@@ -1097,7 +1097,7 @@
                                 case 574:
                                 case 575:
                                     num = 575;
-                                    if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
+                                    if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
                                     {
                                         goto case 576;
                                     }
@@ -1168,21 +1168,21 @@
                                     goto case 593;
                                 case 590:
                                     num = 590;
-                                    if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value).AsDouble() > 0.0)
+                                    if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value) > 0.0)
                                     {
                                         goto case 591;
                                     }
                                     goto case 593;
                                 case 591:
                                     num = 591;
-                                    if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value).AsDouble() < num6)
+                                    if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value) < num6)
                                     {
                                         goto case 592;
                                     }
                                     goto case 593;
                                 case 592:
                                     num = 592;
-                                    num6 = (int)Math.Round((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value).AsDouble());
+                                    num6 = (int)Math.Round(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value));
                                     goto case 593;
                                 case 593:
                                 case 594:
@@ -1850,7 +1850,7 @@
                             goto IL_4044;
                         IL_4044:
                             num = 736;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
                             {
                                 goto IL_4076;
                             }
@@ -1864,7 +1864,7 @@
                             goto IL_4091;
                         IL_4091:
                             num = 739;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
                             {
                                 goto IL_40c3;
                             }
@@ -1878,7 +1878,7 @@
                             goto IL_40de;
                         IL_40de:
                             num = 742;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
                             {
                                 goto IL_4110;
                             }
@@ -1892,7 +1892,7 @@
                             goto IL_412b;
                         IL_412b:
                             num = 745;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
                             {
                                 goto IL_415d;
                             }
@@ -1906,7 +1906,7 @@
                             goto IL_4178;
                         IL_4178:
                             num = 748;
-                            if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
+                            if (Conversion.Val(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
                             {
                                 goto IL_41aa;
                             }
@@ -2756,7 +2756,7 @@
                             }
                         IL_2d09:
                             num = 543;
-                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
+                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
                             {
                                 goto IL_2d44;
                             }
@@ -3045,7 +3045,7 @@
                             goto IL_1e79;
                         IL_1e79:
                             num = 366;
-                            ProgressBar1.Maximum = (int)Math.Round((Modul1.Aus[13]).AsDouble());
+                            ProgressBar1.Maximum = (int)Math.Round(Conversion.Val(Modul1.Aus[13]));
                             goto IL_1e9f;
                         IL_1e9f:
                             num = 367;
@@ -3812,7 +3812,7 @@
                             goto IL_1792;
                         IL_1792:
                             num = 289;
-                            if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value).AsDouble() > 0.0)
+                            if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
                             {
                                 goto IL_17cd;
                             }

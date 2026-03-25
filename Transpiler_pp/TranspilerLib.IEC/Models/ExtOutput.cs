@@ -195,13 +195,13 @@ public class ExtOutput : IOutput
             case (E_State.POU, scAttrPouType) when sName.ToLower() == scNodePou
                 && dData.ContainsKey(scAttrName):
                 dData[scAttrPouType] = sAttrValue.ToString();
-                if (sAttrValue.ToString().ToLower() == "function")
+                if (sAttrValue?.ToString()?.ToLower() == "function")
                 {
                     _out($"FUNCTION {dData[scAttrName]} : ");
                     eState = E_State.Function;
                 }
                 else
-                    _out($"{sAttrValue.ToString().ToUpper()} {dData[scAttrName]};");
+                    _out($"{sAttrValue?.ToString()?.ToUpper()} {dData[scAttrName]};");
                 break;
         }
 

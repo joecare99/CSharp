@@ -126,7 +126,7 @@ public class TitleScreenTests
 
     // Tests
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     public void StartGame_FireOnTitle_RaisesEvent(bool _)
     {
@@ -139,7 +139,7 @@ public class TitleScreenTests
         Assert.AreEqual(1, startEvents, "StartGameRequested sollte genau einmal ausgelöst werden.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     public void StartGame_ThrustOnTitle_RaisesEvent(bool _)
     {
@@ -152,7 +152,7 @@ public class TitleScreenTests
         Assert.AreEqual(1, startEvents, "StartGameRequested sollte genau einmal ausgelöst werden.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(1, "Options")]
     [DataRow(2, "Highscores")]
     [DataRow(3, "Credits")]
@@ -168,7 +168,7 @@ public class TitleScreenTests
         Assert.AreEqual(expectedScreen, GetScreenName(ts));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     public void Title_NavigateLeft_Wraps_ToCredits(bool _)
     {
@@ -180,7 +180,7 @@ public class TitleScreenTests
         Assert.AreEqual("Credits", GetScreenName(ts));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true, 4)]
     [DataRow(false, 2)]
     public void Options_ToggleSound_And_ChangeLives_OneStep(bool increase, int expectedLives)
@@ -210,7 +210,7 @@ public class TitleScreenTests
         Assert.AreEqual(expectedLives, ts.StartLives);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(20, 9)]
     [DataRow(-20, 1)]
     public void Options_StartLives_Clamped(int steps, int expectedLives)
@@ -238,7 +238,7 @@ public class TitleScreenTests
         Assert.AreEqual(expectedLives, ts.StartLives);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(50, 50)]
     public void SetLastScore_UpdatesHighscore_And_ReturnsToTitle(int score, int expectedHigh)
     {
@@ -254,7 +254,7 @@ public class TitleScreenTests
         Assert.AreEqual(expectedHigh, ts.HighScore);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     public void SetLastScore_DoesNotLowerHighscore(bool _)
     {
@@ -268,7 +268,7 @@ public class TitleScreenTests
         Assert.AreEqual("Title", GetScreenName(ts));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     public void Options_EdgeDetection_NoRepeatOnHold(bool _)
     {

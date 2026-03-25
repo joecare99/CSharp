@@ -117,28 +117,28 @@ public static class FilterCompiler
                 break;
         }
 
-        return e =>
+        return e => 
         {
             if (!TryGetFieldText(e, v.Field, out var text, out var typed))
-                return false;
+                return false ;
 
             switch (v.DataType)
             {
                 case FilterDataType.Number:
                     if (!TryAsDouble(text, typed, culture, out var d))
                         return false;
-                    return CompareNumbers(d, v.Operator, parsedFrom as double?, parsedTo as double?);
+                    return v.Negate ^ CompareNumbers(d, v.Operator, parsedFrom as double?, parsedTo as double?);
                 case FilterDataType.DateTime:
                     if (!TryAsDateTimeOffset(text, typed, culture, formats, out var dt))
                         return false;
-                    return CompareDateTimes(dt, v.Operator, parsedFrom as DateTimeOffset?, parsedTo as DateTimeOffset?);
+                    return v.Negate ^ CompareDateTimes(dt, v.Operator, parsedFrom as DateTimeOffset?, parsedTo as DateTimeOffset?);
                 case FilterDataType.Enum:
                     if (!TryAsEnum(text, typed, parsedFrom, out var eobj))
                         return false;
-                    return CompareEnums(eobj, v.Operator, parsedFrom, parsedTo);
+                    return v.Negate ^ CompareEnums(eobj!, v.Operator, parsedFrom, parsedTo);
                 case FilterDataType.String:
                 default:
-                    return CompareStrings(text ?? string.Empty, v.Operator, v.Value, v.ValueTo, cmp);
+                    return v.Negate ^ CompareStrings(text ?? string.Empty, v.Operator, v.Value, v.ValueTo, cmp);
             }
         };
     }

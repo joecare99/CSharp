@@ -70,7 +70,7 @@ namespace Calc64Base.Tests
             Assert.AreEqual(sExp, Calc64Model.GetShortDesc(eVal));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(" 0",new int[] {0},null,0L,new string[] {"" })]
         [DataRow(" 98", new int[] { 9,8 }, null, 98L, new string[] { @"COpChg(Calc64Base.Calc64Model,Accumulator,0 => 9)
 COpChg(Calc64Base.Calc64Model,Accumulator,9 => 98)
@@ -120,7 +120,7 @@ COpChg(Calc64Base.Calc64Model,Accumulator,6474 => 12948)
             Assert.AreEqual(asExp[0],DebugLog);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1,0,new int[] { -1},0,0,0,new string[] { "COpChg(Calc64Base.Calc64Model,Accumulator,1 => 0)\r\n" })]
         [DataRow(2, 1, new int[] { 2,1 }, 3, 0, 0, new string[] { @"COpChg(Calc64Base.Calc64Model,OperationMode,NoMode => Plus)
 COpChg(Calc64Base.Calc64Model,Register,0 => 2)

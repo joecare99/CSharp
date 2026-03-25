@@ -1,0 +1,135 @@
+<UserControl x:Class="ChristmasCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="500" Height="700"
+             Background="Transparent">
+  <!-- Skalierbare Oberfläche -->
+  <Viewbox Stretch="Uniform">
+    <Grid Width="500" Height="700" Background="Transparent">
+
+      <!-- Resources -->
+      <Grid.Resources>
+        <!-- Farbpalette -->
+        <Color x:Key="TannengruenColor">#0B3D2E</Color>
+        <Color x:Key="GoldColor">#D4AF37</Color>
+        <Color x:Key="CremeColor">#FFF8F0</Color>
+        <Color x:Key="LightGrayColor">#EDEDED</Color>
+
+        <LinearGradientBrush x:Key="BackgroundGradient" StartPoint="0,0" EndPoint="0,1">
+          <GradientStop Color="{StaticResource CremeColor}" Offset="0"/>
+          <GradientStop Color="{StaticResource LightGrayColor}" Offset="1"/>
+        </LinearGradientBrush>
+
+        <SolidColorBrush x:Key="TannengruenBrush" Color="{StaticResource TannengruenColor}"/>
+        <SolidColorBrush x:Key="GoldBrush" Color="{StaticResource GoldColor}"/>
+        <SolidColorBrush x:Key="CremeBrush" Color="{StaticResource CremeColor}"/>
+        <SolidColorBrush x:Key="GrayBrush" Color="{StaticResource LightGrayColor}"/>
+
+        <!-- Schriftarten (Fallbacks) -->
+        <FontFamily x:Key="ScriptFont">Segoe Script, Brush Script MT, Cursive</FontFamily>
+        <FontFamily x:Key="SansFont">Segoe UI, Arial, Sans-Serif</FontFamily>
+      </Grid.Resources>
+
+      <!-- Background Layer -->
+      <Canvas x:Name="Background" Width="500" Height="700">
+        <!-- sanfter Hintergrundverlauf -->
+        <Rectangle Width="500" Height="700" Fill="{StaticResource BackgroundGradient}" />
+
+        <!-- dezente, cremefarbene Vignette (als Ellipse) -->
+        <Ellipse Width="420" Height="560" Canvas.Left="40" Canvas.Top="70" Fill="{StaticResource CremeBrush}" Opacity="0.12"/>
+      </Canvas>
+
+      <!-- Decorations Layer -->
+      <Canvas x:Name="Decorations" Width="500" Height="700">
+
+        <!-- Goldene Sterne (fein) -->
+        <Path Data="M10,0 L12.9,6.9 L20,7.6 L14.5,12.1 L16,19 L10,15.5 L4,19 L5.5,12.1 L0,7.6 L7.1,6.9 Z"
+              Fill="{StaticResource GoldBrush}" Canvas.Left="380" Canvas.Top="40" Width="18" Height="18" Opacity="0.95"/>
+        <Path Data="M10,0 L12.9,6.9 L20,7.6 L14.5,12.1 L16,19 L10,15.5 L4,19 L5.5,12.1 L0,7.6 L7.1,6.9 Z"
+              Fill="{StaticResource GoldBrush}" Canvas.Left="120" Canvas.Top="60" Width="12" Height="12" Opacity="0.9"/>
+
+        <!-- Schneeflocken (stilisiert) -->
+        <Path Data="M0,6 L24,6 M12,0 L12,24 M4,4 L20,20 M20,4 L4,20"
+              Stroke="{StaticResource GrayBrush}" StrokeThickness="1.2" StrokeLineCap="Round"
+              Canvas.Left="60" Canvas.Top="120" Width="24" Height="24" Opacity="0.9"/>
+        <Path Data="M0,6 L24,6 M12,0 L12,24 M4,4 L20,20 M20,4 L4,20"
+              Stroke="{StaticResource GrayBrush}" StrokeThickness="1" StrokeLineCap="Round"
+              Canvas.Left="360" Canvas.Top="140" Width="18" Height="18" Opacity="0.85"/>
+
+        <!-- Stilisiertes Tannenbaum-Icon (zentral, flach, vektor) -->
+        <Path x:Name="TreeShadow" Data="M250,220 L200,320 L300,320 Z M250,260 L210,340 L290,340 Z M250,300 L220,360 L280,360 Z"
+              Fill="#000000" Opacity="0.08" Canvas.Left="0" Canvas.Top="0" RenderTransformOrigin="0.5,0.5">
+          <Path.RenderTransform>
+            <TranslateTransform X="4" Y="6"/>
+          </Path.RenderTransform>
+        </Path>
+
+        <Path x:Name="Tree" Data="M250,200 L200,300 L300,300 Z M250,240 L210,320 L290,320 Z M250,280 L220,360 L280,360 Z"
+              Fill="{StaticResource TannengruenBrush}" Stroke="{StaticResource TannengruenBrush}" StrokeThickness="0.5"/>
+
+        <!-- Baum-Ornamente (Kreise) -->
+        <Ellipse Fill="{StaticResource CremeBrush}" Width="10" Height="10" Canvas.Left="245" Canvas.Top="235"/>
+        <Ellipse Fill="{StaticResource CremeBrush}" Width="8" Height="8" Canvas.Left="215" Canvas.Top="295"/>
+        <Ellipse Fill="{StaticResource CremeBrush}" Width="9" Height="9" Canvas.Left="275" Canvas.Top="295"/>
+        <Ellipse Fill="{StaticResource CremeBrush}" Width="7" Height="7" Canvas.Left="235" Canvas.Top="325"/>
+
+        <!-- Goldener Stern oben am Baum -->
+        <Path Data="M250,190 L256,204 L272,206 L260,216 L264,232 L250,222 L236,232 L240,216 L228,206 L244,204 Z"
+              Fill="{StaticResource GoldBrush}" Stroke="{StaticResource GoldBrush}" StrokeThickness="0.3" Canvas.Left="0" Canvas.Top="0"/>
+
+        <!-- Stilisiertes Laub / Zweige (links und rechts) -->
+        <Path Data="M80,420 C110,380 150,360 200,350" Stroke="{StaticResource TannengruenColor}" StrokeThickness="6" StrokeLineCap="Round" StrokeLineJoin="Round" Opacity="0.95" Canvas.Left="0" Canvas.Top="0"/>
+        <Path Data="M420,420 C390,380 350,360 300,350" Stroke="{StaticResource TannengruenColor}" StrokeThickness="6" StrokeLineCap="Round" StrokeLineJoin="Round" Opacity="0.95" Canvas.Left="0" Canvas.Top="0"/>
+
+        <!-- Feine goldene Rahmen-Elemente (launisch, dezent) -->
+        <Path Data="M60,80 C120,40 380,40 440,80" Stroke="{StaticResource GoldBrush}" StrokeThickness="1.2" Opacity="0.6" StrokeLineCap="Round"/>
+        <Path Data="M60,620 C120,660 380,660 440,620" Stroke="{StaticResource GoldBrush}" StrokeThickness="1.2" Opacity="0.5" StrokeLineCap="Round"/>
+
+        <!-- Dezente, cremefarbene Schneeflocken-Sprenkler (Kreise) -->
+        <Ellipse Fill="{StaticResource CremeBrush}" Width="3" Height="3" Canvas.Left="90" Canvas.Top="90" Opacity="0.9"/>
+        <Ellipse Fill="{StaticResource CremeBrush}" Width="2.5" Height="2.5" Canvas.Left="140" Canvas.Top="200" Opacity="0.85"/>
+        <Ellipse Fill="{StaticResource CremeBrush}" Width="2.5" Height="2.5" Canvas.Left="320" Canvas.Top="110" Opacity="0.85"/>
+        <Ellipse Fill="{StaticResource CremeBrush}" Width="3" Height="3" Canvas.Left="410" Canvas.Top="220" Opacity="0.9"/>
+
+      </Canvas>
+
+      <!-- Text Layer -->
+      <Canvas x:Name="Text" Width="500" Height="700">
+        <!-- Band-Hintergrund für Schriftzug (leicht abgerundet) -->
+        <Rectangle Width="420" Height="110" RadiusX="8" RadiusY="8"
+                   Fill="{StaticResource TannengruenBrush}" Canvas.Left="40" Canvas.Top="420" Opacity="0.98"/>
+
+        <!-- leichter Schatten für Band (als Offset-Fill) -->
+        <Rectangle Width="420" Height="110" RadiusX="8" RadiusY="8"
+                   Fill="#000000" Canvas.Left="44" Canvas.Top="424" Opacity="0.06"/>
+
+        <!-- Hauptschriftzug (Script) -->
+        <TextBlock Text="Frohe Weihnachten und besinnliche Feiertage"
+                   FontFamily="{StaticResource ScriptFont}"
+                   FontSize="28"
+                   Foreground="{StaticResource CremeBrush}"
+                   TextAlignment="Center"
+                   Width="420"
+                   Canvas.Left="40"
+                   Canvas.Top="440"
+                   TextWrapping="Wrap"
+                   FontWeight="SemiBold"/>
+
+        <!-- Unterzeile -->
+        <TextBlock Text="Von Herzen"
+                   FontFamily="{StaticResource SansFont}"
+                   FontSize="14"
+                   Foreground="{StaticResource CremeBrush}"
+                   TextAlignment="Center"
+                   Width="420"
+                   Canvas.Left="40"
+                   Canvas.Top="485"
+                   Opacity="0.95"/>
+
+        <!-- Optional: kleine Signatur-Linie -->
+        <Line X1="200" Y1="520" X2="300" Y2="520" Stroke="{StaticResource CremeBrush}" StrokeThickness="0.8" Opacity="0.6"/>
+      </Canvas>
+
+    </Grid>
+  </Viewbox>
+</UserControl>

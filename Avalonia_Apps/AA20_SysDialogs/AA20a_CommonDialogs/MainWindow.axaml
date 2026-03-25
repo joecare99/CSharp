@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:AA20a_CommonDialogs"
+        x:Class="AA20a_CommonDialogs.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="800" Height="520"
+        Title="AA20a - Avln_CommonDialogs">
+	<StackPanel Margin="16" Spacing="12">
+		<TextBlock FontSize="18" Text="Avln_CommonDialogs Beispiel" />
+		<StackPanel Orientation="Horizontal" Spacing="8">
+			<Button Content="Open File" Command="{Binding OpenFileCommand}" />
+			<Button Content="Save File" Command="{Binding SaveFileCommand}" />
+			<Button Content="Color" Command="{Binding ColorCommand}" />
+			<Button Content="Font" Command="{Binding FontCommand}" />
+		</StackPanel>
+		<TextBlock Text="Ergebnis:" />
+		<TextBox Text="{Binding Result}" AcceptsReturn="True" Height="360"/>
+	</StackPanel>
+</Window>

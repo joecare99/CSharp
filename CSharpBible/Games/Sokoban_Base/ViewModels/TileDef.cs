@@ -1,5 +1,5 @@
 // ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 08-04-2022
 //
@@ -11,9 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Sokoban.Model;
+using Sokoban.Models;
 
-namespace Sokoban_Base.ViewModels;
+namespace Sokoban.ViewModels;
 
 /// <summary>
 /// Enum TileDef

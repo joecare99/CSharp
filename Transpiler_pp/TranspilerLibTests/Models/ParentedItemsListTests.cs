@@ -24,7 +24,7 @@ public class TestClass : ITestItf
 
     public ITestItf this[int idx] => _list[idx];
 
-    public ITestItf Parent { get; set; }
+    public ITestItf? Parent { get; set; }
     public int iData { get; set; }
 
     private ParentedItemsList<ITestItf> _list;
@@ -45,7 +45,7 @@ public class TestClass : ITestItf
 [TestClass()]
 public class ParentedItemsListTests : ITestItf
 {
-    public ITestItf Parent { get; set; }
+    public ITestItf? Parent { get; set; }
     public int iData { get; set; }
 
     public ITestItf this[int idx] => testClass[idx];

@@ -20,17 +20,17 @@ public class SpaceTests
         rnd.Next(Arg.Any<int>()).Returns(x => _rnd++ % x.ArgAt<int>(0));
         space.Initialize();
         Assert.IsNotNull(space.Sectors);
-        Assert.AreEqual(24, space.Sectors.Count);
+        Assert.HasCount(24, space.Sectors);
         foreach (var sector in space.Sectors.Values)
         {
             Assert.IsNotNull(sector);
             Assert.IsNotNull(sector.Starsystems);
-            Assert.AreEqual(2, sector.Starsystems.Count);
+            Assert.HasCount(2, sector.Starsystems);
             foreach (var star in sector.Starsystems)
             {
                 Assert.IsNotNull(star);
                 Assert.IsFalse(string.IsNullOrEmpty(star.Name));
-                Assert.IsTrue(NamingHelper.existingNames.Contains(star.Name));
+                Assert.Contains(star.Name, NamingHelper.existingNames);
                 Debug.WriteLine($"Star System: {star.Name} at {star.Position.X},{star.Position.Y},{star.Position.Z} pop:{star.Population} res:{star.Resources}");
             }
         }

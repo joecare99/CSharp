@@ -9,7 +9,7 @@ namespace ConsoleLib.CommonControls.Tests;
 [TestClass]
 public class LabelTests : TestBase
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void Draw_With_Or_Without_ParentBackground(bool useParent)

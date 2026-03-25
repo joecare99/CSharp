@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Snake_Base.Models;
 using Snake_Base.Models.Data;
 using Snake_Base.Models.Interfaces;
@@ -41,9 +42,10 @@ public partial class SnakeViewModel : ObservableObject, ISnakeViewModel
     public int Score => _game.Score;
     public int Lives => _game.Lives;
     public int MaxLives => _game.MaxLives;
+    public bool IsRunning => _game.IsRunning;
 
     public Func<Point, Point> GetOldPos { get => _game.GetOldPos; }
-
+    public Func<int> GameTick { get => _game.GameStep; }
     public bool HalfStep => _halfStep;
 
     partial void OnUserActionChanged(UserAction value)
@@ -52,6 +54,23 @@ public partial class SnakeViewModel : ObservableObject, ISnakeViewModel
             _game.SetSnakeDir((Direction)value);
         else if (value <= UserAction.Quit)
             _game.UserQuit = true;
+    }
+
+    [RelayCommand]
+    private void Reset()
+    {
+        _game.Setup(1);
+    }
+    [RelayCommand]
+    private void Pause()
+    {
+        _game.UserQuit = true;
+    }
+    [RelayCommand]
+    private void Start()
+    {
+        if (!_game.IsRunning)
+            _game.Setup(1);
     }
 
 }

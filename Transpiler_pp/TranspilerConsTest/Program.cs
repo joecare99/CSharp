@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using TranspilerConsTest.Model;
+using TranspilerLib.IEC.Models;
+using TranspilerLib.IEC.Models.Scanner;
 using TranspilerLib.Interfaces;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models;
-using TranspilerLib.Models.Scanner;
 
 internal class Program
 {

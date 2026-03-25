@@ -26,7 +26,7 @@ public partial class GameViewModel : ObservableObject, IGameViewModel
     [ObservableProperty]
     private string _currentTitle = "Detektivspiel";
 
-    public bool CanInteract => _state != null && !_state.Finished;
+    public bool CanInteract => State != null && !State.Finished;
 
     public Action DisplayHelp { get ; set; }
 
@@ -42,7 +42,8 @@ public partial class GameViewModel : ObservableObject, IGameViewModel
         Players.Clear();
         History.Clear();
         State = ((IGameSetup)_service).CreateNew(new[] { "Alice", "Bob", "Carol" });
-        foreach (var p in _state.Players)
+        if (State != null)
+        foreach (var p in State.Players)
             Players.Add(p.Name);
         History.Add("Spiel gestartet");
         UpdateTitle();
@@ -51,22 +52,22 @@ public partial class GameViewModel : ObservableObject, IGameViewModel
     [RelayCommand(CanExecute = nameof(CanInteract))]
     private void Suggest()
     {
-        if (_state == null) return;
-        var cur = State.Players[_state.CurrentPlayerIndex];
-        var person = GameData.Persons.First();
-        var weapon = GameData.Weapons.First();
-        var room = GameData.Rooms.First();
-        var sug = _service.MakeSuggestion(_state, cur.Id, person, weapon, room);
-        History.Add($"V: {cur.Name}: {person.Name}/{weapon.Name}/{room.Name} -> {(sug.RefutingPlayerId is int id ? $"von {_state.Players.First(p=>p.Id==id).Name}" : "Keiner")}");
+        if (State == null) return;
+        var cur = State.Players[State.CurrentPlayerIndex];
+        var person = GameData.Persons[0];
+        var weapon = GameData.Weapons[0];
+        var room = GameData.Rooms[0];
+        var sug = _service.MakeSuggestion(State, cur.Id, person, weapon, room);
+        History.Add($"V: {cur.Name}: {person.Name}/{weapon.Name}/{room.Name} -> {(sug.RefutingPlayerId is int id ? $"von {State.Players.First(p=>p.Id==id).Name}" : "Keiner")}");
         UpdateTitle();
     }
 
     [RelayCommand(CanExecute = nameof(CanInteract))]
     private void Accuse()
     {
-        if (_state == null) return;
-        var cur = State.Players[_state.CurrentPlayerIndex];
-        var ok = _service.MakeAccusation(_state, cur.Id, GameData.Persons.First(), GameData.Weapons.First(), GameData.Rooms.First());
+        if (State == null) return;
+        var cur = State.Players[State.CurrentPlayerIndex];
+        var ok = _service.MakeAccusation(State, cur.Id, GameData.Persons.First(), GameData.Weapons.First(), GameData.Rooms.First());
         History.Add(ok ? $"{cur.Name} gewinnt" : $"{cur.Name} falsch (inaktiv)");
         UpdateTitle();
     }
@@ -90,9 +91,9 @@ public partial class GameViewModel : ObservableObject, IGameViewModel
         if (State == null)
             CurrentTitle = "Detektivspiel";
         else if (State.Finished)
-            CurrentTitle = $"Ende – Sieger {_state.WinnerPlayerId}";
+            CurrentTitle = $"Ende – Sieger {State.WinnerPlayerId}";
         else
-            CurrentTitle = $"Zug: {_state.Players[_state.CurrentPlayerIndex].Name}";
+            CurrentTitle = $"Zug: {State.Players[State.CurrentPlayerIndex].Name}";
     }
 
 }

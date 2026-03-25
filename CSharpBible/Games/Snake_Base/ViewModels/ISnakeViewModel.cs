@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommunityToolkit.Mvvm.Input;
 using Snake_Base.Models.Data;
 using System;
 using System.ComponentModel;
@@ -27,7 +28,10 @@ public interface ISnakeViewModel: INotifyPropertyChanged
 
     UserAction UserAction { get; set; }
     ITileProxy<SnakeTiles> Tiles { get; }
-
+    IRelayCommand ResetCommand { get; }
+    IRelayCommand PauseCommand { get; }
+    IRelayCommand StartCommand { get; }
+     Func<int> GameTick { get; }  
     Func<Point,Point> GetOldPos { get; }
     Size size { get; }
     int Level { get; }
@@ -35,4 +39,5 @@ public interface ISnakeViewModel: INotifyPropertyChanged
     int Lives { get; }
     int MaxLives { get; }
     bool HalfStep { get; }
+    bool IsRunning { get; }
 }

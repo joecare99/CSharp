@@ -1,0 +1,35 @@
+name: TestStatemens CI0
+
+on:
+  push:
+    paths:
+      - "TestStatements/**"
+  pull_request:
+    paths:
+      - "TestStatements/**"
+
+jobs:
+  build-test:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: TestStatements
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Remove private projects
+        run: |
+          
+      - name: Restore
+        run: dotnet restore TestStatements.sln -p:TargetFramework=net8.0-windows
+
+      - name: Build
+        run: dotnet build TestStatements.sln --configuration Release --no-restore -p:TargetFramework=net8.0-windows
+      - name: Test
+        run: dotnet test TestStatements.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0-windows

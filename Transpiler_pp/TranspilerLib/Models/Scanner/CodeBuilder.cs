@@ -71,16 +71,16 @@ public abstract class CodeBuilder : ICodeBuilder
         {
             // Ein Level höher als das Token: wir hängen als Geschwister an den Parent
             int i when i == tokenData.Level + 1
-                => NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock.Parent, tokenData.Pos),
+                => NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock.Parent!, tokenData.Pos),
             // Gleiches Level: Kind des aktuellen Blocks
             int i when i == tokenData.Level
                 => NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos),
             // Zwei Levels höher: wir steigen zwei Ebenen auf
             int i when i == tokenData.Level + 2
-                => NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock.Parent.Parent, tokenData.Pos),
+                => NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock.Parent!.Parent!, tokenData.Pos),
             // Drei Levels höher (Sonderfall) – vermutlich fehlerhafte Struktur aber aktuell zugelassen
             int i when i == tokenData.Level + 3
-                => NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock.Parent.Parent.Parent, tokenData.Pos),
+                => NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock.Parent!.Parent!.Parent!, tokenData.Pos),
             _ => throw new NotImplementedException()
         };
 

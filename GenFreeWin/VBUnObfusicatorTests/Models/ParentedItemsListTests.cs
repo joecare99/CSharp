@@ -19,7 +19,7 @@ public class TestClass : ITestItf
     public TestClass(int v)
     {
         iData = v;
-        _list = new CSCode.ParentedItemsList<ITestItf>(this);
+        _list = new ParentedItemsList<ITestItf>(this);
     }
 
     public ITestItf this[int idx] => _list[idx];
@@ -27,7 +27,7 @@ public class TestClass : ITestItf
     public ITestItf Parent { get; set; }
     public int iData { get ; set ; }
 
-    private CSCode.ParentedItemsList<ITestItf> _list;
+    private ParentedItemsList<ITestItf> _list;
 
     public bool Equals(ITestItf? other)
     {
@@ -50,7 +50,7 @@ public class ParentedItemsListTests : ITestItf
 
     public ITestItf this[int idx] => testClass[idx];
 
-    private CSCode.ParentedItemsList<ITestItf> testClass;
+    private ParentedItemsList<ITestItf> testClass;
 
 
     [TestInitialize()]

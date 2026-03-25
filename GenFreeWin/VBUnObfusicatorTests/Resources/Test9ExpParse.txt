@@ -4,119 +4,119 @@ private void Command1_Click(object eventSender, EventArgs eventArgs)
 {
 ///Comment LComment 1,1
 //Discarded unreachable code: IL_451b
-///Instruction Instruction 1,2
+///Operation Operation 1,2
 int try0001_dispatch = -1;
-///Instruction Instruction 1,3
+///Operation Operation 1,3
 int num = default;
-///Instruction Instruction 1,4
+///Operation Operation 1,4
 short index = default;
-///Instruction Instruction 1,5
+///Operation Operation 1,5
 int num2 = default;
-///Instruction Instruction 1,6
+///Operation Operation 1,6
 int num3 = default;
-///Instruction Instruction 1,7
+///Operation Operation 1,7
 int lErl = default;
-///Instruction Instruction 1,8
+///Operation Operation 1,8
 int num6 = default;
-///Instruction Instruction 1,9
+///Operation Operation 1,9
 int num7 = default;
-///Instruction Instruction 1,10
+///Operation Operation 1,10
 int num8 = default;
-///Instruction Instruction 1,11
+///Operation Operation 1,11
 int num9 = default;
-///Instruction Instruction 1,12
+///Operation Operation 1,12
 string sDest = default;
-///Instruction Instruction 1,13
+///Operation Operation 1,13
 int num10 = default;
-///Instruction Instruction 1,14
+///Operation Operation 1,14
 string sDest2 = default;
-///Instruction Instruction 1,15
+///Operation Operation 1,15
 short num12 = default;
-///Instruction Instruction 1,16
+///Operation Operation 1,16
 int num14 = default;
-///Instruction Instruction 1,17
+///Operation Operation 1,17
 short num15 = default;
-///Instruction Instruction 1,18
+///Operation Operation 1,18
 int num17 = default;
-///Instruction Instruction 1,19
+///Operation Operation 1,19
 int num19 = default;
-///Instruction Instruction 1,20
+///Operation Operation 1,20
 while (true)
 ///BlockStart Block 2,0
 {
-///Instruction Instruction 2,1
+///Operation Operation 2,1
 try
 ///BlockStart Block 3,0
 {
 ///Comment Comment 3,1
 /*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
-///Instruction Instruction 3,2
+///Operation Operation 3,2
 ;
-///Instruction Instruction 3,3
+///Operation Operation 3,3
 checked
 ///BlockStart Block 4,0
 {
-///Instruction Instruction 4,1
+///Operation Operation 4,1
 int num4;
-///Instruction Instruction 4,2
+///Operation Operation 4,2
 int i3;
-///Instruction Instruction 4,3
+///Operation Operation 4,3
 int i4;
-///Instruction Instruction 4,4
+///Operation Operation 4,4
 int i5;
-///Instruction Instruction 4,5
+///Operation Operation 4,5
 int i6;
-///Instruction Instruction 4,6
+///Operation Operation 4,6
 int i7;
-///Instruction Instruction 4,7
+///Operation Operation 4,7
 short t;
-///Instruction Instruction 4,8
+///Operation Operation 4,8
 short num13;
-///Instruction Instruction 4,9
+///Operation Operation 4,9
 int i8;
-///Instruction Instruction 4,10
+///Operation Operation 4,10
 int i9;
-///Instruction Instruction 4,11
+///Operation Operation 4,11
 int i10;
-///Instruction Instruction 4,12
+///Operation Operation 4,12
 short num16;
-///Instruction Instruction 4,13
+///Operation Operation 4,13
 ListBox L;
-///Instruction Instruction 4,14
+///Operation Operation 4,14
 short A;
-///Instruction Instruction 4,15
+///Operation Operation 4,15
 int i11;
-///Instruction Instruction 4,16
+///Operation Operation 4,16
 int i12;
-///Instruction Instruction 4,17
+///Operation Operation 4,17
 int i13;
-///Instruction Instruction 4,18
+///Operation Operation 4,18
 short num18;
-///Instruction Instruction 4,19
+///Operation Operation 4,19
 int i14;
-///Instruction Instruction 4,20
+///Operation Operation 4,20
 int i15;
-///Instruction Instruction 4,21
+///Operation Operation 4,21
 int i16;
-///Instruction Instruction 4,22
+///Operation Operation 4,22
 int i17;
-///Instruction Instruction 4,23
+///Operation Operation 4,23
 int num5;
-///Instruction Instruction 4,24
+///Operation Operation 4,24
 short t2;
-///Instruction Instruction 4,25
+///Operation Operation 4,25
 short num20;
-///Instruction Instruction 4,26
+///Operation Operation 4,26
 short num11;
-///Instruction Instruction 4,27
+///Operation Operation 4,27
 switch (try0001_dispatch)
 ///BlockStart Block 5,0
 {
 ///Label Label 5,1 1
 default:
-///Instruction Instruction 5,2
+///Operation Operation 5,2
 num = 1;
-///Instruction Instruction 5,3
+///Operation Operation 5,3
 index = Command1.GetIndex((Button)eventSender);
 ///Goto Goto 5,4 Dest:OK
 goto IL_0016;
@@ -124,15 +124,15 @@ goto IL_0016;
 case 21059:
 ///BlockStart Block 6,0
 {
-///Instruction Instruction 6,1
+///Operation Operation 6,1
 num2 = num;
-///Instruction Instruction 6,2
+///Operation Operation 6,2
 switch ((num3 <= -2) ? 1 : num3)
 ///BlockStart Block 7,0
 {
 ///Label Label 7,1
 case 2:
-///Instruction Instruction 7,2
+///Operation Operation 7,2
 break;
 ///Label Label 7,3
 case 1:
@@ -150,9 +150,9 @@ goto IL_451d;
 }
 ///Label Label 5,6 2
 IL_0c00:
-///Instruction Instruction 5,7
+///Operation Operation 5,7
 num = 149;
-///Instruction Instruction 5,8
+///Operation Operation 5,8
 if (!DataModul.TTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -160,7 +160,7 @@ if (!DataModul.TTable.NoMatch)
 goto IL_0c1a;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,9
+///Operation Operation 5,9
 else
 ///BlockStart Block 6,0
 {
@@ -170,25 +170,25 @@ goto IL_0c34;
 }
 ///Label Label 5,10 2
 IL_0c1a:
-///Instruction Instruction 5,11
+///Operation Operation 5,11
 num = 150;
-///Instruction Instruction 5,12
+///Operation Operation 5,12
 StringType.MidStmtStr(ref Modul1.LiText, 79, 1, "J");
 ///Goto Goto 5,13 Dest:OK
 goto IL_0c34;
 ///Label Label 5,14 2
 IL_0ba2:
-///Instruction Instruction 5,15
+///Operation Operation 5,15
 num = 148;
-///Instruction Instruction 5,16
+///Operation Operation 5,16
 DataModul.TTable.Seek("=", 1, Modul1.PersInArb);
 ///Goto Goto 5,17 Dest:OK
 goto IL_0c00;
 ///Label Label 5,18 2
 IL_451d:
-///Instruction Instruction 5,19
+///Operation Operation 5,19
 num = 789;
-///Instruction Instruction 5,20
+///Operation Operation 5,20
 if (Information.Err().Number == 6)
 ///BlockStart Block 6,0
 {
@@ -196,7 +196,7 @@ if (Information.Err().Number == 6)
 goto IL_4537;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,21
+///Operation Operation 5,21
 else
 ///BlockStart Block 6,0
 {
@@ -206,13 +206,13 @@ goto IL_4563;
 }
 ///Label Label 5,22 2
 IL_4563:
-///Instruction Instruction 5,23
+///Operation Operation 5,23
 num = 794;
-///Instruction Instruction 5,24
+///Operation Operation 5,24
 if (Interaction.MsgBox(Conversion.ErrorToString(), MsgBoxStyle.OkCancel, (Information.Err().Number).AsString()) == MsgBoxResult.Cancel)
 ///BlockStart Block 6,0
 {
-///Instruction Instruction 6,1
+///Operation Operation 6,1
 ProjectData.EndApp();
 ///BlockEnd Block 6,2
 }
@@ -220,57 +220,57 @@ ProjectData.EndApp();
 goto IL_4593;
 ///Label Label 5,26 2
 IL_0c6f:
-///Instruction Instruction 5,27
+///Operation Operation 5,27
 num = 153;
-///Instruction Instruction 5,28
+///Operation Operation 5,28
 Modul1.LiText = "";
 ///Goto Goto 5,29 Dest:OK
 goto IL_0c81;
 ///Label Label 5,30 2
 IL_4593:
-///Instruction Instruction 5,31
+///Operation Operation 5,31
 num = 797;
-///Instruction Instruction 5,32
+///Operation Operation 5,32
 ProjectData.ClearProjectError();
-///Instruction Instruction 5,33
+///Operation Operation 5,33
 if (num2 == 0)
 ///BlockStart Block 6,0
 {
-///Instruction Instruction 6,1
+///Operation Operation 6,1
 throw ProjectData.CreateProjectError(-2146828268);
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,34
+///Operation Operation 5,34
 num4 = num2;
 ///Goto Goto 5,35 Dest:OK
 goto IL_45bd;
 ///Label Label 5,36 3
 IL_0c81:
-///Instruction Instruction 5,37
+///Operation Operation 5,37
 num = 154;
-///Instruction Instruction 5,38
+///Operation Operation 5,38
 lErl = 5;
 ///Goto Goto 5,39 Dest:OK
 goto IL_0c8b;
 ///Label Label 5,40 2
 IL_0c8b:
-///Instruction Instruction 5,41
+///Operation Operation 5,41
 num = 155;
-///Instruction Instruction 5,42
+///Operation Operation 5,42
 I1++;
 ///Goto Goto 5,43 Dest:OK
 goto IL_0ca1;
 ///Label Label 5,44 2
 IL_45bd:
-///Instruction Instruction 5,45
+///Operation Operation 5,45
 num2 = 0;
-///Instruction Instruction 5,46
+///Operation Operation 5,46
 switch (num4)
 ///BlockStart Block 6,0
 {
 ///Label Label 6,1
 case 1:
-///Instruction Instruction 6,2
+///Operation Operation 6,2
 break;
 ///Label Label 6,3
 case 2:
@@ -2006,25 +2006,25 @@ case 548:
 goto IL_2d6e;
 ///Label Label 6,869
 case 550:
-///Instruction Instruction 6,870
+///Operation Operation 6,870
 num = 550;
-///Instruction Instruction 6,871
+///Operation Operation 6,871
 Modul1.PersInArbsp = Modul1.PersInArb;
 ///Goto Goto 6,872 Dest:OK
 goto case 551;
 ///Label Label 6,873 1
 case 551:
-///Instruction Instruction 6,874
+///Operation Operation 6,874
 num = 551;
-///Instruction Instruction 6,875
+///Operation Operation 6,875
 Modul1.Kenn = 1f;
 ///Goto Goto 6,876 Dest:OK
 goto case 552;
 ///Label Label 6,877 1
 case 552:
-///Instruction Instruction 6,878
+///Operation Operation 6,878
 num = 552;
-///Instruction Instruction 6,879
+///Operation Operation 6,879
 if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
 ///BlockStart Block 7,0
 {
@@ -2036,9 +2036,9 @@ goto case 553;
 goto case 554;
 ///Label Label 6,881 1
 case 553:
-///Instruction Instruction 6,882
+///Operation Operation 6,882
 num = 553;
-///Instruction Instruction 6,883
+///Operation Operation 6,883
 Modul1.Kenn = 2f;
 ///Goto Goto 6,884 Dest:OK
 goto case 554;
@@ -2046,25 +2046,25 @@ goto case 554;
 case 554:
 ///Label Label 6,886
 case 555:
-///Instruction Instruction 6,887
+///Operation Operation 6,887
 num = 555;
-///Instruction Instruction 6,888
+///Operation Operation 6,888
 DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
 ///Goto Goto 6,889 Dest:OK
 goto case 556;
 ///Label Label 6,890 1
 case 556:
-///Instruction Instruction 6,891
+///Operation Operation 6,891
 num = 556;
-///Instruction Instruction 6,892
+///Operation Operation 6,892
 DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), Modul1.Kenn);
 ///Goto Goto 6,893 Dest:OK
 goto case 557;
 ///Label Label 6,894 1
 case 557:
-///Instruction Instruction 6,895
+///Operation Operation 6,895
 num = 557;
-///Instruction Instruction 6,896
+///Operation Operation 6,896
 if (!DataModul.DB_LinkTable.NoMatch)
 ///BlockStart Block 7,0
 {
@@ -2076,31 +2076,31 @@ goto case 559;
 goto IL_3320;
 ///Label Label 6,898 1
 case 559:
-///Instruction Instruction 6,899
+///Operation Operation 6,899
 num = 559;
 ///Goto Goto 6,900 Dest:OK
 goto case 560;
 ///Label Label 6,901 1
 case 560:
-///Instruction Instruction 6,902
+///Operation Operation 6,902
 num = 560;
-///Instruction Instruction 6,903
+///Operation Operation 6,903
 Modul1.FamInArb = DataModul.DB_LinkTable.Fields[nameof(DataModul.LinkFields.FamNr)].Value.AsInt();
 ///Goto Goto 6,904 Dest:OK
 goto case 561;
 ///Label Label 6,905 1
 case 561:
-///Instruction Instruction 6,906
+///Operation Operation 6,906
 num = 561;
-///Instruction Instruction 6,907
+///Operation Operation 6,907
 MainProject.Forms.Familie.Famles(Modul1.FamInArb);
 ///Goto Goto 6,908 Dest:OK
 goto case 562;
 ///Label Label 6,909 1
 case 562:
-///Instruction Instruction 6,910
+///Operation Operation 6,910
 num = 562;
-///Instruction Instruction 6,911
+///Operation Operation 6,911
 if (Modul1.Kenn == 1f)
 ///BlockStart Block 7,0
 {
@@ -2112,17 +2112,17 @@ goto case 563;
 goto case 565;
 ///Label Label 6,913 1
 case 563:
-///Instruction Instruction 6,914
+///Operation Operation 6,914
 num = 563;
-///Instruction Instruction 6,915
+///Operation Operation 6,915
 Modul1.PersInArb = Modul1.Family.Frau;
 ///Goto Goto 6,916 Dest:OK
 goto case 564;
 ///Label Label 6,917 1
 case 565:
-///Instruction Instruction 6,918
+///Operation Operation 6,918
 num = 565;
-///Instruction Instruction 6,919
+///Operation Operation 6,919
 if (Modul1.Kenn == 2f)
 ///BlockStart Block 7,0
 {
@@ -2134,9 +2134,9 @@ goto case 566;
 goto case 564;
 ///Label Label 6,921 1
 case 566:
-///Instruction Instruction 6,922
+///Operation Operation 6,922
 num = 566;
-///Instruction Instruction 6,923
+///Operation Operation 6,923
 Modul1.PersInArb = Modul1.Family.Mann;
 ///Goto Goto 6,924 Dest:OK
 goto case 564;
@@ -2146,41 +2146,41 @@ case 564:
 case 567:
 ///Label Label 6,927
 case 568:
-///Instruction Instruction 6,928
+///Operation Operation 6,928
 num = 568;
-///Instruction Instruction 6,929
+///Operation Operation 6,929
 DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
 ///Goto Goto 6,930 Dest:OK
 goto case 569;
 ///Label Label 6,931 1
 case 569:
-///Instruction Instruction 6,932
+///Operation Operation 6,932
 num = 569;
-///Instruction Instruction 6,933
+///Operation Operation 6,933
 Modul1.I = 101;
 ///Goto Goto 6,934 Dest:OK
 goto case 570;
 ///Label Label 6,935 2
 case 570:
-///Instruction Instruction 6,936
+///Operation Operation 6,936
 num = 570;
-///Instruction Instruction 6,937
+///Operation Operation 6,937
 Modul1.Ubg = Modul1.I;
 ///Goto Goto 6,938 Dest:OK
 goto case 571;
 ///Label Label 6,939 1
 case 571:
-///Instruction Instruction 6,940
+///Operation Operation 6,940
 num = 571;
-///Instruction Instruction 6,941
+///Operation Operation 6,941
 DataModul.DB_EventTable.Seek("=", Modul1.Ubg.AsString(), Modul1.PersInArb.AsString(), "0");
 ///Goto Goto 6,942 Dest:OK
 goto case 572;
 ///Label Label 6,943 1
 case 572:
-///Instruction Instruction 6,944
+///Operation Operation 6,944
 num = 572;
-///Instruction Instruction 6,945
+///Operation Operation 6,945
 if (!DataModul.DB_EventTable.NoMatch)
 ///BlockStart Block 7,0
 {
@@ -2194,9 +2194,9 @@ goto case 573;
 case 574:
 ///Label Label 6,948
 case 575:
-///Instruction Instruction 6,949
+///Operation Operation 6,949
 num = 575;
-///Instruction Instruction 6,950
+///Operation Operation 6,950
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 7,0
 {
@@ -2208,9 +2208,9 @@ goto case 576;
 goto case 573;
 ///Label Label 6,952 1
 case 576:
-///Instruction Instruction 6,953
+///Operation Operation 6,953
 num = 576;
-///Instruction Instruction 6,954
+///Operation Operation 6,954
 if (Conversions.ToDouble(Strings.Trim(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsString())) > 0.0)
 ///BlockStart Block 7,0
 {
@@ -2222,17 +2222,17 @@ goto case 577;
 goto case 573;
 ///Label Label 6,956 1
 case 577:
-///Instruction Instruction 6,957
+///Operation Operation 6,957
 num = 577;
-///Instruction Instruction 6,958
+///Operation Operation 6,958
 transdat = DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value.AsInt();
 ///Goto Goto 6,959 Dest:OK
 goto case 578;
 ///Label Label 6,960 1
 case 578:
-///Instruction Instruction 6,961
+///Operation Operation 6,961
 num = 578;
-///Instruction Instruction 6,962
+///Operation Operation 6,962
 neuedat();
 ///Goto Goto 6,963 Dest:OK
 goto IL_3395;
@@ -2244,9 +2244,9 @@ case 580:
 case 581:
 ///Label Label 6,967
 case 582:
-///Instruction Instruction 6,968
+///Operation Operation 6,968
 num = 582;
-///Instruction Instruction 6,969
+///Operation Operation 6,969
 lErl = 6;
 ///Goto Goto 6,970 Dest:OK
 goto case 583;
@@ -2254,15 +2254,15 @@ goto case 583;
 case 583:
 ///BlockStart Block 7,0
 {
-///Instruction Instruction 7,1
+///Operation Operation 7,1
 num = 583;
-///Instruction Instruction 7,2
+///Operation Operation 7,2
 Modul1.I++;
-///Instruction Instruction 7,3
+///Operation Operation 7,3
 int i = Modul1.I;
-///Instruction Instruction 7,4
+///Operation Operation 7,4
 num5 = 102;
-///Instruction Instruction 7,5
+///Operation Operation 7,5
 if (i <= num5)
 ///BlockStart Block 8,0
 {
@@ -2276,25 +2276,25 @@ goto case 584;
 }
 ///Label Label 6,972 1
 case 584:
-///Instruction Instruction 6,973
+///Operation Operation 6,973
 num = 584;
-///Instruction Instruction 6,974
+///Operation Operation 6,974
 num6 = 30000000;
 ///Goto Goto 6,975 Dest:OK
 goto case 585;
 ///Label Label 6,976 1
 case 585:
-///Instruction Instruction 6,977
+///Operation Operation 6,977
 num = 585;
-///Instruction Instruction 6,978
+///Operation Operation 6,978
 this.A = 1;
 ///Goto Goto 6,979 Dest:OK
 goto case 586;
 ///Label Label 6,980 2
 case 586:
-///Instruction Instruction 6,981
+///Operation Operation 6,981
 num = 586;
-///Instruction Instruction 6,982
+///Operation Operation 6,982
 if (Modul1.Family.Kind[this.A] > 0)
 ///BlockStart Block 7,0
 {
@@ -2306,25 +2306,25 @@ goto case 587;
 goto case 598;
 ///Label Label 6,984 1
 case 587:
-///Instruction Instruction 6,985
+///Operation Operation 6,985
 num = 587;
-///Instruction Instruction 6,986
+///Operation Operation 6,986
 Modul1.I = 101;
 ///Goto Goto 6,987 Dest:OK
 goto case 588;
 ///Label Label 6,988 2
 case 588:
-///Instruction Instruction 6,989
+///Operation Operation 6,989
 num = 588;
-///Instruction Instruction 6,990
+///Operation Operation 6,990
 DataModul.DB_EventTable.Seek("=", Modul1.I.AsString(), Modul1.Family.Kind[this.A].AsString(), "0");
 ///Goto Goto 6,991 Dest:OK
 goto case 589;
 ///Label Label 6,992 1
 case 589:
-///Instruction Instruction 6,993
+///Operation Operation 6,993
 num = 589;
-///Instruction Instruction 6,994
+///Operation Operation 6,994
 if (!DataModul.DB_EventTable.NoMatch)
 ///BlockStart Block 7,0
 {
@@ -2336,9 +2336,9 @@ goto case 590;
 goto case 593;
 ///Label Label 6,996 1
 case 590:
-///Instruction Instruction 6,997
+///Operation Operation 6,997
 num = 590;
-///Instruction Instruction 6,998
+///Operation Operation 6,998
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value) > 0.0)
 ///BlockStart Block 7,0
 {
@@ -2350,9 +2350,9 @@ goto case 591;
 goto case 593;
 ///Label Label 6,1000 1
 case 591:
-///Instruction Instruction 6,1001
+///Operation Operation 6,1001
 num = 591;
-///Instruction Instruction 6,1002
+///Operation Operation 6,1002
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value) < num6)
 ///BlockStart Block 7,0
 {
@@ -2364,9 +2364,9 @@ goto case 592;
 goto case 593;
 ///Label Label 6,1004 1
 case 592:
-///Instruction Instruction 6,1005
+///Operation Operation 6,1005
 num = 592;
-///Instruction Instruction 6,1006
+///Operation Operation 6,1006
 num6 = (int)Math.Round(Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].Value));
 ///Goto Goto 6,1007 Dest:OK
 goto case 593;
@@ -2380,15 +2380,15 @@ case 595:
 case 596:
 ///BlockStart Block 7,0
 {
-///Instruction Instruction 7,1
+///Operation Operation 7,1
 num = 596;
-///Instruction Instruction 7,2
+///Operation Operation 7,2
 Modul1.I++;
-///Instruction Instruction 7,3
+///Operation Operation 7,3
 int i2 = Modul1.I;
-///Instruction Instruction 7,4
+///Operation Operation 7,4
 num5 = 102;
-///Instruction Instruction 7,5
+///Operation Operation 7,5
 if (i2 <= num5)
 ///BlockStart Block 8,0
 {
@@ -2402,7 +2402,7 @@ goto case 597;
 }
 ///Label Label 6,1012 1
 case 598:
-///Instruction Instruction 6,1013
+///Operation Operation 6,1013
 num = 598;
 ///Goto Goto 6,1014 Dest:OK
 goto case 599;
@@ -2414,15 +2414,15 @@ case 600:
 case 601:
 ///BlockStart Block 7,0
 {
-///Instruction Instruction 7,1
+///Operation Operation 7,1
 num = 601;
-///Instruction Instruction 7,2
+///Operation Operation 7,2
 this.A++;
-///Instruction Instruction 7,3
+///Operation Operation 7,3
 int a = this.A;
-///Instruction Instruction 7,4
+///Operation Operation 7,4
 num5 = 99;
-///Instruction Instruction 7,5
+///Operation Operation 7,5
 if (a <= num5)
 ///BlockStart Block 8,0
 {
@@ -2438,9 +2438,9 @@ goto case 599;
 case 599:
 ///Label Label 6,1019
 case 602:
-///Instruction Instruction 6,1020
+///Operation Operation 6,1020
 num = 602;
-///Instruction Instruction 6,1021
+///Operation Operation 6,1021
 if (num6 < 30000000)
 ///BlockStart Block 7,0
 {
@@ -2452,17 +2452,17 @@ goto case 603;
 goto IL_32fc;
 ///Label Label 6,1023 1
 case 603:
-///Instruction Instruction 6,1024
+///Operation Operation 6,1024
 num = 603;
-///Instruction Instruction 6,1025
+///Operation Operation 6,1025
 transdat = Conversions.ToInteger(Conversion.Str(Conversions.ToDouble((num6).AsString().Left( 4)) - 25.0) + "0000");
 ///Goto Goto 6,1026 Dest:OK
 goto case 604;
 ///Label Label 6,1027 1
 case 604:
-///Instruction Instruction 6,1028
+///Operation Operation 6,1028
 num = 604;
-///Instruction Instruction 6,1029
+///Operation Operation 6,1029
 neuedat();
 ///Goto Goto 6,1030 Dest:OK
 goto IL_32fc;
@@ -3212,23 +3212,23 @@ goto end_IL_0001_2;
 goto default;
 ///Label Label 5,48 2
 IL_4537:
-///Instruction Instruction 5,49
+///Operation Operation 5,49
 num = 790;
-///Instruction Instruction 5,50
+///Operation Operation 5,50
 num7 = 200000000;
 ///Goto Goto 5,51 Dest:OK
 goto IL_4545;
 ///Label Label 5,52 2
 IL_4545:
-///Instruction Instruction 5,53
+///Operation Operation 5,53
 num = 791;
-///Instruction Instruction 5,54
+///Operation Operation 5,54
 ProjectData.ClearProjectError();
-///Instruction Instruction 5,55
+///Operation Operation 5,55
 if (num2 == 0)
 ///BlockStart Block 6,0
 {
-///Instruction Instruction 6,1
+///Operation Operation 6,1
 throw ProjectData.CreateProjectError(-2146828268);
 ///BlockEnd Block 6,2
 }
@@ -3236,47 +3236,47 @@ throw ProjectData.CreateProjectError(-2146828268);
 goto IL_45b9;
 ///Label Label 5,57 3
 IL_0c34:
-///Instruction Instruction 5,58
+///Operation Operation 5,58
 num = 152;
-///Instruction Instruction 5,59
+///Operation Operation 5,59
 List1.Items.Add(new ListItem(Modul1.LiText + "          " + Modul1.PersInArb.AsString()));
 ///Goto Goto 5,60 Dest:OK
 goto IL_0c6f;
 ///Label Label 5,61 2
 IL_45b9:
-///Instruction Instruction 5,62
+///Operation Operation 5,62
 num4 = unchecked(num2 + 1);
 ///Goto Goto 5,63 Dest:OK
 goto IL_45bd;
 ///Label Label 5,64 2
 IL_0016:
-///Instruction Instruction 5,65
+///Operation Operation 5,65
 num = 2;
-///Instruction Instruction 5,66
+///Operation Operation 5,66
 RadioButton1.Visible = true;
 ///Goto Goto 5,67 Dest:OK
 goto IL_0026;
 ///Label Label 5,68 2
 IL_0026:
-///Instruction Instruction 5,69
+///Operation Operation 5,69
 num = 3;
-///Instruction Instruction 5,70
+///Operation Operation 5,70
 RadioButton2.Visible = true;
 ///Goto Goto 5,71 Dest:OK
 goto IL_0036;
 ///Label Label 5,72 2
 IL_0036:
-///Instruction Instruction 5,73
+///Operation Operation 5,73
 ProjectData.ClearProjectError();
-///Instruction Instruction 5,74
+///Operation Operation 5,74
 num3 = 2;
 ///Goto Goto 5,75 Dest:OK
 goto IL_003e;
 ///Label Label 5,76 2
 IL_003e:
-///Instruction Instruction 5,77
+///Operation Operation 5,77
 num = 5;
-///Instruction Instruction 5,78
+///Operation Operation 5,78
 switch (index)
 ///BlockStart Block 6,0
 {
@@ -3290,7 +3290,7 @@ case 4:
 case 5:
 ///Label Label 6,5
 case 6:
-///Instruction Instruction 6,6
+///Operation Operation 6,6
 break;
 ///Label Label 6,7
 case 7:
@@ -3310,41 +3310,41 @@ goto IL_006f;
 }
 ///Label Label 5,79 2
 IL_0094:
-///Instruction Instruction 5,80
+///Operation Operation 5,80
 num = 13;
-///Instruction Instruction 5,81
+///Operation Operation 5,81
 List1.Visible = false;
 ///Goto Goto 5,82 Dest:OK
 goto IL_00a6;
 ///Label Label 5,83 2
 IL_006f:
-///Instruction Instruction 5,84
+///Operation Operation 5,84
 num = 9;
-///Instruction Instruction 5,85
+///Operation Operation 5,85
 List2.Visible = false;
 ///Goto Goto 5,86 Dest:OK
 goto IL_0080;
 ///Label Label 5,87 2
 IL_0080:
-///Instruction Instruction 5,88
+///Operation Operation 5,88
 num = 10;
-///Instruction Instruction 5,89
+///Operation Operation 5,89
 List1.Visible = true;
 ///Goto Goto 5,90 Dest:OK
 goto IL_00a6;
 ///Label Label 5,91 4
 IL_00a6:
-///Instruction Instruction 5,92
+///Operation Operation 5,92
 num = 15;
-///Instruction Instruction 5,93
+///Operation Operation 5,93
 Label4.Text = "";
 ///Goto Goto 5,94 Dest:OK
 goto IL_00bb;
 ///Label Label 5,95 2
 IL_00bb:
-///Instruction Instruction 5,96
+///Operation Operation 5,96
 num = 16;
-///Instruction Instruction 5,97
+///Operation Operation 5,97
 if (Modul1.Aus[12] == "")
 ///BlockStart Block 6,0
 {
@@ -3352,7 +3352,7 @@ if (Modul1.Aus[12] == "")
 goto IL_00db;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,98
+///Operation Operation 5,98
 else
 ///BlockStart Block 6,0
 {
@@ -3362,17 +3362,17 @@ goto IL_00ed;
 }
 ///Label Label 5,99 2
 IL_00db:
-///Instruction Instruction 5,100
+///Operation Operation 5,100
 num = 17;
-///Instruction Instruction 5,101
+///Operation Operation 5,101
 Modul1.Aus[12] = "200";
 ///Goto Goto 5,102 Dest:OK
 goto IL_00ed;
 ///Label Label 5,103 3
 IL_00ed:
-///Instruction Instruction 5,104
+///Operation Operation 5,104
 num = 19;
-///Instruction Instruction 5,105
+///Operation Operation 5,105
 if (Modul1.Aus[13] == "")
 ///BlockStart Block 6,0
 {
@@ -3380,7 +3380,7 @@ if (Modul1.Aus[13] == "")
 goto IL_010d;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,106
+///Operation Operation 5,106
 else
 ///BlockStart Block 6,0
 {
@@ -3390,41 +3390,41 @@ goto IL_011f;
 }
 ///Label Label 5,107 2
 IL_010d:
-///Instruction Instruction 5,108
+///Operation Operation 5,108
 num = 20;
-///Instruction Instruction 5,109
+///Operation Operation 5,109
 Modul1.Aus[13] = "200";
 ///Goto Goto 5,110 Dest:OK
 goto IL_011f;
 ///Label Label 5,111 3
 IL_011f:
-///Instruction Instruction 5,112
+///Operation Operation 5,112
 num = 22;
-///Instruction Instruction 5,113
+///Operation Operation 5,113
 List1.Visible = true;
 ///Goto Goto 5,114 Dest:OK
 goto IL_0130;
 ///Label Label 5,115 2
 IL_0130:
-///Instruction Instruction 5,116
+///Operation Operation 5,116
 num = 23;
-///Instruction Instruction 5,117
+///Operation Operation 5,117
 List2.Visible = false;
 ///Goto Goto 5,118 Dest:OK
 goto IL_0141;
 ///Label Label 5,119 2
 IL_0141:
-///Instruction Instruction 5,120
+///Operation Operation 5,120
 num = 24;
-///Instruction Instruction 5,121
+///Operation Operation 5,121
 Label2.Text = "";
 ///Goto Goto 5,122 Dest:OK
 goto IL_0156;
 ///Label Label 5,123 2
 IL_0156:
-///Instruction Instruction 5,124
+///Operation Operation 5,124
 num = 25;
-///Instruction Instruction 5,125
+///Operation Operation 5,125
 if (RadioButton1.Checked)
 ///BlockStart Block 6,0
 {
@@ -3432,7 +3432,7 @@ if (RadioButton1.Checked)
 goto IL_016b;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,126
+///Operation Operation 5,126
 else
 ///BlockStart Block 6,0
 {
@@ -3442,17 +3442,17 @@ goto IL_017c;
 }
 ///Label Label 5,127 2
 IL_016b:
-///Instruction Instruction 5,128
+///Operation Operation 5,128
 num = 26;
-///Instruction Instruction 5,129
+///Operation Operation 5,129
 List1.Sorted = true;
 ///Goto Goto 5,130 Dest:OK
 goto IL_017c;
 ///Label Label 5,131 3
 IL_017c:
-///Instruction Instruction 5,132
+///Operation Operation 5,132
 num = 28;
-///Instruction Instruction 5,133
+///Operation Operation 5,133
 if (RadioButton2.Checked)
 ///BlockStart Block 6,0
 {
@@ -3460,7 +3460,7 @@ if (RadioButton2.Checked)
 goto IL_0191;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,134
+///Operation Operation 5,134
 else
 ///BlockStart Block 6,0
 {
@@ -3470,23 +3470,23 @@ goto IL_01a2;
 }
 ///Label Label 5,135 2
 IL_0191:
-///Instruction Instruction 5,136
+///Operation Operation 5,136
 num = 29;
-///Instruction Instruction 5,137
+///Operation Operation 5,137
 List1.Sorted = false;
 ///Goto Goto 5,138 Dest:OK
 goto IL_01a2;
 ///Label Label 5,139 3
 IL_01a2:
-///Instruction Instruction 5,140
+///Operation Operation 5,140
 num = 31;
-///Instruction Instruction 5,141
+///Operation Operation 5,141
 switch (index)
 ///BlockStart Block 6,0
 {
 ///Label Label 6,1
 case 0:
-///Instruction Instruction 6,2
+///Operation Operation 6,2
 break;
 ///Label Label 6,3
 case 1:
@@ -3530,33 +3530,33 @@ goto IL_01d7;
 }
 ///Label Label 5,142 2
 IL_3e4e:
-///Instruction Instruction 5,143
+///Operation Operation 5,143
 num = 716;
-///Instruction Instruction 5,144
+///Operation Operation 5,144
 List2.Visible = true;
 ///Goto Goto 5,145 Dest:OK
 goto IL_3e62;
 ///Label Label 5,146 2
 IL_3e62:
-///Instruction Instruction 5,147
+///Operation Operation 5,147
 num = 717;
-///Instruction Instruction 5,148
+///Operation Operation 5,148
 List2.Items.Clear();
 ///Goto Goto 5,149 Dest:OK
 goto IL_3e7a;
 ///Label Label 5,150 2
 IL_3e7a:
-///Instruction Instruction 5,151
+///Operation Operation 5,151
 num = 718;
-///Instruction Instruction 5,152
+///Operation Operation 5,152
 num7 = 1;
 ///Goto Goto 5,153 Dest:OK
 goto IL_3e84;
 ///Label Label 5,154 2
 IL_3e84:
-///Instruction Instruction 5,155
+///Operation Operation 5,155
 num = 719;
-///Instruction Instruction 5,156
+///Operation Operation 5,156
 if (num7 <= 0)
 ///BlockStart Block 6,0
 {
@@ -3568,81 +3568,81 @@ goto end_IL_0001_2;
 goto IL_3e9f;
 ///Label Label 5,158 2
 IL_3e9f:
-///Instruction Instruction 5,159
+///Operation Operation 5,159
 num = 722;
-///Instruction Instruction 5,160
+///Operation Operation 5,160
 Label1[2].Text = "Fehlliste Orte";
 ///Goto Goto 5,161 Dest:OK
 goto IL_3ebd;
 ///Label Label 5,162 2
 IL_3ebd:
-///Instruction Instruction 5,163
+///Operation Operation 5,163
 num = 723;
-///Instruction Instruction 5,164
+///Operation Operation 5,164
 Label1[1].Text = "      Nr    Ort Orsteil  Kreis Land Staat Loc  Länge  Breite PLZ Terr StKz";
 ///Goto Goto 5,165 Dest:OK
 goto IL_3edb;
 ///Label Label 5,166 2
 IL_3edb:
-///Instruction Instruction 5,167
+///Operation Operation 5,167
 num = 724;
-///Instruction Instruction 5,168
+///Operation Operation 5,168
 Label1[0].Text = "  ";
 ///Goto Goto 5,169 Dest:OK
 goto IL_3ef9;
 ///Label Label 5,170 2
 IL_3ef9:
-///Instruction Instruction 5,171
+///Operation Operation 5,171
 num = 725;
-///Instruction Instruction 5,172
+///Operation Operation 5,172
 List2.Items.Add("Fehlliste Orte");
 ///Goto Goto 5,173 Dest:OK
 goto IL_3f16;
 ///Label Label 5,174 2
 IL_3f16:
-///Instruction Instruction 5,175
+///Operation Operation 5,175
 num = 726;
-///Instruction Instruction 5,176
+///Operation Operation 5,176
 List2.Items.Add("      Nr    Ort Ortsteil Kreis Land Staat Loc. Laenge Breite PLZ Terr. StKz");
 ///Goto Goto 5,177 Dest:OK
 goto IL_3f33;
 ///Label Label 5,178 2
 IL_3f33:
-///Instruction Instruction 5,179
+///Operation Operation 5,179
 num = 727;
-///Instruction Instruction 5,180
+///Operation Operation 5,180
 DataModul.DB_PlaceTable.MoveFirst();
 ///Goto Goto 5,181 Dest:OK
 goto IL_3f45;
 ///Label Label 5,182 2
 IL_3f45:
-///Instruction Instruction 5,183
+///Operation Operation 5,183
 num = 728;
-///Instruction Instruction 5,184
+///Operation Operation 5,184
 DataModul.DB_PlaceTable.Index = nameof(DataModul.PlaceIndex.OrtNr);
 ///Goto Goto 5,185 Dest:OK
 goto IL_3f5c;
 ///Label Label 5,186 2
 IL_3f5c:
-///Instruction Instruction 5,187
+///Operation Operation 5,187
 num = 729;
-///Instruction Instruction 5,188
+///Operation Operation 5,188
 DataModul.DB_PlaceTable.Seek(">=", num7);
 ///Goto Goto 5,189 Dest:OK
 goto IL_3fb6;
 ///Label Label 5,190 2
 IL_3fb6:
-///Instruction Instruction 5,191
+///Operation Operation 5,191
 num = 730;
-///Instruction Instruction 5,192
+///Operation Operation 5,192
 this.A = 1;
 ///Goto Goto 5,193 Dest:OK
 goto IL_3fc4;
 ///Label Label 5,194 2
 IL_3fc4:
-///Instruction Instruction 5,195
+///Operation Operation 5,195
 num = 731;
-///Instruction Instruction 5,196
+///Operation Operation 5,196
 if (!DataModul.DB_PlaceTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -3650,7 +3650,7 @@ if (!DataModul.DB_PlaceTable.NoMatch)
 goto IL_441a;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,197
+///Operation Operation 5,197
 else
 ///BlockStart Block 6,0
 {
@@ -3660,9 +3660,9 @@ goto IL_4439;
 }
 ///Label Label 5,198 3
 IL_441a:
-///Instruction Instruction 5,199
+///Operation Operation 5,199
 num = 733;
-///Instruction Instruction 5,200
+///Operation Operation 5,200
 if (!DataModul.DB_PlaceTable.EOF)
 ///BlockStart Block 6,0
 {
@@ -3670,7 +3670,7 @@ if (!DataModul.DB_PlaceTable.EOF)
 goto IL_3fe6;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,201
+///Operation Operation 5,201
 else
 ///BlockStart Block 6,0
 {
@@ -3680,25 +3680,25 @@ goto IL_4454;
 }
 ///Label Label 5,202 2
 IL_3fe6:
-///Instruction Instruction 5,203
+///Operation Operation 5,203
 num = 734;
-///Instruction Instruction 5,204
+///Operation Operation 5,204
 Modul1.LiText = new string(' ', 80);
 ///Goto Goto 5,205 Dest:OK
 goto IL_3ffb;
 ///Label Label 5,206 2
 IL_3ffb:
-///Instruction Instruction 5,207
+///Operation Operation 5,207
 num = 735;
-///Instruction Instruction 5,208
+///Operation Operation 5,208
 StringType.MidStmtStr(ref Modul1.LiText, 1, 10, Strings.Right("          " + DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.OrtNr)].Value.AsString(), 10));
 ///Goto Goto 5,209 Dest:OK
 goto IL_4044;
 ///Label Label 5,210 2
 IL_4044:
-///Instruction Instruction 5,211
+///Operation Operation 5,211
 num = 736;
-///Instruction Instruction 5,212
+///Operation Operation 5,212
 if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
@@ -3706,7 +3706,7 @@ if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ort)].AsInt() =
 goto IL_4076;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,213
+///Operation Operation 5,213
 else
 ///BlockStart Block 6,0
 {
@@ -3716,17 +3716,17 @@ goto IL_4091;
 }
 ///Label Label 5,214 2
 IL_4076:
-///Instruction Instruction 5,215
+///Operation Operation 5,215
 num = 737;
-///Instruction Instruction 5,216
+///Operation Operation 5,216
 StringType.MidStmtStr(ref Modul1.LiText, 12, 2, "F ");
 ///Goto Goto 5,217 Dest:OK
 goto IL_4091;
 ///Label Label 5,218 3
 IL_4091:
-///Instruction Instruction 5,219
+///Operation Operation 5,219
 num = 739;
-///Instruction Instruction 5,220
+///Operation Operation 5,220
 if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
@@ -3734,7 +3734,7 @@ if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ortsteil)].AsIn
 goto IL_40c3;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,221
+///Operation Operation 5,221
 else
 ///BlockStart Block 6,0
 {
@@ -3744,17 +3744,17 @@ goto IL_40de;
 }
 ///Label Label 5,222 2
 IL_40c3:
-///Instruction Instruction 5,223
+///Operation Operation 5,223
 num = 740;
-///Instruction Instruction 5,224
+///Operation Operation 5,224
 StringType.MidStmtStr(ref Modul1.LiText, 20, 2, "F ");
 ///Goto Goto 5,225 Dest:OK
 goto IL_40de;
 ///Label Label 5,226 3
 IL_40de:
-///Instruction Instruction 5,227
+///Operation Operation 5,227
 num = 742;
-///Instruction Instruction 5,228
+///Operation Operation 5,228
 if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
@@ -3762,7 +3762,7 @@ if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Kreis)].AsInt()
 goto IL_4110;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,229
+///Operation Operation 5,229
 else
 ///BlockStart Block 6,0
 {
@@ -3772,17 +3772,17 @@ goto IL_412b;
 }
 ///Label Label 5,230 2
 IL_4110:
-///Instruction Instruction 5,231
+///Operation Operation 5,231
 num = 743;
-///Instruction Instruction 5,232
+///Operation Operation 5,232
 StringType.MidStmtStr(ref Modul1.LiText, 28, 2, "F ");
 ///Goto Goto 5,233 Dest:OK
 goto IL_412b;
 ///Label Label 5,234 3
 IL_412b:
-///Instruction Instruction 5,235
+///Operation Operation 5,235
 num = 745;
-///Instruction Instruction 5,236
+///Operation Operation 5,236
 if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
@@ -3790,7 +3790,7 @@ if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Land)].AsInt() 
 goto IL_415d;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,237
+///Operation Operation 5,237
 else
 ///BlockStart Block 6,0
 {
@@ -3800,17 +3800,17 @@ goto IL_4178;
 }
 ///Label Label 5,238 2
 IL_415d:
-///Instruction Instruction 5,239
+///Operation Operation 5,239
 num = 746;
-///Instruction Instruction 5,240
+///Operation Operation 5,240
 StringType.MidStmtStr(ref Modul1.LiText, 34, 2, "F ");
 ///Goto Goto 5,241 Dest:OK
 goto IL_4178;
 ///Label Label 5,242 3
 IL_4178:
-///Instruction Instruction 5,243
+///Operation Operation 5,243
 num = 748;
-///Instruction Instruction 5,244
+///Operation Operation 5,244
 if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt() == 0))
 ///BlockStart Block 6,0
 {
@@ -3818,7 +3818,7 @@ if ((DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staat)].AsInt()
 goto IL_41aa;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,245
+///Operation Operation 5,245
 else
 ///BlockStart Block 6,0
 {
@@ -3828,17 +3828,17 @@ goto IL_41c5;
 }
 ///Label Label 5,246 2
 IL_41aa:
-///Instruction Instruction 5,247
+///Operation Operation 5,247
 num = 749;
-///Instruction Instruction 5,248
+///Operation Operation 5,248
 StringType.MidStmtStr(ref Modul1.LiText, 39, 2, "F ");
 ///Goto Goto 5,249 Dest:OK
 goto IL_41c5;
 ///Label Label 5,250 3
 IL_41c5:
-///Instruction Instruction 5,251
+///Operation Operation 5,251
 num = 751;
-///Instruction Instruction 5,252
+///Operation Operation 5,252
 if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Loc)].AsString()) == "")
 ///BlockStart Block 6,0
 {
@@ -3846,7 +3846,7 @@ if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Loc
 goto IL_4203;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,253
+///Operation Operation 5,253
 else
 ///BlockStart Block 6,0
 {
@@ -3856,17 +3856,17 @@ goto IL_421e;
 }
 ///Label Label 5,254 2
 IL_4203:
-///Instruction Instruction 5,255
+///Operation Operation 5,255
 num = 752;
-///Instruction Instruction 5,256
+///Operation Operation 5,256
 StringType.MidStmtStr(ref Modul1.LiText, 44, 2, "F ");
 ///Goto Goto 5,257 Dest:OK
 goto IL_421e;
 ///Label Label 5,258 3
 IL_421e:
-///Instruction Instruction 5,259
+///Operation Operation 5,259
 num = 754;
-///Instruction Instruction 5,260
+///Operation Operation 5,260
 if (Strings.Len(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.L)].AsString())) <= 1)
 ///BlockStart Block 6,0
 {
@@ -3874,7 +3874,7 @@ if (Strings.Len(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.Pla
 goto IL_4259;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,261
+///Operation Operation 5,261
 else
 ///BlockStart Block 6,0
 {
@@ -3884,17 +3884,17 @@ goto IL_4274;
 }
 ///Label Label 5,262 2
 IL_4259:
-///Instruction Instruction 5,263
+///Operation Operation 5,263
 num = 755;
-///Instruction Instruction 5,264
+///Operation Operation 5,264
 StringType.MidStmtStr(ref Modul1.LiText, 52, 2, "F ");
 ///Goto Goto 5,265 Dest:OK
 goto IL_4274;
 ///Label Label 5,266 3
 IL_4274:
-///Instruction Instruction 5,267
+///Operation Operation 5,267
 num = 757;
-///Instruction Instruction 5,268
+///Operation Operation 5,268
 if (Strings.Len(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.B)].AsString())) <= 1)
 ///BlockStart Block 6,0
 {
@@ -3902,7 +3902,7 @@ if (Strings.Len(Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.Pla
 goto IL_42af;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,269
+///Operation Operation 5,269
 else
 ///BlockStart Block 6,0
 {
@@ -3912,17 +3912,17 @@ goto IL_42ca;
 }
 ///Label Label 5,270 2
 IL_42af:
-///Instruction Instruction 5,271
+///Operation Operation 5,271
 num = 758;
-///Instruction Instruction 5,272
+///Operation Operation 5,272
 StringType.MidStmtStr(ref Modul1.LiText, 58, 2, "F ");
 ///Goto Goto 5,273 Dest:OK
 goto IL_42ca;
 ///Label Label 5,274 3
 IL_42ca:
-///Instruction Instruction 5,275
+///Operation Operation 5,275
 num = 760;
-///Instruction Instruction 5,276
+///Operation Operation 5,276
 if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.PLZ)].AsString()) == "")
 ///BlockStart Block 6,0
 {
@@ -3930,7 +3930,7 @@ if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.PLZ
 goto IL_4308;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,277
+///Operation Operation 5,277
 else
 ///BlockStart Block 6,0
 {
@@ -3940,17 +3940,17 @@ goto IL_4323;
 }
 ///Label Label 5,278 2
 IL_4308:
-///Instruction Instruction 5,279
+///Operation Operation 5,279
 num = 761;
-///Instruction Instruction 5,280
+///Operation Operation 5,280
 StringType.MidStmtStr(ref Modul1.LiText, 63, 2, "F ");
 ///Goto Goto 5,281 Dest:OK
 goto IL_4323;
 ///Label Label 5,282 3
 IL_4323:
-///Instruction Instruction 5,283
+///Operation Operation 5,283
 num = 763;
-///Instruction Instruction 5,284
+///Operation Operation 5,284
 if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Terr)].AsString()) == "")
 ///BlockStart Block 6,0
 {
@@ -3958,7 +3958,7 @@ if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Ter
 goto IL_4361;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,285
+///Operation Operation 5,285
 else
 ///BlockStart Block 6,0
 {
@@ -3968,17 +3968,17 @@ goto IL_437c;
 }
 ///Label Label 5,286 2
 IL_4361:
-///Instruction Instruction 5,287
+///Operation Operation 5,287
 num = 764;
-///Instruction Instruction 5,288
+///Operation Operation 5,288
 StringType.MidStmtStr(ref Modul1.LiText, 68, 2, "F ");
 ///Goto Goto 5,289 Dest:OK
 goto IL_437c;
 ///Label Label 5,290 3
 IL_437c:
-///Instruction Instruction 5,291
+///Operation Operation 5,291
 num = 766;
-///Instruction Instruction 5,292
+///Operation Operation 5,292
 if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Staatk)].AsString()) == "")
 ///BlockStart Block 6,0
 {
@@ -3986,7 +3986,7 @@ if (Strings.Trim(DataModul.DB_PlaceTable.Fields[nameof(DataModul.PlaceFields.Sta
 goto IL_43ba;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,293
+///Operation Operation 5,293
 else
 ///BlockStart Block 6,0
 {
@@ -3996,55 +3996,55 @@ goto IL_43d5;
 }
 ///Label Label 5,294 2
 IL_43ba:
-///Instruction Instruction 5,295
+///Operation Operation 5,295
 num = 767;
-///Instruction Instruction 5,296
+///Operation Operation 5,296
 StringType.MidStmtStr(ref Modul1.LiText, 71, 2, "F ");
 ///Goto Goto 5,297 Dest:OK
 goto IL_43d5;
 ///Label Label 5,298 3
 IL_43d5:
-///Instruction Instruction 5,299
+///Operation Operation 5,299
 num = 769;
-///Instruction Instruction 5,300
+///Operation Operation 5,300
 List2.Items.Add(Modul1.LiText);
 ///Goto Goto 5,301 Dest:OK
 goto IL_43f2;
 ///Label Label 5,302 2
 IL_43f2:
-///Instruction Instruction 5,303
+///Operation Operation 5,303
 num = 770;
-///Instruction Instruction 5,304
+///Operation Operation 5,304
 Modul1.LiText = new string(' ', 80);
 ///Goto Goto 5,305 Dest:OK
 goto IL_4407;
 ///Label Label 5,306 2
 IL_4407:
-///Instruction Instruction 5,307
+///Operation Operation 5,307
 num = 771;
-///Instruction Instruction 5,308
+///Operation Operation 5,308
 DataModul.DB_PlaceTable.MoveNext();
 ///Goto Goto 5,309 Dest:OK
 goto IL_441a;
 ///Label Label 5,310 2
 IL_4439:
-///Instruction Instruction 5,311
+///Operation Operation 5,311
 num = 774;
 ///Goto Goto 5,312 Dest:OK
 goto IL_4441;
 ///Label Label 5,313 2
 IL_4441:
-///Instruction Instruction 5,314
+///Operation Operation 5,314
 num = 775;
-///Instruction Instruction 5,315
+///Operation Operation 5,315
 DataModul.DB_PlaceTable.MoveNext();
 ///Goto Goto 5,316 Dest:OK
 goto IL_4454;
 ///Label Label 5,317 3
 IL_4454:
-///Instruction Instruction 5,318
+///Operation Operation 5,318
 num = 777;
-///Instruction Instruction 5,319
+///Operation Operation 5,319
 if (DataModul.DB_PlaceTable.EOF)
 ///BlockStart Block 6,0
 {
@@ -4052,7 +4052,7 @@ if (DataModul.DB_PlaceTable.EOF)
 goto IL_446b;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,320
+///Operation Operation 5,320
 else
 ///BlockStart Block 6,0
 {
@@ -4062,49 +4062,49 @@ goto IL_448a;
 }
 ///Label Label 5,321 2
 IL_446b:
-///Instruction Instruction 5,322
+///Operation Operation 5,322
 num = 778;
-///Instruction Instruction 5,323
+///Operation Operation 5,323
 List2.Items.Add("Ende der Liste");
 ///Goto Goto 5,324 Dest:OK
 goto IL_448a;
 ///Label Label 5,325 2
 IL_3406:
-///Instruction Instruction 5,326
+///Operation Operation 5,326
 num = 618;
-///Instruction Instruction 5,327
+///Operation Operation 5,327
 List1.Items.Clear();
 ///Goto Goto 5,328 Dest:OK
 goto IL_341e;
 ///Label Label 5,329 2
 IL_341e:
-///Instruction Instruction 5,330
+///Operation Operation 5,330
 num = 619;
-///Instruction Instruction 5,331
+///Operation Operation 5,331
 Label1[2].Text = Modul1.IText[84];
 ///Goto Goto 5,332 Dest:OK
 goto IL_343f;
 ///Label Label 5,333 2
 IL_343f:
-///Instruction Instruction 5,334
+///Operation Operation 5,334
 num = 620;
-///Instruction Instruction 5,335
+///Operation Operation 5,335
 Label1[0].Text = "Name              Elternteil  Kind  Pate  Zeuge  Adoptivkind  verbunden";
 ///Goto Goto 5,336 Dest:OK
 goto IL_345d;
 ///Label Label 5,337 2
 IL_345d:
-///Instruction Instruction 5,338
+///Operation Operation 5,338
 num = 621;
-///Instruction Instruction 5,339
+///Operation Operation 5,339
 num7 = 1;
 ///Goto Goto 5,340 Dest:OK
 goto IL_3467;
 ///Label Label 5,341 2
 IL_3467:
-///Instruction Instruction 5,342
+///Operation Operation 5,342
 num = 622;
-///Instruction Instruction 5,343
+///Operation Operation 5,343
 if (num7 <= 0)
 ///BlockStart Block 6,0
 {
@@ -4116,33 +4116,33 @@ goto end_IL_0001_2;
 goto IL_3482;
 ///Label Label 5,345 2
 IL_3482:
-///Instruction Instruction 5,346
+///Operation Operation 5,346
 num = 625;
-///Instruction Instruction 5,347
+///Operation Operation 5,347
 DataModul.DB_PersonTable.Index = nameof(DataModul.PersonIndex.PerNr);
 ///Goto Goto 5,348 Dest:OK
 goto IL_3499;
 ///Label Label 5,349 2
 IL_3499:
-///Instruction Instruction 5,350
+///Operation Operation 5,350
 num = 626;
-///Instruction Instruction 5,351
+///Operation Operation 5,351
 DataModul.DB_PersonTable.MoveLast();
 ///Goto Goto 5,352 Dest:OK
 goto IL_34ac;
 ///Label Label 5,353 2
 IL_34ac:
-///Instruction Instruction 5,354
+///Operation Operation 5,354
 num = 627;
-///Instruction Instruction 5,355
+///Operation Operation 5,355
 num8 = DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsInt();
 ///Goto Goto 5,356 Dest:OK
 goto IL_34d3;
 ///Label Label 5,357 2
 IL_34d3:
-///Instruction Instruction 5,358
+///Operation Operation 5,358
 num = 628;
-///Instruction Instruction 5,359
+///Operation Operation 5,359
 if (num7 == 0)
 ///BlockStart Block 6,0
 {
@@ -4154,9 +4154,9 @@ goto end_IL_0001_2;
 goto IL_34eb;
 ///Label Label 5,361 2
 IL_34eb:
-///Instruction Instruction 5,362
+///Operation Operation 5,362
 num = 631;
-///Instruction Instruction 5,363
+///Operation Operation 5,363
 if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 ///BlockStart Block 6,0
 {
@@ -4164,7 +4164,7 @@ if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr
 goto IL_351e;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,364
+///Operation Operation 5,364
 else
 ///BlockStart Block 6,0
 {
@@ -4174,79 +4174,79 @@ goto IL_355f;
 }
 ///Label Label 5,365 2
 IL_351e:
-///Instruction Instruction 5,366
+///Operation Operation 5,366
 num = 632;
-///Instruction Instruction 5,367
+///Operation Operation 5,367
 Interaction.MsgBox(Modul1.IText[173] + " " + num7.AsString() + Modul1.IText[172]);
 ///Goto Goto 5,368 Dest:OK
 goto end_IL_0001_2;
 ///Label Label 5,369 2
 IL_355f:
-///Instruction Instruction 5,370
+///Operation Operation 5,370
 num = 635;
-///Instruction Instruction 5,371
+///Operation Operation 5,371
 Label1[1].Text = "unvollständig verknüpfte Personen ";
 ///Goto Goto 5,372 Dest:OK
 goto IL_357d;
 ///Label Label 5,373 2
 IL_357d:
-///Instruction Instruction 5,374
+///Operation Operation 5,374
 num = 636;
-///Instruction Instruction 5,375
+///Operation Operation 5,375
 Modul1.Schalt = 3;
 ///Goto Goto 5,376 Dest:OK
 goto IL_358a;
 ///Label Label 5,377 2
 IL_358a:
-///Instruction Instruction 5,378
+///Operation Operation 5,378
 num = 637;
-///Instruction Instruction 5,379
+///Operation Operation 5,379
 ProgressBar1.Minimum = 0;
 ///Goto Goto 5,380 Dest:OK
 goto IL_359e;
 ///Label Label 5,381 2
 IL_359e:
-///Instruction Instruction 5,382
+///Operation Operation 5,382
 num = 638;
-///Instruction Instruction 5,383
+///Operation Operation 5,383
 ProgressBar1.Maximum = 0;
 ///Goto Goto 5,384 Dest:OK
 goto IL_35b2;
 ///Label Label 5,385 2
 IL_35b2:
-///Instruction Instruction 5,386
+///Operation Operation 5,386
 num = 639;
-///Instruction Instruction 5,387
+///Operation Operation 5,387
 ProgressBar1.Step = 1;
 ///Goto Goto 5,388 Dest:OK
 goto IL_35c6;
 ///Label Label 5,389 2
 IL_35c6:
-///Instruction Instruction 5,390
+///Operation Operation 5,390
 num = 640;
-///Instruction Instruction 5,391
+///Operation Operation 5,391
 ProgressBar1.Maximum = DataModul.DB_PersonTable.RecordCount - 1;
 ///Goto Goto 5,392 Dest:OK
 goto IL_35e5;
 ///Label Label 5,393 2
 IL_35e5:
-///Instruction Instruction 5,394
+///Operation Operation 5,394
 num = 641;
-///Instruction Instruction 5,395
+///Operation Operation 5,395
 i3 = num7;
-///Instruction Instruction 5,396
+///Operation Operation 5,396
 num9 = DataModul.DB_PersonTable.RecordCount - 1;
-///Instruction Instruction 5,397
+///Operation Operation 5,397
 I1 = i3;
 ///Goto Goto 5,398 Dest:OK
 goto IL_3dfe;
 ///Label Label 5,399 2
 IL_3dfe:
-///Instruction Instruction 5,400
+///Operation Operation 5,400
 i4 = I1;
-///Instruction Instruction 5,401
+///Operation Operation 5,401
 num5 = num9;
-///Instruction Instruction 5,402
+///Operation Operation 5,402
 if (i4 <= num5)
 ///BlockStart Block 6,0
 {
@@ -4254,7 +4254,7 @@ if (i4 <= num5)
 goto IL_3607;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,403
+///Operation Operation 5,403
 else
 ///BlockStart Block 6,0
 {
@@ -4264,49 +4264,49 @@ goto IL_3e0f;
 }
 ///Label Label 5,404 2
 IL_3e0f:
-///Instruction Instruction 5,405
+///Operation Operation 5,405
 num = 713;
-///Instruction Instruction 5,406
+///Operation Operation 5,406
 Label4.Text = List1.Items.Count - 1.AsString() + " Einträge";
 ///Goto Goto 5,407 Dest:OK
 goto IL_448a;
 ///Label Label 5,408 2
 IL_3607:
-///Instruction Instruction 5,409
+///Operation Operation 5,409
 num = 642;
-///Instruction Instruction 5,410
+///Operation Operation 5,410
 ProgressBar1.PerformStep();
 ///Goto Goto 5,411 Dest:OK
 goto IL_361a;
 ///Label Label 5,412 2
 IL_361a:
-///Instruction Instruction 5,413
+///Operation Operation 5,413
 num = 643;
-///Instruction Instruction 5,414
+///Operation Operation 5,414
 Application.DoEvents();
 ///Goto Goto 5,415 Dest:OK
 goto IL_3627;
 ///Label Label 5,416 2
 IL_3627:
-///Instruction Instruction 5,417
+///Operation Operation 5,417
 num = 644;
-///Instruction Instruction 5,418
+///Operation Operation 5,418
 Modul1.PersInArb = I1;
 ///Goto Goto 5,419 Dest:OK
 goto IL_3639;
 ///Label Label 5,420 2
 IL_3639:
-///Instruction Instruction 5,421
+///Operation Operation 5,421
 num = 645;
-///Instruction Instruction 5,422
+///Operation Operation 5,422
 sDest = new string(' ', 80);
 ///Goto Goto 5,423 Dest:OK
 goto IL_364b;
 ///Label Label 5,424 2
 IL_364b:
-///Instruction Instruction 5,425
+///Operation Operation 5,425
 num = 646;
-///Instruction Instruction 5,426
+///Operation Operation 5,426
 if (Modul1.PersInArb <= num8)
 ///BlockStart Block 6,0
 {
@@ -4314,7 +4314,7 @@ if (Modul1.PersInArb <= num8)
 goto IL_3666;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,427
+///Operation Operation 5,427
 else
 ///BlockStart Block 6,0
 {
@@ -4324,17 +4324,17 @@ goto IL_448a;
 }
 ///Label Label 5,428 2
 IL_3666:
-///Instruction Instruction 5,429
+///Operation Operation 5,429
 num = 649;
-///Instruction Instruction 5,430
+///Operation Operation 5,430
 DataModul.DB_PersonTable.Seek("=", Modul1.PersInArb.AsString());
 ///Goto Goto 5,431 Dest:OK
 goto IL_36c8;
 ///Label Label 5,432 2
 IL_36c8:
-///Instruction Instruction 5,433
+///Operation Operation 5,433
 num = 650;
-///Instruction Instruction 5,434
+///Operation Operation 5,434
 if (!DataModul.DB_PersonTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4342,7 +4342,7 @@ if (!DataModul.DB_PersonTable.NoMatch)
 goto IL_36e4;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,435
+///Operation Operation 5,435
 else
 ///BlockStart Block 6,0
 {
@@ -4352,23 +4352,23 @@ goto IL_3de8;
 }
 ///Label Label 5,436 2
 IL_36e4:
-///Instruction Instruction 5,437
+///Operation Operation 5,437
 num = 653;
-///Instruction Instruction 5,438
+///Operation Operation 5,438
 LiKi = 1;
 ///Goto Goto 5,439 Dest:OK
 goto IL_36f2;
 ///Label Label 5,440 2
 IL_36f2:
-///Instruction Instruction 5,441
+///Operation Operation 5,441
 num = 654;
-///Instruction Instruction 5,442
+///Operation Operation 5,442
 LiEl = 1;
 ///Goto Goto 5,443 Dest:OK
 goto IL_3700;
 ///Label Label 5,444 2
 IL_3700:
-///Instruction Instruction 5,445
+///Operation Operation 5,445
 num = 655;
 ///Comment LComment 5,446
 //LiPa = 1;
@@ -4376,33 +4376,33 @@ num = 655;
 goto IL_370e;
 ///Label Label 5,448 2
 IL_370e:
-///Instruction Instruction 5,449
+///Operation Operation 5,449
 num = 656;
-///Instruction Instruction 5,450
+///Operation Operation 5,450
 Modul1.Kenn = 3f;
 ///Goto Goto 5,451 Dest:OK
 goto IL_371f;
 ///Label Label 5,452 2
 IL_371f:
-///Instruction Instruction 5,453
+///Operation Operation 5,453
 num = 657;
-///Instruction Instruction 5,454
+///Operation Operation 5,454
 DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
 ///Goto Goto 5,455 Dest:OK
 goto IL_3736;
 ///Label Label 5,456 2
 IL_3736:
-///Instruction Instruction 5,457
+///Operation Operation 5,457
 num = 658;
-///Instruction Instruction 5,458
+///Operation Operation 5,458
 DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), Modul1.Kenn);
 ///Goto Goto 5,459 Dest:OK
 goto IL_379d;
 ///Label Label 5,460 2
 IL_379d:
-///Instruction Instruction 5,461
+///Operation Operation 5,461
 num = 659;
-///Instruction Instruction 5,462
+///Operation Operation 5,462
 if (DataModul.DB_LinkTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4410,7 +4410,7 @@ if (DataModul.DB_LinkTable.NoMatch)
 goto IL_37b4;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,463
+///Operation Operation 5,463
 else
 ///BlockStart Block 6,0
 {
@@ -4420,33 +4420,33 @@ goto IL_37c2;
 }
 ///Label Label 5,464 2
 IL_37b4:
-///Instruction Instruction 5,465
+///Operation Operation 5,465
 num = 660;
-///Instruction Instruction 5,466
+///Operation Operation 5,466
 LiKi = 0;
 ///Goto Goto 5,467 Dest:OK
 goto IL_37c2;
 ///Label Label 5,468 3
 IL_37c2:
-///Instruction Instruction 5,469
+///Operation Operation 5,469
 num = 662;
-///Instruction Instruction 5,470
+///Operation Operation 5,470
 Modul1.Kenn = 1f;
 ///Goto Goto 5,471 Dest:OK
 goto IL_37d3;
 ///Label Label 5,472 2
 IL_37d3:
-///Instruction Instruction 5,473
+///Operation Operation 5,473
 num = 663;
-///Instruction Instruction 5,474
+///Operation Operation 5,474
 Modul1.PerSatzLes();
 ///Goto Goto 5,475 Dest:OK
 goto IL_37e0;
 ///Label Label 5,476 2
 IL_37e0:
-///Instruction Instruction 5,477
+///Operation Operation 5,477
 num = 664;
-///Instruction Instruction 5,478
+///Operation Operation 5,478
 if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsString() == "F"))
 ///BlockStart Block 6,0
 {
@@ -4454,7 +4454,7 @@ if ((DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Sex)].AsStrin
 goto IL_3811;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,479
+///Operation Operation 5,479
 else
 ///BlockStart Block 6,0
 {
@@ -4464,33 +4464,33 @@ goto IL_3822;
 }
 ///Label Label 5,480 2
 IL_3811:
-///Instruction Instruction 5,481
+///Operation Operation 5,481
 num = 665;
-///Instruction Instruction 5,482
+///Operation Operation 5,482
 Modul1.Kenn = 2f;
 ///Goto Goto 5,483 Dest:OK
 goto IL_3822;
 ///Label Label 5,484 3
 IL_3822:
-///Instruction Instruction 5,485
+///Operation Operation 5,485
 num = 667;
-///Instruction Instruction 5,486
+///Operation Operation 5,486
 DataModul.DB_LinkTable.Index = nameof(DataModul.LinkIndex.ElSu);
 ///Goto Goto 5,487 Dest:OK
 goto IL_3839;
 ///Label Label 5,488 2
 IL_3839:
-///Instruction Instruction 5,489
+///Operation Operation 5,489
 num = 668;
-///Instruction Instruction 5,490
+///Operation Operation 5,490
 DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), Modul1.Kenn);
 ///Goto Goto 5,491 Dest:OK
 goto IL_38a0;
 ///Label Label 5,492 2
 IL_38a0:
-///Instruction Instruction 5,493
+///Operation Operation 5,493
 num = 669;
-///Instruction Instruction 5,494
+///Operation Operation 5,494
 if (DataModul.DB_LinkTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4498,7 +4498,7 @@ if (DataModul.DB_LinkTable.NoMatch)
 goto IL_38b7;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,495
+///Operation Operation 5,495
 else
 ///BlockStart Block 6,0
 {
@@ -4508,17 +4508,17 @@ goto IL_38c5;
 }
 ///Label Label 5,496 2
 IL_38b7:
-///Instruction Instruction 5,497
+///Operation Operation 5,497
 num = 670;
-///Instruction Instruction 5,498
+///Operation Operation 5,498
 LiEl = 0;
 ///Goto Goto 5,499 Dest:OK
 goto IL_38c5;
 ///Label Label 5,500 3
 IL_38c5:
-///Instruction Instruction 5,501
+///Operation Operation 5,501
 num = 672;
-///Instruction Instruction 5,502
+///Operation Operation 5,502
 if ((LiKi == 0) & (LiEl == 0))
 ///BlockStart Block 6,0
 {
@@ -4526,7 +4526,7 @@ if ((LiKi == 0) & (LiEl == 0))
 goto IL_38e8;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,503
+///Operation Operation 5,503
 else
 ///BlockStart Block 6,0
 {
@@ -4536,25 +4536,25 @@ goto IL_3de8;
 }
 ///Label Label 5,504 2
 IL_38e8:
-///Instruction Instruction 5,505
+///Operation Operation 5,505
 num = 673;
-///Instruction Instruction 5,506
+///Operation Operation 5,506
 Modul1.Personlesen(Modul1.PersInArb);
 ///Goto Goto 5,507 Dest:OK
 goto IL_38f5;
 ///Label Label 5,508 2
 IL_38f5:
-///Instruction Instruction 5,509
+///Operation Operation 5,509
 num = 674;
-///Instruction Instruction 5,510
+///Operation Operation 5,510
 StringType.MidStmtStr(ref sDest, 1, 20, Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20));
 ///Goto Goto 5,511 Dest:OK
 goto IL_3935;
 ///Label Label 5,512 2
 IL_3935:
-///Instruction Instruction 5,513
+///Operation Operation 5,513
 num = 675;
-///Instruction Instruction 5,514
+///Operation Operation 5,514
 if (LiEl == 0)
 ///BlockStart Block 6,0
 {
@@ -4562,7 +4562,7 @@ if (LiEl == 0)
 goto IL_394b;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,515
+///Operation Operation 5,515
 else
 ///BlockStart Block 6,0
 {
@@ -4572,17 +4572,17 @@ goto IL_3962;
 }
 ///Label Label 5,516 2
 IL_394b:
-///Instruction Instruction 5,517
+///Operation Operation 5,517
 num = 676;
-///Instruction Instruction 5,518
+///Operation Operation 5,518
 StringType.MidStmtStr(ref sDest, 24, 1, "N");
 ///Goto Goto 5,519 Dest:OK
 goto IL_3962;
 ///Label Label 5,520 3
 IL_3962:
-///Instruction Instruction 5,521
+///Operation Operation 5,521
 num = 678;
-///Instruction Instruction 5,522
+///Operation Operation 5,522
 if (LiKi == 0)
 ///BlockStart Block 6,0
 {
@@ -4590,7 +4590,7 @@ if (LiKi == 0)
 goto IL_3978;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,523
+///Operation Operation 5,523
 else
 ///BlockStart Block 6,0
 {
@@ -4600,25 +4600,25 @@ goto IL_398f;
 }
 ///Label Label 5,524 2
 IL_3978:
-///Instruction Instruction 5,525
+///Operation Operation 5,525
 num = 679;
-///Instruction Instruction 5,526
+///Operation Operation 5,526
 StringType.MidStmtStr(ref sDest, 30, 1, "N");
 ///Goto Goto 5,527 Dest:OK
 goto IL_398f;
 ///Label Label 5,528 3
 IL_398f:
-///Instruction Instruction 5,529
+///Operation Operation 5,529
 num = 681;
-///Instruction Instruction 5,530
+///Operation Operation 5,530
 DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 4);
 ///Goto Goto 5,531 Dest:OK
 goto IL_39f2;
 ///Label Label 5,532 2
 IL_39f2:
-///Instruction Instruction 5,533
+///Operation Operation 5,533
 num = 682;
-///Instruction Instruction 5,534
+///Operation Operation 5,534
 if (!DataModul.DB_LinkTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4626,7 +4626,7 @@ if (!DataModul.DB_LinkTable.NoMatch)
 goto IL_3a0c;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,535
+///Operation Operation 5,535
 else
 ///BlockStart Block 6,0
 {
@@ -4636,25 +4636,25 @@ goto IL_3a23;
 }
 ///Label Label 5,536 2
 IL_3a0c:
-///Instruction Instruction 5,537
+///Operation Operation 5,537
 num = 683;
-///Instruction Instruction 5,538
+///Operation Operation 5,538
 StringType.MidStmtStr(ref sDest, 36, 1, "J");
 ///Goto Goto 5,539 Dest:OK
 goto IL_3a23;
 ///Label Label 5,540 3
 IL_3a23:
-///Instruction Instruction 5,541
+///Operation Operation 5,541
 num = 685;
-///Instruction Instruction 5,542
+///Operation Operation 5,542
 DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 5);
 ///Goto Goto 5,543 Dest:OK
 goto IL_3a86;
 ///Label Label 5,544 2
 IL_3a86:
-///Instruction Instruction 5,545
+///Operation Operation 5,545
 num = 686;
-///Instruction Instruction 5,546
+///Operation Operation 5,546
 if (!DataModul.DB_LinkTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4662,7 +4662,7 @@ if (!DataModul.DB_LinkTable.NoMatch)
 goto IL_3aa0;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,547
+///Operation Operation 5,547
 else
 ///BlockStart Block 6,0
 {
@@ -4672,25 +4672,25 @@ goto IL_3ab7;
 }
 ///Label Label 5,548 2
 IL_3aa0:
-///Instruction Instruction 5,549
+///Operation Operation 5,549
 num = 687;
-///Instruction Instruction 5,550
+///Operation Operation 5,550
 StringType.MidStmtStr(ref sDest, 46, 1, "J");
 ///Goto Goto 5,551 Dest:OK
 goto IL_3ab7;
 ///Label Label 5,552 3
 IL_3ab7:
-///Instruction Instruction 5,553
+///Operation Operation 5,553
 num = 689;
-///Instruction Instruction 5,554
+///Operation Operation 5,554
 DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 6);
 ///Goto Goto 5,555 Dest:OK
 goto IL_3b1a;
 ///Label Label 5,556 2
 IL_3b1a:
-///Instruction Instruction 5,557
+///Operation Operation 5,557
 num = 690;
-///Instruction Instruction 5,558
+///Operation Operation 5,558
 if (!DataModul.DB_LinkTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4698,7 +4698,7 @@ if (!DataModul.DB_LinkTable.NoMatch)
 goto IL_3b34;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,559
+///Operation Operation 5,559
 else
 ///BlockStart Block 6,0
 {
@@ -4708,25 +4708,25 @@ goto IL_3b4b;
 }
 ///Label Label 5,560 2
 IL_3b34:
-///Instruction Instruction 5,561
+///Operation Operation 5,561
 num = 691;
-///Instruction Instruction 5,562
+///Operation Operation 5,562
 StringType.MidStmtStr(ref sDest, 46, 1, "J");
 ///Goto Goto 5,563 Dest:OK
 goto IL_3b4b;
 ///Label Label 5,564 3
 IL_3b4b:
-///Instruction Instruction 5,565
+///Operation Operation 5,565
 num = 693;
-///Instruction Instruction 5,566
+///Operation Operation 5,566
 DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 7);
 ///Goto Goto 5,567 Dest:OK
 goto IL_3bae;
 ///Label Label 5,568 2
 IL_3bae:
-///Instruction Instruction 5,569
+///Operation Operation 5,569
 num = 694;
-///Instruction Instruction 5,570
+///Operation Operation 5,570
 if (!DataModul.DB_LinkTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4734,7 +4734,7 @@ if (!DataModul.DB_LinkTable.NoMatch)
 goto IL_3bc8;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,571
+///Operation Operation 5,571
 else
 ///BlockStart Block 6,0
 {
@@ -4744,25 +4744,25 @@ goto IL_3bdf;
 }
 ///Label Label 5,572 2
 IL_3bc8:
-///Instruction Instruction 5,573
+///Operation Operation 5,573
 num = 695;
-///Instruction Instruction 5,574
+///Operation Operation 5,574
 StringType.MidStmtStr(ref sDest, 46, 1, "J");
 ///Goto Goto 5,575 Dest:OK
 goto IL_3bdf;
 ///Label Label 5,576 3
 IL_3bdf:
-///Instruction Instruction 5,577
+///Operation Operation 5,577
 num = 697;
-///Instruction Instruction 5,578
+///Operation Operation 5,578
 DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 8);
 ///Goto Goto 5,579 Dest:OK
 goto IL_3c42;
 ///Label Label 5,580 2
 IL_3c42:
-///Instruction Instruction 5,581
+///Operation Operation 5,581
 num = 698;
-///Instruction Instruction 5,582
+///Operation Operation 5,582
 if (!DataModul.DB_LinkTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4770,7 +4770,7 @@ if (!DataModul.DB_LinkTable.NoMatch)
 goto IL_3c5c;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,583
+///Operation Operation 5,583
 else
 ///BlockStart Block 6,0
 {
@@ -4780,25 +4780,25 @@ goto IL_3c73;
 }
 ///Label Label 5,584 2
 IL_3c5c:
-///Instruction Instruction 5,585
+///Operation Operation 5,585
 num = 699;
-///Instruction Instruction 5,586
+///Operation Operation 5,586
 StringType.MidStmtStr(ref sDest, 55, 1, "J");
 ///Goto Goto 5,587 Dest:OK
 goto IL_3c73;
 ///Label Label 5,588 3
 IL_3c73:
-///Instruction Instruction 5,589
+///Operation Operation 5,589
 num = 701;
-///Instruction Instruction 5,590
+///Operation Operation 5,590
 DataModul.DB_LinkTable.Seek("=", Modul1.PersInArb.AsString(), 9);
 ///Goto Goto 5,591 Dest:OK
 goto IL_3cd7;
 ///Label Label 5,592 2
 IL_3cd7:
-///Instruction Instruction 5,593
+///Operation Operation 5,593
 num = 702;
-///Instruction Instruction 5,594
+///Operation Operation 5,594
 if (!DataModul.DB_LinkTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4806,7 +4806,7 @@ if (!DataModul.DB_LinkTable.NoMatch)
 goto IL_3cf1;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,595
+///Operation Operation 5,595
 else
 ///BlockStart Block 6,0
 {
@@ -4816,33 +4816,33 @@ goto IL_3d08;
 }
 ///Label Label 5,596 2
 IL_3cf1:
-///Instruction Instruction 5,597
+///Operation Operation 5,597
 num = 703;
-///Instruction Instruction 5,598
+///Operation Operation 5,598
 StringType.MidStmtStr(ref sDest, 70, 1, "J");
 ///Goto Goto 5,599 Dest:OK
 goto IL_3d08;
 ///Label Label 5,600 3
 IL_3d08:
-///Instruction Instruction 5,601
+///Operation Operation 5,601
 num = 705;
-///Instruction Instruction 5,602
+///Operation Operation 5,602
 DataModul.DB_WitnessTable.Index = nameof(DataModul.WitnessIndex.ElSu);
 ///Goto Goto 5,603 Dest:OK
 goto IL_3d1f;
 ///Label Label 5,604 2
 IL_3d1f:
-///Instruction Instruction 5,605
+///Operation Operation 5,605
 num = 706;
-///Instruction Instruction 5,606
+///Operation Operation 5,606
 DataModul.DB_WitnessTable.Seek("=", Modul1.PersInArb, "10");
 ///Goto Goto 5,607 Dest:OK
 goto IL_3d7c;
 ///Label Label 5,608 2
 IL_3d7c:
-///Instruction Instruction 5,609
+///Operation Operation 5,609
 num = 707;
-///Instruction Instruction 5,610
+///Operation Operation 5,610
 if (!DataModul.DB_WitnessTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -4850,7 +4850,7 @@ if (!DataModul.DB_WitnessTable.NoMatch)
 goto IL_3d96;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,611
+///Operation Operation 5,611
 else
 ///BlockStart Block 6,0
 {
@@ -4860,87 +4860,87 @@ goto IL_3dad;
 }
 ///Label Label 5,612 2
 IL_3d96:
-///Instruction Instruction 5,613
+///Operation Operation 5,613
 num = 708;
-///Instruction Instruction 5,614
+///Operation Operation 5,614
 StringType.MidStmtStr(ref sDest, 46, 1, "J");
 ///Goto Goto 5,615 Dest:OK
 goto IL_3dad;
 ///Label Label 5,616 3
 IL_3dad:
-///Instruction Instruction 5,617
+///Operation Operation 5,617
 num = 710;
-///Instruction Instruction 5,618
+///Operation Operation 5,618
 List1.Items.Add(new ListItem(sDest + "          " + Modul1.PersInArb.AsString()));
 ///Goto Goto 5,619 Dest:OK
 goto IL_3de8;
 ///Label Label 5,620 4
 IL_3de8:
-///Instruction Instruction 5,621
+///Operation Operation 5,621
 num = 712;
-///Instruction Instruction 5,622
+///Operation Operation 5,622
 I1++;
 ///Goto Goto 5,623 Dest:OK
 goto IL_3dfe;
 ///Label Label 5,624 2
 IL_2496:
-///Instruction Instruction 5,625
+///Operation Operation 5,625
 num = 439;
-///Instruction Instruction 5,626
+///Operation Operation 5,626
 List1.Items.Clear();
 ///Goto Goto 5,627 Dest:OK
 goto IL_24ae;
 ///Label Label 5,628 2
 IL_24ae:
-///Instruction Instruction 5,629
+///Operation Operation 5,629
 num = 440;
-///Instruction Instruction 5,630
+///Operation Operation 5,630
 Label1[2].Text = "Personen ohne Datum";
 ///Goto Goto 5,631 Dest:OK
 goto IL_24cc;
 ///Label Label 5,632 2
 IL_24cc:
-///Instruction Instruction 5,633
+///Operation Operation 5,633
 num = 441;
-///Instruction Instruction 5,634
+///Operation Operation 5,634
 Label1[1].Text = Modul1.IText[166];
 ///Goto Goto 5,635 Dest:OK
 goto IL_24f0;
 ///Label Label 5,636 2
 IL_24f0:
-///Instruction Instruction 5,637
+///Operation Operation 5,637
 num = 442;
-///Instruction Instruction 5,638
+///Operation Operation 5,638
 Label1[0].Text = Modul1.IText[167];
 ///Goto Goto 5,639 Dest:OK
 goto IL_2514;
 ///Label Label 5,640 2
 IL_2514:
-///Instruction Instruction 5,641
+///Operation Operation 5,641
 num = 443;
-///Instruction Instruction 5,642
+///Operation Operation 5,642
 I1 = 0;
 ///Goto Goto 5,643 Dest:OK
 goto IL_2522;
 ///Label Label 5,644 3
 IL_2522:
-///Instruction Instruction 5,645
+///Operation Operation 5,645
 num = 444;
-///Instruction Instruction 5,646
+///Operation Operation 5,646
 Label1[(short)I1].Refresh();
 ///Goto Goto 5,647 Dest:OK
 goto IL_2541;
 ///Label Label 5,648 2
 IL_2541:
-///Instruction Instruction 5,649
+///Operation Operation 5,649
 num = 445;
-///Instruction Instruction 5,650
+///Operation Operation 5,650
 I1++;
-///Instruction Instruction 5,651
+///Operation Operation 5,651
 i5 = I1;
-///Instruction Instruction 5,652
+///Operation Operation 5,652
 num5 = 2;
-///Instruction Instruction 5,653
+///Operation Operation 5,653
 if (i5 <= num5)
 ///BlockStart Block 6,0
 {
@@ -4948,7 +4948,7 @@ if (i5 <= num5)
 goto IL_2522;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,654
+///Operation Operation 5,654
 else
 ///BlockStart Block 6,0
 {
@@ -4958,17 +4958,17 @@ goto IL_2564;
 }
 ///Label Label 5,655 2
 IL_2564:
-///Instruction Instruction 5,656
+///Operation Operation 5,656
 num = 446;
-///Instruction Instruction 5,657
+///Operation Operation 5,657
 num7 = 1;
 ///Goto Goto 5,658 Dest:OK
 goto IL_256e;
 ///Label Label 5,659 2
 IL_256e:
-///Instruction Instruction 5,660
+///Operation Operation 5,660
 num = 447;
-///Instruction Instruction 5,661
+///Operation Operation 5,661
 if (num7 <= 0)
 ///BlockStart Block 6,0
 {
@@ -4980,33 +4980,33 @@ goto end_IL_0001_2;
 goto IL_2589;
 ///Label Label 5,663 2
 IL_2589:
-///Instruction Instruction 5,664
+///Operation Operation 5,664
 num = 450;
-///Instruction Instruction 5,665
+///Operation Operation 5,665
 DataModul.DB_PersonTable.Index = nameof(DataModul.PersonIndex.PerNr);
 ///Goto Goto 5,666 Dest:OK
 goto IL_25a0;
 ///Label Label 5,667 2
 IL_25a0:
-///Instruction Instruction 5,668
+///Operation Operation 5,668
 num = 451;
-///Instruction Instruction 5,669
+///Operation Operation 5,669
 DataModul.DB_PersonTable.MoveLast();
 ///Goto Goto 5,670 Dest:OK
 goto IL_25b3;
 ///Label Label 5,671 2
 IL_25b3:
-///Instruction Instruction 5,672
+///Operation Operation 5,672
 num = 452;
-///Instruction Instruction 5,673
+///Operation Operation 5,673
 num8 = DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsInt();
 ///Goto Goto 5,674 Dest:OK
 goto IL_25da;
 ///Label Label 5,675 2
 IL_25da:
-///Instruction Instruction 5,676
+///Operation Operation 5,676
 num = 453;
-///Instruction Instruction 5,677
+///Operation Operation 5,677
 if (num7 == 0)
 ///BlockStart Block 6,0
 {
@@ -5018,9 +5018,9 @@ goto end_IL_0001_2;
 goto IL_25f2;
 ///Label Label 5,679 2
 IL_25f2:
-///Instruction Instruction 5,680
+///Operation Operation 5,680
 num = 456;
-///Instruction Instruction 5,681
+///Operation Operation 5,681
 if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 ///BlockStart Block 6,0
 {
@@ -5028,7 +5028,7 @@ if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr
 goto IL_2625;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,682
+///Operation Operation 5,682
 else
 ///BlockStart Block 6,0
 {
@@ -5038,63 +5038,63 @@ goto IL_2666;
 }
 ///Label Label 5,683 2
 IL_2625:
-///Instruction Instruction 5,684
+///Operation Operation 5,684
 num = 457;
-///Instruction Instruction 5,685
+///Operation Operation 5,685
 Interaction.MsgBox(Modul1.IText[173] + " " + num7.AsString() + Modul1.IText[172]);
 ///Goto Goto 5,686 Dest:OK
 goto end_IL_0001_2;
 ///Label Label 5,687 2
 IL_2666:
-///Instruction Instruction 5,688
+///Operation Operation 5,688
 num = 460;
-///Instruction Instruction 5,689
+///Operation Operation 5,689
 ProgressBar1.Minimum = 0;
 ///Goto Goto 5,690 Dest:OK
 goto IL_267a;
 ///Label Label 5,691 2
 IL_267a:
-///Instruction Instruction 5,692
+///Operation Operation 5,692
 num = 461;
-///Instruction Instruction 5,693
+///Operation Operation 5,693
 ProgressBar1.Maximum = 0;
 ///Goto Goto 5,694 Dest:OK
 goto IL_268e;
 ///Label Label 5,695 2
 IL_268e:
-///Instruction Instruction 5,696
+///Operation Operation 5,696
 num = 462;
-///Instruction Instruction 5,697
+///Operation Operation 5,697
 ProgressBar1.Step = 1;
 ///Goto Goto 5,698 Dest:OK
 goto IL_26a2;
 ///Label Label 5,699 2
 IL_26a2:
-///Instruction Instruction 5,700
+///Operation Operation 5,700
 num = 463;
-///Instruction Instruction 5,701
+///Operation Operation 5,701
 ProgressBar1.Maximum = DataModul.DB_PersonTable.RecordCount - 1;
 ///Goto Goto 5,702 Dest:OK
 goto IL_26c1;
 ///Label Label 5,703 2
 IL_26c1:
-///Instruction Instruction 5,704
+///Operation Operation 5,704
 num = 464;
-///Instruction Instruction 5,705
+///Operation Operation 5,705
 i6 = num7;
-///Instruction Instruction 5,706
+///Operation Operation 5,706
 num10 = DataModul.DB_PersonTable.RecordCount - 1;
-///Instruction Instruction 5,707
+///Operation Operation 5,707
 I1 = i6;
 ///Goto Goto 5,708 Dest:OK
 goto IL_33b6;
 ///Label Label 5,709 2
 IL_33b6:
-///Instruction Instruction 5,710
+///Operation Operation 5,710
 i7 = I1;
-///Instruction Instruction 5,711
+///Operation Operation 5,711
 num5 = num10;
-///Instruction Instruction 5,712
+///Operation Operation 5,712
 if (i7 <= num5)
 ///BlockStart Block 6,0
 {
@@ -5102,7 +5102,7 @@ if (i7 <= num5)
 goto IL_26e3;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,713
+///Operation Operation 5,713
 else
 ///BlockStart Block 6,0
 {
@@ -5112,41 +5112,41 @@ goto IL_33c7;
 }
 ///Label Label 5,714 2
 IL_33c7:
-///Instruction Instruction 5,715
+///Operation Operation 5,715
 num = 615;
-///Instruction Instruction 5,716
+///Operation Operation 5,716
 Label4.Text = List1.Items.Count - 1.AsString() + " Einträge";
 ///Goto Goto 5,717 Dest:OK
 goto IL_448a;
 ///Label Label 5,718 2
 IL_26e3:
-///Instruction Instruction 5,719
+///Operation Operation 5,719
 num = 465;
-///Instruction Instruction 5,720
+///Operation Operation 5,720
 ProgressBar1.PerformStep();
 ///Goto Goto 5,721 Dest:OK
 goto IL_26f6;
 ///Label Label 5,722 2
 IL_26f6:
-///Instruction Instruction 5,723
+///Operation Operation 5,723
 num = 466;
-///Instruction Instruction 5,724
+///Operation Operation 5,724
 Application.DoEvents();
 ///Goto Goto 5,725 Dest:OK
 goto IL_2703;
 ///Label Label 5,726 2
 IL_2703:
-///Instruction Instruction 5,727
+///Operation Operation 5,727
 num = 467;
-///Instruction Instruction 5,728
+///Operation Operation 5,728
 Modul1.PersInArb = I1;
 ///Goto Goto 5,729 Dest:OK
 goto IL_2715;
 ///Label Label 5,730 2
 IL_2715:
-///Instruction Instruction 5,731
+///Operation Operation 5,731
 num = 468;
-///Instruction Instruction 5,732
+///Operation Operation 5,732
 if (Modul1.PersInArb <= num8)
 ///BlockStart Block 6,0
 {
@@ -5154,7 +5154,7 @@ if (Modul1.PersInArb <= num8)
 goto IL_2730;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,733
+///Operation Operation 5,733
 else
 ///BlockStart Block 6,0
 {
@@ -5164,17 +5164,17 @@ goto IL_448a;
 }
 ///Label Label 5,734 2
 IL_2730:
-///Instruction Instruction 5,735
+///Operation Operation 5,735
 num = 471;
-///Instruction Instruction 5,736
+///Operation Operation 5,736
 DataModul.DB_PersonTable.Seek("=", Modul1.PersInArb.AsString());
 ///Goto Goto 5,737 Dest:OK
 goto IL_2792;
 ///Label Label 5,738 2
 IL_2792:
-///Instruction Instruction 5,739
+///Operation Operation 5,739
 num = 472;
-///Instruction Instruction 5,740
+///Operation Operation 5,740
 if (!DataModul.DB_PersonTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -5182,7 +5182,7 @@ if (!DataModul.DB_PersonTable.NoMatch)
 goto IL_27ae;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,741
+///Operation Operation 5,741
 else
 ///BlockStart Block 6,0
 {
@@ -5192,63 +5192,63 @@ goto IL_3395;
 }
 ///Label Label 5,742 2
 IL_27ae:
-///Instruction Instruction 5,743
+///Operation Operation 5,743
 num = 475;
-///Instruction Instruction 5,744
+///Operation Operation 5,744
 Modul1.Personlesen(Modul1.PersInArb);
 ///Goto Goto 5,745 Dest:OK
 goto IL_27bb;
 ///Label Label 5,746 2
 IL_27bb:
-///Instruction Instruction 5,747
+///Operation Operation 5,747
 num = 476;
-///Instruction Instruction 5,748
+///Operation Operation 5,748
 Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20);
 ///Goto Goto 5,749 Dest:OK
 goto IL_27f5;
 ///Label Label 5,750 2
 IL_27f5:
-///Instruction Instruction 5,751
+///Operation Operation 5,751
 num = 477;
-///Instruction Instruction 5,752
+///Operation Operation 5,752
 Modul1.Schalt = 20;
 ///Goto Goto 5,753 Dest:OK
 goto IL_2803;
 ///Label Label 5,754 2
 IL_2803:
-///Instruction Instruction 5,755
+///Operation Operation 5,755
 num = 478;
-///Instruction Instruction 5,756
+///Operation Operation 5,756
 T = 1;
 ///Goto Goto 5,757 Dest:OK
 goto IL_2811;
 ///Label Label 5,758 3
 IL_2811:
-///Instruction Instruction 5,759
+///Operation Operation 5,759
 num = 479;
-///Instruction Instruction 5,760
+///Operation Operation 5,760
 Modul1.Kont[T + 10] = "";
 ///Goto Goto 5,761 Dest:OK
 goto IL_282d;
 ///Label Label 5,762 2
 IL_282d:
-///Instruction Instruction 5,763
+///Operation Operation 5,763
 num = 480;
-///Instruction Instruction 5,764
+///Operation Operation 5,764
 Modul1.Kont[T + 20] = "";
 ///Goto Goto 5,765 Dest:OK
 goto IL_2849;
 ///Label Label 5,766 2
 IL_2849:
-///Instruction Instruction 5,767
+///Operation Operation 5,767
 num = 481;
-///Instruction Instruction 5,768
+///Operation Operation 5,768
 T = (short)unchecked(T + 1);
-///Instruction Instruction 5,769
+///Operation Operation 5,769
 t = T;
-///Instruction Instruction 5,770
+///Operation Operation 5,770
 num11 = 10;
-///Instruction Instruction 5,771
+///Operation Operation 5,771
 if (t <= num11)
 ///BlockStart Block 6,0
 {
@@ -5256,7 +5256,7 @@ if (t <= num11)
 goto IL_2811;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,772
+///Operation Operation 5,772
 else
 ///BlockStart Block 6,0
 {
@@ -5266,25 +5266,25 @@ goto IL_286e;
 }
 ///Label Label 5,773 2
 IL_286e:
-///Instruction Instruction 5,774
+///Operation Operation 5,774
 num = 482;
-///Instruction Instruction 5,775
+///Operation Operation 5,775
 Modul1.Datles();
 ///Goto Goto 5,776 Dest:OK
 goto IL_287b;
 ///Label Label 5,777 2
 IL_287b:
-///Instruction Instruction 5,778
+///Operation Operation 5,778
 num = 483;
-///Instruction Instruction 5,779
+///Operation Operation 5,779
 sDest2 = "                                                                            ";
 ///Goto Goto 5,780 Dest:OK
 goto IL_2889;
 ///Label Label 5,781 2
 IL_2889:
-///Instruction Instruction 5,782
+///Operation Operation 5,782
 num = 484;
-///Instruction Instruction 5,783
+///Operation Operation 5,783
 if ((Modul1.Kont[11]).Trim() == "")
 ///BlockStart Block 6,0
 {
@@ -5292,7 +5292,7 @@ if ((Modul1.Kont[11]).Trim() == "")
 goto IL_28b9;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,784
+///Operation Operation 5,784
 else
 ///BlockStart Block 6,0
 {
@@ -5302,9 +5302,9 @@ goto IL_3395;
 }
 ///Label Label 5,785 2
 IL_28b9:
-///Instruction Instruction 5,786
+///Operation Operation 5,786
 num = 487;
-///Instruction Instruction 5,787
+///Operation Operation 5,787
 if ((Modul1.Kont[12]).Trim() == "")
 ///BlockStart Block 6,0
 {
@@ -5312,7 +5312,7 @@ if ((Modul1.Kont[12]).Trim() == "")
 goto IL_28e9;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,788
+///Operation Operation 5,788
 else
 ///BlockStart Block 6,0
 {
@@ -5322,9 +5322,9 @@ goto IL_3395;
 }
 ///Label Label 5,789 2
 IL_28e9:
-///Instruction Instruction 5,790
+///Operation Operation 5,790
 num = 490;
-///Instruction Instruction 5,791
+///Operation Operation 5,791
 if ((Modul1.Kont[13]).Trim() == "")
 ///BlockStart Block 6,0
 {
@@ -5332,7 +5332,7 @@ if ((Modul1.Kont[13]).Trim() == "")
 goto IL_2919;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,792
+///Operation Operation 5,792
 else
 ///BlockStart Block 6,0
 {
@@ -5342,9 +5342,9 @@ goto IL_3395;
 }
 ///Label Label 5,793 2
 IL_2919:
-///Instruction Instruction 5,794
+///Operation Operation 5,794
 num = 493;
-///Instruction Instruction 5,795
+///Operation Operation 5,795
 if ((Modul1.Kont[14]).Trim() == "")
 ///BlockStart Block 6,0
 {
@@ -5352,7 +5352,7 @@ if ((Modul1.Kont[14]).Trim() == "")
 goto IL_2949;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,796
+///Operation Operation 5,796
 else
 ///BlockStart Block 6,0
 {
@@ -5362,33 +5362,33 @@ goto IL_3395;
 }
 ///Label Label 5,797 2
 IL_2949:
-///Instruction Instruction 5,798
+///Operation Operation 5,798
 num = 496;
-///Instruction Instruction 5,799
+///Operation Operation 5,799
 num12 = 300;
 ///Goto Goto 5,800 Dest:OK
 goto IL_2956;
 ///Label Label 5,801 3
 IL_2956:
-///Instruction Instruction 5,802
+///Operation Operation 5,802
 num = 497;
-///Instruction Instruction 5,803
+///Operation Operation 5,803
 DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.BeSu);
 ///Goto Goto 5,804 Dest:OK
 goto IL_296d;
 ///Label Label 5,805 2
 IL_296d:
-///Instruction Instruction 5,806
+///Operation Operation 5,806
 num = 498;
-///Instruction Instruction 5,807
+///Operation Operation 5,807
 DataModul.DB_EventTable.Seek("=", num12, Modul1.PersInArb.AsString());
 ///Goto Goto 5,808 Dest:OK
 goto IL_29d0;
 ///Label Label 5,809 2
 IL_29d0:
-///Instruction Instruction 5,810
+///Operation Operation 5,810
 num = 499;
-///Instruction Instruction 5,811
+///Operation Operation 5,811
 if (!DataModul.DB_EventTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -5396,7 +5396,7 @@ if (!DataModul.DB_EventTable.NoMatch)
 goto IL_29ec;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,812
+///Operation Operation 5,812
 else
 ///BlockStart Block 6,0
 {
@@ -5406,15 +5406,15 @@ goto IL_2d63;
 }
 ///Label Label 5,813 2
 IL_29ec:
-///Instruction Instruction 5,814
+///Operation Operation 5,814
 num = 502;
-///Instruction Instruction 5,815
+///Operation Operation 5,815
 switch (num12)
 ///BlockStart Block 6,0
 {
 ///Label Label 6,1
 case 300:
-///Instruction Instruction 6,2
+///Operation Operation 6,2
 break;
 ///Label Label 6,3
 case 301:
@@ -5438,9 +5438,9 @@ goto IL_2a16;
 }
 ///Label Label 5,816 2
 IL_2c4c:
-///Instruction Instruction 5,817
+///Operation Operation 5,817
 num = 534;
-///Instruction Instruction 5,818
+///Operation Operation 5,818
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -5448,7 +5448,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() 
 goto IL_2c7e;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,819
+///Operation Operation 5,819
 else
 ///BlockStart Block 6,0
 {
@@ -5458,17 +5458,17 @@ goto IL_2c9b;
 }
 ///Label Label 5,820 2
 IL_2c7e:
-///Instruction Instruction 5,821
+///Operation Operation 5,821
 num = 535;
-///Instruction Instruction 5,822
+///Operation Operation 5,822
 StringType.MidStmtStr(ref sDest2, 50, 1, Modul1.IText[175]);
 ///Goto Goto 5,823 Dest:OK
 goto IL_2c9b;
 ///Label Label 5,824 3
 IL_2c9b:
-///Instruction Instruction 5,825
+///Operation Operation 5,825
 num = 537;
-///Instruction Instruction 5,826
+///Operation Operation 5,826
 if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -5476,7 +5476,7 @@ if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt
 goto IL_2cd2;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,827
+///Operation Operation 5,827
 else
 ///BlockStart Block 6,0
 {
@@ -5486,9 +5486,9 @@ goto IL_3395;
 }
 ///Label Label 5,828 2
 IL_2cd2:
-///Instruction Instruction 5,829
+///Operation Operation 5,829
 num = 540;
-///Instruction Instruction 5,830
+///Operation Operation 5,830
 if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -5496,7 +5496,7 @@ if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt
 goto IL_2d09;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,831
+///Operation Operation 5,831
 else
 ///BlockStart Block 6,0
 {
@@ -5506,9 +5506,9 @@ goto IL_3395;
 }
 ///Label Label 5,832 2
 IL_2d09:
-///Instruction Instruction 5,833
+///Operation Operation 5,833
 num = 543;
-///Instruction Instruction 5,834
+///Operation Operation 5,834
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -5516,7 +5516,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_2d44;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,835
+///Operation Operation 5,835
 else
 ///BlockStart Block 6,0
 {
@@ -5526,17 +5526,17 @@ goto IL_2d63;
 }
 ///Label Label 5,836 2
 IL_2d44:
-///Instruction Instruction 5,837
+///Operation Operation 5,837
 num = 544;
-///Instruction Instruction 5,838
+///Operation Operation 5,838
 StringType.MidStmtStr(ref sDest2, 53, 1, Modul1.IText[175]);
 ///Goto Goto 5,839 Dest:OK
 goto IL_2d63;
 ///Label Label 5,840 2
 IL_2b31:
-///Instruction Instruction 5,841
+///Operation Operation 5,841
 num = 520;
-///Instruction Instruction 5,842
+///Operation Operation 5,842
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -5544,7 +5544,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() 
 goto IL_2b63;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,843
+///Operation Operation 5,843
 else
 ///BlockStart Block 6,0
 {
@@ -5554,17 +5554,17 @@ goto IL_2b80;
 }
 ///Label Label 5,844 2
 IL_2b63:
-///Instruction Instruction 5,845
+///Operation Operation 5,845
 num = 521;
-///Instruction Instruction 5,846
+///Operation Operation 5,846
 StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
 ///Goto Goto 5,847 Dest:OK
 goto IL_2b80;
 ///Label Label 5,848 3
 IL_2b80:
-///Instruction Instruction 5,849
+///Operation Operation 5,849
 num = 523;
-///Instruction Instruction 5,850
+///Operation Operation 5,850
 if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -5572,7 +5572,7 @@ if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt
 goto IL_2bb7;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,851
+///Operation Operation 5,851
 else
 ///BlockStart Block 6,0
 {
@@ -5582,9 +5582,9 @@ goto IL_3395;
 }
 ///Label Label 5,852 2
 IL_2bb7:
-///Instruction Instruction 5,853
+///Operation Operation 5,853
 num = 526;
-///Instruction Instruction 5,854
+///Operation Operation 5,854
 if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -5592,7 +5592,7 @@ if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt
 goto IL_2bee;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,855
+///Operation Operation 5,855
 else
 ///BlockStart Block 6,0
 {
@@ -5602,9 +5602,9 @@ goto IL_3395;
 }
 ///Label Label 5,856 2
 IL_2bee:
-///Instruction Instruction 5,857
+///Operation Operation 5,857
 num = 529;
-///Instruction Instruction 5,858
+///Operation Operation 5,858
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -5612,7 +5612,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_2c29;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,859
+///Operation Operation 5,859
 else
 ///BlockStart Block 6,0
 {
@@ -5622,17 +5622,17 @@ goto IL_2d63;
 }
 ///Label Label 5,860 2
 IL_2c29:
-///Instruction Instruction 5,861
+///Operation Operation 5,861
 num = 530;
-///Instruction Instruction 5,862
+///Operation Operation 5,862
 StringType.MidStmtStr(ref sDest2, 46, 1, Modul1.IText[175]);
 ///Goto Goto 5,863 Dest:OK
 goto IL_2d63;
 ///Label Label 5,864 2
 IL_2a16:
-///Instruction Instruction 5,865
+///Operation Operation 5,865
 num = 506;
-///Instruction Instruction 5,866
+///Operation Operation 5,866
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -5640,7 +5640,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() 
 goto IL_2a48;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,867
+///Operation Operation 5,867
 else
 ///BlockStart Block 6,0
 {
@@ -5650,17 +5650,17 @@ goto IL_2a65;
 }
 ///Label Label 5,868 2
 IL_2a48:
-///Instruction Instruction 5,869
+///Operation Operation 5,869
 num = 507;
-///Instruction Instruction 5,870
+///Operation Operation 5,870
 StringType.MidStmtStr(ref sDest2, 34, 1, Modul1.IText[175]);
 ///Goto Goto 5,871 Dest:OK
 goto IL_2a65;
 ///Label Label 5,872 3
 IL_2a65:
-///Instruction Instruction 5,873
+///Operation Operation 5,873
 num = 509;
-///Instruction Instruction 5,874
+///Operation Operation 5,874
 if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -5668,7 +5668,7 @@ if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt
 goto IL_2a9c;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,875
+///Operation Operation 5,875
 else
 ///BlockStart Block 6,0
 {
@@ -5678,9 +5678,9 @@ goto IL_3395;
 }
 ///Label Label 5,876 2
 IL_2a9c:
-///Instruction Instruction 5,877
+///Operation Operation 5,877
 num = 512;
-///Instruction Instruction 5,878
+///Operation Operation 5,878
 if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -5688,7 +5688,7 @@ if (!(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt
 goto IL_2ad3;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,879
+///Operation Operation 5,879
 else
 ///BlockStart Block 6,0
 {
@@ -5698,9 +5698,9 @@ goto IL_3395;
 }
 ///Label Label 5,880 2
 IL_2ad3:
-///Instruction Instruction 5,881
+///Operation Operation 5,881
 num = 515;
-///Instruction Instruction 5,882
+///Operation Operation 5,882
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -5708,7 +5708,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_2b0e;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,883
+///Operation Operation 5,883
 else
 ///BlockStart Block 6,0
 {
@@ -5718,31 +5718,31 @@ goto IL_2d63;
 }
 ///Label Label 5,884 2
 IL_2b0e:
-///Instruction Instruction 5,885
+///Operation Operation 5,885
 num = 516;
-///Instruction Instruction 5,886
+///Operation Operation 5,886
 StringType.MidStmtStr(ref sDest2, 38, 1, Modul1.IText[175]);
 ///Goto Goto 5,887 Dest:OK
 goto IL_2d63;
 ///Label Label 5,888 9
 IL_2d63:
-///Instruction Instruction 5,889
+///Operation Operation 5,889
 num = 547;
-///Instruction Instruction 5,890
+///Operation Operation 5,890
 lErl = 92;
 ///Goto Goto 5,891 Dest:OK
 goto IL_2d6e;
 ///Label Label 5,892 2
 IL_2d6e:
-///Instruction Instruction 5,893
+///Operation Operation 5,893
 num = 548;
-///Instruction Instruction 5,894
+///Operation Operation 5,894
 num12 = (short)unchecked(num12 + 1);
-///Instruction Instruction 5,895
+///Operation Operation 5,895
 num13 = num12;
-///Instruction Instruction 5,896
+///Operation Operation 5,896
 num11 = 302;
-///Instruction Instruction 5,897
+///Operation Operation 5,897
 if (num13 <= num11)
 ///BlockStart Block 6,0
 {
@@ -5750,7 +5750,7 @@ if (num13 <= num11)
 goto IL_2956;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,898
+///Operation Operation 5,898
 else
 ///BlockStart Block 6,0
 {
@@ -5760,25 +5760,25 @@ goto IL_32fc;
 }
 ///Label Label 5,899 4
 IL_32fc:
-///Instruction Instruction 5,900
+///Operation Operation 5,900
 num = 606;
-///Instruction Instruction 5,901
+///Operation Operation 5,901
 lErl = 45;
 ///Goto Goto 5,902 Dest:OK
 goto IL_3307;
 ///Label Label 5,903 2
 IL_3307:
-///Instruction Instruction 5,904
+///Operation Operation 5,904
 num = 607;
-///Instruction Instruction 5,905
+///Operation Operation 5,905
 Modul1.LiText += sDest2;
 ///Goto Goto 5,906 Dest:OK
 goto IL_3320;
 ///Label Label 5,907 3
 IL_3320:
-///Instruction Instruction 5,908
+///Operation Operation 5,908
 num = 609;
-///Instruction Instruction 5,909
+///Operation Operation 5,909
 if ((Modul1.LiText).Trim() != "")
 ///BlockStart Block 6,0
 {
@@ -5786,7 +5786,7 @@ if ((Modul1.LiText).Trim() != "")
 goto IL_3348;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,910
+///Operation Operation 5,910
 else
 ///BlockStart Block 6,0
 {
@@ -5796,39 +5796,39 @@ goto IL_3383;
 }
 ///Label Label 5,911 2
 IL_3348:
-///Instruction Instruction 5,912
+///Operation Operation 5,912
 num = 610;
-///Instruction Instruction 5,913
+///Operation Operation 5,913
 List1.Items.Add(new ListItem(Modul1.LiText + "          " + Modul1.PersInArb.AsString()));
 ///Goto Goto 5,914 Dest:OK
 goto IL_3383;
 ///Label Label 5,915 3
 IL_3383:
-///Instruction Instruction 5,916
+///Operation Operation 5,916
 num = 612;
-///Instruction Instruction 5,917
+///Operation Operation 5,917
 Modul1.LiText = "";
 ///Goto Goto 5,918 Dest:OK
 goto IL_3395;
 ///Label Label 5,919 14
 IL_3395:
-///Instruction Instruction 5,920
+///Operation Operation 5,920
 num = 613;
-///Instruction Instruction 5,921
+///Operation Operation 5,921
 lErl = 95;
 ///Goto Goto 5,922 Dest:OK
 goto IL_33a0;
 ///Label Label 5,923 2
 IL_33a0:
-///Instruction Instruction 5,924
+///Operation Operation 5,924
 num = 614;
-///Instruction Instruction 5,925
+///Operation Operation 5,925
 I1++;
 ///Goto Goto 5,926 Dest:OK
 goto IL_33b6;
 ///Label Label 5,927 2
 IL_1c00:
-///Instruction Instruction 5,928
+///Operation Operation 5,928
 num = 336;
 ///Comment LComment 5,929
 //Sz = 0;
@@ -5836,41 +5836,41 @@ num = 336;
 goto IL_1c0e;
 ///Label Label 5,931 2
 IL_1c0e:
-///Instruction Instruction 5,932
+///Operation Operation 5,932
 num = 337;
-///Instruction Instruction 5,933
+///Operation Operation 5,933
 List1.Items.Clear();
 ///Goto Goto 5,934 Dest:OK
 goto IL_1c26;
 ///Label Label 5,935 2
 IL_1c26:
-///Instruction Instruction 5,936
+///Operation Operation 5,936
 num = 338;
-///Instruction Instruction 5,937
+///Operation Operation 5,937
 Label1[2].Text = "Familien ohne Datum";
 ///Goto Goto 5,938 Dest:OK
 goto IL_1c44;
 ///Label Label 5,939 2
 IL_1c44:
-///Instruction Instruction 5,940
+///Operation Operation 5,940
 num = 339;
-///Instruction Instruction 5,941
+///Operation Operation 5,941
 Label1[1].Text = "Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. Eheä. Aus  Fikt.";
 ///Goto Goto 5,942 Dest:OK
 goto IL_1c62;
 ///Label Label 5,943 2
 IL_1c62:
-///Instruction Instruction 5,944
+///Operation Operation 5,944
 num = 340;
-///Instruction Instruction 5,945
+///Operation Operation 5,945
 Label1[0].Text = "                                    DO   DO    DO    DO   DO    DO        DO";
 ///Goto Goto 5,946 Dest:OK
 goto IL_1c80;
 ///Label Label 5,947 2
 IL_1c80:
-///Instruction Instruction 5,948
+///Operation Operation 5,948
 num = 341;
-///Instruction Instruction 5,949
+///Operation Operation 5,949
 if (RadioButton2.Checked)
 ///BlockStart Block 6,0
 {
@@ -5878,7 +5878,7 @@ if (RadioButton2.Checked)
 goto IL_1c98;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,950
+///Operation Operation 5,950
 else
 ///BlockStart Block 6,0
 {
@@ -5888,17 +5888,17 @@ goto IL_1cb5;
 }
 ///Label Label 5,951 2
 IL_1c98:
-///Instruction Instruction 5,952
+///Operation Operation 5,952
 num = 342;
-///Instruction Instruction 5,953
+///Operation Operation 5,953
 List1.Items.Add("Familien ohne Datum");
 ///Goto Goto 5,954 Dest:OK
 goto IL_1cb5;
 ///Label Label 5,955 3
 IL_1cb5:
-///Instruction Instruction 5,956
+///Operation Operation 5,956
 num = 344;
-///Instruction Instruction 5,957
+///Operation Operation 5,957
 if (RadioButton2.Checked)
 ///BlockStart Block 6,0
 {
@@ -5906,7 +5906,7 @@ if (RadioButton2.Checked)
 goto IL_1ccd;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,958
+///Operation Operation 5,958
 else
 ///BlockStart Block 6,0
 {
@@ -5916,17 +5916,17 @@ goto IL_1cea;
 }
 ///Label Label 5,959 2
 IL_1ccd:
-///Instruction Instruction 5,960
+///Operation Operation 5,960
 num = 345;
-///Instruction Instruction 5,961
+///Operation Operation 5,961
 List1.Items.Add("Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. eheä. auß  Fikt.");
 ///Goto Goto 5,962 Dest:OK
 goto IL_1cea;
 ///Label Label 5,963 3
 IL_1cea:
-///Instruction Instruction 5,964
+///Operation Operation 5,964
 num = 347;
-///Instruction Instruction 5,965
+///Operation Operation 5,965
 if (RadioButton2.Checked)
 ///BlockStart Block 6,0
 {
@@ -5934,7 +5934,7 @@ if (RadioButton2.Checked)
 goto IL_1d02;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,966
+///Operation Operation 5,966
 else
 ///BlockStart Block 6,0
 {
@@ -5944,39 +5944,39 @@ goto IL_1d1f;
 }
 ///Label Label 5,967 2
 IL_1d02:
-///Instruction Instruction 5,968
+///Operation Operation 5,968
 num = 348;
-///Instruction Instruction 5,969
+///Operation Operation 5,969
 List1.Items.Add("                                    DO   DO    DO    DO   DO    DO        DO");
 ///Goto Goto 5,970 Dest:OK
 goto IL_1d1f;
 ///Label Label 5,971 3
 IL_1d1f:
-///Instruction Instruction 5,972
+///Operation Operation 5,972
 num = 350;
-///Instruction Instruction 5,973
+///Operation Operation 5,973
 Modul1.I = 0;
 ///Goto Goto 5,974 Dest:OK
 goto IL_1d2c;
 ///Label Label 5,975 3
 IL_1d2c:
-///Instruction Instruction 5,976
+///Operation Operation 5,976
 num = 351;
-///Instruction Instruction 5,977
+///Operation Operation 5,977
 Label1[(short)Modul1.I].Refresh();
 ///Goto Goto 5,978 Dest:OK
 goto IL_1d4a;
 ///Label Label 5,979 2
 IL_1d4a:
-///Instruction Instruction 5,980
+///Operation Operation 5,980
 num = 352;
-///Instruction Instruction 5,981
+///Operation Operation 5,981
 Modul1.I++;
-///Instruction Instruction 5,982
+///Operation Operation 5,982
 i8 = Modul1.I;
-///Instruction Instruction 5,983
+///Operation Operation 5,983
 num5 = 2;
-///Instruction Instruction 5,984
+///Operation Operation 5,984
 if (i8 <= num5)
 ///BlockStart Block 6,0
 {
@@ -5984,7 +5984,7 @@ if (i8 <= num5)
 goto IL_1d2c;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,985
+///Operation Operation 5,985
 else
 ///BlockStart Block 6,0
 {
@@ -5994,17 +5994,17 @@ goto IL_1d6a;
 }
 ///Label Label 5,986 2
 IL_1d6a:
-///Instruction Instruction 5,987
+///Operation Operation 5,987
 num = 353;
-///Instruction Instruction 5,988
+///Operation Operation 5,988
 num7 = 1;
 ///Goto Goto 5,989 Dest:OK
 goto IL_1d74;
 ///Label Label 5,990 2
 IL_1d74:
-///Instruction Instruction 5,991
+///Operation Operation 5,991
 num = 354;
-///Instruction Instruction 5,992
+///Operation Operation 5,992
 if (num7 <= 0)
 ///BlockStart Block 6,0
 {
@@ -6016,25 +6016,25 @@ goto end_IL_0001_2;
 goto IL_1d8f;
 ///Label Label 5,994 2
 IL_1d8f:
-///Instruction Instruction 5,995
+///Operation Operation 5,995
 num = 357;
-///Instruction Instruction 5,996
+///Operation Operation 5,996
 DataModul.DB_FamilyTable.MoveLast();
 ///Goto Goto 5,997 Dest:OK
 goto IL_1da2;
 ///Label Label 5,998 2
 IL_1da2:
-///Instruction Instruction 5,999
+///Operation Operation 5,999
 num = 358;
-///Instruction Instruction 5,1000
+///Operation Operation 5,1000
 num8 = DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsInt();
 ///Goto Goto 5,1001 Dest:OK
 goto IL_1dc9;
 ///Label Label 5,1002 2
 IL_1dc9:
-///Instruction Instruction 5,1003
+///Operation Operation 5,1003
 num = 359;
-///Instruction Instruction 5,1004
+///Operation Operation 5,1004
 if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
 ///BlockStart Block 6,0
 {
@@ -6042,7 +6042,7 @@ if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)
 goto IL_1dfc;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1005
+///Operation Operation 5,1005
 else
 ///BlockStart Block 6,0
 {
@@ -6052,63 +6052,63 @@ goto IL_1e3d;
 }
 ///Label Label 5,1006 2
 IL_1dfc:
-///Instruction Instruction 5,1007
+///Operation Operation 5,1007
 num = 360;
-///Instruction Instruction 5,1008
+///Operation Operation 5,1008
 Interaction.MsgBox(Modul1.IText[174] + " " + num7.AsString() + Modul1.IText[172]);
 ///Goto Goto 5,1009 Dest:OK
 goto end_IL_0001_2;
 ///Label Label 5,1010 2
 IL_1e3d:
-///Instruction Instruction 5,1011
+///Operation Operation 5,1011
 num = 363;
-///Instruction Instruction 5,1012
+///Operation Operation 5,1012
 ProgressBar1.Minimum = 0;
 ///Goto Goto 5,1013 Dest:OK
 goto IL_1e51;
 ///Label Label 5,1014 2
 IL_1e51:
-///Instruction Instruction 5,1015
+///Operation Operation 5,1015
 num = 364;
-///Instruction Instruction 5,1016
+///Operation Operation 5,1016
 ProgressBar1.Maximum = 0;
 ///Goto Goto 5,1017 Dest:OK
 goto IL_1e65;
 ///Label Label 5,1018 2
 IL_1e65:
-///Instruction Instruction 5,1019
+///Operation Operation 5,1019
 num = 365;
-///Instruction Instruction 5,1020
+///Operation Operation 5,1020
 ProgressBar1.Step = 1;
 ///Goto Goto 5,1021 Dest:OK
 goto IL_1e79;
 ///Label Label 5,1022 2
 IL_1e79:
-///Instruction Instruction 5,1023
+///Operation Operation 5,1023
 num = 366;
-///Instruction Instruction 5,1024
+///Operation Operation 5,1024
 ProgressBar1.Maximum = (int)Math.Round(Conversion.Val(Modul1.Aus[13]));
 ///Goto Goto 5,1025 Dest:OK
 goto IL_1e9f;
 ///Label Label 5,1026 2
 IL_1e9f:
-///Instruction Instruction 5,1027
+///Operation Operation 5,1027
 num = 367;
-///Instruction Instruction 5,1028
+///Operation Operation 5,1028
 i9 = num7;
-///Instruction Instruction 5,1029
+///Operation Operation 5,1029
 num14 = num7 + DataModul.DB_FamilyTable.RecordCount;
-///Instruction Instruction 5,1030
+///Operation Operation 5,1030
 I1 = i9;
 ///Goto Goto 5,1031 Dest:OK
 goto IL_2440;
 ///Label Label 5,1032 2
 IL_2440:
-///Instruction Instruction 5,1033
+///Operation Operation 5,1033
 i10 = I1;
-///Instruction Instruction 5,1034
+///Operation Operation 5,1034
 num5 = num14;
-///Instruction Instruction 5,1035
+///Operation Operation 5,1035
 if (i10 <= num5)
 ///BlockStart Block 6,0
 {
@@ -6116,7 +6116,7 @@ if (i10 <= num5)
 goto IL_1ec2;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1036
+///Operation Operation 5,1036
 else
 ///BlockStart Block 6,0
 {
@@ -6126,49 +6126,49 @@ goto IL_2451;
 }
 ///Label Label 5,1037 2
 IL_2451:
-///Instruction Instruction 5,1038
+///Operation Operation 5,1038
 num = 435;
-///Instruction Instruction 5,1039
+///Operation Operation 5,1039
 Label4.Text = List1.Items.Count - 2.AsString() + " Einträge";
 ///Goto Goto 5,1040 Dest:OK
 goto end_IL_0001_2;
 ///Label Label 5,1041 2
 IL_1ec2:
-///Instruction Instruction 5,1042
+///Operation Operation 5,1042
 num = 368;
-///Instruction Instruction 5,1043
+///Operation Operation 5,1043
 ProgressBar1.PerformStep();
 ///Goto Goto 5,1044 Dest:OK
 goto IL_1ed5;
 ///Label Label 5,1045 2
 IL_1ed5:
-///Instruction Instruction 5,1046
+///Operation Operation 5,1046
 num = 369;
-///Instruction Instruction 5,1047
+///Operation Operation 5,1047
 Application.DoEvents();
 ///Goto Goto 5,1048 Dest:OK
 goto IL_1ee2;
 ///Label Label 5,1049 2
 IL_1ee2:
-///Instruction Instruction 5,1050
+///Operation Operation 5,1050
 num = 370;
-///Instruction Instruction 5,1051
+///Operation Operation 5,1051
 sDest2 = "                                                                                          ";
 ///Goto Goto 5,1052 Dest:OK
 goto IL_1ef0;
 ///Label Label 5,1053 2
 IL_1ef0:
-///Instruction Instruction 5,1054
+///Operation Operation 5,1054
 num = 371;
-///Instruction Instruction 5,1055
+///Operation Operation 5,1055
 Modul1.FamInArb = I1;
 ///Goto Goto 5,1056 Dest:OK
 goto IL_1f02;
 ///Label Label 5,1057 2
 IL_1f02:
-///Instruction Instruction 5,1058
+///Operation Operation 5,1058
 num = 372;
-///Instruction Instruction 5,1059
+///Operation Operation 5,1059
 if (Modul1.FamInArb <= num8)
 ///BlockStart Block 6,0
 {
@@ -6176,7 +6176,7 @@ if (Modul1.FamInArb <= num8)
 goto IL_1f1d;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1060
+///Operation Operation 5,1060
 else
 ///BlockStart Block 6,0
 {
@@ -6186,25 +6186,25 @@ goto IL_241f;
 }
 ///Label Label 5,1061 2
 IL_1f1d:
-///Instruction Instruction 5,1062
+///Operation Operation 5,1062
 num = 375;
-///Instruction Instruction 5,1063
+///Operation Operation 5,1063
 DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
 ///Goto Goto 5,1064 Dest:OK
 goto IL_1f34;
 ///Label Label 5,1065 2
 IL_1f34:
-///Instruction Instruction 5,1066
+///Operation Operation 5,1066
 num = 376;
-///Instruction Instruction 5,1067
+///Operation Operation 5,1067
 DataModul.DB_FamilyTable.Seek("=", Modul1.FamInArb.AsString());
 ///Goto Goto 5,1068 Dest:OK
 goto IL_1f96;
 ///Label Label 5,1069 2
 IL_1f96:
-///Instruction Instruction 5,1070
+///Operation Operation 5,1070
 num = 377;
-///Instruction Instruction 5,1071
+///Operation Operation 5,1071
 if (!DataModul.DB_FamilyTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -6212,7 +6212,7 @@ if (!DataModul.DB_FamilyTable.NoMatch)
 goto IL_1fb2;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1072
+///Operation Operation 5,1072
 else
 ///BlockStart Block 6,0
 {
@@ -6222,17 +6222,17 @@ goto IL_2317;
 }
 ///Label Label 5,1073 2
 IL_1fb2:
-///Instruction Instruction 5,1074
+///Operation Operation 5,1074
 num = 380;
-///Instruction Instruction 5,1075
+///Operation Operation 5,1075
 MainProject.Forms.Familie.Famles(Modul1.FamInArb);
 ///Goto Goto 5,1076 Dest:OK
 goto IL_1fbf;
 ///Label Label 5,1077 2
 IL_1fbf:
-///Instruction Instruction 5,1078
+///Operation Operation 5,1078
 num = 381;
-///Instruction Instruction 5,1079
+///Operation Operation 5,1079
 if (Modul1.Family.Mann > 0)
 ///BlockStart Block 6,0
 {
@@ -6240,7 +6240,7 @@ if (Modul1.Family.Mann > 0)
 goto IL_1fd7;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1080
+///Operation Operation 5,1080
 else
 ///BlockStart Block 6,0
 {
@@ -6250,25 +6250,25 @@ goto IL_206d;
 }
 ///Label Label 5,1081 2
 IL_1fd7:
-///Instruction Instruction 5,1082
+///Operation Operation 5,1082
 num = 382;
-///Instruction Instruction 5,1083
+///Operation Operation 5,1083
 Modul1.PersInArb = Modul1.Family.Mann;
 ///Goto Goto 5,1084 Dest:OK
 goto IL_1fe8;
 ///Label Label 5,1085 2
 IL_1fe8:
-///Instruction Instruction 5,1086
+///Operation Operation 5,1086
 num = 383;
-///Instruction Instruction 5,1087
+///Operation Operation 5,1087
 Modul1.Personlesen(Modul1.PersInArb);
 ///Goto Goto 5,1088 Dest:OK
 goto IL_1ff5;
 ///Label Label 5,1089 2
 IL_1ff5:
-///Instruction Instruction 5,1090
+///Operation Operation 5,1090
 num = 384;
-///Instruction Instruction 5,1091
+///Operation Operation 5,1091
 if (Modul1.Kont[0] != "")
 ///BlockStart Block 6,0
 {
@@ -6276,7 +6276,7 @@ if (Modul1.Kont[0] != "")
 goto IL_201a;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1092
+///Operation Operation 5,1092
 else
 ///BlockStart Block 6,0
 {
@@ -6286,39 +6286,39 @@ goto IL_2035;
 }
 ///Label Label 5,1093 2
 IL_201a:
-///Instruction Instruction 5,1094
+///Operation Operation 5,1094
 num = 385;
-///Instruction Instruction 5,1095
+///Operation Operation 5,1095
 StringType.MidStmtStr(ref sDest2, 1, 15, Modul1.Kont[0]);
 ///Goto Goto 5,1096 Dest:OK
 goto IL_2055;
 ///Label Label 5,1097 2
 IL_2035:
-///Instruction Instruction 5,1098
+///Operation Operation 5,1098
 num = 387;
 ///Goto Goto 5,1099 Dest:OK
 goto IL_203d;
 ///Label Label 5,1100 2
 IL_203d:
-///Instruction Instruction 5,1101
+///Operation Operation 5,1101
 num = 388;
-///Instruction Instruction 5,1102
+///Operation Operation 5,1102
 StringType.MidStmtStr(ref sDest2, 1, 15, ">NN<");
 ///Goto Goto 5,1103 Dest:OK
 goto IL_2055;
 ///Label Label 5,1104 3
 IL_2055:
-///Instruction Instruction 5,1105
+///Operation Operation 5,1105
 num = 390;
-///Instruction Instruction 5,1106
+///Operation Operation 5,1106
 StringType.MidStmtStr(ref sDest2, 16, 2, "/ ");
 ///Goto Goto 5,1107 Dest:OK
 goto IL_206d;
 ///Label Label 5,1108 3
 IL_206d:
-///Instruction Instruction 5,1109
+///Operation Operation 5,1109
 num = 392;
-///Instruction Instruction 5,1110
+///Operation Operation 5,1110
 if (Modul1.Family.Frau > 0)
 ///BlockStart Block 6,0
 {
@@ -6326,7 +6326,7 @@ if (Modul1.Family.Frau > 0)
 goto IL_2085;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1111
+///Operation Operation 5,1111
 else
 ///BlockStart Block 6,0
 {
@@ -6336,25 +6336,25 @@ goto IL_2106;
 }
 ///Label Label 5,1112 2
 IL_2085:
-///Instruction Instruction 5,1113
+///Operation Operation 5,1113
 num = 393;
-///Instruction Instruction 5,1114
+///Operation Operation 5,1114
 Modul1.PersInArb = Modul1.Family.Frau;
 ///Goto Goto 5,1115 Dest:OK
 goto IL_2096;
 ///Label Label 5,1116 2
 IL_2096:
-///Instruction Instruction 5,1117
+///Operation Operation 5,1117
 num = 394;
-///Instruction Instruction 5,1118
+///Operation Operation 5,1118
 Modul1.Personlesen(Modul1.PersInArb);
 ///Goto Goto 5,1119 Dest:OK
 goto IL_20a3;
 ///Label Label 5,1120 2
 IL_20a3:
-///Instruction Instruction 5,1121
+///Operation Operation 5,1121
 num = 395;
-///Instruction Instruction 5,1122
+///Operation Operation 5,1122
 if (Modul1.Kont[0] != "")
 ///BlockStart Block 6,0
 {
@@ -6362,7 +6362,7 @@ if (Modul1.Kont[0] != "")
 goto IL_20c8;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1123
+///Operation Operation 5,1123
 else
 ///BlockStart Block 6,0
 {
@@ -6372,31 +6372,31 @@ goto IL_20e4;
 }
 ///Label Label 5,1124 2
 IL_20c8:
-///Instruction Instruction 5,1125
+///Operation Operation 5,1125
 num = 396;
-///Instruction Instruction 5,1126
+///Operation Operation 5,1126
 StringType.MidStmtStr(ref sDest2, 17, 15, Modul1.Kont[0]);
 ///Goto Goto 5,1127 Dest:OK
 goto IL_2106;
 ///Label Label 5,1128 2
 IL_20e4:
-///Instruction Instruction 5,1129
+///Operation Operation 5,1129
 num = 398;
 ///Goto Goto 5,1130 Dest:OK
 goto IL_20ec;
 ///Label Label 5,1131 2
 IL_20ec:
-///Instruction Instruction 5,1132
+///Operation Operation 5,1132
 num = 399;
-///Instruction Instruction 5,1133
+///Operation Operation 5,1133
 StringType.MidStmtStr(ref sDest2, 17, 15, ">NN<");
 ///Goto Goto 5,1134 Dest:OK
 goto IL_2106;
 ///Label Label 5,1135 4
 IL_2106:
-///Instruction Instruction 5,1136
+///Operation Operation 5,1136
 num = 402;
-///Instruction Instruction 5,1137
+///Operation Operation 5,1137
 if (Modul1.Family.Kind[1] != 0)
 ///BlockStart Block 6,0
 {
@@ -6404,7 +6404,7 @@ if (Modul1.Family.Kind[1] != 0)
 goto IL_2120;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1138
+///Operation Operation 5,1138
 else
 ///BlockStart Block 6,0
 {
@@ -6414,41 +6414,41 @@ goto IL_213d;
 }
 ///Label Label 5,1139 2
 IL_2120:
-///Instruction Instruction 5,1140
+///Operation Operation 5,1140
 num = 403;
-///Instruction Instruction 5,1141
+///Operation Operation 5,1141
 StringType.MidStmtStr(ref sDest2, 32, 1, Modul1.IText[175]);
 ///Goto Goto 5,1142 Dest:OK
 goto IL_213d;
 ///Label Label 5,1143 3
 IL_213d:
-///Instruction Instruction 5,1144
+///Operation Operation 5,1144
 num = 405;
-///Instruction Instruction 5,1145
+///Operation Operation 5,1145
 DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
 ///Goto Goto 5,1146 Dest:OK
 goto IL_2154;
 ///Label Label 5,1147 2
 IL_2154:
-///Instruction Instruction 5,1148
+///Operation Operation 5,1148
 num = 406;
-///Instruction Instruction 5,1149
+///Operation Operation 5,1149
 DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
 ///Goto Goto 5,1150 Dest:OK
 goto IL_216b;
 ///Label Label 5,1151 2
 IL_216b:
-///Instruction Instruction 5,1152
+///Operation Operation 5,1152
 num = 407;
-///Instruction Instruction 5,1153
+///Operation Operation 5,1153
 DataModul.DB_FamilyTable.Seek("=", Modul1.FamInArb);
 ///Goto Goto 5,1154 Dest:OK
 goto IL_21c8;
 ///Label Label 5,1155 2
 IL_21c8:
-///Instruction Instruction 5,1156
+///Operation Operation 5,1156
 num = 408;
-///Instruction Instruction 5,1157
+///Operation Operation 5,1157
 if (!DataModul.DB_FamilyTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -6456,7 +6456,7 @@ if (!DataModul.DB_FamilyTable.NoMatch)
 goto IL_21e4;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1158
+///Operation Operation 5,1158
 else
 ///BlockStart Block 6,0
 {
@@ -6466,9 +6466,9 @@ goto IL_2317;
 }
 ///Label Label 5,1159 2
 IL_21e4:
-///Instruction Instruction 5,1160
+///Operation Operation 5,1160
 num = 411;
-///Instruction Instruction 5,1161
+///Operation Operation 5,1161
 if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
 ///BlockStart Block 6,0
 {
@@ -6476,7 +6476,7 @@ if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value =
 goto IL_2216;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1162
+///Operation Operation 5,1162
 else
 ///BlockStart Block 6,0
 {
@@ -6486,41 +6486,41 @@ goto IL_2233;
 }
 ///Label Label 5,1163 2
 IL_2216:
-///Instruction Instruction 5,1164
+///Operation Operation 5,1164
 num = 412;
-///Instruction Instruction 5,1165
+///Operation Operation 5,1165
 StringType.MidStmtStr(ref sDest2, 70, 1, Modul1.IText[175]);
 ///Goto Goto 5,1166 Dest:OK
 goto IL_2233;
 ///Label Label 5,1167 3
 IL_2233:
-///Instruction Instruction 5,1168
+///Operation Operation 5,1168
 num = 414;
-///Instruction Instruction 5,1169
+///Operation Operation 5,1169
 num15 = 500;
 ///Goto Goto 5,1170 Dest:OK
 goto IL_2240;
 ///Label Label 5,1171 3
 IL_2240:
-///Instruction Instruction 5,1172
+///Operation Operation 5,1172
 num = 415;
-///Instruction Instruction 5,1173
+///Operation Operation 5,1173
 Modul1.Ubg = num15;
 ///Goto Goto 5,1174 Dest:OK
 goto IL_224d;
 ///Label Label 5,1175 2
 IL_224d:
-///Instruction Instruction 5,1176
+///Operation Operation 5,1176
 num = 416;
-///Instruction Instruction 5,1177
+///Operation Operation 5,1177
 DataModul.DB_EventTable.Seek("=", Modul1.Ubg.AsString(), Modul1.FamInArb.AsString(), "0");
 ///Goto Goto 5,1178 Dest:OK
 goto IL_22b9;
 ///Label Label 5,1179 2
 IL_22b9:
-///Instruction Instruction 5,1180
+///Operation Operation 5,1180
 num = 417;
-///Instruction Instruction 5,1181
+///Operation Operation 5,1181
 if (DataModul.DB_EventTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -6528,7 +6528,7 @@ if (DataModul.DB_EventTable.NoMatch)
 goto IL_22d8;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1182
+///Operation Operation 5,1182
 else
 ///BlockStart Block 6,0
 {
@@ -6538,9 +6538,9 @@ goto IL_241f;
 }
 ///Label Label 5,1183 2
 IL_22d8:
-///Instruction Instruction 5,1184
+///Operation Operation 5,1184
 num = 420;
-///Instruction Instruction 5,1185
+///Operation Operation 5,1185
 if (!((num15 == 507) & DataModul.DB_EventTable.NoMatch))
 ///BlockStart Block 6,0
 {
@@ -6548,7 +6548,7 @@ if (!((num15 == 507) & DataModul.DB_EventTable.NoMatch))
 goto IL_22fa;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1186
+///Operation Operation 5,1186
 else
 ///BlockStart Block 6,0
 {
@@ -6558,15 +6558,15 @@ goto IL_2317;
 }
 ///Label Label 5,1187 2
 IL_22fa:
-///Instruction Instruction 5,1188
+///Operation Operation 5,1188
 num = 423;
-///Instruction Instruction 5,1189
+///Operation Operation 5,1189
 num15 = (short)unchecked(num15 + 1);
-///Instruction Instruction 5,1190
+///Operation Operation 5,1190
 num16 = num15;
-///Instruction Instruction 5,1191
+///Operation Operation 5,1191
 num11 = 507;
-///Instruction Instruction 5,1192
+///Operation Operation 5,1192
 if (num16 <= num11)
 ///BlockStart Block 6,0
 {
@@ -6574,7 +6574,7 @@ if (num16 <= num11)
 goto IL_2240;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1193
+///Operation Operation 5,1193
 else
 ///BlockStart Block 6,0
 {
@@ -6584,25 +6584,25 @@ goto IL_2317;
 }
 ///Label Label 5,1194 5
 IL_2317:
-///Instruction Instruction 5,1195
+///Operation Operation 5,1195
 num = 424;
-///Instruction Instruction 5,1196
+///Operation Operation 5,1196
 lErl = 34;
 ///Goto Goto 5,1197 Dest:OK
 goto IL_2322;
 ///Label Label 5,1198 2
 IL_2322:
-///Instruction Instruction 5,1199
+///Operation Operation 5,1199
 num = 425;
-///Instruction Instruction 5,1200
+///Operation Operation 5,1200
 DataModul.DB_EventTable.Seek("=", 601.AsString(), Modul1.FamInArb.AsString(), "0");
 ///Goto Goto 5,1201 Dest:OK
 goto IL_238e;
 ///Label Label 5,1202 2
 IL_238e:
-///Instruction Instruction 5,1203
+///Operation Operation 5,1203
 num = 426;
-///Instruction Instruction 5,1204
+///Operation Operation 5,1204
 if (DataModul.DB_EventTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -6610,7 +6610,7 @@ if (DataModul.DB_EventTable.NoMatch)
 goto IL_23aa;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1205
+///Operation Operation 5,1205
 else
 ///BlockStart Block 6,0
 {
@@ -6620,9 +6620,9 @@ goto IL_241f;
 }
 ///Label Label 5,1206 2
 IL_23aa:
-///Instruction Instruction 5,1207
+///Operation Operation 5,1207
 num = 429;
-///Instruction Instruction 5,1208
+///Operation Operation 5,1208
 if (sDest2.Trim() != "")
 ///BlockStart Block 6,0
 {
@@ -6630,7 +6630,7 @@ if (sDest2.Trim() != "")
 goto IL_23cf;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1209
+///Operation Operation 5,1209
 else
 ///BlockStart Block 6,0
 {
@@ -6640,15 +6640,15 @@ goto IL_241f;
 }
 ///Label Label 5,1210 2
 IL_23cf:
-///Instruction Instruction 5,1211
+///Operation Operation 5,1211
 num = 430;
-///Instruction Instruction 5,1212
+///Operation Operation 5,1212
 List1.Items.Add(new ListItem(sDest2 + "          " + Modul1.FamInArb.AsString()));
 ///Goto Goto 5,1213 Dest:OK
 goto IL_2407;
 ///Label Label 5,1214 2
 IL_2407:
-///Instruction Instruction 5,1215
+///Operation Operation 5,1215
 num = 431;
 ///Comment LComment 5,1216
 //Sz++;
@@ -6656,65 +6656,65 @@ num = 431;
 goto IL_241f;
 ///Label Label 5,1218 6
 IL_241f:
-///Instruction Instruction 5,1219
+///Operation Operation 5,1219
 num = 433;
-///Instruction Instruction 5,1220
+///Operation Operation 5,1220
 lErl = 35;
 ///Goto Goto 5,1221 Dest:OK
 goto IL_242a;
 ///Label Label 5,1222 2
 IL_242a:
-///Instruction Instruction 5,1223
+///Operation Operation 5,1223
 num = 434;
-///Instruction Instruction 5,1224
+///Operation Operation 5,1224
 I1++;
 ///Goto Goto 5,1225 Dest:OK
 goto IL_2440;
 ///Label Label 5,1226 2
 IL_1aae:
-///Instruction Instruction 5,1227
+///Operation Operation 5,1227
 num = 322;
-///Instruction Instruction 5,1228
+///Operation Operation 5,1228
 FileSystem.FileClose(99);
 ///Goto Goto 5,1229 Dest:OK
 goto IL_1acb;
 ///Label Label 5,1230 2
 IL_1acb:
-///Instruction Instruction 5,1231
+///Operation Operation 5,1231
 num = 323;
-///Instruction Instruction 5,1232
+///Operation Operation 5,1232
 FileSystem.FileOpen(99, Modul1.TempPath + "\\Text4.Txt", OpenMode.Output);
 ///Goto Goto 5,1233 Dest:OK
 goto IL_1aed;
 ///Label Label 5,1234 2
 IL_1aed:
-///Instruction Instruction 5,1235
+///Operation Operation 5,1235
 num = 324;
-///Instruction Instruction 5,1236
+///Operation Operation 5,1236
 FileSystem.PrintLine(99, Label1[2].Text);
 ///Goto Goto 5,1237 Dest:OK
 goto IL_1b1c;
 ///Label Label 5,1238 2
 IL_1b1c:
-///Instruction Instruction 5,1239
+///Operation Operation 5,1239
 num = 325;
-///Instruction Instruction 5,1240
+///Operation Operation 5,1240
 FileSystem.PrintLine(99, Label1[1].Text);
 ///Goto Goto 5,1241 Dest:OK
 goto IL_1b4b;
 ///Label Label 5,1242 2
 IL_1b4b:
-///Instruction Instruction 5,1243
+///Operation Operation 5,1243
 num = 326;
-///Instruction Instruction 5,1244
+///Operation Operation 5,1244
 FileSystem.PrintLine(99, Label1[0].Text);
 ///Goto Goto 5,1245 Dest:OK
 goto IL_1b7a;
 ///Label Label 5,1246 2
 IL_1b7a:
-///Instruction Instruction 5,1247
+///Operation Operation 5,1247
 num = 327;
-///Instruction Instruction 5,1248
+///Operation Operation 5,1248
 if (List2.Visible)
 ///BlockStart Block 6,0
 {
@@ -6722,7 +6722,7 @@ if (List2.Visible)
 goto IL_1b92;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1249
+///Operation Operation 5,1249
 else
 ///BlockStart Block 6,0
 {
@@ -6732,131 +6732,131 @@ goto IL_1bb9;
 }
 ///Label Label 5,1250 2
 IL_1b92:
-///Instruction Instruction 5,1251
+///Operation Operation 5,1251
 num = 328;
-///Instruction Instruction 5,1252
+///Operation Operation 5,1252
 L = List2;
-///Instruction Instruction 5,1253
+///Operation Operation 5,1253
 A = 2;
-///Instruction Instruction 5,1254
+///Operation Operation 5,1254
 Modul1.Listbox3Clip(ref L, ref A);
-///Instruction Instruction 5,1255
+///Operation Operation 5,1255
 List2 = L;
 ///Goto Goto 5,1256 Dest:OK
 goto IL_1be7;
 ///Label Label 5,1257 2
 IL_1bb9:
-///Instruction Instruction 5,1258
+///Operation Operation 5,1258
 num = 330;
 ///Goto Goto 5,1259 Dest:OK
 goto IL_1bc1;
 ///Label Label 5,1260 2
 IL_1bc1:
-///Instruction Instruction 5,1261
+///Operation Operation 5,1261
 num = 331;
-///Instruction Instruction 5,1262
+///Operation Operation 5,1262
 L = List1;
-///Instruction Instruction 5,1263
+///Operation Operation 5,1263
 A = 2;
-///Instruction Instruction 5,1264
+///Operation Operation 5,1264
 Modul1.Listbox3Clip(ref L, ref A);
-///Instruction Instruction 5,1265
+///Operation Operation 5,1265
 List1 = L;
 ///Goto Goto 5,1266 Dest:OK
 goto IL_1be7;
 ///Label Label 5,1267 3
 IL_1be7:
-///Instruction Instruction 5,1268
+///Operation Operation 5,1268
 num = 333;
-///Instruction Instruction 5,1269
+///Operation Operation 5,1269
 FileSystem.FileClose();
 ///Goto Goto 5,1270 Dest:OK
 goto IL_448a;
 ///Label Label 5,1271 2
 IL_1a3c:
-///Instruction Instruction 5,1272
+///Operation Operation 5,1272
 num = 314;
-///Instruction Instruction 5,1273
+///Operation Operation 5,1273
 List1.Items.Clear();
 ///Goto Goto 5,1274 Dest:OK
 goto IL_1a54;
 ///Label Label 5,1275 2
 IL_1a54:
-///Instruction Instruction 5,1276
+///Operation Operation 5,1276
 num = 315;
-///Instruction Instruction 5,1277
+///Operation Operation 5,1277
 List2.Items.Clear();
 ///Goto Goto 5,1278 Dest:OK
 goto IL_1a6c;
 ///Label Label 5,1279 2
 IL_1a6c:
-///Instruction Instruction 5,1280
+///Operation Operation 5,1280
 num = 316;
-///Instruction Instruction 5,1281
+///Operation Operation 5,1281
 ProgressBar1.Minimum = 0;
 ///Goto Goto 5,1282 Dest:OK
 goto IL_1a80;
 ///Label Label 5,1283 2
 IL_1a80:
-///Instruction Instruction 5,1284
+///Operation Operation 5,1284
 num = 317;
-///Instruction Instruction 5,1285
+///Operation Operation 5,1285
 ProgressBar1.Maximum = 0;
 ///Goto Goto 5,1286 Dest:OK
 goto IL_1a94;
 ///Label Label 5,1287 2
 IL_1a94:
-///Instruction Instruction 5,1288
+///Operation Operation 5,1288
 num = 318;
-///Instruction Instruction 5,1289
+///Operation Operation 5,1289
 Close();
 ///Goto Goto 5,1290 Dest:OK
 goto end_IL_0001_2;
 ///Label Label 5,1291 2
 IL_0cef:
-///Instruction Instruction 5,1292
+///Operation Operation 5,1292
 num = 159;
-///Instruction Instruction 5,1293
+///Operation Operation 5,1293
 DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
 ///Goto Goto 5,1294 Dest:OK
 goto IL_0d06;
 ///Label Label 5,1295 2
 IL_0d06:
-///Instruction Instruction 5,1296
+///Operation Operation 5,1296
 num = 160;
-///Instruction Instruction 5,1297
+///Operation Operation 5,1297
 List1.Items.Clear();
 ///Goto Goto 5,1298 Dest:OK
 goto IL_0d1e;
 ///Label Label 5,1299 2
 IL_0d1e:
-///Instruction Instruction 5,1300
+///Operation Operation 5,1300
 num = 161;
-///Instruction Instruction 5,1301
+///Operation Operation 5,1301
 Label1[2].Text = "Fehlliste Familien";
 ///Goto Goto 5,1302 Dest:OK
 goto IL_0d3c;
 ///Label Label 5,1303 2
 IL_0d3c:
-///Instruction Instruction 5,1304
+///Operation Operation 5,1304
 num = 162;
-///Instruction Instruction 5,1305
+///Operation Operation 5,1305
 Label1[1].Text = "Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. eheä. auß  Fikt.";
 ///Goto Goto 5,1306 Dest:OK
 goto IL_0d5a;
 ///Label Label 5,1307 2
 IL_0d5a:
-///Instruction Instruction 5,1308
+///Operation Operation 5,1308
 num = 163;
-///Instruction Instruction 5,1309
+///Operation Operation 5,1309
 Label1[0].Text = "                                    DO   DO    DO    DO   DO    DO        DO";
 ///Goto Goto 5,1310 Dest:OK
 goto IL_0d78;
 ///Label Label 5,1311 2
 IL_0d78:
-///Instruction Instruction 5,1312
+///Operation Operation 5,1312
 num = 164;
-///Instruction Instruction 5,1313
+///Operation Operation 5,1313
 if (RadioButton2.Checked)
 ///BlockStart Block 6,0
 {
@@ -6864,7 +6864,7 @@ if (RadioButton2.Checked)
 goto IL_0d90;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1314
+///Operation Operation 5,1314
 else
 ///BlockStart Block 6,0
 {
@@ -6874,17 +6874,17 @@ goto IL_0dad;
 }
 ///Label Label 5,1315 2
 IL_0d90:
-///Instruction Instruction 5,1316
+///Operation Operation 5,1316
 num = 165;
-///Instruction Instruction 5,1317
+///Operation Operation 5,1317
 List1.Items.Add("Fehlliste Familien");
 ///Goto Goto 5,1318 Dest:OK
 goto IL_0dad;
 ///Label Label 5,1319 3
 IL_0dad:
-///Instruction Instruction 5,1320
+///Operation Operation 5,1320
 num = 167;
-///Instruction Instruction 5,1321
+///Operation Operation 5,1321
 if (RadioButton2.Checked)
 ///BlockStart Block 6,0
 {
@@ -6892,7 +6892,7 @@ if (RadioButton2.Checked)
 goto IL_0dc5;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1322
+///Operation Operation 5,1322
 else
 ///BlockStart Block 6,0
 {
@@ -6902,17 +6902,17 @@ goto IL_0de2;
 }
 ///Label Label 5,1323 2
 IL_0dc5:
-///Instruction Instruction 5,1324
+///Operation Operation 5,1324
 num = 168;
-///Instruction Instruction 5,1325
+///Operation Operation 5,1325
 List1.Items.Add("Mann            Frau       Kinder  Pro  Verl. Hei   k.H. Schd. eheä. auß  Fikt.");
 ///Goto Goto 5,1326 Dest:OK
 goto IL_0de2;
 ///Label Label 5,1327 3
 IL_0de2:
-///Instruction Instruction 5,1328
+///Operation Operation 5,1328
 num = 170;
-///Instruction Instruction 5,1329
+///Operation Operation 5,1329
 if (RadioButton2.Checked)
 ///BlockStart Block 6,0
 {
@@ -6920,7 +6920,7 @@ if (RadioButton2.Checked)
 goto IL_0dfa;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1330
+///Operation Operation 5,1330
 else
 ///BlockStart Block 6,0
 {
@@ -6930,39 +6930,39 @@ goto IL_0e17;
 }
 ///Label Label 5,1331 2
 IL_0dfa:
-///Instruction Instruction 5,1332
+///Operation Operation 5,1332
 num = 171;
-///Instruction Instruction 5,1333
+///Operation Operation 5,1333
 List1.Items.Add("                                    DO   DO    DO    DO   DO    DO        DO");
 ///Goto Goto 5,1334 Dest:OK
 goto IL_0e17;
 ///Label Label 5,1335 3
 IL_0e17:
-///Instruction Instruction 5,1336
+///Operation Operation 5,1336
 num = 173;
-///Instruction Instruction 5,1337
+///Operation Operation 5,1337
 Modul1.I = 0;
 ///Goto Goto 5,1338 Dest:OK
 goto IL_0e24;
 ///Label Label 5,1339 3
 IL_0e24:
-///Instruction Instruction 5,1340
+///Operation Operation 5,1340
 num = 174;
-///Instruction Instruction 5,1341
+///Operation Operation 5,1341
 Label1[(short)Modul1.I].Refresh();
 ///Goto Goto 5,1342 Dest:OK
 goto IL_0e42;
 ///Label Label 5,1343 2
 IL_0e42:
-///Instruction Instruction 5,1344
+///Operation Operation 5,1344
 num = 175;
-///Instruction Instruction 5,1345
+///Operation Operation 5,1345
 Modul1.I++;
-///Instruction Instruction 5,1346
+///Operation Operation 5,1346
 i11 = Modul1.I;
-///Instruction Instruction 5,1347
+///Operation Operation 5,1347
 num5 = 2;
-///Instruction Instruction 5,1348
+///Operation Operation 5,1348
 if (i11 <= num5)
 ///BlockStart Block 6,0
 {
@@ -6970,7 +6970,7 @@ if (i11 <= num5)
 goto IL_0e24;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1349
+///Operation Operation 5,1349
 else
 ///BlockStart Block 6,0
 {
@@ -6980,17 +6980,17 @@ goto IL_0e62;
 }
 ///Label Label 5,1350 2
 IL_0e62:
-///Instruction Instruction 5,1351
+///Operation Operation 5,1351
 num = 176;
-///Instruction Instruction 5,1352
+///Operation Operation 5,1352
 num7 = 1;
 ///Goto Goto 5,1353 Dest:OK
 goto IL_0e6c;
 ///Label Label 5,1354 2
 IL_0e6c:
-///Instruction Instruction 5,1355
+///Operation Operation 5,1355
 num = 177;
-///Instruction Instruction 5,1356
+///Operation Operation 5,1356
 if (num7 <= 0)
 ///BlockStart Block 6,0
 {
@@ -7002,25 +7002,25 @@ goto end_IL_0001_2;
 goto IL_0e87;
 ///Label Label 5,1358 2
 IL_0e87:
-///Instruction Instruction 5,1359
+///Operation Operation 5,1359
 num = 180;
-///Instruction Instruction 5,1360
+///Operation Operation 5,1360
 DataModul.DB_FamilyTable.MoveLast();
 ///Goto Goto 5,1361 Dest:OK
 goto IL_0e9a;
 ///Label Label 5,1362 2
 IL_0e9a:
-///Instruction Instruction 5,1363
+///Operation Operation 5,1363
 num = 181;
-///Instruction Instruction 5,1364
+///Operation Operation 5,1364
 num8 = DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsInt();
 ///Goto Goto 5,1365 Dest:OK
 goto IL_0ec1;
 ///Label Label 5,1366 2
 IL_0ec1:
-///Instruction Instruction 5,1367
+///Operation Operation 5,1367
 num = 182;
-///Instruction Instruction 5,1368
+///Operation Operation 5,1368
 if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value))
 ///BlockStart Block 6,0
 {
@@ -7028,7 +7028,7 @@ if ((num7 > DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)
 goto IL_0ef4;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1369
+///Operation Operation 5,1369
 else
 ///BlockStart Block 6,0
 {
@@ -7038,55 +7038,55 @@ goto IL_0f36;
 }
 ///Label Label 5,1370 2
 IL_0ef4:
-///Instruction Instruction 5,1371
+///Operation Operation 5,1371
 num = 183;
-///Instruction Instruction 5,1372
+///Operation Operation 5,1372
 Interaction.MsgBox("Die höchste Familiennummer ist " + DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.FamNr)].Value.AsString());
 ///Goto Goto 5,1373 Dest:OK
 goto end_IL_0001_2;
 ///Label Label 5,1374 2
 IL_0f36:
-///Instruction Instruction 5,1375
+///Operation Operation 5,1375
 num = 186;
-///Instruction Instruction 5,1376
+///Operation Operation 5,1376
 ProgressBar1.Minimum = 0;
 ///Goto Goto 5,1377 Dest:OK
 goto IL_0f4a;
 ///Label Label 5,1378 2
 IL_0f4a:
-///Instruction Instruction 5,1379
+///Operation Operation 5,1379
 num = 187;
-///Instruction Instruction 5,1380
+///Operation Operation 5,1380
 ProgressBar1.Maximum = DataModul.DB_FamilyTable.RecordCount - 1;
 ///Goto Goto 5,1381 Dest:OK
 goto IL_0f69;
 ///Label Label 5,1382 2
 IL_0f69:
-///Instruction Instruction 5,1383
+///Operation Operation 5,1383
 num = 188;
-///Instruction Instruction 5,1384
+///Operation Operation 5,1384
 ProgressBar1.Step = 1;
 ///Goto Goto 5,1385 Dest:OK
 goto IL_0f7d;
 ///Label Label 5,1386 2
 IL_0f7d:
-///Instruction Instruction 5,1387
+///Operation Operation 5,1387
 num = 189;
-///Instruction Instruction 5,1388
+///Operation Operation 5,1388
 i12 = num7;
-///Instruction Instruction 5,1389
+///Operation Operation 5,1389
 num17 = num8;
-///Instruction Instruction 5,1390
+///Operation Operation 5,1390
 I1 = i12;
 ///Goto Goto 5,1391 Dest:OK
 goto IL_199d;
 ///Label Label 5,1392 2
 IL_199d:
-///Instruction Instruction 5,1393
+///Operation Operation 5,1393
 i13 = I1;
-///Instruction Instruction 5,1394
+///Operation Operation 5,1394
 num5 = num17;
-///Instruction Instruction 5,1395
+///Operation Operation 5,1395
 if (i13 <= num5)
 ///BlockStart Block 6,0
 {
@@ -7094,7 +7094,7 @@ if (i13 <= num5)
 goto IL_0f95;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1396
+///Operation Operation 5,1396
 else
 ///BlockStart Block 6,0
 {
@@ -7104,17 +7104,17 @@ goto IL_19ae;
 }
 ///Label Label 5,1397 2
 IL_19ae:
-///Instruction Instruction 5,1398
+///Operation Operation 5,1398
 num = 308;
-///Instruction Instruction 5,1399
+///Operation Operation 5,1399
 Label4.Text = List1.Items.Count - 3.AsString() + " Familien";
 ///Goto Goto 5,1400 Dest:OK
 goto IL_19e7;
 ///Label Label 5,1401 2
 IL_19e7:
-///Instruction Instruction 5,1402
+///Operation Operation 5,1402
 num = 309;
-///Instruction Instruction 5,1403
+///Operation Operation 5,1403
 if (RadioButton1.Checked)
 ///BlockStart Block 6,0
 {
@@ -7122,7 +7122,7 @@ if (RadioButton1.Checked)
 goto IL_19ff;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1404
+///Operation Operation 5,1404
 else
 ///BlockStart Block 6,0
 {
@@ -7132,49 +7132,49 @@ goto IL_448a;
 }
 ///Label Label 5,1405 2
 IL_19ff:
-///Instruction Instruction 5,1406
+///Operation Operation 5,1406
 num = 310;
-///Instruction Instruction 5,1407
+///Operation Operation 5,1407
 Label4.Text = List1.Items.Count.AsString() + " Familien";
 ///Goto Goto 5,1408 Dest:OK
 goto IL_448a;
 ///Label Label 5,1409 2
 IL_0f95:
-///Instruction Instruction 5,1410
+///Operation Operation 5,1410
 num = 190;
-///Instruction Instruction 5,1411
+///Operation Operation 5,1411
 ProgressBar1.PerformStep();
 ///Goto Goto 5,1412 Dest:OK
 goto IL_0fa8;
 ///Label Label 5,1413 2
 IL_0fa8:
-///Instruction Instruction 5,1414
+///Operation Operation 5,1414
 num = 191;
-///Instruction Instruction 5,1415
+///Operation Operation 5,1415
 Application.DoEvents();
 ///Goto Goto 5,1416 Dest:OK
 goto IL_0fb5;
 ///Label Label 5,1417 2
 IL_0fb5:
-///Instruction Instruction 5,1418
+///Operation Operation 5,1418
 num = 192;
-///Instruction Instruction 5,1419
+///Operation Operation 5,1419
 sDest2 = "                                                                                          ";
 ///Goto Goto 5,1420 Dest:OK
 goto IL_0fc3;
 ///Label Label 5,1421 2
 IL_0fc3:
-///Instruction Instruction 5,1422
+///Operation Operation 5,1422
 num = 193;
-///Instruction Instruction 5,1423
+///Operation Operation 5,1423
 Modul1.FamInArb = I1;
 ///Goto Goto 5,1424 Dest:OK
 goto IL_0fd5;
 ///Label Label 5,1425 2
 IL_0fd5:
-///Instruction Instruction 5,1426
+///Operation Operation 5,1426
 num = 194;
-///Instruction Instruction 5,1427
+///Operation Operation 5,1427
 if (Modul1.FamInArb <= num8)
 ///BlockStart Block 6,0
 {
@@ -7182,7 +7182,7 @@ if (Modul1.FamInArb <= num8)
 goto IL_0ff0;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1428
+///Operation Operation 5,1428
 else
 ///BlockStart Block 6,0
 {
@@ -7192,25 +7192,25 @@ goto IL_448a;
 }
 ///Label Label 5,1429 2
 IL_0ff0:
-///Instruction Instruction 5,1430
+///Operation Operation 5,1430
 num = 197;
-///Instruction Instruction 5,1431
+///Operation Operation 5,1431
 DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
 ///Goto Goto 5,1432 Dest:OK
 goto IL_1007;
 ///Label Label 5,1433 2
 IL_1007:
-///Instruction Instruction 5,1434
+///Operation Operation 5,1434
 num = 198;
-///Instruction Instruction 5,1435
+///Operation Operation 5,1435
 DataModul.DB_FamilyTable.Seek("=", Modul1.FamInArb.AsString());
 ///Goto Goto 5,1436 Dest:OK
 goto IL_1069;
 ///Label Label 5,1437 2
 IL_1069:
-///Instruction Instruction 5,1438
+///Operation Operation 5,1438
 num = 199;
-///Instruction Instruction 5,1439
+///Operation Operation 5,1439
 if (!DataModul.DB_FamilyTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -7218,7 +7218,7 @@ if (!DataModul.DB_FamilyTable.NoMatch)
 goto IL_1085;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1440
+///Operation Operation 5,1440
 else
 ///BlockStart Block 6,0
 {
@@ -7228,17 +7228,17 @@ goto IL_197c;
 }
 ///Label Label 5,1441 2
 IL_1085:
-///Instruction Instruction 5,1442
+///Operation Operation 5,1442
 num = 202;
-///Instruction Instruction 5,1443
+///Operation Operation 5,1443
 MainProject.Forms.Familie.Famles(Modul1.FamInArb);
 ///Goto Goto 5,1444 Dest:OK
 goto IL_1092;
 ///Label Label 5,1445 2
 IL_1092:
-///Instruction Instruction 5,1446
+///Operation Operation 5,1446
 num = 203;
-///Instruction Instruction 5,1447
+///Operation Operation 5,1447
 if (Modul1.Family.Mann > 0)
 ///BlockStart Block 6,0
 {
@@ -7246,7 +7246,7 @@ if (Modul1.Family.Mann > 0)
 goto IL_10aa;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1448
+///Operation Operation 5,1448
 else
 ///BlockStart Block 6,0
 {
@@ -7256,25 +7256,25 @@ goto IL_1140;
 }
 ///Label Label 5,1449 2
 IL_10aa:
-///Instruction Instruction 5,1450
+///Operation Operation 5,1450
 num = 204;
-///Instruction Instruction 5,1451
+///Operation Operation 5,1451
 Modul1.PersInArb = Modul1.Family.Mann;
 ///Goto Goto 5,1452 Dest:OK
 goto IL_10bb;
 ///Label Label 5,1453 2
 IL_10bb:
-///Instruction Instruction 5,1454
+///Operation Operation 5,1454
 num = 205;
-///Instruction Instruction 5,1455
+///Operation Operation 5,1455
 Modul1.Personlesen(Modul1.PersInArb);
 ///Goto Goto 5,1456 Dest:OK
 goto IL_10c8;
 ///Label Label 5,1457 2
 IL_10c8:
-///Instruction Instruction 5,1458
+///Operation Operation 5,1458
 num = 206;
-///Instruction Instruction 5,1459
+///Operation Operation 5,1459
 if (Modul1.Kont[0] != "")
 ///BlockStart Block 6,0
 {
@@ -7282,7 +7282,7 @@ if (Modul1.Kont[0] != "")
 goto IL_10ed;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1460
+///Operation Operation 5,1460
 else
 ///BlockStart Block 6,0
 {
@@ -7292,39 +7292,39 @@ goto IL_1108;
 }
 ///Label Label 5,1461 2
 IL_10ed:
-///Instruction Instruction 5,1462
+///Operation Operation 5,1462
 num = 207;
-///Instruction Instruction 5,1463
+///Operation Operation 5,1463
 StringType.MidStmtStr(ref sDest2, 1, 15, Modul1.Kont[0]);
 ///Goto Goto 5,1464 Dest:OK
 goto IL_1128;
 ///Label Label 5,1465 2
 IL_1108:
-///Instruction Instruction 5,1466
+///Operation Operation 5,1466
 num = 209;
 ///Goto Goto 5,1467 Dest:OK
 goto IL_1110;
 ///Label Label 5,1468 2
 IL_1110:
-///Instruction Instruction 5,1469
+///Operation Operation 5,1469
 num = 210;
-///Instruction Instruction 5,1470
+///Operation Operation 5,1470
 StringType.MidStmtStr(ref sDest2, 1, 15, ">NN<");
 ///Goto Goto 5,1471 Dest:OK
 goto IL_1128;
 ///Label Label 5,1472 3
 IL_1128:
-///Instruction Instruction 5,1473
+///Operation Operation 5,1473
 num = 212;
-///Instruction Instruction 5,1474
+///Operation Operation 5,1474
 StringType.MidStmtStr(ref sDest2, 16, 2, "/ ");
 ///Goto Goto 5,1475 Dest:OK
 goto IL_1140;
 ///Label Label 5,1476 3
 IL_1140:
-///Instruction Instruction 5,1477
+///Operation Operation 5,1477
 num = 214;
-///Instruction Instruction 5,1478
+///Operation Operation 5,1478
 if (Modul1.Family.Frau > 0)
 ///BlockStart Block 6,0
 {
@@ -7332,7 +7332,7 @@ if (Modul1.Family.Frau > 0)
 goto IL_1158;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1479
+///Operation Operation 5,1479
 else
 ///BlockStart Block 6,0
 {
@@ -7342,25 +7342,25 @@ goto IL_11d9;
 }
 ///Label Label 5,1480 2
 IL_1158:
-///Instruction Instruction 5,1481
+///Operation Operation 5,1481
 num = 215;
-///Instruction Instruction 5,1482
+///Operation Operation 5,1482
 Modul1.PersInArb = Modul1.Family.Frau;
 ///Goto Goto 5,1483 Dest:OK
 goto IL_1169;
 ///Label Label 5,1484 2
 IL_1169:
-///Instruction Instruction 5,1485
+///Operation Operation 5,1485
 num = 216;
-///Instruction Instruction 5,1486
+///Operation Operation 5,1486
 Modul1.Personlesen(Modul1.PersInArb);
 ///Goto Goto 5,1487 Dest:OK
 goto IL_1176;
 ///Label Label 5,1488 2
 IL_1176:
-///Instruction Instruction 5,1489
+///Operation Operation 5,1489
 num = 217;
-///Instruction Instruction 5,1490
+///Operation Operation 5,1490
 if (Modul1.Kont[0] != "")
 ///BlockStart Block 6,0
 {
@@ -7368,7 +7368,7 @@ if (Modul1.Kont[0] != "")
 goto IL_119b;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1491
+///Operation Operation 5,1491
 else
 ///BlockStart Block 6,0
 {
@@ -7378,31 +7378,31 @@ goto IL_11b7;
 }
 ///Label Label 5,1492 2
 IL_119b:
-///Instruction Instruction 5,1493
+///Operation Operation 5,1493
 num = 218;
-///Instruction Instruction 5,1494
+///Operation Operation 5,1494
 StringType.MidStmtStr(ref sDest2, 17, 15, Modul1.Kont[0]);
 ///Goto Goto 5,1495 Dest:OK
 goto IL_11d9;
 ///Label Label 5,1496 2
 IL_11b7:
-///Instruction Instruction 5,1497
+///Operation Operation 5,1497
 num = 220;
 ///Goto Goto 5,1498 Dest:OK
 goto IL_11bf;
 ///Label Label 5,1499 2
 IL_11bf:
-///Instruction Instruction 5,1500
+///Operation Operation 5,1500
 num = 221;
-///Instruction Instruction 5,1501
+///Operation Operation 5,1501
 StringType.MidStmtStr(ref sDest2, 17, 15, ">NN<");
 ///Goto Goto 5,1502 Dest:OK
 goto IL_11d9;
 ///Label Label 5,1503 4
 IL_11d9:
-///Instruction Instruction 5,1504
+///Operation Operation 5,1504
 num = 224;
-///Instruction Instruction 5,1505
+///Operation Operation 5,1505
 if (Modul1.Family.Kind[1] != 0)
 ///BlockStart Block 6,0
 {
@@ -7410,7 +7410,7 @@ if (Modul1.Family.Kind[1] != 0)
 goto IL_11f3;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1506
+///Operation Operation 5,1506
 else
 ///BlockStart Block 6,0
 {
@@ -7420,41 +7420,41 @@ goto IL_1210;
 }
 ///Label Label 5,1507 2
 IL_11f3:
-///Instruction Instruction 5,1508
+///Operation Operation 5,1508
 num = 225;
-///Instruction Instruction 5,1509
+///Operation Operation 5,1509
 StringType.MidStmtStr(ref sDest2, 32, 1, Modul1.IText[175]);
 ///Goto Goto 5,1510 Dest:OK
 goto IL_1210;
 ///Label Label 5,1511 3
 IL_1210:
-///Instruction Instruction 5,1512
+///Operation Operation 5,1512
 num = 227;
-///Instruction Instruction 5,1513
+///Operation Operation 5,1513
 DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.ArtNr);
 ///Goto Goto 5,1514 Dest:OK
 goto IL_1227;
 ///Label Label 5,1515 2
 IL_1227:
-///Instruction Instruction 5,1516
+///Operation Operation 5,1516
 num = 228;
-///Instruction Instruction 5,1517
+///Operation Operation 5,1517
 DataModul.DB_FamilyTable.Index = nameof(DataModul.FamilyIndex.Fam);
 ///Goto Goto 5,1518 Dest:OK
 goto IL_123e;
 ///Label Label 5,1519 2
 IL_123e:
-///Instruction Instruction 5,1520
+///Operation Operation 5,1520
 num = 229;
-///Instruction Instruction 5,1521
+///Operation Operation 5,1521
 DataModul.DB_FamilyTable.Seek("=", Modul1.FamInArb);
 ///Goto Goto 5,1522 Dest:OK
 goto IL_129b;
 ///Label Label 5,1523 2
 IL_129b:
-///Instruction Instruction 5,1524
+///Operation Operation 5,1524
 num = 230;
-///Instruction Instruction 5,1525
+///Operation Operation 5,1525
 if (!DataModul.DB_FamilyTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -7462,7 +7462,7 @@ if (!DataModul.DB_FamilyTable.NoMatch)
 goto IL_12b7;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1526
+///Operation Operation 5,1526
 else
 ///BlockStart Block 6,0
 {
@@ -7472,9 +7472,9 @@ goto IL_197c;
 }
 ///Label Label 5,1527 2
 IL_12b7:
-///Instruction Instruction 5,1528
+///Operation Operation 5,1528
 num = 233;
-///Instruction Instruction 5,1529
+///Operation Operation 5,1529
 if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value ==  -1))
 ///BlockStart Block 6,0
 {
@@ -7482,7 +7482,7 @@ if ((DataModul.DB_FamilyTable.Fields[nameof(DataModul.FamilyFields.Aeb)].Value =
 goto IL_12e9;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1530
+///Operation Operation 5,1530
 else
 ///BlockStart Block 6,0
 {
@@ -7492,41 +7492,41 @@ goto IL_1306;
 }
 ///Label Label 5,1531 2
 IL_12e9:
-///Instruction Instruction 5,1532
+///Operation Operation 5,1532
 num = 234;
-///Instruction Instruction 5,1533
+///Operation Operation 5,1533
 StringType.MidStmtStr(ref sDest2, 70, 1, Modul1.IText[175]);
 ///Goto Goto 5,1534 Dest:OK
 goto IL_1306;
 ///Label Label 5,1535 3
 IL_1306:
-///Instruction Instruction 5,1536
+///Operation Operation 5,1536
 num = 236;
-///Instruction Instruction 5,1537
+///Operation Operation 5,1537
 num15 = 500;
 ///Goto Goto 5,1538 Dest:OK
 goto IL_1313;
 ///Label Label 5,1539 3
 IL_1313:
-///Instruction Instruction 5,1540
+///Operation Operation 5,1540
 num = 237;
-///Instruction Instruction 5,1541
+///Operation Operation 5,1541
 Modul1.Ubg = num15;
 ///Goto Goto 5,1542 Dest:OK
 goto IL_1320;
 ///Label Label 5,1543 2
 IL_1320:
-///Instruction Instruction 5,1544
+///Operation Operation 5,1544
 num = 238;
-///Instruction Instruction 5,1545
+///Operation Operation 5,1545
 DataModul.DB_EventTable.Seek("=", Modul1.Ubg.AsString(), Modul1.FamInArb.AsString(), "0");
 ///Goto Goto 5,1546 Dest:OK
 goto IL_138c;
 ///Label Label 5,1547 2
 IL_138c:
-///Instruction Instruction 5,1548
+///Operation Operation 5,1548
 num = 239;
-///Instruction Instruction 5,1549
+///Operation Operation 5,1549
 if (!DataModul.DB_EventTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -7534,7 +7534,7 @@ if (!DataModul.DB_EventTable.NoMatch)
 goto IL_13a8;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1550
+///Operation Operation 5,1550
 else
 ///BlockStart Block 6,0
 {
@@ -7544,15 +7544,15 @@ goto IL_17ec;
 }
 ///Label Label 5,1551 2
 IL_13a8:
-///Instruction Instruction 5,1552
+///Operation Operation 5,1552
 num = 242;
-///Instruction Instruction 5,1553
+///Operation Operation 5,1553
 switch (Modul1.Ubg)
 ///BlockStart Block 6,0
 {
 ///Label Label 6,1
 case 500:
-///Instruction Instruction 6,2
+///Operation Operation 6,2
 break;
 ///Label Label 6,3
 case 501:
@@ -7588,9 +7588,9 @@ goto IL_13e2;
 }
 ///Label Label 5,1554 2
 IL_1743:
-///Instruction Instruction 5,1555
+///Operation Operation 5,1555
 num = 286;
-///Instruction Instruction 5,1556
+///Operation Operation 5,1556
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -7598,7 +7598,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_1775;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1557
+///Operation Operation 5,1557
 else
 ///BlockStart Block 6,0
 {
@@ -7608,17 +7608,17 @@ goto IL_1792;
 }
 ///Label Label 5,1558 2
 IL_1775:
-///Instruction Instruction 5,1559
+///Operation Operation 5,1559
 num = 287;
-///Instruction Instruction 5,1560
+///Operation Operation 5,1560
 StringType.MidStmtStr(ref sDest2, 65, 1, Modul1.IText[175]);
 ///Goto Goto 5,1561 Dest:OK
 goto IL_1792;
 ///Label Label 5,1562 3
 IL_1792:
-///Instruction Instruction 5,1563
+///Operation Operation 5,1563
 num = 289;
-///Instruction Instruction 5,1564
+///Operation Operation 5,1564
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -7626,7 +7626,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_17cd;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1565
+///Operation Operation 5,1565
 else
 ///BlockStart Block 6,0
 {
@@ -7636,17 +7636,17 @@ goto IL_17ec;
 }
 ///Label Label 5,1566 2
 IL_17cd:
-///Instruction Instruction 5,1567
+///Operation Operation 5,1567
 num = 290;
-///Instruction Instruction 5,1568
+///Operation Operation 5,1568
 StringType.MidStmtStr(ref sDest2, 66, 1, Modul1.IText[175]);
 ///Goto Goto 5,1569 Dest:OK
 goto IL_17ec;
 ///Label Label 5,1570 2
 IL_1696:
-///Instruction Instruction 5,1571
+///Operation Operation 5,1571
 num = 278;
-///Instruction Instruction 5,1572
+///Operation Operation 5,1572
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -7654,7 +7654,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_16c8;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1573
+///Operation Operation 5,1573
 else
 ///BlockStart Block 6,0
 {
@@ -7664,17 +7664,17 @@ goto IL_16e5;
 }
 ///Label Label 5,1574 2
 IL_16c8:
-///Instruction Instruction 5,1575
+///Operation Operation 5,1575
 num = 279;
-///Instruction Instruction 5,1576
+///Operation Operation 5,1576
 StringType.MidStmtStr(ref sDest2, 59, 1, Modul1.IText[175]);
 ///Goto Goto 5,1577 Dest:OK
 goto IL_16e5;
 ///Label Label 5,1578 3
 IL_16e5:
-///Instruction Instruction 5,1579
+///Operation Operation 5,1579
 num = 281;
-///Instruction Instruction 5,1580
+///Operation Operation 5,1580
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -7682,7 +7682,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_1720;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1581
+///Operation Operation 5,1581
 else
 ///BlockStart Block 6,0
 {
@@ -7692,17 +7692,17 @@ goto IL_17ec;
 }
 ///Label Label 5,1582 2
 IL_1720:
-///Instruction Instruction 5,1583
+///Operation Operation 5,1583
 num = 282;
-///Instruction Instruction 5,1584
+///Operation Operation 5,1584
 StringType.MidStmtStr(ref sDest2, 60, 1, Modul1.IText[175]);
 ///Goto Goto 5,1585 Dest:OK
 goto IL_17ec;
 ///Label Label 5,1586 2
 IL_15e9:
-///Instruction Instruction 5,1587
+///Operation Operation 5,1587
 num = 270;
-///Instruction Instruction 5,1588
+///Operation Operation 5,1588
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -7710,7 +7710,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_161b;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1589
+///Operation Operation 5,1589
 else
 ///BlockStart Block 6,0
 {
@@ -7720,17 +7720,17 @@ goto IL_1638;
 }
 ///Label Label 5,1590 2
 IL_161b:
-///Instruction Instruction 5,1591
+///Operation Operation 5,1591
 num = 271;
-///Instruction Instruction 5,1592
+///Operation Operation 5,1592
 StringType.MidStmtStr(ref sDest2, 54, 1, Modul1.IText[175]);
 ///Goto Goto 5,1593 Dest:OK
 goto IL_1638;
 ///Label Label 5,1594 3
 IL_1638:
-///Instruction Instruction 5,1595
+///Operation Operation 5,1595
 num = 273;
-///Instruction Instruction 5,1596
+///Operation Operation 5,1596
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -7738,7 +7738,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_1673;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1597
+///Operation Operation 5,1597
 else
 ///BlockStart Block 6,0
 {
@@ -7748,17 +7748,17 @@ goto IL_17ec;
 }
 ///Label Label 5,1598 2
 IL_1673:
-///Instruction Instruction 5,1599
+///Operation Operation 5,1599
 num = 274;
-///Instruction Instruction 5,1600
+///Operation Operation 5,1600
 StringType.MidStmtStr(ref sDest2, 55, 1, Modul1.IText[175]);
 ///Goto Goto 5,1601 Dest:OK
 goto IL_17ec;
 ///Label Label 5,1602 2
 IL_153c:
-///Instruction Instruction 5,1603
+///Operation Operation 5,1603
 num = 262;
-///Instruction Instruction 5,1604
+///Operation Operation 5,1604
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -7766,7 +7766,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_156e;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1605
+///Operation Operation 5,1605
 else
 ///BlockStart Block 6,0
 {
@@ -7776,17 +7776,17 @@ goto IL_158b;
 }
 ///Label Label 5,1606 2
 IL_156e:
-///Instruction Instruction 5,1607
+///Operation Operation 5,1607
 num = 263;
-///Instruction Instruction 5,1608
+///Operation Operation 5,1608
 StringType.MidStmtStr(ref sDest2, 48, 1, Modul1.IText[175]);
 ///Goto Goto 5,1609 Dest:OK
 goto IL_158b;
 ///Label Label 5,1610 3
 IL_158b:
-///Instruction Instruction 5,1611
+///Operation Operation 5,1611
 num = 265;
-///Instruction Instruction 5,1612
+///Operation Operation 5,1612
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -7794,7 +7794,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_15c6;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1613
+///Operation Operation 5,1613
 else
 ///BlockStart Block 6,0
 {
@@ -7804,17 +7804,17 @@ goto IL_17ec;
 }
 ///Label Label 5,1614 2
 IL_15c6:
-///Instruction Instruction 5,1615
+///Operation Operation 5,1615
 num = 266;
-///Instruction Instruction 5,1616
+///Operation Operation 5,1616
 StringType.MidStmtStr(ref sDest2, 49, 1, Modul1.IText[175]);
 ///Goto Goto 5,1617 Dest:OK
 goto IL_17ec;
 ///Label Label 5,1618 2
 IL_148f:
-///Instruction Instruction 5,1619
+///Operation Operation 5,1619
 num = 254;
-///Instruction Instruction 5,1620
+///Operation Operation 5,1620
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -7822,7 +7822,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_14c1;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1621
+///Operation Operation 5,1621
 else
 ///BlockStart Block 6,0
 {
@@ -7832,17 +7832,17 @@ goto IL_14de;
 }
 ///Label Label 5,1622 2
 IL_14c1:
-///Instruction Instruction 5,1623
+///Operation Operation 5,1623
 num = 255;
-///Instruction Instruction 5,1624
+///Operation Operation 5,1624
 StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
 ///Goto Goto 5,1625 Dest:OK
 goto IL_14de;
 ///Label Label 5,1626 3
 IL_14de:
-///Instruction Instruction 5,1627
+///Operation Operation 5,1627
 num = 257;
-///Instruction Instruction 5,1628
+///Operation Operation 5,1628
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -7850,7 +7850,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_1519;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1629
+///Operation Operation 5,1629
 else
 ///BlockStart Block 6,0
 {
@@ -7860,17 +7860,17 @@ goto IL_17ec;
 }
 ///Label Label 5,1630 2
 IL_1519:
-///Instruction Instruction 5,1631
+///Operation Operation 5,1631
 num = 258;
-///Instruction Instruction 5,1632
+///Operation Operation 5,1632
 StringType.MidStmtStr(ref sDest2, 43, 1, Modul1.IText[175]);
 ///Goto Goto 5,1633 Dest:OK
 goto IL_17ec;
 ///Label Label 5,1634 2
 IL_13e2:
-///Instruction Instruction 5,1635
+///Operation Operation 5,1635
 num = 246;
-///Instruction Instruction 5,1636
+///Operation Operation 5,1636
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -7878,7 +7878,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_1414;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1637
+///Operation Operation 5,1637
 else
 ///BlockStart Block 6,0
 {
@@ -7888,17 +7888,17 @@ goto IL_1431;
 }
 ///Label Label 5,1638 2
 IL_1414:
-///Instruction Instruction 5,1639
+///Operation Operation 5,1639
 num = 247;
-///Instruction Instruction 5,1640
+///Operation Operation 5,1640
 StringType.MidStmtStr(ref sDest2, 37, 1, Modul1.IText[175]);
 ///Goto Goto 5,1641 Dest:OK
 goto IL_1431;
 ///Label Label 5,1642 3
 IL_1431:
-///Instruction Instruction 5,1643
+///Operation Operation 5,1643
 num = 249;
-///Instruction Instruction 5,1644
+///Operation Operation 5,1644
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -7906,7 +7906,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_146c;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1645
+///Operation Operation 5,1645
 else
 ///BlockStart Block 6,0
 {
@@ -7916,31 +7916,31 @@ goto IL_17ec;
 }
 ///Label Label 5,1646 2
 IL_146c:
-///Instruction Instruction 5,1647
+///Operation Operation 5,1647
 num = 250;
-///Instruction Instruction 5,1648
+///Operation Operation 5,1648
 StringType.MidStmtStr(ref sDest2, 38, 1, Modul1.IText[175]);
 ///Goto Goto 5,1649 Dest:OK
 goto IL_17ec;
 ///Label Label 5,1650 15
 IL_17ec:
-///Instruction Instruction 5,1651
+///Operation Operation 5,1651
 num = 293;
-///Instruction Instruction 5,1652
+///Operation Operation 5,1652
 lErl = 54;
 ///Goto Goto 5,1653 Dest:OK
 goto IL_17f7;
 ///Label Label 5,1654 2
 IL_17f7:
-///Instruction Instruction 5,1655
+///Operation Operation 5,1655
 num = 294;
-///Instruction Instruction 5,1656
+///Operation Operation 5,1656
 num15 = (short)unchecked(num15 + 1);
-///Instruction Instruction 5,1657
+///Operation Operation 5,1657
 num18 = num15;
-///Instruction Instruction 5,1658
+///Operation Operation 5,1658
 num11 = 507;
-///Instruction Instruction 5,1659
+///Operation Operation 5,1659
 if (num18 <= num11)
 ///BlockStart Block 6,0
 {
@@ -7948,7 +7948,7 @@ if (num18 <= num11)
 goto IL_1313;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1660
+///Operation Operation 5,1660
 else
 ///BlockStart Block 6,0
 {
@@ -7958,25 +7958,25 @@ goto IL_1814;
 }
 ///Label Label 5,1661 2
 IL_1814:
-///Instruction Instruction 5,1662
+///Operation Operation 5,1662
 num = 295;
-///Instruction Instruction 5,1663
+///Operation Operation 5,1663
 lErl = 3;
 ///Goto Goto 5,1664 Dest:OK
 goto IL_181e;
 ///Label Label 5,1665 2
 IL_181e:
-///Instruction Instruction 5,1666
+///Operation Operation 5,1666
 num = 296;
-///Instruction Instruction 5,1667
+///Operation Operation 5,1667
 DataModul.DB_EventTable.Seek("=", 601.AsString(), Modul1.FamInArb.AsString(), "0");
 ///Goto Goto 5,1668 Dest:OK
 goto IL_188a;
 ///Label Label 5,1669 2
 IL_188a:
-///Instruction Instruction 5,1670
+///Operation Operation 5,1670
 num = 297;
-///Instruction Instruction 5,1671
+///Operation Operation 5,1671
 if (!DataModul.DB_EventTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -7984,7 +7984,7 @@ if (!DataModul.DB_EventTable.NoMatch)
 goto IL_18a7;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1672
+///Operation Operation 5,1672
 else
 ///BlockStart Block 6,0
 {
@@ -7994,9 +7994,9 @@ goto IL_1943;
 }
 ///Label Label 5,1673 2
 IL_18a7:
-///Instruction Instruction 5,1674
+///Operation Operation 5,1674
 num = 298;
-///Instruction Instruction 5,1675
+///Operation Operation 5,1675
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8004,7 +8004,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_18d9;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1676
+///Operation Operation 5,1676
 else
 ///BlockStart Block 6,0
 {
@@ -8014,17 +8014,17 @@ goto IL_18f0;
 }
 ///Label Label 5,1677 2
 IL_18d9:
-///Instruction Instruction 5,1678
+///Operation Operation 5,1678
 num = 299;
-///Instruction Instruction 5,1679
+///Operation Operation 5,1679
 StringType.MidStmtStr(ref sDest2, 75, 1, "J");
 ///Goto Goto 5,1680 Dest:OK
 goto IL_18f0;
 ///Label Label 5,1681 3
 IL_18f0:
-///Instruction Instruction 5,1682
+///Operation Operation 5,1682
 num = 301;
-///Instruction Instruction 5,1683
+///Operation Operation 5,1683
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -8032,7 +8032,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_192b;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1684
+///Operation Operation 5,1684
 else
 ///BlockStart Block 6,0
 {
@@ -8042,111 +8042,111 @@ goto IL_1943;
 }
 ///Label Label 5,1685 2
 IL_192b:
-///Instruction Instruction 5,1686
+///Operation Operation 5,1686
 num = 302;
-///Instruction Instruction 5,1687
+///Operation Operation 5,1687
 StringType.MidStmtStr(ref sDest2, 76, 1, "J");
 ///Goto Goto 5,1688 Dest:OK
 goto IL_1943;
 ///Label Label 5,1689 4
 IL_1943:
-///Instruction Instruction 5,1690
+///Operation Operation 5,1690
 num = 305;
-///Instruction Instruction 5,1691
+///Operation Operation 5,1691
 List1.Items.Add(new ListItem(sDest2 + "          " + Modul1.FamInArb.AsString()));
 ///Goto Goto 5,1692 Dest:OK
 goto IL_197c;
 ///Label Label 5,1693 4
 IL_197c:
-///Instruction Instruction 5,1694
+///Operation Operation 5,1694
 num = 306;
-///Instruction Instruction 5,1695
+///Operation Operation 5,1695
 lErl = 55;
 ///Goto Goto 5,1696 Dest:OK
 goto IL_1987;
 ///Label Label 5,1697 2
 IL_1987:
-///Instruction Instruction 5,1698
+///Operation Operation 5,1698
 num = 307;
-///Instruction Instruction 5,1699
+///Operation Operation 5,1699
 I1++;
 ///Goto Goto 5,1700 Dest:OK
 goto IL_199d;
 ///Label Label 5,1701 2
 IL_01d7:
-///Instruction Instruction 5,1702
+///Operation Operation 5,1702
 num = 35;
-///Instruction Instruction 5,1703
+///Operation Operation 5,1703
 List1.Items.Clear();
 ///Goto Goto 5,1704 Dest:OK
 goto IL_01ec;
 ///Label Label 5,1705 2
 IL_01ec:
-///Instruction Instruction 5,1706
+///Operation Operation 5,1706
 num = 36;
-///Instruction Instruction 5,1707
+///Operation Operation 5,1707
 Label1[2].Text = "Fehlliste Personen";
 ///Goto Goto 5,1708 Dest:OK
 goto IL_0207;
 ///Label Label 5,1709 2
 IL_0207:
-///Instruction Instruction 5,1710
+///Operation Operation 5,1710
 num = 37;
-///Instruction Instruction 5,1711
+///Operation Operation 5,1711
 Label1[1].Text = Modul1.IText[166];
 ///Goto Goto 5,1712 Dest:OK
 goto IL_0228;
 ///Label Label 5,1713 2
 IL_0228:
-///Instruction Instruction 5,1714
+///Operation Operation 5,1714
 num = 38;
-///Instruction Instruction 5,1715
+///Operation Operation 5,1715
 Label1[0].Text = Modul1.IText[167];
 ///Goto Goto 5,1716 Dest:OK
 goto IL_0249;
 ///Label Label 5,1717 2
 IL_0249:
-///Instruction Instruction 5,1718
+///Operation Operation 5,1718
 num = 39;
-///Instruction Instruction 5,1719
+///Operation Operation 5,1719
 Label1[1].Text = Label1[1].Text + " Quelle";
 ///Goto Goto 5,1720 Dest:OK
 goto IL_027a;
 ///Label Label 5,1721 2
 IL_027a:
-///Instruction Instruction 5,1722
+///Operation Operation 5,1722
 num = 40;
-///Instruction Instruction 5,1723
+///Operation Operation 5,1723
 Label1[0].Text = Label1[0].Text + "    T V";
 ///Goto Goto 5,1724 Dest:OK
 goto IL_02ab;
 ///Label Label 5,1725 2
 IL_02ab:
-///Instruction Instruction 5,1726
+///Operation Operation 5,1726
 num = 41;
-///Instruction Instruction 5,1727
+///Operation Operation 5,1727
 I1 = 0;
 ///Goto Goto 5,1728 Dest:OK
 goto IL_02b6;
 ///Label Label 5,1729 3
 IL_02b6:
-///Instruction Instruction 5,1730
+///Operation Operation 5,1730
 num = 42;
-///Instruction Instruction 5,1731
+///Operation Operation 5,1731
 Label1[(short)I1].Refresh();
 ///Goto Goto 5,1732 Dest:OK
 goto IL_02d2;
 ///Label Label 5,1733 2
 IL_02d2:
-///Instruction Instruction 5,1734
+///Operation Operation 5,1734
 num = 43;
-///Instruction Instruction 5,1735
+///Operation Operation 5,1735
 I1++;
-///Instruction Instruction 5,1736
+///Operation Operation 5,1736
 i14 = I1;
-///Instruction Instruction 5,1737
+///Operation Operation 5,1737
 num5 = 2;
-///Instruction Instruction 5,1738
+///Operation Operation 5,1738
 if (i14 <= num5)
 ///BlockStart Block 6,0
 {
@@ -8154,7 +8154,7 @@ if (i14 <= num5)
 goto IL_02b6;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1739
+///Operation Operation 5,1739
 else
 ///BlockStart Block 6,0
 {
@@ -8164,17 +8164,17 @@ goto IL_02f2;
 }
 ///Label Label 5,1740 2
 IL_02f2:
-///Instruction Instruction 5,1741
+///Operation Operation 5,1741
 num = 44;
-///Instruction Instruction 5,1742
+///Operation Operation 5,1742
 num7 = 1;
 ///Goto Goto 5,1743 Dest:OK
 goto IL_02f9;
 ///Label Label 5,1744 2
 IL_02f9:
-///Instruction Instruction 5,1745
+///Operation Operation 5,1745
 num = 45;
-///Instruction Instruction 5,1746
+///Operation Operation 5,1746
 if (num7 <= 0)
 ///BlockStart Block 6,0
 {
@@ -8186,33 +8186,33 @@ goto end_IL_0001_2;
 goto IL_0311;
 ///Label Label 5,1748 2
 IL_0311:
-///Instruction Instruction 5,1749
+///Operation Operation 5,1749
 num = 48;
-///Instruction Instruction 5,1750
+///Operation Operation 5,1750
 DataModul.DB_PersonTable.Index = nameof(DataModul.PersonIndex.PerNr);
 ///Goto Goto 5,1751 Dest:OK
 goto IL_0325;
 ///Label Label 5,1752 2
 IL_0325:
-///Instruction Instruction 5,1753
+///Operation Operation 5,1753
 num = 49;
-///Instruction Instruction 5,1754
+///Operation Operation 5,1754
 DataModul.DB_PersonTable.MoveLast();
 ///Goto Goto 5,1755 Dest:OK
 goto IL_0335;
 ///Label Label 5,1756 2
 IL_0335:
-///Instruction Instruction 5,1757
+///Operation Operation 5,1757
 num = 50;
-///Instruction Instruction 5,1758
+///Operation Operation 5,1758
 num8 = DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsInt();
 ///Goto Goto 5,1759 Dest:OK
 goto IL_0359;
 ///Label Label 5,1760 2
 IL_0359:
-///Instruction Instruction 5,1761
+///Operation Operation 5,1761
 num = 51;
-///Instruction Instruction 5,1762
+///Operation Operation 5,1762
 if (num7 == 0)
 ///BlockStart Block 6,0
 {
@@ -8224,9 +8224,9 @@ goto end_IL_0001_2;
 goto IL_036e;
 ///Label Label 5,1764 2
 IL_036e:
-///Instruction Instruction 5,1765
+///Operation Operation 5,1765
 num = 54;
-///Instruction Instruction 5,1766
+///Operation Operation 5,1766
 if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value))
 ///BlockStart Block 6,0
 {
@@ -8234,7 +8234,7 @@ if ((num7 > DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr
 goto IL_039e;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1767
+///Operation Operation 5,1767
 else
 ///BlockStart Block 6,0
 {
@@ -8244,71 +8244,71 @@ goto IL_03dd;
 }
 ///Label Label 5,1768 2
 IL_039e:
-///Instruction Instruction 5,1769
+///Operation Operation 5,1769
 num = 55;
-///Instruction Instruction 5,1770
+///Operation Operation 5,1770
 Interaction.MsgBox("Die höchste Personennummer ist " + DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.PersNr)].Value.AsString());
 ///Goto Goto 5,1771 Dest:OK
 goto end_IL_0001_2;
 ///Label Label 5,1772 2
 IL_03dd:
-///Instruction Instruction 5,1773
+///Operation Operation 5,1773
 num = 58;
-///Instruction Instruction 5,1774
+///Operation Operation 5,1774
 ProgressBar1.Minimum = 0;
 ///Goto Goto 5,1775 Dest:OK
 goto IL_03ee;
 ///Label Label 5,1776 2
 IL_03ee:
-///Instruction Instruction 5,1777
+///Operation Operation 5,1777
 num = 59;
-///Instruction Instruction 5,1778
+///Operation Operation 5,1778
 ProgressBar1.Maximum = 0;
 ///Goto Goto 5,1779 Dest:OK
 goto IL_03ff;
 ///Label Label 5,1780 2
 IL_03ff:
-///Instruction Instruction 5,1781
+///Operation Operation 5,1781
 num = 60;
-///Instruction Instruction 5,1782
+///Operation Operation 5,1782
 ProgressBar1.Step = 1;
 ///Goto Goto 5,1783 Dest:OK
 goto IL_0410;
 ///Label Label 5,1784 2
 IL_0410:
-///Instruction Instruction 5,1785
+///Operation Operation 5,1785
 num = 61;
-///Instruction Instruction 5,1786
+///Operation Operation 5,1786
 ProgressBar1.Maximum = DataModul.DB_PersonTable.RecordCount - 1;
 ///Goto Goto 5,1787 Dest:OK
 goto IL_042c;
 ///Label Label 5,1788 2
 IL_042c:
-///Instruction Instruction 5,1789
+///Operation Operation 5,1789
 num = 62;
-///Instruction Instruction 5,1790
+///Operation Operation 5,1790
 List1.Items.Clear();
 ///Goto Goto 5,1791 Dest:OK
 goto IL_0441;
 ///Label Label 5,1792 2
 IL_0441:
-///Instruction Instruction 5,1793
+///Operation Operation 5,1793
 num = 63;
-///Instruction Instruction 5,1794
+///Operation Operation 5,1794
 i15 = num7;
-///Instruction Instruction 5,1795
+///Operation Operation 5,1795
 num19 = num8;
-///Instruction Instruction 5,1796
+///Operation Operation 5,1796
 I1 = i15;
 ///Goto Goto 5,1797 Dest:OK
 goto IL_0ca1;
 ///Label Label 5,1798 2
 IL_0ca1:
-///Instruction Instruction 5,1799
+///Operation Operation 5,1799
 i16 = I1;
-///Instruction Instruction 5,1800
+///Operation Operation 5,1800
 num5 = num19;
-///Instruction Instruction 5,1801
+///Operation Operation 5,1801
 if (i16 <= num5)
 ///BlockStart Block 6,0
 {
@@ -8316,7 +8316,7 @@ if (i16 <= num5)
 goto IL_0456;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1802
+///Operation Operation 5,1802
 else
 ///BlockStart Block 6,0
 {
@@ -8326,41 +8326,41 @@ goto IL_0cb2;
 }
 ///Label Label 5,1803 2
 IL_0cb2:
-///Instruction Instruction 5,1804
+///Operation Operation 5,1804
 num = 156;
-///Instruction Instruction 5,1805
+///Operation Operation 5,1805
 Label4.Text = List1.Items.Count.AsString() + " Einträge";
 ///Goto Goto 5,1806 Dest:OK
 goto IL_448a;
 ///Label Label 5,1807 2
 IL_0456:
-///Instruction Instruction 5,1808
+///Operation Operation 5,1808
 num = 64;
-///Instruction Instruction 5,1809
+///Operation Operation 5,1809
 ProgressBar1.PerformStep();
 ///Goto Goto 5,1810 Dest:OK
 goto IL_0466;
 ///Label Label 5,1811 2
 IL_0466:
-///Instruction Instruction 5,1812
+///Operation Operation 5,1812
 num = 65;
-///Instruction Instruction 5,1813
+///Operation Operation 5,1813
 Application.DoEvents();
 ///Goto Goto 5,1814 Dest:OK
 goto IL_0470;
 ///Label Label 5,1815 2
 IL_0470:
-///Instruction Instruction 5,1816
+///Operation Operation 5,1816
 num = 66;
-///Instruction Instruction 5,1817
+///Operation Operation 5,1817
 Modul1.PersInArb = I1;
 ///Goto Goto 5,1818 Dest:OK
 goto IL_047f;
 ///Label Label 5,1819 2
 IL_047f:
-///Instruction Instruction 5,1820
+///Operation Operation 5,1820
 num = 67;
-///Instruction Instruction 5,1821
+///Operation Operation 5,1821
 if (Modul1.PersInArb <= num8)
 ///BlockStart Block 6,0
 {
@@ -8368,7 +8368,7 @@ if (Modul1.PersInArb <= num8)
 goto IL_0497;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1822
+///Operation Operation 5,1822
 else
 ///BlockStart Block 6,0
 {
@@ -8378,17 +8378,17 @@ goto IL_448a;
 }
 ///Label Label 5,1823 14
 IL_448a:
-///Instruction Instruction 5,1824
+///Operation Operation 5,1824
 num = 781;
-///Instruction Instruction 5,1825
+///Operation Operation 5,1825
 lErl = 4;
 ///Goto Goto 5,1826 Dest:OK
 goto IL_4494;
 ///Label Label 5,1827 2
 IL_4494:
-///Instruction Instruction 5,1828
+///Operation Operation 5,1828
 num = 782;
-///Instruction Instruction 5,1829
+///Operation Operation 5,1829
 if (!RadioButton2.Checked)
 ///BlockStart Block 6,0
 {
@@ -8400,39 +8400,39 @@ goto end_IL_0001_2;
 goto IL_44ac;
 ///Label Label 5,1831 2
 IL_44ac:
-///Instruction Instruction 5,1832
+///Operation Operation 5,1832
 num = 783;
-///Instruction Instruction 5,1833
+///Operation Operation 5,1833
 List1.Items.Add("Ende der Liste");
 ///Goto Goto 5,1834 Dest:OK
 goto IL_44c9;
 ///Label Label 5,1835 2
 IL_44c9:
-///Instruction Instruction 5,1836
+///Operation Operation 5,1836
 num = 784;
-///Instruction Instruction 5,1837
+///Operation Operation 5,1837
 Modul1.I = 1;
 ///Goto Goto 5,1838 Dest:OK
 goto IL_44d6;
 ///Label Label 5,1839 3
 IL_44d6:
-///Instruction Instruction 5,1840
+///Operation Operation 5,1840
 num = 785;
-///Instruction Instruction 5,1841
+///Operation Operation 5,1841
 List1.Items.Add("");
 ///Goto Goto 5,1842 Dest:OK
 goto IL_44f3;
 ///Label Label 5,1843 2
 IL_44f3:
-///Instruction Instruction 5,1844
+///Operation Operation 5,1844
 num = 786;
-///Instruction Instruction 5,1845
+///Operation Operation 5,1845
 Modul1.I++;
-///Instruction Instruction 5,1846
+///Operation Operation 5,1846
 i17 = Modul1.I;
-///Instruction Instruction 5,1847
+///Operation Operation 5,1847
 num5 = 17;
-///Instruction Instruction 5,1848
+///Operation Operation 5,1848
 if (i17 > num5)
 ///BlockStart Block 6,0
 {
@@ -8444,17 +8444,17 @@ goto end_IL_0001_2;
 goto IL_44d6;
 ///Label Label 5,1850 2
 IL_0497:
-///Instruction Instruction 5,1851
+///Operation Operation 5,1851
 num = 70;
-///Instruction Instruction 5,1852
+///Operation Operation 5,1852
 DataModul.DB_PersonTable.Seek("=", Modul1.PersInArb.AsString());
 ///Goto Goto 5,1853 Dest:OK
 goto IL_04f6;
 ///Label Label 5,1854 2
 IL_04f6:
-///Instruction Instruction 5,1855
+///Operation Operation 5,1855
 num = 71;
-///Instruction Instruction 5,1856
+///Operation Operation 5,1856
 if (!DataModul.DB_PersonTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -8462,7 +8462,7 @@ if (!DataModul.DB_PersonTable.NoMatch)
 goto IL_050f;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1857
+///Operation Operation 5,1857
 else
 ///BlockStart Block 6,0
 {
@@ -8472,63 +8472,63 @@ goto IL_0c81;
 }
 ///Label Label 5,1858 2
 IL_050f:
-///Instruction Instruction 5,1859
+///Operation Operation 5,1859
 num = 74;
-///Instruction Instruction 5,1860
+///Operation Operation 5,1860
 Modul1.Personlesen(Modul1.PersInArb);
 ///Goto Goto 5,1861 Dest:OK
 goto IL_0519;
 ///Label Label 5,1862 2
 IL_0519:
-///Instruction Instruction 5,1863
+///Operation Operation 5,1863
 num = 75;
-///Instruction Instruction 5,1864
+///Operation Operation 5,1864
 Modul1.LiText = Strings.Left((Modul1.Kont[0]).Trim() + "," + (Modul1.Kont[3]).Trim() + "                                  ", 20);
 ///Goto Goto 5,1865 Dest:OK
 goto IL_0550;
 ///Label Label 5,1866 2
 IL_0550:
-///Instruction Instruction 5,1867
+///Operation Operation 5,1867
 num = 76;
-///Instruction Instruction 5,1868
+///Operation Operation 5,1868
 Modul1.Schalt = 20;
 ///Goto Goto 5,1869 Dest:OK
 goto IL_055b;
 ///Label Label 5,1870 2
 IL_055b:
-///Instruction Instruction 5,1871
+///Operation Operation 5,1871
 num = 77;
-///Instruction Instruction 5,1872
+///Operation Operation 5,1872
 T = 1;
 ///Goto Goto 5,1873 Dest:OK
 goto IL_0566;
 ///Label Label 5,1874 3
 IL_0566:
-///Instruction Instruction 5,1875
+///Operation Operation 5,1875
 num = 78;
-///Instruction Instruction 5,1876
+///Operation Operation 5,1876
 Modul1.Kont[T + 10] = " ";
 ///Goto Goto 5,1877 Dest:OK
 goto IL_057f;
 ///Label Label 5,1878 2
 IL_057f:
-///Instruction Instruction 5,1879
+///Operation Operation 5,1879
 num = 79;
-///Instruction Instruction 5,1880
+///Operation Operation 5,1880
 Modul1.Kont[T + 20] = " ";
 ///Goto Goto 5,1881 Dest:OK
 goto IL_0598;
 ///Label Label 5,1882 2
 IL_0598:
-///Instruction Instruction 5,1883
+///Operation Operation 5,1883
 num = 80;
-///Instruction Instruction 5,1884
+///Operation Operation 5,1884
 T = (short)unchecked(T + 1);
-///Instruction Instruction 5,1885
+///Operation Operation 5,1885
 t2 = T;
-///Instruction Instruction 5,1886
+///Operation Operation 5,1886
 num11 = 10;
-///Instruction Instruction 5,1887
+///Operation Operation 5,1887
 if (t2 <= num11)
 ///BlockStart Block 6,0
 {
@@ -8536,7 +8536,7 @@ if (t2 <= num11)
 goto IL_0566;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1888
+///Operation Operation 5,1888
 else
 ///BlockStart Block 6,0
 {
@@ -8546,81 +8546,81 @@ goto IL_05ba;
 }
 ///Label Label 5,1889 2
 IL_05ba:
-///Instruction Instruction 5,1890
+///Operation Operation 5,1890
 num = 81;
-///Instruction Instruction 5,1891
+///Operation Operation 5,1891
 Modul1.Datles();
 ///Goto Goto 5,1892 Dest:OK
 goto IL_05c4;
 ///Label Label 5,1893 2
 IL_05c4:
-///Instruction Instruction 5,1894
+///Operation Operation 5,1894
 num = 82;
-///Instruction Instruction 5,1895
+///Operation Operation 5,1895
 sDest2 = "                                                                            ";
 ///Goto Goto 5,1896 Dest:OK
 goto IL_05cf;
 ///Label Label 5,1897 2
 IL_05cf:
-///Instruction Instruction 5,1898
+///Operation Operation 5,1898
 num = 83;
-///Instruction Instruction 5,1899
+///Operation Operation 5,1899
 StringType.MidStmtStr(ref sDest2, 2, 2, Modul1.Kont[11] + Modul1.Kont[21]);
 ///Goto Goto 5,1900 Dest:OK
 goto IL_05f2;
 ///Label Label 5,1901 2
 IL_05f2:
-///Instruction Instruction 5,1902
+///Operation Operation 5,1902
 num = 84;
-///Instruction Instruction 5,1903
+///Operation Operation 5,1903
 StringType.MidStmtStr(ref sDest2, 8, 2, Modul1.Kont[12] + Modul1.Kont[22]);
 ///Goto Goto 5,1904 Dest:OK
 goto IL_0615;
 ///Label Label 5,1905 2
 IL_0615:
-///Instruction Instruction 5,1906
+///Operation Operation 5,1906
 num = 85;
-///Instruction Instruction 5,1907
+///Operation Operation 5,1907
 StringType.MidStmtStr(ref sDest2, 17, 2, Modul1.Kont[13] + Modul1.Kont[23]);
 ///Goto Goto 5,1908 Dest:OK
 goto IL_0639;
 ///Label Label 5,1909 2
 IL_0639:
-///Instruction Instruction 5,1910
+///Operation Operation 5,1910
 num = 86;
-///Instruction Instruction 5,1911
+///Operation Operation 5,1911
 StringType.MidStmtStr(ref sDest2, 27, 2, Modul1.Kont[14] + Modul1.Kont[24]);
 ///Goto Goto 5,1912 Dest:OK
 goto IL_065d;
 ///Label Label 5,1913 2
 IL_065d:
-///Instruction Instruction 5,1914
+///Operation Operation 5,1914
 num = 87;
-///Instruction Instruction 5,1915
+///Operation Operation 5,1915
 num12 = 300;
 ///Goto Goto 5,1916 Dest:OK
 goto IL_0667;
 ///Label Label 5,1917 3
 IL_0667:
-///Instruction Instruction 5,1918
+///Operation Operation 5,1918
 num = 88;
-///Instruction Instruction 5,1919
+///Operation Operation 5,1919
 DataModul.DB_EventTable.Index = nameof(DataModul.EventIndex.BeSu);
 ///Goto Goto 5,1920 Dest:OK
 goto IL_067b;
 ///Label Label 5,1921 2
 IL_067b:
-///Instruction Instruction 5,1922
+///Operation Operation 5,1922
 num = 89;
-///Instruction Instruction 5,1923
+///Operation Operation 5,1923
 DataModul.DB_EventTable.Seek("=", num12, Modul1.PersInArb.AsString());
 ///Goto Goto 5,1924 Dest:OK
 goto IL_06db;
 ///Label Label 5,1925 2
 IL_06db:
-///Instruction Instruction 5,1926
+///Operation Operation 5,1926
 num = 90;
-///Instruction Instruction 5,1927
+///Operation Operation 5,1927
 if (!DataModul.DB_EventTable.NoMatch)
 ///BlockStart Block 6,0
 {
@@ -8628,7 +8628,7 @@ if (!DataModul.DB_EventTable.NoMatch)
 goto IL_06f4;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1928
+///Operation Operation 5,1928
 else
 ///BlockStart Block 6,0
 {
@@ -8638,15 +8638,15 @@ goto IL_0ac2;
 }
 ///Label Label 5,1929 2
 IL_06f4:
-///Instruction Instruction 5,1930
+///Operation Operation 5,1930
 num = 93;
-///Instruction Instruction 5,1931
+///Operation Operation 5,1931
 switch (num12)
 ///BlockStart Block 6,0
 {
 ///Label Label 6,1
 case 300:
-///Instruction Instruction 6,2
+///Operation Operation 6,2
 break;
 ///Label Label 6,3
 case 301:
@@ -8670,9 +8670,9 @@ goto IL_071b;
 }
 ///Label Label 5,1932 2
 IL_0981:
-///Instruction Instruction 5,1933
+///Operation Operation 5,1933
 num = 125;
-///Instruction Instruction 5,1934
+///Operation Operation 5,1934
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8680,7 +8680,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() 
 goto IL_09b0;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1935
+///Operation Operation 5,1935
 else
 ///BlockStart Block 6,0
 {
@@ -8690,17 +8690,17 @@ goto IL_09ca;
 }
 ///Label Label 5,1936 2
 IL_09b0:
-///Instruction Instruction 5,1937
+///Operation Operation 5,1937
 num = 126;
-///Instruction Instruction 5,1938
+///Operation Operation 5,1938
 StringType.MidStmtStr(ref sDest2, 50, 1, Modul1.IText[175]);
 ///Goto Goto 5,1939 Dest:OK
 goto IL_09ca;
 ///Label Label 5,1940 3
 IL_09ca:
-///Instruction Instruction 5,1941
+///Operation Operation 5,1941
 num = 128;
-///Instruction Instruction 5,1942
+///Operation Operation 5,1942
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8708,7 +8708,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_09fc;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1943
+///Operation Operation 5,1943
 else
 ///BlockStart Block 6,0
 {
@@ -8718,17 +8718,17 @@ goto IL_0a19;
 }
 ///Label Label 5,1944 2
 IL_09fc:
-///Instruction Instruction 5,1945
+///Operation Operation 5,1945
 num = 129;
-///Instruction Instruction 5,1946
+///Operation Operation 5,1946
 StringType.MidStmtStr(ref sDest2, 51, 1, Modul1.IText[175]);
 ///Goto Goto 5,1947 Dest:OK
 goto IL_0a19;
 ///Label Label 5,1948 3
 IL_0a19:
-///Instruction Instruction 5,1949
+///Operation Operation 5,1949
 num = 131;
-///Instruction Instruction 5,1950
+///Operation Operation 5,1950
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8736,7 +8736,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt(
 goto IL_0a4b;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1951
+///Operation Operation 5,1951
 else
 ///BlockStart Block 6,0
 {
@@ -8746,17 +8746,17 @@ goto IL_0a68;
 }
 ///Label Label 5,1952 2
 IL_0a4b:
-///Instruction Instruction 5,1953
+///Operation Operation 5,1953
 num = 132;
-///Instruction Instruction 5,1954
+///Operation Operation 5,1954
 StringType.MidStmtStr(ref sDest2, 52, 1, Modul1.IText[175]);
 ///Goto Goto 5,1955 Dest:OK
 goto IL_0a68;
 ///Label Label 5,1956 3
 IL_0a68:
-///Instruction Instruction 5,1957
+///Operation Operation 5,1957
 num = 134;
-///Instruction Instruction 5,1958
+///Operation Operation 5,1958
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -8764,7 +8764,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_0aa3;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1959
+///Operation Operation 5,1959
 else
 ///BlockStart Block 6,0
 {
@@ -8774,17 +8774,17 @@ goto IL_0ac2;
 }
 ///Label Label 5,1960 2
 IL_0aa3:
-///Instruction Instruction 5,1961
+///Operation Operation 5,1961
 num = 135;
-///Instruction Instruction 5,1962
+///Operation Operation 5,1962
 StringType.MidStmtStr(ref sDest2, 53, 1, Modul1.IText[175]);
 ///Goto Goto 5,1963 Dest:OK
 goto IL_0ac2;
 ///Label Label 5,1964 2
 IL_084e:
-///Instruction Instruction 5,1965
+///Operation Operation 5,1965
 num = 111;
-///Instruction Instruction 5,1966
+///Operation Operation 5,1966
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8792,7 +8792,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() 
 goto IL_087d;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1967
+///Operation Operation 5,1967
 else
 ///BlockStart Block 6,0
 {
@@ -8802,17 +8802,17 @@ goto IL_0897;
 }
 ///Label Label 5,1968 2
 IL_087d:
-///Instruction Instruction 5,1969
+///Operation Operation 5,1969
 num = 112;
-///Instruction Instruction 5,1970
+///Operation Operation 5,1970
 StringType.MidStmtStr(ref sDest2, 42, 1, Modul1.IText[175]);
 ///Goto Goto 5,1971 Dest:OK
 goto IL_0897;
 ///Label Label 5,1972 3
 IL_0897:
-///Instruction Instruction 5,1973
+///Operation Operation 5,1973
 num = 114;
-///Instruction Instruction 5,1974
+///Operation Operation 5,1974
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8820,7 +8820,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_08c6;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1975
+///Operation Operation 5,1975
 else
 ///BlockStart Block 6,0
 {
@@ -8830,17 +8830,17 @@ goto IL_08e0;
 }
 ///Label Label 5,1976 2
 IL_08c6:
-///Instruction Instruction 5,1977
+///Operation Operation 5,1977
 num = 115;
-///Instruction Instruction 5,1978
+///Operation Operation 5,1978
 StringType.MidStmtStr(ref sDest2, 44, 1, Modul1.IText[175]);
 ///Goto Goto 5,1979 Dest:OK
 goto IL_08e0;
 ///Label Label 5,1980 3
 IL_08e0:
-///Instruction Instruction 5,1981
+///Operation Operation 5,1981
 num = 117;
-///Instruction Instruction 5,1982
+///Operation Operation 5,1982
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8848,7 +8848,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt(
 goto IL_090f;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1983
+///Operation Operation 5,1983
 else
 ///BlockStart Block 6,0
 {
@@ -8858,17 +8858,17 @@ goto IL_0929;
 }
 ///Label Label 5,1984 2
 IL_090f:
-///Instruction Instruction 5,1985
+///Operation Operation 5,1985
 num = 118;
-///Instruction Instruction 5,1986
+///Operation Operation 5,1986
 StringType.MidStmtStr(ref sDest2, 45, 1, Modul1.IText[175]);
 ///Goto Goto 5,1987 Dest:OK
 goto IL_0929;
 ///Label Label 5,1988 3
 IL_0929:
-///Instruction Instruction 5,1989
+///Operation Operation 5,1989
 num = 120;
-///Instruction Instruction 5,1990
+///Operation Operation 5,1990
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -8876,7 +8876,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_0961;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1991
+///Operation Operation 5,1991
 else
 ///BlockStart Block 6,0
 {
@@ -8886,17 +8886,17 @@ goto IL_0ac2;
 }
 ///Label Label 5,1992 2
 IL_0961:
-///Instruction Instruction 5,1993
+///Operation Operation 5,1993
 num = 121;
-///Instruction Instruction 5,1994
+///Operation Operation 5,1994
 StringType.MidStmtStr(ref sDest2, 46, 1, Modul1.IText[175]);
 ///Goto Goto 5,1995 Dest:OK
 goto IL_0ac2;
 ///Label Label 5,1996 2
 IL_071b:
-///Instruction Instruction 5,1997
+///Operation Operation 5,1997
 num = 97;
-///Instruction Instruction 5,1998
+///Operation Operation 5,1998
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8904,7 +8904,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.KBem)].AsInt() 
 goto IL_074a;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,1999
+///Operation Operation 5,1999
 else
 ///BlockStart Block 6,0
 {
@@ -8914,17 +8914,17 @@ goto IL_0764;
 }
 ///Label Label 5,2000 2
 IL_074a:
-///Instruction Instruction 5,2001
+///Operation Operation 5,2001
 num = 98;
-///Instruction Instruction 5,2002
+///Operation Operation 5,2002
 StringType.MidStmtStr(ref sDest2, 34, 1, Modul1.IText[175]);
 ///Goto Goto 5,2003 Dest:OK
 goto IL_0764;
 ///Label Label 5,2004 3
 IL_0764:
-///Instruction Instruction 5,2005
+///Operation Operation 5,2005
 num = 100;
-///Instruction Instruction 5,2006
+///Operation Operation 5,2006
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8932,7 +8932,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumV)].AsInt(
 goto IL_0793;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,2007
+///Operation Operation 5,2007
 else
 ///BlockStart Block 6,0
 {
@@ -8942,17 +8942,17 @@ goto IL_07ad;
 }
 ///Label Label 5,2008 2
 IL_0793:
-///Instruction Instruction 5,2009
+///Operation Operation 5,2009
 num = 101;
-///Instruction Instruction 5,2010
+///Operation Operation 5,2010
 StringType.MidStmtStr(ref sDest2, 36, 1, Modul1.IText[175]);
 ///Goto Goto 5,2011 Dest:OK
 goto IL_07ad;
 ///Label Label 5,2012 3
 IL_07ad:
-///Instruction Instruction 5,2013
+///Operation Operation 5,2013
 num = 103;
-///Instruction Instruction 5,2014
+///Operation Operation 5,2014
 if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt() >0))
 ///BlockStart Block 6,0
 {
@@ -8960,7 +8960,7 @@ if ((DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.DatumB)].AsInt(
 goto IL_07dc;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,2015
+///Operation Operation 5,2015
 else
 ///BlockStart Block 6,0
 {
@@ -8970,17 +8970,17 @@ goto IL_07f6;
 }
 ///Label Label 5,2016 2
 IL_07dc:
-///Instruction Instruction 5,2017
+///Operation Operation 5,2017
 num = 104;
-///Instruction Instruction 5,2018
+///Operation Operation 5,2018
 StringType.MidStmtStr(ref sDest2, 37, 1, Modul1.IText[175]);
 ///Goto Goto 5,2019 Dest:OK
 goto IL_07f6;
 ///Label Label 5,2020 3
 IL_07f6:
-///Instruction Instruction 5,2021
+///Operation Operation 5,2021
 num = 106;
-///Instruction Instruction 5,2022
+///Operation Operation 5,2022
 if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.Ort)].Value) > 0.0)
 ///BlockStart Block 6,0
 {
@@ -8988,7 +8988,7 @@ if (Conversion.Val(DataModul.DB_EventTable.Fields[nameof(DataModul.EventFields.O
 goto IL_082e;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,2023
+///Operation Operation 5,2023
 else
 ///BlockStart Block 6,0
 {
@@ -8998,31 +8998,31 @@ goto IL_0ac2;
 }
 ///Label Label 5,2024 2
 IL_082e:
-///Instruction Instruction 5,2025
+///Operation Operation 5,2025
 num = 107;
-///Instruction Instruction 5,2026
+///Operation Operation 5,2026
 StringType.MidStmtStr(ref sDest2, 38, 1, Modul1.IText[175]);
 ///Goto Goto 5,2027 Dest:OK
 goto IL_0ac2;
 ///Label Label 5,2028 9
 IL_0ac2:
-///Instruction Instruction 5,2029
+///Operation Operation 5,2029
 num = 138;
-///Instruction Instruction 5,2030
+///Operation Operation 5,2030
 lErl = 2;
 ///Goto Goto 5,2031 Dest:OK
 goto IL_0acc;
 ///Label Label 5,2032 2
 IL_0acc:
-///Instruction Instruction 5,2033
+///Operation Operation 5,2033
 num = 139;
-///Instruction Instruction 5,2034
+///Operation Operation 5,2034
 num12 = (short)unchecked(num12 + 1);
-///Instruction Instruction 5,2035
+///Operation Operation 5,2035
 num20 = num12;
-///Instruction Instruction 5,2036
+///Operation Operation 5,2036
 num11 = 302;
-///Instruction Instruction 5,2037
+///Operation Operation 5,2037
 if (num20 <= num11)
 ///BlockStart Block 6,0
 {
@@ -9030,7 +9030,7 @@ if (num20 <= num11)
 goto IL_0667;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,2038
+///Operation Operation 5,2038
 else
 ///BlockStart Block 6,0
 {
@@ -9040,25 +9040,25 @@ goto IL_0ae8;
 }
 ///Label Label 5,2039 2
 IL_0ae8:
-///Instruction Instruction 5,2040
+///Operation Operation 5,2040
 num = 140;
-///Instruction Instruction 5,2041
+///Operation Operation 5,2041
 Modul1.LiText += sDest2;
 ///Goto Goto 5,2042 Dest:OK
 goto IL_0b00;
 ///Label Label 5,2043 2
 IL_0b00:
-///Instruction Instruction 5,2044
+///Operation Operation 5,2044
 num = 141;
-///Instruction Instruction 5,2045
+///Operation Operation 5,2045
 Modul1.PerSatzLes();
 ///Goto Goto 5,2046 Dest:OK
 goto IL_0b0d;
 ///Label Label 5,2047 2
 IL_0b0d:
-///Instruction Instruction 5,2048
+///Operation Operation 5,2048
 num = 142;
-///Instruction Instruction 5,2049
+///Operation Operation 5,2049
 if (null != DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value)
 ///BlockStart Block 6,0
 {
@@ -9066,7 +9066,7 @@ if (null != DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)]
 goto IL_0b40;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,2050
+///Operation Operation 5,2050
 else
 ///BlockStart Block 6,0
 {
@@ -9076,9 +9076,9 @@ goto IL_0b8b;
 }
 ///Label Label 5,2051 2
 IL_0b40:
-///Instruction Instruction 5,2052
+///Operation Operation 5,2052
 num = 143;
-///Instruction Instruction 5,2053
+///Operation Operation 5,2053
 if (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value, "", TextCompare: false))
 ///BlockStart Block 6,0
 {
@@ -9086,7 +9086,7 @@ if (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[n
 goto IL_0b71;
 ///BlockEnd Block 6,2
 }
-///Instruction Instruction 5,2054
+///Operation Operation 5,2054
 else
 ///BlockStart Block 6,0
 {
@@ -9096,23 +9096,23 @@ goto IL_0b8b;
 }
 ///Label Label 5,2055 2
 IL_0b71:
-///Instruction Instruction 5,2056
+///Operation Operation 5,2056
 num = 144;
-///Instruction Instruction 5,2057
+///Operation Operation 5,2057
 StringType.MidStmtStr(ref Modul1.LiText, 77, 1, "J");
 ///Goto Goto 5,2058 Dest:OK
 goto IL_0b8b;
 ///Label Label 5,2059 4
 IL_0b8b:
-///Instruction Instruction 5,2060
+///Operation Operation 5,2060
 num = 147;
-///Instruction Instruction 5,2061
+///Operation Operation 5,2061
 DataModul.TTable.Index = "Tab";
 ///Goto Goto 5,2062 Dest:OK
 goto IL_0ba2;
 ///Label Label 5,2063 2
 end_IL_0001:
-///Instruction Instruction 5,2064
+///Operation Operation 5,2064
 break;
 ///BlockEnd Block 5,2065
 }
@@ -9120,31 +9120,31 @@ break;
 }
 ///BlockEnd Block 3,4
 }
-///Instruction Instruction 2,2
+///Operation Operation 2,2
 catch (Exception obj) when (num3 != 0 && num2 == 0)
 ///BlockStart Block 3,0
 {
-///Instruction Instruction 3,1
+///Operation Operation 3,1
 ProjectData.SetProjectError(obj, lErl);
-///Instruction Instruction 3,2
+///Operation Operation 3,2
 try0001_dispatch = 21059;
-///Instruction Instruction 3,3
+///Operation Operation 3,3
 continue;
 ///BlockEnd Block 3,4
 }
-///Instruction Instruction 2,3
+///Operation Operation 2,3
 throw ProjectData.CreateProjectError(-2146828237);
 ///Label Label 2,4 19
 end_IL_0001_2:
-///Instruction Instruction 2,5
+///Operation Operation 2,5
 break;
 ///BlockEnd Block 2,6
 }
-///Instruction Instruction 1,21
+///Operation Operation 1,21
 if (num2 != 0)
 ///BlockStart Block 2,0
 {
-///Instruction Instruction 2,1
+///Operation Operation 2,1
 ProjectData.ClearProjectError();
 ///BlockEnd Block 2,2
 }

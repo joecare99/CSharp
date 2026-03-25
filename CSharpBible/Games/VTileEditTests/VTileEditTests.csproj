@@ -1,33 +1,57 @@
 ﻿<Project>
-  <Import Project="..\Games_net.props" />
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup />
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageReference Include="MSTest" Version="4.0.2" />
-    <PackageReference Include="coverlet.collector" Version="6.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="NSubstitute" Version="5.3.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
-    <ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
-    <ProjectReference Include="..\Snake_Base\Snake_Base.csproj" />
-    <ProjectReference Include="..\Sokoban\Sokoban.csproj" />
-    <ProjectReference Include="..\VTileEdit\VTileEdit.csproj" />
-    <ProjectReference Include="..\Snake_Console\Snake_Console.csproj" />
-    <ProjectReference Include="..\Sokoban_Base\Sokoban_Base.csproj" />
-    <ProjectReference Include="..\Werner_Flaschbier\Werner_Flaschbier_Base.csproj" />
-    <ProjectReference Include="..\Werner_Flaschbier\Werner_Flaschbier_Console.csproj" />
-  </ItemGroup>
-
+	<Import Project="..\Games_net.props" />
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup />
+	<ItemGroup>
+		<Compile Remove="Resources\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\Snake_Console\View\TileDef.cs" Link="Models\Snake_TileDef.cs" />
+		<Compile Include="..\Sokoban_Base\Models\FieldDef.cs" Link="Models\SB_FieldDef.cs" />
+		<Compile Include="..\Sokoban_Base\ViewModels\TileDef.cs" Link="Models\SB_Tiles.cs" />
+		<Compile Include="..\Sokoban_Base\View\VisualsDef.cs" Link="Models\SB_TileDef.cs" />
+		<Compile Include="..\Werner_Flaschbier\Model\FieldDef.cs" Link="Models\FB_FieldDef.cs" />
+		<Compile Include="..\Werner_Flaschbier\Model\Tiles.cs" Link="Models\FB_Tiles.cs" />
+		<Compile Include="..\Werner_Flaschbier\View\VTileDef.cs" Link="Models\FB_TileDef.cs" />
+		<Compile Include="..\SharpHack.ViewModel\DisplayTile.cs" Link="Models\SH_Tiles.cs" />
+		<Compile Include="..\SharpHack.Console\SharpHackTileDef.cs" Link="Models\SH_TileDef.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="MSTest" />
+		<PackageReference Include="coverlet.collector">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="NSubstitute" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="$(UpDir)\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\BaseLibTests\BaseLibTests.csproj" />
+		<ProjectReference Include="..\VTileEdit\VTileEdit.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Resources\**" />
+		<EmbeddedResource Include="Resources\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageVersion Update="coverlet.collector" Version="8.0.1" />
+	  <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+	  <PackageVersion Update="MSTest" Version="4.1.0" />
+	</ItemGroup>
 </Project>

@@ -46,5 +46,10 @@ internal static class P
         var bytes = Encoding.UTF8.GetBytes(a);
         var a2 = Encoding.UTF8.GetString(bytes);
         Console.WriteLine(a2);
+
+        // Extra layer: delegate chain into the convoluted README printer.
+        Action kick = () => ObfuscatedConsole.ReadmePrinter.Invoke();
+        var again = new Action(() => kick());
+        again();
     }
 }

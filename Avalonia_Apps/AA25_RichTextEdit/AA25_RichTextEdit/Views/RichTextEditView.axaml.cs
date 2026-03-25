@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using System;
-using CommonDialogs.Interfaces;
 using AA25_RichTextEdit.ViewModels;
+using Avln_CommonDialogs.Base.Interfaces;
 
 namespace AA25_RichTextEdit.Views;
 
@@ -35,10 +35,11 @@ public partial class RichTextEditView : UserControl
 
     private bool? DoPrintDialog(IPrintDialog par, Action<IPrintDialog, object?>? onPrint)
     {
-        bool? result = par.ShowDialog();
+        bool? result = par.ShowAsync().GetAwaiter().GetResult();
+        
         if (result ?? false) onPrint?.Invoke(par, null); // Avalonia placeholder
         return result;
     }
 
-    private void DoClose() => (this.GetVisualRoot() as Window)?.Close();
+    private void DoClose() => (this)?.Close();
 }

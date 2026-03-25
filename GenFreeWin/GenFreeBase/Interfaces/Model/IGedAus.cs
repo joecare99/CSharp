@@ -28,6 +28,8 @@ namespace GenFree.Interfaces.Model
         bool Options_Hausnr { get; set; }
         int Options_Famleer { get; set; }
         bool Options_EigQuelle { get; set; }
+        int Trauaus { get; set; }
+        string SpDisk { get; set; }
 
         void berufles(int iPersInArb);
         void Bilderaus(string Kenn, int PerfamNr);
@@ -60,5 +62,6 @@ namespace GenFree.Interfaces.Model
         void Zweitdatum(ref string Datu, string Datsicha, EEventArt eArt, IEventData cEv);
         void WriteEventData(EEventArt eArt, IEventData cEv);
         void Fehlliste(EEventArt eArt, string Dasi,int iPerFamNr, string grund = "");
+        string Text_ChngEncoding4(string namenSuch_Wort, int options_Uml);
     }
 }

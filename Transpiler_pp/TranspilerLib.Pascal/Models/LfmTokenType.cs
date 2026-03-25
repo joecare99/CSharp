@@ -5,6 +5,7 @@ public enum LfmTokenType
     OBJECT,
     END,
     INHERITED,
+    INLINE,
     COLON,
     EQUALS,
     DOT,
@@ -16,5 +17,12 @@ public enum LfmTokenType
     STRING,
     NUMBER,
     BOOLEAN,
-    EOF
+    EOF,
+    LBRACKET,
+    RBRACKET,
+    LBRACE,
+    RBRACE,
+    COMMA,
+    PLUS,
+    MINUS
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using MdbBrowser.ViewModels.Interfaces;
 using BaseLib.Helper;
 

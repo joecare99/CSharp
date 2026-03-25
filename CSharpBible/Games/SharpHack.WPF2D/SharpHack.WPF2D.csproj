@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Page Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="tileset_cutout3.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="tileset_cutout3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <ProjectReference Include="..\SharpHack.Wpf\SharpHack.Wpf.csproj" />
+    <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
+    <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />
+    <ProjectReference Include="..\SharpHack.LevelGen\SharpHack.LevelGen.csproj" />
+    <ProjectReference Include="..\SharpHack.Combat\SharpHack.Combat.csproj" />
+    <ProjectReference Include="..\SharpHack.AI\SharpHack.AI.csproj" />
+    <ProjectReference Include="..\SharpHack.Persist\SharpHack.Persist.csproj" />
+    <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+    <PackageVersion Update="Microsoft.Extensions.Hosting" Version="10.0.5" />
+  </ItemGroup>
+
+</Project>

@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models;
+using TranspilerLib.Models.Scanner;
 using static TranspilerLib.Interfaces.Code.ICodeBase;
 
-namespace TranspilerLib.Models.Scanner;
+namespace TranspilerLib.IEC.Models.Scanner;
 
 public class IECTokenHandler : TokenHandlerBase, ITokenHandler
 {
@@ -141,8 +143,7 @@ Dictionary<IECResWords, IECResWords> blockWords
     private static void DefaultOperator(TokenDelegate? token, string originalCode, TokenizeData data)
     {
         char cNxt = GetNxtChar(data.Pos, originalCode);
-        if (CharSets.operatorSet.Contains(cNxt) && cNxt != '/') ;
-        else
+        if (!CharSets.operatorSet.Contains(cNxt) || cNxt == '/')
         {
             EmitToken(token, data, CodeBlockType.Operation, originalCode, 1);
             data.Pos2 = data.Pos + 1;

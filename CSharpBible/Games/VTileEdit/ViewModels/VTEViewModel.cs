@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -16,23 +17,28 @@ namespace VTileEdit;
 public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyPropertyChanged
 {
     private IVTEModel _model;
+    private readonly ReadOnlyCollection<char> _characterPalette;
 
     public VTEViewModel(IVTEModel model)
     {
         _model = model;
+        _characterPalette = BuildCharacterPalette();
     }
 
     public IVTEModel Model => _model;
+    public ReadOnlyCollection<char> CharacterPalette => _characterPalette;
 
     [ObservableProperty]
-    public partial Enum? SelectedTile { get; set; }
+    public partial int? SelectedTile { get; set; }
 
     [ObservableProperty]
     public partial string[] CurrentLines { get; set; } = Array.Empty<string>();
 
     [ObservableProperty]
     public partial FullColor[] CurrentColors { get; set; } = Array.Empty<FullColor>();
-    public Func<Size> DoNewTileDialog { get; set; }
+    public Func<Size>? DoNewTileDialog { get; set; }
+
+    public Size TileSize => _model.TileSize;
 
     public void LoadFromPath(string path)
     {
@@ -62,7 +68,21 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
         }
     }
 
-    public void SelectTile(Enum tile)
+    public void SaveTileToPath(int tile, string path)
+    {
+        using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
+        switch (Path.GetExtension(path).ToLowerInvariant())
+        {
+            case ".txt": _model.SaveTileToStream(tile, fs, EStreamType.Text); break;
+            case ".tdf": _model.SaveTileToStream(tile, fs, EStreamType.Binary); break;
+            case ".tdj": _model.SaveTileToStream(tile, fs, EStreamType.Json); break;
+            case ".tdx": _model.SaveTileToStream(tile, fs, EStreamType.Xml); break;
+            case ".cs": _model.SaveTileToStream(tile, fs, EStreamType.Code); break;
+            default: throw new NotSupportedException("Unsupported file extension");
+        }
+    }
+
+    public void SelectTile(int tile)
     {
         SelectedTile = tile;
         var st = _model.GetTileDef(tile);
@@ -74,7 +94,7 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
     {
         if (SelectedTile != null)
         {
-            _model.SetTileDef(SelectedTile, lines, colors);
+            _model.SetTileDef(SelectedTile.Value, lines, colors);
             CurrentLines = lines;
             CurrentColors = colors;
         }
@@ -90,18 +110,39 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
     }
 
     [RelayCommand]
-    private void LoadTiles()
+    private void LoadTiles(string? path)
     {
-        _model.Clear();
-        
-        CurrentLines = Array.Empty<string>(); 
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        LoadFromPath(path);
+
+        CurrentLines = Array.Empty<string>();
         CurrentColors = Array.Empty<FullColor>();
     }
 
     [RelayCommand]
-    private void SaveTiles()
+    private void SaveTiles(string? path)
     {
-        // No action needed here, as saving is handled externally
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        SaveToPath(path);
+    }
+
+    [RelayCommand]
+    private void SaveTile(string? path)
+    {
+        if (SelectedTile == null || string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        SaveTileToPath(SelectedTile.Value, path);
     }
 
     [RelayCommand]
@@ -126,6 +167,34 @@ public partial class VTEViewModel : ObservableObject, IVTEViewModel, INotifyProp
     {
         // Show edit-colors dialog
     }
+
+    private static ReadOnlyCollection<char> BuildCharacterPalette()
+    {
+        var encoding = Encoding.GetEncoding(437);
+        var buffer = new byte[1];
+        var decorative = DecorativeCp437Glyphs;
+        var glyphs = new char[256];
+
+        for (var i = 0; i < glyphs.Length; i++)
+        {
+            buffer[0] = (byte)i;
+            var glyph = encoding.GetChars(buffer)[0];
+            if (i < decorative.Length)
+            {
+                glyph = decorative[i];
+            }
+
+            glyphs[i] = glyph;
+        }
+
+        return Array.AsReadOnly(glyphs);
+    }
+
+    private static readonly char[] DecorativeCp437Glyphs =
+    {
+        ' ', '☺', '☻', '♥', '♦', '♣', '♠', '•', '◘', '○', '◙', '♂', '♀', '♪', '♫', '☼',
+        '►', '◄', '↕', '‼', '¶', '§', '▬', '↨', '↑', '↓', '→', '←', '∟', '↔', '▲', '▼'
+    };
 }
 
 public static class FileDialogFilter
@@ -136,11 +205,11 @@ public static class FileDialogFilter
         foreach (var filter in filters)
         {
             sb.Append(filter.Item1);
-            sb.Append("|");
+            sb.Append('|');
             sb.Append(string.Join(";", filter.Item2.Select(e => $"*.{e}")));
-            sb.Append("|");
+            sb.Append('|');
         }
-        sb.Append("|");
+        sb.Append('|');
         return sb.ToString();
     }
 }

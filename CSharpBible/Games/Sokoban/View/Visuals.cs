@@ -1,5 +1,5 @@
 // ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 08-04-2022
 //
@@ -14,33 +14,51 @@
 using BaseLib.Interfaces;
 using BaseLib.Models;
 using ConsoleDisplay.View;
-using Sokoban.Model;
+using Sokoban;
+using Sokoban.Models;
 using Sokoban.Properties;
-using Sokoban_Base.ViewModels;
+using Sokoban.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 
-namespace Sokoban_Base.View
+namespace Sokoban.View
 {
     /// <summary>
     /// The class that handles the UI
     /// </summary>
-    public static class Visuals
+    public sealed class Visuals
     {
+        private readonly IConsole _console;
+        private readonly ITileDef _visualDef;
+
+        /// <summary>
+        /// Gets the game instance.
+        /// </summary>
+        public IGame SokobanGame { get; }
 
         #region Properties
         /// <summary>
         /// The d buffer
         /// </summary>
-        private static TileDef[] dBuffer=new TileDef[] { };
+        private TileDef[] dBuffer = new TileDef[] { };
 
         /// <summary>
         /// My console
         /// is a Console-Proxy for debugging &amp; Testing
         /// </summary>
-        public static IConsole myConsole = new ConsoleProxy();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Visuals"/> class.
+        /// </summary>
+        /// <param name="console">The console implementation to use.</param>
+        /// <param name="game">The game instance to render.</param>
+        public Visuals(IConsole console, IGame game)
+        {
+            _console = console ?? throw new ArgumentNullException(nameof(console));
+            SokobanGame = game ?? throw new ArgumentNullException(nameof(game));
+            _visualDef = new VisualsDef();
+        }
         /// <summary>
         /// The key action
         /// </summary>
@@ -55,13 +73,11 @@ namespace Sokoban_Base.View
             { 'Q', UserAction.Quit },
             { '\u001b', UserAction.Quit } };
 
-        private static ITileDef _visualDef;
-
         /// <summary>
         /// Gets or sets the message.
         /// </summary>
         /// <value>The message.</value>
-        public static string Message { get; set; } = "";
+        public string Message { get; set; } = "";
         #endregion
 
         #region Methods
@@ -77,18 +93,18 @@ namespace Sokoban_Base.View
             }
             catch { }
 
-            _visualDef = new VisualsDef();
+            // instance visuals are created via DI/ctor.
         }
 
         /// <summary>
         /// Shows the specified u action.
         /// </summary>
         /// <param name="uAction">The u action.</param>
-        public static void Show(UserAction? uAction=null)
+        public void Show(UserAction? uAction=null)
         {
-            myConsole.Clear();
-			if (!myConsole.IsOutputRedirected)
-				myConsole.WindowHeight = Math.Min(myConsole.LargestWindowHeight, 40); 
+			_console.Clear();
+			if (!_console.IsOutputRedirected)
+				_console.WindowHeight = Math.Min(_console.LargestWindowHeight, 40); 
 
 			if (uAction == UserAction.Help)
             {
@@ -96,11 +112,11 @@ namespace Sokoban_Base.View
                 return;
             }
 
-            dBuffer = new TileDef[Game.PFSize.Width* Game.PFSize.Height];
+            dBuffer = new TileDef[SokobanGame.PFSize.Width* SokobanGame.PFSize.Height];
             var p = new Point();
-            for (p.Y = 0; p.Y < Game.PFSize.Height; p.Y++)
-                for (p.X = 0; p.X < Game.PFSize.Width; p.X++)                
-                    WriteTile(p, dBuffer[p.X + p.Y * Game.PFSize.Width] = Game.GetTile(p));
+            for (p.Y = 0; p.Y < SokobanGame.PFSize.Height; p.Y++)
+                for (p.X = 0; p.X < SokobanGame.PFSize.Width; p.X++)                
+                    WriteTile(p, dBuffer[p.X + p.Y * SokobanGame.PFSize.Width] = SokobanGame.GetTile(p));
                 
 			ShowStatistics();
         }
@@ -108,19 +124,19 @@ namespace Sokoban_Base.View
         /// <summary>
         /// Updates this instance.
         /// </summary>
-        public static void Update()
+        public void Update()
         {
             List<(Point, TileDef, Point)> diffFields = ComputeUpdateList();
 
             ShowIntermediateTiles(diffFields);
 
-            myConsole.ForegroundColor = ConsoleColor.Gray;
-            myConsole.BackgroundColor = ConsoleColor.Black;
-            myConsole.SetCursorPosition(40, Game.PFSize.Height * 2 + 7);
+            _console.ForegroundColor = ConsoleColor.Gray;
+            _console.BackgroundColor = ConsoleColor.Black;
+            _console.SetCursorPosition(40, SokobanGame.PFSize.Height * 2 + 7);
 
             Thread.Sleep(40);
             for (int i = 0; i < 3; i++)
-                if (!myConsole.KeyAvailable)
+                if (!_console.KeyAvailable)
                     Thread.Sleep(40);
 
             foreach (var f in diffFields)
@@ -133,7 +149,7 @@ namespace Sokoban_Base.View
         /// Shows the intermediate tiles.
         /// </summary>
         /// <param name="diffFields">The difference fields.</param>
-        private static void ShowIntermediateTiles(List<(Point, TileDef, Point)> diffFields)
+        private void ShowIntermediateTiles(List<(Point, TileDef, Point)> diffFields)
         {
             foreach (var f in diffFields)
                 if (f.Item1 == f.Item3)
@@ -152,21 +168,21 @@ namespace Sokoban_Base.View
         /// Computes the update list.
         /// </summary>
         /// <returns>List&lt;System.ValueTuple&lt;Point, TileDef, Point&gt;&gt;.</returns>
-        private static List<(Point, TileDef, Point)> ComputeUpdateList()
+        private List<(Point, TileDef, Point)> ComputeUpdateList()
         {
             List<(Point, TileDef, Point)> diffFields = new();
-            for (int y = 0; y < Game.PFSize.Height; y++)
+            for (int y = 0; y < SokobanGame.PFSize.Height; y++)
             {
-                for (int x = 0; x < Game.PFSize.Width; x++)
+                for (int x = 0; x < SokobanGame.PFSize.Width; x++)
                 {
                     var p = new Point(x, y);
-                    var td = Game.GetTile(p);
-                    if (td != dBuffer[x + y * Game.PFSize.Width])
+                    var td = SokobanGame.GetTile(p);
+                    if (td != dBuffer[x + y * SokobanGame.PFSize.Width])
                     {
 #pragma warning disable CS8604 // Mögliches Nullverweisargument.
-                        diffFields.Add((p, td, Game.GetOldPos(p)));
+                        diffFields.Add((p, td, SokobanGame.GetOldPos(p)));
 #pragma warning restore CS8604 // Mögliches Nullverweisargument.
-                        dBuffer[x + y * Game.PFSize.Width] = td;
+                        dBuffer[x + y * SokobanGame.PFSize.Width] = td;
                     }
                 }
             }
@@ -179,16 +195,16 @@ namespace Sokoban_Base.View
         /// </summary>
         /// <param name="uAction">The u action.</param>
         /// <returns>System.Nullable&lt;UserAction&gt;.</returns>
-        public static UserAction? WaitforUser(UserAction? uAction)
+        public UserAction? WaitforUser(UserAction? uAction)
         {
-            myConsole.Write(Resource1.SelectAction);
-            if (Game.GameSolved || uAction==UserAction.Help || uAction == UserAction.Restart) 
-                myConsole.Write(Resource1.Continue);
+            _console.Write(Resource1.SelectAction);
+            if (SokobanGame.GameSolved || uAction==UserAction.Help || uAction == UserAction.Restart) 
+                _console.Write(Resource1.Continue);
             else 
                 foreach (Direction dir in Enum.GetValues(typeof(Direction))) Console.Write($", {MarkFirst(dir.ToString())}"); 
-            myConsole.Write("\t=>");
+            _console.Write("\t=>");
 
-            var ch= char.ToUpper(myConsole.ReadKey()?.KeyChar ?? '\x00');
+            var ch= char.ToUpper(_console.ReadKey()?.KeyChar ?? '\x00');
             
             uAction = null;
             if (uAction == null && KeyAction.ContainsKey(ch))
@@ -201,12 +217,12 @@ namespace Sokoban_Base.View
         /// <summary>
         /// Shows the help.
         /// </summary>
-        private static void ShowHelp()
+        private void ShowHelp()
         {
             var sDirs = "";
             foreach (string d in typeof(Direction).GetEnumNames()) sDirs += $", {MarkFirst(d)}";
 
-            myConsole.WriteLine(string.Format(Resource1.InfoText,
+            _console.WriteLine(string.Format(Resource1.InfoText,
                 Resource1.stone,
                 sDirs.TrimStart(','),
                 $"{_visualDef.GetTileDef(TileDef.Stone).lines[0]}\r\n{_visualDef.GetTileDef(TileDef.Stone).lines[1]}",
@@ -214,51 +230,51 @@ namespace Sokoban_Base.View
                 $"{_visualDef.GetTileDef(TileDef.Wall).lines[0]} \r\n {_visualDef.GetTileDef(TileDef.Wall).lines[1]}",
                 $"{_visualDef.GetTileDef(TileDef.Destination).lines[0]}  \r\n  {_visualDef.GetTileDef(TileDef.Destination).lines[1]}"
                 ));
-            var cp = myConsole.GetCursorPosition();
+            var cp = _console.GetCursorPosition();
             WriteTile(new PointF(0, (cp.Top - 3) * 0.5f), TileDef.Destination);
             WriteTile(new PointF(0, (cp.Top - 6) * 0.5f), TileDef.Wall);
             WriteTile(new PointF(0, (cp.Top - 9) * 0.5f), TileDef.Player_E);
             WriteTile(new PointF(0, (cp.Top - 12) * 0.5f), TileDef.Stone);
-            myConsole.SetCursorPosition(cp.Left, cp.Top);
-            myConsole.ForegroundColor = ConsoleColor.Gray;
-            myConsole.BackgroundColor = ConsoleColor.Black;
-            myConsole.WriteLine(typeof(Visuals).Assembly.FullName);
+            _console.SetCursorPosition(cp.Left, cp.Top);
+            _console.ForegroundColor = ConsoleColor.Gray;
+            _console.BackgroundColor = ConsoleColor.Black;
+            _console.WriteLine(typeof(Visuals).Assembly.FullName);
             foreach (var l in Resource1.Version.Split(new string[] { "\r\n" }, StringSplitOptions.None))
                 if (l.Contains("Revision") || l.Contains("Date"))
-                    Console.WriteLine(l.Substring(l.IndexOf("]") + 1));
-            myConsole.WriteLine();
+                    _console.WriteLine(l.Substring(l.IndexOf("]") + 1));
+            _console.WriteLine();
         }
 
         /// <summary>
         /// Shows the statistics.
         /// </summary>
-        private static void ShowStatistics()
+        private void ShowStatistics()
         {
-            myConsole.ForegroundColor = ConsoleColor.Gray;
-            myConsole.BackgroundColor = ConsoleColor.Black;
-            myConsole.SetCursorPosition(0, Game.PFSize.Height * 2);
+            _console.ForegroundColor = ConsoleColor.Gray;
+            _console.BackgroundColor = ConsoleColor.Black;
+            _console.SetCursorPosition(0, SokobanGame.PFSize.Height * 2);
 #if DEBUG    
-            foreach (var s in Game.Stones)
-                myConsole.Write($" {Resource1.stone} ({s.Position.X},{s.Position.Y}) {(s.field is Destination ? "OK " : "   ")}\t");
+            foreach (var s in SokobanGame.Stones)
+                Console.Write($" {Resource1.stone} ({s.Position.X},{s.Position.Y}) {(s.field is Destination ? "OK " : "   ")}\t");
 #endif
-            myConsole.Write($"\r\n" + String.Format(Resource1.StonesInDest, Game.StonesInDest));
+            _console.Write($"\r\n" + String.Format(Resource1.StonesInDest, SokobanGame.StonesInDest));
 
 
-            if (Game.player != null)
+            if (SokobanGame.player != null)
             {
-                myConsole.SetCursorPosition(0, Game.PFSize.Height * 2 + 3);
+                _console.SetCursorPosition(0, SokobanGame.PFSize.Height * 2 + 3);
 #if DEBUG
-                Console.WriteLine($"Player ({Game.player.Position.X},{Game.player.Position.Y})");
+                Console.WriteLine($"Player ({SokobanGame.player.Position.X},{SokobanGame.player.Position.Y})");
                 Console.Write(Resource1.PosibMoves);
-                foreach (var d in Game.player.MoveableDirs())
+                foreach (var d in SokobanGame.player.MoveableDirs())
                 {
                     Console.Write($"\t{typeof(Direction).GetEnumName(d)},");
                 }
                 Console.WriteLine("                     ");
 #endif
-                myConsole.SetCursorPosition(0, Game.PFSize.Height * 2 + 6);
-                myConsole.Write(Message + "                                   ");
-                myConsole.SetCursorPosition(0, Game.PFSize.Height * 2 + 7);
+                _console.SetCursorPosition(0, SokobanGame.PFSize.Height * 2 + 6);
+                _console.Write(Message + "                                   ");
+                _console.SetCursorPosition(0, SokobanGame.PFSize.Height * 2 + 7);
 
             }
         }
@@ -273,15 +289,15 @@ namespace Sokoban_Base.View
 #else
         private
 #endif
-        static void WriteTile(PointF p, TileDef td)
+        void WriteTile(PointF p, TileDef td)
         {
             var tld = _visualDef.GetTileDef(td);
-            myConsole.ForegroundColor = tld.colors[0].fgr;
-			myConsole.BackgroundColor = tld.colors[0].bgr;
+            _console.ForegroundColor = tld.colors[0].fgr;
+			_console.BackgroundColor = tld.colors[0].bgr;
             for (int i = 0; i < tld.lines.Length; i++)
             {
-               myConsole.SetCursorPosition((int)(p.X * 4), (int)(p.Y * 2) + i);
-               myConsole.Write(tld.lines[i]);
+               _console.SetCursorPosition((int)(p.X * 4), (int)(p.Y * 2) + i);
+               _console.Write(tld.lines[i]);
             }
         }
 

@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
+using All_Graphics.Views;
 
 /// <summary>
 /// The Models namespace.
@@ -70,6 +71,8 @@ namespace All_Graphics.Models
             ("ImageHandling", typeof(MVVM_ImageHandling.Views.TemplateView), null),
             ("Lines_on_Grid", typeof(MVVM_Lines_on_Grid2.View.PlotFrame), null),
             ("PolyLine", typeof(Polyline.Views.PolyLineView), null),
+            ("Xmas1", typeof(ChristmasCard), null),
+            ("Xmas2", typeof(ChurchWindowChristmasCard), null),
           
 
             
@@ -91,7 +94,7 @@ namespace All_Graphics.Models
                 try
                 {
                     Debug.WriteLine($"{ex.Description} {ex.ExType}");
-                    var desc = new Dictionary<string, string>();
+                    var desc = new Dictionary<string, string?>();
                     Type? t = ex.ExType.Assembly.GetTypes().First((t) => t.Name.EndsWith(nameof(Resources)));
                     if (t != null)
                     {
@@ -99,7 +102,7 @@ namespace All_Graphics.Models
                             if (prop.PropertyType == typeof(string))
                             {
                                 Debug.WriteLine($"  {prop.Name} {prop.PropertyType} ");
-                                desc[prop.Name] = (string)prop.GetValue(null);
+                                desc[prop.Name] = (string?)prop.GetValue(null);
                             }
                         ex.Additionals = desc;
                     }

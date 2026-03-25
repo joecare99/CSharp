@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using MdbBrowser.ViewModels.Interfaces;
 using NSubstitute;
 using BaseLib.Helper;

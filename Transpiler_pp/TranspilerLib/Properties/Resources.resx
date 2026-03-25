@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SErrDivByZero" xml:space="preserve">
-    <value />
+    <value>Error: Division by Zero</value>
   </data>
   <data name="SErrIfXXXNestingLimitReached" xml:space="preserve">
     <value>Nesting of $IFxxx too deep</value>
@@ -127,16 +127,16 @@
     <value>Could not find include file '{0}'</value>
   </data>
   <data name="SErrIncludeLimitReached" xml:space="preserve">
-    <value />
+    <value>Error: The include-limit is reached</value>
   </data>
   <data name="SErrInvalidCharacter" xml:space="preserve">
     <value>Invalid character '{0}'</value>
   </data>
   <data name="SErrInvalidMode" xml:space="preserve">
-    <value />
+    <value>Error: Invalid mode</value>
   </data>
   <data name="SErrInvalidModeSwitch" xml:space="preserve">
-    <value />
+    <value>Error: Invalid mode-swich</value>
   </data>
   <data name="SErrInvalidPPElse" xml:space="preserve">
     <value>$ELSE without matching $IFxxx</value>
@@ -148,75 +148,75 @@
     <value>string exceeds end of line</value>
   </data>
   <data name="SErrOperandAndOperatorMismatch" xml:space="preserve">
-    <value />
+    <value>Operand and operator mismatch</value>
   </data>
   <data name="SErrRangeCheck" xml:space="preserve">
-    <value />
+    <value>Range check error</value>
   </data>
   <data name="SErrWrongSwitchToggle" xml:space="preserve">
-    <value />
+    <value>Wrong switch toggle value, expected '+' or '-'</value>
   </data>
   <data name="SErrXExpectedButYFound" xml:space="preserve">
-    <value />
+    <value>'{0}' expected but '{1}' found</value>
   </data>
   <data name="SIllegalStateForWarnDirective" xml:space="preserve">
-    <value />
+    <value>Illegal state for WARN directive</value>
   </data>
   <data name="SInvalidDispatchFieldName" xml:space="preserve">
-    <value />
+    <value>Invalid dispatch field name '{0}'</value>
   </data>
   <data name="SLogELSEIFAccepted" xml:space="preserve">
-    <value />
+    <value>ELSEIF condition accepted.</value>
   </data>
   <data name="SLogELSEIFRejected" xml:space="preserve">
-    <value />
+    <value>ELSEIF condition rejected.</value>
   </data>
   <data name="SLogIFAccepted" xml:space="preserve">
-    <value />
+    <value>IF condition accepted.</value>
   </data>
   <data name="SLogIFDefAccepted" xml:space="preserve">
     <value>IFDEF {0} found, accepting.</value>
   </data>
   <data name="SLogIFDefRejected" xml:space="preserve">
-    <value />
+    <value>IFDEF {0} not defined, rejecting.</value>
   </data>
   <data name="SLogIFNDefAccepted" xml:space="preserve">
-    <value />
+    <value>IFNDEF {0} not defined, accepting.</value>
   </data>
   <data name="SLogIFNDefRejected" xml:space="preserve">
-    <value />
+    <value>IFNDEF {0} defined, rejecting.</value>
   </data>
   <data name="SLogIFRejected" xml:space="preserve">
-    <value />
+    <value>IF condition rejected.</value>
   </data>
   <data name="SLogLineNumber" xml:space="preserve">
     <value>Reading line {0}.</value>
   </data>
   <data name="SLogMacroDefined" xml:space="preserve">
-    <value />
+    <value>Macro '{0}' defined.</value>
   </data>
   <data name="SLogMacroUnDefined" xml:space="preserve">
-    <value />
+    <value>Macro '{0}' undefined.</value>
   </data>
   <data name="SLogMacroXSetToY" xml:space="preserve">
-    <value />
+    <value>Macro '{0}' set to '{1}'.</value>
   </data>
   <data name="SLogOpeningFile" xml:space="preserve">
     <value>Opening source file "{0}".</value>
   </data>
   <data name="SMisplacedGlobalCompilerSwitch" xml:space="preserve">
-    <value />
+    <value>Misplaced global compiler switch</value>
   </data>
   <data name="SNoResourceSupport" xml:space="preserve">
-    <value />
+    <value>Resource files not supported</value>
   </data>
   <data name="StrinSErrResourceFileNotFound" xml:space="preserve">
     <value>Could not find resource file '{0}'</value>
   </data>
   <data name="SUserDefined" xml:space="preserve">
-    <value />
+    <value>{0}</value>
   </data>
   <data name="SWarnIllegalCompilerDirectiveX" xml:space="preserve">
-    <value />
+    <value>Warning: Illegal compiler directive '{0}'</value>
   </data>
 </root>

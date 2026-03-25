@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\GenFreeWin.props" />
 	<PropertyGroup>
-    <TargetFrameworks>net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net481;net8.0;net9.0</TargetFrameworks>
     <Nullable>enable</Nullable>
 
 		<IsPackable>false</IsPackable>
@@ -18,9 +18,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-		<PackageReference Include="MSTest" Version="4.0.2" />
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+		<PackageReference Include="MSTest" Version="4.1.0" />
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

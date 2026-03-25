@@ -257,21 +257,21 @@ namespace Tetris_Base.Model.Tests
                         if (!b[Ix].CollisionTest(Dlt[Ix], b[Ix].ActBlockAngle))
                         {
                             b[Ix].Position = new Point(b[Ix].Position.X + Dlt[Ix].X, b[Ix].Position.Y + Dlt[Ix].Y);
-                            Assert.IsTrue(cnt <= 4, $"{bt}-{ba.ToString()[4..]},cnt({cnt}) <= 4");
+                            Assert.IsLessThanOrEqualTo(4, cnt, $"{bt}-{ba.ToString()[4..]},cnt({cnt}) <= 4");
                         }
                         else do
                             {
-                                Assert.IsTrue(cnt <= 4, $"{bt}-{ba.ToString()[4..]},cnt <= 4");
+                                Assert.IsLessThanOrEqualTo(4, cnt, $"{bt}-{ba.ToString()[4..]},cnt <= 4");
                                 cnt = 0;
                                 var nDx = rnd.Next(0, 8);
                                 Dlt[Ix] = new Point(Off[nDx % 8], Off[(nDx + 2) % 8]);
                             } while (b[Ix].CollisionTest(Dlt[Ix], b[Ix].ActBlockAngle) && tcnt++ < 16);
 
                         d[Ix].Update();
-                        Assert.IsTrue(b[Ix].Position.X >= -2, $"{bt}-{ba.ToString()[4..]},Pos.X >= -2");
-                        Assert.IsTrue(b[Ix].Position.Y >= -2, $"{bt}-{ba.ToString()[4..]},Pos.Y >= -2");
-                        Assert.IsTrue(b[Ix].Position.X < 3, $"{bt}-{ba.ToString()[4..]},Pos.X < 3");
-                        Assert.IsTrue(b[Ix].Position.Y < 4, $"{bt}-{ba.ToString()[4..]},Pos.Y > 3");
+                        Assert.IsGreaterThanOrEqualTo(-2, b[Ix].Position.X, $"{bt}-{ba.ToString()[4..]},Pos.X >= -2");
+                        Assert.IsGreaterThanOrEqualTo(-2, b[Ix].Position.Y, $"{bt}-{ba.ToString()[4..]},Pos.Y >= -2");
+                        Assert.IsLessThan(3, b[Ix].Position.X, $"{bt}-{ba.ToString()[4..]},Pos.X < 3");
+                        Assert.IsLessThan(4, b[Ix].Position.Y, $"{bt}-{ba.ToString()[4..]},Pos.Y > 3");
                     }
                 Application.DoEvents();
             }

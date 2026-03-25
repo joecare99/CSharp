@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Loader;
 
@@ -21,8 +22,13 @@ class PluginLoadContext : AssemblyLoadContext
 #endif
     }
 
+    public static Dictionary<string, Assembly> loadedAssemblies = new();
+
     protected override Assembly? Load(AssemblyName assemblyName)
     {
+
+     if (loadedAssemblies.TryGetValue(assemblyName.FullName,out var a))
+            return a;
 #if NET5_0_OR_GREATER
         string? assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
 #else
@@ -35,6 +41,7 @@ class PluginLoadContext : AssemblyLoadContext
             Assembly assembly = LoadFromAssemblyPath(assemblyPath);
             if (!assembly?.IsFullyTrusted ?? false)
                 return null;
+            loadedAssemblies[assemblyName.FullName] = assembly;
             return assembly;
         }
 

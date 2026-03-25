@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MdbBrowser.ViewModels.Interfaces;
 using MdbBrowser.Models;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using System;
 using System.Data;
 using BaseLib.Helper;

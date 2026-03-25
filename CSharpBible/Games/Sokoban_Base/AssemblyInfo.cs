@@ -1,5 +1,5 @@
 // ***********************************************************************
-// Assembly         : Sokoban_Base
+// Assembly         : Sokoban
 // Author           : Mir
 // Created          : 07-12-2022
 //

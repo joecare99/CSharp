@@ -4,7 +4,7 @@ private bool Test13Dat()
 {
 ///Comment LComment 1,1
 // Compare this snippet from VBUnObfusicatorTests/Resources/Test13Dat.cs:
-///Instruction Instruction 1,2
+///Operation Operation 1,2
 return 0 < System.SomeFunc(123);
 ///BlockEnd Block 1,3
 }

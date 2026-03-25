@@ -56,7 +56,7 @@ internal sealed class QueryBuilder
             var col = GetKey(e, _q.Dimensions[1]);
             if (row is null || col is null) return;
             if (!_matrix.TryGetValue(row, out var d)) { d = new Dictionary<string,int>(StringComparer.OrdinalIgnoreCase); _matrix[row] = d; }
-            d[col] = d.TryGetValue(col, out var c) ? c +1 :1;
+            d[col] = d.TryGetValue(col, out var c) && !_q.Grouped ? c +1 :1;
         }
     }
 
@@ -152,6 +152,8 @@ internal sealed class QueryBuilder
             DimensionKind.Source => string.IsNullOrWhiteSpace(e.Source) ? "(unbekannt)" : e.Source.Trim(),
             DimensionKind.Hour => e.Timestamp is DateTimeOffset ts ? new DateTimeOffset(ts.Year, ts.Month, ts.Day, ts.Hour,0,0, ts.Offset).LocalDateTime.ToString("yyyy-MM-dd HH:00") : null,
             DimensionKind.MessageNormalized => AnalysisModel.NormalizeMessage(e.Message),
+            DimensionKind.ProgID => TryGetAttributeAsString(e, "eventprogid", out var s) ? s : "",
+            DimensionKind.MsgID => TryGetAttributeAsString(e, "eventmsgid", out var s) ? s : null,
             DimensionKind.X => TryGetAttributeAsDouble(e, "X", out var x) ? x.ToString(CultureInfo.InvariantCulture) : null,
             DimensionKind.Y => TryGetAttributeAsDouble(e, "Y", out var y) ? y.ToString(CultureInfo.InvariantCulture) : null,
             _ => null
@@ -176,5 +178,17 @@ internal sealed class QueryBuilder
         }
         return false;
     }
+
+    private static bool TryGetAttributeAsString(SyslogEntry e, string key, out string value)
+    {
+        value = "";
+        if (e.Attributes.TryGetValue(key, out var s))
+        {
+            value = s;
+            return true;
+        }
+        return false;
+    }
+
 }
 

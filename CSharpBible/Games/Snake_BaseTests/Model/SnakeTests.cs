@@ -11,7 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Game_Base.Model;
+using Game.Model;
+using Game.Model.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Snake_Base.Models.Interfaces;
 using System;
@@ -103,7 +104,7 @@ namespace Snake_Base.Models.Tests
         /// <param name="xExpAlive">if set to <c>true</c> [x exp alive].</param>
         /// <param name="expPos">The exp position.</param>
         /// <param name="sExpSnakeTest">The s exp snake test.</param>
-        [DataTestMethod()]
+        [TestMethod()]
         [TestProperty("Author", "J.C.")]
         [TestCategory("Movement")]
         [DataRow("1-E",new int[] { 2, 1 },new Direction[] {Direction.East }, 2,true,new int[] {3,1},new string[] { "DataChange: Snake_Base.Models.Playfield2D`1[Snake_Base.Models.SnakeGameObject]\to:\tn:Snake_Base.Models.SnakeTail\tp:Items\r\nDataChange: Snake_Base.Models.Playfield2D`1[Snake_Base.Models.SnakeGameObject]\to:\tn:Snake_Base.Models.SnakeHead\tp:Items\r\nDataChange: Snake_Base.Models.SnakeHead\to:{X=2,Y=1}\tn:{X=3,Y=1}\tp:Place\r\nDataChange: Snake_Base.Models.Playfield2D`1[Snake_Base.Models.SnakeGameObject]\to:\tn:Snake_Base.Models.SnakeBodyPart\tp:Items\r\n" })]

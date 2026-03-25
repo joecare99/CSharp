@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace libCIFAR.Data;
+
+public enum ECifar100Category
+{
+    aquatic_mammals,
+    fish,
+    flowers,
+    food_containers,
+    fruit_and_vegetables,
+    household_electrical_devices,
+    household_furniture,
+    insects,
+    large_carnivores,
+    large_man_made_outdoor_things,
+    large_natural_outdoor_scenes,
+    large_omnivores_and_herbivores,
+    medium_mammals,
+    non_insect_invertebrates,
+    people,
+    reptiles,
+    small_mammals,
+    trees,
+    vehicles_1,
+    vehicles_2,
+}

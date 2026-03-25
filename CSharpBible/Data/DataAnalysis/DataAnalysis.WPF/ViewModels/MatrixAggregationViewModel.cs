@@ -15,7 +15,7 @@ public sealed partial class MatrixAggregationViewModel : AggregationItemViewMode
         var dt = new DataTable();
         dt.Columns.Add("Key", typeof(string));
         var columns = agg.Columns ?? Array.Empty<string>();
-        foreach (var col in columns) dt.Columns.Add(col.Replace(".", "˳"), typeof(int));
+        foreach (var col in columns) dt.Columns.Add(col.Replace(".", "˳").Replace("/", "|"), typeof(int));
         if (agg.Matrix is not null)
         {
             var rows = agg.Matrix.Keys.ToList();

@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "SharpHack.MapExport": {
+      "commandName": "Project"
+    },
+    "Profil \"1\"": {
+      "commandName": "Project",
+      "commandLineArgs": "-t \"D:\\Mir\\Pictures\\Tileset2r.png\" -s 64"
+    }
+  }
+}

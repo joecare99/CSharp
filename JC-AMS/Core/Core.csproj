@@ -38,7 +38,7 @@
 	<ItemGroup>
 		<Folder Include="Resource\" />
 	</ItemGroup>
-	<Target Condition="'$(TargetFramework)'=='net60-windows'" Name="PreBuild" BeforeTargets="PreBuildEvent">
+	<Target Condition="'$(TargetFramework)'=='net8.0-windows'" Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<Exec Command="svn up --accept p -q&#xD;&#xA;echo ---&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Resource\Version.inc&#xD;&#xA;echo ===&#xD;&#xA;set errorlevel=" />
 	</Target>
 </Project>

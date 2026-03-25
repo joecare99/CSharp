@@ -62,13 +62,13 @@ public partial class Page1ViewModel : BaseViewModelCT
     /// </summary>
     /// <value>The main options.</value>
     public IList<ListEntry> MainOptions 
-        => _model.MainOptions.Select((i)=>new ListEntry(i, Properties.Resources.ResourceManager.GetString($"MainSelection{i}"))).ToList();
+        => _model.MainOptions.Select((i)=>new ListEntry(i, Properties.Resources.ResourceManager.GetString($"MainSelection{i}")??"")).ToList();
 
     public ImageSource? ImageSource
     {
         get
         {
-            if (File.Exists($"Resources\\{CultureInfo.CurrentUICulture.Name}\\MainSelection{MainSelection?.ID}.png"))
+            if (!string.IsNullOrEmpty(CultureInfo.CurrentUICulture.Name) && File.Exists($"Resources\\{CultureInfo.CurrentUICulture.Name}\\MainSelection{MainSelection?.ID}.png"))
             {
                 return new BitmapImage(new System.Uri( $".\\Resources\\{CultureInfo.CurrentUICulture.Name}\\MainSelection{MainSelection?.ID}.png"));
             }
