@@ -5,10 +5,9 @@ using MVVM.Views.Extension;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using VBUnObfusicator.Data;
-using VBUnObfusicator.Interfaces.Code;
-using VBUnObfusicator.Models;
-using VBUnObfusicator.Models.Scanner;
+using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models.Scanner;
 using VBUnObfusicator.Models.Tests;
 using static VBUnObfusicator.Helper.TestHelper;
 

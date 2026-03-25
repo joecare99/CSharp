@@ -38,6 +38,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\CSharpBible\Libraries\BaseLibTests\BaseLibTests.csproj" />
+	  <ProjectReference Include="..\..\Transpiler_pp\TranspilerLib.CSharp\TranspilerLib.CSharp.csproj" />
+	  <ProjectReference Include="..\..\Transpiler_pp\TranspilerLib\TranspilerLib.csproj" />
 	  <ProjectReference Include="..\VBUnObfusicator\VBUnObfusicator.csproj" />
 	</ItemGroup>
 

@@ -2,7 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using VBUnObfusicator.Interfaces;
+using TranspilerLib.Interfaces;
+using TranspilerLib.Models;
 
 namespace VBUnObfusicator.Models.Tests;
 

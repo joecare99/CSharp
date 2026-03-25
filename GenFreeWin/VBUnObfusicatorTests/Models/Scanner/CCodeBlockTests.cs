@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using VBUnObfusicator.Data;
+using TranspilerLib.Data;
+using TranspilerLib.Models.Scanner;
 using VBUnObfusicator.Models.Tests;
 using VBUnObfusicatorTests.TestData;
 using static VBUnObfusicator.Helper.TestHelper;
@@ -13,7 +14,7 @@ namespace VBUnObfusicator.Models.Scanner.Tests;
 public class CCodeBlockTests : TestBase
 {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-    private VBUnObfusicator.Models.Scanner.CSCode _testClass;
+    private CSCode _testClass;
 
     public static IEnumerable<object[]> TestListMove => new object[][]
 {

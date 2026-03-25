@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using VBUnObfusicator.Models;
-using VBUnObfusicator.Interfaces.Code;
-using VBUnObfusicator.Data;
-using VBUnObfusicator.Models.Scanner;
+using TranspilerLib.Models.Scanner;
+using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models;
+using TranspilerLib.Data;
 
 namespace VBUnObfusicator.Models.Scanner.Tests;
 
@@ -18,9 +18,9 @@ public class CSTokenHandlerTests
         public void Collect(TokenData token) => Tokens.Add(token);
     }
 
-    private static CSCode.CSTokenHandler CreateHandler(string[] reservedWords = null)
+    private static CSTokenHandler CreateHandler(string[] reservedWords = null)
     {
-        var handler = new CSCode.CSTokenHandler
+        var handler = new CSTokenHandler
         {
             reservedWords = reservedWords ?? new[] { "if", "for", "while", "return" }
         };
@@ -128,7 +128,7 @@ public class CSTokenHandlerTests
     public void HandleStrings_EmitsString(string code, int pos2, int pos, CodeBlockType expectedType)
     {
         // stringEndChars is assumed to contain '"' and '\r'
-        typeof(CSCode.CSTokenHandler)
+        typeof(CSTokenHandler)
             .GetField("stringEndChars", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
             ?.SetValue(null, new[] { '"', '\r' });
 
@@ -148,7 +148,7 @@ public class CSTokenHandlerTests
     public void HandleStrings_IpoString(string code, int pos2, int pos,int iExpState, CodeBlockType expectedType)
     {
         // stringEndChars is assumed to contain '"' and '\r'
-        typeof(CSCode.CSTokenHandler)
+        typeof(CSTokenHandler)
             .GetField("stringEndChars", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
             ?.SetValue(null, new[] { '"', '\r' });
 
@@ -168,7 +168,7 @@ public class CSTokenHandlerTests
         var words = new[] { "foo", "bar" };
         handler.reservedWords = words;
         // Use reflection to check private static field
-        var field = typeof(CSCode.CSTokenHandler).GetProperty("reservedWords");
+        var field = typeof(CSTokenHandler).GetProperty("reservedWords");
         Assert.IsNotNull(field);
     }
 }
