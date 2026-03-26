@@ -3,6 +3,8 @@ namespace RepoMigrator.Core;
 
 public enum RepoType { Git, Svn, Custom }
 
+public enum RepositoryAccessMode { Read, Write }
+
 public sealed class RepositoryEndpoint
 {
     public RepoType Type { get; init; }
@@ -42,4 +44,11 @@ public sealed class CommitMetadata
     public string AuthorName { get; init; } = "";
     public string? AuthorEmail { get; init; }
     public DateTimeOffset Timestamp { get; init; }
+}
+
+public sealed class RepositoryProbeResult
+{
+    public bool Success { get; init; }
+    public string Summary { get; init; } = "";
+    public IReadOnlyList<string> Details { get; init; } = Array.Empty<string>();
 }

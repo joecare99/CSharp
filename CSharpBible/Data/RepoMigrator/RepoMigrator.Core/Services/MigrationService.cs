@@ -52,8 +52,7 @@ public sealed class MigrationService : IMigrationService
         }
 
         progress.Report($"Initialisiere Ziel ({dst.Name}) …");
-        await dst.OpenAsync(target, ct);
-        await dst.InitializeTargetAsync(target.UrlOrPath, emptyInit: true, ct);
+        await dst.InitializeTargetAsync(target, emptyInit: true, ct);
 
         var total = changes.Count;
         for (int i = 0; i < total; i++)
@@ -72,7 +71,7 @@ public sealed class MigrationService : IMigrationService
                 // 2) Snapshot in Ziel committen
                 var meta = new CommitMetadata
                 {
-                    Message = c.Message,
+                    Message = string.IsNullOrWhiteSpace(c.Message) ? $"Imported revision {c.Id}" : c.Message,
                     AuthorName = c.AuthorName,
                     AuthorEmail = c.AuthorEmail,
                     Timestamp = c.Timestamp

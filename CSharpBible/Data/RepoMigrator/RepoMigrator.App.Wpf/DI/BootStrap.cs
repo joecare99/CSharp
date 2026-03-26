@@ -1,5 +1,6 @@
 ﻿// RepoMigrator.App.Wpf/DI/Bootstrap.cs
 using Microsoft.Extensions.DependencyInjection;
+using RepoMigrator.App.Wpf.Services;
 using RepoMigrator.App.Wpf.ViewModels;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
@@ -31,6 +32,7 @@ public static class Bootstrap
         });
 
         // ViewModels
+        services.AddSingleton<AppInputStateStore>();
         services.AddSingleton<MainViewModel>();
 
         return services.BuildServiceProvider();
