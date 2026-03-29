@@ -46,8 +46,8 @@ public abstract class OdfContentBase : OdfNodeBase, IDocContent
 
     public virtual IDocSpan AddSpan(string text, IList<object> docFontStyle)
     {
-        var span = new OdfSpan(OdfFontStyle.Default);
-        span.TextContent = text;
+        var fontStyle = OdfFontStyle.FromStyles(docFontStyle);
+        var span = new OdfSpan(fontStyle) { TextContent = text };
         return (IDocSpan)AddChild(span);
     }
 

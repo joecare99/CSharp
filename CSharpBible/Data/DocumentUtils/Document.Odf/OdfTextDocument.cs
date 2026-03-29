@@ -50,8 +50,34 @@ public sealed class OdfTextDocument : IUserDocument
     {
         try
         {
-            using var fs = new FileStream(cOutputPath, FileMode.Create, FileAccess.Write);
-            return SaveTo(fs);
+            var ext = Path.GetExtension(cOutputPath).ToLowerInvariant();
+            if (ext == ".fodt")
+            {
+                // Flat ODF (uncompressed XML)
+                return SaveToFlatOdf(cOutputPath);
+            }
+            else
+            {
+                // Packed ODF (ZIP)
+                using var fs = new FileStream(cOutputPath, FileMode.Create, FileAccess.Write);
+                return SaveTo(fs);
+            }
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private bool SaveToFlatOdf(string cOutputPath)
+    {
+        try
+        {
+            var rootSection = EnsureRoot();
+            var xdoc = Writing.OdfXmlWriter.CreateFlatOdfDocument(rootSection);
+            xdoc.Save(cOutputPath);
+            _isModified = false;
+            return true;
         }
         catch
         {
@@ -63,6 +89,7 @@ public sealed class OdfTextDocument : IUserDocument
     {
         try
         {
+            var rootSection = EnsureRoot();
             using var zip = new System.IO.Compression.ZipArchive(sOutputStream, System.IO.Compression.ZipArchiveMode.Create, leaveOpen: true);
 
             // mimetype (uncompressed, first entry)
@@ -70,11 +97,11 @@ public sealed class OdfTextDocument : IUserDocument
             using (var writer = new StreamWriter(mimeEntry.Open()))
                 writer.Write("application/vnd.oasis.opendocument.text");
 
-            // content.xml
+            // content.xml - use OdfXmlWriter for proper conversion
             var contentEntry = zip.CreateEntry("content.xml");
             using (var stream = contentEntry.Open())
             {
-                var xdoc = CreateContentXDocument();
+                var xdoc = Writing.OdfXmlWriter.CreateContentXml(rootSection);
                 xdoc.Save(stream);
             }
 

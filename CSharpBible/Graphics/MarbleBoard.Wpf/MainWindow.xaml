@@ -1,0 +1,250 @@
+<Window x:Class="MarbleBoard.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MarbleBoard.Wpf.ViewModels"
+        mc:Ignorable="d"
+        Title="Marble Board Prototype"
+        Width="1100"
+        MinWidth="980"
+        Height="760"
+        MinHeight="680"
+        Background="#11151C"
+        PreviewKeyDown="Window_OnPreviewKeyDown">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="28" />
+            <ColumnDefinition Width="*" MinWidth="320" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0"
+                Padding="24"
+                CornerRadius="26"
+                BorderThickness="1"
+                BorderBrush="#33F7E8C8">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#6E4B2B" Offset="0" />
+                    <GradientStop Color="#50351E" Offset="0.55" />
+                    <GradientStop Color="#382312" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <Grid x:Name="BoardSurface"
+                  Width="{Binding Board.BoardWidth}"
+                  Height="{Binding Board.BoardHeight}"
+                  Background="Transparent"
+                  Focusable="True"
+                  PreviewMouseLeftButtonDown="BoardSurface_OnPreviewMouseLeftButtonDown"
+                  PreviewMouseMove="BoardSurface_OnPreviewMouseMove"
+                  PreviewMouseLeftButtonUp="BoardSurface_OnPreviewMouseLeftButtonUp">
+                <ItemsControl ItemsSource="{Binding Board.Slots}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="{Binding DataContext.Board.ColumnCount, RelativeSource={RelativeSource AncestorType=Window}}"
+                                         Rows="{Binding DataContext.Board.RowCount, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:BoardSlotViewModel}">
+                            <Grid Margin="9">
+                                <Ellipse>
+                                    <Ellipse.Fill>
+                                        <RadialGradientBrush Center="0.4,0.35" GradientOrigin="0.35,0.3" RadiusX="0.9" RadiusY="0.9">
+                                            <GradientStop Color="#1F120A" Offset="0" />
+                                            <GradientStop Color="#29180D" Offset="0.5" />
+                                            <GradientStop Color="#573721" Offset="0.82" />
+                                            <GradientStop Color="#A47A4E" Offset="1" />
+                                        </RadialGradientBrush>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <Ellipse Margin="6" Opacity="0.32" Fill="#12000000" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Canvas>
+                    <Ellipse Width="{Binding Board.MarbleDiameter}"
+                             Height="{Binding Board.MarbleDiameter}"
+                             Canvas.Left="{Binding Board.DropTargetLeft}"
+                             Canvas.Top="{Binding Board.DropTargetTop}"
+                             Visibility="{Binding Board.IsDropTargetVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             Stroke="#E8F7E8C8"
+                             StrokeThickness="3"
+                             Fill="#2286E0C5"
+                             StrokeDashArray="2 2" />
+                </Canvas>
+
+                <ItemsControl ItemsSource="{Binding Board.Marbles}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding Left}" />
+                            <Setter Property="Canvas.Top" Value="{Binding Top}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:MarbleViewModel}">
+                            <Grid Width="{Binding Diameter}" Height="{Binding Diameter}">
+                                <Ellipse Opacity="0.6">
+                                    <Ellipse.Effect>
+                                        <DropShadowEffect BlurRadius="20"
+                                                          Color="#E0000000"
+                                                          Direction="300"
+                                                          ShadowDepth="8"
+                                                          Opacity="0.75" />
+                                    </Ellipse.Effect>
+                                    <Ellipse.Fill>
+                                        <SolidColorBrush Color="#01000000" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <Ellipse Fill="{Binding FillBrush}"
+                                         Stroke="{Binding RimBrush}"
+                                         StrokeThickness="2.4" />
+                                <Ellipse Fill="{Binding FormShadowBrush}"
+                                         StrokeThickness="0"
+                                         IsHitTestVisible="False" />
+                                <Canvas Width="{Binding Diameter}"
+                                        Height="{Binding Diameter}"
+                                        IsHitTestVisible="False">
+                                    <Ellipse Width="14"
+                                             Height="6"
+                                             Canvas.Left="21"
+                                             Canvas.Top="11"
+                                             Fill="{Binding TopHoleShadowBrush}" />
+                                    <Ellipse Width="6"
+                                             Height="14"
+                                             Canvas.Left="40"
+                                             Canvas.Top="22"
+                                             Fill="{Binding RightHoleShadowBrush}" />
+                                    <Ellipse Width="13"
+                                             Height="6"
+                                             Canvas.Left="22"
+                                             Canvas.Top="40"
+                                             Fill="{Binding BottomHoleShadowBrush}" />
+                                    <Ellipse Width="6"
+                                             Height="14"
+                                             Canvas.Left="10"
+                                             Canvas.Top="24"
+                                             Fill="{Binding LeftHoleShadowBrush}" />
+                                    <Ellipse Width="7"
+                                             Height="7"
+                                             Canvas.Left="13"
+                                             Canvas.Top="13"
+                                             Opacity="{Binding HighlightOpacity}">
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush Center="0.45,0.45"
+                                                                 GradientOrigin="0.4,0.4"
+                                                                 RadiusX="0.82"
+                                                                 RadiusY="0.82">
+                                                <GradientStop Color="#F8FFFFFF" Offset="0" />
+                                                <GradientStop Color="#D8FFFFFF" Offset="0.42" />
+                                                <GradientStop Color="#30FFFFFF" Offset="0.78" />
+                                                <GradientStop Color="#00FFFFFF" Offset="1" />
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                    <Ellipse Width="14"
+                                             Height="6"
+                                             Canvas.Left="26"
+                                             Canvas.Top="14"
+                                             Fill="{Binding TopReflectionBrush}" />
+                                    <Ellipse Width="7"
+                                             Height="14"
+                                             Canvas.Left="38"
+                                             Canvas.Top="22"
+                                             Fill="{Binding RightReflectionBrush}" />
+                                    <Ellipse Width="14"
+                                             Height="6"
+                                             Canvas.Left="23"
+                                             Canvas.Top="38"
+                                             Fill="{Binding BottomReflectionBrush}" />
+                                    <Ellipse Width="7"
+                                             Height="14"
+                                             Canvas.Left="11"
+                                             Canvas.Top="25"
+                                             Fill="{Binding LeftReflectionBrush}" />
+                                </Canvas>
+                                <Ellipse Stroke="#FFF7E8C8"
+                                         StrokeThickness="3.4"
+                                         Margin="-2"
+                                         Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock FontSize="30"
+                       FontWeight="SemiBold"
+                       Foreground="#FFF8F0DB"
+                       TextWrapping="Wrap"
+                       Text="Marble Board Prototype" />
+            <TextBlock Grid.Row="1"
+                       Margin="0,10,0,0"
+                       TextWrapping="Wrap"
+                       Foreground="#FFD5D9E0"
+                       FontSize="15"
+                       Text="Prototype surface for glossy marbles, cast shadows, neighbor reflections, mouse dragging, and keyboard interaction." />
+
+            <Border Grid.Row="2"
+                    Margin="0,24,0,0"
+                    Padding="18"
+                    CornerRadius="18"
+                    Background="#1AFFFFFF"
+                    BorderBrush="#2ED9C9A6"
+                    BorderThickness="1">
+                <StackPanel>
+                    <TextBlock FontSize="19"
+                               FontWeight="SemiBold"
+                               Foreground="#FFF8F0DB"
+                               Text="Interaction" />
+                    <TextBlock Margin="0,12,0,0"
+                               TextWrapping="Wrap"
+                               Foreground="#FFD5D9E0"
+                               Text="• Click a marble to select it&#x0a;• Drag a selected marble to an empty slot&#x0a;• Use arrow keys to move the selection&#x0a;• Use Shift + Arrow keys to drag the selected marble" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="3"
+                    Margin="0,18,0,0"
+                    VerticalAlignment="Top"
+                    Padding="18"
+                    CornerRadius="18"
+                    Background="#1AFFFFFF"
+                    BorderBrush="#2E7AC8FF"
+                    BorderThickness="1">
+                <StackPanel>
+                    <TextBlock FontSize="19"
+                               FontWeight="SemiBold"
+                               Foreground="#FFF8F0DB"
+                               Text="Board status" />
+                    <TextBlock Margin="0,12,0,0"
+                               TextWrapping="Wrap"
+                               Foreground="#FFD5D9E0"
+                               Text="{Binding Board.StatusText}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

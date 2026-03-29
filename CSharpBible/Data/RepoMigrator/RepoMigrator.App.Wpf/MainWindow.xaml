@@ -4,6 +4,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Loaded="WindowLoaded"
         Title="Repo Migrator" Height="520" Width="820">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -39,6 +42,36 @@
                         <PasswordBox x:Name="SourcePasswordBox" Width="240" PasswordChanged="SourcePasswordChanged"/>
                     </StackPanel>
                     <Button Content="Quelle testen" Command="{Binding TestSourceCommand}" IsEnabled="{Binding IsIdle}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                    <Separator Margin="0,8,0,8"/>
+                    <CheckBox Content="Git-Branches mit Historie übernehmen"
+                              IsChecked="{Binding TransferGitBranches}"
+                              IsEnabled="{Binding CanConfigureGitHistory}"/>
+                    <Border BorderBrush="LightGray" BorderThickness="1" Padding="4" Margin="0,6,0,0">
+                        <ScrollViewer Height="90" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding GitBranchSelections}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" IsEnabled="{Binding DataContext.CanConfigureGitHistory, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                    <CheckBox Content="Git-Tags übernehmen"
+                              IsChecked="{Binding TransferGitTags}"
+                              IsEnabled="{Binding CanConfigureGitHistory}"
+                              Margin="0,8,0,0"/>
+                    <Border BorderBrush="LightGray" BorderThickness="1" Padding="4" Margin="0,6,0,0">
+                        <ScrollViewer Height="70" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding GitTagSelections}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" IsEnabled="{Binding DataContext.TransferGitTags, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
                 </StackPanel>
             </GroupBox>
 
@@ -73,20 +106,52 @@
 
         <!-- Options -->
         <GroupBox Grid.Row="1" Header="Optionen" Margin="0,12,0,0">
-            <StackPanel Margin="8" Orientation="Horizontal">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Von (exkl.)" Width="80"/>
-                    <TextBox Width="220" Text="{Binding FromId}"/>
+            <StackPanel Margin="8">
+                <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding ShowGenericRevisionInputs, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Von (exkl.)" Width="80"/>
+                        <TextBox Width="220" Text="{Binding FromId}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Bis (inkl.)" Width="80"/>
+                        <TextBox Width="220" Text="{Binding ToId}"/>
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Bis (inkl.)" Width="80"/>
-                    <TextBox Width="220" Text="{Binding ToId}"/>
+
+                <StackPanel Visibility="{Binding CanConfigureSvnRevisions, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Von (inkl.)" Width="80"/>
+                        <ComboBox Width="220"
+                                  ItemsSource="{Binding SvnFromRevisionOptions}"
+                                  SelectedItem="{Binding SelectedSvnFromRevisionId}"/>
+                        <TextBlock Text="Bis (inkl.)" Width="80" Margin="12,0,0,0"/>
+                        <ComboBox Width="220"
+                                  ItemsSource="{Binding SvnToRevisionOptions}"
+                                  SelectedItem="{Binding SelectedSvnToRevisionId}"/>
+                    </StackPanel>
+                    <TextBlock Text="Leer bei 'Bis' bedeutet HEAD." Margin="0,6,0,0"/>
+                    <DataGrid ItemsSource="{Binding SvnRevisionSelections}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Height="140"
+                              Margin="0,8,0,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Rev" Binding="{Binding Id}" Width="70"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Timestamp}" Width="160"/>
+                            <DataGridTextColumn Header="Author" Binding="{Binding AuthorName}" Width="120"/>
+                            <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Max" Width="40"/>
-                    <TextBox Width="80" Text="{Binding MaxCount}"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Max" Width="40"/>
+                        <TextBox Width="80" Text="{Binding MaxCount}"/>
+                    </StackPanel>
+                    <CheckBox Content="Älteste zuerst" IsChecked="{Binding OldestFirst}" Margin="12,0,0,0"/>
                 </StackPanel>
-                <CheckBox Content="Älteste zuerst" IsChecked="{Binding OldestFirst}"/>
             </StackPanel>
         </GroupBox>
 

@@ -29,6 +29,27 @@ public sealed class SvnCliProvider : IVersionControlProvider
         return Task.CompletedTask;
     }
 
+    public Task<RepositoryCapabilities> GetCapabilitiesAsync(RepositoryEndpoint endpoint, CancellationToken ct)
+        => Task.FromResult(new RepositoryCapabilities
+        {
+            SupportsRevisionSelection = true
+        });
+
+    public async Task<RepositorySelectionData> GetSelectionDataAsync(RepositoryEndpoint endpoint, CancellationToken ct)
+    {
+        _endpoint = endpoint;
+        _wcPath = IsRemote(endpoint.UrlOrPath) ? null : Path.GetFullPath(endpoint.UrlOrPath);
+
+        var sPathUrl = await GetRepositoryUrlAsync(ct);
+        var lstRevisions = await LoadRevisionInfosAsync(sPathUrl, ct);
+        return new RepositorySelectionData
+        {
+            SuggestedFromRevisionId = SvnRevisionRangeResolver.GetSuggestedFromRevisionId(lstRevisions),
+            SuggestedToRevisionId = null,
+            Revisions = lstRevisions
+        };
+    }
+
     public async Task<RepositoryProbeResult> ProbeAsync(RepositoryEndpoint endpoint, RepositoryAccessMode accessMode, CancellationToken ct)
     {
         try
@@ -71,34 +92,22 @@ public sealed class SvnCliProvider : IVersionControlProvider
         }
     }
 
+    public Task TransferAsync(RepositoryEndpoint source, RepositoryEndpoint target, MigrationOptions options, IMigrationProgress progress, CancellationToken ct)
+        => throw new NotSupportedException("Native history transfer is not supported for Subversion endpoints.");
+
     public async Task<IReadOnlyList<ChangeSetInfo>> GetChangeSetsAsync(ChangeSetQuery query, CancellationToken ct)
     {
-        var repoUrl = await GetRepositoryUrlAsync(ct);
-        var xml = await RunSvnAsync($"log -r 0:HEAD --xml \"{repoUrl}\"", workingDir: null, ct);
-
-        var doc = XDocument.Parse(xml);
-        var entries = doc.Root?.Elements("logentry") ?? Enumerable.Empty<XElement>();
-
-        var list = new List<ChangeSetInfo>();
-        foreach (var e in entries)
-        {
-            var rev = e.Attribute("revision")?.Value ?? "0";
-            var author = e.Element("author")?.Value ?? "unknown";
-            var dateStr = e.Element("date")?.Value ?? "";
-            var msg = e.Element("msg")?.Value ?? "";
-
-            if (!DateTimeOffset.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var when))
-                when = DateTimeOffset.UtcNow;
-
-            list.Add(new ChangeSetInfo
+        var sPathUrl = await GetRepositoryUrlAsync(ct);
+        var list = (await LoadRevisionInfosAsync(sPathUrl, ct))
+            .Select(svnRevision => new ChangeSetInfo
             {
-                Id = rev,
-                Message = msg,
-                AuthorName = string.IsNullOrWhiteSpace(author) ? "unknown" : author,
+                Id = svnRevision.Id,
+                Message = svnRevision.Message,
+                AuthorName = svnRevision.AuthorName,
                 AuthorEmail = null,
-                Timestamp = when
-            });
-        }
+                Timestamp = svnRevision.Timestamp
+            })
+            .ToList();
 
         // Älteste zuerst
         list.Sort((a, b) => int.Parse(a.Id, CultureInfo.InvariantCulture).CompareTo(int.Parse(b.Id, CultureInfo.InvariantCulture)));
@@ -293,6 +302,36 @@ public sealed class SvnCliProvider : IVersionControlProvider
         }
 
         return stdout.ToString();
+    }
+
+    private async Task<IReadOnlyList<RepositoryRevisionInfo>> LoadRevisionInfosAsync(string sPathUrl, CancellationToken ct)
+    {
+        var sXml = await RunSvnAsync($"log -r 0:HEAD --xml \"{sPathUrl}\"", workingDir: null, ct);
+        var xDoc = XDocument.Parse(sXml);
+        var lstEntries = xDoc.Root?.Elements("logentry") ?? Enumerable.Empty<XElement>();
+        var lstRevisions = new List<RepositoryRevisionInfo>();
+
+        foreach (var xEntry in lstEntries)
+        {
+            var sRevision = xEntry.Attribute("revision")?.Value ?? "0";
+            var sAuthor = xEntry.Element("author")?.Value ?? "unknown";
+            var sDate = xEntry.Element("date")?.Value ?? "";
+            var sMessage = xEntry.Element("msg")?.Value ?? "";
+
+            if (!DateTimeOffset.TryParse(sDate, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dtWhen))
+                dtWhen = DateTimeOffset.UtcNow;
+
+            lstRevisions.Add(new RepositoryRevisionInfo
+            {
+                Id = sRevision,
+                Message = sMessage,
+                AuthorName = string.IsNullOrWhiteSpace(sAuthor) ? "unknown" : sAuthor,
+                Timestamp = dtWhen
+            });
+        }
+
+        lstRevisions.Sort((svnLeft, svnRight) => int.Parse(svnLeft.Id, CultureInfo.InvariantCulture).CompareTo(int.Parse(svnRight.Id, CultureInfo.InvariantCulture)));
+        return lstRevisions;
     }
 
     private async Task TryRunSvnAsync(string args, string? workingDir, CancellationToken ct)

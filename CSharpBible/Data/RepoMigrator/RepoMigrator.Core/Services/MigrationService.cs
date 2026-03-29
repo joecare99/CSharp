@@ -14,6 +14,7 @@ public interface IMigrationService
         RepositoryEndpoint source,
         RepositoryEndpoint target,
         ChangeSetQuery query,
+        MigrationOptions options,
         IMigrationProgress progress,
         CancellationToken ct);
 }
@@ -34,14 +35,24 @@ public sealed class MigrationService : IMigrationService
         RepositoryEndpoint source,
         RepositoryEndpoint target,
         ChangeSetQuery query,
+        MigrationOptions options,
         IMigrationProgress progress,
         CancellationToken ct)
     {
         await using var src = _factory.Create(source.Type);
-        await using var dst = _factory.Create(target.Type);
 
         progress.Report($"Öffne Quelle ({src.Name}) …");
         await src.OpenAsync(source, ct);
+
+        if (options.TransferMode == RepositoryTransferMode.NativeHistory)
+        {
+            progress.Report($"Übertrage Historie nativ ({src.Name} -> {target.Type}) …");
+            await src.TransferAsync(source, target, options, progress, ct);
+            progress.Report("Migration abgeschlossen.");
+            return;
+        }
+
+        await using var dst = _factory.Create(target.Type);
 
         progress.Report($"Lese Changesets …");
         var changes = await src.GetChangeSetsAsync(query, ct);

@@ -1,6 +1,6 @@
-﻿using Document.Base.Models.Interfaces;
+﻿using Document.Base.Models;
+using Document.Base.Models.Interfaces;
 using Document.Odf;
-using System.Windows;
 
 namespace OdtBoldTextExample;
 
@@ -28,8 +28,8 @@ public class Program
     static void Run()
     {
         var p = userDocument.AddParagraph(cStylename);
-        p.TextContent = "A";
-        p.AddSpan("bold", [FontWeights.Bold]);
+        p.TextContent = "A ";
+        p.AddSpan("bold", [EFontStyle.Bold]);
         p.AddSpan(" text", []);
         userDocument.SaveTo(cOutputPath);
         Console.WriteLine("Document saved to: " + cOutputPath);
