@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Pr
 		ChristmasCard.svg = ChristmasCard.svg
 		ChristmasCard.xaml = ChristmasCard.xaml
 		ChristmasCard2.svg = ChristmasCard2.svg
+		.github\copilot-instructions.md = .github\copilot-instructions.md
 		Graphics.props = Graphics.props
 		Graphics_net.props = Graphics_net.props
 		ReadMe.md = ReadMe.md
@@ -171,6 +172,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDialogs_net", "..\Libraries\CommonDialogs\CommonDialogs_net.csproj", "{65F08D9B-F63E-14C2-C35D-C324E1E37785}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MVVM", "MVVM", "{C99C28ED-E367-4D36-9146-F42A2E5A65CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarbleBoard.Engine", "MarbleBoard.Engine\MarbleBoard.Engine.csproj", "{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarbleBoard.Engine.Tests", "MarbleBoard.Engine.Tests\MarbleBoard.Engine.Tests.csproj", "{B85F8273-911B-8D7B-5380-306A6FD242A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarbleBoard.Wpf", "MarbleBoard.Wpf\MarbleBoard.Wpf.csproj", "{183EDE00-C598-CCFC-043D-0DD26E1D5502}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -708,6 +715,30 @@ Global
 		{65F08D9B-F63E-14C2-C35D-C324E1E37785}.Release|Any CPU.Build.0 = Release|Any CPU
 		{65F08D9B-F63E-14C2-C35D-C324E1E37785}.Release|x64.ActiveCfg = Release|x64
 		{65F08D9B-F63E-14C2-C35D-C324E1E37785}.Release|x64.Build.0 = Release|x64
+		{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108}.Debug|x64.ActiveCfg = Debug|x64
+		{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108}.Debug|x64.Build.0 = Debug|x64
+		{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108}.Release|x64.ActiveCfg = Release|x64
+		{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108}.Release|x64.Build.0 = Release|x64
+		{B85F8273-911B-8D7B-5380-306A6FD242A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B85F8273-911B-8D7B-5380-306A6FD242A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B85F8273-911B-8D7B-5380-306A6FD242A5}.Debug|x64.ActiveCfg = Debug|x64
+		{B85F8273-911B-8D7B-5380-306A6FD242A5}.Debug|x64.Build.0 = Debug|x64
+		{B85F8273-911B-8D7B-5380-306A6FD242A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B85F8273-911B-8D7B-5380-306A6FD242A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B85F8273-911B-8D7B-5380-306A6FD242A5}.Release|x64.ActiveCfg = Release|x64
+		{B85F8273-911B-8D7B-5380-306A6FD242A5}.Release|x64.Build.0 = Release|x64
+		{183EDE00-C598-CCFC-043D-0DD26E1D5502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{183EDE00-C598-CCFC-043D-0DD26E1D5502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{183EDE00-C598-CCFC-043D-0DD26E1D5502}.Debug|x64.ActiveCfg = Debug|x64
+		{183EDE00-C598-CCFC-043D-0DD26E1D5502}.Debug|x64.Build.0 = Debug|x64
+		{183EDE00-C598-CCFC-043D-0DD26E1D5502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{183EDE00-C598-CCFC-043D-0DD26E1D5502}.Release|Any CPU.Build.0 = Release|Any CPU
+		{183EDE00-C598-CCFC-043D-0DD26E1D5502}.Release|x64.ActiveCfg = Release|x64
+		{183EDE00-C598-CCFC-043D-0DD26E1D5502}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -765,6 +796,9 @@ Global
 		{2B8F46EA-E0E6-3D67-1297-00875CACACB9} = {ED40304F-14CA-473F-9D9A-25FCA5E2C5CF}
 		{2C22DBA7-88B0-BF41-69E4-CA97936D37BB} = {ED40304F-14CA-473F-9D9A-25FCA5E2C5CF}
 		{65F08D9B-F63E-14C2-C35D-C324E1E37785} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
+		{D73792A0-ED74-F2DA-41E1-D4A4CEA2C108} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B85F8273-911B-8D7B-5380-306A6FD242A5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{183EDE00-C598-CCFC-043D-0DD26E1D5502} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1671921B-67F7-474B-A77C-6D6A7F6DF943}
