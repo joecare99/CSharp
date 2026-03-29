@@ -6,7 +6,9 @@ using RepoMigrator.App.Wpf.Settings;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
@@ -21,6 +23,12 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     private readonly IProviderFactory _providerFactory;
     private readonly AppInputStateStore _inputStateStore;
     private bool _isLoadingInputState;
+    private readonly HashSet<string> _hsSavedGitBranchSelections = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> _hsSavedGitTagSelections = new(StringComparer.OrdinalIgnoreCase);
+    private string? _sSavedSvnFromRevisionId;
+    private string? _sSavedSvnToRevisionId;
+    private string? _sSelectedSvnFromRevisionId;
+    private string? _sSelectedSvnToRevisionId;
     private string? _targetUser;
     private string? _targetPassword;
 
@@ -33,6 +41,8 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     [ObservableProperty] public partial RepoType TargetType { get; set; } = RepoType.Git;
     [ObservableProperty] public partial string TargetUrl { get; set; } = "";
     [ObservableProperty] public partial string? TargetBranch { get; set; }
+    [ObservableProperty] public partial bool TransferGitBranches { get; set; }
+    [ObservableProperty] public partial bool TransferGitTags { get; set; }
     public string? TargetUser
     {
         get => _targetUser;
@@ -58,14 +68,42 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     [ObservableProperty] public partial int? MaxCount { get; set; }
     [ObservableProperty] public partial bool OldestFirst { get; set; } = true;
 
+    public string? SelectedSvnFromRevisionId
+    {
+        get => _sSelectedSvnFromRevisionId;
+        set
+        {
+            if (SetProperty(ref _sSelectedSvnFromRevisionId, value))
+                SaveInputState();
+        }
+    }
+
+    public string? SelectedSvnToRevisionId
+    {
+        get => _sSelectedSvnToRevisionId;
+        set
+        {
+            if (SetProperty(ref _sSelectedSvnToRevisionId, value))
+                SaveInputState();
+        }
+    }
+
     [ObservableProperty] public partial string Log { get; set; } = "";
     [ObservableProperty] public partial double ProgressValue { get; set; }
     [ObservableProperty] public partial double ProgressMax { get; set; } = 100;
 
     [ObservableProperty] public partial bool IsRunning { get; set; }
     public bool IsIdle => !IsRunning;
+    public bool CanConfigureGitHistory => SourceType == RepoType.Git && TargetType == RepoType.Git;
+    public bool CanConfigureSvnRevisions => SourceType == RepoType.Svn;
+    public bool ShowGenericRevisionInputs => !CanConfigureSvnRevisions;
 
     public ObservableCollection<RepoType> RepoTypes { get; } = new() { RepoType.Git, RepoType.Svn };
+    public ObservableCollection<GitReferenceSelectionViewModel> GitBranchSelections { get; } = new();
+    public ObservableCollection<GitReferenceSelectionViewModel> GitTagSelections { get; } = new();
+    public ObservableCollection<RepositoryRevisionInfo> SvnRevisionSelections { get; } = new();
+    public ObservableCollection<string> SvnFromRevisionOptions { get; } = new();
+    public ObservableCollection<string> SvnToRevisionOptions { get; } = new();
 
     private CancellationTokenSource? _cts;
     private int _total;
@@ -86,8 +124,16 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         TargetType = state.TargetType;
         TargetUrl = state.TargetUrl;
         TargetBranch = state.TargetBranch;
+        TransferGitBranches = state.TransferGitBranches;
+        TransferGitTags = state.TransferGitTags;
         TargetUser = state.TargetUser;
         TargetPassword = state.TargetPassword;
+        _hsSavedGitBranchSelections.UnionWith(state.SelectedGitBranches);
+        _hsSavedGitTagSelections.UnionWith(state.SelectedGitTags);
+        _sSavedSvnFromRevisionId = state.SelectedSvnFromRevisionId;
+        _sSavedSvnToRevisionId = state.SelectedSvnToRevisionId;
+        SelectedSvnFromRevisionId = state.SelectedSvnFromRevisionId;
+        SelectedSvnToRevisionId = state.SelectedSvnToRevisionId;
         FromId = state.FromId;
         ToId = state.ToId;
         MaxCount = state.MaxCount;
@@ -100,15 +146,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     {
         await RunOperationAsync(clearLog: true, async ct =>
         {
-            var q = new ChangeSetQuery
-            {
-                FromExclusiveId = FromId,
-                ToInclusiveId = ToId,
-                MaxCount = MaxCount,
-                OldestFirst = OldestFirst
-            };
+            var q = CreateChangeSetQuery();
 
-            await _migration.MigrateAsync(CreateSourceEndpoint(), CreateTargetEndpoint(), q, this, ct);
+            await _migration.MigrateAsync(CreateSourceEndpoint(), CreateTargetEndpoint(), q, CreateMigrationOptions(), this, ct);
         });
     }
 
@@ -176,8 +216,168 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
             foreach (var detail in result.Details)
                 Append($"  {detail}");
+
+            if (result.Success && label == "Quelle")
+                await LoadSourceSelectionDataAsync(provider, endpoint, ct);
         });
     }
+
+    private ChangeSetQuery CreateChangeSetQuery()
+    {
+        if (CanConfigureSvnRevisions)
+        {
+            return new ChangeSetQuery
+            {
+                FromExclusiveId = SvnRevisionRangeResolver.ResolveFromExclusiveId(SvnRevisionSelections, SelectedSvnFromRevisionId),
+                ToInclusiveId = SvnRevisionRangeResolver.ResolveToInclusiveId(SelectedSvnToRevisionId),
+                MaxCount = MaxCount,
+                OldestFirst = OldestFirst
+            };
+        }
+
+        return new ChangeSetQuery
+        {
+            FromExclusiveId = FromId,
+            ToInclusiveId = ToId,
+            MaxCount = MaxCount,
+            OldestFirst = OldestFirst
+        };
+    }
+
+    private MigrationOptions CreateMigrationOptions()
+    {
+        if (!CanConfigureGitHistory)
+            return new MigrationOptions();
+
+        return new MigrationOptions
+        {
+            TransferMode = RepositoryTransferMode.NativeHistory,
+            TransferBranches = TransferGitBranches,
+            TransferTags = TransferGitTags,
+            SelectedBranches = GitBranchSelections.Where(vmItem => vmItem.IsSelected).Select(vmItem => vmItem.Name).ToList(),
+            SelectedTags = GitTagSelections.Where(vmItem => vmItem.IsSelected).Select(vmItem => vmItem.Name).ToList()
+        };
+    }
+
+    private async Task LoadGitSelectionDataAsync(IVersionControlProvider provider, RepositoryEndpoint endpoint, CancellationToken ct)
+    {
+        var capabilities = await provider.GetCapabilitiesAsync(endpoint, ct);
+        if (!capabilities.SupportsBranchSelection && !capabilities.SupportsTagSelection)
+        {
+            ClearGitSelections();
+            return;
+        }
+
+        var selectionData = await provider.GetSelectionDataAsync(endpoint, ct);
+        RebuildGitSelectionCollection(GitBranchSelections, selectionData.Branches, _hsSavedGitBranchSelections);
+        RebuildGitSelectionCollection(GitTagSelections, selectionData.Tags, _hsSavedGitTagSelections);
+
+        if (string.IsNullOrWhiteSpace(SourceBranch) && !string.IsNullOrWhiteSpace(selectionData.DefaultBranch))
+            SourceBranch = selectionData.DefaultBranch;
+
+        Append($"  Git-Branches geladen: {GitBranchSelections.Count}");
+        Append($"  Git-Tags geladen: {GitTagSelections.Count}");
+    }
+
+    private async Task LoadSourceSelectionDataAsync(IVersionControlProvider provider, RepositoryEndpoint endpoint, CancellationToken ct)
+    {
+        var capabilities = await provider.GetCapabilitiesAsync(endpoint, ct);
+
+        if (capabilities.SupportsBranchSelection || capabilities.SupportsTagSelection)
+            await LoadGitSelectionDataAsync(provider, endpoint, ct);
+        else
+            ClearGitSelections();
+
+        if (capabilities.SupportsRevisionSelection)
+            await LoadSvnSelectionDataAsync(provider, endpoint, ct);
+        else
+            ClearSvnSelections();
+    }
+
+    private async Task LoadSvnSelectionDataAsync(IVersionControlProvider provider, RepositoryEndpoint endpoint, CancellationToken ct)
+    {
+        var selectionData = await provider.GetSelectionDataAsync(endpoint, ct);
+
+        SvnRevisionSelections.Clear();
+        foreach (var svnRevision in selectionData.Revisions)
+            SvnRevisionSelections.Add(svnRevision);
+
+        SvnFromRevisionOptions.Clear();
+        foreach (var svnRevision in selectionData.Revisions)
+            SvnFromRevisionOptions.Add(svnRevision.Id);
+
+        SvnToRevisionOptions.Clear();
+        SvnToRevisionOptions.Add(string.Empty);
+        foreach (var svnRevision in selectionData.Revisions)
+            SvnToRevisionOptions.Add(svnRevision.Id);
+
+        SelectedSvnFromRevisionId = ResolveExistingOrSuggestedRevisionId(SvnFromRevisionOptions, _sSavedSvnFromRevisionId, selectionData.SuggestedFromRevisionId);
+        SelectedSvnToRevisionId = ResolveExistingOrSuggestedRevisionId(SvnToRevisionOptions, _sSavedSvnToRevisionId, selectionData.SuggestedToRevisionId) ?? string.Empty;
+
+        Append($"  SVN-Revisionen geladen: {SvnRevisionSelections.Count}");
+    }
+
+    private void RebuildGitSelectionCollection(ObservableCollection<GitReferenceSelectionViewModel> lstTargetCollection, IReadOnlyList<RepositoryReferenceInfo> lstSourceItems, HashSet<string> hsSavedSelections)
+    {
+        foreach (var vmExistingItem in lstTargetCollection)
+            vmExistingItem.PropertyChanged -= OnGitSelectionItemPropertyChanged;
+
+        lstTargetCollection.Clear();
+        foreach (var repositoryReference in lstSourceItems)
+        {
+            var vmItem = new GitReferenceSelectionViewModel(repositoryReference.Name, repositoryReference.CommitId, hsSavedSelections.Contains(repositoryReference.Name));
+            vmItem.PropertyChanged += OnGitSelectionItemPropertyChanged;
+            lstTargetCollection.Add(vmItem);
+        }
+    }
+
+    private void OnGitSelectionItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(GitReferenceSelectionViewModel.IsSelected))
+            SaveInputState();
+    }
+
+    private void ClearGitSelections()
+    {
+        foreach (var vmBranch in GitBranchSelections)
+            vmBranch.PropertyChanged -= OnGitSelectionItemPropertyChanged;
+        foreach (var vmTag in GitTagSelections)
+            vmTag.PropertyChanged -= OnGitSelectionItemPropertyChanged;
+
+        GitBranchSelections.Clear();
+        GitTagSelections.Clear();
+    }
+
+    private void ClearSvnSelections()
+    {
+        SvnRevisionSelections.Clear();
+        SvnFromRevisionOptions.Clear();
+        SvnToRevisionOptions.Clear();
+        SelectedSvnFromRevisionId = null;
+        SelectedSvnToRevisionId = string.Empty;
+    }
+
+    private static string? ResolveExistingOrSuggestedRevisionId(IEnumerable<string> lstOptions, string? sSavedRevisionId, string? sSuggestedRevisionId)
+    {
+        var lstAvailableOptions = lstOptions.ToList();
+        if (!string.IsNullOrWhiteSpace(sSavedRevisionId) && lstAvailableOptions.Contains(sSavedRevisionId, StringComparer.OrdinalIgnoreCase))
+            return sSavedRevisionId;
+
+        if (!string.IsNullOrWhiteSpace(sSuggestedRevisionId) && lstAvailableOptions.Contains(sSuggestedRevisionId, StringComparer.OrdinalIgnoreCase))
+            return sSuggestedRevisionId;
+
+        return lstAvailableOptions.FirstOrDefault();
+    }
+
+    private List<string> GetSelectedGitBranchesForPersistence()
+        => GitBranchSelections.Count > 0
+            ? GitBranchSelections.Where(vmItem => vmItem.IsSelected).Select(vmItem => vmItem.Name).ToList()
+            : _hsSavedGitBranchSelections.ToList();
+
+    private List<string> GetSelectedGitTagsForPersistence()
+        => GitTagSelections.Count > 0
+            ? GitTagSelections.Where(vmItem => vmItem.IsSelected).Select(vmItem => vmItem.Name).ToList()
+            : _hsSavedGitTagSelections.ToList();
 
     private async Task RunOperationAsync(bool clearLog, Func<CancellationToken, Task> action)
     {
@@ -216,14 +416,43 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         }
     }
 
-    partial void OnSourceTypeChanged(RepoType value) => SaveInputState();
-    partial void OnSourceUrlChanged(string value) => SaveInputState();
+    partial void OnSourceTypeChanged(RepoType value)
+    {
+        OnPropertyChanged(nameof(CanConfigureGitHistory));
+        OnPropertyChanged(nameof(CanConfigureSvnRevisions));
+        OnPropertyChanged(nameof(ShowGenericRevisionInputs));
+        _hsSavedGitBranchSelections.Clear();
+        _hsSavedGitTagSelections.Clear();
+        _sSavedSvnFromRevisionId = null;
+        _sSavedSvnToRevisionId = null;
+        ClearGitSelections();
+        ClearSvnSelections();
+        SaveInputState();
+    }
+    partial void OnSourceUrlChanged(string value)
+    {
+        _hsSavedGitBranchSelections.Clear();
+        _hsSavedGitTagSelections.Clear();
+        _sSavedSvnFromRevisionId = null;
+        _sSavedSvnToRevisionId = null;
+        ClearGitSelections();
+        ClearSvnSelections();
+        SaveInputState();
+    }
     partial void OnSourceBranchChanged(string? value) => SaveInputState();
     partial void OnSourceUserChanged(string? value) => SaveInputState();
     partial void OnSourcePasswordChanged(string? value) => SaveInputState();
-    partial void OnTargetTypeChanged(RepoType value) => SaveInputState();
+    partial void OnTargetTypeChanged(RepoType value)
+    {
+        OnPropertyChanged(nameof(CanConfigureGitHistory));
+        OnPropertyChanged(nameof(CanConfigureSvnRevisions));
+        OnPropertyChanged(nameof(ShowGenericRevisionInputs));
+        SaveInputState();
+    }
     partial void OnTargetUrlChanged(string value) => SaveInputState();
     partial void OnTargetBranchChanged(string? value) => SaveInputState();
+    partial void OnTransferGitBranchesChanged(bool value) => SaveInputState();
+    partial void OnTransferGitTagsChanged(bool value) => SaveInputState();
     partial void OnFromIdChanged(string? value) => SaveInputState();
     partial void OnToIdChanged(string? value) => SaveInputState();
     partial void OnMaxCountChanged(int? value) => SaveInputState();
@@ -246,6 +475,12 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             TargetBranch = TargetBranch,
             TargetUser = TargetUser,
             TargetPassword = TargetPassword,
+            TransferGitBranches = TransferGitBranches,
+            TransferGitTags = TransferGitTags,
+            SelectedGitBranches = GetSelectedGitBranchesForPersistence(),
+            SelectedGitTags = GetSelectedGitTagsForPersistence(),
+            SelectedSvnFromRevisionId = string.IsNullOrWhiteSpace(SelectedSvnFromRevisionId) ? null : SelectedSvnFromRevisionId,
+            SelectedSvnToRevisionId = string.IsNullOrWhiteSpace(SelectedSvnToRevisionId) ? null : SelectedSvnToRevisionId,
             FromId = FromId,
             ToId = ToId,
             MaxCount = MaxCount,

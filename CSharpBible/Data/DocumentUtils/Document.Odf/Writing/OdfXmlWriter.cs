@@ -10,6 +10,41 @@ namespace Document.Odf.Writing;
 public static class OdfXmlWriter
 {
     /// <summary>
+    /// Erstellt ein vollständiges Flat-ODF-Dokument (fodt) als einzelne XML-Datei.
+    /// </summary>
+    public static XDocument CreateFlatOdfDocument(OdfSection root)
+    {
+        var officeText = new XElement(OdfNamespaces.Office + "text");
+
+        foreach (var node in root.Nodes)
+        {
+            var el = ConvertNode(node);
+            if (el != null)
+                officeText.Add(el);
+        }
+
+        var doc = new XDocument(
+            new XDeclaration("1.0", "UTF-8", null),
+            new XElement(OdfNamespaces.Office + "document",
+                new XAttribute(XNamespace.Xmlns + "office", OdfNamespaces.Office),
+                new XAttribute(XNamespace.Xmlns + "text", OdfNamespaces.Text),
+                new XAttribute(XNamespace.Xmlns + "style", OdfNamespaces.Style),
+                new XAttribute(XNamespace.Xmlns + "fo", OdfNamespaces.Fo),
+                new XAttribute(XNamespace.Xmlns + "xlink", OdfNamespaces.XLink),
+                new XAttribute(XNamespace.Xmlns + "draw", OdfNamespaces.Draw),
+                new XAttribute(XNamespace.Xmlns + "table", OdfNamespaces.Table),
+                new XAttribute(XNamespace.Xmlns + "svg", OdfNamespaces.Svg),
+                new XAttribute(OdfNamespaces.Office + "version", "1.3"),
+                new XAttribute(OdfNamespaces.Office + "mimetype", "application/vnd.oasis.opendocument.text"),
+                CreateAutomaticStyles(root),
+                new XElement(OdfNamespaces.Office + "body", officeText)
+            )
+        );
+
+        return doc;
+    }
+
+    /// <summary>
     /// Erstellt ein vollständiges content.xml für ein ODF-Textdokument.
     /// </summary>
     public static XDocument CreateContentXml(OdfSection root)

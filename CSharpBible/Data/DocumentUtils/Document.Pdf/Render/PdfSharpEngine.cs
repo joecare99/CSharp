@@ -129,22 +129,7 @@ public sealed class PdfSharpEngine : IPdfEngine
 
         if (addOutline)
         {
-            var outline = _doc.Outlines.Add(name, _page, true);
-            try
-            {
-                var dest = new PdfDestination(_page)
-                {
-                    Mode = PdfDestinationMode.FitH,
-                    Top = top
-                };
-                outline.Destination = dest;
-            }
-            catch
-            {
-                // Fallback: Wenn Destination nicht gesetzt werden kann, bleibt Outline seitenbasiert.
-            }
-
-            info.Outline = outline;
+            info.Outline = _doc.Outlines.Add(name, _page, true);
         }
 
         _bookmarks[name] = info;
@@ -167,7 +152,17 @@ public sealed class PdfSharpEngine : IPdfEngine
 
         // Annotation mit Ziel
         var linkRect = new PdfRectangle(rect);
-        var link = _page.AddDocumentLink(linkRect, _doc!.Pages.IndexOf(bm.Page));
+        
+        // Find page index manually since PdfPages doesn't have IndexOf
+        int pageIndex = 0;
+        foreach (var page in _doc!.Pages)
+        {
+            if (page == bm.Page)
+                break;
+            pageIndex++;
+        }
+        
+        var link = _page.AddDocumentLink(linkRect, pageIndex);
 
         _page.Annotations.Add(link);
 
