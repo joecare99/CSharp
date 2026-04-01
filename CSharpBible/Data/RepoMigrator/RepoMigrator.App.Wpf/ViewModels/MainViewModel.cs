@@ -29,6 +29,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     private string? _sSavedSvnToRevisionId;
     private string? _sSelectedSvnFromRevisionId;
     private string? _sSelectedSvnToRevisionId;
+    private WorkflowStage _workflowStage = WorkflowStage.Source;
     private string? _targetUser;
     private string? _targetPassword;
 
@@ -49,7 +50,10 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         set
         {
             if (SetProperty(ref _targetUser, value))
+            {
+                SetWorkflowStage(WorkflowStage.Target);
                 SaveInputState();
+            }
         }
     }
 
@@ -59,7 +63,10 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         set
         {
             if (SetProperty(ref _targetPassword, value))
+            {
+                SetWorkflowStage(WorkflowStage.Target);
                 SaveInputState();
+            }
         }
     }
 
@@ -97,6 +104,10 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     public bool CanConfigureGitHistory => SourceType == RepoType.Git && TargetType == RepoType.Git;
     public bool CanConfigureSvnRevisions => SourceType == RepoType.Svn;
     public bool ShowGenericRevisionInputs => !CanConfigureSvnRevisions;
+    public bool IsSourceStage => WorkflowStage == WorkflowStage.Source;
+    public bool IsTargetStage => WorkflowStage == WorkflowStage.Target;
+    public bool IsOptionsStage => WorkflowStage == WorkflowStage.Options;
+    public bool IsExecutionStage => WorkflowStage == WorkflowStage.Execution;
 
     public ObservableCollection<RepoType> RepoTypes { get; } = new() { RepoType.Git, RepoType.Svn };
     public ObservableCollection<GitReferenceSelectionViewModel> GitBranchSelections { get; } = new();
@@ -104,6 +115,12 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     public ObservableCollection<RepositoryRevisionInfo> SvnRevisionSelections { get; } = new();
     public ObservableCollection<string> SvnFromRevisionOptions { get; } = new();
     public ObservableCollection<string> SvnToRevisionOptions { get; } = new();
+    public ObservableCollection<string> RecentSourceUrls { get; } = new();
+    public ObservableCollection<string> RecentSourceBranches { get; } = new();
+    public ObservableCollection<string> RecentSourceUsers { get; } = new();
+    public ObservableCollection<string> RecentTargetUrls { get; } = new();
+    public ObservableCollection<string> RecentTargetBranches { get; } = new();
+    public ObservableCollection<string> RecentTargetUsers { get; } = new();
 
     private CancellationTokenSource? _cts;
     private int _total;
@@ -130,6 +147,12 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         TargetPassword = state.TargetPassword;
         _hsSavedGitBranchSelections.UnionWith(state.SelectedGitBranches);
         _hsSavedGitTagSelections.UnionWith(state.SelectedGitTags);
+        ResetRecentValues(RecentSourceUrls, state.RecentSourceUrls);
+        ResetRecentValues(RecentSourceBranches, state.RecentSourceBranches);
+        ResetRecentValues(RecentSourceUsers, state.RecentSourceUsers);
+        ResetRecentValues(RecentTargetUrls, state.RecentTargetUrls);
+        ResetRecentValues(RecentTargetBranches, state.RecentTargetBranches);
+        ResetRecentValues(RecentTargetUsers, state.RecentTargetUsers);
         _sSavedSvnFromRevisionId = state.SelectedSvnFromRevisionId;
         _sSavedSvnToRevisionId = state.SelectedSvnToRevisionId;
         SelectedSvnFromRevisionId = state.SelectedSvnFromRevisionId;
@@ -146,10 +169,12 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     {
         await RunOperationAsync(clearLog: true, async ct =>
         {
+            CaptureRecentSourceInputs();
+            CaptureRecentTargetInputs();
             var q = CreateChangeSetQuery();
 
             await _migration.MigrateAsync(CreateSourceEndpoint(), CreateTargetEndpoint(), q, CreateMigrationOptions(), this, ct);
-        });
+        }, workflowStageOnStart: WorkflowStage.Execution, workflowStageOnFinish: WorkflowStage.Options);
     }
 
     [RelayCommand]
@@ -163,7 +188,28 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     [RelayCommand]
     private void Cancel() => _cts?.Cancel();
 
+    [RelayCommand]
+    private void EditSource() => SetWorkflowStage(WorkflowStage.Source);
+
+    [RelayCommand]
+    private void EditTarget() => SetWorkflowStage(WorkflowStage.Target);
+
     public void Report(string message) => Append(message);
+
+    public WorkflowStage WorkflowStage
+    {
+        get => _workflowStage;
+        private set
+        {
+            if (!SetProperty(ref _workflowStage, value))
+                return;
+
+            OnPropertyChanged(nameof(IsSourceStage));
+            OnPropertyChanged(nameof(IsTargetStage));
+            OnPropertyChanged(nameof(IsOptionsStage));
+            OnPropertyChanged(nameof(IsExecutionStage));
+        }
+    }
 
     public void ReportStep(string changeSetId, int index, int total)
     {
@@ -218,7 +264,17 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
                 Append($"  {detail}");
 
             if (result.Success && label == "Quelle")
+            {
+                CaptureRecentSourceInputs();
                 await LoadSourceSelectionDataAsync(provider, endpoint, ct);
+                SetWorkflowStage(WorkflowStage.Target);
+            }
+
+            if (result.Success && label == "Ziel")
+            {
+                CaptureRecentTargetInputs();
+                SetWorkflowStage(WorkflowStage.Options);
+            }
         });
     }
 
@@ -379,10 +435,50 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             ? GitTagSelections.Where(vmItem => vmItem.IsSelected).Select(vmItem => vmItem.Name).ToList()
             : _hsSavedGitTagSelections.ToList();
 
-    private async Task RunOperationAsync(bool clearLog, Func<CancellationToken, Task> action)
+    private static void ResetRecentValues(ObservableCollection<string> lstTargetCollection, IReadOnlyList<string> lstValues)
+    {
+        lstTargetCollection.Clear();
+        foreach (var sValue in lstValues)
+            lstTargetCollection.Add(sValue);
+    }
+
+    private static void ApplyRecentValue(ObservableCollection<string> lstTargetCollection, string? sValue)
+    {
+        var lstUpdatedValues = RecentValueHistory.AddValue(lstTargetCollection.ToList(), sValue);
+        lstTargetCollection.Clear();
+        foreach (var sUpdatedValue in lstUpdatedValues)
+            lstTargetCollection.Add(sUpdatedValue);
+    }
+
+    private void CaptureRecentSourceInputs()
+    {
+        ApplyRecentValue(RecentSourceUrls, SourceUrl);
+        ApplyRecentValue(RecentSourceBranches, SourceBranch);
+        ApplyRecentValue(RecentSourceUsers, SourceUser);
+    }
+
+    private void CaptureRecentTargetInputs()
+    {
+        ApplyRecentValue(RecentTargetUrls, TargetUrl);
+        ApplyRecentValue(RecentTargetBranches, TargetBranch);
+        ApplyRecentValue(RecentTargetUsers, TargetUser);
+    }
+
+    private void SetWorkflowStage(WorkflowStage workflowStage)
+    {
+        if (_isLoadingInputState)
+            return;
+
+        WorkflowStage = workflowStage;
+    }
+
+    private async Task RunOperationAsync(bool clearLog, Func<CancellationToken, Task> action, WorkflowStage? workflowStageOnStart = null, WorkflowStage? workflowStageOnFinish = null)
     {
         if (IsRunning)
             return;
+
+        if (workflowStageOnStart is not null)
+            SetWorkflowStage(workflowStageOnStart.Value);
 
         IsRunning = true;
         OnPropertyChanged(nameof(IsIdle));
@@ -413,6 +509,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             OnPropertyChanged(nameof(IsIdle));
             _cts?.Dispose();
             _cts = null;
+
+            if (workflowStageOnFinish is not null)
+                SetWorkflowStage(workflowStageOnFinish.Value);
         }
     }
 
@@ -427,6 +526,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         _sSavedSvnToRevisionId = null;
         ClearGitSelections();
         ClearSvnSelections();
+        SetWorkflowStage(WorkflowStage.Source);
         SaveInputState();
     }
     partial void OnSourceUrlChanged(string value)
@@ -437,20 +537,42 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         _sSavedSvnToRevisionId = null;
         ClearGitSelections();
         ClearSvnSelections();
+        SetWorkflowStage(WorkflowStage.Source);
         SaveInputState();
     }
-    partial void OnSourceBranchChanged(string? value) => SaveInputState();
-    partial void OnSourceUserChanged(string? value) => SaveInputState();
-    partial void OnSourcePasswordChanged(string? value) => SaveInputState();
+    partial void OnSourceBranchChanged(string? value)
+    {
+        SetWorkflowStage(WorkflowStage.Source);
+        SaveInputState();
+    }
+    partial void OnSourceUserChanged(string? value)
+    {
+        SetWorkflowStage(WorkflowStage.Source);
+        SaveInputState();
+    }
+    partial void OnSourcePasswordChanged(string? value)
+    {
+        SetWorkflowStage(WorkflowStage.Source);
+        SaveInputState();
+    }
     partial void OnTargetTypeChanged(RepoType value)
     {
         OnPropertyChanged(nameof(CanConfigureGitHistory));
         OnPropertyChanged(nameof(CanConfigureSvnRevisions));
         OnPropertyChanged(nameof(ShowGenericRevisionInputs));
+        SetWorkflowStage(WorkflowStage.Target);
         SaveInputState();
     }
-    partial void OnTargetUrlChanged(string value) => SaveInputState();
-    partial void OnTargetBranchChanged(string? value) => SaveInputState();
+    partial void OnTargetUrlChanged(string value)
+    {
+        SetWorkflowStage(WorkflowStage.Target);
+        SaveInputState();
+    }
+    partial void OnTargetBranchChanged(string? value)
+    {
+        SetWorkflowStage(WorkflowStage.Target);
+        SaveInputState();
+    }
     partial void OnTransferGitBranchesChanged(bool value) => SaveInputState();
     partial void OnTransferGitTagsChanged(bool value) => SaveInputState();
     partial void OnFromIdChanged(string? value) => SaveInputState();
@@ -479,6 +601,12 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             TransferGitTags = TransferGitTags,
             SelectedGitBranches = GetSelectedGitBranchesForPersistence(),
             SelectedGitTags = GetSelectedGitTagsForPersistence(),
+            RecentSourceUrls = RecentSourceUrls.ToList(),
+            RecentSourceBranches = RecentSourceBranches.ToList(),
+            RecentSourceUsers = RecentSourceUsers.ToList(),
+            RecentTargetUrls = RecentTargetUrls.ToList(),
+            RecentTargetBranches = RecentTargetBranches.ToList(),
+            RecentTargetUsers = RecentTargetUsers.ToList(),
             SelectedSvnFromRevisionId = string.IsNullOrWhiteSpace(SelectedSvnFromRevisionId) ? null : SelectedSvnFromRevisionId,
             SelectedSvnToRevisionId = string.IsNullOrWhiteSpace(SelectedSvnToRevisionId) ? null : SelectedSvnToRevisionId,
             FromId = FromId,

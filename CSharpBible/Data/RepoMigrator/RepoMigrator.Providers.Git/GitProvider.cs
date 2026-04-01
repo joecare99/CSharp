@@ -305,6 +305,7 @@ public sealed class GitProvider : IVersionControlProvider
     public async Task InitializeTargetAsync(RepositoryEndpoint endpoint, bool emptyInit, CancellationToken ct)
     {
         _endpoint = endpoint;
+        EnsureLocalPushTargetRepository(endpoint);
         _pushTargetUrl = GetPushTargetUrl(endpoint);
         _localPath = _pushTargetUrl is not null
             ? Path.Combine(Path.GetTempPath(), "RepoMigrator", "git-target", Guid.NewGuid().ToString("N"))
@@ -408,12 +409,12 @@ public sealed class GitProvider : IVersionControlProvider
         if (LooksLikeRemote(endpoint.UrlOrPath))
             return GetAccessUrl(endpoint);
 
-        var localPath = Path.GetFullPath(endpoint.UrlOrPath);
-        if (!Repository.IsValid(localPath))
-            return null;
+        var sLocalPath = Path.GetFullPath(endpoint.UrlOrPath);
+        if (!Repository.IsValid(sLocalPath))
+            return ShouldCreateBareLocalTargetRepository(sLocalPath) ? sLocalPath : null;
 
-        using var gitRepository = new Repository(localPath);
-        return gitRepository.Info.IsBare ? localPath : null;
+        using var gitRepository = new Repository(sLocalPath);
+        return gitRepository.Info.IsBare ? sLocalPath : null;
     }
 
     private static string GetAccessUrl(RepositoryEndpoint endpoint)
@@ -440,6 +441,27 @@ public sealed class GitProvider : IVersionControlProvider
         Directory.CreateDirectory(sLocalPath);
         if (!Repository.IsValid(sLocalPath))
             Repository.Init(sLocalPath);
+    }
+
+    private static void EnsureLocalPushTargetRepository(RepositoryEndpoint endpoint)
+    {
+        if (LooksLikeRemote(endpoint.UrlOrPath))
+            return;
+
+        var sLocalPath = Path.GetFullPath(endpoint.UrlOrPath);
+        if (Repository.IsValid(sLocalPath) || !ShouldCreateBareLocalTargetRepository(sLocalPath))
+            return;
+
+        Directory.CreateDirectory(sLocalPath);
+        Repository.Init(sLocalPath, isBare: true);
+    }
+
+    private static bool ShouldCreateBareLocalTargetRepository(string sLocalPath)
+    {
+        if (!Directory.Exists(sLocalPath))
+            return true;
+
+        return !Directory.EnumerateFileSystemEntries(sLocalPath).Any();
     }
 
     private static async Task<string?> GetRemoteHeadBranchAsync(RepositoryEndpoint endpoint, CancellationToken ct)

@@ -17,7 +17,9 @@
 
         <!-- Source/Target Settings -->
         <StackPanel Orientation="Horizontal">
-            <GroupBox Header="Quelle" Width="380">
+            <GroupBox Header="Quelle"
+                      Width="380"
+                      Visibility="{Binding IsSourceStage, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Margin="8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Typ" Width="80"/>
@@ -27,15 +29,27 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="URL/Pfad" Width="80"/>
-                        <TextBox Width="240" Text="{Binding SourceUrl, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ComboBox Width="240"
+                                  IsEditable="True"
+                                  IsTextSearchEnabled="False"
+                                  ItemsSource="{Binding RecentSourceUrls}"
+                                  Text="{Binding SourceUrl, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Branch/Trunk" Width="80"/>
-                        <TextBox Width="240" Text="{Binding SourceBranch}"/>
+                        <ComboBox Width="240"
+                                  IsEditable="True"
+                                  IsTextSearchEnabled="False"
+                                  ItemsSource="{Binding RecentSourceBranches}"
+                                  Text="{Binding SourceBranch, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="User" Width="80"/>
-                        <TextBox Width="240" Text="{Binding SourceUser}"/>
+                        <ComboBox Width="240"
+                                  IsEditable="True"
+                                  IsTextSearchEnabled="False"
+                                  ItemsSource="{Binding RecentSourceUsers}"
+                                  Text="{Binding SourceUser, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Passwort" Width="80"/>
@@ -75,8 +89,13 @@
                 </StackPanel>
             </GroupBox>
 
-            <GroupBox Header="Ziel" Width="380">
+            <GroupBox Header="Ziel"
+                      Width="380"
+                      Visibility="{Binding IsTargetStage, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Margin="8">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Quelle bearbeiten" Command="{Binding EditSourceCommand}" IsEnabled="{Binding IsIdle}"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Typ" Width="80"/>
                         <ComboBox Width="240"
@@ -85,15 +104,27 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="URL/Pfad" Width="80"/>
-                        <TextBox Width="240" Text="{Binding TargetUrl, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ComboBox Width="240"
+                                  IsEditable="True"
+                                  IsTextSearchEnabled="False"
+                                  ItemsSource="{Binding RecentTargetUrls}"
+                                  Text="{Binding TargetUrl, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Branch" Width="80"/>
-                        <TextBox Width="240" Text="{Binding TargetBranch}"/>
+                        <ComboBox Width="240"
+                                  IsEditable="True"
+                                  IsTextSearchEnabled="False"
+                                  ItemsSource="{Binding RecentTargetBranches}"
+                                  Text="{Binding TargetBranch, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="User" Width="80"/>
-                        <TextBox Width="240" Text="{Binding TargetUser}"/>
+                        <ComboBox Width="240"
+                                  IsEditable="True"
+                                  IsTextSearchEnabled="False"
+                                  ItemsSource="{Binding RecentTargetUsers}"
+                                  Text="{Binding TargetUser, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Passwort" Width="80"/>
@@ -105,8 +136,15 @@
         </StackPanel>
 
         <!-- Options -->
-        <GroupBox Grid.Row="1" Header="Optionen" Margin="0,12,0,0">
+        <GroupBox Grid.Row="1"
+                  Header="Optionen"
+                  Margin="0,12,0,0"
+                  Visibility="{Binding IsOptionsStage, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel Margin="8">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Quelle bearbeiten" Command="{Binding EditSourceCommand}" IsEnabled="{Binding IsIdle}" Margin="0,0,8,0"/>
+                    <Button Content="Ziel bearbeiten" Command="{Binding EditTargetCommand}" IsEnabled="{Binding IsIdle}"/>
+                </StackPanel>
                 <StackPanel Orientation="Horizontal"
                             Visibility="{Binding ShowGenericRevisionInputs, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
@@ -165,8 +203,14 @@
         <!-- Actions -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
             <ProgressBar Width="400" Height="18" Minimum="0" Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}"/>
-            <Button Content="Start" Command="{Binding StartCommand}" IsEnabled="{Binding IsIdle}"/>
-            <Button Content="Abbrechen" Command="{Binding CancelCommand}" IsEnabled="{Binding IsRunning}"/>
+            <Button Content="Start"
+                    Command="{Binding StartCommand}"
+                    IsEnabled="{Binding IsIdle}"
+                    Visibility="{Binding IsOptionsStage, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            <Button Content="Abbrechen"
+                    Command="{Binding CancelCommand}"
+                    IsEnabled="{Binding IsRunning}"
+                    Visibility="{Binding IsExecutionStage, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </StackPanel>
     </Grid>
 </Window>

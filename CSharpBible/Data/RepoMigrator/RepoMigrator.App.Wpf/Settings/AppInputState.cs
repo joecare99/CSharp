@@ -19,6 +19,12 @@ public sealed class AppInputState
     public bool TransferGitTags { get; set; }
     public List<string> SelectedGitBranches { get; set; } = [];
     public List<string> SelectedGitTags { get; set; } = [];
+    public List<string> RecentSourceUrls { get; set; } = [];
+    public List<string> RecentSourceBranches { get; set; } = [];
+    public List<string> RecentSourceUsers { get; set; } = [];
+    public List<string> RecentTargetUrls { get; set; } = [];
+    public List<string> RecentTargetBranches { get; set; } = [];
+    public List<string> RecentTargetUsers { get; set; } = [];
     public string? SelectedSvnFromRevisionId { get; set; }
     public string? SelectedSvnToRevisionId { get; set; }
 

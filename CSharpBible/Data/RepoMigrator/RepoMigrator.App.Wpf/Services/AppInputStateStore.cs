@@ -55,6 +55,12 @@ public sealed class AppInputStateStore
                 TransferGitTags = persisted.TransferGitTags,
                 SelectedGitBranches = persisted.SelectedGitBranches ?? [],
                 SelectedGitTags = persisted.SelectedGitTags ?? [],
+                RecentSourceUrls = persisted.RecentSourceUrls ?? [],
+                RecentSourceBranches = persisted.RecentSourceBranches ?? [],
+                RecentSourceUsers = persisted.RecentSourceUsers ?? [],
+                RecentTargetUrls = persisted.RecentTargetUrls ?? [],
+                RecentTargetBranches = persisted.RecentTargetBranches ?? [],
+                RecentTargetUsers = persisted.RecentTargetUsers ?? [],
                 SelectedSvnFromRevisionId = persisted.SelectedSvnFromRevisionId,
                 SelectedSvnToRevisionId = persisted.SelectedSvnToRevisionId,
                 FromId = persisted.FromId,
@@ -91,6 +97,12 @@ public sealed class AppInputStateStore
                 TransferGitTags = state.TransferGitTags,
                 SelectedGitBranches = state.SelectedGitBranches,
                 SelectedGitTags = state.SelectedGitTags,
+                RecentSourceUrls = state.RecentSourceUrls,
+                RecentSourceBranches = state.RecentSourceBranches,
+                RecentSourceUsers = state.RecentSourceUsers,
+                RecentTargetUrls = state.RecentTargetUrls,
+                RecentTargetBranches = state.RecentTargetBranches,
+                RecentTargetUsers = state.RecentTargetUsers,
                 SelectedSvnFromRevisionId = state.SelectedSvnFromRevisionId,
                 SelectedSvnToRevisionId = state.SelectedSvnToRevisionId,
                 FromId = state.FromId,
@@ -150,6 +162,12 @@ public sealed class AppInputStateStore
         public bool TransferGitTags { get; set; }
         public List<string>? SelectedGitBranches { get; set; }
         public List<string>? SelectedGitTags { get; set; }
+        public List<string>? RecentSourceUrls { get; set; }
+        public List<string>? RecentSourceBranches { get; set; }
+        public List<string>? RecentSourceUsers { get; set; }
+        public List<string>? RecentTargetUrls { get; set; }
+        public List<string>? RecentTargetBranches { get; set; }
+        public List<string>? RecentTargetUsers { get; set; }
         public string? SelectedSvnFromRevisionId { get; set; }
         public string? SelectedSvnToRevisionId { get; set; }
         public string? FromId { get; set; }
