@@ -70,16 +70,36 @@ internal static class CryptoUtilities
     }
 
     /// <summary>
-    /// Derives a deterministic SHA-256 hash of a Windows SID.
-    /// Raw SIDs are never written to disk; only their hashes are persisted.
+    /// Derives the SID pepper key from the master key using HKDF-SHA256.
+    /// The pepper ensures that SID hashes cannot be brute-forced via SID enumeration,
+    /// even when the SID domain and RID range are known to an attacker.
+    /// </summary>
+    /// <param name="arrMasterKey">The 32-byte AES master key.</param>
+    /// <returns>A 32-byte SID pepper key.</returns>
+    public static byte[] DeriveSidPepperKey(byte[] arrMasterKey)
+    {
+        ArgumentNullException.ThrowIfNull(arrMasterKey);
+
+        return HKDF.DeriveKey(
+            HashAlgorithmName.SHA256,
+            arrMasterKey,
+            outputLength: 32,
+            info: Encoding.UTF8.GetBytes("GenSecure-SID-Pepper"));
+    }
+
+    /// <summary>
+    /// Computes an HMAC-SHA256 of a Windows SID keyed with the pepper derived from the master key.
+    /// Raw SIDs are never written to disk; only their keyed hashes are persisted.
     /// </summary>
     /// <param name="sSid">The Windows SID string (e.g. <c>S-1-5-21-…</c>).</param>
-    /// <returns>Lowercase hex-encoded SHA-256 digest.</returns>
-    public static string ToSidHash(string sSid)
+    /// <param name="arrSidPepperKey">The 32-byte pepper key obtained from <see cref="DeriveSidPepperKey"/>.</param>
+    /// <returns>Lowercase hex-encoded HMAC-SHA256 digest.</returns>
+    public static string ToSidHash(string sSid, byte[] arrSidPepperKey)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sSid);
+        ArgumentNullException.ThrowIfNull(arrSidPepperKey);
 
-        byte[] arrHash = SHA256.HashData(Encoding.UTF8.GetBytes(sSid));
+        byte[] arrHash = HMACSHA256.HashData(arrSidPepperKey, Encoding.UTF8.GetBytes(sSid));
         return Convert.ToHexString(arrHash).ToLowerInvariant();
     }
 

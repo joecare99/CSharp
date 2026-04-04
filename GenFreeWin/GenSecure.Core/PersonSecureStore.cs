@@ -41,8 +41,9 @@ public sealed class PersonSecureStore : IPersonSecureStore
 
         string sCurrentUserSid = WindowsIdentityUtilities.GetCurrentUserSid();
         byte[] arrMasterKey = _masterKeyBackupService.LoadOrCreateMasterKey();
-        PersonKeyRecord keyRecord = LoadOrCreatePersonKeyRecord(sPersonId, sCurrentUserSid, arrMasterKey);
-        EnsureAccessAllowed(keyRecord, sCurrentUserSid);
+        byte[] arrSidPepperKey = CryptoUtilities.DeriveSidPepperKey(arrMasterKey);
+        PersonKeyRecord keyRecord = LoadOrCreatePersonKeyRecord(sPersonId, sCurrentUserSid, arrMasterKey, arrSidPepperKey);
+        EnsureAccessAllowed(keyRecord, sCurrentUserSid, arrSidPepperKey);
 
         byte[] arrPersonKey = UnwrapPersonKey(keyRecord, arrMasterKey);
         byte[] arrPlaintext = JsonSerializer.SerializeToUtf8Bytes(value, CryptoUtilities.JsonSerializerOptions);
@@ -91,9 +92,10 @@ public sealed class PersonSecureStore : IPersonSecureStore
 
         string sCurrentUserSid = WindowsIdentityUtilities.GetCurrentUserSid();
         byte[] arrMasterKey = _masterKeyBackupService.LoadOrCreateMasterKey();
+        byte[] arrSidPepperKey = CryptoUtilities.DeriveSidPepperKey(arrMasterKey);
         PersonKeyRecord keyRecord = CryptoUtilities.ReadJson<PersonKeyRecord>(sKeyFilePath);
         EnsurePersonIdMatches(sPersonId, keyRecord.PersonId, sKeyFilePath);
-        EnsureAccessAllowed(keyRecord, sCurrentUserSid);
+        EnsureAccessAllowed(keyRecord, sCurrentUserSid, arrSidPepperKey);
 
         byte[] arrPersonKey = UnwrapPersonKey(keyRecord, arrMasterKey);
         EncryptedPersonRecord encryptedPersonRecord = JsonSerializer.Deserialize<EncryptedPersonRecord>(sDataJson, CryptoUtilities.JsonSerializerOptions)
@@ -171,6 +173,7 @@ public sealed class PersonSecureStore : IPersonSecureStore
 
         string sCurrentUserSid = WindowsIdentityUtilities.GetCurrentUserSid();
         byte[] arrMasterKey = _masterKeyBackupService.LoadOrCreateMasterKey();
+        byte[] arrSidPepperKey = CryptoUtilities.DeriveSidPepperKey(arrMasterKey);
         string sKeyFilePath = GetKeyFilePath(sPersonId);
         if (!File.Exists(sKeyFilePath))
         {
@@ -178,9 +181,9 @@ public sealed class PersonSecureStore : IPersonSecureStore
         }
 
         PersonKeyRecord keyRecord = CryptoUtilities.ReadJson<PersonKeyRecord>(sKeyFilePath);
-        EnsureAccessAllowed(keyRecord, sCurrentUserSid);
+        EnsureAccessAllowed(keyRecord, sCurrentUserSid, arrSidPepperKey);
 
-        string sSidHash = CryptoUtilities.ToSidHash(sWindowsSid);
+        string sSidHash = CryptoUtilities.ToSidHash(sWindowsSid, arrSidPepperKey);
         if (!keyRecord.AllowedWindowsSidHashes.Contains(sSidHash, StringComparer.OrdinalIgnoreCase))
         {
             keyRecord.AllowedWindowsSidHashes.Add(sSidHash);
@@ -196,6 +199,8 @@ public sealed class PersonSecureStore : IPersonSecureStore
         ArgumentException.ThrowIfNullOrWhiteSpace(sPersonId);
 
         string sCurrentUserSid = WindowsIdentityUtilities.GetCurrentUserSid();
+        byte[] arrMasterKey = _masterKeyBackupService.LoadOrCreateMasterKey();
+        byte[] arrSidPepperKey = CryptoUtilities.DeriveSidPepperKey(arrMasterKey);
         string sKeyFilePath = GetKeyFilePath(sPersonId);
         if (!File.Exists(sKeyFilePath))
         {
@@ -203,11 +208,11 @@ public sealed class PersonSecureStore : IPersonSecureStore
         }
 
         PersonKeyRecord keyRecord = CryptoUtilities.ReadJson<PersonKeyRecord>(sKeyFilePath);
-        EnsureAccessAllowed(keyRecord, sCurrentUserSid);
+        EnsureAccessAllowed(keyRecord, sCurrentUserSid, arrSidPepperKey);
         return keyRecord.AllowedWindowsSidHashes.AsReadOnly();
     }
 
-    private PersonKeyRecord LoadOrCreatePersonKeyRecord(string sPersonId, string sCurrentUserSid, byte[] arrMasterKey)
+    private PersonKeyRecord LoadOrCreatePersonKeyRecord(string sPersonId, string sCurrentUserSid, byte[] arrMasterKey, byte[] arrSidPepperKey)
     {
         string sKeyFilePath = GetKeyFilePath(sPersonId);
         if (File.Exists(sKeyFilePath))
@@ -227,8 +232,8 @@ public sealed class PersonSecureStore : IPersonSecureStore
             Nonce = CryptoUtilities.ToBase64(arrNonce),
             WrappedPersonKey = CryptoUtilities.ToBase64(arrWrappedPersonKey),
             Tag = CryptoUtilities.ToBase64(arrTag),
-            OwnerWindowsSidHash = CryptoUtilities.ToSidHash(sCurrentUserSid),
-            AllowedWindowsSidHashes = new List<string> { CryptoUtilities.ToSidHash(sCurrentUserSid) },
+            OwnerWindowsSidHash = CryptoUtilities.ToSidHash(sCurrentUserSid, arrSidPepperKey),
+            AllowedWindowsSidHashes = new List<string> { CryptoUtilities.ToSidHash(sCurrentUserSid, arrSidPepperKey) },
             CreatedUtc = DateTimeOffset.UtcNow,
             UpdatedUtc = DateTimeOffset.UtcNow,
         };
@@ -247,9 +252,9 @@ public sealed class PersonSecureStore : IPersonSecureStore
             CryptoUtilities.FromBase64(keyRecord.Tag));
     }
 
-    private void EnsureAccessAllowed(PersonKeyRecord keyRecord, string sCurrentUserSid)
+    private void EnsureAccessAllowed(PersonKeyRecord keyRecord, string sCurrentUserSid, byte[] arrSidPepperKey)
     {
-        string sSidHash = CryptoUtilities.ToSidHash(sCurrentUserSid);
+        string sSidHash = CryptoUtilities.ToSidHash(sCurrentUserSid, arrSidPepperKey);
         if (!keyRecord.AllowedWindowsSidHashes.Contains(sSidHash, StringComparer.OrdinalIgnoreCase))
         {
             // Avoid logging the raw SID to prevent metadata leaks in exception messages.
