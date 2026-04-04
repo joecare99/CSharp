@@ -76,6 +76,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacie", "Legacie", "{ED05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranspilerLib.DriveBASIC.Tests", "TranspilerLib.DriveBASIC.Tests\TranspilerLib.DriveBASIC.Tests.csproj", "{FE5B9048-D9EC-1419-5118-1D1143392538}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDialogs", "..\CSharpBible\Libraries\CommonDialogs\CommonDialogs.csproj", "{905154E7-63D0-FDF0-0011-D38969128C0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDialogs_net", "..\CSharpBible\Libraries\CommonDialogs\CommonDialogs_net.csproj", "{A38C52AE-8CF4-16EE-8830-1D420CEE8760}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -362,6 +366,30 @@ Global
 		{FE5B9048-D9EC-1419-5118-1D1143392538}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FE5B9048-D9EC-1419-5118-1D1143392538}.Release|x86.ActiveCfg = Release|Any CPU
 		{FE5B9048-D9EC-1419-5118-1D1143392538}.Release|x86.Build.0 = Release|Any CPU
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Debug|x86.ActiveCfg = Debug|x86
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Debug|x86.Build.0 = Debug|x86
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Release|Mixed Platforms.Build.0 = Release|x64
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Release|x86.ActiveCfg = Release|x86
+		{905154E7-63D0-FDF0-0011-D38969128C0C}.Release|x86.Build.0 = Release|x86
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Debug|x86.ActiveCfg = Debug|x86
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Debug|x86.Build.0 = Debug|x86
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Release|Mixed Platforms.Build.0 = Release|x64
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Release|x86.ActiveCfg = Release|x86
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -390,6 +418,8 @@ Global
 		{BEB66A05-10A8-4E22-BEF8-60C65D5D7D33} = {5481B009-5D62-45A8-9DD3-B9E6792B0C0E}
 		{89581B77-FF19-1BB1-F4CA-B9DBE0B262DA} = {5481B009-5D62-45A8-9DD3-B9E6792B0C0E}
 		{FE5B9048-D9EC-1419-5118-1D1143392538} = {5481B009-5D62-45A8-9DD3-B9E6792B0C0E}
+		{905154E7-63D0-FDF0-0011-D38969128C0C} = {8655F273-B5AF-4D9A-B635-7F9168703579}
+		{A38C52AE-8CF4-16EE-8830-1D420CEE8760} = {8655F273-B5AF-4D9A-B635-7F9168703579}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {44374C4A-6FF4-4900-8BB8-964A6A2E0338}

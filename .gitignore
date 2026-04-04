@@ -35,3 +35,4 @@ obj
 /CSharpBible/Resources/train-images.idx3-ubyte
 /CSharpBible/Resources/train-labels.idx1-ubyte
 /CSharpBible/Games/Sokoban_Base/Version.svn
+/TestStatements/TestStatements/version.inc
