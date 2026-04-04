@@ -12,8 +12,12 @@ public interface IPersonSecureStore
     /// </summary>
     /// <typeparam name="T">The record type to serialize.</typeparam>
     /// <param name="sPersonId">The stable person identifier.</param>
-    /// <param name="value">The record instance to encrypt and persist.</param>
-    void Save<T>(string sPersonId, T value);
+    /// <param name="value">The record instance to persist.</param>
+    /// <param name="eStoreMode">
+    /// Storage strategy. Use <see cref="StoreMode.Encrypted"/> (default) for living persons
+    /// and <see cref="StoreMode.Plaintext"/> for deceased persons.
+    /// </param>
+    void Save<T>(string sPersonId, T value, StoreMode eStoreMode = StoreMode.Encrypted);
 
     /// <summary>
     /// Loads and decrypts a person record.
@@ -45,9 +49,10 @@ public interface IPersonSecureStore
     void GrantAccess(string sPersonId, string sWindowsSid);
 
     /// <summary>
-    /// Gets the currently configured Windows SIDs that can decrypt a person record.
+    /// Gets the SHA-256 hashes of Windows SIDs that are permitted to decrypt a person record.
+    /// The raw SIDs are never persisted; only their hashes are stored.
     /// </summary>
     /// <param name="sPersonId">The stable person identifier.</param>
-    /// <returns>The configured Windows SIDs.</returns>
-    IReadOnlyCollection<string> GetAllowedWindowsSids(string sPersonId);
+    /// <returns>SHA-256 hashes (lowercase hex) of the configured Windows SIDs.</returns>
+    IReadOnlyCollection<string> GetAllowedWindowsSidHashes(string sPersonId);
 }
