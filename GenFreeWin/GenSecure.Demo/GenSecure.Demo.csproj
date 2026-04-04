@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>GenSecure.Demo</RootNamespace>
+    <AssemblyName>GenSecure.Demo</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GenSecure.Core\GenSecure.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+  </ItemGroup>
+
+</Project>

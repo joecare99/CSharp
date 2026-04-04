@@ -1,0 +1,368 @@
+<Window x:Class="GenSecure.Demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="GenSecure Demo – AES-256-GCM · DPAPI · Krypto-Löschung"
+        Height="820" Width="1060"
+        MinHeight="640" MinWidth="860"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI" FontSize="13">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />    <!-- header bar -->
+            <RowDefinition Height="*" />        <!-- tab control -->
+            <RowDefinition Height="175" />      <!-- log panel -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════ HEADER ═══════════════ -->
+        <Border Grid.Row="0" Background="#2D2D2D" Padding="12,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- SID display -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                           Text="{Binding CurrentUserSidDisplay}"
+                           Foreground="#9CDCFE" FontFamily="Consolas" FontSize="11"
+                           Margin="0,0,0,4" />
+
+                <!-- Directory row -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="Speicherort:" Foreground="#CCCCCC"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <TextBox Text="{Binding RootDirectory, UpdateSourceTrigger=PropertyChanged}"
+                             Width="420" VerticalAlignment="Center"
+                             Background="#3C3C3C" Foreground="White"
+                             BorderBrush="#666" Padding="4,2"
+                             FontFamily="Consolas" FontSize="11" />
+                    <Button Content="📁 Wählen" Command="{Binding ChooseDirectoryCommand}"
+                            Margin="6,0,0,0" Padding="8,3" />
+                    <Button Content="🗂 Explorer" Command="{Binding OpenExplorerCommand}"
+                            Margin="6,0,0,0" Padding="8,3" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════ TABS ═══════════════ -->
+        <TabControl Grid.Row="1" Margin="4,4,4,0">
+
+            <!-- ─────────── TAB 1: Person data ─────────── -->
+            <TabItem Header="👤  Personen-Datensatz">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="370" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: input fields + buttons -->
+                    <StackPanel Grid.Column="0" Margin="0,0,12,0">
+
+                        <TextBlock Text="Personen-ID:" FontWeight="SemiBold" Margin="0,0,0,3" />
+                        <TextBox Text="{Binding PersonId, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Vorname:" Margin="0,10,0,3" />
+                        <TextBox Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Nachname:" Margin="0,10,0,3" />
+                        <TextBox Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Geburtsdatum (z. B. 1990-05-15):" Margin="0,10,0,3" />
+                        <TextBox Text="{Binding BirthDate, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Adresse:" Margin="0,10,0,3" />
+                        <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Notiz (optional):" Margin="0,10,0,3" />
+                        <TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True" Height="54"
+                                 VerticalScrollBarVisibility="Auto" />
+
+                        <Separator Margin="0,14,0,6" />
+
+                        <!-- StoreMode: living (encrypted) vs. deceased (plaintext) -->
+                        <Border Background="#F0F0F0" BorderBrush="#CCCCCC" BorderThickness="1"
+                                CornerRadius="3" Padding="8,6" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="Speichermodus:" FontWeight="SemiBold" Margin="0,0,0,4" />
+                                <RadioButton Content="🔒  Verschlüsselt  (lebende Person)"
+                                             IsChecked="{Binding IsEncryptedMode}"
+                                             GroupName="StoreMode" Margin="0,0,0,4" />
+                                <RadioButton Content="📄  Klartext  (verstorben / historisch)"
+                                             IsChecked="{Binding IsPlaintextMode}"
+                                             GroupName="StoreMode" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Action buttons -->
+                        <WrapPanel>
+                            <Button Content="💾 Speichern" Command="{Binding SavePersonCommand}"
+                                    Padding="10,5" Margin="0,0,6,6" />
+                            <Button Content="📂 Laden" Command="{Binding LoadPersonCommand}"
+                                    Padding="10,5" Margin="0,0,6,6" />
+                            <Button Content="🔍 Existiert?" Command="{Binding ExistsPersonCommand}"
+                                    Padding="10,5" Margin="0,0,0,6" />
+                        </WrapPanel>
+                        <WrapPanel>
+                            <Button Content="🗑 SoftDelete" Command="{Binding SoftDeletePersonCommand}"
+                                    Padding="10,5" Margin="0,0,6,0" Background="#FFF3CD" />
+                            <Button Content="🔒 SecureDelete (Krypto)" Command="{Binding SecureDeletePersonCommand}"
+                                    Padding="10,5" Background="#F8D7DA" />
+                        </WrapPanel>
+
+                        <!-- Explanation -->
+                        <Border Background="#EBF5FB" BorderBrush="#AED6F1" BorderThickness="1"
+                                CornerRadius="4" Padding="10" Margin="0,14,0,0">
+                            <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="#1A5276">
+                                <Run FontWeight="Bold">Verschlüsselt:</Run>
+                                <Run> AES-256-GCM mit per-Person DEK — für lebende, DSGVO-schützenswerte Personen.</Run>
+                                <LineBreak />
+                                <Run FontWeight="Bold">Klartext:</Run>
+                                <Run> Kein Schlüsselfile, lesbares JSON — für Verstorbene oder historische Personen.</Run>
+                                <LineBreak />
+                                <Run FontWeight="Bold">SoftDelete:</Run>
+                                <Run> Entfernt Daten- UND Schlüsseldatei.</Run>
+                                <LineBreak />
+                                <Run FontWeight="Bold">SecureDelete:</Run>
+                                <Run> Entfernt nur den DEK → Payload dauerhaft unlesbar (Krypto-Löschung gem. DSGVO Art. 17). Für Klartext-Einträge wird die Datendatei direkt gelöscht.</Run>
+                            </TextBlock>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Right: decrypted output -->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="📋 Entschlüsselte Daten:"
+                                   FontWeight="SemiBold" Margin="0,0,0,6" />
+                        <TextBox Grid.Row="1"
+                                 Text="{Binding LoadedPersonDisplay, Mode=OneWay}"
+                                 IsReadOnly="True" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas" FontSize="13"
+                                 Background="#F8F9FA" Padding="10" />
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- ─────────── TAB 2: Recovery backup ─────────── -->
+            <TabItem Header="🔑  Schlüssel-Backup">
+                <Grid Margin="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Recovery file info -->
+                    <Border Grid.Row="0" Background="#D5F5E3" BorderBrush="#A9DFBF"
+                            BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="Recovery-Datei:" FontWeight="SemiBold" Margin="0,0,0,4" />
+                            <TextBlock Text="{Binding RecoveryFilePath}"
+                                       FontFamily="Consolas" FontSize="11"
+                                       Foreground="#1E8449" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Create backup -->
+                    <GroupBox Grid.Row="1" Header="Recovery-Backup erstellen"
+                              Padding="12" Margin="0,0,0,14">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="280" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="Passphrase:"
+                                       VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <PasswordBox Grid.Row="0" Grid.Column="1"
+                                         x:Name="_pwdBackupPassphrase" Margin="0,0,0,8" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="Passphrase wiederholen:"
+                                       VerticalAlignment="Center" Margin="0,0,8,8"
+                                       TextWrapping="Wrap" />
+                            <PasswordBox Grid.Row="1" Grid.Column="1"
+                                         x:Name="_pwdBackupConfirm" Margin="0,0,0,8" />
+
+                            <Button Grid.Row="2" Grid.Column="1"
+                                    x:Name="_btnCreateBackup"
+                                    Content="✅ Backup erstellen"
+                                    HorizontalAlignment="Left"
+                                    Padding="12,5"
+                                    Click="_btnCreateBackup_Click" />
+                        </Grid>
+                    </GroupBox>
+
+                    <!-- Restore -->
+                    <GroupBox Grid.Row="2" Header="Master-Schlüssel wiederherstellen"
+                              Padding="12" Margin="0,0,0,14">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="280" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="Passphrase:"
+                                       VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <PasswordBox Grid.Row="0" Grid.Column="1"
+                                         x:Name="_pwdRestorePassphrase" Margin="0,0,0,8" />
+
+                            <Button Grid.Row="1" Grid.Column="1"
+                                    x:Name="_btnRestore"
+                                    Content="🔄 Wiederherstellen"
+                                    HorizontalAlignment="Left"
+                                    Padding="12,5"
+                                    Click="_btnRestore_Click" />
+                        </Grid>
+                    </GroupBox>
+
+                    <!-- Technical explanation -->
+                    <Border Grid.Row="3" Background="#FEF9E7" BorderBrush="#F9E79F"
+                            BorderThickness="1" CornerRadius="4" Padding="12"
+                            VerticalAlignment="Top">
+                        <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="#7D6608">
+                            <Run FontWeight="Bold">Wie es funktioniert:</Run>
+                            <Run> Der Master-Schlüssel wird lokal via DPAPI (CurrentUser) gesichert. Das Recovery-Backup leitet einen Schlüssel aus der Passphrase per PBKDF2-SHA256 (600 000 Iterationen) ab und verschlüsselt den Master-Schlüssel mit AES-256-GCM. So kann der Master-Schlüssel auf einem anderen PC oder nach einem DPAPI-Verlust wiederhergestellt werden.</Run>
+                        </TextBlock>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- ─────────── TAB 3: Access control ─────────── -->
+            <TabItem Header="🔒  Zugriffsrechte">
+                <Grid Margin="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="390" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: controls -->
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+
+                        <TextBlock Text="Personen-ID:" Margin="0,0,0,4" />
+                        <TextBox Text="{Binding GrantPersonId, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Text="Windows-SID:" Margin="0,12,0,4" />
+                        <TextBox Text="{Binding GrantSid, UpdateSourceTrigger=PropertyChanged}"
+                                 FontFamily="Consolas" />
+                        <TextBlock Text="{Binding CurrentUserSidDisplay}"
+                                   FontFamily="Consolas" FontSize="10"
+                                   Foreground="#777" Margin="0,2,0,0"
+                                   TextWrapping="Wrap" />
+
+                        <WrapPanel Margin="0,14,0,0">
+                            <Button Content="🔑 Zugriff gewähren"
+                                    Command="{Binding GrantAccessCommand}"
+                                    Padding="10,5" Margin="0,0,8,0" />
+                            <Button Content="📋 SIDs anzeigen"
+                                    Command="{Binding GetAllowedSidsCommand}"
+                                    Padding="10,5" />
+                        </WrapPanel>
+
+                        <Border Background="#EBF5FB" BorderBrush="#AED6F1" BorderThickness="1"
+                                CornerRadius="4" Padding="10" Margin="0,16,0,0">
+                            <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="#1A5276">
+                                <Run FontWeight="Bold">Zugriffssteuerung:</Run>
+                                <Run> Jede Person hat im Schlüsseleintrag eine Liste erlaubter Windows-SIDs. Der rohe SID wird niemals gespeichert — nur sein SHA-256-Hash. Nur Benutzer, deren SID-Hash in der Liste steht, können den Person-DEK entschlüsseln.</Run>
+                            </TextBlock>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Right: SID list -->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Erlaubte SID-Hashes (SHA-256):"
+                                   FontWeight="SemiBold" Margin="0,0,0,6" />
+                        <ListBox Grid.Row="1"
+                                 ItemsSource="{Binding AllowedSids}"
+                                 FontFamily="Consolas" FontSize="12" />
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- ─────────── TAB 4: Raw encrypted files ─────────── -->
+            <TabItem Header="📄  Rohdaten (verschlüsselt)">
+                <Grid Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <WrapPanel Grid.Row="0" Margin="0,0,0,8">
+                        <Button Content="📄 Datendatei" Command="{Binding ShowDataFileCommand}"
+                                Padding="10,5" Margin="0,0,8,0" />
+                        <Button Content="🔑 Schlüsseldatei" Command="{Binding ShowKeyFileCommand}"
+                                Padding="10,5" Margin="0,0,8,0" />
+                        <Button Content="🔐 Master-Key-Datei" Command="{Binding ShowMasterKeyFileCommand}"
+                                Padding="10,5" />
+                    </WrapPanel>
+
+                    <Border Grid.Row="1" Background="#FEF9E7" BorderBrush="#F9E79F"
+                            BorderThickness="1" CornerRadius="4" Padding="8"
+                            Margin="0,0,0,8">
+                        <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="#7D6608">
+                            Die Dateien enthalten Base64-kodierte AES-256-GCM-Chiffrate. Ohne den DEK (der selbst durch den DPAPI-geschützten Master-Schlüssel gewrappt ist) kann der Inhalt nicht entschlüsselt werden.
+                        </TextBlock>
+                    </Border>
+
+                    <TextBox Grid.Row="2"
+                             Text="{Binding RawContent, Mode=OneWay}"
+                             IsReadOnly="True" AcceptsReturn="True"
+                             HorizontalScrollBarVisibility="Auto"
+                             VerticalScrollBarVisibility="Auto"
+                             FontFamily="Consolas" FontSize="12"
+                             Background="#1E1E1E" Foreground="#D4D4D4"
+                             Padding="10" />
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+
+        <!-- ═══════════════ LOG ═══════════════ -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="#252526" Padding="10,4">
+                <TextBlock Text="📋  Protokoll" Foreground="#CCCCCC"
+                           FontWeight="SemiBold" FontSize="12" />
+            </Border>
+
+            <TextBox Grid.Row="1"
+                     x:Name="_txtLog"
+                     Text="{Binding LogText, Mode=OneWay}"
+                     IsReadOnly="True" AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto"
+                     FontFamily="Consolas" FontSize="11"
+                     Background="#1E1E1E" Foreground="#B5CEA8"
+                     Padding="8" />
+        </Grid>
+    </Grid>
+</Window>
