@@ -119,7 +119,7 @@ public sealed class PersonSecureStoreTests
     }
 
     [TestMethod]
-    public void GetAllowedWindowsSidHashes_ShouldReturnSha256Hashes_NotRawSids()
+    public void GetAllowedWindowsSidHashes_ShouldReturnHmacSha256Hashes_NotRawSids()
     {
         using TestStoreScope scope = new();
 
@@ -131,13 +131,19 @@ public sealed class PersonSecureStoreTests
 
         string sSidHash = lstHashes.Single();
 
-        // A SHA-256 hash is 32 bytes = exactly 64 lowercase hex characters
+        // An HMAC-SHA256 output is 32 bytes = exactly 64 lowercase hex characters
         Assert.AreEqual(64, sSidHash.Length);
         Assert.IsTrue(sSidHash.All(c => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')),
             "The returned value must be a lowercase hex string, not a raw Windows SID.");
 
         // Must not look like a Windows SID
         Assert.IsFalse(sSidHash.StartsWith("S-", StringComparison.OrdinalIgnoreCase));
+
+        // Must not be the plain SHA-256 of the SID — proves the HMAC pepper is in use
+        string sCurrentSid = System.Security.Principal.WindowsIdentity.GetCurrent().User?.Value ?? string.Empty;
+        string sPlainSha256 = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(sCurrentSid))).ToLowerInvariant();
+        Assert.AreNotEqual(sPlainSha256, sSidHash,
+            "The stored hash must be HMAC-SHA256(SID, pepper), not plain SHA-256(SID).");
     }
 
     [TestMethod]
@@ -151,9 +157,25 @@ public sealed class PersonSecureStoreTests
 
         IReadOnlyCollection<string> lstHashes = scope.Store.GetAllowedWindowsSidHashes("person-6");
 
-        string sExpectedHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(sFakeSid))).ToLowerInvariant();
-        Assert.IsTrue(lstHashes.Contains(sExpectedHash),
-            "GrantAccess must store the SHA-256 hash of the SID, not the raw SID.");
+        // Owner hash (current user) + granted hash = 2 entries
+        Assert.AreEqual(2, lstHashes.Count);
+
+        // All entries must be lowercase hex (HMAC-SHA256 output — 64 chars)
+        foreach (string sHash in lstHashes)
+        {
+            Assert.AreEqual(64, sHash.Length);
+            Assert.IsTrue(sHash.All(c => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')),
+                "Every stored hash must be a lowercase hex string, not a raw SID.");
+        }
+
+        // Raw SID must not appear in the list
+        Assert.IsFalse(lstHashes.Contains(sFakeSid, StringComparer.OrdinalIgnoreCase),
+            "The raw Windows SID must never be stored.");
+
+        // Plain SHA-256(SID) must not appear — proves the pepper (HMAC) is in use
+        string sPlainSha256 = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(sFakeSid))).ToLowerInvariant();
+        Assert.IsFalse(lstHashes.Contains(sPlainSha256, StringComparer.OrdinalIgnoreCase),
+            "The stored hash must be HMAC-SHA256(SID, pepper), not plain SHA-256(SID).");
     }
 
     private sealed record TestPerson(string FirstName, string LastName);
