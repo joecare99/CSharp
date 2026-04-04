@@ -69,6 +69,20 @@ internal static class CryptoUtilities
         return Convert.ToHexString(arrHash).ToLowerInvariant();
     }
 
+    /// <summary>
+    /// Derives a deterministic SHA-256 hash of a Windows SID.
+    /// Raw SIDs are never written to disk; only their hashes are persisted.
+    /// </summary>
+    /// <param name="sSid">The Windows SID string (e.g. <c>S-1-5-21-…</c>).</param>
+    /// <returns>Lowercase hex-encoded SHA-256 digest.</returns>
+    public static string ToSidHash(string sSid)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sSid);
+
+        byte[] arrHash = SHA256.HashData(Encoding.UTF8.GetBytes(sSid));
+        return Convert.ToHexString(arrHash).ToLowerInvariant();
+    }
+
     public static T ReadJson<T>(string sFilePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sFilePath);
