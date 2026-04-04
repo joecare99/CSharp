@@ -45,6 +45,41 @@ This repository contains a large multi-target .NET codebase (classic .NET Framew
 
 (Additional test projects follow the naming *Tests.)
 
+## Security & Privacy (GenSecure)
+
+DSGVO-compliant encrypted object store for sensitive person records — designed for synchronisation via Git/SVN.
+Envelope encryption (AES-256-GCM), DPAPI-protected master key, PBKDF2-SHA256 recovery backup,
+HMAC-SHA256 SID pseudonymisation (HKDF pepper), and plaintext mode for deceased / historical persons.
+
+| Project | Path | Description |
+|---------|------|-------------|
+| GenSecure.Contracts | Gen_FreeWin/GenSecure.Contracts | Public interface contracts and enums: `IPersonSecureStore`, `IMasterKeyBackupService`, `DeleteMode`, `StoreMode`. No implementation dependency — reference from application layer only. |
+| GenSecure.Core | Gen_FreeWin/GenSecure.Core | Full implementation: AES-256-GCM envelope encryption, per-person DEK wrapped with DPAPI master key, PBKDF2-SHA256 (600 000 iter.) recovery backup, HMAC-SHA256 SID hashing with HKDF-derived pepper, plaintext store mode for deceased persons, crypto-deletion (DSGVO Art. 17). |
+| GenSecure.Core.Tests | Gen_FreeWin/GenSecure.Core.Tests | MSTest + NSubstitute test suite (9 tests). Covers encrypted round-trip, SoftDelete/SecureDelete for both store modes, master-key recovery, HMAC-SHA256 hash-format verification, and `GrantAccess` pepper proof. |
+| GenSecure.Demo | Gen_FreeWin/GenSecure.Demo | WPF 4-tab show-off application (net9.0-windows, CommunityToolkit.Mvvm). Demonstrates save/load (encrypted & plaintext), SoftDelete/SecureDelete, recovery backup, access-control (HMAC-SID hashes), and raw file viewer. |
+
+### GenSecure Cryptographic Stack
+
+```
+Person payload
+  ?? AES-256-GCM (per-person DEK, random 32 B)          ? <hash>.person.json
+        ?? DEK wrapped with master key (AES-256-GCM)    ? <hash>.key.json
+              ?? Master key — DPAPI (CurrentUser)        ? master/local-master.bin
+              ?? Master key — PBKDF2-SHA256 backup       ? master/recovery-key.json
+
+Windows SID  ?  HMAC-SHA256( HKDF(masterKey, "GenSecure-SID-Pepper") )  ? stored in .key.json
+File names   ?  SHA-256(personId) hex                                    ? no identity leak on disk
+```
+
+| Layer | Algorithm | Purpose |
+|-------|-----------|---------|
+| Data encryption | AES-256-GCM | Encrypts person payload with per-person DEK |
+| Key wrapping | AES-256-GCM | Wraps DEK with 32-byte master key |
+| Local key protection | DPAPI `CurrentUser` | Protects master key on local machine |
+| Recovery backup | PBKDF2-SHA256 · 600 000 iter. + AES-256-GCM | Passphrase-derived backup of master key |
+| SID pseudonymisation | HMAC-SHA256 + HKDF pepper | Prevents SID enumeration attacks on key files |
+| File naming | SHA-256(personId) | Hides identity from file system / version control |
+
 ## Representative READMEs
 Detailed READMEs have been added for these core / exemplar projects:
 - ConsoleLib
@@ -55,6 +90,9 @@ Detailed READMEs have been added for these core / exemplar projects:
 - MapDemo
 - GenFreeData
 - GenFreeBase
+- GenSecure.Contracts
+- GenSecure.Core
+- GenSecure.Demo
 
 ## Conventions
 - One public type per file.
