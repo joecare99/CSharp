@@ -382,4 +382,25 @@ public interface IModul1
     int System_TestForm_Height();
     int DataModul_PeekMandant_RecordCount();
     void Family_Les(int famInArb, IFamilyData family);
+
+    // Missing members for Druck project
+    string Datum1 { get; set; }
+    string Datum2 { get; set; }
+    string Ausdat { get; set; }
+    int iPriv_aus { get; set; }
+    string Font1 { get; set; }
+    int PersSp { get; set; }
+    string Datschuname { get; set; }
+    string Eltq { get; set; }
+    string Ubg1T { get; set; }
+
+    void Datles2();
+    string Person_FullSurname(IPersonData person, bool xFamToUpper);
+    void Person_FullSurname(IList<string> kont, bool v);
+    void Famdatles1(int schalt, out string[] asFamDate);
+    void PerSatzLes(int persInArb);
+    void Famles();
+
+    /// <summary>Gets the print-specific data interface (Druck project only).</summary>
+    IPrintDat PrintDat { get; }
 }
