@@ -26,7 +26,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- SID display -->
+                <!-- SID display (nur lokal angezeigt — wird niemals auf Disk geschrieben) -->
                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                            Text="{Binding CurrentUserSidDisplay}"
                            Foreground="#9CDCFE" FontFamily="Consolas" FontSize="11"
@@ -284,7 +284,7 @@
                                 CornerRadius="4" Padding="10" Margin="0,16,0,0">
                             <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="#1A5276">
                                 <Run FontWeight="Bold">Zugriffssteuerung:</Run>
-                                <Run> Jede Person hat im Schlüsseleintrag eine Liste erlaubter Windows-SIDs. Der rohe SID wird niemals gespeichert — nur sein SHA-256-Hash. Nur Benutzer, deren SID-Hash in der Liste steht, können den Person-DEK entschlüsseln.</Run>
+                                <Run> Jede Person hat im Schlüsseleintrag eine Liste erlaubter Windows-SIDs. Der rohe SID wird niemals gespeichert — nur sein HMAC-SHA256-Hash, gepepert mit einem aus dem Master-Schlüssel abgeleiteten Subkey (HKDF). Selbst bei bekanntem SID-Schema ist ein Brute-Force-Angriff ohne den Master-Schlüssel rechnerisch unmöglich.</Run>
                             </TextBlock>
                         </Border>
                     </StackPanel>
@@ -295,7 +295,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Erlaubte SID-Hashes (SHA-256):"
+                        <TextBlock Grid.Row="0" Text="Erlaubte SID-Hashes (HMAC-SHA256):"
                                    FontWeight="SemiBold" Margin="0,0,0,6" />
                         <ListBox Grid.Row="1"
                                  ItemsSource="{Binding AllowedSids}"

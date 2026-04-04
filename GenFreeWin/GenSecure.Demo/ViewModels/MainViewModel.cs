@@ -278,7 +278,7 @@ public partial class MainViewModel : ObservableObject
             AllowedSids.Clear();
             foreach (var sHash in lstHashes)
                 AllowedSids.Add(sHash);
-            Log($"✅ {AllowedSids.Count} SID-Hash(es) für Person '{GrantPersonId}' geladen (SHA-256, kein Klartext-SID).");
+            Log($"✅ {AllowedSids.Count} SID-Hash(es) für Person '{GrantPersonId}' geladen (HMAC-SHA256 mit Master-Key-Pepper, kein Klartext-SID).");
         }
         catch (Exception ex)
         {
@@ -292,7 +292,7 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
-            var sPath = Path.Combine(_options.DataDirectoryPath, GetFileId(PersonId) + ".json");
+            var sPath = Path.Combine(_options.DataDirectoryPath, GetFileId(PersonId) + ".person.json");
             if (!File.Exists(sPath))
             {
                 RawContent = "(Datei nicht gefunden)";
@@ -314,7 +314,7 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
-            var sPath = Path.Combine(_options.KeyDirectoryPath, GetFileId(PersonId) + ".json");
+            var sPath = Path.Combine(_options.KeyDirectoryPath, GetFileId(PersonId) + ".key.json");
             if (!File.Exists(sPath))
             {
                 RawContent = "(Datei nicht gefunden)";
