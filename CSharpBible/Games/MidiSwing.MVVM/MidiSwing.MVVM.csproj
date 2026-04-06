@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Update="NAudio" Version="2.3.0" />
   </ItemGroup>
 

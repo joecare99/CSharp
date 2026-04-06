@@ -26,7 +26,7 @@
     <ProjectReference Include="..\AsteroidsModernEngine\AsteroidsModernEngine.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+    <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
     <PackageVersion Update="Microsoft.Extensions.Hosting" Version="10.0.5" />
     <PackageVersion Update="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />

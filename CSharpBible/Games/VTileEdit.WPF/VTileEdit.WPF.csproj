@@ -47,6 +47,6 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.1" />
+	  <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.2" />
 	</ItemGroup>
 </Project>

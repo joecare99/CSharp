@@ -19,6 +19,5 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
   </ItemGroup>
 </Project>
