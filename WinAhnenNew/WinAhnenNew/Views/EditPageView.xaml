@@ -1,0 +1,533 @@
+﻿<Page
+    x:Class="WinAhnenNew.Views.EditPageView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:WinAhnenNew.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="EditPageView"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Canvas>
+        <ToggleButton
+            x:Name="SpeedButton1"
+            Canvas.Left="927"
+            Canvas.Top="-18"
+            Width="31"
+            Height="27"
+            Content="" />
+        <Rectangle
+            x:Name="Shape3"
+            Canvas.Left="199"
+            Canvas.Top="1"
+            Width="496"
+            Height="69"
+            Fill="#F0F0F0"
+            Stroke="#000000"
+            StrokeThickness="1" />
+        <Label
+            x:Name="Label11"
+            Canvas.Left="208"
+            Canvas.Top="9"
+            Width="54"
+            Height="27"
+            Content="Vater"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="Edit1"
+            Canvas.Left="267"
+            Canvas.Top="5"
+            Width="424"
+            Height="27"
+            IsReadOnly="True"
+            Text="Edit1" />
+        <Label
+            x:Name="Label12"
+            Canvas.Left="207"
+            Canvas.Top="40"
+            Width="68"
+            Height="27"
+            Content="Mutter"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="Edit2"
+            Canvas.Left="267"
+            Canvas.Top="39"
+            Width="425"
+            Height="27"
+            IsReadOnly="True"
+            Text="Edit2" />
+        <Label
+            x:Name="Label5"
+            Canvas.Left="916"
+            Canvas.Top="3"
+            Width="31"
+            Height="27"
+            Content="Nr."
+            FontFamily="Arial" />
+        <Border
+            Canvas.Left="941"
+            Canvas.Top="3"
+            Width="94"
+            Height="29">
+            <TextBlock
+                Padding="2"
+                VerticalAlignment="Center"
+                Text="" />
+        </Border>
+        <Label
+            x:Name="Label8"
+            Canvas.Left="917"
+            Canvas.Top="36"
+            Width="23"
+            Height="27"
+            Content="ID"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit5"
+            Canvas.Left="941"
+            Canvas.Top="32"
+            Width="99"
+            Height="35"
+            Text="" />
+
+        <Label
+            x:Name="Label18"
+            Canvas.Left="796"
+            Canvas.Top="0"
+            Width="1"
+            Height="1"
+            Background="#FFFFFF"
+            Content=""
+            FontFamily="Arial"
+            Foreground="#FF0000" />
+        <Label
+            x:Name="Label19"
+            Canvas.Left="745"
+            Canvas.Top="27"
+            Width="1"
+            Height="1"
+            Content=""
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit69"
+            Canvas.Left="736"
+            Canvas.Top="43"
+            Width="161"
+            Height="37"
+            Text="" />
+        <Label
+            x:Name="Label20"
+            Canvas.Left="1033"
+            Canvas.Top="83"
+            Width="1"
+            Height="1"
+            Content=""
+            FontFamily="Arial" />
+
+        <TextBox
+            x:Name="Memo1"
+            Canvas.Left="75"
+            Canvas.Top="373"
+            Width="823"
+            Height="55"
+            AcceptsReturn="True"
+            AcceptsTab="True"
+            Text=""
+            TextWrapping="Wrap"
+            VerticalScrollBarVisibility="Auto" />
+        <Rectangle
+            x:Name="Shape2"
+            Canvas.Left="1"
+            Canvas.Top="75"
+            Width="1044"
+            Height="1"
+            Fill="#FFFFFF"
+            Stroke="#000000"
+            StrokeThickness="1" />
+        <Image
+            x:Name="Image1"
+            Canvas.Left="811"
+            Canvas.Top="97"
+            Width="193"
+            Height="235"
+            Source="{Binding ImageSource}"
+            Stretch="Fill" />
+
+        <Label
+            x:Name="Label1"
+            Canvas.Left="11"
+            Canvas.Top="93"
+            Width="63"
+            Height="27"
+            Content="Name"
+            FontFamily="Arial" />
+        <ComboBox
+            x:Name="ComboBox4"
+            Canvas.Left="107"
+            Canvas.Top="84"
+            Width="493"
+            Height="21"
+            IsEditable="True" />
+
+        <Label
+            x:Name="Label2"
+            Canvas.Left="11"
+            Canvas.Top="128"
+            Width="109"
+            Height="27"
+            Content="Vornamen"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit2"
+            Canvas.Left="107"
+            Canvas.Top="121"
+            Width="493"
+            Height="37"
+            Text="" />
+        <Label
+            x:Name="Label3"
+            Canvas.Left="11"
+            Canvas.Top="165"
+            Width="58"
+            Height="27"
+            Content="Beruf"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit3"
+            Canvas.Left="107"
+            Canvas.Top="159"
+            Width="493"
+            Height="35"
+            Text="" />
+        <Label
+            x:Name="Label10"
+            Canvas.Left="11"
+            Canvas.Top="201"
+            Width="97"
+            Height="27"
+            Content="Hofname"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit6"
+            Canvas.Left="107"
+            Canvas.Top="197"
+            Width="493"
+            Height="35"
+            Text="" />
+        <Label
+            x:Name="Label4"
+            Canvas.Left="11"
+            Canvas.Top="240"
+            Width="122"
+            Height="27"
+            Content="Geschlecht"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit7"
+            Canvas.Left="107"
+            Canvas.Top="237"
+            Width="33"
+            Height="35"
+            Text="" />
+        <Label
+            x:Name="Label28"
+            Canvas.Left="171"
+            Canvas.Top="240"
+            Width="120"
+            Height="27"
+            Content="Bekenntnis"
+            FontFamily="Arial" />
+        <ComboBox
+            x:Name="DBComboBox2"
+            Canvas.Left="268"
+            Canvas.Top="237"
+            Width="61"
+            Height="35"
+            IsEditable="True" />
+        <CheckBox
+            x:Name="DBCheckBox1"
+            Canvas.Left="372"
+            Canvas.Top="235"
+            Width="63"
+            Height="33"
+            Content=" lebt" />
+        <Label
+            x:Name="Label80"
+            Canvas.Left="464"
+            Canvas.Top="240"
+            Width="84"
+            Height="27"
+            Content="adopt.v."
+            FontFamily="Arial" />
+        <ComboBox
+            x:Name="DBComboBox3"
+            Canvas.Left="525"
+            Canvas.Top="237"
+            Width="76"
+            Height="39"
+            IsEditable="True" />
+        <!--<Label Content="Beruf" Canvas.Left="15" Canvas.Top="245" Width="58" Height="27" FontFamily="Arial" x:Name="Label9" />-->
+        <Label
+            x:Name="Label13"
+            Canvas.Left="11"
+            Canvas.Top="283"
+            Width="48"
+            Height="27"
+            Content="geb."
+            FontFamily="Arial" />
+        <Label
+            x:Name="Label22"
+            Canvas.Left="73"
+            Canvas.Top="283"
+            Width="89"
+            Height="29"
+            Content="Label22"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit8"
+            Canvas.Left="107"
+            Canvas.Top="279"
+            Width="33"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="DBEdit9"
+            Canvas.Left="149"
+            Canvas.Top="279"
+            Width="33"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="DBEdit10"
+            Canvas.Left="192"
+            Canvas.Top="279"
+            Width="60"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="Edit7"
+            Canvas.Left="267"
+            Canvas.Top="280"
+            Width="439"
+            Height="35"
+            Text="" />
+        <ComboBox
+            x:Name="ComboBox6"
+            Canvas.Left="267"
+            Canvas.Top="279"
+            Width="440"
+            Height="23"
+            IsEditable="True" />
+        <!--<Label Content="geb." Canvas.Left="16" Canvas.Top="367" Width="48" Height="27" FontFamily="Arial" x:Name="Label14" />-->
+        <Label
+            x:Name="Label15"
+            Canvas.Left="11"
+            Canvas.Top="320"
+            Width="41"
+            Height="27"
+            Content="get."
+            FontFamily="Arial" />
+        <Label
+            x:Name="Label23"
+            Canvas.Left="73"
+            Canvas.Top="320"
+            Width="89"
+            Height="29"
+            Content="Label22"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit12"
+            Canvas.Left="107"
+            Canvas.Top="315"
+            Width="33"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="DBEdit13"
+            Canvas.Left="149"
+            Canvas.Top="315"
+            Width="33"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="DBEdit14"
+            Canvas.Left="192"
+            Canvas.Top="315"
+            Width="60"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="Edit11"
+            Canvas.Left="267"
+            Canvas.Top="315"
+            Width="439"
+            Height="35"
+            Text="" />
+        <ComboBox
+            x:Name="ComboBox7"
+            Canvas.Left="267"
+            Canvas.Top="315"
+            Width="440"
+            Height="23"
+            IsEditable="True" />
+        <Label
+            x:Name="Label16"
+            Canvas.Left="11"
+            Canvas.Top="355"
+            Width="53"
+            Height="27"
+            Content="gest."
+            FontFamily="Arial" />
+        <Label
+            x:Name="Label24"
+            Canvas.Left="73"
+            Canvas.Top="356"
+            Width="89"
+            Height="29"
+            Content="Label22"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit16"
+            Canvas.Left="107"
+            Canvas.Top="351"
+            Width="33"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="DBEdit17"
+            Canvas.Left="149"
+            Canvas.Top="351"
+            Width="33"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="DBEdit18"
+            Canvas.Left="192"
+            Canvas.Top="351"
+            Width="60"
+            Height="35"
+            Text="" />
+        <ComboBox
+            x:Name="ComboBox8"
+            Canvas.Left="267"
+            Canvas.Top="351"
+            Width="440"
+            Height="23"
+            IsEditable="True" />
+        <TextBox
+            x:Name="DBEdit4"
+            Canvas.Left="712"
+            Canvas.Top="351"
+            Width="143"
+            Height="35"
+            Text="" />
+        <Label
+            x:Name="Label17"
+            Canvas.Left="11"
+            Canvas.Top="391"
+            Width="53"
+            Height="27"
+            Content="best."
+            FontFamily="Arial" />
+        <Label
+            x:Name="Label25"
+            Canvas.Left="73"
+            Canvas.Top="391"
+            Width="89"
+            Height="29"
+            Content="Label22"
+            FontFamily="Arial" />
+        <TextBox
+            x:Name="DBEdit20"
+            Canvas.Left="107"
+            Canvas.Top="387"
+            Width="33"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="DBEdit21"
+            Canvas.Left="149"
+            Canvas.Top="387"
+            Width="33"
+            Height="35"
+            Text="" />
+        <TextBox
+            x:Name="DBEdit22"
+            Canvas.Left="192"
+            Canvas.Top="387"
+            Width="60"
+            Height="35"
+            Text="" />
+        <ComboBox
+            x:Name="ComboBox9"
+            Canvas.Left="267"
+            Canvas.Top="385"
+            Width="440"
+            Height="23"
+            IsEditable="True" />
+
+        <Label
+            x:Name="Label6"
+            Canvas.Left="4"
+            Canvas.Top="429"
+            Width="76"
+            Height="29"
+            Content="Label6"
+            FontFamily="Arial" />
+        <Label
+            x:Name="Label79"
+            Canvas.Left="171"
+            Canvas.Top="431"
+            Width="85"
+            Height="27"
+            Content="Label79"
+            FontFamily="Arial" />
+        <Label
+            x:Name="Label7"
+            Canvas.Left="536"
+            Canvas.Top="429"
+            Width="76"
+            Height="29"
+            Content="Label7"
+            FontFamily="Arial" />
+        <Label
+            x:Name="Label81"
+            Canvas.Left="619"
+            Canvas.Top="77"
+            Width="85"
+            Height="27"
+            Content="Label81"
+            FontFamily="Arial" />
+        <!--  Unknown component: TFileListBox Name="FileListBox2"  -->
+        <!--  Unknown component: TFileListBox Name="FileListBox1"  -->
+        <!--  Unknown component: TDBNavigator Name="DBNavigator1"  -->
+        <!--  Grid: 6 columns x 8 rows  -->
+        <DataGrid
+            x:Name="StringGrid1"
+            Canvas.Left="-1"
+            Canvas.Top="455"
+            Width="531"
+            Height="231" />
+        <!--  Grid: 6 columns x 8 rows  -->
+        <DataGrid
+            x:Name="StringGrid2"
+            Canvas.Left="533"
+            Canvas.Top="455"
+            Width="512"
+            Height="231" />
+
+
+        <!--  Unknown component: TUpDown Name="UpDown1"  -->
+        <!--  Unknown component: TDBGrid Name="DBGrid3"  -->
+        <!--  Grid: 4 columns x 5 rows  -->
+        <DataGrid
+            x:Name="StringGrid5"
+            Canvas.Left="585"
+            Canvas.Top="100"
+            Width="460"
+            Height="331" />
+    </Canvas>
+</Page>
