@@ -11,147 +11,147 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Datei" x:Name="Datei1">
-                <MenuItem Header="Geb.-Datum -_gt; Taufdatum" x:Name="GebDatumTaufdatum1" />
+                <MenuItem Header="Geb.-Datum -_gt; Taufdatum" x:Name="GebDatumTaufdatum1" Command="{Binding GebDatumTaufdatum1Command}" />
                 <Separator />
-                <MenuItem Header="alle Daten löschen" x:Name="Datenlschen1" />
+                <MenuItem Header="alle Daten löschen" x:Name="Datenlschen1" Command="{Binding Datenlschen1Command}" />
                 <Separator />
-                <MenuItem Header="ID = Satznr." x:Name="IDSatznr1" />
-                <MenuItem Header="IDs löschen" x:Name="IDslschen1" />
+                <MenuItem Header="ID = Satznr." x:Name="IDSatznr1" Command="{Binding IDSatznr1Command}" />
+                <MenuItem Header="IDs löschen" x:Name="IDslschen1" Command="{Binding IDslschen1Command}" />
                 <Separator />
-                <MenuItem Header="Datenschutz ein" x:Name="Datenschutzein1" />
-                <MenuItem Header="Datenschutz aus" x:Name="Datenschutzaus1" />
+                <MenuItem Header="Datenschutz ein" x:Name="Datenschutzein1" Command="{Binding Datenschutzein1Command}" />
+                <MenuItem Header="Datenschutz aus" x:Name="Datenschutzaus1" Command="{Binding Datenschutzaus1Command}" />
                 <Separator />
-                <MenuItem Header="Druckereinstellung" x:Name="Druckereinstellung1" />
-                <MenuItem Header="Bildschirm drucken" InputGestureText="Alt+P" x:Name="Bildschirmdrucken1" />
+                <MenuItem Header="Druckereinstellung" x:Name="Druckereinstellung1" Command="{Binding Druckereinstellung1Command}" />
+                <MenuItem Header="Bildschirm drucken" InputGestureText="Alt+P" x:Name="Bildschirmdrucken1" Command="{Binding Bildschirmdrucken1Command}" />
                 <Separator />
-                <MenuItem Header="Excel-Export" x:Name="ExcelExport1" />
+                <MenuItem Header="Excel-Export" x:Name="ExcelExport1" Command="{Binding ExcelExport1Command}" />
                 <Separator />
-                <MenuItem Header="Ehen/Kinder ordnen" x:Name="EhenKiordnen1" />
+                <MenuItem Header="Ehen/Kinder ordnen" x:Name="EhenKiordnen1" Command="{Binding EhenKiordnen1Command}" />
                 <Separator />
-                <MenuItem Header="beenden" InputGestureText="Alt+X" x:Name="beenden1" />
+                <MenuItem Header="beenden" InputGestureText="Alt+X" x:Name="beenden1" Command="{Binding Beenden1Command}" />
             </MenuItem>
             <MenuItem Header="Datenaustausch" x:Name="Datenaustausch1">
-                <MenuItem Header="AHNEN DOS einlesen" x:Name="AHNENDOSeinlesen1" />
-                <MenuItem Header="OSB einlesen" x:Name="OSBeinlesen1" />
+                <MenuItem Header="AHNEN DOS einlesen" x:Name="AHNENDOSeinlesen1" Command="{Binding AHNENDOSeinlesen1Command}" />
+                <MenuItem Header="OSB einlesen" x:Name="OSBeinlesen1" Command="{Binding OSBeinlesen1Command}" />
                 <Separator />
-                <MenuItem Header="Gedcom-Datei schreiben" x:Name="GedcomDateischreiben1" />
-                <MenuItem Header="Gedcom-Datei einlesen" x:Name="GedcomDateieinlesen1" />
+                <MenuItem Header="Gedcom-Datei schreiben" x:Name="GedcomDateischreiben1" Command="{Binding GedcomDateischreiben1Command}" />
+                <MenuItem Header="Gedcom-Datei einlesen" x:Name="GedcomDateieinlesen1" Command="{Binding GedcomDateieinlesen1Command}" />
                 <Separator />
-                <MenuItem Header="Gedcom-XML schreiben" x:Name="GedcomXMLschreiben1" />
-                <MenuItem Header="Gedcom-XML einlesen" x:Name="GedcomXMLeinlesen1" />
+                <MenuItem Header="Gedcom-XML schreiben" x:Name="GedcomXMLschreiben1" Command="{Binding GedcomXMLschreiben1Command}" />
+                <MenuItem Header="Gedcom-XML einlesen" x:Name="GedcomXMLeinlesen1" Command="{Binding GedcomXMLeinlesen1Command}" />
                 <Separator />
-                <MenuItem Header="FOKO-Datei erstellen" x:Name="FOKODateierstellen1" />
-                <MenuItem Header="FOKO-Datei editieren" x:Name="FOKODateieditieren1" />
+                <MenuItem Header="FOKO-Datei erstellen" x:Name="FOKODateierstellen1" Command="{Binding FOKODateierstellen1Command}" />
+                <MenuItem Header="FOKO-Datei editieren" x:Name="FOKODateieditieren1" Command="{Binding FOKODateieditieren1Command}" />
                 <Separator />
-                <MenuItem Header="Tiny-Tafel erstellen" x:Name="inyTafelerstellen1" />
+                <MenuItem Header="Tiny-Tafel erstellen" x:Name="inyTafelerstellen1" Command="{Binding InyTafelerstellen1Command}" />
                 <Separator />
-                <MenuItem Header="Adressendatei schreiben" x:Name="Adressendateischreiben1" />
+                <MenuItem Header="Adressendatei schreiben" x:Name="Adressendateischreiben1" Command="{Binding Adressendateischreiben1Command}" />
             </MenuItem>
             <MenuItem Header="Datensatz" x:Name="Datensatz1">
-                <MenuItem Header="neu" x:Name="neu1" />
+                <MenuItem Header="neu" x:Name="neu1" Command="{Binding Neu1Command}" />
                 <Separator />
-                <MenuItem Header="löschen" x:Name="schen1" />
+                <MenuItem Header="löschen" x:Name="schen1" Command="{Binding Schen1Command}" />
             </MenuItem>
             <MenuItem Header="Suchen" x:Name="Suchen1">
-                <MenuItem Header="Datensatz-Nr." x:Name="DatensatzNr1" />
+                <MenuItem Header="Datensatz-Nr." x:Name="DatensatzNr1" Command="{Binding DatensatzNr1Command}" />
                 <Separator />
-                <MenuItem Header="Globale Suche" x:Name="GlobaleSuche1" />
+                <MenuItem Header="Globale Suche" x:Name="GlobaleSuche1" Command="{Binding GlobaleSuche1Command}" />
                 <Separator />
-                <MenuItem Header="Partnersuche" x:Name="Partnersuche1" />
+                <MenuItem Header="Partnersuche" x:Name="Partnersuche1" Command="{Binding Partnersuche1Command}" />
                 <MenuItem Header="Letzte Suche" x:Name="LetzteSuche1">
-                    <MenuItem Header="anzeigen" x:Name="anzeigen1" />
-                    <MenuItem Header="drucken" x:Name="drucken1" />
+                    <MenuItem Header="anzeigen" x:Name="anzeigen1" Command="{Binding Anzeigen1Command}" />
+                    <MenuItem Header="drucken" x:Name="drucken1" Command="{Binding Drucken1Command}" />
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Verwandtschaft" x:Name="Verwandtschaft1" />
-                <MenuItem Header="Vettern" x:Name="Vettern1" />
-                <MenuItem Header="Basen" x:Name="Basen1" />
+                <MenuItem Header="Verwandtschaft" x:Name="Verwandtschaft1" Command="{Binding Verwandtschaft1Command}" />
+                <MenuItem Header="Vettern" x:Name="Vettern1" Command="{Binding Vettern1Command}" />
+                <MenuItem Header="Basen" x:Name="Basen1" Command="{Binding Basen1Command}" />
             </MenuItem>
             <MenuItem Header="Listen" x:Name="Listen1">
-                <MenuItem Header="Familienblatt" x:Name="Familienblatt2" />
-                <MenuItem Header="Familienblatt HTML" x:Name="FamilienblattHTML1" />
-                <MenuItem Header="Familien-Grafik" x:Name="FamGrafik1" />
+                <MenuItem Header="Familienblatt" x:Name="Familienblatt2" Command="{Binding Familienblatt2Command}" />
+                <MenuItem Header="Familienblatt HTML" x:Name="FamilienblattHTML1" Command="{Binding FamilienblattHTML1Command}" />
+                <MenuItem Header="Familien-Grafik" x:Name="FamGrafik1" Command="{Binding FamGrafik1Command}" />
                 <Separator />
-                <MenuItem Header="OFB-Druck" x:Name="OFBDruck1" />
+                <MenuItem Header="OFB-Druck" x:Name="OFBDruck1" Command="{Binding OFBDruck1Command}" />
                 <Separator />
                 <MenuItem Header="Namensliste" x:Name="Namensliste1">
-                    <MenuItem Header="alle Personen" x:Name="allePersonen1" />
-                    <MenuItem Header="für bestimmten Ort" x:Name="frbestimmtenOrt1" />
+                    <MenuItem Header="alle Personen" x:Name="allePersonen1" Command="{Binding AllePersonen1Command}" />
+                    <MenuItem Header="für bestimmten Ort" x:Name="frbestimmtenOrt1" Command="{Binding FrbestimmtenOrt1Command}" />
                 </MenuItem>
                 <MenuItem Header="Ortsliste" x:Name="Ortsliste1">
-                    <MenuItem Header="alle Personen" x:Name="allePersonen2" />
-                    <MenuItem Header="Probandenname" x:Name="Probandenname1" />
+                    <MenuItem Header="alle Personen" x:Name="allePersonen2" Command="{Binding AllePersonen2Command}" />
+                    <MenuItem Header="Probandenname" x:Name="Probandenname1" Command="{Binding Probandenname1Command}" />
                 </MenuItem>
-                <MenuItem Header="Quellenliste" x:Name="Quellenliste1" />
+                <MenuItem Header="Quellenliste" x:Name="Quellenliste1" Command="{Binding Quellenliste1Command}" />
                 <Separator />
-                <MenuItem Header="Namens-Verwaltung" x:Name="NamensListeeditieren1" />
-                <MenuItem Header="Orts-Verwaltung" x:Name="OrtsDatei1" />
-                <MenuItem Header="Berufe-Verwaltung" x:Name="BerufeVerwaltung1" />
-                <MenuItem Header="Quellen-Verwaltung" x:Name="QuellenListeeditieren1" />
-                <MenuItem Header="Hofnamen-Verwaltung" x:Name="HofnamenVerwaltung1" />
+                <MenuItem Header="Namens-Verwaltung" x:Name="NamensListeeditieren1" Command="{Binding NamensListeeditieren1Command}" />
+                <MenuItem Header="Orts-Verwaltung" x:Name="OrtsDatei1" Command="{Binding OrtsDatei1Command}" />
+                <MenuItem Header="Berufe-Verwaltung" x:Name="BerufeVerwaltung1" Command="{Binding BerufeVerwaltung1Command}" />
+                <MenuItem Header="Quellen-Verwaltung" x:Name="QuellenListeeditieren1" Command="{Binding QuellenListeeditieren1Command}" />
+                <MenuItem Header="Hofnamen-Verwaltung" x:Name="HofnamenVerwaltung1" Command="{Binding HofnamenVerwaltung1Command}" />
                 <Separator />
-                <MenuItem Header="Listen aktualisieren" x:Name="Listenaktualisieren1" />
+                <MenuItem Header="Listen aktualisieren" x:Name="Listenaktualisieren1" Command="{Binding Listenaktualisieren1Command}" />
             </MenuItem>
             <MenuItem Header="Vorfahren" x:Name="Vorfahren1">
-                <MenuItem Header="Listen" x:Name="Listen2" />
+                <MenuItem Header="Listen" x:Name="Listen2" Command="{Binding Listen2Command}" />
                 <Separator />
                 <MenuItem Header="Spitzenahnen" x:Name="Spitzenahnen1">
-                    <MenuItem Header="Proband" x:Name="Proband1" />
-                    <MenuItem Header="alle Personen" x:Name="allePersonen3" />
+                    <MenuItem Header="Proband" x:Name="Proband1" Command="{Binding Proband1Command}" />
+                    <MenuItem Header="alle Personen" x:Name="allePersonen3" Command="{Binding AllePersonen3Command}" />
                 </MenuItem>
-                <MenuItem Header="Basisahnen" x:Name="Basisahnen1" />
+                <MenuItem Header="Basisahnen" x:Name="Basisahnen1" Command="{Binding Basisahnen1Command}" />
                 <Separator />
-                <MenuItem Header="Grafik I" x:Name="Grafikalt1" />
-                <MenuItem Header="Grafik II" x:Name="Grafik1" />
+                <MenuItem Header="Grafik I" x:Name="Grafikalt1" Command="{Binding Grafikalt1Command}" />
+                <MenuItem Header="Grafik II" x:Name="Grafik1" Command="{Binding Grafik1Command}" />
                 <Separator />
             </MenuItem>
             <MenuItem Header="Nachfahren" x:Name="Nachfahren1">
-                <MenuItem Header="Listen" x:Name="Liste1" />
-                <MenuItem Header="geschachtelt" x:Name="geschachtelt1" />
+                <MenuItem Header="Listen" x:Name="Liste1" Command="{Binding Liste1Command}" />
+                <MenuItem Header="geschachtelt" x:Name="geschachtelt1" Command="{Binding Geschachtelt1Command}" />
                 <Separator />
-                <MenuItem Header="Grafik I" x:Name="GrafikI1" />
-                <MenuItem Header="Grafik II" x:Name="Grafikneu1" />
+                <MenuItem Header="Grafik I" x:Name="GrafikI1" Command="{Binding GrafikI1Command}" />
+                <MenuItem Header="Grafik II" x:Name="Grafikneu1" Command="{Binding Grafikneu1Command}" />
             </MenuItem>
             <MenuItem Header="Kalender" x:Name="Kalender1">
-                <MenuItem Header="Gregorianischer Kalender" x:Name="GregorianischerKalender1" />
-                <MenuItem Header="Frz.Revolutionskalender" x:Name="FrzRevolutionskalender1" />
-                <MenuItem Header="Osterberechnung" x:Name="Osterberechnung1" />
-                <MenuItem Header="Christliche Namenstage" x:Name="ChristlicheNamenstage1" />
+                <MenuItem Header="Gregorianischer Kalender" x:Name="GregorianischerKalender1" Command="{Binding GregorianischerKalender1Command}" />
+                <MenuItem Header="Frz.Revolutionskalender" x:Name="FrzRevolutionskalender1" Command="{Binding FrzRevolutionskalender1Command}" />
+                <MenuItem Header="Osterberechnung" x:Name="Osterberechnung1" Command="{Binding Osterberechnung1Command}" />
+                <MenuItem Header="Christliche Namenstage" x:Name="ChristlicheNamenstage1" Command="{Binding ChristlicheNamenstage1Command}" />
             </MenuItem>
             <MenuItem Header="Bilder" x:Name="Bilder1">
-                <MenuItem Header="einfügen" x:Name="einfgen1" />
-                <MenuItem Header="entfernen" x:Name="entfernen1" />
+                <MenuItem Header="einfügen" x:Name="einfgen1" Command="{Binding Einfgen1Command}" />
+                <MenuItem Header="entfernen" x:Name="entfernen1" Command="{Binding Entfernen1Command}" />
                 <Separator />
-                <MenuItem Header="bmp -_gt; jpg" x:Name="bmpjpg1" />
+                <MenuItem Header="bmp -_gt; jpg" x:Name="bmpjpg1" Command="{Binding Bmpjpg1Command}" />
                 <Separator />
-                <MenuItem Header="alle Bilder entfernen" x:Name="alleBilderentfernen1" />
-                <MenuItem Header="übernehmen" x:Name="bernehmen1" />
+                <MenuItem Header="alle Bilder entfernen" x:Name="alleBilderentfernen1" Command="{Binding AlleBilderentfernen1Command}" />
+                <MenuItem Header="übernehmen" x:Name="bernehmen1" Command="{Binding Bernehmen1Command}" />
             </MenuItem>
             <MenuItem Header="Datenprüfung" x:Name="Datenprfung1">
-                <MenuItem Header="Plausibilitäts-Prüfung" x:Name="Prfen1" />
+                <MenuItem Header="Plausibilitäts-Prüfung" x:Name="Prfen1" Command="{Binding Prfen1Command}" />
                 <Separator />
-                <MenuItem Header="Einzelpersonen " x:Name="Einzelpersonen1" />
-                <MenuItem Header="Mehrfach-Einträge" x:Name="DoppelteEintrge1" />
+                <MenuItem Header="Einzelpersonen " x:Name="Einzelpersonen1" Command="{Binding Einzelpersonen1Command}" />
+                <MenuItem Header="Mehrfach-Einträge" x:Name="DoppelteEintrge1" Command="{Binding DoppelteEintrge1Command}" />
                 <Separator />
-                <MenuItem Header="nicht verknüpfte Beziehungen" x:Name="nichtverknpfteBeziehungen1" />
+                <MenuItem Header="nicht verknüpfte Beziehungen" x:Name="nichtverknpfteBeziehungen1" Command="{Binding NichtverknpfteBeziehungen1Command}" />
             </MenuItem>
             <MenuItem Header="Filter" x:Name="Filter1">
-                <MenuItem Header="ID" x:Name="ID1" />
-                <MenuItem Header="Name" x:Name="Name1" />
-                <MenuItem Header="Hofname" x:Name="Hausname1" />
+                <MenuItem Header="ID" x:Name="ID1" Command="{Binding ID1Command}" />
+                <MenuItem Header="Name" x:Name="Name1" Command="{Binding Name1Command}" />
+                <MenuItem Header="Hofname" x:Name="Hausname1" Command="{Binding Hausname1Command}" />
                 <Separator />
-                <MenuItem Header="aus" x:Name="aus1" />
+                <MenuItem Header="aus" x:Name="aus1" Command="{Binding Aus1Command}" />
             </MenuItem>
             <MenuItem Header="Info" x:Name="Info1">
-                <MenuItem Header="Hilfe" InputGestureText="F1" x:Name="Hilfe1" />
+                <MenuItem Header="Hilfe" InputGestureText="F1" x:Name="Hilfe1" Command="{Binding Hilfe1Command}" />
                 <Separator />
-                <MenuItem Header="zu AHNENWIN" x:Name="zuAHNENWIN1" />
+                <MenuItem Header="zu AHNENWIN" x:Name="zuAHNENWIN1" Command="{Binding ZuAHNENWIN1Command}" />
                 <Separator />
-                <MenuItem Header="Fenstertitel ändern" x:Name="Fenstertitelndern1" />
+                <MenuItem Header="Fenstertitel ändern" x:Name="Fenstertitelndern1" Command="{Binding Fenstertitelndern1Command}" />
             </MenuItem>
             <MenuItem Header="Sicherung" x:Name="Datensicherung1">
-                <MenuItem Header="Daten sichern" x:Name="Datensichern1" />
-                <MenuItem Header="Sicherungs-Datei einlesen" x:Name="SicherungsDateieinlesen2" />
+                <MenuItem Header="Daten sichern" x:Name="Datensichern1" Command="{Binding Datensichern1Command}" />
+                <MenuItem Header="Sicherungs-Datei einlesen" x:Name="SicherungsDateieinlesen2" Command="{Binding SicherungsDateieinlesen2Command}" />
             </MenuItem>
         </Menu>
             <Rectangle DockPanel.Dock="Top" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" x:Name="Shape1" />
