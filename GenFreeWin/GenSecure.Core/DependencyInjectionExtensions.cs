@@ -27,6 +27,7 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<MasterKeyBackupService>();
         services.AddSingleton<IMasterKeyBackupService>(provider => provider.GetRequiredService<MasterKeyBackupService>());
         services.AddSingleton<IPersonSecureStore, PersonSecureStore>();
+        services.AddSingleton<IGenealogySecureStore, GenealogySecureStore>();
 
         return services;
     }

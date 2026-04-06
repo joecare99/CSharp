@@ -308,13 +308,11 @@ public sealed class PersonSecureStore : IPersonSecureStore
 
     private string GetDataFilePath(string sPersonId)
     {
-        string sFileId = CryptoUtilities.ToDeterministicFileId(sPersonId);
-        return Path.Combine(_options.DataDirectoryPath, sFileId + ".person.json");
+        return CryptoUtilities.GetShardedFilePath(_options.DataDirectoryPath, sPersonId, ".person.json");
     }
 
     private string GetKeyFilePath(string sPersonId)
     {
-        string sFileId = CryptoUtilities.ToDeterministicFileId(sPersonId);
-        return Path.Combine(_options.KeyDirectoryPath, sFileId + ".key.json");
+        return CryptoUtilities.GetShardedFilePath(_options.KeyDirectoryPath, sPersonId, ".key.json");
     }
 }
