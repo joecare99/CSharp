@@ -8,43 +8,94 @@
     Height="308"
     Background="#F0F0F0"
     WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BitmapImage x:Key="ToolbarImageList" UriSource="pack://application:,,,/Views/Images/ImageList1.png" />
+        <CroppedBitmap x:Key="ToolbarNewImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,96,16,16" />
+        <CroppedBitmap x:Key="ToolbarOpenImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,112,16,16" />
+        <CroppedBitmap x:Key="ToolbarSaveImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,128,16,16" />
+        <CroppedBitmap x:Key="ToolbarPreviewImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,144,16,16" />
+        <CroppedBitmap x:Key="ToolbarPropertyImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,160,16,16" />
+        <CroppedBitmap x:Key="ToolbarHelpImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,176,16,16" />
+        <CroppedBitmap x:Key="ToolbarFindImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,192,16,16" />
+        <CroppedBitmap x:Key="ToolbarReplaceImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,208,16,16" />
+        <CroppedBitmap x:Key="ToolbarPrintImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,224,16,16" />
+        <CroppedBitmap x:Key="ToolbarSendImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,240,16,16" />
+        <CroppedBitmap x:Key="ToolbarCutImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,0,16,16" />
+        <CroppedBitmap x:Key="ToolbarCopyImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,16,16,16" />
+        <CroppedBitmap x:Key="ToolbarPasteImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,32,16,16" />
+        <CroppedBitmap x:Key="ToolbarUndoImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,48,16,16" />
+        <CroppedBitmap x:Key="ToolbarRedoImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,64,16,16" />
+        <CroppedBitmap x:Key="ToolbarDeleteImage" Source="{StaticResource ToolbarImageList}" SourceRect="0,80,16,16" />
+    </Window.Resources>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem x:Name="File1" Header="_amp;Datei">
+            <MenuItem x:Name="File1" Header="_Datei">
                 <MenuItem
                     x:Name="FileNewItem"
-                    Header="_amp;Neu"
-                    InputGestureText="Ctrl+N" />
+                    Header="_Neu"
+                    InputGestureText="Ctrl+N" >
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="{StaticResource ToolbarNewImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem
                     x:Name="FileOpenItem"
-                    Header="Ö_amp;ffnen"
-                    InputGestureText="Ctrl+O" />
+                    Header="_Öffnen"
+                    InputGestureText="Ctrl+O" >
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="{StaticResource ToolbarOpenImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem
                     x:Name="FileSaveItem"
-                    Header="_amp;Speichern"
+                    Header="_Speichern"
                     InputGestureText="Ctrl+S" />
-                <MenuItem x:Name="FileSaveAsItem" Header="Speichern _amp;unter..." />
+                <MenuItem x:Name="FileSaveAsItem" Header="Speichern _unter..." >
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="{StaticResource ToolbarSaveImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
-                <MenuItem x:Name="FileSendItem" Header="Sen_amp;den" />
+                <MenuItem x:Name="FileSendItem" Header="Sen_den" >
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="{StaticResource ToolbarSendImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
-                <MenuItem x:Name="FileExitItem" Header="_amp;Beenden" />
+                <MenuItem x:Name="FileExitItem" Header="_Beenden" />
             </MenuItem>
-            <MenuItem x:Name="Edit1" Header="_amp;Bearbeiten">
+            <MenuItem x:Name="Edit1" Header="_Bearbeiten">
                 <MenuItem
                     x:Name="CutItem"
-                    Header="_amp;Ausschneiden"
-                    InputGestureText="Ctrl+X" />
+                    Header="_Ausschneiden"
+                    InputGestureText="Ctrl+X" >
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="{StaticResource ToolbarCutImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem
                     x:Name="CopyItem"
-                    Header="_amp;Kopieren"
-                    InputGestureText="Ctrl+C" />
+                    Header="_Kopieren"
+                    InputGestureText="Ctrl+C" >
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="{StaticResource ToolbarCopyImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem
                     x:Name="PasteItem"
-                    Header="_amp;Einfügen"
-                    InputGestureText="Ctrl+V" />
+                    Header="_Einfügen"
+                    InputGestureText="Ctrl+V" >
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="{StaticResource ToolbarPasteImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
-            <MenuItem x:Name="Help1" Header="_amp;Hilfe">
-                <MenuItem x:Name="HelpAboutItem" Header="_amp;Info..." />
+            <MenuItem x:Name="Help1" Header="_Hilfe">
+                <MenuItem x:Name="HelpAboutItem" Header="_Info..." >
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="{StaticResource ToolbarHelpImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
         </Menu>
         <Canvas>
@@ -61,21 +112,35 @@
                 Width="450"
                 Height="24">
                 <!--  ImageIndex: 6  -->
-                <Button x:Name="ToolButton1" ToolTip="Neu|Neue Datei erstellen" />
+                <Button x:Name="ToolButton1" ToolTip="Neu|Neue Datei erstellen">
+                    <Image Width="16" Height="16" Source="{StaticResource ToolbarNewImage}"  Margin="-1"/>
+                </Button>
                 <!--  ImageIndex: 7  -->
-                <Button x:Name="ToolButton2" ToolTip="Öffnen|Datei öffnen" />
+                <Button x:Name="ToolButton2" ToolTip="Öffnen|Datei öffnen">
+                    <Image Width="16" Height="16" Source="{StaticResource ToolbarOpenImage}"  Margin="-1"/>
+                </Button>
                 <!--  ImageIndex: 8  -->
-                <Button x:Name="ToolButton3" ToolTip="Speichern|Aktuelle Datei speichern" />
+                <Button x:Name="ToolButton3" ToolTip="Speichern|Aktuelle Datei speichern">
+                    <Image Width="16" Height="16" Source="{StaticResource ToolbarSaveImage}"  Margin="-1"/>
+                </Button>
                 <Separator />
                 <!--  ImageIndex: 15  -->
-                <Button x:Name="ToolButton5" ToolTip="Senden|Aktuelle Datei per E-Mail verschicken" />
+                <Button x:Name="ToolButton5" ToolTip="Senden|Aktuelle Datei per E-Mail verschicken">
+                    <Image Width="16" Height="16" Source="{StaticResource ToolbarSendImage}"  Margin="-1"/>
+                </Button>
                 <Separator />
                 <!--  ImageIndex: 0  -->
-                <Button x:Name="ToolButton7" ToolTip="Ausschneiden|Markiertes Objekt in die Zwischenablage verschieben" />
+                <Button x:Name="ToolButton7" ToolTip="Ausschneiden|Markiertes Objekt in die Zwischenablage verschieben">
+                    <Image Width="16" Height="16" Source="{StaticResource ToolbarCutImage}"  Margin="-1"/>
+                </Button>
                 <!--  ImageIndex: 1  -->
-                <Button x:Name="ToolButton8" ToolTip="Kopieren|Markiertes Objekt in die Zwischenablage kopieren" />
+                <Button x:Name="ToolButton8" ToolTip="Kopieren|Markiertes Objekt in die Zwischenablage kopieren">
+                    <Image Width="16" Height="16" Source="{StaticResource ToolbarCopyImage}"  Margin="-1"/>
+                </Button>
                 <!--  ImageIndex: 2  -->
-                <Button x:Name="ToolButton9" ToolTip="Einfügen|Inhalt der Zwischenablage einfügen" />
+                <Button x:Name="ToolButton9" ToolTip="Einfügen|Inhalt der Zwischenablage einfügen">
+                    <Image Width="16" Height="16" Source="{StaticResource ToolbarPasteImage}"  Margin="-1"/>
+                </Button>
             </ToolBar>
             <TextBox
                 x:Name="RichEdit1"
@@ -87,11 +152,6 @@
                 AcceptsTab="True"
                 Text=""
                 TextWrapping="Wrap" />
-            <!--  Non-visual: TActionList Name="ActionList1"  -->
-            <!--  Non-visual: TImageList Name="ImageList1"  -->
-            <!--  Unknown component: TOpenDialog Name="OpenDialog"  -->
-            <!--  Unknown component: TSaveDialog Name="SaveDialog"  -->
-            <!--  Unknown component: TSaveDialog Name="SaveDialog1"  -->
         </Canvas>
     </DockPanel>
 </Window>
