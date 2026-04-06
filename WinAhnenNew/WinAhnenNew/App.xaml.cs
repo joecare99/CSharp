@@ -1,14 +1,40 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using System;
+using System.IO;
 using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using GenSecure.Contracts;
+using GenSecure.Core;
+using Microsoft.Extensions.DependencyInjection;
+using WinAhnenNew.Services;
+using WinAhnenNew.ViewModels;
 
 namespace WinAhnenNew
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Interaction logic for App.xaml.
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            var services = new ServiceCollection();
+
+            services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
+            services.AddSingleton<IGenealogyModelFactory, BaseGenGenealogyModelFactory>();
+            services.AddSingleton<IPersonSelectionService, PersonSelectionService>();
+            services.AddTransient<SelectionPageViewModel>();
+            services.AddGenSecureStore(options =>
+            {
+                options.RootDirectory = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "JC-Soft",
+                    "WinAhnenNew");
+            });
+
+            Services = services.BuildServiceProvider();
+        }
+
+        public IServiceProvider Services { get; }
     }
 
 }
