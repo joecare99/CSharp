@@ -178,6 +178,22 @@ public sealed class PersonSecureStoreTests
             "The stored hash must be HMAC-SHA256(SID, pepper), not plain SHA-256(SID).");
     }
 
+    [TestMethod]
+    public void Save_ShouldUseShardedFilesystemLayout()
+    {
+        using TestStoreScope scope = new();
+
+        scope.Store.Save("person-layout", new TestPerson("Rosalind", "Franklin"));
+
+        FileInfo dataFile = scope.GetDataFiles().Single();
+        FileInfo keyFile = scope.GetKeyFiles().Single();
+
+        Assert.AreEqual(3, GetRelativeSegments(scope.Options.DataDirectoryPath, dataFile.FullName).Length,
+            "Expected `<hash-prefix>/<hash-prefix>/<file>` under the data directory.");
+        Assert.AreEqual(3, GetRelativeSegments(scope.Options.KeyDirectoryPath, keyFile.FullName).Length,
+            "Expected `<hash-prefix>/<hash-prefix>/<file>` under the key directory.");
+    }
+
     private sealed record TestPerson(string FirstName, string LastName);
 
     private sealed class TestStoreScope : IDisposable
@@ -206,7 +222,7 @@ public sealed class PersonSecureStoreTests
                 return Array.Empty<FileInfo>();
             }
 
-            return new DirectoryInfo(Options.DataDirectoryPath).GetFiles();
+            return new DirectoryInfo(Options.DataDirectoryPath).GetFiles("*", SearchOption.AllDirectories);
         }
 
         public FileInfo[] GetKeyFiles()
@@ -216,7 +232,7 @@ public sealed class PersonSecureStoreTests
                 return Array.Empty<FileInfo>();
             }
 
-            return new DirectoryInfo(Options.KeyDirectoryPath).GetFiles();
+            return new DirectoryInfo(Options.KeyDirectoryPath).GetFiles("*", SearchOption.AllDirectories);
         }
 
         public void Dispose()
@@ -226,5 +242,12 @@ public sealed class PersonSecureStoreTests
                 Directory.Delete(Options.GetValidatedRootDirectory(), recursive: true);
             }
         }
+
+    }
+
+    private static string[] GetRelativeSegments(string sRootPath, string sFilePath)
+    {
+        string sRelativePath = Path.GetRelativePath(sRootPath, sFilePath);
+        return sRelativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
     }
 }
