@@ -69,6 +69,16 @@ internal static class CryptoUtilities
         return Convert.ToHexString(arrHash).ToLowerInvariant();
     }
 
+    public static string GetShardedFilePath(string sRootDirectory, string sLogicalId, string sExtension)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sRootDirectory);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sLogicalId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sExtension);
+
+        string sFileId = ToDeterministicFileId(sLogicalId);
+        return Path.Combine(sRootDirectory, sFileId[..2], sFileId[2..4], sFileId + sExtension);
+    }
+
     /// <summary>
     /// Derives the SID pepper key from the master key using HKDF-SHA256.
     /// The pepper ensures that SID hashes cannot be brute-forced via SID enumeration,

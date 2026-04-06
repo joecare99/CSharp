@@ -14,6 +14,16 @@ public sealed class GenSecureStoreOptions
     public string? RootDirectory { get; set; }
 
     /// <summary>
+    /// Gets or sets the genealogy package directory name.
+    /// </summary>
+    public string GenealogyDirectoryName { get; set; } = "genealogies";
+
+    /// <summary>
+    /// Gets or sets the secure data container directory name used inside a genealogy package.
+    /// </summary>
+    public string SecureDataDirectoryName { get; set; } = "secure";
+
+    /// <summary>
     /// Gets or sets the encrypted data directory name.
     /// </summary>
     public string DataDirectoryName { get; set; } = "data";
@@ -37,6 +47,11 @@ public sealed class GenSecureStoreOptions
     /// Gets or sets the recovery key file name.
     /// </summary>
     public string RecoveryKeyFileName { get; set; } = "recovery-key.json";
+
+    /// <summary>
+    /// Gets the genealogy package root directory path.
+    /// </summary>
+    public string GenealogyDirectoryPath => Path.Combine(GetValidatedRootDirectory(), GenealogyDirectoryName);
 
     /// <summary>
     /// Gets the encrypted data directory path.
