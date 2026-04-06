@@ -14,5 +14,22 @@
   <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
     <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CSharpBible\Libraries\GenInterfaces\GenInterfaces.csproj" />
+    <ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+    <ProjectReference Include="..\BaseGenClasses\BaseGenClasses.csproj" />
+    <ProjectReference Include="..\..\Gen_FreeWin\GenSecure.Contracts\GenSecure.Contracts.csproj" />
+    <ProjectReference Include="..\..\Gen_FreeWin\GenSecure.Core\GenSecure.Core.csproj" />
+  </ItemGroup>
 
 </Project>

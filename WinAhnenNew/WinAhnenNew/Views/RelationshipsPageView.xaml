@@ -1,0 +1,50 @@
+<Page x:Class="WinAhnenNew.Views.RelationshipsPageView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WinAhnenNew.Views"
+      mc:Ignorable="d" 
+      d:DesignHeight="685" d:DesignWidth="1050"
+      Title="RelationshipsPageView">
+
+    <Canvas>
+        <Rectangle Canvas.Left="55" Canvas.Top="316" Width="949" Height="357" Stroke="#000000" StrokeThickness="1" x:Name="Shape8" />
+        <Rectangle Canvas.Left="71" Canvas.Top="448" Width="913" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" x:Name="Shape6" />
+        <Rectangle Canvas.Left="71" Canvas.Top="581" Width="915" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" x:Name="Shape7" />
+        <Label Content="Art der Verbindung" Canvas.Left="709" Canvas.Top="27" Width="253" Height="33" FontFamily="Arial" x:Name="Label62" />
+        <Label Content="Kirche:" Canvas.Left="69" Canvas.Top="333" Width="98" Height="33" FontFamily="Arial" x:Name="Label36" />
+        <Label Content="Heirat " Canvas.Left="192" Canvas.Top="333" Width="81" Height="32" FontFamily="Arial" x:Name="Label37" />
+        <Label Content="Trauzeugen" Canvas.Left="192" Canvas.Top="376" Width="147" Height="32" FontFamily="Arial" x:Name="Label38" />
+        <Label Content="Quelle" Canvas.Left="192" Canvas.Top="411" Width="80" Height="32" FontFamily="Arial" x:Name="Label54" />
+        <Label Content="Standesamt:" Canvas.Left="69" Canvas.Top="468" Width="170" Height="33" FontFamily="Arial" x:Name="Label51" />
+        <Label Content="Heirat " Canvas.Left="192" Canvas.Top="468" Width="81" Height="32" FontFamily="Arial" x:Name="Label55" />
+        <Label Content="Trauzeugen" Canvas.Left="192" Canvas.Top="508" Width="147" Height="32" FontFamily="Arial" x:Name="Label56" />
+        <Label Content="Quelle" Canvas.Left="192" Canvas.Top="543" Width="80" Height="32" FontFamily="Arial" x:Name="Label61" />
+        <Label Content="Scheidung (Trennung)" Canvas.Left="69" Canvas.Top="600" Width="298" Height="33" FontFamily="Arial" x:Name="Label65" />
+        <Label Content="Quelle" Canvas.Left="197" Canvas.Top="635" Width="80" Height="32" FontFamily="Arial" x:Name="Label66" />
+        <Label Content="" Canvas.Left="59" Canvas.Top="17" Width="1" Height="1" FontFamily="Arial" Background="#C0C0C0" x:Name="Label67" />
+        <Label Content="Label22" Canvas.Left="268" Canvas.Top="333" Width="106" Height="33" FontFamily="Arial" x:Name="Label69" />
+        <Label Content="Label22" Canvas.Left="269" Canvas.Top="600" Width="106" Height="33" FontFamily="Arial" x:Name="Label71" />
+        <Label Content="Label22" Canvas.Left="268" Canvas.Top="468" Width="106" Height="33" FontFamily="Arial" x:Name="Label70" />
+        <DataGrid Canvas.Left="55" Canvas.Top="60" Width="531" Height="235" x:Name="StringGrid3" />
+        <TextBox Text="" Canvas.Left="301" Canvas.Top="329" Width="32" Height="40" x:Name="DBEdit35" />
+        <TextBox Text="" Canvas.Left="339" Canvas.Top="329" Width="32" Height="40" x:Name="DBEdit36" />
+        <TextBox Text="" Canvas.Left="376" Canvas.Top="329" Width="61" Height="40" x:Name="DBEdit37" />
+        <TextBox Text="" Canvas.Left="301" Canvas.Top="369" Width="679" Height="40" x:Name="DBEdit38" />
+        <TextBox Text="" Canvas.Left="301" Canvas.Top="464" Width="32" Height="40" x:Name="DBEdit39" />
+        <TextBox Text="" Canvas.Left="339" Canvas.Top="464" Width="32" Height="40" x:Name="DBEdit41" />
+        <TextBox Text="" Canvas.Left="376" Canvas.Top="464" Width="61" Height="40" x:Name="DBEdit45" />
+        <TextBox Text="" Canvas.Left="301" Canvas.Top="504" Width="679" Height="40" x:Name="DBEdit46" />
+        <ComboBox Canvas.Left="711" Canvas.Top="57" Width="241" Height="35" IsEditable="True" x:Name="DBComboBox1" />
+        <TextBox Text="" Canvas.Left="301" Canvas.Top="596" Width="32" Height="40" x:Name="DBEdit61" />
+        <TextBox Text="" Canvas.Left="339" Canvas.Top="596" Width="32" Height="40" x:Name="DBEdit62" />
+        <TextBox Text="" Canvas.Left="376" Canvas.Top="596" Width="61" Height="40" x:Name="DBEdit63" />
+        <ComboBox Canvas.Left="448" Canvas.Top="329" Width="347" Height="23" IsEditable="True" x:Name="ComboBox20" />
+        <ComboBox Canvas.Left="448" Canvas.Top="464" Width="347" Height="23" IsEditable="True" x:Name="ComboBox21" />
+        <ComboBox Canvas.Left="448" Canvas.Top="596" Width="347" Height="23" IsEditable="True" x:Name="ComboBox22" />
+        <ComboBox Canvas.Left="301" Canvas.Top="408" Width="679" Height="23" IsEditable="True" x:Name="ComboBox23" />
+        <ComboBox Canvas.Left="301" Canvas.Top="543" Width="679" Height="23" IsEditable="True" x:Name="ComboBox24" />
+        <ComboBox Canvas.Left="301" Canvas.Top="633" Width="679" Height="23" IsEditable="True" x:Name="ComboBox25" />
+    </Canvas>
+</Page>
