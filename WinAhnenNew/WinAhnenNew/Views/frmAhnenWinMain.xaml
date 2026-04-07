@@ -14,6 +14,7 @@
                 <MenuItem Header="Geb.-Datum -_gt; Taufdatum" x:Name="GebDatumTaufdatum1" Command="{Binding GebDatumTaufdatum1Command}" />
                 <Separator />
                 <MenuItem Header="alle Daten löschen" x:Name="Datenlschen1" Command="{Binding Datenlschen1Command}" />
+                <MenuItem Header="Erstelle Demo-Genealogie" x:Name="ErstelleDemoGenealogie1" Command="{Binding ErstelleDemoGenealogie1Command}" />
                 <Separator />
                 <MenuItem Header="ID = Satznr." x:Name="IDSatznr1" Command="{Binding IDSatznr1Command}" />
                 <MenuItem Header="IDs löschen" x:Name="IDslschen1" Command="{Binding IDslschen1Command}" />
