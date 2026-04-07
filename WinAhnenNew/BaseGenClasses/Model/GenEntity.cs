@@ -17,9 +17,9 @@ public abstract class GenEntity : GenObject, IGenEntity
     private WeakReference<IGenealogy>? _WLowner; //This is used to avoid circular references in the serialization process
     #endregion
     [DataMember]
-    public IList<IGenFact?> Facts { get; init; } = new WeakLinkList<IGenFact>();
+    public IList<IGenFact?> Facts { get; init; } = [];
     [DataMember]
-    public IList<IGenConnects?> Connects { get; init; }= new WeakLinkList<IGenConnects>();
+    public IList<IGenConnects?> Connects { get; init; } = [];
     [JsonIgnore]
 
     public IGenFact? Start => GetStartFactOfEntity();
