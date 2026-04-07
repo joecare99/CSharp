@@ -13,5 +13,11 @@ namespace WinAhnenNew.Services
         /// </summary>
         /// <returns>A read-only list of selectable genealogy persons.</returns>
         IReadOnlyList<IGenPerson> GetSelectablePersons();
+
+        /// <summary>
+        /// Creates and persists a demo genealogy with the requested number of connected persons.
+        /// </summary>
+        /// <param name="iPersonCount">The number of persons to generate.</param>
+        void CreateDemoGenealogy(int iPersonCount);
     }
 }

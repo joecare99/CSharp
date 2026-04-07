@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
+using WinAhnenNew.Services;
 
 namespace WinAhnenNew.ViewModels
 {
@@ -8,8 +9,20 @@ namespace WinAhnenNew.ViewModels
     /// </summary>
     public sealed partial class FrmAhnenWinMainViewModel : ViewModelBase
     {
+        private readonly IPersonSelectionService _personSelectionService;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmAhnenWinMainViewModel"/> class.
+        /// </summary>
+        /// <param name="personSelectionService">The person selection service.</param>
+        public FrmAhnenWinMainViewModel(IPersonSelectionService personSelectionService)
+        {
+            _personSelectionService = personSelectionService;
+        }
+
         [RelayCommand] private void GebDatumTaufdatum1() { }
         [RelayCommand] private void Datenlschen1() { }
+        [RelayCommand] private void ErstelleDemoGenealogie1() => _personSelectionService.CreateDemoGenealogy(64);
         [RelayCommand] private void IDSatznr1() { }
         [RelayCommand] private void IDslschen1() { }
         [RelayCommand] private void Datenschutzein1() { }

@@ -7,7 +7,8 @@ using System.Linq;
 using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GenInterfaces.Interfaces.Genealogic;
+using CommunityToolkit.Mvvm.Messaging;
+using WinAhnenNew.Messages;
 using WinAhnenNew.Services;
 
 namespace WinAhnenNew.ViewModels
@@ -17,12 +18,15 @@ namespace WinAhnenNew.ViewModels
     /// </summary>
     public sealed partial class SelectionPageViewModel : ViewModelBase
     {
+        private const bool _xDiagnosticsEnabled = false;
         private readonly IPersonSelectionService _personSelectionService;
         private readonly ListCollectionView _personsView;
+        private readonly IMessenger _messenger;
 
-        public SelectionPageViewModel(IPersonSelectionService personSelectionService)
+        public SelectionPageViewModel(IPersonSelectionService personSelectionService, IMessenger messenger)
         {
             _personSelectionService = personSelectionService;
+            _messenger = messenger;
 
             SortFields =
             [
@@ -33,7 +37,7 @@ namespace WinAhnenNew.ViewModels
                 "Geburtsdatum"
             ];
 
-            Persons = new ObservableCollection<IGenPerson>(_personSelectionService.GetSelectablePersons());
+            Persons = new ObservableCollection<SelectionPersonItemViewModel>(CreatePersonItems());
             _personsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Persons);
             PersonsView = _personsView;
             PersonsView.Filter = FilterPerson;
@@ -42,9 +46,21 @@ namespace WinAhnenNew.ViewModels
             ApplySorting();
             UpdateFilteredPersonCount();
             SelectionStatusText = "Bitte wählen Sie eine Person zur Bearbeitung aus.";
+
+            _messenger.Register<GenealogyChangedMessage>(this, static (objRecipient, msgMessage) =>
+            {
+                if (objRecipient is SelectionPageViewModel vmSelection)
+                {
+                    vmSelection.ReloadPersons(msgMessage.Value);
+                }
+            });
         }
 
-        public ObservableCollection<IGenPerson> Persons { get; }
+        public ObservableCollection<SelectionPersonItemViewModel> Persons { get; }
+
+        public ObservableCollection<string> SelectedPersonFacts { get; } = [];
+
+        public bool IsDiagnosticsEnabled => _xDiagnosticsEnabled;
 
         public ICollectionView PersonsView { get; }
 
@@ -70,7 +86,7 @@ namespace WinAhnenNew.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedPersonBirthPlace))]
         [NotifyPropertyChangedFor(nameof(SelectedPersonSex))]
         [NotifyPropertyChangedFor(nameof(IsPersonSelected))]
-        private IGenPerson? _selectedPerson;
+        private SelectionPersonItemViewModel? _selectedPerson;
 
         [ObservableProperty]
         private int _filteredPersonCount;
@@ -78,17 +94,13 @@ namespace WinAhnenNew.ViewModels
         [ObservableProperty]
         private string _selectionStatusText = string.Empty;
 
-        public string SelectedPersonId => SelectedPerson is null
-            ? string.Empty
-            : (!string.IsNullOrWhiteSpace(SelectedPerson.IndRefID)
-                ? SelectedPerson.IndRefID
-                : SelectedPerson.ID.ToString(CultureInfo.CurrentCulture));
+        public string SelectedPersonId => SelectedPerson?.PersonId ?? string.Empty;
 
-        public string SelectedPersonName => GetPersonDisplayName(SelectedPerson);
+        public string SelectedPersonName => SelectedPerson?.DisplayName ?? string.Empty;
 
-        public string SelectedPersonBirthDate => GetBirthDateText(SelectedPerson);
+        public string SelectedPersonBirthDate => SelectedPerson?.BirthDateText ?? string.Empty;
 
-        public string SelectedPersonBirthPlace => SelectedPerson?.BirthPlace?.Name ?? string.Empty;
+        public string SelectedPersonBirthPlace => SelectedPerson?.BirthPlace ?? string.Empty;
 
         public string SelectedPersonSex => SelectedPerson?.Sex ?? string.Empty;
 
@@ -118,12 +130,13 @@ namespace WinAhnenNew.ViewModels
             UpdateFilteredPersonCount();
         }
 
-        partial void OnSelectedPersonChanged(IGenPerson? value)
-        {          
+        partial void OnSelectedPersonChanged(SelectionPersonItemViewModel? value)
+        {
+            UpdateSelectedPersonFacts(value);
 
             SelectionStatusText = value is null
                 ? "Bitte wählen Sie eine Person zur Bearbeitung aus."
-                : $"Ausgewählt: {GetPersonDisplayName(value)} (ID {SelectedPersonId})";
+                : $"Ausgewählt: {value.DisplayName} (ID {value.PersonId})";
         }
 
         [RelayCommand]
@@ -143,7 +156,7 @@ namespace WinAhnenNew.ViewModels
                 return;
             }
 
-            SelectionStatusText = $"Die Person {GetPersonDisplayName(SelectedPerson)} ist für die Bearbeitung ausgewählt.";
+            SelectionStatusText = $"Die Person {SelectedPerson.DisplayName} ist für die Bearbeitung ausgewählt.";
         }
 
         private bool CanSelectPerson()
@@ -153,12 +166,12 @@ namespace WinAhnenNew.ViewModels
 
         private bool FilterPerson(object obj)
         {
-            if (obj is not IGenPerson genPerson)
+            if (obj is not SelectionPersonItemViewModel vmPerson)
             {
                 return false;
             }
 
-            if (OnlyLiving && !IsLiving(genPerson))
+            if (OnlyLiving && !vmPerson.IsLiving)
             {
                 return false;
             }
@@ -169,18 +182,12 @@ namespace WinAhnenNew.ViewModels
             }
 
             var sFilter = FilterText.Trim();
-            var sBirthPlace = genPerson.BirthPlace?.Name ?? string.Empty;
-            var sBirthDate = GetBirthDateText(genPerson);
-            var sPersonId = !string.IsNullOrWhiteSpace(genPerson.IndRefID)
-                ? genPerson.IndRefID
-                : genPerson.ID.ToString(CultureInfo.CurrentCulture);
-
-            return sPersonId.Contains(sFilter, StringComparison.OrdinalIgnoreCase)
-                || (genPerson.Surname?.Contains(sFilter, StringComparison.OrdinalIgnoreCase) ?? false)
-                || (genPerson.GivenName?.Contains(sFilter, StringComparison.OrdinalIgnoreCase) ?? false)
-                || (genPerson.Name?.Contains(sFilter, StringComparison.OrdinalIgnoreCase) ?? false)
-                || sBirthPlace.Contains(sFilter, StringComparison.OrdinalIgnoreCase)
-                || sBirthDate.Contains(sFilter, StringComparison.OrdinalIgnoreCase);
+            return vmPerson.PersonId.Contains(sFilter, StringComparison.OrdinalIgnoreCase)
+                || vmPerson.Surname.Contains(sFilter, StringComparison.OrdinalIgnoreCase)
+                || vmPerson.GivenName.Contains(sFilter, StringComparison.OrdinalIgnoreCase)
+                || vmPerson.DisplayName.Contains(sFilter, StringComparison.OrdinalIgnoreCase)
+                || vmPerson.BirthPlace.Contains(sFilter, StringComparison.OrdinalIgnoreCase)
+                || vmPerson.BirthDateText.Contains(sFilter, StringComparison.OrdinalIgnoreCase);
         }
 
         private void ApplySorting()
@@ -194,41 +201,66 @@ namespace WinAhnenNew.ViewModels
             FilteredPersonCount = PersonsView.Cast<object>().Count();
         }
 
-        private static string GetPersonDisplayName(IGenPerson? genPerson)
+        private void ReloadPersons(int iPersonCount)
         {
-            if (genPerson is null)
+            Persons.Clear();
+            foreach (var vmPerson in CreatePersonItems())
             {
-                return string.Empty;
+                Persons.Add(vmPerson);
             }
 
-            if (!string.IsNullOrWhiteSpace(genPerson.Surname) || !string.IsNullOrWhiteSpace(genPerson.GivenName))
-            {
-                return $"{genPerson.Surname}, {genPerson.GivenName}".Trim(' ', ',');
-            }
-
-            return genPerson.Name ?? string.Empty;
+            SelectedPerson = null;
+            UpdateSelectedPersonFacts(null);
+            PersonsView.Refresh();
+            ApplySorting();
+            UpdateFilteredPersonCount();
+            SelectionStatusText = $"Demo-Genealogie mit {iPersonCount} Personen wurde erstellt.";
         }
 
-        private static string GetBirthDateText(IGenPerson? genPerson)
+        private SelectionPersonItemViewModel[] CreatePersonItems()
         {
-            var genDate = genPerson?.BirthDate;
-            if (genDate is null)
-            {
-                return string.Empty;
-            }
-
-            if (!string.IsNullOrWhiteSpace(genDate.DateText))
-            {
-                return genDate.DateText;
-            }
-
-            return genDate.Date1 == DateTime.MinValue
-                ? string.Empty
-                : genDate.Date1.ToString("dd.MM.yyyy", CultureInfo.CurrentCulture);
+            return _personSelectionService
+                .GetSelectablePersons()
+                .Select(genPerson => new SelectionPersonItemViewModel(genPerson))
+                .ToArray();
         }
 
-        private static bool IsLiving(IGenPerson genPerson)
-            => genPerson.Death is null && genPerson.Burial is null;
+        private void UpdateSelectedPersonFacts(SelectionPersonItemViewModel? vmPerson)
+        {
+            SelectedPersonFacts.Clear();
+
+            if (vmPerson?.Person is null)
+            {
+                SelectedPersonFacts.Add("Keine Person ausgewählt.");
+                return;
+            }
+
+            var lstFacts = vmPerson.Person.Facts
+                .Where(genFact => genFact is not null)
+                .Select(genFact => genFact!)
+                .OrderBy(genFact => genFact.eFactType)
+                .ThenBy(genFact => genFact.ID)
+                .ToArray();
+
+            if (lstFacts.Length == 0)
+            {
+                SelectedPersonFacts.Add("Keine Fakten/Ereignisse vorhanden.");
+                return;
+            }
+
+            foreach (var genFact in lstFacts)
+            {
+                var sDate = string.IsNullOrWhiteSpace(genFact.Date?.DateText)
+                    ? (genFact.Date?.Date1 is DateTime dtDate && dtDate != DateTime.MinValue
+                        ? dtDate.ToString("dd.MM.yyyy", CultureInfo.CurrentCulture)
+                        : string.Empty)
+                    : genFact.Date!.DateText!;
+
+                var sPlace = genFact.Place?.Name ?? string.Empty;
+                var sData = genFact.Data ?? string.Empty;
+                SelectedPersonFacts.Add($"{genFact.eFactType}: Data='{sData}', Date='{sDate}', Place='{sPlace}'");
+            }
+        }
 
         private sealed class PersonSortComparer : IComparer
         {
@@ -243,48 +275,46 @@ namespace WinAhnenNew.ViewModels
 
             public int Compare(object? x, object? y)
             {
-                var genLeft = x as IGenPerson;
-                var genRight = y as IGenPerson;
+                var vmLeft = x as SelectionPersonItemViewModel;
+                var vmRight = y as SelectionPersonItemViewModel;
 
-                if (ReferenceEquals(genLeft, genRight))
+                if (ReferenceEquals(vmLeft, vmRight))
                 {
                     return 0;
                 }
 
-                if (genLeft is null)
+                if (vmLeft is null)
                 {
                     return -1;
                 }
 
-                if (genRight is null)
+                if (vmRight is null)
                 {
                     return 1;
                 }
 
                 int iResult = _selectedSortField switch
                 {
-                    "Vorname" => CompareText(genLeft.GivenName, genRight.GivenName),
-                    "ID" => genLeft.ID.CompareTo(genRight.ID),
-                    "Geburtsort" => CompareText(genLeft.BirthPlace?.Name, genRight.BirthPlace?.Name),
-                    "Geburtsdatum" => Nullable.Compare(
-                        genLeft.BirthDate?.Date1 == DateTime.MinValue ? null : genLeft.BirthDate?.Date1,
-                        genRight.BirthDate?.Date1 == DateTime.MinValue ? null : genRight.BirthDate?.Date1),
-                    _ => CompareText(genLeft.Surname, genRight.Surname)
+                    "Vorname" => CompareText(vmLeft.GivenName, vmRight.GivenName),
+                    "ID" => vmLeft.PersonNumber.CompareTo(vmRight.PersonNumber),
+                    "Geburtsort" => CompareText(vmLeft.BirthPlace, vmRight.BirthPlace),
+                    "Geburtsdatum" => Nullable.Compare(vmLeft.BirthDateValue, vmRight.BirthDateValue),
+                    _ => CompareText(vmLeft.Surname, vmRight.Surname)
                 };
 
                 if (iResult == 0)
                 {
-                    iResult = CompareText(genLeft.Surname, genRight.Surname);
+                    iResult = CompareText(vmLeft.Surname, vmRight.Surname);
                 }
 
                 if (iResult == 0)
                 {
-                    iResult = CompareText(genLeft.GivenName, genRight.GivenName);
+                    iResult = CompareText(vmLeft.GivenName, vmRight.GivenName);
                 }
 
                 if (iResult == 0)
                 {
-                    iResult = genLeft.ID.CompareTo(genRight.ID);
+                    iResult = vmLeft.PersonNumber.CompareTo(vmRight.PersonNumber);
                 }
 
                 return iResult * _sortDirection;

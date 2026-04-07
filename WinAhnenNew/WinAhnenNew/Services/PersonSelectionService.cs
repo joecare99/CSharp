@@ -8,6 +8,7 @@ using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using GenSecure.Contracts;
+using WinAhnenNew.Messages;
 
 namespace WinAhnenNew.Services
 {
@@ -17,6 +18,22 @@ namespace WinAhnenNew.Services
     public sealed class PersonSelectionService : IPersonSelectionService
     {
         private const string DefaultGenealogyId = "winahnen-default";
+        private static readonly string[] _givenNames =
+        [
+            "Anna", "Johann", "Maria", "Karl", "Sophie", "Martin", "Helene", "Friedrich",
+            "Clara", "Wilhelm", "Elisabeth", "Paul", "Therese", "Georg", "Luise", "August"
+        ];
+
+        private static readonly string[] _surnames =
+        [
+            "Meyer", "Schulze", "Krüger", "Becker", "Hoffmann", "Wagner", "Richter", "Koch",
+            "Schäfer", "Bauer", "Klein", "Wolf", "Schröder", "Neumann", "Braun", "Hartmann"
+        ];
+
+        private static readonly string[] _placeNames =
+        [
+            "Enger", "Bünde", "Herford", "Melle", "Osnabrück", "Lübbecke", "Bielefeld", "Minden"
+        ];
 
         private readonly IGenealogySecureStore _genealogySecureStore;
         private readonly IGenealogyModelFactory _genealogyModelFactory;
@@ -48,6 +65,19 @@ namespace WinAhnenNew.Services
                 .OrderBy(genPerson => genPerson.Surname ?? string.Empty, StringComparer.CurrentCultureIgnoreCase)
                 .ThenBy(genPerson => genPerson.GivenName ?? string.Empty, StringComparer.CurrentCultureIgnoreCase)
                 .ToArray();
+        }
+
+        /// <inheritdoc />
+        public void CreateDemoGenealogy(int iPersonCount)
+        {
+            if (iPersonCount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(iPersonCount));
+            }
+
+            _genealogy = CreateConnectedDemoGenealogy(iPersonCount);
+            _genealogySecureStore.Save(DefaultGenealogyId, _genealogy);
+            _messenger.Send(new GenealogyChangedMessage(iPersonCount));
         }
 
         private IGenealogy LoadGenealogy()
@@ -92,6 +122,64 @@ namespace WinAhnenNew.Services
             genGenealogy.Entitys.Add(CreatePerson(genGenealogy, 6, "6", "Martin", "Wagner", "M", new DateTime(1961, 9, 18), genPlaceLuebbecke, true));
             genGenealogy.Entitys.Add(CreatePerson(genGenealogy, 7, "7", "Helene", "Richter", "F", new DateTime(1972, 12, 30), genPlaceBielefeld, true));
             genGenealogy.Entitys.Add(CreatePerson(genGenealogy, 8, "8", "Friedrich", "Koch", "M", new DateTime(1988, 4, 9), genPlaceMinden, true));
+
+            return genGenealogy;
+        }
+
+
+        private IGenealogy CreateConnectedDemoGenealogy(int iPersonCount)
+        {
+            var genGenealogy = new Genealogy(_messenger)
+            {
+                UId = Guid.NewGuid()
+            };
+
+            var arrPlaces = _placeNames
+                .Select((sName, iIndex) => CreatePlace(genGenealogy, iIndex + 1, sName))
+                .ToArray();
+
+            GenPerson? genPreviousPerson = null;
+            for (var iIndex = 0; iIndex < iPersonCount; iIndex++)
+            {
+                var iPersonId = iIndex + 1;
+                var sGivenName = _givenNames[iIndex % _givenNames.Length];
+                var sSurname = _surnames[(iIndex / 2) % _surnames.Length];
+                var sSex = iIndex % 2 == 0 ? "M" : "F";
+                var dtBirthDate = new DateTime(1820 + iIndex, (iIndex % 12) + 1, (iIndex % 27) + 1);
+                var xIsLiving = iIndex >= iPersonCount - 8;
+                var genBirthPlace = arrPlaces[iIndex % arrPlaces.Length];
+
+                var genCurrentPerson = CreatePerson(
+                    genGenealogy,
+                    iPersonId,
+                    iPersonId.ToString(CultureInfo.InvariantCulture),
+                    $"{sGivenName} {iPersonId}",
+                    sSurname,
+                    sSex,
+                    dtBirthDate,
+                    genBirthPlace,
+                    xIsLiving);
+
+                if (genPreviousPerson is not null)
+                {
+                    genCurrentPerson.Connects.Add(new GenConnect
+                    {
+                        UId = Guid.NewGuid(),
+                        eGenConnectionType = EGenConnectionType.Parent,
+                        Entity = genPreviousPerson
+                    });
+
+                    genPreviousPerson.Connects.Add(new GenConnect
+                    {
+                        UId = Guid.NewGuid(),
+                        eGenConnectionType = EGenConnectionType.Child,
+                        Entity = genCurrentPerson
+                    });
+                }
+
+                genGenealogy.Entitys.Add(genCurrentPerson);
+                genPreviousPerson = genCurrentPerson;
+            }
 
             return genGenealogy;
         }

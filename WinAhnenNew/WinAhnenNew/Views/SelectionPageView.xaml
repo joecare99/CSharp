@@ -8,11 +8,16 @@
       d:DesignHeight="700" d:DesignWidth="1050"
       Title="SelectionPageView">
 
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Page.Resources>
+
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -124,12 +129,13 @@
             SelectedItem="{Binding SelectedPerson, Mode=TwoWay}"
             SelectionMode="Single">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ID}" Header="Nr." Width="80" />
+                <DataGridTextColumn Binding="{Binding PersonNumber}" Header="Nr." Width="80" />
+                <DataGridTextColumn Binding="{Binding PersonId}" Header="ID" Width="80" />
                 <DataGridTextColumn Binding="{Binding Surname}" Header="Nachname" Width="*" />
                 <DataGridTextColumn Binding="{Binding GivenName}" Header="Vorname" Width="*" />
                 <DataGridTextColumn Binding="{Binding Sex}" Header="Geschlecht" Width="110" />
-                <DataGridTextColumn Binding="{Binding BirthDate.DateText}" Header="Geburtsdatum" Width="140" />
-                <DataGridTextColumn Binding="{Binding BirthPlace.Name}" Header="Geburtsort" Width="*" />
+                <DataGridTextColumn Binding="{Binding BirthDateText}" Header="Geburtsdatum" Width="140" />
+                <DataGridTextColumn Binding="{Binding BirthPlace}" Header="Geburtsort" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
 
@@ -170,5 +176,13 @@
                 <CheckBox Grid.Row="1" Grid.Column="7" Content="Person ausgewählt" IsChecked="{Binding IsPersonSelected, Mode=OneWay}" IsEnabled="False" />
             </Grid>
         </Border>
+
+        <GroupBox Grid.Row="4"
+                  Height="180"
+                  Margin="0,12,0,0"
+                  Header="Fakten / Ereignisse der ausgewählten Person"
+                  Visibility="{Binding IsDiagnosticsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ListBox ItemsSource="{Binding SelectedPersonFacts}" />
+        </GroupBox>
     </Grid>
 </Page>
