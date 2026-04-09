@@ -4,6 +4,7 @@ using BaseGenClasses.Helper;
 using BaseGenClasses.Helper.Interfaces;
 using CommunityToolkit.Mvvm.Messaging;
 using BaseGenClasses.Model;
+using BaseGenClasses.Persistence;
 using BaseLib.Helper;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
@@ -44,6 +45,12 @@ namespace WinAhnenNew.Model.Tests
             vmEdit.LastName = "Schulze";
 
             Assert.AreEqual("Schulze", genPerson.Surname);
+            Assert.IsTrue(genGenealogy.xDirty);
+            Assert.AreEqual(1, genGenealogy.JournalEntries.Count);
+            Assert.AreEqual(genPerson, genGenealogy.JournalEntries[0].Class);
+            Assert.AreEqual(EFactType.Surname, ((FactJournalValue)genGenealogy.JournalEntries[0].OldData!).eFactType);
+            Assert.AreEqual("Meyer", ((FactJournalValue)genGenealogy.JournalEntries[0].OldData!).Data);
+            Assert.AreEqual("Schulze", ((FactJournalValue)genGenealogy.JournalEntries[0].Data!).Data);
             svcPersonSelection.DidNotReceive().SaveChanges();
         }
 
