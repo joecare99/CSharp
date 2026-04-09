@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using PictureDB.Base.Models;
 using PictureDB.Base.Models.Interfaces;
 using PictureDB.Base.Services.Interfaces;

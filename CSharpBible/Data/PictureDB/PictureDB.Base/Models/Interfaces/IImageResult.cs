@@ -1,5 +1,3 @@
-using System;
-
 namespace PictureDB.Base.Models.Interfaces;
 
 public interface IImageResult

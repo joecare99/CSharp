@@ -6,6 +6,9 @@ using Document.Base.Models.Interfaces;
 using Document.Html;
 using Story_Base.Data;
 using Document.Xaml;
+using Document.Pdf;
+using Document.Odf;
+using Document.Docx;
 
 namespace NebelEbook;
 
@@ -57,7 +60,9 @@ class Program
         // Manuelle Registrierung für HTML
         UserDocumentFactory.Register<HtmlDocument>("html", [".htm",".html"], "text/html");
         UserDocumentFactory.Register<XamlDocument>("xaml", [".xaml",".xml"], "text/xaml");
-    //    UserDocumentFactory.Register<PdfDocument>("pdf", [".pdf" ], "application/pdf");
+        UserDocumentFactory.Register<PdfDocument>("pdf", [".pdf" ], "application/pdf");
+        UserDocumentFactory.Register<OdfTextDocument>("odf", [".odf" ], "application/vnd.oasis.opendocument.text");
+        UserDocumentFactory.Register<DocxDocument>("docx", [".docx" ], "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
         var key = (args.Length > 0 ? args[0] : "html").Trim().ToLowerInvariant();
         var storyPath = Path.Combine(AppContext.BaseDirectory,"Resources", "story2.json");

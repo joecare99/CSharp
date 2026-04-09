@@ -36,6 +36,28 @@ public static class SvnRevisionRangeResolver
     }
 
     /// <summary>
+    /// Returns the next revision id that should be processed after the supplied successful revision.
+    /// </summary>
+    /// <param name="lstRevisions">The ordered revision list for the selected SVN path.</param>
+    /// <param name="sCurrentRevisionId">The successfully processed revision id.</param>
+    /// <returns>The next revision id, or <see langword="null" /> when the current revision is the last known item.</returns>
+    public static string? GetNextRevisionId(IReadOnlyList<RepositoryRevisionInfo> lstRevisions, string? sCurrentRevisionId)
+    {
+        if (string.IsNullOrWhiteSpace(sCurrentRevisionId) || lstRevisions.Count == 0)
+            return null;
+
+        for (var iIndex = 0; iIndex < lstRevisions.Count; iIndex++)
+        {
+            if (!string.Equals(lstRevisions[iIndex].Id, sCurrentRevisionId, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            return iIndex + 1 < lstRevisions.Count ? lstRevisions[iIndex + 1].Id : null;
+        }
+
+        return null;
+    }
+
+    /// <summary>
     /// Normalizes the inclusive SVN end selection. An empty value means HEAD and therefore maps to <see langword="null" />.
     /// </summary>
     /// <param name="sToRevisionId">The inclusive SVN end revision selected in the UI.</param>

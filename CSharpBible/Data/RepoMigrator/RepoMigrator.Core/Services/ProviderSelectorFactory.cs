@@ -1,7 +1,5 @@
 ﻿// RepoMigrator.Core/Services/ProviderSelectorFactory.cs
 using RepoMigrator.Core.Abstractions;
-using System;
-using System.Collections.Generic;
 
 namespace RepoMigrator.Core;
 

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Document.Base.Models.Interfaces
+﻿namespace Document.Base.Models.Interfaces
 {
     public interface IDocStyleStyle
     {

@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Document.Base.Models.Interfaces;
 
 namespace Document.Docx.Model;

@@ -1,12 +1,12 @@
 ﻿// RepoMigrator.App.Wpf/DI/Bootstrap.cs
 using Microsoft.Extensions.DependencyInjection;
-using RepoMigrator.App.Wpf.Services;
+using RepoMigrator.App.Logic.Services;
 using RepoMigrator.App.Wpf.ViewModels;
+using RepoMigrator.App.State.Services;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
 using RepoMigrator.Providers.Git;
 using RepoMigrator.Providers.SvnCli;
-using System;
 
 namespace RepoMigrator.App.Wpf;
 
@@ -32,6 +32,10 @@ public static class Bootstrap
         });
 
         // ViewModels
+        services.AddSingleton<MigrationEndpointFactory>();
+        services.AddSingleton<MigrationQueryService>();
+        services.AddSingleton<RecentPathHistoryService>();
+        services.AddSingleton<RepositorySelectionService>();
         services.AddSingleton<AppInputStateStore>();
         services.AddSingleton<MainViewModel>();
 

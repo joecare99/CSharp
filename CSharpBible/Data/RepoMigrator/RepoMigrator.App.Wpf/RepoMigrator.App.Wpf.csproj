@@ -8,6 +8,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 	<ItemGroup>
+      <ProjectReference Include="..\RepoMigrator.App.Logic\RepoMigrator.App.Logic.csproj" />
+        <ProjectReference Include="..\RepoMigrator.App.State\RepoMigrator.App.State.csproj" />
 		<ProjectReference Include="..\RepoMigrator.Core\RepoMigrator.Core.csproj" />
 		<ProjectReference Include="..\RepoMigrator.Providers.Git\RepoMigrator.Providers.Git.csproj" />
 		<ProjectReference Include="..\RepoMigrator.Providers.SvnCli\RepoMigrator.Providers.SvnCli.csproj" />

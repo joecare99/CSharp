@@ -1,13 +1,10 @@
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PictureDB.Base.Models;
 using PictureDB.Base.Models.Interfaces;
 using PictureDB.Base.Services.Interfaces;
 using CommonDialogs;
-using System.Windows.Threading;
-using System;
 using CommonDialogs.Interfaces;
 
 namespace PictureDB.UI.ViewModels;

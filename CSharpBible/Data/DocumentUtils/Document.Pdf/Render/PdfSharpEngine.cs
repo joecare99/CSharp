@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using PdfSharp.Drawing;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf;
-using PdfSharp.Pdf.Annotations;
-using PdfSharp.Pdf.Advanced;
 
 namespace Document.Pdf.Render;
 

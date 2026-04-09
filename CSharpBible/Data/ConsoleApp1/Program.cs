@@ -1,10 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-namespace ConsoleApp1;
+﻿namespace ConsoleApp1;
 
 // 8. Main-Klasse
 class Program
