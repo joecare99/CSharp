@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace BaseGenClasses.Model;
 
-public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IRecipient<IGenTransaction>, IDisposable
+public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJournalContext, IRecipient<IGenTransaction>, IDisposable
 {
     private readonly IMessenger _messanger;
     private IGenealogyPersistenceProvider? _persistenceProvider;
@@ -50,6 +50,10 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IRecipient<IG
     public event EventHandler<FlushCompletedEventArgs>? Flushed;
 
     public event EventHandler<FlushFailedEventArgs>? FlushFailed;
+
+    public event EventHandler<JournalEntryRecordedEventArgs>? JournalEntryRecorded;
+
+    public IReadOnlyList<IGenTransaction> JournalEntries => Transactions.ToArray();
 
     #endregion
 
@@ -195,14 +199,52 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IRecipient<IG
 
     public void Receive(IGenTransaction message)
     {
-        var _lastTA = Transactions.Where(ta => ta.Class == message.Class && ta.Entry == message.Entry).LastOrDefault();
-        Transactions.Add(message);
+        RecordIncomingTransaction(message);
         MarkDirty(null, "A genealogy transaction was recorded.");
+    }
+
+    public IGenTransaction RecordJournalEntry(IGenBase genClass, IGenBase genEntry, object? objData, object? objOldData)
+    {
+        if (genClass is null)
+        {
+            throw new ArgumentNullException(nameof(genClass));
+        }
+
+        if (genEntry is null)
+        {
+            throw new ArgumentNullException(nameof(genEntry));
+        }
+
+        var genTransaction = new GenTransaction
+        {
+            UId = Guid.NewGuid(),
+            Class = genClass,
+            Entry = genEntry,
+            Data = objData,
+            OldData = objOldData,
+            Timestamp = DateTime.UtcNow,
+            Prev = Transactions.LastOrDefault()
+        };
+
+        ((IHasOwner)genTransaction).SetOwner(this);
+        return RecordIncomingTransaction(genTransaction);
     }
 
     public void AttachPersistenceProvider(IGenealogyPersistenceProvider persistenceProvider)
     {
         _persistenceProvider = persistenceProvider ?? throw new ArgumentNullException(nameof(persistenceProvider));
+    }
+
+    private IGenTransaction RecordIncomingTransaction(IGenTransaction genTransaction)
+    {
+        if (Transactions.LastOrDefault() is GenTransaction genPreviousTransaction)
+        {
+            genPreviousTransaction.SetNext(genTransaction);
+        }
+
+        Transactions.Add(genTransaction);
+        JournalEntryRecorded?.Invoke(this, new JournalEntryRecordedEventArgs(genTransaction));
+        return genTransaction;
     }
 
     public void MarkDirty(IGenEntity? genChangedEntity = null, string? sReason = null)
