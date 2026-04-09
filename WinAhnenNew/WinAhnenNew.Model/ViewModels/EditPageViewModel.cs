@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Media;
 using BaseGenClasses.Helper;
 using BaseGenClasses.Model;
+using BaseGenClasses.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
@@ -670,6 +671,7 @@ namespace WinAhnenNew.ViewModels
         {
             var sNormalizedValue = NormalizeValue(sValue);
             var genFact = genPerson.Facts.FirstOrDefault(genFact => genFact?.eFactType == eFactType);
+            var fctOldValue = FactJournalValue.FromFact(genFact);
 
             if (genFact is null)
             {
@@ -678,7 +680,8 @@ namespace WinAhnenNew.ViewModels
                     return false;
                 }
 
-                genPerson.AddFact(eFactType, sNormalizedValue);
+                var genNewFact = genPerson.AddFact(eFactType, sNormalizedValue);
+                RecordFactJournalEntry(genPerson, genNewFact, null, FactJournalValue.FromFact(genNewFact));
                 return true;
             }
 
@@ -688,6 +691,7 @@ namespace WinAhnenNew.ViewModels
             }
 
             genFact.Data = sNormalizedValue;
+            RecordFactJournalEntry(genPerson, genFact, fctOldValue, FactJournalValue.FromFact(genFact));
             return true;
         }
 
@@ -703,12 +707,14 @@ namespace WinAhnenNew.ViewModels
             var genFact = genPerson.Facts.FirstOrDefault(genFact => genFact?.eFactType == eFactType);
             var dtDate = TryBuildDate(sDay, sMonth, sYear);
             var sNormalizedPlaceName = NormalizePlaceValue(sPlaceName);
+            var fctOldValue = FactJournalValue.FromFact(genFact);
 
             if (dtDate is null && string.IsNullOrWhiteSpace(sNormalizedPlaceName))
             {
                 if (genFact is not null)
                 {
                     genPerson.Facts.Remove(genFact);
+                    RecordFactJournalEntry(genPerson, genFact, fctOldValue, null);
                     return true;
                 }
 
@@ -737,6 +743,11 @@ namespace WinAhnenNew.ViewModels
                 xChanged = true;
             }
 
+            if (xChanged)
+            {
+                RecordFactJournalEntry(genPerson, genFact, fctOldValue, FactJournalValue.FromFact(genFact));
+            }
+
             return xChanged;
         }
 
@@ -745,7 +756,9 @@ namespace WinAhnenNew.ViewModels
             var genFact = genPerson.Facts.FirstOrDefault(genFact => genFact?.eFactType == eFactType);
             if (genFact is not null)
             {
+                var fctOldValue = FactJournalValue.FromFact(genFact);
                 genPerson.Facts.Remove(genFact);
+                RecordFactJournalEntry(genPerson, genFact, fctOldValue, null);
                 return true;
             }
 
@@ -784,9 +797,17 @@ namespace WinAhnenNew.ViewModels
 
         private static void MarkGenealogyDirty(IGenPerson genPerson, string sReason)
         {
-            if (((IHasOwner<IGenealogy>)genPerson).Owner is BaseGenClasses.Persistence.IGenealogyPersistenceContext persistenceContext)
+            if (((IHasOwner<IGenealogy>)genPerson).Owner is IGenealogyPersistenceContext persistenceContext)
             {
                 persistenceContext.MarkDirty(genPerson, sReason);
+            }
+        }
+
+        private static void RecordFactJournalEntry(IGenPerson genPerson, IGenFact genFact, FactJournalValue? fctOldValue, FactJournalValue? fctNewValue)
+        {
+            if (((IHasOwner<IGenealogy>)genPerson).Owner is IGenealogyJournalContext journalContext)
+            {
+                journalContext.RecordJournalEntry(genPerson, genFact, fctNewValue, fctOldValue);
             }
         }
 
