@@ -1,9 +1,4 @@
 ﻿// RepoMigrator.Core/Abstractions/IVersionControlProvider.cs
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace RepoMigrator.Core.Abstractions;
 
 public interface IVersionControlProvider : IAsyncDisposable
@@ -19,6 +14,7 @@ public interface IVersionControlProvider : IAsyncDisposable
 
     Task InitializeTargetAsync(RepositoryEndpoint endpoint, bool emptyInit, CancellationToken ct);
     Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, CancellationToken ct);
+    Task FlushAsync(CancellationToken ct);
 
     string Name { get; }
     bool SupportsRead { get; }

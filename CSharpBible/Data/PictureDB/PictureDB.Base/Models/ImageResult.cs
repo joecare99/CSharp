@@ -1,5 +1,4 @@
 using PictureDB.Base.Models.Interfaces;
-using System;
 
 namespace PictureDB.Base.Models;
 

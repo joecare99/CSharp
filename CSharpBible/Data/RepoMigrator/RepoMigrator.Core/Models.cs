@@ -14,6 +14,24 @@ public enum RepositoryTransferMode
     NativeHistory
 }
 
+/// <summary>
+/// Defines how snapshot-based migration work should be executed.
+/// </summary>
+public enum MigrationExecutionMode
+{
+    Sequential,
+    Pipelined
+}
+
+/// <summary>
+/// Defines how migrated snapshots should be projected into the target repository.
+/// </summary>
+public enum MigrationProjectionMode
+{
+    None,
+    SubdirectoryBranches
+}
+
 public sealed class RepositoryEndpoint
 {
     public RepoType Type { get; init; }
@@ -53,6 +71,7 @@ public sealed class CommitMetadata
     public string AuthorName { get; init; } = "";
     public string? AuthorEmail { get; init; }
     public DateTimeOffset Timestamp { get; init; }
+    public string? TargetBranch { get; init; }
 }
 
 public sealed class RepositoryProbeResult
@@ -113,6 +132,11 @@ public sealed class RepositoryRevisionInfo
 public sealed class MigrationOptions
 {
     public RepositoryTransferMode TransferMode { get; init; } = RepositoryTransferMode.LinearSnapshots;
+    public MigrationExecutionMode ExecutionMode { get; init; } = MigrationExecutionMode.Sequential;
+    public MigrationProjectionMode ProjectionMode { get; init; } = MigrationProjectionMode.None;
+    public int BranchSplitDepth { get; init; } = 1;
+    public int PipelinePrefetchCount { get; init; } = 3;
+    public int PipelineExportWorkerCount { get; init; } = 2;
     public bool TransferBranches { get; init; }
     public bool TransferTags { get; init; }
     public IReadOnlyList<string> SelectedBranches { get; init; } = Array.Empty<string>();

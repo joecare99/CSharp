@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Story_Base.Data;
 
 public sealed class Story

@@ -5,8 +5,7 @@ namespace RepoMigrator.App.Wpf.ViewModels;
 /// </summary>
 public enum WorkflowStage
 {
-    Source,
-    Target,
+    Setup,
     Options,
     Execution
 }

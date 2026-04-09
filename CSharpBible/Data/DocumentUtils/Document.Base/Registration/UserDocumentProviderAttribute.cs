@@ -1,5 +1,3 @@
-using System;
-
 namespace Document.Base.Registration;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]

@@ -1,6 +1,5 @@
 ﻿// RepoMigrator.App.Wpf/App.xaml.cs
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Windows;
 
 namespace RepoMigrator.App.Wpf;

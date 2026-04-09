@@ -1,5 +1,4 @@
 using Document.Base.Models.Interfaces;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Document.Html.Model;
 

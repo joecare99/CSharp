@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using PictureDB.Base.Models;
 using PictureDB.Base.Services.Interfaces;
 

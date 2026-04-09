@@ -219,6 +219,8 @@ public sealed class SvnCliProvider : IVersionControlProvider
         }
     }
 
+    public Task FlushAsync(CancellationToken ct) => Task.CompletedTask;
+
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
     // -------- Helpers --------

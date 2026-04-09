@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using PictureDB.Base.Models;
 
 namespace PictureDB.Base.Services.Interfaces;

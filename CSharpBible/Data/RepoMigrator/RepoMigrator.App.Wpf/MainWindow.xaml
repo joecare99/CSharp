@@ -19,7 +19,7 @@
         <StackPanel Orientation="Horizontal">
             <GroupBox Header="Quelle"
                       Width="380"
-                      Visibility="{Binding IsSourceStage, Converter={StaticResource BoolToVisibilityConverter}}">
+                      Visibility="{Binding IsSetupStage, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Margin="8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Typ" Width="80"/>
@@ -56,46 +56,45 @@
                         <PasswordBox x:Name="SourcePasswordBox" Width="240" PasswordChanged="SourcePasswordChanged"/>
                     </StackPanel>
                     <Button Content="Quelle testen" Command="{Binding TestSourceCommand}" IsEnabled="{Binding IsIdle}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
-                    <Separator Margin="0,8,0,8"/>
-                    <CheckBox Content="Git-Branches mit Historie übernehmen"
-                              IsChecked="{Binding TransferGitBranches}"
-                              IsEnabled="{Binding CanConfigureGitHistory}"/>
-                    <Border BorderBrush="LightGray" BorderThickness="1" Padding="4" Margin="0,6,0,0">
-                        <ScrollViewer Height="90" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding GitBranchSelections}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" IsEnabled="{Binding DataContext.CanConfigureGitHistory, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </Border>
-                    <CheckBox Content="Git-Tags übernehmen"
-                              IsChecked="{Binding TransferGitTags}"
-                              IsEnabled="{Binding CanConfigureGitHistory}"
-                              Margin="0,8,0,0"/>
-                    <Border BorderBrush="LightGray" BorderThickness="1" Padding="4" Margin="0,6,0,0">
-                        <ScrollViewer Height="70" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding GitTagSelections}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" IsEnabled="{Binding DataContext.TransferGitTags, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </Border>
+                    <StackPanel Visibility="{Binding CanConfigureGitHistory, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Separator Margin="0,8,0,8"/>
+                        <CheckBox Content="Git-Branches mit Historie übernehmen"
+                                  IsChecked="{Binding TransferGitBranches}"
+                                  IsEnabled="{Binding CanConfigureGitHistory}"/>
+                        <Border BorderBrush="LightGray" BorderThickness="1" Padding="4" Margin="0,6,0,0">
+                            <ScrollViewer Height="90" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding GitBranchSelections}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" IsEnabled="{Binding DataContext.CanConfigureGitHistory, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+                        <CheckBox Content="Git-Tags übernehmen"
+                                  IsChecked="{Binding TransferGitTags}"
+                                  IsEnabled="{Binding CanConfigureGitHistory}"
+                                  Margin="0,8,0,0"/>
+                        <Border BorderBrush="LightGray" BorderThickness="1" Padding="4" Margin="0,6,0,0">
+                            <ScrollViewer Height="70" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding GitTagSelections}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" IsEnabled="{Binding DataContext.TransferGitTags, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+                    </StackPanel>
                 </StackPanel>
             </GroupBox>
 
             <GroupBox Header="Ziel"
                       Width="380"
-                      Visibility="{Binding IsTargetStage, Converter={StaticResource BoolToVisibilityConverter}}">
+                      Visibility="{Binding IsSetupStage, Converter={StaticResource BoolToVisibilityConverter}}">
                 <StackPanel Margin="8">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Quelle bearbeiten" Command="{Binding EditSourceCommand}" IsEnabled="{Binding IsIdle}"/>
-                    </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Typ" Width="80"/>
                         <ComboBox Width="240"
@@ -115,7 +114,7 @@
                         <ComboBox Width="240"
                                   IsEditable="True"
                                   IsTextSearchEnabled="False"
-                                  ItemsSource="{Binding RecentTargetBranches}"
+                                  ItemsSource="{Binding TargetGitBranchOptions}"
                                   Text="{Binding TargetBranch, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -135,16 +134,47 @@
             </GroupBox>
         </StackPanel>
 
+        <StackPanel Orientation="Horizontal"
+                    Visibility="{Binding ShowCompactEndpointSummaries, Converter={StaticResource BoolToVisibilityConverter}}">
+            <GroupBox Header="Quelle" Width="380">
+                <StackPanel Margin="8">
+                    <TextBlock Text="{Binding SourceSummaryName}" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding SourceSummaryCommit}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Ziel" Width="380">
+                <StackPanel Margin="8">
+                    <TextBlock Text="{Binding TargetSummaryName}" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding TargetSummaryCommit}" Margin="0,4,0,0"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+
         <!-- Options -->
+        <GroupBox Grid.Row="1"
+                  Header="Schritt 1: Quelle &amp; Ziel"
+                  Margin="0,12,0,0"
+                  Visibility="{Binding IsSetupStage, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Margin="8">
+                <TextBlock Text="{Binding SetupHintMessage}" TextWrapping="Wrap"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                    <Button Content="Weiter"
+                            Command="{Binding ContinueFromSetupCommand}"
+                            IsEnabled="{Binding CanContinueFromSetup}"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+
         <GroupBox Grid.Row="1"
                   Header="Optionen"
                   Margin="0,12,0,0"
                   Visibility="{Binding IsOptionsStage, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel Margin="8">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Quelle bearbeiten" Command="{Binding EditSourceCommand}" IsEnabled="{Binding IsIdle}" Margin="0,0,8,0"/>
-                    <Button Content="Ziel bearbeiten" Command="{Binding EditTargetCommand}" IsEnabled="{Binding IsIdle}"/>
+                    <Button Content="Quelle &amp; Ziel bearbeiten" Command="{Binding EditSetupCommand}" IsEnabled="{Binding IsIdle}"/>
                 </StackPanel>
+                <TextBlock Text="{Binding OptionsHintMessage}" TextWrapping="Wrap" Margin="0,0,0,8"/>
                 <StackPanel Orientation="Horizontal"
                             Visibility="{Binding ShowGenericRevisionInputs, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
@@ -161,14 +191,18 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Von (inkl.)" Width="80"/>
                         <ComboBox Width="220"
+                                  IsEditable="True"
+                                  IsTextSearchEnabled="False"
                                   ItemsSource="{Binding SvnFromRevisionOptions}"
-                                  SelectedItem="{Binding SelectedSvnFromRevisionId}"/>
+                                  Text="{Binding SelectedSvnFromRevisionId, UpdateSourceTrigger=PropertyChanged}"/>
                         <TextBlock Text="Bis (inkl.)" Width="80" Margin="12,0,0,0"/>
                         <ComboBox Width="220"
+                                  IsEditable="True"
+                                  IsTextSearchEnabled="False"
                                   ItemsSource="{Binding SvnToRevisionOptions}"
-                                  SelectedItem="{Binding SelectedSvnToRevisionId}"/>
+                                  Text="{Binding SelectedSvnToRevisionId, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
-                    <TextBlock Text="Leer bei 'Bis' bedeutet HEAD." Margin="0,6,0,0"/>
+                    <TextBlock Text="Leer bei 'Bis' bedeutet HEAD. Ohne geladene Liste ist auch eine manuelle Eingabe möglich." Margin="0,6,0,0"/>
                     <DataGrid ItemsSource="{Binding SvnRevisionSelections}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
@@ -181,6 +215,36 @@
                             <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
+                </StackPanel>
+
+                <StackPanel Visibility="{Binding CanConfigureAdvancedGitTargetOptions, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,8,0,0">
+                    <CheckBox Content="Pipeline für SVN→Git-Snapshots verwenden"
+                              IsChecked="{Binding UsePipelinedMigration}"/>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="24,6,0,0"
+                                Visibility="{Binding ShowPipelineTuningOptions, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="Prefetch" Width="60"/>
+                        <TextBox Width="60" Text="{Binding PipelinePrefetchCount}"/>
+                        <TextBlock Text="Worker" Width="60" Margin="12,0,0,0"/>
+                        <TextBox Width="60" Text="{Binding PipelineExportWorkerCount}"/>
+                    </StackPanel>
+
+                    <CheckBox Content="In Sub-Branches nach Verzeichnissen aufteilen"
+                              IsChecked="{Binding SplitIntoSubdirectoryBranches}"
+                              Margin="0,8,0,0"/>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="24,6,0,0"
+                                Visibility="{Binding ShowBranchSplitDepthOptions, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="Ebenen" Width="60"/>
+                        <ComboBox Width="80"
+                                  ItemsSource="{Binding BranchSplitDepthOptions}"
+                                  SelectedItem="{Binding BranchSplitDepth}"/>
+                        <TextBlock Text="Root-Branch = Ziel-Branch" Margin="12,2,0,0"/>
+                    </StackPanel>
+                    <TextBlock Text="Beispiel: Ziel-Branch 'KG' wird zu 'KG/2001' oder bei 2 Ebenen zu 'KG/2001/110209_Testprojekt'."
+                               TextWrapping="Wrap"
+                               Margin="24,4,0,0"
+                               Visibility="{Binding ShowBranchSplitDepthOptions, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
@@ -205,7 +269,7 @@
             <ProgressBar Width="400" Height="18" Minimum="0" Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}"/>
             <Button Content="Start"
                     Command="{Binding StartCommand}"
-                    IsEnabled="{Binding IsIdle}"
+                    IsEnabled="{Binding CanStartMigration}"
                     Visibility="{Binding IsOptionsStage, Converter={StaticResource BoolToVisibilityConverter}}"/>
             <Button Content="Abbrechen"
                     Command="{Binding CancelCommand}"

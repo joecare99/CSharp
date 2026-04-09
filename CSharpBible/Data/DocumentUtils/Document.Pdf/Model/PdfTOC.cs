@@ -1,7 +1,5 @@
 using Document.Base.Models;
 using Document.Base.Models.Interfaces;
-using PdfSharp.Pdf.Advanced;
-using System.Globalization;
 
 namespace Document.Pdf.Model;
 

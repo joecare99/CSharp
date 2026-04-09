@@ -2,14 +2,8 @@
 using LibGit2Sharp;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RepoMigrator.Providers.Git;
 
@@ -19,6 +13,7 @@ public sealed class GitProvider : IVersionControlProvider
     private string? _localPath; // Lokales Arbeitsrepo für Quelle und/oder Ziel
     private string? _pushTargetUrl;
     private Repository? _repo;
+    private readonly HashSet<string> _hsPendingPushBranchNames = new(StringComparer.OrdinalIgnoreCase);
     public string Name => "Git";
     public bool SupportsRead => true;
     public bool SupportsWrite => true;
@@ -82,10 +77,21 @@ public sealed class GitProvider : IVersionControlProvider
     /// <summary>
     /// Returns selectable local Git branches and tags for UI-driven migrations.
     /// </summary>
-    public Task<RepositorySelectionData> GetSelectionDataAsync(RepositoryEndpoint endpoint, CancellationToken ct)
+    public async Task<RepositorySelectionData> GetSelectionDataAsync(RepositoryEndpoint endpoint, CancellationToken ct)
     {
         if (LooksLikeRemote(endpoint.UrlOrPath))
-            return Task.FromResult(new RepositorySelectionData());
+        {
+            var sDefaultBranch = await GetRemoteHeadBranchAsync(endpoint, ct);
+            var lstRemoteBranches = await GetRemoteReferenceInfosAsync(endpoint, referenceNamespace: "heads", ct);
+            var lstRemoteTags = await GetRemoteReferenceInfosAsync(endpoint, referenceNamespace: "tags", ct);
+
+            return new RepositorySelectionData
+            {
+                DefaultBranch = sDefaultBranch,
+                Branches = lstRemoteBranches,
+                Tags = lstRemoteTags
+            };
+        }
 
         var sLocalPath = Path.GetFullPath(endpoint.UrlOrPath);
         if (!Repository.IsValid(sLocalPath))
@@ -111,12 +117,12 @@ public sealed class GitProvider : IVersionControlProvider
             .OrderBy(gitTag => gitTag.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        return Task.FromResult(new RepositorySelectionData
+        return new RepositorySelectionData
         {
             DefaultBranch = gitRepository.Head.FriendlyName,
             Branches = lstBranches,
             Tags = lstTags
-        });
+        };
     }
 
     public async Task<RepositoryProbeResult> ProbeAsync(RepositoryEndpoint endpoint, RepositoryAccessMode accessMode, CancellationToken ct)
@@ -223,7 +229,7 @@ public sealed class GitProvider : IVersionControlProvider
                 : NormalizeBranchName(target.BranchOrTrunk) ?? sSourceBranchName;
 
             var sResolvedTargetBranchName = GitReferenceNameResolver.ResolveAvailableName(sRequestedTargetBranchName, hsExistingBranchNames, dtToday);
-            progress.Report($"Übertrage Branch {sSourceBranchName} -> {sResolvedTargetBranchName} …");
+            progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.GitBranchTransferStarting, sSourceBranchName, sResolvedTargetBranchName);
 
             await RunGitAsync(
                 $"push \"{sTargetAccessUrl}\" \"refs/heads/{sSourceBranchName}:refs/heads/{sResolvedTargetBranchName}\"",
@@ -239,7 +245,7 @@ public sealed class GitProvider : IVersionControlProvider
             ct.ThrowIfCancellationRequested();
 
             var sResolvedTargetTagName = GitReferenceNameResolver.ResolveAvailableName(sSourceTagName, hsExistingTagNames, dtToday);
-            progress.Report($"Übertrage Tag {sSourceTagName} -> {sResolvedTargetTagName} …");
+            progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.GitTagTransferStarting, sSourceTagName, sResolvedTargetTagName);
 
             await RunGitAsync(
                 $"push \"{sTargetAccessUrl}\" \"refs/tags/{sSourceTagName}:refs/tags/{sResolvedTargetTagName}\"",
@@ -353,8 +359,10 @@ public sealed class GitProvider : IVersionControlProvider
         return;
     }
 
-    public Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, CancellationToken ct)
+    public async Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, CancellationToken ct)
     {
+        await EnsureWorkingBranchAsync(metadata.TargetBranch, ct);
+
         // Zielrepo vorausgesetzt: _repo zeigt auf target
         // Synchronisiere Inhalte aus workDir in _localPath
         SyncDirectoryContents(workDir, _localPath!);
@@ -369,19 +377,31 @@ public sealed class GitProvider : IVersionControlProvider
         }
         catch (EmptyCommitException)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         if (_pushTargetUrl is not null)
         {
-            var branchName = string.IsNullOrWhiteSpace(NormalizeBranchName(_endpoint.BranchOrTrunk))
+            var endpoint = _endpoint!;
+            var branchName = string.IsNullOrWhiteSpace(NormalizeBranchName(metadata.TargetBranch ?? endpoint.BranchOrTrunk))
                 ? _repo!.Head.FriendlyName
-                : NormalizeBranchName(_endpoint.BranchOrTrunk)!;
-            var args = $"push --set-upstream \"{_pushTargetUrl}\" \"HEAD:refs/heads/{branchName}\"";
-            return RunGitAsync(args, _localPath, "Git-Push", ct);
+                : NormalizeBranchName(metadata.TargetBranch ?? endpoint.BranchOrTrunk)!;
+            _hsPendingPushBranchNames.Add(branchName);
+        }
+    }
+
+    public async Task FlushAsync(CancellationToken ct)
+    {
+        if (_pushTargetUrl is null || _hsPendingPushBranchNames.Count == 0)
+            return;
+
+        foreach (var sBranchName in _hsPendingPushBranchNames.OrderBy(static sValue => sValue, StringComparer.OrdinalIgnoreCase))
+        {
+            var sPushArgs = $"push --set-upstream \"{_pushTargetUrl}\" \"refs/heads/{sBranchName}:refs/heads/{sBranchName}\"";
+            await RunGitAsync(sPushArgs, _localPath, "Git-Push", ct);
         }
 
-        return Task.CompletedTask;
+        _hsPendingPushBranchNames.Clear();
     }
 
     public ValueTask DisposeAsync()
@@ -390,15 +410,66 @@ public sealed class GitProvider : IVersionControlProvider
         return ValueTask.CompletedTask;
     }
 
-    private static bool LooksLikeRemote(string urlOrPath)
-        => urlOrPath.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-           || urlOrPath.StartsWith("file://", StringComparison.OrdinalIgnoreCase)
-           || urlOrPath.StartsWith("ssh", StringComparison.OrdinalIgnoreCase)
-           || urlOrPath.EndsWith(".git", StringComparison.OrdinalIgnoreCase);
+    private static bool LooksLikeRemote(string sUrlOrPath)
+    {
+        if (string.IsNullOrWhiteSpace(sUrlOrPath))
+            return false;
+
+        if (Path.IsPathRooted(sUrlOrPath) || sUrlOrPath.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        if (sUrlOrPath.StartsWith("git@", StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (!Uri.TryCreate(sUrlOrPath, UriKind.Absolute, out var uriEndpoint))
+            return false;
+
+        if (uriEndpoint.IsFile)
+            return sUrlOrPath.StartsWith("file://", StringComparison.OrdinalIgnoreCase);
+
+        return uriEndpoint.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase)
+            || uriEndpoint.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
+            || uriEndpoint.Scheme.Equals("ssh", StringComparison.OrdinalIgnoreCase)
+            || uriEndpoint.Scheme.Equals("git", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task EnsureWorkingBranchAsync(string? sRequestedBranchName, CancellationToken ct)
+    {
+        var sBranchName = NormalizeBranchName(sRequestedBranchName ?? _endpoint?.BranchOrTrunk);
+        if (string.IsNullOrWhiteSpace(sBranchName))
+            return;
+
+        if (string.Equals(_repo!.Head.FriendlyName, sBranchName, StringComparison.OrdinalIgnoreCase))
+            return;
+
+        var gitLocalBranch = _repo.Branches[sBranchName];
+        if (gitLocalBranch is not null)
+        {
+            Commands.Checkout(_repo, gitLocalBranch);
+            return;
+        }
+
+        if (_pushTargetUrl is not null)
+        {
+            var sRemoteBranchName = $"origin/{sBranchName}";
+            var gitRemoteBranch = _repo.Branches[sRemoteBranchName];
+            if (gitRemoteBranch is not null)
+            {
+                await RunGitAsync($"checkout -B \"{sBranchName}\" \"{sRemoteBranchName}\"", _localPath, "Git-Checkout", ct);
+                _repo.Dispose();
+                _repo = new Repository(_localPath!);
+                return;
+            }
+        }
+
+        await RunGitAsync($"checkout --orphan \"{sBranchName}\"", _localPath, "Git-Orphan-Checkout", ct);
+        _repo.Dispose();
+        _repo = new Repository(_localPath!);
+    }
 
     private static string PrepareLocalPath(RepositoryEndpoint ep)
         => LooksLikeRemote(ep.UrlOrPath) ? Path.Combine(Path.GetTempPath(), "RepoMigrator", "git", Guid.NewGuid().ToString("N"))
-                                         : Path.GetFullPath(ep.UrlOrPath);
+                                         : GetRequiredLocalPath(ep.UrlOrPath, "Git repository");
 
     private static bool IsHttpRemote(string urlOrPath)
         => urlOrPath.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
@@ -409,7 +480,7 @@ public sealed class GitProvider : IVersionControlProvider
         if (LooksLikeRemote(endpoint.UrlOrPath))
             return GetAccessUrl(endpoint);
 
-        var sLocalPath = Path.GetFullPath(endpoint.UrlOrPath);
+        var sLocalPath = GetRequiredLocalPath(endpoint.UrlOrPath, "Git target path");
         if (!Repository.IsValid(sLocalPath))
             return ShouldCreateBareLocalTargetRepository(sLocalPath) ? sLocalPath : null;
 
@@ -437,7 +508,8 @@ public sealed class GitProvider : IVersionControlProvider
         if (LooksLikeRemote(target.UrlOrPath))
             return;
 
-        var sLocalPath = Path.GetFullPath(target.UrlOrPath);
+        var sLocalPath = GetRequiredLocalPath(target.UrlOrPath, "Git target path");
+        EnsureDirectoryCanBeInitializedAsRepository(sLocalPath);
         Directory.CreateDirectory(sLocalPath);
         if (!Repository.IsValid(sLocalPath))
             Repository.Init(sLocalPath);
@@ -448,7 +520,8 @@ public sealed class GitProvider : IVersionControlProvider
         if (LooksLikeRemote(endpoint.UrlOrPath))
             return;
 
-        var sLocalPath = Path.GetFullPath(endpoint.UrlOrPath);
+        var sLocalPath = GetRequiredLocalPath(endpoint.UrlOrPath, "Git target path");
+        EnsureDirectoryCanBeInitializedAsRepository(sLocalPath);
         if (Repository.IsValid(sLocalPath) || !ShouldCreateBareLocalTargetRepository(sLocalPath))
             return;
 
@@ -462,6 +535,23 @@ public sealed class GitProvider : IVersionControlProvider
             return true;
 
         return !Directory.EnumerateFileSystemEntries(sLocalPath).Any();
+    }
+
+    private static string GetRequiredLocalPath(string sUrlOrPath, string sDescription)
+    {
+        if (string.IsNullOrWhiteSpace(sUrlOrPath))
+            throw new InvalidOperationException($"{sDescription} must not be empty.");
+
+        return Path.GetFullPath(sUrlOrPath.Trim());
+    }
+
+    private static void EnsureDirectoryCanBeInitializedAsRepository(string sLocalPath)
+    {
+        if (!Directory.Exists(sLocalPath) || Repository.IsValid(sLocalPath))
+            return;
+
+        if (Directory.EnumerateFileSystemEntries(sLocalPath).Any())
+            throw new InvalidOperationException($"The local Git target path '{sLocalPath}' must be empty or already contain a Git repository.");
     }
 
     private static async Task<string?> GetRemoteHeadBranchAsync(RepositoryEndpoint endpoint, CancellationToken ct)
@@ -540,7 +630,7 @@ public sealed class GitProvider : IVersionControlProvider
     {
         if (!LooksLikeRemote(endpoint.UrlOrPath))
         {
-            var sLocalPath = Path.GetFullPath(endpoint.UrlOrPath);
+            var sLocalPath = GetRequiredLocalPath(endpoint.UrlOrPath, "Git repository");
             if (!Repository.IsValid(sLocalPath))
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -572,6 +662,37 @@ public sealed class GitProvider : IVersionControlProvider
         }
 
         return hsReferenceNames;
+    }
+
+    private static async Task<IReadOnlyList<RepositoryReferenceInfo>> GetRemoteReferenceInfosAsync(RepositoryEndpoint endpoint, string referenceNamespace, CancellationToken ct)
+    {
+        var sOutput = await RunGitAsync(
+            $"ls-remote --{referenceNamespace} \"{GetAccessUrl(endpoint)}\"",
+            workingDir: null,
+            operationName: "Git-Reference-Info-List",
+            ct);
+
+        var lstReferenceInfos = new List<RepositoryReferenceInfo>();
+        foreach (var sLine in sOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+        {
+            var arrParts = sLine.Split('\t', StringSplitOptions.RemoveEmptyEntries);
+            if (arrParts.Length != 2)
+                continue;
+
+            var sPrefix = $"refs/{referenceNamespace}/";
+            if (!arrParts[1].StartsWith(sPrefix, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            lstReferenceInfos.Add(new RepositoryReferenceInfo
+            {
+                Name = arrParts[1][sPrefix.Length..],
+                CommitId = arrParts[0]
+            });
+        }
+
+        return lstReferenceInfos
+            .OrderBy(referenceInfo => referenceInfo.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     private static bool HasHttpCredentials(RepositoryEndpoint endpoint)
