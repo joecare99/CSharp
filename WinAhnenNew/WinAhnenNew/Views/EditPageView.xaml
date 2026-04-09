@@ -5,529 +5,268 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WinAhnenNew.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="Arial"
     Title="EditPageView"
-    d:DesignHeight="450"
+    d:DesignHeight="860"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <Canvas>
-        <ToggleButton
-            x:Name="SpeedButton1"
-            Canvas.Left="927"
-            Canvas.Top="-18"
-            Width="31"
-            Height="27"
-            Content="" />
-        <Rectangle
-            x:Name="Shape3"
-            Canvas.Left="199"
-            Canvas.Top="1"
-            Width="496"
-            Height="69"
-            Fill="#F0F0F0"
-            Stroke="#000000"
-            StrokeThickness="1" />
-        <Label
-            x:Name="Label11"
-            Canvas.Left="208"
-            Canvas.Top="9"
-            Width="54"
-            Height="27"
-            Content="Vater"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="Edit1"
-            Canvas.Left="267"
-            Canvas.Top="5"
-            Width="424"
-            Height="27"
-            IsReadOnly="True"
-            Text="Edit1" />
-        <Label
-            x:Name="Label12"
-            Canvas.Left="207"
-            Canvas.Top="40"
-            Width="68"
-            Height="27"
-            Content="Mutter"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="Edit2"
-            Canvas.Left="267"
-            Canvas.Top="39"
-            Width="425"
-            Height="27"
-            IsReadOnly="True"
-            Text="Edit2" />
-        <Label
-            x:Name="Label5"
-            Canvas.Left="916"
-            Canvas.Top="3"
-            Width="31"
-            Height="27"
-            Content="Nr."
-            FontFamily="Arial" />
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="240" />
+        </Grid.RowDefinitions>
+
         <Border
-            Canvas.Left="941"
-            Canvas.Top="3"
-            Width="94"
-            Height="29">
-            <TextBlock
-                Padding="2"
-                VerticalAlignment="Center"
-                Text="" />
+            Grid.Row="0"
+            Padding="12"
+            Background="#F8F8F8"
+            BorderBrush="#D0D0D0"
+            BorderThickness="1"
+            CornerRadius="4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="300" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Padding="12" BorderBrush="#B0B0B0" BorderThickness="1" CornerRadius="4">
+                    <Grid>
+                        <Rectangle
+                            x:Name="rctParentPlaceholder"
+                            Fill="#F0F0F0"
+                            Stroke="#000000"
+                            StrokeThickness="1"
+                            Visibility="Collapsed" />
+                        <Grid Margin="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Label x:Name="lblFather" Grid.Row="0" Grid.Column="0" Margin="0,0,8,8" VerticalAlignment="Center" Content="Vater" />
+                            <TextBox x:Name="txtFather" Grid.Row="0" Grid.Column="1" Margin="0,0,0,8" MinWidth="240" IsReadOnly="True" Text="{Binding Father, Mode=OneWay}" />
+                            <Label x:Name="lblMother" Grid.Row="1" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="Mutter" />
+                            <TextBox x:Name="txtMother" Grid.Row="1" Grid.Column="1" MinWidth="240" IsReadOnly="True" Text="{Binding Mother, Mode=OneWay}" />
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label x:Name="lblNumber" Grid.Row="0" Grid.Column="0" Margin="0,0,8,8" VerticalAlignment="Center" Content="Nr." />
+                    <Border Grid.Row="0" Grid.Column="1" Margin="0,0,8,8" MinHeight="27" Padding="4" BorderBrush="#B0B0B0" BorderThickness="1">
+                        <TextBlock Padding="2" VerticalAlignment="Center" Text="{Binding PersonNumber, Mode=OneWay}" />
+                    </Border>
+                    <ToggleButton x:Name="tglSelectPerson" Grid.Row="0" Grid.Column="2" Width="31" Height="27" Margin="8,0,0,8" HorizontalAlignment="Right" Content="" IsChecked="{Binding IsSelectPersonToggled, Mode=TwoWay}" />
+
+                    <Label x:Name="lblId" Grid.Row="1" Grid.Column="0" Margin="0,0,8,8" VerticalAlignment="Center" Content="ID" />
+                    <TextBox x:Name="txtId" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,0,0,8" Text="{Binding Id, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Text="Zusatz" />
+                    <TextBox x:Name="txtAdditionalInfo" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding AdditionalInfo, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+
+                    <Label x:Name="Label18" Grid.Row="0" Grid.Column="0" Width="1" Height="1" Background="#FFFFFF" Content="" Foreground="#FF0000" Visibility="Collapsed" />
+                    <Label x:Name="Label19" Grid.Row="1" Grid.Column="0" Width="1" Height="1" Content="" Visibility="Collapsed" />
+                    <Label x:Name="Label20" Grid.Row="2" Grid.Column="2" Width="1" Height="1" Content="" Visibility="Collapsed" />
+                </Grid>
+            </Grid>
         </Border>
-        <Label
-            x:Name="Label8"
-            Canvas.Left="917"
-            Canvas.Top="36"
-            Width="23"
-            Height="27"
-            Content="ID"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit5"
-            Canvas.Left="941"
-            Canvas.Top="32"
-            Width="99"
-            Height="35"
-            Text="" />
 
-        <Label
-            x:Name="Label18"
-            Canvas.Left="796"
-            Canvas.Top="0"
-            Width="1"
-            Height="1"
-            Background="#FFFFFF"
-            Content=""
-            FontFamily="Arial"
-            Foreground="#FF0000" />
-        <Label
-            x:Name="Label19"
-            Canvas.Left="745"
-            Canvas.Top="27"
-            Width="1"
-            Height="1"
-            Content=""
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit69"
-            Canvas.Left="736"
-            Canvas.Top="43"
-            Width="161"
-            Height="37"
-            Text="" />
-        <Label
-            x:Name="Label20"
-            Canvas.Left="1033"
-            Canvas.Top="83"
-            Width="1"
-            Height="1"
-            Content=""
-            FontFamily="Arial" />
-
-        <TextBox
-            x:Name="Memo1"
-            Canvas.Left="75"
-            Canvas.Top="373"
-            Width="823"
-            Height="55"
-            AcceptsReturn="True"
-            AcceptsTab="True"
-            Text=""
-            TextWrapping="Wrap"
-            VerticalScrollBarVisibility="Auto" />
         <Rectangle
-            x:Name="Shape2"
-            Canvas.Left="1"
-            Canvas.Top="75"
-            Width="1044"
+            x:Name="rctSectionSeparator"
+            Grid.Row="1"
             Height="1"
+            Margin="0,12,0,0"
             Fill="#FFFFFF"
             Stroke="#000000"
             StrokeThickness="1" />
-        <Image
-            x:Name="Image1"
-            Canvas.Left="811"
-            Canvas.Top="97"
-            Width="193"
-            Height="235"
-            Source="{Binding ImageSource}"
-            Stretch="Fill" />
 
-        <Label
-            x:Name="Label1"
-            Canvas.Left="11"
-            Canvas.Top="93"
-            Width="63"
-            Height="27"
-            Content="Name"
-            FontFamily="Arial" />
-        <ComboBox
-            x:Name="ComboBox4"
-            Canvas.Left="107"
-            Canvas.Top="84"
-            Width="493"
-            Height="21"
-            IsEditable="True" />
+        <ScrollViewer Grid.Row="2" Margin="0,0,0,24" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="360" />
+                </Grid.ColumnDefinitions>
 
-        <Label
-            x:Name="Label2"
-            Canvas.Left="11"
-            Canvas.Top="128"
-            Width="109"
-            Height="27"
-            Content="Vornamen"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit2"
-            Canvas.Left="107"
-            Canvas.Top="121"
-            Width="493"
-            Height="37"
-            Text="" />
-        <Label
-            x:Name="Label3"
-            Canvas.Left="11"
-            Canvas.Top="165"
-            Width="58"
-            Height="27"
-            Content="Beruf"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit3"
-            Canvas.Left="107"
-            Canvas.Top="159"
-            Width="493"
-            Height="35"
-            Text="" />
-        <Label
-            x:Name="Label10"
-            Canvas.Left="11"
-            Canvas.Top="201"
-            Width="97"
-            Height="27"
-            Content="Hofname"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit6"
-            Canvas.Left="107"
-            Canvas.Top="197"
-            Width="493"
-            Height="35"
-            Text="" />
-        <Label
-            x:Name="Label4"
-            Canvas.Left="11"
-            Canvas.Top="240"
-            Width="122"
-            Height="27"
-            Content="Geschlecht"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit7"
-            Canvas.Left="107"
-            Canvas.Top="237"
-            Width="33"
-            Height="35"
-            Text="" />
-        <Label
-            x:Name="Label28"
-            Canvas.Left="171"
-            Canvas.Top="240"
-            Width="120"
-            Height="27"
-            Content="Bekenntnis"
-            FontFamily="Arial" />
-        <ComboBox
-            x:Name="DBComboBox2"
-            Canvas.Left="268"
-            Canvas.Top="237"
-            Width="61"
-            Height="35"
-            IsEditable="True" />
-        <CheckBox
-            x:Name="DBCheckBox1"
-            Canvas.Left="372"
-            Canvas.Top="235"
-            Width="63"
-            Height="33"
-            Content=" lebt" />
-        <Label
-            x:Name="Label80"
-            Canvas.Left="464"
-            Canvas.Top="240"
-            Width="84"
-            Height="27"
-            Content="adopt.v."
-            FontFamily="Arial" />
-        <ComboBox
-            x:Name="DBComboBox3"
-            Canvas.Left="525"
-            Canvas.Top="237"
-            Width="76"
-            Height="39"
-            IsEditable="True" />
-        <!--<Label Content="Beruf" Canvas.Left="15" Canvas.Top="245" Width="58" Height="27" FontFamily="Arial" x:Name="Label9" />-->
-        <Label
-            x:Name="Label13"
-            Canvas.Left="11"
-            Canvas.Top="283"
-            Width="48"
-            Height="27"
-            Content="geb."
-            FontFamily="Arial" />
-        <Label
-            x:Name="Label22"
-            Canvas.Left="73"
-            Canvas.Top="283"
-            Width="89"
-            Height="29"
-            Content="Label22"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit8"
-            Canvas.Left="107"
-            Canvas.Top="279"
-            Width="33"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="DBEdit9"
-            Canvas.Left="149"
-            Canvas.Top="279"
-            Width="33"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="DBEdit10"
-            Canvas.Left="192"
-            Canvas.Top="279"
-            Width="60"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="Edit7"
-            Canvas.Left="267"
-            Canvas.Top="280"
-            Width="439"
-            Height="35"
-            Text="" />
-        <ComboBox
-            x:Name="ComboBox6"
-            Canvas.Left="267"
-            Canvas.Top="279"
-            Width="440"
-            Height="23"
-            IsEditable="True" />
-        <!--<Label Content="geb." Canvas.Left="16" Canvas.Top="367" Width="48" Height="27" FontFamily="Arial" x:Name="Label14" />-->
-        <Label
-            x:Name="Label15"
-            Canvas.Left="11"
-            Canvas.Top="320"
-            Width="41"
-            Height="27"
-            Content="get."
-            FontFamily="Arial" />
-        <Label
-            x:Name="Label23"
-            Canvas.Left="73"
-            Canvas.Top="320"
-            Width="89"
-            Height="29"
-            Content="Label22"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit12"
-            Canvas.Left="107"
-            Canvas.Top="315"
-            Width="33"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="DBEdit13"
-            Canvas.Left="149"
-            Canvas.Top="315"
-            Width="33"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="DBEdit14"
-            Canvas.Left="192"
-            Canvas.Top="315"
-            Width="60"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="Edit11"
-            Canvas.Left="267"
-            Canvas.Top="315"
-            Width="439"
-            Height="35"
-            Text="" />
-        <ComboBox
-            x:Name="ComboBox7"
-            Canvas.Left="267"
-            Canvas.Top="315"
-            Width="440"
-            Height="23"
-            IsEditable="True" />
-        <Label
-            x:Name="Label16"
-            Canvas.Left="11"
-            Canvas.Top="355"
-            Width="53"
-            Height="27"
-            Content="gest."
-            FontFamily="Arial" />
-        <Label
-            x:Name="Label24"
-            Canvas.Left="73"
-            Canvas.Top="356"
-            Width="89"
-            Height="29"
-            Content="Label22"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit16"
-            Canvas.Left="107"
-            Canvas.Top="351"
-            Width="33"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="DBEdit17"
-            Canvas.Left="149"
-            Canvas.Top="351"
-            Width="33"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="DBEdit18"
-            Canvas.Left="192"
-            Canvas.Top="351"
-            Width="60"
-            Height="35"
-            Text="" />
-        <ComboBox
-            x:Name="ComboBox8"
-            Canvas.Left="267"
-            Canvas.Top="351"
-            Width="440"
-            Height="23"
-            IsEditable="True" />
-        <TextBox
-            x:Name="DBEdit4"
-            Canvas.Left="712"
-            Canvas.Top="351"
-            Width="143"
-            Height="35"
-            Text="" />
-        <Label
-            x:Name="Label17"
-            Canvas.Left="11"
-            Canvas.Top="391"
-            Width="53"
-            Height="27"
-            Content="best."
-            FontFamily="Arial" />
-        <Label
-            x:Name="Label25"
-            Canvas.Left="73"
-            Canvas.Top="391"
-            Width="89"
-            Height="29"
-            Content="Label22"
-            FontFamily="Arial" />
-        <TextBox
-            x:Name="DBEdit20"
-            Canvas.Left="107"
-            Canvas.Top="387"
-            Width="33"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="DBEdit21"
-            Canvas.Left="149"
-            Canvas.Top="387"
-            Width="33"
-            Height="35"
-            Text="" />
-        <TextBox
-            x:Name="DBEdit22"
-            Canvas.Left="192"
-            Canvas.Top="387"
-            Width="60"
-            Height="35"
-            Text="" />
-        <ComboBox
-            x:Name="ComboBox9"
-            Canvas.Left="267"
-            Canvas.Top="385"
-            Width="440"
-            Height="23"
-            IsEditable="True" />
+                <Border Grid.Column="0" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="45" />
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="25" />
+                            <ColumnDefinition Width="25" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="70" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-        <Label
-            x:Name="Label6"
-            Canvas.Left="4"
-            Canvas.Top="429"
-            Width="76"
-            Height="29"
-            Content="Label6"
-            FontFamily="Arial" />
-        <Label
-            x:Name="Label79"
-            Canvas.Left="171"
-            Canvas.Top="431"
-            Width="85"
-            Height="27"
-            Content="Label79"
-            FontFamily="Arial" />
-        <Label
-            x:Name="Label7"
-            Canvas.Left="536"
-            Canvas.Top="429"
-            Width="76"
-            Height="29"
-            Content="Label7"
-            FontFamily="Arial" />
-        <Label
-            x:Name="Label81"
-            Canvas.Left="619"
-            Canvas.Top="77"
-            Width="85"
-            Height="27"
-            Content="Label81"
-            FontFamily="Arial" />
-        <!--  Unknown component: TFileListBox Name="FileListBox2"  -->
-        <!--  Unknown component: TFileListBox Name="FileListBox1"  -->
-        <!--  Unknown component: TDBNavigator Name="DBNavigator1"  -->
-        <!--  Grid: 6 columns x 8 rows  -->
-        <DataGrid
-            x:Name="StringGrid1"
-            Canvas.Left="-1"
-            Canvas.Top="455"
-            Width="531"
-            Height="231" />
-        <!--  Grid: 6 columns x 8 rows  -->
-        <DataGrid
-            x:Name="StringGrid2"
-            Canvas.Left="533"
-            Canvas.Top="455"
-            Width="512"
-            Height="231" />
+                        <Label x:Name="lblLastName" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="Name" Height="24" Grid.ColumnSpan="2" />
+                        <ComboBox x:Name="cboLastName" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="6" Margin="0,1,0,1" MinWidth="220" IsEditable="True" ItemsSource="{Binding LastNameOptions}" Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
+                        <Label x:Name="lblFirstNames" Grid.Row="1" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="Vornamen" Height="24" Grid.ColumnSpan="2" />
+                        <TextBox x:Name="txtFirstNames" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="6" Margin="0,1,0,1" Text="{Binding FirstNames, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
-        <!--  Unknown component: TUpDown Name="UpDown1"  -->
-        <!--  Unknown component: TDBGrid Name="DBGrid3"  -->
-        <!--  Grid: 4 columns x 5 rows  -->
-        <DataGrid
-            x:Name="StringGrid5"
-            Canvas.Left="585"
-            Canvas.Top="100"
-            Width="460"
-            Height="331" />
-    </Canvas>
+                        <Label x:Name="lblOccupation" Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="Beruf" Height="23" Grid.ColumnSpan="2" />
+                        <TextBox x:Name="txtOccupation" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="6" Margin="0,1,0,1" Text="{Binding Occupation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+
+                        <Label x:Name="lblFarmName" Grid.Row="3" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="Hofname" Height="24" Grid.ColumnSpan="2"  />
+                        <TextBox x:Name="txtFarmName" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="6" Margin="0,1,0,1" Text="{Binding FarmName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+
+                        <Label x:Name="lblGender" Grid.Row="4" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="Geschlecht" Height="24" Grid.ColumnSpan="2"  />
+                        <TextBox x:Name="txtGender" Grid.Row="4" Grid.Column="2" Margin="0,1,0,1" Text="{Binding Gender, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        <Label x:Name="lblReligion" Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="2" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Bekenntnis"  />
+                        <ComboBox x:Name="cboReligion" Grid.Row="4" Grid.Column="5" Margin="0,1,0,1" IsEditable="True" ItemsSource="{Binding ReligionOptions}" Text="{Binding Religion, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"     />
+                        <CheckBox x:Name="chkIsAlive" Grid.Row="4" Grid.Column="7" Margin="0,3,0,3" VerticalAlignment="Center" Content="lebt" Height="15" IsChecked="{Binding IsAlive, Mode=TwoWay}" />
+                        <StackPanel Grid.Row="5" Grid.Column="2" Margin="0,0,0,0" Orientation="Horizontal" Grid.ColumnSpan="6"  >
+                            <Label x:Name="lblAdoptedBy" Margin="0,0,8,0" VerticalAlignment="Center" Content="adopt.v." />
+                            <ComboBox x:Name="cboAdoptedBy" Width="220" IsEditable="True" Margin="0,1,0,1" ItemsSource="{Binding AdoptedByOptions}" Text="{Binding AdoptedBy, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                        </StackPanel>
+
+                        <Label x:Name="lblBirth" Grid.Row="6" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="geb." Height="24"  />
+                        <Label x:Name="lblBirthModifier" Grid.Row="6" Grid.Column="1"  VerticalAlignment="Center" Content="{Binding BirthModifier, Mode=OneWay}" Height="24" />
+                        <TextBox x:Name="txtBirthDay" Grid.Row="6" Grid.Column="2" Margin="0,1,0,1" Text="{Binding BirthDay, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                        <TextBox x:Name="txtBirthMonth" Grid.Row="6" Grid.Column="3" Margin="0,1,0,1" Text="{Binding BirthMonth, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        <TextBox x:Name="txtBirthYear" Grid.Row="6" Grid.Column="4" Margin="0,1,0,1" Text="{Binding BirthYear, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        <Grid Grid.Row="6" Grid.Column="5"  Grid.ColumnSpan="3">
+                            <ComboBox x:Name="cboBirthPlace" MinWidth="100" IsEditable="True" Margin="0,1,0,1" ItemsSource="{Binding BirthPlaceOptions}" Text="{Binding BirthPlace, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBox x:Name="txtBirthPlaceHidden" Visibility="Collapsed" Text="{Binding BirthPlaceHidden, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                        </Grid>
+
+                        <Label x:Name="lblBaptism" Grid.Row="7" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="get." Height="24"  />
+                        <TextBox x:Name="txtBaptismModifier" Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" Text="{Binding BaptismModifier, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  Height="24" />
+                        <TextBox x:Name="txtBaptismDay" Grid.Row="7" Grid.Column="2" Margin="0,1,0,1" Text="{Binding BaptismDay, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"   />
+                        <TextBox x:Name="txtBaptismMonth" Grid.Row="7" Grid.Column="3" Margin="0,1,0,1" Text="{Binding BaptismMonth, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"   />
+                        <TextBox x:Name="txtBaptismYear" Grid.Row="7" Grid.Column="4" Margin="0,1,0,1" Text="{Binding BaptismYear, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"   />
+                        <Grid Grid.Row="7" Grid.Column="5" Grid.ColumnSpan="3" >
+                            <ComboBox x:Name="cboBaptismPlace" MinWidth="100" IsEditable="True" Margin="0,1,0,1" ItemsSource="{Binding BaptismPlaceOptions}" Text="{Binding BaptismPlace, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBox x:Name="txtBaptismPlaceHidden" Visibility="Collapsed" Text="{Binding BaptismPlaceHidden, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                        </Grid>
+
+                        <Label x:Name="lblDeath" Grid.Row="8" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="gest." Height="24"  />
+                        <Label x:Name="lblDeathModifier" Grid.Row="8"  Grid.Column="1" Margin="1,0,1,0" VerticalAlignment="Top" Content="{Binding DeathModifier, Mode=OneWay}"  Height="23" />
+                        <TextBox x:Name="txtDeathDay" Grid.Row="8" Grid.Column="2" Margin="0,1,0,1" Text="{Binding DeathDay, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        <TextBox x:Name="txtDeathMonth" Grid.Row="8" Grid.Column="3" Margin="0,1,0,1" Text="{Binding DeathMonth, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        <TextBox x:Name="txtDeathYear" Grid.Row="8" Grid.Column="4" Margin="0,1,0,1" Text="{Binding DeathYear, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        <Grid Grid.Row="8" Grid.Column="5"  Grid.ColumnSpan="3">
+                            <ComboBox x:Name="cboDeathPlace"  Margin="0,0,0,0"  MinWidth="180" IsEditable="True" Grid.ColumnSpan="3" ItemsSource="{Binding DeathPlaceOptions}" Text="{Binding DeathPlace, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                            <TextBox x:Name="txtDeathPlace"  Margin="0,0,0,0" Text="{Binding DeathPlace, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        </Grid>
+                        
+                        <Label x:Name="lblBurial" Grid.Row="9" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="best." Height="24"  />
+                        <Label x:Name="lblBurialModifier" Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" Content="{Binding BurialModifier, Mode=OneWay}"  Height="24"  />
+                        <TextBox x:Name="txtBurialDay" Grid.Row="9" Grid.Column="2" Margin="0,1,0,1" Text="{Binding BurialDay, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        <TextBox x:Name="txtBurialMonth" Grid.Row="9" Grid.Column="3" Margin="0,1,0,1" Text="{Binding BurialMonth, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        <TextBox x:Name="txtBurialYear" Grid.Row="9" Grid.Column="4" Margin="0,1,0,1" Text="{Binding BurialYear, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"  />
+                        <ComboBox x:Name="cboBurialPlace" Grid.Row="9" Grid.Column="5" IsEditable="True" Margin="0,1,0,1" Grid.ColumnSpan="3" ItemsSource="{Binding BurialPlaceOptions}" Text="{Binding BurialPlace, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="2" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="240" />
+                            <RowDefinition Height="12" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Label x:Name="lblImages" Grid.Row="0" Margin="0,0,0,8" Content="{Binding ImagesHeader, Mode=OneWay}" />
+                        <Border Grid.Row="1" BorderBrush="#B0B0B0" BorderThickness="1" CornerRadius="4" Padding="6">
+                            <Image
+                                x:Name="imgPerson"
+                                MinHeight="180"
+                                Source="{Binding PersonImageSource, Mode=OneWay}"
+                                Stretch="Uniform" />
+                        </Border>
+                        <DataGrid x:Name="dgrImages" Grid.Row="3" MinHeight="180" ItemsSource="{Binding Images}" />
+                    </Grid>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
+        <Border Grid.Row="3" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,12,8" VerticalAlignment="Top" Text="Notiz" />
+                <TextBox
+                    x:Name="txtNotes"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    MinHeight="72"
+                    AcceptsReturn="True"
+                    AcceptsTab="True"
+                    Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="4" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Label x:Name="lblSpouses" Grid.Column="0" Content="{Binding SpousesHeader, Mode=OneWay}" />
+                        <Label x:Name="lblWeddingData" Grid.Column="1" Content="{Binding WeddingDataHeader, Mode=OneWay}" />
+                    </Grid>
+                    <DataGrid x:Name="dgrSpousesAndWeddings"  MinWidth="280" ItemsSource="{Binding SpousesAndWeddings}" />
+                </DockPanel>
+            </Border>
+            <Border Grid.Column="2" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+                <DockPanel >
+                    <Label x:Name="lblChildren" DockPanel.Dock="Top" HorizontalAlignment="Left" Content="{Binding ChildrenHeader, Mode=OneWay}" />
+                    <DataGrid x:Name="dgrChildren"  MinWidth="280" ItemsSource="{Binding Children}" />
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
 </Page>

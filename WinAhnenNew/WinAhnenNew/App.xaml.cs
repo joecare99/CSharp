@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using BaseGenClasses.Helper;
+using BaseGenClasses.Helper.Interfaces;
+using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Messaging;
 using GenSecure.Contracts;
 using GenSecure.Core;
@@ -22,8 +25,10 @@ namespace WinAhnenNew
             services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
             services.AddSingleton<IGenealogyModelFactory, BaseGenGenealogyModelFactory>();
             services.AddSingleton<IPersonSelectionService, PersonSelectionService>();
+            services.AddTransient<IGenILBuilder, GenILBuilder>();
             services.AddTransient<FrmAhnenWinMainViewModel>();
             services.AddTransient<SelectionPageViewModel>();
+            services.AddTransient<EditPageViewModel>();
             services.AddGenSecureStore(options =>
             {
                 options.RootDirectory = Path.Combine(
@@ -33,6 +38,7 @@ namespace WinAhnenNew
             });
 
             Services = services.BuildServiceProvider();
+            IoC.Configure(Services);
         }
 
         public IServiceProvider Services { get; }

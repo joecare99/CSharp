@@ -15,6 +15,13 @@
     <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Views\EditPageView_old.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Views\EditPageView - Kopie.xaml" />
+    <Page Remove="Views\EditPageView_old.xaml" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Properties\" />
   </ItemGroup>
@@ -25,9 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CSharpBible\Libraries\GenInterfaces\GenInterfaces.csproj" />
-    <ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
-    <ProjectReference Include="..\BaseGenClasses\BaseGenClasses.csproj" />
+    <ProjectReference Include="..\WinAhnenNew.Model\WinAhnenNew.Model.csproj" />
     <ProjectReference Include="..\..\Gen_FreeWin\GenSecure.Contracts\GenSecure.Contracts.csproj" />
     <ProjectReference Include="..\..\Gen_FreeWin\GenSecure.Core\GenSecure.Core.csproj" />
   </ItemGroup>

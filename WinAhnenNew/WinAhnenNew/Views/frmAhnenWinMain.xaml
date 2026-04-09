@@ -158,7 +158,7 @@
             <Rectangle DockPanel.Dock="Top" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" x:Name="Shape1" />
         <Canvas DockPanel.Dock="Left">
         </Canvas>
-        <TabControl x:Name="PageControl1" >
+        <TabControl x:Name="PageControl1" SelectionChanged="PageControl1_SelectionChanged" >
                 <TabItem Header="Auswahl" x:Name="TabSheet1">
                 <Frame x:Name="SelectionFrame" NavigationUIVisibility="Hidden" Source="/Views/SelectionPageView.xaml" />
             </TabItem>

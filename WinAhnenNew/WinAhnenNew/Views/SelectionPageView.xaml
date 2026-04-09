@@ -120,12 +120,14 @@
         </Grid>
 
         <DataGrid
+            x:Name="dgrPersons"
             Grid.Row="2"
             AutoGenerateColumns="False"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
             IsReadOnly="True"
             ItemsSource="{Binding PersonsView}"
+            MouseDoubleClick="PersonsDataGrid_MouseDoubleClick"
             SelectedItem="{Binding SelectedPerson, Mode=TwoWay}"
             SelectionMode="Single">
             <DataGrid.Columns>
