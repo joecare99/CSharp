@@ -1,4 +1,5 @@
 ﻿using BaseGenClasses.Helper;
+using BaseGenClasses.Persistence;
 using BaseGenClasses.Model;
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Messaging;
@@ -8,16 +9,17 @@ using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Policy;
+using System.Threading;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BaseGenClasses.Model;
 
-public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
+public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IRecipient<IGenTransaction>, IDisposable
 {
-    private IMessenger _messanger;
+    private readonly IMessenger _messanger;
+    private IGenealogyPersistenceProvider? _persistenceProvider;
+    private IGenEntity? _genLastChangedEntity;
     #region Properties
     public EGenType eGenType => EGenType.Genealogy;
     public Guid UId { get; init; }
@@ -38,6 +40,16 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
     public IList<IGenRepository> Repositories { get ; init ; }= [];
     public IList<IGenMedia> Medias { get; init; } = [];
     public IList<IGenTransaction> Transactions { get; init; } = [];
+
+    public bool xDirty { get; private set; }
+
+    public event EventHandler<DirtyStateChangedEventArgs>? DirtyStateChanged;
+
+    public event EventHandler<FlushRequestedEventArgs>? FlushRequested;
+
+    public event EventHandler<FlushCompletedEventArgs>? Flushed;
+
+    public event EventHandler<FlushFailedEventArgs>? FlushFailed;
 
     #endregion
 
@@ -185,6 +197,52 @@ public class Genealogy : IGenealogy, IRecipient<IGenTransaction>, IDisposable
     {
         var _lastTA = Transactions.Where(ta => ta.Class == message.Class && ta.Entry == message.Entry).LastOrDefault();
         Transactions.Add(message);
+        MarkDirty(null, "A genealogy transaction was recorded.");
+    }
+
+    public void AttachPersistenceProvider(IGenealogyPersistenceProvider persistenceProvider)
+    {
+        _persistenceProvider = persistenceProvider ?? throw new ArgumentNullException(nameof(persistenceProvider));
+    }
+
+    public void MarkDirty(IGenEntity? genChangedEntity = null, string? sReason = null)
+    {
+        _genLastChangedEntity = genChangedEntity ?? _genLastChangedEntity;
+        xDirty = true;
+        DirtyStateChanged?.Invoke(this, new DirtyStateChangedEventArgs(true, genChangedEntity, sReason));
+    }
+
+    public async Task FlushAsync(
+        IGenEntity? genRequestedEntity = null,
+        GenealogyFlushScope eScope = GenealogyFlushScope.Auto,
+        CancellationToken cancellationToken = default)
+    {
+        var genEntityToFlush = genRequestedEntity ?? _genLastChangedEntity;
+        FlushRequested?.Invoke(this, new FlushRequestedEventArgs(genEntityToFlush, eScope, xDirty));
+
+        if (!xDirty)
+        {
+            Flushed?.Invoke(this, new FlushCompletedEventArgs(genEntityToFlush, eScope));
+            return;
+        }
+
+        if (_persistenceProvider is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _persistenceProvider.FlushAsync(this, genEntityToFlush, eScope, cancellationToken).ConfigureAwait(false);
+            xDirty = false;
+            DirtyStateChanged?.Invoke(this, new DirtyStateChangedEventArgs(false, genEntityToFlush, "The genealogy was flushed successfully."));
+            Flushed?.Invoke(this, new FlushCompletedEventArgs(genEntityToFlush, eScope));
+        }
+        catch (Exception exException)
+        {
+            FlushFailed?.Invoke(this, new FlushFailedEventArgs(genEntityToFlush, eScope, exException));
+            throw;
+        }
     }
 
     public void Dispose()

@@ -22,7 +22,7 @@ public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList
 
     public void Add(T Item, object index)
     {
-         Add(Item);
+        base.Add(Item);
         _list.Add((T2)index, Count-1);
     }
 
