@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Text;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
 
 namespace RnzTrauer.Core;
 
@@ -33,21 +32,26 @@ public sealed class WebHandler : IDisposable
         ["a"] = ["title", "target", "href"]
     };
 
-    private readonly HttpClient _httpClient = new();
     private readonly RnzConfig _config;
+    private readonly IHttpClientProxy _xHttpClient;
+    private readonly IWebDriverFactory _xWebDriverFactory;
+    private readonly IProgress<WebHandlerProgress>? _xProgress;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WebHandler"/> class.
     /// </summary>
-    public WebHandler(RnzConfig xConfig)
+    public WebHandler(RnzConfig xConfig, IHttpClientProxy xHttpClient, IWebDriverFactory xWebDriverFactory, IProgress<WebHandlerProgress>? xProgress = null)
     {
         _config = xConfig;
+        _xHttpClient = xHttpClient ?? throw new ArgumentNullException(nameof(xHttpClient));
+        _xWebDriverFactory = xWebDriverFactory ?? throw new ArgumentNullException(nameof(xWebDriverFactory));
+        _xProgress = xProgress;
     }
 
     /// <summary>
     /// Gets the active Firefox driver instance.
     /// </summary>
-    public FirefoxDriver? Driver { get; private set; }
+    public IWebDriver? Driver { get; private set; }
 
     /// <summary>
     /// Initializes the RNZ login session.
@@ -62,8 +66,7 @@ public sealed class WebHandler : IDisposable
         {
         }
 
-        var xOptions = new FirefoxOptions();
-        Driver = new FirefoxDriver(xOptions);
+        Driver = _xWebDriverFactory.Create();
         Driver.Navigate().GoToUrl(_config.Url);
         Driver.FindElement(By.Id("emailAddress")).SendKeys(_config.User);
         Driver.FindElement(By.Id("password")).SendKeys(_config.Password);
@@ -143,11 +146,11 @@ public sealed class WebHandler : IDisposable
             var iCounter = 0;
             while (!string.IsNullOrEmpty(sNextUrl) && iCounter < iMaxPage)
             {
-                Console.WriteLine(xDriver.Url);
+                _xProgress?.Report(new WebHandlerProgress(xDriver.Url, true));
                 var (arrSubPages, sUrl, sNext) = WorkMainPage(dPages, arrItems, sAnnouncementType);
                 sNextUrl = sNext;
 
-                Console.Write("\nGet Subpages:");
+                _xProgress?.Report(new WebHandlerProgress("\nGet Subpages:"));
                 foreach (var sSubPage in arrSubPages)
                 {
                     xDriver.Navigate().GoToUrl(sSubPage + "/anzeigen");
@@ -155,14 +158,14 @@ public sealed class WebHandler : IDisposable
                     WorkSubPage(sUrl, dPages, arrItems);
                 }
 
-                Console.WriteLine();
+                _xProgress?.Report(new WebHandlerProgress(string.Empty, true));
                 if (!string.IsNullOrEmpty(sNextUrl))
                 {
                     xDriver.Navigate().GoToUrl(sNextUrl);
                     while (xDriver.Url == sUrl)
                     {
                         Thread.Sleep(500);
-                        Console.Write('.');
+                        _xProgress?.Report(new WebHandlerProgress("."));
                     }
                 }
 
@@ -186,7 +189,7 @@ public sealed class WebHandler : IDisposable
     public void Dispose()
     {
         Close();
-        _httpClient.Dispose();
+        _xHttpClient.Dispose();
     }
 
     private (List<string> SubPages, string Url, string NextUrl) WorkMainPage(Dictionary<string, Dictionary<string, object?>> dPages, List<Dictionary<string, object?>> arrItems, string sAnnouncementType)
@@ -251,13 +254,13 @@ public sealed class WebHandler : IDisposable
                             dCopy[CsSrc] = sDataOriginal;
                         }
 
-                        Console.Write('.');
+                        _xProgress?.Report(new WebHandlerProgress("."));
                         try
                         {
                             var sMediaSource = Convert.ToString(dCopy[CsSrc], CultureInfo.InvariantCulture) ?? string.Empty;
                             if (!string.IsNullOrEmpty(sMediaSource))
                             {
-                                var xResponse = _httpClient.GetAsync(sMediaSource).GetAwaiter().GetResult();
+                                var xResponse = _xHttpClient.GetAsync(sMediaSource).GetAwaiter().GetResult();
                                 dCopy[CsData] = xResponse.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
                                 dCopy[CsHeader] = xResponse.Headers.Concat(xResponse.Content.Headers)
                                     .ToDictionary(h => h.Key, h => string.Join(",", h.Value), StringComparer.OrdinalIgnoreCase);
@@ -295,7 +298,7 @@ public sealed class WebHandler : IDisposable
                     }
                 }
 
-                Console.WriteLine(sNextUrl);
+                _xProgress?.Report(new WebHandlerProgress(sNextUrl, true));
             }
         }
 
@@ -364,7 +367,7 @@ public sealed class WebHandler : IDisposable
             }
         }
 
-        Console.Write('.');
+        _xProgress?.Report(new WebHandlerProgress("."));
         foreach (var dSection in arrSections)
         {
             var sSectionClass = Convert.ToString(dSection.GetValueOrDefault("class"), CultureInfo.InvariantCulture) ?? string.Empty;
@@ -486,7 +489,7 @@ public sealed class WebHandler : IDisposable
     {
         try
         {
-            var xResponse = _httpClient.GetAsync(sHref).GetAwaiter().GetResult();
+            var xResponse = _xHttpClient.GetAsync(sHref).GetAwaiter().GetResult();
             dTarget[CsData] = xResponse.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
             dTarget[CsHeader] = xResponse.Headers.Concat(xResponse.Content.Headers)
                 .ToDictionary(h => h.Key, h => string.Join(",", h.Value), StringComparer.OrdinalIgnoreCase);

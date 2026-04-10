@@ -5,7 +5,7 @@ namespace RnzTrauer.Core;
 /// <summary>
 /// Provides JSON-based configuration loading for the ported tools.
 /// </summary>
-public static class ConfigLoader
+public sealed class ConfigLoader : IConfigLoader
 {
     private static readonly JsonSerializerOptions _options = new()
     {
@@ -13,17 +13,27 @@ public static class ConfigLoader
         WriteIndented = true
     };
 
+    private readonly IFile _xFile;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConfigLoader"/> class.
+    /// </summary>
+    public ConfigLoader(IFile xFile)
+    {
+        _xFile = xFile ?? throw new ArgumentNullException(nameof(xFile));
+    }
+
     /// <summary>
     /// Loads a configuration instance from the specified JSON file.
     /// </summary>
-    public static T Load<T>(string sFilePath) where T : new()
+    public T Load<T>(string sFilePath) where T : new()
     {
-        if (!File.Exists(sFilePath))
+        if (!_xFile.Exists(sFilePath))
         {
             throw new FileNotFoundException($"Configuration file was not found: {sFilePath}");
         }
 
-        var xConfiguration = JsonSerializer.Deserialize<T>(File.ReadAllText(sFilePath), _options);
+        var xConfiguration = JsonSerializer.Deserialize<T>(_xFile.ReadAllText(sFilePath), _options);
         return xConfiguration ?? new T();
     }
 }

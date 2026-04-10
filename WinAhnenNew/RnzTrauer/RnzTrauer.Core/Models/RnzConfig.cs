@@ -5,6 +5,23 @@ namespace RnzTrauer.Core;
 /// </summary>
 public sealed class RnzConfig : DatabaseSettings
 {
+    private readonly IConfigLoader? _xConfigLoader;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RnzConfig"/> class.
+    /// </summary>
+    public RnzConfig()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RnzConfig"/> class with a configuration loader dependency.
+    /// </summary>
+    public RnzConfig(IConfigLoader xConfigLoader)
+    {
+        _xConfigLoader = xConfigLoader ?? throw new ArgumentNullException(nameof(xConfigLoader));
+    }
+
     /// <summary>
     /// Gets or sets the login URL.
     /// </summary>
@@ -33,8 +50,8 @@ public sealed class RnzConfig : DatabaseSettings
     /// <summary>
     /// Loads the configuration from a JSON file.
     /// </summary>
-    public static RnzConfig Load(string sFilePath)
+    public RnzConfig Load(string sFilePath)
     {
-        return ConfigLoader.Load<RnzConfig>(sFilePath);
+        return (_xConfigLoader ?? throw new InvalidOperationException("No configuration loader has been provided.")).Load<RnzConfig>(sFilePath);
     }
 }

@@ -11,12 +11,15 @@ namespace RnzTrauer.Core;
 public sealed class DataHandler : IDisposable
 {
     private readonly MySqlConnection _dbConn;
+    private readonly IFile _xFile;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataHandler"/> class.
     /// </summary>
-    public DataHandler(DatabaseSettings xSettings)
+    public DataHandler(DatabaseSettings xSettings, IFile xFile)
     {
+        _xFile = xFile ?? throw new ArgumentNullException(nameof(xFile));
+
         var sConnectionString = new MySqlConnectionStringBuilder
         {
             Server = xSettings.DBhost,
@@ -39,7 +42,7 @@ public sealed class DataHandler : IDisposable
     /// <summary>
     /// Extracts obituary dictionaries from the stored page JSON structure.
     /// </summary>
-    public static List<Dictionary<string, object?>> ExtractTrauerData(JsonNode? xData, string sLocalPathRoot)
+    public List<Dictionary<string, object?>> ExtractTrauerData(JsonNode? xData, string sLocalPathRoot)
     {
         var arrResult = new List<Dictionary<string, object?>>();
         if (xData is not JsonObject xRoot || xRoot["sections"] is not JsonArray arrSections)
@@ -66,11 +69,11 @@ public sealed class DataHandler : IDisposable
                 }
                 else
                 {
-                    var xFileInfo = new FileInfo(PortedHelpers.GetLocalPath(sLinkHref, sLocalPathRoot));
-                    var sFullName = xFileInfo.Extension.Length == 0 ? Path.Combine(xFileInfo.DirectoryName ?? string.Empty, xFileInfo.Name + ".json") : xFileInfo.FullName;
-                    if (File.Exists(sFullName))
+                    var sLocalPath = PortedHelpers.GetLocalPath(sLinkHref, sLocalPathRoot);
+                    var sFullName = Path.HasExtension(sLocalPath) ? sLocalPath : sLocalPath + ".json";
+                    if (_xFile.Exists(sFullName))
                     {
-                        xTrauerfallData = JsonNode.Parse(File.ReadAllText(sFullName)) as JsonObject ?? new JsonObject();
+                        xTrauerfallData = JsonNode.Parse(_xFile.ReadAllText(sFullName)) as JsonObject ?? new JsonObject();
                         Console.Write(',');
                     }
                     else
@@ -98,7 +101,7 @@ public sealed class DataHandler : IDisposable
                             var sSource = xImage0["src"]?.ToString() ?? string.Empty;
                             if (sSource.Contains("MEDIA", StringComparison.Ordinal))
                             {
-                                sProfileImagePath = PortedHelpers.GetLocalPath(PortedHelpers.LCropStr(sSource, "?"), sLocalPathRoot);
+                                sProfileImagePath = PortedHelpers.GetLocalPath(sSource.LCropStr("?"), sLocalPathRoot);
                             }
                         }
                     }
@@ -166,9 +169,9 @@ public sealed class DataHandler : IDisposable
                     else
                     {
                         var sPdfFile = dTrauerfall["pdf"]?.ToString() ?? string.Empty;
-                        if (File.Exists(sPdfFile))
+                        if (_xFile.Exists(sPdfFile))
                         {
-                            dTrauerfall["pdfText"] = PortedHelpers.PdfText(File.ReadAllBytes(sPdfFile));
+                            dTrauerfall["pdfText"] = PortedHelpers.PdfText(_xFile.ReadAllBytes(sPdfFile));
                         }
                     }
                 }
@@ -283,20 +286,20 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public long AppendTrauerFall(Dictionary<string, object?> dTrauerfall)
     {
-        var (sLastName, sFirstName) = PortedHelpers.SplitName(PortedHelpers.Cond(dTrauerfall, "name"));
+        var (sLastName, sFirstName) = dTrauerfall.Cond("name").SplitName();
         using var xCommand = new MySqlCommand(
             "INSERT INTO `Trauerfall` (`URL`, `Created`, `Preread_Birth`, `Preread_Death`, `Fullname`, `Firstname`, `Lastname`, `Birthname`, `Place`, `Created_by`) VALUES (@url, @created, @birth, @death, @fullName, @firstName, @lastName, @birthName, @place, @createdBy);",
             _dbConn);
-        xCommand.Parameters.AddWithValue("@url", PortedHelpers.Cond(dTrauerfall, "url"));
-        xCommand.Parameters.AddWithValue("@created", ToDbValue(PortedHelpers.Str2Date(PortedHelpers.Cond(dTrauerfall, "created_on"))));
-        xCommand.Parameters.AddWithValue("@birth", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(PortedHelpers.Cond(dTrauerfall, "Birth")))));
-        xCommand.Parameters.AddWithValue("@death", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(PortedHelpers.Cond(dTrauerfall, "Death")))));
+        xCommand.Parameters.AddWithValue("@url", dTrauerfall.Cond("url"));
+        xCommand.Parameters.AddWithValue("@created", ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond("created_on"))));
+        xCommand.Parameters.AddWithValue("@birth", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond("Birth")))));
+        xCommand.Parameters.AddWithValue("@death", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond("Death")))));
         xCommand.Parameters.AddWithValue("@fullName", $"{sLastName}, {sFirstName}");
         xCommand.Parameters.AddWithValue("@firstName", sFirstName);
         xCommand.Parameters.AddWithValue("@lastName", sLastName);
-        xCommand.Parameters.AddWithValue("@birthName", PortedHelpers.Cond(dTrauerfall, "Birthname"));
-        xCommand.Parameters.AddWithValue("@place", PortedHelpers.Cond(dTrauerfall, "Place"));
-        xCommand.Parameters.AddWithValue("@createdBy", PortedHelpers.Cond(dTrauerfall, "created_by"));
+        xCommand.Parameters.AddWithValue("@birthName", dTrauerfall.Cond("Birthname"));
+        xCommand.Parameters.AddWithValue("@place", dTrauerfall.Cond("Place"));
+        xCommand.Parameters.AddWithValue("@createdBy", dTrauerfall.Cond("created_by"));
         xCommand.ExecuteNonQuery();
         return xCommand.LastInsertedId;
     }
@@ -306,31 +309,31 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public long AppendTrauerAnz(long iTrauerfallId, Dictionary<string, object?> dTrauerfall, string sLocalPath)
     {
-        var sPath = Directory.GetParent(PortedHelpers.Cond(dTrauerfall, "img"))?.FullName ?? string.Empty;
+        var sPath = Directory.GetParent(dTrauerfall.Cond("img"))?.FullName ?? string.Empty;
         var sNormalizedLocalPath = sPath.Replace(sLocalPath, string.Empty, StringComparison.Ordinal);
         var sProfileBase = Directory.GetParent(Directory.GetParent(sPath)?.FullName ?? string.Empty)?.FullName ?? string.Empty;
-        var sProfileImage = PortedHelpers.Cond(dTrauerfall, "profImg").Replace(sProfileBase, "..\\..", StringComparison.Ordinal);
+        var sProfileImage = dTrauerfall.Cond("profImg").Replace(sProfileBase, "..\\..", StringComparison.Ordinal);
         var iRubrik = GetRubrik(dTrauerfall);
-        var (sLastName, sFirstName) = PortedHelpers.SplitName(PortedHelpers.Cond(dTrauerfall, "name"));
+        var (sLastName, sFirstName) = dTrauerfall.Cond("name").SplitName();
 
         using var xCommand = new MySqlCommand(
             "INSERT INTO `Anzeigen` (`idTrauerfall`, `url`, `Announcement`, `release`,`localpath`, `pngFile`, `pdfFile`, `Additional`, `Firstname`,`Lastname`, `Birthname`, `Birth`, `Death`, `Place`, `Info`, `ProfileImg`, `Rubrik`) VALUES (@idtf, @url, @announcement, @release, @localpath, @pngFile, @pdfFile, @additional, @firstName, @lastName, @birthName, @birth, @death, @place, @info, @profileImg, @rubrik);",
             _dbConn);
         xCommand.Parameters.AddWithValue("@idtf", iTrauerfallId);
-        xCommand.Parameters.AddWithValue("@url", PortedHelpers.Cond(dTrauerfall, "url"));
-        xCommand.Parameters.AddWithValue("@announcement", int.TryParse(PortedHelpers.Cond(dTrauerfall, "id"), out var iId) ? iId : 0);
-        xCommand.Parameters.AddWithValue("@release", ToDbValue(PortedHelpers.Str2Date(PortedHelpers.Cond(dTrauerfall, "publish"))));
+        xCommand.Parameters.AddWithValue("@url", dTrauerfall.Cond("url"));
+        xCommand.Parameters.AddWithValue("@announcement", int.TryParse(dTrauerfall.Cond("id"), out var iId) ? iId : 0);
+        xCommand.Parameters.AddWithValue("@release", ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond("publish"))));
         xCommand.Parameters.AddWithValue("@localpath", sNormalizedLocalPath);
-        xCommand.Parameters.AddWithValue("@pngFile", Path.GetFileName(PortedHelpers.Cond(dTrauerfall, "img")));
-        xCommand.Parameters.AddWithValue("@pdfFile", Path.GetFileName(PortedHelpers.Cond(dTrauerfall, "pdf")));
+        xCommand.Parameters.AddWithValue("@pngFile", Path.GetFileName(dTrauerfall.Cond("img")));
+        xCommand.Parameters.AddWithValue("@pdfFile", Path.GetFileName(dTrauerfall.Cond("pdf")));
         xCommand.Parameters.AddWithValue("@additional", JsonSerializer.Serialize(dTrauerfall, PortedHelpers.JsonOptions));
         xCommand.Parameters.AddWithValue("@firstName", sFirstName);
         xCommand.Parameters.AddWithValue("@lastName", sLastName);
-        xCommand.Parameters.AddWithValue("@birthName", PortedHelpers.Cond(dTrauerfall, "Birthname"));
-        xCommand.Parameters.AddWithValue("@birth", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(PortedHelpers.Cond(dTrauerfall, "Birth")))));
-        xCommand.Parameters.AddWithValue("@death", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(PortedHelpers.Cond(dTrauerfall, "Death")))));
-        xCommand.Parameters.AddWithValue("@place", PortedHelpers.Cond(dTrauerfall, "Place"));
-        xCommand.Parameters.AddWithValue("@info", PortedHelpers.Cond(dTrauerfall, "pdfText"));
+        xCommand.Parameters.AddWithValue("@birthName", dTrauerfall.Cond("Birthname"));
+        xCommand.Parameters.AddWithValue("@birth", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond("Birth")))));
+        xCommand.Parameters.AddWithValue("@death", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond("Death")))));
+        xCommand.Parameters.AddWithValue("@place", dTrauerfall.Cond("Place"));
+        xCommand.Parameters.AddWithValue("@info", dTrauerfall.Cond("pdfText"));
         xCommand.Parameters.AddWithValue("@profileImg", sProfileImage);
         xCommand.Parameters.AddWithValue("@rubrik", iRubrik);
         xCommand.ExecuteNonQuery();
@@ -375,7 +378,7 @@ public sealed class DataHandler : IDisposable
             }
         }
 
-        var (sLastName, sFirstName) = PortedHelpers.SplitName(PortedHelpers.Cond(dTrauerfall, "name"));
+        var (sLastName, sFirstName) = PortedHelpers.Cond(dTrauerfall, "name").SplitName();
         foreach (var kvPair in new Dictionary<string, object?>
         {
             ["url"] = PortedHelpers.Cond(dTrauerfall, "url"),

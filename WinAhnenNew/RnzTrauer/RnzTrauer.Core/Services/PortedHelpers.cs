@@ -57,17 +57,14 @@ public static class PortedHelpers
     /// <summary>
     /// Returns a trimmed string value from a loosely typed dictionary.
     /// </summary>
-    public static string Cond(IReadOnlyDictionary<string, object?> dValues, string sKey)
-    {
-        return dValues.TryGetValue(sKey, out var xValue)
+    public static string Cond(this IReadOnlyDictionary<string, object?> dValues, string sKey) => dValues.TryGetValue(sKey, out var xValue)
             ? Convert.ToString(xValue, CultureInfo.InvariantCulture)?.Trim(' ') ?? string.Empty
             : string.Empty;
-    }
 
     /// <summary>
     /// Crops the input string at the first occurrence of the specified separator.
     /// </summary>
-    public static string LCropStr(string sOriginal, string sSeparator)
+    public static string LCropStr(this string sOriginal, string sSeparator)
     {
         var iFound = sOriginal.IndexOf(sSeparator, StringComparison.Ordinal);
         return iFound >= 0 ? sOriginal[..iFound] : sOriginal;
@@ -76,7 +73,7 @@ public static class PortedHelpers
     /// <summary>
     /// Splits a full name into last name and first name using the original Python rules.
     /// </summary>
-    public static (string LastName, string FirstName) SplitName(string sName)
+    public static (string LastName, string FirstName) SplitName(this string sName)
     {
         var arrNames = sName.Trim(' ').Split(' ', StringSplitOptions.RemoveEmptyEntries).ToArray();
         if (arrNames.Length == 0)
@@ -98,11 +95,11 @@ public static class PortedHelpers
             else if (arrNames[iIndex].Contains('-', StringComparison.Ordinal))
             {
                 var arrParts = arrNames[iIndex].Split('-', 2);
-                arrNames[iIndex] = $"{Capitalize(arrParts[0])}-{Capitalize(arrParts.Length > 1 ? arrParts[1] : string.Empty)}";
+                arrNames[iIndex] = $"{arrParts[0].Capitalize()}-{(arrParts.Length > 1 ? arrParts[1].Capitalize() : string.Empty)}";
             }
             else
             {
-                arrNames[iIndex] = Capitalize(arrNames[iIndex]);
+                arrNames[iIndex] = arrNames[iIndex].Capitalize();
             }
         }
 
@@ -171,7 +168,7 @@ public static class PortedHelpers
             else
             {
                 var iStartIndex = Math.Min(sLocalPath.Length, iFound + 16);
-                var sDateFragment = LCropStr(sLocalPath.Substring(iStartIndex, Math.Min(10, Math.Max(0, sLocalPath.Length - iStartIndex))), "\\");
+                var sDateFragment = sLocalPath.Substring(iStartIndex, Math.Min(10, Math.Max(0, sLocalPath.Length - iStartIndex))).LCropStr("\\");
                 var arrSplit = sDateFragment.Split('-');
                 if (arrSplit.Length >= 3)
                 {
@@ -187,7 +184,7 @@ public static class PortedHelpers
         iFound = sLocalPath.IndexOf(sMarker, StringComparison.Ordinal);
         if (iFound >= 0)
         {
-            var sPathPart = LCropStr(sLocalPath[(iFound + sMarker.Length)..], "\\");
+            var sPathPart = sLocalPath[(iFound + sMarker.Length)..].LCropStr("\\");
             using var xMd5 = MD5.Create();
             var arrDigest = xMd5.ComputeHash(Encoding.UTF8.GetBytes(sPathPart));
             var iCrc = (((int)arrDigest[^2] << 8) | arrDigest[^1]) & 1023;
@@ -223,38 +220,35 @@ public static class PortedHelpers
     /// <summary>
     /// Converts a supported CLR value into a <see cref="JsonNode"/>.
     /// </summary>
-    public static JsonNode? ToJsonNode(object? xValue)
+    public static JsonNode? ToJsonNode(this object? xValue) => xValue switch
     {
-        return xValue switch
-        {
-            null => null,
-            JsonNode xNode => xNode.DeepClone(),
-            string sValue => JsonValue.Create(sValue),
-            bool xValue1 => JsonValue.Create(xValue1),
-            int iValue => JsonValue.Create(iValue),
-            long iValue => JsonValue.Create(iValue),
-            double fValue => JsonValue.Create(fValue),
-            decimal fValue => JsonValue.Create(fValue),
-            DateOnly dtValue => JsonValue.Create(dtValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
-            DateTime dtValue => JsonValue.Create(dtValue.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)),
-            byte[] arrBytes => JsonValue.Create(Convert.ToBase64String(arrBytes)),
-            IDictionary<string, object?> dValues => ToJsonObject(new Dictionary<string, object?>(dValues, StringComparer.Ordinal)),
-            IDictionary<string, string> dValues => ToJsonObject(dValues.ToDictionary(k => k.Key, v => (object?)v.Value)),
-            IEnumerable<Dictionary<string, object?>> arrItems => ToJsonArray(arrItems.Cast<object?>()),
-            IEnumerable<object?> arrItems when xValue is not string => ToJsonArray(arrItems),
-            _ => JsonSerializer.SerializeToNode(xValue, JsonOptions)
-        };
-    }
+        null => null,
+        JsonNode xNode => xNode.DeepClone(),
+        string sValue => JsonValue.Create(sValue),
+        bool xValue1 => JsonValue.Create(xValue1),
+        int iValue => JsonValue.Create(iValue),
+        long iValue => JsonValue.Create(iValue),
+        double fValue => JsonValue.Create(fValue),
+        decimal fValue => JsonValue.Create(fValue),
+        DateOnly dtValue => JsonValue.Create(dtValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
+        DateTime dtValue => JsonValue.Create(dtValue.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)),
+        byte[] arrBytes => JsonValue.Create(Convert.ToBase64String(arrBytes)),
+        IDictionary<string, object?> dValues => ToJsonObject(new Dictionary<string, object?>(dValues, StringComparer.Ordinal)),
+        IDictionary<string, string> dValues => ToJsonObject(dValues.ToDictionary(k => k.Key, v => (object?)v.Value)),
+        IEnumerable<Dictionary<string, object?>> arrItems => ToJsonArray(arrItems.Cast<object?>()),
+        IEnumerable<object?> arrItems when xValue is not string => ToJsonArray(arrItems),
+        _ => JsonSerializer.SerializeToNode(xValue, JsonOptions)
+    };
 
     /// <summary>
     /// Converts a dictionary into a JSON object.
     /// </summary>
-    public static JsonObject ToJsonObject(IReadOnlyDictionary<string, object?> dValues)
+    public static JsonObject ToJsonObject(this IReadOnlyDictionary<string, object?> dValues)
     {
         var xObject = new JsonObject();
         foreach (var kvValue in dValues)
         {
-            xObject[kvValue.Key] = ToJsonNode(kvValue.Value);
+            xObject[kvValue.Key] = kvValue.Value.ToJsonNode();
         }
 
         return xObject;
@@ -265,13 +259,13 @@ public static class PortedHelpers
         var xArray = new JsonArray();
         foreach (var xItem in arrItems)
         {
-            xArray.Add(ToJsonNode(xItem));
+            xArray.Add(xItem.ToJsonNode());
         }
 
         return xArray;
     }
 
-    private static string Capitalize(string sValue)
+    public static string Capitalize(this string sValue)
     {
         if (string.IsNullOrEmpty(sValue))
         {
