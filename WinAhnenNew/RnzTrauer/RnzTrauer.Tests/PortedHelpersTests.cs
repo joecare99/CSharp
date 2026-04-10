@@ -11,7 +11,7 @@ public sealed class PortedHelpersTests
     [TestMethod]
     public void LCropStr_Returns_Left_Part()
     {
-        Assert.AreEqual("123", PortedHelpers.LCropStr("1234567", "4"));
+        Assert.AreEqual("123", "1234567".LCropStr("4"));
     }
 
     [DataTestMethod]
@@ -25,7 +25,7 @@ public sealed class PortedHelpersTests
     [DataRow(" aa bb-cc ", "Bb-Cc", "Aa")]
     public void SplitName_Matches_Python_Behaviour(string input, string expectedLastName, string expectedFirstName)
     {
-        var (lastName, firstName) = PortedHelpers.SplitName(input);
+        var (lastName, firstName) = input.SplitName();
         Assert.AreEqual(expectedLastName, lastName);
         Assert.AreEqual(expectedFirstName, firstName);
     }
