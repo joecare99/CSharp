@@ -1,13 +1,21 @@
-﻿using AmtsblattLoader.Console.ViewModels;
+﻿using Microsoft.Extensions.DependencyInjection;
+using AmtsblattLoader.Console.ViewModels;
 using AmtsblattLoader.Console.Views;
 using RnzTrauer.Core;
 
-var xView = new ConsoleOutputView();
+var xServices = new ServiceCollection()
+    .AddSingleton<IFile, FileProxy>()
+    .AddSingleton<IConfigLoader, ConfigLoader>()
+    .AddTransient<ConsoleOutputView>()
+    .AddTransient<AmtsblattLoaderConsoleViewModel>()
+    .BuildServiceProvider();
+
+var xView = xServices.GetRequiredService<ConsoleOutputView>();
 
 try
 {
-    var xConfig = AmtsblattConfig.Load(Path.Combine(AppContext.BaseDirectory, "Amtsblatt_Cfg.json"));
-    var xViewModel = new AmtsblattLoaderConsoleViewModel(xView);
+    var xConfig = new AmtsblattConfig(xServices.GetRequiredService<IConfigLoader>()).Load(Path.Combine(AppContext.BaseDirectory, "Amtsblatt_Cfg.json"));
+    var xViewModel = xServices.GetRequiredService<AmtsblattLoaderConsoleViewModel>();
     xViewModel.Run(xConfig);
 }
 catch (FileNotFoundException ex)
