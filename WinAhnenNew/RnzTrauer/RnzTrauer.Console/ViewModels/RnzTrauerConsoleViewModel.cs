@@ -11,13 +11,19 @@ namespace RnzTrauer.Console.ViewModels;
 public sealed class RnzTrauerConsoleViewModel
 {
     private readonly ConsoleOutputView _view;
+    private readonly IFile _xFile;
+    private readonly IHttpClientProxy _xHttpClient;
+    private readonly IWebDriverFactory _xWebDriverFactory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RnzTrauerConsoleViewModel"/> class.
     /// </summary>
-    public RnzTrauerConsoleViewModel(ConsoleOutputView xView)
+    public RnzTrauerConsoleViewModel(ConsoleOutputView xView, IFile xFile, IHttpClientProxy xHttpClient, IWebDriverFactory xWebDriverFactory)
     {
         _view = xView;
+        _xFile = xFile ?? throw new ArgumentNullException(nameof(xFile));
+        _xHttpClient = xHttpClient ?? throw new ArgumentNullException(nameof(xHttpClient));
+        _xWebDriverFactory = xWebDriverFactory ?? throw new ArgumentNullException(nameof(xWebDriverFactory));
     }
 
     /// <summary>
@@ -26,7 +32,18 @@ public sealed class RnzTrauerConsoleViewModel
     public void Run(RnzConfig xConfig)
     {
         _view.WriteLine("Start...");
-        using var xWebHandler = new WebHandler(xConfig);
+        var xProgress = new Progress<WebHandlerProgress>(xUpdate =>
+        {
+            if (xUpdate.WriteLine)
+            {
+                _view.WriteLine(xUpdate.Text);
+            }
+            else
+            {
+                _view.Write(xUpdate.Text);
+            }
+        });
+        using var xWebHandler = new WebHandler(xConfig, _xHttpClient, _xWebDriverFactory, xProgress);
         xWebHandler.InitPage();
 
         _view.WriteLine("Init...");
@@ -86,7 +103,7 @@ public sealed class RnzTrauerConsoleViewModel
 
         xWebHandler.Close();
 
-        using var xDataHandler = new DataHandler(xConfig);
+        using var xDataHandler = new DataHandler(xConfig, _xFile);
         iDayDelta = 0;
         while (iDayDelta <= 14)
         {
@@ -108,10 +125,10 @@ public sealed class RnzTrauerConsoleViewModel
                     var sJsonFile = Path.HasExtension(sPath)
                         ? Path.ChangeExtension(sPath, ".json")
                         : sPath + ".json";
-                    if (File.Exists(sJsonFile))
+                    if (_xFile.Exists(sJsonFile))
                     {
-                        var xData = JsonNode.Parse(File.ReadAllText(sJsonFile));
-                        var arrTrauerfaelle = DataHandler.ExtractTrauerData(xData, xConfig.LocalPath);
+                        var xData = JsonNode.Parse(_xFile.ReadAllText(sJsonFile));
+                        var arrTrauerfaelle = xDataHandler.ExtractTrauerData(xData, xConfig.LocalPath);
                         xDataHandler.TrauerDataToDb(arrTrauerfaelle, xConfig.LocalPath);
                     }
                     else
@@ -143,11 +160,11 @@ public sealed class RnzTrauerConsoleViewModel
                     var sParent = Convert.ToString(xParentValue) ?? string.Empty;
                     var sParentPath = PortedHelpers.GetLocalPath(sParent, xConfig.LocalPath);
                     sParentPath = Path.HasExtension(sParentPath) ? Path.ChangeExtension(sParentPath, ".json") : sParentPath + ".json";
-                    if (File.Exists(sParentPath))
+                    if (_xFile.Exists(sParentPath))
                     {
                         try
                         {
-                            dParentData[sParent] = JsonNode.Parse(File.ReadAllText(sParentPath)) as JsonObject ?? new JsonObject();
+                            dParentData[sParent] = JsonNode.Parse(_xFile.ReadAllText(sParentPath)) as JsonObject ?? new JsonObject();
                         }
                         catch
                         {
@@ -168,15 +185,15 @@ public sealed class RnzTrauerConsoleViewModel
             var sLocalPath = PortedHelpers.GetLocalPath(Convert.ToString(dPage["url"]) ?? string.Empty, xConfig.LocalPath);
             var sHtmlPath = Path.HasExtension(sLocalPath) ? sLocalPath : sLocalPath + ".html";
             Directory.CreateDirectory(Path.GetDirectoryName(sHtmlPath)!);
-            File.WriteAllText(sHtmlPath, Convert.ToString(dPage["content"]) ?? string.Empty);
+            _xFile.WriteAllText(sHtmlPath, Convert.ToString(dPage["content"]) ?? string.Empty);
 
             var sJsonPath = Path.ChangeExtension(sHtmlPath, ".json");
             var xPageNode = PortedHelpers.ToJsonObject(dPage);
-            if (File.Exists(sJsonPath))
+            if (_xFile.Exists(sJsonPath))
             {
                 try
                 {
-                    var xOldNode = JsonNode.Parse(File.ReadAllText(sJsonPath)) as JsonObject;
+                    var xOldNode = JsonNode.Parse(_xFile.ReadAllText(sJsonPath)) as JsonObject;
                     if (xOldNode is not null)
                     {
                         foreach (var kvValue in xOldNode)
@@ -194,7 +211,7 @@ public sealed class RnzTrauerConsoleViewModel
                 }
             }
 
-            File.WriteAllText(sJsonPath, xPageNode.ToJsonString(PortedHelpers.JsonOptions));
+            _xFile.WriteAllText(sJsonPath, xPageNode.ToJsonString(PortedHelpers.JsonOptions));
 
             if (dPage.TryGetValue("parent", out xParentObject) && xParentObject is List<object?> arrParentList)
             {
@@ -214,7 +231,7 @@ public sealed class RnzTrauerConsoleViewModel
                     {
                         foreach (var kvValue in dEntryCopy)
                         {
-                            xTarget[kvValue.Key] = PortedHelpers.ToJsonNode(kvValue.Value);
+                            xTarget[kvValue.Key] = kvValue.Value.ToJsonNode();
                         }
 
                         xParentChanged = true;
@@ -223,7 +240,7 @@ public sealed class RnzTrauerConsoleViewModel
                     if (xParentChanged)
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(dParentPaths[sParent])!);
-                        File.WriteAllText(dParentPaths[sParent], dParentData[sParent].ToJsonString(PortedHelpers.JsonOptions));
+                        _xFile.WriteAllText(dParentPaths[sParent], dParentData[sParent].ToJsonString(PortedHelpers.JsonOptions));
                     }
                 }
             }
@@ -245,11 +262,11 @@ public sealed class RnzTrauerConsoleViewModel
                 sParentPath = Path.HasExtension(sParentPath) ? Path.ChangeExtension(sParentPath, ".json") : sParentPath + ".json";
                 JsonObject xParentData;
                 var xParentChanged = false;
-                if (File.Exists(sParentPath))
+                if (_xFile.Exists(sParentPath))
                 {
                     try
                     {
-                        xParentData = JsonNode.Parse(File.ReadAllText(sParentPath)) as JsonObject ?? new JsonObject();
+                        xParentData = JsonNode.Parse(_xFile.ReadAllText(sParentPath)) as JsonObject ?? new JsonObject();
                     }
                     catch
                     {
@@ -274,7 +291,7 @@ public sealed class RnzTrauerConsoleViewModel
                     var sLocalPath = PortedHelpers.GetLocalPath(sHref, xConfig.LocalPath, dtCurrent);
                     var sDataPath = Path.Combine(sLocalPath, $"data_{dtCurrent:yyyy-MM-dd}.json");
                     Directory.CreateDirectory(Path.GetDirectoryName(sDataPath)!);
-                    File.WriteAllText(sDataPath, PortedHelpers.ToJsonObject(dEntryCopy).ToJsonString(PortedHelpers.JsonOptions));
+                    _xFile.WriteAllText(sDataPath, PortedHelpers.ToJsonObject(dEntryCopy).ToJsonString(PortedHelpers.JsonOptions));
                 }
 
                 var sSource = Convert.ToString(dEntry.GetValueOrDefault(WebHandler.CsSrc)) ?? string.Empty;
@@ -301,7 +318,7 @@ public sealed class RnzTrauerConsoleViewModel
                     }
 
                     Directory.CreateDirectory(Path.GetDirectoryName(sFilePath)!);
-                    File.WriteAllBytes(sFilePath, arrData);
+                    _xFile.WriteAllBytes(sFilePath, arrData);
                     dEntryCopy["localpath"] = sFilePath;
                     xParentData[sSource] = PortedHelpers.ToJsonObject(dEntryCopy);
                     xParentChanged = true;
@@ -310,7 +327,7 @@ public sealed class RnzTrauerConsoleViewModel
                 if (xParentChanged)
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(sParentPath)!);
-                    File.WriteAllText(sParentPath, xParentData.ToJsonString(PortedHelpers.JsonOptions));
+                    _xFile.WriteAllText(sParentPath, xParentData.ToJsonString(PortedHelpers.JsonOptions));
                 }
             }
             catch

@@ -1,13 +1,23 @@
-﻿using RnzTrauer.Console.ViewModels;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RnzTrauer.Console.ViewModels;
 using RnzTrauer.Console.Views;
 using RnzTrauer.Core;
 
-var xView = new ConsoleOutputView();
+var xServices = new ServiceCollection()
+    .AddSingleton<IFile, FileProxy>()
+    .AddSingleton<IConfigLoader, ConfigLoader>()
+    .AddSingleton<IHttpClientProxy, HttpClientProxy>()
+    .AddSingleton<IWebDriverFactory, FirefoxWebDriverFactory>()
+    .AddTransient<ConsoleOutputView>()
+    .AddTransient<RnzTrauerConsoleViewModel>()
+    .BuildServiceProvider();
+
+var xView = xServices.GetRequiredService<ConsoleOutputView>();
 
 try
 {
-    var xConfig = RnzConfig.Load(Path.Combine(AppContext.BaseDirectory, "RNZ_Config.json"));
-    var xViewModel = new RnzTrauerConsoleViewModel(xView);
+    var xConfig = new RnzConfig(xServices.GetRequiredService<IConfigLoader>()).Load(Path.Combine(AppContext.BaseDirectory, "RNZ_Config.json"));
+    var xViewModel = xServices.GetRequiredService<RnzTrauerConsoleViewModel>();
     xViewModel.Run(xConfig);
 }
 catch (FileNotFoundException ex)
