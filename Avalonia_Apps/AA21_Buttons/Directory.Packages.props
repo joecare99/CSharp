@@ -31,4 +31,8 @@
     <PackageVersion Include="MSTest" Version="4.0.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Security fix: GHSA-xrw6-gwf8-vvr9 (High) - transitive via Avalonia -->
+    <GlobalPackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" PrivateAssets="all" />
+  </ItemGroup>
 </Project>
