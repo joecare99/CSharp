@@ -12,7 +12,7 @@ using System.IO;
 using System.Reflection;
 using AA25_RichTextEdit.ViewModels.Interfaces;
 using Avalonia.ViewModels;
-using AvRichTextBox;
+using Avln_CommonDialogs.Base.Interfaces;
 
 namespace AA25_RichTextEdit.ViewModels;
 
@@ -23,9 +23,14 @@ public partial class RichTextEditViewModel : BaseViewModelCT, IRichTextEditViewM
     public DateTime Now => _model.Now;
 
     [ObservableProperty]
-    private FlowDocument _document; // Avalonia uses plain string for now
+    private string _document = string.Empty; // Avalonia uses plain string for now
 
     public Action? CloseApp { get; set; }
+
+    // Dialog delegates – set by the View, called by ViewModel commands
+    public Func<string, IOpenFileDialog, Action<string, IOpenFileDialog>?, Task<bool?>>? FileOpenDialog { get; set; }
+    public Func<string, ISaveFileDialog, Action<string, ISaveFileDialog>?, Task<bool?>>? FileSaveAsDialog { get; set; }
+    public Func<IPrintDialog, Action<IPrintDialog, object?>?, Task<bool?>>? dPrintDialog { get; set; }
 
     public string XamlFileName { get; private set; } = string.Empty;
 
@@ -38,7 +43,7 @@ public partial class RichTextEditViewModel : BaseViewModelCT, IRichTextEditViewM
     {
         _model = model;
         _model.PropertyChanged += OnMPropertyChanged;
-        _document = _model.EmptyText;
+        _document = _model.EmptyText; // string = string
     }
 
     private void OnMPropertyChanged(object? sender, PropertyChangedEventArgs e)

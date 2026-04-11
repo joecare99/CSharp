@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel;
-using MVVM.ViewModel;
+using Avalonia.ViewModels;
 
 /// <summary>
 /// The Tests namespace.

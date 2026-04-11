@@ -4,6 +4,7 @@
 		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
+		<RunSettingsFilePath>C:\Projekte\GitHub\Avalonia_Apps\bin\AA25_RichTextEditTests\Debug\net8.0\fine-code-coverage\coverage-tool-output\AA25_RichTextEditTests %28net8.0%29-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

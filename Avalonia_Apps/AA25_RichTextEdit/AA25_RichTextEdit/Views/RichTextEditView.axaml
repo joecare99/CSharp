@@ -5,7 +5,8 @@
              xmlns:vmi="clr-namespace:AA25_RichTextEdit.ViewModels.Interfaces"
              x:DataType="vmi:IRichTextEditViewModel">
   <DockPanel Background="Silver">
-    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" FlowDirection="LeftToRight" UseLayoutRounding="True">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" FlowDirection="LeftToRight" UseLayoutRounding="True"
+                x:CompileBindings="False">
       <Button Classes="toolbar" Command="{Binding NewTextCommand}" ToolTip.Tip="New Document">
         <TextBlock Text="&#xE7C3;" />
       </Button>
@@ -61,7 +62,8 @@
     </StackPanel>
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,*">
       <TextBlock Text="{Binding Now}" Margin="4"/>
-      <avrichtextbox:RichTextBox x:Name="rtb" Grid.Row="1" Grid.Column="0" FlowDocument="{Binding Document}" />
+      <!-- TODO: bind FlowDocument via converter once Document→FlowDocument conversion is implemented -->
+      <avrichtextbox:RichTextBox x:Name="rtb" Grid.Row="1" Grid.Column="0" />
       <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Document}" IsReadOnly="True"/>
     </Grid>
   </DockPanel>
