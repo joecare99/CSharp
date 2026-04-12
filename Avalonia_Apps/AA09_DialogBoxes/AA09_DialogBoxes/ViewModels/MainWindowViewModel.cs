@@ -17,19 +17,16 @@ using CommunityToolkit.Mvvm.Messaging;
 using AA09_DialogBoxes.Messages;
 using Avalonia.ViewModels;
 using System.Threading.Tasks;
-using MsBox.Avalonia.Enums;
 
 namespace AA09_DialogBoxes.ViewModels;
-
-public enum MsgBoxResult { None, Yes, No }
 
 public partial class MainWindowViewModel : ViewModelBase
 {
     #region Properties
     [ObservableProperty]
-    public partial string Name { get; set; }= "<Name>";
+    public partial string Name { get; set;} = "<Name>";
     [ObservableProperty]
-    public partial string Email { get; set; }= "<Email>";
+    public partial string Email { get; set; } = "<Email>";
     [ObservableProperty]
     private int cnt = 1;
     #endregion
@@ -42,10 +39,19 @@ public partial class MainWindowViewModel : ViewModelBase
         var request = new MessageBoxRequestMessage("Frage", "Willst Du Das ?");
         WeakReferenceMessenger.Default.Send(request);
         var result = await request.Response;
-        if (result == ButtonResult.Yes)
+        if (result == MsgBoxResult.Yes)
             Name = "42 Entwickler";
         else
             Name = "Nö";
+    }
+
+    [RelayCommand]
+    private async Task OpenOverlayMsg()
+    {
+        var request = new OverlayMessageRequestMessage("Overlay Frage", "Soll der In-Window-Overlay-Dialog verwendet werden?");
+        WeakReferenceMessenger.Default.Send(request);
+        var result = await request.Response;
+        Name = result == MsgBoxResult.Yes ? "Overlay: Ja" : "Overlay: Nein";
     }
 
     [RelayCommand]
