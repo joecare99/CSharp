@@ -7,7 +7,7 @@ namespace RepoMigrator.Core;
 public sealed class MigrationService : IMigrationService
 {
     private readonly IProviderFactory _factory;
-
+    public bool IsRunning { get; private set; }
     public MigrationService(IProviderFactory factory) => _factory = factory;
 
     public async Task MigrateAsync(
@@ -18,24 +18,32 @@ public sealed class MigrationService : IMigrationService
         IMigrationProgress progress,
         CancellationToken ct)
     {
-        if (options.TransferMode == RepositoryTransferMode.NativeHistory)
+        try
         {
-            await using var src = _factory.Create(source.Type);
-            progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.SourceOpening, src.Name);
-            await src.OpenAsync(source, ct);
-            progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.NativeHistoryTransferStarting, src.Name, target.Type);
-            await src.TransferAsync(source, target, options, progress, ct);
-            progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.MigrationCompleted);
-            return;
-        }
+            IsRunning = true;
+            if (options.TransferMode == RepositoryTransferMode.NativeHistory)
+            {
+                await using var src = _factory.Create(source.Type);
+                progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.SourceOpening, src.Name);
+                await src.OpenAsync(source, ct);
+                progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.NativeHistoryTransferStarting, src.Name, target.Type);
+                await src.TransferAsync(source, target, options, progress, ct);
+                progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.MigrationCompleted);
+                return;
+            }
 
-        if (options.ExecutionMode == MigrationExecutionMode.Pipelined && CanUsePipelinedExecution(source, target))
-        {
-            await MigrateSnapshotsPipelinedAsync(source, target, query, options, progress, ct);
-            return;
-        }
+            if (options.ExecutionMode == MigrationExecutionMode.Pipelined && CanUsePipelinedExecution(source, target))
+            {
+                await MigrateSnapshotsPipelinedAsync(source, target, query, options, progress, ct);
+                return;
+            }
 
-        await MigrateSnapshotsSequentialAsync(source, target, query, options, progress, ct);
+            await MigrateSnapshotsSequentialAsync(source, target, query, options, progress, ct);
+        } 
+        finally
+        {  
+            IsRunning = false; 
+        }
     }
 
     private async Task MigrateSnapshotsSequentialAsync(

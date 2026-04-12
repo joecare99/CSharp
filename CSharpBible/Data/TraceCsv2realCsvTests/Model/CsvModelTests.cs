@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using BaseLib.Helper;
+using TraceAnalysis.Filter.CSV.Model;
 
 namespace TraceCsv2realCsv.Model.Tests
 {

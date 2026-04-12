@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <!-- MSTest v4 (angenommen Version 4.0.0 verfügbar) -->
-    <PackageReference Include="MSTest" Version="4.1.0" />
+    <PackageReference Include="MSTest" Version="4.2.1" />
 
     <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />

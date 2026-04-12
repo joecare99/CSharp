@@ -32,7 +32,6 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     private string? _sSelectedSvnFromRevisionId;
     private string? _sSelectedSvnToRevisionId;
     private string? _sCurrentChangeSetId;
-    private WorkflowStage _workflowStage = WorkflowStage.Setup;
     private string? _targetUser;
     private string? _targetPassword;
     private bool _xUsePipelinedMigration;
@@ -214,6 +213,14 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     [NotifyPropertyChangedFor(nameof(IsIdle))]
     [NotifyPropertyChangedFor(nameof(CanStartMigration))]
     public partial bool IsRunning { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSetupStage))]
+    [NotifyPropertyChangedFor(nameof(IsOptionsStage))]
+    [NotifyPropertyChangedFor(nameof(IsExecutionStage))]
+    [NotifyPropertyChangedFor(nameof(ShowCompactEndpointSummaries))]
+    public partial WorkflowStage WorkflowStage { get; private set; } = WorkflowStage.Setup;
+
     public bool IsIdle => !IsRunning;
     public bool CanConfigureGitHistory => SourceType == RepoType.Git && TargetType == RepoType.Git;
     public bool CanConfigureSvnRevisions => SourceType == RepoType.Svn;
@@ -365,20 +372,6 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         Append(FormatProgressMessage(message, arrAdditional));
     }
 
-    public WorkflowStage WorkflowStage
-    {
-        get => _workflowStage;
-        private set
-        {
-            if (!SetProperty(ref _workflowStage, value))
-                return;
-
-            OnPropertyChanged(nameof(IsSetupStage));
-            OnPropertyChanged(nameof(IsOptionsStage));
-            OnPropertyChanged(nameof(IsExecutionStage));
-            OnPropertyChanged(nameof(ShowCompactEndpointSummaries));
-        }
-    }
 
     private void ApplyProgressState(MigrationReportMessage message, object?[] arrAdditional)
     {
@@ -854,7 +847,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         if (_isLoadingInputState)
             return;
 
-        if (IsRunning && workflowStage != WorkflowStage.Execution)
+        if (IsRunning && _migration.IsRunning && workflowStage != WorkflowStage.Execution && WorkflowStage == WorkflowStage.Execution)
             return;
 
         WorkflowStage = workflowStage;

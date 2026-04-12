@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using TraceCsv2realCsv.Model;
+using TraceAnalysis.Filter.CSV.Model;
 
 namespace TraceCsv2realCsv
 {
