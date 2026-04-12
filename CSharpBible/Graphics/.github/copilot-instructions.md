@@ -5,7 +5,11 @@ Apply these defaults when working in this repository unless the user explicitly 
 ## General Guidelines
 - Document code thoroughly in English.
 - Validate changes with relevant builds and tests before finishing.
-- If requirements are unclear, ask clarifying questions before starting implementation.
+- If requirements are unclear, ask clarifying questions before starting implementation or planning refinement.
+- Avoid UI text strings in core services. Use Enumerations instead, and keep UI-facing strings in the ViewModel/UI layer.
+- Prefer one class/interface/struct per file.
+- document changes in an DevOps-manner markdown prefered, extrapolate bugs, tasks, baglogs and features
+- Use `DevOps` as the planning directory in this workspace, and treat `.Info.md` as the general planning description file. Team terminology around Azure DevOps backlog items may differ from generic 'story' naming.
 
 ## Testing
 - Use `MSTest` in the latest practical version for new or updated tests.
@@ -17,7 +21,9 @@ Apply these defaults when working in this repository unless the user explicitly 
 
 ## Architecture
 - Use MVVM architecture for UI components to separate concerns and improve testability, using CommunityToolkit.Mvvm for MVVM implementation.
+- Prefer `NotifyPropertyChangedFor` over manual `OnPropertyChanged(nameof(...))` in CommunityToolkit.Mvvm observable properties where applicable.
 - Use Dependency Injection to manage dependencies and improve testability, using Microsoft.Extensions.DependencyInjection.
+- UI-facing strings and summary formatting should stay in the ViewModel/UI layer, not in extracted application logic services.
 
 ## Naming Conventions
 - Distinguish between UI control naming and variable/field naming.
@@ -33,7 +39,7 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Prefer meaningful domain names over type prefixes when the intent is already clear.
 - In UI code, use short 3-character prefixes for actual controls in views and code-behind, e.g.
 	- `lst` for list controls
-	- `btn` for buttons
+	- `btn` for all kind of buttons, 
 	- `edt` for any keyboard input control
 	- `lbl` for any text output control
 - Do not use UI control prefixes for ViewModel properties or other non-UI members.
