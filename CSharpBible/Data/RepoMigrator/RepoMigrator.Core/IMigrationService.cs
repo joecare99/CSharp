@@ -5,6 +5,8 @@ namespace RepoMigrator.Core;
 /// </summary>
 public interface IMigrationService
 {
+    bool IsRunning { get; }
+
     /// <summary>
     /// Migrates changes from a source repository endpoint to a target repository endpoint.
     /// </summary>
