@@ -27,7 +27,8 @@ public sealed class DataHandler : IDisposable
             UserID = xSettings.DBuser,
             Password = xSettings.DBpass,
             Database = xSettings.DB,
-            AllowUserVariables = true
+            AllowUserVariables = true,
+            ConvertZeroDateTime = true
         }.ConnectionString;
 
         _dbConn = new MySqlConnection(sConnectionString);
@@ -264,7 +265,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl)
     {
-        return Query("SELECT * FROM Trauerfall WHERE url=@url", xCommand => xCommand.Parameters.AddWithValue("@url", sUrl));
+        return Query("SELECT idTrauerfall, url FROM Trauerfall WHERE url=@url", xCommand => xCommand.Parameters.AddWithValue("@url", sUrl));
     }
 
     /// <summary>
@@ -309,7 +310,16 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public long AppendTrauerAnz(long iTrauerfallId, Dictionary<string, object?> dTrauerfall, string sLocalPath)
     {
-        var sPath = Directory.GetParent(dTrauerfall.Cond("img"))?.FullName ?? string.Empty;
+        string sImgPath = dTrauerfall.Cond("img");
+        if (string.IsNullOrEmpty(sImgPath))
+        {
+            sImgPath = dTrauerfall.Cond("pdf");
+        }
+        if (string.IsNullOrEmpty(sImgPath))
+        {
+            sImgPath = sLocalPath;
+        }
+        var sPath = Directory.GetParent(sImgPath)?.FullName ?? string.Empty;
         var sNormalizedLocalPath = sPath.Replace(sLocalPath, string.Empty, StringComparison.Ordinal);
         var sProfileBase = Directory.GetParent(Directory.GetParent(sPath)?.FullName ?? string.Empty)?.FullName ?? string.Empty;
         var sProfileImage = dTrauerfall.Cond("profImg").Replace(sProfileBase, "..\\..", StringComparison.Ordinal);
@@ -345,12 +355,21 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public void SetTrauerAnz(Dictionary<string, object?> dCurrent, Dictionary<string, object?> dTrauerfall, string sLocalPath)
     {
-        var sPath = Directory.GetParent(PortedHelpers.Cond(dTrauerfall, "img"))?.FullName ?? string.Empty;
+        string sImgPath = dTrauerfall.Cond("img");
+        if (string.IsNullOrEmpty(sImgPath))
+        {
+            sImgPath = dTrauerfall.Cond("pdf");
+        }
+        if (string.IsNullOrEmpty(sImgPath))
+        {
+            sImgPath = sLocalPath;
+        }
+        var sPath = Directory.GetParent(sImgPath)?.FullName ?? string.Empty;
         var sNormalizedLocalPath = sPath.Replace(sLocalPath, string.Empty, StringComparison.Ordinal);
         var sProfileBase = Directory.GetParent(Directory.GetParent(sPath)?.FullName ?? string.Empty)?.FullName ?? string.Empty;
-        var sProfileImage = PortedHelpers.Cond(dTrauerfall, "profImg").Replace(sProfileBase, "..\\..", StringComparison.Ordinal);
+        var sProfileImage = dTrauerfall.Cond( "profImg").Replace(sProfileBase, "..\\..", StringComparison.Ordinal);
         var iRubrik = dCurrent.TryGetValue("Rubrik", out var xCurrentRubrik) && int.TryParse(Convert.ToString(xCurrentRubrik, CultureInfo.InvariantCulture), out var iParsed) ? iParsed : 8050;
-        var sFilter = PortedHelpers.Cond(dTrauerfall, "filter");
+        var sFilter = dTrauerfall.Cond( "filter");
         if (sFilter == "danksagungen")
         {
             iRubrik = 8060;
@@ -378,23 +397,23 @@ public sealed class DataHandler : IDisposable
             }
         }
 
-        var (sLastName, sFirstName) = PortedHelpers.Cond(dTrauerfall, "name").SplitName();
+        var (sLastName, sFirstName) = dTrauerfall.Cond( "name").SplitName();
         foreach (var kvPair in new Dictionary<string, object?>
         {
-            ["url"] = PortedHelpers.Cond(dTrauerfall, "url"),
-            ["Announcement"] = int.TryParse(PortedHelpers.Cond(dTrauerfall, "id"), out var iId) ? iId : 0,
-            ["release"] = ToDbValue(PortedHelpers.Str2Date(PortedHelpers.Cond(dTrauerfall, "publish"))),
+            ["url"] = dTrauerfall.Cond( "url"),
+            ["Announcement"] = int.TryParse(dTrauerfall.Cond( "id"), out var iId) ? iId : 0,
+            ["release"] = ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond( "publish"))),
             ["localpath"] = sNormalizedLocalPath,
-            ["pngFile"] = Path.GetFileName(PortedHelpers.Cond(dTrauerfall, "img")),
-            ["pdfFile"] = Path.GetFileName(PortedHelpers.Cond(dTrauerfall, "pdf")),
+            ["pngFile"] = Path.GetFileName(dTrauerfall.Cond( "img")),
+            ["pdfFile"] = Path.GetFileName(dTrauerfall.Cond( "pdf")),
             ["Additional"] = JsonSerializer.Serialize(dTrauerfall, PortedHelpers.JsonOptions),
             ["Firstname"] = sFirstName,
             ["Lastname"] = sLastName,
-            ["Birthname"] = PortedHelpers.Cond(dTrauerfall, "Birthname"),
-            ["Birth"] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(PortedHelpers.Cond(dTrauerfall, "Birth")))),
-            ["Death"] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(PortedHelpers.Cond(dTrauerfall, "Death")))),
-            ["Place"] = PortedHelpers.Cond(dTrauerfall, "Place"),
-            ["Info"] = PortedHelpers.Cond(dTrauerfall, "pdfText"),
+            ["Birthname"] = dTrauerfall.Cond( "Birthname"),
+            ["Birth"] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond( "Birth")))),
+            ["Death"] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond( "Death")))),
+            ["Place"] = dTrauerfall.Cond( "Place"),
+            ["Info"] = dTrauerfall.Cond( "pdfText"),
             ["ProfileImg"] = sProfileImage,
             ["Rubrik"] = iRubrik
         })
@@ -413,12 +432,12 @@ public sealed class DataHandler : IDisposable
             "INSERT INTO `RNZ-Traueranzeigen`.`Anzeigen` (`Auftrag`, `url`, `Announcement`, `release`,`localpath`, `pngFile`, `pdfFile`, `Additional`) VALUES (@auftrag, @url, @announcement, @release, @localpath, @pngFile, @pdfFile, @additional);",
             _dbConn);
         xCommand.Parameters.AddWithValue("@auftrag", sAuftrag);
-        xCommand.Parameters.AddWithValue("@url", PortedHelpers.Cond(dTrauerfall, "url"));
-        xCommand.Parameters.AddWithValue("@announcement", int.TryParse(PortedHelpers.Cond(dTrauerfall, "id"), out var iId) ? iId : 0);
-        xCommand.Parameters.AddWithValue("@release", ToDbValue(PortedHelpers.Str2Date(PortedHelpers.Cond(dTrauerfall, "publish"))));
+        xCommand.Parameters.AddWithValue("@url", dTrauerfall.Cond( "url"));
+        xCommand.Parameters.AddWithValue("@announcement", int.TryParse(dTrauerfall.Cond( "id"), out var iId) ? iId : 0);
+        xCommand.Parameters.AddWithValue("@release", ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond( "publish"))));
         xCommand.Parameters.AddWithValue("@localpath", sNormalizedLocalPath);
-        xCommand.Parameters.AddWithValue("@pngFile", Path.GetFileName(PortedHelpers.Cond(dTrauerfall, "img")));
-        xCommand.Parameters.AddWithValue("@pdfFile", Path.GetFileName(PortedHelpers.Cond(dTrauerfall, "pdf")));
+        xCommand.Parameters.AddWithValue("@pngFile", Path.GetFileName(dTrauerfall.Cond( "img")));
+        xCommand.Parameters.AddWithValue("@pdfFile", Path.GetFileName(dTrauerfall.Cond( "pdf")));
         xCommand.Parameters.AddWithValue("@additional", JsonSerializer.Serialize(dTrauerfall, PortedHelpers.JsonOptions));
         xCommand.ExecuteNonQuery();
         return xCommand.LastInsertedId;
@@ -431,12 +450,20 @@ public sealed class DataHandler : IDisposable
     {
         foreach (var dAnnouncement in arrData)
         {
-            var arrCurrentCases = TrauerFallByUrl(PortedHelpers.Cond(dAnnouncement, "url"));
+            var dtCreated = PortedHelpers.Str2Date(dAnnouncement.Cond("created_on"));
+            var dtPublished = PortedHelpers.Str2Date(dAnnouncement.Cond("publish"));
+            if (!dtCreated.HasValue || !dtPublished.HasValue)
+            {
+                Console.WriteLine($"Skip incomplete announcement (missing created/publish): {dAnnouncement.Cond("url")}");
+                continue;
+            }
+
+            var arrCurrentCases = TrauerFallByUrl(dAnnouncement.Cond( "url"));
             var iTrauerfallId = arrCurrentCases.Count == 0
                 ? AppendTrauerFall(dAnnouncement)
-                : Convert.ToInt64(arrCurrentCases[0].Values.First(), CultureInfo.InvariantCulture);
+                : Convert.ToInt64(arrCurrentCases[0]["idTrauerfall"], CultureInfo.InvariantCulture);
 
-            var arrCurrentAnnouncements = TrauerAnz(int.TryParse(PortedHelpers.Cond(dAnnouncement, "id"), out var iId) ? iId : 0);
+            var arrCurrentAnnouncements = TrauerAnz(int.TryParse(dAnnouncement.Cond( "id"), out var iId) ? iId : 0);
             if (arrCurrentAnnouncements.Count == 0)
             {
                 Console.Write('+');
@@ -514,13 +541,18 @@ public sealed class DataHandler : IDisposable
             var dRow = new Dictionary<string, object?>(StringComparer.Ordinal);
             for (var iIndex = 0; iIndex < xReader.FieldCount; iIndex++)
             {
-                dRow[xReader.GetName(iIndex)] = xReader.IsDBNull(iIndex)
-                    ? null
-                    : xReader.GetValue(iIndex) switch
-                    {
-                        DateTime dtValue => dtValue.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-                        _ => xReader.GetValue(iIndex)
-                    };
+                if (xReader.IsDBNull(iIndex))
+                {
+                    dRow[xReader.GetName(iIndex)] = null;
+                    continue;
+                }
+
+                var xValue = xReader.GetValue(iIndex);
+                dRow[xReader.GetName(iIndex)] = xValue switch
+                {
+                    DateTime dtValue => dtValue.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+                    _ => xValue
+                };
             }
 
             arrData.Add(dRow);

@@ -185,7 +185,7 @@ public sealed class WebHandlerTests
         Assert.IsTrue(lstItems.All(dItem => dItem.ContainsKey(WebHandler.CsData)));
         Assert.IsTrue(lstItems.All(dItem => dItem.ContainsKey(WebHandler.CsHeader)));
         Assert.IsTrue(dPages.Values.All(dPage => dPage.ContainsKey("https://trauer.rnz.de/MEDIASERVER/image.jpg")));
-        _ = xHttpClient.Received(4).GetAsync("https://trauer.rnz.de/MEDIASERVER/image.jpg");
+        _ = xHttpClient.Received(1).GetAsync("https://trauer.rnz.de/MEDIASERVER/image.jpg");
         xProgress.Received().Report(new WebHandlerProgress("."));
     }
 
@@ -401,6 +401,17 @@ public sealed class WebHandlerTests
         Assert.AreEqual("https://example.invalid/subpage/anzeigen", lstItems[0]["parent"]);
     }
 
+    [DataTestMethod]
+    [DataRow("<html><head><script>window.setTimeout(function(){}, 1000);</script></head><body>ok</body></html>", false)]
+    [DataRow("504 gateway time-out", true)]
+    [DataRow("Service Unavailable", true)]
+    public void ContainsErrorMarker_Detects_Only_Real_Error_Texts(string sText, bool xExpected)
+    {
+        var xResult = InvokeNonPublicStaticMethod<bool>(typeof(WebHandler), "ContainsErrorMarker", sText);
+
+        Assert.AreEqual(xExpected, xResult);
+    }
+
     private static ReadOnlyCollection<IWebElement> CreateCollection(params IWebElement[] arrElements)
     {
         return new ReadOnlyCollection<IWebElement>(arrElements.ToList());
@@ -454,5 +465,110 @@ public sealed class WebHandlerTests
         var xMethod = xType.GetMethod(sMethodName, BindingFlags.Static | BindingFlags.NonPublic);
         Assert.IsNotNull(xMethod);
         return (T)xMethod.Invoke(null, arrArguments)!;
+    }
+
+    [TestMethod]
+    public void TryLoadBinary_CacheHit_Reuses_Same_ByteArray_Instance_Via_Reflection()
+    {
+        var xHttpClient = Substitute.For<IHttpClientProxy>();
+        var xResponse = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new ByteArrayContent([1, 2, 3])
+        };
+        xResponse.Headers.Add("X-Test", "1");
+        xHttpClient.GetAsync("https://example.invalid/cached.bin").Returns(Task.FromResult(xResponse));
+        using var xHandler = CreateHandler(xHttpClient: xHttpClient);
+
+        var dTarget1 = new Dictionary<string, object?>();
+        var dTarget2 = new Dictionary<string, object?>();
+
+        InvokeNonPublicInstanceMethod(xHandler, "TryLoadBinary", "https://example.invalid/cached.bin", dTarget1);
+        InvokeNonPublicInstanceMethod(xHandler, "TryLoadBinary", "https://example.invalid/cached.bin", dTarget2);
+
+        var arrData1 = (byte[])dTarget1[WebHandler.CsData]!;
+        var arrData2 = (byte[])dTarget2[WebHandler.CsData]!;
+        Assert.IsTrue(ReferenceEquals(arrData1, arrData2));
+        _ = xHttpClient.Received(1).GetAsync("https://example.invalid/cached.bin");
+    }
+
+    [TestMethod]
+    public void TryLoadBinary_CacheHit_Returns_Copied_Header_Dictionary_Via_Reflection()
+    {
+        var xHttpClient = Substitute.For<IHttpClientProxy>();
+        var xResponse = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new ByteArrayContent([1, 2, 3])
+        };
+        xResponse.Headers.Add("X-Test", "1");
+        xHttpClient.GetAsync("https://example.invalid/cached-headers.bin").Returns(Task.FromResult(xResponse));
+        using var xHandler = CreateHandler(xHttpClient: xHttpClient);
+
+        var dTarget1 = new Dictionary<string, object?>();
+        var dTarget2 = new Dictionary<string, object?>();
+
+        InvokeNonPublicInstanceMethod(xHandler, "TryLoadBinary", "https://example.invalid/cached-headers.bin", dTarget1);
+        var dHeaders1 = (Dictionary<string, string>)dTarget1[WebHandler.CsHeader]!;
+        dHeaders1["X-Test"] = "modified";
+
+        InvokeNonPublicInstanceMethod(xHandler, "TryLoadBinary", "https://example.invalid/cached-headers.bin", dTarget2);
+        var dHeaders2 = (Dictionary<string, string>)dTarget2[WebHandler.CsHeader]!;
+
+        Assert.IsFalse(ReferenceEquals(dHeaders1, dHeaders2));
+        Assert.AreEqual("1", dHeaders2["X-Test"]);
+    }
+
+    [TestMethod]
+    public void HasMeaningfulPageContent_Does_Not_Read_PageSource()
+    {
+        var xDriver = Substitute.For<IWebDriver>();
+        var xBody = Substitute.For<IWebElement>();
+
+        xDriver.Title.Returns("Traueranzeigen von Manfred Hindemith | Trauer.rnz.de");
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("body").ToString())).Returns(CreateCollection(xBody));
+        xBody.Text.Returns("Seiteninhalt");
+        xDriver.PageSource.Returns(_ => throw new WebDriverException("timeout"));
+
+        var xResult = InvokeNonPublicStaticMethod<bool>(typeof(WebHandler), "HasMeaningfulPageContent", xDriver);
+
+        Assert.IsTrue(xResult);
+    }
+
+    [TestMethod]
+    public void HasMeaningfulPageContent_Returns_False_For_Error_Text_In_Body()
+    {
+        var xDriver = Substitute.For<IWebDriver>();
+        var xBody = Substitute.For<IWebElement>();
+
+        xDriver.Title.Returns("Loaded");
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("body").ToString())).Returns(CreateCollection(xBody));
+        xBody.Text.Returns("504 gateway time-out");
+
+        var xResult = InvokeNonPublicStaticMethod<bool>(typeof(WebHandler), "HasMeaningfulPageContent", xDriver);
+
+        Assert.IsFalse(xResult);
+    }
+
+    [TestMethod]
+    public void TryLoadBinary_Mutating_Returned_Cached_ByteArray_Affects_Followup_Reads_Via_Reflection()
+    {
+        var xHttpClient = Substitute.For<IHttpClientProxy>();
+        var xResponse = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new ByteArrayContent([1, 2, 3])
+        };
+        xHttpClient.GetAsync("https://example.invalid/mutable-cache.bin").Returns(Task.FromResult(xResponse));
+        using var xHandler = CreateHandler(xHttpClient: xHttpClient);
+
+        var dTarget1 = new Dictionary<string, object?>();
+        var dTarget2 = new Dictionary<string, object?>();
+
+        InvokeNonPublicInstanceMethod(xHandler, "TryLoadBinary", "https://example.invalid/mutable-cache.bin", dTarget1);
+        var arrData1 = (byte[])dTarget1[WebHandler.CsData]!;
+        arrData1[0] = 9;
+
+        InvokeNonPublicInstanceMethod(xHandler, "TryLoadBinary", "https://example.invalid/mutable-cache.bin", dTarget2);
+        var arrData2 = (byte[])dTarget2[WebHandler.CsData]!;
+
+        Assert.AreEqual(9, arrData2[0]);
     }
 }

@@ -18,7 +18,7 @@ try
 {
     var xConfig = new RnzConfig(xServices.GetRequiredService<IConfigLoader>()).Load(Path.Combine(AppContext.BaseDirectory, "RNZ_Config.json"));
     var xViewModel = xServices.GetRequiredService<RnzTrauerConsoleViewModel>();
-    xViewModel.Run(xConfig);
+    xViewModel.Run(xConfig, args.FirstOrDefault() ?? "");
 }
 catch (FileNotFoundException ex)
 {
