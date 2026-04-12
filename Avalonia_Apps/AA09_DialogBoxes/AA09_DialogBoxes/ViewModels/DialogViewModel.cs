@@ -17,7 +17,6 @@ using Avalonia.ViewModels;
 using CommunityToolkit.Mvvm.Messaging;
 using AA09_DialogBoxes.Messages;
 using System.Threading.Tasks;
-using MsBox.Avalonia.Enums;
 
 namespace AA09_DialogBoxes.ViewModels;
 
@@ -55,7 +54,7 @@ public partial class DialogViewModel : ViewModelBase
         var request = new MessageBoxRequestMessage("Frage", "Willst Du Das ?");
         WeakReferenceMessenger.Default.Send(request);
         var result = await request.Response;
-        Name = result == ButtonResult.Yes ? "42 Entwickler" : "Nö";
+        Name = result == MsgBoxResult.Yes ? "42 Entwickler" : "Nö";
     }
 
     [RelayCommand]
