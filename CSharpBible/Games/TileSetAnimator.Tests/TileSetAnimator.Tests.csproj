@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Update="MSTest" Version="4.1.0" />
+    <PackageVersion Update="MSTest" Version="4.2.1" />
   </ItemGroup>
 
 </Project>

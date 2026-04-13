@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:WinAhnenNew.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     FontFamily="Arial"
+    PreviewKeyDown="Page_PreviewKeyDown"
     Title="EditPageView"
     d:DesignHeight="860"
     d:DesignWidth="800"

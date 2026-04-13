@@ -13,7 +13,7 @@
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
+using Avalonia.ViewModels;
 using NSubstitute;
 using System.ComponentModel;
 using BaseLib.Models.Interfaces;

@@ -1,0 +1,7 @@
+<Project>
+  <!-- Security fix: GHSA-xrw6-gwf8-vvr9 (High severity)
+       Pin Tmds.DBus.Protocol to 0.92.0 for projects not using Central Package Management -->
+  <ItemGroup Condition="'$(ManagePackageVersionsCentrally)' != 'true' AND '$(TargetFramework)' != '' AND !$(TargetFramework.StartsWith('net4'))">
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

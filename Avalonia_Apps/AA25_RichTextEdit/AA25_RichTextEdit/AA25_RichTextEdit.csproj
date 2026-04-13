@@ -36,6 +36,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="Simplecto.Avalonia.RichTextBox" />
 		<PackageReference Include="System.Drawing.Common" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" />
 		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
 	</ItemGroup>
 	<ItemGroup>

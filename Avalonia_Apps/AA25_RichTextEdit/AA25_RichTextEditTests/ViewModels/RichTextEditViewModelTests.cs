@@ -15,7 +15,7 @@ using System;
 using System.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using MVVM.ViewModel;
+using Avalonia.ViewModels;
 using BaseLib.Helper;
 using AA25_RichTextEdit.Models;
 

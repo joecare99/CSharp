@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11201.2
@@ -223,7 +223,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA22_AvlnCapTests", "AA22_A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA22_AvlnCap2", "AA22_AvlnCap\AA22_AvlnCap2\AA22_AvlnCap2.csproj", "{BC312318-3671-5E97-5256-467F6FAEFC0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_25_RichTextEdit_net", "..\CSharpBible\MVVM_Tutorial\MVVM_25_RichTextEdit\MVVM_25_RichTextEdit_net.csproj", "{3BF6E365-19B9-A56C-890A-621ED3230455}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AA25_RichTextEdit", "AA25_RichTextEdit", "{3DB34546-9932-4FDF-A61C-E42E9C1FFDC9}"
 EndProject
