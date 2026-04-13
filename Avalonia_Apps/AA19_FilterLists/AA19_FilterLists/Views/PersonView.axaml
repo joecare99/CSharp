@@ -12,9 +12,9 @@
 		<Button Grid.Row="0" Grid.Column="2" Margin="4" Content="Clear" Command="{Binding ClearFilterCommand}"/>
 
 		<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="4">
-			<TextBox Width="120" Watermark="First Name" Text="{Binding NewPerson.FirstName, Mode=TwoWay}"/>
-			<TextBox Width="120" Watermark="Last Name" Text="{Binding NewPerson.LastName, Mode=TwoWay}"/>
-			<TextBox Width="120" Watermark="Title" Text="{Binding NewPerson.Title, Mode=TwoWay}"/>
+			<TextBox Width="120" PlaceholderText="First Name" Text="{Binding NewPerson.FirstName, Mode=TwoWay}"/>
+			<TextBox Width="120" PlaceholderText="Last Name" Text="{Binding NewPerson.LastName, Mode=TwoWay}"/>
+			<TextBox Width="120" PlaceholderText="Title" Text="{Binding NewPerson.Title, Mode=TwoWay}"/>
 			<Button Content="Add" Command="{Binding btnAddPerson}"/>
 		</StackPanel>
 

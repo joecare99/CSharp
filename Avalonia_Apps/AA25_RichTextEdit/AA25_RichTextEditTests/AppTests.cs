@@ -11,7 +11,7 @@ internal class TestApp : App
 {
     public void DoStartUp()
     {
-        OnStartup(null);
+        OnFrameworkInitializationCompleted();
     }
 }
 [TestClass()]

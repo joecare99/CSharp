@@ -34,7 +34,6 @@
 			<PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
-		<PackageReference Include="MsBox.Avalonia" />
 	</ItemGroup>
 	<ItemGroup>
 		<AvaloniaResource Include="Assets\**" />
@@ -56,6 +55,9 @@
 		</Compile>
 		<Compile Update="Views\DialogWindow.axaml.cs">
 		  <DependentUpon>DialogWindow.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\OverlayDialogControl.axaml.cs">
+		  <DependentUpon>OverlayDialogControl.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="App.axaml.cs">
 		  <DependentUpon>App.axaml</DependentUpon>

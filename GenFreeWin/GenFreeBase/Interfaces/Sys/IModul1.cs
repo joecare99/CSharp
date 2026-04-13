@@ -392,7 +392,6 @@ public interface IModul1
     int PersSp { get; set; }
     string Datschuname { get; set; }
     string Eltq { get; set; }
-    string Ubg1T { get; set; }
 
     void Datles2();
     string Person_FullSurname(IPersonData person, bool xFamToUpper);

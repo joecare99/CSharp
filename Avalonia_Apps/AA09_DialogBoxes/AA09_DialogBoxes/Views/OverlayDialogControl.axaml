@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AA09_DialogBoxes.Views.OverlayDialogControl"
+             IsVisible="False"
+             Focusable="True">
+  <Border x:Name="OverlayBackdrop">
+    <Canvas x:Name="OverlayCanvas">
+      <Border x:Name="OverlayDialog"
+              Width="420"
+              Height="250"
+              Background="{DynamicResource AppDefaultBackground2}"
+              BorderBrush="{DynamicResource SideBarOutline}"
+              BorderThickness="1"
+              CornerRadius="8"
+              ClipToBounds="True"
+              Canvas.Left="120"
+              Canvas.Top="90">
+        <Grid RowDefinitions="Auto,*,Auto">
+          <Border Grid.Row="0"
+                  Background="{DynamicResource SideBarBackground}"
+                  CornerRadius="8,8,0,0"
+                  Cursor="SizeAll"
+                  Padding="10,6,0,6"
+                  PointerPressed="OverlayDialog_PointerPressed"
+                  PointerMoved="OverlayDialog_PointerMoved"
+                  PointerReleased="OverlayDialog_PointerReleased">
+            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+              <TextBlock x:Name="OverlayTitle" FontWeight="SemiBold" VerticalAlignment="Center"/>
+              <Button Grid.Column="1"
+                      Content="×"
+                      Width="36"
+                      Height="30"
+                      Margin="0,-6,-1,-6"
+                      Padding="0"
+                      FontSize="16"
+                      FontWeight="Bold"
+                      HorizontalContentAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      Click="OverlayClose_Click">
+                <Button.Styles>
+                  <Style Selector="Button:pointerover">
+                    <Setter Property="Background" Value="#D93030"/>
+                    <Setter Property="Foreground" Value="White"/>
+                  </Style>
+                  <Style Selector="Button:pressed">
+                    <Setter Property="Background" Value="#B82020"/>
+                    <Setter Property="Foreground" Value="White"/>
+                  </Style>
+                </Button.Styles>
+              </Button>
+            </Grid>
+          </Border>
+
+          <ScrollViewer Grid.Row="1" Margin="12,10,12,8" VerticalScrollBarVisibility="Auto">
+            <TextBlock x:Name="OverlayContent" TextWrapping="Wrap" />
+          </ScrollViewer>
+
+          <Grid Grid.Row="2" Margin="12,0,12,12" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <Border Grid.Column="0"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+              <Button Click="OverlayYes_Click" MinWidth="80">
+                <TextBlock><Run TextDecorations="Underline">J</Run><Run>a</Run></TextBlock>
+              </Button>
+              <Button Click="OverlayNo_Click" MinWidth="80">
+                <TextBlock><Run TextDecorations="Underline">N</Run><Run>ein</Run></TextBlock>
+              </Button>
+            </StackPanel>
+          </Grid>
+        </Grid>
+      </Border>
+    </Canvas>
+  </Border>
+</UserControl>

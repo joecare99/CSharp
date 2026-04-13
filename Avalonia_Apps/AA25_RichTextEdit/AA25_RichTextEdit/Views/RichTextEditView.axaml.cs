@@ -1,5 +1,7 @@
 ﻿using Avalonia.Controls;
+using Avalonia.VisualTree;
 using System;
+using System.Threading.Tasks;
 using AA25_RichTextEdit.ViewModels;
 using Avln_CommonDialogs.Base.Interfaces;
 
@@ -17,29 +19,37 @@ public partial class RichTextEditView : UserControl
     {
         if (DataContext is RichTextEditViewModel vm)
         {
-            vm.FileOpenDialog = DoFileDialog;
-            vm.FileSaveAsDialog = DoFileDialog;
+            vm.FileOpenDialog = DoOpenFileDialog;
+            vm.FileSaveAsDialog = DoSaveFileDialog;
             vm.dPrintDialog = DoPrintDialog;
             vm.CloseApp = DoClose;
         }
     }
 
-    private bool? DoFileDialog(string filename, IFileDialog par, Action<string, IFileDialog>? onAccept)
+    private async Task<bool?> DoOpenFileDialog(string filename, IOpenFileDialog par, Action<string, IOpenFileDialog>? onAccept)
     {
-        par.FileName = filename;
-        var window = this.GetVisualRoot() as Window;
-        bool? result = par.ShowDialog(window);
-        if (result ?? false) onAccept?.Invoke(par.FileName, par);
+        var files = await par.ShowAsync();
+        bool result = files.Count > 0;
+        if (result) onAccept?.Invoke(files[0], par);
         return result;
     }
 
-    private bool? DoPrintDialog(IPrintDialog par, Action<IPrintDialog, object?>? onPrint)
+    private async Task<bool?> DoSaveFileDialog(string filename, ISaveFileDialog par, Action<string, ISaveFileDialog>? onAccept)
     {
-        bool? result = par.ShowAsync().GetAwaiter().GetResult();
-        
-        if (result ?? false) onPrint?.Invoke(par, null); // Avalonia placeholder
+        par.InitialFileName = filename;
+        var file = await par.ShowAsync();
+        bool result = file != null;
+        if (result) onAccept?.Invoke(file!, par);
         return result;
     }
 
-    private void DoClose() => (this)?.Close();
+    private async Task<bool?> DoPrintDialog(IPrintDialog par, Action<IPrintDialog, object?>? onPrint)
+    {
+        var session = await par.ShowAsync();
+        bool result = session != null;
+        if (result) onPrint?.Invoke(par, session);
+        return result;
+    }
+
+    private void DoClose() => (TopLevel.GetTopLevel(this) as Window)?.Close();
 }

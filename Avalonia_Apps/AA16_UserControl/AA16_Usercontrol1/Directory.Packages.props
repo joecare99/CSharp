@@ -3,15 +3,19 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Avalonia" Version="11.3.13" />
-    <PackageVersion Include="Avalonia.Desktop" Version="11.3.13" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.13" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.13" />
+    <PackageVersion Include="Avalonia" Version="12.0.0" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.0.0" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.0" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.0.0" />
     <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.13" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
     <PackageVersion Include="Serilog" Version="3.1.1" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="8.0.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="5.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Security fix: GHSA-xrw6-gwf8-vvr9 (High) - transitive via Avalonia -->
+    <GlobalPackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" PrivateAssets="all" />
   </ItemGroup>
 </Project>

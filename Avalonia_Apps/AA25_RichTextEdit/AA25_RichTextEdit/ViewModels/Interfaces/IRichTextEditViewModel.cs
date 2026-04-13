@@ -24,7 +24,8 @@ public interface IRichTextEditViewModel: INotifyPropertyChanged
     IRelayCommand SaveTextCommand { get; }
     IRelayCommand PrintTextCommand { get; }
     IRelayCommand ExitCommand { get; }
-    Action CloseApp { get; set; }
+   Action? CloseApp { get; set; }
     string AllImgSource { get; }
     DateTime Now { get; }
+   string Document { get; set; }
 }

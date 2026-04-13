@@ -12,8 +12,8 @@
     <vm:DialogWindowViewModel />
   </Design.DataContext>
   <StackPanel Margin="16" Spacing="8">
-    <TextBox Text="{Binding Name, Mode=TwoWay}" Watermark="Name"/>
-    <TextBox Text="{Binding Email, Mode=TwoWay}" Watermark="Email"/>
+    <TextBox Text="{Binding Name, Mode=TwoWay}" PlaceholderText="Name"/>
+    <TextBox Text="{Binding Email, Mode=TwoWay}" PlaceholderText="Email"/>
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
       <Button Content="OK" Command="{Binding OKCommand}"/>
       <Button Content="Cancel" Command="{Binding CancelCommand}"/>
