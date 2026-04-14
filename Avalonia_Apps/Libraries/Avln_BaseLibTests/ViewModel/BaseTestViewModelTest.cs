@@ -29,30 +29,32 @@ public partial class TestVM:BaseViewModelCT
 }
 
 [TestClass]
-public class BaseTestViewModelTest : BaseTestViewModel
+public class BaseTestViewModelTest : InvariantCultureTestBase
 {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
     TestVM testModel;
-    private CultureInfo _c;
+    private CultureInfo? _resourceCulture;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+
+    protected override void OnInvariantCultureInitialized()
+    {
+        _resourceCulture = Resource.Culture;
+        Resource.Culture = CultureInfo.InvariantCulture;
+    }
+
+    protected override void OnInvariantCultureCleanup()
+    {
+        Resource.Culture = _resourceCulture;
+    }
 
     [TestInitialize]
     public void Init()
     {
-        _c = CultureInfo.CurrentUICulture;
-        CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
-        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
         testModel = new TestVM();
         testModel.PropertyChanged += OnVMPropertyChanged;
         testModel.PropertyChanging += OnVMPropertyChanging;
         testModel.ErrorsChanged += OnVMErrorsChanged;
         testModel.DoSomethingCommand.CanExecuteChanged += OnCanExChanged;
-    }
-
-    [TestCleanup]
-    public void Cleanup()
-    {
-        CultureInfo.CurrentUICulture = _c;
     }
 
     [TestMethod]
@@ -117,8 +119,20 @@ PropChg(TestVM,TestStr)=Test
 }
 
 [TestClass]
-public class BaseTestViewModelTest_T : BaseTestViewModel<TestVM>
+public class BaseTestViewModelTest_T : InvariantCultureTestBase<TestVM>
 {
+    private CultureInfo? _resourceCulture;
+
+    protected override void OnInvariantCultureInitialized()
+    {
+        _resourceCulture = Resource.Culture;
+        Resource.Culture = CultureInfo.InvariantCulture;
+    }
+
+    protected override void OnInvariantCultureCleanup()
+    {
+        Resource.Culture = _resourceCulture;
+    }
 
     [TestMethod]
     [DataRow(0, 0, new[] { "" })]
