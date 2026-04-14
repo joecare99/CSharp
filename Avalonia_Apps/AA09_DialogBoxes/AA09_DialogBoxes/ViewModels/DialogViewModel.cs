@@ -52,7 +52,7 @@ public partial class DialogViewModel : ViewModelBase
     private async Task OpenMsg()
     {
         var request = new MessageBoxRequestMessage("Frage", "Willst Du Das ?");
-        WeakReferenceMessenger.Default.Send(request);
+        await WeakReferenceMessenger.Default.Send(request);
         var result = await request.Response;
         Name = result == MsgBoxResult.Yes ? "42 Entwickler" : "Nö";
     }
@@ -61,7 +61,7 @@ public partial class DialogViewModel : ViewModelBase
     private async Task OpenDialog()
     {
         var request = new EditDialogRequestMessage(this.Name, this.Email);
-        WeakReferenceMessenger.Default.Send(request);
+        await WeakReferenceMessenger.Default.Send(request);
         var r = await request.Response;
         if (r.Item1 == true)
            (Name,Email) = r.Item2;

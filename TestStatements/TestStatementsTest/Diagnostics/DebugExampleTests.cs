@@ -17,7 +17,7 @@ namespace TestStatements.Diagnostics.Tests
         public void DebugDivideExampleTest(int v1, int v2, int iexp)
         {
             if (v2 == 0 && Debugger.IsAttached)
-                Assert.ThrowsException<AssertFailedException>(() => DebugExample.DebugDivideExample(v1, v2));
+                Assert.Throws<AssertFailedException>(() => DebugExample.DebugDivideExample(v1, v2));
             else
                 Assert.AreEqual(iexp, DebugExample.DebugDivideExample(v1, v2));
         }
@@ -36,7 +36,7 @@ namespace TestStatements.Diagnostics.Tests
         public void NormalDivideExampleTest(int v1, int v2,int iexp)
         {
             if (v2 == 0)
-                Assert.ThrowsException<DivideByZeroException>(() => DebugExample.NormalDivideExample(v1, v2));
+                Assert.Throws<DivideByZeroException>(() => DebugExample.NormalDivideExample(v1, v2));
             else
                 Assert.AreEqual(iexp, DebugExample.NormalDivideExample(v1, v2));
         }

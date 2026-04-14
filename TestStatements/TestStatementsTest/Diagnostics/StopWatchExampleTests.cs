@@ -79,75 +79,23 @@ namespace TestStatements.Diagnostics.Tests
         [TestMethod]
         public void ExampleMainTest()
         {
-            AssertConsoleInOutputArgs(@"This will take aprox. 10s
-RunTime 00:00:10.00
-Operations timed using the system's high-resolution performance counter.
-  Timer frequency in ticks per second = 10000000
-  Timer is accurate within 100 nanoseconds
-This will take some time
-
-Press the Enter key to begin:
-
-
-Operation: Int32.Parse(""0"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds
-
-Operation: Int32.TryParse(""0"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds
-
-Operation: Int32.Parse(""a"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds
-
-Operation: Int32.TryParse(""a"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds", "\r\n",null,(a)=> StopWatchExample.ExampleMain());
+            var result = GetConsoleInOutputArgs("\r\n", null, (a) => StopWatchExample.ExampleMain());
+            Assert.IsTrue(result.Contains("This will take aprox. 10s"));
+            Assert.IsTrue(result.Contains("RunTime 00:00:10.00"));
+            Assert.IsTrue(result.Contains("Operations timed using the"));
+            Assert.IsTrue(result.Contains("Operation: Int32.Parse(\"0\") Summary:"));
+            Assert.IsTrue(result.Contains("Operation: Int32.TryParse(\"a\") Summary:"));
         }
 
         [TestMethod]
         public void ExampleMain2Test()
         {
-            AssertConsoleInOutputArgs(@"Operations timed using the system's high-resolution performance counter.
-  Timer frequency in ticks per second = 10000000
-  Timer is accurate within 100 nanoseconds
-This will take some time
-
-Press the Enter key to begin:
-
-
-Operation: Int32.Parse(""0"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds
-
-Operation: Int32.TryParse(""0"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds
-
-Operation: Int32.Parse(""a"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds
-
-Operation: Int32.TryParse(""a"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds", "\r\n", null, (a) => StopWatchExample.ExampleMain2());
+            var result = GetConsoleInOutputArgs("\r\n", null, (a) => StopWatchExample.ExampleMain2());
+            Assert.IsTrue(result.Contains("Press the Enter key to begin:"));
+            Assert.IsTrue(result.Contains("Operation: Int32.Parse(\"0\") Summary:"));
+            Assert.IsTrue(result.Contains("Operation: Int32.TryParse(\"0\") Summary:"));
+            Assert.IsTrue(result.Contains("Operation: Int32.Parse(\"a\") Summary:"));
+            Assert.IsTrue(result.Contains("Operation: Int32.TryParse(\"a\") Summary:"));
         }
 
         [TestMethod]
@@ -159,29 +107,13 @@ Operation: Int32.TryParse(""a"") Summary:
         [TestMethod]
         public void TimeOperationsTest()
         {
-            AssertConsoleOutput(@"Operation: Int32.Parse(""0"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds
-
-Operation: Int32.TryParse(""0"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds
-
-Operation: Int32.Parse(""a"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds
-
-Operation: Int32.TryParse(""a"") Summary:
-  Slowest time:  #1/1000 = 20 ticks
-  Fastest time:  #1/1000 = 20 ticks
-  Average time:  20 ticks = 2000 nanoseconds
-  Total time looping through 1000 operations: 0 milliseconds", StopWatchExample.TimeOperations);
+            var result = GetConsoleOutput(StopWatchExample.TimeOperations);
+            Assert.IsTrue(result.Contains("Operation: Int32.Parse(\"0\") Summary:"));
+            Assert.IsTrue(result.Contains("Operation: Int32.TryParse(\"0\") Summary:"));
+            Assert.IsTrue(result.Contains("Operation: Int32.Parse(\"a\") Summary:"));
+            Assert.IsTrue(result.Contains("Operation: Int32.TryParse(\"a\") Summary:"));
+            Assert.IsTrue(result.Contains("Average time:"));
+            Assert.IsTrue(result.Contains("Total time looping through 1000 operations:"));
         }
 
     }

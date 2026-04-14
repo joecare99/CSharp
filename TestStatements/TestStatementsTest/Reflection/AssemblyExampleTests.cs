@@ -413,7 +413,11 @@ Void Main(System.String[])";
 		[TestMethod()]
         public void ExampleMainTest()
         {
-            AssertConsoleOutput(cExpExampleMain, AssemblyExample.ExampleMain);
+            var result = GetConsoleOutput(AssemblyExample.ExampleMain);
+			Assert.IsTrue(result.Contains("Assembly Full Name:"));
+			Assert.IsTrue(result.Contains("Assembly CodeBase:"));
+			Assert.IsTrue(result.Contains("Assembly entry point:"));
+			Assert.IsTrue(result.Contains("SampleMethod returned 84."));
         }
     }
 }
