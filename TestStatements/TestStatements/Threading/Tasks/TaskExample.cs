@@ -41,6 +41,8 @@ namespace TestStatements.Threading.Tasks
         /// </summary>
         public static Random random = new Random();
 
+        public static Func<IPing> CreatePing = () => new PingProxy();
+
         /// <summary>
         /// Examples the main.
         /// </summary>
@@ -65,7 +67,7 @@ namespace TestStatements.Threading.Tasks
             {
                 var url = value;
                 tasks.Add(Task.Run(() => {
-                    var png = new Ping();
+                    var png = CreatePing();
                     try
                     {
                         var reply = png.Send(url);
@@ -117,7 +119,7 @@ namespace TestStatements.Threading.Tasks
             {
                 var url = value;
                 tasks.Add(Task.Run(() => {
-                    var png = new Ping();
+                    var png = CreatePing();
                     try
                     {
                         var reply = png.Send(url);

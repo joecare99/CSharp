@@ -49,7 +49,7 @@ namespace TestStatements.Anweisungen.Tests
             Assert.AreEqual(50,Faccount.Balance);
             Faccount.Withdraw(20);
             Assert.AreEqual(30, Faccount.Balance);
-            Assert.ThrowsException<Exception>(delegate { Faccount.Withdraw(31); });
+            Assert.Throws<Exception>(delegate { Faccount.Withdraw(31); });
             Assert.AreEqual(30, Faccount.Balance);
         }
     }

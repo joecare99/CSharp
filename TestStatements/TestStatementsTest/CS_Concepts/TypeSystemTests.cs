@@ -11,25 +11,28 @@ namespace TestStatements.CS_Concepts.Tests;
 [TestClass]
 public class TypeSystemTests : ConsoleTestsBase
 {
-    private readonly string cExpListMain = @"";
-    private readonly string cExpDelareVariables = @"";
-    private readonly string cExpValueTypes1 = @"";
-
     [TestMethod()]
     public void UseOtfTypesTest()
     {
-        AssertConsoleOutput(cExpListMain, TypeSystem.UseOfTypes);
+        var result = GetConsoleOutput(TypeSystem.UseOfTypes);
+        Assert.IsTrue(result.Contains("System.Int32 a = 5"));
+        Assert.IsTrue(result.Contains("System.Int32 b = 7"));
+        Assert.IsTrue(result.Contains("System.Boolean test = True"));
     }
 
     [TestMethod()]
     public void DelareVariablesTest()
     {
-        AssertConsoleOutput(cExpDelareVariables, TypeSystem.DelareVariables);
+        var result = GetConsoleOutput(TypeSystem.DelareVariables);
+        Assert.IsTrue(result.Contains("System.Char firstLetter = C"));
+        Assert.IsTrue(result.Contains("query ="));
+        Assert.IsTrue(result.Contains("item = 100"));
     }
 
     [TestMethod()]
     public void ValueTypes1Test()
     {
-        AssertConsoleOutput(cExpValueTypes1, TypeSystem.ValueTypes1);
+        var result = GetConsoleOutput(TypeSystem.ValueTypes1);
+        Assert.IsTrue(result.Contains("System.Byte b = 255"));
     }
 }

@@ -34,6 +34,7 @@ namespace TestStatements.Anweisungen.Tests
         }
 
         [DataTestMethod()]
+
     
         public void SwitchExample21Test()
         {

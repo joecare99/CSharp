@@ -27,14 +27,22 @@ namespace TestStatements.SystemNS.Xml.Tests
         [TestMethod()]
         public void XmlTest2Test()
         {
-            using (var sw = new StringWriter())
+            var originalOut = Console.Out;
+            try
             {
-                Console.SetOut(sw);
+                using (var sw = new StringWriter())
+                {
+                    Console.SetOut(sw);
 
-                XmlNS.XmlTest1();
+                    XmlNS.XmlTest1();
 
-                var result = sw.ToString().Trim();
-                Assert.AreEqual(Expected, result);
+                    var result = sw.ToString().Trim();
+                    Assert.AreEqual(Expected, result);
+                }
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
             }
                 
         }
