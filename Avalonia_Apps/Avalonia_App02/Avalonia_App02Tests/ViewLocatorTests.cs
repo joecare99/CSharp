@@ -111,7 +111,7 @@ namespace Avalonia_App02.Tests
             var result = testClass.Match("Test");
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.IsFalse(result);
         }
     }
 }

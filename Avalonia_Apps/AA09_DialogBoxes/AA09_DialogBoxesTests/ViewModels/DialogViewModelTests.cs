@@ -15,8 +15,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Avalonia.ViewModels;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Windows;
-using MsBox.Avalonia.Enums;
+using CommunityToolkit.Mvvm.Messaging;
+using AA09_DialogBoxes.Messages;
+using System.Threading.Tasks;
 
 /// <summary>
 /// The Tests namespace.
@@ -39,11 +40,11 @@ public class DialogViewModelTests : BaseTestViewModel
     /// <summary>
     /// The mb result
     /// </summary>
-    ButtonResult mbResult;
+    MsgBoxResult mbResult;
     /// <summary>
     /// The t result
     /// </summary>
-    (string name, string email) tResult;
+    (bool accepted, (string name, string email) values) tResult;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
 
     /// <summary>
@@ -56,33 +57,23 @@ public class DialogViewModelTests : BaseTestViewModel
         testModel.PropertyChanged += OnVMPropertyChanged;
         if (testModel is INotifyPropertyChanging npchgn)
             npchgn.PropertyChanging += OnVMPropertyChanging;
-        testModel.DoOpenDialog += DoOpenDialogTest;
-        testModel.DoOpenMessageBox += DoOpenMessageBoxTest;
+        WeakReferenceMessenger.Default.Register<DialogViewModelTests, MessageBoxRequestMessage>(this, static (r, m) =>
+        {
+            r.DoLog($"DoOpenMessageBox({m.Title},{m.Content})=>{r.mbResult}");
+            m.Reply(r.mbResult);
+        });
+        WeakReferenceMessenger.Default.Register<DialogViewModelTests, EditDialogRequestMessage>(this, static (r, m) =>
+        {
+            r.DoLog($"DoOpenDialog({m.Name},{m.Email})=>{r.tResult}");
+            m.Reply(r.tResult);
+        });
         ClearLog();
     }
 
-    /// <summary>
-    /// Does the open message box test.
-    /// </summary>
-    /// <param name="title">The title.</param>
-    /// <param name="name">The name.</param>
-    /// <returns>System.Windows.MessageBoxResult.</returns>
-    private ButtonResult DoOpenMessageBoxTest(string title, string name)
+    [TestCleanup]
+    public void Cleanup()
     {
-        DoLog($"DoOpenMessageBox({title},{name})=>{mbResult}");
-        return mbResult;
-    }
-
-    /// <summary>
-    /// Does the open dialog test.
-    /// </summary>
-    /// <param name="name">The name.</param>
-    /// <param name="email">The email.</param>
-    /// <returns>System.ValueTuple&lt;System.String, System.String&gt;.</returns>
-    private (string name, string email) DoOpenDialogTest(string name, string email)
-    {
-        DoLog($"DoOpenMessageBox({name},{email})=>{tResult}");
-        return tResult;
+        WeakReferenceMessenger.Default.UnregisterAll(this);
     }
 
     /// <summary>
@@ -96,46 +87,39 @@ public class DialogViewModelTests : BaseTestViewModel
         Assert.IsInstanceOfType(testModel, typeof(BaseViewModelCT));
         Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
         Assert.IsNotNull(testModel.OpenMsgCommand);
-        Assert.IsInstanceOfType(testModel.OpenMsgCommand, typeof(IRelayCommand));
+        Assert.IsInstanceOfType(testModel.OpenMsgCommand, typeof(IAsyncRelayCommand));
         Assert.IsNotNull(testModel.OpenDialogCommand);
-        Assert.IsInstanceOfType(testModel.OpenDialogCommand, typeof(IRelayCommand));
+        Assert.IsInstanceOfType(testModel.OpenDialogCommand, typeof(IAsyncRelayCommand));
     }
 
     /// <summary>
     /// Opens the MSG command test.
     /// </summary>
-    /// <param name="oAct">if set to <c>true</c> [o act].</param>
-    /// <param name="mrExp">The mr exp.</param>
-    /// <param name="asExp">As exp.</param>
+    /// <param name="mrAct">The message-box response.</param>
+    /// <param name="asExp">Expected values and log.</param>
     [TestMethod()]
-    [DataRow(true,ButtonResult.Yes, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>Yes
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestNameTrue
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=42 Entwickler
+    [DataRow(MsgBoxResult.Yes, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>Yes
+PropChgn(DialogViewModel,Name)=TestName
+PropChgn(DialogViewModel,Cnt)=2
+PropChg(DialogViewModel,Cnt)=3
+PropChg(DialogViewModel,Name)=42 Entwickler
 ", "42 Entwickler" })]
-    [DataRow(false, ButtonResult.Ok, new[] { @"PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestNameFalse
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=Nö
+    [DataRow(MsgBoxResult.No, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>No
+PropChgn(DialogViewModel,Name)=TestName
+PropChgn(DialogViewModel,Cnt)=2
+PropChg(DialogViewModel,Cnt)=3
+PropChg(DialogViewModel,Name)=Nö
 ", "Nö" })]
-    [DataRow(null, ButtonResult.No, new[] { @"DoOpenMessageBox(Frage,Willst Du Das ?)=>No
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestName
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=Nö
-", "Nö" })]
-    public void OpenMsgCommandTest(bool? oAct,ButtonResult mrExp, string[] asExp)
+    public async Task OpenMsgCommandTest(MsgBoxResult mrAct, string[] asExp)
     {
         // Arrange
-        testModel.Name = $"TestName{oAct}";
-        if (oAct == false) testModel.DoOpenMessageBox -= DoOpenMessageBoxTest;
-        mbResult = mrExp;
+        testModel.Name = "TestName";
+        mbResult = mrAct;
         ClearLog();
 
         // Act
-        Assert.IsTrue(testModel.OpenMsgCommand.CanExecute(oAct));
-        testModel.OpenMsgCommand.Execute(oAct);
+        Assert.IsTrue(testModel.OpenMsgCommand.CanExecute(null));
+        await testModel.OpenMsgCommand.ExecuteAsync(null);
 
         // Assert
         Assert.AreEqual(asExp[1], testModel.Name);
@@ -145,45 +129,31 @@ PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=Nö
     /// <summary>
     /// Opens the dialog command test.
     /// </summary>
-    /// <param name="oAct">if set to <c>true</c> [o act].</param>
-    /// <param name="sAct">The s act.</param>
-    /// <param name="asExp">As exp.</param>
+    /// <param name="xAccepted">Should dialog result be accepted.</param>
+    /// <param name="sAct">Suffix used for returned values.</param>
+    /// <param name="asExp">Expected values and log.</param>
     [TestMethod()]
-    [DataRow(true,"0", new[] { @"DoOpenMessageBox(TestNameTrue,TestEmailTrue)=>(TestName0, TestMail0)
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestNameTrue
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestName0
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Email)=TestEmailTrue
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Email)=TestMail0
+    [DataRow(true,"0", new[] { @"DoOpenDialog(TestName,TestEmail)=>(True, (TestName0, TestMail0))
+PropChgn(DialogViewModel,Name)=TestName
+PropChgn(DialogViewModel,Cnt)=2
+PropChg(DialogViewModel,Cnt)=3
+PropChg(DialogViewModel,Name)=TestName0
+PropChgn(DialogViewModel,Email)=TestEmail
+PropChg(DialogViewModel,Email)=TestMail0
 ", "TestName0", "TestMail0" })]
-    [DataRow(false, "1", new[] { @"PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestNameFalse
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Email)=TestEmailFalse
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Email)=
-", "","" })]
-    [DataRow(null, "2", new[] { @"DoOpenMessageBox(TestName,TestEmail)=>(TestName2, TestMail2)
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestName
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=2
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Cnt)=3
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Name)=TestName2
-PropChgn(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Email)=TestEmail
-PropChg(MVVM_09a_CTDialogBoxes.ViewModels.DialogViewModel,Email)=TestMail2
-", "TestName2", "TestMail2" })]
-    public void OpenDialogCommandTest(bool? oAct,string sAct, string[] asExp)
+    [DataRow(false, "1", new[] { @"DoOpenDialog(TestName,TestEmail)=>(False, (TestName1, TestMail1))
+", "TestName", "TestEmail" })]
+    public async Task OpenDialogCommandTest(bool xAccepted,string sAct, string[] asExp)
     {
         // Arrange
-        testModel.Name = $"TestName{oAct}";
-        testModel.Email = $"TestEmail{oAct}";
-        tResult = ($"TestName{sAct}", $"TestMail{sAct}");
-        if (oAct == false) testModel.DoOpenDialog -= DoOpenDialogTest;
+        testModel.Name = "TestName";
+        testModel.Email = "TestEmail";
+        tResult = (xAccepted, ($"TestName{sAct}", $"TestMail{sAct}"));
         ClearLog();
 
         // Act    
-        Assert.IsTrue(testModel.OpenDialogCommand.CanExecute(oAct));
-        testModel.OpenDialogCommand.Execute(oAct);
+        Assert.IsTrue(testModel.OpenDialogCommand.CanExecute(null));
+        await testModel.OpenDialogCommand.ExecuteAsync(null);
         
         // Assert
         Assert.AreEqual(asExp[1], testModel.Name);

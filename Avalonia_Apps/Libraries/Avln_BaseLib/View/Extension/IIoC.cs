@@ -19,5 +19,5 @@ public interface IIoC
 {
     Type Type { get; set; }
 
-    object? ProvideValue(IServiceProvider serviceProvider);
+    object ProvideValue(IServiceProvider serviceProvider);
 }
