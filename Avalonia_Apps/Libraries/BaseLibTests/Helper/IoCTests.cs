@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using BaseLib.Model.Tests;
+using BaseLib.Models.Tests;
 
 namespace BaseLib.Helper.Tests;
 
