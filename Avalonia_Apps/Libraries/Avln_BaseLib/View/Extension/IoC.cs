@@ -98,7 +98,7 @@ public class IoC : MarkupExtension , IIoC
     /// </summary>
     /// <param name="serviceProvider">Ein Dienstanbieter-Hilfsprogramm, das Dienste für die Markuperweiterung bereitstellen kann.</param>
     /// <returns>Der Objektwert, der für die Eigenschaft festgelegt werden soll, auf die die Erweiterung angewendet wird.</returns>
-    public override object? ProvideValue(IServiceProvider serviceProvider) => GetReqSrv.Invoke(Type);
+    public override object ProvideValue(IServiceProvider serviceProvider) => GetReqSrv.Invoke(Type);
 
     /// <summary>Configures the <see cref="T:MVVM.View.Extension.IoC" /> class with the specified <see cref="IServiceProvider" /> sp.</summary>
     /// <param name="sp">The sp.</param>

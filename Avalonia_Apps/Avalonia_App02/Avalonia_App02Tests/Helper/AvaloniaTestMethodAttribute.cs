@@ -12,6 +12,13 @@ namespace Avalonia.Headless.MSTest;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 public sealed class AvaloniaTestMethodAttribute : TestMethodAttribute
 {
+    public AvaloniaTestMethodAttribute(
+        [System.Runtime.CompilerServices.CallerFilePath] string? callerFilePath = null,
+        [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
+        : base(callerFilePath, callerLineNumber)
+    {
+    }
+
     public override async Task<Microsoft.VisualStudio.TestTools.UnitTesting.TestResult[]> ExecuteAsync(ITestMethod testMethod)
     {
         var assembly = testMethod.MethodInfo.DeclaringType!.Assembly;
