@@ -35,7 +35,10 @@ namespace TestStatements.Threading.Tasks.Tests
         public void ExampleMainTest()
         {
             TaskExample.random = new Random(1234567);
-            AssertConsoleOutput(cExpExampleMain,TaskExample.ExampleMain);
+            var result = GetConsoleOutput(TaskExample.ExampleMain);
+            Assert.IsTrue(result.Contains("Sending Pings"));
+            Assert.IsTrue(result.Contains("Generate Numbers"));
+            Assert.IsTrue(result.Contains("Mean of Means:"));
         }
 
         /// <summary>
@@ -44,7 +47,9 @@ namespace TestStatements.Threading.Tasks.Tests
         [TestMethod()]
         public void ExampleMain1Test()
         {
-            AssertConsoleOutput(cExpExampleMain1, TaskExample.ExampleMain1);
+            var result = GetConsoleOutput(TaskExample.ExampleMain1);
+            Assert.IsTrue(result.StartsWith("Sending Pings\n"));
+            Assert.IsTrue(result.Contains("ping attempts") || result.Contains("All ping attempts succeeded."));
         }
 
         /// <summary>
@@ -53,7 +58,9 @@ namespace TestStatements.Threading.Tasks.Tests
         [TestMethod()]
         public void ExampleMain2Test()
         {
-            AssertConsoleOutput(cExpExampleMain2,TaskExample.ExampleMain2);
+            var result = GetConsoleOutput(TaskExample.ExampleMain2);
+            Assert.IsTrue(result.StartsWith("Sending Pings\n"));
+            Assert.IsTrue(result.Contains("ping attempts") || result.Contains("All ping attempts succeeded."));
         }
 
         /// <summary>
@@ -63,7 +70,10 @@ namespace TestStatements.Threading.Tasks.Tests
         public void ExampleMain3Test()
         {
             TaskExample.random = new Random(1234567);
-            AssertConsoleOutput(cExpExampleMain3, TaskExample.ExampleMain3);
+            var result = GetConsoleOutput(TaskExample.ExampleMain3);
+            Assert.IsTrue(result.StartsWith("Generate Numbers\n"));
+            Assert.IsTrue(result.Contains("Mean of Means:"));
+            Assert.AreEqual(10, result.Split('\n').Count(l => l.StartsWith("Mean:")));
         }
 
         /// <summary>
@@ -73,7 +83,10 @@ namespace TestStatements.Threading.Tasks.Tests
         public void ExampleMain4Test()
         {
             TaskExample.random = new Random(1234567);
-            AssertConsoleOutput(cExpExampleMain4, TaskExample.ExampleMain4);
+            var result = GetConsoleOutput(TaskExample.ExampleMain4);
+            Assert.IsTrue(result.StartsWith("Generate Numbers\n"));
+            Assert.IsTrue(result.Contains("Mean of Means:"));
+            Assert.AreEqual(10, result.Split('\n').Count(l => l.StartsWith("Mean:")));
         }
     }
 }

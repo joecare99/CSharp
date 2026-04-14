@@ -9,8 +9,10 @@ namespace TestStatements.UnitTesting;
 /// </summary>
 public class ConsoleTestsBase
 {
+    private static string NormalizeConsoleText(string value)
+        => (value ?? string.Empty).Replace("\r\n", "\n").Replace("\r", "\n").Trim();
 
-    protected static void AssertConsoleOutput(string Expected, Action ToTest)
+    protected static string GetConsoleOutput(Action ToTest)
     {
         using var sw = new StringWriter();
         var originalOut = Console.Out;
@@ -25,8 +27,14 @@ public class ConsoleTestsBase
             Console.SetOut(originalOut);
         }
 
-        var result = sw.ToString().Trim();
-        AssertAreEqual(Expected, result);
+        return NormalizeConsoleText(sw.ToString());
+    }
+
+    protected static void AssertConsoleOutput(string Expected, Action ToTest)
+    {
+        var expected = NormalizeConsoleText(Expected);
+        var result = GetConsoleOutput(ToTest);
+        AssertAreEqual(expected, result);
     }
 
     protected static void AssertConsoleOutputArgs(string Expected, string[] Args, Action<String[]> ToTest)
@@ -45,8 +53,9 @@ public class ConsoleTestsBase
             Console.SetOut(originalOut);
         }
 
-        var result = sw.ToString().Trim();
-        AssertAreEqual(Expected, result);
+        var expected = NormalizeConsoleText(Expected);
+        var result = NormalizeConsoleText(sw.ToString());
+        AssertAreEqual(expected, result);
     }
     protected void AssertConsoleInOutputArgs(string Expected, string TestInput, string[] Args, Action<string[]> ToTest)
     {
@@ -67,7 +76,30 @@ public class ConsoleTestsBase
             Console.SetIn(originalIn);
         }
 
-        var result = sw.ToString().Trim();
-        AssertAreEqual(Expected, result);
+        var expected = NormalizeConsoleText(Expected);
+        var result = NormalizeConsoleText(sw.ToString());
+        AssertAreEqual(expected, result);
+    }
+
+    protected static string GetConsoleInOutputArgs(string TestInput, string[] Args, Action<string[]> ToTest)
+    {
+        using var sw = new StringWriter();
+        using var sr = new StringReader(TestInput);
+        var originalOut = Console.Out;
+        var originalIn = Console.In;
+        Console.SetOut(sw);
+        Console.SetIn(sr);
+
+        try
+        {
+            ToTest?.Invoke(Args);
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+            Console.SetIn(originalIn);
+        }
+
+        return NormalizeConsoleText(sw.ToString());
     }
 }

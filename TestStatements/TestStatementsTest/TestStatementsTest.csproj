@@ -6,6 +6,8 @@
 		<TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
 		<UseCommonOutputDirectory>false</UseCommonOutputDirectory>
 		<IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+		<TestTfmsInParallel>false</TestTfmsInParallel>
 		<Deterministic>false</Deterministic>
 		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
