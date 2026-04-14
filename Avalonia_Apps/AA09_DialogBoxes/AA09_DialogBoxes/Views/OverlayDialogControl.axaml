@@ -27,7 +27,7 @@
             <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
               <TextBlock x:Name="OverlayTitle" FontWeight="SemiBold" VerticalAlignment="Center"/>
               <Button Grid.Column="1"
-                      Content="×"
+                      Content="Ã—"
                       Width="36"
                       Height="30"
                       Margin="0,-6,-1,-6"
