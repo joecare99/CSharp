@@ -13,7 +13,7 @@ namespace Avalonia.Headless.MSTest;
 public sealed class AvaloniaTestMethodAttribute : TestMethodAttribute
 {
     public AvaloniaTestMethodAttribute(
-        [System.Runtime.CompilerServices.CallerFilePath] string? callerFilePath = null,
+        [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
         [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
         : base(callerFilePath, callerLineNumber)
     {

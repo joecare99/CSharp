@@ -132,7 +132,7 @@ public class MainWindowTests : BaseTestViewModel
         sNewEmail = sAct4;
 
         var request = new EditDialogRequestMessage(sAct1, sAct2);
-        WeakReferenceMessenger.Default.Send(request);
+        await WeakReferenceMessenger.Default.Send(request);
         var tRes = await request.Response;
 
         Assert.AreEqual(bool.Parse(asExp[1]), tRes.Item1);
