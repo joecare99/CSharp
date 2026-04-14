@@ -18,7 +18,7 @@ public class SomeTemplateModelTests
     private string sTestLog = "";
     private ICyclTimer? tmr=null;
     private ISysTime? st=null;
-    private CultureInfo cc;
+    private CultureInfo? cc;
 
     [TestInitialize()]
     public void TestInitialize()
@@ -37,7 +37,10 @@ public class SomeTemplateModelTests
     [TestCleanup()]
     public void TestCleanup()
     {
-        CultureInfo.CurrentCulture = cc;
+        if (cc != null)
+        {
+            CultureInfo.CurrentCulture = cc;
+        }
     }
     private void Dolog(string v)
     {
@@ -51,7 +54,7 @@ public class SomeTemplateModelTests
         Assert.IsInstanceOfType(testModel, typeof(SomeTemplateModel));
         Assert.IsInstanceOfType(testModel, typeof(ISomeTemplateModel));
         Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
-        Assert.IsNotNull(testModel.Now);
+        Assert.AreEqual(new DateTime(2025, 1, 2), testModel.Now); // aus ISysTime.Now
         tmr!.Received(1).Start();
     }
 

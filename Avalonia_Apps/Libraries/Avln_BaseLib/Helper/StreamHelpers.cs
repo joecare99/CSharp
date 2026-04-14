@@ -104,9 +104,9 @@ public static class StreamHelpers
                     streamBytes = new byte[sizeof(int) * count];
                     _ = stream.Read(streamBytes, 0, sizeof(int) * count);
                     if (t.IsArray)
-                        yield return (e.Item1, streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null).Select(d => d.Value).ToArray());
+                        yield return (e.Item1, streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null).Select(d => d!.Value).ToArray());
                     else    
-                    yield return (e.Item1, (streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null)).Select(d=>d.Value).ToList());
+                    yield return (e.Item1, (streamBytes.Select<byte, int?>((b, i) => i % sizeof(int) == 0 ? BitConverter.ToInt32(streamBytes, i) : null).Where((i) => i != null)).Select(d=>d!.Value).ToList());
                     break;
                 case Type t when (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ||
                               (t.IsAssignableTo(typeof(IEnumerable<IPersistence>))):
@@ -114,7 +114,7 @@ public static class StreamHelpers
                     if (t.IsGenericType)
                         t2 = t.GetGenericArguments()[0];
                     else if (t.IsArray)
-                        t2 = t.GetElementType();
+                        t2 = t.GetElementType()!;
                     else
                         t2 = typeof(IPersistence);
 

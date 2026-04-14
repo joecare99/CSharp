@@ -25,19 +25,19 @@ namespace Avalonia_App02.Models.Tests
         [TestMethod()]
         public void NowTest()
         {
-            Assert.IsNotNull(testClass.Now);
+            Assert.IsGreaterThan(DateTime.MinValue, testClass.Now);
         }
 
         [TestMethod()]
         public void UtcNowTest()
         {
-            Assert.IsNotNull(testClass.UtcNow);
+            Assert.IsGreaterThan(DateTime.MinValue, testClass.UtcNow);
         }
 
         [TestMethod()]
         public void TodayTest()
         {
-            Assert.IsNotNull(testClass.Today);
+            Assert.IsGreaterThan(DateTime.MinValue, testClass.Today);
         }
     }
 }
