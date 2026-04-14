@@ -73,7 +73,7 @@ public class CWpfCapModelTests
         {
             Assert.AreEqual(i % 4+1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={i % 4 +1}");
         }
-        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
+        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Models.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
     }
 
     [TestMethod()]
@@ -106,7 +106,7 @@ public class CWpfCapModelTests
         {
             Assert.AreEqual(i%4!=row? (i + i / 4) % 4 + 1:(i+ i / 4+1) %4+1 , testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
         }
-        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
+        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Models.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
     }
 
     [DataTestMethod()]
@@ -143,7 +143,7 @@ public class CWpfCapModelTests
         {
             Assert.AreEqual(i % 4 != row ? (i + i / 4) % 4 + 1 : (i + i / 4 + 3) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
         }
-        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
+        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Models.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
     }
 
     [DataTestMethod()]
@@ -180,7 +180,7 @@ public class CWpfCapModelTests
         {
             Assert.AreEqual(i / 4 != col ? (i + i / 4) % 4 + 1 : (i + i / 4 + 1) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
         }
-        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
+        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Models.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
     }
 
     [DataTestMethod()]
@@ -217,7 +217,7 @@ public class CWpfCapModelTests
         {
             Assert.AreEqual(i / 4 != col ? (i + i / 4) % 4 + 1 : (i + i / 4 + 3) % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={(i + i / 4) % 4 + 1}");
         }
-        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
+        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Models.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
     }
 
     [DataTestMethod()]
@@ -248,7 +248,7 @@ public class CWpfCapModelTests
         var _x = new int[] { 3, 2, 3, 2, 1, 2, 4, 1, 4, 3, 4, 4, 1, 2, 3, 1 };
         for (var i = 0; i < 16; i++)
             Assert.AreEqual(_x[i], testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={_x[i]}");
-        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
+        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Models.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
     }
 
     [TestMethod()]
@@ -275,7 +275,7 @@ public class CWpfCapModelTests
         {
             Assert.AreEqual(i  % 4 + 1, testWpfCapModel.TileColor(i / 4, i % 4), $"testWpfCapModel.TileColor({i})=={i  % 4 + 1}");
         }
-        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Model.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
+        Assert.AreEqual("TileColChanged<AA22_AvlnCap.Models.CWpfCapModel>(System.EventArgs)\r\n", DebugOut, "DebugOut");
     }
 
     [TestMethod()]

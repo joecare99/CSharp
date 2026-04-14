@@ -37,7 +37,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private async Task OpenMsg()
     {
         var request = new MessageBoxRequestMessage("Frage", "Willst Du Das ?");
-        WeakReferenceMessenger.Default.Send(request);
+        await WeakReferenceMessenger.Default.Send(request);
         var result = await request.Response;
         if (result == MsgBoxResult.Yes)
             Name = "42 Entwickler";
@@ -49,7 +49,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private async Task OpenOverlayMsg()
     {
         var request = new OverlayMessageRequestMessage("Overlay Frage", "Soll der In-Window-Overlay-Dialog verwendet werden?");
-        WeakReferenceMessenger.Default.Send(request);
+        await WeakReferenceMessenger.Default.Send(request);
         var result = await request.Response;
         Name = result == MsgBoxResult.Yes ? "Overlay: Ja" : "Overlay: Nein";
     }
@@ -58,7 +58,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private async Task OpenDialog()
     {
         var request = new EditDialogRequestMessage(this.Name, this.Email);
-        WeakReferenceMessenger.Default.Send(request);
+        await WeakReferenceMessenger.Default.Send(request);
         var r = await request.Response;
         if (r.Item1)
             (Name, Email) = r.Item2;       
