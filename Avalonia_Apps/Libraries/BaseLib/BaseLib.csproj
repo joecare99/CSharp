@@ -31,6 +31,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" Version="4.6.2" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
 	</ItemGroup>
 </Project>
