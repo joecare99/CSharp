@@ -1,8 +1,0 @@
-﻿///Declaration MainBlock 0,0
-private void Test10Dat()
-///BlockStart Block 1,0
-{
-///Operation Operation 1,1
-writeln((xText ? 1 : 0).AsString());
-///BlockEnd Block 1,2
-}
