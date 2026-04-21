@@ -8,9 +8,12 @@ Apply these defaults when working in this repository unless the user explicitly 
 - If requirements are unclear, ask clarifying questions before starting implementation or planning refinement.
 - Avoid UI text strings in core services. Use Enumerations instead, and keep UI-facing strings in the ViewModel/UI layer.
 - Prefer one class/interface/struct per file.
-- document changes in an DevOps-manner markdown prefered, extrapolate bugs, tasks, baglogs and features
+- Document changes in a DevOps manner using Markdown, extrapolating bugs, tasks, backlogs, and features.
 - Use `DevOps` as the planning directory in this workspace, and treat `.Info.md` as the general planning description file. Team terminology around Azure DevOps backlog items may differ from generic 'story' naming.
 - When reviewing build warnings in this repository, ignore unsupported older framework warnings if the project also targets newer supported frameworks. Additionally, ignore `IDE0130` warnings in test projects.
+- Keep project-specific decisions in the repository `DevOps` folder; do not store them in memory for this repository. Use memory only for general solution-wide working preferences.
+- Planning should be done step by step in the `DevOps` directory with a Scrum-oriented structure.
+- Extract complex UI elements into separate widgets/components to keep main windows clean and simple.
 
 ## Testing
 - Use `MSTest` in the latest practical version for new or updated tests.
@@ -40,7 +43,7 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Prefer meaningful domain names over type prefixes when the intent is already clear.
 - In UI code, use short 3-character prefixes for actual controls in views and code-behind, e.g.
 	- `lst` for list controls
-	- `btn` for all kind of buttons, 
+	- `btn` for all kinds of buttons
 	- `edt` for any keyboard input control
 	- `lbl` for any text output control
 - Do not use UI control prefixes for ViewModel properties or other non-UI members.
