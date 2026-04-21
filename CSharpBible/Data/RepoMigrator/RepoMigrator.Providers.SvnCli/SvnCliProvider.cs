@@ -4,6 +4,7 @@ using RepoMigrator.Core.Abstractions;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace RepoMigrator.Providers.SvnCli;
@@ -57,7 +58,7 @@ public sealed class SvnCliProvider : IVersionControlProvider
             _endpoint = endpoint;
             _wcPath = IsRemote(endpoint.UrlOrPath) ? null : Path.GetFullPath(endpoint.UrlOrPath);
 
-            var target = IsRemote(endpoint.UrlOrPath) ? endpoint.UrlOrPath : _wcPath!;
+            var target = IsRemote(endpoint.UrlOrPath) ? ResolveRemoteEndpointPath(endpoint) : _wcPath!;
             var infoXml = await RunSvnAsync($"info --xml \"{target}\"", workingDir: null, ct);
             var doc = XDocument.Parse(infoXml);
             var entry = doc.Root?.Element("entry");
@@ -151,7 +152,7 @@ public sealed class SvnCliProvider : IVersionControlProvider
             // Falls targetPath noch keine WC ist: checkout
             if (!await IsWorkingCopyAsync(_wcPath, ct))
             {
-                await RunSvnAsync($"checkout \"{endpoint.UrlOrPath}\" \"{_wcPath}\"", workingDir: null, ct);
+                await RunSvnAsync($"checkout \"{ResolveRemoteEndpointPath(endpoint)}\" \"{_wcPath}\"", workingDir: null, ct);
             }
         }
         else
@@ -176,16 +177,20 @@ public sealed class SvnCliProvider : IVersionControlProvider
         // Fehlende löschen (Status analysieren)
         var statusOutput = await RunSvnAsync("status", workingDir: _wcPath, ct);
         var toDelete = ParseMissingFromStatus(statusOutput)
-            .Select(rel => Path.Combine(_wcPath, rel))
             .ToList();
 
         if (toDelete.Count > 0)
         {
-            // Pfade quoten
-            var args = new StringBuilder("delete --force");
-            foreach (var p in toDelete)
-                args.Append(' ').Append('"').Append(p).Append('"');
-            await RunSvnAsync(args.ToString(), workingDir: null, ct);
+            var targetsFile = Path.Combine(Path.GetTempPath(), $"svndelete_{Guid.NewGuid():N}.txt");
+            await File.WriteAllLinesAsync(targetsFile, toDelete, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), ct);
+            try
+            {
+                await RunSvnAsync($"delete --force --targets \"{targetsFile}\"", workingDir: _wcPath, ct);
+            }
+            finally
+            {
+                TryDeleteFile(targetsFile);
+            }
         }
 
         // Commit
@@ -212,6 +217,8 @@ public sealed class SvnCliProvider : IVersionControlProvider
                 // Datum setzen
                 await TryRunSvnAsync($"propset --revprop -r {rev} svn:date \"{date}\" \"{repoUrl}\"", workingDir: null, ct);
             }
+
+            await RunSvnAsync("update", workingDir: _wcPath, ct);
         }
         finally
         {
@@ -231,7 +238,7 @@ public sealed class SvnCliProvider : IVersionControlProvider
             throw new InvalidOperationException("Endpoint nicht gesetzt.");
 
         if (IsRemote(_endpoint.UrlOrPath))
-            return _endpoint.UrlOrPath;
+            return ResolveRemoteEndpointPath(_endpoint);
 
         // Lokale WC: URL aus 'svn info' ermitteln
         var info = await RunSvnAsync("info --show-item url", workingDir: _wcPath ?? _endpoint.UrlOrPath, ct);
@@ -245,6 +252,22 @@ public sealed class SvnCliProvider : IVersionControlProvider
     {
         var s = pathOrUrl.Trim().ToLowerInvariant();
         return s.StartsWith("http://") || s.StartsWith("https://") || s.StartsWith("svn://") || s.StartsWith("svn+ssh://") || s.StartsWith("file://");
+    }
+
+    private static string ResolveRemoteEndpointPath(RepositoryEndpoint endpoint)
+    {
+        var sBaseUrl = endpoint.UrlOrPath.Trim();
+        if (string.IsNullOrWhiteSpace(endpoint.BranchOrTrunk))
+            return sBaseUrl;
+
+        var sBranchOrTrunk = endpoint.BranchOrTrunk
+            .Replace('\\', '/')
+            .Trim();
+
+        if (string.IsNullOrWhiteSpace(sBranchOrTrunk))
+            return sBaseUrl;
+
+        return $"{sBaseUrl.TrimEnd('/')}/{sBranchOrTrunk.TrimStart('/')}";
     }
 
     private async Task<bool> IsWorkingCopyAsync(string path, CancellationToken ct)
@@ -369,12 +392,13 @@ public sealed class SvnCliProvider : IVersionControlProvider
 
         // Löschen von Dateien/Ordnern, die es im Source nicht mehr gibt (ausgenommen .svn)
         var srcFiles = Directory.EnumerateFiles(source, "*", SearchOption.AllDirectories)
+            .Where(src => !IsSvnAdministrativePath(source, src))
             .Select(p => p[(source.Length)..].TrimStart(Path.DirectorySeparatorChar))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         foreach (var file in Directory.EnumerateFiles(dest, "*", SearchOption.AllDirectories))
         {
-            if (file.Contains($"{Path.DirectorySeparatorChar}.svn{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase))
+            if (IsSvnAdministrativePath(dest, file))
                 continue;
             var rel = file[(dest.Length)..].TrimStart(Path.DirectorySeparatorChar);
             if (!srcFiles.Contains(rel))
@@ -387,7 +411,7 @@ public sealed class SvnCliProvider : IVersionControlProvider
         // Leere Verzeichnisse ggf. entfernen (ohne .svn)
         foreach (var dir in Directory.EnumerateDirectories(dest, "*", SearchOption.AllDirectories).OrderByDescending(d => d.Length))
         {
-            if (dir.EndsWith($"{Path.DirectorySeparatorChar}.svn", StringComparison.OrdinalIgnoreCase))
+            if (IsSvnAdministrativePath(dest, dir))
                 continue;
             if (!Directory.EnumerateFileSystemEntries(dir).Any())
                 Directory.Delete(dir, false);
@@ -396,11 +420,27 @@ public sealed class SvnCliProvider : IVersionControlProvider
         // Kopieren/Aktualisieren
         foreach (var src in Directory.EnumerateFiles(source, "*", SearchOption.AllDirectories))
         {
+            if (IsSvnAdministrativePath(source, src))
+                continue;
+
             var rel = src[(source.Length)..].TrimStart(Path.DirectorySeparatorChar);
             var dst = Path.Combine(dest, rel);
             Directory.CreateDirectory(Path.GetDirectoryName(dst)!);
             File.Copy(src, dst, true);
         }
+    }
+
+    private static bool IsSvnAdministrativePath(string sRootPath, string sCandidatePath)
+    {
+        var sRelativePath = Path.GetRelativePath(sRootPath, sCandidatePath);
+        if (string.IsNullOrWhiteSpace(sRelativePath) || string.Equals(sRelativePath, ".", StringComparison.Ordinal))
+            return false;
+
+        var arrSegments = sRelativePath
+            .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+            .Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+
+        return arrSegments.Any(sSegment => string.Equals(sSegment, ".svn", StringComparison.OrdinalIgnoreCase));
     }
 
     private static void TryMakeWritable(string path)
@@ -419,10 +459,16 @@ public sealed class SvnCliProvider : IVersionControlProvider
         // gängige Ausgaben:
         // "Committed revision 123."
         // "Übertragen wurden Revision 123." (lokalisierte Clients)
-        // Wir suchen die letzte Zahl im Text.
-        var digits = new string(commitOutput.Where(char.IsDigit).ToArray());
-        if (int.TryParse(digits, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n))
-            return n.ToString(CultureInfo.InvariantCulture);
+        // Wir suchen die Revisionsnummer gezielt in der Abschlusszeile statt alle Ziffern aus dem gesamten Output zu sammeln.
+        var arrLines = commitOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        for (var iLineIndex = arrLines.Length - 1; iLineIndex >= 0; iLineIndex--)
+        {
+            var sLine = arrLines[iLineIndex];
+            var match = Regex.Match(sLine, @"\brevision\s+(?<revision>\d+)\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            if (match.Success)
+                return match.Groups["revision"].Value;
+        }
+
         return null;
     }
 

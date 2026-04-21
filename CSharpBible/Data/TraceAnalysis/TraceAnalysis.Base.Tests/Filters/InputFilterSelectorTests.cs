@@ -1,4 +1,8 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using TraceAnalysis.Base.Filters;
 using TraceAnalysis.Base.Models.Interfaces;
 
@@ -43,7 +47,7 @@ public class InputFilterSelectorTests
         Assert.AreEqual("AutoFilter", result.SelectedFilter.FilterId);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(90, 70, "FilterA")]
     [DataRow(10, 40, "FilterB")]
     public void Select_WhenConfidenceDiffers_ChoosesHigherConfidence(int filterAConfidence, int filterBConfidence, string expectedFilterId)
@@ -107,7 +111,7 @@ public class InputFilterSelectorTests
         var result = selector.Select(new[] { filterA, filterB }, CreateSeekableStream(), new FilterSourceDescriptor("sample", ".csv"));
 
         Assert.IsNull(result.SelectedFilter);
-        Assert.AreEqual(2, result.Analyses.Count);
+        Assert.HasCount(2, result.Analyses);
     }
 
     [TestMethod]

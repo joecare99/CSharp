@@ -8,13 +8,13 @@ public static class HtmlDocumentIO
 {
     public static async Task<HtmlSection> LoadAsync(string path, CancellationToken ct = default)
     {
-        var html = await File.ReadAllTextAsync(path, Encoding.UTF8, ct);
-        return await HtmlDocumentSerializer.FromHtmlStringAsync(html);
+        var html = await File.ReadAllTextAsync(path, Encoding.UTF8, ct).ConfigureAwait(false);
+        return await HtmlDocumentSerializer.FromHtmlStringAsync(html).ConfigureAwait(false);
     }
 
     public static async Task SaveAsync(HtmlSection root, string path, CancellationToken ct = default)
     {
         var html = HtmlDocumentSerializer.ToHtmlString(root);
-        await File.WriteAllTextAsync(path, html, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), ct);
+        await File.WriteAllTextAsync(path, html, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), ct).ConfigureAwait(false);
     }
 }

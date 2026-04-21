@@ -1,0 +1,52 @@
+<UserControl x:Class="RepoMigrator.App.Wpf.Views.TargetEndpointSetupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="UserControlLoaded"
+             DataContextChanged="UserControlDataContextChanged">
+    <GroupBox Header="Ziel"
+              Width="380"
+              Margin="12,0,0,0"
+              Visibility="{Binding IsSetupStage, Converter={StaticResource BoolToVisibilityConverter}}">
+        <StackPanel Margin="8">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Typ" Width="80"/>
+                <ComboBox Width="240"
+                          ItemsSource="{Binding RepoTypes}"
+                          SelectedItem="{Binding TargetType}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="URL/Pfad" Width="80"/>
+                <ComboBox Width="240"
+                          IsEditable="True"
+                          IsTextSearchEnabled="False"
+                          ItemsSource="{Binding RecentTargetUrls}"
+                          Text="{Binding TargetUrl, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Branch" Width="80"/>
+                <ComboBox Width="240"
+                          IsEditable="True"
+                          IsTextSearchEnabled="False"
+                          ItemsSource="{Binding TargetGitBranchOptions}"
+                          Text="{Binding TargetBranch, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="User" Width="80"/>
+                <ComboBox Width="240"
+                          IsEditable="True"
+                          IsTextSearchEnabled="False"
+                          ItemsSource="{Binding RecentTargetUsers}"
+                          Text="{Binding TargetUser, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Passwort" Width="80"/>
+                <PasswordBox x:Name="edtTargetPassword" Width="240" PasswordChanged="TargetPasswordChanged"/>
+            </StackPanel>
+            <Button Content="Ziel testen"
+                    Command="{Binding TestTargetCommand}"
+                    IsEnabled="{Binding IsIdle}"
+                    HorizontalAlignment="Right"
+                    Margin="0,8,0,0"/>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

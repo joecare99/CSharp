@@ -128,6 +128,7 @@ public static class XamlDocumentSerializer
     {
         // ggf. Anker (x:Name) erzeugen, wenn Id vorhanden ist
         var hasAnchor = !string.IsNullOrEmpty(s.Id);
+        var anchorName = hasAnchor ? NormalizeSectionName(s.Id!) : null;
         var text = s.TextContent ?? string.Empty;
         var runOpenWritten = false;
 
@@ -142,7 +143,7 @@ public static class XamlDocumentSerializer
 
         if (hasAnchor)
         {
-            sb.Append("<Span x:Name=\"").Append(EscapeAttribute(s.Id!)).Append("\">");
+            sb.Append("<Span x:Name=\"").Append(EscapeAttribute(anchorName!)).Append("\">");
         }
 
         if (s.IsLink || !string.IsNullOrEmpty(s.Href))
@@ -150,7 +151,7 @@ public static class XamlDocumentSerializer
             sb.Append("<Hyperlink");
             if (!string.IsNullOrEmpty(s.Href))
             {
-                sb.Append(" NavigateUri=\"").Append(EscapeAttribute(s.Href!)).Append('"');
+                sb.Append(" NavigateUri=\"").Append(EscapeAttribute(NormalizeNavigateUri(s.Href!))).Append('"');
             }
             sb.Append('>');
 
@@ -215,5 +216,28 @@ public static class XamlDocumentSerializer
         var sb = new StringBuilder(s.Length + 8);
         AppendEscaped(sb, s);
         return sb.ToString();
+    }
+
+    private static string NormalizeSectionName(string name)
+        => name.Replace('-', '_');
+
+    private static string NormalizeNavigateUri(string href)
+    {
+        if (string.IsNullOrWhiteSpace(href))
+        {
+            return href;
+        }
+
+        if (href.StartsWith('#'))
+        {
+            return "#" + NormalizeSectionName(href[1..]);
+        }
+
+        if (Uri.TryCreate(href, UriKind.Absolute, out _))
+        {
+            return href;
+        }
+
+        return NormalizeSectionName(href);
     }
 }
