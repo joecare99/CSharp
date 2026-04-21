@@ -40,7 +40,7 @@ Implement a robust input filter for the XML-based `MOVIRUN` `.trace` export form
 ## Dependencies
 
 - `T-830302-001` - `Identify first supported source formats`
-- `T-830302-003` - `Specify input filter interface and selection strategy`
+- `T-830353` - `Specify input filter interface and selection strategy`
 
 ## Done Criteria
 

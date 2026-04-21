@@ -46,15 +46,16 @@ The first supported source format is a flat `CSV` file with a header row in the 
 ## Candidate Tasks
 
 - `T-830302-001` - `Identify first supported source formats`
-- `T-830302-003` - `Specify input filter interface and selection strategy`
-- `T-830302-006` - `Define base filter interface project structure`
-- `T-830302-007` - `Test T-830302-003 input filter selection and analysis`
+- `T-830353` - `Specify input filter interface and selection strategy`
+- `T-832070` - `Define base filter interface project structure`
+- `T-831180` - `Test T-830353 input filter selection and analysis`
 - `T-830302-008` - `Implement MOVIRUN trace text input filter`
 - `T-830302-009` - `Test MOVIRUN trace text input filter`
 - `T-830302-010` - `Implement MOVIRUN XML trace input filter`
 - `T-830302-011` - `Test MOVIRUN XML trace input filter`
 - `T-830302-012` - `Integrate TraceCsv2realCsv with shared TraceAnalysis intake filters`
 - `T-830302-013` - `Test TraceCsv2realCsv shared intake integration`
+- `T-830302-014` - `Refactor TraceCsv2realCsv filter composition to use dependency injection`
 
 ## Current Source Format Direction
 

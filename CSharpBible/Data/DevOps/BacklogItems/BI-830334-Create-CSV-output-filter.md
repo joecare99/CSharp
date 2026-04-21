@@ -61,7 +61,7 @@ Multi-value split logic is not part of the direct import filter. Import reads ra
 
 ## Candidate Tasks
 
-- `T-830302-004` - `Specify CSV column mapping and export behavior`
+- `T-830348` - `Specify CSV column mapping and export behavior`
 
 ## Open Questions
 

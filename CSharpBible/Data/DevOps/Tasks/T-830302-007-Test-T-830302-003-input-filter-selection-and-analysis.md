@@ -1,4 +1,4 @@
-# Task T-830302-007 - Test T-830302-003 input filter selection and analysis
+# Task T-831180 - Test T-830353 input filter selection and analysis
 
 ## Status
 
@@ -10,7 +10,7 @@ Draft
 
 ## Goal
 
-Validate that the deterministic input-filter selection and analysis behavior from `T-830302-003` works as specified.
+Validate that the deterministic input-filter selection and analysis behavior from `T-830353` works as specified.
 
 ## Scope
 

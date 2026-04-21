@@ -28,7 +28,7 @@ Refactor `TraceCsv2realCsv` to use the shared `TraceAnalysis` input-filter selec
 
 ## Dependencies
 
-- `T-830302-003` - `Specify input filter interface and selection strategy`
+- `T-830353` - `Specify input filter interface and selection strategy`
 - `T-830302-008` - `Implement MOVIRUN trace text input filter`
 - `T-830302-010` - `Implement MOVIRUN XML trace input filter`
 

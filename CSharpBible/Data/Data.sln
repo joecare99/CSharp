@@ -120,11 +120,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{E6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backlog-Items", "Backlog-Items", "{69FB2434-DA6E-4623-95FD-103AE1C4E8B4}"
 	ProjectSection(SolutionItems) = preProject
-		DevOps\BacklogItems\BI-830334-Create-CSV-output-filter.md = DevOps\BacklogItems\BI-830334-Create-CSV-output-filter.md
 		DevOps\BacklogItems\BI-830331-Define-canonical-trace-exchange-model.md = DevOps\BacklogItems\BI-830331-Define-canonical-trace-exchange-model.md
 		DevOps\BacklogItems\BI-830332-Create-pluggable-input-filters-for-initial-source-formats.md = DevOps\BacklogItems\BI-830332-Create-pluggable-input-filters-for-initial-source-formats.md
-		DevOps\BacklogItems\README.md = DevOps\BacklogItems\README.md
+		DevOps\BacklogItems\BI-830334-Create-CSV-output-filter.md = DevOps\BacklogItems\BI-830334-Create-CSV-output-filter.md
 		DevOps\BacklogItems\BI-830337-Create-Excel-output-filter.md = DevOps\BacklogItems\BI-830337-Create-Excel-output-filter.md
+		DevOps\BacklogItems\README.md = DevOps\BacklogItems\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tasks", "Tasks", "{08C40D64-DCC0-436D-A857-4EF3EA655486}"
@@ -134,7 +134,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tasks", "Tasks", "{08C40D64
 		DevOps\Tasks\T-830302-002-Define-canonical-fields-and-optional-metadata.md = DevOps\Tasks\T-830302-002-Define-canonical-fields-and-optional-metadata.md
 		DevOps\Tasks\T-830302-003-Specify-input-filter-interface-and-selection-strategy.md = DevOps\Tasks\T-830302-003-Specify-input-filter-interface-and-selection-strategy.md
 		DevOps\Tasks\T-830302-004-Specify-CSV-column-mapping-and-export-behavior.md = DevOps\Tasks\T-830302-004-Specify-CSV-column-mapping-and-export-behavior.md
+		DevOps\Tasks\T-830302-006-Define-base-filter-interface-project-structure.md = DevOps\Tasks\T-830302-006-Define-base-filter-interface-project-structure.md
+		DevOps\Tasks\T-830302-007-Test-T-830302-003-input-filter-selection-and-analysis.md = DevOps\Tasks\T-830302-007-Test-T-830302-003-input-filter-selection-and-analysis.md
+		DevOps\Tasks\T-830302-008-Implement-MOVIRUN-trace-text-input-filter.md = DevOps\Tasks\T-830302-008-Implement-MOVIRUN-trace-text-input-filter.md
+		DevOps\Tasks\T-830302-009-Test-MOVIRUN-trace-text-input-filter.md = DevOps\Tasks\T-830302-009-Test-MOVIRUN-trace-text-input-filter.md
+		DevOps\Tasks\T-830302-010-Implement-MOVIRUN-XML-trace-input-filter.md = DevOps\Tasks\T-830302-010-Implement-MOVIRUN-XML-trace-input-filter.md
+		DevOps\Tasks\T-830302-011-Test-MOVIRUN-XML-trace-input-filter.md = DevOps\Tasks\T-830302-011-Test-MOVIRUN-XML-trace-input-filter.md
+		DevOps\Tasks\T-830302-012-Integrate-TraceCsv2realCsv-with-shared-TraceAnalysis-intake-filters.md = DevOps\Tasks\T-830302-012-Integrate-TraceCsv2realCsv-with-shared-TraceAnalysis-intake-filters.md
+		DevOps\Tasks\T-830302-013-Test-TraceCsv2realCsv-shared-intake-integration.md = DevOps\Tasks\T-830302-013-Test-TraceCsv2realCsv-shared-intake-integration.md
 		DevOps\Tasks\T-830395-Specify-Excel-workbook-layout-and-export-behavior.md = DevOps\Tasks\T-830395-Specify-Excel-workbook-layout-and-export-behavior.md
+		DevOps\Tasks\T-830895-Implement-Excel-output-filter-from-canonical-exchange-records.md = DevOps\Tasks\T-830895-Implement-Excel-output-filter-from-canonical-exchange-records.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraceAnalysis.Base", "TraceAnalysis\TraceAnalysis.Base\TraceAnalysis.Base.csproj", "{65231580-7BC5-4956-B1BC-D62133F5D3B1}"
@@ -144,6 +153,26 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraceAnalysis.Base.Tests", "TraceAnalysis\TraceAnalysis.Base.Tests\TraceAnalysis.Base.Tests.csproj", "{45044F5F-A9F4-4DC9-AB09-AAAF8A5484A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraceAnalysis.Filter.CSV", "TraceAnalysis\TraceAnalysis.Filter.CSV\TraceAnalysis.Filter.CSV.csproj", "{E0141A8E-6993-D1B2-C82A-1BC6B29377C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Document.Demo.Gui", "DocumentUtils\Document.Demo.Gui\Document.Demo.Gui.csproj", "{1A23D9EE-E254-2BFB-443F-2C9237B0D719}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraceAnalysis.Filter.Excel", "TraceAnalysis\TraceAnalysis.Filter.Excel\TraceAnalysis.Filter.Excel.csproj", "{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{0D3282FC-2260-4D38-957B-4E3439CD23A7}"
+	ProjectSection(SolutionItems) = preProject
+		TraceAnalysis\TestData\Trace1.trace = TraceAnalysis\TestData\Trace1.trace
+		TraceAnalysis\TestData\Trace1.trace.csv = TraceAnalysis\TestData\Trace1.trace.csv
+		TraceAnalysis\TestData\Trace1.txt = TraceAnalysis\TestData\Trace1.txt
+		TraceAnalysis\TestData\Trace2_us.trace = TraceAnalysis\TestData\Trace2_us.trace
+		TraceAnalysis\TestData\Trace2_us.trace.csv = TraceAnalysis\TestData\Trace2_us.trace.csv
+		TraceAnalysis\TestData\Trace2_us.txt = TraceAnalysis\TestData\Trace2_us.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraceAnalysis.Filter.MovirunText", "TraceAnalysis\TraceAnalysis.Filter.MovirunText\TraceAnalysis.Filter.MovirunText.csproj", "{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraceAnalysis.Filter.MovirunTrace", "TraceAnalysis\TraceAnalysis.Filter.MovirunTrace\TraceAnalysis.Filter.MovirunTrace.csproj", "{57448214-72DC-2383-4E82-6697501ACC29}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DevOps", "DevOps\DevOps.shproj", "{B7D27D6F-34E9-4F5A-BB5F-6A0D3F0F2C7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -611,6 +640,54 @@ Global
 		{E0141A8E-6993-D1B2-C82A-1BC6B29377C6}.Release|x64.Build.0 = Release|Any CPU
 		{E0141A8E-6993-D1B2-C82A-1BC6B29377C6}.Release|x86.ActiveCfg = Release|Any CPU
 		{E0141A8E-6993-D1B2-C82A-1BC6B29377C6}.Release|x86.Build.0 = Release|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Debug|x64.Build.0 = Debug|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Debug|x86.Build.0 = Debug|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Release|x64.ActiveCfg = Release|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Release|x64.Build.0 = Release|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Release|x86.ActiveCfg = Release|Any CPU
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719}.Release|x86.Build.0 = Release|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Debug|x64.Build.0 = Debug|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Debug|x86.Build.0 = Debug|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Release|x64.ActiveCfg = Release|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Release|x64.Build.0 = Release|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Release|x86.ActiveCfg = Release|Any CPU
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8}.Release|x86.Build.0 = Release|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Debug|x64.Build.0 = Debug|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Release|x64.ActiveCfg = Release|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Release|x64.Build.0 = Release|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134}.Release|x86.Build.0 = Release|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Debug|x64.Build.0 = Debug|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Debug|x86.Build.0 = Debug|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Release|x64.ActiveCfg = Release|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Release|x64.Build.0 = Release|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Release|x86.ActiveCfg = Release|Any CPU
+		{57448214-72DC-2383-4E82-6697501ACC29}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -659,8 +736,16 @@ Global
 		{FDA82907-F072-6943-3484-8D582E6131F8} = {51F6C20B-003C-430C-BED7-2A89F834E4C0}
 		{45044F5F-A9F4-4DC9-AB09-AAAF8A5484A2} = {6BB16C4B-D416-4484-ACEF-1A47B631913E}
 		{E0141A8E-6993-D1B2-C82A-1BC6B29377C6} = {6BB16C4B-D416-4484-ACEF-1A47B631913E}
+		{1A23D9EE-E254-2BFB-443F-2C9237B0D719} = {C72F7201-74F9-66F9-5C2C-ABF0F08448DC}
+		{503AE8CE-A1B0-5322-DC8E-75713D21F0A8} = {6BB16C4B-D416-4484-ACEF-1A47B631913E}
+		{0D3282FC-2260-4D38-957B-4E3439CD23A7} = {6BB16C4B-D416-4484-ACEF-1A47B631913E}
+		{FD1D9D5A-C039-86EE-6E92-AF36E0AF9134} = {6BB16C4B-D416-4484-ACEF-1A47B631913E}
+		{57448214-72DC-2383-4E82-6697501ACC29} = {6BB16C4B-D416-4484-ACEF-1A47B631913E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {128BE64A-28F5-47C5-A045-2352EF09BFBB}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		DevOps\DevOps.projitems*{b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

@@ -11,4 +11,4 @@ This directory contains local planning artifacts that mirror an Azure DevOps bac
 
 ## Current Focus
 
-- Epic `830302-TraceAnalysis and AGV-reverse simulation`
+- Epic `E...`

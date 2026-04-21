@@ -100,7 +100,7 @@ Parent: Epic `830302`
 - Record format, owner, and expected availability
 - Note obvious access or retention constraints
 
-### BI-830302-002 - Define trace event glossary
+### BI-830349 - Define trace event glossary
 
 Parent: Epic `830302`
 
@@ -108,7 +108,7 @@ Parent: Epic `830302`
 - Mark unknown or ambiguous semantics
 - Prepare questions for domain validation
 
-### BI-830302-003 - Describe normalized trace shape
+### BI-830353 - Describe normalized trace shape
 
 Parent: Epic `830302`
 
@@ -116,7 +116,7 @@ Parent: Epic `830302`
 - Identify mandatory and optional attributes
 - Capture unresolved mapping rules
 
-### BI-830302-004 - Outline reverse simulation flow
+### BI-830348 - Outline reverse simulation flow
 
 Parent: Epic `830302`
 

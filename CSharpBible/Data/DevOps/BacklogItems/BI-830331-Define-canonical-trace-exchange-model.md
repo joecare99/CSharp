@@ -49,7 +49,7 @@ Responsibility boundary for this increment:
 
 ## Candidate Tasks
 
-- `T-830302-002` - `Define canonical fields and optional metadata`
+- `T-830349` - `Define canonical fields and optional metadata`
 
 ## Open Questions
 
