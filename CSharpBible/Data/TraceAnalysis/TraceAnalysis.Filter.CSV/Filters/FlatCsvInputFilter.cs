@@ -13,10 +13,16 @@ namespace TraceAnalysis.Filter.CSV.Filters
     /// Input filter for flat CSV files with a header row.
     /// Supports common separators (<c>;</c>, <c>\t</c>, <c>,</c>).
     /// </summary>
-    public class FlatCsvInputFilter : IInputFilter
+    public class FlatCsvInputFilter : IAnalyzableInputFilter
     {
         /// <summary>Expected first line of a TraceCsv stream (used for format exclusion).</summary>
         private const string TraceCsvHeader = "[key]; [value]";
+
+        /// <inheritdoc/>
+        public string FilterId => "FlatCsv";
+
+        /// <inheritdoc/>
+        public int Priority => 90;
 
         /// <inheritdoc/>
         /// <remarks>
@@ -28,23 +34,69 @@ namespace TraceAnalysis.Filter.CSV.Filters
         /// </remarks>
         public bool CanHandle(Stream _stream, string _sourceId)
         {
-            if (!_stream.CanSeek)
-                return false;
+            var analysis = Analyze(_stream, new FilterSourceDescriptor(_sourceId, System.IO.Path.GetExtension(_sourceId)));
+            return analysis.CanHandle;
+        }
 
-            var ext = System.IO.Path.GetExtension(_sourceId);
-            if (!string.IsNullOrEmpty(ext) && !ext.Equals(".csv", StringComparison.OrdinalIgnoreCase))
-                return false;
+        /// <inheritdoc/>
+        public InputFilterAnalysisResult Analyze(Stream stream, FilterSourceDescriptor sourceDescriptor)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+            if (sourceDescriptor == null)
+                throw new ArgumentNullException(nameof(sourceDescriptor));
 
-            var startPos = _stream.Position;
+            var decisionLines = new List<string>();
+            var ext = sourceDescriptor.SuggestedExtension ?? System.IO.Path.GetExtension(sourceDescriptor.SourceId);
+            var isExactExtensionMatch = string.Equals(ext, ".csv", StringComparison.OrdinalIgnoreCase);
+
+            if (!string.IsNullOrWhiteSpace(ext))
+                decisionLines.Add($"Extension={ext}");
+
+            if (!stream.CanSeek)
+            {
+                decisionLines.Add("Stream is not seekable.");
+                return new InputFilterAnalysisResult(FilterId, false, 0, isExactExtensionMatch, decisionLines);
+            }
+
+            var startPos = stream.Position;
             try
             {
-                using var reader = new StreamReader(_stream, Encoding.UTF8, true, 1024, leaveOpen: true);
+                using var reader = new StreamReader(stream, Encoding.UTF8, true, 1024, leaveOpen: true);
                 var firstLine = reader.ReadLine();
-                return !string.IsNullOrEmpty(firstLine) && firstLine != TraceCsvHeader;
+                var secondLine = reader.ReadLine();
+                var hasContent = !string.IsNullOrWhiteSpace(firstLine);
+                var isTraceCsv = firstLine == TraceCsvHeader;
+                var separator = DetectSeparator(firstLine);
+                var headerColumns = !string.IsNullOrWhiteSpace(firstLine) && separator != null
+                    ? CsvModel.SplitCSVLine(firstLine, separator)
+                    : new List<string>();
+                var sampleColumns = !string.IsNullOrWhiteSpace(secondLine) && separator != null
+                    ? CsvModel.SplitCSVLine(secondLine, separator)
+                    : new List<string>();
+                var hasMatchingSampleWidth = headerColumns.Count > 0 && sampleColumns.Count == headerColumns.Count;
+
+                decisionLines.Add(hasContent ? "Flat CSV header candidate detected." : "Header line missing.");
+                decisionLines.Add(isTraceCsv ? "TraceCsv signature excluded." : "TraceCsv signature not present.");
+                decisionLines.Add(separator != null ? $"Separator={separator}" : "No supported separator detected.");
+                decisionLines.Add(hasMatchingSampleWidth ? "Sample row width matches header." : "Sample row width mismatch.");
+
+                var canHandle = hasContent && !isTraceCsv && separator != null && hasMatchingSampleWidth;
+                var confidenceScore = 0;
+                if (hasContent && !isTraceCsv)
+                    confidenceScore += 80;
+                if (separator != null)
+                    confidenceScore += 40;
+                if (hasMatchingSampleWidth)
+                    confidenceScore += 40;
+                if (isExactExtensionMatch)
+                    confidenceScore += 10;
+
+                return new InputFilterAnalysisResult(FilterId, canHandle, confidenceScore, isExactExtensionMatch, decisionLines);
             }
             finally
             {
-                _stream.Position = startPos;
+                stream.Position = startPos;
             }
         }
 
@@ -95,6 +147,30 @@ namespace TraceAnalysis.Filter.CSV.Filters
             }
 
             return new TraceDataSet(new TraceMetadata(_sourceId, fields), records, errors);
+        }
+
+        /// <inheritdoc/>
+        public ITraceDataSet Read(Stream stream, FilterSourceDescriptor sourceDescriptor)
+        {
+            if (sourceDescriptor == null)
+                throw new ArgumentNullException(nameof(sourceDescriptor));
+
+            return Read(stream, sourceDescriptor.SourceId);
+        }
+
+        private static string? DetectSeparator(string? line)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+                return null;
+
+            if (line.Contains(";"))
+                return ";";
+            if (line.Contains("\t"))
+                return "\t";
+            if (line.Contains(","))
+                return ",";
+
+            return null;
         }
     }
 }

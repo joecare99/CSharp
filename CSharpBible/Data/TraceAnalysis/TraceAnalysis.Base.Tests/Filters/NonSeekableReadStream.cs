@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+
 namespace TraceAnalysis.Base.Tests.Filters;
 
 /// <summary>

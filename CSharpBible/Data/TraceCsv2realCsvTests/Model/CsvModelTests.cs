@@ -22,7 +22,7 @@ namespace TraceCsv2realCsv.Model.Tests
             testModel = new CsvModel();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(new string[] { "Name,Age,Height", "Alice,25,1.65", "Bob,30,1.80", "Charlie,35,1.75", "David,40,1.70" }, 4)]
         [DataRow(new string[] { "Name,Age,Height", "Alice,25,1.65", "Bob,30,1.80", "Charlie,35,1.75", "David,40,1.70", "Joe,45,1.73", "Morton,50,1.81" }, 6)]
         [DataRow(new string[] { "Name", "Alice", "Bob"}, 2)]
@@ -47,7 +47,7 @@ namespace TraceCsv2realCsv.Model.Tests
                 Assert.AreEqual(1.65, testModel.Rows[0]["Height"]);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(new string[] { "Name", "Age", "Height" }, new object[] {
             new object[]{ "Alice",25,1.65d},
             new object[] { "Bob", 30, 1.80d },
@@ -81,7 +81,7 @@ namespace TraceCsv2realCsv.Model.Tests
         }
 
 
-        [DataTestMethod()]
+        [TestMethod]
         [DataRow(new string[] { },new TypeCode[] { },new object[] { })]
         [DataRow(new string[] { "Alice" }, new TypeCode[] { TypeCode.String }, new object[] { "Alice" })]
         [DataRow(new string[] { "Bob","30" }, new TypeCode[] { TypeCode.String, TypeCode.Int32 }, new object[] { "Bob",30 })]
@@ -97,7 +97,7 @@ namespace TraceCsv2realCsv.Model.Tests
             CollectionAssert.AreEqual(loExp,rslt);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Alice", ",", '\"', new string[] { "Alice" })]
         [DataRow("Alice", "", '\"', new string[] { "Alice" })]
         [DataRow(",0,,", ",", '\"', new string[] { "","0","","" })]
@@ -112,7 +112,7 @@ namespace TraceCsv2realCsv.Model.Tests
 
             var result = CsvModel.SplitCSVLine(line, separator, quotation);
 
-            Assert.AreEqual(asExp.Length, result.Count);
+            Assert.HasCount(asExp.Length, result);
             Assert.AreEqual(asExp[0], result[0], "0");
             if (asExp.Length>1)
             Assert.AreEqual(asExp[1], result[1], "1");
@@ -120,7 +120,7 @@ namespace TraceCsv2realCsv.Model.Tests
                 Assert.AreEqual(asExp[2], result[2], "2");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(new string[] { "Alice", "Bob", "Charlie" }, TypeCode.String,DisplayName ="Strings")]
         [DataRow(new string[] { "1", "2", "3" }, TypeCode.Int32, DisplayName = "int")]
         [DataRow(new string[] { "1.4", "2", "3.8" }, TypeCode.Double, DisplayName = "floats")]

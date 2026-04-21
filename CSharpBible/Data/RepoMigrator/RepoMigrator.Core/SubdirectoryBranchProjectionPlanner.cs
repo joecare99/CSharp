@@ -21,6 +21,7 @@ public static class SubdirectoryBranchProjectionPlanner
             throw new ArgumentOutOfRangeException(nameof(iDepth), "The supported branch split depth is 1 or 2.");
 
         var dctPlans = new SortedDictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+        var hsRootPaths = new HashSet<string>(StringComparer.Ordinal);
         foreach (var sRawPath in lstTrackedPaths)
         {
             var sPath = NormalizePath(sRawPath);
@@ -33,7 +34,7 @@ public static class SubdirectoryBranchProjectionPlanner
 
             if (arrSegments.Length == 1)
             {
-                AddPath(dctPlans, ComposeBranchName(sRootBranchName), sPath);
+                hsRootPaths.Add(sPath);
                 continue;
             }
 
@@ -41,9 +42,31 @@ public static class SubdirectoryBranchProjectionPlanner
             AddPath(dctPlans, ComposeBranchName(sRootBranchName, arrSegments.Take(iDirectorySegments).ToArray()), sPath);
         }
 
+        if (hsRootPaths.Count > 0)
+        {
+            var sRootContentBranchName = dctPlans.Count == 0
+                ? ComposeBranchName(sRootBranchName)
+                : ResolveRootContentBranchName(sRootBranchName, dctPlans.Keys);
+
+            foreach (var sPath in hsRootPaths)
+                AddPath(dctPlans, sRootContentBranchName, sPath);
+        }
+
         return dctPlans
             .Select(kvp => new SubdirectoryBranchProjectionPlan(kvp.Key, kvp.Value))
             .ToList();
+    }
+
+    private static string ResolveRootContentBranchName(string sRootBranchName, IEnumerable<string> lstExistingBranchNames)
+    {
+        var hsExistingBranchNames = lstExistingBranchNames.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        for (var iSuffix = 0; ; iSuffix++)
+        {
+            var sCandidateSegment = iSuffix == 0 ? "_root" : $"_root{iSuffix + 1}";
+            var sCandidateBranchName = ComposeBranchName(sRootBranchName, sCandidateSegment);
+            if (!hsExistingBranchNames.Contains(sCandidateBranchName))
+                return sCandidateBranchName;
+        }
     }
 
     private static void AddPath(IDictionary<string, HashSet<string>> dctPlans, string sBranchName, string sPath)

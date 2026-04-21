@@ -5,7 +5,7 @@ namespace RepoMigrator.Tests;
 [TestClass]
 public sealed class SvnRevisionRangeResolverTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("100", null)]
     [DataRow("110", "100")]
@@ -29,7 +29,7 @@ public sealed class SvnRevisionRangeResolverTests
         Assert.AreEqual("100", sSuggestedRevisionId);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("100", "110")]
     [DataRow("110", "120")]
@@ -43,7 +43,7 @@ public sealed class SvnRevisionRangeResolverTests
         Assert.AreEqual(sExpectedNextRevisionId, sResolvedRevisionId);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("", null)]
     [DataRow("120", "120")]

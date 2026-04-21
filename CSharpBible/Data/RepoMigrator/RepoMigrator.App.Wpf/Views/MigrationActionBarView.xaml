@@ -1,0 +1,17 @@
+<UserControl x:Class="RepoMigrator.App.Wpf.Views.MigrationActionBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <ProgressBar Width="400" Height="18" Minimum="0" Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}"/>
+        <Button Content="Start"
+                Command="{Binding StartCommand}"
+                IsEnabled="{Binding CanStartMigration}"
+                Margin="12,0,0,0"
+                Visibility="{Binding IsOptionsStage, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        <Button Content="Abbrechen"
+                Command="{Binding CancelCommand}"
+                IsEnabled="{Binding IsRunning}"
+                Margin="12,0,0,0"
+                Visibility="{Binding IsExecutionStage, Converter={StaticResource BoolToVisibilityConverter}}"/>
+    </StackPanel>
+</UserControl>

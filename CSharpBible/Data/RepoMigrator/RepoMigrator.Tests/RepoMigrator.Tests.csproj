@@ -16,6 +16,7 @@
     <ProjectReference Include="..\RepoMigrator.App.Logic\RepoMigrator.App.Logic.csproj" />
     <ProjectReference Include="..\RepoMigrator.Core\RepoMigrator.Core.csproj" />
     <ProjectReference Include="..\RepoMigrator.Providers.Git\RepoMigrator.Providers.Git.csproj" />
+    <ProjectReference Include="..\RepoMigrator.Providers.SvnCli\RepoMigrator.Providers.SvnCli.csproj" />
    <ProjectReference Include="..\RepoMigrator.Tools.PipelinedMigration\RepoMigrator.Tools.PipelinedMigration.csproj" />
     <ProjectReference Include="..\RepoMigrator.Tools.GitBranchSplitter\RepoMigrator.Tools.GitBranchSplitter.csproj" />
   </ItemGroup>

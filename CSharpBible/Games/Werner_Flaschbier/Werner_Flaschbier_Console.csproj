@@ -28,7 +28,7 @@
 		<PackageReference Condition="$(TargetFramework.StartsWith(net462))" Include="System.ValueTuple" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+	  <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
 	  <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
 	</ItemGroup>
 </Project>

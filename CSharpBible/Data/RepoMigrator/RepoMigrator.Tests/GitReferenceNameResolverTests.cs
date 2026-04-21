@@ -5,7 +5,7 @@ namespace RepoMigrator.Tests;
 [TestClass]
 public sealed class GitReferenceNameResolverTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("work", "", "work")]
     [DataRow("work", "work", "work-import")]
     [DataRow("work", "work|work-import", "work-import-20250326")]

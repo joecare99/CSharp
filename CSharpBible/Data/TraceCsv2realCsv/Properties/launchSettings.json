@@ -1,0 +1,19 @@
+{
+  "profiles": {
+    "TraceCsv2realCsv": {
+      "commandName": "Project"
+    },
+    "Profil \"1\"": {
+      "commandName": "Executable",
+      "commandLineArgs": "\"C:\\Projekte\\2023\\Remmert_Herford\\AxisTraces_Remmert_20230504\\AxisTracesTranslatorischX_mitLast.trace.csv\" \"C:\\Projekte\\2023\\Remmert_Herford\\AxisTraces_Remmert_20230504\\AxisTracesTranslatorischX_mitLast.csv\" "
+    },
+    "ConvertFIles": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Projekte\\2023\\Remmert_Herford\\AxisTraces_Remmert_20230504\\AxisTracesTranslatorischX_mitLast.trace.csv\" \"C:\\Projekte\\2023\\Remmert_Herford\\AxisTraces_Remmert_20230504\\AxisTracesTranslatorischX_mitLast.csv\" "
+    },
+    "Profil \"2\"": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Projekte\\CSharp\\CSharpBible\\Data\\TraceAnalysis\\TestData\\Trace2_us.trace.csv\" \"C:\\Projekte\\CSharp\\CSharpBible\\Data\\TraceAnalysis\\TestData\\Trace2_us.csv\""
+    }
+  }
+}

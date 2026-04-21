@@ -65,7 +65,7 @@ class Program
         UserDocumentFactory.Register<DocxDocument>("docx", [".docx" ], "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
         var key = (args.Length > 0 ? args[0] : "html").Trim().ToLowerInvariant();
-        var storyPath = Path.Combine(AppContext.BaseDirectory,"Resources", "story2.json");
+        var storyPath = Path.Combine(AppContext.BaseDirectory,"Resources", "story4.json");
 
         // Story laden (oder Beispiel erzeugen) -> liefert Titel
         story = LoadOrCreateSampleStory(storyPath);
