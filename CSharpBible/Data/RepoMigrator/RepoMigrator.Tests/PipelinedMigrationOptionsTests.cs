@@ -5,7 +5,7 @@ namespace RepoMigrator.Tests;
 [TestClass]
 public sealed class PipelinedMigrationOptionsTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("--prefetch", "0", "prefetch count")]
     [DataRow("--export-workers", "0", "worker count")]
     [DataRow("--max-count", "0", "max count")]

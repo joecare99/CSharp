@@ -75,7 +75,7 @@ public sealed class MigrationServiceTests
 
         await service.MigrateAsync(sourceEndpoint, targetEndpoint, query, options, progress, CancellationToken.None);
 
-        await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG"), Arg.Any<CancellationToken>());
+        await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG/_root"), Arg.Any<CancellationToken>());
         await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG/2001"), Arg.Any<CancellationToken>());
         await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG/2001/110209_Testprojekt"), Arg.Any<CancellationToken>());
         await targetProvider.Received(1).FlushAsync(Arg.Any<CancellationToken>());

@@ -26,7 +26,7 @@ public sealed class FileProxyTests
             Directory.Delete(_sTestDirectory, recursive: true);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
     public void Exists_ForFilePresence_ReturnsExpectedResult(bool xCreateFile)
@@ -84,7 +84,7 @@ public sealed class FileProxyTests
         CollectionAssert.AreEqual(rgBytes, stmMemory.ToArray());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Plain UTF8 text")]
     [DataRow("äöü ß Ελληνικά")]
     public void WriteAllText_WithoutEncoding_WritesReadableUtf8Content(string sContents)
@@ -96,7 +96,7 @@ public sealed class FileProxyTests
         Assert.AreEqual(sContents, File.ReadAllText(sPath));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Plain UTF8 text")]
     [DataRow("äöü ß Ελληνικά")]
     public void ReadAllText_WithoutEncoding_ReturnsFileContent(string sContents)
@@ -168,7 +168,7 @@ public sealed class FileProxyTests
         Assert.IsFalse(File.Exists(sPath));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(false, "source")]
     [DataRow(true, "new")]
     public void Copy_CopiesFileToDestination(bool xOverwrite, string sExpectedDestinationContent)

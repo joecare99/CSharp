@@ -28,7 +28,7 @@ public sealed class PdfSharpEngine : IPdfEngine
     private double ContentWidth => (_page?.Width ?? 595) - _left - _right;
     private double LineHeight => _font.GetHeight();
 
-    public object CurrentPageNumber => throw new NotImplementedException();
+    public object CurrentPageNumber => _doc?.PageCount ?? 0;
 
     public void BeginDocument()
     {

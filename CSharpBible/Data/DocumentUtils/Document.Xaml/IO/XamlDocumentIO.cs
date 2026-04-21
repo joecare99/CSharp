@@ -9,7 +9,7 @@ public static class XamlDocumentIO
     public static async Task SaveAsync(XamlSection root, string path, CancellationToken ct = default)
     {
         var xaml = XamlDocumentSerializer.ToXamlString(root);
-        await File.WriteAllTextAsync(path, xaml, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), ct);
+        await File.WriteAllTextAsync(path, xaml, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), ct).ConfigureAwait(false);
     }
 
     // Platzhalter für künftiges Laden

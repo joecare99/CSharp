@@ -28,7 +28,7 @@ public sealed class GitPathBranchSplitPlannerTests
         CollectionAssert.AreEquivalent(new[] { "src/ui/MainWindow.xaml" }, dicPlans["split/src/ui"].ToArray());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("split prefix", "folder/file.txt", "split-prefix/folder")]
     [DataRow("split", "folder/sub folder/file.txt", "split/folder/sub-folder")]
     public void BuildPlans_SanitizesGeneratedBranchNames(string sPrefix, string sTrackedPath, string sExpectedBranch)

@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Update="coverlet.collector" Version="8.0.1" />
+    <PackageVersion Update="coverlet.collector" Version="10.0.0" />
     <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.4.0" />
     <PackageVersion Update="MSTest" Version="4.2.1" />
   </ItemGroup>

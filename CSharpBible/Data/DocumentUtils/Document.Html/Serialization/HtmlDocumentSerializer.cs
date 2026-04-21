@@ -12,7 +12,7 @@ public static class HtmlDocumentSerializer
     {
         var config = Configuration.Default.WithDefaultLoader();
         using var context = BrowsingContext.New(config);
-        var doc = await context.OpenAsync(req => req.Content(html));
+        var doc = await context.OpenAsync(req => req.Content(html)).ConfigureAwait(false);
 
         var root = new HtmlSection();
         var body = doc.Body ?? doc.DocumentElement;

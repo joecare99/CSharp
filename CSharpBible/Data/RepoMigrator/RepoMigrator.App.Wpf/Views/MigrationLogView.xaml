@@ -1,0 +1,14 @@
+<UserControl x:Class="RepoMigrator.App.Wpf.Views.MigrationLogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <GroupBox Header="Log">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <TextBox Text="{Binding Log, Mode=OneWay}"
+                     FontFamily="Consolas"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
+                     IsReadOnly="True"
+                     BorderThickness="0"/>
+        </ScrollViewer>
+    </GroupBox>
+</UserControl>

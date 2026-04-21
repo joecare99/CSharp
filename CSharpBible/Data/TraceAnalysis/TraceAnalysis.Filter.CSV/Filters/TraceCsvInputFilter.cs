@@ -13,10 +13,16 @@ namespace TraceAnalysis.Filter.CSV.Filters
     /// Input filter for the TraceCsv format produced by trace-export tools.
     /// The format is identified by the header line <c>[key]; [value]</c>.
     /// </summary>
-    public class TraceCsvInputFilter : IInputFilter
+    public class TraceCsvInputFilter : IAnalyzableInputFilter
     {
         /// <summary>Expected first line of a TraceCsv stream.</summary>
         private const string TraceCsvHeader = "[key]; [value]";
+
+        /// <inheritdoc/>
+        public string FilterId => "TraceCsv";
+
+        /// <inheritdoc/>
+        public int Priority => 100;
 
         /// <inheritdoc/>
         /// <remarks>
@@ -27,23 +33,49 @@ namespace TraceAnalysis.Filter.CSV.Filters
         /// </remarks>
         public bool CanHandle(Stream _stream, string _sourceId)
         {
-            if (!_stream.CanSeek)
-                return false;
+            var analysis = Analyze(_stream, new FilterSourceDescriptor(_sourceId, System.IO.Path.GetExtension(_sourceId)));
+            return analysis.CanHandle;
+        }
 
-            var ext = System.IO.Path.GetExtension(_sourceId);
-            if (!string.IsNullOrEmpty(ext) && !ext.Equals(".csv", StringComparison.OrdinalIgnoreCase))
-                return false;
+        /// <inheritdoc/>
+        public InputFilterAnalysisResult Analyze(Stream stream, FilterSourceDescriptor sourceDescriptor)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+            if (sourceDescriptor == null)
+                throw new ArgumentNullException(nameof(sourceDescriptor));
 
-            var startPos = _stream.Position;
+            var decisionLines = new List<string>();
+            var ext = sourceDescriptor.SuggestedExtension ?? System.IO.Path.GetExtension(sourceDescriptor.SourceId);
+            var isExactExtensionMatch = string.Equals(ext, ".csv", StringComparison.OrdinalIgnoreCase);
+
+            if (!string.IsNullOrWhiteSpace(ext))
+                decisionLines.Add($"Extension={ext}");
+
+            if (!stream.CanSeek)
+            {
+                decisionLines.Add("Stream is not seekable.");
+                return new InputFilterAnalysisResult(FilterId, false, 0, isExactExtensionMatch, decisionLines);
+            }
+
+            var startPos = stream.Position;
             try
             {
-                using var reader = new StreamReader(_stream, Encoding.UTF8, true, 1024, leaveOpen: true);
+                using var reader = new StreamReader(stream, Encoding.UTF8, true, 1024, leaveOpen: true);
                 var firstLine = reader.ReadLine();
-                return firstLine == TraceCsvHeader;
+                var hasTraceHeader = firstLine == TraceCsvHeader;
+
+                decisionLines.Add(hasTraceHeader ? "TraceCsv header detected." : "TraceCsv header missing.");
+
+                var confidenceScore = hasTraceHeader ? 180 : 0;
+                if (isExactExtensionMatch)
+                    confidenceScore += 10;
+
+                return new InputFilterAnalysisResult(FilterId, hasTraceHeader, confidenceScore, isExactExtensionMatch, decisionLines);
             }
             finally
             {
-                _stream.Position = startPos;
+                stream.Position = startPos;
             }
         }
 
@@ -93,6 +125,15 @@ namespace TraceAnalysis.Filter.CSV.Filters
             }
 
             return new TraceDataSet(new TraceMetadata(_sourceId, fields), records, errors);
+        }
+
+        /// <inheritdoc/>
+        public ITraceDataSet Read(Stream stream, FilterSourceDescriptor sourceDescriptor)
+        {
+            if (sourceDescriptor == null)
+                throw new ArgumentNullException(nameof(sourceDescriptor));
+
+            return Read(stream, sourceDescriptor.SourceId);
         }
     }
 }
