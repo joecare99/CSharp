@@ -1,0 +1,5 @@
+{
+  "description": "Sample data file for the DevOps shared project.",
+  "environment": "Development",
+  "enabled": true
+}
