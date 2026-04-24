@@ -47,76 +47,81 @@ namespace BaseLib.Helper;
 /// </example>
 public static class ListHelper
 {
-    /// <summary>
-    /// Moves an item from a source index to a destination index within the list.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the list.</typeparam>
-    /// <param name="list">The list in which to move the item.</param>
-    /// <param name="iSrc">The zero-based index of the item to move.</param>
-    /// <param name="iDst">The zero-based destination index where the item should be placed.</param>
-    /// <remarks>
-    /// <para>
-    /// If the source and destination indices are equal, no operation is performed.
-    /// </para>
-    /// <para>
-    /// The method handles the index shift that occurs when removing an item before
-    /// the destination index. If an exception occurs during insertion, the item
-    /// is restored to its original position before re-throwing the exception.
-    /// </para>
-    /// </remarks>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when <paramref name="iSrc"/> or <paramref name="iDst"/> is outside
-    /// the valid range of indices for the list.
-    /// </exception>
-    /// <example>
-    /// <code>
-    /// var list = new List&lt;int&gt; { 1, 2, 3, 4, 5 };
-    /// list.MoveItem(0, 4); // Moves element at index 0 to index 4
-    /// // Result: { 2, 3, 4, 1, 5 }
-    /// </code>
-    /// </example>
-    public static void MoveItem<T>(this IList<T> list, int iSrc, int iDst)
+    extension<T>(IList<T> list)
     {
-        if (iSrc == iDst) return;
-        T c = list[iSrc];
-        list.RemoveAt(iSrc);
-        try
+        /// <summary>
+        /// Moves an item from a source index to a destination index within the list.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the list.</typeparam>
+        /// <param name="list">The list in which to move the item.</param>
+        /// <param name="iSrc">The zero-based index of the item to move.</param>
+        /// <param name="iDst">The zero-based destination index where the item should be placed.</param>
+        /// <remarks>
+        /// <para>
+        /// If the source and destination indices are equal, no operation is performed.
+        /// </para>
+        /// <para>
+        /// The method handles the index shift that occurs when removing an item before
+        /// the destination index. If an exception occurs during insertion, the item
+        /// is restored to its original position before re-throwing the exception.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="iSrc"/> or <paramref name="iDst"/> is outside
+        /// the valid range of indices for the list.
+        /// </exception>
+        /// <example>
+        /// <code>
+        /// var list = new List&lt;int&gt; { 1, 2, 3, 4, 5 };
+        /// list.MoveItem(0, 4); // Moves element at index 0 to index 4
+        /// // Result: { 2, 3, 4, 1, 5 }
+        /// </code>
+        /// </example>
+        public void MoveItem(int iSrc, int iDst)
         {
-            list.Insert(iSrc <= iDst ? iDst - 1 : iDst, c);
+            if (iSrc == iDst)
+                return;
+            T c = list[iSrc];
+            list.RemoveAt(iSrc);
+            try
+            {
+                list.Insert(iSrc <= iDst ? iDst - 1 : iDst, c);
+            }
+            catch
+            {
+                list.Insert(iSrc, c);
+                throw;
+            }
         }
-        catch
-        {
-            list.Insert(iSrc, c);
-            throw;
-        }
-    }
 
-    /// <summary>
-    /// Exchanges (swaps) the positions of two items in the list.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the list.</typeparam>
-    /// <param name="list">The list containing the items to swap.</param>
-    /// <param name="iItm1">The zero-based index of the first item to swap.</param>
-    /// <param name="iItm2">The zero-based index of the second item to swap.</param>
-    /// <remarks>
-    /// If both indices are equal, no operation is performed.
-    /// Uses tuple deconstruction for efficient in-place swapping.
-    /// </remarks>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when <paramref name="iItm1"/> or <paramref name="iItm2"/> is outside
-    /// the valid range of indices for the list.
-    /// </exception>
-    /// <example>
-    /// <code>
-    /// var list = new List&lt;string&gt; { "A", "B", "C" };
-    /// list.Swap(0, 2); // Swaps "A" and "C"
-    /// // Result: { "C", "B", "A" }
-    /// </code>
-    /// </example>
-    public static void Swap<T>(this IList<T> list, int iItm1, int iItm2)
-    {
-        if (iItm1 == iItm2) return;
-        (list[iItm1], list[iItm2]) = (list[iItm2], list[iItm1]);
+        /// <summary>
+        /// Exchanges (swaps) the positions of two items in the list.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the list.</typeparam>
+        /// <param name="list">The list containing the items to swap.</param>
+        /// <param name="iItm1">The zero-based index of the first item to swap.</param>
+        /// <param name="iItm2">The zero-based index of the second item to swap.</param>
+        /// <remarks>
+        /// If both indices are equal, no operation is performed.
+        /// Uses tuple deconstruction for efficient in-place swapping.
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="iItm1"/> or <paramref name="iItm2"/> is outside
+        /// the valid range of indices for the list.
+        /// </exception>
+        /// <example>
+        /// <code>
+        /// var list = new List&lt;string&gt; { "A", "B", "C" };
+        /// list.Swap(0, 2); // Swaps "A" and "C"
+        /// // Result: { "C", "B", "A" }
+        /// </code>
+        /// </example>
+        public void Swap(int iItm1, int iItm2)
+        {
+            if (iItm1 == iItm2)
+                return;
+            (list[iItm1], list[iItm2]) = (list[iItm2], list[iItm1]);
+        }
     }
 
     /// <summary>

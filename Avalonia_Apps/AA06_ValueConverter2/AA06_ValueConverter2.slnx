@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="Application.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/UpDir/">
+    <File Path="../Solution.props" />
+  </Folder>
+  <Project Path="AA06_ValueConverter2/AA06_ValueConverter2.csproj" />
+  <Project Path="AA06_ValueConverter2Tests/AA06_ValueConverter2Tests.csproj" />
+</Solution>
