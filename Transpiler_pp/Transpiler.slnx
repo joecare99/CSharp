@@ -1,0 +1,63 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="Mixed Platforms" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/cmd/">
+    <File Path="../../Cmd/CheckIn.cmd" />
+    <File Path="../../Cmd/CheckIn2.cmd" />
+  </Folder>
+  <Folder Name="/Legacie/">
+    <File Path="../../Delphi/Projekte/MPS-LR/Drive/unt_DriveBase.pas" />
+    <File Path="../../Delphi/Projekte/MPS-LR/Drive/unt_DriveCompiler.pas" />
+    <File Path="../../Delphi/Projekte/MPS-LR/Test/fpctestdrivecompiler.pas" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="../CSharpBible/Libraries/Libraries.props" />
+    <Project Path="../CSharpBible/Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../CSharpBible/Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="../CSharpBible/Libraries/CommonDialogs/CommonDialogs.csproj">
+      <Platform Solution="*|Mixed Platforms" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|Mixed Platforms" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj">
+      <Platform Solution="*|Mixed Platforms" Project="x86" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
+      <Platform Solution="*|Mixed Platforms" Project="x86" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="../Gen_FreeWin/GenFreeWin.props" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="Transpiler.props" />
+  </Folder>
+  <Folder Name="/Transpiler/">
+    <Project Path="Analyzer1/Analyzer1.CodeFixes/Analyzer1.CodeFixes.csproj" />
+    <Project Path="Analyzer1/Analyzer1.Package/Analyzer1.Package.csproj" />
+    <Project Path="Analyzer1/Analyzer1.Vsix/Analyzer1.Vsix.csproj" />
+    <Project Path="Analyzer1/Analyzer1/Analyzer1.csproj" />
+    <Project Path="TranspilerConsTest/TranspilerConsTest.csproj" />
+    <Project Path="TranspilerLib.CSharp.Tests/TranspilerLib.CSharp.Tests.csproj" />
+    <Project Path="TranspilerLib.CSharp/TranspilerLib.CSharp.csproj" />
+    <Project Path="TranspilerLib.DriveBASIC.Tests/TranspilerLib.DriveBASIC.Tests.csproj" />
+    <Project Path="TranspilerLib.DriveBASIC/TranspilerLib.DriveBASIC.csproj" />
+    <Project Path="TranspilerLib.IEC.Tests/TranspilerLib.IEC.Tests.csproj" />
+    <Project Path="TranspilerLib.IEC/TranspilerLib.IEC.csproj" />
+    <Project Path="TranspilerLib.Pascal.Tests/TranspilerLib.Pascal.Tests.csproj" />
+    <Project Path="TranspilerLib.Pascal/TranspilerLib.Pascal.csproj" />
+    <Project Path="TranspilerLib/TranspilerLib.csproj" />
+    <Project Path="TranspilerLibTests/TranspilerLibTests.csproj" />
+    <Project Path="Trnsp.Show.Lfm.Tests/Trnsp.Show.Lfm.Tests.csproj" />
+    <Project Path="Trnsp.Show.Lfm/Trnsp.Show.Lfm.csproj" />
+    <Project Path="Trnsp.Show.Pas.Tests/Trnsp.Show.Pas.Tests.csproj" />
+    <Project Path="Trnsp.Show.Pas/Trnsp.Show.Pas.csproj" />
+  </Folder>
+</Solution>
