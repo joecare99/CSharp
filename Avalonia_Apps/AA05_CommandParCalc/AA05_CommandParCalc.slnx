@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="Application.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/UpDir/">
+    <File Path="../Solution.props" />
+  </Folder>
+  <Project Path="AA05_CommandParCalc/AA05_CommandParCalc.csproj" />
+  <Project Path="AA05_CommandParCalcTests/AA05_CommandParCalcTests.csproj" />
+</Solution>
