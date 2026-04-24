@@ -1,0 +1,355 @@
+﻿T:Operation,0,private void Befehl_Click(object eventSender, EventArgs eventArgs)
+T:Block,1,{
+T:Operation,1,int try0000_dispatch = -1;
+T:Operation,1,int num = default(int);
+T:Operation,1,short index = default(short);
+T:Operation,1,int num2 = default(int);
+T:Operation,1,int num3 = default(int);
+T:Operation,1,int number = default(int);
+T:Operation,1,string prompt = default(string);
+T:Operation,1,while
+T:Operation,1,(true)
+T:Block,2,{
+T:Operation,2,try
+T:Block,3,{
+T:Operation,3,
+T:Comment,3,/*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
+T:Operation,3,;
+T:Operation,3,int num4;
+T:Operation,3,string text;
+T:Operation,3,switch
+T:Operation,3,(try0000_dispatch)
+T:Block,4,{
+T:Label,4,default:
+T:Operation,4,num = 1;
+T:Operation,4,index = Befehl.GetIndex((Button)eventSender);
+T:Goto,4,goto IL_0015;
+T:Label,4,case 1043:
+T:Block,5,{
+T:Operation,5,num2 = num;
+T:Operation,5,switch
+T:Operation,5,(num3)
+T:Block,6,{
+T:Label,6,case 2:
+T:Operation,6,break;
+T:Label,6,case 1:
+T:Goto,6,goto IL_0319;
+T:Label,6,default:
+T:Goto,6,goto end_IL_0000;
+T:Block,6,}
+T:Goto,5,goto IL_0248;
+T:Block,5,}
+T:Label,4,IL_0319:
+T:Operation,4,num4 = num2 + 1;
+T:Goto,4,goto IL_031d;
+T:Label,4,IL_0248:
+T:Operation,4,num = 36;
+T:Operation,4,number = Information.Err().Number;
+T:Goto,4,goto IL_0258;
+T:Label,4,IL_0258:
+T:Operation,4,num = 39;
+T:Operation,4,if
+T:Operation,4,(number == 25)
+T:Block,5,{
+T:Goto,5,goto IL_0262;
+T:Block,5,}
+T:Goto,4,goto IL_029b;
+T:Label,4,IL_029b:
+T:Operation,4,num = 46;
+T:Operation,4,if
+T:Operation,4,(number == 55)
+T:Block,5,{
+T:Goto,5,goto IL_02a5;
+T:Block,5,}
+T:Goto,4,goto IL_02d0;
+T:Label,4,IL_02d0:
+T:Operation,4,num = 52;
+T:Operation,4,if
+T:Operation,4,(Interaction.MsgBox(Conversion.ErrorToString(), MsgBoxStyle.OkCancel, (Information.Err().Number).AsString()) == MsgBoxResult.Cancel)
+T:Block,5,{
+T:Operation,5,ProjectData.EndApp();
+T:Block,5,}
+T:Goto,4,goto IL_02f6;
+T:Label,4,IL_00ad:
+T:Operation,4,num = 9;
+T:Operation,4,RichTextBox1.LoadFile(COND.Verz1 +
+T:String,4,"TEMP\\Text2.RTF"
+T:Operation,4,, RichTextBoxStreamType.RichText);
+T:Goto,4,goto IL_00cc;
+T:Label,4,IL_02f6:
+T:Operation,4,num = 55;
+T:Operation,4,ProjectData.ClearProjectError();
+T:Operation,4,if
+T:Operation,4,(num2 == 0)
+T:Block,5,{
+T:Operation,5,throw
+T:Operation,5,ProjectData.CreateProjectError(-2146828268);
+T:Block,5,}
+T:Goto,4,goto IL_0315;
+T:Label,4,IL_00cc:
+T:Operation,4,num = 10;
+T:Operation,4,Interaction.Shell(COND.Aus[7] +
+T:String,4," "
+T:Operation,4,+ COND.Verz1 +
+T:String,4,"Temp\\Text2.RTF"
+T:Operation,4,, AppWinStyle.MaximizedFocus);
+T:Goto,4,goto end_IL_0000_2;
+T:Label,4,IL_0315:
+T:Operation,4,num4 = num2;
+T:Goto,4,goto IL_031d;
+T:Label,4,IL_031d:
+T:Operation,4,num2 = 0;
+T:Operation,4,switch
+T:Operation,4,(num4)
+T:Block,5,{
+T:Label,5,case 1:
+T:Operation,5,break;
+T:Label,5,case 2:
+T:Goto,5,goto IL_0015;
+T:Label,5,case 3:
+T:Goto,5,goto IL_001d;
+T:Label,5,case 4:
+T:Goto,5,goto IL_0073;
+T:Label,5,case 6:
+T:Label,5,case 8:
+T:Goto,5,goto IL_008f;
+T:Label,5,case 9:
+T:Goto,5,goto IL_00ad;
+T:Label,5,case 10:
+T:Goto,5,goto IL_00cc;
+T:Label,5,case 12:
+T:Label,5,case 13:
+T:Goto,5,goto IL_00f9;
+T:Label,5,case 14:
+T:Goto,5,goto IL_010d;
+T:Label,5,case 15:
+T:Goto,5,goto IL_0117;
+T:Label,5,case 18:
+T:Label,5,case 19:
+T:Goto,5,goto IL_0134;
+T:Label,5,case 20:
+T:Goto,5,goto IL_0151;
+T:Label,5,case 21:
+T:Goto,5,goto IL_0178;
+T:Label,5,case 22:
+T:Goto,5,goto IL_0191;
+T:Label,5,case 23:
+T:Goto,5,goto IL_01aa;
+T:Label,5,case 24:
+T:Goto,5,goto IL_01d0;
+T:Label,5,case 26:
+T:Label,5,case 28:
+T:Goto,5,goto IL_01f9;
+T:Label,5,case 30:
+T:Label,5,case 31:
+T:Goto,5,goto IL_021f;
+T:Label,5,case 36:
+T:Goto,5,goto IL_0248;
+T:Label,5,case 38:
+T:Label,5,case 39:
+T:Goto,5,goto IL_0258;
+T:Label,5,case 40:
+T:Goto,5,goto IL_0262;
+T:Label,5,case 41:
+T:Goto,5,goto IL_026c;
+T:Label,5,case 42:
+T:Goto,5,goto IL_027f;
+T:Label,5,case 46:
+T:Goto,5,goto IL_029b;
+T:Label,5,case 47:
+T:Goto,5,goto IL_02a5;
+T:Label,5,case 48:
+T:Goto,5,goto IL_02b4;
+T:Label,5,case 51:
+T:Label,5,case 52:
+T:Goto,5,goto IL_02d0;
+T:Label,5,case 53:
+T:Label,5,case 55:
+T:Goto,5,goto IL_02f6;
+T:Label,5,default:
+T:Goto,5,goto end_IL_0000;
+T:Label,5,case 5:
+T:Label,5,case 11:
+T:Label,5,case 16:
+T:Label,5,case 17:
+T:Label,5,case 25:
+T:Label,5,case 29:
+T:Label,5,case 32:
+T:Label,5,case 33:
+T:Label,5,case 34:
+T:Label,5,case 35:
+T:Label,5,case 37:
+T:Label,5,case 43:
+T:Label,5,case 45:
+T:Label,5,case 49:
+T:Label,5,case 50:
+T:Label,5,case 56:
+T:Label,5,case 57:
+T:Label,5,case 58:
+T:Goto,5,goto end_IL_0000_2;
+T:Block,5,}
+T:Goto,4,goto default;
+T:Label,4,IL_02a5:
+T:Operation,4,num = 47;
+T:Operation,4,FileSystem.FileClose();
+T:Goto,4,goto IL_02b4;
+T:Label,4,IL_02b4:
+T:Operation,4,num = 48;
+T:Operation,4,ProjectData.ClearProjectError();
+T:Operation,4,if
+T:Operation,4,(num2 == 0)
+T:Block,5,{
+T:Operation,5,throw
+T:Operation,5,ProjectData.CreateProjectError(-2146828268);
+T:Block,5,}
+T:Goto,4,goto IL_0315;
+T:Label,4,IL_008f:
+T:Operation,4,num = 8;
+T:Operation,4,RichTextBox1.SaveFile(COND.Verz1 +
+T:String,4,"TEMP\\Text2.RTF"
+T:Operation,4,, RichTextBoxStreamType.RichText);
+T:Goto,4,goto IL_00ad;
+T:Label,4,IL_0262:
+T:Operation,4,num = 40;
+T:Operation,4,prompt =
+T:String,4,"Das angegebene Gerät ist nicht bereit.\rBitte einschalten oder abbrechen."
+T:Operation,4,;
+T:Goto,4,goto IL_026c;
+T:Label,4,IL_026c:
+T:Operation,4,num = 41;
+T:Operation,4,if
+T:Operation,4,(Interaction.MsgBox(prompt, MsgBoxStyle.OkCancel,
+T:String,4,"Fehler"
+T:Operation,4,) == MsgBoxResult.Cancel)
+T:Block,5,{
+T:Goto,5,goto end_IL_0000_2;
+T:Block,5,}
+T:Goto,4,goto IL_027f;
+T:Label,4,IL_027f:
+T:Operation,4,num = 42;
+T:Operation,4,ProjectData.ClearProjectError();
+T:Operation,4,if
+T:Operation,4,(num2 == 0)
+T:Block,5,{
+T:Operation,5,throw
+T:Operation,5,ProjectData.CreateProjectError(-2146828268);
+T:Block,5,}
+T:Goto,4,goto IL_0315;
+T:Label,4,IL_0117:
+T:Operation,4,num = 15;
+T:Operation,4,MyProject.Forms.Druck.Show();
+T:Goto,4,goto end_IL_0000_2;
+T:Label,4,IL_0015:
+T:Operation,4,ProjectData.ClearProjectError();
+T:Operation,4,num3 = 2;
+T:Goto,4,goto IL_001d;
+T:Label,4,IL_001d:
+T:Operation,4,num = 3;
+T:Operation,4,text =
+T:String,4,"Datum "
+T:Operation,4,+ Strings.Mid(DateAndTime.DateString, 4, 2) +
+T:String,4,"."
+T:Operation,4,+ DateAndTime.DateString.Left( 2) +
+T:String,4,"."
+T:Operation,4,+ Strings.Mid(DateAndTime.DateString, 7, 4);
+T:Goto,4,goto IL_0073;
+T:Label,4,IL_0073:
+T:Operation,4,num = 4;
+T:Operation,4,switch
+T:Operation,4,(index)
+T:Block,5,{
+T:Label,5,case 1:
+T:Operation,5,break;
+T:Label,5,case 2:
+T:Goto,5,goto IL_00f9;
+T:Label,5,case 3:
+T:Goto,5,goto IL_0134;
+T:Label,5,default:
+T:Goto,5,goto end_IL_0000_2;
+T:Block,5,}
+T:Goto,4,goto IL_008f;
+T:Label,4,IL_0134:
+T:Operation,4,num = 19;
+T:Operation,4,MyProject.Forms.Hinter.CommonDialog1Save.Filter =
+T:String,4,"Text (*.txt)|*.txt|Formartierter Text (*.RTF)|*.RTF"
+T:Operation,4,;
+T:Goto,4,goto IL_0151;
+T:Label,4,IL_0151:
+T:Operation,4,num = 20;
+T:Operation,4,MyProject.Forms.Hinter.CommonDialog1Save.InitialDirectory = COND.GenPlu +
+T:String,4,"list\\"
+T:Operation,4,;
+T:Goto,4,goto IL_0178;
+T:Label,4,IL_0178:
+T:Operation,4,num = 21;
+T:Operation,4,MyProject.Forms.Hinter.CommonDialog1Save.FilterIndex = 2;
+T:Goto,4,goto IL_0191;
+T:Label,4,IL_0191:
+T:Operation,4,num = 22;
+T:Operation,4,MyProject.Forms.Hinter.CommonDialog1Save.ShowDialog();
+T:Goto,4,goto IL_01aa;
+T:Label,4,IL_01aa:
+T:Operation,4,num = 23;
+T:Operation,4,if
+T:Operation,4,(MyProject.Forms.Hinter.CommonDialog1Save.FileName ==
+T:String,4,""
+T:Operation,4,)
+T:Block,5,{
+T:Goto,5,goto end_IL_0000_2;
+T:Block,5,}
+T:Goto,4,goto IL_01d0;
+T:Label,4,IL_01d0:
+T:Operation,4,num = 24;
+T:Operation,4,switch
+T:Operation,4,(MyProject.Forms.Hinter.CommonDialog1Save.FilterIndex)
+T:Block,5,{
+T:Label,5,case 1:
+T:Operation,5,break;
+T:Label,5,case 2:
+T:Goto,5,goto IL_021f;
+T:Label,5,default:
+T:Goto,5,goto end_IL_0000_2;
+T:Block,5,}
+T:Goto,4,goto IL_01f9;
+T:Label,4,IL_021f:
+T:Operation,4,num = 31;
+T:Operation,4,RichTextBox1.SaveFile(MyProject.Forms.Hinter.CommonDialog1Save.FileName, RichTextBoxStreamType.RichText);
+T:Goto,4,goto end_IL_0000_2;
+T:Label,4,IL_01f9:
+T:Operation,4,num = 28;
+T:Operation,4,RichTextBox1.SaveFile(MyProject.Forms.Hinter.CommonDialog1Save.FileName, RichTextBoxStreamType.PlainText);
+T:Goto,4,goto end_IL_0000_2;
+T:Label,4,IL_00f9:
+T:Operation,4,num = 13;
+T:Operation,4,RichTextBox1.Text =
+T:String,4,""
+T:Operation,4,;
+T:Goto,4,goto IL_010d;
+T:Label,4,IL_010d:
+T:Operation,4,num = 14;
+T:Operation,4,Close();
+T:Goto,4,goto IL_0117;
+T:Label,4,end_IL_0000:
+T:Operation,4,break;
+T:Block,4,}
+T:Block,3,}
+T:Operation,2,catch
+T:Operation,2,(Exception obj)
+T:Operation,2,when (obj is not null && num3 != 0 && num2 == 0)
+T:Block,3,{
+T:Operation,3,ProjectData.SetProjectError(obj);
+T:Operation,3,try0000_dispatch = 1043;
+T:Operation,3,continue;
+T:Block,3,}
+T:Operation,2,throw
+T:Operation,2,ProjectData.CreateProjectError(-2146828237);
+T:Operation,2,continue;
+T:Label,2,end_IL_0000_2:
+T:Operation,2,break;
+T:Block,2,}
+T:Operation,1,if
+T:Operation,1,(num2 != 0)
+T:Block,2,{
+T:Operation,2,ProjectData.ClearProjectError();
+T:Block,2,}
+T:Block,1,}

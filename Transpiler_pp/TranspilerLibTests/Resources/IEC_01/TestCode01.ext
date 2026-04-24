@@ -1,0 +1,10 @@
+﻿// Dies ist ein Kommentar zum Typ ST_01
+TYPE ST_01 :
+	STRUCT 
+		// Dies ist ein Kommentar zum Element a
+		a: INT := INT#1; // Dies ist ein 2. Kommentar zum Element a
+		// Dies ist ein Kommentar zum Element b
+		b: LREAL := LREAL#2.7e-2; // Dies ist ein 2. Kommentar zum Element b
+	END_STRUCT
+END_TYPE
+		

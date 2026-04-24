@@ -1,0 +1,1 @@
+[{"Code":"Begin","type":"block","Level":1,"Pos":0},{"Code":"X","type":"variable","Level":1,"Pos":10},{"Code":":=","type":"assignment","Level":1,"Pos":11},{"Code":"10","type":"number","Level":1,"Pos":15},{"Code":";","type":"separator","Level":1,"Pos":17},{"Code":"end","type":"block","Level":1,"Pos":20},{"Code":".","type":"operation","Level":0,"Pos":23}]
