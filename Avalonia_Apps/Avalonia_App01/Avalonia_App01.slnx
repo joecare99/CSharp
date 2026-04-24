@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Avalonia_App_01.Android/Avalonia_App_01.Android.csproj" />
+  <Project Path="Avalonia_App_01.Browser/Avalonia_App_01.Browser.csproj" />
+  <Project Path="Avalonia_App_01.Desktop/Avalonia_App_01.Desktop.csproj" />
+  <Project Path="Avalonia_App_01.iOS/Avalonia_App_01.iOS.csproj" />
+  <Project Path="Avalonia_App_01/Avalonia_App_01.csproj" />
+</Solution>

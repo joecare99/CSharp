@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Document.Base\Document.Base.csproj" />
+    <ProjectReference Include="..\Document.Docx\Document.Docx.csproj" />
+    <ProjectReference Include="..\Document.Html\Document.Html.csproj" />
+    <ProjectReference Include="..\Document.Odf\Document.Odf.csproj" />
+    <ProjectReference Include="..\Document.Pdf\Document.Pdf.csproj" />
+    <ProjectReference Include="..\Document.Xaml\Document.Xaml.csproj" />
+  </ItemGroup>
+
+</Project>

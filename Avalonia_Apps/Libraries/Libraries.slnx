@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Avln_BaseLib/Avln_BaseLib.csproj" />
+  <Project Path="Avln_BaseLibTests/Avln_BaseLibTests.csproj" />
+  <Project Path="BaseLib/BaseLib.csproj" />
+  <Project Path="BaseLibTests/BaseLibTests.csproj" />
+</Solution>

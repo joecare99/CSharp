@@ -5,7 +5,7 @@ namespace RepoMigrator.Tests;
 [TestClass]
 public sealed class RecentValueHistoryTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("", "alpha|beta", "alpha|beta")]
     [DataRow("gamma", "alpha|beta", "gamma|alpha|beta")]
     [DataRow(" beta ", "alpha|beta|gamma", "beta|alpha|gamma")]
@@ -26,8 +26,8 @@ public sealed class RecentValueHistoryTests
 
         var lstResolvedValues = RecentValueHistory.AddValue(lstExistingValues, "value-11", 10);
 
-        Assert.AreEqual(10, lstResolvedValues.Count);
+        Assert.HasCount(10, lstResolvedValues);
         Assert.AreEqual("value-11", lstResolvedValues[0]);
-        Assert.IsFalse(lstResolvedValues.Contains("value-10"));
+        Assert.DoesNotContain("value-10", lstResolvedValues);
     }
 }

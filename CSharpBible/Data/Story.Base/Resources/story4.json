@@ -1,0 +1,482 @@
+{
+  "title": "Der letzte Glockenschlag von Bretten",
+  "variables": {
+    "stadt": "Bretten",
+    "ermittlerin": "Kommissarin Nora Seidel",
+    "marktplatz": "Marktplatz",
+    "museum": "Melanchthonhaus",
+    "bahnhof": "Brettener Bahnhof",
+    "park": "Stadtpark",
+    "turm": "Simmelturm",
+    "opfer": "Dr. Konrad Eisinger",
+    "regen": "feiner Novemberregen"
+  },
+  "nodes": [
+    {
+      "id": "kap1",
+      "title": "Kapitel 1 – Der Körper im Innenhof",
+      "paragraphs": [
+        "Der Abend über {{stadt}} war nass, kalt und von jenem dunklen Glanz, der die Altstadt schöner und zugleich verdächtiger wirken ließ. Als {{ermittlerin}} durch das Tor zum {{museum}} trat, hatte der {{regen}} das Kopfsteinpflaster im Innenhof in einen schwarzen Spiegel verwandelt, in dem sich Fenster, Dachrinnen und das flackernde Blaulicht verzogen brachen.",
+        "Unter dem steinernen Sims lag {{opfer}}, Lokalhistoriker, Ausstellungsmacher und für viele das wandelnde Gedächtnis von {{stadt}}. Sein Mantel war geöffnet, als habe er noch im Fallen nach Luft oder nach einem letzten Argument gesucht. In seiner linken Hand klemmte ein abgerissener Faden roter Kordel, in der rechten klebte Staub – nicht bloß Hofstaub, sondern heller, trockener Abrieb, der hier im Nieselregen nicht hingehörte.",
+        "Über den Dächern schlug die Glocke ein spätes Mal. Der Klang rollte vom {{turm}} herüber, verlor sich über dem {{marktplatz}} und schien für einen Moment genau dort stehen zu bleiben, wo auch der Blick der Toten stehen geblieben war: am beleuchteten Fenster des Archivs im ersten Stock. Jemand hatte an diesem Ort nicht nur einen Menschen getötet, sondern auch versucht, eine Geschichte zu stehlen."
+      ],
+      "choices": [
+        { "label": "Die Hausmeisterin sofort befragen", "targetId": "kap2_hausmeisterin" },
+        { "label": "Den Innenhof und die Spuren untersuchen", "targetId": "kap2_innenhof" }
+      ]
+    },
+    {
+      "id": "kap2_hausmeisterin",
+      "title": "Kapitel 2 – Die Frau mit dem Schlüsselbund",
+      "paragraphs": [
+        "Sabine Maurer, die Hausmeisterin des {{museum}}, wartete unter dem Vordach, den Wollschal viel zu eng um den Hals gezogen. Regen tropfte von den Dachziegeln hinter ihr in ruhigem Takt, doch ihre Finger klirrten unruhig gegen den Ring aus Schlüsseln, den sie immer wieder fester umklammerte. Sie roch nach nasser Wolle, Reinigungsmittel und Angst.",
+        "„Ich habe nur abgeschlossen“, sagte sie, noch bevor {{ermittlerin}} die erste Frage stellen konnte. „Herr Eisinger war nach der Probe der Stadtführer noch oben im Archiv. Er wollte eine Vitrine prüfen – irgendetwas mit einem Brief, der morgen gezeigt werden sollte.“ Beim Wort Brief senkte sie die Stimme, als könnte schon dessen bloße Nennung Ärger aus dem Mauerwerk locken.",
+        "Dann erwähnte sie, dass kurz vor neun ein Mann mit dunklem Mantel durch den Seitengang gegangen sei. Kein Besucherabzeichen, kein Gruß, nur Eile. Aufgefallen war ihr nicht das Gesicht, sondern etwas Lächerlich-Kleines und gerade deshalb Erinnerbares: Der Mann habe eine Markttasche mit dem Aufdruck eines Bäckers vom {{marktplatz}} getragen – viel zu alltäglich für einen Abend, an dem jemand sich unauffällig machen wollte."
+      ],
+      "choices": [
+        { "label": "Sabines Alibi und Beobachtungen prüfen", "targetId": "kap3_alibi" },
+        { "label": "Das Besucherbuch und den Archivzugang kontrollieren", "targetId": "kap3_gaestebuch" }
+      ]
+    },
+    {
+      "id": "kap2_innenhof",
+      "title": "Kapitel 2 – Nasse Steine, trockener Staub",
+      "paragraphs": [
+        "Im Schein der Taschenlampe begann der Innenhof, seine Zurückhaltung aufzugeben. Zwischen nassen Pflasterfugen lagen zwei Dinge, die nicht zusammenpassten: ein schmaler Streifen hellen Mauerabriebs und ein fast aufgeweichtes Papierstück aus dickem Bahnhofskarton. Der Staub war trocken genug, dass er erst kurz zuvor hier gelandet sein konnte; der Karton dagegen hatte schon Wasser gezogen und war dennoch nicht fortgespült.",
+        "Das Papierschnipsel zeigte nur noch ein Fragment: „Fach 24 – {{bahnhof}}“. Dazu klebte an der Ecke eine Spur schwarzer Fasern, wie von dünnen Handschuhen. Nicht weit davon lag eine zweite Kleinigkeit, leicht zu übersehen und für Mörder oft zu banal: ein Brotkrumen mit Körnern, frisch aufgeweicht, wie aus einer Tüte gefallen, die eben noch durch die Altstadt getragen worden war.",
+        "Am Regenfallrohr fand {{ermittlerin}} außerdem eine gerötete Stelle an der Wand, kaum sichtbar, aber im Licht der Spurensicherung deutlich genug: Jemand hatte dort mit einer Kordel oder einem versiegelten Band entlanggeschrammt. Es roch nach nassem Stein, Eisen und einer Entscheidung, die noch nicht gefallen war – Bahnhof, Keller oder beides."
+      ],
+      "choices": [
+        { "label": "Dem Hinweis zum Bahnhof nachgehen", "targetId": "kap3_bahnhof" },
+        { "label": "Den Keller und das Archiv darunter durchsuchen", "targetId": "kap3_keller" }
+      ]
+    },
+    {
+      "id": "kap3_alibi",
+      "title": "Kapitel 3 – Wer war wann noch da?",
+      "paragraphs": [
+        "Sabine führte {{ermittlerin}} in den Seitenflur, wo der Lärm des Innenhofs nur noch dumpf ankam. Dort rekonstruierte sie den Abend mit jener bemühten Genauigkeit, die entweder von Ehrlichkeit oder von guter Vorbereitung zeugt. Um 20:20 Uhr habe sie den letzten Besucher hinausgelassen, kurz darauf seien noch Mitglieder einer Stadtführungsgruppe am {{marktplatz}} vorbeigelaufen, deren Stimmen sie durch die geöffnete Seitentür gehört habe.",
+        "Zwischen 20:35 Uhr und 20:50 Uhr sei sie im Erdgeschoss gewesen, um einen Wasserschaden im Putzraum zu prüfen. Genau in diesem Zeitfenster habe sie oben Schritte gehört – nicht hastig, eher zielgerichtet. Danach den dumpfen Laut, den sie zuerst für einen umfallenden Ausstellungshocker gehalten habe. Dass dieser Laut ein Körper gewesen sein könnte, gestand sie erst jetzt, und der Satz blieb ihr sichtbar im Hals stecken.",
+        "Das Bemerkenswerteste aber war eine Nebensächlichkeit: Sabine hatte am Fenster einen Mann erkannt, der später am {{marktplatz}} wieder aufgetaucht sei – derselbe Mantel, dieselbe Markttasche, dieselbe Art, beim Gehen den rechten Fuß minimal nachzuziehen. In kleinen Städten verraten sich Menschen oft nicht über Gesichter, sondern über Gewohnheiten."
+      ],
+      "choices": [
+        { "label": "Auf dem Marktplatz nach Zeugen und der Tasche suchen", "targetId": "kap4_marktplatz" },
+        { "label": "Den Schlüsselbestand und mögliche Duplikate prüfen", "targetId": "kap4_keys" }
+      ]
+    },
+    {
+      "id": "kap3_gaestebuch",
+      "title": "Kapitel 3 – Namen, die nicht passen",
+      "paragraphs": [
+        "Das Besucherbuch lag offen auf dem schmalen Empfangstisch, die letzten Einträge vom Regen leicht gewellt. Die Handschriften erzählten von Schulklassen, Touristenpaaren und einem pensionierten Lehrer, der sich so sauber eingetragen hatte, als müsse er noch immer eine Schulaufsicht bestehen. Doch auf der vorletzten Seite fehlte ein Streifen Papier – nicht herausgerissen aus Wut, sondern sauber herausgelöst, fast fachmännisch.",
+        "Im Durchschlag darunter blieben Reste erkennbar: die Buchstaben „L. V.“ und eine Uhrzeit kurz nach halb acht. Daneben eine zweite, nur halb zu lesende Notiz in Bleistift: „Schlüssel nicht im Schrank“. Das war kein regulärer Eintrag. Es war ein Hinweis, entweder für jemanden gedacht – oder vor jemandem versteckt.",
+        "Im Archivzugangsprotokoll tauchte zudem der Name Professor Vitus Lenz auf, ein bekannter Heimatforscher aus {{stadt}}, der seit Monaten mit {{opfer}} um die Echtheit eines reformationszeitlichen Briefs gestritten hatte. Rivalität ist noch kein Mordmotiv, aber in historischen Häusern findet man selten nur Staub zwischen alten Feinden."
+      ],
+      "choices": [
+        { "label": "Professor Lenz aufsuchen", "targetId": "kap4_professor" },
+        { "label": "Handschrift und Notizen mit anderen Unterlagen vergleichen", "targetId": "kap4_compare" }
+      ]
+    },
+    {
+      "id": "kap3_bahnhof",
+      "title": "Kapitel 3 – Fach 24",
+      "paragraphs": [
+        "Der {{bahnhof}} war um diese Uhrzeit halb leer und gerade deshalb unerquicklich hell. Die kalten Leuchtstoffröhren machten aus jedem Reisenden eine potenzielle Falschaussage auf zwei Beinen. Fach 24 lag im alten Schließfachblock hinter dem Fahrkartenautomaten, dort, wo es nach Metall, Bremsstaub und abgestandenem Kaffee roch.",
+        "Das Fach war nicht verschlossen. Im Inneren lagen ein Stadtplan von {{stadt}}, auf dem die Verbindung zwischen {{museum}}, {{marktplatz}}, {{park}} und {{turm}} mit Bleistift nachgezogen war, dazu ein Papiersäckchen vom Bäcker und ein leerer Umschlag. Kein direkter Beweis, eher ein Bewegungsprotokoll für jemanden, der Wege im Voraus plante.",
+        "Unter dem Plan fand {{ermittlerin}} einen Zettel mit zwei Zeilen: „Probe 20:00 – Chorraum frei“ und darunter „Original nicht im Keller lassen“. Jemand hatte nicht spontan getötet. Jemand hatte Wege, Zeiten und Verstecke wie eine kleine Inszenierung vorbereitet."
+      ],
+      "choices": [
+        { "label": "Die Bahnhofskameras auswerten", "targetId": "kap4_cameras" },
+        { "label": "Den Inhalt des Plans mit anderen Hinweisen verknüpfen", "targetId": "kap4_paket" }
+      ]
+    },
+    {
+      "id": "kap3_keller",
+      "title": "Kapitel 3 – Unter den Dielen der Geschichte",
+      "paragraphs": [
+        "Der Keller des {{museum}} wirkte wie ein Ort, an dem Zeit nicht vergeht, sondern sich nur ablagert. Das Licht aus der nackten Birne hing gelb im Gewölbe, während der Geruch von feuchtem Stein, Holzregalen und altem Papier mit jedem Schritt dichter wurde. In einer Seitenkammer stand eine Vitrine offen, das Sicherheitsschloss unbeschädigt, die Halterung im Inneren jedoch leer.",
+        "Dort sollte, wie ein Schild auf der Werkbank verriet, am nächsten Morgen der sogenannte Brettener Melanchthon-Brief vorbereitet werden. Statt des Dokuments lag nur ein Stofftuch mit bräunlichen Flecken und dem Geruch nach Lösungsmittel da. Nicht weit davon befand sich eine Leiter, an deren Sprosse heller Putzabrieb haftete – derselbe Staub wie im Innenhof.",
+        "An der Rückwand zog sich ein schmaler Versorgungsgang entlang, kaum breit genug für eine Person, doch deutlich benutzt. Feine Schuhabdrücke liefen in Richtung Altstadtmauer, und auf einem Regal stand eine halb geöffnete Transportkiste mit restauratorischem Material. Hier unten hatte nicht nur jemand gesucht. Hier unten hatte jemand vorbereitet, getauscht oder gefälscht."
+      ],
+      "choices": [
+        { "label": "Dem Versorgungsgang folgen", "targetId": "kap4_kanal" },
+        { "label": "Die Restaurierungswerkstatt prüfen", "targetId": "kap4_restaurierung" }
+      ]
+    },
+    {
+      "id": "kap4_marktplatz",
+      "title": "Kapitel 4 – Zeugen zwischen Brotduft und Regenlicht",
+      "paragraphs": [
+        "Der {{marktplatz}} lag fast leer, doch nicht still. Unter den Markisen sammelten sich Regenwasser und Restwärme des Tages, aus einer Bäckerei zog noch Brotduft in die feuchte Luft, und zwischen Pflaster und Rathausfassade hallten einzelne Schritte weiter, als sie es tagsüber getan hätten. Kleine Städte schlafen spät, aber sie beobachten die ganze Nacht.",
+        "Die Verkäuferin des letzten offenen Backstands erinnerte sich sofort an die Tasche. „Die mit dem roten Aufdruck? Hatte ein Herr mit Mantel. Nervös. Hat erst ein Körnerbrot gekauft und dann gefragt, ob man vom Stand aus den Seiteneingang des Melanchthonhauses sieht.“ Eine sonderbare Frage, wenn man nur Hunger hat. Eine sehr brauchbare, wenn man jemanden im Blick behalten will.",
+        "Außerdem habe derselbe Mann später mit Stadtrat Armin Vogler gesprochen – nur kurz, aber dicht genug, dass kein höflicher Plausch daraus wurde. Der Name war in {{stadt}} bekannt: ehrgeizig, geschniegelt, stets in Kulturprojekten sichtbar. Die Verkäuferin senkte die Stimme. „Er hat gelächelt, aber nur mit dem Mund. Die Augen waren schon woanders.“"
+      ],
+      "choices": [
+        { "label": "Stadtrat Vogler aufsuchen", "targetId": "kap5_stadtrat" },
+        { "label": "Die Route Richtung Simmelturm verfolgen", "targetId": "kap5_turm" }
+      ]
+    },
+    {
+      "id": "kap4_keys",
+      "title": "Kapitel 4 – Das Problem mit den Schlüsseln",
+      "paragraphs": [
+        "Im Hausmeisterbüro roch es nach Kaffee, Druckerpapier und kaltem Heizkörperstaub. Die Schlüsselliste war ordentlich, fast pedantisch geführt: Archiv, Keller, Magazin, Seitenportal. Gerade deshalb fiel eine Unregelmäßigkeit auf – ein Eintrag war überklebt worden, und unter dem Korrekturstreifen schimmerte das Wort „Dupl.“ hervor.",
+        "Sabine schwor, nie einen Schlüssel aus der Hand gegeben zu haben, doch der alte Tresor in der Ecke erzählte etwas anderes. Eine Schublade ließ sich schwer schließen, und in ihrem Holz steckte feiner Messingstaub, wie er entsteht, wenn ein Schlüssel frisch kopiert oder nachgearbeitet wurde. Kein Beweis gegen sie, aber ein Hinweis auf jemanden, der Zugang nicht nur wollte, sondern technisch lösen konnte.",
+        "Auf der Rückseite des Schlüsselprotokolls stand mit Kugelschreiber eine Telefonnummer eines Schlüsseldienstes in der Weißhofer Straße. Daneben die Initialen A.V. – eine Kombination, die entweder zu einem harmlosen Reparaturauftrag oder zu einem sehr unharmlosen Stadtrat passen konnte."
+      ],
+      "choices": [
+        { "label": "Den Schlüsseldienst befragen", "targetId": "kap5_schlosser" },
+        { "label": "Sabine vorerst entlasten und den Blick weiten", "targetId": "kap5_entlastung" }
+      ]
+    },
+    {
+      "id": "kap4_professor",
+      "title": "Kapitel 4 – Ein Gelehrter mit gekränktem Stolz",
+      "paragraphs": [
+        "Professor Vitus Lenz empfing {{ermittlerin}} in einer Wohnung über einer stillen Gasse, so vollgestopft mit Büchern, Mappen und eingerahmten Stichen, dass selbst der Ärger dort staubig wirkte. Er war ein großer, schmaler Mann mit jener Höflichkeit, die nicht besänftigt, sondern distanziert. Auf dem Tisch lag bereits ein Zeitungsartikel über die Ausstellung im {{museum}}, mehrfach unterstrichen.",
+        "Er verschwieg seinen Streit mit {{opfer}} nicht. „Konrad liebte den großen Auftritt mehr als die saubere Quelle“, sagte er. „Wenn er morgen diesen Brief präsentieren wollte, dann entweder aus Eitelkeit oder weil er glaubte, alle Zweifel ausmanövrieren zu können.“ Seine Stimme klang verletzt, aber nicht überrascht – als hätte er die Eskalation geahnt, nur nicht die Leiche.",
+        "In seiner Garderobe hing jedoch ein dunkler Mantel, und auf dem Fenstersims lag eine Eintrittskarte des {{museum}}. Es wäre bequem, hier den alten Rivalen zu finden. Gerade deshalb misstraute {{ermittlerin}} der Bequemlichkeit."
+      ],
+      "choices": [
+        { "label": "Lenz’ Arbeitszimmer und Unterlagen prüfen", "targetId": "kap5_buero" },
+        { "label": "Lenz direkt mit dem Verdacht konfrontieren", "targetId": "kap5_professor_konfront" }
+      ]
+    },
+    {
+      "id": "kap4_compare",
+      "title": "Kapitel 4 – Spuren von Schrift und Gewohnheit",
+      "paragraphs": [
+        "Im Verwaltungsbüro des {{museum}} breitete {{ermittlerin}} Besucherbuch, Rechnungen, Ausstellungsetiketten und restauratorische Arbeitskarten nebeneinander aus. Erst im Vergleich bekam der Abend eine Handschrift: dieselbe enge Schleife beim Großbuchstaben A, dieselbe Art, Zahlen mit hartem Aufstrich zu versehen, dieselbe Ungeduld beim Wortende.",
+        "Die Bleistiftnotiz „Schlüssel nicht im Schrank“ passte nicht zu Professor Lenz. Wohl aber zu einer Werkstattliste aus der Restaurierung, die von Lukas Venn unterschrieben war – dem freiberuflichen Restaurator, der gerade an mehreren Exponaten im {{museum}} arbeitete. Das Kürzel „L. V.“ aus dem Buch bekam plötzlich ein Gesicht.",
+        "Noch interessanter war eine zweite Entdeckung: Auf einer Transportanweisung hatte jemand den Begriff „Original“ mit doppelter Linie unterstrichen und daneben „nur nach Freigabe Vogler“ notiert. Spätestens jetzt war klar, dass Kunst, Kommunalpolitik und Mord an diesem Abend dicht genug beieinanderlagen, um einander die Schuhe schmutzig zu machen."
+      ],
+      "choices": [
+        { "label": "Die Restaurierungswerkstatt durchsuchen", "targetId": "kap4_restaurierung" },
+        { "label": "Die Notizkette und Freigaben zurückverfolgen", "targetId": "kap5_notizen" }
+      ]
+    },
+    {
+      "id": "kap4_cameras",
+      "title": "Kapitel 4 – Bilder, die nur halb lügen",
+      "paragraphs": [
+        "Die Bahnhofsaufsicht führte {{ermittlerin}} in einen kleinen Raum mit Monitoren, auf denen die Nacht in flachen Grautönen ablief. Die Aufnahmen waren unscharf genug, um jedes Gesicht höflich zu verschweigen, aber klar genug, um Bewegungen zu verraten. Um 20:58 Uhr stellte jemand das Fahrrad am Seitenausgang ab, trug eine Markttasche und verschwand Richtung {{park}}.",
+        "Um 21:07 Uhr tauchte dieselbe Silhouette erneut auf, diesmal ohne Tasche, dafür mit einem länglichen Paket unter dem Arm. Die Person bewegte sich nicht wie ein Dieb im Film – nicht duckend, nicht hastend –, sondern wie jemand, der einen Plan im Kopf bereits mehrfach geübt hat und nur noch die Schritte abarbeitet.",
+        "Noch brisanter war die letzte Sequenz: Kurz vor 21:15 Uhr hielt ein Wagen am Rand des Platzes, und für einen Augenblick spiegelte sich das Nummernschild in einer Pfütze. Nicht vollständig, aber ausreichend, um es dem Dienstwagen des Stadtratsbüros zuzuordnen."
+      ],
+      "choices": [
+        { "label": "Die Spur durch den Stadtpark aufnehmen", "targetId": "kap5_park" },
+        { "label": "Den Bahnhofsvorsteher zu den Fahrzeugdaten befragen", "targetId": "kap5_bahnchef" }
+      ]
+    },
+    {
+      "id": "kap4_paket",
+      "title": "Kapitel 4 – Die Landkarte der Absicht",
+      "paragraphs": [
+        "Der Plan aus dem Schließfach war kein Stadtplan für Touristen, sondern ein Arbeitsblatt voller Linien, Zeiten und Stichworte. Zwischen {{museum}} und {{turm}} war „Sicht“ notiert, zwischen {{bahnhof}} und Chorraum „frei ab 20:00“, und entlang des {{park}} stand nur ein einziges Wort: „unsichtbar“.",
+        "Im Bäckersäckchen lag ein zweiter Zettel, zunächst an der fettigen Innenseite klebend. Darauf hatte jemand den Ablauf in beinahe schulischer Kürze notiert: „Probe – Schlüssel – Tausch – Turm“. Kein Name, keine große Erklärung. Nur vier Wörter, die zusammen eine Nacht ergeben konnten.",
+        "Wer so schreibt, will nichts erzählen, sondern erinnern. Der Zettel wirkte wie ein Spickzettel für einen Komplizen – oder für jemanden, der sich in seinen eigenen Lügen nicht verheddern wollte."
+      ],
+      "choices": [
+        { "label": "Den Hinweis auf den Chorraum verfolgen", "targetId": "kap5_chor" },
+        { "label": "Die Notizen mit städtischen Freigaben abgleichen", "targetId": "kap5_notizen" }
+      ]
+    },
+    {
+      "id": "kap4_kanal",
+      "title": "Kapitel 4 – Der schmale Gang hinter der Stadt",
+      "paragraphs": [
+        "Der Versorgungsgang verlief enger und länger, als es das Gebäude von außen vermuten ließ. Feuchter Putz blätterte von der Wand, und irgendwo über den Köpfen vibrierte leise der Verkehr der Stadt, gedämpft durch Stein, Erde und Geschichte. Auf dem Boden zog sich eine Spur aus hellem Abrieb und einzelnen Tropfen Wachs weiter bergauf.",
+        "An einer Mauernische fand {{ermittlerin}} die gerissene Hälfte einer roten Siegelschnur, exakt passend zu dem Faden in der Hand des Toten. Daneben klebte auf dem Stein ein kleiner Goldflitter – nicht Schmuck, sondern Blattgold, wie es beim Restaurieren oder Fälschen alter Dokumente verwendet wird.",
+        "Der Gang endete unterhalb des {{turm}} in einer verriegelten Luke, die von innen erst vor Kurzem geöffnet worden sein musste. Wer hier entlangging, wollte unbeobachtet zwischen Altstadt, Archiv und Aussichtspunkt wechseln. Das war keine Flucht im Affekt. Das war Infrastruktur."
+      ],
+      "choices": [
+        { "label": "Zum Simmelturm hinauf", "targetId": "kap5_turm" },
+        { "label": "Die Spur ans Labor und zurück in die Akten geben", "targetId": "kap5_spurenlabor" }
+      ]
+    },
+    {
+      "id": "kap4_restaurierung",
+      "title": "Kapitel 4 – Werkstatt für Originale und Lügen",
+      "paragraphs": [
+        "Die Restaurierungswerkstatt lag still da, doch Stille ist in solchen Räumen immer verdächtig. Zwischen Lupenlampen, Baumwollhandschuhen und Lösungsmittelflaschen wirkte alles zunächst ordentlich. Erst auf den zweiten Blick fielen die Doppelungen auf: zwei Wachsstempel, zwei Papierproben, zwei Protokollmappen für ein und dasselbe Exponat.",
+        "In einer Metallschublade fand {{ermittlerin}} Blattgold, Pigmentstaub und ein halbfertiges Siegel, dessen Abdruck dem offiziellen Ausstellungsstempel erstaunlich ähnlich war. Auf dem Arbeitstisch lag eine Rechnung an die Stadt, unterschrieben von Lukas Venn, mit dem harmlosen Betreff „Rahmenanpassung Nordvitrine“. Für eine Rahmenanpassung war hier zu viel Heimlichkeit im Spiel.",
+        "Auf der Unterseite eines Probeblatts standen mit Bleistift zwei Namen: „Vogler / Eisinger“. Zwischen ihnen ein Pfeil, daneben das Wort „heute“. Manchmal ist eine Werkstatt nur ein Raum. Und manchmal ist sie der Ort, an dem jemand einen Betrug so lange poliert, bis er wie Wahrheit aussieht."
+      ],
+      "choices": [
+        { "label": "Die Rechnung und Zahlungswege prüfen", "targetId": "kap5_rechnung" },
+        { "label": "Lukas Venn sofort zur Rede stellen", "targetId": "kap5_restaurator" }
+      ]
+    },
+    {
+      "id": "kap5_stadtrat",
+      "title": "Kapitel 5 – Der Mann mit dem glatten Lächeln",
+      "paragraphs": [
+        "Armin Vogler fand sich nicht schwer. Er stand noch im Rathausflur, geschniegelt, trocken und zu schnell wieder gefasst für einen Mann, in dessen Verantwortungsbereich gerade ein Toter im kulturhistorischen Vorzeigehaus lag. Durch die Glasfront sah man den nassen {{marktplatz}}, und für einen Moment wirkte es, als stehe die ganze Stadt im Hintergrund und lausche.",
+        "Vogler sprach von Tragödie, Verantwortung und notwendiger Diskretion. Alles an ihm war Form, doch kein Satz roch nach Trauer. Als {{ermittlerin}} den Namen Lukas Venn nannte, blinzelte er nur einmal, nicht lange genug für Panik, aber deutlich genug für Wiedererkennung. Noch deutlicher wurde seine Stimme härter, als der Begriff Originalbrief fiel.",
+        "„Das Ausstellungsstück war von erheblicher Bedeutung für {{stadt}}“, sagte er. „Ein Skandal wäre… unerquicklich.“ Nicht unwichtig. Nicht falsch. Nur unerquicklich. In solchen Wortwahlen verstecken sich Menschen, die das Problem bereits in Pressezeilen und Karrierefolgen rechnen."
+      ],
+      "choices": [
+        { "label": "Die städtischen Zahlungen und Verträge prüfen", "targetId": "kap6_konten" },
+        { "label": "Vogler mit den Zeugen direkt konfrontieren", "targetId": "kap6_stadtrat_konfront" }
+      ]
+    },
+    {
+      "id": "kap5_turm",
+      "title": "Kapitel 5 – Wind über den Dächern",
+      "paragraphs": [
+        "Der Aufstieg zum {{turm}} war schmal, kalt und durchzogen vom Geruch nasser Steine. Oben lag {{stadt}} unter einem glänzenden Film aus Regen und Laternenlicht: der {{marktplatz}} wie eine aufgefaltete Karte, das {{museum}} als heller Block zwischen dunklen Gassen, der {{bahnhof}} als fernes Rechteck aus Weiß und Gelb.",
+        "Hinter einem Balken, an dem alte Glockenseile hingen, fand {{ermittlerin}} eine Ledertasche, sorgsam zwischen zwei Holzbretter geklemmt. Darin lag ein in Wachspapier eingeschlagenes Dokument, dazu ein zweiter Siegelstempel und ein Paar schwarze Handschuhe. Wer die Tasche hier versteckte, wollte sie nicht in Sicherheit bringen, sondern aus dem unmittelbaren Suchradius herausnehmen.",
+        "Außen am Geländer klebte frischer Goldstaub. Von hier aus konnte man den Innenhof des {{museum}} sehen – und ebenso den Weg dorthin. Jemand hatte den Überblick gesucht, vielleicht für ein Zeichen, vielleicht für einen Tausch, vielleicht für den richtigen Moment, an dem ein Streit im Hof endgültig wurde."
+      ],
+      "choices": [
+        { "label": "Die Tasche sichern und die Beweise sofort bündeln", "targetId": "kap6_tasche" },
+        { "label": "Den Turm als Beobachtungspunkt nutzen", "targetId": "kap6_observation" }
+      ]
+    },
+    {
+      "id": "kap5_schlosser",
+      "title": "Kapitel 5 – Messingstaub und Gewissen",
+      "paragraphs": [
+        "Der Schlüsseldienst in der Weißhofer Straße war schon geschlossen, doch der Inhaber wohnte im Hinterhaus und öffnete nach kurzem Klingeln im Unterhemd und mit dem Blick eines Mannes, der beruflich zu oft in fremde Probleme gerufen wird. Kaum sah er das Protokollblatt, veränderte sich sein Gesicht – nicht schuldig, eher widerwillig resigniert.",
+        "Ja, sagte er, vor drei Tagen sei ein Ersatzrohling für einen Vitrinenschlüssel angefertigt worden. Offiziell wegen einer beschädigten Halterung. Abgeholt habe ihn nicht Sabine Maurer, sondern ein Mitarbeiter der Stadtverwaltung mit Vollmacht. Der Name auf dem Auftrag: Armin Vogler.",
+        "Bevor {{ermittlerin}} ging, zog der Schlosser noch eine Durchschrift aus einer Schublade. Unten rechts stand eine handschriftliche Ergänzung: „Zweiter Satz nur gegen Barzahlung – L.V.“ Zwei Initialen, zwei Ebenen des Plans. Verwaltung und Werkstatt reichten einander die Hand."
+      ],
+      "choices": [
+        { "label": "Die Werkstatt und verborgene Unterlagen durchsuchen", "targetId": "kap6_drawer" },
+        { "label": "Vogler sofort mit dem Schlüsselauftrag konfrontieren", "targetId": "kap6_stadtrat_konfront" }
+      ]
+    },
+    {
+      "id": "kap5_entlastung",
+      "title": "Kapitel 5 – Was Sabine nicht getan hat",
+      "paragraphs": [
+        "Je länger {{ermittlerin}} die Wege, Zeiten und Handgriffe des Abends zusammensetzte, desto klarer trat hervor, was Sabine Maurer eben nicht getan hatte. Sie hatte Türen geschlossen, Lichter geprüft, einen Wasserschaden gemeldet und zu oft nach oben gesehen. Aber nichts sprach dafür, dass sie einen Tausch im Keller organisiert oder einen Historiker in den Hof gelockt hatte.",
+        "Entlastung ist in Ermittlungen selten ein emotionaler Moment; eher ein stilles Aussortieren falscher Schienen. Doch in diesem Fall war sie wichtig, weil mit Sabine auch die bequemste Erklärung aus dem Raster fiel. Der Täter kannte Abläufe, ja – aber er benutzte sie von außen, nicht aus hausmeisterlicher Routine.",
+        "Damit blieb der Blick auf jene, die Zugang nicht hatten und ihn deshalb beschaffen mussten: Restaurator, Stadtrat, vielleicht ein eitles Gelehrten-Ego als Nebelkerze. Die Geschichte wurde enger und dadurch gefährlicher."
+      ],
+      "choices": [
+        { "label": "Stadtrat Vogler ins Zentrum rücken", "targetId": "kap5_stadtrat" },
+        { "label": "Professor Lenz noch einmal hart prüfen", "targetId": "kap5_professor_konfront" }
+      ]
+    },
+    {
+      "id": "kap5_buero",
+      "title": "Kapitel 5 – Falsche Fährte im Studierzimmer",
+      "paragraphs": [
+        "Im Arbeitszimmer von Professor Lenz fand {{ermittlerin}} Briefe voller Polemik, Randnotizen gegen {{opfer}} und einen alten Zeitungsartikel, in dem Lenz sich über die Verflachung historischer Arbeit beschwerte. Es war genug Material für einen grantigen Intellektuellen, aber erstaunlich wenig für einen Täter, der in dieser Nacht mehrere Bewegungen gleichzeitig organisiert hatte.",
+        "Ein dunkler Mantel hing an der Garderobe, doch die Taschen waren leer. Die Eintrittskarte zum {{museum}} war echt – aber drei Tage alt. Kein Goldstaub, kein Messingabrieb, keine Werkstattspuren. Nur verletzter Stolz, schlecht verpackt und jahrelang gepflegt.",
+        "Lenz hätte morden können, gewiss. Menschen töten aus weit kleineren Kränkungen. Aber die Nacht im {{museum}} roch nach Logistik, Freigaben, Tausch und Beweisverstecken. Nicht nach einem einsamen Gelehrten, der seine Niederlage nicht erträgt."
+      ],
+      "choices": [
+        { "label": "Professor Lenz trotzdem vorschnell festlegen", "targetId": "kap_end_falsch_professor" },
+        { "label": "Zurück zu den Dokumenten und Zahlungswegen", "targetId": "kap5_notizen" }
+      ]
+    },
+    {
+      "id": "kap5_professor_konfront",
+      "title": "Kapitel 5 – Der alte Rivale unter Druck",
+      "paragraphs": [
+        "Professor Lenz reagierte auf den Vorwurf nicht mit Wut, sondern mit gekränkter Erschöpfung. „Sie würden mich gerne nehmen, weil es sauber aussieht“, sagte er. „Zwei alte Männer streiten sich über Geschichte, einer stirbt – fertig.“ Dann zog er eine Brille ab und legte sie sehr langsam auf den Tisch, als wäre selbst das noch Teil eines Widerstands gegen einfache Erzählungen.",
+        "Er gab zu, {{opfer}} am Nachmittag gesehen zu haben. Konrad habe ihm eröffnet, dass der Brief womöglich gar nicht echt sei – oder schlimmer noch, dass jemand bereits eine Kopie vorbereitet habe, um die Ausstellungspolitik der Stadt zu retten. „Er war nicht empört“, sagte Lenz bitter. „Er war fasziniert. Als stünde er vor einer besseren Geschichte als der Wahrheit.“",
+        "Das entlastete Lenz nicht völlig. Aber es verschob den Schwerpunkt. Wenn {{opfer}} am Abend zwischen Skandal und Karrierefund schwankte, dann hatten jene das stärkste Motiv, die an diesem Skandal unmittelbar hingen."
+      ],
+      "choices": [
+        { "label": "Lenz als Täter festschreiben", "targetId": "kap_end_falsch_professor" },
+        { "label": "Dem Hinweis zum Turm und Versteck folgen", "targetId": "kap5_turm" }
+      ]
+    },
+    {
+      "id": "kap5_notizen",
+      "title": "Kapitel 5 – Die kleine Bürokratie des Verbrechens",
+      "paragraphs": [
+        "Die Freigabemappen aus Verwaltung, Werkstatt und Ausstellung ergaben zusammen kein einzelnes Geständnis, aber ein System. Vogler hatte Zahlungen beschleunigt, Lukas Venn Material angefordert, {{opfer}} Sonderzugang zum Keller behalten. Alles wirkte offiziell, bis man die Uhrzeiten danebenlegte – und merkte, dass manche Unterschriften erst nachträglich die Vergangenheit ordnen sollten.",
+        "Besonders belastend war eine interne Notiz: „Original nach Sichtung aus Sicherheitsgründen separieren. Kommunikation nur mündlich.“ Wer so formuliert, will keine Ordnung schaffen, sondern Spuren begrenzen. Zwischen den Blättern lag außerdem eine Quittung für Barzahlung an Venn, ausgestellt auf eine kulturpolitische Sonderreserve des Stadtrats.",
+        "Das Mordmotiv begann Gestalt anzunehmen: Wenn der Brief echt war, war die Ausstellung politischer Triumph. Wenn er falsch war, wurde aus Triumph eine öffentliche Blamage. Und wenn {{opfer}} beides wusste, konnte aus Mitwisserschaft sehr schnell Gefahr werden."
+      ],
+      "choices": [
+        { "label": "Den verborgenen Werkstattschrank und Zahlungsbelege sichern", "targetId": "kap6_drawer" },
+        { "label": "Voglers Konten und Sondermittel prüfen", "targetId": "kap6_konten" }
+      ]
+    },
+    {
+      "id": "kap5_park",
+      "title": "Kapitel 5 – Dunkle Wege im Stadtpark",
+      "paragraphs": [
+        "Der {{park}} lag zwischen Laterneninseln und schwarzem Blattwerk, jeder Kiesweg halb sichtbar, halb Behauptung. Die Reifenspuren vom Bahnhof verloren sich nicht sofort; sie zogen in einem unsauberen Bogen um die Hecke, an einer Parkbank vorbei und weiter in Richtung Altstadtmauer. Dort, wo man vom offenen Platz wieder in die deckende Struktur der Stadt wechselte.",
+        "Unter einer Bank lag eine zusammengefaltete Einmalregenjacke, innen mit Goldstaub bestäubt und außen mit rotem Siegellack verschmiert. Das war kein weggeworfener Schutz gegen Wetter, sondern ein improvisiertes Arbeitskleid für jemanden, der etwas transportierte, ohne Spuren auf Mantel oder Anzug sehen zu wollen.",
+        "Von dort führte der Weg praktisch schnurgerade zum Anstieg unter dem {{turm}}. Wer den Park benutzte, wollte den {{marktplatz}} meiden, nicht die Strecke abkürzen. Der Mörder dachte in Sichtachsen."
+      ],
+      "choices": [
+        { "label": "Weiter zum Turm", "targetId": "kap5_turm" },
+        { "label": "Den Bereich beobachten statt sofort zuzugreifen", "targetId": "kap6_observation" }
+      ]
+    },
+    {
+      "id": "kap5_bahnchef",
+      "title": "Kapitel 5 – Dienstwagen und Nebenbemerkungen",
+      "paragraphs": [
+        "Der Bahnhofsvorsteher war ein Mann, der Nummernschilder ernster nahm als Geständnisse. Er hatte die Wagenbewegung notiert, weil der Dienstwagen kurz den Lieferbereich blockiert hatte. „War unpassend geparkt“, sagte er trocken. „Fällt auf, wenn man Ordnung mag.“ Solche Menschen sind für Ermittlungen ein Geschenk des Alltags.",
+        "Er bestätigte, dass Voglers Wagen nur wenige Minuten dort gestanden habe. Genug Zeit, um etwas abzugeben oder jemanden aufzunehmen, nicht genug für einen längeren Aufenthalt. Noch interessanter war seine zweite Beobachtung: Kurz danach habe er aus Richtung Kirche Chorgesang gehört, obwohl um diese Uhrzeit eigentlich keine reguläre Probe mehr angesetzt gewesen sei.",
+        "Das passte zum Zettel aus Fach 24. Der Chorraum oder seine Nebenräume waren also nicht bloß Dekoration der Route, sondern aktiver Teil des Abends. Ein Versteck, Treffpunkt oder Zwischenlager – in Bretten liegen solche Möglichkeiten oft nur wenige Schritte von den Sehenswürdigkeiten entfernt."
+      ],
+      "choices": [
+        { "label": "Dem Hinweis zur Chorprobe folgen", "targetId": "kap5_chor" },
+        { "label": "Beim Wagen bleiben und auf Rückkehr setzen", "targetId": "kap6_observation" }
+      ]
+    },
+    {
+      "id": "kap5_chor",
+      "title": "Kapitel 5 – Stimmen hinter der Kirche",
+      "paragraphs": [
+        "Im Nebenraum der Kirche roch es nach nassem Stein, Gesangsbüchern und einem Rest Kerzenwachs. Der Chorleiter räumte gerade Noten zusammen und sah so übermüdet aus, dass Lügen für ihn vermutlich zu aufwendig gewesen wären. Er erinnerte sich gut an den Abend, weil ein Sponsorbesuch die Probe unterbrochen hatte.",
+        "Dieser Sponsor war Armin Vogler. Er habe kurz vor neun hineingesehen, den Raum geprüft und Lukas Venn im Flur gesprochen. Kein Handschlag, eher eine hastige Abstimmung. Kurz darauf habe {{opfer}} den Chorleiter gefragt, ob der Seitenausgang Richtung Altstadtmauer frei sei. „Er wirkte gehetzt“, sagte der Mann. „Nicht ängstlich. Eher… als wollte er jemanden noch vorführen, bevor der ihn vorführt.“",
+        "Wenn das stimmte, war {{opfer}} in den letzten Minuten nicht Opfer eines Überfalls geworden, sondern Teilnehmer eines eskalierten Treffens. Er war zum falschen Zeitpunkt zu überzeugt gewesen, die bessere Karte in der Hand zu halten."
+      ],
+      "choices": [
+        { "label": "Vogler mit dieser Aussage unter Druck setzen", "targetId": "kap6_stadtrat_konfront" },
+        { "label": "Zum Turm und möglichen Versteck zurückkehren", "targetId": "kap5_turm" }
+      ]
+    },
+    {
+      "id": "kap5_spurenlabor",
+      "title": "Kapitel 5 – Was die Spuren übriglassen",
+      "paragraphs": [
+        "Die Schnellanalyse brachte keine Wunder, aber Präzision. Der Abrieb aus Keller, Innenhof und Versorgungsgang stammte vom gleichen frisch gebrochenen Kalkputz. Das Wachs war Ausstellungssiegellack aus dem Bestand des {{museum}}. Und im Goldstaub fanden sich Anteile desselben Blattgoldes, das in der Werkstatt von Lukas Venn verwendet wurde.",
+        "Noch wertvoller war die Textilspur von der Regenjacke: feine Wollfasern aus gehobener Mantelqualität, dazu Rückstände einer Imprägnierung, wie sie häufig in teureren Herrenmänteln vorkommt. Nicht exklusiv, aber passend zu jemandem, der geschniegelt Kulturpolitik betreibt und nicht selbst im Keller arbeitet.",
+        "Spuren lösen keinen Fall allein. Aber sie zerstören elegante Ausreden. Von nun an mussten Vogler und Venn nicht mehr nur inhaltlich, sondern materiell erklären, warum ihre Welt an so vielen Stellen auf dem Weg eines Toten klebte."
+      ],
+      "choices": [
+        { "label": "Den Werkstattschrank und verdeckte Belege suchen", "targetId": "kap6_drawer" },
+        { "label": "Die Finanzspur der Stadt durchziehen", "targetId": "kap6_konten" }
+      ]
+    },
+    {
+      "id": "kap5_rechnung",
+      "title": "Kapitel 5 – Bezahlt aus dem Schattenhaushalt",
+      "paragraphs": [
+        "Die Rechnung aus der Werkstatt war auf den ersten Blick harmlos – zu harmlos. Positionen wie „Rahmenanpassung“, „Papierangleichung“ und „Sicherungsarbeiten“ waren so allgemein gehalten, dass sie alles und nichts bedeuten konnten. Gerade deswegen war sie brauchbar: Wer offen fälscht, schreibt selten „Fälschung“ auf die Rechnung.",
+        "Über die Buchungsnummer führte die Spur zu einer kleinen Sonderreserve im Kulturhaushalt, über die ausschließlich Vogler verfügen konnte. Der Betrag war für normale Restaurierungsarbeiten zu hoch, für diskrete Zusatzarbeiten aber genau in jener Größenordnung, die niemandem sofort ins Auge springt. Kleiner als ein Skandal, größer als ein Versehen.",
+        "Auf der Rückseite stand mit Bleistift eine letzte Ergänzung: „zweite Version / nur falls K. umkippt“. Konnte K für Konrad stehen? Für Kopie? Für Keller? In guten Krimis ist Mehrdeutigkeit ein Stilmittel. In Akten ist sie fast immer Absicht."
+      ],
+      "choices": [
+        { "label": "Die Sonderreserve und Konten weiter aufrollen", "targetId": "kap6_konten" },
+        { "label": "In der Werkstatt nach der 'zweiten Version' suchen", "targetId": "kap6_drawer" }
+      ]
+    },
+    {
+      "id": "kap5_restaurator",
+      "title": "Kapitel 5 – Lukas Venn unter dem Lampenlicht",
+      "paragraphs": [
+        "Lukas Venn wirkte jünger, als man einen Mann in seinem Beruf erwartet, und erschöpfter, als man einem bloßen Kunsthandwerker zutrauen würde. Unter der Werkstattlampe glänzte Schweiß an seiner Stirn, obwohl der Raum kühl war. Er beteuerte sofort, nichts mit dem Tod zu tun zu haben – eine Reihenfolge, die selten Zufall ist.",
+        "Venn gab zu, im Auftrag der Stadt ein „Sicherungsduplikat“ vorbereitet zu haben. Eine Formulierung, die nur solange unschuldig klingt, bis man sie neben einem leeren Vitrinenhalter ausspricht. Auf die Frage, wer den Auftrag gegeben habe, presste er die Lippen aufeinander. Auf die Frage, ob {{opfer}} davon wusste, antwortete er mit einem Blick zur Tür.",
+        "Es war der Blick eines Mannes, der mehr Angst vor seinem Auftraggeber als vor der Polizei hatte. Solche Blicke sind selten entlastend, aber oft aufschlussreich."
+      ],
+      "choices": [
+        { "label": "Venn vorschnell als Täter festnehmen", "targetId": "kap_end_falsch_restaurator" },
+        { "label": "Den Auftraggeber und die Belege erzwingen", "targetId": "kap6_konten" }
+      ]
+    },
+    {
+      "id": "kap6_konten",
+      "title": "Kapitel 6 – Zahlen, die töten können",
+      "paragraphs": [
+        "Die Konten und Sondermittel ergaben endlich jene kalte, saubere Linie, die kein Zeuge auswendig lernt. Aus Voglers Kulturreserve war nicht nur die Werkstattrechnung bezahlt worden, sondern auch ein Mietfahrzeug, Materialkäufe und eine private Überweisung an Lukas Venn. Gleichzeitig hatte {{opfer}} am Nachmittag eine Mail vorbereitet, in der er den Oberbürgermeister über Unregelmäßigkeiten in der Ausstellungsvorbereitung informieren wollte.",
+        "Damit stand das Motiv nackt da: Vogler brauchte den Triumph der Ausstellung, Venn brauchte das Geld, und {{opfer}} wusste zu viel. Vielleicht wollte er den Betrug offenlegen, vielleicht ihn erst im letzten Moment nutzen – doch genau diese Unsicherheit machte ihn für beide gefährlich. Im Innenhof des {{museum}} war dann aus einem geplanten Tausch ein Streit geworden, aus dem Streit ein Stoß, aus dem Stoß ein Mord.",
+        "Als {{ermittlerin}} Vogler und Venn mit den Geldflüssen, dem Schlüsseldienst, der Werkstatt, der Turmtasche und der Mail konfrontierte, brach nicht sofort ein Geständnis hervor. Nur diese kurze, graue Stille, in der alle Beteiligten erkennen, dass die Geschichte nicht mehr ihnen gehört. Dann sprach Venn zuerst. Und Vogler zum letzten Mal falsch."
+      ],
+      "choices": [
+        { "label": "Die Beweise sichern und beide festnehmen", "targetId": "kap_end_wahrheit" }
+      ]
+    },
+    {
+      "id": "kap6_stadtrat_konfront",
+      "title": "Kapitel 6 – Die Fassade reißt",
+      "paragraphs": [
+        "Im kleinen Sitzungssaal des Rathauses wirkte Armin Vogler plötzlich nicht mehr groß. Die Aussagen vom {{marktplatz}}, dem Chorraum und dem Schlüsseldienst nahmen ihm nacheinander jene Fluchtwege, die ein Mann seines Schlags sonst über Worte findet. Erst bestritt er die Sonderfreigaben, dann relativierte er sie, dann schob er Verantwortung auf „operative Fehler“.",
+        "Als {{ermittlerin}} die Fotos der Turmtasche und den Hinweis auf die vorbereitete Mail von {{opfer}} vorlegte, veränderte sich sein Gesicht sichtbar. Es war nicht die Reaktion eines Unschuldigen auf einen Irrtum. Es war der Moment, in dem jemand erkennt, dass sein eigenes Krisenmanagement den Mord erst lesbar gemacht hat.",
+        "Venn knickte schließlich ein und schilderte den Plan: Kopie vorbereiten, Original kurz aus der Vitrine nehmen, Präsentation retten, später alles still zurückbauen. Doch {{opfer}} hatte im Keller widersprochen, auf Offenlegung gedrängt und Vogler im Innenhof zur Rede gestellt. Der Stoß sei „nur kurz“ gewesen. Der Steinboden war länger."
+      ],
+      "choices": [
+        { "label": "Vogler und Venn wegen Totschlag und Betrug festnehmen", "targetId": "kap_end_wahrheit" }
+      ]
+    },
+    {
+      "id": "kap6_tasche",
+      "title": "Kapitel 6 – Was im Turm versteckt wird",
+      "paragraphs": [
+        "Die Ledertasche enthielt nicht nur das Dokument, sondern auch den letzten fehlenden Übergang der Geschichte: eine Notiz von {{opfer}} an sich selbst. „Vogler blufft. Venn redet. Original sichern, dann Gespräch im Hof.“ Kein literarischer Satz, nur ein Arbeitsvermerk. Gerade deshalb tödlich aufschlussreich.",
+        "Neben der Notiz lag ein Ersatzsiegel mit Fingerabdrücken von Venn und eine Quittung aus dem Rathaus, gegengezeichnet von Vogler. Damit wurde aus Indizien eine Kette, die nicht mehr auf Vermutungen angewiesen war. Der Turm war kein romantisches Versteck, sondern der Zwischenraum, in dem man glaubte, Beweise bis zum Morgen parken zu können.",
+        "Von oben sah {{ermittlerin}} wieder hinab auf den Hof des {{museum}}. Der Regen hatte die Konturen weich gemacht, aber nicht ausgelöscht. Manche Orte vergessen nichts; sie warten nur darauf, dass jemand die richtige Frage stellt."
+      ],
+      "choices": [
+        { "label": "Mit der Tasche zurück und den Fall schließen", "targetId": "kap_end_wahrheit" },
+        { "label": "Den Täter in Ruhe zurückkehren lassen und beobachten", "targetId": "kap6_observation" }
+      ]
+    },
+    {
+      "id": "kap6_observation",
+      "title": "Kapitel 6 – Warten im Regen",
+      "paragraphs": [
+        "Warten ist in Ermittlungen oft klüger als zugreifen. Hinter der Mauer unterhalb des {{turm}} zog sich die Nacht langsam zusammen, der {{regen}} wurde feiner, die Geräusche seltener. Die Stadt schien still, doch ihr Stillsein war nur die Form, in der sie Bewegungen hörbar macht.",
+        "Kurz nach elf tauchte tatsächlich eine Gestalt auf. Vogler selbst kam nicht – dazu war er zu vorsichtig –, doch Lukas Venn stieg den Weg hinauf, nervös, die Hände tief in den Manteltaschen. Als er an der Versteckstelle die leere Lücke fand, verstand man an seinem Gesicht gleichzeitig Schuld und Unterordnung. Er war Werkzeug gewesen und wusste nun, dass auch Werkzeuge weggeworfen werden.",
+        "Venn brach unter dem Zugriff schneller zusammen als unter der Befragung zuvor. Manche Menschen reden erst, wenn ihnen klar wird, dass ihr Auftraggeber sie nicht mehr decken kann."
+      ],
+      "choices": [
+        { "label": "Venn festnehmen und gegen Vogler aussagen lassen", "targetId": "kap_end_wahrheit" },
+        { "label": "Venn entkommen lassen und auf einen größeren Schlag hoffen", "targetId": "kap_end_offen" }
+      ]
+    },
+    {
+      "id": "kap6_drawer",
+      "title": "Kapitel 6 – Der zweite Boden",
+      "paragraphs": [
+        "In Venns Werkbank gab es einen zweiten Boden, so sorgfältig eingelassen, dass man ihn nur bemerkte, wenn man bereits wusste, wonach man sucht. Darin lagen der zweite Schlüsselsatz, eine Barquittung mit Voglers Unterschrift und mehrere Fotos des Originalbriefs in unterschiedlichen Bearbeitungszuständen. Kopie, Anpassung, Alterung – Schritt für Schritt.",
+        "Das eigentlich Vernichtende aber war eine Sprachnotiz auf einem kleinen Diktiergerät. Darauf hörte man {{opfer}}s Stimme, erregt, aber deutlich: „Wenn ihr das morgen durchzieht, seid ihr erledigt. Ich gehe damit raus.“ Danach eine zweite Stimme, Vogler, scharf und gepresst: „Du gehst jetzt nirgendwohin.“ Das Ende der Aufnahme war nur noch ein Poltern und Wind.",
+        "Manchmal ist Wahrheit nicht poetisch, sondern akustisch. Ein paar Sekunden Klang, und ein ganzer Abend verliert seine Ausflüchte."
+      ],
+      "choices": [
+        { "label": "Mit dem Mitschnitt den Fall beenden", "targetId": "kap_end_wahrheit" }
+      ]
+    },
+    {
+      "id": "kap_end_wahrheit",
+      "title": "Epilog – Der Fall unter dem Glockenschlag",
+      "paragraphs": [
+        "Am Morgen lag {{stadt}} grau und erschöpft unter einem Himmel, der weder Regen noch Aufklaren ganz entschlossen war. Im {{museum}} wurden Vitrinen versiegelt, Akten beschlagnahmt und die große Ausstellung abgesagt, bevor ihre Geschichte überhaupt erzählt werden konnte. Auf dem {{marktplatz}} sprach man leise, aber intensiv. In kleinen Städten reisen Wahrheiten nicht schnell – sie gehen zu Fuß und erreichen trotzdem jeden.",
+        "Armin Vogler wurde wegen Betrugs, Urkundenfälschung und des tödlich eskalierten Streits mit {{opfer}} abgeführt. Lukas Venn hatte gefälscht, kopiert und geschwiegen, bis Schweigen zu teuer wurde. Der Originalbrief tauchte wieder auf, nicht als Triumphstück, sondern als Beweisstück. Vielleicht war das gerechter als jede Festrede.",
+        "{{ermittlerin}} blieb noch einen Moment im Innenhof stehen, dort, wo der Regen in der Nacht das Pflaster glänzend gemacht hatte. Über den Dächern von {{stadt}} schlug die Glocke erneut. Diesmal klang sie nicht wie ein Rätsel, sondern wie dessen Ende – oder zumindest wie das Ende jener Lüge, die glaubte, sich zwischen Geschichte und Karriere verstecken zu können."
+      ],
+      "choices": []
+    },
+    {
+      "id": "kap_end_falsch_professor",
+      "title": "Epilog – Die bequeme Schuld",
+      "paragraphs": [
+        "Professor Lenz wurde zur einfachsten Erklärung eines komplizierten Abends. Ein alter Streit, eine verletzte Eitelkeit, ein Mantel im Flur – genug für Schlagzeilen, zu wenig für Wahrheit. Für ein paar Tage wirkte alles sauber, fast elegant.",
+        "Dann tauchten Werkstattbelege und Konten auf, und die schöne Theorie zerfiel schneller als feuchter Putz. Lenz ging frei aus, aber die Stadt behielt den schalen Nachgeschmack eines Falls, der beinahe aus Bequemlichkeit entschieden worden wäre.",
+        "In {{stadt}} erinnerte man sich später weniger an den Irrtum selbst als an die Art, wie schnell man bereit gewesen war, ihn zu glauben. Auch das ist Teil einer Kriminalgeschichte: nicht nur, wer lügt, sondern wem man die passende Lüge sofort abnimmt."
+      ],
+      "choices": []
+    },
+    {
+      "id": "kap_end_falsch_restaurator",
+      "title": "Epilog – Der Handwerker als Sündenbock",
+      "paragraphs": [
+        "Lukas Venn festzunehmen fühlte sich für einen kurzen Moment richtig an. Werkstatt, Siegel, Kopie, Geld – alles sprach gegen ihn, und doch blieb etwas schief. Zu viel Planung für einen Mann, der sichtbar auf Anweisungen wartete. Zu wenig Macht für jemanden, der allein einen Kulturskandal kontrollieren wollte.",
+        "Während Venn schwieg, ordnete Vogler bereits Pressemitteilungen und Distanzierungen. Der Mord wäre beinahe in der Werkstatt stecken geblieben wie Goldstaub unter einem Fingernagel – sichtbar, aber nicht tief genug.",
+        "Erst später hätte sich gezeigt, dass nicht nur die Hand, sondern auch der Kopf des Verbrechens fehlte. In solchen Enden wird der Fall nicht gelöst, sondern nur falsch beruhigt."
+      ],
+      "choices": []
+    },
+    {
+      "id": "kap_end_offen",
+      "title": "Epilog – Nebel über der Altstadt",
+      "paragraphs": [
+        "Die Entscheidung, Venn laufen zu lassen, wirkte in der Nacht wie Taktik und am Morgen wie Risiko. Als der Himmel über {{stadt}} heller wurde, war er verschwunden, und mit ihm ein Teil der letzten direkten Verbindung zu Vogler.",
+        "Der Fall blieb nicht leer – zu viele Indizien, zu viele Bewegungen, zu viele halbe Wahrheiten lagen offen. Aber er blieb unvollständig, wie ein Brief mit fehlender Seite. Auf dem {{marktplatz}} wurde wieder Brot verkauft, am {{museum}} wurden Führungen angekündigt, und der {{turm}} stand da, als habe er nie etwas gesehen.",
+        "{{ermittlerin}} wusste, dass Geschichten in Bretten selten ganz enden. Manche werden archiviert. Manche warten. Und manche stehen nachts im Regen und schauen zurück."
+      ],
+      "choices": []
+    }
+  ]
+}

@@ -29,7 +29,7 @@ public sealed class GitBranchSplitOptionsTests
         Assert.AreEqual("tool@example.local", options.AuthorEmail);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(new[] { "--source", "main" }, "Missing required argument --repo.")]
     [DataRow(new[] { "--repo", @"C:\Repos\Demo" }, "Missing required argument --source.")]
     [DataRow(new[] { "--repo" }, "Missing value for argument --repo.")]

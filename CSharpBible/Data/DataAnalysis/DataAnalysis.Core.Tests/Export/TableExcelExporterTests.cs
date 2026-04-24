@@ -36,7 +36,7 @@ public class TableExcelExporterTests
         => typeof(TableExcelExporter).GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic)
            ?? throw new InvalidOperationException($"Methode {name} nicht gefunden.");
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(TypeCode.Empty, null, "", TypeCode.String)]                     // null -> ""
     [DataRow(TypeCode.DBNull, null, "", TypeCode.String)]                    // DBNull -> ""
     [DataRow(TypeCode.Boolean, true, true, TypeCode.Boolean)]                     // true -> 1

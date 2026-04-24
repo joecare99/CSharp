@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
     <PackageVersion Update="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
   </ItemGroup>
 
