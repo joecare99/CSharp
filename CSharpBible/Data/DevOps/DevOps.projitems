@@ -10,10 +10,31 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-830362-Create-WPF-trace-analysis-shell.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-830363-Create-canonical-trace-processing-model.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-830364-Create-graphical-processing-configuration-editor.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-830365-Create-console-runner-for-processing-configurations.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-830366-Refine-workbench-primary-ux-flow.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-007-Fix-SVN-working-copy-sync-for-SVN-to-SVN-migration.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-008-Avoid-Git-ref-collisions-in-projected-sub-branches.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)Epics\E-RepoMigrator-001-RepoMigrator-migration-workbench.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\830360-Interactive-trace-visualization-workbench.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\830361-Trace-data-processing-pipeline.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\F-RepoMigrator-02-Git-and-SVN-provider-support.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831181-Implement-JSON-trace-cache-filter.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831182-Integrate-JSON-filter-into-TraceCsv2realCsv.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831183-Specify-processing-configuration-format.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831184-Specify-processing-step-contract-and-execution-semantics.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831185-Specify-WPF-processing-configuration-editor-workflow.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831186-Specify-console-runner-contract-for-processing-configurations.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831187-Create-WPF-trace-analysis-project-and-composition-root.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831188-Implement-WPF-shell-layout-and-navigation-regions.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831189-Implement-channel-browser-and-diagnostics-surfaces.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831190-Implement-WPF-processing-configuration-editor-surface.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831191-Specify-workbench-standalone-primary-workflow.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831192-Specify-preview-coupling-and-contextual-validation.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831193-Implement-keyboard-oriented-main-menu.md" />
+    <None Include="$(MSBuildThisFileDirectory)TraceAnalysis-Workbench-User-Guide.md" />
   </ItemGroup>
 </Project>

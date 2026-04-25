@@ -1,0 +1,47 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries.props" />
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/BaseLib.Show/BaseLib.Show.csproj" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="../Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
+    <Project Path="../Libraries/ConsoleLib/ConsoleLib.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="AsciiClock.cs" />
+    <File Path="AsciiClock_org.cs" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="Pattern_Tutorial.props" />
+    <File Path="Pattern_Tutorial_net.props" />
+    <File Path="README.md" />
+    <File Path="Solution.props" />
+    <File Path="Solution_net.props" />
+  </Folder>
+  <Folder Name="/Quine/">
+    <Project Path="Quine1/Quine1.csproj" />
+    <Project Path="Quine2/Quine2.csproj" />
+    <Project Path="Quine3/Quine3.csproj" />
+    <Project Path="Quine4/Quine4.csproj" />
+    <Project Path="Quine5/Quine5.csproj" />
+    <Project Path="Quine6/Quine6.csproj" />
+    <Project Path="QuineTest/QuineTest.csproj" />
+  </Folder>
+  <Folder Name="/Something/">
+    <Project Path="ConsoleApp1/ConsoleApp1.csproj" />
+    <Project Path="MemoPlus/MemoPlus.csproj" />
+    <Project Path="ObfuscatedConsole/ObfuscatedConsole.csproj" />
+    <Project Path="SelfMaze/SelfMaze.csproj" />
+    <Project Path="SomeThing/SomeThing.csproj" />
+    <Project Path="SomeThing2/SomeThing2.csproj" />
+    <Project Path="SomeThing2a/SomeThing2a.csproj" />
+    <Project Path="Statistic3/Statistic3.csproj" />
+    <Project Path="Statistic4/Statistic4.csproj" />
+    <Project Path="Statistic_ausf3/Statistic_ausf3.csproj" />
+    <Project Path="Statistik/Statistik.csproj" />
+    <Project Path="Statistik2/Statistik2.csproj" />
+    <Project Path="Statistik_ausf/Statistik_ausf.csproj" />
+    <Project Path="Statistik_Ausf2/Statistik_Ausf2.csproj" />
+    <Project Path="SurpriseConsole/SurpriseConsole.csproj" />
+  </Folder>
+</Solution>

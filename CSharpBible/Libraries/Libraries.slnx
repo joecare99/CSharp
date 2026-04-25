@@ -1,0 +1,29 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="Libraries.props" />
+    <File Path="Libraries_net.props" />
+    <Project Path="BaseLib/BaseLib.csproj" />
+    <Project Path="BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="CommonDialogs/CommonDialogs.csproj" />
+    <Project Path="CommonDialogs/CommonDialogs_net.csproj" />
+    <Project Path="ConsoleDisplay/ConsoleDisplay.csproj" />
+    <Project Path="ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
+    <Project Path="ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="ConsoleLib/ConsoleLib_net.csproj" />
+    <Project Path="CSFreeVision/CSFreeVision.csproj" />
+    <Project Path="ExtendedConsole/ExtendedConsole.csproj" />
+    <Project Path="GenInterfaces/GenInterfaces.csproj" />
+    <Project Path="MathLIbrary/MathLibrary.csproj" />
+    <Project Path="MathLibraryTests/MathLibraryTests.csproj" />
+    <Project Path="MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+    <Project Path="WFSystem.Data/WFSystem.Windows.Data.csproj" />
+  </Folder>
+  <Folder Name="/TestConsole/">
+    <File Path="../Solution.props" />
+    <File Path="../Solution_net.props" />
+    <Project Path="../ConsoleApps/TestConsole/TestConsole.csproj" />
+    <Project Path="../ConsoleApps/TestConsole/TestConsole_net.csproj" />
+    <Project Path="../ConsoleApps/TestConsoleTests/TestConsoleTests.csproj" />
+  </Folder>
+</Solution>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11626.88 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
 	ProjectSection(SolutionItems) = preProject
@@ -35,6 +35,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDialogs", "..\Libraries\CommonDialogs\CommonDialogs.csproj", "{92723D0F-CD0C-4AA5-9984-915FB97B766D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDialogs_net", "..\Libraries\CommonDialogs\CommonDialogs_net.csproj", "{D55BB666-6FD9-4EA8-937E-68CFFA95BCED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSQBrowser", "..\..\Gen_FreeWin\MSQBrowser\MSQBrowser.csproj", "{48863B77-C453-1457-3229-B80C6498FB17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSQBrowserTests", "..\..\Gen_FreeWin\MSQBrowserTests\MSQBrowserTests.csproj", "{87F56A0F-ADF8-6103-6EE9-14AB051898A2}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DevOps", "DevOps\DevOps.shproj", "{B7D27D6F-34E9-4F5A-BB5F-6A0D3F0F2C7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +138,22 @@ Global
 		{D55BB666-6FD9-4EA8-937E-68CFFA95BCED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D55BB666-6FD9-4EA8-937E-68CFFA95BCED}.Release|x86.ActiveCfg = Release|x86
 		{D55BB666-6FD9-4EA8-937E-68CFFA95BCED}.Release|x86.Build.0 = Release|x86
+		{48863B77-C453-1457-3229-B80C6498FB17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48863B77-C453-1457-3229-B80C6498FB17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48863B77-C453-1457-3229-B80C6498FB17}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{48863B77-C453-1457-3229-B80C6498FB17}.Debug|x86.Build.0 = Debug|Any CPU
+		{48863B77-C453-1457-3229-B80C6498FB17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48863B77-C453-1457-3229-B80C6498FB17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48863B77-C453-1457-3229-B80C6498FB17}.Release|x86.ActiveCfg = Release|Any CPU
+		{48863B77-C453-1457-3229-B80C6498FB17}.Release|x86.Build.0 = Release|Any CPU
+		{87F56A0F-ADF8-6103-6EE9-14AB051898A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87F56A0F-ADF8-6103-6EE9-14AB051898A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87F56A0F-ADF8-6103-6EE9-14AB051898A2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{87F56A0F-ADF8-6103-6EE9-14AB051898A2}.Debug|x86.Build.0 = Debug|Any CPU
+		{87F56A0F-ADF8-6103-6EE9-14AB051898A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87F56A0F-ADF8-6103-6EE9-14AB051898A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87F56A0F-ADF8-6103-6EE9-14AB051898A2}.Release|x86.ActiveCfg = Release|Any CPU
+		{87F56A0F-ADF8-6103-6EE9-14AB051898A2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,5 +166,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7B6914D-432A-4EBC-8651-58A9E596BD2A}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		DevOps\DevOps.projitems*{b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

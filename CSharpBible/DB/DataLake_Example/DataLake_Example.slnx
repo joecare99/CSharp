@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="DataLake_Example/DataLake_Example.usqldbproj">
+    <Build />
+  </Project>
+</Solution>

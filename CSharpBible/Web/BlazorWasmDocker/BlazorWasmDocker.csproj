@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Wasm.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<UserSecretsId>5ea416fc-196d-4c0f-b36b-b8fc509a293a</UserSecretsId>
@@ -11,7 +11,12 @@
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.targets" />
-	<ItemGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>	<ItemGroup>
 	  <Compile Remove="bin\**" />
 	  <Compile Remove="obj\**" />
 	  <Content Remove="bin\**" />

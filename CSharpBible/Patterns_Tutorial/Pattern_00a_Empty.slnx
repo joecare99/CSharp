@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries.props" />
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../ConsoleDisplay/ConsoleDisplay.csproj" />
+    <Project Path="../ConsoleDisplay/ConsoleDisplay_net.csproj" />
+    <Project Path="../ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
+    <Project Path="../ConsoleDisplayTests/ConsoleDisplay_netTests.csproj" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../Libraries/BaseLib/BaseLib_net.csproj" />
+    <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="../Libraries/BaseLibTests/BaseLib_netTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="Pattern_Tutorial.props" />
+    <File Path="Pattern_Tutorial_net.props" />
+  </Folder>
+  <Project Path="Pattern_00_Template/Pattern_00_Template.csproj" />
+  <Project Path="Pattern_00_Template/Pattern_00_Template_net.csproj" />
+  <Project Path="Pattern_00_TemplateTests/Pattern_00_TemplateTests.csproj" />
+  <Project Path="Pattern_00_TemplateTests/Pattern_00_Template_netTests.csproj" />
+</Solution>

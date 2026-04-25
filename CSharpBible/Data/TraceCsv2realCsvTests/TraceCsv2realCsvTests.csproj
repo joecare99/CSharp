@@ -17,11 +17,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TraceCsv2realCsv\TraceCsv2realCsv.csproj" />
     <ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.CSV\TraceAnalysis.Filter.CSV.csproj" />
+   <ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.JSON\TraceAnalysis.Filter.JSON.csproj" />
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
   </ItemGroup>
 
