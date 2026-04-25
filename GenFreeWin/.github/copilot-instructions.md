@@ -8,8 +8,10 @@ Apply these defaults when working in this repository unless the user explicitly 
 - If requirements are unclear, ask clarifying questions before starting implementation or planning refinement.
 - Avoid UI text strings in core services. Use Enumerations instead, and keep UI-facing strings in the ViewModel/UI layer.
 - Prefer one class/interface/struct per file.
-- document changes in an DevOps-manner markdown prefered, extrapolate bugs, tasks, baglogs and features
+- Document changes in a DevOps manner using markdown, extrapolating bugs, tasks, backlogs, and features.
 - Use `DevOps` as the planning directory in this workspace, and treat `.Info.md` as the general planning description file. Team terminology around Azure DevOps backlog items may differ from generic 'story' naming.
+- Prioritize adding comprehensive tests for newly created code before continuing larger feature or porting work.
+- Use BaseLib filesystem abstractions like `BaseLib.Models.Interfaces.IFile` and `BaseLib.Models.FileProxy` to avoid explicit file system dependencies, and add further interfaces/proxy classes when sensible.
 
 ## Testing
 - Use `MSTest` in the latest practical version for new or updated tests.
@@ -39,7 +41,7 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Prefer meaningful domain names over type prefixes when the intent is already clear.
 - In UI code, use short 3-character prefixes for actual controls in views and code-behind, e.g.
 	- `lst` for list controls
-	- `btn` for all kind of buttons, 
+	- `btn` for all kinds of buttons
 	- `edt` for any keyboard input control
 	- `lbl` for any text output control
 - Do not use UI control prefixes for ViewModel properties or other non-UI members.

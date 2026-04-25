@@ -194,6 +194,7 @@
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".github/copilot-instructions.md" />
+    <File Path=".info.md" />
     <File Path="GenFreeWin.props" />
     <File Path="ReadMe.md" />
     <File Path="README_PROJECTS_INDEX.md" />
@@ -217,9 +218,12 @@
     <Project Path="../WinAhnenNew/WinAhnenNew.Model/WinAhnenNew.Model.csproj" />
     <Project Path="../WinAhnenNew/WinAhnenNew.UI.Tests/WinAhnenNew.UI.Tests.csproj" />
     <Project Path="../WinAhnenNew/WinAhnenNew/WinAhnenNew.csproj" />
+    <Project Path="FBParser/FBParser.csproj" Id="a8090e29-42a3-4997-8143-c79dcf8ce62c" />
+    <Project Path="FBParserTests/FBParserTests.csproj" Id="b88ab56c-b4da-43ea-ada8-6c876ba245a5" />
   </Folder>
   <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_09a_CTDialogBoxes/MVVM_09a_CTDialogBoxes.csproj" />
   <Project Path="../CSharpBible/MVVM_Tutorial/WpfApp1/WpfApp_net.csproj" />
+  <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
   <Project Path="MdbBrowser/MdbBrowser2.csproj">
     <Build Solution="*|x86" Project="false" />
   </Project>
