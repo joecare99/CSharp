@@ -1,0 +1,56 @@
+﻿///Declaration MainBlock 0,0
+private void Test14Dat()
+///BlockStart Block 1,0
+{
+///Operation Operation 1,1
+switch (sTest)
+///BlockStart Block 2,0
+{
+///Label Label 2,1
+case 0:
+///Operation Operation 2,2
+v = 0;
+///Operation Operation 2,3
+while (v < 13)
+///BlockStart Block 3,0
+{
+///Operation Operation 3,1
+K[v] = 0;
+///Operation Operation 3,2
+v++;
+///BlockEnd Block 3,3
+}
+///Operation Operation 2,4
+v = 0;
+///Goto Goto 2,5 Dest:OK
+goto IL_0005;
+///Label Label 2,6
+default:
+///Operation Operation 2,7
+break;
+///Label Label 2,8 2
+IL_0005:
+///Operation Operation 2,9
+while (v < 18)
+///BlockStart Block 3,0
+{
+///Operation Operation 3,1
+K[v] = 0;
+///Operation Operation 3,2
+if (v < 16)
+///BlockStart Block 4,0
+{
+///Operation Operation 4,1
+v++;
+///Goto Goto 4,2 Dest:OK
+goto IL_0005;
+///BlockEnd Block 4,3
+}
+///Operation Operation 3,3
+v++;
+///BlockEnd Block 3,4
+}
+///BlockEnd Block 2,10
+}
+///BlockEnd Block 1,2
+}

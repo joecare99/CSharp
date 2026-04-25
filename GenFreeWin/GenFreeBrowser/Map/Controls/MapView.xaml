@@ -1,0 +1,24 @@
+<UserControl x:Class="GenFreeBrowser.Map.Controls.MapView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <Grid Background="Black">
+        <Canvas x:Name="PART_Canvas" ClipToBounds="True" />
+        <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4" Background="#66000000" Padding="4" CornerRadius="4">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Zoom:" Foreground="White" Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding Zoom}" Foreground="White" Margin="0,0,8,0"/>
+                    <TextBlock Text="Center:" Foreground="White" Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding Center}" Foreground="White"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <TextBlock Text="Cursor:" Foreground="White" Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding Cursor}" Foreground="White"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
