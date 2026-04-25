@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BaseGenClasses.Model;
 using BaseGenClasses.Persistence;
+using BaseGenClasses.Persistence.Interfaces;
 using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
