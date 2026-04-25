@@ -28,7 +28,7 @@
 		<PackageReference Include="IsExternalInit" Version="1.0.3" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
-		<PackageReference Include="System.Data.OleDb" Version="10.0.6" />
+		<PackageReference Include="System.Data.OleDb" Version="10.0.7" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Properties\" />

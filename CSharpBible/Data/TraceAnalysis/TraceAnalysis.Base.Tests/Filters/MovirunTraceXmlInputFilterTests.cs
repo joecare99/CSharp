@@ -57,6 +57,29 @@ public class MovirunTraceXmlInputFilterTests
     }
 
     [TestMethod]
+    [DataRow("System.Double")]
+    [DataRow("LongReal")]
+    [DataRow("LREAL")]
+    public void Read_WithDeclaredFloatingPointType_KeepsFieldMetadataAsDouble(string declaredType)
+    {
+        var filter = new MovirunTraceXmlInputFilter();
+
+        using var stream = CreateStream(CreateTraceXml(
+            microSeconds: false,
+            valuesSeriesA: "714.325,716.325",
+            timestampsSeriesA: "18,48",
+            valuesSeriesB: "200,200",
+            timestampsSeriesB: "18,48",
+            typeSeriesB: declaredType));
+
+        var dataSet = filter.Read(stream, new FilterSourceDescriptor("sample.trace", ".trace"));
+        var speedField = dataSet.Metadata.Fields.Single(field => field.sName == "PLC_PRG.lrAGVSpeed");
+
+        Assert.AreEqual(typeof(double), speedField.FieldType);
+        Assert.AreEqual(200L, dataSet.Records[0].Values["PLC_PRG.lrAGVSpeed"]);
+    }
+
+    [TestMethod]
     public void Read_WithMismatchedSeries_ReturnsPartialResultsAndParseErrors()
     {
         var filter = new MovirunTraceXmlInputFilter();
@@ -108,7 +131,8 @@ public class MovirunTraceXmlInputFilterTests
         string valuesSeriesA,
         string timestampsSeriesA,
         string valuesSeriesB,
-        string timestampsSeriesB)
+        string timestampsSeriesB,
+        string typeSeriesB = "System.Double")
     {
         var microSecondsText = microSeconds ? "True" : "False";
         return $"""
@@ -126,7 +150,7 @@ public class MovirunTraceXmlInputFilterTests
         <Values>{valuesSeriesA}</Values>
         <Timestamps>{timestampsSeriesA}</Timestamps>
       </TraceVariable>
-      <TraceVariable VarName="PLC_PRG.lrAGVSpeed" Type="System.Double">
+      <TraceVariable VarName="PLC_PRG.lrAGVSpeed" Type="{typeSeriesB}">
         <Values>{valuesSeriesB}</Values>
         <Timestamps>{timestampsSeriesB}</Timestamps>
       </TraceVariable>

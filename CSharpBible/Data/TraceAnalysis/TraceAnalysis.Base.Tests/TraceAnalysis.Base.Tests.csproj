@@ -17,6 +17,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\TraceAnalysis.Base\TraceAnalysis.Base.csproj" />
 		<ProjectReference Include="..\TraceAnalysis.Filter.Excel\TraceAnalysis.Filter.Excel.csproj" />
+      <ProjectReference Include="..\TraceAnalysis.Filter.JSON\TraceAnalysis.Filter.JSON.csproj" />
 		<ProjectReference Include="..\TraceAnalysis.Filter.MovirunText\TraceAnalysis.Filter.MovirunText.csproj" />
 		<ProjectReference Include="..\TraceAnalysis.Filter.MovirunTrace\TraceAnalysis.Filter.MovirunTrace.csproj" />
 		<PackageReference Include="NSubstitute" Version="5.3.0" />

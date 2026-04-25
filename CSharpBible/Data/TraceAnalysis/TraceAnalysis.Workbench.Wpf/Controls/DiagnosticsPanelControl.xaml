@@ -1,0 +1,44 @@
+<UserControl x:Class="TraceAnalysis.Workbench.Wpf.Controls.DiagnosticsPanelControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <GroupBox Header="Validation and Diagnostics">
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <GroupBox Header="Source Diagnostics">
+                <ListBox ItemsSource="{Binding SourceIssues}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,4,0,4">
+                                <TextBlock FontWeight="Bold"
+                                           Text="{Binding Severity}" />
+                                <TextBlock TextWrapping="Wrap"
+                                           Text="{Binding Message}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
+
+            <GroupBox Grid.Row="1"
+                      Margin="0,12,0,0"
+                      Header="Processing Diagnostics">
+                <ListBox ItemsSource="{Binding ValidationIssues}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,4,0,4">
+                                <TextBlock FontWeight="Bold"
+                                           Text="{Binding Severity}" />
+                                <TextBlock TextWrapping="Wrap"
+                                           Text="{Binding Message}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
+        </Grid>
+    </GroupBox>
+</UserControl>

@@ -1,0 +1,626 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Basics/">
+    <File Path="Basics/C#-Basics.props" />
+    <File Path="Basics/C#-Basics_net.props" />
+    <Project Path="Basics/Basic_Del00_Template/Basic_Del00_Template.csproj" />
+    <Project Path="Basics/Basic_Del00_TemplateTests/Basic_Del00_TemplateTests.csproj" />
+    <Project Path="Basics/Basic_Del01_Action/Basic_Del01_Action.csproj" />
+    <Project Path="Basics/Basic_Del01_ActionTests/Basic_Del01_ActionTests.csproj" />
+    <Project Path="Basics/Basic_Del02_Filter/Basic_Del02_Filter.csproj" />
+    <Project Path="Basics/Basic_Del02_FilterTests/Basic_Del02_FilterTests.csproj" />
+    <Project Path="Basics/Basic_Del03_General/Basic_Del03_General.csproj" />
+    <Project Path="Basics/Basic_Del03_GeneralTests/Basic_Del03_GeneralTests.csproj" />
+    <Project Path="Basics/Basic_Del04_TestImposibleStuff/Basic_Del04_TestImposibleStuff.csproj" />
+    <Project Path="Basics/Basic_Del04_TestImposibleStuffTests/Basic_Del04_TestImposibleStuffTests.csproj" />
+  </Folder>
+  <Folder Name="/Bibliotheken/">
+    <File Path="Libraries/Libraries.props" />
+    <File Path="Libraries/Libraries_net.props" />
+    <Project Path="Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="Libraries/CommonDialogs/CommonDialogs.csproj" />
+    <Project Path="Libraries/CommonDialogs/CommonDialogs_net.csproj" />
+    <Project Path="Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
+    <Project Path="Libraries/ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
+    <Project Path="Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="Libraries/ConsoleLib/ConsoleLib_net.csproj" />
+    <Project Path="Libraries/CSFreeVision/CSFreeVision.csproj" />
+    <Project Path="Libraries/ExtendedConsole/ExtendedConsole.csproj" />
+    <Project Path="Libraries/GenInterfaces/GenInterfaces.csproj" />
+    <Project Path="Libraries/MathLIbrary/MathLibrary.csproj" />
+    <Project Path="Libraries/MathLibraryTests/MathLibraryTests.csproj" />
+    <Project Path="Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+    <Project Path="Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
+  </Folder>
+  <Folder Name="/Calc/">
+    <File Path="Calc/Calc.props" />
+    <File Path="Calc/Calc_net.props" />
+    <File Path="Calc/Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Calc/Calc32/">
+    <Project Path="Calc/Calc32/Calc32.csproj" />
+    <Project Path="Calc/Calc32/Calc32.Model.csproj" />
+    <Project Path="Calc/Calc32/Calc32.WForms.csproj" />
+    <Project Path="Calc/Calc32/Calc32_net.csproj" />
+    <Project Path="Calc/Calc32/Calc32_net.WForms.csproj" />
+    <Project Path="Calc/Calc32Cons/Calc32.Cons.csproj" />
+    <Project Path="Calc/Calc32Cons/Calc32Cons.csproj" />
+    <Project Path="Calc/Calc32Cons/Calc32Cons_net.csproj" />
+    <Project Path="Calc/Calc32Tests/Calc32Tests.csproj" />
+    <Project Path="Calc/Calc32Tests/Calc32_netTests.csproj" />
+    <Project Path="Calc/Calc32WPF/Calc32.WPF.csproj" />
+    <Project Path="Calc/Calc32WPF/Calc32WPF.csproj" />
+    <Project Path="Calc/Calc32WPF/Calc32WPF_net.csproj" />
+    <Project Path="Calc/Calc32WPF/Calc32_net.WPF.csproj" />
+    <Project Path="Calc/Calc32WPFTests/Calc32WPFTests.csproj" />
+    <Project Path="Calc/Calc32WPFTests/Calc32WPF_netTests.csproj">
+      <BuildDependency Project="Calc/Calc32WPF/Calc32WPF_net.csproj" />
+    </Project>
+  </Folder>
+  <Folder Name="/Calc/Calc64/">
+    <Project Path="Calc/Calc64Base/Calc64Base.csproj" />
+    <Project Path="Calc/Calc64BaseTests/Calc64BaseTests.csproj" />
+    <Project Path="Calc/Calc64WF/Calc64WF.csproj" />
+    <Project Path="Calc/Calc64WF/Calc64WF_net.csproj" />
+    <Project Path="Calc/Calc64WFTests/Calc64WFTests.csproj" />
+    <Project Path="Calc/Calc64WFTests/Calc64WF_netTests.csproj">
+      <BuildDependency Project="Calc/Calc64WF/Calc64WF_net.csproj" />
+    </Project>
+    <Project Path="Calc/Calc64_Wpf/Calc64_Wpf.csproj" />
+  </Folder>
+  <Folder Name="/ConsoleApps/">
+    <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj" />
+    <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp_net.csproj" />
+    <Project Path="ConsoleApps/Display_Test/Display_netTest.csproj" />
+    <Project Path="ConsoleApps/Display_Test/Display_Test.csproj" />
+    <Project Path="ConsoleApps/TestConsole/TestConsole.csproj" />
+    <Project Path="ConsoleApps/TestConsole/TestConsole_net.csproj" />
+    <Project Path="ConsoleApps/TestConsoleDemo/TestConsoleDemo.csproj" />
+    <Project Path="ConsoleApps/TestConsoleTests/TestConsoleTests.csproj" />
+    <Project Path="ConsoleApps/WaveFuncColFrm/WaveFuncColFrm.csproj" />
+  </Folder>
+  <Folder Name="/ConsoleApps/WaveFuncCol/">
+    <Project Path="ConsoleApps/WaveFuncCol/WaveFunCollapse.csproj" />
+    <Project Path="ConsoleApps/WaveFuncCol/WaveFunCollapse_net.csproj" />
+  </Folder>
+  <Folder Name="/Data/">
+    <File Path="Data/Data.props" />
+    <File Path="Data/Data_net.props" />
+    <File Path="Data/Directory.Build.props" />
+    <Project Path="Data/NebelEbook/NebelEbook.csproj" />
+    <Project Path="Data/Story.Base/Story.Base.csproj" />
+    <Project Path="Data/TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
+    <Project Path="Data/TraceCsv2realCsvTests/TraceCsv2realCsvTests.csproj" />
+  </Folder>
+  <Folder Name="/Data/DocumentUtils/">
+    <Project Path="Data/DocumentUtils/Document.Base/Document.Base.csproj" />
+    <Project Path="Data/DocumentUtils/Document.Docx/Document.Docx.csproj" />
+    <Project Path="Data/DocumentUtils/Document.Html/Document.Html.csproj" />
+    <Project Path="Data/DocumentUtils/Document.Odf/Document.Odf.csproj" />
+    <Project Path="Data/DocumentUtils/Document.Pdf/Document.Pdf.csproj" />
+    <Project Path="Data/DocumentUtils/Document.Xaml/Document.Xaml.csproj" />
+    <Project Path="Data/DocumentUtils/HtmlExample/HtmlExample.csproj" />
+    <Project Path="Data/DocumentUtils/OdtBoldTextExample/OdtBoldTextExample.csproj" />
+    <Project Path="Data/DocumentUtils/PdfExample/PdfExample.csproj" />
+  </Folder>
+  <Folder Name="/Data/DocumentUtils/HelloWorld/">
+    <Project Path="Data/DocumentUtils/HelloWorld/HelloWorldOdf.csproj" />
+  </Folder>
+  <Folder Name="/Data/RepoMigrator/">
+    <Project Path="Data/RepoMigrator/RepoMigrator.App.Wpf/RepoMigrator.App.Wpf.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Core/RepoMigrator.Core.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Git/RepoMigrator.Providers.Git.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Svn/RepoMigrator.Providers.Svn.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.SvnCli/RepoMigrator.Providers.SvnCli.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Tests/RepoMigrator.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Data/TraceAnalysis/">
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Base/TraceAnalysis.Base.csproj" />
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.CSV/TraceAnalysis.Filter.CSV.csproj" />
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.MovirunText/TraceAnalysis.Filter.MovirunText.csproj" />
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.MovirunTrace/TraceAnalysis.Filter.MovirunTrace.csproj" />
+  </Folder>
+  <Folder Name="/DB/">
+    <File Path="DB/DB.props" />
+    <File Path="DB/DB_net.props" />
+    <Project Path="DB/ADO_Test/ADO_Test.csproj" />
+    <Project Path="DB/DataLake_App/DataLake_App.csproj" />
+    <Project Path="DB/DataTable-Test/DataTable-Test.csproj" />
+    <Project Path="DB/DBTest1/DBTest1.csproj" />
+    <Project Path="DB/FoxCon/FoxCon.csproj" />
+    <Project Path="DB/MdbBrowser/MdbBrowser.csproj" />
+    <Project Path="DB/MdbBrowserTests/MdbBrowserTests.csproj" />
+    <Project Path="DB/OLEDBTest/OleDbTest.csproj" />
+    <Project Path="DB/OLEDBTest2/OleDbTest2.csproj" />
+    <Project Path="DB/XSD_Data_Test/XSD_Data_Test.csproj" />
+  </Folder>
+  <Folder Name="/DependencyInjection/">
+    <Project Path="DependencyInjection/CustomerRepository/CustomerRepository.csproj" />
+    <Project Path="DependencyInjection/CustomerRepositoryTests/CustomerRepositoryTests.csproj" />
+  </Folder>
+  <Folder Name="/Games/">
+    <File Path="Games/Directory.Packages.props" />
+    <File Path="Games/Games.props" />
+    <File Path="Games/Games_net.props" />
+    <File Path="SomeThing/Solution.props" />
+    <Project Path="Games/CreateCards/CreateCards.csproj" />
+    <Project Path="Games/CsEpiphany/CsEpiphany.csproj" />
+    <Project Path="Games/Game_Base/Game_Base.csproj" />
+    <Project Path="Games/Game_BaseTests/Game_BaseTests.csproj" />
+    <Project Path="Games/HexaBan_Console/HexaBan_Console.csproj" />
+    <Project Path="Games/HexaBan_Console/HexaBan_ConsoleLnx.csproj" />
+    <Project Path="Games/HexaBan_Console/HexaBan_ConsoleWin.csproj" />
+    <Project Path="Games/MVVM_TiledDisplay_net/MVVM_TiledDisplay_net.csproj" />
+    <Project Path="Games/Sudoku_Base/Sudoku_Base.csproj" />
+    <Project Path="Games/Sudoku_BaseTests/Sudoku_BaseTests.csproj" />
+    <Project Path="Games/Tetris_Base/Tetris_Base.csproj" />
+    <Project Path="Games/Tetris_BaseTests/Tetris_BaseTests.csproj" />
+    <Project Path="Games/VectorGfx/VectorGfx.csproj" />
+    <Project Path="Games/VectorGfx2/VectorGfx2.csproj" />
+    <Project Path="Games/VTileEdit/VTileEdit.csproj" />
+    <Project Path="Games/VTileEditTests/VTileEditTests.csproj" />
+  </Folder>
+  <Folder Name="/Games/Asteroids/">
+    <Project Path="Games/Asteroids/Asteroids_net.csproj" />
+    <Project Path="Games/Asteroids_Base/Asteroids_Base.csproj" />
+  </Folder>
+  <Folder Name="/Games/Galaxia/">
+    <Project Path="Games/Galaxia_Base/Galaxia_Base.csproj" />
+    <Project Path="Games/Galaxia_BaseTests/Galaxia_BaseTests.csproj" />
+    <Project Path="Games/Galaxia_UI.Tests/Galaxia_UI.Tests.csproj" />
+    <Project Path="Games/Galaxia_UI/Galaxia_UI.csproj" />
+  </Folder>
+  <Folder Name="/Games/Snake/">
+    <Project Path="Games/Snake_Base/Snake_Base.csproj" />
+    <Project Path="Games/Snake_BaseTests/Snake_BaseTests.csproj" />
+    <Project Path="Games/Snake_Console/Snake_Console.csproj" />
+  </Folder>
+  <Folder Name="/Games/SokoBan_/">
+    <Project Path="Games/Sokoban/Sokoban.csproj" />
+    <Project Path="Games/Sokoban_Base/Sokoban_Base.csproj" />
+    <Project Path="Games/Sokoban_Base/Sokoban_Base_win.csproj" />
+    <Project Path="Games/Sokoban_BaseTests/Sokoban_BaseTests.csproj" />
+  </Folder>
+  <Folder Name="/Games/Werner_Flaschbier/">
+    <Project Path="Games/Werner_Flaschbier/Werner_Flaschbier_Base.csproj" />
+    <Project Path="Games/Werner_Flaschbier/Werner_Flaschbier_Console.csproj" />
+    <Project Path="Games/Werner_Flaschbier_BaseTests/Werner_Flaschbier_BaseTests.csproj" />
+    <Project Path="Games/Werner_Flaschbier_BaseTests/Werner_Flaschbier_ConsoleTests.csproj" />
+  </Folder>
+  <Folder Name="/Graphics/">
+    <File Path="Graphics/Graphics.props" />
+    <File Path="Graphics/Graphics_net.props" />
+    <Project Path="Graphics/All_Graphics/All_Graphics_net.csproj" />
+    <Project Path="Graphics/CanvasWPF/CanvasWPF.csproj" />
+    <Project Path="Graphics/CanvasWPF2_CTItemTemplateSelector/CanvasWPF2_CTItemTemplateSelector.csproj" />
+    <Project Path="Graphics/CanvasWPF2_ItemTemplateSelector/CanvasWPF2_ItemTemplateSelector.csproj" />
+    <Project Path="Graphics/CanvasWPF_CT/CanvasWPF_CT.csproj" />
+    <Project Path="Graphics/DynamicShapeWPF/DynamicShapeWPF.csproj" />
+    <Project Path="Graphics/MVVM_Converter_CTDrawGrid/MVVM_Converter_CTDrawGrid.csproj" />
+    <Project Path="Graphics/MVVM_Converter_CTDrawGrid2/MVVM_Converter_CTDrawGrid2.csproj" />
+    <Project Path="Graphics/MVVM_Converter_CTImgGrid/MVVM_Converter_CTImgGrid.csproj" />
+    <Project Path="Graphics/MVVM_Converter_DrawGrid/MVVM_Converter_DrawGrid.csproj" />
+    <Project Path="Graphics/MVVM_Converter_DrawGrid2/MVVM_Converter_DrawGrid2.csproj" />
+    <Project Path="Graphics/MVVM_Converter_DrawGrid3_NonLin/MVVM_Converter_DrawGrid3_NonLin.csproj" />
+    <Project Path="Graphics/MVVM_Converter_Grid/MVVM_Converter_Grid.csproj" />
+    <Project Path="Graphics/MVVM_Converter_Grid2/MVVM_Converter_Grid2.csproj" />
+    <Project Path="Graphics/MVVM_Converter_Grid3_NonLin/MVVM_Converter_Grid3_NonLin.csproj" />
+    <Project Path="Graphics/MVVM_Converter_ImgGrid/MVVM_Converter_ImgGrid.csproj" />
+    <Project Path="Graphics/MVVM_Converter_ImgGrid2/MVVM_Converter_ImgGrid2.csproj" />
+    <Project Path="Graphics/MVVM_DynamicShape/MVVM_DynamicShape.csproj" />
+    <Project Path="Graphics/MVVM_ImageHandling/MVVM_ImageHandling.csproj" />
+    <Project Path="Graphics/MVVM_ImageHandling/MVVM_ImageHandling_net.csproj" />
+    <Project Path="Graphics/MVVM_ImageHandlingTests/MVVM_ImageHandlingTests.csproj" />
+    <Project Path="Graphics/MVVM_ImageHandlingTests/MVVM_ImageHandling_netTests.csproj" />
+    <Project Path="Graphics/MVVM_Lines_on_Grid/MVVM_Lines_on_Grid.csproj" />
+    <Project Path="Graphics/MVVM_Lines_on_Grid2/MVVM_Lines_on_Grid2.csproj" />
+    <Project Path="Graphics/Permutation/Permutation.csproj" />
+    <Project Path="Graphics/PermutationTests/PermutationTests.csproj" />
+    <Project Path="Graphics/PlotgraphWPF/PlotgraphWPF.csproj" />
+    <Project Path="Graphics/Polyline/Polyline.csproj" />
+    <Project Path="Graphics/Polyline/Polyline2.csproj" />
+    <Project Path="Graphics/Polyline/Polyline_net.csproj" />
+    <Project Path="Graphics/PolySpline/PolySpline.csproj" />
+    <Project Path="Graphics/PolySpline/PolySpline2.csproj" />
+    <Project Path="Graphics/PolySpline/PolySpline_net.csproj" />
+    <Project Path="Graphics/PrimeDisc/PrimeDisc.csproj" />
+    <Project Path="Graphics/TitleGen/TitleGen.csproj" />
+    <Project Path="Graphics/TitleGen2/TitleGen2.csproj" />
+  </Folder>
+  <Folder Name="/Mobile/">
+    <Project Path="Mobile/DXMauiApp1/DXMauiApp1.csproj" />
+    <Project Path="Mobile/MauiApp1/MauiApp1.csproj">
+      <Deploy Solution="*|Any CPU" />
+    </Project>
+  </Folder>
+  <Folder Name="/MVVM_Tutorial/">
+    <File Path="MVVM_Tutorial/MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial/MVVM_Tutorial_net.props" />
+    <Project Path="MVVM_Tutorial/DemoLibrary/DemoLibrary.csproj" />
+    <Project Path="MVVM_Tutorial/DemoLibraryTests/DemoLibraryTests.csproj" />
+    <Project Path="MVVM_Tutorial/ItemsControlTut1/ItemsControlTut1.csproj" />
+    <Project Path="MVVM_Tutorial/ItemsControlTut2/ItemsControlTut2.csproj" />
+    <Project Path="MVVM_Tutorial/ItemsControlTut3/ItemsControlTut3.csproj" />
+    <Project Path="MVVM_Tutorial/ItemsControlTut3/ItemsControlTut3_net.csproj" />
+    <Project Path="MVVM_Tutorial/ItemsControlTut3_netTests/ItemsControlTut3_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/ItemsControlTut4/ItemsControlTut4.csproj" />
+    <Project Path="MVVM_Tutorial/ItemsControlTut4/ItemsControlTut4_net.csproj" />
+    <Project Path="MVVM_Tutorial/ItemsControlTut4_netTests/ItemsControlTut4_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/ListBinding/ListBinding.csproj" />
+    <Project Path="MVVM_Tutorial/ListBinding/ListBinding_net.csproj" />
+    <Project Path="MVVM_Tutorial/ListBindingTests/ListBindingTests.csproj" />
+    <Project Path="MVVM_Tutorial/ListBindingTests/ListBinding_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_AllExamples/MVVM_AllExamples.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_AllExamples/MVVM_AllExamples_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_AllExamplesTests/MVVM_AllExamplesTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_AllExamplesTests/MVVM_AllExamples_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/SyncAsyncParallel/SyncAsyncParallel.csproj" />
+    <Project Path="MVVM_Tutorial/SyncAsyncParallel/SyncAsyncParallel_net.csproj" />
+    <Project Path="MVVM_Tutorial/WpfDemoUI/WpfDemoUI.csproj" />
+    <Project Path="MVVM_Tutorial/WpfDemoUI1/WpfDemoUI1.csproj" />
+    <Project Path="MVVM_Tutorial/WpfDemoUI2/WpfDemoUI2.csproj" />
+  </Folder>
+  <Folder Name="/MVVM_Tutorial/MVVM_Tut_01-10/">
+    <Project Path="MVVM_Tutorial/MVVM_03a_CTNotifyChange/MVVM_03a_CTNotifyChange.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_03a_CTNotifyChange/MVVM_03a_CTNotifyChange_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_03a_CTNotifyChangeTests/MVVM_03a_CTNotifyChangeTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_03a_CTNotifyChangeTests/MVVM_03a_CTNotifyChange_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_03_NotifyChange/MVVM_03_NotifyChange.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_03_NotifyChange/MVVM_03_NotifyChange_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_03_NotifyChangeTests/MVVM_03_NotifyChangeTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_03_NotifyChangeTests/MVVM_03_NotifyChange_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_04a_CTRelayCommand/MVVM_04a_CTRelayCommand.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_04a_CTRelayCommand/MVVM_04a_CTRelayCommand_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_04a_CTRelayCommandTests/MVVM_04a_CTRelayCommandTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_04a_CTRelayCommandTests/MVVM_04a_CTRelayCommand_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_04_DelegateCommand/MVVM_04_DelegateCommand.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_04_DelegateCommand/MVVM_04_DelegateCommand_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_04_DelegateCommandTests/MVVM_04_DelegateCommandTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_04_DelegateCommandTests/MVVM_04_DelegateCommand_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_05a_CTCommandParCalc/MVVM_05a_CTCommandParCalc.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_05a_CTCommandParCalc/MVVM_05a_CTCommandParCalc_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_05a_CTCommandParCalcTests/MVVM_05a_CTCommandParCalcTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_05a_CTCommandParCalcTests/MVVM_05a_CTCommandParCalc_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_05_CommandParCalculator/MVVM_05_CommandParCalculator.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_05_CommandParCalculator/MVVM_05_CommandParCalculator_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_05_CommandParCalculatorTests/MVVM_05_CommandParCalculatorTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_05_CommandParCalculatorTests/MVVM_05_CommandParCalculator_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters/MVVM_06_Converters.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters/MVVM_06_Converters_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_ConvertersTests/MVVM_06_ConvertersTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_2/MVVM_06_Converters_2.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_2/MVVM_06_Converters_2_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_3/MVVM_06_Converters_3.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_3/MVVM_06_Converters_3_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_3Tests/MVVM_06_Converters_3Tests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_3Tests/MVVM_06_Converters_3_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_4/MVVM_06_Converters_4.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_4/MVVM_06_Converters_4_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_4Tests/MVVM_06_Converters_4Tests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_06_Converters_4Tests/MVVM_06_Converters_4_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_09a_CTDialogBoxes/MVVM_09a_CTDialogBoxes.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_09a_CTDialogBoxes/MVVM_09a_CTDialogBoxes_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_09a_CTDialogBoxesTests/MVVM_09a_CTDialogBoxesTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_09a_CTDialogBoxesTests/MVVM_09a_CTDialogBoxes_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_09_DialogBoxes/MVVM_09_DialogBoxes.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_09_DialogBoxes/MVVM_09_DialogBoxes_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_09_DialogBoxesTest/MVVM_09_DialogBoxesTest.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_09_DialogBoxesTest/MVVM_09_DialogBoxes_netTests.csproj" />
+  </Folder>
+  <Folder Name="/MVVM_Tutorial/MVVM_Tut_11-20/">
+    <Project Path="MVVM_Tutorial/MVVM_16_Usercontrol1/MVVM_16_UserControl1.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_16_Usercontrol1/MVVM_16_UserControl1_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_16_UserControl1Tests/MVVM_16_UserControl1Tests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_16_UserControl1Tests/MVVM_16_UserControl1_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_16_Usercontrol2/MVVM_16_UserControl2.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_16_Usercontrol2/MVVM_16_UserControl2_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_Laden/MVVM_17_1_CSV_Laden.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_Laden/MVVM_17_1_CSV_Laden_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_18_MultiConverters/MVVM_18_MultiConverters.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_18_MultiConverters/MVVM_18_MultiConverters_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_18_MultiConvertersTests/MVVM_18_MultiConvertersTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_19_FilterLists/MVVM_19_FilterLists.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_19_FilterLists/MVVM_19_FilterLists_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_19_FilterListsTests/MVVM_19_FilterListsTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_19_FilterListsTests/MVVM_19_FilterLists_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_20a_CTSysdialogs/MVVM_20a_CTSysdialogs.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_20a_CTSysdialogs/MVVM_20a_CTSysdialogs_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_20a_CTSysdialogsTests/MVVM_20a_CTSysdialogsTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_20a_CTSysdialogsTests/MVVM_20a_CTSysdialogs_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_20_Sysdialogs/MVVM_20_Sysdialogs.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_20_Sysdialogs/MVVM_20_Sysdialogs_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_20_SysdialogsTests/MVVM_20_SysdialogsTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_20_SysdialogsTests/MVVM_20_Sysdialogs_netTests.csproj" />
+  </Folder>
+  <Folder Name="/MVVM_Tutorial/MVVM_Tut_21-30/">
+    <Project Path="MVVM_Tutorial/MVVM_21_Buttons/MVVM_21_Buttons.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_21_Buttons/MVVM_21_Buttons_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_22_CTWpfCap/MVVM_22_CTWpfCap.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_22_CTWpfCap/MVVM_22_CTWpfCap_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_22_CTWpfCapTests/MVVM_22_CTWpfCapTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_22_CTWpfCapTests/MVVM_22_CTWpfCap_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_22_WpfCap/MVVM_22_WpfCap.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_22_WpfCap/MVVM_22_WpfCap_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_22_WpfCapTests/MVVM_22_WpfCapTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_22_WpfCapTests/MVVM_22_WpfCap_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24a_CTUserControl/MVVM_24a_CTUserControl.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24a_CTUserControl/MVVM_24a_CTUserControl_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24a_CTUserControlTests/MVVM_24a_CTUserControlTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24a_CTUserControlTests/MVVM_24a_CTUserControl_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24b_UserControl/MVVM_24b_UserControl.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24b_UserControl/MVVM_24b_UserControl_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24b_UserControlTests/MVVM_24b_UserControlTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24b_UserControlTests/MVVM_24b_UserControl_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24c_CTUserControl/MVVM_24c_CTUserControl.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24c_CTUserControl/MVVM_24c_CTUserControl_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24c_CTUserControlTests/MVVM_24c_CTUserControlTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24c_CTUserControlTests/MVVM_24c_CTUserControl_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24_UserControl/MVVM_24_UserControl.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24_UserControl/MVVM_24_UserControl_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24_UserControlTests/MVVM_24_UserControlTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_24_UserControlTests/MVVM_24_UserControl_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_25_RichTextEdit/MVVM_25_RichTextEdit.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_25_RichTextEdit/MVVM_25_RichTextEdit_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_25_RichTextEditTests/MVVM_25_RichTextEditTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_25_RichTextEditTests/MVVM_25_RichTextEdit_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_26_BindingGroupExp/MVVM_26_BindingGroupExp.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_26_BindingGroupExp/MVVM_26_BindingGroupExp_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_26_CTBindingGroupExp/MVVM_26_CTBindingGroupExp.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_26_CTBindingGroupExp/MVVM_26_CTBindingGroupExp_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_27_DataGrid/MVVM_27_DataGrid.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_27_DataGrid/MVVM_27_DataGrid_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_27_DataGridTests/MVVM_27_DataGridTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_27_DataGridTests/MVVM_27_DataGrid_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_1_CTDataGridExt/MVVM_28_1_CTDataGridExt.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_1_CTDataGridExt/MVVM_28_1_CTDataGridExt_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_1_CTDataGridExtTests/MVVM_28_1_CTDataGridExtTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_1_CTDataGridExtTests/MVVM_28_1_CTDataGridExt_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_1_DataGridExt/MVVM_28_1_DataGridExt.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_1_DataGridExt/MVVM_28_1_DataGridExt_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_1_DataGridExtTests/MVVM_28_1_DataGridExtTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_1_DataGridExtTests/MVVM_28_1_DataGridExt_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_DataGrid/MVVM_28_DataGrid.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_DataGrid/MVVM_28_DataGrid_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_DataGridTests/MVVM_28_DataGridTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_28_DataGridTests/MVVM_28_DataGrid_netTests.csproj" />
+  </Folder>
+  <Folder Name="/MVVM_Tutorial/MVVM_Tut_31-40/">
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation1/MVVM_31a_CTValidation1.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation1/MVVM_31a_CTValidation1_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation1Tests/MVVM_31a_CTValidation1Tests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation1Tests/MVVM_31a_CTValidation1_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation2/MVVM_31a_CTValidation2.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation2/MVVM_31a_CTValidation2_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation2Tests/MVVM_31a_CTValidation2Tests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation2Tests/MVVM_31a_CTValidation2_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation3/MVVM_31a_CTValidation3.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation3/MVVM_31a_CTValidation3_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation3Tests/MVVM_31a_CTValidation3Tests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31a_CTValidation3Tests/MVVM_31a_CTValidation3_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31_Validation1/MVVM_31_Validation1.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31_Validation1/MVVM_31_Validation1_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31_Validation1Tests/MVVM_31_Validation1Tests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31_Validation1Tests/MVVM_31_Validation1_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31_Validation2/MVVM_31_Validation2.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31_Validation2/MVVM_31_Validation2_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31_Validation2Tests/MVVM_31_Validation2Tests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_31_Validation2Tests/MVVM_31_Validation2_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_33a_CTEvents_To_Commands/MVVM_33a_CTEvents_To_Commands.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_33a_CTEvents_To_Commands/MVVM_33a_CTEvents_To_Commands_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_33a_CTEvents_To_CommandsTests/MVVM_33a_CTEvents_To_CommandsTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_33a_CTEvents_To_CommandsTests/MVVM_33a_CTEvents_To_Commands_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_33_Events_to_Commands/MVVM_33_Events_to_Commands.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_33_Events_to_Commands/MVVM_33_Events_to_Commands_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_33_Events_to_CommandsTests/MVVM_33_Events_to_CommandsTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_33_Events_to_CommandsTests/MVVM_33_Events_to_Commands_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_34a_CTBindingEventArgs/MVVM_34a_CTBindingEventArgs.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_34a_CTBindingEventArgs/MVVM_34a_CTBindingEventArgs_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_34a_CTBindingEventArgsTests/MVVM_34a_CTBindingEventArgsTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_34a_CTBindingEventArgsTests/MVVM_34a_CTBindingEventArgs_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_34_BindingEventArgs/MVVM_34_BindingEventArgs.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_34_BindingEventArgs/MVVM_34_BindingEventArgs_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_34_BindingEventArgsTests/MVVM_34_BindingEventArgsTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_34_BindingEventArgsTests/MVVM_34_BindingEventArgs_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_35_CommunityToolkit/MVVM_35_CommunityToolkit.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_35_CommunityToolkit/MVVM_35_CommunityToolkit_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_35_CommunityToolkitTests/MVVM_35_CommunityToolkitTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_35_CommunityToolkitTests/MVVM_35_CommunityToolkit_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_36_ComToolKtSavesWork/MVVM_36_ComToolKtSavesWork.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_36_ComToolKtSavesWork/MVVM_36_ComToolKtSavesWork_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_36_ComToolKtSavesWorkTests/MVVM_36_ComToolKtSavesWorkTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_36_ComToolKtSavesWorkTests/MVVM_36_ComToolKtSavesWork_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_37_TreeView/MVVM_37_TreeView.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_37_TreeView/MVVM_37_TreeView_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_37_TreeViewTests/MVVM_37_TreeViewTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_37_TreeViewTests/MVVM_37_TreeView_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_38_CTDependencyInjection/MVVM_38_CTDependencyInjection.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_38_CTDependencyInjection/MVVM_38_CTDependencyInjection_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_38_CTDependencyInjectionTests/MVVM_38_CTDependencyInjectionTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_38_CTDependencyInjectionTests/MVVM_38_CTDependencyInjection_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_39_MultiModelTest/MVVM_39_MultiModelTest.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_39_MultiModelTest/MVVM_39_MultiModelTest_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_39_MultiModelTestTests/MVVM_39_MultiModelTestTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_39_MultiModelTestTests/MVVM_39_MultiModelTest_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_40_Wizzard/MVVM_40_Wizzard.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_40_Wizzard/MVVM_40_Wizzard_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_40_WizzardTests/MVVM_40_WizzardTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_40_WizzardTests/MVVM_40_Wizzard_netTests.csproj" />
+  </Folder>
+  <Folder Name="/MVVM_Tutorial/MVVM_Tut_41-50/">
+    <Project Path="MVVM_Tutorial/MVVM_41_Sudoku/MVVM_41_Sudoku.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_41_Sudoku/MVVM_41_Sudoku_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_41_SudokuTests/MVVM_41_SudokuTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_41_SudokuTests/MVVM_41_Sudoku_netTests.csproj" />
+  </Folder>
+  <Folder Name="/MVVM_Tutorial/Templates/">
+    <Project Path="MVVM_Tutorial/MVVM_00a_CTTemplate/MVVM_00a_CTTemplate.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00a_CTTemplate/MVVM_00a_CTTemplate_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00a_CTTemplateTests/MVVM_00a_CTTemplateTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00a_CTTemplateTests/MVVM_00a_CTTemplate_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00_IoCTemplate/MVVM_00_IoCTemplate.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00_IoCTemplate/MVVM_00_IoCTemplate_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00_IoCTemplateTests/MVVM_00_IoCTemplateTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00_IoCTemplateTests/MVVM_00_IoCTemplate_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00_Template/MVVM_00_Template.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00_Template/MVVM_00_Template_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00_TemplateTests/MVVM_00_TemplateTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_00_TemplateTests/MVVM_00_Template_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_99_SomeIssue/MVVM_99_SomeIssue.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_99_SomeIssue/MVVM_99_SomeIssue_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_99_SomeIssueTests/MVVM_99_SomeIssueTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_99_SomeIssueTests/MVVM_99_SomeIssue_netTests.csproj" />
+  </Folder>
+  <Folder Name="/MVVM_Tutorial/WpfApp1/">
+    <Project Path="MVVM_Tutorial/WpfApp1/WpfApp.csproj" />
+    <Project Path="MVVM_Tutorial/WpfApp1/WpfApp_net.csproj" />
+    <Project Path="MVVM_Tutorial/WpfAppTests/WpfAppTests.csproj" />
+    <Project Path="MVVM_Tutorial/WpfAppTests/WpfApp_netTests.csproj" />
+  </Folder>
+  <Folder Name="/Patterns_Tutorial/">
+    <File Path="Patterns_Tutorial/Pattern_Tutorial.props" />
+    <File Path="Patterns_Tutorial/Pattern_Tutorial_net.props" />
+    <Project Path="Patterns_Tutorial/Pattern_00_Template/Pattern_00_Template.csproj" />
+    <Project Path="Patterns_Tutorial/Pattern_00_TemplateTests/Pattern_00_TemplateTests.csproj" />
+    <Project Path="Patterns_Tutorial/Pattern_01_Singleton/Pattern_01_Singleton.csproj" />
+    <Project Path="Patterns_Tutorial/Pattern_01_SingletonTests/Pattern_01_SingletonTests.csproj" />
+    <Project Path="Patterns_Tutorial/Pattern_02_Observer/Pattern_02_Observer.csproj" />
+    <Project Path="Patterns_Tutorial/Pattern_02_ObserverTests/Pattern_02_ObserverTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="Solution.props" />
+    <File Path="Solution_net.props" />
+  </Folder>
+  <Folder Name="/Resources/">
+    <File Path="Resources/Bitmap1.bmp" />
+    <File Path="Resources/CheckMarkGreen.png" />
+    <File Path="Resources/Exit.png" />
+    <File Path="Resources/FireAtDelphi-128.jpg" />
+    <File Path="Resources/FireAtDelphi-64.jpg" />
+    <File Path="Resources/FireAtDelphi.bmp" />
+  </Folder>
+  <Folder Name="/Simulation/">
+    <File Path="Simulation/Simulation.props" />
+    <File Path="Simulation/Simulation_net.props" />
+    <Project Path="Simulation/AGVFkt/AGVFkt.csproj" />
+    <Project Path="Simulation/AGVFktTests/AGVFktTests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Folder Name="/SomeThing/">
+    <File Path="SomeThing/README.md" />
+    <Project Path="SomeThing/SomeThing/SomeThing.csproj" />
+    <Project Path="SomeThing/SomeThing2/SomeThing2.csproj" />
+    <Project Path="SomeThing/SomeThing2a/SomeThing2a.csproj" />
+    <Project Path="SomeThing/SomeThing2aTests/SomeThing2aTests.csproj" />
+    <Project Path="SomeThing/SomeThing2Tests/SomeThing2Tests.csproj" />
+  </Folder>
+  <Folder Name="/SomeThing/Quine/">
+    <File Path="SomeThing/README.md" />
+    <Project Path="SomeThing/Quine1/Quine1.csproj" />
+    <Project Path="SomeThing/Quine2/Quine2.csproj" />
+    <Project Path="SomeThing/Quine3/Quine3.csproj" />
+    <Project Path="SomeThing/Quine4/Quine4.csproj" />
+    <Project Path="SomeThing/Quine5/Quine5.csproj" />
+    <Project Path="SomeThing/Quine6/Quine6.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Test.csproj" />
+  </Folder>
+  <Folder Name="/Web/">
+    <Project Path="Web/BlazorApp1/BlazorApp1.csproj" />
+    <Project Path="Web/BlazorWasmDocker/BlazorWasmDocker.csproj" />
+  </Folder>
+  <Folder Name="/Web/MyComponent/">
+    <Project Path="Web/MyComponent/Client/MyComponent.Client.csproj" />
+    <Project Path="Web/MyComponent/Server/MyComponent.Server.csproj" />
+    <Project Path="Web/MyComponent/Shared/MyComponent.csproj" />
+  </Folder>
+  <Folder Name="/Web/WebApp1/">
+    <Project Path="Web/WebApp1/BlazorApp2/BlazorApp2.csproj" />
+  </Folder>
+  <Folder Name="/Web/WebApp1/WebApplication1/">
+    <Project Path="Web/WebApp1/WebApplication1/WebApplication1/WebApplication1.csproj" />
+  </Folder>
+  <Folder Name="/WinUI/">
+    <Project Path="App2/App2.csproj">
+      <Platform Solution="*|Any CPU" Project="x64" />
+      <Deploy Solution="*|Any CPU" />
+    </Project>
+  </Folder>
+  <Folder Name="/WinUI/App1/">
+    <Project Path="WinUI/App1/App1/App1.csproj" />
+  </Folder>
+  <Folder Name="/WPFSamples_2/">
+    <File Path="WPFSamples_2/WPF_Samples_net.props" />
+    <Project Path="WPFSamples_2/WPF_AnimationTiming/WPF_AnimationTiming.csproj" />
+    <Project Path="WPFSamples_2/WPF_AnimationTiming/WPF_AnimationTiming_net.csproj" />
+    <Project Path="WPFSamples_2/WPF_AnimationTimingTests/WPF_AnimationTimingTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_AnimationTimingTests/WPF_AnimationTiming_netTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_Brushes/WPF_Brushes.csproj" />
+    <Project Path="WPFSamples_2/WPF_Complex_Layout/WPF_Complex_Layout.csproj" />
+    <Project Path="WPFSamples_2/WPF_Complex_Layout/WPF_Complex_Layout_net.csproj" />
+    <Project Path="WPFSamples_2/WPF_Complex_LayoutTests/WPF_Complex_LayoutTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_Complex_LayoutTests/WPF_Complex_Layout_netTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_ControlsAndLayout/WPF_ControlsAndLayout.csproj" />
+    <Project Path="WPFSamples_2/WPF_ControlsAndLayout/WPF_ControlsAndLayout_net.csproj" />
+    <Project Path="WPFSamples_2/WPF_ControlsAndLayoutTests/WPF_ControlsAndLayoutTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_ControlsAndLayoutTests/WPF_ControlsAndLayout_netTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_CustomAnimation/WPF_CustomAnimation.csproj" />
+    <Project Path="WPFSamples_2/WPF_CustomAnimation/WPF_CustomAnimation_net.csproj" />
+    <Project Path="WPFSamples_2/WPF_CustomAnimationTests/WPF_CustomAnimationTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_CustomAnimationTests/WPF_CustomAnimation_netTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_Geometry/WPF_Geometry.csproj" />
+    <Project Path="WPFSamples_2/WPF_Hello_World/WPF_Hello_World.csproj" />
+    <Project Path="WPFSamples_2/WPF_Hello_World/WPF_Hello_World_net.csproj" />
+    <Project Path="WPFSamples_2/WPF_Hello_WorldTests/WPF_Hello_WorldTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_Hello_WorldTests/WPF_Hello_World_netTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_ImageView/WPF_ImageView.csproj" />
+    <Project Path="WPFSamples_2/WPF_MasterDetail/WPF_MasterDetail.csproj" />
+    <Project Path="WPFSamples_2/WPF_MasterDetail/WPF_MasterDetail_net.csproj" />
+    <Project Path="WPFSamples_2/WPF_MasterDetailTests/WPF_MasterDetailTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_MasterDetailTests/WPF_MasterDetail_netTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_MoveWindow/WPF_MoveWindow.csproj" />
+    <Project Path="WPFSamples_2/WPF_MoveWindow/WPF_MoveWindow_net.csproj" />
+    <Project Path="WPFSamples_2/WPF_MoveWindowTests/WPF_MoveWindowTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_MoveWindowTests/WPF_MoveWindow_netTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_Sample_Template/WPF_Sample_Template.csproj" />
+    <Project Path="WPFSamples_2/WPF_Sample_Template/WPF_Sample_Template_net.csproj" />
+    <Project Path="WPFSamples_2/WPF_Sample_TemplateTests/WPF_Sample_TemplateTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_Sample_TemplateTests/WPF_Sample_Template_netTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_StickyNotesDemo/WPF_StickyNotesDemo.csproj" />
+    <Project Path="WPFSamples_2/WPF_StickyNotesDemo/WPF_StickyNotesDemo_net.csproj" />
+    <Project Path="WPFSamples_2/WPF_StickyNotesDemoTests/WPF_StickyNotesDemoTests.csproj" />
+    <Project Path="WPFSamples_2/WPF_StickyNotesDemoTests/WPF_StickyNotesDemo_netTests.csproj" />
+  </Folder>
+  <Folder Name="/WPFSamples_2/Styles_and_Templates/">
+    <Project Path="WPFSamples_2/Styles_and_Templates/WPF_AlternatingAppearanceOfItems/WPF_AlternatingAppearanceOfItems.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="WPFSamples_2/Styles_and_Templates/WPF_ContentControlStyle/WPF_ContentControlStyle.csproj" />
+    <Project Path="WPFSamples_2/Styles_and_Templates/WPF_EventTriggers/WPF_EventTriggers.csproj" />
+    <Project Path="WPFSamples_2/Styles_and_Templates/WPF_FindingElementsInTemplates/WPF_FindingElementsInTemplates.csproj" />
+    <Project Path="WPFSamples_2/Styles_and_Templates/WPF_IntroToStylingAndTemplating/WPF_IntroToStylingAndTemplating.csproj" />
+  </Folder>
+  <Project Path="../PackageDwnLd.csproj" />
+  <Project Path="AboutEx/AboutEx.csproj" />
+  <Project Path="AboutExTests/AboutExTests.csproj" />
+  <Project Path="ActionTest/ActionTest.csproj" />
+  <Project Path="ActionTestWPF/ActionTestWPF.csproj" />
+  <Project Path="AddPage/AddPage.csproj" Id="c8249e35-ed76-4180-95ba-317f8dc45683" />
+  <Project Path="AddPageWPF/AddPageWPF.csproj" Id="af16f7af-cf83-4679-8111-0bbe9bcda102" />
+  <Project Path="CharGrid/CharGrid.csproj" />
+  <Project Path="CSharpBibleTest/CSharpBibleTest.csproj" Id="4ab88278-f044-49ed-a324-7c931a66da71" />
+  <Project Path="CSV_Viewer/CSV_Viewer.csproj" Id="86a9a87a-d6bf-4904-b4ca-21bd4cff82b8" />
+  <Project Path="CSV_ViewerTest/CSV_ViewerTest.csproj" Id="897c5ad9-edfd-4160-b837-62933591247f" />
+  <Project Path="DataGridEx/DataGridEx.csproj" />
+  <Project Path="DataGridExWPF/DataGridExWPF.csproj" />
+  <Project Path="Libraries/CSFreeVision_/CSFreeVision.csproj" Id="b3315091-13d9-4a5c-b4b0-caf2af74f371" />
+  <Project Path="TestDirectives/TestDirectives.csproj" />
+</Solution>

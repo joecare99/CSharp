@@ -13,33 +13,31 @@
 // ***********************************************************************
 using System.Runtime.CompilerServices;
 
-namespace BaseLib.Interfaces
+namespace BaseLib.Interfaces;
+
+/// <summary>
+/// Interface IParentedObject
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface IParentedObject<T>
 {
-    /// <summary>
-    /// Interface IParentedObject
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IParentedObject<T>
-    {
 #if NET5_0_OR_GREATER
-        T? Parent { get => GetParent(); set => SetParent(value); }
+    T? Parent { get => GetParent(); set => SetParent(value); }
 #endif
-        /// <summary>
-        /// Sets the parent.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="CallerMember">The caller member.</param>
-        void SetParent(T? value, [CallerMemberName] string CallerMember ="" );
-        /// <summary>
-        /// Gets the parent.
-        /// </summary>
-        /// <returns>T.</returns>
-        T? GetParent();
-    }
-
     /// <summary>
-    /// Interface IParentedObject
+    /// Sets the parent.
     /// </summary>
-    public interface IParentedObject : IParentedObject<object?>{ }
-
+    /// <param name="value">The value.</param>
+    /// <param name="CallerMember">The caller member.</param>
+    void SetParent(T? value, [CallerMemberName] string CallerMember ="" );
+    /// <summary>
+    /// Gets the parent.
+    /// </summary>
+    /// <returns>T.</returns>
+    T? GetParent();
 }
+
+/// <summary>
+/// Interface IParentedObject
+/// </summary>
+public interface IParentedObject : IParentedObject<object?>{ }

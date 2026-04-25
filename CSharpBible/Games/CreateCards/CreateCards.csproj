@@ -16,7 +16,7 @@
 	  <PackageReference Include="System.Drawing.Common" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageVersion Update="System.Drawing.Common" Version="10.0.6" />
+	  <PackageVersion Update="System.Drawing.Common" Version="10.0.7" />
 	</ItemGroup>
 
 </Project>

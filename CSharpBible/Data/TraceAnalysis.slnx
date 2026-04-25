@@ -1,0 +1,42 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path="Data_net.props" />
+  </Folder>
+  <Folder Name="/TraceAnalysis/">
+    <Project Path="DevOps/DevOps.shproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Base.Tests/TraceAnalysis.Base.Tests.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Base/TraceAnalysis.Base.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Filter.CSV/TraceAnalysis.Filter.CSV.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Filter.Excel/TraceAnalysis.Filter.Excel.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Filter.JSON/TraceAnalysis.Filter.JSON.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Filter.MovirunText/TraceAnalysis.Filter.MovirunText.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Filter.MovirunTrace/TraceAnalysis.Filter.MovirunTrace.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Workbench.Core/TraceAnalysis.Workbench.Core.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Workbench.Wpf/TraceAnalysis.Workbench.Wpf.csproj" />
+    <Project Path="TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
+    <Project Path="TraceCsv2realCsvTests/TraceCsv2realCsvTests.csproj" />
+  </Folder>
+  <Folder Name="/TraceAnalysis/TestData/">
+    <File Path="TraceAnalysis/TestData/Trace1.trace" />
+    <File Path="TraceAnalysis/TestData/Trace1.trace.csv" />
+    <File Path="TraceAnalysis/TestData/Trace1.txt" />
+    <File Path="TraceAnalysis/TestData/Trace2_us.trace" />
+    <File Path="TraceAnalysis/TestData/Trace2_us.trace.csv" />
+    <File Path="TraceAnalysis/TestData/Trace2_us.txt" />
+  </Folder>
+</Solution>

@@ -1,0 +1,41 @@
+<UserControl x:Class="TraceAnalysis.Workbench.Wpf.Controls.TraceSourceSummaryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Padding="12"
+            BorderBrush="DarkGray"
+            BorderThickness="1">
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Top">
+                <TextBlock FontSize="20"
+                           FontWeight="Bold"
+                           Text="{Binding ConfigurationName}" />
+                <TextBlock Margin="0,4,0,0"
+                           Text="{Binding SourceSummary.SourceText}" />
+                <TextBlock Margin="0,2,0,0"
+                           Text="{Binding SourceSummary.ParseErrorsText}" />
+                <TextBlock Margin="0,2,0,0"
+                           FontWeight="SemiBold"
+                           Text="{Binding SourceSummary.TimeBaseText}" />
+            </StackPanel>
+
+            <Expander Margin="0,12,0,0"
+                      Header="Data Basis"
+                      IsExpanded="False">
+                <DataGrid Margin="0,8,0,0"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          HeadersVisibility="Column"
+                          MinHeight="180"
+                          ItemsSource="{Binding SourceSummary.DataBasisItems}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding ColumnName}" Header="Column" Width="*" />
+                        <DataGridTextColumn Binding="{Binding GroupName}" Header="Group" Width="140" />
+                        <DataGridTextColumn Binding="{Binding FormatText}" Header="Format" Width="140" />
+                        <DataGridTextColumn Binding="{Binding TypeName}" Header="Type" Width="120" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Expander>
+        </DockPanel>
+    </Border>
+</UserControl>
