@@ -1,0 +1,37 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Games/">
+    <File Path="../Games/Games.props" />
+    <File Path="../Games/Games_net.props" />
+    <Project Path="../Games/Sudoku_Base/Sudoku_Base.csproj" />
+    <Project Path="../Games/Sudoku_BaseTests/Sudoku_BaseTests.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+  <Project Path="MVVM_41_Sudoku/MVVM_41_Sudoku.csproj" />
+  <Project Path="MVVM_41_Sudoku/MVVM_41_Sudoku_net.csproj" />
+  <Project Path="MVVM_41_SudokuTests/MVVM_41_SudokuTests.csproj" />
+  <Project Path="MVVM_41_SudokuTests/MVVM_41_Sudoku_netTests.csproj" />
+</Solution>
