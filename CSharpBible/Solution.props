@@ -1,6 +1,7 @@
 <Project>
 	<PropertyGroup>
 		<UpDir>..</UpDir>
+		<AnalysisMode>All</AnalysisMode>
 		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 		<BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<LangVersion>preview</LangVersion>
@@ -9,7 +10,8 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Company>JC-Soft</Company>
 		<Authors>Joe Care</Authors>
-    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-		<Copyright>Copyright © JC-Soft 2023</Copyright>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<Copyright>Copyright © JC-Soft 2026</Copyright>
+		<UseArtifactsOutput>true</UseArtifactsOutput>
 	</PropertyGroup>
 </Project>
