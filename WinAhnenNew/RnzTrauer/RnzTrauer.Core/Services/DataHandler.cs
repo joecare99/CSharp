@@ -1,38 +1,115 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using MySqlConnector;
 
 namespace RnzTrauer.Core;
 
 /// <summary>
-/// Provides database access and extraction helpers for the RNZ obituary data.
+/// Extracts RNZ obituary data from cached JSON payloads and coordinates persistence through a repository abstraction.
 /// </summary>
 public sealed class DataHandler : IDisposable
 {
-    private readonly MySqlConnection _dbConn;
+    private const string JsonSections = "sections";
+    private const string JsonText = "text";
+    private const string JsonLinks = "links";
+    private const string JsonHref = "href";
+    private const string JsonClass = "class";
+    private const string JsonImages = "imgs";
+    private const string JsonSource = "src";
+    private const string JsonFilter = "filter";
+    private const string JsonId = "id";
+    private const string JsonName = "name";
+    private const string JsonPdfText = "pdfText";
+
+    private const string KeyAdditional = "Additional";
+    private const string KeyAnnouncement = "Announcement";
+    private const string KeyBirth = "Birth";
+    private const string KeyBirthName = "Birthname";
+    private const string KeyCreated = "Created";
+    private const string KeyCreatedBy = "Created_by";
+    private const string KeyCreatedBySource = "created_by";
+    private const string KeyCreatedOnSource = "created_on";
+    private const string KeyDeath = "Death";
+    private const string KeyFilter = "filter";
+    private const string KeyFirstName = "Firstname";
+    private const string KeyFullName = "Fullname";
+    private const string KeyIdTrauerfall = "idTrauerfall";
+    private const string KeyId = "id";
+    private const string KeyImage = "img";
+    private const string KeyInfo = "Info";
+    private const string KeyLastName = "Lastname";
+    private const string KeyLocalPath = "localpath";
+    private const string KeyPdf = "pdf";
+    private const string KeyPdfFile = "pdfFile";
+    private const string KeyPdfText = "pdfText";
+    private const string KeyPlace = "Place";
+    private const string KeyPngFile = "pngFile";
+    private const string KeyPrereadBirth = "Preread_Birth";
+    private const string KeyPrereadDeath = "Preread_Death";
+    private const string KeyProfileImage = "ProfileImg";
+    private const string KeyProfileImageSource = "profImg";
+    private const string KeyPublish = "publish";
+    private const string KeyRelease = "release";
+    private const string KeyRubrik = "Rubrik";
+    private const string KeyUrl = "url";
+    private const string KeyUrlUpper = "URL";
+    private const string KeyVisits = "visits";
+
+    private const string AnnouncementPrefix = "ANZ";
+    private const string BirthNamePrefix = "geb.";
+    private const string ContainerCssPrefix = "container";
+    private const string ImageColumnCssPrefix = "col-12";
+    private const string InlineAnnouncementSuffix = "/anzeigen";
+    private const string JsonExtension = ".json";
+    private const string MediaMarker = "MEDIA";
+    private const string ProfileImageRelativeRoot = "..\\..";
+    private const string PublishPrefix = "vom";
+    private const string QuerySeparator = "?";
+    private const string StatusInlineData = ".";
+    private const string StatusCachedData = ",";
+    private const string StatusMissingData = "-";
+    private const string StatusInserted = "+";
+    private const string StatusExisting = "-";
+    private const string StatusUpdated = "\bx";
+    private const string MessageSkipIncompleteAnnouncement = "Skip incomplete announcement (missing created/publish): ";
+
+    private const string FilterDanksagungen = "danksagungen";
+    private const string FilterNachrufe = "nachrufe";
+    private const string FilterTodesanzeigen = "todesanzeigen";
+
+    private const int RubrikTodesanzeigen = 8050;
+    private const int RubrikDanksagungen = 8060;
+    private const int RubrikNachrufe = 8070;
+
+    private static readonly string[] TrauerfallSourceKeys =
+    [
+        KeyUrl,
+        KeyBirth,
+        KeyDeath,
+        KeyPlace,
+        KeyCreatedBySource,
+        KeyCreatedOnSource,
+        KeyVisits
+    ];
+
     private readonly IFile _xFile;
+    private readonly ITrauerDataRepository _repository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataHandler"/> class.
     /// </summary>
     public DataHandler(DatabaseSettings xSettings, IFile xFile)
+        : this(new TrauerDataRepository(xSettings), xFile)
     {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataHandler"/> class with an injected repository.
+    /// </summary>
+    public DataHandler(ITrauerDataRepository xRepository, IFile xFile)
+    {
+        _repository = xRepository ?? throw new ArgumentNullException(nameof(xRepository));
         _xFile = xFile ?? throw new ArgumentNullException(nameof(xFile));
-
-        var sConnectionString = new MySqlConnectionStringBuilder
-        {
-            Server = xSettings.DBhost,
-            Port = 3306,
-            UserID = xSettings.DBuser,
-            Password = xSettings.DBpass,
-            Database = xSettings.DB,
-            AllowUserVariables = true,
-            ConvertZeroDateTime = true
-        }.ConnectionString;
-
-        _dbConn = new MySqlConnection(sConnectionString);
-        _dbConn.Open();
     }
 
     /// <summary>
@@ -46,45 +123,20 @@ public sealed class DataHandler : IDisposable
     public List<Dictionary<string, object?>> ExtractTrauerData(JsonNode? xData, string sLocalPathRoot)
     {
         var arrResult = new List<Dictionary<string, object?>>();
-        if (xData is not JsonObject xRoot || xRoot["sections"] is not JsonArray arrSections)
+        if (xData is not JsonObject xRoot || xRoot[JsonSections] is not JsonArray arrSections)
         {
             return arrResult;
         }
 
         foreach (var xSectionNode in arrSections.OfType<JsonObject>())
         {
-            var arrTexts = xSectionNode["text"] as JsonArray;
-            if (arrTexts is null || arrTexts.Count == 0 || !(arrTexts[0]?.ToString() ?? string.Empty).StartsWith("ANZ", StringComparison.Ordinal))
+            if (!IsAnnouncementSection(xSectionNode))
             {
                 continue;
             }
 
-            JsonObject xTrauerfallData = new();
-            if (xSectionNode["links"] is JsonArray arrLinks && arrLinks.Count > 0 && arrLinks[0] is JsonObject xLink0)
-            {
-                var sLinkHref = xLink0["href"]?.ToString() ?? string.Empty;
-                if (xRoot[$"{sLinkHref}/anzeigen"] is JsonObject xInline)
-                {
-                    xTrauerfallData = xInline;
-                    Console.Write('.');
-                }
-                else
-                {
-                    var sLocalPath = PortedHelpers.GetLocalPath(sLinkHref, sLocalPathRoot);
-                    var sFullName = Path.HasExtension(sLocalPath) ? sLocalPath : sLocalPath + ".json";
-                    if (_xFile.Exists(sFullName))
-                    {
-                        xTrauerfallData = JsonNode.Parse(_xFile.ReadAllText(sFullName)) as JsonObject ?? new JsonObject();
-                        Console.Write(',');
-                    }
-                    else
-                    {
-                        Console.Write('-');
-                    }
-                }
-            }
-
-            if (xTrauerfallData["sections"] is not JsonArray arrTrauerfallSections)
+            var xTrauerfallData = LoadTrauerfallData(xRoot, xSectionNode, sLocalPathRoot);
+            if (xTrauerfallData[JsonSections] is not JsonArray arrTrauerfallSections)
             {
                 continue;
             }
@@ -92,92 +144,13 @@ public sealed class DataHandler : IDisposable
             var sProfileImagePath = string.Empty;
             foreach (var xAnnouncementNode in arrTrauerfallSections.OfType<JsonObject>())
             {
-                var sCssClass = xAnnouncementNode["class"]?.ToString() ?? string.Empty;
-                if (sCssClass.StartsWith("col-12", StringComparison.Ordinal))
-                {
-                    try
-                    {
-                        if (xAnnouncementNode["imgs"] is JsonArray arrImages && arrImages.Count > 0 && arrImages[0] is JsonObject xImage0)
-                        {
-                            var sSource = xImage0["src"]?.ToString() ?? string.Empty;
-                            if (sSource.Contains("MEDIA", StringComparison.Ordinal))
-                            {
-                                sProfileImagePath = PortedHelpers.GetLocalPath(sSource.LCropStr("?"), sLocalPathRoot);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }
-
-                if (!sCssClass.StartsWith("container", StringComparison.Ordinal))
+                TryUpdateProfileImagePath(xAnnouncementNode, sLocalPathRoot, ref sProfileImagePath);
+                if (!StartsWithValue(xAnnouncementNode, JsonClass, ContainerCssPrefix))
                 {
                     continue;
                 }
 
-                var dTrauerfall = new Dictionary<string, object?>(StringComparer.Ordinal)
-                {
-                    ["profImg"] = sProfileImagePath,
-                    ["filter"] = xAnnouncementNode["filter"]?.ToString() ?? string.Empty
-                };
-
-                var sId = xAnnouncementNode["id"]?.ToString() ?? string.Empty;
-                var arrSplit = sId.Split('_', 2);
-                dTrauerfall["id"] = arrSplit.Length > 1 ? arrSplit[1] : string.Empty;
-
-                if (xAnnouncementNode["text"] is JsonArray arrAnnouncementText && arrAnnouncementText.Count > 1)
-                {
-                    var sPublish = arrAnnouncementText[1]?.ToString() ?? string.Empty;
-                    if (sPublish.StartsWith("vom", StringComparison.Ordinal))
-                    {
-                        dTrauerfall["publish"] = sPublish.Length > 4 ? sPublish[4..] : string.Empty;
-                    }
-                }
-
-                if (xTrauerfallData["name"] is not null)
-                {
-                    dTrauerfall["name"] = xTrauerfallData["name"]!.ToString();
-                }
-
-                if (arrTrauerfallSections.Count > 0 && arrTrauerfallSections[0] is JsonObject xFirstSection && xFirstSection["text"] is JsonArray arrFirstText && arrFirstText.Count > 1)
-                {
-                    var sBirthName = arrFirstText[1]?.ToString() ?? string.Empty;
-                    if (sBirthName.StartsWith("geb.", StringComparison.Ordinal))
-                    {
-                        dTrauerfall["Birthname"] = sBirthName.Length > 5 ? sBirthName[5..] : string.Empty;
-                    }
-                }
-
-                foreach (var sKey in new[] { "url", "Birth", "Death", "Place", "created_by", "created_on", "visits" })
-                {
-                    if (xTrauerfallData[sKey] is not null)
-                    {
-                        dTrauerfall[sKey] = xTrauerfallData[sKey]!.ToString();
-                    }
-                }
-
-                if (xAnnouncementNode["links"] is JsonArray arrAnnouncementLinks && arrAnnouncementLinks.Count >= 3)
-                {
-                    var sImage = arrAnnouncementLinks[1]?["href"]?.ToString() ?? string.Empty;
-                    dTrauerfall["img"] = PortedHelpers.GetLocalPath(sImage, sLocalPathRoot);
-                    var sPdf = arrAnnouncementLinks[2]?["href"]?.ToString() ?? string.Empty;
-                    dTrauerfall["pdf"] = PortedHelpers.GetLocalPath(sPdf, sLocalPathRoot);
-                    if (xTrauerfallData[sPdf] is JsonObject xPdfObject && xPdfObject["pdfText"] is not null)
-                    {
-                        dTrauerfall["pdfText"] = xPdfObject["pdfText"]!.ToString();
-                    }
-                    else
-                    {
-                        var sPdfFile = dTrauerfall["pdf"]?.ToString() ?? string.Empty;
-                        if (_xFile.Exists(sPdfFile))
-                        {
-                            dTrauerfall["pdfText"] = PortedHelpers.PdfText(_xFile.ReadAllBytes(sPdfFile));
-                        }
-                    }
-                }
-
-                arrResult.Add(dTrauerfall);
+                arrResult.Add(CreateTrauerfallEntry(xAnnouncementNode, xTrauerfallData, arrTrauerfallSections, sProfileImagePath, sLocalPathRoot));
             }
         }
 
@@ -189,7 +162,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public List<Dictionary<string, object?>> TrauerAnzId(int iId)
     {
-        return Query("SELECT * FROM Anzeigen WHERE idAnzeige=@id", xCommand => xCommand.Parameters.AddWithValue("@id", iId));
+        return _repository.TrauerAnzId(iId);
     }
 
     /// <summary>
@@ -197,7 +170,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public List<Dictionary<string, object?>> TrauerAnz(int iAnnouncement)
     {
-        return Query("SELECT * FROM Anzeigen WHERE Announcement=@announcement", xCommand => xCommand.Parameters.AddWithValue("@announcement", iAnnouncement));
+        return _repository.TrauerAnz(iAnnouncement);
     }
 
     /// <summary>
@@ -205,7 +178,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public List<Dictionary<string, object?>> LegacyTrauerAnz(string sAuftrag)
     {
-        return Query("SELECT * FROM `RNZ-Traueranzeigen`.`Anzeigen` WHERE Auftrag=@auftrag", xCommand => xCommand.Parameters.AddWithValue("@auftrag", sAuftrag));
+        return _repository.LegacyTrauerAnz(sAuftrag);
     }
 
     /// <summary>
@@ -213,7 +186,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public List<Dictionary<string, object?>> TrauerAnzIsNull(string sField, int iLimit = 1)
     {
-        return Query($"SELECT * FROM `Anzeigen` WHERE `{sField}` is null limit @limit", xCommand => xCommand.Parameters.AddWithValue("@limit", iLimit));
+        return _repository.TrauerAnzIsNull(sField, iLimit);
     }
 
     /// <summary>
@@ -221,7 +194,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public List<Dictionary<string, object?>> TrauerFallIsNull(string sField, int iLimit = 1)
     {
-        return Query($"SELECT * FROM `Trauerfall` WHERE `{sField}` is null limit @limit", xCommand => xCommand.Parameters.AddWithValue("@limit", iLimit));
+        return _repository.TrauerFallIsNull(sField, iLimit);
     }
 
     /// <summary>
@@ -229,11 +202,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public List<Dictionary<string, object?>> TrauerFallEquals(string sField, string sValue, int iLimit = 1)
     {
-        return Query($"SELECT * FROM `Trauerfall` WHERE `{sField}`=@value limit @limit", xCommand =>
-        {
-            xCommand.Parameters.AddWithValue("@value", sValue);
-            xCommand.Parameters.AddWithValue("@limit", iLimit);
-        });
+        return _repository.TrauerFallEquals(sField, sValue, iLimit);
     }
 
     /// <summary>
@@ -241,7 +210,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public void UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
     {
-        UpdateRows("Trauerfall", arrNewValues, arrOldValues);
+        _repository.UpdateTrauerFall(arrNewValues, arrOldValues);
     }
 
     /// <summary>
@@ -249,7 +218,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public bool UpdateTrauerAnz(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
     {
-        return UpdateRows("Anzeigen", arrNewValues, arrOldValues);
+        return _repository.UpdateTrauerAnz(arrNewValues, arrOldValues);
     }
 
     /// <summary>
@@ -257,7 +226,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public List<Dictionary<string, object?>> TrauerFallById(int iId)
     {
-        return Query("SELECT * FROM Trauerfall WHERE idTrauerfall=@id", xCommand => xCommand.Parameters.AddWithValue("@id", iId));
+        return _repository.TrauerFallById(iId);
     }
 
     /// <summary>
@@ -265,7 +234,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl)
     {
-        return Query("SELECT idTrauerfall, url FROM Trauerfall WHERE url=@url", xCommand => xCommand.Parameters.AddWithValue("@url", sUrl));
+        return _repository.TrauerFallByUrl(sUrl);
     }
 
     /// <summary>
@@ -273,13 +242,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public void BuildTrauerFallIndex()
     {
-        TfIdx = new Dictionary<string, long>(StringComparer.Ordinal);
-        using var xCommand = new MySqlCommand("SELECT idTrauerfall,url FROM Trauerfall", _dbConn);
-        using var xReader = xCommand.ExecuteReader();
-        while (xReader.Read())
-        {
-            TfIdx[xReader.GetString(1)] = xReader.GetInt64(0);
-        }
+        TfIdx = _repository.BuildTrauerFallIndex();
     }
 
     /// <summary>
@@ -288,21 +251,21 @@ public sealed class DataHandler : IDisposable
     public long AppendTrauerFall(Dictionary<string, object?> dTrauerfall)
     {
         var (sLastName, sFirstName) = dTrauerfall.Cond("name").SplitName();
-        using var xCommand = new MySqlCommand(
-            "INSERT INTO `Trauerfall` (`URL`, `Created`, `Preread_Birth`, `Preread_Death`, `Fullname`, `Firstname`, `Lastname`, `Birthname`, `Place`, `Created_by`) VALUES (@url, @created, @birth, @death, @fullName, @firstName, @lastName, @birthName, @place, @createdBy);",
-            _dbConn);
-        xCommand.Parameters.AddWithValue("@url", dTrauerfall.Cond("url"));
-        xCommand.Parameters.AddWithValue("@created", ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond("created_on"))));
-        xCommand.Parameters.AddWithValue("@birth", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond("Birth")))));
-        xCommand.Parameters.AddWithValue("@death", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond("Death")))));
-        xCommand.Parameters.AddWithValue("@fullName", $"{sLastName}, {sFirstName}");
-        xCommand.Parameters.AddWithValue("@firstName", sFirstName);
-        xCommand.Parameters.AddWithValue("@lastName", sLastName);
-        xCommand.Parameters.AddWithValue("@birthName", dTrauerfall.Cond("Birthname"));
-        xCommand.Parameters.AddWithValue("@place", dTrauerfall.Cond("Place"));
-        xCommand.Parameters.AddWithValue("@createdBy", dTrauerfall.Cond("created_by"));
-        xCommand.ExecuteNonQuery();
-        return xCommand.LastInsertedId;
+        var dValues = new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            [KeyUrlUpper] = dTrauerfall.Cond(KeyUrl),
+            [KeyCreated] = ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond(KeyCreatedOnSource))),
+            [KeyPrereadBirth] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond(KeyBirth)))),
+            [KeyPrereadDeath] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond(KeyDeath)))),
+            [KeyFullName] = $"{sLastName}, {sFirstName}",
+            [KeyFirstName] = sFirstName,
+            [KeyLastName] = sLastName,
+            [KeyBirthName] = dTrauerfall.Cond(KeyBirthName),
+            [KeyPlace] = dTrauerfall.Cond(KeyPlace),
+            [KeyCreatedBy] = dTrauerfall.Cond(KeyCreatedBySource)
+        };
+
+        return _repository.AppendTrauerFall(dValues);
     }
 
     /// <summary>
@@ -310,44 +273,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public long AppendTrauerAnz(long iTrauerfallId, Dictionary<string, object?> dTrauerfall, string sLocalPath)
     {
-        string sImgPath = dTrauerfall.Cond("img");
-        if (string.IsNullOrEmpty(sImgPath))
-        {
-            sImgPath = dTrauerfall.Cond("pdf");
-        }
-        if (string.IsNullOrEmpty(sImgPath))
-        {
-            sImgPath = sLocalPath;
-        }
-        var sPath = Directory.GetParent(sImgPath)?.FullName ?? string.Empty;
-        var sNormalizedLocalPath = sPath.Replace(sLocalPath, string.Empty, StringComparison.Ordinal);
-        var sProfileBase = Directory.GetParent(Directory.GetParent(sPath)?.FullName ?? string.Empty)?.FullName ?? string.Empty;
-        var sProfileImage = dTrauerfall.Cond("profImg").Replace(sProfileBase, "..\\..", StringComparison.Ordinal);
-        var iRubrik = GetRubrik(dTrauerfall);
-        var (sLastName, sFirstName) = dTrauerfall.Cond("name").SplitName();
-
-        using var xCommand = new MySqlCommand(
-            "INSERT INTO `Anzeigen` (`idTrauerfall`, `url`, `Announcement`, `release`,`localpath`, `pngFile`, `pdfFile`, `Additional`, `Firstname`,`Lastname`, `Birthname`, `Birth`, `Death`, `Place`, `Info`, `ProfileImg`, `Rubrik`) VALUES (@idtf, @url, @announcement, @release, @localpath, @pngFile, @pdfFile, @additional, @firstName, @lastName, @birthName, @birth, @death, @place, @info, @profileImg, @rubrik);",
-            _dbConn);
-        xCommand.Parameters.AddWithValue("@idtf", iTrauerfallId);
-        xCommand.Parameters.AddWithValue("@url", dTrauerfall.Cond("url"));
-        xCommand.Parameters.AddWithValue("@announcement", int.TryParse(dTrauerfall.Cond("id"), out var iId) ? iId : 0);
-        xCommand.Parameters.AddWithValue("@release", ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond("publish"))));
-        xCommand.Parameters.AddWithValue("@localpath", sNormalizedLocalPath);
-        xCommand.Parameters.AddWithValue("@pngFile", Path.GetFileName(dTrauerfall.Cond("img")));
-        xCommand.Parameters.AddWithValue("@pdfFile", Path.GetFileName(dTrauerfall.Cond("pdf")));
-        xCommand.Parameters.AddWithValue("@additional", JsonSerializer.Serialize(dTrauerfall, PortedHelpers.JsonOptions));
-        xCommand.Parameters.AddWithValue("@firstName", sFirstName);
-        xCommand.Parameters.AddWithValue("@lastName", sLastName);
-        xCommand.Parameters.AddWithValue("@birthName", dTrauerfall.Cond("Birthname"));
-        xCommand.Parameters.AddWithValue("@birth", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond("Birth")))));
-        xCommand.Parameters.AddWithValue("@death", ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond("Death")))));
-        xCommand.Parameters.AddWithValue("@place", dTrauerfall.Cond("Place"));
-        xCommand.Parameters.AddWithValue("@info", dTrauerfall.Cond("pdfText"));
-        xCommand.Parameters.AddWithValue("@profileImg", sProfileImage);
-        xCommand.Parameters.AddWithValue("@rubrik", iRubrik);
-        xCommand.ExecuteNonQuery();
-        return xCommand.LastInsertedId;
+        return _repository.AppendTrauerAnz(CreateAnnouncementRecord(iTrauerfallId, dTrauerfall, sLocalPath, GetRubrik(dTrauerfall)));
     }
 
     /// <summary>
@@ -355,68 +281,8 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public void SetTrauerAnz(Dictionary<string, object?> dCurrent, Dictionary<string, object?> dTrauerfall, string sLocalPath)
     {
-        string sImgPath = dTrauerfall.Cond("img");
-        if (string.IsNullOrEmpty(sImgPath))
-        {
-            sImgPath = dTrauerfall.Cond("pdf");
-        }
-        if (string.IsNullOrEmpty(sImgPath))
-        {
-            sImgPath = sLocalPath;
-        }
-        var sPath = Directory.GetParent(sImgPath)?.FullName ?? string.Empty;
-        var sNormalizedLocalPath = sPath.Replace(sLocalPath, string.Empty, StringComparison.Ordinal);
-        var sProfileBase = Directory.GetParent(Directory.GetParent(sPath)?.FullName ?? string.Empty)?.FullName ?? string.Empty;
-        var sProfileImage = dTrauerfall.Cond( "profImg").Replace(sProfileBase, "..\\..", StringComparison.Ordinal);
-        var iRubrik = dCurrent.TryGetValue("Rubrik", out var xCurrentRubrik) && int.TryParse(Convert.ToString(xCurrentRubrik, CultureInfo.InvariantCulture), out var iParsed) ? iParsed : 8050;
-        var sFilter = dTrauerfall.Cond( "filter");
-        if (sFilter == "danksagungen")
-        {
-            iRubrik = 8060;
-        }
-        else if (sFilter == "nachrufe")
-        {
-            iRubrik = 8070;
-        }
-        else if (sFilter == "todesanzeigen")
-        {
-            iRubrik = 8050;
-        }
-        else
-        {
-            try
-            {
-                var xJson = JsonNode.Parse(Convert.ToString(dCurrent.GetValueOrDefault("Additional"), CultureInfo.InvariantCulture) ?? string.Empty) as JsonObject;
-                if (xJson?["filter"] is not null)
-                {
-                    dTrauerfall["filter"] = xJson["filter"]!.ToString();
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        var (sLastName, sFirstName) = dTrauerfall.Cond( "name").SplitName();
-        foreach (var kvPair in new Dictionary<string, object?>
-        {
-            ["url"] = dTrauerfall.Cond( "url"),
-            ["Announcement"] = int.TryParse(dTrauerfall.Cond( "id"), out var iId) ? iId : 0,
-            ["release"] = ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond( "publish"))),
-            ["localpath"] = sNormalizedLocalPath,
-            ["pngFile"] = Path.GetFileName(dTrauerfall.Cond( "img")),
-            ["pdfFile"] = Path.GetFileName(dTrauerfall.Cond( "pdf")),
-            ["Additional"] = JsonSerializer.Serialize(dTrauerfall, PortedHelpers.JsonOptions),
-            ["Firstname"] = sFirstName,
-            ["Lastname"] = sLastName,
-            ["Birthname"] = dTrauerfall.Cond( "Birthname"),
-            ["Birth"] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond( "Birth")))),
-            ["Death"] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond( "Death")))),
-            ["Place"] = dTrauerfall.Cond( "Place"),
-            ["Info"] = dTrauerfall.Cond( "pdfText"),
-            ["ProfileImg"] = sProfileImage,
-            ["Rubrik"] = iRubrik
-        })
+        var dValues = CreateAnnouncementRecord(0, dTrauerfall, sLocalPath, ResolveRubrik(dCurrent, dTrauerfall));
+        foreach (var kvPair in dValues.Where(kvPair => !kvPair.Key.Equals(KeyIdTrauerfall, StringComparison.Ordinal)))
         {
             dCurrent[kvPair.Key] = kvPair.Value;
         }
@@ -427,20 +293,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public long AppendLegacyTAnz(string sAuftrag, Dictionary<string, object?> dTrauerfall, string sLocalPath)
     {
-        var sNormalizedLocalPath = Directory.GetParent(PortedHelpers.Cond(dTrauerfall, "pdf"))?.FullName?.Replace(sLocalPath, string.Empty, StringComparison.Ordinal) ?? string.Empty;
-        using var xCommand = new MySqlCommand(
-            "INSERT INTO `RNZ-Traueranzeigen`.`Anzeigen` (`Auftrag`, `url`, `Announcement`, `release`,`localpath`, `pngFile`, `pdfFile`, `Additional`) VALUES (@auftrag, @url, @announcement, @release, @localpath, @pngFile, @pdfFile, @additional);",
-            _dbConn);
-        xCommand.Parameters.AddWithValue("@auftrag", sAuftrag);
-        xCommand.Parameters.AddWithValue("@url", dTrauerfall.Cond( "url"));
-        xCommand.Parameters.AddWithValue("@announcement", int.TryParse(dTrauerfall.Cond( "id"), out var iId) ? iId : 0);
-        xCommand.Parameters.AddWithValue("@release", ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond( "publish"))));
-        xCommand.Parameters.AddWithValue("@localpath", sNormalizedLocalPath);
-        xCommand.Parameters.AddWithValue("@pngFile", Path.GetFileName(dTrauerfall.Cond( "img")));
-        xCommand.Parameters.AddWithValue("@pdfFile", Path.GetFileName(dTrauerfall.Cond( "pdf")));
-        xCommand.Parameters.AddWithValue("@additional", JsonSerializer.Serialize(dTrauerfall, PortedHelpers.JsonOptions));
-        xCommand.ExecuteNonQuery();
-        return xCommand.LastInsertedId;
+        return _repository.AppendLegacyTAnz(CreateLegacyAnnouncementRecord(sAuftrag, dTrauerfall, sLocalPath));
     }
 
     /// <summary>
@@ -454,29 +307,29 @@ public sealed class DataHandler : IDisposable
             var dtPublished = PortedHelpers.Str2Date(dAnnouncement.Cond("publish"));
             if (!dtCreated.HasValue || !dtPublished.HasValue)
             {
-                Console.WriteLine($"Skip incomplete announcement (missing created/publish): {dAnnouncement.Cond("url")}");
+                Console.WriteLine($"{MessageSkipIncompleteAnnouncement}{dAnnouncement.Cond(KeyUrl)}");
                 continue;
             }
 
-            var arrCurrentCases = TrauerFallByUrl(dAnnouncement.Cond( "url"));
+            var arrCurrentCases = TrauerFallByUrl(dAnnouncement.Cond(KeyUrl));
             var iTrauerfallId = arrCurrentCases.Count == 0
                 ? AppendTrauerFall(dAnnouncement)
                 : Convert.ToInt64(arrCurrentCases[0]["idTrauerfall"], CultureInfo.InvariantCulture);
 
-            var arrCurrentAnnouncements = TrauerAnz(int.TryParse(dAnnouncement.Cond( "id"), out var iId) ? iId : 0);
+            var arrCurrentAnnouncements = TrauerAnz(int.TryParse(dAnnouncement.Cond(KeyId), out var iId) ? iId : 0);
             if (arrCurrentAnnouncements.Count == 0)
             {
-                Console.Write('+');
+                Console.Write(StatusInserted);
                 AppendTrauerAnz(iTrauerfallId, dAnnouncement, sLocalPath);
             }
             else
             {
-                Console.Write('-');
+                Console.Write(StatusExisting);
                 var arrCopy = arrCurrentAnnouncements.Select(d => new Dictionary<string, object?>(d, StringComparer.Ordinal)).ToList();
                 SetTrauerAnz(arrCopy[0], dAnnouncement, sLocalPath);
                 if (UpdateTrauerAnz(arrCopy, arrCurrentAnnouncements))
                 {
-                    Console.Write("\bx");
+                    Console.Write(StatusUpdated);
                 }
             }
         }
@@ -485,80 +338,189 @@ public sealed class DataHandler : IDisposable
     /// <inheritdoc />
     public void Dispose()
     {
-        _dbConn.Dispose();
+        _repository.Dispose();
     }
 
-    private bool UpdateRows(string sTable, List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
+    private Dictionary<string, object?> CreateTrauerfallEntry(JsonObject xAnnouncementNode, JsonObject xTrauerfallData, JsonArray arrTrauerfallSections, string sProfileImagePath, string sLocalPathRoot)
     {
-        var xChanged = false;
-        if (arrNewValues.Count == 0)
+        var dTrauerfall = new Dictionary<string, object?>(StringComparer.Ordinal)
         {
-            return false;
-        }
+            [KeyProfileImageSource] = sProfileImagePath,
+            [KeyFilter] = xAnnouncementNode[JsonFilter]?.ToString() ?? string.Empty
+        };
 
-        var sKeyField = arrNewValues[0].Keys.FirstOrDefault(k => k.StartsWith("id", StringComparison.OrdinalIgnoreCase));
-        if (string.IsNullOrEmpty(sKeyField))
-        {
-            return false;
-        }
+        var sId = xAnnouncementNode[JsonId]?.ToString() ?? string.Empty;
+        var arrSplit = sId.Split('_', 2);
+        dTrauerfall[KeyId] = arrSplit.Length > 1 ? arrSplit[1] : string.Empty;
 
-        var dOldById = arrOldValues.ToDictionary(x => Convert.ToString(x[sKeyField], CultureInfo.InvariantCulture) ?? string.Empty, StringComparer.Ordinal);
-        foreach (var dNewRow in arrNewValues)
+        if (xAnnouncementNode[JsonText] is JsonArray arrAnnouncementText && arrAnnouncementText.Count > 1)
         {
-            var sKey = Convert.ToString(dNewRow[sKeyField], CultureInfo.InvariantCulture) ?? string.Empty;
-            if (!dOldById.TryGetValue(sKey, out var dOldRow))
+            var sPublish = arrAnnouncementText[1]?.ToString() ?? string.Empty;
+            if (sPublish.StartsWith(PublishPrefix, StringComparison.Ordinal))
             {
-                continue;
+                dTrauerfall[KeyPublish] = TrimPrefixedValue(sPublish, PublishPrefix);
             }
+        }
 
-            foreach (var (sColumn, xValue) in dNewRow)
+        if (xTrauerfallData[JsonName] is not null)
+        {
+            dTrauerfall[JsonName] = xTrauerfallData[JsonName]!.ToString();
+        }
+
+        if (arrTrauerfallSections.Count > 0 && arrTrauerfallSections[0] is JsonObject xFirstSection && xFirstSection[JsonText] is JsonArray arrFirstText && arrFirstText.Count > 1)
+        {
+            var sBirthName = arrFirstText[1]?.ToString() ?? string.Empty;
+            if (sBirthName.StartsWith(BirthNamePrefix, StringComparison.Ordinal))
             {
-                dOldRow.TryGetValue(sColumn, out var xOldValue);
-                if (Equals(xOldValue, xValue))
+                dTrauerfall[KeyBirthName] = TrimPrefixedValue(sBirthName, BirthNamePrefix);
+            }
+        }
+
+        foreach (var sKey in TrauerfallSourceKeys)
+        {
+            if (xTrauerfallData[sKey] is not null)
+            {
+                dTrauerfall[sKey] = xTrauerfallData[sKey]!.ToString();
+            }
+        }
+
+        if (xAnnouncementNode[JsonLinks] is JsonArray arrAnnouncementLinks && arrAnnouncementLinks.Count >= 3)
+        {
+            var sImage = arrAnnouncementLinks[1]?[JsonHref]?.ToString() ?? string.Empty;
+            dTrauerfall[KeyImage] = PortedHelpers.GetLocalPath(sImage, sLocalPathRoot);
+            var sPdf = arrAnnouncementLinks[2]?[JsonHref]?.ToString() ?? string.Empty;
+            dTrauerfall[KeyPdf] = PortedHelpers.GetLocalPath(sPdf, sLocalPathRoot);
+            if (xTrauerfallData[sPdf] is JsonObject xPdfObject && xPdfObject[JsonPdfText] is not null)
+            {
+                dTrauerfall[KeyPdfText] = xPdfObject[JsonPdfText]!.ToString();
+            }
+            else
+            {
+                var sPdfFile = dTrauerfall[KeyPdf]?.ToString() ?? string.Empty;
+                if (_xFile.Exists(sPdfFile))
                 {
-                    continue;
+                    dTrauerfall[KeyPdfText] = PortedHelpers.PdfText(_xFile.ReadAllBytes(sPdfFile));
                 }
-
-                using var xCommand = new MySqlCommand($"UPDATE `{sTable}` SET `{sColumn}`=@value WHERE `{sKeyField}`=@key", _dbConn);
-                xCommand.Parameters.AddWithValue("@value", xValue ?? DBNull.Value);
-                xCommand.Parameters.AddWithValue("@key", dNewRow[sKeyField]);
-                xCommand.ExecuteNonQuery();
-                xChanged = true;
             }
         }
 
-        return xChanged;
+        return dTrauerfall;
     }
 
-    private List<Dictionary<string, object?>> Query(string sSql, Action<MySqlCommand> xBind)
+    private JsonObject LoadTrauerfallData(JsonObject xRoot, JsonObject xSectionNode, string sLocalPathRoot)
     {
-        var arrData = new List<Dictionary<string, object?>>();
-        using var xCommand = new MySqlCommand(sSql, _dbConn);
-        xBind(xCommand);
-        using var xReader = xCommand.ExecuteReader();
-        while (xReader.Read())
+        if (xSectionNode[JsonLinks] is not JsonArray arrLinks || arrLinks.Count == 0 || arrLinks[0] is not JsonObject xLink0)
         {
-            var dRow = new Dictionary<string, object?>(StringComparer.Ordinal);
-            for (var iIndex = 0; iIndex < xReader.FieldCount; iIndex++)
-            {
-                if (xReader.IsDBNull(iIndex))
-                {
-                    dRow[xReader.GetName(iIndex)] = null;
-                    continue;
-                }
-
-                var xValue = xReader.GetValue(iIndex);
-                dRow[xReader.GetName(iIndex)] = xValue switch
-                {
-                    DateTime dtValue => dtValue.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-                    _ => xValue
-                };
-            }
-
-            arrData.Add(dRow);
+            return new JsonObject();
         }
 
-        return arrData;
+        var sLinkHref = xLink0[JsonHref]?.ToString() ?? string.Empty;
+        if (xRoot[$"{sLinkHref}{InlineAnnouncementSuffix}"] is JsonObject xInline)
+        {
+            Console.Write(StatusInlineData);
+            return xInline;
+        }
+
+        var sLocalPath = PortedHelpers.GetLocalPath(sLinkHref, sLocalPathRoot);
+        var sFullName = Path.HasExtension(sLocalPath) ? sLocalPath : sLocalPath + JsonExtension;
+        if (_xFile.Exists(sFullName))
+        {
+            Console.Write(StatusCachedData);
+            return JsonNode.Parse(_xFile.ReadAllText(sFullName)) as JsonObject ?? new JsonObject();
+        }
+
+        Console.Write(StatusMissingData);
+        return new JsonObject();
+    }
+
+    private static Dictionary<string, object?> CreateAnnouncementRecord(long iTrauerfallId, IReadOnlyDictionary<string, object?> dTrauerfall, string sLocalPath, int iRubrik)
+    {
+        var sImgPath = GetAnnouncementAssetPath(dTrauerfall, sLocalPath);
+        var sPath = Directory.GetParent(sImgPath)?.FullName ?? string.Empty;
+        var sNormalizedLocalPath = sPath.Replace(sLocalPath, string.Empty, StringComparison.Ordinal);
+        var sProfileBase = Directory.GetParent(Directory.GetParent(sPath)?.FullName ?? string.Empty)?.FullName ?? string.Empty;
+        var sProfileImage = dTrauerfall.Cond(KeyProfileImageSource).Replace(sProfileBase, ProfileImageRelativeRoot, StringComparison.Ordinal);
+        var (sLastName, sFirstName) = dTrauerfall.Cond(JsonName).SplitName();
+
+        return new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            [KeyIdTrauerfall] = iTrauerfallId,
+            [KeyUrl] = dTrauerfall.Cond(KeyUrl),
+            [KeyAnnouncement] = int.TryParse(dTrauerfall.Cond(KeyId), out var iId) ? iId : 0,
+            [KeyRelease] = ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond(KeyPublish))),
+            [KeyLocalPath] = sNormalizedLocalPath,
+            [KeyPngFile] = Path.GetFileName(dTrauerfall.Cond(KeyImage)),
+            [KeyPdfFile] = Path.GetFileName(dTrauerfall.Cond(KeyPdf)),
+            [KeyAdditional] = JsonSerializer.Serialize(dTrauerfall, PortedHelpers.JsonOptions),
+            [KeyFirstName] = sFirstName,
+            [KeyLastName] = sLastName,
+            [KeyBirthName] = dTrauerfall.Cond(KeyBirthName),
+            [KeyBirth] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond(KeyBirth)))),
+            [KeyDeath] = ToDbValue(PortedHelpers.Str2Date(TrimLeadingTwo(dTrauerfall.Cond(KeyDeath)))),
+            [KeyPlace] = dTrauerfall.Cond(KeyPlace),
+            [KeyInfo] = dTrauerfall.Cond(KeyPdfText),
+            [KeyProfileImage] = sProfileImage,
+            [KeyRubrik] = iRubrik
+        };
+    }
+
+    private static Dictionary<string, object?> CreateLegacyAnnouncementRecord(string sAuftrag, IReadOnlyDictionary<string, object?> dTrauerfall, string sLocalPath)
+    {
+        var sNormalizedLocalPath = Directory.GetParent(dTrauerfall.Cond(KeyPdf))?.FullName?.Replace(sLocalPath, string.Empty, StringComparison.Ordinal) ?? string.Empty;
+        return new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["Auftrag"] = sAuftrag,
+            [KeyUrl] = dTrauerfall.Cond(KeyUrl),
+            [KeyAnnouncement] = int.TryParse(dTrauerfall.Cond(KeyId), out var iId) ? iId : 0,
+            [KeyRelease] = ToDbValue(PortedHelpers.Str2Date(dTrauerfall.Cond(KeyPublish))),
+            [KeyLocalPath] = sNormalizedLocalPath,
+            [KeyPngFile] = Path.GetFileName(dTrauerfall.Cond(KeyImage)),
+            [KeyPdfFile] = Path.GetFileName(dTrauerfall.Cond(KeyPdf)),
+            [KeyAdditional] = JsonSerializer.Serialize(dTrauerfall, PortedHelpers.JsonOptions)
+        };
+    }
+
+    private static string GetAnnouncementAssetPath(IReadOnlyDictionary<string, object?> dTrauerfall, string sLocalPath)
+    {
+        var sImgPath = dTrauerfall.Cond(KeyImage);
+        if (!string.IsNullOrEmpty(sImgPath))
+        {
+            return sImgPath;
+        }
+
+        sImgPath = dTrauerfall.Cond(KeyPdf);
+        return string.IsNullOrEmpty(sImgPath) ? sLocalPath : sImgPath;
+    }
+
+    private static int ResolveRubrik(IReadOnlyDictionary<string, object?> dCurrent, Dictionary<string, object?> dTrauerfall)
+    {
+        var iRubrik = dCurrent.TryGetValue(KeyRubrik, out var xCurrentRubrik) && int.TryParse(Convert.ToString(xCurrentRubrik, CultureInfo.InvariantCulture), out var iParsed)
+            ? iParsed
+            : RubrikTodesanzeigen;
+
+        var iMappedRubrik = GetRubrikOrNull(dTrauerfall.Cond(KeyFilter));
+        if (iMappedRubrik.HasValue)
+        {
+            return iMappedRubrik.Value;
+        }
+
+        TryRestoreFilterFromAdditional(dCurrent, dTrauerfall);
+        return iRubrik;
+    }
+
+    private static void TryRestoreFilterFromAdditional(IReadOnlyDictionary<string, object?> dCurrent, Dictionary<string, object?> dTrauerfall)
+    {
+        try
+        {
+            var xJson = JsonNode.Parse(Convert.ToString(dCurrent.GetValueOrDefault(KeyAdditional), CultureInfo.InvariantCulture) ?? string.Empty) as JsonObject;
+            if (xJson?[KeyFilter] is not null)
+            {
+                dTrauerfall[KeyFilter] = xJson[KeyFilter]!.ToString();
+            }
+        }
+        catch
+        {
+        }
     }
 
     private static object ToDbValue(DateOnly? dtValue)
@@ -575,11 +537,64 @@ public sealed class DataHandler : IDisposable
 
     private static int GetRubrik(IReadOnlyDictionary<string, object?> dTrauerfall)
     {
-        return PortedHelpers.Cond(dTrauerfall, "filter") switch
+        return GetRubrikOrNull(dTrauerfall.Cond(KeyFilter)) ?? RubrikTodesanzeigen;
+    }
+
+    private static int? GetRubrikOrNull(string sFilter)
+    {
+        return sFilter switch
         {
-            "danksagungen" => 8060,
-            "nachrufe" => 8070,
-            _ => 8050
+            FilterDanksagungen => RubrikDanksagungen,
+            FilterNachrufe => RubrikNachrufe,
+            FilterTodesanzeigen => RubrikTodesanzeigen,
+            _ => null
         };
+    }
+
+    private static bool IsAnnouncementSection(JsonObject xSectionNode)
+    {
+        var arrTexts = xSectionNode[JsonText] as JsonArray;
+        return arrTexts is not null
+            && arrTexts.Count > 0
+            && (arrTexts[0]?.ToString() ?? string.Empty).StartsWith(AnnouncementPrefix, StringComparison.Ordinal);
+    }
+
+    private static bool StartsWithValue(JsonObject xNode, string sKey, string sPrefix)
+    {
+        return (xNode[sKey]?.ToString() ?? string.Empty).StartsWith(sPrefix, StringComparison.Ordinal);
+    }
+
+    private static string TrimPrefixedValue(string sValue, string sPrefix)
+    {
+        var iStart = sPrefix.Length;
+        if (sValue.Length > iStart && sValue[iStart] == ' ')
+        {
+            iStart += 1;
+        }
+
+        return sValue.Length > iStart ? sValue[iStart..] : string.Empty;
+    }
+
+    private static void TryUpdateProfileImagePath(JsonObject xAnnouncementNode, string sLocalPathRoot, ref string sProfileImagePath)
+    {
+        if (!StartsWithValue(xAnnouncementNode, JsonClass, ImageColumnCssPrefix))
+        {
+            return;
+        }
+
+        try
+        {
+            if (xAnnouncementNode[JsonImages] is JsonArray arrImages && arrImages.Count > 0 && arrImages[0] is JsonObject xImage0)
+            {
+                var sSource = xImage0[JsonSource]?.ToString() ?? string.Empty;
+                if (sSource.Contains(MediaMarker, StringComparison.Ordinal))
+                {
+                    sProfileImagePath = PortedHelpers.GetLocalPath(sSource.LCropStr(QuerySeparator), sLocalPathRoot);
+                }
+            }
+        }
+        catch
+        {
+        }
     }
 }
