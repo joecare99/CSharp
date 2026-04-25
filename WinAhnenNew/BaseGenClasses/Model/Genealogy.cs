@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using BaseGenClasses.Persistence.Interfaces;
 
 namespace BaseGenClasses.Model;
 
