@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/MVVM_09_DialogBoxes/">
+    <Project Path="MVVM_09_DialogBoxes/MVVM_09_DialogBoxes.csproj" />
+    <Project Path="MVVM_09_DialogBoxes/MVVM_09_DialogBoxes_net.csproj" />
+    <Project Path="MVVM_09_DialogBoxesTest/MVVM_09_DialogBoxesTest.csproj" />
+    <Project Path="MVVM_09_DialogBoxesTest/MVVM_09_DialogBoxes_netTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+</Solution>

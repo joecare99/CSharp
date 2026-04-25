@@ -1,0 +1,31 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+  <Project Path="MVVM_25_CTRichTextEdit/MVVM_25a_CTRichTextEdit.csproj" />
+  <Project Path="MVVM_25_CTRichTextEdit/MVVM_25a_CTRichTextEdit_net.csproj" />
+  <Project Path="MVVM_25_RichTextEdit/MVVM_25_RichTextEdit.csproj" />
+  <Project Path="MVVM_25_RichTextEdit/MVVM_25_RichTextEdit_net.csproj" />
+  <Project Path="MVVM_25_RichTextEditTests/MVVM_25_RichTextEditTests.csproj" />
+  <Project Path="MVVM_25_RichTextEditTests/MVVM_25_RichTextEdit_netTests.csproj" />
+</Solution>

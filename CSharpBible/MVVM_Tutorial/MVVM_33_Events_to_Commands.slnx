@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+  <Project Path="MVVM_33a_CTEvents_To_Commands/MVVM_33a_CTEvents_To_Commands.csproj" />
+  <Project Path="MVVM_33a_CTEvents_To_Commands/MVVM_33a_CTEvents_To_Commands_net.csproj" />
+  <Project Path="MVVM_33a_CTEvents_To_CommandsTests/MVVM_33a_CTEvents_To_CommandsTests.csproj" />
+  <Project Path="MVVM_33a_CTEvents_To_CommandsTests/MVVM_33a_CTEvents_To_Commands_netTests.csproj" />
+  <Project Path="MVVM_33_Events_to_Commands/MVVM_33_Events_to_Commands.csproj" />
+  <Project Path="MVVM_33_Events_to_Commands/MVVM_33_Events_to_Commands_net.csproj" />
+  <Project Path="MVVM_33_Events_to_CommandsTests/MVVM_33_Events_to_CommandsTests.csproj" />
+  <Project Path="MVVM_33_Events_to_CommandsTests/MVVM_33_Events_to_Commands_netTests.csproj" />
+</Solution>

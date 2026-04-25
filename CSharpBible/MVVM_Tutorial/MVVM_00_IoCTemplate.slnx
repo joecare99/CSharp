@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+  <Project Path="MVVM_00_IoCTemplate/MVVM_00_IoCTemplate.csproj" />
+  <Project Path="MVVM_00_IoCTemplate/MVVM_00_IoCTemplate_net.csproj" />
+  <Project Path="MVVM_00_IoCTemplateTests/MVVM_00_IoCTemplateTests.csproj" />
+  <Project Path="MVVM_00_IoCTemplateTests/MVVM_00_IoCTemplate_netTests.csproj" />
+</Solution>

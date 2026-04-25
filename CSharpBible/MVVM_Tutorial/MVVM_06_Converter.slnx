@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/MathLIbrary/MathLibrary.csproj" />
+    <Project Path="../Libraries/MathLIbrary/MathLibrary_net.csproj" />
+    <Project Path="../Libraries/MathLibraryTests/MathLibraryTests.csproj" />
+    <Project Path="../Libraries/MathLibraryTests/MathLibrary_netTests.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib_net.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+  <Project Path="MVVM_06_Converters/MVVM_06_Converters.csproj" />
+  <Project Path="MVVM_06_Converters/MVVM_06_Converters_net.csproj" />
+  <Project Path="MVVM_06_Converters_2/MVVM_06_Converters_2.csproj" />
+  <Project Path="MVVM_06_Converters_2/MVVM_06_Converters_2_net.csproj" />
+  <Project Path="MVVM_06_Converters_3/MVVM_06_Converters_3.csproj" />
+  <Project Path="MVVM_06_Converters_3/MVVM_06_Converters_3_net.csproj" />
+  <Project Path="MVVM_06_Converters_3Tests/MVVM_06_Converters_3Tests.csproj" />
+  <Project Path="MVVM_06_Converters_3Tests/MVVM_06_Converters_3_netTests.csproj" />
+  <Project Path="MVVM_06_Converters_4/MVVM_06_Converters_4.csproj" />
+  <Project Path="MVVM_06_Converters_4/MVVM_06_Converters_4_net.csproj" />
+  <Project Path="MVVM_06_Converters_4Tests/MVVM_06_Converters_4Tests.csproj" />
+  <Project Path="MVVM_06_Converters_4Tests/MVVM_06_Converters_4_netTests.csproj" />
+</Solution>

@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+  <Project Path="MVVM_22_CTWpfCap/MVVM_22_CTWpfCap.csproj" />
+  <Project Path="MVVM_22_CTWpfCap/MVVM_22_CTWpfCap_net.csproj" />
+  <Project Path="MVVM_22_CTWpfCapTests/MVVM_22_CTWpfCapTests.csproj" />
+  <Project Path="MVVM_22_CTWpfCapTests/MVVM_22_CTWpfCap_netTests.csproj" />
+  <Project Path="MVVM_22_WpfCap/MVVM_22_WpfCap.csproj" />
+  <Project Path="MVVM_22_WpfCap/MVVM_22_WpfCap_net.csproj" />
+  <Project Path="MVVM_22_WpfCapTests/MVVM_22_WpfCapTests.csproj" />
+  <Project Path="MVVM_22_WpfCapTests/MVVM_22_WpfCap_netTests.csproj" />
+</Solution>
