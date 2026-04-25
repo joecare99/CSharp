@@ -7,6 +7,7 @@ using System.Windows.Media;
 using BaseGenClasses.Helper;
 using BaseGenClasses.Model;
 using BaseGenClasses.Persistence;
+using BaseGenClasses.Persistence.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
