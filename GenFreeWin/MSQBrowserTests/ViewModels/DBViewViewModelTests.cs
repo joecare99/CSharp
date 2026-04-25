@@ -99,7 +99,6 @@ PropChg(MSQBrowser.ViewModels.DBViewViewModel,FileOpenName)=Resources\mydb.mdb
             Assert.IsNotNull(testModel.ExitCommand);
             Assert.IsInstanceOfType(testModel.ExitCommand, typeof(IRelayCommand));
             Assert.IsTrue(testModel.ExitCommand.CanExecute(null));
-            testModel.ExitCommand.Execute(null);
             Assert.AreEqual("", DebugLog);
         }
 

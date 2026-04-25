@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using MSQBrowser.ViewModels.Interfaces;
+using BaseLib.Helper;
 
 namespace MSQBrowser.Tests
 {
@@ -18,7 +19,7 @@ namespace MSQBrowser.Tests
         {
            var testClass = new App();
             Assert.IsNotNull(testClass);
-            Assert.ThrowsException<InvalidOperationException>(()=>_=IoC.GetRequiredService<IDBViewViewModel>());
+            Assert.IsNotNull(IoC.GetRequiredService<ITableViewViewModel>());
         }
     }
 }

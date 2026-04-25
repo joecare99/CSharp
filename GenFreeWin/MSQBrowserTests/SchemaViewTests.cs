@@ -1,10 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.View.Extension;
+using MVVM.Views.Extension;
 using System;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using MSQBrowser.ViewModels.Interfaces;
 using NSubstitute;
+using BaseLib.Helper;
 
 namespace MSQBrowser.Views.Tests
 {
