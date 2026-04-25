@@ -1,4 +1,8 @@
 using System.Text;
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
+using FBParser.Models;
+using FBParser.Models.Interfaces;
 
 namespace FBParser;
 
@@ -18,10 +22,48 @@ public sealed class GNameHandler
     private const string Unknown2 = "...";
 
     private readonly SortedDictionary<string, string> _gNameList = new(StringComparer.Ordinal);
+    private readonly IDirectory _directory;
+    private readonly IFile _file;
+    private readonly IPath _path;
+    private readonly Func<string, StreamWriter> _streamWriterFactory;
     private bool _cfgLearnUnknown = true;
     private string _gNameFile = string.Empty;
     private bool _gNameListChanged;
     private SendMessage? _onError;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GNameHandler"/> class using default filesystem proxies.
+    /// </summary>
+    public GNameHandler()
+        : this(new FileProxy(), new DirectoryProxy(), new PathProxy())
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GNameHandler"/> class with explicit filesystem abstractions.
+    /// </summary>
+    /// <param name="file">The file abstraction.</param>
+    /// <param name="directory">The directory abstraction.</param>
+    /// <param name="path">The path abstraction.</param>
+    public GNameHandler(IFile file, IDirectory directory, IPath path)
+        : this(file, directory, path, static tempFile => new StreamWriter(tempFile, false, new UTF8Encoding(false)))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GNameHandler"/> class with explicit filesystem abstractions and writer factory.
+    /// </summary>
+    /// <param name="file">The file abstraction.</param>
+    /// <param name="directory">The directory abstraction.</param>
+    /// <param name="path">The path abstraction.</param>
+    /// <param name="streamWriterFactory">The stream writer factory used for persistence.</param>
+    public GNameHandler(IFile file, IDirectory directory, IPath path, Func<string, StreamWriter> streamWriterFactory)
+    {
+        _file = file;
+        _directory = directory;
+        _path = path;
+        _streamWriterFactory = streamWriterFactory;
+    }
 
     /// <summary>
     /// Gets or sets the error callback.
@@ -90,10 +132,10 @@ public sealed class GNameHandler
     /// <param name="fileName">The source file path.</param>
     public void LoadGNameList(string fileName)
     {
-        if (File.Exists(fileName))
+        if (_file.Exists(fileName))
         {
             _gNameList.Clear();
-            foreach (var line in File.ReadLines(fileName, Encoding.UTF8))
+            foreach (var line in _file.ReadAllText(fileName, Encoding.UTF8).Split(["\r\n", "\n"], StringSplitOptions.None))
             {
                 if (string.IsNullOrWhiteSpace(line))
                 {
@@ -181,8 +223,8 @@ public sealed class GNameHandler
             }
 
             if ((currentName.Length < 3 && !currentName.Equals("NN", StringComparison.OrdinalIgnoreCase))
-                || currentName.EndsWith('.', StringComparison.Ordinal)
-                || currentName.EndsWith('=', StringComparison.Ordinal))
+                || currentName.EndsWith(".", StringComparison.Ordinal)
+                || currentName.EndsWith("=", StringComparison.Ordinal))
             {
                 if (currentName.Length > 0)
                 {
@@ -227,8 +269,8 @@ public sealed class GNameHandler
             }
 
             if ((currentName.Length < 3 && !currentName.Equals("NN", StringComparison.OrdinalIgnoreCase))
-                || currentName.EndsWith('.', StringComparison.Ordinal)
-                || currentName.EndsWith('=', StringComparison.Ordinal))
+                || currentName.EndsWith(".", StringComparison.Ordinal)
+                || currentName.EndsWith("=", StringComparison.Ordinal))
             {
                 if (currentName.Length > 0 && learn)
                 {
@@ -257,7 +299,7 @@ public sealed class GNameHandler
         => (text ?? string.Empty).Split([' '], StringSplitOptions.RemoveEmptyEntries);
 
     private static bool IsAbbrev(string value)
-        => value.Length == 2 && value.EndsWith('.', StringComparison.Ordinal) && char.IsUpper(value[0]);
+        => value.Length == 2 && value.EndsWith(".", StringComparison.Ordinal) && char.IsUpper(value[0]);
 
     private static bool TestFor(string text, int positionOneBased, string test)
     {
@@ -283,16 +325,16 @@ public sealed class GNameHandler
             return;
         }
 
-        var directory = Path.GetDirectoryName(Path.GetFullPath(fileName));
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+        var directory = _path.GetDirectoryName(_path.GetFullPath(fileName));
+        if (!string.IsNullOrEmpty(directory) && !_directory.Exists(directory))
         {
-            Directory.CreateDirectory(directory);
+            _directory.CreateDirectory(directory);
         }
 
-        var tempFile = Path.GetTempFileName();
+        var tempFile = _path.GetTempFileName();
         try
         {
-            using (var writer = new StreamWriter(tempFile, false, new UTF8Encoding(false)))
+            using (var writer = _streamWriterFactory(tempFile))
             {
                 foreach (var pair in _gNameList)
                 {
@@ -302,20 +344,20 @@ public sealed class GNameHandler
                 }
             }
 
-            if (File.Exists(fileName))
+            if (_file.Exists(fileName))
             {
-                File.Delete(fileName);
+                _file.Delete(fileName);
             }
 
-            File.Move(tempFile, fileName);
+            _file.Move(tempFile, fileName);
         }
         catch
         {
             try
             {
-                if (File.Exists(tempFile))
+                if (_file.Exists(tempFile))
                 {
-                    File.Delete(tempFile);
+                    _file.Delete(tempFile);
                 }
             }
             catch

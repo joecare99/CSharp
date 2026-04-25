@@ -405,7 +405,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                 || (innerOffset + 1 <= innerText.Length && In(CharAt(innerText, innerOffset + 1), Charset))
                 || (innerOffset + 1 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && (innerSubstring.EndsWith("Dr", StringComparison.Ordinal) || innerSubstring.EndsWith("rl", StringComparison.Ordinal) || innerSubstring.EndsWith("Nr", StringComparison.Ordinal) || innerSubstring.EndsWith("gl", StringComparison.Ordinal) || innerSubstring.EndsWith("tr", StringComparison.Ordinal) || innerSubstring.EndsWith("Kr", StringComparison.Ordinal) || innerSubstring.EndsWith("Kt", StringComparison.Ordinal)))
                 || (innerOffset + 1 <= innerText.Length && CharAt(innerText, innerOffset + 1) == '.')
-                || innerSubstring.EndsWith('.', StringComparison.Ordinal)
+                || innerSubstring.EndsWith(".", StringComparison.Ordinal)
                 || (innerOffset + 2 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && !new[] { '\n', '\r' }.Contains(CharAt(innerText, innerOffset + 2)) && localLastZiffCount < 3)))
             {
                 innerSubstring += currentChar;
@@ -1822,27 +1822,33 @@ public sealed class FBEntryParser : ParserBase, IDisposable
     /// </summary>
     public bool HandleGCDateEntry(string text, ref int position, string individualId, ref int mode, ref int retMode, ref ParserEventType entryType)
     {
-        bool TestDate(string testString, ParserEventType setEvent)
-        {
-            var result = TestFor(text, position, testString);
-            if (result)
-            {
-                retMode = mode;
-                mode = 101;
-                entryType = setEvent;
-            }
-
-            return result;
-        }
-
 #if DEBUG
         Debug(this, "HGDE: \"" + Copy(text, position, 30) + "\"");
 #endif
-        if (TestDate(CsBirth, ParserEventType.evt_Birth)
-            || TestDate(CsBaptism2, ParserEventType.evt_Baptism)
-            || TestDate(CsDeathEntr, ParserEventType.evt_Death)
-            || TestDate(CsBurial2, ParserEventType.evt_Burial))
+        if (TestFor(text, position, CsBirth)
+            || TestFor(text, position, CsBaptism2)
+            || TestFor(text, position, CsDeathEntr)
+            || TestFor(text, position, CsBurial2))
         {
+            retMode = mode;
+            mode = 101;
+            if (TestFor(text, position, CsBirth))
+            {
+                entryType = ParserEventType.evt_Birth;
+            }
+            else if (TestFor(text, position, CsBaptism2))
+            {
+                entryType = ParserEventType.evt_Baptism;
+            }
+            else if (TestFor(text, position, CsDeathEntr))
+            {
+                entryType = ParserEventType.evt_Death;
+            }
+            else
+            {
+                entryType = ParserEventType.evt_Burial;
+            }
+
             return true;
         }
 
@@ -1875,7 +1881,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
     public bool HandleGCNonPersonEntry(string subString, char actChar, string individualId)
     {
         var localSubstring = subString;
-        if (((localSubstring.Length < 4) && localSubstring.EndsWith('.', StringComparison.Ordinal) && localSubstring.Length > 0 && char.IsLower(localSubstring[0]))
+        if (((localSubstring.Length < 4) && localSubstring.EndsWith(".", StringComparison.Ordinal) && localSubstring.Length > 0 && char.IsLower(localSubstring[0]))
             || localSubstring.Trim().Length == 2)
         {
             if (actChar == '.')
@@ -2030,7 +2036,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
             names = personName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
         }
 
-        if (names.Length > 0 && !names[^1].EndsWith('.', StringComparison.Ordinal) && GuessSexOfGivnName(names[^1], false) != '_' && localAka.StartsWith('?', StringComparison.Ordinal) && localAka.Length > 3)
+        if (names.Length > 0 && !names[^1].EndsWith(".", StringComparison.Ordinal) && GuessSexOfGivnName(names[^1], false) != '_' && localAka.StartsWith("?", StringComparison.Ordinal) && localAka.Length > 3)
         {
             lastName = Copy(localAka, 2).Trim().Replace(".", ". ", StringComparison.Ordinal);
             if (lastName == Copy(famName, 1, lastName.Length - 2) + ". ")
@@ -2068,14 +2074,14 @@ public sealed class FBEntryParser : ParserBase, IDisposable
             lastName = names[^2] + " " + lastName;
         }
 
-        if (!lastName.EndsWith('.', StringComparison.Ordinal) && GuessSexOfGivnName(lastName, false) != '_' && localAka.EndsWith('.', StringComparison.Ordinal) && localAka.Length < 4 && localAka == Copy(famName, 1, localAka.Length - 1) + ".")
+        if (!lastName.EndsWith(".", StringComparison.Ordinal) && GuessSexOfGivnName(lastName, false) != '_' && localAka.EndsWith(".", StringComparison.Ordinal) && localAka.Length < 4 && localAka == Copy(famName, 1, localAka.Length - 1) + ".")
         {
             lastName = famName;
             personName += " " + lastName;
             localAka = "? " + lastName;
         }
 
-        if (lastName != string.Empty && (UpperCharset.Contains(lastName[0]) || lastName[0] == 'Ü') && lastName.EndsWith('.', StringComparison.Ordinal) && lastName.Length <= 4 && Copy(famName, 1, lastName.Length - 1) + "." == lastName)
+        if (lastName != string.Empty && (UpperCharset.Contains(lastName[0]) || lastName[0] == 'Ü') && lastName.EndsWith(".", StringComparison.Ordinal) && lastName.Length <= 4 && Copy(famName, 1, lastName.Length - 1) + "." == lastName)
         {
             personName = personName.Replace(lastName + " ", famName, StringComparison.Ordinal);
             lastName = famName;
