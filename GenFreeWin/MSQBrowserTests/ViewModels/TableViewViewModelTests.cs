@@ -5,6 +5,9 @@ using MSQBrowser.Models;
 using MSQBrowser.Models.Interfaces;
 using MSQBrowser.ViewModels.Interfaces;
 using System.Collections.Generic;
+using System.Data;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MSQBrowser.ViewModels.Tests
 {
@@ -33,21 +36,23 @@ namespace MSQBrowser.ViewModels.Tests
             Assert.IsInstanceOfType(testModel, typeof(ITableViewViewModel));
         }
 
-        [TestMethod()]
+        [DataTestMethod()]
         [DataRow("Test", true, EKind.Table, nameof(IDBViewViewModel.SelectedEntry), true)]
         [DataRow("Test1", false, EKind.Table, nameof(IDBViewViewModel.SelectedEntry))]
         [DataRow("Test2", true, EKind.Schema, nameof(IDBViewViewModel.SelectedEntry))]
         [DataRow("Test3", true, EKind.Table, nameof(IDBViewViewModel.ToString))]
-        public void ParPropChangeTest(string sName, bool xAct, EKind kind, string sProp, bool xExp = false)
+        public async Task ParPropChangeTest(string sName, bool xAct, EKind kind, string sProp, bool xExp = false)
         {
+            var tMod = Substitute.For<IDBModel>();
+            tMod.QueryTableDataPageAsync("Test", Arg.Any<IEnumerable<DBMetaData>>(), 0, 100, Arg.Any<CancellationToken>())
+                .Returns(Task.FromResult(new TablePageResult { Data = new DataTable(), Offset = 0, PageSize = 100 }));
+            testDBView.dBModel.Returns(tMod);
             testDBView.SelectedEntry.Returns(xAct ? new DBMetaData("Test", kind, null!, null!) : null);
             testDBView.PropertyChanged += Raise.Event<System.ComponentModel.PropertyChangedEventHandler>(testDBView, new System.ComponentModel.PropertyChangedEventArgs(sProp));
+            await Task.Delay(20);
             Assert.AreEqual(xExp ? "Test" : "", testModel.TableName);
-            Assert.AreEqual(xExp ? @"PropChgn(MSQBrowser.ViewModels.TableViewViewModel,TableName)=
-PropChgn(MSQBrowser.ViewModels.TableViewViewModel,TableData)=
-PropChg(MSQBrowser.ViewModels.TableViewViewModel,TableData)=
-PropChg(MSQBrowser.ViewModels.TableViewViewModel,TableName)=Test
-" : "", DebugLog);
+            tMod.Received(xExp ? 1 : 0).QueryTable("Test");
+            _ = tMod.Received(xExp ? 1 : 0).QueryTableDataPageAsync("Test", Arg.Any<IEnumerable<DBMetaData>>(), 0, 100, Arg.Any<CancellationToken>());
         }
 
         [DataTestMethod()]
@@ -56,23 +61,22 @@ PropChg(MSQBrowser.ViewModels.TableViewViewModel,TableName)=Test
         [DataRow(false, true, false, false)]
         [DataRow(true, false, false, false)]
         [DataRow(true, false, false, false)]
-        public void TableNameTest(bool xAct, bool xAct2,bool xAct3, bool xExp)
+        public async Task TableNameTest(bool xAct, bool xAct2,bool xAct3, bool xExp)
         {
             var testModel = xAct ? this.testModel : new TableViewViewModel(null!);
             var tMod = Substitute.For<IDBModel>();
             Assert.AreEqual(xAct ? "" : "<TableName>", testModel.TableName);
             testDBView.dBModel.Returns(xAct2 ? tMod : null);
             tMod.QueryTable("Test5").Returns(xAct3?new List<DBMetaData>() { new DBMetaData("Test5", EKind.Table, null!, null!) } : null);
+            tMod.QueryTableDataPageAsync("Test5", Arg.Any<IEnumerable<DBMetaData>>(), 0, 100, Arg.Any<CancellationToken>())
+                .Returns(Task.FromResult(new TablePageResult { Data = new DataTable(), Offset = 0, PageSize = 100 }));
             testModel.TableName = "Test5";
+            await Task.Delay(20);
             Assert.AreEqual("Test5", testModel.TableName);
             tMod.Received(xExp ? 1 : 0).QueryTable("Test5");
-            tMod.Received(xExp ? 1 : 0).QueryTableData("Test5");
+            _ = tMod.Received(xExp ? 1 : 0).QueryTableDataPageAsync("Test5", Arg.Any<IEnumerable<DBMetaData>>(), 0, 100, Arg.Any<CancellationToken>());
             tMod.Received( 0).QuerySchema("Test5");
-            Assert.AreEqual(!xAct ? "" : @"PropChgn(MSQBrowser.ViewModels.TableViewViewModel,TableName)=
-PropChgn(MSQBrowser.ViewModels.TableViewViewModel,TableData)=
-PropChg(MSQBrowser.ViewModels.TableViewViewModel,TableData)=
-PropChg(MSQBrowser.ViewModels.TableViewViewModel,TableName)=Test5
-", DebugLog);
+            Assert.AreEqual(xExp ? "Keine Zeilen gefunden" : "", testModel.PageStatus);
         }
     }
 }

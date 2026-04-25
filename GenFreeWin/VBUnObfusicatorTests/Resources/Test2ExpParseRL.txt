@@ -1,0 +1,158 @@
+﻿///Declaration MainBlock 0,0
+private void Button2_Click(object sender, EventArgs e)
+///BlockStart Block 1,0
+{
+///Comment LComment 1,1
+//Discarded unreachable code: IL_0085
+///Operation Operation 1,2
+int try0000_dispatch = -1;
+///Operation Operation 1,3
+int num3 = default(int);
+///Operation Operation 1,4
+int num2 = default(int);
+///Operation Operation 1,5
+int num = default(int);
+///Operation Operation 1,6
+byte b = default(byte);
+///Operation Operation 1,7
+while (true)
+///BlockStart Block 2,0
+{
+///Operation Operation 2,1
+try
+///BlockStart Block 3,0
+{
+///Comment Comment 3,1
+/*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
+///Operation Operation 3,2
+;
+///Operation Operation 3,3
+switch (try0000_dispatch)
+///BlockStart Block 4,0
+{
+///Label Label 4,1 1
+default:
+///Operation Operation 4,2
+ProjectData.ClearProjectError();
+///Operation Operation 4,3
+num3 = 1;
+///Goto Goto 4,4 Dest:OK
+goto IL_0007;
+///Label Label 4,5
+case 196:
+///BlockStart Block 5,0
+{
+///Operation Operation 5,1
+num2 = num;
+///Operation Operation 5,2
+switch (num3)
+///BlockStart Block 6,0
+{
+///Label Label 6,1
+case 1:
+///Operation Operation 6,2
+break;
+///Label Label 6,3
+default:
+///Goto Goto 6,4 Dest:OK
+goto end_IL_0000;
+///BlockEnd Block 6,5
+}
+///Operation Operation 5,3
+int num4 = num2 + 1;
+///Operation Operation 5,4
+num2 = 0;
+///Operation Operation 5,5
+switch (num4)
+///BlockStart Block 6,0
+{
+///Label Label 6,1
+case 1:
+///Operation Operation 6,2
+break;
+///Label Label 6,3
+case 10:
+///Goto Goto 6,4 Dest:OK
+goto end_IL_0000_2;
+///Label Label 6,5
+case 11:
+///Goto Goto 6,6 Dest:OK
+goto end_IL_0000_3;
+///BlockEnd Block 6,7
+}
+///Goto Goto 5,6 Dest:OK
+goto default;
+///BlockEnd Block 5,7
+}
+///Label Label 4,6 1
+end_IL_0000_2:
+///Operation Operation 4,7
+break;
+///Label Label 4,8 1
+IL_0007:
+///Operation Operation 4,9
+num = 2;
+///Operation Operation 4,10
+FileSystem.FileOpen(99, COND.GenPlu + "\\Init\\Druck_ini.dat", OpenMode.Input);
+///Operation Operation 4,11
+b = 0;
+///Operation Operation 4,12
+while (!FileSystem.EOF(99))
+///BlockStart Block 5,0
+{
+///Operation Operation 5,1
+b = checked((byte)(unchecked(b) + 1));
+///Operation Operation 5,2
+FileSystem.Input(99, ref COND.Aus[b]);
+///BlockEnd Block 5,3
+}
+///Operation Operation 4,13
+FileSystem.FileClose(99);
+///Operation Operation 4,14
+break;
+///BlockEnd Block 4,15
+}
+///Operation Operation 3,4
+num = 10;
+///Operation Operation 3,5
+Process.Start(COND.GenPlu + "\\Hilfe\\TeilB.PDF");
+///Operation Operation 3,6
+break;
+///Label Label 3,7 1
+end_IL_0000:
+///Operation Operation 3,8
+;
+///BlockEnd Block 3,9
+}
+///Operation Operation 2,2
+catch (Exception obj) when (obj is not null && num3 != 0 && num2 == 0)
+///BlockStart Block 3,0
+{
+///Operation Operation 3,1
+ProjectData.SetProjectError(obj);
+///Operation Operation 3,2
+try0000_dispatch = 196;
+///Operation Operation 3,3
+continue;
+///BlockEnd Block 3,4
+}
+///Operation Operation 2,3
+throw ProjectData.CreateProjectError(-2146828237);
+///Operation Operation 2,4
+continue;
+///Label Label 2,5 1
+end_IL_0000_3:
+///Operation Operation 2,6
+break;
+///BlockEnd Block 2,7
+}
+///Operation Operation 1,8
+if (num2 != 0)
+///BlockStart Block 2,0
+{
+///Operation Operation 2,1
+ProjectData.ClearProjectError();
+///BlockEnd Block 2,2
+}
+///BlockEnd Block 1,9
+}

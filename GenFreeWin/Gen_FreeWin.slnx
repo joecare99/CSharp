@@ -1,0 +1,226 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Data/">
+    <Project Path="../CSharpBible/Data/DocumentUtils/Document.Base/Document.Base.csproj" />
+    <Project Path="../CSharpBible/Data/DocumentUtils/Document.Docx/Document.Docx.csproj" />
+    <Project Path="../CSharpBible/Data/DocumentUtils/Document.Html/Document.Html.csproj" />
+    <Project Path="../CSharpBible/Data/DocumentUtils/Document.Odf/Document.Odf.csproj" />
+    <Project Path="../CSharpBible/Data/DocumentUtils/Document.Pdf/Document.Pdf.csproj" />
+    <Project Path="../CSharpBible/Data/DocumentUtils/Document.Xaml/Document.Xaml.csproj" />
+  </Folder>
+  <Folder Name="/Data/DocExmple/">
+    <Project Path="../CSharpBible/Data/DocumentUtils/DocOdfTest/DocOdfTest.csproj" />
+    <Project Path="../CSharpBible/Data/DocumentUtils/HelloWorld/HelloWorld.csproj" />
+    <Project Path="../CSharpBible/Data/DocumentUtils/OdtBoldTextExample/OdtBoldTextExample.csproj" />
+  </Folder>
+  <Folder Name="/DB/">
+    <Project Path="../CSharpBible/DB/DBTest1/DBTest1.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="DAO/Interop.DAO.csproj" />
+    <Project Path="DAO/Interop.DAO_win.csproj" />
+    <Project Path="MdbBrowser/MdbBrowser.csproj" />
+    <Project Path="MdbBrowserTests/MdbBrowserTests.csproj" />
+    <Project Path="mdbTool/mdbTool.csproj" />
+    <Project Path="MSQBrowser/MSQBrowser.csproj" />
+    <Project Path="MSQBrowserTests/MSQBrowserTests.csproj" />
+  </Folder>
+  <Folder Name="/FPC/" />
+  <Folder Name="/FPC/1/">
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/cls_TestParseFBEntry.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/fra_OFBView.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/fra_OFBView.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/Frm_OFBToGedComMain.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/Frm_OFBToGedComMain.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/Frm_ParseFBEntryMain.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/Frm_ParseFBEntryMain.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/frm_TestOFBFrame.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/frm_TestOFBFrame.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/unt_FBParser.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/ParseFBEntry/unt_TestFBData.pas" />
+  </Folder>
+  <Folder Name="/FPC/Components/">
+    <File Path="../../Delphi/Projekte/Genealogie/Source/Components/cls_GenHelperBase.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/Components/fra_NavIData.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/Components/fra_NavIData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/Components/GBaseClasses.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/Components/GFacts.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/Components/GSource.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/Components/Unt_GNameHandler.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/Components/Unt_IData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/Components/unt_IGenBase2.pas" />
+  </Folder>
+  <Folder Name="/FPC/LazMapViewer/">
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvcache.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvde_intfgraphics.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvde_lcl.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvdlefpc.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvdownloadengine.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvdragobj.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvdrawingengine.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvengine.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvextradata.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvgeonames.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvgpsobj.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvgpx.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvjobqueue.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvjobs.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvmapprovider.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvmapviewer.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvmapviewerreg.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/source/mvtypes.pas" />
+  </Folder>
+  <Folder Name="/FPC/LazMapViewer/Example1/">
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/example/globals.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/example/gpslistform.lfm" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/example/gpslistform.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/example/gpsptform.lfm" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/example/gpsptform.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/example/main.lfm" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/example/main.pas" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/example/mapmarker.png" />
+    <File Path="../../Lazarus/Package-Repo/packages/LazMapViewer/example/MapViewer_Demo.lpr" />
+  </Folder>
+  <Folder Name="/FPC/WinAhnenCls/">
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/cls_HejAdopData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/cls_HejBase.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/cls_HejData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/cls_HejDataFilter.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/cls_HejHelper.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/cls_HejIndData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/cls_HejMarrData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/cls_HejPlaceData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/cls_HejSourceData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/fra_AhnenWinClone.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/fra_AhnenWinClone.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/fra_AWHejView.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/fra_AWHejView.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/fra_HejIndView.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/fra_HejIndView.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/fra_IndIndex.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/fra_IndIndex.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/frm_FilterEdit.lfm" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/frm_FilterEdit.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_ClsAdopHej.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_ClsHej.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_ClsHejFilter.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_ClsHejHelper.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_ClsIndHej.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_ClsMarrHej.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_ClsPlaceHej.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_ClsSourceHej.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_fraIndIndex.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/tst_FrmEditFilter.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/unt_AdopTestData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/unt_IndTestData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/unt_MarrTestData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/unt_PlaceTestData.pas" />
+    <File Path="../../Delphi/Projekte/Genealogie/Source/WinAhnenCls/unt_SourceTestData.pas" />
+  </Folder>
+  <Folder Name="/GenFree/">
+    <Project Path="Druck/druck.csproj" />
+    <Project Path="GedLes/gedles.csproj" />
+    <Project Path="GenDBImplOLEDB/GenDBImplOLEDB.csproj" />
+    <Project Path="GenDBImplOLEDBTests/GenDBImplOLEDBTests.csproj" />
+    <Project Path="GenFreeBase/GenFreeBase.csproj" />
+    <Project Path="GenFreeBaseClasses/GenFreeBaseClasses.csproj" />
+    <Project Path="GenFreeBaseClassesTests/GenFreeBaseClassesTests.csproj" />
+    <Project Path="GenFreeBaseTests/GenFreeBaseTests.csproj" />
+    <Project Path="GenFreeBrowser.Tests/GenFreeBrowser.Tests.csproj" />
+    <Project Path="GenFreeBrowser.ViewHost/GenFreeBrowser.ViewHost.csproj" />
+    <Project Path="GenFreeBrowser/GenFreeBrowser.csproj" />
+    <Project Path="GenFreeData/GenFreeData.csproj" />
+    <Project Path="GenFreeDataTests/GenFreeDataTests.csproj" />
+    <Project Path="GenFreeHelper/GenFreeHelper.csproj" />
+    <Project Path="GenFreeHelperTests/GenFreeHelperTests.csproj" />
+    <Project Path="GenFreeUIItfs/GenFreeUIItfs.csproj" />
+    <Project Path="GenFreeWin/GenFreeWin.csproj" />
+    <Project Path="GenFreeWin2/GenFreeWin2.csproj" />
+    <Project Path="GenFreeWin3/GenFreeWin3.csproj">
+      <BuildDependency Project="GenFreeUIItfs/GenFreeUIItfs.csproj" />
+    </Project>
+    <Project Path="GenFreeWinForms/GenFreeWinForms.csproj" />
+    <Project Path="GenFreeWinFormsTests/GenFreeWinFormsTests.csproj" />
+    <Project Path="GenFreeWinTests/GenFreeWinTests.csproj">
+      <BuildDependency Project="../CSharpBible/Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+    </Project>
+    <Project Path="GenFreeWinVm2/GenFreeWinVm2.csproj" />
+    <Project Path="GPUpd1/GPUpd1.csproj" />
+    <Project Path="MapDemo/MapDemo.csproj" />
+    <Project Path="PlaceAuthorityConsoleDemo/PlaceAuthorityConsoleDemo.csproj" />
+    <Project Path="PlaceAuthorityDemo/PlaceAuthorityDemo.csproj" />
+    <Project Path="ResExtractor/ResExtractor.csproj" />
+  </Folder>
+  <Folder Name="/GenSecure/">
+    <Project Path="GenSecure.Contracts/GenSecure.Contracts.csproj" />
+    <Project Path="GenSecure.Core.Tests/GenSecure.Core.Tests.csproj" />
+    <Project Path="GenSecure.Core/GenSecure.Core.csproj" />
+    <Project Path="GenSecure.Demo/GenSecure.Demo.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="../CSharpBible/Libraries/.info" />
+    <File Path="../CSharpBible/Libraries/Libraries.props" />
+    <File Path="../CSharpBible/Libraries/Libraries_net.props" />
+    <Project Path="../CSharpBible/Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../CSharpBible/Libraries/CommonDialogs/CommonDialogs.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="../CSharpBible/Libraries/ExtendedConsole/ExtendedConsole.csproj" />
+    <Project Path="../CSharpBible/Libraries/GenInterfaces/GenInterfaces.csproj" />
+    <Project Path="../CSharpBible/Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
+  </Folder>
+  <Folder Name="/RnzTrauer/">
+    <File Path="../WinAhnenNew/RnzTrauer/Directory.Build.props" />
+    <File Path="../WinAhnenNew/RnzTrauer/Directory.Packages.props" />
+    <Project Path="../WinAhnenNew/RnzTrauer/AmtsblattLoader.Console/AmtsblattLoader.Console.csproj" />
+    <Project Path="../WinAhnenNew/RnzTrauer/RnzTrauer.Console/RnzTrauer.Console.csproj" />
+    <Project Path="../WinAhnenNew/RnzTrauer/RnzTrauer.Core/RnzTrauer.Core.csproj" />
+    <Project Path="../WinAhnenNew/RnzTrauer/RnzTrauer.Tests/RnzTrauer.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/copilot-instructions.md" />
+    <File Path="GenFreeWin.props" />
+    <File Path="ReadMe.md" />
+    <File Path="README_PROJECTS_INDEX.md" />
+  </Folder>
+  <Folder Name="/Tools/">
+    <File Path="Tools/WinFormsDesignerCompat_AutoEvents.csx" />
+    <Project Path="../Transpiler_pp/TranspilerLib.CSharp/TranspilerLib.CSharp.csproj" />
+    <Project Path="../Transpiler_pp/TranspilerLib.Pascal/TranspilerLib.Pascal.csproj" />
+    <Project Path="../Transpiler_pp/TranspilerLib/TranspilerLib.csproj" />
+    <Project Path="VBUnObfusicator/VBUnObfusicator.csproj" />
+    <Project Path="VBUnObfusicatorTests/VBUnObfusicatorTests.csproj" />
+  </Folder>
+  <Folder Name="/WinAhnen/">
+    <File Path="../WinAhnenNew/WinAhnen.props" />
+    <Project Path="../WinAhnenNew/BaseGenClasses/BaseGenClasses.csproj" />
+    <Project Path="../WinAhnenNew/BaseGenClassesTests/BaseGenClassesTests.csproj" />
+    <Project Path="../WinAhnenNew/Gen_BaseItf/Gen_BaseItf.csproj" />
+    <Project Path="../WinAhnenNew/WinAhnenCls/WinAhnenCls.csproj" />
+    <Project Path="../WinAhnenNew/WinAhnenClsTests/WinAhnenClsTests.csproj" />
+    <Project Path="../WinAhnenNew/WinAhnenNew.Model.Tests/WinAhnenNew.Model.Tests.csproj" />
+    <Project Path="../WinAhnenNew/WinAhnenNew.Model/WinAhnenNew.Model.csproj" />
+    <Project Path="../WinAhnenNew/WinAhnenNew.UI.Tests/WinAhnenNew.UI.Tests.csproj" />
+    <Project Path="../WinAhnenNew/WinAhnenNew/WinAhnenNew.csproj" />
+  </Folder>
+  <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_09a_CTDialogBoxes/MVVM_09a_CTDialogBoxes.csproj" />
+  <Project Path="../CSharpBible/MVVM_Tutorial/WpfApp1/WpfApp_net.csproj" />
+  <Project Path="MdbBrowser/MdbBrowser2.csproj">
+    <Build Solution="*|x86" Project="false" />
+  </Project>
+</Solution>
