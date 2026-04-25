@@ -6,14 +6,19 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Document code thoroughly in English.
 - Validate changes with relevant builds and tests before finishing.
 - If requirements are unclear, ask clarifying questions before starting implementation or planning refinement.
-- Avoid UI text strings in core services. Use Enumerations instead, and keep UI-facing strings in the ViewModel/UI layer.
-- Prefer one class/interface/struct per file.
+- When reviewing build warnings in this repository, ignore unsupported older framework warnings if the project also targets newer supported frameworks. Additionally, ignore `IDE0130` warnings in test projects.
+
+## Process and Planning
 - Document changes in a DevOps manner using Markdown, extrapolating bugs, tasks, backlogs, and features.
 - Use `DevOps` as the planning directory in this workspace, and treat `.Info.md` as the general planning description file. Team terminology around Azure DevOps backlog items may differ from generic 'story' naming.
-- When reviewing build warnings in this repository, ignore unsupported older framework warnings if the project also targets newer supported frameworks. Additionally, ignore `IDE0130` warnings in test projects.
-- Keep project-specific decisions in the repository `DevOps` folder; do not store them in memory for this repository. Use memory only for general solution-wide working preferences.
 - Planning should be done step by step in the `DevOps` directory with a Scrum-oriented structure.
-- Extract complex UI elements into separate widgets/components to keep main windows clean and simple.
+
+## Memory
+- Keep project-specific decisions in the repository `DevOps` folder; do not store them in memory for this repository.
+- Use memory for general solution-wide or project-overlapping working preferences rather than repository-local implementation decisions.
+
+## Code Organization
+- Prefer one class/interface/struct per file.
 
 ## Testing
 - Use `MSTest` in the latest practical version for new or updated tests.
@@ -27,7 +32,20 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Use MVVM architecture for UI components to separate concerns and improve testability, using CommunityToolkit.Mvvm for MVVM implementation.
 - Prefer `NotifyPropertyChangedFor` over manual `OnPropertyChanged(nameof(...))` in CommunityToolkit.Mvvm observable properties where applicable.
 - Use Dependency Injection to manage dependencies and improve testability, using Microsoft.Extensions.DependencyInjection.
-- UI-facing strings and summary formatting should stay in the ViewModel/UI layer, not in extracted application logic services.
+- In UI applications, keep UI-facing strings and summary formatting in the ViewModel/UI layer rather than in extracted application logic services.
+- In UI applications, separate UI concerns from models, services, and reusable application logic where practical.
+- For larger UI applications, prefer at least a split between a UI-focused project and a non-UI project for models, services, and reusable orchestration; additional widget or controls projects are acceptable when they improve clarity.
+- Extract complex UI elements into separate widgets/components to keep main windows clean and simple.
+- When working in a project suite, prefer composing the suite from standalone apps or reusable modules instead of developing suite and standalone variants as separate duplicated products.
+- When a workflow depends on external data, make acquisition of the data basis an explicit first step so the UI and services can derive structure such as columns, groups, formats, or time base from it.
+
+## MVVM Requirements
+- In WPF UI projects, ViewModels must use CommunityToolkit.Mvvm.
+- Prefer inheriting from ObservableObject instead of custom base classes unless a documented exception exists.
+- Use [ObservableProperty] for observable state where practical.
+- Use [RelayCommand] or [AsyncRelayCommand] for commands where practical.
+- Use [NotifyPropertyChangedFor] instead of manual dependent property notifications where applicable.
+- Do not introduce new WPF ViewModels based on manual ICommand and manual property boilerplate unless required by framework constraints.
 
 ## Naming Conventions
 - Distinguish between UI control naming and variable/field naming.
