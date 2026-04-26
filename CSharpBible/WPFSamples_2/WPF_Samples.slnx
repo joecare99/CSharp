@@ -1,0 +1,70 @@
+<Solution>
+  <Folder Name="/Accessability/">
+    <Project Path="WPF_MoveWindow/WPF_MoveWindow.csproj" />
+    <Project Path="WPF_MoveWindow/WPF_MoveWindow_net.csproj" />
+    <Project Path="WPF_MoveWindowTests/WPF_MoveWindowTests.csproj" />
+    <Project Path="WPF_MoveWindowTests/WPF_MoveWindow_netTests.csproj" />
+  </Folder>
+  <Folder Name="/Animation/">
+    <Project Path="WPF_AnimationTiming/WPF_AnimationTiming.csproj" />
+    <Project Path="WPF_AnimationTiming/WPF_AnimationTiming_net.csproj" />
+    <Project Path="WPF_AnimationTimingTests/WPF_AnimationTimingTests.csproj" />
+    <Project Path="WPF_AnimationTimingTests/WPF_AnimationTiming_netTests.csproj" />
+    <Project Path="WPF_CustomAnimation/WPF_CustomAnimation.csproj" />
+    <Project Path="WPF_CustomAnimation/WPF_CustomAnimation_net.csproj" />
+    <Project Path="WPF_CustomAnimationTests/WPF_CustomAnimationTests.csproj" />
+    <Project Path="WPF_CustomAnimationTests/WPF_CustomAnimation_netTests.csproj" />
+  </Folder>
+  <Folder Name="/DataBinding/">
+    <Project Path="WPF_MasterDetail/WPF_MasterDetail.csproj" />
+    <Project Path="WPF_MasterDetail/WPF_MasterDetail_net.csproj" />
+    <Project Path="WPF_MasterDetailTests/WPF_MasterDetailTests.csproj" />
+    <Project Path="WPF_MasterDetailTests/WPF_MasterDetail_netTests.csproj" />
+  </Folder>
+  <Folder Name="/Getting_Started/">
+    <Project Path="WPF_Complex_Layout/WPF_Complex_Layout.csproj" />
+    <Project Path="WPF_Complex_Layout/WPF_Complex_Layout_net.csproj" />
+    <Project Path="WPF_Complex_LayoutTests/WPF_Complex_LayoutTests.csproj" />
+    <Project Path="WPF_Complex_LayoutTests/WPF_Complex_Layout_netTests.csproj" />
+    <Project Path="WPF_ControlsAndLayout/WPF_ControlsAndLayout.csproj" />
+    <Project Path="WPF_ControlsAndLayout/WPF_ControlsAndLayout_net.csproj" />
+    <Project Path="WPF_ControlsAndLayoutTests/WPF_ControlsAndLayoutTests.csproj" />
+    <Project Path="WPF_ControlsAndLayoutTests/WPF_ControlsAndLayout_netTests.csproj" />
+    <Project Path="WPF_Hello_World/WPF_Hello_World.csproj" />
+    <Project Path="WPF_Hello_World/WPF_Hello_World_net.csproj" />
+    <Project Path="WPF_Hello_WorldTests/WPF_Hello_WorldTests.csproj" />
+    <Project Path="WPF_Hello_WorldTests/WPF_Hello_World_netTests.csproj" />
+  </Folder>
+  <Folder Name="/Graphics/">
+    <Project Path="WPF_Brushes/WPF_Brushes.csproj" />
+    <Project Path="WPF_Geometry/WPF_Geometry.csproj" />
+    <Project Path="WPF_ImageView/WPF_ImageView.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="ReadMe.md" />
+    <File Path="WPF_Samples.props" />
+    <File Path="WPF_Samples_net.props" />
+  </Folder>
+  <Folder Name="/Sample Applications/">
+    <Project Path="WPF_StickyNotesDemo/WPF_StickyNotesDemo.csproj" />
+    <Project Path="WPF_StickyNotesDemo/WPF_StickyNotesDemo_net.csproj" />
+    <Project Path="WPF_StickyNotesDemoTests/WPF_StickyNotesDemoTests.csproj" />
+    <Project Path="WPF_StickyNotesDemoTests/WPF_StickyNotesDemo_netTests.csproj" />
+  </Folder>
+  <Folder Name="/Styles &amp; Templates/">
+    <File Path="Styles_and_Templates/WPF_Samples.props" />
+    <Project Path="Styles_and_Templates/WPF_AlternatingAppearanceOfItems/WPF_AlternatingAppearanceOfItems.csproj" />
+    <Project Path="Styles_and_Templates/WPF_ContentControlStyle/WPF_ContentControlStyle.csproj" />
+    <Project Path="Styles_and_Templates/WPF_EventTriggers/WPF_EventTriggers.csproj" />
+  </Folder>
+  <Project Path="WPF_Sample_Template/WPF_Sample_Template.csproj" />
+  <Project Path="WPF_Sample_Template/WPF_Sample_Template_net.csproj" />
+  <Project Path="WPF_Sample_TemplateTests/WPF_Sample_TemplateTests.csproj" />
+  <Project Path="WPF_Sample_TemplateTests/WPF_Sample_Template_netTests.csproj" />
+</Solution>

@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../ConsoleDisplay/ConsoleDisplay_win.csproj" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="../Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="C#-Basics.props" />
+    <File Path="C#-Basics_net.props" />
+  </Folder>
+  <Project Path="Basic_Del00_Template/Basic_Del00_Template.csproj" />
+  <Project Path="Basic_Del00_TemplateTests/Basic_Del00_TemplateTests.csproj" />
+  <Project Path="Basic_Del01_Action/Basic_Del01_Action.csproj" />
+  <Project Path="Basic_Del01_ActionTests/Basic_Del01_ActionTests.csproj" />
+  <Project Path="Basic_Del02_Filter/Basic_Del02_Filter.csproj" />
+  <Project Path="Basic_Del02_FilterTests/Basic_Del02_FilterTests.csproj" />
+  <Project Path="Basic_Del03_General/Basic_Del03_General.csproj" />
+  <Project Path="Basic_Del03_GeneralTests/Basic_Del03_GeneralTests.csproj" />
+  <Project Path="Basic_Del04_TestImposibleStuff/Basic_Del04_TestImposibleStuff.csproj" />
+  <Project Path="Basic_Del04_TestImposibleStuffTests/Basic_Del04_TestImposibleStuffTests.csproj" />
+</Solution>

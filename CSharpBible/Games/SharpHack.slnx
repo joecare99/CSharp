@@ -1,0 +1,89 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/ConsoleApps/">
+    <Project Path="../ConsoleApps/TestConsole/TestConsole.csproj" />
+    <Project Path="../ConsoleApps/TestConsole/TestConsole_net.csproj" />
+  </Folder>
+  <Folder Name="/Graphics/">
+    <File Path="../Graphics/Graphics.props" />
+    <File Path="../Graphics/Graphics_net.props" />
+    <Project Path="../Graphics/CanvasWPF2_ItemTemplateSelector/CanvasWPF2_ItemTemplateSelector.csproj" />
+    <Project Path="../Graphics/CanvasWPF_CT/CanvasWPF_CT.csproj" />
+    <Project Path="../Graphics/DynamicShapeWPF/DynamicShapeWPF.csproj" />
+    <Project Path="../Graphics/MVVM_Converter_Grid2/MVVM_Converter_Grid2.csproj" />
+    <Project Path="../Graphics/SuperResolutionOnnxSample/SuperResolutionOnnxSample3.csproj" />
+  </Folder>
+  <Folder Name="/Legacy/" />
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs.csproj" />
+    <Project Path="../Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
+    <Project Path="../Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="../Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
+    <Project Path="../Libraries/ExtendedConsole/ExtendedConsole.csproj" />
+    <Project Path="../Libraries/MathLIbrary/MathLibrary.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="CONTRIBUTING.md" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Games.props" />
+    <File Path="Games_net.props" />
+    <File Path="Packages.props" />
+    <File Path="ReadMe.md" />
+  </Folder>
+  <Folder Name="/SharpHack/">
+    <Project Path="SharpHack.AI/SharpHack.AI.csproj" />
+    <Project Path="SharpHack.AITests/SharpHack.AITests.csproj" />
+    <Project Path="SharpHack.Base/SharpHack.Base.csproj" />
+    <Project Path="SharpHack.BaseCreatures/SharpHack.BaseCreatures.csproj" />
+    <Project Path="SharpHack.BaseItems/SharpHack.BaseItems.csproj" />
+    <Project Path="SharpHack.BaseTests/SharpHack.BaseTests.csproj" />
+    <Project Path="SharpHack.Combat/SharpHack.Combat.csproj" />
+    <Project Path="SharpHack.CombatTests/SharpHack.CombatTests.csproj" />
+    <Project Path="SharpHack.Console/SharpHack.Console.csproj" />
+    <Project Path="SharpHack.Engine/SharpHack.Engine.csproj" />
+    <Project Path="SharpHack.EngineTests/SharpHack.EngineTests.csproj" />
+    <Project Path="SharpHack.LevelGen/SharpHack.LevelGen.csproj" />
+    <Project Path="SharpHack.LevelGenTests/SharpHack.LevelGenTests.csproj" />
+    <Project Path="SharpHack.Magic/SharpHack.Magic.csproj" />
+    <Project Path="SharpHack.MapExport/SharpHack.MapExport.csproj" />
+    <Project Path="SharpHack.Persist/SharpHack.Persist.csproj" />
+    <Project Path="SharpHack.Server/SharpHack.Server.csproj" />
+    <Project Path="SharpHack.Terminal/SharpHack.Terminal.csproj" />
+    <Project Path="SharpHack.ViewModel/SharpHack.ViewModel.csproj" />
+    <Project Path="SharpHack.Wpf/SharpHack.Wpf.csproj" />
+    <Project Path="SharpHack.WPF2D/SharpHack.WPF2D.csproj" />
+  </Folder>
+  <Folder Name="/Sokoban/">
+    <Project Path="Sokoban.Server/Sokoban.Server.csproj" />
+    <Project Path="Sokoban/Sokoban.csproj" />
+    <Project Path="Sokoban_Base/Sokoban_Base.csproj" />
+    <Project Path="Sokoban_Base/Sokoban_Base_win.csproj" />
+    <Project Path="Sokoban_BaseTests/Sokoban_BaseTests.csproj" />
+  </Folder>
+  <Folder Name="/TileSetAnimator/">
+    <Project Path="TileSetAnimator.Tests/TileSetAnimator.Tests.csproj" />
+    <Project Path="TileSetAnimator/TileSetAnimator.csproj" />
+  </Folder>
+  <Folder Name="/VTileEdit/">
+    <Project Path="VTileEdit.WPF/VTileEdit.WPF.csproj" />
+    <Project Path="VTileEdit.WPFTests/VTileEdit.WPFTests.csproj" />
+    <Project Path="VTileEdit/VTileEdit.csproj" />
+    <Project Path="VTileEditTests/VTileEditTests.csproj" />
+  </Folder>
+  <Project Path="Game_Base/Game_Base.csproj" />
+  <Project Path="Game_BaseTests/Game_BaseTests.csproj" />
+  <Project Path="MVVM_TiledDisplay_net/MVVM_TiledDisplay_net.csproj" />
+  <Project Path="RemoteTerminal.Tests/RemoteTerminal.Tests.csproj" />
+  <Project Path="RemoteTerminal/RemoteTerminal.csproj" />
+  <Project Path="SharpHack.View.FirstPerson/SharpHack.View.FirstPerson.csproj" />
+  <Project Path="SharpHack.ViewModel.Tests/SharpHack.ViewModel.Tests.csproj" />
+</Solution>

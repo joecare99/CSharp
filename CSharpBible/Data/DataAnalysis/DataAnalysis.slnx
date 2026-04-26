@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="SEW Syslog 20-10-25.txt" />
+    <File Path="SEW Syslog 20-10-25_Auswertung.xlsx" />
+  </Folder>
+  <Project Path="DataAnalysis.Core.Tests/DataAnalysis.Core.Tests.csproj" />
+  <Project Path="DataAnalysis.Core/DataAnalysis.Core.csproj" />
+  <Project Path="DataAnalysis.WPF.TestHarness/DataAnalysis.WPF.TestHarness.csproj" />
+  <Project Path="DataAnalysis.WPF/DataAnalysis.WPF.csproj" />
+  <Project Path="DataConvert.Console/DataConvert.Console.csproj" />
+</Solution>

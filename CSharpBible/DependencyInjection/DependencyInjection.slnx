@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="DependencyInjection.props" />
+    <File Path="DependencyInjection_net.props" />
+  </Folder>
+  <Project Path="CustomerRepository/CustomerRepository.csproj" />
+  <Project Path="CustomerRepositoryTests/CustomerRepositoryTests.csproj" />
+</Solution>

@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Documente/">
+    <File Path="Docs/C#-Programmierhandbuch   Microsoft Docs.html" />
+    <File Path="HTMLPage1.html" />
+  </Folder>
+  <Folder Name="/Documente/Einblicke in ein CSharp-Programm/">
+    <File Path="Docs/Einblicke in ein C#-Programm   Microsoft Docs.html" />
+  </Folder>
+  <Project Path="CGui/CGui.csproj" />
+  <Project Path="ConsoleTest/ConsoleTest.csproj" />
+  <Project Path="CSharpProgrammierHandbuch/CSharpProgrammierHandbuch.csproj" />
+  <Project Path="Fibonacci/Fibonacci.csproj" />
+  <Project Path="Fibonacci2/Fibonacci2.csproj" />
+  <Project Path="HelloWorld/HelloWorld.csproj" />
+  <Project Path="HelloWorldTests/HelloWorldTests.csproj" />
+</Solution>

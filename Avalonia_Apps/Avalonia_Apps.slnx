@@ -1,0 +1,149 @@
+<Solution>
+  <Folder Name="/AA05_CommandParCalc/">
+    <File Path="AA05_CommandParCalc/Directory.Packages.props" />
+    <Project Path="AA05_CommandParCalc/AA05_CommandParCalc/AA05_CommandParCalc.csproj" />
+    <Project Path="AA05_CommandParCalc/AA05_CommandParCalcTests/AA05_CommandParCalcTests.csproj" />
+  </Folder>
+  <Folder Name="/AA06_ValueConverter2/">
+    <File Path="AA06_ValueConverter2/Application.props" />
+    <File Path="AA06_ValueConverter2/Directory.Packages.props" />
+    <Project Path="AA06_ValueConverter2/AA06_Converters4/AA06_Converters4.csproj" />
+    <Project Path="AA06_ValueConverter2/AA06_Converters4Tests/AA06_Converters4Tests.csproj" />
+    <Project Path="AA06_ValueConverter2/AA06_ValueConverter2/AA06_ValueConverter2.csproj" />
+    <Project Path="AA06_ValueConverter2/AA06_ValueConverter2Tests/AA06_ValueConverter2Tests.csproj" />
+  </Folder>
+  <Folder Name="/AA09_DialogBoxes/">
+    <File Path="AA09_DialogBoxes/Application.props" />
+    <File Path="AA09_DialogBoxes/Directory.Packages.props" />
+    <Project Path="AA09_DialogBoxes/AA09_DialogBoxes/AA09_DialogBoxes.csproj" />
+    <Project Path="AA09_DialogBoxes/AA09_DialogBoxesTests/AA09_DialogBoxes_Tests.csproj" />
+  </Folder>
+  <Folder Name="/AA14_ScreenX/">
+    <File Path="AA14_ScreenX/Application.props" />
+    <File Path="AA14_ScreenX/Directory.Packages.props" />
+    <Project Path="AA14_ScreenX/AA14_ScreenX/AA14_ScreenX.csproj" />
+    <Project Path="AA14_ScreenX/ScreenX.Base/ScreenX.Base.csproj" />
+    <Project Path="AA14_ScreenX/ScreenX.BaseTests/ScreenX.BaseTests.csproj" />
+  </Folder>
+  <Folder Name="/AA15_Labyrinth/">
+    <File Path="AA15_Labyrinth/Directory.Packages.props" />
+    <Project Path="AA15_Labyrinth/AA15a_Treppen/AA15a_Treppen.csproj" />
+    <Project Path="AA15_Labyrinth/AA15_Labyrinth/AA15_Labyrinth.csproj" />
+    <Project Path="AA15_Labyrinth/AA15_LabyrinthTests/AA15_LabyrinthTests.csproj" />
+    <Project Path="AA15_Labyrinth/Treppen.Base/Treppen.Base.csproj" />
+    <Project Path="AA15_Labyrinth/Treppen.BaseTests/Treppen.BaseTests.csproj" />
+  </Folder>
+  <Folder Name="/AA16_UserControl/">
+    <File Path="AA16_UserControl/Directory.Packages.props" />
+    <Project Path="AA16_UserControl/AA16_Usercontrol1/AA16_UserControl1.csproj" />
+    <Project Path="AA16_UserControl/AA16_UserControl1Tests/AA16_UserControl1_Tests.csproj" />
+    <Project Path="AA16_UserControl/AA16_Usercontrol2/AA16_UserControl2.csproj" />
+  </Folder>
+  <Folder Name="/AA18_MultiConverter/">
+    <File Path="AA18_MultiConverter/Directory.Packages.props" />
+    <Project Path="AA18_MultiConverter/AA18_MultiConverters/AA18_MultiConverters.csproj" />
+    <Project Path="AA18_MultiConverter/AA18_MultiConvertersTests/AA18_MultiConvertersTests.csproj" />
+  </Folder>
+  <Folder Name="/AA19_Filterlists/">
+    <File Path="AA19_FilterLists/Application.props" />
+    <File Path="AA19_FilterLists/Directory.Packages.props" />
+    <Project Path="AA19_FilterLists/AA19_FilterLists/AA19_FilterLists.csproj" />
+    <Project Path="AA19_FilterLists/AA19_FilterListsTests/AA19_FilterListsTests.csproj" />
+  </Folder>
+  <Folder Name="/AA20_SysDialogs/">
+    <File Path="AA20_SysDialogs/Application.props" />
+    <File Path="AA20_SysDialogs/Directory.Packages.props" />
+    <Project Path="AA20_SysDialogs/AA20_Sysdialogs/AA20_Sysdialogs.csproj" />
+    <Project Path="AA20_SysDialogs/AA20_SysdialogsTests/AA20_SysdialogsTests.csproj" />
+  </Folder>
+  <Folder Name="/AA21_Button/">
+    <File Path="AA21_Buttons/Application.props" />
+    <File Path="AA21_Buttons/Directory.Packages.props" />
+    <Project Path="AA21_Buttons/AA21_Buttons/AA21_Buttons.csproj" />
+  </Folder>
+  <Folder Name="/AA22_AvlnCap/">
+    <File Path="AA22_AvlnCap/Application.props" />
+    <File Path="AA22_AvlnCap/Directory.Packages.props" />
+    <Project Path="AA22_AvlnCap/AA22_AvlnCap/AA22_AvlnCap.csproj" />
+    <Project Path="AA22_AvlnCap/AA22_AvlnCap2/AA22_AvlnCap2.csproj" />
+    <Project Path="AA22_AvlnCap/AA22_AvlnCapTests/AA22_AvlnCapTests.csproj" />
+  </Folder>
+  <Folder Name="/AA25_RichTextEdit/" />
+  <Folder Name="/Avalonia_App01/">
+    <File Path="Avalonia_App01/Avalonia_App01.props" />
+    <File Path="Avalonia_App01/Directory.Packages.props" />
+    <Project Path="Avalonia_App01/Avalonia_App_01.Android/Avalonia_App_01.Android.csproj" />
+    <Project Path="Avalonia_App01/Avalonia_App_01.Browser/Avalonia_App_01.Browser.csproj" />
+    <Project Path="Avalonia_App01/Avalonia_App_01.Desktop/Avalonia_App_01.Desktop.csproj" />
+    <Project Path="Avalonia_App01/Avalonia_App_01.iOS/Avalonia_App_01.iOS.csproj" />
+    <Project Path="Avalonia_App01/Avalonia_App_01/Avalonia_App_01.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_App02/">
+    <File Path="Avalonia_App02/Application.props" />
+    <File Path="Avalonia_App02/Directory.Packages.props" />
+    <Project Path="Avalonia_App02/Avalonia_App02/Avalonia_App02.csproj" />
+    <Project Path="Avalonia_App02/Avalonia_App02Tests/Avalonia_App02Tests.csproj" />
+  </Folder>
+  <Folder Name="/Legacy/" />
+  <Folder Name="/Legacy/Laby4/">
+    <File Path="../../Delphi/Diverses/Source/Labyrinth/frm_laby4.dfm" />
+    <File Path="../../Delphi/Diverses/Source/Labyrinth/frm_laby4.lfm" />
+    <File Path="../../Delphi/Diverses/Source/Labyrinth/frm_laby4.pas" />
+    <File Path="../../Delphi/Diverses/Source/Labyrinth/frm_laby4b.lfm" />
+    <File Path="../../Delphi/Diverses/Source/Labyrinth/frm_laby4b.pas" />
+    <File Path="../../Delphi/Diverses/Source/Labyrinth/tst_Laby4.pas" />
+    <File Path="../../Delphi/Diverses/Source/Labyrinth/unt_Laby4.pas" />
+    <File Path="../../Delphi/Diverses/Source/Labyrinth/unt_Point2d.pas" />
+  </Folder>
+  <Folder Name="/Legacy/RenderImage/">
+    <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderBase.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderBoundary.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderCamera.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderColor.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderEngine.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderLightSource.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderSimpleObjects.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/frm_DisplTestColor.lfm" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/frm_DisplTestColor.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/Frm_RenderImage.lfm" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/Frm_RenderImage.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/tst_RenderBase.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/tst_RenderBase2.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/tst_RenderBaseAngle.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/tst_RenderColor.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/tst_RenderEngine.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/tst_RenderMath.pas" />
+    <File Path="../../Delphi/Grafik/Source/RenderImage/unt_RenderMath.pas" />
+  </Folder>
+  <Folder Name="/Legacy/ScreenX/">
+    <File Path="../../Delphi/Grafik/Source/ScreenX/Frm_ScreenXMain.dfm" />
+    <File Path="../../Delphi/Grafik/Source/ScreenX/Frm_ScreenXMain.lfm" />
+    <File Path="../../Delphi/Grafik/Source/ScreenX/Frm_ScreenXMain.pas" />
+    <File Path="../../Delphi/Grafik/Source/ScreenX/Unt_RenderTask.pas" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="Libraries/Libraries.props" />
+    <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />
+    <Project Path="Libraries/Avln_BaseLibTests/Avln_BaseLibTests.csproj" />
+    <Project Path="Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="Libraries/MathLibrary/MathLibrary.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="CONTRIBUTING.md" />
+    <File Path="Packages.props" />
+    <File Path="Solution.props" />
+  </Folder>
+  <Project Path="AA20_SysDialogs/AA20a_CommonDialogs/AA20a_CommonDialogs.csproj" />
+  <Project Path="AA25_RichTextEdit/AA25_RichTextEdit/AA25_RichTextEdit.csproj" />
+  <Project Path="AA25_RichTextEdit/AA25_RichTextEditTests/AA25_RichTextEditTests.csproj" />
+  <Project Path="AA25_RichTextEdit/Avln_RichTextEdit/Avln_RichTextEdit.csproj" />
+  <Project Path="AA25_RichTextEdit/Document.Base/Document.Base.csproj" />
+  <Project Path="AA25_RichTextEdit/Document.Flow/Document.Flow.csproj" />
+  <Project Path="AvlnSamples/Avln_Hello_World/Avln_Hello_World.csproj" />
+  <Project Path="BenchmarkSuite1/BenchmarkSuite1.csproj" />
+  <Project Path="Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj" />
+  <Project Path="Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
+  <Project Path="RenderImage.Base/RenderImage.Base.csproj" />
+  <Project Path="RenderImage.BaseTests/RenderImage.BaseTests.csproj" />
+</Solution>

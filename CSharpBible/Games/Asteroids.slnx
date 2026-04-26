@@ -1,0 +1,45 @@
+<Solution>
+  <Folder Name="/Asteroids/">
+    <Project Path="Asteroids/Asteroids_net.csproj" />
+    <Project Path="AsteroidsModernEngine.Tests/AsteroidsModernEngine.Tests.csproj" />
+    <Project Path="AsteroidsModernEngine/AsteroidsModernEngine.csproj" />
+    <Project Path="AsteroidsModernUI/AsteroidsModernUI.csproj" />
+    <Project Path="Asteroids_Base/Asteroids_Base.csproj" />
+  </Folder>
+  <Folder Name="/FPC/">
+    <File Path="../../../Delphi/Games/Source/asteroids/CharEdges.txt" />
+    <File Path="../../../Delphi/Games/Source/asteroids/Credits.txt" />
+    <File Path="../../../Delphi/Games/Source/asteroids/TestAsteroTypes.pas" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uDlg_EnterName.lfm" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uDlg_EnterName.pas" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uGame.pas" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uHighscores.lfm" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uHighscores.pas" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uInfo.lfm" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uInfo.pas" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uKeys.lfm" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uKeys.pas" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uMain.lfm" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uMain.pas" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uSettings.lfm" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uSettings.pas" />
+    <File Path="../../../Delphi/Games/Source/asteroids/uTypes.pas" />
+  </Folder>
+  <Folder Name="/Graphics/">
+    <File Path="../Graphics/Graphics.props" />
+    <File Path="../Graphics/Graphics_net.props" />
+    <Project Path="../Graphics/CanvasWPF_CT/CanvasWPF_CT.csproj" />
+    <Project Path="../Graphics/DynamicShapeWPF/DynamicShapeWPF.csproj" />
+    <Project Path="../Graphics/MVVM_Converter_Grid2/MVVM_Converter_Grid2.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="Games.props" />
+    <File Path="Games_net.props" />
+    <File Path="VectorGfx/VectorGfx.csproj" />
+  </Folder>
+</Solution>

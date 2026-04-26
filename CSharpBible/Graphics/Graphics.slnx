@@ -1,0 +1,224 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Games/">
+    <File Path="../Games/Games.props" />
+    <File Path="../Games/Games_net.props" />
+    <Project Path="../Games/Game_Base/Game_Base.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Games/Sokoban_Base/Sokoban_Base.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Games/Werner_Flaschbier/Werner_Flaschbier_Base.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Graphics/">
+    <Project Path="ConsoleApp1/ColorVis.csproj" />
+    <Project Path="HilpertColorMap/HilpertColorMap.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MarbleBoard.Engine.Tests/MarbleBoard.Engine.Tests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MarbleBoard.Engine/MarbleBoard.Engine.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MarbleBoard.Wpf/MarbleBoard.Wpf.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="PrimeDisc/PrimeDisc.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="ScreenX.Base/ScreenX.Base.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="ScreenX.BaseTests/ScreenX.BaseTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries.props" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/ConsoleDisplay/ConsoleDisplay.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/MachLearn/">
+    <File Path="ML.ReadMe.md" />
+    <Project Path="Cifar10.WPF/Cifar10.WPF.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Cifar10_2.WPF/Cifar10_2.WPF.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="libCIFAR/libCIFAR.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="libMachLearn/libMachLearn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MNIST1Learn/Mnist1Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MNIST2Learn/Mnist2Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MNIST3Learn/Mnist3Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MNIST4Learn/Mnist4Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MNIST5Learn/Mnist5Learn.csproj" />
+    <Project Path="MNISTLearn/Mnist6Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="SuperResolutionOnnxSample/SuperResolutionOnnxSample4.csproj" />
+    <Project Path="SuperResolutionOnnxSample0/SuperResolutionOnnxSample0.csproj" />
+    <Project Path="SuperResolutionOnnxSample1/SuperResolutionOnnxSample1.csproj" />
+    <Project Path="SuperResolutionOnnxSample2/SuperResolutionOnnxSample2.csproj" />
+    <Project Path="SuperResolutionOnnxSample3/SuperResolutionOnnxSample3.csproj" />
+    <Project Path="XOR3Learn/XOR3Learn.csproj" />
+    <Project Path="XORLearn/Cnt3Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="XORLearn0/XORLearn0.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="XORLearn1/XORLearn1.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/MVVM/">
+    <Project Path="MVVM_Converter_CTDrawGrid/MVVM_Converter_CTDrawGrid.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Converter_CTDrawGrid2/MVVM_Converter_CTDrawGrid2.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Converter_CTImgGrid/MVVM_Converter_CTImgGrid.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Converter_DrawGrid/MVVM_Converter_DrawGrid.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Converter_DrawGrid2/MVVM_Converter_DrawGrid2.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Converter_DrawGrid3_NonLin/MVVM_Converter_DrawGrid3_NonLin.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Converter_Grid3_NonLin/MVVM_Converter_Grid3_NonLin.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Converter_ImgGrid/MVVM_Converter_ImgGrid.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Converter_ImgGrid2/MVVM_Converter_ImgGrid2.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_DynamicShape/MVVM_DynamicShape.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_ImageHandling/MVVM_ImageHandling.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_ImageHandling/MVVM_ImageHandling_net.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_ImageHandlingTests/MVVM_ImageHandlingTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_ImageHandlingTests/MVVM_ImageHandling_netTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Lines_on_Grid/MVVM_Lines_on_Grid.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="MVVM_Lines_on_Grid2/MVVM_Lines_on_Grid2.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path="ChristmasCard.svg" />
+    <File Path="ChristmasCard.xaml" />
+    <File Path="ChristmasCard2.svg" />
+    <File Path="Graphics.props" />
+    <File Path="Graphics_net.props" />
+    <File Path="ReadMe.md" />
+  </Folder>
+  <Folder Name="/WaveFunColapse/" />
+  <Folder Name="/WPF-Samples/">
+    <File Path="../WPFSamples_2/WPF_Samples_net.props" />
+    <Project Path="../WPFSamples_2/WPF_Geometry/WPF_Geometry.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../WPFSamples_2/WPF_ImageView/WPF_ImageView.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Project Path="All_Graphics/All_Graphics_net.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CanvasWPF/CanvasWPF.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CanvasWPF2_CTItemTemplateSelector/CanvasWPF2_CTItemTemplateSelector.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CanvasWPF2_ItemTemplateSelector/CanvasWPF2_ItemTemplateSelector.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="CanvasWPF_CT/CanvasWPF_CT.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="DynamicShapeWPF/DynamicShapeWPF.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="PlotgraphWPF/PlotgraphWPF.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="Polyline/Polyline.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="Polyline/Polyline2.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="Polyline/Polyline_net.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="PolySpline/PolySpline.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="PolySpline/PolySpline_net.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="TitleGen/TitleGen.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="TitleGen2/TitleGen2.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+</Solution>

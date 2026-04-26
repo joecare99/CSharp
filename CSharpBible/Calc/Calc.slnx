@@ -1,0 +1,42 @@
+<Solution>
+  <Folder Name="/Calc_32/">
+    <Project Path="Calc32/Calc32.csproj" />
+    <Project Path="Calc32/Calc32.Model.csproj" />
+    <Project Path="Calc32/Calc32.WForms.csproj" />
+    <Project Path="Calc32/Calc32_net.csproj" />
+    <Project Path="Calc32/Calc32_net.WForms.csproj" />
+    <Project Path="Calc32Cons/Calc32Cons.csproj" />
+    <Project Path="Calc32Cons/Calc32Cons_net.csproj" />
+    <Project Path="Calc32Tests/Calc32Tests.csproj" />
+    <Project Path="Calc32Tests/Calc32_netTests.csproj" />
+    <Project Path="Calc32WPF/Calc32.WPF.csproj" />
+    <Project Path="Calc32WPF/Calc32WPF.csproj" />
+    <Project Path="Calc32WPF/Calc32WPF_net.csproj" />
+    <Project Path="Calc32WPF/Calc32_net.WPF.csproj" />
+    <Project Path="Calc32WPFTests/Calc32WPFTests.csproj" />
+    <Project Path="Calc32WPFTests/Calc32WPF_netTests.csproj" />
+  </Folder>
+  <Folder Name="/Calc_64/">
+    <Project Path="Calc64Base/Calc64Base.csproj" />
+    <Project Path="Calc64BaseTests/Calc64BaseTests.csproj" />
+    <Project Path="Calc64WF/Calc64WF.csproj" />
+    <Project Path="Calc64WF/Calc64WF_net.csproj" />
+    <Project Path="Calc64WFTests/Calc64WFTests.csproj" />
+    <Project Path="Calc64WFTests/Calc64WF_netTests.csproj" />
+    <Project Path="Calc64_Wpf/Calc64_Wpf.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="../Libraries/ConsoleLib/ConsoleLib_net.csproj" />
+    <Project Path="../Libraries/ExtendedConsole/ExtendedConsole.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+    <Project Path="../Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="Calc.props" />
+    <File Path="Calc_net.props" />
+  </Folder>
+</Solution>
