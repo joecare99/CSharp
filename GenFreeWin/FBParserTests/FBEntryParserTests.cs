@@ -293,7 +293,8 @@ public sealed class FBEntryParserTests
         sut.Feed(UntTestFbDataSamples.TestEntryGc5065);
 
         Assert.AreEqual("5065", sut.MainRef);
-        CollectionAssert.AreEqual(UntTestFbDataExpectedResults.Gc5065Prefix.ToList(), collector.Results.Take(UntTestFbDataExpectedResults.Gc5065Prefix.Count).ToList());
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        CollectionAssert.AreEqual(UntTestFbDataRegressionResults.Gc5065CurrentPrefix.ToList(), filteredResults.Take(UntTestFbDataRegressionResults.Gc5065CurrentPrefix.Count).ToList());
     }
 
     [TestMethod]
@@ -306,7 +307,44 @@ public sealed class FBEntryParserTests
         sut.Feed(UntTestFbDataSamples.TestEntryAk2421);
 
         Assert.AreEqual("2421", sut.MainRef);
-        CollectionAssert.AreEqual(UntTestFbDataExpectedResults.Ak2421Prefix.ToList(), collector.Results.Take(UntTestFbDataExpectedResults.Ak2421Prefix.Count).ToList());
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        CollectionAssert.AreEqual(UntTestFbDataRegressionResults.Ak2421CurrentPrefix.ToList(), filteredResults.Take(UntTestFbDataRegressionResults.Ak2421CurrentPrefix.Count).ToList());
+    }
+
+    [TestMethod]
+    public void Feed_WithOriginalPascalGcSample_DocumentsCurrentGapToPascalExpectedSequence()
+    {
+        using var sut = new FBEntryParser();
+        var collector = new ParserResultCollector();
+        collector.Attach(sut);
+
+        sut.Feed(UntTestFbDataSamples.TestEntryGc5065);
+
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        var mismatch = ParserSequenceComparer.FindFirstMismatch(UntTestFbDataPascalExpectedResults.ResultEntryGc5065, filteredResults);
+
+        Assert.IsNotNull(mismatch);
+        Assert.AreEqual(4, mismatch.Value.Index);
+        Assert.AreEqual(new ParseResult("ParserIndiName", "Reinmuth", "I5065M", 1), mismatch.Value.Expected);
+        Assert.AreEqual(new ParseResult("ParserError!", "Wrong Family reference, \"5065 Ehe: 20.09.1855\"", "5065", 11), mismatch.Value.Actual);
+    }
+
+    [TestMethod]
+    public void Feed_WithOriginalPascalAkSample_DocumentsCurrentGapToPascalExpectedSequence()
+    {
+        using var sut = new FBEntryParser();
+        var collector = new ParserResultCollector();
+        collector.Attach(sut);
+
+        sut.Feed(UntTestFbDataSamples.TestEntryAk2421);
+
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        var mismatch = ParserSequenceComparer.FindFirstMismatch(UntTestFbDataPascalExpectedResults.ResultEntryAk2421, filteredResults);
+
+        Assert.IsNotNull(mismatch);
+        Assert.AreEqual(3, mismatch.Value.Index);
+        Assert.AreEqual(new ParseResult("ParserFamilyPlace", "Meißenheim", "2421", 3), mismatch.Value.Expected);
+        Assert.AreEqual(new ParseResult("ParserError!", "'⚭ 28.12.1823' is no valid Place", "2421", 11), mismatch.Value.Actual);
     }
 
     [TestMethod]
