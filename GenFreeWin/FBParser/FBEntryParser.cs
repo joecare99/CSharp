@@ -881,6 +881,264 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                     }
 
                     break;
+                case 10:
+                    if (In(CharAt(text, localOffset), Ziffern.Concat(['.', '/'])))
+                    {
+                        localSubstring += CharAt(text, localOffset);
+                    }
+                    else if (CharAt(text, localOffset) == ' '
+                        && ((localOffset + 1 <= text.Length
+                                && In(CharAt(text, localOffset + 1), Ziffern)
+                                && (TestFor(localSubstring, 1, CUnknownKn) || TestFor(localSubstring, 1, CDateModif)))
+                            || TestFor(text, localOffset + 1, CDateModif, out localFound)))
+                    {
+                        localSubstring += ' ';
+                    }
+                    else if (TestFor(text, localOffset, CDateModif, out localFound))
+                    {
+                        localPlace = localSubstring.Trim();
+                        localSubstring = CDateModif[localFound];
+                        localOffset += CDateModif[localFound].Length - 1;
+                    }
+                    else if (TestFor(text, localOffset, CUnknownKn, out localFound))
+                    {
+                        localSubstring += CUnknownKn[localFound];
+                        localOffset += CUnknownKn[localFound].Length - 1;
+                    }
+                    else
+                    {
+                        if (localSubstring.Length > 1)
+                        {
+                            localEventDate = localSubstring;
+                            SetFamilyDate(localMainFamRef, ParserEventType.evt_Marriage, localSubstring);
+                            localSubstring = string.Empty;
+                            if (localPlace != string.Empty)
+                            {
+                                SetFamilyPlace(localMainFamRef, ParserEventType.evt_Marriage, localPlace);
+                            }
+                            else
+                            {
+                                localMode = 11;
+                            }
+                        }
+
+                        if (CharAt(text, localOffset) == ':')
+                        {
+                            if (_defaultPlace != string.Empty && localPlace == string.Empty)
+                            {
+                                SetFamilyPlace(localMainFamRef, ParserEventType.evt_Marriage, _defaultPlace);
+                            }
+
+                            localMode = 5;
+                        }
+                    }
+
+                    break;
+                case 11:
+                    if (localSubstring == string.Empty
+                        && (!text.Contains(':') || (text.Contains("Kd", StringComparison.Ordinal) && text.IndexOf(':') > text.IndexOf("Kd", StringComparison.Ordinal))))
+                    {
+                        Error(this, ": missing");
+                        localMode = 5;
+                        continue;
+                    }
+
+                    if (BuildData(localIndId, text, ref localOffset, ref localSubstring, ref localData))
+                    {
+                        if (localEntryType == ParserEventType.evt_Marriage)
+                        {
+                            SetFamilyPlace(localMainFamRef, localEntryType, localSubstring);
+                        }
+                        else
+                        {
+                            localPlace = localSubstring;
+                        }
+
+                        localSubstring = string.Empty;
+                        if (localData != string.Empty)
+                        {
+                            if (localEntryType == ParserEventType.evt_Marriage)
+                            {
+                                SetFamilyData(localMainFamRef, localEntryType, localData.Trim());
+                                localData = string.Empty;
+                            }
+                            else
+                            {
+                                localAddEvent = localEntryType;
+                            }
+
+                            localAdditional = string.Empty;
+                            localSubstring = string.Empty;
+                        }
+                    }
+
+                    if (CharAt(text, localOffset) == ':')
+                    {
+                        localSubstring = string.Empty;
+                        localMode = 5;
+                    }
+
+                    break;
+                case 100:
+                    if (TestFor(text, localOffset, CsSeparatorGc))
+                    {
+                        localOffset += CsSeparatorGc.Length - 1;
+                        localSubstring = string.Empty;
+                        localFirstEntry = true;
+                        if (localEntryType == ParserEventType.evt_Marriage)
+                        {
+                            localTest = CountChar(text, CsSeparatorGc[0]);
+                            localPersonType = (localFamType == 1 || localTest == 3) ? 'M' : 'F';
+                            localMode = 110;
+                        }
+                        else if (Copy(text, localOffset + 2, 7) == "Kinder:" || Copy(text, localOffset + 2, 5) == "Kind:")
+                        {
+                            localPersonType = 'C';
+                            localChildCount = 0;
+                            localMode = 120;
+                        }
+                        else
+                        {
+                            localPersonType = 'F';
+                            localMode = 110;
+                        }
+                    }
+
+                    break;
+                case 101:
+                    if (In(CharAt(text, localOffset), Ziffern))
+                    {
+                        localSubstring += CharAt(text, localOffset);
+                    }
+                    else if (CharAt(text, localOffset) == ' '
+                        && localSubstring != string.Empty
+                        && localOffset + 1 <= text.Length
+                        && In(CharAt(text, localOffset + 1), Ziffern))
+                    {
+                        localSubstring += CharAt(text, localOffset);
+                    }
+                    else if (CharAt(text, localOffset) == '.'
+                        && ((localOffset + 1 <= text.Length && In(CharAt(text, localOffset + 1), Ziffern.Concat(['.'])))
+                            || (localOffset > 1 && In(CharAt(text, localOffset - 1), Charset.Concat(['.'])))))
+                    {
+                        localSubstring += CharAt(text, localOffset);
+                    }
+                    else if (CharAt(text, localOffset) == '('
+                        && ParseAdditional(text, ref localOffset, out localAdditional))
+                    {
+                        if (localSubstring.Trim() == string.Empty)
+                        {
+                            localSubstring = "(" + localAdditional + ")";
+                        }
+                        else if (localEntryType == ParserEventType.evt_Marriage)
+                        {
+                            SetFamilyData(this.MainRef == string.Empty ? localFamRef : localFamRef, localEntryType, localAdditional);
+                        }
+                        else
+                        {
+                            SetIndiData(localIndId, localEntryType, localAdditional);
+                        }
+                    }
+                    else if (localSubstring == string.Empty && TestFor(text, localOffset, CDateModif, out localFound))
+                    {
+                        localOffset += CDateModif[localFound].Length;
+                        localSubstring += CDateModif[localFound];
+                        if (localOffset <= text.Length && new[] { ' ', '.' }.Contains(CharAt(text, localOffset)))
+                        {
+                            localSubstring += CharAt(text, localOffset);
+                        }
+                        else
+                        {
+                            localOffset--;
+                        }
+                    }
+                    else
+                    {
+                        if (localSubstring.Length > 2)
+                        {
+                            if (localEntryType == ParserEventType.evt_Marriage)
+                            {
+                                localEventDate = localSubstring;
+                                SetFamilyDate(localFamRef, localEntryType, localSubstring);
+                            }
+                            else
+                            {
+                                SetIndiDate(localIndId, localEntryType, localSubstring);
+                            }
+
+                            localSubstring = string.Empty;
+                            localMode = 102;
+                            localPlaceFlag = false;
+                        }
+                        else if (In(CharAt(text, localOffset), Charset))
+                        {
+                            localSubstring += CharAt(text, localOffset);
+                        }
+                    }
+
+                    if (TestFor(text, localOffset, CsSeparatorGc)
+                        || CharAt(text, localOffset) == CsSeparator[0]
+                        || (CharAt(text, localOffset) == '.' && localMode == 102))
+                    {
+                        localMode = localRetMode;
+                        localOffset--;
+                    }
+
+                    break;
+                case 102:
+                    if (!new[] { '<', '[', '.', '(', CsSeparator[0] }.Contains(CharAt(text, localOffset))
+                        && !TestFor(text, localOffset, [CsSeparatorGc, VbNewLine, " " + CsMarrPartKn + " "]))
+                    {
+                        localSubstring += CharAt(text, localOffset);
+                    }
+                    else if (CharAt(text, localOffset) == '.'
+                        && (!TestFor(text, localOffset + 1, [" ", "\t", VbNewLine, "PN"])
+                            || ((localSubstring.Length < 4) && (localSubstring != string.Empty) && In(localSubstring[0], UpperCharset))))
+                    {
+                        localSubstring += '.';
+                    }
+                    else
+                    {
+                        if (localPlaceFlag && localSubstring.Length > 2)
+                        {
+                            if (localEntryType == ParserEventType.evt_Marriage)
+                            {
+                                SetFamilyPlace(localFamRef, localEntryType, localSubstring.Trim());
+                            }
+                            else
+                            {
+                                SetIndiPlace(localIndId, localEntryType, localSubstring.Trim());
+                            }
+
+                            localSubstring = string.Empty;
+                        }
+
+                        if (CharAt(text, localOffset) == '('
+                            && ParseAdditional(text, ref localOffset, out localAdditional))
+                        {
+                            if (localEntryType != ParserEventType.evt_Marriage)
+                            {
+                                SetIndiData(localIndId, localEntryType, localAdditional.Trim());
+                            }
+
+                            localSubstring = string.Empty;
+                        }
+                        else if (new[] { CsSeparator[0], '<', '[', '.' }.Contains(CharAt(text, localOffset))
+                            || TestFor(text, localOffset, [CsSeparatorGc, VbNewLine, " " + CsMarrPartKn + " "]))
+                        {
+                            localMode = localRetMode;
+                            localSubstring = string.Empty;
+                            localOffset--;
+                        }
+                    }
+
+                    if (localSubstring == "in ")
+                    {
+                        localSubstring = string.Empty;
+                        localPlaceFlag = true;
+                    }
+
+                    break;
                 default:
                     // The original state machine contains many additional modes. They are preserved in the Pascal source
                     // and should be ported incrementally. The current implementation already covers the common non-GC flow,
