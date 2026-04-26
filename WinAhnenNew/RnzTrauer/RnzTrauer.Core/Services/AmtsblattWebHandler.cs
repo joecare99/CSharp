@@ -31,7 +31,8 @@ public sealed class AmtsblattWebHandler : IDisposable
         var xOptions = new FirefoxOptions();
         Driver = new FirefoxDriver(xOptions);
         Driver.Navigate().GoToUrl(_config.Url);
-        while (Driver.Title != _config.Title)
+        string s;
+        while ((s=Driver.Title) != _config.Title)
         {
             Thread.Sleep(500);
         }
