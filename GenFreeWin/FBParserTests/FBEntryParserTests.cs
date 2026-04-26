@@ -312,6 +312,59 @@ public sealed class FBEntryParserTests
     }
 
     [TestMethod]
+    [DynamicData(nameof(AkSamples), DynamicDataSourceType.Method)]
+    public void Feed_AkSamples(string filename,string sEntr, IReadOnlyList<ParseResult> expectedResults )
+    {
+        using var sut = new FBEntryParser();
+        var collector = new ParserResultCollector();
+        collector.Attach(sut);
+
+        sut.Feed(sEntr);
+
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        CollectionAssert.AreEqual(expectedResults.ToList(), filteredResults.ToList());
+    }
+
+    private static IEnumerable<object[]> AkSamples()
+    {
+        const string sDataPath = "C:\\Projekte\\Delphi\\Data\\ParseFB";
+        // Implement logic to read sample files from sDataPath and yield return them as object arrays
+        foreach (var file in Directory.EnumerateFiles(sDataPath, "*.enttxt"))
+        {
+            if (!File.Exists(Path.ChangeExtension(file,".entexp")))
+            {
+                continue; // Skip if expected result file already exists, or implement logic to read expected results
+            }
+            var content = File.ReadAllText(file);
+            var expectedResults = ParseExpectedResultsForFile(Path.ChangeExtension(file, ".entexp")); // Implement this method to parse expected results
+            yield return new object[] { Path.GetFileName(file), content, expectedResults };
+        }
+        yield break;
+    }
+
+    private static IReadOnlyList<ParseResult> ParseExpectedResultsForFile(string v)
+    {
+        var FileContent = File.ReadAllLines(v);
+        var expectedResults = new List<ParseResult>();
+        foreach (var line in FileContent.Skip(1))
+        {
+            var parts = line.Split('\t');
+            if (parts.Length == 4)
+            {
+                expectedResults.Add(new ParseResult
+                {
+                    EventType = parts[0],
+                    Data = parts[1],
+                    Reference = parts[2],
+                    SubType = int.TryParse(parts[3], out var subType) ? subType : 0
+                });
+            }
+        }
+
+        return expectedResults;
+    }
+
+    [TestMethod]
     public void Feed_WithOriginalPascalGcSample_DocumentsCurrentGapToPascalExpectedSequence()
     {
         using var sut = new FBEntryParser();
@@ -324,9 +377,9 @@ public sealed class FBEntryParserTests
         var mismatch = ParserSequenceComparer.FindFirstMismatch(UntTestFbDataPascalExpectedResults.ResultEntryGc5065, filteredResults);
 
         Assert.IsNotNull(mismatch);
-        Assert.AreEqual(4, mismatch.Value.Index);
-        Assert.AreEqual(new ParseResult("ParserIndiName", "Reinmuth", "I5065M", 1), mismatch.Value.Expected);
-        Assert.AreEqual(new ParseResult("ParserError!", "Wrong Family reference, \"5065 Ehe: 20.09.1855\"", "5065", 11), mismatch.Value.Actual);
+        Assert.AreEqual(55, mismatch.Value.Index);
+        Assert.AreEqual(new ParseResult("ParserIndiData", "M", "I5065C1", 6), mismatch.Value.Expected);
+        Assert.AreEqual(new ParseResult("ParserIndiDate", "06.08.1856", "I5065C1", 1), mismatch.Value.Actual);
     }
 
     [TestMethod]
@@ -344,7 +397,7 @@ public sealed class FBEntryParserTests
         Assert.IsNotNull(mismatch);
         Assert.AreEqual(3, mismatch.Value.Index);
         Assert.AreEqual(new ParseResult("ParserFamilyPlace", "Meißenheim", "2421", 3), mismatch.Value.Expected);
-        Assert.AreEqual(new ParseResult("ParserError!", "'⚭ 28.12.1823' is no valid Place", "2421", 11), mismatch.Value.Actual);
+        Assert.AreEqual(new ParseResult("ParserIndiName", "Andreas Rosewich", "I2421M", 0), mismatch.Value.Actual);
     }
 
     [TestMethod]

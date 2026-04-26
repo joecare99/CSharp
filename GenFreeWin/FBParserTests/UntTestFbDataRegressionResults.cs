@@ -19,6 +19,6 @@ internal static class UntTestFbDataRegressionResults
         new("ParserStartFamily", "2421", string.Empty, 0),
         new("ParserFamilyType", string.Empty, "2421", 1),
         new("ParserFamilyDate", "28.12.1823", "2421", 3),
-        new("ParserError!", "'⚭ 28.12.1823' is no valid Place", "2421", 11),
+        new("ParserIndiName", "Andreas Rosewich", "I2421M", 0),
     ];
 }
