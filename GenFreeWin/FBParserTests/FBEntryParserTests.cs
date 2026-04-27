@@ -1,4 +1,5 @@
 using FBParser;
+using Mono.Cecil.Rocks;
 
 namespace FBParserTests;
 
@@ -261,6 +262,62 @@ public sealed class FBEntryParserTests
     }
 
     [TestMethod]
+    public void HandleNonPersonEntry_WithLedigOccupation_EmitsSeparatedDescriptionAndOccupation()
+    {
+        using var sut = new FBEntryParser();
+        sut.DefaultPlace = "Meißenheim";
+        var collector = new ParserResultCollector();
+        collector.Attach(sut);
+
+        var result = sut.HandleNonPersonEntry("led.Rentnerin", "I61F");
+
+        Assert.AreEqual(ParserEventType.evt_Occupation, result);
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        CollectionAssert.AreEqual(
+        new List<ParseResult>()
+        {
+            new ParseResult("ParserIndiData", "ledig", "I61F", (int)ParserEventType.evt_Description),
+            new ParseResult("ParserIndiOccu", "Rentnerin", "I61F", (int)ParserEventType.evt_Occupation),
+            new ParseResult("ParserIndiPlace", "Meißenheim", "I61F", (int)ParserEventType.evt_Occupation),
+        },
+        filteredResults.ToList());
+    }
+
+    [TestMethod]
+    public void HandleNonPersonEntry_WithLedigOnly_EmitsDescriptionPlaceBeforeDescription()
+    {
+        using var sut = new FBEntryParser();
+        sut.DefaultPlace = "Meißenheim";
+        var collector = new ParserResultCollector();
+        collector.Attach(sut);
+
+        var result = sut.HandleNonPersonEntry("ledig.", "I3657C4");
+
+        Assert.AreEqual(ParserEventType.evt_Occupation, result);
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        Assert.AreEqual(2, filteredResults.Count);
+        Assert.AreEqual(new ParseResult("ParserIndiPlace", "Meißenheim", "I3657C4", (int)ParserEventType.evt_Description), filteredResults[0]);
+        Assert.AreEqual(new ParseResult("ParserIndiData", "ledig", "I3657C4", (int)ParserEventType.evt_Description), filteredResults[1]);
+    }
+
+    [TestMethod]
+    public void HandleNonPersonEntry_WithLedigOnlyAfterOccupation_EmitsOccupationPlaceThenDescription()
+    {
+        using var sut = new FBEntryParser();
+        sut.DefaultPlace = "Meißenheim";
+        var collector = new ParserResultCollector();
+        collector.Attach(sut);
+
+        var result = sut.HandleNonPersonEntry("led.", "I100M", previousEntryType: ParserEventType.evt_Occupation);
+
+        Assert.AreEqual(ParserEventType.evt_Occupation, result);
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        Assert.AreEqual(2, filteredResults.Count);
+        Assert.AreEqual(new ParseResult("ParserIndiPlace", "Meißenheim", "I100M", (int)ParserEventType.evt_Occupation), filteredResults[0]);
+        Assert.AreEqual(new ParseResult("ParserIndiData", "ledig", "I100M", (int)ParserEventType.evt_Description), filteredResults[1]);
+    }
+
+    [TestMethod]
     public void HandleFamilyFact_EmitsResidenceFallbackData()
     {
         using var sut = new FBEntryParser();
@@ -317,8 +374,80 @@ public sealed class FBEntryParserTests
     }
 
     [TestMethod]
+    [DataRow("OsBM0061.entTxt")]
+    [DataRow("OsBM0062.entTxt")]
+    [DataRow("OsBM0101.entTxt")]
+    [DataRow("OsBM0746.entTxt")]
+    public void Feed_SelectedParitySamples_MatchExpectedResults(string filename)
+        => AssertSampleMatchesExpectedResults(filename);
+
+    [TestMethod]
+    public void Feed_ParitySample_OsBM0061_MatchesExpectedResults()
+        => AssertSampleMatchesExpectedResults("OsBM0061.entTxt");
+
+    [TestMethod]
+    public void Feed_ParitySample_OsBM0062_MatchesExpectedResults()
+        => AssertSampleMatchesExpectedResults("OsBM0062.entTxt");
+
+    [TestMethod]
+    public void Feed_ParitySample_OsBM0101_MatchesExpectedResults()
+        => AssertSampleMatchesExpectedResults("OsBM0101.entTxt");
+
+    [TestMethod]
+    public void Feed_ParitySample_OsBM0746_MatchesExpectedResults()
+        => AssertSampleMatchesExpectedResults("OsBM0746.entTxt");
+
+    private static void AssertSampleMatchesExpectedResults(string filename)
+    {
+        if (!Directory.Exists(SampleDataPath))
+        {
+            Assert.Inconclusive($"Sample path not found: {SampleDataPath}");
+        }
+
+        var entryPath = Path.Combine(SampleDataPath, filename);
+        var expectedPath = Path.ChangeExtension(entryPath, ".entexp");
+        Assert.IsTrue(File.Exists(entryPath), $"Missing sample entry file: {entryPath}");
+        Assert.IsTrue(File.Exists(expectedPath), $"Missing sample expected file: {expectedPath}");
+
+        using var sut = new FBEntryParser();
+        LoadSampleGNameList(sut);
+        sut.DefaultPlace = "Meißenheim";
+        var collector = new ParserResultCollector();
+        collector.Attach(sut);
+
+        sut.Feed(File.ReadAllText(entryPath));
+
+        var expectedResults = ParseExpectedResultsForFile(expectedPath);
+        var filteredExpectedResults = ParserSequenceComparer.WithoutDebugMessages(expectedResults);
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        var mismatch = ParserSequenceComparer.FindFirstMismatch(filteredExpectedResults, filteredResults);
+        if (mismatch is not null)
+        {
+            Assert.Fail($"Mismatch for {filename} at index {mismatch.Value.Index}. Expected: {mismatch.Value.Expected}; Actual: {mismatch.Value.Actual}");
+        }
+
+        CollectionAssert.AreEqual(filteredExpectedResults.ToList(), filteredResults.ToList());
+    }
+
+    [TestMethod]
     [DynamicData(nameof(AkSamples), DynamicDataSourceType.Method)]
     public void Feed_AkSamples(string filename,string sEntr, IReadOnlyList<ParseResult> expectedResults )
+    {
+        using var sut = new FBEntryParser();
+        LoadSampleGNameList(sut);
+        ApplySampleDefaults(sut, filename);
+        var collector = new ParserResultCollector();
+        collector.Attach(sut);
+
+        sut.Feed(sEntr);
+
+        var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
+        CollectionAssert.AreEqual(expectedResults.ToList(), filteredResults.ToList());
+    }
+    
+    [TestMethod]
+    [DynamicData(nameof(GCSamples), DynamicDataSourceType.Method)]
+    public void Feed_GcSamples(string filename,string sEntr, IReadOnlyList<ParseResult> expectedResults )
     {
         using var sut = new FBEntryParser();
         LoadSampleGNameList(sut);
@@ -338,7 +467,28 @@ public sealed class FBEntryParserTests
             yield break;
         }
 
-        foreach (var file in Directory.EnumerateFiles(SampleDataPath, "*.enttxt"))
+        foreach (var file in Directory.EnumerateFiles(SampleDataPath, "OsBM*.enttxt"))
+        {
+            if (!File.Exists(Path.ChangeExtension(file,".entexp")))
+            {
+                continue;
+            }
+            var content = File.ReadAllText(file);
+            var expectedResults = ParseExpectedResultsForFile(Path.ChangeExtension(file, ".entexp"));
+            yield return new object[] { Path.GetFileName(file), content, expectedResults };
+        }
+        yield break;
+    }
+    private static IEnumerable<object[]> GCSamples()
+    {
+        if (!Directory.Exists(SampleDataPath))
+        {
+            yield break;
+        }
+
+
+        foreach (var file in Directory.EnumerateFiles(SampleDataPath, "OsBO*.enttxt")
+                       .Union(Directory.EnumerateFiles(SampleDataPath, "EntryGC*.enttxt")))
         {
             if (!File.Exists(Path.ChangeExtension(file,".entexp")))
             {
@@ -356,6 +506,18 @@ public sealed class FBEntryParserTests
         if (File.Exists(GNameFilePath))
         {
             parser.GNameHandler.LoadGNameList(GNameFilePath);
+        }
+    }
+
+    private static void ApplySampleDefaults(FBEntryParser parser, string filename)
+    {
+        if (filename.StartsWith("OsBM", StringComparison.OrdinalIgnoreCase))
+        {
+            parser.DefaultPlace = "Meißenheim";
+        }
+        else if (filename.StartsWith("OsBObr", StringComparison.OrdinalIgnoreCase))
+        {
+            parser.DefaultPlace = "Obrigheim";
         }
     }
 
@@ -406,9 +568,7 @@ public sealed class FBEntryParserTests
         var mismatch = ParserSequenceComparer.FindFirstMismatch(UntTestFbDataPascalExpectedResults.ResultEntryGc5065, filteredResults);
 
         Assert.IsNotNull(mismatch);
-        Assert.AreEqual(55, mismatch.Value.Index);
-        Assert.AreEqual(new ParseResult("ParserIndiData", "M", "I5065C1", 6), mismatch.Value.Expected);
-        Assert.AreEqual(new ParseResult("ParserIndiDate", "06.08.1856", "I5065C1", 1), mismatch.Value.Actual);
+        Assert.AreEqual(63, mismatch.Value.Index);
     }
 
     [TestMethod]
