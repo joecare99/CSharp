@@ -24,7 +24,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.6" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.6" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
 		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
