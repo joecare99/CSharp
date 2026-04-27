@@ -5,6 +5,9 @@ namespace FBParserTests;
 [TestClass]
 public sealed class FBEntryParserTests
 {
+    private static readonly string SampleDataPath = ResolveSampleDataPath();
+    private static readonly string GNameFilePath = Path.Combine(SampleDataPath, "GNameFile.txt");
+
     [TestMethod]
     public void Constructor_InitializesDefaults()
     {
@@ -287,6 +290,7 @@ public sealed class FBEntryParserTests
     public void Feed_WithOriginalPascalGcSample_AtLeastStartsExpectedFamily()
     {
         using var sut = new FBEntryParser();
+        LoadSampleGNameList(sut);
         var collector = new ParserResultCollector();
         collector.Attach(sut);
 
@@ -301,6 +305,7 @@ public sealed class FBEntryParserTests
     public void Feed_WithOriginalPascalAkSample_AtLeastStartsExpectedFamily()
     {
         using var sut = new FBEntryParser();
+        LoadSampleGNameList(sut);
         var collector = new ParserResultCollector();
         collector.Attach(sut);
 
@@ -316,6 +321,7 @@ public sealed class FBEntryParserTests
     public void Feed_AkSamples(string filename,string sEntr, IReadOnlyList<ParseResult> expectedResults )
     {
         using var sut = new FBEntryParser();
+        LoadSampleGNameList(sut);
         var collector = new ParserResultCollector();
         collector.Attach(sut);
 
@@ -327,19 +333,41 @@ public sealed class FBEntryParserTests
 
     private static IEnumerable<object[]> AkSamples()
     {
-        const string sDataPath = "C:\\Projekte\\Delphi\\Data\\ParseFB";
-        // Implement logic to read sample files from sDataPath and yield return them as object arrays
-        foreach (var file in Directory.EnumerateFiles(sDataPath, "*.enttxt"))
+        if (!Directory.Exists(SampleDataPath))
+        {
+            yield break;
+        }
+
+        foreach (var file in Directory.EnumerateFiles(SampleDataPath, "*.enttxt"))
         {
             if (!File.Exists(Path.ChangeExtension(file,".entexp")))
             {
-                continue; // Skip if expected result file already exists, or implement logic to read expected results
+                continue;
             }
             var content = File.ReadAllText(file);
-            var expectedResults = ParseExpectedResultsForFile(Path.ChangeExtension(file, ".entexp")); // Implement this method to parse expected results
+            var expectedResults = ParseExpectedResultsForFile(Path.ChangeExtension(file, ".entexp"));
             yield return new object[] { Path.GetFileName(file), content, expectedResults };
         }
         yield break;
+    }
+
+    private static void LoadSampleGNameList(FBEntryParser parser)
+    {
+        if (File.Exists(GNameFilePath))
+        {
+            parser.GNameHandler.LoadGNameList(GNameFilePath);
+        }
+    }
+
+    private static string ResolveSampleDataPath()
+    {
+        var candidatePaths = new[]
+        {
+            "C:\\Projekte\\Delphi\\Daten\\ParseFB",
+            "C:\\Projekte\\Delphi\\Data\\ParseFB",
+        };
+
+        return candidatePaths.FirstOrDefault(Directory.Exists) ?? candidatePaths[0];
     }
 
     private static IReadOnlyList<ParseResult> ParseExpectedResultsForFile(string v)
@@ -368,6 +396,7 @@ public sealed class FBEntryParserTests
     public void Feed_WithOriginalPascalGcSample_DocumentsCurrentGapToPascalExpectedSequence()
     {
         using var sut = new FBEntryParser();
+        LoadSampleGNameList(sut);
         var collector = new ParserResultCollector();
         collector.Attach(sut);
 
@@ -386,6 +415,7 @@ public sealed class FBEntryParserTests
     public void Feed_WithOriginalPascalAkSample_DocumentsCurrentGapToPascalExpectedSequence()
     {
         using var sut = new FBEntryParser();
+        LoadSampleGNameList(sut);
         var collector = new ParserResultCollector();
         collector.Attach(sut);
 
