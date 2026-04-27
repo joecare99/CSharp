@@ -18,5 +18,6 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RNZ-TRAUER-001-Document-DataHandler-and-extract-magic-values.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RNZ-TRAUER-002-Move-database-access-into-repository.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RNZ-TRAUER-003-Add-regression-tests-for-mapping-and-delegation.md" />
+    <None Include="$(MSBuildThisFileDirectory)**\*.md" />
   </ItemGroup>
 </Project>

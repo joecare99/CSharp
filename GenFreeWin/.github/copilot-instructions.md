@@ -12,6 +12,7 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Use `DevOps` as the planning directory in this workspace, and treat `.Info.md` as the general planning description file. Team terminology around Azure DevOps backlog items may differ from generic 'story' naming.
 - Prioritize adding comprehensive tests for newly created code before continuing larger feature or porting work.
 - Use BaseLib filesystem abstractions like `BaseLib.Models.Interfaces.IFile` and `BaseLib.Models.FileProxy` to avoid explicit file system dependencies, and add further interfaces/proxy classes when sensible.
+- Note that the `ArtifactsPath/UseArtifactsPath` migration has been rolled back for now because it is a larger separate undertaking and should not be pursued as part of the current parser work.
 
 ## Testing
 - Use `MSTest` in the latest practical version for new or updated tests.
