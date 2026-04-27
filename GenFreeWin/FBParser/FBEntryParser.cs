@@ -141,7 +141,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
     private static readonly string[] CDescriptKn = [CsLedig, CsWitwer, CsWitwe];
     private static readonly string[] CMonthKn = ["", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
     private static readonly string[] CArtikelB = [CsArtikelB1, CsArtikelB2, CsArtikelB3];
-    private static readonly string[] CLedigKn = [$"{CsLedig}er", $"{CsLedig}e", CsLedigAbb];
+    private static readonly string[] CLedigKn = [$"{CsLedig}er", $"{CsLedig}e", CsLedigAbb, CsLedig + "."];
     private static readonly string[] CArtikelU = [CsArtikelU2, CsArtikelU1];
 
     private string _defaultPlace = string.Empty;
@@ -365,174 +365,6 @@ public sealed class FBEntryParser : ParserBase, IDisposable
         var localRetMode = 0;
         var localAddEvent = ParserEventType.evt_Anull;
 
-        bool BuildName(string innerText, ref int innerOffset, ref string innerSubstring, ref string innerData)
-        {
-            var result = false;
-            if (BuildName2(innerText, ref innerOffset, ref localCharCount, ref innerSubstring, out var additional))
-            {
-                if (additional == CsTwin)
-                {
-                    innerData = innerData == string.Empty ? "Zwilling" : innerData + "; Zwilling";
-                }
-                else if (additional != string.Empty)
-                {
-                    localAka = additional;
-                    localAddEvent = ParserEventType.evt_AKA;
-                    localCharCount = 0;
-                }
-            }
-            else
-            {
-                result = innerSubstring.Trim().Length > 0;
-            }
-
-            return result;
-        }
-
-        bool BuildData(string individualId, string innerText, ref int innerOffset, ref string innerSubstring, ref string innerData)
-        {
-            var result = false;
-            var currentChar = CharAt(innerText, innerOffset);
-            if (!new[] { '<', ';', ':', '.', ',', '(', '>', '\n', '\r', '*', CsDeathEntr[0], '­' }.Contains(currentChar))
-            {
-                innerSubstring += currentChar;
-            }
-            else if (innerOffset < innerText.Length - 1 && currentChar == '.' &&
-                ((innerSubstring != string.Empty && innerOffset + 1 <= innerText.Length && In(CharAt(innerText, innerOffset + 1), Ziffern))
-                || (innerSubstring != string.Empty && !In(innerSubstring[^1], Ziffern) && innerOffset + 2 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && In(CharAt(innerText, innerOffset + 2), Charset))
-                || (innerOffset + 1 <= innerText.Length && new[] { '-', ',', '/' }.Contains(CharAt(innerText, innerOffset + 1)))
-                || TestFor(innerText, innerOffset + 1, CsSeparator2)
-                || (innerOffset + 1 <= innerText.Length && In(CharAt(innerText, innerOffset + 1), Charset))
-                || (innerOffset + 1 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && (innerSubstring.EndsWith("Dr", StringComparison.Ordinal) || innerSubstring.EndsWith("rl", StringComparison.Ordinal) || innerSubstring.EndsWith("Nr", StringComparison.Ordinal) || innerSubstring.EndsWith("gl", StringComparison.Ordinal) || innerSubstring.EndsWith("tr", StringComparison.Ordinal) || innerSubstring.EndsWith("Kr", StringComparison.Ordinal) || innerSubstring.EndsWith("Kt", StringComparison.Ordinal)))
-                || (innerOffset + 1 <= innerText.Length && CharAt(innerText, innerOffset + 1) == '.')
-                || innerSubstring.EndsWith(".", StringComparison.Ordinal)
-                || (innerOffset + 2 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && !new[] { '\n', '\r' }.Contains(CharAt(innerText, innerOffset + 2)) && localLastZiffCount < 3)))
-            {
-                innerSubstring += currentChar;
-            }
-            else if (TestFor(innerText, innerOffset, CUnknownKn, out var unknownFound))
-            {
-                innerSubstring += CUnknownKn[unknownFound];
-                innerOffset += CUnknownKn[unknownFound].Length - 1;
-            }
-            else if (currentChar == ',' && innerOffset > 1 && In(CharAt(innerText, innerOffset - 1), Ziffern) && innerOffset + 2 <= innerText.Length && ((In(CharAt(innerText, innerOffset + 1), Ziffern) && In(CharAt(innerText, innerOffset + 2), Ziffern)) || (CharAt(innerText, innerOffset + 1) == ' ' && In(CharAt(innerText, innerOffset + 2), Ziffern) && localLastZiffCount < 3)))
-            {
-                innerSubstring += '.';
-                Warning(this, "Misspelled Date");
-            }
-            else if (TestFor(innerText, innerOffset, [CsSeparator2, CsSeparator], out var separatorFound)
-                && !innerSubstring.Contains(' ')
-                && TestFor(innerText, innerOffset + 1, [" Kr.", " Kreis", " Kt.", " Kanton"]))
-            {
-                innerSubstring += CsSeparator;
-                if (separatorFound == 0)
-                {
-                    innerOffset += CsSeparator2.Length - 1;
-                }
-            }
-            else if (TestFor(innerText, innerOffset, [CsSeparator2, CsSeparator], out separatorFound)
-                && innerOffset > 1 && innerOffset < innerText.Length && In(CharAt(innerText, innerOffset - 1), Ziffern) && In(CharAt(innerText, innerOffset + 1), Ziffern))
-            {
-                innerSubstring += CsSeparator;
-                if (separatorFound == 0)
-                {
-                    innerOffset += CsSeparator2.Length - 1;
-                }
-            }
-            else if (TestFor(innerText, innerOffset, ["-"], out var hyphenFound)
-                && innerOffset > 1 && innerOffset + 1 + hyphenFound <= innerText.Length
-                && In(CharAt(innerText, innerOffset - 1), LowerCharset)
-                && In(CharAt(innerText, innerOffset + 1 + hyphenFound), UpperCharset))
-            {
-                innerSubstring += currentChar;
-            }
-            else if (TestFor(innerText, innerOffset, CHyphens, out hyphenFound)
-                && innerOffset > 1 && innerOffset + CHyphens[hyphenFound].Length <= innerText.Length
-                && In(CharAt(innerText, innerOffset - 1), LowerCharset)
-                && In(CharAt(innerText, innerOffset + CHyphens[hyphenFound].Length), LowerCharsetErw))
-            {
-                if (hyphenFound == 0)
-                {
-                    Warning(this, "Hyphen in Data Ignored");
-                }
-
-                innerOffset += CHyphens[hyphenFound].Length - 1;
-            }
-            else if (TestFor(innerText, innerOffset, _umlauts, out var umlautFound))
-            {
-                innerSubstring += _umlauts[umlautFound];
-                innerOffset += _umlauts[umlautFound].Length - 1;
-            }
-            else if (TestFor(innerText, innerOffset, "“"))
-            {
-                innerSubstring += "“";
-            }
-            else if (TestFor(innerText, innerOffset, [CsBirth, CsDeathEntr, CsDeathEntr2]))
-            {
-                if (innerSubstring.Trim().Length < 2 || (innerSubstring.Trim().Length < 4 && TestFor(innerSubstring, 1, [CsBirth, CsDeathEntr, CsDeathEntr2])))
-                {
-                    innerSubstring += currentChar;
-                }
-                else
-                {
-                    localEntryType = HandleNonPersonEntry(innerSubstring, individualId);
-                    Error(this, ", Expected (End of Entry)");
-                    innerSubstring = string.Empty;
-                    innerOffset--;
-                }
-            }
-            else if (currentChar == CsProtectSpace[0] && innerSubstring.Length < 5)
-            {
-                innerSubstring += currentChar;
-            }
-            else if (TestFor(innerText, innerOffset, "(") && ParseAdditional(innerText, ref innerOffset, out var parsedAdditional))
-            {
-                innerData = parsedAdditional;
-                if (innerData.StartsWith(CsDivorce, StringComparison.Ordinal))
-                {
-                    innerData = RemoveStart(innerData, 3);
-                    if (!localFamDatFlag && _mode == 8)
-                    {
-                        Error(this, "Wife entry not ended with .");
-                    }
-
-                    SetFamilyPlace(localMainFamRef, ParserEventType.evt_Divorce, _defaultPlace);
-                    if (innerData != string.Empty)
-                    {
-                        SetFamilyData(localMainFamRef, ParserEventType.evt_Divorce, innerData);
-                    }
-
-                    innerData = string.Empty;
-                }
-                else if (innerData.EndsWith(" alt", StringComparison.Ordinal))
-                {
-                    SetIndiData(individualId, ParserEventType.evt_Age, innerData);
-                    innerData = string.Empty;
-                }
-            }
-            else if (currentChar == '.'
-                || (new[] { '\n', '\r' }.Contains(currentChar) && innerOffset > 1 && CharAt(innerText, innerOffset - 1) == '.')
-                || (new[] { '\n', '\r' }.Contains(currentChar) && innerOffset > 2 && CharAt(innerText, innerOffset - 1) == ' ' && CharAt(innerText, innerOffset - 2) == '.'))
-            {
-                if (_mode != 9)
-                {
-                    localFamDatFlag = true;
-                    result = innerSubstring.Length > 1;
-                }
-                else
-                {
-                    localEntryEndFlag = true;
-                    result = innerSubstring.Length > 1;
-                }
-            }
-            else
-            {
-                result = innerSubstring.Length > 1;
-            }
-
-            return result;
-        }
-
         while (localOffset <= text.Length)
         {
             Offset = localOffset;
@@ -717,7 +549,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         localAka = string.Empty;
                     }
 
-                    if (BuildName(text, ref localOffset, ref localSubstring, ref localData))
+                    if (BuildName(text, ref localOffset, ref localSubstring, ref localData, ref localCharCount, ref localAka, ref localAddEvent))
                     {
                         localIndId = HandleAKPersonEntry(localSubstring.Trim(), localMainFamRef, localPersonType, localMode, out localLastName, out localPersonSex, localAka);
                         if ((localMode == 5) ^ localMotherName)
@@ -784,7 +616,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         localZiffCount = 0;
                     }
 
-                    if (BuildData(localIndId, text, ref localOffset, ref localSubstring, ref localData))
+                    if (BuildData(localIndId, text, ref localOffset, ref localSubstring, ref localData, localMainFamRef, localLastZiffCount, ref localFamDatFlag, ref localEntryEndFlag, ref localEntryType))
                     {
                         if (Right(localSubstring.Trim(), 4) == " alt" && localSubstring.Trim().Length > 0 && In(localSubstring.Trim()[0], Ziffern) && localEntryType == ParserEventType.evt_Death)
                         {
@@ -793,7 +625,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                             continue;
                         }
 
-                        localEntryType = HandleNonPersonEntry(localSubstring, localIndId);
+                        localEntryType = HandleNonPersonEntry(localSubstring, localIndId, previousEntryType: localEntryType);
                         localSubstring = string.Empty;
                         localLastZiffCount = 0;
                         if (localData != string.Empty)
@@ -830,7 +662,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         localSubstring = localSubstring.Trim();
                         if (localSubstring != string.Empty)
                         {
-                            HandleNonPersonEntry(localSubstring, localIndId);
+                            HandleNonPersonEntry(localSubstring, localIndId, previousEntryType: localEntryType);
                             Error(this, ", missing (last entry)");
                         }
 
@@ -943,7 +775,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         continue;
                     }
 
-                    if (BuildData(localIndId, text, ref localOffset, ref localSubstring, ref localData))
+                    if (BuildData(localIndId, text, ref localOffset, ref localSubstring, ref localData, localMainFamRef, localLastZiffCount, ref localFamDatFlag, ref localEntryEndFlag, ref localEntryType))
                     {
                         if (localEntryType == ParserEventType.evt_Marriage)
                         {
@@ -1486,7 +1318,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         localSubstring += Copy(text, localOffset, localFound * 2 + 1);
                         localOffset += localFound * 2;
                     }
-                    else if (localFirstEntry && BuildName(text, ref localOffset, ref localSubstring, ref localData))
+                    else if (localFirstEntry && BuildName(text, ref localOffset, ref localSubstring, ref localData, ref localCharCount, ref localAka, ref localAddEvent))
                     {
                         localPersonName = localSubstring.Trim();
                         if (TestFor(localPersonName, 1, [CsDeathEntr2, CsDeathEntr], out localFound))
@@ -1513,9 +1345,9 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         localSubstring = string.Empty;
                         localFirstEntry = false;
                     }
-                    else if (!localFirstEntry && BuildData(localIndId2, text, ref localOffset, ref localSubstring, ref localData))
+                    else if (!localFirstEntry && BuildData(localIndId2, text, ref localOffset, ref localSubstring, ref localData, localMainFamRef, localLastZiffCount, ref localFamDatFlag, ref localEntryEndFlag, ref localEntryType))
                     {
-                        localEntryType2 = HandleNonPersonEntry(localSubstring.Trim(), localIndId2);
+                        localEntryType2 = HandleNonPersonEntry(localSubstring.Trim(), localIndId2, previousEntryType: localEntryType2);
                         if (localData != string.Empty)
                         {
                             SetIndiData(localIndId2, localEntryType2, localData);
@@ -1678,13 +1510,13 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                             }
                             else if (!localSubstring.Contains(',', StringComparison.Ordinal))
                             {
-                                HandleNonPersonEntry(localSubstring, localIndId2);
+                                HandleNonPersonEntry(localSubstring, localIndId2, previousEntryType: localEntryType2);
                             }
                             else
                             {
                                 foreach (var entry in localSubstring.Split(','))
                                 {
-                                    HandleNonPersonEntry(entry, localIndId2);
+                                    localEntryType2 = HandleNonPersonEntry(entry, localIndId2, previousEntryType: localEntryType2);
                                 }
                             }
                         }
@@ -1713,12 +1545,12 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                             localPos = localSubstring.IndexOf(',', StringComparison.Ordinal);
                             if (localSubstring.Length > localPos + 3 && In(localSubstring[localPos + 2], LowerCharset))
                             {
-                                HandleNonPersonEntry(localSubstring[..localPos], localIndId);
+                                HandleNonPersonEntry(localSubstring[..localPos], localIndId, previousEntryType: localEntryType);
                                 localSubstring = localSubstring[(localPos + 1)..];
                             }
                         }
 
-                        HandleNonPersonEntry(localSubstring, localIndId, localFamRef);
+                        HandleNonPersonEntry(localSubstring, localIndId, localFamRef, localEntryType);
                         localOffset = localPp + 1;
                         localMode = 50;
                     }
@@ -2580,6 +2412,174 @@ public sealed class FBEntryParser : ParserBase, IDisposable
         }
     }
 
+    private bool BuildName(string innerText, ref int innerOffset, ref string innerSubstring, ref string innerData, ref int localCharCount, ref string? localAka, ref ParserEventType localAddEvent)
+    {
+        var result = false;
+        if (BuildName2(innerText, ref innerOffset, ref localCharCount, ref innerSubstring, out var additional))
+        {
+            if (additional == CsTwin)
+            {
+                innerData = innerData == string.Empty ? "Zwilling" : innerData + "; Zwilling";
+            }
+            else if (additional != string.Empty)
+            {
+                localAka = additional;
+                localAddEvent = ParserEventType.evt_AKA;
+                localCharCount = 0;
+            }
+        }
+        else
+        {
+            result = innerSubstring.Trim().Length > 0;
+        }
+
+        return result;
+    }
+
+    private bool BuildData(string individualId, string innerText, ref int innerOffset, ref string innerSubstring, ref string innerData, string? localMainFamRef, int localLastZiffCount, ref bool localFamDatFlag, ref bool localEntryEndFlag, ref ParserEventType localEntryType)
+    {
+        var result = false;
+        var currentChar = CharAt(innerText, innerOffset);
+        if (!new[] { '<', ';', ':', '.', ',', '(', '>', '\n', '\r', '*', CsDeathEntr[0], '­' }.Contains(currentChar))
+        {
+            innerSubstring += currentChar;
+        }
+        else if (innerOffset < innerText.Length - 1 && currentChar == '.' &&
+            ((innerSubstring != string.Empty && innerOffset + 1 <= innerText.Length && In(CharAt(innerText, innerOffset + 1), Ziffern))
+            || (innerSubstring != string.Empty && !In(innerSubstring[^1], Ziffern) && innerOffset + 2 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && In(CharAt(innerText, innerOffset + 2), Charset))
+            || (innerOffset + 1 <= innerText.Length && new[] { '-', ',', '/' }.Contains(CharAt(innerText, innerOffset + 1)))
+            || TestFor(innerText, innerOffset + 1, CsSeparator2)
+            || (innerOffset + 1 <= innerText.Length && In(CharAt(innerText, innerOffset + 1), Charset))
+            || (innerOffset + 1 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && (innerSubstring.EndsWith("Dr", StringComparison.Ordinal) || innerSubstring.EndsWith("rl", StringComparison.Ordinal) || innerSubstring.EndsWith("Nr", StringComparison.Ordinal) || innerSubstring.EndsWith("gl", StringComparison.Ordinal) || innerSubstring.EndsWith("tr", StringComparison.Ordinal) || innerSubstring.EndsWith("Kr", StringComparison.Ordinal) || innerSubstring.EndsWith("Kt", StringComparison.Ordinal)))
+            || (innerOffset + 1 <= innerText.Length && CharAt(innerText, innerOffset + 1) == '.')
+            || innerSubstring.EndsWith(".", StringComparison.Ordinal)
+            || (innerOffset + 2 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && !new[] { '\n', '\r' }.Contains(CharAt(innerText, innerOffset + 2)) && localLastZiffCount < 3)))
+        {
+            innerSubstring += currentChar;
+        }
+        else if (TestFor(innerText, innerOffset, CUnknownKn, out var unknownFound))
+        {
+            innerSubstring += CUnknownKn[unknownFound];
+            innerOffset += CUnknownKn[unknownFound].Length - 1;
+        }
+        else if (currentChar == ',' && innerOffset > 1 && In(CharAt(innerText, innerOffset - 1), Ziffern) && innerOffset + 2 <= innerText.Length && ((In(CharAt(innerText, innerOffset + 1), Ziffern) && In(CharAt(innerText, innerOffset + 2), Ziffern)) || (CharAt(innerText, innerOffset + 1) == ' ' && In(CharAt(innerText, innerOffset + 2), Ziffern) && localLastZiffCount < 3)))
+        {
+            innerSubstring += '.';
+            Warning(this, "Misspelled Date");
+        }
+        else if (TestFor(innerText, innerOffset, [CsSeparator2, CsSeparator], out var separatorFound)
+            && !innerSubstring.Contains(' ')
+            && TestFor(innerText, innerOffset + 1, [" Kr.", " Kreis", " Kt.", " Kanton"]))
+        {
+            innerSubstring += CsSeparator;
+            if (separatorFound == 0)
+            {
+                innerOffset += CsSeparator2.Length - 1;
+            }
+        }
+        else if (TestFor(innerText, innerOffset, [CsSeparator2, CsSeparator], out separatorFound)
+            && innerOffset > 1 && innerOffset < innerText.Length && In(CharAt(innerText, innerOffset - 1), Ziffern) && In(CharAt(innerText, innerOffset + 1), Ziffern))
+        {
+            innerSubstring += CsSeparator;
+            if (separatorFound == 0)
+            {
+                innerOffset += CsSeparator2.Length - 1;
+            }
+        }
+        else if (TestFor(innerText, innerOffset, ["-"], out var hyphenFound)
+            && innerOffset > 1 && innerOffset + 1 + hyphenFound <= innerText.Length
+            && In(CharAt(innerText, innerOffset - 1), LowerCharset)
+            && In(CharAt(innerText, innerOffset + 1 + hyphenFound), UpperCharset))
+        {
+            innerSubstring += currentChar;
+        }
+        else if (TestFor(innerText, innerOffset, CHyphens, out hyphenFound)
+            && innerOffset > 1 && innerOffset + CHyphens[hyphenFound].Length <= innerText.Length
+            && In(CharAt(innerText, innerOffset - 1), LowerCharset)
+            && In(CharAt(innerText, innerOffset + CHyphens[hyphenFound].Length), LowerCharsetErw))
+        {
+            if (hyphenFound == 0)
+            {
+                Warning(this, "Hyphen in Data Ignored");
+            }
+
+            innerOffset += CHyphens[hyphenFound].Length - 1;
+        }
+        else if (TestFor(innerText, innerOffset, _umlauts, out var umlautFound))
+        {
+            innerSubstring += _umlauts[umlautFound];
+            innerOffset += _umlauts[umlautFound].Length - 1;
+        }
+        else if (TestFor(innerText, innerOffset, "“"))
+        {
+            innerSubstring += "“";
+        }
+        else if (TestFor(innerText, innerOffset, [CsBirth, CsDeathEntr, CsDeathEntr2]))
+        {
+            if (innerSubstring.Trim().Length < 2 || (innerSubstring.Trim().Length < 4 && TestFor(innerSubstring, 1, [CsBirth, CsDeathEntr, CsDeathEntr2])))
+            {
+                innerSubstring += currentChar;
+            }
+            else
+            {
+                localEntryType = HandleNonPersonEntry(innerSubstring, individualId);
+                Error(this, ", Expected (End of Entry)");
+                innerSubstring = string.Empty;
+                innerOffset--;
+            }
+        }
+        else if (currentChar == CsProtectSpace[0] && innerSubstring.Length < 5)
+        {
+            innerSubstring += currentChar;
+        }
+        else if (TestFor(innerText, innerOffset, "(") && ParseAdditional(innerText, ref innerOffset, out var parsedAdditional))
+        {
+            innerData = parsedAdditional;
+            if (innerData.StartsWith(CsDivorce, StringComparison.Ordinal))
+            {
+                innerData = RemoveStart(innerData, 3);
+                if (!localFamDatFlag && _mode == 8)
+                {
+                    Error(this, "Wife entry not ended with .");
+                }
+
+                SetFamilyPlace(localMainFamRef, ParserEventType.evt_Divorce, _defaultPlace);
+                if (innerData != string.Empty)
+                {
+                    SetFamilyData(localMainFamRef, ParserEventType.evt_Divorce, innerData);
+                }
+
+                innerData = string.Empty;
+            }
+            else if (innerData.EndsWith(" alt", StringComparison.Ordinal))
+            {
+                SetIndiData(individualId, ParserEventType.evt_Age, innerData);
+                innerData = string.Empty;
+            }
+        }
+        else if (currentChar == '.'
+            || (new[] { '\n', '\r' }.Contains(currentChar) && innerOffset > 1 && CharAt(innerText, innerOffset - 1) == '.')
+            || (new[] { '\n', '\r' }.Contains(currentChar) && innerOffset > 2 && CharAt(innerText, innerOffset - 1) == ' ' && CharAt(innerText, innerOffset - 2) == '.'))
+        {
+            if (_mode != 9)
+            {
+                localFamDatFlag = true;
+                result = innerSubstring.Length > 1;
+            }
+            else
+            {
+                localEntryEndFlag = true;
+                result = innerSubstring.Length > 1;
+            }
+        }
+        else
+        {
+            result = innerSubstring.Length > 1;
+        }
+
+        return result;
+    }
+
     /// <inheritdoc />
     public override void Error(object? sender, string message)
     {
@@ -3362,7 +3362,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
     /// <summary>
     /// Handles an entry that is not a person name and emits the corresponding callbacks.
     /// </summary>
-    public ParserEventType HandleNonPersonEntry(string subString, string individualId, string famRef = "")
+    public ParserEventType HandleNonPersonEntry(string subString, string individualId, string famRef = "", ParserEventType previousEntryType = ParserEventType.evt_Anull)
     {
         Debug(this, "HNPE: \"" + subString + "\"");
         var localSubString = subString.Trim();
@@ -3441,17 +3441,40 @@ public sealed class FBEntryParser : ParserBase, IDisposable
         }
         else
         {
-            var emitLedigPlace = false;
-            if (TryConsumeLeadingEntry(ref localSubString, CLedigKn, out var rest))
+            var hasLedig = TryConsumeLeadingEntry(ref localSubString, CLedigKn, out var rest);
+            if (hasLedig)
             {
                 localSubString = rest;
-                SetIndiData(individualId, ParserEventType.evt_Description, CsLedig);
-                emitLedigPlace = true;
             }
 
             if (TryConsumeLeadingEntry(ref localSubString, CArtikelU, out rest))
             {
                 localSubString = rest;
+            }
+
+            var hasOccupationText = localSubString.Trim() != string.Empty;
+            var emitLedigOccupationPlace = hasLedig && hasOccupationText;
+            if (hasLedig && !hasOccupationText)
+            {
+                if (previousEntryType == ParserEventType.evt_Occupation && _defaultPlace != string.Empty)
+                {
+                    SetIndiPlace(individualId, ParserEventType.evt_Occupation, _defaultPlace);
+                }
+                else
+                {
+                    var descriptionPlace = place != string.Empty ? place : _defaultPlace;
+                    if (descriptionPlace != string.Empty)
+                    {
+                        SetIndiPlace(individualId, ParserEventType.evt_Description, descriptionPlace);
+                    }
+                }
+
+                place = string.Empty;
+            }
+
+            if (hasLedig)
+            {
+                SetIndiData(individualId, ParserEventType.evt_Description, CsLedig);
             }
 
             entryType = ParserEventType.evt_Occupation;
@@ -3477,7 +3500,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
             {
                 SetIndiPlace(individualId, entryType, place);
             }
-            else if (emitLedigPlace && _defaultPlace != string.Empty)
+            else if (emitLedigOccupationPlace && _defaultPlace != string.Empty)
             {
                 SetIndiPlace(individualId, entryType, _defaultPlace);
             }
