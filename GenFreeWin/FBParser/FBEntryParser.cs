@@ -2834,6 +2834,25 @@ public sealed class FBEntryParser : ParserBase, IDisposable
     private void SetIndiData(string individualId, ParserEventType eventType, string data)
         => OnIndiData?.Invoke(this, data, individualId, (int)eventType);
 
+    private bool TryConsumeLeadingEntry(ref string subString, string[] testStrings, out string rest)
+    {
+        if (TestEntry(subString, testStrings, out rest))
+        {
+            return true;
+        }
+
+        foreach (var testString in testStrings)
+        {
+            if (subString.StartsWith(testString, StringComparison.Ordinal))
+            {
+                rest = RemoveStart(subString, testString.Length).TrimStart();
+                return true;
+            }
+        }
+
+        rest = string.Empty;
+        return false;
+    }
     private void SetIndiDate(string individualId, ParserEventType eventType, string date)
     {
         if (!IsValidDate(date))
@@ -3422,10 +3441,17 @@ public sealed class FBEntryParser : ParserBase, IDisposable
         }
         else
         {
-            if (TestEntry(localSubString, CLedigKn, out var rest))
+            var emitLedigPlace = false;
+            if (TryConsumeLeadingEntry(ref localSubString, CLedigKn, out var rest))
             {
                 localSubString = rest;
                 SetIndiData(individualId, ParserEventType.evt_Description, CsLedig);
+                emitLedigPlace = true;
+            }
+
+            if (TryConsumeLeadingEntry(ref localSubString, CArtikelU, out rest))
+            {
+                localSubString = rest;
             }
 
             entryType = ParserEventType.evt_Occupation;
@@ -3450,6 +3476,10 @@ public sealed class FBEntryParser : ParserBase, IDisposable
             if (place != string.Empty)
             {
                 SetIndiPlace(individualId, entryType, place);
+            }
+            else if (emitLedigPlace && _defaultPlace != string.Empty)
+            {
+                SetIndiPlace(individualId, entryType, _defaultPlace);
             }
         }
 
