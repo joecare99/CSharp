@@ -1,5 +1,6 @@
 using RnzTrauer.Core.Services.Interfaces;
 using System;
+using System.Security;
 
 namespace RnzTrauer.Core;
 
@@ -48,7 +49,7 @@ public sealed class RnzConfig : DatabaseSettings
     /// <summary>
     /// Gets or sets the login password.
     /// </summary>
-    public string Password { get; set; } = string.Empty;
+    public SecureString? Password { get; set; } = default;
 
     /// <summary>
     /// Gets or sets the local storage root.
@@ -62,4 +63,5 @@ public sealed class RnzConfig : DatabaseSettings
     {
         return (_xConfigLoader ?? throw new InvalidOperationException("No configuration loader has been provided.")).Load<RnzConfig>(sFilePath);
     }
+
 }

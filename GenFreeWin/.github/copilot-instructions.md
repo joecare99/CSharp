@@ -15,6 +15,7 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Note that the `ArtifactsPath/UseArtifactsPath` migration has been rolled back for now because it is a larger separate undertaking and should not be pursued as part of the current parser work.
 - Avoid global usings; each file/class should declare its own usings so dependencies remain explicit.
 - Prefer built-in .NET database abstractions from `System.Data/System.Data.Common` (for example `DbProviderFactory`, `DbConnection`, `DbCommand`, `DbDataReader`, `IDbConnection`) over custom database interface hierarchies when making data access provider-agnostic.
+- When changing code related to password handling, only use `SecureString` when it provides a real security improvement; avoid changes without a security benefit.
 
 ## Testing
 - Use `MSTest` in the latest practical version for new or updated tests.

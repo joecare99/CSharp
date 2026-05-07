@@ -1,3 +1,5 @@
+using System.Security;
+
 namespace RnzTrauer.Core;
 
 /// <summary>
@@ -13,7 +15,7 @@ public class DatabaseSettings
     /// <summary>
     /// Gets or sets the database password.
     /// </summary>
-    public string DBpass { get; set; } = string.Empty;
+    public SecureString? DBpass { get; set; } = default;
 
     /// <summary>
     /// Gets or sets the database host name.

@@ -171,7 +171,7 @@ public sealed class WebHandler : IDisposable
         try
         {
             Driver.FindElement(By.Id(LoginEmailAddressId)).SendKeys(_config.User);
-            Driver.FindElement(By.Id(LoginPasswordId)).SendKeys(_config.Password);
+            Driver.FindElement(By.Id(LoginPasswordId)).SendKeys(_config.Password == null ? string.Empty : new System.Net.NetworkCredential(string.Empty, _config.Password).Password);
             Driver.FindElement(By.Id(LoginFormId)).Submit();
         }
         catch 

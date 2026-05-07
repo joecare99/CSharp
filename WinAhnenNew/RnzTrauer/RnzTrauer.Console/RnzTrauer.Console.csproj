@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />
     <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core.csproj" />
     <ProjectReference Include="..\RnzTrauer.WebDriver.Firefox\RnzTrauer.WebDriver.Firefox.csproj" />
     <ProjectReference Include="..\RnzTrauer.WebDriver.Edge\RnzTrauer.WebDriver.Edge.csproj" />
@@ -9,12 +10,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="RNZ_Config.sample.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -22,6 +20,13 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>RnzTrauer.Console-3c590f7a-464d-4dc4-b932-667224a3b83c</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="UserSecrets.sample.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>
