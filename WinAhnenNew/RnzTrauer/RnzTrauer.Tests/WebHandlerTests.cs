@@ -10,6 +10,7 @@ using NSubstitute;
 using OpenQA.Selenium;
 using RnzTrauer.Core;
 using RnzTrauer.Core.Services.Interfaces;
+using BaseLib.Helper;
 
 namespace RnzTrauer.Tests;
 
@@ -23,7 +24,7 @@ public sealed class WebHandlerTests
         {
             Url = "https://example.invalid/login",
             User = "user@example.invalid",
-            Password = "secret",
+            Password = "secret".ToSecureString(),
             Title = "RNZ"
         };
         var xHttpClient = Substitute.For<IHttpClientProxy>();
@@ -48,7 +49,7 @@ public sealed class WebHandlerTests
         _ = xWebDriverFactory.Received(1).Create();
         xNavigation.Received(1).GoToUrl(xConfig.Url);
         xEmailElement.Received(1).SendKeys(xConfig.User);
-        xPasswordElement.Received(1).SendKeys(xConfig.Password);
+        xPasswordElement.Received(1).SendKeys(new System.Net.NetworkCredential(string.Empty, xConfig.Password).Password);
         xFormElement.Received(1).Submit();
         Assert.AreSame(xDriver, xHandler.Driver);
     }
@@ -60,7 +61,7 @@ public sealed class WebHandlerTests
         {
             Url = "https://example.invalid/login",
             User = "user@example.invalid",
-            Password = "secret",
+            Password = "secret".ToSecureString(),
             Title = "RNZ"
         };
         var xHttpClient = Substitute.For<IHttpClientProxy>();
@@ -90,7 +91,7 @@ public sealed class WebHandlerTests
         Assert.AreEqual(1, xOldDriver.ReceivedCalls().Count(xCall => xCall.GetMethodInfo().Name == nameof(IWebDriver.Quit)));
         xNavigation.Received(1).GoToUrl(xConfig.Url);
         xEmailElement.Received(1).SendKeys(xConfig.User);
-        xPasswordElement.Received(1).SendKeys(xConfig.Password);
+        xPasswordElement.Received(1).SendKeys(new System.Net.NetworkCredential(string.Empty, xConfig.Password).Password);
         xFormElement.Received(1).Submit();
         Assert.AreSame(xNewDriver, xHandler.Driver);
     }
@@ -199,7 +200,7 @@ public sealed class WebHandlerTests
         {
             Url = "https://example.invalid/login",
             User = "user@example.invalid",
-            Password = "secret",
+            Password = "secret".ToSecureString(),
             Title = "RNZ"
         };
         var xHttpClient = Substitute.For<IHttpClientProxy>();

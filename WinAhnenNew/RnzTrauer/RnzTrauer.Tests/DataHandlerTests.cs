@@ -636,15 +636,15 @@ public sealed class DataHandlerTests
         using var xHandler = new DataHandler(xRepository, xFile);
 
         using var xWriter = new StringWriter();
-        var xOriginal = Console.Out;
-        Console.SetOut(xWriter);
+        var xOriginal = System.Console.Out;
+        System.Console.SetOut(xWriter);
         try
         {
             xHandler.TrauerDataToDb([dAnnouncement], @"C:\data");
         }
         finally
         {
-            Console.SetOut(xOriginal);
+            System.Console.SetOut(xOriginal);
         }
 
         _ = xRepository.Received(1).TrauerFallByUrl("https://example.invalid/trauerfall");
