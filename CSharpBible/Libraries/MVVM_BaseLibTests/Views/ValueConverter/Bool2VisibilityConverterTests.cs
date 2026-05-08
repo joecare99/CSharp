@@ -44,10 +44,12 @@ public class Bool2VisibilityConverterTests
     [TestMethod]
     [DataRow(true, Visibility.Visible)]
     [DataRow(false, Visibility.Hidden)]
-    [DataRow(null, null)]
+    [DataRow(null, Visibility.Visible)]
     public void ConvertTest(object? value, Visibility expected)
     {
+#pragma warning disable CS8604
         var result = testConv.Convert(value, typeof(string), null!, CultureInfo.InvariantCulture);
+#pragma warning restore CS8604
         Assert.AreEqual(expected, result);
     }
 

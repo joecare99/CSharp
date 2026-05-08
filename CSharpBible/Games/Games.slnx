@@ -152,6 +152,7 @@
   <Project Path="Game_Base/Game_Base.csproj" />
   <Project Path="Game_BaseTests/Game_BaseTests.csproj" />
   <Project Path="MidiSwing.MVVM/MidiSwing.MVVM.csproj" />
+  <Project Path="PackageDwnLd.csproj" />
   <Project Path="RemoteTerminal.Tests/RemoteTerminal.Tests.csproj" />
   <Project Path="RemoteTerminal/RemoteTerminal.csproj" />
   <Project Path="Sudoku_Base/Sudoku_Base.csproj" />
