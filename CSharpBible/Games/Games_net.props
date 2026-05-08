@@ -1,16 +1,17 @@
 <Project>
-	<PropertyGroup>
-		<UpDir>..\..</UpDir>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net","").Replace("_Base",""))</RootNamespace>
-		<LangVersion>preview</LangVersion>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Company>JC-Soft</Company>
-		<Authors>Joe Care</Authors>
-		<Copyright>Copyright © JC-Soft 2026</Copyright>
+  <PropertyGroup>
+    <UpDir>..\..</UpDir>
+    <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net","").Replace("_Base",""))</RootNamespace>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Company>JC-Soft</Company>
+    <Authors>Joe Care</Authors>
+    <Copyright>Copyright © JC-Soft 2026</Copyright>
     <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-	</PropertyGroup>
+    <NoWarn>$(NoWarn);NU1701;NU1702;NETSDK1138</NoWarn>
+  </PropertyGroup>
 </Project>

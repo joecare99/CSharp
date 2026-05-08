@@ -4,8 +4,5 @@
   </Target>
   <Import Project="Packages.props" />
   <ItemGroup>
-    <PackageVersion Include="IsExternalInit" Version="1.0.3" />
-    <PackageVersion Include="MSTest" Version="4.2.2" />
-    <PackageVersion Include="Microsoft.Build" Version="18.4.0" />
   </ItemGroup>
 </Project>

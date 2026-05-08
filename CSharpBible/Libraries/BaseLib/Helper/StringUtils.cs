@@ -18,6 +18,7 @@ using BaseLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 
 namespace BaseLib.Helper;
 
@@ -850,5 +851,14 @@ public static class StringUtils
         return string.Join("", result);
     }
 
-
+    public static SecureString? ToSecureString(this string? sValue)
+    {
+        if (string.IsNullOrEmpty(sValue))
+            return null;
+        var secure = new SecureString();
+        foreach (char c in sValue!)
+            secure.AppendChar(c);
+        secure.MakeReadOnly();
+        return secure;
+    }
 }

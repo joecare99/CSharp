@@ -39,7 +39,7 @@ public static class NamingHelper
     ];
     public static readonly HashSet<string> existingNames = new HashSet<string>();
 
-    static IRandom _random { get; set; }
+    static IRandom? _random { get; set; }
 
     public static void SetRandom(IRandom random) => _random = random;
 
