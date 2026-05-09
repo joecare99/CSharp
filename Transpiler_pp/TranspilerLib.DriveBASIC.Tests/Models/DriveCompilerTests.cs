@@ -43,7 +43,7 @@ public class DriveCompilerTests
     {
         // Arrange
         var LMessage = new List<string>();
-        FCompiler.SourceCode = [line];
+        FCompiler.SourceCode = line is null ? [] : [line];
         FCompiler.Log = LMessage;
         // Act
         bool LResult = FCompiler.Compile();
@@ -294,7 +294,7 @@ public class DriveCompilerTests
         Assert.HasCount(0, FCompiler.Labels, "Label Count");
         Assert.HasCount(token.Length, FCompiler.TokenCode, "Tokens Count");
         for (int i = 0; i < token.Length; i++)
-            Assert.AreEqual(new DriveCommand(token[i], oExp[i] as object[]), FCompiler.TokenCode[i], $"Token[{i}]");
+            Assert.AreEqual(new DriveCommand(token[i], oExp[i] as object[] ?? Array.Empty<object>()), FCompiler.TokenCode[i], $"Token[{i}]");
     }
 
     [TestMethod]
@@ -354,6 +354,7 @@ public class DriveCompilerTests
         FCompiler.BuildExpressionNormal(line, (o) => result.Add($"{o}"), 0, false);
         // Assert
         Assert.HasCount(lExp?.Length ?? 0, result, "Result Count");
+        Assert.IsNotNull(lExp);
         for (int i = 0; i < lExp.Length; i++)
             Assert.AreEqual(lExp[i], result[i], $"Result[{i}]");
     }
@@ -496,6 +497,7 @@ public class DriveCompilerTests
             switch (expectationType)
             {
                 case "rule":
+                    Assert.IsNotNull(match.Value);
                     var ruleIndex = int.Parse(match.Value.ToString() ?? "0", CultureInfo.InvariantCulture);
                     var pattern = ResolveRulePattern(placeholder, ruleIndex);
                     Assert.AreEqual(expectationValue, pattern, $"{scenario}: placeholder {placeholder} rule mismatch");
@@ -529,14 +531,14 @@ public class DriveCompilerTests
     {
         if (string.Equals(placeholder, ParseDefinitions.CToken, StringComparison.OrdinalIgnoreCase))
         {
-            return ParseDefinitions.ParseDefBase[ruleIndex].text;
+            return ParseDefinitions.ParseDefBase[ruleIndex].text ?? string.Empty;
         }
         if (string.Equals(placeholder, ParseDefinitions.CExpression, StringComparison.OrdinalIgnoreCase))
         {
-            return FCompiler.ExpressionNormals[ruleIndex].Item3;
+            return FCompiler.ExpressionNormals[ruleIndex].Item3 ?? string.Empty;
         }
 
-        return ParseDefinitions.PlaceHolderDefBase[ruleIndex].text;
+        return ParseDefinitions.PlaceHolderDefBase[ruleIndex].text ?? string.Empty;
     }
 
     [TestMethod]
