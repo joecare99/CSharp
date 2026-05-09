@@ -26,7 +26,7 @@ public partial class DriveBasic
         StrUngueltigesZeichenF = "Ungültiges Zeichen für Platzhalter: ",
         StrReferenzNichtGefun = "Referenz nicht gefunden ";
 
-    public IList<string> Log { get; set; }
+    public IList<string> Log { get; set; } = [];
     public IEnumerable<string> SourceCode { get; set; }
     public IList<string> Messages { get; set; }
     public IList<IVariable> Variables { get; set; }
@@ -157,6 +157,6 @@ public partial class DriveBasic
     }
 
     private static bool DefinitionUsesExpression(string? text)
-        => !string.IsNullOrEmpty(text) && text.IndexOf(CExpression, StringComparison.OrdinalIgnoreCase) >= 0;
+        => !string.IsNullOrEmpty(text) && text!.IndexOf(CExpression, StringComparison.OrdinalIgnoreCase) >= 0;
 
 }
