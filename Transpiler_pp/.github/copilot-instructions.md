@@ -6,7 +6,7 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Document code thoroughly in English.
 - Validate changes with relevant builds and tests before finishing.
 - If requirements are unclear, ask clarifying questions before starting implementation or planning refinement.
-- When reviewing build warnings in this repository, ignore unsupported older framework warnings if the project also targets newer supported frameworks. Additionally, ignore `IDE0130` warnings in test projects.
+- When reviewing build warnings in this repository, treat them seriously and avoid them whenever possible during implementation and validation work. Ignore unsupported older framework warnings if the project also targets newer supported frameworks. Additionally, ignore `IDE0130` warnings in test projects.
 
 ## Process and Planning
 - Document changes in a DevOps manner using Markdown, extrapolating bugs, tasks, backlogs, and features.
@@ -16,6 +16,8 @@ Apply these defaults when working in this repository unless the user explicitly 
 ## Memory
 - Keep project-specific decisions in the repository `DevOps` folder; do not store them in memory for this repository.
 - Use memory for general solution-wide or project-overlapping working preferences rather than repository-local implementation decisions.
+- When inspecting built assemblies from the workspace in PowerShell, do not load the original output DLLs directly into a long-lived shell; use copies or unload the load context afterward to avoid file locks.
+- Cross-project integration tests should live in a separate test project with clear dependencies instead of one language-specific test project referencing another language frontend's test data.
 
 ## Code Organization
 - Prefer one class/interface/struct per file.
