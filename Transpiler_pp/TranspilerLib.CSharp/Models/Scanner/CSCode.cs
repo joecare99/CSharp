@@ -105,7 +105,7 @@ public partial class CSCode : CodeBase, ICSCode
         {
             string debug = GetDebug(data, OriginalCode);
 
-            Handler(t => stack.Push(t), OriginalCode, data);
+            Handler?.Invoke(t => stack.Push(t), OriginalCode, data);
             stack.Reverse();
             while (stack.Count > 0)
                 yield return stack.Pop();
@@ -128,7 +128,7 @@ public partial class CSCode : CodeBase, ICSCode
         {
             //Debug:
             string debug = GetDebug(data, OriginalCode);
-            Handler(token, OriginalCode, data);
+            Handler?.Invoke(token, OriginalCode, data);
             data.Pos++;
         }
     }
