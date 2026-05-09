@@ -11,7 +11,6 @@ public class JsonOutput : IOutput
 {
     public void Output(IReader reader, Action<string> write, Action<string> debug)
     {
-        var indent = 0;
         write("{");
         var xElExists = false;
         while (reader.Read())
@@ -41,7 +40,7 @@ public class JsonOutput : IOutput
             }
             else if (reader.HasValue)
             {
-                write($"{(xElExists ? ", " : "")} \"@\" : \"{Quoted(reader.getValue().ToString())}\"");
+                write($"{(xElExists ? ", " : "")} \"@\" : \"{Quoted(reader.getValue().ToString() ?? "")}\"");
             }
         }
         write("}");
