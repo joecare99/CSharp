@@ -1,1 +1,24 @@
 ﻿
+    FUNCTION
+ fbCalcWinkelvVector :
+       VAR_INPUT
+ Vec :
+         ;       END_VAR       VAR_OUTPUT
+ Len  LREAL :          ;       END_VAR       VAR
+ ZwErg  LREAL :          ;       END_VAR
+    BEGIN
+      IF
+       THEN
+ ZwErg := SEL(
+ := ATAN(
+ Vec.v.y / vec.v.x  ) := ATAN(
+ Vec.v.y / vec.v.x  ) + pi , ) :=          ;  len := Vec. := v. := x  COS(
+ ZwErg  ) /          ;  fbCalcWinkelvVector := ZwErg  pi * 2.0 - DINT_TO_REAL(
+ TRUNC(
+ Zwerg / pi * 0.5 + 1.5  )  ) * pi * 2.0 -          ;       ELSIF
+       THEN
+ fbCalcWinkelvVector := SEL(
+ := ATAN( - Vec.v.x / vec.v.y - ) + 0.5 * pi , ATAN( - Vec.v.x / vec.v.y - ) - 0.5 * pi - ) ,              ;  len := Vec. := v. := y  SIN(
+ fbCalcWinkelvVector  ) /          ;       else
+ fbCalcWinkelvVector := 0.0         ;  Len := 0.0         ;       end_if       ;
+    END_FUNCTION
