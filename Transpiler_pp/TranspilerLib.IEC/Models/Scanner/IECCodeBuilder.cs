@@ -18,6 +18,11 @@ public class IECCodeBuilder : CodeBuilder
 
     public override void OnToken(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Unknown && string.Equals(data.actualBlock.Name, "Declaration", StringComparison.Ordinal))
+        {
+            data.actualBlock.Type = CodeBlockType.MainBlock;
+        }
+
         if (data.actualBlock == null && _lastKnownActualBlock != null)
         {
             data.actualBlock = _lastKnownActualBlock;
@@ -47,8 +52,8 @@ public class IECCodeBuilder : CodeBuilder
         if (data.actualBlock != null)
         {
             _lastKnownActualBlock = data.actualBlock;
+            TryAttachAssignmentAst(data.actualBlock);
         }
-        TryAttachAssignmentAst(data.actualBlock);
         data.cbtLast = tokenData.type;
     }
 
@@ -183,6 +188,12 @@ public class IECCodeBuilder : CodeBuilder
             base.OnToken(td, data);
             data.actualBlock.Parent = block;
             data.actualBlock = block;
+        }
+        else if (data.actualBlock.Type == CodeBlockType.MainBlock)
+        {
+            var td = tokenData;
+            td.Level = data.actualBlock.Level;
+            base.OnToken(td, data);
         }
         else
         {

@@ -2,18 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models;
 using TranspilerLib.Models.Scanner;
-using static TranspilerLib.Interfaces.Code.ICodeBase;
 
 namespace TranspilerLib.IEC.Models.Scanner;
 
 public class IECTokenHandler : TokenHandlerBase, ITokenHandler
 {
 
-    private static readonly Dictionary<int, Action<TokenDelegate?, string, TokenizeData>> _tokenStateHandler = new()
+    private static readonly Dictionary<int, Action<ICodeBase.TokenDelegate?, string, TokenizeData>> _tokenStateHandler = new()
         {
             { 0, HandleDefault },
             { 1, HandleAlpha },
@@ -26,9 +26,9 @@ public class IECTokenHandler : TokenHandlerBase, ITokenHandler
             { 8, HandleNumbers },
         };
 
-    public static Dictionary<IECResWords, TypeCode> _sysTypes { get; set; }
-    public static string[] _reservedWords { get; set; }
-    public static Dictionary<IECResWords, IECResWords> _blockWords { get; set; }
+    public static Dictionary<IECResWords, TypeCode> _sysTypes { get; set; } = new();
+    public static string[] _reservedWords { get; set; } = [];
+    public static Dictionary<IECResWords, IECResWords> _blockWords { get; set; } = new();
     public
 #if NET7_0_OR_GREATER
 required
@@ -48,7 +48,7 @@ required
 Dictionary<IECResWords, IECResWords> blockWords
     { set => _blockWords = value; }
 
-    public static void HandleDefault(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    public static void HandleDefault(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         switch (OriginalCode[data.Pos])
         {
@@ -81,7 +81,7 @@ Dictionary<IECResWords, IECResWords> blockWords
         }
     }
 
-    private static void DefaultBrackets(TokenDelegate? token, char c, string originalCode, TokenizeData data)
+    private static void DefaultBrackets(ICodeBase.TokenDelegate? token, char c, string originalCode, TokenizeData data)
     {
         var _iBrackets = CharSets.bracketsSet.IndexOf(c);
         if (_iBrackets % 2 != 0)
@@ -92,8 +92,13 @@ Dictionary<IECResWords, IECResWords> blockWords
             data.Stack += 1;
     }
 
-    private static void DefaultAlpha(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void DefaultAlpha(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
+        if (!data.flag && data.Pos == data.Pos2 && data.Stack == 1)
+        {
+            DefaultLabel(token, OriginalCode, data);
+            return;
+        }
 
         if (!data.flag && (data.flag = true)
             && GetText(data, OriginalCode).Trim().EndsWith(")"))
@@ -103,7 +108,7 @@ Dictionary<IECResWords, IECResWords> blockWords
         }
         data.State = 1;
     }
-    private static void DefaultWhitespace(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void DefaultWhitespace(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         if (data.flag && !(data.flag = false))
         {
@@ -119,11 +124,11 @@ Dictionary<IECResWords, IECResWords> blockWords
         }
     }
 
-    private static void DefaultNumbers(TokenDelegate? token, string originalCode, TokenizeData data)
+    private static void DefaultNumbers(ICodeBase.TokenDelegate? token, string originalCode, TokenizeData data)
     {
         data.State = 8;
     }
-    private static void DefaultString(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void DefaultString(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         data.State = 6; // "Normal" String
         EmitToken(token, data, CodeBlockType.Operation, OriginalCode);
@@ -131,7 +136,7 @@ Dictionary<IECResWords, IECResWords> blockWords
         if (data.State != 1)
             data.Pos++;
     }
-    private static void DefaultLabel(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void DefaultLabel(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         if (!GetText(data, OriginalCode).Trim().Contains('?'))
         {
@@ -140,7 +145,7 @@ Dictionary<IECResWords, IECResWords> blockWords
         }
     }
 
-    private static void DefaultOperator(TokenDelegate? token, string originalCode, TokenizeData data)
+    private static void DefaultOperator(ICodeBase.TokenDelegate? token, string originalCode, TokenizeData data)
     {
         char cNxt = GetNxtChar(data.Pos, originalCode);
         if (!CharSets.operatorSet.Contains(cNxt) || cNxt == '/')
@@ -149,7 +154,7 @@ Dictionary<IECResWords, IECResWords> blockWords
             data.Pos2 = data.Pos + 1;
         }
     }
-    private static void DefaultComment(TokenDelegate? token, string OriginalCode, TokenizeData data, int iNewState)
+    private static void DefaultComment(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data, int iNewState)
     {
         if (!string.IsNullOrWhiteSpace(GetText(data, OriginalCode)))
             EmitToken(token, data, CodeBlockType.Operation, OriginalCode);
@@ -158,7 +163,7 @@ Dictionary<IECResWords, IECResWords> blockWords
         data.Pos++;
     }
 
-    private static void HandleNumbers(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void HandleNumbers(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         char c = char.ToLower(OriginalCode[data.Pos]);
         if (CharSets.numbersExt.Contains(c)
@@ -181,7 +186,7 @@ Dictionary<IECResWords, IECResWords> blockWords
             HandleDefault(token, OriginalCode, data);
         }
     }
-    private static void HandleAlpha(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void HandleAlpha(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         if (CharSets.lettersAndNumbers.Contains(OriginalCode[data.Pos]) || OriginalCode[data.Pos] == '_')
         {
@@ -211,7 +216,7 @@ Dictionary<IECResWords, IECResWords> blockWords
             HandleDefault(token, OriginalCode, data);
         }
 
-        static void TestEmit(TokenDelegate? token, string OriginalCode, TokenizeData data)
+        static void TestEmit(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
         {
             int _iResWrdIdx = _reservedWords.IndexOf(GetText(data, OriginalCode).Trim().ToUpper());
             if (_iResWrdIdx > -1)
@@ -241,7 +246,7 @@ Dictionary<IECResWords, IECResWords> blockWords
     }
 
 
-    private static void HandleBlockComments(TokenDelegate? token, string code, TokenizeData data)
+    private static void HandleBlockComments(ICodeBase.TokenDelegate? token, string code, TokenizeData data)
     {
         if (code[data.Pos] == '*' && data.Pos < code.Length - 2 && code[data.Pos + 1] == ')')
         {
@@ -252,14 +257,19 @@ Dictionary<IECResWords, IECResWords> blockWords
         }
     }
 
-    private static void HandleLineComments(TokenDelegate? token, string code, TokenizeData data)
+    private static void HandleLineComments(ICodeBase.TokenDelegate? token, string code, TokenizeData data)
     {
         if (code[data.Pos] == '\r')
         {
             var p = data.Pos2;
+            var q = data.Pos2;
+            while (q > 0 && code[q - 1] is ' ' or '\t')
+            {
+                q--;
+            }
             while (p > 0 && code[--p] is ' ' or '\t')
                 ;
-            if (code[p] == '\n' || code[p] == '\r' || p == 0)
+            if (q == 0 || code[q - 1] == '\n' || code[q - 1] == '\r')
                 EmitToken(token, data, CodeBlockType.FLComment, code);
             else
                 EmitToken(token, data, CodeBlockType.LComment, code);
@@ -268,7 +278,7 @@ Dictionary<IECResWords, IECResWords> blockWords
         }
     }
 
-    private static void HandleStrings(TokenDelegate? token, string code, TokenizeData data)
+    private static void HandleStrings(ICodeBase.TokenDelegate? token, string code, TokenizeData data)
     {
         if (new[] { '"', '\'' }.Contains(code[data.Pos]))
 
@@ -286,12 +296,11 @@ Dictionary<IECResWords, IECResWords> blockWords
             }
     }
 
-
-    public bool TryGetValue(int state, out Action<TokenDelegate?, string, TokenizeData> handler)
-    {
-        return _tokenStateHandler.TryGetValue(state, out handler);
-    }
+    public bool TryGetValue(int state, [NotNullWhen(true)] out Action<ICodeBase.TokenDelegate?, string, TokenizeData>? handler)
+        => _tokenStateHandler.TryGetValue(state, out handler);
 }
+
+
 
 
 

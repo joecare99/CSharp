@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using TranspilerLib.Data;
@@ -55,7 +56,7 @@ public static class IecAstMapper
     /// <param name="block">The code block to inspect.</param>
     /// <param name="statement">Receives the typed assignment statement when available.</param>
     /// <returns><c>true</c> when a typed assignment statement was found; otherwise <c>false</c>.</returns>
-    public static bool TryGetAssignmentStatement(ICodeBlock block, out IecAssignmentStatement? statement)
+    public static bool TryGetAssignmentStatement(ICodeBlock block, [NotNullWhen(true)] out IecAssignmentStatement? statement)
     {
         statement = (block as IECCodeBlock)?.AstNode as IecAssignmentStatement;
         return statement != null;
@@ -94,7 +95,238 @@ public static class IecAstMapper
         return true;
     }
 
-    private static bool TryMapAssignmentValue(ICodeBlock assignmentBlock, out IecExpression? expression)
+    /// <summary>
+    /// Tries to obtain a typed statement from the supplied code block.
+    /// </summary>
+    /// <param name="block">The code block to inspect.</param>
+    /// <param name="statement">Receives the typed statement when available.</param>
+    /// <returns><c>true</c> when a typed statement was found; otherwise <c>false</c>.</returns>
+    public static bool TryGetStatement(ICodeBlock block, [NotNullWhen(true)] out IecStatement? statement)
+    {
+        statement = (block as IECCodeBlock)?.AstNode as IecStatement;
+        return statement != null;
+    }
+
+    /// <summary>
+    /// Creates a typed compilation unit from declarations and implementation blocks.
+    /// </summary>
+    /// <param name="declarations">The declarations that belong to the compilation unit.</param>
+    /// <param name="implementationBlocks">The parsed implementation blocks.</param>
+    /// <returns>The typed compilation unit.</returns>
+    public static IecCompilationUnit CreateCompilationUnit(IEnumerable<IecVariableDeclaration>? declarations, IEnumerable<ICodeBlock>? implementationBlocks)
+    {
+        var statements = ExtractStatements(implementationBlocks);
+        return new IecCompilationUnit(declarations, statements);
+    }
+
+    /// <summary>
+    /// Extracts supported typed statements from implementation blocks.
+    /// </summary>
+    /// <param name="implementationBlocks">The blocks to inspect.</param>
+    /// <returns>The extracted typed statements.</returns>
+    public static IReadOnlyList<IecStatement> ExtractStatements(IEnumerable<ICodeBlock>? implementationBlocks)
+    {
+        var statements = new List<IecStatement>();
+        if (implementationBlocks == null)
+        {
+            return statements;
+        }
+
+        var blocks = implementationBlocks.ToList();
+        for (var i = 0; i < blocks.Count; i++)
+        {
+            var block = blocks[i];
+            if (TryMapStatement(block, out var statement, out var consumedBlocks))
+            {
+                statements.Add(statement);
+                i += consumedBlocks - 1;
+                continue;
+            }
+
+            if (IsTransparentStatementContainer(block))
+            {
+                statements.AddRange(ExtractStatements(block.SubBlocks));
+            }
+        }
+
+        return statements;
+    }
+
+    private static bool TryMapStatement(ICodeBlock block, [NotNullWhen(true)] out IecStatement? statement, out int consumedBlocks)
+    {
+        statement = null;
+        consumedBlocks = 1;
+
+        if (TryGetOrAttachAssignmentStatement(block, out var assignmentStatement))
+        {
+            statement = assignmentStatement;
+            return true;
+        }
+
+        if (TryMapReturnStatement(block, out var returnStatement))
+        {
+            statement = returnStatement;
+            return true;
+        }
+
+        if (TryMapIfStatement(block, out var ifStatement, out consumedBlocks))
+        {
+            statement = ifStatement;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryGetOrAttachAssignmentStatement(ICodeBlock block, [NotNullWhen(true)] out IecAssignmentStatement? statement)
+    {
+        if (TryGetAssignmentStatement(block, out statement))
+        {
+            return true;
+        }
+
+        if (TryAttachAssignmentStatement(block))
+        {
+            return TryGetAssignmentStatement(block, out statement);
+        }
+
+        statement = null;
+        return false;
+    }
+
+    private static bool TryMapReturnStatement(ICodeBlock block, [NotNullWhen(true)] out IecReturnStatement? statement)
+    {
+        statement = null;
+        if (block is not IECCodeBlock iecBlock
+            || block.Type != CodeBlockType.Function
+            || !string.Equals(block.Code, "RETURN", StringComparison.OrdinalIgnoreCase)
+            || block.SubBlocks.Count == 0)
+        {
+            return false;
+        }
+
+        if (!TryMapExpressionGroup(block.SubBlocks.ToArray(), out var expression))
+        {
+            return false;
+        }
+
+        statement = new IecReturnStatement(expression, block.SourcePos);
+        iecBlock.AstNode = statement;
+        return true;
+    }
+
+    private static bool TryMapIfStatement(ICodeBlock block, [NotNullWhen(true)] out IecIfStatement? statement, out int consumedBlocks)
+        => TryMapConditionalStatement(block, consumeEndIfMarker: true, out statement, out consumedBlocks);
+
+    private static bool TryMapConditionalStatement(ICodeBlock block, bool consumeEndIfMarker, [NotNullWhen(true)] out IecIfStatement? statement, out int consumedBlocks)
+    {
+        statement = null;
+        consumedBlocks = 1;
+        if ((!IsBlockMarker(block, "IF") && !IsElsIfMarker(block)) || block.SubBlocks.Count == 0)
+        {
+            return false;
+        }
+
+        if (!TryMapExpressionGroup(block.SubBlocks.ToArray(), out var condition))
+        {
+            return false;
+        }
+
+        var thenStatements = new List<IecStatement>();
+        var elseStatements = new List<IecStatement>();
+        List<IecStatement> activeStatements = thenStatements;
+        var sibling = block.Next;
+        if (sibling == null || (!IsBlockMarker(sibling, "THEN") && !IsBlockMarker(sibling, "BEGIN")))
+        {
+            return false;
+        }
+
+        thenStatements.AddRange(ExtractStatements(sibling.SubBlocks));
+        consumedBlocks++;
+        sibling = sibling.Next;
+
+        while (sibling != null)
+        {
+            if (IsElsIfMarker(sibling))
+            {
+                if (!TryMapConditionalStatement(sibling, consumeEndIfMarker: false, out var elseIfStatement, out var elseIfConsumedBlocks))
+                {
+                    return false;
+                }
+
+                elseStatements.Add(elseIfStatement);
+                consumedBlocks += elseIfConsumedBlocks;
+                sibling = SkipSiblings(sibling, elseIfConsumedBlocks);
+                continue;
+            }
+
+            if (IsBlockMarker(sibling, "ELSE"))
+            {
+                elseStatements.AddRange(ExtractStatements(sibling.SubBlocks));
+                activeStatements = elseStatements;
+                consumedBlocks++;
+                sibling = sibling.Next;
+                continue;
+            }
+
+            if (IsBlockMarker(sibling, "END_IF"))
+            {
+                if (consumeEndIfMarker)
+                {
+                    consumedBlocks++;
+                }
+
+                statement = new IecIfStatement(condition, thenStatements, elseStatements, block.SourcePos);
+                if (block is IECCodeBlock iecBlock)
+                {
+                    iecBlock.AstNode = statement;
+                }
+
+                return true;
+            }
+
+            if (IsTransparentStatementContainer(sibling))
+            {
+                consumedBlocks++;
+                sibling = sibling.Next;
+                continue;
+            }
+
+            if (TryMapStatement(sibling, out var nestedStatement, out var nestedConsumedBlocks))
+            {
+                activeStatements.Add(nestedStatement);
+                consumedBlocks += nestedConsumedBlocks;
+                sibling = SkipSiblings(sibling, nestedConsumedBlocks);
+                continue;
+            }
+
+            sibling = sibling.Next;
+        }
+
+        return false;
+    }
+
+    private static ICodeBlock? SkipSiblings(ICodeBlock? block, int count)
+    {
+        var current = block;
+        for (var i = 0; i < count && current != null; i++)
+        {
+            current = current.Next;
+        }
+
+        return current;
+    }
+
+    private static bool IsBlockMarker(ICodeBlock block, string code)
+        => block.Type == CodeBlockType.Block && string.Equals(block.Code, code, StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsElsIfMarker(ICodeBlock block)
+        => IsBlockMarker(block, "ELSIF");
+
+    private static bool IsTransparentStatementContainer(ICodeBlock block)
+        => block.Type == CodeBlockType.Block && string.Equals(block.Code, ";", StringComparison.Ordinal);
+
+    private static bool TryMapAssignmentValue(ICodeBlock assignmentBlock, [NotNullWhen(true)] out IecExpression? expression)
     {
         expression = null;
         if (assignmentBlock.SubBlocks.Count < 2)
@@ -111,7 +343,7 @@ public static class IecAstMapper
         return TryMapExpressionGroup(candidates, out expression);
     }
 
-    private static bool TryMapExpression(ICodeBlock block, out IecExpression? expression)
+    private static bool TryMapExpression(ICodeBlock block, [NotNullWhen(true)] out IecExpression? expression)
     {
         expression = null;
 
@@ -151,7 +383,7 @@ public static class IecAstMapper
         return false;
     }
 
-    private static bool TryMapExpressionGroup(IReadOnlyList<ICodeBlock> blocks, out IecExpression? expression)
+    private static bool TryMapExpressionGroup(IReadOnlyList<ICodeBlock> blocks, [NotNullWhen(true)] out IecExpression? expression)
     {
         expression = null;
         if (blocks.Count == 0)
@@ -195,7 +427,7 @@ public static class IecAstMapper
     private static bool ContainsArgumentSeparator(IReadOnlyList<ICodeBlock> blocks)
         => blocks.Any(block => block.Type == CodeBlockType.Operation && block.Code == ",");
 
-    private static bool TryMapUnaryExpressionGroup(IReadOnlyList<ICodeBlock> blocks, out IecUnaryExpression? expression)
+    private static bool TryMapUnaryExpressionGroup(IReadOnlyList<ICodeBlock> blocks, [NotNullWhen(true)] out IecUnaryExpression? expression)
     {
         expression = null;
         if (blocks.Count != 2 || blocks[0].Type != CodeBlockType.Operation)
@@ -218,7 +450,7 @@ public static class IecAstMapper
         return expression != null;
     }
 
-    private static bool TryMapBinaryExpressionGroup(IReadOnlyList<ICodeBlock> blocks, out IecBinaryExpression? expression)
+    private static bool TryMapBinaryExpressionGroup(IReadOnlyList<ICodeBlock> blocks, [NotNullWhen(true)] out IecBinaryExpression? expression)
     {
         expression = null;
         var operatorIndex = FindSplitOperatorIndex(blocks);
@@ -275,7 +507,7 @@ public static class IecAstMapper
         return bestIndex;
     }
 
-    private static bool TryMapIdentifierExpression(ICodeBlock block, out IecIdentifierExpression? expression)
+    private static bool TryMapIdentifierExpression(ICodeBlock block, [NotNullWhen(true)] out IecIdentifierExpression? expression)
     {
         expression = null;
         if (block.Type is not CodeBlockType.Variable and not CodeBlockType.Function)
@@ -292,7 +524,7 @@ public static class IecAstMapper
         return true;
     }
 
-    private static bool TryMapLiteralExpression(ICodeBlock block, out IecLiteralExpression? expression)
+    private static bool TryMapLiteralExpression(ICodeBlock block, [NotNullWhen(true)] out IecLiteralExpression? expression)
     {
         expression = null;
         if (block.Type == CodeBlockType.Number)
@@ -310,7 +542,7 @@ public static class IecAstMapper
         return false;
     }
 
-    private static bool TryMapFunctionCallExpression(ICodeBlock block, out IecFunctionCallExpression? expression)
+    private static bool TryMapFunctionCallExpression(ICodeBlock block, [NotNullWhen(true)] out IecFunctionCallExpression? expression)
     {
         expression = null;
         if (block.Type != CodeBlockType.Function || !block.Code.EndsWith("(", StringComparison.Ordinal))
@@ -321,7 +553,7 @@ public static class IecAstMapper
         return TryMapFunctionCallExpressionCore(block.Code[..^1], block.SourcePos, block.SubBlocks, out expression);
     }
 
-    private static bool TryMapFunctionCallExpression(IReadOnlyList<ICodeBlock> blocks, out IecFunctionCallExpression? expression)
+    private static bool TryMapFunctionCallExpression(IReadOnlyList<ICodeBlock> blocks, [NotNullWhen(true)] out IecFunctionCallExpression? expression)
     {
         expression = null;
         if (blocks.Count == 0 || blocks[0].Type != CodeBlockType.Function || !blocks[0].Code.EndsWith("(", StringComparison.Ordinal))
@@ -333,7 +565,7 @@ public static class IecAstMapper
         return TryMapFunctionCallExpressionCore(blocks[0].Code[..^1], blocks[0].SourcePos, functionBlocks, out expression);
     }
 
-    private static bool TryMapFunctionCallExpressionCore(string functionName, int sourcePos, IEnumerable<ICodeBlock> subBlocks, out IecFunctionCallExpression? expression)
+    private static bool TryMapFunctionCallExpressionCore(string functionName, int sourcePos, IEnumerable<ICodeBlock> subBlocks, [NotNullWhen(true)] out IecFunctionCallExpression? expression)
     {
         expression = null;
 
@@ -383,7 +615,7 @@ public static class IecAstMapper
         }
     }
 
-    private static bool TryMapUnaryExpression(ICodeBlock block, out IecUnaryExpression? expression)
+    private static bool TryMapUnaryExpression(ICodeBlock block, [NotNullWhen(true)] out IecUnaryExpression? expression)
     {
         expression = null;
         if (block.SubBlocks.Count != 1)
@@ -406,7 +638,7 @@ public static class IecAstMapper
         return expression != null;
     }
 
-    private static bool TryMapBinaryExpression(ICodeBlock block, out IecBinaryExpression? expression)
+    private static bool TryMapBinaryExpression(ICodeBlock block, [NotNullWhen(true)] out IecBinaryExpression? expression)
     {
         expression = null;
         if (block.SubBlocks.Count != 2)
