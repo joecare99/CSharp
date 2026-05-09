@@ -8,7 +8,7 @@ namespace TranspilerLib.Models.Scanner.Tests;
 [TestClass]
 public class CodeOptimizerTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("if (gift > 0)", "while (gift > 0)")]
     [DataRow("if(gift > 0)", "while(gift > 0)")]
     public void TestItem_RewritesWhileWithoutReplacingInnerIfTokens(string conditionCode, string expectedCode)
