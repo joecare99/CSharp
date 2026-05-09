@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using TranspilerLib.Models;
 
 namespace TranspilerLib.Interfaces.Code
@@ -19,6 +20,6 @@ namespace TranspilerLib.Interfaces.Code
         /// <param name="state">The current tokenizer state.</param>
         /// <param name="handler">When this method returns, contains the state handler delegate if found.</param>
         /// <returns><c>true</c> if a handler for the state exists; otherwise, <c>false</c>.</returns>
-        bool TryGetValue(int state, out Action<ICodeBase.TokenDelegate?, string, TokenizeData> handler);
+        bool TryGetValue(int state, [NotNullWhen(true)] out Action<ICodeBase.TokenDelegate?, string, TokenizeData>? handler);
     }
 }
