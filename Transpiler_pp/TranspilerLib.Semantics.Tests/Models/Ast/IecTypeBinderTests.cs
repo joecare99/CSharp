@@ -147,7 +147,7 @@ public class IecTypeBinderTests
         Assert.IsTrue(result.StatementTypes.Any(entry => ReferenceEquals(entry.Key, statement) && entry.Value == "INT"));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void Bind_MergesNumericType_WhenOneOperandIsUnresolved(bool unresolvedOnLeft)
@@ -169,7 +169,7 @@ public class IecTypeBinderTests
         Assert.IsTrue(result.UnresolvedExpressions.OfType<IecIdentifierExpression>().Any(identifier => ReferenceEquals(identifier, unresolvedIdentifier)));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("ABS", "LREAL")]
     [DataRow("SIGN", "LREAL")]
     [DataRow("rw_ABS", "INT")]
@@ -271,7 +271,7 @@ public class IecTypeBinderTests
         Assert.IsTrue(result.UnresolvedExpressions.Any(expression => ReferenceEquals(expression, missing)));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(IecBinaryOperator.Subtract)]
     [DataRow(IecBinaryOperator.Multiply)]
     [DataRow(IecBinaryOperator.Divide)]

@@ -75,7 +75,7 @@ public class IecCSharpEmitterTests
         Assert.AreEqual("(!Flag)", result);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("SQRT", "Math.Sqrt(Value)")]
     [DataRow("SIGN", "Math.Sign(Value)")]
     [DataRow("rw_ABS", "Math.Abs(Value)")]
@@ -370,7 +370,7 @@ public class IecCSharpEmitterTests
         StringAssert.Contains(exception.Message, "UnsupportedStatement");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(IecBinaryOperator.Subtract, "(Left - Right)")]
     [DataRow(IecBinaryOperator.Multiply, "(Left * Right)")]
     [DataRow(IecBinaryOperator.Divide, "(Left / Right)")]
