@@ -1,0 +1,40 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+	<Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/OpenAI/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path="directory.build.props" />
+    <File Path="Directory.Packages.props" />
+    <Project Path="Ollama-Service1/Ollama-Service1.csproj" />
+    <Project Path="Ollama-Service2/Ollama-Service2.csproj" />
+    <Project Path="Ollama.Protocol.Tests/Ollama.Protocol.Tests.csproj" />
+    <Project Path="Ollama.Protocol/Ollama.Protocol.csproj" />
+    <Project Path="Ollama.Samples.BasicChat/Ollama.Samples.BasicChat.csproj" />
+    <Project Path="Ollama.Samples.ChatCheck/Ollama.Samples.ChatCheck.csproj" />
+    <Project Path="Ollama.Samples.EmbedCheck/Ollama.Samples.EmbedCheck.csproj" />
+    <Project Path="Ollama.Samples.GenerateCheck/Ollama.Samples.GenerateCheck.csproj" />
+    <Project Path="Ollama.Samples.TagsCheck/Ollama.Samples.TagsCheck.csproj" />
+    <Project Path="OpenAIPlayground/OpenAIPlayground.csproj" />
+  </Folder>
+ </Solution>
