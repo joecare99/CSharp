@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace TranspilerLib.IEC.Models.Ast;
 
@@ -11,6 +12,10 @@ namespace TranspilerLib.IEC.Models.Ast;
 /// </summary>
 public static class IecDeclarationExtractor
 {
+    private static readonly Regex _headerPattern = new(
+        @"^(?<kind>METHOD|FUNCTION|FUNCTION_BLOCK|PROGRAM)\s+(?:(?<accessibility>PUBLIC|PROTECTED|PRIVATE|INTERNAL)\s+)?(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*(?::\s*(?<returnType>[A-Za-z_][A-Za-z0-9_]*))?\s*;?$",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
     /// <summary>
     /// Extracts typed variable declarations from IEC declaration text.
     /// </summary>
@@ -73,6 +78,42 @@ public static class IecDeclarationExtractor
     }
 
     /// <summary>
+    /// Extracts shared artifact metadata and exported declaration header information from IEC declaration text.
+    /// </summary>
+    /// <param name="declarationText">The raw declaration text.</param>
+    /// <returns>The extracted declaration header information.</returns>
+    public static IecDeclarationHeader ExtractDeclarationHeader(string declarationText)
+    {
+        var lines = declarationText
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace("\r", "\n", StringComparison.Ordinal)
+            .Split('\n');
+
+        for (var i = 0; i < lines.Length; i++)
+        {
+            var trimmedLine = RemoveInlineComment(lines[i]).Trim();
+            if (string.IsNullOrWhiteSpace(trimmedLine))
+            {
+                continue;
+            }
+
+            var match = _headerPattern.Match(trimmedLine);
+            if (!match.Success)
+            {
+                continue;
+            }
+
+            var artifactKind = ParseArtifactKind(match.Groups["kind"].Value);
+            var accessibility = ParseAccessibility(match.Groups["accessibility"].Value);
+            var artifactName = match.Groups["name"].Value;
+            var returnTypeName = match.Groups["returnType"].Success ? match.Groups["returnType"].Value : null;
+            return new IecDeclarationHeader(artifactName, returnTypeName, new IecArtifactMetadata(artifactKind, accessibility), i);
+        }
+
+        return new IecDeclarationHeader(null, null, new IecArtifactMetadata());
+    }
+
+    /// <summary>
     /// Creates a lightweight compilation unit from declaration and implementation text.
     /// The current implementation extracts declarations and leaves executable statements
     /// to the existing statement parsing pipeline.
@@ -84,7 +125,31 @@ public static class IecDeclarationExtractor
     {
         _ = implementationText;
         var declarations = ExtractDeclarations(declarationText);
-        return new IecCompilationUnit(declarations, Array.Empty<IecStatement>());
+        var header = ExtractDeclarationHeader(declarationText);
+        return new IecCompilationUnit(declarations, Array.Empty<IecStatement>(), header.ArtifactMetadata, header.SourcePos);
+    }
+
+    private static IecArtifactKind ParseArtifactKind(string value)
+    {
+        return value.ToUpperInvariant() switch
+        {
+            "FUNCTION" or "METHOD" => IecArtifactKind.Function,
+            "FUNCTION_BLOCK" => IecArtifactKind.FunctionBlock,
+            "PROGRAM" => IecArtifactKind.Program,
+            _ => IecArtifactKind.Function,
+        };
+    }
+
+    private static IecAccessibility ParseAccessibility(string value)
+    {
+        return value.ToUpperInvariant() switch
+        {
+            "PUBLIC" => IecAccessibility.Public,
+            "PROTECTED" => IecAccessibility.Protected,
+            "PRIVATE" => IecAccessibility.Private,
+            "INTERNAL" => IecAccessibility.Internal,
+            _ => IecAccessibility.Public,
+        };
     }
 
     private static string RemoveInlineComment(string line)
