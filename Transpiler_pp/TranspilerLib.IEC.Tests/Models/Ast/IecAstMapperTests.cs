@@ -139,4 +139,95 @@ public class IecAstMapperTests
         Assert.IsInstanceOfType<IecBinaryExpression>(comparison.Right);
         Assert.AreEqual(IecBinaryOperator.Multiply, ((IecBinaryExpression)comparison.Right).OperatorType);
     }
+
+    [TestMethod]
+    public void TryGetStatement_ReturnsAttachedTypedNode()
+    {
+        var returnStatement = new IecReturnStatement(new IecLiteralExpression(1));
+        var block = new IECCodeBlock
+        {
+            Code = "RETURN",
+            Type = CodeBlockType.Function,
+            AstNode = returnStatement,
+        };
+
+        var result = IecAstMapper.TryGetStatement(block, out var actual);
+
+        Assert.IsTrue(result);
+        Assert.AreSame(returnStatement, actual);
+    }
+
+    [TestMethod]
+    public void ExtractStatements_MapsReturnStatement()
+    {
+        var returnBlock = new IECCodeBlock
+        {
+            Code = "RETURN",
+            Type = CodeBlockType.Function,
+        };
+        _ = new IECCodeBlock { Code = "Target", Type = CodeBlockType.Variable, Parent = returnBlock };
+
+        var statements = IecAstMapper.ExtractStatements([returnBlock]);
+
+        Assert.AreEqual(1, statements.Count);
+        Assert.IsInstanceOfType<IecReturnStatement>(statements[0]);
+        Assert.IsInstanceOfType<IecIdentifierExpression>(((IecReturnStatement)statements[0]).Expression);
+    }
+
+    [TestMethod]
+    public void ExtractStatements_MapsIfStatement_WithElseAssignments()
+    {
+        var ifBlock = new IECCodeBlock { Code = "IF", Type = CodeBlockType.Block };
+        _ = new IECCodeBlock { Code = "Flag", Type = CodeBlockType.Variable, Parent = ifBlock };
+        var thenBlock = new IECCodeBlock { Code = "THEN", Type = CodeBlockType.Block };
+        var thenAssignment = new IECCodeBlock { Code = ":=", Type = CodeBlockType.Assignment };
+        _ = new IECCodeBlock { Code = "Result", Type = CodeBlockType.Variable, Parent = thenAssignment };
+        _ = new IECCodeBlock { Code = "1", Type = CodeBlockType.Number, Parent = thenAssignment };
+        var elseBlock = new IECCodeBlock { Code = "ELSE", Type = CodeBlockType.Block };
+        var elseAssignment = new IECCodeBlock { Code = ":=", Type = CodeBlockType.Assignment };
+        _ = new IECCodeBlock { Code = "Result", Type = CodeBlockType.Variable, Parent = elseAssignment };
+        _ = new IECCodeBlock { Code = "2", Type = CodeBlockType.Number, Parent = elseAssignment };
+        var endIfBlock = new IECCodeBlock { Code = "END_IF", Type = CodeBlockType.Block };
+
+        var root = new IECCodeBlock { Code = "ROOT", Type = CodeBlockType.Block };
+        ifBlock.Parent = root;
+        thenBlock.Parent = root;
+        thenAssignment.Parent = root;
+        elseBlock.Parent = root;
+        elseAssignment.Parent = root;
+        endIfBlock.Parent = root;
+
+        var statements = IecAstMapper.ExtractStatements(root.SubBlocks);
+
+        Assert.AreEqual(1, statements.Count);
+        Assert.IsInstanceOfType<IecIfStatement>(statements[0]);
+        var ifStatement = (IecIfStatement)statements[0];
+        Assert.IsInstanceOfType<IecIdentifierExpression>(ifStatement.Condition);
+        Assert.AreEqual(1, ifStatement.ThenStatements.Count);
+        Assert.AreEqual(1, ifStatement.ElseStatements.Count);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(ifStatement.ThenStatements[0]);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(ifStatement.ElseStatements[0]);
+    }
+
+    [TestMethod]
+    public void CreateCompilationUnit_UsesMappedImplementationStatements()
+    {
+        var declarations = new[]
+        {
+            new IecVariableDeclaration("Flag", "BOOL", IecDeclarationSection.Input),
+            new IecVariableDeclaration("Result", "INT", IecDeclarationSection.Local),
+        };
+        var assignment = new IECCodeBlock { Code = ":=", Type = CodeBlockType.Assignment };
+        _ = new IECCodeBlock { Code = "Result", Type = CodeBlockType.Variable, Parent = assignment };
+        _ = new IECCodeBlock { Code = "1", Type = CodeBlockType.Number, Parent = assignment };
+        var returnBlock = new IECCodeBlock { Code = "RETURN", Type = CodeBlockType.Function };
+        _ = new IECCodeBlock { Code = "Result", Type = CodeBlockType.Variable, Parent = returnBlock };
+
+        var compilationUnit = IecAstMapper.CreateCompilationUnit(declarations, [assignment, returnBlock]);
+
+        Assert.AreEqual(2, compilationUnit.Declarations.Count);
+        Assert.AreEqual(2, compilationUnit.Statements.Count);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(compilationUnit.Statements[0]);
+        Assert.IsInstanceOfType<IecReturnStatement>(compilationUnit.Statements[1]);
+    }
 }
