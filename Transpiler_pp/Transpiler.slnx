@@ -18,20 +18,20 @@
     <Project Path="../CSharpBible/Libraries/BaseLib/BaseLib.csproj" />
     <Project Path="../CSharpBible/Libraries/BaseLibTests/BaseLibTests.csproj" />
     <Project Path="../CSharpBible/Libraries/CommonDialogs/CommonDialogs.csproj">
-      <Platform Solution="*|Mixed Platforms" Project="x64" />
       <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Mixed Platforms" Project="x64" />
     </Project>
     <Project Path="../CSharpBible/Libraries/CommonDialogs/CommonDialogs_net.csproj">
-      <Platform Solution="*|Mixed Platforms" Project="x64" />
       <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Mixed Platforms" Project="x64" />
     </Project>
     <Project Path="../CSharpBible/Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj">
-      <Platform Solution="*|Mixed Platforms" Project="x86" />
       <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Mixed Platforms" Project="x86" />
     </Project>
     <Project Path="../CSharpBible/Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
-      <Platform Solution="*|Mixed Platforms" Project="x86" />
       <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Mixed Platforms" Project="x86" />
     </Project>
   </Folder>
   <Folder Name="/Projektmappenelemente/">
@@ -53,6 +53,7 @@
     <Project Path="TranspilerLib.DriveBASIC/TranspilerLib.DriveBASIC.csproj" />
     <Project Path="TranspilerLib.IEC.Tests/TranspilerLib.IEC.Tests.csproj" />
     <Project Path="TranspilerLib.IEC/TranspilerLib.IEC.csproj" />
+    <Project Path="TranspilerLib.Integration.Tests/TranspilerLib.Integration.Tests.csproj" />
     <Project Path="TranspilerLib.Pascal.Tests/TranspilerLib.Pascal.Tests.csproj" />
     <Project Path="TranspilerLib.Pascal/TranspilerLib.Pascal.csproj" />
     <Project Path="TranspilerLib.Semantics.Tests/TranspilerLib.Semantics.Tests.csproj" />

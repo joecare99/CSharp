@@ -54,7 +54,7 @@ public class IECReader : IReader
     /// </summary>
     /// <param name="i">Nullbasierter Attributindex.</param>
     /// <returns>Wert des Attributs oder <c>null</c>.</returns>
-    public object? GetAttributeValue(int i) => _xr.GetAttribute(i);
+    public object GetAttributeValue(int i) => _xr.GetAttribute(i) ?? string.Empty;
 
     /// <summary>
     /// Liefert den Attributnamen an Position <paramref name="i"/>.

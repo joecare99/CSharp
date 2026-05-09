@@ -16,6 +16,9 @@ namespace TranspilerLib.Models.Scanner;
 /// </remarks>
 public class CSCodeBuilder : CodeBuilder
 {
+    private static ICodeBlock CreateDetachedBlock(string name, CodeBlockType type, string code, int sourcePos)
+        => new CodeBlock() { Name = name, Type = type, Code = code, SourcePos = sourcePos };
+
     /// <summary>
     /// Initializes a new instance of the <see cref="CSCodeBuilder"/> class and configures the default
     /// <see cref="CodeBuilder.NewCodeBlock"/> factory to produce <see cref="CodeBlock"/> instances with source positions.
@@ -69,13 +72,16 @@ public class CSCodeBuilder : CodeBuilder
 
     private void BuildBlockEnd(TokenData tokenData, ICodeBuilderData data)
     {
-        _ = NewCodeBlock($"{tokenData.type}End", tokenData.type, tokenData.Code, data.actualBlock?.Parent, tokenData.Pos);
-        data.actualBlock = data.actualBlock?.Parent;
+        var parentBlock = data.actualBlock.Parent;
+        _ = parentBlock != null
+            ? NewCodeBlock($"{tokenData.type}End", tokenData.type, tokenData.Code, parentBlock, tokenData.Pos)
+            : CreateDetachedBlock($"{tokenData.type}End", tokenData.type, tokenData.Code, tokenData.Pos);
+        data.actualBlock = parentBlock ?? data.actualBlock;
     }
 
     private void BuildBlockStart(TokenData tokenData, ICodeBuilderData data)
     {
-        data.actualBlock = NewCodeBlock($"{tokenData.type}Start", tokenData.type, tokenData.Code, (ICodeBlock?)data.actualBlock, tokenData.Pos);
+        data.actualBlock = NewCodeBlock($"{tokenData.type}Start", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
         data.xBreak = true;
     }
 
@@ -84,7 +90,11 @@ public class CSCodeBuilder : CodeBuilder
         if (!data.actualBlock.Code.StartsWith("case ") && (tokenData.Code.Contains(",") || tokenData.Code.Contains("("))) //not cElse label
         {
             if (data.actualBlock.Type is not CodeBlockType.Operation || data.actualBlock.Code.EndsWith(";"))
-                data.actualBlock = NewCodeBlock($"Operation", CodeBlockType.Operation, "", data.actualBlock.Parent, tokenData.Pos);
+            {
+                data.actualBlock = data.actualBlock.Parent != null
+                    ? NewCodeBlock($"Operation", CodeBlockType.Operation, "", data.actualBlock.Parent, tokenData.Pos)
+                    : CreateDetachedBlock($"Operation", CodeBlockType.Operation, "", tokenData.Pos);
+            }
             data.actualBlock.Code += tokenData.Code + " ";
             tokenData.type = CodeBlockType.Operation; //!! not cElse label
         }
@@ -101,7 +111,11 @@ public class CSCodeBuilder : CodeBuilder
                 tokenData.Code = data.actualBlock.Code.Substring(5);
             }
             else
-                data.actualBlock = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock.Parent, tokenData.Pos);
+            {
+                data.actualBlock = data.actualBlock.Parent != null
+                    ? NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock.Parent, tokenData.Pos)
+                    : CreateDetachedBlock($"{tokenData.type}", tokenData.type, tokenData.Code, tokenData.Pos);
+            }
             if (!data.labels.ContainsKey(tokenData.Code))
                 data.labels.Add(tokenData.Code, data.actualBlock);
         }
@@ -150,7 +164,7 @@ public class CSCodeBuilder : CodeBuilder
             Parent = data.actualBlock?.Parent,
             SourcePos = tokenData.Pos
         };
-        data.gotos.Add((ICodeBlock?)data.actualBlock);
+        data.gotos.Add(data.actualBlock);
         data.xBreak = false;
     }
 

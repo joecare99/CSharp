@@ -25,5 +25,17 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T0009-B0008-General-Metadata-Base.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T0010-B0008-Physical-Semantics-Source-Ownership.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T0011-B0008-Semantics-Test-Project.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0014-B0001-Warning-Reduction.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0015-B0006-IEC-SourceText-To-CSharp-Backend-Regression.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0016-B0001-IEC-Export-Expression-Mapping.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0017-IEC-Test-Failure-Stabilization.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0018-IEC-Scanner-Regression-Stabilization.md" />
+    <None Include="$(MSBuildThisFileDirectory)Temp\ExprInspector\ExprInspector.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Temp\Inspector\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Temp\ExprInspector\Program.cs" />
   </ItemGroup>
 </Project>

@@ -37,10 +37,12 @@ public class IECInterpreter(ICodeBlock codeBlock) : InterpreterBase, IInterprete
             {IECResWords.rw_DIV,typeof(Math).GetMethods().Where(m => m.Name == nameof(Math.DivRem)) },
             {IECResWords.rw_EXP,typeof(Math).GetMethods().Where(m => m.Name == nameof(Math.Exp)) },
             {IECResWords.rw_INT,typeof(Math).GetMethods().Where(m => m.Name == nameof(Math.Floor)) },
-            {IECResWords.rw_LEN,[typeof(IECInterpreter).GetMethod(nameof(GetStringLength),BindingFlags.NonPublic|BindingFlags.Static)] },
+            {IECResWords.rw_LEN,[GetRequiredMethod(nameof(GetStringLength))] },
             {IECResWords.rw_LN,typeof(Math).GetMethods().Where(m => m.Name == nameof(Math.Log)) },
             {IECResWords.rw_LOG,typeof(Math).GetMethods().Where(m => m.Name == nameof(Math.Log10)) },
-            {IECResWords.rw_MOD,typeof(Math).GetMethods().Where(m => m.Name == nameof(Math.IEEERemainder)) },
+             {IECResWords.rw_MOD,[
+                GetRequiredMethod(nameof(GetModuloInt32)),
+                GetRequiredMethod(nameof(GetModuloInt64))] },
         //    {IECResWords.rw_POW,typeof(Math).GetMethod(nameof(Math.Pow)) },
         //??    {IECResWords.rw_ROUND,typeof(Math).GetMethod(nameof(Math.Round)) },
             {IECResWords.rw_SIN,typeof(Math).GetMethods().Where(m => m.Name == nameof(Math.Sin)) },
@@ -50,10 +52,24 @@ public class IECInterpreter(ICodeBlock codeBlock) : InterpreterBase, IInterprete
             {IECResWords.rw_TRUNC,typeof(Math).GetMethods().Where(m => m.Name == nameof(Math.Truncate)) },
         };
 
+    private static MethodInfo GetRequiredMethod(string methodName)
+        => typeof(IECInterpreter).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static)
+            ?? throw new MissingMethodException(typeof(IECInterpreter).FullName, methodName);
+
     /// <summary>
     /// Hilfsfunktion für LEN.
     /// </summary>
     private static int GetStringLength(string s) => s.Length;
+
+    /// <summary>
+    /// Implements IEC integer modulo semantics for 32-bit values.
+    /// </summary>
+    private static int GetModuloInt32(int left, int right) => left % right;
+
+    /// <summary>
+    /// Implements IEC integer modulo semantics for 64-bit values.
+    /// </summary>
+    private static long GetModuloInt64(long left, long right) => left % right;
 
     /// <summary>
     /// Callback zur Auflösung unbekannter Identifikatoren (z.B. Variablen / Funktionen), falls nicht in <see cref="systemfunctions"/>.
@@ -115,7 +131,7 @@ public class IECInterpreter(ICodeBlock codeBlock) : InterpreterBase, IInterprete
     {
         if (IecAstMapper.TryGetAssignmentStatement(block, out var assignment))
         {
-            parameters[assignment.Target.Identifier] = EvaluateExpression(assignment.Value, parameters);
+            parameters[assignment.Target.Identifier] = EvaluateExpression(assignment.Value, parameters) ?? string.Empty;
             return;
         }
 
@@ -130,12 +146,8 @@ public class IECInterpreter(ICodeBlock codeBlock) : InterpreterBase, IInterprete
             var func = right.Split('(')[0];
             var args = right.Split('(')[1].Split(')')[0].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             var values = args.Select(a => parameters[a.Trim()]).ToArray();
-            // Funktionsauflösung anhand Name und Argumentanzahl
-            var method = systemfunctions
-                .First(m => string.Equals(m.Key.ToString(), func, StringComparison.OrdinalIgnoreCase))
-                .Value.First(m => values.Length == m.GetParameters().Length);
-            var result = method.Invoke(null, values);
-            parameters[left] = result!;
+            var result = InvokeSystemFunction(func, values);
+            parameters[left] = result ?? string.Empty;
         }
         else
         {
@@ -171,10 +183,39 @@ public class IECInterpreter(ICodeBlock codeBlock) : InterpreterBase, IInterprete
     private static object? ExecuteFunctionCall(IecFunctionCallExpression functionCall, IDictionary<string, object> parameters)
     {
         var values = functionCall.Arguments.Select(argument => EvaluateExpression(argument, parameters)).ToArray();
+        return InvokeSystemFunction(functionCall.FunctionName, values);
+    }
+
+    /// <summary>
+    /// Resolves and invokes the best matching IEC system function overload.
+    /// </summary>
+    /// <param name="functionName">The IEC function name.</param>
+    /// <param name="values">The runtime arguments.</param>
+    /// <returns>The invocation result.</returns>
+    private static object? InvokeSystemFunction(string functionName, object?[] values)
+    {
         var methods = systemfunctions
-            .First(m => string.Equals(m.Key.ToString(), functionCall.FunctionName, StringComparison.OrdinalIgnoreCase))
+            .First(m => string.Equals(m.Key.ToString(), functionName, StringComparison.OrdinalIgnoreCase))
             .Value;
 
+        var (bestMethod, bestConvertedValues) = ResolveBestMethod(methods, values);
+
+        if (bestMethod != null)
+        {
+            return bestMethod.Invoke(null, bestConvertedValues);
+        }
+
+        throw new InvalidOperationException($"Keine kompatible Funktionssignatur für '{functionName}' gefunden.");
+    }
+
+    /// <summary>
+    /// Selects the best matching overload for the supplied argument values.
+    /// </summary>
+    /// <param name="methods">The candidate methods.</param>
+    /// <param name="values">The runtime arguments.</param>
+    /// <returns>The selected method and its converted arguments.</returns>
+    private static (MethodInfo? Method, object?[]? ConvertedValues) ResolveBestMethod(IEnumerable<MethodInfo> methods, object?[] values)
+    {
         MethodInfo? bestMethod = null;
         object?[]? bestConvertedValues = null;
         var bestScore = int.MinValue;
@@ -206,12 +247,7 @@ public class IECInterpreter(ICodeBlock codeBlock) : InterpreterBase, IInterprete
             }
         }
 
-        if (bestMethod != null)
-        {
-            return bestMethod.Invoke(null, bestConvertedValues);
-        }
-
-        throw new InvalidOperationException($"Keine kompatible Funktionssignatur für '{functionCall.FunctionName}' gefunden.");
+        return (bestMethod, bestConvertedValues);
     }
 
     /// <summary>

@@ -22,6 +22,7 @@
 		<Compile Include="Models\Ast\IecAstMapper.cs" />
 		<Compile Include="Models\Ast\IecCompilationUnit.cs" />
 		<Compile Include="Models\Ast\IecDeclarationMetadata.cs" />
+     <Compile Include="Models\Ast\IecFrontendCompilationUnitFactory.cs" />
 		<Compile Include="Models\Ast\IecMetadata.cs" />
 	</ItemGroup>
 

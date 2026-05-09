@@ -152,7 +152,7 @@ public partial class TToolButton : LfmComponentBase
         }
     }
 
-    protected override void OnActionChanged(TAction target)
+    protected override void OnActionChanged(TAction? target)
     {
         // For TToolButton: inherit Hint from Action (not Caption!)
         if (target == null) return;

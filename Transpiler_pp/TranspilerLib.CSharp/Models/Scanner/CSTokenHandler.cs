@@ -1,17 +1,17 @@
 ﻿using BaseLib.Helper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
-using static TranspilerLib.Interfaces.Code.ICodeBase;
 
 namespace TranspilerLib.Models.Scanner;
 
 public class CSTokenHandler : TokenHandlerBase, ITokenHandler
 {
 
-    private static readonly Dictionary<int, Action<TokenDelegate?, string, TokenizeData>> _tokenStateHandler = new()
+    private static readonly Dictionary<int, Action<ICodeBase.TokenDelegate?, string, TokenizeData>?> _tokenStateHandler = new()
         {
             { 0, HandleDefault },
             { 1, HandleStrings },
@@ -33,7 +33,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
 #endif
      string[] reservedWords { set => _reservedWords = value; }
 
-    internal static void HandleBlockComments(TokenDelegate? token, string code, TokenizeData data)
+    internal static void HandleBlockComments(ICodeBase.TokenDelegate? token, string code, TokenizeData data)
     {
         if (code[data.Pos] == '*' && GetNxtChar(data.Pos,code) == '/')
         {
@@ -44,7 +44,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
         }
     }
 
-    internal static void HandleLineComments(TokenDelegate? token, string code, TokenizeData data)
+    internal static void HandleLineComments(ICodeBase.TokenDelegate? token, string code, TokenizeData data)
     {
         if (code[data.Pos] == '\r' || data.Pos == code.Length-1 )
         {
@@ -54,7 +54,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
         }
     }
 
-    internal static void HandleStrings(TokenDelegate? token, string code, TokenizeData data)
+    internal static void HandleStrings(ICodeBase.TokenDelegate? token, string code, TokenizeData data)
     {
         if (_stringEndChars.Contains(code[data.Pos]))
             switch (code[data.Pos])
@@ -82,7 +82,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
 
     }
 
-    public static void HandleDefault(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    public static void HandleDefault(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         switch (OriginalCode[data.Pos])
         {
@@ -118,7 +118,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
         }
     }
 
-    private static void DefaultAlpha(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void DefaultAlpha(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         if (!data.flag && (data.flag = true)
             && GetText(data, OriginalCode).Trim().EndsWith(")"))
@@ -128,7 +128,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
         }
     }
 
-    private static void DefaultWhitespace(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void DefaultWhitespace(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         if (data.flag && !(data.flag = false)
             && GetText(data, OriginalCode).EndswithAny(_reservedWords))
@@ -138,7 +138,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
         }
     }
 
-    private static void DefaultComment(TokenDelegate? token, string OriginalCode, TokenizeData data, int iNewState)
+    private static void DefaultComment(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data, int iNewState)
     {
         EmitToken(token, data, CodeBlockType.Operation, OriginalCode);
         data.Pos2 = data.Pos;
@@ -146,7 +146,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
         data.Pos++;
     }
 
-    private static void DefaultString(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void DefaultString(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         data.State = 1; // "Normal" String
         if (GetPrvChar(data.Pos, OriginalCode) == '$')
@@ -165,7 +165,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
             data.Pos++;
     }
 
-    private static void DefaultLabel(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void DefaultLabel(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         if (!GetText(data, OriginalCode).Trim().Contains('?'))
         {
@@ -174,14 +174,14 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
         }
     }
 
-    private static void DefaultInstructionEnd(TokenDelegate? token, string OriginalCode, TokenizeData data)
+    private static void DefaultInstructionEnd(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data)
     {
         var text = GetText(data, OriginalCode, 1);
         EmitToken(token, data, text.Contains("goto ") ? CodeBlockType.Goto : CodeBlockType.Operation, OriginalCode, 1);
         data.Pos2 = data.Pos + 1;
     }
 
-    private static void DefaultBlock(TokenDelegate? token, string OriginalCode, TokenizeData data, bool xStart = false, bool xEnd = false)
+    private static void DefaultBlock(ICodeBase.TokenDelegate? token, string OriginalCode, TokenizeData data, bool xStart = false, bool xEnd = false)
     {
         if (!string.IsNullOrEmpty(GetText(data, OriginalCode).Trim()))
             EmitToken(token, data, CodeBlockType.Operation, OriginalCode);
@@ -194,10 +194,8 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
             data.Stack -= 1;
     }
 
-    public bool TryGetValue(int state, out Action<TokenDelegate?, string, TokenizeData> handler)
-    {
-        return _tokenStateHandler.TryGetValue(state, out handler);
-    }
+    public bool TryGetValue(int state, [NotNullWhen(true)] out Action<ICodeBase.TokenDelegate?, string, TokenizeData>? handler) 
+        => _tokenStateHandler.TryGetValue(state, out handler);
 }
 
 

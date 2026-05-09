@@ -113,6 +113,181 @@ public class MfComputeAlignmentRotExportTests
         Assert.IsTrue(typedFunctionCalls.SelectMany(function => function.Arguments).Any(argument => argument is IecIdentifierExpression or IecUnaryExpression or IecBinaryExpression), "Typed function calls should retain expression-shaped arguments from the export fixture.");
     }
 
+    [TestMethod]
+    public void CreateFromSourceText_BuildsTypedCompilationUnit_ForExportFixture()
+    {
+        var fixture = IecExportFixtureData.LoadMfComputeAlignmentRot();
+
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            fixture.DeclarationText,
+            fixture.ImplementationText);
+
+        Assert.IsTrue(compilationUnit.Declarations.Count >= 20, "The export fixture should preserve the extracted declaration set.");
+        Assert.IsTrue(compilationUnit.Statements.Count >= 5, "The frontend source-text bridge should retain a representative typed statement subset for the export fixture.");
+        Assert.IsTrue(compilationUnit.Statements.OfType<IecAssignmentStatement>().Any(statement => statement.Target.Identifier == "_lrAngleSetpDiff"), "Expected a typed assignment for _lrAngleSetpDiff in the typed compilation unit.");
+        Assert.IsTrue(compilationUnit.Statements.OfType<IecAssignmentStatement>().Any(statement => statement.Value is IecFunctionCallExpression), "The frontend source-text bridge should retain typed function-call assignments from the export fixture.");
+        Assert.IsTrue(compilationUnit.Statements.OfType<IecIfStatement>().Any(), "The frontend source-text bridge should now retain IF statements from the export fixture.");
+    }
+
+    [TestMethod]
+    public void CreateFromSourceText_PreservesLimitCall_ForExportFixture()
+    {
+        var fixture = IecExportFixtureData.LoadMfComputeAlignmentRot();
+
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            fixture.DeclarationText,
+            fixture.ImplementationText);
+
+        var limitAssignment = compilationUnit.Statements
+            .OfType<IecAssignmentStatement>()
+            .FirstOrDefault(statement => statement.Target.Identifier == "_lrSetpVelocity");
+
+        Assert.IsNotNull(limitAssignment, "Expected the export fixture to retain the _lrSetpVelocity assignment.");
+        Assert.IsInstanceOfType<IecFunctionCallExpression>(limitAssignment.Value);
+
+        var limitCall = (IecFunctionCallExpression)limitAssignment.Value;
+        Assert.AreEqual("LIMIT", limitCall.FunctionName);
+        Assert.AreEqual(3, limitCall.Arguments.Count, "The LIMIT call should preserve its three export arguments.");
+        Assert.IsInstanceOfType<IecUnaryExpression>(limitCall.Arguments[0]);
+        Assert.IsInstanceOfType<IecBinaryExpression>(limitCall.Arguments[1]);
+        Assert.IsInstanceOfType<IecIdentifierExpression>(limitCall.Arguments[2]);
+    }
+
+    [TestMethod]
+    public void CreateFromSourceText_PreservesNestedExportExpressions_ForExportFixture()
+    {
+        var fixture = IecExportFixtureData.LoadMfComputeAlignmentRot();
+
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            fixture.DeclarationText,
+            fixture.ImplementationText);
+
+        var alignmentVel3Assignment = compilationUnit.Statements
+            .OfType<IecAssignmentStatement>()
+            .FirstOrDefault(statement => statement.Target.Identifier == "_lrAligmentVel3");
+        var alignmentVel4Assignment = compilationUnit.Statements
+            .OfType<IecAssignmentStatement>()
+            .FirstOrDefault(statement => statement.Target.Identifier == "_lrAligmentVel4");
+        var resultAssignment = compilationUnit.Statements
+            .OfType<IecAssignmentStatement>()
+            .FirstOrDefault(statement => statement.Target.Identifier == "_result");
+
+        Assert.IsNotNull(alignmentVel3Assignment, "Expected the export fixture to retain the _lrAligmentVel3 assignment.");
+        Assert.IsNotNull(alignmentVel4Assignment, "Expected the export fixture to retain the _lrAligmentVel4 assignment.");
+        Assert.IsNotNull(resultAssignment, "Expected the export fixture to retain the _result assignment.");
+
+        Assert.IsInstanceOfType<IecBinaryExpression>(alignmentVel3Assignment.Value);
+        var alignmentVel3Expression = (IecBinaryExpression)alignmentVel3Assignment.Value;
+        Assert.AreEqual(IecBinaryOperator.Multiply, alignmentVel3Expression.OperatorType);
+        Assert.IsInstanceOfType<IecFunctionCallExpression>(alignmentVel3Expression.Left);
+        Assert.IsInstanceOfType<IecFunctionCallExpression>(alignmentVel3Expression.Right);
+
+        var alignmentVel3Limit = (IecFunctionCallExpression)alignmentVel3Expression.Left;
+        Assert.AreEqual("LIMIT", alignmentVel3Limit.FunctionName);
+        Assert.AreEqual(3, alignmentVel3Limit.Arguments.Count, "The nested LIMIT call should preserve its three arguments.");
+        Assert.IsInstanceOfType<IecLiteralExpression>(alignmentVel3Limit.Arguments[0]);
+        Assert.IsInstanceOfType<IecBinaryExpression>(alignmentVel3Limit.Arguments[1]);
+        Assert.IsInstanceOfType<IecFunctionCallExpression>(alignmentVel3Limit.Arguments[2]);
+
+        var alignmentVel3Sign = (IecFunctionCallExpression)alignmentVel3Expression.Right;
+        Assert.AreEqual("SEW_MKC_Math2D.SIGN", alignmentVel3Sign.FunctionName);
+        Assert.AreEqual(1, alignmentVel3Sign.Arguments.Count, "The trailing SIGN call should preserve its single argument.");
+
+        Assert.IsInstanceOfType<IecFunctionCallExpression>(alignmentVel4Assignment.Value);
+        var alignmentVel4Limit = (IecFunctionCallExpression)alignmentVel4Assignment.Value;
+        Assert.AreEqual("LIMIT", alignmentVel4Limit.FunctionName);
+        Assert.AreEqual(3, alignmentVel4Limit.Arguments.Count, "The LIMIT call should preserve its three arguments.");
+        Assert.IsInstanceOfType<IecUnaryExpression>(alignmentVel4Limit.Arguments[0]);
+        Assert.IsInstanceOfType<IecBinaryExpression>(alignmentVel4Limit.Arguments[1]);
+        Assert.IsInstanceOfType<IecIdentifierExpression>(alignmentVel4Limit.Arguments[2]);
+
+        Assert.IsInstanceOfType<IecFunctionCallExpression>(resultAssignment.Value);
+        var resultSel = (IecFunctionCallExpression)resultAssignment.Value;
+        Assert.AreEqual("SEL", resultSel.FunctionName);
+        Assert.AreEqual(3, resultSel.Arguments.Count, "The SEL call should preserve all three export arguments.");
+        Assert.IsInstanceOfType<IecBinaryExpression>(resultSel.Arguments[0]);
+        Assert.IsInstanceOfType<IecIdentifierExpression>(resultSel.Arguments[1]);
+        Assert.IsInstanceOfType<IecBinaryExpression>(resultSel.Arguments[2]);
+
+        var resultScaleExpression = (IecBinaryExpression)resultSel.Arguments[2];
+        Assert.AreEqual(IecBinaryOperator.Divide, resultScaleExpression.OperatorType);
+        Assert.IsInstanceOfType<IecBinaryExpression>(resultScaleExpression.Left);
+        Assert.IsInstanceOfType<IecIdentifierExpression>(resultScaleExpression.Right);
+
+        var resultMultiplyExpression = (IecBinaryExpression)resultScaleExpression.Left;
+        Assert.AreEqual(IecBinaryOperator.Multiply, resultMultiplyExpression.OperatorType);
+        Assert.IsInstanceOfType<IecIdentifierExpression>(resultMultiplyExpression.Left);
+        Assert.IsInstanceOfType<IecFunctionCallExpression>(resultMultiplyExpression.Right);
+
+        var resultAbsCall = (IecFunctionCallExpression)resultMultiplyExpression.Right;
+        Assert.AreEqual("ABS", resultAbsCall.FunctionName);
+        Assert.AreEqual(1, resultAbsCall.Arguments.Count, "The ABS call should preserve its single _lrAxisVelTarget argument.");
+        Assert.IsInstanceOfType<IecIdentifierExpression>(resultAbsCall.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void CreateFromSourceText_PreservesInlineCommentStatements_ForExportFixture()
+    {
+        var fixture = IecExportFixtureData.LoadMfComputeAlignmentRot();
+
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            fixture.DeclarationText,
+            fixture.ImplementationText);
+
+        var alignmentVel4Assignment = compilationUnit.Statements
+            .OfType<IecAssignmentStatement>()
+            .FirstOrDefault(statement => statement.Target.Identifier == "_lrAligmentVel4");
+        var axisVelTargetAssignment = compilationUnit.Statements
+            .OfType<IecAssignmentStatement>()
+            .FirstOrDefault(statement => statement.Target.Identifier == "_lrAxisVelTarget");
+
+        Assert.IsNotNull(alignmentVel4Assignment, "Expected the export fixture to retain the inline-comment LIMIT assignment for _lrAligmentVel4.");
+        Assert.IsNotNull(axisVelTargetAssignment, "Expected the export fixture to retain the statement that follows the inline-comment _lrAligmentVel4 assignment.");
+
+        Assert.IsInstanceOfType<IecFunctionCallExpression>(alignmentVel4Assignment.Value);
+        var alignmentVel4Limit = (IecFunctionCallExpression)alignmentVel4Assignment.Value;
+        Assert.AreEqual("LIMIT", alignmentVel4Limit.FunctionName);
+        Assert.AreEqual(3, alignmentVel4Limit.Arguments.Count, "The inline-comment LIMIT call should preserve its three arguments.");
+
+        Assert.IsInstanceOfType<IecFunctionCallExpression>(axisVelTargetAssignment.Value);
+        var axisVelTargetLimit = (IecFunctionCallExpression)axisVelTargetAssignment.Value;
+        Assert.AreEqual("LIMIT", axisVelTargetLimit.FunctionName);
+        Assert.AreEqual(3, axisVelTargetLimit.Arguments.Count, "The statement after the inline comment should remain a distinct LIMIT assignment.");
+    }
+
+    [TestMethod]
+    public void CreateFromSourceText_PreservesIfBranchAssignments_ForExportFixture()
+    {
+        var fixture = IecExportFixtureData.LoadMfComputeAlignmentRot();
+
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            fixture.DeclarationText,
+            fixture.ImplementationText);
+
+        var ifStatements = compilationUnit.Statements.OfType<IecIfStatement>().ToList();
+
+        Assert.AreEqual(2, ifStatements.Count, "The export fixture should retain both IF blocks.");
+        Assert.AreEqual(1, ifStatements[0].ThenStatements.Count, "The first IF block should retain its THEN assignment.");
+        Assert.AreEqual(1, ifStatements[0].ElseStatements.Count, "The first IF block should retain its ELSE assignment.");
+        Assert.AreEqual(1, ifStatements[1].ThenStatements.Count, "The second IF block should retain its THEN assignment.");
+        Assert.AreEqual(1, ifStatements[1].ElseStatements.Count, "The second IF block should retain its ELSE assignment.");
+
+        var firstThenAssignment = ifStatements[0].ThenStatements.OfType<IecAssignmentStatement>().Single();
+        var firstElseAssignment = ifStatements[0].ElseStatements.OfType<IecAssignmentStatement>().Single();
+        var secondThenAssignment = ifStatements[1].ThenStatements.OfType<IecAssignmentStatement>().Single();
+        var secondElseAssignment = ifStatements[1].ElseStatements.OfType<IecAssignmentStatement>().Single();
+
+        Assert.AreEqual("_lrActVelocityUsed", firstThenAssignment.Target.Identifier);
+        Assert.AreEqual("_lrActVelocityUsed", firstElseAssignment.Target.Identifier);
+        Assert.AreEqual("_lrDistRemainder2a", secondThenAssignment.Target.Identifier);
+        Assert.AreEqual("_lrDistRemainder2a", secondElseAssignment.Target.Identifier);
+
+        Assert.IsInstanceOfType<IecBinaryExpression>(firstThenAssignment.Value);
+        Assert.IsInstanceOfType<IecIdentifierExpression>(firstElseAssignment.Value);
+        Assert.IsInstanceOfType<IecBinaryExpression>(secondThenAssignment.Value);
+        Assert.IsInstanceOfType<IecBinaryExpression>(secondElseAssignment.Value);
+    }
+
     /// <summary>
     /// Computes simple regression-oriented metrics for structured-text source code.
     /// The current implementation intentionally focuses on the operators and control-flow

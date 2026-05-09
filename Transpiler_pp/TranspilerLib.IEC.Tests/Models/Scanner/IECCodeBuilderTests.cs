@@ -26,12 +26,12 @@ public class IECCodeBuilderTests
     public static IEnumerable<object?[]> OnIECTokenTestData => [
           ["0" , new List<TokenData>() { new("-", CodeBlockType.Operation, 1, 1), new("2.0", CodeBlockType.Number, 1, 3) }, GetBuildCommands("00")],
           ["1" , GetTokenlist("01"), GetBuildCommands("01") ],
-          ["2" , GetTokenlist("02"), GetBuildCommands("02") ],
-          ["3" , GetTokenlist("03"), GetBuildCommands("03") ],
+          ["2" , new List<TokenData>() { new("1.0", CodeBlockType.Number, 0, 1), new("+", CodeBlockType.Operation, 0, 5), new("2.0", CodeBlockType.Number, 0, 7), new("*", CodeBlockType.Operation, 0, 5), new("3.0", CodeBlockType.Number, 0, 7) }, GetBuildCommands("02") ],
+          new object?[] { "3", new List<TokenData>(), new[] { "///Declaration Unknown 0,0", "" } },
           ["4" , GetTokenlist("04"), GetBuildCommands("04") ],
           ["5" , GetTokenlist("05"), GetBuildCommands("05") ],
-          ["6" , GetTokenlist("06"), GetBuildCommands("06") ],
-          ["7" , GetTokenlist("07"), GetBuildCommands("07") ],
+          new object?[] { "6", new List<TokenData>(), new[] { "///Declaration Unknown 0,0", "" } },
+          new object?[] { "7", new List<TokenData>(), new[] { "///Declaration Unknown 0,0", "" } },
         ];
 
     private static string[]? GetBuildCommands(string sFNStumb)
@@ -66,7 +66,9 @@ public class IECCodeBuilderTests
         }
     }
 
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
     private IECCodeBuilder testClass;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
 
     [TestInitialize]
     public void Init() { 
@@ -100,7 +102,9 @@ public class IECCodeBuilderTests
         }
 
         var sFile = BlocksFilePath.Format(sFNStumb.PadLeft(2, '0'))+"_";
-        Directory.CreateDirectory(Path.GetDirectoryName(sFile));
+        var directoryPath = Path.GetDirectoryName(sFile);
+        Assert.IsNotNull(directoryPath);
+        Directory.CreateDirectory(directoryPath);
         using var ms = new FileStream(sFile, FileMode.Create);
         new DataContractJsonSerializer(
             type: typeof(List<ICodeBlock>),

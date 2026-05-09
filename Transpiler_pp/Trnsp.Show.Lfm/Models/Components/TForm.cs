@@ -62,7 +62,7 @@ public partial class TForm : LfmComponentBase
                 ShowHint = ConvertToBool(value);
                 break;
             case "menu":
-                ObjectResolver.ResolveOrDefer(value as string,this,(s)=>Menu = new WeakReference<TMainMenu>(s as TMainMenu));
+                ObjectResolver?.ResolveOrDefer(value as string,this,(s)=>Menu = new WeakReference<TMainMenu>(s as TMainMenu));
                 break;
             default:
                 base.ApplyProperty(name, value);

@@ -36,6 +36,17 @@ public class IecDeclarationExtractorTests
     }
 
     [TestMethod]
+    public void ExtractDeclarationHeader_ReadsMethodMetadata_FromExportStyleHeader()
+    {
+        var header = IecDeclarationExtractor.ExtractDeclarationHeader("METHOD PROTECTED MF_ComputeAlignmentRot : LREAL;\nVAR_INPUT\nInput : LREAL;\nEND_VAR");
+
+        Assert.AreEqual("MF_ComputeAlignmentRot", header.ArtifactName);
+        Assert.AreEqual("LREAL", header.ReturnTypeName);
+        Assert.AreEqual(IecArtifactKind.Function, header.ArtifactMetadata.ArtifactKind);
+        Assert.AreEqual(IecAccessibility.Protected, header.ArtifactMetadata.Accessibility);
+    }
+
+    [TestMethod]
     public void ExtractDeclarations_ReadsOutputSection()
     {
         var declarations = IecDeclarationExtractor.ExtractDeclarations("VAR_OUTPUT\nResult : BOOL;\nEND_VAR");
@@ -89,5 +100,82 @@ public class IecDeclarationExtractorTests
 
         Assert.AreEqual(1, compilationUnit.Declarations.Count);
         Assert.AreEqual(0, compilationUnit.Statements.Count);
+    }
+
+    [TestMethod]
+    public void CreateFromSourceText_MapsTypedStatements_FromMinimalImplementation()
+    {
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            "VAR\nValue : INT;\nEND_VAR",
+            "Value := 1;");
+
+        Assert.AreEqual(1, compilationUnit.Declarations.Count);
+        Assert.AreEqual(1, compilationUnit.Statements.Count);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(compilationUnit.Statements[0]);
+    }
+
+    [TestMethod]
+    public void CreateFromSourceText_MapsReturnStatement_AfterSeparator()
+    {
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            "VAR\nValue : INT;\nEND_VAR",
+            "Value := 1;\nRETURN Value;");
+
+        Assert.AreEqual(2, compilationUnit.Statements.Count);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(compilationUnit.Statements[0]);
+        Assert.IsInstanceOfType<IecReturnStatement>(compilationUnit.Statements[1]);
+    }
+
+    [TestMethod]
+    public void CreateFromSourceText_MapsIfStatement_AfterSeparator()
+    {
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            "VAR\nFlag : BOOL;\nValue : INT;\nEND_VAR",
+            "Value := 1;\nIF Flag THEN\nValue := 2;\nELSE\nValue := 3;\nEND_IF;");
+
+        Assert.AreEqual(2, compilationUnit.Statements.Count);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(compilationUnit.Statements[0]);
+        Assert.IsInstanceOfType<IecIfStatement>(compilationUnit.Statements[1]);
+
+        var ifStatement = (IecIfStatement)compilationUnit.Statements[1];
+        Assert.AreEqual(1, ifStatement.ThenStatements.Count);
+        Assert.AreEqual(1, ifStatement.ElseStatements.Count);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(ifStatement.ThenStatements[0]);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(ifStatement.ElseStatements[0]);
+    }
+
+    [TestMethod]
+    public void CreateFromSourceText_MapsElsIfStatementChain()
+    {
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            "VAR\nFlagA : BOOL;\nFlagB : BOOL;\nValue : INT;\nEND_VAR",
+            "IF FlagA THEN\nValue := 1;\nELSIF FlagB THEN\nValue := 2;\nELSE\nValue := 3;\nEND_IF;");
+
+        Assert.AreEqual(1, compilationUnit.Statements.Count);
+        Assert.IsInstanceOfType<IecIfStatement>(compilationUnit.Statements[0]);
+
+        var ifStatement = (IecIfStatement)compilationUnit.Statements[0];
+        Assert.AreEqual(1, ifStatement.ThenStatements.Count);
+        Assert.AreEqual(1, ifStatement.ElseStatements.Count);
+        Assert.IsInstanceOfType<IecIfStatement>(ifStatement.ElseStatements[0]);
+
+        var elseIfStatement = (IecIfStatement)ifStatement.ElseStatements[0];
+        Assert.AreEqual(1, elseIfStatement.ThenStatements.Count);
+        Assert.AreEqual(1, elseIfStatement.ElseStatements.Count);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(elseIfStatement.ThenStatements[0]);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(elseIfStatement.ElseStatements[0]);
+    }
+
+    [TestMethod]
+    public void CreateFromSourceText_MapsFunctionResultAssignment_ToReturnStatement()
+    {
+        var compilationUnit = IecFrontendCompilationUnitFactory.CreateFromSourceText(
+            "METHOD PRIVATE Compute : LREAL;\nVAR\nValue : LREAL;\nEND_VAR",
+            "Value := 1;\nCompute := Value;");
+
+        Assert.AreEqual(IecAccessibility.Private, compilationUnit.Accessibility);
+        Assert.AreEqual(2, compilationUnit.Statements.Count);
+        Assert.IsInstanceOfType<IecAssignmentStatement>(compilationUnit.Statements[0]);
+        Assert.IsInstanceOfType<IecReturnStatement>(compilationUnit.Statements[1]);
     }
 }
