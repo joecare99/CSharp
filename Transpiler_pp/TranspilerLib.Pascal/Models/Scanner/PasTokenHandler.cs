@@ -247,6 +247,6 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
         }
     }
 
-    public bool TryGetValue(int state, out Action<TokenDelegate?, string, TokenizeData> handler)
-        => _tokenStateHandler.TryGetValue((PasTokenState)state, out handler!);
+    public bool TryGetValue(int state, out Action<TokenDelegate?, string, TokenizeData>? handler)
+        => _tokenStateHandler.TryGetValue((PasTokenState)state, out handler);
 }
