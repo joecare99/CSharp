@@ -25,45 +25,49 @@
 		<None Remove="*/**" />
 		<None Remove="**" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Include="DevOps\DetectiveGame.Engine.Gameplay-Plan.md" />
+	  <None Include="DevOps\DetectiveGame.Engine.Iteration1-Backlog.md" />
+	</ItemGroup>
 
   <ItemGroup>
     <!-- Avalonia packages -->
     <!-- Important: keep version in sync! -->
-    <PackageReference Include="Avalonia"  />
-    <PackageReference Include="Avalonia.Headless"  />
-    <PackageReference Include="Avalonia.Themes.Fluent"  />
-    <PackageReference Include="Avalonia.Fonts.Inter"  />
-    <PackageReference Include="Avalonia.Diagnostics"  />
-    <PackageReference Include="Avalonia.Desktop"  />
-    <PackageReference Condition="$(TargetFramework.Contains('ios'))" Include="Avalonia.iOS"  />
-    <PackageReference Include="Avalonia.Browser"  />
-    <PackageReference Condition="$(TargetFramework.Contains('android'))" Include="Avalonia.Android"  />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Headless" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="Avalonia.Diagnostics" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Condition="$(TargetFramework.Contains('ios'))" Include="Avalonia.iOS" />
+    <PackageReference Include="Avalonia.Browser" />
+    <PackageReference Condition="$(TargetFramework.Contains('android'))" Include="Avalonia.Android" />
     <PackageReference Include="Svg.Controls.Skia.Avalonia" />
-    <PackageReference Include="Avalonia.Svg"  />
-    <PackageReference Include="Avalonia.Svg.Skia"  />
-    <PackageReference Include="Avalonia.Controls.ColorPicker"  />
-    <PackageReference Include="Avalonia.ReactiveUI"  />
+    <PackageReference Include="Avalonia.Svg" />
+    <PackageReference Include="Avalonia.Svg.Skia" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" />
+    <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="FontPickerAvalonia" />
-    <PackageReference Include="MessageBox.Avalonia"/>
-    <PackageReference Include="MsBox.Avalonia"  />
-    <PackageReference Include="NAudio"  />
-    <PackageReference Include="IndexRange"  />
-    <PackageReference Include="IsExternalInit"  />
-    <PackageReference Include="CommunityToolkit.Mvvm"  />
-    <PackageReference Include="Microsoft.Extensions.Hosting"  />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection"  />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"  />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"  />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf"  />
-    <PackageReference Include="System.Drawing.Common"  />
-    <PackageReference Include="System.ValueTuple"  />
-    <PackageReference Include="System.Configuration.ConfigurationManager"  />
-    <PackageReference Condition="$(TargetFramework.Contains('android'))" Include="Xamarin.AndroidX.Core.SplashScreen"  />
-    <PackageReference Include="Microsoft.NET.Test.Sdk"  />
-    <PackageReference Include="Microsoft.Build"  />
-    <PackageReference Include="NSubstitute"  />
+    <PackageReference Include="MessageBox.Avalonia" />
+    <PackageReference Include="MsBox.Avalonia" />
+    <PackageReference Include="NAudio" />
+    <PackageReference Include="IndexRange" />
+    <PackageReference Include="IsExternalInit" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+    <PackageReference Include="System.Drawing.Common" />
+    <PackageReference Include="System.ValueTuple" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" />
+    <PackageReference Condition="$(TargetFramework.Contains('android'))" Include="Xamarin.AndroidX.Core.SplashScreen" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.Build" />
+    <PackageReference Include="NSubstitute" />
     <PackageReference Include="MSTest" />
-    <PackageReference Include="coverlet.collector"  />
+    <PackageReference Include="coverlet.collector" />
   </ItemGroup>
 
 </Project>

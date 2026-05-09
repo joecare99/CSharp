@@ -10,7 +10,7 @@ namespace Ollama.Samples.GenerateCheck;
 internal static class Program
 {
     private const string DefaultEndpoint = "http://localhost:11434/";
-    private const string DefaultModel = "qwen3.5:4b";
+    private const string DefaultModel = "gemma4:e2b";
 
     private static async Task<int> Main(string[] args)
     {
