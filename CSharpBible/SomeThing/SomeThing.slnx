@@ -28,6 +28,7 @@
     <Project Path="QuineTest/QuineTest.csproj" />
   </Folder>
   <Folder Name="/Something/">
+    <Project Path="ChaoticEntropyGenerator/ChaoticEntropyGenerator.csproj" Id="fe425a22-ee2b-48fb-9c92-14f9532e0fbb" />
     <Project Path="ConsoleApp1/ConsoleApp1.csproj" />
     <Project Path="MemoPlus/MemoPlus.csproj" />
     <Project Path="ObfuscatedConsole/ObfuscatedConsole.csproj" />
