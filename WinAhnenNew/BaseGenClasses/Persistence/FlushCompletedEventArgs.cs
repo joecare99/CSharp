@@ -1,4 +1,5 @@
 using System;
+using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
 
 namespace BaseGenClasses.Persistence;
@@ -13,7 +14,7 @@ public sealed class FlushCompletedEventArgs : EventArgs
     /// </summary>
     /// <param name="genRequestedEntity">The preferred entity focus that was flushed.</param>
     /// <param name="eScope">The flush scope used for the completed operation.</param>
-    public FlushCompletedEventArgs(IGenEntity? genRequestedEntity, GenealogyFlushScope eScope)
+    public FlushCompletedEventArgs(IGenEntity? genRequestedEntity, GenealogyPersistenceScope eScope)
     {
         GenRequestedEntity = genRequestedEntity;
         this.eScope = eScope;
@@ -27,5 +28,5 @@ public sealed class FlushCompletedEventArgs : EventArgs
     /// <summary>
     /// Gets the flush scope used for the completed operation.
     /// </summary>
-    public GenealogyFlushScope eScope { get; }
+    public GenealogyPersistenceScope eScope { get; }
 }

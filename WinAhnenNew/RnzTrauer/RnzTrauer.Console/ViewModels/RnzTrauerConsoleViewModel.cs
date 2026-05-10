@@ -96,7 +96,7 @@ public sealed class RnzTrauerConsoleViewModel
         DateTime today = DateTime.Today;
         var iOffset = DateTime.TryParse(sParam1,out var dtStart)?(today- dtStart).Days : 0; 
         var iDayDelta = 0;
-        while (iDayDelta <= 0)
+        while (iDayDelta <= 15)
         {
             var dtCurrent = DateOnly.FromDateTime(today).AddDays(-(iDayDelta + iOffset));
             iDayDelta += 1;
