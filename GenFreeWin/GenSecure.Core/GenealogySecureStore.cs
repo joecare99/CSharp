@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text.Json;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
@@ -58,6 +60,7 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
 
         Dictionary<IGenEntity, string> dictEntityRecordIds = CreateEntityRecordIdMap(lstPersons, lstFamilies);
         Dictionary<IGenPlace, string> dictPlaceRecordIds = CreatePlaceRecordIdMap(lstPlaces);
+        Dictionary<IGenFact, string> dictFactReferenceIds = CreateFactReferenceIdMap(dictEntityRecordIds);
         Dictionary<IGenPerson, StoreMode> dictPersonStoreModes = lstPersons.ToDictionary(
             genPerson => genPerson,
             genPerson => getPersonStoreMode?.Invoke(genPerson) ?? GetDefaultStoreMode(genPerson));
@@ -107,6 +110,9 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
                 RecordId = dictPlaceRecordIds[genPlace],
                 UId = genPlace.UId,
             }).ToList(),
+             Transactions = genealogy.Transactions
+                .Select(genTransaction => CreateTransactionRecord(genealogy, genTransaction, dictEntityRecordIds, dictPlaceRecordIds, dictFactReferenceIds))
+                .ToList(),
         };
 
         Directory.CreateDirectory(sGenealogyRootDirectory);
@@ -134,6 +140,10 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
         Dictionary<string, IGenPlace> dictPlaces = new(StringComparer.Ordinal);
         Dictionary<string, IGenEntity> dictEntities = new(StringComparer.Ordinal);
         Dictionary<string, GenealogyEntityRecord> dictEntityRecords = new(StringComparer.Ordinal);
+        Dictionary<string, IGenBase> dictReferenceTargets = new(StringComparer.Ordinal)
+        {
+            [GetGenealogyReferenceId()] = genealogy
+        };
 
         foreach (GenealogyManifestEntry manifestEntry in manifest.Places.OrderBy(entry => entry.RecordId, StringComparer.Ordinal))
         {
@@ -148,6 +158,7 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
             genealogy.Places.Add(genPlace);
             SetGenealogyOwner(genPlace, genealogy);
             dictPlaces.Add(manifestEntry.RecordId, genPlace);
+            dictReferenceTargets.Add(GetPlaceReferenceId(manifestEntry.RecordId), genPlace);
         }
 
         foreach (GenealogyManifestEntry manifestEntry in manifest.Persons.OrderBy(entry => entry.RecordId, StringComparer.Ordinal))
@@ -158,6 +169,7 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
             SetGenealogyOwner(genPerson, genealogy);
             dictEntities.Add(manifestEntry.RecordId, genPerson);
             dictEntityRecords.Add(manifestEntry.RecordId, personRecord);
+            dictReferenceTargets.Add(GetEntityReferenceId(manifestEntry.RecordId), genPerson);
         }
 
         foreach (GenealogyManifestEntry manifestEntry in manifest.Families.OrderBy(entry => entry.RecordId, StringComparer.Ordinal))
@@ -168,6 +180,7 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
             SetGenealogyOwner(genFamily, genealogy);
             dictEntities.Add(manifestEntry.RecordId, genFamily);
             dictEntityRecords.Add(manifestEntry.RecordId, familyRecord);
+            dictReferenceTargets.Add(GetEntityReferenceId(manifestEntry.RecordId), genFamily);
         }
 
         foreach (GenealogyManifestEntry manifestEntry in manifest.Places.OrderBy(entry => entry.RecordId, StringComparer.Ordinal))
@@ -182,7 +195,30 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
         foreach (KeyValuePair<string, GenealogyEntityRecord> kvp in dictEntityRecords.OrderBy(pair => pair.Key, StringComparer.Ordinal))
         {
             IGenEntity genEntity = ResolveEntity(dictEntities, kvp.Key);
-            HydrateEntity(factory, genEntity, kvp.Value, dictEntities, dictPlaces);
+            HydrateEntity(factory, genEntity, kvp.Value, dictEntities, dictPlaces, dictReferenceTargets);
+        }
+
+        IGenTransaction? genPreviousTransaction = null;
+        foreach (GenealogyTransactionRecord transactionRecord in (manifest.Transactions ?? []).OrderBy(record => record.Timestamp).ThenBy(record => record.UId))
+        {
+            IGenTransaction genTransaction = factory.CreateTransaction(
+                transactionRecord.UId,
+                transactionRecord.ID,
+                transactionRecord.LastChange,
+                ResolveReference(dictReferenceTargets, transactionRecord.ClassReferenceId),
+                ResolveReference(dictReferenceTargets, transactionRecord.EntryReferenceId),
+                DeserializePayload(transactionRecord.Data),
+                DeserializePayload(transactionRecord.OldData),
+                transactionRecord.Timestamp,
+                genPreviousTransaction);
+            if (genTransaction is IHasOwner hasOwner)
+            {
+                hasOwner.SetOwner(genealogy);
+            }
+
+            LinkTransactions(genPreviousTransaction, genTransaction);
+            genealogy.Transactions.Add(genTransaction);
+            genPreviousTransaction = genTransaction;
         }
 
         return genealogy;
@@ -241,9 +277,9 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
 
     private static void EnsureSupportedCollections(IGenealogy genealogy)
     {
-        if (genealogy.Sources.Count > 0 || genealogy.Repositories.Count > 0 || genealogy.Medias.Count > 0 || genealogy.Transactions.Count > 0)
+        if (genealogy.Sources.Count > 0 || genealogy.Repositories.Count > 0 || genealogy.Medias.Count > 0)
         {
-            throw new NotSupportedException("The current GenSecure genealogy store version supports entities and places only.");
+            throw new NotSupportedException("The current GenSecure genealogy store version supports entities, places, and transactions only.");
         }
     }
 
@@ -288,6 +324,26 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
                 .OrderBy(record => record.TargetRecordId, StringComparer.Ordinal)
                 .ThenBy(record => record.ConnectionType)
                 .ToList(),
+        };
+    }
+
+    private static GenealogyTransactionRecord CreateTransactionRecord(
+        IGenealogy genealogy,
+        IGenTransaction genTransaction,
+        IReadOnlyDictionary<IGenEntity, string> dictEntityRecordIds,
+        IReadOnlyDictionary<IGenPlace, string> dictPlaceRecordIds,
+        IReadOnlyDictionary<IGenFact, string> dictFactReferenceIds)
+    {
+        return new GenealogyTransactionRecord
+        {
+            UId = genTransaction.UId,
+            ID = (genTransaction as IGenObject)?.ID ?? 0,
+            LastChange = (genTransaction as IGenObject)?.LastChange,
+            ClassReferenceId = ResolveReferenceId(genealogy, genTransaction.Class, dictEntityRecordIds, dictPlaceRecordIds, dictFactReferenceIds),
+            EntryReferenceId = ResolveReferenceId(genealogy, genTransaction.Entry, dictEntityRecordIds, dictPlaceRecordIds, dictFactReferenceIds),
+            Data = SerializePayload(genTransaction.Data),
+            OldData = SerializePayload(genTransaction.OldData),
+            Timestamp = genTransaction.Timestamp,
         };
     }
 
@@ -395,6 +451,27 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
         return dictResult;
     }
 
+    private static Dictionary<IGenFact, string> CreateFactReferenceIdMap(IReadOnlyDictionary<IGenEntity, string> dictEntityRecordIds)
+    {
+        Dictionary<IGenFact, string> dictResult = new();
+        foreach (KeyValuePair<IGenEntity, string> kvp in dictEntityRecordIds)
+        {
+            int iIndex = 0;
+            foreach (IGenFact genFact in kvp.Key.Facts.Where(genFact => genFact is not null).Select(genFact => genFact!))
+            {
+                string sFactRecordId = BuildFactRecordId(genFact, iIndex++);
+                dictResult[genFact] = GetFactReferenceId(kvp.Value, sFactRecordId);
+            }
+        }
+
+        return dictResult;
+    }
+
+    private static string BuildFactRecordId(IGenFact genFact, int iIndex)
+        => genFact.UId != Guid.Empty
+            ? $"fact-{genFact.UId:N}"
+            : $"fact-{iIndex:D6}-{genFact.eFactType}";
+
     private static Dictionary<IGenPlace, string> CreatePlaceRecordIdMap(IEnumerable<IGenPlace> lstPlaces)
     {
         Dictionary<IGenPlace, string> dictResult = new();
@@ -475,6 +552,18 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
     private static string GetPlaceIdentitySeed(IGenPlace genPlace)
         => BuildEntityRecordId("place", 0, genPlace.UId, !string.IsNullOrWhiteSpace(genPlace.Name) ? genPlace.Name : genPlace.GOV_ID);
 
+    private static string GetGenealogyReferenceId()
+        => "genealogy";
+
+    private static string GetEntityReferenceId(string sRecordId)
+        => $"entity:{sRecordId}";
+
+    private static string GetPlaceReferenceId(string sRecordId)
+        => $"place:{sRecordId}";
+
+    private static string GetFactReferenceId(string sEntityRecordId, string sFactRecordId)
+        => $"fact:{sEntityRecordId}/{sFactRecordId}";
+
     private static StoreMode GetDefaultStoreMode(IGenPerson genPerson)
         => genPerson.Facts.Any(genFact => genFact?.eFactType is EFactType.Death or EFactType.Burial)
             ? StoreMode.Plaintext
@@ -520,12 +609,53 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
         throw new InvalidDataException($"The place record '{sRecordId}' could not be resolved.");
     }
 
+    private static IGenBase ResolveReference(IReadOnlyDictionary<string, IGenBase> dictReferenceTargets, string sReferenceId)
+    {
+        if (dictReferenceTargets.TryGetValue(sReferenceId, out IGenBase? genBase))
+        {
+            return genBase;
+        }
+
+        throw new InvalidDataException($"The genealogy reference '{sReferenceId}' could not be resolved.");
+    }
+
+    private static string ResolveReferenceId(
+        IGenealogy genealogy,
+        IGenBase genBase,
+        IReadOnlyDictionary<IGenEntity, string> dictEntityRecordIds,
+        IReadOnlyDictionary<IGenPlace, string> dictPlaceRecordIds,
+        IReadOnlyDictionary<IGenFact, string> dictFactReferenceIds)
+    {
+        if (ReferenceEquals(genBase, genealogy))
+        {
+            return GetGenealogyReferenceId();
+        }
+
+        if (genBase is IGenEntity genEntity)
+        {
+            return GetEntityReferenceId(ResolveEntityRecordId(dictEntityRecordIds, genEntity));
+        }
+
+        if (genBase is IGenPlace genPlace)
+        {
+            return GetPlaceReferenceId(ResolvePlaceRecordId(dictPlaceRecordIds, genPlace));
+        }
+
+        if (genBase is IGenFact genFact && dictFactReferenceIds.TryGetValue(genFact, out string? sFactReferenceId))
+        {
+            return sFactReferenceId;
+        }
+
+        throw new NotSupportedException($"Transactions referencing '{genBase.GetType().FullName}' are not supported yet.");
+    }
+
     private static void HydrateEntity(
         IGenealogyModelFactory factory,
         IGenEntity genEntity,
         GenealogyEntityRecord entityRecord,
         IReadOnlyDictionary<string, IGenEntity> dictEntities,
-        IReadOnlyDictionary<string, IGenPlace> dictPlaces)
+        IReadOnlyDictionary<string, IGenPlace> dictPlaces,
+        IDictionary<string, IGenBase> dictReferenceTargets)
     {
         foreach (GenealogyFactRecord factRecord in entityRecord.Facts.OrderBy(record => record.RecordId, StringComparer.Ordinal))
         {
@@ -559,12 +689,55 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
             }
 
             genEntity.Facts.Add(genFact);
+            dictReferenceTargets[GetFactReferenceId(entityRecord.RecordId, factRecord.RecordId)] = genFact;
         }
 
         foreach (GenealogyConnectionRecord connectionRecord in entityRecord.Connections.OrderBy(record => record.TargetRecordId, StringComparer.Ordinal).ThenBy(record => record.ConnectionType))
         {
             genEntity.Connects.Add(factory.CreateConnection(ResolveEntity(dictEntities, connectionRecord.TargetRecordId), connectionRecord.UId, connectionRecord.ConnectionType));
         }
+    }
+
+    private static GenealogySerializedValueRecord? SerializePayload(object? value)
+    {
+        if (value is null)
+        {
+            return null;
+        }
+
+        Type type = value.GetType();
+        return new GenealogySerializedValueRecord
+        {
+            TypeName = type.AssemblyQualifiedName ?? type.FullName ?? type.Name,
+            Json = JsonSerializer.Serialize(value, type),
+        };
+    }
+
+    private static object? DeserializePayload(GenealogySerializedValueRecord? record)
+    {
+        if (record is null)
+        {
+            return null;
+        }
+
+        Type? type = Type.GetType(record.TypeName, throwOnError: false);
+        if (type is null)
+        {
+            return record.Json;
+        }
+
+        return JsonSerializer.Deserialize(record.Json, type);
+    }
+
+    private static void LinkTransactions(IGenTransaction? genPreviousTransaction, IGenTransaction genCurrentTransaction)
+    {
+        if (genPreviousTransaction is null)
+        {
+            return;
+        }
+
+        MethodInfo? method = genPreviousTransaction.GetType().GetMethod("SetNext", BindingFlags.Instance | BindingFlags.Public);
+        method?.Invoke(genPreviousTransaction, [genCurrentTransaction]);
     }
 
     private void CleanupObsoleteRecords(
