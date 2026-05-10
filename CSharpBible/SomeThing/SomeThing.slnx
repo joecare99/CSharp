@@ -30,6 +30,7 @@
   <Folder Name="/Something/">
     <Project Path="ChaoticEntropyGenerator/ChaoticEntropyGenerator.csproj" Id="fe425a22-ee2b-48fb-9c92-14f9532e0fbb" />
     <Project Path="ConsoleApp1/ConsoleApp1.csproj" />
+    <Project Path="ConsoleApp2/ConsoleApp2.csproj" Id="31e75eeb-532e-4947-9b8d-5cda2ea1712c" />
     <Project Path="MemoPlus/MemoPlus.csproj" />
     <Project Path="ObfuscatedConsole/ObfuscatedConsole.csproj" />
     <Project Path="SelfMaze/SelfMaze.csproj" />
