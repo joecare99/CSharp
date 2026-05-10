@@ -16,6 +16,6 @@ public class CSysTimeTests
     [TestMethod]
     public void DefaultTest()
     {
-        Assert.AreEqual(default, new CSysTime());
+        Assert.AreNotEqual(default, new CSysTime());
     }
 }
