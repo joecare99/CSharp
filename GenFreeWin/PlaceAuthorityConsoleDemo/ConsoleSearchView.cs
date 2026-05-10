@@ -4,7 +4,6 @@ using ConsoleLib;
 using ConsoleLib.CommonControls;
 using BaseLib.Interfaces;
 using ConsoleLib.Interfaces;
-using GenFreeBrowser.Places.Interface; // for PlaceResult type
 
 namespace PlaceAuthorityConsoleDemo;
 
@@ -80,7 +79,7 @@ public sealed class ConsoleSearchView : Application
             if (e.PropertyName == nameof(_vm.Search.SelectedResult) && _vm.Search.SelectedResult is not null)
             {
                 var r = _vm.Search.SelectedResult;
-                _statusLabel.Text = $"Sel: {r.Name} [{r.Source}]";
+                _statusLabel.Text = $"Sel: {r.DisplayName} [{r.Source}]";
                 _statusLabel.Invalidate();
                 // Sync list selection if different
                 var idx = _vm.Search.Results.IndexOf(r);

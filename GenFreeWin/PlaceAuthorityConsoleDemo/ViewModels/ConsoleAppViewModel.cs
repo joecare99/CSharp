@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GenFreeBrowser.Places;
+using GenInterfaces.Data;
 
 namespace PlaceAuthorityConsoleDemo;
 
@@ -97,7 +98,7 @@ public sealed partial class ConsoleAppViewModel : ObservableObject
         foreach (var p in Search.Results)
         {
             var hier = (p.Hierarchy?.Count ?? 0) > 0 ? " | " + string.Join(" > ", p.Hierarchy.Take(4)) : string.Empty;
-            sb.AppendLine($"{i++,3}. {p.Name} [{p.Source}] {p.Location.Lon:F4},{p.Location.Lat:F4}{hier}");
+            sb.AppendLine($"{i++,3}. {p.DisplayName} [{p.Source}] {p.Longitude.GetValueOrDefault():F4},{p.Latitude.GetValueOrDefault():F4}{hier}");
         }
         if (Search.Results.Count == 0) sb.AppendLine("(keine Treffer)");
         ResultsText = sb.ToString();
