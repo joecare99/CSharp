@@ -1,4 +1,5 @@
 using System;
+using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
 
 namespace BaseGenClasses.Persistence;
@@ -14,7 +15,7 @@ public sealed class FlushFailedEventArgs : EventArgs
     /// <param name="genRequestedEntity">The preferred entity focus for the failed flush.</param>
     /// <param name="eScope">The requested flush scope.</param>
     /// <param name="exException">The exception that caused the flush failure.</param>
-    public FlushFailedEventArgs(IGenEntity? genRequestedEntity, GenealogyFlushScope eScope, Exception exException)
+    public FlushFailedEventArgs(IGenEntity? genRequestedEntity, GenealogyPersistenceScope eScope, Exception exException)
     {
         GenRequestedEntity = genRequestedEntity;
         this.eScope = eScope;
@@ -29,7 +30,7 @@ public sealed class FlushFailedEventArgs : EventArgs
     /// <summary>
     /// Gets the requested flush scope.
     /// </summary>
-    public GenealogyFlushScope eScope { get; }
+    public GenealogyPersistenceScope eScope { get; }
 
     /// <summary>
     /// Gets the exception that caused the flush failure.

@@ -1,4 +1,5 @@
 using System;
+using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
 
 namespace BaseGenClasses.Persistence;
@@ -14,7 +15,7 @@ public sealed class FlushRequestedEventArgs : EventArgs
     /// <param name="genRequestedEntity">The preferred entity focus for the flush request.</param>
     /// <param name="eScope">The requested flush scope.</param>
     /// <param name="xHasPendingChanges">Indicates whether the genealogy is currently dirty.</param>
-    public FlushRequestedEventArgs(IGenEntity? genRequestedEntity, GenealogyFlushScope eFlushScope, bool xPendingChanges)
+    public FlushRequestedEventArgs(IGenEntity? genRequestedEntity, GenealogyPersistenceScope eFlushScope, bool xPendingChanges)
     {
         GenRequestedEntity = genRequestedEntity;
         eScope = eFlushScope;
@@ -29,7 +30,7 @@ public sealed class FlushRequestedEventArgs : EventArgs
     /// <summary>
     /// Gets the requested flush scope.
     /// </summary>
-    public GenealogyFlushScope eScope { get; }
+    public GenealogyPersistenceScope eScope { get; }
 
     /// <summary>
     /// Gets a value indicating whether the genealogy currently has pending changes.

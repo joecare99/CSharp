@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
 
 namespace BaseGenClasses.Persistence.Interfaces;
@@ -36,10 +37,16 @@ public interface IGenealogyPersistenceContext
     bool xDirty { get; }
 
     /// <summary>
-    /// Attaches a persistence provider that will receive future flush requests.
+    /// Attaches a persistence implementation that will receive future load and flush requests.
     /// </summary>
-    /// <param name="persistenceProvider">The persistence provider to attach.</param>
-    void AttachPersistenceProvider(IGenealogyPersistenceProvider persistenceProvider);
+    /// <param name="persistence">The persistence implementation to attach.</param>
+    void AttachPersistence(IGenPersistence persistence);
+
+    /// <summary>
+    /// Attaches a persistence implementation that will receive future load and flush requests.
+    /// </summary>
+    /// <param name="persistence">The persistence implementation to attach.</param>
+    void AttachPersistenceProvider(IGenPersistence persistence);
 
     /// <summary>
     /// Marks the genealogy as dirty because one of its entities changed.
@@ -56,6 +63,6 @@ public interface IGenealogyPersistenceContext
     /// <param name="cancellationToken">A token that can cancel the flush.</param>
     Task FlushAsync(
         IGenEntity? genRequestedEntity = null,
-        GenealogyFlushScope eScope = GenealogyFlushScope.Auto,
+        GenealogyPersistenceScope eScope = GenealogyPersistenceScope.Auto,
         CancellationToken cancellationToken = default);
 }

@@ -19,7 +19,7 @@ namespace BaseGenClasses.Model;
 public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJournalContext, IRecipient<IGenTransaction>, IDisposable
 {
     private readonly IMessenger _messanger;
-    private IGenealogyPersistenceProvider? _persistenceProvider;
+    private IGenPersistence? _persistence;
     private IGenEntity? _genLastChangedEntity;
     #region Properties
     public EGenType eGenType => EGenType.Genealogy;
@@ -42,6 +42,7 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
     public IList<IGenMedia> Medias { get; init; } = [];
     public IList<IGenTransaction> Transactions { get; init; } = [];
 
+    [JsonIgnore]
     public bool xDirty { get; private set; }
 
     public event EventHandler<DirtyStateChangedEventArgs>? DirtyStateChanged;
@@ -53,7 +54,8 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
     public event EventHandler<FlushFailedEventArgs>? FlushFailed;
 
     public event EventHandler<JournalEntryRecordedEventArgs>? JournalEntryRecorded;
-
+    
+    [JsonIgnore]
     public IReadOnlyList<IGenTransaction> JournalEntries => Transactions.ToArray();
 
     #endregion
@@ -231,9 +233,14 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
         return RecordIncomingTransaction(genTransaction);
     }
 
-    public void AttachPersistenceProvider(IGenealogyPersistenceProvider persistenceProvider)
+    public void AttachPersistence(IGenPersistence persistence)
     {
-        _persistenceProvider = persistenceProvider ?? throw new ArgumentNullException(nameof(persistenceProvider));
+        _persistence = persistence ?? throw new ArgumentNullException(nameof(persistence));
+    }
+
+    public void AttachPersistenceProvider(IGenPersistence persistence)
+    {
+        AttachPersistence(persistence);
     }
 
     private IGenTransaction RecordIncomingTransaction(IGenTransaction genTransaction)
@@ -257,7 +264,7 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
 
     public async Task FlushAsync(
         IGenEntity? genRequestedEntity = null,
-        GenealogyFlushScope eScope = GenealogyFlushScope.Auto,
+        GenealogyPersistenceScope eScope = GenealogyPersistenceScope.Auto,
         CancellationToken cancellationToken = default)
     {
         var genEntityToFlush = genRequestedEntity ?? _genLastChangedEntity;
@@ -269,14 +276,14 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
             return;
         }
 
-        if (_persistenceProvider is null)
+        if (_persistence is null)
         {
             return;
         }
 
         try
         {
-            await _persistenceProvider.FlushAsync(this, genEntityToFlush, eScope, cancellationToken).ConfigureAwait(false);
+            await _persistence.FlushAsync(this, genEntityToFlush, eScope, cancellationToken).ConfigureAwait(false);
             xDirty = false;
             DirtyStateChanged?.Invoke(this, new DirtyStateChangedEventArgs(false, genEntityToFlush, "The genealogy was flushed successfully."));
             Flushed?.Invoke(this, new FlushCompletedEventArgs(genEntityToFlush, eScope));
