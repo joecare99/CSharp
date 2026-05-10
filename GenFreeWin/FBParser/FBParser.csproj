@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj"></ProjectReference>
+    <ProjectReference Include="..\..\CSharpBible\Libraries\GenInterfaces\GenInterfaces.csproj"></ProjectReference>
   </ItemGroup>
 
 </Project>
