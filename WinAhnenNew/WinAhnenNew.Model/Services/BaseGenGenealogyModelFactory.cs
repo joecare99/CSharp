@@ -2,6 +2,7 @@ using System;
 using BaseGenClasses.Model;
 using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
+using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using GenSecure.Contracts;
 
@@ -50,5 +51,19 @@ namespace WinAhnenNew.Services
         /// <inheritdoc />
         public IGenDate CreateDate(Guid gUid, int iId, DateTime? dtLastChange)
             => new GenDate { UId = gUid, ID = iId };
+
+        /// <inheritdoc />
+        public IGenTransaction CreateTransaction(Guid gUid, int iId, DateTime? dtLastChange, IGenBase genClass, IGenBase genEntry, object? objData, object? objOldData, DateTime dtTimestamp, IGenTransaction? genPrev)
+            => new GenTransaction
+            {
+                UId = gUid,
+                ID = iId,
+                Class = genClass,
+                Entry = genEntry,
+                Data = objData,
+                OldData = objOldData,
+                Timestamp = dtTimestamp,
+                Prev = genPrev,
+            };
     }
 }
