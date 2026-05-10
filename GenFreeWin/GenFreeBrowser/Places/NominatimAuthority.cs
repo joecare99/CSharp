@@ -6,17 +6,17 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using GenFreeBrowser.Map;
-using GenFreeBrowser.Places.Interface;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Authorities;
 
 namespace GenFreeBrowser.Places;
 
 /// <summary>
-/// Nominatim (OpenStreetMap) implementation of <see cref="IPlaceAuthority"/>.
+/// Nominatim (OpenStreetMap) implementation of <see cref="IGenPlaceAuthority"/>.
 /// Usage policy: https://operations.osmfoundation.org/policies/nominatim/
 /// Provide a descriptive User-Agent and (optional) contact e-mail.
 /// </summary>
-public sealed class NominatimAuthority : IPlaceAuthority
+public sealed class NominatimAuthority : IGenPlaceAuthority
 {
     private readonly HttpClient _http;
     private readonly string _userAgent;
@@ -40,7 +40,7 @@ public sealed class NominatimAuthority : IPlaceAuthority
         }
     }
 
-    public async Task<IReadOnlyList<PlaceResult>> SearchAsync(PlaceQuery query, CancellationToken ct = default)
+    public async Task<IReadOnlyList<GenPlaceMatch>> SearchPlacesAsync(GenPlaceQuery query, CancellationToken ct = default)
     {
         // Build request URL
         var url = $"https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit={query.MaxResults}&q={Uri.EscapeDataString(query.Text)}";
@@ -57,14 +57,14 @@ public sealed class NominatimAuthority : IPlaceAuthority
         {
             using var resp = await _http.GetAsync(url, ct);
             if (!resp.IsSuccessStatusCode)
-                return Array.Empty<PlaceResult>();
+                return Array.Empty<GenPlaceMatch>();
 
             await using var stream = await resp.Content.ReadAsStreamAsync(ct);
             var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
             if (doc.RootElement.ValueKind != JsonValueKind.Array)
-                return Array.Empty<PlaceResult>();
+                return Array.Empty<GenPlaceMatch>();
 
-            var list = new List<PlaceResult>();
+            var list = new List<GenPlaceMatch>();
             foreach (var el in doc.RootElement.EnumerateArray())
             {
                 var id = SafeGetString(el, "place_id");
@@ -77,7 +77,7 @@ public sealed class NominatimAuthority : IPlaceAuthority
                 var lon = SafeGetDouble(el, "lon");
 
                 var hierarchy = BuildHierarchy(el);
-                list.Add(new PlaceResult(id, name, new GeoPoint(lon, lat), hierarchy, Name));
+                list.Add(new GenPlaceMatch { ExternalId = id, DisplayName = name, Latitude = lat, Longitude = lon, Hierarchy = hierarchy, Source = Name, ParentDisplayName = hierarchy.LastOrDefault() });
             }
             return list;
         }
@@ -87,7 +87,7 @@ public sealed class NominatimAuthority : IPlaceAuthority
         }
         catch
         {
-            return Array.Empty<PlaceResult>();
+            return Array.Empty<GenPlaceMatch>();
         }
     }
 

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GenFreeBrowser.Places.Interface;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Authorities;
 
 namespace GenFreeBrowser.Places;
 
@@ -17,21 +19,21 @@ public sealed partial class SearchViewModel : ObservableObject
 {
     private readonly ISearchHistoryService _history;
     private readonly IPlaceSearchService _placeSearchService;
-    private readonly System.Collections.Generic.IEnumerable<IPlaceAuthority> _authorities;
+    private readonly System.Collections.Generic.IEnumerable<IGenPlaceAuthority> _authorities;
     private CancellationTokenSource? _cts;
 
     public ObservableCollection<string> RecentQueries { get; } = new();
-    public ObservableCollection<IPlaceAuthority> Authorities { get; } = new();
-    public ObservableCollection<PlaceResult> Results { get; } = new();
+    public ObservableCollection<IGenPlaceAuthority> Authorities { get; } = new();
+    public ObservableCollection<GenPlaceMatch> Results { get; } = new();
 
     [ObservableProperty]
     private string _searchText = "<Text>";
 
     [ObservableProperty]
-    private IPlaceAuthority? _selectedAuthority;
+    private IGenPlaceAuthority? _selectedAuthority;
 
     [ObservableProperty]
-    private PlaceResult? _selectedResult;
+    private GenPlaceMatch? _selectedResult;
 
     [ObservableProperty]
     private bool _isBusy;
@@ -41,7 +43,7 @@ public sealed partial class SearchViewModel : ObservableObject
 
     public SearchViewModel(ISearchHistoryService history,
                            IPlaceSearchService placeSearchService,
-                           System.Collections.Generic.IEnumerable<IPlaceAuthority> authorities)
+                           System.Collections.Generic.IEnumerable<IGenPlaceAuthority> authorities)
     {
         _history = history;
         _placeSearchService = placeSearchService;
@@ -70,15 +72,15 @@ public sealed partial class SearchViewModel : ObservableObject
             IsBusy = true;
             Status = "Suche läuft ...";
             Results.Clear();
-            var query = new PlaceQuery(SearchText.Trim());
+            var query = new GenPlaceQuery { Text = SearchText.Trim() };
 
-            System.Collections.Generic.IReadOnlyList<PlaceResult> all;
+            System.Collections.Generic.IReadOnlyList<GenPlaceMatch> all;
             if (SelectedAuthority is not null)
-                all = await SelectedAuthority.SearchAsync(query, ct);
+                all = await SelectedAuthority.SearchPlacesAsync(query, ct);
             else
                 all = await _placeSearchService.SearchAllAsync(query, ct);
 
-            foreach (var r in all.OrderBy(r => r.Name)) Results.Add(r);
+            foreach (var r in all.OrderBy(r => r.DisplayName)) Results.Add(r);
             Status = $"{Results.Count} Treffer";
             _history.Register(SearchText.Trim());
             SyncHistory();

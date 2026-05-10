@@ -4,21 +4,22 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using GenFreeBrowser.Map;
-using GenFreeBrowser.Places.Interface;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Authorities;
+using System.Linq;
 
 namespace GenFreeBrowser.Places;
 
 // GOV (Genealogy.net) place authority
 // API docs: https://gov.genealogy.net/search/index
-public sealed class GovAuthority : IPlaceAuthority
+public sealed class GovAuthority : IGenPlaceAuthority
 {
     private readonly HttpClient _http;
     public string Name => "GOV";
 
     public GovAuthority(HttpClient client) => _http = client;
 
-    public async Task<IReadOnlyList<PlaceResult>> SearchAsync(PlaceQuery query, CancellationToken ct = default)
+    public async Task<IReadOnlyList<GenPlaceMatch>> SearchPlacesAsync(GenPlaceQuery query, CancellationToken ct = default)
     {
         // Simple search endpoint returns HTML if not specifying JSON. Use format=json
         var url = $"https://gov.genealogy.net/api/searchByNameAndType?placename={Uri.EscapeDataString(query.Text)}";
@@ -26,7 +27,7 @@ public sealed class GovAuthority : IPlaceAuthority
         resp.EnsureSuccessStatusCode();
         using var stream = await resp.Content.ReadAsStreamAsync(ct);
         var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
-        var list = new List<PlaceResult>();
+        var list = new List<GenPlaceMatch>();
         if (doc.RootElement.ValueKind == JsonValueKind.Array)
         {
             foreach (var loc in doc.RootElement.EnumerateArray())
@@ -49,7 +50,7 @@ public sealed class GovAuthority : IPlaceAuthority
                             hierarchy.Add(hStr);
                     }
                 }
-                list.Add(new PlaceResult(id, name, new GeoPoint(lon, lat), hierarchy, Name));
+                list.Add(new GenPlaceMatch { ExternalId = id, DisplayName = name, Latitude = lat, Longitude = lon, Hierarchy = hierarchy, Source = Name, ParentDisplayName = hierarchy.LastOrDefault() });
             }
         }
         return list;
