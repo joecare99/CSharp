@@ -3,7 +3,8 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using GenFreeBrowser.Places;
-using GenFreeBrowser.Places.Interface;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Authorities;
 
 namespace PlaceAuthorityDemo
 {
@@ -16,8 +17,8 @@ namespace PlaceAuthorityDemo
             using var httpClient = new HttpClient();
 
             // Example usage of GeoNamesAuthority
-            IPlaceAuthority NamesAuthority = new NominatimAuthority(httpClient);
-            var geoNamesResult = await NamesAuthority.SearchAsync(new PlaceQuery("Berlin"), CancellationToken.None);
+            IGenPlaceAuthority NamesAuthority = new NominatimAuthority(httpClient);
+            var geoNamesResult = await NamesAuthority.SearchPlacesAsync(new GenPlaceQuery { Text = "Berlin" }, CancellationToken.None);
             Console.WriteLine("GeoNamesAuthority Result:");
             foreach (var place in geoNamesResult)
             {
@@ -25,8 +26,8 @@ namespace PlaceAuthorityDemo
             }
 
             // Example usage of GovAuthority
-            IPlaceAuthority govAuthority = new GovAuthority(httpClient);
-            var govResult = await govAuthority.SearchAsync(new PlaceQuery("Berlin"), CancellationToken.None);
+            IGenPlaceAuthority govAuthority = new GovAuthority(httpClient);
+            var govResult = await govAuthority.SearchPlacesAsync(new GenPlaceQuery { Text = "Berlin" }, CancellationToken.None);
             Console.WriteLine("GovAuthority Result:");
             foreach (var place in govResult)
             {
