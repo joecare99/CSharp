@@ -24,16 +24,16 @@ namespace BaseGenClassesTests
             {
                 UId = Guid.NewGuid()
             };
-            var prvPersistence = Substitute.For<IGenealogyPersistenceProvider>();
+            var prvPersistence = Substitute.For<IGenPersistence>();
 
-            genGenealogy.AttachPersistenceProvider(prvPersistence);
+            genGenealogy.AttachPersistence(prvPersistence);
             genGenealogy.MarkDirty(null, "Test change");
             Assert.IsTrue(genGenealogy.xDirty);
  
             await genGenealogy.FlushAsync();
  
             Assert.IsFalse(genGenealogy.xDirty);
-            await prvPersistence.Received(1).FlushAsync(genGenealogy, null, GenealogyFlushScope.Auto, Arg.Any<CancellationToken>());
+            await prvPersistence.Received(1).FlushAsync(genGenealogy, null, GenealogyPersistenceScope.Auto, Arg.Any<CancellationToken>());
         }
 
         [TestMethod]
