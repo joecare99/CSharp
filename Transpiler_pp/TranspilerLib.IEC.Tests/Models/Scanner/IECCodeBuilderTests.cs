@@ -6,6 +6,7 @@ using BaseLib.Helper;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using System.Text;
 using static TranspilerLib.Helper.TestHelper;
 using TranspilerLib.IEC.Models.Ast;
 using TranspilerLib.IEC.TestData;
@@ -69,6 +70,53 @@ public class IECCodeBuilderTests
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
     private IECCodeBuilder testClass;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
+
+    private static string NormalizeCodeSequence(string code)
+    {
+        var sb = new StringBuilder(code.Length);
+        foreach (var ch in code)
+        {
+            if (ch != ' ' && ch != '\t' && ch != '\r' && ch != '\n')
+            {
+                sb.Append(ch);
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    private ICodeBlock BuildCodeBlockTree(IEnumerable<TokenData> tokens)
+    {
+        ICodeBlock root = new CodeBlock() { Name = "Declaration", Code = "", Parent = null, SourcePos = -1 };
+        var data = testClass.NewData(root);
+        foreach (var token in tokens)
+        {
+            testClass.OnToken(token, data);
+        }
+
+        return root;
+    }
+
+    private static ICodeBlock? FindDeclarationByLeftCode(ICodeBlock block, string leftCode)
+    {
+        if (block.Type == CodeBlockType.Declaration
+            && block.SubBlocks.Count > 0
+            && string.Equals(block.SubBlocks[0].Code, leftCode, StringComparison.Ordinal))
+        {
+            return block;
+        }
+
+        foreach (var subBlock in block.SubBlocks)
+        {
+            var found = FindDeclarationByLeftCode(subBlock, leftCode);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
 
     [TestInitialize]
     public void Init() { 
@@ -191,5 +239,82 @@ public class IECCodeBuilderTests
         Assert.AreEqual(1, functionCall.Arguments.Count);
         Assert.IsInstanceOfType<IecIdentifierExpression>(functionCall.Arguments[0]);
         Assert.AreEqual("Input", ((IecIdentifierExpression)functionCall.Arguments[0]).Identifier);
+    }
+
+    [TestMethod]
+    public void OnToken_Assignment_EmitsExpectedLiteralCode()
+    {
+        var container = new CodeBlock() { Name = "Container", Code = "", Parent = null, SourcePos = -1 };
+        ICodeBlock root = new CodeBlock() { Name = "Declaration", Code = "", Parent = container, SourcePos = -1 };
+        var data = testClass.NewData(root);
+        var tokens = new List<TokenData>
+        {
+            new("Target", CodeBlockType.Variable, 1, 1),
+            new(":=", CodeBlockType.Operation, 1, 8),
+            new("5", CodeBlockType.Number, 2, 11),
+        };
+
+        foreach (var token in tokens)
+        {
+            testClass.OnToken(token, data);
+        }
+
+        Assert.AreEqual("Target:=5", NormalizeCodeSequence(root.ToCode(2)));
+    }
+
+    [TestMethod]
+    public void OnToken_Assignment_EmitsExpectedFunctionCallCode()
+    {
+        var container = new CodeBlock() { Name = "Container", Code = "", Parent = null, SourcePos = -1 };
+        ICodeBlock root = new CodeBlock() { Name = "Declaration", Code = "", Parent = container, SourcePos = -1 };
+        var data = testClass.NewData(root);
+        var tokens = new List<TokenData>
+        {
+            new("Target", CodeBlockType.Variable, 1, 1),
+            new(":=", CodeBlockType.Operation, 1, 8),
+            new("rw_ABS", CodeBlockType.Function, 2, 11),
+            new("(", CodeBlockType.Bracket, 2, 17),
+            new("Input", CodeBlockType.Variable, 3, 18),
+            new(")", CodeBlockType.Bracket, 2, 23),
+        };
+
+        foreach (var token in tokens)
+        {
+            testClass.OnToken(token, data);
+        }
+
+        Assert.AreEqual("Target:=rw_ABS(Input)", NormalizeCodeSequence(root.ToCode(2)));
+    }
+
+    [TestMethod]
+    public void OnToken_Declaration_ColonOwnsIdentifierAndDeclaredType()
+    {
+        var root = BuildCodeBlockTree((List<TokenData>)IECTestDataClass.TestDataList0());
+
+        var declaration = FindDeclarationByLeftCode(root, "v");
+
+        Assert.IsNotNull(declaration, root.ToString());
+        Assert.AreEqual(2, declaration.SubBlocks.Count);
+        Assert.AreEqual("v", declaration.SubBlocks[0].Code);
+        Assert.AreEqual("udtVectorData", declaration.SubBlocks[1].Code);
+    }
+
+    [TestMethod]
+    public void OnToken_Declaration_ColonOwnsArrayTypeStructure()
+    {
+        var root = BuildCodeBlockTree((List<TokenData>)IECTestDataClass.TestDataList0());
+
+        var declaration = FindDeclarationByLeftCode(root, "Koordinate");
+
+        Assert.IsNotNull(declaration, root.ToString());
+        Assert.AreEqual("Koordinate", declaration.SubBlocks[0].Code);
+        Assert.AreEqual("ARRAY[", declaration.SubBlocks[1].Code);
+        Assert.AreEqual(CodeBlockType.Function, declaration.SubBlocks[1].Type);
+        var rendered = NormalizeCodeSequence(declaration.ToCode(2));
+        Assert.IsTrue(rendered.Contains("Koordinate"), rendered);
+        Assert.IsTrue(rendered.Contains("ARRAY["), rendered);
+        Assert.IsTrue(rendered.Contains("0..1"), rendered);
+        Assert.IsTrue(rendered.Contains("OF"), rendered);
+        Assert.IsTrue(rendered.Contains("LREAL"), rendered);
     }
 }

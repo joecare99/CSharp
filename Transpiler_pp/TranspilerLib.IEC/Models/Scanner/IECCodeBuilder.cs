@@ -45,6 +45,9 @@ public class IECCodeBuilder : CodeBuilder
             case CodeBlockType.Function when !string.IsNullOrEmpty(tokenData.Code):
                 BuildFunction(tokenData, data);
                 break;
+            case CodeBlockType.Block when !string.IsNullOrEmpty(tokenData.Code):
+                BuildBlock(tokenData, data);
+                break;
             case CodeBlockType.Bracket when !string.IsNullOrEmpty(tokenData.Code):
                 BuildBracket(tokenData, data);
                 break;
@@ -71,8 +74,34 @@ public class IECCodeBuilder : CodeBuilder
         }
     }
 
+    private void BuildBlock(TokenData tokenData, ICodeBuilderData data)
+    {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            data.actualBlock = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
+        base.OnToken(tokenData, data);
+    }
+
     private void BuildBracket(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            if (tokenData.Code == "["
+                && data.actualBlock.SubBlocks.LastOrDefault() is ICodeBlock lastBlock
+                && lastBlock.Type is CodeBlockType.Variable or CodeBlockType.Function)
+            {
+                lastBlock.Type = CodeBlockType.Function;
+                lastBlock.Code += tokenData.Code;
+                return;
+            }
+
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         switch (tokenData.Code)
         {
             default:
@@ -109,6 +138,12 @@ public class IECCodeBuilder : CodeBuilder
 
     private void BuildFunction(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         switch (tokenData.Code.ToUpper())
         {
             default:
@@ -139,11 +174,24 @@ public class IECCodeBuilder : CodeBuilder
 
     private void BuildVariable(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         switch (data.actualBlock.Type)
         {
             case CodeBlockType.Variable or CodeBlockType.Function when data.actualBlock.Code.EndsWith("."):
                 data.actualBlock.Type = CodeBlockType.Variable;
                 data.actualBlock.Code += tokenData.Code;
+                break;
+            case CodeBlockType.Block:
+                {
+                    var td = tokenData;
+                    td.Level = data.actualBlock.Level;
+                    base.OnToken(td, data);
+                }
                 break;
             case CodeBlockType.Function:
                 {
@@ -180,6 +228,12 @@ public class IECCodeBuilder : CodeBuilder
 
     private void BuildNumber(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         if (data.actualBlock.Type is CodeBlockType.Operation or CodeBlockType.Assignment)
         {
             ICodeBlock block = data.actualBlock;
@@ -203,6 +257,12 @@ public class IECCodeBuilder : CodeBuilder
 
     private void BuildInstruction(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration && tokenData.Code != ";")
+        {
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         switch (tokenData.Code, data.actualBlock.Type)
         {
             default:
@@ -228,6 +288,16 @@ public class IECCodeBuilder : CodeBuilder
                     block.Code += tokenData.Code;
                 }
                 break;
+            case (":", CodeBlockType.Variable or CodeBlockType.Function)
+                when !data.actualBlock.Code.EndsWith("(", StringComparison.Ordinal)
+                && data.actualBlock.Parent != null:
+                {
+                    var leftBlock = data.actualBlock;
+                    var declaration = NewCodeBlock("Declaration", CodeBlockType.Declaration, ":", leftBlock.Parent, tokenData.Pos);
+                    leftBlock.Parent = declaration;
+                    data.actualBlock = declaration;
+                }
+                break;
             case (":=", CodeBlockType.Variable or CodeBlockType.Function):
                 {
                     ICodeBlock block = data.actualBlock;
@@ -250,6 +320,17 @@ public class IECCodeBuilder : CodeBuilder
                 break;
             case (";",_):
                 {
+                    if (data.actualBlock.Type == CodeBlockType.Declaration)
+                    {
+                        if (data.actualBlock.Parent != null)
+                        {
+                            _ = NewCodeBlock($"{CodeBlockType.Block}", CodeBlockType.Block, ";", data.actualBlock.Parent, tokenData.Pos);
+                            data.actualBlock = data.actualBlock.Parent;
+                        }
+
+                        break;
+                    }
+
                     _ = IecAstMapper.TryAttachAssignmentStatement(data.actualBlock);
                     var td = tokenData;
                     td.Level = data.actualBlock.Level - 1;
@@ -272,6 +353,12 @@ public class IECCodeBuilder : CodeBuilder
             case ("AND", CodeBlockType.Number or CodeBlockType.Variable or CodeBlockType.Operation or CodeBlockType.Function):
             case ("OR", CodeBlockType.Number or CodeBlockType.Variable or CodeBlockType.Operation or CodeBlockType.Function):
                 {
+                    if (data.actualBlock.Type == CodeBlockType.Declaration)
+                    {
+                        _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+                        break;
+                    }
+
                     ICodeBlock block = data.actualBlock;
                     var td = tokenData;
                     td.Level = block.Level - 1;
