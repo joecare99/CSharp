@@ -14,6 +14,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// The Helper namespace.
@@ -142,6 +143,7 @@ public static class TestHelper
         }
     }
 
+    
     public static void AssertAreEqual(string sExp, string? sAct, string Msg = "")
     {
         var sSep = new[] { Environment.NewLine };
