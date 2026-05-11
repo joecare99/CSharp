@@ -16,7 +16,9 @@ Apply these defaults when working in this repository unless the user explicitly 
 ## Memory
 - Keep project-specific decisions in the repository `DevOps` folder; do not store them in memory for this repository.
 - Use memory for general solution-wide or project-overlapping working preferences rather than repository-local implementation decisions.
-- Use skills and tools from `C:\Projekte\CSharp\Tools\(*.ps1)` when needed for tasks in this workspace.
+- Before using generic terminal commands or ad-hoc manual steps, first check whether a matching reusable script or skill exists in `C:\Projekte\CSharp\Tools\(*.ps1)`.
+- Use Token efficiently in this repository by preferring reusable scripts and skills over ad-hoc terminal commands whenever they fit the task, especially for coverage analysis, build and test diagnostics, reporting, automation, and similar repository-wide workflows.
+- Prefer reusable scripts and skills from `C:\Projekte\CSharp\Tools` and sub-directories over ad-hoc terminal commands whenever they fit the task, especially for coverage analysis, build and test diagnostics, reporting, automation, and similar repository-wide workflows.
 
 ## Code Organization
 - Prefer one class/interface/struct per file.
