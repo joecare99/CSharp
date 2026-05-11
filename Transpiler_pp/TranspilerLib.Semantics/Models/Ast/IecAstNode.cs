@@ -1,11 +1,14 @@
+using TranspilerLib.Models.Scanner;
+
 namespace TranspilerLib.IEC.Models.Ast;
 
 /// <summary>
-/// Represents the base type for all typed IEC abstract syntax tree nodes.
-/// The node stores the original source position when it is known so later
-/// semantic analysis and diagnostics can reference the source input.
+/// Represents the base type for all typed IEC semantic nodes.
+/// The node reuses <see cref="CodeBlock"/> as the structural shell so semantic
+/// models can participate in the same full-loop block infrastructure while still
+/// exposing typed semantic members.
 /// </summary>
-public abstract class IecAstNode
+public abstract class IecAstNode : CodeBlock
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="IecAstNode"/> class.
@@ -15,10 +18,4 @@ public abstract class IecAstNode
     {
         SourcePos = sourcePos;
     }
-
-    /// <summary>
-    /// Gets the zero-based character position in the source input.
-    /// A negative value indicates that the position is currently unknown.
-    /// </summary>
-    public int SourcePos { get; }
 }
