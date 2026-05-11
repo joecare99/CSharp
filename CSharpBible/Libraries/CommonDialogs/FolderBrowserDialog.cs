@@ -84,10 +84,7 @@ public class FolderBrowserDialog : Component, IFileDialog
     /// <summary>
     /// Setzt Eigenschaften auf die Standardwerte zurück.
     /// </summary>
-    public void Reset()
-    {
-        _fbd.Reset();
-    }
+    public void Reset() => _fbd.Reset();
     /// <summary>
     /// Ruft ein Objekt ab, das Daten bezüglich des Steuerelements enthält, oder legt dieses Objekt fest.
     /// </summary>
@@ -126,19 +123,13 @@ public class FolderBrowserDialog : Component, IFileDialog
     /// Führt ein Standarddialogfeld mit einem Standardbesitzer aus.
     /// </summary>
     /// <returns><see cref="F:System.Windows.Forms.DialogResult.OK" />, wenn der Benutzer im Dialogfeld auf OK klickt, andernfalls <see cref="F:System.Windows.Forms.DialogResult.Cancel" />.</returns>
-    public bool? ShowDialog()
-    {
-        return _fbd.ShowDialog() == DialogResult.OK;
-    }
+    public bool? ShowDialog() => _fbd.ShowDialog() == DialogResult.OK;
 
     /// <summary>
     /// Führt ein Standarddialogfeld mit dem angegebenen Besitzer aus.
     /// </summary>
     /// <param name="owner">Ein beliebiges Objekt, das <see cref="T:System.Windows.Forms.IWin32Window" /> implementiert, das das Fenster der obersten Ebene und damit den Besitzer des modalen Dialogfelds darstellt.</param>
     /// <returns><see cref="F:System.Windows.Forms.DialogResult.OK" />, wenn der Benutzer im Dialogfeld auf OK klickt, andernfalls <see cref="F:System.Windows.Forms.DialogResult.Cancel" />.</returns>
-    public bool? ShowDialog(object owner)
-    {
-        return _fbd.ShowDialog((IWin32Window)owner) == DialogResult.OK;
-    }
+    public bool? ShowDialog(object owner) => _fbd.ShowDialog((IWin32Window)owner) == DialogResult.OK;
 
 }

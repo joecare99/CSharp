@@ -14,8 +14,5 @@ internal sealed class TestHttpMessageHandler : HttpMessageHandler
         _handler = handler ?? throw new ArgumentNullException(nameof(handler));
     }
 
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-    {
-        return _handler(request, cancellationToken);
-    }
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) => _handler(request, cancellationToken);
 }

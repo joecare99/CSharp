@@ -1,0 +1,16 @@
+﻿<Project>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFrameworks>net8.0-windows</TargetFrameworks>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Ollama.Tools\Ollama.Tools.csproj" />
+    </ItemGroup>
+</Project>

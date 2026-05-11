@@ -121,10 +121,7 @@ public class FileDialogProxy<T> : IFileDialog where T : class
     /// <returns>
     /// <see langword="true"/> if the user clicks OK; <see langword="false"/> if the user clicks Cancel; otherwise <see langword="null"/>.
     /// </returns>
-    public bool? ShowDialog()
-    {
-        return _fileDialog.ShowDialog();
-    }
+    public bool? ShowDialog() => _fileDialog.ShowDialog();
 
     /// <summary>
     /// Displays the file dialog with the specified owner.
@@ -133,8 +130,5 @@ public class FileDialogProxy<T> : IFileDialog where T : class
     /// <returns>
     /// <see langword="true"/> if the user clicks OK; <see langword="false"/> if the user clicks Cancel; otherwise <see langword="null"/>.
     /// </returns>
-    public bool? ShowDialog(object owner)
-    {
-        return _fileDialog.ShowDialog(owner as System.Windows.Window);
-    }
+    public bool? ShowDialog(object owner) => _fileDialog.ShowDialog(owner as System.Windows.Window);
 }

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Ollama.Protocol;
-using Ollama.Protocol.Models;
+using Ollama.Client;
+using Ollama.Client.Models;
 
 namespace Ollama.Samples.BasicChat;
 
@@ -26,15 +26,13 @@ internal static class Program
         {
             Timeout = Timeout.InfiniteTimeSpan,
         };
-        OllamaProtocolClient client = new(httpClient, new OllamaProtocolClientOptions(new Uri(endpointValue)));
+        OllamaClient client = new(httpClient, new OllamaClientOptions(new Uri(endpointValue)));
+        OllamaChatClient chatClient = client.GetChatClient(model);
 
         try
         {
-            OllamaTagsResponse tagsResponse = await client.GetTagsAsync();
-
             Console.WriteLine($"Endpoint: {endpointValue}");
             Console.WriteLine($"Requested model: {model}");
-            Console.WriteLine($"Available models: {string.Join(", ", tagsResponse.Models.Select(m => m.Name ?? "<unknown>"))}");
             Console.WriteLine();
             Console.WriteLine("Prompt:");
             Console.WriteLine(prompt);
@@ -43,23 +41,24 @@ internal static class Program
 
             bool hasThinking = false;
             bool hasAnswer = false;
-
-            List<OllamaChatMessage> messages =
-                new()
+            ChatCompletionOptions options = new()
             {
-                new OllamaChatMessage
+                Messages = new List<OllamaClientChatMessage>
                 {
-                    Role = "user",
-                    Content = prompt,
+                    new()
+                    {
+                        Role = "system",
+                        Content = "Answer briefly and clearly.",
+                    },
+                    new()
+                    {
+                        Role = "user",
+                        Content = prompt,
+                    },
                 },
             };
 
-            await foreach (OllamaChatResponseChunk chunk in client.ChatStreamingAsync(new OllamaChatRequest
-            {
-                Model = model,
-                Messages = messages,
-                Stream = true,
-            }))
+            await foreach (OllamaStreamingChatUpdate chunk in chatClient.CompleteChatStreamingAsync(options))
             {
                 if (!string.IsNullOrWhiteSpace(chunk.Thinking))
                 {
@@ -67,7 +66,7 @@ internal static class Program
                     hasThinking = true;
                 }
 
-                if (!string.IsNullOrWhiteSpace(chunk.Message?.Content))
+                if (!string.IsNullOrWhiteSpace(chunk.Content))
                 {
                     if (!hasAnswer)
                     {
@@ -76,7 +75,7 @@ internal static class Program
                         Console.WriteLine("Answer:");
                     }
 
-                    Console.Write(chunk.Message.Content);
+                    Console.Write(chunk.Content);
                     hasAnswer = true;
                 }
             }

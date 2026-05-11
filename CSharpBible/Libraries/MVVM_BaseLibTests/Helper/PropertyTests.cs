@@ -44,10 +44,7 @@ public struct TestStruct
     /// Returns a <see cref="System.String" /> that represents this instance.
     /// </summary>
     /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
-    public override string ToString()
-    {
-        return $"({TestInt};{TestString})";
-    }
+    public override string ToString() => $"({TestInt};{TestString})";
     /// <summary>
     /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
     /// </summary>
@@ -70,10 +67,7 @@ public struct TestStruct
         return !(left == right);
     }
 
-    public override int GetHashCode()
-    {
-        return TestInt.GetHashCode() ^ TestString.GetHashCode();
-    }
+    public override int GetHashCode() => TestInt.GetHashCode() ^ TestString.GetHashCode();
 }
 
 [TestClass]

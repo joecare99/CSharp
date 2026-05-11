@@ -79,81 +79,65 @@ namespace MVVM.ViewModel;
         ExecuteAction(action);
 		}
 
-		/// <summary>
-		/// Inserts the item to the specified position.
-		/// </summary>
-		/// <param name="index">The index to insert at.</param>
-		/// <param name="item">The item to be inserted.</param>
-		protected override sealed void InsertItem(int index, T item) {
-			ExecuteAction(() => InsertItemBase(index, item));
-		}
+    /// <summary>
+    /// Inserts the item to the specified position.
+    /// </summary>
+    /// <param name="index">The index to insert at.</param>
+    /// <param name="item">The item to be inserted.</param>
+    protected override sealed void InsertItem(int index, T item) => ExecuteAction(() => InsertItemBase(index, item));
 
-		/// <summary>
-		/// Exposes the base implementation of the <see cref="InsertItem" /> function.
-		/// </summary>
-		/// <param name="index">The index.</param>
-		/// <param name="item">The item.</param>
-		/// <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
-		protected virtual void InsertItemBase(int index, T item) {
-			base.InsertItem(index, item);
-		}
+    /// <summary>
+    /// Exposes the base implementation of the <see cref="InsertItem" /> function.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <param name="item">The item.</param>
+    /// <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
+    protected virtual void InsertItemBase(int index, T item) => base.InsertItem(index, item);
 
-		/// <summary>
-		/// Sets the item at the specified position.
-		/// </summary>
-		/// <param name="index">The index to set the item at.</param>
-		/// <param name="item">The item to set.</param>
-		protected override sealed void SetItem(int index, T item) {
-			ExecuteAction(() => SetItemBase(index, item));
-		}
+    /// <summary>
+    /// Sets the item at the specified position.
+    /// </summary>
+    /// <param name="index">The index to set the item at.</param>
+    /// <param name="item">The item to set.</param>
+    protected override sealed void SetItem(int index, T item) => ExecuteAction(() => SetItemBase(index, item));
 
-		/// <summary>
-		/// Exposes the base implementation of the <see cref="SetItem" /> function.
-		/// </summary>
-		/// <param name="index">The index.</param>
-		/// <param name="item">The item.</param>
-		/// <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
-		protected virtual void SetItemBase(int index, T item) {
-			base.SetItem(index, item);
-		}
+    /// <summary>
+    /// Exposes the base implementation of the <see cref="SetItem" /> function.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <param name="item">The item.</param>
+    /// <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
+    protected virtual void SetItemBase(int index, T item) => base.SetItem(index, item);
 
-		/// <summary>
-		/// Removes the item at the specified position.
-		/// </summary>
-		/// <param name="index">The position used to identify the item to remove.</param>
-		protected override sealed void RemoveItem(int index) {
-			ExecuteAction(() => RemoveItemBase(index));
-		}
+    /// <summary>
+    /// Removes the item at the specified position.
+    /// </summary>
+    /// <param name="index">The position used to identify the item to remove.</param>
+    protected override sealed void RemoveItem(int index) => ExecuteAction(() => RemoveItemBase(index));
 
-		/// <summary>
-		/// Exposes the base implementation of the <see cref="RemoveItem" /> function.
-		/// </summary>
-		/// <param name="index">The index.</param>
-		/// <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
-		protected virtual void RemoveItemBase(int index) {
-			base.RemoveItem(index);
-		}
+    /// <summary>
+    /// Exposes the base implementation of the <see cref="RemoveItem" /> function.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
+    protected virtual void RemoveItemBase(int index) => base.RemoveItem(index);
 
-		/// <summary>
-		/// Clears the items contained by the collection.
-		/// </summary>
-		protected override sealed void ClearItems() {
-			OnUIThread(ClearItemsBase);
-		}
+    /// <summary>
+    /// Clears the items contained by the collection.
+    /// </summary>
+    protected override sealed void ClearItems() => OnUIThread(ClearItemsBase);
 
-		/// <summary>
-		/// Exposes the base implementation of the <see cref="ClearItems" /> function.
-		/// </summary>
-		/// <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
-		protected virtual void ClearItemsBase() {
-			base.ClearItems();
-		}
+    /// <summary>
+    /// Exposes the base implementation of the <see cref="ClearItems" /> function.
+    /// </summary>
+    /// <remarks>Used to avoid compiler warning regarding unverifiable code.</remarks>
+    protected virtual void ClearItemsBase() => base.ClearItems();
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Collections.ObjectModel.ObservableCollection`1.CollectionChanged" /> event with the provided arguments.
-		/// </summary>
-		/// <param name="e">Arguments of the event being raised.</param>
-		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e) {
+    /// <summary>
+    /// Raises the <see cref="E:System.Collections.ObjectModel.ObservableCollection`1.CollectionChanged" /> event with the provided arguments.
+    /// </summary>
+    /// <param name="e">Arguments of the event being raised.</param>
+    protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e) {
 			if (IsNotifying) {
 				base.OnCollectionChanged(e);
 			}

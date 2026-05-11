@@ -1,0 +1,103 @@
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ollama.Tools.ContentAnalysis;
+
+namespace Ollama.Tools.Tests;
+
+[TestClass]
+public sealed class TextAnalysisToolTests
+{
+    [TestMethod]
+    public void Validate_ReturnsFailureForNonTextRequest()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Image,
+            SourceKind = OllamaContentSourceKind.Inline,
+            MediaType = "image/png",
+            Content = "not-used",
+        };
+
+        ContentAnalysisRequestValidationResult result = tool.Validate(request);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.IsTrue(result.Issues.Any(static issue => issue.Code == "contentKind.text.required"));
+    }
+
+    [TestMethod]
+    public void Validate_ReturnsFailureForNonTextMediaType()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Text,
+            SourceKind = OllamaContentSourceKind.Inline,
+            MediaType = "application/json",
+            Content = "hello world",
+        };
+
+        ContentAnalysisRequestValidationResult result = tool.Validate(request);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.IsTrue(result.Issues.Any(static issue => issue.Code == "mediaType.text.invalid"));
+    }
+
+    [TestMethod]
+    public async Task AnalyzeAsync_ReturnsInformationalResultForBalancedText()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Text,
+            SourceKind = OllamaContentSourceKind.Inline,
+            MediaType = "text/plain",
+            Content = "This is a concise sample. It has two sentences and enough words for a basic analysis.",
+        };
+
+        ContentAnalysisResult result = await tool.AnalyzeAsync(request);
+
+        Assert.IsNotNull(result);
+        Assert.IsTrue(result.Score >= 0.85);
+        Assert.IsTrue(result.Findings.Any(static finding => finding.Severity == ContentAnalysisSeverity.Info));
+        StringAssert.Contains(result.Summary, "text");
+    }
+
+    [TestMethod]
+    public async Task AnalyzeAsync_ReturnsWarningsForVeryShortText()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Text,
+            SourceKind = OllamaContentSourceKind.Inline,
+            MediaType = "text/plain",
+            Content = "Too short",
+        };
+
+        ContentAnalysisResult result = await tool.AnalyzeAsync(request);
+
+        Assert.IsNotNull(result);
+        Assert.IsTrue(result.Score < 1.0);
+        Assert.IsTrue(result.Findings.Any(static finding => finding.Title == "Very short text"));
+        Assert.IsTrue(result.Suggestions.Any(static suggestion => suggestion.Title == "Add more context"));
+    }
+
+    [TestMethod]
+    public async Task AnalyzeAsync_DetectsBulletStructure()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Text,
+            SourceKind = OllamaContentSourceKind.Inline,
+            MediaType = "text/plain",
+            Content = "Overview:\n- first point\n- second point\nThis closing sentence explains the list.",
+        };
+
+        ContentAnalysisResult result = await tool.AnalyzeAsync(request);
+
+        Assert.IsTrue(result.Findings.Any(static finding => finding.Title == "Structured bullet points detected"));
+    }
+}

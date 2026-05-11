@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>B7D27D6F-34E9-4F5A-BB5F-6A0D3F0F2C7C</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>DevOps</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)OllamaClientMilestone1.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)OllamaClientMilestone2.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)OllamaCoverageRound2.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)OllamaDiMilestone1.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)OllamaDiUsage.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)OllamaToolsMilestone1.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)OllamaToolsMilestone2.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)OllamaToolsMilestone3.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-Ollama-Tools-AlreadyGreen-01.md" />
+  </ItemGroup>
+</Project>

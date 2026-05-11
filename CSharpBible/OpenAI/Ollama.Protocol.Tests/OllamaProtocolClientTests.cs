@@ -160,4 +160,95 @@ public sealed class OllamaProtocolClientTests
         Assert.AreEqual(0.1d, response.Embeddings[0][0]);
         Assert.AreEqual(0.4d, response.Embeddings[1][1]);
     }
+
+    [TestMethod]
+    public void OllamaProtocolClient_Constructor_ThrowsForNullHttpClient()
+        => Assert.ThrowsExactly<ArgumentNullException>(() => new OllamaProtocolClient(null!, new OllamaProtocolClientOptions(new Uri("http://localhost:11434/"))));
+
+    [TestMethod]
+    public void OllamaProtocolClient_Constructor_ThrowsForNullOptions()
+    {
+        using HttpClient httpClient = new();
+
+        Assert.ThrowsExactly<ArgumentNullException>(() => new OllamaProtocolClient(httpClient, null!));
+    }
+
+    [TestMethod]
+    public async Task GetTagsAsync_ReturnsEmptyResponseWhenPayloadIsNull()
+    {
+        TestHttpMessageHandler handler = new(async (request, cancellationToken) =>
+        {
+            await Task.CompletedTask;
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("null", Encoding.UTF8, "application/json"),
+            };
+        });
+        using HttpClient httpClient = new(handler);
+        OllamaProtocolClient client = new(httpClient, new OllamaProtocolClientOptions(new Uri("http://localhost:11434/")));
+
+        OllamaTagsResponse response = await client.GetTagsAsync();
+
+        Assert.AreEqual(0, response.Models.Count);
+    }
+
+    [TestMethod]
+    public async Task GenerateStreamingAsync_ThrowsForNullRequest()
+    {
+        using HttpClient httpClient = new(new TestHttpMessageHandler((request, cancellationToken) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))));
+        OllamaProtocolClient client = new(httpClient, new OllamaProtocolClientOptions(new Uri("http://localhost:11434/")));
+
+        await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+        {
+            await foreach (OllamaGenerateResponseChunk _ in client.GenerateStreamingAsync(null!))
+            {
+            }
+        });
+    }
+
+    [TestMethod]
+    public async Task ChatStreamingAsync_ThrowsForNullRequest()
+    {
+        using HttpClient httpClient = new(new TestHttpMessageHandler((request, cancellationToken) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))));
+        OllamaProtocolClient client = new(httpClient, new OllamaProtocolClientOptions(new Uri("http://localhost:11434/")));
+
+        await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+        {
+            await foreach (OllamaChatResponseChunk _ in client.ChatStreamingAsync(null!))
+            {
+            }
+        });
+    }
+
+    [TestMethod]
+    public async Task EmbedAsync_ThrowsForNullRequest()
+    {
+        using HttpClient httpClient = new(new TestHttpMessageHandler((request, cancellationToken) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))));
+        OllamaProtocolClient client = new(httpClient, new OllamaProtocolClientOptions(new Uri("http://localhost:11434/")));
+
+        await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => client.EmbedAsync(null!));
+    }
+
+    [TestMethod]
+    public async Task EmbedAsync_ReturnsEmptyResponseWhenPayloadIsNull()
+    {
+        TestHttpMessageHandler handler = new(async (request, cancellationToken) =>
+        {
+            await Task.CompletedTask;
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("null", Encoding.UTF8, "application/json"),
+            };
+        });
+        using HttpClient httpClient = new(handler);
+        OllamaProtocolClient client = new(httpClient, new OllamaProtocolClientOptions(new Uri("http://localhost:11434/")));
+
+        OllamaEmbedResponse response = await client.EmbedAsync(new OllamaEmbedRequest
+        {
+            Model = "qwen-embed",
+            Input = ["Hello"],
+        });
+
+        Assert.AreEqual(0, response.Embeddings.Count);
+    }
 }

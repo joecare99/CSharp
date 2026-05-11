@@ -1,0 +1,10 @@
+<Project>
+    <PropertyGroup>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+    </PropertyGroup>
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+    <ItemGroup>
+        <ProjectReference Include="..\Ollama.Client\Ollama.Client.csproj" />
+    </ItemGroup>
+</Project>

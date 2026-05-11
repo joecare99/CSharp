@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Ollama.Samples.TextAnalysis": {
+      "commandName": "Project"
+    },
+    "Profil \"1\"": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Projekte\\Delphi\\Data\\ParseFB\\EntryGC0036.entTxt\""
+    }
+  }
+}

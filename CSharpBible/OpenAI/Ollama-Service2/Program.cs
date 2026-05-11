@@ -13,7 +13,7 @@ namespace Ollama_Service2;
 internal class Program
 {
     private const string DefaultModel = "qwen3.5:9b";
-    private static readonly Uri GenerateEndpoint = new("http://192.168.0.32:11434/api/generate");
+    private static readonly Uri GenerateEndpoint = new("http://localhost:11434/api/generate");
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -23,7 +23,7 @@ internal class Program
     {
         string prompt = args.Length > 0
             ? string.Join(" ", args)
-            : "I am a C# developer, how can you assist me ?";
+            : "I am a IEC61131 developer, how can you assist me ?";
 
         using HttpClient httpClient = new();
         OllamaGenerateRequest request = new()

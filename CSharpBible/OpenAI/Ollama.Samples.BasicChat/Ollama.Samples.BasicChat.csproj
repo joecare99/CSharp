@@ -6,6 +6,6 @@
     <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
     <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
     <ItemGroup>
-        <ProjectReference Include="..\Ollama.Protocol\Ollama.Protocol.csproj" />
+        <ProjectReference Include="..\Ollama.Client\Ollama.Client.csproj" />
     </ItemGroup>
 </Project>

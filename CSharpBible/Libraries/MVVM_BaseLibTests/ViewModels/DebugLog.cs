@@ -21,13 +21,7 @@ public class DebugLog : IDebugLog
 
     string IDebugLog.DebugLog => _debugLog;
 
-    public void ClearLog()
-    {
-        _debugLog="";
-    }
+    public void ClearLog() => _debugLog = "";
 
-    public void DoLog(string message)
-    {
-        _debugLog+=$"{message}{Environment.NewLine}";
-    }
+    public void DoLog(string message) => _debugLog += $"{message}{Environment.NewLine}";
 }
