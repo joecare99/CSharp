@@ -26,8 +26,13 @@
     <File Path=".github/copilot-instructions.md" />
     <File Path="directory.build.props" />
     <File Path="Directory.Packages.props" />
+    <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
     <Project Path="Ollama-Service1/Ollama-Service1.csproj" />
     <Project Path="Ollama-Service2/Ollama-Service2.csproj" />
+    <Project Path="Ollama.Client.Tests/Ollama.Client.Tests.csproj" />
+    <Project Path="Ollama.Client/Ollama.Client.csproj" />
+    <Project Path="Ollama.Extensions.DependencyInjection.Tests/Ollama.Extensions.DependencyInjection.Tests.csproj" />
+    <Project Path="Ollama.Extensions.DependencyInjection/Ollama.Extensions.DependencyInjection.csproj" />
     <Project Path="Ollama.Protocol.Tests/Ollama.Protocol.Tests.csproj" />
     <Project Path="Ollama.Protocol/Ollama.Protocol.csproj" />
     <Project Path="Ollama.Samples.BasicChat/Ollama.Samples.BasicChat.csproj" />
@@ -35,6 +40,11 @@
     <Project Path="Ollama.Samples.EmbedCheck/Ollama.Samples.EmbedCheck.csproj" />
     <Project Path="Ollama.Samples.GenerateCheck/Ollama.Samples.GenerateCheck.csproj" />
     <Project Path="Ollama.Samples.TagsCheck/Ollama.Samples.TagsCheck.csproj" />
+    <Project Path="Ollama.Samples.TextAnalysis/Ollama.Samples.TextAnalysis.csproj" />
+    <Project Path="Ollama.Samples.ToolUse/Ollama.Samples.ToolUse.csproj" />
+    <Project Path="Ollama.Tools.Tests/Ollama.Tools.Tests.csproj" />
+    <Project Path="Ollama.Tools/Ollama.Tools.csproj" />
+    <Project Path="Ollama.Wpf.TextAnalysis/Ollama.Wpf.TextAnalysis.csproj" />
     <Project Path="OpenAIPlayground/OpenAIPlayground.csproj" />
   </Folder>
  </Solution>
