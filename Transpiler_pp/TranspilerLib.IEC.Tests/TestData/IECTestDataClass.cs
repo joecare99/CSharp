@@ -101,10 +101,8 @@ T:Block,102,0,END_TYPE
     public const string cExpCode0 = @"    
     TYPE
  udtVector :
-       UNION
- v :
-         ;  Koordinate  ARRAY[ : 0 : 1 : ] : OF
- LREAL             ;       END_UNION
+        UNION
+ v :  udtVectorData           ;  Koordinate :  ARRAY[  0  ..  1  ]  OF  LREAL           ;       END_UNION
     END_TYPE";
 
     public static string cExpCode1 { get; } = @"    
@@ -112,11 +110,10 @@ T:Block,102,0,END_TYPE
 
     TYPE
  ST_01 :
-       STRUCT
-            // Dies ist ein Kommentar zum Element a
-  a  INT := INT#1 :          ;             // Dies ist ein 2. Kommentar zum Element a
+        STRUCT             // Dies ist ein Kommentar zum Element a
+  a :  INT  :=  INT#1         ;             // Dies ist ein 2. Kommentar zum Element a
              // Dies ist ein Kommentar zum Element b
-  b  LREAL := LREAL#2.7e-2 :          ;             // Dies ist ein 2. Kommentar zum Element b
+  b :  LREAL  :=  LREAL#2.7e-2         ;             // Dies ist ein 2. Kommentar zum Element b
        END_STRUCT
     END_TYPE";
     public static string cExpCode2 { get; } = @"    

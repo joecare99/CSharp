@@ -1,4 +1,6 @@
+using TranspilerLib.Data;
 using TranspilerLib.IEC.Models.Ast;
+using TranspilerLib.Models.Scanner;
 
 namespace TranspilerLib.IEC.Models.Ast.Tests;
 
@@ -60,6 +62,41 @@ public class IecAstNodeTests
         var declaration = new IecVariableDeclaration("Value", "INT", sourcePos: 42);
 
         Assert.AreEqual(42, declaration.SourcePos);
+    }
+
+    [TestMethod]
+    public void Declaration_InheritsCodeBlockShell()
+    {
+        var declaration = new IecVariableDeclaration("Value", "INT", sourcePos: 42)
+        {
+            Code = "Value : INT",
+            Type = CodeBlockType.Variable,
+        };
+
+        Assert.AreEqual("Value : INT", declaration.Code);
+        Assert.AreEqual(CodeBlockType.Variable, declaration.Type);
+        Assert.AreEqual(0, declaration.SubBlocks.Count);
+    }
+
+    [TestMethod]
+    public void Statement_InheritsParentChildBlockBehavior()
+    {
+        var parent = new IecCompilationUnit();
+        var statement = new IecAssignmentStatement(
+            new IecIdentifierExpression("Value"),
+            new IecLiteralExpression(5),
+            sourcePos: 10)
+        {
+            Code = "Value := 5",
+            Type = CodeBlockType.Assignment,
+        };
+
+        statement.Parent = parent;
+
+        Assert.AreSame(parent, statement.Parent);
+        Assert.AreEqual(1, parent.SubBlocks.Count);
+        Assert.AreSame(statement, parent.SubBlocks[0]);
+        Assert.AreEqual(1, statement.Level);
     }
 
     [TestMethod]
