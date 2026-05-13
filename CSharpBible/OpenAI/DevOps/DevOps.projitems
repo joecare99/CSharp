@@ -19,6 +19,8 @@
     <None Include="$(MSBuildThisFileDirectory)OllamaToolsMilestone1.Info.md" />
     <None Include="$(MSBuildThisFileDirectory)OllamaToolsMilestone2.Info.md" />
     <None Include="$(MSBuildThisFileDirectory)OllamaToolsMilestone3.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-ContentAnalysisRouter-01.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-ContentAnalysisToolAdapter-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-Ollama-Tools-AlreadyGreen-01.md" />
   </ItemGroup>
 </Project>

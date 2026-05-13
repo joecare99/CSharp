@@ -55,8 +55,12 @@ Extend the tool layer so host applications can submit files and content items fo
 - completed: added dedicated tests for C# source validation and result behavior
 - completed: extended the console sample to switch between text and C# source analysis via `--csharp`
 - completed: extended the WPF MVVM/DI sample to switch between text and C# source analysis
+- completed: added shared routing models for automatic content analysis mode selection
+- completed: added `ContentAnalysisRouter` with auto detection based on file extension and C# content patterns
+- completed: extended the console sample to use automatic routing with optional `--text` and `--csharp` overrides
+- completed: extended the WPF MVVM/DI sample to use the shared router and display routing decisions
 
 ## Validation
 - build: solution build completed successfully in Visual Studio
-- tests: `Ollama.Tools.Tests` passed with 37/37 successful, 0 failed, 0 skipped
-- samples: `Ollama.Samples.TextAnalysis` build succeeded and `Ollama.Wpf.TextAnalysis` build succeeded for both text and C# analysis integrations
+- tests: `Ollama.Tools.Tests` passed with 53/53 successful, 0 failed, 0 skipped
+- samples: `Ollama.Samples.TextAnalysis` build succeeded and `Ollama.Wpf.TextAnalysis` build succeeded with automatic routing enabled
