@@ -26,5 +26,10 @@ namespace Db.Core.Abstractions.Sql.Interfaaces
         /// Gets the optional limit.
         /// </summary>
         int? Limit { get; }
+
+        /// <summary>
+        /// Gets the optional offset.
+        /// </summary>
+        object? Offset { get; }
     }
 }
