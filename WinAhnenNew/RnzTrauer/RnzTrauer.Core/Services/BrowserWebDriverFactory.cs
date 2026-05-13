@@ -24,12 +24,9 @@ public sealed class BrowserWebDriverFactory : IWebDriverFactory
     }
 
     /// <inheritdoc />
-    public IWebDriver Create()
+    public IWebDriver Create() => _config.Browser switch
     {
-        return _config.Browser switch
-        {
-            BrowserType.Edge => _edgeFactory.Create(),
-            _ => _firefoxFactory.Create()
-        };
-    }
+        BrowserType.Edge => _edgeFactory.Create(),
+        _ => _firefoxFactory.Create()
+    };
 }

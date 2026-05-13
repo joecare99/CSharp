@@ -43,8 +43,5 @@ public sealed class AmtsblattConfig : DatabaseSettings
     /// <summary>
     /// Loads the configuration from a JSON file.
     /// </summary>
-    public AmtsblattConfig Load(string sFilePath)
-    {
-        return (_xConfigLoader ?? throw new InvalidOperationException("No configuration loader has been provided.")).Load<AmtsblattConfig>(sFilePath);
-    }
+    public AmtsblattConfig Load(string sFilePath) => (_xConfigLoader ?? throw new InvalidOperationException("No configuration loader has been provided.")).Load<AmtsblattConfig>(sFilePath);
 }

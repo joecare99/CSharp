@@ -166,90 +166,57 @@ public sealed class DataHandler : IDisposable
     /// <summary>
     /// Reads obituary rows by internal id.
     /// </summary>
-    public List<Dictionary<string, object?>> TrauerAnzId(int iId)
-    {
-        return _repository.TrauerAnzId(iId);
-    }
+    public List<Dictionary<string, object?>> TrauerAnzId(int iId) => _repository.TrauerAnzId(iId);
 
     /// <summary>
     /// Reads obituary rows by announcement id.
     /// </summary>
-    public List<Dictionary<string, object?>> TrauerAnz(int iAnnouncement)
-    {
-        return _repository.TrauerAnz(iAnnouncement);
-    }
+    public List<Dictionary<string, object?>> TrauerAnz(int iAnnouncement) => _repository.TrauerAnz(iAnnouncement);
 
     /// <summary>
     /// Reads legacy obituary rows by legacy order id.
     /// </summary>
-    public List<Dictionary<string, object?>> LegacyTrauerAnz(string sAuftrag)
-    {
-        return _repository.LegacyTrauerAnz(sAuftrag);
-    }
+    public List<Dictionary<string, object?>> LegacyTrauerAnz(string sAuftrag) => _repository.LegacyTrauerAnz(sAuftrag);
 
     /// <summary>
     /// Reads obituary rows where the specified field is null.
     /// </summary>
-    public List<Dictionary<string, object?>> TrauerAnzIsNull(string sField, int iLimit = 1)
-    {
-        return _repository.TrauerAnzIsNull(sField, iLimit);
-    }
+    public List<Dictionary<string, object?>> TrauerAnzIsNull(string sField, int iLimit = 1) => _repository.TrauerAnzIsNull(sField, iLimit);
 
     /// <summary>
     /// Reads obituary case rows where the specified field is null.
     /// </summary>
-    public List<Dictionary<string, object?>> TrauerFallIsNull(string sField, int iLimit = 1)
-    {
-        return _repository.TrauerFallIsNull(sField, iLimit);
-    }
+    public List<Dictionary<string, object?>> TrauerFallIsNull(string sField, int iLimit = 1) => _repository.TrauerFallIsNull(sField, iLimit);
 
     /// <summary>
     /// Reads obituary case rows where the specified field matches the provided value.
     /// </summary>
-    public List<Dictionary<string, object?>> TrauerFallEquals(string sField, string sValue, int iLimit = 1)
-    {
-        return _repository.TrauerFallEquals(sField, sValue, iLimit);
-    }
+    public List<Dictionary<string, object?>> TrauerFallEquals(string sField, string sValue, int iLimit = 1) => _repository.TrauerFallEquals(sField, sValue, iLimit);
 
     /// <summary>
     /// Updates obituary case rows when values have changed.
     /// </summary>
-    public void UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
-    {
-        _repository.UpdateTrauerFall(arrNewValues, arrOldValues);
-    }
+    public void UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues) => _repository.UpdateTrauerFall(arrNewValues, arrOldValues);
 
     /// <summary>
     /// Updates obituary announcement rows when values have changed.
     /// </summary>
-    public bool UpdateTrauerAnz(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
-    {
-        return _repository.UpdateTrauerAnz(arrNewValues, arrOldValues);
-    }
+    public bool UpdateTrauerAnz(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues) => _repository.UpdateTrauerAnz(arrNewValues, arrOldValues);
 
     /// <summary>
     /// Reads obituary case rows by internal id.
     /// </summary>
-    public List<Dictionary<string, object?>> TrauerFallById(int iId)
-    {
-        return _repository.TrauerFallById(iId);
-    }
+    public List<Dictionary<string, object?>> TrauerFallById(int iId) => _repository.TrauerFallById(iId);
 
     /// <summary>
     /// Reads obituary case rows by URL.
     /// </summary>
-    public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl)
-    {
-        return _repository.TrauerFallByUrl(sUrl);
-    }
+    public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl) => _repository.TrauerFallByUrl(sUrl);
 
     /// <summary>
     /// Builds an in-memory index of obituary case URLs.
     /// </summary>
-    public void BuildTrauerFallIndex()
-    {
-        TfIdx = _repository.BuildTrauerFallIndex();
-    }
+    public void BuildTrauerFallIndex() => TfIdx = _repository.BuildTrauerFallIndex();
 
     /// <summary>
     /// Inserts a new obituary case row.
@@ -277,10 +244,7 @@ public sealed class DataHandler : IDisposable
     /// <summary>
     /// Inserts a new obituary announcement row.
     /// </summary>
-    public long AppendTrauerAnz(long iTrauerfallId, Dictionary<string, object?> dTrauerfall, string sLocalPath)
-    {
-        return _repository.AppendTrauerAnz(CreateAnnouncementRecord(iTrauerfallId, dTrauerfall, sLocalPath, GetRubrik(dTrauerfall)));
-    }
+    public long AppendTrauerAnz(long iTrauerfallId, Dictionary<string, object?> dTrauerfall, string sLocalPath) => _repository.AppendTrauerAnz(CreateAnnouncementRecord(iTrauerfallId, dTrauerfall, sLocalPath, GetRubrik(dTrauerfall)));
 
     /// <summary>
     /// Applies announcement values to the current row dictionary.
@@ -297,10 +261,7 @@ public sealed class DataHandler : IDisposable
     /// <summary>
     /// Inserts a legacy obituary announcement row.
     /// </summary>
-    public long AppendLegacyTAnz(string sAuftrag, Dictionary<string, object?> dTrauerfall, string sLocalPath)
-    {
-        return _repository.AppendLegacyTAnz(CreateLegacyAnnouncementRecord(sAuftrag, dTrauerfall, sLocalPath));
-    }
+    public long AppendLegacyTAnz(string sAuftrag, Dictionary<string, object?> dTrauerfall, string sLocalPath) => _repository.AppendLegacyTAnz(CreateLegacyAnnouncementRecord(sAuftrag, dTrauerfall, sLocalPath));
 
     /// <summary>
     /// Imports extracted obituary data into the database.
@@ -342,10 +303,7 @@ public sealed class DataHandler : IDisposable
     }
 
     /// <inheritdoc />
-    public void Dispose()
-    {
-        _repository.Dispose();
-    }
+    public void Dispose() => _repository.Dispose();
 
     private Dictionary<string, object?> CreateTrauerfallEntry(JsonObject xAnnouncementNode, JsonObject xTrauerfallData, JsonArray arrTrauerfallSections, string sProfileImagePath, string sLocalPathRoot)
     {
@@ -529,33 +487,21 @@ public sealed class DataHandler : IDisposable
         }
     }
 
-    private static object ToDbValue(DateOnly? dtValue)
-    {
-        return dtValue.HasValue
+    private static object ToDbValue(DateOnly? dtValue) => dtValue.HasValue
             ? dtValue.Value.ToDateTime(TimeOnly.MinValue)
             : DBNull.Value;
-    }
 
-    private static string TrimLeadingTwo(string sValue)
-    {
-        return sValue.Length > 2 ? sValue[2..] : string.Empty;
-    }
+    private static string TrimLeadingTwo(string sValue) => sValue.Length > 2 ? sValue[2..] : string.Empty;
 
-    private static int GetRubrik(IReadOnlyDictionary<string, object?> dTrauerfall)
-    {
-        return GetRubrikOrNull(dTrauerfall.Cond(KeyFilter)) ?? RubrikTodesanzeigen;
-    }
+    private static int GetRubrik(IReadOnlyDictionary<string, object?> dTrauerfall) => GetRubrikOrNull(dTrauerfall.Cond(KeyFilter)) ?? RubrikTodesanzeigen;
 
-    private static int? GetRubrikOrNull(string sFilter)
+    private static int? GetRubrikOrNull(string sFilter) => sFilter switch
     {
-        return sFilter switch
-        {
-            FilterDanksagungen => RubrikDanksagungen,
-            FilterNachrufe => RubrikNachrufe,
-            FilterTodesanzeigen => RubrikTodesanzeigen,
-            _ => null
-        };
-    }
+        FilterDanksagungen => RubrikDanksagungen,
+        FilterNachrufe => RubrikNachrufe,
+        FilterTodesanzeigen => RubrikTodesanzeigen,
+        _ => null
+    };
 
     private static bool IsAnnouncementSection(JsonObject xSectionNode)
     {
@@ -565,10 +511,7 @@ public sealed class DataHandler : IDisposable
             && (arrTexts[0]?.ToString() ?? string.Empty).StartsWith(AnnouncementPrefix, StringComparison.Ordinal);
     }
 
-    private static bool StartsWithValue(JsonObject xNode, string sKey, string sPrefix)
-    {
-        return (xNode[sKey]?.ToString() ?? string.Empty).StartsWith(sPrefix, StringComparison.Ordinal);
-    }
+    private static bool StartsWithValue(JsonObject xNode, string sKey, string sPrefix) => (xNode[sKey]?.ToString() ?? string.Empty).StartsWith(sPrefix, StringComparison.Ordinal);
 
     private static string TrimPrefixedValue(string sValue, string sPrefix)
     {

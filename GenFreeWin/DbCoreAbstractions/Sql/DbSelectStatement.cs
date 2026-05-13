@@ -17,7 +17,8 @@ namespace Db.Core.Abstractions.Sql
         /// <param name="fields">The requested field list.</param>
         /// <param name="filters">The filter clauses.</param>
         /// <param name="limit">The optional row limit.</param>
-        public DbSelectStatement(string table, IEnumerable<string>? fields = null, IEnumerable<IDbFilterClause>? filters = null, int? limit = null)
+        /// <param name="offset">The optional row offset.</param>
+        public DbSelectStatement(string table, IEnumerable<string>? fields = null, IEnumerable<IDbFilterClause>? filters = null, int? limit = null, object? offset = null)
         {
             if (string.IsNullOrWhiteSpace(table))
             {
@@ -28,6 +29,7 @@ namespace Db.Core.Abstractions.Sql
             Fields = fields?.ToArray() ?? Array.Empty<string>();
             Filters = filters?.ToArray() ?? Array.Empty<IDbFilterClause>();
             Limit = limit;
+            Offset = offset;
         }
 
         /// <inheritdoc />
@@ -41,5 +43,7 @@ namespace Db.Core.Abstractions.Sql
 
         /// <inheritdoc />
         public int? Limit { get; }
+        /// <inheritdoc />
+        public object? Offset { get; }
     }
 }

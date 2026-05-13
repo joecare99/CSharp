@@ -2,8 +2,6 @@
   <Import Project="..\GenFreeWin.props" />
   <PropertyGroup>
     <TargetFrameworks>net462;net472;net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <RootNamespace>Db.Core.Abstractions</RootNamespace>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
