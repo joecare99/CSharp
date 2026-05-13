@@ -1,7 +1,9 @@
 using Db.Core.Abstractions.Sql.Interfaaces;
 using MySqlConnector;
+using RnzTrauer.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Runtime;
 
@@ -12,7 +14,7 @@ namespace Db.Provider.MySql
     /// </summary>
     public sealed class MySqlDbConnectionFactory : IDbConnectionFactory
     {
-        public DbConnection CreateConnection(IDBSettings xSettings)
+        public IDbConnection CreateConnection(IDBSettings xSettings)
         {
 #if NET8_0_OR_GREATER
             ArgumentNullException.ThrowIfNull(xSettings);
@@ -55,11 +57,9 @@ namespace Db.Provider.MySql
         }
 
         /// <inheritdoc />
-        public IDbStatementRenderer CreateStatementRenderer()
-        {
-            return new MySqlStatementRenderer();
-        }
+        public IDbStatementRenderer CreateStatementRenderer(IDbConnection dBConnection) 
+            => new MySqlStatementRenderer(dBConnection);
 
-        
+
     }
 }
