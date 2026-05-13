@@ -28,6 +28,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <ProjectReference Include="..\..\Libraries\CommonDialogs\CommonDialogs_net.csproj" />
     <ProjectReference Include="..\SharpHack.Wpf\SharpHack.Wpf.csproj" />
     <ProjectReference Include="..\SharpHack.ViewModel\SharpHack.ViewModel.csproj" />
     <ProjectReference Include="..\SharpHack.Engine\SharpHack.Engine.csproj" />

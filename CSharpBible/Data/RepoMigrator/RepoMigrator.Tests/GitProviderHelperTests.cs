@@ -1,5 +1,6 @@
 using System.Reflection;
 using RepoMigrator.Core;
+using RepoMigrator.Core.Diagnostics;
 using RepoMigrator.Providers.Git;
 
 namespace RepoMigrator.Tests;
@@ -104,8 +105,10 @@ public sealed class GitProviderHelperTests
         var sRootPath = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
         var sSourcePath = Path.Combine(sRootPath, "source");
         var sDestPath = Path.Combine(sRootPath, "dest");
+        var sSnapshotRootPath = Path.Combine(sRootPath, "snapshots");
         Directory.CreateDirectory(sSourcePath);
         Directory.CreateDirectory(sDestPath);
+        DifferentialSnapshotStore.SnapshotRootOverride = sSnapshotRootPath;
 
         try
         {
@@ -117,7 +120,7 @@ public sealed class GitProviderHelperTests
             var dtOldWriteTime = DateTimeOffset.UtcNow.AddDays(-2);
             File.SetLastWriteTimeUtc(sDestSameFilePath, dtOldWriteTime.UtcDateTime);
 
-            File.WriteAllText(Path.Combine(sSourcePath, "changed.txt"), "new-value");
+            File.WriteAllText(Path.Combine(sSourcePath, "changed.txt"), "newer-value");
             File.WriteAllText(Path.Combine(sDestPath, "changed.txt"), "old-value");
 
             File.WriteAllText(Path.Combine(sSourcePath, "added.txt"), "added");
@@ -130,13 +133,21 @@ public sealed class GitProviderHelperTests
 
             Assert.AreEqual("same-content", File.ReadAllText(sDestSameFilePath));
             Assert.AreEqual(dtOldWriteTime.UtcDateTime, File.GetLastWriteTimeUtc(sDestSameFilePath));
-            Assert.AreEqual("new-value", File.ReadAllText(Path.Combine(sDestPath, "changed.txt")));
+            Assert.AreEqual("newer-value", File.ReadAllText(Path.Combine(sDestPath, "changed.txt")));
             Assert.AreEqual("added", File.ReadAllText(Path.Combine(sDestPath, "added.txt")));
             Assert.IsFalse(File.Exists(Path.Combine(sDestPath, "removed.txt")));
             Assert.IsTrue(File.Exists(Path.Combine(sDestPath, ".git", "config")));
+
+            var sOperationPath = Directory.GetDirectories(Path.Combine(sSnapshotRootPath, "Git")).Single();
+            Assert.AreEqual("newer-value", File.ReadAllText(Path.Combine(sOperationPath, "source", "changed.txt")));
+            Assert.AreEqual("old-value", File.ReadAllText(Path.Combine(sOperationPath, "destination", "changed.txt")));
+            Assert.AreEqual("added", File.ReadAllText(Path.Combine(sOperationPath, "added", "added.txt")));
+            Assert.AreEqual("remove-me", File.ReadAllText(Path.Combine(sOperationPath, "removed", "removed.txt")));
+            Assert.IsFalse(File.Exists(Path.Combine(sOperationPath, "source", "same.txt")));
         }
         finally
         {
+            DifferentialSnapshotStore.SnapshotRootOverride = null;
             if (Directory.Exists(sRootPath))
                 Directory.Delete(sRootPath, recursive: true);
         }

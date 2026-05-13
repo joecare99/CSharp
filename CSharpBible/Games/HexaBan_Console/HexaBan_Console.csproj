@@ -21,6 +21,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
   </ItemGroup>
 </Project>

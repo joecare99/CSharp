@@ -39,6 +39,8 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     private int _iPipelineExportWorkerCount = 2;
     private bool _xSplitIntoSubdirectoryBranches;
     private int _iBranchSplitDepth = 1;
+    private bool _xVerifyChangedPathCount = true;
+    private bool _xVerboseProgress;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanConfigureGitHistory))]
@@ -185,6 +187,26 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         }
     }
 
+    public bool VerifyChangedPathCount
+    {
+        get => _xVerifyChangedPathCount;
+        set
+        {
+            if (SetProperty(ref _xVerifyChangedPathCount, value))
+                SaveInputState();
+        }
+    }
+
+    public bool VerboseProgress
+    {
+        get => _xVerboseProgress;
+        set
+        {
+            if (SetProperty(ref _xVerboseProgress, value))
+                SaveInputState();
+        }
+    }
+
     public string? SelectedSvnFromRevisionId
     {
         get => _sSelectedSvnFromRevisionId;
@@ -311,6 +333,8 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         PipelineExportWorkerCount = state.PipelineExportWorkerCount;
         SplitIntoSubdirectoryBranches = state.SplitIntoSubdirectoryBranches;
         BranchSplitDepth = state.BranchSplitDepth;
+        VerifyChangedPathCount = state.VerifyChangedPathCount;
+        VerboseProgress = state.VerboseProgress;
         EnsureAdvancedMigrationOptionDefaults();
         RefreshProviderSpecificPathHistories();
         _isLoadingInputState = false;
@@ -443,6 +467,10 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             MigrationReportMessage.ProjectedBranchCommitted => $"Commit-Stufe: Branch '{GetRequired<string>(arrAdditional, 1)}' für Revision {GetRequired<string>(arrAdditional, 0)} übertragen.",
             MigrationReportMessage.GitBranchTransferStarting => $"Übertrage Branch {GetRequired<string>(arrAdditional, 0)} -> {GetRequired<string>(arrAdditional, 1)} …",
             MigrationReportMessage.GitTagTransferStarting => $"Übertrage Tag {GetRequired<string>(arrAdditional, 0)} -> {GetRequired<string>(arrAdditional, 1)} …",
+            MigrationReportMessage.ChangeSetDetails => $"Revision {GetRequired<string>(arrAdditional, 0)}: Autor={GetRequired<string>(arrAdditional, 1)}, Zeit={GetRequired<DateTimeOffset>(arrAdditional, 2):u}, SVN-Pfade={GetRequired<int>(arrAdditional, 3)} (Dateien={GetRequired<int>(arrAdditional, 4)}, Ordner={GetRequired<int>(arrAdditional, 5)}; modified={GetRequired<int>(arrAdditional, 6)}, added={GetRequired<int>(arrAdditional, 7)}, deleted={GetRequired<int>(arrAdditional, 8)}, replaced={GetRequired<int>(arrAdditional, 9)}, other={GetRequired<int>(arrAdditional, 10)}), Beschreibung='{GetRequired<string>(arrAdditional, 11)}'",
+            MigrationReportMessage.SnapshotMaterialized => $"Snapshot für Revision {GetRequired<string>(arrAdditional, 0)} materialisiert: {GetRequired<int>(arrAdditional, 1)} Dateien in {GetRequired<string>(arrAdditional, 2)}.",
+            MigrationReportMessage.ChangeCountVerificationPlanned => $"Prüfe Ziel-Änderungsanzahl für Revision {GetRequired<string>(arrAdditional, 0)} gegen {GetRequired<int>(arrAdditional, 1)} geänderte SVN-Dateipfade ({GetRequired<int>(arrAdditional, 2)} SVN-Pfade gesamt).",
+            MigrationReportMessage.GitChangeCountVerification => $"Git-Status vor Commit: gesamt={GetRequired<int>(arrAdditional, 0)}, modified={GetRequired<int>(arrAdditional, 1)}, added={GetRequired<int>(arrAdditional, 2)}, deleted={GetRequired<int>(arrAdditional, 3)}, renamed={GetRequired<int>(arrAdditional, 4)}; erwartet={GetRequired<int>(arrAdditional, 5)} Dateien ({GetRequired<int>(arrAdditional, 6)} SVN-Pfade gesamt). Beispiel: {GetRequired<string>(arrAdditional, 7)}",
             MigrationReportMessage.MigrationCompleted => "Migration abgeschlossen.",
             _ => throw new InvalidEnumArgumentException(nameof(message), (int)message, typeof(MigrationReportMessage))
         };
@@ -497,7 +525,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
                 ProjectionMode = SplitIntoSubdirectoryBranches && CanConfigureAdvancedGitTargetOptions ? MigrationProjectionMode.SubdirectoryBranches : MigrationProjectionMode.None,
                 BranchSplitDepth = BranchSplitDepth,
                 PipelinePrefetchCount = Math.Max(PipelinePrefetchCount, 1),
-                PipelineExportWorkerCount = Math.Max(PipelineExportWorkerCount, 1)
+                PipelineExportWorkerCount = Math.Max(PipelineExportWorkerCount, 1),
+                VerifyChangedPathCount = VerifyChangedPathCount,
+                VerboseProgress = VerboseProgress
             };
         }
 
@@ -506,6 +536,8 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             TransferMode = RepositoryTransferMode.NativeHistory,
             TransferBranches = TransferGitBranches,
             TransferTags = TransferGitTags,
+            VerifyChangedPathCount = VerifyChangedPathCount,
+            VerboseProgress = VerboseProgress,
             SelectedBranches = GitBranchSelections.Where(vmItem => vmItem.IsSelected).Select(vmItem => vmItem.Name).ToList(),
             SelectedTags = GitTagSelections.Where(vmItem => vmItem.IsSelected).Select(vmItem => vmItem.Name).ToList()
         };
@@ -1026,7 +1058,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             PipelinePrefetchCount = PipelinePrefetchCount,
             PipelineExportWorkerCount = PipelineExportWorkerCount,
             SplitIntoSubdirectoryBranches = SplitIntoSubdirectoryBranches,
-            BranchSplitDepth = BranchSplitDepth
+            BranchSplitDepth = BranchSplitDepth,
+            VerifyChangedPathCount = VerifyChangedPathCount,
+            VerboseProgress = VerboseProgress
         });
     }
 }

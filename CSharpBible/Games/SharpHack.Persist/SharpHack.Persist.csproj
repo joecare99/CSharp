@@ -22,6 +22,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
+    <ProjectReference Include="..\SharpHack.BaseItems\SharpHack.BaseItems.csproj" />
   </ItemGroup>
 
 </Project>

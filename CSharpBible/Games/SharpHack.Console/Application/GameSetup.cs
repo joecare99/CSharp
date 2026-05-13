@@ -1,9 +1,9 @@
-using System;
 using BaseLib.Interfaces;
 using BaseLib.Models;
+using BaseLib.Models.Interfaces;
 using ConsoleDisplay.View;
-using SharpHack.AI;
 using SharpHack.Base.Data;
+using SharpHack.AI;
 using SharpHack.Combat;
 using SharpHack.Engine;
 using SharpHack.LevelGen.BSP;
@@ -19,24 +19,41 @@ namespace SharpHack.Console;
 /// </summary>
 internal sealed class GameSetup
 {
+    private readonly GamePersist _gamePersist = new();
+
+    public GamePersist DurablePersist => _gamePersist;
+
     /// <summary>
     /// Builds the view model, tile display and mini map instances.
     /// </summary>
-    public GameContext Create(IConsole console)
+    public GameContext Create(IConsole console, Func<GameSession, IGameSaveLoadService?>? createSaveLoadService = null)
     {
-        if (console == null)
-        {
-            throw new ArgumentNullException(nameof(console));
-        }
+        ArgumentNullException.ThrowIfNull(console);
+
+        return CreateCore(console, createSaveLoadService, restoreGameState: null);
+    }
+
+    public GameContext CreateFromRestore(IConsole console, RestoreGameState restoreGameState, Func<GameSession, IGameSaveLoadService?>? createSaveLoadService = null)
+    {
+        ArgumentNullException.ThrowIfNull(console);
+        ArgumentNullException.ThrowIfNull(restoreGameState);
+
+        return CreateCore(console, createSaveLoadService, restoreGameState);
+    }
+
+    private GameContext CreateCore(IConsole console, Func<GameSession, IGameSaveLoadService?>? createSaveLoadService, RestoreGameState? restoreGameState)
+    {
+        ArgumentNullException.ThrowIfNull(console);
 
         var random = new CRandom();
         var mapGenerator = new BSPMapGenerator(random);
         var combatSystem = new SimpleCombatSystem();
         var enemyAI = new SimpleEnemyAI();
-        var gamePersist = new InMemoryGamePersist();
-
-        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
-        var viewModel = new GameViewModel(session);
+        var session = restoreGameState == null
+            ? GameSessionFactory.CreateSession(mapGenerator, _gamePersist, random, combatSystem, enemyAI)
+            : GameSessionFactory.CreateSession(mapGenerator, _gamePersist, random, combatSystem, enemyAI, restoreGameState);
+        var saveLoadService = createSaveLoadService?.Invoke(session);
+        var viewModel = GameSessionFactory.CreateGameViewModel(session, saveLoadService);
 
         var tileDef = new TileDefRes(".\\Resources\\Tiles4x2.tdj");
         var viewWidth = 70 / tileDef.TileSize.Width;

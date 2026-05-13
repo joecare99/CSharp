@@ -21,11 +21,11 @@ public sealed class SvnCliProviderCommandTests
         {
             Assert.IsNotNull(ep);
 
-            if (arguments.StartsWith("log -r 0:HEAD --xml", StringComparison.Ordinal))
+            if (arguments.StartsWith("log -v -r 0:HEAD --xml", StringComparison.Ordinal))
             {
                 const string logXml = "<log>" +
-                                      "<logentry revision=\"5\"><author>alice</author><date>2024-01-05T12:00:00Z</date><msg>r5</msg></logentry>" +
-                                      "<logentry revision=\"3\"><author>bob</author><date>2024-01-03T12:00:00Z</date><msg>r3</msg></logentry>" +
+                                      "<logentry revision=\"5\"><author>alice</author><date>2024-01-05T12:00:00Z</date><msg>r5</msg><paths><path action=\"M\" kind=\"file\">/trunk/readme.txt</path></paths></logentry>" +
+                                      "<logentry revision=\"3\"><author>bob</author><date>2024-01-03T12:00:00Z</date><msg>r3</msg><paths><path action=\"A\" kind=\"file\">/trunk/new.txt</path><path action=\"D\" kind=\"file\">/trunk/old.txt</path></paths></logentry>" +
                                       "</log>";
                 return Task.FromResult(logXml);
             }
@@ -40,6 +40,10 @@ public sealed class SvnCliProviderCommandTests
             Assert.AreEqual(2, selectionData.Revisions.Count);
             Assert.AreEqual("3", selectionData.Revisions[0].Id);
             Assert.AreEqual("5", selectionData.Revisions[1].Id);
+            Assert.AreEqual(2, selectionData.Revisions[0].ChangedPaths.Count);
+            Assert.AreEqual("A", selectionData.Revisions[0].ChangedPaths[0].Action);
+            Assert.AreEqual("/trunk/new.txt", selectionData.Revisions[0].ChangedPaths[0].Path);
+            Assert.AreEqual(1, selectionData.Revisions[1].ChangedPaths.Count);
             Assert.AreEqual("3", selectionData.SuggestedFromRevisionId);
         });
     }

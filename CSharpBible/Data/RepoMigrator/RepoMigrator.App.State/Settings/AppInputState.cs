@@ -42,4 +42,6 @@ public sealed class AppInputState
     public int PipelineExportWorkerCount { get; set; } = 2;
     public bool SplitIntoSubdirectoryBranches { get; set; }
     public int BranchSplitDepth { get; set; } = 1;
+    public bool VerifyChangedPathCount { get; set; } = true;
+    public bool VerboseProgress { get; set; }
 }

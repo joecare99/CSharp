@@ -40,6 +40,9 @@ public sealed class SvnProvider : IVersionControlProvider
     public Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, CancellationToken ct)
         => _innerProvider.CommitSnapshotAsync(workDir, metadata, ct);
 
+    public Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, IMigrationProgress progress, CancellationToken ct)
+        => _innerProvider.CommitSnapshotAsync(workDir, metadata, progress, ct);
+
     public Task FlushAsync(CancellationToken ct)
         => _innerProvider.FlushAsync(ct);
 

@@ -3,6 +3,8 @@ using BaseLib.Interfaces;
 using BaseLib.Models;
 using ConsoleDisplay.View;
 using SharpHack.Base.Data;
+using SharpHack.Engine;
+using SharpHack.Persist;
 using Direction = SharpHack.Base.Model.Direction;
 using SharpHack.ViewModel;
 
@@ -14,11 +16,12 @@ namespace SharpHack.Console;
 public sealed class ConsoleGameApp
 {
     private readonly IConsole _console;
-    private readonly GameViewModel _viewModel;
-    private readonly TileDisplay<DisplayTile> _tileDisplay;
-    private readonly Display _miniMap;
-    private readonly GameRenderer _renderer;
-    private readonly NavigationPrompt _navigationPrompt;
+    private readonly GameSetup _setup = new();
+    private GameViewModel _viewModel;
+    private TileDisplay<DisplayTile> _tileDisplay;
+    private Display _miniMap;
+    private GameRenderer _renderer;
+    private NavigationPrompt _navigationPrompt;
 
     private bool _autoDoorOpen = true;
 
@@ -29,17 +32,7 @@ public sealed class ConsoleGameApp
     public ConsoleGameApp(IConsole console)
     {
         _console = console ?? throw new ArgumentNullException(nameof(console));
-        var setup = new GameSetup();
-        var context = setup.Create(_console);
-        _viewModel = context.ViewModel;
-        _tileDisplay = context.TileDisplay;
-        _miniMap = context.MiniMap;
-
-        _renderer = new GameRenderer(_console, _viewModel, _tileDisplay, _miniMap, () => _autoDoorOpen);
-        _navigationPrompt = new NavigationPrompt(_console, _viewModel, _renderer);
-
-        _tileDisplay.FncGetTile = _renderer.GetTileAt;
-        _viewModel.AutoDoorOpen = _autoDoorOpen;
+        ApplyContext(_setup.Create(_console, CreateSaveLoadService));
     }
 
     /// <summary>
@@ -94,6 +87,18 @@ public sealed class ConsoleGameApp
                 _viewModel.ExecutePrimaryAction();
                 break;
 
+            case ConsoleKey.S:
+                SaveRun();
+                break;
+
+            case ConsoleKey.L:
+                LoadRun();
+                break;
+
+            case ConsoleKey.N when !_viewModel.IsRunning:
+                StartNewRun();
+                break;
+
             case ConsoleKey.Escape:
                 return false;
 
@@ -110,5 +115,60 @@ public sealed class ConsoleGameApp
         _autoDoorOpen = !_autoDoorOpen;
         _viewModel.AutoDoorOpen = _autoDoorOpen;
         _viewModel.Messages.Add($"AutoDoorOpen: {(_autoDoorOpen ? "ON" : "OFF")}");
+    }
+
+    private void StartNewRun()
+    {
+        ApplyContext(_setup.Create(_console, CreateSaveLoadService));
+        _viewModel.Messages.Add("New run started.");
+    }
+
+    private void SaveRun()
+    {
+        if (_viewModel.SaveGameCommand.CanExecute(null))
+        {
+            _viewModel.SaveGameCommand.Execute(null);
+        }
+    }
+
+    private void LoadRun()
+    {
+        if (_viewModel.LoadGameCommand.CanExecute(null))
+        {
+            _viewModel.LoadGameCommand.Execute(null);
+            return;
+        }
+
+        ReportStatus("No saved run found.");
+    }
+
+    private IGameSaveLoadService CreateSaveLoadService(GameSession session)
+    {
+        return new ConsoleGameSaveLoadService(_setup.DurablePersist, session, ApplyRestoredState, ReportStatus);
+    }
+
+    private void ApplyRestoredState(RestoreGameState restoreGameState)
+    {
+        ApplyContext(_setup.CreateFromRestore(_console, restoreGameState, CreateSaveLoadService));
+    }
+
+    private void ReportStatus(string message)
+    {
+        if (!string.IsNullOrWhiteSpace(message))
+        {
+            _viewModel.Messages.Add(message);
+        }
+    }
+
+    private void ApplyContext(GameContext context)
+    {
+        _viewModel?.Dispose();
+        _viewModel = context.ViewModel;
+        _tileDisplay = context.TileDisplay;
+        _miniMap = context.MiniMap;
+        _renderer = new GameRenderer(_console, _viewModel, _tileDisplay, _miniMap, () => _autoDoorOpen);
+        _navigationPrompt = new NavigationPrompt(_console, _viewModel, _renderer);
+        _tileDisplay.FncGetTile = _renderer.GetTileAt;
+        _viewModel.AutoDoorOpen = _autoDoorOpen;
     }
 }

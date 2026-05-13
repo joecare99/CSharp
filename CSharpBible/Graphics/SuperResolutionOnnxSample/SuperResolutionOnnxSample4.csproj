@@ -6,6 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.25.1" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.26.0" />
   </ItemGroup>
 </Project>

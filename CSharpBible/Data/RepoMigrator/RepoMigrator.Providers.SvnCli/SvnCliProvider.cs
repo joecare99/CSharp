@@ -1,6 +1,7 @@
 ﻿// RepoMigrator.Providers.SvnCli/SvnCliProvider.cs
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
+using RepoMigrator.Core.Diagnostics;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
@@ -107,7 +108,8 @@ public sealed class SvnCliProvider : IVersionControlProvider
                 Message = svnRevision.Message,
                 AuthorName = svnRevision.AuthorName,
                 AuthorEmail = null,
-                Timestamp = svnRevision.Timestamp
+                Timestamp = svnRevision.Timestamp,
+                ChangedPaths = svnRevision.ChangedPaths
             })
             .ToList();
 
@@ -165,6 +167,9 @@ public sealed class SvnCliProvider : IVersionControlProvider
     }
 
     public async Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, CancellationToken ct)
+        => await CommitSnapshotAsync(workDir, metadata, NullMigrationProgress.Instance, ct);
+
+    public async Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, IMigrationProgress progress, CancellationToken ct)
     {
         if (string.IsNullOrEmpty(_wcPath))
             throw new InvalidOperationException("Working Copy Pfad nicht initialisiert.");
@@ -352,7 +357,7 @@ public sealed class SvnCliProvider : IVersionControlProvider
 
     private async Task<IReadOnlyList<RepositoryRevisionInfo>> LoadRevisionInfosAsync(string sPathUrl, CancellationToken ct)
     {
-        var sXml = await RunSvnAsync($"log -r 0:HEAD --xml \"{sPathUrl}\"", workingDir: null, ct);
+        var sXml = await RunSvnAsync($"log -v -r 0:HEAD --xml \"{sPathUrl}\"", workingDir: null, ct);
         var xDoc = XDocument.Parse(sXml);
         var lstEntries = xDoc.Root?.Elements("logentry") ?? Enumerable.Empty<XElement>();
         var lstRevisions = new List<RepositoryRevisionInfo>();
@@ -363,6 +368,17 @@ public sealed class SvnCliProvider : IVersionControlProvider
             var sAuthor = xEntry.Element("author")?.Value ?? "unknown";
             var sDate = xEntry.Element("date")?.Value ?? "";
             var sMessage = xEntry.Element("msg")?.Value ?? "";
+            var lstChangedPaths = xEntry
+                .Element("paths")?
+                .Elements("path")
+                .Select(xPath => new RepositoryChangedPathInfo
+                {
+                    Path = xPath.Value,
+                    Action = xPath.Attribute("action")?.Value ?? "",
+                    Kind = xPath.Attribute("kind")?.Value
+                })
+                .Where(pathInfo => !string.IsNullOrWhiteSpace(pathInfo.Path))
+                .ToList() ?? [];
 
             if (!DateTimeOffset.TryParse(sDate, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dtWhen))
                 dtWhen = DateTimeOffset.UtcNow;
@@ -372,7 +388,8 @@ public sealed class SvnCliProvider : IVersionControlProvider
                 Id = sRevision,
                 Message = sMessage,
                 AuthorName = string.IsNullOrWhiteSpace(sAuthor) ? "unknown" : sAuthor,
-                Timestamp = dtWhen
+                Timestamp = dtWhen,
+                ChangedPaths = lstChangedPaths
             });
         }
 
@@ -432,6 +449,7 @@ public sealed class SvnCliProvider : IVersionControlProvider
     private static void SyncDirectory(string source, string dest)
     {
         Directory.CreateDirectory(dest);
+        var sSnapshotDirectory = DifferentialSnapshotStore.StartOperation("SvnCli");
 
         var dctSourceFiles = Directory.EnumerateFiles(source, "*", SearchOption.AllDirectories)
             .Where(sPath => !IsSvnAdministrativePath(source, sPath))
@@ -461,6 +479,7 @@ public sealed class SvnCliProvider : IVersionControlProvider
                 continue;
 
             TryMakeWritable(destinationFile.FullPath);
+            DifferentialSnapshotStore.SaveRemovedFile(sSnapshotDirectory, sRelativePath, destinationFile.FullPath);
             File.Delete(destinationFile.FullPath);
         }
 
@@ -475,8 +494,13 @@ public sealed class SvnCliProvider : IVersionControlProvider
                 continue;
             }
 
+            if (File.Exists(sDestinationPath))
+                DifferentialSnapshotStore.SaveChangedFile(sSnapshotDirectory, sRelativePath, sourceFile.FullPath, sDestinationPath);
+            else
+                DifferentialSnapshotStore.SaveAddedFile(sSnapshotDirectory, sRelativePath, sourceFile.FullPath);
+
             Directory.CreateDirectory(Path.GetDirectoryName(sDestinationPath)!);
-            File.Copy(sourceFile.FullPath, sDestinationPath, overwrite: true);
+            VerifiedFileCopy.CopyAndVerify(sourceFile.FullPath, sDestinationPath);
         }
 
         RemoveEmptyDirectories(dest);

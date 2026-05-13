@@ -34,5 +34,9 @@ public enum MigrationReportMessage
     ProjectedBranchCommitted,
     GitBranchTransferStarting,
     GitTagTransferStarting,
+    ChangeSetDetails,
+    SnapshotMaterialized,
+    ChangeCountVerificationPlanned,
+    GitChangeCountVerification,
     MigrationCompleted
 }

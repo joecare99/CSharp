@@ -2,6 +2,7 @@
 using LibGit2Sharp;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
+using RepoMigrator.Core.Diagnostics;
 using System.Diagnostics;
 using System.Text;
 
@@ -364,6 +365,9 @@ public sealed class GitProvider : IVersionControlProvider
     }
 
     public async Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, CancellationToken ct)
+        => await CommitSnapshotAsync(workDir, metadata, NullMigrationProgress.Instance, ct);
+
+    public async Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, IMigrationProgress progress, CancellationToken ct)
     {
         await EnsureWorkingBranchAsync(metadata.TargetBranch, ct);
 
@@ -373,6 +377,7 @@ public sealed class GitProvider : IVersionControlProvider
 
         // Stage + Commit
         Commands.Stage(_repo!, "*");
+        VerifyGitChangedPathCount(metadata, progress);
         var author = new Signature(metadata.AuthorName, metadata.AuthorEmail ?? "unknown@example.com", metadata.Timestamp);
         var committer = author;
         try
@@ -449,6 +454,50 @@ public sealed class GitProvider : IVersionControlProvider
         var sPushArgs = $"push --set-upstream \"{_pushTargetUrl}\" \"refs/heads/{sBranchName}:refs/heads/{sBranchName}\"";
         await RunGitAsync(sPushArgs, _localPath, "Git-Push", ct);
     }
+
+    private void VerifyGitChangedPathCount(CommitMetadata metadata, IMigrationProgress progress)
+    {
+        if (metadata.ExpectedChangedFilePathCount is not { } iExpectedChangedFilePathCount && metadata.ExpectedChangedPathCount is not { } iExpectedChangedPathCount)
+            return;
+
+        var summary = BuildGitStatusSummary();
+        var iExpected = metadata.ExpectedChangedFilePathCount ?? metadata.ExpectedChangedPathCount!.Value;
+        progress.Report(
+            MigrationReportSeverity.Information,
+            MigrationReportMessage.GitChangeCountVerification,
+            summary.Total,
+            summary.Modified,
+            summary.Added,
+            summary.Deleted,
+            summary.Renamed,
+            iExpected,
+            metadata.ExpectedChangedPathCount ?? iExpected,
+            summary.SamplePaths);
+
+        if (!metadata.VerifyChangedPathCount || summary.Total <= iExpected)
+            return;
+
+        throw new InvalidOperationException($"Git target has {summary.Total} changed file paths before commit, but source revision reported {iExpected} changed file paths ({metadata.ExpectedChangedPathCount ?? iExpected} total SVN paths). Sample changed paths: {summary.SamplePaths}");
+    }
+
+    private GitStatusSummary BuildGitStatusSummary()
+    {
+        var lstChangedEntries = _repo!.RetrieveStatus(new StatusOptions { IncludeIgnored = false })
+            .Where(statusEntry => statusEntry.State != FileStatus.Unaltered && statusEntry.State != FileStatus.Ignored)
+            .GroupBy(statusEntry => statusEntry.FilePath, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
+            .ToList();
+
+        return new GitStatusSummary(
+            lstChangedEntries.Count,
+            lstChangedEntries.Count(static entry => entry.State.HasFlag(FileStatus.ModifiedInIndex) || entry.State.HasFlag(FileStatus.ModifiedInWorkdir)),
+            lstChangedEntries.Count(static entry => entry.State.HasFlag(FileStatus.NewInIndex) || entry.State.HasFlag(FileStatus.NewInWorkdir)),
+            lstChangedEntries.Count(static entry => entry.State.HasFlag(FileStatus.DeletedFromIndex) || entry.State.HasFlag(FileStatus.DeletedFromWorkdir)),
+            lstChangedEntries.Count(static entry => entry.State.HasFlag(FileStatus.RenamedInIndex) || entry.State.HasFlag(FileStatus.RenamedInWorkdir)),
+            string.Join(", ", lstChangedEntries.Select(static entry => entry.FilePath).OrderBy(static sPath => sPath, StringComparer.OrdinalIgnoreCase).Take(20)));
+    }
+
+    private sealed record GitStatusSummary(int Total, int Modified, int Added, int Deleted, int Renamed, string SamplePaths);
 
     public ValueTask DisposeAsync()
     {
@@ -834,6 +883,7 @@ public sealed class GitProvider : IVersionControlProvider
 
     private static void SyncDirectoryContents(string sourceDir, string destDir)
     {
+        var sSnapshotDirectory = DifferentialSnapshotStore.StartOperation("Git");
         var dctSourceFiles = Directory.EnumerateFiles(sourceDir, "*", SearchOption.AllDirectories)
             .Select(sFilePath => new
             {
@@ -859,6 +909,7 @@ public sealed class GitProvider : IVersionControlProvider
                 continue;
 
             destinationFile.Info.Attributes = FileAttributes.Normal;
+            DifferentialSnapshotStore.SaveRemovedFile(sSnapshotDirectory, sRelativePath, destinationFile.FullPath);
             destinationFile.Info.Delete();
         }
 
@@ -871,8 +922,13 @@ public sealed class GitProvider : IVersionControlProvider
                 continue;
             }
 
+            if (File.Exists(sDestinationPath))
+                DifferentialSnapshotStore.SaveChangedFile(sSnapshotDirectory, sRelativePath, sourceFile.FullPath, sDestinationPath);
+            else
+                DifferentialSnapshotStore.SaveAddedFile(sSnapshotDirectory, sRelativePath, sourceFile.FullPath);
+
             Directory.CreateDirectory(Path.GetDirectoryName(sDestinationPath)!);
-            File.Copy(sourceFile.FullPath, sDestinationPath, overwrite: true);
+            VerifiedFileCopy.CopyAndVerify(sourceFile.FullPath, sDestinationPath);
         }
 
         RemoveEmptyDirectories(destDir);

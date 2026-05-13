@@ -50,7 +50,7 @@ public class BSPRoomMazeMapGeneratorTests
         Assert.AreEqual(TileType.Wall, map[cx + 2, cy].Type);
         Assert.AreEqual(TileType.Wall, map[cx - 2, cy].Type);
         Assert.AreEqual(TileType.Wall, map[cx, cy + 2].Type);
-        Assert.AreEqual(TileType.Wall, map[cx, cy - 2].Type);
+        Assert.AreEqual(TileType.DoorClosed, map[cx, cy - 2].Type);
     }
 
     [TestMethod]

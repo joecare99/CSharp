@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Ollama.Tools.Abstractions;
 using Ollama.Tools.ContentAnalysis;
 
 namespace Ollama.Samples.TextAnalysis;
@@ -10,47 +9,28 @@ internal static class Program
 {
     private static async Task<int> Main(string[] args)
     {
-        bool analyzeCSharp = args.Length > 0 && string.Equals(args[0], "--csharp", StringComparison.OrdinalIgnoreCase);
-        int inputArgumentStartIndex = analyzeCSharp ? 1 : 0;
-        string[] inputArguments = args.Length > inputArgumentStartIndex
-            ? args[inputArgumentStartIndex..]
-            : [];
-        string inputText = args.Length > 0 && File.Exists(args[0])
-            ? await File.ReadAllTextAsync(args[0])
-            : inputArguments.Length > 0 && File.Exists(inputArguments[0])
-                ? await File.ReadAllTextAsync(inputArguments[0])
-                : inputArguments.Length > 0
-                    ? string.Join(" ", inputArguments)
-                    : analyzeCSharp
-                        ? "using System;\nnamespace Demo;\n\npublic sealed class Sample\n{\n    public void Run()\n    {\n        Console.WriteLine(\"hello\");\n    }\n}"
-                        : "This is a first local text analysis sample. It contains multiple sentences so the heuristic tool can evaluate structure and clarity.";
+        ContentAnalysisMode mode = ResolveMode(args);
+        string[] inputArguments = FilterInputArguments(args);
+        string displayName = inputArguments.Length > 0
+            ? inputArguments[0]
+            : mode == ContentAnalysisMode.CSharp
+                ? "inline csharp input"
+                : "inline input";
+        string inputText = inputArguments.Length > 0 && File.Exists(inputArguments[0])
+            ? await File.ReadAllTextAsync(inputArguments[0])
+            : inputArguments.Length > 0
+                ? string.Join(" ", inputArguments)
+                : mode == ContentAnalysisMode.CSharp
+                    ? "using System;\nnamespace Demo;\n\npublic sealed class Sample\n{\n    public void Run()\n    {\n        Console.WriteLine(\"hello\");\n    }\n}"
+                    : "This is a first local text analysis sample. It contains multiple sentences so the heuristic tool can evaluate structure and clarity.";
 
-        IContentAnalysisTool tool = analyzeCSharp ? new CSharpCodeAnalysisTool() : new TextAnalysisTool();
-        ContentAnalysisRequest request = new()
-        {
-            ContentKind = analyzeCSharp ? OllamaContentKind.SourceCode : OllamaContentKind.Text,
-            SourceKind = OllamaContentSourceKind.Inline,
-            DisplayName = inputArguments.Length > 0 ? inputArguments[0] : analyzeCSharp ? "inline csharp input" : "inline text input",
-            MediaType = analyzeCSharp ? "text/x-csharp" : "text/plain",
-            Language = analyzeCSharp ? "csharp" : string.Empty,
-            Content = inputText,
-        };
+        ContentAnalysisRouter router = new(new TextAnalysisTool(), new CSharpCodeAnalysisTool());
+        ContentAnalysisExecutionResult executionResult = await router.AnalyzeAsync(inputText, displayName, mode);
 
-        ContentAnalysisRequestValidationResult validationResult = tool.Validate(request);
-        if (!validationResult.IsValid)
-        {
-            Console.WriteLine("Validation failed:");
-            foreach (ContentAnalysisValidationIssue issue in validationResult.Issues)
-            {
-                Console.WriteLine($"- {issue.Field}: {issue.Message}");
-            }
-
-            return 1;
-        }
-
-        ContentAnalysisResult result = await tool.AnalyzeAsync(request);
-        Console.WriteLine($"Mode: {(analyzeCSharp ? "C# source analysis" : "Text analysis")}");
-        Console.WriteLine($"Input: {request.DisplayName}");
+        Console.WriteLine($"Mode: {executionResult.Decision.AnalysisLabel}");
+        Console.WriteLine($"Reason: {executionResult.Decision.Reason}");
+        Console.WriteLine($"Input: {displayName}");
+        ContentAnalysisResult result = executionResult.Result;
         Console.WriteLine($"Summary: {result.Summary}");
         Console.WriteLine($"Score: {result.Score:0.00}");
         Console.WriteLine($"Confidence: {result.Confidence:0.00}");
@@ -73,5 +53,26 @@ internal static class Program
         }
 
         return 0;
+    }
+
+    private static ContentAnalysisMode ResolveMode(string[] args)
+    {
+        if (Array.Exists(args, static argument => string.Equals(argument, "--text", StringComparison.OrdinalIgnoreCase)))
+        {
+            return ContentAnalysisMode.Text;
+        }
+
+        if (Array.Exists(args, static argument => string.Equals(argument, "--csharp", StringComparison.OrdinalIgnoreCase)))
+        {
+            return ContentAnalysisMode.CSharp;
+        }
+
+        return ContentAnalysisMode.Auto;
+    }
+
+    private static string[] FilterInputArguments(string[] args)
+    {
+        return Array.FindAll(args, static argument => !string.Equals(argument, "--text", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(argument, "--csharp", StringComparison.OrdinalIgnoreCase));
     }
 }

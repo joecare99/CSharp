@@ -16,13 +16,17 @@ namespace Ollama.Wpf.TextAnalysis.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IContentAnalysisService _contentAnalysisService;
+    private string? _loadedFileName;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AnalyzeTextCommand))]
     private string _inputText = "This is a local WPF text analysis sample. It has enough words and multiple sentences so the UI can display a structured result.";
 
     [ObservableProperty]
-    private bool _analyzeCSharp;
+    private ContentAnalysisMode _selectedMode = ContentAnalysisMode.Auto;
+
+    [ObservableProperty]
+    private string _selectedModeText = "Auto";
 
     [ObservableProperty]
     private string _summary = string.Empty;
@@ -46,6 +50,9 @@ public partial class MainWindowViewModel : ObservableObject
     private string _statusText = "Ready.";
 
     [ObservableProperty]
+    private string _routingReasonText = string.Empty;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AnalyzeTextCommand))]
     private bool _isBusy;
 
@@ -62,13 +69,21 @@ public partial class MainWindowViewModel : ObservableObject
         try
         {
             IsBusy = true;
-            StatusText = _analyzeCSharp ? "Analyzing C# source..." : "Analyzing text...";
+            StatusText = SelectedMode switch
+            {
+                ContentAnalysisMode.CSharp => "Analyzing C# source...",
+                ContentAnalysisMode.Text => "Analyzing text...",
+                _ => "Detecting content type and analyzing...",
+            };
 
-            ContentAnalysisResult result = await _contentAnalysisService.AnalyzeAsync(InputText, _analyzeCSharp);
+            ContentAnalysisExecutionResult executionResult = await _contentAnalysisService.AnalyzeAsync(InputText, _loadedFileName, SelectedMode);
+            ContentAnalysisResult result = executionResult.Result;
             Summary = result.Summary;
             ScoreText = result.Score?.ToString("0.00") ?? "-";
             ConfidenceText = result.Confidence?.ToString("0.00") ?? "-";
             RationaleText = result.Rationale;
+            RoutingReasonText = executionResult.Decision.Reason;
+            SelectedModeText = executionResult.Decision.AnalysisLabel;
             FindingsText = result.Findings.Count == 0
                 ? "No findings."
                 : string.Join(Environment.NewLine + Environment.NewLine, result.Findings.Select(static finding => $"[{finding.Severity}] {finding.Title}{Environment.NewLine}{finding.Message}{Environment.NewLine}{finding.Evidence}"));
@@ -103,6 +118,28 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         InputText = await File.ReadAllTextAsync(dialog.FileName);
+        _loadedFileName = dialog.FileName;
         StatusText = $"Loaded {Path.GetFileName(dialog.FileName)}.";
+    }
+
+    [RelayCommand]
+    private void SelectAutoMode()
+    {
+        SelectedMode = ContentAnalysisMode.Auto;
+        SelectedModeText = "Auto";
+    }
+
+    [RelayCommand]
+    private void SelectTextMode()
+    {
+        SelectedMode = ContentAnalysisMode.Text;
+        SelectedModeText = "Text analysis";
+    }
+
+    [RelayCommand]
+    private void SelectCSharpMode()
+    {
+        SelectedMode = ContentAnalysisMode.CSharp;
+        SelectedModeText = "C# source analysis";
     }
 }

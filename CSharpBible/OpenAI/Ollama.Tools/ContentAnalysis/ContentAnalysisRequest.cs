@@ -44,6 +44,16 @@ public sealed class ContentAnalysisRequest
     public string FilePath { get; init; } = string.Empty;
 
     /// <summary>
+    /// Gets the optional file metadata.
+    /// </summary>
+    public ContentAnalysisFileMetadata FileMetadata { get; init; } = new();
+
+    /// <summary>
+    /// Gets the optional image-specific metadata.
+    /// </summary>
+    public ContentAnalysisImageMetadata ImageMetadata { get; init; } = new();
+
+    /// <summary>
     /// Gets the requested evaluation criteria.
     /// </summary>
     public IReadOnlyList<ContentAnalysisCriterion> Criteria { get; init; } = Array.Empty<ContentAnalysisCriterion>();

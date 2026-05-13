@@ -134,6 +134,177 @@ public class GameSessionTests
     }
 
     [TestMethod]
+    public void PlayerHpZero_TriggersDeathGraceBeforeTerminalDeath()
+    {
+        var mapGenerator = Substitute.For<IMapGenerator>();
+        var random = Substitute.For<IRandom>();
+        var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>();
+        var map = new Map(10, 10);
+
+        map[1, 1].Type = TileType.Floor;
+        map[2, 1].Type = TileType.Floor;
+
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
+        random.Next(Arg.Any<int>()).Returns(2, 1, 0, 0);
+
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
+        session.Player.Position = new Point(1, 1);
+        session.Player.HP = 1;
+
+        var enemy = session.Enemies.FirstOrDefault(e => e.Position.X == 2 && e.Position.Y == 1);
+        Assert.IsNotNull(enemy);
+
+        combatSystem.When(x => x.Attack(session.Player, enemy, Arg.Any<System.Action<string>>()))
+                    .Do(_ => session.Player.HP = 0);
+
+        session.MovePlayer(Direction.East);
+
+        Assert.AreEqual(GameRunState.Running, session.RunState);
+        Assert.IsTrue(session.IsRunning);
+        Assert.AreEqual(0, session.Player.HP);
+    }
+
+    [TestMethod]
+    public void DeathGraceSecondRound_TransitionsToPlayerDead()
+    {
+        var mapGenerator = Substitute.For<IMapGenerator>();
+        var random = Substitute.For<IRandom>();
+        var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>();
+        var map = new Map(10, 10);
+
+        map[1, 1].Type = TileType.Floor;
+        map[2, 1].Type = TileType.Floor;
+
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
+        random.Next(Arg.Any<int>()).Returns(2, 1, 0, 0);
+
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
+        session.Player.Position = new Point(1, 1);
+        session.Player.HP = 1;
+
+        var enemy = session.Enemies.FirstOrDefault(e => e.Position.X == 2 && e.Position.Y == 1);
+        Assert.IsNotNull(enemy);
+
+        combatSystem.When(x => x.Attack(session.Player, enemy, Arg.Any<System.Action<string>>()))
+                    .Do(_ => session.Player.HP = 0);
+
+        session.MovePlayer(Direction.East);
+        session.MovePlayer(Direction.East);
+        session.Update();
+
+        Assert.AreEqual(GameRunState.PlayerDead, session.RunState);
+        Assert.IsFalse(session.IsRunning);
+    }
+
+    [TestMethod]
+    public void TerminalState_BlocksPickupAndDoorActions()
+    {
+        var mapGenerator = Substitute.For<IMapGenerator>();
+        var random = Substitute.For<IRandom>();
+        var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>();
+        var map = new Map(10, 10);
+
+        map[1, 1].Type = TileType.Floor;
+        map[2, 1].Type = TileType.DoorClosed;
+        var sword = new Weapon { Name = "Sword", Position = new Point(1, 1) };
+        map[1, 1].Items.Add(sword);
+
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
+        random.Next(Arg.Any<int>()).Returns(0);
+
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
+        session.Player.Position = new Point(1, 1);
+        session.Player.HP = 0;
+
+        session.MovePlayer(Direction.East);
+        session.MovePlayer(Direction.West);
+
+        session.PickUpItem(session.Player, sword);
+        var opened = session.OpenDoorAt(new Point(2, 1));
+        var toggled = session.ToggleDoorAt(new Point(2, 1));
+        var openedBetween = session.TryOpenDoorBetween(session.Player.Position, new Point(2, 1));
+        var action = session.GetPrimaryAction();
+        var executed = session.ExecutePrimaryAction();
+
+        Assert.AreEqual(GameRunState.PlayerDead, session.RunState);
+        Assert.IsFalse(opened);
+        Assert.IsFalse(toggled);
+        Assert.IsFalse(openedBetween);
+        Assert.AreEqual(GameSession.PrimaryActionKind.None, action.Kind);
+        Assert.IsFalse(executed);
+        Assert.IsFalse(session.Player.Inventory.Contains(sword));
+        Assert.IsTrue(map[1, 1].Items.Contains(sword));
+    }
+
+    [TestMethod]
+    public void PickingUpAmuletOfJoCarneer_TriggersVictory()
+    {
+        var mapGenerator = Substitute.For<IMapGenerator>();
+        var random = Substitute.For<IRandom>();
+        var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>();
+        var map = new Map(10, 10);
+
+        map[1, 1].Type = TileType.Floor;
+        var amulet = new Item { Name = "Amulet of JoCarneer", Position = new Point(1, 1) };
+        map[1, 1].Items.Add(amulet);
+
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
+        random.Next(Arg.Any<int>()).Returns(0);
+
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
+        session.Player.Position = new Point(1, 1);
+
+        session.PickUpItem(session.Player, amulet);
+
+        Assert.AreEqual(GameRunState.Victory, session.RunState);
+        Assert.IsTrue(session.HasWon);
+        Assert.IsFalse(session.IsRunning);
+        Assert.AreEqual("Amulet of JoCarneer", session.VictoryObjective);
+        Assert.IsFalse(string.IsNullOrWhiteSpace(session.CompletionSummary));
+    }
+
+    [TestMethod]
+    public void VictoryBlocksFurtherGameplayMutation()
+    {
+        var mapGenerator = Substitute.For<IMapGenerator>();
+        var random = Substitute.For<IRandom>();
+        var combatSystem = Substitute.For<ICombatSystem>();
+        var enemyAI = Substitute.For<IEnemyAI>();
+        var gamePersist = Substitute.For<IGamePersist>();
+        var map = new Map(10, 10);
+
+        map[1, 1].Type = TileType.Floor;
+        map[2, 1].Type = TileType.DoorClosed;
+        var amulet = new Item { Name = "Amulet of JoCarneer", Position = new Point(1, 1) };
+        map[1, 1].Items.Add(amulet);
+
+        mapGenerator.Generate(Arg.Any<int>(), Arg.Any<int>()).Returns(map);
+        random.Next(Arg.Any<int>()).Returns(0);
+
+        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
+        session.Player.Position = new Point(1, 1);
+
+        session.PickUpItem(session.Player, amulet);
+        session.MovePlayer(Direction.East);
+        var opened = session.OpenDoorAt(new Point(2, 1));
+        var action = session.GetPrimaryAction();
+
+        Assert.AreEqual(GameRunState.Victory, session.RunState);
+        Assert.IsFalse(session.IsRunning);
+        Assert.AreEqual(new Point(1, 1), session.Player.Position);
+        Assert.IsFalse(opened);
+        Assert.AreEqual(GameSession.PrimaryActionKind.None, action.Kind);
+    }
+
+    [TestMethod]
     public void Update_MovesEnemies()
     {
         // Arrange

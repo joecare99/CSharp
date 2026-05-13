@@ -23,10 +23,18 @@
                     Command="{Binding LoadFileCommand}"
                     Padding="12,6"
                     Margin="0,0,8,0" />
-            <CheckBox Margin="0,0,12,0"
-                      VerticalAlignment="Center"
-                      IsChecked="{Binding AnalyzeCSharp}"
-                      Content="Analyze as C# source" />
+            <Button Content="Auto"
+                    Command="{Binding SelectAutoModeCommand}"
+                    Padding="12,6"
+                    Margin="0,0,8,0" />
+            <Button Content="Text"
+                    Command="{Binding SelectTextModeCommand}"
+                    Padding="12,6"
+                    Margin="0,0,8,0" />
+            <Button Content="C#"
+                    Command="{Binding SelectCSharpModeCommand}"
+                    Padding="12,6"
+                    Margin="0,0,12,0" />
             <Button x:Name="btnAnalyze"
                     Content="Analyze Content"
                     Command="{Binding AnalyzeTextCommand}"
@@ -56,6 +64,8 @@
                 <TextBlock Text="Summary" FontWeight="Bold" />
                 <TextBlock Grid.Row="1" Text="{Binding Summary}" TextWrapping="Wrap" Margin="0,4,0,8" />
                 <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Mode: " FontWeight="Bold" />
+                    <TextBlock Text="{Binding SelectedModeText}" Margin="0,0,16,0" />
                     <TextBlock Text="Score: " FontWeight="Bold" />
                     <TextBlock Text="{Binding ScoreText}" Margin="0,0,16,0" />
                     <TextBlock Text="Confidence: " FontWeight="Bold" />
@@ -68,6 +78,11 @@
                          VerticalScrollBarVisibility="Auto"
                          BorderThickness="0"
                          Background="Transparent" />
+                <TextBlock Grid.Row="3"
+                           Margin="0,8,0,0"
+                           Text="{Binding RoutingReasonText}"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Bottom" />
             </Grid>
         </GroupBox>
 

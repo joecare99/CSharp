@@ -63,6 +63,16 @@ public static class ContentAnalysisRequestValidator
             });
         }
 
+        if (request.ContentKind == OllamaContentKind.Image && request.SourceKind != OllamaContentSourceKind.FilePath)
+        {
+            issues.Add(new ContentAnalysisValidationIssue
+            {
+                Field = nameof(ContentAnalysisRequest.SourceKind),
+                Code = "sourceKind.image.filePath.required",
+                Message = "An image request must currently use a file path source.",
+            });
+        }
+
         switch (request.SourceKind)
         {
             case OllamaContentSourceKind.Inline:
@@ -115,6 +125,46 @@ public static class ContentAnalysisRequestValidator
                     Message = "Criterion weights must be within the range from 0.0 to 1.0.",
                 });
             }
+        }
+
+        if (request.FileMetadata.SizeBytes is < 0)
+        {
+            issues.Add(new ContentAnalysisValidationIssue
+            {
+                Field = $"{nameof(ContentAnalysisRequest.FileMetadata)}.{nameof(ContentAnalysisFileMetadata.SizeBytes)}",
+                Code = "fileMetadata.sizeBytes.invalid",
+                Message = "File size metadata must not be negative.",
+            });
+        }
+
+        if (request.ImageMetadata.PixelWidth is < 0)
+        {
+            issues.Add(new ContentAnalysisValidationIssue
+            {
+                Field = $"{nameof(ContentAnalysisRequest.ImageMetadata)}.{nameof(ContentAnalysisImageMetadata.PixelWidth)}",
+                Code = "imageMetadata.pixelWidth.invalid",
+                Message = "Image width metadata must not be negative.",
+            });
+        }
+
+        if (request.ImageMetadata.PixelHeight is < 0)
+        {
+            issues.Add(new ContentAnalysisValidationIssue
+            {
+                Field = $"{nameof(ContentAnalysisRequest.ImageMetadata)}.{nameof(ContentAnalysisImageMetadata.PixelHeight)}",
+                Code = "imageMetadata.pixelHeight.invalid",
+                Message = "Image height metadata must not be negative.",
+            });
+        }
+
+        if (request.ImageMetadata.BitsPerPixel is < 0)
+        {
+            issues.Add(new ContentAnalysisValidationIssue
+            {
+                Field = $"{nameof(ContentAnalysisRequest.ImageMetadata)}.{nameof(ContentAnalysisImageMetadata.BitsPerPixel)}",
+                Code = "imageMetadata.bitsPerPixel.invalid",
+                Message = "Image bit depth metadata must not be negative.",
+            });
         }
 
         return new ContentAnalysisRequestValidationResult

@@ -1,4 +1,5 @@
 using System.Reflection;
+using RepoMigrator.Core.Diagnostics;
 using RepoMigrator.Providers.SvnCli;
 
 namespace RepoMigrator.Tests;
@@ -43,8 +44,10 @@ public sealed class SvnCliProviderSyncDirectoryTests
         var sRootPath = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
         var sSourcePath = Path.Combine(sRootPath, "source");
         var sDestPath = Path.Combine(sRootPath, "dest");
+        var sSnapshotRootPath = Path.Combine(sRootPath, "snapshots");
         Directory.CreateDirectory(sSourcePath);
         Directory.CreateDirectory(sDestPath);
+        DifferentialSnapshotStore.SnapshotRootOverride = sSnapshotRootPath;
 
         try
         {
@@ -73,9 +76,17 @@ public sealed class SvnCliProviderSyncDirectoryTests
             Assert.AreEqual("added", File.ReadAllText(Path.Combine(sDestPath, "added.txt")));
             Assert.IsFalse(File.Exists(Path.Combine(sDestPath, "removed.txt")));
             Assert.IsTrue(File.Exists(Path.Combine(sDestPath, ".svn", "pristine", "keep.svn-base")));
+
+            var sOperationPath = Directory.GetDirectories(Path.Combine(sSnapshotRootPath, "SvnCli")).Single();
+            Assert.AreEqual("new-value", File.ReadAllText(Path.Combine(sOperationPath, "source", "changed.txt")));
+            Assert.AreEqual("old-value", File.ReadAllText(Path.Combine(sOperationPath, "destination", "changed.txt")));
+            Assert.AreEqual("added", File.ReadAllText(Path.Combine(sOperationPath, "added", "added.txt")));
+            Assert.AreEqual("remove-me", File.ReadAllText(Path.Combine(sOperationPath, "removed", "removed.txt")));
+            Assert.IsFalse(File.Exists(Path.Combine(sOperationPath, "source", "same.txt")));
         }
         finally
         {
+            DifferentialSnapshotStore.SnapshotRootOverride = null;
             if (Directory.Exists(sRootPath))
                 Directory.Delete(sRootPath, recursive: true);
         }

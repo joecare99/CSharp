@@ -78,11 +78,13 @@ public sealed class MigrationService : IMigrationService
             ct.ThrowIfCancellationRequested();
             var changeSet = lstChanges[iIndex];
             progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ChangeSetProcessingStarting, changeSet.Id, iIndex + 1, iTotal);
+            ReportChangeSetDetails(changeSet, options, progress);
 
             var sTempDirectory = CreateTempDirectory("linear");
             try
             {
                 await src.MaterializeSnapshotAsync(sTempDirectory, changeSet.Id, ct);
+                ReportSnapshotMaterialized(changeSet, sTempDirectory, options, progress);
                 await CommitProjectedSnapshotAsync(dst, target, changeSet, sTempDirectory, options, hsKnownProjectedBranches, progress, ct);
                 progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.CommitCompleted, changeSet.Id, iIndex + 1, iTotal);
             }
@@ -190,6 +192,7 @@ public sealed class MigrationService : IMigrationService
             {
                 progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ExportWorkerSnapshotExporting, iWorkerIndex + 1, exportRequest.ChangeSet.Id);
                 await src.MaterializeSnapshotAsync(sTempDirectory, exportRequest.ChangeSet.Id, ct);
+                ReportSnapshotMaterialized(exportRequest.ChangeSet, sTempDirectory, new MigrationOptions { VerboseProgress = true }, progress);
                 progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ExportWorkerSnapshotExported, iWorkerIndex + 1, exportRequest.ChangeSet.Id);
                 await snapshotWriter.WriteAsync((exportRequest.Index, exportRequest.ChangeSet, sTempDirectory), ct);
                 progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ExportWorkerSnapshotHandedOff, iWorkerIndex + 1, exportRequest.ChangeSet.Id);
@@ -277,6 +280,7 @@ public sealed class MigrationService : IMigrationService
             }
 
             progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ChangeSetProcessingStarting, bufferedItem.ChangeSet.Id, iExpectedIndex + 1, iExpectedItemCount);
+            ReportChangeSetDetails(bufferedItem.ChangeSet, options, progress);
             try
             {
                 await CommitProjectedSnapshotAsync(dst, target, bufferedItem.ChangeSet, bufferedItem.TempDirectory, options, hsKnownProjectedBranches, progress, ct);
@@ -314,7 +318,7 @@ public sealed class MigrationService : IMigrationService
         if (options.ProjectionMode != MigrationProjectionMode.SubdirectoryBranches || target.Type != RepoType.Git)
         {
             progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.CommitToBranchStarting, changeSet.Id, target.BranchOrTrunk ?? "(default)");
-            await dst.CommitSnapshotAsync(sTempDirectory, BuildCommitMetadata(changeSet, target.BranchOrTrunk), ct);
+            await dst.CommitSnapshotAsync(sTempDirectory, BuildCommitMetadata(changeSet, target.BranchOrTrunk, options), progress, ct);
             return;
         }
 
@@ -344,7 +348,7 @@ public sealed class MigrationService : IMigrationService
                     progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ProjectedBranchEmpty, changeSet.Id, sBranchName);
                 }
 
-                await dst.CommitSnapshotAsync(sProjectionDirectory, BuildCommitMetadata(changeSet, sBranchName), ct);
+                await dst.CommitSnapshotAsync(sProjectionDirectory, BuildCommitMetadata(changeSet, sBranchName, options), progress, ct);
                 progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ProjectedBranchCommitted, changeSet.Id, sBranchName);
             }
             finally
@@ -354,15 +358,102 @@ public sealed class MigrationService : IMigrationService
         }
     }
 
-    private static CommitMetadata BuildCommitMetadata(ChangeSetInfo changeSet, string? sTargetBranch)
+    private static CommitMetadata BuildCommitMetadata(ChangeSetInfo changeSet, string? sTargetBranch, MigrationOptions options)
         => new()
         {
             Message = string.IsNullOrWhiteSpace(changeSet.Message) ? $"Imported revision {changeSet.Id}" : changeSet.Message,
             AuthorName = changeSet.AuthorName,
             AuthorEmail = changeSet.AuthorEmail,
             Timestamp = changeSet.Timestamp,
-            TargetBranch = sTargetBranch
+            TargetBranch = sTargetBranch,
+            ExpectedChangedPathCount = changeSet.ChangedPaths.Count == 0 ? null : changeSet.ChangedPaths.Count,
+            ExpectedChangedFilePathCount = GetChangedFilePathCount(changeSet),
+            VerifyChangedPathCount = options.VerifyChangedPathCount
         };
+
+    private static int? GetChangedFilePathCount(ChangeSetInfo changeSet)
+    {
+        if (changeSet.ChangedPaths.Count == 0)
+            return null;
+
+        var iFilePathCount = changeSet.ChangedPaths.Count(static pathInfo => !string.Equals(pathInfo.Kind, "dir", StringComparison.OrdinalIgnoreCase));
+        return iFilePathCount;
+    }
+
+    private static void ReportChangeSetDetails(ChangeSetInfo changeSet, MigrationOptions options, IMigrationProgress progress)
+    {
+        if (!options.VerboseProgress)
+            return;
+
+        var sMessage = string.IsNullOrWhiteSpace(changeSet.Message) ? "(no message)" : changeSet.Message.Trim();
+        var iChangedFilePathCount = GetChangedFilePathCount(changeSet) ?? 0;
+        var iChangedDirectoryPathCount = changeSet.ChangedPaths.Count(static pathInfo => string.Equals(pathInfo.Kind, "dir", StringComparison.OrdinalIgnoreCase));
+        var actionCounts = BuildSvnActionCounts(changeSet.ChangedPaths);
+        progress.Report(
+            MigrationReportSeverity.Information,
+            MigrationReportMessage.ChangeSetDetails,
+            changeSet.Id,
+            changeSet.AuthorName,
+            changeSet.Timestamp,
+            changeSet.ChangedPaths.Count,
+            iChangedFilePathCount,
+            iChangedDirectoryPathCount,
+            actionCounts.Modified,
+            actionCounts.Added,
+            actionCounts.Deleted,
+            actionCounts.Replaced,
+            actionCounts.Other,
+            sMessage);
+    }
+
+    private static SvnActionCounts BuildSvnActionCounts(IReadOnlyList<RepositoryChangedPathInfo> lstChangedPaths)
+    {
+        var iModified = 0;
+        var iAdded = 0;
+        var iDeleted = 0;
+        var iReplaced = 0;
+        var iOther = 0;
+
+        foreach (var changedPath in lstChangedPaths)
+        {
+            if (string.Equals(changedPath.Kind, "dir", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            switch (changedPath.Action.Trim().ToUpperInvariant())
+            {
+                case "M":
+                    iModified++;
+                    break;
+                case "A":
+                    iAdded++;
+                    break;
+                case "D":
+                    iDeleted++;
+                    break;
+                case "R":
+                    iReplaced++;
+                    break;
+                default:
+                    iOther++;
+                    break;
+            }
+        }
+
+        return new SvnActionCounts(iModified, iAdded, iDeleted, iReplaced, iOther);
+    }
+
+    private sealed record SvnActionCounts(int Modified, int Added, int Deleted, int Replaced, int Other);
+
+    private static void ReportSnapshotMaterialized(ChangeSetInfo changeSet, string sTempDirectory, MigrationOptions options, IMigrationProgress progress)
+    {
+        if (!options.VerboseProgress)
+            return;
+
+        var iSnapshotFileCount = Directory.EnumerateFiles(sTempDirectory, "*", SearchOption.AllDirectories).Count();
+        progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.SnapshotMaterialized, changeSet.Id, iSnapshotFileCount, sTempDirectory);
+        if (changeSet.ChangedPaths.Count > 0)
+            progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ChangeCountVerificationPlanned, changeSet.Id, GetChangedFilePathCount(changeSet) ?? changeSet.ChangedPaths.Count, changeSet.ChangedPaths.Count);
+    }
 
     private static IEnumerable<string> EnumerateTrackedPaths(string sRootDirectory)
         => Directory.EnumerateFiles(sRootDirectory, "*", SearchOption.AllDirectories)

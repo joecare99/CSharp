@@ -33,6 +33,76 @@ public sealed class GitProviderTests
     }
 
     [TestMethod]
+    public async Task CommitSnapshotAsync_WhenChangedPathCountExceedsExpected_ThrowsBeforeCommit()
+    {
+        var sRootPath = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
+        var sTargetPath = Path.Combine(sRootPath, "target");
+        var sSnapshotPath = Path.Combine(sRootPath, "snapshot");
+        Directory.CreateDirectory(sTargetPath);
+        Directory.CreateDirectory(sSnapshotPath);
+
+        try
+        {
+            Repository.Init(sTargetPath);
+            using (var gitRepository = new Repository(sTargetPath))
+            {
+                File.WriteAllText(Path.Combine(sTargetPath, "one.txt"), "one");
+                Commands.Stage(gitRepository, "*");
+                var signature = new Signature("test", "test@example.org", DateTimeOffset.UtcNow);
+                gitRepository.Commit("initial", signature, signature);
+            }
+
+            File.WriteAllText(Path.Combine(sSnapshotPath, "one.txt"), "changed");
+            File.WriteAllText(Path.Combine(sSnapshotPath, "two.txt"), "added");
+
+            InvalidOperationException? ex = null;
+            await using (var provider = new GitProvider())
+            {
+                await provider.InitializeTargetAsync(new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = sTargetPath, BranchOrTrunk = "master" }, true, CancellationToken.None);
+
+                try
+                {
+                    await provider.CommitSnapshotAsync(sSnapshotPath, new CommitMetadata
+                    {
+                        Message = "import",
+                        AuthorName = "alice",
+                        Timestamp = DateTimeOffset.UtcNow,
+                        ExpectedChangedPathCount = 1,
+                        ExpectedChangedFilePathCount = 1,
+                        VerifyChangedPathCount = true
+                    }, CancellationToken.None);
+                }
+                catch (InvalidOperationException caughtEx)
+                {
+                    ex = caughtEx;
+                }
+            }
+
+            Assert.IsNotNull(ex);
+            StringAssert.Contains(ex.Message, "Git target has 2 changed file paths");
+        }
+        finally
+        {
+            if (Directory.Exists(sRootPath))
+                TryDeleteDirectory(sRootPath);
+        }
+    }
+
+    private static void TryDeleteDirectory(string sDirectory)
+    {
+        try
+        {
+            foreach (var sFilePath in Directory.EnumerateFiles(sDirectory, "*", SearchOption.AllDirectories))
+                File.SetAttributes(sFilePath, FileAttributes.Normal);
+
+            Directory.Delete(sDirectory, recursive: true);
+        }
+        catch
+        {
+        }
+    }
+
+    [TestMethod]
     public async Task GetCapabilitiesAsync_ForGitProtocolUrl_TreatsPathAsRemote()
     {
         await using var provider = new GitProvider();

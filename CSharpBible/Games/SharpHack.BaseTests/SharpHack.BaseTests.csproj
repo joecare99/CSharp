@@ -34,6 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SharpHack.Base\SharpHack.Base.csproj" />
     <ProjectReference Include="..\SharpHack.BaseItems\SharpHack.BaseItems.csproj" />
+    <ProjectReference Include="..\SharpHack.Persist\SharpHack.Persist.csproj" />
   </ItemGroup>
 
   <ItemGroup>

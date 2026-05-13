@@ -55,6 +55,7 @@ public sealed class ChangeSetInfo
     public string AuthorName { get; init; } = "";
     public string? AuthorEmail { get; init; }
     public DateTimeOffset Timestamp { get; init; }
+    public IReadOnlyList<RepositoryChangedPathInfo> ChangedPaths { get; init; } = Array.Empty<RepositoryChangedPathInfo>();
 }
 
 public sealed class ChangeSetQuery
@@ -72,6 +73,9 @@ public sealed class CommitMetadata
     public string? AuthorEmail { get; init; }
     public DateTimeOffset Timestamp { get; init; }
     public string? TargetBranch { get; init; }
+    public int? ExpectedChangedPathCount { get; init; }
+    public int? ExpectedChangedFilePathCount { get; init; }
+    public bool VerifyChangedPathCount { get; init; }
 }
 
 public sealed class RepositoryProbeResult
@@ -124,6 +128,17 @@ public sealed class RepositoryRevisionInfo
     public string Message { get; init; } = "";
     public string AuthorName { get; init; } = "";
     public DateTimeOffset Timestamp { get; init; }
+    public IReadOnlyList<RepositoryChangedPathInfo> ChangedPaths { get; init; } = Array.Empty<RepositoryChangedPathInfo>();
+}
+
+/// <summary>
+/// Represents one changed path reported by a repository revision log.
+/// </summary>
+public sealed class RepositoryChangedPathInfo
+{
+    public string Path { get; init; } = "";
+    public string Action { get; init; } = "";
+    public string? Kind { get; init; }
 }
 
 /// <summary>
@@ -139,6 +154,8 @@ public sealed class MigrationOptions
     public int PipelineExportWorkerCount { get; init; } = 2;
     public bool TransferBranches { get; init; }
     public bool TransferTags { get; init; }
+    public bool VerifyChangedPathCount { get; init; } = true;
+    public bool VerboseProgress { get; init; }
     public IReadOnlyList<string> SelectedBranches { get; init; } = Array.Empty<string>();
     public IReadOnlyList<string> SelectedTags { get; init; } = Array.Empty<string>();
 }

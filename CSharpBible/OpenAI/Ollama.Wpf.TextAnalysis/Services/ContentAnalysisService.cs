@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Ollama.Tools.Abstractions;
 using Ollama.Tools.ContentAnalysis;
 
 namespace Ollama.Wpf.TextAnalysis.Services;
@@ -12,34 +10,15 @@ namespace Ollama.Wpf.TextAnalysis.Services;
 /// </summary>
 public sealed class ContentAnalysisService : IContentAnalysisService
 {
-    private readonly TextAnalysisTool _textAnalysisTool;
-    private readonly CSharpCodeAnalysisTool _cSharpCodeAnalysisTool;
+    private readonly ContentAnalysisRouter _contentAnalysisRouter;
 
-    public ContentAnalysisService(TextAnalysisTool textAnalysisTool, CSharpCodeAnalysisTool cSharpCodeAnalysisTool)
+    public ContentAnalysisService(ContentAnalysisRouter contentAnalysisRouter)
     {
-        _textAnalysisTool = textAnalysisTool ?? throw new ArgumentNullException(nameof(textAnalysisTool));
-        _cSharpCodeAnalysisTool = cSharpCodeAnalysisTool ?? throw new ArgumentNullException(nameof(cSharpCodeAnalysisTool));
+        _contentAnalysisRouter = contentAnalysisRouter ?? throw new ArgumentNullException(nameof(contentAnalysisRouter));
     }
 
-    public async Task<ContentAnalysisResult> AnalyzeAsync(string inputText, bool analyzeCSharp, CancellationToken cancellationToken = default)
+    public Task<ContentAnalysisExecutionResult> AnalyzeAsync(string inputText, string? displayName, ContentAnalysisMode mode, CancellationToken cancellationToken = default)
     {
-        ContentAnalysisRequest request = new()
-        {
-            ContentKind = analyzeCSharp ? OllamaContentKind.SourceCode : OllamaContentKind.Text,
-            SourceKind = OllamaContentSourceKind.Inline,
-            DisplayName = analyzeCSharp ? "WPF C# input" : "WPF text input",
-            MediaType = analyzeCSharp ? "text/x-csharp" : "text/plain",
-            Language = analyzeCSharp ? "csharp" : string.Empty,
-            Content = inputText ?? string.Empty,
-        };
-
-        IContentAnalysisTool tool = analyzeCSharp ? _cSharpCodeAnalysisTool : _textAnalysisTool;
-        ContentAnalysisRequestValidationResult validationResult = tool.Validate(request);
-        if (!validationResult.IsValid)
-        {
-            throw new InvalidOperationException(string.Join(" ", validationResult.Issues.Select(static issue => issue.Message)));
-        }
-
-        return await tool.AnalyzeAsync(request, cancellationToken);
+        return _contentAnalysisRouter.AnalyzeAsync(inputText, displayName, mode, cancellationToken);
     }
 }

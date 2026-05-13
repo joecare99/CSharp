@@ -14,6 +14,8 @@ public interface IVersionControlProvider : IAsyncDisposable
 
     Task InitializeTargetAsync(RepositoryEndpoint endpoint, bool emptyInit, CancellationToken ct);
     Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, CancellationToken ct);
+    Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, IMigrationProgress progress, CancellationToken ct)
+        => CommitSnapshotAsync(workDir, metadata, ct);
     Task FlushAsync(CancellationToken ct);
 
     string Name { get; }

@@ -13,8 +13,9 @@ public interface IContentAnalysisService
     /// Analyzes the specified input using the selected mode.
     /// </summary>
     /// <param name="inputText">The input text or source code.</param>
-    /// <param name="analyzeCSharp">A value indicating whether the content should be analyzed as C# source code.</param>
+    /// <param name="displayName">The display name or file name associated with the input.</param>
+    /// <param name="mode">The selected or requested analysis mode.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The structured analysis result.</returns>
-    Task<ContentAnalysisResult> AnalyzeAsync(string inputText, bool analyzeCSharp, CancellationToken cancellationToken = default);
+    /// <returns>The routed structured analysis result.</returns>
+    Task<ContentAnalysisExecutionResult> AnalyzeAsync(string inputText, string? displayName, ContentAnalysisMode mode, CancellationToken cancellationToken = default);
 }

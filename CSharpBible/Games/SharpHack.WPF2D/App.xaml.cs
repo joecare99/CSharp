@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Windows;
+using SharpHack.Persist;
 using SharpHack.Wpf.Services;
 
 namespace SharpHack.WPF2D;
@@ -46,7 +47,10 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
+        services.AddSingleton<GamePersist>();
         services.AddSingleton<MainWindow>();
+        services.AddSingleton<Func<SharpHack.ViewModel.LayeredGameViewModel>>(_ => () => Services.GameSessionFactory.CreateLayeredGameViewModel(_.GetRequiredService<IServiceProvider>()));
+        services.AddSingleton<Func<RestoreGameState, SharpHack.ViewModel.LayeredGameViewModel>>(_ => restore => Services.GameSessionFactory.CreateRestoredLayeredGameViewModel(_.GetRequiredService<IServiceProvider>(), restore));
         services.AddSingleton<ViewModels.MainViewModel>();
         services.AddSingleton(Services.GameSessionFactory.CreateLayeredGameViewModel);
         services.AddSingleton<ITileService, TileService>();
