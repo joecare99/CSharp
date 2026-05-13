@@ -29,14 +29,14 @@ namespace MSQBrowser.Models
         public DBModel(string sURL, string sUser, SecureString sPasswd, string sDB)
         {
             _connectionFactory = new MySqlDbConnectionFactory();
-            _statementRenderer = _connectionFactory.CreateStatementRenderer();
             _providerFactory = MySqlConnectorFactory.Instance;
             _xSettings = _connectionFactory.CreateSettingsStub();
             _xSettings[nameof(MySqlConnectionStringBuilder.Server)] = sURL;
             _xSettings[nameof(MySqlConnectionStringBuilder.UserID)] = sUser;
             _xSettings[nameof(MySqlConnectionStringBuilder.Password)] = sPasswd;
             _xSettings[nameof(MySqlConnectionStringBuilder.Database)] = sDB;
-            database = _connectionFactory.CreateConnection(_xSettings);
+            database = (MySqlConnection)_connectionFactory.CreateConnection(_xSettings);
+            _statementRenderer = _connectionFactory.CreateStatementRenderer(database);
             DbName = sDB;
             //    database.InfoMessage += (sender, e) => System.Diagnostics.Debug.WriteLine($"{sender}: {e.Message}");
             database.StateChange += (sender, e) =>
@@ -136,8 +136,7 @@ namespace MSQBrowser.Models
             if (value.IsValidIdentifyer())
                 try
                 {
-                    var sql = _statementRenderer.RenderSelect(new DbSelectStatement(value));
-                    using var command = CreateCommand(sql, database);
+                    using var command = _statementRenderer.CreateQuery(new DbSelectStatement(value));
                     var da = CreateDataAdapter(command);
                     var bldr = CreateCommandBuilder();
                     bldr.DataAdapter = da;
@@ -163,13 +162,11 @@ namespace MSQBrowser.Models
 
             var effectiveOffset = Math.Max(0, offset);
             var effectivePageSize = Math.Max(1, pageSize);
-            var sql = _statementRenderer.RenderSelect(new DbSelectStatement(value, BuildSelectFields(columns), Array.Empty<IDbFilterClause>(), effectivePageSize + 1))
-                + " OFFSET @offset";
 
-            using var pageConnection = _connectionFactory.CreateConnection(_xSettings);
+            using var pageConnection = (MySqlConnection)_connectionFactory.CreateConnection(_xSettings);
             await pageConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-            using var command = CreateCommand(sql, pageConnection);
+            using var command = _statementRenderer.CreateQuery(pageConnection, value, BuildSelectFields(columns), Array.Empty<IDbFilterClause>(), effectivePageSize + 1, "@offset");
             var offsetParameter = command.CreateParameter();
             offsetParameter.ParameterName = "@offset";
             offsetParameter.Value = effectiveOffset;
@@ -339,14 +336,14 @@ namespace MSQBrowser.Models
             return builder.ToString();
         }
 
-        private DbCommand CreateCommand(string sql, DbConnection connection)
+        private IDbCommand CreateCommand(string sql, IDbConnection connection)
         {
             var command = connection.CreateCommand();
             command.CommandText = sql;
             return command;
         }
 
-        private DbDataAdapter CreateDataAdapter(DbCommand command)
+        private DbDataAdapter CreateDataAdapter(IDbCommand command)
         {
             var dataAdapter = _providerFactory.CreateDataAdapter();
             if (dataAdapter is null)
@@ -354,7 +351,7 @@ namespace MSQBrowser.Models
                 throw new InvalidOperationException("Unable to create a data adapter for the configured provider.");
             }
 
-            dataAdapter.SelectCommand = command;
+            dataAdapter.SelectCommand = (DbCommand)command;
             return dataAdapter;
         }
 
