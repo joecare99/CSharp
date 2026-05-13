@@ -41,7 +41,7 @@ public interface ITrauerDataRepository : IDisposable
     /// <summary>
     /// Updates obituary case rows when values have changed.
     /// </summary>
-    void UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues);
+    bool UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues);
 
     /// <summary>
     /// Updates obituary announcement rows when values have changed.

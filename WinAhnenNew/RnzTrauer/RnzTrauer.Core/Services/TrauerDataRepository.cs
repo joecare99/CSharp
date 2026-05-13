@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Linq;
@@ -18,7 +19,7 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
     private const string TableTrauerfall = "Trauerfall";
     private const string TableLegacyAnzeigen = "RNZ-Traueranzeigen`.`Anzeigen";
 
-    private readonly DbConnection _dbConn;
+    private readonly IDbConnection _dbConn;
     private readonly IDbStatementRenderer _xStatementRenderer;
 
     /// <summary>
@@ -40,79 +41,58 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
         dbSettings["Database"] = xSettings.DB;
 
         _dbConn = xConnectionFactory.CreateConnection(dbSettings);
-        _xStatementRenderer = xConnectionFactory.CreateStatementRenderer();
+        _xStatementRenderer = xConnectionFactory.CreateStatementRenderer(_dbConn);
         _dbConn.Open();
     }
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerAnzId(int iId)
-    {
-        return Query(CreateSelect(TableAnzeigen, ["*"], [new DbFilterClause("idAnzeige", DbFilterOperator.Equal, "@id")]), xCommand => AddScalarParameter(xCommand, "@id", iId));
-    }
+    public List<Dictionary<string, object?>> TrauerAnzId(int iId) 
+        => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause("idAnzeige", DbFilterOperator.Equal, "@id")]),
+            xCommand => AddScalarParameter(xCommand, "@id", iId));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerAnz(int iAnnouncement)
-    {
-        return Query(CreateSelect(TableAnzeigen, ["*"], [new DbFilterClause("Announcement", DbFilterOperator.Equal, "@announcement")]), xCommand => AddScalarParameter(xCommand, "@announcement", iAnnouncement));
-    }
+    public List<Dictionary<string, object?>> TrauerAnz(int iAnnouncement) 
+        => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause("Announcement", DbFilterOperator.Equal, "@announcement")]), 
+            xCommand => AddScalarParameter(xCommand, "@announcement", iAnnouncement));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> LegacyTrauerAnz(string sAuftrag)
-    {
-        return Query(CreateSelect(TableLegacyAnzeigen, ["*"], [new DbFilterClause("Auftrag", DbFilterOperator.Equal, "@auftrag")]), xCommand => AddScalarParameter(xCommand, "@auftrag", sAuftrag));
-    }
+    public List<Dictionary<string, object?>> LegacyTrauerAnz(string sAuftrag) 
+        => Query(_xStatementRenderer.CreateQuery(TableLegacyAnzeigen, ["*"], [new DbFilterClause("Auftrag", DbFilterOperator.Equal, "@auftrag")]), 
+            xCommand => AddScalarParameter(xCommand, "@auftrag", sAuftrag));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerAnzIsNull(string sField, int iLimit = 1)
-    {
-        return Query(CreateSelect(TableAnzeigen, ["*"], [new DbFilterClause(sField, DbFilterOperator.IsNull)], iLimit), xCommand => { });
-    }
+    public List<Dictionary<string, object?>> TrauerAnzIsNull(string sField, int iLimit = 1) 
+        => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause(sField, DbFilterOperator.IsNull)], iLimit), xCommand => { });
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallIsNull(string sField, int iLimit = 1)
-    {
-        return Query(CreateSelect(TableTrauerfall, ["*"], [new DbFilterClause(sField, DbFilterOperator.IsNull)], iLimit), xCommand => { });
-    }
+    public List<Dictionary<string, object?>> TrauerFallIsNull(string sField, int iLimit = 1) 
+        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause(sField, DbFilterOperator.IsNull)], iLimit), xCommand => { });
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallEquals(string sField, string sValue, int iLimit = 1)
-    {
-        return Query(CreateSelect(TableTrauerfall, ["*"], [new DbFilterClause(sField, DbFilterOperator.Equal, "@value")], iLimit), xCommand =>
-        {
-            AddScalarParameter(xCommand, "@value", sValue);
-        });
-    }
+    public List<Dictionary<string, object?>> TrauerFallEquals(string sField, string sValue, int iLimit = 1) 
+        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause(sField, DbFilterOperator.Equal, "@value")], iLimit), 
+            xCommand => AddScalarParameter(xCommand, "@value", sValue));
 
     /// <inheritdoc />
-    public void UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
-    {
-        _ = UpdateRows(TableTrauerfall, arrNewValues, arrOldValues);
-    }
+    public bool UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues) 
+        => UpdateRows(TableTrauerfall, arrNewValues, arrOldValues);
 
     /// <inheritdoc />
-    public bool UpdateTrauerAnz(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
-    {
-        return UpdateRows(TableAnzeigen, arrNewValues, arrOldValues);
-    }
+    public bool UpdateTrauerAnz(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues) 
+        => UpdateRows(TableAnzeigen, arrNewValues, arrOldValues);
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallById(int iId)
-    {
-        return Query(CreateSelect(TableTrauerfall, ["*"], [new DbFilterClause("idTrauerfall", DbFilterOperator.Equal, "@id")]), xCommand => AddScalarParameter(xCommand, "@id", iId));
-    }
+    public List<Dictionary<string, object?>> TrauerFallById(int iId) 
+        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause("idTrauerfall", DbFilterOperator.Equal, "@id")]), xCommand => AddScalarParameter(xCommand, "@id", iId));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl)
-    {
-        return Query(CreateSelect(TableTrauerfall, ["idTrauerfall", "url"], [new DbFilterClause("url", DbFilterOperator.Equal, "@url")]), xCommand => AddScalarParameter(xCommand, "@url", sUrl));
-    }
-
+    public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl) 
+        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["idTrauerfall", "url"], [new DbFilterClause("url", DbFilterOperator.Equal, "@url")]), xCommand => AddScalarParameter(xCommand, "@url", sUrl));
     /// <inheritdoc />
     public Dictionary<string, long> BuildTrauerFallIndex()
     {
         var dIndex = new Dictionary<string, long>(StringComparer.Ordinal);
-        using var xCommand = _dbConn.CreateCommand();
-        xCommand.CommandText = CreateSelect(TableTrauerfall, ["idTrauerfall", "url"], []);
+        using var xCommand = _xStatementRenderer.CreateQuery(TableTrauerfall, ["idTrauerfall", "url"], []);
         using var xReader = xCommand.ExecuteReader();
         while (xReader.Read())
         {
@@ -125,8 +105,7 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
     /// <inheritdoc />
     public long AppendTrauerFall(IReadOnlyDictionary<string, object?> dValues)
     {
-        using var xCommand = _dbConn.CreateCommand();
-        xCommand.CommandText = CreateInsert(TableTrauerfall, [
+        using var xCommand = _xStatementRenderer.CreateInsert(TableTrauerfall, [
             new KeyValuePair<string, string>("URL", "@url"),
             new KeyValuePair<string, string>("Created", "@created"),
             new KeyValuePair<string, string>("Preread_Birth", "@birth"),
@@ -154,8 +133,7 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
     /// <inheritdoc />
     public long AppendTrauerAnz(IReadOnlyDictionary<string, object?> dValues)
     {
-        using var xCommand = _dbConn.CreateCommand();
-        xCommand.CommandText = CreateInsert(TableAnzeigen, [
+        using var xCommand = _xStatementRenderer.CreateInsert(TableAnzeigen, [
             new KeyValuePair<string, string>("idTrauerfall", "@idtf"),
             new KeyValuePair<string, string>("url", "@url"),
             new KeyValuePair<string, string>("Announcement", "@announcement"),
@@ -197,8 +175,7 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
     /// <inheritdoc />
     public long AppendLegacyTAnz(IReadOnlyDictionary<string, object?> dValues)
     {
-        using var xCommand = _dbConn.CreateCommand();
-        xCommand.CommandText = CreateInsert(TableLegacyAnzeigen, [
+        using var xCommand = _xStatementRenderer.CreateInsert(TableLegacyAnzeigen, [
             new KeyValuePair<string, string>("Auftrag", "@auftrag"),
             new KeyValuePair<string, string>("url", "@url"),
             new KeyValuePair<string, string>("Announcement", "@announcement"),
@@ -220,12 +197,9 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
     }
 
     /// <inheritdoc />
-    public void Dispose()
-    {
-        _dbConn.Dispose();
-    }
+    public void Dispose() => _dbConn.Dispose();
 
-    private static void AddParameter(DbCommand xCommand, string sParameterName, IReadOnlyDictionary<string, object?> dValues, string sKey)
+    private static void AddParameter(IDbCommand xCommand, string sParameterName, IReadOnlyDictionary<string, object?> dValues, string sKey)
     {
         var xParameter = xCommand.CreateParameter();
         xParameter.ParameterName = sParameterName;
@@ -264,8 +238,7 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
                     continue;
                 }
 
-                using var xCommand = _dbConn.CreateCommand();
-                xCommand.CommandText = CreateUpdate(sTable, [new KeyValuePair<string, string>(sColumn, "@value")], [new DbFilterClause(sKeyField, DbFilterOperator.Equal, "@key")]);
+                using var xCommand = _xStatementRenderer.CreateUpdate(sTable, [new KeyValuePair<string, string>(sColumn, "@value")], [new DbFilterClause(sKeyField, DbFilterOperator.Equal, "@key")]);
                 AddScalarParameter(xCommand, "@value", xValue ?? DBNull.Value);
                 AddScalarParameter(xCommand, "@key", dNewRow[sKeyField]);
                 xCommand.ExecuteNonQuery();
@@ -276,11 +249,9 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
         return xChanged;
     }
 
-    private List<Dictionary<string, object?>> Query(string sSql, Action<DbCommand> xBind)
+    private List<Dictionary<string, object?>> Query(IDbCommand xCommand, Action<IDbCommand> xBind)
     {
         var arrData = new List<Dictionary<string, object?>>();
-        using var xCommand = _dbConn.CreateCommand();
-        xCommand.CommandText = sSql;
         xBind(xCommand);
         using var xReader = xCommand.ExecuteReader();
         while (xReader.Read())
@@ -308,25 +279,11 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
         return arrData;
     }
 
-    private string CreateSelect(string sTable, IEnumerable<string> arrFields, IEnumerable<DbFilterClause> arrFilters, int? iLimit = null)
-    {
-        var xStatement = new DbSelectStatement(sTable, arrFields, arrFilters, iLimit);
-        return _xStatementRenderer.RenderSelect(xStatement);
-    }
 
-    private string CreateInsert(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields)
-    {
-        var xStatement = new DbInsertStatement(sTable, arrFields);
-        return _xStatementRenderer.RenderInsert(xStatement);
-    }
+    private IDbCommand CreateUpdate(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields, IEnumerable<DbFilterClause> arrFilters) 
+        => _xStatementRenderer.CreateUpdate(sTable, arrFields, arrFilters);
 
-    private string CreateUpdate(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields, IEnumerable<DbFilterClause> arrFilters)
-    {
-        var xStatement = new DbUpdateStatement(sTable, arrFields, arrFilters);
-        return _xStatementRenderer.RenderUpdate(xStatement);
-    }
-
-    private static void AddScalarParameter(DbCommand xCommand, string sParameterName, object? xValue)
+    private static void AddScalarParameter(IDbCommand xCommand, string sParameterName, object? xValue)
     {
         var xParameter = xCommand.CreateParameter();
         xParameter.ParameterName = sParameterName;
@@ -334,7 +291,7 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
         _ = xCommand.Parameters.Add(xParameter);
     }
 
-    private static long GetLastInsertedId(DbCommand xCommand)
+    private static long GetLastInsertedId(IDbCommand xCommand)
     {
         var xProperty = xCommand.GetType().GetProperty("LastInsertedId");
         if (xProperty?.GetValue(xCommand) is long iValue)

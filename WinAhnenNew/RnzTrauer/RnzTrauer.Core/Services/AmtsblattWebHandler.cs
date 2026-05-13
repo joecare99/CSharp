@@ -92,10 +92,7 @@ public sealed class AmtsblattWebHandler : IDisposable
     }
 
     /// <inheritdoc />
-    public void Dispose()
-    {
-        Close();
-    }
+    public void Dispose() => Close();
 
     private (List<string> SubPages, string Url, string NextUrl) WorkMainPage(Dictionary<string, Dictionary<string, object?>> dPages, List<Dictionary<string, object?>> arrItems)
     {

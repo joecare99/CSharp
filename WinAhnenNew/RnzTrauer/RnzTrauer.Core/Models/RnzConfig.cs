@@ -59,9 +59,6 @@ public sealed class RnzConfig : DatabaseSettings
     /// <summary>
     /// Loads the configuration from a JSON file.
     /// </summary>
-    public RnzConfig Load(string sFilePath)
-    {
-        return (_xConfigLoader ?? throw new InvalidOperationException("No configuration loader has been provided.")).Load<RnzConfig>(sFilePath);
-    }
+    public RnzConfig Load(string sFilePath) => (_xConfigLoader ?? throw new InvalidOperationException("No configuration loader has been provided.")).Load<RnzConfig>(sFilePath);
 
 }
