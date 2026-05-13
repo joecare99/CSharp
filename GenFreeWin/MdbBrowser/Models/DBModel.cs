@@ -21,10 +21,10 @@ namespace MdbBrowser.Models
         public DBModel(string filename)
         {
             _connectionFactory = new OleDbConnectionFactory();
-            _statementRenderer = _connectionFactory.CreateStatementRenderer();
             var _dbSettings = _connectionFactory.CreateSettingsStub();
             _dbSettings[nameof(OleDbConnectionStringBuilder.DataSource)] = filename;
             database = (OleDbConnection)_connectionFactory.CreateConnection(_dbSettings);
+            _statementRenderer = _connectionFactory.CreateStatementRenderer(database);
             //    database.InfoMessage += (sender, e) => System.Diagnostics.Debug.WriteLine($"{sender}: {e.Message}");
             database.StateChange += (sender, e) =>
             {
@@ -116,9 +116,7 @@ namespace MdbBrowser.Models
             if (value.IsValidIdentifyer())
                 try
                 {
-                    var sql = _statementRenderer.RenderSelect(new DbSelectStatement(value));
-                    using var command = database.CreateCommand();
-                    command.CommandText = sql;
+                    using var command = _statementRenderer.CreateQuery(new DbSelectStatement(value));
                     result.Load(command.ExecuteReader());
                 }
                 catch { }
