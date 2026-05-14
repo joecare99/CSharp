@@ -61,13 +61,14 @@ public sealed class ImageAnalysisTool : IContentAnalysisTool
     public ContentAnalysisRequestValidationResult Validate(ContentAnalysisRequest? request)
     {
         ContentAnalysisRequestValidationResult baseResult = ContentAnalysisRequestValidator.Validate(request);
-        if (!baseResult.IsValid)
+        List<ContentAnalysisValidationIssue> issues = [.. baseResult.Issues];
+
+        if (request is null)
         {
             return baseResult;
         }
 
-        List<ContentAnalysisValidationIssue> issues = [.. baseResult.Issues];
-        if (request!.ContentKind != OllamaContentKind.Image)
+        if (request.ContentKind != OllamaContentKind.Image)
         {
             issues.Add(new ContentAnalysisValidationIssue
             {
@@ -97,7 +98,7 @@ public sealed class ImageAnalysisTool : IContentAnalysisTool
             });
         }
 
-        if (!File.Exists(request.FilePath))
+        if (!string.IsNullOrWhiteSpace(request.FilePath) && !File.Exists(request.FilePath))
         {
             issues.Add(new ContentAnalysisValidationIssue
             {

@@ -36,6 +36,7 @@ public partial class App : Application
 
         services.AddSingleton<TextAnalysisTool>();
         services.AddSingleton<CSharpCodeAnalysisTool>();
+        services.AddSingleton<ContentAnalysisRouter>();
         services.AddSingleton<IContentAnalysisService, ContentAnalysisService>();
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<MainWindow>();

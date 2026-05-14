@@ -68,30 +68,29 @@ public sealed class TextAnalysisTool : IContentAnalysisTool
     public ContentAnalysisRequestValidationResult Validate(ContentAnalysisRequest? request)
     {
         ContentAnalysisRequestValidationResult baseResult = ContentAnalysisRequestValidator.Validate(request);
-        if (!baseResult.IsValid)
-        {
-            return baseResult;
-        }
-
         List<ContentAnalysisValidationIssue> issues = [.. baseResult.Issues];
-        if (request!.ContentKind != OllamaContentKind.Text)
-        {
-            issues.Add(new ContentAnalysisValidationIssue
-            {
-                Field = nameof(ContentAnalysisRequest.ContentKind),
-                Code = "contentKind.text.required",
-                Message = "The text analysis tool only supports text requests.",
-            });
-        }
 
-        if (!request.MediaType.StartsWith("text/", StringComparison.OrdinalIgnoreCase))
+        if (request != null)
         {
-            issues.Add(new ContentAnalysisValidationIssue
+            if (request.ContentKind != OllamaContentKind.Text)
             {
-                Field = nameof(ContentAnalysisRequest.MediaType),
-                Code = "mediaType.text.invalid",
-                Message = "The text analysis tool requires a text media type.",
-            });
+                issues.Add(new ContentAnalysisValidationIssue
+                {
+                    Field = nameof(ContentAnalysisRequest.ContentKind),
+                    Code = "contentKind.text.required",
+                    Message = "The text analysis tool only supports text requests.",
+                });
+            }
+
+            if (!request.MediaType.StartsWith("text/", StringComparison.OrdinalIgnoreCase))
+            {
+                issues.Add(new ContentAnalysisValidationIssue
+                {
+                    Field = nameof(ContentAnalysisRequest.MediaType),
+                    Code = "mediaType.text.invalid",
+                    Message = "The text analysis tool requires a text media type.",
+                });
+            }
         }
 
         return new ContentAnalysisRequestValidationResult
@@ -133,7 +132,7 @@ public sealed class TextAnalysisTool : IContentAnalysisTool
                 Description = "Provide a longer text sample so the analysis can assess structure and clarity more reliably.",
                 Priority = "medium",
             });
-            score -= 0.25;
+            score -= 0.45;
         }
 
         if (sentenceCount <= 1 && wordCount > 20)

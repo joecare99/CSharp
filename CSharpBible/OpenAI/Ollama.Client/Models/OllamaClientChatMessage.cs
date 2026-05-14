@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Ollama.Client.Models;
 
 /// <summary>
@@ -14,4 +16,9 @@ public sealed class OllamaClientChatMessage
     /// Gets the message content.
     /// </summary>
     public required string Content { get; init; }
+
+    /// <summary>
+    /// Gets an optional list of base64-encoded images to be sent alongside the chat text.
+    /// </summary>
+    public IReadOnlyList<string>? Images { get; init; }
 }

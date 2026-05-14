@@ -137,6 +137,52 @@ public sealed class OllamaClientGuardTests
     }
 
     [TestMethod]
+    public async Task CompleteChatAsync_ThrowsForEmptyImageArray()
+    {
+        TestOllamaProtocolAdapter adapter = new()
+        {
+            ChatStreamingAsyncHandler = (request, cancellationToken) => GetEmptyChatChunksAsync(),
+        };
+        OllamaChatClient client = new(adapter, "qwen3.5:4b");
+
+        await Assert.ThrowsExactlyAsync<ArgumentException>(() => client.CompleteChatAsync(new ChatCompletionOptions
+        {
+            Messages =
+            [
+                new OllamaClientChatMessage
+                {
+                    Role = "user",
+                    Content = "Analyze",
+                    Images = [],
+                },
+            ],
+        }));
+    }
+
+    [TestMethod]
+    public async Task CompleteChatAsync_ThrowsForEmptyImageString()
+    {
+        TestOllamaProtocolAdapter adapter = new()
+        {
+            ChatStreamingAsyncHandler = (request, cancellationToken) => GetEmptyChatChunksAsync(),
+        };
+        OllamaChatClient client = new(adapter, "qwen3.5:4b");
+
+        await Assert.ThrowsExactlyAsync<ArgumentException>(() => client.CompleteChatAsync(new ChatCompletionOptions
+        {
+            Messages =
+            [
+                new OllamaClientChatMessage
+                {
+                    Role = "user",
+                    Content = "Analyze",
+                    Images = ["someBase64", " "],
+                },
+            ],
+        }));
+    }
+
+    [TestMethod]
     public async Task CompleteChatStreamingAsync_ThrowsForEmptyMessages()
     {
         TestOllamaProtocolAdapter adapter = new()

@@ -82,6 +82,7 @@ public sealed class TextAnalysisToolTests
         Assert.IsTrue(result.Score < 1.0);
         Assert.IsTrue(result.Findings.Any(static finding => finding.Title == "Very short text"));
         Assert.IsTrue(result.Suggestions.Any(static suggestion => suggestion.Title == "Add more context"));
+        StringAssert.Contains(result.Summary, "benefit");
     }
 
     [TestMethod]
@@ -99,5 +100,52 @@ public sealed class TextAnalysisToolTests
         ContentAnalysisResult result = await tool.AnalyzeAsync(request);
 
         Assert.IsTrue(result.Findings.Any(static finding => finding.Title == "Structured bullet points detected"));
+    }
+
+    [TestMethod]
+    public void Validate_ReturnsFailureForNullRequest()
+    {
+        TextAnalysisTool tool = new();
+
+        ContentAnalysisRequestValidationResult result = tool.Validate(null);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.IsTrue(result.Issues.Any(static issue => issue.Code == "request.null"));
+    }
+
+    [TestMethod]
+    public void Validate_ReturnsFailureForEmptyInlineContent()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Text,
+            SourceKind = OllamaContentSourceKind.Inline,
+            MediaType = "text/plain",
+            Content = string.Empty,
+        };
+
+        ContentAnalysisRequestValidationResult result = tool.Validate(request);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.IsTrue(result.Issues.Any(static issue => issue.Code == "content.required"));
+    }
+
+    [TestMethod]
+    public void Validate_ReturnsFailureForEmptyFilePath()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Text,
+            SourceKind = OllamaContentSourceKind.FilePath,
+            MediaType = "text/plain",
+            FilePath = string.Empty,
+        };
+
+        ContentAnalysisRequestValidationResult result = tool.Validate(request);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.IsTrue(result.Issues.Any(static issue => issue.Code == "filePath.required"));
     }
 }

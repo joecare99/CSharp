@@ -18,4 +18,11 @@ public sealed class OllamaChatMessage
     /// </summary>
     [JsonPropertyName("content")]
     public required string Content { get; init; }
+
+    /// <summary>
+    /// Gets an optional list of base64-encoded images to be sent alongside the chat text.
+    /// </summary>
+    [JsonPropertyName("images")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? Images { get; init; }
 }

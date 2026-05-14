@@ -140,6 +140,7 @@ public sealed class OllamaChatClient
                 {
                     Role = message.Role,
                     Content = message.Content,
+                    Images = message.Images?.ToArray(),
                 })
                 .ToArray(),
             Stream = true,
@@ -174,6 +175,22 @@ public sealed class OllamaChatClient
             if (string.IsNullOrWhiteSpace(message.Content))
             {
                 throw new ArgumentException("Each chat message requires content.", nameof(messages));
+            }
+
+            if (message.Images is not null)
+            {
+                if (message.Images.Count == 0)
+                {
+                    throw new ArgumentException("Image list must not be empty if provided.", nameof(messages));
+                }
+
+                foreach (string image in message.Images)
+                {
+                    if (string.IsNullOrWhiteSpace(image))
+                    {
+                        throw new ArgumentException("Image base64 data must not be empty.", nameof(messages));
+                    }
+                }
             }
         }
     }
