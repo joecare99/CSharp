@@ -61,6 +61,40 @@ public sealed class OllamaClientTests
     }
 
     [TestMethod]
+    public async Task ChatClient_CompleteChatAsync_WithOptions_MapsImages()
+    {
+        TestOllamaProtocolAdapter adapter = new()
+        {
+            ChatStreamingAsyncHandler = (request, cancellationToken) =>
+            {
+                Assert.AreEqual("qwen3.5:4b", request.Model);
+                Assert.AreEqual(1, request.Messages.Count);
+                Assert.AreEqual("user", request.Messages[0].Role);
+                Assert.AreEqual("Summarize", request.Messages[0].Content);
+                CollectionAssert.AreEqual(new[] { "image1", "image2" }, (System.Collections.ICollection)request.Messages[0].Images!);
+
+                return GetSingleChatChunkAsync(request);
+            },
+        };
+        OllamaClient client = new(adapter);
+
+        OllamaChatCompletion completion = await client.GetChatClient("qwen3.5:4b").CompleteChatAsync(new ChatCompletionOptions
+        {
+            Messages =
+            [
+                new OllamaClientChatMessage
+                {
+                    Role = "user",
+                    Content = "Summarize",
+                    Images = ["image1", "image2"],
+                },
+            ],
+        });
+
+        Assert.AreEqual("Hello", completion.Content);
+    }
+
+    [TestMethod]
     public async Task GenerateClient_GenerateAsync_AggregatesContentAndThinking()
     {
         TestOllamaProtocolAdapter adapter = new()
@@ -296,6 +330,21 @@ public sealed class OllamaClientTests
                 Content = "Option result",
             },
             Thinking = "Plan",
+            Done = true,
+        };
+
+        await Task.Yield();
+    }
+
+    private static async IAsyncEnumerable<OllamaChatResponseChunk> GetSingleChatChunkAsync(OllamaChatRequest request)
+    {
+        yield return new OllamaChatResponseChunk
+        {
+            Message = new OllamaChatMessage
+            {
+                Role = "assistant",
+                Content = "Hello",
+            },
             Done = true,
         };
 

@@ -45,7 +45,9 @@ public sealed class ContentAnalysisToolAdapter : IOllamaTool
             return OllamaToolValidationResult.Failure(errorMessage);
         }
 
-        ContentAnalysisRequestValidationResult validationResult = _analysisTool.Validate(request);
+        ContentAnalysisRequest analysisRequest = request ?? throw new InvalidOperationException("The content analysis tool input must deserialize to a content analysis request.");
+
+        ContentAnalysisRequestValidationResult validationResult = _analysisTool.Validate(analysisRequest);
         if (validationResult.IsValid)
         {
             return OllamaToolValidationResult.Success();
@@ -66,7 +68,9 @@ public sealed class ContentAnalysisToolAdapter : IOllamaTool
             };
         }
 
-        ContentAnalysisRequestValidationResult validationResult = _analysisTool.Validate(request);
+        ContentAnalysisRequest analysisRequest = request ?? throw new InvalidOperationException("The content analysis tool input must deserialize to a content analysis request.");
+
+        ContentAnalysisRequestValidationResult validationResult = _analysisTool.Validate(analysisRequest);
         if (!validationResult.IsValid)
         {
             return new OllamaToolResult
@@ -76,7 +80,6 @@ public sealed class ContentAnalysisToolAdapter : IOllamaTool
             };
         }
 
-        ContentAnalysisRequest analysisRequest = request;
         ContentAnalysisResult result = await _analysisTool.AnalyzeAsync(analysisRequest, cancellationToken);
         return new OllamaToolResult
         {

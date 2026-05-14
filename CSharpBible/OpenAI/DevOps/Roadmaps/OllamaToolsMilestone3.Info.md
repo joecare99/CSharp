@@ -64,3 +64,7 @@ Extend the tool layer so host applications can submit files and content items fo
 - build: solution build completed successfully in Visual Studio
 - tests: `Ollama.Tools.Tests` passed with 53/53 successful, 0 failed, 0 skipped
 - samples: `Ollama.Samples.TextAnalysis` build succeeded and `Ollama.Wpf.TextAnalysis` build succeeded with automatic routing enabled
+
+## Coverage Follow-Up
+- additional `TextAnalysisTool` and `ImageAnalysisTool` coverage was added in a later wave to close remaining heuristic validation branches
+- the next coverage focus should stay in `Ollama.Tools.Tests` unless a production defect is found

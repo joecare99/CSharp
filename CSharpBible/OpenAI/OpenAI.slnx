@@ -47,4 +47,9 @@
     <Project Path="Ollama.Wpf.TextAnalysis/Ollama.Wpf.TextAnalysis.csproj" />
     <Project Path="OpenAIPlayground/OpenAIPlayground.csproj" />
   </Folder>
+  <Folder Name="/PictureDB/">
+    <Project Path="../Data/PictureDB/PictureDB.Base/PictureDB.Base.csproj" />
+    <Project Path="../Data/PictureDB/PictureDB.OllamaTest/PictureDB.OllamaTest.csproj" />
+    <Project Path="../Data/PictureDB/PictureDB.UI/PictureDB.UI.csproj" />
+  </Folder>
  </Solution>
