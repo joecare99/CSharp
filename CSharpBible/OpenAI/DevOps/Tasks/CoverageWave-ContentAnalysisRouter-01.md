@@ -6,6 +6,9 @@
 ## Goal
 Close the uncovered `ContentAnalysisRouter` surface in `Ollama.Tools` with focused tests that verify routing decisions and execution behavior.
 
+## Related Work
+- see also `DevOps/Tasks/CoverageWave-ContentAnalysis-ImageText-01.md` for the remaining content-analysis tool coverage wave
+
 ## Scope
 - add MSTest coverage for explicit routing modes
 - add MSTest coverage for automatic C# detection
