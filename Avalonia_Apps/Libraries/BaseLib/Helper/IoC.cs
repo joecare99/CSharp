@@ -128,10 +128,7 @@ public class IoC
     /// </summary>
     /// <param name="aScope">a scope.</param>
     /// <returns><see cref="IServiceScope" />.</returns>
-    public static IServiceScope GetNewScope(IServiceScope? aScope=null)
-    {
-        return _Scope = aScope ==null? GetScope(): aScope.ServiceProvider.CreateScope();
-    }
+    public static IServiceScope GetNewScope(IServiceScope? aScope = null) => _Scope = aScope == null ? GetScope() : aScope.ServiceProvider.CreateScope();
 
     /// <summary>
     /// Sets the current scope.
