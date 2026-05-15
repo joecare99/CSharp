@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using BaseLib.Models.Interfaces;
 using Ollama.Tools.Abstractions;
 
 namespace Ollama.Tools.ContentAnalysis;
@@ -12,6 +13,8 @@ namespace Ollama.Tools.ContentAnalysis;
 /// </summary>
 public sealed class ImageAnalysisTool : IContentAnalysisTool
 {
+    private readonly IFile _file;
+
     private static readonly OllamaToolSchema ToolSchema = new()
     {
         Summary = "Accepts a content analysis request for an image file and returns a structured local evaluation based on file metadata.",
@@ -57,6 +60,15 @@ public sealed class ImageAnalysisTool : IContentAnalysisTool
     /// <inheritdoc/>
     public OllamaToolSchema Schema => ToolSchema;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImageAnalysisTool"/> class.
+    /// </summary>
+    /// <param name="file">The file abstraction used for metadata access.</param>
+    public ImageAnalysisTool(IFile? file = null)
+    {
+        _file = file ?? new BaseLib.Models.FileProxy();
+    }
+
     /// <inheritdoc/>
     public ContentAnalysisRequestValidationResult Validate(ContentAnalysisRequest? request)
     {
@@ -98,7 +110,7 @@ public sealed class ImageAnalysisTool : IContentAnalysisTool
             });
         }
 
-        if (!string.IsNullOrWhiteSpace(request.FilePath) && !File.Exists(request.FilePath))
+        if (!string.IsNullOrWhiteSpace(request.FilePath) && !_file.GetFileInfo(request.FilePath).Exists)
         {
             issues.Add(new ContentAnalysisValidationIssue
             {
@@ -121,7 +133,7 @@ public sealed class ImageAnalysisTool : IContentAnalysisTool
         ArgumentNullException.ThrowIfNull(request);
         cancellationToken.ThrowIfCancellationRequested();
 
-        FileInfo fileInfo = new(request.FilePath);
+        IFileInfo fileInfo = _file.GetFileInfo(request.FilePath);
         ImageInspection imageInspection = InspectImageFile(fileInfo.FullName);
         long fileSizeBytes = fileInfo.Length;
 

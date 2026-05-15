@@ -109,7 +109,7 @@ public sealed class ContentAnalysisRequestValidatorTests
         Assert.IsTrue(result.Issues.Any(static issue => issue.Code == "filePath.required"));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(-0.1)]
     [DataRow(1.1)]
     public void Validate_ReturnsFailureForCriterionWeightOutsideRange(double weight)

@@ -103,6 +103,69 @@ public sealed class TextAnalysisToolTests
     }
 
     [TestMethod]
+    public async Task AnalyzeAsync_ReturnsMissingParagraphStructureForLongText()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Text,
+            SourceKind = OllamaContentSourceKind.Inline,
+            MediaType = "text/plain",
+            Content = BuildLongText(90),
+        };
+
+        ContentAnalysisResult result = await tool.AnalyzeAsync(request);
+
+        Assert.IsTrue(result.Findings.Any(static finding => finding.Title == "Missing paragraph structure"));
+        Assert.IsTrue(result.Suggestions.Any(static suggestion => suggestion.Title == "Add paragraphs"));
+    }
+
+    [TestMethod]
+    public void Metadata_And_Schema_AreExposed()
+    {
+        TextAnalysisTool tool = new();
+
+        Assert.AreEqual("analyze_text", tool.Name);
+        StringAssert.Contains(tool.Description, "readability");
+        Assert.AreEqual("Accepts a content analysis request for plain text and returns a structured local evaluation.", tool.Schema.Summary);
+        Assert.AreEqual(5, tool.Schema.Parameters.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalyzeAsync_ReturnsConfidenceForFortyPlusWords()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Text,
+            SourceKind = OllamaContentSourceKind.Inline,
+            MediaType = "text/plain",
+            Content = BuildLongText(42),
+        };
+
+        ContentAnalysisResult result = await tool.AnalyzeAsync(request);
+
+        Assert.AreEqual(0.75, result.Confidence);
+    }
+
+    [TestMethod]
+    public async Task AnalyzeAsync_ReturnsHighConfidenceForVeryLongText()
+    {
+        TextAnalysisTool tool = new();
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Text,
+            SourceKind = OllamaContentSourceKind.Inline,
+            MediaType = "text/plain",
+            Content = BuildLongText(130),
+        };
+
+        ContentAnalysisResult result = await tool.AnalyzeAsync(request);
+
+        Assert.AreEqual(0.9, result.Confidence);
+    }
+
+    [TestMethod]
     public void Validate_ReturnsFailureForNullRequest()
     {
         TextAnalysisTool tool = new();
@@ -147,5 +210,17 @@ public sealed class TextAnalysisToolTests
 
         Assert.IsFalse(result.IsValid);
         Assert.IsTrue(result.Issues.Any(static issue => issue.Code == "filePath.required"));
+    }
+
+    private static string BuildLongText(int wordCount)
+    {
+        string[] words = new string[wordCount];
+
+        for (int index = 0; index < wordCount; index++)
+        {
+            words[index] = "word" + index;
+        }
+
+        return string.Join(" ", words);
     }
 }

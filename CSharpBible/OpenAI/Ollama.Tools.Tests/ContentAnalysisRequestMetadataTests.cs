@@ -45,7 +45,7 @@ public sealed class ContentAnalysisRequestMetadataTests
         Assert.IsTrue(result.Issues.Any(static issue => issue.Code == "fileMetadata.sizeBytes.invalid"));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(-1, 100, 24, "imageMetadata.pixelWidth.invalid")]
     [DataRow(100, -1, 24, "imageMetadata.pixelHeight.invalid")]
     [DataRow(100, 100, -1, "imageMetadata.bitsPerPixel.invalid")]

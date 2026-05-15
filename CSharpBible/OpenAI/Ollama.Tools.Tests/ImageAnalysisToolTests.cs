@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ollama.Tools.ContentAnalysis;
@@ -190,6 +192,48 @@ public sealed class ImageAnalysisToolTests
     }
 
     [TestMethod]
+    public async Task AnalyzeAsync_ReturnsImageFormatDetectionForGif()
+    {
+        string tempFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".gif");
+        await File.WriteAllBytesAsync(tempFilePath, CreateTinyGifBytes());
+
+        try
+        {
+            ImageAnalysisTool tool = new();
+            ContentAnalysisRequest request = new()
+            {
+                ContentKind = OllamaContentKind.Image,
+                SourceKind = OllamaContentSourceKind.FilePath,
+                MediaType = "image/gif",
+                FilePath = tempFilePath,
+            };
+
+            ContentAnalysisResult result = await tool.AnalyzeAsync(request);
+
+            Assert.IsTrue(result.Findings.Any(static finding => finding.Title == "Image format detected"));
+        }
+        finally
+        {
+            if (File.Exists(tempFilePath))
+            {
+                File.Delete(tempFilePath);
+            }
+        }
+    }
+
+    [TestMethod]
+    public void ReadBigEndianInt32_ReturnsZeroForShortReads()
+    {
+        using MemoryStream stream = new([0x01, 0x02]);
+        using BinaryReader reader = new(stream);
+
+        MethodInfo method = typeof(ImageAnalysisTool).GetMethod("ReadBigEndianInt32", BindingFlags.NonPublic | BindingFlags.Static)!;
+        int value = (int)method.Invoke(null, [reader])!;
+
+        Assert.AreEqual(0, value);
+    }
+
+    [TestMethod]
     public async Task AnalyzeAsync_ReturnsLowerSummaryForVerySmallImage()
     {
         string tempFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".png");
@@ -230,6 +274,25 @@ public sealed class ImageAnalysisToolTests
         Assert.AreEqual(4, tool.Schema.Parameters.Count);
         Assert.AreEqual("contentKind", tool.Schema.Parameters[0].Name);
         Assert.AreEqual("filePath", tool.Schema.Parameters[3].Name);
+    }
+
+    [TestMethod]
+    public void Validate_ReturnsFailureForMissingFileInfo()
+    {
+        BaseLib.Models.Interfaces.IFile file = new MissingFileInfoFile();
+        ImageAnalysisTool tool = new(file);
+        ContentAnalysisRequest request = new()
+        {
+            ContentKind = OllamaContentKind.Image,
+            SourceKind = OllamaContentSourceKind.FilePath,
+            MediaType = "image/png",
+            FilePath = "missing.png",
+        };
+
+        ContentAnalysisRequestValidationResult result = tool.Validate(request);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.IsTrue(result.Issues.Any(static issue => issue.Code == "filePath.notFound"));
     }
 
     [TestMethod]
@@ -389,5 +452,68 @@ public sealed class ImageAnalysisToolTests
         BitConverter.GetBytes((short)24).CopyTo(bytes, 28);
 
         return bytes;
+    }
+
+    private static byte[] CreateTinyGifBytes()
+    {
+        return
+        [
+            (byte)'G', (byte)'I', (byte)'F', (byte)'8', (byte)'9', (byte)'a',
+            0x02, 0x00,
+            0x02, 0x00,
+        ];
+    }
+
+    private sealed class MissingFileInfoFile : BaseLib.Models.Interfaces.IFile
+    {
+        public bool Exists(string sPath) => false;
+
+        public BaseLib.Models.Interfaces.IFileInfo GetFileInfo(string sPath) => new MissingFileInfo(sPath);
+
+        public Stream OpenRead(string sPath) => throw new NotSupportedException();
+
+        public Stream OpenWrite(string sPath) => throw new NotSupportedException();
+
+        public Stream Create(string sPath) => throw new NotSupportedException();
+
+        public string ReadAllText(string sPath) => throw new NotSupportedException();
+
+        public string ReadAllText(string sPath, Encoding encoding) => throw new NotSupportedException();
+
+        public void WriteAllText(string sPath, string sContents) => throw new NotSupportedException();
+        public void WriteAllText(string sPath, string sContents, Encoding encoding) => throw new NotSupportedException();
+
+        public byte[] ReadAllBytes(string sPath) => throw new NotSupportedException();
+
+        public void WriteAllBytes(string sPath, byte[] rgBytes) => throw new NotSupportedException();
+
+        public void Delete(string sPath) => throw new NotSupportedException();
+
+        public void Copy(string sSourceFileName, string sDestFileName, bool xOverwrite) => throw new NotSupportedException();
+
+        public void Move(string sSourceFileName, string sDestFileName) => throw new NotSupportedException();
+    }
+
+    private sealed class MissingFileInfo : BaseLib.Models.Interfaces.IFileInfo
+    {
+        public MissingFileInfo(string sPath)
+        {
+            FullName = sPath;
+            DirectoryName = Path.GetDirectoryName(sPath);
+            Name = Path.GetFileName(sPath);
+            Extension = Path.GetExtension(sPath);
+        }
+
+        public string FullName { get; }
+
+        public string? DirectoryName { get; }
+
+        public string Name { get; }
+
+        public string Extension { get; }
+
+        public long Length => 0;
+
+        public bool Exists => false;
     }
 }

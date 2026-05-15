@@ -14,16 +14,18 @@ public sealed class ContentAnalysisRouter
 {
     private readonly TextAnalysisTool _textAnalysisTool;
     private readonly CSharpCodeAnalysisTool _cSharpCodeAnalysisTool;
+    private readonly IPdfTextExtractor _pdfTextExtractor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ContentAnalysisRouter"/> class.
     /// </summary>
     /// <param name="textAnalysisTool">The plain text analysis tool.</param>
     /// <param name="cSharpCodeAnalysisTool">The C# source analysis tool.</param>
-    public ContentAnalysisRouter(TextAnalysisTool textAnalysisTool, CSharpCodeAnalysisTool cSharpCodeAnalysisTool)
+    public ContentAnalysisRouter(TextAnalysisTool textAnalysisTool, CSharpCodeAnalysisTool cSharpCodeAnalysisTool, IPdfTextExtractor? pdfTextExtractor = null)
     {
         _textAnalysisTool = textAnalysisTool ?? throw new ArgumentNullException(nameof(textAnalysisTool));
         _cSharpCodeAnalysisTool = cSharpCodeAnalysisTool ?? throw new ArgumentNullException(nameof(cSharpCodeAnalysisTool));
+        _pdfTextExtractor = pdfTextExtractor ?? new PdfPigTextExtractor();
     }
 
     /// <summary>
@@ -80,6 +82,35 @@ public sealed class ContentAnalysisRouter
         {
             Decision = context.Decision,
             Result = result,
+        };
+    }
+
+    /// <summary>
+    /// Extracts text from a PDF file and analyzes the extracted text using the normal text analysis flow.
+    /// </summary>
+    /// <param name="filePath">The PDF file path.</param>
+    /// <param name="mode">The requested routing mode for the extracted text.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The routed analysis result.</returns>
+    public async Task<ContentAnalysisExecutionResult> AnalyzePdfAsync(string filePath, ContentAnalysisMode mode = ContentAnalysisMode.Auto, CancellationToken cancellationToken = default)
+    {
+        PdfExtractionResult pdfResult = await _pdfTextExtractor.ExtractAsync(new PdfExtractionRequest
+        {
+            FilePath = filePath,
+        }, cancellationToken);
+
+        if (!pdfResult.IsSuccessful)
+        {
+            throw new InvalidOperationException(pdfResult.ErrorMessage ?? "PDF extraction failed.");
+        }
+
+        string displayName = pdfResult.FileMetadata?.FileName ?? filePath;
+        ContentAnalysisExecutionResult analysisResult = await AnalyzeAsync(pdfResult.ExtractedText, displayName, mode, cancellationToken);
+
+        return new ContentAnalysisExecutionResult
+        {
+            Decision = analysisResult.Decision,
+            Result = analysisResult.Result,
         };
     }
 

@@ -125,5 +125,41 @@ public sealed class ContentAnalysisRouterTests
         StringAssert.Contains(result.Result.Summary, "C# source");
     }
 
+    [TestMethod]
+    public async Task AnalyzePdfAsync_ExtractsTextAndAnalyzesItAsText()
+    {
+        RecordingPdfTextExtractor pdfTextExtractor = new();
+        pdfTextExtractor.Result = PdfExtractionResult.Success("sample.pdf", "This is a concise sample. It has two sentences and enough words for a basic analysis.", 1, new ContentAnalysisFileMetadata
+        {
+            FileName = "sample.pdf",
+            Extension = ".pdf",
+        });
+
+        ContentAnalysisRouter router = new(new TextAnalysisTool(), new CSharpCodeAnalysisTool(), pdfTextExtractor);
+
+        ContentAnalysisExecutionResult result = await router.AnalyzePdfAsync("sample.pdf");
+
+        Assert.AreEqual(OllamaContentKind.Text, result.Decision.ContentKind);
+        StringAssert.Contains(result.Result.Summary, "text");
+        Assert.AreEqual(1, pdfTextExtractor.CallCount);
+        Assert.AreEqual("sample.pdf", pdfTextExtractor.LastRequest!.FilePath);
+    }
+
     private static ContentAnalysisRouter CreateRouter() => new(new TextAnalysisTool(), new CSharpCodeAnalysisTool());
+
+    private sealed class RecordingPdfTextExtractor : IPdfTextExtractor
+    {
+        public int CallCount { get; private set; }
+
+        public PdfExtractionRequest? LastRequest { get; private set; }
+
+        public PdfExtractionResult Result { get; set; } = PdfExtractionResult.Failure(string.Empty, "No result configured.");
+
+        public Task<PdfExtractionResult> ExtractAsync(PdfExtractionRequest request, System.Threading.CancellationToken cancellationToken = default)
+        {
+            CallCount++;
+            LastRequest = request;
+            return Task.FromResult(Result);
+        }
+    }
 }
