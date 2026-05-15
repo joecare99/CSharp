@@ -11,6 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
 using System;
 using System.IO;
 
@@ -22,6 +24,8 @@ public static class FileUtils
     const string ExtSeparator = ".";
     private const string NewExt = ".~new";
     private const string BackupExt = ".bak";
+
+    private static IFile xFile = new FileProxy();
 
     /// <summary>Changes the extension of a filename by a new extension.</summary>
     /// <param name="sFilename">The original filename.</param>
@@ -48,12 +52,12 @@ public static class FileUtils
     ///   <strong>true</strong> if fil was created.</returns>
     public static bool WriteStringToFile(string sFilename,string sPayload)
     {
-        using (FileStream fs = File.OpenWrite(sFilename))
+        using (Stream fs = xFile.OpenWrite(sFilename))
         using (StreamWriter sw = new(fs))
         {
             sw.Write(sPayload);
         }
-        return File.Exists(sFilename);
+        return xFile.Exists(sFilename);
     }
 
     /// <summary>Read a file into a string.</summary>
@@ -61,9 +65,9 @@ public static class FileUtils
     /// <returns>the data of the file</returns>
     public static string? ReadStringFromFile(string sFilename)
     {
-        if (!File.Exists(sFilename)) return null;
+        if (!xFile.Exists(sFilename)) return null;
         string sResult = "";
-        using (FileStream fs = File.OpenRead(sFilename))
+        using (Stream fs = xFile.OpenRead(sFilename))
         using (StreamReader sw = new(fs))
         {
             sResult = sw.ReadToEnd();
@@ -84,9 +88,9 @@ public static class FileUtils
         string sNewFilename = sFilename.ChangeFileExt(NewExt);
         string sBakFilename = sFilename.ChangeFileExt(BackupExt);
         // Deletes "NewFile" if exists
-        if (File.Exists(sNewFilename))
+        if (xFile.Exists(sNewFilename))
         {
-            File.Delete(sNewFilename);
+             xFile.Delete(sNewFilename);
         }
         // Save the File as "NewFile"
         try
@@ -95,32 +99,32 @@ public static class FileUtils
         }
         catch 
         {
-            if (File.Exists(sNewFilename))
+            if (xFile.Exists(sNewFilename))
                 try
                 {
-                    File.Delete(sNewFilename);
+                    xFile.Delete(sNewFilename);
                 }
                 catch { } // Hard to get here !!
             throw;
         }
-        if (!File.Exists(sNewFilename))
+        if (!xFile.Exists(sNewFilename))
             return false;
         else
         {
             // Success
             // Delete "BakFile" if exists
-            if (File.Exists(sBakFilename))
+            if (xFile.Exists(sBakFilename))
             {
-                File.Delete(sBakFilename);
+                xFile.Delete(sBakFilename);
             }
             // Do the Switch New -> File -> Bak
             if (sNewFilename == sFilename) { }
             else
 
-                if (File.Exists(sFilename))
+                if (xFile.Exists(sFilename))
                 File.Replace(sNewFilename, sFilename, sBakFilename);
             else
-                File.Move(sNewFilename, sFilename);
+                xFile.Move(sNewFilename, sFilename);
                 return true;
         }          
     }
