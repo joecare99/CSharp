@@ -6,10 +6,17 @@ public abstract class MarkdownNodeBase : IDocElement
 {
     public IList<IDOMElement> Nodes { get; } = new List<IDOMElement>();
 
+    public MarkdownNodeBase? Parent { get; private set; }
+
     public IDictionary<string, string> Attributes { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
     public IDOMElement AddChild(IDOMElement element)
     {
+     if (element is MarkdownNodeBase node)
+        {
+            node.Parent = this;
+        }
+
         Nodes.Add(element);
         return element;
     }

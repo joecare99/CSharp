@@ -40,6 +40,14 @@ public static class MarkdownRenderer
 
                 foreach (IDOMElement child in toc.Nodes)
                 {
+                    if (child is MarkdownParagraph paragraph)
+                    {
+                        sb.Append("- ");
+                        WriteInlineContent(sb, paragraph);
+                        sb.AppendLine();
+                        continue;
+                    }
+
                     WriteElement(sb, child);
                 }
                 break;
@@ -135,37 +143,7 @@ public static class MarkdownRenderer
     private static string RenderInlineText(IDocContent content)
     {
         StringBuilder sb = new();
-
-        if (!string.IsNullOrEmpty(content.TextContent))
-        {
-            sb.Append(EscapeMarkdown(content.TextContent));
-        }
-
-        foreach (IDOMElement child in content.Nodes)
-        {
-            switch (child)
-            {
-                case MarkdownSpan nestedSpan:
-                    using (StringWriter writer = new(sb))
-                    {
-                        WriteSpan(writer.GetStringBuilder()!, nestedSpan);
-                    }
-                    break;
-                case MarkdownLineBreak:
-                    sb.Append("  ").AppendLine();
-                    break;
-                case MarkdownNbSpace:
-                    sb.Append(' ');
-                    break;
-                case MarkdownTab:
-                    sb.Append("    ");
-                    break;
-                case IDocContent nestedContent:
-                    sb.Append(EscapeMarkdown(nestedContent.GetTextContent(true)));
-                    break;
-            }
-        }
-
+        WriteInlineContent(sb, content);
         return sb.ToString();
     }
 
