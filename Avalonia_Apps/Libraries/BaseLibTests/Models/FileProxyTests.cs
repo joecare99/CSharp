@@ -41,6 +41,34 @@ public sealed class FileProxyTests
     }
 
     [TestMethod]
+    public void GetFileInfo_ReturnsMetadataForExistingFile()
+    {
+        var sPath = Path.Combine(_sTestDirectory, "info.txt");
+        var sContents = "hello";
+        File.WriteAllText(sPath, sContents);
+
+        var fileInfo = _fileProxy.GetFileInfo(sPath);
+
+        Assert.IsTrue(fileInfo.Exists);
+        Assert.AreEqual(sPath, fileInfo.FullName);
+        Assert.AreEqual("info.txt", fileInfo.Name);
+        Assert.AreEqual(".txt", fileInfo.Extension);
+        Assert.AreEqual(sContents.Length, fileInfo.Length);
+    }
+
+    [TestMethod]
+    public void GetFileInfo_ForMissingFile_ReturnsMetadataWithFalseExists()
+    {
+        var sPath = Path.Combine(_sTestDirectory, "missing.txt");
+
+        var fileInfo = _fileProxy.GetFileInfo(sPath);
+
+        Assert.IsFalse(fileInfo.Exists);
+        Assert.AreEqual(sPath, fileInfo.FullName);
+        Assert.AreEqual("missing.txt", fileInfo.Name);
+    }
+
+    [TestMethod]
     public void Create_CreatesWritableFile()
     {
         var sPath = Path.Combine(_sTestDirectory, "create.bin");
