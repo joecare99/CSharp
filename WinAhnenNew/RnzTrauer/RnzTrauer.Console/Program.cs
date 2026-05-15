@@ -1,6 +1,8 @@
 ﻿using Db.Core.Abstractions.Sql.Interfaaces;
 using Db.Provider.MySql;
 using Microsoft.Extensions.DependencyInjection;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 using RnzTrauer.Console.Configuration;
 using RnzTrauer.Console.ViewModels;
 using RnzTrauer.Console.Views;
@@ -11,11 +13,10 @@ using RnzTrauer.WebDriver.Firefox;
 
 try
 {
-    var xFile = new FileProxy();
     var xConfig = new RnzConsoleConfigurationLoader().Load();
 
     var xServices = new ServiceCollection()
-        .AddSingleton<IFile>(xFile)
+        .AddSingleton<IFile,FileProxy>()
         .AddSingleton(xConfig)
         .AddSingleton<IDbConnectionFactory, MySqlDbConnectionFactory>()
         .AddSingleton<IHttpClientProxy, HttpClientProxy>()
