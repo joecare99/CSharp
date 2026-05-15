@@ -23,6 +23,6 @@ The app should keep text conversion deterministic and reserve any later LLM usag
 - Define the command-line contract and output path behavior.
 - Reuse the PDF extraction pipeline for deterministic text conversion.
 - Add Markdown rendering for page or section structure.
-- Add a separate path for image extraction or image-reference reporting.
+- Add a separate path for image extraction or image-reference reporting, with the main image export and OCR fallback moved into `PBI-11`.
 - Add manual sample inputs under `DevOps/Samples/Pdf/`.
 - Add tests or verification steps for representative PDF samples.

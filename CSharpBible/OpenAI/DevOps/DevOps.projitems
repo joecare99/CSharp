@@ -20,6 +20,8 @@
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-07-MCPIntegration.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-08-SoftwareDevelopmentTools.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-09-PdfMarkdownDeterministicConsoleApp.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-11-PdfImageExportAndOcrFallback.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-13-DocumentModelCanonicalStructure.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)Epics\Epic-PictureDatabase.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\Epic-WpfTextAnalysis.md" />
@@ -41,7 +43,12 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-ContentAnalysisRouter-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-ContentAnalysisToolAdapter-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-Ollama-Tools-AlreadyGreen-01.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\DocumentBaseCanonicalModel-01-ClassLayout.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\DocumentBaseContracts-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\PDFAnalysis-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\PDFInternalStructureDiagnostics-01.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\PDFToDocumentModelImportApi-01-InterfaceSketch.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\PDFToDocumentModelImportApi-01.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\PDFToDocumentModelMapping-01.md" />
   </ItemGroup>
 </Project>

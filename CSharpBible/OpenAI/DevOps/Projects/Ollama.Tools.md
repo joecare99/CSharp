@@ -27,3 +27,11 @@ In Progress
 - [Epic: OpenAI/Ollama Platform and Shared Client Ecosystem](../Epics/Epic-OpenAI-Ollama.md)
 - [Feature: Shared Ollama Platform Foundation](../Features/Feat-00-PlatformFoundation.md)
 - [Epic: WPF App for Advanced Text Analysis and Processing](../Epics/Epic-WpfTextAnalysis.md)
+
+## Planning Notes
+- Reusable analysis and orchestration components should remain separate from document IO adapters.
+- PDF OCR and LLM-heavy interpretation should not be added here if a dedicated document interpretation project is available.
+
+## Boundary Notes
+- Document IO belongs in the document projects, not in Ollama.Tools.
+- Ollama.Tools should only consume document-analysis outputs when needed.

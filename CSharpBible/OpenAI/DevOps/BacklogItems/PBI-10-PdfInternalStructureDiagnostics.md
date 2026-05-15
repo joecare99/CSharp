@@ -23,3 +23,6 @@ As a developer, I want the PDF analysis workflow to inspect internal PDF structu
 - Detect basic encoding hints and ToUnicode-style mappings when present.
 - Render the structural data into the Markdown output.
 - Add verification with representative sample PDFs.
+
+## Follow-up Notes
+- Image export and OCR fallback are planned separately in `PBI-11` so this backlog item stays focused on deterministic structure diagnostics.

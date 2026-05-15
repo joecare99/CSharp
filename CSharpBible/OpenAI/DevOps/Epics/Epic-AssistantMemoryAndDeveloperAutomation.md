@@ -23,6 +23,8 @@ The intent is to evolve the workspace from analysis-centric samples into a more 
 - This epic is about assistant capabilities and not about a single UI product.
 - Persistent memory must be designed with explicit user consent and clear scope boundaries.
 - PDF processing should be focused on text extraction and document understanding before any advanced layout reconstruction.
+- Image export is part of the main PDF analysis flow; OCR fallback is reserved for text-poor or image-only cases.
+- Shared document modeling should move toward `Document.Base` as a canonical structure before adding more renderers.
 - MCP integration should reuse existing tool abstractions where practical.
 
 ## Known Sub-Features
