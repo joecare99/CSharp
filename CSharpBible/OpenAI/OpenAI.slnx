@@ -4,6 +4,15 @@
     <Platform Name="x86" />
 	<Platform Name="x64" />
   </Configurations>
+  <Folder Name="/Document.Base/">
+    <Project Path="../Data/DocumentUtils/Document.Base/Document.Base.csproj" />
+    <Project Path="../Data/DocumentUtils/Document.BaseTests/Document.BaseTests.csproj" Id="4c00b933-2c5d-4b93-8ed0-b8f638aa3878" />
+    <Project Path="../Data/DocumentUtils/Document.Html/Document.Html.csproj" />
+    <Project Path="../Data/DocumentUtils/Document.Markdown/Document.Markdown.csproj" Id="94f24619-27c9-4806-8113-2e2c35a04c83" />
+    <Project Path="../Data/DocumentUtils/Document.MarkdownTests/Document.MarkdownTests.csproj" Id="17341d78-f260-4c59-aa0f-96d5100d53bd" />
+    <Project Path="../Data/DocumentUtils/Document.Model/Document.Model.csproj" Id="7768d048-965a-41b8-b3b0-c080f393714a" />
+    <Project Path="../Data/DocumentUtils/Document.Pdf/Document.Pdf.csproj" />
+  </Folder>
   <Folder Name="/Libraries/">
     <File Path="../Libraries/Libraries_net.props" />
     <Project Path="../Libraries/BaseLib/BaseLib.csproj">
@@ -24,13 +33,6 @@
     <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
       <Platform Solution="*|x86" Project="x86" />
     </Project>
-  </Folder>
-  <Folder Name="/Libraries/Document.Base/">
-    <Project Path="../Data/DocumentUtils/Document.Base/Document.Base.csproj" />
-    <Project Path="../Data/DocumentUtils/Document.BaseTests/Document.BaseTests.csproj" Id="4c00b933-2c5d-4b93-8ed0-b8f638aa3878" />
-    <Project Path="../Data/DocumentUtils/Document.Html/Document.Html.csproj" />
-    <Project Path="../Data/DocumentUtils/Document.Markdown/Document.Markdown.csproj" Id="94f24619-27c9-4806-8113-2e2c35a04c83" />
-    <Project Path="../Data/DocumentUtils/Document.MarkdownTests/Document.MarkdownTests.csproj" Id="17341d78-f260-4c59-aa0f-96d5100d53bd" />
   </Folder>
   <Folder Name="/OpenAI/">
     <File Path=".github/copilot-instructions.md" />
