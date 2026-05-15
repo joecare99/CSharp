@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using FBParser;
-using FBParserTests.Models;
+using BaseLib.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FBParserTests;
