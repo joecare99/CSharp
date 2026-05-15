@@ -4,8 +4,6 @@ using System.IO;
 using System.Text;
 using BaseLib.Models;
 using BaseLib.Models.Interfaces;
-using FBParser.Models;
-using FBParser.Models.Interfaces;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Authorities;
 using System.Linq;
