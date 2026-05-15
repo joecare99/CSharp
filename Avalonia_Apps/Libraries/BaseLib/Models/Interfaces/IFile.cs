@@ -16,6 +16,13 @@ public interface IFile
     bool Exists(string sPath);
 
     /// <summary>
+    /// Gets file metadata for the specified path.
+    /// </summary>
+    /// <param name="sPath">The file path.</param>
+    /// <returns>A testable file metadata abstraction.</returns>
+    IFileInfo GetFileInfo(string sPath);
+
+    /// <summary>
     /// Opens a file for reading.
     /// </summary>
     /// <param name="sPath">The file path.</param>
