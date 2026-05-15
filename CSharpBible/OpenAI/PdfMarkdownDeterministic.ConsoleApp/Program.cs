@@ -122,6 +122,8 @@ internal static class Program
         {
             builder.AppendLine("_No image objects detected._");
         }
+
+        AppendExactStreamExportSection(builder, inspection);
         return builder.ToString();
     }
 
@@ -175,9 +177,50 @@ internal static class Program
         foreach (PdfObjectSummary pdfObject in inspection.Objects)
         {
             builder.AppendLine($"- Object `{pdfObject.ObjectId}`");
+            builder.AppendLine($"  - Identifier: {pdfObject.Identifier}");
             builder.AppendLine($"  - Type: {pdfObject.Type ?? "unknown"}");
             builder.AppendLine($"  - Subtype: {pdfObject.Subtype ?? "unknown"}");
             builder.AppendLine($"  - Stream: {(pdfObject.HasStream ? "yes" : "no")}");
+            if (!string.IsNullOrWhiteSpace(pdfObject.Filter))
+            {
+                builder.AppendLine($"  - Filter: {pdfObject.Filter}");
+            }
+            if (!string.IsNullOrWhiteSpace(pdfObject.StreamKind))
+            {
+                builder.AppendLine($"  - Stream kind: {pdfObject.StreamKind}");
+            }
+            if (!string.IsNullOrWhiteSpace(pdfObject.RawStreamPreview))
+            {
+                builder.AppendLine($"  - Raw stream preview: {pdfObject.RawStreamPreview}");
+            }
+            if (!string.IsNullOrWhiteSpace(pdfObject.DecodedStreamPreview))
+            {
+                builder.AppendLine($"  - Decoded stream preview: {pdfObject.DecodedStreamPreview}");
+            }
+            if (pdfObject.OperatorSummary.Count > 0)
+            {
+                builder.AppendLine("  - Operator summary:");
+                foreach (string op in pdfObject.OperatorSummary.Take(20))
+                {
+                    builder.AppendLine($"    - {op}");
+                }
+            }
+            if (pdfObject.DrawingHints.Count > 0)
+            {
+                builder.AppendLine("  - Drawing hints:");
+                foreach (string hint in pdfObject.DrawingHints)
+                {
+                    builder.AppendLine($"    - {hint}");
+                }
+            }
+            if (pdfObject.GlyphCandidates.Count > 0)
+            {
+                builder.AppendLine("  - Glyph candidates:");
+                foreach (string candidate in pdfObject.GlyphCandidates)
+                {
+                    builder.AppendLine($"    - {candidate}");
+                }
+            }
             builder.AppendLine($"  - Text operators: {(pdfObject.HasTextOperators ? "yes" : "no")}");
             builder.AppendLine($"  - Vector drawing hints: {(pdfObject.HasVectorDrawingHints ? "yes" : "no")}");
             builder.AppendLine($"  - ToUnicode map: {(pdfObject.HasToUnicodeMap ? "yes" : "no")}");
@@ -209,6 +252,32 @@ internal static class Program
                     builder.AppendLine($"    - {reference}");
                 }
             }
+        }
+    }
+
+    private static void AppendExactStreamExportSection(StringBuilder builder, PdfDocumentInspection inspection)
+    {
+        IReadOnlyList<PdfObjectSummary> exportObjects = inspection.Objects
+            .Where(static obj => !string.IsNullOrWhiteSpace(obj.DecodedStreamContent) && obj.HasStream)
+            .ToList();
+
+        builder.AppendLine();
+        builder.AppendLine("## Exact Decoded Streams");
+        builder.AppendLine();
+
+        if (exportObjects.Count == 0)
+        {
+            builder.AppendLine("_No decoded streams available._");
+            return;
+        }
+
+        foreach (PdfObjectSummary pdfObject in exportObjects)
+        {
+            builder.AppendLine($"- Object `{pdfObject.ObjectId}`");
+            builder.AppendLine("```text");
+            builder.AppendLine(pdfObject.DecodedStreamContent);
+            builder.AppendLine("```");
+            builder.AppendLine();
         }
     }
 
