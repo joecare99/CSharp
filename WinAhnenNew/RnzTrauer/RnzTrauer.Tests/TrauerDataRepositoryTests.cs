@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Data;
 using System.Data.Common;
+using BaseLib.Models.Interfaces;
 using Db.Core.Abstractions.Sql.Interfaaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

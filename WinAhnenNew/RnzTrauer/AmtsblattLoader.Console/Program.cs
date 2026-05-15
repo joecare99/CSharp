@@ -2,6 +2,8 @@
 using AmtsblattLoader.Console.ViewModels;
 using AmtsblattLoader.Console.Views;
 using RnzTrauer.Core;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
 using RnzTrauer.Core.Services.Interfaces;
 using RnzTrauer.WebDriver.Firefox;
 
