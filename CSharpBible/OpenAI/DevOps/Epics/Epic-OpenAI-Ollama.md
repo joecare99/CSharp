@@ -40,6 +40,7 @@ The purpose is to provide a consistent foundation for:
 - `PictureDB.Base`
 - `PictureDB.UI`
 - `PictureDB.OllamaTest`
+- `AssistantMemory` planning epic for PDF, long-term memory, MCP, and developer tools
 
 ## Open Questions
 - Should the shared platform expose a formal application shell abstraction for all sample apps?

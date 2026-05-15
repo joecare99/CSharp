@@ -25,6 +25,7 @@ This epic focuses on creating a specialized WPF-based Tool and Client for advanc
 - Feature: Basic Text and C# Code Analysis Implementations (Done)
 - Feature: Advanced Text Services (Draft: Summarize, Extract, Reformat)
 - Feature: PDF Analysis integration (Draft)
+- Feature: Assistant Memory and Developer Tooling Planning (Draft)
 
 ## Open Questions
 - Do we need an additional parser dependency for PDF (like iText7 or PdfPig) or is basic extraction sufficient?

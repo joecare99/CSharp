@@ -10,11 +10,16 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)**\*.pdf" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-00-PlatformDocumentation.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-01-SummaryTool.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-02-VisionClientSupport.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-03-OllamaTestIntegrateClient.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-04-PictureDBModels.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-06-LongTermMemoryAndPreferences.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-07-MCPIntegration.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-08-SoftwareDevelopmentTools.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-09-PdfMarkdownDeterministicConsoleApp.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)Epics\Epic-PictureDatabase.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\Epic-WpfTextAnalysis.md" />
@@ -23,14 +28,7 @@
     <None Include="$(MSBuildThisFileDirectory)Features\Feat-02-AdvTextAndDocAnalysis.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\Feat-03-VisionPrototyping.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\Feat-04-PictureDBCoreModel.md" />
-    <None Include="$(MSBuildThisFileDirectory)OllamaClientMilestone1.Info.md" />
-    <None Include="$(MSBuildThisFileDirectory)OllamaClientMilestone2.Info.md" />
-    <None Include="$(MSBuildThisFileDirectory)OllamaCoverageRound2.Info.md" />
-    <None Include="$(MSBuildThisFileDirectory)OllamaDiMilestone1.Info.md" />
-    <None Include="$(MSBuildThisFileDirectory)OllamaDiUsage.Info.md" />
-    <None Include="$(MSBuildThisFileDirectory)OllamaToolsMilestone1.Info.md" />
-    <None Include="$(MSBuildThisFileDirectory)OllamaToolsMilestone2.Info.md" />
-    <None Include="$(MSBuildThisFileDirectory)OllamaToolsMilestone3.Info.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\Feat-06-LongTermMemoryAndPreferences.md" />
     <None Include="$(MSBuildThisFileDirectory)Projects\Ollama.Client.md" />
     <None Include="$(MSBuildThisFileDirectory)Projects\Ollama.Protocol.md" />
     <None Include="$(MSBuildThisFileDirectory)Projects\Ollama.Tools.md" />
@@ -43,5 +41,7 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-ContentAnalysisRouter-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-ContentAnalysisToolAdapter-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-Ollama-Tools-AlreadyGreen-01.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\PDFAnalysis-01.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\PDFInternalStructureDiagnostics-01.md" />
   </ItemGroup>
 </Project>
