@@ -16,6 +16,7 @@ public abstract class HtmlNodeBase : IDocElement
         {
             h.Parent = this;
         }
+
         Nodes.Add(element);
         return element;
     }
