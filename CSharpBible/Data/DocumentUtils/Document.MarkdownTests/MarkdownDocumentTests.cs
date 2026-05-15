@@ -1,7 +1,10 @@
 using System.Text;
+using System.Reflection;
+using System.Linq;
 using Document.Base.Models.Interfaces;
 using Document.Markdown;
 using Document.Markdown.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Document.MarkdownTests;
 
@@ -32,7 +35,7 @@ public sealed class MarkdownDocumentTests
     [TestMethod]
     public void Constructor_WithNonSectionRoot_Throws()
     {
-        Assert.ThrowsException<ArgumentException>(() => new MarkdownDocument(new MarkdownParagraph()));
+        Assert.Throws<ArgumentException>(() => new MarkdownDocument(new MarkdownParagraph()));
     }
 
     [TestMethod]
@@ -44,12 +47,25 @@ public sealed class MarkdownDocumentTests
         IDocHeadline headline = document.AddHeadline(2, "heading-1");
         IDocTOC toc = document.AddTOC("Contents", 2);
 
-        MarkdownSection root = document.Root as MarkdownSection ?? throw new AssertFailedException();
+        MarkdownSection root = document.Root as MarkdownSection ?? throw new InvalidOperationException();
 
         Assert.IsTrue(document.IsModified);
         Assert.AreSame(root, ((MarkdownParagraph)paragraph).Parent);
         Assert.AreSame(root, ((MarkdownHeadline)headline).Parent);
         Assert.AreSame(root, ((MarkdownTOC)toc).Parent);
+    }
+
+    [TestMethod]
+    public void AddParagraph_RepairsNonSectionRoot()
+    {
+        MarkdownDocument document = new();
+        typeof(MarkdownDocument).GetProperty(nameof(MarkdownDocument.Root), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+            .SetValue(document, new MarkdownParagraph());
+
+        document.AddParagraph("Body");
+
+        Assert.IsInstanceOfType(document.Root, typeof(MarkdownSection));
+        Assert.AreEqual(1, ((MarkdownSection)document.Root).Nodes.Count);
     }
 
     [TestMethod]
@@ -65,12 +81,25 @@ public sealed class MarkdownDocumentTests
     }
 
     [TestMethod]
+    public void AddTOC_RebuildsFromSectionContent()
+    {
+        MarkdownDocument document = new();
+        MarkdownHeadline headline = (MarkdownHeadline)document.AddHeadline(1, "intro");
+        headline.TextContent = "intro";
+
+        MarkdownTOC toc = (MarkdownTOC)document.AddTOC("Contents", 2);
+        toc.RebuildFrom((MarkdownSection)document.Root);
+
+        Assert.AreEqual("TOC", toc.GetStyle().Name);
+        Assert.IsTrue(toc.Nodes.Count > 0);
+    }
+
+    [TestMethod]
     public void SaveTo_File_WritesMarkdownContent()
     {
         MarkdownDocument document = new();
         document.AddHeadline(1, "intro");
-        document.AddParagraph(string.Empty);
-        ((MarkdownParagraph)((MarkdownSection)document.Root).Nodes[1]).TextContent = "Hello world";
+        document.AddParagraph(string.Empty).TextContent = "Hello world";
 
         string path = Path.Combine(Path.GetTempPath(), $"markdown-doc-{Guid.NewGuid():N}.md");
         try
@@ -96,8 +125,8 @@ public sealed class MarkdownDocumentTests
     public void SaveTo_Stream_WritesMarkdownContent()
     {
         MarkdownDocument document = new();
-        document.AddHeadline(1, "intro");
-        document.AddParagraph("Hello world");
+        document.AddHeadline(1, "intro").TextContent = "intro";
+        document.AddParagraph(string.Empty).TextContent = "Hello world";
 
         using MemoryStream stream = new();
 
@@ -109,6 +138,17 @@ public sealed class MarkdownDocumentTests
         string markdown = Encoding.UTF8.GetString(stream.ToArray());
         Assert.IsTrue(markdown.Contains("# intro"));
         Assert.IsTrue(markdown.Contains("Hello world"));
+    }
+
+    [TestMethod]
+    public void SaveTo_Stream_ReturnsFalseWhenWriterFails()
+    {
+        MarkdownDocument document = new();
+        document.AddHeadline(1, "intro").TextContent = "intro";
+
+        bool saved = document.SaveTo(new ThrowingWriteStream());
+
+        Assert.IsFalse(saved);
     }
 
     [TestMethod]
@@ -132,7 +172,7 @@ public sealed class MarkdownDocumentTests
         Assert.IsTrue(loaded);
         Assert.IsFalse(document.IsModified);
 
-        MarkdownSection root = document.Root as MarkdownSection ?? throw new AssertFailedException();
+        MarkdownSection root = document.Root as MarkdownSection ?? throw new InvalidOperationException();
         Assert.AreEqual(1, root.Nodes.Count);
         MarkdownParagraph paragraph = root.Nodes[0] as MarkdownParagraph ?? throw new AssertFailedException();
         Assert.AreEqual("# Title\n\nBody text", paragraph.TextContent);
@@ -149,8 +189,18 @@ public sealed class MarkdownDocumentTests
         Assert.IsTrue(loaded);
         Assert.IsFalse(document.IsModified);
 
-        MarkdownSection root = document.Root as MarkdownSection ?? throw new AssertFailedException();
+        MarkdownSection root = document.Root as MarkdownSection ?? throw new InvalidOperationException();
         Assert.AreEqual(0, root.Nodes.Count);
+    }
+
+    [TestMethod]
+    public void LoadFrom_Stream_ReturnsFalseWhenReaderFails()
+    {
+        MarkdownDocument document = new();
+
+        bool loaded = document.LoadFrom(new ThrowingReadStream());
+
+        Assert.IsFalse(loaded);
     }
 
     [TestMethod]
@@ -168,7 +218,7 @@ public sealed class MarkdownDocumentTests
             Assert.IsTrue(loaded);
             Assert.IsFalse(document.IsModified);
 
-            MarkdownSection root = document.Root as MarkdownSection ?? throw new AssertFailedException();
+        MarkdownSection root = document.Root as MarkdownSection ?? throw new InvalidOperationException();
             Assert.AreEqual(1, root.Nodes.Count);
             MarkdownParagraph paragraph = root.Nodes[0] as MarkdownParagraph ?? throw new AssertFailedException();
             Assert.AreEqual("# Title\n\nBody text", paragraph.TextContent);
@@ -190,5 +240,26 @@ public sealed class MarkdownDocumentTests
         bool loaded = document.LoadFrom(string.Empty);
 
         Assert.IsFalse(loaded);
+    }
+
+    private sealed class ThrowingWriteStream : MemoryStream
+    {
+        public override void Write(byte[] buffer, int offset, int count) => throw new InvalidOperationException();
+        public override void Write(ReadOnlySpan<byte> buffer) => throw new InvalidOperationException();
+    }
+
+    private sealed class ThrowingReadStream : Stream
+    {
+        public override bool CanRead => true;
+        public override bool CanSeek => false;
+        public override bool CanWrite => false;
+        public override long Length => 0;
+        public override long Position { get => 0; set => throw new NotSupportedException(); }
+
+        public override void Flush() { }
+        public override int Read(byte[] buffer, int offset, int count) => throw new InvalidOperationException();
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+        public override void SetLength(long value) => throw new NotSupportedException();
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
     }
 }
