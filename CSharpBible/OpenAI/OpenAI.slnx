@@ -9,6 +9,9 @@
     <Project Path="../Libraries/BaseLib/BaseLib.csproj">
       <Platform Solution="*|x86" Project="x86" />
     </Project>
+    <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
     <Project Path="../Libraries/CommonDialogs/CommonDialogs.csproj">
       <Platform Solution="*|x86" Project="x86" />
     </Project>
@@ -21,6 +24,13 @@
     <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
       <Platform Solution="*|x86" Project="x86" />
     </Project>
+  </Folder>
+  <Folder Name="/Libraries/Document.Base/">
+    <Project Path="../Data/DocumentUtils/Document.Base/Document.Base.csproj" />
+    <Project Path="../Data/DocumentUtils/Document.BaseTests/Document.BaseTests.csproj" Id="4c00b933-2c5d-4b93-8ed0-b8f638aa3878" />
+    <Project Path="../Data/DocumentUtils/Document.Html/Document.Html.csproj" />
+    <Project Path="../Data/DocumentUtils/Document.Markdown/Document.Markdown.csproj" Id="94f24619-27c9-4806-8113-2e2c35a04c83" />
+    <Project Path="../Data/DocumentUtils/Document.MarkdownTests/Document.MarkdownTests.csproj" Id="17341d78-f260-4c59-aa0f-96d5100d53bd" />
   </Folder>
   <Folder Name="/OpenAI/">
     <File Path=".github/copilot-instructions.md" />
@@ -46,6 +56,7 @@
     <Project Path="Ollama.Tools/Ollama.Tools.csproj" />
     <Project Path="Ollama.Wpf.TextAnalysis/Ollama.Wpf.TextAnalysis.csproj" />
     <Project Path="OpenAIPlayground/OpenAIPlayground.csproj" />
+    <Project Path="PdfMarkdownDeterministic.ConsoleApp/PdfMarkdownDeterministic.ConsoleApp.csproj" />
   </Folder>
   <Folder Name="/PictureDB/">
     <Project Path="../Data/PictureDB/PictureDB.Base/PictureDB.Base.csproj" />
