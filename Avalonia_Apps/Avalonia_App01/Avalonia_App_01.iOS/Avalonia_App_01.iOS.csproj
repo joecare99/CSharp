@@ -14,4 +14,15 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalonia_App_01\Avalonia_App_01.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="Tmds.DBus.Protocol" Version="0.93.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Tmds.DBus.Protocol">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>
