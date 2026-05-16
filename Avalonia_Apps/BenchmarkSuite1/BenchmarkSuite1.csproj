@@ -15,4 +15,8 @@
   <ItemGroup>
     <ProjectReference Include="..\AA15_Labyrinth\AA15_Labyrinth\AA15_Labyrinth.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Tmds.DBus.Protocol" Version="0.93.0" />
+  </ItemGroup>
 </Project>
