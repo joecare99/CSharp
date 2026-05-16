@@ -42,5 +42,8 @@
 	    <SubType>Component</SubType>
 	  </Compile>
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Update="Tmds.DBus.Protocol" Version="0.93.0" />
+	</ItemGroup>
 
 </Project>
