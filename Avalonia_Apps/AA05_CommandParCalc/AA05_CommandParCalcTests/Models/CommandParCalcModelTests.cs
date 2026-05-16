@@ -29,6 +29,6 @@ public class CommandParCalcModelTests
         Assert.IsInstanceOfType(testModel, typeof(CommandParCalcModel));
         Assert.IsInstanceOfType(testModel, typeof(ICommandParCalcModel));
         Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
-        Assert.IsNotNull(testModel.Now);
+        Assert.IsGreaterThan(DateTime.MinValue, testModel.Now);
     }
 }
