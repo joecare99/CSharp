@@ -20,5 +20,6 @@
     <PackageVersion Include="coverlet.collector" Version="10.0.0" />
     <!-- Add runtime dependency for non-string resources used by net481 build; pick version with netstandard2.0 support -->
     <PackageVersion Include="System.Resources.Extensions" Version="10.0.7" />
+    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="1.3.0" />
   </ItemGroup>
 </Project>

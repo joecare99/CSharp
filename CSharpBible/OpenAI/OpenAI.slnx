@@ -39,6 +39,7 @@
     <File Path="directory.build.props" />
     <File Path="Directory.Packages.props" />
     <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
+    <Project Path="McpTools/McpTools.csproj" />
     <Project Path="Ollama-Service1/Ollama-Service1.csproj" />
     <Project Path="Ollama-Service2/Ollama-Service2.csproj" />
     <Project Path="Ollama.Client.Tests/Ollama.Client.Tests.csproj" />
