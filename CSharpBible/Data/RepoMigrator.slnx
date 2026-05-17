@@ -30,6 +30,8 @@
     <Project Path="RepoMigrator/RepoMigrator.App.State/RepoMigrator.App.State.csproj" />
     <Project Path="RepoMigrator/RepoMigrator.App.Wpf/RepoMigrator.App.Wpf.csproj" />
     <Project Path="RepoMigrator/RepoMigrator.Core/RepoMigrator.Core.csproj" />
+    <Project Path="RepoMigrator/RepoMigrator.Providers.Archive/RepoMigrator.Providers.Archive.csproj" />
+    <Project Path="RepoMigrator/RepoMigrator.Providers.Compression.Zip/RepoMigrator.Providers.Compression.Zip.csproj" />
     <Project Path="RepoMigrator/RepoMigrator.Providers.Git/RepoMigrator.Providers.Git.csproj" />
     <Project Path="RepoMigrator/RepoMigrator.Providers.Svn/RepoMigrator.Providers.Svn.csproj" />
     <Project Path="RepoMigrator/RepoMigrator.Providers.SvnCli/RepoMigrator.Providers.SvnCli.csproj" />
