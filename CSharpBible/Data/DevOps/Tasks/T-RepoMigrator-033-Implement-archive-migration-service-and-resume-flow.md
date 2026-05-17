@@ -19,6 +19,7 @@ Implement the first-slice archive migration orchestration service with determini
 - Recreate runtime temp state safely on resume
 - Persist checkpoint progression under `DevOps`
 - Stop on unsafe divergence instead of guessing through inconsistent target state
+- Implement the orchestration service in an archive-provider project rather than in `RepoMigrator.Core`
 
 ## Detailed Work Packages
 
@@ -44,3 +45,4 @@ Implement the first-slice archive migration orchestration service with determini
 - Archive plans can be executed and resumed through a dedicated service
 - Checkpoints persist to `DevOps` and are honored during resume
 - Tests cover interruption between commit, tag, and branch steps
+- The implementation respects the corrected provider-project boundaries

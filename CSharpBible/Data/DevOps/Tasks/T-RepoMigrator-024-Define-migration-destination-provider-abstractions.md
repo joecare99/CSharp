@@ -21,6 +21,7 @@ Define the destination-side provider abstractions that keep RepoMigrator.Core sy
 - Clarify the relationship between `IMigrationDestinationProvider` and `IVersionControlProvider`
 - Define which responsibilities stay in the broader destination provider versus the repository-specific provider
 - Record future fit for sequential archive emission as a non-first-slice destination type
+- Ensure provider-specific destination implementations live in their dedicated provider projects rather than in `RepoMigrator.Core`
 
 ## Detailed Work Packages
 
@@ -47,6 +48,7 @@ Define the destination-side provider abstractions that keep RepoMigrator.Core sy
 - A normalized destination model proposal
 - A boundary note describing how `IVersionControlProvider` fits below the broader destination-provider layer
 - A list of follow-up code and test tasks implied by the design
+- A project-boundary note describing where destination-provider implementations should live
 
 ## Dependencies
 
@@ -59,6 +61,7 @@ Define the destination-side provider abstractions that keep RepoMigrator.Core sy
 - The relationship between destination providers and `IVersionControlProvider` is explicit
 - The design supports repository-backed destinations now and sequential archive output later
 - The orchestration impact is identified without forcing immediate implementation of archive-output targets
+- The design makes implementation-project ownership explicit for destination providers
 
 ## Open Questions
 

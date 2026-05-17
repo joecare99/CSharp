@@ -30,13 +30,35 @@ The first coding slice should stay intentionally narrow:
 
 HTTP sources, additional archive formats, and multi-commit reconstruction from archive entry timestamps should remain follow-up slices.
 
-## Proposed New Core Model Files
+## Project-Boundary Correction
+
+The original draft of this task was too Core-heavy. The corrected target state is:
+
+- `RepoMigrator.Core` contains only provider-agnostic contracts and shared models.
+- Archive-specific models, planners, and orchestration types live in an archive-provider project.
+- Compression-format-specific implementations live in dedicated compression provider projects such as a Zip provider project.
+
+The file lists below should therefore be read as ownership targets across the solution, not as a directive to place provider-specific files into `RepoMigrator.Core`.
+
+## Proposed Shared Core Files
 
 The target state should keep one primary type per file where practical.
 
-### Source and plan models
+### Shared source and destination models in `RepoMigrator.Core`
 
-Recommended files under `RepoMigrator/RepoMigrator.Core`:
+Recommended provider-agnostic files under `RepoMigrator/RepoMigrator.Core`:
+
+- `MigrationSourceDefinition.cs`
+- `MigrationSourceKind.cs`
+- `MigrationSourcePlan.cs`
+- `MigrationSourcePlanItem.cs`
+- `MigrationDestinationDefinition.cs`
+- `MigrationDestinationKind.cs`
+- `MigrationDestinationCommit.cs`
+
+### Archive-provider-owned models outside Core
+
+Recommended files in an archive-provider project:
 
 - `ArchiveMigrationSourceDefinition.cs`
 - `ArchiveSourceLocationKind.cs`
@@ -49,14 +71,6 @@ Recommended files under `RepoMigrator/RepoMigrator.Core`:
 - `ArchiveOrderingSignal.cs`
 - `ArchiveOrderingSignalKind.cs`
 - `ArchiveOrderingDecision.cs`
-- `ArchiveImportPlan.cs`
-- `ArchiveImportPlanItem.cs`
-- `ArchiveImportPlanStatus.cs`
-
-### Persistence and resume models
-
-Recommended files:
-
 - `ArchiveImportState.cs`
 - `ArchiveImportSnapshotState.cs`
 - `ArchiveImportCheckpoint.cs`
@@ -64,9 +78,9 @@ Recommended files:
 - `ArchiveImportRunStatus.cs`
 - `ArchiveImportManifestVersion.cs`
 
-### Acquisition and inspection models
+### Archive and compression acquisition models outside Core
 
-Recommended files:
+Recommended files in archive-provider or compression-provider projects:
 
 - `DiscoveredArchiveItem.cs`
 - `ArchiveInspectionResult.cs`
@@ -78,7 +92,7 @@ Recommended files:
 
 ### `ArchiveMigrationSourceDefinition`
 
-Represents the archive-backed source configuration.
+Represents the archive-backed source configuration and should be owned by the archive provider project.
 
 Suggested fields:
 
@@ -94,7 +108,7 @@ Suggested fields:
 
 ### `ArchiveSnapshotDescriptor`
 
-Represents one discovered archive plus the metadata needed for planning.
+Represents one discovered archive plus the metadata needed for planning and should be owned by the archive provider project.
 
 Suggested fields:
 
@@ -116,7 +130,7 @@ Suggested fields:
 
 ### `ArchiveImportPlan`
 
-Represents the durable reviewed plan stored under `DevOps` before and during execution.
+Represents the durable reviewed plan stored under `DevOps` before and during execution and should be owned by the archive provider project.
 
 Suggested fields:
 
@@ -144,7 +158,7 @@ Suggested fields:
 
 ### `ArchiveImportState`
 
-Represents the resumable execution state for one plan.
+Represents the resumable execution state for one plan and should be owned by the archive provider project.
 
 Suggested fields:
 
@@ -183,6 +197,9 @@ Recommended files under `RepoMigrator/RepoMigrator.Core/Abstractions`:
 - `IMigrationSourceProviderFactory.cs`
 - `IMigrationDestinationProvider.cs`
 - `IMigrationDestinationProviderFactory.cs`
+
+Recommended archive-provider-specific abstractions outside Core:
+
 - `IArchiveSnapshotSource.cs`
 - `IArchiveDriver.cs`
 - `IArchiveDriverRegistry.cs`
@@ -328,18 +345,24 @@ Suggested members:
 
 Recommended files under `RepoMigrator/RepoMigrator.Core/Services` or a dedicated archive namespace:
 
-- `DirectoryArchiveSnapshotSource.cs`
-- `ArchiveDriverRegistry.cs`
-- `ArchiveImportPlanner.cs`
-- `ArchiveOrderingService.cs`
-- `ArchiveRefNamingService.cs`
-- `DevOpsArchiveImportStateStore.cs`
-- `ArchiveMigrationService.cs`
-- `ArchivePlanIdFactory.cs`
+Recommended implementation ownership outside Core:
+
+- archive-provider project:
+  - `DirectoryArchiveSnapshotSource.cs`
+  - `ArchiveDriverRegistry.cs`
+  - `ArchiveImportPlanner.cs`
+  - `ArchiveOrderingService.cs`
+  - `ArchiveRefNamingService.cs`
+  - `DevOpsArchiveImportStateStore.cs`
+  - `ArchiveMigrationService.cs`
+  - `ArchivePlanIdFactory.cs`
+- compression-provider projects:
+  - `ZipArchiveDriver.cs`
+  - additional format drivers later
 
 ### Important design choice
 
-Do not overload the existing `IVersionControlProvider` abstraction with archive-source behavior. Keep `IVersionControlProvider` for genuine repository operations and introduce `IMigrationSourceProvider` for source-side extensibility. Also introduce `IMigrationDestinationProvider` as the broader target-side abstraction so future destination types such as sequential archive output can fit the same model. Keep repository-to-repository migration in `MigrationService` and add `ArchiveMigrationService` beside it, or later converge both onto higher-level source-provider and destination-provider orchestration paths once the abstractions prove stable.
+Do not overload the existing `IVersionControlProvider` abstraction with archive-source behavior. Keep `IVersionControlProvider` for genuine repository operations and introduce `IMigrationSourceProvider` for source-side extensibility. Also introduce `IMigrationDestinationProvider` as the broader target-side abstraction so future destination types such as sequential archive output can fit the same model. Keep repository-to-repository migration in `MigrationService` and add `ArchiveMigrationService` beside it in an archive-provider project, or later converge both onto higher-level source-provider and destination-provider orchestration paths once the abstractions prove stable.
 
 This keeps:
 
@@ -347,6 +370,7 @@ This keeps:
 - provider selection explicit,
 - source and destination extensibility symmetric,
 - archive import testable in isolation,
+- project ownership explicit,
 - and resume logic away from the repository-provider abstraction.
 
 ## Recommended Provider Changes
@@ -368,12 +392,17 @@ Recommended new shared models:
 Recommended first source providers:
 
 - `RepositoryMigrationSourceProvider`
-- `DirectoryArchiveSnapshotSourceProvider`
+- `DirectoryArchiveSnapshotSourceProvider` in an archive-provider project
 
 Recommended first destination providers:
 
 - `VersionControlMigrationDestinationProvider`
 - `SequentialArchiveMigrationDestinationProvider` later
+
+Recommended first compression providers:
+
+- `Compression.Provider.Zip`
+- other compression provider projects later
 
 The repository-backed destination contract still needs a small extension for release refs.
 
@@ -450,6 +479,8 @@ Expected registration changes in composition roots:
 
 For the first slice, only `DirectoryArchiveSnapshotSource`, `ZipArchiveDriver`, and a repository-backed `VersionControlMigrationDestinationProvider` need concrete registrations.
 
+Those registrations should come from the owning provider projects rather than from `RepoMigrator.Core`.
+
 ## Recommended Test Surface
 
 ### New unit-test groups
@@ -483,14 +514,14 @@ For the first slice, only `DirectoryArchiveSnapshotSource`, `ZipArchiveDriver`, 
 
 ## Suggested Follow-up Coding Tasks
 
-1. Create archive core model files in `RepoMigrator.Core`.
-2. Add archive abstraction interfaces in `RepoMigrator.Core/Abstractions`.
-3. Implement `DirectoryArchiveSnapshotSource` and `ZipArchiveDriver`.
-4. Implement `ArchiveOrderingService` and `ArchiveRefNamingService`.
-5. Implement `ArchiveImportPlanner` and `DevOpsArchiveImportStateStore`.
-6. Implement `ArchiveMigrationService` with commit, tag, branch, and resume checkpoints.
+1. Keep only provider-agnostic shared contracts and shared models in `RepoMigrator.Core`.
+2. Add archive-specific abstractions and models in an archive-provider project.
+3. Implement `DirectoryArchiveSnapshotSource` in the archive-provider project.
+4. Implement `ZipArchiveDriver` in a dedicated Zip compression provider project.
+5. Implement archive ordering, naming, planning, and state-store services in the archive-provider project.
+6. Implement `ArchiveMigrationService` with commit, tag, branch, and resume checkpoints in the archive-provider project.
 7. Extend Git provider support for tag and branch idempotency operations.
-8. Add targeted MSTest coverage for plan building and resume behavior.
+8. Add targeted MSTest coverage for provider projects, plan building, and resume behavior.
 
 ## Open Questions
 
@@ -501,20 +532,20 @@ For the first slice, only `DirectoryArchiveSnapshotSource`, `ZipArchiveDriver`, 
 ## Detailed Work Packages
 
 1. Core type layout
-   - finalize the list of normalized source, destination, planning, and state models
-   - group models into shared, source-specific, destination-specific, and persistence-specific categories
+   - finalize the list of normalized source and destination models that truly belong in Core
+   - group models into shared, provider-specific, destination-specific, persistence-specific, and sub-provider categories
    - identify which existing files can remain unchanged in the first slice
 2. Abstraction layout
    - finalize `IMigrationSourceProvider`, `IMigrationDestinationProvider`, and their factories
-   - finalize archive-specific contracts beneath the broader provider layers
+   - move archive-specific contracts beneath the broader provider layers into provider projects
    - define how existing `IVersionControlProvider` implementations are wrapped by destination providers
 3. Service layout
-   - decide whether `ArchiveMigrationService` remains a dedicated orchestration service in the first slice
-   - define planner, naming, ordering, and state-store service boundaries
+   - decide whether `ArchiveMigrationService` remains a dedicated orchestration service in the first slice and in which provider project it belongs
+   - define planner, naming, ordering, and state-store service boundaries outside Core
    - define which service responsibilities remain deferred for later slices
 4. Composition-root impact
    - identify DI registration changes in app and tool entry points
-   - identify where provider factories are resolved today and how the broader provider layers fit in
+   - identify where provider factories are resolved today and how the broader provider layers fit across project boundaries
    - identify minimum non-breaking changes for the first code slice
 5. Validation and follow-up slicing
    - map the target state to implementation-ready coding tasks

@@ -21,6 +21,8 @@ The first archive-import slice should treat archive collections as a new migrati
 
 The architecture should keep the existing repository target model for Git commits and tags, while introducing a broader provider family for migration sources. Archive-source providers should discover, inspect, order, and materialize archive snapshots for the existing snapshot-migration pipeline.
 
+RepoMigrator.Core must remain provider-agnostic. Provider-specific files must therefore live in their dedicated provider projects. Archive-provider files belong into archive-provider projects, and concrete compression-format concerns such as Zip belong into dedicated compression-provider projects rather than into Core or into overly broad archive projects.
+
 ## Proposed Contract Direction
 
 ### 1. Provider Model Split
@@ -34,15 +36,18 @@ Suggested model direction:
   - archive-backed implementations
 - `MigrationSourceDefinition`
   - `MigrationSourceKind Kind`
-  - `RepositoryEndpoint? Repository`
-  - `ArchiveSnapshotSourceDefinition? ArchiveSource`
+  - provider-agnostic shared configuration only
+  - provider-specific configuration owned by the responsible provider project
 
 This keeps `RepoType` focused on actual repository systems while still letting RepoMigrator.Core remain provider-agnostic.
 
-### 2. Archive Source Definition
+### 2. Archive Source Definition Ownership
 
-Suggested `ArchiveSnapshotSourceDefinition` fields:
+Archive-specific source definitions should live in an archive-specific provider project instead of `RepoMigrator.Core`.
 
+Suggested `ArchiveSnapshotSourceDefinition` ownership and fields:
+
+- owned by an archive-provider project
 - `ArchiveSourceLocationKind LocationKind`
   - `HttpIndex`
   - `LocalDirectory`
@@ -50,12 +55,11 @@ Suggested `ArchiveSnapshotSourceDefinition` fields:
 - `IReadOnlyList<string> AllowedExtensions`
 - `bool AllowRelativeLinks`
 - `bool RecursiveDirectoryScan`
-- `ArchiveOrderingOptions Ordering`
-- `ArchiveRefNamingOptions Naming`
-- `ArchiveBranchProjectionOptions Branches`
-- `ArchiveManualPlanOptions ManualPlan`
+- archive-ordering and naming options that are specific to archive-based ingestion
 
-### 3. Archive Snapshot Descriptor
+### 3. Archive Snapshot Descriptor Ownership
+
+Archive-specific snapshot descriptors should also live outside `RepoMigrator.Core` because they are provider-specific planning artifacts.
 
 Suggested `ArchiveSnapshotDescriptor` fields:
 
@@ -76,7 +80,9 @@ Suggested `ArchiveSnapshotDescriptor` fields:
 - `string? ProposedBranchName`
 - `ArchiveOrderingEvidence OrderingEvidence`
 
-### 4. Archive Ordering Evidence
+### 4. Archive Ordering Evidence Ownership
+
+Archive ordering evidence and related evidence signals belong with the archive provider implementation or an archive-specific shared project rather than in Core.
 
 Suggested evidence model:
 
@@ -105,7 +111,7 @@ Suggested source-provider direction:
   - `bool CanHandle(MigrationSourceDefinition source)`
   - `Task<MigrationSourcePlan> PrepareAsync(MigrationSourceDefinition source, CancellationToken ct)`
 
-Archive-backed implementations can still use a narrower discovery contract internally:
+Archive-backed implementations can still use a narrower discovery contract internally, but those contracts belong in provider-specific projects rather than in Core:
 
 - `IArchiveSnapshotSource`
   - `Task<IReadOnlyList<DiscoveredArchiveItem>> DiscoverAsync(ArchiveSnapshotSourceDefinition source, CancellationToken ct)`
@@ -133,10 +139,10 @@ Supporting registry:
 
 Initial drivers:
 
-- `ZipArchiveDriver`
-- `SevenZipArchiveDriver`
-- `TarArchiveDriver`
-- `TarGzArchiveDriver`
+- `ZipArchiveDriver` in a dedicated Zip compression provider project
+- `SevenZipArchiveDriver` in a dedicated 7z compression provider project
+- `TarArchiveDriver` in a dedicated Tar provider project
+- `TarGzArchiveDriver` in a dedicated TarGz provider project
 
 ## Proposed Ordering Strategy
 
@@ -218,7 +224,7 @@ Example:
 - Keep `IVersionControlProvider` for target repository operations and genuine VCS behavior.
 - Add a broader source-provider layer for source-side migration inputs.
 - Plan a parallel destination-provider layer above VCS-specific target behavior.
-- Implement archive collections as source providers beneath that layer.
+- Implement archive collections as source providers beneath that layer in dedicated provider projects.
 - Reuse the existing temp-directory snapshot commit flow once an archive has been extracted.
 
 ### Why this direction is preferred
@@ -227,6 +233,7 @@ Example:
 - RepoMigrator.Core stays agnostic through a provider model instead of hardcoded source kinds.
 - Archive-source logic remains testable without pretending to be a repository provider.
 - Future non-repository destinations such as sequential archive output can fit the same architecture.
+- Provider-specific files and sub-providers can evolve independently in their own projects.
 - The current migration service and target-provider abstractions can be extended incrementally instead of rewritten.
 
 ## Initial Implementation Slice Recommendation
@@ -299,5 +306,6 @@ Decision:
 ## Next Refinement Steps
 
 1. Map the proposed source wrapper onto the current migration-service API surface.
-2. Refine the archive-driver contract against real format-library constraints.
-3. Create code-oriented tasks for models, orchestration, and tests after the API direction is accepted.
+2. Refine the archive-driver contract against real format-library constraints and provider-project boundaries.
+3. Define the target project split for archive providers and compression providers.
+4. Create code-oriented tasks for models, orchestration, relocation, and tests after the API direction is accepted.

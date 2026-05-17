@@ -51,12 +51,18 @@ Implement the shared source and destination model types that sit above provider-
   - `MigrationSourceDefinition`
   - `MigrationDestinationDefinition`
   - `MigrationDestinationCommit`
-- Added first archive-specific and future archive-output extension models:
+- Added provisional archive-specific and future archive-output extension models:
   - `ArchiveSourceLocationKind`
   - `ArchiveMigrationSourceDefinition`
   - `SequentialArchiveDestinationDefinition`
 - Kept the new models nullable-safe and compatible with the existing `RepositoryEndpoint` model for first-slice integration.
 - Added `MigrationSourceDestinationModelsTests` covering defaults and representative assigned-value preservation.
+
+## Architecture Correction Note
+
+- The later architectural refinement clarified that provider-specific files should not remain in `RepoMigrator.Core`.
+- The provisional archive-specific and archive-output-specific extension models introduced during this task should be relocated into dedicated provider projects as part of `T-RepoMigrator-035 - Relocate provider-specific archive and compression files out of core`.
+- The provider-agnostic normalized migration models in this task remain valid Core ownership.
 
 ## Validation
 

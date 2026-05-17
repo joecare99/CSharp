@@ -19,6 +19,7 @@ Close the highest-priority automated coverage gaps for the first archive-import 
 - Cover first-slice repository-backed destination behavior and Git ref resume helpers
 - Defer HTTP-source and additional archive-format coverage
 - Keep fixtures readable and deterministic
+- Cover the corrected project boundaries so provider-specific tests reference the owning provider projects rather than Core-only placement assumptions
 
 ## Detailed Work Packages
 
@@ -52,3 +53,4 @@ Close the highest-priority automated coverage gaps for the first archive-import 
 - The first archive-import slice has explicit automated coverage across its highest-risk behaviors
 - Tests remain aligned with repository testing conventions
 - Build and test validation is recorded once implementation lands
+- Tests reflect the corrected provider-project ownership boundaries

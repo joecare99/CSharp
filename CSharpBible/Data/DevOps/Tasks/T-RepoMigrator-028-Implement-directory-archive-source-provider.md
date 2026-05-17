@@ -56,6 +56,12 @@ Implement the first archive-backed migration source provider for local directory
 - Used normalized `MigrationSourcePlan` and `MigrationSourcePlanItem` output so downstream planning can consume the provider without archive-specific orchestration assumptions.
 - Added `RepoMigrator.Tests/DirectoryArchiveSnapshotSourceProviderTests.cs` covering absolute paths, relative paths, recursive filtering behavior, missing-directory validation, empty-match validation, and `CanHandle` behavior.
 
+## Architecture Correction Note
+
+- A later architecture clarification established that provider-specific implementations should live in dedicated provider projects rather than in `RepoMigrator.Core`.
+- `DirectoryArchiveSnapshotSourceProvider` should therefore be relocated into an archive-provider project as part of `T-RepoMigrator-035 - Relocate provider-specific archive and compression files out of core`.
+- The behavior implemented in this task remains useful, but the owning project boundary must be corrected.
+
 ## Validation
 
 - `run_build` completed successfully.

@@ -64,22 +64,26 @@ The planning baseline assumes that version identifiers are useful but not always
 
 ## Architectural Direction
 
-The preferred architecture is to model archive collections as a new migration-source provider type instead of treating them as another repository type. Archive feeds do not expose commits, branches, or native repository semantics, so they should not be forced into `IVersionControlProvider`. Instead, RepoMigrator.Core should stay provider-agnostic through a broader migration-source provider layer while continuing to reuse the existing repository-target commit flow.
+The preferred architecture is to model archive collections as a new migration-source provider type instead of treating them as another repository type. Archive feeds do not expose commits, branches, or native repository semantics, so they should not be forced into `IVersionControlProvider`. RepoMigrator.Core should stay provider-agnostic and should therefore contain only shared abstractions and shared models. Archive-specific files must live in archive-specific provider projects, and sub-provider concerns such as concrete compression formats must live in their own dedicated provider projects.
 
 The current design direction separates:
 
 - a broader source-provider layer for migration inputs,
 - archive-source discovery for HTTP(S) index pages and local directories,
 - archive-driver inspection and extraction per supported format,
+- project boundaries that keep provider-specific implementation files out of `RepoMigrator.Core`,
+- dedicated sub-provider projects for concrete compression or packaging formats such as Zip,
 - explicit ordering evidence and manual override support,
 - DevOps-backed plan and checkpoint persistence for interruption-safe resume workflows,
 - and target-side repository commit, tag, and optional branch creation.
 
 This direction is captured in task `T-RepoMigrator-017 - Draft archive source core architecture` and should guide the next implementation-oriented refinement pass.
 
-The current recommended code target state is captured in task `T-RepoMigrator-023 - Define concrete code target state for archive import`. That target state keeps archive-import orchestration separate from repository-to-repository migration, introduces a broader source-provider model plus dedicated archive-source and archive-driver abstractions, and stores reviewed plans plus execution checkpoints under `DevOps/Data/RepoMigrator/ArchiveImports`.
+The current recommended code target state is captured in task `T-RepoMigrator-023 - Define concrete code target state for archive import`. That target state must be interpreted with the corrected project-boundary rule: provider-agnostic contracts stay in `RepoMigrator.Core`, archive-specific implementations and archive-specific models live in archive-specific provider projects, and concrete compression-format implementations live in dedicated compression provider projects.
 
 The planning direction now also includes a symmetric destination-provider layer above repository-specific target behavior so future outputs such as sequential archive emission can fit without redesigning RepoMigrator.Core. This destination-provider work is refined in task `T-RepoMigrator-024 - Define migration destination provider abstractions`.
+
+The correction of already planned or implemented provider-specific file placement is tracked in task `T-RepoMigrator-035 - Relocate provider-specific archive and compression files out of core`.
 
 ## Persistence and Resume Direction
 
@@ -103,6 +107,7 @@ This direction is further refined in backlog item `BI-RepoMigrator-012 - Define 
 - HTTP pages may expose inconsistent link structures that require tighter source-page assumptions than a local directory feed
 - Tag-name normalization rules may become surprising if common prefixes are stripped too aggressively
 - Resume state may become unsafe if source content or target repository state changes after the persisted checkpoint
+- Provider-specific files placed in `RepoMigrator.Core` may weaken long-term architecture boundaries if not corrected early
 
 ## Open Questions
 
@@ -123,6 +128,7 @@ This direction is further refined in backlog item `BI-RepoMigrator-012 - Define 
 4. Define the naming policy for mandatory tags and optional branches, including preview examples
 5. Define the DevOps-backed plan and checkpoint persistence model for interruption-safe resume
 6. Confirm the symmetric source-provider and destination-provider abstractions above repository-specific implementations
-7. Confirm the concrete code target state, including new core models, archive services, destination providers, and Git target ref operations
-8. Map the agreed archive orchestration path onto the current composition roots and UI workflow boundaries
-9. Add dedicated implementation and test tasks once the first delivery slice is agreed
+7. Confirm the corrected project boundaries so provider-specific files and sub-providers live in dedicated provider projects
+8. Confirm the concrete code target state, including new shared contracts, archive provider projects, destination providers, and Git target ref operations
+9. Map the agreed archive orchestration path onto the current composition roots and UI workflow boundaries
+10. Add dedicated implementation and test tasks once the first delivery slice is agreed

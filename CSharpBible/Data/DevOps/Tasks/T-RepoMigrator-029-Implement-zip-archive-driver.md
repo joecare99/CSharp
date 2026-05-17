@@ -19,6 +19,7 @@ Implement the first archive driver for `.zip` inspection and extraction.
 - Extract a complete snapshot into a working directory
 - Report unsupported or invalid zip content clearly
 - Keep later `.7z`, `.tar`, and `.tar.gz` support out of this slice
+- Implement the driver in a dedicated Zip compression provider project rather than in `RepoMigrator.Core`
 
 ## Detailed Work Packages
 
@@ -32,6 +33,7 @@ Implement the first archive driver for `.zip` inspection and extraction.
 - `.zip` archive driver implementation
 - Inspection and extraction behavior with tests
 - First-slice driver compatibility note in code comments or documentation where useful
+- A project-boundary note confirming Zip-specific ownership outside Core and outside overly broad archive projects
 
 ## Dependencies
 
@@ -43,3 +45,4 @@ Implement the first archive driver for `.zip` inspection and extraction.
 - `.zip` archives can be selected, inspected, and extracted through the driver abstraction
 - Tests cover valid and invalid zip scenarios
 - The implementation is isolated enough to allow later format drivers without redesign
+- The Zip driver lives in a dedicated compression provider project

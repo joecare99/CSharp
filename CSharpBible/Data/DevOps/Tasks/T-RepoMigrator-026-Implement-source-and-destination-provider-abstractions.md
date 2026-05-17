@@ -57,6 +57,11 @@ Implement the broader provider abstractions that keep RepoMigrator.Core symmetri
 - Kept `IVersionControlProvider` unchanged and repository-specific while introducing the higher-level source and destination provider seams.
 - Added `MigrationProviderAbstractionsTests` to cover default model initialization and basic interface assignability through test doubles.
 
+## Architecture Correction Note
+
+- The provider-agnostic abstractions added in this task remain valid Core ownership.
+- Any future provider-specific contracts beneath these abstractions, including archive-specific and compression-specific contracts, should live in dedicated provider projects rather than in `RepoMigrator.Core`.
+
 ## Validation
 
 - `run_build` completed successfully.

@@ -19,6 +19,7 @@ Implement the first-slice services that derive deterministic archive order and d
 - Implement optional first-slice branch-name derivation for repository-backed destinations
 - Keep regex and advanced prefix normalization out of this initial implementation unless a minimal hook is required
 - Emit explainable ordering evidence for review and troubleshooting
+- Place the ordering and naming services in an archive-provider project rather than in `RepoMigrator.Core`
 
 ## Detailed Work Packages
 
@@ -44,3 +45,4 @@ Implement the first-slice services that derive deterministic archive order and d
 - Archive ordering is deterministic and explainable
 - Default tag naming works from the archive base name with compound-extension safety
 - Optional first-slice branch naming is available for repository-backed destinations
+- The implementation respects the corrected provider-project boundaries

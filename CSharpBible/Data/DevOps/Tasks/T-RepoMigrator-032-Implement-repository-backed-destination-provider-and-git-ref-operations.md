@@ -19,6 +19,7 @@ Implement the first repository-backed migration destination provider and the tar
 - Keep repository-specific operations beneath the broader destination-provider abstraction
 - Avoid implementing sequential archive output in this slice
 - Preserve existing repository migration behavior as far as possible
+- Keep repository-backed destination implementations in destination- or provider-specific projects rather than in `RepoMigrator.Core`
 
 ## Detailed Work Packages
 
@@ -43,3 +44,4 @@ Implement the first repository-backed migration destination provider and the tar
 - The first destination provider can write snapshots to repository-backed targets through the broader destination abstraction
 - Git-specific ref operations required for resume are available and tested
 - Existing repository behavior is preserved or intentionally adapted with tests
+- The implementation-project ownership is explicit and consistent with the corrected provider boundaries

@@ -61,6 +61,12 @@ Implement the archive import plan, checkpoint, and persisted execution state mod
 - Added targeted provider-extension dictionaries on plan, plan-item, state, and snapshot-state models so later provider-specific data can be persisted without distorting the shared schema.
 - Added `ArchiveImportModelsTests` covering defaults and representative assigned-value preservation.
 
+## Architecture Correction Note
+
+- A later architectural clarification established that archive-specific files should live in archive-specific provider projects rather than in `RepoMigrator.Core`.
+- The archive plan, checkpoint, and state types introduced here should therefore be treated as provisional Core placement and relocated under `T-RepoMigrator-035 - Relocate provider-specific archive and compression files out of core`.
+- The provider-agnostic persistence concepts remain valid, but the archive-specific concrete models should not remain in Core long term.
+
 ## Validation
 
 - `run_build` completed successfully.

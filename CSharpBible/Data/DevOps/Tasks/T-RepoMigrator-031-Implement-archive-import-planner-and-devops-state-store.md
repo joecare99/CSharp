@@ -19,6 +19,7 @@ Implement the archive import planner and the DevOps-backed plan/state persistenc
 - Keep JSON output deterministic and reviewable
 - Support loading and saving plans and execution state by stable plan id
 - Prepare the implementation for cross-machine resume constraints without relying on temp paths
+- Implement the planner and state store in an archive-provider project rather than in `RepoMigrator.Core`
 
 ## Detailed Work Packages
 
@@ -46,3 +47,4 @@ Implement the archive import planner and the DevOps-backed plan/state persistenc
 - Archive import plans can be prepared and stored under `DevOps`
 - Plan and state manifests are deterministic and readable
 - Tests cover plan creation and persistence roundtrip scenarios
+- The implementation respects the corrected provider-project boundaries
