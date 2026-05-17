@@ -1,4 +1,4 @@
-namespace RepoMigrator.Core;
+namespace RepoMigrator.Providers.Archive;
 
 /// <summary>
 /// Provides schema-version constants for persisted archive import manifests.

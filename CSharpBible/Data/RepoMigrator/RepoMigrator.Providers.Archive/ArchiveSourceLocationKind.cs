@@ -1,4 +1,4 @@
-namespace RepoMigrator.Core;
+namespace RepoMigrator.Providers.Archive;
 
 /// <summary>
 /// Defines where archive-backed migration source snapshots are discovered.

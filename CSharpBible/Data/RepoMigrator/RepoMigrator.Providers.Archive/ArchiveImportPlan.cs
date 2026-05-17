@@ -1,4 +1,6 @@
-namespace RepoMigrator.Core;
+using RepoMigrator.Core;
+
+namespace RepoMigrator.Providers.Archive;
 
 /// <summary>
 /// Represents a durable archive import plan that can be persisted under the DevOps workspace.

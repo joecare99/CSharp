@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Completed
 
 ## Parent
 
@@ -58,3 +58,35 @@ Create the dedicated archive-provider project and relocate archive-specific mode
 - `DirectoryArchiveSnapshotSourceProvider` no longer lives in `RepoMigrator.Core`
 - `RepoMigrator.Core` remains limited to provider-agnostic contracts and shared models
 - Build and affected tests pass after relocation
+
+## Implementation Summary
+
+- Created the new archive-provider project:
+  - `RepoMigrator\RepoMigrator.Providers.Archive\RepoMigrator.Providers.Archive.csproj`
+- Added the new project to the RepoMigrator solution and referenced it from the test project.
+- Moved archive-specific files out of `RepoMigrator.Core` into `RepoMigrator.Providers.Archive`:
+  - `ArchiveMigrationSourceDefinition`
+  - `ArchiveSourceLocationKind`
+  - `ArchiveImportManifestVersion`
+  - `ArchiveImportPlanStatus`
+  - `ArchiveImportRunStatus`
+  - `ArchiveImportCheckpointPhase`
+  - `ArchiveImportCheckpoint`
+  - `ArchiveImportPlanItem`
+  - `ArchiveImportPlan`
+  - `ArchiveImportSnapshotState`
+  - `ArchiveImportState`
+  - `Services\DirectoryArchiveSnapshotSourceProvider`
+- Kept `RepoMigrator.Core` provider-agnostic by replacing archive-specific Core properties with generic provider-data dictionaries on:
+  - `MigrationSourceDefinition`
+  - `MigrationDestinationDefinition`
+- Added conversion helpers in the archive-provider project so archive-specific definitions can translate to and from normalized provider data.
+- Retargeted tests to reference the new archive-provider project and the relocated types.
+
+## Validation
+
+- `run_build` completed successfully.
+- Targeted tests passed for:
+  - `RepoMigrator.Tests.MigrationSourceDestinationModelsTests`
+  - `RepoMigrator.Tests.ArchiveImportModelsTests`
+  - `RepoMigrator.Tests.DirectoryArchiveSnapshotSourceProviderTests`

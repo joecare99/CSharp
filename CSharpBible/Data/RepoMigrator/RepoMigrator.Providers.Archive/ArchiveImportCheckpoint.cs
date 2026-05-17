@@ -1,4 +1,4 @@
-namespace RepoMigrator.Core;
+namespace RepoMigrator.Providers.Archive;
 
 /// <summary>
 /// Represents the current resumable checkpoint of an archive import plan execution.

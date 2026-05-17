@@ -16,7 +16,7 @@ public sealed class MigrationDestinationDefinition
     public RepositoryEndpoint? Repository { get; init; }
 
     /// <summary>
-    /// Gets the future sequential-archive destination definition when archive output is selected.
+    /// Gets provider-specific destination configuration values owned by the responsible destination provider.
     /// </summary>
-    public SequentialArchiveDestinationDefinition? SequentialArchiveDestination { get; init; }
+    public IReadOnlyDictionary<string, string> ProviderData { get; init; } = new Dictionary<string, string>();
 }

@@ -1,6 +1,7 @@
+using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
 
-namespace RepoMigrator.Core.Services;
+namespace RepoMigrator.Providers.Archive.Services;
 
 /// <summary>
 /// Provides first-slice archive source planning for local directory inputs.
@@ -26,9 +27,20 @@ public sealed class DirectoryArchiveSnapshotSourceProvider : IMigrationSourcePro
 
     /// <inheritdoc/>
     public bool CanHandle(MigrationSourceDefinition source)
-        => source.Kind == MigrationSourceKind.ArchiveCollection
-            && source.ArchiveSource is not null
-            && source.ArchiveSource.LocationKind == ArchiveSourceLocationKind.LocalDirectory;
+    {
+        if (source.Kind != MigrationSourceKind.ArchiveCollection)
+            return false;
+
+        try
+        {
+            var archiveSource = ArchiveMigrationSourceDefinition.FromMigrationSourceDefinition(source);
+            return archiveSource.LocationKind == ArchiveSourceLocationKind.LocalDirectory;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+    }
 
     /// <inheritdoc/>
     public Task<MigrationSourcePlan> PrepareAsync(MigrationSourceDefinition source, CancellationToken ct)
@@ -39,7 +51,7 @@ public sealed class DirectoryArchiveSnapshotSourceProvider : IMigrationSourcePro
             throw new NotSupportedException("The supplied source definition is not a local directory archive source.");
 
         ct.ThrowIfCancellationRequested();
-        var archiveSource = source.ArchiveSource!;
+        var archiveSource = ArchiveMigrationSourceDefinition.FromMigrationSourceDefinition(source);
         var resolvedDirectoryPath = ResolveDirectoryPath(archiveSource.Location);
         if (!Directory.Exists(resolvedDirectoryPath))
             throw new DirectoryNotFoundException($"Archive source directory '{resolvedDirectoryPath}' does not exist.");

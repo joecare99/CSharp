@@ -1,4 +1,5 @@
 using RepoMigrator.Core;
+using RepoMigrator.Providers.Archive;
 
 namespace RepoMigrator.Tests;
 
@@ -90,11 +91,11 @@ public sealed class ArchiveImportModelsTests
         var source = new MigrationSourceDefinition
         {
             Kind = MigrationSourceKind.ArchiveCollection,
-            ArchiveSource = new ArchiveMigrationSourceDefinition
+            ProviderData = new ArchiveMigrationSourceDefinition
             {
                 Location = @"C:\archives",
                 AllowedExtensions = [".zip"]
-            }
+            }.ToMigrationSourceDefinition().ProviderData
         };
         var destination = new MigrationDestinationDefinition
         {

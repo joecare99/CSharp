@@ -16,7 +16,7 @@ public sealed class MigrationSourceDefinition
     public RepositoryEndpoint? Repository { get; init; }
 
     /// <summary>
-    /// Gets the archive-specific source definition when the source kind is archive-backed.
+    /// Gets provider-specific source configuration values owned by the responsible source provider.
     /// </summary>
-    public ArchiveMigrationSourceDefinition? ArchiveSource { get; init; }
+    public IReadOnlyDictionary<string, string> ProviderData { get; init; } = new Dictionary<string, string>();
 }

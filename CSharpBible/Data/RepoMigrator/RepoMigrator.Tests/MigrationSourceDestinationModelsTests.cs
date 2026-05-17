@@ -1,4 +1,5 @@
 using RepoMigrator.Core;
+using RepoMigrator.Providers.Archive;
 
 namespace RepoMigrator.Tests;
 
@@ -34,7 +35,7 @@ public sealed class MigrationSourceDestinationModelsTests
 
         Assert.AreEqual(MigrationSourceKind.Repository, definition.Kind);
         Assert.IsNull(definition.Repository);
-        Assert.IsNull(definition.ArchiveSource);
+        Assert.AreEqual(0, definition.ProviderData.Count);
     }
 
     [TestMethod]
@@ -44,7 +45,7 @@ public sealed class MigrationSourceDestinationModelsTests
 
         Assert.AreEqual(MigrationDestinationKind.Repository, definition.Kind);
         Assert.IsNull(definition.Repository);
-        Assert.IsNull(definition.SequentialArchiveDestination);
+        Assert.AreEqual(0, definition.ProviderData.Count);
     }
 
     [TestMethod]
@@ -76,13 +77,13 @@ public sealed class MigrationSourceDestinationModelsTests
         {
             Kind = MigrationSourceKind.ArchiveCollection,
             Repository = repository,
-            ArchiveSource = archiveSource
+            ProviderData = archiveSource.ToMigrationSourceDefinition().ProviderData
         };
 
         Assert.AreEqual(MigrationSourceKind.ArchiveCollection, definition.Kind);
         Assert.AreSame(repository, definition.Repository);
-        Assert.AreSame(archiveSource, definition.ArchiveSource);
-        Assert.AreEqual(2, definition.ArchiveSource.AllowedExtensions.Count);
+        var reconstructedArchiveSource = ArchiveMigrationSourceDefinition.FromMigrationSourceDefinition(definition);
+        Assert.AreEqual(2, reconstructedArchiveSource.AllowedExtensions.Count);
     }
 
     [TestMethod]
@@ -99,12 +100,12 @@ public sealed class MigrationSourceDestinationModelsTests
         {
             Kind = MigrationDestinationKind.SequentialArchiveCollection,
             Repository = repository,
-            SequentialArchiveDestination = sequentialArchiveDestination
+            ProviderData = sequentialArchiveDestination.ToMigrationDestinationDefinition().ProviderData
         };
 
         Assert.AreEqual(MigrationDestinationKind.SequentialArchiveCollection, definition.Kind);
         Assert.AreSame(repository, definition.Repository);
-        Assert.AreSame(sequentialArchiveDestination, definition.SequentialArchiveDestination);
-        Assert.IsTrue(definition.SequentialArchiveDestination.OverwriteExistingArchives);
+        var reconstructedDestination = SequentialArchiveDestinationDefinition.FromMigrationDestinationDefinition(definition);
+        Assert.IsTrue(reconstructedDestination.OverwriteExistingArchives);
     }
 }

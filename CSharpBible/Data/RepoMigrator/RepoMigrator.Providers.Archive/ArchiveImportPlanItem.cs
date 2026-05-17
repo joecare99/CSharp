@@ -1,4 +1,6 @@
-namespace RepoMigrator.Core;
+using RepoMigrator.Core;
+
+namespace RepoMigrator.Providers.Archive;
 
 /// <summary>
 /// Represents one ordered snapshot item in a persisted archive import plan.

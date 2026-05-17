@@ -1,5 +1,6 @@
 using RepoMigrator.Core;
-using RepoMigrator.Core.Services;
+using RepoMigrator.Providers.Archive;
+using RepoMigrator.Providers.Archive.Services;
 
 namespace RepoMigrator.Tests;
 
@@ -18,12 +19,12 @@ public sealed class DirectoryArchiveSnapshotSourceProviderTests
             var source = new MigrationSourceDefinition
             {
                 Kind = MigrationSourceKind.ArchiveCollection,
-                ArchiveSource = new ArchiveMigrationSourceDefinition
+                ProviderData = new ArchiveMigrationSourceDefinition
                 {
                     LocationKind = ArchiveSourceLocationKind.LocalDirectory,
                     Location = tempDirectoryPath,
                     AllowedExtensions = [".zip"]
-                }
+                }.ToMigrationSourceDefinition().ProviderData
             };
 
             var plan = await provider.PrepareAsync(source, CancellationToken.None);
@@ -50,12 +51,12 @@ public sealed class DirectoryArchiveSnapshotSourceProviderTests
             var source = new MigrationSourceDefinition
             {
                 Kind = MigrationSourceKind.ArchiveCollection,
-                ArchiveSource = new ArchiveMigrationSourceDefinition
+                ProviderData = new ArchiveMigrationSourceDefinition
                 {
                     LocationKind = ArchiveSourceLocationKind.LocalDirectory,
                     Location = ".\\archives",
                     AllowedExtensions = [".zip"]
-                }
+                }.ToMigrationSourceDefinition().ProviderData
             };
 
             var plan = await provider.PrepareAsync(source, CancellationToken.None);
@@ -83,13 +84,13 @@ public sealed class DirectoryArchiveSnapshotSourceProviderTests
             var source = new MigrationSourceDefinition
             {
                 Kind = MigrationSourceKind.ArchiveCollection,
-                ArchiveSource = new ArchiveMigrationSourceDefinition
+                ProviderData = new ArchiveMigrationSourceDefinition
                 {
                     LocationKind = ArchiveSourceLocationKind.LocalDirectory,
                     Location = tempDirectoryPath,
                     AllowedExtensions = [".zip"],
                     RecursiveDirectoryScan = false
-                }
+                }.ToMigrationSourceDefinition().ProviderData
             };
 
             var plan = await provider.PrepareAsync(source, CancellationToken.None);
@@ -114,12 +115,12 @@ public sealed class DirectoryArchiveSnapshotSourceProviderTests
             var source = new MigrationSourceDefinition
             {
                 Kind = MigrationSourceKind.ArchiveCollection,
-                ArchiveSource = new ArchiveMigrationSourceDefinition
+                ProviderData = new ArchiveMigrationSourceDefinition
                 {
                     LocationKind = ArchiveSourceLocationKind.LocalDirectory,
                     Location = tempDirectoryPath,
                     AllowedExtensions = [".zip"]
-                }
+                }.ToMigrationSourceDefinition().ProviderData
             };
 
             await Assert.ThrowsAsync<InvalidOperationException>(() => provider.PrepareAsync(source, CancellationToken.None));
@@ -138,12 +139,12 @@ public sealed class DirectoryArchiveSnapshotSourceProviderTests
         var source = new MigrationSourceDefinition
         {
             Kind = MigrationSourceKind.ArchiveCollection,
-            ArchiveSource = new ArchiveMigrationSourceDefinition
+            ProviderData = new ArchiveMigrationSourceDefinition
             {
                 LocationKind = ArchiveSourceLocationKind.LocalDirectory,
                 Location = tempDirectoryPath,
                 AllowedExtensions = [".zip"]
-            }
+            }.ToMigrationSourceDefinition().ProviderData
         };
 
         await Assert.ThrowsAsync<DirectoryNotFoundException>(() => provider.PrepareAsync(source, CancellationToken.None));
@@ -156,11 +157,11 @@ public sealed class DirectoryArchiveSnapshotSourceProviderTests
         var source = new MigrationSourceDefinition
         {
             Kind = MigrationSourceKind.ArchiveCollection,
-            ArchiveSource = new ArchiveMigrationSourceDefinition
+            ProviderData = new ArchiveMigrationSourceDefinition
             {
                 LocationKind = ArchiveSourceLocationKind.LocalDirectory,
                 Location = @"C:\archives"
-            }
+            }.ToMigrationSourceDefinition().ProviderData
         };
 
         Assert.IsTrue(provider.CanHandle(source));

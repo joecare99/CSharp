@@ -1,4 +1,4 @@
-namespace RepoMigrator.Core;
+namespace RepoMigrator.Providers.Archive;
 
 /// <summary>
 /// Represents the persisted execution state of an archive import run.
