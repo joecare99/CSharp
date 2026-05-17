@@ -1,0 +1,48 @@
+# Task T-RepoMigrator-031 - Implement archive import planner and DevOps state store
+
+## Status
+
+Draft
+
+## Parent
+
+- Backlog Item `BI-RepoMigrator-012` - `Define DevOps-backed archive import status persistence and resume`
+
+## Goal
+
+Implement the archive import planner and the DevOps-backed plan/state persistence layer.
+
+## Scope
+
+- Implement a planner that combines source discovery, driver inspection, ordering, and naming into a durable import plan
+- Implement a `DevOps` state store for `plan.json` and `state.json`
+- Keep JSON output deterministic and reviewable
+- Support loading and saving plans and execution state by stable plan id
+- Prepare the implementation for cross-machine resume constraints without relying on temp paths
+
+## Detailed Work Packages
+
+1. Implement `ArchiveImportPlanner`
+2. Implement `DevOpsArchiveImportStateStore`
+3. Implement deterministic file layout under `DevOps/Data/RepoMigrator/ArchiveImports`
+4. Add tests for plan generation, manifest roundtrip, stable file layout, and override-friendly persistence behavior
+
+## Deliverables
+
+- Archive import planner implementation
+- DevOps-backed plan/state persistence implementation
+- Tests covering manifest roundtrip and plan generation behavior
+
+## Dependencies
+
+- `T-RepoMigrator-020` - `Define archive import planner and DevOps manifest layout`
+- `T-RepoMigrator-027` - `Implement archive plan and state models`
+- `T-RepoMigrator-028` - `Implement directory archive source provider`
+- `T-RepoMigrator-029` - `Implement zip archive driver`
+- `T-RepoMigrator-030` - `Implement archive ordering and naming services`
+
+## Acceptance Criteria
+
+- Archive import plans can be prepared and stored under `DevOps`
+- Plan and state manifests are deterministic and readable
+- Tests cover plan creation and persistence roundtrip scenarios

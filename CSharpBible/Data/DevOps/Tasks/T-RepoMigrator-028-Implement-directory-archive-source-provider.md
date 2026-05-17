@@ -1,0 +1,62 @@
+# Task T-RepoMigrator-028 - Implement directory archive source provider
+
+## Status
+
+Completed
+
+## Parent
+
+- Backlog Item `BI-RepoMigrator-009` - `Define archive snapshot source detection and ordering contracts`
+
+## Goal
+
+Implement the first archive-backed migration source provider for local directory inputs.
+
+## Scope
+
+- Implement normalized detection and handling for local directory archive sources
+- Add first-slice discovery logic for local files with configured extensions
+- Support absolute and relative paths in the intended workspace context
+- Emit deterministic discovered archive items for downstream inspection and planning
+- Defer HTTP index handling to a later slice
+
+## Detailed Work Packages
+
+1. Implement `DirectoryArchiveSnapshotSourceProvider` or equivalent first-slice source-provider class
+2. Implement discovered-item creation for supported local archive files
+3. Define validation behavior for missing paths, empty directories, and unsupported file sets
+4. Add MSTest coverage for absolute paths, relative paths, filtering, and deterministic ordering of discovery output
+
+## Deliverables
+
+- First-slice local-directory archive source provider implementation
+- Deterministic discovered archive item output
+- Unit tests covering discovery behavior and validation paths
+
+## Dependencies
+
+- `T-RepoMigrator-019` - `Define archive source and driver service contracts`
+- `T-RepoMigrator-026` - `Implement source and destination provider abstractions`
+
+## Acceptance Criteria
+
+- Local archive directories can be discovered through the broader source-provider model
+- Relative and absolute path scenarios are covered by tests
+- Discovery output is deterministic and ready for planning
+
+## Implementation Summary
+
+- Added `RepoMigrator.Core/Services/DirectoryArchiveSnapshotSourceProvider.cs` as the first archive-backed `IMigrationSourceProvider` implementation for local directory inputs.
+- Implemented support for:
+  - absolute and relative directory paths,
+  - deterministic archive discovery ordering,
+  - extension-based filtering,
+  - optional recursive scanning,
+  - validation for missing directories and directories without matching archive files.
+- Used normalized `MigrationSourcePlan` and `MigrationSourcePlanItem` output so downstream planning can consume the provider without archive-specific orchestration assumptions.
+- Added `RepoMigrator.Tests/DirectoryArchiveSnapshotSourceProviderTests.cs` covering absolute paths, relative paths, recursive filtering behavior, missing-directory validation, empty-match validation, and `CanHandle` behavior.
+
+## Validation
+
+- `run_build` completed successfully.
+- Targeted test execution passed for `RepoMigrator.Tests.DirectoryArchiveSnapshotSourceProviderTests`.
