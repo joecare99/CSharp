@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Parent
 
@@ -57,3 +57,19 @@ Retarget tests, project references, and validation paths after archive and compr
 - Targeted archive and Zip tests run successfully after relocation
 - Build and validation evidence is recorded
 - Remaining cleanup gaps are visible if any still exist
+
+## Validation Evidence
+
+- `RepoMigrator.Tests` references both `RepoMigrator.Providers.Archive` and `RepoMigrator.Providers.Compression.Zip`
+- Targeted test pass completed for:
+  - `RepoMigrator.Tests.MigrationSourceDestinationModelsTests`
+  - `RepoMigrator.Tests.ArchiveImportModelsTests`
+  - `RepoMigrator.Tests.DirectoryArchiveSnapshotSourceProviderTests`
+  - `RepoMigrator.Tests.ZipArchiveDriverTests`
+- Validation result: `24/24` tests passed
+- Full workspace build passed after the retargeting updates
+
+## Cleanup Review
+
+- No remaining outdated Core-placement assumptions were identified in the retargeted archive and Zip test slice
+- No additional follow-up task was required from this relocation validation pass

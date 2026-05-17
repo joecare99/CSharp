@@ -21,6 +21,7 @@
 		<ProjectReference Include="..\RepoMigrator.App.State\RepoMigrator.App.State.csproj" />
 		<ProjectReference Include="..\RepoMigrator.App.Wpf\RepoMigrator.App.Wpf.csproj" />
     <ProjectReference Include="..\RepoMigrator.Providers.Archive\RepoMigrator.Providers.Archive.csproj" />
+    <ProjectReference Include="..\RepoMigrator.Providers.Compression.TarGz\RepoMigrator.Providers.Compression.TarGz.csproj" />
     <ProjectReference Include="..\RepoMigrator.Providers.Compression.Zip\RepoMigrator.Providers.Compression.Zip.csproj" />
 		<ProjectReference Include="..\RepoMigrator.Core\RepoMigrator.Core.csproj" />
 		<ProjectReference Include="..\RepoMigrator.Providers.Git\RepoMigrator.Providers.Git.csproj" />

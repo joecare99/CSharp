@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Parent
 
@@ -46,3 +46,16 @@ Implement the first-slice archive migration orchestration service with determini
 - Checkpoints persist to `DevOps` and are honored during resume
 - Tests cover interruption between commit, tag, and branch steps
 - The implementation respects the corrected provider-project boundaries
+
+## Validation Evidence
+
+- Added provider-agnostic destination ref abstraction `IMigrationDestinationRefOperations` for commit-addressable destination resume steps
+- Added archive-provider-owned `IArchiveMigrationService` and implemented `ArchiveMigrationService`
+- Integrated durable plan/state persistence, extraction, snapshot write, tag creation, optional branch creation, and resumable checkpoint progression
+- Implemented first-slice resume handling for:
+  - commit already completed but tag and branch missing
+  - tag already created but branch missing
+  - unsafe divergence surfaced during tag creation
+- Added targeted MSTest coverage in `RepoMigrator.Tests.ArchiveMigrationServiceTests`
+- Targeted validation result: `5/5` tests passed
+- Full workspace build passed after the implementation

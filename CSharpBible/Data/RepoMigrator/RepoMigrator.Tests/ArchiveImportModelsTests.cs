@@ -117,7 +117,11 @@ public sealed class ArchiveImportModelsTests
             FinalTagName = "Product_1.0.0",
             FinalBranchName = "releases/Product_1.0.0",
             CreateBranch = true,
-            ExtensionData = new Dictionary<string, string> { ["DriverId"] = "zip" }
+            ExtensionData = new Dictionary<string, string>
+            {
+                [ArchiveImportPlanItemExtensionKeys.DriverId] = "zip",
+                [ArchiveImportPlanItemExtensionKeys.ExtractionRootPath] = "src/Product_1.0.0"
+            }
         };
         var checkpoint = new ArchiveImportCheckpoint
         {
@@ -169,7 +173,8 @@ public sealed class ArchiveImportModelsTests
         Assert.AreEqual(MigrationSourceKind.ArchiveCollection, plan.Source.Kind);
         Assert.AreEqual(MigrationDestinationKind.Repository, plan.Destination.Kind);
         Assert.AreEqual(1, plan.Items.Count);
-        Assert.AreEqual("zip", plan.Items[0].ExtensionData["DriverId"]);
+        Assert.AreEqual("zip", plan.Items[0].ExtensionData[ArchiveImportPlanItemExtensionKeys.DriverId]);
+        Assert.AreEqual("src/Product_1.0.0", plan.Items[0].ExtensionData[ArchiveImportPlanItemExtensionKeys.ExtractionRootPath]);
         Assert.AreEqual(ArchiveImportPlanStatus.Ready, plan.Status);
         Assert.AreEqual(ArchiveImportRunStatus.ReadyToResume, state.Status);
         Assert.AreEqual(ArchiveImportCheckpointPhase.TagCreated, state.CurrentCheckpoint.Phase);

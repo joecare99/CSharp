@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Parent
 
@@ -54,3 +54,20 @@ Close the highest-priority automated coverage gaps for the first archive-import 
 - Tests remain aligned with repository testing conventions
 - Build and test validation is recorded once implementation lands
 - Tests reflect the corrected provider-project ownership boundaries
+
+## Validation Evidence
+
+- First-slice archive-import coverage is present across normalized models, archive plan/state models, local directory discovery, Zip inspection/extraction, ordering, naming, DevOps persistence, and resume-aware orchestration
+- Provider-specific tests reference the owning provider projects (`RepoMigrator.Providers.Archive`, `RepoMigrator.Providers.Compression.Zip`, and repository-backed Git provider behavior)
+- Targeted first-slice validation pass completed for:
+  - `RepoMigrator.Tests.MigrationSourceDestinationModelsTests`
+  - `RepoMigrator.Tests.ArchiveImportModelsTests`
+  - `RepoMigrator.Tests.DirectoryArchiveSnapshotSourceProviderTests`
+  - `RepoMigrator.Tests.ZipArchiveDriverTests`
+  - `RepoMigrator.Tests.ArchiveOrderingServiceTests`
+  - `RepoMigrator.Tests.ArchiveRefNamingServiceTests`
+  - `RepoMigrator.Tests.ArchiveImportPlannerTests`
+  - `RepoMigrator.Tests.DevOpsArchiveImportStateStoreTests`
+  - `RepoMigrator.Tests.ArchiveMigrationServiceTests`
+- Targeted validation result: `39/39` tests passed
+- Full workspace build passed after completing the first-slice archive-import implementation

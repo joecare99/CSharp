@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Parent
 
@@ -45,3 +45,16 @@ Implement the first repository-backed migration destination provider and the tar
 - Git-specific ref operations required for resume are available and tested
 - Existing repository behavior is preserved or intentionally adapted with tests
 - The implementation-project ownership is explicit and consistent with the corrected provider boundaries
+
+## Validation Evidence
+
+- Added `VersionControlMigrationDestinationProvider` in `RepoMigrator.Providers.Git` as the repository-backed destination bridge for normalized destination definitions
+- Added `IGitTargetRefOperations` and implemented Git target-side HEAD, tag, and branch helper operations in `GitProvider`
+- Preserved existing Git provider behaviors while extending idempotent branch and tag creation support for resume-aware archive import flows
+- Added targeted MSTest coverage in:
+  - `RepoMigrator.Tests.VersionControlMigrationDestinationProviderTests`
+  - `RepoMigrator.Tests.GitTargetRefOperationsTests`
+  - existing compatibility slice `RepoMigrator.Tests.GitProviderTests`
+  - existing compatibility slice `RepoMigrator.Tests.GitProviderHelperTests`
+- Targeted validation result: `31/31` tests passed
+- Full workspace build passed after the implementation

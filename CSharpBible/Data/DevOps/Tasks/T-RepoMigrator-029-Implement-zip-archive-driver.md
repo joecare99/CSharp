@@ -2,7 +2,15 @@
 
 ## Status
 
-Draft
+Done
+
+## Validation Evidence
+
+- `ZipArchiveDriver` implemented in `RepoMigrator.Providers.Compression.Zip`
+- Zip-specific implementation remains outside `RepoMigrator.Core`
+- Tests cover selection, inspection, extraction, registry resolution, and invalid archive handling
+- Targeted validation passed for `RepoMigrator.Tests.ZipArchiveDriverTests` with `5/5` tests successful
+- Workspace build passed after wiring the dedicated Zip provider project and test references
 
 ## Parent
 

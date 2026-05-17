@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Parent
 
@@ -46,3 +46,14 @@ Implement the first-slice services that derive deterministic archive order and d
 - Default tag naming works from the archive base name with compound-extension safety
 - Optional first-slice branch naming is available for repository-backed destinations
 - The implementation respects the corrected provider-project boundaries
+
+## Validation Evidence
+
+- Added first-slice archive-provider-owned ordering and naming models plus services in `RepoMigrator.Providers.Archive`
+- Implemented `ArchiveOrderingService` with deterministic precedence for manual order, detected version cues, archive timestamps, and stable tie-breakers
+- Implemented `ArchiveRefNamingService` with compound-extension-safe default tag derivation and optional branch naming support
+- Added targeted MSTest coverage in:
+  - `RepoMigrator.Tests.ArchiveOrderingServiceTests`
+  - `RepoMigrator.Tests.ArchiveRefNamingServiceTests`
+- Targeted validation result: `7/7` tests passed
+- Full workspace build passed after the implementation

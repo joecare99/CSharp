@@ -8,6 +8,11 @@ namespace RepoMigrator.App.Logic.Models;
 public sealed class SourceSelectionResult
 {
     /// <summary>
+    /// Gets the source provider capabilities that the UI can react to.
+    /// </summary>
+    public RepositoryCapabilities Capabilities { get; init; } = new();
+
+    /// <summary>
     /// Gets or sets the available Git branches.
     /// </summary>
     public IReadOnlyList<RepositoryReferenceInfo> Branches { get; init; } = [];

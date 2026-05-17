@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Parent
 
@@ -193,3 +193,13 @@ Recommended follow-up tasks after this planning refinement:
 - Archive-specific files live in an archive-specific provider project
 - Compression-format-specific files live in dedicated compression provider projects
 - The build and affected tests pass after relocation
+
+## Validation Evidence
+
+- Archive-specific models, planning, state, ordering, naming, persistence, and orchestration now live in `RepoMigrator.Providers.Archive`
+- Compression-format-specific Zip inspection and extraction now live in `RepoMigrator.Providers.Compression.Zip`
+- `RepoMigrator.Core` remains limited to provider-agnostic shared models and abstractions, including normalized source/destination contracts and destination ref abstraction needed by orchestration
+- Repository-backed destination behavior was kept in the owning Git provider project via `VersionControlMigrationDestinationProvider` and Git-specific ref operations
+- Tests and project references were retargeted to the owning provider projects instead of outdated Core placement assumptions
+- Relocation and follow-up implementation slices were validated through successful targeted archive-import test coverage (`39/39`) and successful targeted Git/destination compatibility coverage (`31/31`)
+- Full workspace build passed after the relocation and follow-up implementation work

@@ -48,6 +48,9 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-031-Implement-archive-import-planner-and-devops-state-store.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-035-Relocate-provider-specific-archive-and-compression-files-out-of-core.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-038-Retarget-archive-provider-tests-and-project-references-after-relocation.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-039-Create-targz-compression-provider-project-and-implement-targz-driver-there.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-040-Create-small-console-tool-for-archive-provider-smoke-tests.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-041-Register-archive-migration-services-in-wpf-bootstrap.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-SharedSkills-001-Create-global-test-coverage-skill.md" />
     <None Include="$(MSBuildThisFileDirectory)TraceAnalysis-Workbench-User-Guide.md" />
   </ItemGroup>

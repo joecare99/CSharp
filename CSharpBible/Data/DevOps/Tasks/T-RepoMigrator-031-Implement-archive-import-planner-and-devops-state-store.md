@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Parent
 
@@ -48,3 +48,14 @@ Implement the archive import planner and the DevOps-backed plan/state persistenc
 - Plan and state manifests are deterministic and readable
 - Tests cover plan creation and persistence roundtrip scenarios
 - The implementation respects the corrected provider-project boundaries
+
+## Validation Evidence
+
+- Added archive-provider-owned abstractions `IArchiveImportPlanner` and `IArchiveImportStateStore`
+- Implemented `ArchiveImportPlanner` to combine normalized source discovery, archive inspection, ordering, naming, and durable plan generation
+- Implemented `DevOpsArchiveImportStateStore` with deterministic manifest layout under `DevOps/Data/RepoMigrator/ArchiveImports/{planId}`
+- Added targeted MSTest coverage in:
+  - `RepoMigrator.Tests.ArchiveImportPlannerTests`
+  - `RepoMigrator.Tests.DevOpsArchiveImportStateStoreTests`
+- Targeted validation result: `3/3` tests passed
+- Full workspace build passed after the implementation

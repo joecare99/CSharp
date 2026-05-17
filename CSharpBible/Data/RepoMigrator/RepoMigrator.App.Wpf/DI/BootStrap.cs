@@ -5,6 +5,10 @@ using RepoMigrator.App.Wpf.ViewModels;
 using RepoMigrator.App.State.Services;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
+using RepoMigrator.Providers.Archive.Abstractions;
+using RepoMigrator.Providers.Archive.Services;
+using RepoMigrator.Providers.Compression.TarGz;
+using RepoMigrator.Providers.Compression.Zip;
 using RepoMigrator.Providers.Git;
 using RepoMigrator.Providers.SvnCli;
 
@@ -30,6 +34,27 @@ public static class Bootstrap
                 { RepoType.Svn, () => sp.GetRequiredService<SvnCliProvider>() }
             });
         });
+
+        // Archive migration support
+        services.AddSingleton(new DirectoryArchiveSnapshotSourceProvider(AppContext.BaseDirectory));
+        services.AddSingleton<ArchiveMigrationSourceProviderFactory>();
+        services.AddSingleton<IMigrationSourceProviderFactory>(sp => sp.GetRequiredService<ArchiveMigrationSourceProviderFactory>());
+        services.AddSingleton<ArchiveMigrationDestinationProviderFactory>();
+        services.AddSingleton<IMigrationDestinationProviderFactory>(sp => sp.GetRequiredService<ArchiveMigrationDestinationProviderFactory>());
+        services.AddSingleton<ArchiveOrderingService>();
+        services.AddSingleton<ArchiveRefNamingService>();
+        services.AddSingleton<ArchiveExtractionRootDetectionService>();
+        services.AddSingleton<ArchiveExtractionRootConfigurationStore>();
+        services.AddSingleton<ZipArchiveDriver>();
+        services.AddSingleton<TarGzArchiveDriver>();
+        services.AddSingleton<IArchiveDriverRegistry>(sp => new ArchiveDriverRegistry(new IArchiveDriver[]
+        {
+            sp.GetRequiredService<TarGzArchiveDriver>(),
+            sp.GetRequiredService<ZipArchiveDriver>()
+        }));
+        services.AddSingleton<IArchiveImportPlanner, ArchiveImportPlanner>();
+        services.AddSingleton<IArchiveImportStateStore>(_ => new DevOpsArchiveImportStateStore(AppContext.BaseDirectory));
+        services.AddSingleton<IArchiveMigrationService, ArchiveMigrationService>();
 
         // ViewModels
         services.AddSingleton<MigrationEndpointFactory>();
