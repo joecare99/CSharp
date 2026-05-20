@@ -17,7 +17,7 @@
 	<ItemGroup>
 		<PackageReference Condition="$(TargetFramework.StartsWith('net4'))" Include="IndexRange" Version="1.1.1" />
 		<PackageReference Include="MSTest" Version="4.2.3" />
-		<PackageReference Include="coverlet.collector" Version="10.0.0">
+		<PackageReference Include="coverlet.collector" Version="10.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
