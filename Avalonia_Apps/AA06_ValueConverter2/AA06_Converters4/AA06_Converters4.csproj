@@ -60,5 +60,4 @@
   <ItemGroup>
     <Folder Include="ViewModels\Interfaces\" />
   </ItemGroup>
-
 </Project>
