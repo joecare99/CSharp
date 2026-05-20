@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using TraceAnalysis.Workbench.Core.Models;
 using TraceAnalysis.Workbench.Core.Services;
+using TraceAnalysis.Widgets.Wpf.ViewModels;
 using TraceAnalysis.Workbench.Wpf.Services;
 
 namespace TraceAnalysis.Workbench.Wpf.ViewModels;
@@ -14,16 +15,19 @@ public sealed class MainWorkbenchViewModel
     private readonly ITraceSourceLoader _traceSourceLoader;
     private readonly IFileDialogService _fileDialogService;
     private readonly IWorkbenchMenuService _menuService;
+    private readonly TraceSeriesProjector _traceSeriesProjector;
     private WorkbenchContextKind _activeContext;
 
     public MainWorkbenchViewModel(
         WorkbenchSessionModel session,
         ITraceSourceLoader traceSourceLoader,
+        TraceSeriesProjector traceSeriesProjector,
         IProcessingConfigurationStorage storage,
         IWorkbenchMenuService menuService,
         IFileDialogService fileDialogService)
     {
         _traceSourceLoader = traceSourceLoader;
+        _traceSeriesProjector = traceSeriesProjector;
         _fileDialogService = fileDialogService;
         _menuService = menuService;
         _activeContext = WorkbenchContextKind.None;
@@ -39,6 +43,8 @@ public sealed class MainWorkbenchViewModel
         ChannelBrowser = new ChannelBrowserViewModel(channels);
         Diagnostics = new DiagnosticsPanelViewModel(sourceIssues, validationIssues);
         ProcessingEditor = new ProcessingEditorViewModel(Steps, storage, fileDialogService);
+        TraceChart = new TraceChartViewModel(_traceSeriesProjector);
+        TraceChart.Update(session.TraceSource);
         LoadTraceCommand = new DelegateCommand(LoadTrace);
         MainMenu = _menuService.CreateMenu(this);
     }
@@ -79,6 +85,11 @@ public sealed class MainWorkbenchViewModel
     public ProcessingEditorViewModel ProcessingEditor { get; }
 
     /// <summary>
+    /// Gets the chart visualization state.
+    /// </summary>
+    public TraceChartViewModel TraceChart { get; }
+
+    /// <summary>
     /// Gets the command that loads a trace file into the shell.
     /// </summary>
     public ICommand LoadTraceCommand { get; }
@@ -104,6 +115,8 @@ public sealed class MainWorkbenchViewModel
 
         var sourceState = _traceSourceLoader.Load(filePath);
         SourceSummary.Update(sourceState);
-        ChannelBrowser.UpdateFromDataBasis(sourceState.DataBasis);
+        ChannelBrowser.UpdateFromSeries(sourceState.Series);
+        ProcessingEditor.UpdateAvailableChannels(sourceState.Series);
+        TraceChart.Update(sourceState);
     }
 }

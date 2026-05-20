@@ -9,7 +9,7 @@ namespace AA05_CommandParCalc.Tests
         [TestMethod()]
         public void MainTest()
         {
-            var _baa = Program.BuildAvaloniaApp;
+            var _baa = Program.GetAppBuilder;
             try
             {
                 Program.GetAppBuilder = () => AppBuilder.Configure<App>();

@@ -6,6 +6,7 @@ using ConsoleLib;
 using ConsoleLib.Interfaces;
 using GenFreeBrowser.Places;
 using GenFreeBrowser.Places.Interface;
+using GenInterfaces.Interfaces.Authorities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace PlaceAuthorityConsoleDemo;
@@ -28,8 +29,8 @@ class Program
         services.AddSingleton<IConsole, ConsoleProxy>();
         services.AddSingleton<IExtendedConsole, ExtendedConsole>();
         services.AddSingleton<ISearchHistoryService, SearchHistoryService>();
-        services.AddSingleton<IPlaceAuthority>(sp => new NominatimAuthority(sp.GetRequiredService<IHttpClientFactory>().CreateClient()));
-        services.AddSingleton<IPlaceAuthority>(sp => new GovAuthority(sp.GetRequiredService<IHttpClientFactory>().CreateClient()));
+        services.AddSingleton<IGenPlaceAuthority>(sp => new NominatimAuthority(sp.GetRequiredService<IHttpClientFactory>().CreateClient()));
+        services.AddSingleton<IGenPlaceAuthority>(sp => new GovAuthority(sp.GetRequiredService<IHttpClientFactory>().CreateClient()));
         services.AddSingleton<IPlaceSearchService, PlaceSearchService>();
         services.AddSingleton<SearchViewModel>();
         services.AddTransient<ConsoleAppViewModel>();

@@ -27,6 +27,8 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     private readonly HashSet<string> _hsSavedGitTagSelections = new(StringComparer.OrdinalIgnoreCase);
     private List<RepoTypeRecentValues> _lstRecentSourceUrlsByType = [];
     private List<RepoTypeRecentValues> _lstRecentTargetUrlsByType = [];
+    private SourceSelectionResult _sourceSelection = new();
+    private TargetSelectionResult _targetSelection = new();
     private string? _sSavedSvnFromRevisionId;
     private string? _sSavedSvnToRevisionId;
     private string? _sSelectedSvnFromRevisionId;
@@ -39,6 +41,8 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     private int _iPipelineExportWorkerCount = 2;
     private bool _xSplitIntoSubdirectoryBranches;
     private int _iBranchSplitDepth = 1;
+    private bool _xVerifyChangedPathCount = true;
+    private bool _xVerboseProgress;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanConfigureGitHistory))]
@@ -185,6 +189,26 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         }
     }
 
+    public bool VerifyChangedPathCount
+    {
+        get => _xVerifyChangedPathCount;
+        set
+        {
+            if (SetProperty(ref _xVerifyChangedPathCount, value))
+                SaveInputState();
+        }
+    }
+
+    public bool VerboseProgress
+    {
+        get => _xVerboseProgress;
+        set
+        {
+            if (SetProperty(ref _xVerboseProgress, value))
+                SaveInputState();
+        }
+    }
+
     public string? SelectedSvnFromRevisionId
     {
         get => _sSelectedSvnFromRevisionId;
@@ -222,9 +246,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     public partial WorkflowStage WorkflowStage { get; private set; } = WorkflowStage.Setup;
 
     public bool IsIdle => !IsRunning;
-    public bool CanConfigureGitHistory => SourceType == RepoType.Git && TargetType == RepoType.Git;
-    public bool CanConfigureSvnRevisions => SourceType == RepoType.Svn;
-    public bool CanConfigureAdvancedGitTargetOptions => SourceType == RepoType.Svn && TargetType == RepoType.Git;
+    public bool CanConfigureGitHistory => SourceSupportsNativeHistoryTransfer && SourceSupportsReferenceSelection && TargetSupportsBranchSelection;
+    public bool CanConfigureSvnRevisions => SourceSupportsRevisionSelection;
+    public bool CanConfigureAdvancedGitTargetOptions => SourceSupportsRevisionSelection && TargetSupportsBranchSelection;
     public bool ShowGenericRevisionInputs => !CanConfigureSvnRevisions;
     public bool ShowPipelineTuningOptions => CanConfigureAdvancedGitTargetOptions && UsePipelinedMigration;
     public bool ShowBranchSplitDepthOptions => CanConfigureAdvancedGitTargetOptions && SplitIntoSubdirectoryBranches;
@@ -311,6 +335,8 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         PipelineExportWorkerCount = state.PipelineExportWorkerCount;
         SplitIntoSubdirectoryBranches = state.SplitIntoSubdirectoryBranches;
         BranchSplitDepth = state.BranchSplitDepth;
+        VerifyChangedPathCount = state.VerifyChangedPathCount;
+        VerboseProgress = state.VerboseProgress;
         EnsureAdvancedMigrationOptionDefaults();
         RefreshProviderSpecificPathHistories();
         _isLoadingInputState = false;
@@ -332,10 +358,10 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             var q = CreateChangeSetQuery();
             var options = CreateMigrationOptions();
 
+            await _migration.MigrateAsync(sourceEndpoint, targetEndpoint, q, options, this, ct);
+
             CaptureRecentSourceInputs();
             CaptureRecentTargetInputs();
-
-            await _migration.MigrateAsync(sourceEndpoint, targetEndpoint, q, options, this, ct);
         }, workflowStageOnStart: WorkflowStage.Execution, workflowStageOnFinish: WorkflowStage.Options);
     }
 
@@ -443,6 +469,10 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             MigrationReportMessage.ProjectedBranchCommitted => $"Commit-Stufe: Branch '{GetRequired<string>(arrAdditional, 1)}' für Revision {GetRequired<string>(arrAdditional, 0)} übertragen.",
             MigrationReportMessage.GitBranchTransferStarting => $"Übertrage Branch {GetRequired<string>(arrAdditional, 0)} -> {GetRequired<string>(arrAdditional, 1)} …",
             MigrationReportMessage.GitTagTransferStarting => $"Übertrage Tag {GetRequired<string>(arrAdditional, 0)} -> {GetRequired<string>(arrAdditional, 1)} …",
+            MigrationReportMessage.ChangeSetDetails => $"Revision {GetRequired<string>(arrAdditional, 0)}: Autor={GetRequired<string>(arrAdditional, 1)}, Zeit={GetRequired<DateTimeOffset>(arrAdditional, 2):u}, SVN-Pfade={GetRequired<int>(arrAdditional, 3)} (Dateien={GetRequired<int>(arrAdditional, 4)}, Ordner={GetRequired<int>(arrAdditional, 5)}; modified={GetRequired<int>(arrAdditional, 6)}, added={GetRequired<int>(arrAdditional, 7)}, deleted={GetRequired<int>(arrAdditional, 8)}, replaced={GetRequired<int>(arrAdditional, 9)}, other={GetRequired<int>(arrAdditional, 10)}), Beschreibung='{GetRequired<string>(arrAdditional, 11)}'",
+            MigrationReportMessage.SnapshotMaterialized => $"Snapshot für Revision {GetRequired<string>(arrAdditional, 0)} materialisiert: {GetRequired<int>(arrAdditional, 1)} Dateien in {GetRequired<string>(arrAdditional, 2)}.",
+            MigrationReportMessage.ChangeCountVerificationPlanned => $"Prüfe Ziel-Änderungsanzahl für Revision {GetRequired<string>(arrAdditional, 0)} gegen {GetRequired<int>(arrAdditional, 1)} geänderte SVN-Dateipfade ({GetRequired<int>(arrAdditional, 2)} SVN-Pfade gesamt).",
+            MigrationReportMessage.GitChangeCountVerification => $"Git-Status vor Commit: gesamt={GetRequired<int>(arrAdditional, 0)}, modified={GetRequired<int>(arrAdditional, 1)}, added={GetRequired<int>(arrAdditional, 2)}, deleted={GetRequired<int>(arrAdditional, 3)}, renamed={GetRequired<int>(arrAdditional, 4)}; erwartet={GetRequired<int>(arrAdditional, 5)} Dateien ({GetRequired<int>(arrAdditional, 6)} SVN-Pfade gesamt). Beispiel: {GetRequired<string>(arrAdditional, 7)}",
             MigrationReportMessage.MigrationCompleted => "Migration abgeschlossen.",
             _ => throw new InvalidEnumArgumentException(nameof(message), (int)message, typeof(MigrationReportMessage))
         };
@@ -497,7 +527,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
                 ProjectionMode = SplitIntoSubdirectoryBranches && CanConfigureAdvancedGitTargetOptions ? MigrationProjectionMode.SubdirectoryBranches : MigrationProjectionMode.None,
                 BranchSplitDepth = BranchSplitDepth,
                 PipelinePrefetchCount = Math.Max(PipelinePrefetchCount, 1),
-                PipelineExportWorkerCount = Math.Max(PipelineExportWorkerCount, 1)
+                PipelineExportWorkerCount = Math.Max(PipelineExportWorkerCount, 1),
+                VerifyChangedPathCount = VerifyChangedPathCount,
+                VerboseProgress = VerboseProgress
             };
         }
 
@@ -506,6 +538,8 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             TransferMode = RepositoryTransferMode.NativeHistory,
             TransferBranches = TransferGitBranches,
             TransferTags = TransferGitTags,
+            VerifyChangedPathCount = VerifyChangedPathCount,
+            VerboseProgress = VerboseProgress,
             SelectedBranches = GitBranchSelections.Where(vmItem => vmItem.IsSelected).Select(vmItem => vmItem.Name).ToList(),
             SelectedTags = GitTagSelections.Where(vmItem => vmItem.IsSelected).Select(vmItem => vmItem.Name).ToList()
         };
@@ -513,6 +547,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
     private void ApplySourceSelectionResult(SourceSelectionResult sourceSelection)
     {
+        _sourceSelection = sourceSelection;
         if (sourceSelection.Branches.Count > 0 || sourceSelection.Tags.Count > 0)
         {
             RebuildGitSelectionCollection(GitBranchSelections, sourceSelection.Branches, _hsSavedGitBranchSelections);
@@ -531,12 +566,13 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         else
             ClearSvnSelections();
 
+        NotifyCapabilityStateChanged();
         NotifySetupStateChanged();
     }
 
     private async Task EnsureOptionSelectionDataAsync(CancellationToken ct)
     {
-        if (SourceType != RepoType.Svn || SvnRevisionSelections.Count > 0 || string.IsNullOrWhiteSpace(SourceUrl))
+        if (!CanConfigureSvnRevisions || SvnRevisionSelections.Count > 0 || string.IsNullOrWhiteSpace(SourceUrl))
             return;
 
         ApplySourceSelectionResult(await _repositorySelectionService.LoadSourceSelectionAsync(CreateSourceEndpoint(), ct));
@@ -544,9 +580,11 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
     private void ApplyTargetSelectionResult(TargetSelectionResult targetSelection)
     {
+        _targetSelection = targetSelection;
         if (targetSelection.Branches.Count == 0)
         {
             TargetGitBranchOptions.Clear();
+            NotifyCapabilityStateChanged();
             NotifySetupStateChanged();
             return;
         }
@@ -563,6 +601,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             TargetBranch = targetSelection.DefaultBranch;
 
         Append($"  Ziel-Branches geladen: {TargetGitBranchOptions.Count}");
+        NotifyCapabilityStateChanged();
         NotifySetupStateChanged();
     }
 
@@ -652,21 +691,15 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
     private static void SyncRecentValues(ObservableCollection<string> lstTargetCollection, IReadOnlyList<string> lstValues)
     {
-        for (var iIndex = 0; iIndex < lstValues.Count; iIndex++)
+        var hsExistingValues = new HashSet<string>(lstTargetCollection, StringComparer.OrdinalIgnoreCase);
+        foreach (var sValue in lstValues)
         {
-            if (iIndex < lstTargetCollection.Count)
-            {
-                if (!string.Equals(lstTargetCollection[iIndex], lstValues[iIndex], StringComparison.Ordinal))
-                    lstTargetCollection[iIndex] = lstValues[iIndex];
-
+            if (string.IsNullOrWhiteSpace(sValue))
                 continue;
-            }
 
-            lstTargetCollection.Add(lstValues[iIndex]);
+            if (hsExistingValues.Add(sValue))
+                lstTargetCollection.Add(sValue);
         }
-
-        while (lstTargetCollection.Count > lstValues.Count)
-            lstTargetCollection.RemoveAt(lstTargetCollection.Count - 1);
     }
 
     private static void ApplyRecentValue(ObservableCollection<string> lstTargetCollection, string? sValue)
@@ -789,6 +822,18 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         OnPropertyChanged(nameof(SetupHintMessage));
     }
 
+    private void NotifyCapabilityStateChanged()
+    {
+        OnPropertyChanged(nameof(CanConfigureGitHistory));
+        OnPropertyChanged(nameof(CanConfigureSvnRevisions));
+        OnPropertyChanged(nameof(CanConfigureAdvancedGitTargetOptions));
+        OnPropertyChanged(nameof(ShowGenericRevisionInputs));
+        OnPropertyChanged(nameof(ShowPipelineTuningOptions));
+        OnPropertyChanged(nameof(ShowBranchSplitDepthOptions));
+        OnPropertyChanged(nameof(CanStartMigration));
+        OnPropertyChanged(nameof(OptionsHintMessage));
+    }
+
     private void NotifyOptionStateChanged()
     {
         OnPropertyChanged(nameof(CanStartMigration));
@@ -815,6 +860,23 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
     private string BuildCommitSummary()
         => $"Aktueller Commit: {(string.IsNullOrWhiteSpace(CurrentChangeSetId) ? "-" : CurrentChangeSetId)}";
+
+    private bool SourceSupportsReferenceSelection
+        => _sourceSelection.Capabilities.SupportsBranchSelection
+           || _sourceSelection.Capabilities.SupportsTagSelection
+           || SourceType == RepoType.Git;
+
+    private bool SourceSupportsRevisionSelection
+        => _sourceSelection.Capabilities.SupportsRevisionSelection
+           || SourceType == RepoType.Svn;
+
+    private bool SourceSupportsNativeHistoryTransfer
+        => _sourceSelection.Capabilities.SupportsNativeHistoryTransfer
+           || SourceType == RepoType.Git;
+
+    private bool TargetSupportsBranchSelection
+        => _targetSelection.Capabilities.SupportsBranchSelection
+           || TargetType == RepoType.Git;
 
     private static string BuildEndpointSummaryName(string sUrlOrPath, string? sBranchOrTrunk)
     {
@@ -897,7 +959,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
     partial void OnSourceTypeChanged(RepoType value)
     {
+        _sourceSelection = new SourceSelectionResult();
         NotifySetupStateChanged();
+        NotifyCapabilityStateChanged();
         NotifyOptionStateChanged();
         RefreshSourceUrlHistory();
         _hsSavedGitBranchSelections.Clear();
@@ -912,10 +976,12 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     }
     partial void OnSourceUrlChanged(string value)
     {
+        _sourceSelection = new SourceSelectionResult();
         _hsSavedGitBranchSelections.Clear();
         _hsSavedGitTagSelections.Clear();
         _sSavedSvnFromRevisionId = null;
         _sSavedSvnToRevisionId = null;
+        NotifyCapabilityStateChanged();
         ClearGitSelections();
         ClearSvnSelections();
         SetWorkflowStage(WorkflowStage.Setup);
@@ -941,7 +1007,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     }
     partial void OnTargetTypeChanged(RepoType value)
     {
+        _targetSelection = new TargetSelectionResult();
         NotifySetupStateChanged();
+        NotifyCapabilityStateChanged();
         NotifyOptionStateChanged();
         RefreshTargetUrlHistory();
         EnsureAdvancedMigrationOptionDefaults();
@@ -951,7 +1019,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     }
     partial void OnTargetUrlChanged(string value)
     {
+        _targetSelection = new TargetSelectionResult();
         NotifyOptionStateChanged();
+        NotifyCapabilityStateChanged();
         TargetGitBranchOptions.Clear();
         SetWorkflowStage(WorkflowStage.Setup);
         SaveInputState();
@@ -1032,7 +1102,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
             PipelinePrefetchCount = PipelinePrefetchCount,
             PipelineExportWorkerCount = PipelineExportWorkerCount,
             SplitIntoSubdirectoryBranches = SplitIntoSubdirectoryBranches,
-            BranchSplitDepth = BranchSplitDepth
+            BranchSplitDepth = BranchSplitDepth,
+            VerifyChangedPathCount = VerifyChangedPathCount,
+            VerboseProgress = VerboseProgress
         });
     }
 }

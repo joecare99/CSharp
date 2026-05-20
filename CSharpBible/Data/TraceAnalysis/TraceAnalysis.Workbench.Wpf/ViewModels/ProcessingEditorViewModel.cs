@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using TraceAnalysis.Workbench.Core.Models;
 using TraceAnalysis.Workbench.Core.Services;
@@ -17,6 +18,7 @@ public partial class ProcessingEditorViewModel : ObservableObject
     private readonly IFileDialogService _fileDialogService;
     private readonly ObservableCollection<ChannelOptionViewModel> _availableChannels;
     private readonly ObservableCollection<EditableProcessingStepViewModel> _editableSteps;
+    private readonly ObservableCollection<TraceSeriesModel> _sourceSeries;
     private string? _currentFilePath;
 
     public ProcessingEditorViewModel(
@@ -28,6 +30,7 @@ public partial class ProcessingEditorViewModel : ObservableObject
         _fileDialogService = fileDialogService;
         _availableChannels = new ObservableCollection<ChannelOptionViewModel>();
         _editableSteps = new ObservableCollection<EditableProcessingStepViewModel>();
+        _sourceSeries = new ObservableCollection<TraceSeriesModel>();
 
         foreach (var step in steps)
             _editableSteps.Add(new EditableProcessingStepViewModel(step, _availableChannels));
@@ -85,6 +88,21 @@ public partial class ProcessingEditorViewModel : ObservableObject
     {
         SelectedStepDetail?.SetStep(StepList.SelectedStep);
         PreviewSummary.UpdateFromStep(StepList.SelectedStep);
+    }
+
+    /// <summary>
+    /// Updates the available input channels from the currently loaded trace series.
+    /// </summary>
+    public void UpdateAvailableChannels(IReadOnlyList<TraceSeriesModel> sourceSeries)
+    {
+        _sourceSeries.Clear();
+        if (sourceSeries != null)
+        {
+            foreach (var series in sourceSeries)
+                _sourceSeries.Add(series);
+        }
+
+        RefreshAvailableChannels();
     }
 
     [RelayCommand]
@@ -182,8 +200,17 @@ public partial class ProcessingEditorViewModel : ObservableObject
         var selectedChannelName = StepList?.SelectedStep?.Inputs.FirstOrDefault()?.SelectedChannel?.ChannelName;
 
         _availableChannels.Clear();
-        foreach (var channel in new[] { "Speed", "Angle", "StatusWord" })
-            _availableChannels.Add(new ChannelOptionViewModel(channel, isDerived: false));
+        foreach (var channel in _sourceSeries)
+        {
+            if (!_availableChannels.Any(option => option.ChannelName == channel.Name))
+                _availableChannels.Add(new ChannelOptionViewModel(channel.Name, isDerived: false));
+        }
+
+        if (_availableChannels.Count == 0)
+        {
+            foreach (var channel in new[] { "Speed", "Angle", "StatusWord" })
+                _availableChannels.Add(new ChannelOptionViewModel(channel, isDerived: false));
+        }
 
         foreach (var step in _editableSteps)
         {

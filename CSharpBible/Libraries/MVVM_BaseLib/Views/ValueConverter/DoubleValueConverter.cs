@@ -33,18 +33,14 @@ public class DoubleValueConverter : IValueConverter
     /// <param name="parameter">The converter parameter to use.</param>
     /// <param name="culture">The culture to use in the converter.</param>
     /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value switch
     {
-        return value switch
-        {
-            double dval when parameter is string spar => (dval * FixedFactor).ToString(spar, culture),
-            double dval => (dval * FixedFactor).ToString(culture),
-            float fval when parameter is string spar => (fval * FixedFactor).ToString(spar, culture),
-            float fval => (fval * FixedFactor).ToString(culture),
-            _ => value?.ToString() ?? ""
-        };
-
-    }
+        double dval when parameter is string spar => (dval * FixedFactor).ToString(spar, culture),
+        double dval => (dval * FixedFactor).ToString(culture),
+        float fval when parameter is string spar => (fval * FixedFactor).ToString(spar, culture),
+        float fval => (fval * FixedFactor).ToString(culture),
+        _ => value?.ToString() ?? ""
+    };
 
     /// <summary>
     /// Converts a value.

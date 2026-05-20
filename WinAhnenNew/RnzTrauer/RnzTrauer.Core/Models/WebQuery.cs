@@ -1,4 +1,5 @@
 using OpenQA.Selenium;
+using System.Collections.Generic;
 
 namespace RnzTrauer.Core;
 

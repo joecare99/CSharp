@@ -409,7 +409,7 @@ public partial class DriveBasic
         {
             if (string.IsNullOrWhiteSpace(text))
                 return 0;
-            var key = char.ToLowerInvariant(text.Trim()[0]);
+            var key = char.ToLowerInvariant(text!.Trim()[0]);
             return AxisMap.TryGetValue(key, out var axis) ? axis : 0;
         }
 

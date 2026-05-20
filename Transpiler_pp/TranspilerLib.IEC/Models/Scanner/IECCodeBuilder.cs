@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using TranspilerLib.Data;
+using TranspilerLib.IEC.Models.Ast;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models.Scanner;
 
@@ -8,6 +9,8 @@ namespace TranspilerLib.IEC.Models.Scanner;
 
 public class IECCodeBuilder : CodeBuilder
 {
+    private ICodeBlock? _lastKnownActualBlock;
+
     public IECCodeBuilder()
     {
         NewCodeBlock = (name, type, code, parent, pos) => new IECCodeBlock() { Name = name, Type = type, Code = code, Parent = parent, SourcePos = pos };
@@ -15,6 +18,16 @@ public class IECCodeBuilder : CodeBuilder
 
     public override void OnToken(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Unknown && string.Equals(data.actualBlock.Name, "Declaration", StringComparison.Ordinal))
+        {
+            data.actualBlock.Type = CodeBlockType.MainBlock;
+        }
+
+        if (data.actualBlock == null && _lastKnownActualBlock != null)
+        {
+            data.actualBlock = _lastKnownActualBlock;
+        }
+
         switch (tokenData.type)
         {
             default:
@@ -32,15 +45,63 @@ public class IECCodeBuilder : CodeBuilder
             case CodeBlockType.Function when !string.IsNullOrEmpty(tokenData.Code):
                 BuildFunction(tokenData, data);
                 break;
+            case CodeBlockType.Block when !string.IsNullOrEmpty(tokenData.Code):
+                BuildBlock(tokenData, data);
+                break;
             case CodeBlockType.Bracket when !string.IsNullOrEmpty(tokenData.Code):
                 BuildBracket(tokenData, data);
                 break;
         }
+        if (data.actualBlock != null)
+        {
+            _lastKnownActualBlock = data.actualBlock;
+            TryAttachAssignmentAst(data.actualBlock);
+        }
         data.cbtLast = tokenData.type;
+    }
+
+    private static void TryAttachAssignmentAst(ICodeBlock block)
+    {
+        ICodeBlock? currentBlock = block;
+        while (currentBlock != null && currentBlock.Parent != null && currentBlock.Type != CodeBlockType.Assignment)
+        {
+            currentBlock = currentBlock.Parent;
+        }
+
+        if (currentBlock?.Type == CodeBlockType.Assignment)
+        {
+            _ = IecAstMapper.TryAttachAssignmentStatement(currentBlock);
+        }
+    }
+
+    private void BuildBlock(TokenData tokenData, ICodeBuilderData data)
+    {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            data.actualBlock = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
+        base.OnToken(tokenData, data);
     }
 
     private void BuildBracket(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            if (tokenData.Code == "["
+                && data.actualBlock.SubBlocks.LastOrDefault() is ICodeBlock lastBlock
+                && lastBlock.Type is CodeBlockType.Variable or CodeBlockType.Function)
+            {
+                lastBlock.Type = CodeBlockType.Function;
+                lastBlock.Code += tokenData.Code;
+                return;
+            }
+
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         switch (tokenData.Code)
         {
             default:
@@ -48,7 +109,10 @@ public class IECCodeBuilder : CodeBuilder
                     var td = tokenData;
                     td.Level = data.actualBlock.Level - 1;
                     base.OnToken(td, data);
-                    data.actualBlock = data.actualBlock.Parent!;
+                    if (data.actualBlock.Parent != null)
+                    {
+                        data.actualBlock = data.actualBlock.Parent;
+                    }
                 }
                 break;
             case "(" when data.actualBlock.Type is CodeBlockType.Variable or CodeBlockType.Function:
@@ -74,6 +138,12 @@ public class IECCodeBuilder : CodeBuilder
 
     private void BuildFunction(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         switch (tokenData.Code.ToUpper())
         {
             default:
@@ -104,11 +174,24 @@ public class IECCodeBuilder : CodeBuilder
 
     private void BuildVariable(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         switch (data.actualBlock.Type)
         {
             case CodeBlockType.Variable or CodeBlockType.Function when data.actualBlock.Code.EndsWith("."):
                 data.actualBlock.Type = CodeBlockType.Variable;
                 data.actualBlock.Code += tokenData.Code;
+                break;
+            case CodeBlockType.Block:
+                {
+                    var td = tokenData;
+                    td.Level = data.actualBlock.Level;
+                    base.OnToken(td, data);
+                }
                 break;
             case CodeBlockType.Function:
                 {
@@ -145,6 +228,12 @@ public class IECCodeBuilder : CodeBuilder
 
     private void BuildNumber(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration)
+        {
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         if (data.actualBlock.Type is CodeBlockType.Operation or CodeBlockType.Assignment)
         {
             ICodeBlock block = data.actualBlock;
@@ -154,6 +243,12 @@ public class IECCodeBuilder : CodeBuilder
             data.actualBlock.Parent = block;
             data.actualBlock = block;
         }
+        else if (data.actualBlock.Type == CodeBlockType.MainBlock)
+        {
+            var td = tokenData;
+            td.Level = data.actualBlock.Level;
+            base.OnToken(td, data);
+        }
         else
         {
             base.OnToken(tokenData, data);
@@ -162,6 +257,12 @@ public class IECCodeBuilder : CodeBuilder
 
     private void BuildInstruction(TokenData tokenData, ICodeBuilderData data)
     {
+        if (data.actualBlock.Type == CodeBlockType.Declaration && tokenData.Code != ";")
+        {
+            _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+            return;
+        }
+
         switch (tokenData.Code, data.actualBlock.Type)
         {
             default:
@@ -187,6 +288,16 @@ public class IECCodeBuilder : CodeBuilder
                     block.Code += tokenData.Code;
                 }
                 break;
+            case (":", CodeBlockType.Variable or CodeBlockType.Function)
+                when !data.actualBlock.Code.EndsWith("(", StringComparison.Ordinal)
+                && data.actualBlock.Parent != null:
+                {
+                    var leftBlock = data.actualBlock;
+                    var declaration = NewCodeBlock("Declaration", CodeBlockType.Declaration, ":", leftBlock.Parent, tokenData.Pos);
+                    leftBlock.Parent = declaration;
+                    data.actualBlock = declaration;
+                }
+                break;
             case (":=", CodeBlockType.Variable or CodeBlockType.Function):
                 {
                     ICodeBlock block = data.actualBlock;
@@ -197,6 +308,7 @@ public class IECCodeBuilder : CodeBuilder
                     td.type = CodeBlockType.Assignment;
                     base.OnToken(td, data);
                     block.Parent = data.actualBlock;
+                    _ = IecAstMapper.TryAttachAssignmentStatement(data.actualBlock);
                 }
                 break;
             case (",",_) :
@@ -208,6 +320,18 @@ public class IECCodeBuilder : CodeBuilder
                 break;
             case (";",_):
                 {
+                    if (data.actualBlock.Type == CodeBlockType.Declaration)
+                    {
+                        if (data.actualBlock.Parent != null)
+                        {
+                            _ = NewCodeBlock($"{CodeBlockType.Block}", CodeBlockType.Block, ";", data.actualBlock.Parent, tokenData.Pos);
+                            data.actualBlock = data.actualBlock.Parent;
+                        }
+
+                        break;
+                    }
+
+                    _ = IecAstMapper.TryAttachAssignmentStatement(data.actualBlock);
                     var td = tokenData;
                     td.Level = data.actualBlock.Level - 1;
                     td.type = CodeBlockType.Block;
@@ -229,6 +353,12 @@ public class IECCodeBuilder : CodeBuilder
             case ("AND", CodeBlockType.Number or CodeBlockType.Variable or CodeBlockType.Operation or CodeBlockType.Function):
             case ("OR", CodeBlockType.Number or CodeBlockType.Variable or CodeBlockType.Operation or CodeBlockType.Function):
                 {
+                    if (data.actualBlock.Type == CodeBlockType.Declaration)
+                    {
+                        _ = NewCodeBlock($"{tokenData.type}", tokenData.type, tokenData.Code, data.actualBlock, tokenData.Pos);
+                        break;
+                    }
+
                     ICodeBlock block = data.actualBlock;
                     var td = tokenData;
                     td.Level = block.Level - 1;
@@ -237,23 +367,36 @@ public class IECCodeBuilder : CodeBuilder
                         && new[] { "*", "/" }.Contains(td.Code)
                         && new[] { "+", "-" }.Contains(block.Code))
                     {
-                        var subBlock = block.SubBlocks.Last();
-                        data.actualBlock.Parent = block;
-                        subBlock.Parent = data.actualBlock;
+                        var subBlock = block.SubBlocks.LastOrDefault();
+                        if (subBlock != null)
+                        {
+                            data.actualBlock.Parent = block;
+                            subBlock.Parent = data.actualBlock;
+                        }
                         // data.actualBlock = block;
 
                     }
                     else
                     if (block.Type == CodeBlockType.Operation
                         && new[] { "*", "/" }.Contains(block.Code)
-                        && new[] { "+", "-" }.Contains(block.Parent?.Code)
+                        && block.Parent is ICodeBlock parentBlock
+                        && new[] { "+", "-" }.Contains(parentBlock.Code)
                         && new[] { "+", "-" }.Contains(td.Code))
                     {
-                        data.actualBlock.Parent = block.Parent!.Parent;
-                        block.Parent.Parent = data.actualBlock;
+                        if (parentBlock.Parent != null)
+                        {
+                            data.actualBlock.Parent = parentBlock.Parent;
+                            parentBlock.Parent = data.actualBlock;
+                        }
+                        else
+                        {
+                            block.Parent = data.actualBlock;
+                        }
                     }
                     else
                         block.Parent = data.actualBlock;
+
+                    _ = IecAstMapper.TryAttachAssignmentStatement(block.Type == CodeBlockType.Assignment ? block : data.actualBlock);
                 }
                 break;
         }

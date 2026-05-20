@@ -18,24 +18,25 @@
     <Project Path="../CSharpBible/Libraries/BaseLib/BaseLib.csproj" />
     <Project Path="../CSharpBible/Libraries/BaseLibTests/BaseLibTests.csproj" />
     <Project Path="../CSharpBible/Libraries/CommonDialogs/CommonDialogs.csproj">
-      <Platform Solution="*|Mixed Platforms" Project="x64" />
       <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Mixed Platforms" Project="x64" />
     </Project>
     <Project Path="../CSharpBible/Libraries/CommonDialogs/CommonDialogs_net.csproj">
-      <Platform Solution="*|Mixed Platforms" Project="x64" />
       <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Mixed Platforms" Project="x64" />
     </Project>
     <Project Path="../CSharpBible/Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj">
-      <Platform Solution="*|Mixed Platforms" Project="x86" />
       <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Mixed Platforms" Project="x86" />
     </Project>
     <Project Path="../CSharpBible/Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
-      <Platform Solution="*|Mixed Platforms" Project="x86" />
       <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="Release|Mixed Platforms" Project="x86" />
     </Project>
   </Folder>
   <Folder Name="/Projektmappenelemente/">
     <File Path="../Gen_FreeWin/GenFreeWin.props" />
+    <File Path=".github/copilot-instructions.md" />
     <File Path="CONTRIBUTING.md" />
     <File Path="Transpiler.props" />
   </Folder>
@@ -44,6 +45,7 @@
     <Project Path="Analyzer1/Analyzer1.Package/Analyzer1.Package.csproj" />
     <Project Path="Analyzer1/Analyzer1.Vsix/Analyzer1.Vsix.csproj" />
     <Project Path="Analyzer1/Analyzer1/Analyzer1.csproj" />
+    <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
     <Project Path="TranspilerConsTest/TranspilerConsTest.csproj" />
     <Project Path="TranspilerLib.CSharp.Tests/TranspilerLib.CSharp.Tests.csproj" />
     <Project Path="TranspilerLib.CSharp/TranspilerLib.CSharp.csproj" />
@@ -51,8 +53,11 @@
     <Project Path="TranspilerLib.DriveBASIC/TranspilerLib.DriveBASIC.csproj" />
     <Project Path="TranspilerLib.IEC.Tests/TranspilerLib.IEC.Tests.csproj" />
     <Project Path="TranspilerLib.IEC/TranspilerLib.IEC.csproj" />
+    <Project Path="TranspilerLib.Integration.Tests/TranspilerLib.Integration.Tests.csproj" />
     <Project Path="TranspilerLib.Pascal.Tests/TranspilerLib.Pascal.Tests.csproj" />
     <Project Path="TranspilerLib.Pascal/TranspilerLib.Pascal.csproj" />
+    <Project Path="TranspilerLib.Semantics.Tests/TranspilerLib.Semantics.Tests.csproj" />
+    <Project Path="TranspilerLib.Semantics/TranspilerLib.Semantics.csproj" />
     <Project Path="TranspilerLib/TranspilerLib.csproj" />
     <Project Path="TranspilerLibTests/TranspilerLibTests.csproj" />
     <Project Path="Trnsp.Show.Lfm.Tests/Trnsp.Show.Lfm.Tests.csproj" />

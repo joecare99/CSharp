@@ -14,6 +14,16 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\TranspilerLib\TranspilerLib.csproj" />
+      <ProjectReference Include="..\TranspilerLib.Semantics\TranspilerLib.Semantics.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Models\Ast\*.cs" />
+		<Compile Include="Models\Ast\IecArtifactMetadata.cs" />
+		<Compile Include="Models\Ast\IecAstMapper.cs" />
+		<Compile Include="Models\Ast\IecCompilationUnit.cs" />
+		<Compile Include="Models\Ast\IecDeclarationMetadata.cs" />
+     <Compile Include="Models\Ast\IecFrontendCompilationUnitFactory.cs" />
+		<Compile Include="Models\Ast\IecMetadata.cs" />
 	</ItemGroup>
 
 </Project>

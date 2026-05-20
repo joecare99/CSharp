@@ -87,7 +87,7 @@ namespace WinAhnenNew.Services
             var genGenealogy = LoadGenealogy();
             if (genGenealogy is IGenealogyPersistenceContext persistenceContext)
             {
-                persistenceContext.FlushAsync(_selectedPerson, GenealogyFlushScope.Auto).GetAwaiter().GetResult();
+                persistenceContext.FlushAsync(_selectedPerson, GenealogyPersistenceScope.Auto).GetAwaiter().GetResult();
                 return;
             }
 
@@ -321,10 +321,33 @@ namespace WinAhnenNew.Services
                 _sGenealogyId = sGenealogyId;
             }
 
+            public Task LoadAsync(IGenealogy genealogy, System.Threading.CancellationToken cancellationToken = default)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return Task.CompletedTask;
+            }
+
+            public Task<IGenEntity?> LoadEntityAsync(
+                IGenealogy genealogy,
+                Guid gUid,
+                EGenType? eGenType = null,
+                System.Threading.CancellationToken cancellationToken = default)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return Task.FromResult(genealogy.Entitys.FirstOrDefault(entity => entity.UId == gUid));
+            }
+
+            public Task SaveAsync(IGenealogy genealogy, System.Threading.CancellationToken cancellationToken = default)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                _genealogySecureStore.Save(_sGenealogyId, genealogy);
+                return Task.CompletedTask;
+            }
+
             public Task FlushAsync(
                 IGenealogy genGenealogy,
                 IGenEntity? genRequestedEntity,
-                GenealogyFlushScope eScope,
+                GenealogyPersistenceScope eScope,
                 System.Threading.CancellationToken cancellationToken = default)
             {
                 cancellationToken.ThrowIfCancellationRequested();

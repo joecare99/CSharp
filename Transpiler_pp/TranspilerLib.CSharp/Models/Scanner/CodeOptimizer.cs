@@ -14,22 +14,25 @@ public class CodeOptimizer : ICodeOptimizer
     private ICodeBlock? RemoveGotoAndLabel(ICodeBlock item, ICodeBlock source)
     {
         var p = source.Parent;
-        if (source.Parent == item.Parent
+        if (p != null
+            && p == item.Parent
             && (item.Index < source.Index + 3)
                 && (item.Index > source.Index))
         {
             var c = item;
             while (c.Next is ICodeBlock next2
-                && next2.Type is CodeBlockType.LComment or CodeBlockType.Comment)
+                && IsCommentLike(next2))
                 c = next2;
             if (c.Next is ICodeBlock next
-                && next.Code.StartsWith("num =")
+                && IsNumAssignment(next)
                 && !next.Code.Contains("(")
                 && next.Code.EndsWith(";"))
                 c = next;
             if (c.Next is ICodeBlock next3)
                 c = next3;
-            _ = source.Parent!.DeleteSubBlocks(source.Index, c.Index - source.Index);
+            var deleteCount = c.Index - source.Index;
+            if (deleteCount > 0)
+                _ = p.DeleteSubBlocks(source.Index, deleteCount);
             if (FindLeadingLabel(c) is ICodeBlock labelItem
                 && labelItem.Sources.Count >= 2)
                 TestItem(labelItem);
@@ -53,6 +56,8 @@ public class CodeOptimizer : ICodeOptimizer
         {
             // Calculate Chunksize
             var l = CalcChunksize(item);
+            if (l <= 0)
+                return;
             var cDst = source;
             while (cDst.Type is CodeBlockType.Goto or CodeBlockType.LComment && cDst.Next is ICodeBlock next)
                 cDst = next;
@@ -77,27 +82,33 @@ public class CodeOptimizer : ICodeOptimizer
     private void DeleteAndMoveGoto(ICodeBlock cIf, ICodeBlock cIfGoto, ICodeBlock cElse, ICodeBlock cElseGoto)
     {
         if (cIfGoto.Type == CodeBlockType.Goto
-            && cIfGoto.Type == CodeBlockType.Goto
+            && cElseGoto.Type == CodeBlockType.Goto
             && cElse.Next is ICodeBlock next)
         {
             var flag = false;
+            ICodeBlock? destLabel = null;
             if (cElseGoto.Code == cIfGoto.Code)
             {
                 flag = cIf.DeleteSubBlocks(cIfGoto.Index, 1);
                 flag |= cElse.MoveSubBlocks(cElseGoto.Index, next, 1);
             }
-            else if (cElseGoto.Destination!.TryGetTarget(out var cEGTarg)
-                && cIfGoto.Destination!.TryGetTarget(out var cIGTarg)
+            else if (cElseGoto.Destination is not null
+                && cElseGoto.Destination.TryGetTarget(out var cEGTarg)
+                && cIfGoto.Destination is not null
+                && cIfGoto.Destination.TryGetTarget(out var cIGTarg)
                 && cEGTarg.Sources.Count > 2
                 && cIGTarg.Sources.Count > 2)
                 flag = cElse.MoveSubBlocks(cElseGoto.Index, next, 1);
             // ======================
             if (cElse.SubBlocks.Count == 2
                 && cElse.SubBlocks.All((c) => c.Type == CodeBlockType.Block))
-                _ = cElse.Parent!.DeleteSubBlocks(cElse.Index, 1);
-            if (cElseGoto.Destination!.TryGetTarget(out var destLabel)
-                && flag
-                && destLabel.Sources.Count is 1 or 2)
+                if (cElse.Parent is ICodeBlock elseParent)
+                    _ = elseParent.DeleteSubBlocks(cElse.Index, 1);
+            if (cElseGoto.Destination is not null
+                && cElseGoto.Destination.TryGetTarget(out var resolvedDestLabel))
+                destLabel = resolvedDestLabel;
+            if (flag
+                && destLabel?.Sources.Count is 1 or 2)
                 TestItem(destLabel);
             else if (flag && destLabel != null && destLabel.Sources.Count > 1)
                 //  foreach (var item in _testList)
@@ -119,12 +130,13 @@ public class CodeOptimizer : ICodeOptimizer
         if (codeBlocks.Count > 0)
         {
             ICodeBlock c = codeBlocks[codeBlocks.Count - 1];
-            while (c.Type is CodeBlockType.Block or CodeBlockType.Comment or CodeBlockType.LComment && c.Prev is ICodeBlock prev)
+            while ((IsCommentLike(c) || c.Type == CodeBlockType.Block)
+                && c.Prev is ICodeBlock prev)
                 c = prev;
             return c.Type == CodeBlockType.Goto ? c : null;
         }
         else
-            return null!;
+            return null;
     }
 
     private void TestEndGotoUpLevel(ICodeBlock? actParent)
@@ -174,6 +186,66 @@ public class CodeOptimizer : ICodeOptimizer
                 || a.Code.StartsWith("if("));
     }
 
+    private static bool IsCommentLike(ICodeBlock item)
+    {
+        return item.Type is CodeBlockType.Comment or CodeBlockType.LComment;
+    }
+
+    private static bool IsElseStatement(ICodeBlock item)
+    {
+        return item.Type == CodeBlockType.Operation
+            && item.Code == "else";
+    }
+
+    private static bool IsNumAssignment(ICodeBlock item)
+    {
+        return item.Type == CodeBlockType.Operation
+            && item.Code.StartsWith("num =");
+    }
+
+    private static string ReplaceLeadingIfWithWhile(string code)
+    {
+        if (code.StartsWith("if("))
+            return $"while{code.Substring(2)}";
+        if (code.StartsWith("if "))
+            return $"while{code.Substring(2)}";
+        return code;
+    }
+
+    private static string ReplaceIdentifierToken(string text, string identifier, string replacement)
+    {
+        if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(identifier))
+            return text;
+
+        int startIndex = 0;
+        while (startIndex < text.Length)
+        {
+            var matchIndex = text.IndexOf(identifier, startIndex, System.StringComparison.Ordinal);
+            if (matchIndex < 0)
+                break;
+
+            var hasStartBoundary = matchIndex == 0 || !IsIdentifierChar(text[matchIndex - 1]);
+            var endIndex = matchIndex + identifier.Length;
+            var hasEndBoundary = endIndex >= text.Length || !IsIdentifierChar(text[endIndex]);
+            if (hasStartBoundary && hasEndBoundary)
+            {
+                text = text.Substring(0, matchIndex) + replacement + text.Substring(endIndex);
+                startIndex = matchIndex + replacement.Length;
+            }
+            else
+            {
+                startIndex = matchIndex + identifier.Length;
+            }
+        }
+
+        return text;
+    }
+
+    private static bool IsIdentifierChar(char c)
+    {
+        return char.IsLetterOrDigit(c) || c == '_' || c == '.';
+    }
+
     public void TestItem(ICodeBlock item)
     {
         RemoveResumeNextCode(item);
@@ -204,20 +276,23 @@ public class CodeOptimizer : ICodeOptimizer
                 ReplaceIfVar(ifItem);
                 var c = item.Next;
                 while (c?.Next is ICodeBlock next
-                    && c.Type is CodeBlockType.LComment or CodeBlockType.Comment)
+                    && IsCommentLike(c))
                     c = next;
                 if (c?.Next is ICodeBlock next2
-                    && c.Code.StartsWith("num ="))
+                    && IsNumAssignment(c))
                     c = next2;
                 // move Instructions to While-Goto
-                if (item.Parent?.MoveSubBlocks(c!.Index, source, ifItem.Index - c.Index) ?? false)
+                if (c != null
+                    && item.Parent is ICodeBlock itemParent
+                    && c.Index >= 0
+                    && ifItem.Index > c.Index
+                    && itemParent.MoveSubBlocks(c.Index, source, ifItem.Index - c.Index))
                 {
-                    ifItem.Code = ifItem.Code.Replace("if", "while");
+                    ifItem.Code = ReplaceLeadingIfWithWhile(ifItem.Code);
                     // Delete goto
                     DeleteItem(source);
                     if (ifItem.Next is ICodeBlock elseItem
-                       && elseItem.Type == CodeBlockType.Operation
-                       && elseItem.Code == "else" 
+                       && IsElseStatement(elseItem)
                        && elseItem.Next != null)
                     {
                         elseItem.MoveSubBlocks(1, elseItem.Next, elseItem.SubBlocks.Count - 2);
@@ -237,7 +312,7 @@ public class CodeOptimizer : ICodeOptimizer
                 var var2 = asItem1.Code.Substring(asItem1.Code.IndexOf(" = ") + 3).TrimEnd(';');
                 if (IsIdentifyer(var1) && asItem1.Code.Contains(var1) && !var2.Contains("+") && !var2.Contains("-"))
                 {
-                    ifItem.Code = $"{ifItem.Code.Substring(0, 2)}{ifItem.Code.Substring(2).Replace(var1, var2)}";
+                    ifItem.Code = $"{ifItem.Code.Substring(0, 2)}{ReplaceIdentifierToken(ifItem.Code.Substring(2), var1, var2)}";
                     DeleteItem(asItem1);
                 }
             }
@@ -250,8 +325,9 @@ public class CodeOptimizer : ICodeOptimizer
         var test = source.Prev;
         while (result && test is CodeBlock c && !(c.Type is CodeBlockType.Label))
         {
-            result = (c.Type is CodeBlockType.LComment or CodeBlockType.Comment or CodeBlockType.Block)
-                || (c.Type is CodeBlockType.Operation && c.Code.StartsWith("num ="));
+            result = IsCommentLike(c)
+                || c.Type == CodeBlockType.Block
+                || IsNumAssignment(c);
             test = c.Prev;
         }
         return result;
@@ -268,7 +344,7 @@ public class CodeOptimizer : ICodeOptimizer
         if (var2.Length == 0) return false;
         if (!char.IsLetter(var2[0]) && var2[0] != '_') return false;
         foreach (char c in var2)
-            if (!char.IsLetterOrDigit(c) && c != '_' && c != '.')
+            if (!IsIdentifierChar(c))
                 return false;
         return true;
     }
@@ -278,14 +354,20 @@ public class CodeOptimizer : ICodeOptimizer
         if (item.Sources.Count != 2) return;
         foreach (var item2 in item.Sources)
             if (item2.TryGetTarget(out var source))
-                if (source.Parent?.Code is string s
+                if (source.Parent is ICodeBlock parent
+                    && source.Index >= 0
+                    && source.Index < parent.SubBlocks.Count
+                    && parent.Code is string s
                     && s.StartsWith("switch (num")
                     && s.EndswithAny("(num4)", "(num5)", "(num6)", "(num7)", "(num7)", "(num8)", "(num9)"))
                 {
                     var l = 1;
-                    while (source.Parent.SubBlocks[source.Index - l].Type == CodeBlockType.Label)
+                    while (source.Index - l >= 0
+                        && parent.SubBlocks[source.Index - l].Type == CodeBlockType.Label)
                         l++;
-                    _ = source.Parent.DeleteSubBlocks(source.Index - l + 1, l);
+                    var deleteIndex = source.Index - l + 1;
+                    if (deleteIndex >= 0 && deleteIndex + l <= parent.SubBlocks.Count)
+                        _ = parent.DeleteSubBlocks(deleteIndex, l);
                     break;
                 }
     }
@@ -294,6 +376,9 @@ public class CodeOptimizer : ICodeOptimizer
     {
         if (item.Parent is ICodeBlock codeBlock)
         {
+            if (item.Index < 0 || item.Index >= codeBlock.SubBlocks.Count)
+                return 0;
+
             int l = 1;
             while (item.Index + l < codeBlock.SubBlocks.Count - 1
                 && codeBlock.SubBlocks[item.Index + l].Type is not CodeBlockType.Label and not CodeBlockType.Block)

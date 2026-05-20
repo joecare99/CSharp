@@ -1,7 +1,10 @@
 using System.Text;
 using System.Text.Json.Nodes;
+using Db.Core.Abstractions.Sql.Interfaaces;
+using BaseLib.Models.Interfaces;
 using RnzTrauer.Console.Views;
 using RnzTrauer.Core;
+using RnzTrauer.Core.Services.Interfaces;
 
 namespace RnzTrauer.Console.ViewModels;
 
@@ -14,6 +17,7 @@ public sealed class RnzTrauerConsoleViewModel
     private readonly IFile _xFile;
     private readonly IHttpClientProxy _xHttpClient;
     private readonly IWebDriverFactory _xWebDriverFactory;
+    private readonly IDbConnectionFactory _xDbConnectionFactory;
 
     // Dictionary keys
     private const string KeyContent = "content";
@@ -56,12 +60,13 @@ public sealed class RnzTrauerConsoleViewModel
     /// <summary>
     /// Initializes a new instance of the <see cref="RnzTrauerConsoleViewModel"/> class.
     /// </summary>
-    public RnzTrauerConsoleViewModel(ConsoleOutputView xView, IFile xFile, IHttpClientProxy xHttpClient, IWebDriverFactory xWebDriverFactory)
+    public RnzTrauerConsoleViewModel(ConsoleOutputView xView, IFile xFile, IHttpClientProxy xHttpClient, IWebDriverFactory xWebDriverFactory, IDbConnectionFactory xDbConnectionFactory)
     {
         _view = xView;
         _xFile = xFile ?? throw new ArgumentNullException(nameof(xFile));
         _xHttpClient = xHttpClient ?? throw new ArgumentNullException(nameof(xHttpClient));
         _xWebDriverFactory = xWebDriverFactory ?? throw new ArgumentNullException(nameof(xWebDriverFactory));
+        _xDbConnectionFactory = xDbConnectionFactory ?? throw new ArgumentNullException(nameof(xDbConnectionFactory));
     }
 
     /// <summary>
@@ -92,7 +97,7 @@ public sealed class RnzTrauerConsoleViewModel
         DateTime today = DateTime.Today;
         var iOffset = DateTime.TryParse(sParam1,out var dtStart)?(today- dtStart).Days : 0; 
         var iDayDelta = 0;
-        while (iDayDelta <= 14)
+        while (iDayDelta <= 15)
         {
             var dtCurrent = DateOnly.FromDateTime(today).AddDays(-(iDayDelta + iOffset));
             iDayDelta += 1;
@@ -146,7 +151,7 @@ public sealed class RnzTrauerConsoleViewModel
 
         xWebHandler.Close();
 
-        using var xDataHandler = new DataHandler(xConfig, _xFile);
+        using var xDataHandler = new DataHandler(_xDbConnectionFactory, xConfig, _xFile);
         iDayDelta = -7;
         while (iDayDelta <= 30)
         {

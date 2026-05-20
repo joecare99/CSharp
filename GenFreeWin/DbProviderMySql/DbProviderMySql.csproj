@@ -1,0 +1,16 @@
+<Project>
+  <Import Project="..\GenFreeWin.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net462;net472;net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <RootNamespace>Db.Provider.MySql</RootNamespace>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\DbCoreAbstractions\DbCoreAbstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.5.0" />
+  </ItemGroup>
+</Project>

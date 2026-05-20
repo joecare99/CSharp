@@ -30,8 +30,8 @@ public partial class TMainMenu : LfmComponentBase
     {
         switch (name.ToLower())
         {
-            case "images":
-                ObjectResolver.ResolveOrDefer(value as string, this, (o)=>ImageList = new WeakReference<TImageList>(o as TImageList));
+            case "images" when value is string sVal:
+                ObjectResolver?.ResolveOrDefer(sVal, this, (o)=>ImageList = o is TImageList til? new WeakReference<TImageList>(til) : null);
                 break;
             default:
                 base.ApplyProperty(name, value);
@@ -159,7 +159,7 @@ public partial class TMenuItem : LfmComponentBase
         }
     }
 
-    protected override void OnActionChanged(TAction action)
+    protected override void OnActionChanged(TAction? action)
     {
         base.OnActionChanged(action);
         

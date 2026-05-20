@@ -2,13 +2,20 @@
 using AmtsblattLoader.Console.ViewModels;
 using AmtsblattLoader.Console.Views;
 using RnzTrauer.Core;
+using BaseLib.Models.Interfaces;
+using BaseLib.Models;
+using RnzTrauer.Core.Services.Interfaces;
+using RnzTrauer.WebDriver.Firefox;
 
 var xServices = new ServiceCollection()
     .AddSingleton<IFile, FileProxy>()
     .AddSingleton<IConfigLoader, ConfigLoader>()
+    .AddFirefoxWebDriver()
     .AddTransient<ConsoleOutputView>()
     .AddTransient<AmtsblattLoaderConsoleViewModel>()
     .BuildServiceProvider();
+
+AmtsblattWebHandler.DefaultWebDriverFactoryProvider = () => xServices.GetRequiredService<IFirefoxWebDriverFactory>();
 
 var xView = xServices.GetRequiredService<ConsoleOutputView>();
 

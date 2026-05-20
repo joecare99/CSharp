@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -206,7 +210,26 @@ public static class PortedHelpers
             var sBuilder = new StringBuilder();
             foreach (var xPage in xDocument.GetPages())
             {
-                sBuilder.AppendLine(xPage.Text);
+                string sText = xPage.Text;
+                if (!sText.Contains("\r\n"))
+                {
+                    sText = "";
+                    double rFontSize = 0d;
+                    string FontName = "";
+                    foreach (var letter in xPage.Letters)
+                    {
+                        // Todo: Space and double punch - detection
+                        if (letter.FontSize != rFontSize || letter.FontName != FontName)
+                        {
+                            rFontSize = letter.FontSize;
+                            FontName = letter.FontName;
+                            if (!string.IsNullOrEmpty(sText))
+                                sText += $"\r\n";
+                        }
+                        sText += letter.Value;
+                    }
+                }
+                sBuilder.AppendLine(sText);
             }
 
             return sBuilder.ToString();

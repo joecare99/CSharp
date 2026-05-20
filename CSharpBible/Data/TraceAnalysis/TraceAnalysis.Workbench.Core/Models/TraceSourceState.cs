@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace TraceAnalysis.Workbench.Core.Models;
 
 /// <summary>
@@ -11,11 +14,13 @@ public sealed class TraceSourceState
     /// <param name="sourceId">Logical source identifier.</param>
     /// <param name="parseErrorCount">Number of parse errors observed for the source.</param>
     /// <param name="dataBasis">Derived structural data basis of the source.</param>
-    public TraceSourceState(string? sourceId, int parseErrorCount, TraceDataBasisModel? dataBasis)
+    /// <param name="series">Projected numeric series of the source.</param>
+    public TraceSourceState(string? sourceId, int parseErrorCount, TraceDataBasisModel? dataBasis, IReadOnlyList<TraceSeriesModel>? series = null)
     {
         SourceId = sourceId;
         ParseErrorCount = parseErrorCount;
         DataBasis = dataBasis;
+        Series = series ?? Array.Empty<TraceSeriesModel>();
     }
 
     /// <summary>
@@ -32,4 +37,9 @@ public sealed class TraceSourceState
     /// Gets the derived structural data basis for the source.
     /// </summary>
     public TraceDataBasisModel? DataBasis { get; }
+
+    /// <summary>
+    /// Gets the projected numeric series available for chart visualization.
+    /// </summary>
+    public IReadOnlyList<TraceSeriesModel> Series { get; }
 }

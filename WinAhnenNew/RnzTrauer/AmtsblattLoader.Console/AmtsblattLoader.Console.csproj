@@ -2,11 +2,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core.csproj" />
+    <ProjectReference Include="..\RnzTrauer.WebDriver.Firefox\RnzTrauer.WebDriver.Firefox.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Selenium.WebDriver.GeckoDriver" />
   </ItemGroup>
 
   <PropertyGroup>

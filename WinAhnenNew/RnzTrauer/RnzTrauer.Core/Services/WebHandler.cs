@@ -1,6 +1,11 @@
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using OpenQA.Selenium;
+using RnzTrauer.Core.Services.Interfaces;
 
 namespace RnzTrauer.Core;
 
@@ -163,10 +168,17 @@ public sealed class WebHandler : IDisposable
 
         Driver = _xWebDriverFactory.Create();
         Driver.Navigate().GoToUrl(_config.Url);
-        Driver.FindElement(By.Id(LoginEmailAddressId)).SendKeys(_config.User);
-        Driver.FindElement(By.Id(LoginPasswordId)).SendKeys(_config.Password);
-        Driver.FindElement(By.Id(LoginFormId)).Submit();
-        while (Driver.Title == _config.Title || string.IsNullOrEmpty(Driver.Title))
+        try
+        {
+            Driver.FindElement(By.Id(LoginEmailAddressId)).SendKeys(_config.User);
+            Driver.FindElement(By.Id(LoginPasswordId)).SendKeys(_config.Password == null ? string.Empty : new System.Net.NetworkCredential(string.Empty, _config.Password).Password);
+            Driver.FindElement(By.Id(LoginFormId)).Submit();
+        }
+        catch 
+        {
+            throw new InvalidOperationException($"{Driver.Title} enthält keine Login-Eingabemaske");
+        }
+            while (Driver.Title == _config.Title || string.IsNullOrEmpty(Driver.Title))
         {
             Thread.Sleep(500);
         }

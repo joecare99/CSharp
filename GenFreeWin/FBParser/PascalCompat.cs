@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FBParser;
@@ -20,7 +23,7 @@ public static class PascalCompat
     /// <summary>
     /// Represents the whitespace characters used by the original helper unit.
     /// </summary>
-    public static readonly HashSet<char> WhiteSpaceChars = [' ', '\0', '\r', '\n', '\t', (char)255];
+    public static readonly HashSet<char> WhiteSpaceChars = [' ', '\0', '\r', '\n', '\t', (char)255, (char)8239];
 
     /// <summary>
     /// Represents common punctuation characters.

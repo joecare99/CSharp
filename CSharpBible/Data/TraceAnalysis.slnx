@@ -26,6 +26,8 @@
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.JSON/TraceAnalysis.Filter.JSON.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.MovirunText/TraceAnalysis.Filter.MovirunText.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.MovirunTrace/TraceAnalysis.Filter.MovirunTrace.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Show.Wpf/TraceAnalysis.Show.Wpf.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Widgets.Wpf/TraceAnalysis.Widgets.Wpf.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Workbench.Core/TraceAnalysis.Workbench.Core.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Workbench.Wpf/TraceAnalysis.Workbench.Wpf.csproj" />
     <Project Path="TraceCsv2realCsv/TraceCsv2realCsv.csproj" />

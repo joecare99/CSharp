@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace TraceAnalysis.Workbench.Wpf.ViewModels;
 
 /// <summary>
-/// Minimal base class for WPF view models in the workbench baseline.
+/// Minimal base class for WPF view models in the workbench shell.
 /// </summary>
 public abstract class ViewModelBase : INotifyPropertyChanged
 {

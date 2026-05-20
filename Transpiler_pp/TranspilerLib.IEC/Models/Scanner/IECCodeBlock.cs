@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using TranspilerLib.Data;
+using TranspilerLib.IEC.Models.Ast;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models.Scanner;
 
@@ -12,6 +14,14 @@ namespace TranspilerLib.IEC.Models.Scanner;
 /// </summary>
 public class IECCodeBlock : CodeBlock
 {
+    /// <summary>
+    /// Gets or sets the optional typed IEC AST node attached to this code block.
+    /// This allows incremental migration from the existing code block model to a
+    /// typed semantic model without replacing the current parser structure in one step.
+    /// </summary>
+    [IgnoreDataMember]
+    public IecAstNode? AstNode { get; set; }
+
     /// <summary>
     /// Erzeugt den (formatierten) Quellcode für diesen Block und seine Unter-Blöcke.
     /// </summary>
@@ -33,6 +43,7 @@ public class IECCodeBlock : CodeBlock
     {
         string codeComment = string.Empty;
         string subCode = string.Empty;
+        var childCodes = SubBlocks?.Select(c => c.ToCode(indent + 2)).ToArray() ?? [];
 
         // Label-Hinweis (Anzahl eingehender Kanten)
         if (Type is CodeBlockType.Label && Sources.Count > 2)
@@ -40,13 +51,29 @@ public class IECCodeBlock : CodeBlock
 
         // Unterblöcke für Operation / Assignment inline verkettet mit dem Operator-Code
         if (SubBlocks?.Count > 0 && Type is CodeBlockType.Operation or CodeBlockType.Assignment)
-            subCode = string.Join(' ' + Code, SubBlocks.Select(c => c.ToCode(indent + 2)));
+            subCode = string.Join(' ' + Code, childCodes);
         else if (SubBlocks?.Count > 1)
-            subCode = string.Join(' ', SubBlocks.Select(c => c.ToCode(indent + 2)));
+            subCode = string.Join(' ', childCodes);
 
         // Kommentarzeilen (verschiedene Kommentararten) – eigene Zeile
         if (new[] { CodeBlockType.LComment, CodeBlockType.FLComment, CodeBlockType.Comment }.Contains(Type))
             return $"{new string(' ', indent)}{Code}{Environment.NewLine}";
+        else if (Type == CodeBlockType.Declaration && SubBlocks?.Count > 0)
+        {
+            var first = childCodes[0];
+            var remaining = childCodes.Skip(1).ToArray();
+            if (remaining.Length == 0)
+            {
+                return $"{first} {Code}";
+            }
+
+            if (SubBlocks[1].Type == CodeBlockType.Block)
+            {
+                return $"{first} {Code}{Environment.NewLine}{string.Join(" ", remaining)}";
+            }
+
+            return $"{first} {Code} {string.Join(" ", remaining)}";
+        }
         // Separatoren ':' ';' behandeln – ggf. Zeilenumbruch wenn nicht unmittelbar ein Kommentar folgt
         else if (Type == CodeBlockType.Operation && new[] { ":", ";" }.Contains(Code)
             && Next?.Type != CodeBlockType.LComment

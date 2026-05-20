@@ -67,8 +67,10 @@
     <Project Path="TraceAnalysis/TraceAnalysis.Base/TraceAnalysis.Base.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.CSV/TraceAnalysis.Filter.CSV.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.Excel/TraceAnalysis.Filter.Excel.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Filter.JSON/TraceAnalysis.Filter.JSON.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.MovirunText/TraceAnalysis.Filter.MovirunText.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.MovirunTrace/TraceAnalysis.Filter.MovirunTrace.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Workbench.Core/TraceAnalysis.Workbench.Core.csproj" />
     <Project Path="TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
     <Project Path="TraceCsv2realCsvTests/TraceCsv2realCsvTests.csproj" />
   </Folder>

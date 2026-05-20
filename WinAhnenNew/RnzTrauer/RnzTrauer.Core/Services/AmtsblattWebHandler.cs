@@ -1,5 +1,8 @@
 using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using RnzTrauer.Core.Services.Interfaces;
 
 namespace RnzTrauer.Core;
 
@@ -8,35 +11,49 @@ namespace RnzTrauer.Core;
 /// </summary>
 public sealed class AmtsblattWebHandler : IDisposable
 {
+    public static Func<IWebDriverFactory> DefaultWebDriverFactoryProvider { get; set; } = () => throw new InvalidOperationException("No default web driver factory configured. Set DefaultWebDriverFactoryProvider before using this constructor.");
+
     private readonly AmtsblattConfig _config;
+    private readonly IWebDriverFactory _xWebDriverFactory;
+    private readonly Action<int> _xSleep;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AmtsblattWebHandler"/> class.
     /// </summary>
     public AmtsblattWebHandler(AmtsblattConfig xConfig)
+        : this(xConfig, DefaultWebDriverFactoryProvider(), Thread.Sleep)
     {
-        _config = xConfig;
     }
 
     /// <summary>
-    /// Gets the active Firefox driver instance.
+    /// Initializes a new instance of the <see cref="AmtsblattWebHandler"/> class with testable dependencies.
     /// </summary>
-    public FirefoxDriver? Driver { get; private set; }
+    public AmtsblattWebHandler(AmtsblattConfig xConfig, IWebDriverFactory xWebDriverFactory, Action<int> xSleep)
+    {
+        _config = xConfig ?? throw new ArgumentNullException(nameof(xConfig));
+        _xWebDriverFactory = xWebDriverFactory ?? throw new ArgumentNullException(nameof(xWebDriverFactory));
+        _xSleep = xSleep ?? throw new ArgumentNullException(nameof(xSleep));
+    }
+
+    /// <summary>
+    /// Gets the active web driver instance.
+    /// </summary>
+    public IWebDriver? Driver { get; private set; }
 
     /// <summary>
     /// Opens the configured start page.
     /// </summary>
     public void InitPage()
     {
-        var xOptions = new FirefoxOptions();
-        Driver = new FirefoxDriver(xOptions);
+        Driver = _xWebDriverFactory.Create();
         Driver.Navigate().GoToUrl(_config.Url);
-        while (Driver.Title != _config.Title)
+        string s;
+        while ((s = Driver.Title) != _config.Title)
         {
-            Thread.Sleep(500);
+            _xSleep(500);
         }
 
-        Thread.Sleep(500);
+        _xSleep(500);
     }
 
     /// <summary>
@@ -48,7 +65,7 @@ public sealed class AmtsblattWebHandler : IDisposable
         xDriver.Navigate().GoToUrl(sStart);
         while (xDriver.Title == "RNZ" || string.IsNullOrEmpty(xDriver.Title))
         {
-            Thread.Sleep(500);
+            _xSleep(500);
         }
 
         var dPages = new Dictionary<string, Dictionary<string, object?>>(StringComparer.Ordinal);
@@ -75,10 +92,7 @@ public sealed class AmtsblattWebHandler : IDisposable
     }
 
     /// <inheritdoc />
-    public void Dispose()
-    {
-        Close();
-    }
+    public void Dispose() => Close();
 
     private (List<string> SubPages, string Url, string NextUrl) WorkMainPage(Dictionary<string, Dictionary<string, object?>> dPages, List<Dictionary<string, object?>> arrItems)
     {
@@ -93,7 +107,7 @@ public sealed class AmtsblattWebHandler : IDisposable
         };
         dPages[sUrl] = dPage;
 
-        Thread.Sleep(4000);
+        _xSleep(4000);
         foreach (var xButton in xDriver.FindElements(By.TagName("button")))
         {
             if ((xButton.Text ?? string.Empty).StartsWith("Alle akz", StringComparison.Ordinal))

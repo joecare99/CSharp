@@ -17,7 +17,9 @@ public class ValidationHelperExtTests : INotifyDataErrorInfo
 
     public bool HasErrors => _xHasErrors;
 
+#pragma warning disable CS0067
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+#pragma warning restore CS0067
 
     public IEnumerable GetErrors(string? propertyName)
     {
@@ -43,15 +45,9 @@ public class ValidationHelperExtTests : INotifyDataErrorInfo
         Assert.AreEqual(csExpEmpty, this.ValidationText("Test"));
     }
 
-    [TestMethod]   
-    public void ValidationTextTestNull()
-    {
-        Assert.Throws<ArgumentNullException>(() => ((INotifyDataErrorInfo)null!).ValidationText("123"));
-    }
+    [TestMethod]
+    public void ValidationTextTestNull() => Assert.Throws<ArgumentNullException>(() => ((INotifyDataErrorInfo)null!).ValidationText("123"));
 
     [TestMethod]
-    public void ValidationTextTestNull2()
-    {
-        Assert.Throws<ArgumentNullException>(() => this.ValidationText(null));
-    }
+    public void ValidationTextTestNull2() => Assert.Throws<ArgumentNullException>(() => this.ValidationText(null));
 }

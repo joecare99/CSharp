@@ -76,6 +76,7 @@
     <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
   </Folder>
   <Folder Name="/Projektmappenelemente/">
+    <File Path=".github/copilot-instructions.md" />
     <File Path="CONTRIBUTING.md" />
     <File Path="Directory.Packages.props" />
     <File Path="Games.props" />
@@ -152,6 +153,7 @@
   <Project Path="Game_Base/Game_Base.csproj" />
   <Project Path="Game_BaseTests/Game_BaseTests.csproj" />
   <Project Path="MidiSwing.MVVM/MidiSwing.MVVM.csproj" />
+  <Project Path="PackageDwnLd.csproj" />
   <Project Path="RemoteTerminal.Tests/RemoteTerminal.Tests.csproj" />
   <Project Path="RemoteTerminal/RemoteTerminal.csproj" />
   <Project Path="Sudoku_Base/Sudoku_Base.csproj" />

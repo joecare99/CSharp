@@ -1,9 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -11,6 +13,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models.Tests;
 using TranspilerLibTests.TestData;
 using static TranspilerLib.Helper.TestHelper;
@@ -163,6 +166,37 @@ public class CSCodeTests : TestBase
 
         _testClass.Tokenize((t) => DoLog($"T:{t.type},{t.Level},{t.Code}"));
         AssertAreEqual(sExp, DebugLog);
+    }
+
+    [TestMethod]
+    public void TokenizeTest2()
+    {
+        // Arrange
+        ITokenHandler _th;
+        _testClass = new CSCode(
+            _th = Substitute.For<ITokenHandler>(),
+            Substitute.For<ICodeBuilder>(),
+            Substitute.For<ICodeOptimizer>());
+
+        _th.TryGetValue(Arg.Any<int>(), out _).Returns(ci =>
+        {
+            Action<ICodeBase.TokenDelegate, string, TokenizeData> v = (t, s, d) =>
+            {
+                DoLog($"T:{d.Pos},{s},{d.State}");
+                t?.Invoke(new(s));
+            };
+            ci[1] = v;
+
+            return true;
+        });
+
+        _testClass.OriginalCode = "int i;";
+
+        var list = _testClass.Tokenize().ToList();
+
+        Assert.AreEqual(1, list.Count);
+        Assert.AreEqual("int i;", list[0].Code);
+        Assert.AreEqual("T:0,int i;,0\r\n", DebugLog);
     }
 
     public static IEnumerable<object[]> ParseTestData => new object[][]
@@ -337,5 +371,30 @@ public class CSCodeTests : TestBase
         AssertAreEqual(data[0], sAct);
     }
 
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void DoWhileTest(bool xAct)
+    {
+        ICodeOptimizer _co;
+        // Arrange
+        _testClass = new CSCode(
+            Substitute.For<ITokenHandler>(),
+            Substitute.For<ICodeBuilder>(),
+            _co = Substitute.For<ICodeOptimizer>()) ;
 
+        // Act
+        _testClass.DoWhile = xAct;
+
+        // Assert
+        _co.Received(1)._noWhile = !xAct;
+        _=_co.Received(0)._noWhile;
+        Assert.AreEqual(!xAct, _co._noWhile);
+        // Assert & Act 2
+        Assert.AreEqual(xAct, _testClass.DoWhile);
+        // Assert 2
+        _ = _co.Received(2)._noWhile;
+
+
+    }
 }

@@ -20,10 +20,7 @@ public class BindableCollectionTests : BaseTestViewModel
 
     }
 
-    private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-       DoLog($"OnCollectionChanged({sender},{e.Action})");
-    }
+    private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) => DoLog($"OnCollectionChanged({sender},{e.Action})");
 
     [TestMethod()]
     public void BindableCollectionTest()

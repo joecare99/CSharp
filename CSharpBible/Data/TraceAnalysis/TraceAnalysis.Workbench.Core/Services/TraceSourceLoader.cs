@@ -19,6 +19,7 @@ public sealed class TraceSourceLoader : ITraceSourceLoader
 {
     private readonly IInputFilterSelector _inputFilterSelector;
     private readonly IReadOnlyList<IAnalyzableInputFilter> _inputFilters;
+    private readonly TraceSeriesProjector _traceSeriesProjector;
 
     /// <summary>
     /// Initializes a new instance of <see cref="TraceSourceLoader"/>.
@@ -32,7 +33,8 @@ public sealed class TraceSourceLoader : ITraceSourceLoader
                 new JsonInputFilter(),
                 new MovirunTextTraceInputFilter(),
                 new MovirunTraceXmlInputFilter()
-            ])
+            ],
+            new TraceSeriesProjector())
     {
     }
 
@@ -41,10 +43,12 @@ public sealed class TraceSourceLoader : ITraceSourceLoader
     /// </summary>
     /// <param name="inputFilterSelector">The filter selector.</param>
     /// <param name="inputFilters">The analyzable input filters.</param>
-    public TraceSourceLoader(IInputFilterSelector inputFilterSelector, IReadOnlyList<IAnalyzableInputFilter> inputFilters)
+    /// <param name="traceSeriesProjector">The series projector used for chart visualization.</param>
+    public TraceSourceLoader(IInputFilterSelector inputFilterSelector, IReadOnlyList<IAnalyzableInputFilter> inputFilters, TraceSeriesProjector traceSeriesProjector)
     {
         _inputFilterSelector = inputFilterSelector ?? throw new ArgumentNullException(nameof(inputFilterSelector));
         _inputFilters = inputFilters ?? throw new ArgumentNullException(nameof(inputFilters));
+        _traceSeriesProjector = traceSeriesProjector ?? throw new ArgumentNullException(nameof(traceSeriesProjector));
     }
 
     /// <inheritdoc/>
@@ -63,7 +67,7 @@ public sealed class TraceSourceLoader : ITraceSourceLoader
             stream.Position = 0;
 
         var dataSet = selection.SelectedFilter.Read(stream, sourceDescriptor);
-        return new TraceSourceState(filePath, dataSet.ParseErrors.Count, BuildDataBasis(dataSet));
+        return new TraceSourceState(filePath, dataSet.ParseErrors.Count, BuildDataBasis(dataSet), _traceSeriesProjector.Project(dataSet));
     }
 
     private static TraceDataBasisModel BuildDataBasis(ITraceDataSet dataSet)

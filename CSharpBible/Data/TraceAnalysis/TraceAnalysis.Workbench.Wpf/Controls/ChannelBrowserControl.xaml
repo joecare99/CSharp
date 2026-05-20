@@ -1,15 +1,20 @@
 <UserControl x:Class="TraceAnalysis.Workbench.Wpf.Controls.ChannelBrowserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <GroupBox Header="Channels">
+    <GroupBox Header="Channels / series">
         <ListBox ItemsSource="{Binding Channels}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="0,2,0,2">
                         <TextBlock FontWeight="SemiBold"
                                    Text="{Binding Name}" />
-                        <TextBlock FontSize="11"
-                                   Text="{Binding Group}" />
+                        <DockPanel>
+                            <TextBlock FontSize="11"
+                                       Text="{Binding Group}" />
+                            <TextBlock Margin="8,0,0,0"
+                                       FontSize="11"
+                                       Text="{Binding IsDerived, StringFormat=Derived: {0}}" />
+                        </DockPanel>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

@@ -25,6 +25,7 @@ namespace WinAhnenNew
             services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
             services.AddSingleton<IGenealogyModelFactory, BaseGenGenealogyModelFactory>();
             services.AddSingleton<IPersonSelectionService, PersonSelectionService>();
+            services.AddTransient<IGenFactBuilder, GenFactBuilder>();
             services.AddTransient<IGenILBuilder, GenILBuilder>();
             services.AddTransient<FrmAhnenWinMainViewModel>();
             services.AddTransient<SelectionPageViewModel>();

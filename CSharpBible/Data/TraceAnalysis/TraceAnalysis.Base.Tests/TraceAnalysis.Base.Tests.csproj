@@ -21,7 +21,7 @@
 		<ProjectReference Include="..\TraceAnalysis.Filter.MovirunText\TraceAnalysis.Filter.MovirunText.csproj" />
 		<ProjectReference Include="..\TraceAnalysis.Filter.MovirunTrace\TraceAnalysis.Filter.MovirunTrace.csproj" />
 		<PackageReference Include="NSubstitute" Version="5.3.0" />
-		<PackageReference Include="MSTest" Version="4.2.1" />
+		<PackageReference Include="MSTest" Version="4.2.3" />
 	</ItemGroup>
 
 </Project>

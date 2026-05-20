@@ -21,6 +21,7 @@ public static class WorkbenchHostFactory
             .ConfigureServices(static services =>
             {
                 services.AddSingleton<IWorkbenchSessionService, WorkbenchSessionService>();
+                services.AddSingleton<TraceSeriesProjector>();
                 services.AddSingleton<ITraceSourceLoader, TraceSourceLoader>();
                 services.AddSingleton<IProcessingConfigurationStorage, JsonProcessingConfigurationStorage>();
                 services.AddSingleton<IFileDialogService, FileDialogService>();

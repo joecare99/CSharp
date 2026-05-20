@@ -7,15 +7,23 @@ using SharpHack.Engine.Pathfinding;
 using SharpHack.BaseItems.Model;
 using System.Collections.Generic;
 using System;
+using SharpHack.Persist;
 
 namespace SharpHack.Engine;
 
 public class GameSession
 {
+    private const string VictoryObjectiveName = "Amulet of JoCarneer";
+
     public IMap Map { get; private set; }
     public ICreature Player { get; private set; }
     public IList<ICreature> Enemies { get; private set; } = [];
-    public bool IsRunning { get; private set; } = true;
+    public GameRunState RunState { get; private set; } = GameRunState.NotStarted;
+    public bool IsRunning => RunState == GameRunState.Running;
+    public bool HasWon => RunState == GameRunState.Victory;
+    public string VictoryObjective => VictoryObjectiveName;
+    public string CompletionSummary => HasWon ? $"You obtained the {VictoryObjectiveName} on level {Level}." : string.Empty;
+    public int TurnsTaken { get; private set; }
     public int Level { get; private set; } = 1; // Add Level property
 
 #if _DEBUG
@@ -31,6 +39,7 @@ public class GameSession
     private readonly IEnemyAI _enemyAI; // Add field
     private readonly FieldOfView _fov;
     private readonly IGamePersist _persistence;
+    private bool _deathGracePending;
 
     public byte[] MiniMap
     {
@@ -83,6 +92,39 @@ public class GameSession
         _enemyAI = enemyAI; // Assign field
         _persistence = gamePersist;
         Initialize();
+        _fov = new FieldOfView(Map);
+        RunState = GameRunState.Running;
+        UpdateFov();
+    }
+
+    public GameSession(IMapGenerator mapGenerator, IGamePersist gamePersist, IRandom random, ICombatSystem combatSystem, IEnemyAI enemyAI, RestoreGameState restoreGameState)
+    {
+        if (restoreGameState == null)
+        {
+            throw new ArgumentNullException(nameof(restoreGameState));
+        }
+
+        if (restoreGameState.Map == null)
+        {
+            throw new ArgumentException("A restored map is required.", nameof(restoreGameState));
+        }
+
+        if (restoreGameState.Player == null)
+        {
+            throw new ArgumentException("A restored player is required.", nameof(restoreGameState));
+        }
+
+        _mapGenerator = mapGenerator;
+        _random = random;
+        _combatSystem = combatSystem;
+        _enemyAI = enemyAI;
+        _persistence = gamePersist;
+        Map = restoreGameState.Map;
+        Player = restoreGameState.Player;
+        Enemies = restoreGameState.Enemies;
+        Level = restoreGameState.Level;
+        RunState = restoreGameState.RunState;
+        TurnsTaken = restoreGameState.TurnsTaken;
         _fov = new FieldOfView(Map);
         UpdateFov();
     }
@@ -343,8 +385,74 @@ public class GameSession
         OnMessage?.Invoke(message);
     }
 
+    private bool IsVictoryItem(IItem item)
+    {
+        return string.Equals(item.Name, VictoryObjectiveName, StringComparison.Ordinal);
+    }
+
+    private void CheckVictoryAfterPickup(IItem item)
+    {
+        if (!IsVictoryItem(item) || HasWon)
+        {
+            return;
+        }
+
+        RunState = GameRunState.Victory;
+        Log($"You have obtained the {VictoryObjectiveName}. Victory!");
+    }
+
+    private bool IsTerminal => RunState is GameRunState.PlayerDead or GameRunState.Victory or GameRunState.Abandoned;
+
+    private bool CanAct => RunState == GameRunState.Running;
+
+    private void CheckDeathAfterRound()
+    {
+        if (Player.HP > 0)
+        {
+            _deathGracePending = false;
+            return;
+        }
+
+        if (!_deathGracePending)
+        {
+            _deathGracePending = true;
+            Log("You are near death.");
+            return;
+        }
+
+        RunState = GameRunState.PlayerDead;
+        Log("You die.");
+    }
+
+    private bool EnsureRunning()
+    {
+        if (CanAct)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool EnsureNotTerminal()
+    {
+        if (IsTerminal)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public void Update()
     {
+        if (!EnsureRunning())
+        {
+            return;
+        }
+
+        TurnsTaken++;
+
         // Game logic update (turn processing)
         foreach (var enemy in Enemies.ToList()) // ToList to allow modification of collection if needed (though we don't remove here)
         {
@@ -366,6 +474,11 @@ public class GameSession
 
     public void MovePlayer(Direction direction, bool autoPickup = true, bool autoEquip = true, bool autoDoorOpen = false)
     {
+        if (!EnsureRunning())
+        {
+            return;
+        }
+
         var newPos = Player.Position;
         switch (direction)
         {
@@ -408,6 +521,10 @@ public class GameSession
                         if (autoPickup)
                         {
                             PickUpItem(Player, item, autoEquip);
+                            if (IsTerminal)
+                            {
+                                return;
+                            }
                         }
                     }
                 }
@@ -433,11 +550,13 @@ public class GameSession
                 Update();
             }
         }
+
+        CheckDeathAfterRound();
     }
 
     public bool OpenDoorAt(Point position)
     {
-        if (!Map.IsValid(position))
+        if (!EnsureNotTerminal() || !Map.IsValid(position))
         {
             return false;
         }
@@ -466,7 +585,7 @@ public class GameSession
 
     public bool CloseDoorAt(Point position)
     {
-        if (!Map.IsValid(position))
+        if (!EnsureNotTerminal() || !Map.IsValid(position))
         {
             return false;
         }
@@ -500,7 +619,7 @@ public class GameSession
 
     public bool TryOpenDoorBetween(Point from, Point to)
     {
-        if (!Map.IsValid(to))
+        if (!EnsureNotTerminal() || !Map.IsValid(to))
         {
             return false;
         }
@@ -529,6 +648,11 @@ public class GameSession
 
     public void PickUpItem(ICreature creature, IItem item, bool autoEquip = true)
     {
+        if (!EnsureNotTerminal() || !EnsureRunning())
+        {
+            return;
+        }
+
         if (Map[item.Position].Items.Contains(item))
         {
             Map[item.Position].Items.Remove(item);
@@ -550,11 +674,21 @@ public class GameSession
                 creature.Body = a;
                 Log($"{creature.Name} equips {a.Name}.");
             }
+
+            if (creature == Player)
+            {
+                CheckVictoryAfterPickup(item);
+            }
         }
     }
 
     private void Attack(ICreature attacker, ICreature defender)
     {
+        if (!EnsureRunning())
+        {
+            return;
+        }
+
         _combatSystem.Attack(attacker, defender, Log); // Delegate to combat system
 
         if (defender.HP <= 0)
@@ -564,6 +698,8 @@ public class GameSession
             Enemies.Remove(defender);
             Map[defender.Position].Creature = null;
         }
+        if (attacker != Player)
+            CheckDeathAfterRound();
     }
 
     public enum PrimaryActionKind
@@ -578,6 +714,11 @@ public class GameSession
 
     public PrimaryAction GetPrimaryAction()
     {
+        if (!EnsureRunning())
+        {
+            return new PrimaryAction(PrimaryActionKind.None, Player.Position, string.Empty);
+        }
+
         var pp = Player.Position;
 
         // 1) Closed door adjacent -> open
@@ -630,6 +771,11 @@ public class GameSession
 
     public bool ExecutePrimaryAction()
     {
+        if (!EnsureRunning())
+        {
+            return false;
+        }
+
         var action = GetPrimaryAction();
         switch (action.Kind)
         {
@@ -658,6 +804,11 @@ public class GameSession
 
     public bool ToggleDoorAt(Point position)
     {
+        if (!EnsureNotTerminal() || !EnsureRunning())
+        {
+            return false;
+        }
+
         if (!Map.IsValid(position))
         {
             return false;
@@ -708,6 +859,11 @@ public class GameSession
     public void RevealAll(bool visible = true)
     {
         if (Map == null)
+        {
+            return;
+        }
+
+        if (IsTerminal)
         {
             return;
         }

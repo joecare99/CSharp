@@ -4,10 +4,13 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using OpenQA.Selenium;
 using RnzTrauer.Core;
+using RnzTrauer.Core.Services.Interfaces;
+using BaseLib.Helper;
 
 namespace RnzTrauer.Tests;
 
@@ -21,7 +24,7 @@ public sealed class WebHandlerTests
         {
             Url = "https://example.invalid/login",
             User = "user@example.invalid",
-            Password = "secret",
+            Password = "secret".ToSecureString(),
             Title = "RNZ"
         };
         var xHttpClient = Substitute.For<IHttpClientProxy>();
@@ -46,9 +49,51 @@ public sealed class WebHandlerTests
         _ = xWebDriverFactory.Received(1).Create();
         xNavigation.Received(1).GoToUrl(xConfig.Url);
         xEmailElement.Received(1).SendKeys(xConfig.User);
-        xPasswordElement.Received(1).SendKeys(xConfig.Password);
+        xPasswordElement.Received(1).SendKeys(new System.Net.NetworkCredential(string.Empty, xConfig.Password).Password);
         xFormElement.Received(1).Submit();
         Assert.AreSame(xDriver, xHandler.Driver);
+    }
+
+    [TestMethod]
+    public void InitPage_Quits_Previous_Driver_And_Waits_For_Title_Change()
+    {
+        var xConfig = new RnzConfig
+        {
+            Url = "https://example.invalid/login",
+            User = "user@example.invalid",
+            Password = "secret".ToSecureString(),
+            Title = "RNZ"
+        };
+        var xHttpClient = Substitute.For<IHttpClientProxy>();
+        var xWebDriverFactory = Substitute.For<IWebDriverFactory>();
+        var xOldDriver = Substitute.For<IWebDriver>();
+        var xNewDriver = Substitute.For<IWebDriver>();
+        var xNavigation = Substitute.For<INavigation>();
+        var xEmailElement = Substitute.For<IWebElement>();
+        var xPasswordElement = Substitute.For<IWebElement>();
+        var xFormElement = Substitute.For<IWebElement>();
+        var iTitleReads = 0;
+
+        xOldDriver.When(xDriver => xDriver.Quit()).Do(_ => throw new InvalidOperationException("quit failed"));
+        xNewDriver.Navigate().Returns(xNavigation);
+        xNewDriver.Title.Returns(_ => ++iTitleReads == 1 ? "RNZ" : "Loaded");
+        xNewDriver.FindElement(Arg.Is<By>(xBy => xBy.ToString() == By.Id("emailAddress").ToString())).Returns(xEmailElement);
+        xNewDriver.FindElement(Arg.Is<By>(xBy => xBy.ToString() == By.Id("password").ToString())).Returns(xPasswordElement);
+        xNewDriver.FindElement(Arg.Is<By>(xBy => xBy.ToString() == By.Id("form").ToString())).Returns(xFormElement);
+        xWebDriverFactory.Create().Returns(xNewDriver);
+
+        using var xHandler = new WebHandler(xConfig, xHttpClient, xWebDriverFactory);
+        SetDriver(xHandler, xOldDriver);
+
+        xHandler.InitPage();
+
+        _ = xWebDriverFactory.Received(1).Create();
+        Assert.AreEqual(1, xOldDriver.ReceivedCalls().Count(xCall => xCall.GetMethodInfo().Name == nameof(IWebDriver.Quit)));
+        xNavigation.Received(1).GoToUrl(xConfig.Url);
+        xEmailElement.Received(1).SendKeys(xConfig.User);
+        xPasswordElement.Received(1).SendKeys(new System.Net.NetworkCredential(string.Empty, xConfig.Password).Password);
+        xFormElement.Received(1).Submit();
+        Assert.AreSame(xNewDriver, xHandler.Driver);
     }
 
     [TestMethod]
@@ -93,6 +138,46 @@ public sealed class WebHandlerTests
     }
 
     [TestMethod]
+    public void Wdr2List_Skips_Stale_Elements_And_Handles_Throwing_Text_And_Children()
+    {
+        var xConfig = new RnzConfig();
+        var xHttpClient = Substitute.For<IHttpClientProxy>();
+        var xWebDriverFactory = Substitute.For<IWebDriverFactory>();
+        var xSearchContext = Substitute.For<ISearchContext>();
+        var xStaleElement = Substitute.For<IWebElement>();
+        var xTextThrowingElement = Substitute.For<IWebElement>();
+        var xChildThrowingElement = Substitute.For<IWebElement>();
+
+        xSearchContext.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("div").ToString()))
+            .Returns(CreateCollection(xStaleElement, xTextThrowingElement, xChildThrowingElement));
+
+        xStaleElement.TagName.Returns(_ => throw new StaleElementReferenceException());
+
+        xTextThrowingElement.TagName.Returns("div");
+        xTextThrowingElement.GetAttribute("class").Returns("c-blockitem");
+        xTextThrowingElement.GetAttribute("id").Returns("text-throw");
+        xTextThrowingElement.Text.Returns(_ => throw new StaleElementReferenceException());
+        xTextThrowingElement.FindElements(Arg.Any<By>()).Returns(CreateCollection());
+
+        xChildThrowingElement.TagName.Returns("div");
+        xChildThrowingElement.GetAttribute("class").Returns("c-blockitem");
+        xChildThrowingElement.GetAttribute("id").Returns("child-throw");
+        xChildThrowingElement.Text.Returns("Line1");
+        xChildThrowingElement.FindElements(Arg.Any<By>()).Returns(_ => throw new StaleElementReferenceException());
+
+        using var xHandler = new WebHandler(xConfig, xHttpClient, xWebDriverFactory);
+
+        var lstResult = xHandler.Wdr2List(xSearchContext, new WebQuery(string.Empty, By.TagName("div"), new WebQuery("links", By.TagName("a"))));
+
+        Assert.AreEqual(2, lstResult.Count);
+        Assert.AreEqual("text-throw", lstResult[0]["id"]);
+        Assert.IsFalse(lstResult[0].ContainsKey("text"));
+        Assert.AreEqual("child-throw", lstResult[1]["id"]);
+        Assert.IsTrue(lstResult[1].ContainsKey("links"));
+        Assert.AreEqual(0, ((List<Dictionary<string, object?>>)lstResult[1]["links"]!).Count);
+    }
+
+    [TestMethod]
     public void GetData1_Throws_When_Driver_Has_Not_Been_Initialized()
     {
         using var xHandler = new WebHandler(new RnzConfig(), Substitute.For<IHttpClientProxy>(), Substitute.For<IWebDriverFactory>());
@@ -115,7 +200,7 @@ public sealed class WebHandlerTests
         {
             Url = "https://example.invalid/login",
             User = "user@example.invalid",
-            Password = "secret",
+            Password = "secret".ToSecureString(),
             Title = "RNZ"
         };
         var xHttpClient = Substitute.For<IHttpClientProxy>();
@@ -381,6 +466,10 @@ public sealed class WebHandlerTests
                         ["imgs"] = new List<Dictionary<string, object?>>()
                     }
                 }
+            },
+            ["https://example.invalid/subpage/anzeigen"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["parent"] = "invalid-parent-shape"
             }
         };
         var lstItems = new List<Dictionary<string, object?>>();
@@ -401,15 +490,155 @@ public sealed class WebHandlerTests
         Assert.AreEqual("https://example.invalid/subpage/anzeigen", lstItems[0]["parent"]);
     }
 
-    [DataTestMethod]
-    [DataRow("<html><head><script>window.setTimeout(function(){}, 1000);</script></head><body>ok</body></html>", false)]
-    [DataRow("504 gateway time-out", true)]
-    [DataRow("Service Unavailable", true)]
-    public void ContainsErrorMarker_Detects_Only_Real_Error_Texts(string sText, bool xExpected)
+    [TestMethod]
+    public void WorkSubPage_Propagates_Ids_And_Rewrites_Jpg_To_Png_Via_Reflection()
     {
-        var xResult = InvokeNonPublicStaticMethod<bool>(typeof(WebHandler), "ContainsErrorMarker", sText);
+        var xHttpClient = Substitute.For<IHttpClientProxy>();
+        var xDriver = Substitute.For<IWebDriver>();
+        var xTitleElement = Substitute.For<IWebElement>();
+        var xBirthElement = Substitute.For<IWebElement>();
+        var xDeathElement = Substitute.For<IWebElement>();
+        var xSectionElement = Substitute.For<IWebElement>();
+        var xSectionImage = Substitute.For<IWebElement>();
+        var xSectionLink = Substitute.For<IWebElement>();
+        var xResponse = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new ByteArrayContent(Encoding.ASCII.GetBytes("PNG1234567"))
+        };
+        xHttpClient.GetAsync("https://example.invalid/MEDIASERVER/photo.jpg").Returns(Task.FromResult(xResponse));
+        using var xHandler = CreateHandler(xHttpClient: xHttpClient);
+        SetDriver(xHandler, xDriver);
 
-        Assert.AreEqual(xExpected, xResult);
+        xDriver.Url.Returns("https://example.invalid/subpage/anzeigen");
+        xDriver.Title.Returns("SubPage");
+        xDriver.PageSource.Returns("<html><body>sub</body></html>");
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("h1").ToString())).Returns(CreateCollection(xTitleElement));
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.ClassName("col-sm-6").ToString())).Returns(CreateCollection(xBirthElement, xDeathElement));
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("section").ToString())).Returns(CreateCollection(xSectionElement));
+
+        xTitleElement.Text.Returns("Max Mustermann");
+        xBirthElement.Text.Returns("* 01.01.2000");
+        xDeathElement.Text.Returns("† 02.02.2020 in Heidelberg");
+
+        xSectionElement.TagName.Returns("div");
+        xSectionElement.Text.Returns($"Hinweis{Environment.NewLine}Mehr Text");
+        xSectionElement.GetAttribute("class").Returns("row");
+        xSectionElement.GetAttribute("id").Returns("19");
+        xSectionElement.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("a").ToString())).Returns(CreateCollection(xSectionLink));
+        xSectionElement.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("img").ToString())).Returns(CreateCollection(xSectionImage));
+
+        xSectionImage.TagName.Returns("img");
+        xSectionImage.Text.Returns(string.Empty);
+        xSectionImage.GetAttribute("class").Returns(string.Empty);
+        xSectionImage.GetAttribute("title").Returns(string.Empty);
+        xSectionImage.GetAttribute("alt").Returns("Image");
+        xSectionImage.GetAttribute("src").Returns("https://example.invalid/MEDIASERVER/photo.jpg");
+        xSectionImage.GetAttribute("style").Returns(string.Empty);
+        xSectionImage.GetAttribute("data-original").Returns(string.Empty);
+        xSectionImage.FindElements(Arg.Any<By>()).Returns(CreateCollection());
+
+        xSectionLink.TagName.Returns("a");
+        xSectionLink.Text.Returns("Speichern");
+        xSectionLink.GetAttribute("title").Returns(string.Empty);
+        xSectionLink.GetAttribute("target").Returns(string.Empty);
+        xSectionLink.GetAttribute("href").Returns("https://example.invalid/MEDIASERVER/photo.jpg");
+        xSectionLink.FindElements(Arg.Any<By>()).Returns(CreateCollection());
+
+        var dPages = new Dictionary<string, Dictionary<string, object?>>(StringComparer.Ordinal)
+        {
+            ["https://example.invalid/list"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["filter"] = "nachrufe",
+                ["sections"] = new List<Dictionary<string, object?>>()
+                {
+                    new(StringComparer.Ordinal)
+                    {
+                        ["links"] = new List<Dictionary<string, object?>>()
+                        {
+                            new(StringComparer.Ordinal) { ["href"] = "https://example.invalid/subpage" }
+                        },
+                        ["imgs"] = new List<Dictionary<string, object?>>()
+                    }
+                },
+                ["https://example.invalid/MEDIASERVER/photo.jpg"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    [WebHandler.CsHeader] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                }
+            }
+        };
+        var lstItems = new List<Dictionary<string, object?>>();
+
+        InvokeNonPublicInstanceMethod(xHandler, "WorkSubPage", "https://example.invalid/list", dPages, lstItems);
+
+        var dSubPage = dPages["https://example.invalid/subpage/anzeigen"];
+        var lstParentSections = (List<Dictionary<string, object?>>)dPages["https://example.invalid/list"]["sections"]!;
+        Assert.AreEqual("19", lstParentSections[0]["id-anz"]);
+        Assert.AreEqual("19", dPages["https://example.invalid/list"]["https://example.invalid/MEDIASERVER/photo.jpg"] is Dictionary<string, object?> dMedia ? dMedia["id-anz"] : string.Empty);
+        var lstSections = (List<Dictionary<string, object?>>)dSubPage["sections"]!;
+        var lstLinks = (List<Dictionary<string, object?>>)lstSections[0]["links"]!;
+        Assert.AreEqual("https://example.invalid/MEDIASERVER/photo.png", lstLinks[0]["href"]);
+        Assert.AreEqual(1, lstItems.Count);
+    }
+
+    [TestMethod]
+    public void ContainsErrorMarker_Detects_Only_Real_Error_Texts()
+    {
+        var xResult = InvokeNonPublicStaticMethod<bool>(typeof(WebHandler), "ContainsErrorMarker", "504 gateway time-out");
+
+        Assert.IsTrue(xResult);
+        xResult = InvokeNonPublicStaticMethod<bool>(typeof(WebHandler), "ContainsErrorMarker", "Service Unavailable");
+
+        Assert.IsTrue(xResult);
+        xResult = InvokeNonPublicStaticMethod<bool>(typeof(WebHandler), "ContainsErrorMarker", "<html><head><script>window.setTimeout(function(){}, 1000);</script></head><body>ok</body></html>");
+
+        Assert.IsFalse(xResult);
+    }
+
+    [TestMethod]
+    public void TryGetBodyText_Returns_Empty_When_FindElements_Throws()
+    {
+        var xSearchContext = Substitute.For<ISearchContext>();
+        xSearchContext.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("body").ToString()))
+            .Returns(_ => throw new WebDriverException("failed"));
+
+        var sResult = InvokeNonPublicStaticMethod<string>(typeof(WebHandler), "TryGetBodyText", xSearchContext);
+
+        Assert.AreEqual(string.Empty, sResult);
+    }
+
+    [TestMethod]
+    public void NavigateWithReloadRetry_Retries_After_WebDriverException_And_Succeeds()
+    {
+        var xConfig = new RnzConfig();
+        var xHttpClient = Substitute.For<IHttpClientProxy>();
+        var xWebDriverFactory = Substitute.For<IWebDriverFactory>();
+        var xDriver = Substitute.For<IWebDriver>();
+        var xNavigation = Substitute.For<INavigation>();
+        var xBody = Substitute.For<IWebElement>();
+        var xProgress = Substitute.For<IProgress<WebHandlerProgress>>();
+        var iCalls = 0;
+
+        xDriver.Navigate().Returns(xNavigation);
+        xDriver.Title.Returns("Loaded");
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("body").ToString())).Returns(CreateCollection(xBody));
+        xBody.Text.Returns("content");
+        xNavigation.When(xNav => xNav.GoToUrl(Arg.Any<string>())).Do(_ =>
+        {
+            iCalls++;
+            if (iCalls == 1)
+            {
+                throw new WebDriverException("temporary");
+            }
+        });
+
+        using var xHandler = new WebHandler(xConfig, xHttpClient, xWebDriverFactory, xProgress);
+        SetDriver(xHandler, xDriver);
+
+        var xResult = InvokeNonPublicInstanceMethod<bool>(xHandler, "NavigateWithReloadRetry", "https://example.invalid/list");
+
+        Assert.IsTrue(xResult);
+        Assert.AreEqual(2, iCalls);
+        xProgress.Received().Report(Arg.Any<WebHandlerProgress>());
     }
 
     private static ReadOnlyCollection<IWebElement> CreateCollection(params IWebElement[] arrElements)
@@ -518,22 +747,6 @@ public sealed class WebHandlerTests
     }
 
     [TestMethod]
-    public void HasMeaningfulPageContent_Does_Not_Read_PageSource()
-    {
-        var xDriver = Substitute.For<IWebDriver>();
-        var xBody = Substitute.For<IWebElement>();
-
-        xDriver.Title.Returns("Traueranzeigen von Manfred Hindemith | Trauer.rnz.de");
-        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("body").ToString())).Returns(CreateCollection(xBody));
-        xBody.Text.Returns("Seiteninhalt");
-        xDriver.PageSource.Returns(_ => throw new WebDriverException("timeout"));
-
-        var xResult = InvokeNonPublicStaticMethod<bool>(typeof(WebHandler), "HasMeaningfulPageContent", xDriver);
-
-        Assert.IsTrue(xResult);
-    }
-
-    [TestMethod]
     public void HasMeaningfulPageContent_Returns_False_For_Error_Text_In_Body()
     {
         var xDriver = Substitute.For<IWebDriver>();
@@ -570,5 +783,213 @@ public sealed class WebHandlerTests
         var arrData2 = (byte[])dTarget2[WebHandler.CsData]!;
 
         Assert.AreEqual(9, arrData2[0]);
+    }
+
+    [TestMethod]
+    public void GetDictionaryList_Handles_Enumerable_Dictionary_Path_Via_Reflection()
+    {
+        IReadOnlyDictionary<string, object?> dValues = new Dictionary<string, object?>
+        {
+            ["links"] = (IEnumerable<Dictionary<string, object?>>)new[]
+            {
+                new Dictionary<string, object?>(StringComparer.Ordinal) { ["href"] = "https://example.invalid/e" }
+            }
+        };
+
+        var lstResult = InvokeNonPublicStaticMethod<List<Dictionary<string, object?>>>(typeof(WebHandler), "GetDictionaryList", dValues, "links");
+
+        Assert.AreEqual(1, lstResult.Count);
+        Assert.AreEqual("https://example.invalid/e", lstResult[0]["href"]);
+    }
+
+    [TestMethod]
+    public void GetStringList_Handles_Enumerable_String_Path_Via_Reflection()
+    {
+        IReadOnlyDictionary<string, object?> dValues = new Dictionary<string, object?>
+        {
+            ["text"] = (IEnumerable<string>)new[] { "A", "B" }
+        };
+
+        var lstResult = InvokeNonPublicStaticMethod<List<string>>(typeof(WebHandler), "GetStringList", dValues, "text");
+
+        CollectionAssert.AreEqual(new[] { "A", "B" }, lstResult);
+    }
+
+    [TestMethod]
+    public void HasMeaningfulPageContent_Returns_False_When_Title_And_Body_Are_Empty()
+    {
+        var xDriver = Substitute.For<IWebDriver>();
+        var xBody = Substitute.For<IWebElement>();
+
+        xDriver.Title.Returns(string.Empty);
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("body").ToString())).Returns(CreateCollection(xBody));
+        xBody.Text.Returns(string.Empty);
+
+        var xResult = InvokeNonPublicStaticMethod<bool>(typeof(WebHandler), "HasMeaningfulPageContent", xDriver);
+
+        Assert.IsFalse(xResult);
+    }
+
+    [TestMethod]
+    public void TryGetBodyText_Ignores_Stale_Body_And_Returns_Empty()
+    {
+        var xSearchContext = Substitute.For<ISearchContext>();
+        var xBody = Substitute.For<IWebElement>();
+        xSearchContext.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("body").ToString())).Returns(CreateCollection(xBody));
+        xBody.Text.Returns(_ => throw new StaleElementReferenceException());
+
+        var sResult = InvokeNonPublicStaticMethod<string>(typeof(WebHandler), "TryGetBodyText", xSearchContext);
+
+        Assert.AreEqual(string.Empty, sResult);
+    }
+
+    [TestMethod]
+    public void WorkSubPage_Uses_DataOriginal_Media_Branch_And_Catches_Invalid_Link()
+    {
+        var xHttpClient = Substitute.For<IHttpClientProxy>();
+        var xDriver = Substitute.For<IWebDriver>();
+        var xTitleElement = Substitute.For<IWebElement>();
+        var xBirthElement = Substitute.For<IWebElement>();
+        var xDeathElement = Substitute.For<IWebElement>();
+        var xSectionElement = Substitute.For<IWebElement>();
+        var xSectionImage = Substitute.For<IWebElement>();
+        var xBrokenLink = Substitute.For<IWebElement>();
+        var xResponse = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new ByteArrayContent(Encoding.ASCII.GetBytes("PNG1234567"))
+        };
+
+        xHttpClient.GetAsync("https://example.invalid/MEDIASERVER/from-data-original.jpg").Returns(Task.FromResult(xResponse));
+        using var xHandler = CreateHandler(xHttpClient: xHttpClient);
+        SetDriver(xHandler, xDriver);
+
+        xDriver.Url.Returns("https://example.invalid/sub/anzeigen");
+        xDriver.Title.Returns("SubTitle");
+        xDriver.PageSource.Returns("<html></html>");
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("h1").ToString())).Returns(CreateCollection(xTitleElement));
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.ClassName("col-sm-6").ToString())).Returns(CreateCollection(xBirthElement, xDeathElement));
+        xDriver.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("section").ToString())).Returns(CreateCollection(xSectionElement));
+
+        xTitleElement.Text.Returns("Max Mustermann");
+        xBirthElement.Text.Returns("* 01.01.2000");
+        xDeathElement.Text.Returns("† 02.02.2020 in Heidelberg");
+
+        xSectionElement.TagName.Returns("div");
+        xSectionElement.Text.Returns("Abschnitt");
+        xSectionElement.GetAttribute("class").Returns("row");
+        xSectionElement.GetAttribute("id").Returns("55");
+        xSectionElement.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("img").ToString())).Returns(CreateCollection(xSectionImage));
+        xSectionElement.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("a").ToString())).Returns(CreateCollection(xBrokenLink));
+
+        xSectionImage.TagName.Returns("img");
+        xSectionImage.Text.Returns(string.Empty);
+        xSectionImage.GetAttribute("class").Returns(string.Empty);
+        xSectionImage.GetAttribute("title").Returns(string.Empty);
+        xSectionImage.GetAttribute("alt").Returns("image");
+        xSectionImage.GetAttribute("src").Returns(string.Empty);
+        xSectionImage.GetAttribute("style").Returns(string.Empty);
+        xSectionImage.GetAttribute("data-original").Returns("/MEDIASERVER/from-data-original.jpg");
+        xSectionImage.FindElements(Arg.Any<By>()).Returns(CreateCollection());
+
+        xBrokenLink.TagName.Returns("a");
+        xBrokenLink.GetAttribute("href").Returns((string?)null);
+        xBrokenLink.FindElements(Arg.Any<By>()).Returns(CreateCollection());
+        xBrokenLink.Text.Returns(_ => throw new InvalidOperationException("to-string failed"));
+
+        var dPages = new Dictionary<string, Dictionary<string, object?>>(StringComparer.Ordinal)
+        {
+            ["https://example.invalid/list"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["filter"] = "nachrufe",
+                ["sections"] = new List<Dictionary<string, object?>>()
+                {
+                    new(StringComparer.Ordinal)
+                    {
+                        ["links"] = new List<Dictionary<string, object?>>()
+                        {
+                            new(StringComparer.Ordinal) { ["href"] = "https://example.invalid/sub" }
+                        },
+                        ["imgs"] = new List<Dictionary<string, object?>>()
+                    }
+                },
+                ["/MEDIASERVER/from-data-original.jpg"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    [WebHandler.CsHeader] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                }
+            },
+            ["https://example.invalid/sub/anzeigen"] = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["parent"] = "invalid-parent-shape"
+            }
+        };
+        var lstItems = new List<Dictionary<string, object?>>();
+
+        InvokeNonPublicInstanceMethod(xHandler, "WorkSubPage", "https://example.invalid/list", dPages, lstItems);
+
+        var dSubPage = dPages["https://example.invalid/sub/anzeigen"];
+        Assert.IsTrue(dSubPage["parent"] is List<object?>);
+        Assert.AreEqual("nachrufe", ((List<Dictionary<string, object?>>)dSubPage["sections"]!)[0]["filter"]);
+    }
+
+    private sealed class ThrowingToStringValue
+    {
+        public override string ToString()
+        {
+            throw new InvalidOperationException("to-string failed");
+        }
+    }
+
+    [TestMethod]
+    public void GetDictionaryList_Returns_Empty_For_Unsupported_Value_Type_Via_Reflection()
+    {
+        IReadOnlyDictionary<string, object?> dValues = new Dictionary<string, object?>
+        {
+            ["links"] = 42
+        };
+
+        var lstResult = InvokeNonPublicStaticMethod<List<Dictionary<string, object?>>>(typeof(WebHandler), "GetDictionaryList", dValues, "links");
+
+        Assert.AreEqual(0, lstResult.Count);
+    }
+
+    [TestMethod]
+    public void GetStringList_Returns_Empty_For_Unsupported_Value_Type_Via_Reflection()
+    {
+        IReadOnlyDictionary<string, object?> dValues = new Dictionary<string, object?>
+        {
+            ["text"] = 42
+        };
+
+        var lstResult = InvokeNonPublicStaticMethod<List<string>>(typeof(WebHandler), "GetStringList", dValues, "text");
+
+        Assert.AreEqual(0, lstResult.Count);
+    }
+
+    [TestMethod]
+    public void Wdr2List_Ignores_Throwing_Child_Query_And_Returns_Element()
+    {
+        var xConfig = new RnzConfig();
+        var xHttpClient = Substitute.For<IHttpClientProxy>();
+        var xWebDriverFactory = Substitute.For<IWebDriverFactory>();
+        var xSearchContext = Substitute.For<ISearchContext>();
+        var xElement = Substitute.For<IWebElement>();
+
+        xSearchContext.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("div").ToString()))
+            .Returns(CreateCollection(xElement));
+
+        xElement.TagName.Returns("div");
+        xElement.GetAttribute("class").Returns("c-blockitem");
+        xElement.GetAttribute("id").Returns("item-1");
+        xElement.Text.Returns("Line");
+        xElement.FindElements(Arg.Is<By>(xBy => xBy.ToString() == By.TagName("a").ToString()))
+            .Returns(_ => throw new InvalidOperationException("child query failed"));
+
+        using var xHandler = new WebHandler(xConfig, xHttpClient, xWebDriverFactory);
+
+        var lstResult = xHandler.Wdr2List(xSearchContext, new WebQuery(string.Empty, By.TagName("div"), new WebQuery("links", By.TagName("a"))));
+
+        Assert.AreEqual(1, lstResult.Count);
+        Assert.AreEqual("item-1", lstResult[0]["id"]);
+        Assert.IsFalse(lstResult[0].ContainsKey("links"));
     }
 }

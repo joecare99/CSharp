@@ -26,10 +26,10 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Avalonia" Version="12.0.1" />
-	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.0.1" />
+	  <PackageReference Include="Avalonia" Version="12.0.3" />
+	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.0.3" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
@@ -41,6 +41,9 @@
 	  <Compile Update="Models\TimerProxy.cs">
 	    <SubType>Component</SubType>
 	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Update="Tmds.DBus.Protocol" Version="0.93.0" />
 	</ItemGroup>
 
 </Project>

@@ -68,12 +68,18 @@ public partial class CSCode : CodeBase, ICSCode
     /// The constructor wires <see cref="CSTokenHandler"/> with <see cref="stringEndChars"/> and <see cref="ReservedWords"/>, 
     /// uses a <see cref="CSCodeBuilder"/> to construct block trees, and applies a default <c>CodeOptimizer</c> for structural clean-up.
     /// </remarks>
-    public CSCode() : base() {
-        tokenHandler = new CSTokenHandler() { 
-            stringEndChars = stringEndChars, 
-            reservedWords = ReservedWords };
-        codeBuilder = new CSCodeBuilder() {  };
-        codeOptimizer = new CodeOptimizer();
+    public CSCode() : this(new CSTokenHandler()
+    {
+        stringEndChars = stringEndChars,
+        reservedWords = ReservedWords
+    }, new CSCodeBuilder(), new CodeOptimizer()) {
+    }
+
+    public CSCode(ITokenHandler tokenHandler, ICodeBuilder codeBuilder, ICodeOptimizer codeOptimizer) : base()
+    {
+        this.tokenHandler = tokenHandler;
+        this.codeBuilder = codeBuilder;
+        this.codeOptimizer = codeOptimizer;
     }
     private static string GetDebug(TokenizeData data, string code) => $"{code.Substring(Math.Max(0, data.Pos - 20), data.Pos - Math.Max(0, data.Pos - 20))}" +
                         $">{code[data.Pos]}<" +
@@ -99,7 +105,7 @@ public partial class CSCode : CodeBase, ICSCode
         {
             string debug = GetDebug(data, OriginalCode);
 
-            Handler(t => stack.Push(t), OriginalCode, data);
+            Handler?.Invoke(t => stack.Push(t), OriginalCode, data);
             stack.Reverse();
             while (stack.Count > 0)
                 yield return stack.Pop();
@@ -122,7 +128,7 @@ public partial class CSCode : CodeBase, ICSCode
         {
             //Debug:
             string debug = GetDebug(data, OriginalCode);
-            Handler(token, OriginalCode, data);
+            Handler?.Invoke(token, OriginalCode, data);
             data.Pos++;
         }
     }

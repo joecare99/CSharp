@@ -50,7 +50,6 @@ public class ExtOutput : IOutput
 
     public void Output(IReader reader, Action<string> write, Action<string> debug)
     {
-        var xElExists = false;
         string sPath = "";
         var eState = E_State.Ignore;
         var dData = new System.Collections.Generic.Dictionary<string, string>();
@@ -72,7 +71,6 @@ public class ExtOutput : IOutput
                 // Debug
                 debug($"/{sPath}{Environment.NewLine}");
                 eState = NodeStateMachine(eState, sPath, sName, dData, xIsEmptyElement, write, debug);
-                xElExists = false;
                 var count = reader.GetAttributeCount();
                 for (var i = 0; i < count; i++)
                 {
@@ -101,7 +99,7 @@ public class ExtOutput : IOutput
                 if (eState == E_State.pou_St)
                     write($"{reader.getValue()}{Environment.NewLine}");
                 else
-                    debug($"/{sPath}/@ : \"{Quoted(reader.getValue().ToString())}\"");
+                    debug($"/{sPath}/@ : \"{Quoted(reader.getValue()?.ToString() ?? string.Empty)}\"");
             }
         }
 
@@ -119,6 +117,8 @@ public class ExtOutput : IOutput
                 eState = E_State.V_Decl;
                 break;
             case (E_State.Type, scNodeReturnType):
+            case (E_State.V_Decl, scNodeReturnType):
+                _out($"{scNodeInterface};{Environment.NewLine}");
                 eState = E_State.pou_Interface;
                 break;
             case (E_State.V_Done, scNodeInputVars):
@@ -190,18 +190,19 @@ public class ExtOutput : IOutput
                 eState = E_State.Type;
                 break;
             case (E_State.POU, scAttrName) when sName.ToLower() == scNodePou:
-                dData[scAttrName] = sAttrValue.ToString();
+                dData[scAttrName] = sAttrValue.ToString() ?? string.Empty;
                 break;
             case (E_State.POU, scAttrPouType) when sName.ToLower() == scNodePou
                 && dData.ContainsKey(scAttrName):
-                dData[scAttrPouType] = sAttrValue.ToString();
-                if (sAttrValue?.ToString()?.ToLower() == "function")
+                var sPouType = sAttrValue.ToString() ?? string.Empty;
+                dData[scAttrPouType] = sPouType;
+                if (string.Equals(sPouType, "function", StringComparison.OrdinalIgnoreCase))
                 {
                     _out($"FUNCTION {dData[scAttrName]} : ");
                     eState = E_State.Function;
                 }
                 else
-                    _out($"{sAttrValue?.ToString()?.ToUpper()} {dData[scAttrName]};");
+                    _out($"{sPouType.ToUpperInvariant()} {dData[scAttrName]};");
                 break;
         }
 
@@ -239,9 +240,12 @@ public class ExtOutput : IOutput
                 _out($"{sName};{Environment.NewLine}");
                 break;
             case (E_State.POU, _, scNodeInterface):
+                eState = E_State.pou_Interface;
                 _out($"{sName};{Environment.NewLine}");
                 // Debug 
                 write($"// eState : {eState} {Environment.NewLine}");
+                break;
+            case (E_State.Function, _, scNodeInterface):
                 break;
             case (E_State.Function, _, scNodeReturnType):
                 eState = E_State.Type;

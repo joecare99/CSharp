@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using BaseGenClasses.Model;
+using BaseGenClasses.Persistence;
 using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
@@ -44,6 +45,10 @@ public sealed class GenealogySecureStoreTests
         Assert.AreSame(loadedFamily, loadedPerson.Connects.Single(genConnect => genConnect is not null)!.Entity);
         Assert.AreEqual(1, loadedFamily.Connects.Count(genConnect => genConnect is not null));
         Assert.AreSame(loadedPerson, loadedFamily.Connects.Single(genConnect => genConnect is not null)!.Entity);
+        Assert.AreEqual(1, loaded.Transactions.Count);
+        Assert.AreSame(loadedPerson, loaded.Transactions[0].Class);
+        Assert.AreSame(birthFact, loaded.Transactions[0].Entry);
+        Assert.AreEqual("Born in London", (loaded.Transactions[0].Data as FactJournalValue)?.Data);
     }
 
     [TestMethod]
@@ -153,6 +158,17 @@ public sealed class GenealogySecureStoreTests
             eGenConnectionType = EGenConnectionType.Child,
         });
 
+        genealogy.Transactions.Add(new GenTransaction
+        {
+            UId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+            ID = 40,
+            Class = person,
+            Entry = person.Facts.Single(genFact => genFact is not null && genFact.eFactType == EFactType.Birth)!,
+            Data = FactJournalValue.FromFact(person.Facts.Single(genFact => genFact is not null && genFact.eFactType == EFactType.Birth)),
+            OldData = null,
+            Timestamp = new DateTime(2025, 4, 1, 12, 30, 0, DateTimeKind.Utc),
+        });
+
         return genealogy;
     }
 
@@ -257,6 +273,19 @@ public sealed class GenealogySecureStoreTests
             {
                 UId = gUid,
                 ID = iId,
+            };
+
+        public IGenTransaction CreateTransaction(Guid gUid, int iId, DateTime? dtLastChange, IGenBase genClass, IGenBase genEntry, object? objData, object? objOldData, DateTime dtTimestamp, IGenTransaction? genPrev)
+            => new GenTransaction
+            {
+                UId = gUid,
+                ID = iId,
+                Class = genClass,
+                Entry = genEntry,
+                Data = objData,
+                OldData = objOldData,
+                Timestamp = dtTimestamp,
+                Prev = genPrev,
             };
     }
 }

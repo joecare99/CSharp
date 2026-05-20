@@ -1,3 +1,5 @@
+using RepoMigrator.Core;
+
 namespace RepoMigrator.App.Logic.Models;
 
 /// <summary>
@@ -5,6 +7,11 @@ namespace RepoMigrator.App.Logic.Models;
 /// </summary>
 public sealed class TargetSelectionResult
 {
+    /// <summary>
+    /// Gets the target provider capabilities that the UI can react to.
+    /// </summary>
+    public RepositoryCapabilities Capabilities { get; init; } = new();
+
     /// <summary>
     /// Gets or sets the available target branches.
     /// </summary>

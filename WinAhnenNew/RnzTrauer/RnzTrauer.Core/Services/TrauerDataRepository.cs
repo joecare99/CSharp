@@ -1,5 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Globalization;
-using MySqlConnector;
+using System.Linq;
+using Db.Core.Abstractions.Sql;
+using Db.Core.Abstractions.Sql.Interfaaces;
+using RnzTrauer.Core.Services.Interfaces;
 
 namespace RnzTrauer.Core;
 
@@ -8,115 +15,84 @@ namespace RnzTrauer.Core;
 /// </summary>
 public sealed class TrauerDataRepository : ITrauerDataRepository
 {
-    private const int DefaultMySqlPort = 3306;
-
     private const string TableAnzeigen = "Anzeigen";
     private const string TableTrauerfall = "Trauerfall";
-    private const string LegacyAnnouncementTable = "`RNZ-Traueranzeigen`.`Anzeigen`";
+    private const string TableLegacyAnzeigen = "RNZ-Traueranzeigen`.`Anzeigen";
 
-    private const string SqlSelectAnnouncementById = "SELECT * FROM Anzeigen WHERE idAnzeige=@id";
-    private const string SqlSelectAnnouncementByAnnouncement = "SELECT * FROM Anzeigen WHERE Announcement=@announcement";
-    private const string SqlSelectLegacyAnnouncementByAuftrag = "SELECT * FROM `RNZ-Traueranzeigen`.`Anzeigen` WHERE Auftrag=@auftrag";
-    private const string SqlSelectTrauerfallById = "SELECT * FROM Trauerfall WHERE idTrauerfall=@id";
-    private const string SqlSelectTrauerfallByUrl = "SELECT idTrauerfall, url FROM Trauerfall WHERE url=@url";
-    private const string SqlSelectTrauerfallIndex = "SELECT idTrauerfall,url FROM Trauerfall";
-    private const string SqlInsertTrauerfall = "INSERT INTO `Trauerfall` (`URL`, `Created`, `Preread_Birth`, `Preread_Death`, `Fullname`, `Firstname`, `Lastname`, `Birthname`, `Place`, `Created_by`) VALUES (@url, @created, @birth, @death, @fullName, @firstName, @lastName, @birthName, @place, @createdBy);";
-    private const string SqlInsertAnnouncement = "INSERT INTO `Anzeigen` (`idTrauerfall`, `url`, `Announcement`, `release`,`localpath`, `pngFile`, `pdfFile`, `Additional`, `Firstname`,`Lastname`, `Birthname`, `Birth`, `Death`, `Place`, `Info`, `ProfileImg`, `Rubrik`) VALUES (@idtf, @url, @announcement, @release, @localpath, @pngFile, @pdfFile, @additional, @firstName, @lastName, @birthName, @birth, @death, @place, @info, @profileImg, @rubrik);";
-    private const string SqlInsertLegacyAnnouncement = "INSERT INTO `RNZ-Traueranzeigen`.`Anzeigen` (`Auftrag`, `url`, `Announcement`, `release`,`localpath`, `pngFile`, `pdfFile`, `Additional`) VALUES (@auftrag, @url, @announcement, @release, @localpath, @pngFile, @pdfFile, @additional);";
-
-    private readonly MySqlConnection _dbConn;
+    private readonly IDbConnection _dbConn;
+    private readonly IDbStatementRenderer _xStatementRenderer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TrauerDataRepository"/> class.
     /// </summary>
-    public TrauerDataRepository(DatabaseSettings xSettings)
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TrauerDataRepository"/> class with an injected connection factory.
+    /// </summary>
+    public TrauerDataRepository(IDbConnectionFactory xConnectionFactory, DatabaseSettings xSettings)
     {
+        ArgumentNullException.ThrowIfNull(xConnectionFactory);
         ArgumentNullException.ThrowIfNull(xSettings);
 
-        var sConnectionString = new MySqlConnectionStringBuilder
-        {
-            Server = xSettings.DBhost,
-            Port = DefaultMySqlPort,
-            UserID = xSettings.DBuser,
-            Password = xSettings.DBpass,
-            Database = xSettings.DB,
-            AllowUserVariables = true,
-            ConvertZeroDateTime = true
-        }.ConnectionString;
+        var dbSettings = xConnectionFactory.CreateSettingsStub();
+        dbSettings["Server"] = xSettings.DBhost;
+        dbSettings["UserID"] = xSettings.DBuser;
+        dbSettings["Password"] = xSettings.DBpass;
+        dbSettings["Database"] = xSettings.DB;
 
-        _dbConn = new MySqlConnection(sConnectionString);
+        _dbConn = xConnectionFactory.CreateConnection(dbSettings);
+        _xStatementRenderer = xConnectionFactory.CreateStatementRenderer(_dbConn);
         _dbConn.Open();
     }
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerAnzId(int iId)
-    {
-        return Query(SqlSelectAnnouncementById, xCommand => xCommand.Parameters.AddWithValue("@id", iId));
-    }
+    public List<Dictionary<string, object?>> TrauerAnzId(int iId) 
+        => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause("idAnzeige", DbFilterOperator.Equal, "@id")]),
+            xCommand => AddScalarParameter(xCommand, "@id", iId));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerAnz(int iAnnouncement)
-    {
-        return Query(SqlSelectAnnouncementByAnnouncement, xCommand => xCommand.Parameters.AddWithValue("@announcement", iAnnouncement));
-    }
+    public List<Dictionary<string, object?>> TrauerAnz(int iAnnouncement) 
+        => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause("Announcement", DbFilterOperator.Equal, "@announcement")]), 
+            xCommand => AddScalarParameter(xCommand, "@announcement", iAnnouncement));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> LegacyTrauerAnz(string sAuftrag)
-    {
-        return Query(SqlSelectLegacyAnnouncementByAuftrag, xCommand => xCommand.Parameters.AddWithValue("@auftrag", sAuftrag));
-    }
+    public List<Dictionary<string, object?>> LegacyTrauerAnz(string sAuftrag) 
+        => Query(_xStatementRenderer.CreateQuery(TableLegacyAnzeigen, ["*"], [new DbFilterClause("Auftrag", DbFilterOperator.Equal, "@auftrag")]), 
+            xCommand => AddScalarParameter(xCommand, "@auftrag", sAuftrag));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerAnzIsNull(string sField, int iLimit = 1)
-    {
-        return Query($"SELECT * FROM `{TableAnzeigen}` WHERE `{sField}` is null limit @limit", xCommand => xCommand.Parameters.AddWithValue("@limit", iLimit));
-    }
+    public List<Dictionary<string, object?>> TrauerAnzIsNull(string sField, int iLimit = 1) 
+        => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause(sField, DbFilterOperator.IsNull)], iLimit), xCommand => { });
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallIsNull(string sField, int iLimit = 1)
-    {
-        return Query($"SELECT * FROM `{TableTrauerfall}` WHERE `{sField}` is null limit @limit", xCommand => xCommand.Parameters.AddWithValue("@limit", iLimit));
-    }
+    public List<Dictionary<string, object?>> TrauerFallIsNull(string sField, int iLimit = 1) 
+        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause(sField, DbFilterOperator.IsNull)], iLimit), xCommand => { });
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallEquals(string sField, string sValue, int iLimit = 1)
-    {
-        return Query($"SELECT * FROM `{TableTrauerfall}` WHERE `{sField}`=@value limit @limit", xCommand =>
-        {
-            xCommand.Parameters.AddWithValue("@value", sValue);
-            xCommand.Parameters.AddWithValue("@limit", iLimit);
-        });
-    }
+    public List<Dictionary<string, object?>> TrauerFallEquals(string sField, string sValue, int iLimit = 1) 
+        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause(sField, DbFilterOperator.Equal, "@value")], iLimit), 
+            xCommand => AddScalarParameter(xCommand, "@value", sValue));
 
     /// <inheritdoc />
-    public void UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
-    {
-        _ = UpdateRows(TableTrauerfall, arrNewValues, arrOldValues);
-    }
+    public bool UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues) 
+        => UpdateRows(TableTrauerfall, arrNewValues, arrOldValues);
 
     /// <inheritdoc />
-    public bool UpdateTrauerAnz(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
-    {
-        return UpdateRows(TableAnzeigen, arrNewValues, arrOldValues);
-    }
+    public bool UpdateTrauerAnz(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues) 
+        => UpdateRows(TableAnzeigen, arrNewValues, arrOldValues);
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallById(int iId)
-    {
-        return Query(SqlSelectTrauerfallById, xCommand => xCommand.Parameters.AddWithValue("@id", iId));
-    }
+    public List<Dictionary<string, object?>> TrauerFallById(int iId) 
+        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause("idTrauerfall", DbFilterOperator.Equal, "@id")]), xCommand => AddScalarParameter(xCommand, "@id", iId));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl)
-    {
-        return Query(SqlSelectTrauerfallByUrl, xCommand => xCommand.Parameters.AddWithValue("@url", sUrl));
-    }
-
+    public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl) 
+        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["idTrauerfall", "url"], [new DbFilterClause("url", DbFilterOperator.Equal, "@url")]), xCommand => AddScalarParameter(xCommand, "@url", sUrl));
     /// <inheritdoc />
     public Dictionary<string, long> BuildTrauerFallIndex()
     {
         var dIndex = new Dictionary<string, long>(StringComparer.Ordinal);
-        using var xCommand = new MySqlCommand(SqlSelectTrauerfallIndex, _dbConn);
+        using var xCommand = _xStatementRenderer.CreateQuery(TableTrauerfall, ["idTrauerfall", "url"], []);
         using var xReader = xCommand.ExecuteReader();
         while (xReader.Read())
         {
@@ -129,7 +105,17 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
     /// <inheritdoc />
     public long AppendTrauerFall(IReadOnlyDictionary<string, object?> dValues)
     {
-        using var xCommand = new MySqlCommand(SqlInsertTrauerfall, _dbConn);
+        using var xCommand = _xStatementRenderer.CreateInsert(TableTrauerfall, [
+            new KeyValuePair<string, string>("URL", "@url"),
+            new KeyValuePair<string, string>("Created", "@created"),
+            new KeyValuePair<string, string>("Preread_Birth", "@birth"),
+            new KeyValuePair<string, string>("Preread_Death", "@death"),
+            new KeyValuePair<string, string>("Fullname", "@fullName"),
+            new KeyValuePair<string, string>("Firstname", "@firstName"),
+            new KeyValuePair<string, string>("Lastname", "@lastName"),
+            new KeyValuePair<string, string>("Birthname", "@birthName"),
+            new KeyValuePair<string, string>("Place", "@place"),
+            new KeyValuePair<string, string>("Created_by", "@createdBy")]);
         AddParameter(xCommand, "@url", dValues, "URL");
         AddParameter(xCommand, "@created", dValues, "Created");
         AddParameter(xCommand, "@birth", dValues, "Preread_Birth");
@@ -141,13 +127,30 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
         AddParameter(xCommand, "@place", dValues, "Place");
         AddParameter(xCommand, "@createdBy", dValues, "Created_by");
         xCommand.ExecuteNonQuery();
-        return xCommand.LastInsertedId;
+        return GetLastInsertedId(xCommand);
     }
 
     /// <inheritdoc />
     public long AppendTrauerAnz(IReadOnlyDictionary<string, object?> dValues)
     {
-        using var xCommand = new MySqlCommand(SqlInsertAnnouncement, _dbConn);
+        using var xCommand = _xStatementRenderer.CreateInsert(TableAnzeigen, [
+            new KeyValuePair<string, string>("idTrauerfall", "@idtf"),
+            new KeyValuePair<string, string>("url", "@url"),
+            new KeyValuePair<string, string>("Announcement", "@announcement"),
+            new KeyValuePair<string, string>("release", "@release"),
+            new KeyValuePair<string, string>("localpath", "@localpath"),
+            new KeyValuePair<string, string>("pngFile", "@pngFile"),
+            new KeyValuePair<string, string>("pdfFile", "@pdfFile"),
+            new KeyValuePair<string, string>("Additional", "@additional"),
+            new KeyValuePair<string, string>("Firstname", "@firstName"),
+            new KeyValuePair<string, string>("Lastname", "@lastName"),
+            new KeyValuePair<string, string>("Birthname", "@birthName"),
+            new KeyValuePair<string, string>("Birth", "@birth"),
+            new KeyValuePair<string, string>("Death", "@death"),
+            new KeyValuePair<string, string>("Place", "@place"),
+            new KeyValuePair<string, string>("Info", "@info"),
+            new KeyValuePair<string, string>("ProfileImg", "@profileImg"),
+            new KeyValuePair<string, string>("Rubrik", "@rubrik")]);
         AddParameter(xCommand, "@idtf", dValues, "idTrauerfall");
         AddParameter(xCommand, "@url", dValues, "url");
         AddParameter(xCommand, "@announcement", dValues, "Announcement");
@@ -166,13 +169,21 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
         AddParameter(xCommand, "@profileImg", dValues, "ProfileImg");
         AddParameter(xCommand, "@rubrik", dValues, "Rubrik");
         xCommand.ExecuteNonQuery();
-        return xCommand.LastInsertedId;
+        return GetLastInsertedId(xCommand);
     }
 
     /// <inheritdoc />
     public long AppendLegacyTAnz(IReadOnlyDictionary<string, object?> dValues)
     {
-        using var xCommand = new MySqlCommand(SqlInsertLegacyAnnouncement, _dbConn);
+        using var xCommand = _xStatementRenderer.CreateInsert(TableLegacyAnzeigen, [
+            new KeyValuePair<string, string>("Auftrag", "@auftrag"),
+            new KeyValuePair<string, string>("url", "@url"),
+            new KeyValuePair<string, string>("Announcement", "@announcement"),
+            new KeyValuePair<string, string>("release", "@release"),
+            new KeyValuePair<string, string>("localpath", "@localpath"),
+            new KeyValuePair<string, string>("pngFile", "@pngFile"),
+            new KeyValuePair<string, string>("pdfFile", "@pdfFile"),
+            new KeyValuePair<string, string>("Additional", "@additional")]);
         AddParameter(xCommand, "@auftrag", dValues, "Auftrag");
         AddParameter(xCommand, "@url", dValues, "url");
         AddParameter(xCommand, "@announcement", dValues, "Announcement");
@@ -182,20 +193,18 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
         AddParameter(xCommand, "@pdfFile", dValues, "pdfFile");
         AddParameter(xCommand, "@additional", dValues, "Additional");
         xCommand.ExecuteNonQuery();
-        return xCommand.LastInsertedId;
+        return GetLastInsertedId(xCommand);
     }
 
     /// <inheritdoc />
-    public void Dispose()
-    {
-        _dbConn.Dispose();
-    }
+    public void Dispose() => _dbConn.Dispose();
 
-    private static void AddParameter(MySqlCommand xCommand, string sParameterName, IReadOnlyDictionary<string, object?> dValues, string sKey)
+    private static void AddParameter(IDbCommand xCommand, string sParameterName, IReadOnlyDictionary<string, object?> dValues, string sKey)
     {
-        _ = xCommand.Parameters.AddWithValue(
-            sParameterName,
-            dValues.TryGetValue(sKey, out var xValue) ? xValue ?? DBNull.Value : DBNull.Value);
+        var xParameter = xCommand.CreateParameter();
+        xParameter.ParameterName = sParameterName;
+        xParameter.Value = dValues.TryGetValue(sKey, out var xValue) ? xValue ?? DBNull.Value : DBNull.Value;
+        _ = xCommand.Parameters.Add(xParameter);
     }
 
     private bool UpdateRows(string sTable, List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
@@ -229,9 +238,9 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
                     continue;
                 }
 
-                using var xCommand = new MySqlCommand($"UPDATE `{sTable}` SET `{sColumn}`=@value WHERE `{sKeyField}`=@key", _dbConn);
-                xCommand.Parameters.AddWithValue("@value", xValue ?? DBNull.Value);
-                xCommand.Parameters.AddWithValue("@key", dNewRow[sKeyField]);
+                using var xCommand = _xStatementRenderer.CreateUpdate(sTable, [new KeyValuePair<string, string>(sColumn, "@value")], [new DbFilterClause(sKeyField, DbFilterOperator.Equal, "@key")]);
+                AddScalarParameter(xCommand, "@value", xValue ?? DBNull.Value);
+                AddScalarParameter(xCommand, "@key", dNewRow[sKeyField]);
                 xCommand.ExecuteNonQuery();
                 xChanged = true;
             }
@@ -240,10 +249,9 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
         return xChanged;
     }
 
-    private List<Dictionary<string, object?>> Query(string sSql, Action<MySqlCommand> xBind)
+    private List<Dictionary<string, object?>> Query(IDbCommand xCommand, Action<IDbCommand> xBind)
     {
         var arrData = new List<Dictionary<string, object?>>();
-        using var xCommand = new MySqlCommand(sSql, _dbConn);
         xBind(xCommand);
         using var xReader = xCommand.ExecuteReader();
         while (xReader.Read())
@@ -269,5 +277,33 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
         }
 
         return arrData;
+    }
+
+
+    private IDbCommand CreateUpdate(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields, IEnumerable<DbFilterClause> arrFilters) 
+        => _xStatementRenderer.CreateUpdate(sTable, arrFields, arrFilters);
+
+    private static void AddScalarParameter(IDbCommand xCommand, string sParameterName, object? xValue)
+    {
+        var xParameter = xCommand.CreateParameter();
+        xParameter.ParameterName = sParameterName;
+        xParameter.Value = xValue ?? DBNull.Value;
+        _ = xCommand.Parameters.Add(xParameter);
+    }
+
+    private static long GetLastInsertedId(IDbCommand xCommand)
+    {
+        var xProperty = xCommand.GetType().GetProperty("LastInsertedId");
+        if (xProperty?.GetValue(xCommand) is long iValue)
+        {
+            return iValue;
+        }
+
+        if (xProperty?.GetValue(xCommand) is int iValue32)
+        {
+            return iValue32;
+        }
+
+        return 0L;
     }
 }

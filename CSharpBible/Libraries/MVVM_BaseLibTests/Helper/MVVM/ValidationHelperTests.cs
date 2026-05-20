@@ -23,15 +23,9 @@ public class ValidationHelperTests
         DebugLog = "";
     }
 
-    private void OnErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
-    {
-        DoLog($"ErrorsChg({sender},{e.PropertyName})");
-    }
+    private void OnErrorsChanged(object? sender, DataErrorsChangedEventArgs e) => DoLog($"ErrorsChg({sender},{e.PropertyName})");
 
-    private void DoLog(string v)
-    {
-        DebugLog+=$"{v}{Environment.NewLine}";
-    }
+    private void DoLog(string v) => DebugLog += $"{v}{Environment.NewLine}";
 
     [TestMethod()]
     public void SetupTest()

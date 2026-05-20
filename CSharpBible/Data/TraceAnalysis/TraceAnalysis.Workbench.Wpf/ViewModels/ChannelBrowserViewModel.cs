@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using TraceAnalysis.Workbench.Core.Models;
 
 namespace TraceAnalysis.Workbench.Wpf.ViewModels;
@@ -29,5 +30,18 @@ public sealed class ChannelBrowserViewModel
 
         foreach (var item in dataBasis.Items)
             Channels.Add(new TraceChannelItem(item.ColumnName, item.GroupName, isDerived: false));
+    }
+
+    /// <summary>
+    /// Replaces the channel list from the projected chart series.
+    /// </summary>
+    public void UpdateFromSeries(IReadOnlyList<TraceSeriesModel> series)
+    {
+        Channels.Clear();
+        if (series == null)
+            return;
+
+        foreach (var item in series)
+            Channels.Add(new TraceChannelItem(item.Name, item.GroupName, isDerived: false));
     }
 }

@@ -32,6 +32,74 @@ public sealed class MigrationServiceTests
     }
 
     [TestMethod]
+    public async Task MigrateAsync_WhenVerboseProgressEnabled_ReportsRevisionDetails()
+    {
+        var providerFactory = Substitute.For<IProviderFactory>();
+        var sourceProvider = Substitute.For<IVersionControlProvider>();
+        var targetProvider = Substitute.For<IVersionControlProvider>();
+        var progress = Substitute.For<IMigrationProgress>();
+        var service = new MigrationService(providerFactory);
+        var sourceEndpoint = new RepositoryEndpoint { Type = RepoType.Svn, UrlOrPath = "svn://source/repo" };
+        var targetEndpoint = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
+        var query = new ChangeSetQuery();
+        var options = new MigrationOptions { VerboseProgress = true };
+        var changeSet = new ChangeSetInfo
+        {
+            Id = "100",
+            Message = "Fix generated docs",
+            AuthorName = "alice",
+            Timestamp = new DateTimeOffset(2024, 1, 1, 8, 0, 0, TimeSpan.Zero),
+            ChangedPaths =
+            [
+                new RepositoryChangedPathInfo { Path = "/trunk/a.htm", Action = "M", Kind = "file" },
+                new RepositoryChangedPathInfo { Path = "/trunk/data.bin", Action = "A", Kind = "file" },
+                new RepositoryChangedPathInfo { Path = "/trunk/docs", Action = "M", Kind = "dir" }
+            ]
+        };
+
+        providerFactory.Create(RepoType.Svn).Returns(sourceProvider);
+        providerFactory.Create(RepoType.Git).Returns(targetProvider);
+        sourceProvider.Name.Returns("SVN");
+        targetProvider.Name.Returns("Git");
+        sourceProvider.OpenAsync(sourceEndpoint, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        sourceProvider.GetChangeSetsAsync(query, Arg.Any<CancellationToken>()).Returns(Task.FromResult<IReadOnlyList<ChangeSetInfo>>([changeSet]));
+        sourceProvider.MaterializeSnapshotAsync(Arg.Any<string>(), changeSet.Id, Arg.Any<CancellationToken>())
+            .Returns(callInfo =>
+            {
+                var sTempDirectory = callInfo.ArgAt<string>(0);
+                File.WriteAllText(Path.Combine(sTempDirectory, "a.htm"), "html");
+                return Task.CompletedTask;
+            });
+        sourceProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
+        targetProvider.InitializeTargetAsync(targetEndpoint, true, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        targetProvider.CommitSnapshotAsync(Arg.Any<string>(), Arg.Any<CommitMetadata>(), progress, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        targetProvider.FlushAsync(Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        targetProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
+
+        await service.MigrateAsync(sourceEndpoint, targetEndpoint, query, options, progress, CancellationToken.None);
+
+        progress.Received().Report(
+            MigrationReportSeverity.Information,
+            MigrationReportMessage.ChangeSetDetails,
+            Arg.Is<object?[]>(arrAdditional => arrAdditional.Length == 12
+                && Equals(arrAdditional[3], 3)
+                && Equals(arrAdditional[4], 2)
+                && Equals(arrAdditional[5], 1)
+                && Equals(arrAdditional[6], 1)
+                && Equals(arrAdditional[7], 1)
+                && Equals(arrAdditional[8], 0)
+                && Equals(arrAdditional[9], 0)
+                && Equals(arrAdditional[10], 0)));
+        progress.Received().Report(MigrationReportSeverity.Information, MigrationReportMessage.SnapshotMaterialized, Arg.Any<object?[]>());
+        progress.Received().Report(MigrationReportSeverity.Information, MigrationReportMessage.ChangeCountVerificationPlanned, Arg.Any<object?[]>());
+        await targetProvider.Received().CommitSnapshotAsync(
+            Arg.Any<string>(),
+            Arg.Is<CommitMetadata>(metadata => metadata.ExpectedChangedPathCount == 3 && metadata.ExpectedChangedFilePathCount == 2 && metadata.VerifyChangedPathCount),
+            progress,
+            Arg.Any<CancellationToken>());
+    }
+
+    [TestMethod]
     public async Task MigrateAsync_ProjectsSnapshotsIntoConfiguredSubdirectoryBranches()
     {
         var providerFactory = Substitute.For<IProviderFactory>();
@@ -75,9 +143,9 @@ public sealed class MigrationServiceTests
 
         await service.MigrateAsync(sourceEndpoint, targetEndpoint, query, options, progress, CancellationToken.None);
 
-        await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG/_root"), Arg.Any<CancellationToken>());
-        await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG/2001"), Arg.Any<CancellationToken>());
-        await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG/2001/110209_Testprojekt"), Arg.Any<CancellationToken>());
+        await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG/_root"), progress, Arg.Any<CancellationToken>());
+        await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG/2001"), progress, Arg.Any<CancellationToken>());
+        await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.TargetBranch == "KG/2001/110209_Testprojekt"), progress, Arg.Any<CancellationToken>());
         await targetProvider.Received(1).FlushAsync(Arg.Any<CancellationToken>());
     }
 
@@ -216,7 +284,7 @@ public sealed class MigrationServiceTests
             });
         exportProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
         targetProvider.InitializeTargetAsync(targetEndpoint, true, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
-        targetProvider.CommitSnapshotAsync(Arg.Any<string>(), Arg.Any<CommitMetadata>(), Arg.Any<CancellationToken>())
+        targetProvider.CommitSnapshotAsync(Arg.Any<string>(), Arg.Any<CommitMetadata>(), progress, Arg.Any<CancellationToken>())
             .Returns(callInfo =>
             {
                 var metadata = callInfo.ArgAt<CommitMetadata>(1);
@@ -235,7 +303,65 @@ public sealed class MigrationServiceTests
         tcsSecondExportCanFinish.TrySetResult();
         await migrationTask;
 
-        await targetProvider.Received().CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.Message == "Import 100"), Arg.Any<CancellationToken>());
-        await targetProvider.Received().CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.Message == "Import 101"), Arg.Any<CancellationToken>());
+        await targetProvider.Received().CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.Message == "Import 100"), progress, Arg.Any<CancellationToken>());
+        await targetProvider.Received().CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(metadata => metadata.Message == "Import 101"), progress, Arg.Any<CancellationToken>());
+    }
+
+    [TestMethod]
+    public async Task MigrateAsync_PipelinedExecution_ReportsCleanupWhenExportFails()
+    {
+        var providerFactory = Substitute.For<IProviderFactory>();
+        var enumerateProvider = Substitute.For<IVersionControlProvider>();
+        var exportProvider = Substitute.For<IVersionControlProvider>();
+        var targetProvider = Substitute.For<IVersionControlProvider>();
+        var progress = Substitute.For<IMigrationProgress>();
+        var service = new MigrationService(providerFactory);
+        var sourceEndpoint = new RepositoryEndpoint { Type = RepoType.Svn, UrlOrPath = "svn://source/repo" };
+        var targetEndpoint = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
+        var query = new ChangeSetQuery();
+        var options = new MigrationOptions
+        {
+            ExecutionMode = MigrationExecutionMode.Pipelined,
+            PipelinePrefetchCount = 1,
+            PipelineExportWorkerCount = 1
+        };
+        var changeSet = new ChangeSetInfo
+        {
+            Id = "100",
+            Message = "Import",
+            AuthorName = "alice",
+            Timestamp = new DateTimeOffset(2024, 1, 1, 8, 0, 0, TimeSpan.Zero)
+        };
+
+        providerFactory.Create(RepoType.Svn).Returns(enumerateProvider, exportProvider);
+        providerFactory.Create(RepoType.Git).Returns(targetProvider);
+        enumerateProvider.Name.Returns("SVN");
+        exportProvider.Name.Returns("SVN");
+        targetProvider.Name.Returns("Git");
+        enumerateProvider.OpenAsync(sourceEndpoint, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        enumerateProvider.GetChangeSetsAsync(query, Arg.Any<CancellationToken>()).Returns(Task.FromResult<IReadOnlyList<ChangeSetInfo>>([changeSet]));
+        enumerateProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
+        exportProvider.OpenAsync(sourceEndpoint, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        exportProvider.MaterializeSnapshotAsync(Arg.Any<string>(), changeSet.Id, Arg.Any<CancellationToken>())
+            .Returns(_ => throw new InvalidOperationException("Simulated export failure"));
+        exportProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
+        targetProvider.InitializeTargetAsync(targetEndpoint, true, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        targetProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
+
+        InvalidOperationException? ex = null;
+        try
+        {
+            await service.MigrateAsync(sourceEndpoint, targetEndpoint, query, options, progress, CancellationToken.None);
+            Assert.Fail("Expected InvalidOperationException.");
+        }
+        catch (InvalidOperationException caughtEx)
+        {
+            ex = caughtEx;
+        }
+
+        Assert.IsNotNull(ex);
+        StringAssert.Contains(ex.Message, "Simulated export failure");
+        progress.Received().Report(MigrationReportSeverity.Warning, MigrationReportMessage.PipelineCleanupStarting, Arg.Any<object?[]>());
+        await targetProvider.DidNotReceive().FlushAsync(Arg.Any<CancellationToken>());
     }
 }

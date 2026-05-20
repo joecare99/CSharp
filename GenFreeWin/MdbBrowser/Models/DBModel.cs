@@ -7,21 +7,24 @@ using System.Data;
 using MdbBrowser.Models.Interfaces;
 using System.Linq;
 using BaseLib.Helper;
+using Db.Core.Abstractions.Sql;
+using GenFree.Data.DB;
+using Db.Core.Abstractions.Sql.Interfaaces;
 
 namespace MdbBrowser.Models
 {
     public class DBModel : IDBModel
     {
-        OleDbConnectionStringBuilder connectionStringBuilder = new();
+        private readonly IDbConnectionFactory _connectionFactory;
+        private readonly IDbStatementRenderer _statementRenderer;
 
-        public DBModel(string filename) : this(new OleDbConnectionStringBuilder() {
-        
-            Provider = IntPtr.Size==8? "Microsoft.ACE.OLEDB.16.0": "Microsoft.Jet.OLEDB.4.0", DataSource = filename, PersistSecurityInfo = false 
-        })
-        { }
-        public DBModel(DbConnectionStringBuilder connect)
+        public DBModel(string filename)
         {
-            database.ConnectionString = connect.ConnectionString;
+            _connectionFactory = new OleDbConnectionFactory();
+            var _dbSettings = _connectionFactory.CreateSettingsStub();
+            _dbSettings[nameof(OleDbConnectionStringBuilder.DataSource)] = filename;
+            database = (OleDbConnection)_connectionFactory.CreateConnection(_dbSettings);
+            _statementRenderer = _connectionFactory.CreateStatementRenderer(database);
             //    database.InfoMessage += (sender, e) => System.Diagnostics.Debug.WriteLine($"{sender}: {e.Message}");
             database.StateChange += (sender, e) =>
             {
@@ -30,7 +33,7 @@ namespace MdbBrowser.Models
                 QueryDB(sender as OleDbConnection);
             };
             System.Diagnostics.Debug.WriteLine($"DBModel: {Directory.GetCurrentDirectory()}");
-            if (File.Exists(connect["Data Source"].ToString()))
+            if (File.Exists(_dbSettings[nameof(OleDbConnectionStringBuilder.DataSource)].ToString()))
                 database.Open();
             else
                 try
@@ -112,7 +115,10 @@ namespace MdbBrowser.Models
             var result = new DataTable();
             if (value.IsValidIdentifyer())
                 try
-                { result.Load(new OleDbCommand($"SELECT * FROM {value}", database).ExecuteReader()); }
+                {
+                    using var command = _statementRenderer.CreateQuery(new DbSelectStatement(value));
+                    result.Load(command.ExecuteReader());
+                }
                 catch { }
             return result;
         }
@@ -121,7 +127,7 @@ namespace MdbBrowser.Models
         {
             return value.IsValidIdentifyer() ? database.GetSchema(value) : null;
         }
-        public OleDbConnection database { get; } = new();
+        public OleDbConnection database { get; }
 
         public List<DBMetaData> dbMetaData = new();
         public List<DBMetaData> dbDataTypes = new();

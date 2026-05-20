@@ -5,12 +5,12 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using GenFreeBrowser.Map;
-using GenFreeBrowser.Places.Interface;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Authorities;
 
 namespace GenFreeBrowser.Places;
 
-public sealed class GeoNamesAuthority : IPlaceAuthority
+public sealed class GeoNamesAuthority : IGenPlaceAuthority
 {
     private readonly HttpClient _http;
     public string Name => "GeoNames";
@@ -21,7 +21,7 @@ public sealed class GeoNamesAuthority : IPlaceAuthority
         _http = httpClient;
     }
 
-    public async Task<IReadOnlyList<PlaceResult>> SearchAsync(PlaceQuery query, CancellationToken ct = default)
+    public async Task<IReadOnlyList<GenPlaceMatch>> SearchPlacesAsync(GenPlaceQuery query, CancellationToken ct = default)
     {
         // Wenn gar kein echter Benutzername vorhanden ist und demo benutzt wird, geoNames limitiert stark.
         // Optional könnte hier ein alternativer Dienst (z.B. Nominatim) verwendet werden, wenn Limits greifen.
@@ -35,11 +35,11 @@ public sealed class GeoNamesAuthority : IPlaceAuthority
             if (!resp.IsSuccessStatusCode)
             {
                 // Fallback: Bei Fehler (Quota / 401 / 403) keine Exception werfen, sondern leere Liste
-                return Array.Empty<PlaceResult>();
+                return Array.Empty<GenPlaceMatch>();
             }
             using var stream = await resp.Content.ReadAsStreamAsync(ct);
             var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
-            var list = new List<PlaceResult>();
+            var list = new List<GenPlaceMatch>();
             if (doc.RootElement.TryGetProperty("geonames", out var arr))
             {
                 foreach (var el in arr.EnumerateArray())
@@ -55,7 +55,7 @@ public sealed class GeoNamesAuthority : IPlaceAuthority
                     var hierarchy = new List<string>();
                     void Add(string? s) { if (!string.IsNullOrWhiteSpace(s)) hierarchy.Add(s!); }
                     Add(countryName); Add(admin1); Add(admin2); Add(admin3);
-                    list.Add(new PlaceResult(id, name, new GeoPoint(lon, lat), hierarchy, Name));
+                    list.Add(new GenPlaceMatch { ExternalId = id, DisplayName = name, Latitude = lat, Longitude = lon, Hierarchy = hierarchy, Source = Name, ParentDisplayName = hierarchy.LastOrDefault() });
                 }
             }
             return list;
@@ -67,7 +67,7 @@ public sealed class GeoNamesAuthority : IPlaceAuthority
         catch
         {
             // Netzwerkproblem -> leere Liste zurück
-            return Array.Empty<PlaceResult>();
+            return Array.Empty<GenPlaceMatch>();
         }
     }
 

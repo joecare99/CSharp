@@ -1,106 +1,130 @@
-using System.Diagnostics;
-using System.Text;
+using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Ollama.Client;
+using Ollama.Client.Models;
 
-Console.WriteLine("PictureDB Ollama Test - simple CLI wrapper\n");
+namespace PictureDB.OllamaTest;
 
-var model = args.Length > 0 ? args[0] : "mistral"; // beispiel
-var prompt = args.Length > 1 ? string.Join(' ', args.Skip(1)) : "Guten Morgen";
-
-// Candidate commands and argument patterns because ollama CLI versions differ
-string[] candidateCommands = new[] { "run", "predict", "query" };
-string[] argPatterns = new[]
+internal static class Program
 {
-    // common: positional prompt
-    "{0} {1} \"{2}\"",
-    // long flag
-    "{0} {1} --prompt \"{2}\"",
-    // short flag
-    "{0} {1} p \"{2}\"",
-    // some versions accept --text or --question
-    "{0} {1} --text \"{2}\"",
-};
+    private const string DefaultEndpoint = "http://localhost:11434/";
+    private const string DefaultModel = "llava";
+    private const string DefaultPrompt = "Describe this image in detail.";
+    private const int MinDimension = 336;
 
-string? finalOutput = null;
-string? finalError = null;
-string? usedInvocation = null;
-
-foreach (var cmd in candidateCommands)
-{
-    foreach (var pattern in argPatterns)
+    private static async Task<int> Main(string[] args)
     {
-        var arguments = string.Format(pattern, cmd, model, prompt);
+        Console.WriteLine("PictureDB Ollama Vision Test\n");
+
+        if (args.Length == 0 || args[0] == "-h" || args[0] == "--help")
+        {
+            Console.WriteLine("Usage: PictureDB.OllamaTest <ImagePath> [ModelName] [Prompt]");
+            Console.WriteLine($"Default Model: {DefaultModel}");
+            Console.WriteLine($"Default Prompt: {DefaultPrompt}");
+            return 0;
+        }
+
+        string imagePath = args[0];
+        string model = args.Length > 1 ? args[1] : DefaultModel;
+        string prompt = args.Length > 2 ? string.Join(" ", args.Skip(2)) : DefaultPrompt;
+
+        if (!File.Exists(imagePath))
+        {
+            Console.WriteLine($"Error: Image file '{imagePath}' not found.");
+            return 1;
+        }
+
         try
         {
-            Console.WriteLine($"Versuche: ollama {arguments}\n");
+            Console.WriteLine($"Attempting to load and process image '{imagePath}'...");
 
-            var psi = new ProcessStartInfo
+            // Note: System.Drawing requires Windows or libgdiplus on Linux
+            using Image originalImage = Image.FromFile(imagePath);
+            int safeWidth = originalImage.Width;
+            int safeHeight = originalImage.Height;
+
+            if (safeWidth < MinDimension || safeHeight < MinDimension)
             {
-                FileName = "ollama",
-                Arguments = arguments,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = Encoding.UTF8,
-                StandardErrorEncoding = Encoding.UTF8,
-            };
-
-            using var proc = Process.Start(psi) ?? throw new InvalidOperationException("Could not start ollama process");
-
-            var outputTask = proc.StandardOutput.ReadToEndAsync();
-            var errorTask = proc.StandardError.ReadToEndAsync();
-
-            var timeout = TimeSpan.FromSeconds(30);
-            var waitTask = proc.WaitForExitAsync();
-            if (await Task.WhenAny(waitTask, Task.Delay(timeout)) != waitTask)
-            {
-                try { proc.Kill(); } catch { }
-                Console.WriteLine($"Timeout when running 'ollama {arguments}'.\n");
-                continue;
+                int maxCurrent = Math.Max(safeWidth, safeHeight);
+                double scale = (double)MinDimension / maxCurrent;
+                safeWidth = (int)(safeWidth * scale);
+                safeHeight = (int)(safeHeight * scale);
             }
 
-            string output = await outputTask;
-            string error = await errorTask;
-
-            // If CLI reports unsupported command/flag, try next pattern
-            if (!string.IsNullOrEmpty(error))
+            using Bitmap normalizedBitmap = new(safeWidth, safeHeight, PixelFormat.Format32bppRgb);
+            using (Graphics g = Graphics.FromImage(normalizedBitmap))
             {
-                var le = error.ToLowerInvariant();
-                if (le.Contains("unknown command") || le.Contains("unknown flag") || le.Contains("flag provided but not defined") || le.Contains("unknown option"))
+                g.Clear(Color.White);
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(originalImage, 0, 0, safeWidth, safeHeight);
+            }
+
+            using MemoryStream ms = new();
+            ImageCodecInfo jpegEncoder = GetEncoder(ImageFormat.Jpeg) ?? throw new InvalidOperationException("JPEG encoder not found.");
+            EncoderParameters encoderParameters = new(1);
+            encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, 95L);
+
+            normalizedBitmap.Save(ms, jpegEncoder, encoderParameters);
+
+            string base64Image = Convert.ToBase64String(ms.ToArray());
+            Console.WriteLine("Image normalization complete.");
+
+            string endpointValue = Environment.GetEnvironmentVariable("OLLAMA_ENDPOINT") ?? DefaultEndpoint;
+
+            using HttpClient httpClient = new()
+            {
+                Timeout = Timeout.InfiniteTimeSpan,
+            };
+
+            Console.WriteLine($"Connecting to Ollama at {endpointValue}");
+            Console.WriteLine($"Using model: {model}");
+            Console.WriteLine($"Prompt: {prompt}\n");
+
+            OllamaClient client = new(httpClient, new OllamaClientOptions(new Uri(endpointValue)));
+            OllamaChatClient chatClient = client.GetChatClient(model);
+
+            ChatCompletionOptions options = new()
+            {
+                Messages =
+                [
+                    new OllamaClientChatMessage
+                    {
+                        Role = "user",
+                        Content = prompt,
+                        Images = [base64Image]
+                    }
+                ]
+            };
+
+            Console.WriteLine("--- Response ---");
+
+            await foreach (var update in chatClient.CompleteChatStreamingAsync(options))
+            {
+                if (!string.IsNullOrEmpty(update.Content))
                 {
-                    Console.WriteLine($"Invocation 'ollama {arguments}' not supported by this version. Trying next...\n");
-                    continue;
+                    Console.Write(update.Content);
                 }
             }
 
-            // Accept either output or non-fatal error
-            finalOutput = output;
-            finalError = error;
-            usedInvocation = arguments;
-            break;
+            Console.WriteLine("\n\n--- Done ---");
+            return 0;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Fehler beim Versuch mit 'ollama {arguments}': {ex.Message}\n");
-            // try next pattern
+            Console.WriteLine($"\nError during vision inference: {ex.Message}");
+            return 1;
         }
     }
 
-    if (finalOutput != null || finalError != null) break;
-}
-
-if (finalOutput == null && finalError == null)
-{
-    Console.WriteLine("Alle Versuche fehlgeschlagen. Bitte prüfe, ob 'ollama' installiert und in PATH ist, und welche Subcommands bzw. Optionen verfügbar sind (z.B. 'ollama --help').");
-    return;
-}
-
-Console.WriteLine($"--- Used invocation: ollama {usedInvocation} ---\n");
-Console.WriteLine("--- Output ---");
-if (!string.IsNullOrEmpty(finalOutput)) Console.WriteLine(finalOutput);
-
-if (!string.IsNullOrEmpty(finalError))
-{
-    Console.WriteLine("--- Error ---");
-    Console.WriteLine(finalError);
+    private static ImageCodecInfo? GetEncoder(ImageFormat format)
+    {
+        return ImageCodecInfo.GetImageEncoders().FirstOrDefault(codec => codec.FormatID == format.Guid);
+    }
 }

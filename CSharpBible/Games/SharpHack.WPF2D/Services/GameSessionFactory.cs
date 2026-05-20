@@ -1,11 +1,6 @@
-﻿using BaseLib.Models;
-using SharpHack.AI;
-using SharpHack.Base.Data;
-using SharpHack.Combat;
-using SharpHack.Engine;
-using SharpHack.LevelGen.BSP;
+﻿using SharpHack.ViewModel;
+using Microsoft.Extensions.DependencyInjection;
 using SharpHack.Persist;
-using SharpHack.ViewModel;
 
 namespace SharpHack.WPF2D.Services;
 
@@ -20,13 +15,23 @@ public static class GameSessionFactory
     /// <returns>The created view model.</returns>
     public static LayeredGameViewModel CreateLayeredGameViewModel(IServiceProvider _)
     {
-        var random = new CRandom();
-        var mapGenerator = new BSPMapGenerator(random);
-        var combatSystem = new SimpleCombatSystem();
-        var enemyAI = new SimpleEnemyAI();
-        var gamePersist = new InMemoryGamePersist();
+        var random = new BaseLib.Models.CRandom();
+        var mapGenerator = new SharpHack.LevelGen.BSP.BSPMapGenerator(random);
+        var combatSystem = new SharpHack.Combat.SimpleCombatSystem();
+        var enemyAI = new SharpHack.AI.SimpleEnemyAI();
+        var gamePersist = _.GetRequiredService<GamePersist>();
+        var session = SharpHack.ViewModel.GameSessionFactory.CreateSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
+        return new LayeredGameViewModel(session);
+    }
 
-        var session = new GameSession(mapGenerator, gamePersist, random, combatSystem, enemyAI);
+    public static LayeredGameViewModel CreateRestoredLayeredGameViewModel(IServiceProvider _, RestoreGameState restoreGameState)
+    {
+        var random = new BaseLib.Models.CRandom();
+        var mapGenerator = new SharpHack.LevelGen.BSP.BSPMapGenerator(random);
+        var combatSystem = new SharpHack.Combat.SimpleCombatSystem();
+        var enemyAI = new SharpHack.AI.SimpleEnemyAI();
+        var gamePersist = _.GetRequiredService<GamePersist>();
+        var session = SharpHack.ViewModel.GameSessionFactory.CreateSession(mapGenerator, gamePersist, random, combatSystem, enemyAI, restoreGameState);
         return new LayeredGameViewModel(session);
     }
 }

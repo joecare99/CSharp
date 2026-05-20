@@ -1,4 +1,5 @@
 ﻿using AA05_CommandParCalc.Models.Interfaces;
+using Microsoft.Testing.Platform.Extensions.Messages;
 
 namespace AA05_CommandParCalc.Models.Tests
 {
@@ -25,19 +26,19 @@ namespace AA05_CommandParCalc.Models.Tests
         [TestMethod()]
         public void NowTest()
         {
-            Assert.IsNotNull(testClass.Now);
+            Assert.IsGreaterThan(DateTime.MinValue, testClass.Now);
         }
 
         [TestMethod()]
         public void UtcNowTest()
         {
-            Assert.IsNotNull(testClass.UtcNow);
+            Assert.IsGreaterThan(DateTime.MinValue, testClass.UtcNow);
         }
 
         [TestMethod()]
         public void TodayTest()
         {
-            Assert.IsNotNull(testClass.Today);
+            Assert.IsGreaterThan(DateTime.MinValue, testClass.Today);
         }
     }
 }

@@ -1,10 +1,20 @@
 using FBParser;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FBParserTests;
 
 [TestClass]
 public sealed class PascalCompatTests
 {
+    [TestMethod]
+    public void HasCharAt_ValidatesOneBasedBounds()
+    {
+        Assert.IsTrue(PascalCompat.HasCharAt("abc", 1));
+        Assert.IsTrue(PascalCompat.HasCharAt("abc", 3));
+        Assert.IsFalse(PascalCompat.HasCharAt("abc", 0));
+        Assert.IsFalse(PascalCompat.HasCharAt("abc", 4));
+    }
+
     [TestMethod]
     [DataRow("abcdef", 1, 3, "abc")]
     [DataRow("abcdef", 4, 10, "def")]
@@ -48,6 +58,7 @@ public sealed class PascalCompatTests
         Assert.AreEqual("def", PascalCompat.RemoveStart("abcdef", 3));
         Assert.AreEqual(string.Empty, PascalCompat.RemoveStart("abcdef", 10));
         Assert.AreEqual("abcdef", PascalCompat.RemoveStart("abcdef", 0));
+        Assert.AreEqual(string.Empty, PascalCompat.RemoveStart(string.Empty, 3));
     }
 
     [TestMethod]
@@ -93,10 +104,10 @@ public sealed class PascalCompatTests
     [TestMethod]
     public void CharsetDefinitions_ContainExpectedGermanCharacters()
     {
-        CollectionAssert.Contains(PascalCompat.Charset.ToList(), 'ä');
-        CollectionAssert.Contains(PascalCompat.UpperCharsetErw.ToList(), 'Ä');
-        CollectionAssert.Contains(PascalCompat.LowerCharsetErw.ToList(), 'ß');
-        CollectionAssert.Contains(PascalCompat.AlphaNum.ToList(), '9');
-        CollectionAssert.Contains(PascalCompat.AlphaNum.ToList(), 'Ö');
+        Assert.IsTrue(PascalCompat.Charset.Contains('ä'));
+        Assert.IsTrue(PascalCompat.UpperCharsetErw.Contains('Ä'));
+        Assert.IsTrue(PascalCompat.LowerCharsetErw.Contains('ß'));
+        Assert.IsTrue(PascalCompat.AlphaNum.Contains('9'));
+        Assert.IsTrue(PascalCompat.AlphaNum.Contains('Ö'));
     }
 }

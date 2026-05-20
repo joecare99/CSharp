@@ -12,6 +12,5 @@
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
 		<Copyright>Copyright © JC-Soft 2026</Copyright>
-		<UseArtifactsOutput>true</UseArtifactsOutput>
 	</PropertyGroup>
 </Project>

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TraceAnalysis.Workbench.Core.Models;
 
@@ -54,7 +55,7 @@ public sealed class WorkbenchSessionService : IWorkbenchSessionService
 
         return new WorkbenchSessionModel(
             configurationName: "New Processing Configuration",
-            traceSource: new TraceSourceState(sourceId: null, parseErrorCount: 0, dataBasis: null),
+            traceSource: new TraceSourceState(sourceId: null, parseErrorCount: 0, dataBasis: null, series: Array.Empty<TraceSeriesModel>()),
             channels,
             steps,
             new WorkbenchDiagnosticsModel(sourceIssues, validationIssues));

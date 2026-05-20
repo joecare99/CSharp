@@ -12,6 +12,10 @@ public class FileProxy : IFile
 {
     public bool Exists(string sPath)
         => File.Exists(sPath);
+
+    public IFileInfo GetFileInfo(string sPath)
+        => new FileInfoProxy(sPath);
+
     public Stream OpenRead(string sPath)
         => File.OpenRead(sPath);
     public Stream OpenWrite(string sPath)

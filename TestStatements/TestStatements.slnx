@@ -1,0 +1,42 @@
+<Solution>
+  <Folder Name="/GJK-Alg/">
+    <Project Path="TestGJKAlg/TestGJKAlg.csproj" />
+    <Project Path="TestGJKAlgTest/TestGJKAlgTest.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../CSharpBible/Libraries/BaseLib/BaseLib.csproj" />
+  </Folder>
+  <Folder Name="/PlugIn/">
+    <Project Path="AppWithPlugin/AppWithPlugin.csproj" />
+    <Project Path="AppWithPluginTest/AppWithPluginTest.csproj" />
+    <Project Path="AppWithPluginWpf/AppWithPluginWpf.csproj" />
+    <Project Path="HelloPlugin/HelloPlugin.csproj" />
+    <Project Path="HelloPluginTest/HelloPluginTest.csproj" />
+    <Project Path="OtherPlugin/OtherPlugin.csproj" />
+    <Project Path="PluginBase/PluginBase.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path="ReadMe.md" />
+    <File Path="Solution.props" />
+    <File Path="Solution_net.props" />
+  </Folder>
+  <Project Path="AsyncExampleWPF/AsyncExampleWPF.csproj" />
+  <Project Path="AsyncExampleWPF/AsyncExampleWPF_net.csproj" />
+  <Project Path="CallAllExamples/CallAllExamples.csproj" />
+  <Project Path="CallAllExamples/CallAllExamples_net.csproj" />
+  <Project Path="ctlClockLib/ctlClockLib.csproj" />
+  <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
+  <Project Path="DynamicSample/DynamicSample.csproj" />
+  <Project Path="DynamicSample/DynamicSample_net.csproj" />
+  <Project Path="SOq1/SOq1.csproj" />
+  <Project Path="TestClockApp/TestClockApp.csproj" />
+  <Project Path="TestNamespaces/TestNamespaces.csproj" />
+  <Project Path="TestStatements/TestStatements.csproj" />
+  <Project Path="TestStatements/TestStatements_net.csproj" />
+  <Project Path="TestStatementsNew/TestStatementsNew.csproj" />
+  <Project Path="TestStatementsTest/TestStatementsTest.csproj" />
+  <Project Path="TestStatementsTest/TestStatements_netTest.csproj" />
+  <Project Path="Tutorials/Tutorials.csproj" />
+  <Project Path="ZeroLengthChar/ZeroLengthChar.csproj" />
+</Solution>

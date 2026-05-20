@@ -20,6 +20,8 @@ internal sealed class GenealogyManifestRecord
     public required List<GenealogyManifestEntry> Families { get; init; }
 
     public required List<GenealogyManifestEntry> Places { get; init; }
+
+    public List<GenealogyTransactionRecord>? Transactions { get; init; }
 }
 
 internal sealed class GenealogyManifestEntry
@@ -122,4 +124,30 @@ internal sealed class GenealogyPlaceRecord
     public string? Notes { get; init; }
 
     public string? ParentRecordId { get; init; }
+}
+
+internal sealed class GenealogyTransactionRecord
+{
+    public Guid UId { get; init; }
+
+    public int ID { get; init; }
+
+    public DateTime? LastChange { get; init; }
+
+    public required string ClassReferenceId { get; init; }
+
+    public required string EntryReferenceId { get; init; }
+
+    public GenealogySerializedValueRecord? Data { get; init; }
+
+    public GenealogySerializedValueRecord? OldData { get; init; }
+
+    public DateTime Timestamp { get; init; }
+}
+
+internal sealed class GenealogySerializedValueRecord
+{
+    public required string TypeName { get; init; }
+
+    public required string Json { get; init; }
 }

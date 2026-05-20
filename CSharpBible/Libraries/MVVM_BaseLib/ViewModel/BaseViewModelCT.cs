@@ -124,17 +124,14 @@ public abstract class BaseViewModelCT : ObservableValidator , IPropertyBinding
         return flag;
     }
 
-    public bool RemovePropertyDependency(string prop1, string prop2)
-    {
-        throw new NotImplementedException();
-    }
+    public bool RemovePropertyDependency(string prop1, string prop2) => throw new NotImplementedException();
 
     /// <summary>
     /// Appends the known parameters.
     /// </summary>
     /// <param name="param">The parameter.</param>
     /// <param name="propertyName">Name of the property.</param>
-		public void AppendKnownParams(object? param,[CallerMemberName] string propertyName = "")
+    public void AppendKnownParams(object? param,[CallerMemberName] string propertyName = "")
     {
         if (!string.IsNullOrEmpty(propertyName))
         {

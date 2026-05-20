@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "CSharpTools": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "..\\McpTools\\McpTools.csproj"
+      ]
+    }
+  }
+}

@@ -36,6 +36,11 @@ public enum MenuContextScope
     Preview,
 
     /// <summary>
+    /// Command is tied to the chart area.
+    /// </summary>
+    Chart,
+
+    /// <summary>
     /// Command is tied to diagnostics.
     /// </summary>
     Diagnostics

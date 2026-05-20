@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.OleDb;
 using System.IO;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -13,31 +12,32 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Db.Core.Abstractions.Sql;
+using Db.Provider.MySql;
+using Db.Core.Abstractions.Sql.Interfaaces;
 
 namespace MSQBrowser.Models
 {
     public class DBModel : IDBModel
     {
         // Internal Factory
-        Func<DbConnection> GetConnection = () => new MySqlConnection();
-        Func<string, DbConnection, DbCommand> GetCommand = (s, c) => new MySqlCommand(s, c as MySqlConnection);
-        Func<DbCommand, DbDataAdapter> GetDataAdapter = (c) => new MySqlDataAdapter(c as MySqlCommand);
-        Func<DbCommandBuilder> GetCommandBuilder = () => new MySqlCommandBuilder();
+        private readonly IDbConnectionFactory _connectionFactory;
+        private readonly IDbStatementRenderer _statementRenderer;
+        private readonly DbProviderFactory _providerFactory;
+        private readonly IDBSettings _xSettings;
 
-        public DBModel(string sURL, string sUser, SecureString sPasswd, string sDB) : this(
-           new NetworkCredential(sUser, sPasswd) is NetworkCredential nwc ? new MySqlConnectionStringBuilder()
-           { Server = sURL, UserID = nwc.UserName, Password = nwc.Password, Database = sDB, CharacterSet = "UTF8", ConvertZeroDateTime = true } : null!)
-        { }
-        public DBModel(MySqlConnectionStringBuilder connect)
+        public DBModel(string sURL, string sUser, SecureString sPasswd, string sDB)
         {
-            connect = new MySqlConnectionStringBuilder(connect.ConnectionString)
-            {
-                ConvertZeroDateTime = true
-            };
-
-            database ??= GetConnection();
-            database.ConnectionString = connect.ConnectionString;
-            DbName = connect.Database;
+            _connectionFactory = new MySqlDbConnectionFactory();
+            _providerFactory = MySqlConnectorFactory.Instance;
+            _xSettings = _connectionFactory.CreateSettingsStub();
+            _xSettings[nameof(MySqlConnectionStringBuilder.Server)] = sURL;
+            _xSettings[nameof(MySqlConnectionStringBuilder.UserID)] = sUser;
+            _xSettings[nameof(MySqlConnectionStringBuilder.Password)] = sPasswd;
+            _xSettings[nameof(MySqlConnectionStringBuilder.Database)] = sDB;
+            database = (MySqlConnection)_connectionFactory.CreateConnection(_xSettings);
+            _statementRenderer = _connectionFactory.CreateStatementRenderer(database);
+            DbName = sDB;
             //    database.InfoMessage += (sender, e) => System.Diagnostics.Debug.WriteLine($"{sender}: {e.Message}");
             database.StateChange += (sender, e) =>
             {
@@ -104,7 +104,7 @@ namespace MSQBrowser.Models
                 && dbConnection != null
                 && dbConnection.State == ConnectionState.Open)
             {
-                var schema = dbConnection.GetSchema(OleDbMetaDataCollectionNames.Columns, new string?[] { null, DbName, sTableName, null });
+                var schema = dbConnection.GetSchema("Columns", new string?[] { null, DbName, sTableName, null });
                 foreach (DataRow schemaDef in schema.Rows)
                     try
                     {
@@ -136,8 +136,9 @@ namespace MSQBrowser.Models
             if (value.IsValidIdentifyer())
                 try
                 {
-                    var da = GetDataAdapter(GetCommand($"SELECT * FROM {value}", database));
-                    var bldr = GetCommandBuilder();
+                    using var command = _statementRenderer.CreateQuery(new DbSelectStatement(value));
+                    var da = CreateDataAdapter(command);
+                    var bldr = CreateCommandBuilder();
                     bldr.DataAdapter = da;
                     da.InsertCommand = bldr.GetInsertCommand();
                     da.UpdateCommand = bldr.GetUpdateCommand();
@@ -154,24 +155,24 @@ namespace MSQBrowser.Models
         {
             var result = new DataTable();
             if (!value.IsValidIdentifyer()
-                || database is not MySqlConnection connection
-                || connection.State != ConnectionState.Open)
+                || database.State != ConnectionState.Open)
             {
                 return new TablePageResult { Data = result, Offset = Math.Max(0, offset), PageSize = Math.Max(1, pageSize) };
             }
 
             var effectiveOffset = Math.Max(0, offset);
             var effectivePageSize = Math.Max(1, pageSize);
-            var sql = $"SELECT {BuildSelectClause(columns)} FROM {EscapeIdentifier(value)} LIMIT @limit OFFSET @offset";
 
-            await using var pageConnection = new MySqlConnection(connection.ConnectionString);
+            using var pageConnection = (MySqlConnection)_connectionFactory.CreateConnection(_xSettings);
             await pageConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-            using var command = new MySqlCommand(sql, pageConnection);
-            command.Parameters.AddWithValue("@limit", effectivePageSize + 1);
-            command.Parameters.AddWithValue("@offset", effectiveOffset);
+            using var command = _statementRenderer.CreateQuery(pageConnection, value, BuildSelectFields(columns), Array.Empty<IDbFilterClause>(), effectivePageSize + 1, "@offset");
+            var offsetParameter = command.CreateParameter();
+            offsetParameter.ParameterName = "@offset";
+            offsetParameter.Value = effectiveOffset;
+            command.Parameters.Add(offsetParameter);
 
-            using var adapter = new MySqlDataAdapter(command);
+            var adapter = CreateDataAdapter(command);
             await Task.Run(() => adapter.Fill(result), cancellationToken).ConfigureAwait(false);
 
             var hasMoreRows = result.Rows.Count > effectivePageSize;
@@ -212,13 +213,13 @@ namespace MSQBrowser.Models
             return value.IsValidIdentifyer() ? database.GetSchema(value) : null;
         }
 
-        private static string BuildSelectClause(IEnumerable<DBMetaData> columns)
+        private static IReadOnlyList<string> BuildSelectFields(IEnumerable<DBMetaData> columns)
         {
             var mappedColumns = columns?.Select(BuildColumnSelectExpression)
                 .Where(expression => !string.IsNullOrWhiteSpace(expression))
                 .ToArray();
 
-            return mappedColumns is { Length: > 0 } ? string.Join(", ", mappedColumns) : "*";
+            return mappedColumns is { Length: > 0 } ? mappedColumns : Array.Empty<string>();
         }
 
         private static string BuildColumnSelectExpression(DBMetaData column)
@@ -335,7 +336,37 @@ namespace MSQBrowser.Models
             return builder.ToString();
         }
 
-        public DbConnection? database { get; } = null;
+        private IDbCommand CreateCommand(string sql, IDbConnection connection)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = sql;
+            return command;
+        }
+
+        private DbDataAdapter CreateDataAdapter(IDbCommand command)
+        {
+            var dataAdapter = _providerFactory.CreateDataAdapter();
+            if (dataAdapter is null)
+            {
+                throw new InvalidOperationException("Unable to create a data adapter for the configured provider.");
+            }
+
+            dataAdapter.SelectCommand = (DbCommand)command;
+            return dataAdapter;
+        }
+
+        private DbCommandBuilder CreateCommandBuilder()
+        {
+            var commandBuilder = _providerFactory.CreateCommandBuilder();
+            if (commandBuilder is null)
+            {
+                throw new InvalidOperationException("Unable to create a command builder for the configured provider.");
+            }
+
+            return commandBuilder;
+        }
+
+        public DbConnection database { get; }
         public string DbName { get; }
 
         public List<DBMetaData> dbMetaData = new();

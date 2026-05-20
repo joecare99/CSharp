@@ -25,10 +25,7 @@ public class IoC2Tests : BaseTestViewModel
     }
 
     [TestCleanup]
-    public void CleanUp()
-    {
-        IoC.GetReqSrv = _grsOld!;
-    }
+    public void CleanUp() => IoC.GetReqSrv = _grsOld!;
 
     [TestMethod()]
     public void ProvideValueTest()

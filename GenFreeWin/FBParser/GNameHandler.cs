@@ -1,15 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using BaseLib.Models;
 using BaseLib.Models.Interfaces;
-using FBParser.Models;
-using FBParser.Models.Interfaces;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Authorities;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FBParser;
 
 /// <summary>
 /// Provides given-name based sex guessing and learning logic used by the parser.
 /// </summary>
-public sealed class GNameHandler
+public sealed class GNameHandler : IGenNameAuthority
 {
     /// <summary>
     /// Represents a diagnostic callback raised by the given-name handler.
@@ -91,6 +97,11 @@ public sealed class GNameHandler
         get => _gNameListChanged;
         set => _gNameListChanged = value;
     }
+
+    /// <summary>
+    /// Gets the authority display name.
+    /// </summary>
+    public string Name => nameof(GNameHandler);
 
     /// <summary>
     /// Initializes the handler state.
@@ -293,6 +304,53 @@ public sealed class GNameHandler
         }
 
         return defaultResult;
+    }
+
+    /// <inheritdoc />
+    public Task<IReadOnlyList<GenNameMatch>> SearchNamesAsync(string query, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return Task.FromResult<IReadOnlyList<GenNameMatch>>(Array.Empty<GenNameMatch>());
+        }
+
+        var matches = _gNameList
+            .Where(pair => pair.Key.Contains(query, StringComparison.OrdinalIgnoreCase))
+            .Select(pair => new GenNameMatch
+            {
+                Name = pair.Key,
+                NormalizedName = pair.Key,
+                Sex = pair.Value.Length > 0 && pair.Value != "_" ? pair.Value[0] : null,
+                Confidence = pair.Key.Equals(query, StringComparison.OrdinalIgnoreCase) ? 1d : 0.75d,
+                Source = Name,
+            })
+            .OrderByDescending(match => match.Confidence)
+            .ThenBy(match => match.Name, StringComparer.Ordinal)
+            .ToArray();
+
+        return Task.FromResult<IReadOnlyList<GenNameMatch>>(matches);
+    }
+
+    /// <inheritdoc />
+    public Task<GenSexSuggestion?> SuggestSexAsync(string givenName, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (string.IsNullOrWhiteSpace(givenName))
+        {
+            return Task.FromResult<GenSexSuggestion?>(null);
+        }
+
+        var sex = GuessSexOfGivnName(givenName, learn: false);
+        return Task.FromResult(sex == 'U'
+            ? null
+            : new GenSexSuggestion
+            {
+                Sex = sex,
+                Confidence = 1d,
+                Source = Name,
+                Detail = givenName,
+            });
     }
 
     private static IEnumerable<string> SplitBySpace(string text)

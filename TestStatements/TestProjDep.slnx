@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="TestProjDep/TestProjDep.csproj" />
+  <Project Path="TestProjLib/TestProjLib.csproj" />
+  <Project Path="TestProjLib2/TestProjLib2.csproj" />
+</Solution>

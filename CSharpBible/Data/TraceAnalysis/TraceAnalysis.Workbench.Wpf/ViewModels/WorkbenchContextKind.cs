@@ -36,6 +36,11 @@ public enum WorkbenchContextKind
     Preview,
 
     /// <summary>
+    /// Chart area is active.
+    /// </summary>
+    Chart,
+
+    /// <summary>
     /// Diagnostics area is active.
     /// </summary>
     Diagnostics

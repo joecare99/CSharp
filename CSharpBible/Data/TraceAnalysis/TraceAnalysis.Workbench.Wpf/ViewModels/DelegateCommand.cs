@@ -4,7 +4,7 @@ using System.Windows.Input;
 namespace TraceAnalysis.Workbench.Wpf.ViewModels;
 
 /// <summary>
-/// Minimal delegate command for the WPF workbench baseline.
+/// Minimal delegate command for the WPF workbench shell.
 /// </summary>
 public sealed class DelegateCommand : ICommand
 {

@@ -1,6 +1,9 @@
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using RnzTrauer.Core;
+using RnzTrauer.Core.Services.Interfaces;
 
 namespace RnzTrauer.Tests;
 
@@ -125,6 +128,26 @@ public sealed class ConfigLoaderTests
 
         Assert.AreSame(xExpected, xResult);
         _ = xConfigLoader.Received(1).Load<AmtsblattConfig>("amtsblatt.json");
+    }
+
+    [TestMethod]
+    public void Load_Deserializes_RnzConfig_Browser_From_String_Enum()
+    {
+        var xFile = Substitute.For<IFile>();
+        xFile.Exists("rnz.json").Returns(true);
+        xFile.ReadAllText("rnz.json").Returns(
+            """
+            {
+              "browser": "Edge",
+              "url": "https://example.invalid/login"
+            }
+            """);
+        var xLoader = new ConfigLoader(xFile);
+
+        var xResult = xLoader.Load<RnzConfig>("rnz.json");
+
+        Assert.AreEqual(BrowserType.Edge, xResult.Browser);
+        Assert.AreEqual("https://example.invalid/login", xResult.Url);
     }
 
     private sealed class TestConfig

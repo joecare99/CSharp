@@ -1,6 +1,7 @@
 <Window x:Class="TraceAnalysis.Workbench.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:controls="clr-namespace:TraceAnalysis.Workbench.Wpf.Controls"
+        xmlns:widgets="clr-namespace:TraceAnalysis.Widgets.Wpf.Controls;assembly=TraceAnalysis.Widgets.Wpf"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Trace Analysis Workbench"
         Height="720"
@@ -66,59 +67,99 @@
                                          GotFocus="ChannelBrowserControl_GotFocus"
                                         DataContext="{Binding ChannelBrowser}" />
 
-        <Grid Grid.Row="2"
-              Grid.Column="1"
-              Margin="0,0,12,12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="320" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <TabControl Grid.Row="2"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    Margin="0,0,0,12"
+                    SelectedIndex="1">
+            <TabItem Header="Overview">
+                <Grid Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="320" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="320" />
+                    </Grid.ColumnDefinitions>
 
-            <controls:ProcessingStepListControl Grid.Column="0"
-                                                Margin="0,0,12,0"
-                                                Focusable="True"
-                                                GotFocus="ProcessingStepListControl_GotFocus"
-                                                DataContext="{Binding ProcessingEditor.StepList}" />
+                    <controls:ProcessingStepListControl Grid.Column="0"
+                                                        Margin="0,0,12,0"
+                                                        Focusable="True"
+                                                        GotFocus="ProcessingStepListControl_GotFocus"
+                                                        DataContext="{Binding ProcessingEditor.StepList}" />
 
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="220" />
-                </Grid.RowDefinitions>
+                    <Grid Grid.Column="1"
+                          Margin="0,0,12,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="220" />
+                        </Grid.RowDefinitions>
 
-                <controls:ProcessingEditorControl Focusable="True"
-                                                  GotFocus="ProcessingEditorControl_GotFocus"
-                                                  DataContext="{Binding ProcessingEditor}" />
+                        <widgets:TraceChartControl Focusable="True"
+                                                   GotFocus="TraceChartControl_GotFocus"
+                                                   DataContext="{Binding TraceChart}" />
 
-                <GroupBox Grid.Row="1"
-                          Margin="0,12,0,0"
-                          GotFocus="PreviewGroupBox_GotFocus"
-                      Header="Preview / Summary">
-                    <StackPanel Margin="8">
-                        <TextBlock FontWeight="Bold"
-                                   Text="{Binding ProcessingEditor.PreviewSummary.TitleText}" />
-                        <TextBlock Margin="0,6,0,0"
-                                   TextWrapping="Wrap"
-                                   Text="{Binding ProcessingEditor.PreviewSummary.DescriptionText}" />
-                        <ItemsControl Margin="0,12,0,0"
-                                      ItemsSource="{Binding ProcessingEditor.PreviewSummary.OutputNames}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Margin="0,2,0,2"
-                                               Text="{Binding}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </GroupBox>
-            </Grid>
-        </Grid>
+                        <controls:ProcessingEditorControl Grid.Row="1"
+                                                          Margin="0,12,0,0"
+                                                          Focusable="True"
+                                                          GotFocus="ProcessingEditorControl_GotFocus"
+                                                          DataContext="{Binding ProcessingEditor}" />
 
-        <controls:DiagnosticsPanelControl Grid.Row="2"
-                                          Grid.Column="2"
-                                          Margin="0,0,0,12"
-                                          Focusable="True"
-                                          GotFocus="DiagnosticsPanelControl_GotFocus"
-                                          DataContext="{Binding Diagnostics}" />
+                        <GroupBox Grid.Row="2"
+                                  Margin="0,12,0,0"
+                                  GotFocus="PreviewGroupBox_GotFocus"
+                                  Header="Preview / Summary">
+                            <StackPanel Margin="8">
+                                <TextBlock FontWeight="Bold"
+                                           Text="{Binding ProcessingEditor.PreviewSummary.TitleText}" />
+                                <TextBlock Margin="0,6,0,0"
+                                           TextWrapping="Wrap"
+                                           Text="{Binding ProcessingEditor.PreviewSummary.DescriptionText}" />
+                                <ItemsControl Margin="0,12,0,0"
+                                              ItemsSource="{Binding ProcessingEditor.PreviewSummary.OutputNames}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,2,0,2"
+                                                       Text="{Binding}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <widgets:TraceCursorSummaryControl Margin="0,0,0,12"
+                                                           DataContext="{Binding TraceChart}" />
+
+                        <controls:DiagnosticsPanelControl Grid.Row="1"
+                                                          Focusable="True"
+                                                          GotFocus="DiagnosticsPanelControl_GotFocus"
+                                                          DataContext="{Binding Diagnostics}" />
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Large Analysis">
+                <Grid Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <widgets:TraceChartControl Focusable="True"
+                                               GotFocus="TraceChartControl_GotFocus"
+                                               DataContext="{Binding TraceChart}" />
+
+                    <widgets:TraceCursorSummaryControl Grid.Row="1"
+                                                       Margin="0,12,0,0"
+                                                       DataContext="{Binding TraceChart}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

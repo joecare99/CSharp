@@ -1,0 +1,69 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x86" />
+	<Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Document.Base/">
+    <Project Path="../Data/DocumentUtils/Document.Base/Document.Base.csproj" />
+    <Project Path="../Data/DocumentUtils/Document.BaseTests/Document.BaseTests.csproj" Id="4c00b933-2c5d-4b93-8ed0-b8f638aa3878" />
+    <Project Path="../Data/DocumentUtils/Document.Html/Document.Html.csproj" />
+    <Project Path="../Data/DocumentUtils/Document.Markdown/Document.Markdown.csproj" Id="94f24619-27c9-4806-8113-2e2c35a04c83" />
+    <Project Path="../Data/DocumentUtils/Document.MarkdownTests/Document.MarkdownTests.csproj" Id="17341d78-f260-4c59-aa0f-96d5100d53bd" />
+    <Project Path="../Data/DocumentUtils/Document.Model/Document.Model.csproj" Id="7768d048-965a-41b8-b3b0-c080f393714a" />
+    <Project Path="../Data/DocumentUtils/Document.Pdf/Document.Pdf.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/OpenAI/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path="directory.build.props" />
+    <File Path="Directory.Packages.props" />
+    <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
+    <Project Path="McpTools/McpTools.csproj" />
+    <Project Path="Ollama-Service1/Ollama-Service1.csproj" />
+    <Project Path="Ollama-Service2/Ollama-Service2.csproj" />
+    <Project Path="Ollama.Client.Tests/Ollama.Client.Tests.csproj" />
+    <Project Path="Ollama.Client/Ollama.Client.csproj" />
+    <Project Path="Ollama.Extensions.DependencyInjection.Tests/Ollama.Extensions.DependencyInjection.Tests.csproj" />
+    <Project Path="Ollama.Extensions.DependencyInjection/Ollama.Extensions.DependencyInjection.csproj" />
+    <Project Path="Ollama.Protocol.Tests/Ollama.Protocol.Tests.csproj" />
+    <Project Path="Ollama.Protocol/Ollama.Protocol.csproj" />
+    <Project Path="Ollama.Samples.BasicChat/Ollama.Samples.BasicChat.csproj" />
+    <Project Path="Ollama.Samples.ChatCheck/Ollama.Samples.ChatCheck.csproj" />
+    <Project Path="Ollama.Samples.EmbedCheck/Ollama.Samples.EmbedCheck.csproj" />
+    <Project Path="Ollama.Samples.GenerateCheck/Ollama.Samples.GenerateCheck.csproj" />
+    <Project Path="Ollama.Samples.TagsCheck/Ollama.Samples.TagsCheck.csproj" />
+    <Project Path="Ollama.Samples.TextAnalysis/Ollama.Samples.TextAnalysis.csproj" />
+    <Project Path="Ollama.Samples.ToolUse/Ollama.Samples.ToolUse.csproj" />
+    <Project Path="Ollama.Tools.Tests/Ollama.Tools.Tests.csproj" />
+    <Project Path="Ollama.Tools/Ollama.Tools.csproj" />
+    <Project Path="Ollama.Wpf.TextAnalysis/Ollama.Wpf.TextAnalysis.csproj" />
+    <Project Path="OpenAIPlayground/OpenAIPlayground.csproj" />
+    <Project Path="PdfMarkdownDeterministic.ConsoleApp/PdfMarkdownDeterministic.ConsoleApp.csproj" />
+  </Folder>
+  <Folder Name="/PictureDB/">
+    <Project Path="../Data/PictureDB/PictureDB.Base/PictureDB.Base.csproj" />
+    <Project Path="../Data/PictureDB/PictureDB.OllamaTest/PictureDB.OllamaTest.csproj" />
+    <Project Path="../Data/PictureDB/PictureDB.UI/PictureDB.UI.csproj" />
+  </Folder>
+ </Solution>

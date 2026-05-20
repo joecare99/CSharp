@@ -33,11 +33,13 @@ public enum LayeredTileHoverAction
     ToggleDoor
 }
 
-public partial class LayeredGameViewModel : ObservableObject
+public partial class LayeredGameViewModel : ObservableObject, IDisposable
 {
     private readonly GameSession _session;
+    private readonly IGameSaveLoadService? _saveLoadService;
     private LayeredCell[] _cells;
     private CancellationTokenSource? _goCts;
+    private bool _disposed;
 
     private int _viewOffsetX;
     private int _viewOffsetY;
@@ -63,14 +65,36 @@ public partial class LayeredGameViewModel : ObservableObject
     [ObservableProperty]
     private bool _autoDoorOpen = true;
 
+    private GameRunState _runState;
+
     public ObservableCollection<string> Messages { get; } = new();
     public ObservableCollection<IItem> Inventory { get; } = new();
+    public RelayCommand SaveGameCommand { get; }
+    public RelayCommand LoadGameCommand { get; }
 
     public IMap Map => _session.Map;
     public byte[] MiniMap => _session.MiniMap;
 
     public ICreature Player => _session.Player;
     public IList<ICreature> Enemies => _session.Enemies;
+
+    public GameRunState RunState
+    {
+        get => _runState;
+        private set
+        {
+            if (SetProperty(ref _runState, value))
+            {
+                OnPropertyChanged(nameof(IsRunning));
+            }
+        }
+    }
+
+    public bool IsRunning => RunState == GameRunState.Running;
+    public bool HasWon => RunState == GameRunState.Victory;
+    public string VictoryObjective => _session.VictoryObjective;
+    public string CompletionSummary => _session.CompletionSummary;
+    public int TurnsTaken => _session.TurnsTaken;
 
     public int ViewWidth { get; private set; }
     public int ViewHeight { get; private set; }
@@ -108,19 +132,56 @@ public partial class LayeredGameViewModel : ObservableObject
 
     public IReadOnlyList<LayeredCell> Cells => _cells;
 
-    public LayeredGameViewModel(GameSession session, int viewWidth = 40, int viewHeight = 25)
+    public bool CanSave => _saveLoadService?.CanSave ?? false;
+    public bool CanLoad => _saveLoadService?.CanLoad ?? false;
+
+    public LayeredGameViewModel(GameSession session, IGameSaveLoadService? saveLoadService = null, int viewWidth = 40, int viewHeight = 25)
     {
         _session = session;
+        _saveLoadService = saveLoadService;
         _session.OnMessage += OnGameMessage;
+        SaveGameCommand = new RelayCommand(SaveGame, CanSaveGame);
+        LoadGameCommand = new RelayCommand(LoadGame, CanLoadGame);
+        if (_saveLoadService != null)
+        {
+            _saveLoadService.AvailabilityChanged += OnSaveLoadAvailabilityChanged;
+        }
 
         ViewWidth = viewWidth;
         ViewHeight = viewHeight;
         _cells = new LayeredCell[ViewWidth * ViewHeight];
 
         PlayerName = _session.Player.Name;
+        RunState = _session.RunState;
         UpdateStats();
         UpdateInventory();
         UpdateCells();
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        _goCts?.Cancel();
+        _goCts?.Dispose();
+        _goCts = null;
+        _session.OnMessage -= OnGameMessage;
+        if (_saveLoadService != null)
+        {
+            _saveLoadService.AvailabilityChanged -= OnSaveLoadAvailabilityChanged;
+        }
+    }
+
+    private void OnSaveLoadAvailabilityChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(CanSave));
+        OnPropertyChanged(nameof(CanLoad));
+        SaveGameCommand.NotifyCanExecuteChanged();
+        LoadGameCommand.NotifyCanExecuteChanged();
     }
 
     private void OnGameMessage(string message)
@@ -137,6 +198,10 @@ public partial class LayeredGameViewModel : ObservableObject
         HP = _session.Player.HP;
         MaxHP = _session.Player.MaxHP;
         Level = _session.Level;
+        RunState = _session.RunState;
+        OnPropertyChanged(nameof(HasWon));
+        OnPropertyChanged(nameof(CompletionSummary));
+        OnPropertyChanged(nameof(TurnsTaken));
     }
 
     private void UpdateInventory()
@@ -150,6 +215,14 @@ public partial class LayeredGameViewModel : ObservableObject
 
     private void UpdateCells()
     {
+        if (!IsRunning)
+        {
+            _cells = new LayeredCell[ViewWidth * ViewHeight];
+            OnPropertyChanged(nameof(Cells));
+            OnPropertyChanged(nameof(PrimaryActionHint));
+            return;
+        }
+
         var map = Map;
         var player = Player;
         var playerPos = player.Position;
@@ -507,6 +580,11 @@ public partial class LayeredGameViewModel : ObservableObject
     [RelayCommand]
     public void Move(Direction direction)
     {
+        if (!IsRunning)
+        {
+            return;
+        }
+
         _session.MovePlayer(direction, autoPickup: AutoPickup, autoEquip: AutoEquip, autoDoorOpen: AutoDoorOpen);
         UpdateStats();
         UpdateInventory();
@@ -527,6 +605,11 @@ public partial class LayeredGameViewModel : ObservableObject
     [RelayCommand]
     public void ExecutePrimaryAction()
     {
+        if (!IsRunning)
+        {
+            return;
+        }
+
         if (_session.ExecutePrimaryAction())
         {
             UpdateStats();
@@ -536,5 +619,25 @@ public partial class LayeredGameViewModel : ObservableObject
             NotifyMiniMapIfChanged();
             OnPropertyChanged(nameof(PrimaryActionHint));
         }
+    }
+
+    public void SaveGame()
+    {
+        _saveLoadService?.Save();
+    }
+
+    private bool CanSaveGame()
+    {
+        return CanSave;
+    }
+
+    public void LoadGame()
+    {
+        _saveLoadService?.Load();
+    }
+
+    private bool CanLoadGame()
+    {
+        return CanLoad;
     }
 }

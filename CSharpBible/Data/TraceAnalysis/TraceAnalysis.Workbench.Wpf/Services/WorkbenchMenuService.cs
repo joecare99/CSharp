@@ -23,6 +23,7 @@ public sealed class WorkbenchMenuService : IWorkbenchMenuService
         var traceMenu = new MenuItemViewModel("_Trace");
         traceMenu.Items.Add(new MenuItemViewModel("Trace _Summary", commandKind: MenuCommandKind.Conditional, contextScope: MenuContextScope.TraceSource));
         traceMenu.Items.Add(new MenuItemViewModel("Channel _Browser", commandKind: MenuCommandKind.Conditional, contextScope: MenuContextScope.ChannelBrowser));
+        traceMenu.Items.Add(new MenuItemViewModel("_Chart", commandKind: MenuCommandKind.Conditional, contextScope: MenuContextScope.Chart));
 
         var viewMenu = new MenuItemViewModel("_View");
         viewMenu.Items.Add(new MenuItemViewModel("_Preview", commandKind: MenuCommandKind.Conditional, contextScope: MenuContextScope.Preview));
@@ -75,6 +76,7 @@ public sealed class WorkbenchMenuService : IWorkbenchMenuService
             MenuContextScope.ProcessingSteps => contextKind == WorkbenchContextKind.ProcessingSteps,
             MenuContextScope.CurrentStep => contextKind == WorkbenchContextKind.CurrentStep,
             MenuContextScope.Preview => contextKind == WorkbenchContextKind.Preview,
+            MenuContextScope.Chart => contextKind == WorkbenchContextKind.Chart,
             MenuContextScope.Diagnostics => contextKind == WorkbenchContextKind.Diagnostics,
             _ => contextKind == WorkbenchContextKind.None
         };

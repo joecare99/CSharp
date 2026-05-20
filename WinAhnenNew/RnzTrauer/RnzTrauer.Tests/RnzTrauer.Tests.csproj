@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,13 +13,19 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="MSTest" />
     <PackageReference Include="NSubstitute" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CSharpBible\Libraries\BaseLibTests\BaseLibTests.csproj" />
+    <ProjectReference Include="..\..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />
     <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core.csproj" />
+    <ProjectReference Include="..\RnzTrauer.Console\RnzTrauer.Console.csproj" />
+    <ProjectReference Include="..\RnzTrauer.WebDriver.Firefox\RnzTrauer.WebDriver.Firefox.csproj" />
+    <ProjectReference Include="..\RnzTrauer.WebDriver.Edge\RnzTrauer.WebDriver.Edge.csproj" />
   </ItemGroup>
 
 </Project>

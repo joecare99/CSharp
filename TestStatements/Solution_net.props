@@ -11,5 +11,6 @@
 	  <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
 	  <SuppressTfmSupportBuildWarning>true</SuppressTfmSupportBuildWarning>
 	  <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <NoWarn>$(NoWarn);NU1701;NU1702;NETSDK1138</NoWarn>
   </PropertyGroup>
 </Project>

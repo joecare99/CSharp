@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RepoMigrator.Core\RepoMigrator.Core.csproj" />
+    <ProjectReference Include="..\RepoMigrator.Providers.SvnCli\RepoMigrator.Providers.SvnCli.csproj" />
   </ItemGroup>
 
 </Project>

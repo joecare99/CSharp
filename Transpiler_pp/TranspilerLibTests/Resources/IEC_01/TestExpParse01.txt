@@ -1,48 +1,48 @@
 ﻿///Declaration MainBlock 0,0
 
-///FLComment FLComment 1,0
+///FLComment FLComment 1,0,0
 // Dies ist ein Kommentar zum Typ ST_01
-///Block Block 1,1
+///Block Block 1,40,1
 TYPE
-///Variable Variable 2,0
+///Variable Variable 2,45,0
 ST_01
-///Operation Operation 2,1
+///Operation Operation 2,51,1
 :
-///Block Block 2,2
+///Block Block 2,53,2
 STRUCT
-///FLComment FLComment 3,0
+///FLComment FLComment 3,67,0
 // Dies ist ein Kommentar zum Element a
-///Variable Variable 3,1
+///Variable Variable 3,107,1
 a
-///Operation Operation 3,2
+///Operation Operation 3,111,2
 :
-///Function Function 3,3
+///Assignment Assignment 4,116,0
+:=
+///Function Variable 5,112,0
 INT
-///Operation Operation 3,4
-:=
-///Number Number 3,5
+///Number Number 5,119,1
 INT#1
-///Operation Operation 3,6
+///Block Block 4,125,1
 ;
-///LComment LComment 3,7
+///LComment LComment 3,127,3
 // Dies ist ein 2. Kommentar zum Element a
-///FLComment FLComment 3,8
+///FLComment FLComment 3,173,4
 // Dies ist ein Kommentar zum Element b
-///Variable Variable 3,9
+///Variable Variable 3,213,5
 b
-///Operation Operation 3,10
+///Operation Operation 3,217,6
 :
-///Function Function 3,11
-LREAL
-///Operation Operation 3,12
+///Assignment Assignment 4,224,0
 :=
-///Number Number 3,13
+///Function Variable 5,218,0
+LREAL
+///Number Number 5,227,1
 LREAL#2.7e-2
-///Operation Operation 3,14
+///Block Block 4,240,1
 ;
-///LComment LComment 3,15
+///LComment LComment 3,242,7
 // Dies ist ein 2. Kommentar zum Element b
-///Block Block 2,3
+///Block Block 2,285,3
 END_STRUCT
-///Block Block 1,2
+///Block Block 1,297,2
 END_TYPE

@@ -14,9 +14,14 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\TranspilerLib\TranspilerLib.csproj" />
-    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" Version="1.0.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+	</ItemGroup>
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">
+	  <ProjectReference Include="..\TranspilerLib.Semantics\TranspilerLib.Semantics.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" Version="1.0.3">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 </Project>

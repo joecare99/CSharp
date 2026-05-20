@@ -2,18 +2,23 @@
 using LibGit2Sharp;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
+using RepoMigrator.Core.Diagnostics;
 using System.Diagnostics;
 using System.Text;
 
 namespace RepoMigrator.Providers.Git;
 
-public sealed class GitProvider : IVersionControlProvider
+public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperations
 {
+    private static Func<string, string?, string, CancellationToken, Task<string>> s_runGitCommandAsync = RunGitProcessAsync;
+    private static Func<GitProvider, string, CancellationToken, Task> s_pushBranchAsync = static (provider, branchName, ct)
+        => provider.PushBranchAsync(branchName, ct);
     private RepositoryEndpoint? _endpoint;
     private string? _localPath; // Lokales Arbeitsrepo für Quelle und/oder Ziel
     private string? _pushTargetUrl;
     private Repository? _repo;
     private readonly HashSet<string> _hsPendingPushBranchNames = new(StringComparer.OrdinalIgnoreCase);
+    private readonly object _pushSyncRoot = new();
     public string Name => "Git";
     public bool SupportsRead => true;
     public bool SupportsWrite => true;
@@ -49,6 +54,7 @@ public sealed class GitProvider : IVersionControlProvider
                 Repository.Init(_localPath!, isBare: false);
             }
         }
+
         _repo = new Repository(_localPath!);
 
         // Branch wechseln (falls Quelle)
@@ -60,6 +66,79 @@ public sealed class GitProvider : IVersionControlProvider
         }
 
         await Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
+    public Task<string?> GetHeadCommitIdAsync(CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        EnsureRepositoryIsOpen();
+        return Task.FromResult(_repo!.Head.Tip?.Sha);
+    }
+
+    /// <inheritdoc/>
+    public Task<bool> BranchExistsAsync(string branchName, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(branchName);
+        EnsureRepositoryIsOpen();
+        return Task.FromResult(_repo!.Branches[NormalizeBranchName(branchName)!] is not null);
+    }
+
+    /// <inheritdoc/>
+    public Task<bool> TagExistsAsync(string tagName, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
+        EnsureRepositoryIsOpen();
+        return Task.FromResult(_repo!.Tags[tagName] is not null);
+    }
+
+    /// <inheritdoc/>
+    public async Task EnsureBranchAsync(string branchName, string commitId, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(branchName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(commitId);
+        EnsureRepositoryIsOpen();
+
+        var normalizedBranchName = NormalizeBranchName(branchName)!;
+        var commit = FindCommit(commitId);
+        var existingBranch = _repo!.Branches[normalizedBranchName];
+        if (existingBranch is not null)
+        {
+            if (string.Equals(existingBranch.Tip?.Sha, commit.Sha, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            throw new InvalidOperationException($"The Git branch '{normalizedBranchName}' already exists on a different commit.");
+        }
+
+        _repo.Branches.Add(normalizedBranchName, commit);
+        if (_pushTargetUrl is not null)
+            await RunGitAsync($"push --set-upstream \"{_pushTargetUrl}\" \"refs/heads/{normalizedBranchName}:refs/heads/{normalizedBranchName}\"", _localPath, "Git-Branch-Push", ct);
+    }
+
+    /// <inheritdoc/>
+    public async Task EnsureTagAsync(string tagName, string commitId, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(commitId);
+        EnsureRepositoryIsOpen();
+
+        var commit = FindCommit(commitId);
+        var existingTag = _repo!.Tags[tagName];
+        if (existingTag is not null)
+        {
+            if (string.Equals(GetTagCommitId(existingTag), commit.Sha, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            throw new InvalidOperationException($"The Git tag '{tagName}' already exists on a different commit.");
+        }
+
+        _repo.ApplyTag(tagName, commit.Sha);
+        if (_pushTargetUrl is not null)
+            await RunGitAsync($"push \"{_pushTargetUrl}\" \"refs/tags/{tagName}:refs/tags/{tagName}\"", _localPath, "Git-Tag-Push", ct);
     }
 
     /// <summary>
@@ -360,6 +439,9 @@ public sealed class GitProvider : IVersionControlProvider
     }
 
     public async Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, CancellationToken ct)
+        => await CommitSnapshotAsync(workDir, metadata, NullMigrationProgress.Instance, ct);
+
+    public async Task CommitSnapshotAsync(string workDir, CommitMetadata metadata, IMigrationProgress progress, CancellationToken ct)
     {
         await EnsureWorkingBranchAsync(metadata.TargetBranch, ct);
 
@@ -369,6 +451,7 @@ public sealed class GitProvider : IVersionControlProvider
 
         // Stage + Commit
         Commands.Stage(_repo!, "*");
+        VerifyGitChangedPathCount(metadata, progress);
         var author = new Signature(metadata.AuthorName, metadata.AuthorEmail ?? "unknown@example.com", metadata.Timestamp);
         var committer = author;
         try
@@ -386,23 +469,109 @@ public sealed class GitProvider : IVersionControlProvider
             var branchName = string.IsNullOrWhiteSpace(NormalizeBranchName(metadata.TargetBranch ?? endpoint.BranchOrTrunk))
                 ? _repo!.Head.FriendlyName
                 : NormalizeBranchName(metadata.TargetBranch ?? endpoint.BranchOrTrunk)!;
-            _hsPendingPushBranchNames.Add(branchName);
+            lock (_pushSyncRoot)
+            {
+                _hsPendingPushBranchNames.Add(branchName);
+            }
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await s_pushBranchAsync(this, branchName, CancellationToken.None);
+                    lock (_pushSyncRoot)
+                    {
+                        _hsPendingPushBranchNames.Remove(branchName);
+                    }
+                }
+                catch
+                {
+                    // FlushAsync übernimmt ggf. den erneuten Versuch und surfacet Fehler synchron am Ende.
+                }
+            });
         }
     }
 
     public async Task FlushAsync(CancellationToken ct)
     {
-        if (_pushTargetUrl is null || _hsPendingPushBranchNames.Count == 0)
+        if (_pushTargetUrl is null)
             return;
 
-        foreach (var sBranchName in _hsPendingPushBranchNames.OrderBy(static sValue => sValue, StringComparer.OrdinalIgnoreCase))
+        List<string> lstPendingBranches;
+        lock (_pushSyncRoot)
+        {
+            if (_hsPendingPushBranchNames.Count == 0)
+                return;
+
+            lstPendingBranches = _hsPendingPushBranchNames
+                .OrderBy(static sValue => sValue, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        foreach (var sBranchName in lstPendingBranches)
         {
             var sPushArgs = $"push --set-upstream \"{_pushTargetUrl}\" \"refs/heads/{sBranchName}:refs/heads/{sBranchName}\"";
             await RunGitAsync(sPushArgs, _localPath, "Git-Push", ct);
-        }
 
-        _hsPendingPushBranchNames.Clear();
+            lock (_pushSyncRoot)
+            {
+                _hsPendingPushBranchNames.Remove(sBranchName);
+            }
+        }
     }
+
+    private async Task PushBranchAsync(string sBranchName, CancellationToken ct)
+    {
+        if (_pushTargetUrl is null)
+            return;
+
+        var sPushArgs = $"push --set-upstream \"{_pushTargetUrl}\" \"refs/heads/{sBranchName}:refs/heads/{sBranchName}\"";
+        await RunGitAsync(sPushArgs, _localPath, "Git-Push", ct);
+    }
+
+    private void VerifyGitChangedPathCount(CommitMetadata metadata, IMigrationProgress progress)
+    {
+        if (metadata.ExpectedChangedFilePathCount is not { } iExpectedChangedFilePathCount && metadata.ExpectedChangedPathCount is not { } iExpectedChangedPathCount)
+            return;
+
+        var summary = BuildGitStatusSummary();
+        var iExpected = metadata.ExpectedChangedFilePathCount ?? metadata.ExpectedChangedPathCount!.Value;
+        progress.Report(
+            MigrationReportSeverity.Information,
+            MigrationReportMessage.GitChangeCountVerification,
+            summary.Total,
+            summary.Modified,
+            summary.Added,
+            summary.Deleted,
+            summary.Renamed,
+            iExpected,
+            metadata.ExpectedChangedPathCount ?? iExpected,
+            summary.SamplePaths);
+
+        if (!metadata.VerifyChangedPathCount || summary.Total <= iExpected)
+            return;
+
+        throw new InvalidOperationException($"Git target has {summary.Total} changed file paths before commit, but source revision reported {iExpected} changed file paths ({metadata.ExpectedChangedPathCount ?? iExpected} total SVN paths). Sample changed paths: {summary.SamplePaths}");
+    }
+
+    private GitStatusSummary BuildGitStatusSummary()
+    {
+        var lstChangedEntries = _repo!.RetrieveStatus(new StatusOptions { IncludeIgnored = false })
+            .Where(statusEntry => statusEntry.State != FileStatus.Unaltered && statusEntry.State != FileStatus.Ignored)
+            .GroupBy(statusEntry => statusEntry.FilePath, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
+            .ToList();
+
+        return new GitStatusSummary(
+            lstChangedEntries.Count,
+            lstChangedEntries.Count(static entry => entry.State.HasFlag(FileStatus.ModifiedInIndex) || entry.State.HasFlag(FileStatus.ModifiedInWorkdir)),
+            lstChangedEntries.Count(static entry => entry.State.HasFlag(FileStatus.NewInIndex) || entry.State.HasFlag(FileStatus.NewInWorkdir)),
+            lstChangedEntries.Count(static entry => entry.State.HasFlag(FileStatus.DeletedFromIndex) || entry.State.HasFlag(FileStatus.DeletedFromWorkdir)),
+            lstChangedEntries.Count(static entry => entry.State.HasFlag(FileStatus.RenamedInIndex) || entry.State.HasFlag(FileStatus.RenamedInWorkdir)),
+            string.Join(", ", lstChangedEntries.Select(static entry => entry.FilePath).OrderBy(static sPath => sPath, StringComparer.OrdinalIgnoreCase).Take(20)));
+    }
+
+    private sealed record GitStatusSummary(int Total, int Modified, int Added, int Deleted, int Renamed, string SamplePaths);
 
     public ValueTask DisposeAsync()
     {
@@ -702,12 +871,34 @@ public sealed class GitProvider : IVersionControlProvider
     private static string? NormalizeBranchName(string? branchName)
         => string.IsNullOrWhiteSpace(branchName) ? null : branchName.Trim();
 
+    private void EnsureRepositoryIsOpen()
+    {
+        if (_repo is null)
+            throw new InvalidOperationException("The Git repository is not open.");
+    }
+
+    private Commit FindCommit(string commitId)
+    {
+        var commit = _repo!.Commits.FirstOrDefault(c => c.Sha.StartsWith(commitId, StringComparison.OrdinalIgnoreCase));
+        return commit ?? throw new InvalidOperationException($"The Git commit '{commitId}' does not exist in the current repository.");
+    }
+
+    private static string? GetTagCommitId(Tag tag)
+        => tag.PeeledTarget is Commit peeledCommit
+            ? peeledCommit.Sha
+            : tag.Target is Commit directCommit
+                ? directCommit.Sha
+                : null;
+
     private static string GetEffectiveHttpUsername(RepositoryEndpoint endpoint)
         => string.IsNullOrWhiteSpace(endpoint.Credentials?.Username)
             ? "git"
             : endpoint.Credentials.Username!;
 
     private static async Task<string> RunGitAsync(string arguments, string? workingDir, string operationName, CancellationToken ct)
+        => await s_runGitCommandAsync(arguments, workingDir, operationName, ct);
+
+    private static async Task<string> RunGitProcessAsync(string arguments, string? workingDir, string operationName, CancellationToken ct)
     {
         var psi = new ProcessStartInfo
         {
@@ -785,30 +976,108 @@ public sealed class GitProvider : IVersionControlProvider
 
     private static void SyncDirectoryContents(string sourceDir, string destDir)
     {
-        // 1) Dateien löschen, die nicht mehr existieren
-        var sourceAll = Directory.EnumerateFiles(sourceDir, "*", SearchOption.AllDirectories)
-            .Select(p => p.Substring(sourceDir.Length).TrimStart(Path.DirectorySeparatorChar))
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var dstFile in Directory.EnumerateFiles(destDir, "*", SearchOption.AllDirectories))
-        {
-            var rel = dstFile.Substring(destDir.Length).TrimStart(Path.DirectorySeparatorChar);
-            if (rel.StartsWith(".git" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
-                continue;
-            if (!sourceAll.Contains(rel))
+        var sSnapshotDirectory = DifferentialSnapshotStore.StartOperation("Git");
+        var dctSourceFiles = Directory.EnumerateFiles(sourceDir, "*", SearchOption.AllDirectories)
+            .Select(sFilePath => new
             {
-                File.SetAttributes(dstFile, FileAttributes.Normal);
-                File.Delete(dstFile);
-            }
+                RelativePath = Path.GetRelativePath(sourceDir, sFilePath),
+                FullPath = sFilePath,
+                Info = new FileInfo(sFilePath)
+            })
+            .ToDictionary(file => file.RelativePath, file => (file.FullPath, file.Info), StringComparer.OrdinalIgnoreCase);
+
+        var dctDestFiles = Directory.EnumerateFiles(destDir, "*", SearchOption.AllDirectories)
+            .Select(sFilePath => new
+            {
+                RelativePath = Path.GetRelativePath(destDir, sFilePath),
+                FullPath = sFilePath,
+                Info = new FileInfo(sFilePath)
+            })
+            .Where(file => !IsGitAdministrativePath(file.RelativePath))
+            .ToDictionary(file => file.RelativePath, file => (file.FullPath, file.Info), StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (sRelativePath, destinationFile) in dctDestFiles)
+        {
+            if (dctSourceFiles.ContainsKey(sRelativePath))
+                continue;
+
+            destinationFile.Info.Attributes = FileAttributes.Normal;
+            DifferentialSnapshotStore.SaveRemovedFile(sSnapshotDirectory, sRelativePath, destinationFile.FullPath);
+            destinationFile.Info.Delete();
         }
 
-        // 2) Dateien kopieren/überschreiben
-        foreach (var srcFile in Directory.EnumerateFiles(sourceDir, "*", SearchOption.AllDirectories))
+        foreach (var (sRelativePath, sourceFile) in dctSourceFiles)
         {
-            var rel = srcFile.Substring(sourceDir.Length).TrimStart(Path.DirectorySeparatorChar);
-            var dst = Path.Combine(destDir, rel);
-            Directory.CreateDirectory(Path.GetDirectoryName(dst)!);
-            File.Copy(srcFile, dst, overwrite: true);
+            var sDestinationPath = Path.Combine(destDir, sRelativePath);
+            if (dctDestFiles.TryGetValue(sRelativePath, out var destinationFile)
+                && AreFilesContentEqual(sourceFile.FullPath, destinationFile.FullPath, sourceFile.Info.Length, destinationFile.Info.Length))
+            {
+                continue;
+            }
+
+            if (File.Exists(sDestinationPath))
+                DifferentialSnapshotStore.SaveChangedFile(sSnapshotDirectory, sRelativePath, sourceFile.FullPath, sDestinationPath);
+            else
+                DifferentialSnapshotStore.SaveAddedFile(sSnapshotDirectory, sRelativePath, sourceFile.FullPath);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(sDestinationPath)!);
+            VerifiedFileCopy.CopyAndVerify(sourceFile.FullPath, sDestinationPath);
+        }
+
+        RemoveEmptyDirectories(destDir);
+    }
+
+    private static bool AreFilesContentEqual(string sSourcePath, string sDestinationPath, long iSourceLength, long iDestinationLength)
+    {
+        if (iSourceLength != iDestinationLength)
+            return false;
+
+        if (iSourceLength == 0)
+            return true;
+
+        const int iBufferSize = 128 * 1024;
+        var arrSourceBuffer = new byte[iBufferSize];
+        var arrDestinationBuffer = new byte[iBufferSize];
+
+        using var sourceStream = new FileStream(sSourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var destinationStream = new FileStream(sDestinationPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+        while (true)
+        {
+            var iReadSource = sourceStream.Read(arrSourceBuffer, 0, arrSourceBuffer.Length);
+            var iReadDestination = destinationStream.Read(arrDestinationBuffer, 0, arrDestinationBuffer.Length);
+
+            if (iReadSource != iReadDestination)
+                return false;
+
+            if (iReadSource == 0)
+                return true;
+
+            if (!arrSourceBuffer.AsSpan(0, iReadSource).SequenceEqual(arrDestinationBuffer.AsSpan(0, iReadDestination)))
+                return false;
+        }
+    }
+
+    private static bool IsGitAdministrativePath(string sRelativePath)
+    {
+        var sNormalizedPath = sRelativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        if (string.Equals(sNormalizedPath, ".git", StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return sNormalizedPath.StartsWith($".git{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static void RemoveEmptyDirectories(string sRootDirectory)
+    {
+        foreach (var sDirectory in Directory.EnumerateDirectories(sRootDirectory, "*", SearchOption.AllDirectories)
+            .OrderByDescending(static sValue => sValue.Length))
+        {
+            var sRelativePath = Path.GetRelativePath(sRootDirectory, sDirectory);
+            if (IsGitAdministrativePath(sRelativePath))
+                continue;
+
+            if (!Directory.EnumerateFileSystemEntries(sDirectory).Any())
+                Directory.Delete(sDirectory, recursive: false);
         }
     }
 }

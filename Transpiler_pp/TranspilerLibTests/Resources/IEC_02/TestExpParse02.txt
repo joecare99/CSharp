@@ -1,1 +1,298 @@
-﻿
+﻿///Declaration MainBlock 0,0
+
+///Block Block 1,0,0
+FUNCTION
+///Variable Variable 2,8,0
+fbCalcWinkelvVector
+///Operation Operation 2,28,1
+:
+///Function Function 3,30,0
+LREAL
+///Block Block 3,36,1
+;
+///Block Block 2,37,2
+VAR_INPUT
+///Variable Variable 3,48,0
+Vec
+///Operation Operation 3,57,1
+:
+///Variable Variable 4,59,0
+udtVector
+///Block Block 3,69,2
+;
+///Block Block 2,70,3
+END_VAR
+///Block Block 2,79,4
+VAR_OUTPUT
+///Function Function 3,91,0
+Len
+///Operation Operation 3,100,1
+:
+///Function Function 4,102,0
+LREAL
+///Block Block 4,108,1
+;
+///Block Block 2,109,5
+END_VAR
+///Block Block 2,118,6
+VAR
+///Variable Variable 3,123,0
+ZwErg
+///Operation Operation 3,134,1
+:
+///Function Function 4,136,0
+LREAL
+///Block Block 4,142,1
+;
+///Block Block 2,143,7
+END_VAR
+///Block Block 1,152,1
+BEGIN
+///Block Block 2,159,0
+IF
+///Operation Operation 3,176,0
+>
+///Function Function 4,163,0
+ABS(
+///Variable Variable 5,168,0
+Vec.v.x
+///Bracket Bracket 5,175,1
+)
+///Function Function 4,178,1
+ABS(
+///Variable Variable 5,183,0
+Vec.v.y
+///Bracket Bracket 5,190,1
+)
+///Block Block 2,191,1
+THEN
+///Assignment Assignment 3,206,0
+:=
+///Variable Variable 4,196,0
+ZwErg
+///Function Function 4,209,1
+SEL(
+///Operation Operation 5,220,0
+<
+///Variable Variable 6,213,0
+Vec.v.x
+///Number Number 6,221,1
+0.0
+///Operation Operation 4,224,2
+,
+///Function Function 5,225,0
+ATAN(
+///Operation Operation 6,237,0
+/
+///Variable Variable 7,230,0
+Vec.v.y
+///Variable Variable 7,238,1
+vec.v.x
+///Bracket Bracket 6,245,1
+)
+///Operation Operation 4,246,3
+,
+///Operation Operation 5,268,0
++
+///Function Function 6,247,0
+ATAN(
+///Operation Operation 7,259,0
+/
+///Variable Variable 8,252,0
+Vec.v.y
+///Variable Variable 8,260,1
+vec.v.x
+///Bracket Bracket 7,267,1
+)
+///Variable Variable 6,269,1
+pi
+///Bracket Bracket 5,271,1
+)
+///Block Block 4,272,4
+;
+///Assignment Assignment 3,281,1
+:=
+///Function Variable 4,273,0
+len
+///Variable Variable 4,283,1
+Vec.
+///Variable Variable 4,287,2
+v.
+///Variable Variable 4,289,3
+x
+///Operation Operation 3,290,2
+/
+///Function Function 4,291,0
+COS(
+///Variable Variable 5,295,0
+ZwErg
+///Bracket Bracket 5,300,1
+)
+///Block Block 4,301,1
+;
+///Assignment Assignment 3,326,3
+:=
+///Variable Variable 4,302,0
+fbCalcWinkelvVector
+///Variable Variable 4,329,1
+ZwErg
+///Operation Operation 3,342,4
+-
+///Operation Operation 4,335,0
++
+///Operation Operation 5,338,0
+*
+///Variable Variable 6,336,0
+pi
+///Number Number 6,339,1
+2.0
+///Operation Operation 4,383,1
+*
+///Operation Operation 5,380,0
+*
+///Function Function 6,343,0
+DINT_TO_REAL(
+///Function Function 7,356,0
+TRUNC(
+///Operation Operation 8,374,0
++
+///Operation Operation 9,370,0
+*
+///Operation Operation 10,367,0
+/
+///Variable Variable 11,362,0
+Zwerg
+///Variable Variable 11,368,1
+pi
+///Number Number 10,371,1
+0.5
+///Number Number 9,375,1
+1.5
+///Bracket Bracket 8,378,1
+)
+///Bracket Bracket 7,379,1
+)
+///Variable Variable 6,381,1
+pi
+///Number Number 5,384,1
+2.0
+///Block Block 4,387,2
+;
+///Block Block 2,388,2
+ELSIF
+///Operation Operation 3,408,0
+>
+///Function Function 4,395,0
+ABS(
+///Variable Variable 5,400,0
+Vec.v.y
+///Bracket Bracket 5,407,1
+)
+///Variable Variable 4,410,1
+epsilon
+///Block Block 2,418,3
+THEN
+///Assignment Assignment 3,448,0
+:=
+///Variable Variable 4,423,0
+fbCalcWinkelvVector
+///Function Function 4,451,1
+SEL(
+///Operation Operation 5,463,0
+<
+///Variable Variable 6,456,0
+Vec.v.y
+///Number Number 6,465,1
+0.0
+///Operation Operation 4,469,2
+,
+///Operation Operation 5,492,0
++
+///Operation Operation 6,475,0
+-
+///Function Function 7,470,0
+ATAN(
+///Operation Operation 7,483,1
+/
+///Variable Variable 8,476,0
+Vec.v.x
+///Variable Variable 8,484,1
+vec.v.y
+///Bracket Bracket 7,491,2
+)
+///Operation Operation 6,496,1
+*
+///Number Number 7,493,0
+0.5
+///Variable Variable 7,497,1
+pi
+///Operation Operation 5,499,1
+,
+///Operation Operation 6,522,0
+-
+///Operation Operation 7,505,0
+-
+///Function Function 8,500,0
+ATAN(
+///Operation Operation 8,513,1
+/
+///Variable Variable 9,506,0
+Vec.v.x
+///Variable Variable 9,514,1
+vec.v.y
+///Bracket Bracket 8,521,2
+)
+///Operation Operation 7,526,1
+*
+///Number Number 8,523,0
+0.5
+///Variable Variable 8,527,1
+pi
+///Bracket Bracket 7,529,2
+)
+///Block Block 6,530,1
+;
+///Assignment Assignment 3,539,1
+:=
+///Function Variable 4,531,0
+len
+///Variable Variable 4,541,1
+Vec.
+///Variable Variable 4,545,2
+v.
+///Variable Variable 4,547,3
+y
+///Operation Operation 3,548,2
+/
+///Function Function 4,549,0
+SIN(
+///Variable Variable 5,553,0
+fbCalcWinkelvVector
+///Bracket Bracket 5,572,1
+)
+///Block Block 4,573,1
+;
+///Block Block 2,574,4
+else
+///Assignment Assignment 3,604,0
+:=
+///Variable Variable 4,580,0
+fbCalcWinkelvVector
+///Number Number 4,607,1
+0.0
+///Block Block 3,610,1
+;
+///Assignment Assignment 3,619,2
+:=
+///Function Variable 4,611,0
+Len
+///Number Number 4,622,1
+0.0
+///Block Block 3,626,3
+;
+///Block Block 2,627,5
+end_if
+///Block Block 2,635,6
+;
+///Block Block 1,636,2
+END_FUNCTION

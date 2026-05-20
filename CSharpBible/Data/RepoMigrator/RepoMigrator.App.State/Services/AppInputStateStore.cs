@@ -77,7 +77,9 @@ public sealed class AppInputStateStore
                 PipelinePrefetchCount = persistedState.PipelinePrefetchCount,
                 PipelineExportWorkerCount = persistedState.PipelineExportWorkerCount,
                 SplitIntoSubdirectoryBranches = persistedState.SplitIntoSubdirectoryBranches,
-                BranchSplitDepth = persistedState.BranchSplitDepth
+                BranchSplitDepth = persistedState.BranchSplitDepth,
+                VerifyChangedPathCount = persistedState.VerifyChangedPathCount,
+                VerboseProgress = persistedState.VerboseProgress
             };
         }
         catch
@@ -126,7 +128,9 @@ public sealed class AppInputStateStore
                 PipelinePrefetchCount = state.PipelinePrefetchCount,
                 PipelineExportWorkerCount = state.PipelineExportWorkerCount,
                 SplitIntoSubdirectoryBranches = state.SplitIntoSubdirectoryBranches,
-                BranchSplitDepth = state.BranchSplitDepth
+                BranchSplitDepth = state.BranchSplitDepth,
+                VerifyChangedPathCount = state.VerifyChangedPathCount,
+                VerboseProgress = state.VerboseProgress
             };
 
             var sJson = JsonSerializer.Serialize(persistedState, SerializerOptions);
@@ -204,5 +208,7 @@ public sealed class AppInputStateStore
         public int PipelineExportWorkerCount { get; set; } = 2;
         public bool SplitIntoSubdirectoryBranches { get; set; }
         public int BranchSplitDepth { get; set; } = 1;
+        public bool VerifyChangedPathCount { get; set; } = true;
+        public bool VerboseProgress { get; set; }
     }
 }

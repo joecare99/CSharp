@@ -1,0 +1,138 @@
+<UserControl x:Class="TraceAnalysis.Widgets.Wpf.Controls.TraceChartControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <GroupBox Header="Trace Chart">
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <DockPanel>
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Left">
+                    <Button Margin="0,0,8,0"
+                            Padding="12,6"
+                            Command="{Binding ShowAllSeriesCommand}"
+                            Content="Show all" />
+                    <Button Margin="0,0,8,0"
+                            Padding="12,6"
+                            Command="{Binding HideAllSeriesCommand}"
+                            Content="Hide all" />
+                    <Button Margin="0,0,8,0"
+                            Padding="12,6"
+                            Command="{Binding ZoomToVisibleDataCommand}"
+                            Content="Zoom" />
+                    <Button Padding="12,6"
+                            Command="{Binding SetCursorsToWindowCommand}"
+                            Content="Cursors = Window" />
+                </StackPanel>
+                <TextBlock Margin="16,4,0,0"
+                           FontWeight="SemiBold"
+                           Text="{Binding ChartStatusText}" />
+            </DockPanel>
+
+            <Grid Grid.Row="1"
+                  Margin="0,12,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="220" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0"
+                        Padding="8"
+                        BorderBrush="DarkGray"
+                        BorderThickness="1"
+                        Background="#FF10131A">
+                    <Grid>
+                        <Canvas x:Name="plotCanvas"
+                                ClipToBounds="True" />
+
+                        <Border HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="8"
+                                Padding="8,4"
+                                Background="#AA000000"
+                                CornerRadius="4">
+                            <StackPanel>
+                                <TextBlock Foreground="White"
+                                           FontWeight="Bold"
+                                           Text="{Binding HorizontalAxisText}" />
+                                <TextBlock Foreground="White"
+                                           Text="{Binding ViewWindowText}" />
+                                <TextBlock Foreground="White"
+                                           Text="{Binding CursorWindowText}" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <GroupBox Grid.Column="1"
+                          Margin="12,0,0,0"
+                          Header="Series visibility">
+                    <ListBox Margin="8"
+                             ItemsSource="{Binding Series}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,4,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Margin="0,2,8,0"
+                                              IsChecked="{Binding IsVisible}" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock FontWeight="SemiBold"
+                                                   Text="{Binding Name}" />
+                                        <TextBlock FontSize="11"
+                                                   Text="{Binding GroupName}" />
+                                        <TextBlock FontSize="11"
+                                                   Text="{Binding PointCountText}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </GroupBox>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock FontWeight="SemiBold"
+                               Text="Time filter" />
+                    <TextBox Margin="0,6,0,0"
+                             Text="{Binding ViewStart, UpdateSourceTrigger=PropertyChanged, StringFormat=0.###}" />
+                    <TextBox Margin="0,6,0,0"
+                             Text="{Binding ViewEnd, UpdateSourceTrigger=PropertyChanged, StringFormat=0.###}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Margin="12,0,0,0">
+                    <TextBlock FontWeight="SemiBold"
+                               Text="Cursor A / B" />
+                    <TextBox Margin="0,6,0,0"
+                             Text="{Binding CursorA, UpdateSourceTrigger=PropertyChanged, StringFormat=0.###}" />
+                    <TextBox Margin="0,6,0,0"
+                             Text="{Binding CursorB, UpdateSourceTrigger=PropertyChanged, StringFormat=0.###}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2"
+                            Margin="12,0,0,0">
+                    <TextBlock FontWeight="SemiBold"
+                               Text="Mode / grouping" />
+                    <TextBlock Margin="0,6,0,0"
+                               Text="{Binding CursorModeText}" />
+                    <TextBlock Margin="0,6,0,0"
+                               Text="{Binding GroupSummaryText}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </GroupBox>
+</UserControl>

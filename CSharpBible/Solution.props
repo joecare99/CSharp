@@ -12,6 +12,5 @@
 		<Authors>Joe Care</Authors>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<Copyright>Copyright © JC-Soft 2026</Copyright>
-		<UseArtifactsOutput>true</UseArtifactsOutput>
 	</PropertyGroup>
 </Project>

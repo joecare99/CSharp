@@ -87,6 +87,12 @@
                 </StackPanel>
                 <CheckBox Content="Älteste zuerst" IsChecked="{Binding OldestFirst}" Margin="12,0,0,0"/>
             </StackPanel>
+            <StackPanel Margin="0,8,0,0">
+                <CheckBox Content="Änderungsanzahl vor Git-Commit gegen SVN-Revisionslog prüfen"
+                          IsChecked="{Binding VerifyChangedPathCount}"/>
+                <CheckBox Content="Ausführliche interne Migrationsvorgänge protokollieren"
+                          IsChecked="{Binding VerboseProgress}"/>
+            </StackPanel>
         </StackPanel>
     </GroupBox>
 </UserControl>

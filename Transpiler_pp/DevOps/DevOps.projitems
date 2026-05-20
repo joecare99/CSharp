@@ -1,15 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-<PropertyGroup>
-<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-<HasSharedItems>true</HasSharedItems>
-<SharedGUID>B7D27D6F-34E9-4F5A-BB5F-6A0D3F0F2C7C</SharedGUID>
-</PropertyGroup>
-<PropertyGroup Label="Configuration">
-<Import_RootNamespace>DevOps</Import_RootNamespace>
-</PropertyGroup>
-<ItemGroup>
-<None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
-<None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
-</ItemGroup>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>B7D27D6F-34E9-4F5A-BB5F-6A0D3F0F2C7C</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>DevOps</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\B0005-IEC-Semantic-Analysis.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\B0008-Shared-Transpiler-Semantics.md" />
+    <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)Features\F0001-IEC-to-CSharp-Testability.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0001-B0001-Detail-Typed-IEC-AST.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0002-B0008-Transition-CSharp-Backend-To-Shared-Semantics.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0003-B0006-Configurable-CSharp-Backend-Output.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0004-B0006-CSharp-Backend-Artifact-Roles.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0005-B0008-Shared-Artifact-Metadata.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0006-B0008-Shared-Wrapper-Traits.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0007-B0008-Artifact-Metadata-Object.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0008-B0008-Declaration-Metadata-Object.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0009-B0008-General-Metadata-Base.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0010-B0008-Physical-Semantics-Source-Ownership.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0011-B0008-Semantics-Test-Project.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0014-B0001-Warning-Reduction.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0015-B0006-IEC-SourceText-To-CSharp-Backend-Regression.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0016-B0001-IEC-Export-Expression-Mapping.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0017-IEC-Test-Failure-Stabilization.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T0018-IEC-Scanner-Regression-Stabilization.md" />
+    <None Include="$(MSBuildThisFileDirectory)Temp\ExprInspector\ExprInspector.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Temp\InspectIecToCode\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Temp\InspectLegacyIecOutput\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Temp\Inspector\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Temp\ExprInspector\Program.cs" />
+  </ItemGroup>
 </Project>

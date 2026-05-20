@@ -132,32 +132,20 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelCTTests, p:Property2:4
     }
 
     [TestMethod]
-    public void RemovePropertyDependencyTest()
-    {
-        Assert.ThrowsExactly<NotImplementedException>(() => RemovePropertyDependency("1", "3"));
-    }
+    public void RemovePropertyDependencyTest() => Assert.ThrowsExactly<NotImplementedException>(() => RemovePropertyDependency("1", "3"));
 
     [TestMethod]
-    [DataRow(1,false)]
+    [DataRow(1, false)]
     [DataRow(2, false)]
     [DataRow(0, false)]
-    public void FuncProxyTest (int dVal,bool xExp)
-    {
-        Assert.AreEqual (xExp,FuncProxy(dVal, Prop2IsGreater));
-    }
+    public void FuncProxyTest(int dVal, bool xExp) => Assert.AreEqual(xExp, FuncProxy(dVal, Prop2IsGreater));
 
     [TestMethod]
     [DataRow(1, true)]
     [DataRow(2, true)]
     [DataRow(0.5, false)]
-    public void FuncProxy2Test(double dVal, bool xExp)
-    {
-        Assert.AreEqual(xExp, FuncProxy(dVal, LocalFunc));
-    }
+    public void FuncProxy2Test(double dVal, bool xExp) => Assert.AreEqual(xExp, FuncProxy(dVal, LocalFunc));
 
-    private bool LocalFunc(double arg)
-    {
-        return arg == Math.Floor(arg);
-    }
+    private bool LocalFunc(double arg) => arg == Math.Floor(arg);
 
 }

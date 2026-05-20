@@ -68,7 +68,6 @@
     <Project Path="AA22_AvlnCap/AA22_AvlnCap2/AA22_AvlnCap2.csproj" />
     <Project Path="AA22_AvlnCap/AA22_AvlnCapTests/AA22_AvlnCapTests.csproj" />
   </Folder>
-  <Folder Name="/AA25_RichTextEdit/" />
   <Folder Name="/Avalonia_App01/">
     <File Path="Avalonia_App01/Avalonia_App01.props" />
     <File Path="Avalonia_App01/Directory.Packages.props" />

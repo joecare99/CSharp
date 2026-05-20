@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "planId": "archive-import-sample-001",
+  "status": "ReadyToResume",
+  "source": {
+    "kind": "ArchiveCollection",
+    "locationKind": "LocalDirectory",
+    "location": "..\\..\\Snapshots"
+  },
+  "target": {
+    "repoType": "Git",
+    "urlOrPath": "C:\\Repos\\MigratedArchiveHistory",
+    "branchOrTrunk": "main"
+  },
+  "ordering": {
+    "mode": "ManualThenVersionThenArchiveMetadata",
+    "manualOverrideFile": "archive-import.plan.json"
+  },
+  "snapshots": [
+    {
+      "snapshotId": "product-1.0.0",
+      "archiveFileName": "Product_1.0.0.zip",
+      "manualOrderIndex": 1,
+      "proposedTagName": "Product_1.0.0",
+      "proposedBranchName": "releases/Product_1.0.0",
+      "checkpoint": "Completed",
+      "targetCommit": "abc123",
+      "tagCreated": true,
+      "branchCreated": true
+    },
+    {
+      "snapshotId": "product-1.1.0",
+      "archiveFileName": "Product_1.1.0.zip",
+      "manualOrderIndex": 2,
+      "proposedTagName": "Product_1.1.0",
+      "proposedBranchName": "releases/Product_1.1.0",
+      "checkpoint": "CommitCompleted",
+      "targetCommit": "def456",
+      "tagCreated": false,
+      "branchCreated": false
+    }
+  ],
+  "currentCheckpoint": {
+    "phase": "CreateTag",
+    "snapshotId": "product-1.1.0"
+  }
+}

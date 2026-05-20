@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj"></ProjectReference>
+    <ProjectReference Include="..\..\CSharpBible\Libraries\GenInterfaces\GenInterfaces.csproj"></ProjectReference>
   </ItemGroup>
 
 </Project>

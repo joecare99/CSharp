@@ -112,6 +112,7 @@ namespace TranspilerLib.Models.Scanner.Tests
         {
             // Arrange
             Assert.IsTrue(testHandler.TryGetValue(8, out var handler));
+            Assert.IsNotNull(handler);
             var data = new TokenizeData() { State = iState, Pos = iPos, Pos2=0 };
             int iCnt = 0;
             List<TokenData> lData = new();
@@ -142,6 +143,7 @@ namespace TranspilerLib.Models.Scanner.Tests
         {
             // Arrange
             Assert.IsTrue(testHandler.TryGetValue(7, out var handler));
+            Assert.IsNotNull(handler);
             var data = new TokenizeData() {State = iState,Pos = iPos  };
             int iCnt = 0;
 

@@ -1,4 +1,9 @@
+using BaseLib.Models.Interfaces;
+using RnzTrauer.Core.Services.Interfaces;
+using System;
+using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace RnzTrauer.Core;
 
@@ -10,7 +15,8 @@ public sealed class ConfigLoader : IConfigLoader
     private static readonly JsonSerializerOptions _options = new()
     {
         PropertyNameCaseInsensitive = true,
-        WriteIndented = true
+        WriteIndented = true,
+        Converters = { new JsonStringEnumConverter() }
     };
 
     private readonly IFile _xFile;
