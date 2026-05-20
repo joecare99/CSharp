@@ -14,7 +14,10 @@
 		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
 	</PropertyGroup>  
   <ItemGroup>
-    <PackageReference Include="Coverlet.Collector" />
+    <PackageReference Include="Coverlet.Collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Avalonia.Headless" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
