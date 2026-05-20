@@ -78,4 +78,8 @@
 	<ItemGroup>
 	  <Folder Include="ViewModels\Helper\" />
 	</ItemGroup>
+  <ItemGroup>
+    <PackageVersion Condition=" '$(TargetFramework)' == 'net8.0' " Update="Simplecto.Avalonia.RichTextBox" Version="1.3.9" />
+    <PackageVersion Condition=" '$(TargetFramework)' == 'net9.0' " Update="Simplecto.Avalonia.RichTextBox" Version="1.3.9" />
+  </ItemGroup>
 </Project>
