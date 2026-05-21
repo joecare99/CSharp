@@ -12,7 +12,11 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
 		<PackageReference Include="MSTest" Version="4.2.3" />
+<<<<<<< HEAD
 		<PackageReference Include="coverlet.collector" Version="10.0.1">
+=======
+		<PackageReference Include="coverlet.collector" Version="10.0.0">
+>>>>>>> origin/master
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
