@@ -154,6 +154,7 @@
   <Project Path="Game_BaseTests/Game_BaseTests.csproj" />
   <Project Path="MidiSwing.MVVM/MidiSwing.MVVM.csproj" />
   <Project Path="packages/PackageUpdate.csproj" />
+  <Project Path="ProceduralMidiMusic/ProceduralMidiMusic.csproj" Id="c8bb53e2-8af1-4392-b3d3-574cd2b5c97a" />
   <Project Path="RemoteTerminal.Tests/RemoteTerminal.Tests.csproj" />
   <Project Path="RemoteTerminal/RemoteTerminal.csproj" />
   <Project Path="Sudoku_Base/Sudoku_Base.csproj" />
