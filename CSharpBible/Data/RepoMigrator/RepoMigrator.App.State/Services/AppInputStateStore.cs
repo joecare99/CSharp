@@ -45,12 +45,12 @@ public sealed class AppInputStateStore
 
             return new AppInputState
             {
-                SourceType = persistedState.SourceType,
+                SourceProviderKey = persistedState.SourceProviderKey,
                 SourceUrl = persistedState.SourceUrl ?? "",
                 SourceBranch = persistedState.SourceBranch,
                 SourceUser = persistedState.SourceUser,
                 SourcePassword = Unprotect(persistedState.SourcePasswordProtected),
-                TargetType = persistedState.TargetType,
+                TargetProviderKey = persistedState.TargetProviderKey,
                 TargetUrl = persistedState.TargetUrl ?? "",
                 TargetBranch = persistedState.TargetBranch,
                 TargetUser = persistedState.TargetUser,
@@ -59,8 +59,8 @@ public sealed class AppInputStateStore
                 TransferGitTags = persistedState.TransferGitTags,
                 SelectedGitBranches = persistedState.SelectedGitBranches ?? [],
                 SelectedGitTags = persistedState.SelectedGitTags ?? [],
-                RecentSourceUrlsByType = persistedState.RecentSourceUrlsByType ?? CreateLegacyRepoTypeHistory(persistedState.SourceType, persistedState.RecentSourceUrls),
-                RecentTargetUrlsByType = persistedState.RecentTargetUrlsByType ?? CreateLegacyRepoTypeHistory(persistedState.TargetType, persistedState.RecentTargetUrls),
+                RecentSourceUrlsByType = persistedState.RecentSourceUrlsByType ?? CreateLegacyProviderHistory(persistedState.SourceProviderKey, persistedState.RecentSourceUrls),
+                RecentTargetUrlsByType = persistedState.RecentTargetUrlsByType ?? CreateLegacyProviderHistory(persistedState.TargetProviderKey, persistedState.RecentTargetUrls),
                 RecentSourceUrls = persistedState.RecentSourceUrls ?? [],
                 RecentSourceBranches = persistedState.RecentSourceBranches ?? [],
                 RecentSourceUsers = persistedState.RecentSourceUsers ?? [],
@@ -96,12 +96,12 @@ public sealed class AppInputStateStore
 
             var persistedState = new PersistedAppInputState
             {
-                SourceType = state.SourceType,
+                SourceProviderKey = state.SourceProviderKey,
                 SourceUrl = state.SourceUrl,
                 SourceBranch = state.SourceBranch,
                 SourceUser = state.SourceUser,
                 SourcePasswordProtected = Protect(state.SourcePassword),
-                TargetType = state.TargetType,
+                TargetProviderKey = state.TargetProviderKey,
                 TargetUrl = state.TargetUrl,
                 TargetBranch = state.TargetBranch,
                 TargetUser = state.TargetUser,
@@ -168,19 +168,22 @@ public sealed class AppInputStateStore
         }
     }
 
-    private static List<RepoTypeRecentValues> CreateLegacyRepoTypeHistory(RepoType repoType, List<string>? lstValues)
+    private static List<ProviderRecentValues> CreateLegacyProviderHistory(string? providerKey, List<string>? lstValues)
         => lstValues is { Count: > 0 }
-            ? [new RepoTypeRecentValues { RepoType = repoType, Values = [.. lstValues] }]
+            ? [new ProviderRecentValues { ProviderKey = providerKey, Values = [.. lstValues] }]
             : [];
+
 
     private sealed class PersistedAppInputState
     {
-        public RepoType SourceType { get; set; } = RepoType.Git;
+        public string? SourceProviderKey { get; set; }
+        public string SourceType { get; set; } = "git";
         public string? SourceUrl { get; set; }
         public string? SourceBranch { get; set; }
         public string? SourceUser { get; set; }
         public string? SourcePasswordProtected { get; set; }
-        public RepoType TargetType { get; set; } = RepoType.Git;
+        public string? TargetProviderKey { get; set; }
+        public string TargetType { get; set; } = "git";
         public string? TargetUrl { get; set; }
         public string? TargetBranch { get; set; }
         public string? TargetUser { get; set; }
@@ -189,8 +192,8 @@ public sealed class AppInputStateStore
         public bool TransferGitTags { get; set; }
         public List<string>? SelectedGitBranches { get; set; }
         public List<string>? SelectedGitTags { get; set; }
-        public List<RepoTypeRecentValues>? RecentSourceUrlsByType { get; set; }
-        public List<RepoTypeRecentValues>? RecentTargetUrlsByType { get; set; }
+        public List<ProviderRecentValues>? RecentSourceUrlsByType { get; set; }
+        public List<ProviderRecentValues>? RecentTargetUrlsByType { get; set; }
         public List<string>? RecentSourceUrls { get; set; }
         public List<string>? RecentSourceBranches { get; set; }
         public List<string>? RecentSourceUsers { get; set; }

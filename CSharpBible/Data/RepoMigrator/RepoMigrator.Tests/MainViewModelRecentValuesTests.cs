@@ -3,9 +3,13 @@ using System.Reflection;
 using System.Collections.Specialized;
 using RepoMigrator.App.Logic.Services;
 using RepoMigrator.App.State.Services;
+using RepoMigrator.App.Wpf;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
 using RepoMigrator.App.Wpf.ViewModels;
+using RepoMigrator.Providers.Archive;
+using RepoMigrator.Providers.Archive.Abstractions;
+using RepoMigrator.Providers.Archive.Services;
 
 namespace RepoMigrator.Tests;
 
@@ -45,7 +49,7 @@ public sealed class MainViewModelRecentValuesTests
     public void SyncRecentValues_KeepsSelectedSourceUrl_AndDoesNotRaiseSourceUrlPropertyChanged()
     {
         var vm = CreateMainViewModel();
-        vm.SourceType = RepoType.Svn;
+        vm.SourceProviderKey = "svn";
         vm.SourceUrl = "svn://typed/source";
 
         var sourceUrlPropertyChangedCount = 0;
@@ -85,6 +89,8 @@ public sealed class MainViewModelRecentValuesTests
         var providerFactory = new ThrowingProviderFactory();
         var repositorySelectionService = new RepositorySelectionService(providerFactory);
         var inputStateStore = new AppInputStateStore();
+        var archiveMigrationService = new NoOpArchiveMigrationService();
+        var migrationSourceProviderFactory = new ArchiveMigrationSourceProviderFactory(new DirectoryArchiveSnapshotSourceProvider(Path.GetTempPath()));
 
         return new MainViewModel(
             migration,
@@ -93,7 +99,9 @@ public sealed class MainViewModelRecentValuesTests
             recentPathHistoryService,
             repositorySelectionService,
             providerFactory,
-            inputStateStore);
+            inputStateStore,
+            archiveMigrationService,
+            migrationSourceProviderFactory);
     }
 
     private sealed class NoOpMigrationService : IMigrationService
@@ -112,7 +120,35 @@ public sealed class MainViewModelRecentValuesTests
 
     private sealed class ThrowingProviderFactory : IProviderFactory
     {
-        public IVersionControlProvider Create(RepoType type)
+        public IVersionControlProvider Create(string providerKey)
             => throw new InvalidOperationException("Provider access is not expected in this test.");
+    }
+
+    private sealed class NoOpArchiveMigrationService : IArchiveMigrationService
+    {
+        public Task<ArchiveImportPlan> PreparePlanAsync(MigrationSourceDefinition source, MigrationDestinationDefinition destination, CancellationToken ct)
+            => Task.FromResult(new ArchiveImportPlan
+            {
+                PlanId = "noop",
+                Source = source,
+                Destination = destination,
+                Items = []
+            });
+
+        public Task<ArchiveImportState> ExecuteAsync(string planId, IMigrationProgress progress, CancellationToken ct)
+            => Task.FromResult(new ArchiveImportState
+            {
+                PlanId = planId,
+                Status = ArchiveImportRunStatus.Completed,
+                CurrentCheckpoint = new ArchiveImportCheckpoint { Phase = ArchiveImportCheckpointPhase.RunCompleted }
+            });
+
+        public Task<ArchiveImportState> ResumeAsync(string planId, IMigrationProgress progress, CancellationToken ct)
+            => Task.FromResult(new ArchiveImportState
+            {
+                PlanId = planId,
+                Status = ArchiveImportRunStatus.Completed,
+                CurrentCheckpoint = new ArchiveImportCheckpoint { Phase = ArchiveImportCheckpointPhase.RunCompleted }
+            });
     }
 }

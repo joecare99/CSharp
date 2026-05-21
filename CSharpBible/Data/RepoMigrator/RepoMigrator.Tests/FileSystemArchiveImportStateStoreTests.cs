@@ -5,15 +5,15 @@ using RepoMigrator.Providers.Archive.Services;
 namespace RepoMigrator.Tests;
 
 [TestClass]
-public sealed class DevOpsArchiveImportStateStoreTests
+public sealed class FileSystemArchiveImportStateStoreTests
 {
     [TestMethod]
     public async Task SaveAndLoadPlanAsync_WhenPlanIsPersisted_RoundTripsDeterministically()
     {
-        var workspaceRootPath = CreateTempDirectory();
+        var storageRootPath = CreateTempDirectory();
         try
         {
-            var store = new DevOpsArchiveImportStateStore(workspaceRootPath);
+            var store = new FileSystemArchiveImportStateStore(storageRootPath);
             var plan = new ArchiveImportPlan
             {
                 PlanId = "sample-plan",
@@ -26,7 +26,7 @@ public sealed class DevOpsArchiveImportStateStoreTests
                 Destination = new MigrationDestinationDefinition
                 {
                     Kind = MigrationDestinationKind.Repository,
-                    Repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
+                    Repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
                 },
                 Items =
                 [
@@ -49,7 +49,7 @@ public sealed class DevOpsArchiveImportStateStoreTests
             var loadedPlan = await store.LoadPlanAsync(plan.PlanId, CancellationToken.None);
             var planDirectoryPath = store.GetPlanDirectoryPath(plan.PlanId);
 
-            Assert.AreEqual(Path.Combine(workspaceRootPath, "DevOps", "Data", "RepoMigrator", "ArchiveImports", "sample-plan"), planDirectoryPath);
+            Assert.AreEqual(Path.Combine(storageRootPath, "RepoMigrator", "ArchiveImports", "sample-plan"), planDirectoryPath);
             Assert.AreEqual(plan.PlanId, loadedPlan.PlanId);
             Assert.AreEqual(1, loadedPlan.Items.Count);
             Assert.AreEqual("zip", loadedPlan.Items[0].ExtensionData["DriverId"]);
@@ -57,17 +57,17 @@ public sealed class DevOpsArchiveImportStateStoreTests
         }
         finally
         {
-            Directory.Delete(workspaceRootPath, recursive: true);
+            Directory.Delete(storageRootPath, recursive: true);
         }
     }
 
     [TestMethod]
     public async Task SaveAndLoadStateAsync_WhenStateIsPersisted_RoundTripsDeterministically()
     {
-        var workspaceRootPath = CreateTempDirectory();
+        var storageRootPath = CreateTempDirectory();
         try
         {
-            var store = new DevOpsArchiveImportStateStore(workspaceRootPath);
+            var store = new FileSystemArchiveImportStateStore(storageRootPath);
             var state = new ArchiveImportState
             {
                 PlanId = "sample-plan",
@@ -110,7 +110,7 @@ public sealed class DevOpsArchiveImportStateStoreTests
         }
         finally
         {
-            Directory.Delete(workspaceRootPath, recursive: true);
+            Directory.Delete(storageRootPath, recursive: true);
         }
     }
 

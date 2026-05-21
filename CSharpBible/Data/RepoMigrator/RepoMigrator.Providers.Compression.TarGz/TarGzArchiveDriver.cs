@@ -16,7 +16,8 @@ public sealed class TarGzArchiveDriver : IArchiveDriver
     /// <inheritdoc/>
     public bool CanHandle(string archivePathOrName)
         => !string.IsNullOrWhiteSpace(archivePathOrName)
-            && archivePathOrName.EndsWith(".tar.gz", StringComparison.OrdinalIgnoreCase);
+            && (archivePathOrName.EndsWith(".tar.gz", StringComparison.OrdinalIgnoreCase)
+                || archivePathOrName.EndsWith(".tgz", StringComparison.OrdinalIgnoreCase));
 
     /// <inheritdoc/>
     public Task<ArchiveInspectionResult> InspectAsync(string archiveFilePath, CancellationToken ct)

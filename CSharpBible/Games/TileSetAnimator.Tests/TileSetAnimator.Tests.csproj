@@ -27,8 +27,4 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageVersion Update="MSTest" Version="4.2.3" />
-  </ItemGroup>
-
-</Project>
+ </Project>

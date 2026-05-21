@@ -146,6 +146,15 @@ public sealed class ArchiveImportPlanner : IArchiveImportPlanner
             [ArchiveImportPlanItemExtensionKeys.ExtractionRootPath] = extractionRootPath
         };
 
+        var commitTimestamp = descriptor.NewestEntryTimestamp ?? descriptor.ExternalLastWriteTimestamp;
+        if (commitTimestamp.HasValue)
+        {
+            extensionData[ArchiveImportPlanItemExtensionKeys.CommitTimestamp] = commitTimestamp.Value.ToString("O");
+            extensionData[ArchiveImportPlanItemExtensionKeys.CommitTimestampSource] = descriptor.NewestEntryTimestamp.HasValue
+                ? nameof(ArchiveSnapshotDescriptor.NewestEntryTimestamp)
+                : nameof(ArchiveSnapshotDescriptor.ExternalLastWriteTimestamp);
+        }
+
         foreach (var signal in decision.Evidence.Signals)
             extensionData[$"Ordering.{signal.Kind}"] = signal.Value;
 

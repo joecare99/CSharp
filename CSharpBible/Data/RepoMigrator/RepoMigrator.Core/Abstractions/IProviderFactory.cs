@@ -3,5 +3,5 @@ namespace RepoMigrator.Core.Abstractions;
 
 public interface IProviderFactory
 {
-    IVersionControlProvider Create(RepoType type);
+    IVersionControlProvider Create(string providerKey);
 }

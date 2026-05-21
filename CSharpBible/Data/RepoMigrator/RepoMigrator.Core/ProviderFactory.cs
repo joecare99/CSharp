@@ -9,11 +9,11 @@ public sealed class ProviderFactory : IProviderFactory
     private readonly IServiceProvider _sp;
     public ProviderFactory(IServiceProvider sp) => _sp = sp;
 
-    public IVersionControlProvider Create(RepoType type)
-        => type switch
+    public IVersionControlProvider Create(string providerKey)
+        => providerKey switch
         {
-            RepoType.Git => _sp.GetRequiredService<IVersionControlProvider>() as dynamic, // wird via named registrations gemappt
-            RepoType.Svn => _sp.GetRequiredService<IEnumerable<IVersionControlProvider>>().First(p => p.GetType().Name.Contains("Svn")),
-            _ => throw new NotSupportedException(type.ToString())
+            "git" => _sp.GetRequiredService<IVersionControlProvider>() as dynamic, // wird via named registrations gemappt
+            "svn" => _sp.GetRequiredService<IEnumerable<IVersionControlProvider>>().First(p => p.GetType().Name.Contains("Svn")),
+            _ => throw new NotSupportedException(providerKey)
         };
 }

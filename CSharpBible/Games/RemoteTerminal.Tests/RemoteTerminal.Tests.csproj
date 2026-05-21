@@ -23,9 +23,4 @@
     <ProjectReference Include="..\..\Libraries\BaseLibTests\BaseLibTests.csproj" />
     <ProjectReference Include="..\RemoteTerminal\RemoteTerminal.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageVersion Update="MSTest" Version="4.2.3" />
-  </ItemGroup>
-
 </Project>

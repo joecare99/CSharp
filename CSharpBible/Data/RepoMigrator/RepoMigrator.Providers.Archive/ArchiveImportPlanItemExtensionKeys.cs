@@ -29,4 +29,14 @@ public static class ArchiveImportPlanItemExtensionKeys
     /// Gets the extraction-root path key.
     /// </summary>
     public const string ExtractionRootPath = "Extraction.RootPath";
+
+    /// <summary>
+    /// Gets the selected commit timestamp key.
+    /// </summary>
+    public const string CommitTimestamp = "Commit.Timestamp";
+
+    /// <summary>
+    /// Gets the selected commit timestamp source key.
+    /// </summary>
+    public const string CommitTimestampSource = "Commit.TimestampSource";
 }

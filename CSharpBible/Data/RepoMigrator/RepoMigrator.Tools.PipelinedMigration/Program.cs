@@ -8,6 +8,9 @@ namespace RepoMigrator.Tools.PipelinedMigration;
 
 internal static class Program
 {
+    private const string GitProviderKey = "git";
+    private const string SvnProviderKey = "svn";
+
     public static async Task<int> Main(string[] arrArgs)
     {
         PipelinedMigrationOptions? options;
@@ -31,11 +34,12 @@ internal static class Program
         var serviceProvider = new ServiceCollection()
             .AddTransient<GitProvider>()
             .AddTransient<SvnCliProvider>()
-            .AddSingleton<IProviderFactory>(sp => new ProviderSelectorFactory(new Dictionary<RepoType, Func<IVersionControlProvider>>
+            .AddSingleton<ProviderSelectorFactory>(sp => new ProviderSelectorFactory(new Dictionary<string, Func<IVersionControlProvider>>(StringComparer.OrdinalIgnoreCase)
             {
-                { RepoType.Git, () => sp.GetRequiredService<GitProvider>() },
-                { RepoType.Svn, () => sp.GetRequiredService<SvnCliProvider>() }
+                { GitProviderKey, () => sp.GetRequiredService<GitProvider>() },
+                { SvnProviderKey, () => sp.GetRequiredService<SvnCliProvider>() }
             }))
+            .AddSingleton<IProviderFactory>(sp => sp.GetRequiredService<ProviderSelectorFactory>())
             .AddSingleton<PipelinedMigrationService>()
             .AddSingleton<ConsoleMigrationProgress>()
             .BuildServiceProvider();

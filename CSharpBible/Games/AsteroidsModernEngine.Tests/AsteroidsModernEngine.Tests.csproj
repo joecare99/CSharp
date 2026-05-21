@@ -31,9 +31,4 @@
   <ItemGroup>
     <ProjectReference Include="..\AsteroidsModernEngine\AsteroidsModernEngine.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageVersion Update="coverlet.collector"  />
-    <PackageVersion Update="Microsoft.NET.Test.Sdk"  />
-    <PackageVersion Update="MSTest"  />
-  </ItemGroup>
 </Project>

@@ -22,7 +22,4 @@
     <ProjectReference Include="..\Galaxia_UI\Galaxia_UI.csproj" />
     <PackageReference Include="MSTest" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageVersion Update="MSTest" Version="4.2.3" />
-  </ItemGroup>
-</Project>
+ </Project>

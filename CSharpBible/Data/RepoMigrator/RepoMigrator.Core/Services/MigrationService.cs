@@ -23,10 +23,10 @@ public sealed class MigrationService : IMigrationService
             IsRunning = true;
             if (options.TransferMode == RepositoryTransferMode.NativeHistory)
             {
-                await using var src = _factory.Create(source.Type);
+                await using var src = _factory.Create(source.ProviderKey);
                 progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.SourceOpening, src.Name);
                 await src.OpenAsync(source, ct);
-                progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.NativeHistoryTransferStarting, src.Name, target.Type);
+                progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.NativeHistoryTransferStarting, src.Name, target.ProviderKey);
                 await src.TransferAsync(source, target, options, progress, ct);
                 progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.MigrationCompleted);
                 return;
@@ -54,11 +54,11 @@ public sealed class MigrationService : IMigrationService
         IMigrationProgress progress,
         CancellationToken ct)
     {
-        await using var src = _factory.Create(source.Type);
+        await using var src = _factory.Create(source.ProviderKey);
         progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.SourceOpening, src.Name);
         await src.OpenAsync(source, ct);
 
-        await using var dst = _factory.Create(target.Type);
+        await using var dst = _factory.Create(target.ProviderKey);
 
         progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ChangeSetsLoading);
         var lstChanges = await src.GetChangeSetsAsync(query, ct);
@@ -109,7 +109,7 @@ public sealed class MigrationService : IMigrationService
         IMigrationProgress progress,
         CancellationToken ct)
     {
-        await using var enumerateProvider = _factory.Create(source.Type);
+        await using var enumerateProvider = _factory.Create(source.ProviderKey);
         progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.SourceOpening, enumerateProvider.Name);
         await enumerateProvider.OpenAsync(source, ct);
 
@@ -128,7 +128,7 @@ public sealed class MigrationService : IMigrationService
             Math.Max(options.PipelinePrefetchCount, 1),
             lstChanges.Count);
 
-        await using var dst = _factory.Create(target.Type);
+        await using var dst = _factory.Create(target.ProviderKey);
         progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.TargetInitializing, dst.Name);
         await dst.InitializeTargetAsync(target, emptyInit: true, ct);
 
@@ -181,7 +181,7 @@ public sealed class MigrationService : IMigrationService
         IMigrationProgress progress,
         CancellationToken ct)
     {
-        await using var src = _factory.Create(source.Type);
+        await using var src = _factory.Create(source.ProviderKey);
         await src.OpenAsync(source, ct);
         progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ExportWorkerSourceOpened, iWorkerIndex + 1);
 
@@ -315,7 +315,7 @@ public sealed class MigrationService : IMigrationService
         IMigrationProgress progress,
         CancellationToken ct)
     {
-        if (options.ProjectionMode != MigrationProjectionMode.SubdirectoryBranches || target.Type != RepoType.Git)
+        if (options.ProjectionMode != MigrationProjectionMode.SubdirectoryBranches || !string.Equals(target.ProviderKey, "git", StringComparison.OrdinalIgnoreCase))
         {
             progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.CommitToBranchStarting, changeSet.Id, target.BranchOrTrunk ?? "(default)");
             await dst.CommitSnapshotAsync(sTempDirectory, BuildCommitMetadata(changeSet, target.BranchOrTrunk, options), progress, ct);
@@ -494,5 +494,6 @@ public sealed class MigrationService : IMigrationService
     }
 
     private static bool CanUsePipelinedExecution(RepositoryEndpoint source, RepositoryEndpoint target)
-        => source.Type == RepoType.Svn && target.Type == RepoType.Git;
+        => string.Equals(source.ProviderKey, "svn", StringComparison.OrdinalIgnoreCase)
+           && string.Equals(target.ProviderKey, "git", StringComparison.OrdinalIgnoreCase);
 }

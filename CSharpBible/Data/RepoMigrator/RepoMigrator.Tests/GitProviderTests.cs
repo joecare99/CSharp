@@ -19,7 +19,7 @@ public sealed class GitProviderTests
         {
             await using var provider = new GitProvider();
 
-            var capabilities = await provider.GetCapabilitiesAsync(new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = sRepositoryPath }, CancellationToken.None);
+            var capabilities = await provider.GetCapabilitiesAsync(new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = sRepositoryPath }, CancellationToken.None);
 
             Assert.IsTrue(capabilities.SupportsNativeHistoryTransfer);
             Assert.IsTrue(capabilities.SupportsBranchSelection);
@@ -58,7 +58,7 @@ public sealed class GitProviderTests
             InvalidOperationException? ex = null;
             await using (var provider = new GitProvider())
             {
-                await provider.InitializeTargetAsync(new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = sTargetPath, BranchOrTrunk = "master" }, true, CancellationToken.None);
+                await provider.InitializeTargetAsync(new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = sTargetPath, BranchOrTrunk = "master" }, true, CancellationToken.None);
 
                 try
                 {
@@ -107,11 +107,152 @@ public sealed class GitProviderTests
     {
         await using var provider = new GitProvider();
 
-        var capabilities = await provider.GetCapabilitiesAsync(new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = "git://192.168.0.32/repo.git" }, CancellationToken.None);
+        var capabilities = await provider.GetCapabilitiesAsync(new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = "git://192.168.0.32/repo.git" }, CancellationToken.None);
 
         Assert.IsFalse(capabilities.SupportsNativeHistoryTransfer);
         Assert.IsFalse(capabilities.SupportsBranchSelection);
         Assert.IsFalse(capabilities.SupportsTagSelection);
+    }
+
+    [TestMethod]
+    public async Task ProbeAsync_ForLocalInvalidRepository_ReturnsFailureWithPathDetails()
+    {
+        var sPath = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(sPath);
+
+        try
+        {
+            await using var provider = new GitProvider();
+
+            var result = await provider.ProbeAsync(
+                new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = sPath },
+                RepositoryAccessMode.Read,
+                CancellationToken.None);
+
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual("Lokales Git-Repository wurde nicht gefunden.", result.Summary);
+            Assert.AreEqual(1, result.Details.Count);
+            StringAssert.Contains(result.Details[0], sPath);
+        }
+        finally
+        {
+            if (Directory.Exists(sPath))
+                Directory.Delete(sPath, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task ProbeAsync_ForLocalRepository_ReturnsSuccessWithBranchAndCommitDetails()
+    {
+        var sPath = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(sPath);
+
+        try
+        {
+            Repository.Init(sPath);
+            using (var repository = new Repository(sPath))
+            {
+                File.WriteAllText(Path.Combine(sPath, "README.md"), "seed");
+                Commands.Stage(repository, "*");
+                var signature = new Signature("alice", "alice@example.org", DateTimeOffset.UtcNow);
+                repository.Commit("init", signature, signature);
+            }
+
+            await using var provider = new GitProvider();
+
+            var result = await provider.ProbeAsync(
+                new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = sPath },
+                RepositoryAccessMode.Read,
+                CancellationToken.None);
+
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual("Lokales Git-Repository ist erreichbar.", result.Summary);
+            Assert.AreEqual(3, result.Details.Count);
+            Assert.IsTrue(result.Details.Any(detail => detail.StartsWith("Pfad:", StringComparison.Ordinal)));
+            Assert.IsTrue(result.Details.Any(detail => detail.StartsWith("Branch:", StringComparison.Ordinal)));
+            Assert.IsTrue(result.Details.Any(detail => detail.StartsWith("Letzter Commit:", StringComparison.Ordinal)));
+        }
+        finally
+        {
+            if (Directory.Exists(sPath))
+                TryDeleteDirectory(sPath);
+        }
+    }
+
+    [TestMethod]
+    public async Task GetExistingReferenceNamesAsync_ForLocalRepository_ReturnsHeadsTagsAndUnknownNamespaceFallback()
+    {
+        var sPath = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(sPath);
+
+        try
+        {
+            Repository.Init(sPath);
+            using (var repository = new Repository(sPath))
+            {
+                File.WriteAllText(Path.Combine(sPath, "README.md"), "seed");
+                Commands.Stage(repository, "*");
+                var signature = new Signature("alice", "alice@example.org", DateTimeOffset.UtcNow);
+                var commit = repository.Commit("init", signature, signature);
+                repository.Branches.Add("feature/demo", commit);
+                repository.ApplyTag("v1.0.0", commit.Sha, signature, "release");
+            }
+
+            var method = typeof(GitProvider).GetMethod("GetExistingReferenceNamesAsync", BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.IsNotNull(method);
+
+            var headsTask = (Task<HashSet<string>>)method.Invoke(null, new object?[]
+            {
+                new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = sPath },
+                "heads",
+                CancellationToken.None
+            })!;
+            var tagsTask = (Task<HashSet<string>>)method.Invoke(null, new object?[]
+            {
+                new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = sPath },
+                "tags",
+                CancellationToken.None
+            })!;
+            var unknownTask = (Task<HashSet<string>>)method.Invoke(null, new object?[]
+            {
+                new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = sPath },
+                "notes",
+                CancellationToken.None
+            })!;
+
+            var heads = await headsTask;
+            var tags = await tagsTask;
+            var unknown = await unknownTask;
+
+            CollectionAssert.Contains(heads.ToList(), "feature/demo");
+            CollectionAssert.Contains(tags.ToList(), "v1.0.0");
+            Assert.IsTrue(heads.Count >= 1);
+            Assert.AreEqual(0, unknown.Count);
+        }
+        finally
+        {
+            if (Directory.Exists(sPath))
+                TryDeleteDirectory(sPath);
+        }
+    }
+
+    [TestMethod]
+    public async Task GetExistingReferenceNamesAsync_ForMissingLocalRepository_ReturnsEmptySet()
+    {
+        var sPath = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
+        var method = typeof(GitProvider).GetMethod("GetExistingReferenceNamesAsync", BindingFlags.NonPublic | BindingFlags.Static);
+        Assert.IsNotNull(method);
+
+        var task = (Task<HashSet<string>>)method.Invoke(null, new object?[]
+        {
+            new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = sPath },
+            "heads",
+            CancellationToken.None
+        })!;
+
+        var heads = await task;
+
+        Assert.AreEqual(0, heads.Count);
     }
 
     [TestMethod]
@@ -130,7 +271,7 @@ public sealed class GitProviderTests
             try
             {
                 await provider.InitializeTargetAsync(
-                    new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = sTargetPath },
+                    new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = sTargetPath },
                     emptyInit: true,
                     CancellationToken.None);
             }
@@ -160,7 +301,7 @@ public sealed class GitProviderTests
         try
         {
             await provider.InitializeTargetAsync(
-                new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = "   " },
+                new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = "   " },
                 emptyInit: true,
                 CancellationToken.None);
         }

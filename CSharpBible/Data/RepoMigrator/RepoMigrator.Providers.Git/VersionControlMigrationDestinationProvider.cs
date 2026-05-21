@@ -8,6 +8,7 @@ namespace RepoMigrator.Providers.Git;
 /// </summary>
 public sealed class VersionControlMigrationDestinationProvider : IMigrationDestinationProvider, IMigrationDestinationRefOperations, IGitTargetRefOperations
 {
+    private const string GitProviderKey = "git";
     private readonly IVersionControlProvider _versionControlProvider;
     private readonly IGitTargetRefOperations _gitTargetRefOperations;
     private RepositoryEndpoint? _endpoint;
@@ -30,7 +31,7 @@ public sealed class VersionControlMigrationDestinationProvider : IMigrationDesti
     public bool CanHandle(MigrationDestinationDefinition destination)
         => destination is not null
            && destination.Kind == MigrationDestinationKind.Repository
-           && destination.Repository?.Type == RepoType.Git;
+           && string.Equals(destination.Repository?.ProviderKey, GitProviderKey, StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc/>
     public async Task InitializeAsync(MigrationDestinationDefinition destination, CancellationToken ct)

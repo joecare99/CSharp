@@ -9,6 +9,8 @@ namespace RepoMigrator.Tools.PipelinedMigration;
 /// </summary>
 public sealed class PipelinedMigrationService
 {
+    private const string SvnProviderKey = "svn";
+    private const string GitProviderKey = "git";
     private readonly IProviderFactory _providerFactory;
 
     /// <summary>
@@ -32,7 +34,7 @@ public sealed class PipelinedMigrationService
         var targetEndpoint = options.CreateTargetEndpoint();
         var query = options.CreateQuery();
 
-        await using var enumerateProvider = _providerFactory.Create(RepoType.Svn);
+        await using var enumerateProvider = _providerFactory.Create(SvnProviderKey);
         progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.SourceOpening, enumerateProvider.Name);
         await enumerateProvider.OpenAsync(sourceEndpoint, ct);
 
@@ -44,7 +46,7 @@ public sealed class PipelinedMigrationService
             return;
         }
 
-        await using var targetProvider = _providerFactory.Create(RepoType.Git);
+        await using var targetProvider = _providerFactory.Create(GitProviderKey);
         progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.PipelineEnabled, Math.Min(options.MaxExportWorkers, lstChanges.Count), Math.Max(options.PrefetchCount, 1), lstChanges.Count);
         progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.TargetInitializing, targetProvider.Name);
         await targetProvider.InitializeTargetAsync(targetEndpoint, emptyInit: true, ct);
@@ -100,7 +102,7 @@ public sealed class PipelinedMigrationService
         IMigrationProgress progress,
         CancellationToken ct)
     {
-        await using var sourceProvider = _providerFactory.Create(RepoType.Svn);
+        await using var sourceProvider = _providerFactory.Create(SvnProviderKey);
         await sourceProvider.OpenAsync(sourceEndpoint, ct);
         progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.ExportWorkerSourceOpened, iWorkerIndex + 1);
 

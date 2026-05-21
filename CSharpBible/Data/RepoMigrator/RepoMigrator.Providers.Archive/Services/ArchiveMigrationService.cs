@@ -150,7 +150,7 @@ public sealed class ArchiveMigrationService : IArchiveMigrationService
                     Message = $"Import archive snapshot {item.FinalTagName}",
                     AuthorName = "RepoMigrator",
                     AuthorEmail = "repomigrator@example.invalid",
-                    Timestamp = DateTimeOffset.UtcNow,
+                    Timestamp = ResolveCommitTimestamp(item),
                     DestinationReference = plan.Destination.Repository?.BranchOrTrunk
                 }, progress, ct).ConfigureAwait(false);
 
@@ -254,6 +254,17 @@ public sealed class ArchiveMigrationService : IArchiveMigrationService
             throw new DirectoryNotFoundException($"The configured extraction root '{configuredRootPath}' was not found in extracted archive '{item.SourceItem.ItemId}'.");
 
         return effectiveWorkDirectory;
+    }
+
+    private static DateTimeOffset ResolveCommitTimestamp(ArchiveImportPlanItem item)
+    {
+        if (item.ExtensionData.TryGetValue(ArchiveImportPlanItemExtensionKeys.CommitTimestamp, out var timestampValue)
+            && DateTimeOffset.TryParse(timestampValue, out var commitTimestamp))
+        {
+            return commitTimestamp;
+        }
+
+        return DateTimeOffset.UtcNow;
     }
 
     private static ArchiveImportState CreateInitialState(ArchiveImportPlan plan)

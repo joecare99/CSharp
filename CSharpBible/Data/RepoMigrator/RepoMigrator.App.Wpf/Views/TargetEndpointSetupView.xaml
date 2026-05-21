@@ -11,8 +11,8 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Typ" Width="80"/>
                 <ComboBox Width="240"
-                          ItemsSource="{Binding RepoTypes}"
-                          SelectedItem="{Binding TargetType}"/>
+                          ItemsSource="{Binding TargetProviderKeys}"
+                          SelectedItem="{Binding TargetProviderKey}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="URL/Pfad" Width="80"/>

@@ -4,12 +4,10 @@ using RepoMigrator.Providers.Archive.Abstractions;
 namespace RepoMigrator.Providers.Archive.Services;
 
 /// <summary>
-/// Persists archive import plans and execution state under a deterministic DevOps workspace layout.
+/// Persists archive import plans and execution state under a deterministic file-system layout.
 /// </summary>
-public sealed class DevOpsArchiveImportStateStore : IArchiveImportStateStore
+public sealed class FileSystemArchiveImportStateStore : IArchiveImportStateStore
 {
-    private const string RootFolderName = "DevOps";
-    private const string DataFolderName = "Data";
     private const string RepoMigratorFolderName = "RepoMigrator";
     private const string ArchiveImportsFolderName = "ArchiveImports";
     private const string PlanFileName = "plan.json";
@@ -21,16 +19,16 @@ public sealed class DevOpsArchiveImportStateStore : IArchiveImportStateStore
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    private readonly string _workspaceRootPath;
+    private readonly string _storageRootPath;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DevOpsArchiveImportStateStore"/> class.
+    /// Initializes a new instance of the <see cref="FileSystemArchiveImportStateStore"/> class.
     /// </summary>
-    /// <param name="workspaceRootPath">The workspace root that contains the DevOps folder.</param>
-    public DevOpsArchiveImportStateStore(string workspaceRootPath)
+    /// <param name="storageRootPath">The runtime-defined root path for persisted archive import manifests.</param>
+    public FileSystemArchiveImportStateStore(string storageRootPath)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRootPath);
-        _workspaceRootPath = Path.GetFullPath(workspaceRootPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(storageRootPath);
+        _storageRootPath = Path.GetFullPath(storageRootPath);
     }
 
     /// <inheritdoc/>
@@ -59,7 +57,7 @@ public sealed class DevOpsArchiveImportStateStore : IArchiveImportStateStore
     public string GetPlanDirectoryPath(string planId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(planId);
-        return Path.Combine(_workspaceRootPath, RootFolderName, DataFolderName, RepoMigratorFolderName, ArchiveImportsFolderName, SanitizePathSegment(planId));
+        return Path.Combine(_storageRootPath, RepoMigratorFolderName, ArchiveImportsFolderName, SanitizePathSegment(planId));
     }
 
     private string GetPlanPath(string planId)

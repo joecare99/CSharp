@@ -188,7 +188,7 @@ public sealed class ConsoleMigrationProgressTests
     {
         var progress = new ConsoleMigrationProgress();
         var output = CaptureOutput(() =>
-            progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.NativeHistoryTransferStarting, "Git", RepoType.Git));
+            progress.Report(MigrationReportSeverity.Information, MigrationReportMessage.NativeHistoryTransferStarting, "Git", "git"));
 
         StringAssert.Contains(output, "Übertrage Historie nativ (Git -> Git)");
     }

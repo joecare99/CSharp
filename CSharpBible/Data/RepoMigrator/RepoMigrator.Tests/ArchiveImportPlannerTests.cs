@@ -22,7 +22,7 @@ public sealed class ArchiveImportPlannerTests
         var destination = new MigrationDestinationDefinition
         {
             Kind = MigrationDestinationKind.Repository,
-            Repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
+            Repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
         };
         var sourceProviderFactory = Substitute.For<IMigrationSourceProviderFactory>();
         var sourceProvider = Substitute.For<IMigrationSourceProvider>();
@@ -69,7 +69,65 @@ public sealed class ArchiveImportPlannerTests
         Assert.AreEqual("releases/release-1.0", plan.Items[0].FinalBranchName);
         Assert.AreEqual("zip", plan.Items[0].ExtensionData[ArchiveImportPlanItemExtensionKeys.DriverId]);
         Assert.AreEqual("product-1.0/src", plan.Items[0].ExtensionData[ArchiveImportPlanItemExtensionKeys.ExtractionRootPath]);
+        Assert.AreEqual("2024-01-01T00:00:00.0000000+00:00", plan.Items[0].ExtensionData[ArchiveImportPlanItemExtensionKeys.CommitTimestamp]);
+        Assert.AreEqual(nameof(ArchiveSnapshotDescriptor.NewestEntryTimestamp), plan.Items[0].ExtensionData[ArchiveImportPlanItemExtensionKeys.CommitTimestampSource]);
         Assert.IsTrue(plan.SourceProviderData.Count > 0);
+    }
+
+    [TestMethod]
+    public async Task PrepareAsync_WhenArchiveEntryTimestampIsMissing_UsesArchiveFileLastWriteTimeForCommitTimestamp()
+    {
+        var source = new ArchiveMigrationSourceDefinition
+        {
+            LocationKind = ArchiveSourceLocationKind.LocalDirectory,
+            Location = @"C:\archives",
+            AllowedExtensions = [".zip"]
+        }.ToMigrationSourceDefinition();
+        var destination = new MigrationDestinationDefinition
+        {
+            Kind = MigrationDestinationKind.Repository,
+            Repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
+        };
+        var sourceProviderFactory = Substitute.For<IMigrationSourceProviderFactory>();
+        var sourceProvider = Substitute.For<IMigrationSourceProvider>();
+        var archivePath = CreateTempArchivePath("release-1.0.zip");
+        var expectedLastWriteTime = new DateTimeOffset(2023, 12, 24, 15, 30, 0, TimeSpan.Zero);
+
+        try
+        {
+            File.SetLastWriteTimeUtc(archivePath, expectedLastWriteTime.UtcDateTime);
+            sourceProviderFactory.Create(source).Returns(sourceProvider);
+            sourceProvider.PrepareAsync(source, Arg.Any<CancellationToken>()).Returns(new MigrationSourcePlan
+            {
+                Source = source,
+                Items =
+                [
+                    new MigrationSourcePlanItem { ItemId = "release-1.0.zip", SnapshotId = "release-1.0", SourceIdentifier = archivePath, DisplayName = "release-1.0.zip" }
+                ]
+            });
+            var driverRegistry = Substitute.For<IArchiveDriverRegistry>();
+            var driver = Substitute.For<IArchiveDriver>();
+            driver.Id.Returns("zip");
+            driverRegistry.Resolve(Arg.Any<string>()).Returns(driver);
+            driver.InspectAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(new ArchiveInspectionResult
+            {
+                ArchiveFilePath = archivePath,
+                DriverId = "zip",
+                NewestEntryTimestamp = null,
+                Entries = [new ArchiveEntryMetadata { EntryPath = "release-1.0/readme.txt", IsDirectory = false }]
+            });
+            var planner = new ArchiveImportPlanner(sourceProviderFactory, driverRegistry, new ArchiveOrderingService(), new ArchiveRefNamingService());
+
+            var plan = await planner.PrepareAsync(source, destination, CancellationToken.None);
+
+            Assert.AreEqual(expectedLastWriteTime.ToString("O"), plan.Items[0].ExtensionData[ArchiveImportPlanItemExtensionKeys.CommitTimestamp]);
+            Assert.AreEqual(nameof(ArchiveSnapshotDescriptor.ExternalLastWriteTimestamp), plan.Items[0].ExtensionData[ArchiveImportPlanItemExtensionKeys.CommitTimestampSource]);
+        }
+        finally
+        {
+            if (File.Exists(archivePath))
+                File.Delete(archivePath);
+        }
     }
 
     [TestMethod]
@@ -84,7 +142,7 @@ public sealed class ArchiveImportPlannerTests
         var destination = new MigrationDestinationDefinition
         {
             Kind = MigrationDestinationKind.Repository,
-            Repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
+            Repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
         };
         var sourceProviderFactory = Substitute.For<IMigrationSourceProviderFactory>();
         var sourceProvider = Substitute.For<IMigrationSourceProvider>();
@@ -147,7 +205,7 @@ public sealed class ArchiveImportPlannerTests
             var destination = new MigrationDestinationDefinition
             {
                 Kind = MigrationDestinationKind.Repository,
-                Repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
+                Repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
             };
             var sourceProviderFactory = Substitute.For<IMigrationSourceProviderFactory>();
             var sourceProvider = Substitute.For<IMigrationSourceProvider>();

@@ -7,13 +7,13 @@ namespace RepoMigrator.App.State.Settings;
 /// </summary>
 public sealed class AppInputState
 {
-    public RepoType SourceType { get; set; } = RepoType.Git;
+    public string SourceProviderKey { get; set; } = "git";
     public string SourceUrl { get; set; } = "";
     public string? SourceBranch { get; set; }
     public string? SourceUser { get; set; }
     public string? SourcePassword { get; set; }
 
-    public RepoType TargetType { get; set; } = RepoType.Git;
+    public string TargetProviderKey { get; set; } = "git";
     public string TargetUrl { get; set; } = "";
     public string? TargetBranch { get; set; }
     public string? TargetUser { get; set; }
@@ -22,8 +22,8 @@ public sealed class AppInputState
     public bool TransferGitTags { get; set; }
     public List<string> SelectedGitBranches { get; set; } = [];
     public List<string> SelectedGitTags { get; set; } = [];
-    public List<RepoTypeRecentValues> RecentSourceUrlsByType { get; set; } = [];
-    public List<RepoTypeRecentValues> RecentTargetUrlsByType { get; set; } = [];
+    public List<ProviderRecentValues> RecentSourceUrlsByType { get; set; } = [];
+    public List<ProviderRecentValues> RecentTargetUrlsByType { get; set; } = [];
     public List<string> RecentSourceUrls { get; set; } = [];
     public List<string> RecentSourceBranches { get; set; } = [];
     public List<string> RecentSourceUsers { get; set; } = [];

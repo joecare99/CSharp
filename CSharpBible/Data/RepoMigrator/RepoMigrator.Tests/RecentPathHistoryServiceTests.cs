@@ -10,11 +10,11 @@ public sealed class RecentPathHistoryServiceTests
     public void AddPath_AddsValueForSelectedRepoType()
     {
         var service = new RecentPathHistoryService();
-        IReadOnlyList<RepoTypeRecentValues> entries = [];
+        IReadOnlyList<ProviderRecentValues> entries = [];
 
-        var updated = service.AddPath(entries, RepoType.Git, "C:/repo-a");
+        var updated = service.AddPath(entries, "git", "C:/repo-a");
 
-        var gitValues = service.GetPaths(updated, RepoType.Git);
+        var gitValues = service.GetPaths(updated, "git");
         Assert.AreEqual(1, gitValues.Count);
         Assert.AreEqual("C:/repo-a", gitValues[0]);
     }
@@ -23,13 +23,13 @@ public sealed class RecentPathHistoryServiceTests
     public void AddPath_DoesNotMixValuesAcrossRepoTypes()
     {
         var service = new RecentPathHistoryService();
-        IReadOnlyList<RepoTypeRecentValues> entries = [];
-        entries = service.AddPath(entries, RepoType.Git, "C:/git-repo");
+        IReadOnlyList<ProviderRecentValues> entries = [];
+        entries = service.AddPath(entries, "git", "C:/git-repo");
 
-        var updated = service.AddPath(entries, RepoType.Svn, "svn://example/repo");
+        var updated = service.AddPath(entries, "svn", "svn://example/repo");
 
-        var gitValues = service.GetPaths(updated, RepoType.Git);
-        var svnValues = service.GetPaths(updated, RepoType.Svn);
+        var gitValues = service.GetPaths(updated, "git");
+        var svnValues = service.GetPaths(updated, "svn");
 
         CollectionAssert.AreEqual(new List<string> { "C:/git-repo" }, gitValues.ToList());
         CollectionAssert.AreEqual(new List<string> { "svn://example/repo" }, svnValues.ToList());

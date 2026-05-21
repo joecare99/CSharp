@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
+using RepoMigrator.App.Wpf;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
+using RepoMigrator.Providers.Patch.Services;
 using RepoMigrator.Providers.Git;
 using RepoMigrator.Providers.Svn;
 
@@ -17,7 +19,7 @@ public sealed class ProviderFactoryTests
         await using var provider = services.BuildServiceProvider();
         var factory = new ProviderFactory(provider);
 
-        var createdProvider = factory.Create(RepoType.Git);
+        var createdProvider = factory.Create("git");
 
         Assert.IsInstanceOfType<GitProvider>(createdProvider);
     }
@@ -31,7 +33,7 @@ public sealed class ProviderFactoryTests
         await using var provider = services.BuildServiceProvider();
         var factory = new ProviderFactory(provider);
 
-        var createdProvider = factory.Create(RepoType.Svn);
+        var createdProvider = factory.Create("svn");
 
         Assert.IsInstanceOfType<SvnProvider>(createdProvider);
     }
@@ -46,7 +48,7 @@ public sealed class ProviderFactoryTests
         NotSupportedException? ex = null;
         try
         {
-            _ = factory.Create(RepoType.Custom);
+            _ = factory.Create("custom");
             Assert.Fail("Expected NotSupportedException.");
         }
         catch (NotSupportedException caughtEx)
@@ -55,6 +57,58 @@ public sealed class ProviderFactoryTests
         }
 
         Assert.IsNotNull(ex);
-        StringAssert.Contains(ex.Message, RepoType.Custom.ToString());
+        StringAssert.Contains(ex.Message, "custom");
+    }
+
+    [TestMethod]
+    public async Task Bootstrap_RegistersDirectoryPatchChangeSetSource()
+    {
+        await using var provider = Bootstrap.Create();
+
+        var changeSetSources = provider.GetServices<IMigrationChangeSetSource>().ToArray();
+
+        Assert.AreEqual(1, changeSetSources.Length);
+        Assert.IsInstanceOfType<DirectoryPatchChangeSetSource>(changeSetSources[0]);
+    }
+
+    [TestMethod]
+    public async Task Bootstrap_RegistersMigrationChangeSetSourceFactory()
+    {
+        await using var provider = Bootstrap.Create();
+
+        var factory = provider.GetRequiredService<IMigrationChangeSetSourceFactory>();
+
+        Assert.IsNotNull(factory);
+    }
+
+    [TestMethod]
+    public async Task Bootstrap_RegistersGitStructuredChangeSetSink()
+    {
+        await using var provider = Bootstrap.Create();
+
+        var sinks = provider.GetServices<IMigrationChangeSetSink>().ToArray();
+
+        Assert.AreEqual(1, sinks.Length);
+        Assert.IsInstanceOfType<GitStructuredChangeSetSink>(sinks[0]);
+    }
+
+    [TestMethod]
+    public async Task Bootstrap_RegistersMigrationChangeSetSinkFactory()
+    {
+        await using var provider = Bootstrap.Create();
+
+        var factory = provider.GetRequiredService<IMigrationChangeSetSinkFactory>();
+
+        Assert.IsNotNull(factory);
+    }
+
+    [TestMethod]
+    public async Task Bootstrap_RegistersStructuredMigrationPlanner()
+    {
+        await using var provider = Bootstrap.Create();
+
+        var planner = provider.GetRequiredService<IStructuredMigrationPlanner>();
+
+        Assert.IsNotNull(planner);
     }
 }

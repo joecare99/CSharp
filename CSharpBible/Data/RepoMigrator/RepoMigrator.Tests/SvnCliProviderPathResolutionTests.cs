@@ -17,7 +17,7 @@ public sealed class SvnCliProviderPathResolutionTests
     {
         var endpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Svn,
+            ProviderKey = "svn",
             UrlOrPath = sUrlOrPath,
             BranchOrTrunk = sBranchOrTrunk
         };

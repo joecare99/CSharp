@@ -39,6 +39,36 @@ public sealed class DirectoryArchiveSnapshotSourceProviderTests
     }
 
     [TestMethod]
+    public async Task PrepareAsync_WhenDefaultExtensionsAreUsed_IncludesTgzArchives()
+    {
+        var tempDirectoryPath = CreateTempDirectory();
+        try
+        {
+            File.WriteAllText(Path.Combine(tempDirectoryPath, "release-1.0.tar.gz"), "tar.gz");
+            File.WriteAllText(Path.Combine(tempDirectoryPath, "release-2.0.tgz"), "tgz");
+            var provider = new DirectoryArchiveSnapshotSourceProvider();
+            var source = new MigrationSourceDefinition
+            {
+                Kind = MigrationSourceKind.ArchiveCollection,
+                ProviderData = new ArchiveMigrationSourceDefinition
+                {
+                    LocationKind = ArchiveSourceLocationKind.LocalDirectory,
+                    Location = tempDirectoryPath
+                }.ToMigrationSourceDefinition().ProviderData
+            };
+
+            var plan = await provider.PrepareAsync(source, CancellationToken.None);
+
+            Assert.AreEqual(2, plan.Items.Count);
+            CollectionAssert.AreEquivalent(new[] { "release-1.0.tar.gz", "release-2.0.tgz" }, plan.Items.Select(item => item.ItemId).ToArray());
+        }
+        finally
+        {
+            Directory.Delete(tempDirectoryPath, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task PrepareAsync_WhenRelativeDirectoryPathIsUsed_ResolvesFromWorkspaceRoot()
     {
         var workspaceRootPath = CreateTempDirectory();
