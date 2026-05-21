@@ -1,4 +1,4 @@
-# Task T-RepoMigrator-020 - Define archive import planner and DevOps manifest layout
+# Task T-RepoMigrator-020 - Define archive import planner and runtime manifest layout
 
 ## Status
 
@@ -7,16 +7,16 @@ Draft
 ## Parent
 
 - Backlog Item `BI-RepoMigrator-011` - `Define release ref naming and manual archive ordering workflow`
-- Backlog Item `BI-RepoMigrator-012` - `Define DevOps-backed archive import status persistence and resume`
+- Backlog Item `BI-RepoMigrator-012` - `Define archive import status persistence and resume`
 
 ## Goal
 
-Define the archive import planner output and the `DevOps` folder layout used for portable plan and state persistence.
+Define the archive import planner output and the runtime-defined manifest layout used for portable plan and state persistence.
 
 ## Scope
 
 - Define the draft import-plan structure produced after discovery and inspection
-- Define folder and file naming conventions under `DevOps` for archive-import runs
+- Define folder and file naming conventions under runtime-defined storage for archive-import runs
 - Define where manual ordering overrides and naming previews are stored
 - Define how checkpoints are updated during execution without losing auditability
 - Define cleanup and retention expectations for completed or abandoned plans
@@ -24,7 +24,7 @@ Define the archive import planner output and the `DevOps` folder layout used for
 
 ## Deliverables
 
-- Proposed `DevOps` manifest layout for archive-import plans and state
+- Proposed runtime manifest layout for archive-import plans and state
 - Update strategy for checkpoint writes during execution
 - Notes on reviewability, diffability, and cross-machine portability
 - A concrete proposal for how source-provider and destination-provider data is partitioned inside the manifest layout
@@ -37,7 +37,7 @@ Define the archive import planner output and the `DevOps` folder layout used for
 ## Detailed Work Packages
 
 1. Manifest folder layout
-   - define the `DevOps/Data/RepoMigrator/...` folder structure
+   - define the provider-owned or runtime-defined `RepoMigrator/...` folder structure
    - define naming rules for plan folders and durable file names
    - define retention behavior for completed, failed, and abandoned runs
 2. Plan manifest structure
@@ -59,3 +59,11 @@ Define the archive import planner output and the `DevOps` folder layout used for
 - Shared and provider-specific manifest sections are separated clearly
 - The layout remains reviewable, diffable, and portable across machines where feasible
 - Checkpoint update behavior is defined explicitly
+
+## Architecture Update
+
+- Runtime persistence must not depend on a repository-local `DevOps` directory being present after release.
+- Persisted archive plans and state should live under provider-defined runtime storage.
+- Example shape:
+  - `<RuntimeStorageRoot>/RepoMigrator/ArchiveImports/<PlanId>/plan.json`
+  - `<RuntimeStorageRoot>/RepoMigrator/ArchiveImports/<PlanId>/state.json`

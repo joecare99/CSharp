@@ -21,6 +21,8 @@ The current naming direction is to derive the tag name from the archive file nam
 
 Because inferred snapshot order may still be wrong even with archive metadata, the workflow must also define how users review and manually reorder the archive plan before execution.
 
+The reviewed direction should also stay compatible with later mixed plans where a reviewed migration sequence may contain both archive-derived snapshots and patch-derived change sets. Naming, review, and ordering workflow decisions should therefore stay as destination-agnostic planning artifacts for as long as possible, with repository-specific ref creation remaining downstream behavior.
+
 ## Scope
 
 - Define the mandatory tag-creation rule for every archive snapshot
@@ -31,6 +33,7 @@ Because inferred snapshot order may still be wrong even with archive metadata, t
 - Define how users inspect and manually reorder the archive import plan
 - Clarify whether tags and optional branches are created before, during, or after the linear trunk commit flow
 - Clarify how repository-backed destinations and future sequential archive destinations affect naming and ordering artifacts
+- Clarify how later mixed plans with patch-derived changes should remain compatible with the same review workflow
 
 ## Acceptance Criteria
 
@@ -40,6 +43,7 @@ Because inferred snapshot order may still be wrong even with archive metadata, t
 - The prefix-normalization discussion is recorded as an open design decision rather than assumed as final
 - Regex-based naming preview requirements are visible for later refinement
 - Manual reordering is represented as a first-class workflow requirement
+- The reviewed workflow remains compatible with later mixed plans that include patch-derived changes
 - The workflow notes which parts are destination-specific versus destination-agnostic
 
 ## Assumptions

@@ -16,6 +16,8 @@ Provide a guided desktop workflow that helps users configure migration endpoints
 
 This feature documents the already implemented WPF baseline around staged setup, option selection, repository-specific choices, progress reporting, and persisted input state. The current application already separates setup, options, and execution stages while keeping shared migration logic outside the UI layer.
 
+The current implementation now exposes provider-key-based source and target selections in the setup workflow. Archive is selectable in the source provider list alongside Git and SVN, while target selection remains limited to the currently supported destination providers.
+
 ## In Scope
 
 - Step-based setup, options, and execution workflow in the WPF application
@@ -39,6 +41,14 @@ This feature documents the already implemented WPF baseline around staged setup,
 - Relevant input state can be saved and restored across sessions
 - Credentials are not stored in plain text in the persisted state file
 - The workflow can surface migration progress without moving UI strings into core services
+
+## Current Implementation Notes
+
+- The source setup view binds to provider keys instead of a closed repository-type enum.
+- Archive is available as an explicit source provider selection in the WPF workflow.
+- The target setup view uses provider keys and currently exposes Git and SVN target providers.
+- Persisted input state supports provider-key storage with legacy migration for older enum-based settings.
+- The current workspace build and automated tests passed after the provider-key migration and archive-selection integration.
 
 ## Related Backlog Items
 

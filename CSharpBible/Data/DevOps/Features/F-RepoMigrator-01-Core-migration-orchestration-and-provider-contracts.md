@@ -16,6 +16,8 @@ Provide the shared migration contracts and orchestration flow that allow reposit
 
 This feature documents the already implemented RepoMigrator baseline around shared repository models, provider selection, migration options, and the central migration service. It is the functional backbone that lets Git, SVN, the WPF application, and command-line tools operate on the same migration concepts.
 
+The current implementation now uses open string-based provider keys in shared contracts instead of a closed core enum for repository types. This keeps the orchestration entry points extensible for additional providers such as CVS or TFS without requiring a core enum expansion.
+
 ## In Scope
 
 - Shared endpoint, query, capability, and metadata models
@@ -38,6 +40,13 @@ This feature documents the already implemented RepoMigrator baseline around shar
 - Provider implementations can be resolved through a common factory abstraction
 - Progress reporting is available through shared contracts instead of UI-specific logic
 - Additional providers can be added without rewriting the orchestration entry point
+
+## Current Implementation Notes
+
+- `RepositoryEndpoint` stores a provider key instead of a core-level repository-type enum value.
+- Shared provider factories resolve providers through string keys such as `git` and `svn`.
+- The contract shape now allows future provider families without changing a closed enum in `RepoMigrator.Core`.
+- Existing command-line and WPF flows were aligned with the provider-key-based contracts and validated through build and automated tests.
 
 ## Related Backlog Items
 

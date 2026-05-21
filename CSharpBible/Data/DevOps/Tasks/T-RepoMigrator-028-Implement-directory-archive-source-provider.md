@@ -66,3 +66,12 @@ Implement the first archive-backed migration source provider for local directory
 
 - `run_build` completed successfully.
 - Targeted test execution passed for `RepoMigrator.Tests.DirectoryArchiveSnapshotSourceProviderTests`.
+
+## Follow-up Maintenance Note
+
+- A regression was identified while validating the archive smoke test against `C:\Projekte\Cpp\xpdf`: the default directory discovery logic recognized `.tar.gz` files but skipped `.tgz` files, even though both represent gzip-compressed tar archives in real snapshot collections.
+- The source-provider default extension list was extended to include `.tgz`.
+- Additional MSTest coverage now verifies that default archive discovery includes both `.tar.gz` and `.tgz` inputs.
+- Validation after the fix:
+  - targeted tests for `RepoMigrator.Tests.DirectoryArchiveSnapshotSourceProviderTests` and `RepoMigrator.Tests.TarGzArchiveDriverTests` passed,
+  - the `RepoMigrator.Tools.ArchiveSmokeTest` run against `C:\Projekte\Cpp\xpdf` completed successfully and listed the previously skipped `.tgz` snapshots.

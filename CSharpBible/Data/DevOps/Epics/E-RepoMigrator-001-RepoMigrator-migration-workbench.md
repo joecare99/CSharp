@@ -200,11 +200,11 @@ Parent: Epic `E-RepoMigrator-001`
 - Record baseline naming from archive file names and the open normalization discussion
 - Specify how users review and manually reorder archive snapshots before execution
 
-### BI-RepoMigrator-012 - Define DevOps-backed archive import status persistence and resume
+### BI-RepoMigrator-012 - Define archive import status persistence and resume
 
 Parent: Epic `E-RepoMigrator-001`
 
-- Define portable plan and checkpoint persistence for archive-import runs under `DevOps`
+- Define portable plan and checkpoint persistence for archive-import runs under runtime-defined storage
 - Support interruption-safe resume behavior, including cross-machine continuation where practical
 - Clarify re-validation and safety rules for changed sources or diverging targets
 
@@ -227,7 +227,7 @@ Parent: Epic `E-RepoMigrator-001`
 - Which diagnostics are mandatory for production troubleshooting and auditability?
 - Are there packaging, distribution, or environment constraints that should influence early feature ordering?
 - How should archive-based snapshot sources fit into the existing provider model without overloading repository-specific concepts?
-- How should durable migration progress and resume checkpoints be represented inside `DevOps` without mixing planning artifacts and volatile runtime noise?
+- How should durable migration progress and resume checkpoints be represented in runtime-defined storage without mixing planning artifacts and volatile runtime noise?
 
 ## Next Refinement Steps
 

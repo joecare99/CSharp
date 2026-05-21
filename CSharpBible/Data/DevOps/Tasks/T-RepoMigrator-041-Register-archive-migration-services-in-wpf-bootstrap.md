@@ -2,7 +2,7 @@
 
 ## Status
 
-Done
+Completed
 
 ## Parent
 
@@ -49,3 +49,19 @@ Register the archive migration services and required provider bridges in the WPF
 - Zip and TarGz drivers are registered for archive inspection and extraction
 - Existing Git and SVN repository migration registration remains intact
 - The workspace build succeeds
+
+## Validation Evidence
+
+- Updated WPF DI registration in `RepoMigrator/RepoMigrator.App.Wpf/DI/BootStrap.cs`
+- Registered archive planner, migration service, runtime-defined archive state store, extraction-root helpers, and Zip/TarGz drivers
+- Added regression coverage in `RepoMigrator/RepoMigrator.Tests/MainViewModelStartWorkflowTests.cs`
+- Workspace build passed after the registration changes
+
+## Follow-up Maintenance Note
+
+- A later WPF validation against `C:\Projekte\Cpp\xpdf` exposed that the app-local archive workflow still constrained `AllowedExtensions` to `.zip` and `.tar.gz`, even after the archive provider and TarGz driver were extended to support `.tgz`.
+- `MainViewModel` now uses one shared archive extension list for both source probing and archive workflow execution: `.zip`, `.tar.gz`, and `.tgz`.
+- Added regression coverage in `RepoMigrator.Tests.MainViewModelStartWorkflowTests` to verify that the WPF source test path counts both `.tar.gz` and `.tgz` archive snapshots.
+- Validation after the follow-up fix:
+  - workspace build passed,
+  - full `RepoMigrator.Tests` execution passed with `237/237` tests successful and `0` skipped.
