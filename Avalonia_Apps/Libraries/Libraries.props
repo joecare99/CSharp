@@ -4,5 +4,6 @@
     <UpDir>..\$(UpDir)</UpDir>
     <BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
     <BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 </Project>

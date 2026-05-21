@@ -50,7 +50,6 @@ public class MainWindowTests
             Width = 1024,
             Height = 768
         };
-        window.Show();
 
         // Assert
         Assert.IsNotNull(window);

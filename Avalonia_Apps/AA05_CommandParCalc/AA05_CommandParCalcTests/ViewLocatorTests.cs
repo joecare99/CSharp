@@ -111,7 +111,7 @@ namespace AA05_CommandParCalc.Tests
             var result = testClass.Match("Test");
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.IsFalse(result);
         }
     }
 }

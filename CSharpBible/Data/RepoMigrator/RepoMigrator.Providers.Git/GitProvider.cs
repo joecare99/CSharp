@@ -8,7 +8,7 @@ using System.Text;
 
 namespace RepoMigrator.Providers.Git;
 
-public sealed class GitProvider : IVersionControlProvider
+public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperations
 {
     private static Func<string, string?, string, CancellationToken, Task<string>> s_runGitCommandAsync = RunGitProcessAsync;
     private static Func<GitProvider, string, CancellationToken, Task> s_pushBranchAsync = static (provider, branchName, ct)
@@ -54,6 +54,7 @@ public sealed class GitProvider : IVersionControlProvider
                 Repository.Init(_localPath!, isBare: false);
             }
         }
+
         _repo = new Repository(_localPath!);
 
         // Branch wechseln (falls Quelle)
@@ -65,6 +66,79 @@ public sealed class GitProvider : IVersionControlProvider
         }
 
         await Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
+    public Task<string?> GetHeadCommitIdAsync(CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        EnsureRepositoryIsOpen();
+        return Task.FromResult(_repo!.Head.Tip?.Sha);
+    }
+
+    /// <inheritdoc/>
+    public Task<bool> BranchExistsAsync(string branchName, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(branchName);
+        EnsureRepositoryIsOpen();
+        return Task.FromResult(_repo!.Branches[NormalizeBranchName(branchName)!] is not null);
+    }
+
+    /// <inheritdoc/>
+    public Task<bool> TagExistsAsync(string tagName, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
+        EnsureRepositoryIsOpen();
+        return Task.FromResult(_repo!.Tags[tagName] is not null);
+    }
+
+    /// <inheritdoc/>
+    public async Task EnsureBranchAsync(string branchName, string commitId, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(branchName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(commitId);
+        EnsureRepositoryIsOpen();
+
+        var normalizedBranchName = NormalizeBranchName(branchName)!;
+        var commit = FindCommit(commitId);
+        var existingBranch = _repo!.Branches[normalizedBranchName];
+        if (existingBranch is not null)
+        {
+            if (string.Equals(existingBranch.Tip?.Sha, commit.Sha, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            throw new InvalidOperationException($"The Git branch '{normalizedBranchName}' already exists on a different commit.");
+        }
+
+        _repo.Branches.Add(normalizedBranchName, commit);
+        if (_pushTargetUrl is not null)
+            await RunGitAsync($"push --set-upstream \"{_pushTargetUrl}\" \"refs/heads/{normalizedBranchName}:refs/heads/{normalizedBranchName}\"", _localPath, "Git-Branch-Push", ct);
+    }
+
+    /// <inheritdoc/>
+    public async Task EnsureTagAsync(string tagName, string commitId, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(commitId);
+        EnsureRepositoryIsOpen();
+
+        var commit = FindCommit(commitId);
+        var existingTag = _repo!.Tags[tagName];
+        if (existingTag is not null)
+        {
+            if (string.Equals(GetTagCommitId(existingTag), commit.Sha, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            throw new InvalidOperationException($"The Git tag '{tagName}' already exists on a different commit.");
+        }
+
+        _repo.ApplyTag(tagName, commit.Sha);
+        if (_pushTargetUrl is not null)
+            await RunGitAsync($"push \"{_pushTargetUrl}\" \"refs/tags/{tagName}:refs/tags/{tagName}\"", _localPath, "Git-Tag-Push", ct);
     }
 
     /// <summary>
@@ -796,6 +870,25 @@ public sealed class GitProvider : IVersionControlProvider
 
     private static string? NormalizeBranchName(string? branchName)
         => string.IsNullOrWhiteSpace(branchName) ? null : branchName.Trim();
+
+    private void EnsureRepositoryIsOpen()
+    {
+        if (_repo is null)
+            throw new InvalidOperationException("The Git repository is not open.");
+    }
+
+    private Commit FindCommit(string commitId)
+    {
+        var commit = _repo!.Commits.FirstOrDefault(c => c.Sha.StartsWith(commitId, StringComparison.OrdinalIgnoreCase));
+        return commit ?? throw new InvalidOperationException($"The Git commit '{commitId}' does not exist in the current repository.");
+    }
+
+    private static string? GetTagCommitId(Tag tag)
+        => tag.PeeledTarget is Commit peeledCommit
+            ? peeledCommit.Sha
+            : tag.Target is Commit directCommit
+                ? directCommit.Sha
+                : null;
 
     private static string GetEffectiveHttpUsername(RepositoryEndpoint endpoint)
         => string.IsNullOrWhiteSpace(endpoint.Credentials?.Username)

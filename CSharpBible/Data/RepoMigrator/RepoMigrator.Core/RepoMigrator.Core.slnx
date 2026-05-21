@@ -1,3 +1,7 @@
 <Solution>
+  <Project Path="../RepoMigrator.Providers.Archive/RepoMigrator.Providers.Archive.csproj" />
+  <Project Path="../RepoMigrator.Providers.Compression.TarGz/RepoMigrator.Providers.Compression.TarGz.csproj" />
+  <Project Path="../RepoMigrator.Providers.Compression.Zip/RepoMigrator.Providers.Compression.Zip.csproj" />
+  <Project Path="../RepoMigrator.Tools.ArchiveSmokeTest/RepoMigrator.Tools.ArchiveSmokeTest.csproj" />
   <Project Path="RepoMigrator.Core/RepoMigrator.Core.csproj" />
 </Solution>

@@ -17,11 +17,13 @@
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-830366-Refine-workbench-primary-ux-flow.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-007-Fix-SVN-working-copy-sync-for-SVN-to-SVN-migration.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-008-Avoid-Git-ref-collisions-in-projected-sub-branches.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-009-Define-archive-snapshot-source-detection-and-ordering-contracts.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)Epics\E-RepoMigrator-001-RepoMigrator-migration-workbench.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\830360-Interactive-trace-visualization-workbench.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\830361-Trace-data-processing-pipeline.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\F-RepoMigrator-02-Git-and-SVN-provider-support.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\F-RepoMigrator-07-Archive-and-web-snapshot-source-ingestion.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831181-Implement-JSON-trace-cache-filter.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831182-Integrate-JSON-filter-into-TraceCsv2realCsv.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831183-Specify-processing-configuration-format.md" />
@@ -39,7 +41,20 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-011-Close-priority-test-coverage-gaps.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-012-Add-command-runner-test-seams-for-provider-coverage.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-013-Cover-Git-transfer-and-SVN-commit-command-flows.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-016-Specify-archive-ordering-name-preview-and-manual-override-workflow.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-017-Draft-archive-source-core-architecture.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-023-Define-concrete-code-target-state-for-archive-import.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-024-Define-migration-destination-provider-abstractions.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-031-Implement-archive-import-planner-and-devops-state-store.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-035-Relocate-provider-specific-archive-and-compression-files-out-of-core.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-038-Retarget-archive-provider-tests-and-project-references-after-relocation.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-039-Create-targz-compression-provider-project-and-implement-targz-driver-there.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-040-Create-small-console-tool-for-archive-provider-smoke-tests.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-041-Register-archive-migration-services-in-wpf-bootstrap.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-SharedSkills-001-Create-global-test-coverage-skill.md" />
     <None Include="$(MSBuildThisFileDirectory)TraceAnalysis-Workbench-User-Guide.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Data\RepoMigrator.ArchiveImportState.example.json" />
   </ItemGroup>
 </Project>

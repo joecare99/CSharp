@@ -17,8 +17,8 @@
   <ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
-		<PackageReference Include="MSTest" Version="4.2.2" />
-		<PackageReference Include="coverlet.collector" Version="10.0.0">
+		<PackageReference Include="MSTest" Version="4.2.3" />
+		<PackageReference Include="coverlet.collector" Version="10.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -42,6 +42,9 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Resource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Update="Tmds.DBus.Protocol" Version="0.93.0" />
 	</ItemGroup>
 
 </Project>

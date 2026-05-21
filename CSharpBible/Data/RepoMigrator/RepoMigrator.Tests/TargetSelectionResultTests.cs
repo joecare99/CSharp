@@ -10,6 +10,7 @@ public sealed class TargetSelectionResultTests
     {
         var result = new TargetSelectionResult();
 
+        Assert.IsNotNull(result.Capabilities);
         Assert.AreEqual(0, result.Branches.Count);
         Assert.IsNull(result.DefaultBranch);
     }
@@ -19,10 +20,12 @@ public sealed class TargetSelectionResultTests
     {
         var result = new TargetSelectionResult
         {
+            Capabilities = new RepoMigrator.Core.RepositoryCapabilities { SupportsBranchSelection = true },
             Branches = ["main", "release"],
             DefaultBranch = "main"
         };
 
+        Assert.IsTrue(result.Capabilities.SupportsBranchSelection);
         CollectionAssert.AreEqual(new[] { "main", "release" }, result.Branches.ToArray());
         Assert.AreEqual("main", result.DefaultBranch);
     }

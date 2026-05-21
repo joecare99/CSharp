@@ -11,6 +11,7 @@ public sealed class SourceSelectionResultTests
     {
         var result = new SourceSelectionResult();
 
+        Assert.IsNotNull(result.Capabilities);
         Assert.AreEqual(0, result.Branches.Count);
         Assert.AreEqual(0, result.Tags.Count);
         Assert.AreEqual(0, result.Revisions.Count);
@@ -26,6 +27,7 @@ public sealed class SourceSelectionResultTests
 
         var result = new SourceSelectionResult
         {
+            Capabilities = new RepositoryCapabilities { SupportsBranchSelection = true, SupportsTagSelection = true, SupportsRevisionSelection = true },
             Branches = [new RepositoryReferenceInfo { Name = "main" }],
             Tags = [new RepositoryReferenceInfo { Name = "v1" }],
             Revisions = revisions,
@@ -34,6 +36,9 @@ public sealed class SourceSelectionResultTests
             SuggestedToRevisionId = "10"
         };
 
+        Assert.IsTrue(result.Capabilities.SupportsBranchSelection);
+        Assert.IsTrue(result.Capabilities.SupportsTagSelection);
+        Assert.IsTrue(result.Capabilities.SupportsRevisionSelection);
         Assert.AreEqual(1, result.Branches.Count);
         Assert.AreEqual("main", result.Branches[0].Name);
         Assert.AreEqual(1, result.Tags.Count);

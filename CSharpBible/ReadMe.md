@@ -10,19 +10,43 @@ Heavily inpired by [42 Entwickler](https://github.com/42Entwickler)
 Tutorial and best-practices for MVVM - pattern - driven projects.
 Heavily inpired by [42 Entwickler](https://github.com/42Entwickler)
 
-## [Design-Pattern - Tutorial](Pattern_Tutorial)
+## [Design-Pattern - Tutorial](Patterns_Tutorial)
 Tutorial for various Design-Pattern.
 Heavily inpired by [42 Entwickler](https://github.com/42Entwickler)
 
 ## [Games](Games) 
-Collection of "small" games
+Collection of game-related projects
 - [Sokoban](Games/Sokoban_Base)
 - [Snake](Games/Snake_Base)
 - [Tetris](Games/Tetris_Base)
 - [Werner-Flaschbier](Games/Werner_Flaschbier) a boulder-dash clone
+- [SharpHack](Games/SharpHack.slnx) rogue-like project family
 
 ## [Graphics](Graphics)
 a collection of programs having visual effects and technics
+
+## Additional project groups
+- [ConsoleApps](ConsoleApps)
+- [Data](Data)
+- [DB](DB)
+- [Libraries](Libraries)
+- [Resources](Resources)
+- [Simulation](Simulation)
+- [Tests](Tests)
+- [Web](Web)
+- [WPFSamples_2](WPFSamples_2)
+- [DependencyInjection](DependencyInjection)
+- [OpenAI](OpenAI)
+
+## [Data](Data) project groups
+- [DataAnalysis](Data/DataAnalysis)
+- [DocumentUtils](Data/DocumentUtils)
+- [NebelEbook](Data/NebelEbook)
+- [PictureDB](Data/PictureDB)
+- [RepoMigrator](Data/RepoMigrator)
+- [Story](Data/Story.Base)
+- [TraceAnalysis](Data/TraceAnalysis)
+- [TraceCsv2realCsv](Data/TraceCsv2realCsv)
 
 And ...
 ## Something2

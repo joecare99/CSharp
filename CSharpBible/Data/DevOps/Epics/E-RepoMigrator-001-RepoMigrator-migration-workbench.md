@@ -89,6 +89,14 @@ Planning file: [F-RepoMigrator-05-Target-projection-and-branch-transformation-to
 - Provide a focused Git branch splitting tool for post-processing and repository reshaping scenarios
 - Clarify when branch transformation belongs in the main migration workflow versus a dedicated helper tool
 
+### Feature F-RepoMigrator-07 - Archive and web snapshot source ingestion
+
+Planning file: [F-RepoMigrator-07-Archive-and-web-snapshot-source-ingestion.md](../Features/F-RepoMigrator-07-Archive-and-web-snapshot-source-ingestion.md)
+
+- Accept archive-backed sources from HTTP(S) download pages and local archive directories
+- Reconstruct a linear `main` or `trunk` history from ordered archive snapshots
+- Create release tags for each imported archive and optionally create release branches from the same snapshot set
+
 ### Feature Candidate F-RepoMigrator-06 - Diagnostics, validation, and automated test coverage
 
 Planning status: Candidate only. No dedicated feature file has been created yet.
@@ -168,6 +176,38 @@ Parent: Epic `E-RepoMigrator-001`
 - Keep test work visible for both interactive and command-line slices
 - Prepare future feature refinement with explicit test-oriented backlog items
 
+### BI-RepoMigrator-009 - Define archive snapshot source detection and ordering contracts
+
+Parent: Epic `E-RepoMigrator-001`
+
+- Define how RepoMigrator distinguishes HTTP(S) archive feeds from local directory archive feeds
+- Specify the snapshot descriptor and ordering metadata needed for archive-backed imports
+- Record precedence and manual override expectations for archive ordering
+
+### BI-RepoMigrator-010 - Plan driver-based archive extraction and metadata inspection
+
+Parent: Epic `E-RepoMigrator-001`
+
+- Define a driver-oriented archive handling model for supported formats
+- Clarify extraction, metadata inspection, and failure behavior expectations
+- Keep future archive-format additions possible without rewriting orchestration
+
+### BI-RepoMigrator-011 - Define release ref naming and manual archive ordering workflow
+
+Parent: Epic `E-RepoMigrator-001`
+
+- Define mandatory tag creation and optional branch creation for archive imports
+- Record baseline naming from archive file names and the open normalization discussion
+- Specify how users review and manually reorder archive snapshots before execution
+
+### BI-RepoMigrator-012 - Define DevOps-backed archive import status persistence and resume
+
+Parent: Epic `E-RepoMigrator-001`
+
+- Define portable plan and checkpoint persistence for archive-import runs under `DevOps`
+- Support interruption-safe resume behavior, including cross-machine continuation where practical
+- Clarify re-validation and safety rules for changed sources or diverging targets
+
 ## Risks
 
 - Provider behavior may differ more strongly than the shared abstractions currently suggest
@@ -175,6 +215,8 @@ Parent: Epic `E-RepoMigrator-001`
 - Pipelined execution may create ordering, cleanup, or temporary-storage risks under failure conditions
 - Branch transformation scenarios may blur the boundary between core migration and post-processing tools
 - Real-world repository sizes may stress current assumptions around progress reporting and operational feedback
+- Archive naming and metadata quality may be inconsistent enough to require explicit manual ordering support
+- Archive-import resume support may be unreliable if portable state and machine-local runtime state are not separated clearly
 
 ## Open Questions
 
@@ -184,6 +226,8 @@ Parent: Epic `E-RepoMigrator-001`
 - What is the preferred boundary between the WPF application and the specialized command-line tools?
 - Which diagnostics are mandatory for production troubleshooting and auditability?
 - Are there packaging, distribution, or environment constraints that should influence early feature ordering?
+- How should archive-based snapshot sources fit into the existing provider model without overloading repository-specific concepts?
+- How should durable migration progress and resume checkpoints be represented inside `DevOps` without mixing planning artifacts and volatile runtime noise?
 
 ## Next Refinement Steps
 

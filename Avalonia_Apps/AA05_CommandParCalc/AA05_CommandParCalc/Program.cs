@@ -48,7 +48,9 @@ public sealed class Program
     /// Builds the avalonia application.
     /// </summary>
     /// <returns>AppBuilder.</returns>
-    public static Func<AppBuilder> GetAppBuilder{ get; set; } = ()
+    public static Func<AppBuilder> GetAppBuilder = CreateAppBuilder;
+
+    private static AppBuilder CreateAppBuilder()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()

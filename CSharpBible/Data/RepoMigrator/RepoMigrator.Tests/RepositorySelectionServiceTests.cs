@@ -23,6 +23,7 @@ public sealed class RepositorySelectionServiceTests
         var result = await service.LoadSourceSelectionAsync(new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = "/repo" }, CancellationToken.None);
 
         Assert.IsNotNull(result);
+        Assert.IsNotNull(result.Capabilities);
         Assert.AreEqual(0, result.Branches.Count);
         Assert.AreEqual(0, result.Tags.Count);
         Assert.AreEqual(0, result.Revisions.Count);
@@ -66,6 +67,9 @@ public sealed class RepositorySelectionServiceTests
 
         var result = await service.LoadSourceSelectionAsync(new RepositoryEndpoint { Type = RepoType.Svn, UrlOrPath = "svn://repo" }, CancellationToken.None);
 
+        Assert.IsTrue(result.Capabilities.SupportsBranchSelection);
+        Assert.IsTrue(result.Capabilities.SupportsTagSelection);
+        Assert.IsTrue(result.Capabilities.SupportsRevisionSelection);
         Assert.AreEqual("main", result.DefaultBranch);
         Assert.AreEqual("100", result.SuggestedFromRevisionId);
         Assert.AreEqual("120", result.SuggestedToRevisionId);
@@ -81,14 +85,20 @@ public sealed class RepositorySelectionServiceTests
     public async Task LoadTargetSelectionAsync_ReturnsDefault_WhenEndpointIsNotGit()
     {
         var providerFactory = Substitute.For<IProviderFactory>();
+        var provider = Substitute.For<IVersionControlProvider>();
+        providerFactory.Create(RepoType.Svn).Returns(provider);
+        provider.GetCapabilitiesAsync(Arg.Any<RepositoryEndpoint>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new RepositoryCapabilities()));
+        provider.DisposeAsync().Returns(ValueTask.CompletedTask);
         var service = new RepositorySelectionService(providerFactory);
 
         var result = await service.LoadTargetSelectionAsync(new RepositoryEndpoint { Type = RepoType.Svn, UrlOrPath = "svn://repo" }, CancellationToken.None);
 
         Assert.IsNotNull(result);
+        Assert.IsNotNull(result.Capabilities);
         Assert.AreEqual(0, result.Branches.Count);
         Assert.IsNull(result.DefaultBranch);
-        providerFactory.DidNotReceive().Create(Arg.Any<RepoType>());
+        providerFactory.Received(1).Create(RepoType.Svn);
     }
 
     [TestMethod]
@@ -97,6 +107,8 @@ public sealed class RepositorySelectionServiceTests
         var providerFactory = Substitute.For<IProviderFactory>();
         var provider = Substitute.For<IVersionControlProvider>();
         providerFactory.Create(RepoType.Git).Returns(provider);
+        provider.GetCapabilitiesAsync(Arg.Any<RepositoryEndpoint>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new RepositoryCapabilities { SupportsBranchSelection = true }));
 
         provider.GetSelectionDataAsync(Arg.Any<RepositoryEndpoint>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(new RepositorySelectionData
@@ -115,6 +127,7 @@ public sealed class RepositorySelectionServiceTests
 
         var result = await service.LoadTargetSelectionAsync(new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = "/repo" }, CancellationToken.None);
 
+        Assert.IsTrue(result.Capabilities.SupportsBranchSelection);
         Assert.AreEqual("main", result.DefaultBranch);
         CollectionAssert.AreEquivalent(new[] { "Main", "release" }, result.Branches.ToArray());
     }

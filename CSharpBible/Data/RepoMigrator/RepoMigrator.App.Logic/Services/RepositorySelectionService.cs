@@ -30,6 +30,7 @@ public sealed class RepositorySelectionService
 
         return new SourceSelectionResult
         {
+            Capabilities = capabilities,
             Branches = capabilities.SupportsBranchSelection ? selectionData.Branches : Array.Empty<RepositoryReferenceInfo>(),
             Tags = capabilities.SupportsTagSelection ? selectionData.Tags : Array.Empty<RepositoryReferenceInfo>(),
             DefaultBranch = selectionData.DefaultBranch,
@@ -44,13 +45,15 @@ public sealed class RepositorySelectionService
     /// </summary>
     public async Task<TargetSelectionResult> LoadTargetSelectionAsync(RepositoryEndpoint endpoint, CancellationToken ct)
     {
-        if (endpoint.Type != RepoType.Git)
-            return new TargetSelectionResult();
-
         await using var provider = _providerFactory.Create(endpoint.Type);
+        var capabilities = await provider.GetCapabilitiesAsync(endpoint, ct);
+        if (!capabilities.SupportsBranchSelection)
+            return new TargetSelectionResult { Capabilities = capabilities };
+
         var selectionData = await provider.GetSelectionDataAsync(endpoint, ct);
         return new TargetSelectionResult
         {
+            Capabilities = capabilities,
             Branches = selectionData.Branches.Select(branchInfo => branchInfo.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList(),
             DefaultBranch = selectionData.DefaultBranch
         };

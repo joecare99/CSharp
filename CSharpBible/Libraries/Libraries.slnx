@@ -26,4 +26,5 @@
     <Project Path="../ConsoleApps/TestConsole/TestConsole_net.csproj" />
     <Project Path="../ConsoleApps/TestConsoleTests/TestConsoleTests.csproj" />
   </Folder>
+  <Project Path="Libraries.Package/Libraries.Package.csproj" />
 </Solution>
