@@ -5,4 +5,7 @@
   <Import Project="Packages.props" />
   <ItemGroup>
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="NAudio.Midi" Version="2.3.0" />
+  </ItemGroup>
 </Project>
