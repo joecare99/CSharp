@@ -22,7 +22,7 @@ public sealed class RepositorySelectionService
     /// </summary>
     public async Task<SourceSelectionResult> LoadSourceSelectionAsync(RepositoryEndpoint endpoint, CancellationToken ct)
     {
-        await using var provider = _providerFactory.Create(endpoint.Type);
+        await using var provider = _providerFactory.Create(endpoint.ProviderKey);
         var capabilities = await provider.GetCapabilitiesAsync(endpoint, ct);
         var selectionData = capabilities.SupportsBranchSelection || capabilities.SupportsTagSelection || capabilities.SupportsRevisionSelection
             ? await provider.GetSelectionDataAsync(endpoint, ct)
@@ -45,7 +45,7 @@ public sealed class RepositorySelectionService
     /// </summary>
     public async Task<TargetSelectionResult> LoadTargetSelectionAsync(RepositoryEndpoint endpoint, CancellationToken ct)
     {
-        await using var provider = _providerFactory.Create(endpoint.Type);
+        await using var provider = _providerFactory.Create(endpoint.ProviderKey);
         var capabilities = await provider.GetCapabilitiesAsync(endpoint, ct);
         if (!capabilities.SupportsBranchSelection)
             return new TargetSelectionResult { Capabilities = capabilities };

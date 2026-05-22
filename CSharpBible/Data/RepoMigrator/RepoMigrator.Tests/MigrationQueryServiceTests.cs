@@ -12,7 +12,7 @@ public sealed class MigrationQueryServiceTests
         var queryService = new MigrationQueryService();
         var lstRevisions = CreateRevisions();
 
-        var query = queryService.CreateQuery(RepoType.Svn, "100", null, 25, true, lstRevisions, "110", "120");
+        var query = queryService.CreateQuery("svn", "100", null, 25, true, lstRevisions, "110", "120");
 
         Assert.AreEqual("100", query.FromExclusiveId);
         Assert.AreEqual("120", query.ToInclusiveId);
@@ -26,7 +26,7 @@ public sealed class MigrationQueryServiceTests
         var queryService = new MigrationQueryService();
         var lstRevisions = CreateRevisions();
 
-        var result = queryService.UpdateResumeAfterCommit(RepoType.Svn, "110", lstRevisions);
+        var result = queryService.UpdateResumeAfterCommit("svn", "110", lstRevisions);
 
         Assert.AreEqual("110", result.FromExclusiveId);
         Assert.AreEqual("120", result.SelectedSvnFromRevisionId);

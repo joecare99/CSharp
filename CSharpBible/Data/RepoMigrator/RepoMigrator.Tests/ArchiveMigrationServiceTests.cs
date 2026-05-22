@@ -69,7 +69,8 @@ public sealed class ArchiveMigrationServiceTests
         await driver.Received(1).ExtractToAsync(plan.Items[0].SourceItem.SourceIdentifier, Arg.Any<string>(), CancellationToken.None);
         await destinationProvider.Received(1).WriteSnapshotAsync(
             Arg.Is<string>(path => path.EndsWith(Path.Combine("archive", "product-root", "src"), StringComparison.OrdinalIgnoreCase)),
-            Arg.Is<MigrationDestinationCommit>(commit => commit.SnapshotId == plan.Items[0].SnapshotId),
+            Arg.Is<MigrationDestinationCommit>(commit => commit.SnapshotId == plan.Items[0].SnapshotId
+                && commit.Timestamp == DateTimeOffset.Parse("2024-01-01T00:00:00.0000000+00:00")),
             NullMigrationProgress.Instance,
             CancellationToken.None);
         await refOperations.Received(1).EnsureTagAsync(plan.Items[0].FinalTagName, "commit-001", CancellationToken.None);
@@ -210,7 +211,7 @@ public sealed class ArchiveMigrationServiceTests
         => new()
         {
             Kind = MigrationDestinationKind.Repository,
-            Repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
+            Repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
         };
 
     private static ArchiveImportPlan CreatePlan(bool createBranch)
@@ -249,7 +250,9 @@ public sealed class ArchiveMigrationServiceTests
                     ExtensionData = new Dictionary<string, string>
                     {
                         [ArchiveImportPlanItemExtensionKeys.DriverId] = "zip",
-                        [ArchiveImportPlanItemExtensionKeys.ExtractionRootPath] = "product-root/src"
+                        [ArchiveImportPlanItemExtensionKeys.ExtractionRootPath] = "product-root/src",
+                        [ArchiveImportPlanItemExtensionKeys.CommitTimestamp] = "2024-01-01T00:00:00.0000000+00:00",
+                        [ArchiveImportPlanItemExtensionKeys.CommitTimestampSource] = nameof(ArchiveSnapshotDescriptor.NewestEntryTimestamp)
                     }
                 }
             ],

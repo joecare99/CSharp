@@ -19,6 +19,8 @@ RepoMigrator should accept both HTTP(S)-based sources and local directory paths 
 
 The same contract must also define how snapshot order is inferred. Version identifiers in archive names may help but are not always unambiguous. File-system timestamps are also weak signals because later copy operations may rewrite them. The ordering model therefore needs an explicit precedence strategy that prefers archive-internal metadata and uses outer timestamps only as fallback information. Manual user-defined reordering must remain available.
 
+The reviewed direction should also prepare this source contract for the later structured-change path. Archive-backed planning remains snapshot-oriented in the first slice, but the source-side model should already leave room for explicit path rewrites and mixed plans where later slices can combine full snapshots with patch-derived changes.
+
 ## Scope
 
 - Define source-type detection rules for `http://`, `https://`, absolute paths, and relative paths
@@ -28,6 +30,7 @@ The same contract must also define how snapshot order is inferred. Version ident
 - Define how manual reordering or explicit sequence overrides replace inferred ordering
 - Identify validation messages for ambiguous or incomplete ordering input
 - Clarify how the source model fits into a broader `IMigrationSourceProvider` abstraction without overloading `RepoType`
+- Review how explicit root-remapping intent can be preserved for later structured-change slices without polluting target providers
 
 ## Acceptance Criteria
 
@@ -37,6 +40,7 @@ The same contract must also define how snapshot order is inferred. Version ident
 - The ordering policy documents precedence, fallback rules, and ambiguity handling
 - Manual override capability is represented in the planning model
 - The source contract is explicitly aligned with a broader source-provider model in RepoMigrator.Core
+- The reviewed direction is compatible with explicit path-rewrite intent for later structured-change execution
 - Open questions around incomplete metadata remain explicit
 
 ## Assumptions
@@ -51,6 +55,7 @@ The same contract must also define how snapshot order is inferred. Version ident
 - Ambiguous version strings may lead to unstable ordering if no manual override exists
 - Different archive formats may expose different internal timestamp quality levels
 - A source contract that is too archive-specific may make future non-repository providers harder to fit cleanly
+- Hidden moved-root assumptions may leak into downstream execution if path-rewrite intent is not represented explicitly enough
 
 ## Open Questions
 

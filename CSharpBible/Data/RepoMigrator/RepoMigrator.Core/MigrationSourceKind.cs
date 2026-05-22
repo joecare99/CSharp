@@ -6,5 +6,6 @@ namespace RepoMigrator.Core;
 public enum MigrationSourceKind
 {
     Repository,
-    ArchiveCollection
+    ArchiveCollection,
+    PatchCollection
 }

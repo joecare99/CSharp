@@ -25,6 +25,108 @@ RepoMigrator.Core must remain provider-agnostic. Provider-specific files must th
 
 ## Proposed Contract Direction
 
+## Reviewed Architecture Update - capability-gated structured change model
+
+The reviewed direction should no longer treat special execution paths as ad-hoc exceptions in orchestration code. Special paths should instead be selected through explicit capabilities.
+
+### Execution principle
+
+- If source and target capabilities allow a safe direct transfer path, orchestration may use that path.
+- The prime first example is direct Git-to-Git transfer.
+- Otherwise, orchestration should fall back to a provider-agnostic structured file-change model.
+
+This keeps direct fast paths available without making them the default architectural shape for every provider combination.
+
+### Structured change model direction
+
+The reviewed long-term model is:
+
+- a repository is treated as a network of commits,
+- each commit is represented as a structured list of file changes,
+- input drivers emit normalized change data,
+- output providers consume that change data according to their own capabilities.
+
+Suggested provider-agnostic change-model concepts:
+
+- `MigrationChangeSet`
+  - logical change identifier
+  - message
+  - author data
+  - timestamp
+  - ordered file changes
+- `MigrationFileChange`
+  - path before change
+  - path after change
+  - operation kind such as add, modify, delete, rename, copy, mode change
+  - content payload or text hunk data
+- `MigrationTextChange`
+  - ordered hunk list
+  - normalized line-ending information when needed
+- `MigrationTextHunk`
+  - start line in the source view
+  - removed text block
+  - added text block
+- `MigrationBinaryChange`
+  - explicit binary add, replace, delete, rename, or opaque delta payload reference
+
+### Root-remapping requirement
+
+Patch and archive-derived inputs must support source-root relocation explicitly.
+
+Suggested model direction:
+
+- `PathRewriteRule`
+  - `FromPrefix`
+  - `ToPrefix`
+  - optional normalization flags
+- change extraction applies path rewriting during normalization so downstream providers operate only on canonical paths
+
+This is required for patch collections where the historical archive root differs from the currently materialized working root.
+
+### Patch-driver direction
+
+Patch files should be handled through a dedicated input-driver path rather than by embedding patch-specific behavior into destination providers.
+
+Suggested responsibilities:
+
+- inspect `.patch` inputs,
+- parse text hunks and recognized binary change markers,
+- emit normalized file-change data,
+- apply configured root-remapping before the changes leave the driver layer.
+
+Reviewed refinement:
+
+- the patch path should be treated as a general patch-driver direction rather than as a one-off patch-input exception,
+- the first concrete slice should remain read-only and focus on parsing `.patch` input,
+- later patch-output capability should be anticipated in the model and capabilities,
+- destination providers and compatibility adapters should not assume patch-output support exists in the first slice.
+
+### Destination-provider direction
+
+Destination providers should consume normalized file-change data according to capability.
+
+Suggested capability split:
+
+- direct-transfer capability
+- structured-change-apply capability
+- fallback materialized-workdir capability
+- destination-ref capability for tags and branches
+
+This allows a phased migration where existing targets can still receive materialized work directories while newer targets adopt structured changes directly.
+
+### Compatibility-adapter direction
+
+The reviewed bridge from structured changes to existing targets should be an explicit compatibility adapter.
+
+Suggested responsibilities:
+
+- consume normalized change sets from structured sources such as the read-first patch driver,
+- materialize deterministic work state for current Git and SVN target flows,
+- preserve ordering, metadata, and destination-ref intent,
+- remain removable once provider-native structured-change sinks are introduced.
+
+This adapter should be treated as a transition layer, not as a hidden permanent architecture dependency.
+
 ### 1. Provider Model Split
 
 Introduce a broader migration-source provider contract that can represent either an existing repository source or a new archive source.
@@ -225,7 +327,8 @@ Example:
 - Add a broader source-provider layer for source-side migration inputs.
 - Plan a parallel destination-provider layer above VCS-specific target behavior.
 - Implement archive collections as source providers beneath that layer in dedicated provider projects.
-- Reuse the existing temp-directory snapshot commit flow once an archive has been extracted.
+- Reuse the existing temp-directory snapshot commit flow once an archive has been extracted where the reviewed structured-change path is not yet in place.
+- Introduce a compatibility adapter for structured changes so read-first patch-driver output can flow into existing Git and SVN targets without a big-bang rewrite.
 
 ### Why this direction is preferred
 
@@ -235,6 +338,8 @@ Example:
 - Future non-repository destinations such as sequential archive output can fit the same architecture.
 - Provider-specific files and sub-providers can evolve independently in their own projects.
 - The current migration service and target-provider abstractions can be extended incrementally instead of rewritten.
+- The read-first patch-driver slice can be introduced without forcing immediate patch-output implementation.
+- Structured-change adoption can progress incrementally through an explicit compatibility bridge.
 
 ## Initial Implementation Slice Recommendation
 
@@ -256,6 +361,7 @@ The first delivery slice should deliberately stay narrow.
 - Non-Git release-ref generation targets
 - Sequential archive-output destination implementation
 - Arbitrary web crawling beyond a known page or feed
+- Patch-output generation from normalized change sets
 
 ## Examples
 
@@ -295,6 +401,7 @@ Decision:
 - Unit tests should cover source discrimination, archive-driver resolution, ordering precedence, tie-breaking, and tag-name derivation.
 - Integration-style tests should cover full archive-to-Git snapshot flows with temp-directory extraction.
 - UI or workflow tests should cover preview visibility for inferred order and naming output.
+- Architecture tests and contract-focused tests should later cover capability selection, path-rewrite normalization, and structured file-change compatibility across drivers and targets.
 
 ## Open Questions
 
@@ -309,3 +416,8 @@ Decision:
 2. Refine the archive-driver contract against real format-library constraints and provider-project boundaries.
 3. Define the target project split for archive providers and compression providers.
 4. Create code-oriented tasks for models, orchestration, relocation, and tests after the API direction is accepted.
+5. Review a provider-agnostic structured file-change model before any broad implementation.
+6. Define explicit capability contracts for direct transfer versus structured-change execution.
+7. Define path-rewrite handling for moved source roots in patch and archive-derived inputs.
+8. Define the read-first patch-driver slice with separate read and write capabilities.
+9. Define the compatibility adapter that bridges structured changes into current target providers.

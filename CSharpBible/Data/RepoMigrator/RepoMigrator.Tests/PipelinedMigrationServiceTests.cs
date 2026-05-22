@@ -13,7 +13,7 @@ public sealed class PipelinedMigrationServiceTests
     {
         var providerFactory = Substitute.For<IProviderFactory>();
         var enumerateProvider = Substitute.For<IVersionControlProvider>();
-        providerFactory.Create(RepoType.Svn).Returns(enumerateProvider);
+        providerFactory.Create("svn").Returns(enumerateProvider);
 
         enumerateProvider.Name.Returns("SVN");
         enumerateProvider.OpenAsync(Arg.Any<RepositoryEndpoint>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
@@ -32,7 +32,7 @@ public sealed class PipelinedMigrationServiceTests
         await service.RunAsync(options, progress, CancellationToken.None);
 
         progress.Received().Report(MigrationReportSeverity.Information, MigrationReportMessage.NoChangeSetsFound);
-        providerFactory.DidNotReceive().Create(RepoType.Git);
+        providerFactory.DidNotReceive().Create("git");
     }
 
     [TestMethod]
@@ -43,8 +43,8 @@ public sealed class PipelinedMigrationServiceTests
         var exportProvider = Substitute.For<IVersionControlProvider>();
         var targetProvider = Substitute.For<IVersionControlProvider>();
 
-        providerFactory.Create(RepoType.Svn).Returns(enumerateProvider, exportProvider);
-        providerFactory.Create(RepoType.Git).Returns(targetProvider);
+        providerFactory.Create("svn").Returns(enumerateProvider, exportProvider);
+        providerFactory.Create("git").Returns(targetProvider);
 
         enumerateProvider.Name.Returns("SVN");
         enumerateProvider.OpenAsync(Arg.Any<RepositoryEndpoint>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
@@ -92,5 +92,80 @@ public sealed class PipelinedMigrationServiceTests
         await targetProvider.Received(1).CommitSnapshotAsync(Arg.Any<string>(), Arg.Is<CommitMetadata>(m => m.Message == "Import"), Arg.Any<CancellationToken>());
         await targetProvider.DidNotReceive().FlushAsync(Arg.Any<CancellationToken>());
         progress.Received().Report(MigrationReportSeverity.Information, MigrationReportMessage.MigrationCompleted);
+    }
+
+    [TestMethod]
+    public async Task RunAsync_WhenCommitFails_DrainsQueuedSnapshotsAndDeletesTempDirectories()
+    {
+        var providerFactory = Substitute.For<IProviderFactory>();
+        var enumerateProvider = Substitute.For<IVersionControlProvider>();
+        var exportProvider = Substitute.For<IVersionControlProvider>();
+        var targetProvider = Substitute.For<IVersionControlProvider>();
+
+        providerFactory.Create("svn").Returns(enumerateProvider, exportProvider);
+        providerFactory.Create("git").Returns(targetProvider);
+
+        enumerateProvider.Name.Returns("SVN");
+        enumerateProvider.OpenAsync(Arg.Any<RepositoryEndpoint>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        enumerateProvider.GetChangeSetsAsync(Arg.Any<ChangeSetQuery>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult<IReadOnlyList<ChangeSetInfo>>([
+                new ChangeSetInfo { Id = "100", Message = "one", AuthorName = "alice", Timestamp = DateTimeOffset.UtcNow },
+                new ChangeSetInfo { Id = "101", Message = "two", AuthorName = "alice", Timestamp = DateTimeOffset.UtcNow }
+            ]));
+        enumerateProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
+
+        exportProvider.OpenAsync(Arg.Any<RepositoryEndpoint>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        exportProvider.MaterializeSnapshotAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo =>
+            {
+                var sTempDirectory = callInfo.ArgAt<string>(0);
+                Directory.CreateDirectory(sTempDirectory);
+                File.WriteAllText(Path.Combine(sTempDirectory, "README.md"), callInfo.ArgAt<string>(1));
+                return Task.CompletedTask;
+            });
+        exportProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
+
+        targetProvider.Name.Returns("Git");
+        targetProvider.InitializeTargetAsync(Arg.Any<RepositoryEndpoint>(), true, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+        targetProvider.CommitSnapshotAsync(Arg.Any<string>(), Arg.Any<CommitMetadata>(), Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw new InvalidOperationException("commit failed"));
+        targetProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
+
+        var tempRoot = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            var progress = Substitute.For<IMigrationProgress>();
+            var service = new PipelinedMigrationService(providerFactory);
+            var options = new PipelinedMigrationOptions
+            {
+                SourceUrl = "svn://example/source",
+                TargetUrl = "C:/git-target",
+                TempRoot = tempRoot,
+                PrefetchCount = 2,
+                MaxExportWorkers = 1
+            };
+
+            InvalidOperationException? ex = null;
+            try
+            {
+                await service.RunAsync(options, progress, CancellationToken.None);
+            }
+            catch (InvalidOperationException caughtEx)
+            {
+                ex = caughtEx;
+            }
+
+            Assert.IsNotNull(ex);
+            Assert.AreEqual("commit failed", ex.Message);
+
+            Assert.IsFalse(Directory.EnumerateDirectories(tempRoot).Any(), "Queued snapshot directories should be deleted after a pipeline failure.");
+        }
+        finally
+        {
+            if (Directory.Exists(tempRoot))
+                Directory.Delete(tempRoot, recursive: true);
+        }
     }
 }

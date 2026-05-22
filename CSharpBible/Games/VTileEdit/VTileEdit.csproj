@@ -26,9 +26,4 @@
 		<ProjectReference Include="..\..\Libraries\CommonDialogs\CommonDialogs.csproj" />
 		<ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageVersion Update="CommunityToolkit.Mvvm" Version="8.4.2" />
-	  <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
-	</ItemGroup>
-
 </Project>

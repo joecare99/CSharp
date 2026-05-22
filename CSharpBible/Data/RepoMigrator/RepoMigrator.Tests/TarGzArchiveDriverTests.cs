@@ -103,6 +103,7 @@ public sealed class TarGzArchiveDriverTests
         var driver = new TarGzArchiveDriver();
 
         Assert.IsTrue(driver.CanHandle("archive.TAR.GZ"));
+        Assert.IsTrue(driver.CanHandle("archive.TGZ"));
         Assert.IsFalse(driver.CanHandle("archive.zip"));
     }
 
@@ -113,6 +114,17 @@ public sealed class TarGzArchiveDriverTests
         var registry = new ArchiveDriverRegistry([tarGzDriver]);
 
         var resolvedDriver = registry.Resolve("sample.tar.gz");
+
+        Assert.AreSame(tarGzDriver, resolvedDriver);
+    }
+
+    [TestMethod]
+    public void Resolve_WhenTgzArchiveIsUsed_ReturnsTarGzDriver()
+    {
+        var tarGzDriver = new TarGzArchiveDriver();
+        var registry = new ArchiveDriverRegistry([tarGzDriver]);
+
+        var resolvedDriver = registry.Resolve("sample.tgz");
 
         Assert.AreSame(tarGzDriver, resolvedDriver);
     }

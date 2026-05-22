@@ -11,9 +11,9 @@ public sealed class MigrationEndpointFactoryTests
     {
         var factory = new MigrationEndpointFactory();
 
-        var endpoint = factory.CreateSourceEndpoint(RepoType.Svn, "svn://example/repo", "trunk", "alice", "secret");
+        var endpoint = factory.CreateSourceEndpoint("svn", "svn://example/repo", "trunk", "alice", "secret");
 
-        Assert.AreEqual(RepoType.Svn, endpoint.Type);
+        Assert.AreEqual("svn", endpoint.ProviderKey);
         Assert.AreEqual("svn://example/repo", endpoint.UrlOrPath);
         Assert.AreEqual("trunk", endpoint.BranchOrTrunk);
         Assert.IsNotNull(endpoint.Credentials);
@@ -26,9 +26,9 @@ public sealed class MigrationEndpointFactoryTests
     {
         var factory = new MigrationEndpointFactory();
 
-        var endpoint = factory.CreateTargetEndpoint(RepoType.Git, "C:\\target", "main", "bob", "token");
+        var endpoint = factory.CreateTargetEndpoint("git", "C:\\target", "main", "bob", "token");
 
-        Assert.AreEqual(RepoType.Git, endpoint.Type);
+        Assert.AreEqual("git", endpoint.ProviderKey);
         Assert.AreEqual("C:\\target", endpoint.UrlOrPath);
         Assert.AreEqual("main", endpoint.BranchOrTrunk);
         Assert.IsNotNull(endpoint.Credentials);

@@ -59,13 +59,7 @@
 	  </Resource>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <PackageVersion Update="IndexRange" Version="1.1.1" />
-	  <PackageVersion Update="System.ValueTuple" Version="4.6.2" />
-	</ItemGroup>
-
-
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(TargetFramework)'=='net6.01'">
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(TargetFramework)'=='net6.01'">
 		<Exec Command="svn up --accept p -q&#xD;&#xA;svn info|find /N /V &quot;/&quot;|find /V &quot;Path&quot;&gt;Version.svn" />
 	</Target>
 

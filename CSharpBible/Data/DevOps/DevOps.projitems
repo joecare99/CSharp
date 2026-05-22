@@ -9,7 +9,6 @@
     <Import_RootNamespace>DevOps</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-830362-Create-WPF-trace-analysis-shell.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-830363-Create-canonical-trace-processing-model.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-830364-Create-graphical-processing-configuration-editor.md" />
@@ -18,7 +17,7 @@
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-007-Fix-SVN-working-copy-sync-for-SVN-to-SVN-migration.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-008-Avoid-Git-ref-collisions-in-projected-sub-branches.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-009-Define-archive-snapshot-source-detection-and-ordering-contracts.md" />
-    <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-012-Define-archive-import-status-persistence-and-resume.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\E-RepoMigrator-001-RepoMigrator-migration-workbench.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\830360-Interactive-trace-visualization-workbench.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\830361-Trace-data-processing-pipeline.md" />
@@ -51,10 +50,15 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-039-Create-targz-compression-provider-project-and-implement-targz-driver-there.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-040-Create-small-console-tool-for-archive-provider-smoke-tests.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-041-Register-archive-migration-services-in-wpf-bootstrap.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-045-Define-compatibility-adapter-for-structured-changes-to-existing-target-providers.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-SharedSkills-001-Create-global-test-coverage-skill.md" />
     <None Include="$(MSBuildThisFileDirectory)TraceAnalysis-Workbench-User-Guide.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Data\RepoMigrator.ArchiveImportState.example.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Backlog\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Data\RepoMigrator\ArchiveImports\xpdf-0-2-tar-0007\" />
   </ItemGroup>
 </Project>

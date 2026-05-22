@@ -14,12 +14,12 @@ public sealed class MigrationServiceTests
         var sourceProvider = Substitute.For<IVersionControlProvider>();
         var progress = Substitute.For<IMigrationProgress>();
         var service = new MigrationService(providerFactory);
-        var sourceEndpoint = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\source" };
-        var targetEndpoint = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target" };
+        var sourceEndpoint = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\source" };
+        var targetEndpoint = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target" };
         var query = new ChangeSetQuery();
         var options = new MigrationOptions { TransferMode = RepositoryTransferMode.NativeHistory };
 
-        providerFactory.Create(RepoType.Git).Returns(sourceProvider);
+        providerFactory.Create("git").Returns(sourceProvider);
         sourceProvider.OpenAsync(sourceEndpoint, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
         sourceProvider.TransferAsync(sourceEndpoint, targetEndpoint, options, progress, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
         sourceProvider.DisposeAsync().Returns(ValueTask.CompletedTask);
@@ -39,8 +39,8 @@ public sealed class MigrationServiceTests
         var targetProvider = Substitute.For<IVersionControlProvider>();
         var progress = Substitute.For<IMigrationProgress>();
         var service = new MigrationService(providerFactory);
-        var sourceEndpoint = new RepositoryEndpoint { Type = RepoType.Svn, UrlOrPath = "svn://source/repo" };
-        var targetEndpoint = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
+        var sourceEndpoint = new RepositoryEndpoint { ProviderKey = "svn", UrlOrPath = "svn://source/repo" };
+        var targetEndpoint = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
         var query = new ChangeSetQuery();
         var options = new MigrationOptions { VerboseProgress = true };
         var changeSet = new ChangeSetInfo
@@ -57,8 +57,8 @@ public sealed class MigrationServiceTests
             ]
         };
 
-        providerFactory.Create(RepoType.Svn).Returns(sourceProvider);
-        providerFactory.Create(RepoType.Git).Returns(targetProvider);
+        providerFactory.Create("svn").Returns(sourceProvider);
+        providerFactory.Create("git").Returns(targetProvider);
         sourceProvider.Name.Returns("SVN");
         targetProvider.Name.Returns("Git");
         sourceProvider.OpenAsync(sourceEndpoint, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
@@ -107,8 +107,8 @@ public sealed class MigrationServiceTests
         var targetProvider = Substitute.For<IVersionControlProvider>();
         var progress = Substitute.For<IMigrationProgress>();
         var service = new MigrationService(providerFactory);
-        var sourceEndpoint = new RepositoryEndpoint { Type = RepoType.Svn, UrlOrPath = "svn://source/repo" };
-        var targetEndpoint = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "KG" };
+        var sourceEndpoint = new RepositoryEndpoint { ProviderKey = "svn", UrlOrPath = "svn://source/repo" };
+        var targetEndpoint = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "KG" };
         var query = new ChangeSetQuery();
         var options = new MigrationOptions { ProjectionMode = MigrationProjectionMode.SubdirectoryBranches, BranchSplitDepth = 2 };
         var changeSet = new ChangeSetInfo
@@ -119,8 +119,8 @@ public sealed class MigrationServiceTests
             Timestamp = new DateTimeOffset(2024, 1, 1, 8, 0, 0, TimeSpan.Zero)
         };
 
-        providerFactory.Create(RepoType.Svn).Returns(sourceProvider);
-        providerFactory.Create(RepoType.Git).Returns(targetProvider);
+        providerFactory.Create("svn").Returns(sourceProvider);
+        providerFactory.Create("git").Returns(targetProvider);
         sourceProvider.Name.Returns("SVN");
         targetProvider.Name.Returns("Git");
         sourceProvider.OpenAsync(sourceEndpoint, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
@@ -158,8 +158,8 @@ public sealed class MigrationServiceTests
         var targetProvider = Substitute.For<IVersionControlProvider>();
         var progress = Substitute.For<IMigrationProgress>();
         var service = new MigrationService(providerFactory);
-        var sourceEndpoint = new RepositoryEndpoint { Type = RepoType.Svn, UrlOrPath = "svn://source/repo" };
-        var targetEndpoint = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
+        var sourceEndpoint = new RepositoryEndpoint { ProviderKey = "svn", UrlOrPath = "svn://source/repo" };
+        var targetEndpoint = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
         var query = new ChangeSetQuery();
         var options = new MigrationOptions
         {
@@ -175,8 +175,8 @@ public sealed class MigrationServiceTests
             Timestamp = new DateTimeOffset(2024, 1, 1, 8, 0, 0, TimeSpan.Zero)
         };
 
-        providerFactory.Create(RepoType.Svn).Returns(enumerateProvider, exportProvider);
-        providerFactory.Create(RepoType.Git).Returns(targetProvider);
+        providerFactory.Create("svn").Returns(enumerateProvider, exportProvider);
+        providerFactory.Create("git").Returns(targetProvider);
         enumerateProvider.Name.Returns("SVN");
         exportProvider.Name.Returns("SVN");
         targetProvider.Name.Returns("Git");
@@ -246,8 +246,8 @@ public sealed class MigrationServiceTests
         var targetProvider = Substitute.For<IVersionControlProvider>();
         var progress = Substitute.For<IMigrationProgress>();
         var service = new MigrationService(providerFactory);
-        var sourceEndpoint = new RepositoryEndpoint { Type = RepoType.Svn, UrlOrPath = "svn://source/repo" };
-        var targetEndpoint = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
+        var sourceEndpoint = new RepositoryEndpoint { ProviderKey = "svn", UrlOrPath = "svn://source/repo" };
+        var targetEndpoint = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
         var query = new ChangeSetQuery();
         var options = new MigrationOptions
         {
@@ -263,8 +263,8 @@ public sealed class MigrationServiceTests
         var tcsSecondExportCanFinish = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var tcsFirstCommitReached = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        providerFactory.Create(RepoType.Svn).Returns(enumerateProvider, exportProvider);
-        providerFactory.Create(RepoType.Git).Returns(targetProvider);
+        providerFactory.Create("svn").Returns(enumerateProvider, exportProvider);
+        providerFactory.Create("git").Returns(targetProvider);
         enumerateProvider.Name.Returns("SVN");
         exportProvider.Name.Returns("SVN");
         targetProvider.Name.Returns("Git");
@@ -316,8 +316,8 @@ public sealed class MigrationServiceTests
         var targetProvider = Substitute.For<IVersionControlProvider>();
         var progress = Substitute.For<IMigrationProgress>();
         var service = new MigrationService(providerFactory);
-        var sourceEndpoint = new RepositoryEndpoint { Type = RepoType.Svn, UrlOrPath = "svn://source/repo" };
-        var targetEndpoint = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
+        var sourceEndpoint = new RepositoryEndpoint { ProviderKey = "svn", UrlOrPath = "svn://source/repo" };
+        var targetEndpoint = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
         var query = new ChangeSetQuery();
         var options = new MigrationOptions
         {
@@ -333,8 +333,8 @@ public sealed class MigrationServiceTests
             Timestamp = new DateTimeOffset(2024, 1, 1, 8, 0, 0, TimeSpan.Zero)
         };
 
-        providerFactory.Create(RepoType.Svn).Returns(enumerateProvider, exportProvider);
-        providerFactory.Create(RepoType.Git).Returns(targetProvider);
+        providerFactory.Create("svn").Returns(enumerateProvider, exportProvider);
+        providerFactory.Create("git").Returns(targetProvider);
         enumerateProvider.Name.Returns("SVN");
         exportProvider.Name.Returns("SVN");
         targetProvider.Name.Returns("Git");

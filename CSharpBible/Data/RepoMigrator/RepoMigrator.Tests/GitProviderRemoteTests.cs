@@ -18,7 +18,7 @@ public sealed class GitProviderRemoteTests
         var calls = new List<string>();
         var endpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Git,
+            ProviderKey = "git",
             UrlOrPath = "https://example.org/repo.git"
         };
 
@@ -61,7 +61,7 @@ public sealed class GitProviderRemoteTests
     {
         var endpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Git,
+            ProviderKey = "git",
             UrlOrPath = "https://example.org/repo.git",
             BranchOrTrunk = "main"
         };
@@ -106,13 +106,13 @@ public sealed class GitProviderRemoteTests
 
         var sourceEndpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Git,
+            ProviderKey = "git",
             UrlOrPath = sSourcePath,
             BranchOrTrunk = "main"
         };
         var targetEndpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Git,
+            ProviderKey = "git",
             UrlOrPath = "https://example.org/target.git"
         };
         var options = new MigrationOptions
@@ -156,6 +156,108 @@ public sealed class GitProviderRemoteTests
     }
 
     [TestMethod]
+    public async Task EnsureTagAsync_WaitsForPendingBackgroundBranchPush_BeforeRemoteTagPush()
+    {
+        var sRootPath = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
+        var sWorkPath = Path.Combine(sRootPath, "work");
+        Directory.CreateDirectory(sWorkPath);
+
+        var targetEndpoint = new RepositoryEndpoint
+        {
+            ProviderKey = "git",
+            UrlOrPath = "https://example.org/target.git",
+            BranchOrTrunk = "main"
+        };
+
+        var gate = new SemaphoreSlim(0, 1);
+        var events = new List<string>();
+
+        try
+        {
+            await WithGitCommandRunnerAndPushAsync(
+                runner: async (arguments, _workingDir, operation, _ct) =>
+                {
+                    lock (events)
+                    {
+                        events.Add($"runner:{operation}:{arguments}");
+                    }
+
+                    if (string.Equals(operation, "Git-Tag-Push", StringComparison.Ordinal))
+                    {
+                        var released = await gate.WaitAsync(TimeSpan.FromSeconds(2));
+                        Assert.IsTrue(released, "Tag push should wait until the pending branch push finished.");
+                    }
+
+                    return "ok";
+                },
+                pushBranchAsync: async (provider, branchName, ct) =>
+                {
+                    lock (events)
+                    {
+                        events.Add($"push:{branchName}:start");
+                    }
+
+                    await Task.Delay(100, ct);
+                    var method = typeof(GitProvider).GetMethod("PushBranchAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+                    Assert.IsNotNull(method);
+                    var task = (Task)method.Invoke(provider, new object?[] { branchName, ct })!;
+                    await task;
+
+                    lock (events)
+                    {
+                        events.Add($"push:{branchName}:end");
+                    }
+
+                    gate.Release();
+                },
+                testAction: async () =>
+                {
+                    await using var provider = new GitProvider();
+                    await provider.InitializeTargetAsync(targetEndpoint, emptyInit: true, CancellationToken.None);
+
+                    File.WriteAllText(Path.Combine(sWorkPath, "a.txt"), "one");
+                    await provider.CommitSnapshotAsync(sWorkPath, new CommitMetadata
+                    {
+                        Message = "rev-1",
+                        AuthorName = "alice",
+                        AuthorEmail = "alice@example.org",
+                        Timestamp = DateTimeOffset.UtcNow,
+                        TargetBranch = "main"
+                    }, CancellationToken.None);
+
+                    for (var iAttempt = 0; iAttempt < 20; iAttempt++)
+                    {
+                        lock (events)
+                        {
+                            if (events.Any(entry => string.Equals(entry, "push:main:start", StringComparison.Ordinal)))
+                                break;
+                        }
+
+                        await Task.Delay(25);
+                    }
+
+                    var headCommitId = await provider.GetHeadCommitIdAsync(CancellationToken.None);
+                    Assert.IsFalse(string.IsNullOrWhiteSpace(headCommitId));
+                    await provider.EnsureTagAsync("v1.0", headCommitId!, CancellationToken.None);
+
+                    lock (events)
+                    {
+                        var branchEndIndex = events.FindIndex(entry => string.Equals(entry, "push:main:end", StringComparison.Ordinal));
+                        var tagPushIndex = events.FindIndex(entry => entry.StartsWith("runner:Git-Tag-Push:", StringComparison.Ordinal));
+                        Assert.IsTrue(branchEndIndex >= 0, "The background branch push should complete.");
+                        Assert.IsTrue(tagPushIndex >= 0, "The tag push should run.");
+                        Assert.IsTrue(branchEndIndex < tagPushIndex, "The remote tag push must not overlap the pending background branch push.");
+                    }
+                });
+        }
+        finally
+        {
+            gate.Dispose();
+            TryDeleteDirectoryWithRetry(sRootPath);
+        }
+    }
+
+    [TestMethod]
     public async Task CommitSnapshotAsync_WithRemoteTarget_SchedulesPushAfterEachRevision()
     {
         var sRootPath = Path.Combine(Path.GetTempPath(), "RepoMigrator.Tests", Guid.NewGuid().ToString("N"));
@@ -164,7 +266,7 @@ public sealed class GitProviderRemoteTests
 
         var targetEndpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Git,
+            ProviderKey = "git",
             UrlOrPath = "https://example.org/target.git",
             BranchOrTrunk = "main"
         };

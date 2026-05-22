@@ -17,7 +17,7 @@ public sealed class VersionControlMigrationDestinationProviderTests
         var destination = new MigrationDestinationDefinition
         {
             Kind = MigrationDestinationKind.Repository,
-            Repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
+            Repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
         };
         var progress = Substitute.For<IMigrationProgress>();
         var workDir = CreateTempDirectory();
@@ -63,7 +63,7 @@ public sealed class VersionControlMigrationDestinationProviderTests
         var destination = new MigrationDestinationDefinition
         {
             Kind = MigrationDestinationKind.Repository,
-            Repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
+            Repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
         };
 
         await destinationProvider.InitializeAsync(destination, CancellationToken.None);

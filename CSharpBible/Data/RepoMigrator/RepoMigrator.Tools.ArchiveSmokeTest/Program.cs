@@ -44,7 +44,7 @@ internal static class Program
             }))
             .AddSingleton<RepoMigrator.Core.Abstractions.IMigrationSourceProviderFactory>(sp => sp.GetRequiredService<ArchiveSmokeTestProviderFactory>())
             .AddSingleton<IArchiveImportPlanner, ArchiveImportPlanner>()
-            .AddSingleton<IArchiveImportStateStore>(_ => new DevOpsArchiveImportStateStore(options.WorkspaceRootPath))
+            .AddSingleton<IArchiveImportStateStore>(_ => new FileSystemArchiveImportStateStore(Path.Combine(options.WorkspaceRootPath, ".RepoMigratorRuntime")))
             .AddSingleton<ArchiveSmokeTestService>()
             .BuildServiceProvider();
 

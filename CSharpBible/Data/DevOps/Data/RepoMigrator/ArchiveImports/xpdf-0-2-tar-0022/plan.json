@@ -1,0 +1,583 @@
+{
+  "schemaVersion": 1,
+  "planId": "xpdf-0-2-tar-0022",
+  "createdUtc": "2026-05-18T16:39:37.5721929+00:00",
+  "source": {
+    "kind": 1,
+    "repository": null,
+    "providerData": {
+      "Archive.LocationKind": "LocalDirectory",
+      "Archive.Location": "C:\\Projekte\\Cpp\\xpdf",
+      "Archive.AllowedExtensions": "",
+      "Archive.AllowRelativeLinks": "False",
+      "Archive.RecursiveDirectoryScan": "False"
+    }
+  },
+  "destination": {
+    "kind": 1,
+    "repository": null,
+    "providerData": {}
+  },
+  "items": [
+    {
+      "snapshotId": "xpdf-0.2.tar.gz",
+      "finalOrderIndex": 0,
+      "sourceItem": {
+        "itemId": "xpdf-0.2.tar.gz",
+        "snapshotId": "xpdf-0.2.tar.gz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.2.tar.gz",
+        "displayName": "xpdf-0.2.tar.gz"
+      },
+      "finalTagName": "xpdf-0.2",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.2.tar.gz",
+        "ArchiveFileName": "xpdf-0.2.tar.gz",
+        "ArchiveBaseName": "xpdf-0.2",
+        "Extraction.RootPath": "xpdf-0.2",
+        "Ordering.DetectedVersion": "0.2",
+        "Ordering.NewestEntryTimestamp": "1995-12-12T06:52:25.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:11.1201840\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.2.tar.gz",
+        "Ordering.DiscoveryIndex": "0"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.3.tar.gz",
+      "finalOrderIndex": 1,
+      "sourceItem": {
+        "itemId": "xpdf-0.3.tar.gz",
+        "snapshotId": "xpdf-0.3.tar.gz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.3.tar.gz",
+        "displayName": "xpdf-0.3.tar.gz"
+      },
+      "finalTagName": "xpdf-0.3",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.3.tar.gz",
+        "ArchiveFileName": "xpdf-0.3.tar.gz",
+        "ArchiveBaseName": "xpdf-0.3",
+        "Extraction.RootPath": "xpdf-0.3",
+        "Ordering.DetectedVersion": "0.3",
+        "Ordering.NewestEntryTimestamp": "1996-01-13T19:59:33.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:12.8380606\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.3.tar.gz",
+        "Ordering.DiscoveryIndex": "1"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.4.tar.gz",
+      "finalOrderIndex": 2,
+      "sourceItem": {
+        "itemId": "xpdf-0.4.tar.gz",
+        "snapshotId": "xpdf-0.4.tar.gz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.4.tar.gz",
+        "displayName": "xpdf-0.4.tar.gz"
+      },
+      "finalTagName": "xpdf-0.4",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.4.tar.gz",
+        "ArchiveFileName": "xpdf-0.4.tar.gz",
+        "ArchiveBaseName": "xpdf-0.4",
+        "Extraction.RootPath": "xpdf-0.4",
+        "Ordering.DetectedVersion": "0.4",
+        "Ordering.NewestEntryTimestamp": "1996-04-26T02:32:12.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:14.5959377\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.4.tar.gz",
+        "Ordering.DiscoveryIndex": "2"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.5.tar.gz",
+      "finalOrderIndex": 3,
+      "sourceItem": {
+        "itemId": "xpdf-0.5.tar.gz",
+        "snapshotId": "xpdf-0.5.tar.gz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.5.tar.gz",
+        "displayName": "xpdf-0.5.tar.gz"
+      },
+      "finalTagName": "xpdf-0.5",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.5.tar.gz",
+        "ArchiveFileName": "xpdf-0.5.tar.gz",
+        "ArchiveBaseName": "xpdf-0.5",
+        "Extraction.RootPath": "xpdf-0.5",
+        "Ordering.DetectedVersion": "0.5",
+        "Ordering.NewestEntryTimestamp": "1996-05-24T05:07:24.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:16.0860633\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.5.tar.gz",
+        "Ordering.DiscoveryIndex": "3"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.6.tar.gz",
+      "finalOrderIndex": 4,
+      "sourceItem": {
+        "itemId": "xpdf-0.6.tar.gz",
+        "snapshotId": "xpdf-0.6.tar.gz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.6.tar.gz",
+        "displayName": "xpdf-0.6.tar.gz"
+      },
+      "finalTagName": "xpdf-0.6",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.6.tar.gz",
+        "ArchiveFileName": "xpdf-0.6.tar.gz",
+        "ArchiveBaseName": "xpdf-0.6",
+        "Extraction.RootPath": "xpdf-0.6",
+        "Ordering.DetectedVersion": "0.6",
+        "Ordering.NewestEntryTimestamp": "1996-11-13T01:55:17.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:17.3757435\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.6.tar.gz",
+        "Ordering.DiscoveryIndex": "4"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.7.tar.gz",
+      "finalOrderIndex": 5,
+      "sourceItem": {
+        "itemId": "xpdf-0.7.tar.gz",
+        "snapshotId": "xpdf-0.7.tar.gz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.7.tar.gz",
+        "displayName": "xpdf-0.7.tar.gz"
+      },
+      "finalTagName": "xpdf-0.7",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.7.tar.gz",
+        "ArchiveFileName": "xpdf-0.7.tar.gz",
+        "ArchiveBaseName": "xpdf-0.7",
+        "Extraction.RootPath": "xpdf-0.7",
+        "Ordering.DetectedVersion": "0.7",
+        "Ordering.NewestEntryTimestamp": "1997-05-29T01:10:11.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:18.7485132\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.7.tar.gz",
+        "Ordering.DiscoveryIndex": "5"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.7a.tar.gz",
+      "finalOrderIndex": 6,
+      "sourceItem": {
+        "itemId": "xpdf-0.7a.tar.gz",
+        "snapshotId": "xpdf-0.7a.tar.gz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.7a.tar.gz",
+        "displayName": "xpdf-0.7a.tar.gz"
+      },
+      "finalTagName": "xpdf-0.7a",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.7a.tar.gz",
+        "ArchiveFileName": "xpdf-0.7a.tar.gz",
+        "ArchiveBaseName": "xpdf-0.7a",
+        "Extraction.RootPath": "xpdf-0.7a",
+        "Ordering.DetectedVersion": "0.7",
+        "Ordering.NewestEntryTimestamp": "1998-02-23T04:44:27.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:20.3566752\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.7a.tar.gz",
+        "Ordering.DiscoveryIndex": "6"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.80.tgz",
+      "finalOrderIndex": 7,
+      "sourceItem": {
+        "itemId": "xpdf-0.80.tgz",
+        "snapshotId": "xpdf-0.80.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.80.tgz",
+        "displayName": "xpdf-0.80.tgz"
+      },
+      "finalTagName": "xpdf-0.80",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.80.tgz",
+        "ArchiveFileName": "xpdf-0.80.tgz",
+        "ArchiveBaseName": "xpdf-0.80",
+        "Extraction.RootPath": "xpdf-0.80",
+        "Ordering.DetectedVersion": "0.80",
+        "Ordering.NewestEntryTimestamp": "1998-11-28T03:49:26.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:21.6291013\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.80.tgz",
+        "Ordering.DiscoveryIndex": "7"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.90.tgz",
+      "finalOrderIndex": 8,
+      "sourceItem": {
+        "itemId": "xpdf-0.90.tgz",
+        "snapshotId": "xpdf-0.90.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.90.tgz",
+        "displayName": "xpdf-0.90.tgz"
+      },
+      "finalTagName": "xpdf-0.90",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.90.tgz",
+        "ArchiveFileName": "xpdf-0.90.tgz",
+        "ArchiveBaseName": "xpdf-0.90",
+        "Extraction.RootPath": "xpdf-0.90",
+        "Ordering.DetectedVersion": "0.90",
+        "Ordering.NewestEntryTimestamp": "1999-08-03T04:45:28.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:22.8004199\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.90.tgz",
+        "Ordering.DiscoveryIndex": "8"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.91.tgz",
+      "finalOrderIndex": 9,
+      "sourceItem": {
+        "itemId": "xpdf-0.91.tgz",
+        "snapshotId": "xpdf-0.91.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.91.tgz",
+        "displayName": "xpdf-0.91.tgz"
+      },
+      "finalTagName": "xpdf-0.91",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.91.tgz",
+        "ArchiveFileName": "xpdf-0.91.tgz",
+        "ArchiveBaseName": "xpdf-0.91",
+        "Extraction.RootPath": "xpdf-0.91",
+        "Ordering.DetectedVersion": "0.91",
+        "Ordering.NewestEntryTimestamp": "2000-08-15T05:01:52.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:24.1231649\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.91.tgz",
+        "Ordering.DiscoveryIndex": "9"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.91a.tgz",
+      "finalOrderIndex": 10,
+      "sourceItem": {
+        "itemId": "xpdf-0.91a.tgz",
+        "snapshotId": "xpdf-0.91a.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.91a.tgz",
+        "displayName": "xpdf-0.91a.tgz"
+      },
+      "finalTagName": "xpdf-0.91a",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.91a.tgz",
+        "ArchiveFileName": "xpdf-0.91a.tgz",
+        "ArchiveBaseName": "xpdf-0.91a",
+        "Extraction.RootPath": "xpdf-0.91a",
+        "Ordering.DetectedVersion": "0.91",
+        "Ordering.NewestEntryTimestamp": "2000-10-12T06:16:59.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:25.3457635\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.91a.tgz",
+        "Ordering.DiscoveryIndex": "10"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.91b.tgz",
+      "finalOrderIndex": 11,
+      "sourceItem": {
+        "itemId": "xpdf-0.91b.tgz",
+        "snapshotId": "xpdf-0.91b.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.91b.tgz",
+        "displayName": "xpdf-0.91b.tgz"
+      },
+      "finalTagName": "xpdf-0.91b",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.91b.tgz",
+        "ArchiveFileName": "xpdf-0.91b.tgz",
+        "ArchiveBaseName": "xpdf-0.91b",
+        "Extraction.RootPath": "xpdf-0.91b",
+        "Ordering.DetectedVersion": "0.91",
+        "Ordering.NewestEntryTimestamp": "2000-10-30T06:43:02.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:26.6349683\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.91b.tgz",
+        "Ordering.DiscoveryIndex": "11"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.91c.tgz",
+      "finalOrderIndex": 12,
+      "sourceItem": {
+        "itemId": "xpdf-0.91c.tgz",
+        "snapshotId": "xpdf-0.91c.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.91c.tgz",
+        "displayName": "xpdf-0.91c.tgz"
+      },
+      "finalTagName": "xpdf-0.91c",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.91c.tgz",
+        "ArchiveFileName": "xpdf-0.91c.tgz",
+        "ArchiveBaseName": "xpdf-0.91c",
+        "Extraction.RootPath": "xpdf-0.91c",
+        "Ordering.DetectedVersion": "0.91",
+        "Ordering.NewestEntryTimestamp": "2000-11-20T00:02:01.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:28.0886103\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.91c.tgz",
+        "Ordering.DiscoveryIndex": "12"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.92.tgz",
+      "finalOrderIndex": 13,
+      "sourceItem": {
+        "itemId": "xpdf-0.92.tgz",
+        "snapshotId": "xpdf-0.92.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92.tgz",
+        "displayName": "xpdf-0.92.tgz"
+      },
+      "finalTagName": "xpdf-0.92",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92.tgz",
+        "ArchiveFileName": "xpdf-0.92.tgz",
+        "ArchiveBaseName": "xpdf-0.92",
+        "Extraction.RootPath": "xpdf-0.92",
+        "Ordering.DetectedVersion": "0.92",
+        "Ordering.NewestEntryTimestamp": "2000-12-04T04:28:07.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:29.4344525\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.92.tgz",
+        "Ordering.DiscoveryIndex": "13"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.92a.tgz",
+      "finalOrderIndex": 14,
+      "sourceItem": {
+        "itemId": "xpdf-0.92a.tgz",
+        "snapshotId": "xpdf-0.92a.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92a.tgz",
+        "displayName": "xpdf-0.92a.tgz"
+      },
+      "finalTagName": "xpdf-0.92a",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92a.tgz",
+        "ArchiveFileName": "xpdf-0.92a.tgz",
+        "ArchiveBaseName": "xpdf-0.92a",
+        "Extraction.RootPath": "xpdf-0.92a",
+        "Ordering.DetectedVersion": "0.92",
+        "Ordering.NewestEntryTimestamp": "2000-12-17T19:40:59.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:30.8117770\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.92a.tgz",
+        "Ordering.DiscoveryIndex": "14"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.92b.tgz",
+      "finalOrderIndex": 15,
+      "sourceItem": {
+        "itemId": "xpdf-0.92b.tgz",
+        "snapshotId": "xpdf-0.92b.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92b.tgz",
+        "displayName": "xpdf-0.92b.tgz"
+      },
+      "finalTagName": "xpdf-0.92b",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92b.tgz",
+        "ArchiveFileName": "xpdf-0.92b.tgz",
+        "ArchiveBaseName": "xpdf-0.92b",
+        "Extraction.RootPath": "xpdf-0.92b",
+        "Ordering.DetectedVersion": "0.92",
+        "Ordering.NewestEntryTimestamp": "2001-01-07T23:28:13.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:32.4175796\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.92b.tgz",
+        "Ordering.DiscoveryIndex": "15"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.92c.tgz",
+      "finalOrderIndex": 16,
+      "sourceItem": {
+        "itemId": "xpdf-0.92c.tgz",
+        "snapshotId": "xpdf-0.92c.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92c.tgz",
+        "displayName": "xpdf-0.92c.tgz"
+      },
+      "finalTagName": "xpdf-0.92c",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92c.tgz",
+        "ArchiveFileName": "xpdf-0.92c.tgz",
+        "ArchiveBaseName": "xpdf-0.92c",
+        "Extraction.RootPath": "xpdf-0.92c",
+        "Ordering.DetectedVersion": "0.92",
+        "Ordering.NewestEntryTimestamp": "2001-06-05T06:03:49.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:33.5795619\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.92c.tgz",
+        "Ordering.DiscoveryIndex": "16"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.92d.tgz",
+      "finalOrderIndex": 17,
+      "sourceItem": {
+        "itemId": "xpdf-0.92d.tgz",
+        "snapshotId": "xpdf-0.92d.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92d.tgz",
+        "displayName": "xpdf-0.92d.tgz"
+      },
+      "finalTagName": "xpdf-0.92d",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92d.tgz",
+        "ArchiveFileName": "xpdf-0.92d.tgz",
+        "ArchiveBaseName": "xpdf-0.92d",
+        "Extraction.RootPath": "xpdf-0.92d",
+        "Ordering.DetectedVersion": "0.92",
+        "Ordering.NewestEntryTimestamp": "2001-06-27T05:09:32.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:34.9248769\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.92d.tgz",
+        "Ordering.DiscoveryIndex": "17"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.92e.tgz",
+      "finalOrderIndex": 18,
+      "sourceItem": {
+        "itemId": "xpdf-0.92e.tgz",
+        "snapshotId": "xpdf-0.92e.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92e.tgz",
+        "displayName": "xpdf-0.92e.tgz"
+      },
+      "finalTagName": "xpdf-0.92e",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.92e.tgz",
+        "ArchiveFileName": "xpdf-0.92e.tgz",
+        "ArchiveBaseName": "xpdf-0.92e",
+        "Extraction.RootPath": "xpdf-0.92e",
+        "Ordering.DetectedVersion": "0.92",
+        "Ordering.NewestEntryTimestamp": "2001-08-24T06:32:11.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:36.4507983\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.92e.tgz",
+        "Ordering.DiscoveryIndex": "18"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.93.tgz",
+      "finalOrderIndex": 19,
+      "sourceItem": {
+        "itemId": "xpdf-0.93.tgz",
+        "snapshotId": "xpdf-0.93.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.93.tgz",
+        "displayName": "xpdf-0.93.tgz"
+      },
+      "finalTagName": "xpdf-0.93",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.93.tgz",
+        "ArchiveFileName": "xpdf-0.93.tgz",
+        "ArchiveBaseName": "xpdf-0.93",
+        "Extraction.RootPath": "xpdf-0.93",
+        "Ordering.DetectedVersion": "0.93",
+        "Ordering.NewestEntryTimestamp": "2001-10-26T17:52:54.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:38.2114085\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.93.tgz",
+        "Ordering.DiscoveryIndex": "19"
+      }
+    },
+    {
+      "snapshotId": "xpdf-0.93a.tgz",
+      "finalOrderIndex": 20,
+      "sourceItem": {
+        "itemId": "xpdf-0.93a.tgz",
+        "snapshotId": "xpdf-0.93a.tgz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.93a.tgz",
+        "displayName": "xpdf-0.93a.tgz"
+      },
+      "finalTagName": "xpdf-0.93a",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-0.93a.tgz",
+        "ArchiveFileName": "xpdf-0.93a.tgz",
+        "ArchiveBaseName": "xpdf-0.93a",
+        "Extraction.RootPath": "xpdf-0.93a",
+        "Ordering.DetectedVersion": "0.93",
+        "Ordering.NewestEntryTimestamp": "2001-11-21T18:17:04.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:39.3851154\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-0.93a.tgz",
+        "Ordering.DiscoveryIndex": "20"
+      }
+    },
+    {
+      "snapshotId": "xpdf-1.00.tar.gz",
+      "finalOrderIndex": 21,
+      "sourceItem": {
+        "itemId": "xpdf-1.00.tar.gz",
+        "snapshotId": "xpdf-1.00.tar.gz",
+        "sourceIdentifier": "C:\\Projekte\\Cpp\\xpdf\\xpdf-1.00.tar.gz",
+        "displayName": "xpdf-1.00.tar.gz"
+      },
+      "finalTagName": "xpdf-1.00",
+      "finalBranchName": null,
+      "createBranch": false,
+      "extensionData": {
+        "DriverId": "tar.gz",
+        "ArchivePathOrUrl": "C:\\Projekte\\Cpp\\xpdf\\xpdf-1.00.tar.gz",
+        "ArchiveFileName": "xpdf-1.00.tar.gz",
+        "ArchiveBaseName": "xpdf-1.00",
+        "Extraction.RootPath": "xpdf-1.00",
+        "Ordering.DetectedVersion": "1.00",
+        "Ordering.NewestEntryTimestamp": "2002-02-01T23:15:45.0000000\u002B00:00",
+        "Ordering.ExternalLastWriteTimestamp": "2026-05-18T16:25:41.2053890\u002B00:00",
+        "Ordering.ArchiveFileName": "xpdf-1.00.tar.gz",
+        "Ordering.DiscoveryIndex": "21"
+      }
+    }
+  ],
+  "status": 1,
+  "notes": null,
+  "sourceProviderData": {
+    "Archive.LocationKind": "LocalDirectory",
+    "Archive.Location": "C:\\Projekte\\Cpp\\xpdf",
+    "Archive.AllowedExtensions": "",
+    "Archive.AllowRelativeLinks": "False",
+    "Archive.RecursiveDirectoryScan": "False"
+  },
+  "destinationProviderData": {}
+}

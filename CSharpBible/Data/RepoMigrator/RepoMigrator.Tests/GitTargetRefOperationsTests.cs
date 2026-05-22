@@ -26,7 +26,7 @@ public sealed class GitTargetRefOperationsTests
             File.WriteAllText(Path.Combine(snapshotPath, "seed.txt"), "changed");
 
             await using var provider = new GitProvider();
-            await provider.InitializeTargetAsync(new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = repositoryPath, BranchOrTrunk = "main" }, true, CancellationToken.None);
+            await provider.InitializeTargetAsync(new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = repositoryPath, BranchOrTrunk = "main" }, true, CancellationToken.None);
             await provider.CommitSnapshotAsync(snapshotPath, new CommitMetadata
             {
                 Message = "import",

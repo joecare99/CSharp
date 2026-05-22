@@ -13,7 +13,7 @@ public sealed class SvnCliProviderCommandTests
     {
         var endpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Svn,
+            ProviderKey = "svn",
             UrlOrPath = "https://example.org/svn/project"
         };
 
@@ -49,12 +49,109 @@ public sealed class SvnCliProviderCommandTests
     }
 
     [TestMethod]
+    public async Task ProbeAsync_WhenInfoXmlIsValid_ReturnsSuccessWithWriteHint()
+    {
+        var endpoint = new RepositoryEndpoint
+        {
+            ProviderKey = "svn",
+            UrlOrPath = "https://example.org/svn/project",
+            BranchOrTrunk = "trunk"
+        };
+
+        await WithSvnCommandRunnerAsync((_ep, arguments, _workingDir, _ct) =>
+        {
+            if (arguments.StartsWith("info --xml \"https://example.org/svn/project/trunk\"", StringComparison.Ordinal))
+            {
+                return Task.FromResult(
+                    "<info><entry revision=\"42\"><url>https://example.org/svn/project/trunk</url><repository><root>https://example.org/svn</root></repository></entry></info>");
+            }
+
+            return Task.FromResult(string.Empty);
+        }, async () =>
+        {
+            await using var provider = new SvnCliProvider();
+
+            var result = await provider.ProbeAsync(endpoint, RepositoryAccessMode.Write, CancellationToken.None);
+
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual("SVN-Repository ist erreichbar.", result.Summary);
+            Assert.IsTrue(result.Details.Any(detail => detail.Contains("URL:", StringComparison.Ordinal)));
+            Assert.IsTrue(result.Details.Any(detail => detail.Contains("Repository Root:", StringComparison.Ordinal)));
+            Assert.IsTrue(result.Details.Any(detail => detail.Contains("Revision:", StringComparison.Ordinal)));
+            Assert.IsTrue(result.Details.Any(detail => detail.Contains("Schreibrechte", StringComparison.Ordinal)));
+        });
+    }
+
+    [TestMethod]
+    public async Task ProbeAsync_WhenCommandFails_ReturnsFailureSummary()
+    {
+        var endpoint = new RepositoryEndpoint
+        {
+            ProviderKey = "svn",
+            UrlOrPath = "https://example.org/svn/project"
+        };
+
+        await WithSvnCommandRunnerAsync((_ep, _arguments, _workingDir, _ct) =>
+                throw new InvalidOperationException("probe failed"),
+            async () =>
+            {
+                await using var provider = new SvnCliProvider();
+
+                var result = await provider.ProbeAsync(endpoint, RepositoryAccessMode.Read, CancellationToken.None);
+
+                Assert.IsFalse(result.Success);
+                Assert.AreEqual("probe failed", result.Summary);
+            });
+    }
+
+    [TestMethod]
+    public async Task GetChangeSetsAsync_AppliesRangeLimitAndReverseOrder()
+    {
+        var endpoint = new RepositoryEndpoint
+        {
+            ProviderKey = "svn",
+            UrlOrPath = "https://example.org/svn/project"
+        };
+
+        await WithSvnCommandRunnerAsync((_ep, arguments, _workingDir, _ct) =>
+        {
+            if (arguments.StartsWith("log -v -r 0:HEAD --xml", StringComparison.Ordinal))
+            {
+                const string logXml = "<log>" +
+                                      "<logentry revision=\"1\"><author>a</author><date>2024-01-01T12:00:00Z</date><msg>r1</msg><paths><path action=\"M\" kind=\"file\">/trunk/a.txt</path></paths></logentry>" +
+                                      "<logentry revision=\"2\"><author>b</author><date>2024-01-02T12:00:00Z</date><msg>r2</msg><paths><path action=\"A\" kind=\"file\">/trunk/b.txt</path></paths></logentry>" +
+                                      "<logentry revision=\"3\"><author>c</author><date>2024-01-03T12:00:00Z</date><msg>r3</msg><paths><path action=\"D\" kind=\"file\">/trunk/c.txt</path></paths></logentry>" +
+                                      "</log>";
+                return Task.FromResult(logXml);
+            }
+
+            return Task.FromResult(string.Empty);
+        }, async () =>
+        {
+            await using var provider = new SvnCliProvider();
+            await provider.OpenAsync(endpoint, CancellationToken.None);
+
+            var changeSets = await provider.GetChangeSetsAsync(new ChangeSetQuery
+            {
+                FromExclusiveId = "1",
+                ToInclusiveId = "3",
+                MaxCount = 1,
+                OldestFirst = false
+            }, CancellationToken.None);
+
+            Assert.AreEqual(1, changeSets.Count);
+            Assert.AreEqual("2", changeSets[0].Id);
+            Assert.AreEqual("r2", changeSets[0].Message);
+        });
+    }
+
+    [TestMethod]
     public async Task InitializeTargetAsync_ForRemote_ExecutesCheckoutWhenWorkingCopyMissing()
     {
         var calls = new List<string>();
         var endpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Svn,
+            ProviderKey = "svn",
             UrlOrPath = "https://example.org/svn/project",
             BranchOrTrunk = "trunk"
         };
@@ -84,7 +181,7 @@ public sealed class SvnCliProviderCommandTests
         var calls = new List<string>();
         var endpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Svn,
+            ProviderKey = "svn",
             UrlOrPath = "https://example.org/svn/project",
             BranchOrTrunk = "branches/release"
         };
@@ -120,7 +217,7 @@ public sealed class SvnCliProviderCommandTests
         var calls = new List<string>();
         var endpoint = new RepositoryEndpoint
         {
-            Type = RepoType.Svn,
+            ProviderKey = "svn",
             UrlOrPath = "https://example.org/svn/project",
             BranchOrTrunk = "trunk"
         };
@@ -156,7 +253,7 @@ public sealed class SvnCliProviderCommandTests
                 await using var provider = new SvnCliProvider();
                 await provider.InitializeTargetAsync(new RepositoryEndpoint
                 {
-                    Type = RepoType.Svn,
+                    ProviderKey = "svn",
                     UrlOrPath = sWorkingCopyPath
                 }, emptyInit: true, CancellationToken.None);
 

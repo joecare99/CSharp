@@ -7,6 +7,8 @@ using RepoMigrator.App.State.Services;
 using RepoMigrator.App.State.Settings;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
+using RepoMigrator.Providers.Archive;
+using RepoMigrator.Providers.Archive.Abstractions;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -15,6 +17,11 @@ namespace RepoMigrator.App.Wpf.ViewModels;
 
 public partial class MainViewModel : ObservableObject, IMigrationProgress
 {
+    private const string GitProviderKey = "git";
+    private const string SvnProviderKey = "svn";
+    private const string ArchiveProviderKey = "archive";
+    private static readonly string[] ArchiveSourceExtensions = [".zip", ".tar.gz", ".tgz"];
+
     private readonly IMigrationService _migration;
     private readonly MigrationEndpointFactory _migrationEndpointFactory;
     private readonly MigrationQueryService _migrationQueryService;
@@ -22,11 +29,13 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     private readonly RepositorySelectionService _repositorySelectionService;
     private readonly IProviderFactory _providerFactory;
     private readonly AppInputStateStore _inputStateStore;
+    private readonly IArchiveMigrationService _archiveMigrationService;
+    private readonly IMigrationSourceProviderFactory _migrationSourceProviderFactory;
     private bool _isLoadingInputState;
     private readonly HashSet<string> _hsSavedGitBranchSelections = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _hsSavedGitTagSelections = new(StringComparer.OrdinalIgnoreCase);
-    private List<RepoTypeRecentValues> _lstRecentSourceUrlsByType = [];
-    private List<RepoTypeRecentValues> _lstRecentTargetUrlsByType = [];
+    private List<ProviderRecentValues> _lstRecentSourceUrlsByType = [];
+    private List<ProviderRecentValues> _lstRecentTargetUrlsByType = [];
     private SourceSelectionResult _sourceSelection = new();
     private TargetSelectionResult _targetSelection = new();
     private string? _sSavedSvnFromRevisionId;
@@ -54,7 +63,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     [NotifyPropertyChangedFor(nameof(CanStartMigration))]
     [NotifyPropertyChangedFor(nameof(OptionsHintMessage))]
     [NotifyPropertyChangedFor(nameof(SourceSummaryName))]
-    public partial RepoType SourceType { get; set; } = RepoType.Git;
+    public partial string SourceProviderKey { get; set; } = GitProviderKey;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanContinueFromSetup))]
     [NotifyPropertyChangedFor(nameof(SetupHintMessage))]
@@ -76,7 +85,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     [NotifyPropertyChangedFor(nameof(CanStartMigration))]
     [NotifyPropertyChangedFor(nameof(OptionsHintMessage))]
     [NotifyPropertyChangedFor(nameof(TargetSummaryName))]
-    public partial RepoType TargetType { get; set; } = RepoType.Git;
+    public partial string TargetProviderKey { get; set; } = GitProviderKey;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanContinueFromSetup))]
     [NotifyPropertyChangedFor(nameof(CanStartMigration))]
@@ -265,7 +274,8 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     public string SourceSummaryCommit => BuildCommitSummary();
     public string TargetSummaryCommit => BuildCommitSummary();
 
-    public ObservableCollection<RepoType> RepoTypes { get; } = new() { RepoType.Git, RepoType.Svn };
+    public ObservableCollection<string> SourceProviderKeys { get; } = new() { GitProviderKey, SvnProviderKey, ArchiveProviderKey };
+    public ObservableCollection<string> TargetProviderKeys { get; } = new() { GitProviderKey, SvnProviderKey };
     public ObservableCollection<GitReferenceSelectionViewModel> GitBranchSelections { get; } = new();
     public ObservableCollection<GitReferenceSelectionViewModel> GitTagSelections { get; } = new();
     public ObservableCollection<RepositoryRevisionInfo> SvnRevisionSelections { get; } = new();
@@ -290,7 +300,9 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         RecentPathHistoryService recentPathHistoryService,
         RepositorySelectionService repositorySelectionService,
         IProviderFactory providerFactory,
-        AppInputStateStore inputStateStore)
+        AppInputStateStore inputStateStore,
+        IArchiveMigrationService archiveMigrationService,
+        IMigrationSourceProviderFactory migrationSourceProviderFactory)
     {
         _migration = migration;
         _migrationEndpointFactory = migrationEndpointFactory;
@@ -299,15 +311,17 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         _repositorySelectionService = repositorySelectionService;
         _providerFactory = providerFactory;
         _inputStateStore = inputStateStore;
+        _archiveMigrationService = archiveMigrationService;
+        _migrationSourceProviderFactory = migrationSourceProviderFactory;
 
         _isLoadingInputState = true;
         var state = _inputStateStore.Load();
-        SourceType = state.SourceType;
+        SourceProviderKey = state.SourceProviderKey;
         SourceUrl = state.SourceUrl;
         SourceBranch = state.SourceBranch;
         SourceUser = state.SourceUser;
         SourcePassword = state.SourcePassword;
-        TargetType = state.TargetType;
+        TargetProviderKey = state.TargetProviderKey;
         TargetUrl = state.TargetUrl;
         TargetBranch = state.TargetBranch;
         TransferGitBranches = state.TransferGitBranches;
@@ -353,6 +367,14 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
         await RunOperationAsync(clearLog: true, async ct =>
         {
+            if (UseArchiveMigrationWorkflow())
+            {
+                await StartArchiveMigrationAsync(ct);
+                CaptureRecentSourceInputs();
+                CaptureRecentTargetInputs();
+                return;
+            }
+
             var sourceEndpoint = CreateSourceEndpoint();
             var targetEndpoint = CreateTargetEndpoint();
             var q = CreateChangeSetQuery();
@@ -441,7 +463,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         => message switch
         {
             MigrationReportMessage.SourceOpening => $"Öffne Quelle ({GetRequired<string>(arrAdditional, 0)}) …",
-            MigrationReportMessage.NativeHistoryTransferStarting => $"Übertrage Historie nativ ({GetRequired<string>(arrAdditional, 0)} -> {GetRequired<RepoType>(arrAdditional, 1)}) …",
+            MigrationReportMessage.NativeHistoryTransferStarting => $"Übertrage Historie nativ ({GetRequired<string>(arrAdditional, 0)} -> {GetRequired<string>(arrAdditional, 1)}) …",
             MigrationReportMessage.ChangeSetsLoading => "Lese Changesets …",
             MigrationReportMessage.NoChangeSetsFound => "Keine Changesets gefunden.",
             MigrationReportMessage.TargetInitializing => $"Initialisiere Ziel ({GetRequired<string>(arrAdditional, 0)}) …",
@@ -486,16 +508,50 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         => string.IsNullOrEmpty(sId) || sId.Length <= 8 ? sId ?? string.Empty : sId[..8];
 
     private RepositoryEndpoint CreateSourceEndpoint()
-        => _migrationEndpointFactory.CreateSourceEndpoint(SourceType, SourceUrl, SourceBranch, SourceUser, SourcePassword);
+        => _migrationEndpointFactory.CreateSourceEndpoint(SourceProviderKey, SourceUrl, SourceBranch, SourceUser, SourcePassword);
 
     private RepositoryEndpoint CreateTargetEndpoint()
-        => _migrationEndpointFactory.CreateTargetEndpoint(TargetType, TargetUrl, TargetBranch, TargetUser, TargetPassword);
+        => _migrationEndpointFactory.CreateTargetEndpoint(TargetProviderKey, TargetUrl, TargetBranch, TargetUser, TargetPassword);
+
+    private bool UseArchiveMigrationWorkflow()
+        => string.Equals(SourceProviderKey, ArchiveProviderKey, StringComparison.OrdinalIgnoreCase)
+           && string.Equals(TargetProviderKey, GitProviderKey, StringComparison.OrdinalIgnoreCase);
+
+    private async Task StartArchiveMigrationAsync(CancellationToken ct)
+    {
+        var source = new ArchiveMigrationSourceDefinition
+        {
+            LocationKind = ArchiveSourceLocationKind.LocalDirectory,
+            Location = SourceUrl,
+            AllowedExtensions = ArchiveSourceExtensions,
+            RecursiveDirectoryScan = true
+        }.ToMigrationSourceDefinition();
+
+        var destination = new MigrationDestinationDefinition
+        {
+            Kind = MigrationDestinationKind.Repository,
+            Repository = CreateTargetEndpoint()
+        };
+
+        Append("Bereite Archiv-Importplan vor …");
+        var plan = await _archiveMigrationService.PreparePlanAsync(source, destination, ct);
+        Append($"Archiv-Importplan erstellt: {plan.PlanId} ({plan.Items.Count} Snapshot(s)).");
+
+        var state = await _archiveMigrationService.ExecuteAsync(plan.PlanId, this, ct);
+        Append($"Archiv-Workflow abgeschlossen: {state.Status}.");
+    }
 
     private async Task ProbeEndpointAsync(string label, RepositoryEndpoint endpoint, RepositoryAccessMode accessMode)
     {
+        if (string.Equals(label, "Quelle", StringComparison.Ordinal) && string.Equals(SourceProviderKey, ArchiveProviderKey, StringComparison.OrdinalIgnoreCase))
+        {
+            await ProbeArchiveSourceAsync();
+            return;
+        }
+
         await RunOperationAsync(clearLog: false, async ct =>
         {
-            await using var provider = _providerFactory.Create(endpoint.Type);
+            await using var provider = _providerFactory.Create(endpoint.ProviderKey);
             Append($"Teste {label} ({provider.Name}) …");
 
             var result = await provider.ProbeAsync(endpoint, accessMode, ct);
@@ -514,8 +570,35 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         });
     }
 
+    private async Task ProbeArchiveSourceAsync()
+    {
+        await RunOperationAsync(clearLog: false, async ct =>
+        {
+            var source = CreateArchiveSourceDefinition().ToMigrationSourceDefinition();
+            var provider = _migrationSourceProviderFactory.Create(source);
+            Append($"Teste Quelle ({provider.Name}) …");
+
+            var plan = await provider.PrepareAsync(source, ct);
+            Append($"Quelle erfolgreich getestet: {plan.Items.Count} Archiv-Snapshot(s) erkannt.");
+
+            ClearGitSelections();
+            ClearSvnSelections();
+            NotifyCapabilityStateChanged();
+            NotifySetupStateChanged();
+        });
+    }
+
+    private ArchiveMigrationSourceDefinition CreateArchiveSourceDefinition()
+        => new()
+        {
+            LocationKind = ArchiveSourceLocationKind.LocalDirectory,
+            Location = SourceUrl,
+            AllowedExtensions = ArchiveSourceExtensions,
+            RecursiveDirectoryScan = true
+        };
+
     private ChangeSetQuery CreateChangeSetQuery()
-        => _migrationQueryService.CreateQuery(SourceType, FromId, ToId, MaxCount, OldestFirst, SvnRevisionSelections, SelectedSvnFromRevisionId, SelectedSvnToRevisionId);
+        => _migrationQueryService.CreateQuery(SourceProviderKey, FromId, ToId, MaxCount, OldestFirst, SvnRevisionSelections, SelectedSvnFromRevisionId, SelectedSvnToRevisionId);
 
     private MigrationOptions CreateMigrationOptions()
     {
@@ -710,7 +793,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
     private void CaptureRecentSourceInputs()
     {
-        _lstRecentSourceUrlsByType = [.. _recentPathHistoryService.AddPath(_lstRecentSourceUrlsByType, SourceType, SourceUrl)];
+        _lstRecentSourceUrlsByType = [.. _recentPathHistoryService.AddPath(_lstRecentSourceUrlsByType, SourceProviderKey, SourceUrl)];
         RefreshSourceUrlHistory();
         ApplyRecentValue(RecentSourceBranches, SourceBranch);
         ApplyRecentValue(RecentSourceUsers, SourceUser);
@@ -718,7 +801,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
     private void CaptureRecentTargetInputs()
     {
-        _lstRecentTargetUrlsByType = [.. _recentPathHistoryService.AddPath(_lstRecentTargetUrlsByType, TargetType, TargetUrl)];
+        _lstRecentTargetUrlsByType = [.. _recentPathHistoryService.AddPath(_lstRecentTargetUrlsByType, TargetProviderKey, TargetUrl)];
         RefreshTargetUrlHistory();
         ApplyRecentValue(RecentTargetBranches, TargetBranch);
         ApplyRecentValue(RecentTargetUsers, TargetUser);
@@ -726,7 +809,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
     private void UpdateResumeFromAfterSuccessfulCommit()
     {
-        var resumeUpdate = _migrationQueryService.UpdateResumeAfterCommit(SourceType, CurrentChangeSetId, SvnRevisionSelections);
+        var resumeUpdate = _migrationQueryService.UpdateResumeAfterCommit(SourceProviderKey, CurrentChangeSetId, SvnRevisionSelections);
         if (!string.IsNullOrWhiteSpace(resumeUpdate.FromExclusiveId))
             FromId = resumeUpdate.FromExclusiveId;
         if (!string.IsNullOrWhiteSpace(resumeUpdate.SelectedSvnFromRevisionId))
@@ -740,10 +823,10 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     }
 
     private void RefreshSourceUrlHistory()
-        => SyncRecentValues(RecentSourceUrls, _recentPathHistoryService.GetPaths(_lstRecentSourceUrlsByType, SourceType));
+        => SyncRecentValues(RecentSourceUrls, _recentPathHistoryService.GetPaths(_lstRecentSourceUrlsByType, SourceProviderKey));
 
     private void RefreshTargetUrlHistory()
-        => SyncRecentValues(RecentTargetUrls, _recentPathHistoryService.GetPaths(_lstRecentTargetUrlsByType, TargetType));
+        => SyncRecentValues(RecentTargetUrls, _recentPathHistoryService.GetPaths(_lstRecentTargetUrlsByType, TargetProviderKey));
 
     private IReadOnlyList<string> GetSetupValidationMessages()
     {
@@ -864,19 +947,19 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     private bool SourceSupportsReferenceSelection
         => _sourceSelection.Capabilities.SupportsBranchSelection
            || _sourceSelection.Capabilities.SupportsTagSelection
-           || SourceType == RepoType.Git;
+           || string.Equals(SourceProviderKey, GitProviderKey, StringComparison.OrdinalIgnoreCase);
 
     private bool SourceSupportsRevisionSelection
         => _sourceSelection.Capabilities.SupportsRevisionSelection
-           || SourceType == RepoType.Svn;
+           || string.Equals(SourceProviderKey, SvnProviderKey, StringComparison.OrdinalIgnoreCase);
 
     private bool SourceSupportsNativeHistoryTransfer
         => _sourceSelection.Capabilities.SupportsNativeHistoryTransfer
-           || SourceType == RepoType.Git;
+           || string.Equals(SourceProviderKey, GitProviderKey, StringComparison.OrdinalIgnoreCase);
 
     private bool TargetSupportsBranchSelection
         => _targetSelection.Capabilities.SupportsBranchSelection
-           || TargetType == RepoType.Git;
+           || string.Equals(TargetProviderKey, GitProviderKey, StringComparison.OrdinalIgnoreCase);
 
     private static string BuildEndpointSummaryName(string sUrlOrPath, string? sBranchOrTrunk)
     {
@@ -902,6 +985,33 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         var sTrimmedPath = sUrlOrPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         var sLeafName = Path.GetFileName(sTrimmedPath);
         return string.IsNullOrWhiteSpace(sLeafName) ? sUrlOrPath : sLeafName;
+    }
+
+    private static bool IsArchiveSourcePath(string? sUrlOrPath)
+    {
+        if (string.IsNullOrWhiteSpace(sUrlOrPath))
+            return false;
+
+        if (Directory.Exists(sUrlOrPath))
+            return true;
+
+        return Path.IsPathFullyQualified(sUrlOrPath)
+            || sUrlOrPath.StartsWith(".", StringComparison.Ordinal)
+            || sUrlOrPath.Contains(Path.DirectorySeparatorChar)
+            || sUrlOrPath.Contains(Path.AltDirectorySeparatorChar);
+    }
+
+    private static bool LooksLikeRepositoryUrl(string? sUrlOrPath)
+    {
+        if (string.IsNullOrWhiteSpace(sUrlOrPath))
+            return false;
+
+        return Uri.TryCreate(sUrlOrPath, UriKind.Absolute, out var uri)
+            && (string.Equals(uri.Scheme, "http", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(uri.Scheme, "https", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(uri.Scheme, "svn", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(uri.Scheme, "git", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(uri.Scheme, "ssh", StringComparison.OrdinalIgnoreCase));
     }
 
     private void SetWorkflowStage(WorkflowStage workflowStage)
@@ -957,7 +1067,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         }
     }
 
-    partial void OnSourceTypeChanged(RepoType value)
+    partial void OnSourceProviderKeyChanged(string value)
     {
         _sourceSelection = new SourceSelectionResult();
         NotifySetupStateChanged();
@@ -1005,7 +1115,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         SetWorkflowStage(WorkflowStage.Setup);
         SaveInputState();
     }
-    partial void OnTargetTypeChanged(RepoType value)
+    partial void OnTargetProviderKeyChanged(string value)
     {
         _targetSelection = new TargetSelectionResult();
         NotifySetupStateChanged();
@@ -1070,12 +1180,12 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
 
         _inputStateStore.Save(new AppInputState
         {
-            SourceType = SourceType,
+            SourceProviderKey = SourceProviderKey,
             SourceUrl = SourceUrl,
             SourceBranch = SourceBranch,
             SourceUser = SourceUser,
             SourcePassword = SourcePassword,
-            TargetType = TargetType,
+            TargetProviderKey = TargetProviderKey,
             TargetUrl = TargetUrl,
             TargetBranch = TargetBranch,
             TargetUser = TargetUser,

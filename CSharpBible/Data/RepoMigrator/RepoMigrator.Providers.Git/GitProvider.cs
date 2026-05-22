@@ -10,6 +10,7 @@ namespace RepoMigrator.Providers.Git;
 
 public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperations
 {
+    public const string ProviderKey = "git";
     private static Func<string, string?, string, CancellationToken, Task<string>> s_runGitCommandAsync = RunGitProcessAsync;
     private static Func<GitProvider, string, CancellationToken, Task> s_pushBranchAsync = static (provider, branchName, ct)
         => provider.PushBranchAsync(branchName, ct);
@@ -18,6 +19,7 @@ public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperatio
     private string? _pushTargetUrl;
     private Repository? _repo;
     private readonly HashSet<string> _hsPendingPushBranchNames = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Task> _dctPendingPushTasksByBranchName = new(StringComparer.OrdinalIgnoreCase);
     private readonly object _pushSyncRoot = new();
     public string Name => "Git";
     public bool SupportsRead => true;
@@ -115,7 +117,10 @@ public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperatio
 
         _repo.Branches.Add(normalizedBranchName, commit);
         if (_pushTargetUrl is not null)
-            await RunGitAsync($"push --set-upstream \"{_pushTargetUrl}\" \"refs/heads/{normalizedBranchName}:refs/heads/{normalizedBranchName}\"", _localPath, "Git-Branch-Push", ct);
+        {
+            await WaitForPendingBranchPushesAsync(excludeBranchName: normalizedBranchName).ConfigureAwait(false);
+            await PushBranchAsync(normalizedBranchName, ct);
+        }
     }
 
     /// <inheritdoc/>
@@ -138,7 +143,11 @@ public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperatio
 
         _repo.ApplyTag(tagName, commit.Sha);
         if (_pushTargetUrl is not null)
-            await RunGitAsync($"push \"{_pushTargetUrl}\" \"refs/tags/{tagName}:refs/tags/{tagName}\"", _localPath, "Git-Tag-Push", ct);
+        {
+            await WaitForPendingBranchPushesAsync().ConfigureAwait(false);
+            await RunExclusiveGitRemoteOperationAsync(
+                () => RunGitAsync($"push \"{_pushTargetUrl}\" \"refs/tags/{tagName}:refs/tags/{tagName}\"", _localPath, "Git-Tag-Push", ct));
+        }
     }
 
     /// <summary>
@@ -279,7 +288,8 @@ public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperatio
     /// </summary>
     public async Task TransferAsync(RepositoryEndpoint source, RepositoryEndpoint target, MigrationOptions options, IMigrationProgress progress, CancellationToken ct)
     {
-        if (source.Type != RepoType.Git || target.Type != RepoType.Git)
+        if (!string.Equals(source.ProviderKey, ProviderKey, StringComparison.OrdinalIgnoreCase)
+            || !string.Equals(target.ProviderKey, ProviderKey, StringComparison.OrdinalIgnoreCase))
             throw new NotSupportedException("Native history transfer is only supported for Git to Git migrations.");
 
         if (LooksLikeRemote(source.UrlOrPath))
@@ -474,21 +484,11 @@ public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperatio
                 _hsPendingPushBranchNames.Add(branchName);
             }
 
-            _ = Task.Run(async () =>
+            var pendingPushTask = Task.Run(async () => await PushPendingBranchAsync(branchName).ConfigureAwait(false));
+            lock (_pushSyncRoot)
             {
-                try
-                {
-                    await s_pushBranchAsync(this, branchName, CancellationToken.None);
-                    lock (_pushSyncRoot)
-                    {
-                        _hsPendingPushBranchNames.Remove(branchName);
-                    }
-                }
-                catch
-                {
-                    // FlushAsync übernimmt ggf. den erneuten Versuch und surfacet Fehler synchron am Ende.
-                }
-            });
+                _dctPendingPushTasksByBranchName[branchName] = pendingPushTask;
+            }
         }
     }
 
@@ -509,15 +509,7 @@ public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperatio
         }
 
         foreach (var sBranchName in lstPendingBranches)
-        {
-            var sPushArgs = $"push --set-upstream \"{_pushTargetUrl}\" \"refs/heads/{sBranchName}:refs/heads/{sBranchName}\"";
-            await RunGitAsync(sPushArgs, _localPath, "Git-Push", ct);
-
-            lock (_pushSyncRoot)
-            {
-                _hsPendingPushBranchNames.Remove(sBranchName);
-            }
-        }
+            await PushPendingBranchAsync(sBranchName, ct);
     }
 
     private async Task PushBranchAsync(string sBranchName, CancellationToken ct)
@@ -526,7 +518,59 @@ public sealed class GitProvider : IVersionControlProvider, IGitTargetRefOperatio
             return;
 
         var sPushArgs = $"push --set-upstream \"{_pushTargetUrl}\" \"refs/heads/{sBranchName}:refs/heads/{sBranchName}\"";
-        await RunGitAsync(sPushArgs, _localPath, "Git-Push", ct);
+        await RunExclusiveGitRemoteOperationAsync(() => RunGitAsync(sPushArgs, _localPath, "Git-Push", ct));
+    }
+
+    private async Task PushPendingBranchAsync(string branchName, CancellationToken ct = default)
+    {
+        try
+        {
+            await s_pushBranchAsync(this, branchName, ct).ConfigureAwait(false);
+        }
+        catch
+        {
+            // FlushAsync übernimmt ggf. den erneuten Versuch und surfacet Fehler synchron am Ende.
+        }
+        finally
+        {
+            lock (_pushSyncRoot)
+            {
+                _hsPendingPushBranchNames.Remove(branchName);
+                _dctPendingPushTasksByBranchName.Remove(branchName);
+            }
+        }
+    }
+
+    private async Task WaitForPendingBranchPushesAsync(string? excludeBranchName = null)
+    {
+        Task[] pendingTasks;
+        lock (_pushSyncRoot)
+        {
+            pendingTasks = _dctPendingPushTasksByBranchName
+                .Where(entry => string.IsNullOrWhiteSpace(excludeBranchName) || !string.Equals(entry.Key, excludeBranchName, StringComparison.OrdinalIgnoreCase))
+                .Select(entry => entry.Value)
+                .ToArray();
+        }
+
+        if (pendingTasks.Length == 0)
+            return;
+
+        await Task.WhenAll(pendingTasks).ConfigureAwait(false);
+    }
+
+    private static readonly SemaphoreSlim s_gitRemoteOperationLock = new(1, 1);
+
+    private static async Task RunExclusiveGitRemoteOperationAsync(Func<Task> operation)
+    {
+        await s_gitRemoteOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            await operation().ConfigureAwait(false);
+        }
+        finally
+        {
+            s_gitRemoteOperationLock.Release();
+        }
     }
 
     private void VerifyGitChangedPathCount(CommitMetadata metadata, IMigrationProgress progress)

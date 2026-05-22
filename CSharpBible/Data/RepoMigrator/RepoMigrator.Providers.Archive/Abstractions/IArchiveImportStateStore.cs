@@ -1,7 +1,7 @@
 namespace RepoMigrator.Providers.Archive.Abstractions;
 
 /// <summary>
-/// Persists durable archive import plans and execution state under the DevOps workspace.
+/// Persists durable archive import plans and execution state under provider-defined runtime storage.
 /// </summary>
 public interface IArchiveImportStateStore
 {
@@ -26,7 +26,7 @@ public interface IArchiveImportStateStore
     Task<ArchiveImportState> LoadStateAsync(string planId, CancellationToken ct);
 
     /// <summary>
-    /// Gets the deterministic workspace directory path for the supplied plan identifier.
+    /// Gets the deterministic storage directory path for the supplied plan identifier.
     /// </summary>
     string GetPlanDirectoryPath(string planId);
 }

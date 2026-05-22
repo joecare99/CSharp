@@ -8,7 +8,7 @@ namespace RepoMigrator.Providers.Archive.Services;
 /// </summary>
 public sealed class DirectoryArchiveSnapshotSourceProvider : IMigrationSourceProvider
 {
-    private static readonly string[] DefaultArchiveExtensions = [".zip", ".7z", ".tar", ".tar.gz"];
+    private static readonly string[] DefaultArchiveExtensions = [".zip", ".7z", ".tar", ".tar.gz", ".tgz"];
     private readonly string _workspaceRootPath;
 
     /// <summary>

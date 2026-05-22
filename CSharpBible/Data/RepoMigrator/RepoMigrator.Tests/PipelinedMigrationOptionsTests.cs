@@ -147,7 +147,7 @@ public sealed class PipelinedMigrationOptionsTests
 
         var endpoint = options.CreateSourceEndpoint();
 
-        Assert.AreEqual(RepoType.Svn, endpoint.Type);
+        Assert.AreEqual("svn", endpoint.ProviderKey);
         Assert.AreEqual("svn://example/source", endpoint.UrlOrPath);
         Assert.AreEqual("trunk", endpoint.BranchOrTrunk);
         Assert.IsNotNull(endpoint.Credentials);
@@ -168,7 +168,7 @@ public sealed class PipelinedMigrationOptionsTests
 
         var endpoint = options.CreateTargetEndpoint();
 
-        Assert.AreEqual(RepoType.Git, endpoint.Type);
+        Assert.AreEqual("git", endpoint.ProviderKey);
         Assert.AreEqual("C:/git-target", endpoint.UrlOrPath);
         Assert.AreEqual("main", endpoint.BranchOrTrunk);
         Assert.IsNotNull(endpoint.Credentials);

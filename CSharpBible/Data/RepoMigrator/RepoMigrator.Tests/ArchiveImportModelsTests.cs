@@ -100,7 +100,7 @@ public sealed class ArchiveImportModelsTests
         var destination = new MigrationDestinationDefinition
         {
             Kind = MigrationDestinationKind.Repository,
-            Repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
+            Repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" }
         };
         var sourceItem = new MigrationSourcePlanItem
         {

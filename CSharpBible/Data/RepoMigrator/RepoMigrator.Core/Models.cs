@@ -1,8 +1,6 @@
 ﻿// RepoMigrator.Core/Models.cs
 namespace RepoMigrator.Core;
 
-public enum RepoType { Git, Svn, Custom }
-
 public enum RepositoryAccessMode { Read, Write }
 
 /// <summary>
@@ -34,7 +32,7 @@ public enum MigrationProjectionMode
 
 public sealed class RepositoryEndpoint
 {
-    public RepoType Type { get; init; }
+    public string ProviderKey { get; init; } = string.Empty;
     public string UrlOrPath { get; init; } = "";
     public string? BranchOrTrunk { get; init; } // e.g. "main", "trunk", or null
     public RepoCredentials? Credentials { get; init; }

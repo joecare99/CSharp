@@ -8,27 +8,27 @@ public sealed class RepoTypeRecentValueHistoryTests
     [TestMethod]
     public void AddValue_StoresValuesPerRepoType()
     {
-        IReadOnlyList<RepoTypeRecentValues> lstHistory = [];
+        IReadOnlyList<ProviderRecentValues> lstHistory = [];
 
-        lstHistory = RepoTypeRecentValueHistory.AddValue(lstHistory, RepoType.Git, "git-path");
-        lstHistory = RepoTypeRecentValueHistory.AddValue(lstHistory, RepoType.Svn, "svn-path");
+        lstHistory = ProviderRecentValueHistory.AddValue(lstHistory, "git", "git-path");
+        lstHistory = ProviderRecentValueHistory.AddValue(lstHistory, "svn", "svn-path");
 
-        CollectionAssert.AreEqual(new[] { "git-path" }, RepoTypeRecentValueHistory.GetValues(lstHistory, RepoType.Git).ToList());
-        CollectionAssert.AreEqual(new[] { "svn-path" }, RepoTypeRecentValueHistory.GetValues(lstHistory, RepoType.Svn).ToList());
+        CollectionAssert.AreEqual(new[] { "git-path" }, ProviderRecentValueHistory.GetValues(lstHistory, "git").ToList());
+        CollectionAssert.AreEqual(new[] { "svn-path" }, ProviderRecentValueHistory.GetValues(lstHistory, "svn").ToList());
     }
 
     [TestMethod]
     public void AddValue_PreservesOtherRepoTypeHistories()
     {
-        IReadOnlyList<RepoTypeRecentValues> lstHistory =
+        IReadOnlyList<ProviderRecentValues> lstHistory =
         [
-            new RepoTypeRecentValues { RepoType = RepoType.Git, Values = ["git-old"] },
-            new RepoTypeRecentValues { RepoType = RepoType.Svn, Values = ["svn-old"] }
+            new ProviderRecentValues { ProviderKey = "git", Values = ["git-old"] },
+            new ProviderRecentValues { ProviderKey = "svn", Values = ["svn-old"] }
         ];
 
-        lstHistory = RepoTypeRecentValueHistory.AddValue(lstHistory, RepoType.Git, "git-new");
+        lstHistory = ProviderRecentValueHistory.AddValue(lstHistory, "git", "git-new");
 
-        CollectionAssert.AreEqual(new[] { "git-new", "git-old" }, RepoTypeRecentValueHistory.GetValues(lstHistory, RepoType.Git).ToList());
-        CollectionAssert.AreEqual(new[] { "svn-old" }, RepoTypeRecentValueHistory.GetValues(lstHistory, RepoType.Svn).ToList());
+        CollectionAssert.AreEqual(new[] { "git-new", "git-old" }, ProviderRecentValueHistory.GetValues(lstHistory, "git").ToList());
+        CollectionAssert.AreEqual(new[] { "svn-old" }, ProviderRecentValueHistory.GetValues(lstHistory, "svn").ToList());
     }
 }

@@ -10,10 +10,10 @@ public sealed class MigrationEndpointFactory
     /// <summary>
     /// Creates a source endpoint.
     /// </summary>
-    public RepositoryEndpoint CreateSourceEndpoint(RepoType repoType, string sUrlOrPath, string? sBranchOrTrunk, string? sUser, string? sPassword)
+    public RepositoryEndpoint CreateSourceEndpoint(string providerKey, string sUrlOrPath, string? sBranchOrTrunk, string? sUser, string? sPassword)
         => new()
         {
-            Type = repoType,
+            ProviderKey = providerKey,
             UrlOrPath = sUrlOrPath,
             BranchOrTrunk = sBranchOrTrunk,
             Credentials = new RepoCredentials { Username = sUser, Password = sPassword }
@@ -22,10 +22,10 @@ public sealed class MigrationEndpointFactory
     /// <summary>
     /// Creates a target endpoint.
     /// </summary>
-    public RepositoryEndpoint CreateTargetEndpoint(RepoType repoType, string sUrlOrPath, string? sBranchOrTrunk, string? sUser, string? sPassword)
+    public RepositoryEndpoint CreateTargetEndpoint(string providerKey, string sUrlOrPath, string? sBranchOrTrunk, string? sUser, string? sPassword)
         => new()
         {
-            Type = repoType,
+            ProviderKey = providerKey,
             UrlOrPath = sUrlOrPath,
             BranchOrTrunk = sBranchOrTrunk,
             Credentials = new RepoCredentials { Username = sUser, Password = sPassword }

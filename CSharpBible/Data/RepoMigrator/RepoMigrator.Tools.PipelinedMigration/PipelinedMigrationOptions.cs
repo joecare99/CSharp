@@ -7,6 +7,9 @@ namespace RepoMigrator.Tools.PipelinedMigration;
 /// </summary>
 public sealed class PipelinedMigrationOptions
 {
+    private const string SvnProviderKey = "svn";
+    private const string GitProviderKey = "git";
+
     /// <summary>
     /// Gets or sets the SVN source URL or working copy path.
     /// </summary>
@@ -147,7 +150,7 @@ public sealed class PipelinedMigrationOptions
     public RepositoryEndpoint CreateSourceEndpoint()
         => new()
         {
-            Type = RepoType.Svn,
+            ProviderKey = SvnProviderKey,
             UrlOrPath = SourceUrl,
             BranchOrTrunk = SourceBranchOrTrunk,
             Credentials = new RepoCredentials { Username = SourceUser, Password = SourcePassword }
@@ -160,7 +163,7 @@ public sealed class PipelinedMigrationOptions
     public RepositoryEndpoint CreateTargetEndpoint()
         => new()
         {
-            Type = RepoType.Git,
+            ProviderKey = GitProviderKey,
             UrlOrPath = TargetUrl,
             BranchOrTrunk = TargetBranch,
             Credentials = new RepoCredentials { Username = TargetUser, Password = TargetPassword }

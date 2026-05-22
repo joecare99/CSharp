@@ -2,7 +2,7 @@
 
 ## Status
 
-Done
+Completed
 
 ## Parent
 
@@ -51,3 +51,13 @@ Create a small standalone console tool that exercises the archive provider again
 - The tool can scan a local archive directory and recognize supported archives
 - The tool can prepare an archive import plan preview using the archive provider services
 - The workspace build succeeds after the tool is added
+
+## Validation Evidence
+
+- Added console tool project `RepoMigrator/RepoMigrator.Tools.ArchiveSmokeTest/RepoMigrator.Tools.ArchiveSmokeTest.csproj`
+- Implemented smoke-test entry point and services in:
+  - `RepoMigrator/RepoMigrator.Tools.ArchiveSmokeTest/Program.cs`
+  - `RepoMigrator/RepoMigrator.Tools.ArchiveSmokeTest/ArchiveSmokeTestService.cs`
+  - `RepoMigrator/RepoMigrator.Tools.ArchiveSmokeTest/ArchiveSmokeTestOptions.cs`
+  - `RepoMigrator/RepoMigrator.Tools.ArchiveSmokeTest/ArchiveSmokeTestProviderFactory.cs`
+- Workspace build passed after adding the tool

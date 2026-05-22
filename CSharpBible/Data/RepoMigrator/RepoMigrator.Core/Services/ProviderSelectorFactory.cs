@@ -5,8 +5,11 @@ namespace RepoMigrator.Core;
 
 public sealed class ProviderSelectorFactory : IProviderFactory
 {
-    private readonly IDictionary<RepoType, Func<IVersionControlProvider>> _map;
-    public ProviderSelectorFactory(IDictionary<RepoType, Func<IVersionControlProvider>> map) => _map = map;
-    public IVersionControlProvider Create(RepoType type)
-        => _map.TryGetValue(type, out var f) ? f() : throw new NotSupportedException(type.ToString());
+    private readonly IDictionary<string, Func<IVersionControlProvider>> _map;
+
+    public ProviderSelectorFactory(IDictionary<string, Func<IVersionControlProvider>> map)
+        => _map = map ?? throw new ArgumentNullException(nameof(map));
+
+    public IVersionControlProvider Create(string providerKey)
+        => _map.TryGetValue(providerKey, out var f) ? f() : throw new NotSupportedException(providerKey);
 }

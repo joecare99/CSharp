@@ -1,14 +1,14 @@
 namespace RepoMigrator.Core;
 
 /// <summary>
-/// Represents a bounded list of recent values for a specific repository type.
+/// Represents a bounded list of recent values for a specific repository provider.
 /// </summary>
-public sealed class RepoTypeRecentValues
+public sealed class ProviderRecentValues
 {
     /// <summary>
-    /// Gets or sets the repository type that owns the recent values.
+    /// Gets or sets the provider key that owns the recent values.
     /// </summary>
-    public RepoType RepoType { get; init; }
+    public string ProviderKey { get; init; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the recent values for the associated repository type.
@@ -17,51 +17,51 @@ public sealed class RepoTypeRecentValues
 }
 
 /// <summary>
-/// Provides helper methods for maintaining recent values grouped by repository type.
+/// Provides helper methods for maintaining recent values grouped by provider key.
 /// </summary>
-public static class RepoTypeRecentValueHistory
+public static class ProviderRecentValueHistory
 {
     /// <summary>
-    /// Returns the recent values stored for the specified repository type.
+    /// Returns the recent values stored for the specified provider key.
     /// </summary>
     /// <param name="lstEntries">The grouped recent values.</param>
-    /// <param name="repoType">The repository type to read.</param>
+    /// <param name="providerKey">The provider key to read.</param>
     /// <returns>The stored values for the requested repository type.</returns>
-    public static IReadOnlyList<string> GetValues(IReadOnlyList<RepoTypeRecentValues> lstEntries, RepoType repoType)
-        => lstEntries.FirstOrDefault(entry => entry.RepoType == repoType)?.Values ?? [];
+    public static IReadOnlyList<string> GetValues(IReadOnlyList<ProviderRecentValues> lstEntries, string providerKey)
+        => lstEntries.FirstOrDefault(entry => string.Equals(entry.ProviderKey, providerKey, StringComparison.OrdinalIgnoreCase))?.Values ?? [];
 
     /// <summary>
-    /// Adds a value to the recent history for the specified repository type while preserving histories for other types.
+    /// Adds a value to the recent history for the specified provider key while preserving histories for other keys.
     /// </summary>
     /// <param name="lstEntries">The grouped recent values.</param>
-    /// <param name="repoType">The repository type to update.</param>
+    /// <param name="providerKey">The provider key to update.</param>
     /// <param name="sValue">The value to add.</param>
-    /// <param name="iMaxCount">The maximum number of values to keep per repository type.</param>
+    /// <param name="iMaxCount">The maximum number of values to keep per provider key.</param>
     /// <returns>A new grouped history list containing the updated values.</returns>
-    public static IReadOnlyList<RepoTypeRecentValues> AddValue(IReadOnlyList<RepoTypeRecentValues> lstEntries, RepoType repoType, string? sValue, int iMaxCount = 10)
+    public static IReadOnlyList<ProviderRecentValues> AddValue(IReadOnlyList<ProviderRecentValues> lstEntries, string providerKey, string? sValue, int iMaxCount = 10)
     {
         var lstUpdatedEntries = lstEntries
-            .Select(entry => new RepoTypeRecentValues
+            .Select(entry => new ProviderRecentValues
             {
-                RepoType = entry.RepoType,
+                ProviderKey = entry.ProviderKey,
                 Values = [.. entry.Values]
             })
             .ToList();
 
-        var recentEntry = lstUpdatedEntries.FirstOrDefault(entry => entry.RepoType == repoType);
+        var recentEntry = lstUpdatedEntries.FirstOrDefault(entry => string.Equals(entry.ProviderKey, providerKey, StringComparison.OrdinalIgnoreCase));
         if (recentEntry is null)
         {
-            recentEntry = new RepoTypeRecentValues { RepoType = repoType };
+            recentEntry = new ProviderRecentValues { ProviderKey = providerKey };
             lstUpdatedEntries.Add(recentEntry);
         }
 
-        recentEntry = new RepoTypeRecentValues
+        recentEntry = new ProviderRecentValues
         {
-            RepoType = repoType,
+            ProviderKey = providerKey,
             Values = [.. RecentValueHistory.AddValue(recentEntry.Values, sValue, iMaxCount)]
         };
 
-        var iIndex = lstUpdatedEntries.FindIndex(entry => entry.RepoType == repoType);
+        var iIndex = lstUpdatedEntries.FindIndex(entry => string.Equals(entry.ProviderKey, providerKey, StringComparison.OrdinalIgnoreCase));
         lstUpdatedEntries[iIndex] = recentEntry;
         return lstUpdatedEntries;
     }

@@ -19,6 +19,8 @@ Archive-backed migration needs format-agnostic orchestration with format-specifi
 
 Besides extraction, the drivers must expose metadata needed for ordering and diagnostics. That includes archive format identity, archive entry listing, candidate timestamp signals, and any confidence information that helps explain why a snapshot received a specific inferred date.
 
+The reviewed direction should also distinguish archive-format drivers from the later general patch-driver direction. Archive drivers focus on archive inspection and extraction, while the patch driver is a separate format-oriented component that starts with read-only `.patch` ingestion and may later grow optional output support.
+
 ## Scope
 
 - Define an archive-driver abstraction for capability detection, metadata inspection, and extraction
@@ -28,6 +30,7 @@ Besides extraction, the drivers must expose metadata needed for ordering and dia
 - Identify external-tool versus library dependency questions per format
 - Specify failure handling for unsupported, corrupted, or partially readable archives
 - Clarify how extraction should materialize a full snapshot for downstream commit processing
+- Clarify the boundary between archive drivers and the separate read-first patch-driver direction
 
 ## Acceptance Criteria
 
@@ -36,6 +39,7 @@ Besides extraction, the drivers must expose metadata needed for ordering and dia
 - Driver metadata responsibilities include timestamp-oriented inspection support
 - Failure behavior is planned for unsupported and damaged archives
 - Driver integration responsibilities within source providers are documented clearly
+- The design clearly separates archive-driver responsibilities from the later read-first patch-driver responsibilities
 - The design keeps later format additions possible without rewriting migration orchestration
 
 ## Assumptions

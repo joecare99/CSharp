@@ -12,13 +12,14 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Document changes in a DevOps manner using Markdown, extrapolating bugs, tasks, backlogs, and features.
 - Use `DevOps` as the planning directory in this workspace, and treat `.Info.md` as the general planning description file. Team terminology around Azure DevOps backlog items may differ from generic 'story' naming.
 - Planning should be done step by step in the `DevOps` directory with a Scrum-oriented structure.
+- When a task is fully implemented and validated, update its DevOps task status before proceeding to the next task.
 
 ## Memory
 - Keep project-specific decisions in the repository `DevOps` folder; do not store them in memory for this repository.
 - Use memory for general solution-wide or project-overlapping working preferences rather than repository-local implementation decisions.
-- Before using generic terminal commands or ad-hoc manual steps, first check whether a matching reusable script or skill exists in `C:\Projekte\CSharp\Tools\(*.ps1)`.
-- Use Token efficiently in this repository by preferring reusable scripts and skills over ad-hoc terminal commands whenever they fit the task, especially for coverage analysis, build and test diagnostics, reporting, automation, and similar repository-wide workflows.
-- Prefer reusable scripts and skills from `C:\Projekte\CSharp\Tools` and sub-directories over ad-hoc terminal commands whenever they fit the task, especially for coverage analysis, build and test diagnostics, reporting, automation, and similar repository-wide workflows.
+- Prefer reusable scripts and skills from `C:\Projekte\CSharp\Tools` and its sub-directories over ad-hoc terminal commands whenever they fit the task, especially for coverage analysis, build and test diagnostics, reporting, automation, and similar repository-wide workflows.
+- Read adjacent `*.md` documentation in that tools area only when needed to confirm applicability or usage.
+- For this repository, prefer keeping RepoMigrator.Core provider-agnostic via broader migration source provider abstractions instead of forcing archive inputs into IVersionControlProvider. Additionally, provider-specific files should live in their specific provider projects; RepoMigrator.Core should contain only provider-agnostic shared abstractions and models. Sub-provider concerns such as compression formats should also live in dedicated specific projects (for example, a Zip compression provider project).
 
 ## Code Organization
 - Prefer one class/interface/struct per file.

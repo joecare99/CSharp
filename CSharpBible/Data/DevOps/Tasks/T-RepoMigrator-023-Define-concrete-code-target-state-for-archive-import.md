@@ -10,7 +10,7 @@ Draft
 - Backlog Item `BI-RepoMigrator-009` - `Define archive snapshot source detection and ordering contracts`
 - Backlog Item `BI-RepoMigrator-010` - `Plan driver-based archive extraction and metadata inspection`
 - Backlog Item `BI-RepoMigrator-011` - `Define release ref naming and manual archive ordering workflow`
-- Backlog Item `BI-RepoMigrator-012` - `Define DevOps-backed archive import status persistence and resume`
+- Backlog Item `BI-RepoMigrator-012` - `Define archive import status persistence and resume`
 
 ## Goal
 
@@ -316,7 +316,7 @@ Suggested members:
 
 Responsibilities:
 
-- read and write persisted plan and state files under `DevOps`
+- read and write persisted plan and state files under provider-defined runtime storage
 - keep manifest writes deterministic and portable
 - provide resume-oriented load methods
 
@@ -353,7 +353,7 @@ Recommended implementation ownership outside Core:
   - `ArchiveImportPlanner.cs`
   - `ArchiveOrderingService.cs`
   - `ArchiveRefNamingService.cs`
-  - `DevOpsArchiveImportStateStore.cs`
+  - `FileSystemArchiveImportStateStore.cs`
   - `ArchiveMigrationService.cs`
   - `ArchivePlanIdFactory.cs`
 - compression-provider projects:
@@ -406,6 +406,80 @@ Recommended first compression providers:
 
 The repository-backed destination contract still needs a small extension for release refs.
 
+## Reviewed rollout update - structured change path before broad implementation
+
+The reviewed target state should evolve beyond snapshot-only thinking without forcing a big-bang rewrite.
+
+### Capability-gated execution rule
+
+- Keep direct provider-to-provider execution only where capabilities explicitly allow it.
+- The canonical first exception is direct Git-to-Git transfer.
+- All other provider combinations should converge on a structured file-change path.
+
+### Recommended new provider-agnostic shared models
+
+Recommended first review candidates under `RepoMigrator/RepoMigrator.Core`:
+
+- `MigrationChangeSet.cs`
+- `MigrationFileChange.cs`
+- `MigrationFileChangeKind.cs`
+- `MigrationTextChange.cs`
+- `MigrationTextHunk.cs`
+- `MigrationBinaryChange.cs`
+- `PathRewriteRule.cs`
+- `ChangeApplicationCapabilities.cs`
+
+### Recommended first abstraction additions
+
+- `IMigrationChangeSetSourceDriver`
+  - emits normalized change sets from an input basis
+  - may advertise separate read and write capabilities where the format requires both directions later
+- `IMigrationChangeSetSink`
+  - consumes normalized change sets directly when the target supports it
+- `IMaterializedSnapshotAdapter`
+  - bridges normalized changes into temporary work directories for legacy destination providers during migration
+  - is an explicit transition layer rather than a permanent hidden dependency
+
+### Reviewed patch-driver target state
+
+The concrete target state should treat patch handling as a general patch-driver concern with separate capabilities for reading and writing.
+
+For the first concrete slice:
+
+- patch-driver support should start with `.patch` input parsing only,
+- the driver should emit normalized structured changes,
+- `SupportsRead` should be true,
+- `SupportsWrite` should remain false,
+- later patch-output support should be anticipated without being required for the first delivery slice.
+
+### Recommended phased migration path
+
+1. Introduce the provider-agnostic structured change models and capability contracts in Core.
+2. Add the first read-only patch-driver slice that parses `.patch` files into normalized file changes and applies configured root rewrites.
+3. Keep current archive full-snapshot import operational while allowing mixed plans to contain both full snapshots and patch-derived commits.
+4. Add a compatibility adapter that materializes structured changes into working directories so existing Git and SVN target providers can participate without immediate rewrites.
+5. Migrate destination providers incrementally to consume structured changes directly where beneficial.
+6. Revisit repository-source providers later so repository history can also emit normalized file-change sets when direct transfer is not selected.
+
+### First-slice review recommendation for patch support
+
+The smallest acceptable first slice after the review should be:
+
+- parse local `.patch` files through a dedicated read-only patch driver,
+- support moved-root path rewriting as part of patch normalization,
+- treat text hunks as first-class structured changes,
+- represent binary changes conservatively as explicit replace/delete/add operations unless a documented format-specific delta can be handled safely,
+- bridge the result into the current target flow through a compatibility layer instead of rewriting all providers at once,
+- and preserve enough normalized metadata so later optional patch-output support remains possible.
+
+### Explicitly deferred until after the review is accepted
+
+- broad provider rewrites to direct structured-change sinks,
+- nonessential binary-delta format inventing,
+- capability expansion without tests and target examples,
+- patch-specific shortcuts embedded in individual destination providers,
+- and patch-output generation before the read path and compatibility bridge are validated.
+
 ### `IVersionControlProvider`
 
 Recommended additions:
@@ -420,14 +494,14 @@ Reason:
 
 Archive execution must be able to record idempotent checkpoints and resume after commit creation but before tag or branch creation, while repository operations stay on the VCS-specific provider contract beneath the broader destination-provider abstraction.
 
-## DevOps Persistence Layout
+## Runtime Persistence Layout
 
 Recommended folder layout:
 
-- `DevOps/Data/RepoMigrator/ArchiveImports/<PlanId>/plan.json`
-- `DevOps/Data/RepoMigrator/ArchiveImports/<PlanId>/state.json`
-- `DevOps/Data/RepoMigrator/ArchiveImports/<PlanId>/ordering-overrides.json`
-- `DevOps/Data/RepoMigrator/ArchiveImports/<PlanId>/events.jsonl` optional later
+- `<RuntimeStorageRoot>/RepoMigrator/ArchiveImports/<PlanId>/plan.json`
+- `<RuntimeStorageRoot>/RepoMigrator/ArchiveImports/<PlanId>/state.json`
+- `<RuntimeStorageRoot>/RepoMigrator/ArchiveImports/<PlanId>/ordering-overrides.json`
+- `<RuntimeStorageRoot>/RepoMigrator/ArchiveImports/<PlanId>/events.jsonl` optional later
 
 ### File responsibilities
 

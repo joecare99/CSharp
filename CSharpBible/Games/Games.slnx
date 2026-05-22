@@ -68,6 +68,9 @@
     <Project Path="../Libraries/CommonDialogs/CommonDialogs.csproj">
       <Platform Solution="*|x86" Project="x86" />
     </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
     <Project Path="../Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
     <Project Path="../Libraries/ConsoleLib/ConsoleLib.csproj" />
     <Project Path="../Libraries/ExtendedConsole/ExtendedConsole.csproj" />
@@ -153,7 +156,11 @@
   <Project Path="Game_Base/Game_Base.csproj" />
   <Project Path="Game_BaseTests/Game_BaseTests.csproj" />
   <Project Path="MidiSwing.MVVM/MidiSwing.MVVM.csproj" />
-  <Project Path="PackageDwnLd.csproj" />
+  <Project Path="packages/PackageUpdate.csproj" />
+  <Project Path="PlayMidiMusic/PlayMidiMusic.csproj" Id="9a228436-767e-4928-952d-3325e8477d29" />
+  <Project Path="PlayMidiMusic2/PlayMidiMusic2.csproj" Id="e8f88777-b5da-4679-8d97-ee09f195b0f9" />
+  <Project Path="PlayMidiMusic3/PlayMidiMusic3.csproj" Id="45877d13-884c-47c3-8bd3-98b285e6e04a" />
+  <Project Path="ProceduralMidiMusic/ProceduralMidiMusic.csproj" Id="c8bb53e2-8af1-4392-b3d3-574cd2b5c97a" />
   <Project Path="RemoteTerminal.Tests/RemoteTerminal.Tests.csproj" />
   <Project Path="RemoteTerminal/RemoteTerminal.csproj" />
   <Project Path="Sudoku_Base/Sudoku_Base.csproj" />

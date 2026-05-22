@@ -8,11 +8,13 @@ namespace RepoMigrator.App.Logic.Services;
 /// </summary>
 public sealed class MigrationQueryService
 {
+    public const string SvnProviderKey = "svn";
+
     /// <summary>
     /// Creates the changeset query for the current application state.
     /// </summary>
     public ChangeSetQuery CreateQuery(
-        RepoType sourceType,
+        string sourceProviderKey,
         string? sFromId,
         string? sToId,
         int? iMaxCount,
@@ -21,7 +23,7 @@ public sealed class MigrationQueryService
         string? sSelectedSvnFromRevisionId,
         string? sSelectedSvnToRevisionId)
     {
-        if (sourceType == RepoType.Svn)
+        if (string.Equals(sourceProviderKey, SvnProviderKey, StringComparison.OrdinalIgnoreCase))
         {
             var sFromExclusiveId = !string.IsNullOrWhiteSpace(sSelectedSvnFromRevisionId)
                 && !string.Equals(sSelectedSvnFromRevisionId, sFromId, StringComparison.OrdinalIgnoreCase)
@@ -49,12 +51,12 @@ public sealed class MigrationQueryService
     /// <summary>
     /// Creates updated resume values after a successful commit.
     /// </summary>
-    public ResumeUpdateResult UpdateResumeAfterCommit(RepoType sourceType, string? sCurrentChangeSetId, IReadOnlyList<RepositoryRevisionInfo> lstSvnRevisionSelections)
+    public ResumeUpdateResult UpdateResumeAfterCommit(string sourceProviderKey, string? sCurrentChangeSetId, IReadOnlyList<RepositoryRevisionInfo> lstSvnRevisionSelections)
     {
         if (string.IsNullOrWhiteSpace(sCurrentChangeSetId))
             return new ResumeUpdateResult();
 
-        if (sourceType != RepoType.Svn)
+        if (!string.Equals(sourceProviderKey, SvnProviderKey, StringComparison.OrdinalIgnoreCase))
             return new ResumeUpdateResult { FromExclusiveId = sCurrentChangeSetId };
 
         var sNextRevisionId = SvnRevisionRangeResolver.GetNextRevisionId(lstSvnRevisionSelections, sCurrentChangeSetId);

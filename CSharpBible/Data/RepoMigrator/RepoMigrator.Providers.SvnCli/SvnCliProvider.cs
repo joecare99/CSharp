@@ -12,6 +12,7 @@ namespace RepoMigrator.Providers.SvnCli;
 
 public sealed class SvnCliProvider : IVersionControlProvider
 {
+    public const string ProviderKey = "svn";
     private static Func<RepositoryEndpoint?, string, string?, CancellationToken, Task<string>> s_runSvnCommandAsync = RunSvnProcessAsync;
     private RepositoryEndpoint? _endpoint;
     private string? _wcPath;

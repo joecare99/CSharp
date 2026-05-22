@@ -15,7 +15,7 @@ public sealed class ConsoleMigrationProgress : IMigrationProgress
         => message switch
         {
             MigrationReportMessage.SourceOpening => $"Öffne Quelle ({GetRequired<string>(arrAdditional, 0)}) …",
-            MigrationReportMessage.NativeHistoryTransferStarting => $"Übertrage Historie nativ ({GetRequired<string>(arrAdditional, 0)} -> {GetRequired<RepoType>(arrAdditional, 1)}) …",
+            MigrationReportMessage.NativeHistoryTransferStarting => $"Übertrage Historie nativ ({GetRequired<string>(arrAdditional, 0)} -> {FormatProviderDisplayName(GetRequired<string>(arrAdditional, 1))}) …",
             MigrationReportMessage.ChangeSetsLoading => "Lese Changesets …",
             MigrationReportMessage.NoChangeSetsFound => "Keine Changesets gefunden.",
             MigrationReportMessage.TargetInitializing => $"Initialisiere Ziel ({GetRequired<string>(arrAdditional, 0)}) …",
@@ -58,4 +58,13 @@ public sealed class ConsoleMigrationProgress : IMigrationProgress
 
     private static string Short(string? sId)
         => string.IsNullOrEmpty(sId) || sId.Length <= 8 ? sId ?? string.Empty : sId[..8];
+
+    private static string FormatProviderDisplayName(string providerKey)
+        => providerKey.ToLowerInvariant() switch
+        {
+            "git" => "Git",
+            "svn" => "SVN",
+            "archive" => "Archive",
+            _ => providerKey
+        };
 }

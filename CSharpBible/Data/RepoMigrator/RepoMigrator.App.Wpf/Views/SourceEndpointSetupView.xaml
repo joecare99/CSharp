@@ -10,8 +10,8 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Typ" Width="80"/>
                 <ComboBox Width="240"
-                          ItemsSource="{Binding RepoTypes}"
-                          SelectedItem="{Binding SourceType}"/>
+                          ItemsSource="{Binding SourceProviderKeys}"
+                          SelectedItem="{Binding SourceProviderKey}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="URL/Pfad" Width="80"/>

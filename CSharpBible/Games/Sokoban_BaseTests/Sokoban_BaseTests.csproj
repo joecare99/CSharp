@@ -28,10 +28,4 @@
     <ProjectReference Include="..\Sokoban_Base\Sokoban_Base.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageVersion Update="coverlet.collector" Version="10.0.0" />
-    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.5.1" />
-    <PackageVersion Update="MSTest" Version="4.2.3" />
-  </ItemGroup>
-
 </Project>

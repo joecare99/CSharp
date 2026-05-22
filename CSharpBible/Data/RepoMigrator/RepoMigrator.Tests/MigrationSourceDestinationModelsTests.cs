@@ -1,5 +1,6 @@
 using RepoMigrator.Core;
 using RepoMigrator.Providers.Archive;
+using RepoMigrator.Providers.Patch;
 
 namespace RepoMigrator.Tests;
 
@@ -26,6 +27,18 @@ public sealed class MigrationSourceDestinationModelsTests
         Assert.AreEqual(string.Empty, definition.OutputDirectory);
         Assert.AreEqual(".zip", definition.ArchiveFileExtension);
         Assert.IsFalse(definition.OverwriteExistingArchives);
+    }
+
+    [TestMethod]
+    public void PatchMigrationSourceDefinition_Defaults_AreInitialized()
+    {
+        var definition = new PatchMigrationSourceDefinition();
+
+        Assert.AreEqual(PatchSourceLocationKind.LocalDirectory, definition.LocationKind);
+        Assert.AreEqual(string.Empty, definition.Location);
+        Assert.AreEqual(0, definition.AllowedExtensions.Count);
+        Assert.IsFalse(definition.RecursiveDirectoryScan);
+        Assert.AreEqual(0, definition.PathRewrites.Count);
     }
 
     [TestMethod]
@@ -72,7 +85,7 @@ public sealed class MigrationSourceDestinationModelsTests
             AllowRelativeLinks = true,
             RecursiveDirectoryScan = true
         };
-        var repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\source", BranchOrTrunk = "main" };
+        var repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\source", BranchOrTrunk = "main" };
         var definition = new MigrationSourceDefinition
         {
             Kind = MigrationSourceKind.ArchiveCollection,
@@ -87,9 +100,40 @@ public sealed class MigrationSourceDestinationModelsTests
     }
 
     [TestMethod]
+    public void PatchMigrationSourceDefinition_AssignedValues_ArePreserved()
+    {
+        var patchSource = new PatchMigrationSourceDefinition
+        {
+            LocationKind = PatchSourceLocationKind.LocalDirectory,
+            Location = @"C:\patches",
+            AllowedExtensions = [".patch", ".diff"],
+            RecursiveDirectoryScan = true,
+            PathRewrites =
+            [
+                new PathRewriteRule
+                {
+                    FromPrefix = "old/root",
+                    ToPrefix = "new/root",
+                    NormalizeDirectorySeparators = true,
+                    IgnoreCase = true
+                }
+            ]
+        };
+        var definition = patchSource.ToMigrationSourceDefinition();
+
+        Assert.AreEqual(MigrationSourceKind.PatchCollection, definition.Kind);
+        var reconstructedPatchSource = PatchMigrationSourceDefinition.FromMigrationSourceDefinition(definition);
+        Assert.AreEqual(@"C:\patches", reconstructedPatchSource.Location);
+        Assert.AreEqual(2, reconstructedPatchSource.AllowedExtensions.Count);
+        Assert.IsTrue(reconstructedPatchSource.RecursiveDirectoryScan);
+        Assert.AreEqual(1, reconstructedPatchSource.PathRewrites.Count);
+        Assert.AreEqual("new/root", reconstructedPatchSource.PathRewrites[0].ToPrefix);
+    }
+
+    [TestMethod]
     public void MigrationDestinationDefinition_AssignedValues_ArePreserved()
     {
-        var repository = new RepositoryEndpoint { Type = RepoType.Git, UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
+        var repository = new RepositoryEndpoint { ProviderKey = "git", UrlOrPath = @"C:\target", BranchOrTrunk = "main" };
         var sequentialArchiveDestination = new SequentialArchiveDestinationDefinition
         {
             OutputDirectory = @"C:\exports",
