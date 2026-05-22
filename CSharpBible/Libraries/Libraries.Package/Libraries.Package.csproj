@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Libraries_net.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <IsPackable>false</IsPackable>
+    <PackageId>JCSoft.CSharpBible.Libraries</PackageId>
+    <Version>1.0.0</Version>
+    <PackageOutputDirectory>$(MSBuildProjectDirectory)\artifacts</PackageOutputDirectory>
+    <PackageStagingDirectory>$(MSBuildProjectDirectory)\staging</PackageStagingDirectory>
+    <PackageArchivePath>$(PackageOutputDirectory)\$(PackageId).$(Version).zip</PackageArchivePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <LibraryOutput Include="$(UpDir)\..\bin\BaseLib\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\BaseLib\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\CommonDialogs\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\CommonDialogs\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\ConsoleDisplay\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\ConsoleDisplay\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\ConsoleLib\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\ConsoleLib\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\ConsoleLib_net\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\ConsoleLib_net\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\GenInterfaces\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\GenInterfaces\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\MathLibrary\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\MathLibrary\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\**\*.xml" />
+    <LibraryOutput Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\**\*.dll" />
+    <LibraryOutput Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\**\*.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+
+  <Target Name="BuildLibrariesWithoutTests">
+    <Exec Command="dotnet build &quot;$(MSBuildProjectDirectory)\Libraries.Package.sln&quot; -c $(Configuration)" WorkingDirectory="$(MSBuildProjectDirectory)" ConsoleToMsBuild="true" />
+  </Target>
+
+  <Target Name="StageLibraryOutputs" DependsOnTargets="BuildLibrariesWithoutTests">
+    <RemoveDir Directories="$(PackageStagingDirectory)" Condition="Exists('$(PackageStagingDirectory)')" />
+    <MakeDir Directories="$(PackageStagingDirectory)" />
+    <Copy SourceFiles="@(LibraryOutput)" DestinationFiles="@(LibraryOutput->'$(PackageStagingDirectory)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\README.md" DestinationFiles="$(PackageStagingDirectory)\README.md" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CreateLibrariesPackage" DependsOnTargets="StageLibraryOutputs">
+    <MakeDir Directories="$(PackageOutputDirectory)" />
+    <Delete Files="$(PackageArchivePath)" Condition="Exists('$(PackageArchivePath)')" />
+    <ZipDirectory SourceDirectory="$(PackageStagingDirectory)" DestinationFile="$(PackageArchivePath)" Overwrite="true" />
+    <Message Importance="high" Text="Created package: $(PackageArchivePath)" />
+  </Target>
+</Project>
