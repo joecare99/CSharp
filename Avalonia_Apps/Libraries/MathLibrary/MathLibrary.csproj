@@ -17,7 +17,5 @@
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageReference Update="Tmds.DBus.Protocol" Version="0.93.0" />
-	</ItemGroup>
+	
 </Project>
