@@ -8,7 +8,7 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<ItemGroup>
-	  <Compile Remove="Properties\SettingsTests.cs" />
+		<Compile Remove="Properties\SettingsTests.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
@@ -19,10 +19,10 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-    <ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
-    <ProjectReference Include="..\AA16_Usercontrol1\AA16_UserControl1.csproj" />
+		<ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
+		<ProjectReference Include="..\AA16_Usercontrol1\AA16_UserControl1.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Properties\" />
+		<Folder Include="Properties\" />
 	</ItemGroup>
 </Project>
