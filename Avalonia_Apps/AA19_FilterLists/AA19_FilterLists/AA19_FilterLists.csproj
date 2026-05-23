@@ -60,5 +60,4 @@
 		<PackageReference Include="System.Configuration.ConfigurationManager" />
 		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
 	</ItemGroup>
-
 </Project>

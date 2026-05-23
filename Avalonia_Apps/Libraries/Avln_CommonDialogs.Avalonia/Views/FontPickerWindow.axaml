@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Avln_CommonDialogs.Avalonia.ViewModels"
+        xmlns:views="clr-namespace:Avln_CommonDialogs.Avalonia.Views"
+        x:Class="Avln_CommonDialogs.Avalonia.Views.FontPickerWindow"
+        x:DataType="vm:FontPickerViewModel"
+        Width="900"
+        Height="720"
+        MinWidth="760"
+        MinHeight="620"
+        Title="Font Picker"
+        WindowStartupLocation="CenterOwner">
+  <views:FontPickerView x:Name="PickerView" />
+</Window>

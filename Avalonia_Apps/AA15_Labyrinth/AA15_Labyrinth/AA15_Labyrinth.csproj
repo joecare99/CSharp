@@ -21,18 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Update="Tmds.DBus.Protocol">
-	    <PrivateAssets>all</PrivateAssets>
-	    <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-	  </PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageVersion Update="Tmds.DBus.Protocol" Version="0.93.0" />
+		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
 	</ItemGroup>
 
 </Project>

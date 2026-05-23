@@ -53,6 +53,7 @@
   <Folder Name="/AA20_SysDialogs/">
     <File Path="AA20_SysDialogs/Application.props" />
     <File Path="AA20_SysDialogs/Directory.Packages.props" />
+    <Project Path="AA20_SysDialogs/AA20a_CommonDialogs/AA20a_CommonDialogs.csproj" />
     <Project Path="AA20_SysDialogs/AA20_Sysdialogs/AA20_Sysdialogs.csproj" />
     <Project Path="AA20_SysDialogs/AA20_SysdialogsTests/AA20_SysdialogsTests.csproj" />
   </Folder>
@@ -67,6 +68,11 @@
     <Project Path="AA22_AvlnCap/AA22_AvlnCap/AA22_AvlnCap.csproj" />
     <Project Path="AA22_AvlnCap/AA22_AvlnCap2/AA22_AvlnCap2.csproj" />
     <Project Path="AA22_AvlnCap/AA22_AvlnCapTests/AA22_AvlnCapTests.csproj" />
+  </Folder>
+  <Folder Name="/AA25_RichText/">
+    <Project Path="AA25_RichTextEdit/AA25_RichTextEdit/AA25_RichTextEdit.csproj" />
+    <Project Path="AA25_RichTextEdit/AA25_RichTextEditTests/AA25_RichTextEditTests.csproj" />
+    <Project Path="AA25_RichTextEdit/Avln_RichTextEdit/Avln_RichTextEdit.csproj" />
   </Folder>
   <Folder Name="/Avalonia_App01/">
     <File Path="Avalonia_App01/Avalonia_App01.props" />
@@ -124,6 +130,8 @@
     <File Path="Libraries/Libraries.props" />
     <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />
     <Project Path="Libraries/Avln_BaseLibTests/Avln_BaseLibTests.csproj" />
+    <Project Path="Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj" />
+    <Project Path="Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
     <Project Path="Libraries/BaseLib/BaseLib.csproj" />
     <Project Path="Libraries/BaseLibTests/BaseLibTests.csproj" />
     <Project Path="Libraries/MathLibrary/MathLibrary.csproj" />
@@ -133,16 +141,10 @@
     <File Path="Packages.props" />
     <File Path="Solution.props" />
   </Folder>
-  <Project Path="AA20_SysDialogs/AA20a_CommonDialogs/AA20a_CommonDialogs.csproj" />
-  <Project Path="AA25_RichTextEdit/AA25_RichTextEdit/AA25_RichTextEdit.csproj" />
-  <Project Path="AA25_RichTextEdit/AA25_RichTextEditTests/AA25_RichTextEditTests.csproj" />
-  <Project Path="AA25_RichTextEdit/Avln_RichTextEdit/Avln_RichTextEdit.csproj" />
   <Project Path="AA25_RichTextEdit/Document.Base/Document.Base.csproj" />
   <Project Path="AA25_RichTextEdit/Document.Flow/Document.Flow.csproj" />
   <Project Path="AvlnSamples/Avln_Hello_World/Avln_Hello_World.csproj" />
   <Project Path="BenchmarkSuite1/BenchmarkSuite1.csproj" />
-  <Project Path="Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj" />
-  <Project Path="Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
   <Project Path="RenderImage.Base/RenderImage.Base.csproj" />
   <Project Path="RenderImage.BaseTests/RenderImage.BaseTests.csproj" />
 </Solution>

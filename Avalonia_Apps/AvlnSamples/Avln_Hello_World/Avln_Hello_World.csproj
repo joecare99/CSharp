@@ -52,8 +52,4 @@
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
-	
-	<ItemGroup>
-	  <PackageReference Update="Tmds.DBus.Protocol" Version="0.93.0" />
-	</ItemGroup>
 </Project>

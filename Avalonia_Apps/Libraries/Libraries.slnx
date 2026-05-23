@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="../Solution.props" />
+    <File Path="Libraries.props" />
+  </Folder>
   <Project Path="Avln_BaseLib/Avln_BaseLib.csproj" />
   <Project Path="Avln_BaseLibTests/Avln_BaseLibTests.csproj" />
   <Project Path="BaseLib/BaseLib.csproj" />

@@ -12,6 +12,7 @@
 			<Button Content="Save File" Command="{Binding SaveFileCommand}" />
 			<Button Content="Color" Command="{Binding ColorCommand}" />
 			<Button Content="Font" Command="{Binding FontCommand}" />
+           <Button Content="Font Overlay" Command="{Binding FontOverlayCommand}" />
 		</StackPanel>
 		<TextBlock Text="Ergebnis:" />
 		<TextBox Text="{Binding Result}" AcceptsReturn="True" Height="360"/>

@@ -39,5 +39,4 @@
 		<ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Base\Avln_CommonDialogs.Base.csproj" />
 		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
 	</ItemGroup>
-
 </Project>

@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	<Import Project="..\Packages.props"/>
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
@@ -8,15 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
-    <PackageReference Include="Microsoft.VisualStudio.DiagnosticsHub.BenchmarkDotNetDiagnosers" Version="18.7.37220.1" />
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="Microsoft.VisualStudio.DiagnosticsHub.BenchmarkDotNetDiagnosers"  />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AA15_Labyrinth\AA15_Labyrinth\AA15_Labyrinth.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Tmds.DBus.Protocol" Version="0.93.0" />
-  </ItemGroup>
 </Project>

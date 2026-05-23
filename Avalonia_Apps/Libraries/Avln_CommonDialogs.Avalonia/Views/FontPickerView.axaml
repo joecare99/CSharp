@@ -1,0 +1,143 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Avln_CommonDialogs.Avalonia.ViewModels"
+             x:Class="Avln_CommonDialogs.Avalonia.Views.FontPickerView"
+             x:DataType="vm:FontPickerViewModel">
+  <Grid RowDefinitions="*" Margin="12">
+    <Grid ColumnDefinitions="2*,3*" ColumnSpacing="12">
+      <Border Grid.Column="0"
+              Padding="10"
+              BorderBrush="LightGray"
+              BorderThickness="1"
+              CornerRadius="6">
+        <Grid RowDefinitions="Auto,*" RowSpacing="8">
+          <TextBlock Text="Font family"
+                     FontSize="14"
+                     FontWeight="SemiBold" />
+          <ListBox Grid.Row="1"
+                   ItemsSource="{Binding FontFamilies}"
+                   SelectedItem="{Binding SelectedFontFamily}"
+                   MinHeight="180">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Name}" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Grid>
+      </Border>
+
+		<DockPanel Grid.Column="1" LastChildFill="True">
+			<Border DockPanel.Dock="Bottom"
+					Padding="12"
+					  BorderBrush="LightGray"
+					  BorderThickness="1"
+					  CornerRadius="6">
+				
+					<StackPanel Grid.Row="2"
+							   Grid.Column="1"
+							   Orientation="Horizontal"
+							   HorizontalAlignment="Right"
+							   Spacing="10">
+						<Button Name="btnOk"
+								Content="OK"
+								IsDefault="True"
+								MinWidth="104" />
+						<Button Name="btnCancel"
+								Content="Cancel"
+								IsCancel="True"
+								MinWidth="104" />
+					
+				</StackPanel>
+			</Border>
+			<ScrollViewer Grid.Column="1"
+					  HorizontalScrollBarVisibility="Disabled"
+					  VerticalScrollBarVisibility="Auto">
+				<StackPanel Spacing="12">
+					<Border Padding="12"
+							BorderBrush="LightGray"
+							BorderThickness="1"
+							CornerRadius="6">
+						<Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="10">
+							<StackPanel Grid.Row="0" Grid.Column="0" Spacing="8">
+								<TextBlock Text="Size"
+										   FontSize="14"
+										   FontWeight="SemiBold" />
+								<NumericUpDown Minimum="6"
+											   Maximum="288"
+											   Increment="1"
+											   FormatString="0.##"
+											   Value="{Binding FontSize}"
+											   Width="140" />
+							</StackPanel>
+
+							<Expander Grid.Row="0" Grid.Column="1"
+									  Header="Preview text"
+									  IsExpanded="False">
+								<TextBox Margin="0,8,0,0"
+										 Text="{Binding PreviewText}"
+										 AcceptsReturn="True"
+										 TextWrapping="Wrap"
+										 MinHeight="56"
+										 MaxHeight="96" />
+							</Expander>
+
+							<StackPanel Grid.Row="1" Grid.Column="0" Spacing="8">
+								<TextBlock Text="Effects"
+										   FontSize="14"
+										   FontWeight="SemiBold" />
+								<WrapPanel Orientation="Horizontal"
+										   ItemHeight="32"
+										   ItemWidth="90">
+									<CheckBox Content="Bold" IsChecked="{Binding IsBold}" />
+									<CheckBox Content="Italic" IsChecked="{Binding IsItalic}" />
+									<CheckBox Content="Underl." IsChecked="{Binding IsUnderline}" />
+									<CheckBox Content="Striketh." IsChecked="{Binding IsStrikethrough}" />
+									<CheckBox Content="Overline" IsChecked="{Binding IsOverline}" />
+								</WrapPanel>
+							</StackPanel>
+
+							<StackPanel Grid.Row="1" Grid.Column="1" Spacing="8">
+								<TextBlock Text="Color"
+										   FontSize="14"
+										   FontWeight="SemiBold" />
+								<ColorPicker IsAlphaEnabled="True"
+											 Color="{Binding SelectedColor}"
+											 MinWidth="280" />
+							</StackPanel>
+
+						</Grid>
+					</Border>
+
+					<Border Padding="12"
+							BorderBrush="LightGray"
+							BorderThickness="1"
+							CornerRadius="6">
+						<StackPanel Spacing="8">
+							<TextBlock Text="Preview"
+									   FontSize="14"
+									   FontWeight="SemiBold" />
+							<Border Padding="12"
+									Background="#FFF8F8F8"
+									BorderBrush="#FFE0E0E0"
+									BorderThickness="1"
+									CornerRadius="4"
+									MinHeight="120"
+									MaxHeight="220">
+								<TextBlock Text="{Binding PreviewText}"
+										   TextWrapping="Wrap"
+										   FontFamily="{Binding PreviewFontFamily}"
+										   FontSize="{Binding PreviewFontSize}"
+										   FontWeight="{Binding PreviewFontWeight}"
+										   FontStyle="{Binding PreviewFontStyle}"
+										   Foreground="{Binding PreviewForeground}"
+										   TextDecorations="{Binding PreviewTextDecorations}" />
+							</Border>
+						</StackPanel>
+					</Border>
+				</StackPanel>
+			</ScrollViewer>
+		</DockPanel>
+    </Grid>
+  </Grid>
+</UserControl>
