@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:Avln_CommonDialogs.Avalonia.Views"
+             x:Class="Avln_CommonDialogs.Avalonia.Views.FontPickerOverlay"
+             IsVisible="False"
+             Focusable="True">
+  <Border x:Name="OverlayBackdrop"
+          Background="#88000000">
+    <Grid>
+      <Border x:Name="OverlayDialog"
+              MinWidth="560"
+              MaxWidth="1100"
+              MinHeight="360"
+              MaxHeight="820"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+              BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+              BorderThickness="1"
+              CornerRadius="10"
+              ClipToBounds="True"
+              Margin="20">
+        <views:FontPickerView x:Name="PickerView" />
+      </Border>
+    </Grid>
+  </Border>
+</UserControl>
