@@ -13,19 +13,8 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" />
-    <PackageReference Include="FontPickerAvalonia" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageVersion Update="Tmds.DBus.Protocol" Version="0.93.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Tmds.DBus.Protocol">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-</Project>
+ </Project>
