@@ -38,7 +38,6 @@
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="Microsoft.VisualStudio.DiagnosticsHub.BenchmarkDotNetDiagnosers" Version="18.7.37220.1" />
-	  
   </ItemGroup>
   <ItemGroup>
     <!-- Security fix: GHSA-xrw6-gwf8-vvr9 (High) - transitive via Avalonia -->
