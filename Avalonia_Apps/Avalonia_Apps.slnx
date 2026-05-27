@@ -141,10 +141,23 @@
     <File Path="Packages.props" />
     <File Path="Solution.props" />
   </Folder>
+  <Folder Name="/Samples/">
+    <Project Path="AvlnSamples/Avln_AnimationTiming/Avln_AnimationTiming.csproj" />
+    <Project Path="AvlnSamples/Avln_Brushes/Avln_Brushes.csproj" />
+    <Project Path="AvlnSamples/Avln_Hello_World/Avln_Hello_World.csproj" />
+  </Folder>
+   <Folder Name="/AA98_AvlnCodeStudio/">
+     <File Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.props" />
+     <File Path="AA98_AvlnCodeStudio/Directory.Packages.props" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" Id="17998949-eb69-4b31-b41e-3bac9c7b53e2" />
+   </Folder>
   <Project Path="AA25_RichTextEdit/Document.Base/Document.Base.csproj" />
   <Project Path="AA25_RichTextEdit/Document.Flow/Document.Flow.csproj" />
-  <Project Path="AvlnSamples/Avln_Hello_World/Avln_Hello_World.csproj" />
   <Project Path="BenchmarkSuite1/BenchmarkSuite1.csproj" />
+  <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
   <Project Path="RenderImage.Base/RenderImage.Base.csproj" />
   <Project Path="RenderImage.BaseTests/RenderImage.BaseTests.csproj" />
 </Solution>
