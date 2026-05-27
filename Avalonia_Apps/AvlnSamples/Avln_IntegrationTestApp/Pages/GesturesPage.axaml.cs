@@ -25,7 +25,7 @@ public partial class GesturesPage : UserControl
         GestureBorder2.IsVisible = true;
     }
 
-    private void GestureBorder_RightTapped(object? sender, RoutedEventArgs e)
+    private void GestureBorder_RightTapped(object? sender, TappedEventArgs e)
     {
         LastGesture.Text = "RightTapped";
     }

@@ -5,24 +5,24 @@ namespace IntegrationTestApp.Models;
 
 internal class DefaultPageProvider : IPageProvider
 {
- public IEnumerable<Page> GetPages() =>
+ public IEnumerable<DemoPage> GetPages() =>
  [
- new("Automation", () => new AutomationPage()),
- new("Button", () => new ButtonPage()),
- new("CheckBox", () => new CheckBoxPage()),
- new("ComboBox", () => new ComboBoxPage()),
- new("ContextMenu", () => new ContextMenuPage()),
- new("DesktopPage", () => new DesktopPage()),
- new("Embedding", () => new EmbeddingPage()),
- new("Gestures", () => new GesturesPage()),
- new("ListBox", () => new ListBoxPage()),
- new("Menu", () => new MenuPage()),
- new("Pointer", () => new PointerPage()),
- new("RadioButton", () => new RadioButtonPage()),
- new("Screens", () => new ScreensPage()),
- new("ScrollBar", () => new ScrollBarPage()),
- new("Slider", () => new SliderPage()),
- new("Window Decorations", () => new WindowDecorationsPage()),
- new("Window", () => new WindowPage()),
+ new("Automation",typeof(AutomationPage), () => new AutomationPage()),
+ new("Button", typeof(ButtonPage), () => new ButtonPage()),
+ new("CheckBox", typeof(CheckBoxPage), () => new CheckBoxPage()),
+ new("ComboBox", typeof(ComboBoxPage), () => new ComboBoxPage()),
+ new("ContextMenu", typeof(ContextMenuPage), () => new ContextMenuPage()),
+ new("DesktopPage", typeof(DesktopPage), () => new DesktopPage()),
+ new("Embedding", typeof(EmbeddingPage), () => new EmbeddingPage()),
+ new("Gestures", typeof(GesturesPage), () => new GesturesPage()),
+ new("ListBox", typeof(ListBoxPage), () => new ListBoxPage()),
+ new("Menu", typeof(MenuPage), () => new MenuPage()),
+ new("Pointer", typeof(PointerPage), () => new PointerPage()),
+ new("RadioButton", typeof(RadioButtonPage), () => new RadioButtonPage()),
+ new("Screens", typeof(ScreensPage), () => new ScreensPage()),
+ new("ScrollBar", typeof(ScrollBarPage), () => new ScrollBarPage()),
+ new("Slider", typeof(SliderPage), () => new SliderPage()),
+ new("Window Decorations", typeof(WindowDecorationsPage), () => new WindowDecorationsPage()),
+ new("Window", typeof(WindowPage), () => new WindowPage()),
  ];
 }
