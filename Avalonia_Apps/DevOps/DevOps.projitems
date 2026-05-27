@@ -10,7 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
-    <None Include="$(MSBuildThisFileDirectory)AA98-001-Small-Editor-Foundation.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)Vision.md" />
   </ItemGroup>
