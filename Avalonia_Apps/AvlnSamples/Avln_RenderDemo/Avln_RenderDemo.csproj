@@ -1,16 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project>
+  <Import Project="..\Avln_Samples.props" />
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+  </PropertyGroup>
+ 
  <ItemGroup>
     <!-- Remove direct source include from Avalonia repo; use local helper instead -->
-    <Compile Remove="..\..\src\Avalonia.Base\Rendering\SceneGraph\LineBoundsHelper.cs" />
-    <Compile Update="Pages\TextFormatterPage.axaml.cs">
-      <DependentUpon>TextFormatterPage.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Remove="..\..\src\Avalonia.Base\Rendering\SceneGraph\LineBoundsHelper.cs" />   
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.0.3" />
