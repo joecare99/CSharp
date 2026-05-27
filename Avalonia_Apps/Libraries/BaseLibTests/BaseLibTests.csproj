@@ -14,6 +14,9 @@
 	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
 		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
 	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Condition="$(TargetFramework.StartsWith('net4'))" Include="IndexRange" Version="1.1.1" />
 		<PackageReference Include="MSTest" Version="4.2.3" />
