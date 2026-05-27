@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:avalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+             x:Class="AA98_AvlnCodeStudio.UI.Controls.EditorTextArea">
+  <Border BorderBrush="{DynamicResource ThemeControlMidBrush}"
+          BorderThickness="1"
+          CornerRadius="4"
+          MinHeight="250">
+      <avalonEdit:TextEditor Name="PART_Editor"
+                             ShowLineNumbers="True"
+                             HorizontalScrollBarVisibility="Auto"
+                             VerticalScrollBarVisibility="Auto"
+                             FontSize="14" />
+  </Border>
+</UserControl>
