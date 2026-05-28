@@ -18,4 +18,8 @@
   <ItemGroup>
 	<ProjectReference Include="..\Avln_Marble.Display\Avln_Marble.Display.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Desktop" Version="12.0.4" />
+    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.17" />
+  </ItemGroup>
 </Project>
