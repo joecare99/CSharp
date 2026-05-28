@@ -76,7 +76,6 @@ namespace AA05_CommandParCalc.Tests
                     obj = Activator.CreateInstance(tAct);
                 else
                     obj = Activator.CreateInstance(tAct, [
-                        null,
                         Substitute.For<ISysTime>(),
                         Substitute.For<ICyclTimer>()
                     ]);

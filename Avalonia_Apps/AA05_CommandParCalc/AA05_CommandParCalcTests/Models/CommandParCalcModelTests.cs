@@ -1,6 +1,5 @@
 ﻿using AA05_CommandParCalc.Models.Interfaces;
 using NSubstitute;
-using Avalonia.Platform;
 using System.ComponentModel;
 
 namespace AA05_CommandParCalc.Models.Tests;
@@ -18,8 +17,7 @@ public class CommandParCalcModelTests
         var tmr = Substitute.For<ICyclTimer>();
         var st = Substitute.For<ISysTime>();
         st.Now.Returns(new DateTime(2025,1,2));
-        var pfh = Substitute.For<IPlatformHandle>();
-        testModel = new CommandParCalcModel(pfh,st,tmr);
+        testModel = new CommandParCalcModel(st,tmr);
     }
 
     [TestMethod()]
