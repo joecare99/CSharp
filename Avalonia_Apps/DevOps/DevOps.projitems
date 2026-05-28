@@ -45,6 +45,9 @@
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F25-Consent-Level-Model.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F31-Component-Settings-Registration.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F36-Test-Data-and-Mocking-Standards.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\Avln_Marble-Migration-to-Avalonia.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA05-T001-Split-CommandParCalc-Into-Core-Desktop-and-Browser.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA09-T001-Fix-Browser-Startup-Black-Screen.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T007-Implement-Initial-Syntax-Highlighting-for-Core-Formats.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T010-Implement-Component-Registration-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T014-Implement-Initial-Docking-Host-Baseline.md" />

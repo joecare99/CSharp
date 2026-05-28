@@ -58,6 +58,7 @@ Der anfängliche fachliche Fokus liegt auf:
 - `C#`
 - `.axaml`
 - `.md`
+- `.resx`
 - optional später `json`
 
 ## 🏗️ Architekturleitlinien
@@ -137,3 +138,5 @@ Ein frühes Inkrement ist erfolgreich, wenn es:
 ## 🧭 Langfristiges Zielbild
 Langfristig soll AA98_AvlnCodeStudio ein fokussierter, moderner und erweiterbarer Entwicklungsarbeitsplatz für die .NET- und Mono-Welt werden. Der Schwerpunkt liegt dabei auf einer modularen Architektur, einer anpassbaren Oberfläche, klarer Benutzerkontrolle über KI-Integration sowie einer schrittweisen Entwicklung zu einem praxistauglichen Visual-Studio-Ersatz im definierten Zielbereich.
 
+## Epics und Features
+Die untergeordneten Dokumente in diesem Bereich konkretisieren die Vision schrittweise und dienen der strukturierten Ausarbeitung, Planung und Weiterentwicklung der fachlichen und technischen Umsetzung. Sie werden iterativ ergänzt, verfeinert und angepasst, um Anforderungen, Arbeitspakete und Fortschritt nachvollziehbar zu dokumentieren.Features sind unter .\Features\*.md definiert und bilden die konkreten Umsetzungsschritte für die einzelnen Epics ab. Sie werden iterativ erweitert und angepasst, um den Fortschritt der Entwicklung zu steuern und sicherzustellen, dass jedes Inkrement einen klaren Mehrwert bietet.
