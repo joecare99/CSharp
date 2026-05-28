@@ -28,11 +28,7 @@ namespace AA98_AvlnCodeStudio.UI
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 ServiceProvider = ConfigureServices(desktop);
-
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>(),
-                };
+                desktop.MainWindow = CreateMainWindow(ServiceProvider);
             }
 
             base.OnFrameworkInitializationCompleted();
@@ -50,6 +46,14 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<MainWindowViewModel>();
 
             return services.BuildServiceProvider();
+        }
+
+        private static MainWindow CreateMainWindow(IServiceProvider serviceProvider)
+        {
+            return new MainWindow
+            {
+                DataContext = serviceProvider.GetRequiredService<MainWindowViewModel>(),
+            };
         }
     }
 }

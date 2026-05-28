@@ -1,6 +1,7 @@
 using AA98_AvlnCodeStudio.Base.Services;
 using AA98_AvlnCodeStudio.Base.ViewModels;
 using AA98_AvlnCodeStudio.Model.Documents;
+using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -35,7 +36,8 @@ public partial class EditorViewModel : CodeStudioViewModelBase
         _storageService = storageService;
 
         _text = _document.Content;
-        _statusText = "Ready.";
+        _statusText = UiStrings.ReadyStatusText;
+        _notificationText = UiStrings.ReadyStatusText;
         SynchronizeFromDocument();
     }
 
@@ -66,16 +68,20 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     [ObservableProperty]
     private string _statusText;
 
+    [ObservableProperty]
+    private string _notificationText;
+
     /// <summary>
     /// Gets the window title for the main editor shell.
     /// </summary>
-    public string WindowTitle => $"Code Studio - {DocumentName ?? _document.DisplayName}{(IsDirty ? " *" : string.Empty)}";
+    public string WindowTitle => $"{UiStrings.ApplicationTitle} - {DocumentName ?? _document.DisplayName}{(IsDirty ? UiStrings.WindowTitleDirtySuffix : string.Empty)}";
 
     partial void OnTextChanged(string value)
     {
         _document.UpdateContent(value);
         SynchronizeFromDocument();
-        StatusText = IsDirty ? "Modified." : "Ready.";
+        StatusText = IsDirty ? UiStrings.ModifiedStatusText : UiStrings.ReadyStatusText;
+        NotificationText = IsDirty ? UiStrings.DocumentModifiedNotificationText : UiStrings.DocumentSynchronizedNotificationText;
     }
 
     /// <summary>
@@ -87,7 +93,8 @@ public partial class EditorViewModel : CodeStudioViewModelBase
         _document.Reset();
         Text = _document.Content;
         SynchronizeFromDocument();
-        StatusText = "New document.";
+        StatusText = UiStrings.NewDocumentStatusText;
+        NotificationText = UiStrings.CreatedNewDocumentNotificationText;
     }
 
     /// <summary>
@@ -102,7 +109,8 @@ public partial class EditorViewModel : CodeStudioViewModelBase
 
         if (string.IsNullOrWhiteSpace(filePath))
         {
-            StatusText = "Open canceled.";
+            StatusText = UiStrings.OpenCanceledStatusText;
+            NotificationText = UiStrings.OpenCanceledNotificationText;
             return;
         }
 
@@ -111,7 +119,8 @@ public partial class EditorViewModel : CodeStudioViewModelBase
 
         Text = _document.Content;
         SynchronizeFromDocument();
-        StatusText = $"Opened '{_document.DisplayName}'.";
+        StatusText = string.Format(UiStrings.OpenedDocumentStatusFormat, _document.DisplayName);
+        NotificationText = string.Format(UiStrings.LoadedDocumentNotificationFormat, _document.DisplayName);
     }
 
     /// <summary>
@@ -130,14 +139,16 @@ public partial class EditorViewModel : CodeStudioViewModelBase
 
         if (string.IsNullOrWhiteSpace(filePath))
         {
-            StatusText = "Save canceled.";
+            StatusText = UiStrings.SaveCanceledStatusText;
+            NotificationText = UiStrings.SaveCanceledNotificationText;
             return;
         }
 
         await _storageService.SaveAllTextAsync(filePath, Text ?? string.Empty);
         _document.MarkSaved(filePath);
         SynchronizeFromDocument();
-        StatusText = $"Saved '{_document.DisplayName}'.";
+        StatusText = string.Format(UiStrings.SavedDocumentStatusFormat, _document.DisplayName);
+        NotificationText = string.Format(UiStrings.SavedDocumentNotificationFormat, _document.DisplayName);
     }
 
     /// <summary>
@@ -152,14 +163,16 @@ public partial class EditorViewModel : CodeStudioViewModelBase
 
         if (string.IsNullOrWhiteSpace(filePath))
         {
-            StatusText = "Save as canceled.";
+            StatusText = UiStrings.SaveAsCanceledStatusText;
+            NotificationText = UiStrings.SaveAsCanceledNotificationText;
             return;
         }
 
         await _storageService.SaveAllTextAsync(filePath, Text ?? string.Empty);
         _document.MarkSaved(filePath);
         SynchronizeFromDocument();
-        StatusText = $"Saved '{_document.DisplayName}'.";
+        StatusText = string.Format(UiStrings.SavedDocumentStatusFormat, _document.DisplayName);
+        NotificationText = string.Format(UiStrings.SavedDocumentNotificationFormat, _document.DisplayName);
     }
 
     private string? GetCurrentDirectory()
