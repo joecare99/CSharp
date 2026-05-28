@@ -1,0 +1,112 @@
+<UserControl
+	x:Class="Avln_Marble.Display.Views.BoardView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:vm="using:Avln_Marble.Display.ViewModels"
+	x:DataType="vm:BoardViewModel"
+	mc:Ignorable="d">
+  <Border Padding="24"
+		  CornerRadius="26"
+		  BorderThickness="1"
+		  BorderBrush="#33F7E8C8">
+	<Border.Background>
+	  <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+		<GradientStop Color="#6E4B2B" Offset="0" />
+		<GradientStop Color="#50351E" Offset="0.55" />
+		<GradientStop Color="#382312" Offset="1" />
+	  </LinearGradientBrush>
+	</Border.Background>
+
+	<Canvas x:Name="BoardSurface"
+			Width="{Binding BoardWidth}"
+			Height="{Binding BoardHeight}"
+			Background="Transparent"
+			Focusable="True"
+			PointerPressed="BoardSurface_OnPointerPressed"
+			PointerMoved="BoardSurface_OnPointerMoved"
+			PointerReleased="BoardSurface_OnPointerReleased">
+	  <ItemsControl ItemsSource="{Binding Slots}">
+		<ItemsControl.ItemsPanel>
+		  <ItemsPanelTemplate>
+			<UniformGrid Columns="{Binding ColumnCount}" Rows="{Binding RowCount}" />
+		  </ItemsPanelTemplate>
+		</ItemsControl.ItemsPanel>
+		<ItemsControl.ItemTemplate>
+		  <DataTemplate x:DataType="vm:BoardSlotViewModel">
+			<Grid Width="74" Height="74">
+			  <Grid Margin="9">
+				<Ellipse Fill="#29180D" />
+				<Ellipse Margin="6" Opacity="0.32" Fill="#12000000" />
+			  </Grid>
+			</Grid>
+		  </DataTemplate>
+		</ItemsControl.ItemTemplate>
+	  </ItemsControl>
+
+		<Ellipse Width="{Binding MarbleDiameter}"
+			   Height="{Binding MarbleDiameter}"
+			   Canvas.Left="{Binding DropTargetLeft}"
+			   Canvas.Top="{Binding DropTargetTop}"
+			   IsVisible="{Binding IsDropTargetVisible}"
+			   Stroke="#E8F7E8C8"
+			   StrokeThickness="3"
+			   Fill="#2286E0C5"
+			   StrokeDashArray="2,2" />
+
+	  <ItemsControl ItemsSource="{Binding Marbles}">
+		<ItemsControl.ItemsPanel>
+		  <ItemsPanelTemplate>
+			<Canvas />
+		  </ItemsPanelTemplate>
+		</ItemsControl.ItemsPanel>
+		<ItemsControl.ItemTemplate>
+		  <DataTemplate x:DataType="vm:MarbleViewModel">
+			<Canvas Width="{Binding Diameter}"
+					Height="{Binding Diameter}"
+					Canvas.Left="{Binding Left}"
+					Canvas.Top="{Binding Top}">
+			  <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}" Opacity="0.6" Fill="#18000000" />
+			  <Ellipse Width="{Binding Diameter}"
+					   Height="{Binding Diameter}"
+					   Fill="{Binding FillBrush}"
+					   Stroke="{Binding RimBrush}"
+					   StrokeThickness="2.4" />
+			  <Ellipse Width="{Binding Diameter}"
+					   Height="{Binding Diameter}"
+					   Fill="{Binding FormShadowBrush}"
+					   StrokeThickness="0"
+					   IsHitTestVisible="False" />
+			  <Ellipse Width="14" Height="6" Canvas.Left="21" Canvas.Top="11" Fill="{Binding TopHoleShadowBrush}" IsHitTestVisible="False" />
+			  <Ellipse Width="6" Height="14" Canvas.Left="40" Canvas.Top="22" Fill="{Binding RightHoleShadowBrush}" IsHitTestVisible="False" />
+			  <Ellipse Width="13" Height="6" Canvas.Left="22" Canvas.Top="40" Fill="{Binding BottomHoleShadowBrush}" IsHitTestVisible="False" />
+			  <Ellipse Width="6" Height="14" Canvas.Left="10" Canvas.Top="24" Fill="{Binding LeftHoleShadowBrush}" IsHitTestVisible="False" />
+			  <Ellipse Width="7" Height="7" Canvas.Left="13" Canvas.Top="13" Opacity="{Binding HighlightOpacity}" IsHitTestVisible="False">
+				<Ellipse.Fill>
+					<RadialGradientBrush Center="45%,45%" GradientOrigin="40%,40%" RadiusX="82%" RadiusY="82%">
+					<GradientStop Color="#F8FFFFFF" Offset="0" />
+					<GradientStop Color="#D8FFFFFF" Offset="0.42" />
+					<GradientStop Color="#30FFFFFF" Offset="0.78" />
+					<GradientStop Color="#00FFFFFF" Offset="1" />
+				  </RadialGradientBrush>
+				</Ellipse.Fill>
+			  </Ellipse>
+			  <Ellipse Width="14" Height="6" Canvas.Left="26" Canvas.Top="14" Fill="{Binding TopReflectionBrush}" IsHitTestVisible="False" />
+			  <Ellipse Width="7" Height="14" Canvas.Left="38" Canvas.Top="22" Fill="{Binding RightReflectionBrush}" IsHitTestVisible="False" />
+			  <Ellipse Width="14" Height="6" Canvas.Left="23" Canvas.Top="38" Fill="{Binding BottomReflectionBrush}" IsHitTestVisible="False" />
+			  <Ellipse Width="7" Height="14" Canvas.Left="11" Canvas.Top="25" Fill="{Binding LeftReflectionBrush}" IsHitTestVisible="False" />
+			  <Ellipse Width="{Binding Diameter}"
+					   Height="{Binding Diameter}"
+					   Margin="-2"
+					   Stroke="#FFF7E8C8"
+					   StrokeThickness="3.4"
+					   IsVisible="{Binding IsSelected}"
+					   IsHitTestVisible="False" />
+			</Canvas>
+		  </DataTemplate>
+		</ItemsControl.ItemTemplate>
+	  </ItemsControl>
+	</Canvas>
+  </Border>
+</UserControl>

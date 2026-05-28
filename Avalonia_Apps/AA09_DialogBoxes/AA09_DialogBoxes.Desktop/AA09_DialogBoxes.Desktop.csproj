@@ -1,0 +1,32 @@
+<Project>
+  <Import Project="..\Application.props" />
+  <PropertyGroup>
+	<OutputType>WinExe</OutputType>
+	<TargetFrameworks>net8.0</TargetFrameworks>
+	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+	<ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<ItemGroup>
+	<PackageReference Include="Avalonia.Desktop" />
+	<PackageReference Include="Avalonia.Diagnostics">
+	  <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+	  <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+	</PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\AA09_DialogBoxes\AA09_DialogBoxes.csproj" />
+  </ItemGroup>
+</Project>

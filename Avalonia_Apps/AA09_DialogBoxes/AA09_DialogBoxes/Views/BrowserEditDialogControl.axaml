@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			  xmlns:vm="clr-namespace:AA09_DialogBoxes.ViewModels"
+			 x:Class="AA09_DialogBoxes.Views.BrowserEditDialogControl"
+			  x:DataType="vm:DialogWindowViewModel"
+			 IsVisible="False"
+			 Focusable="True">
+	<Design.DataContext>
+	<vm:DialogWindowViewModel />
+  </Design.DataContext>
+  <Border x:Name="OverlayBackdrop">
+	<Canvas x:Name="OverlayCanvas">
+	  <Border x:Name="OverlayDialog"
+			  Width="420"
+			  Height="260"
+			  Background="{DynamicResource AppDefaultBackground2}"
+			  BorderBrush="{DynamicResource SideBarOutline}"
+			  BorderThickness="1"
+			  CornerRadius="8"
+			  ClipToBounds="True"
+			  Canvas.Left="120"
+			  Canvas.Top="90">
+		<Grid RowDefinitions="Auto,*,Auto">
+		  <Border Grid.Row="0"
+				  Background="{DynamicResource SideBarBackground}"
+				  CornerRadius="8,8,0,0"
+				  Padding="10,6,0,6">
+			<Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+			  <TextBlock Text="Edit Dialog" FontWeight="SemiBold" VerticalAlignment="Center"/>
+			  <Button Grid.Column="1"
+					  Content="×"
+					  Width="36"
+					  Height="30"
+					  Margin="0,-6,-1,-6"
+					  Padding="0"
+					  FontSize="16"
+					  FontWeight="Bold"
+					  HorizontalContentAlignment="Center"
+					  VerticalContentAlignment="Center"
+					  Background="Transparent"
+					  BorderThickness="0"
+					  Click="OverlayClose_Click" />
+			</Grid>
+		  </Border>
+
+		  <StackPanel Grid.Row="1" Margin="16" Spacing="8">
+			<TextBox x:Name="NameTextBox" Text="{Binding Name, Mode=TwoWay}" PlaceholderText="Name"/>
+			<TextBox x:Name="EmailTextBox" Text="{Binding Email, Mode=TwoWay}" PlaceholderText="Email"/>
+		  </StackPanel>
+
+		  <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="12,0,12,12">
+			<Button Click="OverlayOk_Click" MinWidth="80" IsDefault="True" Content="OK" />
+			<Button Click="OverlayCancel_Click" MinWidth="80" IsCancel="True" Content="Cancel" />
+		  </StackPanel>
+		</Grid>
+	  </Border>
+	</Canvas>
+  </Border>
+</UserControl>

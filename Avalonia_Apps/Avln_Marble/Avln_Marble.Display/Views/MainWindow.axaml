@@ -1,0 +1,85 @@
+<Window
+	x:Class="Avln_Marble.Display.Views.MainWindow"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:vm="using:Avln_Marble.Display.ViewModels"
+	xmlns:views="using:Avln_Marble.Display.Views"
+	x:DataType="vm:MainWindowViewModel"
+	Title="Marble Board Prototype"
+	Width="1100"
+	MinWidth="980"
+	Height="760"
+	MinHeight="680"
+	Background="#11151C"
+	KeyDown="Window_OnKeyDown"
+	mc:Ignorable="d">
+  <Grid Margin="24">
+	<Grid.ColumnDefinitions>
+	  <ColumnDefinition Width="Auto" />
+	  <ColumnDefinition Width="28" />
+	  <ColumnDefinition Width="*" MinWidth="320" />
+	</Grid.ColumnDefinitions>
+
+	<views:BoardView Grid.Column="0" DataContext="{Binding Board}" />
+
+	<Grid Grid.Column="2">
+	  <Grid.RowDefinitions>
+		<RowDefinition Height="Auto" />
+		<RowDefinition Height="Auto" />
+		<RowDefinition Height="Auto" />
+		<RowDefinition Height="*" />
+	  </Grid.RowDefinitions>
+
+	  <TextBlock FontSize="30"
+				 FontWeight="SemiBold"
+				 Foreground="#FFF8F0DB"
+				 TextWrapping="Wrap"
+				 Text="Marble Board Prototype" />
+	  <TextBlock Grid.Row="1"
+				 Margin="0,10,0,0"
+				 TextWrapping="Wrap"
+				 Foreground="#FFD5D9E0"
+				 FontSize="15"
+				 Text="Prototype surface for glossy marbles, cast shadows, neighbor reflections, mouse dragging, and keyboard interaction." />
+
+	  <Border Grid.Row="2"
+			  Margin="0,24,0,0"
+			  Padding="18"
+			  CornerRadius="18"
+			  Background="#1AFFFFFF"
+			  BorderBrush="#2ED9C9A6"
+			  BorderThickness="1">
+		<StackPanel Spacing="12">
+		  <TextBlock FontSize="19"
+					 FontWeight="SemiBold"
+					 Foreground="#FFF8F0DB"
+					 Text="Interaction" />
+		  <TextBlock TextWrapping="Wrap"
+					 Foreground="#FFD5D9E0"
+					 Text="• Click a marble to select it&#x0a;• Drag a selected marble to an empty slot&#x0a;• Use arrow keys to move the selection&#x0a;• Use Shift + Arrow keys to drag the selected marble" />
+		</StackPanel>
+	  </Border>
+
+	  <Border Grid.Row="3"
+			  Margin="0,18,0,0"
+			  VerticalAlignment="Top"
+			  Padding="18"
+			  CornerRadius="18"
+			  Background="#1AFFFFFF"
+			  BorderBrush="#2E7AC8FF"
+			  BorderThickness="1">
+		<StackPanel Spacing="12">
+		  <TextBlock FontSize="19"
+					 FontWeight="SemiBold"
+					 Foreground="#FFF8F0DB"
+					 Text="Board status" />
+		  <TextBlock TextWrapping="Wrap"
+					 Foreground="#FFD5D9E0"
+					 Text="{Binding Board.StatusText}" />
+		</StackPanel>
+	  </Border>
+	</Grid>
+  </Grid>
+</Window>

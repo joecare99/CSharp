@@ -2,7 +2,6 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Avalonia.Platform;
 using AA05_CommandParCalc.Models;
 using AA05_CommandParCalc.Models.Interfaces;
 using AA05_CommandParCalc.ViewModels;
@@ -14,6 +13,8 @@ namespace AA05_CommandParCalc;
 
 public partial class App : Application
 {
+    public IServiceProvider? Services { get; private set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -21,31 +22,35 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        Services = CreateServices();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            InitDesktopApp(desktop);
+            desktop.MainWindow = new MainWindow
+            {
+                DataContext = Services.GetRequiredService<ICommandParCalcViewModel>()
+            };
+        }
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+        {
+            singleViewPlatform.MainView = new CommandParCalcView
+            {
+                DataContext = Services.GetRequiredService<ICommandParCalcViewModel>()
+            };
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
-    protected void InitDesktopApp(IClassicDesktopStyleApplicationLifetime desktop)
+    private static IServiceProvider CreateServices()
     {
         var services = new ServiceCollection();
 
         services.AddTransient<ICommandParCalcViewModel, CommandParCalcViewModel>()
         .AddTransient<ISysTime, SysTime>()
         .AddTransient<ICyclTimer, TimerProxy>()
-        .AddSingleton<IPlatformHandle>((s)=>null!)
         .AddSingleton<ICommandParCalcModel, CommandParCalcModel>();
 
-        Services = services.BuildServiceProvider();
-
-        desktop.MainWindow = new MainWindow
-        {
-            DataContext = Services.GetRequiredService<ICommandParCalcViewModel>()
-        };
+        return services.BuildServiceProvider();
     }
-
-    public IServiceProvider? Services { get; private set; }
 }

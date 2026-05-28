@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Avln_Marble.Browser": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:60447;http://localhost:60448"
+    }
+  }
+}

@@ -20,40 +20,25 @@ using Avalonia;
 namespace AA05_CommandParCalc;
 
 /// <summary>
-/// Class Program. This class cannot be inherited.
+/// Provides the shared Avalonia application builder.
 /// </summary>
-public sealed class Program
+public static class AppBuilderFactory
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
     /// <summary>
-    /// Defines the entry point of the application.
-    /// </summary>
-    /// <param name="args">The arguments.</param>
-    [STAThread]
-    public static void Main(string[] args) 
-        => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
-
-    // Avalonia configuration, don't remove; also used by visual designer.
-    /// <summary>
-    /// Builds the avalonia application.
+    /// Builds the shared Avalonia application.
     /// </summary>
     /// <returns>AppBuilder.</returns>
-    public static AppBuilder BuildAvaloniaApp() //{ get; set; } = ()
+    public static AppBuilder BuildAvaloniaApp()
         => GetAppBuilder();
 
     /// <summary>
-    /// Builds the avalonia application.
+    /// Gets the application builder factory.
     /// </summary>
-    /// <returns>AppBuilder.</returns>
+    /// <returns>A delegate returning the configured <see cref="AppBuilder"/>.</returns>
     public static Func<AppBuilder> GetAppBuilder = CreateAppBuilder;
 
     private static AppBuilder CreateAppBuilder()
         => AppBuilder.Configure<App>()
-            .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
-
 }
