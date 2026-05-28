@@ -21,7 +21,7 @@ public partial class OverlayDialogControl : UserControl
         KeyDown += OverlayDialogControl_KeyDown;
     }
 
-    public Task<MsgBoxResult> ShowAsync(Window owner, string title, string content)
+    public Task<MsgBoxResult> ShowAsync(string title, string content)
     {
         if (_overlayCompletion is { Task.IsCompleted: false })
             return _overlayCompletion.Task;
@@ -30,9 +30,9 @@ public partial class OverlayDialogControl : UserControl
 
         OverlayTitle.Text = title;
         OverlayContent.Text = content;
-        UpdateBackdrop(owner.ActualThemeVariant);
+        UpdateBackdrop(ActualThemeVariant);
         IsVisible = true;
-        CenterOverlayDialog(owner.Bounds);
+        CenterOverlayDialog(Bounds);
         Focus();
 
         return _overlayCompletion.Task;

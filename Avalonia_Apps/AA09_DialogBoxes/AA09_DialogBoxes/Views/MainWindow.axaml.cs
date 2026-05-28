@@ -37,7 +37,7 @@ public partial class MainWindow : Window
 
         WeakReferenceMessenger.Default.Register<OverlayMessageRequestMessage>(this, (r, m) =>
         {
-            m.Reply(_overlayDialogControl.ShowAsync(this, m.Title, m.Content));
+            m.Reply(_overlayDialogControl.ShowAsync(m.Title, m.Content));
         });
 
         WeakReferenceMessenger.Default.Register<EditDialogRequestMessage>(this, (r, m) =>
