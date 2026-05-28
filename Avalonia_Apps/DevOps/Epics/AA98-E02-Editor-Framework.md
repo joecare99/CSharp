@@ -11,12 +11,14 @@ Create the editor foundation for `AA98_AvlnCodeStudio` as a reusable framework t
 - Support initial file types: `C#`, `.axaml`, and `.md`.
 - Introduce syntax-highlighting capabilities appropriate to the supported document types.
 - Prepare the editor area for future multi-document and richer language tooling increments.
+- Prepare editor-facing texts and file-type labels so they can be localized through resources.
 
 ## Included Themes
 - Document lifecycle
 - Editor hosting and document state
 - Syntax highlighting
 - File-type-aware editor behavior
+- Resource-friendly editor text handling
 
 ## Excluded for Now
 - Full Roslyn-powered code intelligence
@@ -27,6 +29,7 @@ Create the editor foundation for `AA98_AvlnCodeStudio` as a reusable framework t
 - Users can work productively with the initial supported document types.
 - The editor model can be extended without replacing the first implementation.
 - The framework supports later additions such as tabs, context actions, and richer language services.
+- Editor-facing texts can evolve toward resource-based localization without redesigning the feature set.
 
 ## Candidate Child Features
 - Multi-document editing

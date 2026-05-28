@@ -10,7 +10,47 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl006-Document-Lifecycle-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl009-File-Type-Identification-and-Behavior-Selection.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl011-Command-Contribution-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl012-Dockable-UI-Contribution-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl014-Initial-Docking-Host-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl016-Layout-Save-and-Restore-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl019-File-Explorer-and-Workspace-Tree-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl022-AI-Provider-Abstraction-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl024-AI-Chat-Interaction-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl026-Consent-Level-Model-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl029-Component-Settings-Registration-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl031-User-Preference-Persistence-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl033-Build-Validation-and-Quality-Gates-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E01-Workbench-and-Shell.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E02-Editor-Framework.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E03-Component-Extension-Model.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E04-Docking-and-Layout.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E05-Workspace-and-Project-Handling.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E06-LLM-Integration-Architecture.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E07-Privacy-Security-and-Consent.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E08-Settings-and-Configuration.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E09-Quality-Tests-and-Engineering-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F01-Main-Window-and-Shell-Regions.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F02-Application-Command-Surfaces.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F03-Workbench-Startup-and-Composition.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F04-Status-and-Notification-Surface.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F06-Multi-Document-Editing-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F09-Command-Contribution-Contracts.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F13-Initial-Docking-Host-Integration.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F20-Workspace-Context-Service.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F23-Editor-Selection-and-Context-Action-Model.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F25-Consent-Level-Model.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F31-Component-Settings-Registration.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F36-Test-Data-and-Mocking-Standards.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T007-Implement-Initial-Syntax-Highlighting-for-Core-Formats.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T010-Implement-Component-Registration-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T014-Implement-Initial-Docking-Host-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T018-Implement-Workspace-Open-and-Close-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T020-Implement-Recent-Workspaces-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T034-Implement-Architecture-Guardrail-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)Vision.md" />
   </ItemGroup>
 </Project>

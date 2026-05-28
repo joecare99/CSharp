@@ -68,6 +68,7 @@ Der anfängliche fachliche Fokus liegt auf:
 - Erweiterbarkeit für lokale und entfernte KI-Anbieter
 - Linux-first, ohne die Architektur unnötig auf nur eine Plattform zu beschränken
 - vorbereitete Integrationspunkte für standardisierte externe Tool- und KI-Protokolle
+- starke Lokalisierbarkeit von Anfang an, insbesondere durch ressourcenbasierte UI- und Benutzerttexte
 
 ## 🔁 Inkrementelle Umsetzungsstrategie
 Die Lösung soll als Framework Stück für Stück wachsen.
@@ -89,6 +90,14 @@ Bevorzugt werden vertikale, direkt nutzbare Ausbaustufen statt großer technisch
 - speicherbares Layout
 - Docking als zentraler Teil des UI-Konzepts
 - klare Verantwortlichkeiten zwischen UI, Logik und Integrationsschichten
+- lokalisierbar und sprachneutral in UI-nahen Textdefinitionen
+
+## 🌍 Lokalisierbarkeit und Ressourcen
+- Benutzer- und UI-Texte sollen von Anfang an aus Ressourcen kommen statt direkt im Code oder XAML hartcodiert zu werden.
+- Die Architektur soll Ressourcen als regulären, erweiterbaren Bestandteil des Frameworks behandeln.
+- Komponenten sollen mittelfristig eigene lokalisierbare Ressourcen beitragen können.
+- Mittelfristig soll das Framework auch Unterstützung für das Anzeigen, Bearbeiten und Pflegen von Ressourcendateien bieten.
+- Frühe Inkremente sollen bereits so gestaltet werden, dass spätere Mehrsprachigkeit keine grundlegende Umstrukturierung der UI- oder Konfigurationslogik erfordert.
 
 ## 🔐 Sicherheits- und Datenschutzgrundsätze
 Sicherheits- und Datenschutzentscheidungen sollen bewusst in der Hand des Benutzers liegen.
@@ -123,6 +132,7 @@ Ein frühes Inkrement ist erfolgreich, wenn es:
 - Komponentenregistrierung für Commands, UI-Elemente und Konfiguration ermöglicht
 - eine benutzeranpassbare Oberfläche mit Docking-Grundlagen unterstützt oder vorbereitet
 - die KI-Integration architektonisch sauber vorbereitet, ohne sie bereits zu erzwingen
+- UI- und Benutzerttexte so platziert, dass eine spätere Lokalisierung ohne grundlegenden Umbau möglich bleibt
 
 ## 🧭 Langfristiges Zielbild
 Langfristig soll AA98_AvlnCodeStudio ein fokussierter, moderner und erweiterbarer Entwicklungsarbeitsplatz für die .NET- und Mono-Welt werden. Der Schwerpunkt liegt dabei auf einer modularen Architektur, einer anpassbaren Oberfläche, klarer Benutzerkontrolle über KI-Integration sowie einer schrittweisen Entwicklung zu einem praxistauglichen Visual-Studio-Ersatz im definierten Zielbereich.

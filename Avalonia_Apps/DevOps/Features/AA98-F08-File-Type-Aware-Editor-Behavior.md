@@ -12,12 +12,14 @@ Introduce file-type-aware editor behavior so the framework can apply suitable ha
 - Introduce a baseline model for file-type-specific behavior selection.
 - Separate shared editor behavior from file-type-specific contributions.
 - Prepare the framework for later richer per-type services beyond syntax highlighting.
+- Prepare file-type-facing labels and descriptions so they can come from resources.
 
 ## Included
 - Document type identification rules
 - File-type-aware behavior selection
 - Shared versus specialized editor responsibilities
 - Extensibility path for future editor services
+- Resource-friendly file-type presentation
 
 ## Excluded for Now
 - Full language server integration
