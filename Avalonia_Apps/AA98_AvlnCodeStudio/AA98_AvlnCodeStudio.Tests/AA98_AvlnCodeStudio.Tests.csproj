@@ -26,4 +26,7 @@
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Model\AA98_AvlnCodeStudio.Model.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base\AA98_AvlnCodeStudio.Base.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.6.0" />
+  </ItemGroup>
 </Project>

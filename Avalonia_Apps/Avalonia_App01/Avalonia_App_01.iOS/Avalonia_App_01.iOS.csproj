@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Avalonia_App_01\Avalonia_App_01.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.iOS" Version="12.0.4" />
+  </ItemGroup>
+
 </Project>
