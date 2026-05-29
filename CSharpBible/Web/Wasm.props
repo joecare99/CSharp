@@ -4,11 +4,11 @@
 	  <BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
     <BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 	  <RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net",""))</RootNamespace>
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <Company>JC-Soft</Company>
     <Authors>Joe Care</Authors>
-    <Copyright>Copyright © JC-Soft 2023</Copyright>
+    <Copyright>Copyright © JC-Soft 2026</Copyright>
   </PropertyGroup>
 </Project>
