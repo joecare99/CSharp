@@ -1,9 +1,11 @@
-using System;
-using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using IntegrationTestApp.Models;
+using IntegrationTestApp.Pages;
 using IntegrationTestApp.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace IntegrationTestApp
 {
@@ -36,7 +38,36 @@ namespace IntegrationTestApp
 
         private MainWindowViewModel? ViewModel => (MainWindowViewModel?)DataContext;
 
-        private void InitializeViewMenu(IEnumerable<Page> pages)
+        public void SetTrayEventState(string checkBoxName)
+        {
+            if (ViewModel is null)
+            {
+                return;
+            }
+
+            var desktopPage = ViewModel.Pages.FirstOrDefault(p => p.PageType == typeof(DesktopPage));
+
+            if (desktopPage is null)
+            {
+                return;
+            }
+
+            if (!ReferenceEquals(Pager.SelectedItem, desktopPage))
+            {
+                Pager.SelectedItem = desktopPage;
+            }
+            else if (PagerContent.Child is null)
+            {
+                PagerContent.Child = desktopPage.CreateContent();
+            }
+
+            if (PagerContent.Child is Control content)
+            {
+                content.FindControl<CheckBox>(checkBoxName)?.IsChecked = true;
+            }
+        }
+
+        private void InitializeViewMenu(IEnumerable<DemoPage> pages)
         {
             var viewMenu = (NativeMenuItem?)NativeMenu.GetMenu(this)?.Items[1];
 
@@ -46,7 +77,7 @@ namespace IntegrationTestApp
                 {
                     Header = (string?)page.Name,
                     ToolTip = $"Tip:{(string?)page.Name}",
-                    ToggleType = NativeMenuItemToggleType.Radio,
+                    ToggleType = MenuItemToggleType.Radio,
                 };
 
                 menuItem.Click += (_, _) =>
@@ -61,7 +92,7 @@ namespace IntegrationTestApp
 
         private void Pager_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (Pager.SelectedItem is Page page)
+            if (Pager.SelectedItem is DemoPage page)
                 PagerContent.Child = page.CreateContent();
         }
 

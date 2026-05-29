@@ -30,4 +30,8 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.17" />
+  </ItemGroup>
+
 </Project>

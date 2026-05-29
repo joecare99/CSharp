@@ -6,21 +6,21 @@ namespace IntegrationTestApp.ViewModels;
 
 internal class MainWindowViewModel : ViewModelBase
 {
-    private Page? _selectedPage;
+    private DemoPage? _selectedPage;
 
-    public MainWindowViewModel(IEnumerable<Page> pages)
+    public MainWindowViewModel(IEnumerable<DemoPage> pages)
     {
         Pages = new(pages);
     }
 
-    public ObservableCollection<Page> Pages { get; }
+    public ObservableCollection<DemoPage> Pages { get; }
     
-    public Page? SelectedPage
+    public DemoPage? SelectedPage
     { 
         get => _selectedPage;
         set
         {
-            if (!EqualityComparer<Page?>.Default.Equals(_selectedPage, value))
+            if (!EqualityComparer<DemoPage?>.Default.Equals(_selectedPage, value))
             {
                 _selectedPage = value;
                 OnPropertyChanged();

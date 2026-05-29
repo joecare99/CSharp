@@ -31,7 +31,7 @@
 						<TextBlock Grid.Column="0" Grid.Row="0" Text="StartPoint:" VerticalAlignment="Center" />
 						<TextBox Grid.Column="2" Grid.Row="0"
 								Text="{Binding StartPointText, Mode=TwoWay}"
-										 Watermark="0.0000;0.0000" />
+										 PlaceholderText="0.0000;0.0000" />
 						<Button Grid.Column="4" Grid.Row="0" Content="Update"
 		 	          Command="{Binding UpdateStartPointFromTextCommand}" />
 
@@ -44,7 +44,7 @@
 						<TextBlock Grid.Column="0" Grid.Row="2" Text="EndPoint:" VerticalAlignment="Center" />
 						<TextBox Grid.Column="2" Grid.Row="2"
 								Text="{Binding EndPointText, Mode=TwoWay}"
-							Watermark="1.0000;1.0000" />
+							PlaceholderText="1.0000;1.0000" />
 						<Button Grid.Column="4" Grid.Row="2" Content="Update"
 					     Command="{Binding UpdateEndPointFromTextCommand}" />
 

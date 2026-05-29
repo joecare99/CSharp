@@ -7,10 +7,6 @@
     <Project Path="Avln_AnimationTiming/Avln_AnimationTiming.csproj" />
     <Project Path="Avln_AnimationTimingTests/Avln_AnimationTimingTests.csproj" />
     <Project Path="Avln_CustomAnimation/Avln_CustomAnimation.csproj" />
-    <Project Path="WPF_AnimationTiming/WPF_AnimationTiming.csproj" />
-    <Project Path="WPF_AnimationTiming/WPF_AnimationTiming_net.csproj" />
-    <Project Path="WPF_AnimationTimingTests/WPF_AnimationTimingTests.csproj" />
-    <Project Path="WPF_AnimationTimingTests/WPF_AnimationTiming_netTests.csproj" />
     <Project Path="WPF_CustomAnimation/WPF_CustomAnimation.csproj" />
     <Project Path="WPF_CustomAnimation/WPF_CustomAnimation_net.csproj" />
     <Project Path="WPF_CustomAnimationTests/WPF_CustomAnimationTests.csproj" />
@@ -26,10 +22,6 @@
     <Project Path="Avln_Complex_Layout/Avln_Complex_Layout.csproj" />
     <Project Path="Avln_Hello_World/Avln_Hello_World.csproj" />
     <Project Path="Avln_Hello_WorldTests/Avln_Hello_WorldTests.csproj" />
-    <Project Path="WPF_Complex_Layout/WPF_Complex_Layout.csproj" />
-    <Project Path="WPF_Complex_Layout/WPF_Complex_Layout_net.csproj" />
-    <Project Path="WPF_Complex_LayoutTests/WPF_Complex_LayoutTests.csproj" />
-    <Project Path="WPF_Complex_LayoutTests/WPF_Complex_Layout_netTests.csproj" />
     <Project Path="WPF_ControlsAndLayout/WPF_ControlsAndLayout.csproj" />
     <Project Path="WPF_ControlsAndLayout/WPF_ControlsAndLayout_net.csproj" />
     <Project Path="WPF_ControlsAndLayoutTests/WPF_ControlsAndLayoutTests.csproj" />
@@ -39,9 +31,6 @@
     <Project Path="Avln_Brushes/Avln_Brushes.csproj" />
     <Project Path="Avln_Geometry/Avln_Geometry.csproj" />
     <Project Path="Avln_ImageView/Avln_ImageView.csproj" />
-    <Project Path="WPF_Brushes/WPF_Brushes.csproj" />
-    <Project Path="WPF_Geometry/WPF_Geometry.csproj" />
-    <Project Path="WPF_ImageView/WPF_ImageView.csproj" />
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="../Libraries/Libraries.props" />
@@ -85,8 +74,4 @@
   <Project Path="Avln_Sample_Template/Avln_Sample_Template.csproj" />
   <Project Path="Avln_TextTestApp/Avln_TextTestApp.csproj" />
   <Project Path="SampleControls/ControlSamples.Pack.csproj" />
-  <Project Path="WPF_Sample_Template/WPF_Sample_Template.csproj" />
-  <Project Path="WPF_Sample_Template/WPF_Sample_Template_net.csproj" />
-  <Project Path="WPF_Sample_TemplateTests/WPF_Sample_TemplateTests.csproj" />
-  <Project Path="WPF_Sample_TemplateTests/WPF_Sample_Template_netTests.csproj" />
 </Solution>

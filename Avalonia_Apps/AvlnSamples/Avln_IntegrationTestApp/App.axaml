@@ -9,7 +9,7 @@
     </Application.Styles>
     <TrayIcon.Icons>
         <TrayIcons>
-            <TrayIcon Icon="/Assets/icon.ico"
+            <TrayIcon Icon="/Assets/avalonia-logo.ico"
                       ToolTipText="IntegrationTestApp TrayIcon"
                       Command="{Binding TrayIconCommand}"
                       CommandParameter="TrayIconClicked">

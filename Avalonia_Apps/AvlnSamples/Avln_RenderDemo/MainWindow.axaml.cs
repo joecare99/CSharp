@@ -58,6 +58,7 @@ namespace RenderDemo
 
         private void InitializeComponent()
         {
+            AvaloniaXamlLoader.Load(this);
         }
     }
 }

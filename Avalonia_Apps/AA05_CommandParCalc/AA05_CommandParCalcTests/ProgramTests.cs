@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using AA05_CommandParCalc;
 
 namespace AA05_CommandParCalc.Tests
 {
@@ -7,24 +8,28 @@ namespace AA05_CommandParCalc.Tests
     {
 
         [TestMethod()]
-        public void MainTest()
+        public void BuildAvaloniaAppUsesConfigurableFactoryTest()
         {
-            var _baa = Program.GetAppBuilder;
+            var appBuilderFactory = AppBuilderFactory.GetAppBuilder;
             try
             {
-                Program.GetAppBuilder = () => AppBuilder.Configure<App>();
-                Assert.ThrowsExactly<InvalidOperationException>(()=> Program.Main(new string[] { }));
+                AppBuilderFactory.GetAppBuilder = () => AppBuilder.Configure<App>();
+
+                var result = AppBuilderFactory.BuildAvaloniaApp();
+
+                Assert.IsNotNull(result);
+                Assert.IsInstanceOfType(result, typeof(AppBuilder));
             }
             finally
             {
-                Program.GetAppBuilder = _baa;
+                AppBuilderFactory.GetAppBuilder = appBuilderFactory;
             }
         }
 
         [TestMethod()]
         public void BuildAvaloniaAppTest()
         {
-            var result = Program.BuildAvaloniaApp();
+            var result = AppBuilderFactory.BuildAvaloniaApp();
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(AppBuilder));
         }

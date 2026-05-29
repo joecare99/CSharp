@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
-		<UpDir>..\</UpDir>
+		<UpDir>..\..</UpDir>
 		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
 		<BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<LangVersion>latest</LangVersion>
@@ -10,7 +10,8 @@
 		<Authors>Mir</Authors>
 		<Product>Avalonia AvlnSamples</Product>
 		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-		<AssemblyName>$(MSBuildProjectName)</AssemblyName>	
+		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
 		<ApplicationIcon />
 		<StartupObject />
 	</PropertyGroup>

@@ -1,0 +1,117 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AA98_AvlnCodeStudio.UI.ViewModels"
+        xmlns:controls="using:AA98_AvlnCodeStudio.UI.Controls"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="AA98_AvlnCodeStudio.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Width="1200"
+        Height="800"
+        MinWidth="900"
+        MinHeight="600"
+        Title="{Binding WindowTitle}">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid Margin="12"
+          RowDefinitions="Auto,*,Auto"
+          ColumnDefinitions="260,*">
+        <Border Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,8"
+                Padding="8,6"
+                BorderBrush="{DynamicResource ThemeControlMidBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+            <StackPanel Spacing="8">
+                <Menu>
+                    <MenuItem Header="{Binding FileMenuHeader}">
+                        <MenuItem Header="{Binding NewCommandText}" Command="{Binding Editor.NewDocumentCommand}" />
+                        <MenuItem Header="{Binding OpenCommandText}" Command="{Binding Editor.OpenCommand}" />
+                        <MenuItem Header="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
+                        <MenuItem Header="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
+                    </MenuItem>
+                    <MenuItem Header="{Binding ViewMenuHeader}">
+                        <MenuItem Header="{Binding NavigationPlaceholderMenuText}" />
+                        <MenuItem Header="{Binding StatusPlaceholderMenuText}" />
+                    </MenuItem>
+                </Menu>
+
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="{Binding NewCommandText}" Command="{Binding Editor.NewDocumentCommand}" />
+                    <Button Content="{Binding OpenCommandText}" Command="{Binding Editor.OpenCommand}" />
+                    <Button Content="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
+                    <Button Content="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Grid.Column="0"
+                Margin="0,0,12,0"
+                Padding="12"
+                BorderBrush="{DynamicResource ThemeControlMidBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+            <StackPanel Spacing="8">
+                <TextBlock Text="{Binding NavigationTitle}"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding NavigationPlaceholder}"
+                           Opacity="0.7"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Padding="12"
+                BorderBrush="{DynamicResource ThemeControlMidBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+            <DockPanel LastChildFill="True">
+                <TextBlock DockPanel.Dock="Top"
+                           Margin="0,0,0,8"
+                           Text="{Binding EditorRegionTitle}"
+                           FontWeight="SemiBold" />
+                <controls:EditorTextArea HorizontalAlignment="Stretch"
+                                         VerticalAlignment="Stretch"
+                                         Text="{Binding Editor.Text, Mode=TwoWay}" />
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Margin="0,12,0,0"
+                Padding="8,6"
+                BorderBrush="{DynamicResource ThemeControlMidBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+            <StackPanel Spacing="4">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Left"
+                               Margin="0,0,16,0"
+                               Text="{Binding StatusRegionTitle}"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Editor.StatusText}" />
+                </DockPanel>
+
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Left"
+                               Margin="0,0,16,0"
+                               Text="{Binding NotificationRegionTitle}"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Editor.NotificationText}" />
+                </DockPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+
+</Window>
+    

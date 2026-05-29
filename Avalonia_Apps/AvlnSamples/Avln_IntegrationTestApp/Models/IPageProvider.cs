@@ -4,5 +4,5 @@ namespace IntegrationTestApp.Models;
 
 internal interface IPageProvider
 {
- IEnumerable<Page> GetPages();
+ IEnumerable<DemoPage> GetPages();
 }

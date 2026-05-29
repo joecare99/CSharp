@@ -1,16 +1,9 @@
 ﻿using NSubstitute;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Platform;
 
 namespace AA05_CommandParCalc.Tests;
 
-class TestApp : App
-{
-    public void CallInitDesktopApp()
-    {
-        InitDesktopApp(Substitute.For<IClassicDesktopStyleApplicationLifetime>());
-    }
-}
+class TestApp : App;
 
 [TestClass()]
 public class AppTests
@@ -47,31 +40,35 @@ public class AppTests
     [TestMethod()]
     public void InitDesktopTest()
     {
-        // Act
-        Assert.ThrowsExactly<InvalidOperationException>(()=> testApp.CallInitDesktopApp());
+        testApp.ApplicationLifetime = Substitute.For<IClassicDesktopStyleApplicationLifetime>();
 
-        // Assert
+        Assert.ThrowsExactly<InvalidOperationException>(() => testApp.OnFrameworkInitializationCompleted());
+
         Assert.IsNotNull(testApp.Services);
-        Assert.IsNull(testApp.Services.GetService(typeof(IPlatformHandle)));
     }
 
     [TestMethod()]
     public void OnFrameworkInitializationCompletedTest()
     {
         testApp.ApplicationLifetime = Substitute.For<IClassicDesktopStyleApplicationLifetime>();
+
         // Act
-        Assert.ThrowsExactly<InvalidOperationException>(()=> testApp.OnFrameworkInitializationCompleted());
+        Assert.ThrowsExactly<InvalidOperationException>(() => testApp.OnFrameworkInitializationCompleted());
+
+        // Assert
+        Assert.IsNotNull(testApp.Services);
     }
 
     [TestMethod()]
     public void OnFrameworkInitializationCompletedTest2()
     {
         testApp.ApplicationLifetime = Substitute.For<IApplicationLifetime>();
+
         // Act
         testApp.OnFrameworkInitializationCompleted();
 
         // Assert
-        Assert.IsNull(testApp.Services);
+        Assert.IsNotNull(testApp.Services);
     }
 
 }

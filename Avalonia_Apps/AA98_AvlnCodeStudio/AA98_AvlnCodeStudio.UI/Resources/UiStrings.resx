@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ApplicationTitle" xml:space="preserve">
+    <value>Code Studio</value>
+  </data>
+  <data name="WindowTitleDirtySuffix" xml:space="preserve">
+    <value> *</value>
+  </data>
+  <data name="NavigationTitle" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="NavigationPlaceholder" xml:space="preserve">
+    <value>Workspace tree placeholder.</value>
+  </data>
+  <data name="EditorRegionTitle" xml:space="preserve">
+    <value>Editor</value>
+  </data>
+  <data name="StatusRegionTitle" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="NotificationRegionTitle" xml:space="preserve">
+    <value>Notification</value>
+  </data>
+  <data name="FileMenuHeader" xml:space="preserve">
+    <value>_File</value>
+  </data>
+  <data name="ViewMenuHeader" xml:space="preserve">
+    <value>_View</value>
+  </data>
+  <data name="NewCommandText" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="OpenCommandText" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="SaveCommandText" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SaveAsCommandText" xml:space="preserve">
+    <value>Save As</value>
+  </data>
+  <data name="NavigationPlaceholderMenuText" xml:space="preserve">
+    <value>Navigation Placeholder</value>
+  </data>
+  <data name="StatusPlaceholderMenuText" xml:space="preserve">
+    <value>Status Placeholder</value>
+  </data>
+  <data name="ReadyStatusText" xml:space="preserve">
+    <value>Ready.</value>
+  </data>
+  <data name="ModifiedStatusText" xml:space="preserve">
+    <value>Modified.</value>
+  </data>
+  <data name="DocumentModifiedNotificationText" xml:space="preserve">
+    <value>Document modified.</value>
+  </data>
+  <data name="DocumentSynchronizedNotificationText" xml:space="preserve">
+    <value>Document synchronized.</value>
+  </data>
+  <data name="NewDocumentStatusText" xml:space="preserve">
+    <value>New document.</value>
+  </data>
+  <data name="CreatedNewDocumentNotificationText" xml:space="preserve">
+    <value>Created new document.</value>
+  </data>
+  <data name="OpenCanceledStatusText" xml:space="preserve">
+    <value>Open canceled.</value>
+  </data>
+  <data name="OpenCanceledNotificationText" xml:space="preserve">
+    <value>Open canceled.</value>
+  </data>
+  <data name="LoadedDocumentNotificationFormat" xml:space="preserve">
+    <value>Loaded '{0}'.</value>
+  </data>
+  <data name="OpenedDocumentStatusFormat" xml:space="preserve">
+    <value>Opened '{0}'.</value>
+  </data>
+  <data name="SaveCanceledStatusText" xml:space="preserve">
+    <value>Save canceled.</value>
+  </data>
+  <data name="SaveCanceledNotificationText" xml:space="preserve">
+    <value>Save canceled.</value>
+  </data>
+  <data name="SaveAsCanceledStatusText" xml:space="preserve">
+    <value>Save as canceled.</value>
+  </data>
+  <data name="SaveAsCanceledNotificationText" xml:space="preserve">
+    <value>Save as canceled.</value>
+  </data>
+  <data name="SavedDocumentStatusFormat" xml:space="preserve">
+    <value>Saved '{0}'.</value>
+  </data>
+  <data name="SavedDocumentNotificationFormat" xml:space="preserve">
+    <value>Saved '{0}'.</value>
+  </data>
+</root>

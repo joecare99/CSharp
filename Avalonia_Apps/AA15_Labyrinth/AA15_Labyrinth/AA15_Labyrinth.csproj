@@ -24,4 +24,8 @@
 		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageVersion Update="Avalonia.Desktop" Version="12.0.4" />
+	</ItemGroup>
+
 </Project>

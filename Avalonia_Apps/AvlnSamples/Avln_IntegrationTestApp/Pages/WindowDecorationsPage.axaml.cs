@@ -17,11 +17,11 @@ public partial class WindowDecorationsPage : UserControl
         window.ExtendClientAreaToDecorationsHint = WindowExtendClientAreaToDecorationsHint.IsChecked!.Value;
         window.ExtendClientAreaTitleBarHeightHint =
             int.TryParse(WindowTitleBarHeightHint.Text, out var val) ? val / window.DesktopScaling : -1;
-        window.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome
-            | (WindowForceSystemChrome.IsChecked == true ? ExtendClientAreaChromeHints.SystemChrome : 0)
-            | (WindowPreferSystemChrome.IsChecked == true ? ExtendClientAreaChromeHints.PreferSystemChrome : 0)
-            | (WindowMacThickSystemChrome.IsChecked == true ? ExtendClientAreaChromeHints.OSXThickTitleBar : 0);
-        
+#if false
+        window.ChromeHints =
+            (WindowForceSystemChrome.IsChecked == true ? ChromeHints.SystemChrome : 0)
+            | (WindowPreferSystemChrome.IsChecked == true ? ChromeHints.PreferSystemChrome : 0);
+#endif        
         if (window is ShowWindowTest showWindowTest && WindowShowTitleAreaControl.IsChecked == true)
         {
             showWindowTest.ShowTitleAreaControl();

@@ -6,6 +6,11 @@ namespace IntegrationTestApp;
 
 public partial class TopmostWindowTest : Window
 {
+    public TopmostWindowTest()
+        : this("TopmostWindowTest")
+    {
+    }
+
     public TopmostWindowTest(string name)
     {
         Name = name;

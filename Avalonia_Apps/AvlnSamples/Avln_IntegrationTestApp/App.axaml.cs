@@ -19,9 +19,14 @@ namespace IntegrationTestApp
 
         public App()
         {
-            TrayIconCommand = new RelayCommand<string>(name =>
+            TrayIconCommand = new RelayCommand<string?>(name =>
             {
-                _mainWindow!.Get<CheckBox>(name).IsChecked = true;
+                if (string.IsNullOrWhiteSpace(name) || _mainWindow is null)
+                {
+                    return;
+                }
+
+                _mainWindow.SetTrayEventState(name);
             });
             DataContext = this;
         }
