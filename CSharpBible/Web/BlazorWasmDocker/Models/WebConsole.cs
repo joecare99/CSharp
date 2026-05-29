@@ -1,87 +1,87 @@
-﻿using BlazorWasmDocker.Models.Interfaces;
-using ConsoleDisplay.View;
+﻿using BaseLib.Interfaces;
+using BlazorWasmDocker.Models.Interfaces;
 using System;
 using System.Drawing;
 
 namespace BlazorWasmDocker.Models;
 
-public class WebConsole : MyConsoleBase
+public class WebConsole : IConsole
 {
     /// <summary>
     /// Gets or sets the color of the foreground.
     /// </summary>
     /// <value>The color of the foreground.</value>
-    public override ConsoleColor ForegroundColor { get => form?.ForegroundColor ?? ConsoleColor.Gray; set => form.ForegroundColor = value; }
+    public ConsoleColor ForegroundColor { get => form?.ForegroundColor ?? ConsoleColor.Gray; set => form.ForegroundColor = value; }
     /// <summary>
     /// Gets or sets the color of the background.
     /// </summary>
     /// <value>The color of the background.</value>
-    public override ConsoleColor BackgroundColor { get => form?.BackgroundColor ?? ConsoleColor.Black; set => form.BackgroundColor = value; }
+    public ConsoleColor BackgroundColor { get => form?.BackgroundColor ?? ConsoleColor.Black; set => form.BackgroundColor = value; }
     /// <summary>
     /// Gets or sets the height of the window.
     /// </summary>
     /// <value>The height of the window.</value>
-    public override int WindowHeight { get => form?.WindowHeight ?? 0; set => form.WindowHeight = value; }
+    public int WindowHeight { get => form?.WindowHeight ?? 0; set => form.WindowHeight = value; }
     /// <summary>
     /// Gets or sets the width of the window.
     /// </summary>
     /// <value>The width of the window.</value>
-    public override int WindowWidth { get => form?.WindowWidth ?? 0; set => form.WindowWidth = value; }
+    public int WindowWidth { get => form?.WindowWidth ?? 0; set => form.WindowWidth = value; }
 
     /// <summary>
     /// Gets a value indicating whether [key available].
     /// </summary>
     /// <value><c>true</c> if [key available]; otherwise, <c>false</c>.</value>
-    public override bool KeyAvailable => form?.KeyAvailable ?? false;
+    public bool KeyAvailable => form?.KeyAvailable ?? false;
 
     /// <summary>
     /// Gets the height of the largest window.
     /// </summary>
     /// <value>The height of the largest window.</value>
     /// <exception cref="System.NotImplementedException"></exception>
-    public override int LargestWindowHeight => throw new NotImplementedException();
+    public int LargestWindowHeight => throw new NotImplementedException();
 
-    public override string Title { get => form?.Text ?? ""; set => form.Text = value; }
+    public string Title { get => form?.Text ?? ""; set => form.Text = value; }
 
     /// <summary>
     /// Clears this instance.
     /// </summary>
-    public override void Clear() => form?.Clear();
+    public void Clear() => form?.Clear();
 
     /// <summary>
     /// Reads the key.
     /// </summary>
     /// <returns>System.Nullable&lt;ConsoleKeyInfo&gt;.</returns>
-    public override ConsoleKeyInfo? ReadKey() => form?.ReadKey();
+    public ConsoleKeyInfo? ReadKey() => form?.ReadKey();
 
     /// <summary>
     /// Sets the cursor position.
     /// </summary>
     /// <param name="left">The left.</param>
     /// <param name="top">The top.</param>
-    public override void SetCursorPosition(int left, int top) => form?.SetCursorPosition(left, top);
+    public void SetCursorPosition(int left, int top) => form?.SetCursorPosition(left, top);
 
     /// <summary>
     /// Writes the specified ch.
     /// </summary>
     /// <param name="ch">The ch.</param>
-    public override void Write(char ch) => form?.Write(ch);
+    public void Write(char ch) => form?.Write(ch);
 
     /// <summary>
     /// Writes the specified st.
     /// </summary>
     /// <param name="st">The st.</param>
-    public override void Write(string? st) => form?.Write(st);
+    public void Write(string? st) => form?.Write(st);
 
     /// <summary>
     /// Writes the line.
     /// </summary>
     /// <param name="st">The st.</param>
-    public override void WriteLine(string? st = "") => Write((st ?? "") + "\r\n");
+    public void WriteLine(string? st = "") => Write((st ?? "") + "\r\n");
 
     private IConsoleHandler? form { get; set; }
     /// <summary>
-    /// Initializes a new instance of the <see cref="TstConsole"/> class.
+    /// Initializes a new instance of the <see cref="WebConsole"/> class.
     /// </summary>
     public WebConsole()
     {
@@ -92,9 +92,9 @@ public class WebConsole : MyConsoleBase
     /// Gets the cursor position.
     /// </summary>
     /// <returns>System.ValueTuple&lt;System.Int32, System.Int32&gt;.</returns>
-    public override (int Left, int Top) GetCursorPosition()
+    public (int Left, int Top) GetCursorPosition()
     {
-        return form?.CursorPosition is Point p?(p.X, p.Y) : (0, 0);
+        return form?.CursorPosition is Point p ? (p.X, p.Y) : (0, 0);
     }
 
     /// <summary>
@@ -103,12 +103,17 @@ public class WebConsole : MyConsoleBase
     /// <param name="freq">The freq.</param>
     /// <param name="len">The length.</param>
     /// <exception cref="System.NotImplementedException"></exception>
-    public override void Beep(int freq, int len)
+    public void Beep(int freq, int len)
     {
         throw new NotImplementedException();
     }
 
-    public override string ReadLine()
+    public string ReadLine()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ResetColor()
     {
         throw new NotImplementedException();
     }
@@ -119,6 +124,12 @@ public class WebConsole : MyConsoleBase
     /// <value>The content.</value>
     public string Content => form.Content;
 
-    public override bool IsOutputRedirected
+    public bool IsOutputRedirected
         => false;
+
+    public bool CursorVisible { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public int BufferWidth => throw new NotImplementedException();
+
+    public int BufferHeight => throw new NotImplementedException();
 }
