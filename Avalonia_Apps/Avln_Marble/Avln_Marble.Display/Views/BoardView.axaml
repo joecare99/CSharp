@@ -19,15 +19,17 @@
 	  </LinearGradientBrush>
 	</Border.Background>
 
-	<Canvas x:Name="BoardSurface"
-			Width="{Binding BoardWidth}"
-			Height="{Binding BoardHeight}"
-			Background="Transparent"
-			Focusable="True"
-			PointerPressed="BoardSurface_OnPointerPressed"
-			PointerMoved="BoardSurface_OnPointerMoved"
-			PointerReleased="BoardSurface_OnPointerReleased">
-	  <ItemsControl ItemsSource="{Binding Slots}">
+	<Grid x:Name="BoardSurface"
+		  Width="{Binding BoardWidth}"
+		  Height="{Binding BoardHeight}"
+		  Background="Transparent"
+		  Focusable="True"
+		  PointerPressed="BoardSurface_OnPointerPressed"
+		  PointerMoved="BoardSurface_OnPointerMoved"
+		  PointerReleased="BoardSurface_OnPointerReleased">
+	  <ItemsControl Width="{Binding BoardWidth}"
+				Height="{Binding BoardHeight}"
+				ItemsSource="{Binding Slots}">
 		<ItemsControl.ItemsPanel>
 		  <ItemsPanelTemplate>
 			<UniformGrid Columns="{Binding ColumnCount}" Rows="{Binding RowCount}" />
@@ -45,6 +47,7 @@
 		</ItemsControl.ItemTemplate>
 	  </ItemsControl>
 
+	  <Canvas Width="{Binding BoardWidth}" Height="{Binding BoardHeight}" IsHitTestVisible="False">
 		<Ellipse Width="{Binding MarbleDiameter}"
 			   Height="{Binding MarbleDiameter}"
 			   Canvas.Left="{Binding DropTargetLeft}"
@@ -54,19 +57,25 @@
 			   StrokeThickness="3"
 			   Fill="#2286E0C5"
 			   StrokeDashArray="2,2" />
+	  </Canvas>
 
-	  <ItemsControl ItemsSource="{Binding Marbles}">
-		<ItemsControl.ItemsPanel>
-		  <ItemsPanelTemplate>
-			<Canvas />
-		  </ItemsPanelTemplate>
-		</ItemsControl.ItemsPanel>
-		<ItemsControl.ItemTemplate>
-		  <DataTemplate x:DataType="vm:MarbleViewModel">
-			<Canvas Width="{Binding Diameter}"
-					Height="{Binding Diameter}"
-					Canvas.Left="{Binding Left}"
-					Canvas.Top="{Binding Top}">
+	  <Canvas Width="{Binding BoardWidth}" Height="{Binding BoardHeight}">
+		<ItemsControl x:Name="MarblesItemsControl"
+					  Width="{Binding BoardWidth}"
+					  Height="{Binding BoardHeight}"
+					  ItemsSource="{Binding Marbles}">
+		  <ItemsControl.ItemsPanel>
+			<ItemsPanelTemplate>
+			  <Canvas />
+			</ItemsPanelTemplate>
+		  </ItemsControl.ItemsPanel>
+		  <ItemsControl.ItemTemplate>
+			<DataTemplate x:DataType="vm:MarbleViewModel">
+			  <Canvas Width="{Binding Diameter}"
+					  Height="{Binding Diameter}">
+				<Canvas.RenderTransform>
+				  <TranslateTransform X="{Binding Left}" Y="{Binding Top}" />
+				</Canvas.RenderTransform>
 			  <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}" Opacity="0.6" Fill="#18000000" />
 			  <Ellipse Width="{Binding Diameter}"
 					   Height="{Binding Diameter}"
@@ -96,17 +105,19 @@
 			  <Ellipse Width="7" Height="14" Canvas.Left="38" Canvas.Top="22" Fill="{Binding RightReflectionBrush}" IsHitTestVisible="False" />
 			  <Ellipse Width="14" Height="6" Canvas.Left="23" Canvas.Top="38" Fill="{Binding BottomReflectionBrush}" IsHitTestVisible="False" />
 			  <Ellipse Width="7" Height="14" Canvas.Left="11" Canvas.Top="25" Fill="{Binding LeftReflectionBrush}" IsHitTestVisible="False" />
-			  <Ellipse Width="{Binding Diameter}"
-					   Height="{Binding Diameter}"
-					   Margin="-2"
+			  <Ellipse Width="{Binding SelectionRingDiameter}"
+					   Height="{Binding SelectionRingDiameter}"
+					   Canvas.Left="{Binding SelectionRingOffset}"
+					   Canvas.Top="{Binding SelectionRingOffset}"
 					   Stroke="#FFF7E8C8"
 					   StrokeThickness="3.4"
 					   IsVisible="{Binding IsSelected}"
 					   IsHitTestVisible="False" />
-			</Canvas>
-		  </DataTemplate>
-		</ItemsControl.ItemTemplate>
-	  </ItemsControl>
-	</Canvas>
+			  </Canvas>
+			</DataTemplate>
+		  </ItemsControl.ItemTemplate>
+		</ItemsControl>
+	  </Canvas>
+	</Grid>
   </Border>
 </UserControl>

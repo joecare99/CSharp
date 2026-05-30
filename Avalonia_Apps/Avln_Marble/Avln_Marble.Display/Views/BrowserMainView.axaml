@@ -10,38 +10,71 @@
 	Focusable="True"
 	KeyDown="BrowserMainView_OnKeyDown"
 	mc:Ignorable="d">
-  <Grid Margin="24">
-	<Grid.RowDefinitions>
-	  <RowDefinition Height="Auto" />
-	  <RowDefinition Height="24" />
-	  <RowDefinition Height="*" />
-	  <RowDefinition Height="24" />
-	  <RowDefinition Height="Auto" />
-	</Grid.RowDefinitions>
+	<Grid Margin="24">
+	<Grid.ColumnDefinitions>
+	  <ColumnDefinition Width="Auto" />
+	  <ColumnDefinition Width="28" />
+	  <ColumnDefinition Width="*" MinWidth="320" />
+	</Grid.ColumnDefinitions>
 
-	<TextBlock FontSize="30"
-			   FontWeight="SemiBold"
-			   Foreground="#FFF8F0DB"
-			   TextWrapping="Wrap"
-			   Text="Marble Board Prototype" />
+	<views:BoardView Grid.Column="0" DataContext="{Binding Board}" />
 
-	<views:BoardView Grid.Row="2" HorizontalAlignment="Left" DataContext="{Binding Board}" />
+	<Grid Grid.Column="2">
+	  <Grid.RowDefinitions>
+		<RowDefinition Height="Auto" />
+		<RowDefinition Height="Auto" />
+		<RowDefinition Height="Auto" />
+		<RowDefinition Height="*" />
+	  </Grid.RowDefinitions>
 
-	<Border Grid.Row="4"
-			Padding="18"
-			CornerRadius="18"
-			Background="#1AFFFFFF"
-			BorderBrush="#2E7AC8FF"
-			BorderThickness="1">
-	  <StackPanel Spacing="12">
-		<TextBlock FontSize="19"
-				   FontWeight="SemiBold"
-				   Foreground="#FFF8F0DB"
-				   Text="Board status" />
-		<TextBlock TextWrapping="Wrap"
-				   Foreground="#FFD5D9E0"
-				   Text="{Binding Board.StatusText}" />
-	  </StackPanel>
-	</Border>
+	  <TextBlock FontSize="30"
+				 FontWeight="SemiBold"
+				 Foreground="#FFF8F0DB"
+				 TextWrapping="Wrap"
+				 Text="Marble Board Prototype" />
+	  <TextBlock Grid.Row="1"
+				 Margin="0,10,0,0"
+				 TextWrapping="Wrap"
+				 Foreground="#FFD5D9E0"
+				 FontSize="15"
+				 Text="Prototype surface for glossy marbles, cast shadows, neighbor reflections, mouse dragging, and keyboard interaction." />
+
+	  <Border Grid.Row="2"
+			  Margin="0,24,0,0"
+			  Padding="18"
+			  CornerRadius="18"
+			  Background="#1AFFFFFF"
+			  BorderBrush="#2ED9C9A6"
+			  BorderThickness="1">
+		<StackPanel Spacing="12">
+		  <TextBlock FontSize="19"
+					 FontWeight="SemiBold"
+					 Foreground="#FFF8F0DB"
+					 Text="Interaction" />
+		  <TextBlock TextWrapping="Wrap"
+					 Foreground="#FFD5D9E0"
+					 Text="• Click a marble to select it&#x0a;• Drag a selected marble to an empty slot&#x0a;• Use arrow keys to move the selection&#x0a;• Use Shift + Arrow keys to drag the selected marble" />
+		</StackPanel>
+	  </Border>
+
+	  <Border Grid.Row="3"
+			  Margin="0,18,0,0"
+			  VerticalAlignment="Top"
+			  Padding="18"
+			  CornerRadius="18"
+			  Background="#1AFFFFFF"
+			  BorderBrush="#2E7AC8FF"
+			  BorderThickness="1">
+		<StackPanel Spacing="12">
+		  <TextBlock FontSize="19"
+					 FontWeight="SemiBold"
+					 Foreground="#FFF8F0DB"
+					 Text="Board status" />
+		  <TextBlock TextWrapping="Wrap"
+					 Foreground="#FFD5D9E0"
+					 Text="{Binding Board.StatusText}" />
+		</StackPanel>
+	  </Border>
+	</Grid>
   </Grid>
 </UserControl>

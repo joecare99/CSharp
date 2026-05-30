@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 using Avln_Marble.Display.ViewModels;
 using MarbleBoard.Engine.Models;
+using System;
 
 namespace Avln_Marble.Display.Views;
 
@@ -13,7 +14,10 @@ namespace Avln_Marble.Display.Views;
 /// </summary>
 public partial class BoardView : UserControl
 {
+    private const string BoardSurfaceControlName = "BoardSurface";
+
     private bool _isPointerCaptured;
+    private readonly Grid _boardSurface;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BoardView"/> class.
@@ -21,7 +25,9 @@ public partial class BoardView : UserControl
     public BoardView()
     {
         InitializeComponent();
-        AttachedToVisualTree += (_, _) => BoardSurface.Focus();
+        _boardSurface = this.FindControl<Grid>(BoardSurfaceControlName)
+            ?? throw new InvalidOperationException($"Required control '{BoardSurfaceControlName}' was not found.");
+        AttachedToVisualTree += (_, _) => _boardSurface.Focus();
     }
 
     private BoardViewModel Board => (BoardViewModel)DataContext!;
@@ -32,7 +38,7 @@ public partial class BoardView : UserControl
         {
             if (Board.BeginPointerDrag(marble.Coordinate))
             {
-                e.Pointer.Capture(BoardSurface);
+                e.Pointer.Capture(_boardSurface);
                 _isPointerCaptured = true;
                 e.Handled = true;
             }
@@ -40,11 +46,11 @@ public partial class BoardView : UserControl
             return;
         }
 
-        Point point = e.GetPosition(BoardSurface);
+        Point point = e.GetPosition(_boardSurface);
         if (Board.TryGetCoordinate(point, out BoardCoordinate coordinate))
         {
             Board.Select(coordinate);
-            BoardSurface.Focus();
+            _boardSurface.Focus();
             e.Handled = true;
         }
     }
@@ -56,7 +62,7 @@ public partial class BoardView : UserControl
             return;
         }
 
-        Board.UpdatePointer(e.GetPosition(BoardSurface));
+        Board.UpdatePointer(e.GetPosition(_boardSurface));
         e.Handled = true;
     }
 
@@ -67,10 +73,10 @@ public partial class BoardView : UserControl
             return;
         }
 
-        Board.CompletePointerDrag(e.GetPosition(BoardSurface));
+        Board.CompletePointerDrag(e.GetPosition(_boardSurface));
         e.Pointer.Capture(null);
         _isPointerCaptured = false;
-        BoardSurface.Focus();
+        _boardSurface.Focus();
         e.Handled = true;
     }
 

@@ -55,6 +55,10 @@ public sealed class MarbleViewModel
 
     public double Diameter { get; }
 
+    public double SelectionRingDiameter => Diameter + 4.0;
+
+    public double SelectionRingOffset => -2.0;
+
     public IBrush FillBrush { get; }
 
     public IBrush FormShadowBrush { get; }

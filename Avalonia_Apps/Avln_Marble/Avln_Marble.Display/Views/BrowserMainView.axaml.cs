@@ -13,9 +13,11 @@ public partial class BrowserMainView : UserControl
     /// <summary>
     /// Initializes a new instance of the <see cref="BrowserMainView"/> class.
     /// </summary>
-    public BrowserMainView()
+    /// <param name="viewModel">The root view model.</param>
+    public BrowserMainView(MainWindowViewModel viewModel)
     {
         InitializeComponent();
+        DataContext = viewModel;
         AttachedToVisualTree += (_, _) => Focus();
     }
 
