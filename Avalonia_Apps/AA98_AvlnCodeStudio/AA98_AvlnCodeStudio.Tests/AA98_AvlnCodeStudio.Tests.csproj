@@ -1,9 +1,10 @@
-<Project>
+﻿<Project>
   <Import Project="..\AA98_AvlnCodeStudio.props" />
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -28,5 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\" />
   </ItemGroup>
 </Project>
