@@ -5,6 +5,7 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -38,6 +39,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base\AA98_AvlnCodeStudio.Base.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.UI\AA98_AvlnCodeStudio.Base.UI.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.OS\AA98_AvlnCodeStudio.Base.OS.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Editor\AA98_AvlnCodeStudio.Editor.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Model\AA98_AvlnCodeStudio.Model.csproj" />
     <ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Avalonia\Avln_CommonDialogs.Avalonia.csproj" />
   </ItemGroup>
