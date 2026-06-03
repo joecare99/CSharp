@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AA98_AvlnCodeStudio.Base.Services;
+namespace AA98_AvlnCodeStudio.Base.OS.Services;
 
 /// <summary>
 /// Defines asynchronous persistence operations for plain text documents.

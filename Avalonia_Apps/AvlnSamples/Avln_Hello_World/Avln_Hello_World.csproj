@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -32,6 +33,9 @@
 		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
 		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.17" />
+		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)'=='DesktopOnly'">
+		  <Version>11.3.17</Version>
+		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
 	</ItemGroup>
 	

@@ -1,0 +1,32 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/AA98_AvlnCodeStudio/">
+    <File Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.props" />
+    <File Path="AA98_AvlnCodeStudio/Directory.Packages.props" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor.Tests/AA98_AvlnCodeStudio.Editor.Tests.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor/AA98_AvlnCodeStudio.Editor.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />
+    <Project Path="Libraries/BaseLib/BaseLib.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="Packages.props" />
+    <File Path="Solution.props" />
+  </Folder>
+  <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
+</Solution>

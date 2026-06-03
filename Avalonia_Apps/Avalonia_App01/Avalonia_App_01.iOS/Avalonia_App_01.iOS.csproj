@@ -5,6 +5,7 @@
     <TargetFramework>net10.0-ios</TargetFramework>
     <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,9 @@
 <Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="DesktopOnly" />
+    <BuildType Name="Release" />
+  </Configurations>
   <Folder Name="/AA05_CommandParCalc/">
     <File Path="AA05_CommandParCalc/Application.props" />
     <File Path="AA05_CommandParCalc/Directory.Packages.props" />
@@ -78,14 +83,20 @@
     <Project Path="AA25_RichTextEdit/AA25_RichTextEdit/AA25_RichTextEdit.csproj" />
     <Project Path="AA25_RichTextEdit/AA25_RichTextEditTests/AA25_RichTextEditTests.csproj" />
     <Project Path="AA25_RichTextEdit/Avln_RichTextEdit/Avln_RichTextEdit.csproj" />
+    <Project Path="AA25_RichTextEdit/Document.Base/Document.Base.csproj" />
+    <Project Path="AA25_RichTextEdit/Document.Flow/Document.Flow.csproj" />
   </Folder>
   <Folder Name="/Avalonia_App01/">
     <File Path="Avalonia_App01/Avalonia_App01.props" />
     <File Path="Avalonia_App01/Directory.Packages.props" />
-    <Project Path="Avalonia_App01/Avalonia_App_01.Android/Avalonia_App_01.Android.csproj" />
+    <Project Path="Avalonia_App01/Avalonia_App_01.Android/Avalonia_App_01.Android.csproj">
+      <Build Solution="DesktopOnly|*" Project="false" />
+    </Project>
     <Project Path="Avalonia_App01/Avalonia_App_01.Browser/Avalonia_App_01.Browser.csproj" />
     <Project Path="Avalonia_App01/Avalonia_App_01.Desktop/Avalonia_App_01.Desktop.csproj" />
-    <Project Path="Avalonia_App01/Avalonia_App_01.iOS/Avalonia_App_01.iOS.csproj" />
+    <Project Path="Avalonia_App01/Avalonia_App_01.iOS/Avalonia_App_01.iOS.csproj">
+      <Build Solution="DesktopOnly|*" Project="false" />
+    </Project>
     <Project Path="Avalonia_App01/Avalonia_App_01/Avalonia_App_01.csproj" />
   </Folder>
   <Folder Name="/Avalonia_App02/">
@@ -97,12 +108,20 @@
   <Folder Name="/Avln_Marble/">
     <File Path="Avln_Marble/Application.props" />
     <File Path="Avln_Marble/Directory.Packages.props" />
-    <Project Path="../CSharpBible/Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj" />
+    <Project Path="../CSharpBible/Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj">
+      <Platform Solution="DesktopOnly|*" Project="x64" />
+    </Project>
     <Project Path="Avln_Marble/Avln_Marble.Browser/Avln_Marble.Browser.csproj" />
     <Project Path="Avln_Marble/Avln_Marble.Desktop/Avln_Marble.Desktop.csproj" />
     <Project Path="Avln_Marble/Avln_Marble.Display/Avln_Marble.Display.csproj" />
   </Folder>
-  <Folder Name="/Legacy/" />
+  <Folder Name="/Legacy/">
+    <File Path="../CSharpBible/ConsoleApps/ConsoleApps.props" />
+    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
+    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
+    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj" />
+    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
+  </Folder>
   <Folder Name="/Legacy/Laby4/">
     <File Path="../../Delphi/Diverses/Source/Labyrinth/frm_laby4.dfm" />
     <File Path="../../Delphi/Diverses/Source/Labyrinth/frm_laby4.lfm" />
@@ -141,12 +160,22 @@
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="Libraries/Libraries.props" />
+    <Project Path="../CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
+    <Project Path="../CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="../CSharpBible/Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
+    <Project Path="../CSharpBible/Libraries/ExtendedConsole/ExtendedConsole.csproj" />
     <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />
-    <Project Path="Libraries/Avln_BaseLibTests/Avln_BaseLibTests.csproj" />
+    <Project Path="Libraries/Avln_BaseLibTests/Avln_BaseLibTests.csproj">
+      <Platform Solution="DesktopOnly|*" Project="x86" />
+    </Project>
     <Project Path="Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj" />
     <Project Path="Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
-    <Project Path="Libraries/BaseLib/BaseLib.csproj" />
-    <Project Path="Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="Libraries/BaseLib/BaseLib.csproj">
+      <Platform Solution="DesktopOnly|*" Project="x64" />
+    </Project>
+    <Project Path="Libraries/BaseLibTests/BaseLibTests.csproj">
+      <Platform Solution="DesktopOnly|*" Project="x64" />
+    </Project>
     <Project Path="Libraries/MathLibrary/MathLibrary.csproj" />
   </Folder>
   <Folder Name="/Projektmappenelemente/">
@@ -165,13 +194,16 @@
    <Folder Name="/AA98_AvlnCodeStudio/">
      <File Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.props" />
      <File Path="AA98_AvlnCodeStudio/Directory.Packages.props" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor.Tests/AA98_AvlnCodeStudio.Editor.Tests.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor/AA98_AvlnCodeStudio.Editor.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" Id="17998949-eb69-4b31-b41e-3bac9c7b53e2" />
    </Folder>
-  <Project Path="AA25_RichTextEdit/Document.Base/Document.Base.csproj" />
-  <Project Path="AA25_RichTextEdit/Document.Flow/Document.Flow.csproj" />
   <Project Path="BenchmarkSuite1/BenchmarkSuite1.csproj" />
   <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
   <Project Path="RenderImage.Base/RenderImage.Base.csproj" />

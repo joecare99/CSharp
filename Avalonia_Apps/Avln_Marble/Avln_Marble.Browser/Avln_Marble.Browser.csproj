@@ -5,6 +5,7 @@
 	<OutputType>Exe</OutputType>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<Nullable>enable</Nullable>
+	<Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk.WebAssembly" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk.WebAssembly" Project="Sdk.targets" />
