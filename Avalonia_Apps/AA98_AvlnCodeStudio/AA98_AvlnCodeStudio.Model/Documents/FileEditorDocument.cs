@@ -6,7 +6,7 @@ namespace AA98_AvlnCodeStudio.Model.Documents;
 /// <summary>
 /// Represents the editable state of a single plain text document.
 /// </summary>
-public sealed class FileEditorDocument
+public sealed class FileEditorDocument : IFileEditorDocument
 {
     private const string DefaultDocumentName = "Untitled.txt";
 
