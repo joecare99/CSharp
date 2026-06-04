@@ -15,7 +15,13 @@ public sealed class TestHostedProcess : IHostedProcess
     public event EventHandler<string>? StandardOutputReceived;
 
     /// <inheritdoc/>
+    public event EventHandler<string>? StandardOutputPartialReceived;
+
+    /// <inheritdoc/>
     public event EventHandler<string>? StandardErrorReceived;
+
+    /// <inheritdoc/>
+    public event EventHandler<string>? StandardErrorPartialReceived;
 
     /// <inheritdoc/>
     public event EventHandler<int>? Exited;
@@ -66,11 +72,25 @@ public sealed class TestHostedProcess : IHostedProcess
         => StandardOutputReceived?.Invoke(this, text);
 
     /// <summary>
+    /// Emits a partial standard output chunk.
+    /// </summary>
+    /// <param name="text">The output text.</param>
+    public void EmitStandardOutputPartial(string text)
+        => StandardOutputPartialReceived?.Invoke(this, text);
+
+    /// <summary>
     /// Emits a standard error line.
     /// </summary>
     /// <param name="text">The error text.</param>
     public void EmitStandardError(string text)
         => StandardErrorReceived?.Invoke(this, text);
+
+    /// <summary>
+    /// Emits a partial standard error chunk.
+    /// </summary>
+    /// <param name="text">The error text.</param>
+    public void EmitStandardErrorPartial(string text)
+        => StandardErrorPartialReceived?.Invoke(this, text);
 
     /// <summary>
     /// Emits a process exit event.
