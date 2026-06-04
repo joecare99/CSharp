@@ -11,6 +11,7 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA00-Bl001-Avalonia-Test-Console-Library.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA00-Bl002-Avalonia-Terminal-Host-App.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl006-Document-Lifecycle-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl009-File-Type-Identification-and-Behavior-Selection.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl011-Command-Contribution-Baseline.md" />
@@ -48,6 +49,7 @@
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F36-Test-Data-and-Mocking-Standards.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\Avln_Marble-Migration-to-Avalonia.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA00-T001-Create-Avalonia-Test-Console-Library.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA00-T002-Create-Avalonia-Terminal-Host-App.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA05-T001-Split-CommandParCalc-Into-Core-Desktop-and-Browser.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA09-T001-Fix-Browser-Startup-Black-Screen.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T001-Extract-Editor-Component-And-DI-Hosted-Avalonia-UI.md" />

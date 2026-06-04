@@ -108,10 +108,14 @@
   <Folder Name="/Avln_Marble/">
     <File Path="Avln_Marble/Application.props" />
     <File Path="Avln_Marble/Directory.Packages.props" />
-    <Project Path="../CSharpBible/Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj"/>
+    <Project Path="../CSharpBible/Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj" />
     <Project Path="Avln_Marble/Avln_Marble.Browser/Avln_Marble.Browser.csproj" />
     <Project Path="Avln_Marble/Avln_Marble.Desktop/Avln_Marble.Desktop.csproj" />
     <Project Path="Avln_Marble/Avln_Marble.Display/Avln_Marble.Display.csproj" />
+  </Folder>
+  <Folder Name="/Avln_TerminalHost/">
+    <Project Path="Avln_TerminalHost/Avln_TerminalHost/Avln_TerminalHost.csproj" />
+    <Project Path="Avln_TerminalHost/Avln_TerminalHostTests/Avln_TerminalHostTests.csproj" />
   </Folder>
   <Folder Name="/Legacy/">
     <File Path="../CSharpBible/ConsoleApps/ConsoleApps.props" />

@@ -20,13 +20,17 @@ Create a separate Avalonia desktop application that hosts `Libraries/Avln_TestCo
 - Full VT terminal emulation is explicitly out of scope for this slice.
 
 ## Tasks
-- [ ] Extend the reusable console library only where hosting requires it.
-- [ ] Add the Avalonia desktop host app and dedicated tests.
-- [ ] Implement process launching, output forwarding, and input submission.
-- [ ] Validate scoped builds and tests.
+- [x] Extend the reusable console library only where hosting requires it.
+- [x] Add the Avalonia desktop host app and dedicated tests.
+- [x] Implement process launching, output forwarding, and input submission.
+- [x] Validate scoped builds and tests.
 
 ## Validation
-- Pending.
+- Build: `dotnet build C:\Projekte\CSharp\Avalonia_Apps\Libraries\Avln_TestConsole\Avln_TestConsole.csproj -nologo`
+- Build: `dotnet build C:\Projekte\CSharp\Avalonia_Apps\Avln_TerminalHost\Avln_TerminalHost\Avln_TerminalHost.csproj -nologo`
+- Tests: `dotnet test C:\Projekte\CSharp\Avalonia_Apps\Libraries\Avln_TestConsoleTests\Avln_TestConsoleTests.csproj -nologo --no-restore`
+- Tests: `dotnet test C:\Projekte\CSharp\Avalonia_Apps\Avln_TerminalHost\Avln_TerminalHostTests\Avln_TerminalHostTests.csproj -nologo --no-restore`
+- Note: IDE-backed solution-wide build/test remained blocked by unrelated existing workspace errors outside this scope.
 
 ## Status
-- In Progress
+- Done
