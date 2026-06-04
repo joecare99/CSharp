@@ -51,6 +51,11 @@ public class AvaloniaConsoleControl : Control
         }
     }
 
+    /// <summary>
+    /// Gets the current rendered cell size for a single console character.
+    /// </summary>
+    public Size CharacterCellSize => CalculateCellSize();
+
     /// <inheritdoc/>
     protected override Size MeasureOverride(Size availableSize)
     {
@@ -59,7 +64,7 @@ public class AvaloniaConsoleControl : Control
             return base.MeasureOverride(availableSize);
         }
 
-        var cellSize = GetCellSize();
+        var cellSize = CalculateCellSize();
         return new Size(_buffer.WindowWidth * cellSize.Width, _buffer.WindowHeight * cellSize.Height);
     }
 
@@ -73,7 +78,7 @@ public class AvaloniaConsoleControl : Control
             return;
         }
 
-        var cellSize = GetCellSize();
+        var cellSize = CalculateCellSize();
         var cells = _buffer.ScreenBuffer;
         for (var index = 0; index < cells.Count; index++)
         {
@@ -173,7 +178,7 @@ public class AvaloniaConsoleControl : Control
             InvalidateVisual();
         });
 
-    private Size GetCellSize()
+    private Size CalculateCellSize()
     {
         var sampleText = new FormattedText(
             "W",
