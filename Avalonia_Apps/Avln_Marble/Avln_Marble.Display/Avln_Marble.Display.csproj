@@ -19,9 +19,6 @@
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\..\..\CSharpBible\Graphics\MarbleBoard.Engine\MarbleBoard.Engine.csproj" />
-  </ItemGroup>
-  <ItemGroup>
 	<Compile Update="App.axaml.cs">
 	  <DependentUpon>App.axaml</DependentUpon>
 	</Compile>
