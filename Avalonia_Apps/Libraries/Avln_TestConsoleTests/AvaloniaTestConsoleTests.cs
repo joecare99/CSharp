@@ -33,7 +33,7 @@ public class AvaloniaTestConsoleTests
         sut.BackgroundColor = ConsoleColor.Blue;
         sut.Write('A');
 
-        sut.Content.Should().StartWith("\\c94A");
+        sut.Content.Should().StartWith("\\c9CA");
     }
 
     [TestMethod]
@@ -48,7 +48,7 @@ public class AvaloniaTestConsoleTests
         sut.Clear();
         sut.Write("\\\t");
 
-        sut.Content.Should().StartWith("\\\\t");
+        sut.Content.Should().StartWith(@"\\\t");
     }
 
     [TestMethod]
