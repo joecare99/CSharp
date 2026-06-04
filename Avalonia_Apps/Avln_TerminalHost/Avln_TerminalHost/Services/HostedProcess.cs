@@ -10,7 +10,11 @@ namespace Avln_TerminalHost.Services;
 /// </summary>
 public sealed class HostedProcess : IHostedProcess
 {
+    private static readonly TimeSpan PartialFlushDelay = TimeSpan.FromMilliseconds(100);
     private readonly Process _process;
+    private readonly CancellationTokenSource _readCancellationTokenSource = new();
+    private readonly Task _standardOutputTask;
+    private readonly Task _standardErrorTask;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HostedProcess"/> class.
@@ -19,18 +23,34 @@ public sealed class HostedProcess : IHostedProcess
     public HostedProcess(Process process)
     {
         _process = process;
-        _process.OutputDataReceived += OnOutputDataReceived;
-        _process.ErrorDataReceived += OnErrorDataReceived;
         _process.Exited += OnExited;
-        _process.BeginOutputReadLine();
-        _process.BeginErrorReadLine();
+
+        var standardOutputReader = new OutputChunkReader(
+            _process.StandardOutput,
+            PartialFlushDelay,
+            text => StandardOutputReceived?.Invoke(this, text),
+            text => StandardOutputPartialReceived?.Invoke(this, text));
+        var standardErrorReader = new OutputChunkReader(
+            _process.StandardError,
+            PartialFlushDelay,
+            text => StandardErrorReceived?.Invoke(this, text),
+            text => StandardErrorPartialReceived?.Invoke(this, text));
+
+        _standardOutputTask = standardOutputReader.RunAsync(_readCancellationTokenSource.Token);
+        _standardErrorTask = standardErrorReader.RunAsync(_readCancellationTokenSource.Token);
     }
 
     /// <inheritdoc/>
     public event EventHandler<string>? StandardOutputReceived;
 
     /// <inheritdoc/>
+    public event EventHandler<string>? StandardOutputPartialReceived;
+
+    /// <inheritdoc/>
     public event EventHandler<string>? StandardErrorReceived;
+
+    /// <inheritdoc/>
+    public event EventHandler<string>? StandardErrorPartialReceived;
 
     /// <inheritdoc/>
     public event EventHandler<int>? Exited;
@@ -59,9 +79,8 @@ public sealed class HostedProcess : IHostedProcess
     /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
-        _process.OutputDataReceived -= OnOutputDataReceived;
-        _process.ErrorDataReceived -= OnErrorDataReceived;
         _process.Exited -= OnExited;
+        _readCancellationTokenSource.Cancel();
 
         if (!_process.HasExited)
         {
@@ -69,23 +88,16 @@ public sealed class HostedProcess : IHostedProcess
             await _process.WaitForExitAsync().ConfigureAwait(false);
         }
 
+        try
+        {
+            await Task.WhenAll(_standardOutputTask, _standardErrorTask).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+
+        _readCancellationTokenSource.Dispose();
         _process.Dispose();
-    }
-
-    private void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
-    {
-        if (e.Data is not null)
-        {
-            StandardOutputReceived?.Invoke(this, e.Data);
-        }
-    }
-
-    private void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
-    {
-        if (e.Data is not null)
-        {
-            StandardErrorReceived?.Invoke(this, e.Data);
-        }
     }
 
     private void OnExited(object? sender, EventArgs e)

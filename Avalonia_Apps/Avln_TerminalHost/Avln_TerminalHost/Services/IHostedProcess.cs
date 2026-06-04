@@ -15,9 +15,19 @@ public interface IHostedProcess : IAsyncDisposable
     event EventHandler<string>? StandardOutputReceived;
 
     /// <summary>
+    /// Occurs when partial standard output data is received before a line terminator arrives.
+    /// </summary>
+    event EventHandler<string>? StandardOutputPartialReceived;
+
+    /// <summary>
     /// Occurs when standard error data is received.
     /// </summary>
     event EventHandler<string>? StandardErrorReceived;
+
+    /// <summary>
+    /// Occurs when partial standard error data is received before a line terminator arrives.
+    /// </summary>
+    event EventHandler<string>? StandardErrorPartialReceived;
 
     /// <summary>
     /// Occurs when the process exits.
