@@ -13,22 +13,55 @@ internal static class Program
 
     public static async Task<int> Main(string[] arrArgs)
     {
-        PipelinedMigrationOptions? options;
+        if (arrArgs.Any(static arg => string.Equals(arg, "/?", StringComparison.OrdinalIgnoreCase)))
+        {
+            PipelinedMigrationOptionsCommand.WriteHelp(Console.Out);
+            return 0;
+        }
+
+        var parseResult = PipelinedMigrationOptionsCommand.Parse(arrArgs);
+        if (parseResult.RequestHelp)
+        {
+            PipelinedMigrationOptionsCommand.WriteHelp(Console.Out);
+            return 0;
+        }
+
+        if (!parseResult.Success)
+        {
+            Console.Error.WriteLine(parseResult.ErrorMessage);
+            PipelinedMigrationOptionsCommand.WriteUsage(Console.Out);
+            return 1;
+        }
+
+        PipelinedMigrationOptions options;
         try
         {
-            options = PipelinedMigrationOptions.Parse(arrArgs);
+            options = new PipelinedMigrationOptions
+            {
+                SourceUrl = parseResult.Options!.SourceUrl,
+                TargetUrl = parseResult.Options.TargetUrl,
+                SourceBranchOrTrunk = parseResult.Options.SourceBranchOrTrunk,
+                TargetBranch = parseResult.Options.TargetBranch,
+                SourceUser = parseResult.Options.SourceUser,
+                SourcePassword = parseResult.Options.SourcePassword,
+                TargetUser = parseResult.Options.TargetUser,
+                TargetPassword = parseResult.Options.TargetPassword,
+                FromId = parseResult.Options.FromId,
+                ToId = parseResult.Options.ToId,
+                MaxCount = parseResult.Options.MaxCount,
+                OldestFirst = !parseResult.Options.NewestFirst,
+                NewestFirst = parseResult.Options.NewestFirst,
+                PrefetchCount = parseResult.Options.PrefetchCount,
+                MaxExportWorkers = parseResult.Options.MaxExportWorkers,
+                TempRoot = parseResult.Options.TempRoot
+            };
+            options.Validate();
         }
         catch (ArgumentException ex)
         {
             Console.Error.WriteLine(ex.Message);
-            WriteUsage();
+            PipelinedMigrationOptionsCommand.WriteUsage(Console.Out);
             return 1;
-        }
-
-        if (options is null)
-        {
-            WriteUsage();
-            return 0;
         }
 
         var serviceProvider = new ServiceCollection()
@@ -56,11 +89,5 @@ internal static class Program
             Console.Error.WriteLine(ex);
             return 2;
         }
-    }
-
-    private static void WriteUsage()
-    {
-        Console.WriteLine("Usage:");
-        Console.WriteLine("  dotnet run --project RepoMigrator\\RepoMigrator.Tools.PipelinedMigration -- --source <svn-url-or-path> --target <git-url-or-path> [--source-branch trunk] [--target-branch main] [--source-user user] [--source-password secret] [--target-user user] [--target-password secret] [--from 123] [--to 456] [--max-count 100] [--prefetch 3] [--export-workers 2] [--temp-root c:\\temp\\repo-pipeline] [--newest-first]");
     }
 }

@@ -1,10 +1,17 @@
+using CommandlineHelper;
 using RepoMigrator.Core;
+using CommandResources = global::RepoMigrator.Tools.PipelinedMigration.Properties.CommandResources;
 
 namespace RepoMigrator.Tools.PipelinedMigration;
 
 /// <summary>
 /// Represents the command line options for the pipelined SVN-to-Git migration prototype.
 /// </summary>
+[CommandDescriptor(
+    "pipelined-migration",
+    ResourceType = typeof(CommandResources),
+    DescriptionResourceName = nameof(CommandResources.PipelinedMigration_Description),
+    HelpTextResourceName = nameof(CommandResources.PipelinedMigration_Help))]
 public sealed class PipelinedMigrationOptions
 {
     private const string SvnProviderKey = "svn";
@@ -13,56 +20,89 @@ public sealed class PipelinedMigrationOptions
     /// <summary>
     /// Gets or sets the SVN source URL or working copy path.
     /// </summary>
+    [CommandOption(
+        "--source",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_Source_Description))]
     public string SourceUrl { get; init; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the Git target URL or repository path.
     /// </summary>
+    [CommandOption(
+        "--target",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_Target_Description))]
     public string TargetUrl { get; init; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the optional SVN branch or trunk path.
     /// </summary>
+    [CommandOption(
+        "--source-branch",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_SourceBranch_Description))]
     public string? SourceBranchOrTrunk { get; init; }
 
     /// <summary>
     /// Gets or sets the optional Git target branch.
     /// </summary>
+    [CommandOption(
+        "--target-branch",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_TargetBranch_Description))]
     public string? TargetBranch { get; init; }
 
     /// <summary>
     /// Gets or sets the optional SVN user name.
     /// </summary>
+    [CommandOption(
+        "--source-user",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_SourceUser_Description))]
     public string? SourceUser { get; init; }
 
     /// <summary>
     /// Gets or sets the optional SVN password.
     /// </summary>
+    [CommandOption(
+        "--source-password",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_SourcePassword_Description))]
     public string? SourcePassword { get; init; }
 
     /// <summary>
     /// Gets or sets the optional Git user name.
     /// </summary>
+    [CommandOption(
+        "--target-user",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_TargetUser_Description))]
     public string? TargetUser { get; init; }
 
     /// <summary>
     /// Gets or sets the optional Git password.
     /// </summary>
+    [CommandOption(
+        "--target-password",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_TargetPassword_Description))]
     public string? TargetPassword { get; init; }
 
     /// <summary>
     /// Gets or sets the optional exclusive lower changeset boundary.
     /// </summary>
+    [CommandOption(
+        "--from",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_From_Description))]
     public string? FromId { get; init; }
 
     /// <summary>
     /// Gets or sets the optional inclusive upper changeset boundary.
     /// </summary>
+    [CommandOption(
+        "--to",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_To_Description))]
     public string? ToId { get; init; }
 
     /// <summary>
     /// Gets or sets the optional maximum number of revisions to process.
     /// </summary>
+    [CommandOption(
+        "--max-count",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_MaxCount_Description))]
     public int? MaxCount { get; init; }
 
     /// <summary>
@@ -71,18 +111,35 @@ public sealed class PipelinedMigrationOptions
     public bool OldestFirst { get; init; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the newest revisions are processed first.
+    /// </summary>
+    [CommandFlag(
+        "--newest-first",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_NewestFirst_Description))]
+    public bool NewestFirst { get; init; }
+
+    /// <summary>
     /// Gets or sets the maximum number of exported snapshots to keep ahead of the commit stage.
     /// </summary>
+    [CommandOption(
+        "--prefetch",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_Prefetch_Description))]
     public int PrefetchCount { get; init; } = 3;
 
     /// <summary>
     /// Gets or sets the number of concurrent SVN export workers.
     /// </summary>
+    [CommandOption(
+        "--export-workers",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_ExportWorkers_Description))]
     public int MaxExportWorkers { get; init; } = 2;
 
     /// <summary>
     /// Gets or sets the optional temporary working root.
     /// </summary>
+    [CommandOption(
+        "--temp-root",
+        DescriptionResourceName = nameof(CommandResources.PipelinedMigration_TempRoot_Description))]
     public string? TempRoot { get; init; }
 
     /// <summary>
@@ -92,51 +149,35 @@ public sealed class PipelinedMigrationOptions
     /// <returns>A validated options instance, or <see langword="null" /> when help should be shown.</returns>
     public static PipelinedMigrationOptions? Parse(string[] arrArgs)
     {
-        if (arrArgs.Length == 0 || arrArgs.Any(sArg => string.Equals(sArg, "--help", StringComparison.OrdinalIgnoreCase) || string.Equals(sArg, "-h", StringComparison.OrdinalIgnoreCase)))
+        if (arrArgs.Length == 0 || arrArgs.Any(sArg => string.Equals(sArg, "/?", StringComparison.OrdinalIgnoreCase)))
             return null;
 
-        var dctArgs = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
-        for (var iIndex = 0; iIndex < arrArgs.Length; iIndex++)
-        {
-            var sArg = arrArgs[iIndex];
-            if (!sArg.StartsWith("--", StringComparison.Ordinal))
-                throw new ArgumentException($"Unexpected argument '{sArg}'.");
+        var parseResult = PipelinedMigrationOptionsCommand.Parse(arrArgs);
+        if (parseResult.RequestHelp)
+            return null;
 
-            if (string.Equals(sArg, "--newest-first", StringComparison.OrdinalIgnoreCase))
-            {
-                dctArgs[sArg] = bool.FalseString;
-                continue;
-            }
+        if (!parseResult.Success)
+            throw new ArgumentException(parseResult.ErrorMessage);
 
-            if (iIndex + 1 >= arrArgs.Length || arrArgs[iIndex + 1].StartsWith("--", StringComparison.Ordinal))
-                throw new ArgumentException($"Missing value for '{sArg}'.");
-
-            dctArgs[sArg] = arrArgs[++iIndex];
-        }
-
-        if (!dctArgs.TryGetValue("--source", out var sSourceUrl) || string.IsNullOrWhiteSpace(sSourceUrl))
-            throw new ArgumentException("Missing required '--source' value.");
-
-        if (!dctArgs.TryGetValue("--target", out var sTargetUrl) || string.IsNullOrWhiteSpace(sTargetUrl))
-            throw new ArgumentException("Missing required '--target' value.");
-
+        var generatedOptions = parseResult.Options!;
         var options = new PipelinedMigrationOptions
         {
-            SourceUrl = sSourceUrl,
-            TargetUrl = sTargetUrl,
-            SourceBranchOrTrunk = GetOptionalValue(dctArgs, "--source-branch"),
-            TargetBranch = GetOptionalValue(dctArgs, "--target-branch"),
-            SourceUser = GetOptionalValue(dctArgs, "--source-user"),
-            SourcePassword = GetOptionalValue(dctArgs, "--source-password"),
-            TargetUser = GetOptionalValue(dctArgs, "--target-user"),
-            TargetPassword = GetOptionalValue(dctArgs, "--target-password"),
-            FromId = GetOptionalValue(dctArgs, "--from"),
-            ToId = GetOptionalValue(dctArgs, "--to"),
-            MaxCount = TryParseOptionalInt(dctArgs, "--max-count"),
-            OldestFirst = !dctArgs.ContainsKey("--newest-first"),
-            PrefetchCount = TryParseOptionalInt(dctArgs, "--prefetch") ?? 3,
-            MaxExportWorkers = TryParseOptionalInt(dctArgs, "--export-workers") ?? 2,
-            TempRoot = GetOptionalValue(dctArgs, "--temp-root")
+            SourceUrl = generatedOptions.SourceUrl,
+            TargetUrl = generatedOptions.TargetUrl,
+            SourceBranchOrTrunk = generatedOptions.SourceBranchOrTrunk,
+            TargetBranch = generatedOptions.TargetBranch,
+            SourceUser = generatedOptions.SourceUser,
+            SourcePassword = generatedOptions.SourcePassword,
+            TargetUser = generatedOptions.TargetUser,
+            TargetPassword = generatedOptions.TargetPassword,
+            FromId = generatedOptions.FromId,
+            ToId = generatedOptions.ToId,
+            MaxCount = generatedOptions.MaxCount,
+            OldestFirst = !generatedOptions.NewestFirst,
+            NewestFirst = generatedOptions.NewestFirst,
+            PrefetchCount = generatedOptions.PrefetchCount,
+            MaxExportWorkers = generatedOptions.MaxExportWorkers,
+            TempRoot = generatedOptions.TempRoot
         };
 
         options.Validate();
@@ -203,16 +244,4 @@ public sealed class PipelinedMigrationOptions
             throw new ArgumentException("The max count must be greater than zero when specified.");
     }
 
-    private static string? GetOptionalValue(IReadOnlyDictionary<string, string?> dctArgs, string sKey)
-        => dctArgs.TryGetValue(sKey, out var sValue) ? sValue : null;
-
-    private static int? TryParseOptionalInt(IReadOnlyDictionary<string, string?> dctArgs, string sKey)
-    {
-        if (!dctArgs.TryGetValue(sKey, out var sValue) || string.IsNullOrWhiteSpace(sValue))
-            return null;
-
-        return int.TryParse(sValue, out var iValue)
-            ? iValue
-            : throw new ArgumentException($"Value '{sValue}' for '{sKey}' is not a valid integer.");
-    }
 }
