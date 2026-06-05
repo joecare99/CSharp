@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -28,6 +29,10 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.17" />
   </ItemGroup>
 
 </Project>

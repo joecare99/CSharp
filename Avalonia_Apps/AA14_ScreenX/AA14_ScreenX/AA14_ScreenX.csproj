@@ -6,6 +6,7 @@
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

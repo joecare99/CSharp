@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\Packages.props"/>
+	<Import Project="..\Packages.props" />
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" />
-    <PackageReference Include="Microsoft.VisualStudio.DiagnosticsHub.BenchmarkDotNetDiagnosers"  />
+    <PackageReference Include="Microsoft.VisualStudio.DiagnosticsHub.BenchmarkDotNetDiagnosers" />
   </ItemGroup>
 
   <ItemGroup>

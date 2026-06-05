@@ -5,6 +5,7 @@
 	<TargetFramework>net10.0</TargetFramework>
 	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	<ApplicationManifest>app.manifest</ApplicationManifest>
+	<Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -17,5 +18,9 @@
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\Avln_Marble.Display\Avln_Marble.Display.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Desktop" Version="12.0.4" />
+    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.17" />
   </ItemGroup>
 </Project>

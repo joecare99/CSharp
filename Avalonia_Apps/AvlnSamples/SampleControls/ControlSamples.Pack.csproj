@@ -11,6 +11,7 @@
     <PackageOutputPath>$(SolutionDir).packages</PackageOutputPath>
     <IncludeSymbols>false</IncludeSymbols>
     <AssemblyName>ControlSamples</AssemblyName>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -42,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.0.3" />
+    <PackageReference Include="Avalonia" Version="12.0.4" />
   </ItemGroup>
 
 </Project>

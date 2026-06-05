@@ -40,16 +40,23 @@ Create a new `Avln_Marble` Avalonia application set that ports the existing WPF 
 
 ## Open Questions
 - Which visual effects require simplification because of Avalonia or browser rendering differences?
-- Should a dedicated test project be added immediately, or can validation begin with build coverage and later focused tests?
+- A dedicated test project has not been added yet; current validation is based on targeted project builds and should be extended with focused tests in a later increment.
 
 ## Tasks
 - [x] Inspect existing Avalonia shared, desktop, and browser project patterns
-- [ ] Create `Avln_Marble` project structure
-- [ ] Port shared view models and board interaction logic
-- [ ] Port shared Avalonia views and styling
-- [ ] Add desktop host bootstrap
-- [ ] Add browser host bootstrap
-- [ ] Validate builds and targeted tests
+- [x] Create `Avln_Marble` project structure
+- [x] Port shared view models and board interaction logic
+- [x] Port shared Avalonia views and styling
+- [x] Add desktop host bootstrap
+- [x] Add browser host bootstrap
+- [x] Validate builds and targeted tests
+
+## Validation Notes
+- `Avln_Marble.Display` builds successfully on `net10.0`.
+- `Avln_Marble.Desktop` builds successfully on `net10.0`.
+- `Avln_Marble.Browser` builds successfully on `net10.0-browser`.
+- A full workspace build is currently not a reliable quality gate for this feature because unrelated existing projects fail with workload, import, and Edit-and-Continue errors.
+- The reported `BoardView` startup `NullReferenceException` was fixed by resolving the `BoardSurface` canvas explicitly instead of relying on a generated field.
 
 ## Status
-- In Progress
+- Completed

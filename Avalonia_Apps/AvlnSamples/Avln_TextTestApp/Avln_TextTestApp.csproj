@@ -19,17 +19,14 @@
     <TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Assets\avalonia-logo.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <AvaloniaResource Include="Assets\avalonia-logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.0.3" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.0.3" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.3" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.3" />
+    <PackageReference Include="Avalonia" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
   </ItemGroup>
 
 </Project>

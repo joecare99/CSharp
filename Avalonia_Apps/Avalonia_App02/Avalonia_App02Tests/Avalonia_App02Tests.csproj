@@ -4,6 +4,7 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -22,6 +23,11 @@
 
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Headless" Version="12.0.4" />
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.6.0" />
   </ItemGroup>
 
 

@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

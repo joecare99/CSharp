@@ -6,6 +6,7 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,5 +30,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Document.Base\Document.Base.csproj" />
   </ItemGroup>
-
 </Project>

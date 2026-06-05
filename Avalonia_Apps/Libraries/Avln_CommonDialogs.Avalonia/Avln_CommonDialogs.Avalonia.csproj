@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,10 @@
     <PackageReference Include="Avalonia.Controls.ColorPicker" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Controls.ColorPicker" Version="12.0.4" />
   </ItemGroup>
 
  </Project>

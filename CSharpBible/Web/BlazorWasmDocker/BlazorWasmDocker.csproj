@@ -1,55 +1,49 @@
 ﻿<Project>
-	<Import Project="..\Wasm.props" />
-	<PropertyGroup>
-		<TargetFrameworks>net8.0</TargetFrameworks>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<UserSecretsId>5ea416fc-196d-4c0f-b36b-b8fc509a293a</UserSecretsId>
-		<BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
-		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<StaticWebAssetBasePath>CSharp</StaticWebAssetBasePath>
-	</PropertyGroup>
-	<Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.props" />
-	<Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.targets" />
-	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
-		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
-	</PropertyGroup>
-	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
-		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
-	</PropertyGroup>	<ItemGroup>
-	  <Compile Remove="bin\**" />
-	  <Compile Remove="obj\**" />
-	  <Content Remove="bin\**" />
-	  <Content Remove="obj\**" />
-	  <EmbeddedResource Remove="bin\**" />
-	  <EmbeddedResource Remove="obj\**" />
-	  <None Remove="bin\**" />
-	  <None Remove="obj\**" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<None Remove="ChildWindow1.xaml" />
-	</ItemGroup>
+  <Import Project="..\Wasm.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UserSecretsId>5ea416fc-196d-4c0f-b36b-b8fc509a293a</UserSecretsId>
+    <BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <StaticWebAssetBasePath>CSharp</StaticWebAssetBasePath>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk.BlazorWebAssembly" Project="Sdk.targets" />
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
+    <Content Remove="bin\**" />
+    <Content Remove="obj\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="bin\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <None Include="wwwroot\scripts\bwdInterop.js" />
-	</ItemGroup>
+  <ItemGroup>
+    <None Remove="ChildWindow1.xaml" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" />
-		<!--<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />-->
-	</ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\scripts\bwdInterop.js" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />
-	  <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
-	  <ProjectReference Include="..\MyComponent\Shared\MyComponent.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.8" />
+    <!--<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />-->
+  </ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="wwwroot\CSharp\" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\MyComponent\Shared\MyComponent.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\CSharp\" />
+  </ItemGroup>
 
 </Project>

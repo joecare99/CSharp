@@ -14,7 +14,7 @@
 		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
 		<PackageReference Include="MSTest" Version="4.2.3" />
 		<PackageReference Include="NSubstitute" Version="5.3.0" />
 	</ItemGroup>

@@ -1,12 +1,9 @@
-using AA98_AvlnCodeStudio.Base.Services;
 using AA98_AvlnCodeStudio.Base.ViewModels;
-using AA98_AvlnCodeStudio.Model.Documents;
+using AA98_AvlnCodeStudio.Editor.Services;
 using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels;
@@ -16,26 +13,17 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels;
 /// </summary>
 public partial class EditorViewModel : CodeStudioViewModelBase
 {
-    private readonly FileEditorDocument _document;
-    private readonly IEditorFileDialogService _fileDialogService;
-    private readonly ITextDocumentStorageService _storageService;
+    private readonly IEditorWorkflow _workflow;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EditorViewModel"/> class.
     /// </summary>
-    /// <param name="document">The document state model.</param>
-    /// <param name="fileDialogService">The dialog service.</param>
-    /// <param name="storageService">The persistence service.</param>
-    public EditorViewModel(
-        FileEditorDocument document,
-        IEditorFileDialogService fileDialogService,
-        ITextDocumentStorageService storageService)
+    /// <param name="workflow">The editor workflow core.</param>
+    public EditorViewModel(IEditorWorkflow workflow)
     {
-        _document = document;
-        _fileDialogService = fileDialogService;
-        _storageService = storageService;
+        _workflow = workflow;
 
-        _text = _document.Content;
+        _text = _workflow.Document.Content;
         _statusText = UiStrings.ReadyStatusText;
         _notificationText = UiStrings.ReadyStatusText;
         SynchronizeFromDocument();
@@ -45,7 +33,10 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     /// Initializes a new instance of the <see cref="EditorViewModel"/> class for design-time usage.
     /// </summary>
     public EditorViewModel()
-        : this(new FileEditorDocument(), new DesignEditorFileDialogService(), new DesignTextDocumentStorageService())
+        : this(new EditorWorkflow(
+            new Model.Documents.FileEditorDocument(),
+            new DesignEditorFileDialogService(),
+            new DesignTextDocumentStorageService()))
     {
     }
 
@@ -74,11 +65,11 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     /// <summary>
     /// Gets the window title for the main editor shell.
     /// </summary>
-    public string WindowTitle => $"{UiStrings.ApplicationTitle} - {DocumentName ?? _document.DisplayName}{(IsDirty ? UiStrings.WindowTitleDirtySuffix : string.Empty)}";
+    public string WindowTitle => $"{UiStrings.ApplicationTitle} - {DocumentName ?? _workflow.Document.DisplayName}{(IsDirty ? UiStrings.WindowTitleDirtySuffix : string.Empty)}";
 
     partial void OnTextChanged(string value)
     {
-        _document.UpdateContent(value);
+        _workflow.UpdateText(value);
         SynchronizeFromDocument();
         StatusText = IsDirty ? UiStrings.ModifiedStatusText : UiStrings.ReadyStatusText;
         NotificationText = IsDirty ? UiStrings.DocumentModifiedNotificationText : UiStrings.DocumentSynchronizedNotificationText;
@@ -90,11 +81,10 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     [RelayCommand]
     private void NewDocument()
     {
-        _document.Reset();
-        Text = _document.Content;
+        var result = _workflow.NewDocumentAsync().GetAwaiter().GetResult();
+        Text = _workflow.Document.Content;
         SynchronizeFromDocument();
-        StatusText = UiStrings.NewDocumentStatusText;
-        NotificationText = UiStrings.CreatedNewDocumentNotificationText;
+        ApplyResult(result, UiStrings.NewDocumentStatusText, UiStrings.CreatedNewDocumentNotificationText, UiStrings.NewDocumentStatusText, UiStrings.CreatedNewDocumentNotificationText);
     }
 
     /// <summary>
@@ -104,23 +94,10 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     [RelayCommand]
     private async Task OpenAsync()
     {
-        var filePath = await _fileDialogService
-            .ShowOpenFileDialogAsync(GetCurrentDirectory());
-
-        if (string.IsNullOrWhiteSpace(filePath))
-        {
-            StatusText = UiStrings.OpenCanceledStatusText;
-            NotificationText = UiStrings.OpenCanceledNotificationText;
-            return;
-        }
-
-        var content = await _storageService.ReadAllTextAsync(filePath);
-        _document.Load(filePath, content);
-
-        Text = _document.Content;
+        var result = await _workflow.OpenAsync();
+        Text = _workflow.Document.Content;
         SynchronizeFromDocument();
-        StatusText = string.Format(UiStrings.OpenedDocumentStatusFormat, _document.DisplayName);
-        NotificationText = string.Format(UiStrings.LoadedDocumentNotificationFormat, _document.DisplayName);
+        ApplyResult(result, string.Format(UiStrings.OpenedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.LoadedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.OpenCanceledStatusText, UiStrings.OpenCanceledNotificationText);
     }
 
     /// <summary>
@@ -130,25 +107,9 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     [RelayCommand]
     private async Task SaveAsync()
     {
-        var filePath = _document.FilePath;
-        if (string.IsNullOrWhiteSpace(filePath))
-        {
-            filePath = await _fileDialogService
-                .ShowSaveFileDialogAsync(GetCurrentDirectory(), _document.DisplayName);
-        }
-
-        if (string.IsNullOrWhiteSpace(filePath))
-        {
-            StatusText = UiStrings.SaveCanceledStatusText;
-            NotificationText = UiStrings.SaveCanceledNotificationText;
-            return;
-        }
-
-        await _storageService.SaveAllTextAsync(filePath, Text ?? string.Empty);
-        _document.MarkSaved(filePath);
+        var result = await _workflow.SaveAsync();
         SynchronizeFromDocument();
-        StatusText = string.Format(UiStrings.SavedDocumentStatusFormat, _document.DisplayName);
-        NotificationText = string.Format(UiStrings.SavedDocumentNotificationFormat, _document.DisplayName);
+        ApplyResult(result, string.Format(UiStrings.SavedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.SavedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.SaveCanceledStatusText, UiStrings.SaveCanceledNotificationText);
     }
 
     /// <summary>
@@ -158,35 +119,27 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     [RelayCommand]
     private async Task SaveAsAsync()
     {
-        var filePath = await _fileDialogService
-            .ShowSaveFileDialogAsync(GetCurrentDirectory(), _document.DisplayName);
-
-        if (string.IsNullOrWhiteSpace(filePath))
-        {
-            StatusText = UiStrings.SaveAsCanceledStatusText;
-            NotificationText = UiStrings.SaveAsCanceledNotificationText;
-            return;
-        }
-
-        await _storageService.SaveAllTextAsync(filePath, Text ?? string.Empty);
-        _document.MarkSaved(filePath);
+        var result = await _workflow.SaveAsAsync();
         SynchronizeFromDocument();
-        StatusText = string.Format(UiStrings.SavedDocumentStatusFormat, _document.DisplayName);
-        NotificationText = string.Format(UiStrings.SavedDocumentNotificationFormat, _document.DisplayName);
-    }
-
-    private string? GetCurrentDirectory()
-    {
-        return string.IsNullOrWhiteSpace(_document.FilePath)
-            ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-            : Path.GetDirectoryName(_document.FilePath);
+        ApplyResult(result, string.Format(UiStrings.SavedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.SavedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.SaveAsCanceledStatusText, UiStrings.SaveAsCanceledNotificationText);
     }
 
     private void SynchronizeFromDocument()
     {
-        DocumentName = _document.DisplayName;
-        CurrentFilePath = _document.FilePath;
-        IsDirty = _document.IsDirty;
+        DocumentName = _workflow.Document.DisplayName;
+        CurrentFilePath = _workflow.Document.FilePath;
+        IsDirty = _workflow.Document.IsDirty;
+    }
+
+    private void ApplyResult(
+        EditorOperationResult result,
+        string completedStatus,
+        string completedNotification,
+        string canceledStatus,
+        string canceledNotification)
+    {
+        StatusText = result.IsCompleted ? completedStatus : canceledStatus;
+        NotificationText = result.IsCompleted ? completedNotification : canceledNotification;
     }
 
 }

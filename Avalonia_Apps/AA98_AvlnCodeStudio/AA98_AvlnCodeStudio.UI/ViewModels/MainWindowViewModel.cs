@@ -1,20 +1,32 @@
 ﻿using AA98_AvlnCodeStudio.UI.Resources;
+using AA98_AvlnCodeStudio.Editor.Services;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
+        private readonly Components.IAvaloniaEditorComponent _editorComponent;
+
         public MainWindowViewModel()
-            : this(new EditorViewModel())
+            : this(new Components.AvaloniaEditorComponent(
+                new EditorWorkflow(
+                    new Model.Documents.FileEditorDocument(),
+                    new Services.DesignEditorFileDialogService(),
+                    new Services.DesignTextDocumentStorageService()),
+                new EditorViewModel(),
+                new Controls.EditorTextArea()))
         {
         }
 
-        public MainWindowViewModel(EditorViewModel editor)
+        public MainWindowViewModel(Components.IAvaloniaEditorComponent editorComponent)
         {
-            Editor = editor;
+            _editorComponent = editorComponent;
+            Editor = editorComponent.EditorViewModel;
         }
 
         public EditorViewModel Editor { get; }
+
+        public Components.IAvaloniaEditorComponent EditorComponent => _editorComponent;
 
         public string WindowTitle => Editor.WindowTitle;
 
