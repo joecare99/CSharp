@@ -1,85 +1,77 @@
+using CommandlineHelper;
+using CommandResources = global::RepoMigrator.Tools.ArchiveSmokeTest.Properties.CommandResources;
+
 namespace RepoMigrator.Tools.ArchiveSmokeTest;
 
 /// <summary>
 /// Represents command-line options for the archive smoke-test tool.
 /// </summary>
+[CommandDescriptor(
+    "archive-smoke-test",
+    ResourceType = typeof(CommandResources),
+    DescriptionResourceName = nameof(CommandResources.ArchiveSmokeTest_Description),
+    HelpTextResourceName = nameof(CommandResources.ArchiveSmokeTest_Help))]
 public sealed class ArchiveSmokeTestOptions
 {
     /// <summary>
     /// Gets the source directory that contains archive snapshots.
     /// </summary>
+    [CommandOption(
+        "--source",
+        DescriptionResourceName = nameof(CommandResources.ArchiveSmokeTest_Source_Description))]
     public required string SourceDirectoryPath { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether subdirectories should be scanned recursively.
     /// </summary>
+    [CommandFlag(
+        "--recursive",
+        DescriptionResourceName = nameof(CommandResources.ArchiveSmokeTest_Recursive_Description))]
     public bool Recursive { get; init; }
 
     /// <summary>
     /// Gets the allowed archive extensions.
     /// </summary>
+    [CommandOption(
+        "--extension",
+        DescriptionResourceName = nameof(CommandResources.ArchiveSmokeTest_Extension_Description))]
     public IReadOnlyList<string> AllowedExtensions { get; init; } = Array.Empty<string>();
 
     /// <summary>
     /// Gets the workspace root path used for DevOps plan persistence.
     /// </summary>
-    public required string WorkspaceRootPath { get; init; }
+    [CommandOption(
+        "--workspace",
+        DescriptionResourceName = nameof(CommandResources.ArchiveSmokeTest_Workspace_Description))]
+    public string WorkspaceRootPath { get; init; } = string.Empty;
 
     /// <summary>
     /// Parses the command-line options.
     /// </summary>
     public static ArchiveSmokeTestOptions? Parse(string[] arrArgs)
     {
-        ArgumentNullException.ThrowIfNull(arrArgs);
+        if (arrArgs is null)
+            throw new ArgumentNullException(nameof(arrArgs));
 
-        if (arrArgs.Length == 0 || arrArgs.Any(static arg => string.Equals(arg, "--help", StringComparison.OrdinalIgnoreCase) || string.Equals(arg, "-h", StringComparison.OrdinalIgnoreCase)))
+        if (arrArgs.Length == 0 || arrArgs.Any(static arg => string.Equals(arg, "/?", StringComparison.OrdinalIgnoreCase)))
             return null;
 
-        string? sourceDirectoryPath = null;
-        string workspaceRootPath = Directory.GetCurrentDirectory();
-        var recursive = false;
-        var allowedExtensions = new List<string>();
+        var parseResult = ArchiveSmokeTestOptionsCommand.Parse(arrArgs);
+        if (parseResult.RequestHelp)
+            return null;
 
-        for (var i = 0; i < arrArgs.Length; i++)
-        {
-            var arg = arrArgs[i];
-            switch (arg)
-            {
-                case "--source":
-                    sourceDirectoryPath = GetRequiredValue(arrArgs, ref i, arg);
-                    break;
-                case "--workspace":
-                    workspaceRootPath = GetRequiredValue(arrArgs, ref i, arg);
-                    break;
-                case "--recursive":
-                    recursive = true;
-                    break;
-                case "--extension":
-                    allowedExtensions.Add(GetRequiredValue(arrArgs, ref i, arg));
-                    break;
-                default:
-                    throw new ArgumentException($"Unknown argument '{arg}'.");
-            }
-        }
+        if (!parseResult.Success)
+            throw new ArgumentException(parseResult.ErrorMessage);
 
-        if (string.IsNullOrWhiteSpace(sourceDirectoryPath))
-            throw new ArgumentException("The --source argument is required.");
-
+        var options = parseResult.Options!;
         return new ArchiveSmokeTestOptions
         {
-            SourceDirectoryPath = Path.GetFullPath(sourceDirectoryPath),
-            WorkspaceRootPath = Path.GetFullPath(workspaceRootPath),
-            Recursive = recursive,
-            AllowedExtensions = allowedExtensions
+            SourceDirectoryPath = Path.GetFullPath(options.SourceDirectoryPath),
+            WorkspaceRootPath = string.IsNullOrWhiteSpace(options.WorkspaceRootPath)
+                ? Directory.GetCurrentDirectory()
+                : Path.GetFullPath(options.WorkspaceRootPath),
+            Recursive = options.Recursive,
+            AllowedExtensions = options.AllowedExtensions
         };
-    }
-
-    private static string GetRequiredValue(string[] arrArgs, ref int i, string argumentName)
-    {
-        if (i + 1 >= arrArgs.Length || string.IsNullOrWhiteSpace(arrArgs[i + 1]))
-            throw new ArgumentException($"Missing value for '{argumentName}'.");
-
-        i++;
-        return arrArgs[i];
     }
 }

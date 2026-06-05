@@ -5,9 +5,11 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>RepoMigrator.Tools.ArchiveSmokeTest</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CommandlineHelper\CommandlineHelper.csproj" />
     <ProjectReference Include="..\RepoMigrator.Core\RepoMigrator.Core.csproj" />
     <ProjectReference Include="..\RepoMigrator.Providers.Archive\RepoMigrator.Providers.Archive.csproj" />
     <ProjectReference Include="..\RepoMigrator.Providers.Compression.Zip\RepoMigrator.Providers.Compression.Zip.csproj" />
@@ -15,7 +17,26 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CommandlineHelper.Generators\CommandlineHelper.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\CommandResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CommandResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\CommandResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommandResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
