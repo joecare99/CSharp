@@ -10,6 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA00-Bl001-Avalonia-Test-Console-Library.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA00-Bl002-Avalonia-Terminal-Host-App.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl006-Document-Lifecycle-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl009-File-Type-Identification-and-Behavior-Selection.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl011-Command-Contribution-Baseline.md" />
@@ -23,6 +25,7 @@
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl029-Component-Settings-Registration-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl031-User-Preference-Persistence-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl033-Build-Validation-and-Quality-Gates-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl037-Versioning-Testing-and-Debugging-Foundation.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E01-Workbench-and-Shell.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E02-Editor-Framework.md" />
@@ -45,7 +48,11 @@
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F25-Consent-Level-Model.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F31-Component-Settings-Registration.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F36-Test-Data-and-Mocking-Standards.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\AA98-F37-Engineering-Tooling-Foundation.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\Avln_Marble-Migration-to-Avalonia.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA00-T001-Create-Avalonia-Test-Console-Library.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA00-T002-Create-Avalonia-Terminal-Host-App.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA00-T003-Native-WinForms-Menu-Mapping-for-ConsoleLib.WinForms.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA05-T001-Split-CommandParCalc-Into-Core-Desktop-and-Browser.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA09-T001-Fix-Browser-Startup-Black-Screen.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T001-Extract-Editor-Component-And-DI-Hosted-Avalonia-UI.md" />
@@ -55,6 +62,7 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T018-Implement-Workspace-Open-and-Close-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T020-Implement-Recent-Workspaces-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T034-Implement-Architecture-Guardrail-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T037-Implement-Versioning-Testing-and-Debugging-Foundation.md" />
     <None Include="$(MSBuildThisFileDirectory)Vision.md" />
   </ItemGroup>
 </Project>

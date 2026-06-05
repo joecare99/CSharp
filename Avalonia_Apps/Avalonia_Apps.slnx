@@ -108,12 +108,14 @@
   <Folder Name="/Avln_Marble/">
     <File Path="Avln_Marble/Application.props" />
     <File Path="Avln_Marble/Directory.Packages.props" />
-    <Project Path="../CSharpBible/Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj">
-      <Platform Solution="DesktopOnly|*" Project="x64" />
-    </Project>
+    <Project Path="../CSharpBible/Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj" />
     <Project Path="Avln_Marble/Avln_Marble.Browser/Avln_Marble.Browser.csproj" />
     <Project Path="Avln_Marble/Avln_Marble.Desktop/Avln_Marble.Desktop.csproj" />
     <Project Path="Avln_Marble/Avln_Marble.Display/Avln_Marble.Display.csproj" />
+  </Folder>
+  <Folder Name="/Avln_TerminalHost/">
+    <Project Path="Avln_TerminalHost/Avln_TerminalHost/Avln_TerminalHost.csproj" />
+    <Project Path="Avln_TerminalHost/Avln_TerminalHostTests/Avln_TerminalHostTests.csproj" />
   </Folder>
   <Folder Name="/Legacy/">
     <File Path="../CSharpBible/ConsoleApps/ConsoleApps.props" />
@@ -121,6 +123,9 @@
     <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
     <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj" />
     <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
+    <Project Path="../CSharpBible/ConsoleApps/TestConsole/TestConsole_net.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
   </Folder>
   <Folder Name="/Legacy/Laby4/">
     <File Path="../../Delphi/Diverses/Source/Labyrinth/frm_laby4.dfm" />
@@ -160,6 +165,7 @@
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="Libraries/Libraries.props" />
+    <Project Path="../CSharpBible/Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
     <Project Path="../CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
     <Project Path="../CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj" />
     <Project Path="../CSharpBible/Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
@@ -170,6 +176,8 @@
     </Project>
     <Project Path="Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj" />
     <Project Path="Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
+    <Project Path="Libraries/Avln_TestConsole/Avln_TestConsole.csproj" />
+    <Project Path="Libraries/Avln_TestConsoleTests/Avln_TestConsoleTests.csproj" />
     <Project Path="Libraries/BaseLib/BaseLib.csproj">
       <Platform Solution="DesktopOnly|*" Project="x64" />
     </Project>
@@ -179,6 +187,7 @@
     <Project Path="Libraries/MathLibrary/MathLibrary.csproj" />
   </Folder>
   <Folder Name="/Projektmappenelemente/">
+    <File Path=".github/copilot-instructions.md" />
     <File Path="CONTRIBUTING.md" />
     <File Path="Packages.props" />
     <File Path="Solution.props" />

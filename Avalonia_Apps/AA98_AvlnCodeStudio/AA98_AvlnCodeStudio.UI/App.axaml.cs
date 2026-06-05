@@ -1,10 +1,9 @@
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using AA98_AvlnCodeStudio.UI.Views;
-using AA98_AvlnCodeStudio.Base.OS.Services;
-using AA98_AvlnCodeStudio.Base.UI.Services;
 using AA98_AvlnCodeStudio.Editor.Components;
 using AA98_AvlnCodeStudio.Editor.Services;
 using AA98_AvlnCodeStudio.Model.Documents;
+using AA98_AvlnCodeStudio.UI.DependencyInjection;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -42,9 +41,8 @@ namespace AA98_AvlnCodeStudio.UI
             var services = new ServiceCollection();
 
             services.AddAvaloniaCommonDialogs(() => desktop.MainWindow);
+            services.AddCodeStudioFoundation();
             services.AddSingleton<IFileEditorDocumentFactory, FileEditorDocumentFactory>();
-            services.AddSingleton<ITextDocumentStorageService, UI.Services.FileSystemTextDocumentStorageService>();
-            services.AddSingleton<IEditorFileDialogService, UI.Services.AvaloniaEditorFileDialogService>();
             services.AddSingleton<IEditorWorkflowFactory, EditorWorkflowFactory>();
             services.AddSingleton<UI.ViewModels.IEditorViewModelFactory, UI.ViewModels.EditorViewModelFactory>();
             services.AddSingleton<UI.Services.IEditorViewFactory, UI.Services.AvaloniaEditorViewFactory>();

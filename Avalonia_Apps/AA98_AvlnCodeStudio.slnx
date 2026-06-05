@@ -7,8 +7,11 @@
     <File Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.props" />
     <File Path="AA98_AvlnCodeStudio/Directory.Packages.props" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Debugging/AA98_AvlnCodeStudio.Base.Debugging.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Testing/AA98_AvlnCodeStudio.Base.Testing.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Versioning/AA98_AvlnCodeStudio.Base.Versioning.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor.Tests/AA98_AvlnCodeStudio.Editor.Tests.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor/AA98_AvlnCodeStudio.Editor.csproj" />
