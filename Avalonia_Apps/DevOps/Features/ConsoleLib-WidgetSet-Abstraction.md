@@ -68,6 +68,7 @@ Introduce a `WidgetSet` abstraction for `ConsoleLib` so the existing public cont
 - The widget seam now covers the base rendering path plus the currently identified specialized rendering hotspots while preserving the existing console-backed behavior.
 - A first `ConsoleLib.WinForms` project now exists with a host form, widget registry, hosted widget-set contract, and an initial adapter slice for core controls using real WinForms instances.
 - The current WinForms slice already compiles as a separate project and supports bidirectional baseline synchronization for key control state such as text, enabled/visible state, bounds, button clicks, list selection, and scrollbar values.
+- The concrete ExtendedConsole-based default widget set has now been moved out of `ConsoleLib` into `ConsoleLib.ExtCon`, while `ConsoleLib` itself targets only modern .NET core TFMs.
 
 ## Status
 - Completed

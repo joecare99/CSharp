@@ -165,6 +165,7 @@
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="Libraries/Libraries.props" />
+    <Project Path="../CSharpBible/Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
     <Project Path="../CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
     <Project Path="../CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj" />
     <Project Path="../CSharpBible/Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />

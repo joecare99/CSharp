@@ -52,6 +52,7 @@
     <None Include="$(MSBuildThisFileDirectory)Features\Avln_Marble-Migration-to-Avalonia.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA00-T001-Create-Avalonia-Test-Console-Library.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA00-T002-Create-Avalonia-Terminal-Host-App.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA00-T003-Native-WinForms-Menu-Mapping-for-ConsoleLib.WinForms.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA05-T001-Split-CommandParCalc-Into-Core-Desktop-and-Browser.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA09-T001-Fix-Browser-Startup-Black-Screen.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T001-Extract-Editor-Component-And-DI-Hosted-Avalonia-UI.md" />
