@@ -13,18 +13,20 @@
 // ***********************************************************************
 using System;
 using System.Drawing;
-using ConsoleLib;
-using ConsoleLib.CommonControls;
-using Calc32Cons.Visual;
 using Microsoft.Extensions.DependencyInjection;
+using BaseLib.Interfaces;
+using BaseLib.Models;
+using BaseLib.Helper;
+using ConsoleLib;
+using ConsoleLib.Interfaces;
+using ConsoleLib.CommonControls;
+using ConsoleLib.ExtCon;
+using Calc32Cons.Visual;
 using Calc32.Models.Interfaces;
 using Calc32.ViewModels;
 using Calc32.Models;
 using Calc32.ViewModels.Interfaces;
-using ConsoleLib.Interfaces;
-using BaseLib.Interfaces;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using BaseLib.Models;
 
 /// <summary>
 /// The Calc32Cons namespace.
@@ -71,19 +73,20 @@ namespace Calc32Cons
             var sp = new ServiceCollection()
              .AddSingleton<ICalculatorClass, CalculatorClass>()
              .AddTransient<ICalculatorViewModel, CalculatorViewModel>()
-             .AddSingleton<IExtendedConsole,ExtendedConsole>()
+             .AddSingleton<IExtendedConsole, ExtendedConsole>()
+             .AddSingleton<IWidgetSet, ConsoleWidgetSet>()
              .AddSingleton(BuildApp)
-             .AddSingleton<Application, Application>()
+             .AddSingleton<Application>()
              .AddTransient<IConsole, ConsoleProxy>()
              .AddTransient<ConsoleCalcView, ConsoleCalcView>()
              //   .AddTransient<Views.LoadingDialog, Views.LoadingDialog>()
              .BuildServiceProvider();
 
-            Ioc.Default.ConfigureServices(sp);
+            IoC.Configure(sp);
 
-            var CalcView = Ioc.Default.GetRequiredService<ConsoleCalcView>();
+            var CalcView = IoC.GetRequiredService<ConsoleCalcView>();
 
-            App.Visible = true;
+            App!.Visible = true;
             App.Draw();
             App.OnMouseMove += App_MouseMove;
             App.OnCanvasResize += App_CanvasResize;
@@ -97,13 +100,13 @@ namespace Calc32Cons
             cl.Inflate(-3, -3);
             Console.ForegroundColor = ConsoleColor.White;
 
-            App = Ioc.Default.GetRequiredService<Application>();
+            App = IoC.GetRequiredService<Application>();
             App.Visible = false;
-            App.Border = ConsoleFramework.singleBorder;
+            App.BorderStyle = ConsoleLib.Data.BorderStyle.Single;
             App.Dimension = cl;
             App.ForeColor = ConsoleColor.DarkBlue;
             App.BackColor = ConsoleColor.Black;
-            App.BoarderColor = ConsoleColor.Blue;
+            App.BorderColor = ConsoleColor.Blue;
 
             //Mouse.Set(0, 0, " ");
             //Mouse.BackColor = ConsoleColor.Red;

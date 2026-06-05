@@ -17,6 +17,7 @@ using System.Drawing;
 using Calc32.ViewModels.Interfaces;
 using ConsoleLib.Interfaces;
 using Calc32.Models;
+using System.Windows.Forms;
 
 /// <summary>
 /// The Visual namespace.
@@ -50,10 +51,10 @@ namespace Calc32Cons.Visual
         {
             Parent = App;
             _model = model;
-            Border = ConsoleFramework.doubleBoarder;
+            BorderStyle = ConsoleLib.Data.BorderStyle.Double;
             ForeColor = ConsoleColor.Blue;
             BackColor = ConsoleColor.DarkBlue;
-            BoarderColor = ConsoleColor.Green;
+            BorderColor = ConsoleColor.Green;
             Dimension = new Rectangle(3, 5, 50, 20);
             Shadow = true;
 
