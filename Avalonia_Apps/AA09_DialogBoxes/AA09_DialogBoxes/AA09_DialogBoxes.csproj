@@ -3,18 +3,19 @@
 	<PropertyGroup>
 		<TargetFrameworks>net8.0</TargetFrameworks>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<Configurations>Debug;Release;DesktopOnly</Configurations>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
-    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
-    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
-  </PropertyGroup>
- <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
-    <TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
-  </PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+	</PropertyGroup>
 	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
 		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
 	</PropertyGroup>
@@ -46,7 +47,7 @@
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">
@@ -55,19 +56,19 @@
 			<DependentUpon>Resources.resx</DependentUpon>
 		</Compile>
 		<Compile Update="Views\DialogView.axaml.cs">
-		  <DependentUpon>DialogView.axaml</DependentUpon>
+			<DependentUpon>DialogView.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\MainWindow.axaml.cs">
-		  <DependentUpon>MainWindow.axaml</DependentUpon>
+			<DependentUpon>MainWindow.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\DialogWindow.axaml.cs">
-		  <DependentUpon>DialogWindow.axaml</DependentUpon>
+			<DependentUpon>DialogWindow.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\OverlayDialogControl.axaml.cs">
-		  <DependentUpon>OverlayDialogControl.axaml</DependentUpon>
+			<DependentUpon>OverlayDialogControl.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="App.axaml.cs">
-		  <DependentUpon>App.axaml</DependentUpon>
+			<DependentUpon>App.axaml</DependentUpon>
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
@@ -76,5 +77,5 @@
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
-	
+
 </Project>
