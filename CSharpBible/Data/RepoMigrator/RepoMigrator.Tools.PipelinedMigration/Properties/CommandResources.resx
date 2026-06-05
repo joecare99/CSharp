@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PipelinedMigration_Description" xml:space="preserve">
+	<value>Runs a pipelined SVN-to-Git migration prototype.</value>
+  </data>
+  <data name="PipelinedMigration_Help" xml:space="preserve">
+	<value>Configures source, target, revision limits, worker counts, and temporary storage for the pipelined migration execution flow.</value>
+  </data>
+  <data name="PipelinedMigration_Source_Description" xml:space="preserve">
+	<value>SVN source URL or working copy path.</value>
+  </data>
+  <data name="PipelinedMigration_Target_Description" xml:space="preserve">
+	<value>Git target URL or repository path.</value>
+  </data>
+  <data name="PipelinedMigration_SourceBranch_Description" xml:space="preserve">
+	<value>Optional SVN branch or trunk path.</value>
+  </data>
+  <data name="PipelinedMigration_TargetBranch_Description" xml:space="preserve">
+	<value>Optional Git target branch.</value>
+  </data>
+  <data name="PipelinedMigration_SourceUser_Description" xml:space="preserve">
+	<value>Optional SVN user name.</value>
+  </data>
+  <data name="PipelinedMigration_SourcePassword_Description" xml:space="preserve">
+	<value>Optional SVN password.</value>
+  </data>
+  <data name="PipelinedMigration_TargetUser_Description" xml:space="preserve">
+	<value>Optional Git user name.</value>
+  </data>
+  <data name="PipelinedMigration_TargetPassword_Description" xml:space="preserve">
+	<value>Optional Git password.</value>
+  </data>
+  <data name="PipelinedMigration_From_Description" xml:space="preserve">
+	<value>Exclusive lower changeset boundary.</value>
+  </data>
+  <data name="PipelinedMigration_To_Description" xml:space="preserve">
+	<value>Inclusive upper changeset boundary.</value>
+  </data>
+  <data name="PipelinedMigration_MaxCount_Description" xml:space="preserve">
+	<value>Maximum number of revisions to process.</value>
+  </data>
+  <data name="PipelinedMigration_NewestFirst_Description" xml:space="preserve">
+	<value>Process the newest revisions first.</value>
+  </data>
+  <data name="PipelinedMigration_Prefetch_Description" xml:space="preserve">
+	<value>Number of snapshots to prefetch ahead of the commit stage.</value>
+  </data>
+  <data name="PipelinedMigration_ExportWorkers_Description" xml:space="preserve">
+	<value>Number of concurrent export workers.</value>
+  </data>
+  <data name="PipelinedMigration_TempRoot_Description" xml:space="preserve">
+	<value>Optional temporary working root.</value>
+  </data>
+</root>

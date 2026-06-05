@@ -1,10 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ConsoleLib; // for Control base
+﻿using ConsoleLib; // for Control base
 using ConsoleLib.CommonControls;
+using ConsoleLib.CommonControls.Tests; // for ConsoleColor
+using ConsoleLib.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Drawing;
 using System.Linq;
-using System;
-using ConsoleLib.CommonControls.Tests; // for ConsoleColor
 
 namespace ConsoleLibTests.CommonControls;
 
@@ -20,28 +21,22 @@ public class PanelTests : TestBase
 
     [TestMethod]
     [TestCategory("Panel")]
-    [DataRow(new[] { '─', '│', '┌', '┐', '└', '┘' })]
-    [DataRow(null)]
-    [DataRow(new char[0])]
-    public void Draw_Renders_Border_And_Children_With_Shadow(char[] border)
+    [DataRow(BorderStyle.Single, '┌')]
+    [DataRow(BorderStyle.None, '░')]
+    [DataRow(BorderStyle.Raised, '▛')]
+    public void Draw_Renders_Border_And_Children_With_Shadow(BorderStyle borderStyle, char expectedCorner)
     {
         var p = new Panel { Dimension = new Rectangle(0, 0, 20, 5) };
-        p.BoarderColor = ConsoleColor.Yellow;
-        p.Border = border; // length >5
+        p.Parent = _TestApp;
+        p.BorderColor = ConsoleColor.Yellow;
+        p.BorderStyle = borderStyle;
         var c1 = new TestChild { Dimension = new Rectangle(1, 1, 5, 1), Parent = p };
         var c2 = new TestChild { Dimension = new Rectangle(2, 2, 6, 2), Parent = p, Shadow = true };
         p.Draw();
         Assert.IsTrue(p.Valid);
         Assert.AreEqual(1, c1.DrawCount);
         Assert.AreEqual(1, c2.DrawCount);
-        if (border != null && border.Length > 5)
-        {
-            Assert.AreEqual(border[2], _tstCon.Content[4]); // top-left corner
-        }
-        else
-        {
-            Assert.AreEqual('░', _tstCon.Content[4]); // top-left corner
-        }
+        Assert.AreEqual(expectedCorner, __tstCon?.Content[4]);
 
     }
 
@@ -70,7 +65,8 @@ public class PanelTests : TestBase
     public void ReDraw_FullRegion_Draws_Border()
     {
         var p = new Panel { Dimension = new Rectangle(0, 0, 15, 4) };
-        p.Border = new[] { '─', '│', '┌', '┐', '└', '┘' }; // ensure border
+        p.Parent = _TestApp;
+        p.BorderStyle = BorderStyle.Single;
         var c1 = new TestChild { Dimension = new Rectangle(1, 1, 5, 1), Parent = p };
         var c2 = new TestChild { Dimension = new Rectangle(2, 2, 6, 2), Parent = p, Shadow = true };
         p.ReDraw(p.Dimension); // region intersects and includes border
@@ -81,6 +77,7 @@ public class PanelTests : TestBase
     public void ReDraw_InnerRegion_No_Border()
     {
         var p = new Panel { Dimension = new Rectangle(0, 0, 15, 5) };
+        p.Parent = _TestApp;
         p.Border = new[] { '─', '│', '┌', '┐', '└', '┘' };
         // inner region completely inside (border skip path)
         var inner = new Rectangle(3, 2, 5, 1);

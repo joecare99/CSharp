@@ -49,9 +49,7 @@ public class MenuItemAdvancedTests : TestBase
     public void Click_Without_SubMenu_Dispatches_Hide()
     {
         // create fake app extended console using test console for both IConsole and IExtendedConsole not allowed -> use substitute
-        var ext = Substitute.For<IExtendedConsole>();
-        var app = new Application(_tstCon, ext);
-        var bar = new MenuBar{ Parent = app };
+        var bar = new MenuBar{ Parent = Application.Default };
         var mi = new MenuItem{ Parent=bar};
         bar.AddRootItem(mi);
         mi.Click();

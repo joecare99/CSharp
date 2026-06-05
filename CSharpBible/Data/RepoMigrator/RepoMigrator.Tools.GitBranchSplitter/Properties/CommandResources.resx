@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GitBranchSplitter_Description" xml:space="preserve">
+	<value>Splits a Git branch into path-based branches.</value>
+  </data>
+  <data name="GitBranchSplitter_Help" xml:space="preserve">
+	<value>Creates split branches from a source branch and preserves the current program orchestration around the generated command-line parser.</value>
+  </data>
+  <data name="GitBranchSplitter_Repo_Description" xml:space="preserve">
+	<value>Path to the Git repository working directory.</value>
+  </data>
+  <data name="GitBranchSplitter_Source_Description" xml:space="preserve">
+	<value>Name of the local source branch to split.</value>
+  </data>
+  <data name="GitBranchSplitter_Prefix_Description" xml:space="preserve">
+	<value>Prefix used for generated branch names.</value>
+  </data>
+  <data name="GitBranchSplitter_Overwrite_Description" xml:space="preserve">
+	<value>Overwrite existing generated branches if they already exist.</value>
+  </data>
+  <data name="GitBranchSplitter_AuthorName_Description" xml:space="preserve">
+	<value>Author name used for generated synthetic commits.</value>
+  </data>
+  <data name="GitBranchSplitter_AuthorEmail_Description" xml:space="preserve">
+	<value>Author email used for generated synthetic commits.</value>
+  </data>
+</root>

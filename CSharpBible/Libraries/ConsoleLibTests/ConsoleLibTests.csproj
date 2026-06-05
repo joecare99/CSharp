@@ -1,17 +1,26 @@
 ﻿<Project>
   <Import Project="..\Libraries.props" />
   <PropertyGroup>
-    <TargetFrameworks>net462;net472;net48;net481</TargetFrameworks>
+    <TargetFrameworks>net481;net48;net472;net462;net8.0-windows</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>13.0</LangVersion>
     <UseWPF>true</UseWPF>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0-windows</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
+  </PropertyGroup>
   <ItemGroup>
     <!-- Adjust relative path to actual ConsoleLib project (outside ConsoleApps folder) -->
-    <ProjectReference Include="..\..\ConsoleApps\TestConsole\TestConsole.csproj" />
+    <ProjectReference Condition="!$(TargetFramework.StartsWith('net4'))" Include="..\..\ConsoleApps\TestConsole\TestConsole_net.csproj" />
+    <ProjectReference Condition="$(TargetFramework.StartsWith('net4'))" Include="..\..\ConsoleApps\TestConsole\TestConsole.csproj" />
     <ProjectReference Include="..\ConsoleLib\ConsoleLib.csproj" />
+    <ProjectReference Include="..\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MSTest.TestAdapter" Version="4.2.3" />

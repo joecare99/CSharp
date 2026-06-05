@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ArchiveSmokeTest_Description" xml:space="preserve">
+    <value>Scans archive snapshots and prepares an archive-import plan preview.</value>
+  </data>
+  <data name="ArchiveSmokeTest_Help" xml:space="preserve">
+    <value>Use repeatable --extension options to limit the recognized archive types while keeping the existing smoke-test execution flow.</value>
+  </data>
+  <data name="ArchiveSmokeTest_Source_Description" xml:space="preserve">
+    <value>Source directory containing archive snapshots.</value>
+  </data>
+  <data name="ArchiveSmokeTest_Workspace_Description" xml:space="preserve">
+    <value>Workspace root used for runtime-defined archive state storage.</value>
+  </data>
+  <data name="ArchiveSmokeTest_Recursive_Description" xml:space="preserve">
+    <value>Scan subdirectories recursively.</value>
+  </data>
+  <data name="ArchiveSmokeTest_Extension_Description" xml:space="preserve">
+    <value>Allowed archive extension. Repeat the option to allow multiple extensions.</value>
+  </data>
+</root>
