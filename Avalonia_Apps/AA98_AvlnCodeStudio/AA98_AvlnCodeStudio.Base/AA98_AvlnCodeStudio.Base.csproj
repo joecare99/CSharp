@@ -1,8 +1,9 @@
-<Project>
+﻿<Project>
   <Import Project="..\AA98_AvlnCodeStudio.props" />
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -14,5 +15,9 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\" />
+    <Folder Include="Debugging\Models\" />
   </ItemGroup>
 </Project>

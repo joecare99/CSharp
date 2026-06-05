@@ -1,7 +1,9 @@
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using AA98_AvlnCodeStudio.UI.Views;
-using AA98_AvlnCodeStudio.Base.Services;
+using AA98_AvlnCodeStudio.Editor.Components;
+using AA98_AvlnCodeStudio.Editor.Services;
 using AA98_AvlnCodeStudio.Model.Documents;
+using AA98_AvlnCodeStudio.UI.DependencyInjection;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -39,21 +41,24 @@ namespace AA98_AvlnCodeStudio.UI
             var services = new ServiceCollection();
 
             services.AddAvaloniaCommonDialogs(() => desktop.MainWindow);
-            services.AddSingleton<FileEditorDocument>();
-            services.AddSingleton<ITextDocumentStorageService, UI.Services.FileSystemTextDocumentStorageService>();
-            services.AddSingleton<IEditorFileDialogService, UI.Services.AvaloniaEditorFileDialogService>();
-            services.AddSingleton<EditorViewModel>();
+            services.AddCodeStudioFoundation();
+            services.AddSingleton<IFileEditorDocumentFactory, FileEditorDocumentFactory>();
+            services.AddSingleton<IEditorWorkflowFactory, EditorWorkflowFactory>();
+            services.AddSingleton<UI.ViewModels.IEditorViewModelFactory, UI.ViewModels.EditorViewModelFactory>();
+            services.AddSingleton<UI.Services.IEditorViewFactory, UI.Services.AvaloniaEditorViewFactory>();
+            services.AddSingleton<UI.Components.AvaloniaEditorComponentFactory>();
+            services.AddSingleton<UI.Components.IAvaloniaEditorComponentFactory>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.AvaloniaEditorComponentFactory>());
+            services.AddSingleton<IEditorComponentFactory>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.AvaloniaEditorComponentFactory>());
+            services.AddSingleton<UI.Components.IAvaloniaEditorComponent>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>().Create());
             services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<MainWindow>();
 
             return services.BuildServiceProvider();
         }
 
         private static MainWindow CreateMainWindow(IServiceProvider serviceProvider)
         {
-            return new MainWindow
-            {
-                DataContext = serviceProvider.GetRequiredService<MainWindowViewModel>(),
-            };
+            return serviceProvider.GetRequiredService<MainWindow>();
         }
     }
 }

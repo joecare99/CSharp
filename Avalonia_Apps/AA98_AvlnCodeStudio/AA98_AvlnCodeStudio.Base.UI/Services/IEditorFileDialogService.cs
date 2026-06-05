@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AA98_AvlnCodeStudio.Base.Services;
+namespace AA98_AvlnCodeStudio.Base.UI.Services;
 
 /// <summary>
 /// Defines UI-agnostic file picker operations for the editor workflow.

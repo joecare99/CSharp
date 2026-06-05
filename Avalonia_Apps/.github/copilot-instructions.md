@@ -20,6 +20,10 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Prefer reusable scripts and skills from `C:\Projekte\CSharp\Tools` and its sub-directories over ad-hoc terminal commands whenever they fit the task, especially for coverage analysis, build and test diagnostics, reporting, automation, and similar repository-wide workflows.
 - Read adjacent `*.md` documentation in that tools area only when needed to confirm applicability or usage.
 - For this repository, prefer keeping RepoMigrator.Core provider-agnostic via broader migration source provider abstractions instead of forcing archive inputs into IVersionControlProvider. Additionally, provider-specific files should live in their specific provider projects; RepoMigrator.Core should contain only provider-agnostic shared abstractions and models. Sub-provider concerns such as compression formats should also live in dedicated specific projects (for example, a Zip compression provider project).
+- In this C# workspace, architecture should be component-based: integrate UI components via Dependency Injection (DI), solve as much as possible through interfaces and interface factories, and keep all non-UI components UI-agnostic and OS-agnostic. A component in this repository means a separate project file with an additional test project, and `AA98_AvlnCodeStudio.Base` should have minimal or no dependencies, particularly not depending on Model.
+- Additional base libraries such as `.Base.UI` and `.Base.OS` are encouraged; both should be able to reference `.Base` but must not have dependencies on each other.
+- A provider-agnostic AI integration should be part of the concept from the beginning; therefore, a dedicated base library like `AA98_AvlnCodeStudio.Base.AI` is desired.
+- Prefer capability-oriented abstractions in this repository's control tree architecture: interfaces should represent what a type has or can provide (for example, a WidgetSet or access to an application loop) rather than identity-style type markers.
 
 ## Code Organization
 - Prefer one class/interface/struct per file.
