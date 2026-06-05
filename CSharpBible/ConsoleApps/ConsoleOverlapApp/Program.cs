@@ -9,6 +9,7 @@ using System.Threading;
 using ConsoleLib;
 using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
+using ConsoleLib.ExtCon;
 using BaseLib.Interfaces;
 using BaseLib.Models;
 
@@ -37,12 +38,13 @@ class Program
     {
         IExtendedConsole ext = new ExtendedConsole();
         IConsole con = new ConsoleProxy();
-        _app = new Application(con, ext)
+
+        _app = new Application(new ConsoleWidgetSet(con, ext))
         {
             BackColor = ConsoleColor.DarkBlue,
             ForeColor = ConsoleColor.Gray,
-            Border = ConsoleFramework.singleBorder,
-            BoarderColor = ConsoleColor.Green
+            BorderStyle = ConsoleLib.Data.BorderStyle.Single,
+            BorderColor = ConsoleColor.Green
         };
         var cl = ConsoleFramework.Canvas.ClipRect;
         cl.Inflate(-2,-2);
@@ -52,10 +54,10 @@ class Program
         {
             Parent = _app,
             Dimension = new Rectangle(5,5,20,5),
-            Border = ConsoleFramework.singleBorder,
+            BorderStyle = ConsoleLib.Data.BorderStyle.Single,
             BackColor = ConsoleColor.DarkGray,
             ForeColor = ConsoleColor.White,
-            BoarderColor = ConsoleColor.Yellow,
+            BorderColor = ConsoleColor.Yellow,
             Shadow = true
         };
         _btnA = new Button
@@ -71,10 +73,10 @@ class Program
         {
             Parent = _app,
             Dimension = new Rectangle(25,5,20,5),
-            Border = ConsoleFramework.singleBorder,
+            BorderStyle = ConsoleLib.Data.BorderStyle.Single,
             BackColor = ConsoleColor.DarkGray,
             ForeColor = ConsoleColor.White,
-            BoarderColor = ConsoleColor.Cyan,
+            BorderColor = ConsoleColor.Cyan,
             Shadow = true
         };
         _btnB = new Button
