@@ -18,6 +18,7 @@
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-008-Avoid-Git-ref-collisions-in-projected-sub-branches.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-009-Define-archive-snapshot-source-detection-and-ordering-contracts.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-012-Define-archive-import-status-persistence-and-resume.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-013-Create-shared-attribute-driven-console-command-infrastructure.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\E-RepoMigrator-001-RepoMigrator-migration-workbench.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\830360-Interactive-trace-visualization-workbench.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\830361-Trace-data-processing-pipeline.md" />
@@ -51,6 +52,19 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-040-Create-small-console-tool-for-archive-provider-smoke-tests.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-041-Register-archive-migration-services-in-wpf-bootstrap.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-045-Define-compatibility-adapter-for-structured-changes-to-existing-target-providers.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-046-Specify-shared-attribute-driven-console-command-model-and-generated-api.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-047-Implement-shared-console-command-runtime-and-source-generator.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-048-Migrate-existing-RepoMigrator-console-tools-to-generated-command-parsing.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-049-Add-coverage-for-generated-console-command-parsing-and-help-output.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-050-Fix-convert-patches-behavior-with-regression-tests-before-refactor.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-051-Split-convert-patches-tests-into-dedicated-test-project.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-052-Split-svn-tests-into-dedicated-test-projects.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-053-Split-git-provider-tests-into-dedicated-test-project.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-054-Split-git-branch-splitter-tests-into-dedicated-test-project.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-055-Split-pipelined-migration-tests-into-dedicated-test-project.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-056-Split-archive-smoke-test-tests-into-dedicated-test-project.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-057-Split-archive-provider-tests-into-dedicated-test-project.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-058-Split-compression-provider-tests-into-dedicated-test-projects.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-SharedSkills-001-Create-global-test-coverage-skill.md" />
     <None Include="$(MSBuildThisFileDirectory)TraceAnalysis-Workbench-User-Guide.md" />
   </ItemGroup>
@@ -58,7 +72,6 @@
     <Content Include="$(MSBuildThisFileDirectory)Data\RepoMigrator.ArchiveImportState.example.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Backlog\" />
     <Folder Include="$(MSBuildThisFileDirectory)Data\RepoMigrator\ArchiveImports\xpdf-0-2-tar-0007\" />
   </ItemGroup>
 </Project>
