@@ -3,6 +3,7 @@ using ConsoleLib;
 using ConsoleLib.Interfaces;
 using System.Drawing;
 using System;
+using ConsoleLib.ExtCon;
 
 namespace ConsoleLib.CommonControls.Tests;
 

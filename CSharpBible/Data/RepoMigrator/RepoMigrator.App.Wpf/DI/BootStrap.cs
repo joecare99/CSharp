@@ -1,8 +1,9 @@
 ﻿// RepoMigrator.App.Wpf/DI/Bootstrap.cs
 using Microsoft.Extensions.DependencyInjection;
 using RepoMigrator.App.Logic.Services;
-using RepoMigrator.App.Wpf.ViewModels;
 using RepoMigrator.App.State.Services;
+using RepoMigrator.App.Wpf.Services;
+using RepoMigrator.App.Wpf.ViewModels;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
 using RepoMigrator.Core.Services;
@@ -78,7 +79,9 @@ public static class Bootstrap
         services.AddSingleton<MigrationQueryService>();
         services.AddSingleton<RecentPathHistoryService>();
         services.AddSingleton<RepositorySelectionService>();
-        services.AddSingleton<AppInputStateStore>();
+        services.AddSingleton<IAppStatePathProvider, WindowsAppStatePathProvider>();
+        services.AddSingleton<ISecretProtector, WindowsDataProtectionSecretProtector>();
+        services.AddSingleton<IAppInputStateStore, AppInputStateStore>();
         services.AddSingleton<MainViewModel>();
 
         return services.BuildServiceProvider();

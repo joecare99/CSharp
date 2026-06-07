@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using RepoMigrator.App.State.Services;
 using RepoMigrator.App.Wpf;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
@@ -110,5 +111,20 @@ public sealed class ProviderFactoryTests
         var planner = provider.GetRequiredService<IStructuredMigrationPlanner>();
 
         Assert.IsNotNull(planner);
+    }
+
+    [TestMethod]
+    public async Task Bootstrap_RegistersAppInputStateAbstractions()
+    {
+        await using var provider = Bootstrap.Create();
+
+        var pathProvider = provider.GetRequiredService<IAppStatePathProvider>();
+        var protector = provider.GetRequiredService<ISecretProtector>();
+        var stateStore = provider.GetRequiredService<IAppInputStateStore>();
+
+        Assert.IsNotNull(pathProvider);
+        Assert.IsNotNull(protector);
+        Assert.IsNotNull(stateStore);
+        Assert.IsInstanceOfType<AppInputStateStore>(stateStore);
     }
 }

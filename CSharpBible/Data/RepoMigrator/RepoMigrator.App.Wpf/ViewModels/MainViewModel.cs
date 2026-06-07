@@ -28,7 +28,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
     private readonly RecentPathHistoryService _recentPathHistoryService;
     private readonly RepositorySelectionService _repositorySelectionService;
     private readonly IProviderFactory _providerFactory;
-    private readonly AppInputStateStore _inputStateStore;
+    private readonly IAppInputStateStore _inputStateStore;
     private readonly IArchiveMigrationService _archiveMigrationService;
     private readonly IMigrationSourceProviderFactory _migrationSourceProviderFactory;
     private bool _isLoadingInputState;
@@ -300,7 +300,7 @@ public partial class MainViewModel : ObservableObject, IMigrationProgress
         RecentPathHistoryService recentPathHistoryService,
         RepositorySelectionService repositorySelectionService,
         IProviderFactory providerFactory,
-        AppInputStateStore inputStateStore,
+        IAppInputStateStore inputStateStore,
         IArchiveMigrationService archiveMigrationService,
         IMigrationSourceProviderFactory migrationSourceProviderFactory)
     {

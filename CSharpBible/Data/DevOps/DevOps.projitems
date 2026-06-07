@@ -56,6 +56,7 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-047-Implement-shared-console-command-runtime-and-source-generator.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-048-Migrate-existing-RepoMigrator-console-tools-to-generated-command-parsing.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-049-Add-coverage-for-generated-console-command-parsing-and-help-output.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-050-Abstract-app-state-credential-protection-for-platform-neutrality.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-050-Fix-convert-patches-behavior-with-regression-tests-before-refactor.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-051-Split-convert-patches-tests-into-dedicated-test-project.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-052-Split-svn-tests-into-dedicated-test-projects.md" />
