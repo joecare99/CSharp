@@ -1,7 +1,5 @@
 ﻿using ILGPU;
 using ILGPU.Runtime;
-using System;
-using System.Collections.Generic;
 
 public class RMatrixKernels
 {
