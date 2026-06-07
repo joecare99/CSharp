@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\Solution.props"/>
+  <Import Project="..\Solution.props" />
   <PropertyGroup>
     <TargetFrameworks>net481;net9.0-windows</TargetFrameworks>
     <OutputType>WinExe</OutputType>
@@ -9,6 +9,11 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ctlClockLib\ctlClockLib.csproj" />
   </ItemGroup>
