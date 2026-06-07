@@ -2,12 +2,12 @@
   <PropertyGroup>
     <BaseOutputPath>..\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
     <BaseIntermediateOutputPath>..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <Company>JC-Soft</Company>
     <Authors>Joe Care</Authors>
-    <Copyright>Copyright © JC-Soft 2024</Copyright>
+    <Copyright>Copyright © JC-Soft 2026</Copyright>
 	  <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
 	  <SuppressTfmSupportBuildWarning>true</SuppressTfmSupportBuildWarning>
 	  <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
