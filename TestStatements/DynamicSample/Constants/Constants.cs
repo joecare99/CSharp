@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DynamicSample.Constants
+﻿namespace DynamicSample.Constants
 {
     /// <summary>
     /// Class Constants.
