@@ -1,0 +1,20 @@
+﻿<Project>
+  <Import Project="..\Application.props" />
+  <PropertyGroup>
+	<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+	<IsTestProject>true</IsTestProject>
+	<AssemblyName>Avln_Bubbles.Model.Tests</AssemblyName>
+	<RootNamespace>Avln_Bubbles.Model.Tests</RootNamespace>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <None Include="Avln_Bubbles.Model.Tests.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\Avln_Bubbles.Model\Avln_Bubbles.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="MSTest" />
+  </ItemGroup>
+</Project>

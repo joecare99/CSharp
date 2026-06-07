@@ -1,10 +1,10 @@
 using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MarbleBoard.Engine.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using MarbleBoard.Engine.Models;
 
 namespace Avln_Marble.Display.ViewModels;
 

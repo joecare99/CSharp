@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <Import Project="..\Application.props" />
   <PropertyGroup>
 	<TargetFramework>net10.0</TargetFramework>
@@ -17,6 +17,9 @@
 	<PackageReference Include="Avalonia.Fonts.Inter" />
 	<PackageReference Include="CommunityToolkit.Mvvm" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CSharpBible\Graphics\MarbleBoard.Engine\MarbleBoard.Engine.csproj" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Update="App.axaml.cs">

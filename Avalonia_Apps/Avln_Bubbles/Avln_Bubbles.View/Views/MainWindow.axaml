@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:Avln_Bubbles.View.ViewModels"
+		xmlns:views="using:Avln_Bubbles.View.Views"
+		x:Class="Avln_Bubbles.View.Views.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+		Title="{Binding Title}"
+		Width="1180"
+		Height="760"
+		MinWidth="980"
+		MinHeight="640"
+		Background="#15111E"
+		mc:Ignorable="d">
+  <Grid Margin="24" ColumnDefinitions="3*,24,2*">
+	<views:BoardView Grid.Column="0" DataContext="{Binding Board}" />
+
+	<Border Grid.Column="2"
+			Padding="24"
+			CornerRadius="18"
+			Background="#1AFFFFFF"
+			BorderBrush="#33FFFFFF"
+			BorderThickness="1">
+	  <views:ShellView DataContext="{Binding}" />
+	</Border>
+  </Grid>
+</Window>
