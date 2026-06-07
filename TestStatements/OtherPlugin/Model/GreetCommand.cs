@@ -1,5 +1,4 @@
-﻿using System;
-using OtherPlugin.Properties;
+﻿using OtherPlugin.Properties;
 using PluginBase.Interfaces;
 
 namespace OtherPlugin.Model;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OtherPlugin.Properties;
+﻿using OtherPlugin.Properties;
 using Microsoft.Extensions.Logging;
 using PluginBase.Interfaces;
 
