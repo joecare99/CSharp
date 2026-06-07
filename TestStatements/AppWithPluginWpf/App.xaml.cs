@@ -20,15 +20,14 @@ namespace AppWithPluginWpf;
 public partial class App : Application, IEnvironment
 {
 
-    private IMessenger? _messanger;
     private IServiceProvider? _sp;
     private IServiceCollection? _sc;
 
-    public IData data => _sp.GetRequiredService<IData>();
+    public IData data => _sp?.GetRequiredService<IData>() ?? throw new InvalidOperationException("Service provider not initialized.");
 
     public IUserInterface ui { get; set; }
 
-    public IMessenger messaging => _sp.GetRequiredService<IMessenger>();
+    public IMessenger messaging => _sp?.GetRequiredService<IMessenger>() ?? throw new InvalidOperationException("Service provider not initialized.");
 
     public List<object> commands { get; private set; }
 
@@ -78,7 +77,11 @@ public partial class App : Application, IEnvironment
 
         commands = pluginPaths.SelectMany(pluginPath =>
         {
-            Assembly pluginAssembly = LoadPlugin(pluginPath);
+            Assembly? pluginAssembly = LoadPlugin(pluginPath);
+            if (pluginAssembly == null)
+            {
+                return Enumerable.Empty<object>();
+            }
             return CreateCommands(pluginAssembly, this);
         }).ToList();
 
@@ -102,7 +105,7 @@ public partial class App : Application, IEnvironment
         {
             if (typeof(ICommand).IsAssignableFrom(type))
             {
-                ICommand result = Activator.CreateInstance(type) as ICommand;
+                ICommand? result = Activator.CreateInstance(type) as ICommand;
                 if (result != null)
                 {
                     result.Initialize(env);
@@ -121,7 +124,7 @@ public partial class App : Application, IEnvironment
         }
     }
 
-    static Assembly LoadPlugin(string relativePath)
+    static Assembly? LoadPlugin(string relativePath)
     {
         string pluginLocation, assemblyPath;
         if (File.Exists(relativePath))

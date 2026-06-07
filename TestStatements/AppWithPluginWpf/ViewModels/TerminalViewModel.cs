@@ -5,10 +5,6 @@ using PluginBase.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace AppWithPluginWpf.ViewModels;
 public partial class TerminalViewModel: ObservableObject, IUserInterface
@@ -29,7 +25,7 @@ public partial class TerminalViewModel: ObservableObject, IUserInterface
     {
         Command = string.Empty;
         Output = new();
-        (App.Current as App).ui = this;
+        (App.Current as App)!.ui = this;
         foreach (var cmd in new List<CommandProxy> {
             new CommandProxy("clear","wipes the terminal", (p) => { Output.Clear(); return 0; } ),
             new CommandProxy("exit","quit the application", (p) => { App.Current.Shutdown(); return 0; } ),
@@ -37,7 +33,7 @@ public partial class TerminalViewModel: ObservableObject, IUserInterface
             new CommandProxy("settitle","sets the title of the terminal", (p) => { Title = p?.ToString() ?? string.Empty; return 0; } ),
         })
         {
-            (App.Current as App).commands.Add(cmd);
+            (App.Current as App)!.commands.Add(cmd);
         }
         Command = "list";
         ExecuteCommand();
@@ -55,7 +51,7 @@ public partial class TerminalViewModel: ObservableObject, IUserInterface
                 Output.Add("Command cannot be empty.");
                 return;
             }
-            foreach (ICommand cmd in (App.Current as App).commands)
+            foreach (ICommand cmd in (App.Current as App)!.commands)
             {
                 if (Command.ToLower().StartsWith(cmd.Name) && (Command.Length == cmd.Name.Length || Command[cmd.Name.Length] == ' '))
                 {
