@@ -1,0 +1,77 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Avln_Bubbles.View.ViewModels"
+			 x:Class="Avln_Bubbles.View.Views.ShellView"
+			 x:DataType="vm:MainWindowViewModel"
+			 mc:Ignorable="d">
+  <StackPanel Spacing="18">
+	<TextBlock FontSize="30"
+			   FontWeight="SemiBold"
+			   Foreground="#FFF4E9D9"
+			   Text="{Binding Title}" />
+
+	<TextBlock TextWrapping="Wrap"
+			   Foreground="#FFD6D0E0"
+			   Text="A bubble game shell for Avalonia with MVVM, DI, desktop hosting, browser hosting, and remote-ready composition boundaries." />
+
+	<UniformGrid Columns="2" Rows="2">
+	  <Border Margin="0,0,12,12" Padding="16" CornerRadius="16" Background="#1A9C27B0">
+		<StackPanel>
+		  <TextBlock FontWeight="Bold" Text="Total Score" />
+		  <TextBlock Margin="0,8,0,0" FontSize="28" Text="{Binding Score}" />
+		</StackPanel>
+	  </Border>
+	  <Border Margin="0,0,0,12" Padding="16" CornerRadius="16" Background="#1A2196F3">
+		<StackPanel>
+		  <TextBlock FontWeight="Bold" Text="Union Score" />
+		  <TextBlock Margin="0,8,0,0" FontSize="28" Text="{Binding UnionScore}" />
+		</StackPanel>
+	  </Border>
+	  <Border Margin="0,0,12,0" Padding="16" CornerRadius="16" Background="#1AFF9800">
+		<StackPanel>
+		  <TextBlock FontWeight="Bold" Text="Host" />
+		  <TextBlock Margin="0,8,0,0" FontSize="20" Text="{Binding HostFeatures.HostLabel}" />
+		</StackPanel>
+	  </Border>
+	  <Border Padding="16" CornerRadius="16" Background="#1A4CAF50">
+		<StackPanel>
+		  <TextBlock FontWeight="Bold" Text="Remote-ready" />
+		  <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Text="{Binding HostFeatures.RemoteHostingSummary}" />
+		</StackPanel>
+	  </Border>
+	</UniformGrid>
+
+	<StackPanel Orientation="Horizontal" Spacing="12">
+	  <Button Command="{Binding StartNewGameCommand}" Content="New Game" MinWidth="160" />
+	  <Border Width="360"
+			  Padding="12,8"
+			  VerticalAlignment="Center"
+			  Background="#33FFFFFF"
+			  BorderBrush="#66FFFFFF"
+			  BorderThickness="1"
+			  CornerRadius="10">
+		<TextBlock VerticalAlignment="Center"
+				   Foreground="#FFF9F7FF"
+				   FontWeight="SemiBold"
+				   Text="{Binding StatusText}"
+				   TextWrapping="Wrap" />
+	  </Border>
+	</StackPanel>
+
+	<Border Padding="16" CornerRadius="16" Background="#2AFFFFFF" BorderBrush="#55FFFFFF" BorderThickness="1">
+	  <StackPanel Spacing="8">
+		<TextBlock FontWeight="Bold" Foreground="#FFF7F0E4" Text="Host capabilities" />
+		<TextBlock>
+		  <Run Foreground="#FFF7F0E4" Text="Desktop windowing: " />
+		  <Run Foreground="#FFFFFFFF" Text="{Binding IsDesktopHost}" />
+		</TextBlock>
+		<TextBlock>
+		  <Run Foreground="#FFF7F0E4" Text="Browser hosting active: " />
+		  <Run Foreground="#FFFFFFFF" Text="{Binding IsBrowserHost}" />
+		</TextBlock>
+	  </StackPanel>
+	</Border>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,53 @@
+body {
+    background: #15111E;
+    color: #F7F0E4;
+    font-family: Inter, Arial, sans-serif;
+}
+
+.avalonia-splash {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #1f1830 0%, #15111E 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.avalonia-splash-content {
+    width: min(900px, 100%);
+    text-align: center;
+}
+
+.avalonia-splash h2 {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #F7F0E4;
+    margin-bottom: 12px;
+}
+
+.avalonia-splash p {
+    margin: 0;
+    color: #E7DDF6;
+}
+
+.startup-details {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFF3F3;
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow: auto;
+    max-height: 45vh;
+}
+
+.avalonia-splash.splash-close {
+    transition: opacity 200ms, display 200ms;
+    display: none;
+    opacity: 0;
+}

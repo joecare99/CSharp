@@ -1,0 +1,60 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Avln_ControlsAndLayout.ViewModels"
+             xmlns:models="using:Avln_ControlsAndLayout.Models"
+             mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="720"
+             x:Class="Avln_ControlsAndLayout.Views.ControlsAndLayoutView"
+             x:DataType="vm:ControlsAndLayoutViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock"><Setter Property="FontFamily" Value="Calibri" /><Setter Property="FontSize" Value="13" /></Style>
+    <Style Selector="ListBox.sampleList"><Setter Property="BorderBrush" Value="Transparent" /><Setter Property="Width" Value="186" /></Style>
+    <Style Selector="ListBox.sampleList ListBoxItem"><Setter Property="Margin" Value="1" /><Setter Property="Padding" Value="15,5,5,5" /></Style>
+  </UserControl.Styles>
+  <Grid Background="#ffc4d4ff">
+    <Grid.RowDefinitions><RowDefinition Height="50" /><RowDefinition Height="*" /><RowDefinition Height="20" /></Grid.RowDefinitions>
+    <TextBlock Grid.RowSpan="2" Margin="20,5,20,5" Text="AvaloniaPad Express" Foreground="#ff4055e1" FontStyle="Italic" FontSize="40" FontWeight="Bold" />
+    <Grid Grid.Row="1">
+      <Border Background="White" CornerRadius="14" Margin="10" BorderBrush="#ff4055e1" BorderThickness="1" />
+      <DockPanel Margin="20" LastChildFill="True">
+        <Border Width="210" Background="#ffc4d4ff" CornerRadius="10" BorderBrush="#ff4055e1" BorderThickness="1" DockPanel.Dock="Left">
+          <DockPanel Margin="7" LastChildFill="False">
+            <TextBlock DockPanel.Dock="Top" Margin="0,0,0,10" Text="Sample Library" Foreground="#ff4055e1" TextAlignment="Center" FontWeight="Bold" FontSize="18" />
+            <ItemsControl ItemsSource="{Binding SampleGroups}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="models:ControlSampleGroup">
+                  <Expander Margin="0,0,0,10" Background="White" Header="{Binding Title}" IsExpanded="True">
+                    <ListBox Classes="sampleList" MaxHeight="260" ItemsSource="{Binding Samples}" SelectedItem="{Binding $parent[UserControl].DataContext.SelectedSample, Mode=TwoWay}">
+                      <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:ControlSample"><TextBlock Text="{Binding Title}" /></DataTemplate>
+                      </ListBox.ItemTemplate>
+                    </ListBox>
+                  </Expander>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </DockPanel>
+        </Border>
+        <DockPanel LastChildFill="True">
+          <TextBlock DockPanel.Dock="Top" Margin="20,10,0,0" Text="{Binding SampleTitle}" FontWeight="Bold" FontSize="22" />
+          <TextBlock DockPanel.Dock="Top" Margin="20,10,20,0" FontSize="15" Text="{Binding SampleDescription}" TextWrapping="Wrap" />
+          <Grid Margin="20,20,20,0">
+            <Grid.RowDefinitions><RowDefinition Height="{Binding PreviewRowHeight}" /><RowDefinition Height="{Binding CodeRowHeight}" /><RowDefinition Height="40" /></Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="White" CornerRadius="14" Margin="0,0,0,8" BorderBrush="LightGray" BorderThickness="1" ClipToBounds="True">
+              <ContentControl Margin="12" Content="{Binding CurrentPreview}" />
+            </Border>
+            <GridSplitter Grid.Row="0" Margin="10,0,10,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="5" Background="Transparent" />
+            <TextBox Grid.Row="1" Margin="0,20,0,0" FontFamily="Consolas" FontSize="14" BorderBrush="Transparent" AcceptsTab="True" AcceptsReturn="True" Text="{Binding EditableAxamlText, Mode=TwoWay, Delay=200}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,5,0,0">
+              <RadioButton Margin="5" Command="{Binding ShowPreviewCommand}" Content="Preview" />
+              <RadioButton Margin="5" Command="{Binding ShowCodeCommand}" Content="aXAML" />
+              <RadioButton Margin="5" Command="{Binding ShowSplitCommand}" Content="Split" IsChecked="True" />
+              <TextBlock Margin="100,5,60,0" Text="{Binding ErrorText}" Foreground="Red" FontWeight="Bold" />
+            </StackPanel>
+          </Grid>
+        </DockPanel>
+      </DockPanel>
+    </Grid>
+  </Grid>
+</UserControl>

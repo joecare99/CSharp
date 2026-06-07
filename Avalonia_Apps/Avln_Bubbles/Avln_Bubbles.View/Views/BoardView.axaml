@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Avln_Bubbles.View.ViewModels"
+			 xmlns:conv="using:Avln_Bubbles.View.Converters"
+			 x:Class="Avln_Bubbles.View.Views.BoardView"
+			 x:DataType="vm:BubblesBoardViewModel"
+			 mc:Ignorable="d">
+	<UserControl.Resources>
+	<conv:BallBrushConverter x:Key="BallBrushConverter" />
+  </UserControl.Resources>
+
+  <Border Padding="18"
+		  CornerRadius="18"
+		  Background="#1AFFFFFF"
+		  BorderBrush="#33FFFFFF"
+		  BorderThickness="1">
+	<Grid RowDefinitions="Auto,*" RowSpacing="12">
+	  <TextBlock FontSize="22"
+				 FontWeight="SemiBold"
+				 Foreground="#FFF4E9D9"
+				 Text="Board" />
+
+	  <ItemsControl Grid.Row="1" ItemsSource="{Binding Balls}">
+		<ItemsControl.ItemsPanel>
+		  <ItemsPanelTemplate>
+			<Canvas />
+		  </ItemsPanelTemplate>
+		</ItemsControl.ItemsPanel>
+
+		<ItemsControl.ItemTemplate>
+		  <DataTemplate x:DataType="vm:BallViewModel">
+			<Border Width="{Binding Size}"
+					Height="{Binding Size}"
+					CornerRadius="{Binding CornerRadius}"
+					Background="{Binding BallType, Converter={StaticResource BallBrushConverter}}"
+					BorderThickness="{Binding Selected, Converter={x:Static conv:BoolToDoubleThicknessConverter.Instance}}"
+					BorderBrush="#CCFFFFFF"
+					BoxShadow="0 8 18 0 #55000000"
+					IsVisible="{Binding IsVisible}"
+					PointerEntered="BallBorder_OnPointerEntered"
+					PointerReleased="BallBorder_OnPointerReleased">
+			  <Border.RenderTransform>
+				<TranslateTransform X="{Binding PixelLeft}" Y="{Binding PixelTop}" />
+			  </Border.RenderTransform>
+			</Border>
+		  </DataTemplate>
+		</ItemsControl.ItemTemplate>
+	  </ItemsControl>
+	</Grid>
+  </Border>
+</UserControl>
