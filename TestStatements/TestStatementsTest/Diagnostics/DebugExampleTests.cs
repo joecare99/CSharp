@@ -1,5 +1,4 @@
-﻿using TestStatements.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using TestStatements.UnitTesting;
 using System.Diagnostics;
