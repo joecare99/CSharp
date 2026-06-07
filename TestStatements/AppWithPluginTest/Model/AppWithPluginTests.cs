@@ -1,12 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AppWithPlugin.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AppWithPlugin.Model.Tests
+﻿namespace AppWithPlugin.Model.Tests
 {
     [TestClass()]
     public class AppWithPluginTests
