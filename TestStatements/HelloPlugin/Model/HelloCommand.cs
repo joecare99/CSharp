@@ -1,5 +1,4 @@
-﻿using System;
-using HelloPlugin.Properties;
+﻿using HelloPlugin.Properties;
 using PluginBase.Interfaces;
 
 namespace HelloPlugin.Model;
