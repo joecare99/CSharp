@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace TestStatements.DependencyInjection
+namespace TestStatements.DependencyInjection;
+
+public class LoggingMessageWriter(ILogger<LoggingMessageWriter> logger) : IMessageWriter
 {
-    public class LoggingMessageWriter(ILogger<LoggingMessageWriter> logger) : IMessageWriter
-    {
-        public void Write(string message) 
-            => logger.LogInformation("Info: {Msg}", message);
-    }
-    
-    
+    public void Write(string message) 
+        => logger.LogInformation("Info: {Msg}", message);
 }
+
+
