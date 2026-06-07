@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ConsoleLib.CommonControls;
 using System.Drawing;
 using ConsoleLib.CommonControls.Tests;
+using ConsoleLib.Data;
 
 namespace ConsoleLibTests.CommonControls;
 
@@ -41,5 +42,13 @@ public class TerminalTests : TestBase
         term.Clear();
         term.Write(second);
         Assert.IsTrue(true);
+    }
+
+    [TestMethod]
+    public void Ctor_Uses_SingleBorderStyle_By_Default()
+    {
+        var term = new Terminal();
+
+        Assert.AreEqual(BorderStyle.Single, term.BorderStyle);
     }
 }

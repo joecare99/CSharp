@@ -1,10 +1,10 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ConsoleLib.CommonControls;
 using System.Drawing;
 using NSubstitute;
 using ConsoleLib.Interfaces;
 using ConsoleLibTests.CommonControls;
+using ConsoleLib.Data;
 
 namespace ConsoleLib.CommonControls.Tests;
 
@@ -17,8 +17,9 @@ public class MenuBarTests: TestBase
         var mb = new MenuBar();
         Assert.AreEqual(ConsoleColor.DarkGray, mb.BackColor);
         Assert.AreEqual(ConsoleColor.Black, mb.ForeColor);
-        Assert.AreEqual(ConsoleColor.DarkGray, mb.BoarderColor);
-        Assert.AreEqual(new Size(_tstCon.WindowWidth,1), mb.size);
+        Assert.AreEqual(ConsoleColor.DarkGray, mb.BorderColor);
+        Assert.AreEqual(BorderStyle.None, mb.BorderStyle);
+        Assert.AreEqual(new Size(80,1), mb.size);
         Assert.AreEqual(new Point(0,0), mb.Position);
     }
 

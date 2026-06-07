@@ -7,17 +7,20 @@ using ConsoleLib.CommonControls;
 using BaseLib.Interfaces;
 using BaseLib.Models;
 using ConsoleLib.Interfaces;
+using ConsoleLib.ExtCon;
 using ConsoleLib;
 
 var services = new ServiceCollection();
 
-services.AddSingleton<IGameService,GameService>();
+services.AddSingleton<IGameService, GameService>();
 services.AddSingleton<IGameSetup>(sp => sp.GetRequiredService<GameService>());
-services.AddTransient<IGameViewModel,GameViewModel>();
+services.AddTransient<IGameViewModel, GameViewModel>();
 services.AddSingleton<GameView>();
-services.AddSingleton<IConsole,ConsoleProxy>();
-services.AddSingleton<IExtendedConsole,ExtendedConsole>();
-services.AddSingleton<IApplication,Application>();
+services.AddSingleton<IConsole, ConsoleProxy>();
+services.AddSingleton<IExtendedConsole, ExtendedConsole>();
+services.AddSingleton<IWidgetSet, ConsoleWidgetSet>();
+
+services.AddSingleton<IApplication, Application>();
 
 var provider = services.BuildServiceProvider();
 

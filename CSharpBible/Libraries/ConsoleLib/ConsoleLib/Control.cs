@@ -11,727 +11,795 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 using System.Threading;
 
-namespace ConsoleLib
+namespace ConsoleLib;
+
+/// <summary>
+/// This is the basic class of all TextControls
+/// </summary>
+public class Control : IControl
 {
-    /// <summary>
-    /// This is the basic class of all TextControls
-    /// </summary>
-    public class Control : IControl
+    private Control _root;
+
+    public Control()
     {
-        #region Properties
-        /// <summary>
-        /// The Dimension
-        /// </summary>
-        protected Rectangle _dimension=Rectangle.Empty;
+        _root = this;
+    }
 
-        /// <summary>
-        /// Gets or sets the message queue.
-        /// </summary>
-        /// <value>The message queue.</value>
-        public static ConcurrentQueue<(Action<object, EventArgs>, object, EventArgs)>? MessageQueue { get; set; } = default;
+    #region Properties
+    /// <summary>
+    /// The Dimension
+    /// </summary>
+    protected Rectangle _dimension=Rectangle.Empty;
 
-        internal static WaitHandle MessageWaitHandle => _messageSignal;
+    /// <summary>
+    /// Gets or sets the message queue.
+    /// </summary>
+    /// <value>The message queue.</value>
+    public static ConcurrentQueue<(Action<object, EventArgs>, object, EventArgs)>? MessageQueue { get; set; } = default;
 
-        private static readonly AutoResetEvent _messageSignal = new(false);
+    public static WaitHandle MessageWaitHandle => _messageSignal;
 
-        internal static bool TryDequeueMessage(out (Action<object, EventArgs> handler, object sender, EventArgs args) workItem)
+    private static readonly AutoResetEvent _messageSignal = new(false);
+
+    public static bool TryDequeueMessage(out (Action<object, EventArgs> handler, object sender, EventArgs args) workItem)
+    {
+        if (MessageQueue != null && MessageQueue.TryDequeue(out workItem))
         {
-            if (MessageQueue != null && MessageQueue.TryDequeue(out workItem))
-            {
-                return true;
-            }
-            workItem = default;
-            return false;
+            return true;
         }
+        workItem = default;
+        return false;
+    }
 
-        internal static void EnqueueMessage(Action<object, EventArgs> handler, object sender, EventArgs args)
+    public static void EnqueueMessage(Action<object, EventArgs> handler, object sender, EventArgs args)
+    {
+        if (MessageQueue == null)
+            return;
+        MessageQueue.Enqueue((handler, sender, args));
+        _messageSignal.Set();
+    }
+
+    /// <summary>
+    /// Gets the real dim.
+    /// </summary>
+    /// <value>The real dim.</value>
+    public Rectangle RealDim => RealDimOf(_dimension);
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="Control"/> is Active.
+    /// </summary>
+    /// <value><c>true</c> if Active; otherwise, <c>false</c>.</value>
+    public bool Active
+    {
+        get => _active; set
         {
-            if (MessageQueue == null)
+            if (!_visible || _active == value)
                 return;
-            MessageQueue.Enqueue((handler, sender, args));
-            _messageSignal.Set();
-        }
-
-        /// <summary>
-        /// Gets the real dim.
-        /// </summary>
-        /// <value>The real dim.</value>
-        public Rectangle RealDim => RealDimOf(_dimension);
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Control"/> is Active.
-        /// </summary>
-        /// <value><c>true</c> if Active; otherwise, <c>false</c>.</value>
-        public bool Active
-        {
-            get => _active; set
-            {
-                if (!_visible || _active == value)
-                    return;
-                if (Parent != null)
-                {
-                    if (!value)
-                        Parent.ActiveControl = null;
-                    else
-                    {
-                        if (Parent.ActiveControl != null)
-                            Parent.ActiveControl.Active = false;
-                        Parent.ActiveControl = this;
-                    }
-                }
-                _active = value;
-                if (value)
-                    OnActivate?.Invoke(this, EventArgs.Empty);
-                OnChange?.Invoke(this, EventArgs.Empty);
-                Invalidate();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Control"/> is Visible.
-        /// </summary>
-        /// <value><c>true</c> if Visible; otherwise, <c>false</c>.</value>
-        public bool Visible
-        {
-            get => _visible; set
-            {
-                if (_visible == value)
-                    return;
-                if (!value)
-                {
-                    Active = false;
-                    Parent?.Invalidate();
-                }
-                _visible = value;
-                if (value)
-                {
-                    OnChange?.Invoke(this, EventArgs.Empty);
-                    Invalidate();
-                }
-            }
-        }
-
-        public virtual bool Enabled
-        {
-            get => _enabled;
-            set
-            {
-                if (value == _enabled) return;
-                _enabled = value;
-                OnEnabledChanged?.Invoke(this, EventArgs.Empty);
-                Invalidate();
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is Visible.
-        /// </summary>
-        /// <value><c>true</c> if this instance is Visible; otherwise, <c>false</c>.</value>
-        public bool IsVisible => _visible && (Parent?.IsVisible ?? true);
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Control"/> is Shadow.
-        /// </summary>
-        /// <value><c>true</c> if Shadow; otherwise, <c>false</c>.</value>
-        public bool Shadow
-        {
-            get => _shadow; set
-            {
-                if (_shadow == value)
-                    return;
-                _shadow = value;
-                Parent?.Invalidate();
-            }
-        }
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Control"/> is Valid.
-        /// </summary>
-        /// <value><c>true</c> if Valid; otherwise, <c>false</c>.</value>
-        public bool Valid
-        {
-            get => _valid; set
-            {
-                if (_valid == value)
-                    return;
-                if (!value)
-                {
-                    Invalidate();
-                }
-                else
-                {
-                    _valid = value;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The back color
-        /// </summary>
-        public ConsoleColor BackColor
-        {
-            get => _backColor; set => _ActBackColor = _backColor = value;
-        }
-        /// <summary>
-        /// The fore color
-        /// </summary>
-        public ConsoleColor ForeColor
-        {
-            get => _foreColor; set => _ActForeColor = _foreColor = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the text.
-        /// </summary>
-        /// <value>The text.</value>
-        public string Text { get => _text; set => SetText(value); }
-
-        /// <summary>
-        /// Gets or sets the tag.
-        /// </summary>
-        /// <value>The tag.</value>
-        public object? Tag { get; set; }
-        /// <summary>
-        /// Gets or sets the accelerator.
-        /// </summary>
-        /// <value>The accelerator.</value>
-        public Char Accelerator { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Dimension.
-        /// </summary>
-        /// <value>The Dimension.</value>
-        public Rectangle Dimension
-        {
-            get => _dimension;
-            set
-            {
-                if (_dimension == value)
-                    return;
-                Rectangle _lastDim = _dimension;
-                _dimension = value;
-                HandleControlMove(_lastDim);
-                if (_lastDim.Location != _dimension.Location)
-                    OnMove?.Invoke(this, EventArgs.Empty);
-                if (_lastDim.Size != _dimension.Size)
-                {
-                    SetSize(_dimension.Size);
-                    OnResize?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the Position.
-        /// </summary>
-        /// <value>The Position.</value>
-        public Point Position
-        {
-            get => _dimension.Location;
-            set
-            {
-                if (_dimension.Location == value)
-                    return;
-                Rectangle _lastDim = _dimension;
-                _dimension.Location = value;
-                HandleControlMove(_lastDim);
-                OnMove?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the size.
-        /// </summary>
-        /// <value>The size.</value>
-        public Size size
-        {
-            get => _dimension.Size; set => SetSize(value);
-        }
-
-        public IList<IControl> Children => _children;
-
-        #region Events
-        /// <summary>
-        /// Occurs when [on click].
-        /// </summary>
-        public event EventHandler? OnClick;
-        /// <summary>
-        /// Occurs when [on move].
-        /// </summary>
-        public event EventHandler? OnMove;
-        /// <summary>
-        /// Occurs when [on resize].
-        /// </summary>
-        public event EventHandler? OnResize;
-        /// <summary>
-        /// Occurs when [on change].
-        /// </summary>
-        public event EventHandler? OnChange;
-        /// <summary>
-        /// Occurs when [on activate].
-        /// </summary>
-        public event EventHandler? OnActivate;
-        /// <summary>
-        /// Occurs when [on mouse enter].
-        /// </summary>
-        public event EventHandler? OnMouseEnter;
-        /// <summary>
-        /// Occurs when [on mouse leave].
-        /// </summary>
-        public event EventHandler? OnMouseLeave;
-        /// <summary>
-        /// Occurs when [on mouse move].
-        /// </summary>
-        public event EventHandler<IMouseEvent>? OnMouseMove;
-        /// <summary>
-        /// Occurs when [on key pressed].
-        /// </summary>
-        public event EventHandler<IKeyEvent>? OnKeyPressed;
-
-        public event EventHandler? OnEnabledChanged;
-        #endregion
-
-        #region private properties
-        /// <summary>
-        /// The Active
-        /// </summary>
-        private bool _active;
-        /// <summary>
-        /// The Valid
-        /// </summary>
-        private bool _valid;
-        /// <summary>
-        /// The Shadow
-        /// </summary>
-        private bool _shadow;
-        /// <summary>
-        /// The Visible
-        /// </summary>
-        private bool _visible = true;
-
-        private bool _enabled = true;
-        /// <summary>
-        /// The Parent
-        /// </summary>
-        private IControl? _parent;
-        /// <summary>
-        /// The text
-        /// </summary>
-        private string _text = "";
-
-        /// <summary>
-        /// The Children
-        /// </summary>
-        protected List<IControl> _children = new();
-
-        protected virtual bool CanProcessInput => Enabled && Visible;
-        #endregion
-
-
-        #endregion
-
-        #region Methods
-        /// <summary>
-        /// Handles the control move.
-        /// </summary>
-        /// <param name="_lastDim">The last Dimension.</param>
-        private void HandleControlMove(Rectangle lastDim)
-        {
-            if (Parent == null)
-            {
-                // Todo: Restore From Background
-                ConsoleFramework.Canvas.FillRect(lastDim, ConsoleFramework.Canvas.ForegroundColor, ConsoleFramework.Canvas.BackgroundColor, ConsoleFramework.chars[4]);
-            }
-            else
-            {
-                var redrawRect = lastDim;
-                if (Shadow)
-                {
-                     redrawRect.Inflate(1,1); 
-                }
-                Parent.ReDraw(redrawRect);
-            }
-            if (IsVisible)
-            {
-                
-                var mp = Application.Default?.MousePos;
-                if (mp != null )
-                {
-                    Point lastMousePos = mp.Value + (Size)Position - (Size)lastDim.Location;
-                    bool _mouseInside = Over(lastMousePos);
-                    bool nowInside = Over(mp.Value);
-                        if (nowInside)
-                        {
-                            if (!_mouseInside)
-                                MouseEnter(mp.Value); // setzt _mouseInside
-                            var se = new VirtMouseEvent(mp.Value);
-                            // lastMousePos = mp -> reiner "Refresh"-Move
-                            MouseMove(se, mp.Value);
-                        }
-                        else if (_mouseInside)
-                        {
-                            MouseLeave(lastMousePos);
-                        }
-                    
-                }
-
-                Invalidate();
-            }
-        }
-
-        /// <summary>
-        /// Reals the dim of.
-        /// </summary>
-        /// <param name="aDim">a dim.</param>
-        /// <returns>Rectangle.</returns>
-        public Rectangle RealDimOf(Rectangle aDim)
-        {
-            var result = aDim;
             if (Parent != null)
             {
-                result.Offset(Parent.RealDim.Location);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Locals the dim of.
-        /// </summary>
-        /// <param name="aDim">a dim.</param>
-        /// <param name="ancestor">The ancestor.</param>
-        /// <returns>Rectangle.</returns>
-        public Rectangle LocalDimOf(Rectangle aDim, IControl? ancestor = null)
-
-        {
-            var result = aDim;
-            result.Location = Point.Subtract(result.Location, (Size)_dimension.Location);
-            if (Parent != null && Parent != ancestor)
-            {
-                result = Parent.LocalDimOf(result, ancestor);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Res the draw.
-        /// </summary>
-        /// <param name="dimension">The Dimension.</param>
-        public virtual void ReDraw(Rectangle dimension)
-        {
-            if (_visible && (Parent?.Visible ?? true) && dimension.IntersectsWith(_dimension))
-            {
-                Draw();
-                _valid = true;
-            }
-        }
-        /// <summary>
-        /// Overs the specified lastMousePos.
-        /// </summary>
-        /// <param name="M">The lastMousePos.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool Over(Point M) => RealDim.Contains(M);
-
-        /// <summary>
-        /// Invalidates this instance.
-        /// </summary>
-        public void Invalidate()
-        {
-            _valid = false;
-            EnqueueMessage(DoRedraw, this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Does the redraw.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="a">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void DoRedraw(object sender, EventArgs a)
-        {
-            if (!_valid)
-            {
-                var dim = ((Control)sender).Dimension;
-                if (((Control)sender).Shadow)
-                    dim.Inflate(1, 1);
-                ReDraw(dim);
-            }
-        }
-
-        /// <summary>Sets the size.</summary>
-        /// <param name="value">The value.</param>
-        protected virtual void SetSize(Size value)
-        {
-            if (_dimension.Size == value)
-                return;
-            Rectangle _lastDim = _dimension;
-            _dimension.Size = value;
-            HandleControlMove(_lastDim);
-            OnResize?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected virtual void SetBinding(INotifyPropertyChanged model,string sProperty)
-        {
-            if (model == null)
-                return;
-            if (model.GetType().GetProperty(sProperty) != null)
-            model.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == sProperty)
+                if (!value)
+                    Parent.ActiveControl = null;
+                else
                 {
-                    SetText(s?.GetType().GetProperty(sProperty)?.GetValue(s)?.ToString() ?? "");
+                    if (Parent.ActiveControl != null)
+                        Parent.ActiveControl.Active = false;
+                    Parent.ActiveControl = this;
                 }
-            };
-        }
-
-        public (INotifyPropertyChanged model, string sProperty) Binding { set => SetBinding(value.model, value.sProperty); }
-       
-        /// <summary>
-        /// Sets the text.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        public virtual void SetText(string value)
-        {
-            if (_text == value)
-                return;
-            _text = value;
-            OnChange?.Invoke(this, new EventArgs());
+            }
+            _active = value;
+            if (value)
+                OnActivate?.Invoke(this, EventArgs.Empty);
+            OnChange?.Invoke(this, EventArgs.Empty);
+            NotifyWidgetStateChanged();
             Invalidate();
         }
+    }
 
-        /// <summary>
-        /// The Active control
-        /// </summary>
-        public IControl? ActiveControl { get; set; }
-
-
-        protected ConsoleColor _ActForeColor;
-        protected ConsoleColor _ActBackColor;
-        private ConsoleColor _backColor;
-        private ConsoleColor _foreColor = ConsoleColor.Gray;
-
-        /// <summary>
-        /// Gets or sets the Parent.
-        /// </summary>
-        /// <value>The Parent.</value>
-        public IControl? Parent { get => _parent; set => SetParent(value); }
-
-        /// <summary>
-        /// Sets the Parent.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        private void SetParent(IControl? value)
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="Control"/> is Visible.
+    /// </summary>
+    /// <value><c>true</c> if Visible; otherwise, <c>false</c>.</value>
+    public bool Visible
+    {
+        get => _visible; set
         {
-            if (_parent == value)
+            if (_visible == value)
                 return;
-            var oldPar = _parent;
-            _parent = value;
-            oldPar?.Remove(this);
-            value?.Add(this);
-        }
-
-        /// <summary>
-        /// Adds the specified control.
-        /// </summary>
-        /// <param name="control">The control.</param>
-        /// <returns>Control.</returns>
-        public IControl Add(IControl control)
-        {
-            if (control.Parent != this)
-                control.Parent?.Remove(control);
-            if (control.Parent == null)
+            if (!value)
             {
-                Children.Add(control);
-                control.Parent = this;
+                Active = false;
+                Parent?.Invalidate();
             }
-            else if (!Children.Contains(control))
-                Children.Add(control);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Removes the specified control.
-        /// </summary>
-        /// <param name="control">The control.</param>
-        /// <returns>Control.</returns>
-        public IControl Remove(IControl control)
-        {
-            control.Parent = null;
-            Children.Remove(control);
-            return this;
-        }
-
-        /// <summary>
-        /// Draws this instance.
-        /// </summary>
-        public virtual void Draw()
-        {
-            // Draw Background
-            lock (this)
+            _visible = value;
+            if (value)
             {
-                if (RealDim.Height > 1)
-                {
-                    ConsoleFramework.Canvas.FillRect(RealDim, _ActForeColor, _ActBackColor, ConsoleFramework.chars[4]);
-                }
-                ConsoleFramework.console.ForegroundColor = _ActForeColor;
-                ConsoleFramework.console.BackgroundColor = _ActBackColor;
-                ConsoleFramework.console.SetCursorPosition(RealDim.X+Math.Max(0,RealDim.Width-Text.Length-2)/2, RealDim.Y + RealDim.Height / 2);
-                ConsoleFramework.console.Write($"[{Text}]");
-                ConsoleFramework.console.BackgroundColor = ConsoleColor.Black;
-            }
-        }
-
-        /// <summary>
-        /// Clicks this instance.
-        /// </summary>
-        public virtual void Click()
-        {
-            OnClick?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Mouse enters the Control.
-        /// </summary>
-        /// <param name="M">The lastMousePos.</param>
-        public virtual void MouseEnter(Point M)
-        {
-            OnMouseEnter?.Invoke(this, EventArgs.Empty);
-            foreach (var ctrl in Children)
-            {
-                if (ctrl.Over(M))
-                    ctrl.MouseEnter(M);
-            }
-        }
-        /// <summary>
-        /// Mouse leaves the control.
-        /// </summary>
-        /// <param name="M">The lastMousePos.</param>
-        public virtual void MouseLeave(Point M)
-        {
-            OnMouseLeave?.Invoke(this, EventArgs.Empty);
-            foreach (var ctrl in Children)
-            {
-                if (ctrl.Over(M))
-                    ctrl.MouseLeave(M);
-            }
-        }
-
-        /// <summary>
-        /// Mouse move in the control.
-        /// </summary>
-        /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
-        /// <param name="lastMousePos">The last mouse Position.</param>
-        public virtual void MouseMove(IMouseEvent M, Point lastMousePos)
-        {
-            if (!CanProcessInput) return;
-            OnMouseMove?.Invoke(this, M);
-            foreach (var ctrl in Children)
-            {
-                bool xoHit = ctrl.Over(lastMousePos);
-                bool xnHit = ctrl.Over(M.MousePos);
-                if (xoHit && !xnHit)
-                    ctrl.MouseLeave(lastMousePos);
-                // Invoke Mouse Leave
-                if (!xoHit && xnHit)
-                {
-                    ctrl.MouseEnter(M.MousePos);
-                    ctrl.MouseMove(M, lastMousePos);
-                }
-                // Invoke Mouse Enter
-                if (xoHit && xnHit)
-                {
-                    ctrl.MouseMove(M, lastMousePos);
-                    break;
-                }
-            }
-        }
-        /// <summary>
-        /// Mouse clicks the control.
-        /// </summary>
-        /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
-        public virtual void MouseClick(IMouseEvent M)
-        {
-            if (!CanProcessInput) return;
-            bool xFlag = false;
-            foreach (var ctrl in Children)
-            {
-                if (ctrl.Over(M.MousePos))
-                {
-                    xFlag = true;
-                    ctrl.MouseClick(M);
-                }
-            }
-            if (!xFlag && M.MouseButtonLeft)
-                Click();
-
-        }
-
-        /// <summary>
-        /// Handles the press key events.
-        /// </summary>
-        /// <param name="e">The <see cref="KeyPressEventArgs"/> instance containing the event data.</param>
-        public virtual void HandlePressKeyEvents(IKeyEvent e)
-        {
-            if (!CanProcessInput) return;
-
-            if (e.KeyChar == Accelerator && Accelerator != '\0')
-            {
-                Click();
-                e.Handled = true;
+                OnChange?.Invoke(this, EventArgs.Empty);
+                NotifyWidgetStateChanged();
+                Invalidate();
             }
             else
             {
-                ActiveControl?.HandlePressKeyEvents(e);
-                if (!e.Handled)
-                    foreach (var ctrl in Children)
-                    {
-                        ctrl.HandlePressKeyEvents(e);
-                        if (e.Handled)
-                            break;
-                    }
-                if (!e.Handled)
-                    OnKeyPressed?.Invoke(this, e);
-            }
-
-        }
-        /// <summary>
-        /// Does the update.
-        /// </summary>
-        public virtual void DoUpdate()
-        {
-            foreach (var ctrl in Children)
-            {
-                ctrl.DoUpdate();
+                NotifyWidgetStateChanged();
             }
         }
-        #endregion
-
     }
 
-    internal class VirtMouseEvent(Point _mp) : IMouseEvent
+    public virtual bool Enabled
     {
-        public Point MousePos => _mp;
-
-        public bool MouseButtonLeft => false;
-
-        public bool MouseButtonRight => false;
-
-        public bool MouseButtonMiddle => false;
-
-        public int MouseWheel => 0;
-
-        public bool MouseMoved => true;
-
-        public bool ButtonEvent => false;
-
-        public bool Handled { get ; set ; }
+        get => _enabled;
+        set
+        {
+            if (value == _enabled) return;
+            _enabled = value;
+            OnEnabledChanged?.Invoke(this, EventArgs.Empty);
+            NotifyWidgetStateChanged();
+            Invalidate();
+        }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether this instance is Visible.
+    /// </summary>
+    /// <value><c>true</c> if this instance is Visible; otherwise, <c>false</c>.</value>
+    public bool IsVisible => _visible && (Parent?.IsVisible ?? true);
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="Control"/> is Shadow.
+    /// </summary>
+    /// <value><c>true</c> if Shadow; otherwise, <c>false</c>.</value>
+    public bool Shadow
+    {
+        get => _shadow; set
+        {
+            if (_shadow == value)
+                return;
+            _shadow = value;
+            NotifyWidgetStateChanged();
+            Parent?.Invalidate();
+        }
+    }
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="Control"/> is Valid.
+    /// </summary>
+    /// <value><c>true</c> if Valid; otherwise, <c>false</c>.</value>
+    public bool Valid
+    {
+        get => _valid; set
+        {
+            if (_valid == value)
+                return;
+            if (!value)
+            {
+                Invalidate();
+            }
+            else
+            {
+                _valid = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The back color
+    /// </summary>
+    public ConsoleColor BackColor
+    {
+        get => _backColor;
+        set
+        {
+            _ActBackColor = _backColor = value;
+            NotifyWidgetStateChanged();
+        }
+    }
+    /// <summary>
+    /// The fore color
+    /// </summary>
+    public ConsoleColor ForeColor
+    {
+        get => _foreColor;
+        set
+        {
+            _ActForeColor = _foreColor = value;
+            NotifyWidgetStateChanged();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the text.
+    /// </summary>
+    /// <value>The text.</value>
+    public string Text { get => _text; set => SetText(value); }
+
+    /// <summary>
+    /// Gets or sets the tag.
+    /// </summary>
+    /// <value>The tag.</value>
+    public object? Tag { get; set; }
+    /// <summary>
+    /// Gets or sets the accelerator.
+    /// </summary>
+    /// <value>The accelerator.</value>
+    public Char Accelerator { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Dimension.
+    /// </summary>
+    /// <value>The Dimension.</value>
+    public Rectangle Dimension
+    {
+        get => _dimension;
+        set
+        {
+            if (_dimension == value)
+                return;
+            Rectangle _lastDim = _dimension;
+            _dimension = value;
+            HandleControlMove(_lastDim);
+            if (_lastDim.Location != _dimension.Location)
+                OnMove?.Invoke(this, EventArgs.Empty);
+            if (_lastDim.Size != _dimension.Size)
+            {
+                SetSize(_dimension.Size);
+                OnResize?.Invoke(this, EventArgs.Empty);
+            }
+            NotifyWidgetStateChanged();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the Position.
+    /// </summary>
+    /// <value>The Position.</value>
+    public Point Position
+    {
+        get => _dimension.Location;
+        set
+        {
+            if (_dimension.Location == value)
+                return;
+            Rectangle _lastDim = _dimension;
+            _dimension.Location = value;
+            HandleControlMove(_lastDim);
+            OnMove?.Invoke(this, EventArgs.Empty);
+            NotifyWidgetStateChanged();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the size.
+    /// </summary>
+    /// <value>The size.</value>
+    public Size size
+    {
+        get => _dimension.Size; set => SetSize(value);
+    }
+
+    public IList<IControl> Children => _children;
+
+    protected Control Root => _root;
+
+    protected IWidgetSet? WidgetSet => Root is IHasWidgetSet hasWidgetSet ? hasWidgetSet.WidgetSet : null;
+
+    protected TCapability? GetRootCapability<TCapability>() where TCapability : class => Root as TCapability;
+
+    protected TCapability? GetWidgetSetCapability<TCapability>() where TCapability : class => WidgetSet as TCapability;
+
+    #region Events
+    /// <summary>
+    /// Occurs when [on click].
+    /// </summary>
+    public event EventHandler? OnClick;
+    /// <summary>
+    /// Occurs when [on move].
+    /// </summary>
+    public event EventHandler? OnMove;
+    /// <summary>
+    /// Occurs when [on resize].
+    /// </summary>
+    public event EventHandler? OnResize;
+    /// <summary>
+    /// Occurs when [on change].
+    /// </summary>
+    public event EventHandler? OnChange;
+    /// <summary>
+    /// Occurs when [on activate].
+    /// </summary>
+    public event EventHandler? OnActivate;
+    /// <summary>
+    /// Occurs when [on mouse enter].
+    /// </summary>
+    public event EventHandler? OnMouseEnter;
+    /// <summary>
+    /// Occurs when [on mouse leave].
+    /// </summary>
+    public event EventHandler? OnMouseLeave;
+    /// <summary>
+    /// Occurs when [on mouse move].
+    /// </summary>
+    public event EventHandler<IMouseEvent>? OnMouseMove;
+    /// <summary>
+    /// Occurs when [on key pressed].
+    /// </summary>
+    public event EventHandler<IKeyEvent>? OnKeyPressed;
+
+    public event EventHandler? OnEnabledChanged;
+    #endregion
+
+    #region private properties
+    /// <summary>
+    /// The Active
+    /// </summary>
+    private bool _active;
+    /// <summary>
+    /// The Valid
+    /// </summary>
+    private bool _valid;
+    /// <summary>
+    /// The Shadow
+    /// </summary>
+    private bool _shadow;
+    /// <summary>
+    /// The Visible
+    /// </summary>
+    private bool _visible = true;
+
+    private bool _enabled = true;
+    /// <summary>
+    /// The Parent
+    /// </summary>
+    private IControl? _parent;
+    /// <summary>
+    /// The text
+    /// </summary>
+    private string _text = "";
+
+    /// <summary>
+    /// The Children
+    /// </summary>
+    protected List<IControl> _children = new();
+
+    protected virtual bool CanProcessInput => Enabled && Visible;
+    #endregion
+
+
+    #endregion
+
+    #region Methods
+    /// <summary>
+    /// Handles the control move.
+    /// </summary>
+    /// <param name="_lastDim">The last Dimension.</param>
+    private void HandleControlMove(Rectangle lastDim)
+    {
+        if (Parent == null)
+        {
+            var consoleHost = GetWidgetSetCapability<IConsoleWidgetHost>();
+            if (consoleHost != null)
+            {
+                try
+                {
+                    consoleHost.FillShadow(lastDim, ConsoleColor.Gray, ConsoleColor.Black, consoleHost.ShadeChars[4]);
+                }
+                catch { }
+            }
+        }
+
+        else
+        {
+            var redrawRect = lastDim;
+            if (Shadow)
+            {
+                redrawRect.Inflate(1, 1);
+            }
+            Parent.ReDraw(redrawRect);
+        }
+        if (IsVisible)
+        {
+            
+            var mp = TryGetApplicationRoot()?.MousePos;
+            if (mp != null )
+            {
+                Point lastMousePos = mp.Value + (Size)Position - (Size)lastDim.Location;
+                bool _mouseInside = Over(lastMousePos);
+                bool nowInside = Over(mp.Value);
+                    if (nowInside)
+                    {
+                        if (!_mouseInside)
+                            MouseEnter(mp.Value); // setzt _mouseInside
+                        var se = new VirtMouseEvent(mp.Value);
+                        // lastMousePos = mp -> reiner "Refresh"-Move
+                        MouseMove(se, mp.Value);
+                    }
+                    else if (_mouseInside)
+                    {
+                        MouseLeave(lastMousePos);
+                    }
+                
+            }
+
+            Invalidate();
+        }
+    }
+
+    /// <summary>
+    /// Reals the dim of.
+    /// </summary>
+    /// <param name="aDim">a dim.</param>
+    /// <returns>Rectangle.</returns>
+    public Rectangle RealDimOf(Rectangle aDim)
+    {
+        var result = aDim;
+        if (Parent != null)
+        {
+            result.Offset(Parent.RealDim.Location);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Locals the dim of.
+    /// </summary>
+    /// <param name="aDim">a dim.</param>
+    /// <param name="ancestor">The ancestor.</param>
+    /// <returns>Rectangle.</returns>
+    public Rectangle LocalDimOf(Rectangle aDim, IControl? ancestor = null)
+
+    {
+        var result = aDim;
+        result.Location = Point.Subtract(result.Location, (Size)_dimension.Location);
+        if (Parent != null && Parent != ancestor)
+        {
+            result = Parent.LocalDimOf(result, ancestor);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Res the draw.
+    /// </summary>
+    /// <param name="dimension">The Dimension.</param>
+    public virtual void ReDraw(Rectangle dimension)
+    {
+        if (_visible && (Parent?.Visible ?? true) && dimension.IntersectsWith(_dimension))
+        {
+            Draw();
+            _valid = true;
+        }
+    }
+    /// <summary>
+    /// Overs the specified lastMousePos.
+    /// </summary>
+    /// <param name="M">The lastMousePos.</param>
+    /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+    public bool Over(Point M) => RealDim.Contains(M);
+
+    /// <summary>
+    /// Invalidates this instance.
+    /// </summary>
+    public void Invalidate()
+    {
+        _valid = false;
+        EnqueueMessage(DoRedraw, this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Does the redraw.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="a">The <see cref="EventArgs"/> instance containing the event data.</param>
+    private void DoRedraw(object sender, EventArgs a)
+    {
+        if (!_valid)
+        {
+            var dim = ((Control)sender).Dimension;
+            if (((Control)sender).Shadow)
+                dim.Inflate(1, 1);
+            ReDraw(dim);
+        }
+    }
+
+    /// <summary>Sets the size.</summary>
+    /// <param name="value">The value.</param>
+    protected virtual void SetSize(Size value)
+    {
+        if (_dimension.Size == value)
+            return;
+        Rectangle _lastDim = _dimension;
+        _dimension.Size = value;
+        HandleControlMove(_lastDim);
+        OnResize?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected virtual void SetBinding(INotifyPropertyChanged model,string sProperty)
+    {
+        if (model == null)
+            return;
+        if (model.GetType().GetProperty(sProperty) != null)
+        model.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == sProperty)
+            {
+                SetText(s?.GetType().GetProperty(sProperty)?.GetValue(s)?.ToString() ?? "");
+            }
+        };
+    }
+
+    public (INotifyPropertyChanged model, string sProperty) Binding { set => SetBinding(value.model, value.sProperty); }
+   
+    /// <summary>
+    /// Sets the text.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    public virtual void SetText(string value)
+    {
+        if (_text == value)
+            return;
+        _text = value;
+        OnChange?.Invoke(this, new EventArgs());
+        Invalidate();
+    }
+
+    /// <summary>
+    /// The Active control
+    /// </summary>
+    public IControl? ActiveControl { get; set; }
+
+
+    protected ConsoleColor _ActForeColor;
+    protected ConsoleColor _ActBackColor;
+    private ConsoleColor _backColor;
+    private ConsoleColor _foreColor = ConsoleColor.Gray;
+
+    /// <summary>
+    /// Gets or sets the Parent.
+    /// </summary>
+    /// <value>The Parent.</value>
+    public IControl? Parent { get => _parent; set => SetParent(value); }
+
+    /// <summary>
+    /// Sets the Parent.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    private void SetParent(IControl? value)
+    {
+        if (_parent == value)
+            return;
+        var oldPar = _parent;
+        WidgetSet?.DetachControl(this);
+        _parent = value;
+        oldPar?.Remove(this);
+        value?.Add(this);
+        UpdateRoot(value as Control);
+        WidgetSet?.AttachControl(this);
+        NotifyWidgetStateChanged();
+    }
+
+    /// <summary>
+    /// Adds the specified control.
+    /// </summary>
+    /// <param name="control">The control.</param>
+    /// <returns>Control.</returns>
+    public IControl Add(IControl control)
+    {
+        if (control.Parent != this)
+            control.Parent?.Remove(control);
+        if (control.Parent == null)
+        {
+            Children.Add(control);
+            control.Parent = this;
+        }
+        else if (!Children.Contains(control))
+            Children.Add(control);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Removes the specified control.
+    /// </summary>
+    /// <param name="control">The control.</param>
+    /// <returns>Control.</returns>
+    public IControl Remove(IControl control)
+    {
+        control.Parent = null;
+        Children.Remove(control);
+        return this;
+    }
+
+    /// <summary>
+    /// Draws this instance.
+    /// </summary>
+    public virtual void Draw()
+    {
+        WidgetSet?.DrawControl(this);
+    }
+
+    /// <summary>
+    /// Notifies the active widget host that the current control state changed.
+    /// </summary>
+    protected void NotifyWidgetStateChanged()
+    {
+        WidgetSet?.SynchronizeControl(this);
+    }
+
+    protected IApplication? TryGetApplicationRoot() => Root as IApplication;
+
+    private void UpdateRoot(Control? parent)
+    {
+        var newRoot = parent?.Root ?? this;
+        SetRoot(newRoot);
+    }
+
+    private void SetRoot(Control root)
+    {
+        if (ReferenceEquals(_root, root))
+            return;
+
+        _root = root;
+        foreach (var child in _children)
+        {
+            if (child is Control childControl)
+            {
+                childControl.SetRoot(root);
+            }
+        }
+    }
+
+    public ConsoleColor GetActualForeColor() => _ActForeColor;
+
+    public ConsoleColor GetActualBackColor() => _ActBackColor;
+
+    /// <summary>
+    /// Clicks this instance.
+    /// </summary>
+    public virtual void Click()
+    {
+        OnClick?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Mouse enters the Control.
+    /// </summary>
+    /// <param name="M">The lastMousePos.</param>
+    public virtual void MouseEnter(Point M)
+    {
+        OnMouseEnter?.Invoke(this, EventArgs.Empty);
+        foreach (var ctrl in Children)
+        {
+            if (ctrl.Over(M))
+                ctrl.MouseEnter(M);
+        }
+    }
+    /// <summary>
+    /// Mouse leaves the control.
+    /// </summary>
+    /// <param name="M">The lastMousePos.</param>
+    public virtual void MouseLeave(Point M)
+    {
+        OnMouseLeave?.Invoke(this, EventArgs.Empty);
+        foreach (var ctrl in Children)
+        {
+            if (ctrl.Over(M))
+                ctrl.MouseLeave(M);
+        }
+    }
+
+    /// <summary>
+    /// Mouse move in the control.
+    /// </summary>
+    /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
+    /// <param name="lastMousePos">The last mouse Position.</param>
+    public virtual void MouseMove(IMouseEvent M, Point lastMousePos)
+    {
+        if (!CanProcessInput) return;
+        OnMouseMove?.Invoke(this, M);
+        foreach (var ctrl in Children)
+        {
+            bool xoHit = ctrl.Over(lastMousePos);
+            bool xnHit = ctrl.Over(M.MousePos);
+            if (xoHit && !xnHit)
+                ctrl.MouseLeave(lastMousePos);
+            // Invoke Mouse Leave
+            if (!xoHit && xnHit)
+            {
+                ctrl.MouseEnter(M.MousePos);
+                ctrl.MouseMove(M, lastMousePos);
+                break;
+            }
+            // Invoke Mouse Enter
+            if (xoHit && xnHit)
+            {
+                ctrl.MouseMove(M, lastMousePos);
+                break;
+            }
+        }
+    }
+    /// <summary>
+    /// Mouse clicks the control.
+    /// </summary>
+    /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
+    public virtual void MouseClick(IMouseEvent M)
+    {
+        if (!CanProcessInput) return;
+        bool xFlag = false;
+        foreach (var ctrl in Children)
+        {
+            if (ctrl.Over(M.MousePos))
+            {
+                xFlag = true;
+                ctrl.MouseClick(M);
+            }
+        }
+        if (!xFlag && M.MouseButtonLeft)
+            Click();
+
+    }
+
+    /// <summary>
+    /// Handles the press key events.
+    /// </summary>
+    /// <param name="e">The <see cref="KeyPressEventArgs"/> instance containing the event data.</param>
+    public virtual void HandlePressKeyEvents(IKeyEvent e)
+    {
+        if (!CanProcessInput) return;
+
+        if (e.KeyChar == Accelerator && Accelerator != '\0')
+        {
+            Click();
+            e.Handled = true;
+        }
+        else
+        {
+            ActiveControl?.HandlePressKeyEvents(e);
+            if (!e.Handled)
+                foreach (var ctrl in Children)
+                {
+                    ctrl.HandlePressKeyEvents(e);
+                    if (e.Handled)
+                        break;
+                }
+            if (!e.Handled)
+                OnKeyPressed?.Invoke(this, e);
+        }
+
+    }
+    /// <summary>
+    /// Does the update.
+    /// </summary>
+    public virtual void DoUpdate()
+    {
+        foreach (var ctrl in Children)
+        {
+            ctrl.DoUpdate();
+        }
+    }
+    #endregion
+
+}
+
+internal class VirtMouseEvent(Point _mp) : IMouseEvent
+{
+    public Point MousePos => _mp;
+
+    public bool MouseButtonLeft => false;
+
+    public bool MouseButtonRight => false;
+
+    public bool MouseButtonMiddle => false;
+
+    public int MouseWheel => 0;
+
+    public bool MouseMoved => true;
+
+    public bool ButtonEvent => false;
+
+    public bool Handled { get ; set ; }
 }

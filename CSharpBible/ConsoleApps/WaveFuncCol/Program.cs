@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WaveFunCollapse.Views;
 using BaseLib.Interfaces;
 using WaveFunCollapse.Models.Interfaces;
+using BaseLib.Models;
 
 /// <summary>
 /// The Display_Test namespace.
@@ -48,7 +49,7 @@ namespace Display_Test
             var sc = new ServiceCollection()
                 .AddSingleton<IWFCModel, WaveFunCollapse.Models.WFCModel>()
                 .AddSingleton<IRandom, BaseLib.Models.CRandom>()
-                .AddSingleton<IConsole,MyConsole>()
+                .AddSingleton<IConsole,ConsoleProxy>()
                 .AddTransient<IView, WaveFunColView>();
 
             var sp = sc.BuildServiceProvider();

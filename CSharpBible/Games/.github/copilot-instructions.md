@@ -28,6 +28,7 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Use `MSTest` in the latest practical version for new or updated tests.
 - Use `NSubstitute` for mocks, stubs, and substitutes in tests.
 - Prefer `DataRow` for parameterized single-test scenarios.
+- Prefer one dedicated test project per production project with a clear scope; any combined test project should only act as an aggregate collector via project references.
 
 ## Internationalization
 - Keep I18N in mind when writing code, ensuring it can be easily adapted for different languages and regions.

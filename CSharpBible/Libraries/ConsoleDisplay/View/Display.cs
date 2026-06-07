@@ -48,13 +48,13 @@ public class Display
     /// <param name="width">The width.</param>
     /// <param name="height">The height.</param>
     public Display(int x, int y, int width, int height)
-        : this(myConsole, x, y, width, height)
+        : this(null, x, y, width, height)
     {
     }
 
-    public Display(IConsole console, int x, int y, int width, int height)
+    public Display(IConsole? console, int x, int y, int width, int height)
     {
-        _console = console ?? throw new ArgumentNullException(nameof(console));
+        _console = console ?? myConsole;
 
         Origin = new Point(x, y);
         dSize = new Size(width, height);

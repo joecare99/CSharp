@@ -1,38 +1,64 @@
+using CommandlineHelper;
+using CommandResources = RepoMigrator.Tools.GitBranchSplitter.Properties.CommandResources;
+
 namespace RepoMigrator.Tools.GitBranchSplitter;
 
 /// <summary>
 /// Captures the command-line options for the Git branch splitter tool.
 /// </summary>
+[CommandDescriptor(
+    "git-branch-splitter",
+    ResourceType = typeof(CommandResources),
+    DescriptionResourceName = nameof(CommandResources.GitBranchSplitter_Description),
+    HelpTextResourceName = nameof(CommandResources.GitBranchSplitter_Help))]
 public sealed class GitBranchSplitOptions
 {
     /// <summary>
     /// Gets the repository working directory.
     /// </summary>
+    [CommandOption(
+        "--repo",
+        DescriptionResourceName = nameof(CommandResources.GitBranchSplitter_Repo_Description))]
     public required string RepositoryPath { get; init; }
 
     /// <summary>
     /// Gets the local source branch that should be split.
     /// </summary>
+    [CommandOption(
+        "--source",
+        DescriptionResourceName = nameof(CommandResources.GitBranchSplitter_Source_Description))]
     public required string SourceBranch { get; init; }
 
     /// <summary>
     /// Gets the prefix that is prepended to generated branch names.
     /// </summary>
+    [CommandOption(
+        "--prefix",
+        DescriptionResourceName = nameof(CommandResources.GitBranchSplitter_Prefix_Description))]
     public string BranchPrefix { get; init; } = "split";
 
     /// <summary>
     /// Gets a value indicating whether existing generated branches may be replaced.
     /// </summary>
+    [CommandFlag(
+        "--overwrite",
+        DescriptionResourceName = nameof(CommandResources.GitBranchSplitter_Overwrite_Description))]
     public bool OverwriteExistingBranches { get; init; }
 
     /// <summary>
     /// Gets the author name used for synthetic commits.
     /// </summary>
+    [CommandOption(
+        "--author-name",
+        DescriptionResourceName = nameof(CommandResources.GitBranchSplitter_AuthorName_Description))]
     public string AuthorName { get; init; } = "RepoMigrator Tool";
 
     /// <summary>
     /// Gets the author email used for synthetic commits.
     /// </summary>
+    [CommandOption(
+        "--author-email",
+        DescriptionResourceName = nameof(CommandResources.GitBranchSplitter_AuthorEmail_Description))]
     public string AuthorEmail { get; init; } = "tool@local";
 
     /// <summary>
@@ -42,73 +68,15 @@ public sealed class GitBranchSplitOptions
     /// <returns>The parsed options, or <see langword="null"/> when help should be shown.</returns>
     public static GitBranchSplitOptions? Parse(string[] args)
     {
-        if (args.Length == 0 || args.Any(static sArgument => sArgument is "--help" or "-h" or "/?"))
+        if (args.Any(static sArgument => sArgument is "/?"))
+            return null;
+        var parseResult = GitBranchSplitOptionsCommand.Parse(args);
+        if (parseResult.RequestHelp)
             return null;
 
-        string? sRepositoryPath = null;
-        string? sSourceBranch = null;
-        var sBranchPrefix = "split";
-        var sAuthorName = "RepoMigrator Tool";
-        var sAuthorEmail = "tool@local";
-        var xOverwriteExistingBranches = false;
+        if (!parseResult.Success)
+            throw new ArgumentException(parseResult.ErrorMessage);
 
-        for (var iArgument = 0; iArgument < args.Length; iArgument++)
-        {
-            var sArgument = args[iArgument];
-            switch (sArgument)
-            {
-                case "--repo":
-                    sRepositoryPath = ReadNextValue(args, ref iArgument, sArgument);
-                    break;
-
-                case "--source":
-                    sSourceBranch = ReadNextValue(args, ref iArgument, sArgument);
-                    break;
-
-                case "--prefix":
-                    sBranchPrefix = ReadNextValue(args, ref iArgument, sArgument);
-                    break;
-
-                case "--author-name":
-                    sAuthorName = ReadNextValue(args, ref iArgument, sArgument);
-                    break;
-
-                case "--author-email":
-                    sAuthorEmail = ReadNextValue(args, ref iArgument, sArgument);
-                    break;
-
-                case "--overwrite":
-                    xOverwriteExistingBranches = true;
-                    break;
-
-                default:
-                    throw new ArgumentException($"Unknown argument: {sArgument}");
-            }
-        }
-
-        if (string.IsNullOrWhiteSpace(sRepositoryPath))
-            throw new ArgumentException("Missing required argument --repo.");
-
-        if (string.IsNullOrWhiteSpace(sSourceBranch))
-            throw new ArgumentException("Missing required argument --source.");
-
-        return new GitBranchSplitOptions
-        {
-            RepositoryPath = sRepositoryPath,
-            SourceBranch = sSourceBranch,
-            BranchPrefix = sBranchPrefix,
-            OverwriteExistingBranches = xOverwriteExistingBranches,
-            AuthorName = sAuthorName,
-            AuthorEmail = sAuthorEmail
-        };
-    }
-
-    private static string ReadNextValue(string[] args, ref int iArgument, string sCurrentArgument)
-    {
-        if (iArgument + 1 >= args.Length)
-            throw new ArgumentException($"Missing value for argument {sCurrentArgument}.");
-
-        iArgument++;
-        return args[iArgument];
+        return parseResult.Options;
     }
 }

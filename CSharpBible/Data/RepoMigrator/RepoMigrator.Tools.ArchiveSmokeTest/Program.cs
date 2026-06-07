@@ -10,23 +10,36 @@ internal static class Program
 {
     public static async Task<int> Main(string[] arrArgs)
     {
-        ArchiveSmokeTestOptions? options;
-        try
+        if (arrArgs.Any(static arg => string.Equals(arg, "/?", StringComparison.OrdinalIgnoreCase)))
         {
-            options = ArchiveSmokeTestOptions.Parse(arrArgs);
+            ArchiveSmokeTestOptionsCommand.WriteHelp(Console.Out);
+            return 0;
         }
-        catch (ArgumentException ex)
+
+        var parseResult = ArchiveSmokeTestOptionsCommand.Parse(arrArgs);
+        if (parseResult.RequestHelp)
         {
-            Console.Error.WriteLine(ex.Message);
-            WriteUsage();
+            ArchiveSmokeTestOptionsCommand.WriteHelp(Console.Out);
+            return 0;
+        }
+
+        if (!parseResult.Success)
+        {
+            Console.Error.WriteLine(parseResult.ErrorMessage);
+            ArchiveSmokeTestOptionsCommand.WriteUsage(Console.Out);
             return 1;
         }
 
-        if (options is null)
+        var parsedOptions = parseResult.Options!;
+        var options = new ArchiveSmokeTestOptions
         {
-            WriteUsage();
-            return 0;
-        }
+            SourceDirectoryPath = Path.GetFullPath(parsedOptions.SourceDirectoryPath),
+            WorkspaceRootPath = string.IsNullOrWhiteSpace(parsedOptions.WorkspaceRootPath)
+                ? Directory.GetCurrentDirectory()
+                : Path.GetFullPath(parsedOptions.WorkspaceRootPath),
+            Recursive = parsedOptions.Recursive,
+            AllowedExtensions = parsedOptions.AllowedExtensions
+        };
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton(new DirectoryArchiveSnapshotSourceProvider(options.WorkspaceRootPath))
@@ -59,14 +72,5 @@ internal static class Program
             Console.Error.WriteLine(ex);
             return 2;
         }
-    }
-
-    private static void WriteUsage()
-    {
-        Console.WriteLine("Usage:");
-        Console.WriteLine("  dotnet run --project RepoMigrator\\RepoMigrator.Tools.ArchiveSmokeTest -- --source <archive-directory> [--workspace <workspace-root>] [--recursive] [--extension .zip] [--extension .tar.gz]");
-        Console.WriteLine();
-        Console.WriteLine("Example:");
-        Console.WriteLine("  dotnet run --project RepoMigrator\\RepoMigrator.Tools.ArchiveSmokeTest -- --source C:\\Projekte\\Cpp\\xpdf --workspace C:\\Projekte\\CSharp\\CSharpBible\\Data --recursive");
     }
 }

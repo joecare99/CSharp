@@ -6,24 +6,27 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        GitBranchSplitOptions? options;
-
-        try
+        if (args.Any(static arg => arg is "/?"))
         {
-            options = GitBranchSplitOptions.Parse(args);
+            GitBranchSplitOptionsCommand.WriteHelp(Console.Out);
+            return 0;
         }
-        catch (ArgumentException ex)
+
+        var parseResult = GitBranchSplitOptionsCommand.Parse(args);
+        if (parseResult.RequestHelp)
         {
-            Console.Error.WriteLine(ex.Message);
-            WriteUsage();
+            GitBranchSplitOptionsCommand.WriteHelp(Console.Out);
+            return 0;
+        }
+
+        if (!parseResult.Success)
+        {
+            Console.Error.WriteLine(parseResult.ErrorMessage);
+            GitBranchSplitOptionsCommand.WriteUsage(Console.Out);
             return 1;
         }
 
-        if (options is null)
-        {
-            WriteUsage();
-            return 0;
-        }
+        var options = parseResult.Options!;
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton<GitBranchSplitService>()
@@ -41,11 +44,5 @@ internal static class Program
             Console.Error.WriteLine(ex);
             return 2;
         }
-    }
-
-    private static void WriteUsage()
-    {
-        Console.WriteLine("Usage:");
-        Console.WriteLine("  dotnet run --project RepoMigrator\\RepoMigrator.Tools.GitBranchSplitter -- --repo <repo-path> --source <branch-name> [--prefix split] [--overwrite] [--author-name \"RepoMigrator Tool\"] [--author-email \"tool@local\"]");
     }
 }

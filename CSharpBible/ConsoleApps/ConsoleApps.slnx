@@ -4,7 +4,10 @@
     <Project Path="../Calc/Calc32Cons/Calc32.Cons.csproj" />
   </Folder>
   <Folder Name="/ConsoleApps/">
+    <Project Path="ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
+    <Project Path="ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
     <Project Path="ConsoleMouseApp/ConsoleMouseApp.csproj" />
+    <Project Path="ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
     <Project Path="ConsoleOverlapApp/ConsoleOverlapApp.csproj" />
     <Project Path="Display_Test/Display_netTest.csproj" />
     <Project Path="TestConsole/TestConsole.csproj" />
@@ -17,17 +20,25 @@
     <Project Path="../Games/DetectiveGame.Console/DetectiveGame.Console.csproj" />
     <Project Path="../Games/DetectiveGame.Engine/DetectiveGame.Engine.csproj" />
   </Folder>
+  <Folder Name="/Leonardo/">
+    <File Path="../../Leonardo/Leonardo.props" />
+    <Project Path="../../Leonardo/Leonardo.Model/Leonardo.Model.csproj" />
+    <Project Path="../../Leonardo/Leonardo.Tty/Leonardo_net.tty.csproj" />
+  </Folder>
   <Folder Name="/Libraries/">
     <File Path="../Libraries/Libraries_net.props" />
     <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
     <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj" />
     <Project Path="../Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
     <Project Path="../Libraries/ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
+    <Project Path="../Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
+    <Project Path="../Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
     <Project Path="../Libraries/ConsoleLib/ConsoleLib.csproj" />
     <Project Path="../Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
     <Project Path="../Libraries/ExtendedConsole/ExtendedConsole.csproj" />
     <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+    <Project Path="../Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
   </Folder>
   <Folder Name="/Projektmappenelemente/">
     <File Path="ConsoleApps.props" />

@@ -10,13 +10,14 @@ using System;
 using System.Drawing;
 using ConsoleLib.CommonControls;
 using ConsoleLib;
+using ConsoleLib.ExtCon;
 using ConsoleMouseApp.Views;
 using ConsoleLib.Interfaces;
 using BaseLib.Interfaces;
 using BaseLib.Models;
 using Microsoft.Extensions.DependencyInjection;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using ConsoleMouseApp.ViewModels; // added
+using BaseLib.Helper; // added
 
 namespace ConsoleMouseApp
 {
@@ -54,7 +55,7 @@ namespace ConsoleMouseApp
             App?.Run();
 
             Console.Write("Programm end ...");
-            ConsoleFramework.ExtendedConsole?.Stop();
+            ConsoleLib.ExtCon.ConsoleFramework.ExtendedConsole?.Stop();
         }
 
         private static void Init()
@@ -62,13 +63,14 @@ namespace ConsoleMouseApp
             var sp = new ServiceCollection()
              .AddSingleton<IExtendedConsole, ExtendedConsole>()
              .AddTransient<IConsole, ConsoleProxy>()
+             .AddTransient<IWidgetSet, ConsoleWidgetSet>()
              .AddSingleton<IConsoleMouseViewModel,ConsoleMouseViewModel>()
              .AddSingleton<Application,ConsoleMouseView>()
              .BuildServiceProvider();
 
-            Ioc.Default.ConfigureServices(sp);
+            IoC.Configure(sp);
 
-            App = Ioc.Default.GetRequiredService<Application>();
+            App = IoC.GetRequiredService<Application>();
             App.Visible = true;
             App.Draw();
             App.OnCanvasResize += App_CanvasResize;
@@ -83,7 +85,7 @@ namespace ConsoleMouseApp
         /// <param name="e">The e.</param>
         private static void App_CanvasResize(object? sender, Point e)
         {
-            var cl = ConsoleFramework.Canvas.ClipRect;
+            var cl = App.WidgetSet.ClipRect;
             cl.Inflate(-3, -3);
             if (App != null)
                 App.Dimension = cl;

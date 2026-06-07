@@ -29,17 +29,17 @@ public static class ConsoleFramework
     /// </summary>
     public static readonly char[] chars = { '█', '▓', '▒', '░',' ' };
     /// <summary>
-    /// The single boarder
+    /// The single border
     /// </summary>
     public static readonly char[] singleBorder = { '─', '│', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼' };
     /// <summary>
-    /// The double boarder
+    /// The double border
     /// </summary>
-    public static readonly char[] doubleBoarder = { '═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬' };
+    public static readonly char[] doubleBorder = { '═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬' };
     /// <summary>
-    /// The simple boarder
+    /// The simple border
     /// </summary>
-    public static readonly char[] simpleBoarder = { '-', '|', ',', ',', '\'', '\'', '+', '+', '+', '+', '+' };
+    public static readonly char[] simpleBorder = { '-', '|', ',', ',', '\'', '\'', '+', '+', '+', '+', '+' };
 
     // Virtual-Key Codes (Windows)
     public const ushort VK_ENTER = (ushort)ConsoleKey.Enter;
@@ -86,13 +86,6 @@ public static class ConsoleFramework
     public static TextCanvas Canvas => _canvas ??= new TextCanvas(console, new Rectangle(0, 0, console.WindowWidth, Math.Min(50, console.LargestWindowHeight)));
     private static IExtendedConsole? extendedConsole;
     private static TextCanvas? _canvas;
-
-    /// <summary>
-    /// Initializes static members of the <see cref="ConsoleFramework"/> class.
-    /// </summary>
-    static ConsoleFramework()
-    {
-    }
 
     /// <summary>
     /// Called when [window size event].

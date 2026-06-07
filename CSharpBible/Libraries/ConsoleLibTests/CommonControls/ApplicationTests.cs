@@ -3,6 +3,8 @@ using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
 using System;
 using System.Drawing;
+using NSubstitute;
+using BaseLib.Helper;
 
 namespace ConsoleLib.CommonControls.Tests;
 
@@ -45,14 +47,13 @@ public class ApplicationTests : TestBase
     [TestMethod]
     public void Dispatch_Executes_Action_Via_MessageQueue()
     {
-        var ext = new FakeExt();
-        var app = new Application(_tstCon, ext);
+        FakeExt ext = new FakeExt();
+        var app = new Application(new ConsoleWidgetSet(_tstCon, ext));
         bool ran=false;
         app.Dispatch(()=>ran=true);
 
         // per Reflection private HandleMessages abrufen
-        var m = typeof(Application).GetMethod("HandleMessages", System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
-        m!.Invoke(app, Array.Empty<object?>());
+        app.ProcessPendingMessages();
         Assert.IsTrue(ran);
     }
 
@@ -61,8 +62,8 @@ public class ApplicationTests : TestBase
     [DataRow(3,1,'Y')]
     public void Mouse_Event_And_Key_Event_Routed(int mx,int my,char accel)
     {
-        var ext = new FakeExt();
-        var app = new Application(_tstCon, ext){ Dimension=new Rectangle(0,0,40,10)};
+        FakeExt ext = new FakeExt();
+        var app = new Application(new ConsoleWidgetSet(_tstCon, ext)) { Dimension=new Rectangle(0,0,40,10)};
         var btn = new Button{ Dimension=new Rectangle(1,1,8,1), Parent=app};
         bool clicked=false; btn.OnClick += (_,_)=>clicked=true;
         ext.RaiseMouse(new MouseEvt{ ButtonEvent=true, MousePos=new Point(mx,my), MouseButtonLeft=true});
@@ -76,11 +77,25 @@ public class ApplicationTests : TestBase
     [TestMethod]
     public void Resize_Event_Invalidates_And_Raises_OnCanvasResize()
     {
-        var ext = new FakeExt();
-        var app = new Application(_tstCon, ext);
+        FakeExt ext = new FakeExt();
+        var app = new Application(new ConsoleWidgetSet(_tstCon, ext));
         int cnt=0;
         app.OnCanvasResize += (_,_)=>cnt++;
         ext.RaiseResize(new Point(120,30));
         Assert.AreEqual(1,cnt);
+    }
+
+    [TestMethod]
+    public void RaiseMouseEvent_Routes_Click_Without_ExtendedConsole_Wiring_In_Control()
+    {
+        FakeExt ext = new FakeExt();
+        var app = new Application(new ConsoleWidgetSet(_tstCon, ext)) { Dimension = new Rectangle(0, 0, 20, 5) };
+        var btn = new Button { Dimension = new Rectangle(1, 1, 5, 1), Parent = app };
+        bool clicked = false;
+        btn.OnClick += (_, _) => clicked = true;
+
+        app.RaiseMouseEvent(new MouseEvt { ButtonEvent = true, MousePos = new Point(2, 1), MouseButtonLeft = true });
+
+        Assert.IsTrue(clicked);
     }
 }

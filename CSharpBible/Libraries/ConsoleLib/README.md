@@ -7,7 +7,7 @@ Enable structured, MVVM-friendly console applications (prototyping, headless adm
 - Composability of controls
 - Deterministic repainting (no flicker)
 - Simple binding hooks (lightweight, reflection-based)
-- Cross-target (net462+ through net9.0)
+- Modern .NET target set for the reusable core library
 
 ## Key Features
 - `Application` root control with message loop integration.
@@ -16,11 +16,12 @@ Enable structured, MVVM-friendly console applications (prototyping, headless adm
 - List rendering (scrolling, selection – extensible).
 - Basic 2?way binding support for `TextBox` (model <-> text) and (extension ready) selection.
 - Drawing API via `TextCanvas` (rect fill, bordered boxes, character output).
-- Separation of concerns through `IConsole` abstraction (enables mocking and testing without real console).
+- Separation of concerns through `IConsole` and `IWidgetSet` abstractions.
+- Backend-specific rendering and host-loop implementations can live in separate projects such as `ConsoleLib.ExtCon` or `ConsoleLib.WinForms`.
 
 ## Targets
 ```
-net462; net472; net48; net481; net6.0-windows; net7.0-windows; net8.0-windows; net9.0-windows
+net8.0; net9.0; net10.0
 ```
 
 ## Getting Started
@@ -31,14 +32,7 @@ net462; net472; net48; net481; net6.0-windows; net7.0-windows; net8.0-windows; n
 ```
 
 ## Basic Usage
-```csharp
-var app = new Application(console, extendedConsole)
-{
-    BackColor = ConsoleColor.DarkBlue
-};
-new Label { Parent = app, Text = "Hello ConsoleLib", Dimension = new(0,0,30,1)};
-app.Run();
-```
+Reference the core project plus a concrete widget-set backend such as `ConsoleLib.ExtCon`, then create the application with an `IWidgetSet` implementation.
 
 ## Binding Example
 ```csharp
@@ -51,6 +45,7 @@ box.BindTwoWay(viewModel, nameof(viewModel.SearchText));
 - Redraws are explicit (`Invalidate`) -> message queue flush ensures stable frame.
 - Minimal allocations per frame; string building localized.
 - Thread safety: coarse `lock` in drawing primitives (adequate for UI thread use, not for high-frequency multi-thread rendering).
+- The core library intentionally no longer contains the concrete ExtendedConsole-backed widget set.
 
 ## Roadmap
 - Horizontal / vertical layout managers.

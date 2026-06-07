@@ -46,4 +46,23 @@ public class ButtonTests : TestBase
         cmd.CanExecuteChanged += Raise.Event();
         Assert.AreEqual(second, b.Enabled);
     }
+
+    [TestMethod]
+    public void DrawControl_Uses_Explicit_Button_Width()
+    {
+        var button = new Button
+        {
+            Parent = _TestApp,
+            Position = new Point(1, 1),
+            size = new Size(8, 1),
+            Text = "1",
+            ForeColor = ConsoleColor.White,
+            BackColor = ConsoleColor.Gray
+        };
+
+        button.Draw();
+
+        Assert.AreEqual(8, button.size.Width);
+        StringAssert.Contains(__tstCon?.Content, "[1]");
+    }
 }
