@@ -1,5 +1,6 @@
 using RepoMigrator.App.Logic.Services;
 using RepoMigrator.App.State.Services;
+using RepoMigrator.App.State.Settings;
 using RepoMigrator.App.Wpf;
 using RepoMigrator.App.Wpf.ViewModels;
 using RepoMigrator.Core;
@@ -24,9 +25,7 @@ public sealed class MainViewModelStartWorkflowTests
         var providerFactory = new ThrowingProviderFactory();
         var archiveMigrationService = new ThrowingArchiveMigrationService();
         var migrationSourceProviderFactory = new ArchiveMigrationSourceProviderFactory(new DirectoryArchiveSnapshotSourceProvider(Path.GetTempPath()));
-
-        var tempStatePath = Path.Combine(Path.GetTempPath(), "RepoMigratorTests", $"inputs_{Guid.NewGuid():N}.json");
-        var inputStateStore = new AppInputStateStore();
+        var inputStateStore = new InMemoryAppInputStateStore();
 
         var vm = new MainViewModel(
             migration,
@@ -62,7 +61,7 @@ public sealed class MainViewModelStartWorkflowTests
         var repositorySelectionService = new RepositorySelectionService(new ThrowingProviderFactory());
         var providerFactory = new ThrowingProviderFactory();
         var archiveMigrationService = new RecordingArchiveMigrationService();
-        var inputStateStore = new AppInputStateStore();
+        var inputStateStore = new InMemoryAppInputStateStore();
         var migrationSourceProviderFactory = new ArchiveMigrationSourceProviderFactory(new DirectoryArchiveSnapshotSourceProvider(Path.GetTempPath()));
         var sourceDirectoryPath = Path.Combine(Path.GetTempPath(), "RepoMigratorTests", $"archive-source-{Guid.NewGuid():N}");
         Directory.CreateDirectory(sourceDirectoryPath);
@@ -186,7 +185,7 @@ public sealed class MainViewModelStartWorkflowTests
         var migrationQueryService = new MigrationQueryService();
         var recentPathHistoryService = new RecentPathHistoryService();
         var repositorySelectionService = new RepositorySelectionService(providerFactory);
-        var inputStateStore = new AppInputStateStore();
+        var inputStateStore = new InMemoryAppInputStateStore();
         var archiveMigrationService = new ThrowingArchiveMigrationService();
         var migrationSourceProviderFactory = new ArchiveMigrationSourceProviderFactory(new DirectoryArchiveSnapshotSourceProvider(Path.GetTempPath()));
 
@@ -212,7 +211,7 @@ public sealed class MainViewModelStartWorkflowTests
         var repositorySelectionService = new RepositorySelectionService(new ThrowingProviderFactory());
         var providerFactory = new ThrowingProviderFactory();
         var archiveMigrationService = new RecordingArchiveMigrationService();
-        var inputStateStore = new AppInputStateStore();
+        var inputStateStore = new InMemoryAppInputStateStore();
         var sourceDirectoryPath = Path.Combine(Path.GetTempPath(), "RepoMigratorTests", $"archive-source-{Guid.NewGuid():N}");
         Directory.CreateDirectory(sourceDirectoryPath);
 
@@ -262,6 +261,17 @@ public sealed class MainViewModelStartWorkflowTests
             IMigrationProgress progress,
             CancellationToken ct)
             => Task.FromException(new InvalidOperationException("expected test failure"));
+    }
+
+    private sealed class InMemoryAppInputStateStore : IAppInputStateStore
+    {
+        private AppInputState _state = new();
+
+        public AppInputState Load()
+            => _state;
+
+        public void Save(AppInputState state)
+            => _state = state;
     }
 
     private sealed class ThrowingArchiveMigrationService : IArchiveMigrationService

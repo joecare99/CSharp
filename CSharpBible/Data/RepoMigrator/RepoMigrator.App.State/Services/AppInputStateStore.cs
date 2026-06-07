@@ -1,7 +1,5 @@
 using RepoMigrator.App.State.Settings;
 using RepoMigrator.Core;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 
 namespace RepoMigrator.App.State.Services;
@@ -9,7 +7,7 @@ namespace RepoMigrator.App.State.Services;
 /// <summary>
 /// Persists and restores the RepoMigrator app input state outside the UI layer.
 /// </summary>
-public sealed class AppInputStateStore
+public sealed class AppInputStateStore : IAppInputStateStore
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
@@ -17,18 +15,17 @@ public sealed class AppInputStateStore
     };
 
     private readonly string _filePath;
+    private readonly ISecretProtector _secretProtector;
 
-    public AppInputStateStore()
-        : this(Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "RepoMigrator",
-            "inputs.json"))
+    public AppInputStateStore(IAppStatePathProvider pathProvider, ISecretProtector secretProtector)
+        : this(pathProvider.GetStateFilePath(), secretProtector)
     {
     }
 
-    internal AppInputStateStore(string sFilePath)
+    public AppInputStateStore(string sFilePath, ISecretProtector secretProtector)
     {
         _filePath = sFilePath;
+        _secretProtector = secretProtector;
     }
 
     public AppInputState Load()
@@ -49,12 +46,12 @@ public sealed class AppInputStateStore
                 SourceUrl = persistedState.SourceUrl ?? "",
                 SourceBranch = persistedState.SourceBranch,
                 SourceUser = persistedState.SourceUser,
-                SourcePassword = Unprotect(persistedState.SourcePasswordProtected),
+                SourcePassword = _secretProtector.Unprotect(persistedState.SourcePasswordProtected),
                 TargetProviderKey = persistedState.TargetProviderKey,
                 TargetUrl = persistedState.TargetUrl ?? "",
                 TargetBranch = persistedState.TargetBranch,
                 TargetUser = persistedState.TargetUser,
-                TargetPassword = Unprotect(persistedState.TargetPasswordProtected),
+                TargetPassword = _secretProtector.Unprotect(persistedState.TargetPasswordProtected),
                 TransferGitBranches = persistedState.TransferGitBranches,
                 TransferGitTags = persistedState.TransferGitTags,
                 SelectedGitBranches = persistedState.SelectedGitBranches ?? [],
@@ -100,12 +97,12 @@ public sealed class AppInputStateStore
                 SourceUrl = state.SourceUrl,
                 SourceBranch = state.SourceBranch,
                 SourceUser = state.SourceUser,
-                SourcePasswordProtected = Protect(state.SourcePassword),
+                SourcePasswordProtected = _secretProtector.Protect(state.SourcePassword),
                 TargetProviderKey = state.TargetProviderKey,
                 TargetUrl = state.TargetUrl,
                 TargetBranch = state.TargetBranch,
                 TargetUser = state.TargetUser,
-                TargetPasswordProtected = Protect(state.TargetPassword),
+                TargetPasswordProtected = _secretProtector.Protect(state.TargetPassword),
                 TransferGitBranches = state.TransferGitBranches,
                 TransferGitTags = state.TransferGitTags,
                 SelectedGitBranches = state.SelectedGitBranches,
@@ -138,33 +135,6 @@ public sealed class AppInputStateStore
         }
         catch
         {
-        }
-    }
-
-    private static string? Protect(string? sValue)
-    {
-        if (string.IsNullOrEmpty(sValue))
-            return null;
-
-        var arrBytes = Encoding.UTF8.GetBytes(sValue);
-        var arrProtectedBytes = ProtectedData.Protect(arrBytes, null, DataProtectionScope.CurrentUser);
-        return Convert.ToBase64String(arrProtectedBytes);
-    }
-
-    private static string? Unprotect(string? sValue)
-    {
-        if (string.IsNullOrEmpty(sValue))
-            return null;
-
-        try
-        {
-            var arrProtectedBytes = Convert.FromBase64String(sValue);
-            var arrBytes = ProtectedData.Unprotect(arrProtectedBytes, null, DataProtectionScope.CurrentUser);
-            return Encoding.UTF8.GetString(arrBytes);
-        }
-        catch
-        {
-            return null;
         }
     }
 

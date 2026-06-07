@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Collections.Specialized;
 using RepoMigrator.App.Logic.Services;
 using RepoMigrator.App.State.Services;
+using RepoMigrator.App.State.Settings;
 using RepoMigrator.App.Wpf;
 using RepoMigrator.Core;
 using RepoMigrator.Core.Abstractions;
@@ -88,7 +89,7 @@ public sealed class MainViewModelRecentValuesTests
         var recentPathHistoryService = new RecentPathHistoryService();
         var providerFactory = new ThrowingProviderFactory();
         var repositorySelectionService = new RepositorySelectionService(providerFactory);
-        var inputStateStore = new AppInputStateStore();
+        var inputStateStore = new InMemoryAppInputStateStore();
         var archiveMigrationService = new NoOpArchiveMigrationService();
         var migrationSourceProviderFactory = new ArchiveMigrationSourceProviderFactory(new DirectoryArchiveSnapshotSourceProvider(Path.GetTempPath()));
 
@@ -102,6 +103,17 @@ public sealed class MainViewModelRecentValuesTests
             inputStateStore,
             archiveMigrationService,
             migrationSourceProviderFactory);
+    }
+
+    private sealed class InMemoryAppInputStateStore : IAppInputStateStore
+    {
+        private RepoMigrator.App.State.Settings.AppInputState _state = new();
+
+        public RepoMigrator.App.State.Settings.AppInputState Load()
+            => _state;
+
+        public void Save(RepoMigrator.App.State.Settings.AppInputState state)
+            => _state = state;
     }
 
     private sealed class NoOpMigrationService : IMigrationService

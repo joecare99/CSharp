@@ -5,6 +5,7 @@ using System;
 using System.Drawing;
 using NSubstitute;
 using BaseLib.Helper;
+using ConsoleLib.ExtCon;
 
 namespace ConsoleLib.CommonControls.Tests;
 

@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.ComponentModel;
 using System.Reflection;
+using ConsoleLib.ExtCon;
 
 namespace ConsoleLib.CommonControls.Tests;
 
