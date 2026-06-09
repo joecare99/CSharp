@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\Solution.props"/>
+  <Import Project="..\Solution.props" />
   <PropertyGroup>
     <TargetFrameworks>net481;net9.0-windows</TargetFrameworks>
     <OutputType>Library</OutputType>
@@ -15,6 +15,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\bin\Release\</OutputPath>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Update="ctlAlarmClock.cs">
       <SubType>UserControl</SubType>
