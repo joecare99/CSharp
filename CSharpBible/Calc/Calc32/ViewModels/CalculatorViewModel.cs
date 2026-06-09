@@ -13,6 +13,7 @@
 // ***********************************************************************
 using Calc32.Models;
 using System;
+using System.Globalization;
 using Calc32.Models.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -25,7 +26,7 @@ namespace Calc32.ViewModels;
 
 /// <summary>
 /// Class CalculatorViewModel.
-/// Implements the <see cref="T:MVVM.ViewModel.BaseViewModel" />
+/// Implements the <see cref="MVVM.ViewModel.BaseViewModel" />
 /// </summary>
 public partial class CalculatorViewModel : ObservableObject, ICalculatorViewModel
 {
@@ -63,7 +64,7 @@ public partial class CalculatorViewModel : ObservableObject, ICalculatorViewMode
     #endregion
     #region Methods
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:Calc32WPF.ViewModel.CalculatorViewModel" /> class.
+    /// Initializes a new instance of the <see cref="Calc32WPF.ViewModel.CalculatorViewModel" /> class.
     /// </summary>
     public CalculatorViewModel(ICalculatorClass calculatorClass)
     {
@@ -76,10 +77,10 @@ public partial class CalculatorViewModel : ObservableObject, ICalculatorViewMode
 
     private bool canOperation() => calculatorClass.Accumulator != 0;
     [RelayCommand(CanExecute = nameof(canOperation))]
-    private void Operation(object? o) => calculatorClass.Operation(int.Parse((string?)o ?? ""));
+    private void Operation(object? o) => calculatorClass.Operation(int.Parse((string?)o ?? "",CultureInfo.InvariantCulture));
 
     [RelayCommand]
-    private void Number(object? o) => calculatorClass.NumberButton(int.Parse((string?)o ?? ""));
+    private void Number(object? o) => calculatorClass.NumberButton(int.Parse((string?)o ?? "",CultureInfo.InvariantCulture));
 
     /// <summary>
     /// Handles the OnChange event of the CalculatorClass control.

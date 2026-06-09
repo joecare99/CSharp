@@ -30,7 +30,7 @@ public class Display
     /// </summary>
     static ConsoleColor[]? colorMap = null;
 
-    private readonly IConsole _console;
+    private IConsole? _console;
     /// <summary>
     /// My console
     /// </summary>
@@ -54,7 +54,7 @@ public class Display
 
     public Display(IConsole? console, int x, int y, int width, int height)
     {
-        _console = console ?? myConsole;
+        _console = console;
 
         Origin = new Point(x, y);
         dSize = new Size(width, height);
@@ -127,6 +127,8 @@ public class Display
     /// </summary>
     public void Update()
     {
+        _console = _console ?? myConsole;
+
         var _fgr = _console.ForegroundColor;
         var _bgr = _console.BackgroundColor;
         for (int y = 0; y < dSize.Height / 2 * 2; y += 2)
