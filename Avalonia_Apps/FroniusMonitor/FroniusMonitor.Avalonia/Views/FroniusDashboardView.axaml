@@ -1,0 +1,149 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:controls="using:FroniusMonitor.Avalonia.Controls"
+			  xmlns:vm="using:FroniusMonitor.Core.ViewModels"
+			 x:DataType="vm:FroniusDashboardViewModel"
+			 x:Class="FroniusMonitor.Avalonia.Views.FroniusDashboardView">
+  <ScrollViewer VerticalScrollBarVisibility="Auto"
+				HorizontalScrollBarVisibility="Disabled">
+	<Grid Margin="28" RowDefinitions="Auto,Auto,Auto,Auto">
+	  <Grid ColumnDefinitions="*,Auto">
+		<StackPanel>
+		  <TextBlock FontSize="34" FontWeight="SemiBold" Text="Fronius Live Dashboard" />
+		  <TextBlock Classes="secondary"
+					 Margin="0,8,0,0"
+					 FontSize="16"
+					 Text="Monitor inverter, battery, PV production, load and grid exchange in real time." />
+		</StackPanel>
+		<Border Grid.Column="1"
+				Padding="16,10"
+				CornerRadius="999"
+				Background="{DynamicResource StatusIdleBrush}">
+		  <TextBlock FontWeight="SemiBold"
+					 Foreground="White"
+					 Text="{Binding ConnectionStateText}" />
+		</Border>
+	  </Grid>
+
+	  <Border Grid.Row="1"
+			  Classes="dashboard-card"
+			  Margin="0,24,0,18"
+			  Background="{DynamicResource CardSecondaryBrush}">
+		<Grid ColumnDefinitions="2.2*,1.2*,Auto">
+		  <StackPanel>
+			<TextBlock Classes="header" Text="Inverter host" />
+			<TextBox Width="340" Margin="0,8,0,0" Text="{Binding EndpointHost}" />
+			<TextBlock Classes="secondary" Margin="0,10,0,0" Text="{Binding EndpointUriText}" />
+		  </StackPanel>
+		  <StackPanel Grid.Column="1" Margin="20,0,0,0">
+			<TextBlock Classes="header" Text="Last update" />
+			<TextBlock Classes="subvalue" Margin="0,8,0,0" Text="{Binding LastUpdatedText}" />
+			<TextBlock Classes="header" Margin="0,10,0,0" Text="Device timestamp" />
+			<TextBlock Classes="subvalue" Margin="0,8,0,0" Text="{Binding DeviceTimestampText}" />
+		  </StackPanel>
+		  <Button Grid.Column="2"
+				  Width="150"
+				  Height="44"
+				  Margin="24,18,0,0"
+				  VerticalAlignment="Top"
+				  Command="{Binding RefreshCommand}"
+				  Content="Refresh now" />
+		</Grid>
+	  </Border>
+
+	  <Grid Grid.Row="2" ColumnDefinitions="*,*,*" ColumnSpacing="12">
+		<Border Classes="dashboard-card">
+		  <StackPanel>
+			<TextBlock Classes="header" Text="PV production" />
+			<TextBlock Classes="value" Text="{Binding PvPowerText}" />
+			<TextBlock Classes="secondary" Foreground="{DynamicResource AccentBrush}" Text="Sun-powered generation" />
+		  </StackPanel>
+		</Border>
+		<Border Grid.Column="1" Classes="dashboard-card">
+		  <StackPanel>
+			<TextBlock Classes="header" Text="House load" />
+			<TextBlock Classes="value" Text="{Binding LoadPowerText}" />
+			<TextBlock Classes="secondary" Foreground="{DynamicResource AccentSecondaryBrush}" Text="Current consumption" />
+		  </StackPanel>
+		</Border>
+		<Border Grid.Column="2" Classes="dashboard-card">
+		  <StackPanel>
+			<TextBlock Classes="header" Text="Inverter output" />
+			<TextBlock Classes="value" Text="{Binding InverterPowerText}" />
+			<TextBlock Classes="secondary" Text="Instantaneous inverter power" />
+		  </StackPanel>
+		</Border>
+	  </Grid>
+
+	  <Grid Grid.Row="3" Margin="0,6,0,0" ColumnDefinitions="1.15*,0.95*" ColumnSpacing="18">
+		<StackPanel>
+		  <Border Classes="dashboard-card">
+			<Grid ColumnDefinitions="*,*">
+			  <StackPanel>
+				<TextBlock Classes="header" Text="Battery power" />
+				<TextBlock Classes="value" Text="{Binding BatteryPowerText}" />
+				<TextBlock Classes="secondary" Foreground="{DynamicResource AccentBrush}" Text="{Binding BatteryDirectionText}" />
+			  </StackPanel>
+			  <StackPanel Grid.Column="1">
+				<TextBlock Classes="header" Text="Battery charge" />
+				<TextBlock Classes="value" Text="{Binding BatteryStateOfChargeText}" />
+				<TextBlock Classes="secondary" Text="State of charge" />
+			  </StackPanel>
+			</Grid>
+		  </Border>
+
+		  <Border Classes="dashboard-card">
+			<Grid ColumnDefinitions="*,*">
+			  <StackPanel>
+				<TextBlock Classes="header" Text="Autonomy" />
+				<TextBlock Classes="value" Text="{Binding AutonomyText}" />
+				<TextBlock Classes="secondary" Text="Share supplied without the grid" />
+			  </StackPanel>
+			  <StackPanel Grid.Column="1">
+				<TextBlock Classes="header" Text="Self-consumption" />
+				<TextBlock Classes="value" Text="{Binding SelfConsumptionText}" />
+				<TextBlock Classes="secondary" Text="Share of PV consumed locally" />
+			  </StackPanel>
+			</Grid>
+		  </Border>
+
+		  <controls:PowerDistributionWidget />
+		</StackPanel>
+
+		<StackPanel Grid.Column="1">
+		  <Border Classes="dashboard-card">
+			<StackPanel>
+			  <TextBlock Classes="header" Text="Grid exchange" />
+			  <TextBlock Classes="value" Text="{Binding GridPowerText}" />
+			  <TextBlock Classes="secondary" Foreground="{DynamicResource AccentSecondaryBrush}" Text="{Binding GridDirectionText}" />
+			</StackPanel>
+		  </Border>
+
+		  <Border Classes="dashboard-card">
+			<StackPanel>
+			  <TextBlock Classes="header" Text="Operating state" />
+			  <Grid Margin="0,18,0,0" ColumnDefinitions="*,*">
+				<StackPanel>
+				  <TextBlock Classes="header" Text="API status" />
+				  <TextBlock Classes="subvalue" Text="{Binding ApiHealthText}" />
+				  <TextBlock Classes="secondary" Margin="0,8,0,0" Text="{Binding ApiStatusCodeText, StringFormat='Code: {0}'}" />
+				</StackPanel>
+				<StackPanel Grid.Column="1">
+				  <TextBlock Classes="header" Text="Battery mode" />
+				  <TextBlock Classes="subvalue" Text="{Binding BatteryModeText}" />
+				</StackPanel>
+			  </Grid>
+			</StackPanel>
+		  </Border>
+
+		  <Border Classes="dashboard-card" IsVisible="{Binding HasDiagnosticText, Converter={StaticResource BooleanToIsVisibleConverter}}">
+			<StackPanel>
+			  <TextBlock Classes="header" Text="Diagnostics" />
+			  <TextBlock Classes="secondary" Margin="0,10,0,0" Text="{Binding DiagnosticText}" />
+			</StackPanel>
+		  </Border>
+		</StackPanel>
+	  </Grid>
+	</Grid>
+  </ScrollViewer>
+</UserControl>

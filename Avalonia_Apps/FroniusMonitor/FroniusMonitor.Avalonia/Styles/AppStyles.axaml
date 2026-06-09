@@ -1,0 +1,110 @@
+<Styles xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Styles.Resources>
+	<Color x:Key="WindowBackgroundColor">#FF0F172A</Color>
+	<Color x:Key="CardBackgroundColor">#FF172033</Color>
+	<Color x:Key="CardSecondaryColor">#FF1E293B</Color>
+	<Color x:Key="CardOutlineColor">#FF334155</Color>
+	<Color x:Key="AccentColor">#FF38BDF8</Color>
+	<Color x:Key="AccentSecondaryColor">#FF818CF8</Color>
+	<Color x:Key="TextPrimaryColor">#FFF8FAFC</Color>
+	<Color x:Key="TextSecondaryColor">#FFE2E8F0</Color>
+	<Color x:Key="TextMutedColor">#FF94A3B8</Color>
+	<Color x:Key="DiagramLineColor">#995E7EA6</Color>
+	<Color x:Key="PvNodeColor">#FFCA8A04</Color>
+	<Color x:Key="PvNodeBackgroundColor">#332E2000</Color>
+	<Color x:Key="BatteryNodeColor">#FF22C55E</Color>
+	<Color x:Key="BatteryNodeBackgroundColor">#143325</Color>
+	<Color x:Key="HomeNodeColor">#FF38BDF8</Color>
+	<Color x:Key="HomeNodeBackgroundColor">#14273F</Color>
+	<Color x:Key="GridNodeColor">#FFF8FAFC</Color>
+	<Color x:Key="GridNodeBackgroundColor">#1E293B</Color>
+	<Color x:Key="StatusOnlineColor">#FF22C55E</Color>
+	<Color x:Key="StatusWarningColor">#FFF59E0B</Color>
+	<Color x:Key="StatusErrorColor">#FFEF4444</Color>
+	<Color x:Key="StatusLoadingColor">#FF38BDF8</Color>
+	<Color x:Key="StatusIdleColor">#FF64748B</Color>
+
+	<SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackgroundColor}" />
+	<SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" />
+	<SolidColorBrush x:Key="CardSecondaryBrush" Color="{StaticResource CardSecondaryColor}" />
+	<SolidColorBrush x:Key="CardOutlineBrush" Color="{StaticResource CardOutlineColor}" />
+	<SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+	<SolidColorBrush x:Key="AccentSecondaryBrush" Color="{StaticResource AccentSecondaryColor}" />
+	<SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+	<SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+	<SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}" />
+	<SolidColorBrush x:Key="DiagramLineBrush" Color="{StaticResource DiagramLineColor}" />
+	<SolidColorBrush x:Key="PvNodeBrush" Color="{StaticResource PvNodeColor}" />
+	<SolidColorBrush x:Key="PvNodeBackgroundBrush" Color="{StaticResource PvNodeBackgroundColor}" />
+	<SolidColorBrush x:Key="BatteryNodeBrush" Color="{StaticResource BatteryNodeColor}" />
+	<SolidColorBrush x:Key="BatteryNodeBackgroundBrush" Color="{StaticResource BatteryNodeBackgroundColor}" />
+	<SolidColorBrush x:Key="HomeNodeBrush" Color="{StaticResource HomeNodeColor}" />
+	<SolidColorBrush x:Key="HomeNodeBackgroundBrush" Color="{StaticResource HomeNodeBackgroundColor}" />
+	<SolidColorBrush x:Key="GridNodeBrush" Color="{StaticResource GridNodeColor}" />
+	<SolidColorBrush x:Key="GridNodeBackgroundBrush" Color="{StaticResource GridNodeBackgroundColor}" />
+	<SolidColorBrush x:Key="StatusOnlineBrush" Color="{StaticResource StatusOnlineColor}" />
+	<SolidColorBrush x:Key="StatusWarningBrush" Color="{StaticResource StatusWarningColor}" />
+	<SolidColorBrush x:Key="StatusErrorBrush" Color="{StaticResource StatusErrorColor}" />
+	<SolidColorBrush x:Key="StatusLoadingBrush" Color="{StaticResource StatusLoadingColor}" />
+	<SolidColorBrush x:Key="StatusIdleBrush" Color="{StaticResource StatusIdleColor}" />
+  </Styles.Resources>
+
+  <Style Selector="Window">
+	<Setter Property="Background" Value="{StaticResource WindowBackgroundBrush}" />
+	<Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+	<Setter Property="FontFamily" Value="Inter, Segoe UI, Arial" />
+  </Style>
+
+  <Style Selector="TextBlock">
+	<Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+	<Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <Style Selector="Button">
+	<Setter Property="Background" Value="{StaticResource AccentBrush}" />
+	<Setter Property="Foreground" Value="White" />
+	<Setter Property="Padding" Value="18,10" />
+	<Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="TextBox">
+	<Setter Property="Background" Value="{StaticResource CardSecondaryBrush}" />
+	<Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+	<Setter Property="BorderBrush" Value="{StaticResource TextMutedBrush}" />
+	<Setter Property="Padding" Value="10,6" />
+  </Style>
+
+	<Style Selector="Border.dashboard-card">
+	<Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
+	<Setter Property="CornerRadius" Value="18" />
+	<Setter Property="BorderBrush" Value="{StaticResource CardOutlineBrush}" />
+	<Setter Property="BorderThickness" Value="1" />
+	<Setter Property="Padding" Value="22" />
+	<Setter Property="Margin" Value="0,0,0,18" />
+  </Style>
+
+	<Style Selector="TextBlock.header">
+	<Setter Property="FontSize" Value="14" />
+	<Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+	<Setter Property="FontWeight" Value="SemiBold" />
+	<Setter Property="TextWrapping" Value="NoWrap" />
+  </Style>
+
+	<Style Selector="TextBlock.secondary">
+	<Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+	<Setter Property="FontSize" Value="15" />
+  </Style>
+
+	<Style Selector="TextBlock.value">
+	<Setter Property="FontSize" Value="30" />
+	<Setter Property="FontWeight" Value="SemiBold" />
+	<Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+  </Style>
+
+	<Style Selector="TextBlock.subvalue">
+	<Setter Property="FontSize" Value="22" />
+	<Setter Property="FontWeight" Value="SemiBold" />
+	<Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+  </Style>
+</Styles>
