@@ -2,10 +2,12 @@
   <Import Project="..\WPF_Samples_net.props" />
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
     <UseWpf>true</UseWpf>
     <ProjectGuid>{B4D693A6-63AF-48A9-89CC-55BE89AE8FCC}</ProjectGuid>
     <Platforms>AnyCPU;x64</Platforms>
+    <TargetFrameworks>net8.0-windows;net9.0-windows</TargetFrameworks>
+    <LangVersion>latestmajor</LangVersion>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
