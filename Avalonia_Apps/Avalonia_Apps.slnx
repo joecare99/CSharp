@@ -138,6 +138,21 @@
     <Project Path="Avln_TerminalHost/Avln_TerminalHost/Avln_TerminalHost.csproj" />
     <Project Path="Avln_TerminalHost/Avln_TerminalHostTests/Avln_TerminalHostTests.csproj" />
   </Folder>
+  <Folder Name="/FroniusMonitor/">
+    <Project Path="../DataConversion/FroniusMonitor.Core.Tests/FroniusMonitor.Core.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+    <Project Path="../DataConversion/FroniusMonitor.Core/FroniusMonitor.Core.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia.Browser/FroniusMonitor.Avalonia.Browser.csproj" />
+    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia.Desktop/FroniusMonitor.Avalonia.Desktop.csproj" />
+    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia.Tests/FroniusMonitor.Avalonia.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia/FroniusMonitor.Avalonia.csproj" />
+    <Project Path="FroniusMonitor/FroniusMonitor.Gateway/FroniusMonitor.Gateway.csproj" />
+  </Folder>
   <Folder Name="/Legacy/">
     <File Path="../CSharpBible/ConsoleApps/ConsoleApps.props" />
     <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
@@ -145,6 +160,14 @@
     <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj" />
     <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
     <Project Path="../CSharpBible/ConsoleApps/TestConsole/TestConsole_net.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Legacy/FroniusMonitor/">
+    <Project Path="../DataConversion/FroniusJson/FroniusJson.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+    <Project Path="../DataConversion/FroniusMonitor.Wpf/FroniusMonitor.Wpf.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Release" />
     </Project>
   </Folder>
@@ -158,6 +181,16 @@
     <File Path="../../Delphi/Diverses/Source/Labyrinth/unt_Laby4.pas" />
     <File Path="../../Delphi/Diverses/Source/Labyrinth/unt_Point2d.pas" />
   </Folder>
+  <Folder Name="/Legacy/MVVM_28_1_DataGridExt/">
+    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExt/MVVM_28_1_CTDataGridExt_net.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExtTests/MVVM_28_1_CTDataGridExt_netTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Legacy/MVVM_37_TreeView/" />
+  <Folder Name="/Legacy/MVVM_40_Wizzard/" />
   <Folder Name="/Legacy/RenderImage/">
     <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderBase.pas" />
     <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderBoundary.pas" />
@@ -222,6 +255,15 @@
     <Project Path="AvlnSamples/Avln_IntegrationTestApp/Avln_IntegrationTestApp.csproj" />
     <Project Path="AvlnSamples/Avln_RenderDemo/Avln_RenderDemo.csproj" />
     <Project Path="AvlnSamples/SampleControls/ControlSamples.Pack.csproj" />
+  </Folder>
+  <Folder Name="/AA28_DataGridExt/">
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Browser/AA28_DataGridExt.Browser.csproj" />
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Desktop/AA28_DataGridExt.Desktop.csproj" />
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Model/AA28_DataGridExt.Model.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Tests/AA28_DataGridExt.Tests.csproj" />
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt/AA28_DataGridExt.csproj" />
   </Folder>
    <Folder Name="/AA98_AvlnCodeStudio/">
      <File Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.props" />
