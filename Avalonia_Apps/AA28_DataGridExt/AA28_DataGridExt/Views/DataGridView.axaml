@@ -1,0 +1,109 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:AA28_DataGridExt.ViewModels"
+			 xmlns:vc="using:AA28_DataGridExt.ValueConverter"
+			 x:Class="AA28_DataGridExt.Views.DataGridView"
+			  x:Name="Root"
+			 x:DataType="vm:DataGridViewModel"
+			 mc:Ignorable="d">
+	<UserControl.Resources>
+		<vc:Bool2VisibilityConverter x:Key="BoolToVisibility" />
+	</UserControl.Resources>
+
+	<Design.DataContext>
+		<vm:DataGridViewModel />
+	</Design.DataContext>
+
+	<Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,*" Margin="12">
+		<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="0,0,0,12">
+			<Button Content="Remove Selected"
+					Command="{Binding RemoveCommand}"
+					CommandParameter="{Binding SelectedPerson}"
+					IsVisible="{Binding IsItemSelected, Converter={StaticResource BoolToVisibility}}" />
+			<TextBlock VerticalAlignment="Center"
+					   Text="{Binding SelectedPerson.Email, FallbackValue='Select a row to edit details.'}" />
+		</StackPanel>
+
+		<DataGrid Grid.Row="1"
+				  Grid.ColumnSpan="2"
+				  Height="360"
+				  AutoGenerateColumns="False"
+				  IsReadOnly="False"
+				  ItemsSource="{Binding Persons}"
+				  SelectedItem="{Binding SelectedPerson, Mode=TwoWay}">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="First name" Binding="{Binding FirstName, Mode=TwoWay}" />
+				<DataGridTextColumn Header="Last name" Binding="{Binding LastName, Mode=TwoWay}" />
+				<DataGridTextColumn Header="Email" Binding="{Binding Email, Mode=TwoWay}" />
+				<DataGridTemplateColumn Header="Department" Width="200">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Department.Name}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<DataGridTemplateColumn.CellEditingTemplate>
+						<DataTemplate>
+							<ComboBox ItemsSource="{Binding DataContext.Departments, ElementName=Root}"
+									  SelectedItem="{Binding Department, Mode=TwoWay}">
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Name}" />
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellEditingTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn Header="Birthday" Width="170">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding BirthdayOffset, StringFormat='{}{0:dd.MM.yyyy}'}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+					<DataGridTemplateColumn.CellEditingTemplate>
+						<DataTemplate>
+							<DatePicker SelectedDate="{Binding BirthdayOffset, Mode=TwoWay}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellEditingTemplate>
+				</DataGridTemplateColumn>
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<Border Grid.Row="2"
+				Grid.Column="0"
+				Grid.ColumnSpan="2"
+				Margin="0,12,0,0"
+				Padding="12"
+				BorderBrush="Gray"
+				BorderThickness="1"
+				CornerRadius="6">
+			<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+				<TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="First name" />
+				<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedPerson.FirstName, Mode=TwoWay}" />
+
+				<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Last name" />
+				<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedPerson.LastName, Mode=TwoWay}" />
+
+				<TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Email" />
+				<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedPerson.Email, Mode=TwoWay}" />
+
+				<TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="Department" />
+				<ComboBox Grid.Row="3"
+						  Grid.Column="1"
+						  ItemsSource="{Binding Departments}"
+						  SelectedItem="{Binding SelectedPerson.Department, Mode=TwoWay}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Name}" />
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+
+				<TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Birthday" />
+				<DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding SelectedPerson.BirthdayOffset, Mode=TwoWay}" />
+			</Grid>
+		</Border>
+	</Grid>
+</UserControl>
