@@ -44,4 +44,7 @@
     <ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Base\Avln_CommonDialogs.Base.csproj" />
     <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageVersion Update="System.Drawing.Common" Version="10.0.9" />
+	</ItemGroup>
 </Project>

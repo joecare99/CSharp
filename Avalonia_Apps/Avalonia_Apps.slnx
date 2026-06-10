@@ -7,84 +7,162 @@
   <Folder Name="/AA05_CommandParCalc/">
     <File Path="AA05_CommandParCalc/Application.props" />
     <File Path="AA05_CommandParCalc/Directory.Packages.props" />
-    <Project Path="AA05_CommandParCalc/AA05_CommandParCalc.Browser/AA05_CommandParCalc.Browser.csproj" />
-    <Project Path="AA05_CommandParCalc/AA05_CommandParCalc.Desktop/AA05_CommandParCalc.Desktop.csproj" />
-    <Project Path="AA05_CommandParCalc/AA05_CommandParCalc/AA05_CommandParCalc.csproj" />
-    <Project Path="AA05_CommandParCalc/AA05_CommandParCalcTests/AA05_CommandParCalcTests.csproj" />
+    <Project Path="AA05_CommandParCalc/AA05_CommandParCalc.Browser/AA05_CommandParCalc.Browser.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA05_CommandParCalc/AA05_CommandParCalc.Desktop/AA05_CommandParCalc.Desktop.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA05_CommandParCalc/AA05_CommandParCalc/AA05_CommandParCalc.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA05_CommandParCalc/AA05_CommandParCalcTests/AA05_CommandParCalcTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA06_ValueConverter2/">
     <File Path="AA06_ValueConverter2/Application.props" />
     <File Path="AA06_ValueConverter2/Directory.Packages.props" />
-    <Project Path="AA06_ValueConverter2/AA06_Converters4/AA06_Converters4.csproj" />
-    <Project Path="AA06_ValueConverter2/AA06_Converters4Tests/AA06_Converters4Tests.csproj" />
-    <Project Path="AA06_ValueConverter2/AA06_ValueConverter2/AA06_ValueConverter2.csproj" />
-    <Project Path="AA06_ValueConverter2/AA06_ValueConverter2Tests/AA06_ValueConverter2Tests.csproj" />
+    <Project Path="AA06_ValueConverter2/AA06_Converters4/AA06_Converters4.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA06_ValueConverter2/AA06_Converters4Tests/AA06_Converters4Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA06_ValueConverter2/AA06_ValueConverter2/AA06_ValueConverter2.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA06_ValueConverter2/AA06_ValueConverter2Tests/AA06_ValueConverter2Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA09_DialogBoxes/">
     <File Path="AA09_DialogBoxes/Application.props" />
     <File Path="AA09_DialogBoxes/Directory.Packages.props" />
-    <Project Path="AA09_DialogBoxes/AA09_DialogBoxes.Browser/AA09_DialogBoxes.Browser.csproj" />
-    <Project Path="AA09_DialogBoxes/AA09_DialogBoxes.Desktop/AA09_DialogBoxes.Desktop.csproj" />
-    <Project Path="AA09_DialogBoxes/AA09_DialogBoxes/AA09_DialogBoxes.csproj" />
-    <Project Path="AA09_DialogBoxes/AA09_DialogBoxesTests/AA09_DialogBoxes_Tests.csproj" />
+    <Project Path="AA09_DialogBoxes/AA09_DialogBoxes.Browser/AA09_DialogBoxes.Browser.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA09_DialogBoxes/AA09_DialogBoxes.Desktop/AA09_DialogBoxes.Desktop.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA09_DialogBoxes/AA09_DialogBoxes/AA09_DialogBoxes.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA09_DialogBoxes/AA09_DialogBoxesTests/AA09_DialogBoxes_Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA14_ScreenX/">
     <File Path="AA14_ScreenX/Application.props" />
     <File Path="AA14_ScreenX/Directory.Packages.props" />
-    <Project Path="AA14_ScreenX/AA14_ScreenX/AA14_ScreenX.csproj" />
-    <Project Path="AA14_ScreenX/ScreenX.Base/ScreenX.Base.csproj" />
-    <Project Path="AA14_ScreenX/ScreenX.BaseTests/ScreenX.BaseTests.csproj" />
+    <Project Path="AA14_ScreenX/AA14_ScreenX/AA14_ScreenX.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA14_ScreenX/ScreenX.Base/ScreenX.Base.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA14_ScreenX/ScreenX.BaseTests/ScreenX.BaseTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA15_Labyrinth/">
     <File Path="AA15_Labyrinth/Directory.Packages.props" />
-    <Project Path="AA15_Labyrinth/AA15a_Treppen/AA15a_Treppen.csproj" />
-    <Project Path="AA15_Labyrinth/AA15_Labyrinth/AA15_Labyrinth.csproj" />
-    <Project Path="AA15_Labyrinth/AA15_LabyrinthTests/AA15_LabyrinthTests.csproj" />
-    <Project Path="AA15_Labyrinth/Treppen.Base/Treppen.Base.csproj" />
-    <Project Path="AA15_Labyrinth/Treppen.BaseTests/Treppen.BaseTests.csproj" />
+    <Project Path="AA15_Labyrinth/AA15a_Treppen/AA15a_Treppen.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA15_Labyrinth/AA15_Labyrinth/AA15_Labyrinth.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA15_Labyrinth/AA15_LabyrinthTests/AA15_LabyrinthTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA15_Labyrinth/Treppen.Base/Treppen.Base.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA15_Labyrinth/Treppen.BaseTests/Treppen.BaseTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA16_UserControl/">
     <File Path="AA16_UserControl/Directory.Packages.props" />
-    <Project Path="AA16_UserControl/AA16_Usercontrol1/AA16_UserControl1.csproj" />
-    <Project Path="AA16_UserControl/AA16_UserControl1Tests/AA16_UserControl1_Tests.csproj" />
-    <Project Path="AA16_UserControl/AA16_Usercontrol2/AA16_UserControl2.csproj" />
+    <Project Path="AA16_UserControl/AA16_Usercontrol1/AA16_UserControl1.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA16_UserControl/AA16_UserControl1Tests/AA16_UserControl1_Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA16_UserControl/AA16_Usercontrol2/AA16_UserControl2.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA18_MultiConverter/">
     <File Path="AA18_MultiConverter/Directory.Packages.props" />
-    <Project Path="AA18_MultiConverter/AA18_MultiConverters/AA18_MultiConverters.csproj" />
-    <Project Path="AA18_MultiConverter/AA18_MultiConvertersTests/AA18_MultiConvertersTests.csproj" />
+    <Project Path="AA18_MultiConverter/AA18_MultiConverters/AA18_MultiConverters.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA18_MultiConverter/AA18_MultiConvertersTests/AA18_MultiConvertersTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA19_Filterlists/">
     <File Path="AA19_FilterLists/Application.props" />
     <File Path="AA19_FilterLists/Directory.Packages.props" />
-    <Project Path="AA19_FilterLists/AA19_FilterLists/AA19_FilterLists.csproj" />
-    <Project Path="AA19_FilterLists/AA19_FilterListsTests/AA19_FilterListsTests.csproj" />
+    <Project Path="AA19_FilterLists/AA19_FilterLists/AA19_FilterLists.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA19_FilterLists/AA19_FilterListsTests/AA19_FilterListsTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA20_SysDialogs/">
     <File Path="AA20_SysDialogs/Application.props" />
     <File Path="AA20_SysDialogs/Directory.Packages.props" />
-    <Project Path="AA20_SysDialogs/AA20a_CommonDialogs/AA20a_CommonDialogs.csproj" />
-    <Project Path="AA20_SysDialogs/AA20_Sysdialogs/AA20_Sysdialogs.csproj" />
-    <Project Path="AA20_SysDialogs/AA20_SysdialogsTests/AA20_SysdialogsTests.csproj" />
+    <Project Path="AA20_SysDialogs/AA20a_CommonDialogs/AA20a_CommonDialogs.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA20_SysDialogs/AA20_Sysdialogs/AA20_Sysdialogs.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA20_SysDialogs/AA20_SysdialogsTests/AA20_SysdialogsTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA21_Button/">
     <File Path="AA21_Buttons/Application.props" />
     <File Path="AA21_Buttons/Directory.Packages.props" />
-    <Project Path="AA21_Buttons/AA21_Buttons/AA21_Buttons.csproj" />
+    <Project Path="AA21_Buttons/AA21_Buttons/AA21_Buttons.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA22_AvlnCap/">
     <File Path="AA22_AvlnCap/Application.props" />
     <File Path="AA22_AvlnCap/Directory.Packages.props" />
-    <Project Path="AA22_AvlnCap/AA22_AvlnCap/AA22_AvlnCap.csproj" />
-    <Project Path="AA22_AvlnCap/AA22_AvlnCap2/AA22_AvlnCap2.csproj" />
-    <Project Path="AA22_AvlnCap/AA22_AvlnCapTests/AA22_AvlnCapTests.csproj" />
+    <Project Path="AA22_AvlnCap/AA22_AvlnCap/AA22_AvlnCap.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA22_AvlnCap/AA22_AvlnCap2/AA22_AvlnCap2.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA22_AvlnCap/AA22_AvlnCapTests/AA22_AvlnCapTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA25_RichText/">
-    <Project Path="AA25_RichTextEdit/AA25_RichTextEdit/AA25_RichTextEdit.csproj" />
-    <Project Path="AA25_RichTextEdit/AA25_RichTextEditTests/AA25_RichTextEditTests.csproj" />
-    <Project Path="AA25_RichTextEdit/Avln_RichTextEdit/Avln_RichTextEdit.csproj" />
-    <Project Path="AA25_RichTextEdit/Document.Base/Document.Base.csproj" />
-    <Project Path="AA25_RichTextEdit/Document.Flow/Document.Flow.csproj" />
+    <Project Path="AA25_RichTextEdit/AA25_RichTextEdit/AA25_RichTextEdit.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA25_RichTextEdit/AA25_RichTextEditTests/AA25_RichTextEditTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA25_RichTextEdit/Avln_RichTextEdit/Avln_RichTextEdit.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA25_RichTextEdit/Document.Base/Document.Base.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA25_RichTextEdit/Document.Flow/Document.Flow.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/Avalonia_App01/">
     <File Path="Avalonia_App01/Avalonia_App01.props" />
@@ -92,83 +170,121 @@
     <Project Path="Avalonia_App01/Avalonia_App_01.Android/Avalonia_App_01.Android.csproj">
       <Build Solution="DesktopOnly|*" Project="false" />
     </Project>
-    <Project Path="Avalonia_App01/Avalonia_App_01.Browser/Avalonia_App_01.Browser.csproj" />
-    <Project Path="Avalonia_App01/Avalonia_App_01.Desktop/Avalonia_App_01.Desktop.csproj" />
+    <Project Path="Avalonia_App01/Avalonia_App_01.Browser/Avalonia_App_01.Browser.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Avalonia_App01/Avalonia_App_01.Desktop/Avalonia_App_01.Desktop.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
     <Project Path="Avalonia_App01/Avalonia_App_01.iOS/Avalonia_App_01.iOS.csproj">
       <Build Solution="DesktopOnly|*" Project="false" />
     </Project>
-    <Project Path="Avalonia_App01/Avalonia_App_01/Avalonia_App_01.csproj" />
+    <Project Path="Avalonia_App01/Avalonia_App_01/Avalonia_App_01.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/Avalonia_App02/">
     <File Path="Avalonia_App02/Application.props" />
     <File Path="Avalonia_App02/Directory.Packages.props" />
-    <Project Path="Avalonia_App02/Avalonia_App02/Avalonia_App02.csproj" />
-    <Project Path="Avalonia_App02/Avalonia_App02Tests/Avalonia_App02Tests.csproj" />
+    <Project Path="Avalonia_App02/Avalonia_App02/Avalonia_App02.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Avalonia_App02/Avalonia_App02Tests/Avalonia_App02Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/Avln_Bubbles/">
     <File Path="Avln_Bubbles/Application.props" />
     <Project Path="Avln_Bubbles/Avln_Bubbles.Browser/Avln_Bubbles.Browser.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="Avln_Bubbles/Avln_Bubbles.Desktop/Avln_Bubbles.Desktop.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="Avln_Bubbles/Avln_Bubbles.Model.Tests/Avln_Bubbles.Model.Tests.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="Avln_Bubbles/Avln_Bubbles.Model/Avln_Bubbles.Model.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="Avln_Bubbles/Avln_Bubbles.View.Tests/Avln_Bubbles.View.Tests.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="Avln_Bubbles/Avln_Bubbles.View/Avln_Bubbles.View.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Avln_Marble/">
     <File Path="Avln_Marble/Application.props" />
     <File Path="Avln_Marble/Directory.Packages.props" />
-    <Project Path="../CSharpBible/Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj" />
-    <Project Path="Avln_Marble/Avln_Marble.Browser/Avln_Marble.Browser.csproj" />
-    <Project Path="Avln_Marble/Avln_Marble.Desktop/Avln_Marble.Desktop.csproj" />
-    <Project Path="Avln_Marble/Avln_Marble.Display/Avln_Marble.Display.csproj" />
+    <Project Path="../CSharpBible/Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Avln_Marble/Avln_Marble.Browser/Avln_Marble.Browser.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Avln_Marble/Avln_Marble.Desktop/Avln_Marble.Desktop.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Avln_Marble/Avln_Marble.Display/Avln_Marble.Display.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/Avln_TerminalHost/">
-    <Project Path="Avln_TerminalHost/Avln_TerminalHost/Avln_TerminalHost.csproj" />
-    <Project Path="Avln_TerminalHost/Avln_TerminalHostTests/Avln_TerminalHostTests.csproj" />
+    <Project Path="Avln_TerminalHost/Avln_TerminalHost/Avln_TerminalHost.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Avln_TerminalHost/Avln_TerminalHostTests/Avln_TerminalHostTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/FroniusMonitor/">
     <Project Path="../DataConversion/FroniusMonitor.Core.Tests/FroniusMonitor.Core.Tests.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="../DataConversion/FroniusMonitor.Core/FroniusMonitor.Core.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
-    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia.Browser/FroniusMonitor.Avalonia.Browser.csproj" />
-    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia.Desktop/FroniusMonitor.Avalonia.Desktop.csproj" />
+    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia.Browser/FroniusMonitor.Avalonia.Browser.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia.Desktop/FroniusMonitor.Avalonia.Desktop.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
     <Project Path="FroniusMonitor/FroniusMonitor.Avalonia.Tests/FroniusMonitor.Avalonia.Tests.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Release" />
     </Project>
-    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia/FroniusMonitor.Avalonia.csproj" />
-    <Project Path="FroniusMonitor/FroniusMonitor.Gateway/FroniusMonitor.Gateway.csproj" />
+    <Project Path="FroniusMonitor/FroniusMonitor.Avalonia/FroniusMonitor.Avalonia.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="FroniusMonitor/FroniusMonitor.Gateway/FroniusMonitor.Gateway.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/Legacy/">
     <File Path="../CSharpBible/ConsoleApps/ConsoleApps.props" />
-    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
-    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
-    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj" />
-    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
+    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
     <Project Path="../CSharpBible/ConsoleApps/TestConsole/TestConsole_net.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Legacy/FroniusMonitor/">
     <Project Path="../DataConversion/FroniusJson/FroniusJson.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="../DataConversion/FroniusMonitor.Wpf/FroniusMonitor.Wpf.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Legacy/Laby4/">
@@ -183,10 +299,10 @@
   </Folder>
   <Folder Name="/Legacy/MVVM_28_1_DataGridExt/">
     <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExt/MVVM_28_1_CTDataGridExt_net.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExtTests/MVVM_28_1_CTDataGridExt_netTests.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Legacy/MVVM_37_TreeView/" />
@@ -219,26 +335,49 @@
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="Libraries/Libraries.props" />
-    <Project Path="../CSharpBible/Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
-    <Project Path="../CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
-    <Project Path="../CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj" />
-    <Project Path="../CSharpBible/Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
-    <Project Path="../CSharpBible/Libraries/ExtendedConsole/ExtendedConsole.csproj" />
-    <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />
+    <Project Path="../CSharpBible/Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/ConsoleLibTests/ConsoleLibTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="../CSharpBible/Libraries/ExtendedConsole/ExtendedConsole.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
     <Project Path="Libraries/Avln_BaseLibTests/Avln_BaseLibTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
       <Platform Solution="DesktopOnly|*" Project="x86" />
     </Project>
-    <Project Path="Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj" />
-    <Project Path="Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
-    <Project Path="Libraries/Avln_TestConsole/Avln_TestConsole.csproj" />
-    <Project Path="Libraries/Avln_TestConsoleTests/Avln_TestConsoleTests.csproj" />
+    <Project Path="Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Avln_TestConsole/Avln_TestConsole.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Avln_TestConsoleTests/Avln_TestConsoleTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
     <Project Path="Libraries/BaseLib/BaseLib.csproj">
-      <Platform Solution="DesktopOnly|*" Project="x64" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="Libraries/BaseLibTests/BaseLibTests.csproj">
-      <Platform Solution="DesktopOnly|*" Project="x64" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
-    <Project Path="Libraries/MathLibrary/MathLibrary.csproj" />
+    <Project Path="Libraries/MathLibrary/MathLibrary.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/Projektmappenelemente/">
     <File Path=".github/copilot-instructions.md" />
@@ -247,39 +386,87 @@
     <File Path="Solution.props" />
   </Folder>
   <Folder Name="/Samples/">
-    <Project Path="AvlnSamples/Avln_AnimationTiming/Avln_AnimationTiming.csproj" />
-    <Project Path="AvlnSamples/Avln_Brushes/Avln_Brushes.csproj" />
-    <Project Path="AvlnSamples/Avln_ControlsAndLayout/Avln_ControlsAndLayout.csproj" />
-    <Project Path="AvlnSamples/Avln_ControlsAndLayoutTests/Avln_ControlsAndLayoutTests.csproj" />
-    <Project Path="AvlnSamples/Avln_Hello_World/Avln_Hello_World.csproj" />
-    <Project Path="AvlnSamples/Avln_IntegrationTestApp/Avln_IntegrationTestApp.csproj" />
-    <Project Path="AvlnSamples/Avln_RenderDemo/Avln_RenderDemo.csproj" />
-    <Project Path="AvlnSamples/SampleControls/ControlSamples.Pack.csproj" />
+    <Project Path="AvlnSamples/Avln_AnimationTiming/Avln_AnimationTiming.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AvlnSamples/Avln_Brushes/Avln_Brushes.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AvlnSamples/Avln_ControlsAndLayout/Avln_ControlsAndLayout.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AvlnSamples/Avln_ControlsAndLayoutTests/Avln_ControlsAndLayoutTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AvlnSamples/Avln_Hello_World/Avln_Hello_World.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AvlnSamples/Avln_IntegrationTestApp/Avln_IntegrationTestApp.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AvlnSamples/Avln_RenderDemo/Avln_RenderDemo.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AvlnSamples/SampleControls/ControlSamples.Pack.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA28_DataGridExt/">
-    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Browser/AA28_DataGridExt.Browser.csproj" />
-    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Desktop/AA28_DataGridExt.Desktop.csproj" />
-    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Model/AA28_DataGridExt.Model.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Browser/AA28_DataGridExt.Browser.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
-    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Tests/AA28_DataGridExt.Tests.csproj" />
-    <Project Path="AA28_DataGridExt/AA28_DataGridExt/AA28_DataGridExt.csproj" />
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Desktop/AA28_DataGridExt.Desktop.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Model/AA28_DataGridExt.Model.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt.Tests/AA28_DataGridExt.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA28_DataGridExt/AA28_DataGridExt/AA28_DataGridExt.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
    <Folder Name="/AA98_AvlnCodeStudio/">
      <File Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.props" />
      <File Path="AA98_AvlnCodeStudio/Directory.Packages.props" />
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj" />
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj" />
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj" />
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj" />
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor.Tests/AA98_AvlnCodeStudio.Editor.Tests.csproj" />
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor/AA98_AvlnCodeStudio.Editor.csproj" />
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj" />
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj" />
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" Id="17998949-eb69-4b31-b41e-3bac9c7b53e2" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor.Tests/AA98_AvlnCodeStudio.Editor.Tests.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor/AA98_AvlnCodeStudio.Editor.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" Id="17998949-eb69-4b31-b41e-3bac9c7b53e2">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
    </Folder>
-  <Project Path="BenchmarkSuite1/BenchmarkSuite1.csproj" />
+  <Project Path="BenchmarkSuite1/BenchmarkSuite1.csproj">
+    <BuildType Solution="DesktopOnly|*" Project="Debug" />
+  </Project>
   <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
-  <Project Path="RenderImage.Base/RenderImage.Base.csproj" />
-  <Project Path="RenderImage.BaseTests/RenderImage.BaseTests.csproj" />
+  <Project Path="RenderImage.Base/RenderImage.Base.csproj">
+    <BuildType Solution="DesktopOnly|*" Project="Debug" />
+  </Project>
+  <Project Path="RenderImage.BaseTests/RenderImage.BaseTests.csproj">
+    <BuildType Solution="DesktopOnly|*" Project="Debug" />
+  </Project>
 </Solution>

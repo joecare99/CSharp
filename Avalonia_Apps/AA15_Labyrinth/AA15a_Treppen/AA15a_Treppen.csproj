@@ -38,4 +38,8 @@
 		<ProjectReference Include="..\Treppen.Base\Treppen.Base.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageVersion Update="System.Drawing.Common" Version="10.0.9" />
+	</ItemGroup>
+
 </Project>
