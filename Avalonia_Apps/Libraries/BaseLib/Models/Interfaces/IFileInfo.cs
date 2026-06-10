@@ -1,5 +1,3 @@
-using System;
-
 namespace BaseLib.Models.Interfaces;
 
 /// <summary>
