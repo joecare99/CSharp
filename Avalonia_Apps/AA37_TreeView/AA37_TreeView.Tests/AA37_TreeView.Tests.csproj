@@ -1,0 +1,37 @@
+﻿<Project>
+  <Import Project="..\Application.props" />
+  <PropertyGroup>
+	<TargetFrameworks>net8.0</TargetFrameworks>
+	<IsTestProject>true</IsTestProject>
+	<AssemblyName>AA37_TreeView.Tests</AssemblyName>
+	<RootNamespace>AA37_TreeView.Tests</RootNamespace>
+	<Configurations>Debug;Release;DesktopOnly</Configurations>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+	<PackageReference Include="Coverlet.Collector">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Avalonia.Headless" />
+	<PackageReference Include="Avalonia.Fonts.Inter" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" />
+	<PackageReference Include="MSTest" />
+	<PackageReference Include="NSubstitute" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\AA37_TreeView.Model\AA37_TreeView.Model.csproj" />
+	<ProjectReference Include="..\AA37_TreeView\AA37_TreeView.csproj" />
+	  <ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+	<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+</Project>

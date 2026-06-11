@@ -1,0 +1,35 @@
+<UserControl
+	x:Class="AA40_Wizzard.Views.Page3View"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:model="using:AA40_Wizzard.Model"
+	xmlns:viewModels="using:AA40_Wizzard.ViewModels"
+	x:DataType="viewModels:Page3ViewModel">
+	<StackPanel Spacing="8">
+		<TextBlock Text="{Binding Additional1Label}" />
+		<ComboBox ItemsSource="{Binding AdditOptions}" SelectedItem="{Binding Additional1}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate DataType="model:ListEntry">
+					<TextBlock Text="{Binding Text}" />
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<TextBlock Text="{Binding Additional2Label}" />
+		<ComboBox ItemsSource="{Binding AdditOptions}" SelectedItem="{Binding Additional2}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate DataType="model:ListEntry">
+					<TextBlock Text="{Binding Text}" />
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<TextBlock Text="{Binding Additional3Label}" />
+		<ComboBox ItemsSource="{Binding AdditOptions}" SelectedItem="{Binding Additional3}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate DataType="model:ListEntry">
+					<TextBlock Text="{Binding Text}" />
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<Button Height="40" Margin="0,8,0,0" Command="{Binding ClearCommand}" Content="{Binding ClearText}" />
+	</StackPanel>
+</UserControl>

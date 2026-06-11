@@ -1,0 +1,40 @@
+<UserControl
+	x:Class="AA40_Wizzard.Views.WizzardView"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:valueConverters="using:AA40_Wizzard.ValueConverters"
+	xmlns:viewModels="using:AA40_Wizzard.ViewModels"
+	x:DataType="viewModels:WizzardViewModel">
+	<UserControl.Resources>
+		<valueConverters:DateTimeValueConverter x:Key="DateTimeValueConverter" />
+	</UserControl.Resources>
+	<DockPanel Background="Silver">
+		<Border DockPanel.Dock="Top" Padding="8">
+			<StackPanel Orientation="Horizontal" Spacing="8">
+				<TextBlock VerticalAlignment="Center" Text="{Binding Title}" />
+				<Button Content="DE" Command="{Binding LangDeCommand}" />
+				<Button Content="EN" Command="{Binding LangEnCommand}" />
+				<Button Content="FR" Command="{Binding LangFrCommand}" />
+			</StackPanel>
+		</Border>
+		<Grid DockPanel.Dock="Bottom" ColumnDefinitions="2*,Auto,Auto" Margin="8">
+			<TextBlock VerticalAlignment="Center" Text="{Binding Now, Converter={StaticResource DateTimeValueConverter}, ConverterParameter=yyyy-MM-dd HH:mm:ss}" />
+			<Button Grid.Column="1" Margin="8,0,0,0" Padding="16,8" Command="{Binding PrevTabCommand}" Content="{Binding PrevTabText}" />
+			<Button Grid.Column="2" Margin="8,0,0,0" Padding="16,8" Command="{Binding NextTabCommand}" Content="{Binding NextTabText}" />
+		</Grid>
+		<TabControl Margin="8" SelectedIndex="{Binding SelectedTab}">
+			<TabItem Header="{Binding Page1Header}">
+				<ContentControl Content="{Binding Page1}" Margin="4" />
+			</TabItem>
+			<TabItem Header="{Binding Page2Header}" IsEnabled="{Binding Tab2Enabled}">
+				<ContentControl Content="{Binding Page2}" Margin="4" />
+			</TabItem>
+			<TabItem Header="{Binding Page3Header}" IsEnabled="{Binding Tab3Enabled}">
+				<ContentControl Content="{Binding Page3}" Margin="4" />
+			</TabItem>
+			<TabItem Header="{Binding Page4Header}" IsEnabled="{Binding Tab4Enabled}">
+				<ContentControl Content="{Binding Page4}" Margin="4" />
+			</TabItem>
+		</TabControl>
+	</DockPanel>
+</UserControl>

@@ -1,0 +1,17 @@
+<UserControl
+	x:Class="AA40_Wizzard.Views.Page4View"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:viewModels="using:AA40_Wizzard.ViewModels"
+	x:DataType="viewModels:Page4ViewModel">
+	<StackPanel Spacing="8">
+		<TextBlock FontWeight="Bold" Text="{Binding SummaryLabel}" />
+		<TextBlock Text="{Binding MainSelection}" />
+		<TextBlock Text="{Binding AndLabel}" />
+		<TextBlock Text="{Binding SubSelection}" />
+		<TextBlock FontWeight="Bold" Text="{Binding AdditionalLabel}" />
+		<TextBlock Text="{Binding Additional1}" />
+		<TextBlock Text="{Binding Additional2}" />
+		<TextBlock Text="{Binding Additional3}" />
+	</StackPanel>
+</UserControl>
