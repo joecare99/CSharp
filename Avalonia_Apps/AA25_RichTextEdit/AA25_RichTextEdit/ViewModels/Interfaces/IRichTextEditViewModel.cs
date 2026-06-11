@@ -20,8 +20,8 @@ public interface IRichTextEditViewModel: INotifyPropertyChanged
 {
 
     IRelayCommand NewTextCommand { get; }
-    IRelayCommand OpenTextCommand { get; }
-    IRelayCommand SaveTextCommand { get; }
+    IAsyncRelayCommand OpenTextCommand { get; }
+    IAsyncRelayCommand SaveTextCommand { get; }
     IRelayCommand PrintTextCommand { get; }
     IRelayCommand ExitCommand { get; }
    Action? CloseApp { get; set; }
