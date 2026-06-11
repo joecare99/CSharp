@@ -3,7 +3,7 @@
     <ProjectReference Include="..\..\..\OpenAI\Ollama.Client\Ollama.Client.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="10.0.8" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.9" />
   </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
