@@ -1,0 +1,12 @@
+<Window
+	x:Class="AA40_Wizzard.Views.MainWindow"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:viewModels="using:AA40_Wizzard.ViewModels"
+	xmlns:views="using:AA40_Wizzard.Views"
+	x:DataType="viewModels:MainWindowViewModel"
+	Title="{Binding Title}"
+	Width="960"
+	Height="640">
+	<views:MainView />
+</Window>

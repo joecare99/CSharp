@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:AA37_TreeView.ViewModels"
+			 x:Class="AA37_TreeView.Views.BooksTreeView"
+			 x:DataType="vm:BooksTreeViewModel"
+			 mc:Ignorable="d">
+	<Design.DataContext>
+		<vm:BooksTreeViewModel />
+	</Design.DataContext>
+
+	<Grid RowDefinitions="Auto,*" ColumnDefinitions="*" Margin="12">
+		<TextBlock Text="Books Tree-View:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+		<Grid Grid.Row="1" ColumnDefinitions="3*,4*" ColumnSpacing="16">
+			<TreeView ItemsSource="{Binding Books}"
+					  SelectedItem="{Binding SelectedNode, Mode=TwoWay}"
+					  SelectionChanged="BooksTree_SelectionChanged">
+				<TreeView.ItemTemplate>
+					<TreeDataTemplate ItemsSource="{Binding Books}">
+						<TextBlock Text="{Binding Category}" />
+					</TreeDataTemplate>
+				</TreeView.ItemTemplate>
+			</TreeView>
+
+			<Border Grid.Column="1"
+					Padding="12"
+					BorderBrush="Gray"
+					BorderThickness="1"
+					CornerRadius="6">
+				<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+					<TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Author" />
+					<TextBox Grid.Row="0" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedBook.Author}" />
+
+					<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Title" />
+					<TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedBook.Title}" />
+
+					<TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Category" />
+					<TextBox Grid.Row="2" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedBook.Category}" />
+				</Grid>
+			</Border>
+		</Grid>
+	</Grid>
+</UserControl>

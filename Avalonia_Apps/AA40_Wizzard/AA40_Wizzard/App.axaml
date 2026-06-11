@@ -1,0 +1,28 @@
+<Application
+	x:Class="AA40_Wizzard.App"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:viewModels="using:AA40_Wizzard.ViewModels"
+	xmlns:views="using:AA40_Wizzard.Views"
+	RequestedThemeVariant="Default">
+	<Application.Styles>
+		<FluentTheme />
+	</Application.Styles>
+	<Application.DataTemplates>
+		<DataTemplate DataType="viewModels:WizzardViewModel">
+			<views:WizzardView />
+		</DataTemplate>
+		<DataTemplate DataType="viewModels:Page1ViewModel">
+			<views:Page1View />
+		</DataTemplate>
+		<DataTemplate DataType="viewModels:Page2ViewModel">
+			<views:Page2View />
+		</DataTemplate>
+		<DataTemplate DataType="viewModels:Page3ViewModel">
+			<views:Page3View />
+		</DataTemplate>
+		<DataTemplate DataType="viewModels:Page4ViewModel">
+			<views:Page4View />
+		</DataTemplate>
+	</Application.DataTemplates>
+</Application>

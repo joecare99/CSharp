@@ -1,14 +1,21 @@
 ﻿<Project>
 	<Import Project="..\Application.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
 		<Configurations>Debug;Release;DesktopOnly</Configurations>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="Avalonia.Headless" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="MSTest" />
 		<PackageReference Include="coverlet.collector">
@@ -18,7 +25,7 @@
 		<PackageReference Include="NSubstitute" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
 		<ProjectReference Include="..\AA25_RichTextEdit\AA25_RichTextEdit.csproj" />
+		<ProjectReference Include="..\Document.Axaml\Document.Axaml.csproj" />
 	</ItemGroup>
 </Project>

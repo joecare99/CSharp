@@ -17,6 +17,10 @@ internal class TestApp : App
 [TestClass()]
 public class AppTests 
 {
+    [ClassInitialize]
+    public static void ClassInitialize(TestContext context)
+        => TestAppBuilder.EnsureInitialized();
+
     static TestApp app = new();
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
     private Func<Type, object?> _gsold;

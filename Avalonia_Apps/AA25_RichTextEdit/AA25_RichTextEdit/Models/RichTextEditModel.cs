@@ -3,6 +3,7 @@
 // ***********************************************************************
 using BaseLib.Models.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Document.Axaml;
 using System;
 using System.Globalization;
 using System.IO;
@@ -12,6 +13,7 @@ namespace AA25_RichTextEdit.Models;
 
 public partial class RichTextEditModel : ObservableObject, IRichTextEditModel
 {
+    private static readonly FlowDocumentAxamlConverter DocumentConverter = new();
     private readonly System.Timers.Timer _timer; // disambiguate Timer
     private readonly ISysTime _systime;
     private readonly ILog _log;
@@ -33,7 +35,10 @@ public partial class RichTextEditModel : ObservableObject, IRichTextEditModel
     public string DocumentFromStream(FileStream fs)
     {
         using var tr = new StreamReader(fs);
-        return tr.ReadToEnd();
+        var rawContent = tr.ReadToEnd();
+        return Path.GetExtension(fs.Name).Equals(".xaml", StringComparison.OrdinalIgnoreCase)
+            ? DocumentConverter.ExtractPlainText(rawContent)
+            : rawContent;
     }
 
     public void DocumentToStream(FileStream fs, string document)

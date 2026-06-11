@@ -157,6 +157,7 @@
     <Project Path="AA25_RichTextEdit/Avln_RichTextEdit/Avln_RichTextEdit.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
+    <Project Path="AA25_RichTextEdit/Document.Axaml/Document.Axaml.csproj" />
     <Project Path="AA25_RichTextEdit/Document.Base/Document.Base.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
@@ -277,6 +278,7 @@
     </Project>
     <Project Path="../CSharpBible/ConsoleApps/TestConsole/TestConsole_net.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+      <Build Solution="DesktopOnly|*" Project="false" />
     </Project>
   </Folder>
   <Folder Name="/Legacy/FroniusMonitor/">
@@ -297,16 +299,26 @@
     <File Path="../../Delphi/Diverses/Source/Labyrinth/unt_Laby4.pas" />
     <File Path="../../Delphi/Diverses/Source/Labyrinth/unt_Point2d.pas" />
   </Folder>
-  <Folder Name="/Legacy/MVVM_28_1_DataGridExt/">
-    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExt/MVVM_28_1_CTDataGridExt_net.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+  <Folder Name="/Legacy/MVVM_37_TreeView/">
+    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_37_TreeView/MVVM_37_TreeView_net.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <Build Solution="DesktopOnly|*" Project="false" />
     </Project>
-    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExtTests/MVVM_28_1_CTDataGridExt_netTests.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_37_TreeViewTests/MVVM_37_TreeView_netTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <Build Solution="DesktopOnly|*" Project="false" />
     </Project>
   </Folder>
-  <Folder Name="/Legacy/MVVM_37_TreeView/" />
-  <Folder Name="/Legacy/MVVM_40_Wizzard/" />
+  <Folder Name="/Legacy/MVVM_40_Wizzard/">
+    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_40_Wizzard/MVVM_40_Wizzard_net.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <Build Solution="DesktopOnly|*" Project="false" />
+    </Project>
+    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_40_WizzardTests/MVVM_40_Wizzard_netTests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <Build Solution="DesktopOnly|*" Project="false" />
+    </Project>
+  </Folder>
   <Folder Name="/Legacy/RenderImage/">
     <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderBase.pas" />
     <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderBoundary.pas" />
@@ -412,6 +424,8 @@
     </Project>
   </Folder>
   <Folder Name="/AA28_DataGridExt/">
+    <File Path="AA28_DataGridExt/Application.props" />
+    <File Path="AA28_DataGridExt/Directory.Packages.props" />
     <Project Path="AA28_DataGridExt/AA28_DataGridExt.Browser/AA28_DataGridExt.Browser.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
@@ -428,18 +442,39 @@
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
   </Folder>
+  <Folder Name="/AA37_Treeview/">
+    <File Path="AA37_TreeView/Application.props" />
+    <File Path="AA37_TreeView/Directory.Packages.props" />
+    <Project Path="AA37_TreeView/AA37_TreeView.Browser/AA37_TreeView.Browser.csproj" />
+    <Project Path="AA37_TreeView/AA37_TreeView.Desktop/AA37_TreeView.Desktop.csproj" />
+    <Project Path="AA37_TreeView/AA37_TreeView.Model/AA37_TreeView.Model.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+    <Project Path="AA37_TreeView/AA37_TreeView.Tests/AA37_TreeView.Tests.csproj" />
+    <Project Path="AA37_TreeView/AA37_TreeView/AA37_TreeView.csproj" />
+  </Folder>
+  <Folder Name="/AA40_Wizzard/">
+    <Project Path="AA40_Wizzard/AA40_Wizzard.Browser/AA40_Wizzard.Browser.csproj" />
+    <Project Path="AA40_Wizzard/AA40_Wizzard.Desktop/AA40_Wizzard.Desktop.csproj" />
+    <Project Path="AA40_Wizzard/AA40_Wizzard.Model/AA40_Wizzard.Model.csproj" />
+    <Project Path="AA40_Wizzard/AA40_Wizzard.Tests/AA40_Wizzard.Tests.csproj" />
+    <Project Path="AA40_Wizzard/AA40_Wizzard/AA40_Wizzard.csproj" />
+  </Folder>
    <Folder Name="/AA98_AvlnCodeStudio/">
      <File Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.props" />
      <File Path="AA98_AvlnCodeStudio/Directory.Packages.props" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Debugging/AA98_AvlnCodeStudio.Base.Debugging.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Testing/AA98_AvlnCodeStudio.Base.Testing.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Versioning/AA98_AvlnCodeStudio.Base.Versioning.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
