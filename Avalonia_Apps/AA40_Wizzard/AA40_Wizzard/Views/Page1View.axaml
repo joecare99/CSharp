@@ -1,0 +1,31 @@
+<UserControl
+	x:Class="AA40_Wizzard.Views.Page1View"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="using:AA40_Wizzard.Controls"
+	xmlns:model="using:AA40_Wizzard.Model"
+	xmlns:viewModels="using:AA40_Wizzard.ViewModels"
+	x:DataType="viewModels:Page1ViewModel">
+	<Grid ColumnDefinitions="3*,7*" RowDefinitions="Auto,*" ColumnSpacing="12">
+		<StackPanel Grid.RowSpan="2" Spacing="8">
+			<TextBlock Text="{Binding NameLabel}" />
+			<ListBox
+				ItemsSource="{Binding MainOptions}"
+				SelectedItem="{Binding MainSelection}">
+				<ListBox.ItemTemplate>
+					<DataTemplate DataType="model:ListEntry">
+						<TextBlock Text="{Binding Text}" />
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+			<Button Height="40" Margin="0,8,0,0" Command="{Binding ClearCommand}" Content="{Binding ClearText}" />
+		</StackPanel>
+		<Border Grid.Column="1" Padding="8">
+			<Image Source="{Binding Image}" Stretch="Uniform" MaxHeight="220" />
+		</Border>
+		<ContentControl
+			Grid.Row="1"
+			Grid.Column="1"
+			Content="{Binding DocumentPreview}" />
+	</Grid>
+</UserControl>

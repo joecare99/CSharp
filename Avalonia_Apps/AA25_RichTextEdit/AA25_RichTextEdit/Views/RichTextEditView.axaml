@@ -19,44 +19,44 @@
       <Button Classes="toolbar" Command="{Binding PrintTextCommand}" ToolTip.Tip="Print">
         <TextBlock Text="&#xE749;" />
       </Button>
-      <Separator/>
-      <Button Classes="toolbar" Command="{Binding #rtb.CutCommand}" ToolTip.Tip="Cut">
+      <Border Width="1" Height="20" Margin="4,0" VerticalAlignment="Center" Background="#808080" />
+      <Button Classes="toolbar" Click="CutToolbarButton_OnClick" ToolTip.Tip="Cut">
         <TextBlock Text="&#xE8C6;" />
       </Button>
-      <Button Classes="toolbar" Command="{Binding #rtb.CopyCommand}" ToolTip.Tip="Copy">
+      <Button Classes="toolbar" Click="CopyToolbarButton_OnClick" ToolTip.Tip="Copy">
         <TextBlock Text="&#xE8C8;" />
       </Button>
-      <Button Classes="toolbar" Command="{Binding #rtb.PasteCommand}" ToolTip.Tip="Paste">
+      <Button Classes="toolbar" Click="PasteToolbarButton_OnClick" ToolTip.Tip="Paste">
         <TextBlock Text="&#xE77F;" />
       </Button>
-      <Separator/>
-      <Button Classes="toolbar" Command="{Binding #rtb.UndoCommand}" ToolTip.Tip="Undo">
+      <Border Width="1" Height="20" Margin="4,0" VerticalAlignment="Center" Background="#808080" />
+      <Button Classes="toolbar" IsEnabled="False" ToolTip.Tip="Undo is not available through the current public Avalonia RichTextBox API">
         <TextBlock Text="&#xE7A7;" />
       </Button>
-      <Button Classes="toolbar" Command="{Binding #rtb.RedoCommand}" ToolTip.Tip="Redo">
+      <Button Classes="toolbar" IsEnabled="False" ToolTip.Tip="Redo is not available in the current Avalonia RichTextBox package">
         <TextBlock Text="&#xE7A6;" />
       </Button>
-      <Separator/>
-      <ToggleButton Classes="toolbar" Command="{Binding #rtb.ToggleBoldCommand}" ToolTip.Tip="Bold">
+      <Border Width="1" Height="20" Margin="4,0" VerticalAlignment="Center" Background="#808080" />
+      <ToggleButton Classes="toolbar" Click="BoldToolbarButton_OnClick" ToolTip.Tip="Bold">
         <TextBlock Text="&#xE8DD;" />
       </ToggleButton>
-      <ToggleButton Classes="toolbar" Command="{Binding #rtb.ToggleItalicCommand}" ToolTip.Tip="Italic">
+      <ToggleButton Classes="toolbar" Click="ItalicToolbarButton_OnClick" ToolTip.Tip="Italic">
         <TextBlock Text="&#xE8DB;" />
       </ToggleButton>
-      <ToggleButton Classes="toolbar" Command="{Binding #rtb.ToggleUnderlineCommand}" ToolTip.Tip="Underline">
+      <ToggleButton Classes="toolbar" Click="UnderlineToolbarButton_OnClick" ToolTip.Tip="Underline">
         <TextBlock Text="&#xE8DC;" />
       </ToggleButton>
-      <Separator/>
-      <Button Classes="toolbar" Command="{Binding #rtb.AlignLeftCommand}" ToolTip.Tip="Align Left">
+      <Border Width="1" Height="20" Margin="4,0" VerticalAlignment="Center" Background="#808080" />
+      <Button Classes="toolbar" Click="AlignLeftToolbarButton_OnClick" ToolTip.Tip="Align Left">
         <TextBlock Text="&#xE8E4;" />
       </Button>
-      <Button Classes="toolbar" Command="{Binding #rtb.AlignCenterCommand}" ToolTip.Tip="Align Center">
+      <Button Classes="toolbar" Click="AlignCenterToolbarButton_OnClick" ToolTip.Tip="Align Center">
         <TextBlock Text="&#xE8E3;" />
       </Button>
-      <Button Classes="toolbar" Command="{Binding #rtb.AlignRightCommand}" ToolTip.Tip="Align Right">
+      <Button Classes="toolbar" Click="AlignRightToolbarButton_OnClick" ToolTip.Tip="Align Right">
         <TextBlock Text="&#xE8E2;" />
       </Button>
-      <Button Classes="toolbar" Command="{Binding #rtb.AlignJustifyCommand}" ToolTip.Tip="Align Justify">
+      <Button Classes="toolbar" Click="AlignJustifyToolbarButton_OnClick" ToolTip.Tip="Align Justify">
         <TextBlock Text="&#xE8E1;" />
       </Button>
     </StackPanel>

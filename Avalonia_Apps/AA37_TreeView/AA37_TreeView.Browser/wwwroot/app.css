@@ -1,0 +1,45 @@
+.avalonia-splash {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: white;
+    font-family: 'Outfit', sans-serif;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    pointer-events: none;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 200ms ease, visibility 0s linear 200ms;
+    z-index: 1000;
+}
+
+@media (prefers-color-scheme: light) {
+    .avalonia-splash {
+        background: white;
+    }
+
+    .avalonia-splash h2 {
+        color: #1b2a4e;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .avalonia-splash {
+        background: #1b2a4e;
+    }
+
+    .avalonia-splash h2 {
+        color: white;
+    }
+}
+
+.avalonia-splash h2 {
+    font-weight: 400;
+    font-size: 1.5rem;
+}
+
+.avalonia-splash.splash-close {
+    opacity: 0;
+    visibility: hidden;
+}

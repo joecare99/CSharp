@@ -1,0 +1,30 @@
+﻿<Project>
+  <Import Project="..\Application.props" />
+  <PropertyGroup>
+	<TargetFramework>net10.0</TargetFramework>
+	<IsTestProject>true</IsTestProject>
+	<AssemblyName>AA40_Wizzard.Tests</AssemblyName>
+	<RootNamespace>AA40_Wizzard.Tests</RootNamespace>
+	<Configurations>Debug;Release;DesktopOnly</Configurations>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+	<PackageReference Include="coverlet.collector">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Avalonia.Headless" />
+	<PackageReference Include="Avalonia.Fonts.Inter" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" />
+	<PackageReference Include="MSTest" />
+	<PackageReference Include="NSubstitute" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\AA40_Wizzard.Model\AA40_Wizzard.Model.csproj" />
+	<ProjectReference Include="..\AA40_Wizzard\AA40_Wizzard.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+	<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+</Project>

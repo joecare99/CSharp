@@ -56,6 +56,9 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA05-T001-Split-CommandParCalc-Into-Core-Desktop-and-Browser.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA09-T001-Fix-Browser-Startup-Black-Screen.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA28-T001-Create-Avalonia-DataGridExt-Project-Set.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA37-T001-Create-Avalonia-TreeView-Project-Set.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA40-T002-Fix-Wizzard-Document-Rendering-and-Selection-Refresh.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA40-T003-Convert-FlowDocuments-to-Avalonia-Document-Pipeline.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T001-Extract-Editor-Component-And-DI-Hosted-Avalonia-UI.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T007-Implement-Initial-Syntax-Highlighting-for-Core-Formats.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T010-Implement-Component-Registration-Baseline.md" />

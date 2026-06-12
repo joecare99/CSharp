@@ -1,0 +1,19 @@
+<UserControl
+	x:Class="AA40_Wizzard.Views.Page2View"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:model="using:AA40_Wizzard.Model"
+	xmlns:viewModels="using:AA40_Wizzard.ViewModels"
+	x:DataType="viewModels:Page2ViewModel">
+	<StackPanel Spacing="8">
+		<TextBlock Text="{Binding NameLabel}" />
+		<ListBox ItemsSource="{Binding SubOptions}" SelectedItem="{Binding SubSelection}">
+			<ListBox.ItemTemplate>
+				<DataTemplate DataType="model:ListEntry">
+					<TextBlock Text="{Binding Text}" />
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Button Height="40" Margin="0,8,0,0" Command="{Binding ClearCommand}" Content="{Binding ClearText}" />
+	</StackPanel>
+</UserControl>

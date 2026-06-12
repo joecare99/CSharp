@@ -12,7 +12,7 @@
     <ProjectReference Include="..\..\CommandlineHelper\CommandlineHelper.csproj" />
     <ProjectReference Include="..\..\CommandlineHelper.Generators\CommandlineHelper.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
   </ItemGroup>
 
   <ItemGroup>

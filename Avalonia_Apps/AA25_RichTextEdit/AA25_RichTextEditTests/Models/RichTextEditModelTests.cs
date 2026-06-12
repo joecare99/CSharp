@@ -15,7 +15,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Avalonia.ViewModels;
 using NSubstitute;
+using System;
 using System.ComponentModel;
+using System.IO;
 using BaseLib.Models.Interfaces;
 
 /// <summary>
@@ -68,5 +70,30 @@ public class RichTextEditModelTests : BaseTestViewModel
         Assert.IsInstanceOfType(testModel, typeof(RichTextEditModel));
         Assert.IsInstanceOfType(testModel, typeof(ObservableObject));
         Assert.IsInstanceOfType(testModel, typeof(INotifyPropertyChanged));
+    }
+
+    [TestMethod]
+    public void DocumentFromStreamConvertsFlowDocumentXamlToPlainTextTest()
+    {
+        var tempFile = Path.Combine(Path.GetTempPath(), $"{nameof(DocumentFromStreamConvertsFlowDocumentXamlToPlainTextTest)}.xaml");
+
+        try
+        {
+            File.WriteAllText(tempFile, "<FlowDocument xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"><Paragraph><Run>Alpha</Run><LineBreak /><Run>Beta</Run></Paragraph></FlowDocument>");
+            using var stream = new FileStream(tempFile, FileMode.Open, FileAccess.Read);
+
+            var result = testModel.DocumentFromStream(stream);
+
+            StringAssert.Contains(result, "Alpha");
+            StringAssert.Contains(result, "Beta");
+            Assert.IsFalse(result.Contains("<FlowDocument", StringComparison.Ordinal));
+        }
+        finally
+        {
+            if (File.Exists(tempFile))
+            {
+                File.Delete(tempFile);
+            }
+        }
     }
 }
