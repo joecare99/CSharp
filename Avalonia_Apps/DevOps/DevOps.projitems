@@ -55,6 +55,8 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA00-T003-Native-WinForms-Menu-Mapping-for-ConsoleLib.WinForms.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA05-T001-Split-CommandParCalc-Into-Core-Desktop-and-Browser.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA09-T001-Fix-Browser-Startup-Black-Screen.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA19-T002-Add-MultiHost-Support-and-Person-Data-Service.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA19-T003-Fix-Browser-Splash-Screen.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA28-T001-Create-Avalonia-DataGridExt-Project-Set.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA37-T001-Create-Avalonia-TreeView-Project-Set.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA40-T002-Fix-Wizzard-Document-Rendering-and-Selection-Refresh.md" />
