@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:views="clr-namespace:AA19_FilterLists.Views"
+ xmlns:vm="clr-namespace:AA19_FilterLists.ViewModels"
+ mc:Ignorable="d"
+ x:Class="AA19_FilterLists.Views.MainView"
+ x:DataType="vm:MainWindowViewModel">
+	<TabControl>
+		<TabItem Header="{Binding SampleTabHeader}">
+			<views:PersonView />
+		</TabItem>
+		<TabItem Header="{Binding XamlTabHeader}">
+			<DockPanel Margin="8">
+				<TextBlock DockPanel.Dock="Top" Margin="0,0,0,8" Text="{Binding XamlDescription}" />
+				<TextBox IsReadOnly="True"
+					 AcceptsReturn="True"
+					 TextWrapping="NoWrap"
+					 ScrollViewer.VerticalScrollBarVisibility="Auto"
+					 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+					 Text="{Binding PersonViewSource}" />
+			</DockPanel>
+		</TabItem>
+		<TabItem Header="{Binding ViewModelTabHeader}">
+			<DockPanel Margin="8">
+				<TextBlock DockPanel.Dock="Top" Margin="0,0,0,8" Text="{Binding ViewModelDescription}" />
+				<TextBox IsReadOnly="True"
+					 AcceptsReturn="True"
+					 TextWrapping="NoWrap"
+					 ScrollViewer.VerticalScrollBarVisibility="Auto"
+					 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+					 Text="{Binding PersonViewViewModelSource}" />
+			</DockPanel>
+		</TabItem>
+	</TabControl>
+</UserControl>
