@@ -48,16 +48,16 @@ public partial class App : Application
 
         services
             .AddSingleton<IMessenger, WeakReferenceMessenger>()
-            .AddSingleton<ISystemClock, SystemClock>()
+            .AddTransient<ISystemClock, SystemClock>()
             .AddSingleton<ILogSink, SimpleLog>()
             .AddSingleton<IWizzardModel, WizzardModel>()
-            .AddSingleton<IWizardContentService, WizardContentService>()
-            .AddSingleton<Page1ViewModel>()
-            .AddSingleton<Page2ViewModel>()
-            .AddSingleton<Page3ViewModel>()
-            .AddSingleton<Page4ViewModel>()
-            .AddSingleton<WizzardViewModel>()
-            .AddSingleton<MainWindowViewModel>()
+            .AddTransient<IWizardContentService, WizardContentService>()
+            .AddTransient<Page1ViewModel>()
+            .AddTransient<Page2ViewModel>()
+            .AddTransient<Page3ViewModel>()
+            .AddTransient<Page4ViewModel>()
+            .AddTransient<WizzardViewModel>()
+            .AddTransient<MainWindowViewModel>()
             .AddTransient<MainWindow>()
             .AddTransient<MainView>();
 

@@ -6,8 +6,8 @@
 	xmlns:model="using:AA40_Wizzard.Model"
 	xmlns:viewModels="using:AA40_Wizzard.ViewModels"
 	x:DataType="viewModels:Page1ViewModel">
-	<Grid ColumnDefinitions="3*,7*" RowDefinitions="Auto,*" ColumnSpacing="12">
-		<StackPanel Grid.RowSpan="2" Spacing="8">
+		<Grid ColumnDefinitions="3*,7*" ColumnSpacing="12">
+			<StackPanel Spacing="8">
 			<TextBlock Text="{Binding NameLabel}" />
 			<ListBox
 				ItemsSource="{Binding MainOptions}"
@@ -20,12 +20,16 @@
 			</ListBox>
 			<Button Height="40" Margin="0,8,0,0" Command="{Binding ClearCommand}" Content="{Binding ClearText}" />
 		</StackPanel>
-		<Border Grid.Column="1" Padding="8">
-			<Image Source="{Binding Image}" Stretch="Uniform" MaxHeight="220" />
-		</Border>
-		<ContentControl
-			Grid.Row="1"
-			Grid.Column="1"
-			Content="{Binding DocumentPreview}" />
+			<Grid Grid.Column="1" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+				<Border Padding="8">
+					<Image Source="{Binding Image}" Stretch="Uniform" MaxHeight="220" />
+				</Border>
+				<ScrollViewer
+					Grid.Column="1"
+					VerticalScrollBarVisibility="Auto"
+					HorizontalScrollBarVisibility="Disabled">
+					<ContentControl Content="{Binding DocumentPreview}" />
+				</ScrollViewer>
+			</Grid>
 	</Grid>
 </UserControl>

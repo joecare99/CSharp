@@ -51,12 +51,12 @@ public sealed partial class Page2ViewModel : ObservableObject, IRecipient<ValueC
     public ListEntry? SubSelection
     {
         get => TryFindEntry(_model.SubSelection, SubOptions);
-        set => _model.SubSelection = value?.ID ?? -1;
+        set { if (value != null) _model.SubSelection = value.ID; }
     }
 
     [RelayCommand]
     private void Clear()
-        => SubSelection = null;
+        => _model.SubSelection = -1;
 
     /// <inheritdoc />
     public void Receive(ValueChangedMessage<CultureInfo> message)
@@ -69,6 +69,7 @@ public sealed partial class Page2ViewModel : ObservableObject, IRecipient<ValueC
     {
         if (string.Equals(e.PropertyName, nameof(IWizzardModel.SubSelection), StringComparison.Ordinal))
         {
+            if (SubSelection?.ID != _model.SubSelection)
             OnPropertyChanged(nameof(SubSelection));
         }
         else if (string.Equals(e.PropertyName, nameof(IWizzardModel.SubOptions), StringComparison.Ordinal))
