@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using CommunityToolkit.Mvvm.ComponentModel;
+using AA19_FilterLists.Properties;
 
 namespace AA19_FilterLists.ViewModels;
 
@@ -20,6 +21,23 @@ namespace AA19_FilterLists.ViewModels;
 /// Implements the <see cref="ObservableObject" />
 /// </summary>
 /// <seealso cref="ObservableObject" />
-internal class MainWindowViewModel : ObservableObject
+public class MainWindowViewModel : ObservableObject
 {
+    public string WindowTitle => Resources.Title;
+
+    public string WindowDescription => Resources.Description;
+
+    public string SampleTabHeader => Resources.Title;
+
+    public string XamlTabHeader => "Xaml";
+
+    public string ViewModelTabHeader => "ViewModel";
+
+    public string XamlDescription => "the Xaml-Code";
+
+    public string ViewModelDescription => "the ViewModel-Code";
+
+    public string PersonViewSource => Resources.PersonView;
+
+    public string PersonViewViewModelSource => Resources.PersonViewViewModel;
 }

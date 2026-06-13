@@ -1,9 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Application.props" />
-
 	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -12,12 +10,22 @@
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="obj\**" />
 		<Compile Remove="Properties\AssemblyInfo.cs" />
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
 		<None Remove="*.bak" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Views\MainWindow.xaml" />
+	  <None Remove="Views\PersonView.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
@@ -29,11 +37,6 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Resources.resx</DependentUpon>
 		</Compile>
-		<Compile Update="Properties\Settings.Designer.cs">
-			<DesignTimeSharedInput>True</DesignTimeSharedInput>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Settings.settings</DependentUpon>
-		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -44,22 +47,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Properties\Settings.settings">
-			<Generator>PublicSettingsSingleFileGenerator</Generator>
-			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
-		</None>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Avalonia" />
-		<PackageReference Include="Avalonia.Desktop" />
+		<PackageReference Include="Avalonia.Controls.DataGrid" />
 		<PackageReference Include="Avalonia.Themes.Fluent" />
 		<PackageReference Include="Avalonia.Fonts.Inter" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="MsBox.Avalonia" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" />
-		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
-		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)'=='DesktopOnly'" />
 	</ItemGroup>
 </Project>

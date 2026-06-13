@@ -70,15 +70,16 @@ namespace AA19_FilterLists.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;Page x:Class=&quot;MVVM_19_FilterLists.Views.PersonView&quot;
-        ///        xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
-        ///        xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
-        ///        xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot;
-        ///        xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
-        ///        xmlns:local=&quot;clr-namespace:MVVM_19_FilterLists.Views&quot;
-        ///        xmlns:mvvm=&quot;clr-namespace:MVVM_19_FilterLists.ViewModels&quot;
-        ///        mc:Ignorable=&quot;d&quot;
-        ///        Title [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;UserControl xmlns=&quot;https://github.com/avaloniaui&quot;
+        /// xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+        /// xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot;
+        /// xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
+        ///  xmlns:dg=&quot;clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid&quot;
+        /// xmlns:vm=&quot;clr-namespace:AA19_FilterLists.ViewModels&quot;
+        /// x:Class=&quot;AA19_FilterLists.Views.PersonView&quot;
+        /// x:DataType=&quot;vm:PersonViewViewModel&quot;
+        /// mc:Ignorable=&quot;d&quot;&gt;
+        ///	&lt;Grid ColumnDefinitions=&quot; [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string PersonView {
             get {
@@ -108,7 +109,7 @@ namespace AA19_FilterLists.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die MVVM #19 FilterLists ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die AVLN #19 FilterLists ähnelt.
         /// </summary>
         public static string Title {
             get {

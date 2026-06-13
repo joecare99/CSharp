@@ -2,28 +2,69 @@
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
  xmlns:vm="clr-namespace:AA19_FilterLists.ViewModels"
  x:Class="AA19_FilterLists.Views.PersonView"
  x:DataType="vm:PersonViewViewModel"
  mc:Ignorable="d">
-	<Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">
-		<TextBlock Grid.Row="0" Grid.Column="0" Margin="4" Text="Filter:"/>
-		<TextBox Grid.Row="0" Grid.Column="1" Margin="4" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-		<Button Grid.Row="0" Grid.Column="2" Margin="4" Content="Clear" Command="{Binding ClearFilterCommand}"/>
+	<Grid ColumnDefinitions="2*,12,1*" RowDefinitions="*" Margin="8">
+		<TabControl Grid.Column="0">
+			<TabItem Header="Table">
+				<dg:DataGrid Margin="0,0,0,8"
+					AutoGenerateColumns="False"
+					ItemsSource="{Binding Persons}"
+					SelectedItem="{Binding ActPerson, Mode=TwoWay}">
+					<dg:DataGrid.Columns>
+						<dg:DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="SizeToHeader" />
+						<dg:DataGridTextColumn Header="Nachname" Binding="{Binding LastName}" Width="*" />
+						<dg:DataGridTextColumn Header="Vorname" Binding="{Binding FirstName}" Width="*" />
+						<dg:DataGridTextColumn Header="Titel" Binding="{Binding Title}" Width="*" />
+						<dg:DataGridTextColumn Header="Voller Name" Binding="{Binding FullName}" Width="2*" />
+					</dg:DataGrid.Columns>
+				</dg:DataGrid>
+			</TabItem>
+			<TabItem Header="List" IsSelected="True">
+				<Grid RowDefinitions="Auto,Auto,*" Margin="0,0,0,8">
+					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+						<TextBlock VerticalAlignment="Center" Text="Filter" />
+						<TextBox Width="220"
+							 Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+						<Button Content="Clear" Command="{Binding ClearFilterCommand}" />
+					</StackPanel>
+					<TextBlock Grid.Row="1" Margin="0,0,0,8" Text="Gefilterte Personen" />
+					<ListBox Grid.Row="2"
+						 ItemsSource="{Binding FilteredPersons}"
+						 SelectedItem="{Binding ActPerson, Mode=TwoWay}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Vertical" Margin="0,4">
+									<TextBlock FontWeight="Bold" Text="{Binding FullName}" />
+									<TextBlock Text="{Binding Title}" />
+									<TextBlock Text="{Binding Id}" />
+								</StackPanel>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</Grid>
+			</TabItem>
+		</TabControl>
 
-		<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="8" Margin="4">
-			<TextBox Width="120" PlaceholderText="First Name" Text="{Binding NewPerson.FirstName, Mode=TwoWay}"/>
-			<TextBox Width="120" PlaceholderText="Last Name" Text="{Binding NewPerson.LastName, Mode=TwoWay}"/>
-			<TextBox Width="120" PlaceholderText="Title" Text="{Binding NewPerson.Title, Mode=TwoWay}"/>
-			<Button Content="Add" Command="{Binding btnAddPerson}"/>
-		</StackPanel>
-
-		<ListBox Grid.Row="3" Grid.ColumnSpan="3" Margin="4" ItemsSource="{Binding FilteredPersons}">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding FullName}"/>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+		<Border Grid.Column="2" Padding="12" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1" CornerRadius="6">
+			<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+				<TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,12" FontSize="16" FontWeight="Bold" Text="Person" />
+				<TextBlock Grid.Row="1" Margin="0,0,8,8" VerticalAlignment="Center" Text="Nachname" />
+				<TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,8" Text="{Binding ActPerson.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBlock Grid.Row="2" Margin="0,0,8,8" VerticalAlignment="Center" Text="Vorname" />
+				<TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,8" Text="{Binding ActPerson.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBlock Grid.Row="3" Margin="0,0,8,8" VerticalAlignment="Center" Text="Titel" />
+				<TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,8" Text="{Binding ActPerson.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBlock Grid.Row="4" Margin="0,0,8,8" VerticalAlignment="Center" Text="Voller Name" />
+				<TextBox Grid.Row="4" Grid.Column="1" Margin="0,0,0,8" IsReadOnly="True" Text="{Binding ActPerson.FullName, Mode=OneWay}" />
+				<StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,12,0,0">
+					<Button Content="Neu" Command="{Binding NewPersonCommand}" />
+					<Button Content="Add" Command="{Binding AddPersonCommand}" />
+				</StackPanel>
+			</Grid>
+		</Border>
 	</Grid>
 </UserControl>
