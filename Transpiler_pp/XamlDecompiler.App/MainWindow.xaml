@@ -1,0 +1,102 @@
+<Window x:Class="XamlDecompiler.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Generated C# to XAML Decompiler"
+        Height="900"
+        Width="1400"
+        MinHeight="700"
+        MinWidth="1100">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid ColumnDefinitions="Auto,Auto,Auto,*" Margin="0,0,0,12">
+            <Button Content="Load .cs file"
+                    Padding="14,6"
+                    Margin="0,0,8,0"
+                    Click="LoadFileButton_OnClick" />
+            <Button Grid.Column="1"
+                    Content="Analyze"
+                    Padding="14,6"
+                    Margin="0,0,8,0"
+                    Command="{Binding AnalyzeCommand}" />
+            <Button Grid.Column="2"
+                    Content="Save XAML + code-behind"
+                    Padding="14,6"
+                    Margin="0,0,8,0"
+                    Click="SaveButton_OnClick"
+                    IsEnabled="{Binding CanSave}" />
+            <TextBlock Grid.Column="3"
+                       VerticalAlignment="Center"
+                       Text="{Binding StatusText}"
+                       TextWrapping="Wrap" />
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center"
+                       Margin="0,0,8,0"
+                       Text="Loaded file:" />
+            <TextBox Grid.Column="1"
+                     Margin="0,0,8,0"
+                     IsReadOnly="True"
+                     Text="{Binding LoadedFilePath}" />
+            <Button Grid.Column="2"
+                    Content="Clear"
+                    Padding="14,4"
+                    Command="{Binding ClearCommand}" />
+        </Grid>
+
+        <Expander Grid.Row="2"
+                  Margin="0,0,0,12"
+                  IsExpanded="True"
+                  Header="Diagnostics">
+            <TextBox MinHeight="80"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Auto"
+                     FontFamily="Consolas"
+                     Text="{Binding DiagnosticsText}" />
+        </Expander>
+
+        <TabControl Grid.Row="3">
+            <TabItem Header="Source preview">
+                <TextBox IsReadOnly="True"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto"
+                         FontFamily="Consolas"
+                         Text="{Binding SourceText}" />
+            </TabItem>
+            <TabItem Header="Reconstructed XAML">
+                <TextBox IsReadOnly="True"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto"
+                         FontFamily="Consolas"
+                         Text="{Binding XamlPreview}" />
+            </TabItem>
+            <TabItem Header="Reconstructed code-behind">
+                <TextBox IsReadOnly="True"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto"
+                         FontFamily="Consolas"
+                         Text="{Binding CodeBehindPreview}" />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
