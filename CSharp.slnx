@@ -1,6 +1,9 @@
 <Solution>
   <Folder Name="/.github/">
+    <File Path=".github/workflows/codeql-analysis.yml" />
     <File Path=".github/workflows/codeql.yml" />
+    <File Path=".github/workflows/CSharpBible.yml" />
+    <File Path=".github/workflows/Teststatements.yml" />
   </Folder>
   <Folder Name="/Avalonia_Apps/" />
   <Folder Name="/Avalonia_Apps/Avalonia_App01/">
@@ -21,21 +24,13 @@
     <Project Path="CSharpBible/AddPage/AddPage.csproj" Id="c8249e35-ed76-4180-95ba-317f8dc45683" />
     <Project Path="CSharpBible/AddPageWPF/AddPageWPF.csproj" Id="af16f7af-cf83-4679-8111-0bbe9bcda102" />
     <Project Path="CSharpBible/CharGrid/CharGrid.csproj" />
-    <Project Path="CSharpBible/ConsoleDisplay/ConsoleDisplay.csproj" />
-    <Project Path="CSharpBible/ConsoleDisplay/ConsoleDisplay_net.csproj" />
     <Project Path="CSharpBible/ConsoleDisplay/ConsoleDisplay_win.csproj" />
     <Project Path="CSharpBible/ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
-    <Project Path="CSharpBible/ConsoleDisplayTests/ConsoleDisplay_netTests.csproj" />
-    <Project Path="CSharpBible/ConsoleMouseApp/ConsoleMouseApp.csproj" />
-    <Project Path="CSharpBible/ConsoleMouseApp/ConsoleMouseApp_net.csproj" />
     <Project Path="CSharpBible/CSharpBibleTest/CSharpBibleTest.csproj" Id="4ab88278-f044-49ed-a324-7c931a66da71" />
     <Project Path="CSharpBible/CSV_Viewer/CSV_Viewer.csproj" Id="86a9a87a-d6bf-4904-b4ca-21bd4cff82b8" />
     <Project Path="CSharpBible/CSV_ViewerTest/CSV_ViewerTest.csproj" Id="897c5ad9-edfd-4160-b837-62933591247f" />
     <Project Path="CSharpBible/DataGridEx/DataGridEx.csproj" />
     <Project Path="CSharpBible/DataGridExWPF/DataGridExWPF.csproj" />
-    <Project Path="CSharpBible/Display_Test/Display_netTest.csproj" />
-    <Project Path="CSharpBible/Display_Test/Display_Test.csproj" />
-    <Project Path="CSharpBible/TestConsole/TestConsole.csproj" />
     <Project Path="CSharpBible/TestConsole/TestConsole_net.csproj" />
     <Project Path="CSharpBible/TestConsoleDemo/TestConsoleDemo.csproj" />
     <Project Path="CSharpBible/TestConsoleTests/TestConsoleTests.csproj" />
@@ -85,6 +80,15 @@
     <Project Path="CSharpBible/Calc/Calc64WFTests/Calc64WFTests.csproj" />
     <Project Path="CSharpBible/Calc/Calc64WFTests/Calc64WF_netTests.csproj" />
     <Project Path="CSharpBible/Calc/Calc64_Wpf/Calc64_Wpf.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/ConsoleApps/">
+    <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/Display_Test/Display_netTest.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/Display_Test/Display_Test.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/TestConsole/TestConsole.csproj" />
   </Folder>
   <Folder Name="/CSharpBible/Data/">
     <Project Path="CSharpBible/Data/TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
@@ -176,23 +180,19 @@
   </Folder>
   <Folder Name="/CSharpBible/Libraries/">
     <Project Path="CSharpBible/Libraries/BaseLib/BaseLib.csproj" />
-    <Project Path="CSharpBible/Libraries/BaseLib/BaseLib_net.csproj" />
     <Project Path="CSharpBible/Libraries/BaseLibTests/BaseLibTests.csproj" />
-    <Project Path="CSharpBible/Libraries/BaseLibTests/BaseLib_netTests.csproj" />
     <Project Path="CSharpBible/Libraries/CommonDialogs/CommonDialogs.csproj" />
     <Project Path="CSharpBible/Libraries/CommonDialogs/CommonDialogs_net.csproj" />
+    <Project Path="CSharpBible/Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
+    <Project Path="CSharpBible/Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
+    <Project Path="CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
     <Project Path="CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj" />
-    <Project Path="CSharpBible/Libraries/ConsoleLib/ConsoleLib_net.csproj" />
     <Project Path="CSharpBible/Libraries/CSFreeVision/CSFreeVision.csproj" />
     <Project Path="CSharpBible/Libraries/GenInterfaces/GenInterfaces.csproj" />
     <Project Path="CSharpBible/Libraries/MathLIbrary/MathLibrary.csproj" />
-    <Project Path="CSharpBible/Libraries/MathLIbrary/MathLibrary_net.csproj" />
     <Project Path="CSharpBible/Libraries/MathLibraryTests/MathLibraryTests.csproj" />
-    <Project Path="CSharpBible/Libraries/MathLibraryTests/MathLibrary_netTests.csproj" />
     <Project Path="CSharpBible/Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
-    <Project Path="CSharpBible/Libraries/MVVM_BaseLib/MVVM_BaseLib_net.csproj" />
     <Project Path="CSharpBible/Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
-    <Project Path="CSharpBible/Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests_net.csproj" />
     <Project Path="CSharpBible/Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
     <Project Path="CSharpBible/Libraries/WFSystem.Data/WFSystem.Windows.Data_net.csproj" />
   </Folder>

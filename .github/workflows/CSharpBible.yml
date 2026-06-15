@@ -1,4 +1,4 @@
-name: CSharpBible CI3
+name: CSharpBible CI4
 
 on:
   push:
