@@ -71,6 +71,7 @@
     <EmbeddedResource Include="Visual\FrmAddPageMain.resx">
       <DependentUpon>FrmAddPageMain.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Directory.Build.props" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

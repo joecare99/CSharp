@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using ActionTest.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -24,30 +25,11 @@ namespace ActionTestWPF
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
-        public MainWindow()
+        public MainWindow(IActionMainViewModel vm)
         {
             InitializeComponent();
-        }
-
-        /// <summary>
-        /// Handles the TextChanged event of the edtInput control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="TextChangedEventArgs"/> instance containing the event data.</param>
-        private void edtInput_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            btnQuit.IsEnabled = (edtInput.Text.ToLower() == "quit");
-            lblTextboxHint.Margin = new Thickness(0,  (edtInput.Text != "") ? -30.0: 160.0,0,0);
-        }
-
-        /// <summary>
-        /// Handles the Click event of the btnQuit control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void btnQuit_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
+            DataContext = vm;
+            vm.ExitAction = (o) => Close();
         }
     }
 }

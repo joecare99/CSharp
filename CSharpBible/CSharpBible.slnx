@@ -4,6 +4,11 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/ActionTest/">
+    <Project Path="ActionTest/ActionTest.csproj" />
+    <Project Path="ActionTest/ActionTest.WF.csproj" />
+    <Project Path="ActionTestWPF/ActionTest.WPF.csproj" />
+  </Folder>
   <Folder Name="/Basics/">
     <File Path="Basics/C#-Basics.props" />
     <File Path="Basics/C#-Basics_net.props" />
@@ -98,6 +103,10 @@
     <Project Path="Data/TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
     <Project Path="Data/TraceCsv2realCsvTests/TraceCsv2realCsvTests.csproj" />
   </Folder>
+  <Folder Name="/Data/CommandLineHelper/">
+    <Project Path="Data/CommandlineHelper.Generators/CommandlineHelper.Generators.csproj" />
+    <Project Path="Data/CommandlineHelper/CommandlineHelper.csproj" />
+  </Folder>
   <Folder Name="/Data/DocumentUtils/">
     <Project Path="Data/DocumentUtils/Document.Base/Document.Base.csproj" />
     <Project Path="Data/DocumentUtils/Document.Docx/Document.Docx.csproj" />
@@ -113,9 +122,15 @@
     <Project Path="Data/DocumentUtils/HelloWorld/HelloWorldOdf.csproj" />
   </Folder>
   <Folder Name="/Data/RepoMigrator/">
+    <Project Path="Data/RepoMigrator/RepoMigrator.App.Logic/RepoMigrator.App.Logic.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.App.State/RepoMigrator.App.State.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.App.Wpf/RepoMigrator.App.Wpf.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Core/RepoMigrator.Core.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Archive/RepoMigrator.Providers.Archive.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Compression.TarGz/RepoMigrator.Providers.Compression.TarGz.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Compression.Zip/RepoMigrator.Providers.Compression.Zip.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Git/RepoMigrator.Providers.Git.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Patch/RepoMigrator.Providers.Patch.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Svn/RepoMigrator.Providers.Svn.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.SvnCli/RepoMigrator.Providers.SvnCli.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Tests/RepoMigrator.Tests.csproj" />
@@ -610,8 +625,6 @@
   <Project Path="../PackageDwnLd.csproj" />
   <Project Path="AboutEx/AboutEx.csproj" />
   <Project Path="AboutExTests/AboutExTests.csproj" />
-  <Project Path="ActionTest/ActionTest.csproj" />
-  <Project Path="ActionTestWPF/ActionTestWPF.csproj" />
   <Project Path="AddPage/AddPage.csproj" Id="c8249e35-ed76-4180-95ba-317f8dc45683" />
   <Project Path="AddPageWPF/AddPageWPF.csproj" Id="af16f7af-cf83-4679-8111-0bbe9bcda102" />
   <Project Path="CharGrid/CharGrid.csproj" />

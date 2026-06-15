@@ -4,13 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ActionTestWPF"
+        xmlns:mvvm="clr-namespace:ActionTest.ViewModels;assembly=ActionTest"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <d:Window.DataContext>
+        <mvvm:ActionMainViewModel />
+    </d:Window.DataContext>
     <Grid>
-        <Button x:Name="btnQuit" Content="Schliessen" Height="100" Margin="0,40,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Width="300" IsEnabled="False" ClickMode="Press" Click="btnQuit_Click"/>
-        <TextBox x:Name="edtInput" HorizontalAlignment="Center" Height="33" Margin="0,160,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="253" TextChanged="edtInput_TextChanged" AutomationProperties.HelpText="Enter Quit here"/>
+        <Button Content="Schliessen" Command="{Binding CloseClickCommand}" Height="100" Margin="0,40,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Width="300"/>
+        <TextBox Text="{Binding EnterQuitText, Delay=100, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Height="33" Margin="0,160,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="253" AutomationProperties.HelpText="Enter Quit here"/>
         <Label x:Name="lblEnterQuit" Content="Enter Quit above to enable the Button" HorizontalAlignment="Center" Margin="0,230,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lblTextboxHint" Content="Enter Quit here" HorizontalAlignment="Center" Margin="0,160,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+        <Label x:Name="lblTextboxHint" Content="Enter Quit here" HorizontalAlignment="Center" Margin="0,140,0,0" VerticalAlignment="Top" IsEnabled="False"/>
 
     </Grid>
 </Window>

@@ -8,8 +8,8 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Coverlet.Collector" Version="10.0.1">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
 		<PackageReference Include="MSTest" Version="4.2.3" />
@@ -22,7 +22,7 @@
 		<ProjectReference Include="..\RepoMigrator.App.Logic\RepoMigrator.App.Logic.csproj" />
 		<ProjectReference Include="..\RepoMigrator.App.State\RepoMigrator.App.State.csproj" />
 		<ProjectReference Include="..\RepoMigrator.App.Wpf\RepoMigrator.App.Wpf.csproj" />
-    <ProjectReference Include="..\RepoMigrator.Providers.Patch\RepoMigrator.Providers.Patch.csproj" />
+		<ProjectReference Include="..\RepoMigrator.Providers.Patch\RepoMigrator.Providers.Patch.csproj" />
 		<ProjectReference Include="..\RepoMigrator.Core\RepoMigrator.Core.csproj" />
 		<ProjectReference Include="..\RepoMigrator.Providers.Git\RepoMigrator.Providers.Git.csproj" />
 		<ProjectReference Include="..\RepoMigrator.Providers.Svn\RepoMigrator.Providers.Svn.csproj" />
