@@ -5,7 +5,120 @@
     <File Path=".github/workflows/CSharpBible.yml" />
     <File Path=".github/workflows/Teststatements.yml" />
   </Folder>
-  <Folder Name="/Avalonia_Apps/" />
+  <Folder Name="/Avalonia_Apps/">
+    <Project Path="Avalonia_Apps/BenchmarkSuite1/BenchmarkSuite1.csproj" />
+    <Project Path="Avalonia_Apps/RenderImage.Base/RenderImage.Base.csproj" />
+    <Project Path="Avalonia_Apps/RenderImage.BaseTests/RenderImage.BaseTests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA05_CommandParCalc/">
+    <Project Path="Avalonia_Apps/AA05_CommandParCalc/AA05_CommandParCalc.Browser/AA05_CommandParCalc.Browser.csproj" />
+    <Project Path="Avalonia_Apps/AA05_CommandParCalc/AA05_CommandParCalc.Desktop/AA05_CommandParCalc.Desktop.csproj" />
+    <Project Path="Avalonia_Apps/AA05_CommandParCalc/AA05_CommandParCalc/AA05_CommandParCalc.csproj" />
+    <Project Path="Avalonia_Apps/AA05_CommandParCalc/AA05_CommandParCalcTests/AA05_CommandParCalcTests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA06_ValueConverter2/">
+    <Project Path="Avalonia_Apps/AA06_ValueConverter2/AA06_Converters4/AA06_Converters4.csproj" />
+    <Project Path="Avalonia_Apps/AA06_ValueConverter2/AA06_Converters4Tests/AA06_Converters4Tests.csproj" />
+    <Project Path="Avalonia_Apps/AA06_ValueConverter2/AA06_ValueConverter2/AA06_ValueConverter2.csproj" />
+    <Project Path="Avalonia_Apps/AA06_ValueConverter2/AA06_ValueConverter2Tests/AA06_ValueConverter2Tests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA09_DialogBoxes/">
+    <Project Path="Avalonia_Apps/AA09_DialogBoxes/AA09_DialogBoxes.Browser/AA09_DialogBoxes.Browser.csproj" />
+    <Project Path="Avalonia_Apps/AA09_DialogBoxes/AA09_DialogBoxes.Desktop/AA09_DialogBoxes.Desktop.csproj" />
+    <Project Path="Avalonia_Apps/AA09_DialogBoxes/AA09_DialogBoxes/AA09_DialogBoxes.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA09_DialogBoxes/AA09_DialogBoxesTests/">
+    <Project Path="Avalonia_Apps/AA09_DialogBoxes/AA09_DialogBoxesTests/AA09_DialogBoxes_Tests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA14_ScreenX/">
+    <Project Path="Avalonia_Apps/AA14_ScreenX/AA14_ScreenX/AA14_ScreenX.csproj" />
+    <Project Path="Avalonia_Apps/AA14_ScreenX/ScreenX.Base/ScreenX.Base.csproj" />
+    <Project Path="Avalonia_Apps/AA14_ScreenX/ScreenX.BaseTests/ScreenX.BaseTests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA15_Labyrinth/">
+    <Project Path="Avalonia_Apps/AA15_Labyrinth/AA15a_Treppen/AA15a_Treppen.csproj" />
+    <Project Path="Avalonia_Apps/AA15_Labyrinth/AA15_Labyrinth/AA15_Labyrinth.csproj" />
+    <Project Path="Avalonia_Apps/AA15_Labyrinth/AA15_LabyrinthTests/AA15_LabyrinthTests.csproj" />
+    <Project Path="Avalonia_Apps/AA15_Labyrinth/Treppen.Base/Treppen.Base.csproj" />
+    <Project Path="Avalonia_Apps/AA15_Labyrinth/Treppen.BaseTests/Treppen.BaseTests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA16_UserControl/" />
+  <Folder Name="/Avalonia_Apps/AA16_UserControl/AA16_Usercontrol1/">
+    <Project Path="Avalonia_Apps/AA16_UserControl/AA16_Usercontrol1/AA16_UserControl1.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA16_UserControl/AA16_UserControl1Tests/">
+    <Project Path="Avalonia_Apps/AA16_UserControl/AA16_UserControl1Tests/AA16_UserControl1_Tests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA16_UserControl/AA16_Usercontrol2/">
+    <Project Path="Avalonia_Apps/AA16_UserControl/AA16_Usercontrol2/AA16_UserControl2.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA18_MultiConverter/">
+    <Project Path="Avalonia_Apps/AA18_MultiConverter/AA18_MultiConverters/AA18_MultiConverters.csproj" />
+    <Project Path="Avalonia_Apps/AA18_MultiConverter/AA18_MultiConvertersTests/AA18_MultiConvertersTests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA19_FilterLists/">
+    <Project Path="Avalonia_Apps/AA19_FilterLists/AA19_FilterLists.Browser/AA19_FilterLists.Browser.csproj" />
+    <Project Path="Avalonia_Apps/AA19_FilterLists/AA19_FilterLists.Desktop/AA19_FilterLists.Desktop.csproj" />
+    <Project Path="Avalonia_Apps/AA19_FilterLists/AA19_FilterLists/AA19_FilterLists.csproj" />
+    <Project Path="Avalonia_Apps/AA19_FilterLists/AA19_FilterListsTests/AA19_FilterListsTests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA20_SysDialogs/">
+    <Project Path="Avalonia_Apps/AA20_SysDialogs/AA20a_CommonDialogs/AA20a_CommonDialogs.csproj" />
+    <Project Path="Avalonia_Apps/AA20_SysDialogs/AA20_Sysdialogs/AA20_Sysdialogs.csproj" />
+    <Project Path="Avalonia_Apps/AA20_SysDialogs/AA20_SysdialogsTests/AA20_SysdialogsTests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA21_Buttons/">
+    <Project Path="Avalonia_Apps/AA21_Buttons/AA21_Buttons/AA21_Buttons.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA22_AvlnCap/">
+    <Project Path="Avalonia_Apps/AA22_AvlnCap/AA22_AvlnCap/AA22_AvlnCap.csproj" />
+    <Project Path="Avalonia_Apps/AA22_AvlnCap/AA22_AvlnCap2/AA22_AvlnCap2.csproj" />
+    <Project Path="Avalonia_Apps/AA22_AvlnCap/AA22_AvlnCapTests/AA22_AvlnCapTests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA25_RichTextEdit/">
+    <Project Path="Avalonia_Apps/AA25_RichTextEdit/AA25_RichTextEdit/AA25_RichTextEdit.csproj" />
+    <Project Path="Avalonia_Apps/AA25_RichTextEdit/AA25_RichTextEditTests/AA25_RichTextEditTests.csproj" />
+    <Project Path="Avalonia_Apps/AA25_RichTextEdit/Avln_RichTextEdit/Avln_RichTextEdit.csproj" />
+    <Project Path="Avalonia_Apps/AA25_RichTextEdit/Document.Axaml/Document.Axaml.csproj" />
+    <Project Path="Avalonia_Apps/AA25_RichTextEdit/Document.Base/Document.Base.csproj" />
+    <Project Path="Avalonia_Apps/AA25_RichTextEdit/Document.Flow/Document.Flow.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA28_DataGridExt/">
+    <Project Path="Avalonia_Apps/AA28_DataGridExt/AA28_DataGridExt.Browser/AA28_DataGridExt.Browser.csproj" />
+    <Project Path="Avalonia_Apps/AA28_DataGridExt/AA28_DataGridExt.Desktop/AA28_DataGridExt.Desktop.csproj" />
+    <Project Path="Avalonia_Apps/AA28_DataGridExt/AA28_DataGridExt.Model/AA28_DataGridExt.Model.csproj" />
+    <Project Path="Avalonia_Apps/AA28_DataGridExt/AA28_DataGridExt.Tests/AA28_DataGridExt.Tests.csproj" />
+    <Project Path="Avalonia_Apps/AA28_DataGridExt/AA28_DataGridExt/AA28_DataGridExt.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA37_TreeView/">
+    <Project Path="Avalonia_Apps/AA37_TreeView/AA37_TreeView.Browser/AA37_TreeView.Browser.csproj" />
+    <Project Path="Avalonia_Apps/AA37_TreeView/AA37_TreeView.Desktop/AA37_TreeView.Desktop.csproj" />
+    <Project Path="Avalonia_Apps/AA37_TreeView/AA37_TreeView.Model/AA37_TreeView.Model.csproj" />
+    <Project Path="Avalonia_Apps/AA37_TreeView/AA37_TreeView.Tests/AA37_TreeView.Tests.csproj" />
+    <Project Path="Avalonia_Apps/AA37_TreeView/AA37_TreeView/AA37_TreeView.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA40_Wizzard/">
+    <Project Path="Avalonia_Apps/AA40_Wizzard/AA40_Wizzard.Browser/AA40_Wizzard.Browser.csproj" />
+    <Project Path="Avalonia_Apps/AA40_Wizzard/AA40_Wizzard.Desktop/AA40_Wizzard.Desktop.csproj" />
+    <Project Path="Avalonia_Apps/AA40_Wizzard/AA40_Wizzard.Model/AA40_Wizzard.Model.csproj" />
+    <Project Path="Avalonia_Apps/AA40_Wizzard/AA40_Wizzard.Tests/AA40_Wizzard.Tests.csproj" />
+    <Project Path="Avalonia_Apps/AA40_Wizzard/AA40_Wizzard/AA40_Wizzard.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AA98_AvlnCodeStudio/">
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI.Tests/AA98_AvlnCodeStudio.Base.AI.Tests.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Debugging/AA98_AvlnCodeStudio.Base.Debugging.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Testing/AA98_AvlnCodeStudio.Base.Testing.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Versioning/AA98_AvlnCodeStudio.Base.Versioning.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor.Tests/AA98_AvlnCodeStudio.Editor.Tests.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor/AA98_AvlnCodeStudio.Editor.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj" />
+    <Project Path="Avalonia_Apps/AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" />
+  </Folder>
   <Folder Name="/Avalonia_Apps/Avalonia_App01/">
     <Project Path="Avalonia_Apps/Avalonia_App01/Avalonia_App_01.Android/Avalonia_App_01.Android.csproj" />
     <Project Path="Avalonia_Apps/Avalonia_App01/Avalonia_App_01.Browser/Avalonia_App_01.Browser.csproj" />
@@ -15,6 +128,65 @@
   </Folder>
   <Folder Name="/Avalonia_Apps/Avalonia_App02/">
     <Project Path="Avalonia_Apps/Avalonia_App02/Avalonia_App02/Avalonia_App02.csproj" />
+    <Project Path="Avalonia_Apps/Avalonia_App02/Avalonia_App02Tests/Avalonia_App02Tests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AvlnSamples/">
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_AnimationTiming/Avln_AnimationTiming.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_AnimationTimingTests/Avln_AnimationTimingTests.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_Brushes/Avln_Brushes.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_Complex_Layout/Avln_Complex_Layout.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_Complex_LayoutTests/Avln_Complex_LayoutTests.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_ControlsAndLayout/Avln_ControlsAndLayout.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_ControlsAndLayoutTests/Avln_ControlsAndLayoutTests.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_CustomAnimation/Avln_CustomAnimation.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_Geometry/Avln_Geometry.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_Hello_World/Avln_Hello_World.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_Hello_WorldTests/Avln_Hello_WorldTests.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_ImageView/Avln_ImageView.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_IntegrationTestApp/Avln_IntegrationTestApp.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_MoveWindow/Avln_MoveWindow.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_MoveWindowTests/Avln_MoveWindowTests.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_RenderDemo/Avln_RenderDemo.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_Sample_Template/Avln_Sample_Template.csproj" />
+    <Project Path="Avalonia_Apps/AvlnSamples/Avln_TextTestApp/Avln_TextTestApp.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/AvlnSamples/SampleControls/">
+    <Project Path="Avalonia_Apps/AvlnSamples/SampleControls/ControlSamples.Pack.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/Avln_Bubbles/">
+    <Project Path="Avalonia_Apps/Avln_Bubbles/Avln_Bubbles.Browser/Avln_Bubbles.Browser.csproj" />
+    <Project Path="Avalonia_Apps/Avln_Bubbles/Avln_Bubbles.Desktop/Avln_Bubbles.Desktop.csproj" />
+    <Project Path="Avalonia_Apps/Avln_Bubbles/Avln_Bubbles.Model.Tests/Avln_Bubbles.Model.Tests.csproj" />
+    <Project Path="Avalonia_Apps/Avln_Bubbles/Avln_Bubbles.Model/Avln_Bubbles.Model.csproj" />
+    <Project Path="Avalonia_Apps/Avln_Bubbles/Avln_Bubbles.View.Tests/Avln_Bubbles.View.Tests.csproj" />
+    <Project Path="Avalonia_Apps/Avln_Bubbles/Avln_Bubbles.View/Avln_Bubbles.View.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/Avln_Marble/">
+    <Project Path="Avalonia_Apps/Avln_Marble/Avln_Marble.Browser/Avln_Marble.Browser.csproj" />
+    <Project Path="Avalonia_Apps/Avln_Marble/Avln_Marble.Desktop/Avln_Marble.Desktop.csproj" />
+    <Project Path="Avalonia_Apps/Avln_Marble/Avln_Marble.Display/Avln_Marble.Display.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/Avln_TerminalHost/">
+    <Project Path="Avalonia_Apps/Avln_TerminalHost/Avln_TerminalHost/Avln_TerminalHost.csproj" />
+    <Project Path="Avalonia_Apps/Avln_TerminalHost/Avln_TerminalHostTests/Avln_TerminalHostTests.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/FroniusMonitor/">
+    <Project Path="Avalonia_Apps/FroniusMonitor/FroniusMonitor.Avalonia.Browser/FroniusMonitor.Avalonia.Browser.csproj" />
+    <Project Path="Avalonia_Apps/FroniusMonitor/FroniusMonitor.Avalonia.Desktop/FroniusMonitor.Avalonia.Desktop.csproj" />
+    <Project Path="Avalonia_Apps/FroniusMonitor/FroniusMonitor.Avalonia.Tests/FroniusMonitor.Avalonia.Tests.csproj" />
+    <Project Path="Avalonia_Apps/FroniusMonitor/FroniusMonitor.Avalonia/FroniusMonitor.Avalonia.csproj" />
+    <Project Path="Avalonia_Apps/FroniusMonitor/FroniusMonitor.Gateway/FroniusMonitor.Gateway.csproj" />
+  </Folder>
+  <Folder Name="/Avalonia_Apps/Libraries/">
+    <Project Path="Avalonia_Apps/Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />
+    <Project Path="Avalonia_Apps/Libraries/Avln_BaseLibTests/Avln_BaseLibTests.csproj" />
+    <Project Path="Avalonia_Apps/Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj" />
+    <Project Path="Avalonia_Apps/Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
+    <Project Path="Avalonia_Apps/Libraries/Avln_TestConsole/Avln_TestConsole.csproj" />
+    <Project Path="Avalonia_Apps/Libraries/Avln_TestConsoleTests/Avln_TestConsoleTests.csproj" />
+    <Project Path="Avalonia_Apps/Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="Avalonia_Apps/Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="Avalonia_Apps/Libraries/MathLibrary/MathLibrary.csproj" />
   </Folder>
   <Folder Name="/CSharpBible/">
     <Project Path="CSharpBible/AboutEx/AboutEx.csproj" />
@@ -81,21 +253,133 @@
     <Project Path="CSharpBible/Calc/Calc64WFTests/Calc64WF_netTests.csproj" />
     <Project Path="CSharpBible/Calc/Calc64_Wpf/Calc64_Wpf.csproj" />
   </Folder>
+  <Folder Name="/CSharpBible/Calc/Calc32/">
+    <Project Path="CSharpBible/Calc/Calc32/Calc32.Model.csproj" />
+    <Project Path="CSharpBible/Calc/Calc32/Calc32.WForms.csproj" />
+    <Project Path="CSharpBible/Calc/Calc32/Calc32_net.WForms.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Calc/Calc32Cons/">
+    <Project Path="CSharpBible/Calc/Calc32Cons/Calc32.Cons.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Calc/Calc32Tests/" />
+  <Folder Name="/CSharpBible/Calc/Calc32WPF/">
+    <Project Path="CSharpBible/Calc/Calc32WPF/Calc32.WPF.csproj" />
+    <Project Path="CSharpBible/Calc/Calc32WPF/Calc32_net.WPF.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Calc/Calc32WPFTests/" />
+  <Folder Name="/CSharpBible/Calc/Calc64WF/" />
+  <Folder Name="/CSharpBible/Calc/Calc64WFTests/" />
   <Folder Name="/CSharpBible/ConsoleApps/">
     <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
     <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
     <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj" />
     <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/ConsoleOverlapApp/ConsoleOverlapApp.csproj" />
     <Project Path="CSharpBible/ConsoleApps/Display_Test/Display_netTest.csproj" />
     <Project Path="CSharpBible/ConsoleApps/Display_Test/Display_Test.csproj" />
     <Project Path="CSharpBible/ConsoleApps/TestConsole/TestConsole.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/TestConsoleDemo/TestConsoleDemo.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/TestConsoleTests/TestConsoleTests.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/WaveFuncColFrm/WaveFuncColFrm.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/ConsoleApps/ConsoleMouseApp/">
+    <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp_net.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/ConsoleApps/Display_Test/" />
+  <Folder Name="/CSharpBible/ConsoleApps/TestConsole/">
+    <Project Path="CSharpBible/ConsoleApps/TestConsole/TestConsole_net.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/ConsoleApps/WaveFuncCol/">
+    <Project Path="CSharpBible/ConsoleApps/WaveFuncCol/WaveFunCollapse.csproj" />
+    <Project Path="CSharpBible/ConsoleApps/WaveFuncCol/WaveFunCollapse_net.csproj" />
   </Folder>
   <Folder Name="/CSharpBible/Data/">
+    <Project Path="CSharpBible/Data/CommandlineHelper.Generators/CommandlineHelper.Generators.csproj" />
+    <Project Path="CSharpBible/Data/CommandlineHelper/CommandlineHelper.csproj" />
+    <Project Path="CSharpBible/Data/NebelEbook/NebelEbook.csproj" />
+    <Project Path="CSharpBible/Data/Story.Base/Story.Base.csproj" />
     <Project Path="CSharpBible/Data/TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
     <Project Path="CSharpBible/Data/TraceCsv2realCsvTests/TraceCsv2realCsvTests.csproj" />
   </Folder>
+  <Folder Name="/CSharpBible/Data/ConsoleApp1/">
+    <Project Path="CSharpBible/Data/ConsoleApp1/DynamicStateMachine.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Data/DataAnalysis/">
+    <Project Path="CSharpBible/Data/DataAnalysis/DataAnalysis.Core.Tests/DataAnalysis.Core.Tests.csproj" />
+    <Project Path="CSharpBible/Data/DataAnalysis/DataAnalysis.Core/DataAnalysis.Core.csproj" />
+    <Project Path="CSharpBible/Data/DataAnalysis/DataAnalysis.WPF.TestHarness/DataAnalysis.WPF.TestHarness.csproj" />
+    <Project Path="CSharpBible/Data/DataAnalysis/DataAnalysis.WPF/DataAnalysis.WPF.csproj" />
+    <Project Path="CSharpBible/Data/DataAnalysis/DataConvert.Console/DataConvert.Console.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Data/DocumentUtils/">
+    <Project Path="CSharpBible/Data/DocumentUtils/DocOdfTest/DocOdfTest.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.Base/Document.Base.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.BaseTests/Document.BaseTests.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.Demo.Gui/Document.Demo.Gui.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.Docx/Document.Docx.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.Html/Document.Html.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.Markdown/Document.Markdown.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.MarkdownTests/Document.MarkdownTests.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.Model/Document.Model.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.Odf/Document.Odf.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.Pdf/Document.Pdf.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/Document.Xaml/Document.Xaml.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/HtmlExample/HtmlExample.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/OdtBoldTextExample/OdtBoldTextExample.csproj" />
+    <Project Path="CSharpBible/Data/DocumentUtils/PdfExample/PdfExample.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Data/DocumentUtils/HelloWorld/">
+    <Project Path="CSharpBible/Data/DocumentUtils/HelloWorld/HelloWorldOdf.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Data/PictureDB/">
+    <Project Path="CSharpBible/Data/PictureDB/PictureDB.Base.Tests/PictureDB.Base.Tests.csproj" />
+    <Project Path="CSharpBible/Data/PictureDB/PictureDB.Base/PictureDB.Base.csproj" />
+    <Project Path="CSharpBible/Data/PictureDB/PictureDB.OllamaTest/PictureDB.OllamaTest.csproj" />
+    <Project Path="CSharpBible/Data/PictureDB/PictureDB.UI/PictureDB.UI.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Data/RepoMigrator/">
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.App.Logic/RepoMigrator.App.Logic.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.App.State/RepoMigrator.App.State.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.App.Wpf/RepoMigrator.App.Wpf.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Core/RepoMigrator.Core.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Archive.Tests/RepoMigrator.Providers.Archive.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Archive/RepoMigrator.Providers.Archive.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Compression.TarGz.Tests/RepoMigrator.Providers.Compression.TarGz.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Compression.TarGz/RepoMigrator.Providers.Compression.TarGz.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Compression.Zip.Tests/RepoMigrator.Providers.Compression.Zip.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Compression.Zip/RepoMigrator.Providers.Compression.Zip.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Git.Tests/RepoMigrator.Providers.Git.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Git/RepoMigrator.Providers.Git.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Patch/RepoMigrator.Providers.Patch.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Svn.Tests/RepoMigrator.Providers.Svn.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.Svn/RepoMigrator.Providers.Svn.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.SvnCli.Tests/RepoMigrator.Providers.SvnCli.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Providers.SvnCli/RepoMigrator.Providers.SvnCli.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Tests/RepoMigrator.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Tools.ArchiveSmokeTest.Tests/RepoMigrator.Tools.ArchiveSmokeTest.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Tools.ArchiveSmokeTest/RepoMigrator.Tools.ArchiveSmokeTest.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Tools.GitBranchSplitter.Tests/RepoMigrator.Tools.GitBranchSplitter.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Tools.GitBranchSplitter/RepoMigrator.Tools.GitBranchSplitter.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Tools.PatchPreparation.Tests/RepoMigrator.Tools.PatchPreparation.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Tools.PipelinedMigration.Tests/RepoMigrator.Tools.PipelinedMigration.Tests.csproj" />
+    <Project Path="CSharpBible/Data/RepoMigrator/RepoMigrator.Tools.PipelinedMigration/RepoMigrator.Tools.PipelinedMigration.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Data/TraceAnalysis/">
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Base.Tests/TraceAnalysis.Base.Tests.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Base/TraceAnalysis.Base.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Filter.CSV/TraceAnalysis.Filter.CSV.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Filter.Excel/TraceAnalysis.Filter.Excel.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Filter.JSON/TraceAnalysis.Filter.JSON.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Filter.MovirunText/TraceAnalysis.Filter.MovirunText.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Filter.MovirunTrace/TraceAnalysis.Filter.MovirunTrace.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Show.Wpf/TraceAnalysis.Show.Wpf.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Widgets.Wpf/TraceAnalysis.Widgets.Wpf.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Workbench.Core/TraceAnalysis.Workbench.Core.csproj" />
+    <Project Path="CSharpBible/Data/TraceAnalysis/TraceAnalysis.Workbench.Wpf/TraceAnalysis.Workbench.Wpf.csproj" />
+  </Folder>
   <Folder Name="/CSharpBible/DB/">
     <Project Path="CSharpBible/DB/DataLake_App/DataLake_App.csproj" />
+    <Project Path="CSharpBible/DB/DataTable-Test/DataTable-Test.csproj" />
     <Project Path="CSharpBible/DB/DBTest1/DBTest1.csproj" />
     <Project Path="CSharpBible/DB/FoxCon/FoxCon.csproj" />
     <Project Path="CSharpBible/DB/MdbBrowser/MdbBrowser.csproj" />
@@ -104,25 +388,78 @@
     <Project Path="CSharpBible/DB/OLEDBTest2/OleDbTest2.csproj" />
     <Project Path="CSharpBible/DB/XSD_Data_Test/XSD_Data_Test.csproj" />
   </Folder>
+  <Folder Name="/CSharpBible/DB/OLEDBTest/" />
+  <Folder Name="/CSharpBible/DB/OLEDBTest2/" />
   <Folder Name="/CSharpBible/DependencyInjection/">
     <Project Path="CSharpBible/DependencyInjection/CustomerRepository/CustomerRepository.csproj" />
     <Project Path="CSharpBible/DependencyInjection/CustomerRepositoryTests/CustomerRepositoryTests.csproj" />
   </Folder>
   <Folder Name="/CSharpBible/Games/">
+    <Project Path="CSharpBible/Games/Arkanoid.Base/Arkanoid.Base.csproj" />
+    <Project Path="CSharpBible/Games/Arkanoid.Cons/Arkanoid.Cons.csproj" />
     <Project Path="CSharpBible/Games/Asteroids/Asteroids_net.csproj" />
+    <Project Path="CSharpBible/Games/AsteroidsModernEngine.Tests/AsteroidsModernEngine.Tests.csproj" />
+    <Project Path="CSharpBible/Games/AsteroidsModernEngine/AsteroidsModernEngine.csproj" />
+    <Project Path="CSharpBible/Games/AsteroidsModernUI/AsteroidsModernUI.csproj" />
     <Project Path="CSharpBible/Games/Asteroids_Base/Asteroids_Base.csproj" />
+    <Project Path="CSharpBible/Games/BoxFlight/BoxFlight.csproj" />
     <Project Path="CSharpBible/Games/CreateCards/CreateCards.csproj" />
     <Project Path="CSharpBible/Games/CsEpiphany/CsEpiphany.csproj" />
+    <Project Path="CSharpBible/Games/DetectiveGame.Console/DetectiveGame.Console.csproj" />
+    <Project Path="CSharpBible/Games/DetectiveGame.Engine/DetectiveGame.Engine.csproj" />
+    <Project Path="CSharpBible/Games/DetectiveGame.Tests/DetectiveGame.Tests.csproj" />
+    <Project Path="CSharpBible/Games/DetectiveGame.Wpf/DetectiveGame.Wpf.csproj" />
+    <Project Path="CSharpBible/Games/Galaxia_Base/Galaxia_Base.csproj" />
+    <Project Path="CSharpBible/Games/Galaxia_BaseTests/Galaxia_BaseTests.csproj" />
+    <Project Path="CSharpBible/Games/Galaxia_UI.Tests/Galaxia_UI.Tests.csproj" />
+    <Project Path="CSharpBible/Games/Galaxia_UI/Galaxia_UI.csproj" />
     <Project Path="CSharpBible/Games/Game_Base/Game_Base.csproj" />
     <Project Path="CSharpBible/Games/Game_Base/Game_Base_net.csproj" />
     <Project Path="CSharpBible/Games/Game_BaseTests/Game_BaseTests.csproj" />
     <Project Path="CSharpBible/Games/Game_BaseTests/Game_Base_netTests.csproj" />
+    <Project Path="CSharpBible/Games/HexaBan/HexaBan.csproj" />
+    <Project Path="CSharpBible/Games/HexaBan_Console/HexaBan_Console.csproj" />
+    <Project Path="CSharpBible/Games/MidiSwing.MVVM/MidiSwing.MVVM.csproj" />
     <Project Path="CSharpBible/Games/MVVM_TiledDisplay_net/MVVM_TiledDisplay_net.csproj" />
+    <Project Path="CSharpBible/Games/PlayMidiMusic/PlayMidiMusic.csproj" />
+    <Project Path="CSharpBible/Games/PlayMidiMusic2/PlayMidiMusic2.csproj" />
+    <Project Path="CSharpBible/Games/PlayMidiMusic3/PlayMidiMusic3.csproj" />
+    <Project Path="CSharpBible/Games/ProceduralMidiMusic/ProceduralMidiMusic.csproj" />
+    <Project Path="CSharpBible/Games/RemoteTerminal.Tests/RemoteTerminal.Tests.csproj" />
+    <Project Path="CSharpBible/Games/RemoteTerminal/RemoteTerminal.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.AI/SharpHack.AI.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.AITests/SharpHack.AITests.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.Base/SharpHack.Base.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.BaseCreatures/SharpHack.BaseCreatures.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.BaseItems/SharpHack.BaseItems.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.BaseItemsTests/SharpHack.BaseItemsTests.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.BaseTests/SharpHack.BaseTests.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.Combat/SharpHack.Combat.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.CombatTests/SharpHack.CombatTests.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.Console/SharpHack.Console.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.Engine/SharpHack.Engine.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.EngineTests/SharpHack.EngineTests.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.LevelGen/SharpHack.LevelGen.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.LevelGenTests/SharpHack.LevelGenTests.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.Magic/SharpHack.Magic.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.MapExport/SharpHack.MapExport.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.Persist/SharpHack.Persist.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.Server/SharpHack.Server.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.Terminal/SharpHack.Terminal.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.View.FirstPerson/SharpHack.View.FirstPerson.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.ViewModel.Tests/SharpHack.ViewModel.Tests.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.ViewModel/SharpHack.ViewModel.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.Wpf/SharpHack.Wpf.csproj" />
+    <Project Path="CSharpBible/Games/SharpHack.WPF2D/SharpHack.WPF2D.csproj" />
+    <Project Path="CSharpBible/Games/Snake.WPF/Snake.WPF.csproj" />
     <Project Path="CSharpBible/Games/Snake_Base/Snake_Base.csproj" />
     <Project Path="CSharpBible/Games/Snake_Base/Snake_Base_net.csproj" />
+    <Project Path="CSharpBible/Games/Snake_BaseTests/Snake_BaseTests.csproj" />
     <Project Path="CSharpBible/Games/Snake_BaseTests/Snake_Base_netTests.csproj" />
     <Project Path="CSharpBible/Games/Snake_Console/Snake_Console.csproj" />
     <Project Path="CSharpBible/Games/Snake_Console/Snake_Console_net.csproj" />
+    <Project Path="CSharpBible/Games/Sokoban.Plugin/Sokoban.Plugin.csproj" />
+    <Project Path="CSharpBible/Games/Sokoban.Server/Sokoban.Server.csproj" />
     <Project Path="CSharpBible/Games/Sokoban/Sokoban.csproj" />
     <Project Path="CSharpBible/Games/Sokoban_Base/Sokoban_Base.csproj" />
     <Project Path="CSharpBible/Games/Sokoban_Base/Sokoban_Base_win.csproj" />
@@ -131,23 +468,49 @@
     <Project Path="CSharpBible/Games/Sudoku_BaseTests/Sudoku_BaseTests.csproj" />
     <Project Path="CSharpBible/Games/Tetris_Base/Tetris_Base.csproj" />
     <Project Path="CSharpBible/Games/Tetris_BaseTests/Tetris_BaseTests.csproj" />
+    <Project Path="CSharpBible/Games/TileSetAnimator.Tests/TileSetAnimator.Tests.csproj" />
+    <Project Path="CSharpBible/Games/TileSetAnimator/TileSetAnimator.csproj" />
+    <Project Path="CSharpBible/Games/Treppen.Base/Treppen.Base.csproj" />
+    <Project Path="CSharpBible/Games/Treppen.BaseTests/Treppen.BaseTests.csproj" />
+    <Project Path="CSharpBible/Games/Treppen.Export/Treppen.Export.csproj" />
+    <Project Path="CSharpBible/Games/Treppen.Print/Treppen.Print.csproj" />
+    <Project Path="CSharpBible/Games/Treppen.WPF/Treppen.WPF.csproj" />
     <Project Path="CSharpBible/Games/VectorGfx/VectorGfx.csproj" />
     <Project Path="CSharpBible/Games/VectorGfx2/VectorGfx2.csproj" />
+    <Project Path="CSharpBible/Games/VTileEdit.WPF/VTileEdit.WPF.csproj" />
+    <Project Path="CSharpBible/Games/VTileEdit.WPFTests/VTileEdit.WPFTests.csproj" />
     <Project Path="CSharpBible/Games/VTileEdit/VTileEdit.csproj" />
     <Project Path="CSharpBible/Games/VTileEditTests/VTileEditTests.csproj" />
+    <Project Path="CSharpBible/Games/Werner_Flaschbier.Console2/Werner_Flaschbier.Console2.csproj" />
     <Project Path="CSharpBible/Games/Werner_Flaschbier/Werner_Flaschbier_Base.csproj" />
     <Project Path="CSharpBible/Games/Werner_Flaschbier/Werner_Flaschbier_Base_win.csproj" />
     <Project Path="CSharpBible/Games/Werner_Flaschbier/Werner_Flaschbier_Console.csproj" />
     <Project Path="CSharpBible/Games/Werner_Flaschbier_BaseTests/Werner_Flaschbier_BaseTests.csproj" />
     <Project Path="CSharpBible/Games/Werner_Flaschbier_BaseTests/Werner_Flaschbier_ConsoleTests.csproj" />
   </Folder>
+  <Folder Name="/CSharpBible/Games/Asteroids/" />
+  <Folder Name="/CSharpBible/Games/HexaBan_Console/">
+    <Project Path="CSharpBible/Games/HexaBan_Console/HexaBan_ConsoleLnx.csproj" />
+    <Project Path="CSharpBible/Games/HexaBan_Console/HexaBan_ConsoleWin.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Games/Sokoban_Base/" />
+  <Folder Name="/CSharpBible/Games/Werner_Flaschbier/" />
+  <Folder Name="/CSharpBible/Games/Werner_Flaschbier_BaseTests/" />
   <Folder Name="/CSharpBible/Graphics/">
     <Project Path="CSharpBible/Graphics/All_Graphics/All_Graphics_net.csproj" />
     <Project Path="CSharpBible/Graphics/CanvasWPF/CanvasWPF.csproj" />
     <Project Path="CSharpBible/Graphics/CanvasWPF2_CTItemTemplateSelector/CanvasWPF2_CTItemTemplateSelector.csproj" />
     <Project Path="CSharpBible/Graphics/CanvasWPF2_ItemTemplateSelector/CanvasWPF2_ItemTemplateSelector.csproj" />
     <Project Path="CSharpBible/Graphics/CanvasWPF_CT/CanvasWPF_CT.csproj" />
+    <Project Path="CSharpBible/Graphics/Cifar10.WPF/Cifar10.WPF.csproj" />
+    <Project Path="CSharpBible/Graphics/Cifar10_2.WPF/Cifar10_2.WPF.csproj" />
     <Project Path="CSharpBible/Graphics/DynamicShapeWPF/DynamicShapeWPF.csproj" />
+    <Project Path="CSharpBible/Graphics/HilpertColorMap/HilpertColorMap.csproj" />
+    <Project Path="CSharpBible/Graphics/libCIFAR/libCIFAR.csproj" />
+    <Project Path="CSharpBible/Graphics/libMachLearn/libMachLearn.csproj" />
+    <Project Path="CSharpBible/Graphics/MarbleBoard.Engine.Tests/MarbleBoard.Engine.Tests.csproj" />
+    <Project Path="CSharpBible/Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj" />
+    <Project Path="CSharpBible/Graphics/MarbleBoard.Wpf/MarbleBoard.Wpf.csproj" />
     <Project Path="CSharpBible/Graphics/MVVM_Converter_CTDrawGrid/MVVM_Converter_CTDrawGrid.csproj" />
     <Project Path="CSharpBible/Graphics/MVVM_Converter_CTDrawGrid2/MVVM_Converter_CTDrawGrid2.csproj" />
     <Project Path="CSharpBible/Graphics/MVVM_Converter_CTImgGrid/MVVM_Converter_CTImgGrid.csproj" />
@@ -175,20 +538,73 @@
     <Project Path="CSharpBible/Graphics/PolySpline/PolySpline.csproj" />
     <Project Path="CSharpBible/Graphics/PolySpline/PolySpline2.csproj" />
     <Project Path="CSharpBible/Graphics/PolySpline/PolySpline_net.csproj" />
+    <Project Path="CSharpBible/Graphics/PrimeDisc/PrimeDisc.csproj" />
+    <Project Path="CSharpBible/Graphics/ScreenX.Base/ScreenX.Base.csproj" />
+    <Project Path="CSharpBible/Graphics/ScreenX.BaseTests/ScreenX.BaseTests.csproj" />
+    <Project Path="CSharpBible/Graphics/SuperResolutionOnnxSample0/SuperResolutionOnnxSample0.csproj" />
+    <Project Path="CSharpBible/Graphics/SuperResolutionOnnxSample1/SuperResolutionOnnxSample1.csproj" />
+    <Project Path="CSharpBible/Graphics/SuperResolutionOnnxSample2/SuperResolutionOnnxSample2.csproj" />
+    <Project Path="CSharpBible/Graphics/SuperResolutionOnnxSample3/SuperResolutionOnnxSample3.csproj" />
     <Project Path="CSharpBible/Graphics/TitleGen/TitleGen.csproj" />
     <Project Path="CSharpBible/Graphics/TitleGen2/TitleGen2.csproj" />
+    <Project Path="CSharpBible/Graphics/XOR3Learn/XOR3Learn.csproj" />
+    <Project Path="CSharpBible/Graphics/XORLearn0/XORLearn0.csproj" />
+    <Project Path="CSharpBible/Graphics/XORLearn1/XORLearn1.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/All_Graphics/" />
+  <Folder Name="/CSharpBible/Graphics/Cifar10_3.WPF/">
+    <Project Path="CSharpBible/Graphics/Cifar10_3.WPF/Cifar10_2.WPF.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/ConsoleApp1/">
+    <Project Path="CSharpBible/Graphics/ConsoleApp1/ColorVis.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/MNIST1Learn/">
+    <Project Path="CSharpBible/Graphics/MNIST1Learn/Mnist1Learn.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/MNIST2Learn/">
+    <Project Path="CSharpBible/Graphics/MNIST2Learn/Mnist2Learn.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/MNIST3Learn/">
+    <Project Path="CSharpBible/Graphics/MNIST3Learn/Mnist3Learn.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/MNIST4Learn/">
+    <Project Path="CSharpBible/Graphics/MNIST4Learn/Mnist4Learn.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/MNIST5Learn/">
+    <Project Path="CSharpBible/Graphics/MNIST5Learn/Mnist5Learn.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/MNIST6Learn/">
+    <Project Path="CSharpBible/Graphics/MNIST6Learn/Mnist6Learn.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/MNISTLearn/">
+    <Project Path="CSharpBible/Graphics/MNISTLearn/Mnist6Learn.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/MVVM_ImageHandling/" />
+  <Folder Name="/CSharpBible/Graphics/MVVM_ImageHandlingTests/" />
+  <Folder Name="/CSharpBible/Graphics/Polyline/" />
+  <Folder Name="/CSharpBible/Graphics/PolySpline/" />
+  <Folder Name="/CSharpBible/Graphics/SuperResolutionOnnxSample/">
+    <Project Path="CSharpBible/Graphics/SuperResolutionOnnxSample/SuperResolutionOnnxSample4.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Graphics/XORLearn/">
+    <Project Path="CSharpBible/Graphics/XORLearn/Cnt3Learn.csproj" />
   </Folder>
   <Folder Name="/CSharpBible/Libraries/">
+    <Project Path="CSharpBible/Libraries/BaseLib.Show/BaseLib.Show.csproj" />
     <Project Path="CSharpBible/Libraries/BaseLib/BaseLib.csproj" />
     <Project Path="CSharpBible/Libraries/BaseLibTests/BaseLibTests.csproj" />
     <Project Path="CSharpBible/Libraries/CommonDialogs/CommonDialogs.csproj" />
     <Project Path="CSharpBible/Libraries/CommonDialogs/CommonDialogs_net.csproj" />
     <Project Path="CSharpBible/Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
+    <Project Path="CSharpBible/Libraries/ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
     <Project Path="CSharpBible/Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
     <Project Path="CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
     <Project Path="CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="CSharpBible/Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
     <Project Path="CSharpBible/Libraries/CSFreeVision/CSFreeVision.csproj" />
+    <Project Path="CSharpBible/Libraries/ExtendedConsole/ExtendedConsole.csproj" />
     <Project Path="CSharpBible/Libraries/GenInterfaces/GenInterfaces.csproj" />
+    <Project Path="CSharpBible/Libraries/Libraries.Package/Libraries.Package.csproj" />
     <Project Path="CSharpBible/Libraries/MathLIbrary/MathLibrary.csproj" />
     <Project Path="CSharpBible/Libraries/MathLibraryTests/MathLibraryTests.csproj" />
     <Project Path="CSharpBible/Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
@@ -196,6 +612,12 @@
     <Project Path="CSharpBible/Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
     <Project Path="CSharpBible/Libraries/WFSystem.Data/WFSystem.Windows.Data_net.csproj" />
   </Folder>
+  <Folder Name="/CSharpBible/Libraries/CommonDialogs/" />
+  <Folder Name="/CSharpBible/Libraries/ConsoleLib/">
+    <Project Path="CSharpBible/Libraries/ConsoleLib/ConsoleLib_net.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/Libraries/MathLIbrary/" />
+  <Folder Name="/CSharpBible/Libraries/WFSystem.Data/" />
   <Folder Name="/CSharpBible/MVVM_Tutorial/">
     <Project Path="CSharpBible/MVVM_Tutorial/DemoLibrary/DemoLibrary.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/DemoLibraryTests/DemoLibraryTests.csproj" />
@@ -276,6 +698,7 @@
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_16_Usercontrol2/MVVM_16_UserControl2_net.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_Laden/MVVM_17_1_CSV_Laden.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_Laden/MVVM_17_1_CSV_Laden_net.csproj" />
+    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_LadenTests.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_18_MultiConverters/MVVM_18_MultiConverters.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_18_MultiConverters/MVVM_18_MultiConverters_net.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_18_MultiConvertersTests/MVVM_18_MultiConvertersTests.csproj" />
@@ -405,6 +828,9 @@
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_41_Sudoku/MVVM_41_Sudoku_net.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_41_SudokuTests/MVVM_41_SudokuTests.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_41_SudokuTests/MVVM_41_Sudoku_netTests.csproj" />
+    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView.csproj" />
+    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView.csproj" />
+    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_99_SomeIssue/MVVM_99_SomeIssue.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_99_SomeIssue/MVVM_99_SomeIssue_net.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/MVVM_99_SomeIssueTests/MVVM_99_SomeIssueTests.csproj" />
@@ -423,6 +849,148 @@
     <Project Path="CSharpBible/MVVM_Tutorial/WpfDemoUI1/WpfDemoUI1.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/WpfDemoUI2/WpfDemoUI2.csproj" />
   </Folder>
+  <Folder Name="/CSharpBible/MVVM_Tutorial/ItemsControlTut3/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/ItemsControlTut4/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/ListBinding/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/ListBindingTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00a_CTTemplate/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00a_CTTemplateTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00_IoCTemplate/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00_IoCTemplateTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00_Template/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00_TemplateTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_03a_CTNotifyChange/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_03a_CTNotifyChangeTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_03_NotifyChange/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_03_NotifyChangeTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_04a_CTRelayCommand/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_04a_CTRelayCommandTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_04_DelegateCommand/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_04_DelegateCommandTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_05a_CTCommandParCalc/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_05a_CTCommandParCalcTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_05_CommandParCalculator/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_05_CommandParCalculatorTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_2/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_3/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_3Tests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_4/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_4Tests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_09a_CTDialogBoxes/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_09a_CTDialogBoxesTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_09_DialogBoxes/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_09_DialogBoxesTest/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_16_Usercontrol1/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_16_UserControl1Tests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_16_Usercontrol2/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_Laden/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/">
+    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_Laden_netTests.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_18_MultiConverters/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_19_FilterLists/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_19_FilterListsTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_20a_CTSysdialogs/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_20a_CTSysdialogsTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_20_Sysdialogs/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_20_SysdialogsTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_21_Buttons/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_22_CTWpfCap/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_22_CTWpfCapTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_22_WpfCap/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_22_WpfCapTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24a_CTUserControl/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24a_CTUserControlTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24b_UserControl/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24b_UserControlTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24c_CTUserControl/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24c_CTUserControlTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24_UserControl/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24_UserControlTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_25_RichTextEdit/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_25_RichTextEditTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_26_BindingGroupExp/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_26_CTBindingGroupExp/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_27_DataGrid/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_27_DataGridTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExt/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExtTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_1_DataGridExt/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_1_DataGridExtTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_DataGrid/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_DataGridTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation1/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation1Tests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation2/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation2Tests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation3/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation3Tests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31_Validation1/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31_Validation1Tests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31_Validation2/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31_Validation2Tests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_33a_CTEvents_To_Commands/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_33a_CTEvents_To_CommandsTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_33_Events_to_Commands/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_33_Events_to_CommandsTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_34a_CTBindingEventArgs/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_34a_CTBindingEventArgsTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_34_BindingEventArgs/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_34_BindingEventArgsTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_35_CommunityToolkit/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_35_CommunityToolkitTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_36_ComToolKtSavesWork/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_36_ComToolKtSavesWorkTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_37_TreeView/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_37_TreeViewTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_38_CTDependencyInjection/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_38_CTDependencyInjectionTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_39_MultiModelTest/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_39_MultiModelTestTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_40_Wizzard/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_40_WizzardTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_41_Sudoku/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_41_SudokuTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_42a_3DView/">
+    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView_net.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_42b_3DView/">
+    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView_net.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_42_3DView/">
+    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView _net.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_99_SomeIssue/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_99_SomeIssueTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_AllExamples/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_AllExamplesTests/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/SyncAsyncParallel/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/WpfApp1/" />
+  <Folder Name="/CSharpBible/MVVM_Tutorial/WpfAppTests/" />
+  <Folder Name="/CSharpBible/OpenAI/">
+    <Project Path="CSharpBible/OpenAI/McpTools/McpTools.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama-Service1/Ollama-Service1.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama-Service2/Ollama-Service2.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Client.Tests/Ollama.Client.Tests.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Client/Ollama.Client.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Extensions.DependencyInjection.Tests/Ollama.Extensions.DependencyInjection.Tests.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Extensions.DependencyInjection/Ollama.Extensions.DependencyInjection.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Protocol.Tests/Ollama.Protocol.Tests.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Protocol/Ollama.Protocol.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Samples.BasicChat/Ollama.Samples.BasicChat.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Samples.ChatCheck/Ollama.Samples.ChatCheck.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Samples.EmbedCheck/Ollama.Samples.EmbedCheck.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Samples.GenerateCheck/Ollama.Samples.GenerateCheck.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Samples.TagsCheck/Ollama.Samples.TagsCheck.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Samples.TextAnalysis/Ollama.Samples.TextAnalysis.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Samples.ToolUse/Ollama.Samples.ToolUse.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Tools.Tests/Ollama.Tools.Tests.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Tools/Ollama.Tools.csproj" />
+    <Project Path="CSharpBible/OpenAI/Ollama.Wpf.TextAnalysis/Ollama.Wpf.TextAnalysis.csproj" />
+    <Project Path="CSharpBible/OpenAI/OpenAIPlayground/OpenAIPlayground.csproj" />
+    <Project Path="CSharpBible/OpenAI/PdfMarkdownDeterministic.ConsoleApp/PdfMarkdownDeterministic.ConsoleApp.csproj" />
+  </Folder>
   <Folder Name="/CSharpBible/Patterns_Tutorial/">
     <Project Path="CSharpBible/Patterns_Tutorial/Pattern_00_Template/Pattern_00_Template.csproj" />
     <Project Path="CSharpBible/Patterns_Tutorial/Pattern_00_Template/Pattern_00_Template_net.csproj" />
@@ -438,15 +1006,35 @@
     <Project Path="CSharpBible/Patterns_Tutorial/Pattern_02_ObserverTests/Pattern_02_Observer_netTests.csproj" />
   </Folder>
   <Folder Name="/CSharpBible/SomeThing/">
+    <Project Path="CSharpBible/SomeThing/ChaoticEntropyGenerator/ChaoticEntropyGenerator.csproj" />
+    <Project Path="CSharpBible/SomeThing/ConsoleApp1/ConsoleApp1.csproj" />
+    <Project Path="CSharpBible/SomeThing/ConsoleApp2/ConsoleApp2.csproj" />
+    <Project Path="CSharpBible/SomeThing/ConsoleApp3/ConsoleApp3.csproj" />
+    <Project Path="CSharpBible/SomeThing/MemoPlus/MemoPlus.csproj" />
+    <Project Path="CSharpBible/SomeThing/ObfuscatedConsole/ObfuscatedConsole.csproj" />
     <Project Path="CSharpBible/SomeThing/Quine1/Quine1.csproj" />
     <Project Path="CSharpBible/SomeThing/Quine2/Quine2.csproj" />
     <Project Path="CSharpBible/SomeThing/Quine3/Quine3.csproj" />
+    <Project Path="CSharpBible/SomeThing/Quine4/Quine4.csproj" />
+    <Project Path="CSharpBible/SomeThing/Quine5/Quine5.csproj" />
+    <Project Path="CSharpBible/SomeThing/Quine6/Quine6.csproj" />
+    <Project Path="CSharpBible/SomeThing/QuineTest/QuineTest.csproj" />
+    <Project Path="CSharpBible/SomeThing/SelfMaze/SelfMaze.csproj" />
     <Project Path="CSharpBible/SomeThing/SomeThing/SomeThing.csproj" />
     <Project Path="CSharpBible/SomeThing/SomeThing2/SomeThing2.csproj" />
     <Project Path="CSharpBible/SomeThing/SomeThing2a/SomeThing2a.csproj" />
     <Project Path="CSharpBible/SomeThing/SomeThing2aTests/SomeThing2aTests.csproj" />
     <Project Path="CSharpBible/SomeThing/SomeThing2Tests/SomeThing2Tests.csproj" />
+    <Project Path="CSharpBible/SomeThing/Statistic3/Statistic3.csproj" />
+    <Project Path="CSharpBible/SomeThing/Statistic4/Statistic4.csproj" />
+    <Project Path="CSharpBible/SomeThing/Statistic_ausf3/Statistic_ausf3.csproj" />
+    <Project Path="CSharpBible/SomeThing/Statistik/Statistik.csproj" />
+    <Project Path="CSharpBible/SomeThing/Statistik2/Statistik2.csproj" />
+    <Project Path="CSharpBible/SomeThing/Statistik_ausf/Statistik_ausf.csproj" />
+    <Project Path="CSharpBible/SomeThing/Statistik_Ausf2/Statistik_Ausf2.csproj" />
+    <Project Path="CSharpBible/SomeThing/SurpriseConsole/SurpriseConsole.csproj" />
   </Folder>
+  <Folder Name="/CSharpBible/Tests/" />
   <Folder Name="/CSharpBible/Web/">
     <Project Path="CSharpBible/Web/BlazorWasmDocker/BlazorWasmDocker.csproj" />
   </Folder>
@@ -455,6 +1043,7 @@
     <Project Path="CSharpBible/WPFSamples_2/WPF_AnimationTiming/WPF_AnimationTiming_net.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_AnimationTimingTests/WPF_AnimationTimingTests.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_AnimationTimingTests/WPF_AnimationTiming_netTests.csproj" />
+    <Project Path="CSharpBible/WPFSamples_2/WPF_Brushes/WPF_Brushes.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_Complex_Layout/WPF_Complex_Layout.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_Complex_Layout/WPF_Complex_Layout_net.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_Complex_LayoutTests/WPF_Complex_LayoutTests.csproj" />
@@ -467,10 +1056,12 @@
     <Project Path="CSharpBible/WPFSamples_2/WPF_CustomAnimation/WPF_CustomAnimation_net.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_CustomAnimationTests/WPF_CustomAnimationTests.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_CustomAnimationTests/WPF_CustomAnimation_netTests.csproj" />
+    <Project Path="CSharpBible/WPFSamples_2/WPF_Geometry/WPF_Geometry.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_Hello_World/WPF_Hello_World.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_Hello_World/WPF_Hello_World_net.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_Hello_WorldTests/WPF_Hello_WorldTests.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_Hello_WorldTests/WPF_Hello_World_netTests.csproj" />
+    <Project Path="CSharpBible/WPFSamples_2/WPF_ImageView/WPF_ImageView.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_MasterDetail/WPF_MasterDetail.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_MasterDetail/WPF_MasterDetail_net.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_MasterDetailTests/WPF_MasterDetailTests.csproj" />
@@ -488,6 +1079,31 @@
     <Project Path="CSharpBible/WPFSamples_2/WPF_StickyNotesDemoTests/WPF_StickyNotesDemoTests.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/WPF_StickyNotesDemoTests/WPF_StickyNotesDemo_netTests.csproj" />
   </Folder>
+  <Folder Name="/CSharpBible/WPFSamples_2/Styles_and_Templates/">
+    <Project Path="CSharpBible/WPFSamples_2/Styles_and_Templates/WPF_AlternatingAppearanceOfItems/WPF_AlternatingAppearanceOfItems.csproj" />
+    <Project Path="CSharpBible/WPFSamples_2/Styles_and_Templates/WPF_ContentControlStyle/WPF_ContentControlStyle.csproj" />
+    <Project Path="CSharpBible/WPFSamples_2/Styles_and_Templates/WPF_EventTriggers/WPF_EventTriggers.csproj" />
+    <Project Path="CSharpBible/WPFSamples_2/Styles_and_Templates/WPF_FindingElementsInTemplates/WPF_FindingElementsInTemplates.csproj" />
+    <Project Path="CSharpBible/WPFSamples_2/Styles_and_Templates/WPF_IntroToStylingAndTemplating/WPF_IntroToStylingAndTemplating.csproj" />
+  </Folder>
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_AnimationTiming/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_AnimationTimingTests/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Complex_Layout/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Complex_LayoutTests/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_ControlsAndLayout/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_ControlsAndLayoutTests/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_CustomAnimation/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_CustomAnimationTests/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Hello_World/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Hello_WorldTests/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_MasterDetail/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_MasterDetailTests/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_MoveWindow/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_MoveWindowTests/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Sample_Template/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Sample_TemplateTests/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_StickyNotesDemo/" />
+  <Folder Name="/CSharpBible/WPFSamples_2/WPF_StickyNotesDemoTests/" />
   <Folder Name="/CSharpProgrammierHandbuch/">
     <Project Path="CSharpProgrammierHandbuch/CGui/CGui.csproj" Id="e31e6e91-35a3-4115-93b2-94ef8060d9e6" />
     <Project Path="CSharpProgrammierHandbuch/ConsoleTest/ConsoleTest.csproj" Id="967cbaec-29e3-4689-83bc-7275e3e6bf46" />
@@ -496,6 +1112,50 @@
     <Project Path="CSharpProgrammierHandbuch/Fibonacci2/Fibonacci2.csproj" Id="812452aa-1098-4055-b06f-47c0629efff4" />
     <Project Path="CSharpProgrammierHandbuch/HelloWorld/HelloWorld.csproj" />
     <Project Path="CSharpProgrammierHandbuch/HelloWorldTests/HelloWorldTests.csproj" />
+  </Folder>
+  <Folder Name="/GenFreeWin/">
+    <Project Path="GenFreeWin/DbCoreAbstractions.UnitTests/DbCoreAbstractions.UnitTests.csproj" />
+    <Project Path="GenFreeWin/DbCoreAbstractions/DbCoreAbstractions.csproj" />
+    <Project Path="GenFreeWin/DbProviderMySql/DbProviderMySql.csproj" />
+    <Project Path="GenFreeWin/DbProviderMySqlTests/DbProviderMySqlTests.csproj" />
+    <Project Path="GenFreeWin/FBParser/FBParser.csproj" />
+    <Project Path="GenFreeWin/FBParserTests/FBParserTests.csproj" />
+    <Project Path="GenFreeWin/GenDBImplOLEDB/GenDBImplOLEDB.csproj" />
+    <Project Path="GenFreeWin/GenDBImplOLEDBTests/GenDBImplOLEDBTests.csproj" />
+    <Project Path="GenFreeWin/GenFreeBase/GenFreeBase.csproj" />
+    <Project Path="GenFreeWin/GenFreeBaseClasses/GenFreeBaseClasses.csproj" />
+    <Project Path="GenFreeWin/GenFreeBaseClassesTests/GenFreeBaseClassesTests.csproj" />
+    <Project Path="GenFreeWin/GenFreeBaseTests/GenFreeBaseTests.csproj" />
+    <Project Path="GenFreeWin/GenFreeBrowser.Tests/GenFreeBrowser.Tests.csproj" />
+    <Project Path="GenFreeWin/GenFreeBrowser.ViewHost/GenFreeBrowser.ViewHost.csproj" />
+    <Project Path="GenFreeWin/GenFreeBrowser/GenFreeBrowser.csproj" />
+    <Project Path="GenFreeWin/GenFreeData/GenFreeData.csproj" />
+    <Project Path="GenFreeWin/GenFreeDataTests/GenFreeDataTests.csproj" />
+    <Project Path="GenFreeWin/GenFreeHelper/GenFreeHelper.csproj" />
+    <Project Path="GenFreeWin/GenFreeHelperTests/GenFreeHelperTests.csproj" />
+    <Project Path="GenFreeWin/GenFreeUIItfs/GenFreeUIItfs.csproj" />
+    <Project Path="GenFreeWin/GenFreeWin2/GenFreeWin2.csproj" />
+    <Project Path="GenFreeWin/GenFreeWin3/GenFreeWin3.csproj" />
+    <Project Path="GenFreeWin/GenFreeWinForms/GenFreeWinForms.csproj" />
+    <Project Path="GenFreeWin/GenFreeWinFormsTests/GenFreeWinFormsTests.csproj" />
+    <Project Path="GenFreeWin/GenFreeWinVm2/GenFreeWinVm2.csproj" />
+    <Project Path="GenFreeWin/GenSecure.Contracts/GenSecure.Contracts.csproj" />
+    <Project Path="GenFreeWin/GenSecure.Core.Tests/GenSecure.Core.Tests.csproj" />
+    <Project Path="GenFreeWin/GenSecure.Core/GenSecure.Core.csproj" />
+    <Project Path="GenFreeWin/GenSecure.Demo/GenSecure.Demo.csproj" />
+    <Project Path="GenFreeWin/MapDemo/MapDemo.csproj" />
+    <Project Path="GenFreeWin/MdbBrowser/MdbBrowser.csproj" />
+    <Project Path="GenFreeWin/MdbBrowserTests/MdbBrowserTests.csproj" />
+    <Project Path="GenFreeWin/MSQBrowser/MSQBrowser.csproj" />
+    <Project Path="GenFreeWin/MSQBrowserTests/MSQBrowserTests.csproj" />
+    <Project Path="GenFreeWin/PlaceAuthorityConsoleDemo/PlaceAuthorityConsoleDemo.csproj" />
+    <Project Path="GenFreeWin/PlaceAuthorityDemo/PlaceAuthorityDemo.csproj" />
+    <Project Path="GenFreeWin/ResExtractor/ResExtractor.csproj" />
+    <Project Path="GenFreeWin/VBUnObfusicator/VBUnObfusicator.csproj" />
+    <Project Path="GenFreeWin/VBUnObfusicatorTests/VBUnObfusicatorTests.csproj" />
+  </Folder>
+  <Folder Name="/GenFreeWin/GenFreeWinTests/">
+    <Project Path="GenFreeWin/GenFreeWinTests/genFreeWinTests.csproj" />
   </Folder>
   <Folder Name="/JC-AMS/">
     <Project Path="JC-AMS/Core.Tests/Core.Tests.csproj" />
@@ -507,6 +1167,7 @@
   <Folder Name="/TestStatements/">
     <Project Path="TestStatements/AppWithPlugin/AppWithPlugin.csproj" />
     <Project Path="TestStatements/AppWithPluginTest/AppWithPluginTest.csproj" />
+    <Project Path="TestStatements/AppWithPluginWpf/AppWithPluginWpf.csproj" />
     <Project Path="TestStatements/AsyncExampleWPF/AsyncExampleWPF.csproj" />
     <Project Path="TestStatements/AsyncExampleWPF/AsyncExampleWPF_net.csproj" />
     <Project Path="TestStatements/CallAllExamples/CallAllExamples.csproj" />
@@ -517,20 +1178,51 @@
     <Project Path="TestStatements/DynamicSample/DynamicSample_net.csproj" />
     <Project Path="TestStatements/HelloPlugin/HelloPlugin.csproj" />
     <Project Path="TestStatements/HelloPluginTest/HelloPluginTest.csproj" />
+    <Project Path="TestStatements/OtherPlugin/OtherPlugin.csproj" />
     <Project Path="TestStatements/PluginBase/PluginBase.csproj" />
+    <Project Path="TestStatements/SOq1/SOq1.csproj" />
     <Project Path="TestStatements/TestClockApp/TestClockApp.csproj" />
+    <Project Path="TestStatements/TestGJKAlg/TestGJKAlg.csproj" />
+    <Project Path="TestStatements/TestGJKAlgTest/TestGJKAlgTest.csproj" />
     <Project Path="TestStatements/TestNamespaces/TestNamespaces.csproj" />
+    <Project Path="TestStatements/TestProjDep/TestProjDep.csproj" />
+    <Project Path="TestStatements/TestProjLib/TestProjLib.csproj" />
+    <Project Path="TestStatements/TestProjLib2/TestProjLib2.csproj" />
     <Project Path="TestStatements/TestStatements/TestStatements.csproj" />
     <Project Path="TestStatements/TestStatements/TestStatements_net.csproj" />
     <Project Path="TestStatements/TestStatementsNew/TestStatementsNew.csproj" />
     <Project Path="TestStatements/TestStatementsTest/TestStatementsTest.csproj" />
     <Project Path="TestStatements/TestStatementsTest/TestStatements_netTest.csproj" />
     <Project Path="TestStatements/Tutorials/Tutorials.csproj" />
+    <Project Path="TestStatements/ZeroLengthChar/ZeroLengthChar.csproj" />
   </Folder>
+  <Folder Name="/TestStatements/AsyncExampleWPF/" />
+  <Folder Name="/TestStatements/CallAllExamples/" />
+  <Folder Name="/TestStatements/DynamicSample/" />
+  <Folder Name="/TestStatements/TestStatements/" />
+  <Folder Name="/TestStatements/TestStatementsTest/" />
   <Folder Name="/Transpiler_pp/">
     <Project Path="Transpiler_pp/TranspilerConsTest/TranspilerConsTest.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.CSharp.Tests/TranspilerLib.CSharp.Tests.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.CSharp/TranspilerLib.CSharp.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.DriveBASIC.Tests/TranspilerLib.DriveBASIC.Tests.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.DriveBASIC/TranspilerLib.DriveBASIC.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.IEC.Tests/TranspilerLib.IEC.Tests.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.IEC/TranspilerLib.IEC.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.Integration.Tests/TranspilerLib.Integration.Tests.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.Pascal.Tests/TranspilerLib.Pascal.Tests.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.Pascal/TranspilerLib.Pascal.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.Semantics.Tests/TranspilerLib.Semantics.Tests.csproj" />
+    <Project Path="Transpiler_pp/TranspilerLib.Semantics/TranspilerLib.Semantics.csproj" />
     <Project Path="Transpiler_pp/TranspilerLib/TranspilerLib.csproj" />
     <Project Path="Transpiler_pp/TranspilerLibTests/TranspilerLibTests.csproj" />
+    <Project Path="Transpiler_pp/Trnsp.Show.Lfm.Tests/Trnsp.Show.Lfm.Tests.csproj" />
+    <Project Path="Transpiler_pp/Trnsp.Show.Lfm/Trnsp.Show.Lfm.csproj" />
+    <Project Path="Transpiler_pp/Trnsp.Show.Pas.Tests/Trnsp.Show.Pas.Tests.csproj" />
+    <Project Path="Transpiler_pp/Trnsp.Show.Pas/Trnsp.Show.Pas.csproj" />
+    <Project Path="Transpiler_pp/XamlDecompiler.App/XamlDecompiler.App.csproj" />
+    <Project Path="Transpiler_pp/XamlDecompiler.Core/XamlDecompiler.Core.csproj" />
+    <Project Path="Transpiler_pp/XamlDecompiler.Tests/XamlDecompiler.Tests.csproj" />
   </Folder>
   <Folder Name="/Transpiler_pp/Analyzer1/">
     <Project Path="Transpiler_pp/Analyzer1/Analyzer1.CodeFixes/Analyzer1.CodeFixes.csproj" />
@@ -540,8 +1232,22 @@
     <Project Path="Transpiler_pp/Analyzer1/Analyzer1/Analyzer1.csproj" />
   </Folder>
   <Folder Name="/WinAhnenNew/">
+    <Project Path="WinAhnenNew/BaseGenClasses/BaseGenClasses.csproj" />
+    <Project Path="WinAhnenNew/BaseGenClassesTests/BaseGenClassesTests.csproj" />
     <Project Path="WinAhnenNew/Gen_BaseItf/Gen_BaseItf.csproj" />
     <Project Path="WinAhnenNew/WinAhnenCls/WinAhnenCls.csproj" />
     <Project Path="WinAhnenNew/WinAhnenClsTests/WinAhnenClsTests.csproj" />
+    <Project Path="WinAhnenNew/WinAhnenNew.Model.Tests/WinAhnenNew.Model.Tests.csproj" />
+    <Project Path="WinAhnenNew/WinAhnenNew.Model/WinAhnenNew.Model.csproj" />
+    <Project Path="WinAhnenNew/WinAhnenNew.UI.Tests/WinAhnenNew.UI.Tests.csproj" />
+    <Project Path="WinAhnenNew/WinAhnenNew/WinAhnenNew.csproj" />
+  </Folder>
+  <Folder Name="/WinAhnenNew/RnzTrauer/">
+    <Project Path="WinAhnenNew/RnzTrauer/AmtsblattLoader.Console/AmtsblattLoader.Console.csproj" />
+    <Project Path="WinAhnenNew/RnzTrauer/RnzTrauer.Console/RnzTrauer.Console.csproj" />
+    <Project Path="WinAhnenNew/RnzTrauer/RnzTrauer.Core/RnzTrauer.Core.csproj" />
+    <Project Path="WinAhnenNew/RnzTrauer/RnzTrauer.Tests/RnzTrauer.Tests.csproj" />
+    <Project Path="WinAhnenNew/RnzTrauer/RnzTrauer.WebDriver.Edge/RnzTrauer.WebDriver.Edge.csproj" />
+    <Project Path="WinAhnenNew/RnzTrauer/RnzTrauer.WebDriver.Firefox/RnzTrauer.WebDriver.Firefox.csproj" />
   </Folder>
 </Solution>
