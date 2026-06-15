@@ -138,8 +138,10 @@
   <Folder Name="/Data/TraceAnalysis/">
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Base/TraceAnalysis.Base.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.CSV/TraceAnalysis.Filter.CSV.csproj" />
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.JSON/TraceAnalysis.Filter.JSON.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.MovirunText/TraceAnalysis.Filter.MovirunText.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.MovirunTrace/TraceAnalysis.Filter.MovirunTrace.csproj" />
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Workbench.Core/TraceAnalysis.Workbench.Core.csproj" />
   </Folder>
   <Folder Name="/DB/">
     <File Path="DB/DB.props" />
