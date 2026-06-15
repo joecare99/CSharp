@@ -1,4 +1,4 @@
-name: CSharpBible CI3
+name: CSharpBible CI4
 
 on:
   push:
@@ -18,34 +18,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup .NET 8.0
+      - name: Setup .NET 10.0
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: "10.0.x"
 
       - name: Remove private projects
         run: |
-          dotnet sln CSharpBible.sln remove "Mobile/MauiApp1/MauiApp1.csproj"
-          dotnet sln CSharpBible.sln remove "Simulation/AGVFktTests/AGVFktTests.csproj"
-          dotnet sln CSharpBible.sln remove "Simulation/AGVFkt/AGVFkt.csproj"
-          dotnet sln CSharpBible.sln remove "DB/ADO_Test/ADO_Test.csproj" 
-          dotnet sln CSharpBible.sln remove "Libraries/CSFreeVision_/CSFreeVision.csproj"
-          dotnet sln CSharpBible.sln remove "Mobile/DXMauiApp1/DXMauiApp1.csproj"
-          dotnet sln CSharpBible.sln remove "Web/MyComponent/Client/MyComponent.Client.csproj"
-          dotnet sln CSharpBible.sln remove "Web/MyComponent/Server/MyComponent.Server.csproj"
-          dotnet sln CSharpBible.sln remove "Web/MyComponent/Shared/MyComponent.csproj"
-          dotnet sln CSharpBible.sln remove "WinUI/App1/App1/App1.csproj"
-          dotnet sln CSharpBible.sln remove "App2/App2.csproj"
-          dotnet sln CSharpBible.sln remove "../PackageDwnLd.csproj"
-          dotnet sln CSharpBible.sln remove "Web/BlazorApp1/BlazorApp1.csproj"
-          dotnet sln CSharpBible.sln remove "Web/WebApp1/BlazorApp2/BlazorApp2.csproj"
-          dotnet sln CSharpBible.sln remove "Web/WebApp1/WebApplication1/WebApplication1/WebApplication1.csproj"
-          
+          $solution = "CSharpBible.slnx"
+
+          dotnet sln $solution list |
+            Where-Object { $_ -match '\.(csproj|vbproj|fsproj)$' } |
+            ForEach-Object {
+              $project = $_.Trim()
+
+              if (-not (Test-Path -LiteralPath $project)) {
+                Write-Host "Removing missing/private project: $project"
+                dotnet sln $solution remove "$project"
+              }
+            }
+
       - name: Restore
-        run: dotnet restore CSharpBible.sln -p:TargetFramework=net8.0-windows
+        run: dotnet restore CSharpBible.slnx -p:TargetFramework=net10.0-windows
 
       - name: Build
-        run: dotnet build CSharpBible.sln --configuration Release --no-restore -p:TargetFramework=net8.0-windows
+        run: dotnet build CSharpBible.slnx --configuration Release --no-restore -p:TargetFramework=net10.0-windows
 
       - name: Test
-        run: dotnet test CSharpBible.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0-windows
+        run: dotnet test CSharpBible.slnx --configuration Release --no-build --verbosity normal -p:TargetFramework=net10.0-windows

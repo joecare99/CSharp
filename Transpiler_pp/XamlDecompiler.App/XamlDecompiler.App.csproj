@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="CommunityToolkit.Mvvm">
+      <Version>8.4.2</Version>
+    </PackageReference>
     <ProjectReference Include="..\XamlDecompiler.Core\XamlDecompiler.Core.csproj" />
   </ItemGroup>
 

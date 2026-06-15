@@ -181,10 +181,9 @@
     <Project Path="Games/Snake_BaseTests/Snake_BaseTests.csproj" />
     <Project Path="Games/Snake_Console/Snake_Console.csproj" />
   </Folder>
-  <Folder Name="/Games/SokoBan_/">
+  <Folder Name="/Games/SokoBan/">
     <Project Path="Games/Sokoban/Sokoban.csproj" />
     <Project Path="Games/Sokoban_Base/Sokoban_Base.csproj" />
-    <Project Path="Games/Sokoban_Base/Sokoban_Base_win.csproj" />
     <Project Path="Games/Sokoban_BaseTests/Sokoban_BaseTests.csproj" />
   </Folder>
   <Folder Name="/Games/Werner_Flaschbier/">
