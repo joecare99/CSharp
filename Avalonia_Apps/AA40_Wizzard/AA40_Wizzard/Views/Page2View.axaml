@@ -7,7 +7,9 @@
 	x:DataType="viewModels:Page2ViewModel">
 	<StackPanel Spacing="8">
 		<TextBlock Text="{Binding NameLabel}" />
-		<ListBox ItemsSource="{Binding SubOptions}" SelectedItem="{Binding SubSelection}">
+		<ListBox 
+			ItemsSource="{Binding SubOptions}" 
+		    SelectedItem="{Binding SubSelection}">
 			<ListBox.ItemTemplate>
 				<DataTemplate DataType="model:ListEntry">
 					<TextBlock Text="{Binding Text}" />

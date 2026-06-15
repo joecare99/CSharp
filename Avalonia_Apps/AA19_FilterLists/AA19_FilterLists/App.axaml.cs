@@ -39,6 +39,10 @@ public partial class App : Application
             var mainWindow = Services.GetRequiredService<Views.MainWindow>();
             desktop.MainWindow = mainWindow;
         }
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+        {
+            singleView.MainView = Services.GetRequiredService<Views.MainView>();
+        }
 
         base.OnFrameworkInitializationCompleted();
     }
@@ -50,9 +54,10 @@ public partial class App : Application
         services.AddSingleton<ViewModels.PersonViewViewModel>();
 
         // Models
-        services.AddSingleton<Model.IPersons, Model.Persons>();
+        services.AddSingleton<Model.IPersonDataService, Model.PersonDataService>();
 
         // Views
+        services.AddTransient<Views.MainView>();
         services.AddTransient<Views.MainWindow>();
         services.AddTransient<Views.PersonView>();
     }

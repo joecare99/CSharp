@@ -36,12 +36,15 @@ public sealed class WizardContentService : IWizardContentService
     /// <inheritdoc />
     public Control? GetDocumentPreview(int? selectionId)
     {
+        string resourceName;
         if (selectionId is null || selectionId < 0)
         {
-            return null;
+            resourceName = $"MainSelection.xaml";
         }
-
-        var resourceName = $"MainSelection{selectionId}.xaml";
+        else
+        {
+            resourceName = $"MainSelection{selectionId}.xaml";
+        }
         var documentXaml = ReadEmbeddedDocument(resourceName);
         return string.IsNullOrWhiteSpace(documentXaml)
             ? null

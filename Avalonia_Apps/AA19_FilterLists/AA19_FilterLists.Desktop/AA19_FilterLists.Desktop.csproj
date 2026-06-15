@@ -1,0 +1,24 @@
+<Project>
+	<Import Project="..\Application.props" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<Configurations>Debug;Release;DesktopOnly</Configurations>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Desktop" />
+		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
+		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'DesktopOnly'" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\AA19_FilterLists\AA19_FilterLists.csproj" />
+	</ItemGroup>
+</Project>

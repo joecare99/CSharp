@@ -19,30 +19,18 @@ using AA19_FilterLists.Model;
 
 namespace AA19_FilterLists.ViewModels;
 
-public class PersonViewViewModel : ObservableObject
+public partial class PersonViewViewModel : ObservableObject
 {
-    private Person newPerson = new Person();
-    private readonly IPersons _persons;
+    private readonly IPersonDataService _personDataService;
     private string _filter = string.Empty;
 
     public event EventHandler? MissingData;
 
-    public Person NewPerson
-    {
-        get => newPerson;
-        set
-        {
-            if (ReferenceEquals(value, newPerson)) return;
-            SetProperty(ref newPerson, value);
-            btnAddPerson?.NotifyCanExecuteChanged();
-        }
-    }
+    [ObservableProperty]
+    public partial Person ActPerson { get; set; } = new Person();
 
-    public ObservableCollection<Person> Persons => _persons.Persons;
+    public ReadOnlyObservableCollection<Person> Persons => _personDataService.Persons;
     public ObservableCollection<Person> FilteredPersons { get; } = new();
-
-    public IRelayCommand btnAddPerson { get; }
-    public IRelayCommand ClearFilterCommand { get; }
 
     public string Filter
     {
@@ -54,34 +42,45 @@ public class PersonViewViewModel : ObservableObject
         }
     }
 
-    public PersonViewViewModel() : this(new Persons()) { }
-    public PersonViewViewModel(IPersons persons)
+    public PersonViewViewModel() : this(new PersonDataService()) { }
+    public PersonViewViewModel(IPersonDataService personDataService)
     {
-        _persons = persons;
-        _persons.Persons.CollectionChanged += (_, __) => DoFiltering();
+        _personDataService = personDataService;
+        _personDataService.PersonsChanged += (_, __) => DoFiltering();
         DoFiltering();
-        btnAddPerson = new RelayCommand(AddPerson, CanAddPerson);
-        ClearFilterCommand = new RelayCommand(() => Filter = string.Empty);
     }
 
+    [RelayCommand]
+    private void NewPerson()
+    {
+        ActPerson = new Person();
+    }
+
+    [RelayCommand]
+    private void ClearFilter()
+    {
+        Filter = string.Empty;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanAddPerson))]
     private void AddPerson()
     {
-        if (newPerson == null || string.IsNullOrWhiteSpace(newPerson.FullName))
+        if (ActPerson == null || string.IsNullOrWhiteSpace(ActPerson.FullName))
         {
             MissingData?.Invoke(this, EventArgs.Empty);
             return;
         }
-        _persons.Persons.Add(NewPerson);
-        NewPerson.Id = _persons.Persons.IndexOf(newPerson) + 1;
-        NewPerson = new Person();
+        _personDataService.AddPerson(ActPerson);
+        ActPerson = new Person();
     }
-    private bool CanAddPerson() => newPerson?.Id == 0;
+
+    private bool CanAddPerson() => ActPerson?.Id == 0;
 
     private void DoFiltering()
     {
         FilteredPersons.Clear();
         string value = _filter?.ToLower() ?? "";
-        foreach (var person in _persons.Persons)
+        foreach (var person in _personDataService.Persons)
         {
             if (string.IsNullOrEmpty(value)
                 || person.FullName.ToLower().Contains(value)

@@ -107,6 +107,12 @@
   <Folder Name="/AA19_Filterlists/">
     <File Path="AA19_FilterLists/Application.props" />
     <File Path="AA19_FilterLists/Directory.Packages.props" />
+    <Project Path="AA19_FilterLists/AA19_FilterLists.Browser/AA19_FilterLists.Browser.csproj">
+      <Build Solution="DesktopOnly|*" Project="false" />
+    </Project>
+    <Project Path="AA19_FilterLists/AA19_FilterLists.Desktop/AA19_FilterLists.Desktop.csproj">
+      <Build Solution="DesktopOnly|*" Project="false" />
+    </Project>
     <Project Path="AA19_FilterLists/AA19_FilterLists/AA19_FilterLists.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
