@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest" />
+    <PackageReference Include="MSTest">
+      <Version>4.2.3</Version>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
