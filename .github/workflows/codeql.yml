@@ -1,4 +1,4 @@
-name: "CodeQL C#"
+﻿name: "CodeQL C#"
 
 on:
   push:
@@ -6,69 +6,36 @@ on:
   pull_request:
     branches: [ "master", "main", "develop" ]
   schedule:
-    - cron: '0 18 * * 5'  # Runs at 18:00 every Friday
+    - cron: "0 18 * * 5"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+concurrency:
+  group: codeql-csharp-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze C#
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ['csharp']
+    timeout-minutes: 60
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          build-mode: none
+          queries: +security-extended,security-and-quality
 
-    - name: Cache dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-          
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        queries: +security-extended,security-and-quality
-
-    - name: Build Avalonia_Apps
-      continue-on-error: true  # Ignore errors during this step
-      run: |
-        dotnet build Avalonia_Apps/Avalonia_Apps.sln
-        
-    - name: Build Transpiler_pp
-      continue-on-error: true  # Ignore errors during this step
-      run: |
-        dotnet build Transpiler_pp/Transpiler.sln
-        
-    - name: Build CSharpBible
-      continue-on-error: true  # Ignore errors during this step
-      run: |
-        dotnet build     CSharpBible/Libraries/Libraries.sln
-        dotnet build     CSharpBible/Calc/Calc.sln
-        dotnet build     CSharpBible/Graphics/Graphics.sln
-        dotnet build     CSharpBible/MVVM_Tutorial/MVVM_Tutorial.sln
-        
-    # Uncomment and modify the following lines if Autobuild fails
-    # - run: |
-    #    echo "Run, Build Application using script"
-    #    ./location_of_script_within_repo/buildscript.sh
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:csharp"

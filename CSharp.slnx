@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/.github/">
+    <File Path=".github/workflows/codeql.yml" />
+  </Folder>
   <Folder Name="/Avalonia_Apps/" />
   <Folder Name="/Avalonia_Apps/Avalonia_App01/">
     <Project Path="Avalonia_Apps/Avalonia_App01/Avalonia_App_01.Android/Avalonia_App_01.Android.csproj" />
@@ -15,8 +18,8 @@
     <Project Path="CSharpBible/AboutExTests/AboutExTests.csproj" />
     <Project Path="CSharpBible/ActionTest/ActionTest.csproj" />
     <Project Path="CSharpBible/ActionTestWPF/ActionTestWPF.csproj" />
-    <Project Path="CSharpBible/AddPage/AddPage.csproj" />
-    <Project Path="CSharpBible/AddPageWPF/AddPageWPF.csproj" />
+    <Project Path="CSharpBible/AddPage/AddPage.csproj" Id="c8249e35-ed76-4180-95ba-317f8dc45683" />
+    <Project Path="CSharpBible/AddPageWPF/AddPageWPF.csproj" Id="af16f7af-cf83-4679-8111-0bbe9bcda102" />
     <Project Path="CSharpBible/CharGrid/CharGrid.csproj" />
     <Project Path="CSharpBible/ConsoleDisplay/ConsoleDisplay.csproj" />
     <Project Path="CSharpBible/ConsoleDisplay/ConsoleDisplay_net.csproj" />
@@ -25,9 +28,9 @@
     <Project Path="CSharpBible/ConsoleDisplayTests/ConsoleDisplay_netTests.csproj" />
     <Project Path="CSharpBible/ConsoleMouseApp/ConsoleMouseApp.csproj" />
     <Project Path="CSharpBible/ConsoleMouseApp/ConsoleMouseApp_net.csproj" />
-    <Project Path="CSharpBible/CSharpBibleTest/CSharpBibleTest.csproj" />
-    <Project Path="CSharpBible/CSV_Viewer/CSV_Viewer.csproj" />
-    <Project Path="CSharpBible/CSV_ViewerTest/CSV_ViewerTest.csproj" />
+    <Project Path="CSharpBible/CSharpBibleTest/CSharpBibleTest.csproj" Id="4ab88278-f044-49ed-a324-7c931a66da71" />
+    <Project Path="CSharpBible/CSV_Viewer/CSV_Viewer.csproj" Id="86a9a87a-d6bf-4904-b4ca-21bd4cff82b8" />
+    <Project Path="CSharpBible/CSV_ViewerTest/CSV_ViewerTest.csproj" Id="897c5ad9-edfd-4160-b837-62933591247f" />
     <Project Path="CSharpBible/DataGridEx/DataGridEx.csproj" />
     <Project Path="CSharpBible/DataGridExWPF/DataGridExWPF.csproj" />
     <Project Path="CSharpBible/Display_Test/Display_netTest.csproj" />
@@ -486,11 +489,11 @@
     <Project Path="CSharpBible/WPFSamples_2/WPF_StickyNotesDemoTests/WPF_StickyNotesDemo_netTests.csproj" />
   </Folder>
   <Folder Name="/CSharpProgrammierHandbuch/">
-    <Project Path="CSharpProgrammierHandbuch/CGui/CGui.csproj" />
-    <Project Path="CSharpProgrammierHandbuch/ConsoleTest/ConsoleTest.csproj" />
-    <Project Path="CSharpProgrammierHandbuch/CSharpProgrammierHandbuch/CSharpProgrammierHandbuch.csproj" />
-    <Project Path="CSharpProgrammierHandbuch/Fibonacci/Fibonacci.csproj" />
-    <Project Path="CSharpProgrammierHandbuch/Fibonacci2/Fibonacci2.csproj" />
+    <Project Path="CSharpProgrammierHandbuch/CGui/CGui.csproj" Id="e31e6e91-35a3-4115-93b2-94ef8060d9e6" />
+    <Project Path="CSharpProgrammierHandbuch/ConsoleTest/ConsoleTest.csproj" Id="967cbaec-29e3-4689-83bc-7275e3e6bf46" />
+    <Project Path="CSharpProgrammierHandbuch/CSharpProgrammierHandbuch/CSharpProgrammierHandbuch.csproj" Id="76360d49-1bbe-48b6-9c7b-199075f11017" />
+    <Project Path="CSharpProgrammierHandbuch/Fibonacci/Fibonacci.csproj" Id="81e70bf3-c1ab-41bb-96d6-4a40f466e441" />
+    <Project Path="CSharpProgrammierHandbuch/Fibonacci2/Fibonacci2.csproj" Id="812452aa-1098-4055-b06f-47c0629efff4" />
     <Project Path="CSharpProgrammierHandbuch/HelloWorld/HelloWorld.csproj" />
     <Project Path="CSharpProgrammierHandbuch/HelloWorldTests/HelloWorldTests.csproj" />
   </Folder>
