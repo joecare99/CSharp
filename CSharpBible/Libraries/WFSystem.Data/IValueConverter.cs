@@ -15,7 +15,7 @@ using System.Globalization;
 
 namespace System.Windows.Data
 {
-    #if !NET8_0_OR_GREATER
+    #if !NET6_0_OR_GREATER
     //
     // Zusammenfassung:
     //     Provides a way to apply custom logic to a binding.
