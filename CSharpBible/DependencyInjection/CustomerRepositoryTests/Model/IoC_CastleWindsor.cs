@@ -26,7 +26,7 @@ namespace CustomerRepositoryTests.Model
             ICustomerRepository repository =
                 container.Resolve<ICustomerRepository>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 

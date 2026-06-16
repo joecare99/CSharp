@@ -16,7 +16,7 @@ namespace CustomerRepositoryTests.Model
             ICustomerRepository repository =
                  new CustomerRepository2();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid()));
         }
 
@@ -28,7 +28,7 @@ namespace CustomerRepositoryTests.Model
             ICustomerRepository2 repository =
                  new CustomerRepository2();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid()));
 
             repository.Log.Get().Should().HaveCount(1);
@@ -42,9 +42,9 @@ namespace CustomerRepositoryTests.Model
             ICustomerRepository2 repository =
                  new CustomerRepository2();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid()));
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid()));
 
             repository.Log.Get().Should().HaveCount(2);
@@ -59,7 +59,7 @@ namespace CustomerRepositoryTests.Model
                 new CustomerRepository2();
             var referenceTime = repository.Clock.Now;
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 

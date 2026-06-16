@@ -19,7 +19,7 @@ namespace CustomerRepositoryTests.Model
             var repository = 
                 new CustomerRepository5(clock.Object, log.Object);
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 
@@ -39,7 +39,7 @@ namespace CustomerRepositoryTests.Model
 
             var repository =
                 new CustomerRepository5(clock.Object, log.Object);
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 
@@ -58,10 +58,10 @@ namespace CustomerRepositoryTests.Model
 
             ICustomerRepository repository = new CustomerRepository5(clock.Object, log.Object);
             // repository.Get(Guid.NewGuid());
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 

@@ -1,8 +1,8 @@
-﻿using BaseLib.Model.Tests;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Basic_Del04_TestImposibleStuff;
 using System;
 using System.Windows.Input;
+using BaseLib.Models.Tests;
 
 namespace Basic_Del04_TestImposibleStuffTests
 {

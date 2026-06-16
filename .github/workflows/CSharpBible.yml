@@ -50,6 +50,7 @@ jobs:
         run: dotnet restore CSharpBible.slnx
 
       - name: Build
+        
         run: dotnet build CSharpBible.slnx --configuration Release --no-restore
 
       - name: Test
