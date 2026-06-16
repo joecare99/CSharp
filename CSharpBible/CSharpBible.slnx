@@ -21,22 +21,30 @@
   <Folder Name="/Bibliotheken/">
     <File Path="Libraries/Libraries.props" />
     <File Path="Libraries/Libraries_net.props" />
+    <Project Path="Libraries/BaseLib.Show/BaseLib.Show.csproj" />
     <Project Path="Libraries/BaseLib/BaseLib.csproj" />
     <Project Path="Libraries/BaseLibTests/BaseLibTests.csproj" />
-    <Project Path="Libraries/CommonDialogs/CommonDialogs.csproj" />
-    <Project Path="Libraries/CommonDialogs/CommonDialogs_net.csproj" />
     <Project Path="Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
     <Project Path="Libraries/ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
-    <Project Path="Libraries/ConsoleLib/ConsoleLib.csproj" />
-    <Project Path="Libraries/ConsoleLib/ConsoleLib_net.csproj" />
     <Project Path="Libraries/CSFreeVision/CSFreeVision.csproj" />
     <Project Path="Libraries/ExtendedConsole/ExtendedConsole.csproj" />
     <Project Path="Libraries/GenInterfaces/GenInterfaces.csproj" />
+    <Project Path="Libraries/Libraries.Package/Libraries.Package.csproj" />
     <Project Path="Libraries/MathLIbrary/MathLibrary.csproj" />
     <Project Path="Libraries/MathLibraryTests/MathLibraryTests.csproj" />
     <Project Path="Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
     <Project Path="Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
+  </Folder>
+  <Folder Name="/Bibliotheken/CommonDialogs/">
+    <Project Path="Libraries/CommonDialogs/CommonDialogs.csproj" />
+    <Project Path="Libraries/CommonDialogs/CommonDialogs_net.csproj" />
+  </Folder>
+  <Folder Name="/Bibliotheken/ConsoleLib/">
+    <Project Path="Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
+    <Project Path="Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
+    <Project Path="Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
   </Folder>
   <Folder Name="/Calc/">
     <File Path="Calc/Calc.props" />
@@ -82,7 +90,9 @@
   <Folder Name="/Calc/Calc64WFTests/" />
   <Folder Name="/ConsoleApps/">
     <Project Path="ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
+    <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
     <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj" />
+    <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
     <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp_net.csproj" />
     <Project Path="ConsoleApps/ConsoleOverlapApp/ConsoleOverlapApp.csproj" />
     <Project Path="ConsoleApps/Display_Test/Display_netTest.csproj" />
@@ -93,12 +103,6 @@
     <Project Path="ConsoleApps/TestConsoleTests/TestConsoleTests.csproj" />
     <Project Path="ConsoleApps/WaveFuncColFrm/WaveFuncColFrm.csproj" />
   </Folder>
-  <Folder Name="/ConsoleApps/ConsoleMouseApp/">
-    <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
-    <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
-  </Folder>
-  <Folder Name="/ConsoleApps/Display_Test/" />
-  <Folder Name="/ConsoleApps/TestConsole/" />
   <Folder Name="/ConsoleApps/WaveFuncCol/">
     <Project Path="ConsoleApps/WaveFuncCol/WaveFunCollapse.csproj" />
     <Project Path="ConsoleApps/WaveFuncCol/WaveFunCollapse_net.csproj" />
@@ -204,8 +208,6 @@
     <Project Path="DB/OLEDBTest2/OleDbTest2.csproj" />
     <Project Path="DB/XSD_Data_Test/XSD_Data_Test.csproj" />
   </Folder>
-  <Folder Name="/DB/OLEDBTest/" />
-  <Folder Name="/DB/OLEDBTest2/" />
   <Folder Name="/DependencyInjection/">
     <Project Path="DependencyInjection/CustomerRepository/CustomerRepository.csproj" />
     <Project Path="DependencyInjection/CustomerRepositoryTests/CustomerRepositoryTests.csproj" />
@@ -305,7 +307,6 @@
     <Project Path="Games/Galaxia_UI.Tests/Galaxia_UI.Tests.csproj" />
     <Project Path="Games/Galaxia_UI/Galaxia_UI.csproj" />
   </Folder>
-  <Folder Name="/Games/HexaBan_Console/" />
   <Folder Name="/Games/packages/">
     <Project Path="Games/packages/PackageUpdate.csproj" />
   </Folder>
@@ -452,10 +453,6 @@
       <Platform Solution="*|x64" Project="x64" />
     </Project>
   </Folder>
-  <Folder Name="/Graphics/MVVM_ImageHandling/" />
-  <Folder Name="/Graphics/MVVM_ImageHandlingTests/" />
-  <Folder Name="/Graphics/Polyline/" />
-  <Folder Name="/Graphics/PolySpline/" />
   <Folder Name="/Graphics/SuperResolutionOnnxSample/">
     <Project Path="Graphics/SuperResolutionOnnxSample/SuperResolutionOnnxSample4.csproj" />
   </Folder>
@@ -463,20 +460,6 @@
     <Project Path="Graphics/XORLearn/Cnt3Learn.csproj">
       <Platform Solution="*|x64" Project="x64" />
     </Project>
-  </Folder>
-  <Folder Name="/Libraries/">
-    <Project Path="Libraries/BaseLib.Show/BaseLib.Show.csproj" />
-    <Project Path="Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
-    <Project Path="Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
-    <Project Path="Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
-    <Project Path="Libraries/Libraries.Package/Libraries.Package.csproj" />
-  </Folder>
-  <Folder Name="/Libraries/CommonDialogs/" />
-  <Folder Name="/Libraries/ConsoleLib/" />
-  <Folder Name="/Libraries/CSFreeVision_/" />
-  <Folder Name="/Libraries/MathLIbrary/" />
-  <Folder Name="/Libraries/WFSystem.Data/">
-    <Project Path="Libraries/WFSystem.Data/WFSystem.Windows.Data_net.csproj" />
   </Folder>
   <Folder Name="/Mobile/">
     <Project Path="Mobile/DXMauiApp1/DXMauiApp1.csproj" />
@@ -501,10 +484,6 @@
     <Project Path="MVVM_Tutorial/ListBinding/ListBinding_net.csproj" />
     <Project Path="MVVM_Tutorial/ListBindingTests/ListBindingTests.csproj" />
     <Project Path="MVVM_Tutorial/ListBindingTests/ListBinding_netTests.csproj" />
-    <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_LadenTests.csproj" />
-    <Project Path="MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView.csproj" />
-    <Project Path="MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView.csproj" />
-    <Project Path="MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_AllExamples/MVVM_AllExamples.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_AllExamples/MVVM_AllExamples_net.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_AllExamplesTests/MVVM_AllExamplesTests.csproj" />
@@ -520,122 +499,6 @@
     <Project Path="MVVM_Tutorial/WpfDemoUI1/WpfDemoUI1.csproj" />
     <Project Path="MVVM_Tutorial/WpfDemoUI2/WpfDemoUI2.csproj" />
   </Folder>
-  <Folder Name="/MVVM_Tutorial/ItemsControlTut3/" />
-  <Folder Name="/MVVM_Tutorial/ItemsControlTut4/" />
-  <Folder Name="/MVVM_Tutorial/ListBinding/" />
-  <Folder Name="/MVVM_Tutorial/ListBindingTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_00a_CTTemplate/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_00a_CTTemplateTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_00_IoCTemplate/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_00_IoCTemplateTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_00_Template/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_00_TemplateTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_03a_CTNotifyChange/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_03a_CTNotifyChangeTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_03_NotifyChange/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_03_NotifyChangeTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_04a_CTRelayCommand/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_04a_CTRelayCommandTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_04_DelegateCommand/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_04_DelegateCommandTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_05a_CTCommandParCalc/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_05a_CTCommandParCalcTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_05_CommandParCalculator/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_05_CommandParCalculatorTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_06_Converters/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_06_Converters_2/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_06_Converters_3/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_06_Converters_3Tests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_06_Converters_4/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_06_Converters_4Tests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_09a_CTDialogBoxes/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_09a_CTDialogBoxesTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_09_DialogBoxes/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_09_DialogBoxesTest/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_16_Usercontrol1/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_16_UserControl1Tests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_16_Usercontrol2/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_17_1_CSV_Laden/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/">
-    <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_Laden_netTests.csproj" />
-  </Folder>
-  <Folder Name="/MVVM_Tutorial/MVVM_18_MultiConverters/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_19_FilterLists/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_19_FilterListsTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_20a_CTSysdialogs/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_20a_CTSysdialogsTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_20_Sysdialogs/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_20_SysdialogsTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_21_Buttons/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_22_CTWpfCap/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_22_CTWpfCapTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_22_WpfCap/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_22_WpfCapTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_24a_CTUserControl/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_24a_CTUserControlTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_24b_UserControl/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_24b_UserControlTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_24c_CTUserControl/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_24c_CTUserControlTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_24_UserControl/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_24_UserControlTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_25_RichTextEdit/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_25_RichTextEditTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_26_BindingGroupExp/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_26_CTBindingGroupExp/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_27_DataGrid/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_27_DataGridTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_28_1_CTDataGridExt/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_28_1_CTDataGridExtTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_28_1_DataGridExt/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_28_1_DataGridExtTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_28_DataGrid/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_28_DataGridTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31a_CTValidation1/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31a_CTValidation1Tests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31a_CTValidation2/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31a_CTValidation2Tests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31a_CTValidation3/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31a_CTValidation3Tests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31_Validation1/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31_Validation1Tests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31_Validation2/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_31_Validation2Tests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_33a_CTEvents_To_Commands/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_33a_CTEvents_To_CommandsTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_33_Events_to_Commands/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_33_Events_to_CommandsTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_34a_CTBindingEventArgs/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_34a_CTBindingEventArgsTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_34_BindingEventArgs/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_34_BindingEventArgsTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_35_CommunityToolkit/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_35_CommunityToolkitTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_36_ComToolKtSavesWork/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_36_ComToolKtSavesWorkTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_37_TreeView/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_37_TreeViewTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_38_CTDependencyInjection/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_38_CTDependencyInjectionTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_39_MultiModelTest/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_39_MultiModelTestTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_40_Wizzard/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_40_WizzardTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_41_Sudoku/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_41_SudokuTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_42a_3DView/">
-    <Project Path="MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView_net.csproj" />
-  </Folder>
-  <Folder Name="/MVVM_Tutorial/MVVM_42b_3DView/">
-    <Project Path="MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView_net.csproj" />
-  </Folder>
-  <Folder Name="/MVVM_Tutorial/MVVM_42_3DView/">
-    <Project Path="MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView _net.csproj" />
-  </Folder>
-  <Folder Name="/MVVM_Tutorial/MVVM_99_SomeIssue/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_99_SomeIssueTests/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_AllExamples/" />
-  <Folder Name="/MVVM_Tutorial/MVVM_AllExamplesTests/" />
   <Folder Name="/MVVM_Tutorial/MVVM_Tut_01-10/">
     <Project Path="MVVM_Tutorial/MVVM_03a_CTNotifyChange/MVVM_03a_CTNotifyChange.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_03a_CTNotifyChange/MVVM_03a_CTNotifyChange_net.csproj" />
@@ -692,6 +555,8 @@
     <Project Path="MVVM_Tutorial/MVVM_16_Usercontrol2/MVVM_16_UserControl2_net.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_Laden/MVVM_17_1_CSV_Laden.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_Laden/MVVM_17_1_CSV_Laden_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_LadenTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_Laden_netTests.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_18_MultiConverters/MVVM_18_MultiConverters.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_18_MultiConverters/MVVM_18_MultiConverters_net.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_18_MultiConvertersTests/MVVM_18_MultiConvertersTests.csproj" />
@@ -827,8 +692,13 @@
     <Project Path="MVVM_Tutorial/MVVM_41_Sudoku/MVVM_41_Sudoku_net.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_41_SudokuTests/MVVM_41_SudokuTests.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_41_SudokuTests/MVVM_41_Sudoku_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView _net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView.csproj" />
   </Folder>
-  <Folder Name="/MVVM_Tutorial/SyncAsyncParallel/" />
   <Folder Name="/MVVM_Tutorial/Templates/">
     <Project Path="MVVM_Tutorial/MVVM_00a_CTTemplate/MVVM_00a_CTTemplate.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_00a_CTTemplate/MVVM_00a_CTTemplate_net.csproj" />
@@ -948,14 +818,16 @@
     <Project Path="Web/BlazorApp1/BlazorApp1.csproj" />
     <Project Path="Web/BlazorWasmDocker/BlazorWasmDocker.csproj" />
   </Folder>
-  <Folder Name="/Web/MyComponent/">
+  <Folder Name="/Web/MyComponent/" />
+  <Folder Name="/Web/MyComponent/Client/">
     <Project Path="Web/MyComponent/Client/MyComponent.Client.csproj" />
+  </Folder>
+  <Folder Name="/Web/MyComponent/Server/">
     <Project Path="Web/MyComponent/Server/MyComponent.Server.csproj" />
+  </Folder>
+  <Folder Name="/Web/MyComponent/Shared/">
     <Project Path="Web/MyComponent/Shared/MyComponent.csproj" />
   </Folder>
-  <Folder Name="/Web/MyComponent/Client/" />
-  <Folder Name="/Web/MyComponent/Server/" />
-  <Folder Name="/Web/MyComponent/Shared/" />
   <Folder Name="/Web/WebApp1/">
     <Project Path="Web/WebApp1/BlazorApp2/BlazorApp2.csproj" />
   </Folder>
@@ -1022,24 +894,6 @@
     <Project Path="WPFSamples_2/Styles_and_Templates/WPF_FindingElementsInTemplates/WPF_FindingElementsInTemplates.csproj" />
     <Project Path="WPFSamples_2/Styles_and_Templates/WPF_IntroToStylingAndTemplating/WPF_IntroToStylingAndTemplating.csproj" />
   </Folder>
-  <Folder Name="/WPFSamples_2/WPF_AnimationTiming/" />
-  <Folder Name="/WPFSamples_2/WPF_AnimationTimingTests/" />
-  <Folder Name="/WPFSamples_2/WPF_Complex_Layout/" />
-  <Folder Name="/WPFSamples_2/WPF_Complex_LayoutTests/" />
-  <Folder Name="/WPFSamples_2/WPF_ControlsAndLayout/" />
-  <Folder Name="/WPFSamples_2/WPF_ControlsAndLayoutTests/" />
-  <Folder Name="/WPFSamples_2/WPF_CustomAnimation/" />
-  <Folder Name="/WPFSamples_2/WPF_CustomAnimationTests/" />
-  <Folder Name="/WPFSamples_2/WPF_Hello_World/" />
-  <Folder Name="/WPFSamples_2/WPF_Hello_WorldTests/" />
-  <Folder Name="/WPFSamples_2/WPF_MasterDetail/" />
-  <Folder Name="/WPFSamples_2/WPF_MasterDetailTests/" />
-  <Folder Name="/WPFSamples_2/WPF_MoveWindow/" />
-  <Folder Name="/WPFSamples_2/WPF_MoveWindowTests/" />
-  <Folder Name="/WPFSamples_2/WPF_Sample_Template/" />
-  <Folder Name="/WPFSamples_2/WPF_Sample_TemplateTests/" />
-  <Folder Name="/WPFSamples_2/WPF_StickyNotesDemo/" />
-  <Folder Name="/WPFSamples_2/WPF_StickyNotesDemoTests/" />
   <Project Path="../PackageDwnLd.csproj" />
   <Project Path="../TestStatements/PluginBase/PluginBase.csproj" />
   <Project Path="AboutEx/AboutEx.csproj" />
