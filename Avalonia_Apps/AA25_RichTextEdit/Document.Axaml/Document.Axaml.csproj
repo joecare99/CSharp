@@ -2,7 +2,7 @@
   <Import Project="..\Application.props" />
   <PropertyGroup>
 	<TargetFrameworks>net8.0</TargetFrameworks>
-	<ImplicitUsings>enable</ImplicitUsings>
+	<ImplicitUsings>disable</ImplicitUsings>
 	<Nullable>enable</Nullable>
 	<Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>

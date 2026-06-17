@@ -1,4 +1,6 @@
-﻿namespace Document.Base.Models.Interfaces;
+﻿using System.Collections.Generic;
+
+namespace Document.Base.Models.Interfaces;
 
 public interface IDOMElement
 {

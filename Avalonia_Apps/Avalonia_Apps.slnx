@@ -154,6 +154,8 @@
     </Project>
   </Folder>
   <Folder Name="/AA25_RichText/">
+    <File Path="AA25_RichTextEdit/Application.props" />
+    <File Path="AA25_RichTextEdit/Directory.Packages.props" />
     <Project Path="AA25_RichTextEdit/AA25_RichTextEdit/AA25_RichTextEdit.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
@@ -282,10 +284,6 @@
     <Project Path="../CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
-    <Project Path="../CSharpBible/ConsoleApps/TestConsole/TestConsole_net.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Debug" />
-      <Build Solution="DesktopOnly|*" Project="false" />
-    </Project>
   </Folder>
   <Folder Name="/Legacy/FroniusMonitor/">
     <Project Path="../DataConversion/FroniusJson/FroniusJson.csproj">
@@ -304,26 +302,6 @@
     <File Path="../../Delphi/Diverses/Source/Labyrinth/tst_Laby4.pas" />
     <File Path="../../Delphi/Diverses/Source/Labyrinth/unt_Laby4.pas" />
     <File Path="../../Delphi/Diverses/Source/Labyrinth/unt_Point2d.pas" />
-  </Folder>
-  <Folder Name="/Legacy/MVVM_37_TreeView/">
-    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_37_TreeView/MVVM_37_TreeView_net.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
-      <Build Solution="DesktopOnly|*" Project="false" />
-    </Project>
-    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_37_TreeViewTests/MVVM_37_TreeView_netTests.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
-      <Build Solution="DesktopOnly|*" Project="false" />
-    </Project>
-  </Folder>
-  <Folder Name="/Legacy/MVVM_40_Wizzard/">
-    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_40_Wizzard/MVVM_40_Wizzard_net.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
-      <Build Solution="DesktopOnly|*" Project="false" />
-    </Project>
-    <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_40_WizzardTests/MVVM_40_Wizzard_netTests.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
-      <Build Solution="DesktopOnly|*" Project="false" />
-    </Project>
   </Folder>
   <Folder Name="/Legacy/RenderImage/">
     <File Path="../../Delphi/Grafik/Source/RenderImage/cls_RenderBase.pas" />
