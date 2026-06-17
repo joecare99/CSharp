@@ -7,7 +7,12 @@ on:
   pull_request:
     paths:
       - "TestStatements/**"
-
+      
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+  
 jobs:
   build-test:
     runs-on: windows-latest
@@ -18,18 +23,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup .NET 8.0
+      - name: Setup .NET 10.0
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: "10.0.x"
 
       - name: Remove private projects
         run: |
+         $solution = "TestStatements.slnx"
+
+          dotnet sln $solution list |
+            Where-Object { $_ -match '\.(csproj|vbproj|fsproj)$' } |
+            ForEach-Object {
+              $project = $_.Trim()
+
+              if (-not (Test-Path -LiteralPath $project)) {
+                Write-Host "Removing missing/private project: $project"
+                dotnet sln $solution remove "$project"
+              }
+            }
+
           
       - name: Restore
-        run: dotnet restore TestStatements.sln -p:TargetFramework=net8.0-windows
+        run: dotnet restore TestStatements.slnx -p:TargetFramework=net10.0-windows
 
       - name: Build
-        run: dotnet build TestStatements.sln --configuration Release --no-restore -p:TargetFramework=net8.0-windows
+        run: dotnet build TestStatements.slnx --configuration Release --no-restore -p:TargetFramework=net10.0-windows
       - name: Test
-        run: dotnet test TestStatements.sln --configuration Release --no-build --verbosity normal -p:TargetFramework=net8.0-windows
+        run: dotnet test TestStatements.slnx --configuration Release --no-build --verbosity normal -p:TargetFramework=net10.0-windows
