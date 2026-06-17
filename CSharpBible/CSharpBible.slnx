@@ -26,22 +26,30 @@
   <Folder Name="/Bibliotheken/">
     <File Path="Libraries/Libraries.props" />
     <File Path="Libraries/Libraries_net.props" />
+    <Project Path="Libraries/BaseLib.Show/BaseLib.Show.csproj" />
     <Project Path="Libraries/BaseLib/BaseLib.csproj" />
     <Project Path="Libraries/BaseLibTests/BaseLibTests.csproj" />
-    <Project Path="Libraries/CommonDialogs/CommonDialogs.csproj" />
-    <Project Path="Libraries/CommonDialogs/CommonDialogs_net.csproj" />
     <Project Path="Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
     <Project Path="Libraries/ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
-    <Project Path="Libraries/ConsoleLib/ConsoleLib.csproj" />
-    <Project Path="Libraries/ConsoleLib/ConsoleLib_net.csproj" />
     <Project Path="Libraries/CSFreeVision/CSFreeVision.csproj" />
     <Project Path="Libraries/ExtendedConsole/ExtendedConsole.csproj" />
     <Project Path="Libraries/GenInterfaces/GenInterfaces.csproj" />
+    <Project Path="Libraries/Libraries.Package/Libraries.Package.csproj" />
     <Project Path="Libraries/MathLIbrary/MathLibrary.csproj" />
     <Project Path="Libraries/MathLibraryTests/MathLibraryTests.csproj" />
     <Project Path="Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
     <Project Path="Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
+  </Folder>
+  <Folder Name="/Bibliotheken/CommonDialogs/">
+    <Project Path="Libraries/CommonDialogs/CommonDialogs.csproj" />
+    <Project Path="Libraries/CommonDialogs/CommonDialogs_net.csproj" />
+  </Folder>
+  <Folder Name="/Bibliotheken/ConsoleLib/">
+    <Project Path="Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
+    <Project Path="Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
+    <Project Path="Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
   </Folder>
   <Folder Name="/Calc/">
     <File Path="Calc/Calc.props" />
@@ -68,6 +76,10 @@
       <BuildDependency Project="Calc/Calc32WPF/Calc32WPF_net.csproj" />
     </Project>
   </Folder>
+  <Folder Name="/Calc/Calc32Cons/" />
+  <Folder Name="/Calc/Calc32Tests/" />
+  <Folder Name="/Calc/Calc32WPF/" />
+  <Folder Name="/Calc/Calc32WPFTests/" />
   <Folder Name="/Calc/Calc64/">
     <Project Path="Calc/Calc64Base/Calc64Base.csproj" />
     <Project Path="Calc/Calc64BaseTests/Calc64BaseTests.csproj" />
@@ -79,9 +91,15 @@
     </Project>
     <Project Path="Calc/Calc64_Wpf/Calc64_Wpf.csproj" />
   </Folder>
+  <Folder Name="/Calc/Calc64WF/" />
+  <Folder Name="/Calc/Calc64WFTests/" />
   <Folder Name="/ConsoleApps/">
+    <Project Path="ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
+    <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
     <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.csproj" />
+    <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
     <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp_net.csproj" />
+    <Project Path="ConsoleApps/ConsoleOverlapApp/ConsoleOverlapApp.csproj" />
     <Project Path="ConsoleApps/Display_Test/Display_netTest.csproj" />
     <Project Path="ConsoleApps/Display_Test/Display_Test.csproj" />
     <Project Path="ConsoleApps/TestConsole/TestConsole.csproj" />
@@ -98,19 +116,33 @@
     <File Path="Data/Data.props" />
     <File Path="Data/Data_net.props" />
     <File Path="Data/Directory.Build.props" />
+    <Project Path="Data/CommandlineHelper.Generators/CommandlineHelper.Generators.csproj" />
+    <Project Path="Data/CommandlineHelper/CommandlineHelper.csproj" />
     <Project Path="Data/NebelEbook/NebelEbook.csproj" />
     <Project Path="Data/Story.Base/Story.Base.csproj" />
     <Project Path="Data/TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
     <Project Path="Data/TraceCsv2realCsvTests/TraceCsv2realCsvTests.csproj" />
   </Folder>
-  <Folder Name="/Data/CommandLineHelper/">
-    <Project Path="Data/CommandlineHelper.Generators/CommandlineHelper.Generators.csproj" />
-    <Project Path="Data/CommandlineHelper/CommandlineHelper.csproj" />
+  <Folder Name="/Data/ConsoleApp1/">
+    <Project Path="Data/ConsoleApp1/DynamicStateMachine.csproj" />
+  </Folder>
+  <Folder Name="/Data/DataAnalysis/">
+    <Project Path="Data/DataAnalysis/DataAnalysis.Core.Tests/DataAnalysis.Core.Tests.csproj" />
+    <Project Path="Data/DataAnalysis/DataAnalysis.Core/DataAnalysis.Core.csproj" />
+    <Project Path="Data/DataAnalysis/DataAnalysis.WPF.TestHarness/DataAnalysis.WPF.TestHarness.csproj" />
+    <Project Path="Data/DataAnalysis/DataAnalysis.WPF/DataAnalysis.WPF.csproj" />
+    <Project Path="Data/DataAnalysis/DataConvert.Console/DataConvert.Console.csproj" />
   </Folder>
   <Folder Name="/Data/DocumentUtils/">
+    <Project Path="Data/DocumentUtils/DocOdfTest/DocOdfTest.csproj" />
     <Project Path="Data/DocumentUtils/Document.Base/Document.Base.csproj" />
+    <Project Path="Data/DocumentUtils/Document.BaseTests/Document.BaseTests.csproj" />
+    <Project Path="Data/DocumentUtils/Document.Demo.Gui/Document.Demo.Gui.csproj" />
     <Project Path="Data/DocumentUtils/Document.Docx/Document.Docx.csproj" />
     <Project Path="Data/DocumentUtils/Document.Html/Document.Html.csproj" />
+    <Project Path="Data/DocumentUtils/Document.Markdown/Document.Markdown.csproj" />
+    <Project Path="Data/DocumentUtils/Document.MarkdownTests/Document.MarkdownTests.csproj" />
+    <Project Path="Data/DocumentUtils/Document.Model/Document.Model.csproj" />
     <Project Path="Data/DocumentUtils/Document.Odf/Document.Odf.csproj" />
     <Project Path="Data/DocumentUtils/Document.Pdf/Document.Pdf.csproj" />
     <Project Path="Data/DocumentUtils/Document.Xaml/Document.Xaml.csproj" />
@@ -121,27 +153,51 @@
   <Folder Name="/Data/DocumentUtils/HelloWorld/">
     <Project Path="Data/DocumentUtils/HelloWorld/HelloWorldOdf.csproj" />
   </Folder>
+  <Folder Name="/Data/PictureDB/">
+    <Project Path="Data/PictureDB/PictureDB.Base.Tests/PictureDB.Base.Tests.csproj" />
+    <Project Path="Data/PictureDB/PictureDB.Base/PictureDB.Base.csproj" />
+    <Project Path="Data/PictureDB/PictureDB.OllamaTest/PictureDB.OllamaTest.csproj" />
+    <Project Path="Data/PictureDB/PictureDB.UI/PictureDB.UI.csproj" />
+  </Folder>
   <Folder Name="/Data/RepoMigrator/">
     <Project Path="Data/RepoMigrator/RepoMigrator.App.Logic/RepoMigrator.App.Logic.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.App.State/RepoMigrator.App.State.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.App.Wpf/RepoMigrator.App.Wpf.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Core/RepoMigrator.Core.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Archive.Tests/RepoMigrator.Providers.Archive.Tests.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Archive/RepoMigrator.Providers.Archive.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Compression.TarGz.Tests/RepoMigrator.Providers.Compression.TarGz.Tests.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Compression.TarGz/RepoMigrator.Providers.Compression.TarGz.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Compression.Zip.Tests/RepoMigrator.Providers.Compression.Zip.Tests.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Compression.Zip/RepoMigrator.Providers.Compression.Zip.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Git.Tests/RepoMigrator.Providers.Git.Tests.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Git/RepoMigrator.Providers.Git.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Patch/RepoMigrator.Providers.Patch.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Svn.Tests/RepoMigrator.Providers.Svn.Tests.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.Svn/RepoMigrator.Providers.Svn.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Providers.SvnCli.Tests/RepoMigrator.Providers.SvnCli.Tests.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Providers.SvnCli/RepoMigrator.Providers.SvnCli.csproj" />
     <Project Path="Data/RepoMigrator/RepoMigrator.Tests/RepoMigrator.Tests.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Tools.ArchiveSmokeTest.Tests/RepoMigrator.Tools.ArchiveSmokeTest.Tests.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Tools.ArchiveSmokeTest/RepoMigrator.Tools.ArchiveSmokeTest.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Tools.GitBranchSplitter.Tests/RepoMigrator.Tools.GitBranchSplitter.Tests.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Tools.GitBranchSplitter/RepoMigrator.Tools.GitBranchSplitter.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Tools.PatchPreparation.Tests/RepoMigrator.Tools.PatchPreparation.Tests.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Tools.PipelinedMigration.Tests/RepoMigrator.Tools.PipelinedMigration.Tests.csproj" />
+    <Project Path="Data/RepoMigrator/RepoMigrator.Tools.PipelinedMigration/RepoMigrator.Tools.PipelinedMigration.csproj" />
   </Folder>
   <Folder Name="/Data/TraceAnalysis/">
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Base.Tests/TraceAnalysis.Base.Tests.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Base/TraceAnalysis.Base.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.CSV/TraceAnalysis.Filter.CSV.csproj" />
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.Excel/TraceAnalysis.Filter.Excel.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.JSON/TraceAnalysis.Filter.JSON.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.MovirunText/TraceAnalysis.Filter.MovirunText.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Filter.MovirunTrace/TraceAnalysis.Filter.MovirunTrace.csproj" />
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Show.Wpf/TraceAnalysis.Show.Wpf.csproj" />
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Widgets.Wpf/TraceAnalysis.Widgets.Wpf.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Workbench.Core/TraceAnalysis.Workbench.Core.csproj" />
+    <Project Path="Data/TraceAnalysis/TraceAnalysis.Workbench.Wpf/TraceAnalysis.Workbench.Wpf.csproj" />
   </Folder>
   <Folder Name="/DB/">
     <File Path="DB/DB.props" />
@@ -166,22 +222,85 @@
     <File Path="Games/Games.props" />
     <File Path="Games/Games_net.props" />
     <File Path="SomeThing/Solution.props" />
+    <Project Path="Games/Arkanoid.Base/Arkanoid.Base.csproj" />
+    <Project Path="Games/Arkanoid.Cons/Arkanoid.Cons.csproj" />
+    <Project Path="Games/AsteroidsModernEngine.Tests/AsteroidsModernEngine.Tests.csproj" />
+    <Project Path="Games/AsteroidsModernEngine/AsteroidsModernEngine.csproj" />
+    <Project Path="Games/AsteroidsModernUI/AsteroidsModernUI.csproj" />
+    <Project Path="Games/BoxFlight/BoxFlight.csproj" />
     <Project Path="Games/CreateCards/CreateCards.csproj" />
     <Project Path="Games/CsEpiphany/CsEpiphany.csproj" />
+    <Project Path="Games/DetectiveGame.Console/DetectiveGame.Console.csproj" />
+    <Project Path="Games/DetectiveGame.Engine/DetectiveGame.Engine.csproj" />
+    <Project Path="Games/DetectiveGame.Tests/DetectiveGame.Tests.csproj" />
+    <Project Path="Games/DetectiveGame.Wpf/DetectiveGame.Wpf.csproj" />
     <Project Path="Games/Game_Base/Game_Base.csproj" />
     <Project Path="Games/Game_BaseTests/Game_BaseTests.csproj" />
+    <Project Path="Games/HexaBan/HexaBan.csproj" />
     <Project Path="Games/HexaBan_Console/HexaBan_Console.csproj" />
     <Project Path="Games/HexaBan_Console/HexaBan_ConsoleLnx.csproj" />
     <Project Path="Games/HexaBan_Console/HexaBan_ConsoleWin.csproj" />
+    <Project Path="Games/MidiSwing.MVVM/MidiSwing.MVVM.csproj" />
     <Project Path="Games/MVVM_TiledDisplay_net/MVVM_TiledDisplay_net.csproj" />
+    <Project Path="Games/PlayMidiMusic/PlayMidiMusic.csproj" />
+    <Project Path="Games/PlayMidiMusic2/PlayMidiMusic2.csproj" />
+    <Project Path="Games/PlayMidiMusic3/PlayMidiMusic3.csproj" />
+    <Project Path="Games/ProceduralMidiMusic/ProceduralMidiMusic.csproj" />
+    <Project Path="Games/RemoteTerminal.Tests/RemoteTerminal.Tests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Games/RemoteTerminal/RemoteTerminal.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Games/SharpHack.AI/SharpHack.AI.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Games/SharpHack.AITests/SharpHack.AITests.csproj" />
+    <Project Path="Games/SharpHack.Base/SharpHack.Base.csproj" />
+    <Project Path="Games/SharpHack.BaseCreatures/SharpHack.BaseCreatures.csproj" />
+    <Project Path="Games/SharpHack.BaseItems/SharpHack.BaseItems.csproj" />
+    <Project Path="Games/SharpHack.BaseItemsTests/SharpHack.BaseItemsTests.csproj" />
+    <Project Path="Games/SharpHack.BaseTests/SharpHack.BaseTests.csproj" />
+    <Project Path="Games/SharpHack.Combat/SharpHack.Combat.csproj" />
+    <Project Path="Games/SharpHack.CombatTests/SharpHack.CombatTests.csproj" />
+    <Project Path="Games/SharpHack.Console/SharpHack.Console.csproj" />
+    <Project Path="Games/SharpHack.Engine/SharpHack.Engine.csproj" />
+    <Project Path="Games/SharpHack.EngineTests/SharpHack.EngineTests.csproj" />
+    <Project Path="Games/SharpHack.LevelGen/SharpHack.LevelGen.csproj" />
+    <Project Path="Games/SharpHack.LevelGenTests/SharpHack.LevelGenTests.csproj" />
+    <Project Path="Games/SharpHack.Magic/SharpHack.Magic.csproj" />
+    <Project Path="Games/SharpHack.MapExport/SharpHack.MapExport.csproj" />
+    <Project Path="Games/SharpHack.Persist/SharpHack.Persist.csproj" />
+    <Project Path="Games/SharpHack.Server/SharpHack.Server.csproj" />
+    <Project Path="Games/SharpHack.Terminal/SharpHack.Terminal.csproj" />
+    <Project Path="Games/SharpHack.View.FirstPerson/SharpHack.View.FirstPerson.csproj" />
+    <Project Path="Games/SharpHack.ViewModel.Tests/SharpHack.ViewModel.Tests.csproj" />
+    <Project Path="Games/SharpHack.ViewModel/SharpHack.ViewModel.csproj" />
+    <Project Path="Games/SharpHack.Wpf/SharpHack.Wpf.csproj" />
+    <Project Path="Games/SharpHack.WPF2D/SharpHack.WPF2D.csproj" />
+    <Project Path="Games/Snake.WPF/Snake.WPF.csproj" />
+    <Project Path="Games/Sokoban.Plugin/Sokoban.Plugin.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Games/Sokoban.Server/Sokoban.Server.csproj" />
     <Project Path="Games/Sudoku_Base/Sudoku_Base.csproj" />
     <Project Path="Games/Sudoku_BaseTests/Sudoku_BaseTests.csproj" />
     <Project Path="Games/Tetris_Base/Tetris_Base.csproj" />
     <Project Path="Games/Tetris_BaseTests/Tetris_BaseTests.csproj" />
+    <Project Path="Games/TileSetAnimator.Tests/TileSetAnimator.Tests.csproj" />
+    <Project Path="Games/TileSetAnimator/TileSetAnimator.csproj" />
+    <Project Path="Games/Treppen.Base/Treppen.Base.csproj" />
+    <Project Path="Games/Treppen.BaseTests/Treppen.BaseTests.csproj" />
+    <Project Path="Games/Treppen.Export/Treppen.Export.csproj" />
+    <Project Path="Games/Treppen.Print/Treppen.Print.csproj" />
+    <Project Path="Games/Treppen.WPF/Treppen.WPF.csproj" />
     <Project Path="Games/VectorGfx/VectorGfx.csproj" />
     <Project Path="Games/VectorGfx2/VectorGfx2.csproj" />
+    <Project Path="Games/VTileEdit.WPF/VTileEdit.WPF.csproj" />
+    <Project Path="Games/VTileEdit.WPFTests/VTileEdit.WPFTests.csproj" />
     <Project Path="Games/VTileEdit/VTileEdit.csproj" />
     <Project Path="Games/VTileEditTests/VTileEditTests.csproj" />
+    <Project Path="Games/Werner_Flaschbier.Console2/Werner_Flaschbier.Console2.csproj" />
   </Folder>
   <Folder Name="/Games/Asteroids/">
     <Project Path="Games/Asteroids/Asteroids_net.csproj" />
@@ -193,6 +312,9 @@
     <Project Path="Games/Galaxia_UI.Tests/Galaxia_UI.Tests.csproj" />
     <Project Path="Games/Galaxia_UI/Galaxia_UI.csproj" />
   </Folder>
+  <Folder Name="/Games/packages/">
+    <Project Path="Games/packages/PackageUpdate.csproj" />
+  </Folder>
   <Folder Name="/Games/Snake/">
     <Project Path="Games/Snake_Base/Snake_Base.csproj" />
     <Project Path="Games/Snake_BaseTests/Snake_BaseTests.csproj" />
@@ -203,12 +325,16 @@
     <Project Path="Games/Sokoban_Base/Sokoban_Base.csproj" />
     <Project Path="Games/Sokoban_BaseTests/Sokoban_BaseTests.csproj" />
   </Folder>
+  <Folder Name="/Games/Sokoban_Base/">
+    <Project Path="Games/Sokoban_Base/Sokoban_Base_win.csproj" />
+  </Folder>
   <Folder Name="/Games/Werner_Flaschbier/">
     <Project Path="Games/Werner_Flaschbier/Werner_Flaschbier_Base.csproj" />
     <Project Path="Games/Werner_Flaschbier/Werner_Flaschbier_Console.csproj" />
     <Project Path="Games/Werner_Flaschbier_BaseTests/Werner_Flaschbier_BaseTests.csproj" />
     <Project Path="Games/Werner_Flaschbier_BaseTests/Werner_Flaschbier_ConsoleTests.csproj" />
   </Folder>
+  <Folder Name="/Games/Werner_Flaschbier_BaseTests/" />
   <Folder Name="/Graphics/">
     <File Path="Graphics/Graphics.props" />
     <File Path="Graphics/Graphics_net.props" />
@@ -217,7 +343,31 @@
     <Project Path="Graphics/CanvasWPF2_CTItemTemplateSelector/CanvasWPF2_CTItemTemplateSelector.csproj" />
     <Project Path="Graphics/CanvasWPF2_ItemTemplateSelector/CanvasWPF2_ItemTemplateSelector.csproj" />
     <Project Path="Graphics/CanvasWPF_CT/CanvasWPF_CT.csproj" />
+    <Project Path="Graphics/Cifar10.WPF/Cifar10.WPF.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Graphics/Cifar10_2.WPF/Cifar10_2.WPF.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
     <Project Path="Graphics/DynamicShapeWPF/DynamicShapeWPF.csproj" />
+    <Project Path="Graphics/HilpertColorMap/HilpertColorMap.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Graphics/libCIFAR/libCIFAR.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Graphics/libMachLearn/libMachLearn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Graphics/MarbleBoard.Engine.Tests/MarbleBoard.Engine.Tests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Graphics/MarbleBoard.Engine/MarbleBoard.Engine.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Graphics/MarbleBoard.Wpf/MarbleBoard.Wpf.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
     <Project Path="Graphics/MVVM_Converter_CTDrawGrid/MVVM_Converter_CTDrawGrid.csproj" />
     <Project Path="Graphics/MVVM_Converter_CTDrawGrid2/MVVM_Converter_CTDrawGrid2.csproj" />
     <Project Path="Graphics/MVVM_Converter_CTImgGrid/MVVM_Converter_CTImgGrid.csproj" />
@@ -246,8 +396,75 @@
     <Project Path="Graphics/PolySpline/PolySpline2.csproj" />
     <Project Path="Graphics/PolySpline/PolySpline_net.csproj" />
     <Project Path="Graphics/PrimeDisc/PrimeDisc.csproj" />
+    <Project Path="Graphics/ScreenX.Base/ScreenX.Base.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Graphics/ScreenX.BaseTests/ScreenX.BaseTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Graphics/SuperResolutionOnnxSample0/SuperResolutionOnnxSample0.csproj" />
+    <Project Path="Graphics/SuperResolutionOnnxSample1/SuperResolutionOnnxSample1.csproj" />
+    <Project Path="Graphics/SuperResolutionOnnxSample2/SuperResolutionOnnxSample2.csproj" />
+    <Project Path="Graphics/SuperResolutionOnnxSample3/SuperResolutionOnnxSample3.csproj" />
     <Project Path="Graphics/TitleGen/TitleGen.csproj" />
     <Project Path="Graphics/TitleGen2/TitleGen2.csproj" />
+    <Project Path="Graphics/XOR3Learn/XOR3Learn.csproj" />
+    <Project Path="Graphics/XORLearn0/XORLearn0.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="Graphics/XORLearn1/XORLearn1.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Graphics/All_Graphics/" />
+  <Folder Name="/Graphics/Cifar10_3.WPF/">
+    <Project Path="Graphics/Cifar10_3.WPF/Cifar10_2.WPF.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Graphics/ConsoleApp1/">
+    <Project Path="Graphics/ConsoleApp1/ColorVis.csproj" />
+  </Folder>
+  <Folder Name="/Graphics/MNIST1Learn/">
+    <Project Path="Graphics/MNIST1Learn/Mnist1Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Graphics/MNIST2Learn/">
+    <Project Path="Graphics/MNIST2Learn/Mnist2Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Graphics/MNIST3Learn/">
+    <Project Path="Graphics/MNIST3Learn/Mnist3Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Graphics/MNIST4Learn/">
+    <Project Path="Graphics/MNIST4Learn/Mnist4Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Graphics/MNIST5Learn/">
+    <Project Path="Graphics/MNIST5Learn/Mnist5Learn.csproj" />
+  </Folder>
+  <Folder Name="/Graphics/MNIST6Learn/">
+    <Project Path="Graphics/MNIST6Learn/Mnist6Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Graphics/MNISTLearn/">
+    <Project Path="Graphics/MNISTLearn/Mnist6Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Graphics/SuperResolutionOnnxSample/">
+    <Project Path="Graphics/SuperResolutionOnnxSample/SuperResolutionOnnxSample4.csproj" />
+  </Folder>
+  <Folder Name="/Graphics/XORLearn/">
+    <Project Path="Graphics/XORLearn/Cnt3Learn.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
   </Folder>
   <Folder Name="/Mobile/">
     <Project Path="Mobile/DXMauiApp1/DXMauiApp1.csproj" />
@@ -278,6 +495,11 @@
     <Project Path="MVVM_Tutorial/MVVM_AllExamplesTests/MVVM_AllExamples_netTests.csproj" />
     <Project Path="MVVM_Tutorial/SyncAsyncParallel/SyncAsyncParallel.csproj" />
     <Project Path="MVVM_Tutorial/SyncAsyncParallel/SyncAsyncParallel_net.csproj" />
+    <Project Path="MVVM_Tutorial/UWP_00_Test/UWP_00_Test.csproj">
+      <Platform Solution="*|Any CPU" Project="x86" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
     <Project Path="MVVM_Tutorial/WpfDemoUI/WpfDemoUI.csproj" />
     <Project Path="MVVM_Tutorial/WpfDemoUI1/WpfDemoUI1.csproj" />
     <Project Path="MVVM_Tutorial/WpfDemoUI2/WpfDemoUI2.csproj" />
@@ -338,6 +560,8 @@
     <Project Path="MVVM_Tutorial/MVVM_16_Usercontrol2/MVVM_16_UserControl2_net.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_Laden/MVVM_17_1_CSV_Laden.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_Laden/MVVM_17_1_CSV_Laden_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_LadenTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_Laden_netTests.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_18_MultiConverters/MVVM_18_MultiConverters.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_18_MultiConverters/MVVM_18_MultiConverters_net.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_18_MultiConvertersTests/MVVM_18_MultiConvertersTests.csproj" />
@@ -473,6 +697,12 @@
     <Project Path="MVVM_Tutorial/MVVM_41_Sudoku/MVVM_41_Sudoku_net.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_41_SudokuTests/MVVM_41_SudokuTests.csproj" />
     <Project Path="MVVM_Tutorial/MVVM_41_SudokuTests/MVVM_41_Sudoku_netTests.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView_net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView _net.csproj" />
+    <Project Path="MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView.csproj" />
   </Folder>
   <Folder Name="/MVVM_Tutorial/Templates/">
     <Project Path="MVVM_Tutorial/MVVM_00a_CTTemplate/MVVM_00a_CTTemplate.csproj" />
@@ -497,6 +727,30 @@
     <Project Path="MVVM_Tutorial/WpfApp1/WpfApp_net.csproj" />
     <Project Path="MVVM_Tutorial/WpfAppTests/WpfAppTests.csproj" />
     <Project Path="MVVM_Tutorial/WpfAppTests/WpfApp_netTests.csproj" />
+  </Folder>
+  <Folder Name="/MVVM_Tutorial/WpfAppTests/" />
+  <Folder Name="/OpenAI/">
+    <Project Path="OpenAI/McpTools/McpTools.csproj" />
+    <Project Path="OpenAI/Ollama-Service1/Ollama-Service1.csproj" />
+    <Project Path="OpenAI/Ollama-Service2/Ollama-Service2.csproj" />
+    <Project Path="OpenAI/Ollama.Client.Tests/Ollama.Client.Tests.csproj" />
+    <Project Path="OpenAI/Ollama.Client/Ollama.Client.csproj" />
+    <Project Path="OpenAI/Ollama.Extensions.DependencyInjection.Tests/Ollama.Extensions.DependencyInjection.Tests.csproj" />
+    <Project Path="OpenAI/Ollama.Extensions.DependencyInjection/Ollama.Extensions.DependencyInjection.csproj" />
+    <Project Path="OpenAI/Ollama.Protocol.Tests/Ollama.Protocol.Tests.csproj" />
+    <Project Path="OpenAI/Ollama.Protocol/Ollama.Protocol.csproj" />
+    <Project Path="OpenAI/Ollama.Samples.BasicChat/Ollama.Samples.BasicChat.csproj" />
+    <Project Path="OpenAI/Ollama.Samples.ChatCheck/Ollama.Samples.ChatCheck.csproj" />
+    <Project Path="OpenAI/Ollama.Samples.EmbedCheck/Ollama.Samples.EmbedCheck.csproj" />
+    <Project Path="OpenAI/Ollama.Samples.GenerateCheck/Ollama.Samples.GenerateCheck.csproj" />
+    <Project Path="OpenAI/Ollama.Samples.TagsCheck/Ollama.Samples.TagsCheck.csproj" />
+    <Project Path="OpenAI/Ollama.Samples.TextAnalysis/Ollama.Samples.TextAnalysis.csproj" />
+    <Project Path="OpenAI/Ollama.Samples.ToolUse/Ollama.Samples.ToolUse.csproj" />
+    <Project Path="OpenAI/Ollama.Tools.Tests/Ollama.Tools.Tests.csproj" />
+    <Project Path="OpenAI/Ollama.Tools/Ollama.Tools.csproj" />
+    <Project Path="OpenAI/Ollama.Wpf.TextAnalysis/Ollama.Wpf.TextAnalysis.csproj" />
+    <Project Path="OpenAI/OpenAIPlayground/OpenAIPlayground.csproj" />
+    <Project Path="OpenAI/PdfMarkdownDeterministic.ConsoleApp/PdfMarkdownDeterministic.ConsoleApp.csproj" />
   </Folder>
   <Folder Name="/Patterns_Tutorial/">
     <File Path="Patterns_Tutorial/Pattern_Tutorial.props" />
@@ -531,11 +785,27 @@
   </Folder>
   <Folder Name="/SomeThing/">
     <File Path="SomeThing/README.md" />
+    <Project Path="SomeThing/ChaoticEntropyGenerator/ChaoticEntropyGenerator.csproj" />
+    <Project Path="SomeThing/ConsoleApp1/ConsoleApp1.csproj" />
+    <Project Path="SomeThing/ConsoleApp2/ConsoleApp2.csproj" />
+    <Project Path="SomeThing/ConsoleApp3/ConsoleApp3.csproj" />
+    <Project Path="SomeThing/MemoPlus/MemoPlus.csproj" />
+    <Project Path="SomeThing/ObfuscatedConsole/ObfuscatedConsole.csproj" />
+    <Project Path="SomeThing/QuineTest/QuineTest.csproj" />
+    <Project Path="SomeThing/SelfMaze/SelfMaze.csproj" />
     <Project Path="SomeThing/SomeThing/SomeThing.csproj" />
     <Project Path="SomeThing/SomeThing2/SomeThing2.csproj" />
     <Project Path="SomeThing/SomeThing2a/SomeThing2a.csproj" />
     <Project Path="SomeThing/SomeThing2aTests/SomeThing2aTests.csproj" />
     <Project Path="SomeThing/SomeThing2Tests/SomeThing2Tests.csproj" />
+    <Project Path="SomeThing/Statistic3/Statistic3.csproj" />
+    <Project Path="SomeThing/Statistic4/Statistic4.csproj" />
+    <Project Path="SomeThing/Statistic_ausf3/Statistic_ausf3.csproj" />
+    <Project Path="SomeThing/Statistik/Statistik.csproj" />
+    <Project Path="SomeThing/Statistik2/Statistik2.csproj" />
+    <Project Path="SomeThing/Statistik_ausf/Statistik_ausf.csproj" />
+    <Project Path="SomeThing/Statistik_Ausf2/Statistik_Ausf2.csproj" />
+    <Project Path="SomeThing/SurpriseConsole/SurpriseConsole.csproj" />
   </Folder>
   <Folder Name="/SomeThing/Quine/">
     <File Path="SomeThing/README.md" />
@@ -553,9 +823,14 @@
     <Project Path="Web/BlazorApp1/BlazorApp1.csproj" />
     <Project Path="Web/BlazorWasmDocker/BlazorWasmDocker.csproj" />
   </Folder>
-  <Folder Name="/Web/MyComponent/">
+  <Folder Name="/Web/MyComponent/" />
+  <Folder Name="/Web/MyComponent/Client/">
     <Project Path="Web/MyComponent/Client/MyComponent.Client.csproj" />
+  </Folder>
+  <Folder Name="/Web/MyComponent/Server/">
     <Project Path="Web/MyComponent/Server/MyComponent.Server.csproj" />
+  </Folder>
+  <Folder Name="/Web/MyComponent/Shared/">
     <Project Path="Web/MyComponent/Shared/MyComponent.csproj" />
   </Folder>
   <Folder Name="/Web/WebApp1/">
@@ -624,7 +899,7 @@
     <Project Path="WPFSamples_2/Styles_and_Templates/WPF_FindingElementsInTemplates/WPF_FindingElementsInTemplates.csproj" />
     <Project Path="WPFSamples_2/Styles_and_Templates/WPF_IntroToStylingAndTemplating/WPF_IntroToStylingAndTemplating.csproj" />
   </Folder>
-  <Project Path="../packages/PackageDwnLd.csproj" />
+  <Project Path="../TestStatements/PluginBase/PluginBase.csproj" />
   <Project Path="AboutEx/AboutEx.csproj" />
   <Project Path="AboutExTests/AboutExTests.csproj" />
   <Project Path="AddPage/AddPage.csproj" Id="c8249e35-ed76-4180-95ba-317f8dc45683" />
