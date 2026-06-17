@@ -22,7 +22,7 @@
 		<PackageReference Condition="$(TargetFrameWork.StartsWith(net462))" Include="System.ValueTuple" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
 		<ProjectReference Include="..\Calc64Base\Calc64Base.csproj" />
 		<ProjectReference Include="$(UpDir)\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
 	</ItemGroup>

@@ -4,6 +4,11 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/ActionTest/">
+    <Project Path="ActionTest/ActionTest.csproj" />
+    <Project Path="ActionTest/ActionTest.WF.csproj" />
+    <Project Path="ActionTestWPF/ActionTest.WPF.csproj" />
+  </Folder>
   <Folder Name="/Basics/">
     <File Path="Basics/C#-Basics.props" />
     <File Path="Basics/C#-Basics_net.props" />
@@ -894,12 +899,9 @@
     <Project Path="WPFSamples_2/Styles_and_Templates/WPF_FindingElementsInTemplates/WPF_FindingElementsInTemplates.csproj" />
     <Project Path="WPFSamples_2/Styles_and_Templates/WPF_IntroToStylingAndTemplating/WPF_IntroToStylingAndTemplating.csproj" />
   </Folder>
-  <Project Path="../PackageDwnLd.csproj" />
   <Project Path="../TestStatements/PluginBase/PluginBase.csproj" />
   <Project Path="AboutEx/AboutEx.csproj" />
   <Project Path="AboutExTests/AboutExTests.csproj" />
-  <Project Path="ActionTest/ActionTest.csproj" />
-  <Project Path="ActionTestWPF/ActionTestWPF.csproj" />
   <Project Path="AddPage/AddPage.csproj" Id="c8249e35-ed76-4180-95ba-317f8dc45683" />
   <Project Path="AddPageWPF/AddPageWPF.csproj" Id="af16f7af-cf83-4679-8111-0bbe9bcda102" />
   <Project Path="CharGrid/CharGrid.csproj" />
@@ -908,6 +910,5 @@
   <Project Path="CSV_ViewerTest/CSV_ViewerTest.csproj" Id="897c5ad9-edfd-4160-b837-62933591247f" />
   <Project Path="DataGridEx/DataGridEx.csproj" />
   <Project Path="DataGridExWPF/DataGridExWPF.csproj" />
-  <Project Path="Libraries/CSFreeVision_/CSFreeVision.csproj" Id="b3315091-13d9-4a5c-b4b0-caf2af74f371" />
   <Project Path="TestDirectives/TestDirectives.csproj" />
 </Solution>

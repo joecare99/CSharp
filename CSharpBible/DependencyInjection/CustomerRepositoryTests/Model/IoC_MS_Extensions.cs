@@ -38,7 +38,7 @@ namespace CustomerRepositoryTests.Model
             ICustomerRepository? repository =
                 container?.GetService<ICustomerRepository>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
             );
 
@@ -53,7 +53,7 @@ namespace CustomerRepositoryTests.Model
             var repository =
                 container.GetService<ICustomerRepository>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
             );
 
@@ -68,10 +68,10 @@ namespace CustomerRepositoryTests.Model
             var repository =
                 container.GetService<ICustomerRepository>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
             );
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
             );
 
@@ -87,7 +87,7 @@ namespace CustomerRepositoryTests.Model
             var repository =
                 container.GetService<ICustomerRepository>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
             );
 

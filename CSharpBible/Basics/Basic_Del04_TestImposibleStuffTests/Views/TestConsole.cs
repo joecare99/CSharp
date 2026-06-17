@@ -32,6 +32,11 @@ namespace Basic_Del04_TestImposibleStuff.Views.Tests
         public string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public int WindowHeight { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public int WindowWidth { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool CursorVisible { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public int BufferWidth => throw new NotImplementedException();
+
+        public int BufferHeight => throw new NotImplementedException();
 
         public TestConsole(Action<String> doLog) {
             _dolog = doLog;
@@ -79,6 +84,11 @@ namespace Basic_Del04_TestImposibleStuff.Views.Tests
         public void WriteLine(string? st = "")
         {
             _dolog($"WriteLine({st})");
+        }
+
+        public void ResetColor()
+        {
+            throw new NotImplementedException();
         }
     }
 }

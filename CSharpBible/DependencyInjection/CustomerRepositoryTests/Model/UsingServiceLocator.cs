@@ -20,7 +20,7 @@ namespace CustomerRepositoryTests.Model
 
             ICustomerRepository repository = new CustomerRepository4();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
         }
@@ -33,7 +33,7 @@ namespace CustomerRepositoryTests.Model
 
             ICustomerRepository repository = new CustomerRepository4();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 
@@ -53,7 +53,7 @@ namespace CustomerRepositoryTests.Model
             catch { }
             #endregion
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 
@@ -69,7 +69,7 @@ namespace CustomerRepositoryTests.Model
 
             ICustomerRepository repository = new CustomerRepository4();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 

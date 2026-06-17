@@ -14,7 +14,7 @@ namespace CustomerRepositoryTests.Model
         {
             ICustomerRepository repository = new CustomerRepository1();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
         }
@@ -24,7 +24,7 @@ namespace CustomerRepositoryTests.Model
         {
             ICustomerRepository2 repository = new CustomerRepository1();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 
@@ -35,7 +35,7 @@ namespace CustomerRepositoryTests.Model
         public void RepLogsTimeOnInvLogGet() {
             ICustomerRepository2 repository = new CustomerRepository1();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 

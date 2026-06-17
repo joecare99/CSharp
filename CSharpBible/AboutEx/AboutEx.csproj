@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Solution_net.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 		<OutputType>WinExe</OutputType>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -9,6 +9,12 @@
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0-windows</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
+	</PropertyGroup>
 	<PropertyGroup>
 		<RootNamespace>CSharpBible.AboutEx</RootNamespace>
 	</PropertyGroup>

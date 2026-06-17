@@ -18,7 +18,7 @@ namespace CustomerRepositoryTests.Model
             ICustomerRepository repository =
                 fixture.Create<CustomerRepository5>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
         }

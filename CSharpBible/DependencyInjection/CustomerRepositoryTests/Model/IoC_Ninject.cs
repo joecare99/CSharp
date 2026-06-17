@@ -36,7 +36,7 @@ namespace CustomerRepositoryTests.Model
             ICustomerRepository repository =
                 kernel.Get<ICustomerRepository>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository.Get(Guid.NewGuid())
             );
 
@@ -51,7 +51,7 @@ namespace CustomerRepositoryTests.Model
             var repository =
                 kernel.Get<ICustomerRepository>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
             );
 
@@ -65,10 +65,10 @@ namespace CustomerRepositoryTests.Model
             var repository =
                 kernel.Get<ICustomerRepository>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
             );
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
             );
 
@@ -84,7 +84,7 @@ namespace CustomerRepositoryTests.Model
             var repository =
                 kernel.Get<ICustomerRepository>();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.Throws<ArgumentException>(
                 () => repository?.Get(Guid.NewGuid())
             );
 

@@ -1,17 +1,33 @@
 ﻿<Project>
-  <Import Project="..\Solution_net.props" />
-  <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>CSharpBible.ActionTest</RootNamespace>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-  </PropertyGroup>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-  </ItemGroup>
+	<Import Project="..\Solution_net.props" />
+	<PropertyGroup>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<OutputType>Library</OutputType>
+		<RootNamespace>ActionTest</RootNamespace>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Properties\**" />
+		<Compile Remove="Resources\**" />
+		<Compile Remove="Visual\**" />
+		<EmbeddedResource Remove="Properties\**" />
+		<EmbeddedResource Remove="Resources\**" />
+		<EmbeddedResource Remove="Visual\**" />
+		<None Remove="Properties\**" />
+		<None Remove="Resources\**" />
+		<None Remove="Visual\**" />
+		<Compile Remove="Program.cs" />
+		<None Remove="App.config" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+	</ItemGroup>
 </Project>

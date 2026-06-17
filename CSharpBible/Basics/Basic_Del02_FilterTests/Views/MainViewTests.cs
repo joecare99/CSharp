@@ -13,7 +13,7 @@
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
-using BaseLib.Model.Tests;
+using BaseLib.Models.Tests;
 
 /// <summary>
 /// The Tests namespace.
