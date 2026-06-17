@@ -118,14 +118,22 @@ public static class FileUtils
                 xFile.Delete(sBakFilename);
             }
             // Do the Switch New -> File -> Bak
-            if (sNewFilename == sFilename) { }
+            if (sNewFilename == sFilename)
+            {
+            }
             else
-
+            {
                 if (xFile.Exists(sFilename))
-                File.Replace(sNewFilename, sFilename, sBakFilename);
-            else
-                xFile.Move(sNewFilename, sFilename);
-                return true;
+                {
+                    File.Replace(sNewFilename, sFilename, sBakFilename);
+                }
+                else
+                {
+                    xFile.Move(sNewFilename, sFilename);
+                }
+            }
+
+            return true;
         }          
     }
 }

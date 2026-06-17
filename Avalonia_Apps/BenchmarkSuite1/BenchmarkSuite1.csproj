@@ -7,6 +7,16 @@
     <Nullable>enable</Nullable>
     <Configurations>Debug;Release;DesktopOnly</Configurations>
   </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaXaml Remove="bin\**" />
+    <AvaloniaXaml Remove="obj\**" />
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="bin\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet">
