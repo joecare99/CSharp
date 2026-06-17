@@ -159,9 +159,13 @@ public sealed class ContentAnalysisRouter
             || inputText.Contains("internal ", StringComparison.Ordinal)
             || inputText.Contains("protected ", StringComparison.Ordinal);
 
-        return (hasUsingDirective && hasSemicolons)
-            || (hasNamespace && hasTypeDeclaration)
-            || (hasTypeDeclaration && hasAccessModifier);
+        bool looksLikeUsingBasedSource = hasUsingDirective && hasSemicolons;
+        bool looksLikeNamespacedType = hasNamespace && hasTypeDeclaration;
+        bool looksLikeMemberDeclaration = hasTypeDeclaration && hasAccessModifier;
+
+        return looksLikeUsingBasedSource
+            || looksLikeNamespacedType
+            || looksLikeMemberDeclaration;
     }
 
     private static ContentAnalysisRoutingDecision CreateTextDecision(string reason)

@@ -11,6 +11,18 @@ internal sealed class GenealogicalNameTokenBuilder : IGenealogicalNameTokenBuild
 {
     private readonly GenealogicalNameTokenBuilderConfiguration _configuration;
 
+    private bool IsNamePunctuation(string text, int offset, int charCount)
+    {
+        bool followedByDelimiter = HasCharAt(text, offset + 1)
+            && new[] { ',', '.', ' ', '>' }.Contains(CharAt(text, offset + 1));
+        bool followedBySeparatorMarker = _configuration.TestFor(text, offset + 1, [_configuration.Separator2Marker], out _);
+        bool continuesAbbreviation = offset > 1
+            && (Charset.Contains(CharAt(text, offset - 1)) || CharAt(text, offset - 1) == '.')
+            && (charCount <= 3 || (HasCharAt(text, offset + 1) && In(CharAt(text, offset + 1), UpperCharset)));
+
+        return followedByDelimiter || followedBySeparatorMarker || continuesAbbreviation;
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="GenealogicalNameTokenBuilder"/> class.
     /// </summary>
@@ -47,12 +59,7 @@ internal sealed class GenealogicalNameTokenBuilder : IGenealogicalNameTokenBuild
             offset += _configuration.UnknownMarker.Length - 1;
             charCount = 0;
         }
-        else if (currentChar == '.'
-            && ((offset + 1 <= text.Length && new[] { ',', '.', ' ', '>' }.Contains(CharAt(text, offset + 1)))
-                || _configuration.TestFor(text, offset + 1, [_configuration.Separator2Marker], out _)
-                || (offset > 1
-                    && (Charset.Contains(CharAt(text, offset - 1)) || CharAt(text, offset - 1) == '.')
-                    && (charCount <= 3 || (offset + 1 <= text.Length && In(CharAt(text, offset + 1), UpperCharset))))))
+        else if (currentChar == '.' && IsNamePunctuation(text, offset, charCount))
         {
             subString += currentChar;
         }

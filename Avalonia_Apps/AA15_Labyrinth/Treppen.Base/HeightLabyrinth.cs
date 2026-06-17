@@ -40,24 +40,33 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
     */
 
     private Rectangle _dimension;
-    private int[,] _z;
+    private int[,]? _z;
     private readonly Random _rnd = new();
 
     // Seed-Pattern (Signatur) wie im Pascal-Original
     private const string FPrest2 = "4465452.7575331.6566211.213265103021342243312434";
     private readonly uint[] FPrest3 = [0x4465452E,0x7575331E,0x6566211E,0x21326510,0x30213422,0x43312434];
 
+    /// <inheritdoc/>
     public event Action<object, Point>? UpdateCell;
 
+    /// <inheritdoc/>
     public Rectangle Dimension
     {
         get => _dimension;
         set { _dimension = value; _z = new int[value.Width, value.Height]; }
     }
 
-    public int this[int x, int y] => InBounds(x, y) ? _z[x, y] : 0;
+    /// <inheritdoc/>
+    public int this[int x, int y] => InBounds(x, y) && _z != null ? _z[x, y] : 0;
     private bool InBounds(int x, int y) => x >= 0 && y >= 0 && x < _dimension.Width && y < _dimension.Height;
 
+    private static bool ShouldRaiseHeight(bool canm1, bool canz, int baseLevel, int previousHeight)
+        => baseLevel > previousHeight || (!canz && (!canm1 || baseLevel == previousHeight));
+
+    private static bool ShouldLowerHeight(bool canp1, bool canz, int baseLevel, int previousHeight)
+        => baseLevel < previousHeight || (!canz && (!canp1 || baseLevel == previousHeight));
+    /// <inheritdoc/>
     public int BaseLevel(int x, int y) => (int)Math.Truncate(x / 1.3 + y / 1.3) + 1;
 
     // Mappt die kompakten Seed-Daten in das Raster, wie in Pascal SetLData
@@ -74,7 +83,7 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
                 int idx0 = total - (y * xm) - x - 1; // 0-basierte Entsprechung zu Pascal
                 char ch = sdat[idx0];
                 int val = (ch - '0') + offset; // '.' -> -2 + 2 => 0
-                if (InBounds(x, y))
+                if (InBounds(x, y) && _z != null)
                     _z[x, y] = val;
             }
         }
@@ -90,7 +99,7 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
             {
                 var nibble = (int)((data[ym-y-1] >> (4 * (x))) & 0x0F);
                 int val = (nibble == 14 ? 0 : nibble + offset); // 14='.'→0
-                if (InBounds(x, y))
+                if (InBounds(x, y) && _z != null)
                     _z[x, y] = val;
             }
         }
@@ -98,7 +107,8 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
 
     public void Generate()
     {
-        Array.Clear(_z, 0, _z.Length);
+        if (_z != null)
+            Array.Clear(_z, 0, _z.Length);
 
         // Seed-Pattern (Signatur) initial aufbringen
         SetLData2(FPrest3, 8, 6, 2);
@@ -106,7 +116,8 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
         var start = new Point(1, Math.Min(6, Math.Max(0, _dimension.Height - 1)));
         if (!InBounds(start.X, start.Y)) return;
 
-        _z[start.X, start.Y] = BaseLevel(start.X, start.Y) - 1;
+        if (_z != null)
+            _z[start.X, start.Y] = BaseLevel(start.X, start.Y) - 1;
 
         var fifo = new Point[_dimension.Width * _dimension.Height];
         int push = 0, pop = 0;
@@ -231,8 +242,8 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
         var blv = BaseLevel(next.X, next.Y);
         if (!(canm1 || canz || canp1)) return false;
 
-        if (canp1 && (blv > ph || (!canz && (!canm1 || blv == ph)))) { height = ph + 1; return true; }
-        if (canm1 && (blv < ph || (!canz && (!canp1 || blv == ph)))) { height = ph - 1; return true; }
+        if (canp1 && ShouldRaiseHeight(canm1, canz, blv, ph)) { height = ph + 1; return true; }
+        if (canm1 && ShouldLowerHeight(canp1, canz, blv, ph)) { height = ph - 1; return true; }
         if (canz) { height = ph; return true; }
 
         return false;

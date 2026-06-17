@@ -181,6 +181,45 @@ public sealed class FBEntryParser : ParserBase, IDisposable
         _gcHelper = CreateGcHelper();
     }
 
+    private static bool HasMoreFollowingSpacesThanCommas(string text, int startIndex)
+        => text.IndexOf(' ', startIndex) > text.IndexOf(',', startIndex);
+
+    private static bool StartsUppercaseFamilyName(string text, int localOffset)
+        => In(CharAt(text, localOffset), UpperCharsetErw)
+            && HasMoreFollowingSpacesThanCommas(text, localOffset - 1);
+
+    private static bool StartsVonFamilyName(string text, int localOffset)
+        => CharAt(text, localOffset) == 'v'
+            && HasMoreFollowingSpacesThanCommas(text, localOffset + 3);
+
+    private static bool ShouldSwitchToFamilyNameMode(string text, int localOffset)
+    {
+        bool hasBirthYearPrefix = localOffset > 2
+            && CharAt(text, localOffset - 1) == ' '
+            && In(CharAt(text, localOffset - 2), Ziffern);
+        bool matchesExcludedMarker = TestFor(text, localOffset, CsMarriageGc)
+            || TestFor(text, localOffset, CsIllegChild);
+
+        return hasBirthYearPrefix
+            && !matchesExcludedMarker
+            && (StartsUppercaseFamilyName(text, localOffset) || StartsVonFamilyName(text, localOffset));
+    }
+
+    private static bool AllowsDateWhitespaceContinuation(string text, int localOffset, string localSubstring, out int found)
+    {
+        found = -1;
+        if (CharAt(text, localOffset) != ' ')
+        {
+            return false;
+        }
+
+        bool continuesKnownDatePrefix = HasCharAt(text, localOffset + 1)
+            && In(CharAt(text, localOffset + 1), Ziffern)
+            && (TestFor(localSubstring, 1, CUnknownKn) || TestFor(localSubstring, 1, CDateModif));
+
+        return continuesKnownDatePrefix || TestFor(text, localOffset + 1, CDateModif, out found);
+    }
+
     /// <summary>
     /// Occurs when a family starts.
     /// </summary>
@@ -443,13 +482,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         localPersonType = 'U';
                         localOffset--;
                     }
-                    else if (localOffset > 2
-                        && CharAt(text, localOffset - 1) == ' '
-                        && In(CharAt(text, localOffset - 2), Ziffern)
-                        && !TestFor(text, localOffset, CsMarriageGc)
-                        && !TestFor(text, localOffset, CsIllegChild)
-                        && ((In(CharAt(text, localOffset), UpperCharsetErw) && text.IndexOf(' ', localOffset - 1) > text.IndexOf(',', localOffset - 1))
-                            || (CharAt(text, localOffset) == 'v' && text.IndexOf(' ', localOffset + 3) > text.IndexOf(',', localOffset + 3))))
+                    else if (ShouldSwitchToFamilyNameMode(text, localOffset))
                     {
                         localMode = 110;
                         localSubstring = string.Empty;
@@ -883,11 +916,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                     {
                         localSubstring += CharAt(text, localOffset);
                     }
-                    else if (CharAt(text, localOffset) == ' '
-                        && ((localOffset + 1 <= text.Length
-                                && In(CharAt(text, localOffset + 1), Ziffern)
-                                && (TestFor(localSubstring, 1, CUnknownKn) || TestFor(localSubstring, 1, CDateModif)))
-                            || TestFor(text, localOffset + 1, CDateModif, out localFound)))
+                    else if (AllowsDateWhitespaceContinuation(text, localOffset, localSubstring, out localFound))
                     {
                         localSubstring += ' ';
                     }
