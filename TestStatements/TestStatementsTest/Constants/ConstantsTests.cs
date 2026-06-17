@@ -15,7 +15,7 @@ namespace TestStatementTest.ConstantTests
         private const int cExpHelloWorld = -1497658439;//485358840;// 1253652992;
 #endif
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1,Constants.LoremIpsum,typeof(string),5050, DisplayName = "Lorem Ipsum ...")]
         [DataRow(2,Constants.dGoldenCut, typeof(double),1, DisplayName = "the golden cut 1.61...")]
         [DataRow(3, Constants.HelloWorld, typeof(string),13, DisplayName = "Just 'Hello World !'")]
@@ -51,7 +51,7 @@ namespace TestStatementTest.ConstantTests
                 "Hello World !".GetHashCode() ^ "\0".GetHashCode(), "Hash");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(1, "Hello", true)]
         [DataRow(2, "!", true)]
         [DataRow(3, "World", true)]
@@ -91,7 +91,7 @@ namespace TestStatementTest.ConstantTests
             Assert.AreEqual(Constants.LoremIpsum.GetHashCode(), liCopy.GetHashCode(), "Hash");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(1, "Lorem ipsum",true)]
         [DataRow(2, ".", true)]
         [DataRow(3, "class", true)]

@@ -9,7 +9,7 @@ namespace TestStatements.Anweisungen.Tests
     [TestClass()]
     public class AccountTests
     {
-        private Account Faccount = null;
+        private Account Faccount = null!;
 
         /// <summary>
         /// Initializes this instance.

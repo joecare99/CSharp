@@ -27,7 +27,7 @@ namespace TestStatements.Threading.Tasks.Tests
         [TestInitialize]
         public void Init()
         {
-            TaskExample.GetPing = () => new MyPing(new[] { ""});
+            TaskExample.CreatePing = () => new MyPing(new[] { ""});
         }
 
         /// <summary>

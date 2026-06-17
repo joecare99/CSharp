@@ -62,7 +62,7 @@ namespace TestStatements.UnitTesting.Tests
 		/// <param name="iTest">The i test.</param>
 		/// <param name="iExp">The i exp.</param>
 		/// <param name="TestName">Name of the test.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[TestProperty("Author","CR")]
 		[DynamicData(nameof(ReusableTestDataProperty))]
 		[DynamicData(nameof(ReusableTestDataProperty2))]
@@ -82,7 +82,7 @@ namespace TestStatements.UnitTesting.Tests
 		/// <param name="iTest">The i test.</param>
 		/// <param name="iExp">The i exp.</param>
 		/// <param name="TestName">Name of the test.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[DynamicData(nameof(ReusableTestDataMethod), DynamicDataSourceType.Method)]
 		[DynamicData(nameof(ReusableTestDataMethod2), DynamicDataSourceType.Method)]
 		public void SampleDataMethodTest(int iStart, int[] iTest, int[] iExp, string TestName="") {
@@ -103,7 +103,7 @@ namespace TestStatements.UnitTesting.Tests
 		/// <param name="iExp2">The i exp2.</param>
 		/// <param name="iTest3">The i test3.</param>
 		/// <param name="iExp3">The i exp3.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[DataRow(3, 2, 6, 1, 3, 3, 9)]
 		[DataRow(4, 2, 8, 1, 4, 3, 12)]
 		[DataRow(1, 2, 2, 1, 1, 3, 3)]

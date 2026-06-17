@@ -6,7 +6,7 @@ namespace TestStatements.Helper.Tests
     [TestClass]
     public class ExtensionsTests
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null,0)]
         [DataRow("", 0)]
         [DataRow("0", 0)]
@@ -18,7 +18,7 @@ namespace TestStatements.Helper.Tests
             Assert.AreEqual(iExp, sVal.AsInt());
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null, float.NaN)]
         [DataRow("", float.NaN)]
         [DataRow("0", 0f)]
@@ -29,7 +29,7 @@ namespace TestStatements.Helper.Tests
             Assert.AreEqual(fExp, sVal.AsFloat());
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null, double.NaN)]
         [DataRow("", double.NaN)]
         [DataRow("0", 0d)]
@@ -40,7 +40,7 @@ namespace TestStatements.Helper.Tests
             Assert.AreEqual(dExp, sVal.AsDouble());
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("0", new object[] { (sbyte)0x01, (sbyte)0x02, (sbyte)0x03, (sbyte)0x04 }, new string[] { "1", "2", "3", "4" })]
         [DataRow("1", new object[] { "Hallo", null, 1d, 2f, 4, 5u }, new object[] { "Hallo", "", "1", "2", "4", "5" })]
         [DataRow("2",new object[] {"Hallo",null,1d,2f,4,5u }, new object[] { "Hallo", "", "1", "2", "4", "5" })]

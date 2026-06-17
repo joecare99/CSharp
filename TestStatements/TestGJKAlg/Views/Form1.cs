@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 using TestGJKAlg.Views;
 
 namespace TestGJKAlg;
 
+[SupportedOSPlatform("windows6.1")]
 public partial class Form1 : Form
 {
     public Form1()

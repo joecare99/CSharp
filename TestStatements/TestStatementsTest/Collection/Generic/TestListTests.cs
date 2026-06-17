@@ -77,7 +77,7 @@ namespace TestStatements.Collection.Generic.Tests
             AssertConsoleOutput(cExpShowRemove2, TestList.ShowRemove2);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("0", null, "Is null")]
         [DataRow("1",new string[]{}, "Capacity: 0\r\nCount: 0")]
         [DataRow("2", new string[] {"Test" }, "Capacity: 1\r\nCount: 1")]
@@ -88,7 +88,7 @@ namespace TestStatements.Collection.Generic.Tests
             AssertConsoleOutput(sExp,()=> DinosaurExample.ShowStatus(lsVal));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Part1",1,"Part2",2,false)]
         [DataRow("Part1", 1, "Part2", 1, true)]
         [DataRow("Part1", 1, "Part1", 2, false)]
@@ -101,7 +101,7 @@ namespace TestStatements.Collection.Generic.Tests
             Assert.AreEqual(xExp,p1.Equals((object?)p2));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Part1", 1, "Part2", 2, false)]
         [DataRow("Part1", 1, "Part2", 1, true)]
         [DataRow("Part1", 1, "Part1", 2, false)]
@@ -114,7 +114,7 @@ namespace TestStatements.Collection.Generic.Tests
             Assert.AreEqual(xExp, p1.Equals((Part?)p2));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Part1",1,1)]
         [DataRow("Part2", 1, 1)]
         [DataRow("", 0, 0)]
@@ -128,7 +128,7 @@ namespace TestStatements.Collection.Generic.Tests
         /// <summary>
         /// Defines the test method ShowRemove2Test.
         /// </summary>
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "")]
         [DataRow(1, "Tyrannosaurus\r\nAmargasaurus\r\nMamenchisaurus\r\nDeinonychus\r\nCompsognathus")]
         [DataRow(2, "Tyrannosaurus\r\nAmargasaurus\r\nMamenchisaurus\r\nDeinonychus\r\nCompsognathus")]

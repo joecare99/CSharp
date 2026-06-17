@@ -22,7 +22,7 @@ namespace TestStatements.Anweisungen.Tests
 		/// <summary>
 		/// Defines the test method DoTryCatchTest.
 		/// </summary>
-		[DataTestMethod()]
+		[TestMethod()]
 		[TestProperty("Author","J.C.")]
 		[DataRow("Empty", cExpected1, new string[] { })]
 		[DataRow("(1)", cExpected1, new string[] { "1"})]
@@ -36,7 +36,7 @@ namespace TestStatements.Anweisungen.Tests
 		/// <summary>
 		/// Defines the test method DoTryCatchTest.
 		/// </summary>
-		[DataTestMethod()]
+		[TestMethod()]
 		[TestProperty("Author", "J.C.")]
 		[DataRow("Empty", cExpected2, new string[] { })]
 		[DataRow("(1)", cExpected2a, new string[] { "1" })]

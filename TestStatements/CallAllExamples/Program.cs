@@ -39,7 +39,7 @@ namespace CallAllExamples
                                 object[] param = null;
                                 InvokeMethode(y, param);
                             }
-                            else if ((y.GetParameters().Length == 1) &&(y.GetParameters()[0].Name.ToLower() == "args"))
+                            else if ((y.GetParameters().Length == 1) &&(y.GetParameters()[0].Name?.ToLower() == "args"))
                             {
 
                                 Console.WriteLine(InvokeTitle, x.Name, y.Name, "{ }");
