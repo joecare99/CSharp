@@ -103,7 +103,7 @@ namespace TestStatements.Collection.Generic.Tests
 		/// <param name="box2_1">The box2 1.</param>
 		/// <param name="box2_2">The box2 2.</param>
 		/// <param name="box2_3">The box2 3.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[DataRow(-1, 2, 6, 8, 10,12,14)]
 		[DataRow(1, 10, 12, 14, 2, 6, 8)]
 		[DataRow(1, 10, 12, 14, 2, 12, 8)]

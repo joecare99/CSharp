@@ -1,4 +1,7 @@
-﻿namespace Document.Base.Models.Interfaces;
+﻿using System.Collections.Generic;
+using System.IO;
+
+namespace Document.Base.Models.Interfaces;
 
 public interface IUserDocument
 {

@@ -181,6 +181,45 @@ public sealed class FBEntryParser : ParserBase, IDisposable
         _gcHelper = CreateGcHelper();
     }
 
+    private static bool IsNextSpaceAfterNextComma(string text, int startIndex)
+        => text.IndexOf(' ', startIndex) > text.IndexOf(',', startIndex);
+
+    private static bool StartsUppercaseFamilyName(string text, int localOffset)
+        => In(CharAt(text, localOffset), UpperCharsetErw)
+            && IsNextSpaceAfterNextComma(text, localOffset - 1);
+
+    private static bool StartsVonFamilyName(string text, int localOffset)
+        => CharAt(text, localOffset) == 'v'
+            && IsNextSpaceAfterNextComma(text, localOffset + 3);
+
+    private static bool ShouldSwitchToFamilyNameMode(string text, int localOffset)
+    {
+        bool hasBirthYearPrefix = localOffset > 2
+            && CharAt(text, localOffset - 1) == ' '
+            && In(CharAt(text, localOffset - 2), Ziffern);
+        bool matchesExcludedMarker = TestFor(text, localOffset, CsMarriageGc)
+            || TestFor(text, localOffset, CsIllegChild);
+
+        return hasBirthYearPrefix
+            && !matchesExcludedMarker
+            && (StartsUppercaseFamilyName(text, localOffset) || StartsVonFamilyName(text, localOffset));
+    }
+
+    private static bool AllowsDateWhitespaceContinuation(string text, int localOffset, string localSubstring, out int found)
+    {
+        found = -1;
+        if (CharAt(text, localOffset) != ' ')
+        {
+            return false;
+        }
+
+        bool continuesKnownDatePrefix = HasCharAt(text, localOffset + 1)
+            && In(CharAt(text, localOffset + 1), Ziffern)
+            && (TestFor(localSubstring, 1, CUnknownKn) || TestFor(localSubstring, 1, CDateModif));
+
+        return continuesKnownDatePrefix || TestFor(text, localOffset + 1, CDateModif, out found);
+    }
+
     /// <summary>
     /// Occurs when a family starts.
     /// </summary>
@@ -443,13 +482,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         localPersonType = 'U';
                         localOffset--;
                     }
-                    else if (localOffset > 2
-                        && CharAt(text, localOffset - 1) == ' '
-                        && In(CharAt(text, localOffset - 2), Ziffern)
-                        && !TestFor(text, localOffset, CsMarriageGc)
-                        && !TestFor(text, localOffset, CsIllegChild)
-                        && ((In(CharAt(text, localOffset), UpperCharsetErw) && text.IndexOf(' ', localOffset - 1) > text.IndexOf(',', localOffset - 1))
-                            || (CharAt(text, localOffset) == 'v' && text.IndexOf(' ', localOffset + 3) > text.IndexOf(',', localOffset + 3))))
+                    else if (ShouldSwitchToFamilyNameMode(text, localOffset))
                     {
                         localMode = 110;
                         localSubstring = string.Empty;
@@ -883,11 +916,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                     {
                         localSubstring += CharAt(text, localOffset);
                     }
-                    else if (CharAt(text, localOffset) == ' '
-                        && ((localOffset + 1 <= text.Length
-                                && In(CharAt(text, localOffset + 1), Ziffern)
-                                && (TestFor(localSubstring, 1, CUnknownKn) || TestFor(localSubstring, 1, CDateModif)))
-                            || TestFor(text, localOffset + 1, CDateModif, out localFound)))
+                    else if (AllowsDateWhitespaceContinuation(text, localOffset, localSubstring, out localFound))
                     {
                         localSubstring += ' ';
                     }
@@ -1559,13 +1588,13 @@ public sealed class FBEntryParser : ParserBase, IDisposable
 
                     if (localFirstEntry && TestFor(text, localOffset, CDeathEntries, out localFound))
                     {
-                        localSubstring += Copy(text, localOffset, CDeathEntries[localFound].Length );
+                        localSubstring += Copy(text, localOffset, CDeathEntries[localFound].Length);
                         localOffset += CDeathEntries[localFound].Length;
                     }
                     else if (localFirstEntry && BuildName(text, ref localOffset, ref localSubstring, ref localData, ref localCharCount, ref localAka, ref localAddEvent))
                     {
                         localPersonName = localSubstring.Trim();
-                        if (TestFor(localPersonName, 1, CDeathEntries , out localFound))
+                        if (TestFor(localPersonName, 1, CDeathEntries, out localFound))
                         {
                             localPersonName = Copy(localPersonName, CDeathEntries[localFound].Length + 1, 200).Trim();
                             if (localPersonName.StartsWith(CsProtectSpace, StringComparison.Ordinal))
@@ -1688,7 +1717,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                             localSubstring = localPersonName[localPos..];
                             localPersonName = localPersonName[..localPos].Trim();
                         }
-                       
+
                         if (TestFor(localPersonName, 1, CDeathEntries, out localFound))
                         {
                             localPersonName = Copy(localPersonName, CDeathEntries[localFound].Length + 1, 200).Trim();
@@ -1811,7 +1840,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         {
                             if (localEntryType == ParserEventType.evt_ID)
                             {
-                            SetIndiRef(localIndId, localEntryType, localSubstring);
+                                SetIndiRef(localIndId, localEntryType, localSubstring);
                             }
 
                             localSubstring = string.Empty;
@@ -1921,7 +1950,6 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         {
                             localMode = 150;
                             localRetMode2 = 112;
-                            localOffset--;
                         }
                     }
 
@@ -2213,10 +2241,10 @@ public sealed class FBEntryParser : ParserBase, IDisposable
 
                         localMode = 112;
                         localOffset--;
-                        if (new[] { '<', '[' }.Contains(CharAt(text, localOffset)))
+                        if (localMode < 150 && new[] { '<', '[' }.Contains(CharAt(text, localOffset)))
                         {
+                            localRetMode2 = localMode;
                             localMode = 150;
-                            localRetMode2 = 112;
                         }
                     }
 
@@ -2339,12 +2367,6 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                     else if (HandleGCNonPersonEntry(localSubstring, CharAt(text, localOffset), localIndId))
                     {
                         localSubstring = string.Empty;
-                        if (new[] { '<', '[' }.Contains(CharAt(text, localOffset)))
-                        {
-                            localRetMode2 = localMode;
-                            localMode = 150;
-                            localOffset--;
-                        }
                     }
                     else if (new[] { '<', '[' }.Contains(CharAt(text, localOffset)))
                     {
@@ -2353,8 +2375,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
                         localMode = 150;
                         localOffset--;
                     }
-
-                    if (TestFor(text, localOffset, [" " + CsMarriageEntr2 + " ", " " + CsIllegChild + " "]))
+                    else if (TestFor(text, localOffset, [" " + CsMarriageEntr2 + " ", " " + CsIllegChild + " "]))
                     {
                         localRetMode3 = localMode;
                         localMode = 124;
@@ -2669,7 +2690,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
         }
         else if (innerOffset < innerText.Length - 1 && currentChar == '.' &&
             ((innerSubstring != string.Empty && innerOffset + 1 <= innerText.Length && In(CharAt(innerText, innerOffset + 1), Ziffern))
-            || (innerSubstring != string.Empty && !In(innerSubstring[^1], Ziffern) && innerOffset + 2 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && In(CharAt(innerText, innerOffset + 2), Charset))
+            || (innerSubstring != string.Empty && !In(innerSubstring[^1], Ziffern) && innerOffset + 2 <= innerText.Length && CharAt(innerText, innerOffset + 1) == ' ' && In(CharAt(innerText, innerOffset + 2), Ziffern))
             || (innerOffset + 1 <= innerText.Length && new[] { '-', ',', '/' }.Contains(CharAt(innerText, innerOffset + 1)))
             || TestFor(innerText, innerOffset + 1, CsSeparator2)
             || (innerOffset + 1 <= innerText.Length && In(CharAt(innerText, innerOffset + 1), Charset))
@@ -2755,7 +2776,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
         {
             innerSubstring += currentChar;
         }
-        else if (TestFor(innerText, innerOffset, "(") && ParseAdditional(innerText, ref innerOffset, out var parsedAdditional))
+        else if (TestFor(innerText, innerOffset, "(") && ParseAdditional(text, ref innerOffset, out var parsedAdditional))
         {
             innerData = parsedAdditional;
             if (innerData.StartsWith(CsDivorce, StringComparison.Ordinal))

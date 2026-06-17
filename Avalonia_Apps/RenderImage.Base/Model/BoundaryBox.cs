@@ -7,6 +7,21 @@ namespace RenderImage.Base.Model
     {
         private TFTriple _boxSize;
 
+        private static bool IsOutsideHalfExtentAndMovingAway(double distance, double halfExtent, double direction)
+            => (distance - halfExtent > 0 && direction <= 0)
+                || (distance + halfExtent < 0 && direction >= 0);
+
+        private static bool IsRayMissingBox(TFTriple localDistance, TFTriple boxSize, TFTriple direction)
+        {
+            double halfX = boxSize.X * 0.5;
+            double halfY = boxSize.Y * 0.5;
+            double halfZ = boxSize.Z * 0.5;
+
+            return IsOutsideHalfExtentAndMovingAway(localDistance.X, halfX, direction.X)
+                || IsOutsideHalfExtentAndMovingAway(localDistance.Y, halfY, direction.Y)
+                || IsOutsideHalfExtentAndMovingAway(localDistance.Z, halfZ, direction.Z);
+        }
+
         public BoundaryBox(RenderPoint position, RenderVector size) : base(position)
         {
             _boxSize = size.Value;
@@ -24,12 +39,7 @@ namespace RenderImage.Base.Model
             }
             distance = -1.0;
             var dir = ray.Direction.Value;
-            if (((lDist.X - _boxSize.X * 0.5 > 0) && (dir.X <= 0)) ||
-            ((lDist.X + _boxSize.X * 0.5 < 0) && (dir.X >= 0)) ||
-            ((lDist.Y - _boxSize.Y * 0.5 > 0) && (dir.Y <= 0)) ||
-            ((lDist.Y + _boxSize.Y * 0.5 < 0) && (dir.Y >= 0)) ||
-            ((lDist.Z - _boxSize.Z * 0.5 > 0) && (dir.Z <= 0)) ||
-            ((lDist.Z + _boxSize.Z * 0.5 < 0) && (dir.Z >= 0)))
+            if (IsRayMissingBox(lDist, _boxSize, dir))
                 return false;
             // XY plane test (Z face)
             if (Math.Abs(dir.Z) > 1e-12)

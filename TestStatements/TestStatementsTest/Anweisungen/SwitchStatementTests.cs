@@ -7,7 +7,7 @@ namespace TestStatements.Anweisungen.Tests
     [TestClass()]
     public class SwitchStatementTests:ConsoleTestsBase
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "Case 2")]
         [DataRow(1, "Default case")]
         [DataRow(2, "Case 2")]
@@ -22,7 +22,7 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleOutput(sExp, SwitchStatement.SwitchExample1);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "The color is green")]
         [DataRow(1, "The color is unknown.")]
         [DataRow(2, "The color is blue")]
@@ -37,7 +37,7 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleOutput(sExp, SwitchStatement.SwitchExample2);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "Case 2")]
         [DataRow(1, "An unexpected value (0)")]
         [DataRow(2, "Case 3")]
@@ -52,7 +52,7 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleOutput(sExp, SwitchStatement.SwitchExample3);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "The sum of 8 die is 36")]
         [DataRow(1, "The sum of 8 die is 27")]
         [DataRow(2, "The sum of 8 die is 39")]
@@ -67,7 +67,7 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleOutput(sExp, SwitchStatement.SwitchExample4);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(0, "The weekend")]
         [DataRow(1, "The first day of the work week.")]
         [DataRow(2, "The middle of the work week.")]
@@ -83,14 +83,14 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleOutput(sExp, SwitchStatement.SwitchExample5);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         public void SwitchExample6Test()
         {
             AssertConsoleOutput(@"An array with 5 elements.
 4 items", SwitchStatement.SwitchExample6);
 
         }
-        [DataTestMethod()]
+        [TestMethod()]
         public void SwitchExample7Test()
         {
             AssertConsoleOutput(@"An array with 5 elements.

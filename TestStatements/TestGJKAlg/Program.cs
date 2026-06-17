@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace TestGJKAlg
@@ -9,6 +10,7 @@ namespace TestGJKAlg
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
+        [SupportedOSPlatform("windows6.1")]
         static void Main()
         {
             Application.EnableVisualStyles();

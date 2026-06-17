@@ -36,7 +36,7 @@ namespace TestStatementTest.UnitTesting
 		/// </summary>
 		/// <param name="expected">The expected.</param>
 		/// <param name="ints">The ints.</param>
-		[DataTestMethod]
+		[TestMethod]
 		[DataRow(10,new[] {1,2,3,4})]
 		[DataRow(1, new[] { 1 })]
 		[DataRow(0, new[] { 1, -1})]
@@ -53,7 +53,7 @@ namespace TestStatementTest.UnitTesting
 		/// Datas the test open array parameters.
 		/// </summary>
 		/// <param name="ints">The ints.</param>
-		[DataTestMethod]
+		[TestMethod]
 		[DataRow(10, 1, 2, 3, 4 )]
 		[DataRow(15, 1, 2, 3, 4, 5 )]
 		[DataRow(0)]
@@ -75,7 +75,7 @@ namespace TestStatementTest.UnitTesting
 		/// <param name="iTest">The i test.</param>
 		/// <param name="iExp">The i exp.</param>
 		/// <param name="TestName">Name of the test.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[TestProperty("Author", "CR")]
 		[DynamicData("ReusableTestDataProperty")]
 		[DataRow(2, new[] {-1,0,1,2,3,4 }, new[] {-2,0,2,4,6,8 }, "Weitere DataRow")]

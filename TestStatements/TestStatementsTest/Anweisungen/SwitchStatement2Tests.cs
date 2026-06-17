@@ -17,7 +17,7 @@ namespace TestStatements.Anweisungen.Tests
             new object[] { new Rectangle(8, 8),32d, "Information about square rectangle:\r\n   Length of a side: 8\r\n   Area: 64"},
             new object[] { new Circle(3), Math.PI*6d, "A Circle shape"},
         };
-        [DataTestMethod()]
+        [TestMethod()]
         [DynamicData(nameof(ShapeTestData))]
         public void ShowShapeInfoTest(Shape sh,double _,string sExp)
         {
@@ -25,7 +25,7 @@ namespace TestStatements.Anweisungen.Tests
             AssertConsoleOutput(sExp, ()=>SwitchStatement2.ShowShapeInfo(sh));
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
         [DynamicData(nameof(ShapeTestData))]
         public void ShapeCircumfenceTest(Shape sh, double? fExp, string _)
         {
@@ -33,7 +33,7 @@ namespace TestStatements.Anweisungen.Tests
             Assert.AreEqual(fExp, sh?.Circumference);
         }
 
-        [DataTestMethod()]
+        [TestMethod()]
 
     
         public void SwitchExample21Test()

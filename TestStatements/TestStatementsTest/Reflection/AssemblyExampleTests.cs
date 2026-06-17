@@ -371,7 +371,7 @@ Void Main(System.String[])";
 		/// <param name="iExp2">The i exp2.</param>
 		/// <param name="iTest3">The i test3.</param>
 		/// <param name="iExp3">The i exp3.</param>
-		[DataTestMethod()]
+		[TestMethod()]
 		[DataRow( 3, 2,  6, 1,  3, 3, 9)]
 		[DataRow( 4, 2,  8, 1,  4, 3, 12)]
 		[DataRow( 1, 2,  2, 1,  1, 3, 3)]

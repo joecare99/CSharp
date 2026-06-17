@@ -10,6 +10,7 @@ public class V2Tests
         Assert.AreEqual(vExp.Z, vAct.Z, $"{Msg}.Z");
     }
 
+    [TestMethod]
     [DataRow(new float[]{0,0}, new float[] { 0, 0 })]
     [DataRow(new float[]{1,0}, new float[] { -1, 0 })]
     [DataRow(new float[]{0,1}, new float[] { 0, -1 })]

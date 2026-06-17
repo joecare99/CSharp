@@ -7,6 +7,21 @@ namespace RenderImage.Base.Model
     {
         private readonly TFTriple _size;
 
+        private static bool IsOutsideHalfExtentAndMovingAway(double distance, double halfExtent, double direction)
+            => (distance - halfExtent > 0 && direction <= 0)
+                || (distance + halfExtent < 0 && direction >= 0);
+
+        private static bool IsRayMissingBox(TFTriple localDistance, TFTriple boxSize, TFTriple direction)
+        {
+            double halfX = boxSize.X * 0.5;
+            double halfY = boxSize.Y * 0.5;
+            double halfZ = boxSize.Z * 0.5;
+
+            return IsOutsideHalfExtentAndMovingAway(localDistance.X, halfX, direction.X)
+                || IsOutsideHalfExtentAndMovingAway(localDistance.Y, halfY, direction.Y)
+                || IsOutsideHalfExtentAndMovingAway(localDistance.Z, halfZ, direction.Z);
+        }
+
         public Box(RenderPoint position, RenderVector size, RenderColor baseColor)
         : this(position, size, baseColor, new TFTriple { X = 0.6, Y = 0.4, Z = 0.0 }) { }
 
@@ -22,12 +37,7 @@ namespace RenderImage.Base.Model
             hit = default;
             var lDist = Position.Value - ray.StartPoint.Value;
             var inside = Math.Abs(lDist.X) < _size.X * 0.5 && Math.Abs(lDist.Y) < _size.Y * 0.5 && Math.Abs(lDist.Z) < _size.Z * 0.5;
-            if (!inside && (((lDist.X - _size.X * 0.5 > 0) && (ray.Direction.Value.X <= 0)) ||
-            ((lDist.X + _size.X * 0.5 < 0) && (ray.Direction.Value.X >= 0)) ||
-            ((lDist.Y - _size.Y * 0.5 > 0) && (ray.Direction.Value.Y <= 0)) ||
-            ((lDist.Y + _size.Y * 0.5 < 0) && (ray.Direction.Value.Y >= 0)) ||
-            ((lDist.Z - _size.Z * 0.5 > 0) && (ray.Direction.Value.Z <= 0)) ||
-            ((lDist.Z + _size.Z * 0.5 < 0) && (ray.Direction.Value.Z >= 0))))
+            if (!inside && IsRayMissingBox(lDist, _size, ray.Direction.Value))
             { return false; }
             hit.AmbientVal = _surface.X;
             hit.ReflectionVal = _surface.Y;
