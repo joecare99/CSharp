@@ -349,7 +349,7 @@ SMath2.ToPoint(PtDest)
                 Pts[0] = SMath2.ToPoint(SMath2.PointVectorToPoint(Center, Direction - 45f, Math.Sqrt(2 * Size * Size)));
                 Pts[1] = SMath2.ToPoint(SMath2.PointVectorToPoint(Center, Direction - 90f, Size));
                 Pts[2] = SMath2.ToPoint(SMath2.PointVectorToPoint(Center, Direction + 90f, Size));
-                Pts[3] = SMath2.ToPoint(SMath2.PointVectorToPoint(Center, Direction + 45f, Math.Sqrt(2 * Size * Size)));
+                Pts[3] = SMath2.ToPoint(SMath2.PointVectorToPoint(Center, Direction + 45f, Math.Sqrt(2d * Size * Size)));
                 Gr.DrawLines(Pen, Pts);
                 return true;
             }
