@@ -817,6 +817,7 @@
     <Project Path="SomeThing/Quine6/Quine6.csproj" />
   </Folder>
   <Folder Name="/Tests/">
+    <Project Path="CSharpBibleTest/CSharpBibleTest.csproj" Id="4ab88278-f044-49ed-a324-7c931a66da71" />
     <Project Path="Tests/Test.csproj" />
   </Folder>
   <Folder Name="/Web/">
@@ -905,7 +906,6 @@
   <Project Path="AddPage/AddPage.csproj" Id="c8249e35-ed76-4180-95ba-317f8dc45683" />
   <Project Path="AddPageWPF/AddPageWPF.csproj" Id="af16f7af-cf83-4679-8111-0bbe9bcda102" />
   <Project Path="CharGrid/CharGrid.csproj" />
-  <Project Path="CSharpBibleTest/CSharpBibleTest.csproj" Id="4ab88278-f044-49ed-a324-7c931a66da71" />
   <Project Path="CSV_Viewer/CSV_Viewer.csproj" Id="86a9a87a-d6bf-4904-b4ca-21bd4cff82b8" />
   <Project Path="CSV_ViewerTest/CSV_ViewerTest.csproj" Id="897c5ad9-edfd-4160-b837-62933591247f" />
   <Project Path="DataGridEx/DataGridEx.csproj" />
