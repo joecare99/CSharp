@@ -42,7 +42,7 @@ public partial class PersonViewViewModel : ObservableObject
         }
     }
 
-    public PersonViewViewModel() : this(new PersonDataService()) { }
+//    public PersonViewViewModel() : this(new PersonDataService()) { }
     public PersonViewViewModel(IPersonDataService personDataService)
     {
         _personDataService = personDataService;

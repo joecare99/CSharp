@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSingleton(new FroniusDeviceEndpointOptions
 {
-    Host = "192.168.0.80",
+    Host = "192.168.0.27",
 });
 builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddSingleton<IFroniusPowerFlowClient, FroniusPowerFlowClient>();

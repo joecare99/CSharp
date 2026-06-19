@@ -108,10 +108,10 @@
     <File Path="AA19_FilterLists/Application.props" />
     <File Path="AA19_FilterLists/Directory.Packages.props" />
     <Project Path="AA19_FilterLists/AA19_FilterLists.Browser/AA19_FilterLists.Browser.csproj">
-      <Build Solution="DesktopOnly|*" Project="false" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="AA19_FilterLists/AA19_FilterLists.Desktop/AA19_FilterLists.Desktop.csproj">
-      <Build Solution="DesktopOnly|*" Project="false" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="AA19_FilterLists/AA19_FilterLists/AA19_FilterLists.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
@@ -165,7 +165,9 @@
     <Project Path="AA25_RichTextEdit/Avln_RichTextEdit/Avln_RichTextEdit.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
-    <Project Path="AA25_RichTextEdit/Document.Axaml/Document.Axaml.csproj" />
+    <Project Path="AA25_RichTextEdit/Document.Axaml/Document.Axaml.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
     <Project Path="AA25_RichTextEdit/Document.Base/Document.Base.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
@@ -261,7 +263,7 @@
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="FroniusMonitor/FroniusMonitor.Avalonia.Tests/FroniusMonitor.Avalonia.Tests.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
     <Project Path="FroniusMonitor/FroniusMonitor.Avalonia/FroniusMonitor.Avalonia.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
@@ -351,7 +353,6 @@
     </Project>
     <Project Path="Libraries/Avln_BaseLibTests/Avln_BaseLibTests.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
-      <Platform Solution="DesktopOnly|*" Project="x86" />
     </Project>
     <Project Path="Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
@@ -429,20 +430,38 @@
   <Folder Name="/AA37_Treeview/">
     <File Path="AA37_TreeView/Application.props" />
     <File Path="AA37_TreeView/Directory.Packages.props" />
-    <Project Path="AA37_TreeView/AA37_TreeView.Browser/AA37_TreeView.Browser.csproj" />
-    <Project Path="AA37_TreeView/AA37_TreeView.Desktop/AA37_TreeView.Desktop.csproj" />
-    <Project Path="AA37_TreeView/AA37_TreeView.Model/AA37_TreeView.Model.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    <Project Path="AA37_TreeView/AA37_TreeView.Browser/AA37_TreeView.Browser.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
-    <Project Path="AA37_TreeView/AA37_TreeView.Tests/AA37_TreeView.Tests.csproj" />
-    <Project Path="AA37_TreeView/AA37_TreeView/AA37_TreeView.csproj" />
+    <Project Path="AA37_TreeView/AA37_TreeView.Desktop/AA37_TreeView.Desktop.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA37_TreeView/AA37_TreeView.Model/AA37_TreeView.Model.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA37_TreeView/AA37_TreeView.Tests/AA37_TreeView.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA37_TreeView/AA37_TreeView/AA37_TreeView.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
   <Folder Name="/AA40_Wizzard/">
-    <Project Path="AA40_Wizzard/AA40_Wizzard.Browser/AA40_Wizzard.Browser.csproj" />
-    <Project Path="AA40_Wizzard/AA40_Wizzard.Desktop/AA40_Wizzard.Desktop.csproj" />
-    <Project Path="AA40_Wizzard/AA40_Wizzard.Model/AA40_Wizzard.Model.csproj" />
-    <Project Path="AA40_Wizzard/AA40_Wizzard.Tests/AA40_Wizzard.Tests.csproj" />
-    <Project Path="AA40_Wizzard/AA40_Wizzard/AA40_Wizzard.csproj" />
+    <Project Path="AA40_Wizzard/AA40_Wizzard.Browser/AA40_Wizzard.Browser.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA40_Wizzard/AA40_Wizzard.Desktop/AA40_Wizzard.Desktop.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA40_Wizzard/AA40_Wizzard.Model/AA40_Wizzard.Model.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA40_Wizzard/AA40_Wizzard.Tests/AA40_Wizzard.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="AA40_Wizzard/AA40_Wizzard/AA40_Wizzard.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
   </Folder>
    <Folder Name="/AA98_AvlnCodeStudio/">
      <File Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.props" />
@@ -450,15 +469,21 @@
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Debugging/AA98_AvlnCodeStudio.Base.Debugging.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Debugging/AA98_AvlnCodeStudio.Base.Debugging.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Testing/AA98_AvlnCodeStudio.Base.Testing.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Testing/AA98_AvlnCodeStudio.Base.Testing.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
-     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Versioning/AA98_AvlnCodeStudio.Base.Versioning.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Versioning/AA98_AvlnCodeStudio.Base.Versioning.csproj">
+       <BuildType Solution="DesktopOnly|*" Project="Debug" />
+     </Project>
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>

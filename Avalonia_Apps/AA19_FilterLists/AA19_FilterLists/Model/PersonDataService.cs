@@ -13,7 +13,7 @@ public class PersonDataService : IPersonDataService
     {
     }
 
-    public PersonDataService(IEnumerable<Person> persons)
+    private PersonDataService(IEnumerable<Person> persons)
     {
         _persons = new ObservableCollection<Person>(persons);
         _persons.CollectionChanged += (_, e) => PersonsChanged?.Invoke(this, e);
