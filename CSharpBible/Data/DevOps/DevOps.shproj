@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>B7D27D6F-34E9-4F5A-BB5F-6A0D3F0F2C7C</ProjectGuid>
+    <ProjectGuid>{1EB7D763-C20A-43DC-9E3B-058363FD8F7E}</ProjectGuid>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
