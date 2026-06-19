@@ -30,6 +30,7 @@
     <Compile Include="..\Calc32\ViewModels\Interfaces\ICalculatorViewModel.cs" Link="ViewModels\Interfaces\ICalculatorViewModel.cs" />
   </ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\Libraries\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
 		<ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
 		<ProjectReference Include="..\..\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
 	</ItemGroup>

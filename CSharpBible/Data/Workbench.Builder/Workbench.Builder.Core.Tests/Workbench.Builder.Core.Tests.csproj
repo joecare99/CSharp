@@ -1,0 +1,31 @@
+﻿<Project>
+  <Import Project="..\..\Data_net.props" />
+  <PropertyGroup>
+	<IsPackable>false</IsPackable>
+	<TargetFrameworks>net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <None Include="TestData\ProjectWithProjectReference\ProjectWithProjectReference.csproj" />
+    <None Include="TestData\ProjectWithProjectReference\ReferencedLibrary\ReferencedLibrary.csproj" />
+    <None Include="TestData\SimpleConsoleApp\SimpleConsoleApp.csproj" />
+    <None Include="TestData\SimpleLibrary\SimpleLibrary.csproj" />
+    <None Include="TestData\SimpleTestProject\SimpleTestProject.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="MSTest" Version="4.2.3" />
+	<PackageReference Include="NSubstitute" Version="5.3.0" />
+  </ItemGroup>
+	<ItemGroup>
+	<Compile Remove="TestData\**\*.cs" />
+	<None Include="TestData\**\*.cs" />
+	<None Update="TestData\**\*">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\Workbench.Builder.Core\Workbench.Builder.Core.csproj" />
+	<ProjectReference Include="..\Workbench.Builder.Host\Workbench.Builder.Host.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="..\ConsoleApps_net.props" />
   <PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<OutputType>WinExe</OutputType>
 	</PropertyGroup>
@@ -20,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
     <ProjectReference Include="..\TestConsole\TestConsole_net.csproj" />
-    <ProjectReference Include="..\WaveFuncCol\WaveFunCollapse.csproj" />
+    <ProjectReference Include="..\WaveFuncCol\WaveFunCollapse_net.csproj" />
   </ItemGroup>
 
   <ItemGroup>

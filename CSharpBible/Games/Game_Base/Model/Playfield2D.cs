@@ -269,7 +269,25 @@ public class Playfield2D<T>: IPlayfield2D<T>, IHasChildren<T> where T : class
             OnDataChanged?.Invoke(sender, ("Place", e.oP, e.nP));
         }
     }
-#endregion
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Playfield2D<T> d &&
+               EqualityComparer<Dictionary<Point, T>>.Default.Equals(_pfData, d._pfData) &&
+               _pfRect.Equals(d._pfRect) &&
+               _pfSize.Equals(d._pfSize) &&
+               EqualityComparer<IEnumerable<T>>.Default.Equals(Items, d.Items);
+    }
+
+    public override int GetHashCode()
+    {
+#if NET6_0_OR_GREATER
+        return HashCode.Combine(_pfData, _pfRect, _pfSize, Items);
+#else
+        return _pfData.GetHashCode() ^ _pfRect.GetHashCode() ^ _pfSize.GetHashCode() ^ Items.GetHashCode();
+#endif
+    }
+    #endregion
 }
 
 /// <summary>
