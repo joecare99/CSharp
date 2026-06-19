@@ -36,6 +36,7 @@
     <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E07-Privacy-Security-and-Consent.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E08-Settings-and-Configuration.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E09-Quality-Tests-and-Engineering-Baseline.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\AA98-E10-Workbench-Builder-and-Roslyn-Execution.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F01-Main-Window-and-Shell-Regions.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F02-Application-Command-Surfaces.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\AA98-F03-Workbench-Startup-and-Composition.md" />
@@ -69,6 +70,7 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T020-Implement-Recent-Workspaces-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T034-Implement-Architecture-Guardrail-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T037-Implement-Versioning-Testing-and-Debugging-Foundation.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T041-Implement-Builder-V1.1-Thin-Host.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\BUB-T001-Migrate-Bubbels-To-Avalonia-With-Desktop-And-Browser-Hosts.md" />
     <None Include="$(MSBuildThisFileDirectory)Vision.md" />
   </ItemGroup>
