@@ -11,6 +11,7 @@
 		<Authors>Joe Care</Authors>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
+		<NoWarn>$(NoWarn);NETSDK1138</NoWarn>
 		<Copyright>Copyright © JC-Soft 2026</Copyright>
 	</PropertyGroup>
 </Project>

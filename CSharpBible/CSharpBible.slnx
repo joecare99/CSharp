@@ -11,7 +11,7 @@
   </Folder>
   <Folder Name="/Basics/">
     <File Path="Basics/C#-Basics.props" />
-    <File Path="Basics/C#-Basics_net.props" />
+    <File Path="Basics/C#-Basics_net_.props" />
     <Project Path="Basics/Basic_Del00_Template/Basic_Del00_Template.csproj" />
     <Project Path="Basics/Basic_Del00_TemplateTests/Basic_Del00_TemplateTests.csproj" />
     <Project Path="Basics/Basic_Del01_Action/Basic_Del01_Action.csproj" />
@@ -76,10 +76,6 @@
       <BuildDependency Project="Calc/Calc32WPF/Calc32WPF_net.csproj" />
     </Project>
   </Folder>
-  <Folder Name="/Calc/Calc32Cons/" />
-  <Folder Name="/Calc/Calc32Tests/" />
-  <Folder Name="/Calc/Calc32WPF/" />
-  <Folder Name="/Calc/Calc32WPFTests/" />
   <Folder Name="/Calc/Calc64/">
     <Project Path="Calc/Calc64Base/Calc64Base.csproj" />
     <Project Path="Calc/Calc64BaseTests/Calc64BaseTests.csproj" />
@@ -91,8 +87,6 @@
     </Project>
     <Project Path="Calc/Calc64_Wpf/Calc64_Wpf.csproj" />
   </Folder>
-  <Folder Name="/Calc/Calc64WF/" />
-  <Folder Name="/Calc/Calc64WFTests/" />
   <Folder Name="/ConsoleApps/">
     <Project Path="ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
     <Project Path="ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
@@ -118,6 +112,7 @@
     <File Path="Data/Directory.Build.props" />
     <Project Path="Data/CommandlineHelper.Generators/CommandlineHelper.Generators.csproj" />
     <Project Path="Data/CommandlineHelper/CommandlineHelper.csproj" />
+    <Project Path="Data/DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
     <Project Path="Data/NebelEbook/NebelEbook.csproj" />
     <Project Path="Data/Story.Base/Story.Base.csproj" />
     <Project Path="Data/TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
@@ -198,6 +193,11 @@
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Widgets.Wpf/TraceAnalysis.Widgets.Wpf.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Workbench.Core/TraceAnalysis.Workbench.Core.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Workbench.Wpf/TraceAnalysis.Workbench.Wpf.csproj" />
+  </Folder>
+  <Folder Name="/Data/Workbench.Builder/">
+    <Project Path="Data/Workbench.Builder/Workbench.Builder.Core.Tests/Workbench.Builder.Core.Tests.csproj" />
+    <Project Path="Data/Workbench.Builder/Workbench.Builder.Core/Workbench.Builder.Core.csproj" />
+    <Project Path="Data/Workbench.Builder/Workbench.Builder.Host/Workbench.Builder.Host.csproj" />
   </Folder>
   <Folder Name="/DB/">
     <File Path="DB/DB.props" />
@@ -728,7 +728,6 @@
     <Project Path="MVVM_Tutorial/WpfAppTests/WpfAppTests.csproj" />
     <Project Path="MVVM_Tutorial/WpfAppTests/WpfApp_netTests.csproj" />
   </Folder>
-  <Folder Name="/MVVM_Tutorial/WpfAppTests/" />
   <Folder Name="/OpenAI/">
     <Project Path="OpenAI/McpTools/McpTools.csproj" />
     <Project Path="OpenAI/Ollama-Service1/Ollama-Service1.csproj" />
@@ -785,6 +784,7 @@
   </Folder>
   <Folder Name="/SomeThing/">
     <File Path="SomeThing/README.md" />
+    <File Path="SomeThing/Solution.props" />
     <Project Path="SomeThing/ChaoticEntropyGenerator/ChaoticEntropyGenerator.csproj" />
     <Project Path="SomeThing/ConsoleApp1/ConsoleApp1.csproj" />
     <Project Path="SomeThing/ConsoleApp2/ConsoleApp2.csproj" />
