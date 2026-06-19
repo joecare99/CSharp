@@ -14,9 +14,18 @@ public sealed class TextDocumentService : ITextDocumentService
     /// <inheritdoc />
     public async Task<TextDocumentModel> LoadAsync(string filePath, CancellationToken cancellationToken = default)
     {
+#if NET6_0_OR_GREATER
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
-
-        var text = await File.ReadAllTextAsync(filePath, cancellationToken).ConfigureAwait(false);
+#else
+        if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentNullException(nameof(filePath));
+#endif
+        string text;
+#if NET6_0_OR_GREATER
+        text = await File.ReadAllTextAsync(filePath, cancellationToken).ConfigureAwait(false);
+#else
+        text = await new Task<string>(() => File.ReadAllText(filePath)).ConfigureAwait(false);
+#endif
         return new TextDocumentModel
         {
             FilePath = filePath,
@@ -27,8 +36,12 @@ public sealed class TextDocumentService : ITextDocumentService
     /// <inheritdoc />
     public async Task SaveAsync(TextDocumentModel document, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(document);
+#if NET6_0_OR_GREATER
         ArgumentException.ThrowIfNullOrWhiteSpace(document.FilePath);
+#else
+        if (string.IsNullOrWhiteSpace(document.FilePath))
+            throw new ArgumentNullException(nameof(document.FilePath));
+#endif       
 
         var sFilePath = document.FilePath;
         var sDirectory = Path.GetDirectoryName(sFilePath);
@@ -37,6 +50,11 @@ public sealed class TextDocumentService : ITextDocumentService
             Directory.CreateDirectory(sDirectory);
         }
 
+
+#if NET6_0_OR_GREATER
         await File.WriteAllTextAsync(sFilePath, document.Text ?? string.Empty, cancellationToken).ConfigureAwait(false);
+#else
+        await new Task(() => File.WriteAllText(sFilePath, document.Text ?? string.Empty)).ConfigureAwait(false);
+#endif
     }
 }
