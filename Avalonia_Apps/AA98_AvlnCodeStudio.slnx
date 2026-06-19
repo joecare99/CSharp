@@ -31,5 +31,17 @@
     <File Path="Packages.props" />
     <File Path="Solution.props" />
   </Folder>
+  <Folder Name="/Workbench.Builder/">
+    <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Core.Tests/Workbench.Builder.Core.Tests.csproj" />
+    <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Core/Workbench.Builder.Core.csproj" />
+    <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Host/Workbench.Builder.Host.csproj" />
+  </Folder>
+  <Folder Name="/Workbench.Builder/DevOps/">
+    <File Path="../../../Users/DEROSCHR/.copilot/plans/plan-roslyn-builder-starter-slice-initial-files-and-execution-order.md" />
+    <File Path="../../../Users/DEROSCHR/.copilot/plans/plan-roslyn-builder-v1-split-v1.1-project-inspection-and-v1.2-compilation.md" />
+    <File Path="../../../Users/DEROSCHR/.copilot/plans/plan-roslyn-builder-v1.1v1.2-refinement-for-workbench-integration.md" />
+    <File Path="../CSharpBible/DevOps/Tasks/RoslynBuilder.StarterSlice.md" />
+    <File Path="plan-roslyn-builder-roadmap.md" />
+  </Folder>
   <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
 </Solution>
