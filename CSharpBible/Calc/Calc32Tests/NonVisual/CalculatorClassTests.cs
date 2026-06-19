@@ -132,7 +132,6 @@ namespace Calc32.Models.Tests
         [TestMethod()]
         [DataRow("432", new int[] { 4, 3, 2 }, new int[] { 4, 43, 432 })]
         [DataRow("1234", new int[] { 1, 2, 3, 4 }, new int[] { 1, 12, 123, 1234 })]
-        [DataRow("1234", new int[] { 1, 2, 3, 4 }, new int[] { 1, 12, 123, 1234 })]
         [DataRow("999999999", new int[] { 9, 9, 9, 9, 9, 9, 9, 9 }, new int[] { 9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, 999999999 })]
         public void ButtonTest(string name, int[] aiButtons, int[] aiExp)
         {

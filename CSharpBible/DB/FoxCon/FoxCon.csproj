@@ -1,13 +1,8 @@
 ﻿<Project>
-
+	<Import Project="..\DB_net.props"/>
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<BaseIntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<IntermediateOutputPath>..\..\..\obj.net\$(MSBuildProjectName)\</IntermediateOutputPath>
-		<BaseOutputPath>..\..\..\bin\$(MSBuildProjectName)</BaseOutputPath>
+		<TargetFramework>net10.0</TargetFramework>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -19,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.27.0" />
     <PackageReference Include="Selenium.Mozilla.Firefox.Webdriver" Version="0.6.0.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.44.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.45.0" />
     <PackageReference Include="System.Text.Json" Version="10.0.9" />
   </ItemGroup>
 

@@ -137,7 +137,7 @@ namespace Calc64WF.ViewModel.Tests
         [DataRow("99", 100, 4, 100, "", "Akkumulator:-101\r\nAccumulator:\r\nAkkumulator:100\r\nAccumulator:\r\n")]
         public void MainWindow_VM_OpButton(string sButtons, long iAcc, int iPCCount, long iExpAkk, string sExpOp, string sExpPC)
         {
-            (_ModelView as FrmCalc64MainViewModel).Accumulator = iAcc;
+            (_ModelView as FrmCalc64MainViewModel)?.Accumulator = iAcc;
             ClearResults();
             foreach (var button in sButtons)
             {

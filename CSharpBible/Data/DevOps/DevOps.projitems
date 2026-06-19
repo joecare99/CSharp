@@ -19,11 +19,19 @@
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-009-Define-archive-snapshot-source-detection-and-ordering-contracts.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-012-Define-archive-import-status-persistence-and-resume.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-RepoMigrator-013-Create-shared-attribute-driven-console-command-infrastructure.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-WorkbenchBuilder-001-Complete-V1.1-inspection-pipeline.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-WorkbenchBuilder-002-Stabilize-thin-host-and-output-contracts.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-WorkbenchBuilder-003-Expand-builder-regression-coverage.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\BI-WorkbenchBuilder-004-Plan-V1.2-compilation-emit-and-debug-symbols.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\E-RepoMigrator-001-RepoMigrator-migration-workbench.md" />
+    <None Include="$(MSBuildThisFileDirectory)Epics\E-WorkbenchBuilder-001-Roslyn-based-build-workbench.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\830360-Interactive-trace-visualization-workbench.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\830361-Trace-data-processing-pipeline.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\F-RepoMigrator-02-Git-and-SVN-provider-support.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\F-RepoMigrator-07-Archive-and-web-snapshot-source-ingestion.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\F-WorkbenchBuilder-01-V1.1-project-inspection-and-reference-discovery.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\F-WorkbenchBuilder-02-thin-host-and-inspection-output-contracts.md" />
+    <None Include="$(MSBuildThisFileDirectory)Features\F-WorkbenchBuilder-03-V1.2-compilation-emit-and-debug-symbols.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831181-Implement-JSON-trace-cache-filter.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831182-Integrate-JSON-filter-into-TraceCsv2realCsv.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831183-Specify-processing-configuration-format.md" />
@@ -67,6 +75,14 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-057-Split-archive-provider-tests-into-dedicated-test-project.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-058-Split-compression-provider-tests-into-dedicated-test-projects.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-SharedSkills-001-Create-global-test-coverage-skill.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-001-Validate-and-document-current-V1.1-inspection-contract.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-002-Harden-reference-resolution-coverage-and-diagnostics.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-003-Document-and-validate-thin-host-command-contract.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-004-Extend-host-request-options-for-V1.1-parity-where-needed.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-005-Add-coverage-for-reference-categories-and-missing-input-diagnostics.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-006-Broaden-sample-project-coverage-for-builder-tests.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-007-Specify-V1.2-compilation-and-emit-contracts.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-008-Plan-source-generator-and-Portable-PDB-support-slices.md" />
     <None Include="$(MSBuildThisFileDirectory)TraceAnalysis-Workbench-User-Guide.md" />
   </ItemGroup>
   <ItemGroup>

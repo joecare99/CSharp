@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel;
 using MVVM.ViewModel;
+using NSubstitute;
+using System.ComponentModel;
+using WpfApp.Services;
 
 namespace WpfApp.ViewModels.Tests
 {
@@ -14,7 +16,9 @@ namespace WpfApp.ViewModels.Tests
         [TestInitialize]
         public void Init()
         {
-            testModel = new();
+            var _textServ = Substitute.For<ITextDocumentService>();
+            var _fileServ = Substitute.For<IFileDialogService>();
+            testModel = new MainWindowViewModel(_textServ,_fileServ);
         }
 
         [TestMethod()]

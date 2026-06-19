@@ -10,81 +10,6 @@ using System.Runtime.CompilerServices;
 
 namespace Game.Model.Tests;
 
-public class TestItem2D : IPlacedObject, IEquatable<TestItem2D>, IParentedObject
-{
-    internal object? _parent;
-    public Point _place;
-    private Point _oldPlace;
-
-    public string Name = "";
-
-    public static event Action<string, TestItem2D, object?, object?, string>? Log;
-
-    public event EventHandler<(Point oP, Point nP)>? OnPlaceChange;
-
-    public bool Equals(TestItem2D? other) => other != null && other.Name == Name;
-
-#if NET6_0_OR_GREATER
-    public object? Parent
-    {
-        get => _parent;
-        set => SetParent(value);
-    }
-
-    public Point Place
-    {
-        get => _place;
-        set => SetPlace(value);
-    }
-#endif
-
-    public object? GetParent() => _parent;
-
-    public void SetParent(object? value, [CallerMemberName] string callerMember = "")
-    {
-        if (_parent == value) return;
-        var old = _parent;
-        _parent = value;
-        Log?.Invoke("New Parent", this, old, value, callerMember);
-    }
-
-    public Point GetPlace() => _place;
-
-    public void SetPlace(Point value, [CallerMemberName] string name = "")
-        => value.SetProperty(ref _place,
-            (s, o, n) =>
-            {
-                _oldPlace = (Point)o;
-                OnPlaceChange?.Invoke(this, ((Point)o, (Point)n));
-                Log?.Invoke("Place changed", this, o, n, s);
-            },
-            name);
-
-    public Point GetOldPlace() => _oldPlace;
-
-    public override string ToString() => $"TestItem2D({Name},{_place})";
-
-    public bool AddItem(object value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool RemoveItem(object value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<object> GetItems()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void NotifyChildChange(object childObject, object oldVal, object newVal, [CallerMemberName] string prop = "")
-    {
-        throw new NotImplementedException();
-    }
-}
-
 [TestClass]
 public class Playfield2DTests
 {
@@ -99,7 +24,7 @@ public class Playfield2DTests
     {
         _pf = new Playfield2D<TestItem2D>(new Size(5, 5));
         _pf.OnDataChanged += PfOnDataChanged;
-        TestItem2D.Log += ItemLog;
+        TestItem2D.logOperation += ItemLog;
         _result = "";
     }
 
@@ -107,7 +32,7 @@ public class Playfield2DTests
     public void Cleanup()
     {
         _pf.OnDataChanged -= PfOnDataChanged;
-        TestItem2D.Log -= ItemLog;
+        TestItem2D.logOperation -= ItemLog;
     }
 
     [TestMethod]
@@ -264,7 +189,7 @@ public class Playfield2DTests
         _result += $"DataChange: {e.prop}\to:{e.oldVal}\tn:{e.newVal}\r\n";
     }
 
-    private void ItemLog(string op, TestItem2D item, object? oldVal, object? newVal, string prop)
+    private void ItemLog(string op, object item, object? oldVal, object? newVal, string prop)
     {
         _result += $"{op}: {item}\to:{oldVal}\tn:{newVal}\tc:{prop}\r\n";
     }

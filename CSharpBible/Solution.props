@@ -12,5 +12,7 @@
 		<Authors>Joe Care</Authors>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<Copyright>Copyright © JC-Soft 2026</Copyright>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<NoWarn>$(NoWarn);NETSDK1138;NU1701</NoWarn>
 	</PropertyGroup>
 </Project>

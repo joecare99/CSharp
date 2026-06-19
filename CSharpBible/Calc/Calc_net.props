@@ -11,5 +11,7 @@
 		<Copyright>Copyright © JC-Soft 2023</Copyright>
 		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("_net",""))</RootNamespace>
 		<SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<NoWarn>$(NoWarn);NETSDK1138;NU1701</NoWarn>
 	</PropertyGroup>
 </Project>
