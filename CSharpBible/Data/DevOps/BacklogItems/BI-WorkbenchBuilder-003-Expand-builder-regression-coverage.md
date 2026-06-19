@@ -24,6 +24,7 @@ The focus is not only test quantity. The more important concern is preserving tr
 - Expand sample-project-based tests
 - Add edge-case coverage for diagnostics and resolution behavior
 - Keep formatter and host tests aligned with contract expectations
+- Add an explicit multi-target sample-project path for V1.1 hardening
 - Identify coverage gaps that must be closed before V1.2 emit work advances
 
 ## Acceptance Criteria
@@ -44,7 +45,7 @@ The focus is not only test quantity. The more important concern is preserving tr
 
 ## Open Questions
 
-- Which scenarios are mandatory before V1.2 starts: multi-targeting, analyzer-heavy projects, package-heavy projects, or executable-specific samples?
+- Which scenarios remain mandatory after the first multi-target sample is added: analyzer-heavy projects, package-heavy projects, or executable-specific samples?
 - Should additional test helpers be introduced to control restore and environment preconditions more explicitly?
 
 ## Next Refinement Steps
@@ -57,3 +58,7 @@ The focus is not only test quantity. The more important concern is preserving tr
 
 - `T-WorkbenchBuilder-005` - `Add coverage for reference categories and missing-input diagnostics`
 - `T-WorkbenchBuilder-006` - `Broaden sample project coverage for builder tests`
+
+## Notes
+
+The next concrete sample-project expansion for this backlog item should be a compact multi-target SDK-style project, for example with `TargetFrameworks=net8.0;net10.0`, so V1.1 can validate target-framework recognition and best-effort multi-target behavior explicitly.

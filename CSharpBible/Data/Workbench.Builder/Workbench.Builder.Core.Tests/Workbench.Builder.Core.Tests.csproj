@@ -7,6 +7,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
+    <None Include="TestData\MultiTargetLibrary\MultiTargetLibrary.csproj" />
     <None Include="TestData\ProjectWithProjectReference\ProjectWithProjectReference.csproj" />
     <None Include="TestData\ProjectWithProjectReference\ReferencedLibrary\ReferencedLibrary.csproj" />
     <None Include="TestData\SimpleConsoleApp\SimpleConsoleApp.csproj" />

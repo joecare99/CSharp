@@ -16,6 +16,8 @@ internal static class TestDataProjectPaths
 
     public static string ProjectWithProjectReferenceProjectPath => GetPath("ProjectWithProjectReference", "ProjectWithProjectReference.csproj");
 
+    public static string MultiTargetLibraryProjectPath => GetPath("MultiTargetLibrary", "MultiTargetLibrary.csproj");
+
     private static string GetPath(params string[] relativeSegments)
     {
         string testDataPath = Path.Combine(AppContext.BaseDirectory, "TestData");

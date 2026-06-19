@@ -18,6 +18,8 @@ This feature represents the current center of gravity of the `Workbench.Builder`
 
 The remaining refinement focus is less about starting the feature and more about validating and hardening what now exists on disk. The feature should clearly define the expected V1.1 contract boundaries, identify correctness gaps, and make sure the inspection result stays stable enough to serve later host, UI, and compilation slices.
 
+V1.1 should prefer observability over silent incompleteness. If data cannot be resolved reliably, the inspection result should remain as complete as practical while exposing the limitation through structured diagnostics instead of omitting the affected area without explanation.
+
 ## In Scope
 
 - MSBuild-backed loading of SDK-style project metadata
@@ -41,8 +43,22 @@ The remaining refinement focus is less about starting the feature and more about
 - The inspection result exposes project metadata, compile items, project references, package references, resolved references, and diagnostics
 - Missing files or references are surfaced as diagnostics rather than being silently ignored
 - Test-project classification is represented explicitly in the inspection result
+- Projects that depend on restore state still produce a best-effort inspection result when restore data is incomplete, with explicit warnings for degraded reference resolution
+- Multi-target projects are at least recognized as such, and V1.1 documents whether the current slice inspects one target framework at a time or multiple target frameworks through best-effort iteration
+- Unresolved analyzer references are reported explicitly rather than being collapsed into generic missing-reference handling
 - Sample project tests validate the loader, resolver, and orchestration path
 - The feature documents the remaining known correctness gaps before V1.2 begins
+
+## V1.1 Contract Clarifications
+
+- V1.1 remains inspection-first and best-effort rather than attempting a full build-grade project-system emulation.
+- For projects using `TargetFramework`, the inspection pipeline should expose the inspected target framework directly.
+- For projects using `TargetFrameworks`, V1.1 should recognize the multi-target shape explicitly and evolve toward best-effort per-target inspection rather than pretending that the project is inherently single-target.
+- If the current implementation can only inspect one target framework reliably, that limitation must be documented as a known gap instead of being treated as the intended final behavior.
+- Inspection without a prior restore is allowed, but restore-dependent reference resolution may be incomplete and should emit clear warnings.
+- Project metadata and declarative item discovery should remain available even when restore-dependent resolved-reference data is incomplete.
+- Unresolved analyzer references should remain visible as analyzer-specific diagnostics because analyzers matter to later compilation slices even if V1.1 does not execute them.
+- V1.1 guarantees observability of degraded states before completeness of every project-system detail.
 
 ## Dependencies
 
@@ -55,18 +71,19 @@ The remaining refinement focus is less about starting the feature and more about
 - CLI-based reference resolution may differ across SDK versions or environments
 - Multi-targeting behavior may need additional explicit handling
 - Analyzer and package reference classification may require later refinement
+- Best-effort inspection across multiple target frameworks may require result-shape extensions or additional diagnostics to avoid ambiguous output
 - Inspection diagnostics may need clearer severity rules once more scenarios are covered
 
 ## Open Questions
 
-- Which target-framework fallback behavior should be guaranteed in V1.1?
-- Should restore-state expectations be made explicit in the service contract?
-- How should unresolved analyzer references be reported compared to ordinary metadata references?
-- Which additional sample projects are needed to cover realistic edge cases?
+- What exact result shape should represent best-effort inspection across multiple target frameworks without destabilizing current consumers?
+- Which warning codes should be reserved specifically for restore-dependent degradation and analyzer-resolution degradation?
+- Which minimum additional sample-project set is required before the V1.1 contract can be treated as hardened?
 
 ## Next Refinement Steps
 
 1. Validate the current implementation against the intended V1.1 contract
-2. Expand regression coverage around reference categories and diagnostics
-3. Document known gaps in multi-targeting and restore-dependent behavior
-4. Freeze the V1.1 inspection result shape before V1.2 emit work starts
+2. Expand regression coverage around reference categories, restore-dependent warnings, and analyzer-specific diagnostics
+3. Add sample projects for multi-targeting, restore-dependent packages, analyzer references, broken project references, and missing compile items
+4. Document known gaps in multi-targeting and restore-dependent behavior
+5. Freeze the V1.1 inspection result shape before V1.2 emit work starts
