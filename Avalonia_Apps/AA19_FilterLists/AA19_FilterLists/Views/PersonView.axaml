@@ -13,7 +13,7 @@
 				<dg:DataGrid Margin="0,0,0,8"
 					AutoGenerateColumns="False"
 					ItemsSource="{Binding Persons}"
-					SelectedItem="{Binding ActPerson, Mode=TwoWay}">
+					SelectedItem="{Binding ActPerson, Mode=TwoWay, Delay=50}">
 					<dg:DataGrid.Columns>
 						<dg:DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="SizeToHeader" />
 						<dg:DataGridTextColumn Header="Nachname" Binding="{Binding LastName}" Width="*" />
@@ -34,7 +34,7 @@
 					<TextBlock Grid.Row="1" Margin="0,0,0,8" Text="Gefilterte Personen" />
 					<ListBox Grid.Row="2"
 						 ItemsSource="{Binding FilteredPersons}"
-						 SelectedItem="{Binding ActPerson, Mode=TwoWay}">
+						 SelectedItem="{Binding ActPerson, Mode=TwoWay, Delay=100}">
 						<ListBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Vertical" Margin="0,4">
