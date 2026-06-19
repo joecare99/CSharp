@@ -32,6 +32,7 @@
     <File Path="Solution.props" />
   </Folder>
   <Folder Name="/Workbench.Builder/">
+    <Project Path="../CSharpBible/Data/DevOps/DevOps.shproj" />
     <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Core.Tests/Workbench.Builder.Core.Tests.csproj" />
     <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Core/Workbench.Builder.Core.csproj" />
     <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Host/Workbench.Builder.Host.csproj" />
@@ -44,4 +45,7 @@
     <File Path="plan-roslyn-builder-roadmap.md" />
   </Folder>
   <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
+  <Properties Name="SolutionProperties">
+    <Property Name="WorkspaceFolder" Value="..\CSharpBible\Data" />
+  </Properties>
 </Solution>
