@@ -25,4 +25,7 @@
 	  <Reference Include="ReachFramework" />
 	  <Reference Include="System.Printing" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\CommonDialogs.Abstractions\CommonDialogs.Abstractions.csproj" />
+	</ItemGroup>
 </Project>

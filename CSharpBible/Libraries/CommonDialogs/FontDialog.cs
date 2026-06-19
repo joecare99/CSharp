@@ -12,8 +12,10 @@
 // <summary></summary>
 // ***********************************************************************
 using CommonDialogs.Interfaces;
+using CommonDialogs.Models;
 using System.Windows.Forms;
 using System.ComponentModel;
+using DrawingFontStyle = System.Drawing.FontStyle;
 
 namespace CommonDialogs;
 
@@ -25,7 +27,47 @@ namespace CommonDialogs;
 public class FontDialog : System.Windows.Forms.FontDialog, IFontDialog
 {
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-    public new System.Drawing.Font Font { get => base.Font;set => base.Font = value; }
+    public new FontDialogSelection Font
+    {
+        get
+        {
+            var font = base.Font;
+            return new FontDialogSelection
+            {
+                FamilyName = font?.FontFamily?.Name,
+                Size = font?.Size ?? 0d,
+                IsBold = font?.Bold ?? false,
+                IsItalic = font?.Italic ?? false,
+                IsUnderline = font?.Underline ?? false,
+                IsStrikethrough = font?.Strikeout ?? false,
+                Color = new((uint)base.Color.ToArgb(), base.Color.IsNamedColor ? base.Color.Name : null)
+            };
+        }
+        set
+        {
+            var selection = value ?? new FontDialogSelection();
+            var fontFamily = string.IsNullOrWhiteSpace(selection.FamilyName)
+                ? base.Font?.FontFamily?.Name ?? System.Drawing.SystemFonts.DefaultFont.FontFamily.Name
+                : selection.FamilyName;
+            var fontSize = selection.Size > 0d ? (float)selection.Size : System.Drawing.SystemFonts.DefaultFont.Size;
+
+            var style = DrawingFontStyle.Regular;
+            if (selection.IsBold)
+                style |= DrawingFontStyle.Bold;
+
+            if (selection.IsItalic)
+                style |= DrawingFontStyle.Italic;
+
+            if (selection.IsUnderline)
+                style |= DrawingFontStyle.Underline;
+
+            if (selection.IsStrikethrough)
+                style |= DrawingFontStyle.Strikeout;
+
+            base.Font = new System.Drawing.Font(fontFamily, fontSize, style);
+            base.Color = System.Drawing.Color.FromArgb(unchecked((int)selection.Color.Argb));
+        }
+    }
 
     /// <summary>
     /// Führt ein Standarddialogfeld mit einem Standardbesitzer aus.

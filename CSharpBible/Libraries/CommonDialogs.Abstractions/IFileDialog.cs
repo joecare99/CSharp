@@ -1,4 +1,4 @@
-﻿namespace CommonDialogs.Interfaces;
+namespace CommonDialogs.Interfaces;
 
 public interface IFileDialog
 {

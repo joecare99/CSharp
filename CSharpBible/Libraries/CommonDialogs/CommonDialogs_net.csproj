@@ -22,4 +22,7 @@
 	<ItemGroup>
 	  <Compile Remove="TaskDialog.cs" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\CommonDialogs.Abstractions\CommonDialogs.Abstractions.csproj" />
+	</ItemGroup>
 </Project>
