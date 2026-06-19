@@ -23,6 +23,7 @@
     <Compile Remove="ConsoleLib\ConsoleFramework.cs" />
     <Compile Remove="ConsoleLib\ConsoleWidgetSet.cs" />
     <Compile Remove="ConsoleLib\NullExtendedConsole.cs" />
+    <Compile Remove="ConsoleLib\TextCanvas.cs" />
     <Compile Remove="ConsoleLib\WidgetSetContext.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>

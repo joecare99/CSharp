@@ -17,7 +17,7 @@ Enable structured, MVVM-friendly console applications (prototyping, headless adm
 - Basic 2?way binding support for `TextBox` (model <-> text) and (extension ready) selection.
 - Drawing API via `TextCanvas` (rect fill, bordered boxes, character output).
 - Separation of concerns through `IConsole` and `IWidgetSet` abstractions.
-- Backend-specific rendering and host-loop implementations can live in separate projects such as `ConsoleLib.ExtCon` or `ConsoleLib.WinForms`.
+- Backend-specific rendering and host-loop implementations can live in separate projects such as `ConsoleLib.ExtCon` or other host-specific adapters.
 
 ## Targets
 ```
@@ -46,6 +46,7 @@ box.BindTwoWay(viewModel, nameof(viewModel.SearchText));
 - Minimal allocations per frame; string building localized.
 - Thread safety: coarse `lock` in drawing primitives (adequate for UI thread use, not for high-frequency multi-thread rendering).
 - The core library intentionally no longer contains the concrete ExtendedConsole-backed widget set.
+- The `ConsoleLib` core itself is intended to stay host- and OS-neutral; platform-specific event or rendering integrations belong in separate backend projects.
 
 ## Roadmap
 - Horizontal / vertical layout managers.
