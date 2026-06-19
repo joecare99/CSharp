@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Libraries_net.props" />
+  <PropertyGroup>
+	<TargetFramework>net8.0</TargetFramework>
+	<NoDefaultExcludes>true</NoDefaultExcludes>
+	<IsPackable>true</IsPackable>
+	<IncludeBuildOutput>false</IncludeBuildOutput>
+	<PackageId>CSharpBible.Libraries.Core</PackageId>
+	<Version>1.0.0</Version>
+	<Title>CSharpBible Libraries Core</Title>
+	<Description>Core package for the platform-neutral CSharpBible libraries.</Description>
+	<PackageReadmeFile>README.Core.md</PackageReadmeFile>
+	<PackageOutputPath>$(MSBuildProjectDirectory)\artifacts\nuget</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
+	<PackageReference Include="System.Text.Json" Version="10.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<None Include="README.Core.md" Pack="true" PackagePath="\" />
+	<None Include="$(UpDir)\..\bin\BaseLib\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\BaseLib\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\CommonDialogs.Abstractions\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\CommonDialogs.Abstractions\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleDisplay\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleDisplay\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleLib\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleLib\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\GenInterfaces\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\GenInterfaces\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\MathLibrary\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\MathLibrary\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+  </ItemGroup>
+</Project>

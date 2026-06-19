@@ -16,6 +16,7 @@ Intern wird dafür die testfreie `Libraries.Package.sln` gebaut. Danach werden n
 
 ## Enthaltene Projekte
 - BaseLib
+- CommonDialogs.Abstractions
 - CommonDialogs
 - CommonDialogs_net
 - ConsoleDisplay
@@ -34,3 +35,7 @@ Intern wird dafür die testfreie `Libraries.Package.sln` gebaut. Danach werden n
 ## Enthaltene Hilfsdateien
 - `Libraries.Package.sln` enthält nur Bibliotheksprojekte
 - `Libraries.Package.csproj` baut die testfreie Solution und archiviert die Ergebnisse
+
+## Architekturhinweis
+- `CommonDialogs.Abstractions` enthält die OS-neutralen Dialog-Verträge.
+- `CommonDialogs` und `CommonDialogs_net` bleiben die Windows-spezifischen Implementierungen.

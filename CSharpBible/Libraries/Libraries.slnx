@@ -4,12 +4,15 @@
     <File Path="Libraries_net.props" />
     <Project Path="BaseLib/BaseLib.csproj" />
     <Project Path="BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="CommonDialogs.Abstractions/CommonDialogs.Abstractions.csproj">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
     <Project Path="CommonDialogs/CommonDialogs.csproj" />
     <Project Path="CommonDialogs/CommonDialogs_net.csproj" />
     <Project Path="ConsoleDisplay/ConsoleDisplay.csproj" />
     <Project Path="ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
+    <Project Path="ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
     <Project Path="ConsoleLib/ConsoleLib.csproj" />
-    <Project Path="ConsoleLib/ConsoleLib_net.csproj" />
     <Project Path="CSFreeVision/CSFreeVision.csproj" />
     <Project Path="ExtendedConsole/ExtendedConsole.csproj" />
     <Project Path="GenInterfaces/GenInterfaces.csproj" />

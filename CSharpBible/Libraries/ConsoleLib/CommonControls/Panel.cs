@@ -31,7 +31,7 @@ public class Panel : Control, IGroupControl, IHasBorder
     [Obsolete("Use BorderStyle property instead.")]
     public char[] Border
     {
-        get => BorderDefinition.CustomChars;
+        get => BorderDefinition.CustomChars ?? Array.Empty<char>();
         set
         {
             var _border = value ?? Array.Empty<char>();

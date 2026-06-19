@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.5.11801.241
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -72,6 +72,18 @@ Global
 		{1EA31318-6EB5-4F76-9A8F-3CA397493F38}.Release|x64.Build.0 = Release|x64
 		{1EA31318-6EB5-4F76-9A8F-3CA397493F38}.Release|x86.ActiveCfg = Release|Any CPU
 		{1EA31318-6EB5-4F76-9A8F-3CA397493F38}.Release|x86.Build.0 = Release|Any CPU
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Debug|x64.ActiveCfg = Debug|x64
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Debug|x64.Build.0 = Debug|x64
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Debug|x86.ActiveCfg = Debug|Any CPU
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Debug|x86.Build.0 = Debug|Any CPU
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Release|Any CPU.Build.0 = Release|Any CPU
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Release|x64.ActiveCfg = Release|x64
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Release|x64.Build.0 = Release|x64
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Release|x86.ActiveCfg = Release|Any CPU
+{A5C0A4DE-0B6F-4E0A-A18D-B338CA2F2F4A}.Release|x86.Build.0 = Release|Any CPU
 		{FCE4E961-F2E8-460E-A14A-6FCD428B46E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FCE4E961-F2E8-460E-A14A-6FCD428B46E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCE4E961-F2E8-460E-A14A-6FCD428B46E4}.Debug|x64.ActiveCfg = Debug|x64
@@ -188,3 +200,4 @@ Global
 		        SolutionGuid = {6D37F7D5-05FC-41A5-94A8-7C66D1CE9910}
 	EndGlobalSection
 EndGlobal
+
