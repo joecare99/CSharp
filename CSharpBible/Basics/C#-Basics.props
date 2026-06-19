@@ -12,5 +12,7 @@
 		<Authors>Joe Care</Authors>
 		<Copyright>Copyright © JC-Soft 2026</Copyright>
 		<SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<NoWarn>$(NoWarn);NU1701</NoWarn>
 	</PropertyGroup>
 </Project>
