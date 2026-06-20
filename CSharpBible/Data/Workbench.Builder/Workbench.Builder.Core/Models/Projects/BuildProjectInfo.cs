@@ -20,6 +20,8 @@ public sealed class BuildProjectInfo
     /// <param name="implicitUsings">The optional evaluated implicit usings mode.</param>
     /// <param name="configuration">The optional evaluated build configuration.</param>
     /// <param name="runtimeIdentifier">The optional evaluated runtime identifier.</param>
+    /// <param name="outputPath">The optional evaluated output path.</param>
+    /// <param name="intermediateOutputPath">The optional evaluated intermediate output path.</param>
     /// <param name="isSdkStyle">A value indicating whether the project appears to be SDK-style.</param>
     /// <param name="isPackable">A value indicating whether the project is packable, when known.</param>
     public BuildProjectInfo(
@@ -35,6 +37,8 @@ public sealed class BuildProjectInfo
         string? implicitUsings,
         string? configuration,
         string? runtimeIdentifier,
+        string? outputPath,
+        string? intermediateOutputPath,
         bool isSdkStyle,
         bool? isPackable)
     {
@@ -50,6 +54,8 @@ public sealed class BuildProjectInfo
         ImplicitUsings = implicitUsings;
         Configuration = configuration;
         RuntimeIdentifier = runtimeIdentifier;
+        OutputPath = outputPath;
+        IntermediateOutputPath = intermediateOutputPath;
         IsSdkStyle = isSdkStyle;
         IsPackable = isPackable;
     }
@@ -113,6 +119,16 @@ public sealed class BuildProjectInfo
     /// Gets the optional evaluated runtime identifier.
     /// </summary>
     public string? RuntimeIdentifier { get; }
+
+    /// <summary>
+    /// Gets the optional evaluated output path.
+    /// </summary>
+    public string? OutputPath { get; }
+
+    /// <summary>
+    /// Gets the optional evaluated intermediate output path.
+    /// </summary>
+    public string? IntermediateOutputPath { get; }
 
     /// <summary>
     /// Gets a value indicating whether the project appears to be SDK-style.

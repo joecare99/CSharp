@@ -21,10 +21,7 @@ public sealed class ProjectInspectionFormatter : IProjectInspectionFormatter
     /// <inheritdoc/>
     public string Format(ProjectInspectionResult result, ProjectInspectionOutputFormat format)
     {
-        if (result is null)
-        {
-            throw new ArgumentNullException(nameof(result));
-        }
+        ArgumentNullException.ThrowIfNull(result);
 
         return format switch
         {
@@ -151,24 +148,7 @@ public sealed class ProjectInspectionFormatter : IProjectInspectionFormatter
 
         foreach (BuildDiagnostic diagnostic in diagnostics)
         {
-            builder.Append($"- {diagnostic.Severity} {diagnostic.Code}: {diagnostic.Message}");
-
-            if (!string.IsNullOrWhiteSpace(diagnostic.FilePath))
-            {
-                builder.Append($" | File={diagnostic.FilePath}");
-            }
-
-            if (diagnostic.Line.HasValue)
-            {
-                builder.Append($" | Line={diagnostic.Line.Value}");
-            }
-
-            if (diagnostic.Column.HasValue)
-            {
-                builder.Append($" | Column={diagnostic.Column.Value}");
-            }
-
-            builder.AppendLine();
+            builder.AppendLine($"- {BuildDiagnosticTextFormatter.Format(diagnostic)}");
         }
     }
 

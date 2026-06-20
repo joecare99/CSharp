@@ -37,10 +37,7 @@ public sealed class ProjectInspectionService : IProjectInspectionService
     /// <inheritdoc/>
     public ProjectInspectionResult Inspect(ProjectLoadRequest request)
     {
-        if (request is null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         LoadedProjectModel loadedProject = _projectLoader.Load(request);
         bool isTestProject = _testProjectDetector.IsTestProject(loadedProject);
@@ -73,6 +70,8 @@ public sealed class ProjectInspectionService : IProjectInspectionService
             implicitUsings: loadedProject.Properties.ImplicitUsings,
             configuration: loadedProject.Properties.Configuration,
             runtimeIdentifier: loadedProject.Properties.RuntimeIdentifier,
+            outputPath: loadedProject.Properties.OutputPath,
+            intermediateOutputPath: loadedProject.Properties.IntermediateOutputPath,
             isSdkStyle: loadedProject.IsSdkStyle,
             isPackable: ParseBooleanOrNull(loadedProject.Properties.IsPackable));
     }

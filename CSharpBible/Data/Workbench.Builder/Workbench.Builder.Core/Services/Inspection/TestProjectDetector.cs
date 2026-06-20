@@ -26,10 +26,7 @@ public sealed class TestProjectDetector : ITestProjectDetector
     /// <inheritdoc/>
     public bool IsTestProject(LoadedProjectModel project)
     {
-        if (project is null)
-        {
-            throw new ArgumentNullException(nameof(project));
-        }
+        ArgumentNullException.ThrowIfNull(project);
 
         if (bool.TryParse(project.Properties.IsTestProject, out bool isTestProject))
         {

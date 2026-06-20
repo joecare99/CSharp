@@ -20,13 +20,17 @@ public sealed class MsBuildProjectLoader : IProjectLoader
     private static readonly object SyncRoot = new();
     private static bool s_isLocatorRegistered;
 
+    internal static Func<bool> IsMsBuildLocatorRegisteredOverride { get; set; } = static () => MSBuildLocator.IsRegistered;
+
+    internal static Func<string?> FindDotNetSdkPathOverride { get; set; } = FindDotNetSdkPath;
+
+    internal static Func<IEnumerable<VisualStudioInstance>> QueryVisualStudioInstancesOverride { get; set; } =
+        static () => MSBuildLocator.QueryVisualStudioInstances();
+
     /// <inheritdoc/>
     public LoadedProjectModel Load(ProjectLoadRequest request)
     {
-        if (request is null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         if (string.IsNullOrWhiteSpace(request.ProjectFilePath))
         {
@@ -66,6 +70,8 @@ public sealed class MsBuildProjectLoader : IProjectLoader
             isTestProject: GetOptionalPropertyValue(project, nameof(ProjectPropertySet.IsTestProject)),
             configuration: GetOptionalPropertyValue(project, "Configuration"),
             runtimeIdentifier: GetOptionalPropertyValue(project, "RuntimeIdentifier"),
+            outputPath: GetOptionalPropertyValue(project, "OutputPath"),
+            intermediateOutputPath: GetOptionalPropertyValue(project, "IntermediateOutputPath"),
             projectAssetsFile: GetOptionalPropertyValue(project, "ProjectAssetsFile"));
 
         return new LoadedProjectModel(
@@ -94,16 +100,16 @@ public sealed class MsBuildProjectLoader : IProjectLoader
                 return;
             }
 
-            if (!MSBuildLocator.IsRegistered)
+            if (!IsMsBuildLocatorRegisteredOverride())
             {
-                string? sdkPath = FindDotNetSdkPath();
+                string? sdkPath = FindDotNetSdkPathOverride();
                 if (!string.IsNullOrWhiteSpace(sdkPath))
                 {
                     MSBuildLocator.RegisterMSBuildPath(sdkPath);
                 }
                 else
                 {
-                    IEnumerable<VisualStudioInstance> instances = MSBuildLocator.QueryVisualStudioInstances()
+                    IEnumerable<VisualStudioInstance> instances = QueryVisualStudioInstancesOverride()
                         .OrderByDescending(static instance => instance.Version);
                     VisualStudioInstance? instance = instances.FirstOrDefault();
                     if (instance is null)
@@ -117,6 +123,14 @@ public sealed class MsBuildProjectLoader : IProjectLoader
 
             s_isLocatorRegistered = true;
         }
+    }
+
+    internal static void ResetForTests()
+    {
+        IsMsBuildLocatorRegisteredOverride = static () => MSBuildLocator.IsRegistered;
+        FindDotNetSdkPathOverride = FindDotNetSdkPath;
+        QueryVisualStudioInstancesOverride = static () => MSBuildLocator.QueryVisualStudioInstances();
+        s_isLocatorRegistered = false;
     }
 
     private static string? FindDotNetSdkPath()
