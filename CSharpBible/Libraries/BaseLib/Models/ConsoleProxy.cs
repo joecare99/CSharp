@@ -41,9 +41,9 @@ public class ConsoleProxy : IConsole
     public bool KeyAvailable => _KeyAvailable?.GetValue(instance) as bool? ?? false;
     public int LargestWindowHeight => _LargestWindowHeight?.GetValue(instance) as int? ?? 0;
     public string Title { get => _Title?.GetValue(instance) as string ?? string.Empty; set => _Title?.SetValue(instance, value); }
-    public int WindowHeight { get => _WindowHeight?.GetValue(instance) as int? ?? 0; set => _WindowHeight?.SetValue(instance, value); }
-    public int WindowWidth { get => _WindowWidth?.GetValue(instance) as int? ?? 0; set => _WindowWidth?.SetValue(instance, value); }
-    public bool CursorVisible { get => _CursorVisible?.GetValue(instance) as bool? ?? false; set => _CursorVisible?.SetValue(instance, value); }
+    public int WindowHeight { get => _WindowHeight?.GetValue(instance) as int? ?? 0; set { try { _WindowHeight?.SetValue(instance, value); } catch { } } }
+    public int WindowWidth { get => _WindowWidth?.GetValue(instance) as int? ?? 0; set { try { _WindowWidth?.SetValue(instance, value); } catch { } } }
+    public bool CursorVisible { get => _CursorVisible?.GetValue(instance) as bool? ?? false; set { try { _CursorVisible?.SetValue(instance, value); } catch { } } }
     public int BufferWidth => _BufferWidth?.GetValue(instance) as int? ?? 0;
     public int BufferHeight => _BufferHeight?.GetValue(instance) as int? ?? 0;
 

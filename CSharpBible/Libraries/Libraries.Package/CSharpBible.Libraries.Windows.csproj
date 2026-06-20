@@ -5,7 +5,7 @@
 	<NoDefaultExcludes>true</NoDefaultExcludes>
 	<IsPackable>true</IsPackable>
 	<IncludeBuildOutput>false</IncludeBuildOutput>
-	<PackageId>CSharpBible.Libraries.Windows</PackageId>
+	<PackageId>JCSoft.CSharpBible.Libraries.Windows</PackageId>
 	<Version>1.0.0</Version>
 	<Title>CSharpBible Libraries Windows</Title>
 	<Description>Windows-specific package for the CSharpBible libraries.</Description>
@@ -32,5 +32,11 @@
 	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
 	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
 	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
   </ItemGroup>
 </Project>
