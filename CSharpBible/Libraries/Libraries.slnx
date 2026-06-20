@@ -16,11 +16,16 @@
     <Project Path="CSFreeVision/CSFreeVision.csproj" />
     <Project Path="ExtendedConsole/ExtendedConsole.csproj" />
     <Project Path="GenInterfaces/GenInterfaces.csproj" />
+    <Project Path="Libraries.Package/CSharpBible.Libraries.Core.csproj" />
+    <Project Path="Libraries.Package/CSharpBible.Libraries.Windows.csproj" />
     <Project Path="MathLIbrary/MathLibrary.csproj" />
     <Project Path="MathLibraryTests/MathLibraryTests.csproj" />
     <Project Path="MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
     <Project Path="WFSystem.Data/WFSystem.Windows.Data.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="../../.github/copilot-instructions.md" />
   </Folder>
   <Folder Name="/TestConsole/">
     <File Path="../Solution.props" />
