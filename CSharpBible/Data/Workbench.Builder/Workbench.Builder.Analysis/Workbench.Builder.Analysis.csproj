@@ -12,7 +12,4 @@
 	<ProjectReference Include="..\Workbench.Builder.Cli\Workbench.Builder.Cli.csproj" />
 	<ProjectReference Include="..\Workbench.Builder.Core\Workbench.Builder.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
 </Project>

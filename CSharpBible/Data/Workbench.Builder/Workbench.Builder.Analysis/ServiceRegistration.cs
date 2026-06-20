@@ -1,15 +1,15 @@
 using Microsoft.Extensions.DependencyInjection;
 using Workbench.Builder.Cli;
 using Workbench.Builder.Core.Abstractions;
-using Workbench.Builder.Core.Services.Compilation;
+using Workbench.Builder.Core.Services.Formatting;
 using Workbench.Builder.Core.Services.Inspection;
 using Workbench.Builder.Core.Services.Loading;
 using Workbench.Builder.Core.Services.References;
 
-namespace Workbench.Builder.Host;
+namespace Workbench.Builder.Analysis;
 
 /// <summary>
-/// Registers services required by the V1.2 compile host.
+/// Registers services required by the V1.1 analysis host.
 /// </summary>
 public static class ServiceRegistration
 {
@@ -23,12 +23,11 @@ public static class ServiceRegistration
         services.AddSingleton<IProjectLoader, MsBuildProjectLoader>();
         services.AddSingleton<IReferenceResolver, ReferenceResolver>();
         services.AddSingleton<ITestProjectDetector, TestProjectDetector>();
-        services.AddSingleton<IProjectEmitSupportEvaluator, ProjectEmitSupportEvaluator>();
-        services.AddSingleton<IProjectCompilationService, ProjectCompilationService>();
         services.AddSingleton<IProjectInspectionService, ProjectInspectionService>();
-        services.AddSingleton<HostCommandLineParser>();
+        services.AddSingleton<IProjectInspectionFormatter, ProjectInspectionFormatter>();
+        services.AddSingleton<AnalysisCommandLineParser>();
         services.AddSingleton<IHostConsole, SystemConsoleAdapter>();
-        services.AddSingleton<HostApplication>();
+        services.AddSingleton<AnalysisApplication>();
         return services.BuildServiceProvider();
     }
 }

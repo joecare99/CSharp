@@ -1,12 +1,12 @@
-namespace Workbench.Builder.Host;
+namespace Workbench.Builder.Cli;
 
 /// <summary>
-/// Defines process exit codes for the builder inspection host.
+/// Defines process exit codes for builder command-line hosts.
 /// </summary>
 public static class HostExitCodes
 {
     /// <summary>
-    /// Indicates a successful inspection run.
+    /// Indicates a successful run.
     /// </summary>
     public const int Success = 0;
 

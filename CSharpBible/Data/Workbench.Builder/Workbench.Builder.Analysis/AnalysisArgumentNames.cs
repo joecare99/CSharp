@@ -1,14 +1,14 @@
-namespace Workbench.Builder.Host;
+namespace Workbench.Builder.Analysis;
 
 /// <summary>
-/// Defines supported command-line argument names for the builder compile host.
+/// Defines supported command-line argument names for the builder analysis host.
 /// </summary>
-public static class HostArgumentNames
+public static class AnalysisArgumentNames
 {
     /// <summary>
-    /// Gets the output directory option name.
+    /// Gets the format option name.
     /// </summary>
-    public const string Output = "--output";
+    public const string Format = "--format";
 
     /// <summary>
     /// Gets the short help option name.

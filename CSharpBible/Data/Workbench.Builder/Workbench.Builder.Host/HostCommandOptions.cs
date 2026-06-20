@@ -1,37 +1,29 @@
-using Workbench.Builder.Core.Models.Inspection;
+using Workbench.Builder.Cli;
 
 namespace Workbench.Builder.Host;
 
 /// <summary>
-/// Represents the parsed command-line options for the builder inspection host.
+/// Represents the parsed command-line options for the builder compile host.
 /// </summary>
-public sealed class HostCommandOptions
+public sealed class HostCommandOptions : ProjectCommandOptionsBase
 {
     /// <summary>
     /// Initializes a new instance of <see cref="HostCommandOptions"/>.
     /// </summary>
-    /// <param name="projectFilePath">The project file path to inspect.</param>
-    /// <param name="outputFormat">The requested output format.</param>
+    /// <param name="projectFilePath">The project file path to compile.</param>
+    /// <param name="outputDirectory">The optional output directory for emitted artifacts.</param>
     /// <param name="showHelp">A value indicating whether help output was requested.</param>
-    public HostCommandOptions(string? projectFilePath, ProjectInspectionOutputFormat outputFormat, bool showHelp)
+    public HostCommandOptions(
+        string? projectFilePath,
+        string? outputDirectory,
+        bool showHelp)
+        : base(projectFilePath, showHelp)
     {
-        ProjectFilePath = projectFilePath;
-        OutputFormat = outputFormat;
-        ShowHelp = showHelp;
+        OutputDirectory = outputDirectory;
     }
 
     /// <summary>
-    /// Gets the project file path to inspect.
+    /// Gets the optional output directory for emitted artifacts.
     /// </summary>
-    public string? ProjectFilePath { get; }
-
-    /// <summary>
-    /// Gets the requested output format.
-    /// </summary>
-    public ProjectInspectionOutputFormat OutputFormat { get; }
-
-    /// <summary>
-    /// Gets a value indicating whether help output was requested.
-    /// </summary>
-    public bool ShowHelp { get; }
+    public string? OutputDirectory { get; }
 }

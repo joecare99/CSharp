@@ -29,7 +29,7 @@ public class ProjectInspectionFormatterTests
         StringAssert.Contains(output, "Compile Items (1)");
         StringAssert.Contains(output, "Resolved References (1)");
         StringAssert.Contains(output, "Diagnostics (1)");
-        StringAssert.Contains(output, "Warning WB1999: Sample warning");
+        StringAssert.Contains(output, @"C:\Temp\Sample\Sample.csproj(12,34): warning WB1999: Sample warning");
     }
 
     /// <summary>
@@ -64,6 +64,8 @@ public class ProjectInspectionFormatterTests
             implicitUsings: "enable",
             configuration: "Debug",
             runtimeIdentifier: null,
+            outputPath: @"bin\Debug\net10.0\",
+            intermediateOutputPath: @"obj\Debug\net10.0\",
             isSdkStyle: true,
             isPackable: false);
 

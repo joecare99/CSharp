@@ -1,5 +1,4 @@
 ﻿<Project>
-  <Import Project="..\..\Data_net.props" />
   <PropertyGroup>
 	<IsPackable>false</IsPackable>
 	<TargetFrameworks>net10.0</TargetFrameworks>
@@ -7,7 +6,13 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
+	<None Include="TestData\BrokenConsoleApp\BrokenConsoleApp.csproj" />
+	<None Include="TestData\MissingCompileItemProject\MissingCompileItemProject.csproj" />
+	<None Include="TestData\MissingMetadataReferenceProject\MissingMetadataReferenceProject.csproj" />
+	<None Include="TestData\MissingProjectReferenceProject\MissingProjectReferenceProject.csproj" />
+	<None Include="TestData\MissingTargetFrameworkProject\MissingTargetFrameworkProject.csproj" />
     <None Include="TestData\MultiTargetLibrary\MultiTargetLibrary.csproj" />
+    <None Include="TestData\NonSdkStyleProject\NonSdkStyleProject.csproj" />
     <None Include="TestData\ProjectWithProjectReference\ProjectWithProjectReference.csproj" />
     <None Include="TestData\ProjectWithProjectReference\ReferencedLibrary\ReferencedLibrary.csproj" />
     <None Include="TestData\SimpleConsoleApp\SimpleConsoleApp.csproj" />
@@ -26,6 +31,8 @@
 	</None>
   </ItemGroup>
   <ItemGroup>
+	<ProjectReference Include="..\Workbench.Builder.Analysis\Workbench.Builder.Analysis.csproj" />
+	<ProjectReference Include="..\Workbench.Builder.Cli\Workbench.Builder.Cli.csproj" />
 	<ProjectReference Include="..\Workbench.Builder.Core\Workbench.Builder.Core.csproj" />
 	<ProjectReference Include="..\Workbench.Builder.Host\Workbench.Builder.Host.csproj" />
   </ItemGroup>

@@ -1,77 +1,37 @@
 using System;
-using Workbench.Builder.Core.Models.Inspection;
+using Workbench.Builder.Cli;
 
 namespace Workbench.Builder.Host;
 
 /// <summary>
-/// Parses command-line arguments for the builder inspection host.
+/// Parses command-line arguments for the builder compile host.
 /// </summary>
-public sealed class HostCommandLineParser
+public sealed class HostCommandLineParser : ProjectCommandLineParserBase<HostCommandOptions>
 {
-    /// <summary>
-    /// Parses the specified command-line arguments.
-    /// </summary>
-    /// <param name="args">The raw command-line arguments.</param>
-    /// <returns>The parsed host command options.</returns>
-    public HostCommandOptions Parse(string[] args)
+    /// <inheritdoc/>
+    protected override bool TryHandleArgument(string[] args, ref int index, string argument, ref string? projectFilePath)
     {
-        if (args is null)
+        if (string.Equals(argument, HostArgumentNames.Output, StringComparison.OrdinalIgnoreCase))
         {
-            throw new ArgumentNullException(nameof(args));
+            if (index + 1 >= args.Length)
+            {
+                throw new ArgumentException("An output directory value is required after --output.", nameof(args));
+            }
+
+            OutputDirectory = args[++index];
+            return true;
         }
 
-        string? projectFilePath = null;
-        ProjectInspectionOutputFormat outputFormat = ProjectInspectionOutputFormat.PlainText;
-        bool showHelp = false;
-
-        for (int i = 0; i < args.Length; i++)
-        {
-            string argument = args[i];
-
-            if (string.Equals(argument, HostArgumentNames.HelpShort, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(argument, HostArgumentNames.HelpLong, StringComparison.OrdinalIgnoreCase))
-            {
-                showHelp = true;
-                continue;
-            }
-
-            if (string.Equals(argument, HostArgumentNames.Format, StringComparison.OrdinalIgnoreCase))
-            {
-                if (i + 1 >= args.Length)
-                {
-                    throw new ArgumentException("A format value is required after --format.", nameof(args));
-                }
-
-                outputFormat = ParseOutputFormat(args[++i]);
-                continue;
-            }
-
-            if (projectFilePath is null)
-            {
-                projectFilePath = argument;
-                continue;
-            }
-
-            throw new ArgumentException($"Unexpected argument '{argument}'.", nameof(args));
-        }
-
-        return new HostCommandOptions(projectFilePath, outputFormat, showHelp);
+        return false;
     }
 
-    private static ProjectInspectionOutputFormat ParseOutputFormat(string value)
+    /// <inheritdoc/>
+    protected override HostCommandOptions CreateOptions(string? projectFilePath, bool showHelp)
     {
-        if (string.Equals(value, "plain", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(value, "text", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(value, "plaintext", StringComparison.OrdinalIgnoreCase))
-        {
-            return ProjectInspectionOutputFormat.PlainText;
-        }
-
-        if (string.Equals(value, "json", StringComparison.OrdinalIgnoreCase))
-        {
-            return ProjectInspectionOutputFormat.Json;
-        }
-
-        throw new ArgumentException($"The format '{value}' is not supported. Use 'plain' or 'json'.", nameof(value));
+        HostCommandOptions options = new(projectFilePath, OutputDirectory, showHelp);
+        OutputDirectory = null;
+        return options;
     }
+
+    private string? OutputDirectory { get; set; }
 }

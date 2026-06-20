@@ -1,37 +1,42 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Workbench.Builder.Cli;
 using Workbench.Builder.Core.Abstractions;
+using Workbench.Builder.Core.Models.Compilation;
+using Workbench.Builder.Core.Models.Diagnostics;
 using Workbench.Builder.Core.Models.Inspection;
 using Workbench.Builder.Core.Models.Loading;
+using Workbench.Builder.Core.Services.Formatting;
 
 namespace Workbench.Builder.Host;
 
 /// <summary>
-/// Coordinates argument parsing, project inspection, and output emission for the thin builder host.
+/// Coordinates argument parsing, project inspection, compilation, and output emission for the V1.2 compile host.
 /// </summary>
 public sealed class HostApplication
 {
     private readonly HostCommandLineParser _commandLineParser;
+    private readonly IProjectCompilationService _projectCompilationService;
     private readonly IProjectInspectionService _projectInspectionService;
-    private readonly IProjectInspectionFormatter _projectInspectionFormatter;
     private readonly IHostConsole _console;
 
     /// <summary>
     /// Initializes a new instance of <see cref="HostApplication"/>.
     /// </summary>
     /// <param name="commandLineParser">The command-line parser.</param>
+    /// <param name="projectCompilationService">The project compilation service.</param>
     /// <param name="projectInspectionService">The project inspection service.</param>
-    /// <param name="projectInspectionFormatter">The inspection result formatter.</param>
     /// <param name="console">The console abstraction.</param>
     public HostApplication(
         HostCommandLineParser commandLineParser,
+        IProjectCompilationService projectCompilationService,
         IProjectInspectionService projectInspectionService,
-        IProjectInspectionFormatter projectInspectionFormatter,
         IHostConsole console)
     {
         _commandLineParser = commandLineParser ?? throw new ArgumentNullException(nameof(commandLineParser));
+        _projectCompilationService = projectCompilationService ?? throw new ArgumentNullException(nameof(projectCompilationService));
         _projectInspectionService = projectInspectionService ?? throw new ArgumentNullException(nameof(projectInspectionService));
-        _projectInspectionFormatter = projectInspectionFormatter ?? throw new ArgumentNullException(nameof(projectInspectionFormatter));
         _console = console ?? throw new ArgumentNullException(nameof(console));
     }
 
@@ -51,10 +56,22 @@ public sealed class HostApplication
                 return Task.FromResult(options.ShowHelp ? HostExitCodes.Success : HostExitCodes.InvalidArguments);
             }
 
-            ProjectInspectionResult result = _projectInspectionService.Inspect(new ProjectLoadRequest(options.ProjectFilePath));
-            string output = _projectInspectionFormatter.Format(result, options.OutputFormat);
-            _console.WriteLine(output);
-            return Task.FromResult(HostExitCodes.Success);
+            ProjectInspectionResult inspectionResult = _projectInspectionService.Inspect(new ProjectLoadRequest(options.ProjectFilePath));
+            ProjectCompilationResult compilationResult = _projectCompilationService.Compile(
+                new ProjectCompilationRequest(inspectionResult, options.OutputDirectory, emitPortablePdb: true));
+
+            if (compilationResult.Succeeded)
+            {
+                _console.WriteLine(CreateEmitSuccessText(compilationResult));
+                return Task.FromResult(HostExitCodes.Success);
+            }
+
+            foreach (BuildDiagnostic diagnostic in compilationResult.Diagnostics)
+            {
+                _console.WriteErrorLine(BuildDiagnosticTextFormatter.Format(diagnostic));
+            }
+
+            return Task.FromResult(HostExitCodes.ExecutionFailed);
         }
         catch (ArgumentException exception)
         {
@@ -71,6 +88,15 @@ public sealed class HostApplication
 
     internal static string CreateUsageText()
     {
-        return "Usage: Workbench.Builder.Host <project.csproj> [--format plain|json] [--help]";
+        return "Usage: Workbench.Builder.Host <project.csproj> [--output <directory>] [--help]";
+    }
+
+    private static string CreateEmitSuccessText(ProjectCompilationResult compilationResult)
+    {
+        string artifactLines = string.Join(
+            Environment.NewLine,
+            compilationResult.Artifacts.Select(static artifact => $"- {artifact.Kind}: {artifact.FilePath}"));
+
+        return $"Emit succeeded for '{compilationResult.InspectionResult.Project.AssemblyName}'.{Environment.NewLine}{artifactLines}";
     }
 }

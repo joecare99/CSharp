@@ -1,7 +1,7 @@
-namespace Workbench.Builder.Host;
+namespace Workbench.Builder.Cli;
 
 /// <summary>
-/// Abstracts console output for the thin builder host.
+/// Abstracts console output for builder command-line hosts.
 /// </summary>
 public interface IHostConsole
 {

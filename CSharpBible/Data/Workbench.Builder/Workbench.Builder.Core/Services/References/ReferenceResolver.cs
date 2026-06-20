@@ -18,10 +18,7 @@ public sealed class ReferenceResolver : IReferenceResolver
     /// <inheritdoc/>
     public IReadOnlyList<ResolvedReferenceInfo> Resolve(LoadedProjectModel project)
     {
-        if (project is null)
-        {
-            throw new ArgumentNullException(nameof(project));
-        }
+        ArgumentNullException.ThrowIfNull(project);
 
         List<ResolvedReferenceInfo> resolvedReferences = new();
         HashSet<string> seenKeys = new(StringComparer.OrdinalIgnoreCase);

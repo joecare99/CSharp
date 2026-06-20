@@ -1,6 +1,6 @@
 using System;
 
-namespace Workbench.Builder.Host;
+namespace Workbench.Builder.Cli;
 
 /// <summary>
 /// Adapts <see cref="Console"/> to <see cref="IHostConsole"/>.
