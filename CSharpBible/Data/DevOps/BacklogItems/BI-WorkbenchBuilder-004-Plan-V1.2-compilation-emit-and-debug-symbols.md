@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+In Progress
 
 ## Parent
 
@@ -14,7 +14,7 @@ Turn the user-approved V1.2 direction into concrete implementation slices for Ro
 
 ## Description
 
-The current builder state is now advanced enough that V1.2 planning can be made concrete. The workspace already has a loader, resolver, inspection service, formatter, host, and a test baseline. The next phase should define how those outputs become Roslyn compilation inputs, which project categories are supported first, and how emit success is validated.
+The current builder state is now advanced enough that V1.2 planning and implementation can proceed together. The workspace already has a loader, resolver, inspection service, formatter, host, test baseline, and the first working compilation slice. The next phase should harden how those outputs become Roslyn compilation inputs, confirm the supported project categories, and broaden emit validation incrementally.
 
 Executable output for non-library, non-test projects is an explicit user requirement. Portable PDB generation is also relevant because debugging and breakpoints should remain possible. Source generators are important enough that the planning should not treat them as an afterthought, even if the first implementation splits them into a dedicated follow-up slice.
 
@@ -31,7 +31,7 @@ The first implementation-ready planning target is now constrained to a practical
 
 ## Acceptance Criteria
 
-- V1.2 planning is concrete enough to start implementation without reopening the full architecture question
+- V1.2 planning and implementation are aligned enough to continue without reopening the full architecture question
 - Supported initial emit scenarios are explicit for class-library and console-project baselines
 - Test-project non-emit behavior is explicit in the planning contract
 - Debug-symbol and source-generator requirements are visible in the backlog
@@ -57,9 +57,9 @@ The first implementation-ready planning target is now constrained to a practical
 
 ## Next Refinement Steps
 
-1. Define the minimal compilation service API
-2. Decide the initial supported project categories and explicit test-project exclusion behavior
-3. Split emit, Portable PDB, and source-generator planning into executable tasks
+1. Harden the minimal compilation service API and its supported baseline behavior
+2. Keep the supported initial project categories and explicit test-project exclusion behavior stable while coverage expands
+3. Split remaining source-generator and later emit work into executable tasks
 
 ## Planned Implementation Tasks
 

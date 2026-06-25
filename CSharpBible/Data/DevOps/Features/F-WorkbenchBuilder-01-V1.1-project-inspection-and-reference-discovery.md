@@ -2,7 +2,7 @@
 
 ## Status
 
-In Progress
+Completed
 
 ## Parent
 
@@ -14,9 +14,9 @@ Provide a stable V1.1 inspection pipeline that can load an SDK-style project, co
 
 ## Summary
 
-This feature represents the current center of gravity of the `Workbench.Builder` implementation. The workspace already contains a host-neutral core with `ProjectLoadRequest`, `LoadedProjectModel`, `ProjectInspectionResult`, `MsBuildProjectLoader`, `TestProjectDetector`, `ReferenceResolver`, and `ProjectInspectionService`. Sample tests also exist for loading, resolving, and inspection orchestration.
+This feature established the first stable inspection baseline of the `Workbench.Builder` implementation. The workspace contains a host-neutral core with `ProjectLoadRequest`, `LoadedProjectModel`, `ProjectInspectionResult`, `MsBuildProjectLoader`, `TestProjectDetector`, `ReferenceResolver`, and `ProjectInspectionService`. Sample tests exist for loading, resolving, orchestration, and visible multi-target behavior.
 
-The remaining refinement focus is less about starting the feature and more about validating and hardening what now exists on disk. The feature should clearly define the expected V1.1 contract boundaries, identify correctness gaps, and make sure the inspection result stays stable enough to serve later host, UI, and compilation slices.
+The feature focus shifted from initial creation to validation and hardening, and the baseline is now strong enough to support later host, UI, and compilation slices. Remaining refinements are follow-up work rather than blockers for the V1.1 milestone.
 
 V1.1 should prefer observability over silent incompleteness. If data cannot be resolved reliably, the inspection result should remain as complete as practical while exposing the limitation through structured diagnostics instead of omitting the affected area without explanation.
 
@@ -47,7 +47,7 @@ V1.1 should prefer observability over silent incompleteness. If data cannot be r
 - Multi-target projects are at least recognized as such, and V1.1 documents whether the current slice inspects one target framework at a time or multiple target frameworks through best-effort iteration
 - Unresolved analyzer references are reported explicitly rather than being collapsed into generic missing-reference handling
 - Sample project tests validate the loader, resolver, and orchestration path
-- The feature documents the remaining known correctness gaps before V1.2 begins
+- Known remaining correctness gaps are documented explicitly and do not block the first V1.2 slice
 
 ## V1.1 Contract Clarifications
 
@@ -82,8 +82,6 @@ V1.1 should prefer observability over silent incompleteness. If data cannot be r
 
 ## Next Refinement Steps
 
-1. Validate the current implementation against the intended V1.1 contract
-2. Expand regression coverage around reference categories, restore-dependent warnings, and analyzer-specific diagnostics
-3. Add sample projects for multi-targeting, restore-dependent packages, analyzer references, broken project references, and missing compile items
-4. Document known gaps in multi-targeting and restore-dependent behavior
-5. Freeze the V1.1 inspection result shape before V1.2 emit work starts
+1. Preserve the V1.1 inspection contract while V1.2 broadens compilation behavior
+2. Expand coverage only where later waves expose new inspection regressions or ambiguity
+3. Carry forward any remaining analyzer- or restore-specific refinements as follow-up work rather than reopening the V1.1 baseline

@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+In Progress
 
 ## Goal
 
@@ -10,7 +10,7 @@ Establish a provider-neutral, OS-conscious build workbench that can inspect SDK-
 
 ## Summary
 
-This epic tracks the Workbench.Builder initiative as an incremental build-tool foundation inside the workspace. The current implementation already includes a host-neutral core project, a thin console host, structured inspection models, MSBuild-backed project loading, pragmatic reference resolution, formatter support, and first regression tests. The next planning slices must stabilize the V1.1 inspection baseline, harden the human-readable and machine-readable host outputs, and prepare the transition into V1.2 compilation, emit, and debug-symbol generation.
+This epic tracks the Workbench.Builder initiative as an incremental build-tool foundation inside the workspace. The current implementation already includes a host-neutral core project, a thin console host, structured inspection models, MSBuild-backed project loading, pragmatic reference resolution, formatter support, a first Roslyn-based compilation and emit slice, position-aware diagnostics, and regression tests. The V1.1 inspection baseline is now established far enough to support the active V1.2 compilation, emit, and debug-symbol work.
 
 The workbench is intended to start small and observable rather than imitating the complete MSBuild engine immediately. Early slices prioritize deterministic project inspection and understandable diagnostics for standard console and library scenarios, while keeping later room for executable output, source generators, and portable debugging data.
 
@@ -18,7 +18,7 @@ The workbench is intended to start small and observable rather than imitating th
 
 - SDK-style projects can be inspected through a stable structured result model
 - Compile items, project references, package references, and resolved references are exposed consistently
-- A thin host can render inspection output for human and machine consumption
+- A thin host can render builder output and diagnostics clearly while remaining reusable as a narrow adapter around `Workbench.Builder.Core`
 - The implementation remains suitable for later Linux-friendly execution for ordinary console and library projects
 - The architecture leaves explicit room for future Roslyn compilation, emit, source-generator support, and Portable PDB generation
 - Current and future work is traceable through feature, backlog, and task documents under `Data/DevOps`
@@ -27,9 +27,9 @@ The workbench is intended to start small and observable rather than imitating th
 
 - Planning and refinement of the `Workbench.Builder` initiative
 - V1.1 project loading, project inspection, reference discovery, and result formatting
-- Thin host orchestration for command-line-driven inspection output
+- Thin host orchestration for command-line-driven inspection and early compilation output
 - Regression coverage for loader, resolver, formatter, host, and inspection orchestration
-- Planning for V1.2 compilation, emit, executable output, and debugging symbols
+- Planning and implementation for V1.2 compilation, emit, executable output, and debugging symbols
 - Explicit consideration of source-generator-compatible evolution in later slices
 
 ## Out of Scope
@@ -181,6 +181,8 @@ Parent: Epic `E-WorkbenchBuilder-001`
 
 ### Wave 1 - Inspection baseline hardening
 
+Status: Completed
+
 Primary focus:
 
 - Complete and stabilize V1.1 project inspection and reference discovery
@@ -196,6 +198,8 @@ Primary planning artifacts:
 - `BI-WorkbenchBuilder-003`
 
 ### Wave 2 - First Roslyn emit baseline
+
+Status: In Progress
 
 Primary focus:
 
@@ -265,11 +269,10 @@ Primary planning artifacts:
 
 ## Next Refinement Steps
 
-1. Review the current on-disk Builder implementation against the V1.1 planning baseline
-2. Stabilize the inspection pipeline and document remaining correctness gaps
-3. Expand regression coverage for current loader, resolver, formatter, and host behavior
-4. Define the first V1.2 compilation slice and its minimum acceptance criteria
-5. Revisit source-generator and Portable PDB requirements before emit implementation starts
+1. Reconcile the planning artifacts with the now-completed V1.1 baseline and the active V1.2 implementation state
+2. Continue hardening compilation and emit behavior for the supported baseline scenarios
+3. Expand regression coverage where V1.2 introduces new diagnostics, artifact, or runtime-asset behavior
+4. Revisit source-generator and Portable PDB requirements before the next compilation slice broadens
 6. Define the first generator-aware compilation support slice after the emit baseline is stable
 7. Specify deterministic incremental-build and caching boundaries before optimization work expands
 8. Define richer diagnostics and execution telemetry before broader Workbench integration starts
