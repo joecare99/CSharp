@@ -15,10 +15,10 @@ namespace Workbench.Builder.Core.Tests.References;
 public class ReferenceResolverMultiTargetTests
 {
     /// <summary>
-    /// Verifies that the default inspected target framework still resolves framework references for the multi-target sample.
+    /// Verifies that the highest builder-supported target framework resolves framework references for the multi-target sample.
     /// </summary>
     [TestMethod]
-    public void Resolve_MultiTargetProjectWithoutExplicitTargetFramework_LeavesTargetFrameworkVisibleAsKnownGap()
+    public void Resolve_MultiTargetProjectWithoutExplicitTargetFramework_ReturnsFrameworkReferencesForHighestSupportedTargetFramework()
     {
         DotNetRestoreHelper.EnsureRestored(TestDataProjectPaths.MultiTargetLibraryProjectPath);
         MsBuildProjectLoader loader = new();
@@ -27,8 +27,8 @@ public class ReferenceResolverMultiTargetTests
 
         var references = resolver.Resolve(project);
 
-        Assert.AreEqual(string.Empty, project.Properties.TargetFramework);
-        Assert.AreEqual(0, references.Count);
+        Assert.AreEqual("net10.0", project.Properties.TargetFramework);
+        Assert.IsTrue(references.Any(reference => reference.Kind == ReferenceKind.Framework && reference.Exists));
     }
 
     /// <summary>

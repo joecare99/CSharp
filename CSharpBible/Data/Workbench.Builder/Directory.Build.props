@@ -1,0 +1,13 @@
+<!-- Directory.Build.props -->
+<Project>
+	<Import Project="..\Data_net.props"/>
+	<PropertyGroup>
+		<UpDir>..\$(UpDir)</UpDir>
+		<BaseOutputPath>..\$(BaseOutputPath)</BaseOutputPath>
+		<BaseIntermediateOutputPath>..\$(BaseIntermediateOutputPath)</BaseIntermediateOutputPath>
+
+		<!-- Optional: Konfigurationsebene (Debug/Release) anhängen -->
+		<BaseIntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</BaseIntermediateOutputPath>
+		<OutputPath>$(BaseOutputPath)$(Configuration)\</OutputPath>
+	</PropertyGroup>
+</Project>

@@ -69,6 +69,67 @@ public class HostApplicationTests
     }
 
     /// <summary>
+    /// Verifies that detailed verbosity writes progress output before emit success.
+    /// </summary>
+    [TestMethod]
+    public async Task RunAsync_DetailedVerbosity_WritesProgressMessagesAsync()
+    {
+        HostCommandLineParser parser = new();
+        IProjectCompilationService compilationService = Substitute.For<IProjectCompilationService>();
+        IProjectInspectionService inspectionService = Substitute.For<IProjectInspectionService>();
+        IHostConsole console = Substitute.For<IHostConsole>();
+        ProjectInspectionResult inspectionResult = CreateResult();
+        ProjectCompilationResult compilationResult = CreateCompilationResult(inspectionResult, succeeded: true);
+
+        inspectionService.Inspect(Arg.Any<ProjectLoadRequest>()).Returns(inspectionResult);
+        compilationService.Compile(Arg.Any<ProjectCompilationRequest>()).Returns(compilationResult);
+        HostApplication application = new(parser, compilationService, inspectionService, console);
+
+        int exitCode = await application.RunAsync(new[] { "sample.csproj", HostArgumentNames.Verbosity, "detailed" });
+
+        Assert.AreEqual(HostExitCodes.Success, exitCode);
+        console.Received(1).WriteLine(Arg.Is<string>(text => text.Contains("[host] Inspecting project 'sample.csproj'.")));
+        console.Received(1).WriteLine(Arg.Is<string>(text => text.Contains("[host] Resolved target framework 'net10.0'")));
+        console.Received(1).WriteLine(Arg.Is<string>(text => text.Contains("[host] Compiling project to 'C:\\Temp\\Sample'.")));
+        console.Received(1).WriteLine(Arg.Is<string>(text => text.Contains("Emit succeeded")));
+    }
+
+    /// <summary>
+    /// Verifies that structured non-error diagnostics are written to standard output on successful runs.
+    /// </summary>
+    [TestMethod]
+    public async Task RunAsync_SuccessWithProjectWarning_WritesWarningToStandardOutputAsync()
+    {
+        HostCommandLineParser parser = new();
+        IProjectCompilationService compilationService = Substitute.For<IProjectCompilationService>();
+        IProjectInspectionService inspectionService = Substitute.For<IProjectInspectionService>();
+        IHostConsole console = Substitute.For<IHostConsole>();
+        ProjectInspectionResult inspectionResult = CreateResult();
+        ProjectCompilationResult compilationResult = new(
+            inspectionResult,
+            new ProjectEmitSupport(true, ProjectEmitKind.Executable, "Emit supported."),
+            new[]
+            {
+                new CompilationArtifactInfo(CompilationArtifactKind.PrimaryOutput, @"C:\Temp\Sample\Sample.Assembly.dll", true),
+            },
+            new[]
+            {
+                new BuildDiagnostic(BuildDiagnosticSeverity.Warning, "SYSLIB0057", "Target project build: Loading certificate data through the constructor or Import is obsolete.", @"C:\Temp\Sample\Program.cs", 214, 15),
+            },
+            succeeded: true);
+
+        inspectionService.Inspect(Arg.Any<ProjectLoadRequest>()).Returns(inspectionResult);
+        compilationService.Compile(Arg.Any<ProjectCompilationRequest>()).Returns(compilationResult);
+        HostApplication application = new(parser, compilationService, inspectionService, console);
+
+        int exitCode = await application.RunAsync(new[] { "sample.csproj" });
+
+        Assert.AreEqual(HostExitCodes.Success, exitCode);
+        console.Received(1).WriteLine(Arg.Is<string>(text => text.Contains(@"C:\Temp\Sample\Program.cs(214,15): warning SYSLIB0057: Target project build:")));
+        console.DidNotReceive().WriteErrorLine(Arg.Is<string>(text => text.Contains("SYSLIB0057")));
+    }
+
+    /// <summary>
     /// Verifies that failed emit output preserves IDE-friendly diagnostic locations.
     /// </summary>
     [TestMethod]
@@ -128,6 +189,7 @@ public class HostApplicationTests
         Assert.AreEqual(HostExitCodes.InvalidArguments, exitCode);
         console.Received(1).WriteErrorLine(Arg.Is<string>(text => text.Contains("output directory value is required")));
         console.Received(1).WriteLine(Arg.Is<string>(text => text.Contains("Usage: Workbench.Builder.Host")));
+        console.Received(1).WriteLine(Arg.Is<string>(text => text.Contains("--verbosity normal|detailed")));
     }
 
     private static ProjectInspectionResult CreateResult()
@@ -169,6 +231,8 @@ public class HostApplicationTests
             {
                 new CompilationArtifactInfo(CompilationArtifactKind.PrimaryOutput, @"C:\Temp\Sample\Sample.Assembly.dll", true),
                 new CompilationArtifactInfo(CompilationArtifactKind.DebugSymbols, @"C:\Temp\Sample\Sample.Assembly.pdb", true),
+                new CompilationArtifactInfo(CompilationArtifactKind.RuntimeMetadata, @"C:\Temp\Sample\Sample.Assembly.runtimeconfig.json", true),
+                new CompilationArtifactInfo(CompilationArtifactKind.RuntimeHost, @"C:\Temp\Sample\Sample.Assembly.exe", true),
             },
             new[]
             {

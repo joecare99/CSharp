@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Workbench.Builder.Core.Models.Loading;
 using Workbench.Builder.Core.Services.Loading;
@@ -71,7 +74,7 @@ public class MsBuildProjectLoaderTests
     /// <summary>
     /// Verifies that loading a request without a project file path throws <see cref="ArgumentException"/>.
     /// </summary>
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null)]
     [DataRow("")]
     [DataRow(" ")]
@@ -117,5 +120,125 @@ public class MsBuildProjectLoaderTests
         InvalidOperationException exception = Assert.ThrowsExactly<InvalidOperationException>(() => loader.Load(new ProjectLoadRequest(TestDataProjectPaths.SimpleConsoleAppProjectPath)));
 
         Assert.AreEqual("No MSBuild instance or .NET SDK path could be detected for registration.", exception.Message);
+    }
+
+    /// <summary>
+    /// Verifies that the second registration guard returns immediately when registration completes while the caller is waiting for the lock.
+    /// </summary>
+    [TestMethod]
+    public void EnsureMsBuildRegistered_WhenRegistrationCompletesWhileWaitingForLock_ReturnsFromSecondGuard()
+    {
+        MsBuildProjectLoader.ResetForTests();
+
+        object syncRoot = GetPrivateStaticField<object>("SyncRoot");
+        lock (syncRoot)
+        {
+            SetPrivateStaticField("s_isLocatorRegistered", false);
+
+            Task invocation = Task.Run(InvokeEnsureMsBuildRegistered);
+            Task.Delay(100).Wait();
+
+            SetPrivateStaticField("s_isLocatorRegistered", true);
+            Assert.IsFalse(invocation.IsCompleted);
+        }
+
+        InvokeEnsureMsBuildRegistered();
+        Assert.IsTrue(GetPrivateStaticField<bool>("s_isLocatorRegistered"));
+    }
+
+    /// <summary>
+    /// Verifies that a DOTNET_ROOT entry without an sdk subfolder is ignored when probing SDK locations.
+    /// </summary>
+    [TestMethod]
+    public void FindDotNetSdkPath_WhenRootHasNoSdkDirectory_IgnoresThatRoot()
+    {
+        string tempRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string? originalDotNetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT");
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            Environment.SetEnvironmentVariable("DOTNET_ROOT", tempRoot);
+
+            string? result = InvokeFindDotNetSdkPath();
+
+            Assert.IsTrue(result is null || Path.IsPathRooted(result));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("DOTNET_ROOT", originalDotNetRoot);
+            Directory.Delete(tempRoot, recursive: true);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that an explicit runtime identifier is forwarded into the evaluated project properties.
+    /// </summary>
+    [TestMethod]
+    public void Load_WhenRuntimeIdentifierIsSpecified_PreservesRuntimeIdentifier()
+    {
+        MsBuildProjectLoader loader = new();
+
+        LoadedProjectModel project = loader.Load(new ProjectLoadRequest(TestDataProjectPaths.SimpleConsoleAppProjectPath, runtimeIdentifier: "win-x64"));
+
+        Assert.AreEqual("win-x64", project.Properties.RuntimeIdentifier);
+    }
+
+    /// <summary>
+    /// Verifies that a multi-target project with no concrete first target framework remains on the initially loaded project.
+    /// </summary>
+    [TestMethod]
+    public void Load_WhenTargetFrameworksContainOnlySeparators_DoesNotReloadForFirstTargetFramework()
+    {
+        string projectDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string projectFilePath = Path.Combine(projectDirectory, "SeparatorOnlyTargetFrameworks.csproj");
+        Directory.CreateDirectory(projectDirectory);
+
+        try
+        {
+            File.WriteAllText(
+                projectFilePath,
+                """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <TargetFrameworks> ; ; </TargetFrameworks>
+                  </PropertyGroup>
+                </Project>
+                """);
+
+            MsBuildProjectLoader loader = new();
+            LoadedProjectModel project = loader.Load(new ProjectLoadRequest(projectFilePath));
+
+            Assert.AreEqual(string.Empty, project.Properties.TargetFramework);
+            Assert.AreEqual(0, project.CompileItems.Count);
+        }
+        finally
+        {
+            Directory.Delete(projectDirectory, recursive: true);
+        }
+    }
+
+    private static void InvokeEnsureMsBuildRegistered()
+    {
+        MethodInfo method = typeof(MsBuildProjectLoader).GetMethod("EnsureMsBuildRegistered", BindingFlags.NonPublic | BindingFlags.Static)!;
+        method.Invoke(null, null);
+    }
+
+    private static string? InvokeFindDotNetSdkPath()
+    {
+        MethodInfo method = typeof(MsBuildProjectLoader).GetMethod("FindDotNetSdkPath", BindingFlags.NonPublic | BindingFlags.Static)!;
+        return (string?)method.Invoke(null, null);
+    }
+
+    private static T GetPrivateStaticField<T>(string fieldName)
+    {
+        FieldInfo field = typeof(MsBuildProjectLoader).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Static)!;
+        return (T)field.GetValue(null)!;
+    }
+
+    private static void SetPrivateStaticField(string fieldName, object value)
+    {
+        FieldInfo field = typeof(MsBuildProjectLoader).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Static)!;
+        field.SetValue(null, value);
     }
 }

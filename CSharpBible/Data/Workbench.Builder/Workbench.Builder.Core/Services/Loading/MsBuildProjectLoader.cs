@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Versioning;
 using System.Runtime.CompilerServices;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
@@ -54,8 +56,7 @@ public sealed class MsBuildProjectLoader : IProjectLoader
         string projectDirectory = Path.GetDirectoryName(projectFilePath) ?? Directory.GetCurrentDirectory();
 
         Dictionary<string, string> globalProperties = CreateGlobalProperties(request);
-        ProjectCollection projectCollection = new(globalProperties);
-        Project project = LoadProject(projectCollection, projectFilePath, globalProperties);
+        Project project = LoadProject(projectFilePath, globalProperties);
 
         ProjectPropertySet properties = new(
             assemblyName: GetRequiredPropertyValue(project, "AssemblyName", Path.GetFileNameWithoutExtension(projectFilePath)),
@@ -206,9 +207,10 @@ public sealed class MsBuildProjectLoader : IProjectLoader
         return globalProperties;
     }
 
-    private static Project LoadProject(ProjectCollection projectCollection, string projectFilePath, Dictionary<string, string> globalProperties)
+    private static Project LoadProject(string projectFilePath, Dictionary<string, string> globalProperties)
     {
-        Project project = projectCollection.LoadProject(projectFilePath);
+        using ProjectCollection initialProjectCollection = new(globalProperties);
+        Project project = initialProjectCollection.LoadProject(projectFilePath);
         if (!string.IsNullOrWhiteSpace(GetOptionalPropertyValue(project, nameof(ProjectLoadRequest.TargetFramework))))
         {
             return project;
@@ -220,18 +222,160 @@ public sealed class MsBuildProjectLoader : IProjectLoader
             return project;
         }
 
-        string? firstTargetFramework = targetFrameworks
-            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .FirstOrDefault();
-        if (string.IsNullOrWhiteSpace(firstTargetFramework))
+        string? selectedTargetFramework = SelectTargetFramework(targetFrameworks);
+        if (string.IsNullOrWhiteSpace(selectedTargetFramework))
         {
             return project;
         }
 
-        projectCollection.UnloadAllProjects();
-        globalProperties[nameof(ProjectLoadRequest.TargetFramework)] = firstTargetFramework;
-        return projectCollection.LoadProject(projectFilePath);
+        globalProperties[nameof(ProjectLoadRequest.TargetFramework)] = selectedTargetFramework;
+
+        using ProjectCollection targetFrameworkProjectCollection = new(globalProperties);
+        return targetFrameworkProjectCollection.LoadProject(projectFilePath);
     }
+
+    private static string? SelectTargetFramework(string targetFrameworks)
+    {
+        string[] candidates = targetFrameworks
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(static targetFramework => !string.IsNullOrWhiteSpace(targetFramework))
+            .ToArray();
+        if (candidates.Length == 0)
+        {
+            return null;
+        }
+
+        string? builderTargetFramework = GetBuilderTargetFramework();
+        if (!string.IsNullOrWhiteSpace(builderTargetFramework))
+        {
+            string? exactMatch = candidates.FirstOrDefault(
+                candidate => string.Equals(candidate, builderTargetFramework, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(exactMatch))
+            {
+                return exactMatch;
+            }
+        }
+
+        ParsedTargetFramework? builderFramework = ParseTargetFramework(builderTargetFramework);
+
+        return candidates
+            .Select(candidate => new { TargetFramework = candidate, Parsed = ParseTargetFramework(candidate) })
+            .Where(static candidate => candidate.Parsed is not null)
+            .Where(candidate => builderFramework is null || IsSupportedByBuilder(candidate.Parsed!, builderFramework))
+            .OrderByDescending(candidate => GetTargetFrameworkRank(candidate.Parsed!))
+            .Select(candidate => candidate.TargetFramework)
+            .FirstOrDefault()
+            ?? candidates[0];
+    }
+
+    private static string? GetBuilderTargetFramework()
+    {
+        object[] attributes = typeof(MsBuildProjectLoader).Assembly.GetCustomAttributes(typeof(TargetFrameworkAttribute), inherit: false);
+        TargetFrameworkAttribute? attribute = attributes.OfType<TargetFrameworkAttribute>().FirstOrDefault();
+        if (attribute is null || string.IsNullOrWhiteSpace(attribute.FrameworkName))
+        {
+            return null;
+        }
+
+        FrameworkName frameworkName;
+        try
+        {
+            frameworkName = new FrameworkName(attribute.FrameworkName);
+        }
+        catch (ArgumentException)
+        {
+            return null;
+        }
+
+        return frameworkName.Identifier switch
+        {
+            ".NETCoreApp" when frameworkName.Version.Major >= 5 => $"net{frameworkName.Version.Major}.{frameworkName.Version.Minor}",
+            ".NETStandard" => $"netstandard{frameworkName.Version.Major}.{frameworkName.Version.Minor}",
+            ".NETFramework" => $"net{frameworkName.Version.Major}{frameworkName.Version.Minor}{frameworkName.Version.Build}",
+            _ => null,
+        };
+    }
+
+    private static bool IsSupportedByBuilder(ParsedTargetFramework candidate, ParsedTargetFramework builder)
+    {
+        if (candidate.Family == TargetFrameworkFamily.NetFramework)
+        {
+            return true;
+        }
+
+        if (candidate.Family == TargetFrameworkFamily.NetStandard)
+        {
+            return true;
+        }
+
+        return candidate.Family == builder.Family && candidate.Version <= builder.Version;
+    }
+
+    private static long GetTargetFrameworkRank(ParsedTargetFramework targetFramework)
+    {
+        int familyRank = targetFramework.Family switch
+        {
+            TargetFrameworkFamily.ModernNet => 3,
+            TargetFrameworkFamily.NetFramework => 2,
+            TargetFrameworkFamily.NetStandard => 1,
+            _ => 0,
+        };
+
+        return ((long)familyRank * 1_000_000_000L)
+            + ((long)targetFramework.Version.Major * 1_000_000L)
+            + ((long)targetFramework.Version.Minor * 1_000L)
+            + targetFramework.Version.Build;
+    }
+
+    private static ParsedTargetFramework? ParseTargetFramework(string? targetFramework)
+    {
+        if (string.IsNullOrWhiteSpace(targetFramework))
+        {
+            return null;
+        }
+
+        if (targetFramework.StartsWith("netstandard", StringComparison.OrdinalIgnoreCase))
+        {
+            return TryCreateParsedTargetFramework(TargetFrameworkFamily.NetStandard, targetFramework[11..]);
+        }
+
+        if (!targetFramework.StartsWith("net", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        string versionText = targetFramework[3..];
+        if (versionText.Contains('.'))
+        {
+            return TryCreateParsedTargetFramework(TargetFrameworkFamily.ModernNet, versionText);
+        }
+
+        if (versionText.Length is < 2 or > 3 || !versionText.All(char.IsDigit))
+        {
+            return null;
+        }
+
+        int major = int.Parse(versionText[..1]);
+        int minor = int.Parse(versionText[1..2]);
+        int build = versionText.Length == 3 ? int.Parse(versionText[2..3]) : 0;
+        return new ParsedTargetFramework(TargetFrameworkFamily.NetFramework, new Version(major, minor, build));
+    }
+
+    private static ParsedTargetFramework? TryCreateParsedTargetFramework(TargetFrameworkFamily family, string versionText)
+    {
+        return Version.TryParse(versionText, out Version? version)
+            ? new ParsedTargetFramework(family, version)
+            : null;
+    }
+
+    private enum TargetFrameworkFamily
+    {
+        ModernNet,
+        NetFramework,
+        NetStandard,
+    }
+
+    private sealed record ParsedTargetFramework(TargetFrameworkFamily Family, Version Version);
 
     private static IReadOnlyList<CompileItemInfo> GetCompileItems(Project project)
     {

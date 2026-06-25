@@ -16,10 +16,10 @@ namespace Workbench.Builder.Core.Tests.ProjectInspection;
 public class ProjectInspectionServiceMultiTargetTests
 {
     /// <summary>
-    /// Verifies that the inspection service exposes the default first-target behavior for a multi-target project.
+    /// Verifies that the inspection service exposes the highest builder-supported target framework for a multi-target project.
     /// </summary>
     [TestMethod]
-    public void Inspect_MultiTargetProjectWithoutExplicitTargetFramework_ExposesCurrentTargetFrameworkGap()
+    public void Inspect_MultiTargetProjectWithoutExplicitTargetFramework_UsesHighestSupportedTargetFramework()
     {
         DotNetRestoreHelper.EnsureRestored(TestDataProjectPaths.MultiTargetLibraryProjectPath);
         ProjectInspectionService service = new(new MsBuildProjectLoader(), new ReferenceResolver(), new TestProjectDetector());
@@ -27,11 +27,11 @@ public class ProjectInspectionServiceMultiTargetTests
         var result = service.Inspect(new ProjectLoadRequest(TestDataProjectPaths.MultiTargetLibraryProjectPath));
 
         Assert.AreEqual("MultiTargetLibrary", result.Project.AssemblyName);
-        Assert.AreEqual(string.Empty, result.Project.TargetFramework);
-        Assert.AreEqual(0, result.CompileItems.Count);
+        Assert.AreEqual("net10.0", result.Project.TargetFramework);
+        Assert.AreEqual(1, result.CompileItems.Count);
         Assert.IsFalse(result.IsTestProject);
-        Assert.IsTrue(result.Diagnostics.Any(diagnostic => diagnostic.Code == "WB1002" && diagnostic.Severity == BuildDiagnosticSeverity.Warning));
-        Assert.IsTrue(result.Diagnostics.Any(diagnostic => diagnostic.Code == "WB1103" || diagnostic.Code == "WB1102") || result.ResolvedReferences.Count == 0);
+        Assert.IsFalse(result.Diagnostics.Any(diagnostic => diagnostic.Code == "WB1002" && diagnostic.Severity == BuildDiagnosticSeverity.Warning));
+        Assert.IsTrue(result.ResolvedReferences.Any(reference => reference.Exists));
         Assert.IsFalse(result.Diagnostics.Any(diagnostic => diagnostic.Severity == BuildDiagnosticSeverity.Error));
     }
 

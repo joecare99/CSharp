@@ -1,0 +1,50 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libraries/">
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs.Abstractions/CommonDialogs.Abstractions.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs_net.csproj">
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="../Libraries/Terminal.Avalonia/Terminal.Avalonia.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/Terminal.Backends.Posix/Terminal.Backends.Posix.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/Terminal.Backends.Windows/Terminal.Backends.Windows.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/Terminal.Core.Tests/Terminal.Core.Tests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+    <Project Path="../Libraries/Terminal.Core/Terminal.Core.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path="Data_net.props" />
+  </Folder>
+  <Folder Name="/Workbench.Builder/">
+    <File Path="Workbench.Builder/Directory.Build.props" />
+    <Project Path="Workbench.Builder/Workbench.Builder.Analysis/Workbench.Builder.Analysis.csproj" />
+    <Project Path="Workbench.Builder/Workbench.Builder.Cli/Workbench.Builder.Cli.csproj" />
+    <Project Path="Workbench.Builder/Workbench.Builder.Core.Tests/Workbench.Builder.Core.Tests.csproj" />
+    <Project Path="Workbench.Builder/Workbench.Builder.Core/Workbench.Builder.Core.csproj" />
+    <Project Path="Workbench.Builder/Workbench.Builder.Host/Workbench.Builder.Host.csproj" />
+  </Folder>
+  <Project Path="DevOps/DevOps.shproj" />
+  <Properties Name="SolutionProperties">
+    <Property Name="WorkspaceFolder" Value="..\Libraries" />
+  </Properties>
+</Solution>

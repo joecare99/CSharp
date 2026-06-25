@@ -2,11 +2,20 @@
 	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0;net481;net48;net472;net462</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net481;net48;net472;net462</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+	</PropertyGroup>
 	<PropertyGroup>
 	</PropertyGroup>
 	<ItemGroup>
@@ -20,9 +29,9 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.6.2" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="System.Text.Json" Version="10.0.9" />
 		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.1.1" />
-		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" Version="1.0.3" />
-		<PackageReference Include="System.Text.Json" Version="10.0.9" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" Version="1.0.3" />	
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\BaseLib\BaseLib.csproj" />

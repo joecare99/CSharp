@@ -198,6 +198,16 @@ namespace TestConsole
             BackgroundColor = ConsoleColor.Black;
         }
 
+        public void SetWindowPosition(int left, int top)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetWindowSize(int width, int height)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Gets the content.
         /// </summary>
@@ -219,5 +229,10 @@ namespace TestConsole
         public int BufferWidth => WindowWidth;
 
         public int BufferHeight => WindowHeight;
+
+        public int LargestWindowWidth => throw new NotImplementedException();
+
+        public int WindowLeft { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int WindowTop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

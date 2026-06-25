@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+In Progress
 
 ## Parent
 
@@ -14,11 +14,11 @@ Define and implement the first Roslyn-based compilation slice that can emit asse
 
 ## Summary
 
-This feature is the next major expansion after the V1.1 inspection baseline. The current codebase now provides the data-acquisition and reporting foundation needed to decide how compilation inputs should be assembled. The feature should turn those inspection results into actual Roslyn compilation inputs and support practical emit scenarios for ordinary console and library projects.
+This feature is the active major expansion after the V1.1 inspection baseline. The current codebase already turns inspection results into practical Roslyn compilation inputs for the supported first slice and can emit artifacts for ordinary console and library projects.
 
 The user intent already established that executable output is required when the inspected project is neither a library nor a test project. Debugging support should be considered through symbol generation, and source generators are an important later compatibility target. The feature should therefore begin with a tightly scoped first emit slice rather than trying to reproduce the full MSBuild build graph in one step.
 
-The first V1.2 emit slice is now defined more concretely: it should support SDK-style class-library and console-project scenarios, continue to classify test projects explicitly, and refuse emit for test-project shapes instead of treating them as ordinary executables. Portable PDB generation should be the default symbol strategy for supported emit scenarios, while source-generator support remains an explicit follow-up planning track rather than an implicit promise of the first implementation increment.
+The first V1.2 emit slice is now implemented for the supported SDK-style class-library and console-project baseline, continues to classify test projects explicitly, and refuses emit for test-project shapes instead of treating them as ordinary executables. Portable PDB generation is the default symbol strategy for the supported emit scenarios, while source-generator support remains an explicit follow-up planning track rather than an implicit promise of the first implementation increment.
 
 ## In Scope
 
@@ -74,9 +74,7 @@ The first V1.2 emit slice is now defined more concretely: it should support SDK-
 
 ## Next Refinement Steps
 
-1. Specify the first V1.2 compilation service contracts
-2. Define executable-versus-library emit rules from inspection data, including explicit non-emit behavior for test projects
-3. Clarify Portable PDB requirements and default behavior for the supported first slice
-4. Add failure-oriented NIO samples and position-aware diagnostic assertions
-5. Split source-generator support into explicit planning work if needed
-6. Add minimal end-to-end emit tests before broadening scenario coverage
+1. Continue hardening the implemented V1.2 service boundary and supported emit scenarios
+2. Expand failure-oriented samples and diagnostic assertions where gaps remain
+3. Split source-generator support into explicit planning and implementation work
+4. Broaden end-to-end emit coverage only after the current baseline stays stable
