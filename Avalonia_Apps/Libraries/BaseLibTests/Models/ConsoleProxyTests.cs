@@ -1,6 +1,7 @@
 using BaseLib.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 
 namespace BaseLib.Models.Tests;
 
@@ -18,169 +19,262 @@ public class ConsoleProxyTests
     [TestMethod]
     public void Constructor_ShouldCreateInstance()
     {
-        // Assert
         Assert.IsNotNull(_sut);
     }
 
     [TestMethod]
     public void ForegroundColor_Get_ShouldReturnConsoleColor()
     {
-        // Act
         var result = _sut.ForegroundColor;
 
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(ConsoleColor));
+        Assert.IsInstanceOfType<ConsoleColor>(result);
     }
 
     [TestMethod]
     public void ForegroundColor_Set_ShouldNotThrow()
     {
-        // Arrange
         var originalColor = _sut.ForegroundColor;
 
-        // Act & Assert
-        _sut.ForegroundColor = ConsoleColor.Red;
-        _sut.ForegroundColor = originalColor;
+        AssertDoesNotThrow(() => _sut.ForegroundColor = ConsoleColor.Red);
+        AssertDoesNotThrow(() => _sut.ForegroundColor = originalColor);
     }
 
     [TestMethod]
     public void BackgroundColor_Get_ShouldReturnConsoleColor()
     {
-        // Act
         var result = _sut.BackgroundColor;
 
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(ConsoleColor));
+        Assert.IsInstanceOfType<ConsoleColor>(result);
     }
 
     [TestMethod]
     public void BackgroundColor_Set_ShouldNotThrow()
     {
-        // Arrange
         var originalColor = _sut.BackgroundColor;
 
-        // Act & Assert
-        _sut.BackgroundColor = ConsoleColor.Blue;
-        _sut.BackgroundColor = originalColor;
+        AssertDoesNotThrow(() => _sut.BackgroundColor = ConsoleColor.Blue);
+        AssertDoesNotThrow(() => _sut.BackgroundColor = originalColor);
     }
 
     [TestMethod]
     public void IsOutputRedirected_ShouldReturnBool()
     {
-        // Act
         var result = _sut.IsOutputRedirected;
 
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(bool));
+        Assert.IsInstanceOfType<bool>(result);
     }
 
     [TestMethod]
     public void KeyAvailable_ShouldReturnBool()
     {
-        // Act
         var result = _sut.KeyAvailable;
 
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(bool));
+        Assert.IsInstanceOfType<bool>(result);
     }
 
     [TestMethod]
     public void LargestWindowHeight_ShouldReturnInt()
     {
-        // Act
         var result = _sut.LargestWindowHeight;
 
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(int));
+        Assert.IsInstanceOfType<int>(result);
+    }
+
+    [TestMethod]
+    public void LargestWindowWidth_ShouldReturnInt()
+    {
+        var result = _sut.LargestWindowWidth;
+
+        Assert.IsInstanceOfType<int>(result);
     }
 
     [TestMethod]
     public void Title_Get_ShouldReturnString()
     {
-        // Act
         var result = _sut.Title;
 
-        // Assert
         Assert.IsNotNull(result);
     }
 
     [TestMethod]
     public void Title_Set_ShouldNotThrow()
     {
-        // Arrange
         var originalTitle = _sut.Title;
 
-        // Act & Assert
-        _sut.Title = "TestTitle";
-        _sut.Title = originalTitle;
+        AssertDoesNotThrow(() => _sut.Title = "TestTitle");
+        AssertDoesNotThrow(() => _sut.Title = originalTitle);
     }
 
     [TestMethod]
-    public void GetCursorPosition_ShouldReturnTuple()
+    public void WindowHeight_Set_ShouldNotThrow()
     {
-        // Act
-        var result = _sut.GetCursorPosition;
+        var originalValue = _sut.WindowHeight;
 
-        // Assert
-        Assert.IsNotNull(result);
+        AssertDoesNotThrow(() => _sut.WindowHeight = originalValue > 0 ? originalValue : 25);
     }
 
     [TestMethod]
-    public void SetCursorPosition_ShouldNotThrow()
+    public void WindowWidth_Set_ShouldNotThrow()
     {
-        // Arrange
+        var originalValue = _sut.WindowWidth;
 
-        // Act 
-        var result = _sut.SetCursorPosition;
-
-        //Assert
-        Assert.IsNotNull(result);
+        AssertDoesNotThrow(() => _sut.WindowWidth = originalValue > 0 ? originalValue : 80);
     }
 
     [TestMethod]
-    public void Write_Char_ShouldNotThrow()
+    public void WindowLeft_Set_ShouldNotThrow()
     {
-        // Act & Assert - keine Exception erwartet
-        _sut.Write('X');
+        var originalValue = _sut.WindowLeft;
+
+        AssertDoesNotThrow(() => _sut.WindowLeft = originalValue);
     }
 
     [TestMethod]
-    public void Write_String_ShouldNotThrow()
+    public void WindowTop_Set_ShouldNotThrow()
     {
-        // Act & Assert - keine Exception erwartet
-        _sut.Write("Test");
+        var originalValue = _sut.WindowTop;
+
+        AssertDoesNotThrow(() => _sut.WindowTop = originalValue);
     }
 
     [TestMethod]
-    public void Write_NullString_ShouldNotThrow()
+    public void CursorVisible_Get_ShouldReturnBool()
     {
-        // Act & Assert - keine Exception erwartet
-        _sut.Write((string?)null);
+        var result = _sut.CursorVisible;
+
+        Assert.IsInstanceOfType<bool>(result);
     }
 
     [TestMethod]
-    public void WriteLine_ShouldNotThrow()
+    public void CursorVisible_Set_ShouldNotThrow()
     {
-        // Act & Assert - keine Exception erwartet
-        _sut.WriteLine("TestLine");
+        var originalValue = _sut.CursorVisible;
+
+        AssertDoesNotThrow(() => _sut.CursorVisible = !originalValue);
+        AssertDoesNotThrow(() => _sut.CursorVisible = originalValue);
     }
 
     [TestMethod]
-    public void WriteLine_Null_ShouldNotThrow()
+    public void BufferWidth_ShouldReturnInt()
     {
-        // Act & Assert - keine Exception erwartet
-        _sut.WriteLine(null);
+        var result = _sut.BufferWidth;
+
+        Assert.IsInstanceOfType<int>(result);
+    }
+
+    [TestMethod]
+    public void BufferHeight_ShouldReturnInt()
+    {
+        var result = _sut.BufferHeight;
+
+        Assert.IsInstanceOfType<int>(result);
+    }
+
+    [TestMethod]
+    public void Beep_ShouldNotThrow()
+    {
+        AssertDoesNotThrow(() => _sut.Beep(800, 10));
     }
 
     [TestMethod]
     public void Clear_ShouldNotThrow()
     {
-        // Act & Assert - keine Exception erwartet
-        var m= _sut.Clear;
-        //Assert
-        Assert.IsNotNull(m);
+        AssertDoesNotThrow(_sut.Clear);
     }
 
-    // Beep und ReadKey/ReadLine werden nicht getestet, da sie
-    // auf Benutzereingaben warten oder Audio abspielen
+    [TestMethod]
+    public void GetCursorPosition_ShouldReturnTuple()
+    {
+        var result = _sut.GetCursorPosition();
+
+        Assert.IsInstanceOfType<ValueTuple<int, int>>(result);
+    }
+
+    [TestMethod]
+    public void SetCursorPosition_ShouldNotThrow()
+    {
+        AssertDoesNotThrow(() => _sut.SetCursorPosition(0, 0));
+    }
+
+    [TestMethod]
+    public void SetWindowPosition_ShouldNotThrow()
+    {
+        AssertDoesNotThrow(() => _sut.SetWindowPosition(_sut.WindowLeft, _sut.WindowTop));
+    }
+
+    [TestMethod]
+    public void SetWindowSize_ShouldNotThrow()
+    {
+        var width = _sut.WindowWidth > 0 ? _sut.WindowWidth : 80;
+        var height = _sut.WindowHeight > 0 ? _sut.WindowHeight : 25;
+
+        AssertDoesNotThrow(() => _sut.SetWindowSize(width, height));
+    }
+
+    [TestMethod]
+    public void ReadLine_ShouldReturnString()
+    {
+        var originalIn = Console.In;
+
+        try
+        {
+            Console.SetIn(new StringReader("TestInput" + Environment.NewLine));
+
+            var result = _sut.ReadLine();
+
+            Assert.AreEqual("TestInput", result);
+        }
+        finally
+        {
+            Console.SetIn(originalIn);
+        }
+    }
+
+    [TestMethod]
+    public void ResetColor_ShouldNotThrow()
+    {
+        AssertDoesNotThrow(_sut.ResetColor);
+    }
+
+    [TestMethod]
+    public void Write_Char_ShouldNotThrow()
+    {
+        AssertDoesNotThrow(() => _sut.Write('X'));
+    }
+
+    [TestMethod]
+    public void Write_String_ShouldNotThrow()
+    {
+        AssertDoesNotThrow(() => _sut.Write("Test"));
+    }
+
+    [TestMethod]
+    public void Write_NullString_ShouldNotThrow()
+    {
+        AssertDoesNotThrow(() => _sut.Write((string?)null));
+    }
+
+    [TestMethod]
+    public void WriteLine_ShouldNotThrow()
+    {
+        AssertDoesNotThrow(() => _sut.WriteLine("TestLine"));
+    }
+
+    [TestMethod]
+    public void WriteLine_Null_ShouldNotThrow()
+    {
+        AssertDoesNotThrow(() => _sut.WriteLine(null));
+    }
+
+    private static void AssertDoesNotThrow(Action action)
+    {
+        try
+        {
+            action();
+        }
+        catch (Exception ex)
+        {
+            Assert.Fail($"Expected no exception, but got {ex.GetType().Name}: {ex.Message}");
+        }
+    }
 }
