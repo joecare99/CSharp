@@ -28,6 +28,8 @@ internal static class TestDataProjectPaths
 
     public static string MultiTargetLibraryProjectPath => GetPath("MultiTargetLibrary", "MultiTargetLibrary.csproj");
 
+    public static string MultiTargetConsoleAppProjectPath => GetPath("MultiTargetConsoleApp", "MultiTargetConsoleApp.csproj");
+
     public static string NonSdkStyleProjectPath => GetPath("NonSdkStyleProject", "NonSdkStyleProject.csproj");
 
     private static string GetPath(params string[] relativeSegments)

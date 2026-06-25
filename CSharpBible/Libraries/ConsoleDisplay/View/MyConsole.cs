@@ -249,6 +249,11 @@ public class MyConsole : IConsole
     public  bool IsOutputRedirected 
         => (bool)(isOutputRedirected?.GetValue(instance) ?? false);
 
+    public int LargestWindowWidth => throw new NotImplementedException();
+
+    public int WindowLeft { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public int WindowTop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
 
     /// <summary>
     /// Clears this instance.
@@ -305,4 +310,13 @@ public class MyConsole : IConsole
 
     public void ResetColor() => resetcolor_int?.Invoke(instance, new object[] { });
 
+    public void SetWindowPosition(int left, int top)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetWindowSize(int width, int height)
+    {
+        throw new NotImplementedException();
+    }
 }

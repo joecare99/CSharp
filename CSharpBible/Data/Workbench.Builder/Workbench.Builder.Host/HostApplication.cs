@@ -56,9 +56,17 @@ public sealed class HostApplication
                 return Task.FromResult(options.ShowHelp ? HostExitCodes.Success : HostExitCodes.InvalidArguments);
             }
 
+            WriteProgress(options, $"Inspecting project '{options.ProjectFilePath}'.");
             ProjectInspectionResult inspectionResult = _projectInspectionService.Inspect(new ProjectLoadRequest(options.ProjectFilePath));
+            WriteProgress(options, $"Resolved target framework '{inspectionResult.Project.TargetFramework}' for assembly '{inspectionResult.Project.AssemblyName}'.");
+            WriteProgress(options, $"Compiling project to '{options.OutputDirectory ?? inspectionResult.Project.ProjectDirectory}'.");
             ProjectCompilationResult compilationResult = _projectCompilationService.Compile(
                 new ProjectCompilationRequest(inspectionResult, options.OutputDirectory, emitPortablePdb: true));
+
+            foreach (BuildDiagnostic diagnostic in compilationResult.Diagnostics.Where(static diagnostic => diagnostic.Severity != BuildDiagnosticSeverity.Error))
+            {
+                _console.WriteLine(BuildDiagnosticTextFormatter.Format(diagnostic));
+            }
 
             if (compilationResult.Succeeded)
             {
@@ -66,7 +74,7 @@ public sealed class HostApplication
                 return Task.FromResult(HostExitCodes.Success);
             }
 
-            foreach (BuildDiagnostic diagnostic in compilationResult.Diagnostics)
+            foreach (BuildDiagnostic diagnostic in compilationResult.Diagnostics.Where(static diagnostic => diagnostic.Severity == BuildDiagnosticSeverity.Error))
             {
                 _console.WriteErrorLine(BuildDiagnosticTextFormatter.Format(diagnostic));
             }
@@ -88,7 +96,17 @@ public sealed class HostApplication
 
     internal static string CreateUsageText()
     {
-        return "Usage: Workbench.Builder.Host <project.csproj> [--output <directory>] [--help]";
+        return "Usage: Workbench.Builder.Host <project.csproj> [--output <directory>] [--verbosity normal|detailed] [--help]";
+    }
+
+    private void WriteProgress(HostCommandOptions options, string text)
+    {
+        if (options.Verbosity < HostVerbosity.Detailed)
+        {
+            return;
+        }
+
+        _console.WriteLine($"[host] {text}");
     }
 
     private static string CreateEmitSuccessText(ProjectCompilationResult compilationResult)

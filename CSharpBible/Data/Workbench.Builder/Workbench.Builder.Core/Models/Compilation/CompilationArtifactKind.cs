@@ -14,4 +14,19 @@ public enum CompilationArtifactKind
     /// The emitted portable debug-symbol artifact.
     /// </summary>
     DebugSymbols = 1,
+
+    /// <summary>
+    /// A copied dependency artifact required by the emitted output.
+    /// </summary>
+    Dependency = 2,
+
+    /// <summary>
+    /// A runtime host or launcher artifact for executable output.
+    /// </summary>
+    RuntimeHost = 3,
+
+    /// <summary>
+    /// A runtime metadata artifact such as deps or runtimeconfig.
+    /// </summary>
+    RuntimeMetadata = 4,
 }

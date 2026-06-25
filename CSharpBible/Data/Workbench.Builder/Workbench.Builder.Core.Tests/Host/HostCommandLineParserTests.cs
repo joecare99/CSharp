@@ -21,6 +21,7 @@ public class HostCommandLineParserTests
 
         Assert.AreEqual("sample.csproj", options.ProjectFilePath);
         Assert.AreEqual("artifacts", options.OutputDirectory);
+        Assert.AreEqual(HostVerbosity.Normal, options.Verbosity);
         Assert.IsFalse(options.ShowHelp);
     }
 
@@ -36,6 +37,22 @@ public class HostCommandLineParserTests
 
         Assert.AreEqual("sample.csproj", options.ProjectFilePath);
         Assert.IsNull(options.OutputDirectory);
+        Assert.AreEqual(HostVerbosity.Normal, options.Verbosity);
+        Assert.IsFalse(options.ShowHelp);
+    }
+
+    /// <summary>
+    /// Verifies that an explicit verbosity argument is parsed correctly.
+    /// </summary>
+    [TestMethod]
+    public void Parse_ProjectPathAndVerbosity_ReturnsExpectedOptions()
+    {
+        HostCommandLineParser parser = new();
+
+        HostCommandOptions options = parser.Parse(new[] { "sample.csproj", HostArgumentNames.Verbosity, "detailed" });
+
+        Assert.AreEqual("sample.csproj", options.ProjectFilePath);
+        Assert.AreEqual(HostVerbosity.Detailed, options.Verbosity);
         Assert.IsFalse(options.ShowHelp);
     }
 
@@ -52,5 +69,6 @@ public class HostCommandLineParserTests
         Assert.IsTrue(options.ShowHelp);
         Assert.IsNull(options.ProjectFilePath);
         Assert.IsNull(options.OutputDirectory);
+        Assert.AreEqual(HostVerbosity.Normal, options.Verbosity);
     }
 }

@@ -15,6 +15,9 @@
     <None Remove="bin\**" />
     <None Remove="obj\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="View\MyConsoleTests.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MSTest" Version="4.2.3" />

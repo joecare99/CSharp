@@ -12,6 +12,7 @@
 	<None Include="TestData\MissingProjectReferenceProject\MissingProjectReferenceProject.csproj" />
 	<None Include="TestData\MissingTargetFrameworkProject\MissingTargetFrameworkProject.csproj" />
     <None Include="TestData\MultiTargetLibrary\MultiTargetLibrary.csproj" />
+	<None Include="TestData\MultiTargetConsoleApp\MultiTargetConsoleApp.csproj" />
     <None Include="TestData\NonSdkStyleProject\NonSdkStyleProject.csproj" />
     <None Include="TestData\ProjectWithProjectReference\ProjectWithProjectReference.csproj" />
     <None Include="TestData\ProjectWithProjectReference\ReferencedLibrary\ReferencedLibrary.csproj" />
@@ -20,6 +21,11 @@
     <None Include="TestData\SimpleTestProject\SimpleTestProject.csproj" />
   </ItemGroup>
   <ItemGroup>
+	<PackageReference Include="coverlet.collector" Version="10.0.1">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
 	<PackageReference Include="MSTest" Version="4.2.3" />
 	<PackageReference Include="NSubstitute" Version="5.3.0" />
   </ItemGroup>

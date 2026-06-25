@@ -7,6 +7,9 @@
 	<AssemblyName>ProjectWithProjectReference</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+	<Compile Remove="ReferencedLibrary\**\*.cs" />
+	<Compile Remove="ReferencedLibrary\obj\**\*.cs" />
+	<Compile Remove="ReferencedLibrary\bin\**\*.cs" />
 	<ProjectReference Include="ReferencedLibrary\ReferencedLibrary.csproj" />
   </ItemGroup>
 </Project>

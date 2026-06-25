@@ -62,6 +62,22 @@ public class ProjectEmitSupportEvaluatorTests
     }
 
     /// <summary>
+    /// Verifies that non-SDK-style projects remain non-emit in the first V1.2 slice.
+    /// </summary>
+    [TestMethod]
+    public void Evaluate_WhenProjectIsNotSdkStyle_ReturnsNonEmitSupport()
+    {
+        var evaluator = new ProjectEmitSupportEvaluator();
+        ProjectInspectionResult inspectionResult = CreateInspectionResult(outputType: "Exe", isSdkStyle: false, isTestProject: false);
+
+        ProjectEmitSupport emitSupport = evaluator.Evaluate(inspectionResult);
+
+        Assert.IsFalse(emitSupport.CanEmit);
+        Assert.AreEqual(ProjectEmitKind.None, emitSupport.EmitKind);
+        StringAssert.Contains(emitSupport.Reason, "Only SDK-style projects are supported");
+    }
+
+    /// <summary>
     /// Verifies that unsupported output types remain visible as non-emit decisions.
     /// </summary>
     [TestMethod]
