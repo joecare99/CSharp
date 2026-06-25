@@ -2,6 +2,10 @@
   <Folder Name="/Libraries/">
     <File Path="Libraries.props" />
     <File Path="Libraries_net.props" />
+    <Project Path="BaseLib.Show.Tests/BaseLib.Show.Tests.csproj">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
+    <Project Path="BaseLib.Show/BaseLib.Show.csproj" />
     <Project Path="BaseLib/BaseLib.csproj" />
     <Project Path="BaseLibTests/BaseLibTests.csproj" />
     <Project Path="CommonDialogs.Abstractions/CommonDialogs.Abstractions.csproj">
@@ -12,6 +16,7 @@
     <Project Path="ConsoleDisplay/ConsoleDisplay.csproj" />
     <Project Path="ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
     <Project Path="ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
+    <Project Path="ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
     <Project Path="ConsoleLib/ConsoleLib.csproj" />
     <Project Path="CSFreeVision/CSFreeVision.csproj" />
     <Project Path="ExtendedConsole/ExtendedConsole.csproj" />
@@ -23,6 +28,16 @@
     <Project Path="MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
     <Project Path="WFSystem.Data/WFSystem.Windows.Data.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/TerminalHost/">
+    <Project Path="Terminal.Avalonia.Host/Terminal.Avalonia.Host.csproj" />
+    <Project Path="Terminal.Avalonia/Terminal.Avalonia.csproj" />
+    <Project Path="Terminal.Backends.Posix/Terminal.Backends.Posix.csproj" />
+    <Project Path="Terminal.Backends.Windows/Terminal.Backends.Windows.csproj" />
+    <Project Path="Terminal.Core.Tests/Terminal.Core.Tests.csproj" />
+    <Project Path="Terminal.Core/Terminal.Core.csproj" />
+    <Project Path="Terminal.Wpf.Host/Terminal.Wpf.Host.csproj" />
+    <Project Path="Terminal.Wpf/Terminal.Wpf.csproj" />
   </Folder>
   <Folder Name="/Projektmappenelemente/">
     <File Path="../../.github/copilot-instructions.md" />
