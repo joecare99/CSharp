@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Title" xml:space="preserve"><value>BaseLib Showcase</value></data>
+  <data name="Welcome_Title" xml:space="preserve"><value>B A S E L I B   S H O W C A S E</value></data>
+  <data name="Welcome_Subtitle" xml:space="preserve"><value>Demonstrates selected BaseLib features</value></data>
+  <data name="Menu_Title" xml:space="preserve"><value>MAIN MENU</value></data>
+  <data name="Menu_RunAll" xml:space="preserve"><value>Run all demos</value></data>
+  <data name="Menu_Exit" xml:space="preserve"><value>Quit</value></data>
+  <data name="Menu_Prompt" xml:space="preserve"><value>Your choice: </value></data>
+  <data name="Goodbye_Message" xml:space="preserve"><value>Thank you for exploring the BaseLib showcase!</value></data>
+  <data name="Continue_Prompt" xml:space="preserve"><value>Press any key to continue...</value></data>
+  <data name="SourceCode_Label" xml:space="preserve"><value>Source code:</value></data>
+  <data name="Common_Original" xml:space="preserve"><value>Original</value></data>
+  <data name="Common_Quoted" xml:space="preserve"><value>Quoted</value></data>
+  <data name="Common_Unquoted" xml:space="preserve"><value>Unquoted</value></data>
+  <data name="Common_Template" xml:space="preserve"><value>Template</value></data>
+  <data name="Common_Formatted" xml:space="preserve"><value>Formatted</value></data>
+  <data name="Common_FirstWord" xml:space="preserve"><value>First word</value></data>
+  <data name="Common_Rest" xml:space="preserve"><value>Remaining text</value></data>
+  <data name="Common_CsvLine" xml:space="preserve"><value>CSV line</value></data>
+  <data name="Common_ItemNumber" xml:space="preserve"><value>Item {0}</value></data>
+  <data name="Common_Valid" xml:space="preserve"><value>✓ valid</value></data>
+  <data name="Common_Invalid" xml:space="preserve"><value>✗ invalid</value></data>
+  <data name="Common_String" xml:space="preserve"><value>String</value></data>
+  <data name="Common_Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Common_WindowWidth" xml:space="preserve"><value>WindowWidth</value></data>
+  <data name="Common_WindowHeight" xml:space="preserve"><value>WindowHeight</value></data>
+  <data name="Common_Title" xml:space="preserve"><value>Title</value></data>
+  <data name="Common_IsOutputRedirected" xml:space="preserve"><value>IsOutputRedirected</value></data>
+  <data name="Common_LargestWindowHeight" xml:space="preserve"><value>LargestWindowHeight</value></data>
+  <data name="Common_CurrentPosition" xml:space="preserve"><value>Current position</value></data>
+  <data name="Common_StepNumber" xml:space="preserve"><value>Step {0}</value></data>
+  <data name="Common_BufferSize" xml:space="preserve"><value>Buffer size: {0}</value></data>
+  <data name="Common_ValueNumber" xml:space="preserve"><value>Value {0}</value></data>
+  <data name="Common_NotAvailable" xml:space="preserve"><value>(not available)</value></data>
+  <data name="Common_Null" xml:space="preserve"><value>null</value></data>
+  <data name="Common_NullDisplay" xml:space="preserve"><value>(null)</value></data>
+  <data name="Common_Now" xml:space="preserve"><value>Now</value></data>
+  <data name="Common_Today" xml:space="preserve"><value>Today</value></data>
+  <data name="Common_Sequence1" xml:space="preserve"><value>Sequence 1</value></data>
+  <data name="Common_Sequence2" xml:space="preserve"><value>Sequence 2</value></data>
+  <data name="Demo_StringUtils_Title" xml:space="preserve"><value>StringUtils</value></data>
+  <data name="Demo_StringUtils_Description" xml:space="preserve"><value>String helpers</value></data>
+  <data name="Demo_Math_Title" xml:space="preserve"><value>MathUtilities</value></data>
+  <data name="Demo_Math_Description" xml:space="preserve"><value>Mathematical helpers</value></data>
+  <data name="Demo_Byte_Title" xml:space="preserve"><value>ByteUtils</value></data>
+  <data name="Demo_Byte_Description" xml:space="preserve"><value>Bit operations</value></data>
+  <data name="Demo_Object_Title" xml:space="preserve"><value>ObjectHelper</value></data>
+  <data name="Demo_Object_Description" xml:space="preserve"><value>Type conversions</value></data>
+  <data name="Demo_List_Title" xml:space="preserve"><value>ListHelper</value></data>
+  <data name="Demo_List_Description" xml:space="preserve"><value>List operations</value></data>
+  <data name="Demo_Type_Title" xml:space="preserve"><value>TypeUtils</value></data>
+  <data name="Demo_Type_Description" xml:space="preserve"><value>Type utilities</value></data>
+  <data name="Demo_Console_Title" xml:space="preserve"><value>ConsoleProxy</value></data>
+  <data name="Demo_Console_Description" xml:space="preserve"><value>Console abstraction</value></data>
+  <data name="Demo_IoC_Title" xml:space="preserve"><value>IoC</value></data>
+  <data name="Demo_IoC_Description" xml:space="preserve"><value>Dependency injection</value></data>
+  <data name="Demo_TimeRandom_Title" xml:space="preserve"><value>SysTime &amp; CRandom</value></data>
+  <data name="Demo_TimeRandom_Description" xml:space="preserve"><value>Time and randomness</value></data>
+  <data name="Example_String_Quote" xml:space="preserve"><value>Quote / UnQuote</value></data>
+  <data name="Example_String_Format" xml:space="preserve"><value>Format extension</value></data>
+  <data name="Example_String_FirstRest" xml:space="preserve"><value>SFirst / SRest</value></data>
+  <data name="Example_String_ToNormal" xml:space="preserve"><value>ToNormal</value></data>
+  <data name="Example_String_LeftRight" xml:space="preserve"><value>Left / Right</value></data>
+  <data name="Example_String_QuotedSplit" xml:space="preserve"><value>QuotedSplit</value></data>
+  <data name="Example_String_Identifier" xml:space="preserve"><value>IsValidIdentifyer</value></data>
+  <data name="Example_String_PadTab" xml:space="preserve"><value>PadTab</value></data>
+  <data name="Example_String_Any" xml:space="preserve"><value>ContainsAny / StartswithAny / EndswithAny</value></data>
+  <data name="Example_Math_Pt1" xml:space="preserve"><value>PT1 filter</value></data>
+  <data name="Example_Math_Mean" xml:space="preserve"><value>Mean</value></data>
+  <data name="Example_Math_Median" xml:space="preserve"><value>Median filter</value></data>
+  <data name="Example_Byte_BitMask" xml:space="preserve"><value>BitMask32 / BitMask64</value></data>
+  <data name="Example_Byte_SetClearGetSwitch" xml:space="preserve"><value>SetBit / ClearBit / GetBit / SwitchBit</value></data>
+  <data name="Example_Byte_BitCount" xml:space="preserve"><value>BitCount</value></data>
+  <data name="Example_Object_AsInt" xml:space="preserve"><value>AsInt</value></data>
+  <data name="Example_Object_AsDouble" xml:space="preserve"><value>AsDouble</value></data>
+  <data name="Example_Object_AsBool" xml:space="preserve"><value>AsBool</value></data>
+  <data name="Example_Object_AsDate" xml:space="preserve"><value>AsDate</value></data>
+  <data name="Example_Object_AsEnum" xml:space="preserve"><value>AsEnum&lt;T&gt;</value></data>
+  <data name="Example_Object_AsString" xml:space="preserve"><value>AsString</value></data>
+  <data name="Example_List_Swap" xml:space="preserve"><value>Swap</value></data>
+  <data name="Example_List_MoveItem" xml:space="preserve"><value>MoveItem</value></data>
+  <data name="Example_List_Range" xml:space="preserve"><value>To range</value></data>
+  <data name="Example_Type_TypeCode" xml:space="preserve"><value>TC (TypeCode)</value></data>
+  <data name="Example_Type_ToType" xml:space="preserve"><value>ToType</value></data>
+  <data name="Example_Type_Between" xml:space="preserve"><value>IsBetweenIncl / IsBetweenExcl</value></data>
+  <data name="Example_Type_CheckLimit" xml:space="preserve"><value>CheckLimit</value></data>
+  <data name="Example_Type_Get" xml:space="preserve"><value>Get</value></data>
+  <data name="Example_Console_Properties" xml:space="preserve"><value>Current console properties</value></data>
+  <data name="Example_Console_Cursor" xml:space="preserve"><value>Cursor position</value></data>
+  <data name="Example_Console_Colors" xml:space="preserve"><value>Color palette</value></data>
+  <data name="Example_Console_Purpose" xml:space="preserve"><value>Purpose</value></data>
+  <data name="Example_IoC_Configure" xml:space="preserve"><value>Configure ServiceCollection</value></data>
+  <data name="Example_IoC_Resolve" xml:space="preserve"><value>Resolve services</value></data>
+  <data name="Example_IoC_Scopes" xml:space="preserve"><value>Scopes</value></data>
+  <data name="Example_Time_SysTime" xml:space="preserve"><value>SysTime</value></data>
+  <data name="Example_Time_Random" xml:space="preserve"><value>CRandom</value></data>
+  <data name="Math_Pt1_Intro" xml:space="preserve"><value>Simulate a step change from 0 to 100:</value></data>
+  <data name="Math_Median_Buffer" xml:space="preserve"><value>Buffer size: {0} (removes outliers)</value></data>
+  <data name="Byte_BitNumber" xml:space="preserve"><value>Bit {0}</value></data>
+  <data name="Byte_BitCount_Value" xml:space="preserve"><value>{0} bits set</value></data>
+  <data name="Console_PaletteLabel" xml:space="preserve"><value>Palette</value></data>
+  <data name="Console_PurposeIntro" xml:space="preserve"><value>ConsoleProxy enables:</value></data>
+  <data name="Console_PurposeTesting" xml:space="preserve"><value>Console abstraction for unit tests</value></data>
+  <data name="Console_PurposeDi" xml:space="preserve"><value>Dependency injection for console access</value></data>
+  <data name="Console_PurposeMockable" xml:space="preserve"><value>Mockable console contract (IConsole)</value></data>
+  <data name="IoC_CodeExampleLabel" xml:space="preserve"><value>Code example:</value></data>
+  <data name="IoC_ScopeIntro" xml:space="preserve"><value>IoC also supports scopes for short-lived services.</value></data>
+  <data name="Time_MockIntro" xml:space="preserve"><value>Testable time through mocking:</value></data>
+  <data name="Time_NowMocked" xml:space="preserve"><value>Now (mocked)</value></data>
+  <data name="Time_NowRestored" xml:space="preserve"><value>Now (restored)</value></data>
+  <data name="Random_IntegerIntro" xml:space="preserve"><value>Random integers:</value></data>
+  <data name="Random_DoubleIntro" xml:space="preserve"><value>Random doubles (0.0 - 1.0):</value></data>
+  <data name="Random_ReproIntro" xml:space="preserve"><value>Reproducible sequence (seed = 42):</value></data>
+  <data name="Random_IdenticalNote" xml:space="preserve"><value>→ Both sequences are identical!</value></data>
+</root>
