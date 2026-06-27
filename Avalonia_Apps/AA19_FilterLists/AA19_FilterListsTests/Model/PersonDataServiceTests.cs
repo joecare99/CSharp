@@ -1,5 +1,6 @@
 using AA19_FilterLists.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace AA19_FilterLists.Model.Tests;
 
@@ -9,7 +10,7 @@ public class PersonDataServiceTests
     [TestMethod]
     public void DefaultServiceProvidesInitialPersonFromModelService()
     {
-        var service = new PersonDataService();
+        var service = new PersonDataService(PersonDataService.CreateDefaultPersons());
 
         Assert.AreEqual(1, service.Persons.Count);
         Assert.AreEqual("Mustermann", service.Persons[0].LastName);
