@@ -8,12 +8,7 @@ public class PersonDataService : IPersonDataService
 {
     private readonly ObservableCollection<Person> _persons;
 
-    public PersonDataService()
-        : this(CreateDefaultPersons())
-    {
-    }
-
-    private PersonDataService(IEnumerable<Person> persons)
+    public PersonDataService(IEnumerable<Person> persons)
     {
         _persons = new ObservableCollection<Person>(persons);
         _persons.CollectionChanged += (_, e) => PersonsChanged?.Invoke(this, e);
@@ -30,7 +25,7 @@ public class PersonDataService : IPersonDataService
         _persons.Add(person);
     }
 
-    private static IEnumerable<Person> CreateDefaultPersons()
+    public static IEnumerable<Person> CreateDefaultPersons()
     {
         yield return new Person("Mustermann", "Max", "Dr.") { Id = 1 };
         yield return new Person("Musterfrau", "Anna", "Prof.") { Id = 2 };
