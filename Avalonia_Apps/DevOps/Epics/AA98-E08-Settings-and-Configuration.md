@@ -40,6 +40,8 @@ Provide a structured configuration model for application behavior, component-pro
 ## Assumptions
 - Settings should stay understandable for both end users and developers.
 - Layout, privacy, and provider settings should converge on one coherent configuration approach.
+- Shared preference and configuration contracts should start in `Libraries/AppKomponentBaseLib` when they are reusable beyond AA98 itself.
+- AA98-specific preference composition should build on top of those shared contracts instead of owning them directly.
 
 ## Open Questions
 - Which settings belong in user preferences versus workspace-level state?
