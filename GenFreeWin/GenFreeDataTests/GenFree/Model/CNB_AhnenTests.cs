@@ -122,9 +122,9 @@ public class CNB_AhnenTests
         _recordset.Received().AddNew();
         fields[NB_AhnenFields.PerNr].Received().Value = 1;
         fields[NB_AhnenFields.Gene].Received().Value = 2;
-        fields[NB_AhnenFields.Ahn1].Received().Value = 4;
-        fields[NB_AhnenFields.Ahn2].Received().Value = 5;
-        fields[NB_AhnenFields.Ahn3].Received().Value = 0;
+        fields[NB_AhnenFields.Ahn1].Received().Value = 4L;
+        fields[NB_AhnenFields.Ahn2].Received().Value = 5L;
+        fields[NB_AhnenFields.Ahn3].Received().Value = 0L;
         fields[NB_AhnenFields.Weiter].Received().Value = 3;
         fields[NB_AhnenFields.Ehe].Received().Value = 6;
         _recordset.Received().Update();
@@ -139,8 +139,8 @@ public class CNB_AhnenTests
 
         _recordset.Received().Edit();
         fields[NB_AhnenFields.Gene].Received().Value = 1;
-        fields[NB_AhnenFields.Ahn1].Received().Value = 2;
-        fields[NB_AhnenFields.Ahn2].Received().Value = 3;
+        fields[NB_AhnenFields.Ahn1].Received().Value = 2L;
+        fields[NB_AhnenFields.Ahn2].Received().Value = 3L;
         fields[NB_AhnenFields.Ehe].Received().Value = 4;
         fields[NB_AhnenFields.Name].Received().Value = "Test";
         _recordset.Received().Update();
