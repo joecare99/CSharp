@@ -14,10 +14,10 @@
     <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\AppKomponentBaseLib\AppKomponentBaseLib.csproj" />
     <ProjectReference Include="..\..\Libraries\Avln_BaseLib\Avln_BaseLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Components\" />
     <Folder Include="Debugging\Models\" />
   </ItemGroup>
 </Project>
