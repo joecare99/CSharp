@@ -1,0 +1,16 @@
+<Project>
+  <Import Project="..\AA98_AvlnCodeStudio.props" />
+  <PropertyGroup>
+	<OutputType>Exe</OutputType>
+	<TargetFrameworks>net10.0</TargetFrameworks>
+	<Nullable>enable</Nullable>
+	<Configurations>Debug;Release;DesktopOnly</Configurations>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Building\AA98_AvlnCodeStudio.Base.Building.csproj" />
+	<ProjectReference Include="..\AA98_AvlnCodeStudio.Building.Workbench\AA98_AvlnCodeStudio.Building.Workbench.csproj" />
+  </ItemGroup>
+</Project>

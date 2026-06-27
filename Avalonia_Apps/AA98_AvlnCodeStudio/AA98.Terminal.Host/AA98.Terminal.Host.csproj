@@ -1,0 +1,36 @@
+<Project>
+  <Import Project="..\AA98_AvlnCodeStudio.props" />
+  <PropertyGroup>
+	<OutputType>WinExe</OutputType>
+	<TargetFrameworks>net10.0</TargetFrameworks>
+	<Nullable>enable</Nullable>
+	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+	<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	<Configurations>Debug;Release;DesktopOnly</Configurations>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+	<PackageReference Include="Avalonia" />
+	<PackageReference Include="Avalonia.Desktop" />
+	<PackageReference Include="Avalonia.Themes.Fluent" />
+	<PackageReference Include="Avalonia.Fonts.Inter" />
+	<PackageReference Include="AvaloniaUI.DiagnosticsSupport">
+	  <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+	  <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+	</PackageReference>
+	<PackageReference Include="CommunityToolkit.Mvvm" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.OS\AA98_AvlnCodeStudio.Base.OS.csproj" />
+	<ProjectReference Include="..\..\Libraries\Avln_TestConsole\Avln_TestConsole.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+	<PackageVersion Update="Avalonia.Desktop" Version="12.0.4" />
+	<PackageVersion Update="AvaloniaUI.DiagnosticsSupport" Version="2.2.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+</Project>

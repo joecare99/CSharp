@@ -1,0 +1,16 @@
+<Project>
+  <Import Project="..\AA98_AvlnCodeStudio.props" />
+  <PropertyGroup>
+	<TargetFrameworks>net10.0</TargetFrameworks>
+	<Nullable>enable</Nullable>
+	<Configurations>Debug;Release;DesktopOnly</Configurations>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Building\AA98_AvlnCodeStudio.Base.Building.csproj" />
+	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Testing\AA98_AvlnCodeStudio.Base.Testing.csproj" />
+	<ProjectReference Include="..\..\..\CSharpBible\Data\Workbench.Builder\Workbench.Builder.Core\Workbench.Builder.Core.csproj" />
+  </ItemGroup>
+</Project>
