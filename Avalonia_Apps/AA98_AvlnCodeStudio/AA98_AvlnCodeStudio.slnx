@@ -7,6 +7,8 @@
     <Project Path="AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj" />
+    <Project Path="AA98.Terminal.Host/AA98.Terminal.Host.csproj" />
+    <Project Path="AA98.Terminal.Host.Tests/AA98.Terminal.Host.Tests.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj" />
     <Project Path="AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" />

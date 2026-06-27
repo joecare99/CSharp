@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:controls="using:Avln_ImageEditor.Controls.Views"
+		xmlns:vm="using:Avln_ImageEditor.Host.ViewModels"
+		x:Class="Avln_ImageEditor.Host.Views.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+		Title="{Binding Title}"
+		Width="1280"
+		Height="820"
+		MinWidth="980"
+		MinHeight="640"
+		Background="#18191E"
+		mc:Ignorable="d">
+  <Grid RowDefinitions="Auto,*">
+	<Border Grid.Row="0"
+			Padding="12"
+			Background="#25272D"
+			BorderBrush="#3C3F48"
+			BorderThickness="0,0,0,1">
+	  <DockPanel LastChildFill="True">
+		<Button x:Name="btnOpenImage"
+				DockPanel.Dock="Left"
+				Click="OpenImage_Click"
+				Content="Open image" />
+		<TextBlock Margin="12,0,0,0"
+				   VerticalAlignment="Center"
+				   Foreground="#D7D9E0"
+				   Text="{Binding StatusText}" />
+	  </DockPanel>
+	</Border>
+
+	<controls:ImageEditorControl Grid.Row="1"
+								 DataContext="{Binding Editor}" />
+  </Grid>
+</Window>

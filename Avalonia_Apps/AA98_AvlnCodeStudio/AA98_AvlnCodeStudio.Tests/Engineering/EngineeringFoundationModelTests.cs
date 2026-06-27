@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.Base.Debugging.Models;
+using AA98_AvlnCodeStudio.Base.OS.Models;
 using AA98_AvlnCodeStudio.Base.Testing.Models;
 using AA98_AvlnCodeStudio.Base.Versioning.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -45,6 +46,8 @@ public class EngineeringFoundationModelTests
         var request = new TestRunRequest();
 
         Assert.IsNull(request.WorkspaceRootPath);
+        Assert.IsNull(request.ProjectPath);
+        Assert.IsNull(request.TargetFramework);
         Assert.AreEqual(0, request.Targets.Count);
         Assert.IsFalse(request.CollectCoverage);
     }
@@ -89,5 +92,35 @@ public class EngineeringFoundationModelTests
         Assert.AreEqual(string.Empty, session.SessionId);
         Assert.IsNull(session.DisplayName);
         Assert.AreEqual(DebugSessionState.Unknown, session.State);
+    }
+
+    /// <summary>
+    /// Verifies that a terminal session start request starts with empty optional values.
+    /// </summary>
+    [TestMethod]
+    public void TerminalSessionStartRequest_UsesExpectedDefaults()
+    {
+        var request = new TerminalSessionStartRequest();
+
+        Assert.IsNull(request.WorkspaceRootPath);
+        Assert.IsNull(request.WorkingDirectory);
+        Assert.IsNull(request.ShellPath);
+        Assert.IsNull(request.ShellDisplayName);
+        Assert.AreEqual(0, request.Arguments.Count);
+        Assert.AreEqual(0, request.EnvironmentVariables.Count);
+    }
+
+    /// <summary>
+    /// Verifies that a terminal shell descriptor starts with empty optional values.
+    /// </summary>
+    [TestMethod]
+    public void TerminalShellDescriptor_UsesExpectedDefaults()
+    {
+        var descriptor = new TerminalShellDescriptor();
+
+        Assert.IsNull(descriptor.DisplayName);
+        Assert.IsNull(descriptor.ExecutablePath);
+        Assert.AreEqual(0, descriptor.Arguments.Count);
+        Assert.IsFalse(descriptor.IsFallback);
     }
 }

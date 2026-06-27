@@ -99,8 +99,19 @@ public sealed class EditorWorkflow : IEditorWorkflow
 
     private string? GetCurrentDirectory()
     {
-        return string.IsNullOrWhiteSpace(_document.FilePath)
-            ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-            : Path.GetDirectoryName(_document.FilePath);
+        if (!string.IsNullOrWhiteSpace(_document.FilePath))
+        {
+            return Path.GetDirectoryName(_document.FilePath);
+        }
+
+        if (!string.IsNullOrWhiteSpace(Environment.CurrentDirectory))
+        {
+            return Environment.CurrentDirectory;
+        }
+
+        var userProfileDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        return string.IsNullOrWhiteSpace(userProfileDirectory)
+            ? null
+            : userProfileDirectory;
     }
 }

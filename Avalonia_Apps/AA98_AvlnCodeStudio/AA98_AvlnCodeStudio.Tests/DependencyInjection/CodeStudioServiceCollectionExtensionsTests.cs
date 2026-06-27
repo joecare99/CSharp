@@ -1,8 +1,11 @@
 using AA98_AvlnCodeStudio.Base.AI.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.AI.Services;
+using AA98_AvlnCodeStudio.Base.Building.DependencyInjection;
+using AA98_AvlnCodeStudio.Base.Building.Services;
 using AA98_AvlnCodeStudio.Base.Debugging.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Debugging.Services;
 using AA98_AvlnCodeStudio.Base.OS.DependencyInjection;
+using AA98_AvlnCodeStudio.Base.OS.Models;
 using AA98_AvlnCodeStudio.Base.OS.Services;
 using AA98_AvlnCodeStudio.Base.Testing.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Testing.Services;
@@ -16,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AA98_AvlnCodeStudio.Tests.DependencyInjection;
 
@@ -48,11 +52,13 @@ public class CodeStudioServiceCollectionExtensionsTests
     {
         var services = new ServiceCollection();
 
+        services.AddCodeStudioBuilding();
         services.AddCodeStudioVersioning();
         services.AddCodeStudioTesting();
         services.AddCodeStudioDebugging();
 
         using var serviceProvider = services.BuildServiceProvider();
+        Assert.IsInstanceOfType<NullCodeStudioBuilderService>(serviceProvider.GetRequiredService<ICodeStudioBuilderService>());
         Assert.IsInstanceOfType<NullVersionControlService>(serviceProvider.GetRequiredService<IVersionControlService>());
         Assert.IsInstanceOfType<NullTestExecutionService>(serviceProvider.GetRequiredService<ITestExecutionService>());
         Assert.IsInstanceOfType<NullDebugSessionService>(serviceProvider.GetRequiredService<IDebugSessionService>());
@@ -71,7 +77,82 @@ public class CodeStudioServiceCollectionExtensionsTests
 
         using var serviceProvider = services.BuildServiceProvider();
         Assert.IsInstanceOfType<DesignTextDocumentStorageService>(serviceProvider.GetRequiredService<ITextDocumentStorageService>());
+        Assert.IsInstanceOfType<NullTerminalShellResolver>(serviceProvider.GetRequiredService<ITerminalShellResolver>());
+        Assert.IsInstanceOfType<NullTerminalSessionService>(serviceProvider.GetRequiredService<ITerminalSessionService>());
         Assert.IsInstanceOfType<DesignEditorFileDialogService>(serviceProvider.GetRequiredService<IEditorFileDialogService>());
+    }
+
+    /// <summary>
+    /// Verifies that the default terminal registrations add fallback services.
+    /// </summary>
+    [TestMethod]
+    public async Task AddCodeStudioTerminal_RegistersFallbackServices()
+    {
+        var services = new ServiceCollection();
+
+        services.AddCodeStudioTerminal();
+
+        using var serviceProvider = services.BuildServiceProvider();
+        var shellResolver = serviceProvider.GetRequiredService<ITerminalShellResolver>();
+        var sessionService = serviceProvider.GetRequiredService<ITerminalSessionService>();
+        Assert.IsInstanceOfType<NullTerminalShellResolver>(shellResolver);
+        Assert.IsInstanceOfType<NullTerminalSessionService>(sessionService);
+
+        var session = await sessionService.StartSessionAsync(new TerminalSessionStartRequest());
+        Assert.AreEqual(TerminalSessionState.Running, session.State);
+        Assert.IsTrue(session.Shell.IsFallback);
+        await session.DisposeAsync();
+    }
+
+    /// <summary>
+    /// Verifies that the fallback shell resolver preserves explicit request configuration.
+    /// </summary>
+    [TestMethod]
+    public async Task AddCodeStudioTerminal_FallbackShellPreservesRequestedConfiguration()
+    {
+        var services = new ServiceCollection();
+
+        services.AddCodeStudioTerminal();
+
+        using var serviceProvider = services.BuildServiceProvider();
+        var shellResolver = serviceProvider.GetRequiredService<ITerminalShellResolver>();
+        var request = new TerminalSessionStartRequest
+        {
+            ShellPath = "/bin/bash",
+            ShellDisplayName = "bash",
+        };
+        request.Arguments.Add("-l");
+        request.Arguments.Add("-i");
+
+        var shell = await shellResolver.ResolveShellAsync(request);
+
+        Assert.AreEqual("bash", shell.DisplayName);
+        Assert.AreEqual("/bin/bash", shell.ExecutablePath);
+        CollectionAssert.AreEqual(new[] { "-l", "-i" }, shell.Arguments.ToArray());
+        Assert.IsTrue(shell.IsFallback);
+    }
+
+    /// <summary>
+    /// Verifies that the fallback terminal session can be stopped deterministically.
+    /// </summary>
+    [TestMethod]
+    public async Task AddCodeStudioTerminal_FallbackSessionStopRaisesExitAndStopsSession()
+    {
+        var services = new ServiceCollection();
+
+        services.AddCodeStudioTerminal();
+
+        using var serviceProvider = services.BuildServiceProvider();
+        var sessionService = serviceProvider.GetRequiredService<ITerminalSessionService>();
+        var session = await sessionService.StartSessionAsync(new TerminalSessionStartRequest());
+        int? exitCode = null;
+        session.Exited += (_, code) => exitCode = code;
+
+        await session.StopAsync();
+
+        Assert.AreEqual(TerminalSessionState.Stopped, session.State);
+        Assert.AreEqual(0, exitCode);
+        await session.DisposeAsync();
     }
 
     /// <summary>
@@ -86,9 +167,12 @@ public class CodeStudioServiceCollectionExtensionsTests
 
         using var serviceProvider = services.BuildServiceProvider();
         Assert.IsNotNull(serviceProvider.GetRequiredService<IAIClientFactory>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<ICodeStudioBuilderService>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<IVersionControlService>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<ITestExecutionService>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<IDebugSessionService>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<ITerminalShellResolver>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<ITerminalSessionService>());
 
         var storageDescriptor = services.Last(static descriptor => descriptor.ServiceType == typeof(ITextDocumentStorageService));
         var dialogDescriptor = services.Last(static descriptor => descriptor.ServiceType == typeof(IEditorFileDialogService));
