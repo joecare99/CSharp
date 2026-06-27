@@ -38,6 +38,7 @@ namespace GenFree.Data.Tests
             (testRS.Fields[PlaceFields.PolName] as IHasValue).Value.Returns("PolName");
             (testRS.Fields[PlaceFields.g] as IHasValue).Value.Returns("g");
             testClass = new(testRS);
+            testClass.ClearChangedProps();
             CPlaceData.SetGetText(getTextFnc);
             testRS.ClearReceivedCalls();
         }

@@ -18,11 +18,10 @@ public sealed class ConsoleSearchView : Application
     private ListBox _resultsList = null!;
     private Label _historyLabel = null!;
 
-    public ConsoleSearchView(ConsoleAppViewModel vm, IConsole console, IExtendedConsole extendedConsole) : base(console, extendedConsole)
+    public ConsoleSearchView(ConsoleAppViewModel vm, IWidgetSet widgetSet) : base(widgetSet)
     {
         _vm = vm;
-        console.Title = "PlaceAuthority Console Demo (MVVM)";
-        console.Clear();
+        widgetSet.SetTitle("PlaceAuthority Console Demo (MVVM)");
         BuildUi();
     }
 
@@ -30,17 +29,22 @@ public sealed class ConsoleSearchView : Application
     {
         var root = this;
         BackColor = ConsoleColor.DarkBlue;
-        BoarderColor = ConsoleColor.Gray;
-        Border = ConsoleFramework.singleBorder;
-
-        new Label { 
-            Parent = root, 
-            Dimension = new System.Drawing.Rectangle(0, 0, 20, 1), 
-            ForeColor = ConsoleColor.Gray, 
-            Text = "Query:" 
+        BorderDefinition = new BorderDef()
+        {
+            BorderColor = ConsoleColor.Gray,
+            Style = ConsoleLib.Data.BorderStyle.Single
         };
 
-        _queryBox = new TextBox {
+        new Label
+        {
+            Parent = root,
+            Dimension = new System.Drawing.Rectangle(0, 0, 20, 1),
+            ForeColor = ConsoleColor.Gray,
+            Text = "Query:"
+        };
+
+        _queryBox = new TextBox
+        {
             Parent = root,
             Dimension = new System.Drawing.Rectangle(0, 1, Math.Min(40, Console.WindowWidth - 2), 1),
             MultiLine = false,
@@ -50,7 +54,8 @@ public sealed class ConsoleSearchView : Application
         };
 
         _queryBox.Active = true;
-        _historyLabel = new Label {
+        _historyLabel = new Label
+        {
             Parent = root,
             Dimension = new System.Drawing.Rectangle(0, 2, Console.WindowWidth - 2, 1),
             ForeColor = ConsoleColor.DarkCyan,
@@ -58,7 +63,8 @@ public sealed class ConsoleSearchView : Application
         };
         new Label { Parent = root, Dimension = new System.Drawing.Rectangle(0, 3, 20, 1), Text = "Results:", ForeColor = ConsoleColor.Gray };
 
-        _resultsList = new ListBox {
+        _resultsList = new ListBox
+        {
             Parent = root,
             Dimension = new System.Drawing.Rectangle(0, 4, 30, Console.WindowHeight - 6),
             BackColor = ConsoleColor.Black,
@@ -67,7 +73,8 @@ public sealed class ConsoleSearchView : Application
             SelectedBinding = (_vm.Search, nameof(_vm.Search.SelectedResult)),
         };
 
-        _statusLabel = new Label {
+        _statusLabel = new Label
+        {
             Parent = root,
             Dimension = new System.Drawing.Rectangle(0, Console.WindowHeight - 1, Console.WindowWidth - 1, 1),
             BackColor = ConsoleColor.DarkGray,
@@ -75,7 +82,8 @@ public sealed class ConsoleSearchView : Application
             Binding = (_vm, nameof(_vm.Status))
         };
 
-        ((INotifyPropertyChanged)_vm.Search).PropertyChanged += (_, e) => {
+        ((INotifyPropertyChanged)_vm.Search).PropertyChanged += (_, e) =>
+        {
             if (e.PropertyName == nameof(_vm.Search.SelectedResult) && _vm.Search.SelectedResult is not null)
             {
                 var r = _vm.Search.SelectedResult;
@@ -90,7 +98,8 @@ public sealed class ConsoleSearchView : Application
             }
         };
 
-        this.OnKeyPressed += async (_, e) => {
+        this.OnKeyPressed += async (_, e) =>
+        {
             switch ((ConsoleKey)e.usKeyCode)
             {
                 case ConsoleKey.Enter:
@@ -143,12 +152,16 @@ public sealed class ConsoleSearchView : Application
 
     private void MoveSelection(int delta)
     {
-        if (_vm.Search.Results.Count == 0) return;
+        if (_vm.Search.Results.Count == 0)
+            return;
         var newIndex = _resultsList.SelectedIndex;
-        if (newIndex < 0) newIndex = 0;
+        if (newIndex < 0)
+            newIndex = 0;
         newIndex += delta;
-        if (newIndex < 0) newIndex = 0;
-        if (newIndex >= _vm.Search.Results.Count) newIndex = _vm.Search.Results.Count - 1;
+        if (newIndex < 0)
+            newIndex = 0;
+        if (newIndex >= _vm.Search.Results.Count)
+            newIndex = _vm.Search.Results.Count - 1;
         _resultsList.SelectedIndex = newIndex;
         _vm.Search.SelectedResult = _vm.Search.Results[newIndex];
     }

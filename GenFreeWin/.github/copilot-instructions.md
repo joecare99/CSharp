@@ -16,11 +16,14 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Avoid global usings; each file/class should declare its own usings so dependencies remain explicit.
 - Prefer built-in .NET database abstractions from `System.Data/System.Data.Common` (for example `DbProviderFactory`, `DbConnection`, `DbCommand`, `DbDataReader`, `IDbConnection`) over custom database interface hierarchies when making data access provider-agnostic.
 - When changing code related to password handling, only use `SecureString` when it provides a real security improvement; avoid changes without a security benefit.
+- For driver planning, ensure `Genealogy.GedCom` resides in the neutral solution area. The execution of drivers should be asynchronous. In `WinAhnenCls`, no temporary compatibility adapters should remain. `GedLes` serves only as a negative or comparison reference; the primary focus should be on the GEDCOM-5.5.1 standard, with careful insight into what should be avoided. For the HEJ driver, prefer Option C: primary semantic equivalence focusing on import, with an optional rare legacy-compatible export mode for the old format.
+- For `GenInterfaces`, prefer a common result object with `Success`, `Diagnostics`, and optional payload. Diagnostics should support at least `Trace`, `Info`, `Warning`, and `Error`. Format issues should carry file context and line number.
 
 ## Testing
 - Use `MSTest` in the latest practical version for new or updated tests.
 - Use `NSubstitute` for mocks, stubs, and substitutes in tests.
 - Prefer `DataRow` for parameterized single-test scenarios.
+- For driver testing strategy, use both JSON snapshots and explicit assertions. Roundtrip tests should be tolerant, especially regarding order deviations.
 
 ## Internationalization
 - Keep I18N in mind when writing code, ensuring it can be easily adapted for different languages and regions.
