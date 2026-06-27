@@ -599,4 +599,9 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
         {
         }
     }
+
+    public void SetTitle(string v)
+    {
+        console.Title = v;
+    }
 }

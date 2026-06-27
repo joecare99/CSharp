@@ -2,32 +2,28 @@
 
 ## Status
 - [x] Planned
-- [ ] Implemented
-- [ ] Validated
+- [x] Implemented
+- [x] Validated
 - [ ] Closed
-- [x] Paused
+- [ ] Paused
 
 ## Summary
-Mouse input still does not reach the hosted console application even though the routed WPF event exception has already been fixed.
+Mouse input did not reach the hosted console application in the WPF and Avalonia hosts when applications enabled mouse reporting through combined private mode sequences.
 
 ## Current Findings
-- The current WPF terminal control only forwards mouse input when `TerminalMouseProtocol.Sgr` is active.
-- The shared parser reports mouse tracking modes for `?1000`, `?1002`, and `?1003`.
-- The shared parser reports SGR protocol only for `?1006`.
-- If a console application enables mouse tracking without also enabling `?1006`, the UI control currently suppresses all mouse reports.
-- The same SGR-only gate is present in both `Terminal.Wpf.Controls.TerminalControl` and `Terminal.Avalonia.Controls.TerminalControl`.
+- The current WPF and Avalonia terminal controls forward mouse input only when `MouseTrackingMode` and `TerminalMouseProtocol.Sgr` are active.
+- The shared parser previously matched only exact single private mode strings such as `?1002` and `?1006`.
+- Combined DECSET and DECRST sequences such as `CSI ?1002;1006h` or `CSI ?1000;1006l` were ignored by the parser.
+- Because of that, `MouseTrackingMode` and `MouseProtocol` stayed unset and both hosts suppressed mouse forwarding.
 
 ## Working Hypothesis
-Some hosted console applications enable VT mouse tracking but keep the default protocol instead of negotiating SGR explicitly. The terminal host therefore needs a fallback mouse protocol path rather than requiring SGR unconditionally.
+Hosted console applications commonly enable VT mouse tracking and SGR reporting in a single combined private mode sequence. The shared parser therefore needs to split and process each requested mode individually.
 
 ## Planned Next Steps
-1. Extend the shared mouse protocol model to represent the default VT mouse protocol.
-2. Update the ANSI parser and mouse input encoder to support protocol-specific encoding.
-3. Update WPF and Avalonia terminal controls to send mouse reports for the negotiated protocol.
-4. Add regression tests in `Terminal.Core.Tests`.
-5. Validate with targeted tests and a solution build.
+1. Validate the parser fix with targeted terminal parser tests.
+2. Validate the affected host projects with targeted builds if needed.
 
 ## Resume Notes
-- Last confirmed user feedback: the routed-event exception is gone and line duplication is fixed.
-- A separate unsupported `CSI ... t` sequence was intentionally deferred.
-- The next implementation step should start in shared terminal core protocol handling, not in the host app entry point.
+- The parser now splits combined private mode sequences in `ApplyMode` and applies each mode independently.
+- Regression tests were added for combined mouse enable and disable sequences.
+- If runtime issues remain after validation, the next check should be a live host session against a mouse-aware terminal client.

@@ -308,21 +308,49 @@ public sealed class TerminalAnsiParser
 
     private void ApplyMode(string parameterText, bool enabled)
     {
+        if (string.IsNullOrEmpty(parameterText))
+        {
+            return;
+        }
+
+        if (parameterText[0] == '?')
+        {
+            foreach (var modeText in parameterText[1..].Split(';', StringSplitOptions.RemoveEmptyEntries))
+            {
+                ApplyPrivateMode(modeText, enabled);
+            }
+
+            return;
+        }
+
+        ApplyStandardMode(parameterText, enabled);
+    }
+
+    private void ApplyStandardMode(string parameterText, bool enabled)
+    {
+        if (parameterText == "25")
+        {
+            _buffer.SetCursorVisibility(enabled);
+        }
+    }
+
+    private void ApplyPrivateMode(string parameterText, bool enabled)
+    {
         switch (parameterText)
         {
-            case "?25":
+            case "25":
                 _buffer.SetCursorVisibility(enabled);
                 return;
-            case "?1000":
+            case "1000":
                 SetMouseTrackingMode(enabled ? TerminalMouseTrackingMode.Button : TerminalMouseTrackingMode.None);
                 return;
-            case "?1002":
+            case "1002":
                 SetMouseTrackingMode(enabled ? TerminalMouseTrackingMode.Drag : TerminalMouseTrackingMode.None);
                 return;
-            case "?1003":
+            case "1003":
                 SetMouseTrackingMode(enabled ? TerminalMouseTrackingMode.Move : TerminalMouseTrackingMode.None);
                 return;
-            case "?1006":
+            case "1006":
                 SetMouseProtocol(enabled ? TerminalMouseProtocol.Sgr : TerminalMouseProtocol.None);
                 return;
         }

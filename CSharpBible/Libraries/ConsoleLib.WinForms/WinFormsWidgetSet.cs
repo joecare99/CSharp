@@ -614,6 +614,11 @@ public sealed class WinFormsWidgetSet : IHostedWidgetSet
         }
     }
 
+    public void SetTitle(string v)
+    {
+        _hostForm.Text = v;
+    }
+
     private sealed class WinFormsMouseEventAdapter :  IMouseEvent
     {
         public WinFormsMouseEventAdapter(System.Windows.Forms.MouseEventArgs args, WinFormsControl source)
