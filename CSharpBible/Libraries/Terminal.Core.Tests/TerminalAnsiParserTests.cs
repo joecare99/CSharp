@@ -142,6 +142,24 @@ public class TerminalAnsiParserTests
     }
 
     [TestMethod]
+    public void Parse_ShouldReportMouseTrackingModeAndProtocolChangesFromCombinedPrivateModeSequence()
+    {
+        var buffer = new TerminalBuffer(new TerminalSize(5, 2));
+        var reportedMode = TerminalMouseTrackingMode.None;
+        var reportedProtocol = TerminalMouseProtocol.None;
+        var parser = new TerminalAnsiParser(buffer, null, (mode, protocol) =>
+        {
+            reportedMode = mode;
+            reportedProtocol = protocol;
+        });
+
+        parser.Parse("\u001b[?1002;1006h");
+
+        Assert.AreEqual(TerminalMouseTrackingMode.Drag, reportedMode);
+        Assert.AreEqual(TerminalMouseProtocol.Sgr, reportedProtocol);
+    }
+
+    [TestMethod]
     public void Parse_ShouldDisableMouseTrackingWhenModeIsReset()
     {
         var buffer = new TerminalBuffer(new TerminalSize(5, 2));
@@ -154,6 +172,24 @@ public class TerminalAnsiParserTests
         });
 
         parser.Parse("\u001b[?1000h\u001b[?1006h\u001b[?1000l");
+
+        Assert.AreEqual(TerminalMouseTrackingMode.None, reportedMode);
+        Assert.AreEqual(TerminalMouseProtocol.None, reportedProtocol);
+    }
+
+    [TestMethod]
+    public void Parse_ShouldDisableMouseTrackingWhenCombinedModeIsReset()
+    {
+        var buffer = new TerminalBuffer(new TerminalSize(5, 2));
+        var reportedMode = TerminalMouseTrackingMode.None;
+        var reportedProtocol = TerminalMouseProtocol.None;
+        var parser = new TerminalAnsiParser(buffer, null, (mode, protocol) =>
+        {
+            reportedMode = mode;
+            reportedProtocol = protocol;
+        });
+
+        parser.Parse("\u001b[?1000;1006h\u001b[?1000;1006l");
 
         Assert.AreEqual(TerminalMouseTrackingMode.None, reportedMode);
         Assert.AreEqual(TerminalMouseProtocol.None, reportedProtocol);

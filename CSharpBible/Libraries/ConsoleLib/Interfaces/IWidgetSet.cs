@@ -114,6 +114,7 @@ public interface IWidgetSet
     /// <param name="terminal">The terminal to redraw.</param>
     /// <param name="dimension">The clipping rectangle in terminal coordinates.</param>
     void RedrawTerminal(IControl terminal, System.Drawing.Rectangle dimension);
+    void SetTitle(string v);
 
     System.Drawing.Rectangle ClipRect { get; }
 }
