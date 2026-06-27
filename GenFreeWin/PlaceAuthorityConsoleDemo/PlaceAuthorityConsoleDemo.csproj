@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CSharpBible\Libraries\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
     <ProjectReference Include="..\..\CSharpBible\Libraries\ConsoleLib\ConsoleLib.csproj" />
     <ProjectReference Include="..\..\CSharpBible\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
     <ProjectReference Include="..\GenFreeBrowser\GenFreeBrowser.csproj" />

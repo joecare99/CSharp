@@ -4,6 +4,7 @@ using BaseLib.Interfaces;
 using BaseLib.Models;
 using ConsoleLib;
 using ConsoleLib.Interfaces;
+using ConsoleLib.ExtCon;
 using GenFreeBrowser.Places;
 using GenFreeBrowser.Places.Interface;
 using GenInterfaces.Interfaces.Authorities;
@@ -27,6 +28,7 @@ class Program
         var services = new ServiceCollection();
         services.AddHttpClient();
         services.AddSingleton<IConsole, ConsoleProxy>();
+        services.AddSingleton<IWidgetSet, ConsoleWidgetSet>();
         services.AddSingleton<IExtendedConsole, ExtendedConsole>();
         services.AddSingleton<ISearchHistoryService, SearchHistoryService>();
         services.AddSingleton<IGenPlaceAuthority>(sp => new NominatimAuthority(sp.GetRequiredService<IHttpClientFactory>().CreateClient()));
