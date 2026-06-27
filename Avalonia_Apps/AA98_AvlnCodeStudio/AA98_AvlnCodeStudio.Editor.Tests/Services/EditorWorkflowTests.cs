@@ -4,6 +4,7 @@ using AA98_AvlnCodeStudio.Editor.Services;
 using AA98_AvlnCodeStudio.Model.Documents;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System;
 using System.Threading.Tasks;
 
 namespace AA98_AvlnCodeStudio.Editor.Tests.Services;
@@ -58,6 +59,28 @@ public class EditorWorkflowTests
     }
 
     /// <summary>
+    /// Verifies that opening a Linux-path source file loads the selected content.
+    /// </summary>
+    [TestMethod]
+    public async Task OpenAsync_LoadsSelectedLinuxCSharpDocument()
+    {
+        var document = new FileEditorDocument();
+        var dialogService = Substitute.For<IEditorFileDialogService>();
+        var storageService = Substitute.For<ITextDocumentStorageService>();
+        dialogService.ShowOpenFileDialogAsync(Arg.Any<string?>(), default).Returns("/home/dev/aa98/Program.cs");
+        storageService.ReadAllTextAsync("/home/dev/aa98/Program.cs", default).Returns("class Program { }\n");
+        var workflow = new EditorWorkflow(document, dialogService, storageService);
+
+        var result = await workflow.OpenAsync();
+
+        Assert.IsTrue(result.IsCompleted);
+        Assert.AreEqual(EditorOperationKind.Open, result.OperationKind);
+        Assert.AreEqual("/home/dev/aa98/Program.cs", document.FilePath);
+        Assert.AreEqual("Program.cs", document.DisplayName);
+        Assert.AreEqual("class Program { }\n", document.Content);
+    }
+
+    /// <summary>
     /// Verifies that save uses the existing file path without prompting.
     /// </summary>
     [TestMethod]
@@ -100,6 +123,27 @@ public class EditorWorkflowTests
     }
 
     /// <summary>
+    /// Verifies that save as persists a Linux-path markdown planning file.
+    /// </summary>
+    [TestMethod]
+    public async Task SaveAsAsync_PromptsAndSavesLinuxMarkdownDocument()
+    {
+        var document = new FileEditorDocument();
+        document.UpdateContent("# backlog\n");
+        var dialogService = Substitute.For<IEditorFileDialogService>();
+        var storageService = Substitute.For<ITextDocumentStorageService>();
+        dialogService.ShowSaveFileDialogAsync(Arg.Any<string?>(), "Untitled.txt", default).Returns("/home/dev/aa98/plan.md");
+        var workflow = new EditorWorkflow(document, dialogService, storageService);
+
+        var result = await workflow.SaveAsAsync();
+
+        Assert.IsTrue(result.IsCompleted);
+        Assert.AreEqual(EditorOperationKind.SaveAs, result.OperationKind);
+        Assert.AreEqual("/home/dev/aa98/plan.md", document.FilePath);
+        await storageService.Received(1).SaveAllTextAsync("/home/dev/aa98/plan.md", "# backlog\n", default);
+    }
+
+    /// <summary>
     /// Verifies that canceling open returns a canceled result.
     /// </summary>
     [TestMethod]
@@ -116,5 +160,46 @@ public class EditorWorkflowTests
         Assert.IsFalse(result.IsCompleted);
         Assert.AreEqual(EditorOperationStatus.Canceled, result.Status);
         await storageService.DidNotReceive().ReadAllTextAsync(Arg.Any<string>(), default);
+    }
+
+    /// <summary>
+    /// Verifies that opening an unsaved document uses the current working directory as dialog seed.
+    /// </summary>
+    [TestMethod]
+    public async Task OpenAsync_UsesCurrentDirectoryForUnsavedDocument()
+    {
+        var currentDirectory = Environment.CurrentDirectory;
+        Assert.IsFalse(string.IsNullOrWhiteSpace(currentDirectory));
+
+        var document = new FileEditorDocument();
+        var dialogService = Substitute.For<IEditorFileDialogService>();
+        var storageService = Substitute.For<ITextDocumentStorageService>();
+        dialogService.ShowOpenFileDialogAsync(currentDirectory, default).Returns((string?)null);
+        var workflow = new EditorWorkflow(document, dialogService, storageService);
+
+        await workflow.OpenAsync();
+
+        await dialogService.Received(1).ShowOpenFileDialogAsync(currentDirectory, default);
+    }
+
+    /// <summary>
+    /// Verifies that saving a Linux-path document preserves its existing path without prompting.
+    /// </summary>
+    [TestMethod]
+    public async Task SaveAsync_UsesExistingLinuxFilePath()
+    {
+        var document = new FileEditorDocument();
+        document.Load("/home/dev/aa98/sample.axaml", "<Window />\n");
+        document.UpdateContent("<Window/>\n");
+        var dialogService = Substitute.For<IEditorFileDialogService>();
+        var storageService = Substitute.For<ITextDocumentStorageService>();
+        var workflow = new EditorWorkflow(document, dialogService, storageService);
+
+        var result = await workflow.SaveAsync();
+
+        Assert.IsTrue(result.IsCompleted);
+        Assert.AreEqual(EditorOperationKind.Save, result.OperationKind);
+        await storageService.Received(1).SaveAllTextAsync("/home/dev/aa98/sample.axaml", "<Window/>\n", default);
+        await dialogService.DidNotReceive().ShowSaveFileDialogAsync(Arg.Any<string?>(), Arg.Any<string?>(), default);
     }
 }
