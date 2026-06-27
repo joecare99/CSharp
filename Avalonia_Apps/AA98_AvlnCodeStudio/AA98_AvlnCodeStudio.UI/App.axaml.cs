@@ -5,6 +5,7 @@ using AA98_AvlnCodeStudio.Editor.Services;
 using AA98_AvlnCodeStudio.Model.Documents;
 using AA98_AvlnCodeStudio.UI.DependencyInjection;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avln_CommonDialogs.Avalonia;
@@ -29,18 +30,36 @@ namespace AA98_AvlnCodeStudio.UI
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                ServiceProvider = ConfigureServices(desktop);
-                desktop.MainWindow = CreateMainWindow(ServiceProvider);
+                InitializeDesktop(desktop);
             }
 
             base.OnFrameworkInitializationCompleted();
         }
 
-        private static IServiceProvider ConfigureServices(IClassicDesktopStyleApplicationLifetime desktop)
+        public MainWindow InitializeDesktop(IClassicDesktopStyleApplicationLifetime desktop)
         {
+            ArgumentNullException.ThrowIfNull(desktop);
+
+            try
+            {
+                ServiceProvider = CreateServiceProvider(() => desktop.MainWindow);
+                var mainWindow = CreateMainWindow(ServiceProvider);
+                desktop.MainWindow = mainWindow;
+                return mainWindow;
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException("AA98 shell startup failed during desktop initialization. Check desktop lifetime, service registrations, and platform dialog availability.", exception);
+            }
+        }
+
+        public static ServiceProvider CreateServiceProvider(Func<TopLevel?> topLevelProvider)
+        {
+            ArgumentNullException.ThrowIfNull(topLevelProvider);
+
             var services = new ServiceCollection();
 
-            services.AddAvaloniaCommonDialogs(() => desktop.MainWindow);
+            services.AddAvaloniaCommonDialogs(topLevelProvider);
             services.AddCodeStudioFoundation();
             services.AddSingleton<IFileEditorDocumentFactory, FileEditorDocumentFactory>();
             services.AddSingleton<IEditorWorkflowFactory, EditorWorkflowFactory>();
@@ -53,12 +72,25 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<MainWindow>();
 
-            return services.BuildServiceProvider();
+            return services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateOnBuild = true,
+                ValidateScopes = true
+            });
         }
 
-        private static MainWindow CreateMainWindow(IServiceProvider serviceProvider)
+        public static MainWindow CreateMainWindow(IServiceProvider serviceProvider)
         {
-            return serviceProvider.GetRequiredService<MainWindow>();
+            ArgumentNullException.ThrowIfNull(serviceProvider);
+
+            try
+            {
+                return serviceProvider.GetRequiredService<MainWindow>();
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException("AA98 main window creation failed. Check UI component and editor registrations.", exception);
+            }
         }
     }
 }

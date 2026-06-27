@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.Base.AI.DependencyInjection;
+using AA98_AvlnCodeStudio.Base.Building.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Debugging.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.OS.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Testing.DependencyInjection;
@@ -25,6 +26,7 @@ public static class CodeStudioServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddCodeStudioAI();
+        services.AddCodeStudioBuilding();
         services.AddCodeStudioVersioning();
         services.AddCodeStudioTesting();
         services.AddCodeStudioDebugging();

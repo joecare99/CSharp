@@ -40,6 +40,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base\AA98_AvlnCodeStudio.Base.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.AI\AA98_AvlnCodeStudio.Base.AI.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Building\AA98_AvlnCodeStudio.Base.Building.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.UI\AA98_AvlnCodeStudio.Base.UI.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.OS\AA98_AvlnCodeStudio.Base.OS.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Versioning\AA98_AvlnCodeStudio.Base.Versioning.csproj" />
