@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="GenFreeAvln.Views.FraPersImpQuerry"
+			 Width="432"
+			 Height="186">
+  <GroupBox Name="frmImport" Header="Daten Import">
+	<Grid RowDefinitions="*,*" ColumnDefinitions="*,*" Margin="4">
+	  <Button Grid.Row="0" Grid.Column="0" Name="btnReenter" Margin="4" Content="neu eingeben" Command="{Binding ReenterCommand}" />
+	  <Button Grid.Row="0" Grid.Column="1" Name="btnLoadFromFile" Margin="4" Content="aus Datei wählen" Command="{Binding LoadFromFileCommand}" />
+	  <Button Grid.Row="1" Grid.Column="0" Name="btnCancel3" Margin="4" Content="abbrechen" Command="{Binding CancelCommand}" />
+	  <Button Grid.Row="1" Grid.Column="1" Name="btnDeleteQuiet" Margin="4" Content="Ohne Rückfrage löschen" Command="{Binding DeleteQuietCommand}" />
+	</Grid>
+  </GroupBox>
+</UserControl>

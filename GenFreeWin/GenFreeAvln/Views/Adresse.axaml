@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		x:Class="GenFreeAvln.Views.Adresse"
+		Title="Adresse"
+		Width="560"
+		Height="520"
+		CanResize="False"
+		ShowInTaskbar="False">
+  <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*,Auto"
+		ColumnDefinitions="180,*"
+		Margin="12">
+	<TextBlock Grid.Row="0" Grid.Column="0" Name="lblTitle" Text="Titel" VerticalAlignment="Center" />
+	<TextBox Grid.Row="0" Grid.Column="1" Name="edtTitle" Text="{Binding Title, Mode=TwoWay}" />
+
+	<TextBlock Grid.Row="1" Grid.Column="0" Name="lblGivenname" Text="Vorname" VerticalAlignment="Center" />
+	<TextBox Grid.Row="1" Grid.Column="1" Name="edtGivenname" Text="{Binding Givenname, Mode=TwoWay}" />
+
+	<TextBlock Grid.Row="2" Grid.Column="0" Name="lblSurname" Text="Nachname" VerticalAlignment="Center" />
+	<TextBox Grid.Row="2" Grid.Column="1" Name="edtSurname" Text="{Binding Surname, Mode=TwoWay}" />
+
+	<TextBlock Grid.Row="3" Grid.Column="0" Name="lblStreet" Text="Straße" VerticalAlignment="Center" />
+	<TextBox Grid.Row="3" Grid.Column="1" Name="edtStreet" Text="{Binding Street, Mode=TwoWay}" />
+
+	<TextBlock Grid.Row="4" Grid.Column="0" Name="lblZip" Text="PLZ" VerticalAlignment="Center" />
+	<TextBox Grid.Row="4" Grid.Column="1" Name="edtZip" Text="{Binding Zip, Mode=TwoWay}" />
+
+	<TextBlock Grid.Row="5" Grid.Column="0" Name="lblPlace" Text="Ort" VerticalAlignment="Center" />
+	<TextBox Grid.Row="5" Grid.Column="1" Name="edtPlace" Text="{Binding Place, Mode=TwoWay}" />
+
+	<TextBlock Grid.Row="6" Grid.Column="0" Name="lblPhone" Text="Telefon" VerticalAlignment="Center" />
+	<TextBox Grid.Row="6" Grid.Column="1" Name="edtPhone" Text="{Binding Phone, Mode=TwoWay}" />
+
+	<TextBlock Grid.Row="7" Grid.Column="0" Name="lblEMail" Text="E-Mail" VerticalAlignment="Center" />
+	<TextBox Grid.Row="7" Grid.Column="1" Name="edtEMail" Text="{Binding EMail, Mode=TwoWay}" />
+
+	<TextBlock Grid.Row="8" Grid.Column="0" Name="lblSpecial" Text="Zusatz" VerticalAlignment="Center" />
+	<TextBox Grid.Row="8" Grid.Column="1" Name="edtSpecial" Text="{Binding Special, Mode=TwoWay}" />
+
+	<TextBlock Grid.Row="9" Grid.ColumnSpan="2" Name="lblSubcaption" Margin="0,8,0,0" />
+	<TextBlock Grid.Row="10" Grid.ColumnSpan="2" Name="lblHint" TextWrapping="Wrap" Margin="0,8,0,0" />
+
+	<Button Grid.Row="11" Grid.Column="1" Name="btnSave" HorizontalAlignment="Right" MinWidth="120" Margin="0,12,0,0"
+			Command="{Binding SaveCommand}" Content="Speichern" />
+  </Grid>
+</Window>

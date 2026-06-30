@@ -135,12 +135,14 @@
     <Project Path="GenFreeBaseTests/GenFreeBaseTests.csproj" />
     <Project Path="GenFreeBrowser.Tests/GenFreeBrowser.Tests.csproj" />
     <Project Path="GenFreeBrowser.ViewHost/GenFreeBrowser.ViewHost.csproj" />
+    <Project Path="GenFreeBrowser.Map/GenFreeBrowser.Map.csproj" />
     <Project Path="GenFreeBrowser/GenFreeBrowser.csproj" />
     <Project Path="GenFreeData/GenFreeData.csproj" />
     <Project Path="GenFreeDataTests/GenFreeDataTests.csproj" />
     <Project Path="GenFreeHelper/GenFreeHelper.csproj" />
     <Project Path="GenFreeHelperTests/GenFreeHelperTests.csproj" />
     <Project Path="GenFreeUIItfs/GenFreeUIItfs.csproj" />
+    <Project Path="GenFreeAvln/GenFreeAvln.csproj" />
     <Project Path="GenFreeWin/GenFreeWin.csproj" />
     <Project Path="GenFreeWin2/GenFreeWin2.csproj" />
     <Project Path="GenFreeWin3/GenFreeWin3.csproj">
