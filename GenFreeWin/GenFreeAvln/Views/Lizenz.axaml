@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		x:Class="GenFreeAvln.Views.Lizenz"
+		Title="Lizenz"
+		Width="420"
+		Height="300"
+		CanResize="False"
+		ShowInTaskbar="False">
+  <StackPanel Margin="16" Spacing="10">
+	<TextBlock Name="lblEnterLicence" HorizontalAlignment="Center" FontWeight="Bold" />
+	<Button Name="btnReqHint" Command="{Binding ReqHintCommand}" HorizontalAlignment="Center" MinWidth="240" />
+	<TextBlock Name="lblDisplayHint" IsVisible="{Binding DisplayHintVisible}" HorizontalAlignment="Center" />
+
+	<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4" Margin="0,10,0,0">
+	  <TextBox Name="txtLicPart1" Width="120" Text="{Binding LicText1, Mode=TwoWay}" Tag="0" TextInput="TextBox_OnTextInput" KeyUp="TextBox_OnKeyUp" />
+	  <TextBlock Name="lblSep2" Text="-" VerticalAlignment="Center" />
+	  <TextBox Name="txtLicPart2" Width="120" Text="{Binding LicText2, Mode=TwoWay}" Tag="1" TextInput="TextBox_OnTextInput" KeyUp="TextBox_OnKeyUp" />
+	  <TextBlock Name="lblSep1" Text="-" VerticalAlignment="Center" />
+	  <TextBox Name="txtLicPart3" Width="72" Text="{Binding LicText3, Mode=TwoWay}" Tag="2" TextInput="TextBox_OnTextInput" KeyUp="TextBox_OnKeyUp" />
+	</StackPanel>
+
+	<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="16" Margin="0,16,0,0">
+	  <Button Name="btnVerify" Command="{Binding VerifyCommand}" IsEnabled="True" MinWidth="100" />
+	  <Button Name="btnCancel" Command="{Binding CancelCommand}" MinWidth="100" />
+	</StackPanel>
+  </StackPanel>
+</Window>

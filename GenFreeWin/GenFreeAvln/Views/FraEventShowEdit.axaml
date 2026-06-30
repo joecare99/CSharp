@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="GenFreeAvln.Views.FraEventShowEdit"
+			 Height="40">
+  <Grid ColumnDefinitions="2*,8*" RowDefinitions="Auto">
+	<Border Grid.Column="0" Background="#E0E0E0" Padding="8,2">
+	  <TextBlock Name="lblEvent" TextAlignment="Right" VerticalAlignment="Center" />
+	</Border>
+	<Border Grid.Column="1" Background="White" Padding="8,2">
+	  <TextBlock Name="lblBirthDisp" Text="{Binding Display_Text}" VerticalAlignment="Center" />
+	</Border>
+  </Grid>
+</UserControl>
