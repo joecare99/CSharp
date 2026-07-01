@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.UI;
+using AA98_AvlnCodeStudio.UI.ViewModels;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avln_CommonDialogs.Base.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,10 +26,12 @@ public class AppStartupCompositionTests
         var viewModelFactory = serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.UI.ViewModels.IEditorViewModelFactory>();
         var workflowFactory = serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Editor.Services.IEditorWorkflowFactory>();
         var dialogService = serviceProvider.GetRequiredService<IOpenFileDialog>();
+        var planningExplorer = serviceProvider.GetRequiredService<PlanningExplorerViewModel>();
 
         Assert.IsNotNull(viewModelFactory);
         Assert.IsNotNull(workflowFactory);
         Assert.IsNotNull(dialogService);
+        Assert.IsNotNull(planningExplorer);
     }
 
     /// <summary>

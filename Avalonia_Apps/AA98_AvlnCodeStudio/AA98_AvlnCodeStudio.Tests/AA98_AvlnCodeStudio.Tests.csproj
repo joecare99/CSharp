@@ -35,13 +35,19 @@
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Versioning\AA98_AvlnCodeStudio.Base.Versioning.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Testing\AA98_AvlnCodeStudio.Base.Testing.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Debugging\AA98_AvlnCodeStudio.Base.Debugging.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Diagnostics.Debug\AA98_AvlnCodeStudio.Diagnostics.Debug.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Diagnostics.UI\AA98_AvlnCodeStudio.Diagnostics.UI.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Core\AA98_AvlnCodeStudio.Planning.Core.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Local\AA98_AvlnCodeStudio.Planning.Local.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.UI\AA98_AvlnCodeStudio.Planning.UI.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.UI\AA98_AvlnCodeStudio.UI.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Building.Workbench\AA98_AvlnCodeStudio.Building.Workbench.csproj" />
     <ProjectReference Include="..\AA98.Builder.Host\AA98.Builder.Host.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Versioning.Git\AA98_AvlnCodeStudio.Versioning.Git.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.6.0" />
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.7.0" />
   </ItemGroup>
 </Project>
