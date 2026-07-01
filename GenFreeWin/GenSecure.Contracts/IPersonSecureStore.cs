@@ -42,17 +42,17 @@ public interface IPersonSecureStore
     void Delete(string sPersonId, DeleteMode eMode);
 
     /// <summary>
-    /// Grants access to a Windows SID for an existing person record.
+    /// Grants access to a principal identifier for an existing person record.
     /// </summary>
     /// <param name="sPersonId">The stable person identifier.</param>
-    /// <param name="sWindowsSid">The Windows SID to add.</param>
-    void GrantAccess(string sPersonId, string sWindowsSid);
+    /// <param name="sPrincipalId">The principal identifier to add.</param>
+    void GrantAccess(string sPersonId, string sPrincipalId);
 
     /// <summary>
-    /// Gets the SHA-256 hashes of Windows SIDs that are permitted to decrypt a person record.
-    /// The raw SIDs are never persisted; only their hashes are stored.
+    /// Gets the hashes of principal identifiers that are permitted to decrypt a person record.
+    /// The raw principal identifiers are never persisted; only their hashes are stored.
     /// </summary>
     /// <param name="sPersonId">The stable person identifier.</param>
-    /// <returns>SHA-256 hashes (lowercase hex) of the configured Windows SIDs.</returns>
-    IReadOnlyCollection<string> GetAllowedWindowsSidHashes(string sPersonId);
+    /// <returns>Lowercase hex hashes of the configured principal identifiers.</returns>
+    IReadOnlyCollection<string> GetAllowedPrincipalHashes(string sPersonId);
 }
