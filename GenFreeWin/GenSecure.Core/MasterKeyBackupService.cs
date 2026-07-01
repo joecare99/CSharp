@@ -13,6 +13,7 @@ public sealed class MasterKeyBackupService : IMasterKeyBackupService
     private const int MasterKeySize = 32;
     private const int RecoveryKeySize = 32;
     private const int RecoveryIterationCount = 600000;
+    private readonly ILocalKeyProtector _localKeyProtector;
     private readonly GenSecureStoreOptions _options;
 
     /// <summary>
@@ -20,8 +21,19 @@ public sealed class MasterKeyBackupService : IMasterKeyBackupService
     /// </summary>
     /// <param name="options">The store options.</param>
     public MasterKeyBackupService(GenSecureStoreOptions options)
+        : this(options, PlatformServiceResolver.CreateLocalKeyProtector(options))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterKeyBackupService"/> class.
+    /// </summary>
+    /// <param name="options">The store options.</param>
+    /// <param name="localKeyProtector">The local master-key protector.</param>
+    public MasterKeyBackupService(GenSecureStoreOptions options, ILocalKeyProtector localKeyProtector)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
+        _localKeyProtector = localKeyProtector ?? throw new ArgumentNullException(nameof(localKeyProtector));
     }
 
     /// <inheritdoc />
@@ -85,7 +97,7 @@ public sealed class MasterKeyBackupService : IMasterKeyBackupService
         if (File.Exists(sLocalMasterKeyFilePath))
         {
             byte[] arrProtectedMasterKey = File.ReadAllBytes(sLocalMasterKeyFilePath);
-            return ProtectedData.Unprotect(arrProtectedMasterKey, optionalEntropy: null, DataProtectionScope.CurrentUser);
+            return _localKeyProtector.Unprotect(arrProtectedMasterKey);
         }
 
         byte[] arrMasterKey = RandomNumberGenerator.GetBytes(MasterKeySize);
@@ -98,7 +110,7 @@ public sealed class MasterKeyBackupService : IMasterKeyBackupService
         ArgumentNullException.ThrowIfNull(arrMasterKey);
 
         Directory.CreateDirectory(_options.MasterKeyDirectoryPath);
-        byte[] arrProtectedMasterKey = ProtectedData.Protect(arrMasterKey, optionalEntropy: null, DataProtectionScope.CurrentUser);
+        byte[] arrProtectedMasterKey = _localKeyProtector.Protect(arrMasterKey);
         File.WriteAllBytes(_options.LocalMasterKeyFilePath, arrProtectedMasterKey);
     }
 }
