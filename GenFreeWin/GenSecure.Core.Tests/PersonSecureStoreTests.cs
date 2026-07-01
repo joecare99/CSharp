@@ -119,13 +119,13 @@ public sealed class PersonSecureStoreTests
     }
 
     [TestMethod]
-    public void GetAllowedWindowsSidHashes_ShouldReturnHmacSha256Hashes_NotRawSids()
+    public void GetAllowedPrincipalHashes_ShouldReturnHmacSha256Hashes_NotRawPrincipalIds()
     {
         using TestStoreScope scope = new();
 
         scope.Store.Save("person-5", new TestPerson("Emmy", "Noether"));
 
-        IReadOnlyCollection<string> lstHashes = scope.Store.GetAllowedWindowsSidHashes("person-5");
+        IReadOnlyCollection<string> lstHashes = scope.Store.GetAllowedPrincipalHashes("person-5");
 
         Assert.AreEqual(1, lstHashes.Count);
 
@@ -134,16 +134,15 @@ public sealed class PersonSecureStoreTests
         // An HMAC-SHA256 output is 32 bytes = exactly 64 lowercase hex characters
         Assert.AreEqual(64, sSidHash.Length);
         Assert.IsTrue(sSidHash.All(c => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')),
-            "The returned value must be a lowercase hex string, not a raw Windows SID.");
+            "The returned value must be a lowercase hex string, not a raw principal identifier.");
 
-        // Must not look like a Windows SID
-        Assert.IsFalse(sSidHash.StartsWith("S-", StringComparison.OrdinalIgnoreCase));
+        // Must not be the raw principal identifier
+        Assert.IsFalse(string.Equals(scope.PrincipalProvider.CurrentPrincipalId, sSidHash, StringComparison.OrdinalIgnoreCase));
 
-        // Must not be the plain SHA-256 of the SID — proves the HMAC pepper is in use
-        string sCurrentSid = System.Security.Principal.WindowsIdentity.GetCurrent().User?.Value ?? string.Empty;
-        string sPlainSha256 = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(sCurrentSid))).ToLowerInvariant();
+        // Must not be the plain SHA-256 of the principal ID — proves the HMAC pepper is in use
+        string sPlainSha256 = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(scope.PrincipalProvider.CurrentPrincipalId))).ToLowerInvariant();
         Assert.AreNotEqual(sPlainSha256, sSidHash,
-            "The stored hash must be HMAC-SHA256(SID, pepper), not plain SHA-256(SID).");
+            "The stored hash must be HMAC-SHA256(principalId, pepper), not plain SHA-256(principalId).");
     }
 
     [TestMethod]
@@ -151,11 +150,11 @@ public sealed class PersonSecureStoreTests
     {
         using TestStoreScope scope = new();
 
-        const string sFakeSid = "S-1-5-21-0000000000-1111111111-2222222222-500";
+        const string sFakePrincipalId = "user:granted-user";
         scope.Store.Save("person-6", new TestPerson("Lise", "Meitner"));
-        scope.Store.GrantAccess("person-6", sFakeSid);
+        scope.Store.GrantAccess("person-6", sFakePrincipalId);
 
-        IReadOnlyCollection<string> lstHashes = scope.Store.GetAllowedWindowsSidHashes("person-6");
+        IReadOnlyCollection<string> lstHashes = scope.Store.GetAllowedPrincipalHashes("person-6");
 
         // Owner hash (current user) + granted hash = 2 entries
         Assert.AreEqual(2, lstHashes.Count);
@@ -165,17 +164,17 @@ public sealed class PersonSecureStoreTests
         {
             Assert.AreEqual(64, sHash.Length);
             Assert.IsTrue(sHash.All(c => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')),
-                "Every stored hash must be a lowercase hex string, not a raw SID.");
+                "Every stored hash must be a lowercase hex string, not a raw principal identifier.");
         }
 
-        // Raw SID must not appear in the list
-        Assert.IsFalse(lstHashes.Contains(sFakeSid, StringComparer.OrdinalIgnoreCase),
-            "The raw Windows SID must never be stored.");
+        // Raw principal identifier must not appear in the list
+        Assert.IsFalse(lstHashes.Contains(sFakePrincipalId, StringComparer.OrdinalIgnoreCase),
+            "The raw principal identifier must never be stored.");
 
-        // Plain SHA-256(SID) must not appear — proves the pepper (HMAC) is in use
-        string sPlainSha256 = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(sFakeSid))).ToLowerInvariant();
+        // Plain SHA-256(principalId) must not appear — proves the pepper (HMAC) is in use
+        string sPlainSha256 = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(sFakePrincipalId))).ToLowerInvariant();
         Assert.IsFalse(lstHashes.Contains(sPlainSha256, StringComparer.OrdinalIgnoreCase),
-            "The stored hash must be HMAC-SHA256(SID, pepper), not plain SHA-256(SID).");
+            "The stored hash must be HMAC-SHA256(principalId, pepper), not plain SHA-256(principalId).");
     }
 
     [TestMethod]
@@ -205,11 +204,17 @@ public sealed class PersonSecureStoreTests
             {
                 RootDirectory = sRootDirectory,
             };
-            BackupService = new MasterKeyBackupService(Options);
-            Store = new PersonSecureStore(BackupService, Options);
+            LocalKeyProtector = new PassThroughLocalKeyProtector();
+            PrincipalProvider = new FixedPrincipalProvider();
+            BackupService = new MasterKeyBackupService(Options, LocalKeyProtector);
+            Store = new PersonSecureStore(BackupService, Options, PrincipalProvider);
         }
 
         public GenSecureStoreOptions Options { get; }
+
+        public PassThroughLocalKeyProtector LocalKeyProtector { get; }
+
+        public FixedPrincipalProvider PrincipalProvider { get; }
 
         public MasterKeyBackupService BackupService { get; }
 
@@ -243,6 +248,28 @@ public sealed class PersonSecureStoreTests
             }
         }
 
+    }
+
+    private sealed class PassThroughLocalKeyProtector : ILocalKeyProtector
+    {
+        public byte[] Protect(byte[] arrPlaintext)
+        {
+            ArgumentNullException.ThrowIfNull(arrPlaintext);
+            return arrPlaintext.ToArray();
+        }
+
+        public byte[] Unprotect(byte[] arrProtectedData)
+        {
+            ArgumentNullException.ThrowIfNull(arrProtectedData);
+            return arrProtectedData.ToArray();
+        }
+    }
+
+    private sealed class FixedPrincipalProvider : ICurrentPrincipalProvider
+    {
+        public string CurrentPrincipalId { get; } = "user:test-user";
+
+        public string GetCurrentPrincipalId() => CurrentPrincipalId;
     }
 
     private static string[] GetRelativeSegments(string sRootPath, string sFilePath)

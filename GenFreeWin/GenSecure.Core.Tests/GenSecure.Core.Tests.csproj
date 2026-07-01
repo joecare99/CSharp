@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\GenFreeWin.props" />
 	<PropertyGroup>
-		<TargetFramework>net9.0-windows</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<IsPackable>false</IsPackable>
 		<UseWPF>false</UseWPF>
