@@ -1,11 +1,16 @@
 using System;
 using System.Security.Principal;
+using GenSecure.Contracts;
 
-namespace GenSecure.Core;
+namespace GenSecure.Windows;
 
-internal static class WindowsIdentityUtilities
+/// <summary>
+/// Provides the current Windows SID as the principal identifier.
+/// </summary>
+public sealed class WindowsSidPrincipalProvider : ICurrentPrincipalProvider
 {
-    public static string GetCurrentUserSid()
+    /// <inheritdoc />
+    public string GetCurrentPrincipalId()
     {
         using WindowsIdentity? identity = WindowsIdentity.GetCurrent();
         if (identity is null || !identity.IsAuthenticated || identity.User is null)

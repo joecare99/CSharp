@@ -12,13 +12,15 @@ tested with mocks and swapped without recompilation.
 ## Key Features
 
 - `IPersonSecureStore` — save, load, delete, exists, and access-control operations
+- `ICurrentPrincipalProvider` — supplies the current platform principal identifier
+- `ILocalKeyProtector` — abstracts local master-key protection for the active platform
 - `IMasterKeyBackupService` — PBKDF2 recovery key creation and restore
 - `DeleteMode` — `SoftDelete` (removes files) vs. `SecureDelete` (crypto-deletion, DSGVO Art. 17)
 - `StoreMode` — `Encrypted` (AES-256-GCM, living persons) vs. `Plaintext` (deceased / historical)
 
 ## Targets
 
-`net9.0-windows`
+`net481`, `net6.0`, `net7.0`, `net8.0`
 
 ## Public API
 
@@ -34,8 +36,8 @@ void Delete(string sPersonId, DeleteMode eMode);
 //   DeleteMode.SecureDelete — removes only the DEK (crypto-deletion); plaintext fallback: data file
 
 // Access control
-void GrantAccess(string sPersonId, string sWindowsSid);
-IReadOnlyCollection<string> GetAllowedWindowsSidHashes(string sPersonId);
+void GrantAccess(string sPersonId, string sPrincipalId);
+IReadOnlyCollection<string> GetAllowedPrincipalHashes(string sPersonId);
 
 // Recovery
 void CreateRecoveryKeyBackup(string sPassphrase, bool xOverwrite = false);

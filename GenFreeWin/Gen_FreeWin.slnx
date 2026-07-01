@@ -222,6 +222,7 @@
   </Folder>
   <Folder Name="/WinAhnen/">
     <File Path="../WinAhnenNew/WinAhnen.props" />
+    <Project Path="../WinAhnenNew/AvlnAhnenNew/AvlnAhnenNew.csproj" />
     <Project Path="../WinAhnenNew/BaseGenClasses/BaseGenClasses.csproj" />
     <Project Path="../WinAhnenNew/BaseGenClassesTests/BaseGenClassesTests.csproj" />
     <Project Path="../WinAhnenNew/Gen_BaseItf/Gen_BaseItf.csproj" />
@@ -237,7 +238,12 @@
   <Project Path="../CSharpBible/MVVM_Tutorial/MVVM_09a_CTDialogBoxes/MVVM_09a_CTDialogBoxes.csproj" />
   <Project Path="../CSharpBible/MVVM_Tutorial/WpfApp1/WpfApp_net.csproj" />
   <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
+  <Project Path="GenSecure.Linux/GenSecure.Linux.csproj" />
+  <Project Path="GenSecure.Windows/GenSecure.Windows.csproj" />
   <Project Path="MdbBrowser/MdbBrowser2.csproj">
     <Build Solution="*|x86" Project="false" />
   </Project>
+  <Properties Name="SolutionProperties">
+    <Property Name="WorkspaceFolder" Value="..\WinAhnenNew" />
+  </Properties>
 </Solution>

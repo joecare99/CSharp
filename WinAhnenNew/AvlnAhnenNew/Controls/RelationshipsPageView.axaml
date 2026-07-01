@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:controls="using:AvlnAhnenNew.Controls"
+			  x:Class="AvlnAhnenNew.Controls.RelationshipsPageView"
+			 x:CompileBindings="False">
+	<Grid Margin="12">
+	<Grid.RowDefinitions>
+	  <RowDefinition Height="Auto" />
+	  <RowDefinition Height="12" />
+	  <RowDefinition Height="*" />
+	</Grid.RowDefinitions>
+	<controls:PersonHeaderView />
+	<ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+	  <Canvas Width="1050" Height="700">
+	<Rectangle x:Name="Shape8" Canvas.Left="55" Canvas.Top="316" Width="949" Height="357" Stroke="#000000" StrokeThickness="1" />
+	<Rectangle x:Name="Shape6" Canvas.Left="71" Canvas.Top="448" Width="913" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" />
+	<Rectangle x:Name="Shape7" Canvas.Left="71" Canvas.Top="581" Width="915" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" />
+	<Label x:Name="Label62" Canvas.Left="709" Canvas.Top="27" Content="Art der Verbindung" />
+	<Label x:Name="Label36" Canvas.Left="69" Canvas.Top="333" Content="Kirche:" />
+	<Label x:Name="Label37" Canvas.Left="192" Canvas.Top="333" Content="Heirat " />
+	<Label x:Name="Label38" Canvas.Left="192" Canvas.Top="376" Content="Trauzeugen" />
+	<Label x:Name="Label54" Canvas.Left="192" Canvas.Top="411" Content="Quelle" />
+	<Label x:Name="Label51" Canvas.Left="69" Canvas.Top="468" Content="Standesamt:" />
+	<Label x:Name="Label55" Canvas.Left="192" Canvas.Top="468" Content="Heirat " />
+	<Label x:Name="Label56" Canvas.Left="192" Canvas.Top="508" Content="Trauzeugen" />
+	<Label x:Name="Label61" Canvas.Left="192" Canvas.Top="543" Content="Quelle" />
+	<Label x:Name="Label65" Canvas.Left="69" Canvas.Top="600" Content="Scheidung (Trennung)" />
+	<Label x:Name="Label66" Canvas.Left="197" Canvas.Top="635" Content="Quelle" />
+	<Label x:Name="Label67" Canvas.Left="59" Canvas.Top="17" Width="1" Height="1" Background="#C0C0C0" Content="" />
+	<Label x:Name="Label69" Canvas.Left="268" Canvas.Top="333" Content="Label22" />
+	<Label x:Name="Label71" Canvas.Left="269" Canvas.Top="600" Content="Label22" />
+	<Label x:Name="Label70" Canvas.Left="268" Canvas.Top="468" Content="Label22" />
+	<DataGrid x:Name="StringGrid3" Canvas.Left="55" Canvas.Top="60" Width="531" Height="235" />
+	<TextBox x:Name="DBEdit35" Canvas.Left="301" Canvas.Top="329" Width="32" />
+	<TextBox x:Name="DBEdit36" Canvas.Left="339" Canvas.Top="329" Width="32" />
+	<TextBox x:Name="DBEdit37" Canvas.Left="376" Canvas.Top="329" Width="61" />
+	<TextBox x:Name="DBEdit38" Canvas.Left="301" Canvas.Top="369" Width="679" />
+	<TextBox x:Name="DBEdit39" Canvas.Left="301" Canvas.Top="464" Width="32" />
+	<TextBox x:Name="DBEdit41" Canvas.Left="339" Canvas.Top="464" Width="32" />
+	<TextBox x:Name="DBEdit45" Canvas.Left="376" Canvas.Top="464" Width="61" />
+	<TextBox x:Name="DBEdit46" Canvas.Left="301" Canvas.Top="504" Width="679" />
+	<ComboBox x:Name="DBComboBox1" Canvas.Left="711" Canvas.Top="57" Width="241" IsEditable="True" />
+	<TextBox x:Name="DBEdit61" Canvas.Left="301" Canvas.Top="596" Width="32" />
+	<TextBox x:Name="DBEdit62" Canvas.Left="339" Canvas.Top="596" Width="32" />
+	<TextBox x:Name="DBEdit63" Canvas.Left="376" Canvas.Top="596" Width="61" />
+	<ComboBox x:Name="ComboBox20" Canvas.Left="448" Canvas.Top="329" Width="347" IsEditable="True" />
+	<ComboBox x:Name="ComboBox21" Canvas.Left="448" Canvas.Top="464" Width="347" IsEditable="True" />
+	<ComboBox x:Name="ComboBox22" Canvas.Left="448" Canvas.Top="596" Width="347" IsEditable="True" />
+	<ComboBox x:Name="ComboBox23" Canvas.Left="301" Canvas.Top="408" Width="679" IsEditable="True" />
+	<ComboBox x:Name="ComboBox24" Canvas.Left="301" Canvas.Top="543" Width="679" IsEditable="True" />
+	<ComboBox x:Name="ComboBox25" Canvas.Left="301" Canvas.Top="633" Width="679" IsEditable="True" />
+	  </Canvas>
+	</ScrollViewer>
+  </Grid>
+</UserControl>

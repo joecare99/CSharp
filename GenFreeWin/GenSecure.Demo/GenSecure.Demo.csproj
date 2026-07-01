@@ -14,6 +14,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\GenSecure.Core\GenSecure.Core.csproj" />
+		<ProjectReference Include="..\GenSecure.Windows\GenSecure.Windows.csproj" />
         <ProjectReference Include="..\..\WinAhnenNew\BaseGenClasses\BaseGenClasses.csproj" />
 	</ItemGroup>
 

@@ -1,6 +1,7 @@
 <Page x:Class="WinAhnenNew.Views.RelationshipsPageView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="clr-namespace:WinAhnenNew.Controls"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WinAhnenNew.Views"
@@ -8,7 +9,17 @@
       d:DesignHeight="685" d:DesignWidth="1050"
       Title="RelationshipsPageView">
 
-    <Canvas>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <controls:PersonHeaderView />
+
+        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Canvas Width="1050" Height="700">
         <Rectangle Canvas.Left="55" Canvas.Top="316" Width="949" Height="357" Stroke="#000000" StrokeThickness="1" x:Name="Shape8" />
         <Rectangle Canvas.Left="71" Canvas.Top="448" Width="913" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" x:Name="Shape6" />
         <Rectangle Canvas.Left="71" Canvas.Top="581" Width="915" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" x:Name="Shape7" />
@@ -46,5 +57,7 @@
         <ComboBox Canvas.Left="301" Canvas.Top="408" Width="679" Height="23" IsEditable="True" x:Name="ComboBox23" />
         <ComboBox Canvas.Left="301" Canvas.Top="543" Width="679" Height="23" IsEditable="True" x:Name="ComboBox24" />
         <ComboBox Canvas.Left="301" Canvas.Top="633" Width="679" Height="23" IsEditable="True" x:Name="ComboBox25" />
-    </Canvas>
+            </Canvas>
+        </ScrollViewer>
+    </Grid>
 </Page>

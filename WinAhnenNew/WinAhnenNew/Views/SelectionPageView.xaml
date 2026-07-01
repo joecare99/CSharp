@@ -126,7 +126,7 @@
             CanUserAddRows="False"
             CanUserDeleteRows="False"
             IsReadOnly="True"
-            ItemsSource="{Binding PersonsView}"
+            ItemsSource="{Binding FilteredPersons}"
             MouseDoubleClick="PersonsDataGrid_MouseDoubleClick"
             SelectedItem="{Binding SelectedPerson, Mode=TwoWay}"
             SelectionMode="Single">
