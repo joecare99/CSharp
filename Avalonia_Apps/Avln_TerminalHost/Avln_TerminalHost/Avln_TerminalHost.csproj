@@ -24,4 +24,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Avln_TestConsole\Avln_TestConsole.csproj" />
   </ItemGroup>
-</Project>
+ </Project>
