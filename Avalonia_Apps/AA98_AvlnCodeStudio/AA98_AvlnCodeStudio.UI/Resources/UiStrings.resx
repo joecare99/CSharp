@@ -24,6 +24,9 @@
   <data name="NavigationPlaceholder" xml:space="preserve">
     <value>Workspace tree placeholder.</value>
   </data>
+  <data name="PlanningExplorerTitle" xml:space="preserve">
+    <value>Planning Explorer</value>
+  </data>
   <data name="EditorRegionTitle" xml:space="preserve">
     <value>Editor</value>
   </data>

@@ -59,13 +59,28 @@
                 BorderBrush="{DynamicResource ThemeControlMidBrush}"
                 BorderThickness="1"
                 CornerRadius="4">
-            <StackPanel Spacing="8">
-                <TextBlock Text="{Binding NavigationTitle}"
+            <Grid RowDefinitions="Auto,Auto,*"
+                  RowSpacing="8">
+                <TextBlock Grid.Row="0"
+                           Text="{Binding NavigationTitle}"
                            FontWeight="SemiBold" />
-                <TextBlock Text="{Binding NavigationPlaceholder}"
+                <TextBlock Grid.Row="1"
+                           Text="{Binding PlanningExplorerTitle}"
                            Opacity="0.7"
                            TextWrapping="Wrap" />
-            </StackPanel>
+                <TreeView Grid.Row="2"
+                          ItemsSource="{Binding PlanningExplorer.RootItems}"
+                          SelectedItem="{Binding PlanningExplorer.SelectedItem, Mode=TwoWay}">
+                    <TreeView.ItemTemplate>
+                        <TreeDataTemplate ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="{Binding Id}" />
+                                <TextBlock Text="{Binding Title}" Opacity="0.8" />
+                            </StackPanel>
+                        </TreeDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </Grid>
         </Border>
 
         <Border Grid.Row="1"

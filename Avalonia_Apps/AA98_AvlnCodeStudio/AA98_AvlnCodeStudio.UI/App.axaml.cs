@@ -69,7 +69,9 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<UI.Components.IAvaloniaEditorComponentFactory>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.AvaloniaEditorComponentFactory>());
             services.AddSingleton<IEditorComponentFactory>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.AvaloniaEditorComponentFactory>());
             services.AddSingleton<UI.Components.IAvaloniaEditorComponent>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>().Create());
-            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<MainWindowViewModel>(serviceProvider => new MainWindowViewModel(
+                serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponent>(),
+                serviceProvider.GetRequiredService<UI.ViewModels.PlanningExplorerViewModel>()));
             services.AddSingleton<MainWindow>();
 
             return services.BuildServiceProvider(new ServiceProviderOptions
