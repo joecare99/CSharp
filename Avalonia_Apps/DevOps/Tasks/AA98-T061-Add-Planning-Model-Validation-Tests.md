@@ -20,8 +20,14 @@ Add tests for local planning model parsing and convention validation.
 - Planning model reader behavior is covered by targeted tests.
 - Validation diagnostics are deterministic.
 
+## Delivered
+- Extended `MarkdownPlanningReaderTests` with additional deterministic fixture scenarios for malformed headings, unknown and empty status sections, and broken cross-link parent references.
+- Validated that repository-convention parsing remains stable for `Epic -> Feature -> Backlog Item -> Task`, while diagnostics remain resilient for malformed or incomplete markdown content.
+- Kept the implementation provider-neutral by adding coverage only in tests without introducing provider-specific fields.
+
 ## Validation
 - Run targeted planning model tests.
+- `run_tests` for project `AA98_AvlnCodeStudio.Tests`: 200/200 passed, including all `MarkdownPlanningReaderTests` cases.
 
 ## Status
-- Proposed
+- Completed
