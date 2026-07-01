@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:controls="using:AvlnAhnenNew.Controls"
+			  x:Class="AvlnAhnenNew.Controls.DetailPageView"
+			 x:CompileBindings="False">
+	<Grid Margin="12">
+	<Grid.RowDefinitions>
+	  <RowDefinition Height="Auto" />
+	  <RowDefinition Height="12" />
+	  <RowDefinition Height="*" />
+	</Grid.RowDefinitions>
+	<controls:PersonHeaderView />
+	<ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+	  <Canvas Width="1050" Height="700">
+	  <Label x:Name="Label35" Canvas.Left="8" Canvas.Top="16" Background="#C0C0C0" Content="Kind von" />
+	  <Label x:Name="Label41" Canvas.Left="916" Canvas.Top="3" Content="Nr." />
+	  <Label x:Name="Label63" Canvas.Left="917" Canvas.Top="29" Content="ID" />
+	  <Label x:Name="Label29" Canvas.Left="8" Canvas.Top="87" Content="Name" />
+	  <Label x:Name="Label30" Canvas.Left="5" Canvas.Top="123" Content="Vornamen" />
+	  <Label x:Name="Label31" Canvas.Left="8" Canvas.Top="160" Content="Beruf" />
+	  <Label x:Name="Label32" Canvas.Left="7" Canvas.Top="232" Content="Geschlecht" />
+	  <Label x:Name="Label52" Canvas.Left="7" Canvas.Top="195" Content="lebt(e) in" />
+	  <Label x:Name="Label33" Canvas.Left="8" Canvas.Top="272" Content="geb." />
+	  <Label x:Name="Label34" Canvas.Left="8" Canvas.Top="309" Content="get." />
+	  <Label x:Name="Label39" Canvas.Left="8" Canvas.Top="345" Content="Taufp." />
+	  <Label x:Name="Label40" Canvas.Left="8" Canvas.Top="385" Content="gest." />
+	  <Label x:Name="Label42" Canvas.Left="8" Canvas.Top="421" Content="TU" />
+	  <Label x:Name="Label43" Canvas.Left="8" Canvas.Top="459" Content="best." />
+	  <Label x:Name="Label60" Canvas.Left="520" Canvas.Top="459" Content="---" />
+	  <Label x:Name="Label59" Canvas.Left="520" Canvas.Top="385" Content="---" />
+	  <Label x:Name="Label58" Canvas.Left="520" Canvas.Top="308" Content="---" />
+	  <Label x:Name="Label57" Canvas.Left="520" Canvas.Top="269" Content="---" />
+	  <Label x:Name="Label50" Canvas.Left="552" Canvas.Top="60" Content="Andere Namensschreibweisen :" />
+	  <Label x:Name="Label44" Canvas.Left="8" Canvas.Top="511" Content="Heirat" />
+	  <Label x:Name="Label45" Canvas.Left="61" Canvas.Top="511" Content="kirchlich" />
+	  <Label x:Name="Label46" Canvas.Left="36" Canvas.Top="544" Content="Trauzeugen" />
+	  <Label x:Name="Label47" Canvas.Left="8" Canvas.Top="584" Content="Standesamt" />
+	  <Label x:Name="Label49" Canvas.Left="36" Canvas.Top="619" Content="Trauzeugen" />
+	  <Label x:Name="Label48" Canvas.Left="8" Canvas.Top="652" Content="Scheid./Trenn." />
+	  <Rectangle x:Name="Shape4" Canvas.Left="0" Canvas.Top="497" Width="1044" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" />
+	  <Rectangle x:Name="Shape5" Canvas.Left="0" Canvas.Top="60" Width="1044" Height="1" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" />
+	  <Border Canvas.Left="953" Canvas.Top="0" Width="94" Height="29"><TextBlock VerticalAlignment="Center" Padding="2" /></Border>
+	  <Label x:Name="Label68" Canvas.Left="156" Canvas.Top="232" Content="Bekenntnis" />
+	  <Label x:Name="Label53" Canvas.Left="469" Canvas.Top="235" Content="Quellen:" />
+	  <Label x:Name="Label99" Canvas.Left="552" Canvas.Top="123" Content="Rufname" />
+	  <TextBox x:Name="Edit32" Canvas.Left="783" Canvas.Top="615" Width="27" />
+	  <TextBox x:Name="DBEdit25" Canvas.Left="953" Canvas.Top="27" Width="91" />
+	  <TextBox x:Name="DBEdit57" Canvas.Left="60" Canvas.Top="455" Width="31" />
+	  <TextBox x:Name="DBEdit56" Canvas.Left="92" Canvas.Top="455" Width="31" />
+	  <TextBox x:Name="DBEdit55" Canvas.Left="124" Canvas.Top="455" Width="52" />
+	  <TextBox x:Name="DBEdit60" Canvas.Left="60" Canvas.Top="419" Width="459" />
+	  <TextBox x:Name="DBEdit52" Canvas.Left="124" Canvas.Top="381" Width="52" />
+	  <TextBox x:Name="DBEdit51" Canvas.Left="92" Canvas.Top="381" Width="31" />
+	  <TextBox x:Name="DBEdit50" Canvas.Left="60" Canvas.Top="381" Width="31" />
+	  <TextBox x:Name="DBEdit59" Canvas.Left="60" Canvas.Top="344" Width="709" />
+	  <TextBox x:Name="DBEdit49" Canvas.Left="60" Canvas.Top="307" Width="31" />
+	  <TextBox x:Name="DBEdit48" Canvas.Left="92" Canvas.Top="307" Width="31" />
+	  <TextBox x:Name="DBEdit47" Canvas.Left="124" Canvas.Top="307" Width="52" />
+	  <TextBox x:Name="DBEdit44" Canvas.Left="124" Canvas.Top="268" Width="52" />
+	  <TextBox x:Name="DBEdit43" Canvas.Left="92" Canvas.Top="268" Width="31" />
+	  <TextBox x:Name="DBEdit42" Canvas.Left="60" Canvas.Top="268" Width="31" />
+	  <TextBox x:Name="DBEdit26" Canvas.Left="93" Canvas.Top="193" Width="673" />
+	  <TextBox x:Name="DBEdit40" Canvas.Left="115" Canvas.Top="231" Width="28" />
+	  <ComboBox x:Name="DBComboBox7" Canvas.Left="261" Canvas.Top="229" Width="60" IsEditable="True" />
+	  <CheckBox x:Name="DBCheckBox2" Canvas.Left="373" Canvas.Top="229" Content=" lebt" />
+	  <TextBox x:Name="DBEdit31" Canvas.Left="552" Canvas.Top="80" Width="488" />
+	  <TextBox x:Name="Edit30" Canvas.Left="153" Canvas.Top="543" Width="595" />
+	  <TextBox x:Name="Edit15" Canvas.Left="153" Canvas.Top="651" Width="33" />
+	  <Border x:Name="Panel1" Canvas.Left="768" Canvas.Top="504" Width="273" Height="91" Background="#F0F0F0" BorderBrush="Gray" BorderThickness="1">
+		<Canvas>
+		  <Label x:Name="Label64" Canvas.Left="20" Canvas.Top="12" Content="Art der Verbindung" />
+		  <ComboBox x:Name="ComboBox5" Canvas.Left="25" Canvas.Top="40" Width="221" IsEditable="True" />
+		</Canvas>
+	  </Border>
+	  <TextBox x:Name="DBEdit32" Canvas.Left="93" Canvas.Top="156" Width="461" />
+	  <TextBox x:Name="DBEdit33" Canvas.Left="93" Canvas.Top="117" Width="421" />
+	  <ComboBox x:Name="ComboBox1" Canvas.Left="299" Canvas.Top="505" Width="451" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox10" Canvas.Left="93" Canvas.Top="80" Width="421" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox11" Canvas.Left="539" Canvas.Top="232" Width="508" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox12" Canvas.Left="539" Canvas.Top="268" Width="508" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox13" Canvas.Left="537" Canvas.Top="307" Width="508" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox14" Canvas.Left="537" Canvas.Top="381" Width="508" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox15" Canvas.Left="537" Canvas.Top="456" Width="508" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox16" Canvas.Left="192" Canvas.Top="268" Width="327" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox17" Canvas.Left="192" Canvas.Top="307" Width="327" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox18" Canvas.Left="192" Canvas.Top="381" Width="327" IsEditable="True" />
+	  <ComboBox x:Name="ComboBox19" Canvas.Left="192" Canvas.Top="456" Width="327" IsEditable="True" />
+	  <TextBox x:Name="DBEdit19" Canvas.Left="640" Canvas.Top="117" Width="400" />
+	  </Canvas>
+	</ScrollViewer>
+  </Grid>
+</UserControl>
