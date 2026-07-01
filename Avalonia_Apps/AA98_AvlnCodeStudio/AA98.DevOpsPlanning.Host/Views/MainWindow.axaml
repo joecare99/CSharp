@@ -1,0 +1,128 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:vm="using:AA98.DevOpsPlanning.Host.ViewModels"
+		xmlns:diagnostics="using:AA98_AvlnCodeStudio.Diagnostics.UI.Views"
+		xmlns:planning="using:AA98_AvlnCodeStudio.Planning.UI.Views"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d"
+		d:DesignWidth="1200"
+		d:DesignHeight="800"
+		x:Class="AA98.DevOpsPlanning.Host.Views.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+		Title="AA98 DevOps Planning Host"
+		Width="1200"
+		Height="800"
+		MinWidth="900"
+		MinHeight="600">
+
+	<Grid Margin="12"
+		  RowDefinitions="Auto,Auto,2*,*"
+		  ColumnDefinitions="*">
+		<Menu Grid.Row="0"
+			  Margin="0,0,0,8">
+			<MenuItem Header="_Datei">
+				<MenuItem Header="Solution-Root öffnen..."
+						  Command="{Binding OpenSolutionRootCommand}" />
+				<MenuItem Header="DevOps-Projekt öffnen..."
+						  Command="{Binding OpenPlanningProjectCommand}" />
+				<MenuItem Header="Neues DevOps-Projekt..."
+						  Command="{Binding NewPlanningProjectCommand}" />
+			</MenuItem>
+		</Menu>
+
+		<Border Grid.Row="1"
+				Margin="0,0,0,8"
+				Padding="8"
+				BorderBrush="{DynamicResource ThemeControlMidBrush}"
+				BorderThickness="1"
+				CornerRadius="4">
+			<Grid RowDefinitions="Auto,Auto"
+				  ColumnDefinitions="Auto,*,Auto,Auto,Auto"
+				  RowSpacing="8"
+				  ColumnSpacing="8">
+				<TextBlock Grid.Row="0"
+						   Grid.Column="0"
+						   Grid.ColumnSpan="5"
+						   Text="AA98 DevOps Planning Host"
+						   FontWeight="SemiBold" />
+
+				<TextBlock Grid.Row="1"
+						   Grid.Column="0"
+						   Text="Path:"
+						   VerticalAlignment="Center" />
+				<TextBox Grid.Row="1"
+						 Grid.Column="1"
+						 Text="{Binding PathSelection, Mode=TwoWay}" />
+				<CheckBox Grid.Row="1"
+						  Grid.Column="2"
+						  VerticalAlignment="Center"
+						  IsChecked="{Binding PathSelectionIsPlanningProject, Mode=TwoWay}"
+						  Content="Path is planning project" />
+				<StackPanel Grid.Row="1"
+							Grid.Column="3"
+							Orientation="Horizontal"
+							Spacing="8">
+					<Button Content="Apply"
+							Command="{Binding ApplyPathSelectionCommand}" />
+					<Button Content="Refresh"
+							Command="{Binding RefreshCommand}" />
+				</StackPanel>
+
+				<Menu Grid.Row="1"
+					  Grid.Column="4"
+					  VerticalAlignment="Center">
+					<MenuItem Header="Datei">
+						<MenuItem Header="Solution-Root öffnen..."
+								  Command="{Binding OpenSolutionRootCommand}" />
+						<MenuItem Header="DevOps-Projekt öffnen..."
+								  Command="{Binding OpenPlanningProjectCommand}" />
+						<MenuItem Header="Neues DevOps-Projekt..."
+								  Command="{Binding NewPlanningProjectCommand}" />
+					</MenuItem>
+				</Menu>
+			</Grid>
+		</Border>
+
+		<planning:PlanningExplorerView Grid.Row="2"
+						 Margin="0,0,0,12"
+						 DataContext="{Binding PlanningExplorer}" />
+
+		<Grid Grid.Row="3" ColumnDefinitions="*,2*">
+			<diagnostics:DiagnosticListView Grid.Column="1"
+								 Margin="0,0,0,12"
+								 DataContext="{Binding DiagnosticCollection}" />
+
+			<Border
+					Margin="0,0,0,0"
+					Padding="8,6"
+					BorderBrush="{DynamicResource ThemeControlMidBrush}"
+					BorderThickness="1"
+					CornerRadius="4">
+				<StackPanel Spacing="4">
+					<DockPanel>
+						<TextBlock DockPanel.Dock="Left"
+								   Margin="0,0,8,0"
+								   Text="Repository:"
+								   FontWeight="SemiBold" />
+						<TextBlock Text="{Binding RepositoryRootPath}" />
+					</DockPanel>
+					<DockPanel>
+						<TextBlock DockPanel.Dock="Left"
+								   Margin="0,0,8,0"
+								   Text="Planning:"
+								   FontWeight="SemiBold" />
+						<TextBlock Text="{Binding PlanningRootPath}" />
+					</DockPanel>
+					<DockPanel>
+						<TextBlock DockPanel.Dock="Left"
+								   Margin="0,0,8,0"
+								   Text="Status:"
+								   FontWeight="SemiBold" />
+						<TextBlock Text="{Binding StatusText}" />
+					</DockPanel>
+				</StackPanel>
+			</Border>
+		</Grid>
+	</Grid>
+</Window>
