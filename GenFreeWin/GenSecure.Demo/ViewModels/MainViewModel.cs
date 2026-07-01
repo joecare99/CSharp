@@ -268,17 +268,17 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    /// <summary>Retrieves and lists all Windows SID hashes permitted to access the entered person record.</summary>
+    /// <summary>Retrieves and lists all principal hashes permitted to access the entered person record.</summary>
     [RelayCommand]
     private void GetAllowedSids()
     {
         try
         {
-            var lstHashes = _store.GetAllowedWindowsSidHashes(GrantPersonId);
+            var lstHashes = _store.GetAllowedPrincipalHashes(GrantPersonId);
             AllowedSids.Clear();
             foreach (var sHash in lstHashes)
                 AllowedSids.Add(sHash);
-            Log($"✅ {AllowedSids.Count} SID-Hash(es) für Person '{GrantPersonId}' geladen (HMAC-SHA256 mit Master-Key-Pepper, kein Klartext-SID).");
+            Log($"✅ {AllowedSids.Count} Principal-Hash(es) für Person '{GrantPersonId}' geladen (HMAC-SHA256 mit Master-Key-Pepper, keine Klartext-Principal-ID).");
         }
         catch (Exception ex)
         {
