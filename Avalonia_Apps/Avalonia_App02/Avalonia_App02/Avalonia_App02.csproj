@@ -48,8 +48,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Update="Avalonia.Desktop" Version="12.0.4" />
-    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.17" />
+    <PackageVersion Update="Avalonia" Version="12.0.5" />
+    <PackageVersion Update="Avalonia.Desktop" Version="12.0.5" />
+    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.18" />
+    <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.0.5" />
+    <PackageVersion Update="Avalonia.Themes.Fluent" Version="12.0.5" />
+    <PackageVersion Update="Svg.Controls.Skia.Avalonia" Version="12.0.0.13" />
   </ItemGroup>
 
 </Project>
