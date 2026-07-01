@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:AA98_AvlnCodeStudio.Planning.UI.ViewModels"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d"
+			 x:Class="AA98_AvlnCodeStudio.Planning.UI.Views.PlanningExplorerView"
+			 x:DataType="vm:PlanningExplorerViewModel">
+  <Grid ColumnDefinitions="360,Auto,*">
+	<Border Grid.Column="0"
+			Margin="0,0,6,0"
+			Padding="12"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+	  <DockPanel LastChildFill="True">
+		<TextBlock DockPanel.Dock="Top"
+				   Margin="0,0,0,8"
+				   Text="Planning Hierarchy"
+				   FontWeight="SemiBold" />
+		<TreeView ItemsSource="{Binding RootItems}"
+				  SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+		  <TreeView.ItemTemplate>
+			<TreeDataTemplate ItemsSource="{Binding Children}">
+			  <StackPanel Orientation="Horizontal" Spacing="3">
+				<TextBlock Text="{Binding Id}" />
+				<TextBlock Text="{Binding Title}" Opacity="0.8" />
+			  </StackPanel>
+			</TreeDataTemplate>
+		  </TreeView.ItemTemplate>
+		</TreeView>
+	  </DockPanel>
+	</Border>
+
+	<GridSplitter Grid.Column="1"
+				  Width="6"
+				  Background="{DynamicResource ThemeControlMidBrush}"
+				  ResizeDirection="Columns"
+				  HorizontalAlignment="Stretch"
+				  VerticalAlignment="Stretch" />
+
+	<Border Grid.Column="2"
+			Padding="12"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+	  <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*"
+			RowSpacing="6">
+		<TextBlock Grid.Row="0"
+				   Text="Selected Item"
+				   FontWeight="SemiBold" />
+		<TextBlock Grid.Row="1" Text="ID:" FontWeight="SemiBold" />
+		<TextBlock Grid.Row="1" Margin="80,0,0,0" Text="{Binding SelectedItemId}" />
+		<TextBlock Grid.Row="2" Text="Title:" FontWeight="SemiBold" />
+		<TextBlock Grid.Row="2" Margin="80,0,0,0" Text="{Binding SelectedItemTitle}" TextWrapping="Wrap" />
+		<TextBlock Grid.Row="3" Text="Kind:" FontWeight="SemiBold" />
+		<TextBlock Grid.Row="3" Margin="80,0,0,0" Text="{Binding SelectedItemKind}" />
+		<TextBlock Grid.Row="4" Text="Status:" FontWeight="SemiBold" />
+		<TextBlock Grid.Row="4" Margin="80,0,0,0" Text="{Binding SelectedItemStatus}" />
+		<TextBlock Grid.Row="5" Text="Parent:" FontWeight="SemiBold" />
+		<TextBlock Grid.Row="5" Margin="80,0,0,0" Text="{Binding SelectedItemParentId}" />
+		<TextBlock Grid.Row="6" Text="Source:" FontWeight="SemiBold" />
+		<TextBlock Grid.Row="6" Margin="80,0,0,0" Text="{Binding SelectedItemSourcePath}" TextWrapping="Wrap" VerticalAlignment="Top" />
+	  </Grid>
+	</Border>
+  </Grid>
+</UserControl>

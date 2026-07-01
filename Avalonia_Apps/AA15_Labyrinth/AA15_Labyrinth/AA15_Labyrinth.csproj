@@ -26,7 +26,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageVersion Update="Avalonia.Desktop" Version="12.0.4" />
+	  <PackageVersion Update="Avalonia" Version="12.0.5" />
+	  <PackageVersion Update="Avalonia.Desktop" Version="12.0.5" />
+	  <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.0.5" />
+	  <PackageVersion Update="Avalonia.Themes.Fluent" Version="12.0.5" />
 	</ItemGroup>
 
 </Project>

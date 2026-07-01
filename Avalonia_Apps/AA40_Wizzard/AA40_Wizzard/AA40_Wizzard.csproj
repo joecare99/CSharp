@@ -26,4 +26,7 @@
 	<AvaloniaResource Include="Assets\**" Exclude="Assets\Resources\**\*.xaml" />
 	<EmbeddedResource Include="Assets\Resources\**\*.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Simplecto.Avalonia.RichTextBox" Version="1.9.3" />
+  </ItemGroup>
 </Project>

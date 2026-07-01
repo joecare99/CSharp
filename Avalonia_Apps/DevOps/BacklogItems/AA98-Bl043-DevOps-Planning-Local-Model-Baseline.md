@@ -33,5 +33,11 @@ AA98 can understand the local markdown planning hierarchy as a structured planni
 1. Define the neutral model before UI work.
 2. Use the current repository planning files as initial test data.
 
+## Progress Notes
+- The first provider-neutral local planning contracts now exist in `AA98_AvlnCodeStudio.Base`, covering planning items, stable IDs, titles, statuses, source paths, parent or child links, and diagnostics for local markdown planning workflows.
+- Deterministic engineering tests now validate the default state of the planning contracts before the markdown reader and validation logic are introduced.
+- The first local markdown planning reader now loads `DevOps` planning files into the shared planning model, resolves parent-child links, and reports duplicate-ID or missing-parent diagnostics without stopping the full read.
+- Planning validation coverage is now broadened with deterministic tests for malformed headings, status-convention edge cases, and broken local cross-link references, completing the local planning model baseline slice.
+
 ## Status
-- Proposed
+- Completed

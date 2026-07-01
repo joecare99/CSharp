@@ -344,21 +344,6 @@
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="Libraries/Libraries.props" />
-    <Project Path="../CSharpBible/Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Debug" />
-    </Project>
-    <Project Path="../CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Debug" />
-    </Project>
-    <Project Path="../CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Debug" />
-    </Project>
-    <Project Path="../CSharpBible/Libraries/ConsoleLibTests/ConsoleLibTests.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Debug" />
-    </Project>
-    <Project Path="../CSharpBible/Libraries/ExtendedConsole/ExtendedConsole.csproj">
-      <BuildType Solution="DesktopOnly|*" Project="Debug" />
-    </Project>
     <Project Path="Libraries/AppKomponentBaseLib/AppKomponentBaseLib.csproj" />
     <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
@@ -481,6 +466,9 @@
      <Project Path="AA98_AvlnCodeStudio/AA98.Builder.Host/AA98.Builder.Host.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98.DevOpsPlanning.Host/AA98.DevOpsPlanning.Host.csproj">
+       <Build Solution="DesktopOnly|*" Project="false" />
+     </Project>
      <Project Path="AA98_AvlnCodeStudio/AA98.Terminal.Host/AA98.Terminal.Host.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
@@ -509,6 +497,8 @@
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Building.Workbench/AA98_AvlnCodeStudio.Building.Workbench.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Diagnostics.Debug/AA98_AvlnCodeStudio.Diagnostics.Debug.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Diagnostics.UI/AA98_AvlnCodeStudio.Diagnostics.UI.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor.Tests/AA98_AvlnCodeStudio.Editor.Tests.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
@@ -518,12 +508,16 @@
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.Core/AA98_AvlnCodeStudio.Planning.Core.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.Local/AA98_AvlnCodeStudio.Planning.Local.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.UI/AA98_AvlnCodeStudio.Planning.UI.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" Id="17998949-eb69-4b31-b41e-3bac9c7b53e2">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Versioning.Git/AA98_AvlnCodeStudio.Versioning.Git.csproj" />
    </Folder>
   <Project Path="BenchmarkSuite1/BenchmarkSuite1.csproj">
     <BuildType Solution="DesktopOnly|*" Project="Debug" />
@@ -535,4 +529,7 @@
   <Project Path="RenderImage.BaseTests/RenderImage.BaseTests.csproj">
     <BuildType Solution="DesktopOnly|*" Project="Debug" />
   </Project>
+  <Properties Name="SolutionProperties">
+    <Property Name="WorkspaceFolder" Value=".." />
+  </Properties>
 </Solution>

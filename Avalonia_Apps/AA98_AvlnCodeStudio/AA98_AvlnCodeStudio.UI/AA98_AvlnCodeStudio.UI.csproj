@@ -52,7 +52,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Update="Avalonia.Desktop" Version="12.0.4" />
-    <PackageVersion Update="AvaloniaUI.DiagnosticsSupport" Version="2.2.2" />
+    <PackageVersion Update="Avalonia.AvaloniaEdit" Version="12.0.0" />
+    <PackageVersion Update="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
   </ItemGroup>
+
 </Project>

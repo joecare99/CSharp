@@ -34,5 +34,11 @@ A developer can browse and inspect local planning items inside a dedicated plann
 1. Build on the local planning model baseline.
 2. Add editing backlog items after browsing and validation work.
 
+## Progress Notes
+- A first planning explorer view model is now implemented in `AA98_AvlnCodeStudio.UI`, exposing a deterministic hierarchy for local epics, features, backlog items, and tasks.
+- Selection now exposes key metadata fields (ID, title, status, parent, source path) plus diagnostics from local planning reads.
+- Startup composition now provides the planning explorer in the main shell view model, and deterministic tests cover hierarchy and selection behavior.
+- A dedicated thin micro host `AA98.DevOpsPlanning.Host` now exists for isolated planning exploration, loading local planning hierarchy and diagnostics without external provider coupling.
+
 ## Status
-- Proposed
+- In Progress

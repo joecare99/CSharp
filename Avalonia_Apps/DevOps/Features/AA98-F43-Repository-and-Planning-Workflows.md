@@ -39,5 +39,16 @@ Introduce local repository and DevOps planning workflows that support AA98 self-
 2. Create local planning model and planning UI tasks.
 3. Add dedicated validation tasks for planning convention checks and repository workflow tests.
 
+## Progress Notes
+- The first local repository baseline slice is now defined through provider-neutral AA98 versioning contracts for repository context, active local reference kind, capability reporting, and staged or ignored change summaries.
+- Shared engineering tests now validate the repository model defaults before local Git inspection logic is introduced.
+- The first local Git-backed repository inspection adapter is now implemented as a separate AA98 versioning project, mapping repository root, branch or detached-head state, and porcelain change output into the shared local repository contracts.
+- The repository baseline validation slice is now complete with repeatable tests for Git request flags and fallback repository-context behavior, plus documented manual smoke checks for live repository confirmation.
+- The first local planning baseline slice is now defined through provider-neutral AA98 planning contracts for markdown planning items, statuses, parent links, source paths, and diagnostics, ready for a later markdown reader and planning UI.
+- The first local markdown planning reader is now implemented in the AA98 base layer, turning `DevOps` planning files into structured planning items with normalized statuses, parent-child links, and resilient diagnostics for malformed or incomplete local planning data.
+- The planning-model validation slice is now complete with deterministic convention and edge-case tests for malformed headings, status normalization boundaries, optional parent sections, and broken local cross-link references.
+- The first planning explorer view model is now implemented, allowing deterministic browsing of local planning hierarchy nodes and selected-item metadata through the UI view-model composition.
+- A dedicated `AA98.DevOpsPlanning.Host` micro host is now implemented to run the local planning explorer in isolation with thin startup composition and provider-neutral local planning loading.
+
 ## Status
-- Proposed
+- In Progress

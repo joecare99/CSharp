@@ -33,5 +33,11 @@ A developer can inspect local repository state and use repository context during
 1. Define neutral local repository contracts.
 2. Add commit workflow planning only after inspection is useful.
 
+## Progress Notes
+- The provider-neutral local repository contract baseline is now defined in the shared AA98 versioning layer, including repository context, active local reference kind, capability metadata, and staged or ignored change details.
+- Deterministic model tests now cover the new local repository request and status defaults before live Git inspection is introduced.
+- Local Git inspection is now implemented through a dedicated adapter project with repository root discovery, branch or detached-head mapping, capability reporting, and porcelain-based change enumeration behind an isolated command runner seam.
+- Repository workflow validation now covers Git request-flag behavior and conservative fallback context handling, and the remaining real-repository smoke-check flow is documented for manual confirmation when needed.
+
 ## Status
-- Proposed
+- Completed

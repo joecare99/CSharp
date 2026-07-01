@@ -21,4 +21,8 @@
   <ItemGroup>
 	<ProjectReference Include="..\Avln_Bubbles.View\Avln_Bubbles.View.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Desktop" Version="12.0.5" />
+    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.18" />
+  </ItemGroup>
 </Project>

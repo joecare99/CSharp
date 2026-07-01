@@ -13,8 +13,18 @@ using AA98_AvlnCodeStudio.Base.UI.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.UI.Services;
 using AA98_AvlnCodeStudio.Base.Versioning.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Versioning.Services;
+using AA98_AvlnCodeStudio.Diagnostics.Debug.DependencyInjection;
+using AA98_AvlnCodeStudio.Diagnostics.UI.DependencyInjection;
+using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
+using AppKomponentBaseLib.Diagnostics;
+#if NET10_0
+using AA98_AvlnCodeStudio.Versioning.Git.DependencyInjection;
+using AA98_AvlnCodeStudio.Versioning.Git.Services;
+#endif
 using AA98_AvlnCodeStudio.UI.DependencyInjection;
 using AA98_AvlnCodeStudio.UI.Services;
+using AA98_AvlnCodeStudio.UI.ViewModels;
+using AA98_AvlnCodeStudio.Base.Planning.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -164,6 +174,8 @@ public class CodeStudioServiceCollectionExtensionsTests
         var services = new ServiceCollection();
 
         services.AddCodeStudioFoundation();
+        services.AddDiagnosticsUi();
+        services.AddDebugDiagnostics();
 
         using var serviceProvider = services.BuildServiceProvider();
         Assert.IsNotNull(serviceProvider.GetRequiredService<IAIClientFactory>());
@@ -173,6 +185,10 @@ public class CodeStudioServiceCollectionExtensionsTests
         Assert.IsNotNull(serviceProvider.GetRequiredService<IDebugSessionService>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<ITerminalShellResolver>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<ITerminalSessionService>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<IPlanningReader>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<PlanningExplorerViewModel>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<DiagnosticCollectionViewModel>());
+        Assert.IsTrue(serviceProvider.GetServices<IDiagnosticConsumer>().Any());
 
         var storageDescriptor = services.Last(static descriptor => descriptor.ServiceType == typeof(ITextDocumentStorageService));
         var dialogDescriptor = services.Last(static descriptor => descriptor.ServiceType == typeof(IEditorFileDialogService));
@@ -180,4 +196,21 @@ public class CodeStudioServiceCollectionExtensionsTests
         Assert.AreEqual(typeof(FileSystemTextDocumentStorageService), storageDescriptor.ImplementationType);
         Assert.AreEqual(typeof(AvaloniaEditorFileDialogService), dialogDescriptor.ImplementationType);
     }
+
+#if NET10_0
+    /// <summary>
+    /// Verifies that the Git-backed versioning registration replaces the fallback service with the Git adapter.
+    /// </summary>
+    [TestMethod]
+    public void AddGitCodeStudioVersioning_RegistersGitBackedServices()
+    {
+        var services = new ServiceCollection();
+
+        services.AddGitCodeStudioVersioning();
+
+        using var serviceProvider = services.BuildServiceProvider();
+        Assert.IsInstanceOfType<GitCommandRunner>(serviceProvider.GetRequiredService<IGitCommandRunner>());
+        Assert.IsInstanceOfType<GitVersionControlService>(serviceProvider.GetRequiredService<IVersionControlService>());
+    }
+#endif
 }

@@ -24,4 +24,7 @@
 	  </PackageReference>
 	<PackageReference Include="NSubstitute" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+  </ItemGroup>
 </Project>

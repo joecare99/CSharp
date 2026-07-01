@@ -20,9 +20,15 @@ Define neutral contracts for local repository context and status.
 - Local repository status can be represented provider-neutrally.
 - Contracts are suitable for local Git implementation and later adapters.
 
+## Delivered
+- Extended the shared versioning request contract with repository context and optional capability inclusion for local inspection scenarios.
+- Extended the shared repository status contract with provider-neutral repository identity, active reference kind, detached-state information, repository-root discovery, and capability metadata.
+- Extended the local change summary contract with staged and ignored-state flags for later local Git inspection without introducing remote-provider assumptions.
+- Added deterministic engineering model tests for the new repository request, status, and change-summary defaults.
+
 ## Validation
 - Build changed projects.
 - Add contract tests if descriptors contain normalization behavior.
 
 ## Status
-- Proposed
+- Completed

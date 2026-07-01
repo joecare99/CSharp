@@ -5,7 +5,9 @@ using AA98_AvlnCodeStudio.Base.OS.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Testing.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.UI.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Versioning.DependencyInjection;
+using AA98_AvlnCodeStudio.Base.Planning.Services;
 using AA98_AvlnCodeStudio.UI.Services;
+using AA98_AvlnCodeStudio.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -32,6 +34,8 @@ public static class CodeStudioServiceCollectionExtensions
         services.AddCodeStudioDebugging();
         services.AddCodeStudioOS<FileSystemTextDocumentStorageService>();
         services.AddCodeStudioUI<AvaloniaEditorFileDialogService>();
+        services.AddSingleton<IPlanningReader, MarkdownPlanningReader>();
+        services.AddSingleton<PlanningExplorerViewModel>();
         return services;
     }
 }
