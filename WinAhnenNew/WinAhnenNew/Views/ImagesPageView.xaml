@@ -1,6 +1,7 @@
 <Page x:Class="WinAhnenNew.Views.ImagesPageView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="clr-namespace:WinAhnenNew.Controls"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WinAhnenNew.Views"
@@ -8,7 +9,17 @@
       d:DesignHeight="685" d:DesignWidth="1050"
       Title="ImagesPageView">
 
-    <Canvas>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <controls:PersonHeaderView />
+
+        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Canvas Width="1050" Height="700">
         <Image Canvas.Left="13" Canvas.Top="29" Width="119" Height="129" Stretch="Fill" Source="{Binding ImageSource}" x:Name="Image2" />
         <Image Canvas.Left="163" Canvas.Top="29" Width="119" Height="129" Stretch="Fill" Source="{Binding ImageSource}" x:Name="Image3" />
         <Image Canvas.Left="312" Canvas.Top="29" Width="119" Height="129" Stretch="Fill" Source="{Binding ImageSource}" x:Name="Image4" />
@@ -40,5 +51,7 @@
         <Label Content="" Canvas.Left="917" Canvas.Top="192" Width="1" Height="1" FontFamily="Arial" x:Name="Label97" />
         <Label Content="" Canvas.Left="917" Canvas.Top="64" Width="1" Height="1" FontFamily="Arial" x:Name="Label98" />
         <Label Content="" Canvas.Left="11" Canvas.Top="0" Width="1" Height="1" FontFamily="Arial" x:Name="Label72" />
-    </Canvas>
+            </Canvas>
+        </ScrollViewer>
+    </Grid>
 </Page>
