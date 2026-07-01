@@ -17,4 +17,7 @@
 	<PackageReference Include="Avalonia" />
 	<PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia" Version="12.0.5" />
+  </ItemGroup>
 </Project>
