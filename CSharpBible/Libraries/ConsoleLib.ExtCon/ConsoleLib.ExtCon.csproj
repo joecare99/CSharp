@@ -19,7 +19,6 @@
 	<None Remove="obj\**" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\ConsoleLib\ConsoleLib.csproj" />
 	<ProjectReference Include="..\ExtendedConsole\ExtendedConsole.csproj" />
   </ItemGroup>
 </Project>
