@@ -19,8 +19,6 @@
     <!-- Adjust relative path to actual ConsoleLib project (outside ConsoleApps folder) -->
     <ProjectReference Condition="!$(TargetFramework.StartsWith('net4'))" Include="..\..\ConsoleApps\TestConsole\TestConsole_net.csproj" />
     <ProjectReference Condition="$(TargetFramework.StartsWith('net4'))" Include="..\..\ConsoleApps\TestConsole\TestConsole.csproj" />
-    <ProjectReference Include="..\ConsoleLib\ConsoleLib.csproj" />
-    <ProjectReference Include="..\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MSTest.TestAdapter" Version="4.2.3" />
