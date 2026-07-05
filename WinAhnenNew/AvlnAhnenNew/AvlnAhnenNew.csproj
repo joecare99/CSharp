@@ -7,7 +7,6 @@
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>disable</ImplicitUsings>
 	<UseCompiledBindingsByDefault>false</UseCompiledBindingsByDefault>
-	<ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
