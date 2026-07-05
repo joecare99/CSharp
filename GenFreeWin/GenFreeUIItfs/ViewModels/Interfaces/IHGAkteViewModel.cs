@@ -12,11 +12,11 @@ public interface IHGAkteViewModel
 
     IRelayCommand MainMenueCommand { get; }
     IRelayCommand BackCommand { get; }
-    IRelayCommand ShowUsageCommand { get; }
-    IRelayCommand NextEntryCommand { get; }
-    IRelayCommand PrevEntryCommand { get; }
+    IAsyncRelayCommand ShowUsageCommand { get; }
+    IAsyncRelayCommand NextEntryCommand { get; }
+    IAsyncRelayCommand PrevEntryCommand { get; }
     IRelayCommand SearchCommand { get; }
-    IRelayCommand EnterNew2Command { get; }
+    IAsyncRelayCommand EnterNew2Command { get; }
     IRelayCommand CloseUsageCommand { get; }
     IRelayCommand EditEntryCommand { get; }
     IRelayCommand NewEntryCommand { get; }
