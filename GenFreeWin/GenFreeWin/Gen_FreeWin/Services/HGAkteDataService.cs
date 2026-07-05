@@ -19,6 +19,7 @@ using GenFree.Data;
 using GenFree.Helper;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Gen_FreeWin.Services
@@ -376,18 +377,43 @@ namespace Gen_FreeWin.Services
 
             try
             {
-                dynamic dynFields = fields;
+                // Access fields using reflection to avoid dynamic binder issues
+                var fieldsType = fields.GetType();
+                var indexer = fieldsType.GetProperty("Item", System.Reflection.BindingFlags.IgnoreCase | System.Reflection.BindingFlags.Public);
+
+                if (indexer == null)
+                    return null;
+
+                object? GetField(object fieldKey)
+                {
+                    try
+                    {
+                        return indexer.GetValue(fields, new[] { fieldKey });
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
+
+                string? SafeToString(object fieldKey) => GetField(fieldKey)?.ToString();
+                int SafeToInt(object fieldKey)
+                {
+                    var val = GetField(fieldKey);
+                    return val != null && int.TryParse(val.ToString(), out var result) ? result : 0;
+                }
+
                 return new HGAkteModel
                 {
-                    Id = Convert.ToInt32(dynFields[HGAFields.Nr] ?? 0),
-                    AkteNumber = (string)(dynFields[HGAFields.Akte] ?? ""),
-                    Kirchspiel = (string)(dynFields[HGAFields.Kirchspiel] ?? ""),
-                    Beschreibung = (string)(dynFields[HGAFields.Beschr] ?? ""),
-                    Hof = (string)(dynFields[HGAFields.Hof] ?? ""),
-                    Brandkasse = (string)(dynFields[HGAFields.Brandkasse] ?? ""),
-                    Bemerkungen = (string)(dynFields[HGAFields.Bem] ?? ""),
-                    Flur = (string)(dynFields[HGAFields.Flur] ?? ""),
-                    Parzelle = (string)(dynFields[HGAFields.Parzelle] ?? "")
+                    Id = SafeToInt(HGAFields.Nr),
+                    AkteNumber = SafeToString(HGAFields.Akte) ?? "",
+                    Kirchspiel = SafeToString(HGAFields.Kirchspiel) ?? "",
+                    Beschreibung = SafeToString(HGAFields.Beschr) ?? "",
+                    Hof = SafeToString(HGAFields.Hof) ?? "",
+                    Brandkasse = SafeToString(HGAFields.Brandkasse) ?? "",
+                    Bemerkungen = SafeToString(HGAFields.Bem) ?? "",
+                    Flur = SafeToString(HGAFields.Flur) ?? "",
+                    Parzelle = SafeToString(HGAFields.Parzelle) ?? ""
                 };
             }
             catch (Exception ex)
@@ -416,18 +442,55 @@ namespace Gen_FreeWin.Services
         /// <summary>
         /// Maps database fields to GBEModel.
         /// </summary>
-        private GBEModel MapFromDatabase_GBE(dynamic fields)
+        private GBEModel MapFromDatabase_GBE(object? fields)
         {
-            return new GBEModel
+            if (fields == null)
+                return null;
+
+            try
             {
-                Id = Convert.ToInt32(fields[GBEFields.Nr] ?? 0),
-                AkteNumber = (string)fields[GBEFields.Akte] ?? "",
-                Jahr = (string)fields[GBEFields.Jahr] ?? "",
-                Name = (string)fields[GBEFields.Name] ?? "",
-                Geb = (string)fields[GBEFields.Geb] ?? "",
-                Erb = (string)fields[GBEFields.Erb] ?? "",
-                Abg = (string)fields[GBEFields.Abg] ?? ""
-            };
+                // Access fields using reflection to avoid dynamic binder issues
+                var fieldsType = fields.GetType();
+                var indexer = fieldsType.GetProperty("Item", System.Reflection.BindingFlags.IgnoreCase | System.Reflection.BindingFlags.Public);
+
+                if (indexer == null)
+                    return null;
+
+                object? GetField(object fieldKey)
+                {
+                    try
+                    {
+                        return indexer.GetValue(fields, new[] { fieldKey });
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
+
+                string? SafeToString(object fieldKey) => GetField(fieldKey)?.ToString();
+                int SafeToInt(object fieldKey)
+                {
+                    var val = GetField(fieldKey);
+                    return val != null && int.TryParse(val.ToString(), out var result) ? result : 0;
+                }
+
+                return new GBEModel
+                {
+                    Id = SafeToInt(GBEFields.Nr),
+                    AkteNumber = SafeToString(GBEFields.Akte) ?? "",
+                    Jahr = SafeToString(GBEFields.Jahr) ?? "",
+                    Name = SafeToString(GBEFields.Name) ?? "",
+                    Geb = SafeToString(GBEFields.Geb) ?? "",
+                    Erb = SafeToString(GBEFields.Erb) ?? "",
+                    Abg = SafeToString(GBEFields.Abg) ?? ""
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"MapFromDatabase_GBE error: {ex.Message}");
+                return null;
+            }
         }
 
         /// <summary>
