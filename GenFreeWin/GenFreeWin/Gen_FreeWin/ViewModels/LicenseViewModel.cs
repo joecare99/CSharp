@@ -16,6 +16,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services;
+using Gen_FreeWin.Services.Interfaces;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
@@ -86,7 +87,7 @@ namespace Gen_FreeWin.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="LicenseViewModel"/> class.
         /// </summary>
-        public LicenseViewModel(IModul1 modul1, GenFree.ViewModels.Interfaces.IInteraction interaction, IProjectData projectData, IStrings strings)
+        public LicenseViewModel(IModul1 modul1, IInteraction interaction, IProjectData projectData, IStrings strings)
         {
             _interaction = interaction ?? throw new ArgumentNullException(nameof(interaction));
             _projectData = projectData ?? throw new ArgumentNullException(nameof(projectData));

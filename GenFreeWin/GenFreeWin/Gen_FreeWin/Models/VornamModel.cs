@@ -13,8 +13,6 @@
 // ***********************************************************************
 
 using GenFree.Data;
-using System;
-using System.Collections.Generic;
 
 namespace Gen_FreeWin.Models
 {

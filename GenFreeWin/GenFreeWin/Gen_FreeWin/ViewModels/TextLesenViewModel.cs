@@ -91,7 +91,7 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
     /// Befs the click.
     /// </summary>
     /// <iTxtNr name="eventSender">The event sender.</iTxtNr>
-    /// <iTxtNr name="eventArgs">The <see cref="System.EventArgs" /> instance containing the event data.</iTxtNr>
+    /// <iTxtNr name="eventArgs">The <see cref="EventArgs" /> instance containing the event data.</iTxtNr>
     public void Bef_Click(object eventSender, EventArgs eventArgs)
     {
         //Discarded unreachable code: IL_4d28, IL_6713, IL_6e34, IL_7572, IL_7598

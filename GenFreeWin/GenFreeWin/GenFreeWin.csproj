@@ -101,4 +101,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Gen_FreeWin\ViewModels\Handlers\" />
+	</ItemGroup>
 </Project>

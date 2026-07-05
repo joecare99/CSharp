@@ -15,7 +15,6 @@
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Main;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services.Interfaces;
 using Gen_FreeWin.UseCases;
@@ -24,10 +23,7 @@ using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
-using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
-using GenFreeWin.Views;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,9 +31,6 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Forms;
-using System.Windows.Input;
 
 namespace Gen_FreeWin.ViewModels
 {
@@ -48,27 +41,87 @@ namespace Gen_FreeWin.ViewModels
     /// </summary>
     public partial class VornamViewModel : ObservableObject, IVornamViewModel
     {
-        Form IVornamViewModel.View { get; set; }
-        public Vornam View => (Vornam)((IVornamViewModel)this).View;
-
+        
         // ============================================================================
         // MVVM Observable Properties (bindable via CommunityToolkit.Mvvm)
+        // Pattern (from copilot-instructions.md): 
+        // [ObservableProperty] public partial Type PropertyName { get; set; } = defaultValue;
         // ============================================================================
 
         [ObservableProperty]
-        private ObservableCollection<IListItem<int>> searchResults = new();
+        public partial ObservableCollection<IListItem<int>> SearchResults { get; set; } = new();
 
         [ObservableProperty]
-        private ObservableCollection<VornamModel> currentNames = new();
+        public partial ObservableCollection<VornamModel> CurrentNames { get; set; } = new();
 
         [ObservableProperty]
-        private string searchPattern = "";
+        public partial string SearchPattern { get; set; } = "";
 
         [ObservableProperty]
-        private bool isLoading;
+        public partial bool IsLoading { get; set; }
 
         [ObservableProperty]
-        private string statusMessage = "";
+        public partial string StatusMessage { get; set; } = "";
+
+        // ========================================================================
+        // Form UI State Properties (for MVVM binding, not direct View access)
+        // ========================================================================
+
+        /// <summary>
+        /// Form heading text (replaces View.lblHeading.Text).
+        /// </summary>
+        [ObservableProperty]
+        public partial string FormHeading { get; set; } = "";
+
+        /// <summary>
+        /// Form background color (replaces View.BackColor).
+        /// Represented as int (ColorArgb) for serialization safety.
+        /// </summary>
+        [ObservableProperty]
+        public partial int FormBackColor { get; set; } = unchecked((int)0xFFFFFFFF); // White
+
+        /// <summary>
+        /// Font size for form controls (replaces View.Font).
+        /// </summary>
+        [ObservableProperty]
+        public partial float FormFontSize { get; set; } = 10f;
+
+        /// <summary>
+        /// Font family name for form controls.
+        /// </summary>
+        [ObservableProperty]
+        public partial string FormFontName { get; set; } = "Arial";
+
+        /// <summary>
+        /// Observable collection of name field view models (15 fields, lines 1-15).
+        /// Replaces direct access to View.Text_Renamed[i].
+        /// </summary>
+        [ObservableProperty]
+        public partial ObservableCollection<NameFieldViewModel> NameFieldsTyped { get; set; } = new();
+
+        /// <summary>
+        /// IVornamViewModel.NameFields implementation (typed as object for interface compatibility).
+        /// Internal proxy to NameFieldsTyped.
+        /// </summary>
+        ObservableCollection<object> IVornamViewModel.NameFields
+        {
+            get => new ObservableCollection<object>(NameFieldsTyped.Cast<object>());
+            set => NameFieldsTyped = new ObservableCollection<NameFieldViewModel>(value.Cast<NameFieldViewModel>());
+        }
+
+        /// <summary>
+        /// Signal for View to close (replaces View?.Close()).
+        /// Set to true when form should be closed from ViewModel.
+        /// </summary>
+        [ObservableProperty]
+        public partial bool RequestClose { get; set; }
+
+        /// <summary>
+        /// Current active name field index for search result selection.
+        /// Replaces _currentNameIndex tracking.
+        /// </summary>
+        [ObservableProperty]
+        public partial int CurrentFieldIndex { get; set; } = -1;
 
         // ============================================================================
         // Private Fields & Dependencies
@@ -79,9 +132,6 @@ namespace Gen_FreeWin.ViewModels
 
         // Legacy Modul1 references
         private IModul1 Modul1 => _Modul1.Instance;
-        private IInteraction Interaction => Menue.Default;
-        private IVBConversions Conversion => Modul1.Conversions;
-        private IProjectData ProjectData => Modul1.ProjectData;
 
         // State tracking
         private int _currentPersonId;
@@ -104,6 +154,13 @@ namespace Gen_FreeWin.ViewModels
 
             SearchResults = new ObservableCollection<IListItem<int>>();
             CurrentNames = new ObservableCollection<VornamModel>();
+
+            // Initialize 15 name field view models (lines 1-15)
+            NameFieldsTyped = new ObservableCollection<NameFieldViewModel>();
+            for (int i = 1; i <= 15; i++)
+            {
+                NameFieldsTyped.Add(new NameFieldViewModel(i));
+            }
         }
 
         // ============================================================================
@@ -113,6 +170,7 @@ namespace Gen_FreeWin.ViewModels
 
         /// <summary>
         /// Async relay command: Loads names for the current person/gender on form load.
+        /// MVVM pure: Sets Observable Properties instead of directly accessing View controls.
         /// Usage in view: [CommandBinding(nameof(IVornamViewModel.LoadNamesCommand))]
         /// </summary>
         [RelayCommand]
@@ -120,34 +178,37 @@ namespace Gen_FreeWin.ViewModels
         {
             try
             {
+                // Set form UI state via Observable Properties (not View.Font, View.Text, etc.)
                 if (Modul1.FontSize > 0f)
                 {
-                    View.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+                    FormFontSize = Modul1.FontSize;
+                    FormFontName = "Arial";
                 }
 
-                View.lblHeading.Text = "Vorname                                                            Rufname-Marker                 Leitname";
-                View.BackColor = Modul1.HintFarb;
+                FormHeading = "Vorname                                                            Rufname-Marker                 Leitname";
+                FormBackColor = Modul1.HintFarb.ToArgb();
 
+                // Determine current person and gender
                 _currentPersonId = Personen.Default.PersonNr;
                 _currentTextKennz = Personen.Default.edtSex.Text.Trim().ToUpper() == "F" ? ETextKennz.F_ : ETextKennz.V_;
 
                 IsLoading = true;
                 var names = await _searchUseCase.LoadNamesAsync(_currentPersonId, _currentTextKennz);
 
-                // Update UI on main thread
-                View?.Invoke((MethodInvoker)(() =>
+                // Update CurrentNames collection and refresh UI state
+                CurrentNames.Clear();
+                foreach (var name in names)
                 {
-                    CurrentNames.Clear();
-                    foreach (var name in names)
-                    {
-                        CurrentNames.Add(name);
-                    }
-                    RefreshUI();
-                }));
+                    CurrentNames.Add(name);
+                }
+
+                // Populate NameFields from CurrentNames
+                RefreshNameFieldsFromCurrentNames();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"LoadNames error: {ex.Message}");
+                StatusMessage = $"Error loading names: {ex.Message}";
             }
             finally
             {
@@ -184,6 +245,7 @@ namespace Gen_FreeWin.ViewModels
 
         /// <summary>
         /// Async relay command: Selects a search result and populates the name field with full data.
+        /// MVVM pure: Updates NameFields Observable Collection instead of View.Text_Renamed directly.
         /// Usage in view: [CommandBinding(nameof(IVornamViewModel.SelectSearchResultCommand))]
         /// </summary>
         /// <param name="selectedItem">The IListItem&lt;int&gt; selected from dropdown</param>
@@ -197,14 +259,13 @@ namespace Gen_FreeWin.ViewModels
             {
                 // Get full text/lead name info
                 var textInfo = await _searchUseCase.GetTextByIdAsync(selectedItem.ItemData);
-                if (textInfo.HasValue)
+                if (textInfo.HasValue && CurrentFieldIndex >= 0 && CurrentFieldIndex < NameFieldsTyped.Count)
                 {
-                    // Update current name input fields
-                    if (_currentNameIndex > 0)
-                    {
-                        View.Text_Renamed[_currentNameIndex].Text = textInfo.Value.Text;
-                        View.Text_Renamed[_currentNameIndex + 50].Text = textInfo.Value.LeadName;
-                    }
+                    // Update current name field via Observable NameFieldViewModel
+                    var field = NameFieldsTyped[CurrentFieldIndex];
+                    field.PrimaryName = textInfo.Value.Text;
+                    field.Synonym = textInfo.Value.LeadName;
+                    field.MarkModified();
 
                     SearchResults.Clear();
                     SearchPattern = "";
@@ -212,12 +273,13 @@ namespace Gen_FreeWin.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"SelectSearchResult error: {ex.Message}");
+
             }
         }
 
         /// <summary>
         /// Async relay command: Saves all edited names for the current person to the database.
+        /// MVVM pure: Reads from NameFields Observable Properties instead of View.Text_Renamed directly.
         /// Usage in view: [CommandBinding(nameof(IVornamViewModel.SaveAllNamesCommand))]
         /// </summary>
         [RelayCommand]
@@ -227,19 +289,20 @@ namespace Gen_FreeWin.ViewModels
             {
                 IsLoading = true;
 
-                // Collect names from form fields
+                // Collect names from NameFieldsTyped ObservableCollection
                 var names = new List<VornamModel>();
-                for (int i = 1; i <= 15; i++)
+                for (int i = 0; i < NameFieldsTyped.Count; i++)
                 {
-                    if (!string.IsNullOrWhiteSpace(View.Text_Renamed[i].Text))
+                    var field = NameFieldsTyped[i];
+                    if (!field.IsEmpty)
                     {
                         var name = new VornamModel
                         {
                             PersonId = _currentPersonId,
-                            PrimaryName = View.Text_Renamed[i].Text.Left(240).TrimEnd(),
-                            Synonym = View.Text_Renamed[i + 50].Text.Left(240).TrimEnd(),
+                            PrimaryName = field.PrimaryName.Left(240).TrimEnd(),
+                            Synonym = field.Synonym.Left(240).TrimEnd(),
                             TextKennz = _currentTextKennz,
-                            LineNumber = (short)i,
+                            LineNumber = (short)(i + 1),
                             IsCalledName = false,
                             IsNickname = false
                         };
@@ -257,7 +320,7 @@ namespace Gen_FreeWin.ViewModels
 
                 if (success)
                 {
-                    // Refresh and reload ancestor data
+                    // Refresh and reload ancestor data (still accesses legacy globals – to be refactored separately)
                     Modul1.Person_ReadNames(_currentPersonId, Modul1.Person);
                     var ancestorData = Modul1.Ancesters_GetPersonData(Modul1.Person.ID, out int iAhn, out string _);
                     Modul1.Kont[10] = ancestorData;
@@ -265,7 +328,7 @@ namespace Gen_FreeWin.ViewModels
                     Personen.Default.edtGivennames.Text = Modul1.Person.Givennames;
 
                     // Show duplicates if configured
-                    if (Conversion.Val(Modul1.Aus[24].AsInt().AsString()) == 1.0)
+                    if (Modul1.Aus[24].AsInt() == 1)
                     {
                         Personen.Default.frmDublicates.Width = Personen.Default.Width - 20;
                         Personen.Default.lstDuplicates.Width = Personen.Default.frmDublicates.Width - 40;
@@ -274,7 +337,8 @@ namespace Gen_FreeWin.ViewModels
                         Personen.Default.Zeigfam(Personen.Default.edtSurnames.Text.Trim() + "," + Personen.Default.edtGivennames.Text.Trim());
                     }
 
-                    View?.Close();
+                    // Signal to View to close (instead of View?.Close())
+                    RequestClose = true;
                 }
             }
             catch (Exception ex)
@@ -290,6 +354,7 @@ namespace Gen_FreeWin.ViewModels
 
         /// <summary>
         /// Sync relay command: Cancels edit mode and closes the form.
+        /// MVVM pure: Clears NameFields and signals RequestClose instead of View?.Close() or Focus().
         /// Usage in view: [CommandBinding(nameof(IVornamViewModel.CancelEditCommand))]
         /// </summary>
         [RelayCommand]
@@ -297,17 +362,59 @@ namespace Gen_FreeWin.ViewModels
         {
             try
             {
-                // Clear form fields
-                for (int i = 1; i <= 65; i++)
+                // Clear all name fields
+                foreach (var field in NameFieldsTyped)
                 {
-                    View.Text_Renamed[i].Text = "";
+                    field.Clear();
                 }
-                View.Close();
-                Personen.Default.edtAlias.Focus();
+
+                // Signal to View to close (instead of View?.Close())
+                RequestClose = true;
+
+                // Note: Focus() would require View access; that's handled in View code-behind
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"CancelEdit error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Sync relay command: Completes edit mode and closes the form.
+        /// MVVM pure: Clears NameFields and signals RequestClose instead of View?.Close() or Focus().
+        /// Usage in view: [CommandBinding(nameof(IVornamViewModel.DoneEditCommand))]
+        /// </summary>
+        [RelayCommand]
+        public void DoneEdit()
+        {
+            SaveAllNames().GetAwaiter();
+        }
+
+        /// <summary>
+        /// Helper method: Populates NameFieldsTyped from CurrentNames collection.
+        /// Synchronizes loaded VornamModel items into observable name field ViewModels.
+        /// </summary>
+        private void RefreshNameFieldsFromCurrentNames()
+        {
+            NameFieldsTyped.Clear();
+            for (int i = 1; i <= 15; i++)
+            {
+                NameFieldsTyped.Add(new NameFieldViewModel(i));
+            }
+
+            // Populate from CurrentNames if available
+            if (CurrentNames != null && CurrentNames.Count > 0)
+            {
+                int index = 0;
+                foreach (var nameModel in CurrentNames.OfType<VornamModel>())
+                {
+                    if (index < NameFieldsTyped.Count)
+                    {
+                        NameFieldsTyped[index].PrimaryName = nameModel.PrimaryName ?? "";
+                        NameFieldsTyped[index].Synonym = nameModel.Synonym ?? "";
+                        index++;
+                    }
+                }
             }
         }
 
@@ -334,7 +441,8 @@ namespace Gen_FreeWin.ViewModels
                     if (success)
                     {
                         CurrentNames.Clear();
-                        RefreshUI();
+                        NameFieldsTyped.Clear();
+                        RefreshNameFieldsFromCurrentNames();
                     }
                 }
             }
@@ -345,14 +453,12 @@ namespace Gen_FreeWin.ViewModels
         }
 
         // ============================================================================
-        // Interface Property Exposures (for IVornamViewModel contract)
-        // Explicit interface implementation to satisfy IVornamViewModel with settable properties
-        // CurrentNames is exposed as ObservableCollection<object> in the interface
-        // but internally managed as ObservableCollection<VornamModel>
+        // Interface Property Exposures (IVornamViewModel contract)
+        // Explicit interface implementation for command/property binding
         // ============================================================================
 
         /// <summary>
-        /// Explicit interface property for SearchResults (supports both get and set).
+        /// Interface exposure for SearchResults (get/set for binding).
         /// </summary>
         ObservableCollection<IListItem<int>> IVornamViewModel.SearchResults
         {
@@ -361,9 +467,8 @@ namespace Gen_FreeWin.ViewModels
         }
 
         /// <summary>
-        /// Explicit interface property for CurrentNames (supports both get and set).
-        /// Exposes as object collection to avoid cross-assembly model dependency;
-        /// runtime items are Gen_FreeWin.Models.VornamModel.
+        /// Interface exposure for CurrentNames (as object collection for cross-assembly safety).
+        /// Internal type: ObservableCollection&lt;VornamModel&gt;
         /// </summary>
         ObservableCollection<object> IVornamViewModel.CurrentNames
         {
@@ -371,77 +476,10 @@ namespace Gen_FreeWin.ViewModels
             set
             {
                 CurrentNames.Clear();
-                foreach (var item in value)
+                foreach (var item in value.OfType<VornamModel>())
                 {
-                    if (item is VornamModel model)
-                        CurrentNames.Add(model);
+                    CurrentNames.Add(item);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Maps the LoadNames async relay command for command binding.
-        /// </summary>
-        IAsyncRelayCommand IVornamViewModel.LoadNamesCommand =>
-            new AsyncRelayCommand(LoadNames);
-
-        /// <summary>
-        /// Maps the SearchNames async relay command for command binding.
-        /// </summary>
-        IAsyncRelayCommand<string> IVornamViewModel.SearchNamesCommand =>
-            new AsyncRelayCommand<string>(SearchNames);
-
-        /// <summary>
-        /// Maps the SelectSearchResult async relay command for command binding.
-        /// </summary>
-        IAsyncRelayCommand<IListItem<int>> IVornamViewModel.SelectSearchResultCommand =>
-            new AsyncRelayCommand<IListItem<int>>(SelectSearchResult);
-
-        /// <summary>
-        /// Maps the SaveAllNames async relay command for command binding.
-        /// </summary>
-        IAsyncRelayCommand IVornamViewModel.SaveAllNamesCommand =>
-            new AsyncRelayCommand(SaveAllNames);
-
-        /// <summary>
-        /// Maps the CancelEdit relay command for command binding.
-        /// </summary>
-        IRelayCommand IVornamViewModel.CancelEditCommand =>
-            new RelayCommand(CancelEdit);
-
-        /// <summary>
-        /// Maps the DeleteAllNames async relay command for command binding.
-        /// </summary>
-        IAsyncRelayCommand IVornamViewModel.DeleteAllNamesCommand =>
-            new AsyncRelayCommand(DeleteAllNames);
-
-        // ============================================================================
-        // Helper Methods
-        // ============================================================================
-
-        /// <summary>
-        /// Refreshes the UI form fields with current names from CurrentNames collection.
-        /// </summary>
-        private void RefreshUI()
-        {
-            try
-            {
-                // Clear all form fields
-                for (int i = 1; i <= 65; i++)
-                {
-                    View.Text_Renamed[i].Text = "";
-                }
-
-                // Populate from CurrentNames collection
-                for (int i = 0; i < CurrentNames.Count && i < 15; i++)
-                {
-                    View.Text_Renamed[i + 1].Text = CurrentNames[i].PrimaryName;
-                    View.Text_Renamed[i + 1 + 50].Text = CurrentNames[i].Synonym;
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"RefreshUI error: {ex.Message}");
             }
         }
 
@@ -455,7 +493,6 @@ namespace Gen_FreeWin.ViewModels
         /// </summary>
         public void Form_Load(object sender, EventArgs e)
         {
-            // Execute load names using the async command
             try
             {
                 var cmd = ((IVornamViewModel)this).LoadNamesCommand;
@@ -470,34 +507,5 @@ namespace Gen_FreeWin.ViewModels
             }
         }
 
-        /// <summary>
-        /// Legacy event handler: Command button click. Deprecated; use command bindings instead.
-        /// </summary>
-        public void Befehl_Click(object sender, EventArgs e) { }
-
-        /// <summary>
-        /// Legacy event handler: List double-click variant 1. Deprecated.
-        /// </summary>
-        public void List1_DoubleClick(object sender, EventArgs e) { }
-
-        /// <summary>
-        /// Legacy event handler: List double-click variant 2. Deprecated.
-        /// </summary>
-        public void Liste1_DoubleClick(object sender, EventArgs e) { }
-
-        /// <summary>
-        /// Legacy event handler: Text key press. Use SearchNamesCommand via [CommandBinding] instead.
-        /// </summary>
-        public void Text_Renamed_KeyPress(object sender, KeyPressEventArgs e) { }
-
-        /// <summary>
-        /// Legacy event handler: Text key up. Deprecated.
-        /// </summary>
-        public void Text_Renamed_KeyUp(object sender, KeyEventArgs e) { }
-
-        /// <summary>
-        /// Legacy event handler: Text changed. Use SearchNamesCommand via [CommandBinding] instead.
-        /// </summary>
-        public void Text_Renamed_TextChanged(object sender, EventArgs e) { }
     }
 }

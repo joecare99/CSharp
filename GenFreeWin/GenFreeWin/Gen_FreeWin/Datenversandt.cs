@@ -99,18 +99,18 @@ public class Datenversandt : Form
         }
     }
 
-    [System.Diagnostics.DebuggerStepThrough]
+    [DebuggerStepThrough]
     private void InitializeComponent()
     {
-        Label1 = new System.Windows.Forms.Label();
-        Label2 = new System.Windows.Forms.Label();
-        Button1 = new System.Windows.Forms.Button();
-        Button2 = new System.Windows.Forms.Button();
-        Label3 = new System.Windows.Forms.Label();
+        Label1 = new Label();
+        Label2 = new Label();
+        Button1 = new Button();
+        Button2 = new Button();
+        Label3 = new Label();
         SuspendLayout();
         Label1.AutoSize = true;
         Label1.Location = new System.Drawing.Point(24, 26);
-        Label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+        Label1.Margin = new Padding(4, 0, 4, 0);
         Label1.Name = "Label1";
         Label1.Size = new System.Drawing.Size(51, 17);
         Label1.TabIndex = 0;
@@ -148,7 +148,7 @@ public class Datenversandt : Form
         Controls.Add(Label2);
         Controls.Add(Label1);
         Font = new System.Drawing.Font("Arial", 8.5f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-        Margin = new System.Windows.Forms.Padding(4);
+        Margin = new Padding(4);
         Name = "Datenversandt";
         Text = "Datenversandt";
         ResumeLayout(false);

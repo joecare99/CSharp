@@ -1510,7 +1510,7 @@ public partial class OrtsVerViewModel: BaseViewModelCT, IOrtsVerViewModel
         }
 
         View.Close();
-        Views.FrmEreignis ereignis = MainProject.Forms.Ereignis;
+        FrmEreignis ereignis = MainProject.Forms.Ereignis;
         ereignis.TextBox5.Tag = Modul1_OrtNr;
         ereignis.TextBox5.Text = Modul1.UbgT;
         ereignis.ListBox1.Visible = false;

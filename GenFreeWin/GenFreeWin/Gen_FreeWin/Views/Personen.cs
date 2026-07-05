@@ -36,9 +36,9 @@ public partial class Personen : Form
         {
             __ENCList.Add(new WeakReference(this));
         }
-        components = new System.ComponentModel.Container();
-        System.ComponentModel.ComponentResourceManager resources 
-            = new System.ComponentModel.ComponentResourceManager(typeof(global::GenFreeWin.Views.Menue));
+        components = new Container();
+        ComponentResourceManager resources 
+            = new ComponentResourceManager(typeof(GenFreeWin.Views.Menue));
 
         InitializeComponent();
 

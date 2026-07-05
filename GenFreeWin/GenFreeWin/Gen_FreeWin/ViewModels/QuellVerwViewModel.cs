@@ -2090,7 +2090,7 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
         num5 = View._Label1_13.Tag.AsInt(); // Updated from Text.AsInt() to Tag.AsInt()
         int Modul1_Nr1 = 0;
         View.Close();
-        GenFree.Interfaces.DB.IRecordset dB_SourceLinkTable = DataModul.DB_SourceLinkTable;
+        IRecordset dB_SourceLinkTable = DataModul.DB_SourceLinkTable;
 
         switch (Modul1.Qkenn)
         {

@@ -14,159 +14,81 @@
 
 using System.Collections.Generic;
 
-namespace Gen_FreeWin.Models
+namespace Gen_FreeWin.Models;
+
+/// <summary>
+/// Represents a single Grundbuchakte (land register entry / property record).
+/// Contains basic property information and a collection of associated Grundbucheinträge (property uses).
+/// </summary>
+public class HGAkteModel
 {
     /// <summary>
-    /// Represents a single Grundbuchakte (land register entry / property record).
-    /// Contains basic property information and a collection of associated Grundbucheinträge (property uses).
+    /// Unique numeric identifier for this Akte.
     /// </summary>
-    public class HGAkteModel
-    {
-        /// <summary>
-        /// Unique numeric identifier for this Akte.
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Akte number (primary identifier, user-facing).
-        /// </summary>
-        public string AkteNumber { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Kirchspiel (parish or administrative district).
-        /// </summary>
-        public string Kirchspiel { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Beschreibung / Description of the property or district.
-        /// </summary>
-        public string Beschreibung { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Hof / Farm designation or class.
-        /// </summary>
-        public string Hof { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Brandkasse (fire insurance class or related classification).
-        /// </summary>
-        public string Brandkasse { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Bemerkungen / Additional remarks or notes.
-        /// </summary>
-        public string Bemerkungen { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Flur / Field or plot designation.
-        /// </summary>
-        public string Flur { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Parzelle / Parcel number or designation.
-        /// </summary>
-        public string Parzelle { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Display text combining key fields for UI presentation.
-        /// </summary>
-        public string DisplayText => $"{AkteNumber} {Kirchspiel}".Trim();
-
-        /// <summary>
-        /// Associated Grundbucheinträge (land register entries) for this Akte.
-        /// </summary>
-        public List<GBEModel> Grundbucheintraege { get; set; } = new();
-
-        /// <summary>
-        /// Collection of persons/entities using or referenced in this property.
-        /// </summary>
-        public List<PropertyUsageModel> PropertyUsages { get; set; } = new();
-
-        /// <summary>
-        /// Validates that the Akte has required minimum information.
-        /// </summary>
-        /// <returns>True if Akte is valid for persistence, false otherwise.</returns>
-        public bool IsValid()
-        {
-            // Akte must have at least an Akte number
-            return !string.IsNullOrWhiteSpace(AkteNumber);
-        }
-    }
+    public int Id { get; set; }
 
     /// <summary>
-    /// Represents a Grundbucheintrag (land register entry / property use record).
+    /// Akte number (primary identifier, user-facing).
     /// </summary>
-    public class GBEModel
-    {
-        /// <summary>
-        /// Unique numeric identifier for this GBE.
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Reference to parent Akte number.
-        /// </summary>
-        public string AkteNumber { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Jahr / Year of the entry or registration.
-        /// </summary>
-        public string Jahr { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Name / Description of the property or owner (at time of entry).
-        /// </summary>
-        public string Name { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Geb / Birth or acquisition information.
-        /// </summary>
-        public string Geb { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Erb / Inheritance or succession information.
-        /// </summary>
-        public string Erb { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Abg / Settlement, conveyance or other transfer information.
-        /// </summary>
-        public string Abg { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Display text for UI list presentation.
-        /// </summary>
-        public string DisplayText => $"{Jahr} {Name}".Trim();
-
-        /// <summary>
-        /// Validates that the GBE has required minimum information.
-        /// </summary>
-        /// <returns>True if GBE is valid for persistence, false otherwise.</returns>
-        public bool IsValid()
-        {
-            // GBE must have at least an Akte reference
-            return !string.IsNullOrWhiteSpace(AkteNumber) && Id > 0;
-        }
-    }
+    public string AkteNumber { get; set; } = string.Empty;
 
     /// <summary>
-    /// Represents the usage of a property (person or entity linked to a property).
+    /// Kirchspiel (parish or administrative district).
     /// </summary>
-    public class PropertyUsageModel
+    public string Kirchspiel { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Beschreibung / Description of the property or district.
+    /// </summary>
+    public string Beschreibung { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Hof / Farm designation or class.
+    /// </summary>
+    public string Hof { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Brandkasse (fire insurance class or related classification).
+    /// </summary>
+    public string Brandkasse { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Bemerkungen / Additional remarks or notes.
+    /// </summary>
+    public string Bemerkungen { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Flur / Field or plot designation.
+    /// </summary>
+    public string Flur { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Parzelle / Parcel number or designation.
+    /// </summary>
+    public string Parzelle { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Display text combining key fields for UI presentation.
+    /// </summary>
+    public string DisplayText => $"{AkteNumber} {Kirchspiel}".Trim();
+
+    /// <summary>
+    /// Associated Grundbucheinträge (land register entries) for this Akte.
+    /// </summary>
+    public List<GBEModel> Grundbucheintraege { get; set; } = new();
+
+    /// <summary>
+    /// Collection of persons/entities using or referenced in this property.
+    /// </summary>
+    public List<PropertyUsageModel> PropertyUsages { get; set; } = new();
+
+    /// <summary>
+    /// Validates that the Akte has required minimum information.
+    /// </summary>
+    /// <returns>True if Akte is valid for persistence, false otherwise.</returns>
+    public bool IsValid()
     {
-        /// <summary>
-        /// Reference to the Akte number.
-        /// </summary>
-        public string AkteNumber { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Person ID linked to this property.
-        /// </summary>
-        public int PersonId { get; set; }
-
-        /// <summary>
-        /// Person display name (surname, givennames).
-        /// </summary>
-        public string PersonName { get; set; } = string.Empty;
+        // Akte must have at least an Akte number
+        return !string.IsNullOrWhiteSpace(AkteNumber);
     }
 }

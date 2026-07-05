@@ -30,7 +30,7 @@ public partial class RechText : Form
             __ENCList.Add(new WeakReference(this));
         }
         ABef = new ControlArray<Button>();
-        ABez = new ControlArray<System.Windows.Forms.Label>();
+        ABez = new ControlArray<Label>();
         ACommand1 = new ControlArray<Button>();
 
         InitializeComponent();

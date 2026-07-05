@@ -43,7 +43,7 @@ public partial class Namensuch : Form
         {
             __ENCList.Add(new WeakReference(this));
         }
-        components = new System.ComponentModel.Container();
+        components = new Container();
 
 
         Label1 = new();

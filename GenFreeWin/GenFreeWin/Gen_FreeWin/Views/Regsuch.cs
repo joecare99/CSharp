@@ -31,13 +31,13 @@ public partial class Regsuch : Form
         }
         ACheck2 = new ControlArray<CheckBox>();
         ACommand1 = new ControlArray<Button>();
-        ALabel1 = new ControlArray<System.Windows.Forms.Label>();
-        ALabel5 = new ControlArray<System.Windows.Forms.Label>();
-        ALabel6 = new ControlArray<System.Windows.Forms.Label>();
-        ALabel7 = new ControlArray<System.Windows.Forms.Label>();
-        ALabel8 = new ControlArray<System.Windows.Forms.Label>();
-        ALine1 = new ControlArray<System.Windows.Forms.Label>();
-        AOption1 = new ControlArray<System.Windows.Forms.RadioButton>();
+        ALabel1 = new ControlArray<Label>();
+        ALabel5 = new ControlArray<Label>();
+        ALabel6 = new ControlArray<Label>();
+        ALabel7 = new ControlArray<Label>();
+        ALabel8 = new ControlArray<Label>();
+        ALine1 = new ControlArray<Label>();
+        AOption1 = new ControlArray<RadioButton>();
         InitializeComponent();
         
         AOption1.SetIndex(_Option1_0, 0);

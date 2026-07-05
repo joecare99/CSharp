@@ -27,8 +27,8 @@ public partial class Partnerrecherche : Form
 		{
 			__ENCList.Add(new WeakReference(this));
 		}
-		Label2 = new ControlArray<System.Windows.Forms.Label>();
-		Text1 = new ControlArray<System.Windows.Forms.TextBox>();
+		Label2 = new ControlArray<Label>();
+		Text1 = new ControlArray<TextBox>();
 		InitializeComponent();
 		Text1.SetIndex(_Text1_2, 2);
 		Text1.SetIndex(_Text1_1, 1);

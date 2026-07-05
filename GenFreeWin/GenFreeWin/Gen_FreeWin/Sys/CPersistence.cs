@@ -275,7 +275,7 @@ namespace GenFree.Sys
             var M1_Iter = 0;
             while (!FileSystem.EOF(99) && ++M1_Iter < anz)
             {
-                txT[M1_Iter] = Strings.Trim(FileSystem.LineInput(99).Replace(":", ""));
+                txT[M1_Iter] = Strings.Trim(FileSystem.LineInput(99));
             }
             FileSystem.FileClose(99);
         }
@@ -313,17 +313,13 @@ namespace GenFree.Sys
         #endregion
 
         #region Prog-Methods
-        public void WriteIntsProg(string sSection, int[] aiValues)
-        {
-            WriteInts(GenFreeDir, sSection, aiValues);
-        }
+        public void WriteIntsProg(string sSection, int[] aiValues) => WriteInts(GenFreeDir, sSection, aiValues);
 
 
-        public void WriteStringProg(string sSection, string text)
-        {
-            WriteString(GenFreeDir, sSection, text);
-        }
+        public void WriteStringProg(string sSection, string text) => WriteString(GenFreeDir, sSection, text);
         public void ReadStringsProg(string sSection, string[] asData) => ReadStrings(GenFreeDir, sSection, asData);
+
+        public void ReadStringsProg(string sSection, IList<string> asData, int iCount) => ReadStrings(GenFreeDir, sSection, asData);
 
         public IEnumerable<string> ReadStringsProg(string sSection)
         {
@@ -494,10 +490,7 @@ namespace GenFree.Sys
             FileSystem.FileClose(99);
             return Value2;
         }
-        public int[] ReadIntsProg(string sSection, int iCnt)
-        {
-            return ReadInts(GenFreeDir, sSection, iCnt);
-        }
+        public int[] ReadIntsProg(string sSection, int iCnt) => ReadInts(GenFreeDir, sSection, iCnt);
 
         public void ReadSuchDatMand<T>(string DateiName, IList<T> aeValues) where T : Enum
         {
@@ -582,10 +575,7 @@ namespace GenFree.Sys
             return Value;
         }
 
-        void IGenPersistence.ReadBoolsTemp(string v, IList<bool> Option)
-        {
-            ReadBoolsTemp(v, Option);
-        }
+        void IGenPersistence.ReadBoolsTemp(string v, IList<bool> Option) => ReadBoolsTemp(v, Option);
 
         public void ReadStringsOutput(string sSection, IList<string> asValue, int iCount)
         {
@@ -645,10 +635,10 @@ namespace GenFree.Sys
             FileSystem.FileClose(99);
         }
 
-        public IList<string> ReadStringsMand(string v1, int v2)
+        public IList<string> ReadStringsMand(string sSection, int v2)
         {
             var result = new List<string>(v2);
-            FileSystem.FileOpen(99, Path.Combine(MandDir, v1), OpenMode.Input);
+            FileSystem.FileOpen(99, Path.Combine(MandDir, sSection), OpenMode.Input);
             for (int i = 0; i < v2; i++)
             {
                 if (FileSystem.EOF(99)) break;

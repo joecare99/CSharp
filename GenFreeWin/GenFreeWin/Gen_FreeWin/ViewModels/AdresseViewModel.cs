@@ -6,6 +6,8 @@ using GenFreeWin.Views;
 using Microsoft.VisualBasic;
 using MVVM.ViewModel;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -64,44 +66,39 @@ public partial class AdresseViewModel:BaseViewModelCT, IAdresseViewModel
     private void FormLoad()
     {
         View.BackColor = Menue.Default.BackColor;
-        FileSystem.FileClose(99);
-        if (_Modul1.Instance.Typ != DriveType.CDRom)
+        IList<string> lines = [];
+        _Modul1.Instance.Persistence.ReadStringsProg("Adresse", lines, 9);
+        if (lines.Count > 1)
         {
-            FileSystem.FileOpen(99, Path.Combine(_Modul1.Instance.GenFreeDir, "Adresse"), OpenMode.Append);
-        }
-        FileSystem.FileClose(99);
-        FileSystem.FileOpen(99, Path.Combine(_Modul1.Instance.GenFreeDir, "Adresse"), OpenMode.Input);
-        if (!FileSystem.EOF(99))
-        {
-            Title = FileSystem.LineInput(99);
-            Givenname = FileSystem.LineInput(99);
-            if (!FileSystem.EOF(99))
+            Title = lines[0];
+            Givenname = lines[1];
+            if (lines.Count > 2)
             {
-                Surname = FileSystem.LineInput(99);
+                Surname = lines[2];
             }
-            if (!FileSystem.EOF(99))
+            if (lines.Count > 3)
             {
-                Street = FileSystem.LineInput(99);
+                Street = lines[3];
             }
-            if (!FileSystem.EOF(99))
+            if (lines.Count > 4)
             {
-                Zip = FileSystem.LineInput(99);
+                Zip = lines[4];
             }
-            if (!FileSystem.EOF(99))
+            if (lines.Count > 5)
             {
-                Place = FileSystem.LineInput(99);
+                Place = lines[5];
             }
-            if (!FileSystem.EOF(99))
+            if (lines.Count > 6)
             {
-                Phone = FileSystem.LineInput(99);
+                Phone = lines[6];
             }
-            if (!FileSystem.EOF(99))
+            if (lines.Count > 7)
             {
-                EMail = FileSystem.LineInput(99);
+                EMail = lines[7];
             }
-            if (!FileSystem.EOF(99))
+            if (lines.Count > 8)
             {
-                Special = FileSystem.LineInput(99);
+                Special = lines[8];
             }
         }
     }

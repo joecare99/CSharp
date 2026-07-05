@@ -1263,7 +1263,7 @@ public partial class FrmEreignis : Form
                                 num6++;
                             }
                             ListBox3.Items.Clear();
-                            Modul1_oResult = Modul1.DeleteDoublicates<string>(Modul1_MyList);
+                            Modul1_oResult = Modul1.DeleteDoublicates(Modul1_MyList);
                             ListBox3.Items.AddRange(Modul1_oResult.ToArray());
                             ListBox3.Visible = true;
                             if (Modul1.Typ != DriveType.CDRom)
