@@ -27,6 +27,7 @@ public partial class App : Application
         var google = MapProviders.CreateGoogleMaps();
         sc.AddMapProviderCatalog(bing, bingareal, osm, google);
 
+        sc.AddHttpClient();
         // Active provider state + tilesource factory
         sc.AddSingleton<IMapProvider>(bingareal); // default
         sc.AddSingleton<ITileSource>(sp => new HttpTileSource(sp.GetRequiredService<IMapProvider>(), sp.GetRequiredService<ITileCache>()));

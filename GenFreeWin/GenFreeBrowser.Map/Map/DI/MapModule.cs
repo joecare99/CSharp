@@ -10,7 +10,6 @@ public static class MapModule
         cacheRoot ??= System.IO.Path.Combine(System.IO.Path.GetTempPath(), "MapTileCache");
         services.AddSingleton<ViewportState>();
         services.AddSingleton<ITileCache>(_ => new FileTileCache(cacheRoot));
-        services.AddHttpClient();
         // Provider and tilesource are app specific, register factories
         return services;
     }

@@ -1,6 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:GenFree.ViewModels.Interfaces"
 			 x:Class="GenFreeAvln.Views.FraStatistics"
+			 x:DataType="vm:IFraStatisticsViewModel"
 			 Width="258"
 			 Height="183">
   <GroupBox Name="frmStatistics" Header="Datei-Statistik">

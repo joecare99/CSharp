@@ -1,0 +1,12 @@
+{
+  "Browser": "Edge",
+  "Url": "https://trauer.rnz.de/login",
+  "Title": "RNZ",
+  "User": "H_Rosewich",
+  "Password": "rnzahW1ch",
+  "DBuser": "root",
+  "DBpass": "",
+  "DBhost": "192.168.0.98",
+  "DB": "RNZ-Trauer2",
+  "LocalPath": "\\\\Diskstation\\Share\\Daten\\dokumente\\HTML\\trauer.rnz.de"
+}

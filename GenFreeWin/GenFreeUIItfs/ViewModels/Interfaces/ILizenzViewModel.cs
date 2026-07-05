@@ -16,7 +16,7 @@ public interface ILizenzViewModel: INotifyPropertyChanged
     IRelayCommand VerifyCommand { get; }
     IRelayCommand CancelCommand { get; }
 
-    Action DoClose { set; }
-    Action DoEndProg { set; }
+    Action? DoClose { set; }
+    Action? DoEndProg { set; }
     IInteraction Interaction { set; }
 }

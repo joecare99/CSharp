@@ -1,0 +1,104 @@
+﻿<Project>
+	<Import Project="..\GenFreeWin.props" />
+	<PropertyGroup>
+		<AssemblyName>Gen_Free</AssemblyName>
+		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+		<OutputType>WinExe</OutputType>
+		<UseWindowsForms>True</UseWindowsForms>
+		<TargetFrameworks>net481</TargetFrameworks>
+		<PlatformTarget>x86</PlatformTarget>
+	</PropertyGroup>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+	<PropertyGroup>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup>
+		<ApplicationIcon>app.ico</ApplicationIcon>
+		<RootNamespace />
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Gen_FreeWin\Gen_PlusdatenDataSetTableAdapters\**" />
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="Gen_FreeWin\Gen_PlusdatenDataSetTableAdapters\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="Gen_FreeWin\Gen_PlusdatenDataSetTableAdapters\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Gen_FreeWin\DBImplementOleDB.cs" />
+		<Compile Remove="Gen_FreeWin\Gen_PlusdatenDataSet.cs" />
+		<Compile Remove="Gen_FreeWin\Gen_PlusdatenDataSet.Designer.cs" />
+		<Compile Remove="Gen_FreeWin\Gen_PlusdatenDataSet_.cs" />
+		<Compile Remove="Gen_FreeWin\Quellen.designer.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Gen_FreeWin\Gen_PlusdatenDataSet.xsc" />
+	  <None Remove="Gen_FreeWin\Gen_PlusdatenDataSet.xsd" />
+	  <None Remove="Gen_FreeWin\Gen_PlusdatenDataSet.xss" />
+	 </ItemGroup>
+	<ItemGroup>
+	  <None Include="Gen_FreeWin\Views\Quellen.designer.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+	  <ProjectReference Include="..\GenDBImplOLEDB\GenDBImplOLEDB.csproj" />
+	  <ProjectReference Include="..\GenFreeBaseClasses\GenFreeBaseClasses.csproj" />
+		<ProjectReference Include="..\GenFreeData\GenFreeData.csproj" />
+		<ProjectReference Include="..\GenFreeBase\GenFreeBase.csproj" />
+	  <ProjectReference Include="..\GenFreeHelper\GenFreeHelper.csproj" />
+	  <ProjectReference Include="..\GenFreeUIItfs\GenFreeUIItfs.csproj" />
+	  <ProjectReference Include="..\GenFreeWinForms\GenFreeWinForms.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Gen_FreeWin\Views\Repo.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	  <Compile Update="Properties\Resource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Gen_FreeWin\Views\Personen.de.resx">
+	    <Generator></Generator>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Gen_FreeWin\Views\Personen.resx">
+	    <Generator></Generator>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Properties\Resource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <CustomToolNamespace>Properties</CustomToolNamespace>
+	    <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>PublicSettingsSingleFileGenerator</Generator>
+	    <CustomToolNamespace>Properties</CustomToolNamespace>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
+	</ItemGroup>
+	<ItemGroup>
+    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
+	</ItemGroup>
+</Project>
