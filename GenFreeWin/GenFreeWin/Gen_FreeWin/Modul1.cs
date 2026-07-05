@@ -1,10 +1,8 @@
 using BaseLib.Helper;
 using Gen_FreeWin;
-using Gen_FreeWin.Data;
 using Gen_FreeWin.Main;
 using Gen_FreeWin.Views;
 using GenFree.Data;
-using GenFree.Data.Models;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
@@ -28,9 +26,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Security.Policy;
 using System.Text;
 using System.Windows.Forms;
 

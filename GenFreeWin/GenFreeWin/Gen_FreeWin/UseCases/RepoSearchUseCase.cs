@@ -12,7 +12,6 @@
 // <summary>Business logic use case for repository search and initialization</summary>
 // ***********************************************************************
 
-using BaseLib.Helper;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services.Interfaces;
 using GenFree.Helper;

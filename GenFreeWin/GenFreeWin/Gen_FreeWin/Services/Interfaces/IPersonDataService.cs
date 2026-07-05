@@ -12,7 +12,6 @@
 // <summary>Service contract for person name and genealogy data access</summary>
 // ***********************************************************************
 
-using GenFree.Interfaces.Data;
 using System.Threading.Tasks;
 
 namespace Gen_FreeWin.Services.Interfaces

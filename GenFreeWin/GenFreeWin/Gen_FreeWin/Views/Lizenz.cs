@@ -1,21 +1,16 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Models;
 using Gen_FreeWin.Services;
 using Gen_FreeWin.ViewModels;
-using Gen_FreeWin.Views;
 using GenFree;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
-using GenFreeWin.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Gen_FreeWin;

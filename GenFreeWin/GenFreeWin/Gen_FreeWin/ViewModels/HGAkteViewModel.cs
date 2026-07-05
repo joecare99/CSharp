@@ -12,17 +12,14 @@
 // <summary>Refactored thin MVVM ViewModel for HGakte (Grundbuchakte) management</summary>
 // ***********************************************************************
 
-using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Main;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services.Interfaces;
 using Gen_FreeWin.UseCases;
 using Gen_FreeWin.ViewModels.Interfaces;
 using Gen_FreeWin.Views;
 using GenFree;
-using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.VB;

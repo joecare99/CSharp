@@ -12,7 +12,6 @@
 // <summary>Domain model for HGakte (Grundbuchakte / Land Register Entry)</summary>
 // ***********************************************************************
 
-using System;
 using System.Collections.Generic;
 
 namespace Gen_FreeWin.Models

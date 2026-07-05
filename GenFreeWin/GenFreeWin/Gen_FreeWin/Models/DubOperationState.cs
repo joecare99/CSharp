@@ -12,7 +12,6 @@
 // <summary>State and context for duplicate handling operations</summary>
 // ***********************************************************************
 
-using GenFree.Interfaces.Data;
 using System.Collections.Generic;
 
 namespace Gen_FreeWin.Models

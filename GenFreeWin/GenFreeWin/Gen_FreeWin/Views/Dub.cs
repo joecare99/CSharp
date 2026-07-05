@@ -1,21 +1,8 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
-using GenFree;
-using GenFree.Data;
 using GenFree.Helper;
-using GenFree.Interfaces.Data;
-using GenFree.Interfaces.DB;
-using GenFree.Interfaces.Sys;
-using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
-using GenFreeWin.Views;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Views;
 

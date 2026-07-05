@@ -12,16 +12,13 @@
 // <summary>Business logic and workflows for HGakte (Grundbuchakte) operations</summary>
 // ***********************************************************************
 
-using BaseLib.Helper;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services.Interfaces;
-using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Gen_FreeWin.UseCases

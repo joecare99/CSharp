@@ -12,16 +12,11 @@
 // <summary>Implementation for duplicate detection logic</summary>
 // ***********************************************************************
 
-using BaseLib.Helper;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services.Interfaces;
-using GenFree;
-using GenFree.Data;
-using GenFree.Interfaces.Data;
 using GenFree.Interfaces.Sys;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Gen_FreeWin.Services
