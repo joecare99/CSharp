@@ -9,21 +9,12 @@ namespace GenFree.ViewModels.Interfaces
 {
     /// <summary>
     /// Modern MVVM contract for Vorname (given name) ViewModel.
-    /// Defines observable properties, async/sync relay commands, and maintains backward compatibility with legacy form events.
-    /// Note: CurrentNames is typed as ObservableCollection&lt;object&gt; to avoid cross-assembly model visibility.
-    /// At runtime, each item is a Gen_FreeWin.Models.VornamModel; cast as needed when consuming.
+    /// Pure MVVM design: NO direct View reference. All UI state exposed via Observable Properties.
+    /// This interface is WPF/MAUI ready (Form is generic for backward compatibility only).
     /// </summary>
     public interface IVornamViewModel : INotifyPropertyChanged
     {
-        // ========================================================================
-        // Form/View Reference
-        // ========================================================================
-
-        /// <summary>
-        /// Gets or sets the associated WinForms View (Vornam form).
-        /// </summary>
-        Form View { get; set; }
-
+      
         // ========================================================================
         // Observable Properties (MVVM Bindable via CommunityToolkit.Mvvm)
         // ========================================================================
@@ -55,6 +46,50 @@ namespace GenFree.ViewModels.Interfaces
         /// Status/error message to display to user.
         /// </summary>
         string StatusMessage { get; set; }
+
+        // ========================================================================
+        // Form UI State Properties (NEW - for true MVVM)
+        // These replace direct View access
+        // ========================================================================
+
+        /// <summary>
+        /// Form heading text (replaces View.lblHeading.Text).
+        /// </summary>
+        string FormHeading { get; set; }
+
+        /// <summary>
+        /// Form background color as ARGB int (replaces View.BackColor).
+        /// </summary>
+        int FormBackColor { get; set; }
+
+        /// <summary>
+        /// Font size for form controls (replaces View.Font size).
+        /// </summary>
+        float FormFontSize { get; set; }
+
+        /// <summary>
+        /// Font family name for form controls (replaces View.Font family).
+        /// </summary>
+        string FormFontName { get; set; }
+
+        /// <summary>
+        /// Observable collection of name field view models (15 fields, lines 1-15).
+        /// Replaces direct access to View.Text_Renamed[] array.
+        /// Each item has PrimaryName, Synonym, IsModified, IsValid properties.
+        /// Type: ObservableCollection&lt;object&gt; at interface level (runtime: NameFieldViewModel items)
+        /// </summary>
+        ObservableCollection<object> NameFields { get; set; }
+
+        /// <summary>
+        /// Signal for View to close (replaces View?.Close()).
+        /// Set to true when form should be closed from ViewModel.
+        /// </summary>
+        bool RequestClose { get; set; }
+
+        /// <summary>
+        /// Current active name field index for search result selection.
+        /// </summary>
+        int CurrentFieldIndex { get; set; }
 
         // ========================================================================
         // Modern MVVM Relay Commands
@@ -95,6 +130,12 @@ namespace GenFree.ViewModels.Interfaces
         IRelayCommand CancelEditCommand { get; }
 
         /// <summary>
+        /// Sync command: Done edit and close form.
+        /// Usage: [CommandBinding(nameof(IVornamViewModel.DoneEditCommand))]
+        /// </summary>
+        IRelayCommand DoneEditCommand { get; }
+
+        /// <summary>
         /// Async command: Delete all names of current gender.
         /// Usage: [CommandBinding(nameof(IVornamViewModel.DeleteAllNamesCommand))]
         /// </summary>
@@ -110,34 +151,5 @@ namespace GenFree.ViewModels.Interfaces
         /// </summary>
         void Form_Load(object sender, EventArgs e);
 
-        /// <summary>
-        /// Handles command button click. Legacy event handler; use command bindings instead.
-        /// </summary>
-        void Befehl_Click(object sender, EventArgs e);
-
-        /// <summary>
-        /// Handles list double-click (variant 1). Legacy event handler.
-        /// </summary>
-        void List1_DoubleClick(object sender, EventArgs e);
-
-        /// <summary>
-        /// Handles list double-click (variant 2). Legacy event handler.
-        /// </summary>
-        void Liste1_DoubleClick(object sender, EventArgs e);
-
-        /// <summary>
-        /// Handles name field key press. Legacy event handler; use SearchNamesCommand instead.
-        /// </summary>
-        void Text_Renamed_KeyPress(object sender, KeyPressEventArgs e);
-
-        /// <summary>
-        /// Handles name field key up. Legacy event handler.
-        /// </summary>
-        void Text_Renamed_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e);
-
-        /// <summary>
-        /// Handles name field text changed. Legacy event handler; use SearchNamesCommand instead.
-        /// </summary>
-        void Text_Renamed_TextChanged(object sender, EventArgs e);
     }
 }
