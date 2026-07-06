@@ -87,12 +87,12 @@ namespace JCAMS.Core
             }
             else
             {
-                double Delta = (rect.Width - 3 * rect.Height) / 2;
-                int x2 = rect.X + (int)Delta;
+                int Delta = (rect.Width - 3 * rect.Height) / 2;
+                int x2 = rect.X + Delta;
                
                 Red = new Rectangle(x2, rect.Top, rect.Height, rect.Height);
-                Yel = new Rectangle(rect.X + (int)Delta + rect.Height, rect.Top, rect.Height, rect.Height);
-                Gre = new Rectangle(rect.X + (int)Delta + rect.Height * 2, rect.Top, rect.Height, rect.Height);
+                Yel = new Rectangle(rect.X + Delta + rect.Height, rect.Top, rect.Height, rect.Height);
+                Gre = new Rectangle(rect.X + Delta + rect.Height * 2, rect.Top, rect.Height, rect.Height);
             }
             P = new Point(Red.X + Red.Width / 2, Red.Y + Red.Height / 2);
 /*            FillSolidEllipse(graphics, Red, Color.White);
