@@ -1,0 +1,105 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:vm="using:AA98.MarkDown.Host.ViewModels"
+		xmlns:models="using:AA98.MarkDown.Host.Models"
+		xmlns:markdown="using:AA98.MarkDown.UI.Controls"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d"
+		d:DesignWidth="1200"
+		d:DesignHeight="800"
+		x:Class="AA98.MarkDown.Host.Views.MainWindow"
+		x:Name="HostWindow"
+		x:DataType="vm:MainWindowViewModel"
+		Title="AA98.MarkDown.Host"
+		Width="1200"
+		Height="800"
+		MinWidth="900"
+		MinHeight="600"
+		FontSize="12">
+  <Window.Styles>
+	<Style Selector="TabControl TabItem">
+	  <Setter Property="FontSize" Value="12" />
+	</Style>
+  </Window.Styles>
+
+  <Grid Margin="12"
+		RowDefinitions="Auto,Auto,*,Auto">
+	<Menu Grid.Row="0"
+		  Margin="0,0,0,8">
+	  <MenuItem Header="Datei">
+		<MenuItem Header="Neu"
+				  Command="{Binding NewDocumentCommand}" />
+		<MenuItem Header="Öffnen"
+				  Click="OnOpenRequested" />
+		<MenuItem Header="Speichern"
+				  Command="{Binding SaveCommand}" />
+		<MenuItem Header="Speichern unter"
+				  Click="OnSaveAsRequested" />
+		<MenuItem Header="Tab schließen"
+				  Click="OnCloseTabRequested" />
+	  </MenuItem>
+	</Menu>
+
+	<Border Grid.Row="1"
+			Margin="0,0,0,8"
+			Padding="8"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+	  <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto"
+			ColumnSpacing="8">
+		<TextBox Grid.Column="0"
+				 Watermark="Markdown-Pfad (*.md)"
+				 Text="{Binding DocumentPathInput, Mode=TwoWay}" />
+		<Button Grid.Column="1"
+				Content="Öffnen"
+				Click="OnOpenRequested" />
+		<Button Grid.Column="2"
+				Content="Neu"
+				Command="{Binding NewDocumentCommand}" />
+		<Button Grid.Column="3"
+				Content="Speichern"
+				Command="{Binding SaveCommand}" />
+		<Button Grid.Column="4"
+				Content="Speichern unter"
+				Click="OnSaveAsRequested" />
+		<ToggleButton Grid.Column="5"
+				  Content="Preview"
+				  IsChecked="{Binding IsPreviewEnabled, Mode=TwoWay}" />
+		<Button Grid.Column="6"
+				Content="Tab schließen"
+				Click="OnCloseTabRequested" />
+	  </Grid>
+	</Border>
+
+	<TabControl Grid.Row="2"
+				ItemsSource="{Binding Documents}"
+				SelectedItem="{Binding SelectedDocument, Mode=TwoWay}">
+	  <TabControl.ItemTemplate>
+		<DataTemplate x:DataType="models:MarkdownDocumentTab">
+		  <TextBlock Text="{Binding DisplayTitle}" />
+		</DataTemplate>
+	  </TabControl.ItemTemplate>
+	  <TabControl.ContentTemplate>
+		<DataTemplate x:DataType="models:MarkdownDocumentTab">
+		  <markdown:MarkdownEditorPreview HorizontalAlignment="Stretch"
+										  VerticalAlignment="Stretch"
+										  IsPreviewEnabled="{Binding DataContext.IsPreviewEnabled, ElementName=HostWindow}"
+										  Text="{Binding Text, Mode=TwoWay}"
+										  LinkInvoked="OnMarkdownLinkInvoked" />
+		</DataTemplate>
+	  </TabControl.ContentTemplate>
+	</TabControl>
+
+	<Border Grid.Row="3"
+			Margin="0,8,0,0"
+			Padding="8,6"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+	  <TextBlock Text="{Binding StatusText}"
+				 TextTrimming="CharacterEllipsis" />
+	</Border>
+  </Grid>
+</Window>

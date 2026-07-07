@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:avalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+			 xmlns:md="using:Markdown.Avalonia"
+			 xmlns:ctb="clr-namespace:ColorTextBlock.Avalonia;assembly=ColorTextBlock.Avalonia"
+			 x:Class="AA98.MarkDown.UI.Controls.MarkdownEditorPreview">
+  <UserControl.Styles>
+	<Style Selector="ctb|CTextBlock">
+	  <Setter Property="FontFamily" Value="Monospace" />
+	</Style>
+  </UserControl.Styles>
+
+  <Grid Name="PART_LayoutGrid"
+		RowDefinitions="Auto,*"
+		ColumnDefinitions="*,6,*"
+		RowSpacing="6">
+	<TextBlock Grid.Row="0"
+			   Grid.Column="0"
+			   Text="Markdown Editor"
+			   FontWeight="SemiBold" />
+	<TextBlock Name="PART_PreviewHeader"
+			   Grid.Row="0"
+			   Grid.Column="2"
+			   Text="Preview"
+			   FontWeight="SemiBold" />
+
+	<Border Grid.Row="1"
+			Grid.Column="0"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+	  <avalonEdit:TextEditor Name="PART_Editor"
+							 ShowLineNumbers="True"
+							 HorizontalScrollBarVisibility="Auto"
+							 VerticalScrollBarVisibility="Auto"
+							 FontFamily="Monospace"
+							 FontSize="12" />
+	</Border>
+
+	<GridSplitter Name="PART_ColumnSplitter"
+				  Grid.Row="1"
+				  Grid.Column="1"
+				  Width="6"
+				  Background="{DynamicResource ThemeControlMidBrush}"
+				  ResizeDirection="Columns"
+				  HorizontalAlignment="Stretch"
+				  VerticalAlignment="Stretch" />
+
+	<Border Name="PART_PreviewBorder"
+			Grid.Row="1"
+			Grid.Column="2"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+	  <md:MarkdownScrollViewer Name="PART_Preview"
+							 Margin="8"
+							 Markdown="" />
+	</Border>
+  </Grid>
+</UserControl>
