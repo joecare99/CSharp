@@ -87,12 +87,12 @@ namespace JCAMS.Core
             }
             else
             {
-                double Delta = (rect.Width - 3 * rect.Height) / 2;
-                int x2 = rect.X + (int)Delta;
+                int Delta = (rect.Width - 3 * rect.Height) / 2;
+                int x2 = rect.X + Delta;
                
                 Red = new Rectangle(x2, rect.Top, rect.Height, rect.Height);
-                Yel = new Rectangle(rect.X + (int)Delta + rect.Height, rect.Top, rect.Height, rect.Height);
-                Gre = new Rectangle(rect.X + (int)Delta + rect.Height * 2, rect.Top, rect.Height, rect.Height);
+                Yel = new Rectangle(rect.X + Delta + rect.Height, rect.Top, rect.Height, rect.Height);
+                Gre = new Rectangle(rect.X + Delta + rect.Height * 2, rect.Top, rect.Height, rect.Height);
             }
             P = new Point(Red.X + Red.Width / 2, Red.Y + Red.Height / 2);
 /*            FillSolidEllipse(graphics, Red, Color.White);
@@ -271,7 +271,7 @@ namespace JCAMS.Core
 SMath2.ToPoint(PtDest)
             };
             double Len = Length;
-            PtDest = SMath2.PointVectorToPoint(PtDest, Angle, Length * 2);
+            PtDest = SMath2.PointVectorToPoint(PtDest, Angle, Length * 2.0);
             Pt2.X = (int)((double)PtDest.X - Math.Cos((Angle + 20.0) * Math.PI / 180.0) * (double)Length * 2.0);
             Pt2.Y = (int)((double)PtDest.Y - Math.Sin((Angle + 20.0) * Math.PI / 180.0) * (double)Length * 2.0);
             Pt3.X = (int)((double)PtDest.X - Math.Cos((Angle - 20.0) * Math.PI / 180.0) * (double)Length * 2.0);
@@ -283,13 +283,13 @@ SMath2.ToPoint(PtDest)
             Gr.DrawPolygon(Pens.Red, Pt);
             if (Speed > 0.0)
             {
-                Pt4 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt2, Angle, Length * 2));
-                Pt5 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt3, Angle, Length * 2));
+                Pt4 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt2, Angle, Length * 2.0));
+                Pt5 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt3, Angle, Length * 2.0));
             }
             else
             {
-                Pt4 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt2, Angle + 180.0, Length * 2));
-                Pt5 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt3, Angle + 180.0, Length * 2));
+                Pt4 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt2, Angle + 180.0, Length * 2.0));
+                Pt5 = SMath2.ToPoint(SMath2.PointVectorToPoint(Pt3, Angle + 180.0, Length * 2.0));
             }
             Gr.DrawLines(Pen, new Point[4]
             {
