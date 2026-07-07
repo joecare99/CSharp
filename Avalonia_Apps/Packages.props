@@ -23,6 +23,7 @@
     <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="$(AvaloniaVersion)" />
 	<PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.0.1" />
 	<PackageVersion Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
+	<PackageVersion Include="Markdown.Avalonia" Version="11.0.3" />
 	<PackageVersion Include="FontPickerAvalonia" Version="0.10.18.1" />
 
     <PackageVersion Include="Avalonia.Svg.Skia" Version="11.3.0" />
