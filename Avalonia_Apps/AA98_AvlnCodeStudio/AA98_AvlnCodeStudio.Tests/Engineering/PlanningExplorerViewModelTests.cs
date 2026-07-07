@@ -1,6 +1,4 @@
 using AppKomponentBaseLib.Diagnostics;
-using AA98_AvlnCodeStudio.Base.Planning.Models;
-using AA98_AvlnCodeStudio.Base.Planning.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -8,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AA98_AvlnCodeStudio.Planning.Core.Models;
+using AA98_AvlnCodeStudio.Planning.Core.Services;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
 
@@ -23,7 +22,7 @@ public class PlanningExplorerViewModelTests
     [TestMethod]
     public async Task LoadAsync_BuildsDeterministicHierarchy()
     {
-        IPlanningReader planningReader = Substitute.For<IPlanningReader>();
+        IPlanningProvider planningReader = Substitute.For<IPlanningProvider>();
         planningReader
             .ReadAsync(Arg.Any<PlanningReadRequest>(), Arg.Any<CancellationToken>())
             .Returns(_ => Task.FromResult(CreateHierarchyResult()));
@@ -55,7 +54,7 @@ public class PlanningExplorerViewModelTests
     [TestMethod]
     public async Task LoadAsync_ExposesSelectionMetadataAndDiagnostics()
     {
-        IPlanningReader planningReader = Substitute.For<IPlanningReader>();
+        IPlanningProvider planningReader = Substitute.For<IPlanningProvider>();
         planningReader
             .ReadAsync(Arg.Any<PlanningReadRequest>(), Arg.Any<CancellationToken>())
             .Returns(_ => Task.FromResult(CreateResultWithDiagnosticsAndOrphan()));

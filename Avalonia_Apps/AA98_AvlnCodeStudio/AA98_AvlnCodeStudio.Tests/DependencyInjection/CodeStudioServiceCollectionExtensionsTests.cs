@@ -24,12 +24,12 @@ using AA98_AvlnCodeStudio.Versioning.Git.Services;
 using AA98_AvlnCodeStudio.UI.DependencyInjection;
 using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
-using AA98_AvlnCodeStudio.Base.Planning.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AA98_AvlnCodeStudio.Planning.Core.Services;
 
 namespace AA98_AvlnCodeStudio.Tests.DependencyInjection;
 
@@ -185,7 +185,7 @@ public class CodeStudioServiceCollectionExtensionsTests
         Assert.IsNotNull(serviceProvider.GetRequiredService<IDebugSessionService>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<ITerminalShellResolver>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<ITerminalSessionService>());
-        Assert.IsNotNull(serviceProvider.GetRequiredService<IPlanningReader>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<IPlanningProvider>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<PlanningExplorerViewModel>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<DiagnosticCollectionViewModel>());
         Assert.IsTrue(serviceProvider.GetServices<IDiagnosticConsumer>().Any());
