@@ -1,10 +1,10 @@
 using AA98_AvlnCodeStudio.Base.Debugging.Models;
 using AppKomponentBaseLib.Diagnostics;
 using AA98_AvlnCodeStudio.Base.OS.Models;
-using AA98_AvlnCodeStudio.Base.Planning.Models;
 using AA98_AvlnCodeStudio.Base.Testing.Models;
 using AA98_AvlnCodeStudio.Base.Versioning.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using AA98_AvlnCodeStudio.Planning.Core.Models;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
 

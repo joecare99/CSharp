@@ -1,7 +1,7 @@
 ﻿using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.Editor.Services;
-using AA98_AvlnCodeStudio.Base.Planning.Services;
 using System.IO;
+using AA98_AvlnCodeStudio.Planning.Core.Services;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels
 {

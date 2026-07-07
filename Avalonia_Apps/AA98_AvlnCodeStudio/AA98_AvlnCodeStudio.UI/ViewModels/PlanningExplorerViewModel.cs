@@ -1,6 +1,6 @@
+using AA98_AvlnCodeStudio.Planning.Core.Models;
+using AA98_AvlnCodeStudio.Planning.Core.Services;
 using AppKomponentBaseLib.Diagnostics;
-using AA98_AvlnCodeStudio.Base.Planning.Models;
-using AA98_AvlnCodeStudio.Base.Planning.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -16,13 +16,13 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels;
 /// </summary>
 public partial class PlanningExplorerViewModel : ViewModelBase
 {
-    private readonly IPlanningReader _planningReader;
+    private readonly IPlanningProvider _planningReader;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PlanningExplorerViewModel"/> class.
     /// </summary>
     /// <param name="planningReader">The planning reader service.</param>
-    public PlanningExplorerViewModel(IPlanningReader planningReader)
+    public PlanningExplorerViewModel(IPlanningProvider planningReader)
     {
         _planningReader = planningReader ?? throw new ArgumentNullException(nameof(planningReader));
     }

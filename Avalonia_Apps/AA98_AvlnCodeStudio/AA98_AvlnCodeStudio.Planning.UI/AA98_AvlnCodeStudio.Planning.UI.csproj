@@ -16,6 +16,7 @@
   </PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="Avalonia" />
+	<PackageReference Include="Avalonia.AvaloniaEdit" />
 	<PackageReference Include="CommunityToolkit.Mvvm" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>

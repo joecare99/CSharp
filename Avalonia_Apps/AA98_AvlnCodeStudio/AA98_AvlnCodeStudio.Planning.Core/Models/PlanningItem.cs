@@ -34,6 +34,11 @@ public sealed class PlanningItem
     public string SourcePath { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the raw markdown document text for the planning item.
+    /// </summary>
+    public string DocumentText { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets or sets the optional parent link declared for the planning item.
     /// </summary>
     public PlanningItemLink? Parent { get; set; }

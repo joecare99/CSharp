@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="AA98_AvlnCodeStudio.Planning.UI.Controls.PropertiesPanel"
+			 x:CompileBindings="False">
+  <Border BorderBrush="{DynamicResource ThemeControlMidBrush}"
+		  BorderThickness="1"
+		  CornerRadius="4"
+		  Padding="8">
+	<Grid RowDefinitions="Auto,*"
+		  RowSpacing="8">
+	  <TextBlock Grid.Row="0"
+				 Text="Properties"
+				 FontWeight="SemiBold" />
+
+	  <ScrollViewer Grid.Row="1"
+					VerticalScrollBarVisibility="Auto">
+		<ItemsControl ItemsSource="{Binding Properties}">
+		  <ItemsControl.ItemTemplate>
+			<DataTemplate>
+			  <Grid ColumnDefinitions="140,*"
+					Margin="0,0,0,6">
+				<TextBlock Grid.Column="0"
+						   VerticalAlignment="Center"
+						   Text="{Binding DisplayName}" />
+
+				<Grid Grid.Column="1">
+				  <TextBox IsVisible="{Binding IsEditable}"
+						   Text="{Binding Value, Mode=TwoWay}" />
+				  <TextBlock IsVisible="{Binding IsReadOnly}"
+							 VerticalAlignment="Center"
+							 Text="{Binding Value}" />
+				</Grid>
+			  </Grid>
+			</DataTemplate>
+		  </ItemsControl.ItemTemplate>
+		</ItemsControl>
+	  </ScrollViewer>
+	</Grid>
+  </Border>
+</UserControl>

@@ -79,12 +79,14 @@ public sealed class MarkdownPlanningReader : IPlanningProvider
 
     private static PlanningItem ReadItem(string repositoryRootPath, string filePath, PlanningItemKind kind)
     {
+        string documentText = File.ReadAllText(filePath);
         string[] lines = File.ReadAllLines(filePath);
         string sourcePath = Path.GetRelativePath(repositoryRootPath, filePath);
         PlanningItem item = new()
         {
             Kind = kind,
             SourcePath = sourcePath,
+            DocumentText = documentText,
         };
 
         ParseHeading(item, lines);

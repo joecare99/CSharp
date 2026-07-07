@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.Planning.Core.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -8,17 +9,18 @@ namespace AA98_AvlnCodeStudio.Planning.UI.ViewModels;
 /// <summary>
 /// Represents a single planning tree node in the planning UI component.
 /// </summary>
-public sealed class PlanningTreeItemViewModel
+public partial class PlanningTreeItemViewModel : ObservableObject
 {
     public PlanningTreeItemViewModel(PlanningItem item)
     {
         ArgumentNullException.ThrowIfNull(item);
 
         Id = item.Id;
-        Title = item.Title;
+        _title = item.Title;
         Kind = item.Kind;
-        Status = item.Status;
+        _status = item.Status;
         SourcePath = item.SourcePath;
+        _documentText = item.DocumentText;
         ParentId = item.Parent?.ItemId;
         ParentSourcePath = item.Parent?.SourcePath;
     }
@@ -27,22 +29,27 @@ public sealed class PlanningTreeItemViewModel
     {
         SourcePath = sourcePath;
         Id = sourcePath;
-        Title = Path.GetFileName(sourcePath);
+        _title = Path.GetFileName(sourcePath);
         Kind = PlanningItemKind.Unknown;
-        Status = PlanningItemStatus.Unknown;
+        _status = PlanningItemStatus.Unknown;
     }
 
     public bool IsVirtualNode => string.Equals(Id, SourcePath, StringComparison.OrdinalIgnoreCase);
 
     public string Id { get; }
 
-    public string Title { get; }
+    [ObservableProperty]
+    private string _title;
 
     public PlanningItemKind Kind { get; }
 
-    public PlanningItemStatus Status { get; }
+    [ObservableProperty]
+    private PlanningItemStatus _status;
 
     public string SourcePath { get; }
+
+    [ObservableProperty]
+    private string _documentText = string.Empty;
 
     public string? ParentId { get; }
 
