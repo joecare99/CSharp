@@ -1,6 +1,7 @@
 using Gen_FreeWin.Main;
 using GenFree;
 using GenFree.Helper;
+using Gen_FreeWin.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,6 +36,12 @@ public partial class Namensuch : Form
     {
         _viewModel = viewModel;
         _viewModel.View = this;
+
+        if (_viewModel is NamenSuchViewModel namenSuchViewModel)
+        {
+            namenSuchViewModel.AttachViewAdapter(new NamenSuchViewAdapter(this));
+        }
+
         FormClosed += Namensuch_FormClosed;
         Load += Namensuch_Load;
         strings = _Modul1.Instance.IText;

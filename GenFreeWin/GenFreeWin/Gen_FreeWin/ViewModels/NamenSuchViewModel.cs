@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gen_FreeWin.Services;
 using Gen_FreeWin.ViewModels;
+using Gen_FreeWin.ViewModels.Interfaces;
 using Gen_FreeWin.ViewModels.Models;
 using Gen_FreeWin.Views;
 using GenFree;
@@ -205,30 +206,6 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
     public ObservableCollection<ListItem<int>> Label5_Text { get; } = [];
     public ObservableCollection<ListItem<int>> Label7_Text { get; } = [];
     public ObservableCollection<ListItem<int>> Label8_Text { get; } = [];
-
-    IContainerControl INamenSuchViewModel.View { get; set; }
-
-    [Obsolete]
-    Namensuch View => (Namensuch)(this as INamenSuchViewModel).View;
-
-    FraNameSrchSelection fraNameSrchSelection1 => View.fraNameSrchSelection1;
-
-    private IDocument Document => Namensuch.Default.fraPreview1;
-
-    [Obsolete]
-    private PictureBox PictureBox1 => Namensuch.Default.PictureBox1;
-    [Obsolete]
-    private ComboBox ComboBox1 => Namensuch.Default.ComboBox1;
-    [Obsolete]
-    private ComboBox ComboBox2 => Namensuch.Default.ComboBox2;
-    [Obsolete]
-    private GroupBox Frame3 => Namensuch.Default.Frame3;
-    [Obsolete]
-    private ListBox ListBox1 => Namensuch.Default.ListBox1;
-    [Obsolete]
-    private ListBox List1 => Namensuch.Default.List1;
-    [Obsolete]
-    private Cursor Cursor { get; set; }
 
     // ====================================================================
     // Service Layer Fields (Phase B/C/D: Dependency Injection)
@@ -534,38 +511,6 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         Listleer();
     }
 
-    [Obsolete]
-    public void Check2_CheckStateChanged(object eventSender, EventArgs eventArgs)
-    {
-        if (eventSender == View.chbFamOnly)
-        {
-            Male2_Checked = false;
-            Female2_Checked = false;
-            Male_Checked = false;
-            Females_Checked = false;
-        }
-        if (eventSender != View.chbSelection)
-        {
-            if (FamOnly_Checked)
-            {
-                Male2_Visible = false;
-                Female2_Visible = false;
-
-                Male_Visible = true;
-                Females_Visible = true;
-            }
-            else
-            {
-                Male_Visible = false;
-                Females_Visible = false;
-
-                Male2_Visible = true;
-                Female2_Visible = true;
-            }
-            _ = ComboBox1.Focus();
-        }
-    }
-
     [RelayCommand]
     private void CheckMale()
     {
@@ -601,84 +546,6 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         SearchResultCount = 0;
         StatusMessage = "Filter: Weibliche Familie";
         Listleer();
-    }
-
-    [Obsolete]
-    public void Check2_MouseDown(object eventSender, MouseEventArgs eventArgs)
-    {
-        ;
-    }
-
-    private void chbOmitSpouse_CheckStateChanged(object eventSender, EventArgs eventArgs)
-    {
-        Male_Checked = false;
-        Females_Checked = false;
-        FamOnly_Checked = false;
-        if (OmitSpouse_Checked)
-        {
-            Label3_Text = "Name,Vorname                        Datum JJJJ  Personennr.";
-            Male_Visible = false;
-            Females_Visible = false;
-            FamOnly_Visible = false;
-        }
-        else
-        {
-            Label3_Text = "Name,Vorname                        Datum JJJJ  Personennr. Heirat       Partner";
-            Male2_Visible = true;
-            Female2_Visible = true;
-            FamOnly_Visible = true;
-        }
-        if (ComboBox1.Text != "")
-        {
-            StartSearch();
-        }
-    }
-
-    private void Combo1_KeyPress(object eventSender, KeyPressEventArgs eventArgs)
-    {
-        short num = checked((short)Strings.Asc(eventArgs.KeyChar));
-        _ = Interaction.MsgBox(num.ToString());
-        if (num == 13)
-        {
-            StartSearch();
-        }
-        eventArgs.KeyChar = Strings.Chr(num);
-        if (num != 0)
-        {
-        }
-    }
-
-    [Obsolete]
-    private void Command1_Click(object eventSender, EventArgs eventArgs)
-    {
-        var Index = View.Command1.GetIndex((Button)eventSender);
-
-
-        Modul1.UbgT1 = "";
-        switch (Index)
-        {
-            case 0:
-                break;
-            case 1:
-                PersonSheet();
-                break;
-            case 2:
-                FamilySheet();
-                break;
-            case 3:
-                StartSearch();
-                break;
-            case 5:
-            case 6:
-                Command1_Section56(Index);
-                break;
-            case 7:
-                PrintList();
-                break;
-            default:
-                View.Cursor = Cursors.Default;
-                break;
-        }
     }
 
     private void Clear_Label1_Text()
@@ -751,13 +618,13 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             return;
         }
 
-        FraPreview fraPreview = View.fraPreview1;
+        FraPreview fraPreview = UiForm.fraPreview1;
         IDocument document = fraPreview;
         fraPreview.Top = 0;
         fraPreview.Left = 0;
-        fraPreview.Height = View.Height;
+        fraPreview.Height = UiForm.Height;
         fraPreview.Visible = true;
-        fraPreview.Width = View.Width;
+        fraPreview.Width = UiForm.Width;
         fraPreview.AdjustLayout();
         document.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
         ComboBox1_Visible = false;
@@ -1040,7 +907,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             Kindles(ref KText, Modul1.FamInArb, Document);
         }
         fraPreview.DocumentRenew();
-        View.Cursor = Cursors.Default;
+        UiForm.Cursor = Cursors.Default;
     }
 
     void AppendPerson(IDocument doc, int iPers)
@@ -1057,7 +924,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         var num4 = 1;
         foreach (var link in DataModul.Link.ReadAllFams(iFamNr, eLKennz))
         {
-            if (num4++ > 99) break;
+            if (num4++ > 99)
+                break;
             aiPers.Add(link.iPersNr);
         }
 
@@ -1131,9 +999,9 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
     [RelayCommand]
     private async void StartSearch()
     {
-        View.Cursor = Cursors.WaitCursor;
-        View.ListBox1.Visible = false;
-        View.List1.Visible = true;
+        UiForm.Cursor = Cursors.WaitCursor;
+        UiForm.ListBox1.Visible = false;
+        UiForm.List1.Visible = true;
         Listleer();
 
         // Validate ComboBox text
@@ -1150,7 +1018,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             if (Text1_Text.Trim() == "")
             {
                 _ = Interaction.MsgBox("Suchbegriff muss angegeben werden");
-                View.Cursor = Cursors.Default;
+                UiForm.Cursor = Cursors.Default;
                 return;
             }
         }
@@ -1166,7 +1034,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         if (Text1_Text.Trim() == "")
         {
             _ = Interaction.MsgBox("Suchbegriff muss angegeben werden");
-            View.Cursor = Cursors.Default;
+            UiForm.Cursor = Cursors.Default;
             return;
         }
 
@@ -1181,8 +1049,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             Listfuell();
         }
 
-        _ = View.ComboBox1.Focus();
-        View.Cursor = Cursors.Default;
+        _ = UiForm.ComboBox1.Focus();
+        UiForm.Cursor = Cursors.Default;
     }
 
     /// <summary>
@@ -1240,7 +1108,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
     private void PrintList()
     {
         Modul1.Listbox3Clip(List1_Items, 1);
-        View.Cursor = Cursors.Default;
+        UiForm.Cursor = Cursors.Default;
     }
 
     private void Command1_Section56(int Index)
@@ -1261,7 +1129,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             FamilySheet();
         }
         //       fraNameSrchSelection1.Visible = false;
-        View.Cursor = Cursors.Default;
+        UiForm.Cursor = Cursors.Default;
     }
 
 
@@ -1276,12 +1144,12 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
 
         Document.SetHangingIndent(20);
         ComboBox2.Visible = false;
-        View.fraPreview1.Top = 0;
-        View.fraPreview1.Left = 0;
-        View.fraPreview1.Height = View.Height;
-        View.fraPreview1.Visible = true;
-        View.fraPreview1.Width = View.Width;
-        View.fraPreview1.AdjustLayout();
+        UiForm.fraPreview1.Top = 0;
+        UiForm.fraPreview1.Left = 0;
+        UiForm.fraPreview1.Height = UiForm.Height;
+        UiForm.fraPreview1.Visible = true;
+        UiForm.fraPreview1.Width = UiForm.Width;
+        UiForm.fraPreview1.AdjustLayout();
         Document.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
         ComboBox1.Visible = false;
         StartSearch_Visible = false;
@@ -1389,7 +1257,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 foreach (var link in DataModul.Link.ReadAllFams(Modul1.FamInArb, ELinkKennz.lkChild))
                 {
                     Modul1.Family.Kind[num4] = link.iPersNr;
-                    if (num4++ > 99) break;
+                    if (num4++ > 99)
+                        break;
                     A++;
                 }
                 U++;
@@ -1583,8 +1452,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             }
 
         }
-        View.fraPreview1.DocumentRenew();
-        View.Cursor = Cursors.Default;
+        UiForm.fraPreview1.DocumentRenew();
+        UiForm.Cursor = Cursors.Default;
     }
 
     [RelayCommand]
@@ -1609,7 +1478,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             ComboBox1.Text = "";
             DoHide();
         }
-        View.Cursor = Cursors.Default;
+        UiForm.Cursor = Cursors.Default;
     }
 
     private void ReadCheckBoxState(IList<bool> aus)
@@ -1636,15 +1505,15 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         {
             Modul1.Persistence.ReadEnumInit("Windowstate", out WiS);
         }
-        View.WindowState = WiS;
+        UiForm.WindowState = WiS;
         var _ints = Persistence.ReadIntsProg("maspos.dat", 2);
-        View.Left = _ints[0];
-        View.Top = _ints[1];
-        View.fraPreview1.Top = 0;
-        View.fraPreview1.Left = 0;
-        View.fraPreview1.Height = View.Height;
-        View.fraPreview1.Width = View.Width;
-        Document.SetFont(View.Font);
+        UiForm.Left = _ints[0];
+        UiForm.Top = _ints[1];
+        UiForm.fraPreview1.Top = 0;
+        UiForm.fraPreview1.Left = 0;
+        UiForm.fraPreview1.Height = UiForm.Height;
+        UiForm.fraPreview1.Width = UiForm.Width;
+        Document.SetFont(UiForm.Font);
 
 
         DataModul.DT_DescendentTable.MoveFirst();
@@ -1656,13 +1525,13 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         short num4 = 0;
         while (num4 <= 15)
         {
-            View.Label7[num4].Visible = false;
+            UiForm.Label7[num4].Visible = false;
             num4 = (short)unchecked(num4 + 1);
         }
         List1.Visible = true;
-        View.fraPreview1.Height = View.Height;
-        View.fraPreview1.Width = View.Width;
-        View.BackColor = Modul1.HintFarb;
+        UiForm.fraPreview1.Height = UiForm.Height;
+        UiForm.fraPreview1.Width = UiForm.Width;
+        UiForm.BackColor = Modul1.HintFarb;
         ProjectData.ClearProjectError();
         var num3 = 3;
         if (IsNotReadOnly)
@@ -1698,12 +1567,12 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             Label9_Visible = true;
             List1_Items.Clear();
             List1.Visible = true;
-            List1.Width = View.Width - 100;
+            List1.Width = UiForm.Width - 100;
         }
         num4 = 0;
         while (num4 <= 15)
         {
-            View.Label5[num4].Font = View.Font;
+            UiForm.Label5[num4].Font = UiForm.Font;
             num4 = (short)unchecked(num4 + 1);
         }
         NameSuch_Load_End();
@@ -2743,7 +2612,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
 
                             lErl = 2;
                             List4_Items.Add(new(text + Modul1.PersInArb.AsString(), Modul1.PersInArb));
-                            if (b++ > 99) break;
+                            if (b++ > 99)
+                                break;
                         }
                         goto end_IL_0001_2;
                     IL_03ea:
@@ -2802,7 +2672,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         }
         if (ComboBox1.Text == "")
         {
-            View.Cursor = Cursors.Default;
+            UiForm.Cursor = Cursors.Default;
             List1_Items.Add(new("Ende der Liste"));
             goto end_IL_0001_2;
         }
@@ -2869,7 +2739,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 if (Modul1.UbgT.Length / 3.0 != Conversion.Int(Modul1.UbgT.Length / 3.0))
                 {
                     _ = Interaction.MsgBox(_searchContext.Message);
-                    View.Cursor = Cursors.Default;
+                    UiForm.Cursor = Cursors.Default;
                     List1_Items.Add(new("Ende der Liste"));
                     goto end_IL_0001_2;
                 }
@@ -2968,11 +2838,12 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             goto IL_1fb0;
         }
     IL_1fb0: // <========== 16
-        View.Cursor = Cursors.Default;
+        UiForm.Cursor = Cursors.Default;
         List1_Items.Add(new("Ende der Liste"));
         goto end_IL_0001_2;
 
-    end_IL_0001_2: return;
+    end_IL_0001_2:
+        return;
     }
 
     public static string[] Datr(int persInArb, bool xShort)
@@ -3206,514 +3077,6 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         return QuText;
     }
 
-    public void Berufe(EEventArt eArt, IDocument rtbAnz)
-    {
-        //Discarded unreachable code: IL_2efd
-        int try0001_dispatch = -1;
-        int num = default;
-        int num2 = default;
-        int num3 = default;
-        int lErl = default;
-        while (true)
-        {
-            try
-            {
-                /*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
-                ;
-                checked
-                {
-                    int num7;
-                    string QuText;
-                    switch (try0001_dispatch)
-                    {
-                        default:
-                            num = 1;
-                            QuText = "";
-                            goto IL_000a;
-                        case 14030:
-                            {
-                                num2 = num;
-                                switch (num3 <= -2 ? 1 : num3)
-                                {
-                                    case 2:
-                                        break;
-                                    case 1:
-                                        goto IL_2f90;
-                                    default:
-                                        goto end_IL_0001;
-                                }
-                                if (Information.Err().Number == 3021)
-                                {
-                                    ProjectData.ClearProjectError();
-                                    if (num2 == 0)
-                                    {
-                                        throw ProjectData.CreateProjectError(-2146828268);
-                                    }
-                                    goto IL_2f90;
-                                }
-                                else
-                                {
-                                    if (Interaction.MsgBox(Conversion.ErrorToString(), title: Information.Err().Number.AsString(), mb: MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-                                    {
-                                        ProjectData.EndApp();
-                                    }
-                                    ProjectData.ClearProjectError();
-                                    if (num2 == 0)
-                                    {
-                                        throw ProjectData.CreateProjectError(-2146828268);
-                                    }
-                                    num7 = num2;
-                                    goto IL_2f94;
-                                }
-                            }
-                        end_IL_0001:
-                            break;
-                        IL_000a:
-                            num = 2;
-                            int privaus1 = privaus;
-                            int persInArb1 = Modul1.PersInArb;
-                            var evtList = List3_Items;
-
-                            string QuText2 = "";
-                            Modul1.UbgT1 = "";
-                            ProjectData.ClearProjectError();
-
-                            num3 = 2;
-                            string sEvent;
-                            sEvent = "";
-                            evtList.Clear();
-                            EEventArt eEventArt = eArt;
-                            int iFamPers = persInArb1;
-                            if (eEventArt > EEventArt.eA_601)
-                            {
-                                iFamPers = Modul1.FamInArb;
-                            }
-                            //                           var dB_EventTable = DataModul.DB_EventTable;
-                            foreach (var evt in DataModul.Event.ReadEventsBeSu(iFamPers, eEventArt))
-                            {
-                                if (evt.iPrivacy <= privaus1 && evt.iLfNr >= 1)
-                                {
-                                    string sEventDate = evt.dDatumV != default ? evt.dDatumV.AsString() : "";
-                                    sEventDate += 0 != evt.iDatumText ? evt.sDatumText.FrameIfNEoW(" (", ")") : "";
-                                    string sEventNote = evt.iKBem > 0 ? " " + evt.sKBem.Trim() + " " : " ";
-                                    sEventNote += evt.iHausNr > 0 ? evt.sHausNr.Trim() + " " : "";
-
-                                    sEvent = sEventDate + sEventNote + new string(' ', 240).Left(240) + evt.iLfNr.AsString();
-                                    if (eEventArt == EEventArt.eA_105 && Option[EOutCfg.o47])
-                                    {
-                                        sEvent = evt.sArtText + sEvent;
-                                    }
-
-                                    evtList.Add(new ListItem<(EEventArt, int, short)>(sEvent, (evt.eArt, evt.iPerFamNr, (short)evt.iLfNr)));
-                                }
-                            }
-                            lErl = 13;
-
-                            if (evtList.Count <= 0)
-                            {
-                                goto end_IL_0001_2;
-                            }
-                            if (eEventArt == EEventArt.eA_300)
-                            {
-                                Anz_AppendNewlineIfNeeded(rtbAnz);
-                                rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Bold));
-                                rtbAnz.AppendText(evtList.Count switch
-                                {
-                                    1 => Modul1.IText[EUserText.tOccupation] + ": ",
-                                    _ => Modul1.IText[EUserText.tTitle] + " ",
-                                });
-                                rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                            }
-                            else if (eEventArt == EEventArt.eA_301)
-                            {
-                                Anz_AppendNewlineIfNeeded(rtbAnz);
-                                rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Bold));
-                                if (evtList.Count >= 1)
-                                {
-                                    rtbAnz.AppendText(Modul1.IText[EUserText.t70] + " ");
-                                }
-                                rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                            }
-                            else if (eEventArt == EEventArt.eA_302)
-                            {
-                                Anz_AppendNewlineIfNeeded(rtbAnz);
-                                rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Bold));
-                                rtbAnz.AppendText(evtList.Count switch
-                                {
-                                    1 => Modul1.IText[EUserText.t444] + " ",
-                                    _ => Modul1.IText[EUserText.t445] + " ",
-                                });
-                                rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                            }
-                            else if (eEventArt == EEventArt.eA_602)
-                            {
-                                Retweg3(Document);
-                                rtbAnz.AppendText("\n\n");
-                                rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Bold));
-                                rtbAnz.AppendText(evtList.Count switch
-                                {
-                                    1 => "Wohnung der Familie: ",
-                                    _ => "Wohnungen der Familie: ",
-                                });
-                                rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                                Modul1.UbgT1 = "";
-                            }
-
-                            short num11 = (short)(evtList.Count - 1);
-                            short num10 = 0;
-                            while (num10 <= num11)
-                            {
-                                var LfNR = evtList[num10].ItemData<(int iArt, int iPers, int iLfNr)>().iLfNr;
-                                var xBreak = !DataModul.Event.ReadData(((EEventArt)Beruf, iFamPers, (short)LfNR), out var evt);
-                                if (xBreak || (evt.iLfNr != LfNR))
-                                {
-                                    _ = Interaction.MsgBox("7: FehlerStop");
-                                }
-                                var num4 = 0;
-                                while (num4++ <= 15)
-                                {
-                                    Modul1.Kont1[num4] = "";
-                                }
-                                Datu = default;
-                                if (evt.iPerFamNr != iFamPers)
-                                {
-                                    break;
-                                }
-                                var sDatu = "";
-                                if (evt.dDatumV != default)
-                                {
-                                    Datu = evt.dDatumV;
-                                    sDatu = Datwand1(Datu, evt.sDatumV_S);
-                                    Modul1.Kont1[1] = Datu.AsString();
-                                }
-                                if (evt.dDatumB != default)
-                                {
-                                    Datu = evt.dDatumB;
-                                    sDatu = Datwand1(Datu, evt.sDatumB_S);
-                                    if (sDatu.Left(2) == "am")
-                                    {
-                                        sDatu = Strings.Mid(sDatu, 4, sDatu.Length);
-                                    }
-                                    if (sDatu != "" & evt.sDatumB_S.Trim() == "")
-                                    {
-                                        sDatu = " bis " + sDatu;
-                                    }
-                                    if (Modul1.Kont1[1].Left(2) == "am")
-                                    {
-                                        Modul1.Kont1[1] = Strings.Mid(Modul1.Kont1[1], 4, Modul1.Kont1[1].Length);
-                                    }
-                                    if (evt.sDatumV_S.Trim() == "")
-                                    {
-                                        if (Modul1.Kont1[1].Trim() != "")
-                                        {
-                                            Modul1.Kont1[1] = Modul1.Kont1[1].Length < 10 ? "von " + Modul1.Kont1[1] : "vom " + Modul1.Kont1[1];
-                                        }
-                                        Modul1.Kont1[3] = " " + sDatu;
-                                    }
-                                    if (Modul1.Kont1[3] == "" & sDatu.Trim() != "")
-                                    {
-                                        Modul1.Kont1[3] = " " + sDatu;
-                                    }
-                                }
-                                Modul1.UbgT = "";
-                                if (0 != evt.iDatumText)
-                                {
-                                    Modul1.Kont1[1] += evt.sDatumText.FrameIfNEoW(" (", ")");
-                                }
-                                if (eEventArt == EEventArt.eA_105
-                                    && Option[EOutCfg.o34]
-                                    && "" != evt.sReg
-                                    && evt.sReg.Trim() != "")
-                                {
-                                    Modul1.Kont1[10] = " (Urk.-Nr.: " + evt.sReg.Trim() + ") ";
-                                }
-                                if (evt.iKBem > 0)
-                                {
-                                    Modul1.Kont1[7] = evt.sKBem.FrameIfNEoW(" ");
-                                }
-                                if (0 != evt.iHausNr)
-                                {
-                                    Modul1.Kont1[7] += evt.sHausNr.Trim() + " ";
-                                }
-
-                                if (eEventArt == EEventArt.eA_603)
-                                {
-                                    Modul1.Kont[0] = evt.sArtText;
-                                }
-                                else if (eEventArt == EEventArt.eA_105)
-                                {
-                                    Anz_AppendNewlineIfNeeded(rtbAnz);
-                                    Modul1.Kont[0] = 0 != evt.iArtText ? evt.sArtText : "";
-                                    rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Bold));
-                                    rtbAnz.AppendText(Modul1.Kont[0].Trim() + ": ");
-                                    rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                                }
-                                if (eEventArt == EEventArt.eA_106)
-                                {
-                                    Anz_AppendNewlineIfNeeded(rtbAnz);
-                                    rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Bold));
-                                    rtbAnz.AppendText("Heimatort/recht: ");
-                                    rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                                }
-                                if (eEventArt == EEventArt.eA_603)
-                                {
-                                    Anz_AppendNewlineIfNeeded(rtbAnz);
-                                    rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Bold));
-                                    rtbAnz.AppendText(Modul1.Person.SurName.Trim() + ": ");
-                                    rtbAnz.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                                }
-                                if (evt.iOrt > 0)
-                                {
-                                    Modul1.UbgT = Place_ReadData(evt.iOrt, 0, 0, Option[EOutCfg.o35], evt.sZusatz);
-                                    if (evt.sOrt_S != "")
-                                    {
-                                        Modul1.UbgT = Modul1.UbgT.TrimEnd() + " " + evt.sOrt_S.Trim();
-                                    }
-                                    Modul1.Kont1[5] = " " + Modul1.UbgT.Trim();
-                                    Modul1.UbgT = "";
-                                }
-                                Modul1.Kont1[4] = evt.sDatumB_S;
-                                if (evt.iPlatz > 0)
-                                {
-                                    Modul1.Kont1[6] = evt.sPlatz.FrameIfNEoW(" ");
-                                }
-                                Modul1.Kont1[4] = "";
-                                if (eEventArt < EEventArt.eA_400)
-                                {
-                                    if (Option[EOutCfg.o02] && evt.sBem[1] != " ")
-                                    {
-                                        Modul1.Kont1[2] = evt.sBem[1].Trim().FrameIfNEoW("{", "}");
-                                    }
-                                    if (Option[EOutCfg.o03] && evt.sBem[2] != " ")
-                                    {
-                                        Modul1.Kont1[4] = evt.sBem[2].Trim().FrameIfNEoW("{", "}");
-                                    }
-                                }
-                                else
-                                {
-                                    if (Option[EOutCfg.o02] && evt.sBem[1] != " ")
-                                    {
-                                        Modul1.Kont1[2] = evt.sBem[1].Trim().FrameIfNEoW("{", "}");
-                                    }
-                                    if (Option[EOutCfg.o03] && evt.sBem[2] != " ")
-                                    {
-                                        Modul1.Kont1[4] = evt.sBem[2].Trim().FrameIfNEoW("{", "}");
-                                    }
-                                }
-                                if (Modul1.Kont1[2].Trim() != "" | Modul1.Kont1[4].Trim() != "")
-                                {
-                                    QuText = " " + Modul1.Kont1[2].Trim() + " " + Modul1.Kont1[4].Trim();
-                                    QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                }
-                                if (eEventArt != EEventArt.eA_603)
-                                {
-                                }
-                                sEvent = Jobdreh(sEvent, ereiRf: EreiRf);
-                                sEvent = sEvent + " " + QuText;
-                                QuText = "";
-                                if (Option[EOutCfg.o39])
-                                {
-                                    DataModul.DB_SourceLinkTable.Index = "Tab22";
-                                    DataModul.DB_SourceLinkTable.Seek("=", 3, iFamPers, eEventArt, LfNR);
-                                    QuText2 = "";
-                                    while (!DataModul.DB_SourceLinkTable.EOF && !DataModul.DB_SourceLinkTable.NoMatch
-                                            && 0 != DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Art].AsInt())
-                                    {
-                                        if (
-                                            DataModul.DB_SourceLinkTable.Fields[0].AsInt() != 3 |
-                                            DataModul.DB_SourceLinkTable.Fields[1].AsInt() > iFamPers |
-                                            DataModul.DB_SourceLinkTable.Fields[1].AsInt() > persInArb1 |
-                                            DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Art].AsEnum<EEventArt>() != eEventArt |
-                                            DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.LfNr].AsInt() != LfNR)
-                                            break;
-
-                                        DataModul.DB_QuTable.Index = "NR";
-                                        DataModul.DB_QuTable.Seek("=", DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._3]);
-                                        if (!DataModul.DB_QuTable.NoMatch)
-                                        {
-                                            if (QuText2 == "")
-                                            {
-                                                QuText2 = ". " + Modul1.IText[EUserText.t450] + " ";
-                                            }
-                                            QuText2 = QuText2.Trim().Length > 10
-                                                ? (QuText2 + "; " + DataModul.DB_QuTable.Fields[QuFields._2].Value).AsString()
-                                                : (QuText2 + DataModul.DB_QuTable.Fields[QuFields._2].Value).AsString();
-                                            if (null != DataModul.DB_SourceLinkTable.Fields[3].Value & DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim() != "")
-                                            {
-                                                QuText2 = null == DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value
-                                                    ? QuText2 + " " + Modul1.IText[EUserText.t449] + " " + DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim()
-                                                    : QuText2 + ", " + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].AsString().Trim() + " " + DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim();
-                                            }
-                                            if (null != DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Orig].Value)
-                                            {
-                                                if (DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Orig].AsString() != "")
-                                                {
-                                                    QuText2 = (QuText2 + " >" + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Orig].Value + "<").AsString();
-                                                }
-                                                QuText2 = Zeiweg(QuText2, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                            }
-                                            if (null != DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Kom].Value)
-                                            {
-                                                if (DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Kom].AsString() != "")
-                                                {
-                                                    QuText2 = (QuText2 + " ==" + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Kom].Value + "==").AsString();
-                                                }
-                                                QuText2 = Zeiweg(QuText2, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                            }
-                                        }
-                                        DataModul.DB_SourceLinkTable.MoveNext();
-                                    }
-                                    if (null != evt.sBem[3])
-                                    {
-                                        if (evt.sBem[3].Trim() != "")
-                                        {
-                                            Modul1.Kont1[9] = evt.sBem[3].Trim();
-                                        }
-                                        if (Modul1.Kont1[9].Trim() != "")
-                                        {
-                                            if (QuText2 == "")
-                                            {
-                                                QuText2 = ". " + Modul1.IText[EUserText.t450] + " " + Modul1.Kont1[9].Trim();
-                                            }
-                                            else
-                                            {
-                                                QuText2 = QuText2 + "; " + Modul1.Kont1[9].Trim();
-                                                Modul1.Kont1[9] = "";
-                                            }
-                                            if (QuText2.Trim() != "")
-                                            {
-                                                QuText2 = Zeiweg(QuText2, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                                QuText2 = QuText2.Trim();
-                                                if (QuText2.Right(1) == ";")
-                                                {
-                                                    QuText2 = Strings.Trim(QuText2.Left(QuText2.Trim().Length - 1));
-                                                }
-                                                QuText2 = QuText2.Trim() + ".";
-                                            }
-                                        }
-                                    }
-                                }
-                                if (eEventArt <= EEventArt.eA_499)
-                                {
-                                    int persInArb = persInArb1;
-                                    int num15 = 1;
-                                    while (num15 <= 100)
-                                    {
-                                        KontSP[num15] = Modul1.Kont[num15];
-                                        Modul1.Kont[num15] = "";
-                                        num15 += 1;
-                                    }
-
-                                    EEventArt num17 = eEventArt;
-                                    if (Option[EOutCfg.o32])
-                                    {
-                                        Zeugsu(num17);
-                                        Modul1.UbgT1 = DataModul.Event.GetValue(persInArb, num17, EventFields.Bem4, (f) => f.AsString());
-                                    }
-                                    persInArb1 = persInArb;
-                                    num15 = 1;
-                                    while (num15 <= 100)
-                                    {
-                                        Modul1.Kont[num15] = KontSP[num15];
-                                        KontSP[num15] = "";
-                                        num15 += 1;
-                                    }
-                                    persInArb1 = persInArb;
-                                    if (Modul1.UbgT1.Trim() != "")
-                                    {
-                                        Modul1.UbgT1 = " Zeugen: " + Modul1.UbgT1.Trim() + ".";
-                                    }
-                                }
-                                lErl = 10;
-                                if (Modul1.Kont1[10].Trim() != "")
-                                {
-                                    Modul1.Kont1[10] = " " + Modul1.Kont1[10].Trim() + " ";
-                                }
-                                sEvent = sEvent.Trim() + Modul1.Kont1[10] + QuText2 + Modul1.UbgT1;
-                                QuText2 = "";
-                                Modul1.UbgT1 = "";
-                                if (sEvent.Trim().Right(1) != ".")
-                                {
-                                    sEvent = sEvent.Trim() + ". ";
-                                }
-                                if (eEventArt == EEventArt.eA_105 || num10 == 0)
-                                {
-                                    AppendTextIfNE(rtbAnz, sEvent);
-                                }
-                                else if (eEventArt != EEventArt.eA_603)
-                                {
-                                    if (sEvent.Trim() != "")
-                                    {
-                                        rtbAnz.AppendText("\n" + sEvent);
-                                    }
-                                }
-                                else if (sEvent.Trim() != "")
-                                {
-                                    rtbAnz.AppendText(sEvent);
-                                }
-
-
-
-                                lErl = 22;
-                                num10 = (short)unchecked(num10 + 1);
-                            }
-
-                            {
-                                eEventArt = 0;
-                            }
-                            goto end_IL_0001_2;
-                        IL_2f90:
-                            num7 = unchecked(num2 + 1);
-                            goto IL_2f94;
-                        IL_2f94:
-                            num2 = 0;
-                            switch (num7)
-                            {
-                                case 1:
-                                    break;
-                                case 17:
-                                case 86:
-                                case 102:
-                                case 115:
-                                case 131:
-                                case 160:
-                                case 450:
-                                case 459:
-                                    goto end_IL_0001_2;
-                            }
-                            goto default;
-                    }
-                }
-            }
-            catch (Exception obj) when (num3 != 0 && num2 == 0)
-            {
-                ProjectData.SetProjectError(obj, lErl);
-                try0001_dispatch = 14030;
-                continue;
-            }
-            throw ProjectData.CreateProjectError(-2146828237);
-        end_IL_0001_2: // <========== 8
-            break;
-        }
-        if (num2 != 0)
-        {
-            ProjectData.ClearProjectError();
-        }
-
-        void Anz_AppendNewlineIfNeeded(IDocument rtbAnz)
-        {
-            _ = rtbAnz.AppendTextIfNd("\n");
-        }
-
-        static void AppendTextIfNE(IDocument rtbAnz, string sText)
-        {
-            if (!string.IsNullOrWhiteSpace(sText))
-            {
-                rtbAnz.AppendText(sText);
-            }
-        }
-    }
-
     public void Kindles(ref string KText, int famInArb, IDocument iDoc)
     {
         //Discarded unreachable code: IL_0846
@@ -3855,1261 +3218,6 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         }
     }
 
-    public void EPerles(short Index, int FamSP1, int Persp1, bool Opt10, IDocument document)
-    {
-        //Discarded unreachable code: IL_485c
-        int try0001_dispatch = -1;
-        int num3 = default;
-        int num2 = default;
-        int num = default;
-        int lErl = default;
-        while (true)
-        {
-            try
-            {
-                /*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
-                ;
-                checked
-                {
-                    int num4;
-                    int persInArb2;
-                    int persInArb3;
-                    string InText;
-                    int Ortnr;
-                    short Art;
-                    float Idned;
-                    var person = new CPersonData();
-                    switch (try0001_dispatch)
-                    {
-                        default:
-                            ProjectData.ClearProjectError();
-                            num3 = 2;
-                            goto IL_0009;
-                        case 21374:
-                            {
-                                num2 = num;
-                                switch (num3 <= -2 ? 1 : num3)
-                                {
-                                    case 2:
-                                        break;
-                                    case 1:
-                                        goto IL_48b4;
-                                    default:
-                                        goto end_IL_0001;
-                                }
-                                if (Interaction.MsgBox(Conversion.ErrorToString(), title: Information.Err().Number.AsString(), mb: MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-                                {
-                                    ProjectData.EndApp();
-                                }
-                                ProjectData.ClearProjectError();
-                                if (num2 == 0)
-                                {
-                                    throw ProjectData.CreateProjectError(-2146828268);
-                                }
-                                num4 = num2;
-                                goto IL_48b8;
-                            }
-                        end_IL_0001:
-                            break;
-                        IL_0009:
-                            num = 2;
-                            // Referenzen
-                            int M1_PersInArb = Modul1.PersInArb;
-                            var M1_Kont0 = Modul1.Person.SurName;
-                            var M1_Givennames = Modul1.Person.Givennames;
-                            var M1_Kont4 = Modul1.Person.Alias;
-                            var M1_Kont5 = Modul1.Person.Clan;
-                            var M1_Kont6 = Modul1.Person.Stat;
-                            var M1_Prae = Modul1.Person.Prae;
-                            var M1_Kont11 = Modul1.Person.Birthday;
-                            var M1_Kont12 = Modul1.Person.Baptised;
-                            var M1_Kont13 = Modul1.Person.Death;
-                            var M1_Kont14 = Modul1.Person.Burial;
-                            string M1_Kont16 = "";
-                            string M1_Kont17 = "";
-                            string M1_Kont21 = "";
-                            string M1_Kont22 = "";
-                            string M1_Kont25 = "";
-                            string M1_Kont31 = "";
-                            string M1_Kont32 = "";
-                            string M1_Kont41 = "";
-                            string M1_Kont42 = "";
-
-                            int M1_Ubg;
-                            string M1_UbgT;
-                            int persInArb = M1_PersInArb;
-                            var M1_DTxt = Modul1.DTxt;
-
-                            Font font_Arial_11_Bold = new("Arial", 11.01f, FontStyle.Bold);
-                            Font font_Arial_11_Reg = new("Arial", 11.01f, FontStyle.Regular);
-
-                            var dB_PersonTable = DataModul.DB_PersonTable;
-
-                            Modul1.Person_ReadNames(M1_PersInArb, person);
-                            int Pers_iReligi = dB_PersonTable.Fields[PersonFields.religi].AsInt();
-
-                            if (M1_Prae.Trim() != "")
-                            {
-                                M1_Prae = M1_Prae.Trim() + " ";
-                            }
-
-                            if (Option[EOutCfg.o10_EmitIDs])
-                            {
-                                document.AppendText($"<{M1_PersInArb}> ");
-                            }
-                            document.AppendText(M1_Prae);
-                            document.AppendText(M1_Givennames.TrimEnd() + " ");
-                            _ = Namerw(Modul1.Person.SurName, Modul1.Person.Prefix, Modul1.Person.Suffix);
-                            string selectedText = M1_Kont0.TrimEnd();
-                            document.SetFont(font_Arial_11_Bold);
-                            document.AppendText(selectedText);
-                            document.SetFont(font_Arial_11_Reg);
-                            if (M1_Kont5 != "")
-                            {
-                                document.AppendText($" Sippe {M1_Kont5.TrimEnd()}");
-                            }
-                            //M1_PersInArb = Modul1.PerSatzLes(M1_PersInArb, Modul1.Schalt);
-                            document.SetFont(new Font("Arial", 11.01f, FontStyle.Italic));
-                            if (M1_Kont4 != "")
-                            {
-                                document.AppendText($" ({M1_Kont4.TrimEnd()})");
-                            }
-                            else
-                            {
-                                document.AppendText("");
-                            }
-                            document.SetFont(font_Arial_11_Reg);
-
-                            if (Pers_iReligi > 0)
-                            {
-                                M1_Ubg = Pers_iReligi.AsInt();
-                                M1_UbgT = DataModul.TextLese1(M1_Ubg);
-                                document.AppendText(", " + M1_UbgT);
-                            }
-                            Bildaus("P");
-                            if (M1_Kont6.Trim() != "")
-                            {
-                                document.AppendText(" " + M1_Kont6.TrimEnd() + " ");
-                            }
-                            document.SetFont(font_Arial_11_Reg);
-                            AppendRelatives(Modul1.PersInArb, document);
-                            Datles1(Modul1.PersInArb, Modul1.Person);
-                            document.AppendText(M1_Kont25);
-                            Retweg3(Document);
-                            document.SetHangingIndent(40);
-                            document.AppendText("\n");
-                            document.SetFont(font_Arial_11_Reg);
-                            document.SetIndent(0);
-                            Datles1(Modul1.PersInArb, Modul1.Person);
-                            string QuText;
-                            if (M1_Kont11.Trim() != ""
-                                | M1_Kont16.Length > 0
-                                | M1_Kont21.Length > 0
-                                | M1_Kont31.Trim() != ""
-                                | M1_Kont41.Trim() != "")
-                            {
-                                document.SetIndent(20);
-                                document.AppendText(M1_DTxt[1] + " " + M1_Kont11.Trim() + ".");
-                                if (Option[EOutCfg.o02]
-                                    && M1_Kont16.Trim() != "")
-                                {
-                                    QuText = M1_Kont16;
-                                    QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                    document.AppendText(" " + QuText);
-                                    QuText = "";
-                                }
-                                if (Option[EOutCfg.o03]
-                                    && M1_Kont21.Trim() != "")
-                                {
-                                    QuText = M1_Kont21;
-                                    QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                    document.AppendText(" " + QuText);
-                                    QuText = "";
-                                }
-                                if (M1_Kont31.Trim() != "")
-                                {
-                                    QuText = M1_Kont31;
-                                    QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                    document.AppendText(" " + QuText);
-                                    QuText = "";
-                                }
-                                if (document.AppendTextIfNd("."))
-                                    document.AppendText(" ");
-                                if (M1_Kont41 != "")
-                                {
-                                    document.AppendText(" " + M1_Kont41);
-                                }
-                            }
-                            if (M1_Kont12.Trim() != ""
-                                | M1_Kont17.Length > 0
-                                | M1_Kont22.Length > 0
-                                | M1_Kont32.Trim() != ""
-                                | M1_Kont42.Trim() != "")
-                            {
-                                document.AppendText("\n" + M1_DTxt[2] + " " + M1_Kont12.Trim() + ".");
-                                if (Option[EOutCfg.o02]
-                                    && M1_Kont17.Length > 0)
-                                {
-                                    QuText = M1_Kont17;
-                                    QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                    document.AppendText(" " + QuText);
-                                    QuText = "";
-                                }
-                                if (Option[EOutCfg.o03])
-                                {
-                                    if (M1_Kont22.Length > 0)
-                                    {
-                                        QuText = M1_Kont22;
-                                        QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                        document.AppendText(" " + QuText);
-                                        QuText = "";
-                                    }
-                                }
-                                if (M1_Kont32.Trim() != "")
-                                {
-                                    QuText = M1_Kont32;
-                                    QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                    document.AppendText(" " + QuText);
-                                    QuText = "";
-                                }
-                                _ = document.AppendTextIfNd(".");
-                                if (M1_Kont42 != "")
-                                {
-                                    document.AppendText(" " + M1_Kont42);
-                                }
-                            }
-                            int num11;
-                            if (Index == 1 | Index == 2)
-                            {
-                                if (Option[EOutCfg.o30])
-                                {
-                                    persInArb2 = M1_PersInArb;
-                                    int num5 = 0;
-
-                                    foreach (var Link in DataModul.Link.ReadAllFams(persInArb2, ELinkKennz.lkGodparent))
-                                    {
-                                        Modul1.Person_ReadNames(Link.iPersNr, Modul1.Person);
-                                        var sFullname = Namerw(Modul1.Person.SurName, Modul1.Person.Prefix, Modul1.Person.Suffix);
-                                        document.SetFont(font_Arial_11_Reg);
-                                        document.SetIndent(20);
-                                        if (num5 == 0)
-                                        {
-                                            document.AppendText("\n");
-                                            document.SetFont(font_Arial_11_Reg);
-                                            document.AppendText(" " + Modul1.IText[EUserText.tGodparents].Replace("&", "") + ": " + (M1_Prae.Trim() + " " + M1_Givennames.Trim()).Trim() + " " + sFullname.Trim());
-                                            num5 = 1;
-                                        }
-                                        else
-                                        {
-                                            document.AppendText((M1_Prae.Trim() + " " + M1_Givennames.Trim()).Trim() + " " + sFullname.Trim());
-                                        }
-                                        if (Option[EOutCfg.o31_GodpWithoutData])
-                                        {
-                                            Datles1(Link.iPersNr, Modul1.Person);
-                                            if (M1_Kont11 == "")
-                                            {
-                                                M1_Kont11 = M1_Kont12;
-                                            }
-                                            if (M1_Kont11.Trim() != "")
-                                            {
-                                                document.AppendText(" * " + M1_Kont11.Trim());
-                                            }
-                                            if (M1_Kont13 == "")
-                                            {
-                                                M1_Kont13 = M1_Kont14;
-                                            }
-                                            if (M1_Kont14.Trim() != "" & M1_Kont11.Trim() != "")
-                                            {
-                                                document.AppendText(",");
-                                            }
-                                            if (M1_Kont14.Trim() != "")
-                                            {
-                                                document.AppendText(M1_DTxt[3] + " " + M1_Kont13.Trim());
-                                            }
-                                            document.AppendText("; ");
-                                        }
-                                        else
-                                        {
-                                            document.AppendText("; ");
-                                        }
-                                    }
-                                    M1_PersInArb = persInArb;
-                                    var dB_PersonTable2 = DataModul.Person.Seek(M1_PersInArb);
-                                    string Pers_sBem2 = dB_PersonTable2.Fields[PersonFields.Bem2].AsString();
-
-                                    if (null != Pers_sBem2
-                                        && Pers_sBem2.Trim() != "")
-                                    {
-                                        if (num5 == 0)
-                                        {
-                                            document.AppendText(" " + Modul1.IText[EUserText.tGodparents].Replace("&", "") + ": ");
-                                        }
-                                        document.AppendText(Pers_sBem2.Trim());
-                                    }
-                                    M1_PersInArb = persInArb;
-                                }
-                                _ = document.AppendTextIfNd(".");
-                                if (Option[EOutCfg.o40])
-                                {
-                                    Sterdat(0);
-                                }
-                                _ = TrimEnd(document);
-                                _ = document.TrimEnd(";");
-                                _ = document.AppendTextIfNd(".");
-                                var liList5 = new List<(DateTime, int)>();
-                                if (Option[EOutCfg.o38])
-                                {
-                                    liList5.Clear();
-                                    PersNr = M1_PersInArb.AsInt();
-
-                                    foreach (var link in DataModul.Link.ReadAllPers(M1_PersInArb, ELinkKennz.lkGodparent))
-                                    {
-                                        M1_PersInArb = link.iFamNr;
-
-                                        Datu = DataModul.Event.GetDate(EEventArt.eA_Baptism, M1_PersInArb, out _);
-                                        if (Datu == default)
-                                        {
-                                            Datu = DataModul.Event.GetDate(EEventArt.eA_Birth, M1_PersInArb, out _);
-                                        }
-
-                                        liList5.Add((Datu, M1_PersInArb));
-                                    }
-
-                                    short num6 = (short)(liList5.Count - 1);
-                                    short num7 = 0;
-                                    while (num7 <= num6)
-                                    {
-                                        M1_PersInArb = liList5[num7].Item2;
-                                        Modul1.Person_ReadNames(M1_PersInArb, Modul1.Person);
-                                        _ = Namerw(Modul1.Person.SurName, Modul1.Person.Prefix, Modul1.Person.Suffix);
-                                        Datu = liList5[num7].Item1;
-
-                                        document.AppendText("\n" + Modul1.IText[EUserText.t348] + ": " + Datu + " bei " + (M1_Prae.Trim() + " " + M1_Givennames.Trim()).Trim() + " " + M1_Kont0.Trim());
-                                        M1_PersInArb = PersNr;
-                                        num7 = (short)unchecked(num7 + 1);
-                                    }
-                                }
-                                M1_PersInArb = persInArb;
-                                if (Option[EOutCfg.o37])
-                                {
-                                    Zeuge_Bei(Modul1.PersInArb);
-                                }
-                                M1_PersInArb = persInArb;
-                                persInArb3 = M1_PersInArb;
-                                foreach (var link in DataModul.Link.ReadAllFams(M1_PersInArb, ELinkKennz.lk9))
-                                {
-                                    M1_PersInArb = link.iPersNr;
-                                    Modul1.Person_ReadNames(M1_PersInArb, Modul1.Person);
-                                    M1_Kont0 = Namerw(Modul1.Person.SurName, Modul1.Person.Prefix, Modul1.Person.Suffix);
-                                    document.AppendText("\n");
-                                    document.AppendText("Verbundene Person: ");
-                                    document.AppendText((M1_Prae.Trim() + " " + M1_Givennames.Trim()).Trim() + " " + M1_Kont0.Trim());
-                                    Datles1(Modul1.PersInArb, Modul1.Person);
-                                    if (M1_Kont11 == "")
-                                    {
-                                        M1_Kont11 = M1_Kont12;
-                                    }
-                                    if (M1_Kont11.Trim() != "")
-                                    {
-                                        document.AppendText(" * " + M1_Kont11.Trim() + ".");
-                                    }
-                                    if (M1_Kont13 == "")
-                                    {
-                                        M1_Kont13 = M1_Kont14;
-                                    }
-                                    if (M1_Kont14.Trim() != "")
-                                    {
-                                        document.AppendText(M1_DTxt[3] + " " + M1_Kont13.Trim() + ".");
-                                    }
-                                    M1_PersInArb = persInArb;
-                                }
-                                M1_PersInArb = persInArb;
-                                foreach (var link in DataModul.Link.ReadAllPers(M1_PersInArb, ELinkKennz.lk9))
-                                {
-                                    M1_PersInArb = link.iFamNr;
-                                    Modul1.Person_ReadNames(M1_PersInArb, Modul1.Person);
-                                    M1_Kont0 = Namerw(Modul1.Person.SurName, Modul1.Person.Prefix, Modul1.Person.Suffix);
-                                    /* ??
-                                    Datu = DataModul.Event_GetDate(M1_PersInArb, EEventArt.eA_Baptism, out Modul1.Ds);
-                                    if (Datu == default)
-                                    {
-                                        Datu = DataModul.Event_GetDate(M1_PersInArb, EEventArt.eA_Birth, out Modul1.Ds);
-                                    }
-
-                                    if (Datu != default)
-                                        sDatu = Datwand1(Datu, Modul1.Ds);
-                                    else
-                                    {
-                                        sDatu = "";
-                                    }
-                                    */
-                                    document.AppendText("\nVerbunden mit " + (M1_Prae.Trim() + " " + M1_Givennames.Trim()).Trim() + " " + M1_Kont0.Trim());
-                                    M1_PersInArb = persInArb;
-                                }
-                                Modul1.eLKennz = ELinkKennz.lkWitnOfEngage;
-                                var aiFam = DataModul.Link.GetPersonFams(M1_PersInArb, Modul1.eLKennz);
-
-                                liList5.Clear();
-                                int num10 = aiFam.Count;
-                                num11 = 1;
-                                while (num11 <= num10)
-                                {
-                                    Modul1.FamInArb = aiFam[num11 - 1];
-                                    Datu = DataModul.Event.GetDate(EEventArt.eA_MarrReligious, aiFam[num11 - 1]);
-
-                                    liList5.Add((Datu, Modul1.FamInArb));
-                                    num11++;
-                                }
-                                InText = "Verlobungszeuge";
-                                Art = 501;
-                                Zeugenaus(ref InText, ref Art, liList5);
-                                M1_PersInArb = persInArb;
-                                aiFam.Clear();
-                                Modul1.eLKennz = ELinkKennz.lkMarrWitness;
-                                aiFam = DataModul.Link.GetPersonFams(M1_PersInArb, Modul1.eLKennz);
-                                liList5.Clear();
-                                int num14 = aiFam.Count;
-                                num11 = 1;
-                                while (num11 <= num14)
-                                {
-                                    Modul1.FamInArb = aiFam[num11 - 1];
-                                    Datu = DataModul.Event.GetDate(EEventArt.eA_MarrReligious, aiFam[num11 - 1]);
-
-                                    liList5.Add((Datu, Modul1.FamInArb));
-                                    num11++;
-                                }
-                                InText = "Trauzeuge";
-                                Art = 502;
-                                Zeugenaus(ref InText, ref Art, liList5);
-                                M1_PersInArb = persInArb;
-                                aiFam.Clear();
-                                Modul1.eLKennz = ELinkKennz.lkWitnOfMarr;
-                                aiFam = DataModul.Link.GetPersonFams(M1_PersInArb, Modul1.eLKennz);
-                                liList5.Clear();
-                                int num16 = aiFam.Count;
-                                num11 = 1;
-                                while (num11 <= num16)
-                                {
-                                    Modul1.FamInArb = aiFam[num11 - 1];
-                                    Datu = DataModul.Event.GetDate(EEventArt.eA_MarrReligious, aiFam[num11 - 1]);
-
-                                    liList5.Add((Datu, Modul1.FamInArb));
-                                    num11++;
-                                }
-                                InText = "kirchl. Trauzeuge";
-                                Art = 503;
-                                Zeugenaus(ref InText, ref Art, liList5);
-                                M1_PersInArb = persInArb;
-                            }
-                            if (Option[EOutCfg.o43] | false)
-                            {
-                                Berufe(EEventArt.eA_300, Document);
-                                Berufe(EEventArt.eA_301, Document);
-                                Berufe(EEventArt.eA_302, Document);
-                                _ = document.AppendTextIfNd();
-                                Berufe(EEventArt.eA_105, Document);
-                                _ = document.AppendTextIfNd();
-                                document.SetFont(font_Arial_11_Reg);
-                                Berufe(EEventArt.eA_106, Document);
-                            }
-                            _ = document.AppendTextIfNd();
-                            document.SetFont(font_Arial_11_Reg);
-                            if (Option[EOutCfg.o40])
-                            {
-                                Sterdat(1);
-                            }
-                            _ = document.AppendTextIfNd();
-
-                            string Pers_sBem1 = dB_PersonTable.Fields[PersonFields.Bem1].AsString();
-
-                            if (Option[EOutCfg.o01_Person] && Pers_sBem1.Trim() != "")
-                            {
-                                QuText = Pers_sBem1.Trim();
-                                QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                document.AppendText("{" + QuText + "}.\n");
-                                QuText = "";
-                            }
-                            Quellen();
-                            Persp1 = M1_PersInArb;
-                            Modul1.eLKennz = ELinkKennz.lkFather;
-                            if (dB_PersonTable.Fields[PersonFields.Sex].AsString() == "F")
-                            {
-                                Modul1.eLKennz = ELinkKennz.lkMother;
-                            }
-                            if (Index == 2)
-                            {
-                                Weitehen(FamSP1, this.Document);
-                            }
-                            M1_PersInArb = persInArb;
-                            Modul1.Family.Mann = 0;
-                            Modul1.Family.Frau = 0;
-                            M1_Ubg = Adoeltsuch(Modul1.PersInArb);
-                            Adoelt(M1_Ubg, Document);
-                            M1_PersInArb = persInArb;
-                            Modul1.Family.Mann = 0;
-                            Modul1.Family.Frau = 0;
-                            M1_Ubg = Modul1.Eltsuch(M1_PersInArb);
-                            if (M1_Ubg > 0)
-                                do
-                                {
-                                    document.AppendText("\n");
-                                    document.SetIndent(40);
-                                    ID = 200;
-                                    document.SetFont(font_Arial_11_Bold);
-                                    document.AppendText(Modul1.IText[EUserText.t82] + "\n");
-                                    document.SetFont(font_Arial_11_Reg);
-                                    Modul1.FamInArb = M1_Ubg;
-                                    if (!DataModul.Link.GetFamPerson(Modul1.FamInArb, ELinkKennz.lkFather, out M1_PersInArb))
-                                    {
-                                        Modul1.Family.Mann = M1_PersInArb;
-
-                                        Modul1.Person_ReadNames(M1_PersInArb, person);
-                                        string FullName = Namerw(person.SurName, person.Prefix, person.Suffix);
-                                        if (Option[EOutCfg.o10_EmitIDs])
-                                        {
-                                            document.AppendText("<" + M1_PersInArb.AsString() + "> " + M1_Prae.Trim() + " " + M1_Givennames.Trim());
-                                        }
-                                        else
-                                        {
-                                            document.AppendText(M1_Prae.Trim() + " " + M1_Givennames.Trim());
-                                        }
-                                        document.SetFont(font_Arial_11_Bold);
-                                        document.AppendText(" " + FullName);
-                                        document.SetFont(font_Arial_11_Reg);
-                                        if (M1_Kont4 != "")
-                                        {
-                                            document.SetFont(new Font("Arial", 11.01f, FontStyle.Italic));
-                                            document.AppendText(" (" + M1_Kont4.TrimEnd() + ")");
-                                        }
-                                        else
-                                        {
-                                            document.AppendText("");
-                                        }
-                                        document.SetFont(font_Arial_11_Reg);
-                                        var pt = DataModul.Person.Seek(M1_PersInArb);
-                                        if (pt.Fields[PersonFields.religi].AsInt() > 0)
-                                        {
-                                            M1_Ubg = pt.Fields[PersonFields.religi].AsInt();
-                                            M1_UbgT = DataModul.TextLese1(M1_Ubg);
-                                            document.AppendText(", " + M1_UbgT);
-                                        }
-                                        Bildaus("P");
-                                        AppendRelatives(Modul1.PersInArb, document);
-                                    }
-                                    else
-                                    {
-                                        document.AppendText(Modul1.IText[EUserText.tSpouseUnknown] + "\n");
-                                        M1_PersInArb = 0;
-                                    }
-                                    document.SetFont(font_Arial_11_Reg);
-                                    BemSch = 0;
-                                    Datu = default;
-                                    if (M1_PersInArb > 0)
-                                    {
-                                        Idned = 0f;
-                                        Datr1(ref Idned, Modul1.PersInArb);
-                                    }
-                                    num11 = 1;
-                                    while (num11 <= 6)
-                                    {
-                                        Modul1.Kont1[num11] = "";
-                                        num11++;
-                                    }
-                                    EEventArt eArt;
-                                    if ((!DataModul.Event.ReadData((eArt = EEventArt.eA_Marriage, Modul1.FamInArb, 0), out var cEv)
-                                            || cEv.dDatumV == default && cEv.dDatumB == default)
-                                        && (!DataModul.Event.Exists((eArt = EEventArt.eA_MarrReligious, Modul1.FamInArb, 0))
-                                            || cEv.dDatumV == default && cEv.dDatumB == default))
-                                    {
-                                        break;
-                                    }
-                                    Modul1_priv = cEv.iPrivacy;
-                                    if (!(Modul1_priv > privaus))
-                                    {
-                                        if (cEv.dDatumV != default)
-                                        {
-                                            Datu = cEv.dDatumV;
-                                            var sDatu = Datwand1(Datu, cEv.sDatumV_S);
-                                            Modul1.Kont1[1] = sDatu;
-                                        }
-                                        if (cEv.dDatumB != default)
-                                        {
-                                            Datu = cEv.dDatumB;
-                                            var sDatu = Datwand1(Datu, cEv.sDatumB_S);
-                                            if (Modul1.Kont1[1] != "")
-                                            {
-                                                sDatu = " / " + sDatu;
-                                            }
-                                            Modul1.Kont1[3] = sDatu;
-                                        }
-                                        M1_UbgT = "";
-                                        if (cEv.iOrt > 0)
-                                        {
-                                            Ortnr = cEv.iOrt;
-                                            Modul1.UbgT = Place_ReadData(Ortnr, 1, 0, Option[EOutCfg.o35], cEv.sZusatz);
-                                            if (Strings.Trim(cEv.sOrt_S) != "")
-                                            {
-                                                M1_UbgT = M1_UbgT.TrimEnd() + " " + Strings.Trim(cEv.sOrt_S);
-                                            }
-                                        }
-                                        num11 = 1;
-                                        while (num11 <= 6)
-                                        {
-                                            if (Modul1.Kont1[num11] == "0")
-                                            {
-                                                Modul1.Kont1[num11] = "";
-                                            }
-                                            num11++;
-                                        }
-                                        document.SetIndent(50);
-                                        if (Option[EOutCfg.o14])
-                                        {
-                                            document.SetIndent(70);
-                                        }
-                                        _ = document.AppendTextIfNd(" ");
-
-                                        string text2 = "";
-                                        if (cEv.eArt == EEventArt.eA_Marriage)
-                                        {
-                                            text2 = M1_DTxt[7];
-                                        }
-                                        if (cEv.eArt == EEventArt.eA_MarrReligious)
-                                        {
-                                            text2 = M1_DTxt[8];
-                                        }
-                                        _ = document.AppendTextIfNd();
-                                        if (Option[EOutCfg.o34])
-                                        {
-                                            if ("" != cEv.sReg)
-                                            {
-                                                if (cEv.sReg.Trim() != "")
-                                                {
-                                                    M1_UbgT = M1_UbgT + " (Urk.-Nr.: " + cEv.sReg.Trim() + ") ";
-                                                }
-                                            }
-                                        }
-                                        if (Option[EOutCfg.o10_EmitIDs])
-                                        {
-                                            document.AppendText(text2 + " [" + Modul1.FamInArb.AsString() + "] " + Modul1.Kont1[1] + " " + Modul1.Kont1[2] + Modul1.Kont1[3] + Modul1.Kont1[5] + Modul1.Kont1[6] + " " + M1_UbgT + " mit\n");
-                                            M1_UbgT = "";
-                                        }
-                                        else
-                                        {
-                                            document.AppendText(text2 + " " + Modul1.Kont1[1] + " " + Modul1.Kont1[2] + Modul1.Kont1[3] + Modul1.Kont1[5] + Modul1.Kont1[6] + " " + M1_UbgT + " mit\n");
-                                            M1_UbgT = "";
-                                        }
-                                    }
-                                }
-                                while (false);
-                            else
-                            {
-                                Modul1.FamInArb = 0;
-                                goto end_IL_0001_2;
-                            }
-                            lErl = 33;
-                            document.SetIndent(40);
-                            _ = document.AppendTextIfNd();
-                            document.SetFont(font_Arial_11_Reg);
-                            if (DataModul.Link.GetFamPerson(Modul1.FamInArb, ELinkKennz.lkMother, out M1_PersInArb))
-                            {
-                                Modul1.Family.Frau = M1_PersInArb;
-
-                                Modul1.Person_ReadNames(M1_PersInArb, person);
-                                var FullName = Namerw(person.SurName, person.Prefix, person.Suffix);
-                                if (Option[EOutCfg.o10_EmitIDs])
-                                {
-                                    document.AppendText("<" + M1_PersInArb.AsString() + "> " + M1_Prae.Trim() + " " + M1_Givennames.Trim());
-                                }
-                                else
-                                {
-                                    document.AppendText(M1_Prae.Trim() + " " + M1_Givennames.Trim());
-                                }
-                                document.SetFont(font_Arial_11_Bold);
-                                document.AppendText(" " + FullName);
-                                document.SetFont(font_Arial_11_Reg);
-                                document.SetFont(new Font("Arial", 11.01f, FontStyle.Italic));
-                                if (M1_Kont4 != "")
-                                {
-                                    document.AppendText(" (" + M1_Kont4.TrimEnd() + ")");
-                                }
-                                else
-                                {
-                                    document.AppendText("");
-                                }
-                                document.SetFont(font_Arial_11_Reg);
-                                var pt = DataModul.Person.Seek(M1_PersInArb);
-                                if (pt.Fields[PersonFields.religi].AsInt() > 0)
-                                {
-                                    M1_Ubg = pt.Fields[PersonFields.religi].AsInt().AsInt();
-                                    M1_UbgT = DataModul.TextLese1(M1_Ubg);
-                                    document.AppendText(", " + M1_UbgT);
-                                }
-                                Bildaus("P");
-                                AppendRelatives(Modul1.PersInArb, document);
-                                Idned = 0f;
-                                Datr1(ref Idned, Modul1.PersInArb);
-                                _ = document.AppendTextIfNd();
-                                document.SetFont(font_Arial_11_Reg);
-                            }
-                            else
-                            {
-                                document.AppendText(Modul1.IText[EUserText.tSpouseUnknown] + "\n");
-                                document.SetFont(font_Arial_11_Reg);
-                            }
-                            goto end_IL_0001_2;
-                        IL_48b4:
-                            num4 = unchecked(num2 + 1);
-                            goto IL_48b8;
-                        IL_48b8:
-                            num2 = 0;
-                            switch (num4)
-                            {
-                                case 1:
-                                    break;
-                                case 669:
-                                case 674:
-                                case 681:
-                                case 686:
-                                    goto end_IL_0001_2;
-                            }
-                            goto default;
-                    }
-                }
-            }
-            catch (Exception obj) when (num3 != 0 && num2 == 0)
-            {
-                ProjectData.SetProjectError(obj, lErl);
-                try0001_dispatch = 21374;
-                continue;
-            }
-            throw ProjectData.CreateProjectError(-2146828237);
-        end_IL_0001_2: // <========== 3
-            break;
-        }
-        if (num2 != 0)
-        {
-            ProjectData.ClearProjectError();
-        }
-    }
-
-
-
-    public void AppendRelatives(int persInArb, IDocument edtAnzeige)
-    {
-        bool xAppendAnc = Option[EOutCfg.o11];
-        bool xAppendDesc = Option[EOutCfg.o12];
-        if (xAppendAnc
-            || xAppendDesc)
-        {
-            Font fArial11Underl = new Font("Arial", 11.01f, FontStyle.Underline);
-            Font fArial11Reg = new Font("Arial", 11.01f, FontStyle.Regular);
-            Ahnles(persInArb, out _, out string Modul1_Kont11, out string Modul1_Kont13, out _);
-            if (xAppendAnc && Modul1_Kont11.Trim() != "")
-            {
-                edtAnzeige.SetFont(fArial11Underl);
-                edtAnzeige.AppendText(" ");
-                edtAnzeige.AppendText("Ahnen-Nr.: " + Modul1_Kont11.Trim() + ".");
-                edtAnzeige.SetFont(fArial11Reg);
-            }
-            if (xAppendDesc && Modul1_Kont13.Trim() != "")
-            {
-                edtAnzeige.AppendText(" ");
-                edtAnzeige.SetFont(fArial11Underl);
-                edtAnzeige.AppendText(Modul1_Kont13);
-                edtAnzeige.SetFont(fArial11Reg);
-            }
-            edtAnzeige.SetFont(fArial11Reg);
-        }
-    }
-
-    public void Kindhei(int persInArb1)
-    {
-        string sPerSex;
-        Modul1.eLKennz = (sPerSex = DataModul.Person.GetSex(persInArb1)) == "F" ? ELinkKennz.lkMother : ELinkKennz.lkFather;
-
-        var aiFam = Modul1.Link_Famsuch(persInArb1, Modul1.eLKennz);
-        var liList5 = new List<(DateTime, int)>();
-        liList5.Clear();
-        checked
-        {
-            int num = aiFam.Count;
-            int M1_Iter = 1;
-            while (M1_Iter <= num)
-            {
-                Modul1.FamInArb = aiFam[M1_Iter - 1];
-                EEventArt num3 = EEventArt.eA_500;
-                while (num3 <= EEventArt.eA_505)
-                {
-                    if ((Datu = DataModul.Event.GetDate(num3, Modul1.FamInArb)) != default
-                        && num3 != EEventArt.eA_504)
-                        break;
-                    num3++;
-                }
-                if (Datu.AsInt() == 0.0)
-                {
-                    Datu = DataModul.Event.GetDate(EEventArt.eA_601, Modul1.FamInArb);
-                }
-                liList5.Add((Datu, Modul1.FamInArb));
-                M1_Iter++;
-            }
-
-            IDocument edtAnzeige = Document;
-            if (Option[EOutCfg.o14])
-            {
-                _ = edtAnzeige.AppendTextIfNd();
-                edtAnzeige.SetIndent(90);
-            }
-            edtAnzeige.SetIndent(0);
-            _ = edtAnzeige.AppendTextIfNd(" ");
-            if (liList5.Count == 1)
-            {
-                edtAnzeige.AppendText("Verbindung:");
-            }
-            if (liList5.Count > 1)
-            {
-                edtAnzeige.AppendText("Verbindungen:");
-            }
-            short num6 = (short)(liList5.Count - 1);
-            short num7 = 0;
-            while (num7 <= num6)
-            {
-                Modul1.FamInArb = liList5[num7].Item2;
-                Heidat(out Scheid, Modul1.FamInArb, Document);
-                LPweg();
-                Bildaus("F");
-                if (Option[EOutCfg.o14])
-                {
-                    edtAnzeige.AppendText("\n");
-                    edtAnzeige.SetIndent(30);
-                    edtAnzeige.AppendText("mit ");
-                }
-                else
-                {
-                    edtAnzeige.AppendText(" mit ");
-                }
-                Modul1.eLKennz = sPerSex == "F" ? ELinkKennz.lkFather : ELinkKennz.lkMother;
-                if (DataModul.Link.GetFamPerson(Modul1.FamInArb, Modul1.eLKennz, out var persInArb2))
-                {
-                    Modul1.Person_ReadNames(persInArb2, Modul1.Person);
-                    Modul1.Person.SetFullSurname(Namerw(Modul1.Person.SurName, Modul1.Person.Prefix, Modul1.Person.Suffix));
-                    if (Option[EOutCfg.o10_EmitIDs])
-                    {
-                        edtAnzeige.AppendText("<" + persInArb2.AsString() + "> " + Modul1.Person.Prae.Trim() + " " + Modul1.Person.Givennames.Trim());
-                    }
-                    else
-                    {
-                        edtAnzeige.AppendText(Modul1.Person.Prae.Trim() + " " + Modul1.Person.Givennames.Trim());
-                    }
-                    edtAnzeige.SetFont(new Font("Arial", 11.01f, FontStyle.Bold));
-                    edtAnzeige.AppendText(" " + Modul1.Person.FullSurName);
-                    edtAnzeige.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                    edtAnzeige.SetFont(new Font("Arial", 11.01f, FontStyle.Italic));
-                    if (Modul1.Person.Alias != "")
-                    {
-                        edtAnzeige.AppendText(" (" + Modul1.Person.Alias.TrimEnd() + ") ");
-                    }
-                    else
-                    {
-                        edtAnzeige.AppendText("");
-                    }
-                    edtAnzeige.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                    var pt = DataModul.Person.Seek(persInArb2);
-                    if (pt.Fields[PersonFields.religi].AsInt() > 0)
-                    {
-                        var ubg = pt.Fields[PersonFields.religi].AsInt();
-                        _ = DataModul.Textlese(ubg, out var ubgT, out _);
-                        edtAnzeige.AppendText(", " + ubgT);
-                    }
-                    Bildaus("P");
-                    AppendRelatives(persInArb2, edtAnzeige);
-                    ID = 600;
-                    float Idned = 0f;
-                    Datr1(ref Idned, persInArb2);
-                }
-                else
-                {
-                    edtAnzeige.AppendText(Modul1.IText[EUserText.tSpouseUnknown] + "\n");
-                }
-                num7++;
-            }
-            edtAnzeige.SetIndent(0);
-        }
-    }
-
-    public void Heidat(out bool scheid, int famInArb, IDocument richTextBox)
-    {
-        //Discarded unreachable code: IL_1d96
-        int try0001_dispatch = -1;
-        int num3 = default;
-        int num2 = default;
-        int num = default;
-        int lErl = default;
-        int num4 = default;
-        int num6 = default;
-        EEventArt eArt = default;
-        string text = default;
-        string QuText = default;
-        scheid = false;
-        while (true)
-        {
-            try
-            {
-                /*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
-                ;
-                checked
-                {
-                    int num5;
-                    int Ortnr;
-                    string LD2;
-                    switch (try0001_dispatch)
-                    {
-                        default:
-                            ProjectData.ClearProjectError();
-                            num3 = 2;
-                            goto IL_0009;
-                        case 8948:
-                            {
-                                num2 = num;
-                                switch (num3 <= -2 ? 1 : num3)
-                                {
-                                    case 2:
-                                        break;
-                                    case 1:
-                                        goto IL_1e26;
-                                    default:
-                                        goto end_IL_0001;
-                                }
-                                if (Information.Err().Number == 94)
-                                {
-                                    ProjectData.ClearProjectError();
-                                    if (num2 == 0)
-                                    {
-                                        throw ProjectData.CreateProjectError(-2146828268);
-                                    }
-                                    goto IL_1e26;
-                                }
-                                else
-                                {
-                                    if (Interaction.MsgBox(Conversion.ErrorToString(), title: Information.Err().Number.AsString(), mb: MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-                                    {
-                                        ProjectData.EndApp();
-                                    }
-                                    ProjectData.ClearProjectError();
-                                    if (num2 == 0)
-                                    {
-                                        throw ProjectData.CreateProjectError(-2146828268);
-                                    }
-                                    num5 = num2;
-                                    goto IL_1e2a;
-                                }
-                            }
-                        end_IL_0001:
-                            break;
-                        IL_0009:
-                            num = 2;
-                            richTextBox.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                            if (Option[EOutCfg.o10_EmitIDs])
-                            {
-                                richTextBox.AppendText("[" + famInArb.AsString() + "]");
-                            }
-                            DataModul.DB_FamilyTable.Index = nameof(FamilyIndex.Fam);
-                            DataModul.DB_FamilyTable.Seek("=", famInArb);
-                            if (DataModul.DB_FamilyTable.Fields[FamilyFields.Aeb].AsInt() == -1)
-                            {
-                                richTextBox.AppendText("Aussereheliche Verbindung");
-                            }
-                            richTextBox.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                            num6 = 0;
-                            goto IL_0159;
-                        IL_0159: // <========== 3
-                            num = 13;
-                            eArt = num6 switch
-                            {
-                                0 => EEventArt.eA_501,
-                                1 => EEventArt.eA_500,
-                                2 => EEventArt.eA_507,
-                                3 => EEventArt.eA_505,
-                                4 => EEventArt.eA_Marriage,
-                                5 => EEventArt.eA_MarrReligious,
-                                6 => EEventArt.eA_504,
-                                7 => EEventArt.eA_506,
-                                _ => eArt,
-                            };
-                            Datu = default;
-                            short num10 = 1;
-                            while (num10 <= 15)
-                            {
-                                Modul1.Kont1[num10] = "";
-                                num10++;
-                            }
-                            if (DataModul.Event.ReadData(eArt, famInArb, out var cEv) && !(cEv.iPrivacy > privaus))
-                            {
-                                Datu = cEv.dDatumV;
-                                if (Datu.AsInt() > 0.0)
-                                {
-                                    var sDatu = Datwand1(Datu, cEv.sDatumV_S);
-                                    Modul1.Kont1[1] = Datu.AsString();
-                                    if (cEv.sVChr != "0")
-                                    {
-                                        Modul1.Kont1[1] = Modul1.Kont1[1] + " VChr";
-                                    }
-                                }
-                                else
-                                {
-                                    Modul1.Kont1[1] = "";
-                                }
-                                if (cEv.dDatumB != default)
-                                {
-                                    Datu = cEv.dDatumB;
-                                    var sDatu = Datwand1(Datu, cEv.sDatumB_S);
-                                    if (Modul1.Kont1[1] != "")
-                                    {
-                                        sDatu = " / " + sDatu;
-                                    }
-                                    Modul1.Kont1[3] = sDatu;
-                                }
-                                Modul1.UbgT = "";
-                                if (cEv.iOrt > 0)
-                                {
-                                    Modul1.UbgT = Place_ReadData(cEv.iOrt, 0, 0, Option[EOutCfg.o35], cEv.sZusatz);
-                                    if (cEv.sOrt_S.Trim() != "")
-                                    {
-                                        Modul1.UbgT = Modul1.UbgT.TrimEnd() + " " + Strings.Trim(cEv.sOrt_S);
-                                    }
-                                    Modul1.Kont1[5] = Modul1.UbgT;
-                                }
-                                if (0 != cEv.iDatumText)
-                                {
-                                    Modul1.Kont1[14] = " " + cEv.sDatumText + " ";
-                                }
-                                if (cEv.iKBem > 0)
-                                {
-                                    Modul1.Kont1[7] = cEv.sKBem.Trim();
-                                }
-                                if (0 != cEv.iHausNr)
-                                {
-                                    Modul1.Kont1[7] = Modul1.Kont1[7] + " " + cEv.sHausNr.Trim() + " ";
-                                }
-                                if (cEv.iPlatz > 0)
-                                {
-                                    Modul1.Kont1[6] = cEv.sPlatz.Trim();
-                                }
-
-                                bool flag = false;
-                                DataModul.DB_SourceLinkTable.Index = "Tab22";
-                                DataModul.DB_SourceLinkTable.Seek("=", 3, famInArb, cEv.eArt, 0);
-                                flag |= !DataModul.DB_SourceLinkTable.NoMatch;
-                                flag |= "" != cEv.sBem[3];
-                                flag |= Option[EOutCfg.o05] & cEv.sBem[1].Trim() != "";
-                                flag |= Option[EOutCfg.o06] & cEv.sBem[2].Trim() != "";
-                                flag |= Modul1.Kont1[1].Trim() != ""
-                                    | Modul1.Kont1[2].Trim() != ""
-                                    | Modul1.Kont1[3].Trim() != ""
-                                    | Modul1.Kont1[5].Trim() != ""
-                                    | Modul1.Kont1[6].Trim() != ""
-                                    | Modul1.Kont1[7].Trim() != ""
-                                    | Modul1.UbgT.Trim() != "";
-                                if (flag)
-                                {
-                                    text = "";
-                                    scheid |= eArt == EEventArt.eA_504;
-                                    text = eArt switch
-                                    {
-                                        EEventArt.eA_500 => Modul1.DTxt[5],
-                                        EEventArt.eA_501 => Modul1.DTxt[6],
-                                        EEventArt.eA_Marriage => Modul1.DTxt[7],
-                                        EEventArt.eA_MarrReligious => Modul1.DTxt[8],
-                                        EEventArt.eA_504 => Modul1.DTxt[9],
-                                        EEventArt.eA_505 => Modul1.DTxt[10],
-                                        EEventArt.eA_507 => Modul1.DTxt[15],
-                                        _ => text,
-                                    };
-                                    _ = richTextBox.AppendTextIfNd(" ");
-                                    if (Option[EOutCfg.o14])
-                                    {
-                                        richTextBox.AppendText("\n");
-                                        if (richTextBox.GetIndent() == 0)
-                                        {
-                                            richTextBox.SetIndent(20);
-                                        }
-                                    }
-                                    Modul1.Job = Jobdreh(Modul1.Job, ereiRf: EreiRf);
-                                    if (Option[EOutCfg.o34] && "" != cEv.sReg.Trim())
-                                    {
-                                        Modul1.Job = Modul1.Job + " (Urk.-Nr.: " + Strings.Trim(cEv.sReg) + ") ";
-                                    }
-                                    richTextBox.AppendText(text + " " + Modul1.Job);
-                                    Modul1.Job = "";
-                                    LfNR = 0;
-                                    Modul1.Kont1[20] = "";
-                                    if (Strings.RTrim(cEv.sBem[1]) != "" && Option[EOutCfg.o05])
-                                    {
-                                        richTextBox.AppendText(" {" + Strings.RTrim(cEv.sBem[1]) + "}");
-                                    }
-                                    if (Strings.RTrim(cEv.sBem[2]) != "")
-                                    {
-                                        if (Option[EOutCfg.o06])
-                                        {
-                                            richTextBox.AppendText(" {" + Strings.RTrim(cEv.sBem[2]) + "}");
-                                        }
-                                    }
-                                    if (Option[EOutCfg.o39])
-                                    {
-                                        QuText = "";
-                                        //flag2 = false;
-                                        DataModul.DB_SourceLinkTable.Index = "Tab22";
-                                        DataModul.DB_SourceLinkTable.Seek("=", 3, famInArb, cEv.eArt, 0);
-                                        if (!DataModul.DB_SourceLinkTable.NoMatch)
-                                        {
-
-                                            _ = richTextBox.AppendTextIfNd(".");
-                                            richTextBox.AppendText(Modul1.IText[EUserText.t450] + " ");
-                                            //flag2 = true;
-                                            while (!DataModul.DB_SourceLinkTable.EOF
-                                                && !DataModul.DB_SourceLinkTable.NoMatch
-                                                && 0 != DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Art].AsInt()
-                                                && DataModul.DB_SourceLinkTable.Fields[0].AsInt() == 3
-                                                && DataModul.DB_SourceLinkTable.Fields[1].AsInt() <= famInArb
-                                                && DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Art].AsEnum<EEventArt>() == cEv.eArt
-                                                && DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.LfNr].AsInt() == 0)
-                                            {
-                                                DataModul.DB_QuTable.Index = "Nr";
-                                                DataModul.DB_QuTable.Seek("=", DataModul.DB_SourceLinkTable.Fields[2]);
-                                                QuText = QuText != ""
-                                                    ? (QuText + "; " + DataModul.DB_QuTable.Fields[QuFields._2].Value).AsString()
-                                                    : DataModul.DB_QuTable.Fields[QuFields._2].AsString();
-                                                if (DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim() != "")
-                                                {
-                                                    QuText = null == DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value
-                                                        ? QuText + ", " + Modul1.IText[EUserText.t449] + " " + DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim()
-                                                        : QuText + ", " + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].AsString().Trim() + " " + DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim();
-                                                }
-                                                if (null != DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Orig].Value)
-                                                {
-                                                    if (DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Orig].AsString() != "")
-                                                    {
-                                                        QuText = string.Concat(QuText, " >" + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Orig].AsString() + "<");
-                                                    }
-                                                }
-                                                if (null != DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Kom].Value)
-                                                {
-                                                    if (DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Kom].AsString() != "")
-                                                    {
-                                                        QuText = string.Concat(QuText, " ==" + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Kom].AsString() + "==");
-                                                    }
-                                                }
-                                                QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
-                                                DataModul.DB_SourceLinkTable.MoveNext();
-                                            }
-
-                                        }
-                                        if ("" != cEv.sBem[3])
-                                        {
-                                            if (Strings.Trim(cEv.sBem[3]) != "")
-                                            {
-                                                Modul1.UbgT = Strings.RTrim(cEv.sBem[3]);
-                                                Modul1.UbgT = Zeiweg(Modul1.UbgT, !Option[EOutCfg.o07_KeepFormat]);
-                                                QuText = QuText == "" ? ". " + Modul1.IText[EUserText.t450] + " " + Modul1.UbgT.TrimEnd() : QuText.Trim() + "; " + Modul1.UbgT.TrimEnd();
-                                            }
-                                            richTextBox.AppendText(QuText);
-                                            QuText = "";
-                                            _ = richTextBox.AppendTextIfNd(".");
-                                        }
-                                    }
-                                    goto IL_19be;
-                                }
-                                else
-                                {
-                                    goto IL_19be;
-                                }
-                            }
-                            else
-                            {
-                                goto IL_1d11;
-                            }
-                        IL_19be: // <========== 4
-                            num = 259;
-                            if (Option[EOutCfg.o32])
-                            {
-                                Zeugsu(eArt);
-                                Modul1.Kont1[20] = DataModul.Event.GetValue(famInArb, eArt, EventFields.Bem4, (f) => f.AsString());
-                                if (Modul1.Kont1[20].Trim() != "")
-                                {
-                                    _ = richTextBox.AppendTextIfNd(".");
-                                    if (unchecked(eArt == EEventArt.eA_Marriage || eArt == EEventArt.eA_MarrReligious))
-                                    {
-                                        richTextBox.AppendText(" Trauzeugen: " + Modul1.Kont1[20].Trim());
-                                    }
-                                    else
-                                    {
-                                        richTextBox.AppendText(" Zeugen: " + Modul1.Kont1[20].Trim());
-                                    }
-                                    _ = richTextBox.AppendTextIfNd(".");
-                                }
-                            }
-                            goto IL_1d11;
-                        IL_1d11: // <========== 4
-                            num = 288;
-                            lErl = 22;
-                            num6++;
-                            if (num6 <= 7)
-                            {
-                                goto IL_0159;
-                            }
-                            else
-                            {
-                                if (num4 == 1)
-                                {
-                                    richTextBox.AppendText(" mit\n");
-                                }
-                                richTextBox.SetFont(new Font("Arial", 11.01f, FontStyle.Regular));
-                                goto end_IL_0001_2;
-                            }
-                        IL_1e26:
-                            num5 = unchecked(num2 + 1);
-                            goto IL_1e2a;
-                        IL_1e2a:
-                            num2 = 0;
-                            switch (num5)
-                            {
-                                case 1:
-                                    break;
-                                case 13:
-                                    goto IL_0159;
-                                case 255:
-                                case 256:
-                                case 257:
-                                case 258:
-                                case 259:
-                                    goto IL_19be;
-                                case 44:
-                                case 53:
-                                case 285:
-                                case 286:
-                                case 287:
-                                case 288:
-                                    goto IL_1d11;
-                            }
-                            goto default;
-                    }
-                }
-            }
-            catch (Exception obj) when (num3 != 0 && num2 == 0)
-            {
-                ProjectData.SetProjectError(obj, lErl);
-                try0001_dispatch = 8948;
-                continue;
-            }
-            throw ProjectData.CreateProjectError(-2146828237);
-        end_IL_0001_2:
-            break;
-        }
-        if (num2 != 0)
-        {
-            ProjectData.ClearProjectError();
-        }
-    }
-
     public void Weitehen(int FamSP1, IDocument document)
     {
         var aiFams = Modul1.Link_Famsuch(Modul1.PersInArb, Modul1.eLKennz);
@@ -5200,7 +3308,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                     document.AppendText(".");
                 }
             }
-            else break;
+            else
+                break;
         }
         document.AppendText("\n");
 
@@ -5458,7 +3567,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             }
             Modul1.PersInArb = DataModul.DSB_SearchTable.Fields["Nummer"].AsInt();
             Modul1.Person_ReadNames(Modul1.PersInArb, Modul1.Person);
-            var sClan = View.CheckBox19.Checked && Modul1.Person.Clan != "" ? "(" + Modul1.Person.Clan + ")" : "";
+            var sClan = UiForm.CheckBox19.Checked && Modul1.Person.Clan != "" ? "(" + Modul1.Person.Clan + ")" : "";
             Modul1.Person.SetFullSurname((Modul1.Person.Prefix.Trim() + " " + Modul1.Person.SurName + " " + Modul1.Person.Suffix + sClan).Trim());
             text3 = Modul1.Person.FullSurName.TrimEnd() + "," + Modul1.Person.Givennames;
             dB_PersonTable.Index = nameof(PersonIndex.PerNr);
@@ -5519,7 +3628,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         int num6 = checked((int)Math.Round((Text1_Text + "0000").Left(8).AsDouble()));
         //iEventType = 0;
         foreach (var cEv in DataModul.Event.ReadAllGt(EventIndex.DatInd, num6))
-            if (num5++ > Modul1.Aus[(int)EOutCfg.o13].AsInt()) break;
+            if (num5++ > Modul1.Aus[(int)EOutCfg.o13].AsInt())
+                break;
             else
             {
 
@@ -5989,7 +4099,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
     public int Adoeltsuch(int persInArb)
     {
         var aiFams = DataModul.Link.GetPersonFams(persInArb, ELinkKennz.lkAdoptedChild);
-        if (aiFams.Count == 1) return aiFams[0];
+        if (aiFams.Count == 1)
+            return aiFams[0];
         if (aiFams.Count > 1)
         {
             string text2 = "Person " + persInArb.AsString() + " ist in den Familien " + string.Join(", ", aiFams) + " als Kind eingebunden. Eine Person kann aber nur in einer Familie als Kind sein.";
@@ -6239,64 +4350,6 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         }
     }
 
-    public static string[] Datl(int persInArb, bool xShort)
-    {
-        var result = new string[4];
-        var arDates = DataModul.Event.GetPersonDates(persInArb, out _, HndlPlace);
-        for (var num = 1; num <= 4; num++)
-        {
-            if (arDates[num] > DateTime.MinValue)
-            {
-                result[(num - 1) & 2] = (num & 1) switch
-                {
-                    1 => $"{arDates[num].Year}",
-                    0 when result[(num - 1) & 2] == "" => $"{arDates[num].Year}",
-                    _ => result[(num - 1) & 2],
-                };
-            }
-        }
-        return result;
-
-        void HndlPlace(EEventArt iEvent, int iPlace, string sPlace)
-        {
-            if (iPlace > 0)
-            {
-                string sPlace2 = "";
-                if (iPlace > 0)
-                {
-                    sPlace2 = Place_ReadData(iPlace, 0, 1, xShort);
-                    if (sPlace.Trim() != "")
-                    {
-                        sPlace2 = sPlace2.TrimEnd() + " " + sPlace.AsString().Trim();
-                    }
-                }
-    ;
-                result[((int)iEvent - 101) | 1] = ((int)iEvent & 1) switch
-                {
-                    1 => sPlace2,
-                    0 when result[(int)iEvent - 101 - 1 | 1] == "" => sPlace2,
-                    _ => result[(int)iEvent - 101 - 1 | 1]
-                };
-            }
-        }
-    }
-
-    public void Retweg3(IDocument Display)
-    {
-        while (!Display.IsEmpty)
-        {
-            if (TrimEnd(Display)) continue;
-            if (Display.TrimEnd("\n")) continue;
-            if (Display.TrimEnd("\r")) continue;
-            break;
-        }
-    }
-
-    public bool TrimEnd(IDocument display)
-    {
-        return display.TrimEnd();
-    }
-
     public void Listleer()
     {
         PersonSheet_Visible = false;
@@ -6428,7 +4481,6 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         num3 = 2;
         short num5 = 0;
         int num6 = $"{Text1_Text}00000000".Left(8).AsInt();
-        int persInArb = 0;
 
         DataModul.DB_PersonTable.Index = nameof(PersonIndex.BeaDat);
         DataModul.DB_PersonTable.Seek(">=", num6);
@@ -6437,6 +4489,9 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             && num5 < Modul1.Aus[(int)EOutCfg.o13].AsInt())
         {
             DateTime Person_EditDat = DataModul.DB_PersonTable.Fields[PersonFields.EditDat].AsDate();
+            var persInArb = DataModul.DB_PersonTable.Fields[PersonFields.PersNr].AsInt();
+            string sPerson_Sex = DataModul.DB_PersonTable.Fields[PersonFields.Sex].AsString();
+
             DDatum = Person_EditDat.AsString();
             HT = DDatum.Date2DotDateStr2();
             if (HT.Trim() == "")
@@ -6444,7 +4499,6 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 HT = "          ";
             }
 
-            persInArb = DataModul.DB_PersonTable.Fields[PersonFields.PersNr].AsInt();
             PersSp = persInArb;
             //                                    Perles1(persInArb);
             Modul1.Person_ReadNames(persInArb, Modul1.Person);
@@ -6453,33 +4507,30 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 Modul1.Person.SetFullSurname(Modul1.Person.Prefix.Trim() + " " + Modul1.Person.SurName);
             }
             string text = Modul1.Person.FullSurName.TrimEnd() + "," + Modul1.Person.Givennames;
-            string text2 = DataModul.DB_PersonTable.Fields[PersonFields.Sex].AsString();
-            if ((!Male2_Checked
-            || text2 != "F")
-            && (!Female2_Checked
-            || text2 != "M"))
+            if ((!Male2_Checked || sPerson_Sex != "F")
+            && (!Female2_Checked || sPerson_Sex != "M"))
             {
-                IList<int> aiFam = null;
-                if ((Male_Checked && text2 == "M") || (Females_Checked && text2 == "F") || !Male_Checked & !Females_Checked)
+                IList<int>? aiFam = null;
+                if ((Male_Checked && sPerson_Sex == "M") || (Females_Checked && sPerson_Sex == "F") || !Male_Checked & !Females_Checked)
                 {
-                    aiFam = Modul1.Ehesuch(persInArb, text2);
+                    aiFam = Modul1.Ehesuch(persInArb, sPerson_Sex);
                 }
 
-                ELinkKennz eLKennz = text2 == "F" ? ELinkKennz.lkFather : ELinkKennz.lkMother;
+                ELinkKennz eLKennz = sPerson_Sex == "F" ? ELinkKennz.lkFather : ELinkKennz.lkMother;
 
                 IListItem<int> LiText;
                 int num11;
-                if (aiFam == null)
+                if (aiFam != null)
                 {
                     foreach (var Fam in aiFam)
                     {
                         LiText = Modul1.Famzeig(Fam, eLKennz);
-                        num11 = Strings.InStr(text, ",");
-                        if (num11 > 25f)
+                        num11 = text.IndexOf(",");
+                        if (num11 > 24)
                         {
-                            text = text.Left(25) + Strings.Mid(text, num11, text.Length);
+                            text = text.Left(25) + text.Substring(num11, text.Length - num11);
                         }
-                        List1_Items.Add(new($"{text,40} HT{PersSp,-10} {LiText,40} {Fam,-10}", (PersSp, LiText.ItemData, Fam)));
+                        List1_Items.Add(new($"{text,40} HT{persInArb,-10} {LiText,40} {Fam,-10}", (persInArb, LiText.ItemData, Fam)));
                         if (List1_Items.Count >= Modul1.Aus[(int)EOutCfg.o13].AsInt())
                         {
                             DataModul.DB_PersonTable.MoveLast();
@@ -6490,14 +4541,14 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 }
                 else
                 {
-                    num11 = Strings.InStr(text, ",");
-                    if (num11 > 25f)
+                    num11 = text.IndexOf(",");
+                    if (num11 > 24)
                     {
-                        text = text.Left(25) + Strings.Mid(text, num11, text.Length);
+                        text = text.Left(25) + text.Substring(num11, text.Length - num11);
                     }
                     if (!FamOnly_Checked)
                     {
-                        List1_Items.Add(new($"{text,40} HT{PersSp,-10} {"",40}", (PersSp, 0, 0)));
+                        List1_Items.Add(new($"{text,40} HT{persInArb,-10} {"",40}", (persInArb, 0, 0)));
                         //S += 1f;
                     }
                 }
@@ -6519,7 +4570,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         string text = default;
         int number = default;
         int lErl = default;
-        float num5 = default;
+        int num5 = default;
         int num6 = default;
         string DDatum = default;
         float num8 = default;
@@ -6532,29 +4583,13 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         DataModul.DB_FamilyTable.Seek(">=", num6);
         //iEventType = 0;
         string LiText = "          ";
-        goto IL_0721;
-    IL_06e6: // <========== 3
-        num = 75;
-        lErl = 2;
-        if ((double)num5 >= Modul1.Aus[(int)EOutCfg.o13].AsInt())
-        {
-            goto end_IL_0001_2;
-        }
-        goto IL_0711;
-    IL_0711: // <========== 3
-        num = 81;
-        DataModul.DB_FamilyTable.MoveNext();
-        goto IL_0721;
-    IL_0721: // <========== 3
-        num = 10;
-        if (DataModul.DB_FamilyTable.EOF)
-        {
-            goto end_IL_0001_2;
-        }
-        if (!DataModul.DB_FamilyTable.NoMatch)
+        while (!DataModul.DB_FamilyTable.EOF 
+            && !DataModul.DB_FamilyTable.NoMatch
+            && (num5 < Modul1.Aus[(int)EOutCfg.o13].AsInt()))
         {
             Modul1.FamInArb = DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt();
             DDatum = DataModul.DB_FamilyTable.Fields[FamilyFields.EditDat].AsString();
+            
             HT = DDatum.Date2DotDateStr2();
             if (HT.Trim() == "")
             {
@@ -6625,56 +4660,13 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 LiText = (LiText + new string(' ', 135)).Left(135);
                 List1_Items.Add(new(LiText + Modul1.FamInArb.AsString(),
                    (Modul1.Family.Mann, Modul1.Family.Frau, Modul1.FamInArb)));
-                num5 += 1f;
-                goto IL_06e6;
+                num5 += 1;
+                
             }
+            DataModul.DB_FamilyTable.MoveNext();
+
         }
-        goto IL_0711;
-        /*  IL_0865:
-              num4 = num2 + 1;
-              goto IL_0869;
-          IL_0869:
-              num2 = 0;
-              switch (num4)
-              {
-                  case 1:
-                      break;
-                  case 75:
-                  case 103:
-                      goto IL_06e6;
-                  case 78:
-                  case 79:
-                  case 80:
-                  case 81:
-                      goto IL_0711;
-                  case 9:
-                  case 10:
-                  case 82:
-                      goto IL_0721;
-                  case 77:
-                  case 83:
-                  case 85:
-                  case 89:
-                  case 90:
-                  case 96:
-                  case 97:
-                  case 100:
-                  case 104:
-                  case 105:
-                      goto end_IL_0001_2;
-              }
-              goto default;
-      }
-    }
-    catch (Exception obj) when (obj is not null && num3 != 0 && num2 == 0)
-    {
-      ProjectData.SetProjectError(obj, lErl);
-      try0001_dispatch = 2587;
-      continue;
-    }
-    throw ProjectData.CreateProjectError(-2146828237);*/
-    end_IL_0001_2: // <========== 5
-        return;
+
     }
 
     public void FamzeigDat(int Fam, out string LiText, ELinkKennz Kenn)
@@ -6740,7 +4732,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                     Document.AppendText(" ");
                 }
             }
-            else _ = Document.AppendTextIfNd("\n");
+            else
+                _ = Document.AppendTextIfNd("\n");
 
             if (Modul1.Person.Death != "")
             {
@@ -6791,7 +4784,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 Document.AppendText(" ");
             }
         }
-        else _ = Document.AppendTextIfNd("\n");
+        else
+            _ = Document.AppendTextIfNd("\n");
 
         Document.AppendText(Modul1.DTxt[4] + " " + Modul1.Person.Burial.Trim() + ".");
         if (Option[EOutCfg.o02] && Modul1.Kont[19].Length > 0)
@@ -7092,8 +5086,10 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         {
             while (true)
             {
-                if (Document.TrimEnd(".")) continue;
-                if (Document.TrimEnd()) continue;
+                if (Document.TrimEnd("."))
+                    continue;
+                if (Document.TrimEnd())
+                    continue;
                 break;
             }
         }
@@ -7104,22 +5100,28 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         Image image;
         if (Option[EOutCfg.o13] | Option[EOutCfg.o41] | Option[EOutCfg.o42])
         {
-            DataModul.DB_PictureTable.Index = "Perkenn  ";
             int num5 = BiKe == "P" ? Modul1.PersInArb : Modul1.FamInArb;
+            DataModul.DB_PictureTable.Index = "Perkenn  ";
             DataModul.DB_PictureTable.Seek("=", BiKe, num5);
             while (!DataModul.DB_PictureTable.EOF && !DataModul.DB_PictureTable.NoMatch)
             {
+                var iPicture_ID = DataModul.DB_PictureTable.Fields[PictureFields.ZuNr].AsInt();
+                var sPicture_sPfad = DataModul.DB_PictureTable.Fields[PictureFields.Pfad].AsString();
+                var sPicture_Datei = DataModul.DB_PictureTable.Fields[PictureFields.Datei].AsString();
+                var sPicture_Beschreibung = DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].AsString();
+                var sPicture_Bem = DataModul.DB_PictureTable.Fields[PictureFields.Bem].AsString();
+
                 Document.AppendText("\n");
-                if (!(DataModul.DB_PictureTable.Fields[PictureFields.ZuNr].AsInt() != num5))
+                if (!(iPicture_ID != num5))
                 {
-                    string DateiName = DataModul.DB_PictureTable.Fields[PictureFields.Pfad].AsString().Length > 0 && DataModul.DB_PictureTable.Fields[PictureFields.Pfad].AsString()[0] == '#'
-                ? (Modul1.Verz + Strings.Mid(DataModul.DB_PictureTable.Fields[PictureFields.Pfad].AsString(), 1, DataModul.DB_PictureTable.Fields[PictureFields.Pfad].AsString().Length) + DataModul.DB_PictureTable.Fields[PictureFields.Datei].AsString())
-                : DataModul.DB_PictureTable.Fields[PictureFields.Pfad].AsString() + DataModul.DB_PictureTable.Fields[PictureFields.Datei].AsString();
+                    string DateiName = sPicture_sPfad.Length > 0 && sPicture_sPfad.StartsWith("#")
+                ? Path.Combine(Modul1.Verz, sPicture_sPfad.Remove(0, 1), sPicture_Datei)
+                : Path.Combine(sPicture_sPfad, sPicture_Datei);
 
                     Bitmap bitmap;
                     if (Option[EOutCfg.o42])
                     {
-                        if (DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].AsString() == "Personenbild")
+                        if (sPicture_Beschreibung == "Personenbild")
                         {
                             DateiName = DateiName.Replace("#", "");
                             FileStream fileStream = new FileStream(DateiName, FileMode.Open);
@@ -7132,30 +5134,26 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                                 {
                                     Document.AppendText("\n" + DateiName);
                                 }
-                                if (null != DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value)
+                                if (!string.IsNullOrWhiteSpace(sPicture_Beschreibung))
                                 {
-                                    Document.AppendText('\n' + DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].AsString());
+                                    Document.AppendText('\n' + sPicture_Beschreibung);
                                 }
-                                if (null != DataModul.DB_PictureTable.Fields[PictureFields.Bem].Value)
+                                if (!string.IsNullOrWhiteSpace(sPicture_Bem))
                                 {
-                                    Document.AppendText('\n' + DataModul.DB_PictureTable.Fields[PictureFields.Bem].AsString());
+                                    Document.AppendText('\n' + sPicture_Bem);
                                 }
                             }
                             else
                             {
-                                PictureBox pictureBox = PictureBox1;
-                                pictureBox.Image = AutoSizeImage(bitmap, pictureBox.ClientRectangle.Width, pictureBox.ClientRectangle.Height);
-                                pictureBox.Image = PicResizeByWidth(bitmap, 250);
-                                image = pictureBox.Image;
-                                pictureBox = null;
-                                Document.AppendImage(image);
-                                if (null != DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value)
+                                Image image2 = PicResizeByWidth(bitmap, 250);
+                                Document.AppendImage(image2);
+                                if (!string.IsNullOrWhiteSpace(sPicture_Beschreibung))
                                 {
-                                    Document.AppendText('\n' + DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].AsString());
+                                    Document.AppendText('\n' + sPicture_Beschreibung);
                                 }
-                                if (null != DataModul.DB_PictureTable.Fields[PictureFields.Bem].Value)
+                                if (!string.IsNullOrWhiteSpace(sPicture_Bem))
                                 {
-                                    Document.AppendText('\n' + DataModul.DB_PictureTable.Fields[PictureFields.Bem].AsString());
+                                    Document.AppendText('\n' + sPicture_Bem);
                                 }
                             }
                         }
@@ -7174,11 +5172,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                             }
                             else
                             {
-                                PictureBox pictureBox2 = PictureBox1;
-                                pictureBox2.Image = AutoSizeImage(bitmap, pictureBox2.ClientRectangle.Width, pictureBox2.ClientRectangle.Height);
-                                pictureBox2.Image = PicResizeByWidth(bitmap, 250);
-                                pictureBox2 = null;
-                                Image image2 = PictureBox1.Image;
+                                Image image2 = PicResizeByWidth(bitmap, 250);
                                 Document.AppendImage(image2);
                             }
 
@@ -7187,13 +5181,13 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                             {
                                 Document.AppendText("\n" + DateiName);
                             }
-                            if (null != DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value)
+                            if (!string.IsNullOrWhiteSpace(sPicture_Beschreibung))
                             {
-                                Document.AppendText('\n' + DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].AsString());
+                                Document.AppendText('\n' + sPicture_Beschreibung);
                             }
-                            if (null != DataModul.DB_PictureTable.Fields[PictureFields.Bem].Value)
+                            if (!string.IsNullOrWhiteSpace(sPicture_Bem))
                             {
-                                Document.AppendText('\n' + DataModul.DB_PictureTable.Fields[PictureFields.Bem].AsString());
+                                Document.AppendText('\n' + sPicture_Bem);
                             }
                         }
                     }
@@ -7305,7 +5299,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                     }
                 }
             }
-        View.Cursor = Cursors.Default;
+        UiForm.Cursor = Cursors.Default;
         List1_Items.Add(new("Ende der Liste"));
     }
 
@@ -7384,7 +5378,8 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 }
             }
         }
-        View.Cursor = Cursors.Default;
+        UiForm.Cursor = Cursors.Default;
+        UiForm.Cursor = Cursors.Default;
         List1_Items.Add(new("Ende der Liste"));
     }
 
@@ -7416,140 +5411,15 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             Modul1.PersInArb = persInArb_ancestor;
             Modul1.Person_ReadNames(persInArb_ancestor, Modul1.Person);
 
-            var item_ancestor = (Modul1.Person.SurName.TrimEnd() + "," + Modul1.Person.Givennames).PadRight(44) 
-                + DataModul.DT_AncesterTable.Fields["PerNr"].AsInt().AsString().PadLeft(10) 
-                + "             " 
-                + DataModul.DT_AncesterTable.Fields["gen"].AsString() 
-                + "   " 
+            var item_ancestor = (Modul1.Person.SurName.TrimEnd() + "," + Modul1.Person.Givennames).PadRight(44)
+                + DataModul.DT_AncesterTable.Fields["PerNr"].AsInt().AsString().PadLeft(10)
+                + "             "
+                + DataModul.DT_AncesterTable.Fields["gen"].AsString()
+                + "   "
                 + DataModul.DT_AncesterTable.Fields["Ahn"].AsString().Trim();
             List1_Items.Add(new(item_ancestor, (persInArb_ancestor, 0, 0)));
             DataModul.DT_AncesterTable.MoveNext();
         }
     }
 
-    /// <summary>
-    /// Executes free search (t316) – calls Zeigfamanl() helper.
-    /// </summary>
-    private void ExecuteFreeSearch()
-    {
-        if (Text1_Text == "")
-        {
-            Text1_Text = "0";
-        }
-        Zeigfamanl();
-    }
-
-    /// <summary>
-    /// Executes place family search (t317) – indexes family table by BeaDat and seeks.
-    /// </summary>
-    private void ExecutePlaceSearch()
-    {
-        DataModul.DB_FamilyTable.Index = nameof(FamilyIndex.BeaDat);
-        if (Text1_Text == "")
-        {
-            Text1_Text = "0";
-        }
-        DataModul.DB_PersonTable.Index = nameof(PersonIndex.PerNr);
-        DataModul.DB_PersonTable.Seek(">=", Text1_Text.AsInt());
-        Zeigfamanl2();
-    }
-
-    /// <summary>
-    /// Executes phonetic search (t318) – Koelner_Phonetic algorithm on DSB_SearchTable.
-    /// </summary>
-    private void ExecutePhoneticSearch()
-    {
-        DataModul.DSB_SearchTable.Index = "K_Phonsuch";
-        DataModul.DSB_SearchTable.Seek(">=", Module2.Koelner_Phonetic(Text1_Text), 0);
-        if (!OmitSpouse_Checked)
-        {
-            Zeigfam();
-        }
-        else
-        {
-            Zeig(DataModul.DSB_SearchTable);
-        }
-    }
-
-    /// <summary>
-    /// Executes SoundEx search (t320) – SoundEx algorithm on DSB_SearchTable.
-    /// </summary>
-    private void ExecuteSoundExSearch()
-    {
-        DataModul.DSB_SearchTable.Index = "Soundsuch";
-        DataModul.DSB_SearchTable.Seek(">=", Module2.GetSoundEx(Text1_Text), 0);
-        if (!OmitSpouse_Checked)
-        {
-            Zeigfam();
-        }
-        else
-        {
-            Zeig(DataModul.DSB_SearchTable);
-        }
-    }
-
-    /// <summary>
-    /// Executes Leit search (t321) – exact match on DSB_SearchTable by Leitsuch index.
-    /// </summary>
-    private void ExecuteLeitSearch()
-    {
-        DataModul.DSB_SearchTable.Index = "Leitsuch";
-        DataModul.DSB_SearchTable.Seek(">=", Text1_Text, 0);
-        if (!OmitSpouse_Checked)
-        {
-            Zeigfam();
-        }
-        else
-        {
-            Zeig(DataModul.DSB_SearchTable);
-        }
-    }
-
-    /// <summary>
-    /// Executes person number search (t315) – Persuch index on DSB_SearchTable.
-    /// </summary>
-    private void ExecutePersonSearch()
-    {
-        DataModul.DSB_SearchTable.Index = "Persuch";
-        DataModul.DSB_SearchTable.Seek(">=", Text1_Text, 0);
-        Zeigfamdat();
-    }
-
-    /// <summary>
-    /// Executes object number search (t313) – by Nummer index on DSB_SearchTable.
-    /// </summary>
-    private void ExecuteNumberSearch()
-    {
-        DataModul.DSB_SearchTable.Index = "Nummer";
-        if (Text1_Text == "")
-        {
-            Text1_Text = "0";
-        }
-        DataModul.DSB_SearchTable.Seek(">=", Text1_Text.AsInt());
-        if (!OmitSpouse_Checked)
-        {
-            Zeigfam();
-        }
-        else
-        {
-            Zeig(DataModul.DSB_SearchTable);
-        }
-    }
-
-    /// <summary>
-    /// Executes alias name search (t319) – Aliassuch index on DSB_SearchTable.
-    /// </summary>
-    private void ExecuteAliasSearch()
-    {
-        DataModul.DSB_SearchTable.Index = "Aliassuch";
-        DataModul.DSB_SearchTable.Seek(">=", Text1_Text, 0);
-        if (!OmitSpouse_Checked)
-        {
-            Zeigfam();
-        }
-        else
-        {
-            Zeig(DataModul.DSB_SearchTable);
-        }
-    }
 }
