@@ -1,4 +1,4 @@
-using AA98_AvlnCodeStudio.Base.Planning.Models;
+using AA98_AvlnCodeStudio.Planning.Core.Models;
 using System;
 using System.Collections.ObjectModel;
 
