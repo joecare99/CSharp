@@ -16,11 +16,11 @@
   </PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="Avalonia" />
-	<PackageReference Include="Avalonia.AvaloniaEdit" />
 	<PackageReference Include="CommunityToolkit.Mvvm" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
   <ItemGroup>
+	<ProjectReference Include="..\AA98.MarkDown.UI\AA98.MarkDown.UI.csproj" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.UI\AA98_AvlnCodeStudio.Base.UI.csproj" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Core\AA98_AvlnCodeStudio.Planning.Core.csproj" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Local\AA98_AvlnCodeStudio.Planning.Local.csproj" />

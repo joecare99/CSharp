@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:vm="using:AA98_AvlnCodeStudio.Planning.UI.ViewModels"
+			 xmlns:markdownControls="using:AA98.MarkDown.UI.Controls"
 			 xmlns:controls="using:AA98_AvlnCodeStudio.Planning.UI.Controls"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -106,8 +107,8 @@
 				   Text="{Binding SelectedItemSourcePath}"
 				   Opacity="0.75"
 				   TextTrimming="CharacterEllipsis" />
-		<controls:MarkdownEditorPreview Grid.Row="2"
-								Text="{Binding SelectedItemDocumentText, Mode=TwoWay}" />
+		<markdownControls:MarkdownEditorPreview Grid.Row="2"
+									 Text="{Binding SelectedItemDocumentText, Mode=TwoWay}" />
 		<controls:PropertiesPanel Grid.Row="3"
 							DataContext="{Binding}" />
 	  </Grid>
