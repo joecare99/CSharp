@@ -1,0 +1,49 @@
+// Dokumentation: Methoden-Zerlegung aus Fehlerli.cs
+//
+// ORIGINAL: Command1_Click (> 1000 Zeilen mit verschachtelten Gotos)
+// REFACTORED:
+//   - GetPersonenErrors()           [ca. 50 Zeilen, klar]
+//   - GetFamilienErrors()           [ca. 50 Zeilen, klar]
+//   - GetOerterErrors()             [ca. 40 Zeilen, klar]
+//   - GetLinkedPersonsErrors()      [ca. 50 Zeilen, klar]
+//   → Jede Methode hat eine Verantwortung, ist testbar, ist lesbar.
+//
+// ORIGINAL: Button9_Click (~600 Zeilen mit Datum-Schätzung)
+// REFACTORED:
+//   - EstimateBirthDate()           [Haupt-Methode, ~20 Zeilen]
+//   - TryEstimateThroughParentEvents()     [Taufe → Geburt, ~10 Zeilen]
+//   - TryEstimateThroughChildBirths()      [Kinder → Geburt, ~20 Zeilen]
+//   - TryEstimateThroughMarriage()         [Hochzeit → Geburt, ~20 Zeilen]
+//   → In EventService.cs, alle klein und spezialisiert.
+//
+// ORIGINAL: Fehlliste_Personen (~150 Zeilen, mit String-Manipulation & Formatting)
+// REFACTORED:
+//   - GetPersonenOhneEltern()       [in FehlerlistenService, ~60 Zeilen]
+//   - DetectMissingPersonData()     [Prädikat, ~10 Zeilen]
+//   - FormatPersonDisplay()         [String-Formatierung, ~5 Zeilen]
+//   - FormatPersonDisplayWithFlags() [String-Formatierung mit Flags, ~8 Zeilen]
+//   → Separation: Logik / Daten / Formatierung.
+//
+// ORIGINAL: Fehliste_Familien (~150 Zeilen)
+// REFACTORED:
+//   - GetFamilienErrors()          [in FehlerlistenService, ~80 Zeilen]
+//   - GatherFamilyErrorFlags()     [Fehler-Detection, ~12 Zeilen]
+//   - FormatFamilyDisplay()        [String-Formatierung, ~12 Zeilen]
+//
+// ORIGINAL: Button5_Click (~350 Zeilen, mit vielen Checkboxes & Bedingungen)
+// REFACTORED:
+//   - GetFamilienOhneDatum()       [in FehlerlistenService, ~70 Zeilen]
+//   - HasFamilyEvents()            [Prädikat, ~8 Zeilen]
+//
+// EVA-PRINZIP IN ALLEN METHODEN:
+// 1. EINGABE: Parameter (Callbacks für Progress + Items)
+// 2. VERARBEITUNG: Datenbank-Iteration, Filterung, Schätzung
+// 3. AUSGABE: ErrorListResult mit FormattedItems
+//
+// ALTEN CODE entfernt: Alle goto-Sprünge, verschachtelte Bedingungen,
+// VB6-style Error-Handling mit try/catch Tricks sind weg.
+//
+// Moderne Ausnahmen: ArgumentOutOfRangeException, Task.Delay für UI-Responsiveness.
+//
+// TEST-FREUNDLICH: Alle Services sind mockbar, keine static Abhängigkeiten außer DataModul.
+// (DataModul könnte auch gegen Interface abstrahiert werden, aber das ist Phase 2.)
