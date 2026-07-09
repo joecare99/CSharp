@@ -31,14 +31,14 @@
 		  <Version>4.9.1</Version>
 		</PackageReference>
 		<PackageReference Include="System.IO.Ports">
-		  <Version>10.0.5</Version>
+		  <Version>10.0.9</Version>
 		</PackageReference>
 		<PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.Common" />
 		<PackageReference Include="System.ServiceProcess.ServiceController">
-		  <Version>10.0.5</Version>
+		  <Version>10.0.9</Version>
 		</PackageReference>
 		<PackageReference Include="System.Management">
-		  <Version>10.0.5</Version>
+		  <Version>10.0.9</Version>
 		</PackageReference>
 		<PackageReference Include="System.Text.RegularExpressions">
 		  <Version>4.3.1</Version>
