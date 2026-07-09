@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Workbench.Builder.Core.Models.Inspection;
 using Workbench.Builder.Host;
 
 namespace Workbench.Builder.Core.Tests.Host;
@@ -11,17 +10,49 @@ namespace Workbench.Builder.Core.Tests.Host;
 public class HostCommandLineParserTests
 {
     /// <summary>
-    /// Verifies that a project path with an explicit JSON format is parsed correctly.
+    /// Verifies that a project path with an explicit output directory is parsed correctly.
     /// </summary>
     [TestMethod]
-    public void Parse_ProjectPathAndJsonFormat_ReturnsExpectedOptions()
+    public void Parse_ProjectPathAndOutputDirectory_ReturnsExpectedOptions()
     {
         HostCommandLineParser parser = new();
 
-        HostCommandOptions options = parser.Parse(new[] { "sample.csproj", HostArgumentNames.Format, "json" });
+        HostCommandOptions options = parser.Parse(new[] { "sample.csproj", HostArgumentNames.Output, "artifacts" });
 
         Assert.AreEqual("sample.csproj", options.ProjectFilePath);
-        Assert.AreEqual(ProjectInspectionOutputFormat.Json, options.OutputFormat);
+        Assert.AreEqual("artifacts", options.OutputDirectory);
+        Assert.AreEqual(HostVerbosity.Normal, options.Verbosity);
+        Assert.IsFalse(options.ShowHelp);
+    }
+
+    /// <summary>
+    /// Verifies that a plain project path is parsed correctly.
+    /// </summary>
+    [TestMethod]
+    public void Parse_ProjectPathOnly_ReturnsExpectedOptions()
+    {
+        HostCommandLineParser parser = new();
+
+        HostCommandOptions options = parser.Parse(new[] { "sample.csproj" });
+
+        Assert.AreEqual("sample.csproj", options.ProjectFilePath);
+        Assert.IsNull(options.OutputDirectory);
+        Assert.AreEqual(HostVerbosity.Normal, options.Verbosity);
+        Assert.IsFalse(options.ShowHelp);
+    }
+
+    /// <summary>
+    /// Verifies that an explicit verbosity argument is parsed correctly.
+    /// </summary>
+    [TestMethod]
+    public void Parse_ProjectPathAndVerbosity_ReturnsExpectedOptions()
+    {
+        HostCommandLineParser parser = new();
+
+        HostCommandOptions options = parser.Parse(new[] { "sample.csproj", HostArgumentNames.Verbosity, "detailed" });
+
+        Assert.AreEqual("sample.csproj", options.ProjectFilePath);
+        Assert.AreEqual(HostVerbosity.Detailed, options.Verbosity);
         Assert.IsFalse(options.ShowHelp);
     }
 
@@ -37,6 +68,7 @@ public class HostCommandLineParserTests
 
         Assert.IsTrue(options.ShowHelp);
         Assert.IsNull(options.ProjectFilePath);
-        Assert.AreEqual(ProjectInspectionOutputFormat.PlainText, options.OutputFormat);
+        Assert.IsNull(options.OutputDirectory);
+        Assert.AreEqual(HostVerbosity.Normal, options.Verbosity);
     }
 }

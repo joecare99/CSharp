@@ -2776,7 +2776,7 @@ public sealed class FBEntryParser : ParserBase, IDisposable
         {
             innerSubstring += currentChar;
         }
-        else if (TestFor(innerText, innerOffset, "(") && ParseAdditional(text, ref innerOffset, out var parsedAdditional))
+        else if (TestFor(innerText, innerOffset, "(") && ParseAdditional(innerText, ref innerOffset, out var parsedAdditional))
         {
             innerData = parsedAdditional;
             if (innerData.StartsWith(CsDivorce, StringComparison.Ordinal))

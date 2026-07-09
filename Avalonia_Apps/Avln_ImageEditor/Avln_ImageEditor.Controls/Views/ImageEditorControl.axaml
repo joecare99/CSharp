@@ -1,0 +1,115 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:models="using:Avln_ImageEditor.Controls.Models"
+			 xmlns:vm="using:Avln_ImageEditor.Controls.ViewModels"
+			 x:Class="Avln_ImageEditor.Controls.Views.ImageEditorControl"
+			 x:DataType="vm:ImageEditorViewModel"
+			 d:DesignHeight="720"
+			 d:DesignWidth="1080"
+			 mc:Ignorable="d">
+  <Grid RowDefinitions="Auto,*"
+		Background="#202126">
+	<Border Grid.Row="0"
+			Padding="12"
+			Background="#2B2D33"
+			BorderBrush="#40424A"
+			BorderThickness="0,0,0,1">
+	  <DockPanel LastChildFill="True">
+		<StackPanel DockPanel.Dock="Left"
+					Orientation="Horizontal"
+					Spacing="8">
+		  <Button Command="{Binding SelectToolCommand}"
+				  CommandParameter="{x:Static models:ImageEditorTool.Select}"
+				  Content="Select" />
+		  <Button Command="{Binding SelectToolCommand}"
+				  CommandParameter="{x:Static models:ImageEditorTool.Brush}"
+				  Content="Brush" />
+		  <Button Command="{Binding SelectToolCommand}"
+				  CommandParameter="{x:Static models:ImageEditorTool.Eraser}"
+				  Content="Eraser" />
+		  <Button Command="{Binding SelectToolCommand}"
+				  CommandParameter="{x:Static models:ImageEditorTool.Fill}"
+				  Content="Fill" />
+		  <Button Command="{Binding SelectToolCommand}"
+				  CommandParameter="{x:Static models:ImageEditorTool.Crop}"
+				  Content="Crop" />
+		</StackPanel>
+
+		<StackPanel DockPanel.Dock="Right"
+					Orientation="Horizontal"
+					Spacing="8">
+		  <Button Command="{Binding ZoomOutCommand}"
+				  Content="-" />
+		  <TextBlock MinWidth="56"
+					 VerticalAlignment="Center"
+					 Foreground="#F2F2F2"
+					 Text="{Binding ZoomSummary}"
+					 TextAlignment="Center" />
+		  <Button Command="{Binding ZoomInCommand}"
+				  Content="+" />
+		  <Button Command="{Binding ResetZoomCommand}"
+				  Content="100%" />
+		  <Button Command="{Binding ClearDocumentCommand}"
+				  Content="Clear" />
+		</StackPanel>
+
+		<StackPanel HorizontalAlignment="Center"
+					Orientation="Horizontal"
+					Spacing="16">
+		  <TextBlock VerticalAlignment="Center"
+					 Foreground="#D7D9E0"
+					 Text="{Binding DocumentSummary}" />
+		  <TextBlock VerticalAlignment="Center"
+					 Foreground="#9EA3B0"
+					 Text="{Binding SelectedTool, StringFormat='Tool: {0}'}" />
+		</StackPanel>
+	  </DockPanel>
+	</Border>
+
+	<Grid Grid.Row="1">
+	  <Border Margin="16"
+			  Background="#15161A"
+			  BorderBrush="#343741"
+			  BorderThickness="1">
+		<ScrollViewer HorizontalScrollBarVisibility="Auto"
+					  VerticalScrollBarVisibility="Auto">
+		  <Grid MinWidth="640"
+				MinHeight="420">
+			<Border Width="32"
+					Height="32"
+					Background="#272A31" />
+			<Image HorizontalAlignment="Center"
+				   VerticalAlignment="Center"
+				   Source="{Binding ActiveDocument.Image}"
+				   Stretch="None">
+			  <Image.RenderTransform>
+				<ScaleTransform ScaleX="{Binding ZoomFactor}"
+								ScaleY="{Binding ZoomFactor}" />
+			  </Image.RenderTransform>
+			</Image>
+		  </Grid>
+		</ScrollViewer>
+	  </Border>
+
+	  <Border Padding="20"
+			  HorizontalAlignment="Center"
+			  VerticalAlignment="Center"
+			  Background="#CC202126"
+			  CornerRadius="8"
+			  IsVisible="{Binding !HasDocument}">
+		<StackPanel Spacing="8">
+		  <TextBlock HorizontalAlignment="Center"
+					 FontSize="22"
+					 FontWeight="SemiBold"
+					 Foreground="#F2F2F2"
+					 Text="Image Editor" />
+		  <TextBlock HorizontalAlignment="Center"
+					 Foreground="#B8BCC8"
+					 Text="Open an image in the host application to start." />
+		</StackPanel>
+	  </Border>
+	</Grid>
+  </Grid>
+</UserControl>

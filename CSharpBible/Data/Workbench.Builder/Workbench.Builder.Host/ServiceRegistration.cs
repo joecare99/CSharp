@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
+using Workbench.Builder.Cli;
 using Workbench.Builder.Core.Abstractions;
-using Workbench.Builder.Core.Services.Formatting;
+using Workbench.Builder.Core.Services.Compilation;
 using Workbench.Builder.Core.Services.Inspection;
 using Workbench.Builder.Core.Services.Loading;
 using Workbench.Builder.Core.Services.References;
@@ -8,7 +9,7 @@ using Workbench.Builder.Core.Services.References;
 namespace Workbench.Builder.Host;
 
 /// <summary>
-/// Registers services required by the thin builder inspection host.
+/// Registers services required by the V1.2 compile host.
 /// </summary>
 public static class ServiceRegistration
 {
@@ -22,8 +23,9 @@ public static class ServiceRegistration
         services.AddSingleton<IProjectLoader, MsBuildProjectLoader>();
         services.AddSingleton<IReferenceResolver, ReferenceResolver>();
         services.AddSingleton<ITestProjectDetector, TestProjectDetector>();
+        services.AddSingleton<IProjectEmitSupportEvaluator, ProjectEmitSupportEvaluator>();
+        services.AddSingleton<IProjectCompilationService, ProjectCompilationService>();
         services.AddSingleton<IProjectInspectionService, ProjectInspectionService>();
-        services.AddSingleton<IProjectInspectionFormatter, ProjectInspectionFormatter>();
         services.AddSingleton<HostCommandLineParser>();
         services.AddSingleton<IHostConsole, SystemConsoleAdapter>();
         services.AddSingleton<HostApplication>();

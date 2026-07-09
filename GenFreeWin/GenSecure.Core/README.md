@@ -7,14 +7,14 @@ access control and audit-safe deletion.
 ## Purpose
 
 Implements `IPersonSecureStore` and `IMasterKeyBackupService` from `GenSecure.Contracts`.
-Provides envelope encryption (per-person DEK wrapped with a DPAPI-protected master key),
+Provides envelope encryption (per-person DEK wrapped with a locally protected master key),
 a passphrase-based recovery mechanism, and plaintext mode for deceased / historical persons
 that no longer require DSGVO protection.
 
 ## Key Features
 
 - **AES-256-GCM** data encryption and DEK wrapping — authenticated, tamper-evident
-- **DPAPI `CurrentUser`** — master key bound to the local Windows account; zero network exposure
+- **Platform-aware local key protection** — DPAPI `CurrentUser` on Windows, data-protection fallback on non-Windows systems
 - **PBKDF2-SHA256 recovery backup** (600 000 iterations) — machine-migration and disaster recovery
 - **HMAC-SHA256 SID pseudonymisation** — raw Windows SIDs never written to disk;
   pepper derived via HKDF from master key prevents enumeration attacks on key files
@@ -25,7 +25,7 @@ that no longer require DSGVO protection.
 
 ## Targets
 
-`net9.0-windows`  *(DPAPI and Windows Identity APIs require Windows)*
+`net8.0`, `net9.0` *(and `net10.0` when the SDK is available)*
 
 ## Getting Started
 
@@ -35,6 +35,9 @@ services.AddGenSecureStore(options =>
 {
     options.RootDirectory = @"C:\MyApp\Store";
 });
+
+// Optional on Windows: keep DPAPI + SID-based identity explicitly
+services.AddGenSecureWindowsPlatform();
 ```
 
 ```csharp
@@ -78,7 +81,7 @@ public class PersonService(IPersonSecureStore store)
 |-------|-----------|---------|
 | Payload encryption | AES-256-GCM | 12-byte nonce, 16-byte tag, per-person random DEK |
 | DEK wrapping | AES-256-GCM | Master key as wrapping key |
-| Master key storage | DPAPI `CurrentUser` | `ProtectedData.Protect` / `Unprotect` |
+| Master key storage | Platform-dependent | DPAPI on Windows, data protection fallback elsewhere |
 | Recovery backup | PBKDF2-SHA256 + AES-256-GCM | 600 000 iterations, random 32-byte salt |
 | SID hashing | HMAC-SHA256 | Key = HKDF-SHA256(masterKey, "GenSecure-SID-Pepper") |
 | File naming | SHA-256(personId) | Hex, lowercase — no identity leak |
@@ -91,10 +94,11 @@ GenSecure.Core
   ├── PersonSecureStore       ← IPersonSecureStore implementation
   ├── MasterKeyBackupService  ← IMasterKeyBackupService implementation
   ├── CryptoUtilities         ← AES-GCM, HKDF, HMAC-SHA256, PBKDF2 helpers (internal)
+  ├── DataProtectionLocalKeyProtector / DpapiLocalKeyProtector ← Platform-specific local key protection
+  ├── EnvironmentPrincipalProvider / WindowsSidPrincipalProvider ← Platform-specific principal IDs
   ├── FileModels              ← Internal JSON file models (internal)
   ├── GenSecureStoreOptions   ← Configuration (RootDirectory, file name conventions)
-  ├── DependencyInjectionExtensions ← AddGenSecureStore() extension
-  └── WindowsIdentityUtilities ← GetCurrentUserSid() helper (internal)
+  └── DependencyInjectionExtensions ← AddGenSecureStore() extension
 ```
 
 ## Dependencies
@@ -102,7 +106,8 @@ GenSecure.Core
 | Package | Version | Purpose |
 |---------|---------|---------|
 | `Microsoft.Extensions.DependencyInjection` | 10.x | DI registration |
-| `System.Security.Cryptography.ProtectedData` | 9.x | DPAPI on Windows |
+| `Microsoft.AspNetCore.DataProtection` | 10.x | Cross-platform local key protection fallback |
+| `System.Security.Cryptography.ProtectedData` | 10.x | DPAPI on Windows |
 
 ## Contributing
 

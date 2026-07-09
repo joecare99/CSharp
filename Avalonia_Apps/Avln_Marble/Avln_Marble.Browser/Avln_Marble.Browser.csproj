@@ -21,4 +21,7 @@
   <ItemGroup>
 	<ProjectReference Include="..\Avln_Marble.Display\Avln_Marble.Display.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Browser" Version="12.0.5" />
+  </ItemGroup>
 </Project>

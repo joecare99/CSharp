@@ -1,10 +1,13 @@
 using AA98_AvlnCodeStudio.Base.AI.DependencyInjection;
+using AA98_AvlnCodeStudio.Base.Building.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Debugging.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.OS.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Testing.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.UI.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Versioning.DependencyInjection;
+using AA98_AvlnCodeStudio.Planning.Core.Services;
 using AA98_AvlnCodeStudio.UI.Services;
+using AA98_AvlnCodeStudio.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -25,11 +28,14 @@ public static class CodeStudioServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddCodeStudioAI();
+        services.AddCodeStudioBuilding();
         services.AddCodeStudioVersioning();
         services.AddCodeStudioTesting();
         services.AddCodeStudioDebugging();
         services.AddCodeStudioOS<FileSystemTextDocumentStorageService>();
         services.AddCodeStudioUI<AvaloniaEditorFileDialogService>();
+        services.AddSingleton<IPlanningProvider, MarkdownPlanningReader>();
+        services.AddSingleton<PlanningExplorerViewModel>();
         return services;
     }
 }

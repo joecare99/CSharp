@@ -18,6 +18,7 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
 {
     private const string ManifestFileName = "manifest.json";
     private const string CurrentVersion = "1.0";
+    private readonly ICurrentPrincipalProvider _currentPrincipalProvider;
     private readonly MasterKeyBackupService _masterKeyBackupService;
     private readonly GenSecureStoreOptions _options;
 
@@ -27,9 +28,21 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
     /// <param name="masterKeyBackupService">The master key provider.</param>
     /// <param name="options">The store options.</param>
     public GenealogySecureStore(MasterKeyBackupService masterKeyBackupService, GenSecureStoreOptions options)
+        : this(masterKeyBackupService, options, PlatformServiceResolver.CreateCurrentPrincipalProvider())
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GenealogySecureStore"/> class.
+    /// </summary>
+    /// <param name="masterKeyBackupService">The master key provider.</param>
+    /// <param name="options">The store options.</param>
+    /// <param name="currentPrincipalProvider">The current principal provider.</param>
+    public GenealogySecureStore(MasterKeyBackupService masterKeyBackupService, GenSecureStoreOptions options, ICurrentPrincipalProvider currentPrincipalProvider)
     {
         _masterKeyBackupService = masterKeyBackupService ?? throw new ArgumentNullException(nameof(masterKeyBackupService));
         _options = options ?? throw new ArgumentNullException(nameof(options));
+        _currentPrincipalProvider = currentPrincipalProvider ?? throw new ArgumentNullException(nameof(currentPrincipalProvider));
     }
 
     /// <inheritdoc />
@@ -799,7 +812,7 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
             RecoveryKeyFileName = _options.RecoveryKeyFileName,
             GenealogyDirectoryName = _options.GenealogyDirectoryName,
             SecureDataDirectoryName = _options.SecureDataDirectoryName,
-        });
+        }, _currentPrincipalProvider);
     }
 
     private string GetGenealogyRootDirectory(string sGenealogyId)

@@ -2,7 +2,7 @@
 
 ## Status
 
-In Progress
+Completed
 
 ## Parent
 
@@ -50,9 +50,9 @@ The host should remain an adapter around the reusable core, not a second place w
 
 ## Next Refinement Steps
 
-1. Freeze the current host baseline for V1.1
-2. Record extension points for V1.2 options
-3. Expand tests for argument combinations and output selection behavior
+1. Preserve the current thin-host baseline while later waves add capabilities
+2. Record extension points for future host options without moving logic out of `Workbench.Builder.Core`
+3. Expand tests only where later host-visible behavior changes
 
 ## Planned Implementation Tasks
 

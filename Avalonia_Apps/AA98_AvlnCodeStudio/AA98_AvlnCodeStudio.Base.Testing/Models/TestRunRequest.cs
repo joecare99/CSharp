@@ -13,6 +13,16 @@ public sealed class TestRunRequest
     public string? WorkspaceRootPath { get; set; }
 
     /// <summary>
+    /// Gets or sets the optional test project path.
+    /// </summary>
+    public string? ProjectPath { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional target framework.
+    /// </summary>
+    public string? TargetFramework { get; set; }
+
+    /// <summary>
     /// Gets the logical test targets to include in the run.
     /// </summary>
     public IList<string> Targets { get; } = new List<string>();

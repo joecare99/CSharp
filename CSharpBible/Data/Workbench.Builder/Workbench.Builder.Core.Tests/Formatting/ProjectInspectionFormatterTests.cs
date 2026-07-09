@@ -1,3 +1,4 @@
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Workbench.Builder.Core.Models.Diagnostics;
 using Workbench.Builder.Core.Models.Inspection;
@@ -29,7 +30,7 @@ public class ProjectInspectionFormatterTests
         StringAssert.Contains(output, "Compile Items (1)");
         StringAssert.Contains(output, "Resolved References (1)");
         StringAssert.Contains(output, "Diagnostics (1)");
-        StringAssert.Contains(output, "Warning WB1999: Sample warning");
+        StringAssert.Contains(output, @"C:\Temp\Sample\Sample.csproj(12,34): warning WB1999: Sample warning");
     }
 
     /// <summary>
@@ -49,6 +50,48 @@ public class ProjectInspectionFormatterTests
         StringAssert.Contains(output, "\"Severity\": \"Warning\"");
     }
 
+    /// <summary>
+    /// Verifies that the plain-text formatter renders empty sections as none.
+    /// </summary>
+    [TestMethod]
+    public void Format_PlainText_WhenCollectionsAreEmpty_RendersNoneSections()
+    {
+        ProjectInspectionFormatter formatter = new();
+        ProjectInspectionResult result = CreateEmptyResult();
+
+        string output = formatter.Format(result, ProjectInspectionOutputFormat.PlainText);
+
+        StringAssert.Contains(output, "Compile Items (0)");
+        StringAssert.Contains(output, "Project References (0)");
+        StringAssert.Contains(output, "Package References (0)");
+        StringAssert.Contains(output, "Resolved References (0)");
+        StringAssert.Contains(output, "Diagnostics (0)");
+
+        Assert.AreEqual(5, CountOccurrences(output, "- none"));
+    }
+
+    /// <summary>
+    /// Verifies that unsupported output formats are rejected.
+    /// </summary>
+    [TestMethod]
+    public void Format_WhenFormatIsUnsupported_ThrowsArgumentOutOfRangeException()
+    {
+        ProjectInspectionFormatter formatter = new();
+        ProjectInspectionResult result = CreateResult();
+
+        try
+        {
+            _ = formatter.Format(result, (ProjectInspectionOutputFormat)999);
+            Assert.Fail("Expected an ArgumentOutOfRangeException to be thrown.");
+            return;
+        }
+        catch (ArgumentOutOfRangeException exception)
+        {
+            Assert.AreEqual("format", exception.ParamName);
+        }
+
+    }
+
     private static ProjectInspectionResult CreateResult()
     {
         BuildProjectInfo project = new(
@@ -64,6 +107,8 @@ public class ProjectInspectionFormatterTests
             implicitUsings: "enable",
             configuration: "Debug",
             runtimeIdentifier: null,
+            outputPath: @"bin\Debug\net10.0\",
+            intermediateOutputPath: @"obj\Debug\net10.0\",
             isSdkStyle: true,
             isPackable: false);
 
@@ -90,5 +135,49 @@ public class ProjectInspectionFormatterTests
                 new BuildDiagnostic(BuildDiagnosticSeverity.Warning, "WB1999", "Sample warning", @"C:\Temp\Sample\Sample.csproj", 12, 34),
             },
             isTestProject: false);
+    }
+
+    private static ProjectInspectionResult CreateEmptyResult()
+    {
+        BuildProjectInfo project = new(
+            projectFilePath: @"C:\Temp\Empty\Empty.csproj",
+            projectDirectory: @"C:\Temp\Empty",
+            assemblyName: "Empty.Assembly",
+            rootNamespace: "Empty.Namespace",
+            targetFramework: "net10.0",
+            outputType: null,
+            langVersion: null,
+            nullable: null,
+            defineConstants: null,
+            implicitUsings: null,
+            configuration: null,
+            runtimeIdentifier: null,
+            outputPath: null,
+            intermediateOutputPath: null,
+            isSdkStyle: false,
+            isPackable: null);
+
+        return new ProjectInspectionResult(
+            project,
+            Array.Empty<CompileItemInfo>(),
+            Array.Empty<ProjectReferenceInfo>(),
+            Array.Empty<PackageReferenceInfo>(),
+            Array.Empty<ResolvedReferenceInfo>(),
+            Array.Empty<BuildDiagnostic>(),
+            isTestProject: false);
+    }
+
+    private static int CountOccurrences(string text, string value)
+    {
+        int count = 0;
+        int index = 0;
+
+        while ((index = text.IndexOf(value, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += value.Length;
+        }
+
+        return count;
     }
 }

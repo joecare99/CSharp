@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Completed
 
 ## Parent
 
@@ -15,7 +15,7 @@ Keep automated validation visible and growing while the builder architecture is 
 
 ## Description
 
-The builder projects already include first MSTest coverage for loader, detector, resolver, formatter, inspection service, host parser, and host orchestration. That is a strong start for a new architecture slice, but the current scenario surface is still small. This backlog item keeps test expansion explicit so later implementation work does not outpace validation.
+The builder projects include MSTest coverage for loader, detector, resolver, formatter, inspection service, host parser, host orchestration, visible multi-target behavior, and the first compilation and emit slices. This backlog item kept test expansion explicit while the architecture moved from inspection-only planning into an implemented baseline.
 
 The focus is not only test quantity. The more important concern is preserving trust in the structured inspection contract, reference classification behavior, and host adapter semantics while the next iteration moves toward emit and source-generator-sensitive work.
 
@@ -50,9 +50,9 @@ The focus is not only test quantity. The more important concern is preserving tr
 
 ## Next Refinement Steps
 
-1. Identify the most important uncovered V1.1 scenarios
-2. Add targeted tests and sample inputs
-3. Reassess gaps before V1.2 implementation begins
+1. Preserve coverage for the established V1.1 baseline while V1.2 expands
+2. Add targeted tests and sample inputs when later waves introduce new risk areas
+3. Reassess gaps before broadening beyond the current supported emit baseline
 
 ## Planned Implementation Tasks
 
@@ -61,4 +61,4 @@ The focus is not only test quantity. The more important concern is preserving tr
 
 ## Notes
 
-The next concrete sample-project expansion for this backlog item should be a compact multi-target SDK-style project, for example with `TargetFrameworks=net8.0;net10.0`, so V1.1 can validate target-framework recognition and best-effort multi-target behavior explicitly.
+The compact multi-target SDK-style sample-project path is now part of the established validation baseline and should remain covered as later waves extend compilation behavior.

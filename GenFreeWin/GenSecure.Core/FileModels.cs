@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GenSecure.Core;
 
@@ -31,9 +32,11 @@ internal sealed class PersonKeyRecord
 
     public required string Tag { get; init; }
 
-    public required string OwnerWindowsSidHash { get; init; }
+    [JsonPropertyName("OwnerWindowsSidHash")]
+    public required string OwnerPrincipalHash { get; init; }
 
-    public required List<string> AllowedWindowsSidHashes { get; init; }
+    [JsonPropertyName("AllowedWindowsSidHashes")]
+    public required List<string> AllowedPrincipalHashes { get; init; }
 
     public DateTimeOffset CreatedUtc { get; init; }
 

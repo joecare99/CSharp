@@ -1,5 +1,4 @@
 ﻿<Project>
-  <Import Project="..\..\Data_net.props" />
   <PropertyGroup>
 	<IsPackable>false</IsPackable>
 	<TargetFrameworks>net10.0</TargetFrameworks>
@@ -7,7 +6,14 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
+	<None Include="TestData\BrokenConsoleApp\BrokenConsoleApp.csproj" />
+	<None Include="TestData\MissingCompileItemProject\MissingCompileItemProject.csproj" />
+	<None Include="TestData\MissingMetadataReferenceProject\MissingMetadataReferenceProject.csproj" />
+	<None Include="TestData\MissingProjectReferenceProject\MissingProjectReferenceProject.csproj" />
+	<None Include="TestData\MissingTargetFrameworkProject\MissingTargetFrameworkProject.csproj" />
     <None Include="TestData\MultiTargetLibrary\MultiTargetLibrary.csproj" />
+	<None Include="TestData\MultiTargetConsoleApp\MultiTargetConsoleApp.csproj" />
+    <None Include="TestData\NonSdkStyleProject\NonSdkStyleProject.csproj" />
     <None Include="TestData\ProjectWithProjectReference\ProjectWithProjectReference.csproj" />
     <None Include="TestData\ProjectWithProjectReference\ReferencedLibrary\ReferencedLibrary.csproj" />
     <None Include="TestData\SimpleConsoleApp\SimpleConsoleApp.csproj" />
@@ -15,6 +21,11 @@
     <None Include="TestData\SimpleTestProject\SimpleTestProject.csproj" />
   </ItemGroup>
   <ItemGroup>
+	<PackageReference Include="coverlet.collector" Version="10.0.1">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
 	<PackageReference Include="MSTest" Version="4.2.3" />
 	<PackageReference Include="NSubstitute" Version="5.3.0" />
   </ItemGroup>
@@ -26,6 +37,8 @@
 	</None>
   </ItemGroup>
   <ItemGroup>
+	<ProjectReference Include="..\Workbench.Builder.Analysis\Workbench.Builder.Analysis.csproj" />
+	<ProjectReference Include="..\Workbench.Builder.Cli\Workbench.Builder.Cli.csproj" />
 	<ProjectReference Include="..\Workbench.Builder.Core\Workbench.Builder.Core.csproj" />
 	<ProjectReference Include="..\Workbench.Builder.Host\Workbench.Builder.Host.csproj" />
   </ItemGroup>

@@ -74,6 +74,14 @@ public interface IConsole
     int LargestWindowHeight { get; }
 
     /// <summary>
+    /// Gets the largest possible number of console window columns based on the current font and display resolution.
+    /// </summary>
+    /// <value>
+    /// The maximum number of columns that can be displayed in the console window.
+    /// </value>
+    int LargestWindowWidth { get; }
+
+    /// <summary>
     /// Gets or sets the title to display in the console window's title bar.
     /// </summary>
     /// <value>
@@ -96,6 +104,22 @@ public interface IConsole
     /// The number of columns visible in the console window.
     /// </value>
     int WindowWidth { get; set; }
+
+    /// <summary>
+    /// Gets or sets the leftmost position of the console window area relative to the screen buffer.
+    /// </summary>
+    /// <value>
+    /// The zero-based column position of the console window.
+    /// </value>
+    int WindowLeft { get; set; }
+
+    /// <summary>
+    /// Gets or sets the topmost position of the console window area relative to the screen buffer.
+    /// </summary>
+    /// <value>
+    /// The zero-based row position of the console window.
+    /// </value>
+    int WindowTop { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the cursor is visible.
@@ -157,6 +181,20 @@ public interface IConsole
     /// <param name="left">The column position of the cursor, where 0 is the leftmost column.</param>
     /// <param name="top">The row position of the cursor, where 0 is the topmost row.</param>
     void SetCursorPosition(int left, int top);
+
+    /// <summary>
+    /// Sets the position of the console window relative to the screen buffer.
+    /// </summary>
+    /// <param name="left">The zero-based column position of the upper-left corner of the console window.</param>
+    /// <param name="top">The zero-based row position of the upper-left corner of the console window.</param>
+    void SetWindowPosition(int left, int top);
+
+    /// <summary>
+    /// Sets the height and width of the console window to the specified values.
+    /// </summary>
+    /// <param name="width">The width of the console window measured in columns.</param>
+    /// <param name="height">The height of the console window measured in rows.</param>
+    void SetWindowSize(int width, int height);
 
     /// <summary>
     /// Writes the specified Unicode character to the standard output stream.

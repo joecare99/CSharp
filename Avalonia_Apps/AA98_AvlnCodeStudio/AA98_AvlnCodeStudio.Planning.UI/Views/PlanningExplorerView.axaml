@@ -1,0 +1,129 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:AA98_AvlnCodeStudio.Planning.UI.ViewModels"
+			 xmlns:markdownControls="using:AA98.MarkDown.UI.Controls"
+			 xmlns:controls="using:AA98_AvlnCodeStudio.Planning.UI.Controls"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d"
+			 x:Class="AA98_AvlnCodeStudio.Planning.UI.Views.PlanningExplorerView"
+			 x:Name="ExplorerRoot"
+			 x:DataType="vm:PlanningExplorerViewModel">
+  <UserControl.Styles>
+	<Style Selector="TreeView#HierarchyTree TreeViewItem">
+	  <Setter Property="MinHeight" Value="22" />
+	</Style>
+	<Style Selector="TreeView#HierarchyTree TreeViewItem:not(:expanded)">
+	  <Setter Property="MinHeight" Value="18" />
+	</Style>
+  </UserControl.Styles>
+
+  <Grid ColumnDefinitions="340,Auto,*"
+		RowDefinitions="*,Auto">
+	<Border Grid.Column="0"
+			Grid.Row="0"
+			Margin="0,0,6,0"
+			Padding="10"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+	  <Grid RowDefinitions="Auto,8,*"
+			RowSpacing="0">
+		<StackPanel Grid.Row="0"
+					Orientation="Horizontal"
+					Spacing="8">
+		  <ToggleButton Content="Hierarchie"
+						IsChecked="{Binding IsHierarchyMode}"
+						Command="{Binding ShowHierarchyViewCommand}" />
+		  <ToggleButton Content="Kategorie"
+						IsChecked="{Binding IsCategoryMode}"
+						Command="{Binding ShowCategoryViewCommand}" />
+		</StackPanel>
+
+		<Grid Grid.Row="2">
+		  <TreeView x:Name="HierarchyTree"
+					IsVisible="{Binding IsHierarchyMode}"
+					ItemsSource="{Binding RootItems}"
+					SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+			<TreeView.ItemTemplate>
+			  <TreeDataTemplate ItemsSource="{Binding Children}">
+				<StackPanel Orientation="Horizontal" Spacing="4">
+				  <TextBlock Text="{Binding Id}" FontSize="12" />
+				  <TextBlock Text="{Binding Title}" Opacity="0.82" FontSize="12" />
+				</StackPanel>
+			  </TreeDataTemplate>
+			</TreeView.ItemTemplate>
+		  </TreeView>
+
+		  <ScrollViewer IsVisible="{Binding IsCategoryMode}"
+						VerticalScrollBarVisibility="Auto">
+			<ItemsControl ItemsSource="{Binding CategoryGroups}">
+			  <ItemsControl.ItemTemplate>
+				<DataTemplate>
+				  <Expander Header="{Binding Name}"
+							IsExpanded="True"
+							Margin="0,0,0,6">
+					<ListBox ItemsSource="{Binding Items}"
+							 x:CompileBindings="False"
+							 SelectedItem="{Binding DataContext.SelectedItem, ElementName=ExplorerRoot, Mode=TwoWay}">
+					  <ListBox.ItemTemplate>
+						<DataTemplate>
+						  <StackPanel Orientation="Horizontal" Spacing="4">
+							<TextBlock Text="{Binding Id}" FontSize="12" />
+							<TextBlock Text="{Binding Title}" Opacity="0.82" FontSize="12" />
+						  </StackPanel>
+						</DataTemplate>
+					  </ListBox.ItemTemplate>
+					</ListBox>
+				  </Expander>
+				</DataTemplate>
+			  </ItemsControl.ItemTemplate>
+			</ItemsControl>
+		  </ScrollViewer>
+		</Grid>
+	  </Grid>
+	</Border>
+
+	<GridSplitter Grid.Column="1"
+				  Grid.Row="0"
+				  Width="6"
+				  Background="{DynamicResource ThemeControlMidBrush}"
+				  ResizeDirection="Columns"
+				  HorizontalAlignment="Stretch"
+				  VerticalAlignment="Stretch" />
+
+	<Border Grid.Column="2"
+			Grid.Row="0"
+			Padding="10"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+	  <Grid RowDefinitions="Auto,Auto,2*,*"
+			RowSpacing="8">
+		<TextBlock Grid.Row="0"
+				   Text="Dokument"
+				   FontWeight="SemiBold" />
+		<TextBlock Grid.Row="1"
+				   Text="{Binding SelectedItemSourcePath}"
+				   Opacity="0.75"
+				   TextTrimming="CharacterEllipsis" />
+		<markdownControls:MarkdownEditorPreview Grid.Row="2"
+									 Text="{Binding SelectedItemDocumentText, Mode=TwoWay}" />
+		<controls:PropertiesPanel Grid.Row="3"
+							DataContext="{Binding}" />
+	  </Grid>
+	</Border>
+
+	<Border Grid.Column="0"
+			Grid.ColumnSpan="3"
+			Grid.Row="1"
+			Margin="0,8,0,0"
+			Padding="8,4"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+	  <TextBlock Text="{Binding ExplorerStatusText}"
+				 TextTrimming="CharacterEllipsis" />
+	</Border>
+  </Grid>
+</UserControl>

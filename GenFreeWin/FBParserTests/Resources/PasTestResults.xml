@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestResults>
+  <!-- Generated using FPCUnit on 2026-04-27 18:05:36-->
+  <TestListing>
+    <TestSuite Name="" ElapsedTime="00:02:42.497" NumberOfErrors="0" NumberOfFailures="19" NumberOfRunTests="310" NumberOfIgnoredTests="0">
+      <TestSuite Name="TTestFBEntryParser" ElapsedTime="00:00:08.671" NumberOfErrors="0" NumberOfFailures="1" NumberOfRunTests="38" NumberOfIgnoredTests="0">
+        <Test Name="TestSetUp" Result="OK" ElapsedTime="00:00:00.151"/>
+        <Test Name="TestResult" Result="OK" ElapsedTime="00:00:00.168"/>
+        <Test Name="TestParseGC5065" Result="OK" ElapsedTime="00:00:00.422"/>
+        <Test Name="TestParseAK2421" Result="OK" ElapsedTime="00:00:00.825"/>
+        <Test Name="TestHandleAKPersonEntry" Result="OK" ElapsedTime="00:00:00.970"/>
+        <Test Name="TestHandleAKPersonEntry_55" Result="OK" ElapsedTime="00:00:00.457"/>
+        <Test Name="TestHandleAKPersonEntry_56" Result="OK" ElapsedTime="00:00:00.313"/>
+        <Test Name="TestHandleNonPersonEntry" Result="OK" ElapsedTime="00:00:00.124"/>
+        <Test Name="TestHandleNonPersonEntry_occ" Result="OK" ElapsedTime="00:00:01.432"/>
+        <Test Name="TestHandleNonPersonEntry_4" Result="OK" ElapsedTime="00:00:00.114"/>
+        <Test Name="TestHandleNonPersonEntry_4_2" Result="OK" ElapsedTime="00:00:00.102"/>
+        <Test Name="TestHandleNonPersonEntry_5" Result="OK" ElapsedTime="00:00:00.110"/>
+        <Test Name="TestHandleNonPersonEntry_6" Result="OK" ElapsedTime="00:00:00.108"/>
+        <Test Name="TestHandleNonPersonEntry_Birth_Plac2" Result="OK" ElapsedTime="00:00:00.113"/>
+        <Test Name="TestHandleNonPersonEntry_Birth_Plac3" Result="OK" ElapsedTime="00:00:00.146"/>
+        <Test Name="TestHandleNonPersonEntry_Birth_Plac4" Result="OK" ElapsedTime="00:00:00.162"/>
+        <Test Name="TestHandleNonPersonEntry_Res" Result="OK" ElapsedTime="00:00:00.164"/>
+        <Test Name="TestHandleNonPersonEntry_div" Result="OK" ElapsedTime="00:00:00.149"/>
+        <Test Name="TestHandleNonPersonEntry_marr" Result="OK" ElapsedTime="00:00:00.136"/>
+        <Test Name="TestHandleNonPersonEntry_57" Result="OK" ElapsedTime="00:00:00.137"/>
+        <Test Name="TestHandleNonPersonEntry_Gef" Result="OK" ElapsedTime="00:00:00.137"/>
+        <Test Name="TestHandleFamilyFact_Str" Result="OK" ElapsedTime="00:00:00.125"/>
+        <Test Name="TestHandleFamilyFact_Div" Result="OK" ElapsedTime="00:00:00.107"/>
+        <Test Name="TestHandleFamilyFact_emig" Result="OK" ElapsedTime="00:00:00.118"/>
+        <Test Name="TestHandleFamilyFact_marr1" Result="OK" ElapsedTime="00:00:00.108"/>
+        <Test Name="TestHandleFamilyFact_marr2" Result="OK" ElapsedTime="00:00:00.115"/>
+        <Test Name="TestGetEntryType" Result="Failed" ElapsedTime="00:00:00.248">
+          <Message>TTestFBEntryParser.TestGetEntryType: "Test[20]: wurde "Schmittjockel" genannt" expected: &lt;11&gt; but was: &lt;49&gt;</Message>
+          <ExceptionClass>EAssertionFailedError</ExceptionClass>
+          <ExceptionMessage>"Test[20]: wurde "Schmittjockel" genannt" expected: &lt;11&gt; but was: &lt;49&gt;</ExceptionMessage>
+        </Test>
+        <Test Name="TestGetEntryType_Rel" Result="OK" ElapsedTime="00:00:00.115"/>
+        <Test Name="TestGuessSexOfGivnName" Result="OK" ElapsedTime="00:00:00.224"/>
+        <Test Name="TestHandleGCDateEntry" Result="OK" ElapsedTime="00:00:00.106"/>
+        <Test Name="TesttestEntry" Result="OK" ElapsedTime="00:00:00.110"/>
+        <Test Name="TestTestFor" Result="OK" ElapsedTime="00:00:00.106"/>
+        <Test Name="TestTestFor2" Result="OK" ElapsedTime="00:00:00.103"/>
+        <Test Name="TestTestFor3" Result="OK" ElapsedTime="00:00:00.101"/>
+        <Test Name="TestParseAdditional" Result="OK" ElapsedTime="00:00:00.110"/>
+        <Test Name="TestTestReferenz" Result="OK" ElapsedTime="00:00:00.105"/>
+        <Test Name="TestIsValidDate" Result="OK" ElapsedTime="00:00:00.102"/>
+        <Test Name="TestIsValidPlace" Result="OK" ElapsedTime="00:00:00.104"/>
+      </TestSuite>
+      <TestSuite Name="TTestFBEntryParserAK" ElapsedTime="00:00:38.417" NumberOfErrors="0" NumberOfFailures="6" NumberOfRunTests="66" NumberOfIgnoredTests="0">
+        <Test Name="TestFileM0001" Result="OK" ElapsedTime="00:00:00.449"/>
+        <Test Name="TestFileM0002" Result="OK" ElapsedTime="00:00:00.297"/>
+        <Test Name="TestFileM0003" Result="OK" ElapsedTime="00:00:00.451"/>
+        <Test Name="TestFileM0004" Result="OK" ElapsedTime="00:00:00.566"/>
+        <Test Name="TestFileM0005" Result="OK" ElapsedTime="00:00:00.444"/>
+        <Test Name="TestFileM0006" Result="OK" ElapsedTime="00:00:00.930"/>
+        <Test Name="TestFileM0007" Result="Failed" ElapsedTime="00:00:00.409">
+          <Message>TTestFBEntryParserAK.TestFileM0007: "Teste Evt[6],OsBM0007.entTxt" expected: &lt;ParserIndiOccu	Ackerknecht	I7M	7&gt; but was: &lt;ParserIndiOccu	ein Ackerknecht	I7M	7&gt;</Message>
+          <ExceptionClass>EAssertionFailedError</ExceptionClass>
+          <ExceptionMessage>"Teste Evt[6],OsBM0007.entTxt" expected: &lt;ParserIndiOccu	Ackerknecht	I7M	7&gt; but was: &lt;ParserIndiOccu	ein Ackerknecht	I7M	7&gt;</ExceptionMessage>
+        </Test>
+        <Test Name="TestFileM0008" Result="OK" ElapsedTime="00:00:00.622"/>
+        <Test Name="TestFileM0009" Result="OK" ElapsedTime="00:00:00.436"/>
+        <Test Name="TestFileM0011" Result="OK" ElapsedTime="00:00:00.573"/>
+        <Test Name="TestFileM0020" Result="OK" ElapsedTime="00:00:00.581"/>
+        <Test Name="TestFileM0026" Result="OK" ElapsedTime="00:00:00.381"/>
+        <Test Name="TestFileM0030" Result="Failed" ElapsedTime="00:00:00.486">
+          <Message>TTestFBEntryParserAK.TestFileM0030: "Teste Evt[16],OsBM0030.entTxt" expected: &lt;ParserFamilyPlace	Meißenheim	30	17&gt; but was: &lt;ParserError!	Person entry not ended with .	30	6&gt;</Message>
+          <ExceptionClass>EAssertionFailedError</ExceptionClass>
+          <ExceptionMessage>"Teste Evt[16],OsBM0030.entTxt" expected: &lt;ParserFamilyPlace	Meißenheim	30	17&gt; but was: &lt;ParserError!	Person entry not ended with .	30	6&gt;</ExceptionMessage>
+        </Test>
+        <Test Name="TestFileM0037" Result="OK" ElapsedTime="00:00:00.456"/>
+        <Test Name="TestFileM0054" Result="OK" ElapsedTime="00:00:00.501"/>
+        <Test Name="TestFileM0061" Result="Failed" ElapsedTime="00:00:00.313">
+          <Message>TTestFBEntryParserAK.TestFileM0061: "Teste Evt[13],OsBM0061.entTxt" expected: &lt;ParserIndiData	ledig	I61F	38&gt; but was: &lt;ParserIndiOccu	led.Rentnerin	I61F	7&gt;</Message>
+          <ExceptionClass>EAssertionFailedError</ExceptionClass>
+          <ExceptionMessage>"Teste Evt[13],OsBM0061.entTxt" expected: &lt;ParserIndiData	ledig	I61F	38&gt; but was: &lt;ParserIndiOccu	led.Rentnerin	I61F	7&gt;</ExceptionMessage>
+        </Test>
+        <Test Name="TestFileM0119" Result="OK" ElapsedTime="00:00:00.425"/>
+        <Test Name="TestFileM0193" Result="OK" ElapsedTime="00:00:00.583"/>
+        <Test Name="TestFileM0211" Result="OK" ElapsedTime="00:00:00.379"/>
+        <Test Name="TestFileM0263" Result="OK" ElapsedTime="00:00:00.468"/>
+        <Test Name="TestFileM0330" Result="OK" ElapsedTime="00:00:00.711"/>
+        <Test Name="TestFileM0337" Result="OK" ElapsedTime="00:00:00.336"/>
+        <Test Name="TestFileM0405" Result="OK" ElapsedTime="00:00:00.690"/>
+        <Test Name="TestFileM0407" Result="OK" ElapsedTime="00:00:00.642"/>
+        <Test Name="TestFileM0409" Result="OK" ElapsedTime="00:00:00.511"/>
+        <Test Name="TestFileM0411" Result="OK" ElapsedTime="00:00:00.853"/>
+        <Test Name="TestFileM0424" Result="OK" ElapsedTime="00:00:00.552"/>
+        <Test Name="TestFileM0427" Result="OK" ElapsedTime="00:00:00.510"/>
+        <Test Name="TestFileM0429" Result="OK" ElapsedTime="00:00:00.500"/>
+        <Test Name="TestFileM0443" Result="OK" ElapsedTime="00:00:00.398"/>
+        <Test Name="TestFileM0462" Result="OK" ElapsedTime="00:00:00.412"/>
+        <Test Name="TestFileM0470" Result="OK" ElapsedTime="00:00:00.611"/>
+        <Test Name="TestFileM0476" Result="OK" ElapsedTime="00:00:00.408"/>
+        <Test Name="TestFileM0485" Result="OK" ElapsedTime="00:00:00.506"/>
+        <Test Name="TestFileM0486" Result="OK" ElapsedTime="00:00:00.700"/>
+        <Test Name="TestFileM0549" Result="OK" ElapsedTime="00:00:00.668"/>
+        <Test Name="TestFileM0746" Result="Failed" ElapsedTime="00:00:00.401">
+          <Message>TTestFBEntryParserAK.TestFileM0746: "Teste Evt[29],OsBM0746.entTxt" expected: &lt;ParserIndiName	Hans Jacob D.	I741FM	0&gt; but was: &lt;ParserIndiName	Hans Jacob D. 	I741FM	0&gt;</Message>
+          <ExceptionClass>EAssertionFailedError</ExceptionClass>
+          <ExceptionMessage>"Teste Evt[29],OsBM0746.entTxt" expected: &lt;ParserIndiName	Hans Jacob D.	I741FM	0&gt; but was: &lt;ParserIndiName	Hans Jacob D. 	I741FM	0&gt;</ExceptionMessage>
+        </Test>
+        <Test Name="TestFileM0832" Result="OK" ElapsedTime="00:00:00.473"/>
+        <Test Name="TestFileM0854" Result="Failed" ElapsedTime="00:00:00.379">
+          <Message>TTestFBEntryParserAK.TestFileM0854: "Teste Evt[6],OsBM0854.entTxt" expected: &lt;ParserError!	Wrong Family reference, "\t850\t.8 2.12.1955: H"	850	1&gt; but was: &lt;ParserIndiName	Heinz Karl Hasemann	I850M	0&gt;</Message>
+          <ExceptionClass>EAssertionFailedError</ExceptionClass>
+          <ExceptionMessage>"Teste Evt[6],OsBM0854.entTxt" expected: &lt;ParserError!	Wrong Family reference, "\t850\t.8 2.12.1955: H"	850	1&gt; but was: &lt;ParserIndiName	Heinz Karl Hasemann	I850M	0&gt;</ExceptionMessage>
+        </Test>
+        <Test Name="TestFileM0889" Result="OK" ElapsedTime="00:00:00.832"/>
+        <Test Name="TestFileM0918" Result="OK" ElapsedTime="00:00:00.968"/>
+        <Test Name="TestFileM1026" Result="OK" ElapsedTime="00:00:00.883"/>
+        <Test Name="TestFileM1078" Result="OK" ElapsedTime="00:00:00.674"/>
+        <Test Name="TestFileM1093" Result="OK" ElapsedTime="00:00:00.624"/>
+        <Test Name="TestFileM1138" Result="OK" ElapsedTime="00:00:00.616"/>
+        <Test Name="TestFileM1149" Result="OK" ElapsedTime="00:00:00.776"/>
+        <Test Name="TestFileM1220" Result="OK" ElapsedTime="00:00:00.907"/>
+        <Test Name="TestFileM1221" Result="OK" ElapsedTime="00:00:00.734"/>
+        <Test Name="TestFileM1227" Result="Failed" ElapsedTime="00:00:00.607">
+          <Message>TTestFBEntryParserAK.TestFileM1227: "Teste Evt[57],OsBM1227.entTxt" expected: &lt;ParserIndiData	ledig	I3657C5	38&gt; but was: &lt;ParserIndiOccu	led.Landwirt	I3657C5	7&gt;</Message>
+          <ExceptionClass>EAssertionFailedError</ExceptionClass>
+          <ExceptionMessage>"Teste Evt[57],OsBM1227.entTxt" expected: &lt;ParserIndiData	ledig	I3657C5	38&gt; but was: &lt;ParserIndiOccu	led.Landwirt	I3657C5	7&gt;</ExceptionMessage>
+        </Test>
+        <Test Name="TestFileM1240" Result="OK" ElapsedTime="00:00:00.682"/>
+        <Test Name="TestFileM1242" Result="OK" ElapsedTime="00:00:00.697"/>
+        <Test Name="TestFileM1251" Result="OK" ElapsedTime="00:00:00.750"/>
+        <Test Name="TestFileM1252" Result="OK" ElapsedTime="00:00:00.451"/>
+        <Test Name="TestFileM1262" Result="OK" ElapsedTime="00:00:00.665"/>
+        <Test Name="TestFileM1268" Result="OK" ElapsedTime="00:00:00.886"/>
+        <Test Name="TestFileM1274" Result="OK" ElapsedTime="00:00:00.531"/>
+        <Test Name="TestFileM1276" Result="OK" ElapsedTime="00:00:00.629"/>
+        <Test Name="TestFileM1319" Result="OK" ElapsedTime="00:00:00.382"/>
+        <Test Name="TestFileM1321" Result="OK" ElapsedTime="00:00:00.497"/>
+        <Test Name="TestFileM1353" Result="OK" ElapsedTime="00:00:00.582"/>
+        <Test Name="TestFileM1353a" Result="OK" ElapsedTime="00:00:00.628"/>
+        <Test Name="TestFileM1354" Result="OK" ElapsedTime="00:00:00.639"/>
+        <Test Name="TestFileM1387" Result="OK" ElapsedTime="00:00:00.623"/>
+        <Test Name="TestFileM1436" Result="OK" ElapsedTime="00:00:00.756"/>
+        <Test Name="TestFileM2420" Result="OK" ElapsedTime="00:00:00.423"/>
+        <Test Name="TestFileM2421" Result="OK" ElapsedTime="00:00:00.750"/>
+      </TestSuite>
+      <TestSuite Name="TTestFBEntryParserGC" ElapsedTime="00:00:15.184" NumberOfErrors="0" NumberOfFailures="0" NumberOfRunTests="33" NumberOfIgnoredTests="0">
+        <Test Name="TestFile03" Result="OK" ElapsedTime="00:00:00.336"/>
+        <Test Name="TestFileO0006" Result="OK" ElapsedTime="00:00:00.349"/>
+        <Test Name="TestFileO0011" Result="OK" ElapsedTime="00:00:00.478"/>
+        <Test Name="TestFileO0035" Result="OK" ElapsedTime="00:00:00.419"/>
+        <Test Name="TestFile45" Result="OK" ElapsedTime="00:00:00.492"/>
+        <Test Name="TestFile50" Result="OK" ElapsedTime="00:00:00.313"/>
+        <Test Name="TestFile51" Result="OK" ElapsedTime="00:00:00.712"/>
+        <Test Name="TestFile52" Result="OK" ElapsedTime="00:00:00.417"/>
+        <Test Name="TestFile53" Result="OK" ElapsedTime="00:00:00.364"/>
+        <Test Name="TestFile54" Result="OK" ElapsedTime="00:00:00.371"/>
+        <Test Name="TestFile63" Result="OK" ElapsedTime="00:00:00.876"/>
+        <Test Name="TestFileO0077" Result="OK" ElapsedTime="00:00:00.421"/>
+        <Test Name="TestFileO120" Result="OK" ElapsedTime="00:00:00.503"/>
+        <Test Name="TestFileO156" Result="OK" ElapsedTime="00:00:00.528"/>
+        <Test Name="TestFileO189" Result="OK" ElapsedTime="00:00:00.324"/>
+        <Test Name="TestFileO197" Result="OK" ElapsedTime="00:00:00.378"/>
+        <Test Name="TestFileO0338" Result="OK" ElapsedTime="00:00:00.812"/>
+        <Test Name="TestFileO0451" Result="OK" ElapsedTime="00:00:00.304"/>
+        <Test Name="TestFileO1304" Result="OK" ElapsedTime="00:00:00.376"/>
+        <Test Name="TestFileO1886" Result="OK" ElapsedTime="00:00:00.408"/>
+        <Test Name="TestFileO2201" Result="OK" ElapsedTime="00:00:00.295"/>
+        <Test Name="TestFileO2298" Result="OK" ElapsedTime="00:00:00.321"/>
+        <Test Name="TestFileO2578" Result="OK" ElapsedTime="00:00:00.411"/>
+        <Test Name="TestFileO2658" Result="OK" ElapsedTime="00:00:00.406"/>
+        <Test Name="TestFileO3135" Result="OK" ElapsedTime="00:00:00.306"/>
+        <Test Name="TestFileO3222" Result="OK" ElapsedTime="00:00:00.412"/>
+        <Test Name="TestFileO3503" Result="OK" ElapsedTime="00:00:00.410"/>
+        <Test Name="TestFileO3892" Result="OK" ElapsedTime="00:00:00.246"/>
+        <Test Name="TestFileO3899" Result="OK" ElapsedTime="00:00:00.795"/>
+        <Test Name="TestFileO4528" Result="OK" ElapsedTime="00:00:00.564"/>
+        <Test Name="TestFileO4551" Result="OK" ElapsedTime="00:00:00.634"/>
+        <Test Name="TestFileO6299" Result="OK" ElapsedTime="00:00:00.576"/>
+        <Test Name="TestFileO6302" Result="OK" ElapsedTime="00:00:00.522"/>
+      </TestSuite>
+      <TestSuite Name="TTestFBEntryParserAll" ElapsedTime="00:01:33.040" NumberOfErrors="0" NumberOfFailures="11" NumberOfRunTests="172" NumberOfIgnoredTests="0">
+        <TestSuite Name="test" ElapsedTime="00:01:33.040" NumberOfErrors="0" NumberOfFailures="11" NumberOfRunTests="172" NumberOfIgnoredTests="0">
+          <Test Name="Test_EntryGC0001" Result="OK" ElapsedTime="00:00:00.334"/>
+          <Test Name="Test_EntryGC0002" Result="OK" ElapsedTime="00:00:00.282"/>
+          <Test Name="Test_EntryGC0003" Result="OK" ElapsedTime="00:00:00.296"/>
+          <Test Name="Test_EntryGC0004" Result="OK" ElapsedTime="00:00:00.261"/>
+          <Test Name="Test_EntryGC0036" Result="OK" ElapsedTime="00:00:00.628"/>
+          <Test Name="Test_EntryGC0043" Result="OK" ElapsedTime="00:00:00.547"/>
+          <Test Name="Test_EntryGC0044" Result="OK" ElapsedTime="00:00:00.575"/>
+          <Test Name="Test_EntryGC0045" Result="OK" ElapsedTime="00:00:00.557"/>
+          <Test Name="Test_EntryGC0046" Result="OK" ElapsedTime="00:00:00.392"/>
+          <Test Name="Test_EntryGC0050" Result="OK" ElapsedTime="00:00:00.305"/>
+          <Test Name="Test_EntryGC0051" Result="OK" ElapsedTime="00:00:00.587"/>
+          <Test Name="Test_EntryGC0052" Result="OK" ElapsedTime="00:00:00.342"/>
+          <Test Name="Test_EntryGC0053" Result="OK" ElapsedTime="00:00:00.301"/>
+          <Test Name="Test_EntryGC0054" Result="OK" ElapsedTime="00:00:00.300"/>
+          <Test Name="Test_EntryGC0063" Result="OK" ElapsedTime="00:00:00.681"/>
+          <Test Name="Test_OsBM0001" Result="OK" ElapsedTime="00:00:00.560"/>
+          <Test Name="Test_OsBM0002" Result="OK" ElapsedTime="00:00:00.358"/>
+          <Test Name="Test_OsBM0003" Result="OK" ElapsedTime="00:00:00.347"/>
+          <Test Name="Test_OsBM0004" Result="OK" ElapsedTime="00:00:00.464"/>
+          <Test Name="Test_OsBM0005" Result="OK" ElapsedTime="00:00:00.387"/>
+          <Test Name="Test_OsBM0006" Result="OK" ElapsedTime="00:00:00.943"/>
+          <Test Name="Test_OsBM0007" Result="Failed" ElapsedTime="00:00:00.395">
+            <Message>test.Test_OsBM0007: "Teste Evt[6],OsBM0007.entTxt" expected: &lt;ParserIndiOccu	Ackerknecht	I7M	7&gt; but was: &lt;ParserIndiOccu	ein Ackerknecht	I7M	7&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[6],OsBM0007.entTxt" expected: &lt;ParserIndiOccu	Ackerknecht	I7M	7&gt; but was: &lt;ParserIndiOccu	ein Ackerknecht	I7M	7&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM0008" Result="OK" ElapsedTime="00:00:00.726"/>
+          <Test Name="Test_OsBM0009" Result="OK" ElapsedTime="00:00:00.533"/>
+          <Test Name="Test_OsBM0010" Result="OK" ElapsedTime="00:00:00.399"/>
+          <Test Name="Test_OsBM0011" Result="OK" ElapsedTime="00:00:00.524"/>
+          <Test Name="Test_OsBM0020" Result="OK" ElapsedTime="00:00:00.487"/>
+          <Test Name="Test_OsBM0026" Result="OK" ElapsedTime="00:00:00.334"/>
+          <Test Name="Test_OsBM0030" Result="Failed" ElapsedTime="00:00:00.453">
+            <Message>test.Test_OsBM0030: "Teste Evt[16],OsBM0030.entTxt" expected: &lt;ParserFamilyPlace	Meißenheim	30	17&gt; but was: &lt;ParserError!	Person entry not ended with .	30	6&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[16],OsBM0030.entTxt" expected: &lt;ParserFamilyPlace	Meißenheim	30	17&gt; but was: &lt;ParserError!	Person entry not ended with .	30	6&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM0032" Result="OK" ElapsedTime="00:00:00.403"/>
+          <Test Name="Test_OsBM0037" Result="OK" ElapsedTime="00:00:00.488"/>
+          <Test Name="Test_OsBM0054" Result="OK" ElapsedTime="00:00:00.577"/>
+          <Test Name="Test_OsBM0061" Result="Failed" ElapsedTime="00:00:00.387">
+            <Message>test.Test_OsBM0061: "Teste Evt[13],OsBM0061.entTxt" expected: &lt;ParserIndiData	ledig	I61F	38&gt; but was: &lt;ParserIndiOccu	led.Rentnerin	I61F	7&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[13],OsBM0061.entTxt" expected: &lt;ParserIndiData	ledig	I61F	38&gt; but was: &lt;ParserIndiOccu	led.Rentnerin	I61F	7&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM0062" Result="Failed" ElapsedTime="00:00:00.425">
+            <Message>test.Test_OsBM0062: "Teste Evt[16],OsBM0062.entTxt" expected: &lt;ParserIndiData	ledig	I61aF	38&gt; but was: &lt;ParserIndiOccu	led. Rentnerin	I61aF	7&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[16],OsBM0062.entTxt" expected: &lt;ParserIndiData	ledig	I61aF	38&gt; but was: &lt;ParserIndiOccu	led. Rentnerin	I61aF	7&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM0069" Result="OK" ElapsedTime="00:00:00.237"/>
+          <Test Name="Test_OsBM0076" Result="OK" ElapsedTime="00:00:00.293"/>
+          <Test Name="Test_OsBM0092" Result="OK" ElapsedTime="00:00:00.307"/>
+          <Test Name="Test_OsBM0101" Result="Failed" ElapsedTime="00:00:00.329">
+            <Message>test.Test_OsBM0101: "Teste Evt[16],OsBM0101.entTxt" expected: &lt;ParserIndiData	ledig	I100M	38&gt; but was: &lt;ParserIndiOccu	led.	I100M	7&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[16],OsBM0101.entTxt" expected: &lt;ParserIndiData	ledig	I100M	38&gt; but was: &lt;ParserIndiOccu	led.	I100M	7&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM0104" Result="OK" ElapsedTime="00:00:00.598"/>
+          <Test Name="Test_OsBM0112" Result="OK" ElapsedTime="00:00:00.581"/>
+          <Test Name="Test_OsBM0118" Result="OK" ElapsedTime="00:00:00.684"/>
+          <Test Name="Test_OsBM0119" Result="OK" ElapsedTime="00:00:00.643"/>
+          <Test Name="Test_OsBM0161" Result="OK" ElapsedTime="00:00:00.634"/>
+          <Test Name="Test_OsBM0193" Result="OK" ElapsedTime="00:00:00.612"/>
+          <Test Name="Test_OsBM0211" Result="OK" ElapsedTime="00:00:00.371"/>
+          <Test Name="Test_OsBM0254" Result="OK" ElapsedTime="00:00:00.312"/>
+          <Test Name="Test_OsBM0257" Result="OK" ElapsedTime="00:00:00.461"/>
+          <Test Name="Test_OsBM0263" Result="OK" ElapsedTime="00:00:00.363"/>
+          <Test Name="Test_OsBM0268" Result="OK" ElapsedTime="00:00:00.301"/>
+          <Test Name="Test_OsBM0287" Result="OK" ElapsedTime="00:00:00.677"/>
+          <Test Name="Test_OsBM0330" Result="OK" ElapsedTime="00:00:00.722"/>
+          <Test Name="Test_OsBM0337" Result="OK" ElapsedTime="00:00:00.343"/>
+          <Test Name="Test_OsBM0373" Result="OK" ElapsedTime="00:00:00.459"/>
+          <Test Name="Test_OsBM0378" Result="OK" ElapsedTime="00:00:00.329"/>
+          <Test Name="Test_OsBM0380" Result="OK" ElapsedTime="00:00:00.369"/>
+          <Test Name="Test_OsBM0405" Result="OK" ElapsedTime="00:00:00.641"/>
+          <Test Name="Test_OsBM0407" Result="OK" ElapsedTime="00:00:00.648"/>
+          <Test Name="Test_OsBM0409" Result="OK" ElapsedTime="00:00:00.475"/>
+          <Test Name="Test_OsBM0411" Result="OK" ElapsedTime="00:00:01.149"/>
+          <Test Name="Test_OsBM0424" Result="OK" ElapsedTime="00:00:00.584"/>
+          <Test Name="Test_OsBM0427" Result="OK" ElapsedTime="00:00:00.496"/>
+          <Test Name="Test_OsBM0429" Result="OK" ElapsedTime="00:00:00.627"/>
+          <Test Name="Test_OsBM0442" Result="Failed" ElapsedTime="00:00:00.588">
+            <Message>test.Test_OsBM0442: "Teste Evt[21],OsBM0442.entTxt" expected: &lt;ParserIndiDate	Schäfer	I439F	5&gt; but was: &lt;ParserIndiOccu	. = Schäfer	I439F	7&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[21],OsBM0442.entTxt" expected: &lt;ParserIndiDate	Schäfer	I439F	5&gt; but was: &lt;ParserIndiOccu	. = Schäfer	I439F	7&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM0443" Result="OK" ElapsedTime="00:00:00.513"/>
+          <Test Name="Test_OsBM0460" Result="OK" ElapsedTime="00:00:00.557"/>
+          <Test Name="Test_OsBM0462" Result="OK" ElapsedTime="00:00:00.586"/>
+          <Test Name="Test_OsBM0470" Result="OK" ElapsedTime="00:00:00.636"/>
+          <Test Name="Test_OsBM0476" Result="OK" ElapsedTime="00:00:00.473"/>
+          <Test Name="Test_OsBM0485" Result="OK" ElapsedTime="00:00:00.506"/>
+          <Test Name="Test_OsBM0486" Result="OK" ElapsedTime="00:00:00.618"/>
+          <Test Name="Test_OsBM0539" Result="OK" ElapsedTime="00:00:00.563"/>
+          <Test Name="Test_OsBM0549" Result="OK" ElapsedTime="00:00:00.581"/>
+          <Test Name="Test_OsBM0594" Result="OK" ElapsedTime="00:00:00.704"/>
+          <Test Name="Test_OsBM0674" Result="OK" ElapsedTime="00:00:00.867"/>
+          <Test Name="Test_OsBM0687" Result="OK" ElapsedTime="00:00:00.852"/>
+          <Test Name="Test_OsBM0713" Result="OK" ElapsedTime="00:00:00.637"/>
+          <Test Name="Test_OsBM0734" Result="OK" ElapsedTime="00:00:00.442"/>
+          <Test Name="Test_OsBM0737" Result="OK" ElapsedTime="00:00:00.741"/>
+          <Test Name="Test_OsBM0744" Result="OK" ElapsedTime="00:00:00.579"/>
+          <Test Name="Test_OsBM0746" Result="Failed" ElapsedTime="00:00:00.509">
+            <Message>test.Test_OsBM0746: "Teste Evt[29],OsBM0746.entTxt" expected: &lt;ParserIndiName	Hans Jacob D.	I741FM	0&gt; but was: &lt;ParserIndiName	Hans Jacob D. 	I741FM	0&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[29],OsBM0746.entTxt" expected: &lt;ParserIndiName	Hans Jacob D.	I741FM	0&gt; but was: &lt;ParserIndiName	Hans Jacob D. 	I741FM	0&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM0747" Result="OK" ElapsedTime="00:00:00.436"/>
+          <Test Name="Test_OsBM0750" Result="OK" ElapsedTime="00:00:00.530"/>
+          <Test Name="Test_OsBM0832" Result="OK" ElapsedTime="00:00:00.465"/>
+          <Test Name="Test_OsBM0840" Result="OK" ElapsedTime="00:00:00.508"/>
+          <Test Name="Test_OsBM0854" Result="Failed" ElapsedTime="00:00:00.426">
+            <Message>test.Test_OsBM0854: "Teste Evt[6],OsBM0854.entTxt" expected: &lt;ParserError!	Wrong Family reference, "\t850\t.8 2.12.1955: H"	850	1&gt; but was: &lt;ParserIndiName	Heinz Karl Hasemann	I850M	0&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[6],OsBM0854.entTxt" expected: &lt;ParserError!	Wrong Family reference, "\t850\t.8 2.12.1955: H"	850	1&gt; but was: &lt;ParserIndiName	Heinz Karl Hasemann	I850M	0&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM0883" Result="OK" ElapsedTime="00:00:00.316"/>
+          <Test Name="Test_OsBM0889" Result="OK" ElapsedTime="00:00:00.979"/>
+          <Test Name="Test_OsBM0918" Result="OK" ElapsedTime="00:00:00.787"/>
+          <Test Name="Test_OsBM0927" Result="OK" ElapsedTime="00:00:00.845"/>
+          <Test Name="Test_OsBM0971" Result="OK" ElapsedTime="00:00:00.473"/>
+          <Test Name="Test_OsBM1026" Result="OK" ElapsedTime="00:00:00.627"/>
+          <Test Name="Test_OsBM1031" Result="OK" ElapsedTime="00:00:00.495"/>
+          <Test Name="Test_OsBM1066" Result="OK" ElapsedTime="00:00:00.475"/>
+          <Test Name="Test_OsBM1078" Result="OK" ElapsedTime="00:00:00.718"/>
+          <Test Name="Test_OsBM1087" Result="OK" ElapsedTime="00:00:00.653"/>
+          <Test Name="Test_OsBM1093" Result="OK" ElapsedTime="00:00:00.572"/>
+          <Test Name="Test_OsBM1138" Result="OK" ElapsedTime="00:00:00.629"/>
+          <Test Name="Test_OsBM1149" Result="OK" ElapsedTime="00:00:00.760"/>
+          <Test Name="Test_OsBM1193" Result="Failed" ElapsedTime="00:00:00.636">
+            <Message>test.Test_OsBM1193: "Teste Evt[87],OsBM1193.entTxt" expected: &lt;ParserIndiData	ledig	I1188C4	38&gt; but was: &lt;ParserIndiOccu	led.Fischer	I1188C4	7&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[87],OsBM1193.entTxt" expected: &lt;ParserIndiData	ledig	I1188C4	38&gt; but was: &lt;ParserIndiOccu	led.Fischer	I1188C4	7&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM1220" Result="OK" ElapsedTime="00:00:00.855"/>
+          <Test Name="Test_OsBM1221" Result="OK" ElapsedTime="00:00:00.621"/>
+          <Test Name="Test_OsBM1227" Result="Failed" ElapsedTime="00:00:00.596">
+            <Message>test.Test_OsBM1227: "Teste Evt[57],OsBM1227.entTxt" expected: &lt;ParserIndiData	ledig	I3657C5	38&gt; but was: &lt;ParserIndiOccu	led.Landwirt	I3657C5	7&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[57],OsBM1227.entTxt" expected: &lt;ParserIndiData	ledig	I3657C5	38&gt; but was: &lt;ParserIndiOccu	led.Landwirt	I3657C5	7&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM1240" Result="OK" ElapsedTime="00:00:00.696"/>
+          <Test Name="Test_OsBM1242" Result="OK" ElapsedTime="00:00:00.650"/>
+          <Test Name="Test_OsBM1246" Result="OK" ElapsedTime="00:00:00.587"/>
+          <Test Name="Test_OsBM1251" Result="OK" ElapsedTime="00:00:00.969"/>
+          <Test Name="Test_OsBM1252" Result="OK" ElapsedTime="00:00:00.507"/>
+          <Test Name="Test_OsBM1262" Result="OK" ElapsedTime="00:00:00.578"/>
+          <Test Name="Test_OsBM1268" Result="OK" ElapsedTime="00:00:00.836"/>
+          <Test Name="Test_OsBM1274" Result="OK" ElapsedTime="00:00:00.536"/>
+          <Test Name="Test_OsBM1276" Result="OK" ElapsedTime="00:00:00.515"/>
+          <Test Name="Test_OsBM1290" Result="OK" ElapsedTime="00:00:00.568"/>
+          <Test Name="Test_OsBM1291" Result="OK" ElapsedTime="00:00:00.646"/>
+          <Test Name="Test_OsBM1292" Result="OK" ElapsedTime="00:00:00.472"/>
+          <Test Name="Test_OsBM1319" Result="OK" ElapsedTime="00:00:00.358"/>
+          <Test Name="Test_OsBM1321" Result="OK" ElapsedTime="00:00:00.548"/>
+          <Test Name="Test_OsBM1328" Result="OK" ElapsedTime="00:00:00.550"/>
+          <Test Name="Test_OsBM1353" Result="OK" ElapsedTime="00:00:00.483"/>
+          <Test Name="Test_OsBM1353a" Result="OK" ElapsedTime="00:00:00.459"/>
+          <Test Name="Test_OsBM1354" Result="OK" ElapsedTime="00:00:00.546"/>
+          <Test Name="Test_OsBM1386" Result="OK" ElapsedTime="00:00:00.853"/>
+          <Test Name="Test_OsBM1387" Result="OK" ElapsedTime="00:00:00.653"/>
+          <Test Name="Test_OsBM1436" Result="OK" ElapsedTime="00:00:00.813"/>
+          <Test Name="Test_OsBM1750" Result="OK" ElapsedTime="00:00:00.791"/>
+          <Test Name="Test_OsBM1768" Result="OK" ElapsedTime="00:00:00.464"/>
+          <Test Name="Test_OsBM1819" Result="OK" ElapsedTime="00:00:01.100"/>
+          <Test Name="Test_OsBM1960" Result="OK" ElapsedTime="00:00:00.817"/>
+          <Test Name="Test_OsBM2342" Result="OK" ElapsedTime="00:00:00.768"/>
+          <Test Name="Test_OsBM2396" Result="OK" ElapsedTime="00:00:00.701"/>
+          <Test Name="Test_OsBM2420" Result="OK" ElapsedTime="00:00:00.420"/>
+          <Test Name="Test_OsBM2421" Result="OK" ElapsedTime="00:00:00.773"/>
+          <Test Name="Test_OsBM2444" Result="OK" ElapsedTime="00:00:00.636"/>
+          <Test Name="Test_OsBM2450" Result="OK" ElapsedTime="00:00:00.584"/>
+          <Test Name="Test_OsBM2465" Result="OK" ElapsedTime="00:00:00.492"/>
+          <Test Name="Test_OsBM2588" Result="OK" ElapsedTime="00:00:00.436"/>
+          <Test Name="Test_OsBM2629" Result="OK" ElapsedTime="00:00:00.717"/>
+          <Test Name="Test_OsBM2645" Result="OK" ElapsedTime="00:00:00.539"/>
+          <Test Name="Test_OsBM2900" Result="OK" ElapsedTime="00:00:00.498"/>
+          <Test Name="Test_OsBM3034" Result="Failed" ElapsedTime="00:00:00.682">
+            <Message>test.Test_OsBM3034: "Teste Evt[38],OsBM3034.entTxt" expected: &lt;ParserIndiName	... Bohrenmacher	I3001FU	0&gt; but was: &lt;ParserIndiName	... B.	I3001FU	0&gt;</Message>
+            <ExceptionClass>EAssertionFailedError</ExceptionClass>
+            <ExceptionMessage>"Teste Evt[38],OsBM3034.entTxt" expected: &lt;ParserIndiName	... Bohrenmacher	I3001FU	0&gt; but was: &lt;ParserIndiName	... B.	I3001FU	0&gt;</ExceptionMessage>
+          </Test>
+          <Test Name="Test_OsBM3046" Result="OK" ElapsedTime="00:00:00.705"/>
+          <Test Name="Test_OsBObr0006" Result="OK" ElapsedTime="00:00:00.401"/>
+          <Test Name="Test_OsBObr0011" Result="OK" ElapsedTime="00:00:00.534"/>
+          <Test Name="Test_OsBObr0035" Result="OK" ElapsedTime="00:00:00.410"/>
+          <Test Name="Test_OsBObr0077" Result="OK" ElapsedTime="00:00:00.333"/>
+          <Test Name="Test_OsBObr0120" Result="OK" ElapsedTime="00:00:00.466"/>
+          <Test Name="Test_OsBObr0138" Result="OK" ElapsedTime="00:00:00.509"/>
+          <Test Name="Test_OsBObr0156" Result="OK" ElapsedTime="00:00:00.518"/>
+          <Test Name="Test_OsBObr0189" Result="OK" ElapsedTime="00:00:00.435"/>
+          <Test Name="Test_OsBObr0197" Result="OK" ElapsedTime="00:00:00.450"/>
+          <Test Name="Test_OsBObr0338" Result="OK" ElapsedTime="00:00:00.860"/>
+          <Test Name="Test_OsBObr0451" Result="OK" ElapsedTime="00:00:00.302"/>
+          <Test Name="Test_OsBObr0457" Result="OK" ElapsedTime="00:00:00.312"/>
+          <Test Name="Test_OsBObr0933" Result="OK" ElapsedTime="00:00:00.319"/>
+          <Test Name="Test_OsBObr1282" Result="OK" ElapsedTime="00:00:00.648"/>
+          <Test Name="Test_OsBObr1304" Result="OK" ElapsedTime="00:00:00.309"/>
+          <Test Name="Test_OsBObr1886" Result="OK" ElapsedTime="00:00:00.371"/>
+          <Test Name="Test_OsBObr2201" Result="OK" ElapsedTime="00:00:00.294"/>
+          <Test Name="Test_OsBObr2298" Result="OK" ElapsedTime="00:00:00.393"/>
+          <Test Name="Test_OsBObr2578" Result="OK" ElapsedTime="00:00:00.453"/>
+          <Test Name="Test_OsBObr2658" Result="OK" ElapsedTime="00:00:00.497"/>
+          <Test Name="Test_OsBObr3135" Result="OK" ElapsedTime="00:00:00.394"/>
+          <Test Name="Test_OsBObr3222" Result="OK" ElapsedTime="00:00:00.468"/>
+          <Test Name="Test_OsBObr3503" Result="OK" ElapsedTime="00:00:00.539"/>
+          <Test Name="Test_OsBObr3892" Result="OK" ElapsedTime="00:00:00.318"/>
+          <Test Name="Test_OsBObr3899" Result="OK" ElapsedTime="00:00:00.793"/>
+          <Test Name="Test_OsBObr4528" Result="OK" ElapsedTime="00:00:00.416"/>
+          <Test Name="Test_OsBObr4551" Result="OK" ElapsedTime="00:00:00.498"/>
+          <Test Name="Test_OsBObr5939" Result="OK" ElapsedTime="00:00:00.365"/>
+          <Test Name="Test_OsBObr5942" Result="OK" ElapsedTime="00:00:00.384"/>
+          <Test Name="Test_OsBObr5943" Result="OK" ElapsedTime="00:00:00.408"/>
+          <Test Name="Test_OsBObr6299" Result="OK" ElapsedTime="00:00:00.500"/>
+          <Test Name="Test_OsBObr6302" Result="OK" ElapsedTime="00:00:00.472"/>
+        </TestSuite>
+      </TestSuite>
+      <TestSuite Name="TTestFBEntryParserAll" ElapsedTime="00:00:07.185" NumberOfErrors="0" NumberOfFailures="1" NumberOfRunTests="1" NumberOfIgnoredTests="0">
+        <Test Name="TestFiles" Result="Failed" ElapsedTime="00:00:07.180">
+          <Message>TTestFBEntryParserAll.TestFiles: "Teste Evt[6],OsBM0007.entTxt" expected: &lt;ParserIndiOccu	Ackerknecht	I7M	7&gt; but was: &lt;ParserIndiOccu	ein Ackerknecht	I7M	7&gt;</Message>
+          <ExceptionClass>EAssertionFailedError</ExceptionClass>
+          <ExceptionMessage>"Teste Evt[6],OsBM0007.entTxt" expected: &lt;ParserIndiOccu	Ackerknecht	I7M	7&gt; but was: &lt;ParserIndiOccu	ein Ackerknecht	I7M	7&gt;</ExceptionMessage>
+        </Test>
+      </TestSuite>
+    </TestSuite>
+  </TestListing>
+  <NumberOfRunTests>310</NumberOfRunTests>
+  <NumberOfErrors>0</NumberOfErrors>
+  <NumberOfFailures>19</NumberOfFailures>
+  <NumberOfIgnoredTests>0</NumberOfIgnoredTests>
+  <TotalElapsedTime>00:02:42.501</TotalElapsedTime>
+  <DateTimeRan>2026-04-27 18:08:19</DateTimeRan>
+</TestResults>

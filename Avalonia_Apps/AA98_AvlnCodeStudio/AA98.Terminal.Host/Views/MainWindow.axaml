@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:vm="using:AA98.Terminal.Host.ViewModels"
+		xmlns:view="using:AA98.Terminal.Host.Views"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d"
+		d:DesignWidth="1200"
+		d:DesignHeight="720"
+		x:Class="AA98.Terminal.Host.Views.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+		Title="AA98 Terminal Host">
+	<Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12">
+		<TextBlock Text="AA98 Terminal Host" FontSize="20" FontWeight="Bold" Margin="0,0,0,12" />
+		<TextBlock Grid.Row="1" Margin="0,0,0,12" Text="{Binding SessionDescription}" />
+		<Border Grid.Row="2" Background="Black" BorderBrush="Gray" BorderThickness="1" Padding="4">
+			<view:TerminalConsoleView />
+		</Border>
+		<Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto,Auto" Margin="0,12,0,0">
+			<TextBox Grid.Column="0"
+					 PlaceholderText="Command input"
+					 Text="{Binding InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<Button Grid.Column="1" Margin="8,0,0,0" Content="Send" Command="{Binding SendInputCommand}" />
+			<Button Grid.Column="2" Margin="8,0,0,0" Content="Start" Command="{Binding StartCommand}" />
+			<Button Grid.Column="3" Margin="8,0,0,0" Content="Stop" Command="{Binding StopCommand}" />
+		</Grid>
+	</Grid>
+</Window>

@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:controls="using:AvlnAhnenNew.Controls"
+			 x:Class="AvlnAhnenNew.Controls.AdditionalPageView"
+			 x:CompileBindings="False">
+	<Grid Margin="12">
+	<Grid.RowDefinitions>
+	  <RowDefinition Height="Auto" />
+	  <RowDefinition Height="12" />
+	  <RowDefinition Height="*" />
+	</Grid.RowDefinitions>
+	<controls:PersonHeaderView />
+	<Canvas Grid.Row="2">
+	  <Label x:Name="Label27"
+		   Width="1"
+		   Height="1"
+		   Background="#C0C0C0"
+		   Canvas.Left="45"
+		   Canvas.Top="20"
+		   Content="" />
+	</Canvas>
+  </Grid>
+</UserControl>

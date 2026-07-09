@@ -1,0 +1,26 @@
+<Project>
+  <Import Project="..\Libraries.props" />
+  <PropertyGroup>
+	<OutputType>Library</OutputType>
+	<TargetFrameworks>net481;net8.0</TargetFrameworks>
+	<ImplicitUsings>disable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+	<IsPackable>false</IsPackable>
+	<IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+	<PackageReference Include="MSTest" Version="4.2.3" />
+	<PackageReference Include="NSubstitute" Version="5.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\GenInterfaces\GenInterfaces.csproj" />
+  </ItemGroup>
+</Project>

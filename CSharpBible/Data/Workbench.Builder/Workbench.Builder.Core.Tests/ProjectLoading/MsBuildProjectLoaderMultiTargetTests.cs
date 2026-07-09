@@ -12,10 +12,10 @@ namespace Workbench.Builder.Core.Tests.ProjectLoading;
 public class MsBuildProjectLoaderMultiTargetTests
 {
     /// <summary>
-    /// Verifies that a multi-target project defaults to the first declared target framework when no explicit target is requested.
+    /// Verifies that a multi-target project defaults to the highest builder-supported target framework when no explicit target is requested.
     /// </summary>
     [TestMethod]
-    public void Load_MultiTargetProjectWithoutExplicitTargetFramework_LeavesTargetFrameworkVisibleAsKnownGap()
+    public void Load_MultiTargetProjectWithoutExplicitTargetFramework_UsesHighestSupportedTargetFramework()
     {
         MsBuildProjectLoader loader = new();
 
@@ -23,8 +23,9 @@ public class MsBuildProjectLoaderMultiTargetTests
 
         Assert.AreEqual("MultiTargetLibrary", project.Properties.AssemblyName);
         Assert.AreEqual("Workbench.Builder.TestData.MultiTargetLibrary", project.Properties.RootNamespace);
-        Assert.AreEqual(string.Empty, project.Properties.TargetFramework);
-        Assert.AreEqual(0, project.CompileItems.Count);
+        Assert.AreEqual("net10.0", project.Properties.TargetFramework);
+        Assert.AreEqual(1, project.CompileItems.Count);
+        Assert.AreEqual("SharedValue.cs", project.CompileItems[0].Include);
         Assert.IsTrue(project.IsSdkStyle);
     }
 

@@ -1,0 +1,220 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="AvlnAhnenNew.Controls.EditPageView"
+			  x:CompileBindings="False"
+			 FontFamily="Arial">
+	<UserControl.Styles>
+	<Style Selector="TextBox.narrow-input">
+	  <Setter Property="MinWidth" Value="35" />
+	  <Setter Property="HorizontalAlignment" Value="Left" />
+	</Style>
+  </UserControl.Styles>
+  <Grid Margin="12">
+	<Grid.RowDefinitions>
+	  <RowDefinition Height="Auto" />
+	  <RowDefinition Height="Auto" />
+	  <RowDefinition Height="*" />
+	  <RowDefinition Height="Auto" />
+	  <RowDefinition Height="240" />
+	</Grid.RowDefinitions>
+
+	<Border Grid.Row="0" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+	  <Grid>
+		<Grid.ColumnDefinitions>
+		  <ColumnDefinition Width="*" />
+		  <ColumnDefinition Width="20" />
+		  <ColumnDefinition Width="300" />
+		</Grid.ColumnDefinitions>
+
+		<Border Grid.Column="0" Padding="12" BorderBrush="#B0B0B0" BorderThickness="1" CornerRadius="4">
+		  <Grid>
+			<Rectangle x:Name="rctParentPlaceholder" Fill="#F0F0F0" Stroke="#000000" StrokeThickness="1" IsVisible="False" />
+			<Grid Margin="8">
+			  <Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			  </Grid.ColumnDefinitions>
+			  <Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			  </Grid.RowDefinitions>
+			  <Label x:Name="lblFather" Grid.Row="0" Grid.Column="0" Margin="0,0,8,8" VerticalAlignment="Center" Content="Vater" />
+			  <TextBox x:Name="txtFather" Grid.Row="0" Grid.Column="1" Margin="0,0,0,8" MinWidth="240" IsReadOnly="True" Text="{Binding Father}" />
+			  <Label x:Name="lblMother" Grid.Row="1" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="Mutter" />
+			  <TextBox x:Name="txtMother" Grid.Row="1" Grid.Column="1" MinWidth="240" IsReadOnly="True" Text="{Binding Mother}" />
+			</Grid>
+		  </Grid>
+		</Border>
+
+		<Grid Grid.Column="2">
+		  <Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		  </Grid.ColumnDefinitions>
+		  <Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		  </Grid.RowDefinitions>
+
+		  <Label x:Name="lblNumber" Grid.Row="0" Grid.Column="0" Margin="0,0,8,8" VerticalAlignment="Center" Content="Nr." />
+		  <Border Grid.Row="0" Grid.Column="1" Margin="0,0,8,8" MinHeight="27" Padding="4" BorderBrush="#B0B0B0" BorderThickness="1"><TextBlock Padding="2" VerticalAlignment="Center" Text="{Binding PersonNumber}" /></Border>
+		  <ToggleButton x:Name="tglSelectPerson" Grid.Row="0" Grid.Column="2" Width="31" Height="27" Margin="8,0,0,8" HorizontalAlignment="Right" IsChecked="{Binding IsSelectPersonToggled, Mode=TwoWay}" />
+		  <Label x:Name="lblId" Grid.Row="1" Grid.Column="0" Margin="0,0,8,8" VerticalAlignment="Center" Content="ID" />
+		  <TextBox x:Name="txtId" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,0,0,8" Text="{Binding Id, Mode=TwoWay}" />
+		  <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Text="Zusatz" />
+		  <TextBox x:Name="txtAdditionalInfo" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding AdditionalInfo, Mode=TwoWay}" />
+		</Grid>
+	  </Grid>
+	</Border>
+
+	<Rectangle x:Name="rctSectionSeparator" Grid.Row="1" Height="1" Margin="0,12,0,0" Fill="#FFFFFF" Stroke="#000000" StrokeThickness="1" />
+
+	<ScrollViewer Grid.Row="2" Margin="0,0,0,24" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+	  <Grid>
+		<Grid.ColumnDefinitions>
+		  <ColumnDefinition Width="2*" />
+		  <ColumnDefinition Width="16" />
+		  <ColumnDefinition Width="360" />
+		</Grid.ColumnDefinitions>
+
+		<Border Grid.Column="0" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+		  <Grid>
+			<Grid.ColumnDefinitions>
+			  <ColumnDefinition Width="60" />
+			  <ColumnDefinition Width="35" />
+			  <ColumnDefinition Width="35" />
+			  <ColumnDefinition Width="35" />
+			  <ColumnDefinition Width="65" />
+			  <ColumnDefinition Width="70" />
+			  <ColumnDefinition Width="2*" />
+			  <ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<Label x:Name="lblLastName" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,8,0" VerticalAlignment="Center" Content="Name" />
+			<ComboBox x:Name="cboLastName" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="6" Margin="0,1,0,1" MinWidth="220" IsEditable="True" ItemsSource="{Binding LastNameOptions}" Text="{Binding LastName, Mode=TwoWay}" />
+			<Label x:Name="lblFirstNames" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,8,0" VerticalAlignment="Center" Content="Vornamen" />
+			<TextBox x:Name="txtFirstNames" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="6" Margin="0,1,0,1" Text="{Binding FirstNames, Mode=TwoWay}" />
+			<Label x:Name="lblOccupation" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,8,0" VerticalAlignment="Center" Content="Beruf" />
+			<TextBox x:Name="txtOccupation" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="6" Margin="0,1,0,1" Text="{Binding Occupation, Mode=TwoWay}" />
+			<Label x:Name="lblFarmName" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,8,0" VerticalAlignment="Center" Content="Hofname" />
+			<TextBox x:Name="txtFarmName" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="6" Margin="0,1,0,1" Text="{Binding FarmName, Mode=TwoWay}" />
+			
+			<Label x:Name="lblGender" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,8,0" VerticalAlignment="Center" Content="Geschlecht" />
+			<TextBox x:Name="txtGender" Classes="narrow-input" Grid.Row="4" Grid.Column="2" Margin="0,1,0,1" Text="{Binding Gender, Mode=TwoWay}" />
+			<Label x:Name="lblReligion" Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="2" Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Bekenntnis" />
+			<ComboBox x:Name="cboReligion" Grid.Row="4" Grid.Column="5" Margin="0,1,0,1" IsEditable="True" ItemsSource="{Binding ReligionOptions}" Text="{Binding Religion, Mode=TwoWay}" />
+			<CheckBox x:Name="chkIsAlive" Grid.Row="4" Grid.Column="7" Margin="0,3,0,3" VerticalAlignment="Center" Content="lebt" IsChecked="{Binding IsAlive, Mode=TwoWay}" />
+			<StackPanel Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="6" Orientation="Horizontal">
+			  <Label x:Name="lblAdoptedBy" Margin="0,0,8,0" VerticalAlignment="Center" Content="adopt.v." />
+			  <ComboBox x:Name="cboAdoptedBy" Width="220" Margin="0,1,0,1" IsEditable="True" ItemsSource="{Binding AdoptedByOptions}" Text="{Binding AdoptedBy, Mode=TwoWay}" />
+			</StackPanel>
+			<Label x:Name="lblBirth" Grid.Row="6" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="geb." />
+			<Label x:Name="lblBirthModifier" Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Content="{Binding BirthModifier}" />
+			<TextBox x:Name="txtBirthDay" Classes="narrow-input" Grid.Row="6" Grid.Column="2" Margin="0,1,0,1" Text="{Binding BirthDay, Mode=TwoWay}" />
+			<TextBox x:Name="txtBirthMonth" Classes="narrow-input" Grid.Row="6" Grid.Column="3" Margin="0,1,0,1" Text="{Binding BirthMonth, Mode=TwoWay}" />
+			<TextBox x:Name="txtBirthYear" Classes="narrow-input" Grid.Row="6" Grid.Column="4" Width="65" Margin="0,1,0,1" Text="{Binding BirthYear, Mode=TwoWay}" />
+			<Grid Grid.Row="6" Grid.Column="5" Grid.ColumnSpan="3">
+			  <ComboBox x:Name="cboBirthPlace" MinWidth="100" Margin="0,1,0,1" IsEditable="True" ItemsSource="{Binding BirthPlaceOptions}" Text="{Binding BirthPlace, Mode=TwoWay}" />
+			  <TextBox x:Name="txtBirthPlaceHidden" IsVisible="False" Text="{Binding BirthPlaceHidden, Mode=TwoWay}" />
+			</Grid>
+			<Label x:Name="lblBaptism" Grid.Row="7" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="get." />
+			<Label x:Name="lblBaptismModifier" Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" Content="{Binding BaptismModifier}" />
+			<TextBox x:Name="txtBaptismDay" Classes="narrow-input" Grid.Row="7" Grid.Column="2" Margin="0,1,0,1" Text="{Binding BaptismDay, Mode=TwoWay}" />
+			<TextBox x:Name="txtBaptismMonth" Classes="narrow-input" Grid.Row="7" Grid.Column="3" Margin="0,1,0,1" Text="{Binding BaptismMonth, Mode=TwoWay}" />
+			<TextBox x:Name="txtBaptismYear" Classes="narrow-input" Grid.Row="7" Grid.Column="4" Width="65" Margin="0,1,0,1" Text="{Binding BaptismYear, Mode=TwoWay}" />
+			<Grid Grid.Row="7" Grid.Column="5" Grid.ColumnSpan="3">
+			  <ComboBox x:Name="cboBaptismPlace" MinWidth="100" Margin="0,1,0,1" IsEditable="True" ItemsSource="{Binding BaptismPlaceOptions}" Text="{Binding BaptismPlace, Mode=TwoWay}" />
+			  <TextBox x:Name="txtBaptismPlaceHidden" IsVisible="False" Text="{Binding BaptismPlaceHidden, Mode=TwoWay}" />
+			</Grid>
+			<Label x:Name="lblDeath" Grid.Row="8" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="gest." />
+			<Label x:Name="lblDeathModifier" Grid.Row="8" Grid.Column="1" Margin="1,0,1,0" VerticalAlignment="Top" Content="{Binding DeathModifier}" />
+			<TextBox x:Name="txtDeathDay" Classes="narrow-input" Grid.Row="8" Grid.Column="2" Margin="0,1,0,1" Text="{Binding DeathDay, Mode=TwoWay}" />
+			<TextBox x:Name="txtDeathMonth" Classes="narrow-input" Grid.Row="8" Grid.Column="3" Margin="0,1,0,1" Text="{Binding DeathMonth, Mode=TwoWay}" />
+			<TextBox x:Name="txtDeathYear" Classes="narrow-input" Grid.Row="8" Grid.Column="4" Width="65" Margin="0,1,0,1" Text="{Binding DeathYear, Mode=TwoWay}" />
+			<Grid Grid.Row="8" Grid.Column="5" Grid.ColumnSpan="3">
+			  <ComboBox x:Name="cboDeathPlace" Margin="0,0,0,0" MinWidth="180" IsEditable="True" ItemsSource="{Binding DeathPlaceOptions}" Text="{Binding DeathPlace, Mode=TwoWay}" />
+			</Grid>
+			<Label x:Name="lblBurial" Grid.Row="9" Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center" Content="best." />
+			<Label x:Name="lblBurialModifier" Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" Content="{Binding BurialModifier}" />
+			<TextBox x:Name="txtBurialDay" Classes="narrow-input" Grid.Row="9" Grid.Column="2" Margin="0,1,0,1" Text="{Binding BurialDay, Mode=TwoWay}" />
+			<TextBox x:Name="txtBurialMonth" Classes="narrow-input" Grid.Row="9" Grid.Column="3" Margin="0,1,0,1" Text="{Binding BurialMonth, Mode=TwoWay}" />
+			<TextBox x:Name="txtBurialYear" Classes="narrow-input" Grid.Row="9" Grid.Column="4" Width="65" Margin="0,1,0,1" Text="{Binding BurialYear, Mode=TwoWay}" />
+			<ComboBox x:Name="cboBurialPlace" Grid.Row="9" Grid.Column="5" Grid.ColumnSpan="3" Margin="0,1,0,1" IsEditable="True" ItemsSource="{Binding BurialPlaceOptions}" Text="{Binding BurialPlace, Mode=TwoWay}" />
+		  </Grid>
+		</Border>
+
+		<Border Grid.Column="2" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+		  <Grid>
+			<Grid.RowDefinitions>
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="240" />
+			  <RowDefinition Height="12" />
+			  <RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Label x:Name="lblImages" Grid.Row="0" Margin="0,0,0,8" Content="{Binding ImagesHeader}" />
+			<Border Grid.Row="1" BorderBrush="#B0B0B0" BorderThickness="1" CornerRadius="4" Padding="6">
+			  <Image x:Name="imgPerson" MinHeight="180" Source="{Binding PersonImageSource}" Stretch="Uniform" />
+			</Border>
+			<DataGrid x:Name="dgrImages" Grid.Row="3" MinHeight="180" ItemsSource="{Binding Images}" />
+		  </Grid>
+		</Border>
+	  </Grid>
+	</ScrollViewer>
+
+	<Border Grid.Row="3" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+	  <Grid>
+		<Grid.RowDefinitions>
+		  <RowDefinition Height="Auto" />
+		  <RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+		  <ColumnDefinition Width="Auto" />
+		  <ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,12,8" VerticalAlignment="Top" Text="Notiz" />
+		<TextBox x:Name="txtNotes" Grid.Row="0" Grid.Column="1" MinHeight="72" AcceptsReturn="True" Text="{Binding Notes, Mode=TwoWay}" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+	  </Grid>
+	</Border>
+
+	<Grid Grid.Row="4" Margin="0,12,0,0">
+	  <Grid.ColumnDefinitions>
+		<ColumnDefinition Width="*" />
+		<ColumnDefinition Width="12" />
+		<ColumnDefinition Width="*" />
+	  </Grid.ColumnDefinitions>
+	  <Border Grid.Column="0" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+		<DockPanel>
+		  <Grid DockPanel.Dock="Top">
+			<Grid.ColumnDefinitions>
+			  <ColumnDefinition Width="*" />
+			  <ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Label x:Name="lblSpouses" Grid.Column="0" Content="{Binding SpousesHeader}" />
+			<Label x:Name="lblWeddingData" Grid.Column="1" Content="{Binding WeddingDataHeader}" />
+		  </Grid>
+		  <DataGrid x:Name="dgrSpousesAndWeddings" MinWidth="280" ItemsSource="{Binding SpousesAndWeddings}" />
+		</DockPanel>
+	  </Border>
+	  <Border Grid.Column="2" Padding="12" Background="#F8F8F8" BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="4">
+		<DockPanel>
+		  <Label x:Name="lblChildren" DockPanel.Dock="Top" HorizontalAlignment="Left" Content="{Binding ChildrenHeader}" />
+		  <DataGrid x:Name="dgrChildren" MinWidth="280" ItemsSource="{Binding Children}" />
+		</DockPanel>
+	  </Border>
+	</Grid>
+  </Grid>
+</UserControl>

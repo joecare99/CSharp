@@ -2,7 +2,7 @@
 
 ## Status
 
-In Progress
+Completed
 
 ## Parent
 
@@ -10,20 +10,19 @@ In Progress
 
 ## Goal
 
-Provide a thin command-line host that triggers project inspection and emits predictable plain-text or JSON output for interactive use and automation.
+Provide a thin command-line host boundary that stays small, delegates build logic to `Workbench.Builder.Core`, and emits predictable output and diagnostics for interactive use and automation.
 
 ## Summary
 
-The current on-disk state already includes `Workbench.Builder.Host` with command-line parsing, service registration, host orchestration, console abstraction, exit codes, and startup entry point. The feature therefore starts from a partially implemented baseline rather than from zero. The planning focus is to stabilize the host contract, make output expectations explicit, and keep the host intentionally thin so `Workbench.Builder.Core` remains reusable.
+The current on-disk state includes `Workbench.Builder.Host` with command-line parsing, service registration, host orchestration, console abstraction, exit codes, startup entry point, detailed progress reporting, and IDE-friendly diagnostic output. The feature therefore moved beyond a partial baseline and now serves as the thin host boundary around reusable core services.
 
-The host is not meant to become a second business-logic layer. It should parse arguments, call inspection services, choose an output format, and present the result or failure clearly. The main design objective is a small observable host boundary that can later coexist with additional UI or automation adapters.
+The host is not meant to become a second business-logic layer. It should parse arguments, call core services, and present success, warnings, and failures clearly. The main design objective remains a small observable host boundary that can later coexist with additional UI or automation adapters.
 
 ## In Scope
 
-- Command-line parsing for project path, output format, and help behavior
-- Host orchestration around inspection and formatting
+- Command-line parsing for project path, output directory, verbosity, and help behavior
+- Host orchestration around inspection, compilation, and formatting
 - Plain-text output for direct human consumption
-- JSON output for tool integration and scripted flows
 - Exit-code and error-output conventions for invalid arguments and runtime failures
 - Regression coverage for host argument and orchestration behavior
 
@@ -36,11 +35,10 @@ The host is not meant to become a second business-logic layer. It should parse a
 
 ## Acceptance Criteria
 
-- The host accepts a project path and output-format selection
+- The host accepts a project path and the current supported command options
 - Help and invalid-argument flows are distinguishable through exit code and output behavior
-- A successful run emits the formatted inspection result exactly once
+- A successful run emits the formatted build result exactly once while preserving non-error diagnostics
 - Plain-text output remains understandable for manual diagnosis
-- JSON output remains structurally stable enough for future consumers
 - Host tests cover success, help, and invalid-argument paths
 
 ## Dependencies
@@ -63,7 +61,6 @@ The host is not meant to become a second business-logic layer. It should parse a
 
 ## Next Refinement Steps
 
-1. Confirm the minimum stable host contract for V1.1
-2. Add tests for option combinations and output-format edge cases
-3. Clarify how future V1.2 options extend the parser without overcomplicating V1.1
-4. Keep the host thin while additional consumers are introduced later
+1. Preserve the thin-host boundary while future waves add options or alternate consumers
+2. Extend tests only where later compilation work changes host-visible behavior
+3. Revisit machine-readable output separately if a later consumer requires it explicitly

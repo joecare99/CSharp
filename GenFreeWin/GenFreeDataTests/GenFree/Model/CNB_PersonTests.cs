@@ -72,13 +72,13 @@ namespace GenFree.Models.Tests
         [TestMethod]
         public void MaxIDTest()
         {
-            Assert.AreEqual(1, testClass.MaxID); //?? Assuming MaxID returns 0 for an empty recordset
+            Assert.AreEqual(0, testClass.MaxID); //?? Assuming MaxID returns 0 for an empty recordset
         }
 
         [TestMethod()]
         public void MinIDTest()
         {
-            Assert.AreEqual(1, testClass.MinID);
+            Assert.AreEqual(0, testClass.MinID);
         }
 
     }

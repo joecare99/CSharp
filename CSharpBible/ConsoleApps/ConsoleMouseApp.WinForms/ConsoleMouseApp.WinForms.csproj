@@ -21,8 +21,6 @@
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\ConsoleMouseApp\ConsoleMouseApp.Base.csproj" />
-	<ProjectReference Include="$(UpDir)\Libraries\ConsoleLib\ConsoleLib.csproj" />
-	<ProjectReference Include="$(UpDir)\Libraries\ConsoleLib.WinForms\ConsoleLib.WinForms.csproj" />
 	<ProjectReference Include="$(UpDir)\Libraries\BaseLib\BaseLib.csproj" />
   </ItemGroup>
 </Project>

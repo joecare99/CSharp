@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:GenFree.ViewModels.Interfaces"
+			 x:Class="GenFreeAvln.Views.FraStatistics"
+			 x:DataType="vm:IFraStatisticsViewModel"
+			 Width="258"
+			 Height="183">
+  <GroupBox Name="frmStatistics" Header="Datei-Statistik">
+	<Grid Margin="4" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,*">
+	  <TextBox Grid.Row="0" Grid.Column="0" Name="lblPersons" IsReadOnly="True" Text="{Binding Persons}" HorizontalContentAlignment="Right" Margin="2" />
+	  <TextBlock Grid.Row="0" Grid.Column="1" Name="lblHdrPersons" VerticalAlignment="Center" Margin="2" />
+
+	  <TextBox Grid.Row="1" Grid.Column="0" Name="lblFamilies" IsReadOnly="True" Text="{Binding Families}" HorizontalContentAlignment="Right" Margin="2" />
+	  <TextBlock Grid.Row="1" Grid.Column="1" Name="lblHdrFamilies" VerticalAlignment="Center" Margin="2" />
+
+	  <TextBox Grid.Row="2" Grid.Column="0" Name="lblPlaces" IsReadOnly="True" Text="{Binding Places}" HorizontalContentAlignment="Right" Margin="2" />
+	  <TextBlock Grid.Row="2" Grid.Column="1" Name="lblHdrPlaces" VerticalAlignment="Center" Margin="2" />
+
+	  <TextBox Grid.Row="3" Grid.Column="0" Name="lblDates" IsReadOnly="True" Text="{Binding Dates}" HorizontalContentAlignment="Right" Margin="2" />
+	  <TextBlock Grid.Row="3" Grid.Column="1" Name="lblHdrDates" VerticalAlignment="Center" Margin="2" />
+
+	  <TextBox Grid.Row="4" Grid.Column="0" Name="lblTexts" IsReadOnly="True" Text="{Binding Texts}" HorizontalContentAlignment="Right" Margin="2" />
+	  <TextBlock Grid.Row="4" Grid.Column="1" Name="lblHdrTexts" VerticalAlignment="Center" Margin="2" />
+	</Grid>
+  </GroupBox>
+</UserControl>

@@ -93,6 +93,11 @@ public class Terminal : Control, IConsole
     public bool CursorVisible { get; set; }
     public int BufferWidth => WindowWidth;
     public int BufferHeight => WindowHeight;
+
+    public int LargestWindowWidth => throw new NotImplementedException();
+
+    public int WindowLeft { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public int WindowTop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     #endregion
     /// <summary>
     /// Draws this instance.
@@ -231,6 +236,16 @@ public class Terminal : Control, IConsole
     {
         ForeColor = ConsoleColor.Gray;
         BackColor = ConsoleColor.Black;
+    }
+
+    public void SetWindowPosition(int left, int top)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetWindowSize(int width, int height)
+    {
+        throw new NotImplementedException();
     }
 }
 

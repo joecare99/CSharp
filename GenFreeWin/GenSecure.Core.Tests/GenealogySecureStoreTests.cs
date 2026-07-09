@@ -197,11 +197,17 @@ public sealed class GenealogySecureStoreTests
             {
                 RootDirectory = sRootDirectory,
             };
-            BackupService = new MasterKeyBackupService(Options);
-            Store = new GenealogySecureStore(BackupService, Options);
+            LocalKeyProtector = new PassThroughLocalKeyProtector();
+            PrincipalProvider = new FixedPrincipalProvider();
+            BackupService = new MasterKeyBackupService(Options, LocalKeyProtector);
+            Store = new GenealogySecureStore(BackupService, Options, PrincipalProvider);
         }
 
         public GenSecureStoreOptions Options { get; }
+
+        public PassThroughLocalKeyProtector LocalKeyProtector { get; }
+
+        public FixedPrincipalProvider PrincipalProvider { get; }
 
         public MasterKeyBackupService BackupService { get; }
 
@@ -219,6 +225,26 @@ public sealed class GenealogySecureStoreTests
             {
                 Directory.Delete(Options.GetValidatedRootDirectory(), recursive: true);
             }
+        }
+
+        public sealed class PassThroughLocalKeyProtector : ILocalKeyProtector
+        {
+            public byte[] Protect(byte[] arrPlaintext)
+            {
+                ArgumentNullException.ThrowIfNull(arrPlaintext);
+                return arrPlaintext.ToArray();
+            }
+
+            public byte[] Unprotect(byte[] arrProtectedData)
+            {
+                ArgumentNullException.ThrowIfNull(arrProtectedData);
+                return arrProtectedData.ToArray();
+            }
+        }
+
+        public sealed class FixedPrincipalProvider : ICurrentPrincipalProvider
+        {
+            public string GetCurrentPrincipalId() => "user:test-user";
         }
     }
 

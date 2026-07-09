@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+	<OutputType>Exe</OutputType>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+	<AssemblyName>MissingTargetFrameworkProject</AssemblyName>
+	<RootNamespace>Workbench.Builder.TestData.MissingTargetFrameworkProject</RootNamespace>
+  </PropertyGroup>
+</Project>

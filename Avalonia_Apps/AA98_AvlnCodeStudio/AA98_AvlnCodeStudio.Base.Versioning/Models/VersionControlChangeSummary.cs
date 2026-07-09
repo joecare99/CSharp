@@ -16,6 +16,16 @@ public sealed class VersionControlChangeSummary
     public string? PreviousPath { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the change is staged.
+    /// </summary>
+    public bool IsStaged { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the change is ignored by local repository rules.
+    /// </summary>
+    public bool IsIgnored { get; set; }
+
+    /// <summary>
     /// Gets or sets the high-level change kind.
     /// </summary>
     public VersionControlChangeKind ChangeKind { get; set; } = VersionControlChangeKind.Unknown;

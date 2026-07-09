@@ -1,6 +1,3 @@
 <Project>
   <Import Project="..\Packages.props" />
-  <ItemGroup>
-    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
-  </ItemGroup>
 </Project>

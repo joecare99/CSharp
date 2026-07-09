@@ -6,18 +6,30 @@
   <Folder Name="/AA98_AvlnCodeStudio/">
     <File Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.props" />
     <File Path="AA98_AvlnCodeStudio/Directory.Packages.props" />
+    <Project Path="AA98_AvlnCodeStudio/AA98.Builder.Host/AA98.Builder.Host.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98.DevOpsPlanning.Host/AA98.DevOpsPlanning.Host.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98.MarkDown.Host/AA98.MarkDown.Host.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98.MarkDown.UI/AA98.MarkDown.UI.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Building/AA98_AvlnCodeStudio.Base.Building.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Debugging/AA98_AvlnCodeStudio.Base.Debugging.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Testing/AA98_AvlnCodeStudio.Base.Testing.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.Versioning/AA98_AvlnCodeStudio.Base.Versioning.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Building.Workbench/AA98_AvlnCodeStudio.Building.Workbench.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Diagnostics.Debug/AA98_AvlnCodeStudio.Diagnostics.Debug.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Diagnostics.UI/AA98_AvlnCodeStudio.Diagnostics.UI.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor.Tests/AA98_AvlnCodeStudio.Editor.Tests.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor/AA98_AvlnCodeStudio.Editor.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.Core/AA98_AvlnCodeStudio.Planning.Core.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.Local/AA98_AvlnCodeStudio.Planning.Local.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.UI/AA98_AvlnCodeStudio.Planning.UI.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Versioning.Git/AA98_AvlnCodeStudio.Versioning.Git.csproj" />
   </Folder>
   <Folder Name="/Libraries/">
     <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />
@@ -36,13 +48,6 @@
     <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Core.Tests/Workbench.Builder.Core.Tests.csproj" />
     <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Core/Workbench.Builder.Core.csproj" />
     <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Host/Workbench.Builder.Host.csproj" />
-  </Folder>
-  <Folder Name="/Workbench.Builder/DevOps/">
-    <File Path="../../../Users/DEROSCHR/.copilot/plans/plan-roslyn-builder-starter-slice-initial-files-and-execution-order.md" />
-    <File Path="../../../Users/DEROSCHR/.copilot/plans/plan-roslyn-builder-v1-split-v1.1-project-inspection-and-v1.2-compilation.md" />
-    <File Path="../../../Users/DEROSCHR/.copilot/plans/plan-roslyn-builder-v1.1v1.2-refinement-for-workbench-integration.md" />
-    <File Path="../CSharpBible/DevOps/Tasks/RoslynBuilder.StarterSlice.md" />
-    <File Path="plan-roslyn-builder-roadmap.md" />
   </Folder>
   <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
   <Properties Name="SolutionProperties">

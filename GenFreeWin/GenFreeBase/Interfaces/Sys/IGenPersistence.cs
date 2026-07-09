@@ -30,17 +30,20 @@ public interface IGenPersistence
     void AppendStringsTemp(string sSection, IList<string> lines);
     void WriteStringTemp(string sSection, string text);
     
+    bool ExistFileMand(string dateiName);
     void WriteEnumMand(string sSection, Enum eValue);
     int GetIntMand(string sSection, long lPos = 1);
     void PutIntMand(string sSection, ValueType letzte, long lPos);
     void PutIntsMand(string sSection, int[] aiValues);
     int ReadIntMand(string sFilename);
+    int[] ReadIntsMand(string sSection, int cCnt);
     void WriteIntMand(string sFilename, int iValue);
     void WriteStringMand(string sSection, string sValue);
 
     string ReadStringMLProg(string sSection, int iMaxLine);
     string ReadStringProg(string sSection);
     void ReadStringsProg(string sSection, string[] aus);
+    void ReadStringsProg(string v, IList<string> asOption, int iCount);
     int[] ReadIntsProg(string sSection, int iCnt);
     void WriteIntsProg(string sSection, int[] aiValues);
     void WriteStringProg(string sFilename, string text);
@@ -58,12 +61,11 @@ public interface IGenPersistence
     bool ExistFileTemp(string v);
     int FileLengthTemp(string v);
     void WriteStringsTemp(string sSection, IList<string> asValue);
-    int[] ReadIntsMand(string sSection, int cCnt);
-    IList<string> ReadStringsMand(string v1, int v2);
     void ReadStringsTemp(string v, IList<string> asOption);
+
+    IList<string> ReadStringsMand(string v1, int v2);
     string CreateTempFilefromInit(string v);
     bool ExistFile(string v);
-    bool ExistFileMand(string dateiName);
     void WriteStringsMand(string sSection, IList<string> items);
     bool ExistFileProg(string v);
 }

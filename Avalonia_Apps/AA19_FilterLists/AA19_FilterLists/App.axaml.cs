@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using AA19_FilterLists.Model;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -55,6 +56,7 @@ public partial class App : Application
 
         // Models
         services.AddSingleton<Model.IPersonDataService, Model.PersonDataService>();
+        services.AddSingleton<IEnumerable<Person>>((o)=> Model.PersonDataService.CreateDefaultPersons());
 
         // Views
         services.AddTransient<Views.MainView>();

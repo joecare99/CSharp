@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using WinAhnenNew.ViewModels;
 
 namespace WinAhnenNew.Views
@@ -11,7 +12,7 @@ namespace WinAhnenNew.Views
         public AddressPageView()
         {
             InitializeComponent();
-            DataContext = new AddressPageViewModel();
+            DataContext = ((App)System.Windows.Application.Current).Services.GetRequiredService<AddressPageViewModel>();
         }
     }
 }

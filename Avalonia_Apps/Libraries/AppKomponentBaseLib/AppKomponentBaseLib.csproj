@@ -1,0 +1,40 @@
+<Project>
+  <Import Project="..\Libraries.props" />
+  <PropertyGroup>
+	<OutputType>Library</OutputType>
+	<TargetFrameworks>net6.0;net7.0;net8.0;net481;net48;net472;net462</TargetFrameworks>
+	<Platforms>AnyCPU;x64</Platforms>
+	<Configurations>Debug;Release;DesktopOnly</Configurations>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="Exists('..\sgLib.snk')">
+	<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+	<UserSecretsId>7414f16a-f6fd-43aa-9ed0-f3e49cb25ae4</UserSecretsId>
+	<SignAssembly>True</SignAssembly>
+	<DelaySign>False</DelaySign>
+	<AssemblyOriginatorKeyFile>..\sgLib.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+	<Compile Remove="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Remove="*.bak" />
+  </ItemGroup>
+  <ItemGroup>
+	<PackageReference Condition="'$(TargetFrameWork)'=='net462'" Include="System.ValueTuple" Version="4.6.2" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\BaseLib\BaseLib.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using WinAhnenNew.ViewModels;
 
 namespace WinAhnenNew.Views
@@ -11,7 +12,7 @@ namespace WinAhnenNew.Views
         public SiblingsPageView()
         {
             InitializeComponent();
-            DataContext = new SiblingsPageViewModel();
+            DataContext = ((App)System.Windows.Application.Current).Services.GetRequiredService<SiblingsPageViewModel>();
         }
     }
 }

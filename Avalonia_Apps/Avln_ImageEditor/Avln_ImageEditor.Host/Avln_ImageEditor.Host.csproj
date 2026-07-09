@@ -1,0 +1,42 @@
+<Project>
+  <Import Project="..\Application.props" />
+  <PropertyGroup>
+	<OutputType>WinExe</OutputType>
+	<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+	<ApplicationManifest>app.manifest</ApplicationManifest>
+	<AssemblyName>Avln_ImageEditor.Host</AssemblyName>
+	<RootNamespace>Avln_ImageEditor.Host</RootNamespace>
+	<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+	<Compile Remove="obj\**" />
+	<EmbeddedResource Remove="obj\**" />
+	<None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="Avalonia" />
+	<PackageReference Include="Avalonia.Desktop" />
+	<PackageReference Include="Avalonia.Themes.Fluent" />
+	<PackageReference Include="Avalonia.Fonts.Inter" />
+	<PackageReference Include="Avalonia.Diagnostics">
+	  <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+	  <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>none</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\Avln_ImageEditor.Controls\Avln_ImageEditor.Controls.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia" Version="12.0.5" />
+    <PackageVersion Update="Avalonia.Desktop" Version="12.0.5" />
+    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.18" />
+    <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.0.5" />
+    <PackageVersion Update="Avalonia.Themes.Fluent" Version="12.0.5" />
+  </ItemGroup>
+</Project>

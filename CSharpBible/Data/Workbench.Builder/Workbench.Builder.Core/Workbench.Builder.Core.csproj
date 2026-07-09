@@ -1,5 +1,4 @@
 ﻿<Project>
-  <Import Project="..\..\Data_net.props" />
   <PropertyGroup>
 	<OutputType>Library</OutputType>
 	<TargetFrameworks>net10.0</TargetFrameworks>
@@ -7,9 +6,13 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
-	<PackageReference Include="Microsoft.Build" Version="18.7.1" ExcludeAssets="runtime"  />
-	<PackageReference Include="Microsoft.Build.Framework" Version="18.7.1" ExcludeAssets="runtime"  />
+	<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
+	<PackageReference Include="Microsoft.Build" Version="18.7.1" ExcludeAssets="runtime" />
+	<PackageReference Include="Microsoft.Build.Framework" Version="18.7.1" ExcludeAssets="runtime" />
 	<PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
-	<PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.7.1" ExcludeAssets="runtime"  />
+	<PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.7.1" ExcludeAssets="runtime" />
+  </ItemGroup>
+  <ItemGroup>
+	<InternalsVisibleTo Include="Workbench.Builder.Core.Tests" />
   </ItemGroup>
 </Project>

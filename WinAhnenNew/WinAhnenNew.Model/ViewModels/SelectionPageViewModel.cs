@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -20,7 +20,6 @@ namespace WinAhnenNew.ViewModels
     {
         private const bool _xDiagnosticsEnabled = false;
         private readonly IPersonSelectionService _personSelectionService;
-        private readonly ListCollectionView _personsView;
         private readonly IMessenger _messenger;
 
         public SelectionPageViewModel(IPersonSelectionService personSelectionService, IMessenger messenger)
@@ -38,13 +37,10 @@ namespace WinAhnenNew.ViewModels
             ];
 
             Persons = new ObservableCollection<SelectionPersonItemViewModel>(CreatePersonItems());
-            _personsView = (ListCollectionView)CollectionViewSource.GetDefaultView(Persons);
-            PersonsView = _personsView;
-            PersonsView.Filter = FilterPerson;
+            FilteredPersons = [];
 
             SelectedSortField = SortFields.FirstOrDefault() ?? "Name";
-            ApplySorting();
-            UpdateFilteredPersonCount();
+            ApplyFiltersAndSorting();
             SelectionStatusText = "Bitte wählen Sie eine Person zur Bearbeitung aus.";
 
             _messenger.Register<GenealogyChangedMessage>(this, static (objRecipient, msgMessage) =>
@@ -62,7 +58,7 @@ namespace WinAhnenNew.ViewModels
 
         public bool IsDiagnosticsEnabled => _xDiagnosticsEnabled;
 
-        public ICollectionView PersonsView { get; }
+        public ObservableCollection<SelectionPersonItemViewModel> FilteredPersons { get; }
 
         public ObservableCollection<string> SortFields { get; }
 
@@ -108,26 +104,22 @@ namespace WinAhnenNew.ViewModels
 
         partial void OnFilterTextChanged(string value)
         {
-            PersonsView.Refresh();
-            UpdateFilteredPersonCount();
+            ApplyFiltersAndSorting();
         }
 
         partial void OnOnlyLivingChanged(bool value)
         {
-            PersonsView.Refresh();
-            UpdateFilteredPersonCount();
+            ApplyFiltersAndSorting();
         }
 
         partial void OnSelectedSortFieldChanged(string value)
         {
-            ApplySorting();
-            UpdateFilteredPersonCount();
+            ApplyFiltersAndSorting();
         }
 
         partial void OnSortDescendingChanged(bool value)
         {
-            ApplySorting();
-            UpdateFilteredPersonCount();
+            ApplyFiltersAndSorting();
         }
 
         partial void OnSelectedPersonChanged(SelectionPersonItemViewModel? value)
@@ -192,15 +184,26 @@ namespace WinAhnenNew.ViewModels
                 || vmPerson.BirthDateText.Contains(sFilter, StringComparison.OrdinalIgnoreCase);
         }
 
-        private void ApplySorting()
+        private void ApplyFiltersAndSorting()
         {
-            _personsView.CustomSort = new PersonSortComparer(SelectedSortField, SortDescending);
-            _personsView.Refresh();
+            var arrPersons = Persons
+                .Where(FilterPerson)
+                .ToArray();
+
+            Array.Sort(arrPersons, new PersonSortComparer(SelectedSortField, SortDescending));
+
+            FilteredPersons.Clear();
+            foreach (var vmPerson in arrPersons)
+            {
+                FilteredPersons.Add(vmPerson);
+            }
+
+            UpdateFilteredPersonCount();
         }
 
         private void UpdateFilteredPersonCount()
         {
-            FilteredPersonCount = PersonsView.Cast<object>().Count();
+            FilteredPersonCount = FilteredPersons.Count;
         }
 
         private void ReloadPersons(int iPersonCount)
@@ -213,9 +216,7 @@ namespace WinAhnenNew.ViewModels
 
             SelectedPerson = null;
             UpdateSelectedPersonFacts(null);
-            PersonsView.Refresh();
-            ApplySorting();
-            UpdateFilteredPersonCount();
+            ApplyFiltersAndSorting();
             SelectionStatusText = $"Demo-Genealogie mit {iPersonCount} Personen wurde erstellt.";
         }
 
@@ -264,7 +265,7 @@ namespace WinAhnenNew.ViewModels
             }
         }
 
-        private sealed class PersonSortComparer : IComparer
+        private sealed class PersonSortComparer : IComparer, System.Collections.Generic.IComparer<SelectionPersonItemViewModel>
         {
             private readonly string _selectedSortField;
             private readonly int _sortDirection;
@@ -279,6 +280,12 @@ namespace WinAhnenNew.ViewModels
             {
                 var vmLeft = x as SelectionPersonItemViewModel;
                 var vmRight = y as SelectionPersonItemViewModel;
+
+                return Compare(vmLeft, vmRight);
+            }
+
+            public int Compare(SelectionPersonItemViewModel? vmLeft, SelectionPersonItemViewModel? vmRight)
+            {
 
                 if (ReferenceEquals(vmLeft, vmRight))
                 {

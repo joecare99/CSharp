@@ -1,6 +1,7 @@
 using System;
 using GenSecure.Contracts;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace GenSecure.Core;
 
@@ -24,6 +25,8 @@ public static class DependencyInjectionExtensions
         configureOptions(options);
 
         services.AddSingleton(options);
+        services.TryAddSingleton<ILocalKeyProtector>(provider => PlatformServiceResolver.CreateLocalKeyProtector(provider.GetRequiredService<GenSecureStoreOptions>()));
+        services.TryAddSingleton<ICurrentPrincipalProvider>(static _ => PlatformServiceResolver.CreateCurrentPrincipalProvider());
         services.AddSingleton<MasterKeyBackupService>();
         services.AddSingleton<IMasterKeyBackupService>(provider => provider.GetRequiredService<MasterKeyBackupService>());
         services.AddSingleton<IPersonSecureStore, PersonSecureStore>();

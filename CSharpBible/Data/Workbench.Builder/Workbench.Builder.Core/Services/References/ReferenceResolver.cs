@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Workbench.Builder.Core.Abstractions;
 using Workbench.Builder.Core.Models.Loading;
+using Workbench.Builder.Core.Models.Projects;
 using Workbench.Builder.Core.Models.References;
 
 namespace Workbench.Builder.Core.Services.References;
@@ -18,17 +20,14 @@ public sealed class ReferenceResolver : IReferenceResolver
     /// <inheritdoc/>
     public IReadOnlyList<ResolvedReferenceInfo> Resolve(LoadedProjectModel project)
     {
-        if (project is null)
-        {
-            throw new ArgumentNullException(nameof(project));
-        }
+        ArgumentNullException.ThrowIfNull(project);
 
         List<ResolvedReferenceInfo> resolvedReferences = new();
         HashSet<string> seenKeys = new(StringComparer.OrdinalIgnoreCase);
 
         AddProjectReferences(project, resolvedReferences, seenKeys);
-        AddResolvedMsBuildReferences(project, "ReferencePath", resolvedReferences, seenKeys);
-        AddResolvedMsBuildReferences(project, "Analyzer", resolvedReferences, seenKeys);
+        AddResolvedMsBuildReferences(project, "ReferencePath", false, resolvedReferences, seenKeys);
+        AddResolvedMsBuildReferences(project, "Analyzer", true, resolvedReferences, seenKeys);
 
         return resolvedReferences;
     }
@@ -38,28 +37,81 @@ public sealed class ReferenceResolver : IReferenceResolver
         ICollection<ResolvedReferenceInfo> resolvedReferences,
         ISet<string> seenKeys)
     {
+        foreach (JsonElement item in ResolveMsBuildItems(project, "ReferencePath", includeProjectReferences: true))
+        {
+            if (!string.Equals(GetMetadataValue(item, "ReferenceSourceTarget"), "ProjectReference", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            AddReference(item, ReferenceKind.Project, resolvedReferences, seenKeys);
+        }
+
         foreach (Models.Projects.ProjectReferenceInfo projectReference in project.ProjectReferences)
         {
             string displayName = Path.GetFileNameWithoutExtension(projectReference.ProjectFilePath);
+            string? resolvedAssemblyPath = ResolveProjectReferenceAssemblyPath(project, projectReference);
+            bool exists = !string.IsNullOrWhiteSpace(resolvedAssemblyPath)
+                ? File.Exists(resolvedAssemblyPath)
+                : projectReference.Exists;
             AddReference(
                 new ResolvedReferenceInfo(
                     ReferenceKind.Project,
                     displayName,
                     projectReference.Include,
-                    projectReference.ProjectFilePath,
-                    projectReference.Exists),
+                    resolvedAssemblyPath ?? projectReference.ProjectFilePath,
+                    exists),
                 resolvedReferences,
                 seenKeys);
         }
     }
 
+    private static string? ResolveProjectReferenceAssemblyPath(LoadedProjectModel project, ProjectReferenceInfo projectReference)
+    {
+        if (!projectReference.Exists)
+        {
+            return null;
+        }
+
+        string? targetFramework = SelectProjectReferenceTargetFramework(project.Properties.TargetFramework, projectReference.ProjectFilePath);
+        string? targetPath = QueryMsBuildProperty(
+            projectReference.ProjectFilePath,
+            "TargetPath",
+            GetConfiguration(project),
+            targetFramework,
+            project.Properties.RuntimeIdentifier);
+        if (string.IsNullOrWhiteSpace(targetPath))
+        {
+            return null;
+        }
+
+        if (File.Exists(targetPath))
+        {
+            return targetPath;
+        }
+
+        EnsureProjectReferenceBuilt(projectReference.ProjectFilePath, GetConfiguration(project), targetFramework, project.Properties.RuntimeIdentifier);
+        return File.Exists(targetPath) ? targetPath : null;
+    }
+
+    private static void EnsureProjectReferenceBuilt(string projectFilePath, string configuration, string? targetFramework, string? runtimeIdentifier)
+    {
+        if (RunBuild(projectFilePath, configuration, targetFramework, runtimeIdentifier, restore: false) == 0)
+        {
+            return;
+        }
+
+        _ = RunBuild(projectFilePath, configuration, targetFramework, runtimeIdentifier, restore: true);
+    }
+
     private static void AddResolvedMsBuildReferences(
         LoadedProjectModel project,
         string itemName,
+        bool includeProjectReferences,
         ICollection<ResolvedReferenceInfo> resolvedReferences,
         ISet<string> seenKeys)
     {
-        foreach (JsonElement item in ResolveMsBuildItems(project, itemName))
+        foreach (JsonElement item in ResolveMsBuildItems(project, itemName, includeProjectReferences))
         {
             if (string.Equals(itemName, "ReferencePath", StringComparison.Ordinal) &&
                 string.Equals(GetMetadataValue(item, "ReferenceSourceTarget"), "ProjectReference", StringComparison.OrdinalIgnoreCase))
@@ -76,6 +128,22 @@ public sealed class ReferenceResolver : IReferenceResolver
 
     private static IReadOnlyList<JsonElement> ResolveMsBuildItems(LoadedProjectModel project, string itemName)
     {
+        return ResolveMsBuildItems(project, itemName, includeProjectReferences: true);
+    }
+
+    private static IReadOnlyList<JsonElement> ResolveMsBuildItems(LoadedProjectModel project, string itemName, bool includeProjectReferences)
+    {
+        IReadOnlyList<JsonElement> resolvedItems = RunMsBuildItemQuery(project, itemName, restore: false, includeProjectReferences);
+        if (resolvedItems.Count > 0)
+        {
+            return resolvedItems;
+        }
+
+        return RunMsBuildItemQuery(project, itemName, restore: true, includeProjectReferences);
+    }
+
+    private static IReadOnlyList<JsonElement> RunMsBuildItemQuery(LoadedProjectModel project, string itemName, bool restore, bool includeProjectReferences)
+    {
         ProcessStartInfo startInfo = new("dotnet")
         {
             RedirectStandardOutput = true,
@@ -87,12 +155,20 @@ public sealed class ReferenceResolver : IReferenceResolver
 
         startInfo.ArgumentList.Add("msbuild");
         startInfo.ArgumentList.Add(project.ProjectFilePath);
-        startInfo.ArgumentList.Add("-restore");
+        if (restore)
+        {
+            startInfo.ArgumentList.Add("-restore");
+        }
+
         startInfo.ArgumentList.Add("-target:ResolveReferences");
         startInfo.ArgumentList.Add($"-getItem:{itemName}");
         startInfo.ArgumentList.Add("-nologo");
         startInfo.ArgumentList.Add("-verbosity:quiet");
         startInfo.ArgumentList.Add($"-property:Configuration={GetConfiguration(project)}");
+        if (!includeProjectReferences)
+        {
+            startInfo.ArgumentList.Add("-property:BuildProjectReferences=false");
+        }
 
         if (!string.IsNullOrWhiteSpace(project.Properties.TargetFramework))
         {
@@ -133,6 +209,277 @@ public sealed class ReferenceResolver : IReferenceResolver
         _ = standardError;
         return resolvedItems;
     }
+
+    private static string? QueryMsBuildProperty(
+        string projectFilePath,
+        string propertyName,
+        string configuration,
+        string? targetFramework,
+        string? runtimeIdentifier)
+    {
+        ProcessStartInfo startInfo = CreateMsBuildStartInfo(projectFilePath, configuration, targetFramework, runtimeIdentifier);
+        startInfo.ArgumentList.Add($"-getProperty:{propertyName}");
+
+        using Process process = Process.Start(startInfo)
+            ?? throw new InvalidOperationException("Failed to start dotnet msbuild for property resolution.");
+
+        string standardOutput = process.StandardOutput.ReadToEnd();
+        string standardError = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+
+        if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(standardOutput))
+        {
+            return null;
+        }
+
+        string trimmedOutput = standardOutput.Trim();
+        if (!trimmedOutput.StartsWith('{'))
+        {
+            _ = standardError;
+            return trimmedOutput;
+        }
+
+        using JsonDocument document = JsonDocument.Parse(trimmedOutput);
+        if (!document.RootElement.TryGetProperty("Properties", out JsonElement propertiesElement) ||
+            !propertiesElement.TryGetProperty(propertyName, out JsonElement valueElement) ||
+            valueElement.ValueKind != JsonValueKind.String)
+        {
+            return null;
+        }
+
+        _ = standardError;
+        return valueElement.GetString();
+    }
+
+    private static IReadOnlyDictionary<string, string> QueryMsBuildProperties(
+        string projectFilePath,
+        IReadOnlyList<string> propertyNames,
+        string configuration,
+        string? targetFramework,
+        string? runtimeIdentifier)
+    {
+        ProcessStartInfo startInfo = CreateMsBuildStartInfo(projectFilePath, configuration, targetFramework, runtimeIdentifier);
+        foreach (string propertyName in propertyNames)
+        {
+            startInfo.ArgumentList.Add($"-getProperty:{propertyName}");
+        }
+
+        using Process process = Process.Start(startInfo)
+            ?? throw new InvalidOperationException("Failed to start dotnet msbuild for property resolution.");
+
+        string standardOutput = process.StandardOutput.ReadToEnd();
+        string standardError = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+
+        if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(standardOutput))
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        string trimmedOutput = standardOutput.Trim();
+        if (!trimmedOutput.StartsWith('{'))
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        using JsonDocument document = JsonDocument.Parse(trimmedOutput);
+        if (!document.RootElement.TryGetProperty("Properties", out JsonElement propertiesElement) ||
+            propertiesElement.ValueKind != JsonValueKind.Object)
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        Dictionary<string, string> resolvedProperties = new(StringComparer.OrdinalIgnoreCase);
+        foreach (string propertyName in propertyNames)
+        {
+            if (propertiesElement.TryGetProperty(propertyName, out JsonElement valueElement) && valueElement.ValueKind == JsonValueKind.String)
+            {
+                resolvedProperties[propertyName] = valueElement.GetString() ?? string.Empty;
+            }
+        }
+
+        _ = standardError;
+        return resolvedProperties;
+    }
+
+    private static int RunBuild(string projectFilePath, string configuration, string? targetFramework, string? runtimeIdentifier, bool restore)
+    {
+        ProcessStartInfo startInfo = new("dotnet")
+        {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            WorkingDirectory = Path.GetDirectoryName(projectFilePath) ?? Directory.GetCurrentDirectory(),
+        };
+
+        startInfo.ArgumentList.Add("build");
+        startInfo.ArgumentList.Add(projectFilePath);
+        if (!restore)
+        {
+            startInfo.ArgumentList.Add("--no-restore");
+        }
+
+        startInfo.ArgumentList.Add("-nologo");
+        startInfo.ArgumentList.Add("-v");
+        startInfo.ArgumentList.Add("quiet");
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(configuration);
+
+        if (!string.IsNullOrWhiteSpace(targetFramework))
+        {
+            startInfo.ArgumentList.Add("-f");
+            startInfo.ArgumentList.Add(targetFramework);
+        }
+
+        if (!string.IsNullOrWhiteSpace(runtimeIdentifier))
+        {
+            startInfo.ArgumentList.Add("-r");
+            startInfo.ArgumentList.Add(runtimeIdentifier);
+        }
+
+        using Process process = Process.Start(startInfo)
+            ?? throw new InvalidOperationException("Failed to start dotnet build for project reference resolution.");
+
+        _ = process.StandardOutput.ReadToEnd();
+        _ = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        return process.ExitCode;
+    }
+
+    private static ProcessStartInfo CreateMsBuildStartInfo(string projectFilePath, string configuration, string? targetFramework, string? runtimeIdentifier)
+    {
+        ProcessStartInfo startInfo = new("dotnet")
+        {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            WorkingDirectory = Path.GetDirectoryName(projectFilePath) ?? Directory.GetCurrentDirectory(),
+        };
+
+        startInfo.ArgumentList.Add("msbuild");
+        startInfo.ArgumentList.Add(projectFilePath);
+        startInfo.ArgumentList.Add("-nologo");
+        startInfo.ArgumentList.Add("-verbosity:quiet");
+        startInfo.ArgumentList.Add($"-property:Configuration={configuration}");
+
+        if (!string.IsNullOrWhiteSpace(targetFramework))
+        {
+            startInfo.ArgumentList.Add($"-property:{nameof(ProjectLoadRequest.TargetFramework)}={targetFramework}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(runtimeIdentifier))
+        {
+            startInfo.ArgumentList.Add($"-property:{nameof(ProjectLoadRequest.RuntimeIdentifier)}={runtimeIdentifier}");
+        }
+
+        return startInfo;
+    }
+
+    private static string? SelectProjectReferenceTargetFramework(string? requestedTargetFramework, string projectFilePath)
+    {
+        IReadOnlyDictionary<string, string> properties = QueryMsBuildProperties(
+            projectFilePath,
+            ["TargetFramework", "TargetFrameworks"],
+            configuration: "Debug",
+            targetFramework: null,
+            runtimeIdentifier: null);
+
+        List<string> candidateTargetFrameworks = new();
+        if (properties.TryGetValue("TargetFramework", out string? targetFramework) && !string.IsNullOrWhiteSpace(targetFramework))
+        {
+            candidateTargetFrameworks.Add(targetFramework);
+        }
+
+        if (properties.TryGetValue("TargetFrameworks", out string? targetFrameworks) && !string.IsNullOrWhiteSpace(targetFrameworks))
+        {
+            candidateTargetFrameworks.AddRange(
+                targetFrameworks.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+        }
+
+        return SelectBestMatchingTargetFramework(requestedTargetFramework, candidateTargetFrameworks);
+    }
+
+    private static string? SelectBestMatchingTargetFramework(string? requestedTargetFramework, IReadOnlyList<string> candidateTargetFrameworks)
+    {
+        string[] distinctCandidates = candidateTargetFrameworks
+            .Where(static candidate => !string.IsNullOrWhiteSpace(candidate))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        if (distinctCandidates.Length == 0)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(requestedTargetFramework))
+        {
+            string? exactMatch = distinctCandidates.FirstOrDefault(
+                candidate => string.Equals(candidate, requestedTargetFramework, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(exactMatch))
+            {
+                return exactMatch;
+            }
+
+            ParsedTargetFramework? requested = ParseTargetFramework(requestedTargetFramework);
+            if (requested is not null)
+            {
+                string? compatibleMatch = distinctCandidates
+                    .Select(candidate => new { Candidate = candidate, Parsed = ParseTargetFramework(candidate) })
+                    .Where(x => x.Parsed is not null && x.Parsed.Value.Family == requested.Value.Family && x.Parsed.Value.Rank <= requested.Value.Rank)
+                    .OrderByDescending(x => x.Parsed!.Value.Rank)
+                    .Select(x => x.Candidate)
+                    .FirstOrDefault();
+                if (!string.IsNullOrWhiteSpace(compatibleMatch))
+                {
+                    return compatibleMatch;
+                }
+            }
+        }
+
+        return distinctCandidates
+            .Select(candidate => new { Candidate = candidate, Parsed = ParseTargetFramework(candidate) })
+            .OrderByDescending(x => x.Parsed?.Rank ?? int.MinValue)
+            .Select(x => x.Candidate)
+            .First();
+    }
+
+    private static ParsedTargetFramework? ParseTargetFramework(string? targetFramework)
+    {
+        if (string.IsNullOrWhiteSpace(targetFramework))
+        {
+            return null;
+        }
+
+        if (targetFramework.StartsWith("netstandard", StringComparison.OrdinalIgnoreCase))
+        {
+            return TryParseVersionFamily("netstandard", targetFramework[11..]);
+        }
+
+        if (!targetFramework.StartsWith("net", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        string suffix = targetFramework[3..];
+        if (suffix.Contains('.', StringComparison.Ordinal))
+        {
+            return TryParseVersionFamily("net", suffix);
+        }
+
+        return int.TryParse(suffix, out int rank)
+            ? new ParsedTargetFramework("netfx", rank)
+            : null;
+    }
+
+    private static ParsedTargetFramework? TryParseVersionFamily(string family, string versionText)
+    {
+        return Version.TryParse(versionText, out Version? version)
+            ? new ParsedTargetFramework(family, (version.Major * 100) + version.Minor)
+            : null;
+    }
+
+    private readonly record struct ParsedTargetFramework(string Family, int Rank);
 
     private static string GetConfiguration(LoadedProjectModel project)
     {

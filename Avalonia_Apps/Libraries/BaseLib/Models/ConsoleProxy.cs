@@ -1,67 +1,271 @@
-﻿using BaseLib.Interfaces;
+using BaseLib.Interfaces;
 using System;
-using System.Reflection;
 
 namespace BaseLib.Models;
 
 public class ConsoleProxy : IConsole
 {
-    protected MethodInfo _writeLineS = typeof(Console).GetMethod(nameof(Console.WriteLine), [typeof(string)])!;
-    protected MethodInfo _beep = typeof(Console).GetMethod(nameof(Console.Beep), [typeof(int), typeof(int)])!;
+    private const string HideCursorSequence = "\u001b[?25l";
+    private const string ShowCursorSequence = "\u001b[?25h";
+    private const string ResetColorSequence = "\u001b[0m";
+    private const string ClearScreenSequence = "\u001b[2J\u001b[H";
+    private const string BellSequence = "\a";
+
+    private ConsoleColor _backgroundColor = ConsoleColor.Black;
+    private (int Left, int Top) _cursorPosition;
+    private bool _cursorVisible;
+    private ConsoleColor _foregroundColor = ConsoleColor.White;
+    private string _title = string.Empty;
+    private int _windowHeight;
+    private int _windowLeft;
+    private int _windowTop;
+    private int _windowWidth;
+
+    public ConsoleColor ForegroundColor
+    {
+        get => GetValue(() => Console.ForegroundColor, _foregroundColor);
+        set
+        {
+            _foregroundColor = value;
+            TryInvoke(() => Console.ForegroundColor = value);
+        }
+    }
+
+    public ConsoleColor BackgroundColor
+    {
+        get => GetValue(() => Console.BackgroundColor, _backgroundColor);
+        set
+        {
+            _backgroundColor = value;
+            TryInvoke(() => Console.BackgroundColor = value);
+        }
+    }
+
+    public bool IsOutputRedirected => GetValue(() => Console.IsOutputRedirected, false);
+
+    public bool KeyAvailable => GetValue(() => Console.KeyAvailable, false);
+
+    public int LargestWindowHeight => GetValue(() => Console.LargestWindowHeight, 0);
+
+    public int LargestWindowWidth => GetValue(() => Console.LargestWindowWidth, 0);
+
+    public string Title
+    {
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+        get => GetValue(() => Console.Title, _title);
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+        set
+        {
+            _title = value ?? string.Empty;
+            TryInvoke(() => Console.Title = value ?? string.Empty);
+        }
+    }
+
+    public int WindowHeight
+    {
+        get => GetValue(() => Console.WindowHeight, _windowHeight);
+        set
+        {
+            _windowHeight = value;
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+            TryInvoke(() => Console.WindowHeight = value);
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+        }
+    }
+
+    public int WindowWidth
+    {
+        get => GetValue(() => Console.WindowWidth, _windowWidth);
+        set
+        {
+            _windowWidth = value;
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+            TryInvoke(() => Console.WindowWidth = value);
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+        }
+    }
+
+    public int WindowLeft
+    {
+        get => GetValue(() => Console.WindowLeft, _windowLeft);
+        set
+        {
+            _windowLeft = value;
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+            TryInvoke(() => Console.WindowLeft = value);
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+        }
+    }
+
+    public int WindowTop
+    {
+        get => GetValue(() => Console.WindowTop, _windowTop);
+        set
+        {
+            _windowTop = value;
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+            TryInvoke(() => Console.WindowTop = value);
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+        }
+    }
+
+    public bool CursorVisible
+    {
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+        get => GetValue(() => Console.CursorVisible, _cursorVisible);
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+        set
+        {
+            _cursorVisible = value;
+            if (!TryInvoke(() => Console.CursorVisible = value))
+            {
+                WriteAnsi(value ? ShowCursorSequence : HideCursorSequence);
+            }
+        }
+    }
+
+    public int BufferWidth => GetValue(() => Console.BufferWidth, 0);
+
+    public int BufferHeight => GetValue(() => Console.BufferHeight, 0);
+
+    public void Beep(int freq, int len)
+    {
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+        if (!TryInvoke(() => Console.Beep(freq, len)))
+        {
+            WriteAnsi(BellSequence);
+        }
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+    }
+
+    public void Clear()
+    {
+        if (!TryInvoke(Console.Clear))
+        {
+            WriteAnsi(ClearScreenSequence);
+        }
+    }
+
+    public (int Left, int Top) GetCursorPosition()
+    {
 #if NET5_0_OR_GREATER
-    protected MethodInfo _GetCursorPosition = typeof(Console).GetMethod(nameof(Console.GetCursorPosition), [])!;
+        return GetValue(Console.GetCursorPosition, _cursorPosition);
 #else
-    protected MethodInfo _CursorLeft = typeof(Console).GetMethod(nameof(Console.CursorLeft), [])!;
-    protected MethodInfo _CursorTop = typeof(Console).GetMethod(nameof(Console.CursorTop), [])!;
+        try
+        {
+            _cursorPosition = (Console.CursorLeft, Console.CursorTop);
+            return _cursorPosition;
+        }
+        catch
+        {
+            return _cursorPosition;
+        }
 #endif
-    protected MethodInfo _ReadKey = typeof(Console).GetMethod(nameof(Console.ReadKey), [])!;
-    protected MethodInfo _Readline = typeof(Console).GetMethod(nameof(Console.ReadLine), [])!;
-    protected MethodInfo _setCursorPosition = typeof(Console).GetMethod(nameof(Console.SetCursorPosition), [typeof(int), typeof(int)])!;
-    protected MethodInfo _writeCh = typeof(Console).GetMethod(nameof(Console.Write), [typeof(char)])!;
-    protected MethodInfo _writeS = typeof(Console).GetMethod(nameof(Console.Write), [typeof(string)])!;
-    protected MethodInfo _clear = typeof(Console).GetMethod(nameof(Console.Clear), [])!;
-    protected MethodInfo _resetColor = typeof(Console).GetMethod(nameof(Console.ResetColor), [])!;
+    }
 
-    protected PropertyInfo _ForegroundColor = typeof(Console).GetProperty(nameof(Console.ForegroundColor))!;
-    protected PropertyInfo _BackgroundColor = typeof(Console).GetProperty(nameof(Console.BackgroundColor))!;
-    protected PropertyInfo _IsOutputRedirected = typeof(Console).GetProperty(nameof(Console.IsOutputRedirected))!;
-    protected PropertyInfo _KeyAvailable = typeof(Console).GetProperty(nameof(Console.KeyAvailable))!;
-    protected PropertyInfo _LargestWindowHeight = typeof(Console).GetProperty(nameof(Console.LargestWindowHeight))!;
-    protected PropertyInfo _Title = typeof(Console).GetProperty(nameof(Console.Title))!;
-    protected PropertyInfo _WindowHeight = typeof(Console).GetProperty(nameof(Console.WindowHeight))!;
-    protected PropertyInfo _WindowWidth = typeof(Console).GetProperty(nameof(Console.WindowWidth))!;
-    protected PropertyInfo _CursorVisible = typeof(Console).GetProperty(nameof(Console.CursorVisible))!;
-    protected PropertyInfo _BufferWidth = typeof(Console).GetProperty(nameof(Console.BufferWidth))!;
-    protected PropertyInfo _BufferHeight = typeof(Console).GetProperty(nameof(Console.BufferHeight))!;
+    public ConsoleKeyInfo? ReadKey()
+    {
+        try
+        {
+            return Console.ReadKey();
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
-    protected object? instance = default;
-    public ConsoleColor ForegroundColor { get => _ForegroundColor?.GetValue(instance) as ConsoleColor? ?? ConsoleColor.White; set => _ForegroundColor?.SetValue(instance,value); }
-    public ConsoleColor BackgroundColor { get => _BackgroundColor?.GetValue(instance) as ConsoleColor? ?? ConsoleColor.Black; set => _BackgroundColor?.SetValue(instance, value); }
-    public bool IsOutputRedirected => _IsOutputRedirected?.GetValue(instance) as bool? ?? false;
-    public bool KeyAvailable => _KeyAvailable?.GetValue(instance) as bool? ?? false;
-    public int LargestWindowHeight => _LargestWindowHeight?.GetValue(instance) as int? ?? 0;
-    public string Title { get => _Title?.GetValue(instance) as string ?? string.Empty; set => _Title?.SetValue(instance, value); }
-    public int WindowHeight { get => _WindowHeight?.GetValue(instance) as int? ?? 0; set => _WindowHeight?.SetValue(instance, value); }
-    public int WindowWidth { get => _WindowWidth?.GetValue(instance) as int? ?? 0; set => _WindowWidth?.SetValue(instance, value); }
-    public bool CursorVisible { get => _CursorVisible?.GetValue(instance) as bool? ?? false; set => _CursorVisible?.SetValue(instance, value); }
-    public int BufferWidth => _BufferWidth?.GetValue(instance) as int? ?? 0;
-    public int BufferHeight => _BufferHeight?.GetValue(instance) as int? ?? 0;
+    public string ReadLine()
+    {
+        try
+        {
+            return Console.ReadLine() ?? string.Empty;
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
 
+    public void ResetColor()
+    {
+        if (!TryInvoke(Console.ResetColor))
+        {
+            WriteAnsi(ResetColorSequence);
+        }
+    }
 
-    public void Beep(int freq, int len) => _beep?.Invoke(instance, [freq, len]);
-    public void Clear() => _clear?.Invoke(instance, []);
-#if NET5_0_OR_GREATER
-    public (int Left, int Top) GetCursorPosition() => _GetCursorPosition?.Invoke(instance, []) as (int, int)? ?? (0, 0);
-#else
-    public (int Left, int Top) GetCursorPosition() => (_CursorLeft?.Invoke(instance, []) as int? ?? 0, _CursorTop?.Invoke(instance, []) as int? ?? 0);
-#endif
-    public ConsoleKeyInfo? ReadKey() => _ReadKey?.Invoke(instance, []) as ConsoleKeyInfo?;
-    public string ReadLine() => _Readline?.Invoke(instance, [])?.ToString() ?? string.Empty;
+    public void SetCursorPosition(int left, int top)
+    {
+        _cursorPosition = (left, top);
+        if (!TryInvoke(() => Console.SetCursorPosition(left, top)))
+        {
+            WriteAnsi($"\u001b[{top + 1};{left + 1}H");
+        }
+    }
 
-    public void ResetColor() => _resetColor?.Invoke(instance, []);
+    public void SetWindowPosition(int left, int top)
+    {
+        _windowLeft = left;
+        _windowTop = top;
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+        TryInvoke(() => Console.SetWindowPosition(left, top));
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+    }
 
-    public void SetCursorPosition(int left, int top) => _setCursorPosition?.Invoke(instance, [left, top]);
-    public void Write(char ch) => _writeCh?.Invoke(instance, [ch]);
-    public void Write(string? st) => _writeS?.Invoke(instance, [st]);
-    public void WriteLine(string? v) => _writeLineS?.Invoke(instance, [v]);
+    public void SetWindowSize(int width, int height)
+    {
+        _windowWidth = width;
+        _windowHeight = height;
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+        TryInvoke(() => Console.SetWindowSize(width, height));
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+    }
+
+    public void Write(char ch) => TryInvoke(() => Console.Write(ch));
+
+    public void Write(string? st) => TryInvoke(() => Console.Write(st));
+
+    public void WriteLine(string? st = "") => TryInvoke(() => Console.WriteLine(st));
+
+    private static T GetValue<T>(Func<T> getter, T fallback)
+    {
+        try
+        {
+            return getter();
+        }
+        catch
+        {
+            return fallback;
+        }
+    }
+
+    private static bool TryInvoke(Action action)
+    {
+        try
+        {
+            action();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static void WriteAnsi(string sequence)
+    {
+        if (string.IsNullOrWhiteSpace(sequence) || Console.IsOutputRedirected)
+        {
+            return;
+        }
+
+        try
+        {
+            Console.Write(sequence);
+        }
+        catch
+        {
+        }
+    }
 }

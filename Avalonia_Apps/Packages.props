@@ -2,28 +2,34 @@
   <!-- https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management -->
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	  <AvaloniaVersion>12.0.5</AvaloniaVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- Avalonia packages -->
     <!-- Important: keep version in sync! -->
-    <PackageVersion Include="Avalonia" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Headless" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.17" />
-    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.iOS" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Browser" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Android" Version="12.0.4" />
+    <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Headless" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.18" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
+    <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.iOS" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Browser" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Android" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="Avalonia.Svg" Version="11.2.0.2" />
-    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.12" />
-    <PackageVersion Include="Avalonia.Svg.Skia" Version="11.3.0" />
+    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.13" />
     <PackageVersion Include="Avalonia.Labs.Controls.ColorPicker" Version="11.2.2" />
-    <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.ReactiveUI" Version="11.3.8" />
-    <PackageVersion Include="FontPickerAvalonia" Version="0.10.18.1" />
-    <PackageVersion Include="Simplecto.Avalonia.RichTextBox" Version="1.8.3" />
+    <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="$(AvaloniaVersion)" />
+	<PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.0.1" />
+	<PackageVersion Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
+	<PackageVersion Include="Markdown.Avalonia" Version="11.0.3" />
+	<PackageVersion Include="FontPickerAvalonia" Version="0.10.18.1" />
+
+    <PackageVersion Include="Avalonia.Svg.Skia" Version="11.3.0" />
+	<PackageVersion Include="Avalonia.ReactiveUI" Version="11.3.8" />
+	  
+	<PackageVersion Include="Simplecto.Avalonia.RichTextBox" Version="1.9.3" />
     <PackageVersion Include="MessageBox.Avalonia" Version="12.0.0" />
     <PackageVersion Include="MsBox.Avalonia" Version="3.0.0-rc2" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -33,9 +39,11 @@
     <PackageVersion Include="System.Drawing.Common" Version="10.0.9" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="10.0.9" />
     <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.14" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
+    
+	<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="MSTest" Version="4.2.3" />
+    <PackageVersion Include="FluentAssertions" Version="8.10.0" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="Microsoft.VisualStudio.DiagnosticsHub.BenchmarkDotNetDiagnosers" Version="18.7.37220.1" />

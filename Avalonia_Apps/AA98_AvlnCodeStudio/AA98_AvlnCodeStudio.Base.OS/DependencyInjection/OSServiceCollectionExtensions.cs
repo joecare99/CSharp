@@ -20,7 +20,22 @@ public static class OSServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        services.AddCodeStudioTerminal();
         services.AddSingleton<ITextDocumentStorageService, TTextDocumentStorageService>();
+        return services;
+    }
+
+    /// <summary>
+    /// Adds the default provider-neutral terminal services.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The same service collection instance.</returns>
+    public static IServiceCollection AddCodeStudioTerminal(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.AddSingleton<ITerminalShellResolver, NullTerminalShellResolver>();
+        services.AddSingleton<ITerminalSessionService, NullTerminalSessionService>();
         return services;
     }
 }

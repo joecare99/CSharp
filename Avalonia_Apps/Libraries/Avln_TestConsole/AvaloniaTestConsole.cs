@@ -98,6 +98,12 @@ public sealed class AvaloniaTestConsole : IAvaloniaConsole
     /// <inheritdoc/>
     public TimeSpan? ReadLineTimeout { get; set; }
 
+    // Todo:
+    public int LargestWindowWidth => throw new NotImplementedException();
+
+    public int WindowLeft { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public int WindowTop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
     /// <inheritdoc/>
     public void Beep(int freq, int len)
     {
@@ -209,4 +215,14 @@ public sealed class AvaloniaTestConsole : IAvaloniaConsole
 
     /// <inheritdoc/>
     public void EnqueueLine(string line) => _scriptedLines.Enqueue(line);
+
+    public void SetWindowPosition(int left, int top)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetWindowSize(int width, int height)
+    {
+        throw new NotImplementedException();
+    }
 }

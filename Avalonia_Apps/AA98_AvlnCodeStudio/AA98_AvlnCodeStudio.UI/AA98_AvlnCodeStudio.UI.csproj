@@ -40,6 +40,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base\AA98_AvlnCodeStudio.Base.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.AI\AA98_AvlnCodeStudio.Base.AI.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Building\AA98_AvlnCodeStudio.Base.Building.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.UI\AA98_AvlnCodeStudio.Base.UI.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.OS\AA98_AvlnCodeStudio.Base.OS.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Versioning\AA98_AvlnCodeStudio.Base.Versioning.csproj" />
@@ -48,10 +49,7 @@
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Editor\AA98_AvlnCodeStudio.Editor.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Model\AA98_AvlnCodeStudio.Model.csproj" />
     <ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Avalonia\Avln_CommonDialogs.Avalonia.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Core\AA98_AvlnCodeStudio.Planning.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageVersion Update="Avalonia.Desktop" Version="12.0.4" />
-    <PackageVersion Update="AvaloniaUI.DiagnosticsSupport" Version="2.2.2" />
-  </ItemGroup>
 </Project>

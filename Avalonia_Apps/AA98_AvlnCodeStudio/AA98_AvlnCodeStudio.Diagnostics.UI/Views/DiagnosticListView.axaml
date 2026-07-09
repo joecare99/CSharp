@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d"
+			 x:Class="AA98_AvlnCodeStudio.Diagnostics.UI.Views.DiagnosticListView"
+			 x:DataType="vm:DiagnosticCollectionViewModel">
+	<Border Padding="8"
+			BorderBrush="{DynamicResource ThemeControlMidBrush}"
+			BorderThickness="1"
+			CornerRadius="4">
+		<DockPanel LastChildFill="True">
+			<StackPanel DockPanel.Dock="Top"
+						Margin="0,0,0,6"
+						Spacing="2">
+				<TextBlock Text="Diagnostics"
+						   FontWeight="SemiBold" />
+				<TextBlock Text="{Binding SummaryText}" />
+			</StackPanel>
+			<ScrollViewer VerticalScrollBarVisibility="Auto">
+				<ItemsControl ItemsSource="{Binding Items}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Border Margin="0,0,0,6"
+									Padding="6"
+									BorderBrush="{DynamicResource ThemeControlMidBrush}"
+									BorderThickness="1"
+									CornerRadius="3">
+								<StackPanel Spacing="2">
+									<TextBlock FontWeight="SemiBold"
+											   Text="{Binding Code, StringFormat='{}{0}'}" />
+									<TextBlock Text="{Binding Severity, StringFormat='Severity: {0}'}" />
+									<TextBlock Text="{Binding Message}"
+											   TextWrapping="Wrap" />
+									<TextBlock Text="{Binding SourcePath, StringFormat='Source: {0}'}"
+											   TextWrapping="Wrap" />
+									<TextBlock Text="{Binding LineNumber, StringFormat='Line: {0}'}" />
+								</StackPanel>
+							</Border>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+			</DockPanel>
+	</Border>
+</UserControl>

@@ -2,7 +2,7 @@
 
 ## Status
 
-In Progress
+Completed
 
 ## Parent
 
@@ -51,9 +51,9 @@ The primary concern is not merely adding more code, but making the existing cont
 
 ## Next Refinement Steps
 
-1. Compare current code behavior against the intended V1.1 contract
-2. Record known limitations and severity rules
-3. Add or refine tests for uncovered inspection scenarios
+1. Preserve the documented V1.1 contract while later waves extend the builder
+2. Record any newly discovered inspection gaps as follow-up work rather than reopening the baseline
+3. Add or refine tests only where later changes threaten established V1.1 behavior
 
 ## Planned Implementation Tasks
 

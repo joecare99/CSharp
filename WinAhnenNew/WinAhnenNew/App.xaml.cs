@@ -25,11 +25,19 @@ namespace WinAhnenNew
             services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
             services.AddSingleton<IGenealogyModelFactory, BaseGenGenealogyModelFactory>();
             services.AddSingleton<IPersonSelectionService, PersonSelectionService>();
+            services.AddSingleton<IApplicationShutdownService, WpfApplicationShutdownService>();
             services.AddTransient<IGenFactBuilder, GenFactBuilder>();
             services.AddTransient<IGenILBuilder, GenILBuilder>();
             services.AddTransient<FrmAhnenWinMainViewModel>();
             services.AddTransient<SelectionPageViewModel>();
             services.AddTransient<EditPageViewModel>();
+            services.AddTransient<DetailPageViewModel>();
+            services.AddTransient<RelationshipsPageViewModel>();
+            services.AddTransient<SiblingsPageViewModel>();
+            services.AddTransient<TextPageViewModel>();
+            services.AddTransient<AdditionalPageViewModel>();
+            services.AddTransient<AddressPageViewModel>();
+            services.AddTransient<ImagesPageViewModel>();
             services.AddGenSecureStore(options =>
             {
                 options.RootDirectory = Path.Combine(

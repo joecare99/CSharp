@@ -70,6 +70,38 @@ public class FileEditorDocumentTests
     }
 
     /// <summary>
+    /// Verifies that Linux-style paths keep a stable display name.
+    /// </summary>
+    [TestMethod]
+    public void Load_WithLinuxPath_UsesFileNameAsDisplayName()
+    {
+        var document = new FileEditorDocument();
+
+        document.Load("/home/dev/aa98/notes.md", "# notes\n");
+
+        Assert.AreEqual("/home/dev/aa98/notes.md", document.FilePath);
+        Assert.AreEqual("notes.md", document.DisplayName);
+        Assert.AreEqual("# notes\n", document.Content);
+        Assert.IsFalse(document.IsDirty);
+    }
+
+    /// <summary>
+    /// Verifies that Linux-style Avalonia file paths keep a stable display name after saving.
+    /// </summary>
+    [TestMethod]
+    public void MarkSaved_WithLinuxAxamlPath_UsesFileNameAsDisplayName()
+    {
+        var document = new FileEditorDocument();
+        document.UpdateContent("<Window/>\n");
+
+        document.MarkSaved("/home/dev/aa98/MainWindow.axaml");
+
+        Assert.AreEqual("/home/dev/aa98/MainWindow.axaml", document.FilePath);
+        Assert.AreEqual("MainWindow.axaml", document.DisplayName);
+        Assert.IsFalse(document.IsDirty);
+    }
+
+    /// <summary>
     /// Verifies that invalid load arguments are rejected.
     /// </summary>
     [TestMethod]

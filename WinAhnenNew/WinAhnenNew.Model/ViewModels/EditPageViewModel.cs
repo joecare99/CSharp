@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Media;
 using BaseGenClasses.Helper;
 using BaseGenClasses.Model;
 using BaseGenClasses.Persistence;
@@ -13,6 +12,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
+using WinAhnenNew.Collections;
 using WinAhnenNew.Messages;
 using WinAhnenNew.Services;
 
@@ -25,6 +25,7 @@ namespace WinAhnenNew.ViewModels
     {
         private static readonly string[] _arrDefaultReligions = ["ev.", "rk.", "rf.", "lt."];
         private readonly IPersonSelectionService _personSelectionService;
+        private readonly IMessenger _messenger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EditPageViewModel"/> class.
@@ -34,6 +35,7 @@ namespace WinAhnenNew.ViewModels
         public EditPageViewModel(IPersonSelectionService personSelectionService, IMessenger messenger)
         {
             _personSelectionService = personSelectionService;
+            _messenger = messenger;
 
             LastNameOptions = [];
             ReligionOptions = [];
@@ -196,7 +198,7 @@ namespace WinAhnenNew.ViewModels
         private string _burialPlace = string.Empty;
 
         [ObservableProperty]
-        private ImageSource? _personImageSource;
+        private object? _personImageSource;
 
         [ObservableProperty]
         private string _notes = string.Empty;
@@ -217,8 +219,7 @@ namespace WinAhnenNew.ViewModels
         {
             var lstPersons = _personSelectionService.GetSelectablePersons();
 
-            UpdateStringCollection(
-                LastNameOptions,
+            LastNameOptions.SynchronizeWith(
                 lstPersons
                     .Select(genPerson => genPerson.Surname)
                     .Where(sValue => !string.IsNullOrWhiteSpace(sValue))
@@ -226,8 +227,7 @@ namespace WinAhnenNew.ViewModels
                     .Distinct(StringComparer.CurrentCultureIgnoreCase)
                     .OrderBy(sValue => sValue, StringComparer.CurrentCultureIgnoreCase));
 
-            UpdateStringCollection(
-                ReligionOptions,
+            ReligionOptions.SynchronizeWith(
                 _arrDefaultReligions.Concat(
                     lstPersons
                         .Select(genPerson => genPerson.Religion)
@@ -236,18 +236,17 @@ namespace WinAhnenNew.ViewModels
                         .OrderBy(sValue => sValue, StringComparer.CurrentCultureIgnoreCase))
                     .Distinct(StringComparer.CurrentCultureIgnoreCase));
 
-            UpdateStringCollection(
-                AdoptedByOptions,
+            AdoptedByOptions.SynchronizeWith(
                 lstPersons
                     .Select(FormatPersonName)
                     .Where(sValue => !string.IsNullOrWhiteSpace(sValue))
                     .Distinct(StringComparer.CurrentCultureIgnoreCase)
                     .OrderBy(sValue => sValue, StringComparer.CurrentCultureIgnoreCase));
 
-            UpdateStringCollection(BirthPlaceOptions, GetPlaceOptions(lstPersons, static genPerson => genPerson.BirthPlace?.Name));
-            UpdateStringCollection(BaptismPlaceOptions, GetPlaceOptions(lstPersons, static genPerson => genPerson.BaptPlace?.Name));
-            UpdateStringCollection(DeathPlaceOptions, GetPlaceOptions(lstPersons, static genPerson => genPerson.DeathPlace?.Name));
-            UpdateStringCollection(BurialPlaceOptions, GetPlaceOptions(lstPersons, static genPerson => genPerson.BurialPlace?.Name));
+            BirthPlaceOptions.SynchronizeWith(GetPlaceOptions(lstPersons, static genPerson => genPerson.BirthPlace?.Name));
+            BaptismPlaceOptions.SynchronizeWith(GetPlaceOptions(lstPersons, static genPerson => genPerson.BaptPlace?.Name));
+            DeathPlaceOptions.SynchronizeWith(GetPlaceOptions(lstPersons, static genPerson => genPerson.DeathPlace?.Name));
+            BurialPlaceOptions.SynchronizeWith(GetPlaceOptions(lstPersons, static genPerson => genPerson.BurialPlace?.Name));
         }
 
         #pragma warning disable MVVMTK0034
@@ -459,15 +458,6 @@ namespace WinAhnenNew.ViewModels
                 .OrderBy(sValue => sValue, StringComparer.CurrentCultureIgnoreCase);
         }
 
-        private static void UpdateStringCollection(ObservableCollection<string> lstTarget, IEnumerable<string> lstValues)
-        {
-            lstTarget.Clear();
-            foreach (var sValue in lstValues)
-            {
-                lstTarget.Add(sValue);
-            }
-        }
-
         private static IGenPerson? ResolveSpouse(IGenPerson genSelectedPerson, IGenFamily genFamily)
         {
             if (ReferenceEquals(genFamily.Husband, genSelectedPerson))
@@ -665,6 +655,7 @@ namespace WinAhnenNew.ViewModels
             if (xHasChanges)
             {
                 MarkGenealogyDirty(genSelectedPerson, "Edit page values were applied to the selected person.");
+                _messenger.Send(new PersonHeaderChangedMessage());
             }
         }
 

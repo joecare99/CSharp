@@ -1,0 +1,35 @@
+<Project>
+  <Import Project="..\AA98_AvlnCodeStudio.props" />
+  <PropertyGroup>
+	<OutputType>WinExe</OutputType>
+	<TargetFrameworks>net8.0</TargetFrameworks>
+	<Nullable>enable</Nullable>
+	<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	<Configurations>Debug;Release;DesktopOnly</Configurations>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+	<PackageReference Include="Avalonia" />
+	<PackageReference Include="Avalonia.Desktop" />
+	<PackageReference Include="Avalonia.Themes.Fluent" />
+	<PackageReference Include="Avalonia.Fonts.Inter" />
+	<PackageReference Include="AvaloniaUI.DiagnosticsSupport">
+	  <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+	  <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>none</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="CommunityToolkit.Mvvm" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\AA98.MarkDown.UI\AA98.MarkDown.UI.csproj" />
+  </ItemGroup>
+</Project>

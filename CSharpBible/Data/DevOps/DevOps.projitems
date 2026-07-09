@@ -45,6 +45,7 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831191-Specify-workbench-standalone-primary-workflow.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831192-Specify-preview-coupling-and-contextual-validation.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831193-Implement-keyboard-oriented-main-menu.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-ConsoleProxy-Platform-Robustness.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-010-Use-differential-patches-for-SVN-sync.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-011-Close-priority-test-coverage-gaps.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-012-Add-command-runner-test-seams-for-provider-coverage.md" />
@@ -75,6 +76,12 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-057-Split-archive-provider-tests-into-dedicated-test-project.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-058-Split-compression-provider-tests-into-dedicated-test-projects.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-SharedSkills-001-Create-global-test-coverage-skill.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-Terminal-001-Create-terminal-project-slice-and-solution-wiring.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-Terminal-002-Implement-platform-neutral-terminal-core.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-Terminal-003-Implement-windows-conpty-backend.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-Terminal-004-Implement-posix-pty-backend.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-Terminal-005-Implement-avalonia-terminal-usercontrol.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-Terminal-006-Add-terminal-core-tests-and-validate-slice.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-001-Validate-and-document-current-V1.1-inspection-contract.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-002-Harden-reference-resolution-coverage-and-diagnostics.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-WorkbenchBuilder-003-Document-and-validate-thin-host-command-contract.md" />

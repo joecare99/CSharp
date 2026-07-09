@@ -1,5 +1,7 @@
 ﻿using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.Editor.Services;
+using System.IO;
+using AA98_AvlnCodeStudio.Planning.Core.Services;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels
 {
@@ -8,23 +10,29 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly Components.IAvaloniaEditorComponent _editorComponent;
 
         public MainWindowViewModel()
-            : this(new Components.AvaloniaEditorComponent(
-                new EditorWorkflow(
-                    new Model.Documents.FileEditorDocument(),
-                    new Services.DesignEditorFileDialogService(),
-                    new Services.DesignTextDocumentStorageService()),
-                new EditorViewModel(),
-                new Controls.EditorTextArea()))
+            : this(
+                new Components.AvaloniaEditorComponent(
+                    new EditorWorkflow(
+                        new Model.Documents.FileEditorDocument(),
+                        new Services.DesignEditorFileDialogService(),
+                        new Services.DesignTextDocumentStorageService()),
+                    new EditorViewModel(),
+                    new Controls.EditorTextArea()),
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()))
         {
         }
 
-        public MainWindowViewModel(Components.IAvaloniaEditorComponent editorComponent)
+        public MainWindowViewModel(Components.IAvaloniaEditorComponent editorComponent, PlanningExplorerViewModel planningExplorer)
         {
             _editorComponent = editorComponent;
             Editor = editorComponent.EditorViewModel;
+            PlanningExplorer = planningExplorer;
+            PlanningExplorer.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
         }
 
         public EditorViewModel Editor { get; }
+
+        public PlanningExplorerViewModel PlanningExplorer { get; }
 
         public Components.IAvaloniaEditorComponent EditorComponent => _editorComponent;
 
@@ -33,6 +41,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         public string NavigationTitle => UiStrings.NavigationTitle;
 
         public string NavigationPlaceholder => UiStrings.NavigationPlaceholder;
+
+        public string PlanningExplorerTitle => UiStrings.PlanningExplorerTitle;
 
         public string EditorRegionTitle => UiStrings.EditorRegionTitle;
 

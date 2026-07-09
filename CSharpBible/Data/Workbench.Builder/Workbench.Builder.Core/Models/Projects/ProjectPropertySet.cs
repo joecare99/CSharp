@@ -20,6 +20,8 @@ public sealed class ProjectPropertySet
     /// <param name="isTestProject">The evaluated test project flag.</param>
     /// <param name="configuration">The evaluated build configuration.</param>
     /// <param name="runtimeIdentifier">The evaluated runtime identifier.</param>
+    /// <param name="outputPath">The evaluated output path, when available.</param>
+    /// <param name="intermediateOutputPath">The evaluated intermediate output path, when available.</param>
     /// <param name="projectAssetsFile">The evaluated project assets file path, when available.</param>
     public ProjectPropertySet(
         string assemblyName,
@@ -34,6 +36,8 @@ public sealed class ProjectPropertySet
         string? isTestProject,
         string? configuration,
         string? runtimeIdentifier,
+        string? outputPath,
+        string? intermediateOutputPath,
         string? projectAssetsFile)
     {
         AssemblyName = assemblyName;
@@ -48,6 +52,8 @@ public sealed class ProjectPropertySet
         IsTestProject = isTestProject;
         Configuration = configuration;
         RuntimeIdentifier = runtimeIdentifier;
+        OutputPath = outputPath;
+        IntermediateOutputPath = intermediateOutputPath;
         ProjectAssetsFile = projectAssetsFile;
     }
 
@@ -110,6 +116,16 @@ public sealed class ProjectPropertySet
     /// Gets the evaluated runtime identifier.
     /// </summary>
     public string? RuntimeIdentifier { get; }
+
+    /// <summary>
+    /// Gets the evaluated output path, when available.
+    /// </summary>
+    public string? OutputPath { get; }
+
+    /// <summary>
+    /// Gets the evaluated intermediate output path, when available.
+    /// </summary>
+    public string? IntermediateOutputPath { get; }
 
     /// <summary>
     /// Gets the evaluated project assets file path, when available.

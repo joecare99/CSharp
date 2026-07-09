@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using GenSecure.Core;
 using GenSecure.Demo.ViewModels;
+using GenSecure.Windows;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GenSecure.Demo;
@@ -23,6 +24,7 @@ public partial class App : Application
 
         services.AddGenSecureStore(o =>
             o.RootDirectory = Path.Combine(Path.GetTempPath(), "GenSecureDemo"));
+        services.AddGenSecureWindowsPlatform();
 
         services.AddSingleton<MainViewModel>();
 

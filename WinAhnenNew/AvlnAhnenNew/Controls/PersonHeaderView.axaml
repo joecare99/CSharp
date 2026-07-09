@@ -1,0 +1,139 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="AvlnAhnenNew.Controls.PersonHeaderView"
+			 x:CompileBindings="False">
+  <Border Padding="12"
+		  Background="#F8F8F8"
+		  BorderBrush="#D0D0D0"
+		  BorderThickness="1"
+		  CornerRadius="4">
+	<Grid>
+	  <Grid.RowDefinitions>
+		<RowDefinition Height="Auto" />
+		<RowDefinition Height="12" />
+		<RowDefinition Height="Auto" />
+	  </Grid.RowDefinitions>
+
+	  <Grid Grid.Row="0">
+		<Grid.ColumnDefinitions>
+		  <ColumnDefinition Width="Auto" />
+		  <ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+		<TextBlock Grid.Column="0"
+				   Margin="0,0,8,0"
+				   VerticalAlignment="Center"
+				   Text="Person" />
+		<TextBox Grid.Column="1"
+				 IsReadOnly="True"
+				 Text="{Binding DisplayName}" />
+	  </Grid>
+
+	  <Grid Grid.Row="2">
+		<Grid.ColumnDefinitions>
+		  <ColumnDefinition Width="*" />
+		  <ColumnDefinition Width="20" />
+		  <ColumnDefinition Width="300" />
+		</Grid.ColumnDefinitions>
+
+		<Border Grid.Column="0"
+				Padding="12"
+				BorderBrush="#B0B0B0"
+				BorderThickness="1"
+				CornerRadius="4">
+		  <Grid Margin="8">
+			<Grid.ColumnDefinitions>
+			  <ColumnDefinition Width="Auto" />
+			  <ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+			  <RowDefinition Height="Auto" />
+			  <RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<TextBlock Grid.Row="0"
+					   Grid.Column="0"
+					   Margin="0,0,8,8"
+					   VerticalAlignment="Center"
+					   Text="Vater" />
+			<TextBox Grid.Row="0"
+					 Grid.Column="1"
+					 Margin="0,0,0,8"
+					 MinWidth="240"
+					 IsReadOnly="True"
+					 Text="{Binding Father}" />
+			<TextBlock Grid.Row="1"
+					   Grid.Column="0"
+					   Margin="0,0,8,0"
+					   VerticalAlignment="Center"
+					   Text="Mutter" />
+			<TextBox Grid.Row="1"
+					 Grid.Column="1"
+					 MinWidth="240"
+					 IsReadOnly="True"
+					 Text="{Binding Mother}" />
+		  </Grid>
+		</Border>
+
+		<Grid Grid.Column="2">
+		  <Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		  </Grid.ColumnDefinitions>
+		  <Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		  </Grid.RowDefinitions>
+
+		  <TextBlock Grid.Row="0"
+					 Grid.Column="0"
+					 Margin="0,0,8,8"
+					 VerticalAlignment="Center"
+					 Text="Nr." />
+		  <Border Grid.Row="0"
+				  Grid.Column="1"
+				  Margin="0,0,8,8"
+				  MinHeight="27"
+				  Padding="4"
+				  BorderBrush="#B0B0B0"
+				  BorderThickness="1">
+			<TextBlock Padding="2"
+					   VerticalAlignment="Center"
+					   Text="{Binding PersonNumber}" />
+		  </Border>
+		  <ToggleButton Grid.Row="0"
+						Grid.Column="2"
+						Width="31"
+						Height="27"
+						Margin="8,0,0,8"
+						HorizontalAlignment="Right"
+						IsChecked="{Binding IsSelectPersonToggled}"
+						IsEnabled="False" />
+		  <TextBlock Grid.Row="1"
+					 Grid.Column="0"
+					 Margin="0,0,8,8"
+					 VerticalAlignment="Center"
+					 Text="ID" />
+		  <TextBox Grid.Row="1"
+				   Grid.Column="1"
+				   Grid.ColumnSpan="2"
+				   Margin="0,0,0,8"
+				   IsReadOnly="True"
+				   Text="{Binding Id}" />
+		  <TextBlock Grid.Row="2"
+					 Grid.Column="0"
+					 Margin="0,0,8,0"
+					 VerticalAlignment="Center"
+					 Text="Zusatz" />
+		  <TextBox Grid.Row="2"
+				   Grid.Column="1"
+				   Grid.ColumnSpan="2"
+				   IsReadOnly="True"
+				   Text="{Binding AdditionalInfo}" />
+		</Grid>
+	  </Grid>
+	</Grid>
+  </Border>
+</UserControl>

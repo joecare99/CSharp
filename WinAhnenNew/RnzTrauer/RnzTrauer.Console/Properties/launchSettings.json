@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "RnzTrauer.Console": {
+      "commandName": "Project"
+    },
+    "Rnz with date": {
+      "commandName": "Project",
+      "commandLineArgs": "07.09.2025"
+    }
+  }
+}

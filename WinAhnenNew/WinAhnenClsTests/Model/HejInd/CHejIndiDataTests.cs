@@ -8,10 +8,10 @@ namespace WinAhnenCls.Model.HejInd.Tests
     public class CHejIndiDataTests
     {
         //private CHejInds FClsHejIndividuals;
-        private CHejIndiReader FHejIndData;
-        private string FDataDir;
+        private CHejIndiReader FHejIndData = null!;
+        private string FDataDir = "";
         private Random rnd;
-        const string DefDataDir = "Data";
+        const string DefDataDir = ".\\Resources\\";
         /*
         private void CreateTestData(bool Tested = false)
         {
@@ -100,7 +100,7 @@ for (i = 1, i < cInd.Length; i++)
                     FDataDir = Path.Combine("..", FDataDir);
                 else
                     break;
-            FDataDir = Path.Combine(FDataDir, "HejTest");
+   //         FDataDir = Path.Combine(FDataDir, "HejTest");
         }
 
         [TestMethod()]

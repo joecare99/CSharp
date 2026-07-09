@@ -80,13 +80,13 @@ internal static class CryptoUtilities
     }
 
     /// <summary>
-    /// Derives the SID pepper key from the master key using HKDF-SHA256.
-    /// The pepper ensures that SID hashes cannot be brute-forced via SID enumeration,
-    /// even when the SID domain and RID range are known to an attacker.
+    /// Derives the principal pepper key from the master key using HKDF-SHA256.
+    /// The pepper ensures that principal hashes cannot be brute-forced via principal enumeration,
+    /// even when the principal identifier namespace is predictable to an attacker.
     /// </summary>
     /// <param name="arrMasterKey">The 32-byte AES master key.</param>
-    /// <returns>A 32-byte SID pepper key.</returns>
-    public static byte[] DeriveSidPepperKey(byte[] arrMasterKey)
+    /// <returns>A 32-byte principal pepper key.</returns>
+    public static byte[] DerivePrincipalPepperKey(byte[] arrMasterKey)
     {
         ArgumentNullException.ThrowIfNull(arrMasterKey);
 
@@ -94,22 +94,22 @@ internal static class CryptoUtilities
             HashAlgorithmName.SHA256,
             arrMasterKey,
             outputLength: 32,
-            info: Encoding.UTF8.GetBytes("GenSecure-SID-Pepper"));
+            info: Encoding.UTF8.GetBytes("GenSecure-Principal-Pepper"));
     }
 
     /// <summary>
-    /// Computes an HMAC-SHA256 of a Windows SID keyed with the pepper derived from the master key.
-    /// Raw SIDs are never written to disk; only their keyed hashes are persisted.
+    /// Computes an HMAC-SHA256 of a principal identifier keyed with the pepper derived from the master key.
+    /// Raw principal identifiers are never written to disk; only their keyed hashes are persisted.
     /// </summary>
-    /// <param name="sSid">The Windows SID string (e.g. <c>S-1-5-21-…</c>).</param>
-    /// <param name="arrSidPepperKey">The 32-byte pepper key obtained from <see cref="DeriveSidPepperKey"/>.</param>
+    /// <param name="sPrincipalId">The principal identifier.</param>
+    /// <param name="arrPrincipalPepperKey">The 32-byte pepper key obtained from <see cref="DerivePrincipalPepperKey"/>.</param>
     /// <returns>Lowercase hex-encoded HMAC-SHA256 digest.</returns>
-    public static string ToSidHash(string sSid, byte[] arrSidPepperKey)
+    public static string ToPrincipalHash(string sPrincipalId, byte[] arrPrincipalPepperKey)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(sSid);
-        ArgumentNullException.ThrowIfNull(arrSidPepperKey);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sPrincipalId);
+        ArgumentNullException.ThrowIfNull(arrPrincipalPepperKey);
 
-        byte[] arrHash = HMACSHA256.HashData(arrSidPepperKey, Encoding.UTF8.GetBytes(sSid));
+        byte[] arrHash = HMACSHA256.HashData(arrPrincipalPepperKey, Encoding.UTF8.GetBytes(sPrincipalId));
         return Convert.ToHexString(arrHash).ToLowerInvariant();
     }
 

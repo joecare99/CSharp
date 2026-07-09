@@ -24,6 +24,8 @@ public static class UiStrings
 
     public static string NavigationPlaceholder => GetString(nameof(NavigationPlaceholder));
 
+    public static string PlanningExplorerTitle => GetString(nameof(PlanningExplorerTitle));
+
     public static string EditorRegionTitle => GetString(nameof(EditorRegionTitle));
 
     public static string StatusRegionTitle => GetString(nameof(StatusRegionTitle));
