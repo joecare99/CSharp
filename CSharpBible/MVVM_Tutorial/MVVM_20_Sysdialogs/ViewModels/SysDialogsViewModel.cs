@@ -14,6 +14,7 @@
 using System;
 using System.Drawing;
 using CommonDialogs;
+using CommonDialogs.Helper;
 using CommonDialogs.Interfaces;
 using Microsoft.Win32;
 using MVVM.ViewModel;
@@ -218,19 +219,20 @@ public class SysDialogsViewModel : BaseViewModel {
 			});
 
 			OpenColorDialogCommand = new DelegateCommand((o) => {
-            IColorDialog cdPar = new ColorDialog
-            {
-                Color = MyColor
-            };
-            dColorDialog?.Invoke(MyColor, cdPar, (c, p) => { MyColor = c; });
+			IColorDialog cdPar = new ColorDialog
+			{
+				Color = MyColor.ToDialogColor()
+			};
+
+			dColorDialog?.Invoke(MyColor, cdPar, (c, p) => { MyColor = c; });
 			});
 
 			OpenFontDialogCommand = new DelegateCommand((o) => {
-            IFontDialog fdPar = new FontDialog
-            {
-                Font = MyFont
-            };
-            dFontDialog?.Invoke(MyFont, fdPar, (f, p) => { MyFont = f; });
+			IFontDialog fdPar = new FontDialog
+			{
+				Font = MyFont.ToDialogSelection(MyColor)
+			};
+			dFontDialog?.Invoke(MyFont, fdPar, (f, p) => { MyFont = f; });
 			});
 
 			OpenPrintDialogCommand = new DelegateCommand((o) => {

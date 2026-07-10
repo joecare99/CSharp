@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using CommonDialogs.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Media;
 using System.Globalization;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ public class ColorConverterTests
                 new object[] { Colors.Blue, "#FF0000FF" },
                 new object[] { Colors.White, "#FFFFFFFF" },
                 new object[] { Colors.Transparent, "#00FFFFFF" },
+                new object[] { new DialogColor(0xFF112233), "#FF112233" },
                 new object[] { null!, "" },
     };
 
@@ -42,6 +44,6 @@ public class ColorConverterTests
     [TestMethod()]
     public void ConvertBackTest()
     {
-        Assert.ThrowsExactly<NotImplementedException>(()=> _testConverter.ConvertBack(null!,typeof(string),null!,CultureInfo.InvariantCulture));
+        Assert.Throws<NotImplementedException>(()=> _testConverter.ConvertBack(null!,typeof(string),null!,CultureInfo.InvariantCulture));
     }
 }

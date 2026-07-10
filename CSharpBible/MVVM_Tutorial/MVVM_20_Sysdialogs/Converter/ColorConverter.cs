@@ -11,6 +11,8 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using CommonDialogs.Helper;
+using CommonDialogs.Models;
 using System;
 using System.Globalization;
 using System.Windows.Data;
@@ -37,15 +39,20 @@ public class ColorConverter : IValueConverter
     {
         if (value is Color c)
             return c.ToString();
-        if (value is System.Drawing.Color cl)
+
+        if (value is System.Drawing.Color drawingColor)
         {
-            Color cc = default;
-            cc.A = cl.A;
-            cc.B = cl.B; 
-            cc.R = cl.R;
-            cc.G = cl.G;
-            return cc.ToString();
+            var mediaColor = Color.FromArgb(drawingColor.A, drawingColor.R, drawingColor.G, drawingColor.B);
+            return mediaColor.ToString();
         }
+
+        if (value is DialogColor dialogColor)
+        {
+            var convertedColor = dialogColor.ToDrawingColor();
+            var mediaColor = Color.FromArgb(convertedColor.A, convertedColor.R, convertedColor.G, convertedColor.B);
+            return mediaColor.ToString();
+        }
+
         return string.Empty;
     }
 
