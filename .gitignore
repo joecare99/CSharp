@@ -49,3 +49,4 @@
 /Avalonia_Apps/.packages/*.nupkg
 /.github/upgrades/scenarios/sdk-style-conversion/tasks/01-convert-csv-viewer
 /CSharpBible/Libraries/Libraries.Package/artifacts/nuget
+/JC-AMS/Core/Resource/Version.inc
