@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using CommonDialogs.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,6 +15,7 @@ public class FontConverterTests
 
     static IEnumerable<object[]> FontConverterData => new[] {
                 new object[] { new System.Drawing.Font("Arial", 12f), new System.Windows.Media.FontFamily("Arial") },
+                new object[] { new FontDialogSelection { FamilyName = "Arial", Size = 12d }, new System.Windows.Media.FontFamily("Arial") },
                 new object[] { null!, null! },
     };
 
@@ -33,6 +35,6 @@ public class FontConverterTests
     [TestMethod()]
     public void ConvertBackTest()
     {
-        Assert.ThrowsExactly<NotImplementedException>(() => _testConverter.ConvertBack(null!, typeof(string), null!, CultureInfo.InvariantCulture));
+        Assert.Throws<NotImplementedException>(() => _testConverter.ConvertBack(null!, typeof(string), null!, CultureInfo.InvariantCulture));
     }
 }
