@@ -14,6 +14,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using CommonDialogs.Helper;
 using CommonDialogs.Interfaces;
 using CommonDialogs.Models;
 
@@ -63,8 +64,8 @@ public partial class ColorDialog : Component, IColorDialog
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
     public DialogColor Color
     {
-        get => new((uint)_cd.Color.ToArgb(), _cd.Color.IsNamedColor ? _cd.Color.Name : null);
-        set => _cd.Color = System.Drawing.Color.FromArgb(unchecked((int)value.Argb));
+        get => _cd.Color.ToDialogColor();
+        set => _cd.Color = value.ToDrawingColor();
     }
 
 

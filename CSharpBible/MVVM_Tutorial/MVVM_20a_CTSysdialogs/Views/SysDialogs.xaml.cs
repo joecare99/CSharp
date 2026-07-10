@@ -15,6 +15,7 @@ using MVVM_20_Sysdialogs.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using CommonDialogs.Helper;
 using CommonDialogs.Interfaces;
 using System.Drawing;
 
@@ -69,9 +70,9 @@ public partial class SysDialogs : Page {
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     private bool? DoFontDialog(Font font, IFontDialog par, Action<Font, IFontDialog>? OnAccept)
     {
-        par.Font = font;
+        par.Font = font.ToDialogSelection();
         bool? result = par.ShowDialog();
-        if (result ?? false) OnAccept?.Invoke(par.Font, par);
+        if (result ?? false) OnAccept?.Invoke(par.Font.ToDrawingFont(font), par);
         return result;
     }
 
@@ -84,9 +85,9 @@ public partial class SysDialogs : Page {
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     private bool? DoColorDialog(Color color, IColorDialog par, Action<Color, IColorDialog>? OnAccept)
     {
-        par.Color = color;
+        par.Color = color.ToDialogColor();
         bool? result = par.ShowDialog();
-        if (result ?? false) OnAccept?.Invoke(par.Color , par);
+        if (result ?? false) OnAccept?.Invoke(par.Color.ToDrawingColor(), par);
         return result;
     }
 

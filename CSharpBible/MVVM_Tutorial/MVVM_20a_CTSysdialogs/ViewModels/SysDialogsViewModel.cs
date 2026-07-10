@@ -15,6 +15,7 @@ using System;
 using System.Drawing;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommonDialogs;
+using CommonDialogs.Helper;
 using CommonDialogs.Interfaces;
 using Microsoft.Win32;
 using MVVM.ViewModel;
@@ -155,7 +156,7 @@ public partial class SysDialogsViewModel : BaseViewModelCT
     {
         IFontDialog fdPar = new FontDialog
         {
-            Font = MyFont
+            Font = MyFont.ToDialogSelection(MyColor)
         };
         dFontDialog?.Invoke(MyFont, fdPar, (f, p) => { MyFont = f; });
     }
@@ -165,7 +166,7 @@ public partial class SysDialogsViewModel : BaseViewModelCT
     {
         IColorDialog cdPar = new ColorDialog
         {
-            Color = MyColor
+            Color = MyColor.ToDialogColor()
         };
         dColorDialog?.Invoke(MyColor, cdPar, (c, p) => { MyColor = c; });
     }

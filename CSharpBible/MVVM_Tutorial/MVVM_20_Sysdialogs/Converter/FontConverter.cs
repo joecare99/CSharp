@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommonDialogs.Helper;
+using CommonDialogs.Models;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -10,9 +12,10 @@ public class FontConverter : IValueConverter
     {
         return value switch
         {
-            System.Drawing.Font f => new System.Windows.Media.FontFamily(f.Name),
+            System.Drawing.Font drawingFont => new System.Windows.Media.FontFamily(drawingFont.Name),
+            FontDialogSelection selection => new System.Windows.Media.FontFamily(selection.ToDrawingFont().Name),
             _ => null
-        } ;
+        };
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) 
