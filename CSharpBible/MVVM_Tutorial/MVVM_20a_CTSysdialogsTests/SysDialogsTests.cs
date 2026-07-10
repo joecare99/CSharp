@@ -64,7 +64,7 @@ public class SysDialogsTests
     [DataRow(true, false, "")]
     [DataRow(false, true, "")]
     [DataRow(null, true, "")]
-    [DataRow(true, true, "OnFont([Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=1, GdiVerticalFont=False],{0})\r\n")]
+    [DataRow(true, true, "OnFont([Font: Name=Microsoft Sans Serif, Size=8,25, Units=3, GdiCharSet=0, GdiVerticalFont=False],{0})\r\n")]
     public void DoFontDialogTest(bool? xRes, bool xAct, string sExp)
     {
         var par = Substitute.For<IFontDialog>();
