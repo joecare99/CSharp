@@ -22,6 +22,6 @@
 	<ProjectReference Include="..\Avln_Bubbles.View\Avln_Bubbles.View.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="Avalonia.Browser" Version="12.0.5" />
+    <PackageVersion Update="Avalonia.Browser" Version="12.1.0" />
   </ItemGroup>
 </Project>
