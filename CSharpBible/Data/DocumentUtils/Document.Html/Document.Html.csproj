@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="1.5.1" />
+    <PackageReference Include="AngleSharp" Version="1.5.2" />
   </ItemGroup>
 </Project>
