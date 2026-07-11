@@ -10,8 +10,8 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.0.5" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.5" />
+    <PackageReference Include="Avalonia" Version="12.1.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.0" />
   </ItemGroup>
 
   <ItemGroup>
