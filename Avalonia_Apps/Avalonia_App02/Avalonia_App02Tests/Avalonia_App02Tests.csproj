@@ -26,9 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.0.5" />
-    <PackageVersion Update="Avalonia.Headless" Version="12.0.5" />
+    <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.1.0" />
+    <PackageVersion Update="Avalonia.Headless" Version="12.1.0" />
     <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+    <PackageVersion Update="MSTest" Version="4.3.0" />
   </ItemGroup>
 
 
