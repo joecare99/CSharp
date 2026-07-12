@@ -260,6 +260,12 @@
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
   </Folder>
+  <Folder Name="/Data/" />
+  <Folder Name="/Data/Workbench.Builder/">
+    <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Core/Workbench.Builder.Core.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+  </Folder>
   <Folder Name="/FroniusMonitor/">
     <Project Path="../DataConversion/FroniusMonitor.Core.Tests/FroniusMonitor.Core.Tests.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
@@ -469,6 +475,8 @@
      <Project Path="AA98_AvlnCodeStudio/AA98.DevOpsPlanning.Host/AA98.DevOpsPlanning.Host.csproj">
        <Build Solution="DesktopOnly|*" Project="false" />
      </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98.MarkDown.Host/AA98.MarkDown.Host.csproj" />
+     <Project Path="AA98_AvlnCodeStudio/AA98.MarkDown.UI/AA98.MarkDown.UI.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98.Terminal.Host/AA98.Terminal.Host.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
