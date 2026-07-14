@@ -613,13 +613,13 @@ internal partial class Ahnen : Form
                             {
                                 var sPerSex = DataModul.Person.GetSex(Modul1.PersInArb);
                                 if (Conversions.ToBoolean(Modul1_Nr1 / 2.0 == Conversion.Int(Modul1_Nr1 / 2.0)
-                                    & sPerSex == "F"))
+                                    && sPerSex == "F"))
                                 {
                                     _ = Interaction.MsgBox("Person ist weiblich!\nWeibliche Personen können keine grade Ahnenziffer bekommen.");
                                     goto end_IL_0001_2;
                                 }
                                 if (Conversions.ToBoolean(Modul1_Nr1 / 2.0 != Conversion.Int(Modul1_Nr1 / 2.0)
-                                    & sPerSex == "M"))
+                                    && sPerSex == "M"))
                                 {
                                     _ = Interaction.MsgBox("Person ist männlich!\nMännliche Personen können keine ungrade Ahnenziffer größer 1 bekommen.");
                                     goto end_IL_0001_2;
@@ -629,119 +629,119 @@ internal partial class Ahnen : Form
                             {
                                 Gen = 0;
                             }
-                            else if (Modul1_Nr1 > 1 & Modul1_Nr1 < 4)
+                            else if (Modul1_Nr1 > 1 && Modul1_Nr1 < 4)
                             {
                                 Gen = 1;
                             }
-                            else if (Modul1_Nr1 > 3 & Modul1_Nr1 < 8)
+                            else if (Modul1_Nr1 > 3 && Modul1_Nr1 < 8)
                             {
                                 Gen = 2;
                             }
-                            else if (Modul1_Nr1 > 7 & Modul1_Nr1 < 16)
+                            else if (Modul1_Nr1 > 7 && Modul1_Nr1 < 16)
                             {
                                 Gen = 3;
                             }
-                            else if (Modul1_Nr1 > 15 & Modul1_Nr1 < 32)
+                            else if (Modul1_Nr1 > 15 && Modul1_Nr1 < 32)
                             {
                                 Gen = 4;
                             }
-                            else if (Modul1_Nr1 > 31 & Modul1_Nr1 < 64)
+                            else if (Modul1_Nr1 > 31 && Modul1_Nr1 < 64)
                             {
                                 Gen = 5;
                             }
-                            else if (Modul1_Nr1 > 63 & Modul1_Nr1 < 128)
+                            else if (Modul1_Nr1 > 63 && Modul1_Nr1 < 128)
                             {
                                 Gen = 6;
                             }
-                            else if (Modul1_Nr1 > 127 & Modul1_Nr1 < 256)
+                            else if (Modul1_Nr1 > 127 && Modul1_Nr1 < 256)
                             {
                                 Gen = 7;
                             }
-                            else if (Modul1_Nr1 > 255 & Modul1_Nr1 < 512)
+                            else if (Modul1_Nr1 > 255 && Modul1_Nr1 < 512)
                             {
                                 Gen = 8;
                             }
-                            else if (Modul1_Nr1 > 511 & Modul1_Nr1 < 1024)
+                            else if (Modul1_Nr1 > 511 && Modul1_Nr1 < 1024)
                             {
                                 Gen = 9;
                             }
-                            else if (Modul1_Nr1 > 1023 & Modul1_Nr1 < 2048)
+                            else if (Modul1_Nr1 > 1023 && Modul1_Nr1 < 2048)
                             {
                                 Gen = 10;
                             }
-                            else if (Modul1_Nr1 > 2047 & Modul1_Nr1 < 4096)
+                            else if (Modul1_Nr1 > 2047 && Modul1_Nr1 < 4096)
                             {
                                 Gen = 11;
                             }
-                            else if (Modul1_Nr1 > 4095 & Modul1_Nr1 < 8192)
+                            else if (Modul1_Nr1 > 4095 && Modul1_Nr1 < 8192)
                             {
                                 Gen = 12;
                             }
-                            else if (Modul1_Nr1 > 8191 & Modul1_Nr1 < 16384)
+                            else if (Modul1_Nr1 > 8191 && Modul1_Nr1 < 16384)
                             {
                                 Gen = 13;
                             }
-                            else if (Modul1_Nr1 > 16383 & Modul1_Nr1 < 32768)
+                            else if (Modul1_Nr1 > 16383 && Modul1_Nr1 < 32768)
                             {
                                 Gen = 14;
                             }
-                            else if (Modul1_Nr1 > 32767 & Modul1_Nr1 < 65536)
+                            else if (Modul1_Nr1 > 32767 && Modul1_Nr1 < 65536)
                             {
                                 Gen = 15;
                             }
-                            else if (Modul1_Nr1 > 65535 & Modul1_Nr1 < 131072)
+                            else if (Modul1_Nr1 > 65535 && Modul1_Nr1 < 131072)
                             {
                                 Gen = 16;
                             }
-                            else if (Modul1_Nr1 > 131071 & Modul1_Nr1 < 262144)
+                            else if (Modul1_Nr1 > 131071 && Modul1_Nr1 < 262144)
                             {
                                 Gen = 17;
                             }
-                            else if (Modul1_Nr1 > 262143 & Modul1_Nr1 < 524288)
+                            else if (Modul1_Nr1 > 262143 && Modul1_Nr1 < 524288)
                             {
                                 Gen = 18;
                             }
-                            else if (Modul1_Nr1 > 524287 & Modul1_Nr1 < 1048576)
+                            else if (Modul1_Nr1 > 524287 && Modul1_Nr1 < 1048576)
                             {
                                 Gen = 19;
                             }
-                            else if (Modul1_Nr1 > 1048575 & Modul1_Nr1 < 2097152)
+                            else if (Modul1_Nr1 > 1048575 && Modul1_Nr1 < 2097152)
                             {
                                 Gen = 20;
                             }
-                            else if (Modul1_Nr1 > 2097151 & Modul1_Nr1 < 4194304)
+                            else if (Modul1_Nr1 > 2097151 && Modul1_Nr1 < 4194304)
                             {
                                 Gen = 21;
                             }
-                            else if (Modul1_Nr1 > 4194303 & Modul1_Nr1 < 8388608)
+                            else if (Modul1_Nr1 > 4194303 && Modul1_Nr1 < 8388608)
                             {
                                 Gen = 22;
                             }
-                            else if (Modul1_Nr1 > 8388607 & Modul1_Nr1 < 16777216)
+                            else if (Modul1_Nr1 > 8388607 && Modul1_Nr1 < 16777216)
                             {
                                 Gen = 23;
                             }
-                            else if (Modul1_Nr1 > 16777215 & Modul1_Nr1 < 33554432)
+                            else if (Modul1_Nr1 > 16777215 && Modul1_Nr1 < 33554432)
                             {
                                 Gen = 24;
                             }
-                            else if (Modul1_Nr1 > 33554431 & Modul1_Nr1 < 67108864)
+                            else if (Modul1_Nr1 > 33554431 && Modul1_Nr1 < 67108864)
                             {
                                 Gen = 25;
                             }
-                            else if (Modul1_Nr1 > 67108863 & Modul1_Nr1 < 134217728)
+                            else if (Modul1_Nr1 > 67108863 && Modul1_Nr1 < 134217728)
                             {
                                 Gen = 26;
                             }
-                            else if (Modul1_Nr1 > 134217727 & Modul1_Nr1 < 268435456)
+                            else if (Modul1_Nr1 > 134217727 && Modul1_Nr1 < 268435456)
                             {
                                 Gen = 27;
                             }
-                            else if (Modul1_Nr1 > 268435455 & Modul1_Nr1 < 536870912)
+                            else if (Modul1_Nr1 > 268435455 && Modul1_Nr1 < 536870912)
                             {
                                 Gen = 28;
                             }
-                            else if (Modul1_Nr1 > 536870911 & Modul1_Nr1 < 1073741824)
+                            else if (Modul1_Nr1 > 536870911 && Modul1_Nr1 < 1073741824)
                             {
                                 Gen = 29;
                             }
@@ -865,7 +865,7 @@ internal partial class Ahnen : Form
                                 Modul1.Ubg = famsuch1(Modul1.PersInArb, Modul1.eLKennz);
                                 Modul1.FamInArb = Modul1.Ubg;
                                 Gen++;
-                                if (!(Gen == 135 | Gen > Modul1_Gen1.AsDouble() + 1.0))
+                                if (!(Gen == 135 || Gen > Modul1_Gen1.AsDouble() + 1.0))
                                 {
                                     if (Modul1.Ubg != 0)
                                     {
@@ -874,7 +874,7 @@ internal partial class Ahnen : Form
                                         Modul1.Ubg = 0;
                                         Perprüf = Modul1.PersInArb;
                                         DataModul.Link.ReadFamily(Modul1.FamInArb, Modul1.Family);
-                                        if (!(Modul1.Family.Mann == 0 & Modul1.Family.Frau == 0))
+                                        if (!(Modul1.Family.Mann == 0 && Modul1.Family.Frau == 0))
                                         {
                                             Modul1.PersInArb = Modul1.Family.Mann;
                                             if (Modul1.Family.Mann == 0)
@@ -1369,7 +1369,7 @@ internal partial class Ahnen : Form
         {
             aiFam.Add(link.iFamNr);
         }
-        if (eLKennz == ELinkKennz.lkChild & aiFam.Count > 1)
+        if (eLKennz == ELinkKennz.lkChild && aiFam.Count > 1)
         {
             string text = "Person " + persInArb.AsString() + " ist in den Familien " + Fami + " als Kind eingebunden. Eine Person kann aber nur in einer Familie als Kind sein.";
             text += "\nBitte diesen Fehler zuerst korrigieren.";
@@ -1889,7 +1889,7 @@ internal partial class Ahnen : Form
         Modul1.Ubg = famsuch1(Modul1.PersInArb, Modul1.eLKennz);
         Modul1.FamInArb = Modul1.Ubg;
         Gen++;
-        if (!(Gen == 135 | Gen > Modul1_Gen1.AsDouble() + 1.0))
+        if (!(Gen == 135 || Gen > Modul1_Gen1.AsDouble() + 1.0))
         {
             if (Modul1.Ubg != 0)
             {
@@ -1898,7 +1898,7 @@ internal partial class Ahnen : Form
                 Modul1.Ubg = 0;
                 Perprüf = Modul1.PersInArb;
                 DataModul.Link.ReadFamily(Modul1.FamInArb, Modul1.Family);
-                if (!(Modul1.Family.Mann == 0 & Modul1.Family.Frau == 0))
+                if (!(Modul1.Family.Mann == 0 && Modul1.Family.Frau == 0))
                 {
                     Modul1.PersInArb = Modul1.Family.Mann;
                     if (Modul1.Family.Mann == 0)

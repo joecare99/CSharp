@@ -1415,7 +1415,7 @@ public partial class Hinter : Form
                                     AppendText($"   {Modul1.IText[EUserText.tChild_AS]}{num22 - num16}{Modul1.IText[EUserText.t214]}", famInArb, 4);
                                 }
                             }
-                            if ((array[1] > 0) & (aiFather[1] > 0) && array[1] - 10000 < aiFather[1])
+                            if ((array[1] > 0) && (aiFather[1] > 0) && array[1] - 10000 < aiFather[1])
                             {
                                 if (Ja == 0)
                                 {
@@ -1424,7 +1424,7 @@ public partial class Hinter : Form
                                 }
                                 AppendText($"Kind {num4 + 1} vor {Modul1.IText[EUserText.t162]} geboren !", famInArb, 4);
                             }
-                            if ((array[1] > 0) & (aiFather[3] > 0) && array[1] - 10000 > aiFather[3])
+                            if ((array[1] > 0) && (aiFather[3] > 0) && array[1] - 10000 > aiFather[3])
                             {
                                 if (Ja == 0)
                                 {
@@ -1433,7 +1433,7 @@ public partial class Hinter : Form
                                 }
                                 AppendText(Modul1.IText[EUserText.t212], famInArb, 4);
                             }
-                            if ((array[1] > 0) & (aiMother[1] > 0) && array[1] - 10000 < aiMother[1])
+                            if ((array[1] > 0) && (aiMother[1] > 0) && array[1] - 10000 < aiMother[1])
                             {
                                 if (Ja == 0)
                                 {
@@ -1442,7 +1442,7 @@ public partial class Hinter : Form
                                 }
                                 AppendText($"Kind {num4 + 1} vor {Modul1.IText[EUserText.t163]} geboren ", famInArb, 4);
                             }
-                            if ((array[1] > 0) & (aiMother[3] > 0) && array[1] > aiMother[3])
+                            if ((array[1] > 0) && (aiMother[3] > 0) && array[1] > aiMother[3])
                             {
                                 if (Ja == 0)
                                 {
@@ -1451,7 +1451,7 @@ public partial class Hinter : Form
                                 }
                                 AppendText(Modul1.IText[EUserText.t213], famInArb, 4);
                             }
-                            if ((array[1] > 0) & (aiMother[1] > 0) && array[1] > aiMother[1] + Modul1_Diff[4])
+                            if ((array[1] > 0) && (aiMother[1] > 0) && array[1] > aiMother[1] + Modul1_Diff[4])
                             {
                                 if (Ja == 0)
                                 {

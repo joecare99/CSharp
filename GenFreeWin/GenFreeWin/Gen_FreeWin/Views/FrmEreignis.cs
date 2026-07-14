@@ -1707,7 +1707,7 @@ public partial class FrmEreignis : Form
                     {
                         string text = ((TextBox)sender).Text;
                         float num4 = Strings.InStr(text, ".");
-                        if (!(num4 == 2f || num4 == 4f) && !(num4 > 0f & text.Length < 10) && !(text.Length > 0 & text.Length < 4))
+                        if (!(num4 == 2f || num4 == 4f) && !(num4 > 0f && text.Length < 10) && !(text.Length > 0 && text.Length < 4))
                         {
                             if (text.Length < 8)
                             {
@@ -1719,7 +1719,7 @@ public partial class FrmEreignis : Form
                                 if (TextBox8.Text.Trim() == "")
                                 {
                                     Button12.Visible = true;
-                                    if (num3 == 1 & text.AsInt() > 0.0)
+                                    if (num3 == 1 && text.AsInt() > 0.0)
                                     {
                                         Label13.Text = text.Right(4) + "/";
                                     }
@@ -2341,7 +2341,7 @@ public partial class FrmEreignis : Form
                         IL_0805:
                             num = 136;
                             float num8;
-                            if (Strings.Len(Strings.RTrim(Strings.LTrim(((TextBox)sender).Text))) > 0 & Strings.Len(Strings.RTrim(Strings.LTrim(((TextBox)sender).Text))) < 4)
+                            if (Strings.Len(Strings.RTrim(Strings.LTrim(((TextBox)sender).Text))) > 0 && Strings.Len(Strings.RTrim(Strings.LTrim(((TextBox)sender).Text))) < 4)
                             {
                                 Interaction.Beep();
                                 goto end_IL_0001;
@@ -2349,7 +2349,7 @@ public partial class FrmEreignis : Form
                             else
                             {
                                 num8 = Strings.InStr(((TextBox)sender).Text, ".");
-                                if (num8 > 0f | Strings.Len(((TextBox)sender).Text) == 0)
+                                if (num8 > 0f || Strings.Len(((TextBox)sender).Text) == 0)
                                 {
                                     DDatum = Strings.Mid(((TextBox)sender).Text, 7, 4) + Strings.Mid(((TextBox)sender).Text, 4, 2) + Strings.Mid(((TextBox)sender).Text, 1, 2);
                                 }
@@ -2360,7 +2360,7 @@ public partial class FrmEreignis : Form
                                     {
                                         Modul1.sDatu = "0" + Modul1.sDatu;
                                     }
-                                    if (Modul1.sDatu.Length > 4 & Modul1.sDatu.Length < 8)
+                                    if (Modul1.sDatu.Length > 4 && Modul1.sDatu.Length < 8)
                                     {
                                         _ = Interaction.MsgBox("Eingabefehler ");
                                         goto end_IL_0001;
@@ -2674,7 +2674,7 @@ public partial class FrmEreignis : Form
         {
             StringType.MidStmtStr(ref sDat_Death, 1, 2, "00");
         }
-        if (TextBox14.Text.AsInt() == 0.0 & TextBox13.Text.AsInt() == 0.0 & TextBox15.Text.AsInt() == 0.0)
+        if (TextBox14.Text.AsInt() == 0.0 && TextBox13.Text.AsInt() == 0.0 && TextBox15.Text.AsInt() == 0.0)
         {
             StringType.MidStmtStr(ref sDat_Death, 1, 2, "00");
             StringType.MidStmtStr(ref sDat_Death, 4, 2, "00");
@@ -2791,13 +2791,13 @@ public partial class FrmEreignis : Form
 
     private void TextBox2_LostFocus(object sender, EventArgs e)
     {
-        if (Strings.Len(Strings.RTrim(Strings.LTrim(((TextBox)sender).Text))) > 0 & Strings.Len(Strings.RTrim(Strings.LTrim(((TextBox)sender).Text))) < 4)
+        if (Strings.Len(Strings.RTrim(Strings.LTrim(((TextBox)sender).Text))) > 0 && Strings.Len(Strings.RTrim(Strings.LTrim(((TextBox)sender).Text))) < 4)
         {
             Interaction.Beep();
             return;
         }
         float num = Strings.InStr(((TextBox)sender).Text, ".");
-        if (num > 0f | Strings.Len(((TextBox)sender).Text) == 0)
+        if (num > 0f || Strings.Len(((TextBox)sender).Text) == 0)
         {
             string text = Strings.Mid(((TextBox)sender).Text, 7, 4) + Strings.Mid(((TextBox)sender).Text, 4, 2) + Strings.Mid(((TextBox)sender).Text, 1, 2);
             return;
@@ -2807,7 +2807,7 @@ public partial class FrmEreignis : Form
         {
             Modul1.sDatu = "0" + Modul1.sDatu;
         }
-        if (Modul1.sDatu.Length > 4 & Modul1.sDatu.Length < 8)
+        if (Modul1.sDatu.Length > 4 && Modul1.sDatu.Length < 8)
         {
             _ = Interaction.MsgBox("Eingabefehler ");
             return;
@@ -3094,7 +3094,7 @@ public partial class FrmEreignis : Form
                 Label19.Text = "";
                 Label19.Tag = 0;
             }
-            if (Label18.Text != "" & Label19.Text != "")
+            if (Label18.Text != "" && Label19.Text != "")
             {
                 if (Label18.Tag.AsInt() > Label19.Tag.AsInt())
                 {

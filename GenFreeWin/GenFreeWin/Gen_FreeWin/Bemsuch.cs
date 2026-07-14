@@ -699,7 +699,7 @@ internal class Bemsuch : Form
             IL_00e0:
                 num = 18;
                 Command1[0].Enabled = false;
-                if ((Text1.Text == "") | (Text1.Text == " "))
+                if ((Text1.Text == "") || (Text1.Text == " "))
                 {
                     goto end_IL_0001_2;
                 }
@@ -720,7 +720,7 @@ internal class Bemsuch : Form
                 List1.Items.Clear();
                 ProjectData.ClearProjectError();
                 num3 = 4;
-                if ((Check1[0].Checked) | (Check1[1].Checked) | (Check1[2].Checked))
+                if ((Check1[0].Checked) || (Check1[1].Checked) || (Check1[2].Checked))
                 {
                     ProgressBar1.Minimum = 0;
                     ProgressBar1.Maximum = 0;
@@ -821,7 +821,7 @@ internal class Bemsuch : Form
                     destination = Modul1.TempPath + "\\NumTemp.mdb";
                     source = Modul1.InitDir + "NUMTEMP.mdb";
                     DataModul.ReplaceNBDatafile(destination, source, () => Command1[1].Enabled = false, true);
-                    if ((Check1[6].Checked) | (Check1[7].Checked))
+                    if ((Check1[6].Checked) || (Check1[7].Checked))
                     {
                         DataModul.DB_FamilyTable.MoveFirst();
                         ProgressBar1.Minimum = 0;

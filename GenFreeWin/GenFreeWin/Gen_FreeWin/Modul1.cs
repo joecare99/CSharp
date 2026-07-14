@@ -2766,7 +2766,7 @@ public partial class _Modul1 : IModul1
                 }
                 Job = Kont1[9] + Kont1[1] + Kont1[3] + Kont1[14] + Kont1[7] + Kont1[5] + Kont1[8].Replace("  ", " ");
                 if ((Event.sBem[1].TrimEnd() != "")
-                    | (Event.sBem[2].TrimEnd() != ""))
+                    || (Event.sBem[2].TrimEnd() != ""))
                     if (Job.Trim().Length < 2)
                     {
                         {
@@ -2863,7 +2863,7 @@ public partial class _Modul1 : IModul1
         if (sLine.Trim().Length < 2)
         {
             if ((cEvent.sBem[1].TrimEnd() != "")
-                | (cEvent.sBem[2].TrimEnd() != ""))
+                || (cEvent.sBem[2].TrimEnd() != ""))
             {
                 sLine = "Bemerkung " + sLine;
             }
@@ -3941,7 +3941,7 @@ public partial class _Modul1 : IModul1
                     Kont[(int)_Iter2 - 90] = Event_PreDisplay(xCitation: DataModul.SourceLink.Exists(3, _Modul1.Instance.PersInArb, _Iter2, LfNR)
                         || !string.IsNullOrWhiteSpace(cEvt.sBem[3]));
                     if ((cEvt.sBem[1].TrimEnd() != "")
-                        | (cEvt.sBem[2].TrimEnd() != ""))
+                        || (cEvt.sBem[2].TrimEnd() != ""))
                     {
                         Kont[(int)_Iter2 - 85] = cEvt.sBem[1].TrimEnd();
                     }
@@ -4136,7 +4136,7 @@ public partial class _Modul1 : IModul1
         Kont2[2] = cPlace.sOrtsteil;
         string sName = Kont2[1];
         globOrt2 += Kont2[1];
-        if ((sLongitude.AsInt() > 0.0) | (sLatiude.AsInt() != 0.0))
+        if ((sLongitude.AsInt() > 0.0) || (sLatiude.AsInt() != 0.0))
         {
             if (Kont2[2].Trim() != "")
             {
