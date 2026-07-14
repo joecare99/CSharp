@@ -803,7 +803,6 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
         View.Combo1.Text = Text1_Text;
         ProjectData.ClearProjectError();
         LB1_items.Clear();
-        string text = default;
         int M1_Iter = default;
         if (Text1_Text != "")
         {
@@ -904,7 +903,7 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
                     while (M1_Iter < Modul1.Aus[13].AsInt()
                         && !dB_EventTable.EOF
                         && !dB_EventTable.NoMatch
-                        && dB_EventTable.Fields[EventFields.Art].AsEnum<EEventArt>() == text.AsEnum<EEventArt>()
+                        && dB_EventTable.Fields[EventFields.Art].AsEnum<EEventArt>() == eArt
                         && string.Compare(dB_EventTable.Fields[EventFields.Reg].AsString(), Text1_Text.ToUpper()) >= 0
                         )
                     {
