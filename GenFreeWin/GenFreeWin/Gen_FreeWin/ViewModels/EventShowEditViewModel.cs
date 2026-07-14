@@ -5,7 +5,7 @@ using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 using System;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class EventShowEditViewModel : BaseViewModelCT, IEventShowEditViewModel
 {

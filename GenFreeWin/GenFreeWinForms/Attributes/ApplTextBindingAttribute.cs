@@ -11,7 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Gen_FreeWin;
+using GenFreeWin;
 using GenFree.Interfaces.UI;
 using System;
 using System.ComponentModel;

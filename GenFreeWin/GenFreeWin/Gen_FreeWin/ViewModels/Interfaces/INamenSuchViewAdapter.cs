@@ -1,6 +1,6 @@
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 
-namespace Gen_FreeWin.ViewModels.Interfaces;
+namespace GenFreeWin.ViewModels.Interfaces;
 
 public interface INamenSuchViewAdapter
 {

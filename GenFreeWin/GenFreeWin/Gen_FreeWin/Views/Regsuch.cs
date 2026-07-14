@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 public partial class Regsuch : Form
 {

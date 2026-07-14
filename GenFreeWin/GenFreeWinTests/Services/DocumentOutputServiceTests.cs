@@ -1,12 +1,12 @@
-using Gen_FreeWin.Services;
-using Gen_FreeWin.Services.Models;
+using GenFreeWin.Services;
+using GenFreeWin.Services.Models;
 using GenFree.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Drawing;
 using System.Text;
 
-namespace Gen_FreeWin.Tests.Services
+namespace GenFreeWin.Tests.Services
 {
     [TestClass]
     public class DocumentOutputServiceTests

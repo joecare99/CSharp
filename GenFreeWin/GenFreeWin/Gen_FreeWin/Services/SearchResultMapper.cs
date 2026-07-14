@@ -9,12 +9,12 @@
 // <summary>Implementation for mapping search results to UI representations</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.ViewModels.Models;
+using GenFreeWin.ViewModels.Models;
 using GenFree.Helper;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Maps SearchResult domain objects to ListItem UI representations.

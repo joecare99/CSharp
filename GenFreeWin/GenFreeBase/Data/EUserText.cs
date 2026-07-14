@@ -1,4 +1,4 @@
-﻿namespace Gen_FreeWin;
+﻿namespace GenFreeWin;
 
 public enum EUserText : int
 {

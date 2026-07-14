@@ -1,11 +1,11 @@
-using Gen_FreeWin.Models;
+using GenFreeWin.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services;
+namespace GenFreeWin.Services;
 
 /// <summary>
 /// Service für Fehllisten-Abfragen (EVA-Prinzip: Eingabe → Verarbeitung → Ausgabe).

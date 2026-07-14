@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using GenFree.ViewModels.Interfaces;
 using System;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class FraPersImpQueryViewModel : ObservableObject, IFraPersImpQueryViewModel
 {

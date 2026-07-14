@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Gen_FreeWin.ViewModels.Models
+namespace GenFreeWin.ViewModels.Models
 {
     /// <summary>
     /// Domain model representing person/family/event data extracted from legacy VB-style ViewModel storage.

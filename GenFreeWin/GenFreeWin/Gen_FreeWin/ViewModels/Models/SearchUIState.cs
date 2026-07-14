@@ -9,7 +9,7 @@
 // <summary>UI state model for search interface (extracted from NamenSuchViewModel)</summary>
 // ***********************************************************************
 
-namespace Gen_FreeWin.ViewModels.Models
+namespace GenFreeWin.ViewModels.Models
 {
     /// <summary>
     /// Domain model representing the complete UI state of the search interface.

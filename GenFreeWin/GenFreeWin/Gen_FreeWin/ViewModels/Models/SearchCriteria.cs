@@ -9,7 +9,7 @@
 // <summary>Domain model for name search criteria</summary>
 // ***********************************************************************
 
-namespace Gen_FreeWin.ViewModels.Models
+namespace GenFreeWin.ViewModels.Models
 {
     /// <summary>
     /// Encapsulates search criteria for name search operations.

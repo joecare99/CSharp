@@ -15,10 +15,10 @@
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
-using Gen_FreeWin.UseCases;
-using Gen_FreeWin.Views;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
+using GenFreeWin.UseCases;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -32,7 +32,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels
+namespace GenFreeWin.ViewModels
 {
     /// <summary>
     /// Modernized thin MVVM ViewModel for Vorname (given name) management.

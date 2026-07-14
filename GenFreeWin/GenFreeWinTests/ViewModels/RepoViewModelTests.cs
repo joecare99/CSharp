@@ -13,9 +13,9 @@
 // <summary>Unit tests for RepoViewModel</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
-using Gen_FreeWin.ViewModels;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
+using GenFreeWin.ViewModels;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +24,7 @@ using System;
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Tests.ViewModels
+namespace GenFreeWin.Tests.ViewModels
 {
     /// <summary>
     /// Unit tests for the RepoViewModel class.

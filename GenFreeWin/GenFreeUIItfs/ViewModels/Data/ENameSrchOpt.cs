@@ -1,4 +1,4 @@
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public enum ENameSrchOpt
 {

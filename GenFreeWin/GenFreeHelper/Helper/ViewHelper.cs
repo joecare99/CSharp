@@ -1,4 +1,4 @@
-﻿using Gen_FreeWin;
+﻿using GenFreeWin;
 using GenFree.Interfaces.UI;
 using System.Drawing;
 using System.Windows.Forms;

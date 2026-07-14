@@ -1,9 +1,9 @@
-using Gen_FreeWin.Services;
-using Gen_FreeWin.ViewModels;
+using GenFreeWin.Services;
+using GenFreeWin.ViewModels;
 using System;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 /// <summary>
 /// Factory für die Initialisierung und Bindung eines FehlerliViewModel an die Fehlerli-View.

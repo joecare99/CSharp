@@ -1,7 +1,7 @@
 using BaseLib.Helper;
 using GenFree.Data;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class NamenSuchViewModel
 {

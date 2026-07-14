@@ -12,13 +12,13 @@
 // <summary>Implementation for duplicate person/family merge operations</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
 using GenFree.Interfaces.Sys;
 using System;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Implements duplicate resolution by consolidating person/family records, swapping/migrating events, and managing links/relationships.

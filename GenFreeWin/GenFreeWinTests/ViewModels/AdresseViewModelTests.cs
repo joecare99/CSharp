@@ -13,12 +13,12 @@
 // <summary>Unit tests for AdresseViewModel</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.ViewModels;
+using GenFreeWin.ViewModels;
 using GenFree.ViewModels.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace Gen_FreeWin.Tests.ViewModels
+namespace GenFreeWin.Tests.ViewModels
 {
     /// <summary>
     /// Unit tests for the AdresseViewModel class.

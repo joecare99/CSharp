@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Gen_FreeWin.Models;
+namespace GenFreeWin.Models;
 
 /// <summary>
 /// Enumeration für Fehllisten-Typen.

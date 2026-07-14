@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Gen_FreeWin;
+using GenFreeWin;
 using GenFree.Interfaces.UI;
 using GenFree.ViewModels.Interfaces;
 

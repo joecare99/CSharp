@@ -1,9 +1,9 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Services;
-using Gen_FreeWin.ViewModels.Models;
-using Gen_FreeWin.Views;
+using GenFreeWin.Services;
+using GenFreeWin.ViewModels.Models;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -28,7 +28,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
 {

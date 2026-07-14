@@ -3,7 +3,7 @@ using GenFree.Interfaces.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
-namespace Gen_FreeWin.Tests
+namespace GenFreeWin.Tests
 {
     [TestClass]
     public class DateHelperTests

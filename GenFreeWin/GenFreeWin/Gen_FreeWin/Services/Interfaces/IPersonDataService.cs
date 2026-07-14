@@ -14,7 +14,7 @@
 
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services.Interfaces
+namespace GenFreeWin.Services.Interfaces
 {
     /// <summary>
     /// Service for accessing and manipulating person name and genealogy data.

@@ -15,7 +15,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 [DesignerGenerated]
 internal class FunkT : Form

@@ -9,7 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 
 public partial class EinzelQuelle : Form

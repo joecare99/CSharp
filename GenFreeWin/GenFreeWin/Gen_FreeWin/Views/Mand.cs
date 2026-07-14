@@ -2,7 +2,7 @@ using GenFree.ViewModels.Interfaces;
 using System;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class Mand : Form
 {

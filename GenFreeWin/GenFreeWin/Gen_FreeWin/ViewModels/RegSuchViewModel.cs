@@ -1,7 +1,7 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -21,7 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
 {

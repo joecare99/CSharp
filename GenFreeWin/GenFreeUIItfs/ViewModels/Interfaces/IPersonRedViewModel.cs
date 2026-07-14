@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin;
+using GenFreeWin;
 using System.ComponentModel;
 
 namespace GenFree.ViewModels.Interfaces;

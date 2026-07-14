@@ -1,7 +1,7 @@
-using Gen_FreeWin.Services.Models;
+using GenFreeWin.Services.Models;
 using GenFree.Data;
 
-namespace Gen_FreeWin.Services.Interfaces
+namespace GenFreeWin.Services.Interfaces
 {
     /// <summary>
     /// Composes document structure fragments for NamenSuch output independently of rendering.

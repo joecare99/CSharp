@@ -16,7 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class FrmEreignis : Form
 {

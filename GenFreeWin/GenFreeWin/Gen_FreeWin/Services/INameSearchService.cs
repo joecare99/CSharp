@@ -9,11 +9,11 @@
 // <summary>Service interface for name search operations</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.ViewModels.Models;
+using GenFreeWin.ViewModels.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Service for executing name searches with filtering, validation, and result mapping.

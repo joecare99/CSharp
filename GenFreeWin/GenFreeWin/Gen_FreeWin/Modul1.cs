@@ -1,6 +1,6 @@
 using BaseLib.Helper;
-using Gen_FreeWin;
-using Gen_FreeWin.Views;
+using GenFreeWin;
+using GenFreeWin.Views;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;

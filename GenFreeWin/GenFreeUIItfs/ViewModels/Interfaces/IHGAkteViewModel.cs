@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels.Interfaces;
+namespace GenFreeWin.ViewModels.Interfaces;
 
 public interface IHGAkteViewModel
 {

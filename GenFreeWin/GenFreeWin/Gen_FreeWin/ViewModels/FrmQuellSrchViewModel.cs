@@ -1,5 +1,5 @@
 ﻿using BaseLib.Helper;
-using Gen_FreeWin;
+using GenFreeWin;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.ViewModels.Interfaces;

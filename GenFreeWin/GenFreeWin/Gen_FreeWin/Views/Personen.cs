@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class Personen : Form
 {

@@ -2,7 +2,7 @@
 using GenFreeWin.Attributes;
 using Views;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 partial class FraEventShowEdit
 {

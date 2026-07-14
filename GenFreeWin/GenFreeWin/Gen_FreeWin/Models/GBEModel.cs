@@ -12,7 +12,7 @@
 // <summary>Domain model for HGakte (Grundbuchakte / Land Register Entry)</summary>
 // ***********************************************************************
 
-namespace Gen_FreeWin.Models;
+namespace GenFreeWin.Models;
 
 /// <summary>
 /// Represents a Grundbucheintrag (land register entry / property use record).

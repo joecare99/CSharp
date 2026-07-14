@@ -11,7 +11,7 @@
 
 using System;
 
-namespace Gen_FreeWin.ViewModels.Commands
+namespace GenFreeWin.ViewModels.Commands
 {
     /// <summary>
     /// Encapsulates filter command logic extracted from NamenSuchViewModel.

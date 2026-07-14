@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 public partial class Quellverw : Form
 {

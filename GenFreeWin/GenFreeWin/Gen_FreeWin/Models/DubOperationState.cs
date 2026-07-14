@@ -14,7 +14,7 @@
 
 using System.Collections.Generic;
 
-namespace Gen_FreeWin.Models
+namespace GenFreeWin.Models
 {
     /// <summary>
     /// Represents the operational state for duplicate person/family resolution.

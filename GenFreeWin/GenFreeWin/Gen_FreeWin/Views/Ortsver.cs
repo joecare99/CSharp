@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 [DesignerGenerated]
 public partial class Ortsver : Form

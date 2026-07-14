@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 public enum EOutCfg : int
 {

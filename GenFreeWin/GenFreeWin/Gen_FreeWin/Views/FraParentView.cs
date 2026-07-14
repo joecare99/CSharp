@@ -1,5 +1,5 @@
 ﻿using BaseLib.Helper;
-using Gen_FreeWin.ViewModels;
+using GenFreeWin.ViewModels;
 using GenFree;
 using GenFree.Interfaces.Sys;
 using GenFree.ViewModels.Interfaces;
@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin.Views
+namespace GenFreeWin.Views
 {
     public partial class FraParentView : UserControl
     {

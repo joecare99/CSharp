@@ -1,10 +1,10 @@
-using Gen_FreeWin.Models;
+using GenFreeWin.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 
-namespace Gen_FreeWin.ViewModels.Interfaces;
+namespace GenFreeWin.ViewModels.Interfaces;
 
 /// <summary>
 /// Describes the bindable state and commands of the picture management workflow.

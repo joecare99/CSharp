@@ -12,11 +12,11 @@
 // <summary>Data access contract for HGakte (Grundbuchakte) operations</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
+using GenFreeWin.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services.Interfaces
+namespace GenFreeWin.Services.Interfaces
 {
     /// <summary>
     /// Async contract for HGakte (Grundbuchakte / land register) data access.

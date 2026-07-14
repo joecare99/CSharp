@@ -14,7 +14,7 @@ using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 [DesignerGenerated]
 public class Datenversandt : Form

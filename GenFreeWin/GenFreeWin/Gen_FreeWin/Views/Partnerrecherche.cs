@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 [DesignerGenerated]
 public partial class Partnerrecherche : Form

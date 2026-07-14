@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Gen_FreeWin.Data;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFreeWin.Data;
+using GenFreeWin.Models;
+using GenFreeWin.ViewModels.Interfaces;
 using GenFree.Interfaces.Sys;
 using MVVM.ViewModel;
 using System;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 /// <summary>
 /// Encapsulates the bindable state of the legacy picture management workflow.

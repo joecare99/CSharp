@@ -14,9 +14,9 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services;
-using Gen_FreeWin.Services.Interfaces;
+using GenFreeWin.Models;
+using GenFreeWin.Services;
+using GenFreeWin.Services.Interfaces;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
@@ -24,7 +24,7 @@ using GenFreeWin.Views;
 using MVVM.ViewModel;
 using System;
 
-namespace Gen_FreeWin.ViewModels
+namespace GenFreeWin.ViewModels
 {
     /// <summary>
     /// ViewModel for the license dialog.

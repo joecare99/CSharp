@@ -1,5 +1,5 @@
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services;
+using GenFreeWin.Models;
+using GenFreeWin.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;

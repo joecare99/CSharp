@@ -1,4 +1,4 @@
-namespace Gen_FreeWin.Services.Models
+namespace GenFreeWin.Services.Models
 {
     /// <summary>
     /// Represents a composed heading structure for NamenSuch document output.

@@ -12,7 +12,7 @@
 // <summary>Model for license data with validation logic</summary>
 // ***********************************************************************
 
-namespace Gen_FreeWin.Models
+namespace GenFreeWin.Models
 {
     /// <summary>
     /// Represents license data with validation logic.

@@ -13,7 +13,7 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Gen_FreeWin.ViewModels
+namespace GenFreeWin.ViewModels
 {
     /// <summary>
     /// Helper class to bridge legacy VB.NET APIs with Modern C# equivalents.

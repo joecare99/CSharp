@@ -1,5 +1,5 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -17,7 +17,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 internal class Bemsuch : Form
 {

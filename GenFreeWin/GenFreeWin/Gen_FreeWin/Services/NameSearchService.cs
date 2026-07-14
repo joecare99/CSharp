@@ -9,13 +9,13 @@
 // <summary>Implementation of name search service</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.ViewModels.Models;
+using GenFreeWin.ViewModels.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Implements name search operations with filtering, validation, and sorting.

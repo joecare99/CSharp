@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Gen_FreeWin;
+using GenFreeWin;
 using GenFree.Interfaces.UI;
 using GenFree.ViewModels.Interfaces;
 
@@ -27,27 +27,27 @@ public partial class FraStatistics : UserControl
 
     public void SetDefaultTexts()
     {
-        if (this.FindControl<TextBlock>("lblHdrPersons") is TextBlock lblHdrPersons)
+        if (this.FindControl<TextBlock>(nameof(FraStatistics.lblHdrPersons)) is TextBlock lblHdrPersons)
         {
             lblHdrPersons.Text = _strings[EUserText.t84_Persons];
         }
 
-        if (this.FindControl<TextBlock>("lblHdrFamilies") is TextBlock lblHdrFamilies)
+        if (this.FindControl<TextBlock>(nameof(FraStatistics.lblHdrFamilies)) is TextBlock lblHdrFamilies)
         {
             lblHdrFamilies.Text = _strings[EUserText.t83_Families];
         }
 
-        if (this.FindControl<TextBlock>("lblHdrPlaces") is TextBlock lblHdrPlaces)
+        if (this.FindControl<TextBlock>(nameof(FraStatistics.lblHdrPlaces)) is TextBlock lblHdrPlaces)
         {
             lblHdrPlaces.Text = _strings[EUserText.t99_Places];
         }
 
-        if (this.FindControl<TextBlock>("lblHdrDates") is TextBlock lblHdrDates)
+        if (this.FindControl<TextBlock>(nameof(FraStatistics.lblHdrDates)) is TextBlock lblHdrDates)
         {
             lblHdrDates.Text = _strings[EUserText.t100_Dates];
         }
 
-        if (this.FindControl<TextBlock>("lblHdrTexts") is TextBlock lblHdrTexts)
+        if (this.FindControl<TextBlock>(nameof(FraStatistics.lblHdrTexts)) is TextBlock lblHdrTexts)
         {
             lblHdrTexts.Text = _strings[EUserText.t101_Texts];
         }

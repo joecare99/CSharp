@@ -4,7 +4,7 @@ using GenFreeWin.Attributes;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin.Views
+namespace GenFreeWin.Views
 {
     public partial class FraPersImpQuerry : UserControl
     {

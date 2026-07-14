@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public interface IOFBViewModel : INotifyPropertyChanged
 {

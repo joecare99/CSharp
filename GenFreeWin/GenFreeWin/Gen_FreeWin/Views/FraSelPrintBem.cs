@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views
+namespace GenFreeWin.Views
 {
 
     public partial class FraSelPrintBem : UserControl

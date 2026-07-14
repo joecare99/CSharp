@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public class BoolProxy<T2, T>(Func<IList<T>> getter, Func<T, bool> conv, Func<bool, T>? reconv = null) : IList<bool> where T2 : Enum
 {

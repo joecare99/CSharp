@@ -1,4 +1,4 @@
-﻿namespace Gen_FreeWin.Data
+﻿namespace GenFreeWin.Data
 {
 
 }

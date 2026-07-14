@@ -1,5 +1,5 @@
 ﻿using BaseLib.Helper;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -15,7 +15,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class RechTextViewModel : BaseViewModelCT, IRechTextViewModel
 {

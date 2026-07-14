@@ -1,6 +1,6 @@
 using System;
 
-namespace Gen_FreeWin.Models
+namespace GenFreeWin.Models
 {
     /// <summary>
     /// Represents a selectable land-register file entry shown in the first ownership selection list.

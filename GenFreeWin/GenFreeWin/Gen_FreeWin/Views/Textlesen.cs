@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class Textlesen : Form
 {

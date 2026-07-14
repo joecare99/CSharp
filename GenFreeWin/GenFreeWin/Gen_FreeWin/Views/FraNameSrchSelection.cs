@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views
+namespace GenFreeWin.Views
 {
     public partial class FraNameSrchSelection : UserControl
     {

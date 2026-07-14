@@ -1,6 +1,6 @@
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services;
-using Gen_FreeWin.ViewModels;
+using GenFreeWin.Models;
+using GenFreeWin.Services;
+using GenFreeWin.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;

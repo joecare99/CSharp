@@ -1,4 +1,4 @@
-﻿using Gen_FreeWin.Views;
+﻿using GenFreeWin.Views;
 using GenFree.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

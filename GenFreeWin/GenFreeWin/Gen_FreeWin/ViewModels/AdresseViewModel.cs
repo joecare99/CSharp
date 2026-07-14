@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class AdresseViewModel : BaseViewModelCT, IAdresseViewModel
 {

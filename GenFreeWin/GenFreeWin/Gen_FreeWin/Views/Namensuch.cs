@@ -1,5 +1,5 @@
 using BaseLib.Helper;
-using Gen_FreeWin.ViewModels;
+using GenFreeWin.ViewModels;
 using GenFree;
 using GenFree.Helper;
 using GenFree.Interfaces.UI;
@@ -12,7 +12,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class Namensuch : Form
 {

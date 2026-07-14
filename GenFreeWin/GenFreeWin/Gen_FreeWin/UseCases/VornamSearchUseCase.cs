@@ -12,15 +12,15 @@
 // <summary>Vorname business logic and workflows orchestration</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
 using GenFree.Data;
 using GenFree.Helper;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.UseCases
+namespace GenFreeWin.UseCases
 {
     /// <summary>
     /// Orchestrates business logic for Vorname (given name) workflows.

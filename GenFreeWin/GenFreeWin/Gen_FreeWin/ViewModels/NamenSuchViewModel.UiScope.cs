@@ -2,7 +2,7 @@ using BaseLib.Helper;
 using System;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class NamenSuchViewModel
 {

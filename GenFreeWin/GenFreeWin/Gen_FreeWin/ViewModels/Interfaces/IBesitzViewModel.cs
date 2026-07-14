@@ -1,9 +1,9 @@
-using Gen_FreeWin.Models;
+using GenFreeWin.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace Gen_FreeWin.ViewModels.Interfaces;
+namespace GenFreeWin.ViewModels.Interfaces;
 
 /// <summary>
 /// Describes the presentation state and interaction flow of the ownership selection form.

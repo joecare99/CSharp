@@ -1,6 +1,6 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Interfaces.Sys;
@@ -16,7 +16,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class MandViewModel : BaseViewModelCT, IMandViewModel
 {

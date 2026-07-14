@@ -1,7 +1,7 @@
-using Gen_FreeWin.Services.Models;
+using GenFreeWin.Services.Models;
 using GenFree.Interfaces;
 
-namespace Gen_FreeWin.Services.Interfaces
+namespace GenFreeWin.Services.Interfaces
 {
     /// <summary>
     /// Provides document-specific output helpers independent from ViewModel state.

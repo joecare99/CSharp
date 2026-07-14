@@ -1,6 +1,6 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -20,7 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
 {

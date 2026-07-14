@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin;
+using GenFreeWin;
 using GenFree.Data;
 using System;
 using System.ComponentModel;

@@ -1,8 +1,8 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Data;
-using Gen_FreeWin.ViewModels;
-using Gen_FreeWin.ViewModels.Interfaces;
-using Gen_FreeWin.Views;
+using GenFreeWin.Data;
+using GenFreeWin.ViewModels;
+using GenFreeWin.ViewModels.Interfaces;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Data.DB;
@@ -28,7 +28,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Main;
+namespace GenFreeWin.Main;
 
 [EditorBrowsable(EditorBrowsableState.Never)]
 [GeneratedCode("MyTemplate", "8.0.0.0")]

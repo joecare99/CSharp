@@ -2,7 +2,7 @@
 using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class PersonRedViewModel : BaseViewModelCT, IPersonRedViewModel
 {

@@ -1,7 +1,7 @@
 ﻿using GenFree.Interfaces.VB;
 using System;
 
-namespace Gen_FreeWin.Main;
+namespace GenFreeWin.Main;
 
 public class COperators : IOperators
 {

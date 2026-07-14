@@ -1,7 +1,7 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.ViewModels.Interfaces;
-using Gen_FreeWin.Views;
+using GenFreeWin.Models;
+using GenFreeWin.ViewModels.Interfaces;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -21,7 +21,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 [DesignerGenerated]
 internal class Bilder : Form

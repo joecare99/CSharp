@@ -1,7 +1,7 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.DB;
@@ -20,7 +20,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
 {

@@ -12,7 +12,7 @@
 // <summary>Implementation for person name and genealogy data access</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Services.Interfaces;
+using GenFreeWin.Services.Interfaces;
 using GenFree.Data;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.Sys;
@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Implements person data queries and name consolidation logic.

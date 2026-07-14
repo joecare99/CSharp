@@ -13,10 +13,10 @@
 // <summary>Unit tests for VornamViewModel</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
-using Gen_FreeWin.UseCases;
-using Gen_FreeWin.ViewModels;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
+using GenFreeWin.UseCases;
+using GenFreeWin.ViewModels;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.ViewModels.Interfaces;
@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Tests.ViewModels
+namespace GenFreeWin.Tests.ViewModels
 {
     /// <summary>
     /// Unit tests for the VornamViewModel class.

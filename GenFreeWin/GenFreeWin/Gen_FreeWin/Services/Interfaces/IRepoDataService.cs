@@ -12,11 +12,11 @@
 // <summary>Service interface for Repository data access and persistence</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
+using GenFreeWin.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services.Interfaces
+namespace GenFreeWin.Services.Interfaces
 {
     /// <summary>
     /// Service contract for Repository data access and database persistence operations.
