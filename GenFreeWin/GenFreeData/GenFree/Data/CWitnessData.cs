@@ -1,16 +1,15 @@
-﻿using GenFree.Models.Data;
-using GenFree.Helper;
+﻿using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
+using GenFree.Models.Data;
 using System;
 using System.Linq;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
 
 namespace GenFree.Data
 {
     public class CWitnessData : CRSDataC<EWitnessProp, (int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>, IWitnessData
     {
-        public CWitnessData(IRecordset db_Table, bool xNoInit=false) : base(db_Table,xNoInit)
+        public CWitnessData(IRecordset db_Table, bool xNoInit = false) : base(db_Table, xNoInit)
         {
         }
 

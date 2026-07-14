@@ -11,7 +11,7 @@ namespace BaseLib_netTests.Interfaces;
 class TestIHCClass : IHasChildren<object?>
 #pragma warning restore CS8634 // Der Typ kann nicht als Typparameter im generischen Typ oder in der generischen Methode verwendet werden. Die NULL-Zulässigkeit des Typarguments entspricht nicht der class-Einschränkung.
 {
-    private readonly List<object?> _children=new();
+    private readonly List<object?> _children = new();
     public bool AddItem(object? value)
     {
         _children.Add(value);
@@ -55,12 +55,13 @@ public class IHasChildrenTests
 
 #if NET5_0_OR_GREATER
     [TestMethod]
-    [DataRow(0,"Test")]
+    [DataRow(0, "Test")]
     [DataRow(1, 5)]
     [DataRow(2, 7.2d)]
     [DataRow(3, null)]
-    public void ItemsTest(int ix,object? oExp) {
-        Assert.AreEqual(oExp, _class.Items.ToList()[ix]);  
+    public void ItemsTest(int ix, object? oExp)
+    {
+        Assert.AreEqual(oExp, _class.Items.ToList()[ix]);
     }
 #endif
 

@@ -600,7 +600,8 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
                 List<int> aiFam = new();
                 foreach (var link in DataModul.Link.ReadAllPers(Modul1.PersInArb, Modul1.eLKennz))
                 {
-                    if (M1_Iter++ > 100) break;
+                    if (M1_Iter++ > 100)
+                        break;
                     aiFam.Add(link.iFamNr);
                 }
                 if (aiFam.Count > 0)
@@ -1561,7 +1562,8 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
                             foreach (var link in DataModul.Link.ReadAllPers(Modul1.PersInArb, Modul1.eLKennz))
                             {
                                 aiFam.Add(link.iFamNr);
-                                if (aiFam.Count > 99) break;
+                                if (aiFam.Count > 99)
+                                    break;
                             }
                             if (aiFam.Count == 0)
                             {
@@ -1981,7 +1983,8 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
 
             num++;
         }
-        if (cEvt == null) return "";
+        if (cEvt == null)
+            return "";
 
         if (cEvt.dDatumV != default)
         {

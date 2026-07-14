@@ -1,5 +1,5 @@
-﻿using Microsoft.Win32;
-using CommonDialogs.Interfaces;
+﻿using CommonDialogs.Interfaces;
+using Microsoft.Win32;
 
 namespace CommonDialogs;
 

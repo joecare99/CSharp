@@ -140,7 +140,7 @@ public class CodeBlock : ICodeBlock
     public List<List<int>> SourcesIndex
     {
         get => Sources.Select((s) => GetItemIdx(s)).ToList();
-        set => Sources = value.Select((s) => SetSourceByIdx(this, s)).Where((s) => s != null).Select(s=>s!).ToList();
+        set => Sources = value.Select((s) => SetSourceByIdx(this, s)).Where((s) => s != null).Select(s => s!).ToList();
     }
 
     /// <summary>

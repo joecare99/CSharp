@@ -1,11 +1,9 @@
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree.Data;
-using GenFree.Interfaces.DB;
-using GenFree.Models;
-using NSubstitute;
-using BaseLib.Interfaces;
 using BaseLib.Helper;
+using BaseLib.Interfaces;
+using GenFree.Interfaces.DB;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 using System.Linq;
 
 namespace GenFree.Data.Tests;
@@ -32,16 +30,16 @@ public class CRepositoryTests
     public void _keyIndex_CorrectIndex()
     {
         var property = typeof(CRepository).GetProperties(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-            .Where(p=>p.Name == "_keyIndex" && p.PropertyType == typeof(RepoIndex)).FirstOrDefault();
+            .Where(p => p.Name == "_keyIndex" && p.PropertyType == typeof(RepoIndex)).FirstOrDefault();
         var id = property.GetValue(_repository);
-        Assert.IsInstanceOfType(id,typeof(Enum));
+        Assert.IsInstanceOfType(id, typeof(Enum));
         Assert.AreEqual(RepoIndex.Nr, id.AsEnum<RepoIndex>());
     }
 
     [TestMethod]
     public void _db_Table_ReturnsRecordSet()
     {
-        var property = typeof(CRepository).GetProperties( System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+        var property = typeof(CRepository).GetProperties(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
             .Where(p => p.Name == "_db_Table" && p.PropertyType == typeof(IRecordset))
             .FirstOrDefault();
         var data = property.GetValue(_repository);

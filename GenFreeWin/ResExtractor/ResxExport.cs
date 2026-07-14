@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Resources;
+﻿using System.Collections;
 using System.ComponentModel.Design;
-using System.Windows.Forms;
+using System.Drawing.Imaging;
+using System.Resources;
 static class ResxExport
 {
     public static void ExportImages(string resxPath, string outputDir)
@@ -18,30 +14,31 @@ static class ResxExport
         };
 
         foreach (DictionaryEntry de in reader)
-        try{
-            var node = (ResXDataNode)de.Value;
-            object? value = node.GetValue((ITypeResolutionService?)null);
-            if (value is Bitmap bmp)
+            try
             {
-                // Originalformat bestimmen
-                var fmt = bmp.RawFormat;
-                string ext = ImageCodecInfo.GetImageEncoders()
-                               .FirstOrDefault(c => c.FormatID == fmt.Guid)?
-                               .FilenameExtension?.Split(';')[0].Trim('*').ToLower()
-                             ?? "png";
+                var node = (ResXDataNode)de.Value;
+                object? value = node.GetValue((ITypeResolutionService?)null);
+                if (value is Bitmap bmp)
+                {
+                    // Originalformat bestimmen
+                    var fmt = bmp.RawFormat;
+                    string ext = ImageCodecInfo.GetImageEncoders()
+                                   .FirstOrDefault(c => c.FormatID == fmt.Guid)?
+                                   .FilenameExtension?.Split(';')[0].Trim('*').ToLower()
+                                 ?? "png";
 
-                string file = Path.Combine(outputDir, de.Key + "." + ext);
+                    string file = Path.Combine(outputDir, de.Key + "." + ext);
 
-                // Verlustfrei speichern (falls kein Encoder gefunden, PNG als Fallback)
-                if (ext == "png")
-                    bmp.Save(file, ImageFormat.Png);
-                else
-                    bmp.Save(file, fmt);
+                    // Verlustfrei speichern (falls kein Encoder gefunden, PNG als Fallback)
+                    if (ext == "png")
+                        bmp.Save(file, ImageFormat.Png);
+                    else
+                        bmp.Save(file, fmt);
+                }
             }
-        }
             catch (Exception ex)
-        {
-            Console.WriteLine($"Fehler beim Exportieren von Ressource '{de.Key}': {ex.Message}");
+            {
+                Console.WriteLine($"Fehler beim Exportieren von Ressource '{de.Key}': {ex.Message}");
             }
     }
 }

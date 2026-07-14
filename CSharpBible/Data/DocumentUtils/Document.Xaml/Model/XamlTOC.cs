@@ -29,7 +29,7 @@ public sealed class XamlTOC : XamlContentBase, IDocTOC
             // Anker-ID an Headline vorhanden?
             var id = h.Id;
 
-            var link = (XamlSpan)p.AddLink(id,XamlFontStyle.Default);
+            var link = (XamlSpan)p.AddLink(id, XamlFontStyle.Default);
             link.TextContent = anchorText;
 
             AddChild(p);

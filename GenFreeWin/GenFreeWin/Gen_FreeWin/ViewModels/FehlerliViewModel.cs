@@ -1,10 +1,9 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services;
+using System;
+using System.Collections.ObjectModel;
 
 namespace Gen_FreeWin.ViewModels;
 

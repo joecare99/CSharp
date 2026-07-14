@@ -1,7 +1,6 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Main;
 using Gen_FreeWin.Views;
 using GenFree.Data;
 using GenFree.Helper;
@@ -184,7 +183,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
 
     public Menu1ViewModel(IFraStatisticsViewModel fraStatisticsVm)
     {
-        Statistics = fraStatisticsVm; 
+        Statistics = fraStatisticsVm;
     }
 
     public bool PbxLanguage3Visible { get; private set; }
@@ -234,7 +233,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
 
         DoFormLoad(out num, out num3, Value, out Value2, ref text3, ref text4, out lErl, ref Value3, num9, ref oBitmap, ref Satz2, ref M1_Iter, ref documentText, out DateiName2, out DateiName, ref farb2, ref text2);
         return;
-    // =============== Begin der Fehlerbehandlung ===============
+        // =============== Begin der Fehlerbehandlung ===============
     IL_4c8e:
         num = 961;
         int number = Information.Err().Number;
@@ -250,7 +249,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
             {
                 throw ProjectData.CreateProjectError(-2146828268);
             }
-//            goto IL_4efc;
+            //            goto IL_4efc;
         }
         else if (number == 53)
         {
@@ -262,9 +261,9 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
             {
                 throw ProjectData.CreateProjectError(-2146828268);
             }
-  //          goto IL_4efc;
+            //          goto IL_4efc;
         }
-  
+
     }
 
     private void DoFormLoad(
@@ -481,7 +480,8 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
             //<====================
             ProjectData.ClearProjectError();
             num3 = 10;
-            Modul1.Persistence.ReadEnumInit<FormWindowState>("Windowstate", out var WiS); Modul1.eWindowState = WiS;
+            Modul1.Persistence.ReadEnumInit<FormWindowState>("Windowstate", out var WiS);
+            Modul1.eWindowState = WiS;
             if (Modul1.eWindowState == (Enum)FormWindowState.Maximized)
             {
                 WindowState = FormWindowState.Maximized;
@@ -661,7 +661,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
                 if (Modul1.Reli)
                 {
                     _ = Interaction.MsgBox("Die Religionseinträge werden jetzt bearbeitet. Dieser einmalig erforderliche Vorgang kann einige Minuten dauern.");
-                    
+
                     int num17 = DataModul.Person.MaxID;
                     DataModul.DB_PersonTable.MoveFirst();
                     int num18 = DataModul.Person.MinID;
@@ -1389,7 +1389,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
         if (Modul1.Typ != DriveType.CDRom)
         {
             int Value = Modul1.Persistence.GetIntMand("Letzter.dat", 1L);
-            Modul1.Letzte = new() { iPerson = (Value != 0) ? Value : Modul1.Letzte.iPerson, iFamily= Modul1.Letzte.iFamily };
+            Modul1.Letzte = new() { iPerson = (Value != 0) ? Value : Modul1.Letzte.iPerson, iFamily = Modul1.Letzte.iFamily };
         }
         if (Modul1.PersInArb == 0)
         {
@@ -1480,7 +1480,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
         {
             Mand_CheckReorg();
         }
-        Statistics.SetDates( DataModul.Event.Count);
+        Statistics.SetDates(DataModul.Event.Count);
         Statistics.SetTexts(DataModul.DB_TexteTable.RecordCount);
         FileSystem.FileClose(99);
     }
@@ -1712,7 +1712,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
     private void Show()
     {
         if (!View.Visible)
-            View.Visible = true; 
+            View.Visible = true;
     }
 
     private void Hide()
@@ -2194,7 +2194,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
                                 }
                             }
                             goto IL_1475;
-                        //============
+                            //============
 
                         IL_1475: // <========== 3
                                  // <========== 3
@@ -2816,12 +2816,14 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
         try
         {
             var Value = (float)Interaction.MsgBox("Alle Daten des aktuellen Mandanten werden überschrieben", "Achtung", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
-            if (Value == 2f) return;
+            if (Value == 2f)
+                return;
 
             CloseDatabases();
 
             string drive = Interaction.InputBox("Auf welchem Laufwerk befinden sich die gesicherten Daten?").Trim().Left(1);
-            if (string.IsNullOrEmpty(drive)) return;
+            if (string.IsNullOrEmpty(drive))
+                return;
 
             string backupPath = $"{drive}:\\Genplussich\\{Strings.Mid(Modul1.Verz, 16, Modul1.Verz.Length - 1)}";
             //     Dir1.Path = backupPath;
@@ -2836,7 +2838,8 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
             string backupDataPath = backupPath + "Gen_plusdaten.Mdb";
 
             string message = $"Soll der Mandant mit letzter Änderung am \n\n{FileSystem.FileDateTime(currentDataPath)}\n\nmit Daten vom \n\n{FileSystem.FileDateTime(backupDataPath)}\n\nüberschrieben werden?";
-            if (Interaction.MsgBox(message, title: "Warnung", mb: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Exclamation) == DialogResult.No) return;
+            if (Interaction.MsgBox(message, title: "Warnung", mb: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Exclamation) == DialogResult.No)
+                return;
 
             FileSystem.FileCopy(backupDataPath, currentDataPath);
 
@@ -3793,7 +3796,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
             while (M1_Iter-- > 0)
             {
                 // Todo: Data ???
-                LstList3Items.Add(new (ListBox2Items[M1_Iter].ToString()));
+                LstList3Items.Add(new(ListBox2Items[M1_Iter].ToString()));
             }
         }
     }
@@ -3944,7 +3947,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
         SetDateVisible = false;
         CodeOfArmsVisible = true;
     }
-    
+
     [RelayCommand]
     private void OpenProperty()
     {

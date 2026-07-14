@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
 using WpfApp.Services;
 using WpfApp.ViewModels;
 using WpfApp.Views;

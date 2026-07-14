@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace GenFree.Interfaces.Data;
 
-namespace GenFree.Interfaces.Data;
-
-public interface IPictureData: IHasIRecordset
+public interface IPictureData : IHasIRecordset
 {
 
 }

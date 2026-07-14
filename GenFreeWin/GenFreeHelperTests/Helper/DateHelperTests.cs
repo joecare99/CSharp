@@ -27,7 +27,7 @@ namespace GenFree.Helper.Tests
         [TestMethod()]
         public void FormatDatumTest2()
         {
-            FormatDatumTest("Dat4:", new DateTime(2022,12,29),4, "Dat4:29.12.2022");
+            FormatDatumTest("Dat4:", new DateTime(2022, 12, 29), 4, "Dat4:29.12.2022");
         }
 
         [TestMethod()]

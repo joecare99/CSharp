@@ -1,13 +1,13 @@
 ﻿using BaseLib.Helper;
 using GenFree;
 using GenFree.Data;
+using GenFree.Interfaces.Sys;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
-using GenFree.Interfaces.Sys;
 
 namespace Gen_FreeWin.Views
 {
@@ -21,7 +21,7 @@ namespace Gen_FreeWin.Views
         public List<int> PersonIDs { get; } = new();
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EUserText eChb43Txt { set => chbPersonBaseDatesOnly.Text = Modul1.IText[value]; } 
+        public EUserText eChb43Txt { set => chbPersonBaseDatesOnly.Text = Modul1.IText[value]; }
 
         public EExportPrivacy ePrintPrivacy => fraSelPrintPrivacy1.ePrintPrivacy;
 
@@ -50,9 +50,9 @@ namespace Gen_FreeWin.Views
             Check2.SetIndex(chbPersonPictOnly, 42);
             Check2.SetIndex(chbPersonBaseDatesOnly, 43);
 
- //           btnEnterNew.SetIndex(btnSelStart1, 5);
- //           btnEnterNew.SetIndex(btnSelStart2, 6);
- 
+            //           btnEnterNew.SetIndex(btnSelStart1, 5);
+            //           btnEnterNew.SetIndex(btnSelStart2, 6);
+
         }
 
         public void ReadCheckBoxState(IList<bool> axOpt)
@@ -64,7 +64,7 @@ namespace Gen_FreeWin.Views
             }
             for (int num4 = 0; num4 <= 10; num4++)
                 if (Check1.TryGetValue(num4, out var c))
-                    axOpt[num4+10] = c.Checked;
+                    axOpt[num4 + 10] = c.Checked;
 
             for (int num4 = 30; num4 <= 44; num4++)
                 if (Check2.TryGetValue(num4, out var c))
@@ -77,7 +77,7 @@ namespace Gen_FreeWin.Views
         {
             for (int num4 = 0; num4 <= 10; num4++)
                 if (Check2.TryGetValue(num4, out var c))
-                    c.Checked = axOpt[num4+10];
+                    c.Checked = axOpt[num4 + 10];
 
             bool[] bools = new bool[8];
             for (int num4 = 1; num4 <= 7; num4++)
@@ -97,7 +97,8 @@ namespace Gen_FreeWin.Views
 
         private void FraNameSrchSelection_Load(object sender, EventArgs e)
         {
-            if (DesignMode) return;
+            if (DesignMode)
+                return;
             if (Modul1.FontSize > 0f)
                 lblHelp.Font = new Font("Courier New", Modul1.FontSize, FontStyle.Bold);
 

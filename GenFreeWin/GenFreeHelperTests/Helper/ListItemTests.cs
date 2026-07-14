@@ -11,7 +11,7 @@ namespace GenFree.Helper.Tests
         [DataRow("C")]
         public void ToStringTest(string sExp)
         {
-            Assert.AreEqual(sExp,new ListItem(sExp,null).ToString());
+            Assert.AreEqual(sExp, new ListItem(sExp, null).ToString());
         }
     }
 }

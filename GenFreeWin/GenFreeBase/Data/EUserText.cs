@@ -265,7 +265,7 @@ public enum EUserText : int
     /// <summary>Staaten</summary>
     t191 = 191,
     t192 = 192,
-    t193 = 193,    
+    t193 = 193,
     /// <summary>Kirche/Friedhof/Firma etc.</summary>
     t194 = 194,
     /// <summary>Suffix</summary>
@@ -280,7 +280,7 @@ public enum EUserText : int
     t200 = 200,
     t201 = 201,
     t202 = 202,
-    t204 = 204,    
+    t204 = 204,
     /// <summary>
     /// o04_Family-errors
     /// </summary>
@@ -684,5 +684,5 @@ public enum EUserText : int
     t432 = 432,
     t433 = 433,
     t434 = 434,
-    
+
 }

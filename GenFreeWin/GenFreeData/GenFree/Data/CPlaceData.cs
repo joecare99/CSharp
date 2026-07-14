@@ -1,11 +1,9 @@
-﻿using GenFree.Models.Data;
-using GenFree.Helper;
-using GenFree.Interfaces.DB;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Models.Data;
+using System;
+using System.Linq;
 
 namespace GenFree.Data
 {
@@ -37,7 +35,7 @@ namespace GenFree.Data
         public int iLand { get => iLand1; set => SetPropValue(EPlaceProp.iLand, value); }
         public string sLand => (_sLand ??= _GetText?.Invoke(iLand)) ?? $"{iLand}";
         public int iStaat { get => iStaat1; set => SetPropValue(EPlaceProp.iStaat, value); }
-        public string sStaat => (_sStaat ??= _GetText?.Invoke(iStaat))?? $"{iStaat}";
+        public string sStaat => (_sStaat ??= _GetText?.Invoke(iStaat)) ?? $"{iStaat}";
         public string sStaatk { get => field; set => SetPropValue(ref field, EPlaceProp.iStaat, value); } = "";
         public string sPLZ { get => field; set => SetPropValue(ref field, EPlaceProp.sPLZ, value); } = "";
         public string sTerr { get => field; set => SetPropValue(ref field, EPlaceProp.sTerr, value); } = "";
@@ -58,7 +56,8 @@ namespace GenFree.Data
 
         public override void FillData(IRecordset dB_PlaceTable)
         {
-            if (dB_PlaceTable == null) return; // No data to fill
+            if (dB_PlaceTable == null)
+                return; // No data to fill
             ReadID(dB_PlaceTable);
             iOrt1 = dB_PlaceTable.Fields[PlaceFields.Ort].AsInt();
             iOrtsteil1 = dB_PlaceTable.Fields[PlaceFields.Ortsteil].AsInt();
@@ -144,7 +143,8 @@ namespace GenFree.Data
         /// <param name="value">The value.</param>
         public override void SetPropValue(EPlaceProp prop, object value)
         {
-            if (EqualsProp(prop, value)) return;
+            if (EqualsProp(prop, value))
+                return;
 
             AddChangedProp(prop);
 
@@ -201,7 +201,7 @@ namespace GenFree.Data
             }
         }
 
-        public override void ReadID(IRecordset dB_PlaceTable) 
+        public override void ReadID(IRecordset dB_PlaceTable)
             => _ID = dB_PlaceTable.Fields[PlaceFields.OrtNr].AsInt();
     }
 }

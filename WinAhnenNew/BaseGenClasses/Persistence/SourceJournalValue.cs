@@ -1,4 +1,3 @@
-using System;
 using GenInterfaces.Interfaces.Genealogic;
 
 namespace BaseGenClasses.Persistence;

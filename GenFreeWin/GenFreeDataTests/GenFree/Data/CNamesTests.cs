@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GenFree.Interfaces.DB;
-using NSubstitute;
-using GenFree.Interfaces.Model;
-using GenFree.Interfaces.Data;
-using BaseLib.Interfaces;
+﻿using BaseLib.Interfaces;
 using GenFree.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Interfaces.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Data.Tests
 {

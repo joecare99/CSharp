@@ -1,7 +1,7 @@
-using System;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using RnzTrauer.Core.Services.Interfaces;
+using System;
 
 namespace RnzTrauer.Core;
 

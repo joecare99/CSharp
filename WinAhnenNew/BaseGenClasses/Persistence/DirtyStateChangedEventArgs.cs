@@ -1,5 +1,5 @@
-using System;
 using GenInterfaces.Interfaces.Genealogic;
+using System;
 
 namespace BaseGenClasses.Persistence;
 

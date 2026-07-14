@@ -1,15 +1,14 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using BaseGenClasses.Model;
 using BaseGenClasses.Persistence;
-using BaseGenClasses.Persistence.Interfaces;
 using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using NSubstitute;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BaseGenClassesTests
 {
@@ -29,9 +28,9 @@ namespace BaseGenClassesTests
             genGenealogy.AttachPersistence(prvPersistence);
             genGenealogy.MarkDirty(null, "Test change");
             Assert.IsTrue(genGenealogy.xDirty);
- 
+
             await genGenealogy.FlushAsync();
- 
+
             Assert.IsFalse(genGenealogy.xDirty);
             await prvPersistence.Received(1).FlushAsync(genGenealogy, null, GenealogyPersistenceScope.Auto, Arg.Any<CancellationToken>());
         }

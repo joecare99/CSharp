@@ -97,27 +97,27 @@ public partial class Quellverw : Form
         return base.ShowDialog(null);
     }
 
-    private void ComboBox2_MouseDoubleClick(object s,MouseEventArgs e) => _viewModel.ComboBox2_MouseDoubleClick(s, e);
-    private void ComboBox2_SelectedIndexChanged(object s,EventArgs e) => _viewModel.ComboBox2_SelectedIndexChanged(s, e);
-    private void PictureBox1_Click(object s,EventArgs e) => _viewModel.PictureBox1_Click(s, e);
-    private void Button6_Click(object s,EventArgs e) => _viewModel.Button6_Click(s, e);
-    private void btnHometown_Click(object s,EventArgs e) => _viewModel.btnHometown_Click(s, e);
-    private void Label7_Click(object s,EventArgs e) => _viewModel.Label7_Click(s, e);
-    private void btnNewEntry_Click(object s,EventArgs e) => _viewModel.btnNewEntry_Click(s, e);
-   
-    private void frmSrch_btnDeleteEntry_Click(object s,EventArgs e) => _viewModel.frmSrch.btnDeleteEntry_Click(s, e);
-    private void frmSrch_btnClose_Click(object s,EventArgs e) => _viewModel.frmSrch.btnClose_Click(s, e);
-    private void frmSrch_ListBox1_DoubleClick(object s,EventArgs e) => _viewModel.frmSrch.ListBox1_DoubleClick(s, e);
-    private void frmSrch_edtSearch_TextChanged(object s,EventArgs e) => _viewModel.frmSrch.edtSearch_TextChanged(s, e);
-    
-    private void ComboBox1_KeyUp(object s,KeyEventArgs e) => _viewModel.ComboBox1_KeyUp(s, e);
-    private void ComboBox1_DoubleClick(object s,EventArgs e) => _viewModel.ComboBox1_DoubleClick(s, e);
-    private void ComboBox1_SelectedIndexChanged(object s,EventArgs e) => _viewModel.ComboBox1_SelectedIndexChanged(s, e);
-    private void Button1_Click(object s,EventArgs e) => _viewModel.Button1_Click(s, e);
-    private void TextBox1_KeyDown(object s,KeyEventArgs e) => _viewModel.TextBox1_KeyDown(s, e);
-    private void RTB1_GotFocus(object s,EventArgs e) => _viewModel.RTB1_GotFocus(s, e);
-    private void List1_DoubleClick(object s,EventArgs e) => _viewModel.List1_DoubleClick(s, e);
-    private void Text2_KeyDown(object s,KeyEventArgs e) => _viewModel.Text2_KeyDown(s, e);
-    private void _Option1_0_CheckedChanged(object s,EventArgs e) => _viewModel._Option1_0_CheckedChanged(s, e);
-    private void Text1_KeyDown(object s,KeyEventArgs e) => _viewModel.Text1_KeyDown(s, e);
+    private void ComboBox2_MouseDoubleClick(object s, MouseEventArgs e) => _viewModel.ComboBox2_MouseDoubleClick(s, e);
+    private void ComboBox2_SelectedIndexChanged(object s, EventArgs e) => _viewModel.ComboBox2_SelectedIndexChanged(s, e);
+    private void PictureBox1_Click(object s, EventArgs e) => _viewModel.PictureBox1_Click(s, e);
+    private void Button6_Click(object s, EventArgs e) => _viewModel.Button6_Click(s, e);
+    private void btnHometown_Click(object s, EventArgs e) => _viewModel.btnHometown_Click(s, e);
+    private void Label7_Click(object s, EventArgs e) => _viewModel.Label7_Click(s, e);
+    private void btnNewEntry_Click(object s, EventArgs e) => _viewModel.btnNewEntry_Click(s, e);
+
+    private void frmSrch_btnDeleteEntry_Click(object s, EventArgs e) => _viewModel.frmSrch.btnDeleteEntry_Click(s, e);
+    private void frmSrch_btnClose_Click(object s, EventArgs e) => _viewModel.frmSrch.btnClose_Click(s, e);
+    private void frmSrch_ListBox1_DoubleClick(object s, EventArgs e) => _viewModel.frmSrch.ListBox1_DoubleClick(s, e);
+    private void frmSrch_edtSearch_TextChanged(object s, EventArgs e) => _viewModel.frmSrch.edtSearch_TextChanged(s, e);
+
+    private void ComboBox1_KeyUp(object s, KeyEventArgs e) => _viewModel.ComboBox1_KeyUp(s, e);
+    private void ComboBox1_DoubleClick(object s, EventArgs e) => _viewModel.ComboBox1_DoubleClick(s, e);
+    private void ComboBox1_SelectedIndexChanged(object s, EventArgs e) => _viewModel.ComboBox1_SelectedIndexChanged(s, e);
+    private void Button1_Click(object s, EventArgs e) => _viewModel.Button1_Click(s, e);
+    private void TextBox1_KeyDown(object s, KeyEventArgs e) => _viewModel.TextBox1_KeyDown(s, e);
+    private void RTB1_GotFocus(object s, EventArgs e) => _viewModel.RTB1_GotFocus(s, e);
+    private void List1_DoubleClick(object s, EventArgs e) => _viewModel.List1_DoubleClick(s, e);
+    private void Text2_KeyDown(object s, KeyEventArgs e) => _viewModel.Text2_KeyDown(s, e);
+    private void _Option1_0_CheckedChanged(object s, EventArgs e) => _viewModel._Option1_0_CheckedChanged(s, e);
+    private void Text1_KeyDown(object s, KeyEventArgs e) => _viewModel.Text1_KeyDown(s, e);
 }

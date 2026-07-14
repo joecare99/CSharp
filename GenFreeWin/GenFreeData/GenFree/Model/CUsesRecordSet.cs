@@ -1,5 +1,4 @@
 ﻿using BaseLib.Helper;
-using GenFree.Helper;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
@@ -26,7 +25,10 @@ namespace GenFree.Models
             dB_Table.MoveFirst();
             while (!dB_Table.EOF)
             {
-                try { action?.Invoke(dB_Table); } catch { };
+                try
+                { action?.Invoke(dB_Table); }
+                catch { }
+                ;
                 dB_Table.MoveNext();
             }
         }

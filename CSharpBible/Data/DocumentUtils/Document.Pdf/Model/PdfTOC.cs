@@ -13,7 +13,7 @@ public class PdfTOC : PdfContentBase, IDocTOC
         Level = Math.Clamp(level, 1, 6);
     }
     public override IDocStyleStyle GetStyle() => new PdfStyle("TOC");
-    
+
     /// <summary>
     /// Rebuilds the table of contents by extracting headings from the specified document section.
     /// </summary>
@@ -23,7 +23,8 @@ public class PdfTOC : PdfContentBase, IDocTOC
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="root"/> is null.</exception>
     public void RebuildFrom(IDocSection root)
     {
-        if (root is null) throw new ArgumentNullException(nameof(root));
+        if (root is null)
+            throw new ArgumentNullException(nameof(root));
 
         // Inhalt zurücksetzen (Kinder und Text)
         _children.Clear();
@@ -34,7 +35,7 @@ public class PdfTOC : PdfContentBase, IDocTOC
             .Where(h => h.Level <= Level)
             .ToList();
 
-        AddSpan(Name,EFontStyle.Bold);
+        AddSpan(Name, EFontStyle.Bold);
         AddLineBreak();
 
         // Einfache Ausgabe: Einzug per Spaces, Text, dann Zeilenumbruch .. als Platzhalter

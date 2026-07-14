@@ -1,6 +1,4 @@
-﻿using System;
-using Db.Core.Abstractions.Sql;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Db.Core.Abstractions.Sql;
 
 namespace DbCoreAbstractions.UnitTests.Sql
 {

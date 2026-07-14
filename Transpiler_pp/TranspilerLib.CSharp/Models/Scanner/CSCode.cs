@@ -1,5 +1,4 @@
-﻿using BaseLib.Helper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using TranspilerLib.CSharp.Data;
@@ -72,7 +71,8 @@ public partial class CSCode : CodeBase, ICSCode
     {
         stringEndChars = stringEndChars,
         reservedWords = ReservedWords
-    }, new CSCodeBuilder(), new CodeOptimizer()) {
+    }, new CSCodeBuilder(), new CodeOptimizer())
+    {
     }
 
     public CSCode(ITokenHandler tokenHandler, ICodeBuilder codeBuilder, ICodeOptimizer codeOptimizer) : base()
@@ -100,7 +100,7 @@ public partial class CSCode : CodeBase, ICSCode
         TokenizeData data = new();
         Stack<TokenData> stack = new();
         while (
-                data.Pos < OriginalCode.Length 
+                data.Pos < OriginalCode.Length
                 && tokenHandler.TryGetValue(data.State, out var Handler))
         {
             string debug = GetDebug(data, OriginalCode);
@@ -147,7 +147,7 @@ public partial class CSCode : CodeBase, ICSCode
     public override ICodeBlock Parse(IEnumerable<TokenData>? values = null)
     {
         string BlockCode = string.Empty;
-        ICodeBlock codeBlock = new CodeBlock() { Name = "Declaration",Type=CodeBlockType.MainBlock, Code = "", Parent = null };
+        ICodeBlock codeBlock = new CodeBlock() { Name = "Declaration", Type = CodeBlockType.MainBlock, Code = "", Parent = null };
         var data = codeBuilder.NewData(codeBlock);
 
         if (values == null)

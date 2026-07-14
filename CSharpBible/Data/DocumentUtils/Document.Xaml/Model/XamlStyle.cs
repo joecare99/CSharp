@@ -12,7 +12,8 @@ public sealed class XamlStyle : IDocStyleStyle
         Name = name;
         if (properties != null)
         {
-            foreach (var kv in properties) Properties[kv.Key] = kv.Value;
+            foreach (var kv in properties)
+                Properties[kv.Key] = kv.Value;
         }
     }
 }

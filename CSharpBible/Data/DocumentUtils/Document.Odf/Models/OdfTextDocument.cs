@@ -70,7 +70,7 @@ public class OdfTextDocument : IUserDocument
                 return false;
 
             using var contentStream = contentEntry.Open();
-            var contentXml = System.Xml.Linq.XDocument.Load(contentStream, 
+            var contentXml = System.Xml.Linq.XDocument.Load(contentStream,
                 System.Xml.Linq.LoadOptions.PreserveWhitespace | System.Xml.Linq.LoadOptions.SetLineInfo);
 
             // Root-Nodes löschen und neu befüllen
@@ -102,7 +102,7 @@ public class OdfTextDocument : IUserDocument
     {
         try
         {
-            using var zip = new System.IO.Compression.ZipArchive(sOutputStream, 
+            using var zip = new System.IO.Compression.ZipArchive(sOutputStream,
                 System.IO.Compression.ZipArchiveMode.Create, leaveOpen: true);
 
             // mimetype (muss erste Entry sein, unkomprimiert)

@@ -1,11 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
-using Microsoft.Extensions.DependencyInjection;
-using MVVM.Views.Extension;
+﻿using BaseLib.Helper;
 using MdbBrowser.ViewModels.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using BaseLib.Helper;
+using System.Threading;
 
 namespace MdbBrowser.Views.Tests
 {
@@ -17,7 +15,7 @@ namespace MdbBrowser.Views.Tests
         {
             // Build the DependencyInjection container
             var builder = new ServiceCollection()
-               .AddTransient((s)=>Substitute.For<IDBViewViewModel>());
+               .AddTransient((s) => Substitute.For<IDBViewViewModel>());
 
             IoC.Configure(builder.BuildServiceProvider());
         }

@@ -1,11 +1,9 @@
-﻿using GenFree.Models.Data;
-using GenFree.Helper;
-using GenFree.Interfaces.DB;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Models.Data;
+using System;
+using System.Linq;
 
 namespace GenFree.Data
 {
@@ -38,7 +36,7 @@ namespace GenFree.Data
 
         protected override Enum _keyIndex => RepoIndex.Nr;
 
-        public CRepoData(IRecordset dB_RepoTable, bool xNoInit=false) : base(dB_RepoTable,xNoInit) { }
+        public CRepoData(IRecordset dB_RepoTable, bool xNoInit = false) : base(dB_RepoTable, xNoInit) { }
 
         public override void ReadID(IRecordset dB_RepoTable)
         {
@@ -100,7 +98,8 @@ namespace GenFree.Data
         /// <param name="value">The value.</param>
         public override void SetPropValue(ERepoProp prop, object value)
         {
-            if (EqualsProp(prop, value)) return;
+            if (EqualsProp(prop, value))
+                return;
 
             AddChangedProp(prop);
 

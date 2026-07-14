@@ -1,11 +1,7 @@
 using GenFree.ViewModels.Interfaces;
-using GenFree;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Views;
 

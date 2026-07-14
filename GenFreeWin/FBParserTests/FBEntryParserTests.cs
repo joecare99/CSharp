@@ -1,9 +1,9 @@
+using FBParser;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FBParser;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FBParserTests;
 
@@ -577,7 +577,7 @@ public sealed class FBEntryParserTests
 
     [TestMethod]
     [DynamicData(nameof(AkSamples), DynamicDataSourceType.Method)]
-    public void Feed_AkSamples(string filename,string sEntr, IReadOnlyList<ParseResult> expectedResults )
+    public void Feed_AkSamples(string filename, string sEntr, IReadOnlyList<ParseResult> expectedResults)
     {
         if (filename == "__missing__")
         {
@@ -595,10 +595,10 @@ public sealed class FBEntryParserTests
         var filteredResults = ParserSequenceComparer.WithoutDebugMessages(collector.Results);
         CollectionAssert.AreEqual(expectedResults.ToList(), filteredResults.ToList());
     }
-    
+
     [TestMethod]
     [DynamicData(nameof(GCSamples), DynamicDataSourceType.Method)]
-    public void Feed_GcSamples(string filename,string sEntr, IReadOnlyList<ParseResult> expectedResults )
+    public void Feed_GcSamples(string filename, string sEntr, IReadOnlyList<ParseResult> expectedResults)
     {
         if (filename == "__missing__")
         {
@@ -626,7 +626,7 @@ public sealed class FBEntryParserTests
 
         foreach (var file in Directory.EnumerateFiles(SampleDataPath, "OsBM*.enttxt"))
         {
-            if (!File.Exists(Path.ChangeExtension(file,".entexp")))
+            if (!File.Exists(Path.ChangeExtension(file, ".entexp")))
             {
                 continue;
             }
@@ -648,7 +648,7 @@ public sealed class FBEntryParserTests
         foreach (var file in Directory.EnumerateFiles(SampleDataPath, "OsBO*.enttxt")
                        .Union(Directory.EnumerateFiles(SampleDataPath, "EntryGC*.enttxt")))
         {
-            if (!File.Exists(Path.ChangeExtension(file,".entexp")))
+            if (!File.Exists(Path.ChangeExtension(file, ".entexp")))
             {
                 continue;
             }

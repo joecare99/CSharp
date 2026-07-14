@@ -1,6 +1,6 @@
+using GenSecure.Contracts;
 using System;
 using System.Security.Principal;
-using GenSecure.Contracts;
 
 namespace GenSecure.Windows;
 

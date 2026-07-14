@@ -65,7 +65,8 @@ public class CRSDataTests
 
         public override void SetPropValue(TestProp prop, object? value)
         {
-            if (EqualsProp(prop, value)) return;
+            if (EqualsProp(prop, value))
+                return;
             AddChangedProp(prop);
             object _ = prop switch
             {
@@ -108,8 +109,8 @@ public class CRSDataTests
     {
         testRS.NoMatch.Returns(xExp);
         testClass.Delete();
-        testRS.Received(xExp?0:1).Delete();
-        Assert.AreEqual("ID",testRS.Index);
+        testRS.Received(xExp ? 0 : 1).Delete();
+        Assert.AreEqual("ID", testRS.Index);
         testRS.Received(1).Seek("=", testClass.ID);
     }
 

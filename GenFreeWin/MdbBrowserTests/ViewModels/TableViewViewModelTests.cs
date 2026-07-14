@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
-using NSubstitute;
-using MdbBrowser.Models;
+﻿using MdbBrowser.Models;
 using MdbBrowser.Models.Interfaces;
 using MdbBrowser.ViewModels.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVVM.ViewModel;
+using NSubstitute;
 using System.Collections.Generic;
 
 namespace MdbBrowser.ViewModels.Tests
@@ -56,18 +56,18 @@ PropChg(MdbBrowser.ViewModels.TableViewViewModel,TableName)=Test
         [DataRow(false, true, false, false)]
         [DataRow(true, false, false, false)]
         [DataRow(true, false, false, false)]
-        public void TableNameTest(bool xAct, bool xAct2,bool xAct3, bool xExp)
+        public void TableNameTest(bool xAct, bool xAct2, bool xAct3, bool xExp)
         {
             var testModel = xAct ? this.testModel : new TableViewViewModel(null!);
             var tMod = Substitute.For<IDBModel>();
             Assert.AreEqual(xAct ? "" : "<TableName>", testModel.TableName);
             testDBView.dBModel.Returns(xAct2 ? tMod : null);
-            tMod.QueryTable("Test5").Returns(xAct3?new List<DBMetaData>() { new DBMetaData("Test5", EKind.Table, null!, null!) } : null);
+            tMod.QueryTable("Test5").Returns(xAct3 ? new List<DBMetaData>() { new DBMetaData("Test5", EKind.Table, null!, null!) } : null);
             testModel.TableName = "Test5";
             Assert.AreEqual("Test5", testModel.TableName);
             tMod.Received(xExp ? 1 : 0).QueryTable("Test5");
             tMod.Received(xExp ? 1 : 0).QueryTableData("Test5");
-            tMod.Received( 0).QuerySchema("Test5");
+            tMod.Received(0).QuerySchema("Test5");
             Assert.AreEqual(!xAct ? "" : @"PropChgn(MdbBrowser.ViewModels.TableViewViewModel,TableName)=
 PropChgn(MdbBrowser.ViewModels.TableViewViewModel,TableData)=
 PropChg(MdbBrowser.ViewModels.TableViewViewModel,TableData)=

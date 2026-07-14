@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Document.Base.Models.Interfaces;
 using Document.Base.Registration;
 using Document.Docx.Model;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using Xceed.Document.NET;
 using Xceed.Words.NET;
 
 namespace Document.Docx;
 
-[UserDocumentProvider("docx", Extensions = new[]{ ".docx" }, ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document", DisplayName = "Word (DocX)")]
+[UserDocumentProvider("docx", Extensions = new[] { ".docx" }, ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document", DisplayName = "Word (DocX)")]
 public sealed class DocxDocument : IUserDocument
 {
     private bool _isModified;
@@ -46,12 +46,18 @@ public sealed class DocxDocument : IUserDocument
 
     private static void ApplyRunFormatting(Formatting fmt, IDocFontStyle style)
     {
-        if (style.Bold) fmt.Bold = true;
-        if (style.Italic) fmt.Italic = true;
-        if (style.Underline) fmt.UnderlineStyle = UnderlineStyle.singleLine;
-        if (style.Strikeout) fmt.StrikeThrough = StrikeThrough.strike;
-        if (!string.IsNullOrWhiteSpace(style.FontFamily)) fmt.FontFamily = new Font(style.FontFamily);
-        if (style.FontSizePt is double sz) fmt.Size = (float)sz;
+        if (style.Bold)
+            fmt.Bold = true;
+        if (style.Italic)
+            fmt.Italic = true;
+        if (style.Underline)
+            fmt.UnderlineStyle = UnderlineStyle.singleLine;
+        if (style.Strikeout)
+            fmt.StrikeThrough = StrikeThrough.strike;
+        if (!string.IsNullOrWhiteSpace(style.FontFamily))
+            fmt.FontFamily = new Font(style.FontFamily);
+        if (style.FontSizePt is double sz)
+            fmt.Size = (float)sz;
     }
 
     private static void BuildDocX(DocX doc, DocxSection root)
@@ -61,59 +67,61 @@ public sealed class DocxDocument : IUserDocument
             switch (node)
             {
                 case DocxParagraph p:
-                {
-                    var par = doc.InsertParagraph();
-                    if (!string.IsNullOrEmpty(p.TextContent)) par.Append(p.TextContent);
-                    foreach (var child in p.Nodes)
                     {
-                        if (child is DocxSpan sp)
+                        var par = doc.InsertParagraph();
+                        if (!string.IsNullOrEmpty(p.TextContent))
+                            par.Append(p.TextContent);
+                        foreach (var child in p.Nodes)
                         {
-                            var fmt = new Formatting();
-                            ApplyRunFormatting(fmt, sp.Style);
-                            if (sp.IsLink && !string.IsNullOrEmpty(sp.Href))
+                            if (child is DocxSpan sp)
                             {
-                                var hyperlink = doc.AddHyperlink(sp.TextContent ?? sp.Href!, new Uri(sp.Href!, UriKind.RelativeOrAbsolute));
-                                par.AppendHyperlink(hyperlink);
+                                var fmt = new Formatting();
+                                ApplyRunFormatting(fmt, sp.Style);
+                                if (sp.IsLink && !string.IsNullOrEmpty(sp.Href))
+                                {
+                                    var hyperlink = doc.AddHyperlink(sp.TextContent ?? sp.Href!, new Uri(sp.Href!, UriKind.RelativeOrAbsolute));
+                                    par.AppendHyperlink(hyperlink);
+                                }
+                                else
+                                {
+                                    par.Append(sp.TextContent ?? string.Empty, fmt);
+                                }
                             }
-                            else
+                            else if (child is DocxLineBreak)
                             {
-                                par.Append(sp.TextContent ?? string.Empty, fmt);
+                                par.AppendLine(string.Empty);
+                            }
+                            else if (child is DocxNbSpace)
+                            {
+                                par.Append("\u00A0");
+                            }
+                            else if (child is DocxTab)
+                            {
+                                par.Append("\t");
                             }
                         }
-                        else if (child is DocxLineBreak)
-                        {
-                            par.AppendLine(string.Empty);
-                        }
-                        else if (child is DocxNbSpace)
-                        {
-                            par.Append("\u00A0");
-                        }
-                        else if (child is DocxTab)
-                        {
-                            par.Append("\t");
-                        }
+                        break;
                     }
-                    break;
-                }
                 case DocxHeadline h:
-                {
-                    var par = doc.InsertParagraph();
-                    if (!string.IsNullOrEmpty(h.TextContent)) par.Append(h.TextContent);
-                    par.StyleName = $"Heading {Math.Clamp(h.Level,1,9)}";
-                    break;
-                }
+                    {
+                        var par = doc.InsertParagraph();
+                        if (!string.IsNullOrEmpty(h.TextContent))
+                            par.Append(h.TextContent);
+                        par.StyleName = $"Heading {Math.Clamp(h.Level, 1, 9)}";
+                        break;
+                    }
                 case DocxTOC toc:
-                {
-                    var switches = new Dictionary<TableOfContentsSwitches, string?>
+                    {
+                        var switches = new Dictionary<TableOfContentsSwitches, string?>
                     {
                         { TableOfContentsSwitches.O, $"\"1-{Math.Clamp(toc.Level,1,9)}\"" },
                         { TableOfContentsSwitches.H, string.Empty },
                         { TableOfContentsSwitches.Z, string.Empty },
                         { TableOfContentsSwitches.U, string.Empty }
                     };
-                    doc.InsertTableOfContents("Table of Contents", switches);
-                    break;
-                }
+                        doc.InsertTableOfContents("Table of Contents", switches);
+                        break;
+                    }
             }
         }
     }

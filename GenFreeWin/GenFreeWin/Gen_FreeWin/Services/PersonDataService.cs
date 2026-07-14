@@ -192,7 +192,8 @@ namespace Gen_FreeWin.Services
                         {
                             if (!families.Contains(link.iFamNr))
                                 families.Add(link.iFamNr);
-                            if (families.Count > 99) break;
+                            if (families.Count > 99)
+                                break;
                         }
                     }
 

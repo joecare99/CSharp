@@ -1,10 +1,7 @@
-using System;
-using System.Windows.Forms;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services;
-using Gen_FreeWin.Main;
-using GenFree;
-using GenFree.Helper;
+using System;
+using System.Windows.Forms;
 
 namespace Gen_FreeWin.Views;
 

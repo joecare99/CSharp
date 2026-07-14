@@ -3,14 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GenFree.Interfaces.Sys;
 using GenFree.ViewModels.Interfaces;
-using Microsoft.VisualBasic;
 using MVVM.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace GenFreeWin.ViewModels;
 
@@ -30,7 +23,7 @@ public partial class LizenzViewModel : BaseViewModelCT, ILizenzViewModel
     private string _licText3;
 
     [ObservableProperty]
-    private bool _displayHintVisible ;
+    private bool _displayHintVisible;
 
     public Action DoClose { get; set; }
     public Action DoEndProg { get; set; }
@@ -54,8 +47,8 @@ public partial class LizenzViewModel : BaseViewModelCT, ILizenzViewModel
     {
         _Command1_Click_Counter++;
         if (_system.SetLicNr(LicText1 + "-GB-" + LicText2 + "-" + LicText3))
-        { 
-            return;            
+        {
+            return;
         }
         if (_Command1_Click_Counter > 4)
         {

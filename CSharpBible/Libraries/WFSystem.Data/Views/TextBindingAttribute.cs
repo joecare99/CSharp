@@ -25,12 +25,12 @@ public class TextBindingAttribute(string cmdName) : Attribute
 
     public void Bind(object viewModel, Control field)
     {
-        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi )
+        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi)
         {
             field.Text = pi.GetValue(viewModel)?.ToString();
             if (viewModel is INotifyPropertyChanged npc)
                 npc.PropertyChanged += (s, e) => { if (e.PropertyName == PropertyName) field.Text = s!.GetType().GetProperty(e.PropertyName)?.GetValue(s)?.ToString(); };
-            if (pi.CanWrite && pi.PropertyType==typeof(string))
+            if (pi.CanWrite && pi.PropertyType == typeof(string))
             {
                 field.TextChanged += (s, e) => pi.SetValue(viewModel, field.Text);
             }

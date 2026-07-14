@@ -3,10 +3,6 @@ using BaseLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Interfaces.DB.Tests;
 
@@ -18,9 +14,9 @@ public class IFieldsCollectionTests
     {
         // Arrange
         var fieldsCollection = Substitute.For<IFieldsCollection>();
-        (fieldsCollection["TestField"] as IHasValue).Value.Returns(1,2,3);
-        (fieldsCollection[2] as IHasValue).Value.Returns(1.1,2.2,3.3);
-        (fieldsCollection[TypeCode.Double] as IHasValue).Value.Returns("1","2","3");
+        (fieldsCollection["TestField"] as IHasValue).Value.Returns(1, 2, 3);
+        (fieldsCollection[2] as IHasValue).Value.Returns(1.1, 2.2, 3.3);
+        (fieldsCollection[TypeCode.Double] as IHasValue).Value.Returns("1", "2", "3");
         // Act
         var result1 = fieldsCollection[TypeCode.Double].AsString();
         var result2 = fieldsCollection[2].AsDouble();

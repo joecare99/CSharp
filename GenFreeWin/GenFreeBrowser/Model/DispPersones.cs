@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GenFreeBrowser.Model;
+﻿namespace GenFreeBrowser.Model;
 
 public record DispPersones(int Id = 0, string Vollname = "", DateTime? GeburtsDatum = null, DateTime? SterbeDatum = null)
 {

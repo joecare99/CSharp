@@ -1,11 +1,7 @@
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GenFreeBrowser.Places;
-using GenInterfaces.Data;
+using System.Text;
 
 namespace PlaceAuthorityConsoleDemo;
 
@@ -51,7 +47,8 @@ public sealed partial class ConsoleAppViewModel : ObservableObject
     [RelayCommand]
     private void HistoryPrev()
     {
-        if (Search.RecentQueries.Count == 0) return;
+        if (Search.RecentQueries.Count == 0)
+            return;
         HistoryIndex = (HistoryIndex + 1) % Search.RecentQueries.Count;
         Search.SearchText = Search.RecentQueries[HistoryIndex];
         DoSearchCommand.NotifyCanExecuteChanged();
@@ -61,9 +58,11 @@ public sealed partial class ConsoleAppViewModel : ObservableObject
     [RelayCommand]
     private void HistoryNext()
     {
-        if (Search.RecentQueries.Count == 0) return;
+        if (Search.RecentQueries.Count == 0)
+            return;
         HistoryIndex--;
-        if (HistoryIndex < 0) HistoryIndex = Search.RecentQueries.Count - 1;
+        if (HistoryIndex < 0)
+            HistoryIndex = Search.RecentQueries.Count - 1;
         Search.SearchText = Search.RecentQueries[HistoryIndex];
         DoSearchCommand.NotifyCanExecuteChanged();
         UpdateHistoryBanner();
@@ -78,7 +77,8 @@ public sealed partial class ConsoleAppViewModel : ObservableObject
 
     public void Backspace()
     {
-        if (Search.SearchText.Length == 0) return;
+        if (Search.SearchText.Length == 0)
+            return;
         Search.SearchText = Search.SearchText[..^1];
         HistoryIndex = -1;
         DoSearchCommand.NotifyCanExecuteChanged();
@@ -100,7 +100,8 @@ public sealed partial class ConsoleAppViewModel : ObservableObject
             var hier = (p.Hierarchy?.Count ?? 0) > 0 ? " | " + string.Join(" > ", p.Hierarchy.Take(4)) : string.Empty;
             sb.AppendLine($"{i++,3}. {p.DisplayName} [{p.Source}] {p.Longitude.GetValueOrDefault():F4},{p.Latitude.GetValueOrDefault():F4}{hier}");
         }
-        if (Search.Results.Count == 0) sb.AppendLine("(keine Treffer)");
+        if (Search.Results.Count == 0)
+            sb.AppendLine("(keine Treffer)");
         ResultsText = sb.ToString();
     }
 }

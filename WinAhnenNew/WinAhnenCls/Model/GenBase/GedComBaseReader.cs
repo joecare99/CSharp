@@ -10,13 +10,13 @@ public class GedComBaseReader : TextReader
     public struct SGedComLine()
     {
         // Field for the level
-        public int iLevel =0;
+        public int iLevel = 0;
         // Field for the GedCom-ID if there is any
-        public string? sID =null;
+        public string? sID = null;
         // Field for the GedCom-tag
-        public string sTag="";
+        public string sTag = "";
         // Field for data 
-        public string? sData=null;
+        public string? sData = null;
         // Prepared field for cross-references
         public string? sXRef = null;
         // Prepared field for rest of line
@@ -24,10 +24,13 @@ public class GedComBaseReader : TextReader
 
         public object?[] ToOArray()
         {
-            var _l=new List<object?>() { iLevel, sID, sTag };
-            if(sData!=null || sXRef!=null || sRest!=null) _l.Add(sData);
-            if(sXRef!=null || sRest!=null) _l.Add(sXRef);
-            if(sRest!=null) _l.Add(sRest);
+            var _l = new List<object?>() { iLevel, sID, sTag };
+            if (sData != null || sXRef != null || sRest != null)
+                _l.Add(sData);
+            if (sXRef != null || sRest != null)
+                _l.Add(sXRef);
+            if (sRest != null)
+                _l.Add(sRest);
             return _l.ToArray();
         }
     }
@@ -45,7 +48,7 @@ public class GedComBaseReader : TextReader
         _reader.Close();
     }
 
-   public IEnumerable<SGedComLine> GetGedComLines()
+    public IEnumerable<SGedComLine> GetGedComLines()
     {
         while (!_reader.EndOfStream)
         {
@@ -73,8 +76,8 @@ public class GedComBaseReader : TextReader
             else
                 sRet.sID = null;
             sRet.sTag = _sLine[_iTagCol];
-            sRet.sData = _sLine.Length > _iTagCol+1? string.Join(" ", _sLine.Skip(_iTagCol + 1)):null;
-            
+            sRet.sData = _sLine.Length > _iTagCol + 1 ? string.Join(" ", _sLine.Skip(_iTagCol + 1)) : null;
+
         }
         return sRet;
     }

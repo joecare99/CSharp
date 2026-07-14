@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace Gen_FreeWin.Views
 {
-    public interface IPartnerRechercheViewModel: INotifyPropertyChanged
+    public interface IPartnerRechercheViewModel : INotifyPropertyChanged
     {
         IContainerControl View { get; set; }
 

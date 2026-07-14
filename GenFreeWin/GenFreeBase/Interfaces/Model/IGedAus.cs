@@ -61,7 +61,7 @@ namespace GenFree.Interfaces.Model
         void WriteHeader(string gedAus_FILENAM);
         void Zweitdatum(ref string Datu, string Datsicha, EEventArt eArt, IEventData cEv);
         void WriteEventData(EEventArt eArt, IEventData cEv);
-        void Fehlliste(EEventArt eArt, string Dasi,int iPerFamNr, string grund = "");
+        void Fehlliste(EEventArt eArt, string Dasi, int iPerFamNr, string grund = "");
         string Text_ChngEncoding4(string namenSuch_Wort, int options_Uml);
     }
 }

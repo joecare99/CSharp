@@ -9,7 +9,7 @@ public partial class FraPersImpQueryViewModel : ObservableObject, IFraPersImpQue
 {
 
     [ObservableProperty]
-    public partial EUserText IText { get; set ; }
+    public partial EUserText IText { get; set; }
 
     [ObservableProperty]
     public partial EUserText IReenter { get; set; }
@@ -32,7 +32,7 @@ public partial class FraPersImpQueryViewModel : ObservableObject, IFraPersImpQue
     private void DeleteQuiet() => onDelete?.Invoke();
 
     [RelayCommand]
-    private void Cancel() => onCancel(this,null);
+    private void Cancel() => onCancel(this, null);
 
     [RelayCommand]
     private void Reenter() => onReenter?.Invoke();

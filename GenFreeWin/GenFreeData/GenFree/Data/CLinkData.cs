@@ -1,11 +1,9 @@
-﻿using GenFree.Helper;
-using System;
-using System.Collections.Generic;
-using GenFree.Interfaces.DB;
-using System.Linq;
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
 using GenFree.Models.Data;
+using System;
+using System.Linq;
 
 namespace GenFree.Data
 {
@@ -50,7 +48,8 @@ namespace GenFree.Data
 
         public override void FillData(IRecordset dB_LinkTable)
         {
-            if (dB_LinkTable == null) return;
+            if (dB_LinkTable == null)
+                return;
             ReadID(dB_LinkTable);
         }
 
@@ -89,7 +88,8 @@ namespace GenFree.Data
         public void SetPers(int p2)
         {
             var dB_LinkTable = _db_Table;
-            if (!CkeckRecordset(dB_LinkTable, ID)) return;
+            if (!CkeckRecordset(dB_LinkTable, ID))
+                return;
             dB_LinkTable.Edit();
             dB_LinkTable.Fields[ILinkData.LinkFields.PerNr].Value = p2;
             dB_LinkTable.Update();
@@ -99,7 +99,8 @@ namespace GenFree.Data
         public void SetFam(int _iFamNr)
         {
             var dB_LinkTable = _db_Table;
-            if (!CkeckRecordset(dB_LinkTable, ID)) return;
+            if (!CkeckRecordset(dB_LinkTable, ID))
+                return;
             dB_LinkTable.Edit();
             dB_LinkTable.Fields[ILinkData.LinkFields.FamNr].Value = _iFamNr;
             dB_LinkTable.Update();
@@ -133,17 +134,20 @@ namespace GenFree.Data
             switch (prop)
             {
                 case ELinkProp.eKennz:
-                    if (eKennz == (ELinkKennz)value) return;
+                    if (eKennz == (ELinkKennz)value)
+                        return;
                     AddChangedProp(prop);
                     eKennz = (ELinkKennz)value;
                     break;
                 case ELinkProp.iFamNr:
-                    if (iFamNr == (int)value) return;
+                    if (iFamNr == (int)value)
+                        return;
                     AddChangedProp(prop);
                     iFamNr = (int)value;
                     break;
                 case ELinkProp.iPersNr:
-                    if (iPersNr == (int)value) return;
+                    if (iPersNr == (int)value)
+                        return;
                     AddChangedProp(prop);
                     iPersNr = (int)value;
                     break;
@@ -183,6 +187,6 @@ namespace GenFree.Data
             iPersNr = dB_LinkTable.Fields[ILinkData.LinkFields.PerNr].AsInt();
         }
 
-        
+
     }
 }

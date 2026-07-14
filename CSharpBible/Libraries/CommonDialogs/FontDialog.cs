@@ -14,8 +14,8 @@
 using CommonDialogs.Helper;
 using CommonDialogs.Interfaces;
 using CommonDialogs.Models;
-using System.Windows.Forms;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace CommonDialogs;
 

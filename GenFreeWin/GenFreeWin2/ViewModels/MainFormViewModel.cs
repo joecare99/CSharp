@@ -4,15 +4,11 @@ using GenFree.Interfaces.UI;
 using GenFreeWin2.ViewModels.Interfaces;
 using MVVM.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GenFreeWin2.ViewModels;
 
-public partial class MainFormViewModel: BaseViewModelCT, IMainFormViewModel, IRecipient<IShowFrmMsg>,IRecipient<IShowDlgMsg>, IDisposable
+public partial class MainFormViewModel : BaseViewModelCT, IMainFormViewModel, IRecipient<IShowFrmMsg>, IRecipient<IShowDlgMsg>, IDisposable
 {
     private readonly IMessenger _messenger;
 

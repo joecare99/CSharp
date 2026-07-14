@@ -8,9 +8,9 @@ namespace MVVM.ViewModel.Tests;
 [TestClass()]
 public class BaseViewModelTests : BaseViewModel
 {
-    private int property1=3;
-    private int property2=5;
-    private string DebugResult="";
+    private int property1 = 3;
+    private int property2 = 5;
+    private string DebugResult = "";
 
     [TestInitialize()]
     public void Init()
@@ -19,29 +19,29 @@ public class BaseViewModelTests : BaseViewModel
         KnownParams.Clear();
         PropertyChanged -= OnPropertyChanged;
         PropertyChanged += OnPropertyChanged;
-        doSomething = new DelegateCommand<int>((i) => DebugResult += $"doSomething({i})",(i)=>Prop1IsGreaterThen1Prop2());
-        doSomething.CanExecuteChanged += OnCanExChanged;    
+        doSomething = new DelegateCommand<int>((i) => DebugResult += $"doSomething({i})", (i) => Prop1IsGreaterThen1Prop2());
+        doSomething.CanExecuteChanged += OnCanExChanged;
     }
 
     private void OnCanExChanged(object? sender, EventArgs e)
         => DebugResult += $"OnCanExChanged: o:{sender}{Environment.NewLine}";
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        => DebugResult += $"OnPropChanged: o:{sender}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName??"")?.GetValue(sender)}{Environment.NewLine}";
+        => DebugResult += $"OnPropChanged: o:{sender}, p:{e.PropertyName}:{sender?.GetType().GetProperty(e.PropertyName ?? "")?.GetValue(sender)}{Environment.NewLine}";
 
-    public int Property1 { get => property1; set => SetProperty(ref property1 , value); }
+    public int Property1 { get => property1; set => SetProperty(ref property1, value); }
     public int Property2 { get => property2; set => SetProperty(ref property2, value); }
-    public int Property3 { get => property1 + property2; set => Property1 = value -Property2; }
-    public int Property4 { get => property2*property2; set => Property2 = (int)Math.Sqrt(value); }
+    public int Property3 { get => property1 + property2; set => Property1 = value - Property2; }
+    public int Property4 { get => property2 * property2; set => Property2 = (int)Math.Sqrt(value); }
 
     public bool Prop1IsGreaterThen1Prop2() => property1 > property2;
     public bool Prop2IsGreater(int i) => i > property2;
-    public bool IsGreater(int i,int i2) => i > i2;
+    public bool IsGreater(int i, int i2) => i > i2;
 
     public IRelayCommand? doSomething { get; set; }
 
     [TestMethod()]
-    [DataRow("0 - 1 =>  2",1,2,new string[] {
+    [DataRow("0 - 1 =>  2", 1, 2, new string[] {
         @"OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Property3:7
 OnCanExChanged: o:MVVM.ViewModel.DelegateCommand`1[System.Int32]
 OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Prop1IsGreaterThen1Prop2:
@@ -105,7 +105,7 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Prop2IsGreater:
 OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Prop2IsGreater:
 OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Property2:4
 " })]
-    public void BaseViewModelTest(string name, int i,int iVal, string[] aExp )
+    public void BaseViewModelTest(string name, int i, int iVal, string[] aExp)
     {
         AddPropertyDependency(nameof(Property3), nameof(Property1));
         AddPropertyDependency(nameof(Property3), nameof(Property2));
@@ -122,12 +122,20 @@ OnPropChanged: o:MVVM.ViewModel.Tests.BaseViewModelTests, p:Property2:4
         AppendKnownParams(7, "");
         switch (i)
         {
-            case 1:Property1 = iVal; break;
-            case 2: Property2 = iVal; break;
-            case 3: Property3 = iVal; break;
-            case 4: Property4 = iVal; break;
+            case 1:
+                Property1 = iVal;
+                break;
+            case 2:
+                Property2 = iVal;
+                break;
+            case 3:
+                Property3 = iVal;
+                break;
+            case 4:
+                Property4 = iVal;
+                break;
         }
-        Assert.AreEqual( aExp[0], DebugResult, name);
+        Assert.AreEqual(aExp[0], DebugResult, name);
 
     }
 

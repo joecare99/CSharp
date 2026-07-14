@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace GenFree.Data;
 
@@ -859,8 +858,8 @@ public static partial class DataModul
             {
                 try
                 {
-              
-                    var tbl = tbls.FirstOrDefault(x => x.Name.ToLower() == tbldef.Name.ToLower() );
+
+                    var tbl = tbls.FirstOrDefault(x => x.Name.ToLower() == tbldef.Name.ToLower());
                     if (tbl is null)
                     {
                         Database.CreateTable(tbldef.tableDef);
@@ -926,7 +925,8 @@ public static partial class DataModul
 
     public static void Convert_OldReligion()
     {
-        if (DataModul.Person.ExistsReligi()) return;
+        if (DataModul.Person.ExistsReligi())
+            return;
         IRecordset dB_PersonTable1 = DB_PersonTable;
         _ = Interaction.MsgBox("Die Religionseinträge werden jetzt bearbeitet. Vermutlich wurde der Mandant mit einer älteren Programmversion bearbeitet. Dieser Vorgang kann einige Minuten dauern.");
         dB_PersonTable1.Index = nameof(PersonIndex.PerNr);
@@ -1236,7 +1236,7 @@ public static partial class DataModul
                         foreach (IIndexDef idx in tbl.Indexes)
                         {
                             var fields = idx.Fields;
-                            print($"\t\tnew({sDesc}Index.{idx.Name}, [ {string.Join(", " , fields.Select(f=> GetFldName(sDesc, f))) } ])"
+                            print($"\t\tnew({sDesc}Index.{idx.Name}, [ {string.Join(", ", fields.Select(f => GetFldName(sDesc, f)))} ])"
                                 + $"{(idx.Unique && !idx.Primary ? "{ Unique = true }" : "")}"
                                 + $"{(idx.Primary && !idx.Unique ? "{ Primary = true }" : "")}"
                                 + $"{(idx.Primary && idx.Unique ? "{ Primary = true, Unique = true }" : "")}"
@@ -1438,7 +1438,7 @@ public static partial class DataModul
         {
             while (!dB_TTable.EOF
                 && !dB_TTable.NoMatch
-                && dB_TTable.Fields[SourceLinkFields._1].AsInt() == Param 
+                && dB_TTable.Fields[SourceLinkFields._1].AsInt() == Param
                 && dB_TTable.Fields[SourceLinkFields._2].AsInt() == persInArb)
             {
                 dB_TTable.Delete();

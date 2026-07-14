@@ -1,5 +1,3 @@
-using System;
-
 namespace RnzTrauer.Core.Services.Interfaces;
 
 /// <summary>

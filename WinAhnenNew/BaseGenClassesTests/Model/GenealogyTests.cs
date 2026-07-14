@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using BaseGenClasses.Helper;
+using BaseGenClasses.Helper.Interfaces;
 using BaseLib.Helper;
+using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
-using BaseGenClasses.Helper;
-using BaseGenClasses.Helper.Interfaces;
 using NSubstitute;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BaseGenClasses.Model.Tests
 {
@@ -22,7 +22,7 @@ namespace BaseGenClasses.Model.Tests
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         private Guid _uid;
 #pragma warning disable CS0014 
-        private readonly string _cGenealogyJS2= "{\"$id\":\"1\",\"eGenType\":11,\"Entitys\":{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"eGenType\":2,\"UId\":\"52d05107-58dc-4e08-a2cf-507e86f93e2f\",\"Facts\":{\"$id\":\"4\",\"$values\":[{\"$id\":\"5\",\"eGenType\":0,\"eFactType\":0,\"Data\":\"Peter\",\"Entities\":{\"$id\":\"6\",\"$values\":[]}},{\"$id\":\"7\",\"eGenType\":0,\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"8\",\"$values\":[]}},{\"$id\":\"9\",\"eGenType\":0,\"eFactType\":7,\"Date\":{\"$id\":\"10\",\"eGenType\":10,\"Date1\":\"1950-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"11\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"12\",\"$values\":[]}},{\"$id\":\"13\",\"eGenType\":3,\"UId\":\"c8456df6-cb02-4bee-92d9-652c1fd7f40e\",\"Facts\":{\"$id\":\"14\",\"$values\":[{\"$id\":\"15\",\"eGenType\":0,\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"16\",\"$values\":[]}},{\"$id\":\"17\",\"eGenType\":0,\"eFactType\":28,\"Date\":{\"$id\":\"18\",\"eGenType\":10,\"Date1\":\"1950-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"19\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"20\",\"$values\":[]}}]},\"Sources\":{\"$id\":\"21\",\"$values\":[]},\"Places\":{\"$id\":\"22\",\"$values\":[]},\"Medias\":{\"$id\":\"23\",\"$values\":[]},\"Transactions\":{\"$id\":\"24\",\"$values\":[]},\"UId\":\"60bf23eb-d293-4971-8b13-8845ff25d8dd\"}";
+        private readonly string _cGenealogyJS2 = "{\"$id\":\"1\",\"eGenType\":11,\"Entitys\":{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"eGenType\":2,\"UId\":\"52d05107-58dc-4e08-a2cf-507e86f93e2f\",\"Facts\":{\"$id\":\"4\",\"$values\":[{\"$id\":\"5\",\"eGenType\":0,\"eFactType\":0,\"Data\":\"Peter\",\"Entities\":{\"$id\":\"6\",\"$values\":[]}},{\"$id\":\"7\",\"eGenType\":0,\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"8\",\"$values\":[]}},{\"$id\":\"9\",\"eGenType\":0,\"eFactType\":7,\"Date\":{\"$id\":\"10\",\"eGenType\":10,\"Date1\":\"1950-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"11\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"12\",\"$values\":[]}},{\"$id\":\"13\",\"eGenType\":3,\"UId\":\"c8456df6-cb02-4bee-92d9-652c1fd7f40e\",\"Facts\":{\"$id\":\"14\",\"$values\":[{\"$id\":\"15\",\"eGenType\":0,\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"16\",\"$values\":[]}},{\"$id\":\"17\",\"eGenType\":0,\"eFactType\":28,\"Date\":{\"$id\":\"18\",\"eGenType\":10,\"Date1\":\"1950-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"19\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"20\",\"$values\":[]}}]},\"Sources\":{\"$id\":\"21\",\"$values\":[]},\"Places\":{\"$id\":\"22\",\"$values\":[]},\"Medias\":{\"$id\":\"23\",\"$values\":[]},\"Transactions\":{\"$id\":\"24\",\"$values\":[]},\"UId\":\"60bf23eb-d293-4971-8b13-8845ff25d8dd\"}";
 #pragma warning restore CS0014 
         private readonly string _cGenealogyJS = "{\"$id\":\"1\",\"eGenType\":11,\"UId\":\"60bf23eb-d293-4971-8b13-8845ff25d8dd\",\"Entitys\":{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"eGenType\":2,\"UId\":\"52d05107-58dc-4e08-a2cf-507e86f93e2f\",\"Facts\":{\"$id\":\"4\",\"$values\":[{\"$id\":\"5\",\"eGenType\":0,\"eFactType\":0,\"Data\":\"Peter\",\"Entities\":{\"$id\":\"6\",\"$values\":[]}},{\"$id\":\"7\",\"eGenType\":0,\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"8\",\"$values\":[]}},{\"$id\":\"9\",\"eGenType\":0,\"eFactType\":7,\"Date\":{\"$id\":\"10\",\"eGenType\":10,\"Date1\":\"1950-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"11\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"12\",\"$values\":[]}},{\"$id\":\"13\",\"eGenType\":3,\"UId\":\"c8456df6-cb02-4bee-92d9-652c1fd7f40e\",\"Facts\":{\"$id\":\"14\",\"$values\":[{\"$id\":\"15\",\"eGenType\":0,\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"16\",\"$values\":[]}},{\"$id\":\"17\",\"eGenType\":0,\"eFactType\":28,\"Date\":{\"$id\":\"18\",\"eGenType\":10,\"Date1\":\"1950-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"19\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"20\",\"$values\":[]}}]},\"Sources\":{\"$id\":\"21\",\"$values\":[]},\"Places\":{\"$id\":\"22\",\"$values\":[]},\"Repositories\":{\"$id\":\"23\",\"$values\":[]},\"Medias\":{\"$id\":\"24\",\"$values\":[]},\"Transactions\":{\"$id\":\"25\",\"$values\":[]}}";
 
@@ -74,9 +74,10 @@ namespace BaseGenClasses.Model.Tests
 
         [TestMethod]
         [DynamicData(nameof(GetEnityTestData))]
-        public void GetEntityTest(IEnumerable<object?> param, Exception? ex,EGenType eExpType, string sExpStr, DateTime? dExpDate)
+        public void GetEntityTest(IEnumerable<object?> param, Exception? ex, EGenType eExpType, string sExpStr, DateTime? dExpDate)
         {
-            object? Exec(Action action) { action(); return null; }
+            object? Exec(Action action)
+            { action(); return null; }
             if (ex != null)
             {
                 _ = ex switch

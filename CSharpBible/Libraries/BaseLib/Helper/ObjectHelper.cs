@@ -469,5 +469,5 @@ public class ControlArray<T> : Dictionary<int, T>, ISupportInitialize
     /// This indexer provides 0-based access while internally using 1-based keys, 
     /// maintaining compatibility with VB6-style control arrays.
     /// </remarks>
-    public new T this[int i] => base[i+1];
+    public new T this[int i] => base[i + 1];
 }

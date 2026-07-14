@@ -1,10 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Data.Tests;
 
@@ -25,7 +20,7 @@ public class WindowSizeHelperTests
     public void GetWindowSizeTest(EWindowSize eAct, int width, int height, string expected)
     {
         // Annahme: WindowSizeHelper.GetWindowSize gibt einen string zurück, der die Größe beschreibt
-        var (iRWidth,iRHeight) = eAct.GetWindowSize();
+        var (iRWidth, iRHeight) = eAct.GetWindowSize();
         Assert.AreEqual(width, iRWidth);
         Assert.AreEqual(height, iRHeight);
     }
@@ -35,7 +30,7 @@ public class WindowSizeHelperTests
     public void GetWindowSizeTest2(EWindowSize eAct, int width, int height, string expected)
     {
         // Annahme: WindowSizeHelper.GetWindowSize gibt einen string zurück, der die Größe beschreibt
-        Assert.Throws<NotImplementedException>( ()=>_ = eAct.GetWindowSize());
+        Assert.Throws<NotImplementedException>(() => _ = eAct.GetWindowSize());
     }
 
 

@@ -1,6 +1,5 @@
 ﻿using BaseLib.Helper;
 using BaseLib.Interfaces;
-using GenFree.Helper;
 using GenFree.Interfaces;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
@@ -9,14 +8,14 @@ using System.Collections.Generic;
 
 namespace GenFree.Models
 {
-    public abstract class CUsesIndexedRSet<T, T2, T3, T4> : 
+    public abstract class CUsesIndexedRSet<T, T2, T3, T4> :
         CUsesRecordSet<T>,
         IHasIxDataItf<T2, T4, T>,
         IHasRSIndex1<T2, T3>
         where T2 : Enum where T3 : Enum where T4 : IHasID<T>, IHasIRecordset
     {
         public abstract T3 GetIndex1Field(T2 eIndex);
-        protected abstract T4 GetData(IRecordset rs,bool xNoInit = false);
+        protected abstract T4 GetData(IRecordset rs, bool xNoInit = false);
 
         protected abstract T2 _keyIndex { get; }
         protected override string __keyIndex => _keyIndex.AsString();
@@ -38,14 +37,15 @@ namespace GenFree.Models
         }
 
         public IEnumerable<T4> ReadAll()
-            => ReadAllDataDB(_keyIndex, (r)=>r.MoveFirst(),(c)=>false);
+            => ReadAllDataDB(_keyIndex, (r) => r.MoveFirst(), (c) => false);
 
         public IEnumerable<T4> ReadAll(T2 eIndex)
             => ReadAllDataDB(eIndex, (rs) => rs.MoveFirst(), (e) => false);
 
         public override IRecordset? Seek(T tValue, out bool xBreak)
         {
-            if (tValue is not ValueType vVal) throw new NotImplementedException();
+            if (tValue is not ValueType vVal)
+                throw new NotImplementedException();
             var dB_Table = _db_Table;
             dB_Table.Index = $"{_keyIndex}";
             dB_Table.Seek("=", vVal);
@@ -133,7 +133,8 @@ namespace GenFree.Models
 
         public void Commit(T4 data)
         {
-            if (data == null) return;
+            if (data == null)
+                return;
             var id = data.ID;
             var rs = Seek(id);
             if (rs != null)

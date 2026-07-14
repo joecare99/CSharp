@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 

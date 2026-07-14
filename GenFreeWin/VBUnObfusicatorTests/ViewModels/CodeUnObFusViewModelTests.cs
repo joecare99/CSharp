@@ -1,13 +1,11 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.Views.Extension;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
-using TranspilerLib.Models;
 using TranspilerLib.Models.Scanner;
 using VBUnObfusicator.Models.Tests;
 using static VBUnObfusicator.Helper.TestHelper;
@@ -101,7 +99,7 @@ namespace VBUnObfusicator.ViewModels.Tests
         }
 
         [TestMethod]
-        [DataRow("0-Empty", new object[] { "", true, true ,true}, new[] { "Please enter some code ...", @"PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=
+        [DataRow("0-Empty", new object[] { "", true, true, true }, new[] { "Please enter some code ...", @"PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=
 PropChg(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Result)=Please enter some code ...
 " })]
         [DataRow("1-Code1", new object[] { "Code1", true, false, true }, new[] { "<ToCodeResult>", @"PropChgn(VBUnObfusicator.ViewModels.CodeUnObFusViewModel,Code)=
@@ -198,7 +196,7 @@ Lines 0 => 0
             _testViewModel.Code = param[0]?.ToString() ?? "";
             _testViewModel.Reorder = param[1] is not false and not null;
             _testViewModel.RemoveLbl = param[2] is not false and not null;
-            _testViewModel.DoWhile = param[3] is not false and not null;            
+            _testViewModel.DoWhile = param[3] is not false and not null;
             _testViewModel.ExecuteCommand.Execute(null);
             Assert.AreEqual(asExp[0], _testViewModel.Result);
             AssertAreEqual(asExp[1], DebugLog);
@@ -228,7 +226,7 @@ Lines 0 => 0
             // Arrange
             var viewModel = new CodeUnObFusViewModel();
             IoC.GetReqSrv = (t) => t switch
-            {              
+            {
                 _ => throw new NotImplementedException()
             };
 

@@ -1,14 +1,14 @@
 ﻿using BaseLib.Helper;
 using GenFree;
+using GenFree.Interfaces.Sys;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using System.ComponentModel;
-using GenFree.Interfaces.Sys;
 
 namespace Gen_FreeWin.Views
 {
-   
+
     public partial class FraSelPrintBem : UserControl
     {
         IModul1 Modul1 => _Modul1.Instance;
@@ -23,7 +23,8 @@ namespace Gen_FreeWin.Views
 
         private void FraSelPrintBem_Load(object sender, EventArgs e)
         {
-            if (this.DesignMode) return;
+            if (this.DesignMode)
+                return;
             ChkNotes = new ControlArray<CheckBox>();
             ChkNotes.SetIndex(chbSelNotePerson, EFraSelPrintNotes.o01_Person.AsInt());
             ChkNotes.SetIndex(chbSelNoteUpperPersDate, EFraSelPrintNotes.UpperPersonDate.AsInt());
@@ -44,9 +45,9 @@ namespace Gen_FreeWin.Views
 
         public bool[] GetState()
         {
-            bool[] result = new bool[ChkNotes.Keys.Max()+1];
+            bool[] result = new bool[ChkNotes.Keys.Max() + 1];
             for (int i = 0; i < result.Count(); i++)
-                if (ChkNotes.TryGetValue(i,out var c))
+                if (ChkNotes.TryGetValue(i, out var c))
                     result[i] = c.Checked;
             return result;
         }

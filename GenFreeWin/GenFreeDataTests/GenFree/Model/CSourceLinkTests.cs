@@ -1,13 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using NSubstitute;
-using BaseLib.Interfaces;
+﻿using BaseLib.Interfaces;
+using GenFree.Data;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
-using GenFree.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
+using System.Linq;
 
 namespace GenFree.Models.Tests
 {
@@ -26,10 +25,10 @@ namespace GenFree.Models.Tests
             testClass = new CSourceLink(() => testRS);
             testRS.NoMatch.Returns(true);
             (testRS.Fields[SourceLinkFields._1] as IHasValue).Value.Returns(1, 2, 5, 16);
-            (testRS.Fields[SourceLinkFields._2] as IHasValue).Value.Returns(2,3,4);
-            (testRS.Fields[SourceLinkFields._3] as IHasValue).Value.Returns(3,4,5);
-            (testRS.Fields[SourceLinkFields._4] as IHasValue).Value.Returns(4,5,6);
-            (testRS.Fields[SourceLinkFields.Art] as IHasValue).Value.Returns(7,8,9);
+            (testRS.Fields[SourceLinkFields._2] as IHasValue).Value.Returns(2, 3, 4);
+            (testRS.Fields[SourceLinkFields._3] as IHasValue).Value.Returns(3, 4, 5);
+            (testRS.Fields[SourceLinkFields._4] as IHasValue).Value.Returns(4, 5, 6);
+            (testRS.Fields[SourceLinkFields.Art] as IHasValue).Value.Returns(7, 8, 9);
             (testRS.Fields[SourceLinkFields.LfNr] as IHasValue).Value.Returns(8, 9, 10);
             testRS.ClearReceivedCalls();
         }
@@ -92,7 +91,7 @@ namespace GenFree.Models.Tests
             var sut = testClass;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(()=>_= sut.GetIndex1Field(index));
+            Assert.Throws<ArgumentException>(() => _ = sut.GetIndex1Field(index));
 
         }
 
@@ -129,7 +128,7 @@ namespace GenFree.Models.Tests
             {
                 Assert.IsNull(result);
             }
-                Assert.AreEqual(noMatch, xBreak);
+            Assert.AreEqual(noMatch, xBreak);
             rs.Received().Seek(Arg.Any<string>(), (short)citKenn, perFamNr, (int)art, (short)lfNr);
         }
 

@@ -1,8 +1,8 @@
+using Db.Core.Abstractions.Sql.Interfaaces;
 using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
-using Db.Core.Abstractions.Sql.Interfaaces;
 
 namespace GenFree.Data.DB
 {
@@ -24,7 +24,7 @@ namespace GenFree.Data.DB
         public IDbConnection CreateConnection(IDBSettings xSettings)
         {
 
-           var builder = new OleDbConnectionStringBuilder()
+            var builder = new OleDbConnectionStringBuilder()
             {
 
                 Provider = IntPtr.Size == 8 ? "Microsoft.ACE.OLEDB.16.0" : "Microsoft.Jet.OLEDB.4.0",
@@ -45,7 +45,7 @@ namespace GenFree.Data.DB
         }
 
         /// <inheritdoc />
-        public IDbStatementRenderer CreateStatementRenderer(IDbConnection dBConnection) 
+        public IDbStatementRenderer CreateStatementRenderer(IDbConnection dBConnection)
             => new OleDbStatementRenderer(dBConnection);
     }
 }

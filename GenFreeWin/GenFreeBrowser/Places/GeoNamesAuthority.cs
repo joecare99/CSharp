@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Authorities;
 using System.Globalization;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using GenInterfaces.Data;
-using GenInterfaces.Interfaces.Authorities;
 
 namespace GenFreeBrowser.Places;
 
@@ -53,8 +49,12 @@ public sealed class GeoNamesAuthority : IGenPlaceAuthority
                     var admin2 = SafeGetString(el, "adminName2", true);
                     var admin3 = SafeGetString(el, "adminName3", true);
                     var hierarchy = new List<string>();
-                    void Add(string? s) { if (!string.IsNullOrWhiteSpace(s)) hierarchy.Add(s!); }
-                    Add(countryName); Add(admin1); Add(admin2); Add(admin3);
+                    void Add(string? s)
+                    { if (!string.IsNullOrWhiteSpace(s)) hierarchy.Add(s!); }
+                    Add(countryName);
+                    Add(admin1);
+                    Add(admin2);
+                    Add(admin3);
                     list.Add(new GenPlaceMatch { ExternalId = id, DisplayName = name, Latitude = lat, Longitude = lon, Hierarchy = hierarchy, Source = Name, ParentDisplayName = hierarchy.LastOrDefault() });
                 }
             }

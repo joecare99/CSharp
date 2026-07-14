@@ -1,10 +1,9 @@
-﻿using MSQBrowser.ViewModels;
-using System;
-using System.Windows.Controls;
+﻿using BaseLib.Helper;
 using CommonDialogs.Interfaces;
-using MVVM.Views.Extension;
+using MSQBrowser.ViewModels;
+using System;
 using System.Security;
-using BaseLib.Helper;
+using System.Windows.Controls;
 
 namespace MSQBrowser.Views
 {
@@ -26,14 +25,14 @@ namespace MSQBrowser.Views
             vm.DBConnectDialog = DoDBConDialog;
         }
 
-        private bool? DoDBConDialog(string[] Params,SecureString p, Action<string[], SecureString>? OnAccept)
+        private bool? DoDBConDialog(string[] Params, SecureString p, Action<string[], SecureString>? OnAccept)
         {
             IDialogWindow dialog = IoC.GetRequiredService<IDialogWindow>();
             var dialogViewModel = (DBConnectViewModel)dialog.DataContext;
-            (dialogViewModel.Server, 
+            (dialogViewModel.Server,
                 dialogViewModel.User,
                 dialogViewModel.Password,
-                dialogViewModel.Db) = (Params[0], Params[1],p, Params[2]);
+                dialogViewModel.Db) = (Params[0], Params[1], p, Params[2]);
             if (dialog.ShowDialog() == true)
             {
                 OnAccept?.Invoke(new string[] { dialogViewModel.Server, dialogViewModel.User, dialogViewModel.Db }, dialogViewModel.Password);
@@ -54,7 +53,8 @@ namespace MSQBrowser.Views
         {
             Par.FileName = Filename;
             bool? result = Par.ShowDialog(this.Parent);
-            if (result ?? false) OnAccept?.Invoke(Par.FileName, Par);
+            if (result ?? false)
+                OnAccept?.Invoke(Par.FileName, Par);
             return result;
         }
 

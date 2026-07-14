@@ -1,12 +1,12 @@
-﻿using GenFree.Interfaces.DB;
+﻿using BaseLib.Helper;
 using GenFree.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Models.Data;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
-using GenFree.Models.Data;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
+using System.Reflection;
 
 namespace GenFree.Data;
 
@@ -28,7 +28,7 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
     public IList<string> Nickname { get; } = new List<string>();
     public IList<string> Callname { get; } = new List<string>();
     public string FullSurName { get; private set; } = "";
-  //  public string FullName { get; private set; }
+    //  public string FullName { get; private set; }
     public string sSex { get; private set; } = "";
     public string sKonv { get; private set; } = "";
 
@@ -52,7 +52,7 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
     /// Events of this person 
     /// </summary>
     public IList<IEventData> Events { get; } = [];
-    
+
     public string sOFB { get; private set; } = "";
     public string[] sSuch { get; } = new string[7];
     public string Stat { get; private set; } = "";
@@ -67,11 +67,12 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     static CPersonData() => Reset();
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public CPersonData(IRecordset dB_PersonTable, bool xNoInit=false) : base(dB_PersonTable, xNoInit) { }
+    public CPersonData(IRecordset dB_PersonTable, bool xNoInit = false) : base(dB_PersonTable, xNoInit) { }
 
     public override void FillData(IRecordset dB_PersonTable)
     {
-        if (dB_PersonTable?.EOF != false) return;
+        if (dB_PersonTable?.EOF != false)
+            return;
         ReadID(dB_PersonTable);
         sOFB = dB_PersonTable.Fields[PersonFields.OFB].AsString();
         sPruefen = dB_PersonTable.Fields[PersonFields.Pruefen].AsString();
@@ -143,7 +144,7 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
         && string.IsNullOrWhiteSpace(sBem[2])
         && string.IsNullOrWhiteSpace(sBem[3]);
 
-    public bool xVChr { get ; set; }
+    public bool xVChr { get; set; }
 
     public void SetPersonNr(int i) { _ID = i; }
 
@@ -229,10 +230,10 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
                 }
                 catch { }
             else
-              if (p.PropertyType == typeof(IList<string>))
-                ((IList<string>)p.GetValue(this)!).Clear();
-            else if (p.PropertyType == typeof(string[]))
-               new[] {"","","","" }.IntoString( (string[])p.GetValue(this));
+                if (p.PropertyType == typeof(IList<string>))
+                    ((IList<string>)p.GetValue(this)!).Clear();
+                else if (p.PropertyType == typeof(string[]))
+                    new[] { "", "", "", "" }.IntoString((string[])p.GetValue(this));
 
 
         }
@@ -274,7 +275,7 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
             {
                 Nickname.Add(txts.Item1);
             }
-            sGivennames += txts.Item1.TrimEnd().FrameIfNEoW(sQuoteS)+" ";
+            sGivennames += txts.Item1.TrimEnd().FrameIfNEoW(sQuoteS) + " ";
             if (!string.IsNullOrWhiteSpace(txts.Item2) && xInclLN)
             {
                 sGivennames += $">{txts.Item2.Trim()}< ";
@@ -316,9 +317,11 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
     }
     public void Update()
     {
-        if (_ID == 0) return; // no ID, nothing to update
+        if (_ID == 0)
+            return; // no ID, nothing to update
         var dB_PersonTable = Seek(_ID);
-        if (dB_PersonTable == null) return;
+        if (dB_PersonTable == null)
+            return;
         dB_PersonTable.Edit();
         SetDBValues(dB_PersonTable, null);
         dB_PersonTable.Update();
@@ -438,7 +441,8 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
 
     public override void SetPropValue(EPersonProp prop, object value)
     {
-        if (EqualsProp(prop,value)) return;
+        if (EqualsProp(prop, value))
+            return;
         AddChangedProp(prop);
         object _ = prop switch
         {
@@ -469,8 +473,10 @@ public class CPersonData : CRSDataInt<EPersonProp>, IPersonData
     }
 
     public void SetPersonEvents(IEnumerable<IEventData> acEvents)
-    { Events.Clear();
-        if (acEvents == null) return;
+    {
+        Events.Clear();
+        if (acEvents == null)
+            return;
         foreach (var cEvt in acEvents)
         {
             SetData(cEvt);

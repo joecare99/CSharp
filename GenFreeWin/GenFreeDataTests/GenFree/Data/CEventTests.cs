@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GenFree.Interfaces.DB;
-using NSubstitute;
-using GenFree.Interfaces.Model;
-using GenFree.Interfaces.Data;
+﻿using BaseLib.Helper;
 using BaseLib.Interfaces;
-using BaseLib.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Interfaces.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Data.Tests
 {
@@ -254,10 +254,10 @@ namespace GenFree.Data.Tests
         {
             // Arrange
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            
+
             // Act
             Assert.AreEqual(xExp, testClass.ReadData(eArt, iActFam, out var cEv, (short)iLfdNr));
-            
+
             // Assert
             if (xExp)
             {
@@ -317,7 +317,7 @@ namespace GenFree.Data.Tests
             //            Assert.AreEqual(xExp, 
             testClass.DeleteBeSu(eArt, iActFam);//);
             Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
-            testRS.Received().Seek("=",(int)eArt, iActFam);
+            testRS.Received().Seek("=", (int)eArt, iActFam);
         }
 
         [TestMethod()]
@@ -360,10 +360,10 @@ namespace GenFree.Data.Tests
         {
             // Arrange
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            
+
             // Act 
             testClass.ChgEvent(eArt, iActFam, eArt2, iActFam2);
-            
+
             // Assert
             Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
             testRS.Received().Seek("=", (int)eArt, iActFam);
@@ -403,7 +403,7 @@ namespace GenFree.Data.Tests
         {
             // Arrange
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
-            
+
             // Act & Assert
             foreach (var cEv in testClass.ReadEventsBeSu(iActFam, eArt))
             {
@@ -546,10 +546,10 @@ namespace GenFree.Data.Tests
             // Arrange
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, !xExp, !xExp, true);
             var testP = Substitute.For<IPersonData>();
-           
+
             // Act
             testClass.PersLebDatles(iActFam, testP);
-            
+
             // Assert
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
             testRS.Received().Seek("=", (int)EEventArt.eA_Birth, iActFam, (short)0);
@@ -728,9 +728,9 @@ namespace GenFree.Data.Tests
             iRc = 0;
             testRS.NoMatch.Returns(iActFam is not (> 0 and < 3) || iLfdNr / 2 != iActFam, false, true);
             xResult = new[] { eArt != EventFields.Art, false };
-          
+
             testClass.UpdateAllSetValPred(eIx, eFld, iLfdNr, eArt, iLfdNr + 1, tstPred1);
-            
+
             Assert.AreEqual((iLfdNr == 2) ? 1 : 0, iRc);
             Assert.AreEqual($"{eIx}", testRS.Index);
             testRS.Received(1).Seek("=", iLfdNr);
@@ -816,8 +816,9 @@ namespace GenFree.Data.Tests
         {
             // Arrange
             var key = (eArt, iLink, iLfNr);
-            testRS.NoMatch.Returns(iLfNr==1);
-            if (iLink==1) (testRS.Fields[EventFields.ArtText] as IHasValue).Value.Returns("OldValue");
+            testRS.NoMatch.Returns(iLfNr == 1);
+            if (iLink == 1)
+                (testRS.Fields[EventFields.ArtText] as IHasValue).Value.Returns("OldValue");
 
             // Act
             testClass.SetValAppend(key, eSetField, sNewVal);
@@ -828,10 +829,10 @@ namespace GenFree.Data.Tests
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
             // Optional: Überprüfe, ob das Feld gesetzt wurde
             if (eSetField == EventFields.ArtText)
-                testRS.Fields[eSetField].Received(1).Value = "OldValue "+ sNewVal;
+                testRS.Fields[eSetField].Received(1).Value = "OldValue " + sNewVal;
             else
                 testRS.Fields[eSetField].Received(1).Value = sNewVal + " ";
-            testRS.Received(1+iLfNr).Update();
+            testRS.Received(1 + iLfNr).Update();
         }
 
         [TestMethod()]
@@ -845,12 +846,12 @@ namespace GenFree.Data.Tests
             (testRS.Fields[eField] as IHasValue).Value.Returns(expected);
 
             // Act
-            var result = testClass.GetValue(iLink,eArt, eField,i=>i.AsString());
+            var result = testClass.GetValue(iLink, eArt, eField, i => i.AsString());
 
             // Assert
             Assert.AreEqual(expected, result);
             Assert.AreEqual(nameof(EventIndex.ArtNr), testRS.Index);
-            testRS.Received().Seek("=", (int)eArt, iLink,0);
+            testRS.Received().Seek("=", (int)eArt, iLink, 0);
         }
 
         [TestMethod()]
@@ -879,7 +880,7 @@ namespace GenFree.Data.Tests
             {
                 testRS.DidNotReceive().Delete();
                 testRS.DidNotReceive().MoveNext();
-            }       
+            }
         }
 
         [TestMethod()]
@@ -898,9 +899,9 @@ namespace GenFree.Data.Tests
             // Assert
             Assert.AreEqual(nameof(EventIndex.BeSu), testRS.Index);
             testRS.ReceivedWithAnyArgs(xExp ? 21 : 20).Seek("=");
-            testRS.Received(xExp ? 2 : 1).Seek("=",101, famNr);
-            testRS.Received(1).Seek("=",102, famNr);
-            testRS.Received(1).Seek("=",120, famNr);
+            testRS.Received(xExp ? 2 : 1).Seek("=", 101, famNr);
+            testRS.Received(1).Seek("=", 102, famNr);
+            testRS.Received(1).Seek("=", 120, famNr);
             if (xExp)
             {
                 testRS.Received(1).Delete();
@@ -945,7 +946,7 @@ namespace GenFree.Data.Tests
             // Arrange
             // Simuliere, dass testRS.NoMatch beim ersten MoveNext false (Datensatz vorhanden), dann true (Ende)
             testRS.NoMatch.Returns(!xExp, true);
-            testRS.EOF.Returns(iIndexVal==2, true);
+            testRS.EOF.Returns(iIndexVal == 2, true);
             (testRS.Fields[EventFields.Art] as IHasValue).Value.Returns(101);
             (testRS.Fields[EventFields.PerFamNr] as IHasValue).Value.Returns(2);
             (testRS.Fields[EventFields.LfNr] as IHasValue).Value.Returns(1);
@@ -965,7 +966,7 @@ namespace GenFree.Data.Tests
                 Assert.AreEqual(2, cEv.iPerFamNr);
                 Assert.AreEqual(1, cEv.iLfNr);
             }
-            if (xExp && iIndexVal!=2)
+            if (xExp && iIndexVal != 2)
                 Assert.AreEqual(1, count);
             else
                 Assert.AreEqual(0, count);

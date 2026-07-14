@@ -114,8 +114,8 @@ namespace Gen_FreeWin.UseCases
                 foreach (var gbe in gbes)
                 {
                     // Display text: "Jahr Name   [Extra space to reach column 200]  Nr"
-                    string displayText = $"{gbe.Jahr} {gbe.Name}".Trim() + 
-                        new string(' ', 240).Substring(0, 200) + 
+                    string displayText = $"{gbe.Jahr} {gbe.Name}".Trim() +
+                        new string(' ', 240).Substring(0, 200) +
                         gbe.Id.ToString();
                     items.Add(new MyListItem(displayText, gbe.Id));
                 }
@@ -151,9 +151,9 @@ namespace Gen_FreeWin.UseCases
                     _modul1.PersInArb = usage.PersonId;
                     _modul1.Person_ReadNames(usage.PersonId, _modul1.Person);
 
-                    string displayText = (_modul1.Person.SurName.Trim() + ", " + 
-                        _modul1.Person.Givennames.Trim() + 
-                        new string(' ', 240)).Substring(0, 200) + 
+                    string displayText = (_modul1.Person.SurName.Trim() + ", " +
+                        _modul1.Person.Givennames.Trim() +
+                        new string(' ', 240)).Substring(0, 200) +
                         usage.PersonId.ToString();
 
                     items.Add(new MyListItem(displayText, usage.PersonId));

@@ -42,9 +42,9 @@ public class MenuItem : CommandControl
             if (ShortcutKey == '\0')
             {
                 var idx = value.IndexOf('&');
-                if (idx >= 0 && idx + 1 < value.Length && value[idx+1]!='&')
+                if (idx >= 0 && idx + 1 < value.Length && value[idx + 1] != '&')
                     Accelerator = char.ToUpperInvariant(value[idx + 1]);
-                else if (value.Length > 0 && value[0]>'@')
+                else if (value.Length > 0 && value[0] > '@')
                     Accelerator = char.ToUpperInvariant(value[0]);
             }
         }
@@ -82,7 +82,8 @@ public class MenuItem : CommandControl
 
     public override void Click()
     {
-        if (!Enabled) return;
+        if (!Enabled)
+            return;
         if (SubMenu != null)
         {
             if (!SubMenu.Visible)
@@ -102,7 +103,8 @@ public class MenuItem : CommandControl
 
     public override void HandlePressKeyEvents(Interfaces.IKeyEvent e)
     {
-        if (!Enabled) return;
+        if (!Enabled)
+            return;
         if (char.ToUpperInvariant(e.KeyChar) == Accelerator && Accelerator != '\0')
         {
             e.Handled = true;

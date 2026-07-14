@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Interfaces;
 using GenFree.Interfaces.DB;
-using NSubstitute;
 using GenFree.Interfaces.Model;
-using BaseLib.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 
 namespace GenFree.Models.Tests
 {

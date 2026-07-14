@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+﻿using BaseLib.Interfaces;
 using GenFree.Interfaces.DB;
-using NSubstitute;
 using GenFree.Interfaces.Sys;
-using System.IO;
-using BaseLib.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace GenFree.Data.Tests
 {
@@ -188,7 +188,7 @@ namespace GenFree.Data.Tests
 
         [TestMethod()]
         [DataRow(true, 1, PersonIndex.Such3, "Mustermann", 0)]
-        public void Person_DoSearchTest(bool xRev,int iPers, PersonIndex eIdx,string sSuch,int iExp)
+        public void Person_DoSearchTest(bool xRev, int iPers, PersonIndex eIdx, string sSuch, int iExp)
         {
             // Arrange
             var personTable = Substitute.For<IRecordset>();
@@ -202,18 +202,18 @@ namespace GenFree.Data.Tests
             personTable.Seek(Arg.Is<string>(s => s == searchField), Arg.Any<object>());
 
             // Act
-            int found = DataModul.Person_DoSearch(PersonIndex.Such3, searchValue,iPers,xRev);
+            int found = DataModul.Person_DoSearch(PersonIndex.Such3, searchValue, iPers, xRev);
 
             // Assert
             personTable.Received(0).FindFirst($"{searchField} = '{searchValue}'");
             personTable.ReceivedWithAnyArgs(1).Seek(Arg.Any<string>());
-            Assert.AreEqual(iExp,found);
+            Assert.AreEqual(iExp, found);
         }
 
         [TestMethod()]
         public void NB_SperrPers_ExistsTest()
         {
-            
+
         }
     }
 }

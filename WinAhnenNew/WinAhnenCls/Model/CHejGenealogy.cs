@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
 using System.Text;
 using WinAhnenCls.Model.HejInd;
 using WinAhnenCls.Model.HejMarr;
@@ -52,9 +51,9 @@ namespace WinAhnenCls.Model
         public Func<IList<object>, IGenFact> GetFact { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Func<IList<object>, IGenMedia> GetMedia { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public Func<IList<object?>, IGenSource> GetSource { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Func<IList<object?>, IGenTransaction> GetTransaction { get ; set; }
+        public Func<IList<object?>, IGenTransaction> GetTransaction { get; set; }
         public IList<IGenEntity> Entitys { get; init; } = [];
-        public IList<IGenSource> Sources { get ; init; } = [];
+        public IList<IGenSource> Sources { get; init; } = [];
         public IList<IGenRepository> Repositories { get; init; } = [];
         public IList<IGenPlace> Places { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public IList<IGenMedia> Medias { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
@@ -84,19 +83,25 @@ namespace WinAhnenCls.Model
         {
             if (list.Count == 0)
                 throw new ArgumentException("List must contain at least one item");
-                        
+
             Guid? guid = null;
             string? name = null;
             DateTime? date = null;
 
             foreach (var item in list)
             {
-                switch (item)  
+                switch (item)
                 {
 
-                    case Guid g: guid = g; break;
-                    case string s: name = s; break;
-                    case DateTime dt: date = dt; break;
+                    case Guid g:
+                        guid = g;
+                        break;
+                    case string s:
+                        name = s;
+                        break;
+                    case DateTime dt:
+                        date = dt;
+                        break;
                 }
             }
 
@@ -181,7 +186,10 @@ namespace WinAhnenCls.Model
             if (_people.Count == 0)
                 return;
             var lastId = GetActID;
-            if (_actIndex < 0) _actIndex = 0; else if (_actIndex < _people.Count - 1) _actIndex++;
+            if (_actIndex < 0)
+                _actIndex = 0;
+            else if (_actIndex < _people.Count - 1)
+                _actIndex++;
             UpdateActiveState();
             if (lastId != GetActID)
                 OnUpdate?.Invoke(this, EventArgs.Empty);
@@ -192,7 +200,10 @@ namespace WinAhnenCls.Model
             if (_people.Count == 0)
                 return;
             var lastId = GetActID;
-            if (_actIndex > 0) _actIndex--; else _actIndex = 0;
+            if (_actIndex > 0)
+                _actIndex--;
+            else
+                _actIndex = 0;
             UpdateActiveState();
             if (lastId != GetActID)
                 OnUpdate?.Invoke(this, EventArgs.Empty);
@@ -273,8 +284,10 @@ namespace WinAhnenCls.Model
                 var parts = line.Split('\u000F');
                 if (parts.Length < 2)
                     continue;
-                if (!int.TryParse(parts[0], out var p1)) continue;
-                if (!int.TryParse(parts[1], out var p2)) continue;
+                if (!int.TryParse(parts[0], out var p1))
+                    continue;
+                if (!int.TryParse(parts[1], out var p2))
+                    continue;
                 _marriages.Add((p1, p2));
                 if (_idToIndex.TryGetValue(p1, out var idx1))
                 {
@@ -285,7 +298,8 @@ namespace WinAhnenCls.Model
 
             // We don't need to parse adoptions/places/sources for the current tests
             // Consume rest of the stream to ensure position is at end
-            while ((line = sr.ReadLine()) != null) { /* just drain */ }
+            while ((line = sr.ReadLine()) != null)
+            { /* just drain */ }
 
             // Build children lists
             foreach (var child in _people)

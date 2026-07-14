@@ -25,7 +25,7 @@ namespace MVVM.Views.Extension;
 /// Implements the <see cref="MarkupExtension" />
 /// </summary>
 /// <seealso cref="MarkupExtension" />
-public class IoC2 : MarkupExtension , IIoC
+public class IoC2 : MarkupExtension, IIoC
 {
     /// <summary>
     /// Gets or sets the type.

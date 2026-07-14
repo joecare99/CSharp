@@ -1,13 +1,13 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using GenSecure.Contracts;
+using GenSecure.Core;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using GenSecure.Contracts;
-using GenSecure.Core;
 
 namespace GenSecure.Demo.ViewModels;
 
@@ -135,7 +135,8 @@ public partial class MainViewModel : ObservableObject
         _currentUserSidDisplay = $"Benutzer-SID: {sSid}";
         _grantSid = sSid;
 
-        try { _recoveryFilePath = options.RecoveryKeyFilePath; }
+        try
+        { _recoveryFilePath = options.RecoveryKeyFilePath; }
         catch { _recoveryFilePath = string.Empty; }
 
         Log("GenSecure Demo gestartet.");
@@ -389,7 +390,8 @@ public partial class MainViewModel : ObservableObject
         {
             _options.RootDirectory = dlg.FolderName;
             RootDirectory = dlg.FolderName;
-            try { RecoveryFilePath = _options.RecoveryKeyFilePath; }
+            try
+            { RecoveryFilePath = _options.RecoveryKeyFilePath; }
             catch { /* ignore until first use */ }
             Log($"📁 Neues Verzeichnis gesetzt: {dlg.FolderName}");
         }

@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GenFree.Interfaces.DB;
-using NSubstitute;
-using GenFree.Interfaces.Sys;
-using GenFree.Interfaces.Model;
+﻿using BaseLib.Interfaces;
 using GenFree.Interfaces.Data;
-using BaseLib.Interfaces;
+using GenFree.Interfaces.DB;
+using GenFree.Interfaces.Model;
+using GenFree.Interfaces.Sys;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Data.Tests
 {
@@ -192,8 +192,8 @@ namespace GenFree.Data.Tests
             testClass.AllSetEditDate();
             // Assert
             testRS.Received(2).MoveFirst();
-            testRS.Received(famNr-1).Edit();
-            testRS.Received(famNr-1).Update();
+            testRS.Received(famNr - 1).Edit();
+            testRS.Received(famNr - 1).Update();
             Assert.AreEqual(expectedDate, (testRS.Fields[FamilyFields.EditDat] as IHasValue).Value);
         }
 

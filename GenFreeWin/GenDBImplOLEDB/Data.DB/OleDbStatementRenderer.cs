@@ -1,10 +1,10 @@
+using Db.Core.Abstractions.Sql;
+using Db.Core.Abstractions.Sql.Interfaaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using Db.Core.Abstractions.Sql;
-using Db.Core.Abstractions.Sql.Interfaaces;
 
 namespace GenFree.Data.DB
 {

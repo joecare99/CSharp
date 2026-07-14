@@ -1,10 +1,10 @@
-﻿using GenFree.Helper;
-using System;
-using GenFree.Interfaces.DB;
-using System.Linq;
-using GenFree.Models.Data;
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
+using GenFree.Helper;
 using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Models.Data;
+using System;
+using System.Linq;
 
 namespace GenFree.Data;
 
@@ -148,7 +148,8 @@ public class CEventData : CRSDataC<EEventProp, (EEventArt eArt, int iLink, short
     public void Update(string[]? strings = null)
     {
         IRecordset? rs = Seek(ID);
-        if (rs == null) return;
+        if (rs == null)
+            return;
         IField f;
         string d;
         if (strings != null)
@@ -247,7 +248,8 @@ public class CEventData : CRSDataC<EEventProp, (EEventArt eArt, int iLink, short
 
     public override void SetPropValue(EEventProp prop, object value)
     {
-        if (EqualsProp(prop, value)) return;
+        if (EqualsProp(prop, value))
+            return;
         AddChangedProp(prop);
         object _ = prop switch
         {

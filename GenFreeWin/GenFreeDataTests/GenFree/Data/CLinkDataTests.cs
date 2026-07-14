@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GenFree.Interfaces.DB;
-using NSubstitute;
+﻿using BaseLib.Interfaces;
 using GenFree.Interfaces.Data;
-using BaseLib.Interfaces;
+using GenFree.Interfaces.DB;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Data.Tests
 {
@@ -77,9 +77,9 @@ namespace GenFree.Data.Tests
         public void FillDataTest()
         {
             testClass.FillData(testRS);
-            Assert.AreEqual(3,testClass.iFamNr);
-            Assert.AreEqual(4,testClass.iPersNr);
-            Assert.AreEqual(ELinkKennz.lkMother,testClass.eKennz);
+            Assert.AreEqual(3, testClass.iFamNr);
+            Assert.AreEqual(4, testClass.iPersNr);
+            Assert.AreEqual(ELinkKennz.lkMother, testClass.eKennz);
         }
 
         [TestMethod()]
@@ -98,16 +98,16 @@ namespace GenFree.Data.Tests
         {
             testRS.NoMatch.Returns(!xAct);
             testClass.Delete();
-            Assert.AreEqual(nameof(LinkIndex.FamPruef),testRS.Index);
-            testRS.Received(1).Seek("=",2,3,ELinkKennz.lkFather);
+            Assert.AreEqual(nameof(LinkIndex.FamPruef), testRS.Index);
+            testRS.Received(1).Seek("=", 2, 3, ELinkKennz.lkFather);
             _ = testRS.Received(0).Fields[""];
-            testRS.Received(xAct ?1:0).Delete();
+            testRS.Received(xAct ? 1 : 0).Delete();
         }
 
         [TestMethod()]
-        [DataRow(1,true,1,2,ELinkKennz.lkNone,3)]
-        [DataRow(2,false,3,2,ELinkKennz.lkFather,2)]
-        public void SetPersTest(int iAct,bool xPre, int iPre1,int iPre2, ELinkKennz ePre3, int iExp)
+        [DataRow(1, true, 1, 2, ELinkKennz.lkNone, 3)]
+        [DataRow(2, false, 3, 2, ELinkKennz.lkFather, 2)]
+        public void SetPersTest(int iAct, bool xPre, int iPre1, int iPre2, ELinkKennz ePre3, int iExp)
         {
             testRS.NoMatch.Returns(xPre);
             (testRS.Fields[ILinkData.LinkFields.PerNr] as IHasValue).Value.Returns(iPre1);
@@ -116,7 +116,7 @@ namespace GenFree.Data.Tests
 
             testClass.SetPers(iAct);
 
-            Assert.AreEqual(iExp,testClass.iPersNr);
+            Assert.AreEqual(iExp, testClass.iPersNr);
         }
 
         [TestMethod()]
@@ -141,10 +141,10 @@ namespace GenFree.Data.Tests
         public void GetPropTypeTest(ELinkProp pAct, TypeCode eExp)
         {
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
-        } 
-        
+        }
+
         [TestMethod()]
-        [DataRow((ELinkProp)(0-1), TypeCode.Int32)]
+        [DataRow((ELinkProp)(0 - 1), TypeCode.Int32)]
         [DataRow((ELinkProp)3, TypeCode.Int32)]
         [DataRow((ELinkProp)100, TypeCode.Int32)]
         public void GetPropTypeTest2(ELinkProp pAct, TypeCode eExp)
@@ -228,7 +228,7 @@ namespace GenFree.Data.Tests
         [DataRow((ELinkProp)3, 4)]
         public void SetDBValueTest3(ELinkProp eAct, object _)
         {
-            Assert.ThrowsExactly<NotImplementedException>(()=> testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
+            Assert.ThrowsExactly<NotImplementedException>(() => testClass.SetDBValues(testRS, new[] { (Enum)eAct }));
         }
 
         [TestMethod()]

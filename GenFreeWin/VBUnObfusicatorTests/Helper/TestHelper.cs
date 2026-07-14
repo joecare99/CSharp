@@ -130,16 +130,20 @@ namespace VBUnObfusicator.Helper
 
             static string BldLns(int i, T[] dta)
             {
-                if (dta.Length < 10) return $"[{string.Join("; ", dta)}]";
+                if (dta.Length < 10)
+                    return $"[{string.Join("; ", dta)}]";
                 string sa;
                 List<string> s = new() { (sa = $"{dta[i]}") };
                 int size = sa.Length;
                 var j = 1;
                 for (; j < 30; j++)
                 {
-                    if (i - j >= 0) { s.Insert(0, sa = $"{dta[i - j]}"); size += sa.Length; }
-                    if (i + j < dta.Length) { s.Add(sa = $"{dta[i + j]}"); size += sa.Length; }
-                    if (size > 200) break;
+                    if (i - j >= 0)
+                    { s.Insert(0, sa = $"{dta[i - j]}"); size += sa.Length; }
+                    if (i + j < dta.Length)
+                    { s.Add(sa = $"{dta[i + j]}"); size += sa.Length; }
+                    if (size > 200)
+                        break;
                 }
                 return $"[...{string.Join("; ", dta)}...]";
             }

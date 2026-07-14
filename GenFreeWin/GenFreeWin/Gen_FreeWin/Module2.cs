@@ -58,7 +58,7 @@ internal sealed class Module2
                 num2++;
             }
 
-            Endwert = Endwert.PadRight(6,'0').Left(6);
+            Endwert = Endwert.PadRight(6, '0').Left(6);
             return Endwert;
         }
     }

@@ -1,7 +1,7 @@
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GenFreeBrowser.Model;
 using GenFreeBrowser.ViewModels.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace GenFreeBrowser.ViewModels;
 
@@ -60,7 +60,8 @@ public partial class KernFamilieViewModel : ObservableObject, IKernFamilieViewMo
 
     private static string BuildVital(DispPersones? p)
     {
-        if (p is null) return string.Empty;
+        if (p is null)
+            return string.Empty;
         var born = p.GeburtsDatum?.ToString("dd MMM yyyy") ?? "?";
         var died = p.SterbeDatum?.ToString("dd MMM yyyy") ?? string.Empty;
         return string.IsNullOrEmpty(died) ? $"Born: {born}" : $"Born: {born}  –  Died: {died}";

@@ -9,7 +9,7 @@ namespace MdbBrowser.Models
         public EKind Kind { get; set; }
         public object This;
         public IEnumerable<string> Data { get; set; }
-        public DBMetaData(string Name, EKind Kind, object This, IEnumerable<string> Data) 
+        public DBMetaData(string Name, EKind Kind, object This, IEnumerable<string> Data)
         {
             this.Name = Name;
             this.Kind = Kind;
@@ -19,7 +19,7 @@ namespace MdbBrowser.Models
 
         public override string ToString()
         {
-            return $"(N:{Name}, K:{Kind} D:({(Data!=null?string.Join(", ",Data):"")}))";
+            return $"(N:{Name}, K:{Kind} D:({(Data != null ? string.Join(", ", Data) : "")}))";
         }
     }
 }

@@ -1,10 +1,8 @@
-﻿using MVVM.Views.Extension;
+﻿using BaseLib.Helper;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
-using TranspilerLib.Models;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models.Scanner;
-using BaseLib.Helper;
 
 namespace VBUnObfusicator;
 

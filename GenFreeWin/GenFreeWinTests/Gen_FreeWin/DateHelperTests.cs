@@ -1,5 +1,4 @@
-﻿using Gen_FreeWin;
-using GenFree.Helper;
+﻿using GenFree.Helper;
 using GenFree.Interfaces.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -24,7 +23,7 @@ namespace Gen_FreeWin.Tests
             for (int i = 1; i < IT.Length; i++)
                 asIT[(EUserText)(116 + i)].Returns(IT[i]);
 
-            Assert.AreEqual(expected, DateHelper2.CalcAge(D1, D2, asIT)??"");
+            Assert.AreEqual(expected, DateHelper2.CalcAge(D1, D2, asIT) ?? "");
         }
     }
 }

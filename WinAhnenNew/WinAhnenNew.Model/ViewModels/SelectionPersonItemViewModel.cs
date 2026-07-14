@@ -1,8 +1,8 @@
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Globalization;
 using System.Linq;
-using GenInterfaces.Data;
-using GenInterfaces.Interfaces.Genealogic;
 
 namespace WinAhnenNew.ViewModels
 {

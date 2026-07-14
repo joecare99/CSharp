@@ -1,6 +1,6 @@
-using System.Text;
 using Document.Html.Model;
 using Document.Html.Serialization;
+using System.Text;
 
 namespace Document.Html.IO;
 

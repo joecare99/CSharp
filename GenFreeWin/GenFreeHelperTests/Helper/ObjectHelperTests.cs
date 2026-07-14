@@ -1,10 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using NSubstitute;
+﻿using BaseLib.Helper;
+using BaseLib.Interfaces;
 using GenFree.Data;
 using GenFree.Interfaces.DB;
-using BaseLib.Helper;
-using BaseLib.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Helper.Tests
 {
@@ -350,13 +350,13 @@ namespace GenFree.Helper.Tests
         }
 
         [TestMethod()]
-        [DataRow("Zero", null,null)]
+        [DataRow("Zero", null, null)]
         [DataRow("1-0", 1, 0.0)]
         [DataRow("0-1", 0, 1.0)]
         [DataRow("2-1", 2, double.PositiveInfinity)]
-        public void SetRetTest(string sName,int iAct,double dAct)
+        public void SetRetTest(string sName, int iAct, double dAct)
         {
-            Assert.AreEqual(iAct,dAct.SetRet((d)=>Assert.AreEqual(dAct,d),iAct));
+            Assert.AreEqual(iAct, dAct.SetRet((d) => Assert.AreEqual(dAct, d), iAct));
         }
     }
 }

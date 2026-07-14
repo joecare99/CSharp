@@ -12,7 +12,7 @@ public sealed class XamlSection : XamlNodeBase, IDocSection
 
     public IDocHeadline AddHeadline(int aLevel, string Id)
     {
-        var h = new XamlHeadline(aLevel,Id);
+        var h = new XamlHeadline(aLevel, Id);
         return (IDocHeadline)AddChild(h);
     }
 

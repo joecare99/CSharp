@@ -1,14 +1,6 @@
 ﻿using GenFree.Interfaces.UI;
 using GenFree.ViewModels.Interfaces;
-using GenFreeWin.Views;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFreeWin.Views.Tests;
 
@@ -26,7 +18,7 @@ public class LizenzTests
         _viewModel = Substitute.For<ILizenzViewModel>();
         _strings = Substitute.For<IApplUserTexts>();
         // Act
-        _testView = new Lizenz(_viewModel,_strings);
+        _testView = new Lizenz(_viewModel, _strings);
     }
 
     [TestMethod()]

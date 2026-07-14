@@ -1,10 +1,10 @@
 ﻿using GenFree.Data;
+using GenFree.Interfaces.UI;
+using GenFree.ViewModels.Interfaces;
+using GenFreeWin.Attributes;
 using System;
 using System.Windows.Forms;
 using Views;
-using GenFreeWin.Attributes;
-using GenFree.Interfaces.UI;
-using GenFree.ViewModels.Interfaces;
 
 namespace Gen_FreeWin.Views
 {
@@ -12,7 +12,7 @@ namespace Gen_FreeWin.Views
     {
         private IEventShowEditViewModel _viewModel;
 
-        public FraEventShowEdit(IEventShowEditViewModel viewModel,IApplUserTexts strings)
+        public FraEventShowEdit(IEventShowEditViewModel viewModel, IApplUserTexts strings)
         {
             _viewModel = viewModel;
             Load += FraEventShowEdit_Load;
@@ -20,7 +20,7 @@ namespace Gen_FreeWin.Views
             _viewModel.DoClick = () => lbl_Click(this, null);
             CommandBindingAttribute.Commit(this, viewModel);
             TextBindingAttribute.Commit(this, viewModel);
-            ApplTextBindingAttribute.Commit(this, viewModel,strings);
+            ApplTextBindingAttribute.Commit(this, viewModel, strings);
         }
         private void FraEventShowEdit_Load(object sender, EventArgs e)
         {
@@ -28,7 +28,8 @@ namespace Gen_FreeWin.Views
             {
                 lblEvent.Text = $"{_viewModel.EEvtArt}:";
                 return;
-            };
+            }
+            ;
 
             UpdateHdr();
 
@@ -60,10 +61,10 @@ namespace Gen_FreeWin.Views
                         break;
                 }
                 return;
-            } 
-                
+            }
+
         }
-      
+
         private void lbl_Click(object sender, EventArgs e)
         {
             OnClick(EventArgs.Empty);

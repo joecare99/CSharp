@@ -1,11 +1,11 @@
+using OpenQA.Selenium;
+using RnzTrauer.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using OpenQA.Selenium;
-using RnzTrauer.Core.Services.Interfaces;
 
 namespace RnzTrauer.Core;
 
@@ -174,11 +174,11 @@ public sealed class WebHandler : IDisposable
             Driver.FindElement(By.Id(LoginPasswordId)).SendKeys(_config.Password == null ? string.Empty : new System.Net.NetworkCredential(string.Empty, _config.Password).Password);
             Driver.FindElement(By.Id(LoginFormId)).Submit();
         }
-        catch 
+        catch
         {
             throw new InvalidOperationException($"{Driver.Title} enthält keine Login-Eingabemaske");
         }
-            while (Driver.Title == _config.Title || string.IsNullOrEmpty(Driver.Title))
+        while (Driver.Title == _config.Title || string.IsNullOrEmpty(Driver.Title))
         {
             Thread.Sleep(500);
         }

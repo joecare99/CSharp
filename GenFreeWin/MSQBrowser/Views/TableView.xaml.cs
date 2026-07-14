@@ -1,5 +1,5 @@
-﻿using System.Windows.Controls;
-using MSQBrowser.ViewModels;
+﻿using MSQBrowser.ViewModels;
+using System.Windows.Controls;
 
 namespace MSQBrowser.Views
 {

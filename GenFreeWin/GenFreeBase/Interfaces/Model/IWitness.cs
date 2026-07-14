@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 namespace GenFree.Data
 {
-    public interface IWitness : 
+    public interface IWitness :
         IHasIxDataItf<WitnessIndex, IWitnessData, (int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>,
         IHasRSIndex1<WitnessIndex, WitnessFields>,
-        IUsesRecordset<(int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>, 
+        IUsesRecordset<(int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>,
         IUsesID<(int iLink, int iPers, int iWKennz, EEventArt eArt, short iLfNr)>
     {
         void Add(int iPerfam, int personNr, EEventArt art, short lfNR, int iWKennz = 10);

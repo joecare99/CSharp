@@ -1,8 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using MVVM.Views.Extension;
+﻿using BaseLib.Helper;
 using MdbBrowser.ViewModels.Interfaces;
-using BaseLib.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace MdbBrowser.Tests
 {
@@ -12,9 +11,9 @@ namespace MdbBrowser.Tests
         [TestMethod()]
         public void AppTest()
         {
-           var testClass = new App();
+            var testClass = new App();
             Assert.IsNotNull(testClass);
-            Assert.ThrowsExactly<InvalidOperationException>(()=>_=IoC.GetRequiredService<IDBViewViewModel>());
+            Assert.ThrowsExactly<InvalidOperationException>(() => _ = IoC.GetRequiredService<IDBViewViewModel>());
         }
     }
 }

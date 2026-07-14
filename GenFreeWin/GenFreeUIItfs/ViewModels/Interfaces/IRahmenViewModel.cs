@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface IRahmenViewModel: INotifyPropertyChanged
+public interface IRahmenViewModel : INotifyPropertyChanged
 {
     IContainerControl View { get; set; }
     IList<int>? _aiPers { get; set; }

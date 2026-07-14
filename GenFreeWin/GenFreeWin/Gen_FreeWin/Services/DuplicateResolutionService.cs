@@ -99,10 +99,10 @@ namespace Gen_FreeWin.Services
         {
             return Task.Run(() =>
             {
-                var state = new DubOperationState 
-                { 
-                    Person1Id = person1Id, 
-                    Person2Id = person2Id 
+                var state = new DubOperationState
+                {
+                    Person1Id = person1Id,
+                    Person2Id = person2Id
                 };
 
                 try

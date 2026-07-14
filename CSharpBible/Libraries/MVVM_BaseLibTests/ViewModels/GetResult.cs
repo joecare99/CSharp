@@ -19,12 +19,12 @@ namespace MVVM.ViewModel.Tests;
 
 public class GetResult : IGetResult
 {
-    private readonly Dictionary<string,Func<object[],object?>> _Dic=new();
+    private readonly Dictionary<string, Func<object[], object?>> _Dic = new();
 
     public int Count => _Dic.Count;
     public object? Get(object[] objects, [CallerMemberName] string proc = "")
     {
-        if (_Dic.TryGetValue(proc??"", out var f))
+        if (_Dic.TryGetValue(proc ?? "", out var f))
             return f(objects);
         else
             return null;

@@ -15,17 +15,13 @@
 
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services.Interfaces;
-using Gen_FreeWin.UseCases;
 using Gen_FreeWin.ViewModels;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
-using GenFree.Interfaces.VB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
-using System.Collections.ObjectModel;
 using System.Drawing;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Gen_FreeWin.Tests.ViewModels

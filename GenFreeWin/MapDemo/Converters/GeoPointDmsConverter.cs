@@ -1,7 +1,6 @@
-using System;
+using GenFreeBrowser.Map;
 using System.Globalization;
 using System.Windows.Data;
-using GenFreeBrowser.Map;
 
 namespace MapDemo.Converters;
 

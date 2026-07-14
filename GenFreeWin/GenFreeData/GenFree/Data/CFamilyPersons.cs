@@ -1,13 +1,13 @@
-﻿using GenFree.Interfaces;
-using GenFree.Interfaces.DB;
+﻿using BaseLib.Helper;
 using GenFree.Helper;
+using GenFree.Interfaces;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Models.Data;
+using GenFree.Sys;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GenFree.Sys;
-using GenFree.Models.Data;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
 
 namespace GenFree.Data
 {
@@ -46,13 +46,13 @@ namespace GenFree.Data
 
         protected override Enum _keyIndex => FamilyIndex.Fam;
 
-        public IList<IEventData> Events { get; } =[];
+        public IList<IEventData> Events { get; } = [];
 
-        public IList<ILinkData> Connects { get; } =[];
+        public IList<ILinkData> Connects { get; } = [];
 
-        public CFamilyPersons() : this(_getTable(),true) { }
+        public CFamilyPersons() : this(_getTable(), true) { }
 
-        public CFamilyPersons(IRecordset dB_FamilyTable, bool xNoInit=false) : base(dB_FamilyTable,xNoInit)
+        public CFamilyPersons(IRecordset dB_FamilyTable, bool xNoInit = false) : base(dB_FamilyTable, xNoInit)
         {
             sBem.Initialize();
             Mann = 0;
@@ -63,7 +63,8 @@ namespace GenFree.Data
 
         public override void FillData(IRecordset dB_FamilyTable)
         {
-            if (dB_FamilyTable?.EOF != false) return;
+            if (dB_FamilyTable?.EOF != false)
+                return;
             ReadID(dB_FamilyTable);
             dAnlDatum = dB_FamilyTable.Fields[FamilyFields.AnlDatum].AsDate();
             dEditDat = dB_FamilyTable.Fields[FamilyFields.EditDat].AsDate();

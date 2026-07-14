@@ -1,16 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommonDialogs;
+using CommonDialogs.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MdbBrowser.Models;
 using MdbBrowser.Models.Interfaces;
 using MdbBrowser.ViewModels.Interfaces;
-using CommonDialogs.Interfaces;
+using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using CommonDialogs;
-using Microsoft.Win32;
 
 namespace MdbBrowser.ViewModels
 {
@@ -102,7 +102,7 @@ namespace MdbBrowser.ViewModels
         [RelayCommand]
         private void DoSelectedItemChanged(object? prop)
         {
-            if (prop is RoutedPropertyChangedEventArgs<object> rpcEa 
+            if (prop is RoutedPropertyChangedEventArgs<object> rpcEa
                 && rpcEa.NewValue is CategorizedDBMetadata cbvm)
             {
                 SelectedEntry = cbvm.This;
@@ -110,8 +110,8 @@ namespace MdbBrowser.ViewModels
                     try
                     {
                         This = this;
-                        if (Assembly.GetExecutingAssembly().GetType($"{Assembly.GetExecutingAssembly().GetName().Name}.Views.{dbmd.Kind}View",true,true) is Type)
-                        CurrentView = $"/Views/{dbmd.Kind}View.xaml";
+                        if (Assembly.GetExecutingAssembly().GetType($"{Assembly.GetExecutingAssembly().GetName().Name}.Views.{dbmd.Kind}View", true, true) is Type)
+                            CurrentView = $"/Views/{dbmd.Kind}View.xaml";
                     }
                     catch { CurrentView = ""; }
             }

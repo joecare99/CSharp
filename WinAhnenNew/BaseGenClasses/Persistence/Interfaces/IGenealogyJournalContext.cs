@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
+using System;
+using System.Collections.Generic;
 
 namespace BaseGenClasses.Persistence.Interfaces;
 

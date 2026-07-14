@@ -1,16 +1,15 @@
-using System;
-using System.Windows.Forms;
 using BaseLib.Helper;
-using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using GenFree.Interfaces.UI;
-using GenFreeWin2.ViewModels.Interfaces;
 using GenFree.ViewModels.Interfaces;
-using GenFreeWin2.ViewModels;
+using GenFree.Views;
 using GenFreeWin.ViewModels;
 using GenFreeWin.Views;
-using GenFree.Views;
+using GenFreeWin2.ViewModels;
+using GenFreeWin2.ViewModels.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Windows.Forms;
 
 namespace GenFreeWin2
 {
@@ -36,15 +35,15 @@ namespace GenFreeWin2
             var sp = new ServiceCollection()
                 .AddSingleton<IApplUserTexts, ApplUserTexts>()
                 .AddSingleton<IAdresseViewModel, AdresseViewModel>()
-                .AddSingleton<IMessenger>((s)=>WeakReferenceMessenger.Default)
+                .AddSingleton<IMessenger>((s) => WeakReferenceMessenger.Default)
                 .AddSingleton<IMenu1ViewModel, MenueViewModel>()
                 .AddTransient<IFraStatisticsViewModel, FraStatisticsViewModel>()
-                .AddTransient<IMainFormViewModel,MainFormViewModel>()
-                .AddTransient<ILizenzViewModel,LizenzViewModel>()
+                .AddTransient<IMainFormViewModel, MainFormViewModel>()
+                .AddTransient<ILizenzViewModel, LizenzViewModel>()
                 .AddTransient<IFraPersImpQueryViewModel, FraPersImpQuerryViewModel>()
                 .AddTransient<IPersonenViewModel, PersonenViewModel>()
-                .AddTransient<IShowDlgMsg,ShowDlgMsg>()
-                .AddTransient<IShowFrmMsg,ShowFrmMsg>()
+                .AddTransient<IShowDlgMsg, ShowDlgMsg>()
+                .AddTransient<IShowFrmMsg, ShowFrmMsg>()
                 .AddSingleton<MainForm>()
                 .AddTransient<Lizenz>()
                 .AddTransient<Menue>()

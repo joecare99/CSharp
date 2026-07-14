@@ -126,7 +126,7 @@ namespace Gen_FreeWin.ViewModels
                 return null;
 
             // Try common German format first (DD.MM.YYYY)
-            if (DateTime.TryParseExact(dateStr, "dd.MM.yyyy", CultureInfo.InvariantCulture, 
+            if (DateTime.TryParseExact(dateStr, "dd.MM.yyyy", CultureInfo.InvariantCulture,
                 DateTimeStyles.None, out var result))
                 return result;
 

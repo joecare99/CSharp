@@ -41,7 +41,7 @@ public class Application : Panel, IApplication, IHasWidgetSet
     public new IWidgetSet WidgetSet { get; private set; }
 
     public static IApplication? Default { get; private set; }
-    
+
     /// <summary>
     /// Occurs when [on canvas resize].
     /// </summary>
@@ -52,7 +52,7 @@ public class Application : Panel, IApplication, IHasWidgetSet
     /// </summary>
     private IMouseEvent? MButtons = default;
 
-    public Application(IWidgetSet widgetSet) 
+    public Application(IWidgetSet widgetSet)
     {
         this.WidgetSet = widgetSet;
         BorderStyle = BorderStyle.None;
@@ -66,7 +66,7 @@ public class Application : Panel, IApplication, IHasWidgetSet
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The e.</param>
-    private void HandleWinBufEvent(object? sender, Point e)      
+    private void HandleWinBufEvent(object? sender, Point e)
     {
         (WidgetSet as IConsoleWidgetHost)?.ClearHost();
         OnCanvasResize?.Invoke(this, e);
@@ -84,10 +84,11 @@ public class Application : Panel, IApplication, IHasWidgetSet
 
         if (e.bKeyDown)
         {
-             base.HandlePressKeyEvents(e);
+            base.HandlePressKeyEvents(e);
         }
         else
-        { };
+        { }
+        ;
 
     }
 
@@ -96,7 +97,7 @@ public class Application : Panel, IApplication, IHasWidgetSet
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The e.</param>
-    private void HandleMouseEvent(object? sender, IMouseEvent e) 
+    private void HandleMouseEvent(object? sender, IMouseEvent e)
     {
         if (e.MouseMoved)
         {
@@ -106,7 +107,7 @@ public class Application : Panel, IApplication, IHasWidgetSet
             MButtons = e;
             MouseMove(e, lastMousePos);
         }
-        else if (e.ButtonEvent )
+        else if (e.ButtonEvent)
         {
 
             MousePos = e.MousePos;
@@ -117,10 +118,10 @@ public class Application : Panel, IApplication, IHasWidgetSet
                     ctrl.MouseClick(e);
             }
         }
-        else 
+        else
         {
             if (e.MouseWheel != 0)
-               MouseMove(e, e.MousePos);
+                MouseMove(e, e.MousePos);
         }
     }
 

@@ -7,7 +7,7 @@ namespace CommonDialogs.Interfaces;
 
 public interface IPrintDialog
 {
-   
+
     bool CurrentPageEnabled { get; set; }
     //
     // Zusammenfassung:
@@ -70,7 +70,7 @@ public interface IPrintDialog
     //
     // Rückgabewerte:
     //     A System.Double that represents the width of the printable page area.
-     double PrintableAreaWidth { get; }
+    double PrintableAreaWidth { get; }
     //
     // Zusammenfassung:
     //     Gets or sets a System.Printing.PrintQueue that represents the printer that is

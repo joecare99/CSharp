@@ -1,5 +1,4 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -957,7 +956,7 @@ public partial class FrmEreignis : Form
         if (!DataModul.DB_SourceLinkTable.NoMatch
             && DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._1].AsInt() == 3
             && DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._2].AsInt() == Modul1.Nr
-            && DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Art].AsEnum<EEventArt>() == eEventArt 
+            && DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Art].AsEnum<EEventArt>() == eEventArt
             && DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.LfNr].AsInt() == Modul1.LfNR)
         {
             DataModul.DB_SourceLinkTable.Delete();
@@ -1965,7 +1964,7 @@ public partial class FrmEreignis : Form
                                     while (!DataModul.DOSB_OrtSTable.EOF && !DataModul.DOSB_OrtSTable.NoMatch)
                                     {
                                         num6 += 1f;
-                                        _ = ListBox2.Items.Add(Strings.Left(((DataModul.DOSB_OrtSTable.Fields["Name"].Value) + ( new string(' ', 50))).AsString(), 50) + Strings.Right("          " + DataModul.DOSB_OrtSTable.Fields["Nr"].AsString().TrimEnd(), 10));
+                                        _ = ListBox2.Items.Add(Strings.Left(((DataModul.DOSB_OrtSTable.Fields["Name"].Value) + (new string(' ', 50))).AsString(), 50) + Strings.Right("          " + DataModul.DOSB_OrtSTable.Fields["Nr"].AsString().TrimEnd(), 10));
                                         DataModul.DOSB_OrtSTable.MoveNext();
                                         if (num6 == 200f)
                                         {
@@ -3171,7 +3170,7 @@ public partial class FrmEreignis : Form
             {
                 if (Label8.Text.Trim() != "")
                 {
-                    string item = TextBox5.Text + new string(' ', 240).Left(240) + Strings.Right(((new string(' ', 10)) + ( TextBox5.Tag)).AsString(), 10);
+                    string item = TextBox5.Text + new string(' ', 240).Left(240) + Strings.Right(((new string(' ', 10)) + (TextBox5.Tag)).AsString(), 10);
                     ListBox3.Items.Insert(0, item);
                     item = "";
                 }

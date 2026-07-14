@@ -11,7 +11,8 @@ public abstract class XamlNodeBase : IDocElement
 
     public IDOMElement AddChild(IDOMElement element)
     {
-        if (element is XamlNodeBase x) x.Parent = this;
+        if (element is XamlNodeBase x)
+            x.Parent = this;
         Nodes.Add(element);
         return element;
     }
@@ -32,16 +33,16 @@ public abstract class XamlNodeBase : IDocElement
 
         return type switch
         {
-            XamlElementType.Section   => (IDocElement)AddChild(new XamlSection()),
+            XamlElementType.Section => (IDocElement)AddChild(new XamlSection()),
             XamlElementType.Paragraph => (IDocElement)AddChild(new XamlParagraph(styleName: value)),
-            XamlElementType.Headline  => (IDocElement)AddChild(new XamlHeadline(level: TryParseInt(value, 1),id: Id)),
-            XamlElementType.TOC       => (IDocElement)AddChild(new XamlTOC(name: value, level: TryParseInt(value, 2))),
-            XamlElementType.Span      => (IDocElement)AddChild(new XamlSpan(XamlFontStyle.Default)),
-            XamlElementType.Link      => (IDocElement)AddChild(new XamlSpan(XamlFontStyle.Default) { Href = value }),
+            XamlElementType.Headline => (IDocElement)AddChild(new XamlHeadline(level: TryParseInt(value, 1), id: Id)),
+            XamlElementType.TOC => (IDocElement)AddChild(new XamlTOC(name: value, level: TryParseInt(value, 2))),
+            XamlElementType.Span => (IDocElement)AddChild(new XamlSpan(XamlFontStyle.Default)),
+            XamlElementType.Link => (IDocElement)AddChild(new XamlSpan(XamlFontStyle.Default) { Href = value }),
             XamlElementType.LineBreak => (IDocElement)AddChild(new XamlLineBreak()),
-            XamlElementType.NbSpace   => (IDocElement)AddChild(new XamlNbSpace()),
-            XamlElementType.Tab       => (IDocElement)AddChild(new XamlTab()),
-            XamlElementType.Bookmark  => (IDocElement)AddChild(new XamlSpan(XamlFontStyle.Default) { Id = Id }),
+            XamlElementType.NbSpace => (IDocElement)AddChild(new XamlNbSpace()),
+            XamlElementType.Tab => (IDocElement)AddChild(new XamlTab()),
+            XamlElementType.Bookmark => (IDocElement)AddChild(new XamlSpan(XamlFontStyle.Default) { Id = Id }),
             _ => throw new NotSupportedException($"Element type '{aType}' wird nicht unterstützt.")
         };
     }

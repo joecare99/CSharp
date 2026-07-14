@@ -1,10 +1,9 @@
-﻿using System;
-using GenFree.Interfaces.DB;
-using GenFree.Helper;
-using System.Collections.Generic;
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
 using GenFree.Models;
+using System;
+using System.Collections.Generic;
 
 namespace GenFree.Data;
 
@@ -38,7 +37,7 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         _ => throw new ArgumentException(nameof(eIndex)),
     };
 
-    protected override IWitnessData GetData(IRecordset rs, bool xNoInit = false) => new CWitnessData(rs,xNoInit);
+    protected override IWitnessData GetData(IRecordset rs, bool xNoInit = false) => new CWitnessData(rs, xNoInit);
 
     public IEnumerable<IWitnessData> ReadAllFams(int iNr, int v)
     {
@@ -53,11 +52,11 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
         }
     }
 
-    public bool ExistZeug(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10) 
+    public bool ExistZeug(int persInArb, EEventArt eEvtArt, short lfNR, int eWKennz = 10)
         => SeekZeug(persInArb, eWKennz, eEvtArt, lfNR) != null;
-    public bool ExistE(int persInArb, int eWKennz = 10) 
+    public bool ExistE(int persInArb, int eWKennz = 10)
         => SeekElSu(persInArb, eWKennz) != null;
-    public bool ExistF(int persInArb, int eWKennz = 10) 
+    public bool ExistF(int persInArb, int eWKennz = 10)
         => SeekFaSu(persInArb, eWKennz) != null;
 
     public void DeleteAllE(int persInArb, int eWKennz)
@@ -153,7 +152,7 @@ public class CWitness : CUsesIndexedRSet<(int iLink, int iPers, int iWKennz, EEv
     {
         var dB_Table = _db_Table;
         dB_Table.Index = $"{_keyIndex}";
-        dB_Table.Seek("=", tValue.iLink, tValue.iPers, tValue.iWKennz,(short)tValue.eArt, tValue.iLfNr);
+        dB_Table.Seek("=", tValue.iLink, tValue.iPers, tValue.iWKennz, (short)tValue.eArt, tValue.iLfNr);
         xBreak = dB_Table.NoMatch;
         return xBreak ? null : dB_Table;
     }

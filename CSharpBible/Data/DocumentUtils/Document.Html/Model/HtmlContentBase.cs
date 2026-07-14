@@ -1,6 +1,6 @@
-using System.Text;
 using Document.Base.Models;
 using Document.Base.Models.Interfaces;
+using System.Text;
 
 namespace Document.Html.Model;
 
@@ -14,13 +14,15 @@ public abstract class HtmlContentBase : HtmlNodeBase, IDocContent
         set
         {
             _text.Clear();
-            if (!string.IsNullOrEmpty(value)) _text.Append(value);
+            if (!string.IsNullOrEmpty(value))
+                _text.Append(value);
         }
     }
 
     public void AppendText(string text)
     {
-        if (!string.IsNullOrEmpty(text)) _text.Append(text);
+        if (!string.IsNullOrEmpty(text))
+            _text.Append(text);
     }
 
     public virtual IDocContent AddLineBreak()
@@ -59,7 +61,7 @@ public abstract class HtmlContentBase : HtmlNodeBase, IDocContent
 
     public virtual IDocSpan AddLink(string Href, IDocFontStyle docFontStyle)
     {
-        var link = new HtmlSpan(docFontStyle) { IsLink = true,Href = Href };
+        var link = new HtmlSpan(docFontStyle) { IsLink = true, Href = Href };
         return (IDocSpan)AddChild(link);
     }
 
@@ -67,7 +69,8 @@ public abstract class HtmlContentBase : HtmlNodeBase, IDocContent
 
     public virtual string GetTextContent(bool xRecursive = true)
     {
-        if (!xRecursive) return TextContent;
+        if (!xRecursive)
+            return TextContent;
 
         var sb = new StringBuilder();
         sb.Append(TextContent);

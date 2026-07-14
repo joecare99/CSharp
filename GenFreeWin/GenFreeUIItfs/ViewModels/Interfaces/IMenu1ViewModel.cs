@@ -1,14 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using GenFree.Data;
 using GenFree.Helper;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
-using System.Windows.Input;
 
 namespace GenFree.ViewModels.Interfaces;
 
@@ -52,8 +48,8 @@ public interface IMenu1ViewModel : INotifyPropertyChanged
     Color MandantPathBackColor { get; }
     Color FrmWindowSizeBackColor { get; }
 
-    bool CreationDateVisible { get;  }
-    bool MarkedVisible { get;  }
+    bool CreationDateVisible { get; }
+    bool MarkedVisible { get; }
     bool NotesVisible { get; }
     bool CodeOfArmsVisible { get; }
     bool ListBox2Visible { get; }

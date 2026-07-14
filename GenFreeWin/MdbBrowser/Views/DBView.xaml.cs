@@ -1,7 +1,7 @@
-﻿using MdbBrowser.ViewModels;
+﻿using CommonDialogs.Interfaces;
+using MdbBrowser.ViewModels;
 using System;
 using System.Windows.Controls;
-using CommonDialogs.Interfaces;
 
 namespace MdbBrowser.Views
 {
@@ -33,7 +33,8 @@ namespace MdbBrowser.Views
         {
             Par.FileName = Filename;
             bool? result = Par.ShowDialog(this.Parent);
-            if (result ?? false) OnAccept?.Invoke(Par.FileName, Par);
+            if (result ?? false)
+                OnAccept?.Invoke(Par.FileName, Par);
             return result;
         }
 

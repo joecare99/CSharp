@@ -11,12 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 using CommonDialogs.Helper;
 using CommonDialogs.Interfaces;
 using CommonDialogs.Models;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 /// <summary>
 /// The CommonDialogs namespace.

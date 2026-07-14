@@ -107,7 +107,7 @@ public partial class Dub : Form
         ALabel1.SetIndex(_Label1_42, 42);
         ALabel1.SetIndex(_Label1_43, 43);
         ALabel1.SetIndex(_Label1_44, 44);
-        
+
         Option1.SetIndex(_Option1_0, 0);
         Option1.SetIndex(_Option1_2, 2);
         Option1.SetIndex(_Option1_1, 1);

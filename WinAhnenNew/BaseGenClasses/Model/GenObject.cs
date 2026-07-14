@@ -47,7 +47,7 @@ namespace BaseGenClasses.Model
         /// </summary>
         /// <value>The type of the e gen.</value>
         [DataMember]
-        public abstract EGenType eGenType { get ; }
+        public abstract EGenType eGenType { get; }
 
         /// <summary>
         /// Gets or sets the last change.
@@ -58,6 +58,6 @@ namespace BaseGenClasses.Model
         /// Gets the (local) identifier. This ID is only unique within the application, maybe classes and not across different applications.
         /// </summary>
         /// <value>The identifier.</value>
-        public int ID { get ; init ; }
+        public int ID { get; init; }
     }
 }

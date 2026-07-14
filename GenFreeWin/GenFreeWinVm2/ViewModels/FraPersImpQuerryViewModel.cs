@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gen_FreeWin;
-using Gen_FreeWin.Views;
 using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 
 namespace GenFreeWin.ViewModels;
+
 public partial class FraPersImpQuerryViewModel : BaseViewModelCT, IFraPersImpQueryViewModel
 {
     [ObservableProperty]
@@ -23,21 +23,21 @@ public partial class FraPersImpQuerryViewModel : BaseViewModelCT, IFraPersImpQue
     [ObservableProperty]
     private EUserText _iLoadFromFile = EUserText.t306;
 
-    public Action<object, object> onCancel { get ; set ; }
-    public Action onFromFile { get ; set ; }
-    public Action onReenter { get ; set ; }
+    public Action<object, object> onCancel { get; set; }
+    public Action onFromFile { get; set; }
+    public Action onReenter { get; set; }
 
     public void SetDefaultTexts()
     {
-        IReenter  = EUserText.t72;
-        ILoadFromFile  = EUserText.t306;
+        IReenter = EUserText.t72;
+        ILoadFromFile = EUserText.t306;
         IDelete = EUserText.t307;
         ICancel = EUserText.tNMCancel;
     }
 
     [RelayCommand]
     private void DeleteQuiet()
-    { 
+    {
     }
 
     [RelayCommand]

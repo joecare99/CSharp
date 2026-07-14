@@ -165,8 +165,8 @@ namespace Gen_FreeWin.UseCases
         /// Handles transaction management and error handling.
         /// </summary>
         public async Task<(bool Success, int SavedCount, string? Error)> SaveBatchNamesAsync(
-            int personId, 
-            ETextKennz textKennz, 
+            int personId,
+            ETextKennz textKennz,
             System.Collections.Generic.List<VornamModel> names)
         {
             if (personId <= 0 || names == null || names.Count == 0)

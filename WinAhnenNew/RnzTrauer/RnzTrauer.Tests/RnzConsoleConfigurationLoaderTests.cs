@@ -1,9 +1,6 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RnzTrauer.Console.Configuration;
 using RnzTrauer.Core;
-using System;
-using System.Collections.Generic;
 
 namespace RnzTrauer.Tests;
 
@@ -51,7 +48,7 @@ public sealed class RnzConsoleConfigurationLoaderTests
             User = string.Empty,
             Password = new(),
             DBuser = "app-db-user",
-            DBpass =  new(),
+            DBpass = new(),
             DBhost = "app-db-host",
             DB = "app-db"
         };

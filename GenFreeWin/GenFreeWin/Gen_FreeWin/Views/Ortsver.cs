@@ -38,10 +38,10 @@ public partial class Ortsver : Form
     private void ListBox2_DoubleClick(object s, EventArgs e) => _viewModel.ListBox2_DoubleClick(s, e);
     private void ListBox3_DoubleClick(object s, EventArgs e) => _viewModel.ListBox3_DoubleClick(s, e);
     private void ListBox4_DoubleClick(object s, EventArgs e) => _viewModel.ListBox4_DoubleClick(s, e);
-    
+
     private void Label27_TextChanged(object s, EventArgs e) => _viewModel.Label27_TextChanged(s, e);
     private void Label32_TextChanged(object s, EventArgs e) => _viewModel.Label32_TextChanged(s, e);
-    
+
     private void Button24_Click(object s, EventArgs e) => _viewModel.Button24_Click(s, e);
     private void Button23_Click(object s, EventArgs e) => _viewModel.Button23_Click(s, e);
     private void Button22_Click(object s, EventArgs e) => _viewModel.Button22_Click(s, e);

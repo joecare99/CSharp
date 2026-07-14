@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.ViewModel;
-using NSubstitute;
 using MSQBrowser.Models;
 using MSQBrowser.Models.Interfaces;
 using MSQBrowser.ViewModels.Interfaces;
+using MVVM.ViewModel;
+using NSubstitute;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading;
@@ -61,13 +61,13 @@ namespace MSQBrowser.ViewModels.Tests
         [DataRow(false, true, false, false)]
         [DataRow(true, false, false, false)]
         [DataRow(true, false, false, false)]
-        public async Task TableNameTest(bool xAct, bool xAct2,bool xAct3, bool xExp)
+        public async Task TableNameTest(bool xAct, bool xAct2, bool xAct3, bool xExp)
         {
             var testModel = xAct ? this.testModel : new TableViewViewModel(null!);
             var tMod = Substitute.For<IDBModel>();
             Assert.AreEqual(xAct ? "" : "<TableName>", testModel.TableName);
             testDBView.dBModel.Returns(xAct2 ? tMod : null);
-            tMod.QueryTable("Test5").Returns(xAct3?new List<DBMetaData>() { new DBMetaData("Test5", EKind.Table, null!, null!) } : null);
+            tMod.QueryTable("Test5").Returns(xAct3 ? new List<DBMetaData>() { new DBMetaData("Test5", EKind.Table, null!, null!) } : null);
             tMod.QueryTableDataPageAsync("Test5", Arg.Any<IEnumerable<DBMetaData>>(), 0, 100, Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult(new TablePageResult { Data = new DataTable(), Offset = 0, PageSize = 100 }));
             testModel.TableName = "Test5";
@@ -75,7 +75,7 @@ namespace MSQBrowser.ViewModels.Tests
             Assert.AreEqual("Test5", testModel.TableName);
             tMod.Received(xExp ? 1 : 0).QueryTable("Test5");
             _ = tMod.Received(xExp ? 1 : 0).QueryTableDataPageAsync("Test5", Arg.Any<IEnumerable<DBMetaData>>(), 0, 100, Arg.Any<CancellationToken>());
-            tMod.Received( 0).QuerySchema("Test5");
+            tMod.Received(0).QuerySchema("Test5");
             Assert.AreEqual(xExp ? "Keine Zeilen gefunden" : "", testModel.PageStatus);
         }
     }

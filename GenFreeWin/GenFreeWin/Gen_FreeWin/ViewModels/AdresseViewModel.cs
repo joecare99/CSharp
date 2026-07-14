@@ -6,14 +6,13 @@ using GenFreeWin.Views;
 using Microsoft.VisualBasic;
 using MVVM.ViewModel;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Gen_FreeWin.ViewModels;
 
-public partial class AdresseViewModel:BaseViewModelCT, IAdresseViewModel
+public partial class AdresseViewModel : BaseViewModelCT, IAdresseViewModel
 {
     [ObservableProperty]
     public partial string Title { get; set; }
@@ -57,7 +56,7 @@ public partial class AdresseViewModel:BaseViewModelCT, IAdresseViewModel
                 return;
             }
         }
-        _Modul1.Instance.Persistence.WriteStringsProg("Adresse", [Title,Givenname,]);
+        _Modul1.Instance.Persistence.WriteStringsProg("Adresse", [Title, Givenname,]);
         DoHide?.Invoke();
         Menue.Default.SetAdress(Givenname.Trim() + " " + Surname.Trim());
     }
@@ -102,5 +101,5 @@ public partial class AdresseViewModel:BaseViewModelCT, IAdresseViewModel
             }
         }
     }
-    
+
 }

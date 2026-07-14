@@ -1,7 +1,7 @@
-﻿using System;
+﻿using GenFree.Interfaces.VB;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using GenFree.Interfaces.VB;
 
 namespace GenFree.Models.VB;
 

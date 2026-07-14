@@ -1,12 +1,9 @@
+using RnzTrauer.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Globalization;
 using System.Linq;
-using Db.Core.Abstractions.Sql;
-using Db.Core.Abstractions.Sql.Interfaaces;
-using RnzTrauer.Core.Services.Interfaces;
 
 namespace RnzTrauer.Core;
 
@@ -46,47 +43,47 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
     }
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerAnzId(int iId) 
+    public List<Dictionary<string, object?>> TrauerAnzId(int iId)
         => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause("idAnzeige", DbFilterOperator.Equal, "@id")]),
             xCommand => AddScalarParameter(xCommand, "@id", iId));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerAnz(int iAnnouncement) 
-        => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause("Announcement", DbFilterOperator.Equal, "@announcement")]), 
+    public List<Dictionary<string, object?>> TrauerAnz(int iAnnouncement)
+        => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause("Announcement", DbFilterOperator.Equal, "@announcement")]),
             xCommand => AddScalarParameter(xCommand, "@announcement", iAnnouncement));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> LegacyTrauerAnz(string sAuftrag) 
-        => Query(_xStatementRenderer.CreateQuery(TableLegacyAnzeigen, ["*"], [new DbFilterClause("Auftrag", DbFilterOperator.Equal, "@auftrag")]), 
+    public List<Dictionary<string, object?>> LegacyTrauerAnz(string sAuftrag)
+        => Query(_xStatementRenderer.CreateQuery(TableLegacyAnzeigen, ["*"], [new DbFilterClause("Auftrag", DbFilterOperator.Equal, "@auftrag")]),
             xCommand => AddScalarParameter(xCommand, "@auftrag", sAuftrag));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerAnzIsNull(string sField, int iLimit = 1) 
+    public List<Dictionary<string, object?>> TrauerAnzIsNull(string sField, int iLimit = 1)
         => Query(_xStatementRenderer.CreateQuery(TableAnzeigen, ["*"], [new DbFilterClause(sField, DbFilterOperator.IsNull)], iLimit), xCommand => { });
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallIsNull(string sField, int iLimit = 1) 
+    public List<Dictionary<string, object?>> TrauerFallIsNull(string sField, int iLimit = 1)
         => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause(sField, DbFilterOperator.IsNull)], iLimit), xCommand => { });
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallEquals(string sField, string sValue, int iLimit = 1) 
-        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause(sField, DbFilterOperator.Equal, "@value")], iLimit), 
+    public List<Dictionary<string, object?>> TrauerFallEquals(string sField, string sValue, int iLimit = 1)
+        => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause(sField, DbFilterOperator.Equal, "@value")], iLimit),
             xCommand => AddScalarParameter(xCommand, "@value", sValue));
 
     /// <inheritdoc />
-    public bool UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues) 
+    public bool UpdateTrauerFall(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
         => UpdateRows(TableTrauerfall, arrNewValues, arrOldValues);
 
     /// <inheritdoc />
-    public bool UpdateTrauerAnz(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues) 
+    public bool UpdateTrauerAnz(List<Dictionary<string, object?>> arrNewValues, List<Dictionary<string, object?>> arrOldValues)
         => UpdateRows(TableAnzeigen, arrNewValues, arrOldValues);
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallById(int iId) 
+    public List<Dictionary<string, object?>> TrauerFallById(int iId)
         => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["*"], [new DbFilterClause("idTrauerfall", DbFilterOperator.Equal, "@id")]), xCommand => AddScalarParameter(xCommand, "@id", iId));
 
     /// <inheritdoc />
-    public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl) 
+    public List<Dictionary<string, object?>> TrauerFallByUrl(string sUrl)
         => Query(_xStatementRenderer.CreateQuery(TableTrauerfall, ["idTrauerfall", "url"], [new DbFilterClause("url", DbFilterOperator.Equal, "@url")]), xCommand => AddScalarParameter(xCommand, "@url", sUrl));
     /// <inheritdoc />
     public Dictionary<string, long> BuildTrauerFallIndex()
@@ -280,7 +277,7 @@ public sealed class TrauerDataRepository : ITrauerDataRepository
     }
 
 
-    private IDbCommand CreateUpdate(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields, IEnumerable<DbFilterClause> arrFilters) 
+    private IDbCommand CreateUpdate(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields, IEnumerable<DbFilterClause> arrFilters)
         => _xStatementRenderer.CreateUpdate(sTable, arrFields, arrFilters);
 
     private static void AddScalarParameter(IDbCommand xCommand, string sParameterName, object? xValue)

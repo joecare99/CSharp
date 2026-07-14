@@ -9,9 +9,8 @@
 // <summary>Adapter for managing PersonSearchData and SearchUIState persistence (extracted from NamenSuchViewModel)</summary>
 // ***********************************************************************
 
-using System;
-using System.Collections.Generic;
 using Gen_FreeWin.ViewModels.Models;
+using System;
 
 namespace Gen_FreeWin.ViewModels
 {

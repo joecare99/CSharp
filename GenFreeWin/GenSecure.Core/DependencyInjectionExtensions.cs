@@ -1,7 +1,7 @@
-using System;
 using GenSecure.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
 
 namespace GenSecure.Core;
 

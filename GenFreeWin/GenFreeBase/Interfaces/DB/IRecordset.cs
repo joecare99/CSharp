@@ -3,6 +3,7 @@
 using GenFree.Data;
 
 namespace GenFree.Interfaces.DB;
+
 public interface IRecordset
 {
     RecordsetTypeEnum _Type { get; }

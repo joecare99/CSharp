@@ -1,6 +1,4 @@
-﻿using RnzTrauer.Core.Services.Interfaces;
-using System.Data;
-using System.Data.Common;
+﻿using System.Data;
 
 namespace Db.Core.Abstractions.Sql.Interfaaces;
 

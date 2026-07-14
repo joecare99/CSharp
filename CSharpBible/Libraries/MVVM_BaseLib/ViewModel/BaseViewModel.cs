@@ -31,16 +31,16 @@ public abstract class BaseViewModel : NotificationObject, IPropertyBinding
     /// <summary>
     /// Occurs when the property is changed.
     /// </summary>
-		private readonly Dictionary<(string, object?), object?> _PropertyOldValue = new();
+    private readonly Dictionary<(string, object?), object?> _PropertyOldValue = new();
 
     /// <summary>
     /// The known parameters
     /// </summary>
-		protected Dictionary<string, List<object?>> KnownParams = new();
+    protected Dictionary<string, List<object?>> KnownParams = new();
     /// <summary>
     /// The command can execute binding
     /// </summary>
-    private readonly Dictionary<string, List<(string,bool)>> _CommandCanExecuteBinding = new();
+    private readonly Dictionary<string, List<(string, bool)>> _CommandCanExecuteBinding = new();
     #endregion
 
     #region Methods
@@ -88,7 +88,7 @@ public abstract class BaseViewModel : NotificationObject, IPropertyBinding
                                     foreach (var para in KnownParams[t.Item1])
                                     {
                                         var newVal = mi.Invoke(this,
-										new object?[]
+                                        new object?[]
                                         { para });
                                         NewMethod(t, newVal, para);
                                     }
@@ -97,10 +97,11 @@ public abstract class BaseViewModel : NotificationObject, IPropertyBinding
                         break;
                 }
 
-			void NewMethod((string, bool) t, object? newVal, object? para = null)
+        void NewMethod((string, bool) t, object? newVal, object? para = null)
         {
             var oldVal = !_PropertyOldValue.ContainsKey((t.Item1, para)) ? null : _PropertyOldValue[(t.Item1, para)];
-            if (newVal == null && oldVal == null) return;
+            if (newVal == null && oldVal == null)
+                return;
             if (t.Item2 || !(newVal ?? oldVal!).Equals(newVal != null ? oldVal : null))
             {
                 if (!t.Item2)
@@ -110,14 +111,14 @@ public abstract class BaseViewModel : NotificationObject, IPropertyBinding
         }
     }
 
-    public bool AddPropertyDependency(string prop1, string prop2,bool xForce=false )
+    public bool AddPropertyDependency(string prop1, string prop2, bool xForce = false)
     {
         bool flag =
             GetType().GetProperty(prop1) is not null
             || GetType().GetMethod(prop1) is System.Reflection.MethodInfo mi
                 && mi.GetParameters().Length is 0 or 1;
         if (flag && _CommandCanExecuteBinding.TryGetValue(prop2, out var l))
-            l.Add((prop1,xForce));
+            l.Add((prop1, xForce));
         else if (flag)
             _CommandCanExecuteBinding[prop2] = new() { (prop1, xForce) };
         return flag;
@@ -130,21 +131,21 @@ public abstract class BaseViewModel : NotificationObject, IPropertyBinding
     /// </summary>
     /// <param name="param">The parameter.</param>
     /// <param name="propertyName">Name of the property.</param>
-    public void AppendKnownParams(object? param,[CallerMemberName] string propertyName = "")
+    public void AppendKnownParams(object? param, [CallerMemberName] string propertyName = "")
     {
         if (!string.IsNullOrEmpty(propertyName))
         {
             if (!KnownParams.ContainsKey(propertyName))
                 KnownParams[propertyName] =
-						new List<object?> { param };
+                        new List<object?> { param };
             else if (!KnownParams[propertyName].Contains(param))
                 KnownParams[propertyName].Add(param);
         }
     }
 
-    public T FuncProxy<T,T2>(T2 param, Func<T2, T> f, [CallerMemberName] string propertyName = "")
+    public T FuncProxy<T, T2>(T2 param, Func<T2, T> f, [CallerMemberName] string propertyName = "")
     {
-        if (! new[] { typeof(double), typeof(float) }.Contains(typeof(T2)))
+        if (!new[] { typeof(double), typeof(float) }.Contains(typeof(T2)))
             AppendKnownParams(param, propertyName);
         return f(param);
     }

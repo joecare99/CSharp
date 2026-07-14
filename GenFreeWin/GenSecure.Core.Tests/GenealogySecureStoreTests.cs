@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using BaseGenClasses.Model;
 using BaseGenClasses.Persistence;
 using CommunityToolkit.Mvvm.Messaging;
@@ -13,6 +7,11 @@ using GenInterfaces.Interfaces.Genealogic;
 using GenSecure.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace GenSecure.Core.Tests;
 

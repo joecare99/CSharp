@@ -1,15 +1,7 @@
 ﻿using BaseLib.Helper;
-using GenFree.Data;
-using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
-using GenFree.Interfaces.Sys;
-using GenFree.Models.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Data;
 

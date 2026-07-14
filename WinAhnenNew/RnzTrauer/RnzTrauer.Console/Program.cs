@@ -1,8 +1,6 @@
-﻿using Db.Core.Abstractions.Sql.Interfaaces;
-using Db.Provider.MySql;
-using Microsoft.Extensions.DependencyInjection;
+﻿using BaseLib.Models;
 using BaseLib.Models.Interfaces;
-using BaseLib.Models;
+using Microsoft.Extensions.DependencyInjection;
 using RnzTrauer.Console.Configuration;
 using RnzTrauer.Console.ViewModels;
 using RnzTrauer.Console.Views;
@@ -16,7 +14,7 @@ try
     var xConfig = new RnzConsoleConfigurationLoader().Load();
 
     var xServices = new ServiceCollection()
-        .AddSingleton<IFile,FileProxy>()
+        .AddSingleton<IFile, FileProxy>()
         .AddSingleton(xConfig)
         .AddSingleton<IDbConnectionFactory, MySqlDbConnectionFactory>()
         .AddSingleton<IHttpClientProxy, HttpClientProxy>()

@@ -7,7 +7,7 @@ public class COperators : IOperators
 {
     public object AddObject(object value1, object value2)
     {
-       return value1 switch
+        return value1 switch
         {
             int i1 when value2 is int i2 => i1 + i2,
             string s1 when value2 is string s2 => s1 + s2,

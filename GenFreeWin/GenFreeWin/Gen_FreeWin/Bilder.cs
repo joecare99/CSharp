@@ -1,5 +1,4 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.ViewModels.Interfaces;
 using Gen_FreeWin.Views;
@@ -1402,82 +1401,82 @@ internal class Bilder : Form
 
         num = 1;
         Label3.Visible = true;
-    //    goto IL_0011;
-    //case 2232:
-    //    {
-    //        num2 = num;
-    //        switch ((num3 <= -2) ? 1 : num3)
-    //        {
-    //            case 3:
-    //                break;
-    //            case 2:
-    //                goto IL_063e;
-    //            case 1:
-    //                goto IL_0716;
-    //            default:
-    //                goto end_IL_0001;
-    //        }
-    //        if (Information.Err().Number == 13)
-    //        {
-    //            if (Interaction.MsgBox(Conversions.ErrorToString(), title: Information.Err().Number.AsString(), mb: MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-    //            {
-    //                ProjectData.EndApp();
-    //            }
-    //            goto end_IL_0001_2;
-    //        }
-    //        else
-    //        {
-    //            if (Information.Err().Number == 53)
-    //            {
-    //                prompt = "Das Bild " + text + " wurde nicht gefunden.\n\n Soll die Bildverknüpfung gelöscht werden?";
-    //                Modul1.Value = (float)Interaction.MsgBox(prompt, mb: MessageBoxButtons.YesNo | MessageBoxButtons.Information, icon: "");
-    //                if (Modul1.Value != 6f)
-    //                {
-    //                    goto end_IL_0001_2;
-    //                }
-    //                DataModul.DB_PictureTable.Delete();
-    //                goto end_IL_0001_2;
-    //            }
-    //            else
-    //            {
-    //                if (Information.Err().Number == 71)
-    //                {
-    //                    _ = Interaction.MsgBox(Conversions.ErrorToString());
-    //                    goto end_IL_0001_2;
-    //                }
-    //                else
-    //                {
-    //                    if (Information.Err().Number == 76)
-    //                    {
-    //                        prompt = "Das Bild " + text + " wurde nicht gefunden.\n\n Soll die Bildverknüpfung gelöscht werden?";
-    //                        var Modul1_Value = (float)Interaction.MsgBox(prompt, title: "", mb: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Information);
-    //                        if (Modul1_Value != 6f)
-    //                        {
-    //                            goto end_IL_0001_2;
-    //                        }
-    //                        DataModul.DB_PictureTable.Delete();
-    //                        goto end_IL_0001_2;
-    //                    }
-    //                    else
-    //                    {
-    //                        if (Interaction.MsgBox(Conversions.ErrorToString(), title: Information.Err().Number.AsString(), mb: MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-    //                        {
-    //                            ProjectData.EndApp();
-    //                        }
-    //                        ProjectData.ClearProjectError();
-    //                        if (num2 == 0)
-    //                        {
-    //                            throw ProjectData.CreateProjectError(-2146828268);
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //        goto IL_0712;
-    //    }
-    //end_IL_0001:
-    //    break;
-   // IL_0011:
+        //    goto IL_0011;
+        //case 2232:
+        //    {
+        //        num2 = num;
+        //        switch ((num3 <= -2) ? 1 : num3)
+        //        {
+        //            case 3:
+        //                break;
+        //            case 2:
+        //                goto IL_063e;
+        //            case 1:
+        //                goto IL_0716;
+        //            default:
+        //                goto end_IL_0001;
+        //        }
+        //        if (Information.Err().Number == 13)
+        //        {
+        //            if (Interaction.MsgBox(Conversions.ErrorToString(), title: Information.Err().Number.AsString(), mb: MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+        //            {
+        //                ProjectData.EndApp();
+        //            }
+        //            goto end_IL_0001_2;
+        //        }
+        //        else
+        //        {
+        //            if (Information.Err().Number == 53)
+        //            {
+        //                prompt = "Das Bild " + text + " wurde nicht gefunden.\n\n Soll die Bildverknüpfung gelöscht werden?";
+        //                Modul1.Value = (float)Interaction.MsgBox(prompt, mb: MessageBoxButtons.YesNo | MessageBoxButtons.Information, icon: "");
+        //                if (Modul1.Value != 6f)
+        //                {
+        //                    goto end_IL_0001_2;
+        //                }
+        //                DataModul.DB_PictureTable.Delete();
+        //                goto end_IL_0001_2;
+        //            }
+        //            else
+        //            {
+        //                if (Information.Err().Number == 71)
+        //                {
+        //                    _ = Interaction.MsgBox(Conversions.ErrorToString());
+        //                    goto end_IL_0001_2;
+        //                }
+        //                else
+        //                {
+        //                    if (Information.Err().Number == 76)
+        //                    {
+        //                        prompt = "Das Bild " + text + " wurde nicht gefunden.\n\n Soll die Bildverknüpfung gelöscht werden?";
+        //                        var Modul1_Value = (float)Interaction.MsgBox(prompt, title: "", mb: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Information);
+        //                        if (Modul1_Value != 6f)
+        //                        {
+        //                            goto end_IL_0001_2;
+        //                        }
+        //                        DataModul.DB_PictureTable.Delete();
+        //                        goto end_IL_0001_2;
+        //                    }
+        //                    else
+        //                    {
+        //                        if (Interaction.MsgBox(Conversions.ErrorToString(), title: Information.Err().Number.AsString(), mb: MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+        //                        {
+        //                            ProjectData.EndApp();
+        //                        }
+        //                        ProjectData.ClearProjectError();
+        //                        if (num2 == 0)
+        //                        {
+        //                            throw ProjectData.CreateProjectError(-2146828268);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        goto IL_0712;
+        //    }
+        //end_IL_0001:
+        //    break;
+        // IL_0011:
         num = 2;
         Picture1.BackColor = BackColor;
         Picture1.Width = checked(Width - 10);

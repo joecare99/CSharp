@@ -2167,7 +2167,7 @@ ProjectData.ClearProjectError();
 }";
         //  public static string TestDataExpReorder0 =@"";
         public static string testDataExpReorder1 { get; } = Resource.Test1ExpParseSL;
-          
+
         public static string testDataExpReorder2 { get; } = Resource.Test2ExpParseSL;
         public static string testDataExpReorder3 { get; } = @"///Declaration MainBlock 0,0
 public void Test3()

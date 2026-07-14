@@ -25,7 +25,7 @@ public class CheckedBindingAttribute(string cmdName) : Attribute
 
     public void Bind(object viewModel, Control field)
     {
-        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi )
+        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi)
         {
             if (field is CheckBox cb)
             {

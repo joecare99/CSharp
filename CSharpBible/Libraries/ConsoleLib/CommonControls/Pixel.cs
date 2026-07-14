@@ -35,13 +35,13 @@ public class Pixel : Control
     /// <param name="X">The x.</param>
     /// <param name="Y">The y.</param>
     /// <param name="text">The text.</param>
-    public void Set(int X, int Y, string text="")
+    public void Set(int X, int Y, string text = "")
     {
         if (text != "")
         {
-            Text = text; 
+            Text = text;
         }
-        Position = new Point(X,Y);
+        Position = new Point(X, Y);
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ public class Pixel : Control
     /// </summary>
     /// <param name="position">The Position.</param>
     /// <param name="text">The text.</param>
-    public void Set(Point position, string text= "")
+    public void Set(Point position, string text = "")
     {
         Set(position.X, position.Y, text);
     }

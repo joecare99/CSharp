@@ -3,7 +3,6 @@ using GenFree.Helper;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 namespace GenFree.ViewModels.Interfaces
 {
@@ -14,7 +13,7 @@ namespace GenFree.ViewModels.Interfaces
     /// </summary>
     public interface IVornamViewModel : INotifyPropertyChanged
     {
-      
+
         // ========================================================================
         // Observable Properties (MVVM Bindable via CommunityToolkit.Mvvm)
         // ========================================================================

@@ -1,9 +1,6 @@
-using System;
-using System.ComponentModel;
-using ConsoleLib;
 using ConsoleLib.CommonControls;
-using BaseLib.Interfaces;
 using ConsoleLib.Interfaces;
+using System.ComponentModel;
 
 namespace PlaceAuthorityConsoleDemo;
 

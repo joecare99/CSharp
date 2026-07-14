@@ -1,4 +1,3 @@
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GenFree.Data.Models.Tests;
@@ -17,10 +16,10 @@ public class TGedLineTests
     public void Constructor_String_ParsesCorrectly(string input, int expectedLvl, string expectedLink, string expectedTag, string expectedData)
     {
         var line = new TGedLine(input);
-        Assert.AreEqual(expectedLvl, line.iLvl,"iLvl");
-        Assert.AreEqual(expectedLink, line.link,"link");
-        Assert.AreEqual(expectedTag, line.sTag,"sTag");
-        Assert.AreEqual(expectedData, line.sData,"sData");
+        Assert.AreEqual(expectedLvl, line.iLvl, "iLvl");
+        Assert.AreEqual(expectedLink, line.link, "link");
+        Assert.AreEqual(expectedTag, line.sTag, "sTag");
+        Assert.AreEqual(expectedData, line.sData, "sData");
     }
 
     [TestMethod]

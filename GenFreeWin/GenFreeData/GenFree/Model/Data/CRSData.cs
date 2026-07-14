@@ -9,7 +9,7 @@ namespace GenFree.Models.Data
         where T2 : struct
     {
         protected abstract Enum _keyIndex { get; }
-        protected CRSData(IRecordset db_Table, bool xNoInit =false) : base(db_Table,xNoInit)
+        protected CRSData(IRecordset db_Table, bool xNoInit = false) : base(db_Table, xNoInit)
         {
         }
 
@@ -17,7 +17,7 @@ namespace GenFree.Models.Data
         {
             _db_Table.Index = _keyIndex.ToString();
             _db_Table.Seek("=", iD);
-            return _db_Table.NoMatch?null:_db_Table;
+            return _db_Table.NoMatch ? null : _db_Table;
         }
 
     }
@@ -29,10 +29,11 @@ namespace GenFree.Models.Data
 
         public abstract T2 ID { get; }
 
-        public CRSDataC(IRecordset db_Table, bool xNoInit=false)
+        public CRSDataC(IRecordset db_Table, bool xNoInit = false)
         {
             _db_Table = db_Table;
-            if (!xNoInit) FillData(db_Table);
+            if (!xNoInit)
+                FillData(db_Table);
         }
         protected abstract IRecordset? Seek(T2 iD);
 

@@ -47,9 +47,9 @@ public partial class RechText : Form
 
     }
 
-    private void _Bef_3_Click(object s, EventArgs e) => _viewModel._Bef_3_Click(s,e);
-    private void Liste1_DoubleClick(object s, EventArgs e) => _viewModel.Liste1_DoubleClick(s,e);
-    private void List3_DoubleClick(object s, EventArgs e) => _viewModel.List3_DoubleClick(s,e);
-    private void Label5_Click(object s, EventArgs e) => _viewModel.Label5_Click(s,e);
+    private void _Bef_3_Click(object s, EventArgs e) => _viewModel._Bef_3_Click(s, e);
+    private void Liste1_DoubleClick(object s, EventArgs e) => _viewModel.Liste1_DoubleClick(s, e);
+    private void List3_DoubleClick(object s, EventArgs e) => _viewModel.List3_DoubleClick(s, e);
+    private void Label5_Click(object s, EventArgs e) => _viewModel.Label5_Click(s, e);
 
 }

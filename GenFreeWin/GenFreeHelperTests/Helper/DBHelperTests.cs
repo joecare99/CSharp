@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using NSubstitute;
+﻿using GenFree.Data;
 using GenFree.Interfaces.DB;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 using System.Data;
-using GenFree.Data;
 
 namespace GenFree.Helper.Tests
 {
@@ -100,7 +100,7 @@ namespace GenFree.Helper.Tests
             tIdx.Columns.Add("COLUMN_NAME", typeof(string));
             tIdx.Columns.Add("PRIMARY_KEY", typeof(bool));
             tIdx.Columns.Add("UNIQUE", typeof(bool));
-            tIdx.Rows.Add("Test", "TestIdx", "Test", true,false);
+            tIdx.Rows.Add("Test", "TestIdx", "Test", true, false);
             testDB.GetSchema("Indexes").Returns(tIdx);
 
             //Act

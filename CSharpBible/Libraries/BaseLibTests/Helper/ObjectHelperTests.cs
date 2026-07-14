@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using BaseLib.Interfaces;
+﻿using BaseLib.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System;
 
 namespace BaseLib.Helper.Tests;
 
@@ -13,7 +13,7 @@ public class ObjectHelperTests
     [DataRow(1, 1)]
     [DataRow(int.MaxValue, int.MaxValue)]
     [DataRow(int.MinValue, int.MinValue)]
-    [DataRow(uint.MaxValue-1, -2)]
+    [DataRow(uint.MaxValue - 1, -2)]
     [DataRow(2u, 2)]
     [DataRow("3", 3)]
     [DataRow("4.5", -1)]
@@ -22,7 +22,7 @@ public class ObjectHelperTests
     [DataRow("DBNull", -1)]
     [DataRow("IHasValue", 0)]
     [DataRow("_", -1)]
-    public void AsIntTest(object? obj,int iExp)
+    public void AsIntTest(object? obj, int iExp)
     {
         if (obj is string s)
             obj = obj switch
@@ -31,10 +31,10 @@ public class ObjectHelperTests
                 "IHasValue" => Substitute.For<IHasValue>(),
                 "_" => new object(),
                 _ => obj
-            };   
+            };
         // Act
-        var result = ObjectHelper.AsInt(obj,-1);
-        
+        var result = ObjectHelper.AsInt(obj, -1);
+
         // Assert
         Assert.AreEqual(iExp, result);
 
@@ -127,7 +127,7 @@ public class ObjectHelperTests
     [DataRow("10-10-2023", "2023-10-10T00:00:00")]
     [DataRow("2023-10-10T10:10:10", "2023-10-10T10:10:10")]
     [DataRow("InvalidDate", "0001-01-01T00:00:00")]
-    [DataRow(638000000000000000L, "2022-09-28T22:13:20")] 
+    [DataRow(638000000000000000L, "2022-09-28T22:13:20")]
     [DataRow("DBNull", "0001-01-01T00:00:00")]
     [DataRow("IHasValue", "0001-01-01T00:00:00")]
     [DataRow("_", "0001-01-01T00:00:00")]
@@ -154,7 +154,7 @@ public class ObjectHelperTests
     [DataRow(1, 1)]
     [DataRow(long.MaxValue, long.MaxValue)]
     [DataRow(long.MinValue, long.MinValue)]
-    [DataRow(ulong.MaxValue , ulong.MaxValue)]
+    [DataRow(ulong.MaxValue, ulong.MaxValue)]
     [DataRow(2u, 2)]
     [DataRow("3", 3)]
     [DataRow("Dog", 0)]
@@ -164,7 +164,7 @@ public class ObjectHelperTests
     [DataRow(double.MaxValue, double.MaxValue)]
     [DataRow(double.NaN, double.NaN)]
     [DataRow(6L, 6)]
-    [DataRow('7', 48+7)]
+    [DataRow('7', 48 + 7)]
     [DataRow("DBNull", 0)]
     [DataRow("IHasValue", 0)]
     [DataRow("_", 0)]
@@ -198,7 +198,7 @@ public class ObjectHelperTests
     [DataRow("yes", false)]
     [DataRow("no", false)]
     [DataRow("1", true)]
-    [DataRow("0", false)]  
+    [DataRow("0", false)]
     [DataRow('1', true)]
     [DataRow('T', true)]
     [DataRow('t', true)]

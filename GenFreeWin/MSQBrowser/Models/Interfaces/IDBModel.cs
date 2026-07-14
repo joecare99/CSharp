@@ -2,7 +2,6 @@
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
-using MSQBrowser.Models;
 
 namespace MSQBrowser.Models.Interfaces
 {

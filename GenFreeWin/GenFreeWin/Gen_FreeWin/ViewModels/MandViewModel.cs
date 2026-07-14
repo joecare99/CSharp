@@ -37,7 +37,7 @@ public partial class MandViewModel : BaseViewModelCT, IMandViewModel
     IContainerControl IMandViewModel.View { get; set; }
 
     Mand View => (Mand)((IMandViewModel)this).View;
-   
+
     [ObservableProperty]
     public partial bool Frame1_Visible { get; set; }
 
@@ -247,7 +247,7 @@ public partial class MandViewModel : BaseViewModelCT, IMandViewModel
                             {
                                 List1_Items.Add(mands);
                             }
-                            
+
                             if (Modul1.System.xDemo)
                             {
                                 if (List1_Items.Count > 1)
@@ -482,7 +482,8 @@ public partial class MandViewModel : BaseViewModelCT, IMandViewModel
                 num = 72;
                 _ = Interaction.MsgBox("F117");
                 break;
-            end_IL_0001:;
+            end_IL_0001:
+                ;
             }
             catch (Exception obj) when (obj is not null && num3 != 0 && num2 == 0)
             {
@@ -711,7 +712,7 @@ public partial class MandViewModel : BaseViewModelCT, IMandViewModel
                             View.Close();
                             View.Befehl2.PerformClick();
                             goto end_IL_0001_2;
-                        //=================
+                            //=================
                         IL_04a6:
                             num = 66;
                             number = Information.Err().Number;
@@ -724,7 +725,7 @@ public partial class MandViewModel : BaseViewModelCT, IMandViewModel
                                 goto IL_04e7;
                             }
 
-                        //=================
+                            //=================
                         end_IL_0001_3:
                             break;
                     }
@@ -732,7 +733,8 @@ public partial class MandViewModel : BaseViewModelCT, IMandViewModel
                     _ = Interaction.MsgBox(Conversion.ErrorToString(), title: Information.Err().Number.AsString(), mb: MessageBoxButtons.OK);
                     break;
                 }
-            end_IL_0001:;
+            end_IL_0001:
+                ;
             }
             catch (Exception obj2) when (obj2 is not null && num3 != 0 && num2 == 0)
             {
@@ -1149,7 +1151,7 @@ public partial class MandViewModel : BaseViewModelCT, IMandViewModel
                             }
                             View.Label2.Text = View.List1.Text.Left(Modul1.Verz1.Length);
                             goto end_IL_0001_2;
-                        //== Error Handling ==
+                            //== Error Handling ==
 
                         IL_0395:
                             num = 42;

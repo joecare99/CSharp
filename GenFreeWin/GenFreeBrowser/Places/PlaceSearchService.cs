@@ -1,10 +1,6 @@
+using GenFreeBrowser.Places.Interface;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Authorities;
-using GenFreeBrowser.Places.Interface;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GenFreeBrowser.Places;
 

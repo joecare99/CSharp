@@ -1,15 +1,14 @@
-﻿using System;
+﻿using BaseLib.Helper;
+using Db.Core.Abstractions.Sql;
+using Db.Core.Abstractions.Sql.Interfaaces;
+using GenFree.Data.DB;
+using MdbBrowser.Models.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.OleDb;
 using System.IO;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data;
-using MdbBrowser.Models.Interfaces;
 using System.Linq;
-using BaseLib.Helper;
-using Db.Core.Abstractions.Sql;
-using GenFree.Data.DB;
-using Db.Core.Abstractions.Sql.Interfaaces;
 
 namespace MdbBrowser.Models
 {
@@ -71,7 +70,7 @@ namespace MdbBrowser.Models
                 var datatypes = oleDbConnection.GetSchema("DataTypes");
                 foreach (DataRow datatype in datatypes.Rows)
                 {
-                    dbDataTypes.Add(new DBMetaData(datatype[0].ToString(), EKind.DataTypes, datatype, 
+                    dbDataTypes.Add(new DBMetaData(datatype[0].ToString(), EKind.DataTypes, datatype,
                         new[] { datatype[5].ToString(), datatype[1].ToString(), datatype[2].ToString() }));
                 }
 
@@ -91,7 +90,7 @@ namespace MdbBrowser.Models
                 {
                     result.Add(new DBMetaData(schemaDef[3].ToString(), EKind.Column, schemaDef, new[] { GetTypeName((int)schemaDef[11]), schemaDef[13].ToString() }));
                 }
-                schema = oleDbConnection.GetSchema(OleDbMetaDataCollectionNames.Indexes, new string?[] { null, null, sTableName,null,null });
+                schema = oleDbConnection.GetSchema(OleDbMetaDataCollectionNames.Indexes, new string?[] { null, null, sTableName, null, null });
 
             }
             return result;

@@ -62,7 +62,8 @@ namespace WinAhnenCls.Model
         public static void DateStr2HeyDate(string aDate, out string Day, out string Month, out string Year)
         {
             (Day, Month, Year) = ("", "", "");
-            if (aDate == "") return;
+            if (aDate == "")
+                return;
             string[] s = aDate.Split('.');
             if (s.Length == 3)
             {

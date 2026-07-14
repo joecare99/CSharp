@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TranspilerLib.Pascal.Models;
 
@@ -24,7 +22,7 @@ public class LfmObjectBuilder
         _tokenEnumerator = tokens.GetEnumerator();
         Advance();
 
-        if (_currentToken.Type == LfmTokenType.OBJECT || 
+        if (_currentToken.Type == LfmTokenType.OBJECT ||
             _currentToken.Type == LfmTokenType.INHERITED ||
             _currentToken.Type == LfmTokenType.INLINE)
         {
@@ -81,7 +79,7 @@ public class LfmObjectBuilder
         // Parse properties and nested objects until 'end'
         while (_currentToken.Type != LfmTokenType.END && _currentToken.Type != LfmTokenType.EOF)
         {
-            if (_currentToken.Type == LfmTokenType.OBJECT || 
+            if (_currentToken.Type == LfmTokenType.OBJECT ||
                 _currentToken.Type == LfmTokenType.INHERITED ||
                 _currentToken.Type == LfmTokenType.INLINE)
             {
@@ -331,7 +329,7 @@ public class LfmObjectBuilder
         while (_currentToken.Type != LfmTokenType.RANGLE && _currentToken.Type != LfmTokenType.EOF)
         {
             // Expect 'item' keyword (as IDENTIFIER with value "item")
-            if (_currentToken.Type == LfmTokenType.IDENTIFIER && 
+            if (_currentToken.Type == LfmTokenType.IDENTIFIER &&
                 _currentToken.Value.Equals("item", StringComparison.OrdinalIgnoreCase))
             {
                 var item = ParseItem();

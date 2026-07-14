@@ -1,11 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GenFree.Helper;
 using GenFree.Interfaces.UI;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System.Drawing;
 
@@ -14,9 +9,9 @@ namespace GenFree.Helper.Tests
     [TestClass()]
     public class ViewHelperTests
     {
-     #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
         IApplUserTexts iText;
-     #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Fügen Sie ggf. den „erforderlichen“ Modifizierer hinzu, oder deklarieren Sie den Modifizierer als NULL-Werte zulassend.
 
         [TestInitialize]
         public void Init()
@@ -42,15 +37,15 @@ namespace GenFree.Helper.Tests
             ViewHelper.SetCommandBtn(button, expectedEnabled, commandName, iText);
 
             // Assert
-            Assert.AreEqual(commandName+":", button.Text);
+            Assert.AreEqual(commandName + ":", button.Text);
             Assert.AreEqual(expectedEnabled, button.Visible);
         }
 
         [TestMethod]
-        [DataRow("Speichern", "Save",0xE0E0E0, true)]
+        [DataRow("Speichern", "Save", 0xE0E0E0, true)]
         [DataRow("Löschen", "Delete", 0xE0E0E0, false)]
         [DataRow("Bearbeiten", "Edit", 0xE0E0E0, true)]
-        public void SetLabelTxtTest(string labelText, string labelName,int iColor, bool expectedEnabled)
+        public void SetLabelTxtTest(string labelText, string labelName, int iColor, bool expectedEnabled)
         {
             // Arrange
             var label = new System.Windows.Forms.Label
@@ -60,7 +55,7 @@ namespace GenFree.Helper.Tests
             };
 
             // Act
-            ViewHelper.SetLabelTxt(label, expectedEnabled, labelName,Color.FromArgb(iColor), iText);
+            ViewHelper.SetLabelTxt(label, expectedEnabled, labelName, Color.FromArgb(iColor), iText);
 
             // Assert
             Assert.AreEqual(labelName + ":", label.Text);

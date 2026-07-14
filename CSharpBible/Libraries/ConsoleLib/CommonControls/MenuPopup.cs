@@ -42,7 +42,7 @@ public class MenuPopup : Panel, IPopup
         }
         size = new Size(w + 2, y + 1);
         if (Visible)
-           Invalidate();
+            Invalidate();
     }
 
     public void Show()

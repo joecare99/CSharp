@@ -31,7 +31,7 @@ public class COFB : CUsesIndexedRSet<(int, string, int), OFBIndex, OFBFields, IO
         };
     }
 
-    protected override IOFBData GetData(IRecordset rs, bool xNoInit = false) => new COFBData(rs,xNoInit);
+    protected override IOFBData GetData(IRecordset rs, bool xNoInit = false) => new COFBData(rs, xNoInit);
 
     public override IRecordset? Seek((int, string, int) tValue, out bool xBreak)
     {

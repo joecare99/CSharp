@@ -11,7 +11,7 @@ namespace gen_plusTests.Gen_FreeWin
             _debugLog += message + Environment.NewLine;
             System.Diagnostics.Debug.WriteLine(message);
         } // End Sub DoLog
-        
+
         protected void ErrorLog(Exception ex) => DoLog("Err: " + ex.Message + Environment.NewLine + ex.StackTrace);
         protected void ClearLog() => _debugLog = string.Empty;
 

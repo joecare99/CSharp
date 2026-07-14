@@ -25,8 +25,8 @@ public class CRSDataIntTests
         public override void FillData(IRecordset dB_Table)
         {
             ReadID(dB_Table);
-            sDescription= dB_Table.Fields[TestProp.sDescription].AsString();
-            iData=dB_Table.Fields[TestProp.iData].AsInt();
+            sDescription = dB_Table.Fields[TestProp.sDescription].AsString();
+            iData = dB_Table.Fields[TestProp.iData].AsInt();
         }
 
         public override Type GetPropType(TestProp prop) => prop switch
@@ -61,7 +61,8 @@ public class CRSDataIntTests
 
         public override void SetPropValue(TestProp prop, object? value)
         {
-            if (EqualsProp(prop, value)) return;
+            if (EqualsProp(prop, value))
+                return;
             AddChangedProp(prop);
             object _ = prop switch
             {
@@ -104,8 +105,8 @@ public class CRSDataIntTests
     {
         testRS.NoMatch.Returns(xExp);
         testClass.Delete();
-        testRS.Received(xExp?0:1).Delete();
-        Assert.AreEqual("ID",testRS.Index);
+        testRS.Received(xExp ? 0 : 1).Delete();
+        Assert.AreEqual("ID", testRS.Index);
         testRS.Received(1).Seek("=", testClass.ID);
     }
 
@@ -114,10 +115,10 @@ public class CRSDataIntTests
     {
         testClass.NewID();
         Assert.AreEqual(3, testClass.ID);
-        testRS.Received(1).Index="ID";
+        testRS.Received(1).Index = "ID";
         testRS.Received(1).MoveLast();
         testRS.Received(1).Fields[TestProp.ID].Value = 1;
         testClass.SetDBValues(testRS, null);
-        _=testRS.Received(2).Fields[TestProp.ID].Value;
+        _ = testRS.Received(2).Fields[TestProp.ID].Value;
     }
 }

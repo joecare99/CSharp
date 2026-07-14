@@ -1,7 +1,7 @@
-﻿using System.IO.Compression;
+﻿using Document.Odf.Models;
+using System.IO.Compression;
 using System.Text;
 using System.Xml.Linq;
-using Document.Odf.Models;
 
 namespace Document.Odf;
 
@@ -66,7 +66,8 @@ public sealed class OdfDocument : IAsyncDisposable, IDisposable
     public XDocument? ReadMetaXmlOrNull()
     {
         var entry = _zip.GetEntry("meta.xml");
-        if (entry is null) return null;
+        if (entry is null)
+            return null;
         using var s = entry.Open();
         return XDocument.Load(s, LoadOptions.PreserveWhitespace | LoadOptions.SetLineInfo);
     }
@@ -74,7 +75,8 @@ public sealed class OdfDocument : IAsyncDisposable, IDisposable
     public XDocument? ReadStylesXmlOrNull()
     {
         var entry = _zip.GetEntry("styles.xml");
-        if (entry is null) return null;
+        if (entry is null)
+            return null;
         using var s = entry.Open();
         return XDocument.Load(s, LoadOptions.PreserveWhitespace | LoadOptions.SetLineInfo);
     }
@@ -87,7 +89,8 @@ public sealed class OdfDocument : IAsyncDisposable, IDisposable
 
     public void WriteContentXml(XDocument contentXml)
     {
-        if (_isReadOnly) throw new InvalidOperationException("Dokument ist schreibgeschützt");
+        if (_isReadOnly)
+            throw new InvalidOperationException("Dokument ist schreibgeschützt");
 
         var entry = _zip.GetEntry("content.xml");
         entry?.Delete();
@@ -99,7 +102,8 @@ public sealed class OdfDocument : IAsyncDisposable, IDisposable
 
     public void WriteMetaXml(XDocument metaXml)
     {
-        if (_isReadOnly) throw new InvalidOperationException("Dokument ist schreibgeschützt");
+        if (_isReadOnly)
+            throw new InvalidOperationException("Dokument ist schreibgeschützt");
 
         var entry = _zip.GetEntry("meta.xml");
         entry?.Delete();
@@ -111,7 +115,8 @@ public sealed class OdfDocument : IAsyncDisposable, IDisposable
 
     public void WriteStylesXml(XDocument stylesXml)
     {
-        if (_isReadOnly) throw new InvalidOperationException("Dokument ist schreibgeschützt");
+        if (_isReadOnly)
+            throw new InvalidOperationException("Dokument ist schreibgeschützt");
 
         var entry = _zip.GetEntry("styles.xml");
         entry?.Delete();
@@ -123,7 +128,8 @@ public sealed class OdfDocument : IAsyncDisposable, IDisposable
 
     public void WriteBinary(string pathInPackage, Stream data)
     {
-        if (_isReadOnly) throw new InvalidOperationException("Dokument ist schreibgeschützt");
+        if (_isReadOnly)
+            throw new InvalidOperationException("Dokument ist schreibgeschützt");
 
         var entry = _zip.GetEntry(pathInPackage);
         entry?.Delete();
@@ -175,7 +181,8 @@ public sealed class OdfDocument : IAsyncDisposable, IDisposable
 
     public void Dispose()
     {
-        if (_disposed) return;
+        if (_disposed)
+            return;
         _disposed = true;
         _zip.Dispose();
     }

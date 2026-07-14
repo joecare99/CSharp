@@ -3,7 +3,7 @@ using MVVM.ViewModel;
 
 namespace VBUnObfusicator.ViewModels
 {
-    public partial class MainWindowViewModel : BaseViewModelCT    
+    public partial class MainWindowViewModel : BaseViewModelCT
     {
         [ObservableProperty]
         private string _frameSource = "/Views/CodeUnObFusView.xaml";

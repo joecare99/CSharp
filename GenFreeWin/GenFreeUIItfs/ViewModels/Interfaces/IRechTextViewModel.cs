@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface IRechTextViewModel: INotifyPropertyChanged
+public interface IRechTextViewModel : INotifyPropertyChanged
 {
     IContainerControl View { get; set; }
     int FamPerSchalt { get; }

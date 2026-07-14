@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using MVVM.ViewModel;
-using MdbBrowser.ViewModels.Interfaces;
+﻿using CommonDialogs.Interfaces;
 using CommunityToolkit.Mvvm.Input;
-using CommonDialogs.Interfaces;
-using System.Windows;
 using MdbBrowser.Models;
+using MdbBrowser.ViewModels.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVVM.ViewModel;
+using System;
+using System.Windows;
 
 namespace MdbBrowser.ViewModels.Tests
 {
@@ -60,9 +60,9 @@ PropChg(MdbBrowser.ViewModels.DBViewViewModel,FileOpenName)=
 PropChgn(MdbBrowser.ViewModels.DBViewViewModel,FileOpenName)=
 PropChg(MdbBrowser.ViewModels.DBViewViewModel,FileOpenName)=Resources\mydb.mdb
 " })]
-        public void OpenCommandTest(bool xAct,string sAct,string[] asExp)
+        public void OpenCommandTest(bool xAct, string sAct, string[] asExp)
         {
-            if (sAct == null )
+            if (sAct == null)
                 testModel.FileOpenDialog = null;
             Assert.IsNotNull(testModel.OpenCommand);
             Assert.IsInstanceOfType(testModel.OpenCommand, typeof(IRelayCommand));

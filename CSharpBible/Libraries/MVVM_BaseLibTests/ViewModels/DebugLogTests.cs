@@ -16,8 +16,8 @@ public class DebugLogTests
     public void SetupTest()
     {
         Assert.IsNotNull(testClass);
-        Assert.IsInstanceOfType(testClass,typeof(DebugLog));
-        Assert.IsInstanceOfType(testClass,typeof(IDebugLog));
+        Assert.IsInstanceOfType(testClass, typeof(DebugLog));
+        Assert.IsInstanceOfType(testClass, typeof(IDebugLog));
         Assert.AreEqual("", (testClass as IDebugLog).DebugLog);
     }
 
@@ -42,9 +42,9 @@ public class DebugLogTests
 
     [TestMethod]
     [DataRow(new[] { "" }, new[] { "\r\n" })]
-    [DataRow(new[] { "","" }, new[] { "\r\n\r\n" })]
+    [DataRow(new[] { "", "" }, new[] { "\r\n\r\n" })]
     [DataRow(new[] { "Peter" }, new[] { "Peter\r\n" })]
-    [DataRow(new[] { "Peter","Haase" }, new[] { "Peter\r\nHaase\r\n" })]
+    [DataRow(new[] { "Peter", "Haase" }, new[] { "Peter\r\nHaase\r\n" })]
     public void DoLogTest(string[] asVal, string[] asExp)
     {
         foreach (var line in asVal)

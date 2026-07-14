@@ -1,13 +1,7 @@
-﻿using GenFree.Data.DB;
-using GenFree.Interfaces.DB;
+﻿using GenFree.Interfaces.DB;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Data.DB.Tests;
 

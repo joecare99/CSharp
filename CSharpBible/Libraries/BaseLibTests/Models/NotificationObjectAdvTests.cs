@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using BaseLib.Interfaces;
 using BaseLib.Models;
-using BaseLib.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace BaseLib.ViewModel.Tests;
 
@@ -13,7 +13,7 @@ public class NotificationObjectAdvTests : NotificationObjectAdv
 {
     public enum eValidReact
     {
-        OK=0,
+        OK = 0,
         NIO,
         GeneralException,
         ArgumetException,
@@ -24,22 +24,31 @@ public class NotificationObjectAdvTests : NotificationObjectAdv
     private float _testFloat;
     private double _testDouble;
 
-    private eValidReact valReact=eValidReact.OK;
+    private eValidReact valReact = eValidReact.OK;
 
-    private string DebugResult ="";
+    private string DebugResult = "";
     private TypeCode _testEnum;
 
-    public string TestString { get => _testString;set=>SetProperty(ref _testString,value); }
-    public string TestString1 { get => _testString; set => SetProperty(ref _testString, value,ValidateString); }
+    public string TestString { get => _testString; set => SetProperty(ref _testString, value); }
+    public string TestString1 { get => _testString; set => SetProperty(ref _testString, value, ValidateString); }
     public string TestString2 { get => _testString; set => SetProperty(ref _testString, value, StringAct); }
     public string TestString3 { get => _testString; set => SetProperty(ref _testString, value, ValidateString, StringAct); }
-    public string TestString4 { get => _testString; set => SetProperty(ref _testString, value, new string[] {nameof(TestString),nameof(TestString2) }); }
-    public string TestString5 { get => _testString; set 
-            => SetProperty(ref _testString, value, new string[] { nameof(TestString), nameof(TestString1) },ValidateString); }
-    public string TestString6 { get => _testString; set 
-            => SetProperty(ref _testString, value, new string[] { nameof(TestString), nameof(TestString1) },StringAct); }
-    public string TestString7 { get => _testString; set 
-            => SetProperty(ref _testString, value, new string[] { nameof(TestString), nameof(TestString1) }, ValidateString, StringAct); }
+    public string TestString4 { get => _testString; set => SetProperty(ref _testString, value, new string[] { nameof(TestString), nameof(TestString2) }); }
+    public string TestString5
+    {
+        get => _testString; set
+            => SetProperty(ref _testString, value, new string[] { nameof(TestString), nameof(TestString1) }, ValidateString);
+    }
+    public string TestString6
+    {
+        get => _testString; set
+            => SetProperty(ref _testString, value, new string[] { nameof(TestString), nameof(TestString1) }, StringAct);
+    }
+    public string TestString7
+    {
+        get => _testString; set
+            => SetProperty(ref _testString, value, new string[] { nameof(TestString), nameof(TestString1) }, ValidateString, StringAct);
+    }
 
     public int TestInt { get => _testInt; set => SetProperty(ref _testInt, value); }
     public float TestFloat { get => _testFloat; set => SetProperty(ref _testFloat, value); }
@@ -53,14 +62,15 @@ public class NotificationObjectAdvTests : NotificationObjectAdv
         switch (valReact)
         {
             case eValidReact.OK:
-                return ;
+                return;
             case eValidReact.NIO:
-                return ;
+                return;
             case eValidReact.GeneralException:
                 throw new Exception("A general exception occured");
             case eValidReact.ArgumetException:
                 throw new ArgumentException($"Argument ({arg2}) not valid!");
-            default: return;
+            default:
+                return;
         }
     }
 
@@ -77,7 +87,8 @@ public class NotificationObjectAdvTests : NotificationObjectAdv
                 throw new Exception("A general exception occured");
             case eValidReact.ArgumetException:
                 throw new ArgumentException($"Argument ({arg1}) not valid!");
-            default: return false;
+            default:
+                return false;
         }
     }
 
@@ -105,17 +116,17 @@ public class NotificationObjectAdvTests : NotificationObjectAdv
     }
 
     [TestMethod]
-    [TestProperty("Author","J.C.")]
+    [TestProperty("Author", "J.C.")]
     [TestCategory("SetData")]
-    [DataRow("00 Empty",0,"",eValidReact.OK,"","")]
+    [DataRow("00 Empty", 0, "", eValidReact.OK, "", "")]
     [DataRow("01-Test", 0, "Test", eValidReact.OK, "Test", "OnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString:Test, o:, n:Test\r\n")]
     [DataRow("10-1 Empty", 1, "", eValidReact.OK, "", "")]
-    [DataRow("10-2 Test" , 1, "", eValidReact.NIO, "", "")]
-    [DataRow("10-2 Test" , 1, "", eValidReact.GeneralException, "", "")]
+    [DataRow("10-2 Test", 1, "", eValidReact.NIO, "", "")]
+    [DataRow("10-2 Test", 1, "", eValidReact.GeneralException, "", "")]
     [DataRow("11-1 Empty", 1, "Test", eValidReact.OK, "Test", "Validate: Test, React:OK\r\nOnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString1:Test, o:, n:Test\r\n")]
-    [DataRow("11-2 Test" , 1, "Test", eValidReact.NIO, "", "Validate: Test, React:NIO\r\n")]
-    [DataRow("11-3 GEx"  , 1, "Test", eValidReact.GeneralException, "", "Validate: Test, React:GeneralException\r\n")]
-    [DataRow("11-4 AEx"  , 1, "Test", eValidReact.ArgumetException, "", "Validate: Test, React:ArgumetException\r\n")]
+    [DataRow("11-2 Test", 1, "Test", eValidReact.NIO, "", "Validate: Test, React:NIO\r\n")]
+    [DataRow("11-3 GEx", 1, "Test", eValidReact.GeneralException, "", "Validate: Test, React:GeneralException\r\n")]
+    [DataRow("11-4 AEx", 1, "Test", eValidReact.ArgumetException, "", "Validate: Test, React:ArgumetException\r\n")]
     [DataRow("12-2 Test2", 1, "Test2", eValidReact.OK, "Test2", "Validate: Test2, React:OK\r\nOnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString1:Test2, o:, n:Test2\r\n")]
     [DataRow("20-1 Empty", 2, "", eValidReact.OK, "", "")]
     [DataRow("20-2 Test", 2, "", eValidReact.NIO, "", "")]
@@ -131,8 +142,8 @@ public class NotificationObjectAdvTests : NotificationObjectAdv
     [DataRow("31-3 GEx", 3, "Test", eValidReact.GeneralException, "", "Validate: Test, React:GeneralException\r\n")]
     [DataRow("31-4 AEx", 3, "Test", eValidReact.ArgumetException, "", "Validate: Test, React:ArgumetException\r\n")]
     [DataRow("40-1 Empty", 4, "", eValidReact.OK, "", "")]
-    [DataRow("40-2 Test " , 4, "", eValidReact.NIO, "", "")]
-    [DataRow("41-1 Test " , 4, "Test", eValidReact.OK, "Test", "OnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString4:Test, o:, n:Test\r\nOnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString:Test, o:, n:\r\nOnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString2:Test, o:, n:\r\n")]
+    [DataRow("40-2 Test ", 4, "", eValidReact.NIO, "", "")]
+    [DataRow("41-1 Test ", 4, "Test", eValidReact.OK, "Test", "OnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString4:Test, o:, n:Test\r\nOnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString:Test, o:, n:\r\nOnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString2:Test, o:, n:\r\n")]
     [DataRow("41-2 Test2", 4, "Test2", eValidReact.NIO, "Test2", "OnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString4:Test2, o:, n:Test2\r\nOnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString:Test2, o:, n:\r\nOnPropChanged: o:BaseLib.ViewModel.Tests.NotificationObjectAdvTests, p:TestString2:Test2, o:, n:\r\n")]
     [DataRow("50-1 Empty", 5, "", eValidReact.OK, "", "")]
     [DataRow("50-2 Test ", 5, "", eValidReact.NIO, "", "")]
@@ -152,7 +163,7 @@ public class NotificationObjectAdvTests : NotificationObjectAdv
     [DataRow("71-2 Test ", 7, "Test", eValidReact.NIO, "", "Validate: Test, React:NIO\r\n")]
     [DataRow("71-3 GEx  ", 7, "Test", eValidReact.GeneralException, "", "Validate: Test, React:GeneralException\r\n")]
     [DataRow("71-4 AEx  ", 7, "Test", eValidReact.ArgumetException, "", "Validate: Test, React:ArgumetException\r\n")]
-    public void TestStringProp(string name,int iTs,string sVal, eValidReact eReact, string sExp,string sDebExp)
+    public void TestStringProp(string name, int iTs, string sVal, eValidReact eReact, string sExp, string sDebExp)
     {
         valReact = eReact;
         bool xCh = sVal != _testString;
@@ -160,25 +171,57 @@ public class NotificationObjectAdvTests : NotificationObjectAdv
         switch (iTs)
         {
             //case 1: TestString1 = sVal; break;
-            case 1 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(()=>TestString1 = sVal,$"{name}.T1"); break;
-            case 1 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString1 = sVal, $"{name}.T1"); break;
-            case 1: TestString1 = sVal; break;
-            case 2: TestString2 = sVal; break;
-            case 3 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString3 = sVal, $"{name}.T3"); break;
-            case 3 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString3 = sVal, $"{name}.T3"); break;
-            case 3: TestString3 = sVal; break;
-            case 4: TestString4 = sVal; break;
-            case 5 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString5 = sVal, $"{name}.T5"); break;
-            case 5 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString5 = sVal, $"{name}.T5"); break;
-            case 5: TestString5 = sVal; break;
-            case 6: TestString6 = sVal; break;
-            case 7 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString7 = sVal, $"{name}.T7"); break;
-            case 7 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString7 = sVal, $"{name}.T7"); break;
-            case 7: TestString7 = sVal; break;
-            default: TestString = sVal; break;
+            case 1 when xCh && eReact == eValidReact.GeneralException:
+                Assert.ThrowsExactly<Exception>(() => TestString1 = sVal, $"{name}.T1");
+                break;
+            case 1 when xCh && eReact == eValidReact.ArgumetException:
+                Assert.ThrowsExactly<ArgumentException>(() => TestString1 = sVal, $"{name}.T1");
+                break;
+            case 1:
+                TestString1 = sVal;
+                break;
+            case 2:
+                TestString2 = sVal;
+                break;
+            case 3 when xCh && eReact == eValidReact.GeneralException:
+                Assert.ThrowsExactly<Exception>(() => TestString3 = sVal, $"{name}.T3");
+                break;
+            case 3 when xCh && eReact == eValidReact.ArgumetException:
+                Assert.ThrowsExactly<ArgumentException>(() => TestString3 = sVal, $"{name}.T3");
+                break;
+            case 3:
+                TestString3 = sVal;
+                break;
+            case 4:
+                TestString4 = sVal;
+                break;
+            case 5 when xCh && eReact == eValidReact.GeneralException:
+                Assert.ThrowsExactly<Exception>(() => TestString5 = sVal, $"{name}.T5");
+                break;
+            case 5 when xCh && eReact == eValidReact.ArgumetException:
+                Assert.ThrowsExactly<ArgumentException>(() => TestString5 = sVal, $"{name}.T5");
+                break;
+            case 5:
+                TestString5 = sVal;
+                break;
+            case 6:
+                TestString6 = sVal;
+                break;
+            case 7 when xCh && eReact == eValidReact.GeneralException:
+                Assert.ThrowsExactly<Exception>(() => TestString7 = sVal, $"{name}.T7");
+                break;
+            case 7 when xCh && eReact == eValidReact.ArgumetException:
+                Assert.ThrowsExactly<ArgumentException>(() => TestString7 = sVal, $"{name}.T7");
+                break;
+            case 7:
+                TestString7 = sVal;
+                break;
+            default:
+                TestString = sVal;
+                break;
         }
         Assert.AreEqual(sExp, _testString, $"{name}.Result");
-        Assert.AreEqual(sDebExp, DebugResult, $"{name}.DebRes");    
+        Assert.AreEqual(sDebExp, DebugResult, $"{name}.DebRes");
     }
 
     [TestMethod]
@@ -238,22 +281,54 @@ public class NotificationObjectAdvTests : NotificationObjectAdv
         switch (iTs)
         {
             //case 1: TestString1 = sVal; break;
-            case 1 when xCh && eReact == eValidReact.GeneralException: Assert.Throws<Exception>(() => TestString1 = sVal, $"{name}.T1"); break;
-            case 1 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString1 = sVal, $"{name}.T1"); break;
-            case 1: TestString1 = sVal; break;
-            case 2: TestString2 = sVal; break;
-            case 3 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString3 = sVal, $"{name}.T3"); break;
-            case 3 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString3 = sVal, $"{name}.T3"); break;
-            case 3: TestString3 = sVal; break;
-            case 4: TestString4 = sVal; break;
-            case 5 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString5 = sVal, $"{name}.T5"); break;
-            case 5 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString5 = sVal, $"{name}.T5"); break;
-            case 5: TestString5 = sVal; break;
-            case 6: TestString6 = sVal; break;
-            case 7 when xCh && eReact == eValidReact.GeneralException: Assert.ThrowsExactly<Exception>(() => TestString7 = sVal, $"{name}.T7"); break;
-            case 7 when xCh && eReact == eValidReact.ArgumetException: Assert.ThrowsExactly<ArgumentException>(() => TestString7 = sVal, $"{name}.T7"); break;
-            case 7: TestString7 = sVal; break;
-            default: TestString = sVal; break;
+            case 1 when xCh && eReact == eValidReact.GeneralException:
+                Assert.Throws<Exception>(() => TestString1 = sVal, $"{name}.T1");
+                break;
+            case 1 when xCh && eReact == eValidReact.ArgumetException:
+                Assert.ThrowsExactly<ArgumentException>(() => TestString1 = sVal, $"{name}.T1");
+                break;
+            case 1:
+                TestString1 = sVal;
+                break;
+            case 2:
+                TestString2 = sVal;
+                break;
+            case 3 when xCh && eReact == eValidReact.GeneralException:
+                Assert.ThrowsExactly<Exception>(() => TestString3 = sVal, $"{name}.T3");
+                break;
+            case 3 when xCh && eReact == eValidReact.ArgumetException:
+                Assert.ThrowsExactly<ArgumentException>(() => TestString3 = sVal, $"{name}.T3");
+                break;
+            case 3:
+                TestString3 = sVal;
+                break;
+            case 4:
+                TestString4 = sVal;
+                break;
+            case 5 when xCh && eReact == eValidReact.GeneralException:
+                Assert.ThrowsExactly<Exception>(() => TestString5 = sVal, $"{name}.T5");
+                break;
+            case 5 when xCh && eReact == eValidReact.ArgumetException:
+                Assert.ThrowsExactly<ArgumentException>(() => TestString5 = sVal, $"{name}.T5");
+                break;
+            case 5:
+                TestString5 = sVal;
+                break;
+            case 6:
+                TestString6 = sVal;
+                break;
+            case 7 when xCh && eReact == eValidReact.GeneralException:
+                Assert.ThrowsExactly<Exception>(() => TestString7 = sVal, $"{name}.T7");
+                break;
+            case 7 when xCh && eReact == eValidReact.ArgumetException:
+                Assert.ThrowsExactly<ArgumentException>(() => TestString7 = sVal, $"{name}.T7");
+                break;
+            case 7:
+                TestString7 = sVal;
+                break;
+            default:
+                TestString = sVal;
+                break;
         }
         Assert.AreEqual(sExp, _testString, $"{name}.Result");
         Assert.AreEqual(sDebExp, DebugResult, $"{name}.DebRes");

@@ -312,10 +312,14 @@ namespace Gen_FreeWin.ViewModels.Models
         public override string ToString()
         {
             var filters = new System.Collections.Generic.List<string>();
-            if (MaleChecked) filters.Add("Male");
-            if (FemaleChecked) filters.Add("Female");
-            if (FamilyOnlyChecked) filters.Add("FamilyOnly");
-            if (OmitSpouseChecked) filters.Add("NoSpouse");
+            if (MaleChecked)
+                filters.Add("Male");
+            if (FemaleChecked)
+                filters.Add("Female");
+            if (FamilyOnlyChecked)
+                filters.Add("FamilyOnly");
+            if (OmitSpouseChecked)
+                filters.Add("NoSpouse");
 
             var filterStr = string.Join("|", filters);
             return $"SearchUIState: Text='{SearchText}', Filters=[{filterStr}]";

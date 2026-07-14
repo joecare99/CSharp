@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MdbBrowser.Models.Interfaces;
+﻿using MdbBrowser.Models.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace MdbBrowser.Models.Tests

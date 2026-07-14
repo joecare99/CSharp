@@ -210,7 +210,8 @@ public static class StringUtils
     /// <seealso cref="SRest(string, string)"/>
     public static string SFirst(this string s, string sep = " ")
     {
-        if (!s.Contains(sep)) return s;
+        if (!s.Contains(sep))
+            return s;
         return s.Substring(0, s.IndexOf(sep));
     }
 
@@ -239,7 +240,8 @@ public static class StringUtils
     /// <seealso cref="SFirst(string, string)"/>
     public static string SRest(this string s, string sep = " ")
     {
-        if (!s.Contains(sep)) return "";
+        if (!s.Contains(sep))
+            return "";
         return s.Substring(s.IndexOf(sep) + 1);
     }
 
@@ -504,11 +506,14 @@ public static class StringUtils
     /// </example>
     public static bool IsValidIdentifyer(this string? s)
     {
-        if (string.IsNullOrWhiteSpace(s)) return false;
+        if (string.IsNullOrWhiteSpace(s))
+            return false;
         var _s = s!.ToUpper();
-        if (!AlphaUpper.Contains(_s[0])) return false;
+        if (!AlphaUpper.Contains(_s[0]))
+            return false;
         foreach (var c in _s)
-            if (!(AlphaNumeric + "_").Contains(c)) return false;
+            if (!(AlphaNumeric + "_").Contains(c))
+                return false;
         return true;
     }
 
@@ -693,7 +698,7 @@ public static class StringUtils
     /// <returns>
     /// The zero-based index of the next placeholder start if one exists; otherwise, the length of the line plus one.
     /// </returns>
-    public static int GetNextPlaceHolder(this string line, int offset=0)
+    public static int GetNextPlaceHolder(this string line, int offset = 0)
     {
         int result = line.Length + 1;
         int i = offset;

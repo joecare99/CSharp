@@ -1,16 +1,14 @@
+using BaseLib.Helper;
+using NSubstitute;
+using OpenQA.Selenium;
+using RnzTrauer.Core;
+using RnzTrauer.Core.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
-using OpenQA.Selenium;
-using RnzTrauer.Core;
-using RnzTrauer.Core.Services.Interfaces;
-using BaseLib.Helper;
 
 namespace RnzTrauer.Tests;
 

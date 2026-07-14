@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree.Interfaces.DB;
-using NSubstitute;
-using GenFree.Interfaces.Model;
+﻿using BaseLib.Interfaces;
 using GenFree.Data;
-using BaseLib.Interfaces;
+using GenFree.Interfaces.DB;
+using GenFree.Interfaces.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 
 namespace GenFree.Models.Tests
 {
@@ -76,8 +76,8 @@ namespace GenFree.Models.Tests
             Assert.AreEqual(1, testClass.MaxID); // Assuming MaxID returns 0 for an empty recordset
             testRS.Received(1).MoveLast();
             testRS.Received(1).Index = "Fam";
-            _=testRS.Received(1).Fields;
-            _=(testRS.Fields[FamilyFields.FamNr] as IHasValue).Received(1).Value;
+            _ = testRS.Received(1).Fields;
+            _ = (testRS.Fields[FamilyFields.FamNr] as IHasValue).Received(1).Value;
         }
     }
 }

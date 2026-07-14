@@ -1,6 +1,6 @@
-using System;
 using GenSecure.Contracts;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace GenSecure.Windows;
 

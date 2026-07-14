@@ -1,12 +1,12 @@
 ﻿using BaseLib.Helper;
+using Gen_FreeWin.ViewModels;
 using GenFree;
-using System;
-using System.Windows.Forms;
-using System.ComponentModel;
 using GenFree.Interfaces.Sys;
 using GenFree.ViewModels.Interfaces;
+using System;
+using System.ComponentModel;
+using System.Windows.Forms;
 using Views;
-using Gen_FreeWin.ViewModels;
 
 namespace Gen_FreeWin.Views
 {
@@ -31,31 +31,31 @@ namespace Gen_FreeWin.Views
             CommandBindingAttribute.Commit(this, _viewModel);
         }
 
-       // [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-       // public EUserText iText { get => frmParent.Tag.AsEnum<EUserText>(); set => frmParent.Text = Modul1.IText[frmParent.Tag = value]; }
+        // [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        // public EUserText iText { get => frmParent.Tag.AsEnum<EUserText>(); set => frmParent.Text = Modul1.IText[frmParent.Tag = value]; }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int iPNr { get => edtParentPNr.Tag.AsInt(); set => edtParentPNr.Text = value.ToString(); }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string PersName {  get => lblParentName.Text; set => lblParentName.Text = value; }
+        public string PersName { get => lblParentName.Text; set => lblParentName.Text = value; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string PersGivn {  get => lblParentName.Text; set => lblParentName.Text = value; }
+        public string PersGivn { get => lblParentName.Text; set => lblParentName.Text = value; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string PersTitle {  get => lblParentTitle.Text; set => lblParentTitle.Text = value; }
+        public string PersTitle { get => lblParentTitle.Text; set => lblParentTitle.Text = value; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string PersText8 {  get => lblParent_8.Text; set => lblParent_8.Text = value; }
+        public string PersText8 { get => lblParent_8.Text; set => lblParent_8.Text = value; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string PersAka {  get => lblParentAka.Text; set => lblParentAka.Text = value; }
+        public string PersAka { get => lblParentAka.Text; set => lblParentAka.Text = value; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string PersText10 {  get => lblParentResidence.Text; set => lblParentResidence.Text = value; }
+        public string PersText10 { get => lblParentResidence.Text; set => lblParentResidence.Text = value; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string PersText12 {  get => lblParent_12.Text; set => lblParent_12.Text = value; }
+        public string PersText12 { get => lblParent_12.Text; set => lblParent_12.Text = value; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string PersNrMarr {  get => lblParentNrMarr.Text; set => lblParentNrMarr.Text = value; }
+        public string PersNrMarr { get => lblParentNrMarr.Text; set => lblParentNrMarr.Text = value; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int iFamNr { get; internal set; }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public bool PNr_Visible { get => edtParentPNr.Visible; set =>edtParentPNr.Visible=value; }
+        public bool PNr_Visible { get => edtParentPNr.Visible; set => edtParentPNr.Visible = value; }
         public event EventHandler<KeyPressEventArgs> onPNr_KeyPress;
         public event EventHandler<KeyEventArgs> onPNr_KeyUp;
         public event EventHandler<EventArgs> onLabel_Click;
@@ -74,7 +74,7 @@ namespace Gen_FreeWin.Views
             PersText10 = Modul1.IText[EUserText.tResidence] + ": ";
             PersText12 = "";
             PersNrMarr = Modul1.IText[EUserText.tMarrCount];
-            
+
         }
 
         private void edtParentPNr_KeyUp(object sender, KeyEventArgs e)

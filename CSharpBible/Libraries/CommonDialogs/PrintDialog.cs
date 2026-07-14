@@ -2,6 +2,6 @@
 
 namespace CommonDialogs;
 
-public class PrintDialog: System.Windows.Controls.PrintDialog, IPrintDialog
+public class PrintDialog : System.Windows.Controls.PrintDialog, IPrintDialog
 {
 }

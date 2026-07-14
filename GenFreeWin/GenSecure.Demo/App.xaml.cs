@@ -1,10 +1,10 @@
-using System;
-using System.IO;
-using System.Windows;
 using GenSecure.Core;
 using GenSecure.Demo.ViewModels;
 using GenSecure.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IO;
+using System.Windows;
 
 namespace GenSecure.Demo;
 

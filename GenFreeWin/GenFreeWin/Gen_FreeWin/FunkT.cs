@@ -108,7 +108,7 @@ internal class FunkT : Form
             _Command1 = value;
             if (_Command1 != null)
             {
-                _Command1.AddClick ( obj);
+                _Command1.AddClick(obj);
             }
         }
     }
@@ -865,7 +865,8 @@ internal class FunkT : Form
                 num = 20;
                 eventArgs.Cancel = cancel;
                 break;
-            end_IL_0001:;
+            end_IL_0001:
+                ;
             }
             catch (Exception obj) when (obj is not null && num3 != 0 && num2 == 0)
             {

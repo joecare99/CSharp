@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Model
 {
-    public interface IHasDataItf<T,T2> : IUsesID<T2> where T : IHasID<T2>
+    public interface IHasDataItf<T, T2> : IUsesID<T2> where T : IHasID<T2>
     {
         /// <summary>
         /// Reads the data.
@@ -11,7 +11,7 @@ namespace GenFree.Interfaces.Model
         /// <param name="key">The key.</param>
         /// <param name="data">The data.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        bool ReadData(T2 key,out T? data);
+        bool ReadData(T2 key, out T? data);
         /// <summary>
         /// Reads all records.
         /// </summary>
@@ -23,7 +23,7 @@ namespace GenFree.Interfaces.Model
         /// <param name="key">The key.</param>
         /// <param name="data">The data.</param>
         /// <param name="asProps">As props.</param>
-        void SetData(T2 key,T data, Enum[]? asProps = null);
+        void SetData(T2 key, T data, Enum[]? asProps = null);
         /// <summary>
         /// Commits the specified data.
         /// </summary>

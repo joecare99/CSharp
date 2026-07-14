@@ -1,10 +1,7 @@
-using System;
 using FBParser.Analysis;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+using System;
 using System.Linq;
 using static FBParser.PascalCompat;
-using System.Collections;
 
 namespace FBParser;
 

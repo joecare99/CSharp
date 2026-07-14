@@ -62,13 +62,13 @@ public class TestHelperTests
 
     [TestMethod]
     [DataRow(new string[] { "a", "b", "c", "d" }, new string[] { "a", "b", "c", "d" }, true)]
-    [DataRow(new string[] {  }, new string[] { }, true)]
+    [DataRow(new string[] { }, new string[] { }, true)]
     [DataRow(new string[] { "a", "b", "c", "d" }, new string[] { "a", "b", "c", "e" })]
     [DataRow(new string[] { "a", "b", "c", "d" }, new string[] { "a", "x", "c", "d" })]
     [DataRow(new string[] { "a", "b", "c" }, new string[] { "a", "b", "c", "e" })]
     [DataRow(new string[] { "a", "b", "c", "d" }, new string[] { "a", "b", "c" })]
-    [DataRow(new string[] {  }, new string[] { "a", "b", "c" })]
-    [DataRow(new string[] { "a", "b", "c", "d" }, new string[] {  })]
+    [DataRow(new string[] { }, new string[] { "a", "b", "c" })]
+    [DataRow(new string[] { "a", "b", "c", "d" }, new string[] { })]
     public void AssertAreEqualEnumTest1(string[] asExpData, string[] asActData, bool xExp = false)
     {
         if (xExp)

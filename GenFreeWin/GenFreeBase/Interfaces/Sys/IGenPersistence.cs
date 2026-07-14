@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using static System.Collections.Specialized.BitVector32;
 
 namespace GenFree.Interfaces.Sys;
 
@@ -11,7 +10,7 @@ public interface IGenPersistence
 {
     int GetIntInit(string sSection, long lPos);
     Color[] ReadFarbenInit(string name, int iCnt);
-    int[] ReadIntsInit(string sSection, int iCnt=-1);
+    int[] ReadIntsInit(string sSection, int iCnt = -1);
     int ReadIntInit(string sSection);
     string ReadStringInit(string sSection);
     void ReadStringsInit(string sSection, string[] aus);
@@ -26,10 +25,10 @@ public interface IGenPersistence
     bool ExistFileInit(string v);
     void PutColorsInit(string v, IList<Color> value);
     void PutColorInit(string v, Color value, int iCnt);
-    
+
     void AppendStringsTemp(string sSection, IList<string> lines);
     void WriteStringTemp(string sSection, string text);
-    
+
     bool ExistFileMand(string dateiName);
     void WriteEnumMand(string sSection, Enum eValue);
     int GetIntMand(string sSection, long lPos = 1);
@@ -50,11 +49,11 @@ public interface IGenPersistence
     void WriteStringsProg(string sSection, string[] values);
 
     void CopyDirectory(string v, string backupDir);
-    
+
     void CreateTempFile(string v);
     void WriteBoolsTemp(string sSection, IList<bool> Option);
     bool ReadBoolInit(string v);
-    void ReadBoolsTemp( string v, IList<bool> Option);
+    void ReadBoolsTemp(string v, IList<bool> Option);
     void ReadStringsOutput(string sSection, IList<string> asValue, int iCount);
     void WriteStringsOutput(string sSection, IList<string> asValue, int iCount);
     void DeleteTempFile(string v);
@@ -70,42 +69,43 @@ public interface IGenPersistence
     bool ExistFileProg(string v);
 }
 
-public static class PersistenceHelper {
-    public static T ReadEnumInit<T>(this IGenPersistence _p, string sSection) where T :  Enum
+public static class PersistenceHelper
+{
+    public static T ReadEnumInit<T>(this IGenPersistence _p, string sSection) where T : Enum
         => ToEnum<T>(_p.ReadIntInit(sSection));
     public static T ReadEnumMand<T>(this IGenPersistence _p, string sSection) where T : Enum
     => ToEnum<T>(_p.ReadIntMand(sSection));
 
-    private static T ToEnum<T>(int v) where T :  Enum
+    private static T ToEnum<T>(int v) where T : Enum
     {
         return (T)Enum.ToObject(typeof(T), v);
     }
 
-    public static void ReadEnumsMand<T>(this IGenPersistence _p, string sSection, T[] enums) where T :  Enum
+    public static void ReadEnumsMand<T>(this IGenPersistence _p, string sSection, T[] enums) where T : Enum
     {
         var ai = _p.ReadIntsMand(sSection, enums.Length);
-        for (var i = 0; i < Math.Min(ai.Length, enums.Length) ; i++)
+        for (var i = 0; i < Math.Min(ai.Length, enums.Length); i++)
             enums[i] = ToEnum<T>(ai[i]);
     }
-    public static void ReadEnumsMand<T>(this IGenPersistence _p, string sSection, IList<T> enums) where T :  Enum
+    public static void ReadEnumsMand<T>(this IGenPersistence _p, string sSection, IList<T> enums) where T : Enum
     {
         var ai = _p.ReadIntsMand(sSection, enums.Count);
-        for (var i = 0; i<Math.Min(ai.Length, enums.Count) ; i++)
-            enums[i] = ToEnum<T>(ai[i]); 
+        for (var i = 0; i < Math.Min(ai.Length, enums.Count); i++)
+            enums[i] = ToEnum<T>(ai[i]);
     }
-    public static void PutEnumsMand<T>(this IGenPersistence _p, string sSection, IList<T> enums) where T :  Enum
+    public static void PutEnumsMand<T>(this IGenPersistence _p, string sSection, IList<T> enums) where T : Enum
     {
-        _p.PutIntsMand(sSection, enums.Select(e=>e.AsInt()).ToArray());
+        _p.PutIntsMand(sSection, enums.Select(e => e.AsInt()).ToArray());
     }
-    public static IList<T> ReadEnumsInit<T>(this IGenPersistence _p, string v) where T:  Enum
+    public static IList<T> ReadEnumsInit<T>(this IGenPersistence _p, string v) where T : Enum
     {
-        return _p.ReadIntsInit(v).Select(i=>ToEnum<T>(i)).ToList();         
+        return _p.ReadIntsInit(v).Select(i => ToEnum<T>(i)).ToList();
     }
-    public static void ReadSuchDatMand<T>(this IGenPersistence _p, string DateiName, IList<T> aeValues) where T :  Enum
+    public static void ReadSuchDatMand<T>(this IGenPersistence _p, string DateiName, IList<T> aeValues) where T : Enum
     {
         _p.ReadEnumsMand(DateiName, aeValues);
     }
-    public static void ReadEnumInit<T>(this IGenPersistence _p, string sSection, out T eVal) where T : Enum 
+    public static void ReadEnumInit<T>(this IGenPersistence _p, string sSection, out T eVal) where T : Enum
         => eVal = _p.ReadEnumInit<T>(sSection);
 
 }

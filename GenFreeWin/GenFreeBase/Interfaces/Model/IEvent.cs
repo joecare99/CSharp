@@ -33,8 +33,8 @@ namespace GenFree.Interfaces.Model;
 /// <seealso cref="Model.IUsesRecordset{(EEventArt eArt, int iLink, short iLfNr)}" />
 /// <seealso cref="IHasRSIndex1{EventIndex, EventFields}" />
 /// <seealso cref="Model.IHasIxDataItf{EventIndex, IEventData, (EEventArt eArt, int iLink, short iLfNr)}" />
-public interface IEvent : 
-    IUsesRecordset<(EEventArt eArt, int iLink, short iLfNr)> , 
+public interface IEvent :
+    IUsesRecordset<(EEventArt eArt, int iLink, short iLfNr)>,
     IHasRSIndex1<EventIndex, EventFields>,
     IHasIxDataItf<EventIndex, IEventData, (EEventArt eArt, int iLink, short iLfNr)>
 {
@@ -178,7 +178,7 @@ public interface IEvent :
     /// <param name="cEvt">The c evt.</param>
     /// <param name="iLfNr">The i lf nr.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    bool ReadData(EEventArt eEventArt, int persInArb,out IEventData? cEvt, short iLfNr = 0);
+    bool ReadData(EEventArt eEventArt, int persInArb, out IEventData? cEvt, short iLfNr = 0);
     /// <summary>
     /// Reads the data pl.
     /// </summary>
@@ -202,7 +202,7 @@ public interface IEvent :
     /// <param name="cEv">The data.</param>
     /// <returns>
     ///   <c>true</c> if event found, <c>false</c> otherwise.</returns>
-    bool ReadBeSu(EEventArt eArt, int iLink,  out IEventData? cEv);
+    bool ReadBeSu(EEventArt eArt, int iLink, out IEventData? cEv);
     /// <summary>
     /// Reads the events be su.
     /// </summary>
@@ -336,5 +336,5 @@ public interface IEvent :
     /// <returns>IEnumerable&lt;IEventData&gt;.</returns>
     IEnumerable<IEventData> ReadAllGt(EventIndex eIndex, int iIndexVal);
     IEnumerable<IEventData> ReadAllBeSu(EEventArt eEventArt, int persInArb);
-    IEnumerable<IEventData> ReadEntityEvents(int iD, bool xFamily=false);
+    IEnumerable<IEventData> ReadEntityEvents(int iD, bool xFamily = false);
 }

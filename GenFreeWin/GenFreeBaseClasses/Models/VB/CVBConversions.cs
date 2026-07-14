@@ -32,6 +32,6 @@ public class CVBConversions : IVBConversions
 
     public double Val(object v) => v.AsDouble();
 
-    public string ChangeType(object v, Type type) 
+    public string ChangeType(object v, Type type)
         => Convert.ChangeType(v, type)?.ToString() ?? string.Empty;
 }

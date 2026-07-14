@@ -22,7 +22,7 @@ public class PropertyHelperTests
         new object[] { "20-1 Empty", 2, "", eValidReact.OK, "", "" },
         new object[] { "20-2 Test", 2, "", eValidReact.NIO, "", "" },
         new object[] { "20-2 Test", 2, "", eValidReact.GeneralException, "", "" },
-        new object[] { "21-1 Empty", 2, "Test", eValidReact.OK, "Test",new string[] { 
+        new object[] { "21-1 Empty", 2, "Test", eValidReact.OK, "Test",new string[] {
                 "Validate: TestString2(Test), React:OK\r\n",
                 "Validate: TestString3(Test), React:OK\r\n",
                 "Validate: TestString_2(Test), React:OK\r\n",
@@ -115,7 +115,7 @@ public class PropertyHelperTests
 
     public string TestString_0 { get => _testString; set => PropertyHelper.SetProperty(value, (s) => TestString = s, TestString); }
     public string TestString_1 { get => _testString; set => value.SetProperty((s) => TestString = s, TestString); }
-    public string TestString_2 { get => _testString; set => PropertyHelper.SetProperty(value, (s) => TestString = s, TestString, (s)=>ValidateString(s)); }
+    public string TestString_2 { get => _testString; set => PropertyHelper.SetProperty(value, (s) => TestString = s, TestString, (s) => ValidateString(s)); }
     public string TestString_3 { get => _testString; set => value.SetProperty((s) => TestString = s, TestString, (s) => ValidateString(s)); }
     public string TestString_4 { get => _testString; set => PropertyHelper.SetProperty(value, (s) => TestString = s, TestString, StringAct); }
     public string TestString_5 { get => _testString; set => value.SetProperty((s) => TestString = s, TestString, StringAct); }
@@ -154,7 +154,7 @@ public class PropertyHelperTests
         }
     }
 
-    private bool ValidateString(string arg1 = "",[CallerMemberName] string propertyName = "")
+    private bool ValidateString(string arg1 = "", [CallerMemberName] string propertyName = "")
     {
         DebugResult += $"Validate: {propertyName}({arg1}), React:{valReact}{Environment.NewLine}";
         return valReact switch
@@ -169,14 +169,20 @@ public class PropertyHelperTests
     {
         valReact = eReact;
         bool xCh = sVal != _testString;
-        bool eRIsEx = xCh 
-            && eReact is not (eValidReact.OK or eValidReact.NIO) 
+        bool eRIsEx = xCh
+            && eReact is not (eValidReact.OK or eValidReact.NIO)
             && iTs is 2 or 4;
         switch (eReact)
         {
-            case eValidReact.GeneralException when eRIsEx: Assert.ThrowsExactly<Exception>(Setter, $"{name}.T2"); break;
-            case eValidReact.ArgumentException when eRIsEx: Assert.ThrowsExactly<ArgumentException>(Setter, $"{name}.T2"); break;
-            default: Setter(); break;
+            case eValidReact.GeneralException when eRIsEx:
+                Assert.ThrowsExactly<Exception>(Setter, $"{name}.T2");
+                break;
+            case eValidReact.ArgumentException when eRIsEx:
+                Assert.ThrowsExactly<ArgumentException>(Setter, $"{name}.T2");
+                break;
+            default:
+                Setter();
+                break;
         }
         Assert.AreEqual(sExp, _testString, $"{name}.Result");
         Assert.AreEqual(sDebExp, DebugResult, $"{name}.DebRes");
@@ -187,18 +193,21 @@ public class PropertyHelperTests
     [TestCategory("SetData")]
     [DynamicData(nameof(TestPropData))]
     public void SetPropertyTest1(string name, int iTs, string sVal, eValidReact eReact, string sExp, object sDebExp)
-        => SetPropertyTest(name, iTs, sVal, eReact, sExp, sDebExp switch { string s => s, string[] a => a[0], _ => "" }, () => iTs switch {
-        2 => TestString2 = sVal,
-        3 => TestString4 = sVal,
-        4 => TestString6 = sVal,
-        _ => TestString = sVal});
+        => SetPropertyTest(name, iTs, sVal, eReact, sExp, sDebExp switch { string s => s, string[] a => a[0], _ => "" }, () => iTs switch
+        {
+            2 => TestString2 = sVal,
+            3 => TestString4 = sVal,
+            4 => TestString6 = sVal,
+            _ => TestString = sVal
+        });
 
     [TestMethod()]
     [TestProperty("Author", "J.C.")]
     [TestCategory("SetData")]
     [DynamicData(nameof(TestPropData))]
     public void SetPropertyTest2(string name, int iTs, string sVal, eValidReact eReact, string sExp, object sDebExp)
-        => SetPropertyTest(name, iTs, sVal, eReact, sExp, sDebExp switch { string s => s, string[] a => a[1], _ => "" }, () => iTs switch {
+        => SetPropertyTest(name, iTs, sVal, eReact, sExp, sDebExp switch { string s => s, string[] a => a[1], _ => "" }, () => iTs switch
+        {
             2 => TestString3 = sVal,
             3 => TestString5 = sVal,
             4 => TestString7 = sVal,
@@ -210,7 +219,8 @@ public class PropertyHelperTests
     [TestCategory("SetData")]
     [DynamicData(nameof(TestPropData))]
     public void SetPropertyTest3(string name, int iTs, string sVal, eValidReact eReact, string sExp, object sDebExp)
-        => SetPropertyTest(name, iTs, sVal, eReact, sExp, sDebExp switch { string s => s, string[] a => a[2], _ => "" }, () => iTs switch {
+        => SetPropertyTest(name, iTs, sVal, eReact, sExp, sDebExp switch { string s => s, string[] a => a[2], _ => "" }, () => iTs switch
+        {
             2 => TestString_2 = sVal,
             3 => TestString_4 = sVal,
             4 => TestString_6 = sVal,
@@ -222,7 +232,8 @@ public class PropertyHelperTests
     [TestCategory("SetData")]
     [DynamicData(nameof(TestPropData))]
     public void SetPropertyTest4(string name, int iTs, string sVal, eValidReact eReact, string sExp, object sDebExp)
-        => SetPropertyTest(name, iTs, sVal, eReact, sExp, sDebExp switch { string s => s, string[] a => a[3], _ => "" }, () => iTs switch {
+        => SetPropertyTest(name, iTs, sVal, eReact, sExp, sDebExp switch { string s => s, string[] a => a[3], _ => "" }, () => iTs switch
+        {
             2 => TestString_3 = sVal,
             3 => TestString_5 = sVal,
             4 => TestString_7 = sVal,

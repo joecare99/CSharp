@@ -34,16 +34,16 @@ public abstract class HtmlNodeBase : IDocElement
 
         return type switch
         {
-            HtmlElementType.Section   => (IDocSpan)AddChild(new HtmlSection()),
+            HtmlElementType.Section => (IDocSpan)AddChild(new HtmlSection()),
             HtmlElementType.Paragraph => (IDocSpan)AddChild(new HtmlParagraph(styleName: value)),
-            HtmlElementType.Headline  => (IDocSpan)AddChild(new HtmlHeadline(level: TryParseInt(value, 1), id: Id)),
-            HtmlElementType.TOC       => (IDocSpan)AddChild(new HtmlTOC(name: value, level: TryParseInt(value, 2))),
-            HtmlElementType.Span      => (IDocSpan)AddChild(new HtmlSpan(style: HtmlFontStyle.Default)),
-            HtmlElementType.Link      => (IDocSpan)AddChild(new HtmlSpan(style: HtmlFontStyle.Default) { Href = value }),
+            HtmlElementType.Headline => (IDocSpan)AddChild(new HtmlHeadline(level: TryParseInt(value, 1), id: Id)),
+            HtmlElementType.TOC => (IDocSpan)AddChild(new HtmlTOC(name: value, level: TryParseInt(value, 2))),
+            HtmlElementType.Span => (IDocSpan)AddChild(new HtmlSpan(style: HtmlFontStyle.Default)),
+            HtmlElementType.Link => (IDocSpan)AddChild(new HtmlSpan(style: HtmlFontStyle.Default) { Href = value }),
             HtmlElementType.LineBreak => (IDocSpan)AddChild(new HtmlLineBreak()),
-            HtmlElementType.NbSpace   => (IDocSpan)AddChild(new HtmlNbSpace()),
-            HtmlElementType.Tab       => (IDocSpan)AddChild(new HtmlTab()),
-            HtmlElementType.Bookmark  => (IDocSpan)AddChild(new HtmlSpan(style: HtmlFontStyle.Default) { Id = value }),
+            HtmlElementType.NbSpace => (IDocSpan)AddChild(new HtmlNbSpace()),
+            HtmlElementType.Tab => (IDocSpan)AddChild(new HtmlTab()),
+            HtmlElementType.Bookmark => (IDocSpan)AddChild(new HtmlSpan(style: HtmlFontStyle.Default) { Id = value }),
             _ => throw new NotSupportedException($"Element type '{aType}' wird nicht unterstützt.")
         };
     }

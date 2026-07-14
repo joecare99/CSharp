@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using BaseGenClasses.Helper;
+using BaseGenClasses.Helper.Interfaces;
 using BaseLib.Helper;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
-using BaseGenClasses.Helper;
-using BaseGenClasses.Helper.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BaseGenClasses.Model.Tests;
+
 [TestClass]
 public class GenFamilyTests
 {
@@ -16,12 +17,13 @@ public class GenFamilyTests
     private GenFamily _genFamily;
     private IGenPerson _husband;
     private IGenPerson _wife;
-    private readonly string? _cFamilyJS= "{\"$id\":\"1\",\"eGenType\":3,\"UId\":\"95742eb9-44c2-4d3f-9200-8c61abdd9b65\",\"Facts\":{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"eGenType\":0,\"eFactType\":28,\"Date\":{\"$id\":\"4\",\"eGenType\":10,\"Date1\":\"1900-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"5\",\"$values\":[]}},{\"$id\":\"6\",\"eGenType\":0,\"eFactType\":29,\"Date\":{\"$id\":\"7\",\"eGenType\":10,\"Date1\":\"1930-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"8\",\"$values\":[]}},{\"$id\":\"9\",\"eGenType\":0,\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"10\",\"$values\":[]}},{\"$id\":\"11\",\"eGenType\":0,\"eFactType\":27,\"Data\":\"123456\",\"Entities\":{\"$id\":\"12\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"13\",\"$values\":[{\"$id\":\"14\",\"eGenType\":4,\"Entity\":{\"$id\":\"15\",\"eGenType\":2,\"UId\":\"95742eb9-44c2-4d3f-9201-8c61abdd9b65\",\"Facts\":{\"$id\":\"16\",\"$values\":[{\"$id\":\"17\",\"eGenType\":0,\"eFactType\":6,\"Data\":\"M\",\"Entities\":{\"$id\":\"18\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"19\",\"$values\":[]}},\"eGenConnectionType\":0},{\"$id\":\"20\",\"eGenType\":4,\"Entity\":{\"$id\":\"21\",\"eGenType\":2,\"UId\":\"95742eb9-44c2-4d3f-9202-8c61abdd9b65\",\"Facts\":{\"$id\":\"22\",\"$values\":[{\"$id\":\"23\",\"eGenType\":0,\"eFactType\":6,\"Data\":\"F\",\"Entities\":{\"$id\":\"24\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"25\",\"$values\":[]}},\"eGenConnectionType\":0}]}}";
+    private readonly string? _cFamilyJS = "{\"$id\":\"1\",\"eGenType\":3,\"UId\":\"95742eb9-44c2-4d3f-9200-8c61abdd9b65\",\"Facts\":{\"$id\":\"2\",\"$values\":[{\"$id\":\"3\",\"eGenType\":0,\"eFactType\":28,\"Date\":{\"$id\":\"4\",\"eGenType\":10,\"Date1\":\"1900-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"5\",\"$values\":[]}},{\"$id\":\"6\",\"eGenType\":0,\"eFactType\":29,\"Date\":{\"$id\":\"7\",\"eGenType\":10,\"Date1\":\"1930-01-01T00:00:00\"},\"Data\":\"\",\"Entities\":{\"$id\":\"8\",\"$values\":[]}},{\"$id\":\"9\",\"eGenType\":0,\"eFactType\":1,\"Data\":\"Mustermann\",\"Entities\":{\"$id\":\"10\",\"$values\":[]}},{\"$id\":\"11\",\"eGenType\":0,\"eFactType\":27,\"Data\":\"123456\",\"Entities\":{\"$id\":\"12\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"13\",\"$values\":[{\"$id\":\"14\",\"eGenType\":4,\"Entity\":{\"$id\":\"15\",\"eGenType\":2,\"UId\":\"95742eb9-44c2-4d3f-9201-8c61abdd9b65\",\"Facts\":{\"$id\":\"16\",\"$values\":[{\"$id\":\"17\",\"eGenType\":0,\"eFactType\":6,\"Data\":\"M\",\"Entities\":{\"$id\":\"18\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"19\",\"$values\":[]}},\"eGenConnectionType\":0},{\"$id\":\"20\",\"eGenType\":4,\"Entity\":{\"$id\":\"21\",\"eGenType\":2,\"UId\":\"95742eb9-44c2-4d3f-9202-8c61abdd9b65\",\"Facts\":{\"$id\":\"22\",\"$values\":[{\"$id\":\"23\",\"eGenType\":0,\"eFactType\":6,\"Data\":\"F\",\"Entities\":{\"$id\":\"24\",\"$values\":[]}}]},\"Connects\":{\"$id\":\"25\",\"$values\":[]}},\"eGenConnectionType\":0}]}}";
 
     [TestInitialize]
     public void Initialize()
     {
-        IoC.GetReqSrv = (t) => t switch {
+        IoC.GetReqSrv = (t) => t switch
+        {
             _ when t == typeof(IGenFactBuilder) => new GenFactBuilder(),
             _ when t == typeof(IGenConnectBuilder) => new GenConnectBuilder(),
             _ when t == typeof(IGenILBuilder) => new GenILBuilder(),
@@ -33,7 +35,7 @@ public class GenFamilyTests
         {
             UId = _uid
         };
-        _genFamily.AddEvent(EFactType.Mariage, new GenDate(new DateTime(1900, 1, 1)),"",new Guid());
+        _genFamily.AddEvent(EFactType.Mariage, new GenDate(new DateTime(1900, 1, 1)), "", new Guid());
         _genFamily.AddEvent(EFactType.Divorce, new GenDate(new DateTime(1930, 1, 1)), "", new Guid());
         _genFamily.AddFact(EFactType.Surname, "Mustermann", new Guid());
         _genFamily.AddFact(EFactType.Reference, "123456", new Guid());
@@ -117,10 +119,10 @@ public class GenFamilyTests
         {
             ReferenceHandler = ReferenceHandler.Preserve,
         };
-        var json = JsonSerializer.Serialize<IGenEntity>(_genFamily,options);
+        var json = JsonSerializer.Serialize<IGenEntity>(_genFamily, options);
         Assert.AreEqual(_cFamilyJS, json);
-    }   
-    
+    }
+
     [TestMethod]
     public void DeserializationTest()
     {
@@ -128,7 +130,7 @@ public class GenFamilyTests
         {
             ReferenceHandler = ReferenceHandler.Preserve,
         };
-        var json = JsonSerializer.Serialize<IGenEntity>(_genFamily,options);
+        var json = JsonSerializer.Serialize<IGenEntity>(_genFamily, options);
         Assert.AreEqual(_cFamilyJS, json);
         options = new JsonSerializerOptions(options);
         options.Converters.Add(new GenConverter<List<IGenFact>, IList<IGenFact>>());
@@ -138,7 +140,7 @@ public class GenFamilyTests
         options.Converters.Add(new GenConverter<GenPerson, IGenEntity>());
         options.Converters.Add(new GenConverter<GenConnect, IGenConnects>());
 
-        var genFamily = JsonSerializer.Deserialize<GenFamily>(json,options);
+        var genFamily = JsonSerializer.Deserialize<GenFamily>(json, options);
         Assert.AreEqual(_genFamily.UId, genFamily.UId);
         Assert.AreEqual(_genFamily.eGenType, genFamily.eGenType);
         Assert.AreEqual(_genFamily.Husband.UId, genFamily.Husband.UId);

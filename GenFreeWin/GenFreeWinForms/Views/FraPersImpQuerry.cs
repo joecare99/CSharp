@@ -1,13 +1,8 @@
-﻿using BaseLib.Helper;
-using GenFree;
-using GenFree.Helper;
-using System;
-using System.Windows.Forms;
-using System.ComponentModel;
-using GenFree.Interfaces.UI;
-using Views;
-using GenFreeWin.Attributes;
+﻿using GenFree.Interfaces.UI;
 using GenFree.ViewModels.Interfaces;
+using GenFreeWin.Attributes;
+using System.Windows.Forms;
+using Views;
 
 namespace Gen_FreeWin.Views
 {

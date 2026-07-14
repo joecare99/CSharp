@@ -1,18 +1,17 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
 using GenFree;
 using GenFree.Data;
+using GenFree.Interfaces.Sys;
+using GenFreeWin.Views;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
-using System.ComponentModel;
-using GenFree.Interfaces.Sys;
-using GenFreeWin.Views;
 
 namespace Gen_FreeWin;
 
@@ -471,10 +470,10 @@ public class Grundbucheintrag : Form
     {
         Label7.Text = iGBENr.ToString();
         Label7.Tag = iGBENr;
-        TextBox1.Text =  sJahr;
-        TextBox2.Text =  sName;
-        TextBox3.Text =  sGeb ;
-        TextBox5.Text =  sErb ;
+        TextBox1.Text = sJahr;
+        TextBox2.Text = sName;
+        TextBox3.Text = sGeb;
+        TextBox5.Text = sErb;
         TextBox4.Text = sAbg;
         return base.ShowDialog();
     }

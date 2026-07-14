@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GenFreeBrowser.Model;
 using GenFreeBrowser.ViewModels.Interfaces;
 using MVVM.ViewModel;
+using System.Collections.ObjectModel;
 
 namespace GenFreeBrowser.ViewModels;
 
@@ -76,7 +73,8 @@ public partial class FraPersonenListViewModel : BaseViewModelCT, IPersonenListVi
     [RelayCommand(AllowConcurrentExecutions = false)]
     public async Task LadeAsync(CancellationToken ct = default)
     {
-        if (IsBusy) return;
+        if (IsBusy)
+            return;
         try
         {
             IsBusy = true;
@@ -109,7 +107,8 @@ public partial class FraPersonenListViewModel : BaseViewModelCT, IPersonenListVi
     [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanGoNext))]
     public async Task NextPageAsync(CancellationToken ct = default)
     {
-        if (!HasNextPage) return;
+        if (!HasNextPage)
+            return;
         PageIndex++;
         await LadeAsync(ct);
     }
@@ -117,7 +116,8 @@ public partial class FraPersonenListViewModel : BaseViewModelCT, IPersonenListVi
     [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanGoPrevious))]
     public async Task PreviousPageAsync(CancellationToken ct = default)
     {
-        if (!HasPreviousPage) return;
+        if (!HasPreviousPage)
+            return;
         PageIndex--;
         await LadeAsync(ct);
     }

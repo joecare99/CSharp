@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gen_FreeWin.Services;
-using Gen_FreeWin.ViewModels;
-using Gen_FreeWin.ViewModels.Interfaces;
 using Gen_FreeWin.ViewModels.Models;
 using Gen_FreeWin.Views;
 using GenFree;
@@ -4583,13 +4581,13 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         DataModul.DB_FamilyTable.Seek(">=", num6);
         //iEventType = 0;
         string LiText = "          ";
-        while (!DataModul.DB_FamilyTable.EOF 
+        while (!DataModul.DB_FamilyTable.EOF
             && !DataModul.DB_FamilyTable.NoMatch
             && (num5 < Modul1.Aus[(int)EOutCfg.o13].AsInt()))
         {
             Modul1.FamInArb = DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt();
             DDatum = DataModul.DB_FamilyTable.Fields[FamilyFields.EditDat].AsString();
-            
+
             HT = DDatum.Date2DotDateStr2();
             if (HT.Trim() == "")
             {
@@ -4661,7 +4659,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 List1_Items.Add(new(LiText + Modul1.FamInArb.AsString(),
                    (Modul1.Family.Mann, Modul1.Family.Frau, Modul1.FamInArb)));
                 num5 += 1;
-                
+
             }
             DataModul.DB_FamilyTable.MoveNext();
 

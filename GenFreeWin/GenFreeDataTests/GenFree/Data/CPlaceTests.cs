@@ -1,10 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GenFree.Interfaces.DB;
-using NSubstitute;
-using GenFree.Interfaces.Model;
+﻿using BaseLib.Interfaces;
 using GenFree.Interfaces.Data;
-using BaseLib.Interfaces;
+using GenFree.Interfaces.DB;
+using GenFree.Interfaces.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Data.Tests
 {
@@ -58,9 +58,9 @@ namespace GenFree.Data.Tests
             testRS.EOF.Returns(iActPlace is not (> 0 and < 3) || iLfNr / 2 != iActPlace, false, false, true);
             var iCnt = 0;
             Action<float, int>? onProgress = ((int)(ETextKennz)eTKennz == 0) ? null : (f, i) => _ = i;
-           
+
             testClass.ForeEachTextDo(i => $"i", (i, aS) => iCnt++, onProgress);
-            
+
             Assert.AreEqual(xExp ? 3 : 0, iCnt);
             Assert.AreEqual(nameof(PlaceIndex.OrtNr), testRS.Index);
             testRS.Received(xExp ? 3 : 0).MoveNext();
@@ -130,13 +130,13 @@ namespace GenFree.Data.Tests
         }
 
         [TestMethod()]
-        [DataRow(PlaceIndex.OrtNr,PlaceFields.OrtNr)]
+        [DataRow(PlaceIndex.OrtNr, PlaceFields.OrtNr)]
         [DataRow(PlaceIndex.Orte, PlaceFields.Ort)]
         [DataRow(PlaceIndex.OT, PlaceFields.Ortsteil)]
         [DataRow(PlaceIndex.K, PlaceFields.Kreis)]
         [DataRow(PlaceIndex.L, PlaceFields.Land)]
         [DataRow(PlaceIndex.S, PlaceFields.Staat)]
-        public void GetIndex1FieldTest(PlaceIndex eAct,PlaceFields eExp)
+        public void GetIndex1FieldTest(PlaceIndex eAct, PlaceFields eExp)
         {
             Assert.AreEqual(eExp, testClass.GetIndex1Field(eAct));
         }
@@ -147,7 +147,7 @@ namespace GenFree.Data.Tests
         [DataRow((PlaceIndex)100, PlaceFields.OrtNr)]
         public void GetIndex1FieldTest2(PlaceIndex eAct, PlaceFields eExp)
         {
-            Assert.ThrowsExactly<ArgumentException>(()=>testClass.GetIndex1Field(eAct));
+            Assert.ThrowsExactly<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
     }
 }

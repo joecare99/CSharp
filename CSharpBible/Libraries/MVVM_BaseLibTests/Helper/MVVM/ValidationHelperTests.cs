@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.ComponentModel;
-using static BaseLib.Helper.TestHelper;
-using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using static BaseLib.Helper.TestHelper;
 
 namespace BaseLib.Helper.MVVM.Tests;
 
@@ -13,7 +13,7 @@ public class ValidationHelperTests
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
     ValidationHelper _helper;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-    private string DebugLog="";
+    private string DebugLog = "";
 
     [TestInitialize]
     public void Init()
@@ -65,25 +65,25 @@ ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp3)
     {
         AssertAreEqual(Array.Empty<string>(), _helper.GetErrors("SomeProp"));
         CreateTestData(_helper);
-        AssertAreEqual(new List<string>() { "Not a valid property" }, (_helper.GetErrors("SomeProp") as List<ValidationResult>)?.ConvertAll(o=>o.ErrorMessage??"")!);
+        AssertAreEqual(new List<string>() { "Not a valid property" }, (_helper.GetErrors("SomeProp") as List<ValidationResult>)?.ConvertAll(o => o.ErrorMessage ?? "")!);
     }
 
     [TestMethod()]
-    [DataRow(new string []{}, new[] { "" },DisplayName ="Empty")]
+    [DataRow(new string[] { }, new[] { "" }, DisplayName = "Empty")]
     [DataRow(new[] { "SomeProp", "Not a valid property" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\n",
     "SomeProp","Not a valid property" }, DisplayName = "1 SomeProp")]
-    [DataRow(new[] { "SomeProp", "Not a valid property","SomeProp2", "Not a valid property (2)" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)\r\n",
+    [DataRow(new[] { "SomeProp", "Not a valid property", "SomeProp2", "Not a valid property (2)" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp2)\r\n",
     "SomeProp","Not a valid property","SomeProp2", "Not a valid property (2)" }, DisplayName = "2 SomeProp,SomeProp2")]
     [DataRow(new[] { "SomeProp", "Not a valid property", "SomeProp", "Something else" }, new[] { "ErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\nErrorsChg(BaseLib.Helper.MVVM.ValidationHelper,SomeProp)\r\n",
     "SomeProp","Not a valid property","SomeProp2", null! }, DisplayName = "3 SomeProp,SomeProp")]
     public void AddErrorTest(string[] Props, string[] asExp)
     {
-        for (int i=0;i< Props.Length ;i+=2)
+        for (int i = 0; i < Props.Length; i += 2)
             Assert.IsNull(_helper[Props[i]]);
         for (int i = 0; i < Props.Length; i += 2)
-            _helper.AddError(Props[i], Props[i+1]);
+            _helper.AddError(Props[i], Props[i + 1]);
         for (int i = 1; i < asExp.Length; i += 2)
-            Assert.AreEqual(asExp[i+1], _helper[asExp[i]], asExp[i]);
+            Assert.AreEqual(asExp[i + 1], _helper[asExp[i]], asExp[i]);
         Assert.AreEqual(asExp[0], DebugLog);
     }
 

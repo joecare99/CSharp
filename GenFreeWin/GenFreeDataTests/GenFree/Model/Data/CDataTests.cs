@@ -29,7 +29,8 @@ public class CDataTests
 
         public override void SetPropValue(TestProp prop, object? value)
         {
-            if (EqualsProp(prop, value)) return;
+            if (EqualsProp(prop, value))
+                return;
             AddChangedProp(prop);
             object _ = prop switch
             {
@@ -83,7 +84,7 @@ public class CDataTests
     [DataRow(TestProp.iData, 321)]
     public void GetPropValue2Test(TestProp eAct, object? oExp)
     {
-       switch (eAct)
+        switch (eAct)
         {
             default:
                 Assert.AreEqual(oExp, testClass.GetPropValue<int>(eAct));

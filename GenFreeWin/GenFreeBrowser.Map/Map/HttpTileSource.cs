@@ -19,11 +19,13 @@ public sealed class HttpTileSource : ITileSource
 
     public async Task<byte[]?> GetTileAsync(TileId id)
     {
-        var cached = await _cache.TryGetAsync(id,_provider.Id).ConfigureAwait(false);
-        if (cached != null) return cached;
+        var cached = await _cache.TryGetAsync(id, _provider.Id).ConfigureAwait(false);
+        if (cached != null)
+            return cached;
 
         var url = _provider.GetTileUrl(id);
-        if (url == null) return null;
+        if (url == null)
+            return null;
 
         var data = await _client.GetByteArrayAsync(url).ConfigureAwait(false);
         await _cache.StoreAsync(id, _provider.Id, data).ConfigureAwait(false);

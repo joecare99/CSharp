@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace GenFree.ViewModels;
 
-public partial class FrmQuellSrchViewModel:BaseViewModelCT, IFrmQuellSrchViewModel
+public partial class FrmQuellSrchViewModel : BaseViewModelCT, IFrmQuellSrchViewModel
 {
     IQuellVerwViewModel _parent;
     IInteraction Interaction => _parent.Interaction;
@@ -21,7 +21,7 @@ public partial class FrmQuellSrchViewModel:BaseViewModelCT, IFrmQuellSrchViewMod
         View.frmSrch_edtSearch.Text = "";
         View.frmSrch_Label5.Text = "";
         View.frmSrch_ListBox1.Items.Clear();
-       
+
         long Satznr = View._Label1_13.Tag.AsInt();
         _parent.Les1(Satznr, Rich: false);
     }
@@ -50,7 +50,7 @@ public partial class FrmQuellSrchViewModel:BaseViewModelCT, IFrmQuellSrchViewMod
     {
         IList listBox = View.frmSrch_ListBox1.Items;
         GenFree.Interfaces.DB.IRecordset dB_RepoTable = DataModul.DB_RepoTable;
-     
+
         listBox.Clear();
         dB_RepoTable.Index = "Name";
         dB_RepoTable.Seek(">=", View.frmSrch_edtSearch.Text);

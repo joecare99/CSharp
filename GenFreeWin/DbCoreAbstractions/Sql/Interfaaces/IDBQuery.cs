@@ -7,7 +7,7 @@ namespace RnzTrauer.Core.Services.Interfaces;
 /// Represents an abstract database query used by the repository layer.
 /// </summary>
 public interface IDBQuery : IDisposable, System.Data.IDbCommand
-{    
+{
     /// <summary>
     /// Adds a named parameter to the query.
     /// </summary>

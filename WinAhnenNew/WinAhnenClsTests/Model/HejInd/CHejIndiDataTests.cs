@@ -100,7 +100,7 @@ for (i = 1, i < cInd.Length; i++)
                     FDataDir = Path.Combine("..", FDataDir);
                 else
                     break;
-   //         FDataDir = Path.Combine(FDataDir, "HejTest");
+            //         FDataDir = Path.Combine(FDataDir, "HejTest");
         }
 
         [TestMethod()]

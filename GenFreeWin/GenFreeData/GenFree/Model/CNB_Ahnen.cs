@@ -1,7 +1,6 @@
 ﻿//using DAO;
 using BaseLib.Helper;
 using GenFree.Data;
-using GenFree.Models;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
@@ -84,12 +83,12 @@ public class CNB_Ahnen(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Ah
         bool noMatch = !PersonExists(persInArb);
         if (noMatch)
         {
-            AddRow(persInArb, iGen,0, iAhn1, iAhn2, famInArb);
+            AddRow(persInArb, iGen, 0, iAhn1, iAhn2, famInArb);
         }
         else if (_db_Table.Fields[NB_AhnenFields.Ahn1].AsInt() != 0)
         {
             SetWeiterRaw();
-            AddRow(persInArb, iGen,1, iAhn1, iAhn2, famInArb);
+            AddRow(persInArb, iGen, 1, iAhn1, iAhn2, famInArb);
         }
         else
         {

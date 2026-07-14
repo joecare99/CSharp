@@ -25,7 +25,7 @@ public interface IApplication : IGroupControl
 
     IWidgetSet WidgetSet { get; }
 
-//        static IApplication Default { get; }
+    //        static IApplication Default { get; }
 
     void Initialize();
     void Run();

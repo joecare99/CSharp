@@ -1,21 +1,21 @@
 ﻿using GenInterfaces.Interfaces;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BaseGenClasses.Helper;
 
-public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList<T> where T : class where T2 : notnull
+public class IndexedList<T, T2>(Func<T, T2> getIdx) : WeakLinkList<T>, IIndexedList<T> where T : class where T2 : notnull
 {
-    private Dictionary<T2,int> _list = new();
+    private Dictionary<T2, int> _list = new();
 
     private Func<T, T2> _getIdx = getIdx;
-    public T? this[object index] { get => _list.TryGetValue((T2)index,out var iix)?this[iix]:null ; set => throw new NotImplementedException(); }
+    public T? this[object index] { get => _list.TryGetValue((T2)index, out var iix) ? this[iix] : null; set => throw new NotImplementedException(); }
 
     public override void Add(T? item)
     {
-        if (item == null) return;
+        if (item == null)
+            return;
         base.Add(item);
         _list.Add(_getIdx(item), Count - 1);
     }
@@ -23,7 +23,7 @@ public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList
     public void Add(T Item, object index)
     {
         base.Add(Item);
-        _list.Add((T2)index, Count-1);
+        _list.Add((T2)index, Count - 1);
     }
 
     public override void Clear()
@@ -34,7 +34,8 @@ public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList
 
     public override bool Remove(T? item)
     {
-        if (item == null) return false;
+        if (item == null)
+            return false;
         if (_list.TryGetValue(_getIdx(item), out var i))
         {
             _list.Remove(_getIdx(item));
@@ -46,7 +47,8 @@ public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList
 
     public override void Insert(int index, T? item)
     {
-        if (item == null) return;
+        if (item == null)
+            return;
         base.Insert(index, item);
         _list.Add(_getIdx(item), index);
     }
@@ -59,7 +61,8 @@ public class IndexedList<T,T2>(Func<T,T2> getIdx): WeakLinkList<T>, IIndexedList
     public override void RemoveAt(int index)
     {
         T? t = this[index];
-        if (t!=null) _list.Remove(_getIdx(t));
+        if (t != null)
+            _list.Remove(_getIdx(t));
         base.RemoveAt(index);
     }
 

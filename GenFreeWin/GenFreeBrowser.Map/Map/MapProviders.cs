@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
 using GenFreeBrowser.Map.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace GenFreeBrowser.Map;
 

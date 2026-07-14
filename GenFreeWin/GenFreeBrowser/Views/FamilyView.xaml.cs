@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using GenFreeBrowser.Views.Models;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using GenFreeBrowser.Views.Models;
 
 namespace GenFreeBrowser.Views
 {
@@ -39,18 +36,22 @@ namespace GenFreeBrowser.Views
         private void OnLoaded(object? sender, RoutedEventArgs e)
         {
             var graph = ResolveGraph(DataContext);
-            if (graph is null) return;
+            if (graph is null)
+                return;
             LayoutGraph(graph);
             DrawConnectors(graph);
         }
 
         private static FamilyGraph? ResolveGraph(object? dc)
         {
-            if (dc is FamilyGraph g) return g;
-            if (dc is null) return null;
+            if (dc is FamilyGraph g)
+                return g;
+            if (dc is null)
+                return null;
             // Try property named Graph
             var prop = dc.GetType().GetProperty("Graph", BindingFlags.Public | BindingFlags.Instance);
-            if (prop?.GetValue(dc) is FamilyGraph gg) return gg;
+            if (prop?.GetValue(dc) is FamilyGraph gg)
+                return gg;
             return null;
         }
 
@@ -84,7 +85,8 @@ namespace GenFreeBrowser.Views
             {
                 var a = graph.Nodes.First(n => n.Id == p.A);
                 var b = graph.Nodes.First(n => n.Id == p.B);
-                if (a.X > b.X) (a, b) = (b, a);
+                if (a.X > b.X)
+                    (a, b) = (b, a);
                 _lineCanvas.Children.Add(MakeLine(a.X + CardWidth, a.Y + CardHeight / 2.0, b.X, b.Y + CardHeight / 2.0, Color.FromRgb(165, 184, 122)));
             }
 
@@ -94,14 +96,15 @@ namespace GenFreeBrowser.Views
                 var a = graph.Nodes.First(n => n.Id == pc.ParentA);
                 var b = graph.Nodes.First(n => n.Id == pc.ParentB);
                 var c = graph.Nodes.First(n => n.Id == pc.Child);
-                if (a.X > b.X) (a, b) = (b, a);
+                if (a.X > b.X)
+                    (a, b) = (b, a);
                 var y = (a.Y + CardHeight / 2.0 + b.Y + CardHeight / 2.0) / 2.0;
                 var x1 = a.X + CardWidth;
                 var x2 = b.X;
                 var xm = (x1 + x2) / 2.0;
                 var cx = c.X + CardWidth / 2.0;
                 var cy = c.Y;
-                var ym = (c.Y+ a.Y + CardHeight) / 2.0;
+                var ym = (c.Y + a.Y + CardHeight) / 2.0;
 
                 _lineCanvas.Children.Add(MakeLine(x1, y, x2, y, Color.FromRgb(154, 163, 173)));
                 _lineCanvas.Children.Add(MakeLine(xm, y, xm, ym, Color.FromRgb(154, 163, 173)));

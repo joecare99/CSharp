@@ -1,7 +1,4 @@
-﻿using GenFree;
-using GenFree.Data;
-using GenFree.Helper;
-using GenFree.Interfaces.UI;
+﻿using GenFree.Interfaces.UI;
 using GenFree.ViewModels.Interfaces;
 using System.Windows.Forms;
 using Views;

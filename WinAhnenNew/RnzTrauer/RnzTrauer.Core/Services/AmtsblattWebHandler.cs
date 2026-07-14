@@ -1,8 +1,8 @@
 using OpenQA.Selenium;
+using RnzTrauer.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using RnzTrauer.Core.Services.Interfaces;
 
 namespace RnzTrauer.Core;
 

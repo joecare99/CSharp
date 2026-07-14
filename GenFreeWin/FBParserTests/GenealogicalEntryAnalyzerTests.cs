@@ -1,4 +1,3 @@
-using System;
 using FBParser;
 using FBParser.Analysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

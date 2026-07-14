@@ -1,13 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper;
+using BaseLib.Interfaces;
+using GenFree.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
-using GenFree.Interfaces.DB;
-using NSubstitute;
-using GenFree.Helper;
 using static BaseLib.Helper.TestHelper;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
-using BaseLib.Interfaces;
 
 
 namespace GenFree.Data.Tests
@@ -74,7 +74,9 @@ namespace GenFree.Data.Tests
 
         public void CPersonDataTest3()
         {
-            try { var testClass = new CPersonData(); }catch { }                    
+            try
+            { var testClass = new CPersonData(); }
+            catch { }
         }
 
 
@@ -143,7 +145,7 @@ namespace GenFree.Data.Tests
 
         [TestMethod()]
         [DataRow(new[] { "", "", "", "", "", "", "", "", "", "", "", "19000102", "19010304", "19800506", "19810708" },
-            new object[] { new[]{ 1900, 1, 2 }, new[] { 1901, 3, 4 }, new[] { 1980, 5, 6 }, new[] { 1981, 7, 8 } })]
+            new object[] { new[] { 1900, 1, 2 }, new[] { 1901, 3, 4 }, new[] { 1980, 5, 6 }, new[] { 1981, 7, 8 } })]
         public void SetDatesTest(string[] asAct, object[] aoExp)
         {
             testClass.SetDates(asAct);
@@ -241,8 +243,8 @@ namespace GenFree.Data.Tests
             //Act
             testClass.Update();
 
-            _= testRS.Received(1).NoMatch;
-            testRS.Received(xNoMatch?0:1).Edit();
+            _ = testRS.Received(1).NoMatch;
+            testRS.Received(xNoMatch ? 0 : 1).Edit();
             testRS.Received(xNoMatch ? 0 : 1).Update();
             Assert.AreEqual(0, testClass.ChangedProps.Count);
         }
@@ -256,7 +258,7 @@ namespace GenFree.Data.Tests
         }
 
         [TestMethod()]
-        [DataRow("Sex",false)]
+        [DataRow("Sex", false)]
         [DataRow("M")]
         [DataRow("F")]
         [DataRow("D")]
@@ -272,7 +274,7 @@ namespace GenFree.Data.Tests
         [DataRow(false)]
         public void xVChrTest(bool sAct)
         {
-            testClass.xVChr = sAct; 
+            testClass.xVChr = sAct;
             Assert.AreEqual(sAct, testClass.xVChr);
         }
 

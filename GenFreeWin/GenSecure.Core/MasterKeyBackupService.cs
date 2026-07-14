@@ -1,7 +1,7 @@
+using GenSecure.Contracts;
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using GenSecure.Contracts;
 
 namespace GenSecure.Core;
 

@@ -1,11 +1,10 @@
 ﻿//using DAO;
 using BaseLib.Helper;
-using GenFree.Models;
-using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
+using GenFree.Models;
 using System;
 
 namespace GenFree.Data;
@@ -82,7 +81,7 @@ public class CFamily : CUsesIndexedRSet<int, FamilyIndex, FamilyFields, IFamilyD
         _ => throw new ArgumentException(nameof(eIndex)),
     };
 
-    protected override IFamilyData GetData(IRecordset rs, bool xNoInit = false) => new CFamilyPersons(rs,xNoInit);
+    protected override IFamilyData GetData(IRecordset rs, bool xNoInit = false) => new CFamilyPersons(rs, xNoInit);
 
     public void AllSetEditDate()
     {

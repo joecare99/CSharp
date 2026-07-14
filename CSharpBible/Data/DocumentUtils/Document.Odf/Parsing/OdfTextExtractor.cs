@@ -8,7 +8,10 @@ public static class OdfTextExtractor
 {
     public static string GetPlainText(XDocument contentXml)
     {
-        var officeBody = contentXml.Root?.Element(OdfNamespaces.Office + "body"); var officeText = officeBody?.Element(OdfNamespaces.Office + "text"); if (officeText is null) return string.Empty;
+        var officeBody = contentXml.Root?.Element(OdfNamespaces.Office + "body");
+        var officeText = officeBody?.Element(OdfNamespaces.Office + "text");
+        if (officeText is null)
+            return string.Empty;
         var sb = new StringBuilder(8 * 1024);
         foreach (var node in officeText.DescendantNodes())
         {

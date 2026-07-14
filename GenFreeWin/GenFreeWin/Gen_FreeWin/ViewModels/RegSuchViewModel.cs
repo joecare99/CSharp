@@ -22,6 +22,7 @@ using System.Linq;
 using System.Windows.Forms;
 
 namespace Gen_FreeWin.ViewModels;
+
 public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
 {
     IContainerControl IRegSuchViewModel.View { get; set; }

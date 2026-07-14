@@ -1,17 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BaseLib.Helper;
+using BaseLib.Helper.MVVM;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MSQBrowser.Properties;
 using MVVM.ViewModel;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security;
-using BaseLib.Helper.MVVM;
-using BaseLib.Helper;
-using MySqlConnector;
 using System.Data;
+using System.Linq;
 using System.Net;
+using System.Security;
 
 namespace MSQBrowser.ViewModels;
 
@@ -22,10 +22,10 @@ public partial class DBConnectViewModel : BaseViewModelCT
     [NotifyPropertyChangedFor(nameof(TTServer))]
     [NotifyCanExecuteChangedFor(nameof(ListDBSCommand))]
     [NotifyCanExecuteChangedFor(nameof(ConnectCommand))]
-    [Required(ErrorMessageResourceName =nameof(Resources.Err_Required),ErrorMessageResourceType =typeof(Resources))]
+    [Required(ErrorMessageResourceName = nameof(Resources.Err_Required), ErrorMessageResourceType = typeof(Resources))]
     private string _server = "localhost";
     public string? TTServer => this.ValidationText();
-    
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TTUser))]
     [NotifyCanExecuteChangedFor(nameof(ListDBSCommand))]
@@ -38,7 +38,7 @@ public partial class DBConnectViewModel : BaseViewModelCT
     [NotifyPropertyChangedFor(nameof(TTPassword))]
     [NotifyCanExecuteChangedFor(nameof(ListDBSCommand))]
     [NotifyCanExecuteChangedFor(nameof(ConnectCommand))]
-    [Required(AllowEmptyStrings =true, ErrorMessageResourceName = nameof(Resources.Err_Required), ErrorMessageResourceType = typeof(Resources))]
+    [Required(AllowEmptyStrings = true, ErrorMessageResourceName = nameof(Resources.Err_Required), ErrorMessageResourceType = typeof(Resources))]
     private SecureString _password;
     public string? TTPassword => this.ValidationText();
 
@@ -50,12 +50,12 @@ public partial class DBConnectViewModel : BaseViewModelCT
     public string? TTDb => this.ValidationText();
 
     [ObservableProperty]
-    [CustomValidation(typeof(DBConnectViewModel),nameof(NoValidator))] 
+    [CustomValidation(typeof(DBConnectViewModel), nameof(NoValidator))]
     private IEnumerable<string>? _DBs;
 
     [ObservableProperty]
     [CustomValidation(typeof(DBConnectViewModel), nameof(NoValidator))]
-    private string _testMsg="";
+    private string _testMsg = "";
 
     public Action<object?>? OnAccept { get; set; }
 
@@ -74,12 +74,15 @@ public partial class DBConnectViewModel : BaseViewModelCT
         return string.IsNullOrEmpty(TTServer) && string.IsNullOrEmpty(TTUser) && string.IsNullOrEmpty(TTPassword);
     }
 
-    [RelayCommand(CanExecute =nameof(CanListDBs))]
+    [RelayCommand(CanExecute = nameof(CanListDBs))]
     private void ListDBS()
     {
-        var nwc= new NetworkCredential(User, Password);
-        var con = new MySqlConnection() { ConnectionString = new MySqlConnectionStringBuilder() 
-        { Server = Server, UserID = nwc.UserName, Password = nwc.Password, Database = "mysql", CharacterSet = "UTF8" }.ConnectionString };
+        var nwc = new NetworkCredential(User, Password);
+        var con = new MySqlConnection()
+        {
+            ConnectionString = new MySqlConnectionStringBuilder()
+            { Server = Server, UserID = nwc.UserName, Password = nwc.Password, Database = "mysql", CharacterSet = "UTF8" }.ConnectionString
+        };
         try
         {
             try
@@ -88,13 +91,14 @@ public partial class DBConnectViewModel : BaseViewModelCT
                 var db = con.GetSchema("Databases");
                 DBs = db.Rows.Cast<DataRow>().Select(o => o["SCHEMA_NAME"].ToString()).ToList();
             }
-            finally { 
-                con.Close(); 
+            finally
+            {
+                con.Close();
             }
         }
-        catch(Exception ex) 
-        { 
-            System.Diagnostics.Debug.WriteLine(ex.Message); 
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.Message);
         }
     }
 
@@ -106,7 +110,8 @@ public partial class DBConnectViewModel : BaseViewModelCT
     }
 
     [RelayCommand]
-    private void Test() {
+    private void Test()
+    {
         var nwc = new NetworkCredential(User, Password);
         var con = new MySqlConnection()
         {
@@ -131,10 +136,10 @@ public partial class DBConnectViewModel : BaseViewModelCT
             System.Diagnostics.Debug.WriteLine(ex.Message);
         }
     }
-    private bool CanConnect()=>
+    private bool CanConnect() =>
         TTServer == null && TTUser == null && TTPassword == null && TTDb == null;
 
-    [RelayCommand(CanExecute =nameof(CanConnect))]
+    [RelayCommand(CanExecute = nameof(CanConnect))]
     private void Connect()
     {
         OnAccept?.Invoke(this);

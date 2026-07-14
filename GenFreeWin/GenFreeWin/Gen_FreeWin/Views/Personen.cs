@@ -1,4 +1,3 @@
-using Gen_FreeWin.Main;
 using GenFree;
 using GenFree.Data;
 using GenFree.Interfaces.Sys;
@@ -37,7 +36,7 @@ public partial class Personen : Form
             __ENCList.Add(new WeakReference(this));
         }
         components = new Container();
-        ComponentResourceManager resources 
+        ComponentResourceManager resources
             = new ComponentResourceManager(typeof(GenFreeWin.Views.Menue));
 
         InitializeComponent();
@@ -121,7 +120,7 @@ public partial class Personen : Form
 
     private void Personen_FormClosing(object sender, FormClosingEventArgs e)
     {
-  //      _viewModel.FormClosingCommand.Execute(e);
+        //      _viewModel.FormClosingCommand.Execute(e);
     }
 
     private void Personen_Load(object sender, EventArgs e)
@@ -135,7 +134,8 @@ public partial class Personen : Form
             btnReturn.Text = Modul1.IText[eRetText];
         _viewModel.PersonNr = Modul1.PersInArb = PersInArb;
         _viewModel.Perzeig(PersInArb);
-        if (Visible) Hide();
+        if (Visible)
+            Hide();
         base.Show();
     }
 
@@ -181,7 +181,7 @@ public partial class Personen : Form
 
     public int AendPruef(int persInArb, int ubg2)
     {
-       return _viewModel.AendPruef(persInArb, ubg2);
+        return _viewModel.AendPruef(persInArb, ubg2);
     }
 
     internal (short LfNR, EEventArt Art, int iPerfam) FrmPerson_Do(int v, Action performClick, Action close)

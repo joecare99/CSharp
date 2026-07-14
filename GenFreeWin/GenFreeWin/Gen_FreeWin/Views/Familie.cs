@@ -1,5 +1,4 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
 using GenFree;
 using GenFree.Interfaces.Sys;
 using GenFree.ViewModels.Interfaces;
@@ -10,6 +9,7 @@ using System.Windows.Forms;
 using Views;
 
 namespace Gen_FreeWin.Views;
+
 public partial class Familie : Form
 {
     #region Properties
@@ -50,7 +50,7 @@ public partial class Familie : Form
         }
         InitializeComponent();
         Text = $"{_Modul1.Instance.AppName} Familienverwaltung";
-        CommandBindingAttribute.Commit(this, _viewModel); 
+        CommandBindingAttribute.Commit(this, _viewModel);
         TextBindingAttribute.Commit(this, _viewModel);
     }
     #endregion
@@ -74,8 +74,8 @@ public partial class Familie : Form
         btnMainmenue.Text = Modul1.IText[tNMBack];
     }
 
-    [Obsolete ("Use _viewModel instead.")]
-    public void Fameinlesen(int famInArb, out short rich) 
+    [Obsolete("Use _viewModel instead.")]
+    public void Fameinlesen(int famInArb, out short rich)
         => _viewModel.Fameinlesen(famInArb, out rich);
 
     private void Listbox3_DoubleClick(object s, EventArgs e) => _viewModel.Listbox3_DoubleClick(s, e);
@@ -86,7 +86,7 @@ public partial class Familie : Form
     private void ListBox1_DoubleClick(object s, EventArgs e) => _viewModel.ListBox1_DoubleClick(s, e);
     private void lblPicures_Click(object s, EventArgs e) => _viewModel.lblPicures_Click(s, e);
     private void lblSources_Click(object s, EventArgs e) => _viewModel.lblSources_Click(s, e);
-       
+
     private void CheckBox1_CheckedChanged(object s, EventArgs e) => _viewModel.CheckBox1_CheckedChanged(s, e);
     private void edtNamePS_KeyUp(object s, KeyEventArgs e) => _viewModel.edtNamePS_KeyUp(s, e);
     private void cbxIllegitRel_Click(object s, EventArgs e) => _viewModel.cbxIllegitRel_Click(s, e);

@@ -1,7 +1,7 @@
+using GenInterfaces.Data;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using GenInterfaces.Data;
 
 namespace GenInterfaces.Interfaces.Authorities;
 

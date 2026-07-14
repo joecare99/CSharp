@@ -23,7 +23,7 @@ namespace Db.Provider.MySql
                 throw new ArgumentNullException(nameof(xStatement));
             }
 
-            var sFields = xStatement.Fields.Count == 0 || (xStatement.Fields.Count == 1 && xStatement.Fields[0] == "*")  ? "*" : string.Join(",", xStatement.Fields.Select(QuoteIdentifier));
+            var sFields = xStatement.Fields.Count == 0 || (xStatement.Fields.Count == 1 && xStatement.Fields[0] == "*") ? "*" : string.Join(",", xStatement.Fields.Select(QuoteIdentifier));
             var xBuilder = new StringBuilder($"SELECT {sFields} FROM {QuoteIdentifier(xStatement.Table)}");
             AppendFilters(xBuilder, xStatement.Filters);
             if (xStatement.Limit.HasValue)
@@ -34,7 +34,7 @@ namespace Db.Provider.MySql
             return xBuilder.ToString();
         }
 
-        public IDbCommand CreateQuery( IDbSelectStatement xStatement)
+        public IDbCommand CreateQuery(IDbSelectStatement xStatement)
         {
             if (xStatement is null)
             {
@@ -44,7 +44,7 @@ namespace Db.Provider.MySql
             return CreateQuery(xStatement.Table, xStatement.Fields, xStatement.Filters, xStatement.Limit, xStatement.Offset);
         }
 
-        public IDbCommand CreateQuery(string sTable, IEnumerable<string> arrFields, IEnumerable<IDbFilterClause> arrFilters, int? iLimit = null, object? offset =null)
+        public IDbCommand CreateQuery(string sTable, IEnumerable<string> arrFields, IEnumerable<IDbFilterClause> arrFilters, int? iLimit = null, object? offset = null)
             => CreateQuery(_dbConnection, sTable, arrFields, arrFilters, iLimit, offset);
 
         /// <inheritdoc />
@@ -129,7 +129,7 @@ namespace Db.Provider.MySql
         {
             var sFields = string.Join(", ", arrFields.Select(xField => QuoteIdentifier(xField.Key)));
             var sValues = string.Join(", ", arrFields.Select(xField => xField.Value));
-            
+
             var xCommand = dbConnection.CreateCommand();
             xCommand.CommandText = $"INSERT INTO {QuoteIdentifier(sTable)} ({sFields}) VALUES ({sValues});";
 

@@ -3,7 +3,8 @@ using System;
 using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Data;
-public interface IPersonData : IEntityData, IHasID<int>,IHasPropEnum<EPersonProp>, IHasIRecordset
+
+public interface IPersonData : IEntityData, IHasID<int>, IHasPropEnum<EPersonProp>, IHasIRecordset
 {
     /// <summary>
     /// Gets the alias or AKA.

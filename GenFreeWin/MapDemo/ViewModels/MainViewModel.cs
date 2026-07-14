@@ -1,9 +1,8 @@
-using System;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GenFreeBrowser.Map;
 using GenFreeBrowser.Map.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 namespace MapDemo;
 

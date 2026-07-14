@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models;
@@ -16,7 +15,7 @@ public class PasCode : CodeBase
 
     private readonly ITokenHandler _tokenHandler = new PasTokenHandler() { reservedWords = _reserved };
     private readonly ICodeBuilder _codeBuilder = new PasCodeBuilder();
- //   private readonly ICodeOptimizer _optimizer = new CodeOptimizer();
+    //   private readonly ICodeOptimizer _optimizer = new CodeOptimizer();
 
     private static string GetDebug(TokenizeData data, string code) => $"{code.Substring(Math.Max(0, data.Pos - 20), data.Pos - Math.Max(0, data.Pos - 20))}>" + code[data.Pos] + "<" +
         $"{code.Substring(Math.Min(data.Pos + 1, code.Length - 1), Math.Min(40, code.Length - data.Pos - 1))}";
@@ -42,7 +41,7 @@ public class PasCode : CodeBase
 
     public override ICodeBlock Parse(IEnumerable<TokenData>? values = null)
     {
-        ICodeBlock root = new PasCodeBlock() { Name = "PascalRoot", Code = string.Empty, Parent = null, Type=CodeBlockType.MainBlock  };
+        ICodeBlock root = new PasCodeBlock() { Name = "PascalRoot", Code = string.Empty, Parent = null, Type = CodeBlockType.MainBlock };
         var data = _codeBuilder.NewData(root);
 
         if (values == null)

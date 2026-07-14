@@ -1,13 +1,6 @@
-﻿using BaseLib.Helper;
-using GenFree.Interfaces.DB;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GenFree.Interfaces.DB;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Data.DB.Tests;
 
@@ -32,7 +25,7 @@ public class RecordsetTests
         database.Execute("CREATE UNIQUE INDEX idx_ID ON TestTable (ID)");
         database.Execute("INSERT INTO TestTable (Name) VALUES ('Test Name')");
         Assert.AreEqual(1, database.Execute("INSERT INTO TestTable (Name) VALUES ('Another Test Name')"));
-        TestRS = database.OpenRecordset("TestTable",RecordsetTypeEnum.dbOpenTable);
+        TestRS = database.OpenRecordset("TestTable", RecordsetTypeEnum.dbOpenTable);
     }
 
     [TestCleanup()]
@@ -83,7 +76,7 @@ public class RecordsetTests
         TestRS.Edit();
         TestRS.Fields["Name"].Value = "Updated Test Name";
         TestRS.Update();
-        
+
         TestRS.MoveFirst();
         Assert.AreEqual("Updated Test Name", TestRS.Fields["Name"].Value);
         TestRS.Close();
@@ -113,7 +106,7 @@ public class RecordsetTests
     public void SeekTestNIO()
     {
         TestRS.MoveFirst();
-        Assert.Throws<InvalidOperationException>(()=> TestRS.Seek("=", "Test Name"));
+        Assert.Throws<InvalidOperationException>(() => TestRS.Seek("=", "Test Name"));
         TestRS.Close();
     }
 
@@ -123,7 +116,7 @@ public class RecordsetTests
         TestRS.Edit();
         TestRS.Fields["Name"].Value = "Updated Name";
         TestRS.Update();
-        
+
         TestRS.MoveFirst();
         Assert.AreEqual("Updated Name", TestRS.Fields["Name"].Value);
         TestRS.Close();
@@ -140,7 +133,7 @@ public class RecordsetTests
         TestRS.AddNew();
         TestRS.Fields["Name"].Value = "New Test Name";
         TestRS.Update();
-        
+
         TestRS.MoveLast();
         Assert.AreEqual("New Test Name", TestRS.Fields["Name"].Value);
         Assert.AreEqual(3, TestRS.RecordCount);
@@ -157,7 +150,7 @@ public class RecordsetTests
     {
         TestRS.MoveFirst();
         TestRS.Delete();
-        
+
         Assert.AreEqual(1, TestRS.RecordCount);
         TestRS.MoveFirst();
         Assert.AreEqual("Another Test Name", TestRS.Fields["Name"].Value);

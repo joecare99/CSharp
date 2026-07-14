@@ -15,7 +15,7 @@ public partial class MapView : UserControl
         nameof(Viewport), typeof(ViewportState), typeof(MapView), new PropertyMetadata(null, OnViewportChanged));
 
     public static readonly DependencyProperty TileSourceProperty = DependencyProperty.Register(
-        nameof(TileSource), typeof(ITileSource), typeof(MapView), new PropertyMetadata(null, (_,__) => { }));
+        nameof(TileSource), typeof(ITileSource), typeof(MapView), new PropertyMetadata(null, (_, __) => { }));
 
     private readonly ConcurrentDictionary<TileId, Image> _tiles = new();
     private Point? _lastDrag;
@@ -59,7 +59,8 @@ public partial class MapView : UserControl
 
     private async void RefreshAsync()
     {
-        if (Viewport == null || TileSource == null) return;
+        if (Viewport == null || TileSource == null)
+            return;
         PART_Canvas.Children.Clear();
         _tiles.Clear();
 
@@ -71,24 +72,25 @@ public partial class MapView : UserControl
         int tilesX = (int)Math.Ceiling(Viewport.PixelSize.Width / MapConstants.TileSize) + 2;
         int tilesY = (int)Math.Ceiling(Viewport.PixelSize.Height / MapConstants.TileSize) + 2;
         double tileOffsetX2 = (Viewport.PixelSize.Width / MapConstants.TileSize) - tilesX - 2;
-        double tileOffsetY2 = (Viewport.PixelSize.Height / MapConstants.TileSize) - tilesY -2;
+        double tileOffsetY2 = (Viewport.PixelSize.Height / MapConstants.TileSize) - tilesY - 2;
 
         int centerTileX = (int)Math.Floor(cx);
         int centerTileY = (int)Math.Floor(cy);
 
-        for (int dx = -tilesX/2; dx <= tilesX/2; dx++)
+        for (int dx = -tilesX / 2; dx <= tilesX / 2; dx++)
         //int dx = 0;
         {
 
-            for (int dy = -tilesY/2; dy <= tilesY/2; dy++)
-           // int dy = 0;
+            for (int dy = -tilesY / 2; dy <= tilesY / 2; dy++)
+            // int dy = 0;
             {
                 long tx = centerTileX + dx;
                 long ty = centerTileY + dy;
-                if (tx < 0 || ty < 0 || tx >= (1 << z) || ty >= (1 << z)) continue; // outside world
+                if (tx < 0 || ty < 0 || tx >= (1 << z) || ty >= (1 << z))
+                    continue; // outside world
                 var id = new TileId(tx, ty, z);
-                double screenX = (tilesX/2f + dx - tileOffsetX+ tileOffsetX2/2+1f) * MapConstants.TileSize;
-                double screenY = (tilesY/2f + dy - tileOffsetY+ tileOffsetY2/2+1f) * MapConstants.TileSize;
+                double screenX = (tilesX / 2f + dx - tileOffsetX + tileOffsetX2 / 2 + 1f) * MapConstants.TileSize;
+                double screenY = (tilesY / 2f + dy - tileOffsetY + tileOffsetY2 / 2 + 1f) * MapConstants.TileSize;
                 var img = new Image { Width = MapConstants.TileSize, Height = MapConstants.TileSize };
                 Canvas.SetLeft(img, screenX);
                 Canvas.SetTop(img, screenY);
@@ -101,11 +103,13 @@ public partial class MapView : UserControl
 
     private async Task LoadTileAsync(TileId id, Image img)
     {
-        if (TileSource == null) return;
+        if (TileSource == null)
+            return;
         try
         {
             var data = await TileSource.GetTileAsync(id).ConfigureAwait(false);
-            if (data == null) return;
+            if (data == null)
+                return;
             await Dispatcher.InvokeAsync(() =>
             {
                 var bmp = new BitmapImage();
@@ -123,7 +127,8 @@ public partial class MapView : UserControl
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Viewport == null) return;
+        if (Viewport == null)
+            return;
         var delta = e.Delta > 0 ? 1 : -1;
         Viewport.Zoom += delta;
     }
@@ -141,7 +146,8 @@ public partial class MapView : UserControl
         if (_lastDrag != null && Viewport != null && e.LeftButton == MouseButtonState.Pressed)
         {
             long now = Environment.TickCount64;
-            if (now - _lastCursorUpdateTicks < CursorUpdateMinIntervalMs) return; // throttle to ~20 Hz
+            if (now - _lastCursorUpdateTicks < CursorUpdateMinIntervalMs)
+                return; // throttle to ~20 Hz
             _lastCursorUpdateTicks = now;
             var pos = e.GetPosition(this);
             var dx = pos.X - _lastDrag.Value.X;
@@ -158,9 +164,11 @@ public partial class MapView : UserControl
 
     private void OnMapMouseMove(object sender, MouseEventArgs e)
     {
-        if (Viewport == null) return;
+        if (Viewport == null)
+            return;
         long now = Environment.TickCount64;
-        if (now - _lastCursorUpdateTicks < CursorUpdateMinIntervalMs) return; // throttle to ~20 Hz
+        if (now - _lastCursorUpdateTicks < CursorUpdateMinIntervalMs)
+            return; // throttle to ~20 Hz
         _lastCursorUpdateTicks = now;
         var pos = e.GetPosition(this);
         // Convert pixel position to geographic coordinate

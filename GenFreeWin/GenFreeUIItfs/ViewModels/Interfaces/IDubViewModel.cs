@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface IDubViewModel: INotifyPropertyChanged
+public interface IDubViewModel : INotifyPropertyChanged
 {
     IContainerControl? View { get; set; }
     void Button1_Click(object sender, EventArgs e);

@@ -19,7 +19,7 @@ public partial class MainForm : Form
         _viewModel.ShowDialog = viewModel_ShowDialog;
         this.IsMdiContainer = true;
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
-        viewModel.View = IoC.GetRequiredService<Menue>();       
+        viewModel.View = IoC.GetRequiredService<Menue>();
     }
 
     private void viewModel_ShowDialog(Control control)

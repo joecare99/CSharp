@@ -1,9 +1,8 @@
 // Datei: GenFreeBaseClassesTests/Models/System/BaseSystemTests.cs
-using System;
 using GenFree.Interfaces.Sys;
-using GenFree.Models.System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System;
 
 namespace GenFree.Models.System.Tests;
 
@@ -32,9 +31,9 @@ public class BaseSystemTests
         var result = sut.SetLicNr(lic);
 
         Assert.IsFalse(result);
-         persistence
-            .DidNotReceive()
-            .WriteStringProg(Arg.Any<string>(), Arg.Any<string>());
+        persistence
+           .DidNotReceive()
+           .WriteStringProg(Arg.Any<string>(), Arg.Any<string>());
     }
 
     [TestMethod]
@@ -48,7 +47,7 @@ public class BaseSystemTests
         string expectedOwner)
     {
         var persistence = Substitute.For<IGenPersistence>();
-        persistence.ReadStringMLProg("Adresse", 3).Returns(string.Join(Environment.NewLine,[ a1, a2, a3 ]));
+        persistence.ReadStringMLProg("Adresse", 3).Returns(string.Join(Environment.NewLine, [a1, a2, a3]));
         var sut = new BaseSystem(persistence);
 
         var result = sut.SetLicNr(lic);

@@ -1,5 +1,3 @@
-using System;
-
 namespace Gen_FreeWin.Services.Models
 {
     /// <summary>

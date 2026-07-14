@@ -1,6 +1,6 @@
-using System.Text;
 using Document.Base.Models.Interfaces;
 using Document.Xaml.Model;
+using System.Text;
 
 namespace Document.Xaml.Serialization;
 
@@ -49,7 +49,8 @@ public static class XamlDocumentSerializer
                 sb.Append("<Run xml:space=\"preserve\">").Append("\t").AppendLine("</Run>");
                 break;
             case XamlSection sec:
-                foreach (var n in sec.Nodes) WriteElement(sb, n);
+                foreach (var n in sec.Nodes)
+                    WriteElement(sb, n);
                 break;
         }
     }
@@ -136,7 +137,8 @@ public static class XamlDocumentSerializer
         {
             sb.Append("<Run");
             var attrs = BuildRunAttributes(s);
-            if (!string.IsNullOrEmpty(attrs)) { sb.Append(' ').Append(attrs); }
+            if (!string.IsNullOrEmpty(attrs))
+            { sb.Append(' ').Append(attrs); }
             sb.Append('>');
             runOpenWritten = true;
         }
@@ -178,20 +180,26 @@ public static class XamlDocumentSerializer
         var parts = new List<string>();
         if (s.FontStyle is { } fs)
         {
-            if (!string.IsNullOrEmpty(fs.Color)) parts.Add($"Foreground=\"{EscapeAttribute(fs.Color!)}\"");
-            if (!string.IsNullOrEmpty(fs.FontFamily)) parts.Add($"FontFamily=\"{EscapeAttribute(fs.FontFamily!)}\"");
+            if (!string.IsNullOrEmpty(fs.Color))
+                parts.Add($"Foreground=\"{EscapeAttribute(fs.Color!)}\"");
+            if (!string.IsNullOrEmpty(fs.FontFamily))
+                parts.Add($"FontFamily=\"{EscapeAttribute(fs.FontFamily!)}\"");
             if (fs.FontSizePt is double sizePt)
             {
                 // WPF nutzt Device Independent Pixels (1/96 inch). 1pt = 1/72 inch => px = pt * 96/72 = pt * 1.333...
                 var dip = sizePt * 96.0 / 72.0;
                 parts.Add($"FontSize=\"{dip:0.#}\"");
             }
-            if (fs.Strikeout) parts.Add("TextDecorations=\"Strikethrough\"");
+            if (fs.Strikeout)
+                parts.Add("TextDecorations=\"Strikethrough\"");
         }
         // Fett/Kursiv/Underline als Container-Tags sind möglich, aber hier per Run-Attribute einfacher:
-        if (s.FontStyle.Bold) parts.Add("FontWeight=\"Bold\"");
-        if (s.FontStyle.Italic) parts.Add("FontStyle=\"Italic\"");
-        if (s.FontStyle.Underline) parts.Add("TextDecorations=\"Underline\"");
+        if (s.FontStyle.Bold)
+            parts.Add("FontWeight=\"Bold\"");
+        if (s.FontStyle.Italic)
+            parts.Add("FontStyle=\"Italic\"");
+        if (s.FontStyle.Underline)
+            parts.Add("TextDecorations=\"Underline\"");
         return string.Join(' ', parts);
     }
 

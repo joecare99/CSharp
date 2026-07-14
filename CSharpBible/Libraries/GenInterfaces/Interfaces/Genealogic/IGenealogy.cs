@@ -29,7 +29,7 @@ namespace GenInterfaces.Interfaces.Genealogic
         /// Gets or sets the "get entity function".
         /// </summary>
         /// <value>The get entity function. This function should get a new instance of IGenEntity or deliver an existing one due to the parameters</value>
-        Func<IList<object?>,IGenEntity> GetEntity { get; set; }
+        Func<IList<object?>, IGenEntity> GetEntity { get; set; }
         /// <summary>
         /// Gets or sets the "get fact/event function".
         /// </summary>

@@ -41,7 +41,7 @@ namespace Gen_FreeWin.ViewModels
     /// </summary>
     public partial class VornamViewModel : ObservableObject, IVornamViewModel
     {
-        
+
         // ============================================================================
         // MVVM Observable Properties (bindable via CommunityToolkit.Mvvm)
         // Pattern (from copilot-instructions.md): 

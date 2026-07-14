@@ -1,11 +1,10 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using Gen_FreeWin.Models;
 using Gen_FreeWin.Services;
 using Gen_FreeWin.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System;
+using System.Threading.Tasks;
 
 namespace GenFreeWinTests;
 
@@ -29,10 +28,10 @@ public class FehlerliViewModelTests
         _mockService.GetPersonenOhneElternAsync(
             Arg.Any<Action<int, int>>(),
             Arg.Any<Action<ErrorListItem>>())
-            .Returns(Task.FromResult(new ErrorListResult 
-            { 
-                IsSuccess = true, 
-                Title = "Test Result" 
+            .Returns(Task.FromResult(new ErrorListResult
+            {
+                IsSuccess = true,
+                Title = "Test Result"
             }));
 
         _viewModel = new FehlerliViewModel(_mockService);
@@ -101,10 +100,10 @@ public class FehlerliViewModelTests
                 itemCallback?.Invoke(new ErrorListItem { Id = 2, DisplayText = "Test 2", AdditionalData = new() });
                 itemCallback?.Invoke(new ErrorListItem { Id = 3, DisplayText = "Test 3", AdditionalData = new() });
 
-                return await Task.FromResult(new ErrorListResult 
-                { 
-                    IsSuccess = true, 
-                    Title = "Personen ohne Eltern" 
+                return await Task.FromResult(new ErrorListResult
+                {
+                    IsSuccess = true,
+                    Title = "Personen ohne Eltern"
                 });
             });
 
@@ -118,7 +117,7 @@ public class FehlerliViewModelTests
         Assert.IsTrue(_viewModel.PersonenOhneElternList.Count >= 3);
         Assert.AreEqual(100, _viewModel.ProgressValue);
         Assert.IsFalse(_viewModel.IsLoading);
-        Assert.IsTrue(_viewModel.StatusMessage.Contains("Einträge geladen") 
+        Assert.IsTrue(_viewModel.StatusMessage.Contains("Einträge geladen")
                    || _viewModel.StatusMessage.Contains("geladen"));
     }
 
@@ -182,11 +181,11 @@ public class FehlerliViewModelTests
         _mockService.GetPersonenOhneElternAsync(
             Arg.Any<Action<int, int>>(),
             Arg.Any<Action<ErrorListItem>>())
-            .Returns(Task.FromResult(new ErrorListResult 
-            { 
-                IsSuccess = false, 
+            .Returns(Task.FromResult(new ErrorListResult
+            {
+                IsSuccess = false,
                 ErrorMessage = "Service connection failed",
-                Title = "Error" 
+                Title = "Error"
             }));
 
         // Act
@@ -195,7 +194,7 @@ public class FehlerliViewModelTests
 
         // Assert
         Assert.IsFalse(_viewModel.IsLoading);
-        Assert.IsTrue(_viewModel.StatusMessage.Contains("Fehler") 
+        Assert.IsTrue(_viewModel.StatusMessage.Contains("Fehler")
                    || _viewModel.StatusMessage.Contains("Error")
                    || _viewModel.StatusMessage.Contains("failed"));
     }

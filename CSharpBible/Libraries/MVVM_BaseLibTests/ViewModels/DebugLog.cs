@@ -17,7 +17,7 @@ namespace MVVM.ViewModel.Tests;
 
 public class DebugLog : IDebugLog
 {
-    private string _debugLog="";
+    private string _debugLog = "";
 
     string IDebugLog.DebugLog => _debugLog;
 

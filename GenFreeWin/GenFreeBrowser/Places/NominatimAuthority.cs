@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Authorities;
+using System.Globalization;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace GenFreeBrowser.Places;
 
@@ -32,11 +27,15 @@ public sealed class NominatimAuthority : IGenPlaceAuthority
         // Ensure headers (Nominatim policy requires valid UA)
         if (!_http.DefaultRequestHeaders.UserAgent.Any())
         {
-            try { _http.DefaultRequestHeaders.UserAgent.ParseAdd(_userAgent); } catch { /* ignore */ }
+            try
+            { _http.DefaultRequestHeaders.UserAgent.ParseAdd(_userAgent); }
+            catch { /* ignore */ }
         }
         if (_email is not null && !_http.DefaultRequestHeaders.Contains("From"))
         {
-            try { _http.DefaultRequestHeaders.Add("From", _email); } catch { /* ignore */ }
+            try
+            { _http.DefaultRequestHeaders.Add("From", _email); }
+            catch { /* ignore */ }
         }
     }
 
@@ -117,7 +116,8 @@ public sealed class NominatimAuthority : IGenPlaceAuthority
             {
                 if (addr.TryGetProperty(k, out var v) && v.GetString() is { } s && !string.IsNullOrWhiteSpace(s))
                 {
-                    if (seen.Add(s)) list.Add(s);
+                    if (seen.Add(s))
+                        list.Add(s);
                 }
             }
         }
@@ -127,7 +127,8 @@ public sealed class NominatimAuthority : IGenPlaceAuthority
     private static string FirstNonEmpty(params string?[] values)
     {
         foreach (var v in values)
-            if (!string.IsNullOrWhiteSpace(v)) return v!;
+            if (!string.IsNullOrWhiteSpace(v))
+                return v!;
         return string.Empty;
     }
 
@@ -149,8 +150,10 @@ public sealed class NominatimAuthority : IGenPlaceAuthority
     {
         if (el.TryGetProperty(prop, out var p))
         {
-            if (p.ValueKind == JsonValueKind.Number && p.TryGetDouble(out var d)) return d;
-            if (p.ValueKind == JsonValueKind.String && double.TryParse(p.GetString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var ds)) return ds;
+            if (p.ValueKind == JsonValueKind.Number && p.TryGetDouble(out var d))
+                return d;
+            if (p.ValueKind == JsonValueKind.String && double.TryParse(p.GetString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var ds))
+                return ds;
         }
         return 0d;
     }

@@ -1,10 +1,10 @@
-using System;
-using System.Data;
 using BaseLib.Interfaces;
 using GenFree.Data;
 using GenFree.Interfaces.DB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System;
+using System.Data;
 
 
 namespace GenFree.Models.Tests;
@@ -45,10 +45,10 @@ public class CNB_AhnenTests
     public void PersonExists_ReturnsExpected(int persNr, bool exists)
     {
         _recordset.NoMatch.Returns(!exists);
-     
+
         var result = _sut.PersonExists(persNr);
 
-        Assert.AreEqual(exists,result);
+        Assert.AreEqual(exists, result);
         _recordset.Received().Seek("=", persNr);
         _recordset.Received().Index = nameof(NB_AhnenIndex.PerNR);
     }
@@ -99,11 +99,11 @@ public class CNB_AhnenTests
 
         var result = _sut.CReadData(num6, out var value);
 
-        Assert.AreEqual(exists,result);
+        Assert.AreEqual(exists, result);
         if (exists)
         {
             Assert.IsNotNull(value);
-            Assert.AreEqual(genVal,value.Value.iGen);
+            Assert.AreEqual(genVal, value.Value.iGen);
             Assert.AreEqual(persVal, value.Value.iPers);
         }
         else
@@ -158,8 +158,8 @@ public class CNB_AhnenTests
 
     [TestMethod]
     [DataRow(false, 0, true, false, false, DisplayName = "Commit_AddRow_WhenPersonNotExists")]
-    [DataRow(true, 1, true, false, true, DisplayName ="Commit_SetWeiterAndAddRow_WhenAhn1NotZero")]
-    [DataRow(true, 0, false, true, false, DisplayName ="Commit_EditRaw_WhenAhn1Zero")]
+    [DataRow(true, 1, true, false, true, DisplayName = "Commit_SetWeiterAndAddRow_WhenAhn1NotZero")]
+    [DataRow(true, 0, false, true, false, DisplayName = "Commit_EditRaw_WhenAhn1Zero")]
     public void Commit_BehavesCorrectly(bool personExists, int ahn1, bool expectAdd, bool expectEdit, bool expectSetWeiter)
     {
         _recordset.NoMatch.Returns(!personExists);

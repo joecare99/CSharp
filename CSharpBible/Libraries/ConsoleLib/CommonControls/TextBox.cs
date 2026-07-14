@@ -9,9 +9,9 @@
 // </copyright>
 // Simple (optional multi-line) text input control for ConsoleLib (mit Cursor-Steuerung)
 // ***********************************************************************
+using ConsoleLib.Interfaces;
 using System;
 using System.Collections.Generic;
-using ConsoleLib.Interfaces;
 using System.ComponentModel; // Added for binding
 using System.Reflection;
 
@@ -56,7 +56,7 @@ public class TextBox : Control
 
     public bool MultiLine
     {
-        get => _multiLine; 
+        get => _multiLine;
         set
         {
             _multiLine = value;
@@ -73,7 +73,7 @@ public class TextBox : Control
     /// <summary>
     /// Gets or sets caret (column,line)
     /// </summary>
-    public (int Column,int Line) Caret
+    public (int Column, int Line) Caret
     {
         get => (_caretCol, _caretLine);
         set
@@ -111,7 +111,10 @@ public class TextBox : Control
         _boundPropInfo = model.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
         if (_boundPropInfo == null || !_boundPropInfo.CanRead)
         {
-            _boundModel = null; _boundProperty = null; _boundPropInfo = null; return;
+            _boundModel = null;
+            _boundProperty = null;
+            _boundPropInfo = null;
+            return;
         }
         if (!_boundPropInfo.CanWrite)
         {
@@ -124,13 +127,15 @@ public class TextBox : Control
 
     private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (_boundProperty == null || !string.Equals(e.PropertyName, _boundProperty, StringComparison.OrdinalIgnoreCase)) return;
+        if (_boundProperty == null || !string.Equals(e.PropertyName, _boundProperty, StringComparison.OrdinalIgnoreCase))
+            return;
         SyncFromModel();
     }
 
     private void SyncFromModel()
     {
-        if (_boundModel == null || _boundPropInfo == null) return;
+        if (_boundModel == null || _boundPropInfo == null)
+            return;
         try
         {
             var val = _boundPropInfo.GetValue(_boundModel);
@@ -165,7 +170,8 @@ public class TextBox : Control
         {
             _lines.Add(normalizedValue);
         }
-        if (_lines.Count == 0) _lines.Add(string.Empty);
+        if (_lines.Count == 0)
+            _lines.Add(string.Empty);
         _caretLine = _lines.Count - 1;
         _caretCol = _lines[_caretLine].Length;
         _firstVisibleLine = Math.Max(0, _caretLine - size.Height + 1);
@@ -174,7 +180,8 @@ public class TextBox : Control
 
     private void NormalizeSingleLine()
     {
-        if (_lines.Count <= 1) return;
+        if (_lines.Count <= 1)
+            return;
         var all = string.Join(" ", _lines);
         _lines.Clear();
         _lines.Add(all);
@@ -213,13 +220,15 @@ public class TextBox : Control
 
     private string GetLineForDisplay(int idx)
     {
-        if (idx < 0 || idx >= _lines.Count) return string.Empty;
+        if (idx < 0 || idx >= _lines.Count)
+            return string.Empty;
         return _lines[idx];
     }
 
     public override void HandlePressKeyEvents(IKeyEvent e)
     {
-        if (!Enabled || !Active) { base.HandlePressKeyEvents(e); return; }
+        if (!Enabled || !Active)
+        { base.HandlePressKeyEvents(e); return; }
 
         // Navigation keys (check usKeyCode)
         if (e.bKeyDown && e.KeyChar == '\0') // typical for non-char keys
@@ -252,7 +261,8 @@ public class TextBox : Control
                 }
                 break;
             case (char)27: // ESC ignore
-                handled = false; break;
+                handled = false;
+                break;
             default:
                 if (!char.IsControl(ch))
                 {
@@ -275,15 +285,24 @@ public class TextBox : Control
 
         switch (keyCode)
         {
-            case var _ when keyCode == keyMap.KeyLeft: return CaretLeft();
-            case var _ when keyCode == keyMap.KeyRight: return CaretRight();
-            case var _ when keyCode == keyMap.KeyUp: return CaretUp();
-            case var _ when keyCode == keyMap.KeyDown: return CaretDown();
-            case var _ when keyCode == keyMap.KeyHome: return CaretHome();
-            case var _ when keyCode == keyMap.KeyEnd: return CaretEnd();
-            case var _ when keyCode == keyMap.KeyDelete: return Delete();
-            case var _ when keyCode == keyMap.KeyPageUp: return PageUp();
-            case var _ when keyCode == keyMap.KeyPageDown: return PageDown();
+            case var _ when keyCode == keyMap.KeyLeft:
+                return CaretLeft();
+            case var _ when keyCode == keyMap.KeyRight:
+                return CaretRight();
+            case var _ when keyCode == keyMap.KeyUp:
+                return CaretUp();
+            case var _ when keyCode == keyMap.KeyDown:
+                return CaretDown();
+            case var _ when keyCode == keyMap.KeyHome:
+                return CaretHome();
+            case var _ when keyCode == keyMap.KeyEnd:
+                return CaretEnd();
+            case var _ when keyCode == keyMap.KeyDelete:
+                return Delete();
+            case var _ when keyCode == keyMap.KeyPageUp:
+                return PageUp();
+            case var _ when keyCode == keyMap.KeyPageDown:
+                return PageDown();
         }
         return false;
     }
@@ -327,7 +346,8 @@ public class TextBox : Control
     }
     private bool CaretUp()
     {
-        if (!MultiLine || _caretLine == 0) return false;
+        if (!MultiLine || _caretLine == 0)
+            return false;
         _caretLine--;
         _caretCol = Math.Min(_caretCol, _lines[_caretLine].Length);
         EnsureCaretVisible();
@@ -336,7 +356,8 @@ public class TextBox : Control
     }
     private bool CaretDown()
     {
-        if (!MultiLine || _caretLine >= _lines.Count - 1) return false;
+        if (!MultiLine || _caretLine >= _lines.Count - 1)
+            return false;
         _caretLine++;
         _caretCol = Math.Min(_caretCol, _lines[_caretLine].Length);
         EnsureCaretVisible();
@@ -345,38 +366,53 @@ public class TextBox : Control
     }
     private bool CaretHome()
     {
-        if (_caretCol == 0) return false;
-        _caretCol = 0; Invalidate(); return true;
+        if (_caretCol == 0)
+            return false;
+        _caretCol = 0;
+        Invalidate();
+        return true;
     }
     private bool CaretEnd()
     {
         var len = _lines[_caretLine].Length;
-        if (_caretCol == len) return false;
-        _caretCol = len; Invalidate(); return true;
+        if (_caretCol == len)
+            return false;
+        _caretCol = len;
+        Invalidate();
+        return true;
     }
     private bool PageUp()
     {
-        if (!MultiLine) return false;
+        if (!MultiLine)
+            return false;
         int newLine = Math.Max(0, _caretLine - Math.Max(1, size.Height - 1));
-        if (newLine == _caretLine) return false;
+        if (newLine == _caretLine)
+            return false;
         _caretLine = newLine;
         _caretCol = Math.Min(_caretCol, _lines[_caretLine].Length);
-        EnsureCaretVisible(); Invalidate(); return true;
+        EnsureCaretVisible();
+        Invalidate();
+        return true;
     }
     private bool PageDown()
     {
-        if (!MultiLine) return false;
+        if (!MultiLine)
+            return false;
         int newLine = Math.Min(_lines.Count - 1, _caretLine + Math.Max(1, size.Height - 1));
-        if (newLine == _caretLine) return false;
+        if (newLine == _caretLine)
+            return false;
         _caretLine = newLine;
         _caretCol = Math.Min(_caretCol, _lines[_caretLine].Length);
-        EnsureCaretVisible(); Invalidate(); return true;
+        EnsureCaretVisible();
+        Invalidate();
+        return true;
     }
 
     private bool InsertChar(char ch)
     {
         var line = _lines[_caretLine];
-        if (line.Length >= 2000) return false; // simple guard
+        if (line.Length >= 2000)
+            return false; // simple guard
         line = line.Insert(_caretCol, ch.ToString());
         _lines[_caretLine] = line;
         _caretCol++;
@@ -437,10 +473,11 @@ public class TextBox : Control
 
     private bool NewLine()
     {
-        if (!_multiLine) return false;
+        if (!_multiLine)
+            return false;
         var line = _lines[_caretLine];
-        string newLine = ( _caretCol < line.Length) ? line.Substring(_caretCol) : string.Empty;
-        _lines[_caretLine] = ( _caretCol > 0) ? line.Substring(0, _caretCol) : string.Empty;
+        string newLine = (_caretCol < line.Length) ? line.Substring(_caretCol) : string.Empty;
+        _lines[_caretLine] = (_caretCol > 0) ? line.Substring(0, _caretCol) : string.Empty;
         _lines.Insert(_caretLine + 1, newLine);
         _caretLine++;
         _caretCol = 0;
@@ -468,7 +505,9 @@ public class TextBox : Control
             // push to model if bound (two-way)
             if (!_suppressModelUpdate && _boundModel != null && _boundPropInfo != null && _boundPropInfo.CanWrite)
             {
-                try { _boundPropInfo.SetValue(_boundModel, newText); } catch { /* ignore */ }
+                try
+                { _boundPropInfo.SetValue(_boundModel, newText); }
+                catch { /* ignore */ }
             }
         }
     }

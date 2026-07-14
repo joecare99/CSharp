@@ -13,8 +13,10 @@ public sealed class XamlSpan : XamlContentBase, IDocSpan
         get => Attributes.TryGetValue("NavigateUri", out var v) ? v : null;
         set
         {
-            if (value is null) Attributes.Remove("NavigateUri");
-            else Attributes["NavigateUri"] = value;
+            if (value is null)
+                Attributes.Remove("NavigateUri");
+            else
+                Attributes["NavigateUri"] = value;
             IsLink = value != null;
         }
     }
@@ -24,8 +26,10 @@ public sealed class XamlSpan : XamlContentBase, IDocSpan
         get => Attributes.TryGetValue("Id", out var v) ? v : null;
         set
         {
-            if (value is null) Attributes.Remove("Id");
-            else Attributes["Id"] = value;
+            if (value is null)
+                Attributes.Remove("Id");
+            else
+                Attributes["Id"] = value;
         }
     }
 

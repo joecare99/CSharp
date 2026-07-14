@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using TranspilerLib.Interfaces;
 using TranspilerLib.Models;
 
 namespace VBUnObfusicator.Models.Tests;
 
-public interface ITestItf : IHasParents<ITestItf>, IEquatable<ITestItf> 
+public interface ITestItf : IHasParents<ITestItf>, IEquatable<ITestItf>
 {
     int iData { get; set; }
     ITestItf this[int idx] { get; }
@@ -26,7 +26,7 @@ public class TestClass : ITestItf
     public ITestItf this[int idx] => _list[idx];
 
     public ITestItf Parent { get; set; }
-    public int iData { get ; set ; }
+    public int iData { get; set; }
 
     private ParentedItemsList<ITestItf> _list;
 
@@ -46,7 +46,7 @@ public class TestClass : ITestItf
 [TestClass()]
 public class ParentedItemsListTests : ITestItf
 {
-    public ITestItf Parent { get ;  set ; }
+    public ITestItf Parent { get; set; }
     public int iData { get; set; }
 
     public ITestItf this[int idx] => testClass[idx];
@@ -71,7 +71,7 @@ public class ParentedItemsListTests : ITestItf
     {
         AddTest();
         Assert.IsNotNull(testClass.GetEnumerator());
-        Assert.IsInstanceOfType(testClass.GetEnumerator(),typeof(IEnumerator<ITestItf>));
+        Assert.IsInstanceOfType(testClass.GetEnumerator(), typeof(IEnumerator<ITestItf>));
     }
 
     [TestMethod()]
@@ -87,11 +87,11 @@ public class ParentedItemsListTests : ITestItf
     public void InsertTest()
     {
         Assert.AreEqual(0, testClass.Count);
-        testClass.Insert(0,new TestClass(3));
-        testClass.Insert(1,new TestClass(5));
+        testClass.Insert(0, new TestClass(3));
+        testClass.Insert(1, new TestClass(5));
         testClass[1].Add(new TestClass(11));
         testClass[1].Add(new TestClass(7));
-        testClass.Insert(2,testClass[1][1]);
+        testClass.Insert(2, testClass[1][1]);
         Assert.AreEqual(3, testClass.Count);
     }
 
@@ -131,7 +131,7 @@ public class ParentedItemsListTests : ITestItf
     public void ContainsTest()
     {
         AddTest();
-        Assert.IsTrue(testClass.Contains( new TestClass(3)));
+        Assert.IsTrue(testClass.Contains(new TestClass(3)));
         Assert.IsFalse(testClass.Contains(new TestClass(2)));
         Assert.IsFalse(testClass.Contains(this));
     }

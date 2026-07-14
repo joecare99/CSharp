@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface IPersonRedViewModel: INotifyPropertyChanged
+public interface IPersonRedViewModel : INotifyPropertyChanged
 {
     int PersonId { get; set; }
     string PersonSurname { get; set; }

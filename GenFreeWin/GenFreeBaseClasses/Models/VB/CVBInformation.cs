@@ -8,13 +8,14 @@ public class CVBInformation : IVBInformation
 {
     public (int Number, string Description, string Source, Action<int> Raise) Err()
     {
-        return (Information.Err().Number, 
-                Information.Err().Description, 
-                Information.Err().Source, 
-                (int v) => { Information.Err().Raise(v); });
+        return (Information.Err().Number,
+                Information.Err().Description,
+                Information.Err().Source,
+                (int v) => { Information.Err().Raise(v); }
+        );
     }
 
-    public bool IsDBNull(object v) 
+    public bool IsDBNull(object v)
         => Information.IsDBNull(v);
 
 }

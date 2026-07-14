@@ -56,18 +56,18 @@ public class CCitationDataTests
     }
 
     [TestMethod()]
-    [DataRow(1, EEventArt.eA_Birth, 100,true)]
-    [DataRow(2, EEventArt.eA_Birth, 100,false)]
-    [DataRow(3, EEventArt.eA_Birth, 100,true)]
-    [DataRow(3, EEventArt.eA_Birth, 100,false)]
-    public void CommitTest(int iPerFamNr, EEventArt eArt, int lfNR,bool xNMt)
+    [DataRow(1, EEventArt.eA_Birth, 100, true)]
+    [DataRow(2, EEventArt.eA_Birth, 100, false)]
+    [DataRow(3, EEventArt.eA_Birth, 100, true)]
+    [DataRow(3, EEventArt.eA_Birth, 100, false)]
+    public void CommitTest(int iPerFamNr, EEventArt eArt, int lfNR, bool xNMt)
     {
         testClass.iLinkType = (short)iPerFamNr;
         testRS.NoMatch.Returns(xNMt);
-        testClass.Commit(iPerFamNr,eArt,(short)lfNR);
+        testClass.Commit(iPerFamNr, eArt, (short)lfNR);
         testRS.Received(1).Update();
         testRS.ReceivedWithAnyArgs(1).Seek("=");
-        testRS.Received(xNMt?0:1).Edit();
+        testRS.Received(xNMt ? 0 : 1).Edit();
         testRS.Received(xNMt ? 1 : 0).AddNew();
         testRS.Received(xNMt ? 10 : 5).Fields[SourceLinkFields._1].Value = iPerFamNr;
 
@@ -75,7 +75,7 @@ public class CCitationDataTests
 
     [TestMethod()]
     public void GetPropTypeTest()
-    { 
+    {
         Assert.AreEqual(TypeCode.String, Type.GetTypeCode(testClass.GetPropType(ESourceLinkProp.sSourceTitle)));
         Assert.AreEqual(TypeCode.Int32, Type.GetTypeCode(testClass.GetPropType(ESourceLinkProp.iPerFamNr)));
     }
@@ -92,7 +92,7 @@ public class CCitationDataTests
     public void SetPropValueTest()
     {
         testClass.SetPropValue(ESourceLinkProp.iPerFamNr, 10);
-        Assert.AreEqual(10, testClass.iPerFamNr , "testClass.iPerFamNr = 10");
+        Assert.AreEqual(10, testClass.iPerFamNr, "testClass.iPerFamNr = 10");
         Assert.AreEqual(2, testClass.ChangedProps.Count);
         testClass.SetPropValue(ESourceLinkProp.sSourceTitle, "New Title");
         Assert.AreEqual(2, testClass.ChangedProps.Count);

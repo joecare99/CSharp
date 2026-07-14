@@ -3,7 +3,7 @@ using System;
 
 namespace GenFree.Interfaces.Data;
 
-public interface IEventData: IHasID<(EEventArt eArt, int iLink, short iLfNr)>, IHasPropEnum<EEventProp>, IHasIRecordset
+public interface IEventData : IHasID<(EEventArt eArt, int iLink, short iLfNr)>, IHasPropEnum<EEventProp>, IHasIRecordset
 {
     DateTime dDatumB { get; }
     DateTime dDatumV { get; }

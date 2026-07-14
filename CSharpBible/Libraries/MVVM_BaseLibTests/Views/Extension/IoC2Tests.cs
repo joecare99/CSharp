@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MVVM.ViewModel;
 using System;
-using BaseLib.Helper;
 
 namespace MVVM.Views.Extension.Tests;
 
@@ -38,5 +38,5 @@ public class IoC2Tests : BaseTestViewModel
         Assert.AreEqual("GetReqSrv(System.Object)\r\n", DebugLog);
     }
 
-  
+
 }

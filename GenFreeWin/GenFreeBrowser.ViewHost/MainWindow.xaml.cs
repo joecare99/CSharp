@@ -1,7 +1,6 @@
-using System;
-using System.Windows;
 using GenFreeBrowser.ViewModels;
 using GenFreeBrowser.ViewModels.Interfaces;
+using System.Windows;
 
 namespace GenFreeBrowser.ViewHost;
 

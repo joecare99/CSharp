@@ -1,12 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GenFree.Interfaces.DB;
-using NSubstitute;
-using GenFree.Helper;
-using BaseLib.Helper;
-using static BaseLib.Helper.TestHelper;
-using GenFree.Interfaces.Data;
+﻿using BaseLib.Helper;
 using BaseLib.Interfaces;
+using GenFree.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
+using static BaseLib.Helper.TestHelper;
 
 namespace GenFree.Data.Tests
 {
@@ -75,7 +75,7 @@ namespace GenFree.Data.Tests
         }
 
         [TestMethod()]
-        [DataRow((EFamilyProp)3,6)]
+        [DataRow((EFamilyProp)3, 6)]
         [DataRow((EFamilyProp)4, 8)]
         public void FillDataTest(EFamilyProp eProp, object oExp)
         {
@@ -99,10 +99,11 @@ namespace GenFree.Data.Tests
         [DataRow(true)]
         public void CheckSetAnlDatumTest(bool xAct)
         {
-            if (xAct) testClass.SetPropValue(EFamilyProp.dAnlDatum, DateTime.MinValue);
+            if (xAct)
+                testClass.SetPropValue(EFamilyProp.dAnlDatum, DateTime.MinValue);
             testClass.CheckSetAnlDatum(testRS);
-            testRS.Received(xAct?1:0).Edit();
-            testRS.Received(xAct?1:0).Update();
+            testRS.Received(xAct ? 1 : 0).Edit();
+            testRS.Received(xAct ? 1 : 0).Update();
         }
 
         [TestMethod()]
@@ -151,7 +152,7 @@ namespace GenFree.Data.Tests
         public void SetDBValueTest2(EFamilyProp eAct, object oExp)
         {
             SetPropValueTest(eAct, oExp);
-            testClass.SetDBValues(testRS, null );
+            testClass.SetDBValues(testRS, null);
             _ = testRS.Received().Fields[eAct.ToString()];
         }
 
@@ -163,23 +164,23 @@ namespace GenFree.Data.Tests
             testRS.NoMatch.Returns(xAct);
             testClass.Delete();
             Assert.AreEqual("Fam", testRS.Index);
-            testRS.Received(xAct?0:1).Delete();
-            testRS.Received(1).Seek("=",testClass.ID);
+            testRS.Received(xAct ? 0 : 1).Delete();
+            testRS.Received(1).Seek("=", testClass.ID);
         }
 
         [TestMethod()]
         public void KinderTest()
         {
-            testClass.Kinder.Add((1,"A"));
-            Assert.AreEqual(1,testClass.Kind[0]);
-            Assert.AreEqual("A",testClass.KiAText[0]);
+            testClass.Kinder.Add((1, "A"));
+            Assert.AreEqual(1, testClass.Kind[0]);
+            Assert.AreEqual("A", testClass.KiAText[0]);
         }
 
         [TestMethod()]
-        [DataRow("sName","Text_5")]
+        [DataRow("sName", "Text_5")]
         [DataRow("sPrefix", "Text_7")]
         [DataRow("sSuffix", "Text_8")]
-        public void GetTextTest(string sProp,string sExp)
+        public void GetTextTest(string sProp, string sExp)
         {
             Assert.AreEqual(sExp, testClass.GetProp(sProp));
         }
@@ -216,8 +217,8 @@ namespace GenFree.Data.Tests
         [TestMethod()]
         [DataRow(EFamilyProp.ID, 3)]
         [DataRow(EFamilyProp.iName, 5)]
-        [DataRow(EFamilyProp.sBem, new[] {"", "Bem1", "Bem2", "Bem3" })]
-        [DataRow(EFamilyProp.dAnlDatum,new[] { 1980, 12, 31 })]
+        [DataRow(EFamilyProp.sBem, new[] { "", "Bem1", "Bem2", "Bem3" })]
+        [DataRow(EFamilyProp.dAnlDatum, new[] { 1980, 12, 31 })]
         [DataRow(EFamilyProp.dEditDat, new[] { 2024, 01, 01 })]
         [DataRow(EFamilyProp.iPrae, 7)]
         [DataRow(EFamilyProp.iSuf, 8)]
@@ -259,7 +260,7 @@ namespace GenFree.Data.Tests
         [DataRow(EFamilyProp.ID, 4)]
         [DataRow(EFamilyProp.iName, 6)]
         [DataRow(EFamilyProp.sBem, new[] { "", "Bem1-", "Bem2-", "Bem3" })]
-        [DataRow(EFamilyProp.sBem, new object[] { 1, "Bem1-"})]
+        [DataRow(EFamilyProp.sBem, new object[] { 1, "Bem1-" })]
         [DataRow(EFamilyProp.dAnlDatum, new[] { 1980, 12, 30 })]
         [DataRow(EFamilyProp.dEditDat, new[] { 2024, 01, 02 })]
         [DataRow(EFamilyProp.iPrae, 8)]
@@ -276,7 +277,7 @@ namespace GenFree.Data.Tests
             else if (oAct is string s && s.Length == 36 && Guid.TryParse(s, out var g))
                 oAct = g;
             else if (oAct is object[] aO && aO.Length == 2 && aO[0] is int iX && aO[1] is string sD)
-                oAct = new ListItem<int>(sD,iX);
+                oAct = new ListItem<int>(sD, iX);
 
             testClass.SetPropValue(eAct, oAct);
             if (oAct is ListItem<int> l)

@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper;
+using BaseLib.Interfaces;
 using GenFree.Interfaces.DB;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using static BaseLib.Helper.TestHelper;
-using BaseLib.Helper;
-using BaseLib.Interfaces;
 
 namespace GenFree.Helper.Tests
 {
