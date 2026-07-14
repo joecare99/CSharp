@@ -20,8 +20,8 @@
       <ProjectReference Include="..\TraceAnalysis.Filter.JSON\TraceAnalysis.Filter.JSON.csproj" />
 		<ProjectReference Include="..\TraceAnalysis.Filter.MovirunText\TraceAnalysis.Filter.MovirunText.csproj" />
 		<ProjectReference Include="..\TraceAnalysis.Filter.MovirunTrace\TraceAnalysis.Filter.MovirunTrace.csproj" />
-		<PackageReference Include="NSubstitute" Version="5.3.0" />
-		<PackageReference Include="MSTest" Version="4.2.3" />
+		<PackageReference Include="NSubstitute" Version="6.0.0" />
+		<PackageReference Include="MSTest" Version="4.3.0" />
 	</ItemGroup>
 
 </Project>

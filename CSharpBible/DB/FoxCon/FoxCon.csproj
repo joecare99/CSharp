@@ -1,5 +1,5 @@
 ﻿<Project>
-	<Import Project="..\DB_net.props"/>
+	<Import Project="..\DB_net.props" />
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net10.0</TargetFramework>
@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.27.0" />
     <PackageReference Include="Selenium.Mozilla.Firefox.Webdriver" Version="0.6.0.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.45.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.46.0" />
     <PackageReference Include="System.Text.Json" Version="10.0.9" />
   </ItemGroup>
 
