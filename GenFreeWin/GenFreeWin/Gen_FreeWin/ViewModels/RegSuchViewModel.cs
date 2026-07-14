@@ -876,13 +876,13 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
                     List6_Items.Clear();
                     DataModul.DB_EventTable.Index = nameof(EventIndex.Reg1);
                     DataModul.DB_EventTable.Seek(">=", (int)eArt, Text1_Text);
-                    if (text.AsInt() != 0.0)
+                    if ((int)eArt != 0)
                     {
                         M1_Iter = 0;
                         while (!(M1_Iter >= Modul1.Aus[13].AsInt())
                             && !DataModul.DB_EventTable.EOF
                             && !DataModul.DB_EventTable.NoMatch
-                            && DataModul.DB_EventTable.Fields[EventFields.Art].AsInt() == text.AsInt()
+                            && DataModul.DB_EventTable.Fields[EventFields.Art].AsInt() == (int)eArt
                             && string.Compare(DataModul.DB_EventTable.Fields[EventFields.Reg].AsString(), Text1_Text.ToUpper()) >= 0)
                         {
                             string sReg = DataModul.DB_EventTable.Fields[EventFields.Reg].AsString();
