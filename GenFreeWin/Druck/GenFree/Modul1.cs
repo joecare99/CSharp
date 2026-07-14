@@ -5082,7 +5082,7 @@ public class _Modul1 : IModul1
         int num = default;
         int num2 = default;
         int num3 = default;
-        List<(int, ELinkKennz)> text2 = default;
+        List<(int, ELinkKennz)> text2 = new List<(int, ELinkKennz)>();
         while (true)
         {
             try
