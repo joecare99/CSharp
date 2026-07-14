@@ -17,8 +17,8 @@
 	<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-	<PackageReference Include="MSTest" Version="4.3.0" />
-	<PackageReference Include="NSubstitute" Version="5.3.0" />
+	<PackageReference Include="MSTest" Version="4.3.2" />
+	<PackageReference Include="NSubstitute" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\GenInterfaces\GenInterfaces.csproj" />
