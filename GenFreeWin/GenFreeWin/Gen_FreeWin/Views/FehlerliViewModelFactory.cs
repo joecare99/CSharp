@@ -60,16 +60,6 @@ internal static class FehlerliViewModelFactory
                 DataSource = viewModel.PersonenOhneElternList
             };
 
-            var personenErrorsBinding = new BindingSource
-            {
-                DataSource = viewModel.PersonenErrorsList
-            };
-
-            var familienErrorsBinding = new BindingSource
-            {
-                DataSource = viewModel.FamilienErrorsList
-            };
-
             var oerterErrorsBinding = new BindingSource
             {
                 DataSource = viewModel.OerterErrorsList
