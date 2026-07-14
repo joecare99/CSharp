@@ -80,8 +80,6 @@ public class FehlerliViewModelTests
     public async Task LoadPersonenOhneElternCommand_Execute_UpdatesProgressAndList()
     {
         // Arrange
-        int progressUpdateCount = 0;
-        var capturedProgressValues = new System.Collections.Generic.List<int>();
 
         // Mock-Service: callback aufrufen mit 3 Items
         _mockService.GetPersonenOhneElternAsync(
