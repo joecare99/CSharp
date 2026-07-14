@@ -2,7 +2,7 @@
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface IFraStatisticsViewModel: INotifyPropertyChanged
+public interface IFraStatisticsViewModel : INotifyPropertyChanged
 {
     public int Persons { get; }
 

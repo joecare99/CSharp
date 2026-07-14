@@ -1,6 +1,6 @@
-using System;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
+using System;
 
 namespace BaseGenClasses.Persistence;
 

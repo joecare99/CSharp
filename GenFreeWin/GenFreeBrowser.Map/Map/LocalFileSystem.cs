@@ -21,19 +21,24 @@ public sealed class LocalFileSystem : IFileSystem
     }
     public bool TryDeleteFile(string path)
     {
-        try { File.Delete(path); return true; } catch { return false; }
+        try
+        { File.Delete(path); return true; }
+        catch { return false; }
     }
     public IEnumerable<string> EnumerateDirectories(string root, bool recursive) =>
         Directory.EnumerateDirectories(root, "*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
     public int GetEntryCount(string directory)
     {
-        try { return Directory.GetFileSystemEntries(directory).Length; } catch { return -1; }
+        try
+        { return Directory.GetFileSystemEntries(directory).Length; }
+        catch { return -1; }
     }
     public void TryDeleteDirectory(string path)
     {
         try
         {
-            if (Directory.Exists(path)) Directory.Delete(path, false);
+            if (Directory.Exists(path))
+                Directory.Delete(path, false);
         }
         catch { }
     }

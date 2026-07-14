@@ -1,10 +1,6 @@
 ﻿using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseGenClasses.Model.Tests;
 
@@ -35,8 +31,9 @@ public class GenEntityTests
     public void Initialize()
     {
         _uid = Guid.NewGuid();
-        _testClass = new() { 
-            UId = _uid            
+        _testClass = new()
+        {
+            UId = _uid
         };
     }
 

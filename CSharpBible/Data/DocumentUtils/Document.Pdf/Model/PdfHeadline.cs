@@ -9,6 +9,6 @@ public sealed class PdfHeadline : PdfContentBase, IDocHeadline
 
     public string Id { get; }
 
-    public PdfHeadline(int level, string Id) => (Level,Id) = (Math.Clamp(level, 1, 6),Id);
+    public PdfHeadline(int level, string Id) => (Level, Id) = (Math.Clamp(level, 1, 6), Id);
     public override IDocStyleStyle GetStyle() => new PdfStyle($"H{Level}");
 }

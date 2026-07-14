@@ -49,14 +49,17 @@ public sealed class PdfSharpEngine : IPdfEngine
     public void SetFont(string family, bool bold, bool italic, double sizePt)
     {
         var style = XFontStyleEx.Regular;
-        if (bold) style |= XFontStyleEx.Bold;
-        if (italic) style |= XFontStyleEx.Italic;
+        if (bold)
+            style |= XFontStyleEx.Bold;
+        if (italic)
+            style |= XFontStyleEx.Italic;
         _font = new XFont(string.IsNullOrWhiteSpace(family) ? "Arial" : family, sizePt <= 0 ? 12 : sizePt, style);
     }
 
     public void WriteText(string text)
     {
-        if (string.IsNullOrEmpty(text)) return;
+        if (string.IsNullOrEmpty(text))
+            return;
         var lines = text.Replace("\r\n", "\n").Replace('\r', '\n').Split('\n');
         foreach (var line in lines)
         {
@@ -101,7 +104,8 @@ public sealed class PdfSharpEngine : IPdfEngine
 
     private void EnsurePageSpace()
     {
-        if (_page is null || _gfx is null) return;
+        if (_page is null || _gfx is null)
+            return;
         if (_y + LineHeight > _page.Height - _top)
             AddPage();
     }
@@ -117,7 +121,8 @@ public sealed class PdfSharpEngine : IPdfEngine
     // Fügt an der aktuellen Position ein Bookmark ein (optional mit Outline-Eintrag im PDF-Navigationsbaum).
     public void AddBookmark(string name, bool addOutline = true)
     {
-        if (string.IsNullOrWhiteSpace(name) || _doc is null || _page is null) return;
+        if (string.IsNullOrWhiteSpace(name) || _doc is null || _page is null)
+            return;
 
         var top = new XUnit(_y);
         var info = new BookmarkInfo(_page, top);
@@ -133,9 +138,12 @@ public sealed class PdfSharpEngine : IPdfEngine
     // Schreibt klickbaren Text, der zu einem zuvor definierten Bookmark springt.
     public void WriteLinkToBookmark(string text, string bookmarkName)
     {
-        if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(bookmarkName)) return;
-        if (_page is null || _gfx is null) return;
-        if (!_bookmarks.TryGetValue(bookmarkName, out var bm)) return;
+        if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(bookmarkName))
+            return;
+        if (_page is null || _gfx is null)
+            return;
+        if (!_bookmarks.TryGetValue(bookmarkName, out var bm))
+            return;
 
         EnsurePageSpace();
 
@@ -147,7 +155,7 @@ public sealed class PdfSharpEngine : IPdfEngine
 
         // Annotation mit Ziel
         var linkRect = new PdfRectangle(rect);
-        
+
         // Find page index manually since PdfPages doesn't have IndexOf
         int pageIndex = 0;
         foreach (var page in _doc!.Pages)
@@ -156,7 +164,7 @@ public sealed class PdfSharpEngine : IPdfEngine
                 break;
             pageIndex++;
         }
-        
+
         var link = _page.AddDocumentLink(linkRect, pageIndex);
 
         _page.Annotations.Add(link);

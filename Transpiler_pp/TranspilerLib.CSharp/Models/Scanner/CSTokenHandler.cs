@@ -31,11 +31,12 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
 #else
     public
 #endif
-     string[] reservedWords { set => _reservedWords = value; }
+     string[] reservedWords
+    { set => _reservedWords = value; }
 
     internal static void HandleBlockComments(ICodeBase.TokenDelegate? token, string code, TokenizeData data)
     {
-        if (code[data.Pos] == '*' && GetNxtChar(data.Pos,code) == '/')
+        if (code[data.Pos] == '*' && GetNxtChar(data.Pos, code) == '/')
         {
             EmitToken(token, data, CodeBlockType.Comment, code, 2);
             data.Pos2 = data.Pos + 2;
@@ -46,7 +47,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
 
     internal static void HandleLineComments(ICodeBase.TokenDelegate? token, string code, TokenizeData data)
     {
-        if (code[data.Pos] == '\r' || data.Pos == code.Length-1 )
+        if (code[data.Pos] == '\r' || data.Pos == code.Length - 1)
         {
             EmitToken(token, data, CodeBlockType.LComment, code);
             data.Pos2 = data.Pos + 1;
@@ -101,7 +102,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
             case '"':
                 DefaultString(token, OriginalCode, data);
                 break;
-            case '/' when GetNxtChar(data.Pos,OriginalCode) == '/':
+            case '/' when GetNxtChar(data.Pos, OriginalCode) == '/':
                 DefaultComment(token, OriginalCode, data, 2);
                 break;
             case '/' when GetNxtChar(data.Pos, OriginalCode) == '*':
@@ -194,7 +195,7 @@ public class CSTokenHandler : TokenHandlerBase, ITokenHandler
             data.Stack -= 1;
     }
 
-    public bool TryGetValue(int state, [NotNullWhen(true)] out Action<ICodeBase.TokenDelegate?, string, TokenizeData>? handler) 
+    public bool TryGetValue(int state, [NotNullWhen(true)] out Action<ICodeBase.TokenDelegate?, string, TokenizeData>? handler)
         => _tokenStateHandler.TryGetValue(state, out handler);
 }
 

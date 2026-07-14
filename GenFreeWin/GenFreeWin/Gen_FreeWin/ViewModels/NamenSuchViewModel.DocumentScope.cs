@@ -1,8 +1,8 @@
-using Gen_FreeWin.Services;
-using Gen_FreeWin.Services.Interfaces;
+using GenFreeWin.Services;
+using GenFreeWin.Services.Interfaces;
 using GenFree.Interfaces;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class NamenSuchViewModel
 {

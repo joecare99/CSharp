@@ -14,11 +14,11 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
-using Gen_FreeWin.UseCases;
-using Gen_FreeWin.ViewModels.Interfaces;
-using Gen_FreeWin.Views;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
+using GenFreeWin.UseCases;
+using GenFreeWin.ViewModels.Interfaces;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
@@ -31,7 +31,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels
+namespace GenFreeWin.ViewModels
 {
     /// <summary>
     /// Thin MVVM ViewModel for Grundbuchakte (HGakte) management.

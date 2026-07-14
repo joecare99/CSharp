@@ -43,7 +43,7 @@ public class DblClickBindingAttribute(string cmdName) : Attribute
 
     public static void Commit(object obj, object dataContext)
     {
-        foreach (var field in obj.GetType().GetFields(BindingFlags.NonPublic| BindingFlags.Public | BindingFlags.Instance))
+        foreach (var field in obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
         {
             if (GetCustomAttribute(field, typeof(DblClickBindingAttribute)) is DblClickBindingAttribute attr
                 && field.GetValue(obj) is Control ctrl)

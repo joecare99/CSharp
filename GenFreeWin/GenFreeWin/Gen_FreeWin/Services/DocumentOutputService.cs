@@ -1,9 +1,9 @@
-using Gen_FreeWin.Services.Interfaces;
-using Gen_FreeWin.Services.Models;
+using GenFreeWin.Services.Interfaces;
+using GenFreeWin.Services.Models;
 using GenFree.Interfaces;
 using System.Drawing;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Implements document output helper logic formerly hosted by the ViewModel.

@@ -1,12 +1,11 @@
-using System;
-using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
 using GenFreeBrowser.Map;
 using GenFreeBrowser.Map.DI;
 using GenFreeBrowser.Map.Interfaces;
 using GenFreeBrowser.Places;
 using GenFreeBrowser.Places.Interface;
 using GenInterfaces.Interfaces.Authorities;
+using Microsoft.Extensions.DependencyInjection;
+using System.Windows;
 
 namespace MapDemo;
 

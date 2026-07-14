@@ -1,10 +1,10 @@
+using GenFreeBrowser.Places;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Authorities;
 using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using GenFreeBrowser.Places;
-using GenInterfaces.Data;
-using GenInterfaces.Interfaces.Authorities;
 
 namespace PlaceAuthorityDemo
 {

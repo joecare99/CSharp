@@ -1,11 +1,10 @@
-﻿using GenFree.Interfaces.DB;
+﻿using BaseLib.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
-using GenFree.Helper;
+using GenFree.Models;
 using System;
 using System.Collections.Generic;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
-using GenFree.Models;
 
 namespace GenFree.Data;
 
@@ -98,7 +97,10 @@ public class CLink : CUsesIndexedRSet<(int iFamily, int iPerson, ELinkKennz eKen
              && !dB_LinkTable.NoMatch
              && !(dB_LinkTable.Fields[ILinkData.LinkFields.FamNr].AsInt() != famInArb))
         {
-            try { action(GetData(dB_LinkTable), dB_LinkTable); } catch { };
+            try
+            { action(GetData(dB_LinkTable), dB_LinkTable); }
+            catch { }
+            ;
             dB_LinkTable.MoveNext();
         }
         return xResult;
@@ -241,7 +243,10 @@ public class CLink : CUsesIndexedRSet<(int iFamily, int iPerson, ELinkKennz eKen
                 Family.Kinder.Add((PeronNr, "A"));
                 break;
             default:
-                try { action?.Invoke(value, PeronNr); } catch { };
+                try
+                { action?.Invoke(value, PeronNr); }
+                catch { }
+                ;
                 break;
         }
     }
@@ -359,5 +364,5 @@ public class CLink : CUsesIndexedRSet<(int iFamily, int iPerson, ELinkKennz eKen
         };
     }
 
-    protected override ILinkData GetData(IRecordset rs, bool xNoInit = false) => new CLinkData(rs,xNoInit);
+    protected override ILinkData GetData(IRecordset rs, bool xNoInit = false) => new CLinkData(rs, xNoInit);
 }

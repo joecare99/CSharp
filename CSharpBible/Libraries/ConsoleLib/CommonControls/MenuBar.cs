@@ -3,10 +3,10 @@
 // Author           : Mir (extended by AI)
 // Created          : 09-26-2025
 // ***********************************************************************
+using ConsoleLib.Data;
 using System;
 using System.Drawing;
 using System.Linq;
-using ConsoleLib.Data;
 
 namespace ConsoleLib.CommonControls;
 

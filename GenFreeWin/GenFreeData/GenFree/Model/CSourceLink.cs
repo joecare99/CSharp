@@ -19,21 +19,21 @@ public class CSourceLink : CUsesIndexedRSet<(short, int, EEventArt, short), Sour
 
     protected override IRecordset _db_Table => _value();
 
-    public override SourceLinkFields GetIndex1Field(SourceLinkIndex eIndex) 
+    public override SourceLinkFields GetIndex1Field(SourceLinkIndex eIndex)
         => eIndex switch
-    {
-        SourceLinkIndex.Tab => SourceLinkFields._2,
-        _ => throw new ArgumentException()
-    };
+        {
+            SourceLinkIndex.Tab => SourceLinkFields._2,
+            _ => throw new ArgumentException()
+        };
 
-    protected override ISourceLinkData GetData(IRecordset rs, bool xNoInit = false) 
+    protected override ISourceLinkData GetData(IRecordset rs, bool xNoInit = false)
         => new CSourceLinkData(rs, xNoInit);
 
     public override IRecordset? Seek((short, int, EEventArt, short) tKey, out bool xBreak)
     {
         var db_Table = _db_Table;
         db_Table.Index = _keyIndex.AsFld();
-        db_Table.Seek("=", tKey.Item1, tKey.Item2, (int)tKey.Item3,tKey.Item4);
+        db_Table.Seek("=", tKey.Item1, tKey.Item2, (int)tKey.Item3, tKey.Item4);
         xBreak = db_Table.NoMatch;
         return xBreak ? null : db_Table;
     }
@@ -67,8 +67,8 @@ public class CSourceLink : CUsesIndexedRSet<(short, int, EEventArt, short), Sour
         yield break;
     }
 
-    public bool Exists(int iCitKenn, int iPerFamNr, EEventArt eArt, short lfNR = 0) 
-        => Exists(( (short)iCitKenn, iPerFamNr, eArt, lfNR));
+    public bool Exists(int iCitKenn, int iPerFamNr, EEventArt eArt, short lfNR = 0)
+        => Exists(((short)iCitKenn, iPerFamNr, eArt, lfNR));
 
     public bool ExistsEnt(short v, int iFamInArb)
     {

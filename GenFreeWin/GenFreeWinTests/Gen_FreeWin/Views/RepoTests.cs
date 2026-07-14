@@ -1,15 +1,10 @@
 ﻿using GenFree.Helper;
 using GenFree.ViewModels.Interfaces;
-using GenFreeWin.Views;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFreeWin.Views.Tests;
 
@@ -24,9 +19,9 @@ public class RepoTests
     {
         // Arrange
         _viewModel = Substitute.For<IRepoViewModel>();
-        _viewModel.Repolist_Items.Returns ( new ObservableCollection<IListItem<int>>() );
-        _viewModel.Sources_Items.Returns ( new ObservableCollection<IListItem<int>>() );
-        _viewModel.FontSize.Returns( 9.3f);
+        _viewModel.Repolist_Items.Returns(new ObservableCollection<IListItem<int>>());
+        _viewModel.Sources_Items.Returns(new ObservableCollection<IListItem<int>>());
+        _viewModel.FontSize.Returns(9.3f);
         // Act
         _testView = new Repo(_viewModel);
     }

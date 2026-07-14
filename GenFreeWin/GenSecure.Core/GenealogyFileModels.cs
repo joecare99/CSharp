@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using GenInterfaces.Data;
 using global::GenSecure.Contracts;
+using System;
+using System.Collections.Generic;
 
 namespace GenSecure.Core;
 

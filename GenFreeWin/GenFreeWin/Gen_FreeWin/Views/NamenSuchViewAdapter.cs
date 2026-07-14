@@ -1,6 +1,6 @@
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFreeWin.ViewModels.Interfaces;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public sealed class NamenSuchViewAdapter : INamenSuchViewAdapter
 {

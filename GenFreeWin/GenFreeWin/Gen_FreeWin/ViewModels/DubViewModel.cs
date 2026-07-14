@@ -1,6 +1,6 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -16,7 +16,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class DubViewModel : ObservableObject, IDubViewModel
 {
@@ -600,7 +600,8 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
                 List<int> aiFam = new();
                 foreach (var link in DataModul.Link.ReadAllPers(Modul1.PersInArb, Modul1.eLKennz))
                 {
-                    if (M1_Iter++ > 100) break;
+                    if (M1_Iter++ > 100)
+                        break;
                     aiFam.Add(link.iFamNr);
                 }
                 if (aiFam.Count > 0)
@@ -1561,7 +1562,8 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
                             foreach (var link in DataModul.Link.ReadAllPers(Modul1.PersInArb, Modul1.eLKennz))
                             {
                                 aiFam.Add(link.iFamNr);
-                                if (aiFam.Count > 99) break;
+                                if (aiFam.Count > 99)
+                                    break;
                             }
                             if (aiFam.Count == 0)
                             {
@@ -1848,7 +1850,10 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
                         kennz = Person_sSex.ToUpper() == "M" ? ELinkKennz.lkFather : ELinkKennz.lkMother;
                         if (DataModul.Link.GetPersonFam(Search_iPersNr, kennz, out int iFamNr))
                         {
-                            aiFam.Add(iFamNr);
+                            if (!aiFam.Contains(iFamNr))
+                            {
+                                aiFam.Add(iFamNr);
+                            }
                             DataModul.Link.ReadFamily(iFamNr, Modul1.Family);
                             Search_iPersNr = kennz switch
                             {
@@ -1872,7 +1877,10 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
                         if (DataModul.Link.GetPersonFam(Search_iPersNr, Modul1.eLKennz, out var iChildFam))
                         {
                             Modul1.FamInArb = iChildFam;
-                            aiFam.Add(iChildFam);
+                            if (!aiFam.Contains(iChildFam))
+                            {
+                                aiFam.Add(iChildFam);
+                            }
                             DataModul.Link.ReadFamily(iChildFam, Modul1.Family);
                             if (Modul1.Family.Mann > 0)
                             {
@@ -1975,7 +1983,8 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
 
             num++;
         }
-        if (cEvt == null) return "";
+        if (cEvt == null)
+            return "";
 
         if (cEvt.dDatumV != default)
         {

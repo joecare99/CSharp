@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface IMandViewModel: INotifyPropertyChanged
+public interface IMandViewModel : INotifyPropertyChanged
 {
     IContainerControl View { get; set; }
     bool Frame1_Visible { get; }

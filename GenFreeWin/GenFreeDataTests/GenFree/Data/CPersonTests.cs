@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using BaseLib.Interfaces;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
-using NSubstitute;
 using GenFree.Interfaces.Model;
 using GenFree.Interfaces.Sys;
-using GenFree.Interfaces.Data;
-using BaseLib.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Data.Tests
 {
@@ -86,7 +86,8 @@ namespace GenFree.Data.Tests
         public void CheckIDTest(string sName, int iActPers, Enum eTKennz, int iLfNr, int iExp)
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers);
-            if (iLfNr == 3) (testRS.Fields[PersonFields.Sex] as IHasValue).Value.Returns("M");
+            if (iLfNr == 3)
+                (testRS.Fields[PersonFields.Sex] as IHasValue).Value.Returns("M");
             Assert.AreEqual(iExp, testClass.CheckID(iActPers, (int)(ELinkKennz)eTKennz == 0, (ELinkKennz)eTKennz));
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
             testRS.Received(iExp is -1 ? 0 : 1).Seek("=", iActPers);
@@ -108,10 +109,11 @@ namespace GenFree.Data.Tests
         {
             testRS.NoMatch.Returns(iActPers is not (> 0 and < 3) || iLfNr / 2 != iActPers, false, false, true);
             testRS.RecordCount.Returns(iLfNr);
-            if (iLfNr >= 4) (testRS.Fields[PersonFields.Pruefen] as IHasValue).Value.Returns("G", "G", "G", "");
+            if (iLfNr >= 4)
+                (testRS.Fields[PersonFields.Pruefen] as IHasValue).Value.Returns("G", "G", "G", "");
 
             Assert.AreEqual(iExp, testClass.ValidateID(iActPers, (short)schalt, iLfNr, ELinkKennz.lkNone, i => (ELinkKennz)eLKennz));
-            
+
             Assert.AreEqual(nameof(PersonIndex.PerNr), testRS.Index);
             testRS.Received().Seek("=", iActPers);
         }
@@ -209,6 +211,6 @@ namespace GenFree.Data.Tests
             Assert.ThrowsExactly<ArgumentException>(() => testClass.GetIndex1Field(eAct));
         }
 
-      
+
     }
 }

@@ -1,11 +1,10 @@
 ﻿using GenFree.Data;
 using GenFree.Interfaces.DB;
-using System;
 using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Data;
 
-public interface IFamilyData :IEntityData, IHasID<int>, IHasPropEnum<EFamilyProp>, IHasIRecordset
+public interface IFamilyData : IEntityData, IHasID<int>, IHasPropEnum<EFamilyProp>, IHasIRecordset
 {
     int iName { get; }
     int iPrae { get; }

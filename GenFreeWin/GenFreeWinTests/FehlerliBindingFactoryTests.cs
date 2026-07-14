@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows.Forms;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services;
-using Gen_FreeWin.ViewModels;
-using Gen_FreeWin.Views;
+using GenFreeWin.Models;
+using GenFreeWin.Services;
+using GenFreeWin.ViewModels;
+using GenFreeWin.Views;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using System;
+using System.Collections.ObjectModel;
+using System.Windows.Forms;
 
 namespace GenFreeWinTests;
 

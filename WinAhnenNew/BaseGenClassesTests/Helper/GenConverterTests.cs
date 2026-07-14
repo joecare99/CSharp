@@ -1,13 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseGenClasses.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GenInterfaces.Interfaces.Genealogic;
-using BaseGenClasses.Model;
+﻿using BaseGenClasses.Model;
 using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Genealogic;
+using System;
 
 namespace BaseGenClasses.Helper.Tests
 {
@@ -23,11 +17,12 @@ namespace BaseGenClasses.Helper.Tests
         }
 
         [TestMethod()]
-        [DataRow(0,false)]
-        [DataRow(1,true)]
-        public void CanConvertTest(int i,bool xExp)
+        [DataRow(0, false)]
+        [DataRow(1, true)]
+        public void CanConvertTest(int i, bool xExp)
         {
-            Assert.AreEqual(xExp, genConverter.CanConvert(i switch {
+            Assert.AreEqual(xExp, genConverter.CanConvert(i switch
+            {
                 0 => typeof(object),
                 1 => typeof(IGenDate)
             }));
@@ -85,7 +80,7 @@ namespace BaseGenClasses.Helper.Tests
 
             // Assert
             Assert.IsFalse(string.IsNullOrEmpty(json), "JSON output should not be empty or null.");
-             Assert.IsTrue(json.Contains($"\"eDateModifier\":{(int)about}"), "JSON should contain eDateModifier About.");
+            Assert.IsTrue(json.Contains($"\"eDateModifier\":{(int)about}"), "JSON should contain eDateModifier About.");
             Assert.AreEqual(sExp, json);
         }
 

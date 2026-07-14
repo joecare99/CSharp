@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Gen_FreeWin;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using GenFreeWin;
 using GenFree.Interfaces.UI;
 using GenFree.ViewModels.Interfaces;
 

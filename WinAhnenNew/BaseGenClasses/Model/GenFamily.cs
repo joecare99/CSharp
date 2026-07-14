@@ -16,10 +16,7 @@ using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /// <summary>
 /// The Model namespace.
@@ -46,17 +43,21 @@ public class GenFamily : GenEntity, IGenFamily
     /// </summary>
     /// <value>The husband.</value>
     /// <exception cref="System.NotImplementedException"></exception>
-    public IGenPerson? Husband { 
-        get => Connects.Where(c => c?.eGenConnectionType == EGenConnectionType.Parent && c.Entity is IGenPerson p && p.Sex == "M").Select(p => p!.Entity as IGenPerson).FirstOrDefault(); 
-        set => Connects.AddPerson(EGenConnectionType.Parent, value); }
+    public IGenPerson? Husband
+    {
+        get => Connects.Where(c => c?.eGenConnectionType == EGenConnectionType.Parent && c.Entity is IGenPerson p && p.Sex == "M").Select(p => p!.Entity as IGenPerson).FirstOrDefault();
+        set => Connects.AddPerson(EGenConnectionType.Parent, value);
+    }
     /// <summary>
     /// Gets or sets the wife.
     /// </summary>
     /// <value>The wife.</value>
     /// <exception cref="System.NotImplementedException"></exception>
-    public IGenPerson? Wife { 
-        get => Connects.Where(c => c?.eGenConnectionType == EGenConnectionType.Parent && c.Entity is IGenPerson p && p.Sex == "F").Select(p => p!.Entity as IGenPerson).FirstOrDefault(); 
-        set => Connects.AddPerson(EGenConnectionType.Parent, value); }
+    public IGenPerson? Wife
+    {
+        get => Connects.Where(c => c?.eGenConnectionType == EGenConnectionType.Parent && c.Entity is IGenPerson p && p.Sex == "F").Select(p => p!.Entity as IGenPerson).FirstOrDefault();
+        set => Connects.AddPerson(EGenConnectionType.Parent, value);
+    }
 
     /// <summary>
     /// Gets the child count.
@@ -70,7 +71,7 @@ public class GenFamily : GenEntity, IGenFamily
     /// </summary>
     /// <value>The children.</value>
     /// <exception cref="System.NotImplementedException"></exception>
-    public IIndexedList<IGenPerson> Children => Connects.Where(c => c?.eGenConnectionType == EGenConnectionType.Child && c.Entity is IGenPerson).Select(f => f!.Entity as IGenPerson).ToIndexedList(i => i.IndRefID??"");
+    public IIndexedList<IGenPerson> Children => Connects.Where(c => c?.eGenConnectionType == EGenConnectionType.Child && c.Entity is IGenPerson).Select(f => f!.Entity as IGenPerson).ToIndexedList(i => i.IndRefID ?? "");
 
     /// <summary>
     /// Gets or sets the marriage date.
@@ -95,20 +96,20 @@ public class GenFamily : GenEntity, IGenFamily
     /// </summary>
     /// <value>The family reference identifier.</value>
     /// <exception cref="System.NotImplementedException"></exception>
-    public string? FamilyRefID { get => Facts.GetFact(EFactType.Reference, f => f.Data); set => Facts.SetFact(EFactType.Reference,this,value); }
+    public string? FamilyRefID { get => Facts.GetFact(EFactType.Reference, f => f.Data); set => Facts.SetFact(EFactType.Reference, this, value); }
     /// <summary>
     /// Gets or sets the name of the family.
     /// </summary>
     /// <value>The name of the family.</value>
     /// <exception cref="System.NotImplementedException"></exception>
-    public string? FamilyName { get => Facts.GetFact(EFactType.Surname,f=>f.Data); set => Facts.SetFact(EFactType.Surname,this, value); }
+    public string? FamilyName { get => Facts.GetFact(EFactType.Surname, f => f.Data); set => Facts.SetFact(EFactType.Surname, this, value); }
 
     /// <summary>
     /// Gets the end fact of entity.
     /// </summary>
     /// <returns>System.Nullable&lt;IGenFact&gt;.</returns>
     /// <exception cref="System.NotImplementedException"></exception>
-    protected override IGenFact? GetEndFactOfEntity() 
+    protected override IGenFact? GetEndFactOfEntity()
         => Facts.FirstOrDefault(f => f?.eGenType == EGenType.GenFact && f.eFactType is EFactType.Divorce or EFactType.Separation or EFactType.Anull);
 
     /// <summary>
@@ -116,6 +117,6 @@ public class GenFamily : GenEntity, IGenFamily
     /// </summary>
     /// <returns>System.Nullable&lt;IGenFact&gt;.</returns>
     /// <exception cref="System.NotImplementedException"></exception>
-    protected override IGenFact? GetStartFactOfEntity() 
+    protected override IGenFact? GetStartFactOfEntity()
         => Facts.FirstOrDefault(f => f?.eGenType == EGenType.GenFact && f.eFactType is EFactType.Mariage);
 }

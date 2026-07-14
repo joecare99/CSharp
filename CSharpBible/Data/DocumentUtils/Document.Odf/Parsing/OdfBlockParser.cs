@@ -1,6 +1,6 @@
-﻿using System.Xml.Linq;
-using Document.Base.Models.Interfaces;
+﻿using Document.Base.Models.Interfaces;
 using Document.Odf.Models;
+using System.Xml.Linq;
 
 namespace Document.Odf.Parsing;
 
@@ -13,7 +13,8 @@ internal static class OdfBlockParser
         var officeText = contentXml.Root?
             .Element(OdfNamespaces.Office + "body")?
             .Element(OdfNamespaces.Office + "text");
-        if (officeText is null) return;
+        if (officeText is null)
+            return;
 
         foreach (var el in officeText.Elements())
         {
@@ -26,7 +27,8 @@ internal static class OdfBlockParser
             {
                 int level = 1;
                 var lvlAttr = (string?)el.Attribute(OdfNamespaces.Text + "outline-level");
-                if (!int.TryParse(lvlAttr, out level)) level = 1;
+                if (!int.TryParse(lvlAttr, out level))
+                    level = 1;
 
                 var id = (string?)el.Attribute("id")
                          ?? (string?)el.Attribute(OdfNamespaces.Text + "name");

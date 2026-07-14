@@ -7,11 +7,11 @@ using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Model;
 
-public interface ILink : 
-    IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eKennz)>, 
-    IUsesID<(int iFamily, int iPerson, ELinkKennz eKennz)> ,
-    IHasRSIndex1<LinkIndex,ILinkData.LinkFields>,
-    IHasIxDataItf<LinkIndex,ILinkData, (int iFamily, int iPerson, ELinkKennz eKennz)>
+public interface ILink :
+    IUsesRecordset<(int iFamily, int iPerson, ELinkKennz eKennz)>,
+    IUsesID<(int iFamily, int iPerson, ELinkKennz eKennz)>,
+    IHasRSIndex1<LinkIndex, ILinkData.LinkFields>,
+    IHasIxDataItf<LinkIndex, ILinkData, (int iFamily, int iPerson, ELinkKennz eKennz)>
 {
     void Append(int iFamily, int iPerson, ELinkKennz iKennz);
     bool AppendE(int iFamNr, int iPerson, ELinkKennz eKennz);

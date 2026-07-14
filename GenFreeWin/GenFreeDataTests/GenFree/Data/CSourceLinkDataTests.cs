@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GenFree.Interfaces.DB;
-using NSubstitute;
+﻿using BaseLib.Interfaces;
 using GenFree.Interfaces.Data;
-using BaseLib.Interfaces;
+using GenFree.Interfaces.DB;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Data.Tests
 {
@@ -57,15 +57,15 @@ namespace GenFree.Data.Tests
         }
 
         [TestMethod()]
-        [DataRow(ESourceLinkProp.eArt,      TypeCode.Int16)]
+        [DataRow(ESourceLinkProp.eArt, TypeCode.Int16)]
         [DataRow(ESourceLinkProp.iLinkType, TypeCode.Int16)]
-        [DataRow(ESourceLinkProp.iPerFamNr,   TypeCode.Int32)]
-        [DataRow(ESourceLinkProp.iQuNr,     TypeCode.Int32)]
-        [DataRow(ESourceLinkProp.sEntry,   TypeCode.String)]
-        [DataRow(ESourceLinkProp.iLfdNr,    TypeCode.Int16)]
-        [DataRow(ESourceLinkProp.sPage,      TypeCode.String)]
-        [DataRow(ESourceLinkProp.sOriginalText,     TypeCode.String)]
-        [DataRow(ESourceLinkProp.sComment,      TypeCode.String)]
+        [DataRow(ESourceLinkProp.iPerFamNr, TypeCode.Int32)]
+        [DataRow(ESourceLinkProp.iQuNr, TypeCode.Int32)]
+        [DataRow(ESourceLinkProp.sEntry, TypeCode.String)]
+        [DataRow(ESourceLinkProp.iLfdNr, TypeCode.Int16)]
+        [DataRow(ESourceLinkProp.sPage, TypeCode.String)]
+        [DataRow(ESourceLinkProp.sOriginalText, TypeCode.String)]
+        [DataRow(ESourceLinkProp.sComment, TypeCode.String)]
         public void GetPropTypeTest(ESourceLinkProp pAct, TypeCode eExp)
         {
             Assert.AreEqual(eExp, Type.GetTypeCode(testClass.GetPropType(pAct)));
@@ -189,7 +189,7 @@ namespace GenFree.Data.Tests
             testClass.Delete();
             Assert.AreEqual(nameof(SourceLinkIndex.Tab22), testRS.Index);
             testRS.Received(xAct ? 0 : 1).Delete();
-            testRS.Received(1).Seek("=", testClass.ID.Item1,  (int)testClass.ID.Item3, testClass.ID.Item2, testClass.ID.Item4);
+            testRS.Received(1).Seek("=", testClass.ID.Item1, (int)testClass.ID.Item3, testClass.ID.Item2, testClass.ID.Item4);
         }
 
     }

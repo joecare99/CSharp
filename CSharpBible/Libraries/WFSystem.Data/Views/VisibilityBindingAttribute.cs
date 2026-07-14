@@ -25,7 +25,7 @@ public class VisibilityBindingAttribute(string cmdName) : Attribute
 
     public void Bind(object viewModel, Control field)
     {
-        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType==typeof(bool) )
+        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType == typeof(bool))
         {
             field.Visible = (bool)pi.GetValue(viewModel)!;
             if (viewModel is INotifyPropertyChanged npc)

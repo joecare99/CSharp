@@ -18,7 +18,8 @@ public sealed class DocxSpan : DocxContentBase, IDocSpan
 
     public void SetStyle(object fs)
     {
-        if (fs is IDocFontStyle idfs) Style = idfs;
+        if (fs is IDocFontStyle idfs)
+            Style = idfs;
     }
 
     public void SetStyle(IDocFontStyle fs) => Style = fs;

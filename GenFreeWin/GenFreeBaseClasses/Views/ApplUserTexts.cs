@@ -1,9 +1,10 @@
-﻿using Gen_FreeWin;
+﻿using GenFreeWin;
 using GenFree.Interfaces.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace GenFree.Views;
+
 public class ApplUserTexts : IApplUserTexts
 {
     private readonly List<string> _texte = new(560);
@@ -42,7 +43,7 @@ public class ApplUserTexts : IApplUserTexts
 
     public bool IsReadOnly => false;
 
-    public void Add(string item) =>_texte.Add(item);
+    public void Add(string item) => _texte.Add(item);
 
     public void Clear() => _texte.Clear();
 

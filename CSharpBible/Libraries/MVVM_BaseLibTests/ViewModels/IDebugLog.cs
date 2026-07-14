@@ -17,5 +17,5 @@ public interface IDebugLog
 {
     void DoLog(string message);
     void ClearLog();
-    string DebugLog {  get; }
+    string DebugLog { get; }
 }

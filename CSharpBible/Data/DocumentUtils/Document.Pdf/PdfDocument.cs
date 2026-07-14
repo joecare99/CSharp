@@ -31,7 +31,7 @@ public sealed class PdfDocument : IUserDocument
         return EnsureRoot().AddParagraph(cStylename);
     }
 
-    public IDocHeadline  AddHeadline(int nLevel, string Id)
+    public IDocHeadline AddHeadline(int nLevel, string Id)
     {
         _isModified = true;
         return EnsureRoot().AddHeadline(nLevel, Id);
@@ -83,7 +83,8 @@ public sealed class PdfDocument : IUserDocument
 
     private PdfSection EnsureRoot()
     {
-        if (Root is PdfSection sec) return sec;
+        if (Root is PdfSection sec)
+            return sec;
         sec = new PdfSection();
         Root = sec;
         _isModified = true;

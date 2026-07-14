@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface IFamilieViewModel: INotifyPropertyChanged
+public interface IFamilieViewModel : INotifyPropertyChanged
 {
     IContainerControl View { get; set; }
     int iFamNr { get; set; }

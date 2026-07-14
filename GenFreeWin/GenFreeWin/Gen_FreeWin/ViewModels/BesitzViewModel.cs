@@ -1,12 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Gen_FreeWin.Data;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFreeWin.Data;
+using GenFreeWin.Models;
+using GenFreeWin.ViewModels.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 /// <summary>
 /// Encapsulates the ownership selection workflow independently from the WinForms view.

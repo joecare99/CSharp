@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
 using BaseGenClasses.Helper;
 using BaseGenClasses.Model;
 using BaseGenClasses.Persistence;
@@ -12,6 +7,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
 using WinAhnenNew.Collections;
 using WinAhnenNew.Messages;
 using WinAhnenNew.Services;
@@ -249,7 +249,7 @@ namespace WinAhnenNew.ViewModels
             BurialPlaceOptions.SynchronizeWith(GetPlaceOptions(lstPersons, static genPerson => genPerson.BurialPlace?.Name));
         }
 
-        #pragma warning disable MVVMTK0034
+#pragma warning disable MVVMTK0034
         private void ApplySelectedPerson(IGenPerson? genSelectedPerson)
         {
             if (genSelectedPerson is null)
@@ -371,7 +371,7 @@ namespace WinAhnenNew.ViewModels
             SpousesAndWeddings.Clear();
             Children.Clear();
         }
-        #pragma warning restore MVVMTK0034
+#pragma warning restore MVVMTK0034
 
         private void LoadSpousesAndWeddings(IGenPerson genSelectedPerson)
         {

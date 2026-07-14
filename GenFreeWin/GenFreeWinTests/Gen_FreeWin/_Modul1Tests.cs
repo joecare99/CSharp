@@ -1,21 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GenFree;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BaseLib.Helper;
-using GenFree.Interfaces.UI;
-using NSubstitute;
-using GenFree.ViewModels.Interfaces;
+﻿using BaseLib.Helper;
+using BaseLib.Interfaces;
 using GenFree.Data;
-using GenFree.Interfaces.Model;
+using GenFree.Helper;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Sys;
-using BaseLib.Interfaces;
-using GenFree.Helper;
+using GenFree.Interfaces.UI;
 using GenFree.Interfaces.VB;
+using GenFree.ViewModels.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Tests
 {
@@ -73,7 +67,7 @@ namespace GenFree.Tests
 
             // Assert
             var _ = _ia.ReceivedWithAnyArgs(1).MsgBox("");
-           
+
         }
 
         [TestMethod]

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace WinAhnenCls.Utils
@@ -21,7 +20,8 @@ namespace WinAhnenCls.Utils
             get => _onError;
             set
             {
-                if (_onError == value) return;
+                if (_onError == value)
+                    return;
                 _onError = value;
             }
         }
@@ -31,7 +31,8 @@ namespace WinAhnenCls.Utils
             get => _cfgLearnUnknown;
             set
             {
-                if (_cfgLearnUnknown == value) return;
+                if (_cfgLearnUnknown == value)
+                    return;
                 _cfgLearnUnknown = value;
             }
         }
@@ -41,7 +42,8 @@ namespace WinAhnenCls.Utils
             get => _gNameListChanged;
             set
             {
-                if (_gNameListChanged == value) return;
+                if (_gNameListChanged == value)
+                    return;
                 _gNameListChanged = value;
             }
         }
@@ -83,7 +85,8 @@ namespace WinAhnenCls.Utils
                 _gNameList.Clear();
                 foreach (var line in File.ReadLines(aFilename, Encoding.UTF8))
                 {
-                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
 
                     int idx = line.IndexOf('=');
                     if (idx < 0)
@@ -133,7 +136,8 @@ namespace WinAhnenCls.Utils
 
         public void LearnSexOfGivnName(string aName, char aSex)
         {
-            if (aName == null) return;
+            if (aName == null)
+                return;
 
             foreach (var token in SplitBySpace(aName))
             {
@@ -181,7 +185,8 @@ namespace WinAhnenCls.Utils
         public char GuessSexOfGivnName(string aName, bool bLearn = true)
         {
             char result = 'U';
-            if (aName == null) return result;
+            if (aName == null)
+                return result;
 
             foreach (var token in SplitBySpace(aName))
             {
@@ -223,7 +228,8 @@ namespace WinAhnenCls.Utils
         private static bool TestFor(string aText, int pPos1Based, string aTest)
         {
             int idx = Math.Max(0, pPos1Based - 1);
-            if (idx < 0 || idx + aTest.Length > aText.Length) return false;
+            if (idx < 0 || idx + aTest.Length > aText.Length)
+                return false;
             return string.CompareOrdinal(aText, idx, aTest, 0, aTest.Length) == 0;
         }
 
@@ -235,7 +241,8 @@ namespace WinAhnenCls.Utils
 
         private void SafeSave(string filename)
         {
-            if (string.IsNullOrEmpty(filename)) return;
+            if (string.IsNullOrEmpty(filename))
+                return;
 
             var dir = Path.GetDirectoryName(Path.GetFullPath(filename));
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
@@ -262,7 +269,9 @@ namespace WinAhnenCls.Utils
             }
             catch
             {
-                try { if (File.Exists(temp)) File.Delete(temp); } catch { /* ignore */ }
+                try
+                { if (File.Exists(temp)) File.Delete(temp); }
+                catch { /* ignore */ }
                 throw;
             }
         }

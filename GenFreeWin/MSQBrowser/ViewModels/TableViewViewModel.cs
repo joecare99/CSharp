@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using MSQBrowser.ViewModels.Interfaces;
+using CommunityToolkit.Mvvm.Input;
 using MSQBrowser.Models;
+using MSQBrowser.ViewModels.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using CommunityToolkit.Mvvm.Input;
 using System.Threading;
 using System.Threading.Tasks;
 

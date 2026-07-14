@@ -1,7 +1,7 @@
-using System;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
+using System;
 
 namespace GenSecure.Contracts;
 

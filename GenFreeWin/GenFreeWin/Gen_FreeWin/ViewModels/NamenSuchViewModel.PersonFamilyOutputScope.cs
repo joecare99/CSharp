@@ -1,15 +1,13 @@
 using BaseLib.Helper;
-using GenFree;
 using GenFree.Data;
 using GenFree.Interfaces;
-using GenFree.Interfaces.DB;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class NamenSuchViewModel
 {
@@ -158,10 +156,10 @@ public partial class NamenSuchViewModel
                             Datles1(Modul1.PersInArb, Modul1.Person);
                             string QuText;
                             if (M1_Kont11.Trim() != ""
-                                | M1_Kont16.Length > 0
-                                | M1_Kont21.Length > 0
-                                | M1_Kont31.Trim() != ""
-                                | M1_Kont41.Trim() != "")
+                                || M1_Kont16.Length > 0
+                                || M1_Kont21.Length > 0
+                                || M1_Kont31.Trim() != ""
+                                || M1_Kont41.Trim() != "")
                             {
                                 document.SetIndent(20);
                                 document.AppendText(M1_DTxt[1] + " " + M1_Kont11.Trim() + ".");
@@ -198,10 +196,10 @@ public partial class NamenSuchViewModel
                                 }
                             }
                             if (M1_Kont12.Trim() != ""
-                                | M1_Kont17.Length > 0
-                                | M1_Kont22.Length > 0
-                                | M1_Kont32.Trim() != ""
-                                | M1_Kont42.Trim() != "")
+                                || M1_Kont17.Length > 0
+                                || M1_Kont22.Length > 0
+                                || M1_Kont32.Trim() != ""
+                                || M1_Kont42.Trim() != "")
                             {
                                 document.AppendText("\n" + M1_DTxt[2] + " " + M1_Kont12.Trim() + ".");
                                 if (Option[EOutCfg.o02]
@@ -233,7 +231,7 @@ public partial class NamenSuchViewModel
                                 }
                             }
                             int num11;
-                            if (Index == 1 | Index == 2)
+                            if (Index == 1 || Index == 2)
                             {
                                 if (Option[EOutCfg.o30])
                                 {
@@ -272,7 +270,7 @@ public partial class NamenSuchViewModel
                                             {
                                                 M1_Kont13 = M1_Kont14;
                                             }
-                                            if (M1_Kont14.Trim() != "" & M1_Kont11.Trim() != "")
+                                            if (M1_Kont14.Trim() != "" && M1_Kont11.Trim() != "")
                                             {
                                                 document.AppendText(",");
                                             }

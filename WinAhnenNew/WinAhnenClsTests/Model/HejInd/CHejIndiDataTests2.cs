@@ -50,7 +50,7 @@ namespace WinAhnenCls.Model.HejInd.Tests
             new CHejPlaceData() { },
         };
 
-        private string FDataDir=".\\Resources\\";
+        private string FDataDir = ".\\Resources\\";
         private int FDataChCount;
         public int FUpdateCount;
 
@@ -256,7 +256,8 @@ namespace WinAhnenCls.Model.HejInd.Tests
                 }
                 finally
                 {
-                };
+                }
+            ;
 
         }
     }

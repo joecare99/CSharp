@@ -1,5 +1,4 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -18,7 +17,8 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
+
 public partial class Hinter : Form
 {
     private static List<WeakReference> __ENCList = new List<WeakReference>();
@@ -408,7 +408,7 @@ public partial class Hinter : Form
                                 RadioButton32.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
                             }
                             Button5.Text = Modul1.IText[EUserText.t158];
-                            var pos =Modul1.Persistence.ReadIntsProg("maspos.dat",2);
+                            var pos = Modul1.Persistence.ReadIntsProg("maspos.dat", 2);
                             Left = pos[0];
                             Top = pos[1];
                             Modul1.AutoupD = Modul1.Persistence.ReadStringInit("Update_ini.dat");
@@ -688,7 +688,7 @@ public partial class Hinter : Form
         Modul1.HintFarb = ColorTranslator.FromOle(0xC0C0C9);
         Modul1.ErFarb = ColorTranslator.FromOle(0xC0C0C9);
         Modul1.Feld1Farb = ColorTranslator.FromOle(0xFFFFFF);
-        Modul1.Persistence.PutColorsInit("Farb.dat", [ Modul1.HintFarb, Modul1.Feld1Farb, Modul1.ErFarb ]);
+        Modul1.Persistence.PutColorsInit("Farb.dat", [Modul1.HintFarb, Modul1.Feld1Farb, Modul1.ErFarb]);
         Frame4.BackColor = Modul1.HintFarb;
         BackColor = Modul1.HintFarb;
         TextBox1.BackColor = Modul1.Feld1Farb;
@@ -1380,15 +1380,15 @@ public partial class Hinter : Form
                                     {
                                         StringType.MidStmtStr(ref DDatum, 4, 2, "01");
                                     }
-                                    if (((DDatum.AsDate()- HT.AsDate()).TotalDays > 3)
-                                        & ((DDatum.AsDate()- HT.AsDate()).TotalDays < 8*30.25))
+                                    if (((DDatum.AsDate() - HT.AsDate()).TotalDays > 3)
+                                        & ((DDatum.AsDate() - HT.AsDate()).TotalDays < 8 * 30.25))
                                     {
                                         if (Ja == 0)
                                         {
                                             AppenTitle(array3[1], famInArb);
                                             Ja = 1;
                                         }
-                                        AppendText($"Kind {num4} nur {(DDatum.AsDate()-HT.AsDate()).TotalDays} Tage vor Kind {num4 + 1} geboren.\n", famInArb, 4);
+                                        AppendText($"Kind {num4} nur {(DDatum.AsDate() - HT.AsDate()).TotalDays} Tage vor Kind {num4 + 1} geboren.\n", famInArb, 4);
                                     }
                                 }
                             }
@@ -1415,7 +1415,7 @@ public partial class Hinter : Form
                                     AppendText($"   {Modul1.IText[EUserText.tChild_AS]}{num22 - num16}{Modul1.IText[EUserText.t214]}", famInArb, 4);
                                 }
                             }
-                            if ((array[1] > 0) & (aiFather[1] > 0) && array[1] - 10000 < aiFather[1])
+                            if ((array[1] > 0) && (aiFather[1] > 0) && array[1] - 10000 < aiFather[1])
                             {
                                 if (Ja == 0)
                                 {
@@ -1424,7 +1424,7 @@ public partial class Hinter : Form
                                 }
                                 AppendText($"Kind {num4 + 1} vor {Modul1.IText[EUserText.t162]} geboren !", famInArb, 4);
                             }
-                            if ((array[1] > 0) & (aiFather[3] > 0) && array[1] - 10000 > aiFather[3])
+                            if ((array[1] > 0) && (aiFather[3] > 0) && array[1] - 10000 > aiFather[3])
                             {
                                 if (Ja == 0)
                                 {
@@ -1433,7 +1433,7 @@ public partial class Hinter : Form
                                 }
                                 AppendText(Modul1.IText[EUserText.t212], famInArb, 4);
                             }
-                            if ((array[1] > 0) & (aiMother[1] > 0) && array[1] - 10000 < aiMother[1])
+                            if ((array[1] > 0) && (aiMother[1] > 0) && array[1] - 10000 < aiMother[1])
                             {
                                 if (Ja == 0)
                                 {
@@ -1442,7 +1442,7 @@ public partial class Hinter : Form
                                 }
                                 AppendText($"Kind {num4 + 1} vor {Modul1.IText[EUserText.t163]} geboren ", famInArb, 4);
                             }
-                            if ((array[1] > 0) & (aiMother[3] > 0) && array[1] > aiMother[3])
+                            if ((array[1] > 0) && (aiMother[3] > 0) && array[1] > aiMother[3])
                             {
                                 if (Ja == 0)
                                 {
@@ -1451,7 +1451,7 @@ public partial class Hinter : Form
                                 }
                                 AppendText(Modul1.IText[EUserText.t213], famInArb, 4);
                             }
-                            if ((array[1] > 0) & (aiMother[1] > 0) && array[1] > aiMother[1] + Modul1_Diff[4])
+                            if ((array[1] > 0) && (aiMother[1] > 0) && array[1] > aiMother[1] + Modul1_Diff[4])
                             {
                                 if (Ja == 0)
                                 {

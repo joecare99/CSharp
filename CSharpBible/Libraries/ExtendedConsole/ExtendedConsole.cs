@@ -38,10 +38,12 @@ namespace ConsoleLib
             /// The seconds
             /// </summary>
             Console.WindowHeight = 50;
-            try { Console.BufferHeight = 50; }
-            catch {
+            try
+            { Console.BufferHeight = 50; }
+            catch
+            {
                 Console.BufferHeight = Console.WindowHeight;
-            }            
+            }
             IntPtr inHandle = GetStdHandle(STD_INPUT_HANDLE);
             GetConsoleMode(inHandle, out ConsoleMode mode);
             mode &= ~ConsoleMode.ENABLE_QUICK_EDIT_MODE; //disable
@@ -100,23 +102,23 @@ namespace ConsoleLib
         /// <summary>
         /// The run
         /// </summary>
-        private  bool Run = false;
+        private bool Run = false;
 
         /// <summary>
         /// Stops this instance.
         /// </summary>
-        public  void Stop() => Run = false;
+        public void Stop() => Run = false;
 
         /// <summary>Occurs when a mouse event happend.</summary>
-        public  event EventHandler<IMouseEvent>? MouseEvent;
+        public event EventHandler<IMouseEvent>? MouseEvent;
 
         /// <summary>
         ///  Occurs when a key event happend.
         /// </summary>
-        public  event EventHandler<IKeyEvent>? KeyEvent;
+        public event EventHandler<IKeyEvent>? KeyEvent;
 
         /// <summary>Occurs when a window buffer size change event happend.</summary>
-        public  event EventHandler<Point>? WindowBufferSizeEvent;
+        public event EventHandler<Point>? WindowBufferSizeEvent;
     }
 
 
@@ -239,37 +241,37 @@ namespace ConsoleLib
             WINDOW_BUFFER_SIZE_EVENT = 0x0004
         }; //more
 
-    /// <summary>
-    /// State of the mouse-buttons
-    /// </summary>
-    [Flags]
-    public enum ButtonState : uint
-    {
         /// <summary>
-        /// The 1st button from left is pressed
+        /// State of the mouse-buttons
         /// </summary>
-        FROM_LEFT_1ST_BUTTON_PRESSED = 0x0001,
-        /// <summary>
-        /// The 2nd button from left is pressed
-        /// </summary>
-        FROM_LEFT_2ND_BUTTON_PRESSED = 0x0004,
-        /// <summary>
-        /// The 3rd button from left is pressed
-        /// </summary>
-        FROM_LEFT_3RD_BUTTON_PRESSED = 0x0008,
-        /// <summary>
-        /// The 4th button from left is pressed
-        /// </summary>
-        FROM_LEFT_4TH_BUTTON_PRESSED = 0x0010,
-        /// <summary>
-        /// The rightmost button is pressed
-        /// </summary>
-        RIGHTMOST_BUTTON_PRESSED = 0x0002
-    };
+        [Flags]
+        public enum ButtonState : uint
+        {
+            /// <summary>
+            /// The 1st button from left is pressed
+            /// </summary>
+            FROM_LEFT_1ST_BUTTON_PRESSED = 0x0001,
+            /// <summary>
+            /// The 2nd button from left is pressed
+            /// </summary>
+            FROM_LEFT_2ND_BUTTON_PRESSED = 0x0004,
+            /// <summary>
+            /// The 3rd button from left is pressed
+            /// </summary>
+            FROM_LEFT_3RD_BUTTON_PRESSED = 0x0008,
+            /// <summary>
+            /// The 4th button from left is pressed
+            /// </summary>
+            FROM_LEFT_4TH_BUTTON_PRESSED = 0x0010,
+            /// <summary>
+            /// The rightmost button is pressed
+            /// </summary>
+            RIGHTMOST_BUTTON_PRESSED = 0x0002
+        };
 
-    /// <summary>
-    /// The state of the control keys. This member can be one or more of the following values.
-    /// </summary>
+        /// <summary>
+        /// The state of the control keys. This member can be one or more of the following values.
+        /// </summary>
         [Flags]
         public enum ControlKeyState : uint
         {
@@ -369,7 +371,8 @@ namespace ConsoleLib
         /// Enum DateDifFormat
         /// </summary>
         [Flags]
-        public enum Attributes :ushort {
+        public enum Attributes : ushort
+        {
             /// <summary>
             /// The foreground blue
             /// </summary>
@@ -458,7 +461,7 @@ namespace ConsoleLib
         /// <summary>
         /// Struct MOUSE_EVENT_RECORD
         /// </summary>
-        public struct MOUSE_EVENT_RECORD:IMouseEvent
+        public struct MOUSE_EVENT_RECORD : IMouseEvent
         {
             /// <summary>
             /// The dw mouse Position
@@ -487,7 +490,7 @@ namespace ConsoleLib
 
             public Point MousePos => new Point(dwMousePosition.X, dwMousePosition.Y);
 
-            public bool MouseButtonLeft => dwButtonState == ButtonState.FROM_LEFT_1ST_BUTTON_PRESSED ;
+            public bool MouseButtonLeft => dwButtonState == ButtonState.FROM_LEFT_1ST_BUTTON_PRESSED;
 
             public bool MouseButtonRight => dwButtonState == ButtonState.RIGHTMOST_BUTTON_PRESSED;
 
@@ -497,8 +500,8 @@ namespace ConsoleLib
             {
                 get
                 {
-                    if (dwEventFlags !=  EventFlags.MOUSE_MOVED)
-                    return  (Int16)((uint)dwButtonState >> 16);
+                    if (dwEventFlags != EventFlags.MOUSE_MOVED)
+                        return (Int16)((uint)dwButtonState >> 16);
                     else
                     {
                         return 0;
@@ -506,18 +509,18 @@ namespace ConsoleLib
                 }
             }
 
-            public bool MouseMoved => dwEventFlags == EventFlags.MOUSE_MOVED ;
+            public bool MouseMoved => dwEventFlags == EventFlags.MOUSE_MOVED;
 
             public bool ButtonEvent => dwEventFlags == 0;
 
-            public bool Handled { get ; set; }
+            public bool Handled { get; set; }
         }
 
         /// <summary>
         /// Struct KEY_EVENT_RECORD
         /// </summary>
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
-        public struct KEY_EVENT_RECORD:IKeyEvent
+        public struct KEY_EVENT_RECORD : IKeyEvent
         {
             /// <summary>
             /// If the key is pressed, this member is <strong>TRUE</strong>. Otherwise, this member is <strong>FALSE</strong> (the key is released).
@@ -568,7 +571,7 @@ namespace ConsoleLib
 
             public ushort usScanCode => wVirtualScanCode;
 
-            public bool Handled { get =>bHandled; set => bHandled = value; }
+            public bool Handled { get => bHandled; set => bHandled = value; }
 
             bool IKeyEvent.bKeyDown => bKeyDown;
 
@@ -741,6 +744,6 @@ namespace ConsoleLib
         /// <param name="lpWriteRegion">The write region.</param>
         /// <returns>If the function succeeds, the return value is nonzero.<para />If the function fails, the return value is zero. To get extended error information, call <see cref="GetLastError" />.</returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern bool ReadConsoleOutput(IntPtr hConsoleInput,[Out] CHAR_INFO[,] lpBuffer, COORD dwBufferSize, COORD dwBufferCoord, ref SMALL_RECT lpWriteRegion);
+        public static extern bool ReadConsoleOutput(IntPtr hConsoleInput, [Out] CHAR_INFO[,] lpBuffer, COORD dwBufferSize, COORD dwBufferCoord, ref SMALL_RECT lpWriteRegion);
     }
 }

@@ -1,11 +1,8 @@
 using Db.Core.Abstractions.Sql.Interfaaces;
 using MySqlConnector;
-using RnzTrauer.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Runtime;
 
 namespace Db.Provider.MySql
 {
@@ -19,7 +16,8 @@ namespace Db.Provider.MySql
 #if NET8_0_OR_GREATER
             ArgumentNullException.ThrowIfNull(xSettings);
 #else
-            if (xSettings == null) throw new ArgumentNullException(nameof(xSettings));
+            if (xSettings == null)
+                throw new ArgumentNullException(nameof(xSettings));
 #endif
 
             var sConnectionString = new MySqlConnectionStringBuilder
@@ -57,7 +55,7 @@ namespace Db.Provider.MySql
         }
 
         /// <inheritdoc />
-        public IDbStatementRenderer CreateStatementRenderer(IDbConnection dBConnection) 
+        public IDbStatementRenderer CreateStatementRenderer(IDbConnection dBConnection)
             => new MySqlStatementRenderer(dBConnection);
 
 

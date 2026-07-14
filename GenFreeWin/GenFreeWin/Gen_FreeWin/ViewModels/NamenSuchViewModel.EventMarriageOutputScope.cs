@@ -1,15 +1,13 @@
 using BaseLib.Helper;
-using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces;
-using GenFree.Interfaces.DB;
 using Microsoft.VisualBasic;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class NamenSuchViewModel
 {
@@ -167,7 +165,7 @@ public partial class NamenSuchViewModel
                                     {
                                         sDatu = Strings.Mid(sDatu, 4, sDatu.Length);
                                     }
-                                    if (sDatu != "" & evt.sDatumB_S.Trim() == "")
+                                    if (sDatu != "" && evt.sDatumB_S.Trim() == "")
                                     {
                                         sDatu = " bis " + sDatu;
                                     }
@@ -183,7 +181,7 @@ public partial class NamenSuchViewModel
                                         }
                                         Modul1.Kont1[3] = " " + sDatu;
                                     }
-                                    if (Modul1.Kont1[3] == "" & sDatu.Trim() != "")
+                                    if (Modul1.Kont1[3] == "" && sDatu.Trim() != "")
                                     {
                                         Modul1.Kont1[3] = " " + sDatu;
                                     }
@@ -256,7 +254,7 @@ public partial class NamenSuchViewModel
                                 {
                                     Modul1.Kont1[4] = evt.sBem[2].Trim().FrameIfNEoW("{", "}");
                                 }
-                                if (Modul1.Kont1[2].Trim() != "" | Modul1.Kont1[4].Trim() != "")
+                                if (Modul1.Kont1[2].Trim() != "" || Modul1.Kont1[4].Trim() != "")
                                 {
                                     QuText = " " + Modul1.Kont1[2].Trim() + " " + Modul1.Kont1[4].Trim();
                                     QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);
@@ -629,15 +627,15 @@ public partial class NamenSuchViewModel
                                 DataModul.DB_SourceLinkTable.Seek("=", 3, famInArb, cEv.eArt, 0);
                                 flag |= !DataModul.DB_SourceLinkTable.NoMatch;
                                 flag |= "" != cEv.sBem[3];
-                                flag |= Option[EOutCfg.o05] & cEv.sBem[1].Trim() != "";
-                                flag |= Option[EOutCfg.o06] & cEv.sBem[2].Trim() != "";
+                                flag |= Option[EOutCfg.o05] && cEv.sBem[1].Trim() != "";
+                                flag |= Option[EOutCfg.o06] && cEv.sBem[2].Trim() != "";
                                 flag |= Modul1.Kont1[1].Trim() != ""
-                                    | Modul1.Kont1[2].Trim() != ""
-                                    | Modul1.Kont1[3].Trim() != ""
-                                    | Modul1.Kont1[5].Trim() != ""
-                                    | Modul1.Kont1[6].Trim() != ""
-                                    | Modul1.Kont1[7].Trim() != ""
-                                    | Modul1.UbgT.Trim() != "";
+                                    || Modul1.Kont1[2].Trim() != ""
+                                    || Modul1.Kont1[3].Trim() != ""
+                                    || Modul1.Kont1[5].Trim() != ""
+                                    || Modul1.Kont1[6].Trim() != ""
+                                    || Modul1.Kont1[7].Trim() != ""
+                                    || Modul1.UbgT.Trim() != "";
                                 if (flag)
                                 {
                                     text = eArt switch

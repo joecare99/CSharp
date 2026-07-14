@@ -1,6 +1,5 @@
-﻿using System.Windows.Controls;
-using System.Windows.Navigation;
-using GenFree.ViewModels.Interfaces;
+﻿using GenFree.ViewModels.Interfaces;
+using System.Windows.Controls;
 
 namespace GenFreeWpf.Views;
 

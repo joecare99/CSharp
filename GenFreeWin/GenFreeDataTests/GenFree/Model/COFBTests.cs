@@ -2,7 +2,6 @@
 using GenFree.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
-using GenFree.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;

@@ -1,11 +1,9 @@
+using GenFreeWin.Services;
+using GenFreeWin.ViewModels;
 using System;
-using System.Collections.ObjectModel;
 using System.Windows.Forms;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services;
-using Gen_FreeWin.ViewModels;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 /// <summary>
 /// Factory für die Initialisierung und Bindung eines FehlerliViewModel an die Fehlerli-View.
@@ -58,16 +56,6 @@ internal static class FehlerliViewModelFactory
             var personenOhneElternBinding = new BindingSource
             {
                 DataSource = viewModel.PersonenOhneElternList
-            };
-
-            var personenErrorsBinding = new BindingSource
-            {
-                DataSource = viewModel.PersonenErrorsList
-            };
-
-            var familienErrorsBinding = new BindingSource
-            {
-                DataSource = viewModel.FamilienErrorsList
             };
 
             var oerterErrorsBinding = new BindingSource

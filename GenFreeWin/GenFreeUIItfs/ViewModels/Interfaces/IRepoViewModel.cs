@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface IRepoViewModel: INotifyPropertyChanged
+public interface IRepoViewModel : INotifyPropertyChanged
 {
     bool BtnDeleteVisible { get; }
     IRelayCommand FormLoadCommand { get; }

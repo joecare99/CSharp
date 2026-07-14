@@ -1,7 +1,6 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Gen_FreeWin.Main;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -21,7 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
 {
@@ -346,7 +345,7 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
                             goto IL_1779;
                         IL_1582:
                             num = 242;
-                            _ = View.List3.Items.Add(("F"+ "          " + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._2].AsString().Right(10) + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._4].Value));
+                            _ = View.List3.Items.Add(("F" + "          " + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._2].AsString().Right(10) + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._4].Value));
                             goto IL_171e;
                         IL_161a:
                             num = 245;
@@ -354,7 +353,7 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
                             {
                                 if (DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Art].AsInt() > 499)
                                 {
-                                    _ = View.List3.Items.Add(("F"+ "          " + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._2].AsString().Right(10) + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._4].Value));
+                                    _ = View.List3.Items.Add(("F" + "          " + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._2].AsString().Right(10) + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value + DataModul.DB_SourceLinkTable.Fields[SourceLinkFields._4].Value));
                                 }
                             }
                             goto IL_171e;
@@ -641,7 +640,8 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
     {
         destination = Modul1.Verz + "Quell\\GEDAUS.mdb";
         bool xReplace = true;
-        if (File.Exists(destination)) xReplace = DialogResult.No != Interaction.MsgBox("Bestehende Auswahl löschen?\n Anderenfalls werden diese Daten zu der bestehenden Auswahl zugefügt.", title: "", mb: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Question);
+        if (File.Exists(destination))
+            xReplace = DialogResult.No != Interaction.MsgBox("Bestehende Auswahl löschen?\n Anderenfalls werden diese Daten zu der bestehenden Auswahl zugefügt.", title: "", mb: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Question);
         source = Modul1.InitDir + "GedAUS.mdb";
         DataModul.OpenQuellData(destination, source, xReplace);
         ForEachFamilyPerson(View.List2.Items, DataModul_NB_Frau_AddPerson);
@@ -2097,7 +2097,7 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
             case 3:
                 if (MainProject.Forms.Ereignis.Visible)
                 {
-                    if ((DataModul.DB_EventTable.Fields[EventFields.Art].AsInt()< 499))
+                    if ((DataModul.DB_EventTable.Fields[EventFields.Art].AsInt() < 499))
                     {
                         dB_SourceLinkTable.Index = "Tab23";
                         dB_SourceLinkTable.Seek("=", 3, Modul1_Nr1 = Personen.Default.PersonNr, num5, Modul1.Art, Modul1.LfNR);

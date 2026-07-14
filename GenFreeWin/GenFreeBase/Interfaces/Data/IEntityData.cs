@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GenFree.Interfaces.Data
 {
-    public interface IEntityData: IHasID<int>
+    public interface IEntityData : IHasID<int>
     {
         /// <summary>
         /// Gets date when the record was created.

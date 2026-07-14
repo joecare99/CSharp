@@ -1,7 +1,6 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Main;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -20,7 +19,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
 {
@@ -675,8 +674,8 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
     }
     public void btnSearchRegister_Click(object sender, EventArgs e)
     {
-            Regsuch regsuch = MainProject.Forms.Regsuch;
-       
+        Regsuch regsuch = MainProject.Forms.Regsuch;
+
         Kindneu = 0;
         checked
         {
@@ -686,7 +685,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
             {
                 return;
             }
-            _ = regsuch.ShowDialog((byte)1,(byte)1,0,0);
+            _ = regsuch.ShowDialog((byte)1, (byte)1, 0, 0);
             Modul1.Suchschalt = regsuch.Suchschalt;
             Modul1.Suchfam = regsuch.Suchfam;
             if (Modul1.Suchschalt == 1)
@@ -1496,7 +1495,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
     public void btnSearchName_Click(object sender, EventArgs e)
     {
         Namensuch namensuch = MainProject.Forms.Namensuch;
-        
+
         Kindneu = 0;
         Modul1.FamInArb = iFamNr;
         FamdatPrüfen(Modul1.FamInArb);
@@ -1507,7 +1506,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
 
 
 
-        _ = namensuch.ShowDialog(0,"",0);
+        _ = namensuch.ShowDialog(0, "", 0);
         var FamPerschalt = namensuch.FamPerSchalt;
         Modul1.Suchfam = namensuch.SuchFam;
         Modul1.SuchPer = namensuch.SuchPer;
@@ -2103,7 +2102,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         Kindneu = 0;
         View.chbAppAsAdopted.Visible = false;
         View.frmAppendPerson.Visible = false;
-        
+
         Modul1.SuchPer = 0;
         rechText.Show();
         if (View.lblAppLabel44.Tag.AsInt() == 2)
@@ -2132,7 +2131,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         _ = rechText.ShowDialog();
         var FamPerschalt = rechText.FamPerSchalt;
         Modul1.PersInArb = rechText.PersInArb;
- 
+
         if (FamPerschalt == 1)
         {
             View.Close();
@@ -2553,7 +2552,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
             Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
             return;
         }
-        if (Modul1.FamInArb == 0 )
+        if (Modul1.FamInArb == 0)
         {
             Modul1.FamInArb = checked(iFamNr);
         }
@@ -2769,7 +2768,8 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         var aiPers = new List<int>();
         foreach (var link in DataModul.Link.ReadAllFams(iFamNr, ELinkKennz.lkWitnOfEngage))
         {
-            if (M1_Iter++ > 99) break;
+            if (M1_Iter++ > 99)
+                break;
             aiPers.Add(link.iPersNr);
         }
         Rahmen.Default.btnDelete.Enabled = false;
@@ -2782,7 +2782,8 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         var aiPers = new List<int>();
         foreach (var link in DataModul.Link.ReadAllFams(iFamNr, ELinkKennz.lkWitnOfMarr))
         {
-            if (M1_Iter++ > 99) break;
+            if (M1_Iter++ > 99)
+                break;
             aiPers.Add(link.iPersNr);
         }
         Rahmen.Default.btnDelete.Enabled = false;
@@ -2796,7 +2797,8 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         var aiPers = new List<int>();
         foreach (var link in DataModul.Link.ReadAllFams(iFamNr, ELinkKennz.lkMarrWitness))
         {
-            if (M1_Iter++ > 99) break;
+            if (M1_Iter++ > 99)
+                break;
             aiPers.Add(link.iPersNr);
         }
         DataModul.DB_FamilyTable.Seek("=", iFamNr);
@@ -2845,7 +2847,8 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
             foreach (var item in DataModul.Link.ReadAllFams(famInArb, sKennz))
             {
                 aiPers.Add(item.iPersNr);
-                if (M1_Iter++ > 99) break;
+                if (M1_Iter++ > 99)
+                    break;
             }
 
             return aiPers;
@@ -3337,7 +3340,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         }
         StringType.MidStmtStr(ref sDest, 64, 8, "        " + iPersChild.AsString().Right(8));
 
-            Kont_3 = "";
+        Kont_3 = "";
         Modul1.Person_ReadNames(iPersChild, Modul1.Person);
         Modul1.Person.SetFullSurname(Modul1.BuildFullSurName(Modul1.Person));
         if (sFamilyName.Trim() != Modul1.Person.FullSurName.Trim())

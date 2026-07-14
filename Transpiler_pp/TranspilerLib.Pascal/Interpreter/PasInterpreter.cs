@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using System.Text;
-using System.Threading.Tasks;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Pascal.Data; // hinzugefügt für PasReservedWords
@@ -49,7 +47,8 @@ public class PasInterpreter
 
     public bool Prepare(ICodeBlock codeBlock)
     {
-        if (codeBlock is null) return false;
+        if (codeBlock is null)
+            return false;
 
         var declaredVars = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var declaredFuncs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -59,7 +58,8 @@ public class PasInterpreter
 
         foreach (var name in externalCallCandidates)
         {
-            if (declaredFuncs.Contains(name)) continue;
+            if (declaredFuncs.Contains(name))
+                continue;
             if (!Externals.ContainsKey(name))
             {
                 var localName = name;
@@ -103,21 +103,25 @@ public class PasInterpreter
 
     private static void ExtractExternalCalls(ICodeBlock node, HashSet<string>? declaredFuncs, HashSet<string>? externalCallCandidates)
     {
-        if (externalCallCandidates is null) return;
+        if (externalCallCandidates is null)
+            return;
 
         var code = node.Code ?? string.Empty;
         code = StripStrings(code);
 
         // Einzelnes Wort direkt als Schlüsselwort / Funktionsname prüfen
-        if (ReservedWordSet.Contains(code)) return;
-        if (declaredFuncs != null && declaredFuncs.Contains(code)) return;
+        if (ReservedWordSet.Contains(code))
+            return;
+        if (declaredFuncs != null && declaredFuncs.Contains(code))
+            return;
 
         externalCallCandidates.Add(code);
     }
 
     private static string StripStrings(string s)
     {
-        if (string.IsNullOrEmpty(s)) return s ?? string.Empty;
+        if (string.IsNullOrEmpty(s))
+            return s ?? string.Empty;
         var sb = new StringBuilder(s.Length);
         var inStr = false;
 
@@ -141,14 +145,16 @@ public class PasInterpreter
                 }
                 continue;
             }
-            if (!inStr) sb.Append(c);
+            if (!inStr)
+                sb.Append(c);
         }
         return sb.ToString();
     }
 
     private static void ParseFunctionDecl(ICodeBlock node, HashSet<string>? declaredFuncs)
     {
-        if (declaredFuncs is null) return;
+        if (declaredFuncs is null)
+            return;
 
         if (!string.IsNullOrWhiteSpace(node.Name))
         {
@@ -168,7 +174,8 @@ public class PasInterpreter
 
     private void ParseVariableDecl(ICodeBlock node, HashSet<string>? declaredVars)
     {
-        if (declaredVars is null) return;
+        if (declaredVars is null)
+            return;
 
         if (!string.IsNullOrWhiteSpace(node.Name))
         {
@@ -179,7 +186,8 @@ public class PasInterpreter
         var code = node.Code ?? string.Empty;
         var beforeColon = code;
         var colonIdx = code.IndexOf(':');
-        if (colonIdx >= 0) beforeColon = code[..colonIdx];
+        if (colonIdx >= 0)
+            beforeColon = code[..colonIdx];
 
         foreach (var part in beforeColon.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             RegisterVariable(part, declaredVars);
@@ -187,8 +195,10 @@ public class PasInterpreter
 
     private void RegisterVariable(string? name, HashSet<string>? declaredVars)
     {
-        if (declaredVars is null) return;
-        if (string.IsNullOrWhiteSpace(name)) return;
+        if (declaredVars is null)
+            return;
+        if (string.IsNullOrWhiteSpace(name))
+            return;
         var clean = name.Trim();
         if (!declaredVars.Contains(clean))
             declaredVars.Add(clean);

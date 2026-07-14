@@ -1,6 +1,6 @@
-using System.Text;
 using Document.Base.Models;
 using Document.Base.Models.Interfaces;
+using System.Text;
 
 namespace Document.Pdf.Model;
 
@@ -14,13 +14,15 @@ public abstract class PdfContentBase : PdfNodeBase, IDocContent
         set
         {
             _text.Clear();
-            if (!string.IsNullOrEmpty(value)) _text.Append(value);
+            if (!string.IsNullOrEmpty(value))
+                _text.Append(value);
         }
     }
 
     public void AppendText(string text)
     {
-        if (!string.IsNullOrEmpty(text)) _text.Append(text);
+        if (!string.IsNullOrEmpty(text))
+            _text.Append(text);
     }
 
     public virtual IDocContent AddLineBreak()
@@ -66,11 +68,13 @@ public abstract class PdfContentBase : PdfNodeBase, IDocContent
 
     public virtual string GetTextContent(bool xRecursive = true)
     {
-        if (!xRecursive) return TextContent;
+        if (!xRecursive)
+            return TextContent;
         var sb = new StringBuilder();
         sb.Append(TextContent);
         foreach (var c in _children)
-            if (c is IDocContent ic) sb.Append(ic.GetTextContent(true));
+            if (c is IDocContent ic)
+                sb.Append(ic.GetTextContent(true));
         return sb.ToString();
     }
 

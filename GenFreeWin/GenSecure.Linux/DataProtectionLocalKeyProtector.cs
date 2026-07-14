@@ -1,9 +1,9 @@
-using System;
-using System.IO;
 using GenSecure.Contracts;
 using GenSecure.Core;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IO;
 
 namespace GenSecure.Linux;
 

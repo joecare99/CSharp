@@ -1,6 +1,5 @@
 ﻿using BaseLib.Helper;
 using GenFree.Data;
-using GenFree.Helper;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
@@ -28,7 +27,7 @@ public class CNB_Family : CUsesRecordSet<int>, INB_Family
         return xBreak ? null : NB_FamilyTable;
     }
 
-    protected override int GetID(IRecordset recordset) 
+    protected override int GetID(IRecordset recordset)
         => recordset.Fields[FamilyFields.FamNr].AsInt();
 
     public void Append(int famInArb, bool xAppenWitt = true)

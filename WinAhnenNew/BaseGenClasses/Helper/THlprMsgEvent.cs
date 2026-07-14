@@ -1,5 +1,3 @@
-using System;
-
 namespace BaseGenClasses.Helper;
 
 /// <summary>

@@ -2,13 +2,13 @@ using GenFree.ViewModels.Interfaces;
 using System;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class Mand : Form
 {
     private IMandViewModel _viewModel;
 
-    private void Text1_KeyPress(object sender, KeyPressEventArgs e) => _viewModel.Text1_KeyPress(sender,e);
+    private void Text1_KeyPress(object sender, KeyPressEventArgs e) => _viewModel.Text1_KeyPress(sender, e);
 
     private void Command1_Click(object sender, EventArgs e) => _viewModel.Command1_Click(sender, e);
 
@@ -18,13 +18,13 @@ public partial class Mand : Form
 
     private void _CmdNewMandant_Click(object sender, EventArgs e) => _viewModel.CmdNewMandant_Click(sender, e);
 
-    private void List1_DoubleClick(object sender, EventArgs e) 
+    private void List1_DoubleClick(object sender, EventArgs e)
         => _viewModel.List1_DoubleClick(sender, e);
 
     private void List1_Click(object sender, EventArgs e)
         => _viewModel.List1_Click(sender, e);
 
-    private void Laufwerk1_SelectedIndexChanged(object sender, EventArgs e) 
+    private void Laufwerk1_SelectedIndexChanged(object sender, EventArgs e)
         => _viewModel.Laufwerk1_SelectedIndexChanged(sender, e);
 
     public Mand(IMandViewModel viewModel)

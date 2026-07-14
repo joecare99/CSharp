@@ -1,10 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GenFree.Interfaces.DB;
-using NSubstitute;
-using GenFree.Interfaces;
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
 using BaseLib.Interfaces;
+using GenFree.Interfaces;
+using GenFree.Interfaces.DB;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 using System.Linq;
 
 namespace GenFree.Models.Tests;
@@ -380,7 +380,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         _ => throw new NotImplementedException(),
     };
 
-    protected override ITestData GetData(IRecordset rs, bool xNoInit = false) 
+    protected override ITestData GetData(IRecordset rs, bool xNoInit = false)
         => new CTestData(rs, xNoInit);
 
     private class CTestData : ITestData
@@ -390,7 +390,10 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
         public CTestData(IRecordset rs, bool xNoInit = false)
         {
             this.rs = rs;
-            if (!xNoInit) FillData(rs); else Description = string.Empty;
+            if (!xNoInit)
+                FillData(rs);
+            else
+                Description = string.Empty;
         }
 
         public string Description { get; set; }
@@ -444,7 +447,7 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     public void CreateNewTest()
     {
         // Arrange
-      //  testRS.AddNew().Returns(_ => { });
+        //  testRS.AddNew().Returns(_ => { });
         (testRS.Fields[TestIndexField.ID] as IHasValue).Value.Returns(0);
         (testRS.Fields[TestIndexField.Description] as IHasValue).Value.Returns(string.Empty);
         (testRS.Fields[TestIndexField.Data] as IHasValue).Value.Returns(0);
@@ -468,16 +471,16 @@ public class CUsesIndexedRSetTests : CUsesIndexedRSet<int, TestIndex, TestIndexF
     {
         // Arrange
         var ce = new CTestData(testRS) { ID = id, Description = description, Data = data };
-        testRS.NoMatch.Returns(id!=2);
+        testRS.NoMatch.Returns(id != 2);
 
         // Act
         Commit(ce);
 
         // Assert
-        testRS.Received(id==2?1:0).Edit();
-        testRS.Received(id==2?0:1).AddNew();
+        testRS.Received(id == 2 ? 1 : 0).Edit();
+        testRS.Received(id == 2 ? 0 : 1).AddNew();
         testRS.Received(1).Update();
-        Assert.AreEqual(2, ce.ID,"Id");
+        Assert.AreEqual(2, ce.ID, "Id");
         Assert.AreEqual(description, ce.Description);
         Assert.AreEqual(data, ce.Data);
     }

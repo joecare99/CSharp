@@ -1,8 +1,7 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Main;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -21,7 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
 {
@@ -29,7 +28,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
     private const int cDefaultErr = -0x7FF5FFEC;
     private const string sSexMustBeAssigned = "Geschlecht muß angegeben werden\rM = Mann; F = Frau; D = Divers; U = unbekannt";
 
-    private IModul1 Modul1=> _Modul1.Instance;
+    private IModul1 Modul1 => _Modul1.Instance;
     private IGenPersistence Persistence => Modul1.Persistence;
     private IFraPersImpQueryViewModel _fraPersImpQuerryViewModel;
     private IEventShowEditViewModel _birthEVM;
@@ -80,7 +79,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
     [ObservableProperty]
     public partial string Search3_Text { get; set; }
     [ObservableProperty]
-    public partial string Marriages_Text { get; set; } 
+    public partial string Marriages_Text { get; set; }
     [ObservableProperty]
     public partial string AncesterNr_Text { get; set; }
     [ObservableProperty]
@@ -100,7 +99,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
     [ObservableProperty]
     public partial string Family1_Text { get; set; }
     [ObservableProperty]
-    public partial string CreationDate_Text { get; set; } 
+    public partial string CreationDate_Text { get; set; }
     [ObservableProperty]
     public partial string Mandant_Text { get; set; }
     [ObservableProperty]
@@ -112,15 +111,15 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
     public string DuplLabel6_Text { get; private set; }
     public string FamPers_Text { get; private set; }
 
-    public IFraPersImpQueryViewModel FraPersImpQuerryViewModel 
+    public IFraPersImpQueryViewModel FraPersImpQuerryViewModel
         => _fraPersImpQuerryViewModel ??= IoC.GetRequiredService<IFraPersImpQueryViewModel>();
-    public IEventShowEditViewModel BirthEVM 
+    public IEventShowEditViewModel BirthEVM
         => _birthEVM ??= IoC.GetKeyedRequiredService<IEventShowEditViewModel>(EEventArt.eA_Birth);
     public IEventShowEditViewModel BaptismEVM
         => _baptismEVM ??= IoC.GetKeyedRequiredService<IEventShowEditViewModel>(EEventArt.eA_Baptism);
     public IEventShowEditViewModel DeathEVM
         => _deathEVM ??= IoC.GetKeyedRequiredService<IEventShowEditViewModel>(EEventArt.eA_Death);
-    public IEventShowEditViewModel BurialEVM 
+    public IEventShowEditViewModel BurialEVM
         => _burialEVM ??= IoC.GetKeyedRequiredService<IEventShowEditViewModel>(EEventArt.eA_Burial);
 
     public bool IsNotReadOnly { get; private set; }
@@ -265,7 +264,8 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
 
     partial void OnGivennames_TextChanged(string newValue)
     {
-        if (internalChange) return;
+        if (internalChange)
+            return;
         if (Sex_Text.Trim() == "")
         {
             Givennames_Text = "";
@@ -283,7 +283,8 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
 
     partial void OnSex_TextChanged(string value)
     {
-        if (internalChange) return;
+        if (internalChange)
+            return;
         Modul1.Trans = 1;
         switch (value.Trim())
         {
@@ -336,7 +337,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
         FraPersImpQuerryViewModel.onReenter = Reenter;
     }
 
-    private (EEventArt eArt,object obj) Command2_AnyClick(object s, object e)
+    private (EEventArt eArt, object obj) Command2_AnyClick(object s, object e)
     {
         throw new NotImplementedException();
     }
@@ -431,7 +432,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
     [RelayCommand]
     private void LoadFromFile()
     {
-        var r = Command2_AnyClick(null,null);
+        var r = Command2_AnyClick(null, null);
         var M1_Iter = 1;
         while (M1_Iter <= 900)
         {
@@ -790,7 +791,8 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
         foreach (var link in DataModul.Link.ReadAllPers(persInArb, ELinkKennz.lkMarrWitness))
         {
             Per1.Add(link.iFamNr);
-            if (num7++ > 99) break;
+            if (num7++ > 99)
+                break;
         }
 
         foreach (var link in DataModul.Link.ReadAllPers(persInArb, ELinkKennz.lkWitnOfEngage))
@@ -802,7 +804,8 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
         foreach (var link in DataModul.Link.ReadAllPers(persInArb, ELinkKennz.lkWitnOfMarr))
         {
             Per1.Add(link.iFamNr);
-            if (num7++ > 99) break;
+            if (num7++ > 99)
+                break;
         }
 
         Rahmen.Default.ShowRahmenDialog(Modul1.IText[EUserText.t302], EUserText.t302, 3, Per1);
@@ -926,7 +929,8 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
             var num7 = 1;
             foreach (var Link in DataModul.Link.ReadAllPers(Modul1.PersInArb, ELinkKennz.lk9))
             {
-                if (num7++ > 99) break;
+                if (num7++ > 99)
+                    break;
                 aiFam.Add(Link.iFamNr);
             }
             Modul1.Ubg = 2;
@@ -954,7 +958,8 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
             var num7 = 1;
             foreach (var Link in DataModul.Link.ReadAllFams(Modul1.PersInArb, ELinkKennz.lk9))
             {
-                if (num7++ > 99) break;
+                if (num7++ > 99)
+                    break;
                 aiPers.Add(Link.iPersNr);
             }
             Modul1.Ubg = 1;
@@ -1270,7 +1275,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
         int PersInArb = PersonNr;
         Modul1.eLKennz = Sex_Text == "F" ? ELinkKennz.lkMother : ELinkKennz.lkFather;
         var ubgT = Modul1.Link_Famsuch(PersInArb, Modul1.eLKennz);
-        if (ubgT == null)
+        if (ubgT != null)
         {
             if (ubgT.Count > 10)
             {
@@ -1524,7 +1529,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
             //=================
         }
         goto end_IL_0001_2;
-    //=================
+        //=================
     end_IL_0001_2: // <========== 3
         return;
     }
@@ -2369,7 +2374,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
 
         Adoption_Visible = DataModul.Link.ExistE(Modul1.PersInArb, ELinkKennz.lkAdoptedChild);
 
-        View.btnNoGodparents.SetCommandBtn( DataModul.Link.ExistFam(Modul1.PersInArb, new[] { ELinkKennz.lkGodparent })
+        View.btnNoGodparents.SetCommandBtn(DataModul.Link.ExistFam(Modul1.PersInArb, new[] { ELinkKennz.lkGodparent })
             || (Person.sBem[2].Length > 1), Modul1.IText[EUserText.tGodparents], Modul1.IText);
 
         foreach (var wtn in DataModul.Witness.ReadAllFams(PersonNr, 10))
@@ -2439,7 +2444,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
         DataModul.DT_DescendentTable.Index = "PerNr";
         DataModul.DT_DescendentTable.Seek("=", Modul1.PersInArb);
         NachfNr_Text = !DataModul.DT_DescendentTable.NoMatch
-            ? (string.Concat(Modul1.IText[EUserText.t239] + " ", DataModul.DT_DescendentTable.Fields["Gen"].AsString()) +  "-" +  DataModul.DT_DescendentTable.Fields["Nr"].Value)
+            ? (string.Concat(Modul1.IText[EUserText.t239] + " ", DataModul.DT_DescendentTable.Fields["Gen"].AsString()) + "-" + DataModul.DT_DescendentTable.Fields["Nr"].Value)
         : "";
 
         ubg = Modul1.Eltsuch(Modul1.PersInArb);
@@ -3314,16 +3319,18 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
         dB_PersonTable.Edit();
         switch (eArt, suchfeld[0])
         {
-            default: break;
+            default:
+                break;
             case (EEventArt.eA_Birth, ESearchSelection.e6):
             case (EEventArt.eA_Baptism, ESearchSelection.e7):
             case (EEventArt.eA_Death, ESearchSelection.e8):
             case (EEventArt.eA_Burial, ESearchSelection.e9):
-                dB_PersonTable.Fields[PersonFields.Such4].Value = sSrchVal; break;
+                dB_PersonTable.Fields[PersonFields.Such4].Value = sSrchVal;
+                break;
         }
         switch (eArt, suchfeld[1])
         {
-            case (EEventArt.eA_Birth,ESearchSelection.e6):
+            case (EEventArt.eA_Birth, ESearchSelection.e6):
             case (EEventArt.eA_Baptism, ESearchSelection.e7):
             case (EEventArt.eA_Death, ESearchSelection.e8):
             case (EEventArt.eA_Burial, ESearchSelection.e9):
@@ -3596,7 +3603,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
                         FileSystem.PrintLine(6, View.WindowState);
                         FileSystem.FileClose(6);
                         goto end_IL_0001_2;
-                    //=================
+                        //=================
                     IL_01fe:
                         num4 = num2 + 1;
                         while (true)

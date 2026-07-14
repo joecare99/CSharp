@@ -11,11 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using Gen_FreeWin;
+using GenFreeWin;
 using GenFree.Interfaces.UI;
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -28,7 +27,7 @@ public class ApplTextBindingAttribute(string cmdName) : Attribute
 
     public void Bind(INotifyPropertyChanged viewModel, Control field, IApplUserTexts strings)
     {
-        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType==typeof(EUserText) )
+        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType == typeof(EUserText))
         {
             field.Text = strings[pi.GetValue(viewModel)!];
             if (viewModel is INotifyPropertyChanged npc)

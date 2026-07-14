@@ -1,13 +1,7 @@
-﻿using GenFree.Data.DB;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute.Exceptions;
+﻿using GenFree.Helper;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GenFree.Helper;
 
 namespace GenFree.Data.DB.Tests;
 
@@ -86,7 +80,7 @@ public class CDatabaseTests
     public void ExecuteTest1()
     {
         CreateTestData();
-        var rslt= database.Execute("UPDATE TestTable SET Name = @Name WHERE ID = @ID", new Dictionary<string,object>() { { "@Name", "Updated Name" }, { "@ID", 1 } });
+        var rslt = database.Execute("UPDATE TestTable SET Name = @Name WHERE ID = @ID", new Dictionary<string, object>() { { "@Name", "Updated Name" }, { "@ID", 1 } });
         Assert.IsTrue(rslt == 1, "Update operation did not affect any rows.");
     }
 
@@ -120,7 +114,7 @@ public class CDatabaseTests
         Assert.IsTrue(database.TableExists("TestTable"), "TestTable does not exist in the database.");
 
         // Open a recordset and check its properties
-        var rs = database.OpenRecordset("TestTable","",null,null);
+        var rs = database.OpenRecordset("TestTable", "", null, null);
         Assert.IsNotNull(rs, "Recordset should not be null.");
         Assert.AreEqual(2, rs.RecordCount, "Recordset should contain 2 records.");
         rs.Close();

@@ -1,11 +1,9 @@
-﻿using System.Reflection;
-
-namespace TranspilerLib.Models;
+﻿namespace TranspilerLib.Models;
 
 /// <summary>
 /// Provides file scanning related types and callbacks used by the transpiler to process resources and warnings.
 /// </summary>
-public class CFileScanner 
+public class CFileScanner
 {
     /// <summary>
     /// Represents a callback that handles an individual resource file discovered by the scanner.
@@ -19,7 +17,7 @@ public class CFileScanner
     /// Describes a mapping between a file extension and a corresponding <see cref="TResourceHandler"/>.
     /// </summary>
     public struct TResourceHandlerRecord
-    { 
+    {
         string Ext;
         TResourceHandler Handler;
     }
@@ -30,8 +28,8 @@ public class CFileScanner
     public struct TWarnMsgNumberState
     {
         int Number;
-      //  TWarnMsgState State;
+        //  TWarnMsgState State;
     }
-    
+
 
 }

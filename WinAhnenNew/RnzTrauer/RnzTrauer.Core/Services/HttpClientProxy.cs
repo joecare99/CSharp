@@ -12,10 +12,10 @@ public sealed class HttpClientProxy : IHttpClientProxy
     private readonly HttpClient _xHttpClient = new();
 
     /// <inheritdoc />
-    public Task<HttpResponseMessage> GetAsync(string sRequestUri) 
+    public Task<HttpResponseMessage> GetAsync(string sRequestUri)
         => _xHttpClient.GetAsync(sRequestUri);
 
     /// <inheritdoc />
-    public void Dispose() 
+    public void Dispose()
         => _xHttpClient.Dispose();
 }

@@ -1,5 +1,5 @@
-using System.Windows;
 using GenSecure.Demo.ViewModels;
+using System.Windows;
 
 namespace GenSecure.Demo;
 

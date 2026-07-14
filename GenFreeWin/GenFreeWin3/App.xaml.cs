@@ -4,8 +4,6 @@ using GenFree.Interfaces.UI;
 using GenFree.ViewModels.Interfaces;
 using GenFreeWpf.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
-using System.Data;
 using System.Windows;
 
 namespace GenFreeWpf

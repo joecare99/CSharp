@@ -1,5 +1,4 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -13,7 +12,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 internal partial class Ahnenneu : Form
 {
@@ -207,7 +206,7 @@ internal partial class Ahnenneu : Form
         switch (eventArgs.Button)
         {
             case MouseButtons.Left:
-                Label1_Click(eventSender,eventArgs);
+                Label1_Click(eventSender, eventArgs);
                 break;
             case MouseButtons.Right:
 
@@ -252,7 +251,7 @@ internal partial class Ahnenneu : Form
                 {
                     string datu = $"{Event_GetFamilyYear(iFamNr).Year,4}";
 
-                    if (DataModul.Link.GetFamPerson(iFamNr, Modul1.eLKennz, out var link_iPerNr ))
+                    if (DataModul.Link.GetFamPerson(iFamNr, Modul1.eLKennz, out var link_iPerNr))
                     {
                         Modul1.Person_ReadNames(link_iPerNr, Modul1.Person);
 
@@ -305,8 +304,8 @@ internal partial class Ahnenneu : Form
                 Personen.Default.Sortlist.Items.Clear();
                 foreach (var iFamNr in Modul1.Ehesuch(Modul1.PersInArb, Persex))
                 {
-                    foreach(var itm in Modul1.Family_Kindsuch(iFamNr))
-                    Personen.Default.Sortlist.Items.Add(itm);
+                    foreach (var itm in Modul1.Family_Kindsuch(iFamNr))
+                        Personen.Default.Sortlist.Items.Add(itm);
                 }
                 if (Personen.Default.Sortlist.Items.Count > 0)
                 {
@@ -318,7 +317,7 @@ internal partial class Ahnenneu : Form
                         int i4 = M1_Iter;
                         int num6 = num11;
                         if (i4 <= num6)
-                        { 
+                        {
                             Modul1.PersInArb = (int)Math.Round(Strings.Mid(Personen.Default.Sortlist.Items.ItemString(M1_Iter), 11, 10).AsDouble());
                             Modul1.Person_ReadNames(Modul1.PersInArb, Modul1.Person);
                             Modul1.Kont[10] = Modul1.Ancesters_GetPersonData(Modul1.Person.ID, out int iAhn2, out Modul1_Kont20);
@@ -359,7 +358,7 @@ internal partial class Ahnenneu : Form
         Modul1.PersInArb = Label1[index].Tag.AsInt();
         if (Modul1.PersInArb != 0)
         {
-            MainProject.Forms.Namensuch.SetPerson(Modul1.PersInArb,1,9);
+            MainProject.Forms.Namensuch.SetPerson(Modul1.PersInArb, 1, 9);
         }
     }
 
@@ -548,7 +547,7 @@ internal partial class Ahnenneu : Form
                     int M1_Iter = default;
                     int num4;
                     bool flag;
-                    int Modul1_Nr1=0;
+                    int Modul1_Nr1 = 0;
                     int Modul1_Gen1 = 0;
                     switch (try0001_dispatch)
                     {
@@ -623,7 +622,7 @@ internal partial class Ahnenneu : Form
                                 _ = Interaction.MsgBox("Stop", title: "4", mb: MessageBoxButtons.OK);
                                 goto end_IL_0001_2;
                             }
-                            nr = Modul1_Nr1= 1;
+                            nr = Modul1_Nr1 = 1;
                             _z = nr - 1;
                             Modul1_Gen1 = 6;
                             Modul1_Gen1 = Modul1_Gen1 + (_gen - 1);
@@ -665,7 +664,7 @@ internal partial class Ahnenneu : Form
                                     _frauenkek1 = (short)(num6 + 1);
                                     if (Modul1.Family.Frau > 0)
                                     {
-                                        DataModul_WriteNBFrau1Data(Modul1.Family.Frau, Modul1.FamInArb,Modul1_Nr1, _gen, _frauenkek1, _frauenkek2);
+                                        DataModul_WriteNBFrau1Data(Modul1.Family.Frau, Modul1.FamInArb, Modul1_Nr1, _gen, _frauenkek1, _frauenkek2);
                                         Modul1_Nr1++;
                                     }
                                     Modul1.Family.Frau = 0;
@@ -681,7 +680,8 @@ internal partial class Ahnenneu : Form
                                     num3 = 0;
                                     _z++;
                                     flag = DataModul.NB_Frau.ReadData(_z, out var iPers, out var famNr, out _gen, out num5, out var _num6);
-                                    if (flag) (Modul1.PersInArb, Modul1.FamInArb) = (iPers, famNr);
+                                    if (flag)
+                                        (Modul1.PersInArb, Modul1.FamInArb) = (iPers, famNr);
                                     num6 = _num6;
                                 }
                             }

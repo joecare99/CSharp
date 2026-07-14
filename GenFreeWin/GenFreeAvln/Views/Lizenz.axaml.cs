@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using Gen_FreeWin;
+using GenFreeWin;
 using GenFree.Interfaces.UI;
 using GenFree.ViewModels.Interfaces;
 using System;

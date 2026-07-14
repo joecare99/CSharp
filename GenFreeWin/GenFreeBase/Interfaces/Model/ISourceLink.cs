@@ -10,7 +10,7 @@ namespace GenFree.Interfaces.Model
         IUsesID<(short, int, EEventArt, short)>,
         IHasRSIndex1<SourceLinkIndex, SourceLinkFields>
     {
-        bool Exists(int v, int famInArb, EEventArt eArt, short lfNR=0);
+        bool Exists(int v, int famInArb, EEventArt eArt, short lfNR = 0);
         /// <summary>
         /// Exists the entity.
         /// </summary>

@@ -1,9 +1,5 @@
-using GenFree.Views;
-using GenFree.Interfaces.UI;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
+using GenFreeWin;
 using System.Collections.Generic;
-using Gen_FreeWin;
 using System.Linq;
 
 namespace GenFree.Views.Tests;

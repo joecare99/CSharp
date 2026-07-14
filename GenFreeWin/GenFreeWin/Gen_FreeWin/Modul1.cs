@@ -1,7 +1,6 @@
 using BaseLib.Helper;
-using Gen_FreeWin;
-using Gen_FreeWin.Main;
-using Gen_FreeWin.Views;
+using GenFreeWin;
+using GenFreeWin.Views;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.Data;
@@ -600,20 +599,20 @@ public partial class _Modul1 : IModul1
         }
         else
         {
-                EnsurePictureDirectory();
-                    DataModul.DataOpen(Mandant);
-                    AfterMandantDatabaseOpened(true);
-                    // Check for religi field and handle schema migrations
-                    if (DBHelper.TableExists(DataModul.MandDB, nameof(dbTables.Ahnen))) 
-                        DataModul.MandDB.TryExecute($"DROP Table {dbTables.Ahnen} ");
-                    if (DBHelper.TableExists(DataModul.MandDB, nameof(dbTables.Leer))) 
-                        DataModul.MandDB.TryExecute($"DROP Table {dbTables.Leer}");
-                    if (!DBHelper.DbFieldExists(DataModul.MandDB, dbTables.Personen, "religi"))
-                    {
-                        Reli = true;
-                    }
-                }
+            EnsurePictureDirectory();
+            DataModul.DataOpen(Mandant);
+            AfterMandantDatabaseOpened(true);
+            // Check for religi field and handle schema migrations
+            if (DBHelper.TableExists(DataModul.MandDB, nameof(dbTables.Ahnen)))
+                DataModul.MandDB.TryExecute($"DROP Table {dbTables.Ahnen} ");
+            if (DBHelper.TableExists(DataModul.MandDB, nameof(dbTables.Leer)))
+                DataModul.MandDB.TryExecute($"DROP Table {dbTables.Leer}");
+            if (!DBHelper.DbFieldExists(DataModul.MandDB, dbTables.Personen, "religi"))
+            {
+                Reli = true;
             }
+        }
+    }
 
     private static void CloseAllDatabases()
     {
@@ -971,7 +970,8 @@ public partial class _Modul1 : IModul1
         }
         else
         {
-            if (!Directory.Exists(Verz + "Bilder")) FileSystem.MkDir(Verz + "Bilder");
+            if (!Directory.Exists(Verz + "Bilder"))
+                FileSystem.MkDir(Verz + "Bilder");
             DataModul.DataOpen(Mandant);
             /*
                                         DataModul.DOSB.Execute("Create Table "+nameof(dbTables.OrtSuch)+" (Name Text(100));");
@@ -1038,7 +1038,8 @@ public partial class _Modul1 : IModul1
                                         DataModul.DT_AncesterTable.Index = "PerNr";
                                         */
             num = 200;
-            if (DBHelper.TableExists(DataModul.MandDB, nameof(dbTables.Ahnen))) DataModul.MandDB.TryExecute($"DROP Table {dbTables.Ahnen} ");
+            if (DBHelper.TableExists(DataModul.MandDB, nameof(dbTables.Ahnen)))
+                DataModul.MandDB.TryExecute($"DROP Table {dbTables.Ahnen} ");
             ProjectData.ClearProjectError();
             num3 = 8;
             /*
@@ -1046,7 +1047,8 @@ public partial class _Modul1 : IModul1
                          DataModul.MandDB.Execute("Alter table "+nameof(dbTables.Leer1)+"  add Column Modul1.Art Text(1);");
                          DataModul.MandDB.Execute("create Index Leer on "+nameof(dbTables.Leer1)+" (Modul1.Art)");
               */
-            if (DBHelper.TableExists(DataModul.MandDB, nameof(dbTables.Leer))) DataModul.MandDB.TryExecute($"DROP Table {dbTables.Leer}");
+            if (DBHelper.TableExists(DataModul.MandDB, nameof(dbTables.Leer)))
+                DataModul.MandDB.TryExecute($"DROP Table {dbTables.Leer}");
             if (!DBHelper.DbFieldExists(DataModul.MandDB, dbTables.Personen, "religi"))
             {
                 ProjectData.ClearProjectError();
@@ -2634,11 +2636,16 @@ public partial class _Modul1 : IModul1
     public string Event_PreDisplay(bool xCitation = false, bool xWitness = false, bool xAnnotation = false, bool xBC = false, bool xReg = false)
     {
         string text = "";
-        if (xCitation) text = "§ ";
-        if (xWitness) text += "Z ";
-        if (xAnnotation) text += "B ";
-        if (xBC) text += "< ";
-        if (xReg) text += "U ";
+        if (xCitation)
+            text = "§ ";
+        if (xWitness)
+            text += "Z ";
+        if (xAnnotation)
+            text += "B ";
+        if (xBC)
+            text += "< ";
+        if (xReg)
+            text += "U ";
         return text;
     }
 
@@ -2766,7 +2773,7 @@ public partial class _Modul1 : IModul1
                 }
                 Job = Kont1[9] + Kont1[1] + Kont1[3] + Kont1[14] + Kont1[7] + Kont1[5] + Kont1[8].Replace("  ", " ");
                 if ((Event.sBem[1].TrimEnd() != "")
-                    | (Event.sBem[2].TrimEnd() != ""))
+                    || (Event.sBem[2].TrimEnd() != ""))
                     if (Job.Trim().Length < 2)
                     {
                         {
@@ -2863,7 +2870,7 @@ public partial class _Modul1 : IModul1
         if (sLine.Trim().Length < 2)
         {
             if ((cEvent.sBem[1].TrimEnd() != "")
-                | (cEvent.sBem[2].TrimEnd() != ""))
+                || (cEvent.sBem[2].TrimEnd() != ""))
             {
                 sLine = "Bemerkung " + sLine;
             }
@@ -2892,7 +2899,8 @@ public partial class _Modul1 : IModul1
                 if (cEvt.dDatumV != default && FamInArb != Familie.Default.iFamNr)
                 {
                     result = cEvt.dDatumV.Year;
-                    if (eArt >= EEventArt.eA_MarrReligious) break;
+                    if (eArt >= EEventArt.eA_MarrReligious)
+                        break;
                 }
             }
             eArt++;
@@ -3282,7 +3290,8 @@ public partial class _Modul1 : IModul1
             }
         }
         goto end_IL_0001_2;
-    end_IL_0001_2: return;
+    end_IL_0001_2:
+        return;
     }
 
 
@@ -3941,7 +3950,7 @@ public partial class _Modul1 : IModul1
                     Kont[(int)_Iter2 - 90] = Event_PreDisplay(xCitation: DataModul.SourceLink.Exists(3, _Modul1.Instance.PersInArb, _Iter2, LfNR)
                         || !string.IsNullOrWhiteSpace(cEvt.sBem[3]));
                     if ((cEvt.sBem[1].TrimEnd() != "")
-                        | (cEvt.sBem[2].TrimEnd() != ""))
+                        || (cEvt.sBem[2].TrimEnd() != ""))
                     {
                         Kont[(int)_Iter2 - 85] = cEvt.sBem[1].TrimEnd();
                     }
@@ -4136,7 +4145,7 @@ public partial class _Modul1 : IModul1
         Kont2[2] = cPlace.sOrtsteil;
         string sName = Kont2[1];
         globOrt2 += Kont2[1];
-        if ((sLongitude.AsInt() > 0.0) | (sLatiude.AsInt() != 0.0))
+        if ((sLongitude.AsInt() > 0.0) || (sLatiude.AsInt() != 0.0))
         {
             if (Kont2[2].Trim() != "")
             {
@@ -4263,7 +4272,8 @@ public partial class _Modul1 : IModul1
     // UI-orientierte Methode: Zeigt das Bild in einer PictureBox an
     public void ShowPictureInUI(PictureData picData, PictureBox pictureBox, int pbw, int pbh)
     {
-        if (picData == null || picData.Bitmap == null) return;
+        if (picData == null || picData.Bitmap == null)
+            return;
         float ratio = (float)picData.Bitmap.Width / picData.Bitmap.Height;
         if (ratio > 1)
             pictureBox.Image = PicResizeByHeigth(picData.Bitmap, pbw);

@@ -1,11 +1,7 @@
+using BaseLib.Helper;
 using Microsoft.Extensions.Configuration;
 using RnzTrauer.Core;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Reflection;
-using System.Security;
-using BaseLib.Helper;
 
 namespace RnzTrauer.Console.Configuration;
 
@@ -46,9 +42,9 @@ public sealed class RnzConsoleConfigurationLoader
         ArgumentNullException.ThrowIfNull(xSecrets);
 
         xConfig.User = GetOverlayValue(xSecrets, nameof(RnzConfig.User), xConfig.User);
-        xConfig.Password = GetOverlayValue(xSecrets, nameof(RnzConfig.Password),"").ToSecureString();
+        xConfig.Password = GetOverlayValue(xSecrets, nameof(RnzConfig.Password), "").ToSecureString();
         xConfig.DBuser = GetOverlayValue(xSecrets, nameof(RnzConfig.DBuser), xConfig.DBuser);
-        xConfig.DBpass = GetOverlayValue(xSecrets, nameof(RnzConfig.DBpass),"").ToSecureString();
+        xConfig.DBpass = GetOverlayValue(xSecrets, nameof(RnzConfig.DBpass), "").ToSecureString();
         xConfig.DBhost = GetOverlayValue(xSecrets, nameof(RnzConfig.DBhost), xConfig.DBhost);
         xConfig.DB = GetOverlayValue(xSecrets, nameof(RnzConfig.DB), xConfig.DB);
     }

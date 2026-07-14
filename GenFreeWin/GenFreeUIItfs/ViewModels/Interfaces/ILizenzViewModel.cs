@@ -4,12 +4,12 @@ using System.ComponentModel;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface ILizenzViewModel: INotifyPropertyChanged
+public interface ILizenzViewModel : INotifyPropertyChanged
 {
     string LicText1 { get; set; }
     string LicText2 { get; set; }
     string LicText3 { get; set; }
-     
+
     bool DisplayHintVisible { get; }
 
     IRelayCommand ReqHintCommand { get; }

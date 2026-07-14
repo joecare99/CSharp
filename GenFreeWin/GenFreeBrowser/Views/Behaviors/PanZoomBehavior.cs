@@ -1,8 +1,7 @@
-using System;
+using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Microsoft.Xaml.Behaviors;
 
 namespace GenFreeBrowser.Views.Behaviors
 {
@@ -97,7 +96,8 @@ namespace GenFreeBrowser.Views.Behaviors
 
         private void EnsureTransforms()
         {
-            if (AssociatedObject == null) return;
+            if (AssociatedObject == null)
+                return;
 
             if (AssociatedObject.RenderTransform is not TransformGroup group)
             {
@@ -115,22 +115,28 @@ namespace GenFreeBrowser.Views.Behaviors
                 _translate = null;
                 foreach (var t in group.Children)
                 {
-                    if (t is ScaleTransform s) _scale ??= s;
-                    if (t is TranslateTransform tr) _translate ??= tr;
+                    if (t is ScaleTransform s)
+                        _scale ??= s;
+                    if (t is TranslateTransform tr)
+                        _translate ??= tr;
                 }
                 _scale ??= new ScaleTransform(1.0, 1.0);
                 _translate ??= new TranslateTransform(0, 0);
-                if (!group.Children.Contains(_scale)) group.Children.Insert(0, _scale);
-                if (!group.Children.Contains(_translate)) group.Children.Add(_translate);
+                if (!group.Children.Contains(_scale))
+                    group.Children.Insert(0, _scale);
+                if (!group.Children.Contains(_translate))
+                    group.Children.Add(_translate);
             }
         }
 
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (AssociatedObject == null || _scale == null || _translate == null) return;
+            if (AssociatedObject == null || _scale == null || _translate == null)
+                return;
 
             bool zooming = !CtrlWheelToZoom || (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
-            if (!zooming) return; // Let ScrollViewer handle scrolling
+            if (!zooming)
+                return; // Let ScrollViewer handle scrolling
 
             e.Handled = true;
             AssociatedObject.Focus();
@@ -139,7 +145,8 @@ namespace GenFreeBrowser.Views.Behaviors
             var oldScale = _scale.ScaleX;
             var delta = e.Delta > 0 ? ZoomStep : -ZoomStep;
             var newScale = Math.Clamp(oldScale + delta, MinScale, MaxScale);
-            if (Math.Abs(newScale - oldScale) < 0.0001) return;
+            if (Math.Abs(newScale - oldScale) < 0.0001)
+                return;
 
             // Zoom around mouse position
             var scaleFactor = newScale / oldScale;
@@ -153,7 +160,8 @@ namespace GenFreeBrowser.Views.Behaviors
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (AssociatedObject == null || _translate == null) return;
+            if (AssociatedObject == null || _translate == null)
+                return;
 
             bool clickOnBackground = ReferenceEquals(e.OriginalSource, AssociatedObject);
 
@@ -179,7 +187,8 @@ namespace GenFreeBrowser.Views.Behaviors
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            if (_panStart is null || AssociatedObject == null || _translate == null) return;
+            if (_panStart is null || AssociatedObject == null || _translate == null)
+                return;
             var current = e.GetPosition(AssociatedObject);
             var dx = current.X - _panStart.Value.X;
             var dy = current.Y - _panStart.Value.Y;
@@ -212,7 +221,8 @@ namespace GenFreeBrowser.Views.Behaviors
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (_scale == null || _translate == null) return;
+            if (_scale == null || _translate == null)
+                return;
             const double panStep = 30;
 
             if (e.Key == Key.D0 && Keyboard.Modifiers == ModifierKeys.Control)
@@ -258,10 +268,12 @@ namespace GenFreeBrowser.Views.Behaviors
 
         private void ZoomAtCenter(double delta)
         {
-            if (AssociatedObject == null || _scale == null || _translate == null) return;
+            if (AssociatedObject == null || _scale == null || _translate == null)
+                return;
             var oldScale = _scale.ScaleX;
             var newScale = Math.Clamp(oldScale + delta, MinScale, MaxScale);
-            if (Math.Abs(newScale - oldScale) < 0.0001) return;
+            if (Math.Abs(newScale - oldScale) < 0.0001)
+                return;
 
             var center = new Point(AssociatedObject.ActualWidth / 2, AssociatedObject.ActualHeight / 2);
             var scaleFactor = newScale / oldScale;
@@ -273,7 +285,8 @@ namespace GenFreeBrowser.Views.Behaviors
 
         private void ResetTransform()
         {
-            if (_scale == null || _translate == null) return;
+            if (_scale == null || _translate == null)
+                return;
             _scale.ScaleX = 1.0;
             _scale.ScaleY = 1.0;
             _translate.X = 0;

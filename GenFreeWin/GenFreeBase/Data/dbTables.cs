@@ -17,8 +17,8 @@ public enum dbTables
     INamen, IndNam, Leer, Leer1,
     Repo, // Repository
     RepoTab,
-    Tab, 
-    Tab1, 
+    Tab,
+    Tab1,
     Tab2,
     OrtSuch,//(DOSB) Ortsuche
     Nachk, //(Temp) Nachkommen

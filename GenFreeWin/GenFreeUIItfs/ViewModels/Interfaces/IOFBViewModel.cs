@@ -1,14 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using GenFree.Helper;
-using MVVM.ViewModel;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
-public interface IOFBViewModel: INotifyPropertyChanged
+public interface IOFBViewModel : INotifyPropertyChanged
 {
     IContainerControl View { get; set; }
     IRelayCommand List1_DblClickCommand { get; }
@@ -31,12 +30,12 @@ public interface IOFBViewModel: INotifyPropertyChanged
     ObservableCollection<string> List50_Items { get; set; }
     ObservableCollection<string> List51_Items { get; set; }
     ObservableCollection<IListItem<int>> List52_Items { get; set; }
-    
+
     string Text1_Text { get; set; }
     string Text2_0_Text { get; set; }
     string Text2_1_Text { get; set; }
     string Text2_2_Text { get; set; }
-    
+
     bool Check1_Checked { get; set; }
     bool List1_Visible { get; set; }
     bool List2_Visible { get; set; }

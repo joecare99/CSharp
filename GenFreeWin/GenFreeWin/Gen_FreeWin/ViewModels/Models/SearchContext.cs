@@ -1,4 +1,4 @@
-namespace Gen_FreeWin.ViewModels.Models
+namespace GenFreeWin.ViewModels.Models
 {
     /// <summary>
     /// Encapsulates search context state and parameters used during search operations in Listfuell().

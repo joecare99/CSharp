@@ -1,9 +1,9 @@
-using System.Text;
 using Document.Base.Models.Interfaces;
 using Document.Base.Registration;
 using Document.Xaml.IO;
 using Document.Xaml.Model;
 using Document.Xaml.Serialization;
+using System.Text;
 
 namespace Document.Xaml;
 
@@ -33,7 +33,7 @@ public sealed class XamlDocument : IUserDocument
         return EnsureRoot().AddParagraph(cStylename);
     }
 
-    public IDocHeadline AddHeadline(int nLevel, string? Id= null)
+    public IDocHeadline AddHeadline(int nLevel, string? Id = null)
     {
         _isModified = true;
         return EnsureRoot().AddHeadline(nLevel, Id);
@@ -87,7 +87,8 @@ public sealed class XamlDocument : IUserDocument
 
     private XamlSection EnsureRoot()
     {
-        if (Root is XamlSection sec) return sec;
+        if (Root is XamlSection sec)
+            return sec;
         sec = new XamlSection();
         Root = sec;
         _isModified = true;

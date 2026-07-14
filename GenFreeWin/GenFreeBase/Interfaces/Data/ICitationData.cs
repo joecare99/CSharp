@@ -2,7 +2,7 @@
 
 namespace GenFree.Interfaces.Data;
 
-public interface ICitationData: IHasIRecordset , IHasID<(short , int , EEventArt , short )>, IHasPropEnum<ESourceLinkProp>
+public interface ICitationData : IHasIRecordset, IHasID<(short, int, EEventArt, short)>, IHasPropEnum<ESourceLinkProp>
 {
     int iQuNr { get; set; } // Source ID
     short iLfdNr { get; set; } // Link number, used for multiple links to the same source

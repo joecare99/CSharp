@@ -12,10 +12,10 @@
 // <summary>Service contract for duplicate person/family merging</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
+using GenFreeWin.Models;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services.Interfaces
+namespace GenFreeWin.Services.Interfaces
 {
     /// <summary>
     /// Service for orchestrating person or family duplicate merge/resolution operations.

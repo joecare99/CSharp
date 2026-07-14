@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using FBParser;
+using System.Collections.Generic;
 
 namespace FBParserTests;
 

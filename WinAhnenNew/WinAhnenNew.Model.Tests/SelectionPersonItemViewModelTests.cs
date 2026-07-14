@@ -1,7 +1,6 @@
-using System;
 using BaseGenClasses.Model;
 using GenInterfaces.Data;
-using GenInterfaces.Interfaces.Genealogic;
+using System;
 using WinAhnenNew.ViewModels;
 
 namespace WinAhnenNew.Model.Tests

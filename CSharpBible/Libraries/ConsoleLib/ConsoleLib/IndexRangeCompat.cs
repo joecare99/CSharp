@@ -9,7 +9,8 @@ public readonly struct Index
     private readonly int _value; // sign bit = from end
     public Index(int value, bool fromEnd = false)
     {
-        if (value < 0) throw new ArgumentOutOfRangeException(nameof(value));
+        if (value < 0)
+            throw new ArgumentOutOfRangeException(nameof(value));
         _value = fromEnd ? value | int.MinValue : value;
     }
     private Index(int value) => _value = value;

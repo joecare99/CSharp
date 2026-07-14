@@ -1,7 +1,8 @@
 ﻿using GenFree.Data;
 
 namespace GenFree.Interfaces.Data;
-public interface ILinkData: IHasID<(int iFamily, int iPerson, ELinkKennz eKennz)>, IHasPropEnum<ELinkProp>, IHasIRecordset
+
+public interface ILinkData : IHasID<(int iFamily, int iPerson, ELinkKennz eKennz)>, IHasPropEnum<ELinkProp>, IHasIRecordset
 {
     public enum LinkFields
     {

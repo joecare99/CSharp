@@ -1,12 +1,11 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services;
+using GenFreeWin.Models;
+using GenFreeWin.Services;
+using System;
+using System.Collections.ObjectModel;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 /// <summary>
 /// ViewModel für die Fehlerli-Dialog.

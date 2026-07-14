@@ -25,7 +25,7 @@ namespace MVVM.ViewModel;
 /// <seealso cref="ObservableObject" />
 public class NotificationObjectCT : ObservableObject
 {
-		
+
     /// <summary>
     /// Helper for setting properties
     /// </summary>
@@ -36,7 +36,7 @@ public class NotificationObjectCT : ObservableObject
     /// <param name="propertyName">Name of the property.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
     protected bool ExecPropSetter<T>(Action<T> setter, T data, T value, Action<T, T>? action, [CallerMemberName] string propertyName = "")
-        => ExecPropSetter(setter,data, value, null, null, action, propertyName);
+        => ExecPropSetter(setter, data, value, null, null, action, propertyName);
 
     /// <summary>
     /// Helper for setting properties
@@ -48,10 +48,12 @@ public class NotificationObjectCT : ObservableObject
     /// <param name="action">The action.</param>
     /// <param name="propertyName">Name of the property.</param>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-		protected bool ExecPropSetter<T>(Action<T> setter,T data, T value, string[]? propertyNames = null, Predicate<T>? validate = null, Action<T, T>? action = null, [CallerMemberName] string propertyName = "")
+    protected bool ExecPropSetter<T>(Action<T> setter, T data, T value, string[]? propertyNames = null, Predicate<T>? validate = null, Action<T, T>? action = null, [CallerMemberName] string propertyName = "")
     {
-        if (EqualityComparer<T>.Default.Equals(data, value)) return false;
-        if (validate?.Invoke(value) == false) return false;
+        if (EqualityComparer<T>.Default.Equals(data, value))
+            return false;
+        if (validate?.Invoke(value) == false)
+            return false;
         T old = data;
         OnPropertyChanging(propertyName);
         foreach (var pn in propertyNames ?? Array.Empty<string>())

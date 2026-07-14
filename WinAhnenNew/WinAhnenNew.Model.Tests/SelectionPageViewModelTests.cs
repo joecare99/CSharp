@@ -1,7 +1,6 @@
-using CommunityToolkit.Mvvm.Messaging;
 using BaseGenClasses.Model;
+using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
-using GenInterfaces.Interfaces.Genealogic;
 using NSubstitute;
 using WinAhnenNew.Messages;
 using WinAhnenNew.Services;

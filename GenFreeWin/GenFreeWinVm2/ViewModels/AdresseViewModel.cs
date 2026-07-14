@@ -29,11 +29,13 @@ public partial class AdresseViewModel : BaseViewModelCT, IAdresseViewModel
     public event EventHandler OnClose;
 
     [RelayCommand]
-    private void Save() { 
+    private void Save()
+    {
         //Todo save data
         OnClose?.Invoke(this, EventArgs.Empty);
     }
-    [RelayCommand] 
-    private void FormLoad() { 
+    [RelayCommand]
+    private void FormLoad()
+    {
     }
 }

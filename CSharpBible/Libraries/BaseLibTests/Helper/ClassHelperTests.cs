@@ -387,7 +387,7 @@ public class ClassHelperTests
         Assert.AreNotEqual(oVal, GetValue(Prop));
         this[Prop] = oVal;
         Assert.AreEqual(oVal, this[Prop]);
-        var Prop2 = Prop+"1";
+        var Prop2 = Prop + "1";
         SetVal(Prop2, oVal);
         Assert.AreEqual(oVal, GetValue(Prop2));
         Assert.AreNotEqual(oVal2, GetValue(Prop2));
@@ -401,12 +401,12 @@ public class ClassHelperTests
     }
 
     [TestMethod]
-    [DataRow(nameof(boolProp),true)]
-    [DataRow(null,false)]
-    [DataRow("NoProp",false)]
-    public void IsPropertyTest(string Prop,bool xExp)
+    [DataRow(nameof(boolProp), true)]
+    [DataRow(null, false)]
+    [DataRow("NoProp", false)]
+    public void IsPropertyTest(string Prop, bool xExp)
     {
-        Assert.AreEqual(xExp,this.IsProperty(Prop));
+        Assert.AreEqual(xExp, this.IsProperty(Prop));
     }
 
     /// <summary>
@@ -439,7 +439,7 @@ public class ClassHelperTests
     public void GetFieldTest(string Prop, object oVal, object oVal2)
     {
         SetVal(Prop, oVal);
-        Assert.AreEqual(oVal, this.GetField(Prop+"1"));
+        Assert.AreEqual(oVal, this.GetField(Prop + "1"));
         Assert.AreNotEqual(oVal2, this.GetField(Prop + "1"));
         SetVal(Prop, oVal);
         Assert.AreEqual(oVal, this.GetField(Prop + "1"));
@@ -497,7 +497,7 @@ public class ClassHelperTests
         this.SetProp(nameof(stringProp), (string)null!);
         Assert.IsNull(stringProp);
         this.SetProp(nameof(objectProp), "Hallo");
-        TestHelper.AssertAreEqual(new object(), objectProp,new string[] { });
+        TestHelper.AssertAreEqual(new object(), objectProp, new string[] { });
     }
 
     /// <summary>
@@ -507,7 +507,7 @@ public class ClassHelperTests
     public void GetPropTest2()
     {
 #if NET5_0_OR_GREATER
-        Assert.AreEqual(objectProp, this.GetProp<object,object>(nameof(objectProp), null!));
+        Assert.AreEqual(objectProp, this.GetProp<object, object>(nameof(objectProp), null!));
 #else
         Assert.ThrowsExactly<ArgumentNullException>(() => this.GetProp<object, object>(nameof(objectProp), null!));
 #endif

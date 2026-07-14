@@ -9,14 +9,11 @@
 // <summary>Handler for search execution commands (extracted from NamenSuchViewModel)</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.ViewModels.Models;
-using Gen_FreeWin.Services;
+using GenFreeWin.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.ViewModels.Commands
+namespace GenFreeWin.ViewModels.Commands
 {
     /// <summary>
     /// Encapsulates search command logic extracted from NamenSuchViewModel.

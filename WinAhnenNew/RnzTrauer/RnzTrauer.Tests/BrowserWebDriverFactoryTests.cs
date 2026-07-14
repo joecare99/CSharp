@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using OpenQA.Selenium;
 using RnzTrauer.Core;

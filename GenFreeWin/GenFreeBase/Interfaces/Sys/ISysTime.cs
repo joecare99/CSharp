@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GenFree.Interfaces.Sys
+﻿namespace GenFree.Interfaces.Sys
 {
     public interface ISysTime : BaseLib.Models.Interfaces.ISysTime
     {

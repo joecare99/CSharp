@@ -1,12 +1,9 @@
+using GenFree.Interfaces.DB;
+using NSubstitute;
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.OleDb;
 using System.IO;
-using GenFree.Data.DB;
-using GenFree.Interfaces.DB;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
 
 namespace GenFree.Data.DB.Tests;
 
@@ -69,7 +66,7 @@ public class DBEngineTests
 
         // Act & Assert
         _dbEngine.CompactDatabase(source, destination);
-        
+
         // Assert
         Assert.IsTrue(File.Exists(destination), "Destination file should exist.");
     }

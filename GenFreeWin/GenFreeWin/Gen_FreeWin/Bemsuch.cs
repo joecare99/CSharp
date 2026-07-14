@@ -1,6 +1,5 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -18,7 +17,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 internal class Bemsuch : Form
 {
@@ -699,7 +698,7 @@ internal class Bemsuch : Form
             IL_00e0:
                 num = 18;
                 Command1[0].Enabled = false;
-                if ((Text1.Text == "") | (Text1.Text == " "))
+                if ((Text1.Text == "") || (Text1.Text == " "))
                 {
                     goto end_IL_0001_2;
                 }
@@ -720,7 +719,7 @@ internal class Bemsuch : Form
                 List1.Items.Clear();
                 ProjectData.ClearProjectError();
                 num3 = 4;
-                if ((Check1[0].Checked) | (Check1[1].Checked) | (Check1[2].Checked))
+                if ((Check1[0].Checked) || (Check1[1].Checked) || (Check1[2].Checked))
                 {
                     ProgressBar1.Minimum = 0;
                     ProgressBar1.Maximum = 0;
@@ -821,7 +820,7 @@ internal class Bemsuch : Form
                     destination = Modul1.TempPath + "\\NumTemp.mdb";
                     source = Modul1.InitDir + "NUMTEMP.mdb";
                     DataModul.ReplaceNBDatafile(destination, source, () => Command1[1].Enabled = false, true);
-                    if ((Check1[6].Checked) | (Check1[7].Checked))
+                    if ((Check1[6].Checked) || (Check1[7].Checked))
                     {
                         DataModul.DB_FamilyTable.MoveFirst();
                         ProgressBar1.Minimum = 0;
@@ -858,19 +857,20 @@ internal class Bemsuch : Form
                     ProgressBar1.PerformStep();
                     _Find = 0f;
                     Modul1.FamInArb = DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt();
-                    if (Check1[6].Checked 
+                    if (Check1[6].Checked
                         && family_sBem1.ToUpper().Contains(Text1.Text.ToUpper()))
                     {
                         _Find = 1f;
                     }
-                    else if (Check1[7].Checked 
-                        && Family_sBem3.Trim() != "" 
+                    else if (Check1[7].Checked
+                        && Family_sBem3.Trim() != ""
                         && Family_sBem3.ToUpper().Contains(Text1.Text.ToUpper()))
                     {
                         _Find = 1f;
                     }
-                    else goto IL_15e3;
-                        goto IL_14d5;
+                    else
+                        goto IL_15e3;
+                    goto IL_14d5;
                 }
                 goto IL_1644;
             IL_1644: // <========== 3
@@ -894,7 +894,7 @@ internal class Bemsuch : Form
                     if (cEvt.eArt >= EEventArt.eA_500)
                     {
                         Modul1.FamInArb = cEvt.iPerFamNr;
-                        if (Check1[9].Checked 
+                        if (Check1[9].Checked
                             && Strings.InStr(cEvt.sBem[1].AsString().ToUpper(), Text1.Text.ToUpper()) != 0)
                         {
                             _Find = 1f;
@@ -916,7 +916,7 @@ internal class Bemsuch : Form
                             _Find = 1f;
                         }
                         else
-                        { 
+                        {
                             Label4.Text = "Suche in den Datumsfeldern der Familien";
                             continue;
                         }
@@ -1139,7 +1139,7 @@ internal class Bemsuch : Form
                 Command1[0].Enabled = true;
                 DataModul.NB.Close();
                 goto end_IL_0001_2;
-            //===============================================================
+                //===============================================================
             IL_2e64:
                 num = 487;
                 RichTextBox1.Visible = true;

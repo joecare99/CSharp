@@ -114,7 +114,7 @@
         public const string cGed_TRLR = "TRLR";
         public const string cGed_TYPE = "TYPE";
         public const string cGed_VALU = "VALU";
-        public const string cGed_VERS = "VERS";        
+        public const string cGed_VERS = "VERS";
         public const string cGed_RELI = "RELI";
         public const string cGed__CRE = "_CRE";
         public const string cGed__INT = "_INT";

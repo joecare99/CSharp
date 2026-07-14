@@ -1,5 +1,4 @@
 ﻿using BaseLib.Helper;
-using GenFree.Helper;
 using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Models.Data;
@@ -12,9 +11,9 @@ namespace GenFree.Data
     {
         private string? _sText;
         private static Func<int, string> _getText = DataModul.TextLese1;
-     //   private static Func<IRecordset> _getTable;
+        //   private static Func<IRecordset> _getTable;
 
-        public override (int, string, int) ID => (iPerNr,sKennz,iTextNr);
+        public override (int, string, int) ID => (iPerNr, sKennz, iTextNr);
 
         public int iPerNr { get; private set; }
 
@@ -33,7 +32,7 @@ namespace GenFree.Data
         //{
         //    _getTable = value;
         //}
-        public COFBData(IRecordset db_Table, bool xNoInit=false) : base(db_Table,xNoInit)
+        public COFBData(IRecordset db_Table, bool xNoInit = false) : base(db_Table, xNoInit)
         {
         }
 
@@ -75,7 +74,7 @@ namespace GenFree.Data
 
         public override void SetDBValues(IRecordset dB_Table, Enum[]? asProps)
         {
-            asProps ??= _changedPropsList.Select(e=>(Enum)e).ToArray();
+            asProps ??= _changedPropsList.Select(e => (Enum)e).ToArray();
             {
                 foreach (var sProp in asProps)
                 {
@@ -99,11 +98,11 @@ namespace GenFree.Data
 
         public override void SetPropValue(EOFBProps prop, object value)
         {
-           if(EqualsProp(prop, value))
+            if (EqualsProp(prop, value))
             {
                 return;
             }
-            AddChangedProp(prop);   
+            AddChangedProp(prop);
             switch (prop)
             {
                 case EOFBProps.iPerNr:
@@ -122,7 +121,7 @@ namespace GenFree.Data
         protected override IRecordset? Seek((int, string, int) iD)
         {
             _db_Table.Index = $"{OFBIndex.Indn}";
-            _db_Table.Seek("=", iD.Item1,iD.Item2,iD.Item3);
+            _db_Table.Seek("=", iD.Item1, iD.Item2, iD.Item3);
             return _db_Table.NoMatch ? null : _db_Table;
         }
 

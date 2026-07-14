@@ -59,9 +59,11 @@ public sealed class MapProvider : IMapProvider
 
     public string? GetTileUrl(TileId id)
     {
-        if (_layers.Count == 0) return null;
+        if (_layers.Count == 0)
+            return null;
         var l = _layers[_layerIndex];
-        if (id.Z < l.MinZoom || id.Z > l.MaxZoom) return null;
+        if (id.Z < l.MinZoom || id.Z > l.MaxZoom)
+            return null;
 
         if (_serverRoundRobin.Length != _layers.Count)
             _serverRoundRobin = new int[_layers.Count];
@@ -94,8 +96,10 @@ public sealed class MapProvider : IMapProvider
         {
             int digit = 0;
             long mask = 1L << (i - 1);
-            if ((tile.X & mask) != 0) digit += 1;
-            if ((tile.Y & mask) != 0) digit += 2;
+            if ((tile.X & mask) != 0)
+                digit += 1;
+            if ((tile.Y & mask) != 0)
+                digit += 2;
             quad[tile.Z - i] = (char)('0' + digit);
         }
         return new string(quad);

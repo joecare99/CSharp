@@ -1,4 +1,4 @@
-using Gen_FreeWin.ViewModels.Interfaces;
+using GenFreeWin.ViewModels.Interfaces;
 using GenFreeWin.Views;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class HGakte : Form
 {

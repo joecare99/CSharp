@@ -27,8 +27,8 @@ namespace GenFree.Data.Tests
             (testRS.Fields[RepoFields.Mail] as IHasValue).Value.Returns(5, 6, 7);
             (testRS.Fields[RepoFields.Http] as IHasValue).Value.Returns(6, 7, 8);
             (testRS.Fields[RepoFields.Bem] as IHasValue).Value.Returns(7, 8, 9);
-            (testRS.Fields[RepoFields.Suchname] as IHasValue).Value.Returns(8,9,10);
-            (testRS.Fields[RepoFields.Name] as IHasValue).Value.Returns(9,10,11);
+            (testRS.Fields[RepoFields.Suchname] as IHasValue).Value.Returns(8, 9, 10);
+            (testRS.Fields[RepoFields.Name] as IHasValue).Value.Returns(9, 10, 11);
             (testRS.Fields[RepoFields.Strasse] as IHasValue).Value.Returns(10, 11, 12);
             testClass = new(testRS);
             testRS.ClearReceivedCalls();

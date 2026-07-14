@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class OFB : Form
 {
@@ -14,7 +14,7 @@ public partial class OFB : Form
 
     private IOFBViewModel _viewModel;
 
-    public IOFBViewModel ViewModel=> _viewModel;
+    public IOFBViewModel ViewModel => _viewModel;
 
     [DebuggerNonUserCode]
     public OFB(IOFBViewModel viewModel)
@@ -31,8 +31,8 @@ public partial class OFB : Form
         }
 
         InitializeComponent();
-                
-        TextBindingAttribute.Commit(this, _viewModel); 
+
+        TextBindingAttribute.Commit(this, _viewModel);
         CommandBindingAttribute.Commit(this, _viewModel);
         KeyBindingAttribute.Commit(this, _viewModel);
         CheckedBindingAttribute.Commit(this, _viewModel);
@@ -42,7 +42,7 @@ public partial class OFB : Form
 
     private void VmSetFocus(string obj)
     {
-       switch (obj)
+        switch (obj)
         {
             case nameof(IOFBViewModel.Text2_0_Text):
                 _Text2_0.Focus();

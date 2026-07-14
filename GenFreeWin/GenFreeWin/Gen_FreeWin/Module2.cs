@@ -1,5 +1,5 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Interfaces.Sys;
@@ -8,7 +8,7 @@ using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.IO;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 [StandardModule]
 internal sealed class Module2
@@ -58,7 +58,7 @@ internal sealed class Module2
                 num2++;
             }
 
-            Endwert = Endwert.PadRight(6,'0').Left(6);
+            Endwert = Endwert.PadRight(6, '0').Left(6);
             return Endwert;
         }
     }

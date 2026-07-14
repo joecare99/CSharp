@@ -37,7 +37,7 @@ public class Control : IControl
     /// <summary>
     /// The Dimension
     /// </summary>
-    protected Rectangle _dimension=Rectangle.Empty;
+    protected Rectangle _dimension = Rectangle.Empty;
 
     /// <summary>
     /// Gets or sets the message queue.
@@ -137,7 +137,8 @@ public class Control : IControl
         get => _enabled;
         set
         {
-            if (value == _enabled) return;
+            if (value == _enabled)
+                return;
             _enabled = value;
             OnEnabledChanged?.Invoke(this, EventArgs.Empty);
             NotifyWidgetStateChanged();
@@ -403,26 +404,26 @@ public class Control : IControl
         }
         if (IsVisible)
         {
-            
+
             var mp = TryGetApplicationRoot()?.MousePos;
-            if (mp != null )
+            if (mp != null)
             {
                 Point lastMousePos = mp.Value + (Size)Position - (Size)lastDim.Location;
                 bool _mouseInside = Over(lastMousePos);
                 bool nowInside = Over(mp.Value);
-                    if (nowInside)
-                    {
-                        if (!_mouseInside)
-                            MouseEnter(mp.Value); // setzt _mouseInside
-                        var se = new VirtMouseEvent(mp.Value);
-                        // lastMousePos = mp -> reiner "Refresh"-Move
-                        MouseMove(se, mp.Value);
-                    }
-                    else if (_mouseInside)
-                    {
-                        MouseLeave(lastMousePos);
-                    }
-                
+                if (nowInside)
+                {
+                    if (!_mouseInside)
+                        MouseEnter(mp.Value); // setzt _mouseInside
+                    var se = new VirtMouseEvent(mp.Value);
+                    // lastMousePos = mp -> reiner "Refresh"-Move
+                    MouseMove(se, mp.Value);
+                }
+                else if (_mouseInside)
+                {
+                    MouseLeave(lastMousePos);
+                }
+
             }
 
             Invalidate();
@@ -518,22 +519,22 @@ public class Control : IControl
         OnResize?.Invoke(this, EventArgs.Empty);
     }
 
-    protected virtual void SetBinding(INotifyPropertyChanged model,string sProperty)
+    protected virtual void SetBinding(INotifyPropertyChanged model, string sProperty)
     {
         if (model == null)
             return;
         if (model.GetType().GetProperty(sProperty) != null)
-        model.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == sProperty)
+            model.PropertyChanged += (s, e) =>
             {
-                SetText(s?.GetType().GetProperty(sProperty)?.GetValue(s)?.ToString() ?? "");
-            }
-        };
+                if (e.PropertyName == sProperty)
+                {
+                    SetText(s?.GetType().GetProperty(sProperty)?.GetValue(s)?.ToString() ?? "");
+                }
+            };
     }
 
     public (INotifyPropertyChanged model, string sProperty) Binding { set => SetBinding(value.model, value.sProperty); }
-   
+
     /// <summary>
     /// Sets the text.
     /// </summary>
@@ -699,7 +700,8 @@ public class Control : IControl
     /// <param name="lastMousePos">The last mouse Position.</param>
     public virtual void MouseMove(IMouseEvent M, Point lastMousePos)
     {
-        if (!CanProcessInput) return;
+        if (!CanProcessInput)
+            return;
         OnMouseMove?.Invoke(this, M);
         foreach (var ctrl in Children)
         {
@@ -728,7 +730,8 @@ public class Control : IControl
     /// <param name="M">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
     public virtual void MouseClick(IMouseEvent M)
     {
-        if (!CanProcessInput) return;
+        if (!CanProcessInput)
+            return;
         bool xFlag = false;
         foreach (var ctrl in Children)
         {
@@ -749,7 +752,8 @@ public class Control : IControl
     /// <param name="e">The <see cref="KeyPressEventArgs"/> instance containing the event data.</param>
     public virtual void HandlePressKeyEvents(IKeyEvent e)
     {
-        if (!CanProcessInput) return;
+        if (!CanProcessInput)
+            return;
 
         if (e.KeyChar == Accelerator && Accelerator != '\0')
         {
@@ -801,5 +805,5 @@ internal class VirtMouseEvent(Point _mp) : IMouseEvent
 
     public bool ButtonEvent => false;
 
-    public bool Handled { get ; set ; }
+    public bool Handled { get; set; }
 }

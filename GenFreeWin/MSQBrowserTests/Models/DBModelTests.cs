@@ -1,6 +1,5 @@
 using BaseLib.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MSQBrowser.Models;
 using MSQBrowser.Models.Interfaces;
 using MySqlConnector;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace MSQBrowser.Models.Tests
         [TestInitialize]
         public void Init()
         {
-            testModel = new DBModel(sURL: "127.0.0.1",sUser:"user",sPasswd: "test".ToSecureString()!,sDB:"testdb");
+            testModel = new DBModel(sURL: "127.0.0.1", sUser: "user", sPasswd: "test".ToSecureString()!, sDB: "testdb");
         }
 
         [TestMethod]

@@ -12,13 +12,13 @@
 // <summary>Implementation for duplicate person/family merge operations</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
 using GenFree.Interfaces.Sys;
 using System;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Implements duplicate resolution by consolidating person/family records, swapping/migrating events, and managing links/relationships.
@@ -99,10 +99,10 @@ namespace Gen_FreeWin.Services
         {
             return Task.Run(() =>
             {
-                var state = new DubOperationState 
-                { 
-                    Person1Id = person1Id, 
-                    Person2Id = person2Id 
+                var state = new DubOperationState
+                {
+                    Person1Id = person1Id,
+                    Person2Id = person2Id
                 };
 
                 try

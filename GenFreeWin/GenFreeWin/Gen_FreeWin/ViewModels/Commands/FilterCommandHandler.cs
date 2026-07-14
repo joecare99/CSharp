@@ -9,10 +9,9 @@
 // <summary>Handler for filter/checkbox state change commands (extracted from NamenSuchViewModel)</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.ViewModels.Models;
 using System;
 
-namespace Gen_FreeWin.ViewModels.Commands
+namespace GenFreeWin.ViewModels.Commands
 {
     /// <summary>
     /// Encapsulates filter command logic extracted from NamenSuchViewModel.

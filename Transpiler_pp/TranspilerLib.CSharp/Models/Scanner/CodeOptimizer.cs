@@ -263,7 +263,8 @@ public class CodeOptimizer : ICodeOptimizer
 
     private void TestForEasyWhileLoops(ICodeBlock item)
     {
-        if (_noWhile) return;
+        if (_noWhile)
+            return;
         foreach (var wrSource in item.Sources)
             if (wrSource.TryGetTarget(out var source)
                 && source.Parent is ICodeBlock ifItem
@@ -341,8 +342,10 @@ public class CodeOptimizer : ICodeOptimizer
 
     private static bool IsIdentifyer(string var2)
     {
-        if (var2.Length == 0) return false;
-        if (!char.IsLetter(var2[0]) && var2[0] != '_') return false;
+        if (var2.Length == 0)
+            return false;
+        if (!char.IsLetter(var2[0]) && var2[0] != '_')
+            return false;
         foreach (char c in var2)
             if (!IsIdentifierChar(c))
                 return false;
@@ -351,7 +354,8 @@ public class CodeOptimizer : ICodeOptimizer
 
     private static void RemoveResumeNextCode(ICodeBlock item)
     {
-        if (item.Sources.Count != 2) return;
+        if (item.Sources.Count != 2)
+            return;
         foreach (var item2 in item.Sources)
             if (item2.TryGetTarget(out var source))
                 if (source.Parent is ICodeBlock parent
@@ -385,7 +389,8 @@ public class CodeOptimizer : ICodeOptimizer
                 l++;
             return l;
         }
-        else return 0;
+        else
+            return 0;
     }
 
 }

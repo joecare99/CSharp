@@ -31,7 +31,8 @@ public abstract class GenHelperBase
         get => _onHlpMessage;
         set
         {
-            if (_onHlpMessage == value) return;
+            if (_onHlpMessage == value)
+                return;
             _onHlpMessage = value;
         }
     }
@@ -41,7 +42,8 @@ public abstract class GenHelperBase
         get => _citation;
         set
         {
-            if (ReferenceEquals(_citation, value)) return;
+            if (ReferenceEquals(_citation, value))
+                return;
             _citation = value;
             FCitRefn = string.Empty;
         }
@@ -52,7 +54,8 @@ public abstract class GenHelperBase
         get => _citTitle;
         set
         {
-            if (_citTitle == value) return;
+            if (_citTitle == value)
+                return;
             _citTitle = value ?? string.Empty;
         }
     }
@@ -62,7 +65,8 @@ public abstract class GenHelperBase
         get => _osbHdr;
         set
         {
-            if (_osbHdr == value) return;
+            if (_osbHdr == value)
+                return;
             _osbHdr = value ?? string.Empty;
         }
     }
@@ -107,8 +111,10 @@ public abstract class GenHelperBase
 
     public void FireEvent(object sender, string[] aSTa)
     {
-        if (aSTa == null || aSTa.Length != 4) return;
-        if (!int.TryParse(aSTa[3], out var lInt)) return;
+        if (aSTa == null || aSTa.Length != 4)
+            return;
+        if (!int.TryParse(aSTa[3], out var lInt))
+            return;
 
         switch (aSTa[0])
         {
@@ -182,7 +188,8 @@ public abstract class GenHelperBase
     {
         for (int i = 0; i < s.Length; i++)
         {
-            if (IsAsciiDigit(s[i])) return i;
+            if (IsAsciiDigit(s[i]))
+                return i;
         }
         return -1;
     }

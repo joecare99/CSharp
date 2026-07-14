@@ -18,7 +18,8 @@ public class CommandControl : Control
         get => _command;
         set
         {
-            if (_command == value) return;
+            if (_command == value)
+                return;
             if (_command != null)
                 _command.CanExecuteChanged -= Command_CanExecuteChanged;
             _command = value;
@@ -44,7 +45,8 @@ public class CommandControl : Control
 
     public override void Click()
     {
-        if (!Enabled) return; // ignore clicks when disabled
+        if (!Enabled)
+            return; // ignore clicks when disabled
         if (_command != null && _command.CanExecute(Tag))
             _command.Execute(Tag);
         base.Click(); // raise OnClick event first

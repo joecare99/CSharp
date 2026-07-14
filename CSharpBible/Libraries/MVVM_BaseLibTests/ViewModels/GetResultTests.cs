@@ -13,17 +13,18 @@ public class GetResultTests
     public void Init() => testClass = new();
 
     [TestMethod]
-    public void SetupTest() {
+    public void SetupTest()
+    {
         Assert.IsNotNull(testClass);
-        Assert.IsInstanceOfType(testClass,typeof(GetResult));
-        Assert.IsInstanceOfType(testClass,typeof(IGetResult));
-        Assert.AreEqual(0,testClass.Count);
+        Assert.IsInstanceOfType(testClass, typeof(GetResult));
+        Assert.IsInstanceOfType(testClass, typeof(IGetResult));
+        Assert.AreEqual(0, testClass.Count);
     }
 
     [TestMethod]
     public void RegisterTest()
     {
-        testClass.Register("Test1",(o)=>$"Test1({string.Join(", ",o)})");
+        testClass.Register("Test1", (o) => $"Test1({string.Join(", ", o)})");
         Assert.AreEqual(1, testClass.Count);
         testClass.Register("Test2", (o) => $"Test2({string.Join(", ", o)})");
         Assert.AreEqual(2, testClass.Count);
@@ -34,13 +35,14 @@ public class GetResultTests
     }
 
     [TestMethod]
-    [DataRow("Test1", new[] {"Hello" }, "Test1(Hello)")]
+    [DataRow("Test1", new[] { "Hello" }, "Test1(Hello)")]
     [DataRow("Test1", new[] { "Hello", "World" }, "Test1(Hello, World)")]
-    [DataRow("Test1", new[] { "Hello", "World","!" }, "Test1(Hello, World, !)")]
-    public void Test1(string _, object[] param, string? sExp) {
+    [DataRow("Test1", new[] { "Hello", "World", "!" }, "Test1(Hello, World, !)")]
+    public void Test1(string _, object[] param, string? sExp)
+    {
         Assert.IsNull(testClass.Get(param));
         RegisterTest();
-        Assert.AreEqual(sExp,testClass.Get(param));
+        Assert.AreEqual(sExp, testClass.Get(param));
         Assert.AreEqual(3, testClass.Count);
     }
 
@@ -50,9 +52,9 @@ public class GetResultTests
     [DataRow("Test1", new[] { "Hello", "new", "World" }, "Test1(Hello, new, World)")]
     public void GetTest(string name, object[] param, string? sExp)
     {
-        Assert.IsNull(testClass.Get(param,name));
+        Assert.IsNull(testClass.Get(param, name));
         RegisterTest();
-        Assert.AreEqual(sExp, testClass.Get(param,name));
+        Assert.AreEqual(sExp, testClass.Get(param, name));
         Assert.AreEqual(3, testClass.Count);
     }
 
@@ -64,7 +66,7 @@ public class GetResultTests
     {
         Assert.IsNull(testClass.Get(param, name));
         RegisterTest();
-        Assert.AreEqual(sExp, testClass.Get(param,name));
+        Assert.AreEqual(sExp, testClass.Get(param, name));
         Assert.AreEqual(3, testClass.Count);
     }
 }

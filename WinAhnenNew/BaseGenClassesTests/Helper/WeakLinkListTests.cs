@@ -1,10 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseGenClasses.Helper;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseGenClasses.Helper.Tests;
 
@@ -122,13 +117,13 @@ public class WeakLinkListTests
     public void IndexOfTest(int[] aInts, int oAct, int iExp)
     {
         Arrange(aInts);
- 
+
         Assert.AreEqual(iExp, _testClass.IndexOf(new TestClass(oAct)));
     }
 
     [TestMethod()]
     [DataRow(new[] { 1, 2, 3, 4 }, 2, 5)]
- //   [DataRow(new[] { 1, 2, 3, 4 }, 5, -1)]
+    //   [DataRow(new[] { 1, 2, 3, 4 }, 5, -1)]
     [DataRow(new[] { 1, 2, -1, 3, 4 }, 1, -1)]
     public void InsertTest(int[] aInts, int iAct, int iAct2)
     {
@@ -145,26 +140,26 @@ public class WeakLinkListTests
     {
         Arrange(aInts);
 
-        Assert.ThrowsExactly<ArgumentOutOfRangeException>(()=> _testClass.Insert(iAct, new TestClass(iAct2)));
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => _testClass.Insert(iAct, new TestClass(iAct2)));
     }
 
     [TestMethod()]
     [DataRow(new[] { 1, 2, 3, 4 }, 2, true)]
     [DataRow(new[] { 1, 2, 3, 4 }, 5, false)]
     [DataRow(new[] { 1, 2, -1, 3, 4 }, 1, false)]
-    public void RemoveTest(int[] aInts, int iAct,bool xExp)
+    public void RemoveTest(int[] aInts, int iAct, bool xExp)
     {
         Arrange(aInts);
 
-        Assert.AreEqual(xExp, _testClass.Remove( new TestClass(iAct)));
+        Assert.AreEqual(xExp, _testClass.Remove(new TestClass(iAct)));
         Assert.AreEqual(false, _testClass.Contains(new TestClass(iAct)));
     }
 
     [TestMethod()]
     [DataRow(new[] { 1, 2, 3, 4 }, 2, true)]
-//    [DataRow(new[] { 1, 2, 3, 4 }, 5, false)]
+    //    [DataRow(new[] { 1, 2, 3, 4 }, 5, false)]
     [DataRow(new[] { 1, 2, -1, 3, 4 }, 1, false)]
-    public void RemoveAtTest(int[] aInts, int iAct,bool xExp)
+    public void RemoveAtTest(int[] aInts, int iAct, bool xExp)
     {
         Arrange(aInts);
 
@@ -173,7 +168,7 @@ public class WeakLinkListTests
 
     [TestMethod()]
     [DataRow(new[] { 1, 2, 3, 4 }, 5, false)]
-    public void RemoveAtTest2(int[] aInts, int iAct,bool xExp)
+    public void RemoveAtTest2(int[] aInts, int iAct, bool xExp)
     {
         Arrange(aInts);
 
@@ -189,7 +184,7 @@ public class WeakLinkListTests
     {
         Arrange(aInts);
 
-        Assert.AreEqual(iExp,_testClass[iAct]?.IntObj);
+        Assert.AreEqual(iExp, _testClass[iAct]?.IntObj);
     }
 
     [TestMethod()]
@@ -200,7 +195,7 @@ public class WeakLinkListTests
         Arrange(aInts);
 
         _testClass[iAct] = new TestClass(iExp);
-        Assert.AreEqual(4,_testClass.Count);
+        Assert.AreEqual(4, _testClass.Count);
         Assert.AreEqual(iExp, _testClass[iAct]?.IntObj);
     }
 
@@ -213,7 +208,7 @@ internal class TestClass(int _int) : IDisposable
 
     public void Dispose() { }
 
-    public override bool Equals(object? obj) 
+    public override bool Equals(object? obj)
         => obj is TestClass tc ? tc.IntObj.Equals(IntObj) : IntObj.Equals(obj);
 }
 

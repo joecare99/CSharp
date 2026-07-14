@@ -12,11 +12,11 @@
 // <summary>Data access service for license persistence, wraps IModul1.Persistence</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Services.Interfaces;
+using GenFreeWin.Services.Interfaces;
 using GenFree.Interfaces.Sys;
 using System;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Service for managing license data persistence operations.

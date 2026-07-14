@@ -23,7 +23,7 @@ namespace ConsoleLib.CommonControls;
 /// Implements the <see cref="ConsoleLib.Control" />
 /// </summary>
 /// <seealso cref="ConsoleLib.Control" />
-public class Panel : Control, IGroupControl, IHasBorder 
+public class Panel : Control, IGroupControl, IHasBorder
 {
     /// <summary>
     /// The border

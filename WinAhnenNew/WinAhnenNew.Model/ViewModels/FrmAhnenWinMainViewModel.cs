@@ -34,8 +34,9 @@ namespace WinAhnenNew.ViewModels
         [RelayCommand] private void Bildschirmdrucken1() { }
         [RelayCommand] private void ExcelExport1() { }
         [RelayCommand] private void EhenKiordnen1() { }
-        [RelayCommand] private void Beenden1() 
-        { 
+        [RelayCommand]
+        private void Beenden1()
+        {
             _applicationShutdownService.Shutdown();
         }
         [RelayCommand] private void AHNENDOSeinlesen1() { }

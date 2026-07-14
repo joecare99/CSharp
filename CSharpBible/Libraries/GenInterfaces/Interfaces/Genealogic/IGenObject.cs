@@ -23,7 +23,7 @@ namespace GenInterfaces.Interfaces.Genealogic;
 /// Interface IGenObject
 /// Extends the <see cref="GenInterfaces.Interfaces.Genealogic.IGenBase" />, It's the interface for all objects that contain  genealogycal data.
 /// </summary>
-public interface IGenObject : IGenBase 
+public interface IGenObject : IGenBase
 {
     /// <summary>
     /// Gets the (local) identifier. This ID is only unique within the application, maybe classes and not across different applications.

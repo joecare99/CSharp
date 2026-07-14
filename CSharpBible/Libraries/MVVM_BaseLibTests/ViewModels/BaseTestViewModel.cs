@@ -50,10 +50,10 @@ public abstract class BaseTestViewModel<T> : BaseTestViewModel where T : class, 
 
     protected virtual Dictionary<string, object?> GetDefaultData() => new();
 
-   /// <summary>
-   /// Initializes the test-models for this instance.
-   /// </summary>
-   [TestInitialize]
+    /// <summary>
+    /// Initializes the test-models for this instance.
+    /// </summary>
+    [TestInitialize]
     public virtual void Init()
     {
         testModel = GetModel();

@@ -12,14 +12,14 @@
 // <summary>Implementation for duplicate detection logic</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
 using GenFree.Interfaces.Sys;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Implements duplicate detection by searching person records via DSB_SearchTable, UID comparison, and name patterns.

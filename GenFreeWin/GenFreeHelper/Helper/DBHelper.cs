@@ -4,12 +4,10 @@ using GenFree.Interfaces.DB;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace GenFree.Helper;
+
 public static class DBHelper
 {
     public static IEnumerable<ITableDef> TableDefs(this IDatabase db)
@@ -21,7 +19,7 @@ public static class DBHelper
             TableDef td = new(db.Connection, row["TABLE_NAME"].AsString());
             db.GetSchema("Columns", new[] { null, null, td.Name }).Rows
                 .Cast<DataRow>().Select(
-                r => new FieldDef(td, r["COLUMN_NAME"].AsString(),dbDataTypes.GetTypeCode(r["DATA_TYPE"].AsInt()), r["CHARACTER_MAXIMUM_LENGTH"].AsInt())).ToList().ForEach(r => { });
+                r => new FieldDef(td, r["COLUMN_NAME"].AsString(), dbDataTypes.GetTypeCode(r["DATA_TYPE"].AsInt()), r["CHARACTER_MAXIMUM_LENGTH"].AsInt())).ToList().ForEach(r => { });
             db.GetSchema("Indexes").Rows
                 .Cast<DataRow>().Where(r => r["TABLE_NAME"].AsString() == td.Name)?.Select(
                 r => new IndexDef(td, r["INDEX_NAME"].AsString(), r["COLUMN_NAME"].AsString(), r["PRIMARY_KEY"].AsBool(), r["UNIQUE"].AsBool())).ToList().ForEach(r => { /*if (r.Name == null) td.Indexes.Add(r);*/ });
@@ -29,7 +27,7 @@ public static class DBHelper
         }
     }
 
-    public static IDictionary<int,(string name,TypeCode tc)> GetDataTypes(this IDatabase db)
+    public static IDictionary<int, (string name, TypeCode tc)> GetDataTypes(this IDatabase db)
     {
         Dictionary<int, (string name, TypeCode tc)> result = [];
         var datatypes = db.GetSchema("DataTypes");
@@ -37,7 +35,7 @@ public static class DBHelper
         // 11
         foreach (DataRow datatype in datatypes.Rows)
         {
-            result[datatype[1].AsInt()]=(datatype[0].AsString(),Type.GetTypeCode(Type.GetType(datatype[5].AsString(),false,true)));
+            result[datatype[1].AsInt()] = (datatype[0].AsString(), Type.GetTypeCode(Type.GetType(datatype[5].AsString(), false, true)));
         }
         return result;
     }
@@ -134,7 +132,7 @@ public static class DBHelper
 
     public static void AlterIndex(this IDatabase db, ITableDef tbl, IIndexDef idx)
     {
-      //  var tr=db.Connection.BeginTransaction();
+        //  var tr=db.Connection.BeginTransaction();
         try
         {
             // Drop the existing index if it exists
@@ -146,12 +144,12 @@ public static class DBHelper
         }
         catch (Exception ex)
         {
-          //  tr.Rollback();
+            //  tr.Rollback();
             System.Diagnostics.Debug.WriteLine($"Error creating index {idx.Name} on table {tbl.Name}: {string.Join(",", idx.Fields)}");
         }
     }
 
-    public static void CreateTable(this IDatabase db, ITableDef tbl )
+    public static void CreateTable(this IDatabase db, ITableDef tbl)
     {
         try
         {
@@ -182,8 +180,8 @@ public static class DBHelper
             TypeCode.Int64 => "BIGINT",
             TypeCode.SByte => "TINYINT",
             TypeCode.Single => "FLOAT",
-            TypeCode.String when size>0 => $"VARCHAR({size})",
-            TypeCode.String when size==0 => "MEMO",
+            TypeCode.String when size > 0 => $"VARCHAR({size})",
+            TypeCode.String when size == 0 => "MEMO",
             _ => throw new ArgumentException($"Unsupported type: {type}"),
         };
     }

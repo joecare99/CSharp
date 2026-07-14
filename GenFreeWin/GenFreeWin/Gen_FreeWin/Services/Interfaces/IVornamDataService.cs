@@ -12,13 +12,13 @@
 // <summary>Async data-access contract for Vorname (given name) operations</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
+using GenFreeWin.Models;
 using GenFree.Data;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services.Interfaces
+namespace GenFreeWin.Services.Interfaces
 {
     /// <summary>
     /// Async data-access contract for name/Vorname persistence and retrieval.

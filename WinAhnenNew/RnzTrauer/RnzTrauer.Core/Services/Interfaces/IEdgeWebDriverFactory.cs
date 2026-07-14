@@ -1,5 +1,3 @@
-using OpenQA.Selenium;
-
 namespace RnzTrauer.Core.Services.Interfaces;
 
 /// <summary>

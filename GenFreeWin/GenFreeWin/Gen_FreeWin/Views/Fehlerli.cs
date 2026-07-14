@@ -1,5 +1,4 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -21,7 +20,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
+
 internal partial class Fehlerli : Form
 {
     private static List<WeakReference> __ENCList = new();
@@ -1951,7 +1951,7 @@ internal partial class Fehlerli : Form
                     string inputStr = DateTime.Now.ToString("yyyyMMdd");
                     if (Modul1.Person.Death.Trim() == "" && Modul1.Person.Burial.Trim() == "")
                     {
-                        if (Modul1.Person.Birthday.Trim() == "" & Modul1.Person.Baptised.Trim() == "")
+                        if (Modul1.Person.Birthday.Trim() == "" && Modul1.Person.Baptised.Trim() == "")
                         {
                             Modul1_LiText += "          ";
                         }
@@ -2398,7 +2398,7 @@ internal partial class Fehlerli : Form
                             num = 178;
                             lErl = InnerLoop(flag);
                             goto IL_248d;
-                        //==========
+                            //==========
                         IL_248d: // <========== 14
                             num = 391;
                             lErl = 95;

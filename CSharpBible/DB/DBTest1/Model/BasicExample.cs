@@ -11,11 +11,11 @@ namespace DBTest1.Model
         {
             var builder = new MySqlConnectionStringBuilder
             {
-                Server = args[0],               
+                Server = args[0],
                 UserID = args[1],
                 Password = args[2],
                 Database = args[3],
-                CharacterSet ="UTF8"             
+                CharacterSet = "UTF8"
             };
 
             using var conn = new MySqlConnection(builder.ConnectionString);
@@ -39,14 +39,14 @@ namespace DBTest1.Model
                 cmd.ExecuteNonQuery();
             }
 
-           var s= conn.GetSchema();
+            var s = conn.GetSchema();
             foreach (var col in s.Columns)
                 Console.Write($"{col}\t");
             Console.WriteLine();
             Console.WriteLine("=======================");
             foreach (DataRow row in s.Rows)
             {
-               foreach(var col in row.ItemArray)
+                foreach (var col in row.ItemArray)
                     Console.Write($"{col}\t");
                 Console.WriteLine();
             }
@@ -68,16 +68,16 @@ namespace DBTest1.Model
             // Retrieve all rows
             var xFirst = true;
             using (var cmd = new MySqlCommand("SELECT * FROM Testtable", conn))
-            using (var reader = cmd.ExecuteReader())                                
+            using (var reader = cmd.ExecuteReader())
                 while (reader.Read())
                 {
-                    if ( xFirst)
+                    if (xFirst)
                     {
                         for (int i = 0; i < reader.FieldCount; i++)
-                            Console.Write($"{reader.GetName(i)}\t"); 
+                            Console.Write($"{reader.GetName(i)}\t");
                         Console.WriteLine();
                         for (int i = 0; i < reader.FieldCount; i++)
-                            Console.Write($"{new string('=',reader.GetName(i).Length)}\t");
+                            Console.Write($"{new string('=', reader.GetName(i).Length)}\t");
                         Console.WriteLine();
                         xFirst = false;
                     }
@@ -85,11 +85,15 @@ namespace DBTest1.Model
                     for (int i = 0; i < reader.FieldCount; i++)
                         switch (reader.GetDataTypeName(i))
                         {
-                            case "VARCHAR": Console.Write($"{reader.GetString(i)}\t"); break;
-                            case "INT": Console.Write($"{reader.GetInt32(i)}\t"); break;
+                            case "VARCHAR":
+                                Console.Write($"{reader.GetString(i)}\t");
+                                break;
+                            case "INT":
+                                Console.Write($"{reader.GetInt32(i)}\t");
+                                break;
                         }
                     Console.WriteLine();
-                }            
+                }
         }
 
         private static void Conn_StateChange(object sender, System.Data.StateChangeEventArgs e)

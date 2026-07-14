@@ -5,7 +5,7 @@ using System;
 
 namespace GenFree.Interfaces.Model
 {
-    public interface IPerson : IHasIxDataItf<PersonIndex, IPersonData,int>, IUsesRecordset<int>, IUsesID<int>, IHasRSIndex1<PersonIndex,PersonFields>
+    public interface IPerson : IHasIxDataItf<PersonIndex, IPersonData, int>, IUsesRecordset<int>, IUsesID<int>, IHasRSIndex1<PersonIndex, PersonFields>
     {
         int MinID { get; }
 

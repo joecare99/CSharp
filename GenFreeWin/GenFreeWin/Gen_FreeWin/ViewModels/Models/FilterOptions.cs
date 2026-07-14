@@ -11,7 +11,7 @@
 
 using System;
 
-namespace Gen_FreeWin.ViewModels.Models
+namespace GenFreeWin.ViewModels.Models
 {
     /// <summary>
     /// Encapsulates all UI filter state for the name search dialog.

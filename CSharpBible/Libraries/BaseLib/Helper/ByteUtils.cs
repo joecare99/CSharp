@@ -22,10 +22,10 @@ namespace BaseLib.Helper;
 public static class ByteUtils
 {
 
-     ///<summary>
+    ///<summary>
     /// return bit array with toggled SingleBit at Index
     /// </summary>
-    public static int SwitchBit(this int bitArray, int index) 
+    public static int SwitchBit(this int bitArray, int index)
         => bitArray ^ index.BitMask32();
 
     ///<summary>
@@ -40,7 +40,7 @@ public static class ByteUtils
     public static long SwitchBit(this long bitArray, int index)
         => bitArray ^ index.BitMask64();
 
-     ///<summary>
+    ///<summary>
     /// return bit array with set SingleBit at Index
     /// </summary>
     public static int SetBit(this int bitArray, int index)
@@ -80,13 +80,13 @@ public static class ByteUtils
     /// return bit array with set SingleBit at Index
     /// </summary>
     public static bool GetBit(this int bitArray, int index)
-        => (bitArray & index.BitMask32())!=0;
+        => (bitArray & index.BitMask32()) != 0;
 
     ///<summary>
     /// return bit array with set SingleBit at Index
     /// </summary>
     public static bool GetBit(this uint bitArray, int index)
-        => (bitArray & ((uint)index).BitMask32())!=0;
+        => (bitArray & ((uint)index).BitMask32()) != 0;
 
     ///<summary>
     /// return bit array with set SingleBit at Index
@@ -117,7 +117,7 @@ public static class ByteUtils
     /// </summary>
     /// <param name="bit"></param>
     /// <returns></returns>
-    public static int BitMask32(this int bit) 
+    public static int BitMask32(this int bit)
         => bit < 32 && bit >= 0 ? 0x01 << bit : throw new ArgumentException("out of range");
 
     /// <summary>
@@ -125,7 +125,7 @@ public static class ByteUtils
     /// </summary>
     /// <param name="bit"></param>
     /// <returns></returns>
-    public static uint BitMask32(this uint bit) 
+    public static uint BitMask32(this uint bit)
         => bit < 32 ? (uint)(0x01 << (int)bit) : throw new ArgumentException("out of range");
 
     /// <summary>
@@ -133,11 +133,11 @@ public static class ByteUtils
     /// </summary>
     /// <param name="bit"></param>
     /// <returns></returns>
-    public static long BitMask64(this int bit) 
+    public static long BitMask64(this int bit)
         => bit < 64 && bit >= 0 ? 0x01L << bit : throw new ArgumentException("out of range");
 
-        private static readonly sbyte[] bitCounts = [
-            0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,
+    private static readonly sbyte[] bitCounts = [
+        0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,
             1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
             1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
             2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,
@@ -153,7 +153,7 @@ public static class ByteUtils
             3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
             3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,
             4,5,5,6,5,6,6,7,5,6,6,7,6,7,7,8
-        ];
+    ];
 
     /// <summary>
     /// returns the number of bits set in the bit array
@@ -191,7 +191,7 @@ SET @num = @num + @num / 0x100000000
 
 RETURN(@num & 0x3F) + @msb */
     public static int BitCount2(this long bit)
-        =>BitCount2(unchecked((ulong) bit));
+        => BitCount2(unchecked((ulong)bit));
     public static int BitCount2(this ulong bit)
     {
         bit = bit - ((bit >> 1) & 0x5555555555555555);

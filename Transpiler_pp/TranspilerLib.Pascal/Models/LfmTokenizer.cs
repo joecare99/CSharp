@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TranspilerLib.Pascal.Models;
 
@@ -224,13 +221,19 @@ public class LfmTokenizer
     {
         switch (value.ToLower())
         {
-            case "object": return LfmTokenType.OBJECT;
-            case "end": return LfmTokenType.END;
-            case "inherited": return LfmTokenType.INHERITED;
-            case "inline": return LfmTokenType.INLINE;
+            case "object":
+                return LfmTokenType.OBJECT;
+            case "end":
+                return LfmTokenType.END;
+            case "inherited":
+                return LfmTokenType.INHERITED;
+            case "inline":
+                return LfmTokenType.INLINE;
             case "true":
-            case "false": return LfmTokenType.BOOLEAN;
-            default: return LfmTokenType.IDENTIFIER;
+            case "false":
+                return LfmTokenType.BOOLEAN;
+            default:
+                return LfmTokenType.IDENTIFIER;
         }
     }
 }

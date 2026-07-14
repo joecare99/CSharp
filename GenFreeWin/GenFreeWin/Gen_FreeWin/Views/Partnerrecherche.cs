@@ -6,39 +6,39 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 [DesignerGenerated]
 public partial class Partnerrecherche : Form
 {
-	private static readonly List<WeakReference> __ENCList = new();
+    private static readonly List<WeakReference> __ENCList = new();
 
 
     private IPartnerRechercheViewModel _viewModel;
 
     [DebuggerNonUserCode]
-	public Partnerrecherche(IPartnerRechercheViewModel viewModel)
-	{
-		_viewModel = viewModel;
-		_viewModel.View = this;
-		Resize += _viewModel.Partnerrecherche_Resize;
-		Load += _viewModel.Partnerrecherche_Load;
-		lock (__ENCList)
-		{
-			__ENCList.Add(new WeakReference(this));
-		}
-		Label2 = new ControlArray<Label>();
-		Text1 = new ControlArray<TextBox>();
-		InitializeComponent();
-		Text1.SetIndex(_Text1_2, 2);
-		Text1.SetIndex(_Text1_1, 1);
-		Text1.SetIndex(_Text1_0, 0);
-		Label2.SetIndex(_Label2_1, 1);
-		Label2.SetIndex(_Label2_0, 0);
-		Text1.AddKeyPress(_viewModel.Text1_KeyPress);
-		Text1.AddTextChanged(_viewModel.Text1_TextChanged);
+    public Partnerrecherche(IPartnerRechercheViewModel viewModel)
+    {
+        _viewModel = viewModel;
+        _viewModel.View = this;
+        Resize += _viewModel.Partnerrecherche_Resize;
+        Load += _viewModel.Partnerrecherche_Load;
+        lock (__ENCList)
+        {
+            __ENCList.Add(new WeakReference(this));
+        }
+        Label2 = new ControlArray<Label>();
+        Text1 = new ControlArray<TextBox>();
+        InitializeComponent();
+        Text1.SetIndex(_Text1_2, 2);
+        Text1.SetIndex(_Text1_1, 1);
+        Text1.SetIndex(_Text1_0, 0);
+        Label2.SetIndex(_Label2_1, 1);
+        Label2.SetIndex(_Label2_0, 0);
+        Text1.AddKeyPress(_viewModel.Text1_KeyPress);
+        Text1.AddTextChanged(_viewModel.Text1_TextChanged);
 
-	}
+    }
 
     private void Command1_Click(object s, EventArgs e) => _viewModel.Command1_Click(s, e);
     private void Command2_Click(object s, EventArgs e) => _viewModel.Command2_Click(s, e);

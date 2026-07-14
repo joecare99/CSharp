@@ -1,11 +1,9 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Services;
-using Gen_FreeWin.ViewModels;
-using Gen_FreeWin.ViewModels.Interfaces;
-using Gen_FreeWin.ViewModels.Models;
-using Gen_FreeWin.Views;
+using GenFreeWin.Services;
+using GenFreeWin.ViewModels.Models;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -30,7 +28,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
 {
@@ -3385,7 +3383,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                                 QuText = QuText.Trim().Length > 0
                                     ? (QuText + "; " + DataModul.DB_QuTable.Fields[QuFields._2].Value).AsString()
                                     : (QuText + DataModul.DB_QuTable.Fields[QuFields._2].Value).AsString();
-                                if (null != DataModul.DB_SourceLinkTable.Fields[3].Value & DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim() != "")
+                                if (null != DataModul.DB_SourceLinkTable.Fields[3].Value && DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim() != "")
                                 {
                                     QuText += $", {(null == DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value
                                         ? $"{Modul1.IText[EUserText.t449]} {DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim()}"
@@ -4583,13 +4581,13 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         DataModul.DB_FamilyTable.Seek(">=", num6);
         //iEventType = 0;
         string LiText = "          ";
-        while (!DataModul.DB_FamilyTable.EOF 
+        while (!DataModul.DB_FamilyTable.EOF
             && !DataModul.DB_FamilyTable.NoMatch
             && (num5 < Modul1.Aus[(int)EOutCfg.o13].AsInt()))
         {
             Modul1.FamInArb = DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt();
             DDatum = DataModul.DB_FamilyTable.Fields[FamilyFields.EditDat].AsString();
-            
+
             HT = DDatum.Date2DotDateStr2();
             if (HT.Trim() == "")
             {
@@ -4661,7 +4659,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                 List1_Items.Add(new(LiText + Modul1.FamInArb.AsString(),
                    (Modul1.Family.Mann, Modul1.Family.Frau, Modul1.FamInArb)));
                 num5 += 1;
-                
+
             }
             DataModul.DB_FamilyTable.MoveNext();
 
@@ -5098,7 +5096,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
     public void Bildaus(string BiKe)
     {
         Image image;
-        if (Option[EOutCfg.o13] | Option[EOutCfg.o41] | Option[EOutCfg.o42])
+        if (Option[EOutCfg.o13] || Option[EOutCfg.o41] || Option[EOutCfg.o42])
         {
             int num5 = BiKe == "P" ? Modul1.PersInArb : Modul1.FamInArb;
             DataModul.DB_PictureTable.Index = "Perkenn  ";

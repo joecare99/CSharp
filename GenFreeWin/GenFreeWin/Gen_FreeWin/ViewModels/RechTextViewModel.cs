@@ -1,22 +1,21 @@
-﻿using Gen_FreeWin.Views;
-using GenFree.ViewModels.Interfaces;
-using BaseLib.Helper;
-using Gen_FreeWin.Main;
+﻿using BaseLib.Helper;
+using GenFreeWin.Views;
+using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Sys;
+using GenFree.Interfaces.VB;
+using GenFree.ViewModels.Interfaces;
+using GenFreeWin.Views;
 using MVVM.ViewModel;
 using System;
-using System.Windows.Forms;
-using GenFree;
-using GenFreeWin.Views;
-using GenFree.Interfaces.VB;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class RechTextViewModel : BaseViewModelCT, IRechTextViewModel
 {
@@ -251,7 +250,7 @@ public partial class RechTextViewModel : BaseViewModelCT, IRechTextViewModel
                                                 && !DataModul.DB_EventTable.NoMatch
                                                 && !(DataModul.DB_EventTable.Fields[EventFields.KBem].AsInt() != Nr))
                                             {
-                                                if ((DataModul.DB_EventTable.Fields[EventFields.Art].AsInt()< 499))
+                                                if ((DataModul.DB_EventTable.Fields[EventFields.Art].AsInt() < 499))
                                                 {
                                                     DataModul.WB_FrauTable.AddNew();
                                                     DataModul.WB_FrauTable.Fields["LfNr"].Value = DataModul.DB_EventTable.Fields[EventFields.PerFamNr].AsInt();
@@ -1012,7 +1011,8 @@ public partial class RechTextViewModel : BaseViewModelCT, IRechTextViewModel
             && !(dT_RelgionTable.Fields[ReligionFields.TextNr].AsInt() != Nr))
         {
             int iPerNr = dT_RelgionTable.Fields[ReligionFields.PerNr].AsInt();
-            if (DataModul.WB_Frau.Update(iPerNr)) Lz++;
+            if (DataModul.WB_Frau.Update(iPerNr))
+                Lz++;
 
             dT_RelgionTable.MoveNext();
         }

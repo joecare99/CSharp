@@ -5,7 +5,7 @@
 /// Diese Tests könnten später in ein vollständiges MSTest-Projekt migriert werden.
 /// </summary>
 
-namespace Gen_FreeWin.Services;
+namespace GenFreeWin.Services;
 
 /// <remarks>
 /// INTEGRATION-TEST-SZENARIEN FÜR PHASE 3:
@@ -79,7 +79,7 @@ namespace Gen_FreeWin.Services;
 /// Szenario:
 ///   1. Füge ErrorListItem mit DisplayText="Teste <ID>" zur Liste hinzu
 ///   2. UI-Inspection: ListBox zeigt "Teste <ID>"?
-/// Erwartet: Text ist lesbar, nicht "Gen_FreeWin.Models.ErrorListItem"
+/// Erwartet: Text ist lesbar, nicht "GenFreeWin.Models.ErrorListItem"
 /// Außenfall: ValueMember="Id" ermöglicht SelectedValue-Queries
 /// 
 /// === TEST 9: Smoke-Test: Form öffnet normal, bleibt stabil ===

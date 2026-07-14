@@ -11,10 +11,10 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using MVVM.ViewModel;
-using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MVVM.ViewModel;
+using System;
 
 namespace MVVM_09a_CTDialogBoxes.ViewModels;
 
@@ -33,7 +33,7 @@ public partial class DialogWindowViewModel : BaseViewModelCT
     /// <summary>
     /// The email
     /// </summary>
-    [ObservableProperty] 
+    [ObservableProperty]
     private string _email = "";
 
     /// <summary>

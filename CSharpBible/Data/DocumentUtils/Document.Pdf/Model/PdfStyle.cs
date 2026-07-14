@@ -9,7 +9,9 @@ public sealed class PdfStyle : IDocStyleStyle
     public PdfStyle(string? name = null, IDictionary<string, string>? props = null)
     {
         Name = name;
-        if (props != null) foreach (var kv in props) Properties[kv.Key] = kv.Value;
+        if (props != null)
+            foreach (var kv in props)
+                Properties[kv.Key] = kv.Value;
     }
 }
 

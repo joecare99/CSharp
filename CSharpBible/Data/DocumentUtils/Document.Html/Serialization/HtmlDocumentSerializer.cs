@@ -1,8 +1,8 @@
-using System.Text;
 using AngleSharp;
 using AngleSharp.Dom;
 using Document.Base.Models.Interfaces;
 using Document.Html.Model;
+using System.Text;
 
 namespace Document.Html.Serialization;
 
@@ -17,7 +17,8 @@ public static class HtmlDocumentSerializer
         var root = new HtmlSection();
         var body = doc.Body ?? doc.DocumentElement;
 
-        if (body is null) return root;
+        if (body is null)
+            return root;
 
         foreach (var child in body.Children)
         {
@@ -32,49 +33,49 @@ public static class HtmlDocumentSerializer
         switch (element.TagName.ToUpperInvariant())
         {
             case "P":
-            {
-                var p = rootOrContainer.AddParagraph(ATextStyleName: null!);
-                MapInline(element, p);
-                break;
-            }
+                {
+                    var p = rootOrContainer.AddParagraph(ATextStyleName: null!);
+                    MapInline(element, p);
+                    break;
+                }
             case "H1":
             case "H2":
             case "H3":
             case "H4":
             case "H5":
             case "H6":
-            {
-                var level = int.Parse(element.TagName[1].ToString());
-                var h = (HtmlHeadline)rootOrContainer.AddHeadline(level, element.Id);
-                MapInline(element, h);
-                break;
-            }
+                {
+                    var level = int.Parse(element.TagName[1].ToString());
+                    var h = (HtmlHeadline)rootOrContainer.AddHeadline(level, element.Id);
+                    MapInline(element, h);
+                    break;
+                }
             case "DIV":
             case "SECTION":
-            {
-                var sec = (HtmlSection)rootOrContainer.AppendDocElement(HtmlElementType.Section);
-                foreach (var ch in element.Children)
-                    MapElement(ch, sec);
-                break;
-            }
+                {
+                    var sec = (HtmlSection)rootOrContainer.AppendDocElement(HtmlElementType.Section);
+                    foreach (var ch in element.Children)
+                        MapElement(ch, sec);
+                    break;
+                }
             case "UL":
             case "OL":
-            {
-                // Mappe Listeneinträge als einzelne Paragraphen
-                foreach (var li in element.Children.Where(c => c.TagName.Equals("LI", StringComparison.OrdinalIgnoreCase)))
                 {
-                    var p = rootOrContainer.AddParagraph("List");
-                    MapInline(li, p);
+                    // Mappe Listeneinträge als einzelne Paragraphen
+                    foreach (var li in element.Children.Where(c => c.TagName.Equals("LI", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var p = rootOrContainer.AddParagraph("List");
+                        MapInline(li, p);
+                    }
+                    break;
                 }
-                break;
-            }
             default:
-            {
-                // Fallback: Alles als Paragraph
-                var p = rootOrContainer.AddParagraph(null!);
-                MapInline(element, p);
-                break;
-            }
+                {
+                    // Fallback: Alles als Paragraph
+                    var p = rootOrContainer.AddParagraph(null!);
+                    MapInline(element, p);
+                    break;
+                }
         }
     }
 
@@ -88,36 +89,39 @@ public static class HtmlDocumentSerializer
                     container.AppendText(text.Data);
                     break;
                 case IElement el:
-                {
-                    var tag = el.TagName.ToUpperInvariant();
-                    if (tag is "BR")
                     {
-                        container.AddLineBreak();
+                        var tag = el.TagName.ToUpperInvariant();
+                        if (tag is "BR")
+                        {
+                            container.AddLineBreak();
+                        }
+                        else if (tag is "SPAN" or "EM" or "STRONG" or "B" or "I" or "U")
+                        {
+                            var span = (HtmlSpan)container.AddSpan(HtmlFontStyle.Default);
+                            if (tag is "B" or "STRONG")
+                                span.Attributes["weight"] = "bold";
+                            if (tag is "I" or "EM")
+                                span.Attributes["style"] = "italic";
+                            if (tag is "U")
+                                span.Attributes["decoration"] = "underline";
+                            MapInline(el, span);
+                        }
+                        else if (tag is "A")
+                        {
+                            var link = (HtmlSpan)container.AddLink(el.GetAttribute("href"), HtmlFontStyle.Default);
+                            MapInline(el, link);
+                        }
+                        else if (tag is "NBSP")
+                        {
+                            container.AddNBSpace(HtmlFontStyle.Default);
+                        }
+                        else
+                        {
+                            // Unbekannte Inline-Elemente: Inline weiter abbilden
+                            MapInline(el, container);
+                        }
+                        break;
                     }
-                    else if (tag is "SPAN" or "EM" or "STRONG" or "B" or "I" or "U")
-                    {
-                        var span = (HtmlSpan)container.AddSpan(HtmlFontStyle.Default);
-                        if (tag is "B" or "STRONG") span.Attributes["weight"] = "bold";
-                        if (tag is "I" or "EM") span.Attributes["style"] = "italic";
-                        if (tag is "U") span.Attributes["decoration"] = "underline";
-                        MapInline(el, span);
-                    }
-                    else if (tag is "A")
-                    {
-                        var link = (HtmlSpan)container.AddLink(el.GetAttribute("href"), HtmlFontStyle.Default);
-                        MapInline(el, link);
-                    }
-                    else if (tag is "NBSP")
-                    {
-                        container.AddNBSpace(HtmlFontStyle.Default);
-                    }
-                    else
-                    {
-                        // Unbekannte Inline-Elemente: Inline weiter abbilden
-                        MapInline(el, container);
-                    }
-                    break;
-                }
             }
         }
     }
@@ -131,7 +135,7 @@ public static class HtmlDocumentSerializer
         sb.AppendLine("<body>");
         foreach (var child in (root as HtmlNodeBase).Nodes)
         {
-            WriteElement(sb, child );
+            WriteElement(sb, child);
         }
         sb.AppendLine("</body>");
         sb.AppendLine("</html>");

@@ -11,7 +11,7 @@ using System.Globalization;
 namespace MVVM_BaseLibTests.ViewModel;
 
 [NotifyDataErrorInfo]
-public partial class TestVM:BaseViewModelCT
+public partial class TestVM : BaseViewModelCT
 {
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DoSomethingCommand))]
@@ -20,11 +20,11 @@ public partial class TestVM:BaseViewModelCT
 
     [ObservableProperty]
     [Required(ErrorMessageResourceName = "Err_Required", ErrorMessageResourceType = typeof(Resource))]
-    private string _testStr ="<TestStr>";
+    private string _testStr = "<TestStr>";
 
     bool DSCanExecute() => TestInt > 5;
 
-    [RelayCommand(CanExecute =nameof(DSCanExecute))]
+    [RelayCommand(CanExecute = nameof(DSCanExecute))]
     private void DoSomething() { }
 }
 
@@ -47,8 +47,8 @@ public class BaseTestViewModelTest : BaseTestViewModel
     }
 
     [TestMethod]
-    [DataRow(0,0,new[] { "" })]
-    [DataRow(-1,0,new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
+    [DataRow(0, 0, new[] { "" })]
+    [DataRow(-1, 0, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=0
 PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
 ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=The value is not in the specified range TestInt (0-10)
 PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=-1
@@ -72,7 +72,7 @@ CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
 PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestInt)=10
 CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
 " })]
-    public void IntPropTest(int iAct,int _,string[] asExp)
+    public void IntPropTest(int iAct, int _, string[] asExp)
     {
         // Act
         testModel.TestInt = iAct;
@@ -82,7 +82,7 @@ CanExChanged(CommunityToolkit.Mvvm.Input.RelayCommand)=True
         Assert.AreEqual(asExp[0], DebugLog);
     }
     [TestMethod]
-    [DataRow("<TestStr>", new[] { "","<TestStr>" })]
+    [DataRow("<TestStr>", new[] { "", "<TestStr>" })]
     [DataRow(null, new[] { @"PropChgn(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=<TestStr>
 PropChg(MVVM_BaseLibTests.ViewModel.TestVM,HasErrors)=True
 ErrorsChanged(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=The value may not be empty TestStr
@@ -196,6 +196,6 @@ PropChg(MVVM_BaseLibTests.ViewModel.TestVM,TestStr)=Test
         // Assert
         Assert.IsNotNull(TestModelProperies);
 
-    protected override Dictionary<string, object?> GetDefaultData() 
-        => new() { { nameof(TestVM.HasErrors), false }, { nameof(TestVM.TestInt), 0 }, { nameof(TestVM.TestStr),"<TestStr>" } };
+    protected override Dictionary<string, object?> GetDefaultData()
+        => new() { { nameof(TestVM.HasErrors), false }, { nameof(TestVM.TestInt), 0 }, { nameof(TestVM.TestStr), "<TestStr>" } };
 }

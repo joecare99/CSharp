@@ -1,12 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Main;
 using GenFree.Data;
 using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 using System;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class EventShowEditViewModel : BaseViewModelCT, IEventShowEditViewModel
 {
@@ -43,17 +42,22 @@ public partial class EventShowEditViewModel : BaseViewModelCT, IEventShowEditVie
 
     partial void OnIPersNrChanged(int newVal)
     {
-        Display_Text = DataModul.Event_GetLabelText(newVal, EEvtArt , Event_PreDisplay);
+        Display_Text = DataModul.Event_GetLabelText(newVal, EEvtArt, Event_PreDisplay);
     }
 
     public string Event_PreDisplay(bool xCitation = false, bool xWitness = false, bool xAnnotation = false, bool xBC = false, bool xReg = false)
     {
         string text = "";
-        if (xCitation) text = "§ ";
-        if (xWitness) text += "Z ";
-        if (xAnnotation) text += "B ";
-        if (xBC) text += "< ";
-        if (xReg) text += "U ";
+        if (xCitation)
+            text = "§ ";
+        if (xWitness)
+            text += "Z ";
+        if (xAnnotation)
+            text += "B ";
+        if (xBC)
+            text += "< ";
+        if (xReg)
+            text += "U ";
         return text;
     }
 

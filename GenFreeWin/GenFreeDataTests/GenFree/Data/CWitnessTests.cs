@@ -1,10 +1,9 @@
-﻿using GenFree.Data;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using GenFree.Interfaces.DB;
-using NSubstitute;
+﻿using BaseLib.Interfaces;
 using GenFree.Interfaces.Data;
-using BaseLib.Interfaces;
+using GenFree.Interfaces.DB;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
 
 namespace GenFree.Data.Tests
 {
@@ -283,7 +282,7 @@ namespace GenFree.Data.Tests
             // Assert
             Assert.AreEqual(xExp ? 1 : 0, count);
             Assert.AreEqual(nameof(WitnessIndex.ZeugSu), testRS.Index);
-            testRS.Received(1).Seek("=", iPerFamNr,10, (short)eArt,(short)0);
+            testRS.Received(1).Seek("=", iPerFamNr, 10, (short)eArt, (short)0);
         }
     }
 }

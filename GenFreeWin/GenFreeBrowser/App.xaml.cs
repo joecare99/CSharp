@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
-using GenFreeBrowser.ViewModels.Interfaces;
+﻿using GenFreeBrowser.Map.DI;
 using GenFreeBrowser.ViewModels;
-using GenFreeBrowser.Map.DI;
+using GenFreeBrowser.ViewModels.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using System.Windows;
 
 namespace GenFreeBrowser;
 

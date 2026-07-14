@@ -4,7 +4,7 @@ using System;
 
 namespace GenFree.Interfaces.Model
 {
-    public interface IHasRSIndex1<T,T2> where T2 : Enum where T : Enum
+    public interface IHasRSIndex1<T, T2> where T2 : Enum where T : Enum
     {
         IRecordset? Seek(T eIndex, object oIndexVal);
 

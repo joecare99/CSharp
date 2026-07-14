@@ -22,9 +22,9 @@ public class MouseEventArgs : IMouseEvent
 
     public MouseEventArgs(NativeMethods.MOUSE_EVENT_RECORD m)
     {
-        _m = m;  
+        _m = m;
     }
-    public Point MousePos => new Point(_m.dwMousePosition.X,_m.dwMousePosition.Y);
+    public Point MousePos => new Point(_m.dwMousePosition.X, _m.dwMousePosition.Y);
 
     public bool MouseButtonLeft => throw new NotImplementedException();
 

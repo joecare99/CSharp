@@ -1,6 +1,6 @@
 ﻿using BaseGenClasses.Helper;
 using BaseGenClasses.Persistence;
-using BaseGenClasses.Model;
+using BaseGenClasses.Persistence.Interfaces;
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Messaging;
 using GenInterfaces.Data;
@@ -9,10 +9,9 @@ using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
-using BaseGenClasses.Persistence.Interfaces;
 
 namespace BaseGenClasses.Model;
 
@@ -38,7 +37,7 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
     public IList<IGenEntity> Entitys { get; init; } = [];
     public IList<IGenSource> Sources { get; init; } = [];
     public IList<IGenPlace> Places { get; init; } = [];
-    public IList<IGenRepository> Repositories { get ; init ; }= [];
+    public IList<IGenRepository> Repositories { get; init; } = [];
     public IList<IGenMedia> Medias { get; init; } = [];
     public IList<IGenTransaction> Transactions { get; init; } = [];
 
@@ -54,7 +53,7 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
     public event EventHandler<FlushFailedEventArgs>? FlushFailed;
 
     public event EventHandler<JournalEntryRecordedEventArgs>? JournalEntryRecorded;
-    
+
     [JsonIgnore]
     public IReadOnlyList<IGenTransaction> JournalEntries => Transactions.ToArray();
 
@@ -127,7 +126,8 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
         }
 
         Entitys.Add(result);
-        if (result is IHasOwner<IGenealogy> hasOwner) hasOwner.SetOwner(this);
+        if (result is IHasOwner<IGenealogy> hasOwner)
+            hasOwner.SetOwner(this);
         return result;
     }
 
@@ -176,9 +176,12 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
             _fact = _fact ?? ((item is IGenFact f) ? f : null);
             if (item is string s)
             {
-                if (s.StartsWith("http")) _www = new(s);
-                else if (s.Length < 100 && !s.Contains('\n')) _description = s;
-                else if (_data == null) _data = s;
+                if (s.StartsWith("http"))
+                    _www = new(s);
+                else if (s.Length < 100 && !s.Contains('\n'))
+                    _description = s;
+                else if (_data == null)
+                    _data = s;
             }
         }
 
@@ -186,7 +189,7 @@ public class Genealogy : IGenealogy, IGenealogyPersistenceContext, IGenealogyJou
             throw new ArgumentException("Not enough data to create an entity");
 
         var knownFact = Sources.FirstOrDefault(e => e?.UId == _uid);
-            return knownFact;
+        return knownFact;
 
     }
 

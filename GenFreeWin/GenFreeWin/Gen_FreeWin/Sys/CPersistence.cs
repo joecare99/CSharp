@@ -35,9 +35,9 @@ namespace GenFree.Sys
         /// Gets the output path.
         /// </summary>
         /// <value>The output path.</value>
-        public string OutputDir => _Modul1.Instance.Verz1+ "INIT\\Ausgaben\\";
+        public string OutputDir => _Modul1.Instance.Verz1 + "INIT\\Ausgaben\\";
 
-        
+
         //modernisierte Version von WriteInt: Verzicht auf FileSystem, stattdessen File.WriteAllText
         void WriteInt(string sArea, string sSection, int iValue)
         {
@@ -69,7 +69,7 @@ namespace GenFree.Sys
             }
             return value;
         }
-         
+
         private int ReadInt(string sArea, string sSection)
         {
             var filePath = Path.Combine(sArea, sSection);
@@ -106,12 +106,12 @@ namespace GenFree.Sys
             var lines = File.ReadAllLines(filePath);
             foreach (var line in lines)
             {
-                if (iCnt-->0 && int.TryParse(line.Trim(), out int val))
+                if (iCnt-- > 0 && int.TryParse(line.Trim(), out int val))
                     values.Add(val);
             }
             return values.ToArray();
         }
-        private int ReadStrings(string sArea, string sSection, IList<string> asValue,bool xReplace =false )
+        private int ReadStrings(string sArea, string sSection, IList<string> asValue, bool xReplace = false)
         {
             var filePath = Path.Combine(sArea, sSection);
             if (!File.Exists(filePath))
@@ -123,8 +123,8 @@ namespace GenFree.Sys
                     asS[i] = lines[i];
             else if (xReplace)
                 for (var i = 0; i < lines.Length; i++)
-                    if (i+1 < asValue.Count)
-                        asValue[i+1] = lines[i];
+                    if (i + 1 < asValue.Count)
+                        asValue[i + 1] = lines[i];
                     else
                         asValue.Add(lines[i]);
             else
@@ -139,8 +139,8 @@ namespace GenFree.Sys
                 return -1;
 
             var lines = File.ReadAllLines(filePath);
-            for (var i = 0; i<asValue.Length && i< lines.Length; i++)
-                asValue[i]=lines[i];
+            for (var i = 0; i < asValue.Length && i < lines.Length; i++)
+                asValue[i] = lines[i];
             return lines.Count();
         }
         private string ReadString(string asArea, string sSection)
@@ -507,7 +507,8 @@ namespace GenFree.Sys
 
         public void CopyDirectory(string v, string backupDir)
         {
-            if (!Directory.Exists(v)) return;
+            if (!Directory.Exists(v))
+                return;
             if (!Directory.Exists(backupDir))
                 Directory.CreateDirectory(backupDir);
             var di = new DirectoryInfo(v);
@@ -556,7 +557,8 @@ namespace GenFree.Sys
         {
 
             var result = new int[cCnt];
-            if (!File.Exists(Path.Combine( GenFreeDir, sSection))) return result;
+            if (!File.Exists(Path.Combine(GenFreeDir, sSection)))
+                return result;
             FileSystem.FileOpen(99, Path.Combine(GenFreeDir, sSection), OpenMode.Input);
             for (int i = 0; i < cCnt; i++)
             {
@@ -611,7 +613,7 @@ namespace GenFree.Sys
             }
         }
 
-        public bool ExistFileTemp(string v) 
+        public bool ExistFileTemp(string v)
             => File.Exists(Path.Combine(TempPath, v));
 
         public int FileLengthTemp(string v)
@@ -641,7 +643,8 @@ namespace GenFree.Sys
             FileSystem.FileOpen(99, Path.Combine(MandDir, sSection), OpenMode.Input);
             for (int i = 0; i < v2; i++)
             {
-                if (FileSystem.EOF(99)) break;
+                if (FileSystem.EOF(99))
+                    break;
                 string line = FileSystem.LineInput(99).Trim();
                 result.Add(line);
             }
@@ -668,10 +671,10 @@ namespace GenFree.Sys
             return path;
         }
 
-        public bool ExistFile(string v) 
+        public bool ExistFile(string v)
             => File.Exists((string?)v);
 
-        public bool ExistFileMand(string dateiName) 
+        public bool ExistFileMand(string dateiName)
             => File.Exists(Path.Combine(MandDir, dateiName));
 
         public void WriteStringsMand(string sSection, IList<string> items)
@@ -684,7 +687,7 @@ namespace GenFree.Sys
             FileSystem.FileClose(99);
         }
 
-        public bool ExistFileProg(string v) 
+        public bool ExistFileProg(string v)
             => File.Exists(Path.Combine(GenFreeDir, v));
     }
 }

@@ -12,7 +12,7 @@
 // <summary>Search result for duplicate candidates</summary>
 // ***********************************************************************
 
-namespace Gen_FreeWin.Models
+namespace GenFreeWin.Models
 {
     /// <summary>
     /// Represents a search result record for potential duplicates.

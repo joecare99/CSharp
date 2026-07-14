@@ -18,7 +18,7 @@ public sealed class PdfSection : PdfNodeBase, IDocSection
 
     public IDocTOC AddTOC(string aName, int aLevel)
     {
-        var p = new PdfTOC(aName,aLevel);
+        var p = new PdfTOC(aName, aLevel);
         p.AppendText($"{aName} (bis H{aLevel})");
         return AddChild(p);
     }

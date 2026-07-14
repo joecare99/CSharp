@@ -1,8 +1,8 @@
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GenInterfaces.Data;
-using GenInterfaces.Interfaces.Genealogic;
 
 namespace BaseGenClasses.Persistence.Interfaces;
 

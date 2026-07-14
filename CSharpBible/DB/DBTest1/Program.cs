@@ -17,9 +17,9 @@ namespace DBTest1
 
         public static void Main(params string[] args)
         {
-            foreach(var s in DbProviderFactories.GetProviderInvariantNames())
+            foreach (var s in DbProviderFactories.GetProviderInvariantNames())
                 System.Console.WriteLine(s);
-            System.Console.WriteLine(new string('=',50));
+            System.Console.WriteLine(new string('=', 50));
             BasicExample.DoExample("192.168.0.98", "root", "", "test");
         }
     }

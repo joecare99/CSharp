@@ -34,14 +34,15 @@ public abstract class GenEntity : GenObject, IGenEntity
     public IList<IGenMedia?> Media { get; init; } = new WeakLinkList<IGenMedia>();
 
     [JsonIgnore]
-    public IGenealogy? Owner => (_WLowner?.TryGetTarget(out var t)??false)?t:null;
+    public IGenealogy? Owner => (_WLowner?.TryGetTarget(out var t) ?? false) ? t : null;
     #endregion
     abstract protected IGenFact? GetStartFactOfEntity();
     abstract protected IGenFact? GetEndFactOfEntity();
 
     void IHasOwner<IGenealogy>.SetOwner(IGenealogy t)
     {
-        if (t == null) return;
+        if (t == null)
+            return;
         _WLowner = new(t);
     }
 }

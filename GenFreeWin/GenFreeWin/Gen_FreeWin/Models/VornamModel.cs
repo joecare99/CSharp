@@ -14,7 +14,7 @@
 
 using GenFree.Data;
 
-namespace Gen_FreeWin.Models
+namespace GenFreeWin.Models
 {
     /// <summary>
     /// Domain model representing a Name entry with synonym/alias information.

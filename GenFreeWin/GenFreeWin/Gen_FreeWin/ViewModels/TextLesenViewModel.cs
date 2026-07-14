@@ -1,8 +1,7 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Main;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -20,7 +19,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
 {
@@ -449,7 +448,8 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
                             {
                                 Modul1.UbgT = View.Text2.Text.ToUpper();
                                 Modul1.STextles("TL5", Txknz, Modul1.UbgT, Liste1_Items);
-                                if (List1_Items.Count > 0) tTextBez = M_Bezeichnu;
+                                if (List1_Items.Count > 0)
+                                    tTextBez = M_Bezeichnu;
 
                             }
                             else
@@ -550,7 +550,8 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
                                     {
                                         Modul1.UbgT = View.Text2.Text.ToUpper();
                                         Modul1.STextles("TL5", Txknz, Modul1.UbgT, ocItems: MainProject.Forms.Ereignis.ListBox2.Items);
-                                        if (List1_Items.Count > 0) tTextBez = M_Bezeichnu;
+                                        if (List1_Items.Count > 0)
+                                            tTextBez = M_Bezeichnu;
 
                                     }
                                     else
@@ -843,7 +844,7 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
                 kennz3 = Modul1.eTKennz;
                 int nr = Nr;
                 int num12;
-                int num18=0;
+                int num18 = 0;
                 switch (kennz3)
                 {
                     case ETextKennz.A_:
@@ -1014,7 +1015,8 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
                             DataModul.Event.ForEachDo(EventIndex.EOrt, EventFields.Ort, nr, (cEv) =>
                             {
                                 _ = View.Sortbox1.Items.Add(new ListItem($"{cEv.iPerFamNr,10}{cEv.eArt.AsInt(),10}", (cEv.iPerFamNr, cEv.eArt)));
-                                if (View.Sortbox1.Items.Count <= 32500) return true;
+                                if (View.Sortbox1.Items.Count <= 32500)
+                                    return true;
                                 Abbr = 2f;
                                 return false;
                             }
@@ -1042,7 +1044,8 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
                             DataModul.Event.ForEachDo(EventIndex.EOrt, EventFields.Ort, nr, (cEv) =>
                             {
                                 _ = View.Sortbox1.Items.Add(new ListItem($"{cEv.iPerFamNr,10}{cEv.eArt.AsInt(),10}", (cEv.iPerFamNr, cEv.eArt)));
-                                if (View.Sortbox1.Items.Count <= 32500) return true;
+                                if (View.Sortbox1.Items.Count <= 32500)
+                                    return true;
                                 Abbr = 2f;
                                 return false;
                             }
@@ -1115,7 +1118,7 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
         {
             return;
         }
-        View.RTB.Text ="";
+        View.RTB.Text = "";
         View.Text3.Text = "";
         string sOldText = DataModul.DB_TexteTable.Fields[TexteFields.Txt].AsString();
 
@@ -1152,7 +1155,8 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
         {
             var ubgT = View.Text2.Text.ToUpper();
             Modul1.STextles("TL5", Txknz, sNewText.Trim(), ocItems: MainProject.Forms.Ereignis.ListBox2.Items);
-            if (List1_Items.Count > 0) tTextBez = M_Bezeichnu;
+            if (List1_Items.Count > 0)
+                tTextBez = M_Bezeichnu;
 
         }
         else
@@ -1635,7 +1639,8 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
                                 break;
                             case 16:
                                 tKennz = ETextKennz.A_;
-                                bezeichnu = ($"{Modul1.IText[EUserText.t196],100}", tKennz); ;
+                                bezeichnu = ($"{Modul1.IText[EUserText.t196],100}", tKennz);
+                                ;
                                 View._Check2_0.Visible = true;
                                 break;
                             case 17:
@@ -2909,7 +2914,7 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
         {
             Modul1.UbgT = DataModul.Place.FullName(cPlace);
 
-            OrtSTable_SetData(Ortnr, DataModul.Place.FullName(cPlace,true,false));
+            OrtSTable_SetData(Ortnr, DataModul.Place.FullName(cPlace, true, false));
             num2++;
         }
     }
@@ -3405,7 +3410,8 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
         if (View.Text2.Text != "")
         {
             Modul1.STextles("TL5", tTextBez.eTKnz, View.Text2.Text.ToUpper(), Liste1_Items);
-            if (List1_Items.Count > 0) tTextBez = M_Bezeichnu;
+            if (List1_Items.Count > 0)
+                tTextBez = M_Bezeichnu;
         }
         else
         {
@@ -3521,7 +3527,8 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
                         break;
                 }
                 goto IL_0519;
-            end_IL_0001:;
+            end_IL_0001:
+                ;
             }
             catch (Exception obj) when (obj is not null && num2 != 0 && num == 0)
             {
@@ -3724,7 +3731,8 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
                         break;
                 }
                 goto IL_0564;
-            end_IL_0001:;
+            end_IL_0001:
+                ;
             }
             catch (Exception obj) when (obj is not null && num2 != 0 && num == 0)
             {
@@ -3805,34 +3813,35 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
             DataModul.wrkDefault.Rollback();
         }
         goto end_IL_0001;
-    /*
-     * num = -1;
-                                switch (iSatz)
-                                {
-                                    case 2:
-                                        if (Information.Err().Number == 3022)
-                                        {
-                                            text = "Der Text ist unter Todesursachen schon vorhanden.\nÄndern Sie den Text unter Todesursachen z.B. durch vorsetzten eines >A<.";
-                                            text += "\nVerschieben Sie dann diesen Text und machen die Änderung unter Todesursache wieder rückgängig.";
-                                            DataModul.wrkDefault.Rollback();
-                                            _ = Interaction.MsgBox(text, mb: MessageBoxButtons.OK, title: "Verschieben nicht möglich");
-                                            Text1.Text = "";
-                                            Liste1.List6_Items.Clear();
-                                        }
-                                        else
-                                        {
-                                            DataModul.wrkDefault.Rollback();
-                                            _ = Interaction.MsgBox(text, mb: MessageBoxButtons.OK, title: "Verschieben nicht möglich");
-                                            Text1.Text = "";
-                                            Liste1.List6_Items.Clear();
-                                        }
-                                        goto end_IL_0001;
-                                }
-                                break;
-                        }
-                        goto IL_0617;
-                    }*/
-    end_IL_0001:;
+        /*
+         * num = -1;
+                                    switch (iSatz)
+                                    {
+                                        case 2:
+                                            if (Information.Err().Number == 3022)
+                                            {
+                                                text = "Der Text ist unter Todesursachen schon vorhanden.\nÄndern Sie den Text unter Todesursachen z.B. durch vorsetzten eines >A<.";
+                                                text += "\nVerschieben Sie dann diesen Text und machen die Änderung unter Todesursache wieder rückgängig.";
+                                                DataModul.wrkDefault.Rollback();
+                                                _ = Interaction.MsgBox(text, mb: MessageBoxButtons.OK, title: "Verschieben nicht möglich");
+                                                Text1.Text = "";
+                                                Liste1.List6_Items.Clear();
+                                            }
+                                            else
+                                            {
+                                                DataModul.wrkDefault.Rollback();
+                                                _ = Interaction.MsgBox(text, mb: MessageBoxButtons.OK, title: "Verschieben nicht möglich");
+                                                Text1.Text = "";
+                                                Liste1.List6_Items.Clear();
+                                            }
+                                            goto end_IL_0001;
+                                    }
+                                    break;
+                            }
+                            goto IL_0617;
+                        }*/
+    end_IL_0001:
+        ;
     }
 
 }

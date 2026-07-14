@@ -1,8 +1,8 @@
+using Document.Base.Models; // for EFontStyle
+using Document.Base.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Document.Base.Models.Interfaces;
-using Document.Base.Models; // for EFontStyle
 
 namespace Document.Docx.Model;
 
@@ -16,13 +16,15 @@ public abstract class DocxContentBase : DocxNodeBase, IDocContent, IDocElement
         set
         {
             _text.Clear();
-            if (!string.IsNullOrEmpty(value)) _text.Append(value);
+            if (!string.IsNullOrEmpty(value))
+                _text.Append(value);
         }
     }
 
     public void AppendText(string text)
     {
-        if (!string.IsNullOrEmpty(text)) _text.Append(text);
+        if (!string.IsNullOrEmpty(text))
+            _text.Append(text);
     }
 
     public virtual IDocContent AddLineBreak()
@@ -80,11 +82,13 @@ public abstract class DocxContentBase : DocxNodeBase, IDocContent, IDocElement
 
     public virtual string GetTextContent(bool xRecursive = true)
     {
-        if (!xRecursive) return TextContent;
+        if (!xRecursive)
+            return TextContent;
         var sb = new StringBuilder();
         sb.Append(TextContent);
         foreach (var c in Nodes)
-            if (c is IDocContent dc) sb.Append(dc.GetTextContent(true));
+            if (c is IDocContent dc)
+                sb.Append(dc.GetTextContent(true));
         return sb.ToString();
     }
 
@@ -95,6 +99,7 @@ public abstract class DocxContentBase : DocxNodeBase, IDocContent, IDocElement
     public IEnumerable<IDocElement> Enumerate()
     {
         foreach (var n in Nodes)
-            if (n is IDocElement de) yield return de;
+            if (n is IDocElement de)
+                yield return de;
     }
 }

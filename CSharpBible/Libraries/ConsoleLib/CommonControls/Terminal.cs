@@ -66,17 +66,17 @@ public class Terminal : Control, IConsole
         base.SetSize(size);
         var _old = ScBuffer;
         ScBuffer = new ScreenCell[size.Width - 2, size.Height - 2];
-        for(var y = 0;y < size.Height - 2;y++)
+        for (var y = 0; y < size.Height - 2; y++)
             for (var x = 0; x < size.Width - 2; x++)
             {
-                if (_old != null &&x < _old.GetLength(0) && y < _old.GetLength(1))
+                if (_old != null && x < _old.GetLength(0) && y < _old.GetLength(1))
                     ScBuffer[x, y] = _old[x, y];
                 else
-                    ScBuffer[x, y] = (' ',( ConsoleColor.White, ConsoleColor.Black));
+                    ScBuffer[x, y] = (' ', (ConsoleColor.White, ConsoleColor.Black));
             }
     }
 
-    private ScreenCell[,] ScBuffer = new ScreenCell[0,0];
+    private ScreenCell[,] ScBuffer = new ScreenCell[0, 0];
     private ConsoleColor _ForegroundColor = ConsoleColor.DarkGray;
     private ConsoleColor _BackgroundColor;
     private Point _cursorPos;
@@ -85,9 +85,9 @@ public class Terminal : Control, IConsole
     ConsoleColor IConsole.BackgroundColor { get => _BackgroundColor; set => _BackgroundColor = value; }
     public bool IsOutputRedirected => ConsoleHost?.IsOutputRedirected ?? false;
     public bool KeyAvailable => false;  // Todo: Implement keybuffer
-    public int LargestWindowHeight => size.Height-2;
+    public int LargestWindowHeight => size.Height - 2;
     public string Title { get => Text; set { } }
-    public int WindowHeight { get => size.Height -2; set { } }
+    public int WindowHeight { get => size.Height - 2; set { } }
     public int WindowWidth { get => size.Width - 2; set { } }
 
     public bool CursorVisible { get; set; }
@@ -152,7 +152,7 @@ public class Terminal : Control, IConsole
         (_cursorPos.X, _cursorPos.Y) = (left, top);
     }
 
-    private void _write(char ch,bool xUpdate)
+    private void _write(char ch, bool xUpdate)
     {
         switch (ch)
         {
@@ -170,7 +170,7 @@ public class Terminal : Control, IConsole
                 _cursorPos.X = 0;
                 break;
             case '\t':
-                _cursorPos.X= _cursorPos.X & -4 + 4;
+                _cursorPos.X = _cursorPos.X & -4 + 4;
                 if (_cursorPos.X >= size.Width - 2)
                 {
                     _cursorPos.X = 0;
@@ -197,7 +197,8 @@ public class Terminal : Control, IConsole
                     ConsoleHost?.WriteTerminalCell(this, _cursorPos.X, _cursorPos.Y, ch, _ForegroundColor, _BackgroundColor);
                 _cursorPos.X++;
                 break;
-        };
+        }
+        ;
         if (Valid && !xUpdate)
             Invalidate();
     }
@@ -220,10 +221,11 @@ public class Terminal : Control, IConsole
     public void Write(char ch) => _write(ch, true);
     public void Write(string? st)
     {
-        if (st == null) return;
+        if (st == null)
+            return;
         foreach (var ch in st)
         {
-            _write(ch, st.Length < size.Width-2);
+            _write(ch, st.Length < size.Width - 2);
         }
     }
 

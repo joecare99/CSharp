@@ -1,21 +1,16 @@
-﻿using System;
-using System.IO;
+﻿using GenFree.Data;
+using GenFree.Helper;
+using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Interfaces.Model;
+using GenFree.Interfaces.UI;
+using GenFree.Interfaces.VB;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GenFree.Interfaces.DB;
-using Microsoft.VisualBasic;
+using System.IO;
 using System.Runtime.InteropServices;
-using GenFree.Data;
-using GenFree.Interfaces.UI;
-using GenFree.Interfaces.Model;
-using GenFree.Interfaces.Data;
-using GenFree.Helper;
-using System.Collections;
-using GenFree.Data.Models;
-using GenFree.Interfaces.VB;
 
 namespace GenFree.Interfaces.Sys;
 
@@ -117,12 +112,12 @@ public interface IModul1
 
     string AppName { get; }
     string Author { get; }
-    string VendorName { get;}
+    string VendorName { get; }
     /// <summary>
     /// "Version DD.MM.YYYY {VersDat}"
     /// </summary>
     /// <value>The version.</value>
-    string Version { get;  }
+    string Version { get; }
     /// <summary>
     /// "{AppName} {Description}"
     /// </summary>
@@ -164,10 +159,10 @@ public interface IModul1
     /// Gets the picture dir.
     /// </summary>
     /// <value>The path of picture .</value>
-    string PictureDir { get;}
+    string PictureDir { get; }
 
     string Verz1 { get; set; }
-    string MainProg { get;  }
+    string MainProg { get; }
     /// <summary>
     /// Gets or sets the name of the mandant.
     /// </summary>
@@ -184,7 +179,7 @@ public interface IModul1
     // =================
     byte Programtesttemp { get; set; }
     string AutoupD { get; set; }
-    
+
     bool FAendmerk { get; set; }
     bool PAendmerk { get; set; }
 
@@ -198,7 +193,7 @@ public interface IModul1
 
     IFamilyData Family { get; set; }
     IPersonData Person { get; set; }
-    
+
     ELinkKennz eLKennz { get; set; }
     EEventArt Art { get; set; }
     ETextKennz eNKennz { get; set; }
@@ -209,7 +204,7 @@ public interface IModul1
 
     string UbgT { get; set; }
     string UbgT1 { get; set; }
-    
+
     string AppHostName { get; }
     Enum eWindowState { get; set; }
     EWindowSize eWindowSize { get; set; }
@@ -240,21 +235,21 @@ public interface IModul1
     string sDatu { get; set; }
     int Datklein { get; set; }
 
-     short Les { get; set; }
-    
+    short Les { get; set; }
+
     short Druck_Tast { get; set; }
     string Message_sNoChangesOnCD { get; }
     string Message_sDemoVerNotPossibl { get; }
 
     Letzter Letzte { get; set; }
- 
-    
+
+
     byte Suchschalt { get; set; }
     int Suchfam { get; set; }
     int SuchPer { get; set; }
     short Trans { get; set; }
     string Inhaber { get; set; }
-    
+
     short ErSchalt { get; set; }
     int Nr { get; set; }
     /// <summary>
@@ -323,7 +318,7 @@ public interface IModul1
     void OFBTextPruefenSpeichern(string UbgT, string Kennz, int LfNR);
     bool OfficeAppInstalled(MSOfficeComponent nComponent);
     string OfficeInstallPath(MSOfficeVersion nVersion);
-    string ortles1(int Ortnr, byte Schalt=0,Action<int,string>? action=null);
+    string ortles1(int Ortnr, byte Schalt = 0, Action<int, string>? action = null);
     string ortles(int OrtNr, byte Schalt);
     string[] Ortles(IPlaceData place, int Schalt = 0, Action<int, string>? export = null);
     void Orttextspeichern();

@@ -12,7 +12,7 @@ public interface IRegSuchViewModel
     IRelayCommand<object> Label70_DoubleClickCommand { get; }
 
     void Form_Load(object sender, EventArgs e);
-    
+
     void Combo1_KeyUp(object s, KeyEventArgs e);
     void Command1_Click(object sender, EventArgs e);
     void Label5_DoubleClick(object sender, EventArgs e);

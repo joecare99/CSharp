@@ -1,8 +1,7 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Main;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -21,16 +20,17 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
-namespace Gen_FreeWin.ViewModels;
-public partial class OrtsVerViewModel: BaseViewModelCT, IOrtsVerViewModel
+namespace GenFreeWin.ViewModels;
+
+public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 {
     IContainerControl IOrtsVerViewModel.View { get; set; }
     Ortsver View => (Ortsver)((IOrtsVerViewModel)this).View;
 
-	[ObservableProperty]
-	public partial bool Frame1_Visible { get; set; }
+    [ObservableProperty]
+    public partial bool Frame1_Visible { get; set; }
 
-	IModul1 Modul1 => _Modul1.Instance;
+    IModul1 Modul1 => _Modul1.Instance;
     IInteraction Interaction = Menue.Default;
     #region VB-Compatibility-Interfaces
     IProjectData ProjectData => Modul1.ProjectData;
@@ -1625,14 +1625,14 @@ public partial class OrtsVerViewModel: BaseViewModelCT, IOrtsVerViewModel
         checked
         {
             DataModul.DOSB_OrtSTable.Seek("=", View.Label13.Tag.AsInt());
-            if (!DataModul.DOSB_OrtSTable.NoMatch 
+            if (!DataModul.DOSB_OrtSTable.NoMatch
                 && (DataModul.DOSB_OrtSTable.Fields["Nr"].AsInt() == View.Label13.Tag.AsInt()))
             {
                 DataModul.DOSB_OrtSTable.Delete();
             }
             DataModul.DB_PlaceTable.Index = nameof(PlaceIndex.OrtNr);
             DataModul.DB_PlaceTable.Seek("=", View.Label13.Tag.AsInt());
-            if (!DataModul.DB_PlaceTable.NoMatch 
+            if (!DataModul.DB_PlaceTable.NoMatch
                 && (DataModul.DB_PlaceTable.Fields[PlaceFields.OrtNr].AsInt() == View.Label13.Tag.AsInt()))
             {
                 DataModul.DB_PlaceTable.Delete();
@@ -2135,11 +2135,11 @@ public partial class OrtsVerViewModel: BaseViewModelCT, IOrtsVerViewModel
         }
         View.Label30.Text = Modul1.UbgT1.Trim();
         Modul1.UbgT1 = "";
-    //    }
-    //    num = 62;
-    //    View.Label32.Text = "Gewählter Ort\n" + View.ListBox4.SelectedItem.AsString().Left(-10);
-    //    break;
-    //}
+        //    }
+        //    num = 62;
+        //    View.Label32.Text = "Gewählter Ort\n" + View.ListBox4.SelectedItem.AsString().Left(-10);
+        //    break;
+        //}
     end_IL_0001_3:
         ;
     }
@@ -2163,7 +2163,7 @@ public partial class OrtsVerViewModel: BaseViewModelCT, IOrtsVerViewModel
             var instance2 = Strings.Split(View.Label32.Text, "\n");
             View.Label33.Text = "Die Luflinien-Entfernung zwischen " + Strings.Trim(
                 instance[0].AsString()) + " und " + Strings.Trim(
-                    instance2[0].AsString()) + " beträgt \n\n" + 
+                    instance2[0].AsString()) + " beträgt \n\n" +
                     Conversion.Str(Math.Floor(PlaceHelpers.CalcDistance(View.Label28.Text.AsInt(), View.Label29.Text.AsInt(), View.Label30.Text.AsInt(), View.Label31.Text.AsInt()))) + " Km";
         }
     }
@@ -2176,7 +2176,7 @@ public partial class OrtsVerViewModel: BaseViewModelCT, IOrtsVerViewModel
             var instance2 = Strings.Split(View.Label32.Text, "\n");
             View.Label33.Text = "Die Luftlinien-Entfernung zwischen " + Strings.Trim(
                 instance[0].AsString()) + " und " + Strings.Trim(
-                    instance2[0].AsString()) + " beträgt \n\n" + 
+                    instance2[0].AsString()) + " beträgt \n\n" +
                     Conversion.Str(Math.Floor(PlaceHelpers.CalcDistance(View.Label28.Text.AsInt(), View.Label29.Text.AsInt(), View.Label30.Text.AsInt(), View.Label31.Text.AsInt()))) + " Km";
         }
     }

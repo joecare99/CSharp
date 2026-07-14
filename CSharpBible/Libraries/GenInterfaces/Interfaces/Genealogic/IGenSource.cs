@@ -42,5 +42,5 @@ public interface IGenSource : IGenObject, IHasOwner<IGenealogy>
     /// <value>The list of media of this source.</value>
     IList<IGenMedia> Medias { get; init; }
 
-    
+
 }

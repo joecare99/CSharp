@@ -18,7 +18,7 @@ public class CNB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Fra
         IRecordset nB_Frau1Table = _db_Table;
         nB_Frau1Table.Index = __keyIndex;
         nB_Frau1Table.Seek("=", key);
-        xBreak=nB_Frau1Table.NoMatch;
+        xBreak = nB_Frau1Table.NoMatch;
         return xBreak ? null : nB_Frau1Table;
     }
     /// <summary>
@@ -26,7 +26,7 @@ public class CNB_Frau(Func<IRecordset> recordset) : CUsesRecordSet<int>, INB_Fra
     /// </summary>
     /// <param name="recordset">The recordset.</param>
     /// <returns>System.Int32.</returns>
-    protected override int GetID(IRecordset recordset) 
+    protected override int GetID(IRecordset recordset)
         => recordset.Fields[NB_Frau1Fields.LfNr].AsInt();
 
     /// <summary>

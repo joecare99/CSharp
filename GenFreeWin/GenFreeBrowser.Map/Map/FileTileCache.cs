@@ -56,7 +56,8 @@ public sealed class FileTileCache : ITileCache
 
     private bool NeedsCleanupTrigger()
     {
-        if (_maxBytes is null && _maxAge is null) return false;
+        if (_maxBytes is null && _maxAge is null)
+            return false;
         var now = DateTime.UtcNow;
         if (now >= _nextCleanupTime)
         {
@@ -68,12 +69,14 @@ public sealed class FileTileCache : ITileCache
 
     private void Cleanup()
     {
-        if (_maxBytes is null && _maxAge is null) return;
+        if (_maxBytes is null && _maxAge is null)
+            return;
         try
         {
             lock (_cleanupLock)
             {
-                if (!_fs.DirectoryExists(_root)) return;
+                if (!_fs.DirectoryExists(_root))
+                    return;
 
                 var files = _fs.EnumerateFiles(_root, "*.png", recursive: true)
                     .Select(p =>
@@ -89,7 +92,8 @@ public sealed class FileTileCache : ITileCache
                     .Select(x => x!)
                     .ToList();
 
-                if (files.Count == 0) return;
+                if (files.Count == 0)
+                    return;
 
                 if (_maxAge is not null)
                 {
@@ -108,7 +112,8 @@ public sealed class FileTileCache : ITileCache
                     {
                         foreach (var f in files.OrderBy(f => f.LastWriteUtc))
                         {
-                            if (total <= _maxBytes.Value) break;
+                            if (total <= _maxBytes.Value)
+                                break;
                             if (_fs.TryDeleteFile(f.Path))
                             {
                                 total -= f.Length;

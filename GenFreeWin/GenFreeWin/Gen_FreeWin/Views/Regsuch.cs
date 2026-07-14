@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Views;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 public partial class Regsuch : Form
 {
@@ -39,7 +39,7 @@ public partial class Regsuch : Form
         ALine1 = new ControlArray<Label>();
         AOption1 = new ControlArray<RadioButton>();
         InitializeComponent();
-        
+
         AOption1.SetIndex(_Option1_0, 0);
         AOption1.SetIndex(_Option1_1, 1);
         AOption1.SetIndex(_Option1_2, 2);
@@ -54,15 +54,15 @@ public partial class Regsuch : Form
         AOption1.SetIndex(_Option1_11, 11);
         AOption1.SetIndex(_Option1_12, 12);
         AOption1.SetIndex(_Option1_13, 13);
-        
+
         ACheck2.SetIndex(_Check2_3, 3);
-        
+
         ACommand1.SetIndex(_Command1_0, 0);
         ACommand1.SetIndex(_Command1_3, 3);
         ACommand1.SetIndex(_Command1_7, 7);
-        
+
         ALabel1.SetIndex(_Label1_1, 1);
-        
+
         ACommand1.AddClick(_viewModel.Command1_Click);
         ALabel5.AddDoubleClick(_viewModel.Label5_DoubleClick);
         AOption1.AddCheckedChangedRB(_viewModel.Option1_CheckedChanged);
@@ -72,13 +72,13 @@ public partial class Regsuch : Form
         CheckedBindingAttribute.Commit(this, _viewModel);
         DblClickBindingAttribute.Commit(this, _viewModel);
     }
-    private void ListBox1_Click(object s, EventArgs e) => _viewModel.ListBox1_Click(s,e);
-    private void ListBox1_DoubleClick(object s, EventArgs e) => _viewModel.ListBox1_DoubleClick(s,e);
-    private void Combo1_KeyUp(object s, KeyEventArgs e) => _viewModel.Combo1_KeyUp(s,e);
+    private void ListBox1_Click(object s, EventArgs e) => _viewModel.ListBox1_Click(s, e);
+    private void ListBox1_DoubleClick(object s, EventArgs e) => _viewModel.ListBox1_DoubleClick(s, e);
+    private void Combo1_KeyUp(object s, KeyEventArgs e) => _viewModel.Combo1_KeyUp(s, e);
 
     internal DialogResult ShowDialog(byte v1, byte bSuchschalt, int iSuchpers, int iSuchfam)
     {
-        
+
         return ShowDialog();
     }
 }

@@ -1,15 +1,16 @@
 ﻿//using DAO;
-using System;
+using BaseLib.Helper;
+using GenFree.Helper;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
-using GenFree.Helper;
 using GenFree.Interfaces.Sys;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
 using GenFree.Models;
+using System;
 
 namespace GenFree.Data;
-public class CPerson : CUsesIndexedRSet<int,PersonIndex,PersonFields,IPersonData>, IPerson
+
+public class CPerson : CUsesIndexedRSet<int, PersonIndex, PersonFields, IPersonData>, IPerson
 {
     private Func<IRecordset> _value;
     private ISysTime _sysTime;

@@ -1,24 +1,24 @@
-﻿using Gen_FreeWin.Views;
-using MVVM.ViewModel;
-using System;
-using System.Windows.Forms;
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
-using GenFreeWin.Views;
 using GenFree.Interfaces.VB;
-using System.Drawing;
-using System.Diagnostics;
 using GenFree.ViewModels.Interfaces;
+using GenFreeWin.Views;
+using MVVM.ViewModel;
+using System;
+using System.Diagnostics;
+using System.Drawing;
+using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
-public class PartnerRechercheViewModel : BaseViewModelCT , IPartnerRechercheViewModel
+public class PartnerRechercheViewModel : BaseViewModelCT, IPartnerRechercheViewModel
 {
     IContainerControl IPartnerRechercheViewModel.View { get; set; }
-    Partnerrecherche View=> (Partnerrecherche)((IPartnerRechercheViewModel)this).View;
+    Partnerrecherche View => (Partnerrecherche)((IPartnerRechercheViewModel)this).View;
 
     IModul1 Modul1 => _Modul1.Instance;
     [Obsolete]

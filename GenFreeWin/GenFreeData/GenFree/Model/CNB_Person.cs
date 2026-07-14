@@ -1,6 +1,5 @@
 ﻿using BaseLib.Helper;
 using GenFree.Data;
-using GenFree.Helper;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
 using System;
@@ -19,7 +18,7 @@ namespace GenFree.Models
         }
         protected override string __keyIndex => "Per";
         protected override IRecordset _db_Table => _value();
-        protected override int GetID(IRecordset recordset) 
+        protected override int GetID(IRecordset recordset)
             => recordset.Fields[IndexFields.Person].AsInt();
 
         public override IRecordset? Seek(int key, out bool xBreak)

@@ -1,5 +1,3 @@
-using System;
-
 namespace System.Diagnostics.CodeAnalysis;
 
 #if !NET5_0_OR_GREATER

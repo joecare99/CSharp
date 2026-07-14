@@ -12,11 +12,11 @@
 // <summary>Service contract for duplicate detection logic</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
+using GenFreeWin.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Services.Interfaces
+namespace GenFreeWin.Services.Interfaces
 {
     /// <summary>
     /// Service for detecting and retrieving potential duplicate candidates.

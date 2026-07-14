@@ -1,13 +1,13 @@
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces;
+using GenInterfaces.Interfaces.Genealogic;
+using global::GenSecure.Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using GenInterfaces.Data;
-using GenInterfaces.Interfaces;
-using GenInterfaces.Interfaces.Genealogic;
-using global::GenSecure.Contracts;
 
 namespace GenSecure.Core;
 
@@ -123,7 +123,7 @@ public sealed class GenealogySecureStore : IGenealogySecureStore
                 RecordId = dictPlaceRecordIds[genPlace],
                 UId = genPlace.UId,
             }).ToList(),
-             Transactions = genealogy.Transactions
+            Transactions = genealogy.Transactions
                 .Select(genTransaction => CreateTransactionRecord(genealogy, genTransaction, dictEntityRecordIds, dictPlaceRecordIds, dictFactReferenceIds))
                 .ToList(),
         };

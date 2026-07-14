@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace GenFreeBrowser.Places;
 
@@ -29,7 +25,8 @@ public sealed class SearchHistoryService : ISearchHistoryService
     {
         get
         {
-            lock (_gate) return _items.AsReadOnly();
+            lock (_gate)
+                return _items.AsReadOnly();
         }
     }
 
@@ -54,7 +51,8 @@ public sealed class SearchHistoryService : ISearchHistoryService
                     _items.Clear();
                     foreach (var s in data)
                     {
-                        if (!string.IsNullOrWhiteSpace(s)) _items.Add(s.Trim());
+                        if (!string.IsNullOrWhiteSpace(s))
+                            _items.Add(s.Trim());
                     }
                 }
             }
@@ -67,13 +65,15 @@ public sealed class SearchHistoryService : ISearchHistoryService
 
     public void Register(string query)
     {
-        if (string.IsNullOrWhiteSpace(query)) return;
+        if (string.IsNullOrWhiteSpace(query))
+            return;
         var q = query.Trim();
         lock (_gate)
         {
             _items.RemoveAll(s => s.Equals(q, StringComparison.OrdinalIgnoreCase));
             _items.Insert(0, q);
-            while (_items.Count > _maxItems) _items.RemoveAt(_items.Count - 1);
+            while (_items.Count > _maxItems)
+                _items.RemoveAt(_items.Count - 1);
             PersistUnsafe();
         }
     }

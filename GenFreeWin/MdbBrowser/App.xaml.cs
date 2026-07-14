@@ -4,7 +4,6 @@ using MdbBrowser.Models.Interfaces;
 using MdbBrowser.ViewModels;
 using MdbBrowser.ViewModels.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using MVVM.Views.Extension;
 using System;
 using System.Windows;
 
@@ -19,9 +18,9 @@ namespace MdbBrowser
         {
             // Build the DependencyInjection container
             var builder = new ServiceCollection()
-                .AddSingleton<IDBModel,DBModel>()
-               .AddSingleton<IDBViewViewModel>((s)=>DBViewViewModel.This!)
-               .AddTransient<ITableViewViewModel,TableViewViewModel>()
+                .AddSingleton<IDBModel, DBModel>()
+               .AddSingleton<IDBViewViewModel>((s) => DBViewViewModel.This!)
+               .AddTransient<ITableViewViewModel, TableViewViewModel>()
                .AddTransient<ISchemaViewViewModel, SchemaViewViewModel>();
 
             IoC.GetReqSrv = builder.BuildServiceProvider().GetRequiredService;

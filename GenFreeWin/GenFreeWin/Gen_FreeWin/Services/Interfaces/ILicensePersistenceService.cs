@@ -12,7 +12,7 @@
 // <summary>Interface for license persistence operations</summary>
 // ***********************************************************************
 
-namespace Gen_FreeWin.Services.Interfaces
+namespace GenFreeWin.Services.Interfaces
 {
     /// <summary>
     /// Interface for managing license data persistence operations.

@@ -23,7 +23,7 @@ namespace GenInterfaces.Interfaces.Genealogic;
 /// Extends the <see cref="GenInterfaces.Interfaces.Genealogic.IGenObject" />
 /// </summary>
 /// <seealso cref="GenInterfaces.Interfaces.Genealogic.IGenObject" />
-public interface IGenRepository: IGenObject, IHasOwner<IGenealogy>
+public interface IGenRepository : IGenObject, IHasOwner<IGenealogy>
 {
     /// <summary>
     /// Gets the name of the repository.

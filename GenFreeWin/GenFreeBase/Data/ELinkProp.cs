@@ -3,7 +3,7 @@
     public enum ELinkProp
     {
         iPersNr, // 
-        iFamNr,   
+        iFamNr,
         eKennz,
     }
 }

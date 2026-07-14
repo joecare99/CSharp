@@ -1,6 +1,6 @@
-﻿using System;
+﻿using GenInterfaces.Interfaces.Genealogic;
+using System;
 using System.Text.Json;
-using GenInterfaces.Interfaces.Genealogic;
 
 namespace BaseGenClasses.Model.Tests;
 
@@ -14,7 +14,7 @@ public class GenPlaceTests
     [TestInitialize]
     public void Initialize()
     {
-        _genPlace = new GenPlace("Musterstadt", "Deutschland","GOV123")
+        _genPlace = new GenPlace("Musterstadt", "Deutschland", "GOV123")
         {
             UId = Guid.Parse("164359f0-a3a4-4f9f-8824-af79ec666a45")
         };
@@ -75,8 +75,8 @@ public class GenPlaceTests
     {
         var json = JsonSerializer.Serialize<IGenPlace>(_genPlace);
         Assert.AreEqual(_cPlaceJS, json);
-    }  
-    
+    }
+
     [TestMethod()]
     public void DeerializeGenPlaceTest()
     {

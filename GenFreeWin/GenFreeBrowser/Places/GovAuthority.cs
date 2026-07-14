@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Authorities;
-using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace GenFreeBrowser.Places;
 
@@ -38,8 +33,10 @@ public sealed class GovAuthority : IGenPlaceAuthority
                 double lat = 0, lon = 0;
                 if (loc.TryGetProperty("position", out var coords) && coords.ValueKind == JsonValueKind.Object)
                 {
-                    if (coords.TryGetProperty("lat", out var latProp) && latProp.TryGetDouble(out var dlat)) lat = dlat;
-                    if (coords.TryGetProperty("lon", out var lonProp) && lonProp.TryGetDouble(out var dlon)) lon = dlon;
+                    if (coords.TryGetProperty("lat", out var latProp) && latProp.TryGetDouble(out var dlat))
+                        lat = dlat;
+                    if (coords.TryGetProperty("lon", out var lonProp) && lonProp.TryGetDouble(out var dlon))
+                        lon = dlon;
                 }
                 var hierarchy = new List<string>();
                 if (loc.TryGetProperty("hierarchy", out var hProp) && hProp.ValueKind == JsonValueKind.Array)

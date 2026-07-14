@@ -57,7 +57,7 @@
  * ============================================
  * 
  * - MSTest 4.2.3 (oder neuere Version)
- * - Gen_FreeWin.csproj als Abhängigkeit
+ * - GenFreeWin.csproj als Abhängigkeit
  * - Test-Projekt mit [TestClass], [TestMethod], [TestInitialize] Attributen
  * 
  * ============================================

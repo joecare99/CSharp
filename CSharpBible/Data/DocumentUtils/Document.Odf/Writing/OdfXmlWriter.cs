@@ -1,6 +1,6 @@
-using System.Xml.Linq;
 using Document.Base.Models.Interfaces;
 using Document.Odf.Models;
+using System.Xml.Linq;
 
 namespace Document.Odf.Writing;
 
@@ -50,7 +50,7 @@ public static class OdfXmlWriter
     public static XDocument CreateContentXml(OdfSection root)
     {
         var officeText = new XElement(OdfNamespaces.Office + "text");
-        
+
         foreach (var node in root.Nodes)
         {
             var el = ConvertNode(node);
@@ -105,13 +105,13 @@ public static class OdfXmlWriter
     public static XDocument CreateMetaXml(string? title = null, string? creator = null)
     {
         var meta = new XElement(OdfNamespaces.Office + "meta");
-        
+
         if (!string.IsNullOrEmpty(title))
             meta.Add(new XElement(OdfNamespaces.Dc + "title", title));
-        
+
         if (!string.IsNullOrEmpty(creator))
             meta.Add(new XElement(OdfNamespaces.Dc + "creator", creator));
-        
+
         meta.Add(new XElement(OdfNamespaces.Meta + "creation-date", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")));
         meta.Add(new XElement(OdfNamespaces.Meta + "generator", "Document.Odf"));
 
@@ -187,7 +187,8 @@ public static class OdfXmlWriter
             hasProps = true;
         }
 
-        if (!hasProps) return null;
+        if (!hasProps)
+            return null;
 
         return new XElement(OdfNamespaces.Style + "style",
             new XAttribute(OdfNamespaces.Style + "name", styleName),
@@ -199,11 +200,15 @@ public static class OdfXmlWriter
     private static string? GetAutoStyleName(IDocFontStyle fontStyle)
     {
         var parts = new List<string>();
-        if (fontStyle.Bold) parts.Add("Bold");
-        if (fontStyle.Italic) parts.Add("Italic");
-        if (fontStyle.Underline) parts.Add("Underline");
-        if (fontStyle.Strikeout) parts.Add("Strikeout");
-        
+        if (fontStyle.Bold)
+            parts.Add("Bold");
+        if (fontStyle.Italic)
+            parts.Add("Italic");
+        if (fontStyle.Underline)
+            parts.Add("Underline");
+        if (fontStyle.Strikeout)
+            parts.Add("Strikeout");
+
         return parts.Count > 0 ? "T_" + string.Join("_", parts) : null;
     }
 
@@ -263,7 +268,7 @@ public static class OdfXmlWriter
     private static XElement ConvertParagraph(OdfParagraph p)
     {
         var el = new XElement(OdfNamespaces.Text + "p");
-        
+
         if (!string.IsNullOrEmpty(p.StyleName))
             el.Add(new XAttribute(OdfNamespaces.Text + "style-name", p.StyleName));
 
@@ -292,7 +297,7 @@ public static class OdfXmlWriter
         );
 
         var tocBody = new XElement(OdfNamespaces.Text + "index-body");
-        
+
         foreach (var child in toc.Nodes)
         {
             if (child is OdfParagraph p)
@@ -347,7 +352,7 @@ public static class OdfXmlWriter
         else
         {
             el = new XElement(OdfNamespaces.Text + "span");
-            
+
             var styleName = GetAutoStyleName(span.FontStyle);
             if (!string.IsNullOrEmpty(styleName))
                 el.Add(new XAttribute(OdfNamespaces.Text + "style-name", styleName));

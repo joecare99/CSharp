@@ -1,9 +1,9 @@
+using GenFree.ViewModels.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using GenFree.ViewModels.Interfaces;
 using Views;
 
 namespace GenFreeWin.Views;
@@ -28,9 +28,9 @@ public partial class Repo : Form
         }
         InitializeComponent();
 
-        CommandBindingAttribute.Commit(this,_viewModel);
-        DblClickBindingAttribute.Commit(this,_viewModel);
-        TextBindingAttribute.Commit(this,_viewModel);
+        CommandBindingAttribute.Commit(this, _viewModel);
+        DblClickBindingAttribute.Commit(this, _viewModel);
+        TextBindingAttribute.Commit(this, _viewModel);
         KeyBindingAttribute.Commit(this, _viewModel);
         VisibilityBindingAttribute.Commit(this, _viewModel);
         ListBindingAttribute.Commit(this, _viewModel);

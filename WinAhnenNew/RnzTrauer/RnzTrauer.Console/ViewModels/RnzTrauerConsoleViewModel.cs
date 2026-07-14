@@ -1,10 +1,9 @@
-using System.Text;
-using System.Text.Json.Nodes;
-using Db.Core.Abstractions.Sql.Interfaaces;
 using BaseLib.Models.Interfaces;
 using RnzTrauer.Console.Views;
 using RnzTrauer.Core;
 using RnzTrauer.Core.Services.Interfaces;
+using System.Text;
+using System.Text.Json.Nodes;
 
 namespace RnzTrauer.Console.ViewModels;
 
@@ -95,7 +94,7 @@ public sealed class RnzTrauerConsoleViewModel
             : string.Empty;
         var sSearchBaseUrl = $"{sBaseHost}{RnzSearchPath}";
         DateTime today = DateTime.Today;
-        var iOffset = DateTime.TryParse(sParam1,out var dtStart)?(today- dtStart).Days : 0; 
+        var iOffset = DateTime.TryParse(sParam1, out var dtStart) ? (today - dtStart).Days : 0;
         var iDayDelta = 0;
         while (iDayDelta <= 15)
         {

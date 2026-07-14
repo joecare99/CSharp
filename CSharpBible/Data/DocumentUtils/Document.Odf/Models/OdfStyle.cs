@@ -13,7 +13,8 @@ public sealed class OdfStyle : IDocStyleStyle
         Name = name;
         if (properties != null)
         {
-            foreach (var kv in properties) Properties[kv.Key] = kv.Value;
+            foreach (var kv in properties)
+                Properties[kv.Key] = kv.Value;
         }
     }
 }
@@ -33,7 +34,7 @@ public sealed class OdfFontStyle : IDocFontStyle
     public static readonly OdfFontStyle BoldStyle = new() { Name = "Bold", Bold = true };
     public static readonly OdfFontStyle ItalicStyle = new() { Name = "Italic", Italic = true };
     public static readonly OdfFontStyle UnderlineStyle = new() { Name = "Underline", Underline = true };
-    public static readonly OdfFontStyle StrikeoutStyle = new() { Name = "Strikeout", Strikeout= true };
+    public static readonly OdfFontStyle StrikeoutStyle = new() { Name = "Strikeout", Strikeout = true };
 
     /// <summary>
     /// Creates a font style from a list of EFontStyle values.

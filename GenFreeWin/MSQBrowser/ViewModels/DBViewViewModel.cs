@@ -1,18 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommonDialogs;
+using CommonDialogs.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using MSQBrowser.Models;
 using MSQBrowser.Models.Interfaces;
+using MSQBrowser.Properties;
 using MSQBrowser.ViewModels.Interfaces;
-using CommonDialogs.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
-using CommonDialogs;
-using Microsoft.Win32;
 using System.Security;
-using MSQBrowser.Properties;
+using System.Windows;
 
 namespace MSQBrowser.ViewModels
 {
@@ -29,7 +29,7 @@ namespace MSQBrowser.ViewModels
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public delegate bool? FileDialogHandler(string Filename, IFileDialog Par, Action<string, IFileDialog>? OnAccept = null);
 
-        public delegate bool? DBConnDialogHandler(string[] Params,SecureString Pwd, Action<string[], SecureString>? OnAccept = null);
+        public delegate bool? DBConnDialogHandler(string[] Params, SecureString Pwd, Action<string[], SecureString>? OnAccept = null);
         #endregion
 
         #region Properties
@@ -72,7 +72,7 @@ namespace MSQBrowser.ViewModels
         private void Connect()
         {
             var par = new string[] { Settings.Default.ServerName, Settings.Default.User, Settings.Default.Db };
-            DBConnectDialog?.Invoke(par,Settings.Default.Password, (s,p) =>
+            DBConnectDialog?.Invoke(par, Settings.Default.Password, (s, p) =>
             {
                 Settings.Default.ServerName = s[0];
                 Settings.Default.User = s[1];
@@ -96,7 +96,7 @@ namespace MSQBrowser.ViewModels
 
                 foreach (var entry in entriesToAdd)
                     DbMetaInfo.Add(entry);
-            }); 
+            });
         }
 
         [RelayCommand]
@@ -114,7 +114,7 @@ namespace MSQBrowser.ViewModels
                 (s, p) =>
                 {
                     FileOpenName = s;
-                    _DBModel = new DBModel("","",null,"");
+                    _DBModel = new DBModel("", "", null, "");
                     DbMetaInfo.Clear();
 
                     var entriesToAdd = _DBModel.dbMetaData
@@ -139,7 +139,7 @@ namespace MSQBrowser.ViewModels
         [RelayCommand]
         private void DoSelectedItemChanged(object? prop)
         {
-            if (prop is RoutedPropertyChangedEventArgs<object> rpcEa 
+            if (prop is RoutedPropertyChangedEventArgs<object> rpcEa
                 && rpcEa.NewValue is CategorizedDBMetadata cbvm)
             {
                 SelectedEntry = cbvm.This;
@@ -147,8 +147,8 @@ namespace MSQBrowser.ViewModels
                     try
                     {
                         This = this;
-                        if (Assembly.GetExecutingAssembly().GetType($"{Assembly.GetExecutingAssembly().GetName().Name}.Views.{dbmd.Kind}View",true,true) is Type)
-                        CurrentView = $"/Views/{dbmd.Kind}View.xaml";
+                        if (Assembly.GetExecutingAssembly().GetType($"{Assembly.GetExecutingAssembly().GetName().Name}.Views.{dbmd.Kind}View", true, true) is Type)
+                            CurrentView = $"/Views/{dbmd.Kind}View.xaml";
                     }
                     catch { CurrentView = ""; }
             }

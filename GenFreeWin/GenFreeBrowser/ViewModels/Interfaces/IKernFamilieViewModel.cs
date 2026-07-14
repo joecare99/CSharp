@@ -1,5 +1,5 @@
-using System.Collections.ObjectModel;
 using GenFreeBrowser.Model;
+using System.Collections.ObjectModel;
 
 namespace GenFreeBrowser.ViewModels.Interfaces;
 

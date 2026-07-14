@@ -1,10 +1,8 @@
-using System;
-using GenFree.Models;
+using BaseLib.Interfaces;
+using GenFree.Data;
 using GenFree.Interfaces.DB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using BaseLib.Interfaces;
-using GenFree.Data;
 
 namespace GenFree.Models.Tests
 {
@@ -75,7 +73,7 @@ namespace GenFree.Models.Tests
             var result = _cnbFrau.MaxID;
 
             // Assert
-            Assert.AreEqual(3,result);
+            Assert.AreEqual(3, result);
         }
 
         /// <summary>

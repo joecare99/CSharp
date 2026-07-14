@@ -1,11 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVVM.Views.Extension;
-using System;
-using System.Threading;
+﻿using BaseLib.Helper;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSQBrowser.ViewModels.Interfaces;
 using NSubstitute;
-using BaseLib.Helper;
+using System;
+using System.Threading;
 
 namespace MSQBrowser.Views.Tests
 {
@@ -17,7 +16,7 @@ namespace MSQBrowser.Views.Tests
         {
             // Build the DependencyInjection container
             var builder = new ServiceCollection()
-               .AddTransient((s)=>Substitute.For<IDBViewViewModel>());
+               .AddTransient((s) => Substitute.For<IDBViewViewModel>());
 
             IoC.GetReqSrv = builder.BuildServiceProvider().GetRequiredService;
         }

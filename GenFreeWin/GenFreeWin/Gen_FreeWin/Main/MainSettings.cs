@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace Gen_FreeWin.Main;
+namespace GenFreeWin.Main;
 
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]

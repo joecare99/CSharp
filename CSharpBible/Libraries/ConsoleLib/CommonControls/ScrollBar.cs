@@ -4,11 +4,11 @@
 // Created          : 09-27-2025
 // Last Modified On : 09-27-2025 (hover feedback + binding + disabled + triangles)
 // ***********************************************************************
-using System;
-using System.Drawing;
-using System.ComponentModel;
-using System.Reflection;
 using ConsoleLib.Interfaces;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Reflection;
 
 namespace ConsoleLib.CommonControls;
 
@@ -33,9 +33,11 @@ public class ScrollBar : Control
         get => _minimum;
         set
         {
-            if (value == _minimum) return;
+            if (value == _minimum)
+                return;
             _minimum = value;
-            if (_maximum < _minimum) _maximum = _minimum;
+            if (_maximum < _minimum)
+                _maximum = _minimum;
             Value = Math.Max(Value, _minimum);
             Invalidate();
         }
@@ -47,7 +49,8 @@ public class ScrollBar : Control
         get => _maximum;
         set
         {
-            if (value == _maximum) return;
+            if (value == _maximum)
+                return;
             _maximum = Math.Max(value, _minimum);
             Value = Math.Min(Value, _maximum);
             Invalidate();
@@ -60,8 +63,10 @@ public class ScrollBar : Control
         get => _largeChange;
         set
         {
-            if (value <= 0) value = 1;
-            if (value == _largeChange) return;
+            if (value <= 0)
+                value = 1;
+            if (value == _largeChange)
+                return;
             _largeChange = value;
             Invalidate();
         }
@@ -74,12 +79,15 @@ public class ScrollBar : Control
         set
         {
             var v = Math.Max(_minimum, Math.Min(_maximum, value));
-            if (v == _value) return;
+            if (v == _value)
+                return;
             _value = v;
             // update model if bound
             if (_valueBindingModel != null && _valueBindingPropInfo != null && !_internalBindingUpdate)
             {
-                try { _valueBindingPropInfo.SetValue(_valueBindingModel, _value); } catch { }
+                try
+                { _valueBindingPropInfo.SetValue(_valueBindingModel, _value); }
+                catch { }
             }
             OnValueChanged?.Invoke(this, EventArgs.Empty);
             Invalidate();
@@ -89,15 +97,15 @@ public class ScrollBar : Control
 
     #region Appearance / Colors
     public ConsoleColor TrackColor { get; set; } = ConsoleColor.DarkGray;
-  
+
     public ConsoleColor ThumbColor { get; set; } = ConsoleColor.Gray;
     public ConsoleColor ThumbHotColor { get; set; } = ConsoleColor.White;
     public ConsoleColor ThumbHotBackColor { get; set; } = ConsoleColor.DarkBlue;
-    
+
     public ConsoleColor ArrowColor { get; set; } = ConsoleColor.Gray;
     public ConsoleColor ArrowHotColor { get; set; } = ConsoleColor.White;
     public ConsoleColor ArrowHotBackColor { get; set; } = ConsoleColor.DarkBlue;
-    
+
     public ConsoleColor DisabledColor { get; set; } = ConsoleColor.DarkGray;
     public ConsoleColor DisabledBackColor { get; set; } = ConsoleColor.Black;
     public ConsoleColor DisabledThumbBackColor { get; set; } = ConsoleColor.DarkGray;
@@ -132,7 +140,8 @@ public class ScrollBar : Control
             int full = TrackLengthRaw <= 2 ? Math.Max(0, TrackLengthRaw - 2) : 0;
             return (1, Math.Max(0, full));
         }
-        if (Range == 0) return (1, TrackLength);
+        if (Range == 0)
+            return (1, TrackLength);
         int thumbLen = Math.Max(1, (int)Math.Round((double)_largeChange / (Range + _largeChange) * TrackLength));
         int maxPos = TrackLength - thumbLen;
         int pos = maxPos == 0 ? 0 : (int)Math.Round((double)(Value - _minimum) / Range * maxPos);
@@ -142,12 +151,16 @@ public class ScrollBar : Control
     private Part HitTest(Point p)
     {
         var dim = RealDim;
-        if (!dim.Contains(p)) return Part.None;
+        if (!dim.Contains(p))
+            return Part.None;
         int coord = Vertical ? p.Y - dim.Y : p.X - dim.X;
-        if (coord == 0) return Part.DecArrow;
-        if (coord == TrackLengthRaw - 1) return Part.IncArrow;
+        if (coord == 0)
+            return Part.DecArrow;
+        if (coord == TrackLengthRaw - 1)
+            return Part.IncArrow;
         var (thumbStart, thumbLen) = GetThumb();
-        if (coord >= thumbStart && coord < thumbStart + thumbLen) return Part.Thumb;
+        if (coord >= thumbStart && coord < thumbStart + thumbLen)
+            return Part.Thumb;
         return Part.Track;
     }
 
@@ -173,33 +186,56 @@ public class ScrollBar : Control
     #region Keyboard / Mouse
     public override void HandlePressKeyEvents(Interfaces.IKeyEvent e)
     {
-        if (!Enabled || !e.bKeyDown) return;
+        if (!Enabled || !e.bKeyDown)
+            return;
         switch (char.ToUpperInvariant(e.KeyChar))
         {
-            case '+': SmallIncrement(); e.Handled = true; break;
-            case '-': SmallDecrement(); e.Handled = true; break;
-            case 'P': LargeIncrement(); e.Handled = true; break;
-            case 'O': LargeDecrement(); e.Handled = true; break;
+            case '+':
+                SmallIncrement();
+                e.Handled = true;
+                break;
+            case '-':
+                SmallDecrement();
+                e.Handled = true;
+                break;
+            case 'P':
+                LargeIncrement();
+                e.Handled = true;
+                break;
+            case 'O':
+                LargeDecrement();
+                e.Handled = true;
+                break;
         }
-        if (e.Handled) Invalidate(); else base.HandlePressKeyEvents(e);
+        if (e.Handled)
+            Invalidate();
+        else
+            base.HandlePressKeyEvents(e);
     }
 
     public override void MouseClick(IMouseEvent M)
     {
-        if (!Enabled) { base.MouseClick(M); return; }
+        if (!Enabled)
+        { base.MouseClick(M); return; }
         var dim = RealDim;
-        if (!dim.Contains(M.MousePos)) { base.MouseClick(M); return; }
+        if (!dim.Contains(M.MousePos))
+        { base.MouseClick(M); return; }
         int coord = Vertical ? M.MousePos.Y - dim.Y : M.MousePos.X - dim.X;
         int lastIndex = TrackLengthRaw - 1;
-        if (coord == 0) SmallDecrement();
-        else if (coord == lastIndex) SmallIncrement();
+        if (coord == 0)
+            SmallDecrement();
+        else if (coord == lastIndex)
+            SmallIncrement();
         else
         {
             var (thumbStart, thumbLen) = GetThumb();
             int thumbEnd = thumbStart + thumbLen - 1;
-            if (coord < thumbStart) LargeDecrement();
-            else if (coord > thumbEnd) LargeIncrement();
-            else { _dragging = true; _dragThumbOffset = coord - thumbStart; }
+            if (coord < thumbStart)
+                LargeDecrement();
+            else if (coord > thumbEnd)
+                LargeIncrement();
+            else
+            { _dragging = true; _dragThumbOffset = coord - thumbStart; }
         }
         Invalidate();
         base.MouseClick(M);
@@ -207,7 +243,8 @@ public class ScrollBar : Control
 
     public override void MouseMove(IMouseEvent M, Point lastMousePos)
     {
-        if (!Enabled) { base.MouseMove(M, lastMousePos); return; }
+        if (!Enabled)
+        { base.MouseMove(M, lastMousePos); return; }
         if (_dragging && M.MouseMoved)
         {
             var dim = RealDim;

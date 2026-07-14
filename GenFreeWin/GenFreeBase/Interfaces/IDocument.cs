@@ -7,10 +7,10 @@ namespace GenFree.Interfaces
     {
         void AppendImage(Image image);
         void AppendText(string text);
-        bool AppendTextIfNd(string sText = "\n",int iCnt=1);
+        bool AppendTextIfNd(string sText = "\n", int iCnt = 1);
         void ClearDocument();
         int GetIndent();
-        void SetAlignment<T>(T eTextAlign) where T :Enum;
+        void SetAlignment<T>(T eTextAlign) where T : Enum;
         void SetFont(Font font);
         void SetIndent(int iIndent);
         void SetHangingIndent(int iHIndent);

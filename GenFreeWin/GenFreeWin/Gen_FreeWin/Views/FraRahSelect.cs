@@ -1,12 +1,12 @@
 ﻿using BaseLib.Helper;
 using GenFree;
+using GenFree.Interfaces.Sys;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
-using GenFree.Interfaces.Sys;
 
-namespace Gen_FreeWin.Views
+namespace GenFreeWin.Views
 {
     public partial class FraRahSelect : UserControl
     {
@@ -17,18 +17,21 @@ namespace Gen_FreeWin.Views
         IModul1 Modul1 => _Modul1.Instance;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EUserText eText { get => frmRahmenSelect.Tag.AsEnum<EUserText>(); 
-            set => frmRahmenSelect.Text = Modul1.IText[(frmRahmenSelect.Tag = value).AsEnum<EUserText>()]; }
+        public EUserText eText
+        {
+            get => frmRahmenSelect.Tag.AsEnum<EUserText>();
+            set => frmRahmenSelect.Text = Modul1.IText[(frmRahmenSelect.Tag = value).AsEnum<EUserText>()];
+        }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public bool xEnReenter { get=>btnReenter.Enabled; set=> btnReenter.Enabled=value; }
-        public bool xVisReenter { get => btnReenter.Visible; set=> btnReenter.Visible = value; }
+        public bool xEnReenter { get => btnReenter.Enabled; set => btnReenter.Enabled = value; }
+        public bool xVisReenter { get => btnReenter.Visible; set => btnReenter.Visible = value; }
         public new string Text { get => frmRahmenSelect.Text; set => frmRahmenSelect.Text = value; }
         public FraRahSelect()
         {
             InitializeComponent();
         }
 
-        
+
         private void btnCancel_Click(object sender, EventArgs e) => Cancel?.Invoke(this, e);
         private void btnReenter_Click(object sender, EventArgs e) => Reenter?.Invoke(this, e);
         private void btnEnterNumber_Click(object sender, EventArgs e) => EnterNumber?.Invoke(this, e);
@@ -36,7 +39,8 @@ namespace Gen_FreeWin.Views
 
         private void FraRahSelect_Load(object sender, EventArgs e)
         {
-            if (this.DesignMode) return;
+            if (this.DesignMode)
+                return;
             frmRahmenSelect.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
             btnReenter.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
             btnFromFile.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);

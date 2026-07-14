@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface INamenSuchViewModel: INotifyPropertyChanged
+public interface INamenSuchViewModel : INotifyPropertyChanged
 {
     IContainerControl View { get; set; }
     // ====================================================================

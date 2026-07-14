@@ -1,7 +1,6 @@
-﻿using Microsoft.VisualBasic;
+﻿using BaseLib.Helper;
 using System;
 using System.Collections.Generic;
-using BaseLib.Helper;
 using System.Globalization;
 
 namespace GenFree.Helper;
@@ -9,15 +8,15 @@ namespace GenFree.Helper;
 public static class DateHelper
 {
 #nullable enable
-    private static Func<DateTime> _getDate = ()=>DateTime.Today;
+    private static Func<DateTime> _getDate = () => DateTime.Today;
     public static void SetDate(Func<DateTime> f)
     {
         _getDate = f;
     }
-    public static string FormatDatum(this object? anlDatum, string sHeader,int iDefault = 1)
+    public static string FormatDatum(this object? anlDatum, string sHeader, int iDefault = 1)
     {
         string kont_0 = anlDatum.AsString();
-        if (anlDatum is DateTime dt || DateTime.TryParse(kont_0,out dt))
+        if (anlDatum is DateTime dt || DateTime.TryParse(kont_0, out dt))
         {
             kont_0 = $"{sHeader}{dt:d}";
         }
@@ -74,9 +73,9 @@ public static class DateHelper
     public static IList<string> IntoString(this DateTime[] adDates, IList<string>? asRes = null, int offs = 0)
     {
         asRes ??= new string[Math.Max(0, adDates.Length + offs)];
-        for(var i = 0; i<adDates.Length;i++)
+        for (var i = 0; i < adDates.Length; i++)
             if (i + offs >= 0 && i + offs < asRes.Count)
-                asRes[i+offs] = adDates[i].ToString("yyyy.MM.dd");
+                asRes[i + offs] = adDates[i].ToString("yyyy.MM.dd");
         return asRes;
     }
 

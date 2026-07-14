@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models.Scanner;
@@ -55,7 +54,7 @@ public partial class PasCodeBuilder : CodeBuilder
         }
         data.cbtLast = tokenData.type;
     }
-  
+
     EPasResWords? TryGetResWord(string code)
     {
         if (Enum.TryParse<EPasResWords>(code.ToUpperInvariant(), out var resWord))
@@ -66,7 +65,8 @@ public partial class PasCodeBuilder : CodeBuilder
     private void BuildAssignment(TokenData tokenData, ICodeBuilderData data)
     {
         var left = data.actualBlock;
-        if (left == null) return;
+        if (left == null)
+            return;
 
         var parent = data.actualBlock.Parent ?? left;
         // Assignment is higher prio than any operation.
@@ -94,7 +94,8 @@ public partial class PasCodeBuilder : CodeBuilder
             {
                 var siblings = left.Parent.SubBlocks;
                 int idx = siblings.IndexOf(left);
-                if (idx >= 0) siblings.RemoveAt(idx);
+                if (idx >= 0)
+                    siblings.RemoveAt(idx);
             }
             assign.SubBlocks.Insert(0, left);
         }
@@ -126,8 +127,10 @@ public partial class PasCodeBuilder : CodeBuilder
     private static void SetDecl(ICodeBuilderData data, ICodeBlock decl)
     {
         data.labels[DECL_KEY] = decl;
-        if (data.labels.ContainsKey(DECL_COMMA_KEY)) data.labels.Remove(DECL_COMMA_KEY);
-        if (data.labels.ContainsKey(DECL_COLON_KEY)) data.labels.Remove(DECL_COLON_KEY);
+        if (data.labels.ContainsKey(DECL_COMMA_KEY))
+            data.labels.Remove(DECL_COMMA_KEY);
+        if (data.labels.ContainsKey(DECL_COLON_KEY))
+            data.labels.Remove(DECL_COLON_KEY);
     }
 
     private static void SetDeclComma(ICodeBuilderData data, ICodeBlock comma)
@@ -138,9 +141,12 @@ public partial class PasCodeBuilder : CodeBuilder
 
     private static void ClearDeclState(ICodeBuilderData data)
     {
-        if (data.labels.ContainsKey(DECL_KEY)) data.labels.Remove(DECL_KEY);
-        if (data.labels.ContainsKey(DECL_COMMA_KEY)) data.labels.Remove(DECL_COMMA_KEY);
-        if (data.labels.ContainsKey(DECL_COLON_KEY)) data.labels.Remove(DECL_COLON_KEY);
+        if (data.labels.ContainsKey(DECL_KEY))
+            data.labels.Remove(DECL_KEY);
+        if (data.labels.ContainsKey(DECL_COMMA_KEY))
+            data.labels.Remove(DECL_COMMA_KEY);
+        if (data.labels.ContainsKey(DECL_COLON_KEY))
+            data.labels.Remove(DECL_COLON_KEY);
     }
 
     private static bool IsOperator(string text)
@@ -250,8 +256,10 @@ public partial class PasCodeBuilder : CodeBuilder
             if (text == ";")
             {
                 data.actualBlock = decl;
-                if (data.labels.ContainsKey(DECL_COMMA_KEY)) data.labels.Remove(DECL_COMMA_KEY);
-                if (data.labels.ContainsKey(DECL_COLON_KEY)) data.labels.Remove(DECL_COLON_KEY);
+                if (data.labels.ContainsKey(DECL_COMMA_KEY))
+                    data.labels.Remove(DECL_COMMA_KEY);
+                if (data.labels.ContainsKey(DECL_COLON_KEY))
+                    data.labels.Remove(DECL_COLON_KEY);
                 return;
             }
             if (text == "..")
@@ -263,7 +271,7 @@ public partial class PasCodeBuilder : CodeBuilder
             }
         }
 
-        if (text == ";" && data.actualBlock.Type == CodeBlockType.MainBlock && 
+        if (text == ";" && data.actualBlock.Type == CodeBlockType.MainBlock &&
             (data.actualBlock.Code == "Program" || data.actualBlock.Code == "Unit"))
         {
             return;
@@ -274,13 +282,13 @@ public partial class PasCodeBuilder : CodeBuilder
             // Find the nearest enclosing block (Block, Function, MainBlock)
             // But respect Interface/Implementation and Procedure/Function structure
             var block = data.actualBlock;
-            
+
             // Check if we should reset the current block
             bool shouldReset = true;
             if (block.Type == CodeBlockType.Operation)
             {
                 var code = block.Code.Trim();
-                if (code.Equals("interface", StringComparison.OrdinalIgnoreCase) || 
+                if (code.Equals("interface", StringComparison.OrdinalIgnoreCase) ||
                     code.Equals("implementation", StringComparison.OrdinalIgnoreCase))
                 {
                     shouldReset = false;
@@ -306,7 +314,7 @@ public partial class PasCodeBuilder : CodeBuilder
                     if (block.Type == CodeBlockType.Operation)
                     {
                         var c = block.Code.Trim();
-                        if (c.Equals("interface", StringComparison.OrdinalIgnoreCase) || 
+                        if (c.Equals("interface", StringComparison.OrdinalIgnoreCase) ||
                             c.Equals("implementation", StringComparison.OrdinalIgnoreCase))
                         {
                             break;
@@ -314,7 +322,7 @@ public partial class PasCodeBuilder : CodeBuilder
                     }
                     block = block.Parent;
                 }
-                
+
                 if (block != null)
                 {
                     data.actualBlock = block;
@@ -347,7 +355,7 @@ public partial class PasCodeBuilder : CodeBuilder
                 para1.MoveToSub(data.actualBlock);
                 return;
             }
-          
+
         }
 
         if (data.actualBlock.Type is not CodeBlockType.Operation
@@ -359,7 +367,7 @@ public partial class PasCodeBuilder : CodeBuilder
             var parent = (data.actualBlock.Type is CodeBlockType.Function or CodeBlockType.Block or CodeBlockType.MainBlock)
                 ? data.actualBlock
                 : data.actualBlock.Parent;
-            
+
             data.actualBlock = NewCodeBlock("Operation", CodeBlockType.Operation, text, parent!, tokenData.Pos);
         }
         else
@@ -372,7 +380,7 @@ public partial class PasCodeBuilder : CodeBuilder
 
     private void BuildValue(TokenData tokenData, ICodeBuilderData data)
     {
-        if (data.actualBlock.Type == CodeBlockType.MainBlock && 
+        if (data.actualBlock.Type == CodeBlockType.MainBlock &&
            (data.actualBlock.Code == "Program" || data.actualBlock.Code == "Unit") &&
            (data.actualBlock.SubBlocks.Count == 0) &&
            tokenData.type == CodeBlockType.Variable)
@@ -440,7 +448,7 @@ public partial class PasCodeBuilder : CodeBuilder
     private void AddRawToken(TokenData tokenData, ICodeBuilderData data)
     {
         var parent = data.actualBlock;
-        if ((tokenData.type == CodeBlockType.Comment || tokenData.type == CodeBlockType.LComment)&& data.actualBlock.SubBlocks.Count>0 && !IsComment(data.actualBlock.SubBlocks[^1]?.Type)  )
+        if ((tokenData.type == CodeBlockType.Comment || tokenData.type == CodeBlockType.LComment) && data.actualBlock.SubBlocks.Count > 0 && !IsComment(data.actualBlock.SubBlocks[^1]?.Type))
         {
             parent = data.actualBlock.SubBlocks[^1];
             NewCodeBlock(
@@ -457,7 +465,7 @@ public partial class PasCodeBuilder : CodeBuilder
             tokenData.Code,
             parent,
             tokenData.Pos);
-        if ( IsComment(tokenData.type))
+        if (IsComment(tokenData.type))
         {
             // Kommentare nicht als aktuelles Element setzen
             data.actualBlock = parent;

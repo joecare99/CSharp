@@ -5,7 +5,7 @@
 // ***********************************************************************
 namespace ConsoleLib.Interfaces;
 
-public interface IPopup: IControl 
+public interface IPopup : IControl
 {
     void Hide();
     void Show();

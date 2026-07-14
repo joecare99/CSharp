@@ -179,7 +179,7 @@ public class CSCodeBuilder : CodeBuilder
                 Name = $"{tokenData.type}",
                 Type = tokenData.type,
                 Code = tokenData.Code,
-                Parent = data.actualBlock.Parent ?? data.actualBlock 
+                Parent = data.actualBlock.Parent ?? data.actualBlock
             };
         }
         else

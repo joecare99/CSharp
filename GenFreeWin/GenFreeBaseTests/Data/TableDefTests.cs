@@ -9,7 +9,7 @@ namespace GenFree.Data.Tests
         [TestInitialize]
         public void Init()
         {
-            testClass = new TableDef(null!,"test");
+            testClass = new TableDef(null!, "test");
         }
 
         [TestMethod()]
@@ -25,9 +25,9 @@ namespace GenFree.Data.Tests
         [DataRow(null)]
         public void NamePropTest(string? sAct)
         {
-            Assert.AreEqual("test",testClass.Name);
+            Assert.AreEqual("test", testClass.Name);
             testClass.Name = sAct;
-            Assert.AreEqual(sAct,testClass.Name);
+            Assert.AreEqual(sAct, testClass.Name);
         }
     }
 }

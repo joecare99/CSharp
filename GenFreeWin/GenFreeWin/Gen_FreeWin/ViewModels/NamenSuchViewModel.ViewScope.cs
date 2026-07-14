@@ -1,17 +1,17 @@
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree.Interfaces;
 using System;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class NamenSuchViewModel
 {
     IContainerControl GenFree.ViewModels.Interfaces.INamenSuchViewModel.View { get; set; }
 
-    private Gen_FreeWin.ViewModels.Interfaces.INamenSuchViewAdapter _viewAdapter;
+    private GenFreeWin.ViewModels.Interfaces.INamenSuchViewAdapter _viewAdapter;
 
-    public void AttachViewAdapter(Gen_FreeWin.ViewModels.Interfaces.INamenSuchViewAdapter viewAdapter)
+    public void AttachViewAdapter(GenFreeWin.ViewModels.Interfaces.INamenSuchViewAdapter viewAdapter)
     {
         _viewAdapter = viewAdapter;
     }

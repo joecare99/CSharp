@@ -7,7 +7,7 @@ namespace GenFreeBrowser.Map;
 
 public sealed class ViewportState : INotifyPropertyChanged
 {
-    private GeoPoint _center = new(0,50);
+    private GeoPoint _center = new(0, 50);
     private int _zoom = 5;
     private Size _pixelSize;
     private GeoPoint _cursor; // current mouse cursor geographic position
@@ -15,7 +15,7 @@ public sealed class ViewportState : INotifyPropertyChanged
     public GeoPoint Center
     {
         get => _center;
-        set { if(!_center.Equals(value)) { _center = GeoPoint.Clamp(value); OnChanged(); } }
+        set { if (!_center.Equals(value)) { _center = GeoPoint.Clamp(value); OnChanged(); } }
     }
 
     public int Zoom

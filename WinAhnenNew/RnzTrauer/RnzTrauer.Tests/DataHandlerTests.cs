@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text.Json.Nodes;
 using BaseLib.Models.Interfaces;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using RnzTrauer.Core;
 using RnzTrauer.Core.Services.Interfaces;
+using System.Globalization;
+using System.Text.Json.Nodes;
 
 namespace RnzTrauer.Tests;
 
@@ -51,7 +47,7 @@ public sealed class DataHandlerTests
         xRepository.AppendTrauerFall(Arg.Any<IReadOnlyDictionary<string, object?>>()).Returns(101L);
         xRepository.AppendTrauerAnz(Arg.Any<IReadOnlyDictionary<string, object?>>()).Returns(102L);
         xRepository.AppendLegacyTAnz(Arg.Any<IReadOnlyDictionary<string, object?>>()).Returns(103L);
-        xRepository.UpdateTrauerAnz(Arg.Any<List<Dictionary<string, object?>>>() , Arg.Any<List<Dictionary<string, object?>>>() ).Returns(true);
+        xRepository.UpdateTrauerAnz(Arg.Any<List<Dictionary<string, object?>>>(), Arg.Any<List<Dictionary<string, object?>>>()).Returns(true);
 
         using var xHandler = new DataHandler(xRepository, xFile);
 
@@ -601,7 +597,7 @@ public sealed class DataHandlerTests
 
         xRepository.TrauerFallByUrl("https://example.invalid/trauerfall").Returns(new List<Dictionary<string, object?>> { dExistingCase });
         xRepository.TrauerAnz(17).Returns(new List<Dictionary<string, object?>> { dExistingAnnouncement });
-        xRepository.UpdateTrauerAnz(Arg.Any<List<Dictionary<string, object?>>>() , Arg.Any<List<Dictionary<string, object?>>>() ).Returns(true);
+        xRepository.UpdateTrauerAnz(Arg.Any<List<Dictionary<string, object?>>>(), Arg.Any<List<Dictionary<string, object?>>>()).Returns(true);
 
         using var xHandler = new DataHandler(xRepository, xFile);
 
@@ -618,7 +614,7 @@ public sealed class DataHandlerTests
         _ = xRepository.Received(1).TrauerAnz(17);
         _ = xRepository.DidNotReceive().AppendTrauerFall(Arg.Any<IReadOnlyDictionary<string, object?>>());
         _ = xRepository.DidNotReceive().AppendTrauerAnz(Arg.Any<IReadOnlyDictionary<string, object?>>());
-        _ = xRepository.Received(1).UpdateTrauerAnz(Arg.Any<List<Dictionary<string, object?>>>() , Arg.Any<List<Dictionary<string, object?>>>() );
+        _ = xRepository.Received(1).UpdateTrauerAnz(Arg.Any<List<Dictionary<string, object?>>>(), Arg.Any<List<Dictionary<string, object?>>>());
     }
 
     [TestMethod]
@@ -652,7 +648,7 @@ public sealed class DataHandlerTests
         _ = xRepository.Received(1).TrauerAnz(17);
         _ = xRepository.Received(1).AppendTrauerFall(Arg.Any<IReadOnlyDictionary<string, object?>>());
         _ = xRepository.Received(1).AppendTrauerAnz(Arg.Any<IReadOnlyDictionary<string, object?>>());
-        _ = xRepository.DidNotReceive().UpdateTrauerAnz(Arg.Any<List<Dictionary<string, object?>>>() , Arg.Any<List<Dictionary<string, object?>>>() );
+        _ = xRepository.DidNotReceive().UpdateTrauerAnz(Arg.Any<List<Dictionary<string, object?>>>(), Arg.Any<List<Dictionary<string, object?>>>());
         StringAssert.Contains(xWriter.ToString(), "+");
     }
 

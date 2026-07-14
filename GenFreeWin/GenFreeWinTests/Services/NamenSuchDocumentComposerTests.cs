@@ -1,8 +1,8 @@
-using Gen_FreeWin.Services;
+using GenFreeWin.Services;
 using GenFree.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Gen_FreeWin.Tests.Services
+namespace GenFreeWin.Tests.Services
 {
     [TestClass]
     public class NamenSuchDocumentComposerTests

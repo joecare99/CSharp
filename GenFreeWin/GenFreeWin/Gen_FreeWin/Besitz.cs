@@ -1,7 +1,7 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.ViewModels.Interfaces;
-using Gen_FreeWin.Views;
+using GenFreeWin.Models;
+using GenFreeWin.ViewModels.Interfaces;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Interfaces.Sys;
 using GenFreeWin.Views;
@@ -15,7 +15,7 @@ using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 [DesignerGenerated]
 public class Besitz : Form

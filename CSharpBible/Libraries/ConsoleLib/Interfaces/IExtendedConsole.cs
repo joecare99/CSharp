@@ -16,7 +16,7 @@ using System.Drawing;
 
 namespace ConsoleLib.Interfaces;
 
-public interface IExtendedConsole 
+public interface IExtendedConsole
 {
     event EventHandler<IMouseEvent>? MouseEvent;
     event EventHandler<IKeyEvent>? KeyEvent;

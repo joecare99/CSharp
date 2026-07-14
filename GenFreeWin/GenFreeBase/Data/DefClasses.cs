@@ -1,9 +1,9 @@
 ﻿//using DAO;
-using System.Data.Common;
-using System.Collections.Generic;
-using System;
-using System.Linq;
 using GenFree.Interfaces.DB;
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 
 namespace GenFree.Data;
 
@@ -37,7 +37,7 @@ public class IndexDef : IIndexDef
             Primary = xPrimary;
             Unique = xUnique;
             if (td != null)
-               td.Indexes.Add(this);
+                td.Indexes.Add(this);
         }
     }
     private ITableDef _table;
@@ -57,8 +57,8 @@ public class FieldDef : IFieldDef
         Name = name;
         Type = (TypeCode)v2;
         Size = v3;
-        if(td!=null)
-          td.Fields.Add(this);
+        if (td != null)
+            td.Fields.Add(this);
     }
 
     private ITableDef _table;

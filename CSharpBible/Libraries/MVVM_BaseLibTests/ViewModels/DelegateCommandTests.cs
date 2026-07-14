@@ -6,7 +6,7 @@ namespace MVVM.ViewModel.Tests;
 [TestClass()]
 public class DelegateCommandTests : BaseTestViewModel
 {
-    DelegateCommand _testCommand1 =null!;
+    DelegateCommand _testCommand1 = null!;
     DelegateCommand _testCommand3 = null!;
     DelegateCommand<TypeCode?> _testCommand2 = null!;
 
@@ -14,16 +14,16 @@ public class DelegateCommandTests : BaseTestViewModel
     public void Init()
     {
         _testCommand1 = new((o) => DoLog($"Execute({nameof(_testCommand1)},{o})"));
-        _testCommand3 = new((o) => DoLog($"Execute({nameof(_testCommand3)},{o})"),canCmd3);
+        _testCommand3 = new((o) => DoLog($"Execute({nameof(_testCommand3)},{o})"), canCmd3);
         _testCommand2 = new(
             (o) => DoLog($"Execute({nameof(_testCommand2)},{o})"),
             canCmd2);
         _testCommand1.CanExecuteChanged += OnCanExecuteChanged;
         _testCommand2.CanExecuteChanged += OnCanExecuteChanged;
-//            _testCommand3.CanExecuteChanged += OnCanExecuteChanged;
+        //            _testCommand3.CanExecuteChanged += OnCanExecuteChanged;
     }
 
-    private void OnCanExecuteChanged(object? sender, EventArgs e) 
+    private void OnCanExecuteChanged(object? sender, EventArgs e)
         => DoLog($"CanExecuteChanged({sender})");
 
     private bool canCmd2(TypeCode? o)
@@ -35,7 +35,7 @@ public class DelegateCommandTests : BaseTestViewModel
 
     [TestMethod()]
     [DataRow(0, null, false)]
-    [DataRow(1,TypeCode.Boolean,true)]
+    [DataRow(1, TypeCode.Boolean, true)]
     [DataRow(1, TypeCode.Empty, true)]
     [DataRow(1, TypeCode.String, true)]
     [DataRow(1, null, true)]
@@ -47,18 +47,20 @@ public class DelegateCommandTests : BaseTestViewModel
     [DataRow(3, TypeCode.Empty, false)]
     [DataRow(3, TypeCode.String, true)]
     [DataRow(3, null, false)]
-    public void CanExecuteTest(int iVal,TypeCode? tC,bool xExp)
+    public void CanExecuteTest(int iVal, TypeCode? tC, bool xExp)
     {
-        var f = iVal switch { 
-            1 => _testCommand1.CanExecute, 
+        var f = iVal switch
+        {
+            1 => _testCommand1.CanExecute,
             2 => _testCommand2.CanExecute,
             3 => _testCommand3.CanExecute,
-            _ => (Func<object?,bool>)(o => false) };
-        Assert.AreEqual(xExp,f(tC));
+            _ => (Func<object?, bool>)(o => false)
+        };
+        Assert.AreEqual(xExp, f(tC));
     }
 
     [TestMethod()]
-    [DataRow(0, null, new[] { ""})]
+    [DataRow(0, null, new[] { "" })]
     [DataRow(1, TypeCode.Boolean, new[] { "Execute(_testCommand1,Boolean)\r\n" })]
     [DataRow(1, TypeCode.Empty, new[] { "Execute(_testCommand1,Empty)\r\n" })]
     [DataRow(1, TypeCode.String, new[] { "Execute(_testCommand1,String)\r\n" })]
@@ -97,6 +99,6 @@ public class DelegateCommandTests : BaseTestViewModel
             3 => _testCommand3.NotifyCanExecuteChanged,
             _ => (Action)(() => { })
         }).Invoke();
-        Assert.AreEqual(asExp[0],DebugLog);
+        Assert.AreEqual(asExp[0], DebugLog);
     }
 }

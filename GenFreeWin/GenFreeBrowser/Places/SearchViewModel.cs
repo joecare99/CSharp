@@ -1,13 +1,9 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GenFreeBrowser.Places.Interface;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Authorities;
+using System.Collections.ObjectModel;
 
 namespace GenFreeBrowser.Places;
 
@@ -48,7 +44,8 @@ public sealed partial class SearchViewModel : ObservableObject
         _history = history;
         _placeSearchService = placeSearchService;
         _authorities = authorities;
-        foreach (var a in authorities) Authorities.Add(a);
+        foreach (var a in authorities)
+            Authorities.Add(a);
         _ = LoadHistoryAsync();
     }
 
@@ -56,7 +53,8 @@ public sealed partial class SearchViewModel : ObservableObject
     {
         await _history.LoadAsync();
         RecentQueries.Clear();
-        foreach (var q in _history.Items) RecentQueries.Add(q);
+        foreach (var q in _history.Items)
+            RecentQueries.Add(q);
     }
 
     private bool CanSearch() => !IsBusy && !string.IsNullOrWhiteSpace(SearchText);
@@ -80,7 +78,8 @@ public sealed partial class SearchViewModel : ObservableObject
             else
                 all = await _placeSearchService.SearchAllAsync(query, ct);
 
-            foreach (var r in all.OrderBy(r => r.DisplayName)) Results.Add(r);
+            foreach (var r in all.OrderBy(r => r.DisplayName))
+                Results.Add(r);
             Status = $"{Results.Count} Treffer";
             _history.Register(SearchText.Trim());
             SyncHistory();
@@ -102,7 +101,8 @@ public sealed partial class SearchViewModel : ObservableObject
     [RelayCommand]
     private void UseHistoryItem(string? text)
     {
-        if (string.IsNullOrWhiteSpace(text)) return;
+        if (string.IsNullOrWhiteSpace(text))
+            return;
         SearchText = text;
         SearchCommand.NotifyCanExecuteChanged();
     }
@@ -110,6 +110,7 @@ public sealed partial class SearchViewModel : ObservableObject
     private void SyncHistory()
     {
         RecentQueries.Clear();
-        foreach (var q in _history.Items) RecentQueries.Add(q);
+        foreach (var q in _history.Items)
+            RecentQueries.Add(q);
     }
 }

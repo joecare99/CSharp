@@ -26,7 +26,7 @@ public class BackColorBindingAttribute(string cmdName) : Attribute
 
     public void Bind(object viewModel, Control field)
     {
-        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType==typeof(Color) )
+        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType == typeof(Color))
         {
             field.BackColor = (Color)pi.GetValue(viewModel)!;
             if (viewModel is INotifyPropertyChanged npc)

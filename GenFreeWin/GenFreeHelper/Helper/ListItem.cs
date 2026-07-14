@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 
 namespace GenFree.Helper
 {
@@ -72,7 +71,8 @@ namespace GenFree.Helper
 
         public static void SetString(this IList items, int Idx, string s)
         {
-            if (Idx < items.Count && items[Idx] is ListItem l) l.ItemString = s;
+            if (Idx < items.Count && items[Idx] is ListItem l)
+                l.ItemString = s;
         }
     }
 }

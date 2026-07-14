@@ -1,8 +1,7 @@
+using RnzTrauer.Core;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RnzTrauer.Core;
 
 namespace RnzTrauer.Tests;
 

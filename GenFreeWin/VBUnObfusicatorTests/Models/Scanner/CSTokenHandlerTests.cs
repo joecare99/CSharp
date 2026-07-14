@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
-using TranspilerLib.Models;
-using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models;
 using TranspilerLib.Models.Scanner;
 
 namespace VBUnObfusicator.Models.Scanner.Tests;
@@ -116,7 +115,7 @@ public class CSTokenHandlerTests
     {
         var handler = CreateHandler();
         var collector = new TokenCollector();
-        var data = new TokenizeData { Pos2 = pos2, Pos = pos, State= 2 };
+        var data = new TokenizeData { Pos2 = pos2, Pos = pos, State = 2 };
         if (handler.TryGetValue(2, out var action))
             action(collector.Collect, code, data);
         Assert.IsTrue(collector.Tokens.Exists(t => t.type == expectedType));
@@ -143,9 +142,9 @@ public class CSTokenHandlerTests
     }
 
     [TestMethod]
-    [DataRow("$\"string\"\r", 0, 7,6, CodeBlockType.String)]
-    [DataRow("$\"multiline{3}\"", 0, 13,4, CodeBlockType.String)]
-    public void HandleStrings_IpoString(string code, int pos2, int pos,int iExpState, CodeBlockType expectedType)
+    [DataRow("$\"string\"\r", 0, 7, 6, CodeBlockType.String)]
+    [DataRow("$\"multiline{3}\"", 0, 13, 4, CodeBlockType.String)]
+    public void HandleStrings_IpoString(string code, int pos2, int pos, int iExpState, CodeBlockType expectedType)
     {
         // stringEndChars is assumed to contain '"' and '\r'
         typeof(CSTokenHandler)

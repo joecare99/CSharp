@@ -1,16 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GenFreeWin.Views;
+using GenFree.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NSubstitute;
-using Gen_FreeWin.Views;
-using System.Collections.ObjectModel;
-using System.Windows.Forms;
 using System.ComponentModel;
-using GenFree.Helper;
-using CommunityToolkit.Mvvm.Input;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace GenFreeWin.Views.Tests;
 
@@ -101,7 +97,7 @@ public class OFBViewTests
     [TestMethod]
     public void OFBView_ApplyButtonClick()
     {
-        _testView.Show(); 
+        _testView.Show();
         _viewModel.ApplyCommand.CanExecute(Arg.Any<object>()).Returns(true);
         _viewModel.ApplyCommand.CanExecuteChanged += Raise.Event();
         // Act
@@ -206,11 +202,11 @@ public class OFBViewTests
         _viewModel.List1_Items.Add("and hit");
         _viewModel.List1_Items.Add("[Del]-Button");
 
-        _testView.btnApply.Enabled  = true;
+        _testView.btnApply.Enabled = true;
         _testView.List1.Visible = true;
         _testView.List1.Enabled = true;
         _testView.List1.Focus();
-        _viewModel.ApplyCommand.When(x=> x.Execute(Arg.Any<object>())).Do(_ => _testView.Hide());
+        _viewModel.ApplyCommand.When(x => x.Execute(Arg.Any<object>())).Do(_ => _testView.Hide());
         // Act
         //     while (_testView.Visible)
         //         Application.DoEvents();

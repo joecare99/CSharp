@@ -13,23 +13,21 @@
 // <summary>Unit tests for VornamViewModel</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
-using Gen_FreeWin.UseCases;
-using Gen_FreeWin.ViewModels;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
+using GenFreeWin.UseCases;
+using GenFreeWin.ViewModels;
 using GenFree.Data;
 using GenFree.Helper;
-using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.Tests.ViewModels
+namespace GenFreeWin.Tests.ViewModels
 {
     /// <summary>
     /// Unit tests for the VornamViewModel class.
@@ -252,12 +250,12 @@ namespace Gen_FreeWin.Tests.ViewModels
         public void CurrentNames_CanAddItems()
         {
             // Arrange
-            var nameModel = new VornamModel 
-            { 
-                PersonId = 1, 
-                PrimaryName = "Hans", 
-                Synonym = "Hans", 
-                TextKennz = ETextKennz.V_ 
+            var nameModel = new VornamModel
+            {
+                PersonId = 1,
+                PrimaryName = "Hans",
+                Synonym = "Hans",
+                TextKennz = ETextKennz.V_
             };
 
             // Act

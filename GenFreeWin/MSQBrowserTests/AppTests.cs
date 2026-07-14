@@ -1,13 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MSQBrowser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MVVM.Views.Extension;
+﻿using BaseLib.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MSQBrowser.ViewModels.Interfaces;
-using BaseLib.Helper;
 
 namespace MSQBrowser.Tests
 {
@@ -17,7 +10,7 @@ namespace MSQBrowser.Tests
         [TestMethod()]
         public void AppTest()
         {
-           var testClass = new App();
+            var testClass = new App();
             Assert.IsNotNull(testClass);
             Assert.IsNotNull(IoC.GetRequiredService<ITableViewViewModel>());
         }

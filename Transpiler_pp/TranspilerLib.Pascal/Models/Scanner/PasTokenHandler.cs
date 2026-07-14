@@ -58,7 +58,7 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
     {
         var nxtChar = GetNxtChar(data.Pos, code);
         if (!char.IsDigit(nxtChar) && nxtChar != 'e' && nxtChar != 'E' && nxtChar != '-' && nxtChar != '.'
-           || code[data.Pos] == '-' && !char.IsDigit(nxtChar))         
+           || code[data.Pos] == '-' && !char.IsDigit(nxtChar))
         {
             EmitToken(token, data, CodeBlockType.Number, code, 1);
             data.Pos2 = data.Pos + 1;
@@ -111,10 +111,10 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
     {
         if (code[data.Pos] == '\n' || data.Pos == code.Length - 1)
         {
-            var p= data.Pos2-1;
+            var p = data.Pos2 - 1;
             while (p > 0 && code[p] == ' ')
                 p--;
-            EmitToken(token, data, ((IList<char>)[ '\r', '\n' ]).Contains(code[p]) ? CodeBlockType.FLComment : CodeBlockType.LComment, code);
+            EmitToken(token, data, ((IList<char>)['\r', '\n']).Contains(code[p]) ? CodeBlockType.FLComment : CodeBlockType.LComment, code);
             data.Pos2 = data.Pos + 1;
             data.State = 0;
         }
@@ -124,9 +124,9 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
     {
         if (code[data.Pos] == '*' && GetNxtChar(data.Pos, code) == ')')
         {
-        var p = data.Pos2 - 1;
-        while (p > 0 && code[p] == ' ')
-            p--;
+            var p = data.Pos2 - 1;
+            while (p > 0 && code[p] == ' ')
+                p--;
             EmitToken(token, data, ((IList<char>)['\r', '\n']).Contains(code[p]) ? CodeBlockType.FLComment : CodeBlockType.Comment, code, 2);
             data.Pos2 = data.Pos + 2;
             data.State = 0;
@@ -137,9 +137,9 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
     {
         if (code[data.Pos] == '}')
         {
-        var p = data.Pos2 - 1;
-        while (p > 0 && code[p] == ' ')
-            p--;
+            var p = data.Pos2 - 1;
+            while (p > 0 && code[p] == ' ')
+                p--;
             EmitToken(token, data, ((IList<char>)['\r', '\n']).Contains(code[p]) ? CodeBlockType.FLComment : CodeBlockType.Comment, code, 1);
             data.Pos2 = data.Pos + 1;
             data.State = 0;
@@ -159,7 +159,7 @@ public class PasTokenHandler : TokenHandlerBase, ITokenHandler
                     if (text.Equals("BEGIN", StringComparison.OrdinalIgnoreCase))
                     {
                         data.Stack++;
-                        EmitToken(token, data, CodeBlockType.Block, code, 1); 
+                        EmitToken(token, data, CodeBlockType.Block, code, 1);
                     }
                     else if (text.Equals("END", StringComparison.OrdinalIgnoreCase))
                     {

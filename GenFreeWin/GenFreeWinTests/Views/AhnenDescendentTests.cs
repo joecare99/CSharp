@@ -1,8 +1,8 @@
-using System.Reflection;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
+using GenFree.Data; // für DataModul-Typen
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using GenFree.Data; // für DataModul-Typen
+using System.Reflection;
 
 namespace GenFreeWinTests.Views
 {
@@ -17,10 +17,10 @@ namespace GenFreeWinTests.Views
 
             // Recordsets mocken
             var rsDesc = Substitute.For<GenFree.Interfaces.DB.IRecordset>();
-            var rsOrt  = Substitute.For<GenFree.Interfaces.DB.IRecordset>();
+            var rsOrt = Substitute.For<GenFree.Interfaces.DB.IRecordset>();
 
             DataModul.DT_DescendentTable = rsDesc;
-            DataModul.NB_OrtindTable     = rsOrt;
+            DataModul.NB_OrtindTable = rsOrt;
 
             // List1 und interne Felder vorbereiten
             form.List1.Items.Add("20200101".PadRight(9) + "123".PadLeft(10)); // Datum + PerNr

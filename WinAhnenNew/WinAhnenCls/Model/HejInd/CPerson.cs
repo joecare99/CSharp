@@ -1,11 +1,9 @@
-﻿using BaseLib.Interfaces;
-using GenInterfaces.Data;
+﻿using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using WinAhnenCls.Model.GenBase;
 
 namespace WinAhnenCls.Model.HejInd
 {
@@ -34,7 +32,7 @@ namespace WinAhnenCls.Model.HejInd
 
         public int ChildCount => throw new NotImplementedException();
 
-        public IIndexedList<IGenPerson> Children { get; }  
+        public IIndexedList<IGenPerson> Children { get; }
 
         public IGenFamily ParentFamily { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -70,19 +68,19 @@ namespace WinAhnenCls.Model.HejInd
         public IGenPlace Residence { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public IList<IGenFact> Facts { get; init; }
-        public IList<IGenConnects> Connects { get ; init ; }
+        public IList<IGenConnects> Connects { get; init; }
 
         public IGenFact Start => throw new NotImplementedException();
 
         public IGenFact End => throw new NotImplementedException();
 
-        public IList<IGenSource> Sources { get ; init ; }
+        public IList<IGenSource> Sources { get; init; }
         public Guid UId { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public EGenType eGenType { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         IList<IGenSource> IGenEntity.Sources { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
         public IList<IGenMedia> Media { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
-        public IGenealogy Owner => (_WLowner?.TryGetTarget(out var t)??false)?t:null;
+        public IGenealogy Owner => (_WLowner?.TryGetTarget(out var t) ?? false) ? t : null;
 
         public IIndexedList<IGenFamily> Marriages => throw new NotImplementedException();
 

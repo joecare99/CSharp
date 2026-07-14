@@ -1,8 +1,8 @@
-using Gen_FreeWin.Services.Interfaces;
-using Gen_FreeWin.Services.Models;
+using GenFreeWin.Services.Interfaces;
+using GenFreeWin.Services.Models;
 using GenFree.Data;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Creates NamenSuch document structure elements independently from concrete document output APIs.

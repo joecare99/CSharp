@@ -1,10 +1,10 @@
-﻿using GenInterfaces.Interfaces.Genealogic;
+﻿using BaseLib.Helper;
 using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Genealogic;
+using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using BaseLib.Helper;
-using System.Collections.Generic;
-using System;
 
 namespace BaseGenClasses.Helper;
 
@@ -34,7 +34,7 @@ public class GenPolyConverter<I> : JsonConverter<I> where I : class, IGenBase
             throw new JsonException();
         }
 
-        while (discrReader.GetString()?.StartsWith("$")==true)
+        while (discrReader.GetString()?.StartsWith("$") == true)
         {
             discrReader.Read();
             discrReader.Skip();

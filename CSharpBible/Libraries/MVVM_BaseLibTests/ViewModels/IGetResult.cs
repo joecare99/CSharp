@@ -18,6 +18,6 @@ namespace MVVM.ViewModel.Tests;
 
 public interface IGetResult
 {
-    object? Get( object[] objects, [CallerMemberName] string proc="");
-    void Register(string proc, Func<object[],object?> fesultFct);
+    object? Get(object[] objects, [CallerMemberName] string proc = "");
+    void Register(string proc, Func<object[], object?> fesultFct);
 }

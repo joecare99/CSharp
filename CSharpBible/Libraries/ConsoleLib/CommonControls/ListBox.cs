@@ -53,8 +53,10 @@ public class ListBox : Control, IDisposable, IHasBorder
         get => _selectedIndex;
         set
         {
-            if (value == _selectedIndex) return;
-            if (value < -1 || value >= ItemCount) return;
+            if (value == _selectedIndex)
+                return;
+            if (value < -1 || value >= ItemCount)
+                return;
             _selectedIndex = value;
             _selectedItem = _selectedIndex >= 0 ? _itemsSource?[_selectedIndex] : null;
             UpdateSelectedBinding();
@@ -69,7 +71,8 @@ public class ListBox : Control, IDisposable, IHasBorder
         get => _selectedItem;
         set
         {
-            if (ReferenceEquals(value, _selectedItem)) return;
+            if (ReferenceEquals(value, _selectedItem))
+                return;
             int idx = IndexOfItem(value);
             if (idx >= 0 || value == null)
             {
@@ -87,7 +90,7 @@ public class ListBox : Control, IDisposable, IHasBorder
     private int ItemCount => _itemsSource?.Count ?? 0;
     private bool NeedScrollBar => ItemCount > VisibleRows && VisibleRows > 0;
 
-    public (INotifyPropertyChanged, string) SelectedBinding { set=> BindSelected(value.Item1,value.Item2); }
+    public (INotifyPropertyChanged, string) SelectedBinding { set => BindSelected(value.Item1, value.Item2); }
 
     public ListBox()
     {
@@ -98,7 +101,8 @@ public class ListBox : Control, IDisposable, IHasBorder
 
     private void SetItemsSource(IList? list)
     {
-        if (ReferenceEquals(list, _itemsSource)) return;
+        if (ReferenceEquals(list, _itemsSource))
+            return;
         if (_notifyCol != null)
             _notifyCol.CollectionChanged -= Items_CollectionChanged;
         _itemsSource = list;
@@ -108,7 +112,8 @@ public class ListBox : Control, IDisposable, IHasBorder
         _topIndex = 0;
         if (_itemsSource == null || _itemsSource.Count == 0)
         {
-            _selectedIndex = -1; _selectedItem = null;
+            _selectedIndex = -1;
+            _selectedItem = null;
         }
         else if (_selectedIndex >= _itemsSource.Count)
         {
@@ -163,9 +168,12 @@ public class ListBox : Control, IDisposable, IHasBorder
 
     private void EnsureSelectedVisible()
     {
-        if (_selectedIndex < 0) return;
-        if (_selectedIndex < _topIndex) _topIndex = _selectedIndex;
-        if (_selectedIndex >= _topIndex + VisibleRows) _topIndex = Math.Max(0, _selectedIndex - VisibleRows + 1);
+        if (_selectedIndex < 0)
+            return;
+        if (_selectedIndex < _topIndex)
+            _topIndex = _selectedIndex;
+        if (_selectedIndex >= _topIndex + VisibleRows)
+            _topIndex = Math.Max(0, _selectedIndex - VisibleRows + 1);
         SyncScrollBar();
     }
 
@@ -182,9 +190,11 @@ public class ListBox : Control, IDisposable, IHasBorder
 
     private int IndexOfItem(object? value)
     {
-        if (value == null || _itemsSource == null) return -1;
+        if (value == null || _itemsSource == null)
+            return -1;
         for (int i = 0; i < _itemsSource.Count; i++)
-            if (Equals(_itemsSource[i], value)) return i;
+            if (Equals(_itemsSource[i], value))
+                return i;
         return -1;
     }
 
@@ -215,9 +225,11 @@ public class ListBox : Control, IDisposable, IHasBorder
 
     public override void MouseClick(Interfaces.IMouseEvent M)
     {
-        if (!Visible || !Enabled) { base.MouseClick(M); return; }
+        if (!Visible || !Enabled)
+        { base.MouseClick(M); return; }
         var dim = RealDim;
-        if (!dim.Contains(M.MousePos)) { base.MouseClick(M); return; }
+        if (!dim.Contains(M.MousePos))
+        { base.MouseClick(M); return; }
         int relY = M.MousePos.Y - dim.Y;
         if (relY >= 0 && relY < VisibleRows)
         {
@@ -232,7 +244,8 @@ public class ListBox : Control, IDisposable, IHasBorder
 
     public override void MouseMove(Interfaces.IMouseEvent M, Point lastMousePos)
     {
-        if (!Visible || !Enabled) { return; }
+        if (!Visible || !Enabled)
+        { return; }
         bool invalidate = false;
         if (M.MouseWheel != 0 && ItemCount > 0)
         {
@@ -244,7 +257,7 @@ public class ListBox : Control, IDisposable, IHasBorder
         }
         var dim = RealDim;
         if (NeedScrollBar)
-            dim.Inflate(-1,0);
+            dim.Inflate(-1, 0);
         if (dim.Contains(M.MousePos))
         {
             int relY = M.MousePos.Y - dim.Y;
@@ -260,7 +273,8 @@ public class ListBox : Control, IDisposable, IHasBorder
             _hoverIndex = -1;
             invalidate = true;
         }
-        if (invalidate) Invalidate();
+        if (invalidate)
+            Invalidate();
         base.MouseMove(M, lastMousePos);
     }
 
@@ -276,24 +290,37 @@ public class ListBox : Control, IDisposable, IHasBorder
 
     public override void HandlePressKeyEvents(Interfaces.IKeyEvent e)
     {
-        if (!Visible || !Enabled) { return; }
-        if (!e.bKeyDown) return;
+        if (!Visible || !Enabled)
+        { return; }
+        if (!e.bKeyDown)
+            return;
         switch (char.ToUpperInvariant(e.KeyChar))
         {
             case 'J':
             case '+':
-                if (SelectedIndex < ItemCount - 1) SelectedIndex++;
-                e.Handled = true; break;
+                if (SelectedIndex < ItemCount - 1)
+                    SelectedIndex++;
+                e.Handled = true;
+                break;
             case 'K':
             case '-':
-                if (SelectedIndex > 0) SelectedIndex--;
-                e.Handled = true; break;
+                if (SelectedIndex > 0)
+                    SelectedIndex--;
+                e.Handled = true;
+                break;
             case 'P':
-                SelectedIndex = Math.Min(ItemCount - 1, SelectedIndex + Math.Max(1, VisibleRows - 1)); e.Handled = true; break;
+                SelectedIndex = Math.Min(ItemCount - 1, SelectedIndex + Math.Max(1, VisibleRows - 1));
+                e.Handled = true;
+                break;
             case 'O':
-                SelectedIndex = Math.Max(0, SelectedIndex - Math.Max(1, VisibleRows - 1)); e.Handled = true; break;
+                SelectedIndex = Math.Max(0, SelectedIndex - Math.Max(1, VisibleRows - 1));
+                e.Handled = true;
+                break;
         }
-        if (e.Handled) EnsureSelectedVisible(); else base.HandlePressKeyEvents(e);
+        if (e.Handled)
+            EnsureSelectedVisible();
+        else
+            base.HandlePressKeyEvents(e);
     }
 
     #region Binding SelectedItem
@@ -312,7 +339,8 @@ public class ListBox : Control, IDisposable, IHasBorder
             try
             {
                 var val = _selBindingPropInfo.GetValue(model);
-                if (val != null) SelectedItem = val;
+                if (val != null)
+                    SelectedItem = val;
             }
             catch { }
         }
@@ -339,13 +367,16 @@ public class ListBox : Control, IDisposable, IHasBorder
 
     private void UpdateSelectedBinding()
     {
-        if (_internalSelUpdate) return;
+        if (_internalSelUpdate)
+            return;
         if (_selBindingModel != null && _selBindingPropInfo != null && _selBindingPropInfo.CanWrite)
         {
-            try { _selBindingPropInfo.SetValue(_selBindingModel, _selectedItem); } catch { }
+            try
+            { _selBindingPropInfo.SetValue(_selBindingModel, _selectedItem); }
+            catch { }
         }
     }
-    
+
     private void DetachSelectedBinding()
     {
         if (_selBindingModel != null)

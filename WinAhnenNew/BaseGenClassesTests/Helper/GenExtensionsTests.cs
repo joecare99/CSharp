@@ -1,17 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BaseGenClasses.Helper;
+﻿using BaseGenClasses.Helper.Interfaces;
+using BaseLib.Helper;
+using GenInterfaces.Data;
+using GenInterfaces.Interfaces.Genealogic;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GenInterfaces.Interfaces.Genealogic;
-using NSubstitute;
-using GenInterfaces.Data;
-using BaseLib.Helper;
-using System.Runtime.InteropServices;
-using BaseGenClasses.Helper.Interfaces;
-using GenInterfaces.Interfaces;
 
 namespace BaseGenClasses.Helper.Tests
 {
@@ -168,11 +162,11 @@ namespace BaseGenClasses.Helper.Tests
             iConnect.AddPerson(EGenConnectionType.Friend, Substitute.For<IGenPerson>());
 
             // Act
-            var result = iConnect.Where(i=>i?.Entity != null).ToIndexedList((I)=>I.Entity!.eGenType);
+            var result = iConnect.Where(i => i?.Entity != null).ToIndexedList((I) => I.Entity!.eGenType);
 
             // Assert
             Assert.IsNotNull(result);
-            result.ReceivedWithAnyArgs(2).Add(null!,null!);
+            result.ReceivedWithAnyArgs(2).Add(null!, null!);
         }
     }
 }

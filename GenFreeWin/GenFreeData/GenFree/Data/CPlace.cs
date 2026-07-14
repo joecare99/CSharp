@@ -1,16 +1,16 @@
-﻿using System;
-using System.Linq;
+﻿using BaseLib.Helper;
+using GenFree.Helper;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
-using GenFree.Helper;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
 using GenFree.Models;
+using System;
+using System.Linq;
 
 namespace GenFree.Data;
 
 
-public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, IPlace
+public class CPlace : CUsesIndexedRSet<int, PlaceIndex, PlaceFields, IPlaceData>, IPlace
 {
     private Func<IRecordset> _value;
 
@@ -68,21 +68,21 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
         _ => throw new ArgumentException(nameof(eIndex)),
     };
 
-    protected override IPlaceData GetData(IRecordset rs, bool xNoInit = false) => new CPlaceData(rs,xNoInit);
+    protected override IPlaceData GetData(IRecordset rs, bool xNoInit = false) => new CPlaceData(rs, xNoInit);
 
     public bool ReadIdxData(PlaceIndex eIdx, object value, out IPlaceData? cPlace)
     {
         cPlace = null;
         IRecordset rs = _db_Table;
         rs.Index = GetIndex1Field(eIdx).AsFld();
-        rs.Seek("=",value);
+        rs.Seek("=", value);
         if (rs.NoMatch)
             return false;
         cPlace = GetData(rs);
         return true;
     }
 
-    public string FullName(IPlaceData? cPlace, bool xNoPraepos=true, bool xAdditional=false)
+    public string FullName(IPlaceData? cPlace, bool xNoPraepos = true, bool xAdditional = false)
     {
         if (cPlace == null)
             return string.Empty;
@@ -106,7 +106,7 @@ public class CPlace : CUsesIndexedRSet<int,PlaceIndex,PlaceFields,IPlaceData>, I
         {
             Place_sZusatz = "in";
         }
-        if (!xAdditional )
+        if (!xAdditional)
         {
             Place_sKreis = cPlace.sKreis;
             Place_sLand = cPlace.sLand;

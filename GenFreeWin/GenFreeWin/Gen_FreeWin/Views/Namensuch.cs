@@ -1,19 +1,18 @@
-using Gen_FreeWin.Main;
+using BaseLib.Helper;
+using GenFreeWin.ViewModels;
 using GenFree;
 using GenFree.Helper;
-using Gen_FreeWin.ViewModels;
+using GenFree.Interfaces.UI;
+using GenFree.ViewModels.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using BaseLib.Helper;
-using GenFree.Interfaces.UI;
-using System.Collections.Specialized;
-using GenFree.ViewModels.Interfaces;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 public partial class Namensuch : Form
 {
@@ -172,9 +171,11 @@ public partial class Namensuch : Form
         Line1.SetIndex(_Line1_26, 26);
         Line1.SetIndex(_Line1_27, 27);
         Line1.SetIndex(_Line1_28, 28);
-        
-        foreach (var l in Label5.Values) l.DoubleClick += new EventHandler(Label5_DoubleClick);
-        foreach (var l in Label6.Values) l.DoubleClick += new EventHandler(Label6_DoubleClick);
+
+        foreach (var l in Label5.Values)
+            l.DoubleClick += new EventHandler(Label5_DoubleClick);
+        foreach (var l in Label6.Values)
+            l.DoubleClick += new EventHandler(Label6_DoubleClick);
         _viewModel.Label1_Text.CollectionChanged += Label1_Text_CollectionChanged;
         _viewModel.Label5_Text.CollectionChanged += Label5_Text_CollectionChanged;
         _viewModel.Label7_Text.CollectionChanged += Label7_Text_CollectionChanged;
@@ -218,7 +219,7 @@ public partial class Namensuch : Form
 
     private void Namensuch_Load(object sender, EventArgs e)
     {
-       _viewModel.FormLoadCommand.Execute(e);
+        _viewModel.FormLoadCommand.Execute(e);
     }
 
     private void Namensuch_FormClosed(object sender, FormClosedEventArgs e)
@@ -300,14 +301,14 @@ public partial class Namensuch : Form
 
     public DialogResult ShowDialog(int personNr, string title, int iFamNr)
     {
-       _viewModel.ShowNamensuchDlg(title, personNr, iFamNr);
+        _viewModel.ShowNamensuchDlg(title, personNr, iFamNr);
         Text = title;
         return ShowDialog();
     }
 
     public void ClearSelection()
     {
-       chbMale.Checked = false;
+        chbMale.Checked = false;
         chbFemales.Checked = false;
         chbFamOnly.Checked = false;
         chbSelection.Checked = false;

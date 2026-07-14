@@ -9,11 +9,11 @@
 // <summary>Interface for mapping search results to UI-bindable items</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.ViewModels.Models;
+using GenFreeWin.ViewModels.Models;
 using GenFree.Helper;
 using System.Collections.Generic;
 
-namespace Gen_FreeWin.Services
+namespace GenFreeWin.Services
 {
     /// <summary>
     /// Maps SearchResult domain objects to ListItem UI-bindable representations.

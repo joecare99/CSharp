@@ -109,7 +109,7 @@ public class TestStructTests
     {
         var ts = new TestStruct() { TestInt = 123, TestString = "Dada" };
         var ts2 = new TestStruct() { TestInt = 124, TestString = "Dada" };
-        Assert.AreNotEqual(ts.GetHashCode() , ts2.GetHashCode());
+        Assert.AreNotEqual(ts.GetHashCode(), ts2.GetHashCode());
     }
 
 }
@@ -166,7 +166,7 @@ public class PropertyHelperTests2
     /// <summary>
     /// The string property
     /// </summary>
-    private string strProp="";
+    private string strProp = "";
     /// <summary>
     /// The structure property
     /// </summary>
@@ -174,10 +174,10 @@ public class PropertyHelperTests2
     /// <summary>
     /// The data result
     /// </summary>
-    private string DataResult="";
+    private string DataResult = "";
     private bool boolProp;
 
-    public static IEnumerable<object[]> PropTestData => new[] 
+    public static IEnumerable<object[]> PropTestData => new[]
     {
     new object[]{"object", TypeCode.Object, "123", true, @"c:	SetPropertyTest,	o:,	n:123
 "},
@@ -252,7 +252,7 @@ public class PropertyHelperTests2
         {
             case TypeCode.Object when value.Contains(";"): // struct
                 Assert.AreEqual(bExp, PropertyHelper.SetProperty(ref structProp, TestStruct.Parse(value), DoAction));
-                Assert.AreEqual(expResult, DataResult,Name);
+                Assert.AreEqual(expResult, DataResult, Name);
                 break;
             case TypeCode.Object when value.StartsWith("Ex"): // struct
                 DoEx = new NotSupportedException();
@@ -320,16 +320,16 @@ public class PropertyHelperTests2
         switch (tt)
         {
             case TypeCode.Object when value.Contains(";"): // struct
-                Assert.AreEqual(bExp, PropertyHelper.SetProperty(TestStruct.Parse(value),(s) => structProp = s, structProp,DoAction));
+                Assert.AreEqual(bExp, PropertyHelper.SetProperty(TestStruct.Parse(value), (s) => structProp = s, structProp, DoAction));
                 Assert.AreEqual(expResult, DataResult);
                 break;
             case TypeCode.Object when value.StartsWith("Ex"): // struct
                 DoEx = new NotSupportedException();
-                Assert.AreEqual(bExp, PropertyHelper.SetProperty(value,(n)=>strProp=n, strProp, DoAction));
+                Assert.AreEqual(bExp, PropertyHelper.SetProperty(value, (n) => strProp = n, strProp, DoAction));
                 Assert.AreEqual(expResult, DataResult);
                 break;
             case TypeCode.String when value.StartsWith("vn"): // struct
-                Assert.AreEqual(bExp, PropertyHelper.SetProperty(value, setter: (n) => strProp = n, strProp,  (s) => false, DoAction));
+                Assert.AreEqual(bExp, PropertyHelper.SetProperty(value, setter: (n) => strProp = n, strProp, (s) => false, DoAction));
                 Assert.AreEqual(expResult, DataResult);
                 break;
             case TypeCode.String when value.StartsWith("vm"): // struct
@@ -337,7 +337,7 @@ public class PropertyHelperTests2
                 Assert.AreEqual(expResult, DataResult);
                 break;
             case TypeCode.String when value.StartsWith("vx"): // struct
-                Assert.AreEqual(bExp, value.SetProperty((n) => strProp = n, strProp,DoAction));
+                Assert.AreEqual(bExp, value.SetProperty((n) => strProp = n, strProp, DoAction));
                 Assert.AreEqual(expResult, DataResult);
                 break;
             case TypeCode.String:
@@ -345,7 +345,7 @@ public class PropertyHelperTests2
                 Assert.AreEqual(expResult, DataResult);
                 break;
             case TypeCode.Object when value.StartsWith("te"):
-                Assert.AreEqual(bExp, PropertyHelper.SetProperty((TestEnum)Enum.Parse(typeof(TestEnum),value), (n) => enumProp = n, enumProp,DoAction));
+                Assert.AreEqual(bExp, PropertyHelper.SetProperty((TestEnum)Enum.Parse(typeof(TestEnum), value), (n) => enumProp = n, enumProp, DoAction));
                 Assert.AreEqual(expResult, DataResult);
                 break;
             case TypeCode.Double:
@@ -383,6 +383,7 @@ public class PropertyHelperTests2
     private void DoAction<T>(string arg1, T arg2, T arg3)
     {
         DataResult += $"c:\t{arg1},\to:{arg2},\tn:{arg3}\r\n";
-        if (DoEx != null) throw DoEx;
+        if (DoEx != null)
+            throw DoEx;
     }
 }

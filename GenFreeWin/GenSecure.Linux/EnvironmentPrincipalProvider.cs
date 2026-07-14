@@ -1,5 +1,5 @@
-using System;
 using GenSecure.Contracts;
+using System;
 
 namespace GenSecure.Linux;
 

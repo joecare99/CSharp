@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Windows;
-using System.Threading;
-using NSubstitute;
-using CommonDialogs.Interfaces;
+﻿using CommonDialogs.Interfaces;
 using MdbBrowser.ViewModels;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System.Threading;
+using System.Windows;
 
 namespace MdbBrowser.Views.Tests
 {
@@ -24,10 +24,10 @@ namespace MdbBrowser.Views.Tests
 
         [TestMethod()]
         [DataRow(true)]
-        [DataRow(true,false)]
+        [DataRow(true, false)]
         [DataRow(false)]
         [DataRow(null)]
-        public void DoFileDialogTest(bool? xExp,bool xAct=true)
+        public void DoFileDialogTest(bool? xExp, bool xAct = true)
         {
             DBView? mw = null;
             var t = new Thread(() => mw = new());
@@ -38,9 +38,9 @@ namespace MdbBrowser.Views.Tests
             IFileDialog fd = Substitute.For<IFileDialog>();
             fd.FileName.Returns("testFile");
             fd.ShowDialog(Arg.Any<Window>()).Returns(xExp);
-            bool? result =  mw?.DoFileDialog("test", fd, xAct? (s, f) => _iCnt++:null);
+            bool? result = mw?.DoFileDialog("test", fd, xAct ? (s, f) => _iCnt++ : null);
             Assert.AreEqual(xExp, result);
-            Assert.AreEqual(xExp == true && xAct? 1 : 0, _iCnt);
+            Assert.AreEqual(xExp == true && xAct ? 1 : 0, _iCnt);
             fd.Received(1).ShowDialog(Arg.Any<Window>());
         }
 
@@ -49,7 +49,7 @@ namespace MdbBrowser.Views.Tests
         {
             DBView? mw = null;
             DBViewViewModel? vm = null;
-            var t = new Thread(() => { mw = new(); mw.Page_Loaded(mw, null!);vm = (DBViewViewModel)mw.DataContext; });
+            var t = new Thread(() => { mw = new(); mw.Page_Loaded(mw, null!); vm = (DBViewViewModel)mw.DataContext; });
             t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
             t.Start();
             t.Join(); //Wait for the thread to end

@@ -1,16 +1,15 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Main;
 using GenFree;
 using GenFree.Data;
+using GenFree.Interfaces.Sys;
 using Microsoft.VisualBasic;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using GenFree.Interfaces.Sys;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
 
 
 public partial class EinzelQuelle : Form
@@ -41,7 +40,7 @@ public partial class EinzelQuelle : Form
             DataModul.CitationData.sEntry = edtEntry.Text;
             DataModul.CitationData.sOriginalText = edtOriginalText.Text;
             DataModul.CitationData.sComment = edtComment.Text;
-            DataModul.CitationData.Commit(lbl__PerFamNr.Tag.AsInt(),Modul1.Art,Modul1.LfNR);
+            DataModul.CitationData.Commit(lbl__PerFamNr.Tag.AsInt(), Modul1.Art, Modul1.LfNR);
             edtOriginalText.Text = "";
             edtComment.Text = "";
         }

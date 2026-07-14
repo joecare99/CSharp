@@ -1,7 +1,6 @@
-﻿using System;
+﻿using BaseLib.Helper;
+using System;
 using System.Collections.Generic;
-using BaseLib.Helper;
-using GenFree.Interfaces.DB;
 
 namespace GenFree.Helper
 {
@@ -15,36 +14,36 @@ namespace GenFree.Helper
                 yield return func(item);
             }
         }
-/*
-        //public static string AsString(this object? data)
-        //    => data switch
-        //    {
-        //        string s => s,
-        //        IField f => f.Value.AsString(),
-        //        null => "",
-        //        object o => o.ToString() ?? "",
-        //    };
+        /*
+                //public static string AsString(this object? data)
+                //    => data switch
+                //    {
+                //        string s => s,
+                //        IField f => f.Value.AsString(),
+                //        null => "",
+                //        object o => o.ToString() ?? "",
+                //    };
 
-        //public static string Left(this string data, int iCnt)
-        //    => iCnt >= 0
-        //    ? data.Substring(0, Math.Min(data.Length, iCnt))
-        //    : data.Substring(0, Math.Max(0, data.Length + iCnt));
+                //public static string Left(this string data, int iCnt)
+                //    => iCnt >= 0
+                //    ? data.Substring(0, Math.Min(data.Length, iCnt))
+                //    : data.Substring(0, Math.Max(0, data.Length + iCnt));
 
-        //public static string Right(this string data, int iCnt)
-        //    => iCnt >= 0
-        //    ? data.Substring(Math.Max(0, data.Length - iCnt))
-        //    : data.Substring(Math.Min(data.Length, -iCnt));
-*/
+                //public static string Right(this string data, int iCnt)
+                //    => iCnt >= 0
+                //    ? data.Substring(Math.Max(0, data.Length - iCnt))
+                //    : data.Substring(Math.Min(data.Length, -iCnt));
+        */
         public static string Uml2Such(this string UbgT)
         {
             List<(string uml, string repl)> Umlauts = new List<(string, string)>() {
-                ("Ü", "U"), 
-                ("Ä", "A"), 
-                ("Ö", "O"), 
-                ("ä", "a"), 
-                ("à", "a"), 
-                ("á", "a"), 
-                ("â", "a"), 
+                ("Ü", "U"),
+                ("Ä", "A"),
+                ("Ö", "O"),
+                ("ä", "a"),
+                ("à", "a"),
+                ("á", "a"),
+                ("â", "a"),
                 ("ß", "ss") };
             int num = 0;
             while (num != -1 && !string.IsNullOrEmpty(UbgT))
@@ -90,7 +89,8 @@ namespace GenFree.Helper
             {
                 foreach (var r in new (string, string)[] {
                 ("\xE8u", "ü"), ("\x00E8a", "ä"), ("\xE8o", "ö"), ("\xE8U", "Ü"), ("\x00E8A", "Ä"), ("\xE8O", "Ö")
-                }) Ubgt1 = Ubgt1.Replace(r.Item1, r.Item2);
+                })
+                    Ubgt1 = Ubgt1.Replace(r.Item1, r.Item2);
             }
             if (Ubgt1.Contains('\xE2'.AsString()))
             {
@@ -98,7 +98,8 @@ namespace GenFree.Helper
                     ("\xE2" + "a", "á"), ("\xE2" + "e", "é"), ("\xE2" + "o", "ó"), ("\xE2" + "i", "í"),
                     ("\xE2" + "u", "ú"), ("\xE2" + "A", "Á"), ("\xE2" + "E", "É"), ("\xE2" + "O", "Ó"),
                     ("\xE2" + "I", "Í"), ("\xE2" + "U", "Ú"),
-                }) Ubgt1 = Ubgt1.Replace(r.Item1, r.Item2);
+                })
+                    Ubgt1 = Ubgt1.Replace(r.Item1, r.Item2);
             }
             if (Ubgt1.Contains('\xE3'.AsString()))
             {
@@ -106,12 +107,13 @@ namespace GenFree.Helper
                    ("\xE3" + "a", "â"), ("\xE3" + "e", "ê"), ("\xE3" + "o", "ô"), ("\xE3" + "i", "î"),
                    ("\xE3" + "u", "û"), ("\xE3" + "A", "Â"), ("\xE3" + "E", "Ê"), ("\xE3" + "O", "Ô"),
                    ("\xE3" + "I", "Î"), ("\xE3" + "U", "Û"),
-                }) Ubgt1 = Ubgt1.Replace(r.Item1, r.Item2);
+                })
+                    Ubgt1 = Ubgt1.Replace(r.Item1, r.Item2);
             }
             if (Ubgt1.Contains('\xC5'.AsString()))
             {
                 var num5_ = Ubgt1.IndexOf('\xC5');
-                Ubgt1 = Ubgt1.Left(num5_ - 1) + "¿" + Ubgt1.Substring(num5_ + 1, Math.Max(0, Ubgt1.Length-num5_-1));
+                Ubgt1 = Ubgt1.Left(num5_ - 1) + "¿" + Ubgt1.Substring(num5_ + 1, Math.Max(0, Ubgt1.Length - num5_ - 1));
             }
             return Ubgt1;
         }

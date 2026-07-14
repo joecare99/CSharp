@@ -14,7 +14,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Gen_FreeWin.ViewModels
+namespace GenFreeWin.ViewModels
 {
     /// <summary>
     /// MVVM ViewModel representing a single name entry field (line).

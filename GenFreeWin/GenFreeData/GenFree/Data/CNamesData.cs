@@ -1,16 +1,16 @@
-﻿using GenFree.Models.Data;
+﻿using BaseLib.Helper;
 using GenFree.Helper;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
+using GenFree.Models.Data;
 using System;
 using System.Linq;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
 
 namespace GenFree.Data;
 
 public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesData
 {
-    public CNamesData(IRecordset dB_NamesTable, bool xNoInit=false) : base(dB_NamesTable,xNoInit)
+    public CNamesData(IRecordset dB_NamesTable, bool xNoInit = false) : base(dB_NamesTable, xNoInit)
     {
     }
 
@@ -95,7 +95,8 @@ public class CNamesData : CRSDataC<ENamesProp, (int, ETextKennz, int)>, INamesDa
 
     public override void SetPropValue(ENamesProp prop, object value)
     {
-        if (EqualsProp(prop, value)) return;
+        if (EqualsProp(prop, value))
+            return;
         AddChangedProp(prop);
         object _ = prop switch
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace Gen_FreeWin;
+namespace GenFreeWin;
+
 public enum EOutCfg : int
 {
     oNone = 0,
@@ -47,7 +48,7 @@ public enum EOutCfg : int
     o48 = 48,
 }
 
-[Obsolete("use EOutCfg") ]
+[Obsolete("use EOutCfg")]
 public enum ENameSrchOpt
 {
     EmitIDs = 10,

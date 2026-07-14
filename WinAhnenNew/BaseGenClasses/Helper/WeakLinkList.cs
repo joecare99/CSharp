@@ -14,8 +14,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /// <summary>
 /// The Helper namespace.
@@ -39,9 +37,11 @@ namespace BaseGenClasses.Helper
         /// </summary>
         /// <param name="index">The index.</param>
         /// <returns>System.Nullable&lt;T&gt;.</returns>
-        public T? this[int index] { 
-            get => _list[index]?.TryGetTarget(out T? target) ??false ? target : default; 
-            set => _list[index] = value ==null?null: new WeakReference<T>(value); }
+        public T? this[int index]
+        {
+            get => _list[index]?.TryGetTarget(out T? target) ?? false ? target : default;
+            set => _list[index] = value == null ? null : new WeakReference<T>(value);
+        }
         /// <summary>
         /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
         /// </summary>
@@ -58,7 +58,8 @@ namespace BaseGenClasses.Helper
         /// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
         public virtual void Add(T? item)
         {
-            if (item != null) _list.Add(new WeakReference<T>(item));
+            if (item != null)
+                _list.Add(new WeakReference<T>(item));
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace BaseGenClasses.Helper
         /// </summary>
         /// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
         /// <returns><see langword="true" /> if <paramref name="item" /> is found in the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, <see langword="false" />.</returns>
-        public bool Contains(T? item) => _list.Any(wr => wr?.TryGetTarget(out T? target) ?? false ? target.Equals(item) : false );
+        public bool Contains(T? item) => _list.Any(wr => wr?.TryGetTarget(out T? target) ?? false ? target.Equals(item) : false);
         /// <summary>
         /// Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
         /// </summary>
@@ -123,7 +124,8 @@ namespace BaseGenClasses.Helper
         /// <param name="item">The object to insert into the <see cref="T:System.Collections.Generic.IList`1" />.</param>
         public virtual void Insert(int index, T? item)
         {
-           if (item != null) _list.Insert(index, new WeakReference<T>(item));
+            if (item != null)
+                _list.Insert(index, new WeakReference<T>(item));
         }
 
         /// <summary>
@@ -133,7 +135,8 @@ namespace BaseGenClasses.Helper
         /// <returns><see langword="true" /> if <paramref name="item" /> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, <see langword="false" />. This method also returns <see langword="false" /> if <paramref name="item" /> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1" />.</returns>
         public virtual bool Remove(T? item)
         {
-            if (item == null) return false;
+            if (item == null)
+                return false;
             for (int i = 0; i < _list.Count; i++)
             {
                 if ((_list[i]?.TryGetTarget(out T? target) ?? false) && target.Equals(item))

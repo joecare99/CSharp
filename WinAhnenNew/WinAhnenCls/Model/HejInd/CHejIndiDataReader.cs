@@ -1,9 +1,6 @@
-﻿using GenInterfaces.Data;
-using GenInterfaces.Interfaces;
-using GenInterfaces.Interfaces.Genealogic;
+﻿using GenInterfaces.Interfaces.Genealogic;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using WinAhnenCls.Model.GenBase;
 
@@ -12,7 +9,7 @@ namespace WinAhnenCls.Model.HejInd
     public class CHejIndiReader : IReader<IGenPerson>
     {
 
-    private Dictionary<EHejIndDataFields, object> _data = new();
+        private Dictionary<EHejIndDataFields, object> _data = new();
 
         public int ID { get => (int)_data[EHejIndDataFields.hind_ID]; set => _data[EHejIndDataFields.hind_ID] = value; }
         public int idFather { get => (int)_data[EHejIndDataFields.hind_idFather]; set => _data[EHejIndDataFields.hind_idFather] = value; }
@@ -104,7 +101,7 @@ namespace WinAhnenCls.Model.HejInd
             var _line = sr.ReadLine().Split('');
             for (int i = 0; i < _line.Length; i++)
             {
-                var field = (EHejIndDataFields)(i-1); 
+                var field = (EHejIndDataFields)(i - 1);
                 if (int.TryParse(_line[i], out int _int))
                     Data[field] = _int;
                 else

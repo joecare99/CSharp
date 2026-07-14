@@ -1,7 +1,7 @@
-using System.Collections.Concurrent;
-using System.Reflection;
 using Document.Base.Models.Interfaces;
 using Document.Base.Registration;
+using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace Document.Base.Factories;
 
@@ -23,8 +23,10 @@ public static class UserDocumentFactory
     public static void Register(string key, Func<IUserDocument> creator,
         IEnumerable<string>? extensions = null, string? contentType = null, bool overwrite = false)
     {
-        if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Key darf nicht leer sein.", nameof(key));
-        if (creator is null) throw new ArgumentNullException(nameof(creator));
+        if (string.IsNullOrWhiteSpace(key))
+            throw new ArgumentException("Key darf nicht leer sein.", nameof(key));
+        if (creator is null)
+            throw new ArgumentNullException(nameof(creator));
 
         if (!overwrite && _byKey.ContainsKey(key))
             throw new InvalidOperationException($"Key '{key}' ist bereits registriert.");
@@ -35,7 +37,8 @@ public static class UserDocumentFactory
         {
             foreach (var ext in extensions.Select(NormalizeExtension))
             {
-                if (string.IsNullOrEmpty(ext)) continue;
+                if (string.IsNullOrEmpty(ext))
+                    continue;
                 _extToKey[ext] = key;
             }
         }
@@ -77,21 +80,24 @@ public static class UserDocumentFactory
         if (LooksLikePath(keyOrExtOrContentTypeOrPath))
         {
             var doc = CreateForPath(keyOrExtOrContentTypeOrPath);
-            if (doc is not null) return doc;
+            if (doc is not null)
+                return doc;
         }
 
         // Content-Type?
         if (keyOrExtOrContentTypeOrPath.Contains('/'))
         {
             var doc = CreateForContentType(keyOrExtOrContentTypeOrPath);
-            if (doc is not null) return doc;
+            if (doc is not null)
+                return doc;
         }
 
         // Extension?
         if (keyOrExtOrContentTypeOrPath.StartsWith('.'))
         {
             var doc = CreateForExtension(keyOrExtOrContentTypeOrPath);
-            if (doc is not null) return doc;
+            if (doc is not null)
+                return doc;
         }
 
         // Key
@@ -119,7 +125,8 @@ public static class UserDocumentFactory
     {
         EnsureScanned();
         var ext = NormalizeExtension(extension);
-        if (string.IsNullOrEmpty(ext)) return null;
+        if (string.IsNullOrEmpty(ext))
+            return null;
         return _extToKey.TryGetValue(ext, out var key) && _byKey.TryGetValue(key, out var factory)
             ? factory()
             : null;
@@ -128,7 +135,8 @@ public static class UserDocumentFactory
     public static IUserDocument? CreateForContentType(string contentType)
     {
         EnsureScanned();
-        if (string.IsNullOrWhiteSpace(contentType)) return null;
+        if (string.IsNullOrWhiteSpace(contentType))
+            return null;
         return _ctToKey.TryGetValue(contentType, out var key) && _byKey.TryGetValue(key, out var factory)
             ? factory()
             : null;
@@ -149,7 +157,8 @@ public static class UserDocumentFactory
         foreach (var asm in assemblies)
         {
             Type[] types;
-            try { types = asm.GetTypes(); }
+            try
+            { types = asm.GetTypes(); }
             catch { continue; }
 
             foreach (var t in types)
@@ -158,7 +167,8 @@ public static class UserDocumentFactory
                     continue;
 
                 var attrs = t.GetCustomAttributes<UserDocumentProviderAttribute>(inherit: false).ToArray();
-                if (attrs.Length == 0) continue;
+                if (attrs.Length == 0)
+                    continue;
 
                 // Erzeuge Creator
                 Func<IUserDocument> creator = () => (IUserDocument)Activator.CreateInstance(t)!;
@@ -168,7 +178,8 @@ public static class UserDocumentFactory
                     var keys = (a.Keys?.Length ?? 0) > 0 ? a.Keys! : Array.Empty<string>();
                     foreach (var key in keys)
                     {
-                        if (string.IsNullOrWhiteSpace(key)) continue;
+                        if (string.IsNullOrWhiteSpace(key))
+                            continue;
                         // Mehrere Attribute können denselben Key definieren – letztes gewinnt.
                         _byKey[key] = creator;
                     }
@@ -194,7 +205,8 @@ public static class UserDocumentFactory
 
     private static void EnsureScanned()
     {
-        if (_scanned) return;
+        if (_scanned)
+            return;
         if (AutoScanOnFirstUse)
         {
             ScanAssemblies();
@@ -204,9 +216,11 @@ public static class UserDocumentFactory
 
     private static string NormalizeExtension(string extension)
     {
-        if (string.IsNullOrWhiteSpace(extension)) return string.Empty;
+        if (string.IsNullOrWhiteSpace(extension))
+            return string.Empty;
         var ext = extension.Trim();
-        if (!ext.StartsWith('.')) ext = "." + ext;
+        if (!ext.StartsWith('.'))
+            ext = "." + ext;
         return ext.ToLowerInvariant();
     }
 

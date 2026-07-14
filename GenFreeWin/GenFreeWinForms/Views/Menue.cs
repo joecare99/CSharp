@@ -1,23 +1,15 @@
+using BaseLib.Helper;
+using GenFreeWin;
+using GenFree.Interfaces.UI;
+using GenFree.ViewModels.Interfaces;
+//using DAO;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
 using System.Windows.Forms;
-using GenFree;
-using GenFree.Data;
-using GenFree.Interfaces.DB;
-using GenFree.Interfaces.UI;
-using GenFree.Helper;
-//using DAO;
-using Microsoft.VisualBasic;
-using BaseLib.Helper;
 using Views;
-using GenFree.ViewModels.Interfaces;
-using Gen_FreeWin;
 
 
 namespace GenFreeWin.Views;
@@ -231,7 +223,7 @@ public partial class Menue : Form, IInteraction
     public object? Choose(double Index, params object?[] v2)
     {
 #if NET5_0_OR_GREATER
-        return Interaction.Choose(Index,v2);
+        return Interaction.Choose(Index, v2);
 #else
         return false;
 #endif
@@ -249,7 +241,7 @@ public partial class Menue : Form, IInteraction
 
     public string? InputBox(string v, string title = "", string sDefault = "")
     {
-        #if NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
         return Interaction.InputBox(v, title, sDefault);
 #else
         return string.Empty;

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using BaseLib.Helper;
 using MVVM.ViewModel;
-using MVVM.Views.Extension;
+using System;
+using System.Linq;
 using TranspilerLib.Interfaces.Code;
 using VBUnObfusicator.Properties;
 
@@ -45,7 +44,7 @@ namespace VBUnObfusicator.ViewModels
                 else
                 {
                     Result = DoExecute(Code, Reorder, RemoveLbl, DoWhile);
-                    Result2 = string.Format(Resource.Result2, Code.Length, Code.Count((c)=>c==Environment.NewLine[0]),
+                    Result2 = string.Format(Resource.Result2, Code.Length, Code.Count((c) => c == Environment.NewLine[0]),
                         Result.Length, Result.Count((c) => c == Environment.NewLine[0]));
                 }
             }

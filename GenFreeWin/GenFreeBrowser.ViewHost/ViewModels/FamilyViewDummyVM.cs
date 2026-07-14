@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using GenFreeBrowser.Views.Models;
 
 namespace GenFreeBrowser.ViewHost.ViewModels;

@@ -1,12 +1,9 @@
+using GenFreeWin.Models;
+using GenFreeWin.Services;
 using System;
 using System.Windows.Forms;
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services;
-using Gen_FreeWin.Main;
-using GenFree;
-using GenFree.Helper;
 
-namespace Gen_FreeWin.Views;
+namespace GenFreeWin.Views;
 
 /// <summary>
 /// Refaktorierte Codenlogik für Fehlerli-Dialog.

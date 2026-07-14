@@ -2,13 +2,9 @@
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace BaseGenClasses.Model;
 
@@ -17,7 +13,7 @@ namespace BaseGenClasses.Model;
 public class GenFact(IGenEntity _owner) : GenObject, IGenFact
 {
 
-    public EFactType eFactType { get; init ; }
+    public EFactType eFactType { get; init; }
     public IGenDate? Date { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public IGenPlace? Place { get; set; }
@@ -37,17 +33,18 @@ public class GenFact(IGenEntity _owner) : GenObject, IGenFact
 
     public override EGenType eGenType => EGenType.GenFact;
     [JsonConstructor()]
-    private GenFact() :this(null!)
+    private GenFact() : this(null!)
     {
     }
-    public GenFact(IGenEntity Owner, EFactType eFactType):this(Owner)
+    public GenFact(IGenEntity Owner, EFactType eFactType) : this(Owner)
     {
         this.eFactType = eFactType;
     }
 
     void IHasOwner<IGenEntity>.SetOwner(IGenEntity t)
     {
-        if (t == null) return;
+        if (t == null)
+            return;
         _owner = t;
     }
 

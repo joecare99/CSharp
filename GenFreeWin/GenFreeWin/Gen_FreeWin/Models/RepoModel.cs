@@ -12,7 +12,7 @@
 // <summary>Domain model for genealogy Repository data</summary>
 // ***********************************************************************
 
-namespace Gen_FreeWin.Models
+namespace GenFreeWin.Models
 {
     /// <summary>
     /// Represents a genealogy Repository with contact information and metadata.

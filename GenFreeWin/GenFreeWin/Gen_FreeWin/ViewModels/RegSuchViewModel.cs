@@ -1,7 +1,7 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin.Views;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
@@ -21,7 +21,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
+
 public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
 {
     IContainerControl IRegSuchViewModel.View { get; set; }
@@ -803,7 +804,6 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
         View.Combo1.Text = Text1_Text;
         ProjectData.ClearProjectError();
         LB1_items.Clear();
-        string text = default;
         int M1_Iter = default;
         if (Text1_Text != "")
         {
@@ -876,13 +876,13 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
                     List6_Items.Clear();
                     DataModul.DB_EventTable.Index = nameof(EventIndex.Reg1);
                     DataModul.DB_EventTable.Seek(">=", (int)eArt, Text1_Text);
-                    if (text.AsInt() != 0.0)
+                    if ((int)eArt != 0)
                     {
                         M1_Iter = 0;
                         while (!(M1_Iter >= Modul1.Aus[13].AsInt())
                             && !DataModul.DB_EventTable.EOF
                             && !DataModul.DB_EventTable.NoMatch
-                            && DataModul.DB_EventTable.Fields[EventFields.Art].AsInt() == text.AsInt()
+                            && DataModul.DB_EventTable.Fields[EventFields.Art].AsInt() == (int)eArt
                             && string.Compare(DataModul.DB_EventTable.Fields[EventFields.Reg].AsString(), Text1_Text.ToUpper()) >= 0)
                         {
                             string sReg = DataModul.DB_EventTable.Fields[EventFields.Reg].AsString();
@@ -904,7 +904,7 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
                     while (M1_Iter < Modul1.Aus[13].AsInt()
                         && !dB_EventTable.EOF
                         && !dB_EventTable.NoMatch
-                        && dB_EventTable.Fields[EventFields.Art].AsEnum<EEventArt>() == text.AsEnum<EEventArt>()
+                        && dB_EventTable.Fields[EventFields.Art].AsEnum<EEventArt>() == eArt
                         && string.Compare(dB_EventTable.Fields[EventFields.Reg].AsString(), Text1_Text.ToUpper()) >= 0
                         )
                     {

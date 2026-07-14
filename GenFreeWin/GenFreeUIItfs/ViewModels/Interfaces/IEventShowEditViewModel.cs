@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using Gen_FreeWin;
+using GenFreeWin;
 using GenFree.Data;
 using System;
 using System.ComponentModel;
 
 namespace GenFree.ViewModels.Interfaces;
 
-public interface IEventShowEditViewModel: INotifyPropertyChanged
+public interface IEventShowEditViewModel : INotifyPropertyChanged
 {
     IRelayCommand ClickCommand { get; }
     string Display_Text { get; }

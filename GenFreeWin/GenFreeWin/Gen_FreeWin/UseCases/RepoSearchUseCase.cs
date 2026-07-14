@@ -12,8 +12,8 @@
 // <summary>Business logic use case for repository search and initialization</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.Models;
-using Gen_FreeWin.Services.Interfaces;
+using GenFreeWin.Models;
+using GenFreeWin.Services.Interfaces;
 using GenFree.Helper;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Gen_FreeWin.UseCases
+namespace GenFreeWin.UseCases
 {
     /// <summary>
     /// Encapsulates business logic for repository search, loading, and list management.

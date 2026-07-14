@@ -1,10 +1,10 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Models;
+using GenFreeWin.Models;
 using GenFree.Data;
 using System;
 using System.Collections.Generic;
 
-namespace Gen_FreeWin.Data;
+namespace GenFreeWin.Data;
 
 /// <summary>
 /// Defines data access operations required by the ownership selection workflow.

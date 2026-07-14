@@ -14,8 +14,6 @@
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 /// <summary>
 /// The Model namespace.
@@ -93,7 +91,7 @@ public class GenDate : GenObject, IGenDate
         DateText = dateText;
     }
 
-    public GenDate(DateTime date1, EDateType? type2 = null, DateTime? date2 = null, string? dateText = null):this(EDateModifier.None,EDateType.Full,date1,type2,date2,dateText)
+    public GenDate(DateTime date1, EDateType? type2 = null, DateTime? date2 = null, string? dateText = null) : this(EDateModifier.None, EDateType.Full, date1, type2, date2, dateText)
     {
     }
 }

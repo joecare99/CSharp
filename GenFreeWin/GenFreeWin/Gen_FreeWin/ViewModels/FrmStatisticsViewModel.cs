@@ -2,7 +2,7 @@
 using GenFree.ViewModels.Interfaces;
 using MVVM.ViewModel;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class FrmStatisticsViewModel : BaseViewModelCT, IFraStatisticsViewModel
 {
@@ -21,6 +21,6 @@ public partial class FrmStatisticsViewModel : BaseViewModelCT, IFraStatisticsVie
     public void SetTexts(int Count) => Texts = Count;
     public void UpdateStat()
     {
-        
+
     }
 }

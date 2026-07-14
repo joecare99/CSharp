@@ -9,7 +9,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 
@@ -67,14 +66,14 @@ public static class DBImplementOleDB
 
             // COM-Typ dynamisch laden (spätes Binding, keine Projekt-Referenz nötig)
             Type? jroType = Type.GetTypeFromProgID("JRO.JetEngine");
-            if (jroType == null || IntPtr.Size==8)
+            if (jroType == null || IntPtr.Size == 8)
                 throw new NotSupportedException("JRO.JetEngine COM-Komponente nicht verfügbar. Datenbank-Komprimierung nicht möglich.");
 
             object jetEngine = Activator.CreateInstance(jroType);
 
             // Connection-Strings für Quelle und Ziel
-            var src = $"Provider={(IntPtr.Size==8? Settings.Default.OleDB_Provider64 :Settings.Default.OleDB_Provider)};Data Source={v1};Jet OLEDB:Engine Type=5";
-            var dst = $"Provider={(IntPtr.Size==8? Settings.Default.OleDB_Provider64 :Settings.Default.OleDB_Provider)};Data Source={v2};Jet OLEDB:Engine Type=5";
+            var src = $"Provider={(IntPtr.Size == 8 ? Settings.Default.OleDB_Provider64 : Settings.Default.OleDB_Provider)};Data Source={v1};Jet OLEDB:Engine Type=5";
+            var dst = $"Provider={(IntPtr.Size == 8 ? Settings.Default.OleDB_Provider64 : Settings.Default.OleDB_Provider)};Data Source={v2};Jet OLEDB:Engine Type=5";
 
             // CompactDatabase aufrufen
             jroType.InvokeMember("CompactDatabase",
@@ -150,10 +149,10 @@ public static class DBImplementOleDB
 
             // 4. Öffne die neue Datenbank und gib das IDatabase-Objekt zurück
             var result = new OleDbConnection(new OleDbConnectionStringBuilder
-                {
-                    Provider = (IntPtr.Size == 8)?Settings.Default.OleDB_Provider64: Settings.Default.OleDB_Provider,
-                    DataSource = sDBName
-                }.ConnectionString);
+            {
+                Provider = (IntPtr.Size == 8) ? Settings.Default.OleDB_Provider64 : Settings.Default.OleDB_Provider,
+                DataSource = sDBName
+            }.ConnectionString);
             result.Open();
             return new CDatabase(result);
         }
@@ -205,7 +204,7 @@ public static class DBImplementOleDB
             }
             else if (cmd.Parameters.Count == 1 && value is object o)
                 cmd.Parameters[0].Value = o;
-           return cmd.ExecuteNonQuery();
+            return cmd.ExecuteNonQuery();
         }
 
         public int Execute(string sql)
@@ -290,18 +289,19 @@ public static class DBImplementOleDB
             if (name.IsValidIdentifyer() && type == RecordsetTypeEnum.dbOpenTable)
                 try
                 {
-                   var cmd = new OleDbCommand(name, (OleDbConnection)db);
+                    var cmd = new OleDbCommand(name, (OleDbConnection)db);
                     cmd.CommandType = CommandType.TableDirect;
                     adapter = new OleDbDataAdapter(cmd);
-                   adapter.Fill(_dataTable);
-   //                adapter.
-                   _dataTable.TableName = name;
-                   var b = new OleDbCommandBuilder(adapter);
-                   adapter.UpdateCommand = b.GetUpdateCommand();
-                   adapter.InsertCommand = b.GetInsertCommand();
-                   adapter.DeleteCommand = b.GetDeleteCommand();
+                    adapter.Fill(_dataTable);
+                    //                adapter.
+                    _dataTable.TableName = name;
+                    var b = new OleDbCommandBuilder(adapter);
+                    adapter.UpdateCommand = b.GetUpdateCommand();
+                    adapter.InsertCommand = b.GetInsertCommand();
+                    adapter.DeleteCommand = b.GetDeleteCommand();
                 }
-                catch {
+                catch
+                {
                     _ = 1;
                 }
             else
@@ -372,7 +372,7 @@ public static class DBImplementOleDB
         {
             _dataTable.DefaultView[dataRow].Row.BeginEdit();
             if (EditMode == 0)
-               EditMode = 1; // Setzt den Editiermodus
+                EditMode = 1; // Setzt den Editiermodus
         }
 
         public void MoveNext()
@@ -407,7 +407,7 @@ public static class DBImplementOleDB
             if (v.Trim() == "=")
             {
                 dataRow = defaultView.Find(param);
-                    return;
+                return;
             }
             // ">=": ersten passenden Eintrag suchen (optimiert, da DefaultView sortiert ist)
             else if (v.Trim() == ">=")
@@ -459,7 +459,7 @@ public static class DBImplementOleDB
                     var colValue = rowView[sortColumns[c]];
                     if (DBNull.Value == colValue)
                         return 1;
-                    cmp = Comparer.Default.Compare( colValue, param[c]);
+                    cmp = Comparer.Default.Compare(colValue, param[c]);
                     if (cmp < 0 || cmp > 0)
                     {
                         break;
@@ -474,7 +474,7 @@ public static class DBImplementOleDB
         public void Update()
         {
             if (EditMode == 2)
-            {    
+            {
                 _dataTable.Rows.Add(drNew);
                 dataRow = _dataTable.Rows.Count - 1;
                 drNew?.EndEdit();

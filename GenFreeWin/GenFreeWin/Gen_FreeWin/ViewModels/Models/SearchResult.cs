@@ -11,7 +11,7 @@
 
 using System;
 
-namespace Gen_FreeWin.ViewModels.Models
+namespace GenFreeWin.ViewModels.Models
 {
     /// <summary>
     /// Represents a single result item from a name search operation.

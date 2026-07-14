@@ -42,7 +42,7 @@ public partial class DialogWindow : Window, IDialogWindow
         vm.DoOK += DoOK;
     }
 
-    private void DoOK(object? sender,EventArgs e)
+    private void DoOK(object? sender, EventArgs e)
     {
         DialogResult = true;
         Hide();

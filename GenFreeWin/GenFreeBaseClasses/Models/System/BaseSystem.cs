@@ -1,38 +1,32 @@
 ﻿using BaseLib.Helper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GenFree.Interfaces.Sys;
-using Microsoft.VisualBasic;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenFree.Models.System;
 
-public partial class BaseSystem: ObservableObject, ISystem
+public partial class BaseSystem : ObservableObject, ISystem
 {
     private IGenPersistence _persistence;
 
-    public BaseSystem(IGenPersistence persistence) {
+    public BaseSystem(IGenPersistence persistence)
+    {
         _persistence = persistence;
     }
 
     [ObservableProperty]
-    private string _progOwner="";
+    private string _progOwner = "";
     [ObservableProperty]
     private bool _progIsDemo;
 
     public Func<string, bool> CheckLicence { get; set; } = (s) => ChecLicInt(s);
-    public short VerSpecial { get ; set ; }
+    public short VerSpecial { get; set; }
     public bool xDemo { get; set; }
     public bool xJudenfriedhofVersion { get; set; }
 
     public bool SetLicNr(string licNr)
     {
-        if( ChecLicInt(licNr) )
+        if (ChecLicInt(licNr))
         {
             _persistence.WriteStringProg("IDF.Dat", licNr);
 
@@ -66,7 +60,7 @@ public partial class BaseSystem: ObservableObject, ISystem
 
                 var _Li1 = (int)Math.Round((_Li - 1) / _licSplit[3].Substring(4, 1).AsDouble());
                 if (_Li1 == _licSplit[3].Substring(2, 2).AsInt())
-                {                   
+                {
                     return true;
                 }
             }

@@ -149,7 +149,7 @@ public static class ControlArrayHelper
             item.Value.CheckedChanged -= eh;
         }
     }
-      public static void AddCheckedChangedRB<T>(this ControlArray<T> caText, EventHandler eh) where T : RadioButton
+    public static void AddCheckedChangedRB<T>(this ControlArray<T> caText, EventHandler eh) where T : RadioButton
     {
         foreach (var item in caText)
         {

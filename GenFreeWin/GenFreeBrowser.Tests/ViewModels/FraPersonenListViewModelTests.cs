@@ -1,25 +1,19 @@
+using GenFreeBrowser;
 using GenFreeBrowser.Model;
 using GenFreeBrowser.ViewModels;
-using GenFreeBrowser;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 [TestClass]
 public class FraPersonenListViewModelTests
 {
-    private static DispPersones P(int id, string name, int year) => new(id, name, new DateTime(year,1,1));
+    private static DispPersones P(int id, string name, int year) => new(id, name, new DateTime(year, 1, 1));
 
     [TestMethod]
     public async Task LadeAsync_Füllt_Sammlung()
     {
         var svc = Substitute.For<IPersonenService>();
         svc.QueryAsync(Arg.Any<PersonenQuery>(), Arg.Any<CancellationToken>())
-            .Returns(ci => Task.FromResult(((IReadOnlyList<DispPersones>)new[]{ P(1,"A",2000), P(2,"B",1990) },2)));
+            .Returns(ci => Task.FromResult(((IReadOnlyList<DispPersones>)new[] { P(1, "A", 2000), P(2, "B", 1990) }, 2)));
         var vm = new FraPersonenListViewModel(svc);
 
         await vm.LadeAsync();
@@ -34,7 +28,7 @@ public class FraPersonenListViewModelTests
     {
         var svc = Substitute.For<IPersonenService>();
         svc.QueryAsync(Arg.Any<PersonenQuery>(), Arg.Any<CancellationToken>())
-            .Returns(((IReadOnlyList<DispPersones>)Array.Empty<DispPersones>(),0));
+            .Returns(((IReadOnlyList<DispPersones>)Array.Empty<DispPersones>(), 0));
         var vm = new FraPersonenListViewModel(svc);
 
         await vm.LadeAsync();
@@ -56,7 +50,7 @@ public class FraPersonenListViewModelTests
 
         Assert.IsTrue(vm.IsBusy);
         Assert.IsTrue(second.IsCompleted);
-        tcs.SetResult(((IReadOnlyList<DispPersones>)new[]{ P(1,"A",2000)},1));
+        tcs.SetResult(((IReadOnlyList<DispPersones>)new[] { P(1, "A", 2000) }, 1));
         await first;
         Assert.AreEqual(1, vm.Personen.Count);
     }
@@ -66,11 +60,11 @@ public class FraPersonenListViewModelTests
     {
         var svc = Substitute.For<IPersonenService>();
         // erste Seite ohne Filter
-        svc.QueryAsync(Arg.Is<PersonenQuery>(q=> q.PageIndex==0 && q.NameContains==null), Arg.Any<CancellationToken>())
-            .Returns(((IReadOnlyList<DispPersones>)new[]{ P(1,"Alpha",1990)},1));
+        svc.QueryAsync(Arg.Is<PersonenQuery>(q => q.PageIndex == 0 && q.NameContains == null), Arg.Any<CancellationToken>())
+            .Returns(((IReadOnlyList<DispPersones>)new[] { P(1, "Alpha", 1990) }, 1));
         // mit Filter
-        svc.QueryAsync(Arg.Is<PersonenQuery>(q=> q.NameContains=="Max"), Arg.Any<CancellationToken>())
-            .Returns(((IReadOnlyList<DispPersones>)new[]{ P(2,"Max",1980)},1));
+        svc.QueryAsync(Arg.Is<PersonenQuery>(q => q.NameContains == "Max"), Arg.Any<CancellationToken>())
+            .Returns(((IReadOnlyList<DispPersones>)new[] { P(2, "Max", 1980) }, 1));
         var vm = new FraPersonenListViewModel(svc);
 
         await vm.LadeAsync();
@@ -85,10 +79,10 @@ public class FraPersonenListViewModelTests
     public async Task Paging_Funktioniert()
     {
         var svc = Substitute.For<IPersonenService>();
-        svc.QueryAsync(Arg.Is<PersonenQuery>(q=> q.PageIndex==0), Arg.Any<CancellationToken>())
-            .Returns(((IReadOnlyList<DispPersones>)new[]{ P(1,"A",2000), P(2,"B",2001)},4));
-        svc.QueryAsync(Arg.Is<PersonenQuery>(q=> q.PageIndex==1), Arg.Any<CancellationToken>())
-            .Returns(((IReadOnlyList<DispPersones>)new[]{ P(3,"C",2002), P(4,"D",2003)},4));
+        svc.QueryAsync(Arg.Is<PersonenQuery>(q => q.PageIndex == 0), Arg.Any<CancellationToken>())
+            .Returns(((IReadOnlyList<DispPersones>)new[] { P(1, "A", 2000), P(2, "B", 2001) }, 4));
+        svc.QueryAsync(Arg.Is<PersonenQuery>(q => q.PageIndex == 1), Arg.Any<CancellationToken>())
+            .Returns(((IReadOnlyList<DispPersones>)new[] { P(3, "C", 2002), P(4, "D", 2003) }, 4));
         var vm = new FraPersonenListViewModel(svc) { PageSize = 2 };
 
         await vm.LadeAsync();
@@ -105,7 +99,7 @@ public class FraPersonenListViewModelTests
     {
         var svc = Substitute.For<IPersonenService>();
         svc.QueryAsync(Arg.Any<PersonenQuery>(), Arg.Any<CancellationToken>())
-            .Returns(((IReadOnlyList<DispPersones>)new[]{ P(1,"A",2000)},1));
+            .Returns(((IReadOnlyList<DispPersones>)new[] { P(1, "A", 2000) }, 1));
         var vm = new FraPersonenListViewModel(svc);
         await vm.LadeAsync();
 
@@ -118,7 +112,7 @@ public class FraPersonenListViewModelTests
     {
         var svc = Substitute.For<IPersonenService>();
         svc.QueryAsync(Arg.Any<PersonenQuery>(), Arg.Any<CancellationToken>())
-            .Returns(((IReadOnlyList<DispPersones>)new[]{ P(1,"A",2000)},10));
+            .Returns(((IReadOnlyList<DispPersones>)new[] { P(1, "A", 2000) }, 10));
         var vm = new FraPersonenListViewModel(svc) { PageSize = 5 };
         await vm.LadeAsync();
         vm.PageIndex = 1; // direkt manipulieren über Reflection geht nicht, daher zweite Seite simulieren

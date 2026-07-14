@@ -1,5 +1,4 @@
 using BaseLib.Interfaces;
-using ConsoleLib;
 using ConsoleLib.CommonControls;
 using ConsoleLib.Data;
 using ConsoleLib.Interfaces;

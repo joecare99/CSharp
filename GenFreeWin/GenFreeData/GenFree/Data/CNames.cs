@@ -1,14 +1,13 @@
-﻿using GenFree.Helper;
+﻿using BaseLib.Helper;
+using GenFree.Interfaces.Data;
 using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Model;
-using System;
-using BaseLib.Helper;
-using GenFree.Interfaces.Data;
 using GenFree.Models;
+using System;
 
 namespace GenFree.Data
 {
-    public class CNames : CUsesIndexedRSet<(int, ETextKennz, int),NameIndex,NameFields,INamesData>, INames
+    public class CNames : CUsesIndexedRSet<(int, ETextKennz, int), NameIndex, NameFields, INamesData>, INames
     {
         private const string cNameIndex = "NABD2CU";
 
@@ -68,7 +67,7 @@ namespace GenFree.Data
         {
             IRecordset dB_NamesTable = _db_Table;
             dB_NamesTable.Index = $"{_keyIndex}";
-            dB_NamesTable.Seek("=", key.Item1,(char)key.Item2, key.Item3);
+            dB_NamesTable.Seek("=", key.Item1, (char)key.Item2, key.Item3);
             xBreak = dB_NamesTable.NoMatch;
             return xBreak ? null : dB_NamesTable;
         }
@@ -193,6 +192,6 @@ namespace GenFree.Data
                 _r.Delete();
             }
         }
-        protected override INamesData GetData(IRecordset rs, bool xNoInit = false) => new CNamesData(rs,xNoInit);
+        protected override INamesData GetData(IRecordset rs, bool xNoInit = false) => new CNamesData(rs, xNoInit);
     }
 }

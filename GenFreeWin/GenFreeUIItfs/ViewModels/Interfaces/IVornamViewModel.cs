@@ -3,7 +3,6 @@ using GenFree.Helper;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 namespace GenFree.ViewModels.Interfaces
 {
@@ -14,7 +13,7 @@ namespace GenFree.ViewModels.Interfaces
     /// </summary>
     public interface IVornamViewModel : INotifyPropertyChanged
     {
-      
+
         // ========================================================================
         // Observable Properties (MVVM Bindable via CommunityToolkit.Mvvm)
         // ========================================================================
@@ -27,7 +26,7 @@ namespace GenFree.ViewModels.Interfaces
 
         /// <summary>
         /// Current loaded/edited names for the person.
-        /// Type: ObservableCollection&lt;object&gt; (runtime: Gen_FreeWin.Models.VornamModel items)
+        /// Type: ObservableCollection&lt;object&gt; (runtime: GenFreeWin.Models.VornamModel items)
         /// Note: Use as object collection to avoid cross-assembly dependency on VornamModel type.
         /// </summary>
         ObservableCollection<object> CurrentNames { get; set; }

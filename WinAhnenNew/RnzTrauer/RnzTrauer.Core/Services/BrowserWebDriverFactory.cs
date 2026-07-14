@@ -1,6 +1,6 @@
-using System;
 using OpenQA.Selenium;
 using RnzTrauer.Core.Services.Interfaces;
+using System;
 
 namespace RnzTrauer.Core;
 

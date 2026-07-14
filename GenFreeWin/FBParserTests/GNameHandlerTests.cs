@@ -1,8 +1,8 @@
+using BaseLib.Models;
+using FBParser;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
-using FBParser;
-using BaseLib.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FBParserTests;
 

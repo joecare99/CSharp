@@ -1,17 +1,9 @@
 using BaseLib.Helper;
-using Gen_FreeWin.Views;
-using GenFree;
-using GenFree.Helper;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Windows.Forms;
-using System.ComponentModel;
-using GenFree.ViewModels.Interfaces;
+using GenFreeWin;
 using GenFree.Interfaces.UI;
-using Gen_FreeWin;
+using GenFree.ViewModels.Interfaces;
+using System;
+using System.Windows.Forms;
 using Views;
 
 namespace GenFreeWin.Views;
@@ -38,10 +30,10 @@ public partial class Lizenz : Form
     private void _Lizenz_Load(object eventSender, EventArgs eventArgs)
     {
         lblEnterLicence.Text = _strings[EUserText.t112];
-    //    lblDisplayHint.Text = 
+        //    lblDisplayHint.Text = 
         btnVerify.Text = _strings[EUserText.t113];
         btnCancel.Text = _strings[EUserText.tNMCancel];
-      //  btnReqHint.Text = 
+        //  btnReqHint.Text = 
     }
 
 

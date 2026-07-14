@@ -1,6 +1,6 @@
-using System.Text;
 using Document.Base.Models;
 using Document.Base.Models.Interfaces;
+using System.Text;
 
 namespace Document.Xaml.Model;
 
@@ -14,13 +14,15 @@ public abstract class XamlContentBase : XamlNodeBase, IDocContent
         set
         {
             _text.Clear();
-            if (!string.IsNullOrEmpty(value)) _text.Append(value);
+            if (!string.IsNullOrEmpty(value))
+                _text.Append(value);
         }
     }
 
     public void AppendText(string text)
     {
-        if (!string.IsNullOrEmpty(text)) _text.Append(text);
+        if (!string.IsNullOrEmpty(text))
+            _text.Append(text);
     }
 
     public virtual IDocContent AddLineBreak()
@@ -56,7 +58,7 @@ public abstract class XamlContentBase : XamlNodeBase, IDocContent
         return (IDocSpan)AddChild(span);
     }
 
-    public virtual IDocSpan AddLink(string Href,IDocFontStyle docFontStyle)
+    public virtual IDocSpan AddLink(string Href, IDocFontStyle docFontStyle)
     {
         var link = new XamlSpan(docFontStyle) { IsLink = true, Href = Href };
         return (IDocSpan)AddChild(link);
@@ -66,7 +68,8 @@ public abstract class XamlContentBase : XamlNodeBase, IDocContent
 
     public virtual string GetTextContent(bool xRecursive = true)
     {
-        if (!xRecursive) return TextContent;
+        if (!xRecursive)
+            return TextContent;
 
         var sb = new StringBuilder();
         sb.Append(TextContent);

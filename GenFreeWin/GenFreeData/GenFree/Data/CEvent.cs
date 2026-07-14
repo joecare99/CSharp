@@ -1,12 +1,11 @@
 ﻿//using DAO;
-using GenFree.Interfaces.DB;
-using GenFree.Interfaces.Model;
-using GenFree.Helper;
-using System;
-using System.Collections.Generic;
 using BaseLib.Helper;
 using GenFree.Interfaces.Data;
+using GenFree.Interfaces.DB;
+using GenFree.Interfaces.Model;
 using GenFree.Models;
+using System;
+using System.Collections.Generic;
 
 namespace GenFree.Data;
 #nullable enable
@@ -36,7 +35,9 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
                  && !(dB_EventTable.Fields[EventFields.PerFamNr].AsInt() != iFamPers)
                  && !(dB_EventTable.Fields[EventFields.Art].AsEnum<EEventArt>() != i))
             {
-                try { action(GetData(dB_EventTable), dB_EventTable); } catch { }
+                try
+                { action(GetData(dB_EventTable), dB_EventTable); }
+                catch { }
                 dB_EventTable.MoveNext();
             }
         }
@@ -491,7 +492,8 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         int num19 = 300;
         while (num19 <= 302)
         {
-            while (DeleteBeSu((EEventArt)num19, num18)) ;
+            while (DeleteBeSu((EEventArt)num19, num18))
+                ;
             num19++;
         }
     }
@@ -501,7 +503,8 @@ public class CEvent : CUsesIndexedRSet<(EEventArt eArt, int iLink, short iLfNr),
         int num19 = 101;
         while (num19 <= 120)
         {
-            while (DeleteBeSu((EEventArt)num19, num18)) ;
+            while (DeleteBeSu((EEventArt)num19, num18))
+                ;
             num19++;
         }
     }

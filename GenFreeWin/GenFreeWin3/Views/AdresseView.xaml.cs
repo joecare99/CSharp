@@ -1,5 +1,5 @@
-using System.Windows.Controls;
 using GenFree.ViewModels.Interfaces;
+using System.Windows.Controls;
 
 namespace GenFreeWpf.Views;
 

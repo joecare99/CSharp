@@ -1,6 +1,6 @@
-using System.Text;
 using Document.Xaml.Model;
 using Document.Xaml.Serialization;
+using System.Text;
 
 namespace Document.Xaml.IO;
 

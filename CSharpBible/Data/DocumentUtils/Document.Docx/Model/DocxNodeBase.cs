@@ -1,12 +1,12 @@
-using System.Collections.Generic;
 using Document.Base.Models.Interfaces;
+using System.Collections.Generic;
 
 namespace Document.Docx.Model;
 
 public abstract class DocxNodeBase : IDOMElement
 {
     private readonly List<IDOMElement> _nodes = new();
-    private readonly Dictionary<string,string> _attributes = new();
+    private readonly Dictionary<string, string> _attributes = new();
 
     public IDictionary<string, string> Attributes => _attributes;
     public IList<IDOMElement> Nodes => _nodes;
@@ -19,7 +19,7 @@ public abstract class DocxNodeBase : IDOMElement
 
     public string? GetAttribute(string name) => _attributes.TryGetValue(name, out var v) ? v : null;
 
-    protected T AddChild<T>(T el) where T: IDOMElement
+    protected T AddChild<T>(T el) where T : IDOMElement
     {
         _nodes.Add(el);
         return el;

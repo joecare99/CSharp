@@ -1,6 +1,5 @@
 ﻿using System;
 using TranspilerLib.Data;
-using TranspilerLib.Interfaces.Code;
 using static TranspilerLib.Interfaces.Code.ICodeBase;
 
 namespace TranspilerLib.Models.Scanner;

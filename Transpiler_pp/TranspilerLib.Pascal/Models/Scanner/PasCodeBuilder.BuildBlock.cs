@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TranspilerLib.Data;
+﻿using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Pascal.Data;
 

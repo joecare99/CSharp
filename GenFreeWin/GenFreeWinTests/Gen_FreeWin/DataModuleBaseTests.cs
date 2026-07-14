@@ -14,7 +14,7 @@ namespace gen_plusTests.Gen_FreeWin
         public void Init()
         {
             // get a temporary working directory
-             _workingDir = Path.Combine( Path.GetTempPath(),Guid.NewGuid().ToString());
+            _workingDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(_workingDir);
         }
 

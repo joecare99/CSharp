@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
+using GenFreeBrowser.Model;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using GenFreeBrowser.Model;
 
 namespace GenFreeBrowser;
 
@@ -42,7 +37,8 @@ public sealed class PersonenService : IPersonenService
 
     private IReadOnlyList<DispPersones> EnsureCache(CancellationToken ct)
     {
-        if (_cache != null) return _cache;
+        if (_cache != null)
+            return _cache;
         _cache = LoadFromGedcom(ct).ToList();
         return _cache;
     }
@@ -51,10 +47,14 @@ public sealed class PersonenService : IPersonenService
     {
         var solutionRoot = FindSolutionRoot();
         var gedPath = Path.Combine(solutionRoot, "WinAhnenNew", "WinAhnenClsTests", "Resources", "Muster_GEDCOM_UTF-8.ged");
-        if (!File.Exists(gedPath)) yield break;
+        if (!File.Exists(gedPath))
+            yield break;
 
         var lines = File.ReadAllLines(gedPath);
-        int? currentId = null; string? currentName = null; DateTime? birth = null; bool inBirth = false;
+        int? currentId = null;
+        string? currentName = null;
+        DateTime? birth = null;
+        bool inBirth = false;
         foreach (var raw in lines)
         {
             ct.ThrowIfCancellationRequested();
@@ -65,7 +65,10 @@ public sealed class PersonenService : IPersonenService
                 if (currentId.HasValue)
                     yield return CreatePerson(currentId, currentName, birth);
                 currentId = int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
-                currentName = null; birth = null; inBirth = false; continue;
+                currentName = null;
+                birth = null;
+                inBirth = false;
+                continue;
             }
             if (currentId.HasValue)
             {
@@ -95,12 +98,16 @@ public sealed class PersonenService : IPersonenService
         {
             if (TryMonth(parts[1], out var m))
             {
-                try { return new DateTime(year, m, day); } catch { }
+                try
+                { return new DateTime(year, m, day); }
+                catch { }
             }
         }
         if (parts.Length == 1 && int.TryParse(parts[0], out var y))
         {
-            try { return new DateTime(y, 1, 1); } catch { }
+            try
+            { return new DateTime(y, 1, 1); }
+            catch { }
         }
         return null;
     }
@@ -131,8 +138,12 @@ public sealed class PersonenService : IPersonenService
         var dir = AppContext.BaseDirectory;
         for (int i = 0; i < 6; i++)
         {
-            if (Directory.GetFiles(dir, "*.sln").Length > 0) return dir;
-            var parent = Directory.GetParent(dir); if (parent == null) break; dir = parent.FullName;
+            if (Directory.GetFiles(dir, "*.sln").Length > 0)
+                return dir;
+            var parent = Directory.GetParent(dir);
+            if (parent == null)
+                break;
+            dir = parent.FullName;
         }
         return AppContext.BaseDirectory;
     }

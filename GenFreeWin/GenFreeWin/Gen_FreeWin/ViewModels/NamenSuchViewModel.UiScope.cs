@@ -1,10 +1,8 @@
 using BaseLib.Helper;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.VisualBasic;
 using System;
 using System.Windows.Forms;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class NamenSuchViewModel
 {

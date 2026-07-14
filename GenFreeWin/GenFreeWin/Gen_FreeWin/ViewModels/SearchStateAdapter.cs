@@ -9,10 +9,10 @@
 // <summary>Adapter to convert ViewModel state to/from service models</summary>
 // ***********************************************************************
 
-using Gen_FreeWin.ViewModels.Models;
+using GenFreeWin.ViewModels.Models;
 using System;
 
-namespace Gen_FreeWin.ViewModels
+namespace GenFreeWin.ViewModels
 {
     /// <summary>
     /// Adapter that bridges NamenSuchViewModel observable properties 

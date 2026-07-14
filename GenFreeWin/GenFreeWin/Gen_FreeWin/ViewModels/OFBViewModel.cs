@@ -1,20 +1,20 @@
-﻿using Gen_FreeWin.Views;
-using MVVM.ViewModel;
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using GenFreeWin.Views;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.VB;
+using MVVM.ViewModel;
 using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Forms;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
 
-namespace Gen_FreeWin.ViewModels;
+namespace GenFreeWin.ViewModels;
 
 public partial class OFBViewModel : BaseViewModelCT, IOFBViewModel
 {
@@ -118,7 +118,8 @@ public partial class OFBViewModel : BaseViewModelCT, IOFBViewModel
             _ = Names_Delete(PersInArb, ETextKennz.Y_);
         }
 
-        while (DataModul.OFB.DeleteIndNr(PersInArb, "NN")) ;
+        while (DataModul.OFB.DeleteIndNr(PersInArb, "NN"))
+            ;
 
         int M1_Iter = 0;
         while (M1_Iter <= List50_Items.Count - 1)
@@ -128,7 +129,8 @@ public partial class OFBViewModel : BaseViewModelCT, IOFBViewModel
             M1_Iter++;
         }
 
-        while (DataModul.OFB.DeleteIndNr(PersInArb, "EE")) ;
+        while (DataModul.OFB.DeleteIndNr(PersInArb, "EE"))
+            ;
 
         M1_Iter = 0;
         while (M1_Iter <= List51_Items.Count - 1)
@@ -138,7 +140,8 @@ public partial class OFBViewModel : BaseViewModelCT, IOFBViewModel
             M1_Iter++;
         }
 
-        while (DataModul.OFB.DeleteIndNr(PersInArb, "OO")) ;
+        while (DataModul.OFB.DeleteIndNr(PersInArb, "OO"))
+            ;
 
         M1_Iter = 0;
         while (M1_Iter <= List52_Items.Count - 1)
@@ -301,7 +304,7 @@ public partial class OFBViewModel : BaseViewModelCT, IOFBViewModel
         List4_Visible = false;
         SetFocus(nameof(IOFBViewModel.Text2_2_Text));
     }
-    
+
     [RelayCommand]
     private void List5_2_DblClick()
     {

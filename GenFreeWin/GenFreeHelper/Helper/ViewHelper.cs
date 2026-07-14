@@ -1,19 +1,13 @@
-﻿using Gen_FreeWin;
+﻿using GenFreeWin;
 using GenFree.Interfaces.UI;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GenFree.Helper;
 
 public static class ViewHelper
 {
-    public static void SetCommandBtn(this Button button, bool xCond, string sBtnHeader,IApplUserTexts IText)
+    public static void SetCommandBtn(this Button button, bool xCond, string sBtnHeader, IApplUserTexts IText)
     {
         button.Text = sBtnHeader + ":" + IText[EUserText.tNo];
         button.BackColor = Color.FromArgb(0xE0E0E0);

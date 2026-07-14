@@ -12,7 +12,6 @@
 // <summary></summary>
 // ***********************************************************************
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -23,7 +22,7 @@ using System.Windows.Forms;
 namespace Views;
 
 [AttributeUsage(AttributeTargets.Field)]
-public class ListBindingAttribute(string itmsName,string selItemName) : Attribute
+public class ListBindingAttribute(string itmsName, string selItemName) : Attribute
 {
     public string PropertyName { get; } = itmsName;
     public string Property2Name { get; } = selItemName;

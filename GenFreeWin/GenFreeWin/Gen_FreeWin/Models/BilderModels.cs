@@ -1,6 +1,6 @@
 using System;
 
-namespace Gen_FreeWin.Models;
+namespace GenFreeWin.Models;
 
 /// <summary>
 /// Represents a persisted picture entry shown in the picture selection list.

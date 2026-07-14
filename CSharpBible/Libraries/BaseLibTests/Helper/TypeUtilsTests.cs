@@ -29,7 +29,8 @@ public class TypeUtilsTests
     [DataRow(TypeCode.Decimal, "System.Decimal")]
     [DataRow(TypeCode.DateTime, "System.DateTime")]
     [DataRow(TypeCode.String, "System.String")]
-    public void TCTest(TypeCode tc, string ts ) {
+    public void TCTest(TypeCode tc, string ts)
+    {
         var tpe = Type.GetType(ts, false, true);
         Assert.AreEqual(tc, tpe.TC());
     }
@@ -158,23 +159,23 @@ public class TypeUtilsTests
     }
 
     [TestMethod()]
-    [DataRow(TypeCode.Object,   true)]
-    [DataRow(TypeCode.DBNull,   true)]
-    [DataRow(TypeCode.Boolean,  true)]
-    [DataRow(TypeCode.Char,     true)]
-    [DataRow(TypeCode.SByte,    true)]
-    [DataRow(TypeCode.Byte,     true)]
-    [DataRow(TypeCode.Int16,    true)]
-    [DataRow(TypeCode.UInt16,   true)]
-    [DataRow(TypeCode.Int32,    true)]
-    [DataRow(TypeCode.UInt32,   true)]
-    [DataRow(TypeCode.Int64,    true)]
-    [DataRow(TypeCode.UInt64,   true)]
-    [DataRow(TypeCode.Single,   true)]
-    [DataRow(TypeCode.Double,   true)]
-    [DataRow(TypeCode.Decimal,  true)]
+    [DataRow(TypeCode.Object, true)]
+    [DataRow(TypeCode.DBNull, true)]
+    [DataRow(TypeCode.Boolean, true)]
+    [DataRow(TypeCode.Char, true)]
+    [DataRow(TypeCode.SByte, true)]
+    [DataRow(TypeCode.Byte, true)]
+    [DataRow(TypeCode.Int16, true)]
+    [DataRow(TypeCode.UInt16, true)]
+    [DataRow(TypeCode.Int32, true)]
+    [DataRow(TypeCode.UInt32, true)]
+    [DataRow(TypeCode.Int64, true)]
+    [DataRow(TypeCode.UInt64, true)]
+    [DataRow(TypeCode.Single, true)]
+    [DataRow(TypeCode.Double, true)]
+    [DataRow(TypeCode.Decimal, true)]
     [DataRow(TypeCode.DateTime, true)]
-    [DataRow(TypeCode.String,   true)]
+    [DataRow(TypeCode.String, true)]
     public void CompareTest0(TypeCode tc, bool _)
     {
         static bool? f(Type? t) => t?.Compare(t.Get(1), t.Get(0));
@@ -254,7 +255,7 @@ public class TypeUtilsTests
     }
 
     [TestMethod()]
-    [DataRow(TypeCode.Object,0)]
+    [DataRow(TypeCode.Object, 0)]
     [DataRow(TypeCode.DBNull, 0)]
     [DataRow(TypeCode.Boolean, false)]
     [DataRow(TypeCode.Char, '\x0')]
@@ -326,16 +327,16 @@ public class TypeUtilsTests
 
 
     [TestMethod()]
-    [DataRow(0,0,1,true)]
+    [DataRow(0, 0, 1, true)]
     [DataRow(1, 0, 1, true)]
     [DataRow(-1, 0, 1, false)]
     [DataRow(2, 0, 1, false)]
     [DataRow(0, -1, 1, true)]
     [DataRow(0, 1, -1, false)]
     [DataRow(2, 1, -1, false)]
-    public void IsBetweenInclTest0(int i1,int im,int ix, bool xExp)
+    public void IsBetweenInclTest0(int i1, int im, int ix, bool xExp)
     {
-        Assert.AreEqual(xExp, i1.IsBetweenIncl(im,ix));
+        Assert.AreEqual(xExp, i1.IsBetweenIncl(im, ix));
     }
 
     [TestMethod()]
