@@ -1951,7 +1951,7 @@ internal partial class Fehlerli : Form
                     string inputStr = DateTime.Now.ToString("yyyyMMdd");
                     if (Modul1.Person.Death.Trim() == "" && Modul1.Person.Burial.Trim() == "")
                     {
-                        if (Modul1.Person.Birthday.Trim() == "" & Modul1.Person.Baptised.Trim() == "")
+                        if (Modul1.Person.Birthday.Trim() == "" && Modul1.Person.Baptised.Trim() == "")
                         {
                             Modul1_LiText += "          ";
                         }
