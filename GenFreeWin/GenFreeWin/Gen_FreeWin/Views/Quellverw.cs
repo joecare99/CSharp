@@ -2,7 +2,6 @@ using BaseLib.Helper;
 using GenFree.Helper;
 using GenFree.ViewModels.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -10,8 +9,6 @@ namespace Gen_FreeWin;
 
 public partial class Quellverw : Form
 {
-    private static List<WeakReference> __ENCList = new List<WeakReference>();
-
     private IQuellVerwViewModel _viewModel;
 
     protected override CreateParams CreateParams

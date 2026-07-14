@@ -1607,9 +1607,11 @@ internal partial class Ahnen : Form
         Gen = 0;
         Modul1.Schalt = 0;
         _a1 = "Nummer der gesuchten Person\rLeer,0 oder Abbrechen wechselt in die Suche nach Namen";
-        Modul1.PersInArb = (int)Math.Round(
-            Interaction.InputBox(_a1,
-                "Auswahl der Person deren Ahnen berechnet werden sollen.").AsDouble());
+        string personSelectionInput = Interaction.InputBox(_a1,
+            "Auswahl der Person deren Ahnen berechnet werden sollen.");
+        Modul1.PersInArb = int.TryParse(personSelectionInput, out int selectedPersonId)
+            ? selectedPersonId
+            : 0;
 
         if (Modul1.PersInArb == 0)
         {
@@ -1623,7 +1625,10 @@ internal partial class Ahnen : Form
         Modul1.Person_ReadNames(Modul1.PersInArb, Modul1.Person);
         Bezeichnung1.Text = "Ahnenberechnung für " + Modul1.Person.Givennames + " " + Modul1.Person.SurName;
         Modul1_Gen1 = Interaction.InputBox("Wieviel Generationen maximal", "max. 93 Generationen", "93");
-        Modul1_Nr1 = (int)Math.Round(Interaction.InputBox("Start mit Ahnenziffer:", "", "1").AsDouble());
+        string startNumberInput = Interaction.InputBox("Start mit Ahnenziffer:", "", "1");
+        Modul1_Nr1 = int.TryParse(startNumberInput, out int startNumber)
+            ? startNumber
+            : 0;
         if (Modul1_Nr1 == 0)
         {
             return null;

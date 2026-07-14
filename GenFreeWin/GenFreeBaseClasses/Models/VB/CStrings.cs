@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using GenFree.Interfaces.VB;
 
 namespace GenFree.Models.VB;
@@ -20,9 +21,22 @@ public class CStrings : IStrings
 
     public string Format(object value, string format)
     {
-        // This method is intended to format a value according to a specified format.
-        // In a real implementation, you might use string.Format or similar methods.
-        return string.Format(format, value);
+        if (value is null)
+        {
+            return string.Empty;
+        }
+
+        if (string.IsNullOrEmpty(format))
+        {
+            return value.ToString();
+        }
+
+        if (value is IFormattable formattableValue)
+        {
+            return formattableValue.ToString(format, CultureInfo.CurrentCulture);
+        }
+
+        return value.ToString();
     }
 
     public int InStr(string text, string v)

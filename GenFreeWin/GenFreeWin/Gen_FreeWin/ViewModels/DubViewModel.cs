@@ -1848,7 +1848,10 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
                         kennz = Person_sSex.ToUpper() == "M" ? ELinkKennz.lkFather : ELinkKennz.lkMother;
                         if (DataModul.Link.GetPersonFam(Search_iPersNr, kennz, out int iFamNr))
                         {
-                            aiFam.Add(iFamNr);
+                            if (!aiFam.Contains(iFamNr))
+                            {
+                                aiFam.Add(iFamNr);
+                            }
                             DataModul.Link.ReadFamily(iFamNr, Modul1.Family);
                             Search_iPersNr = kennz switch
                             {
@@ -1872,7 +1875,10 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
                         if (DataModul.Link.GetPersonFam(Search_iPersNr, Modul1.eLKennz, out var iChildFam))
                         {
                             Modul1.FamInArb = iChildFam;
-                            aiFam.Add(iChildFam);
+                            if (!aiFam.Contains(iChildFam))
+                            {
+                                aiFam.Add(iChildFam);
+                            }
                             DataModul.Link.ReadFamily(iChildFam, Modul1.Family);
                             if (Modul1.Family.Mann > 0)
                             {
