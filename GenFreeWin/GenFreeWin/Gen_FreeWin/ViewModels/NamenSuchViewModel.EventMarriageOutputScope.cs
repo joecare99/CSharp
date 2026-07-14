@@ -167,7 +167,7 @@ public partial class NamenSuchViewModel
                                     {
                                         sDatu = Strings.Mid(sDatu, 4, sDatu.Length);
                                     }
-                                    if (sDatu != "" & evt.sDatumB_S.Trim() == "")
+                                    if (sDatu != "" && evt.sDatumB_S.Trim() == "")
                                     {
                                         sDatu = " bis " + sDatu;
                                     }
@@ -183,7 +183,7 @@ public partial class NamenSuchViewModel
                                         }
                                         Modul1.Kont1[3] = " " + sDatu;
                                     }
-                                    if (Modul1.Kont1[3] == "" & sDatu.Trim() != "")
+                                    if (Modul1.Kont1[3] == "" && sDatu.Trim() != "")
                                     {
                                         Modul1.Kont1[3] = " " + sDatu;
                                     }
@@ -256,7 +256,7 @@ public partial class NamenSuchViewModel
                                 {
                                     Modul1.Kont1[4] = evt.sBem[2].Trim().FrameIfNEoW("{", "}");
                                 }
-                                if (Modul1.Kont1[2].Trim() != "" | Modul1.Kont1[4].Trim() != "")
+                                if (Modul1.Kont1[2].Trim() != "" || Modul1.Kont1[4].Trim() != "")
                                 {
                                     QuText = " " + Modul1.Kont1[2].Trim() + " " + Modul1.Kont1[4].Trim();
                                     QuText = Zeiweg(QuText, xStrip: !Option[EOutCfg.o07_KeepFormat]);

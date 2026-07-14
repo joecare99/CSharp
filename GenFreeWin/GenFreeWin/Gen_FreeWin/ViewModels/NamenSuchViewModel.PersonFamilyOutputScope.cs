@@ -233,7 +233,7 @@ public partial class NamenSuchViewModel
                                 }
                             }
                             int num11;
-                            if (Index == 1 | Index == 2)
+                            if (Index == 1 || Index == 2)
                             {
                                 if (Option[EOutCfg.o30])
                                 {
@@ -272,7 +272,7 @@ public partial class NamenSuchViewModel
                                             {
                                                 M1_Kont13 = M1_Kont14;
                                             }
-                                            if (M1_Kont14.Trim() != "" & M1_Kont11.Trim() != "")
+                                            if (M1_Kont14.Trim() != "" && M1_Kont11.Trim() != "")
                                             {
                                                 document.AppendText(",");
                                             }
