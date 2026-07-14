@@ -1270,7 +1270,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
         int PersInArb = PersonNr;
         Modul1.eLKennz = Sex_Text == "F" ? ELinkKennz.lkMother : ELinkKennz.lkFather;
         var ubgT = Modul1.Link_Famsuch(PersInArb, Modul1.eLKennz);
-        if (ubgT == null)
+        if (ubgT != null)
         {
             if (ubgT.Count > 10)
             {
