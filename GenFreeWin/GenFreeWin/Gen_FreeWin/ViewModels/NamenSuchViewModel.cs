@@ -3385,7 +3385,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
                                 QuText = QuText.Trim().Length > 0
                                     ? (QuText + "; " + DataModul.DB_QuTable.Fields[QuFields._2].Value).AsString()
                                     : (QuText + DataModul.DB_QuTable.Fields[QuFields._2].Value).AsString();
-                                if (null != DataModul.DB_SourceLinkTable.Fields[3].Value & DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim() != "")
+                                if (null != DataModul.DB_SourceLinkTable.Fields[3].Value && DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim() != "")
                                 {
                                     QuText += $", {(null == DataModul.DB_SourceLinkTable.Fields[SourceLinkFields.Aus].Value
                                         ? $"{Modul1.IText[EUserText.t449]} {DataModul.DB_SourceLinkTable.Fields[3].AsString().Trim()}"
@@ -5098,7 +5098,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
     public void Bildaus(string BiKe)
     {
         Image image;
-        if (Option[EOutCfg.o13] | Option[EOutCfg.o41] | Option[EOutCfg.o42])
+        if (Option[EOutCfg.o13] || Option[EOutCfg.o41] || Option[EOutCfg.o42])
         {
             int num5 = BiKe == "P" ? Modul1.PersInArb : Modul1.FamInArb;
             DataModul.DB_PictureTable.Index = "Perkenn  ";

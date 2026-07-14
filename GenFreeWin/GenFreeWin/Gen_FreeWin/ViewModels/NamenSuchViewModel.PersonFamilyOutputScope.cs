@@ -158,10 +158,10 @@ public partial class NamenSuchViewModel
                             Datles1(Modul1.PersInArb, Modul1.Person);
                             string QuText;
                             if (M1_Kont11.Trim() != ""
-                                | M1_Kont16.Length > 0
-                                | M1_Kont21.Length > 0
-                                | M1_Kont31.Trim() != ""
-                                | M1_Kont41.Trim() != "")
+                                || M1_Kont16.Length > 0
+                                || M1_Kont21.Length > 0
+                                || M1_Kont31.Trim() != ""
+                                || M1_Kont41.Trim() != "")
                             {
                                 document.SetIndent(20);
                                 document.AppendText(M1_DTxt[1] + " " + M1_Kont11.Trim() + ".");
@@ -198,10 +198,10 @@ public partial class NamenSuchViewModel
                                 }
                             }
                             if (M1_Kont12.Trim() != ""
-                                | M1_Kont17.Length > 0
-                                | M1_Kont22.Length > 0
-                                | M1_Kont32.Trim() != ""
-                                | M1_Kont42.Trim() != "")
+                                || M1_Kont17.Length > 0
+                                || M1_Kont22.Length > 0
+                                || M1_Kont32.Trim() != ""
+                                || M1_Kont42.Trim() != "")
                             {
                                 document.AppendText("\n" + M1_DTxt[2] + " " + M1_Kont12.Trim() + ".");
                                 if (Option[EOutCfg.o02]

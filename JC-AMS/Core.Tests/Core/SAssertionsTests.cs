@@ -26,11 +26,7 @@ namespace JCAMS.Core.Tests
         {
             SAssertions.Assert(true);
             Assert.AreEqual(0, listenerStream.Length);
-#if NET6_0_OR_GREATER
-            Assert.ThrowsException<Exception>(() => SAssertions.Assert(false, "Some Message2"));
-#else
-            SAssertions.Assert(false);
-#endif
+            Assert.Throws<Exception>(() => SAssertions.Assert(false, "Some Message2"));
             Assert.AreEqual(0, listenerStream.Length);
         }
 
@@ -39,22 +35,14 @@ namespace JCAMS.Core.Tests
         {
             SAssertions.Assert(true, "Some Message");
             Assert.AreEqual(0, listenerStream.Length);
-#if NET6_0_OR_GREATER
-            Assert.ThrowsException<Exception>(() => SAssertions.Assert(false, "Some Message2"));
-#else
-            SAssertions.Assert(false, "Some Message2");
-#endif
+            Assert.Throws<Exception>(() => SAssertions.Assert(false, "Some Message2"));
         }
 
         [TestMethod()]
         public void AssertTest2()
         {
             SAssertions.Assert(true, "Some Message", "Detail");
-#if NET6_0_OR_GREATER
-            Assert.ThrowsException<Exception>(() => SAssertions.Assert(false, "Some Message2","Detail"));
-#else
-            SAssertions.Assert(false, "Some Message2", "Detail");
-#endif
+            Assert.Throws<Exception>(() => SAssertions.Assert(false, "Some Message2","Detail"));
         }
     }
 }

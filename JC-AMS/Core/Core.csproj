@@ -27,23 +27,14 @@
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Data.SqlClient">
-		  <Version>4.9.1</Version>
-		</PackageReference>
-		<PackageReference Include="System.IO.Ports">
-		  <Version>10.0.9</Version>
-		</PackageReference>
+		<PackageReference Include="System.Data.SqlClient"/>
+		<PackageReference Include="System.IO.Ports"/>
 		<PackageReference Condition="'$(TargetFramework)'=='net60-windows'" Include="System.Data.Common" />
-		<PackageReference Include="System.ServiceProcess.ServiceController">
-		  <Version>10.0.9</Version>
-		</PackageReference>
-		<PackageReference Include="System.Management">
-		  <Version>10.0.9</Version>
-		</PackageReference>
-		<PackageReference Include="System.Text.RegularExpressions">
-		  <Version>4.3.1</Version>
-		</PackageReference>
+		<PackageReference Include="System.ServiceProcess.ServiceController"/>
+		<PackageReference Include="System.Management"/>
+		<PackageReference Include="System.Text.RegularExpressions"/>
 		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Resource\" />
