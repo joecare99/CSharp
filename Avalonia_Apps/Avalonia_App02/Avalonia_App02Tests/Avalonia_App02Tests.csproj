@@ -20,17 +20,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalonia_App02\Avalonia_App02.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.1.0" />
-    <PackageVersion Update="Avalonia.Headless" Version="12.1.0" />
-    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.7.0" />
-    <PackageVersion Update="MSTest" Version="4.3.0" />
-  </ItemGroup>
-
-
 </Project>

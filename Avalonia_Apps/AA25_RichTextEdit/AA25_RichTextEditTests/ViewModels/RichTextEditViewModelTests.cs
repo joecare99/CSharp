@@ -45,6 +45,7 @@ public class RichTextEditViewModelTests : BaseTestViewModel<RichTextEditViewMode
         IoC.GetReqSrv = (t) => t switch
         {
             Type _t when _t == typeof(IRichTextEditModel) => _model ??= Substitute.For<IRichTextEditModel>(),
+            Type _t when _t == typeof(IServiceProvider) => Substitute.For<IServiceProvider>(),
             _ => throw new System.NotImplementedException($"No code for {t}")
         };
         base.Init();

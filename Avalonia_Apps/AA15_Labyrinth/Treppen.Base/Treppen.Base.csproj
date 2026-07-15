@@ -21,8 +21,4 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
-	  <PackageVersion Update="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
-	</ItemGroup>
 </Project>

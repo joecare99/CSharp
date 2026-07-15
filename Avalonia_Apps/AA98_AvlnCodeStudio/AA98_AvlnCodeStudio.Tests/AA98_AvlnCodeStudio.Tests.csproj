@@ -48,7 +48,4 @@
     <ProjectReference Include="..\AA98.Builder.Host\AA98.Builder.Host.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Versioning.Git\AA98_AvlnCodeStudio.Versioning.Git.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.7.0" />
-  </ItemGroup>
 </Project>
