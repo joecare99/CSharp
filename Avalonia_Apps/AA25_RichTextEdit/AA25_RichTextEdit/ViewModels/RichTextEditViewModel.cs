@@ -14,6 +14,7 @@ using AA25_RichTextEdit.ViewModels.Interfaces;
 using Avalonia.ViewModels;
 using Avln_CommonDialogs.Base.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using BaseLib.Helper;
 
 namespace AA25_RichTextEdit.ViewModels;
 
@@ -45,6 +46,10 @@ public partial class RichTextEditViewModel : BaseViewModelCT, IRichTextEditViewM
 
     // Image asset path adapted for Avalonia (use avares URI)
     public string AllImgSource => $"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Resources/all64_2.png";
+
+    public RichTextEditViewModel():this(IoC.GetRequiredService<IRichTextEditModel>(), IoC.GetRequiredService<IServiceProvider>())
+    {
+    }
 
     public RichTextEditViewModel(IRichTextEditModel model, IServiceProvider serviceProvider)
     {
