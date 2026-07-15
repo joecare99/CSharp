@@ -19,7 +19,4 @@
 	<PackageReference Include="Avalonia.AvaloniaEdit" />
 	<PackageReference Include="Markdown.Avalonia" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageVersion Update="Markdown.Avalonia" Version="12.0.0-a3" />
-  </ItemGroup>
 </Project>
