@@ -17,11 +17,4 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageVersion Update="Avalonia" Version="12.1.0" />
-    <PackageVersion Update="Avalonia.Controls.ColorPicker" Version="12.1.0" />
-    <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
-  </ItemGroup>
-
  </Project>
