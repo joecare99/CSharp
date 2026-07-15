@@ -29,5 +29,4 @@
 		<ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
 		<ProjectReference Include="..\AA09_DialogBoxes\AA09_DialogBoxes.csproj" />
 	</ItemGroup>
-
 </Project>
