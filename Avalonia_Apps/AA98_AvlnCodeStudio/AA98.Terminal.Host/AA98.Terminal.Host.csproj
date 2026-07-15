@@ -31,7 +31,4 @@
   <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageVersion Update="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
-  </ItemGroup>
 </Project>

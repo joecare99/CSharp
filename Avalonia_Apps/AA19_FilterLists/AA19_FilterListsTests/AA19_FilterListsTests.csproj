@@ -36,5 +36,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\AA19_FilterLists\AA19_FilterLists.csproj" />
 	</ItemGroup>
-
 </Project>

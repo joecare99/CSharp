@@ -26,9 +26,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalonia_App_01\Avalonia_App_01.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageVersion Update="Avalonia.Desktop" Version="12.1.0" />
-  </ItemGroup>
-
 </Project>
