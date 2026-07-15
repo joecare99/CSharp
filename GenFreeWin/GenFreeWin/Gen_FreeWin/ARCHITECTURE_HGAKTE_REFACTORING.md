@@ -72,7 +72,7 @@ The original monolithic `HGAkteViewModel` (582 lines) has been decomposed into a
 - GBE operations: `SaveGBEAsync`, `UpdateGBEAsync`, `DeleteGBEAsync`
 
 **Characteristics**:
-- Returns `ObservableCollection<IListItem<int>>` for direct UI binding (using `MyListItem`)
+- Returns `ObservableCollection<IListItem<int>>` for direct UI binding (using `ListItem<int>`)
 - Formats display text for ComboBox (Jahr, Name, padded to column 200, then ID)
 - Uses `Modul1.Person_ReadNames()` to resolve person names for usage display
 - Catches and logs exceptions, returns safe defaults
