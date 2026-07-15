@@ -36,8 +36,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageVersion Update="Avalonia.Browser" Version="12.1.0" />
-  </ItemGroup>
 </Project>
