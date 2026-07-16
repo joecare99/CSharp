@@ -189,8 +189,8 @@ namespace GenFreeWin.ViewModels
                 FormBackColor = Modul1.HintFarb.ToArgb();
 
                 // Determine current person and gender
-                _currentPersonId = Personen.Default.PersonNr;
-                _currentTextKennz = Personen.Default.edtSex.Text.Trim().ToUpper() == "F" ? ETextKennz.F_ : ETextKennz.V_;
+                _currentPersonId = Personen.Instance.PersonNr;
+                _currentTextKennz = Personen.Instance.edtSex.Text.Trim().ToUpper() == "F" ? ETextKennz.F_ : ETextKennz.V_;
 
                 IsLoading = true;
                 var names = await _searchUseCase.LoadNamesAsync(_currentPersonId, _currentTextKennz);
@@ -325,16 +325,16 @@ namespace GenFreeWin.ViewModels
                     var ancestorData = Modul1.Ancesters_GetPersonData(Modul1.Person.ID, out int iAhn, out string _);
                     Modul1.Kont[10] = ancestorData;
                     Modul1.Kont[97] = iAhn.AsString();
-                    Personen.Default.edtGivennames.Text = Modul1.Person.Givennames;
+                    Personen.Instance.edtGivennames.Text = Modul1.Person.Givennames;
 
                     // Show duplicates if configured
                     if (Modul1.Aus[24].AsInt() == 1)
                     {
-                        Personen.Default.frmDublicates.Width = Personen.Default.Width - 20;
-                        Personen.Default.lstDuplicates.Width = Personen.Default.frmDublicates.Width - 40;
-                        Personen.Default.frmDublicates.Visible = true;
-                        Personen.Default.frmDublicates.Location = new Point(0, 166);
-                        Personen.Default.Zeigfam(Personen.Default.edtSurnames.Text.Trim() + "," + Personen.Default.edtGivennames.Text.Trim());
+                        Personen.Instance.frmDublicates.Width = Personen.Instance.Width - 20;
+                        Personen.Instance.lstDuplicates.Width = Personen.Instance.frmDublicates.Width - 40;
+                        Personen.Instance.frmDublicates.Visible = true;
+                        Personen.Instance.frmDublicates.Location = new Point(0, 166);
+                        Personen.Instance.Zeigfam(Personen.Instance.edtSurnames.Text.Trim() + "," + Personen.Instance.edtGivennames.Text.Trim());
                     }
 
                     // Signal to View to close (instead of View?.Close())

@@ -3407,7 +3407,7 @@ public partial class _Modul1 : IModul1
         {
             text = "";
         }
-        Personen.Default.lblSearch2.Text = text;
+        Personen.Instance.lblSearch2.Text = text;
     end_IL_0001: // <========== 12
         return;
     }
@@ -3527,7 +3527,7 @@ public partial class _Modul1 : IModul1
 
     public float Datcheck(int eArt)
     {
-        Nr = eArt > 499 ? Familie.Default.iFamNr : Personen.Default.PersonNr;
+        Nr = eArt > 499 ? Familie.Default.iFamNr : Personen.Instance.PersonNr;
         return DataModul.Event.Exists((EEventArt)eArt, Nr, LfNR) ? 5f : 1f;
     }
     public bool RemoveWriteProtection(string sFile)
@@ -3819,7 +3819,7 @@ public partial class _Modul1 : IModul1
             }
             else if (Formnam == "Personen.List3")
             {
-                AppendList(Texte_iTxNr, text, Personen.Default.List3.Items);
+                AppendList(Texte_iTxNr, text, Personen.Instance.List3.Items);
             }
             else if (Formnam == "Familie.List3")
             {
@@ -4451,7 +4451,7 @@ public partial class _Modul1 : IModul1
                     if (num6 > 1)
                     {
                         text = PBW.AsString();
-                        PictureBox pictureBox4 = Personen.Default.Picture1;
+                        PictureBox pictureBox4 = Personen.Instance.Picture1;
                         pictureBox4.Image = PicResizeByHeigth(bitmap2, PBW);
                         pictureBox4 = null;
                         //=================
@@ -4459,7 +4459,7 @@ public partial class _Modul1 : IModul1
                     else
                     {
                         text = PBH.AsString();
-                        PictureBox pictureBox5 = Personen.Default.Picture1;
+                        PictureBox pictureBox5 = Personen.Instance.Picture1;
                         pictureBox5.Image = PicResizeByWidth(bitmap2, PBH);
                         pictureBox5 = null;
                     }
@@ -4565,14 +4565,14 @@ public partial class _Modul1 : IModul1
                 if (num7 > 1f)
                 {
                     text = PBW.AsString();
-                    PictureBox pictureBox8 = Personen.Default.Picture1;
+                    PictureBox pictureBox8 = Personen.Instance.Picture1;
                     pictureBox8.Image = PicResizeByHeigth(bitmap, PBW);
                     pictureBox8 = null;
                 }
                 else
                 {
                     text = PBH.AsString();
-                    PictureBox pictureBox = Personen.Default.Picture1;
+                    PictureBox pictureBox = Personen.Instance.Picture1;
                     pictureBox.Image = PicResizeByWidth(bitmap, PBH);
                     pictureBox = null;
                 }

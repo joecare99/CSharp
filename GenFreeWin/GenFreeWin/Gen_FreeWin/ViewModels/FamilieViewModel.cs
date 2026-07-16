@@ -910,7 +910,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
                             }
                             Modul1.PersInArb = Modul1.Ubg;
                             View.Hide();
-                            Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+                            Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
                         }
                         goto end_IL_0001_2;
                     IL_01e1:
@@ -1053,7 +1053,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         if (Modul1.PersInArb != 0)
         {
             View.Close();
-            Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+            Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
         }
         else
         {
@@ -1077,9 +1077,9 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
             Form Formtocheck = forms.Personen;
             var num5 = Modul1.IsFormloaded(Formtocheck);
             forms.Personen = (Personen)Formtocheck;
-            Personen.Default.Close();
+            Personen.Instance.Close();
             Ad = false;
-            Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+            Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
         }
         else
         {
@@ -1515,7 +1515,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         {
             View.Close();
             Ad = true;
-            Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+            Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
             return;
         }
         if (Modul1.Suchfam == 0)
@@ -1924,7 +1924,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
 
     public void btnAppNewPerson_Click(object sender, EventArgs e)
     {
-        Personen frmPerson = Personen.Default;
+        Personen frmPerson = Personen.Instance;
         frmPerson.Close();
         if (Modul1.Trans == 0)
         {
@@ -2136,7 +2136,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         {
             View.Close();
             Ad = true;
-            Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+            Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
             return;
         }
         if (Modul1.PersInArb != 0)
@@ -2549,7 +2549,7 @@ public partial class FamilieViewModel : BaseViewModelCT, IFamilieViewModel
         {
             View.Close();
             Ad = true;
-            Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+            Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
             return;
         }
         if (Modul1.FamInArb == 0)

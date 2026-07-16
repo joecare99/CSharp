@@ -170,12 +170,12 @@ internal partial class Ahnenneu : Form
 
     private void Ahnenneu_Load(object eventSender, EventArgs eventArgs)
     {
-        BackColor = Personen.Default.BackColor;
+        BackColor = Personen.Instance.BackColor;
         if (Modul1.FontSize > 0f)
         {
             Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
         }
-        DesktopLocation = Personen.Default.DesktopLocation;
+        DesktopLocation = Personen.Instance.DesktopLocation;
         Ahnfuell();
     }
 
@@ -190,8 +190,8 @@ internal partial class Ahnenneu : Form
 
     private void Ahnenneu_Resize(object eventSender, EventArgs eventArgs)
     {
-        Width = Personen.Default.Width;
-        Height = Personen.Default.Height;
+        Width = Personen.Instance.Width;
+        Height = Personen.Instance.Height;
     }
 
     private void Ahnenneu_FormClosed(object eventSender, FormClosedEventArgs eventArgs)
@@ -238,7 +238,7 @@ internal partial class Ahnenneu : Form
                 List1.Items.SetString(4, "Begraben: " + Modul1.Person.Burial);
                 List1.Items.SetString(5, "Verbindung(en): ");
                 List2.Items.Clear();
-                Personen.Default.List4.Items.Clear();
+                Personen.Instance.List4.Items.Clear();
                 Modul1.eLKennz = ELinkKennz.lkFather;
                 DataModul.DB_PersonTable.Seek("=", Modul1.PersInArb);
                 string Persex = DataModul.DB_PersonTable.Fields[PersonFields.Sex].AsString().AsString();
@@ -263,7 +263,7 @@ internal partial class Ahnenneu : Form
                             datu = datu.Left(4) + " F";
                         }
                         _liText = new string(' ', 80);
-                        if (Modul1.Person.SurName != "" | Modul1.Person.Givennames != "")
+                        if (Modul1.Person.SurName != "" || Modul1.Person.Givennames != "")
                         {
                             StringType.MidStmtStr(ref _liText, 1, 60, "" + datu.Right(6) + " " + Modul1.Person.Givennames + " " + Modul1.Person.SurName.ToUpper().TrimEnd());
                         }
@@ -301,16 +301,16 @@ internal partial class Ahnenneu : Form
                     M1_Iter++;
                 }
                 Modul1.PersInArb = persInArb;
-                Personen.Default.Sortlist.Items.Clear();
+                Personen.Instance.Sortlist.Items.Clear();
                 foreach (var iFamNr in Modul1.Ehesuch(Modul1.PersInArb, Persex))
                 {
                     foreach (var itm in Modul1.Family_Kindsuch(iFamNr))
-                        Personen.Default.Sortlist.Items.Add(itm);
+                        Personen.Instance.Sortlist.Items.Add(itm);
                 }
-                if (Personen.Default.Sortlist.Items.Count > 0)
+                if (Personen.Instance.Sortlist.Items.Count > 0)
                 {
                     _ = List1.Items.Add(new ListItem(Modul1.IText[EUserText.t130], -1));
-                    int num11 = Personen.Default.Sortlist.Items.Count - 1;
+                    int num11 = Personen.Instance.Sortlist.Items.Count - 1;
                     M1_Iter = 0;
                     while (true)
                     {
@@ -318,17 +318,17 @@ internal partial class Ahnenneu : Form
                         int num6 = num11;
                         if (i4 <= num6)
                         {
-                            Modul1.PersInArb = (int)Math.Round(Strings.Mid(Personen.Default.Sortlist.Items.ItemString(M1_Iter), 11, 10).AsDouble());
+                            Modul1.PersInArb = (int)Math.Round(Strings.Mid(Personen.Instance.Sortlist.Items.ItemString(M1_Iter), 11, 10).AsDouble());
                             Modul1.Person_ReadNames(Modul1.PersInArb, Modul1.Person);
                             Modul1.Kont[10] = Modul1.Ancesters_GetPersonData(Modul1.Person.ID, out int iAhn2, out Modul1_Kont20);
                             Modul1.Kont[97] = iAhn2.AsString();
-                            string DDatum = Personen.Default.Sortlist.Items.ItemString(M1_Iter).Left(10);
+                            string DDatum = Personen.Instance.Sortlist.Items.ItemString(M1_Iter).Left(10);
                             string HT = DDatum.Date2DotDateStr2();
                             if (HT == "")
                             {
                                 HT = "          ";
                             }
-                            if (Personen.Default.Sortlist.Items.ItemData<int>(M1_Iter) == 10)
+                            if (Personen.Instance.Sortlist.Items.ItemData<int>(M1_Iter) == 10)
                             {
                                 HT += " (Adop.)";
                             }
@@ -390,10 +390,10 @@ internal partial class Ahnenneu : Form
     private void Label2_Click(object eventSender, EventArgs eventArgs)
     {
         Modul1.Schalt = 3;
-        Personen.Default.lblSearch2.Text = "";
+        Personen.Instance.lblSearch2.Text = "";
         Modul1.PersInArb = Label2.Tag.AsInt();
         Close();
-        Personen.Default.Perzeig(Modul1.PersInArb);
+        Personen.Instance.Perzeig(Modul1.PersInArb);
         Modul1.Aend = 0f;
     }
 
@@ -501,8 +501,8 @@ internal partial class Ahnenneu : Form
             Modul1.PersInArb = i;
             Close();
             Modul1.Schalt = 3;
-            Personen.Default.lblSearch2.Text = "";
-            Personen.Default.Perzeig(Modul1.PersInArb);
+            Personen.Instance.lblSearch2.Text = "";
+            Personen.Instance.Perzeig(Modul1.PersInArb);
             Modul1.Aend = 0f;
         }
     }
@@ -643,7 +643,7 @@ internal partial class Ahnenneu : Form
                                 if (aiFam.Count != 0)
                                     Modul1.FamInArb = aiFam[0];
                                 _gen++;
-                                if (!(_gen == 135 | _gen > Modul1_Gen1.AsDouble() + 1.0)
+                                if (!(_gen == 135 || _gen > Modul1_Gen1.AsDouble() + 1.0)
                                     && Modul1.FamInArb != 0)
                                 {
                                     Modul1.Family.Mann = 0;
@@ -843,8 +843,8 @@ internal partial class Ahnenneu : Form
                                 Label1[(short)M1_Iter].Tag = "";
                                 M1_Iter++;
                             }
-                            Modul1.PersInArb = Personen.Default.PersonNr;
-                            Modul1.Startpers = Personen.Default.PersonNr;
+                            Modul1.PersInArb = Personen.Instance.PersonNr;
+                            Modul1.Startpers = Personen.Instance.PersonNr;
                             string Modul1_Kont20;
                             AB1(GetPersInArb());
                             DataModul.NB_Ahn1Table.Index = "Ahnen";
