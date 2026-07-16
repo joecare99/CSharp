@@ -18,10 +18,13 @@
 		<RootNamespace />
 	</PropertyGroup>
 	<ItemGroup>
+		<Compile Remove="Gen_FreeWin.Tests\**" />
 		<Compile Remove="Gen_FreeWin\Gen_PlusdatenDataSetTableAdapters\**" />
 		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="Gen_FreeWin.Tests\**" />
 		<EmbeddedResource Remove="Gen_FreeWin\Gen_PlusdatenDataSetTableAdapters\**" />
 		<EmbeddedResource Remove="obj\**" />
+		<None Remove="Gen_FreeWin.Tests\**" />
 		<None Remove="Gen_FreeWin\Gen_PlusdatenDataSetTableAdapters\**" />
 		<None Remove="obj\**" />
 	</ItemGroup>
@@ -102,7 +105,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Gen_FreeWin.Tests\" />
 	  <Folder Include="Gen_FreeWin\ViewModels\Handlers\" />
 	</ItemGroup>
 </Project>

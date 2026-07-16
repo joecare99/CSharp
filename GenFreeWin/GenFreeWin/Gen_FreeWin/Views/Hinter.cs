@@ -1381,7 +1381,7 @@ public partial class Hinter : Form
                                         StringType.MidStmtStr(ref DDatum, 4, 2, "01");
                                     }
                                     if (((DDatum.AsDate() - HT.AsDate()).TotalDays > 3)
-                                        & ((DDatum.AsDate() - HT.AsDate()).TotalDays < 8 * 30.25))
+                                        && ((DDatum.AsDate() - HT.AsDate()).TotalDays < 8 * 30.25))
                                     {
                                         if (Ja == 0)
                                         {
@@ -1681,7 +1681,7 @@ public partial class Hinter : Form
                     if (DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt() != num4)
                     {
                         if (!((DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt() < num4)
-                            & DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt() == inputStr.AsInt()))
+                            && DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt() == inputStr.AsInt()))
                         {
                             if (Modul1.FamInArb == 277)
                             {
