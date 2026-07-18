@@ -36,7 +36,7 @@
 		<PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)'=='DesktopOnly'">
 		  <Version>11.3.17</Version>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
 	</ItemGroup>
 	
 	<ItemGroup>
