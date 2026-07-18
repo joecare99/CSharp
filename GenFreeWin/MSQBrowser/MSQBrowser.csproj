@@ -27,7 +27,7 @@
 		<PackageReference Include="IsExternalInit" Version="1.0.3" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
 		<PackageReference Include="MySqlConnector" Version="2.6.1" />
 	</ItemGroup>
 	<ItemGroup>
