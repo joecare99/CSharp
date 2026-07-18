@@ -23,8 +23,8 @@ namespace MVVM_09a_CTDialogBoxes.Views;
 public partial class MainWindow : Window
 {
     public Func<IDialogWindow> NewDialogWindow = () => new DialogWindow();
-    public Func<string, string, MessageBoxButton, MessageBoxResult> MessageBoxShow = 
-        (t, n,mbb) => MessageBox.Show(t, n, mbb);
+    public Func<string, string, MessageBoxButton, MessageBoxResult> MessageBoxShow =
+        (t, n, mbb) => MessageBox.Show(t, n, mbb);
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
@@ -45,7 +45,7 @@ public partial class MainWindow : Window
         vm.DoOpenMessageBox = DoOpenMessageBox;
     }
 
-    private MessageBoxResult DoOpenMessageBox(string Title, string Name) 
+    private MessageBoxResult DoOpenMessageBox(string Title, string Name)
         => MessageBoxShow(Title, Name, MessageBoxButton.YesNo);
 
     private (string name, string email) DoOpenDialog(string Name, string email)
