@@ -103,7 +103,7 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
             View.Label2.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
         }
 
-        View.DesktopLocation = Personen.Default.DesktopLocation;
+        View.DesktopLocation = Personen.Instance.DesktopLocation;
         FileSystem.FileClose(99);
         if (Modul1.Typ != DriveType.CDRom)
         {
@@ -298,8 +298,8 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
                 if (Modul1.Suchschalt == 1)
                 {
                     Familie.Default.Hide();
-                    Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
-                    Personen.Default.Perzeig(Modul1.PersInArb);
+                    Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
+                    Personen.Instance.Perzeig(Modul1.PersInArb);
                     Modul1.Ubg = Modul1.PersInArb;
                 }
                 else
@@ -521,9 +521,9 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
                             Suchspeich();
                         }
                         Familie.Default.Hide();
-                        Personen.Default.Close();
+                        Personen.Instance.Close();
                         Modul1.Suchschalt = 2;
-                        Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+                        Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
                         Modul1.Ubg = Modul1.PersInArb;
                     }
                 }
@@ -1275,8 +1275,8 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
             if (Modul1.Suchschalt == 1)
             {
                 Familie.Default.Hide();
-                Personen.Default.Close();
-                Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+                Personen.Instance.Close();
+                Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
                 Modul1.Ubg = Modul1.PersInArb;
                 Modul1.Suchschalt = 0;
             }
@@ -1408,7 +1408,7 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
                     Suchspeich();
                     View.Hide();
                 }
-                Personen.Default.Hide();
+                Personen.Instance.Hide();
                 Familie.Default.Show();
                 Modul1.FamInArb = Modul1.Ubg;
                 break;
@@ -1782,7 +1782,7 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
                                     View.ListBox1.Items.Clear();
                                     View.Hide();
                                 }
-                                Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+                                Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
                             }
                             else
                             {
@@ -1809,7 +1809,7 @@ public partial class RegSuchViewModel : BaseViewModelCT, IRegSuchViewModel
                                 View.ListBox1.Items.Clear();
                                 View.Hide();
                             }
-                            Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+                            Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
                         }
                         goto end_IL_0001_2;
                     IL_028f:

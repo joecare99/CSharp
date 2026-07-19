@@ -9,7 +9,6 @@ using GenFree.Interfaces.Data;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
-using GenFreeWin.Views;
 using Microsoft.VisualBasic;
 using MVVM.ViewModel;
 using System;
@@ -73,27 +72,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     {
         WinPath = Environment.GetEnvironmentVariable("Windir");
 
-        View.RTB1.AddContextMenu();
-        if (Modul1.FontSize > 0f)
-        {
-            View.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.ListBox2.Font = new Font("Courier New", Modul1.FontSize, FontStyle.Regular);
-            View.Frame1.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.Label19.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.Label20.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.Label21.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.Button13.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.Button14.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.Button15.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.TextBox22.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.TextBox23.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.TextBox24.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.TextBox25.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.TextBox26.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.TextBox27.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.TextBox28.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-            View.TextBox29.Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
-        }
+       
         View.btnNext.Text = Modul1.IText[EUserText.t155];
         View.btnPrev.Text = Modul1.IText[EUserText.t156];
         View.btnShowPlaceGE.Text = Modul1.IText[EUserText.t356];
@@ -138,13 +117,6 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         View.Label22.Text = Modul1.IText[EUserText.t353];
         View.TextBox21.Text = Modul1.IText[EUserText.t352];
 
-        var aiPos = Modul1.Persistence.ReadIntsProg("maspos.dat", 2);
-        View.Left = aiPos[0];
-        View.Top = aiPos[1];
-        View.Text = $"{Modul1.AppName} Ortsverwaltung für Mandant {Modul1.Mandant}";
-        View.BackColor = Modul1.HintFarb;
-        Modul1.Persistence.ReadEnumInit<FormWindowState>("Windowstate", out var WiS);
-        View.WindowState = WiS;
         FileSystem.FileClose(99);
         if (Directory.Exists(WinPath + "\\Microsoft.net\\Framework\\v3.5"))
         {

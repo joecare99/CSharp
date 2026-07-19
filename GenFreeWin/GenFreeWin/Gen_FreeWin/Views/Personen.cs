@@ -18,7 +18,7 @@ public partial class Personen : Form
 
     private IPersonenViewModel _viewModel;
 
-    public static Personen Default => MainProject.Forms.Personen;
+    public static Personen Instance => MainProject.Forms.Personen;
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool xDestIsFam { get; private set; }
     public int PersonNr { get; internal set; }

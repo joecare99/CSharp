@@ -1417,7 +1417,7 @@ internal class Bemsuch : Form
             Modul1.PersInArb = List1.Items.ItemData<int>(List1.SelectedIndex);
             Modul1.Aend = 0f;
             Modul1.Ad = false;
-            Personen.Default.Show(Modul1.PersInArb, EUserText.tNMBack);
+            Personen.Instance.Show(Modul1.PersInArb, EUserText.tNMBack);
         }
     }
 

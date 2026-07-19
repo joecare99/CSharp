@@ -88,8 +88,8 @@ public partial class OFB : Form
         _Label1_3.Text = Modul1.IText[EUserText.t403] + ":";
         Label2.Text = Modul1.IText[EUserText.t407];
         btnApply.Text = Modul1.IText[EUserText.t113];
-        Top = Personen.Default.Top + 200;
-        Left = Personen.Default.Left + 50;
+        Top = Personen.Instance.Top + 200;
+        Left = Personen.Instance.Left + 50;
     }
 
 }

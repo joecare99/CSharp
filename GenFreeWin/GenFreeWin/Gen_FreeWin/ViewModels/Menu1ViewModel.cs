@@ -1396,8 +1396,8 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
             Modul1.PersInArb = 1;
         }
         Modul1.PersInArb = Modul1.Letzte.iPerson;
-        Personen.Default.WindowState = WindowState;
-        Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+        Personen.Instance.WindowState = WindowState;
+        Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
     }
 
     private bool CheckTestDat(bool xSenderIsMandantvEndPrg)
@@ -1572,7 +1572,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
 
     private static void Main_CloseAllForms()
     {
-        Personen.Default.Close();
+        Personen.Instance.Close();
         Familie.Default.Close();
         MainProject.Forms.Quellverw.Close();
         MainProject.Forms.Ortsver.Close();
@@ -2806,7 +2806,7 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
         finally
         {
             Modul1.Dateienopen();
-            //            this.Cursor = Cursors.Default;
+            //            this.Cursor = Cursors.Instance;
         }
     }
 
@@ -3894,8 +3894,8 @@ public partial class Menu1ViewModel : BaseViewModelCT, IMenu1ViewModel
                             {
                                 Modul1.PersInArb = 1;
                             }
-                            Personen.Default.WindowState = WindowState;
-                            Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
+                            Personen.Instance.WindowState = WindowState;
+                            Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
 
                         }
                         else if ((left == Modul1.IText[EUserText.t441] || left == Modul1.IText[EUserText.t442]) && 1 != 0)

@@ -92,7 +92,7 @@ public partial class FrmEreignis : Form
         else
         {
             Modul1.PersInArb = 0;
-            Modul1.PersInArb = Personen.Default.PersonNr;
+            Modul1.PersInArb = Personen.Instance.PersonNr;
             if (Modul1.PersInArb == 0)
             {
                 _ = Interaction.MsgBox(Modul1.PersInArb.AsString(), title: "2", mb: MessageBoxButtons.OK);
@@ -182,7 +182,7 @@ public partial class FrmEreignis : Form
                             }
                             Box1.Visible = eEventArt != EEventArt.eA_601;
                             if (eEventArt == EEventArt.eA_302
-                                | eEventArt == EEventArt.eA_602)
+                                || eEventArt == EEventArt.eA_602)
                             {
                                 Label22.Visible = true;
                                 TextBox18.Visible = true;
@@ -241,7 +241,7 @@ public partial class FrmEreignis : Form
                             {
                                 Top = 290;
                             }
-                            if (eEventArt != EEventArt.eA_603 & eEventArt != EEventArt.eA_105)
+                            if (eEventArt != EEventArt.eA_603 && eEventArt != EEventArt.eA_105)
                             {
                                 Label1.Visible = false;
                                 TextBox1.Visible = false;
@@ -290,7 +290,7 @@ public partial class FrmEreignis : Form
                             {
                                 CheckBox1.Visible = false;
                             }
-                            if (eEventArt > EEventArt.eA_499 & eEventArt < EEventArt.eA_602)
+                            if (eEventArt > EEventArt.eA_499 && eEventArt < EEventArt.eA_602)
                             {
                                 Modul1.Nr = Familie.Default.iFamNr;
                                 Modul1.LfNR = 0;
@@ -307,7 +307,7 @@ public partial class FrmEreignis : Form
                             }
                             else if (Modul1.Typ != DriveType.CDRom)
                             {
-                                Modul1.Nr = Personen.Default.PersonNr;
+                                Modul1.Nr = Personen.Instance.PersonNr;
                                 DataModul.DB_PersonTable.Index = nameof(PersonIndex.PerNr);
                                 DataModul.DB_PersonTable.Seek("=", Modul1.PersInArb.AsString());
                                 if (DataModul.DB_PersonTable.NoMatch)
@@ -315,29 +315,29 @@ public partial class FrmEreignis : Form
                                     _ = Interaction.MsgBox("Stop", mb: MessageBoxButtons.OK, title: "5");
                                 }
                                 DataModul.DB_PersonTable.Edit();
-                                DataModul.DB_PersonTable.Fields[PersonFields.Sex].Value = Personen.Default.edtSex.Text.Trim().ToUpper();
-                                Wort = Personen.Default.edtReligion.Text.Trim();
+                                DataModul.DB_PersonTable.Fields[PersonFields.Sex].Value = Personen.Instance.edtSex.Text.Trim().ToUpper();
+                                Wort = Personen.Instance.edtReligion.Text.Trim();
                                 int Satz;
                                 Satz = DataModul.Texte_Schreib(Wort, Modul1.UbgT1, ETextKennz.tk7_);
                                 DataModul.DB_PersonTable.Fields[PersonFields.religi].Value = Satz;
-                                if (Personen.Default.edtNotes.Text.TrimEnd() == "")
+                                if (Personen.Instance.edtNotes.Text.TrimEnd() == "")
                                 {
-                                    Personen.Default.edtNotes.Text = " ";
+                                    Personen.Instance.edtNotes.Text = " ";
                                 }
                                 I = 1;
                                 while (I <= 20
-                                    && Strings.Asc(Personen.Default.edtNotes.Text.Right(1)) < 14)
+                                    && Strings.Asc(Personen.Instance.edtNotes.Text.Right(1)) < 14)
                                 {
-                                    Personen.Default.edtNotes.Text = Personen.Default.edtNotes.Text.Left(Personen.Default.edtNotes.Text.Length - 1);
+                                    Personen.Instance.edtNotes.Text = Personen.Instance.edtNotes.Text.Left(Personen.Instance.edtNotes.Text.Length - 1);
                                     I += 1;
                                 }
-                                DataModul.DB_PersonTable.Fields[PersonFields.Bem1].Value = Personen.Default.edtNotes.Text;
+                                DataModul.DB_PersonTable.Fields[PersonFields.Bem1].Value = Personen.Instance.edtNotes.Text;
                                 DataModul.DB_PersonTable.Fields[PersonFields.Pruefen].Value = "0";
                                 DataModul.DB_PersonTable.Update();
                             }
                             else
                             {
-                                Modul1.Nr = Personen.Default.PersonNr;
+                                Modul1.Nr = Personen.Instance.PersonNr;
                             }
                             if (Modul1.System.VerSpecial == 0 && Modul1.Typ != DriveType.CDRom)
                             {
@@ -431,7 +431,7 @@ public partial class FrmEreignis : Form
                                         CheckBox2.CheckState = CheckState.Checked;
                                     }
                                 }
-                                if (eEventArt == EEventArt.eA_302 | eEventArt == EEventArt.eA_602)
+                                if (eEventArt == EEventArt.eA_302 || eEventArt == EEventArt.eA_602)
                                 {
                                     if (cEvent.iHausNr > 0)
                                     {
@@ -484,7 +484,7 @@ public partial class FrmEreignis : Form
                                             TextBox19.Text = cEvent.sAn;
                                         }
                                     }
-                                    if (TextBox4.Text != "" & TextBox17.Text == "")
+                                    if (TextBox4.Text != "" && TextBox17.Text == "")
                                     {
                                         Button16.Visible = true;
                                     }
@@ -502,7 +502,7 @@ public partial class FrmEreignis : Form
                                     Button2.Text = "&Zeugen: Ja";
                                     Button2.BackColor = ColorTranslator.FromOle(65535);
                                 }
-                                Modul1_PerfamNr = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Default.PersonNr;
+                                Modul1_PerfamNr = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Instance.PersonNr;
                                 DataModul.DB_WitnessTable.Index = nameof(WitnessIndex.ZeugSu);
                                 DataModul.DB_WitnessTable.Seek("=", Modul1_PerfamNr, "10", eEventArt, Modul1.LfNR);
                                 if (!DataModul.DB_WitnessTable.NoMatch)
@@ -830,10 +830,10 @@ public partial class FrmEreignis : Form
         Schaltsp = Modul1.ErSchalt;
         checked
         {
-            Modul1.PFSatz = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Default.PersonNr;
-            if (LeerPruef(eEventArt) | Schaltsp == 10f)
+            Modul1.PFSatz = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Instance.PersonNr;
+            if (LeerPruef(eEventArt) || Schaltsp == 10f)
             {
-                Modul1.PFSatz = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Default.PersonNr;
+                Modul1.PFSatz = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Instance.PersonNr;
                 DataModul.Event.Delete(key: (eEventArt, Modul1.PFSatz, Modul1.LfNR));
                 Close();
             }
@@ -888,7 +888,7 @@ public partial class FrmEreignis : Form
                 break;
             }
         }
-        Modul1.PFSatz = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Default.PersonNr;
+        Modul1.PFSatz = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Instance.PersonNr;
         DataModul.Event.Delete(key: (eEventArt, Modul1.PFSatz, Modul1.LfNR));
         Check1.Visible = false;
         ListBox1.Visible = false;
@@ -917,7 +917,7 @@ public partial class FrmEreignis : Form
             }
             else
             {
-                Modul1.PersInArb = Personen.Default.PersonNr;
+                Modul1.PersInArb = Personen.Instance.PersonNr;
             }
             Close();
         }
@@ -1016,7 +1016,7 @@ public partial class FrmEreignis : Form
                             break;
                         IL_0008:
                             num = 2;
-                            Quellen frmQuellen = MainProject.Forms.Quellen;
+                            Quellen frmQuellen = Quellen.Instance;
                             Modul1.Qkenn = 3;
                             //eEventArt = eEventArt;
                             Modul1.Nr = eEventArt < EEventArt.eA_499 ? Modul1.PersInArb : Familie.Default.iFamNr;
@@ -1148,7 +1148,7 @@ public partial class FrmEreignis : Form
                         IL_0009:
                             num = 2;
                             _ = Button5.Focus();
-                            if (TextBox5.Text != "" & TextBox5.Tag.AsInt() == 0.0)
+                            if (TextBox5.Text != "" && TextBox5.Tag.AsInt() == 0.0)
                             {
                                 _ = Interaction.MsgBox("Ort kann so nicht gespeichert werden. Neueingabe nur über >neuer Ort<");
                                 goto end_IL_0001_2;
@@ -1156,12 +1156,12 @@ public partial class FrmEreignis : Form
                             if (TextBox2.Text != "")
                             {
                                 var array = TextBox2.Text.Split('.');
-                                if (array[0].AsDouble() < 0.0 | array[0].AsDouble() > 31.0)
+                                if (array[0].AsDouble() < 0.0 || array[0].AsDouble() > 31.0)
                                 {
                                     _ = Interaction.MsgBox("Die Tagesangabe \"" + array[0] + "\" ist falsch und kann so nicht gespeichert werden");
                                     goto end_IL_0001_2;
                                 }
-                                else if (array[1].AsDouble() < 0.0 | array[1].AsDouble() > 12.0)
+                                else if (array[1].AsDouble() < 0.0 || array[1].AsDouble() > 12.0)
                                 {
                                     _ = Interaction.MsgBox("Die Monatsangabe \"" + array[1] + "\" ist falsch und kann so nicht gespeichert werden");
                                     goto end_IL_0001_2;
@@ -1171,12 +1171,12 @@ public partial class FrmEreignis : Form
                             if (TextBox9.Text != "")
                             {
                                 var array2 = TextBox9.Text.Split('.');
-                                if (array2[0].AsDouble() < 0.0 | array2[0].AsDouble() > 31.0)
+                                if (array2[0].AsDouble() < 0.0 || array2[0].AsDouble() > 31.0)
                                 {
                                     _ = Interaction.MsgBox("Die Tagesangabe \"" + array2[0] + "\" ist falsch und kann so nicht gespeichert werden");
                                     goto end_IL_0001_2;
                                 }
-                                else if (array2[1].AsDouble() < 0.0 | array2[1].AsDouble() > 12.0)
+                                else if (array2[1].AsDouble() < 0.0 || array2[1].AsDouble() > 12.0)
                                 {
                                     _ = Interaction.MsgBox("Die Monatsangabe \"" + array2[1] + "\" ist falsch und kann so nicht gespeichert werden");
                                     goto end_IL_0001_2;
@@ -1191,9 +1191,9 @@ public partial class FrmEreignis : Form
                             {
                                 TextBox10.Text = "";
                             }
-                            if (TextBox9.Text != "" & TextBox2.Text != "")
+                            if (TextBox9.Text != "" && TextBox2.Text != "")
                             {
-                                if (TextBox3.Text.Trim() != "" & TextBox3.Text.ToUpper() != "Z".ToUpper())
+                                if (TextBox3.Text.Trim() != "" && TextBox3.Text.ToUpper() != "Z".ToUpper())
                                 {
                                     if (eEventArt == EEventArt.eA_Birth
                                         || eEventArt == EEventArt.eA_Baptism
@@ -1212,7 +1212,7 @@ public partial class FrmEreignis : Form
                                         TextBox3.Text = "z";
                                         TextBox10.Text = "a";
                                     }
-                                    else if (TextBox3.Text.Trim() != "" & TextBox3.Text.ToUpper() != "B".ToUpper())
+                                    else if (TextBox3.Text.Trim() != "" && TextBox3.Text.ToUpper() != "B".ToUpper())
                                     {
                                         _ = Interaction.MsgBox("Bei Belegung beider Datumsfelder ist der Zusatz \"" + TextBox3.Text + "\" nicht möglich");
                                         TextBox3.Text = "";
@@ -1282,10 +1282,10 @@ public partial class FrmEreignis : Form
                                 forms = MainProject.Forms;
                                 Formtocheck = forms.Personen;
                                 num5 = Modul1.IsFormloaded(Formtocheck);
-                                forms.Personen = (Personen)Formtocheck;
+                                forms.Personen = Personen.Instance;
                                 if (num5 == -1)
                                 {
-                                    Modul1.PersInArb = Personen.Default.PersonNr;
+                                    Modul1.PersInArb = Personen.Instance.PersonNr;
                                     if (Modul1.PersInArb == 0)
                                     {
                                         _ = Interaction.MsgBox(Modul1.PersInArb.AsString(), title: "3", mb: MessageBoxButtons.OK);
@@ -1930,7 +1930,7 @@ public partial class FrmEreignis : Form
                     ListBox2.Visible = false;
                     ListBox1.Visible = false;
                     ListBox4.Visible = false;
-                    if (!(Modul1.UbgT != " " | Modul1.UbgT != ""))
+                    if (!(Modul1.UbgT != " " || Modul1.UbgT != ""))
                     {
                         break;
                     }
@@ -2215,7 +2215,7 @@ public partial class FrmEreignis : Form
                             }
                         IL_02be:
                             num = 59;
-                            if (num5 == 40 & num5 != (short)Modul1_EingCode)
+                            if (num5 == 40 && num5 != (short)Modul1_EingCode)
                             {
                                 _ = TextBox5.Focus();
                             }
@@ -2224,7 +2224,7 @@ public partial class FrmEreignis : Form
                             num = 64;
                             if (num7 < 10)
                             {
-                                if (num5 == 40 & num5 != (short)Modul1_EingCode)
+                                if (num5 == 40 && num5 != (short)Modul1_EingCode)
                                 {
                                     _ = TextBox18.Enabled ? TextBox18.Focus() : TextBox5.Focus();
                                 }
@@ -2233,7 +2233,7 @@ public partial class FrmEreignis : Form
                         IL_035b: // <========== 3
                             num = 75;
                             DDatum = "";
-                            if (unchecked(num7 == 6 && num5 == 46) & num5 != (short)Modul1_EingCode)
+                            if (unchecked(num7 == 6 && num5 == 46) && num5 != (short)Modul1_EingCode)
                             {
                                 ListBox2.Visible = false;
                                 ListBox1.Visible = false;
@@ -2467,7 +2467,7 @@ public partial class FrmEreignis : Form
                         IL_0ea8:
                             num = 228;
                             ListBox2.Visible = false;
-                            if (TextBox18.Visible & TextBox4.Text.Trim() != "")
+                            if (TextBox18.Visible && TextBox4.Text.Trim() != "")
                             {
                                 TextBox18.Enabled = true;
                                 _ = TextBox18.Focus();
@@ -2724,7 +2724,7 @@ public partial class FrmEreignis : Form
                 return;
             }
 
-            Modul1_PerfamNr = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Default.PersonNr;
+            Modul1_PerfamNr = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Instance.PersonNr;
 
             DataModul_Witness_ForAllZeug(Modul1_PerfamNr, eEventArt, Modul1.LfNR, (cWitness) => Modul1_Per1.Add(cWitness.iPers));
 
@@ -2842,14 +2842,14 @@ public partial class FrmEreignis : Form
 
     private void Button13_Click(object sender, EventArgs e)
     {
-        MainProject.Forms.Ortsver.Close();
-        MainProject.Forms.Ortsver.Show();
-        MainProject.Forms.Ortsver.Button11.PerformClick();
-        MainProject.Forms.Ortsver.Button10.Visible = false;
-        MainProject.Forms.Ortsver.Button12.Visible = false;
-        MainProject.Forms.Ortsver.Button19.Visible = true;
-        MainProject.Forms.Ortsver.edtPlace.Text = TextBox5.Text.Left(1).ToUpper() + Strings.Mid(TextBox5.Text, 2, TextBox5.Text.Trim().Length);
-        MainProject.Forms.Ortsver.edtPlace.SelectionStart = MainProject.Forms.Ortsver.edtPlace.Text.Length;
+        Ortsver.Instance.Close();
+        Ortsver.Instance.Show();
+        Ortsver.Instance.Button11.PerformClick();
+        Ortsver.Instance.Button10.Visible = false;
+        Ortsver.Instance.Button12.Visible = false;
+        Ortsver.Instance.Button19.Visible = true;
+        Ortsver.Instance.edtPlace.Text = TextBox5.Text.Left(1).ToUpper() + Strings.Mid(TextBox5.Text, 2, TextBox5.Text.Trim().Length);
+        Ortsver.Instance.edtPlace.SelectionStart = Ortsver.Instance.edtPlace.Text.Length;
     }
 
     private void Button14_Click_1(object sender, EventArgs e)
@@ -2946,7 +2946,7 @@ public partial class FrmEreignis : Form
             }
             else
             {
-                Modul1.PFSatz = Personen.Default.PersonNr;
+                Modul1.PFSatz = Personen.Instance.PersonNr;
             }
             DataModul.Event.Delete((eEventArt, Modul1.PFSatz, Modul1.LfNR));
             Close();
@@ -2964,7 +2964,7 @@ public partial class FrmEreignis : Form
                 Formtocheck = forms.Personen;
                 num8 = Modul1.IsFormloaded(Formtocheck);
                 forms.Personen = (Personen)Formtocheck;
-                Modul1.PFSatz = num8 == -1 ? Personen.Default.PersonNr : Modul1.PersInArbsp;
+                Modul1.PFSatz = num8 == -1 ? Personen.Instance.PersonNr : Modul1.PersInArbsp;
             }
             ProjectData.ClearProjectError();
             num3 = 2;
@@ -3372,7 +3372,7 @@ public partial class FrmEreignis : Form
         {
             Modul1_priv = 2;
         }
-        Modul1.PFSatz = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Default.PersonNr;
+        Modul1.PFSatz = eEventArt > EEventArt.eA_499 ? Familie.Default.iFamNr : Personen.Instance.PersonNr;
         if (DataModul.Event.ReadData((eEventArt, Modul1.PFSatz, Modul1.LfNR), out var cEvent)
             && ((cEvent.eArt == EEventArt.eA_105 || cEvent.eArt == EEventArt.eA_603)
                 && (cEvent.iArtText > 0 || TextBox1.Text != "")

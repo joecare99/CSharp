@@ -168,20 +168,20 @@ public partial class DubViewModel : ObservableObject, IDubViewModel
     {
         Modul1.PersInArb = View._Label1_20.Tag.AsInt();
         Familie.Default.btnMainmenue.Text = Modul1.IText[EUserText.tNMBack];
-        Personen.Default.Close();
+        Personen.Instance.Close();
         Modul1.Aend = 0f;
         Modul1.Ad = false;
-        Personen.Default.Show(Modul1.PersInArb, EUserText.tNMBack);
+        Personen.Instance.Show(Modul1.PersInArb, EUserText.tNMBack);
     }
 
     private void Command1_9_Click(object eventSender, EventArgs eventArgs)
     {
         Modul1.PersInArb = View._Label1_0.Tag.AsInt();
-        Personen.Default.Close();
+        Personen.Instance.Close();
         Familie.Default.btnMainmenue.Text = Modul1.IText[EUserText.tNMBack];
         Modul1.Aend = 0f;
         Modul1.Ad = false;
-        Personen.Default.Show(Modul1.PersInArb, EUserText.tNMBack);
+        Personen.Instance.Show(Modul1.PersInArb, EUserText.tNMBack);
     }
 
     private void Command1_7_Click(object eventSender, EventArgs eventArgs)

@@ -9,8 +9,12 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Company>JC-Soft</Company>
 		<Authors>Joe Care</Authors>
-		<Copyright>Copyright © JC-Soft 2024</Copyright>
-    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-    <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
+		<Copyright>Copyright © JC-Soft 2026</Copyright>
+		<GenFreeWinPath>..\..\GenFreeWin\</GenFreeWinPath>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([System.IO.File]::Exists('..\..\Gen_FreeWin\.info'))">
+		<GenFreeWinPath>..\..\Gen_FreeWin\</GenFreeWinPath>
 	</PropertyGroup>
 </Project>
