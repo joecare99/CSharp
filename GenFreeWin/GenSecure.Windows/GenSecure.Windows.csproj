@@ -14,7 +14,7 @@
 	<ProjectReference Include="..\GenSecure.Contracts\GenSecure.Contracts.csproj" />
   </ItemGroup>
   <ItemGroup>
-	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
-	<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.9" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+	<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.10" />
   </ItemGroup>
 </Project>
