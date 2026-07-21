@@ -12,7 +12,7 @@
     <PackageVersion Include="NSubstitute" Version="6.0.0" />
     <PackageVersion Include="MySqlConnector" Version="2.6.1" />
     <PackageVersion Include="Selenium.WebDriver" Version="4.46.0" />
-    <PackageVersion Include="Selenium.WebDriver.GeckoDriver" Version="0.37.0" />
+    <PackageVersion Include="Selenium.WebDriver.GeckoDriver" Version="0.37.1" />
     <PackageVersion Include="Selenium.WebDriver.MSEdgeDriver" Version="150.0.4078.65" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="10.0.10" />
     <PackageVersion Include="UglyToad.PdfPig" Version="1.7.0-custom-5" />
