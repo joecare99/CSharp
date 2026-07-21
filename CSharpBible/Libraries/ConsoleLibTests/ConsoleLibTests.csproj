@@ -21,8 +21,8 @@
     <ProjectReference Condition="$(TargetFramework.StartsWith('net4'))" Include="..\..\ConsoleApps\TestConsole\TestConsole.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="4.3.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="4.3.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.3.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.3.2" />
     <PackageReference Include="NSubstitute" Version="6.0.0" />
   </ItemGroup>
 </Project>

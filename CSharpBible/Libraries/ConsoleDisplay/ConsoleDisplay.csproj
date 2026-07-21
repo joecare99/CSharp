@@ -29,7 +29,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Condition="'$(TargetFramework)'=='net462'" Include="System.ValueTuple" Version="4.6.2" />
-		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="System.Text.Json" Version="10.0.9" />
+		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="System.Text.Json" Version="10.0.10" />
 		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.1.1" />
 		<PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IsExternalInit" Version="1.0.3" />	
 	</ItemGroup>
