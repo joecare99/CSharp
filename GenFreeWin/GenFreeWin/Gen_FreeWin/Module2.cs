@@ -244,9 +244,9 @@ internal sealed class Module2
     /// <returns>System.Int32. The person-No or family-no according to the event and source</returns>
     public static int ZuPerFamNummer(EEventArt eEventArt, short qkenn) => qkenn switch
     {
-        1 => Personen.Instance.PersonNr, // Person
+        1 => Personen.Default.PersonNr, // Person
         2 => Familie.Default.iFamNr, // Familie
-        _ when eEventArt <= EEventArt.eA_499 => Personen.Instance.PersonNr, // Person
+        _ when eEventArt <= EEventArt.eA_499 => Personen.Default.PersonNr, // Person
         _ => Familie.Default.iFamNr // Familie
     };
 

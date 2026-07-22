@@ -1630,7 +1630,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
             DoHide();
             Familie.Default.Hide();
             Modul1.Ad = true;
-            Personen.Instance.Show(Modul1.PersInArb, EUserText.t158);
+            Personen.Default.Show(Modul1.PersInArb, EUserText.t158);
             Modul1.Ubg = Modul1.PersInArb;
         }
         else
@@ -1656,7 +1656,7 @@ public partial class NamenSuchViewModel : BaseViewModelCT, INamenSuchViewModel
         if (Modul1.Ubg > 0)
         {
             DoHide();
-            Personen.Instance.Hide();
+            Personen.Default.Hide();
             Familie.Default.Show(Modul1.Ubg);
         }
     }

@@ -961,10 +961,10 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
             return;
         }
         Modul1.PersInArb = View.List2.Items[View.List2.SelectedIndex].AsString().Right(10).AsInt();
-        Personen.Instance.lblSearch2.Text = "";
+        Personen.Default.lblSearch2.Text = "";
         Modul1.Aend = 0f;
-        Personen.Instance.Close();
-        Personen.Instance.Show(Modul1.PersInArb, EUserText.tNMBack);
+        Personen.Default.Close();
+        Personen.Default.Show(Modul1.PersInArb, EUserText.tNMBack);
     }
 
     public void Command2_Click(object eventSender, EventArgs eventArgs)
@@ -2100,7 +2100,7 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
                     if ((DataModul.DB_EventTable.Fields[EventFields.Art].AsInt() < 499))
                     {
                         dB_SourceLinkTable.Index = "Tab23";
-                        dB_SourceLinkTable.Seek("=", 3, Modul1_Nr1 = Personen.Instance.PersonNr, num5, Modul1.Art, Modul1.LfNR);
+                        dB_SourceLinkTable.Seek("=", 3, Modul1_Nr1 = Personen.Default.PersonNr, num5, Modul1.Art, Modul1.LfNR);
                     }
                     else
                     {
@@ -2111,7 +2111,7 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
                 break;
             case 1:
                 dB_SourceLinkTable.Index = "Tab21";
-                dB_SourceLinkTable.Seek("=", Modul1.Qkenn, Modul1_Nr1 = Personen.Instance.PersonNr, num5);
+                dB_SourceLinkTable.Seek("=", Modul1.Qkenn, Modul1_Nr1 = Personen.Default.PersonNr, num5);
                 if (dB_SourceLinkTable.NoMatch)
                 {
                     MainProject.Forms.Quellen.Schreib(Modul1.Qkenn, Modul1_Nr1, MainProject.Forms.Quellen.Nr2, Modul1.Art, Modul1.LfNR);

@@ -141,7 +141,7 @@ public partial class Hinter : Form
 
     public void Show0(string sTitle)
     {
-        Text = Text + sTitle;
+        Text = MainProject.Forms.Hinter.Text + sTitle;
         Button7.Visible = false;
         Button8.Visible = false;
         GroupBox1.Visible = true;
@@ -1239,9 +1239,9 @@ public partial class Hinter : Form
                 Person_Dates(Modul1.Family.Frau, aiFather);
 
                 float num12 = aiFather[1] - aiMother[1];
-                if ((aiMother[1] > 0) && (aiFather[1] > 0))
+                if ((aiMother[1] > 0) & (aiFather[1] > 0))
                 {
-                    if ((num12 > Modul1_Diff[1]) || (num12 < -Modul1_Diff[1]))
+                    if ((num12 > Modul1_Diff[1]) | (num12 < -Modul1_Diff[1]))
                     {
                         array3[2] = Modul1.IText[EUserText.t209] + " " + Strings.Mid(Conversion.Int(num12 / 10000f).AsString(), 2, 10) + Modul1.IText[EUserText.t216] + " !";
                     }
@@ -1292,7 +1292,7 @@ public partial class Hinter : Form
                 {
                     num6 = Modul1.Kont1[5].AsInt();
                 }
-                if ((num6 > 0) && (Modul1.Kont1[3].AsInt() > 0.0))
+                if ((num6 > 0) & (Modul1.Kont1[3].AsInt() > 0.0))
                 {
                     if (num6 > Modul1.Kont1[3].AsInt())
                     {
@@ -1310,11 +1310,11 @@ public partial class Hinter : Form
                     {
                         array3[4] = Modul1.IText[EUserText.t163] + Modul1.IText[EUserText.t210] + (Conversion.Int(num6 / 10000.0) - Conversion.Int(aiMother[1] / 10000.0)).AsString() + Modul1.IText[EUserText.t216] + " !";
                     }
-                    if ((num6 > aiFather[3]) && (aiFather[3] > 0))
+                    if ((num6 > aiFather[3]) & (aiFather[3] > 0))
                     {
                         array3[5] = Modul1.IText[EUserText.t162] + Modul1.IText[EUserText.t211];
                     }
-                    if ((num6 > aiMother[3]) && (aiMother[3] > 0))
+                    if ((num6 > aiMother[3]) & (aiMother[3] > 0))
                     {
                         array3[6] = Modul1.IText[EUserText.t163] + Modul1.IText[EUserText.t211];
                     }
@@ -1369,7 +1369,7 @@ public partial class Hinter : Form
                                 {
                                     StringType.MidStmtStr(ref HT, 4, 2, "01");
                                 }
-                                if ((DDatum.AsInt() > 0.0) && (HT.AsInt() > 0.0))
+                                if ((DDatum.AsInt() > 0.0) & (HT.AsInt() > 0.0))
                                 {
                                     ProjectData.ClearProjectError();
                                     if (DDatum.Left(2) == "00")
@@ -1381,7 +1381,7 @@ public partial class Hinter : Form
                                         StringType.MidStmtStr(ref DDatum, 4, 2, "01");
                                     }
                                     if (((DDatum.AsDate() - HT.AsDate()).TotalDays > 3)
-                                        && ((DDatum.AsDate() - HT.AsDate()).TotalDays < 8 * 30.25))
+                                        & ((DDatum.AsDate() - HT.AsDate()).TotalDays < 8 * 30.25))
                                     {
                                         if (Ja == 0)
                                         {
@@ -1592,7 +1592,7 @@ public partial class Hinter : Form
             Familie.Default.btnMainmenue.Text = Modul1.IText[EUserText.tNMBack];
             Modul1.Ad = true;
             Modul1.PersInArb = List1.Items.ItemData<int>(List1.SelectedIndex);
-            Personen.Instance.Show(Modul1.PersInArb, EUserText.tNMBack);
+            Personen.Default.Show(Modul1.PersInArb, EUserText.tNMBack);
             Modul1.Aend = 0f;
         }
         else
@@ -1681,7 +1681,7 @@ public partial class Hinter : Form
                     if (DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt() != num4)
                     {
                         if (!((DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt() < num4)
-                            && DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt() == inputStr.AsInt()))
+                            & DataModul.DB_FamilyTable.Fields[FamilyFields.FamNr].AsInt() == inputStr.AsInt()))
                         {
                             if (Modul1.FamInArb == 277)
                             {
