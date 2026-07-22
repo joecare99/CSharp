@@ -270,7 +270,7 @@ namespace ConsoleDisplay.View.Tests
 		[TestInitialize()]
         public void Init()
         {
-            TileDisplayHex.myConsole = console ?? ( console= _tstCon = new TstConsole());
+            TileDisplayHex.console = console ?? ( console= _tstCon = new TstConsole());
             Application_DoEvents();
             console.Clear();
         }

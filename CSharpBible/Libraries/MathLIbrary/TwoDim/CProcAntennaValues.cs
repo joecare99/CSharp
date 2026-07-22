@@ -121,14 +121,12 @@ public class CProcAntennaValues
     {
         // Wert in Tabelle einfügen oder ändern
         var tfPoint = new Vector(lrAntennaOffset, lrAntennaValue);
-        var tfPointWorld = new Vector(lrAntennaOffset, lrAntennaValue);
-        var iDist = new double[31];iDist.Initialize();
         var nIdx = 0;
         if (xAntDetect
             && (((tfPoint.x - aPunkteSpeicher[0].x) > lrCfgEinfgDist)
                 || ((tfPoint.x - aPunkteSpeicher[1].x) > 2 * lrCfgEinfgDist)))
         {
-            for (var i = 30; i > 0; i++)
+            for (var i = 30; i > 0; i--)
                 aPunkteSpeicher[i] = aPunkteSpeicher[i - 1];
             aPunkteSpeicher[0] = tfPoint;
             HMI[0] = aPunkteSpeicher[0].Mult(fDispFak);

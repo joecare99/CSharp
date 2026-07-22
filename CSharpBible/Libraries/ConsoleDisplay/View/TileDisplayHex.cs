@@ -74,7 +74,7 @@ namespace ConsoleDisplay.View
 		/// <summary>
 		/// My console
 		/// </summary>
-		public static IConsole myConsole { get; set; } = new ConsoleProxy();
+		public static IConsole console { get; set; } = new ConsoleProxy();
 		/// <summary>
 		/// Gets or sets the tile definition.
 		/// it returns the default-tileDef when the local tileDef isn't set.
@@ -123,15 +123,17 @@ namespace ConsoleDisplay.View
 		/// The (local) tile-definition
 		/// </summary>
 		private TileDefBase? _tileDef;
-		#endregion
-		#endregion
+        private static ConsoleColor _bgr;
+        private static ConsoleColor _fgr;
+        #endregion
+        #endregion
 
-		#region Methods
-		#region Static Methods
-		/// <summary>
-		/// Initializes static members of the <see cref="TileDisplay{T}"/> class.
-		/// </summary>
-		static TileDisplayHex() {
+        #region Methods
+        #region Static Methods
+        /// <summary>
+        /// Initializes static members of the <see cref="TileDisplay{T}"/> class.
+        /// </summary>
+        static TileDisplayHex() {
 			defaultTile = default;
 		}
 
@@ -168,10 +170,13 @@ namespace ConsoleDisplay.View
 		/// <param name="s">The s.</param>
 		/// <param name="pc">The pc.</param>
 		private static void WriteTileChunk(Point Offset, PointF p, (string[] lines, (ConsoleColor fgr, ConsoleColor bgr)[] colors) def, Size s, Point pc) {
-			myConsole.ForegroundColor = def.colors[pc.X + pc.Y * s.Width].fgr;
-			myConsole.BackgroundColor = def.colors[pc.X + pc.Y * s.Width].bgr;
-			myConsole.SetCursorPosition(Offset.X + (int)(p.X * s.Width) + pc.X, Offset.Y + (int)(p.Y * s.Height) + pc.Y);
-			myConsole.Write(def.lines[pc.Y][pc.X]);
+
+            if (_fgr != def.colors[pc.X + pc.Y * s.Width].fgr || (p.X == 0 && p.Y == 0))
+                console.ForegroundColor = _fgr = def.colors[pc.X + pc.Y * s.Width].fgr;
+            if (_bgr != def.colors[pc.X + pc.Y * s.Width].bgr || (p.X == 0 && p.Y == 0))
+                console.BackgroundColor = _bgr = def.colors[pc.X + pc.Y * s.Width].bgr;
+            console.SetCursorPosition(Offset.X + (int)(p.X * s.Width) + pc.X, Offset.Y + (int)(p.Y * s.Height) + pc.Y);
+			console.Write(def.lines[pc.Y][pc.X]);
 		}
 		#endregion
 
@@ -208,7 +213,7 @@ namespace ConsoleDisplay.View
 			_rect.Location = position;
 			_tileSize = tileSize != Size.Empty ? tileSize : new Size(4, 2);
 			if (size == Size.Empty)
-				_size = new Size(myConsole.WindowWidth / _tileSize.Width, myConsole.WindowHeight / _tileSize.Height);
+				_size = new Size(console.WindowWidth / _tileSize.Width, console.WindowHeight / _tileSize.Height);
 			else
 				_size = size;
 			_rect.Size = new Size(_size.Width * _tileSize.Width, _size.Height * _tileSize.Height);
@@ -266,7 +271,9 @@ namespace ConsoleDisplay.View
 
 		public void Update(bool e) {
 			var diffFields = new List<(PointF, T, PointF)>();
-			var p = new Point();
+            _bgr = console.BackgroundColor;
+            _fgr = console.ForegroundColor;
+            var p = new Point();
 			Point p3 = new();
 			if (FncGetTile == null) return;
 

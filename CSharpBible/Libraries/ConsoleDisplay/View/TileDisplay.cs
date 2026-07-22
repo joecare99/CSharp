@@ -259,8 +259,8 @@ public class TileDisplay<T>: ITileDisplay<T>
     {
         var cv = console.CursorVisible;
         console.CursorVisible = false;
-        _bgr = ConsoleColor.Black;
-        _fgr = ConsoleColor.Black;
+        _bgr = console.BackgroundColor;
+        _fgr = console.ForegroundColor;
         var diffFields = new List<(Point, T, Point?)>();
         var p = new Point();
         Point p3 = new();
