@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <Import Project="..\Libraries.props" />
   <PropertyGroup>
 	<TargetFrameworks>net481;net48;net472;net462;net8.0-windows</TargetFrameworks>
@@ -18,5 +18,8 @@
 	<Compile Remove="obj\**" />
 	<EmbeddedResource Remove="obj\**" />
 	<None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleLib\ConsoleLib.csproj" />
   </ItemGroup>
 </Project>

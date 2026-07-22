@@ -195,6 +195,205 @@ public class CProcAntennaValuesTests
         Assert.AreEqual(lrOffset, _fOffset, 1e-8, "fOffset");
     }
 
+    /// <summary>
+    /// Verifies that <see cref="CProcAntennaValues.HandleAntennaValue(double, double, bool)"/> keeps the stored points unchanged when no detection is reported.
+    /// </summary>
+    [TestMethod]
+    public void HandleAntennaValueLeavesPointsUnchangedWhenNoDetectionOccurs()
+    {
+        var points = CreateDefaultStoredPoints();
+        var expected = ToDArr(points);
+        var testClass = new CProcAntennaValues(points, [0]);
+
+        Assert.IsTrue(testClass.HandleAntennaValue(150.0d, 150.0d, false));
+
+        CollectionAssert.AreEqual(expected, ToDArr(testClass.Debug.aPoints), new DObjComaprer());
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="CProcAntennaValues.HandleAntennaValue(double, double, bool)"/> inserts a new point at the front when the measured offset is ahead of the current range.
+    /// </summary>
+    [TestMethod]
+    public void HandleAntennaValueInsertsPointAtFrontWhenOffsetIsAheadOfStoredRange()
+    {
+        var points = CreateDefaultStoredPoints();
+        points[0] = new Math2d.Vector(279.9d, 0.0d);
+        points[1] = new Math2d.Vector(260.0d, 0.0d);
+        var testClass = new CProcAntennaValues(points, [0]);
+
+        Assert.IsTrue(testClass.HandleAntennaValue(300.0d, 150.0d, true));
+
+        Assert.AreEqual(300.0d, testClass.Debug.aPoints[0].x, 1e-8, "Points[0].x");
+        Assert.AreEqual(150.0d, testClass.Debug.aPoints[0].y, 1e-8, "Points[0].y");
+        Assert.AreEqual(279.9d, testClass.Debug.aPoints[1].x, 1e-8, "Points[1].x");
+        Assert.AreEqual(37.5d, testClass.HMI[0].y, 1e-8, "HMI[0].y");
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="CProcAntennaValues.HandleAntennaValue(double, double, bool)"/> appends a new point at the end when the measured offset is behind the current range.
+    /// </summary>
+    [TestMethod]
+    public void HandleAntennaValueAppendsPointAtEndWhenOffsetIsBehindStoredRange()
+    {
+        var points = CreateDefaultStoredPoints();
+        points[29] = new Math2d.Vector(321.0d, 0.0d);
+        points[30] = new Math2d.Vector(321.0d, 0.0d);
+        var testClass = new CProcAntennaValues(points, [0]);
+
+        Assert.IsTrue(testClass.HandleAntennaValue(300.0d, 150.0d, true));
+
+        Assert.AreEqual(280.0d, testClass.Debug.aPoints[0].x, 1e-8, "Points[0].x");
+        Assert.AreEqual(300.0d, testClass.Debug.aPoints[30].x, 1e-8, "Points[30].x");
+        Assert.AreEqual(150.0d, testClass.Debug.aPoints[30].y, 1e-8, "Points[30].y");
+        Assert.IsFalse(testClass.Debug.bFlag, "Appending at the end should clear the internal flag.");
+        Assert.AreEqual(37.5d, testClass.HMI[30].y, 1e-8, "HMI[30].y");
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="CProcAntennaValues.HandleAntennaValue(double, double, bool)"/> blends the nearest point when the measured offset falls within the stored range.
+    /// </summary>
+    [TestMethod]
+    public void HandleAntennaValueBlendsNearestPointWhenOffsetFallsInsideStoredRange()
+    {
+        var points = CreateDefaultStoredPoints();
+        var testClass = new CProcAntennaValues(points, [0]);
+
+        Assert.IsTrue(testClass.HandleAntennaValue(150.0d, 150.0d, true));
+
+        Assert.AreEqual(159.5d, testClass.Debug.aPoints[7].x, 1e-8, "Points[7].x");
+        Assert.AreEqual(7.5d, testClass.Debug.aPoints[7].y, 1e-8, "Points[7].y");
+        Assert.AreEqual(140.0d, testClass.Debug.aPoints[8].x, 1e-8, "Points[8].x");
+        Assert.AreEqual(0.0d, testClass.Debug.aPoints[8].y, 1e-8, "Points[8].y");
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="CProcAntennaValues.ComputeTrackAndLookAhead(double, double, double, out StTrackSeg, out StTrackSeg, out double)"/> returns the expected straight track for the default stored points.
+    /// </summary>
+    [TestMethod]
+    public void ComputeTrackAndLookAheadReturnsStraightTrackForDefaultPoints()
+    {
+        var testClass = new CProcAntennaValues(CreateDefaultStoredPoints(), [0]);
+
+        Assert.IsTrue(testClass.ComputeTrackAndLookAhead(0.0d, 0.0d, 0.5d, out var track, out var lookAheadTrack, out var yDeviation));
+
+        AssertAreEqual(CreateTrackSegment([0.0d, 0.0d, 0.0d, 1.0d, 0.0d]), track);
+        AssertAreEqual(CreateTrackSegment([0.0d, 0.0d, 0.0d, 1.0d, 0.0d]), lookAheadTrack);
+        Assert.AreEqual(0.0d, yDeviation, 1e-8, nameof(yDeviation));
+        Assert.AreEqual(0.0d, testClass.HMI[29].x, 1e-8, "HMI[29].x");
+        Assert.AreEqual(0.0d, testClass.HMI[29].y, 1e-8, "HMI[29].y");
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="CProcAntennaValues.ComputeTrackAndLookAhead(double, double, double, out StTrackSeg, out StTrackSeg, out double)"/> composes the helper calculations consistently for a curved point set.
+    /// </summary>
+    [TestMethod]
+    public void ComputeTrackAndLookAheadMatchesHelperCompositionForCurvedInput()
+    {
+        var points = ToVArr([
+            300.0d, 150.0d, 279.9d, 0d, 260d, 0d, 240d, 0d, 220d, 0d, 200d, 0d, 180d, 0d, 160d, 0d,
+            140d, 0d, 120d, 0d, 100d, 0d, 80d, 0d, 60d, 0d, 40d, 0d, 20d, 0d, 0d, 0d,
+            0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d,
+            0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d]);
+        var testClass = new CProcAntennaValues(points, [0]);
+        testClass.Calculate3DistinctPoints(out var front, out var middle, out var back);
+        var lookAheadPoints = CProcAntennaValues.CalculateLookAhead(1.0d, 300.0d, 1.0d, [front, middle, back]);
+        var expectedTrack = testClass.CalcTrack([front, middle, back], out var expectedCenter, out var expectedDeviation);
+        var expectedLookAheadTrack = testClass.CalcTrack(lookAheadPoints, out _, out _);
+
+        Assert.IsTrue(testClass.ComputeTrackAndLookAhead(1.0d, 300.0d, 1.0d, out var track, out var lookAheadTrack, out var yDeviation));
+
+        AssertAreEqual(expectedTrack, track);
+        AssertAreEqual(expectedLookAheadTrack, lookAheadTrack);
+        Assert.AreEqual(expectedDeviation, yDeviation, 1e-8, nameof(yDeviation));
+        Assert.AreEqual(expectedCenter.x * 0.25d, testClass.HMI[29].x, 1e-8, "HMI[29].x");
+        Assert.AreEqual(expectedCenter.y * 0.25d, testClass.HMI[29].y, 1e-8, "HMI[29].y");
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="CProcAntennaValues.Config(double, double, double)"/> updates internal settings used by <see cref="CProcAntennaValues.ComputeVAntennaVal(StTrackSeg, bool)"/>.
+    /// </summary>
+    [TestMethod]
+    public void ConfigUpdatesParametersUsedByComputeVAntennaVal()
+    {
+        var testClass = new CProcAntennaValues();
+        var track = CreateTrackSegment([-1000.0d, 0.0d, 0.0d, 1.0d, 0.0d]);
+
+        var defaultAngle = testClass.ComputeVAntennaVal(track, false);
+
+        Assert.AreEqual(500.0d, defaultAngle, 1e-8, "DefaultAngle");
+        Assert.AreEqual(-250.0d, testClass.HMI[28].x, 1e-8, "Default.HMI[28].x");
+        Assert.AreEqual(0.0d, testClass.HMI[27].x, 1e-8, "Default.HMI[27].x");
+
+        Assert.IsTrue(testClass.Config(2000.0d, 123.0d, 5.0d));
+
+        var configuredAngle = testClass.ComputeVAntennaVal(track, false);
+
+        Assert.AreEqual(0.0d, configuredAngle, 1e-8, "ConfiguredAngle");
+        Assert.AreEqual(250.0d, testClass.HMI[27].x, 1e-8, "Configured.HMI[27].x");
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="CProcAntennaValues.ComputeVAntennaVal(StTrackSeg, bool)"/> returns zero for straight tracks without a valid normal.
+    /// </summary>
+    [TestMethod]
+    public void ComputeVAntennaValReturnsZeroForStraightTrackWithoutNormal()
+    {
+        var testClass = new CProcAntennaValues();
+        var track = CreateTrackSegment([40.0d, -20.0d, 0.0d, 0.0d, 0.0d]);
+
+        var angle = testClass.ComputeVAntennaVal(track, false);
+
+        Assert.AreEqual(0.0d, angle, 1e-8);
+        Assert.AreEqual(10.0d, testClass.HMI[28].x, 1e-8, "HMI[28].x");
+        Assert.AreEqual(-5.0d, testClass.HMI[28].y, 1e-8, "HMI[28].y");
+    }
+
+    /// <summary>
+    /// Verifies straight-track steering computation for forward and reverse driving modes.
+    /// </summary>
+    [TestMethod]
+    public void ComputeVAntennaValStraightTrackReturnsExpectedForwardAndReverseAngles()
+    {
+        var testClass = new CProcAntennaValues();
+        var track = CreateTrackSegment([0.0d, 0.0d, 0.0d, 1.0d, 0.0d]);
+
+        var forwardAngle = testClass.ComputeVAntennaVal(track, false);
+        var reverseAngle = testClass.ComputeVAntennaVal(track, true);
+
+        Assert.AreEqual(500.0d, forwardAngle, 1e-8, "ForwardAngle");
+        Assert.AreEqual(-500.0d, reverseAngle, 1e-8, "ReverseAngle");
+        Assert.AreEqual(-250.0d, testClass.HMI[27].x, 1e-8, "Reverse.HMI[27].x");
+        Assert.AreEqual(0.0d, testClass.HMI[27].y, 1e-8, "Reverse.HMI[27].y");
+    }
+
+    /// <summary>
+    /// Verifies curved-track steering computation and HMI target point projection.
+    /// </summary>
+    [TestMethod]
+    public void ComputeVAntennaValCurvedTrackReturnsExpectedAngleAndHmiTarget()
+    {
+        var testClass = new CProcAntennaValues();
+        var track = CreateTrackSegment([0.0d, 0.0d, 0.0d, 1.0d, 2000.0d]);
+
+        var angle = testClass.ComputeVAntennaVal(track, false);
+
+        Assert.AreEqual(1497.3969638106419d, angle, 1e-8, "Angle");
+        Assert.AreEqual(-248.049416807332d, testClass.HMI[27].x, 1e-8, "HMI[27].x");
+        Assert.AreEqual(-31.1686833463069d, testClass.HMI[27].y, 1e-8, "HMI[27].y");
+        Assert.AreEqual(0.0d, testClass.HMI[28].x, 1e-8, "HMI[28].x");
+        Assert.AreEqual(0.0d, testClass.HMI[28].y, 1e-8, "HMI[28].y");
+    }
+
+    private Math2d.Vector[] CreateDefaultStoredPoints()
+    {
+        var result = new Math2d.Vector[31];
+        for (var i = 0; i < 16; i++)
+            result[i] = new Math2d.Vector(300.0d - (20.0d * i), 0.0d);
+        for (var i = 16; i < result.Length; i++)
+            result[i] = new Math2d.Vector(0.0d, 0.0d);
+        return result;
+    }
+
     private StTrackSeg CreateTrackSegment(double[] adSeg)
     {
         return new StTrackSeg(ToVArr(adSeg)[0], ToVArr(adSeg)[1], adSeg[4]);

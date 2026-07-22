@@ -38,7 +38,7 @@ public class PosixTerminalEnvironmentTests
     }
 
     [TestMethod]
-    public void ResolveTerm_ShouldFallbackToVt100WhenXtermEntriesAreUnavailable()
+    public void ResolveTerm_ShouldFallbackToDumbWhenXtermEntriesAreUnavailable()
     {
         static bool DirectoryExists(string path)
         {
@@ -52,7 +52,7 @@ public class PosixTerminalEnvironmentTests
 
         var term = PosixTerminalEnvironment.ResolveTerm(null, DirectoryExists, FileExists);
 
-        Assert.AreEqual("vt100", term);
+        Assert.AreEqual("dumb", term);
     }
 
     [TestMethod]
