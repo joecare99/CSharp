@@ -1687,7 +1687,7 @@ internal class Bilder : Form
         if (kennz == "P")
         {
             Modul1.PersInArb = Modul1.Ubg;
-            Personen.Instance.Perzeig(Modul1.PersInArb);
+            Personen.Default.Perzeig(Modul1.PersInArb);
         }
         else if (kennz == "F")
         {

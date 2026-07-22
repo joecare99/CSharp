@@ -245,7 +245,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
     public string Label15_Text { get; private set; }
 
     [Obsolete]
-    Personen View => Personen.Instance;
+    Personen View => Personen.Default;
 
     public Color NewPerson_BackColor { get; private set; }
     public Color NoGodparents_BackColor { get; private set; }
@@ -2435,7 +2435,7 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
         if (DataModul.Link.ExistE(Modul1.PersInArb, ELinkKennz.lkWitnOfMarr))
         {
         }
-        Personen.Instance.FrmPerson_EventUpd(Modul1.PersInArb);
+        Personen.Default.FrmPerson_EventUpd(Modul1.PersInArb);
         if (!Modul1.Person.xVChr)
         {
             Modul1.Kont[25] = DateHelper2.CalcAge(Modul1.Person.Death, Modul1.Person.Birthday, Modul1.IText);
@@ -2832,8 +2832,8 @@ public partial class PersonenViewModel : BaseViewModelCT, IPersonenViewModel
     //        Modul1.Modul1.Art = eArt;
     //        if (Modul1.Modul1.Art > EEventArt.eA_499)
     //        {
-    //            Modul1.FamInArb = Familie.Instance.iFamNr;
-    //            Familie.Instance.Fameinlesen(Modul1.FamInArb, out short Rich);
+    //            Modul1.FamInArb = Familie.Default.iFamNr;
+    //            Familie.Default.Fameinlesen(Modul1.FamInArb, out short Rich);
     //        }
     //        else
     //        {

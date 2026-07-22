@@ -96,7 +96,7 @@ public partial class OFBViewModel : BaseViewModelCT, IOFBViewModel
             DoClose();
             return;
         }
-        PersInArb = Personen.Instance.PersonNr;
+        PersInArb = Personen.Default.PersonNr;
 
         DataModul.Person_UpdateOFB(PersInArb, Check1_Checked);
 
@@ -197,13 +197,13 @@ public partial class OFBViewModel : BaseViewModelCT, IOFBViewModel
 
         checked
         {
-            PersInArb = Personen.Instance.PersonNr;
+            PersInArb = Personen.Default.PersonNr;
 
-            var pt = DataModul.Person.Seek(Personen.Instance.PersonNr);
+            var pt = DataModul.Person.Seek(Personen.Default.PersonNr);
             Check1_Checked = pt?.Fields[PersonFields.OFB].AsString() == "J";
 
             DataModul.DB_NameTable.Index = nameof(NameIndex.NamKenn);
-            DataModul.DB_NameTable.Seek("=", Personen.Instance.PersonNr, ETextKennz.Y_);
+            DataModul.DB_NameTable.Seek("=", Personen.Default.PersonNr, ETextKennz.Y_);
             float num = 1f;
             if (!DataModul.DB_NameTable.NoMatch && Operators.ConditionalCompareObjectEqual(DataModul.DB_NameTable.Fields[NameFields.PersNr].AsInt(), PersInArb, TextCompare: false) && !DataModul.DB_NameTable.NoMatch)
             {

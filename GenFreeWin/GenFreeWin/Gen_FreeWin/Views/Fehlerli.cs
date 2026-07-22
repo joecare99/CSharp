@@ -919,7 +919,7 @@ internal partial class Fehlerli : Form
                 var LiEl = axLinkEx[1] && axLinkEx[2] ? 1 : 0;
                 var LiKi = axLinkEx[3] ? 1 : 0;
 
-                if (LiKi == 0 && LiEl == 0)
+                if (LiKi == 0 & LiEl == 0)
                 {
                     Modul1.Person_ReadNames(I1, Modul1.Person);
                     StringType.MidStmtStr(ref sDest, 1, 20, $"{Modul1.Person.SurName.Trim() + "," + Modul1.Person.Givennames.Trim(),20}");
@@ -1196,9 +1196,9 @@ internal partial class Fehlerli : Form
             if (Strings.InStr(_Label1_2.Text, Modul1.IText[EUserText.t84_Persons]) != 0)
             {
                 Modul1.PersInArb = (int)Math.Round(List1.Text.Right(10).AsDouble());
-                Personen.Instance.lblSearch2.Text = "";
+                Personen.Default.lblSearch2.Text = "";
                 Modul1.Aend = 0f;
-                Personen.Instance.Show(Modul1.PersInArb, EUserText.tNMBack);
+                Personen.Default.Show(Modul1.PersInArb, EUserText.tNMBack);
             }
             else
             {
@@ -1214,8 +1214,8 @@ internal partial class Fehlerli : Form
     private void List2_DoubleClick(object eventSender, EventArgs eventArgs)
     {
         Modul1.Schalt = (byte)-List2.Tag.AsInt();
-        _ = Ortsver.Instance.ShowDialog();
-        Ortsver.Instance.Close();
+        _ = MainProject.Forms.Ortsver.ShowDialog();
+        MainProject.Forms.Ortsver.Close();
     }
 
     private void Button1_Click(object sender, EventArgs e)
@@ -1636,7 +1636,7 @@ internal partial class Fehlerli : Form
                                         {
                                             DataModul.DB_PersonTable.Fields[PersonFields.Sex].Value = array5[0];
                                         }
-                                        if ((bool)left2 && (left3 != "F"))
+                                        if ((bool)left2 & (left3 != "F"))
                                         {
 
                                             array7 = new object[1];
@@ -1783,13 +1783,13 @@ internal partial class Fehlerli : Form
                                             IEventData Event = null;
                                             while (++num7 <= 507)
                                             {
-                                                if (!(num7 == 500 && !CheckBox6.Checked)
-                                                    && !(num7 == 501 && !CheckBox5.Checked)
-                                                    && !(num7 == 502 && !CheckBox7.Checked)
-                                                    && !(num7 == 503 && !CheckBox8.Checked)
-                                                    && !(num7 == 504 && !CheckBox9.Checked)
-                                                    && !(num7 == 505 && !CheckBox10.Checked)
-                                                    && !(num7 == 507 && !CheckBox11.Checked)
+                                                if (!(num7 == 500 & !CheckBox6.Checked)
+                                                    && !(num7 == 501 & !CheckBox5.Checked)
+                                                    && !(num7 == 502 & !CheckBox7.Checked)
+                                                    && !(num7 == 503 & !CheckBox8.Checked)
+                                                    && !(num7 == 504 & !CheckBox9.Checked)
+                                                    && !(num7 == 505 & !CheckBox10.Checked)
+                                                    && !(num7 == 507 & !CheckBox11.Checked)
                                                     && DataModul.Event.ReadData((EEventArt)num7, I1, out Event, 0))
                                                 {
                                                     break;
@@ -2093,7 +2093,7 @@ internal partial class Fehlerli : Form
                                             num7 = 101;
                                             while (num7 <= 105)
                                             {
-                                                if (!(num7 == 101 && !CheckBox22.Checked) && !(num7 == 102 && !CheckBox21.Checked) && !(num7 == 103 && !CheckBox20.Checked) && !(num7 == 104 && !CheckBox19.Checked) && !(num7 == 105 && !CheckBox15.Checked))
+                                                if (!(num7 == 101 & !CheckBox22.Checked) && !(num7 == 102 & !CheckBox21.Checked) && !(num7 == 103 & !CheckBox20.Checked) && !(num7 == 104 & !CheckBox19.Checked) && !(num7 == 105 & !CheckBox15.Checked))
                                                 {
                                                     Modul1.Ubg = num7;
                                                     if (!DataModul.Event.ReadData((EEventArt)num7, Modul1.PersInArb, out cEvt2))
@@ -2137,9 +2137,9 @@ internal partial class Fehlerli : Form
                                     num7 = 300;
                                     while (num7 <= 302)
                                     {
-                                        if (!(num7 == 300 && !CheckBox18.Checked)
-                                            && !(num7 == 301 && !CheckBox17.Checked)
-                                            && !(num7 == 302 && !CheckBox16.Checked))
+                                        if (!(num7 == 300 & !CheckBox18.Checked)
+                                            && !(num7 == 301 & !CheckBox17.Checked)
+                                            && !(num7 == 302 & !CheckBox16.Checked))
                                         {
                                             Modul1.Ubg = num7;
                                             if (DataModul.Event.ReadData((EEventArt)num7, Modul1.PersInArb, out cEvt))
@@ -3576,7 +3576,7 @@ internal partial class Fehlerli : Form
                                     dB_EventTable.MoveNext();
                                 }
                             }
-                            else if (RadioButton8.Checked || RadioButton13.Checked)
+                            else if (RadioButton8.Checked | RadioButton13.Checked)
                             {
                                 GroupBox8.Visible = false;
                                 dB_EventTable.Index = nameof(EventIndex.Datbs);
@@ -3626,7 +3626,7 @@ internal partial class Fehlerli : Form
                                     dB_EventTable.MoveNext();
                                 }
                             }
-                            else if (RadioButton8.Checked || RadioButton13.Checked)
+                            else if (RadioButton8.Checked | RadioButton13.Checked)
                             {
                                 GroupBox8.Visible = false;
                                 dB_EventTable.Index = nameof(EventIndex.Datbs);
@@ -3723,7 +3723,7 @@ internal partial class Fehlerli : Form
     {
         RadioButton1.Visible = false;
         RadioButton2.Visible = false;
-        if (!RadioButton16.Checked && !RadioButton15.Checked)
+        if (!RadioButton16.Checked & !RadioButton15.Checked)
         {
             RadioButton16.Checked = true;
         }

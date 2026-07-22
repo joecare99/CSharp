@@ -1,10 +1,6 @@
-using BaseLib.Helper;
-using GenFree;
-using GenFree.Interfaces.Sys;
 using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
 using Views;
 
@@ -13,8 +9,6 @@ namespace GenFreeWin.Views;
 [DesignerGenerated]
 public partial class Ortsver : Form
 {
-    public static Ortsver Instance { get=>field ??= IoC.GetRequiredService<Ortsver>(); private set; }
-
     private static List<WeakReference> __ENCList = new();
 
     private IOrtsVerViewModel _viewModel;
@@ -25,47 +19,12 @@ public partial class Ortsver : Form
         _viewModel = viewModel;
         _viewModel.View = this;
         Load += _viewModel.Form_Load;
-        Load += Ortsver_Load;
         lock (__ENCList)
         {
             __ENCList.Add(new WeakReference(this));
         }
         InitializeComponent();
         CommandBindingAttribute.Commit(this, _viewModel);
-        Instance = this;
-    }
-
-    private void Ortsver_Load(object sender, EventArgs e)
-    {
-        RTB1.AddContextMenu();
-        if (_Modul1.Instance.FontSize > 0f)
-        {
-            var Font = new Font("Arial", _Modul1.Instance.FontSize, FontStyle.Regular);
-            ListBox2.Font = new Font("Courier New", _Modul1.Instance.FontSize, FontStyle.Regular);
-            Frame1.Font    = Font;
-            Label19.Font   = Font;
-            Label20.Font   = Font;
-            Label21.Font   = Font;
-            Button13.Font  = Font;
-            Button14.Font  = Font;
-            Button15.Font  = Font;
-            TextBox22.Font = Font;
-            TextBox23.Font = Font;
-            TextBox24.Font = Font;
-            TextBox25.Font = Font;
-            TextBox26.Font = Font;
-            TextBox27.Font = Font;
-            TextBox28.Font = Font;
-            TextBox29.Font = Font;
-        }
-
-        var aiPos = _Modul1.Instance.Persistence.ReadIntsProg("maspos.dat", 2);
-        Left = aiPos[0];
-        Top = aiPos[1];
-        Text = $"{_Modul1.Instance.AppName} Ortsverwaltung für Mandant {_Modul1.Instance.Mandant}";
-        BackColor = _Modul1.Instance.HintFarb;
-        _Modul1.Instance.Persistence.ReadEnumInit<FormWindowState>("Windowstate", out var WiS);
-        WindowState = WiS;
     }
 
     private void TextBox1_KeyUp(object s, KeyEventArgs e) => _viewModel.TextBox1_KeyUp(s, e);
@@ -99,6 +58,5 @@ public partial class Ortsver : Form
     private void Button11_Click(object s, EventArgs e) => _viewModel.Button11_Click(s, e);
     private void Button10_Click(object s, EventArgs e) => _viewModel.Button10_Click(s, e);
     private void RTB1_KeyUp(object s, KeyEventArgs e) => _viewModel.RTB1_KeyUp(s, e);
-    
-    
+
 }

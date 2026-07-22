@@ -525,8 +525,8 @@ public class Besitz : Form
     private void Besitz_Load(object sender, EventArgs e)
     {
         ApplyFonts();
-        Top = Personen.Instance.btnProperty.Top;
-        _viewModel.Load(Modul1.Ubg, Personen.Instance.PersonNr);
+        Top = Personen.Default.btnProperty.Top;
+        _viewModel.Load(Modul1.Ubg, Personen.Default.PersonNr);
         ApplyViewModel();
     }
 

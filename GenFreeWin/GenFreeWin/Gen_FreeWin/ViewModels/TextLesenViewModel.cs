@@ -2232,14 +2232,14 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
                 return;
             }
             Modul1.PersInArb = (int)Math.Round(View.List1.Text.Right(10).AsDouble());
-            Personen.Instance.lblSearch2.Text = "";
+            Personen.Default.lblSearch2.Text = "";
             Modul1.Aend = 0f;
-            Personen.Instance.Close();
-            if ((double)(int)Math.Round(View.List1.Text.Right(10).AsDouble()) != Personen.Instance.PersonNr)
+            Personen.Default.Close();
+            if ((double)(int)Math.Round(View.List1.Text.Right(10).AsDouble()) != Personen.Default.PersonNr)
             {
                 Modul1.PersInArb = (int)Math.Round(View.List1.Text.Right(10).AsDouble());
             }
-            Personen.Instance.Show(Modul1.PersInArb, EUserText.tNMBack);
+            Personen.Default.Show(Modul1.PersInArb, EUserText.tNMBack);
         }
     }
 
