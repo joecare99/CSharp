@@ -21,37 +21,13 @@ using System.Windows.Forms;
 namespace GenFreeWin.Attributes;
 
 [AttributeUsage(AttributeTargets.Field)]
-public class ApplTextBindingAttribute<T> : ApplTextBindingAttribute where T : Enum
+public class ApplTextBindingAttribute(string cmdName) : Attribute
 {
-    public ApplTextBindingAttribute(T @enum) : base(@enum)
-    {
-    }
-}
-
-[AttributeUsage(AttributeTargets.Field)]
-public class ApplTextBindingAttribute : Attribute
-{
-    public string? PropertyName { get; } = default;
-    protected Enum? _enum { get; } = default;
-
-    public ApplTextBindingAttribute(string propertyName)
-    {
-        PropertyName = propertyName;
-    }
-
-    protected ApplTextBindingAttribute(Enum @enum)
-    {
-        _enum = @enum;
-    }
+    public string PropertyName { get; } = cmdName;
 
     public void Bind(INotifyPropertyChanged viewModel, Control field, IApplUserTexts strings)
     {
-        if (_enum is not null)
-        {
-            field.Text = strings[_enum];
-        }
-        else if (PropertyName is not null
-            && viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType == typeof(EUserText))
+        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType == typeof(EUserText))
         {
             field.Text = strings[pi.GetValue(viewModel)!];
             if (viewModel is INotifyPropertyChanged npc)
