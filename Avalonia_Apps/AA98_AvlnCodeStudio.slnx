@@ -53,6 +53,6 @@
   </Folder>
   <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
   <Properties Name="SolutionProperties">
-    <Property Name="WorkspaceFolder" Value="..\CSharpBible\Data" />
+    <Property Name="WorkspaceFolder" Value="..\.." />
   </Properties>
 </Solution>

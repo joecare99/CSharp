@@ -9,10 +9,11 @@
     <Import_RootNamespace>DevOps</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)**\*.md" />
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\Skills\PackageUsage\README-PackageUsageSkill.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" Link="README-PackageUsageSkill.md" />
+    <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl051-Code-Wiki-Vault-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\Skills\PackageUsage\Inspect-PackageUsage.ps1" Link="Inspect-PackageUsage.ps1" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T083-Refine-Code-Wiki-To-Project-Level.md" />
     <None Include="$(MSBuildThisFileDirectory)Vision.md" />
   </ItemGroup>
 </Project>
