@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using static BaseLib.Helper.TestHelper;
 /// <summary>
 /// The Tests namespace.
@@ -318,37 +319,37 @@ public class StringUtilsTests
     }
 
     [TestMethod()]
-    [DataRow(null,  false)]
-    [DataRow("",  false)]
-    [DataRow("_",  false)]
-    [DataRow("Empty",  true)]
-    [DataRow("Empty_34",  true)]
-    [DataRow("2mpty2",  false)]
-    [DataRow("Emp ty2",  false)]
-    [DataRow("NIO1 ",  false)]
+    [DataRow(null, false)]
+    [DataRow("", false)]
+    [DataRow("_", false)]
+    [DataRow("Empty", true)]
+    [DataRow("Empty_34", true)]
+    [DataRow("2mpty2", false)]
+    [DataRow("Emp ty2", false)]
+    [DataRow("NIO1 ", false)]
     public void IsValidIdentifyerTest(string sAct, bool xExp)
     {
-        Assert.AreEqual(xExp,sAct.IsValidIdentifyer());
+        Assert.AreEqual(xExp, sAct.IsValidIdentifyer());
     }
 
     [TestMethod()]
-    [DataRow("This is a test",14, "This is a test")]
-    [DataRow("This is a test",0, "")]
-    [DataRow("This is a test",-1, "This is a tes")]
-    [DataRow("This is a test",1, "T")]
-    [DataRow("This is a test",20, "This is a test")]
-    public void LeftTest(string sAct,int iAct, string sExp)
+    [DataRow("This is a test", 14, "This is a test")]
+    [DataRow("This is a test", 0, "")]
+    [DataRow("This is a test", -1, "This is a tes")]
+    [DataRow("This is a test", 1, "T")]
+    [DataRow("This is a test", 20, "This is a test")]
+    public void LeftTest(string sAct, int iAct, string sExp)
     {
         Assert.AreEqual(sExp, sAct.Left(iAct));
     }
 
     [TestMethod()]
-    [DataRow("This is a test",14, "This is a test")]
-    [DataRow("This is a test",0, "")]
-    [DataRow("This is a test",-1, "his is a test")]
-    [DataRow("This is a test",1, "t")]
-    [DataRow("This is a test",20, "This is a test")]
-    public void RightTest(string sAct,int iAct, string sExp)
+    [DataRow("This is a test", 14, "This is a test")]
+    [DataRow("This is a test", 0, "")]
+    [DataRow("This is a test", -1, "his is a test")]
+    [DataRow("This is a test", 1, "t")]
+    [DataRow("This is a test", 20, "This is a test")]
+    public void RightTest(string sAct, int iAct, string sExp)
     {
         Assert.AreEqual(sExp, sAct.Right(iAct));
     }
@@ -360,7 +361,7 @@ public class StringUtilsTests
     [DataRow(false, "False")]
     [DataRow(1234, "1234")]
 
-    public void AsStringTest(object? oAct,string sExp)
+    public void AsStringTest(object? oAct, string sExp)
     {
         Assert.AreEqual(sExp, oAct.AsString());
     }
@@ -453,6 +454,105 @@ public class StringUtilsTests
 
         // Assert
         Assert.AreEqual(expected, result, $"Input: '{input}'");
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="StringUtils.IntoString(string[], IList{string}?, int)"/> creates a new array when no target is supplied.
+    /// </summary>
+    [TestMethod]
+    public void IntoStringWithoutTargetCreatesNewArray()
+    {
+        var source = new[] { "a", "b", "c" };
+
+        var result = source.IntoString();
+
+        CollectionAssert.AreEqual(source, result.ToArray());
+        Assert.AreEqual(source.Length, result.Count);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="StringUtils.IntoString(string[], IList{string}?, int)"/> copies values into an existing target at the requested offset.
+    /// </summary>
+    [TestMethod]
+    public void IntoStringWithPositiveOffsetUpdatesExistingTarget()
+    {
+        var source = new[] { "a", "b", "c" };
+        IList<string> target = new[] { "x0", "x1", "x2", "x3", "x4" };
+
+        var result = source.IntoString(target, 1);
+
+        Assert.AreSame(target, result);
+        CollectionAssert.AreEqual(new[] { "x0", "a", "b", "c", "x4" }, result.ToArray());
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="StringUtils.IntoString(string[], IList{string}?, int)"/> skips leading source values when a negative offset is used.
+    /// </summary>
+    [TestMethod]
+    public void IntoStringWithNegativeOffsetSkipsLeadingSourceValues()
+    {
+        var source = new[] { "a", "b", "c" };
+        IList<string> target = new[] { "x0", "x1" };
+
+        var result = source.IntoString(target, -1);
+
+        CollectionAssert.AreEqual(new[] { "b", "c" }, result.ToArray());
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="StringUtils.IntoString(string[], IList{string}?, int)"/> ignores values that would exceed the target bounds.
+    /// </summary>
+    [TestMethod]
+    public void IntoStringIgnoresValuesOutsideTargetBounds()
+    {
+        var source = new[] { "a", "b", "c" };
+        IList<string> target = new[] { "x0", "x1", "x2" };
+
+        var result = source.IntoString(target, 2);
+
+        CollectionAssert.AreEqual(new[] { "x0", "x1", "a" }, result.ToArray());
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="StringUtils.IntoString(string[], IList{string}?, int)"/> creates an empty target when the computed size is negative.
+    /// </summary>
+    [TestMethod]
+    public void IntoStringWithNegativeOffsetAndNoTargetCanCreateEmptyArray()
+    {
+        var source = new[] { "a", "b", "c" };
+
+        var result = source.IntoString(null, -5);
+
+        Assert.AreEqual(0, result.Count);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="StringUtils.ToSecureString(string?)"/> returns <c>null</c> for null and empty input.
+    /// </summary>
+    [TestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    public void ToSecureStringReturnsNullForNullOrEmptyInput(string? value)
+    {
+        var result = value.ToSecureString();
+
+        Assert.IsNull(result);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="StringUtils.ToSecureString(string?)"/> copies the original text and marks the result as read-only.
+    /// </summary>
+    [TestMethod]
+    public void ToSecureStringReturnsReadOnlySecureStringWithOriginalContent()
+    {
+        const string value = "Secret123!";
+
+        var result = value.ToSecureString();
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(value.Length, result.Length);
+        Assert.IsTrue(result.IsReadOnly());
+        Assert.AreEqual(value, new NetworkCredential(string.Empty, result).Password);
     }
 
     private bool testCharset(string arg1, string arg2) => !arg1.StartsWith("<Integer:") || int.TryParse(arg2, out _);
