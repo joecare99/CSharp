@@ -75,3 +75,11 @@ Apply these defaults when working in this repository unless the user explicitly 
 ## Nullability
 - Use strict nullable reference types to indicate when a variable can be null, and handle nullability appropriately in code.
 - When fixing nullability issues in this repository, do not use null-forgiving assignments like 'null!'; if a variable can be assigned null, make the variable nullable instead.
+
+## Wiki in `C:\Projekte\CSharp\CodeWikiVault`
+- Der Nutzer bevorzugt für das Code-Wiki eine klassische, aufgabenorientierte Struktur: 'Wie löse ich ...' und 'Was muss ich tun wenn ...'. Projekte dienen nur als Beispielgeber, nicht als Hauptgliederung oder README-Spiegelung.
+- Für Wiki-Inhalte sollen Graphen und Abläufe mit Mermaid-Graphs dargestellt werden.
+- Die Auffindbarkeit der Wiki-Inhalte soll auch rückwärts über Konzepte funktionieren: Wer nach LINQ, Field-Pattern oder ähnlichen Sprachfeatures sucht, soll das passende Beispiel direkt finden.
+- Der Nutzer bevorzugt für die Wiki-Struktur, dass alle Seiten einem Haupt-Subtype zugeordnet und in passende Unterordner verschoben werden; Index-Dateien sollen eine minimale Navigationsebene mit verlinkten Überschriften zu Unterindizes enthalten.
+- Für große Wiki-Indizes sollen dynamisch 2-4 exemplarische, grundlegende Haupteinträge im Hauptindex bleiben; übrige Inhalte in sinnvolle bereichsspezifische Unterordner mit Unterindex verschieben.
+- Bei Wiki-/Dokumentationsseiten sollen 'Best Practices' als nutzungsorientierte Inversion formuliert werden: 'Wie nutze ich den Code bestmöglich?', 'Wo macht er mir das Leben leichter?' und konkrete Beispiele statt allgemeiner Ratschläge. Die Best Practices sollen um implizite Nutzungshinweise erweitert werden: wie der Code verwendet werden kann, was er erleichtert, und anwendungsnahe Beispielszenarien statt nur preskriptiver Hinweise.
