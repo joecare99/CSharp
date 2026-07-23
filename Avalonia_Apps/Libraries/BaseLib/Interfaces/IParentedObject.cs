@@ -29,7 +29,7 @@ public interface IParentedObject<T>
     /// </summary>
     /// <param name="value">The value.</param>
     /// <param name="CallerMember">The caller member.</param>
-    void SetParent(T? value, [CallerMemberName] string CallerMember ="" );
+    void SetParent(T? value, [CallerMemberName] string CallerMember = "");
     /// <summary>
     /// Gets the parent.
     /// </summary>
@@ -40,4 +40,4 @@ public interface IParentedObject<T>
 /// <summary>
 /// Interface IParentedObject
 /// </summary>
-public interface IParentedObject : IParentedObject<object?>{ }
+public interface IParentedObject : IParentedObject<object?> { }

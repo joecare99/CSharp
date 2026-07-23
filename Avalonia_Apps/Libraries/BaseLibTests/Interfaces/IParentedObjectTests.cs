@@ -7,7 +7,7 @@ namespace BaseLib_netTests.Interfaces;
 
 class TestIPClass : IParentedObject<List<object>>
 {
-    private List<object>? _parent=null;
+    private List<object>? _parent = null;
     public string? Name { get; set; }
     public List<object>? GetParent()
         => _parent;
@@ -15,7 +15,7 @@ class TestIPClass : IParentedObject<List<object>>
     public void SetParent(List<object>? value, [CallerMemberName] string CallerMember = "")
     {
         _parent?.Remove(this);
-        _parent= value;
+        _parent = value;
         value?.Add(this);
     }
 
@@ -29,8 +29,8 @@ class TestIPClass : IParentedObject<List<object>>
 public class IParentedObjectTests
 {
     private IParentedObject<List<object>>[]? _child;
-    private readonly List<object> _par1=new();
-    private readonly List<object> _par2=new();
+    private readonly List<object> _par1 = new();
+    private readonly List<object> _par2 = new();
 
     [TestInitialize]
     public void Init()
@@ -44,7 +44,8 @@ public class IParentedObjectTests
 
 #if NET5_0_OR_GREATER
     [TestMethod]
-    public void ParentTest() {
+    public void ParentTest()
+    {
         Assert.IsNull(_child![0].Parent);
         Assert.IsEmpty(_par1);
         Assert.IsEmpty(_par2);

@@ -20,7 +20,7 @@ namespace BaseLib.Interfaces;
 /// Interface IHasChildren
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IHasChildren<T> where T : class  
+public interface IHasChildren<T> where T : class
 {
 #if NET5_0_OR_GREATER
     IEnumerable<T> Items { get => GetItems(); }
@@ -50,7 +50,7 @@ public interface IHasChildren<T> where T : class
     /// <param name="oldVal">The old value.</param>
     /// <param name="newVal">The new value.</param>
     /// <param name="prop">The property.</param>
-    void NotifyChildChange(T childObject, object oldVal, object newVal,[CallerMemberName] string prop = "" );
+    void NotifyChildChange(T childObject, object oldVal, object newVal, [CallerMemberName] string prop = "");
 }
 
 /// <summary>

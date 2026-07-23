@@ -33,7 +33,7 @@ public class IoC
     /// builder.AddSingleton&lt;IInterface2, CSingleton&gt;();
     /// IoC.GetReqSrv = builder.BuildServiceProvider().GetRequiredService;</code>
     /// </example>
-    public static Func<Type, object> GetReqSrv { get; set; }=(t)=>throw new NotImplementedException("Please initialize the service first.");
+    public static Func<Type, object> GetReqSrv { get; set; } = (t) => throw new NotImplementedException("Please initialize the service first.");
     /// <summary>
     /// Gets or sets the requested service (can be null).
     /// </summary>
@@ -96,7 +96,7 @@ public class IoC
     /// <typeparam name="T"></typeparam>
     /// <param name="key">The key</param>
     /// <returns>T, the initialized service(class)</returns>
-    public static T GetKeyedRequiredService<T>(object? key) => (T)GetKydReqSrv.Invoke(typeof(T),key);
+    public static T GetKeyedRequiredService<T>(object? key) => (T)GetKydReqSrv.Invoke(typeof(T), key);
     /// <summary>
     /// Gets the service.
     /// </summary>
@@ -120,7 +120,7 @@ public class IoC
         _Scope = _BaseScope = GetScope();
         GetReqSrv = (t) => { var s = sp.GetService(t); return s ?? throw new InvalidOperationException($"No service for {t}"); };
         GetSrv = sp.GetService;
-        GetKydReqSrv = (t, k) => { var s = sp.GetRequiredKeyedService(t,k); return s; };
+        GetKydReqSrv = (t, k) => { var s = sp.GetRequiredKeyedService(t, k); return s; };
     }
 
     /// <summary>

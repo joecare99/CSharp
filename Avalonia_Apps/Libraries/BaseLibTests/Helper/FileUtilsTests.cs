@@ -58,7 +58,8 @@ public class FileUtilsTests
         using FileStream fs = File.OpenWrite(sFilename);
         using StreamWriter sw = new(fs);
         sw.Write($"This is File: {sFilename}\r\nUserdata is {(aObj as FileUtilsTests)?.sUserData}");
-        if (eException != null) throw eException;
+        if (eException != null)
+            throw eException;
     }
 
     FileStream? fsopen = null;
@@ -214,7 +215,7 @@ public class FileUtilsTests
         var sFileName = "test.nix";
         try
         {
-            Assert.ThrowsExactly<KeyNotFoundException>(()=>FileUtils.SaveFile(SaveTestFile2!, Path.Combine(sLocalTestPath, sFileName), this));
+            Assert.ThrowsExactly<KeyNotFoundException>(() => FileUtils.SaveFile(SaveTestFile2!, Path.Combine(sLocalTestPath, sFileName), this));
             Assert.IsFalse(File.Exists(Path.Combine(sLocalTestPath, sFileName)));
         }
         finally

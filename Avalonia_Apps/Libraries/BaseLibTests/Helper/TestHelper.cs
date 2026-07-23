@@ -50,7 +50,7 @@ public static class TestHelper
                 if (prop.PropertyType.GetInterfaces().Contains(typeof(IEnumerable)))
                     AssertAreEqual((IEnumerable?)prop.GetValue(ExpData), (IEnumerable?)prop.GetValue(ActData), Msg + $".{prop.Name}");
                 else
-                Assert.AreEqual(ExpData.GetProp(prop.Name), ActData.GetProp(prop.Name), Msg + $".{prop.Name}");
+                    Assert.AreEqual(ExpData.GetProp(prop.Name), ActData.GetProp(prop.Name), Msg + $".{prop.Name}");
             }
         var fields = typeof(T).GetFields();
         foreach (var field in fields)
@@ -68,7 +68,8 @@ public static class TestHelper
                (i < aLines.Length - 1 ? $"{Environment.NewLine}#{i + 1:D3}: {aLines[(i + 1) % 5]}" : "") +
                (i < aLines.Length - 2 ? $"{Environment.NewLine}#{i + 2:D3}: {aLines[(i + 2) % 5]}" : "");
 
-        if (exp == null && act == null) return;
+        if (exp == null && act == null)
+            return;
         if (exp == null || act == null)
         {
             Assert.AreEqual(exp, act, Msg);
@@ -84,17 +85,17 @@ public static class TestHelper
         var iErr = -1;
         foreach (var el in exp)
         {
-            var al = !xEoAAct ?actE.Current:null;
+            var al = !xEoAAct ? actE.Current : null;
             actLines[i % 5] = $"{(al is string or null ? "" : al.GetType())} {al}";
             expLines[i % 5] = $"{(el is string or null ? "" : el.GetType())} {el}";
             if (iErr == -1 && !el!.Equals(al))
                 iErr = i;
-            if (iErr != -1 && i-3==iErr)
+            if (iErr != -1 && i - 3 == iErr)
                 Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");
-            xEoAAct = !actE.MoveNext();                    
+            xEoAAct = !actE.MoveNext();
             i++;
         }
-        if (iErr != -1 || (i==0 && !xEoAAct))
+        if (iErr != -1 || (i == 0 && !xEoAAct))
         {
             if (iErr == -1)
             {
@@ -105,9 +106,10 @@ public static class TestHelper
             else
                 actLines[i % 5] = $"";
             expLines[i % 5] = $"<EOF>";
-            Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");  }
+            Assert.AreEqual(BldLns(iErr, expLines), BldLns(iErr, actLines), $"{Msg}: Entry{i}:");
+        }
         else
-        { 
+        {
             Assert.IsTrue(xEoAAct);
         }
 
@@ -135,26 +137,30 @@ public static class TestHelper
 
     }
 
-    public static void AssertAreEqual<T>(T[] exp, T[] act, string Msg = "") where T : struct 
+    public static void AssertAreEqual<T>(T[] exp, T[] act, string Msg = "") where T : struct
     {
         if (exp != null && exp.Length / 2 < act?.Length)
             for (int i = 0; i < Math.Min(exp.Length, act.Length); i++)
-                if (!EqualityComparer<T>.Default.Equals( exp[i] , act[i]))
+                if (!EqualityComparer<T>.Default.Equals(exp[i], act[i]))
                     Assert.AreEqual(BldLns(i, exp), BldLns(i, act), $"{Msg}: Entry{i}:");
         Assert.AreEqual(exp?.Length, act?.Length);
 
         static string BldLns(int i, T[] dta)
         {
-            if (dta.Length < 10) return $"[{string.Join("; ", dta)}]"; 
+            if (dta.Length < 10)
+                return $"[{string.Join("; ", dta)}]";
             string sa;
-            List<string> s = new() {(sa= $"{dta[i]}") };
+            List<string> s = new() { (sa = $"{dta[i]}") };
             int size = sa.Length;
             var j = 1;
-            for (; j<30; j++)
+            for (; j < 30; j++)
             {
-                if (i-j>=0) { s.Insert(0,sa=$"{dta[i - j]}");size += sa.Length; }
-                if (i + j < dta.Length) { s.Add(sa = $"{dta[i + j]}"); size += sa.Length; }
-                if (size > 200) break;
+                if (i - j >= 0)
+                { s.Insert(0, sa = $"{dta[i - j]}"); size += sa.Length; }
+                if (i + j < dta.Length)
+                { s.Add(sa = $"{dta[i + j]}"); size += sa.Length; }
+                if (size > 200)
+                    break;
             }
             return $"[...{string.Join("; ", dta)}...]";
         }
