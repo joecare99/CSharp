@@ -240,7 +240,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(IntTestDataIO))]
     public void SetBitTest(int iVal, int ix, bool xSet, int iExp)
     {
-        if (!xSet) return;
+        if (!xSet)
+            return;
         Assert.AreEqual(iExp, iVal.SetBit(ix));
     }
 
@@ -255,7 +256,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(IntTestDataIO))]
     public void SetBit1Test(int iVal, int ix, bool xSet, int iExp)
     {
-        if (!xSet) return;
+        if (!xSet)
+            return;
         Assert.AreEqual(iExp, ByteUtils.SetBit(iVal, ix));
     }
 
@@ -286,7 +288,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(LongTestDataIO))]
     public void SetBit2IOTest(long lVal, int ix, bool xSet, long lExp)
     {
-        if (!xSet) return;
+        if (!xSet)
+            return;
         Assert.AreEqual(lExp, lVal.SetBit(ix));
     }
 
@@ -301,7 +304,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(LongTestDataIO))]
     public void SetBit3IOTest(long lVal, int ix, bool xSet, long lExp)
     {
-        if (!xSet) return;
+        if (!xSet)
+            return;
         Assert.AreEqual(lExp, ByteUtils.SetBit(lVal, ix));
     }
 
@@ -332,7 +336,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(UIntTestDataIO))]
     public void SetBit4Test(uint uVal, int ix, bool xSet, uint uExp)
     {
-        if (!xSet) return;
+        if (!xSet)
+            return;
         Assert.AreEqual(uExp, uVal.SetBit(ix));
     }
 
@@ -431,7 +436,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(IntTestDataIO))]
     public void ClearBitTest(int iVal, int ix, bool xSet, int iExp)
     {
-        if (xSet) return;
+        if (xSet)
+            return;
         Assert.AreEqual(iExp, iVal.ClearBit(ix));
     }
 
@@ -446,7 +452,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(IntTestDataIO))]
     public void ClearBit1Test(int iVal, int ix, bool xSet, int iExp)
     {
-        if (xSet) return;
+        if (xSet)
+            return;
         Assert.AreEqual(iExp, ByteUtils.ClearBit(iVal, ix));
     }
 
@@ -460,7 +467,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(UIntTestDataIO))]
     public void ClearBit5Test(uint iVal, int ix, bool xSet, uint iExp)
     {
-        if (xSet) return;
+        if (xSet)
+            return;
         Assert.AreEqual(iExp, iVal.ClearBit(ix));
     }
 
@@ -475,7 +483,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(UIntTestDataIO))]
     public void ClearBit6Test(uint iVal, int ix, bool xSet, uint iExp)
     {
-        if (xSet) return;
+        if (xSet)
+            return;
         Assert.AreEqual((uint)iExp, (uint)ByteUtils.ClearBit((uint)iVal, ix));
     }
 
@@ -506,7 +515,8 @@ public class ByteUtilsTests
     [DynamicData(nameof(LongTestDataIO))]
     public void ClearBit3Test(long lVal, int ix, bool xSet, long lExp)
     {
-        if (xSet) return;
+        if (xSet)
+            return;
         Assert.AreEqual(lExp, lVal.ClearBit(ix));
     }
 
@@ -618,14 +628,14 @@ public class ByteUtilsTests
     }
 
     [TestMethod()]
-    [DataRow(0L,0)]
-    [DataRow(1L,1)]
-    [DataRow(-1L,64)]
-    [DataRow(long.MinValue,1)]
-    [DataRow(long.MaxValue,63)]
-    public void BitCountTest(long lAct,int iExp)
+    [DataRow(0L, 0)]
+    [DataRow(1L, 1)]
+    [DataRow(-1L, 64)]
+    [DataRow(long.MinValue, 1)]
+    [DataRow(long.MaxValue, 63)]
+    public void BitCountTest(long lAct, int iExp)
     {
-        Assert.AreEqual(iExp,lAct.BitCount());
+        Assert.AreEqual(iExp, lAct.BitCount());
     }
 
     [TestMethod()]
@@ -633,7 +643,7 @@ public class ByteUtilsTests
     {
         for (var i = 0; i < 100000; i++)
         {
-            Assert.AreEqual(1, ((long)1 << i%64).BitCount());
+            Assert.AreEqual(1, ((long)1 << i % 64).BitCount());
         }
     }
 

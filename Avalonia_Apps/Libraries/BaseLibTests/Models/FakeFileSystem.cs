@@ -1,9 +1,9 @@
+using BaseLib.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BaseLib.Models.Interfaces;
 
 namespace BaseLib.Models;
 
@@ -111,7 +111,7 @@ public sealed class FakeFileSystem : IFile, IDirectory, IPath
     }
 
     public System.IO.StreamWriter CreateStreamWriter(string sPath)
-        => new(CreateWriteStream(sPath), new UTF8Encoding(false),bufferSize: -1, leaveOpen: false);
+        => new(CreateWriteStream(sPath), new UTF8Encoding(false), bufferSize: -1, leaveOpen: false);
 
     private System.IO.Stream CreateWriteStream(string sPath)
         => new FakeWriteBackStream(this, sPath);
