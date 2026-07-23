@@ -350,6 +350,9 @@
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="Libraries/Libraries.props" />
+    <Project Path="../CSharpBible/Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
+    <Project Path="../CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
+    <Project Path="../CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj" />
     <Project Path="Libraries/AppKomponentBaseLib/AppKomponentBaseLib.csproj" />
     <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
