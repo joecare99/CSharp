@@ -93,7 +93,7 @@ public partial class _Modul1 : IModul1
     public IStrings Strings => field;
     public ISystem System => field;
 
-    public string AppName => "Gen_FreeWin";
+    public string AppName => "GenFreeWin";
     public string Author => "Joe Care";
     public string VendorName => "JC-Soft";
 

@@ -374,11 +374,11 @@ public partial class Personen
             this.lblNickname = new System.Windows.Forms.Label();
             this.Label15 = new System.Windows.Forms.Label();
 
-            this.fraEventShowEdit1 = new Gen_FreeWin.Views.FraEventShowEdit(_viewModel.BirthEVM, Modul1.IText);
-            this.fraEventShowEdit2 = new Gen_FreeWin.Views.FraEventShowEdit(_viewModel.BaptismEVM, Modul1.IText);
-            this.fraEventShowEdit3 = new Gen_FreeWin.Views.FraEventShowEdit(_viewModel.DeathEVM, Modul1.IText);
-            this.fraEventShowEdit4 = new Gen_FreeWin.Views.FraEventShowEdit(_viewModel.BurialEVM, Modul1.IText);
-            this.fraPersImpQuerry1 = new Gen_FreeWin.Views.FraPersImpQuerry(_viewModel.FraPersImpQuerryViewModel,Modul1.IText);
+            this.fraEventShowEdit1 = new GenFreeWin.Views.FraEventShowEdit(_viewModel.BirthEVM, Modul1.IText);
+            this.fraEventShowEdit2 = new GenFreeWin.Views.FraEventShowEdit(_viewModel.BaptismEVM, Modul1.IText);
+            this.fraEventShowEdit3 = new GenFreeWin.Views.FraEventShowEdit(_viewModel.DeathEVM, Modul1.IText);
+            this.fraEventShowEdit4 = new GenFreeWin.Views.FraEventShowEdit(_viewModel.BurialEVM, Modul1.IText);
+            this.fraPersImpQuerry1 = new GenFreeWin.Views.FraPersImpQuerry(_viewModel.FraPersImpQuerryViewModel,Modul1.IText);
             ((System.ComponentModel.ISupportInitialize)(this.Picture1)).BeginInit();
             this.frmDublicates.SuspendLayout();
             this.frmReenter.SuspendLayout();

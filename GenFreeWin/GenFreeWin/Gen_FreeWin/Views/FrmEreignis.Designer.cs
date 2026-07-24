@@ -1,4 +1,4 @@
-using Gen_FreeWin.Main;
+using GenFreeWin.Main;
 using GenFree;
 using GenFree.Data;
 using GenFree.Helper;
