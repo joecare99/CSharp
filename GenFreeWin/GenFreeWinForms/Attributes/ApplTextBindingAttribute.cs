@@ -21,18 +21,33 @@ using System.Windows.Forms;
 namespace GenFreeWin.Attributes;
 
 [AttributeUsage(AttributeTargets.Field)]
-public class ApplTextBindingAttribute(string cmdName) : Attribute
+public class ApplTextBindingAttribute(string? cmdName) : Attribute
 {
+    public ApplTextBindingAttribute(EUserText cmdText) : this(null)
+    {
+        PropertyText = cmdText;
+    }
+
     public string PropertyName { get; } = cmdName;
+    public EUserText? PropertyText { get; }
 
     public void Bind(INotifyPropertyChanged viewModel, Control field, IApplUserTexts strings)
     {
-        if (viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi && pi.PropertyType == typeof(EUserText))
+        if (PropertyText != null)
+        {
+            field.Text = strings[PropertyText.Value];
+            strings.TextsChanged += (s, e) => field.Text = strings[PropertyText.Value];
+        }
+        else
+            if (PropertyName != null 
+            && viewModel.GetType().GetProperty(PropertyName) is PropertyInfo pi 
+            && pi.PropertyType == typeof(EUserText))
         {
             field.Text = strings[pi.GetValue(viewModel)!];
+            strings.TextsChanged += (s, e) => { field.Text = strings[pi.GetValue(viewModel)!]; };
             if (viewModel is INotifyPropertyChanged npc)
                 npc.PropertyChanged += (s, e) => { if (e.PropertyName == PropertyName) field.Text = strings[s!.GetType().GetProperty(e.PropertyName)?.GetValue(s)!]; };
-        }
+            }
     }
 
     public static void Commit(IComponent obj, INotifyPropertyChanged dataContext, IApplUserTexts strings)
