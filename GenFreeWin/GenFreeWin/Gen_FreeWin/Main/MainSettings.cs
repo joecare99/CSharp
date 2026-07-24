@@ -54,7 +54,7 @@ internal sealed class MainSettings : ApplicationSettingsBase
     }
 
     [SpecialSetting(SpecialSetting.ConnectionString)]
-    [DefaultSettingValue("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=d:\\Gen_FreeWin\\JC-Soft\\Gen_Plusdaten.mdb")]
+    [DefaultSettingValue("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=d:\\GenFreeWin\\JC-Soft\\Gen_Plusdaten.mdb")]
     [DebuggerNonUserCode]
     [ApplicationScopedSetting]
     public string Gen_PlusdatenConnectionString => this["Gen_PlusdatenConnectionString"].AsString();

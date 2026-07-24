@@ -16,10 +16,26 @@ internal sealed class Module2
     static IModul1 Modul1 => _Modul1.Instance;
 
     /// <summary>
-    /// Calculates the "Koelners phonetic"-Index.
+    /// Calculates the Cologne phonetic ("Kölner Phonetik") code for the supplied input value.
     /// </summary>
-    /// <param name="Eingabe">The eingabe.</param>
-    /// <returns>System.String.</returns>
+    /// <param name="Eingabe">
+    /// The input text to encode. Leading and trailing whitespace is removed before processing.
+    /// The method also normalizes common German diacritics and the sharp s character so that
+    /// equivalent spellings are treated consistently during phonetic encoding.
+    /// </param>
+    /// <returns>
+    /// A six-character Cologne phonetic code. The algorithm converts the input into a sequence of
+    /// phonetic groups, removes repeated consecutive digits, and pads the final result with trailing
+    /// zeroes when needed to reach a fixed length of six characters.
+    /// </returns>
+    /// <remarks>
+    /// This implementation follows the classical Cologne phonetic rules used for approximate matching
+    /// of names. It is intended for similarity-based searches rather than for exact string comparison.
+    /// A null input value is not supported and will cause a runtime exception.
+    /// </remarks>
+    /// <exception cref="System.NullReferenceException">
+    /// Thrown when <paramref name="Eingabe"/> is <see langword="null"/>.
+    /// </exception>
     public static string Koelner_Phonetic(string Eingabe)
     {
         string text = "";

@@ -7,6 +7,36 @@ namespace GenFreeWin.Views;
 
 public interface IOrtsVerViewModel : INotifyPropertyChanged
 {
+    string edtPlace_Text { get; set; }
+    string edtSuburb_Text { get; set; }
+    string edtCounty_Text { get; set; }
+    string edtCountry_Text { get; set; }
+    string edtState_Text { get; set; }
+    string edtLocator_Text { get; set; }
+    string edtLat1_Text { get; set; }
+    string edtLong1_Text { get; set; }
+    string edtGOV_Text { get; set; }
+    string edtLat2_Text { get; set; }
+    string edtLat3_Text { get; set; }
+    string edtLong2_Text { get; set; }
+    string edtLong3_Text { get; set; }
+    string edtZIP_Text { get; set; }
+    string edtAdditional_Text { get; set; }
+    string edtPolName_Text { get; set; }
+    string TextBox17_Text { get; set; }
+    string TextBox18_Text { get; set; }
+    string TextBox22_Text { get; set; }
+    string TextBox23_Text { get; set; }
+    string TextBox24_Text { get; set; }
+    string TextBox25_Text { get; set; }
+    string TextBox26_Text { get; set; }
+    string TextBox27_Text { get; set; }
+    string TextBox28_Text { get; set; }
+    string TextBox29_Text { get; set; }
+    string TextBox30_Text { get; set; }
+    string TextBox31_Text { get; set; }
+    string TextBox32_Text { get; set; }
+
     IContainerControl View { get; set; }
     IRelayCommand NextCommand { get; }
     IRelayCommand PrevCommand { get; }

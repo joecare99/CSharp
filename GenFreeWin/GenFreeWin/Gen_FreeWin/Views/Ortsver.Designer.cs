@@ -1295,22 +1295,22 @@ partial class Ortsver
     [TextBinding(nameof(IOrtsVerViewModel.Button10_Text))]
     internal Button Button10;
     [CommandBinding(nameof(IOrtsVerViewModel.BeginEditCommand))]
-    [ApplTextBinding<EUserText>(EUserText.t73)]
+    [ApplTextBinding(EUserText.t73)]
     [VisibilityBinding(nameof(IOrtsVerViewModel.Button11_Visible))]
     internal Button Button11;
     [CommandBinding(nameof(IOrtsVerViewModel.SavePlaceCommand))]
-    [ApplTextBinding<EUserText>(EUserText.tNMSave)]
+    [ApplTextBinding(EUserText.tNMSave)]
     [VisibilityBinding(nameof(IOrtsVerViewModel.Button12_Visible))]
     internal Button Button12;
     [CommandBinding(nameof(IOrtsVerViewModel.CalculateCoordinatesCommand))]
-    [ApplTextBinding<EUserText>(EUserText.t296)]
+    [ApplTextBinding(EUserText.t296)]
     internal Button Button13;
     [CommandBinding(nameof(IOrtsVerViewModel.ApplyCoordinatesCommand))]
-    [ApplTextBinding<EUserText>(EUserText.t297)]
+    [ApplTextBinding(EUserText.t297)]
     [VisibilityBinding(nameof(IOrtsVerViewModel.Button15_Visible))]
     internal Button Button15;
     [CommandBinding(nameof(IOrtsVerViewModel.CloseCoordinateConverterCommand))]
-    [ApplTextBinding<EUserText>(EUserText.t67)]
+    [ApplTextBinding(EUserText.t67)]
     internal Button Button14;
     [VisibilityBinding(nameof(IOrtsVerViewModel.ListBox1_Visible))]
     internal ListBox ListBox1;
