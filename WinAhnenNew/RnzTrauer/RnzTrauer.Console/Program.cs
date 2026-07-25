@@ -1,5 +1,7 @@
 ﻿using BaseLib.Models;
 using BaseLib.Models.Interfaces;
+using Db.Core.Abstractions.Sql.Interfaaces;
+using Db.Provider.MySql;
 using Microsoft.Extensions.DependencyInjection;
 using RnzTrauer.Console.Configuration;
 using RnzTrauer.Console.ViewModels;
