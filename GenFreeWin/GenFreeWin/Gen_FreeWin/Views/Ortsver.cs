@@ -1,6 +1,11 @@
+using BaseLib.Models.Interfaces;
+using GenFree;
+using GenFree.Interfaces.Sys;
+using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using Views;
 
@@ -13,12 +18,13 @@ public partial class Ortsver : Form
 
     private IOrtsVerViewModel _viewModel;
 
-    public Keys ModifierKeys => Form.ModifierKeys;
+    public Keys ModifierKeys => ModifierKeys;
     public Ortsver(IOrtsVerViewModel viewModel)
     {
         _viewModel = viewModel;
         _viewModel.View = this;
-        Load += _viewModel.Form_Load;
+        Load += Form_Load;
+        Load += Form_Load;
         lock (__ENCList)
         {
             __ENCList.Add(new WeakReference(this));
@@ -27,8 +33,172 @@ public partial class Ortsver : Form
         CommandBindingAttribute.Commit(this, _viewModel);
     }
 
+    IModul1 Modul1 => _Modul1.Instance;
+    private void Form_Load(object sender, EventArgs e)
+    {
+        var WinPath = Environment.GetEnvironmentVariable("Windir");
+
+        RTB1.AddContextMenu();
+        if (Modul1.FontSize > 0f)
+        {
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Courier New", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+            Font = new Font("Arial", Modul1.FontSize, FontStyle.Regular);
+        }
+        var aiPos = Modul1.Persistence.ReadIntsProg("maspos.dat", 2);
+        Left = aiPos[0];
+        Top = aiPos[1];
+        Text = $"{Modul1.AppName} Ortsverwaltung für Mandant {Modul1.Mandant}";
+        BackColor = Modul1.HintFarb;
+        Modul1.Persistence.ReadEnumInit<FormWindowState>("Windowstate", out var WiS);
+        WindowState = WiS;
+
+    }
+
     private void TextBox1_KeyUp(object s, KeyEventArgs e) => _viewModel.TextBox1_KeyUp(s, e);
-    private void Textbox1_KeyPress(object s, KeyPressEventArgs e) => _viewModel.Textbox1_KeyPress(s, e);
+    private void Textbox1_KeyPress(object s, KeyPressEventArgs e)
+    {
+        short num = checked((short)Strings.Asc(e.KeyChar));
+        if ((ModifierKeys & Keys.Alt) != 0)
+        {
+            return;
+        }
+
+        string name = ((TextBox)s).Name;
+        if (name == edtPlace.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtSuburb.Focus();
+            }
+        }
+        else if (name == edtSuburb.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtCounty.Focus();
+            }
+        }
+        else if (name == edtCounty.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtCountry.Focus();
+            }
+        }
+        else if (name == edtCountry.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtState.Focus();
+            }
+        }
+        else if (name == edtState.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtLocator.Focus();
+            }
+        }
+        else if (name == edtLocator.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtGOV.Focus();
+            }
+        }
+        else if (name == edtGOV.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtLat1.Focus();
+            }
+        }
+        else if (name == edtLat1.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtLat2.Focus();
+            }
+        }
+        else if (name == edtLat2.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtLat3.Focus();
+            }
+        }
+        else if (name == edtLat3.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtLong1.Focus();
+            }
+        }
+        else if (name == edtLong1.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtLong2.Focus();
+            }
+        }
+        else if (name == edtLong2.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtLong3.Focus();
+            }
+        }
+        else if (name == edtLong3.Name)
+        {
+            Locber();
+            if (num == 13)
+            {
+                _ = edtAdditional.Focus();
+            }
+        }
+        else if (name == edtAdditional.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtPolName.Focus();
+            }
+        }
+        else if (name == edtPolName.Name)
+        {
+            if (num == 13)
+            {
+                _ = edtZIP.Focus();
+            }
+        }
+        else if (name == edtZIP.Name)
+        {
+            if (num == 13)
+            {
+                _ = TextBox17.Focus();
+            }
+        }
+        else if (name == TextBox17.Name && num == 13)
+        {
+            _ = TextBox18.Focus();
+        }
+    }
+ 
+
     private void TextBox13_TextChanged(object s, EventArgs e) => _viewModel.TextBox13_TextChanged(s, e);
     private void TextBox30_TextChanged(object s, EventArgs e) => _viewModel.TextBox30_TextChanged(s, e);
     private void TextBox31_TextChanged(object s, EventArgs e) => _viewModel.TextBox31_TextChanged(s, e);

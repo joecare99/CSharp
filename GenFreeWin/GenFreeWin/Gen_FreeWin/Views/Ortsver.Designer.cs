@@ -1255,39 +1255,39 @@ partial class Ortsver
     [TextBinding(nameof(IOrtsVerViewModel.RTB1_Text))]
     internal RichTextBox RTB1;
     [CommandBinding(nameof(IOrtsVerViewModel.NextCommand))]
-    [ApplTextBinding(nameof(IOrtsVerViewModel.NextButtonText))]
+    [ApplTextBinding(nameof(IOrtsVerViewModel.btnNext_Text))]
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnNext_Visible))]
     internal Button btnNext;
     [CommandBinding(nameof(IOrtsVerViewModel.PrevCommand))]
-    [ApplTextBinding(nameof(IOrtsVerViewModel.PrevButtonText))]
+    [ApplTextBinding(nameof(IOrtsVerViewModel.btnPrev_Text))]
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnPrev_Visible))]
     internal Button btnPrev;
     [CommandBinding(nameof(IOrtsVerViewModel.ShowPlaceGECommand))]
-    [ApplTextBinding(nameof(IOrtsVerViewModel.ShowPlaceGEButtonText))]
+    [ApplTextBinding(nameof(IOrtsVerViewModel.btnShowPlaceGE_Text))]
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnShowPlaceGE_Visible))]
     internal Button btnShowPlaceGE;
     [CommandBinding(nameof(IOrtsVerViewModel.ShowPlaceGMCommand))]
-    [ApplTextBinding(nameof(IOrtsVerViewModel.ShowPlaceGMButtonText))]
+    [ApplTextBinding(nameof(IOrtsVerViewModel.btnShowPlaceGM_Text))]
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnShowPlaceGM_Visible))]
     internal Button btnShowPlaceGM;
     [CommandBinding(nameof(IOrtsVerViewModel.LinkGOVCommand))]
-    [ApplTextBinding(nameof(IOrtsVerViewModel.LinkGovButtonText))]
+    [ApplTextBinding(nameof(IOrtsVerViewModel.btnLinkGOV_Text))]
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnLinkGOV_Visible))]
     internal Button btnLinkGOV;
     [CommandBinding(nameof(IOrtsVerViewModel.SearchGOVCommand))]
-    [ApplTextBinding(nameof(IOrtsVerViewModel.SearchGovButtonText))]
+    [ApplTextBinding(nameof(IOrtsVerViewModel.btnSearchGOV_Text))]
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnSearchGOV_Visible))]
     internal Button btnSearchGOV;
     [CommandBinding(nameof(IOrtsVerViewModel.ConvertKoordsCommand))]
-    [ApplTextBinding(nameof(IOrtsVerViewModel.ConvertCoordinatesButtonText))]
+    [ApplTextBinding(nameof(IOrtsVerViewModel.btnConvertKoords_Text))]
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnConvertKoords_Visible))]
     internal Button btnConvertKoords;
     [CommandBinding(nameof(IOrtsVerViewModel.SearchNameCommand))]
-    [ApplTextBinding(nameof(IOrtsVerViewModel.SearchByNameButtonText))]
+    [ApplTextBinding(nameof(IOrtsVerViewModel.btnSearchName_Text))]
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnSearchName_Visible))]
     internal Button btnSearchName;
     [CommandBinding(nameof(IOrtsVerViewModel.SearchNumberCommand))]
-    [ApplTextBinding(nameof(IOrtsVerViewModel.SearchByNumberButtonText))]
+    [ApplTextBinding(nameof(IOrtsVerViewModel.btnSearchNumber_Text))]
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnSearchNumber_Visible))]
     internal Button btnSearchNumber;
     [CommandBinding(nameof(IOrtsVerViewModel.CloseViewCommand))]
