@@ -2,6 +2,7 @@
 using GenFree.Interfaces.UI;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 namespace GenFree.Views;
 
@@ -42,6 +43,8 @@ public class ApplUserTexts : IApplUserTexts
     public int Count => _texte.Count;
 
     public bool IsReadOnly => false;
+
+    public event EventHandler? TextsChanged;
 
     public void Add(string item) => _texte.Add(item);
 
