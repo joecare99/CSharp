@@ -36,6 +36,26 @@ public interface IOrtsVerViewModel : INotifyPropertyChanged
     string TextBox30_Text { get; set; }
     string TextBox31_Text { get; set; }
     string TextBox32_Text { get; set; }
+    string RTB1_Text { get; set; }
+
+    bool TextBox30_Visible { get; set; }
+    bool btnNext_Visible { get; set; }
+    bool btnPrev_Visible { get; set; }
+    bool btnShowPlaceGE_Visible { get; set; }
+    bool btnShowPlaceGM_Visible { get; set; }
+    bool btnLinkGOV_Visible { get; set; }
+    bool btnSearchGOV_Visible { get; set; }
+    bool btnConvertKoords_Visible { get; set; }
+    bool btnSearchName_Visible { get; set; }
+    bool btnSearchNumber_Visible { get; set; }
+    bool Button10_Visible { get; set; }
+
+    EUserText CoordinatesDecimalHintText { get; set; }
+    EUserText btnNext_Text { get; set; }
+    EUserText btnPrev_Text { get; set; }
+    EUserText btnShowPlaceGE_Text { get; set; }
+    EUserText btnShowPlaceGM_Text { get; set; }
+    EUserText btnLinkGOV_Text { get; set; }
 
     IContainerControl View { get; set; }
     IRelayCommand NextCommand { get; }
@@ -48,6 +68,24 @@ public interface IOrtsVerViewModel : INotifyPropertyChanged
     IRelayCommand SearchNameCommand { get; }
     IRelayCommand SearchNumberCommand { get; }
     bool Frame1_Visible { get; }
+    EUserText btnSearchGOV_Text { get; set; }
+    EUserText btnConvertKoords_Text { get; set; }
+    EUserText btnSearchName_Text { get; set; }
+    EUserText btnSearchNumber_Text { get; set; }
+    EUserText Button10_Text { get; set; }
+    bool Button11_Visible { get; set; }
+    bool Button12_Visible { get; set; }
+    bool Button15_Visible { get; set; }
+    bool ListBox1_Visible { get; set; }
+    bool ListBox2_Visible { get; set; }
+    string Button16_Text { get; set; }
+    bool Button17_Visible { get; set; }
+    bool Button18_Visible { get; set; }
+    bool Button19_Visible { get; set; }
+    string Label32_Text { get; set; }
+    string Label27_Text { get; set; }
+    bool Button23_Visible { get; set; }
+    bool Button21_Visible { get; set; }
 
     void Button10_Click(object s, EventArgs e);
     void Button11_Click(object s, EventArgs e);
@@ -73,7 +111,6 @@ public interface IOrtsVerViewModel : INotifyPropertyChanged
     void ListBox4_DoubleClick(object s, EventArgs e);
     void RTB1_KeyUp(object sender, KeyEventArgs e);
     void TextBox13_TextChanged(object sender, EventArgs e);
-    void Textbox1_KeyPress(object eventSender, KeyPressEventArgs eventArgs);
     void TextBox1_KeyUp(object sender, KeyEventArgs e);
     void TextBox30_TextChanged(object s, EventArgs e);
     void TextBox31_TextChanged(object s, EventArgs e);
