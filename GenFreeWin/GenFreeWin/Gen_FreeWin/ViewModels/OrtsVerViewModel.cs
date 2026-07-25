@@ -30,6 +30,26 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     [ObservableProperty]
     public partial bool Frame1_Visible { get; set; }
 
+    [ObservableProperty] public partial string edtPlace_Text { get; set; }
+    [ObservableProperty] public partial string edtSuburb_Text { get; set; }
+    [ObservableProperty] public partial string edtCounty_Text { get; set; }
+    [ObservableProperty] public partial string edtCountry_Text { get; set; }
+    [ObservableProperty] public partial string edtState_Text { get; set; }
+    [ObservableProperty] public partial string edtLocator_Text { get; set; }
+    [ObservableProperty] public partial string edtGOV_Text { get; set; }
+    [ObservableProperty] public partial string edtZIP_Text { get; set; }
+    [ObservableProperty] public partial string edtLong1_Text { get; set; }
+    [ObservableProperty] public partial string edtLong2_Text { get; set; }
+    [ObservableProperty] public partial string edtLong3_Text { get; set; }
+    [ObservableProperty] public partial string edtLat1_Text { get; set; }
+    [ObservableProperty] public partial string edtLat2_Text { get; set; }
+    [ObservableProperty] public partial string edtLat3_Text { get; set; }
+    [ObservableProperty] public partial string edtAdditional_Text { get; set; }
+    [ObservableProperty] public partial string edtPolName_Text { get; set; }
+    [ObservableProperty] public partial string TextBox17_Text { get; set; }
+    [ObservableProperty] public partial string TextBox18_Text { get; set; }
+    [ObservableProperty] public partial string TextBox22_Text { get; set; }
+
     IModul1 Modul1 => _Modul1.Instance;
     IInteraction Interaction = Menue.Default;
     #region VB-Compatibility-Interfaces
@@ -192,12 +212,12 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
     private void View_ClearGeoKoor()
     {
-        View.edtLong1.Text = "";
-        View.edtLong2.Text = "";
-        View.edtLong3.Text = "";
-        View.edtLat1.Text = "";
-        View.edtLat2.Text = "";
-        View.edtLat3.Text = "";
+        edtLong1_Text = "";
+        edtLong2_Text = "";
+        edtLong3_Text = "";
+        edtLat1_Text = "";
+        edtLat2_Text = "";
+        edtLat3_Text = "";
     }
 
     private void Setfields((string, string) tuple)
@@ -205,22 +225,22 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         switch (tuple.Item1)
         {
             case "B.h":
-                View.edtLat1.Text = tuple.Item2;
+                edtLat1_Text = tuple.Item2;
                 break;
             case "B.m":
-                View.edtLat2.Text = tuple.Item2;
+                edtLat2_Text = tuple.Item2;
                 break;
             case "B.s":
-                View.edtLat2.Text = tuple.Item2;
+                edtLat2_Text = tuple.Item2;
                 break;
             case "L.h":
-                View.edtLong1.Text = tuple.Item2;
+                edtLong1_Text = tuple.Item2;
                 break;
             case "L.m":
-                View.edtLong2.Text = tuple.Item2;
+                edtLong2_Text = tuple.Item2;
                 break;
             case "L.s":
-                View.edtLong3.Text = tuple.Item2;
+                edtLong3_Text = tuple.Item2;
                 break;
 
         }
@@ -262,20 +282,20 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
         View.Label13.Text = $"{Modul1.IText[EUserText.t150]}:{cPlace.ID}";
         View.Label13.Tag = cPlace.ID;
-        View.edtPlace.Text = cPlace.sOrt;
-        View.edtSuburb.Text = cPlace.sOrtsteil;
-        View.edtCounty.Text = cPlace.sKreis;
-        View.edtCountry.Text = cPlace.sLand;
-        View.edtState.Text = cPlace.sStaat;
-        View.edtLocator.Text = cPlace.sLoc;
-        View.TextBox17.Text = cPlace.sTerr.Trim();
-        View.TextBox18.Text = cPlace.sStaatk;
-        View.edtAdditional.Text = cPlace.sZusatz;
-        View.edtPolName.Text = cPlace.sPolName;
-        View.edtZIP.Text = cPlace.sPLZ;
-        View.edtGOV.Text = cPlace.sGOV;
+        edtPlace_Text = cPlace.sOrt;
+        edtSuburb_Text = cPlace.sOrtsteil;
+        edtCounty_Text = cPlace.sKreis;
+        edtCountry_Text = cPlace.sLand;
+        edtState_Text = cPlace.sStaat;
+        edtLocator_Text = cPlace.sLoc;
+        TextBox17_Text = cPlace.sTerr.Trim();
+        TextBox18_Text = cPlace.sStaatk;
+        edtAdditional_Text = cPlace.sZusatz;
+        edtPolName_Text = cPlace.sPolName;
+        edtZIP_Text = cPlace.sPLZ;
+        edtGOV_Text = cPlace.sGOV;
 
-        View.btnLinkGOV.Visible = View.edtGOV.Text.Trim() != "";
+        View.btnLinkGOV.Visible = edtGOV_Text.Trim() != "";
         View.RTB1.Text = "";
         View.RTB1.SelectedText = cPlace.sBem;
         View.Button16.BackColor = View.Button11.BackColor;
@@ -358,7 +378,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         {
             return;
         }
-        string adrString = View.edtPlace.Text + " " + View.edtSuburb.Text + " " + View.edtCountry.Text + " " + View.edtState.Text;
+        string adrString = edtPlace_Text + " " + edtSuburb_Text + " " + edtCountry_Text + " " + edtState_Text;
         Geocode geocode = GeocodeAdress(adrString);
         Modul1.UbgT = geocode.Longitude;
         if (Modul1.UbgT == "")
@@ -385,20 +405,20 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
                     text = Strings.Right("   " + Modul1.UbgT.Left(unchecked(Modul1_aByte) - 1), 3) + "°";
                     Modul1_Ba2 = text + Modul1_Ba3.Trim() + "' " + Modul1_Ba5.Trim();
                 }
-                if ((View.edtLat1.Text.Trim() != Modul1_Ba2.Left(3).Trim()
-                    || View.edtLat2.Text != Strings.Mid(Modul1_Ba2, 5, 2)
-                    || View.edtLat3.Text != Strings.Mid(Modul1_Ba2, 9, 2)
-                    || View.edtLong1.Text.Trim() != Modul1_Ba1.Left(3).Trim()
-                    || View.edtLong2.Text != Strings.Mid(Modul1_Ba1, 5, 2)
-                    || View.edtLong3.Text != Strings.Mid(Modul1_Ba1, 9, 2))
+                if ((edtLat1_Text.Trim() != Modul1_Ba2.Left(3).Trim()
+                    || edtLat2_Text != Strings.Mid(Modul1_Ba2, 5, 2)
+                    || edtLat3_Text != Strings.Mid(Modul1_Ba2, 9, 2)
+                    || edtLong1_Text.Trim() != Modul1_Ba1.Left(3).Trim()
+                    || edtLong2_Text != Strings.Mid(Modul1_Ba1, 5, 2)
+                    || edtLong3_Text != Strings.Mid(Modul1_Ba1, 9, 2))
                     && Interaction.MsgBox("B:" + Modul1_Ba2 + "   L:" + Modul1_Ba1, title: "Ermittelte Koordinaten übernehmen?", mb: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    View.edtLat1.Text = Modul1_Ba2.Left(3);
-                    View.edtLat2.Text = Strings.Mid(Modul1_Ba2, 5, 2);
-                    View.edtLat3.Text = Strings.Mid(Modul1_Ba2, 9, 2);
-                    View.edtLong1.Text = Modul1_Ba1.Left(3);
-                    View.edtLong2.Text = Strings.Mid(Modul1_Ba1, 5, 2);
-                    View.edtLong3.Text = Strings.Mid(Modul1_Ba1, 9, 2);
+                    edtLat1_Text = Modul1_Ba2.Left(3);
+                    edtLat2_Text = Strings.Mid(Modul1_Ba2, 5, 2);
+                    edtLat3_Text = Strings.Mid(Modul1_Ba2, 9, 2);
+                    edtLong1_Text = Modul1_Ba1.Left(3);
+                    edtLong2_Text = Strings.Mid(Modul1_Ba1, 5, 2);
+                    edtLong3_Text = Strings.Mid(Modul1_Ba1, 9, 2);
                     Geoles1();
                     View.btnShowPlaceGE.Visible = true;
                     View.Button22.PerformClick();
@@ -421,21 +441,21 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     private void ShowPlaceGM()
     {
         Ort = "";
-        if (View.edtZIP.Text.Trim() != ""
-            && (Strings.Asc(View.edtZIP.Text) > 46)
-            && (Strings.Asc(View.edtZIP.Text) < 58)
+        if (edtZIP_Text.Trim() != ""
+            && (Strings.Asc(edtZIP_Text) > 46)
+            && (Strings.Asc(edtZIP_Text) < 58)
             && DataModul.DB_PlaceTable.Fields[PlaceFields.PLZ].AsInt() > 0)
         {
             // Hä ?
             Ort = (DataModul.DB_PlaceTable.Fields[PlaceFields.PLZ].Value + " ");
         }
-        if (View.edtSuburb.Text != "")
+        if (edtSuburb_Text != "")
         {
-            Ort += View.edtSuburb.Text;
+            Ort += edtSuburb_Text;
         }
         else
         {
-            Ort += View.edtPlace.Text;
+            Ort += edtPlace_Text;
         }
         // nochmal Hä ?
         (LR, Br) = GoogleItf_GetKoordFromKmlFile();
@@ -479,7 +499,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     [RelayCommand]
     private void LinkGOV()
     {
-        _ = Process.Start("http://gov.genealogy.net/item/show?id=" + View.edtGOV.Text);
+        _ = Process.Start("http://gov.genealogy.net/item/show?id=" + edtGOV_Text);
     }
 
     [RelayCommand]
@@ -498,7 +518,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
     public void Button13_Click(object sender, EventArgs e)
     {
-        if (View.TextBox22.Text == "" || View.TextBox27.Text == "")
+        if (TextBox22_Text == "" || View.TextBox27.Text == "")
         {
             return;
         }
@@ -525,7 +545,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
             }
             View.TextBox28.Text = Strings.Format(num2, "##00");
             View.TextBox29.Text = Strings.Format(num4, "##00");
-            string text3 = View.TextBox22.Text;
+            string text3 = TextBox22_Text;
             num = Strings.InStr(text3, ".");
             if (num == 0f)
             {
@@ -554,14 +574,14 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     {
         if (!((View.TextBox23.Text.Trim() == "") | (View.TextBox27.Text.Trim() == "")))
         {
-            View.edtLat1.Text = View.TextBox23.Text;
-            View.edtLat2.Text = View.TextBox24.Text;
-            View.edtLat3.Text = View.TextBox25.Text;
-            View.edtLong1.Text = View.TextBox26.Text;
-            View.edtLong2.Text = View.TextBox28.Text;
-            View.edtLong3.Text = View.TextBox29.Text;
+            edtLat1_Text = View.TextBox23.Text;
+            edtLat2_Text = View.TextBox24.Text;
+            edtLat3_Text = View.TextBox25.Text;
+            edtLong1_Text = View.TextBox26.Text;
+            edtLong2_Text = View.TextBox28.Text;
+            edtLong3_Text = View.TextBox29.Text;
             View.btnShowPlaceGE.Visible = true;
-            View.TextBox22.Text = "";
+            TextBox22_Text = "";
             View.TextBox23.Text = "";
             View.TextBox24.Text = "";
             View.TextBox25.Text = "";
@@ -579,7 +599,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
     public void Button14_Click(object sender, EventArgs e)
     {
-        View.TextBox22.Text = "";
+        TextBox22_Text = "";
         View.TextBox23.Text = "";
         View.TextBox24.Text = "";
         View.TextBox25.Text = "";
@@ -619,13 +639,13 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
             cPlace = DataModul.Place.CreateNew();
         }
         byte b = 0;
-        cPlace.iOrt = SaveText(View.edtPlace.Text, ETextKennz.H_, ref b);
-        cPlace.iOrtsteil = SaveText(View.edtSuburb.Text, ETextKennz.I_, ref b);
-        cPlace.iKreis = SaveText(View.edtCounty.Text, ETextKennz.J_, ref b);
-        cPlace.iLand = SaveText(View.edtCountry.Text, ETextKennz.K_, ref b);
-        cPlace.iStaat = SaveText(View.edtState.Text, ETextKennz.L_, ref b);
-        cPlace.sPolName = View.edtState.Text;
-        SaveText(View.edtState.Text, ETextKennz.S_, ref b);
+        cPlace.iOrt = SaveText(edtPlace_Text, ETextKennz.H_, ref b);
+        cPlace.iOrtsteil = SaveText(edtSuburb_Text, ETextKennz.I_, ref b);
+        cPlace.iKreis = SaveText(edtCounty_Text, ETextKennz.J_, ref b);
+        cPlace.iLand = SaveText(edtCountry_Text, ETextKennz.K_, ref b);
+        cPlace.iStaat = SaveText(edtState_Text, ETextKennz.L_, ref b);
+        cPlace.sPolName = edtState_Text;
+        SaveText(edtState_Text, ETextKennz.S_, ref b);
         if (b == 0)
         {
             _ = Interaction.MsgBox("Ein leerer Ort kann nicht gespeichert werden!");
@@ -634,29 +654,29 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         }
         else
         {
-            cPlace.sLoc = View.edtLocator.Text.ToUpper().Trim();
-            cPlace.sL = "    " + View.edtLong1.Text.Trim().Right(4) + "," + "  " + View.edtLong2.Text.Trim().Right(2) + "  " + View.edtLong3.Text.Trim().Right(2);
-            cPlace.sB = "    " + View.edtLat1.Text.Trim().Right(4) + "," + "  " + View.edtLat2.Text.Trim().Right(2) + "  " + View.edtLat3.Text.Trim().Right(2);
-            cPlace.sTerr = Strings.UCase(View.TextBox17.Text.Trim().Left(3));
-            cPlace.sStaatk = Strings.UCase(View.TextBox18.Text.Trim().Left(3));
-            cPlace.sZusatz = View.edtAdditional.Text.Trim().Left(10);
-            if (View.edtZIP.Text.TrimEnd() == "")
+            cPlace.sLoc = edtLocator_Text.ToUpper().Trim();
+            cPlace.sL = "    " + edtLong1_Text.Trim().Right(4) + "," + "  " + edtLong2_Text.Trim().Right(2) + "  " + edtLong3_Text.Trim().Right(2);
+            cPlace.sB = "    " + edtLat1_Text.Trim().Right(4) + "," + "  " + edtLat2_Text.Trim().Right(2) + "  " + edtLat3_Text.Trim().Right(2);
+            cPlace.sTerr = Strings.UCase(TextBox17_Text.Trim().Left(3));
+            cPlace.sStaatk = Strings.UCase(TextBox18_Text.Trim().Left(3));
+            cPlace.sZusatz = edtAdditional_Text.Trim().Left(10);
+            if (edtZIP_Text.TrimEnd() == "")
             {
-                View.edtZIP.Text = "0";
+                edtZIP_Text = "0";
             }
-            cPlace.sPLZ = View.edtZIP.Text.Trim().Left(10);
+            cPlace.sPLZ = edtZIP_Text.Trim().Left(10);
             View.RTB1.Text = View.RTB1.Text.Trim();
             if (View.RTB1.Text == "")
             {
                 View.RTB1.Text = " ";
             }
             cPlace.sBem = View.RTB1.Text;
-            View.edtGOV.Text = View.edtGOV.Text.ToUpper();
-            cPlace.sGOV = View.edtGOV.Text.Trim().Left(20);
+            edtGOV_Text = edtGOV_Text.ToUpper();
+            cPlace.sGOV = edtGOV_Text.Trim().Left(20);
             DataModul.Place.Commit(cPlace);
 
-            var sPrefix = View.edtSuburb.Text.Trim() != "" ? $"-{View.edtSuburb.Text.Trim()} " : " ";
-            DataModul_DOSB_OrtS_Update(cPlace, $"{View.edtPlace.Text.Trim()}{sPrefix} {View.edtCounty.Text.Trim()} {View.edtCountry.Text.Trim()} {View.edtState.Text.Trim()}");
+            var sPrefix = edtSuburb_Text.Trim() != "" ? $"-{edtSuburb_Text.Trim()} " : " ";
+            DataModul_DOSB_OrtS_Update(cPlace, $"{edtPlace_Text.Trim()}{sPrefix} {edtCounty_Text.Trim()} {edtCountry_Text.Trim()} {edtState_Text.Trim()}");
 
             Geoles(cPlace);
             Modul1.Ubg = View.Label13.Tag.AsInt();
@@ -823,37 +843,37 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         switch (Textindex)
         {
             case 1:
-                View.edtPlace.Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
+                edtPlace_Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
                 View.ListBox1.Items.Clear();
                 _ = View.edtSuburb.Focus();
                 break;
             case 2:
-                View.edtSuburb.Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
+                edtSuburb_Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
                 View.ListBox1.Items.Clear();
                 _ = View.edtCounty.Focus();
                 break;
             case 3:
-                View.edtCounty.Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
+                edtCounty_Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
                 View.ListBox1.Items.Clear();
                 _ = View.edtCountry.Focus();
                 break;
             case 4:
-                View.edtCountry.Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
+                edtCountry_Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
                 View.ListBox1.Items.Clear();
                 _ = View.edtState.Focus();
                 break;
             case 5:
-                View.edtState.Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
+                edtState_Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
                 View.ListBox1.Items.Clear();
                 _ = View.edtAdditional.Focus();
                 break;
             case 15:
-                View.edtAdditional.Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
+                edtAdditional_Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
                 View.ListBox1.Items.Clear();
                 _ = View.edtPolName.Focus();
                 break;
             case 16:
-                View.edtPolName.Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
+                edtPolName_Text = Strings.Trim(View.ListBox1.SelectedItem.AsString().Left(240));
                 View.ListBox1.Items.Clear();
                 _ = View.edtZIP.Focus();
                 break;
@@ -1067,10 +1087,10 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
                 Modul1.eTKennz = ETextKennz.L_;
                 break;
             case 6:
-                if (View.edtLocator.Text.Length > 6)
+                if (edtLocator_Text.Length > 6)
                 {
                     Interaction.Beep();
-                    View.edtLocator.Text = View.edtLocator.Text.Left(6);
+                    edtLocator_Text = edtLocator_Text.Left(6);
                     View.edtLocator.SelectionStart = 6;
                 }
                 else
@@ -1176,19 +1196,19 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     }
     private void View_Ortmaskleer()
     {
-        View.edtPlace.Text = "";
-        View.edtSuburb.Text = "";
-        View.edtCounty.Text = "";
-        View.edtCountry.Text = "";
-        View.edtState.Text = "";
-        View.edtLocator.Text = "";
-        View.edtGOV.Text = "";
+        edtPlace_Text = "";
+        edtSuburb_Text = "";
+        edtCounty_Text = "";
+        edtCountry_Text = "";
+        edtState_Text = "";
+        edtLocator_Text = "";
+        edtGOV_Text = "";
         View_ClearGeoKoor();
-        View.edtZIP.Text = "";
-        View.edtAdditional.Text = "";
-        View.edtPolName.Text = "";
-        View.TextBox17.Text = "";
-        View.TextBox18.Text = "";
+        edtZIP_Text = "";
+        edtAdditional_Text = "";
+        edtPolName_Text = "";
+        TextBox17_Text = "";
+        TextBox18_Text = "";
         View.RTB1.Text = "";
     }
 
@@ -1340,19 +1360,19 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     public void Locber()
     {
         float num = 1f;
-        if (View.edtLat1.Text.Trim() == "")
+        if (edtLat1_Text.Trim() == "")
         {
             num = 0f;
         }
-        if (View.edtLat2.Text.Trim() == "")
+        if (edtLat2_Text.Trim() == "")
         {
             num = 0f;
         }
-        if (View.edtLong1.Text.Trim() == "")
+        if (edtLong1_Text.Trim() == "")
         {
             num = 0f;
         }
-        if (View.edtLong2.Text.Trim() == "")
+        if (edtLong2_Text.Trim() == "")
         {
             num = 0f;
         }
@@ -1361,9 +1381,9 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
             _ = Interaction.MsgBox("Eingabe unvollständig, berechenen des Locatorcodes nicht möglich");
             return;
         }
-        float num2 = View.edtLat1.Text.AsInt();
-        float num3 = View.edtLat2.Text.AsInt();
-        float num4 = View.edtLat3.Text.AsInt();
+        float num2 = edtLat1_Text.AsInt();
+        float num3 = edtLat2_Text.AsInt();
+        float num4 = edtLat3_Text.AsInt();
         if (num2 < 0f)
         {
             num3 *= -1f;
@@ -1374,9 +1394,9 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         {
             _ = Interaction.MsgBox("Falsche Eingabe");
         }
-        float num6 = View.edtLong1.Text.AsInt();
-        float num7 = View.edtLong2.Text.AsInt();
-        float num8 = View.edtLong3.Text.AsInt();
+        float num6 = edtLong1_Text.AsInt();
+        float num7 = edtLong2_Text.AsInt();
+        float num8 = edtLong3_Text.AsInt();
         if (num6 < 0f)
         {
             num7 *= -1f;
@@ -1415,11 +1435,11 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
             num11 = Conversion.Int(num11);
             float num22 = 65f + num11;
             string text4 = Strings.Chr((int)Math.Round(num22)).AsString();
-            if (View.edtLocator.Text.Trim() == "")
+            if (edtLocator_Text.Trim() == "")
             {
-                View.edtLocator.Text = text2 + text + num16.AsString().TrimStart() + num18.AsString().TrimStart() + text3 + text4;
+                edtLocator_Text = text2 + text + num16.AsString().TrimStart() + num18.AsString().TrimStart() + text3 + text4;
             }
-            else if (View.edtLocator.Text != text2 + text + num16.AsString().TrimStart() + num18.AsString().TrimStart() + text3 + text4)
+            else if (edtLocator_Text != text2 + text + num16.AsString().TrimStart() + num18.AsString().TrimStart() + text3 + text4)
             {
                 string text5 = "Errechneter Locator-Code ";
                 text5 = text5 + "\r" + text2 + text + num16.AsString().TrimStart() + num18.AsString().TrimStart() + text3 + text4;
@@ -1428,7 +1448,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
                 var Modul1_Value = Interaction.MsgBox(text5, title: "", mb: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Question);
                 if (Modul1_Value == DialogResult.Yes)
                 {
-                    View.edtLocator.Text = text2 + text + num16.AsString().TrimStart() + num18.AsString().TrimStart() + text3 + text4;
+                    edtLocator_Text = text2 + text + num16.AsString().TrimStart() + num18.AsString().TrimStart() + text3 + text4;
                     View.Button22.PerformClick();
                 }
             }
@@ -1445,11 +1465,11 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         }
         //Discarded unreachable code: IL_0cff
         byte b2 = 0;
-        cPlace.iOrt = SaveText(View.edtPlace.Text, ETextKennz.H_, ref b2);
-        cPlace.iOrtsteil = SaveText(View.edtSuburb.Text, ETextKennz.I_, ref b2);
-        cPlace.iKreis = SaveText(View.edtCounty.Text, ETextKennz.J_, ref b2);
-        cPlace.iLand = SaveText(View.edtCountry.Text, ETextKennz.K_, ref b2);
-        cPlace.iStaat = SaveText(View.edtState.Text, ETextKennz.L_, ref b2);
+        cPlace.iOrt = SaveText(edtPlace_Text, ETextKennz.H_, ref b2);
+        cPlace.iOrtsteil = SaveText(edtSuburb_Text, ETextKennz.I_, ref b2);
+        cPlace.iKreis = SaveText(edtCounty_Text, ETextKennz.J_, ref b2);
+        cPlace.iLand = SaveText(edtCountry_Text, ETextKennz.K_, ref b2);
+        cPlace.iStaat = SaveText(edtState_Text, ETextKennz.L_, ref b2);
 
         if (b2 == 0)
         {
@@ -1459,9 +1479,9 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         }
         else
         {
-            if (View.edtPolName.Text != "")
+            if (edtPolName_Text != "")
             {
-                Modul1.UbgT = View.edtPolName.Text.TrimEnd();
+                Modul1.UbgT = edtPolName_Text.TrimEnd();
                 Modul1.eTKennz = ETextKennz.S_;
                 Modul1.Ubg = Modul1.TextSpeich(Modul1.UbgT, Modul1.UbgT1, Modul1.eTKennz, Modul1.PersInArb, Modul1.LfNR);
                 cPlace.sPolName = Modul1.Ubg.AsString();
@@ -1470,21 +1490,21 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
             {
                 cPlace.sPolName = "0";
             }
-            cPlace.sLoc = View.edtLocator.Text.ToUpper().Trim();
-            cPlace.sL = View.edtLong1.Text.Trim().PadLeft(4) + "," + View.edtLong2.Text.Trim().PadLeft(2) + View.edtLong3.Text.Trim().PadLeft(2);
-            cPlace.sB = View.edtLat1.Text.Trim().PadLeft(4) + "," + View.edtLat2.Text.Trim().PadLeft(2) + View.edtLat3.Text.Trim().PadLeft(2);
-            cPlace.sTerr = Strings.UCase(View.TextBox17.Text.Trim().Left(3));
-            cPlace.sStaatk = Strings.UCase(View.TextBox18.Text.Trim().Left(3));
-            cPlace.sZusatz = View.edtAdditional.Text.Trim().Left(10);
-            if (View.edtPolName.Text.Trim() == "")
+            cPlace.sLoc = edtLocator_Text.ToUpper().Trim();
+            cPlace.sL = edtLong1_Text.Trim().PadLeft(4) + "," + edtLong2_Text.Trim().PadLeft(2) + edtLong3_Text.Trim().PadLeft(2);
+            cPlace.sB = edtLat1_Text.Trim().PadLeft(4) + "," + edtLat2_Text.Trim().PadLeft(2) + edtLat3_Text.Trim().PadLeft(2);
+            cPlace.sTerr = Strings.UCase(TextBox17_Text.Trim().Left(3));
+            cPlace.sStaatk = Strings.UCase(TextBox18_Text.Trim().Left(3));
+            cPlace.sZusatz = edtAdditional_Text.Trim().Left(10);
+            if (edtPolName_Text.Trim() == "")
             {
-                View.edtPolName.Text = " ";
+                edtPolName_Text = " ";
             }
-            if (View.edtZIP.Text.TrimEnd() == "")
+            if (edtZIP_Text.TrimEnd() == "")
             {
-                View.edtZIP.Text = "0";
+                edtZIP_Text = "0";
             }
-            cPlace.sPLZ = View.edtZIP.Text.TrimEnd();
+            cPlace.sPLZ = edtZIP_Text.TrimEnd();
             View.RTB1.Text = View.RTB1.Text.Trim();
             if (View.RTB1.Text == "")
             {
@@ -1497,12 +1517,12 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
             {
                 DataModul.DB_PlaceTable.Fields[PlaceFields.OrtNr].Value = Modul1_OrtNr;
             }
-            View.edtGOV.Text = View.edtGOV.Text.ToUpper();
-            cPlace.sGOV = View.edtGOV.Text.Trim();
+            edtGOV_Text = edtGOV_Text.ToUpper();
+            cPlace.sGOV = edtGOV_Text.Trim();
             DataModul.Place.Commit(cPlace);
 
-            var sPrefix = View.edtSuburb.Text.Trim() != "" ? "-" + View.edtSuburb.Text.Trim() + " " : " ";
-            string sPlace = View.edtPlace.Text.Trim() + sPrefix + View.edtCounty.Text.Trim() + " " + View.edtCountry.Text.Trim() + " " + View.edtState.Text.Trim();
+            var sPrefix = edtSuburb_Text.Trim() != "" ? "-" + edtSuburb_Text.Trim() + " " : " ";
+            string sPlace = edtPlace_Text.Trim() + sPrefix + edtCounty_Text.Trim() + " " + edtCountry_Text.Trim() + " " + edtState_Text.Trim();
 
             DataModul_DOSB_OrtsTable_SetData(Modul1_OrtNr, sPlace);
             Modul1.UbgT = sPlace;
@@ -1692,7 +1712,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
     public void Button21_Click(object sender, EventArgs e)
     {
-        string adrString = View.edtPlace.Text + " " + View.edtSuburb.Text + " " + View.edtCountry.Text + " " + View.edtState.Text;
+        string adrString = edtPlace_Text + " " + edtSuburb_Text + " " + edtCountry_Text + " " + edtState_Text;
         Geocode geocode = GeocodeAdress(adrString);
         Modul1.UbgT = geocode.Longitude;
         checked
@@ -1717,12 +1737,12 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
                 }
                 if (Interaction.MsgBox("B:" + Modul1_Ba2 + "   L:" + Modul1_Ba1, title: "Ermittelte Koordinaten übernehmen?", mb: MessageBoxButtons.YesNo, icon: MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    View.edtLat1.Text = Modul1_Ba2.Left(3);
-                    View.edtLat2.Text = Strings.Mid(Modul1_Ba2, 5, 2);
-                    View.edtLat3.Text = Strings.Mid(Modul1_Ba2, 9, 2);
-                    View.edtLong1.Text = Modul1_Ba1.Left(3);
-                    View.edtLong2.Text = Strings.Mid(Modul1_Ba1, 5, 2);
-                    View.edtLong3.Text = Strings.Mid(Modul1_Ba1, 9, 2);
+                    edtLat1_Text = Modul1_Ba2.Left(3);
+                    edtLat2_Text = Strings.Mid(Modul1_Ba2, 5, 2);
+                    edtLat3_Text = Strings.Mid(Modul1_Ba2, 9, 2);
+                    edtLong1_Text = Modul1_Ba1.Left(3);
+                    edtLong2_Text = Strings.Mid(Modul1_Ba1, 5, 2);
+                    edtLong3_Text = Strings.Mid(Modul1_Ba1, 9, 2);
                     Geoles1();
                     View.btnShowPlaceGE.Visible = true;
                     View.Button22.PerformClick();
@@ -1737,15 +1757,15 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
     public void Geoles1()
     {
-        string text = View.edtPlace.Text.Trim();
-        if (View.edtSuburb.Text.Trim() != "")
+        string text = edtPlace_Text.Trim();
+        if (edtSuburb_Text.Trim() != "")
         {
-            text = text + "-" + View.edtSuburb.Text.Trim();
+            text = text + "-" + edtSuburb_Text.Trim();
         }
 
-        string text3 = View.edtLat1.Text.Trim() + ".";
-        float num = (float)(View.edtLat2.Text.AsInt() / 60.0 * 100.0);
-        float num2 = (float)(View.edtLat3.Text.AsInt() / 3600.0 * 100.0);
+        string text3 = edtLat1_Text.Trim() + ".";
+        float num = (float)(edtLat2_Text.AsInt() / 60.0 * 100.0);
+        float num2 = (float)(edtLat3_Text.AsInt() / 3600.0 * 100.0);
         float num3 = num + num2;
         num3 *= 100f;
         checked
@@ -1753,9 +1773,9 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
             num3 = (short)Math.Round(num3);
             string text4 = Strings.Format(num3, "####0000");
             text3 += text4;
-            string text2 = View.edtLong1.Text.Trim() + ".";
-            num = (float)(View.edtLong2.Text.AsInt() / 60.0 * 100.0);
-            num2 = (float)(View.edtLong3.Text.AsInt() / 3600.0 * 100.0);
+            string text2 = edtLong1_Text.Trim() + ".";
+            num = (float)(edtLong2_Text.AsInt() / 60.0 * 100.0);
+            num2 = (float)(edtLong3_Text.AsInt() / 3600.0 * 100.0);
             num3 = num + num2;
             num3 *= 100f;
             num3 = (short)Math.Round(num3);
@@ -1810,7 +1830,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
     public void TextBox13_TextChanged(object sender, EventArgs e)
     {
-        if (View.edtLong3.Text.Trim().Length == 2)
+        if (edtLong3_Text.Trim().Length == 2)
         {
             Locber();
         }
