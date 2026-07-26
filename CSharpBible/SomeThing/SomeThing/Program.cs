@@ -1,9 +1,9 @@
 #define ShowGen
 #define _SingleTask
+using BaseLib.Models;
 using System.Threading;
-using ConsoleDisplay.View;
 
-MyConsole console = new();
+ConsoleProxy console = new();
 const int T2k = 1<<11, //2048 (2^11)
           CellPerDimension = (0x13 << 1) + 1, // 39 
           One = CellPerDimension & -CellPerDimension, // 1

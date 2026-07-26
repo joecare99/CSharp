@@ -6,12 +6,12 @@
 // Last Modified By : AI Assistant
 // Last Modified On : 09-27-2025
 // ***********************************************************************
-using ConsoleLib.Interfaces;
 using System;
 using System.Drawing;
+using System.ComponentModel;
+using ConsoleLib.Interfaces;
 using ConsoleLib.CommonControls;
 using ConsoleMouseApp.ViewModels;
-using System.ComponentModel;
 
 namespace ConsoleMouseApp.Views;
 

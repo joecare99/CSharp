@@ -1,6 +1,6 @@
 #define ShowGen
+using BaseLib.Models;
 using System.Threading;
-using ConsoleDisplay.View;
 
 // Initialisieren der Variablen
 const int gridSize = 1 << 11;
@@ -16,7 +16,7 @@ int[] rowOffsets = new int[] { 0, cellSpacing - 4, cellCount - cellSpacing, -cel
 int[] colOffsets = new int[] { cellSpacing, cellCount, -cellSpacing, -cellCount };
 int[] grid = new int[gridSize];
 
-MyConsole console = new();
+ConsoleProxy console = new();
 Rnd randomGenerator = new();
 // Funktion zum Drucken von ASCII-Art
 void PrintHouse(int x) => console.Write((x < cellSize) ? $"{houseChars[((housePattern >> (x++ << cellSpacing)) & 3) - 1]}{houseChars[((housePattern >> (x << cellSpacing)) & 3) - 1]}" : $"{houseChars}{houseChars}{houseChars}\r\n"[x..]);

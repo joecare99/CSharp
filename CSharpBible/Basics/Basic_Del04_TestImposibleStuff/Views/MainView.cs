@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Windows.Input;
-using ConsoleDisplay.View;
 using Basic_Del04_TestImposibleStuff.ViewModels;
 using BaseLib.Interfaces;
+using BaseLib.Models;
 
 namespace Basic_Del04_TestImposibleStuff.Views;
 
 public class MainView : ICommand
 {
     public MainViewModel DataContext { get; set; } = new();
-    public IConsole console { get; set; } = new MyConsole();
+    public IConsole console { get; set; } = new ConsoleProxy();
 
     public event EventHandler? CanExecuteChanged;
 

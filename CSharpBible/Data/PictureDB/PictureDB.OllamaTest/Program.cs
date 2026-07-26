@@ -15,7 +15,7 @@ namespace PictureDB.OllamaTest;
 internal static class Program
 {
     private const string DefaultEndpoint = "http://localhost:11434/";
-    private const string DefaultModel = "llava";
+    private const string DefaultModel = "ministral-3:3b";
     private const string DefaultPrompt = "Describe this image in detail.";
     private const int MinDimension = 336;
 
