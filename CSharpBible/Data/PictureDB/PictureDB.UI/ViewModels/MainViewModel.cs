@@ -83,7 +83,7 @@ public partial class MainViewModel : ObservableObject
                 try
                 {
                     var b64 = _processor.ConvertToBase64(f);
-                    var resp = await _llm.AnalyzeImageAsync(b64, "Kategorisiere und bewerte dieses Bild.");
+                    var resp = await _llm.AnalyzeImageAsync(b64, "Categorize and evaluate this image. (Answer in JSON format only.)");
                     var r = new ImageResult { FilePath = f, Category = _categorizer.ExtractCategory(resp), Score = _evaluator.ExtractScore(resp) };
                     App.Current.Dispatcher.Invoke(() => Results.Add(r));
                 }

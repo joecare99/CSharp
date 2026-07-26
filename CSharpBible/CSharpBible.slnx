@@ -115,8 +115,6 @@
     <Project Path="Data/DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
     <Project Path="Data/NebelEbook/NebelEbook.csproj" />
     <Project Path="Data/Story.Base/Story.Base.csproj" />
-    <Project Path="Data/TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
-    <Project Path="Data/TraceCsv2realCsvTests/TraceCsv2realCsvTests.csproj" />
   </Folder>
   <Folder Name="/Data/ConsoleApp1/">
     <Project Path="Data/ConsoleApp1/DynamicStateMachine.csproj" />
@@ -193,6 +191,8 @@
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Widgets.Wpf/TraceAnalysis.Widgets.Wpf.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Workbench.Core/TraceAnalysis.Workbench.Core.csproj" />
     <Project Path="Data/TraceAnalysis/TraceAnalysis.Workbench.Wpf/TraceAnalysis.Workbench.Wpf.csproj" />
+    <Project Path="Data/TraceCsv2realCsv/TraceCsv2realCsv.csproj" />
+    <Project Path="Data/TraceCsv2realCsvTests/TraceCsv2realCsvTests.csproj" />
   </Folder>
   <Folder Name="/Data/Workbench.Builder/">
     <Project Path="Data/Workbench.Builder/Workbench.Builder.Core.Tests/Workbench.Builder.Core.Tests.csproj" />
@@ -900,6 +900,27 @@
     <Project Path="WPFSamples_2/Styles_and_Templates/WPF_FindingElementsInTemplates/WPF_FindingElementsInTemplates.csproj" />
     <Project Path="WPFSamples_2/Styles_and_Templates/WPF_IntroToStylingAndTemplating/WPF_IntroToStylingAndTemplating.csproj" />
   </Folder>
+  <Project Path="../CodeWikiVault/" Type="Website" DisplayName="CodeWikiVault" Id="18ab383b-6bf8-e80a-515c-5d6f32cc8f0b">
+    <BuildType Project="Debug" />
+    <Properties Name="WebsiteProperties">
+      <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
+      <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+      <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+      <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;..\CodeWikiVault\&quot;" />
+      <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_53114\&quot;" />
+      <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+      <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_53114&quot;" />
+      <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
+      <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+      <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+      <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;..\CodeWikiVault\&quot;" />
+      <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_53114\&quot;" />
+      <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+      <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_53114&quot;" />
+      <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.8.1&quot;" />
+      <Property Name="VWDPort" Value="&quot;53114&quot;" />
+    </Properties>
+  </Project>
   <Project Path="../TestStatements/PluginBase/PluginBase.csproj" />
   <Project Path="AboutEx/AboutEx.csproj" />
   <Project Path="AboutExTests/AboutExTests.csproj" />
