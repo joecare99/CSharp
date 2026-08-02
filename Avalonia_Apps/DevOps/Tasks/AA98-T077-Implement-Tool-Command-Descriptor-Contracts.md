@@ -24,5 +24,8 @@ Implement tool-capable command descriptor contracts according to the metadata de
 - Build changed projects.
 - Run command contract tests and add tests in `AA98-T078`.
 
+## Progress Notes
+- Shared descriptors for tool parameters and results are implemented in `AppKomponentBaseLib`, and the descriptor now supports safety-level and consent metadata alongside normalized context requirements.
+
 ## Status
-- Proposed
+- Completed

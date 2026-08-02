@@ -74,9 +74,9 @@ This document orders the planned AA98 self-hosting tasks so an implementation ag
 
 ### Azure DevOps
 
-26. `../Tasks/AA98-T067-Refine-Azure-DevOps-Field-Mapping.md`
-27. `../Tasks/AA98-T068-Implement-Azure-DevOps-Adapter-Skeleton.md`
-28. `../Tasks/AA98-T069-Add-Azure-DevOps-Adapter-Contract-Tests.md`
+26. `../Tasks/AA98-T084-Refine-Azure-DevOps-Field-Mapping.md`
+27. `../Tasks/AA98-T085-Implement-Azure-DevOps-Adapter-Skeleton.md`
+28. `../Tasks/AA98-T086-Add-Azure-DevOps-Adapter-Contract-Tests.md`
 
 ### GitHub
 

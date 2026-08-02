@@ -33,5 +33,8 @@ AA98 commands can be invoked both by UI users and by AI components through expli
 1. Start with contract-only implementation.
 2. Add invocation infrastructure only after descriptors are stable.
 
+## Progress Notes
+- Shared tool-capable command metadata contracts have been implemented in `Libraries/AppKomponentBaseLib/Commands` and validated through targeted MSTest coverage for normalization, consent, safety metadata, and validation behavior.
+
 ## Status
-- Proposed
+- Completed

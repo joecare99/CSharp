@@ -20,7 +20,8 @@ Add tests for the planning explorer view model and UI-facing planning behavior.
 - Invalid planning files are represented without crashing the UI model.
 
 ## Validation
-- Run targeted planning UI tests.
+- Added view-model tests for hierarchy and category projection, selection metadata, editable property propagation, empty planning results, and result- or item-level diagnostics.
+- Targeted Planning Explorer test run completed successfully: 12 executions passed, 0 failed.
 
 ## Status
-- Proposed
+- Completed

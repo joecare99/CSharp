@@ -24,6 +24,7 @@
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor.Tests/AA98_AvlnCodeStudio.Editor.Tests.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Editor/AA98_AvlnCodeStudio.Editor.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj" />
+    <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.AzureDevOps/AA98_AvlnCodeStudio.Planning.AzureDevOps.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.Core/AA98_AvlnCodeStudio.Planning.Core.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.Local/AA98_AvlnCodeStudio.Planning.Local.csproj" />
     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.UI/AA98_AvlnCodeStudio.Planning.UI.csproj" />
@@ -51,6 +52,27 @@
     <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Core/Workbench.Builder.Core.csproj" />
     <Project Path="../CSharpBible/Data/Workbench.Builder/Workbench.Builder.Host/Workbench.Builder.Host.csproj" />
   </Folder>
+  <Project Path="../CodeWikiVault/" Type="Website" DisplayName="CodeWikiVault" Id="18ab383b-6bf8-e80a-515c-5d6f32cc8f0b">
+    <BuildType Project="Debug" />
+    <Properties Name="WebsiteProperties">
+      <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
+      <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+      <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+      <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;..\CodeWikiVault\&quot;" />
+      <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_53114\&quot;" />
+      <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+      <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_53114&quot;" />
+      <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
+      <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+      <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+      <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;..\CodeWikiVault\&quot;" />
+      <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_53114\&quot;" />
+      <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+      <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_53114&quot;" />
+      <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.8.1&quot;" />
+      <Property Name="VWDPort" Value="&quot;53114&quot;" />
+    </Properties>
+  </Project>
   <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
   <Properties Name="SolutionProperties">
     <Property Name="WorkspaceFolder" Value="..\.." />

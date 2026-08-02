@@ -19,9 +19,9 @@ AA98 can later exchange planning information with Azure DevOps through a provide
 - No token or credential persistence is introduced in planning files.
 
 ## Implementation Tasks
-- `AA98-T067 Refine Azure DevOps Field Mapping`
-- `AA98-T068 Implement Azure DevOps Adapter Skeleton`
-- `AA98-T069 Add Azure DevOps Adapter Contract Tests`
+- `AA98-T084 Refine Azure DevOps Field Mapping`
+- `AA98-T085 Implement Azure DevOps Adapter Skeleton`
+- `AA98-T086 Add Azure DevOps Adapter Contract Tests`
 
 ## Assumptions
 - Azure DevOps work starts after provider-neutral contracts exist.
@@ -30,8 +30,8 @@ AA98 can later exchange planning information with Azure DevOps through a provide
 - Which process template should be used for the first mapping assumption?
 
 ## Next Refinement Steps
-1. Choose import/export versus connected sync.
-2. Define minimal field mapping before implementation.
+1. Choose a concrete Azure DevOps process template and state mapping.
+2. Implement live import or export only after connection consent and error-handling behavior are defined.
 
 ## Status
-- Proposed
+- Completed

@@ -23,5 +23,8 @@ Add tests for tool-capable command descriptor contracts.
 ## Validation
 - Run targeted command contract tests.
 
+## Progress Notes
+- Targeted MSTest coverage now validates descriptor normalization, input/output metadata, consent handling, and validation failures for the new shared tool-command contracts.
+
 ## Status
-- Proposed
+- Completed

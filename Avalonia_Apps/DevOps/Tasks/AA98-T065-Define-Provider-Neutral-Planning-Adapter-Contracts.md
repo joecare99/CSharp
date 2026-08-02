@@ -24,5 +24,11 @@ Define contracts for external planning provider adapters without provider-specif
 - Build changed projects.
 - Add contract tests in `AA98-T066`.
 
+## Delivered
+- Added adapter descriptors with import/export capability flags.
+- Added explicit synchronization direction and request/result contracts with neutral scope, mappings, items, and diagnostics.
+- Separated local item IDs from provider adapter, scope, and item IDs through dedicated mapping models.
+- Added abstract adapter and credential service contracts without provider SDK dependencies.
+
 ## Status
-- Proposed
+- Completed

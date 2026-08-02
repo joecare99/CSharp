@@ -39,6 +39,8 @@ A developer can browse and inspect local planning items inside a dedicated plann
 - Selection now exposes key metadata fields (ID, title, status, parent, source path) plus diagnostics from local planning reads.
 - Startup composition now provides the planning explorer in the main shell view model, and deterministic tests cover hierarchy and selection behavior.
 - A dedicated thin micro host `AA98.DevOpsPlanning.Host` now exists for isolated planning exploration, loading local planning hierarchy and diagnostics without external provider coupling.
+- The reusable Planning.UI explorer now provides compact hierarchy and category views, Markdown editing and preview, a status line, and a generic properties surface.
+- Targeted view-model tests now cover hierarchy and category projection, selection and editable properties, empty results, and read- or item-level diagnostics.
 
 ## Status
-- In Progress
+- Completed
