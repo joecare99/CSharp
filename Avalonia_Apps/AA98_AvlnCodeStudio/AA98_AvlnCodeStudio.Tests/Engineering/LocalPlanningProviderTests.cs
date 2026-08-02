@@ -78,4 +78,104 @@ public class LocalPlanningProviderTests
             Directory.Delete(repositoryRootPath, recursive: true);
         }
     }
+
+    /// <summary>
+    /// Verifies that saving an existing document preserves its content outside editable metadata.
+    /// </summary>
+    [TestMethod]
+    public async Task WriteAsync_ExistingDocument_PreservesCustomMarkdownAndUpdatesMetadata()
+    {
+        string repositoryRootPath = Path.Combine(Path.GetTempPath(), "AA98_LocalPlanningProviderTests", Guid.NewGuid().ToString("N"));
+        string relativeSourcePath = Path.Combine("DevOps", "Tasks", "AA98-T064-Add-Planning-UI-Tests.md");
+        string sourcePath = Path.Combine(repositoryRootPath, relativeSourcePath);
+        Directory.CreateDirectory(Path.GetDirectoryName(sourcePath)!);
+        await File.WriteAllTextAsync(sourcePath, """
+            # AA98-T064 Previous Title
+
+            ## Goal
+            Preserve this custom content.
+
+            ## Status
+            - Proposed
+
+            ## Notes
+            Keep this section unchanged.
+            """).ConfigureAwait(false);
+
+        try
+        {
+            LocalPlanningProvider provider = new();
+            PlanningWriteRequest request = new()
+            {
+                RepositoryRootPath = repositoryRootPath,
+            };
+            request.Items.Add(new PlanningItem
+            {
+                Id = "AA98-T064",
+                Title = "Updated Planning UI Tests",
+                Kind = PlanningItemKind.Task,
+                Status = PlanningItemStatus.Completed,
+                SourcePath = relativeSourcePath,
+                DocumentText = await File.ReadAllTextAsync(sourcePath).ConfigureAwait(false),
+            });
+
+            PlanningWriteResult result = await provider.WriteAsync(request).ConfigureAwait(false);
+
+            Assert.AreEqual(1, result.WrittenSourcePaths.Count);
+            string content = await File.ReadAllTextAsync(sourcePath).ConfigureAwait(false);
+            StringAssert.Contains(content, "# AA98-T064 Updated Planning UI Tests");
+            StringAssert.Contains(content, "- Done");
+            StringAssert.Contains(content, "Preserve this custom content.");
+            StringAssert.Contains(content, "Keep this section unchanged.");
+        }
+        finally
+        {
+            Directory.Delete(repositoryRootPath, recursive: true);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that external changes prevent an existing planning document from being overwritten.
+    /// </summary>
+    [TestMethod]
+    public async Task WriteAsync_ExistingDocumentChangedAfterLoad_ReportsConflictAndPreservesFile()
+    {
+        string repositoryRootPath = Path.Combine(Path.GetTempPath(), "AA98_LocalPlanningProviderTests", Guid.NewGuid().ToString("N"));
+        string relativeSourcePath = Path.Combine("DevOps", "Tasks", "AA98-T067-Persist-Local-Planning-Document-Edits.md");
+        string sourcePath = Path.Combine(repositoryRootPath, relativeSourcePath);
+        string loadedDocumentText = "# AA98-T067 Persist Local Planning Document Edits\n\n## Status\n- Proposed\n";
+        string externallyChangedDocumentText = "# AA98-T067 Persist Local Planning Document Edits\n\n## Status\n- In Progress\n\n## Notes\nExternal change.\n";
+        Directory.CreateDirectory(Path.GetDirectoryName(sourcePath)!);
+        await File.WriteAllTextAsync(sourcePath, externallyChangedDocumentText).ConfigureAwait(false);
+
+        try
+        {
+            LocalPlanningProvider provider = new();
+            PlanningWriteRequest request = new()
+            {
+                RepositoryRootPath = repositoryRootPath,
+            };
+            request.ExpectedDocumentTexts[relativeSourcePath] = loadedDocumentText;
+            request.Items.Add(new PlanningItem
+            {
+                Id = "AA98-T067",
+                Title = "Changed Title",
+                Kind = PlanningItemKind.Task,
+                Status = PlanningItemStatus.Completed,
+                SourcePath = relativeSourcePath,
+                DocumentText = loadedDocumentText,
+            });
+
+            PlanningWriteResult result = await provider.WriteAsync(request).ConfigureAwait(false);
+
+            Assert.AreEqual(0, result.WrittenSourcePaths.Count);
+            Assert.AreEqual(1, result.Diagnostics.Count);
+            Assert.AreEqual("PLW002", result.Diagnostics.Single().Code);
+            Assert.AreEqual(externallyChangedDocumentText, await File.ReadAllTextAsync(sourcePath).ConfigureAwait(false));
+        }
+        finally
+        {
+            Directory.Delete(repositoryRootPath, recursive: true);
+        }
+    }
 }

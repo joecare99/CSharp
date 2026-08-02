@@ -38,6 +38,7 @@
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Diagnostics.Debug\AA98_AvlnCodeStudio.Diagnostics.Debug.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Diagnostics.UI\AA98_AvlnCodeStudio.Diagnostics.UI.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Core\AA98_AvlnCodeStudio.Planning.Core.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.AzureDevOps\AA98_AvlnCodeStudio.Planning.AzureDevOps.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Local\AA98_AvlnCodeStudio.Planning.Local.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.UI\AA98_AvlnCodeStudio.Planning.UI.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.UI\AA98_AvlnCodeStudio.UI.csproj" />
