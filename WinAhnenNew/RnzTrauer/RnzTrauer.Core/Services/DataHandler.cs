@@ -224,7 +224,7 @@ public sealed class DataHandler : IDisposable
     /// </summary>
     public long AppendTrauerFall(Dictionary<string, object?> dTrauerfall)
     {
-        var (sLastName, sFirstName) = dTrauerfall.Cond("name").SplitName();
+        var (sLastName, sFirstName) = dTrauerfall.Cond(JsonName).SplitName();
         var dValues = new Dictionary<string, object?>(StringComparer.Ordinal)
         {
             [KeyUrlUpper] = dTrauerfall.Cond(KeyUrl),
@@ -271,8 +271,8 @@ public sealed class DataHandler : IDisposable
     {
         foreach (var dAnnouncement in arrData)
         {
-            var dtCreated = PortedHelpers.Str2Date(dAnnouncement.Cond("created_on"));
-            var dtPublished = PortedHelpers.Str2Date(dAnnouncement.Cond("publish"));
+            var dtCreated = PortedHelpers.Str2Date(dAnnouncement.Cond(KeyCreatedOnSource));
+            var dtPublished = PortedHelpers.Str2Date(dAnnouncement.Cond(KeyPublish));
             if (!dtCreated.HasValue || !dtPublished.HasValue)
             {
                 Console.WriteLine($"{MessageSkipIncompleteAnnouncement}{dAnnouncement.Cond(KeyUrl)}");
@@ -282,7 +282,7 @@ public sealed class DataHandler : IDisposable
             var arrCurrentCases = TrauerFallByUrl(dAnnouncement.Cond(KeyUrl));
             var iTrauerfallId = arrCurrentCases.Count == 0
                 ? AppendTrauerFall(dAnnouncement)
-                : Convert.ToInt64(arrCurrentCases[0]["idTrauerfall"], CultureInfo.InvariantCulture);
+                : Convert.ToInt64(arrCurrentCases[0][KeyIdTrauerfall], CultureInfo.InvariantCulture);
 
             var arrCurrentAnnouncements = TrauerAnz(int.TryParse(dAnnouncement.Cond(KeyId), out var iId) ? iId : 0);
             if (arrCurrentAnnouncements.Count == 0)
