@@ -29,4 +29,8 @@
 	<ProjectReference Include="..\FroniusMonitor.Avalonia\FroniusMonitor.Avalonia.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Desktop" Version="12.1.1" />
+  </ItemGroup>
+
 </Project>
