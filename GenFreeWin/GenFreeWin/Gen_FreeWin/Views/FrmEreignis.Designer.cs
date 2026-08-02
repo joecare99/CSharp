@@ -219,7 +219,7 @@ public partial class FrmEreignis
             this.Button10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.Button10.Enabled = false;
             this.Button10.Location = new System.Drawing.Point(105, 126);
-            this.Button10.Name = "Button10";
+            this.Button10.Name = "btnCloseView";
             this.Button10.Size = new System.Drawing.Size(95, 24);
             this.Button10.TabIndex = 9;
             this.Button10.Text = "übernehmen";

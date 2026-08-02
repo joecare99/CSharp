@@ -13,8 +13,15 @@
 		<GenFreeWinPath>..\..\GenFreeWin\</GenFreeWinPath>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
+		<_WinAhnenGenFreeWinInfoPath>$(MSBuildThisFileDirectory)..\Gen_FreeWin\.info.md</_WinAhnenGenFreeWinInfoPath>
+		<_WinAhnenGenFreeWinInfoExists Condition="$([System.IO.File]::Exists('$(_WinAhnenGenFreeWinInfoPath)'))">true</_WinAhnenGenFreeWinInfoExists>
+		<_WinAhnenGenFreeWinInfoExists Condition="'$(_WinAhnenGenFreeWinInfoExists)'==''">false</_WinAhnenGenFreeWinInfoExists>
 	</PropertyGroup>
-	<PropertyGroup Condition="$([System.IO.File]::Exists('..\..\Gen_FreeWin\.info'))">
+	<PropertyGroup Condition="$(_WinAhnenGenFreeWinInfoExists) == 'true'">
 		<GenFreeWinPath>..\..\Gen_FreeWin\</GenFreeWinPath>
 	</PropertyGroup>
+
+	<Target Name="PrintWinAhnenProps" BeforeTargets="Build">
+		<Message Text="WinAhnen.props: GenFreeWinPath=$(GenFreeWinPath)" Importance="high" />
+	</Target>
 </Project>

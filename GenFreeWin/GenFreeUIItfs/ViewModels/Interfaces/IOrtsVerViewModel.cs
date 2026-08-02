@@ -38,7 +38,8 @@ public interface IOrtsVerViewModel : INotifyPropertyChanged
     string TextBox32_Text { get; set; }
     string RTB1_Text { get; set; }
 
-    bool TextBox30_Visible { get; set; }
+    bool Frame1_Visible { get; }
+    bool TextBox30_Visible { get; }
     bool btnNext_Visible { get; set; }
     bool btnPrev_Visible { get; set; }
     bool btnShowPlaceGE_Visible { get; set; }
@@ -48,7 +49,13 @@ public interface IOrtsVerViewModel : INotifyPropertyChanged
     bool btnConvertKoords_Visible { get; set; }
     bool btnSearchName_Visible { get; set; }
     bool btnSearchNumber_Visible { get; set; }
-    bool Button10_Visible { get; set; }
+    bool CloseViewButtonVisible { get; set; }
+    bool BeginEditButtonVisible { get; set; }
+    bool SavePlaceButtonVisible { get; set; }
+    bool Button15_Visible { get; set; }
+    bool Button17_Visible { get; set; }
+    bool Button18_Visible { get; set; }
+    bool Button19_Visible { get; set; }
 
     EUserText CoordinatesDecimalHintText { get; set; }
     EUserText btnNext_Text { get; set; }
@@ -56,8 +63,36 @@ public interface IOrtsVerViewModel : INotifyPropertyChanged
     EUserText btnShowPlaceGE_Text { get; set; }
     EUserText btnShowPlaceGM_Text { get; set; }
     EUserText btnLinkGOV_Text { get; set; }
+    string Label25_Text { get; set; }
+    string Label27_Text { get; set; }
+    string Label32_Text { get; set; }
+    string Label28_Text { get; set; }
+    string Label29_Text { get; set; }
+    string Label30_Text { get; set; }
+    string Label31_Text { get; set; }
+    string Label33_Text { get; set; }
+    string Label35_Text { get; set; }
+    EUserText btnConvertKoords_Text { get; set; }
+    EUserText btnSearchName_Text { get; set; }
+    EUserText btnSearchNumber_Text { get; set; }
+    EUserText CloseViewButtonText { get; set; }
 
     IContainerControl View { get; set; }
+    IRelayCommand CloseViewCommand { get; }
+    IRelayCommand BeginEditCommand { get; }
+    IRelayCommand SavePlaceCommand { get; }
+    IRelayCommand CalculateCoordinatesCommand { get; }
+    IRelayCommand ApplyCoordinatesCommand { get; }
+    IRelayCommand CloseCoordinateConverterCommand { get; }
+    IRelayCommand OpenPicturesCommand { get; }
+    IRelayCommand CancelEditCommand { get; }
+    IRelayCommand DeletePlaceCommand { get; }
+    IRelayCommand SaveAndReturnCommand { get; }
+    IRelayCommand FindUnusedPlacesCommand { get; }
+    IRelayCommand DetectCoordinatesCommand { get; }
+    IRelayCommand ResetSearchViewCommand { get; }
+    IRelayCommand OpenDistancePanelCommand { get; }
+    IRelayCommand CloseDistancePanelCommand { get; }
     IRelayCommand NextCommand { get; }
     IRelayCommand PrevCommand { get; }
     IRelayCommand ShowPlaceGECommand { get; }
@@ -67,52 +102,46 @@ public interface IOrtsVerViewModel : INotifyPropertyChanged
     IRelayCommand ConvertKoordsCommand { get; }
     IRelayCommand SearchNameCommand { get; }
     IRelayCommand SearchNumberCommand { get; }
-    bool Frame1_Visible { get; }
     EUserText btnSearchGOV_Text { get; set; }
-    EUserText btnConvertKoords_Text { get; set; }
-    EUserText btnSearchName_Text { get; set; }
-    EUserText btnSearchNumber_Text { get; set; }
-    EUserText Button10_Text { get; set; }
-    bool Button11_Visible { get; set; }
-    bool Button12_Visible { get; set; }
-    bool Button15_Visible { get; set; }
-    bool ListBox1_Visible { get; set; }
-    bool ListBox2_Visible { get; set; }
-    string Button16_Text { get; set; }
-    bool Button17_Visible { get; set; }
-    bool Button18_Visible { get; set; }
-    bool Button19_Visible { get; set; }
-    string Label32_Text { get; set; }
-    string Label27_Text { get; set; }
-    bool Button23_Visible { get; set; }
-    bool Button21_Visible { get; set; }
+    bool ListBox1_Visible { get; }
+    bool ListBox2_Visible { get; }
+    bool Button23_Visible { get; }
+    bool Button21_Visible { get; }
+    string Button16_Text { get; }
+    string Label1_Text { get; }
+    string Label13_Text { get; }
+    EUserText CancelEditButtonText { get; }
+    EUserText DeletePlaceButtonText { get; }
+    EUserText SaveAndReturnButtonText { get; }
+    EUserText FindUnusedPlacesButtonText { get; }
+    bool Panel1_Visible { get; }
+    bool edtPlace_Visible { get; }
+    bool edtLocator_Visible { get; }
+    EUserText LatitudeLabelText { get; set; }
+    EUserText LongitudeLabelText { get; set; }
+    EUserText GovLabelText { get; set; }
+    EUserText AdditionalOutputLabelText { get; set; }
+    EUserText StateLabelText { get; set; }
+    EUserText SuburbLabelText { get; set; }
+    EUserText CountyLabelText { get; set; }
+    EUserText CountryLabelText { get; set; }
+    EUserText PlaceLabelText { get; set; }
+    EUserText LocatorLabelText { get; set; }
+    EUserText PostalCodeLabelText { get; set; }
+    EUserText AdditionalLabelText { get; set; }
+    EUserText Label17_Text { get; set; }
+    EUserText PoliticalNameLabelText { get; set; }
+    EUserText ConverterLatitudeLabelText { get; set; }
+    EUserText ConverterLongitudeLabelText { get; set; }
+    EUserText ConverterHeaderLabelText { get; set; }
+    EUserText SearchPromptLabelText { get; set; }
 
-    void Button10_Click(object s, EventArgs e);
-    void Button11_Click(object s, EventArgs e);
-    void Button12_Click(object s, EventArgs e);
-    void Button13_Click(object s, EventArgs e);
-    void Button14_Click(object s, EventArgs e);
-    void Button15_Click(object s, EventArgs e);
-    void Button16_Click(object s, EventArgs e);
-    void Button17_Click(object s, EventArgs e);
-    void Button18_Click(object s, EventArgs e);
-    void Button19_Click(object s, EventArgs e);
-    void Button20_Click(object s, EventArgs e);
-    void Button21_Click(object s, EventArgs e);
-    void Button22_Click(object s, EventArgs e);
-    void Button23_Click(object s, EventArgs e);
-    void Button24_Click(object s, EventArgs e);
     void Form_Load(object sender, EventArgs e);
-    void Label27_TextChanged(object s, EventArgs e);
-    void Label32_TextChanged(object s, EventArgs e);
     void ListBox1_DoubleClick(object sender, EventArgs e);
     void ListBox2_DoubleClick(object s, EventArgs e);
     void ListBox3_DoubleClick(object s, EventArgs e);
     void ListBox4_DoubleClick(object s, EventArgs e);
+    void Locber();
     void RTB1_KeyUp(object sender, KeyEventArgs e);
-    void TextBox13_TextChanged(object sender, EventArgs e);
     void TextBox1_KeyUp(object sender, KeyEventArgs e);
-    void TextBox30_TextChanged(object s, EventArgs e);
-    void TextBox31_TextChanged(object s, EventArgs e);
-    void TextBox32_TextChanged(object s, EventArgs e);
 }

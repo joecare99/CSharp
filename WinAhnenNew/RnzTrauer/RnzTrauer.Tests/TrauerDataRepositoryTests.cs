@@ -1,4 +1,6 @@
 using BaseLib.Models.Interfaces;
+using Db.Core.Abstractions.Sql;
+using Db.Core.Abstractions.Sql.Interfaaces;
 using NSubstitute;
 using RnzTrauer.Core;
 using System.Collections;
@@ -31,8 +33,13 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderSelect(Arg.Any<IDbSelectStatement>()).Returns("SELECT `idTrauerfall`,`url` FROM `Trauerfall`");
         var xConnection = new FakeDbConnection();
+        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "SELECT `idTrauerfall`,`url` FROM `Trauerfall`";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xConnection.ExecuteReaderResult = new FakeDbDataReader(
             ["idTrauerfall", "url"],
@@ -55,8 +62,13 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderInsert(Arg.Any<IDbInsertStatement>()).Returns("INSERT INTO `Trauerfall` (`URL`, `Created`, `Preread_Birth`, `Preread_Death`, `Fullname`, `Firstname`, `Lastname`, `Birthname`, `Place`, `Created_by`) VALUES (@url, @created, @birth, @death, @fullName, @firstName, @lastName, @birthName, @place, @createdBy);");
         var xConnection = new FakeDbConnection();
+        xRenderer.CreateInsert(Arg.Any<string>(), Arg.Any<IEnumerable<KeyValuePair<string, string?>>>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "INSERT INTO `Trauerfall` (`URL`, `Created`, `Preread_Birth`, `Preread_Death`, `Fullname`, `Firstname`, `Lastname`, `Birthname`, `Place`, `Created_by`) VALUES (@url, @created, @birth, @death, @fullName, @firstName, @lastName, @birthName, @place, @createdBy);";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xConnection.LastInsertedId = 77L;
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
@@ -119,8 +131,13 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderInsert(Arg.Any<IDbInsertStatement>()).Returns("INSERT-STUB");
         var xConnection = new IntLastInsertedIdDbConnection { IntLastInsertedId = 123 };
+        xRenderer.CreateInsert(Arg.Any<string>(), Arg.Any<IEnumerable<KeyValuePair<string, string?>>>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "INSERT-STUB";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
         var dValues = new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -328,7 +345,7 @@ public sealed class TrauerDataRepositoryTests
 
         protected override DbTransaction? DbTransaction { get; set; }
 
-        public new long LastInsertedId => _xConnection.LastInsertedId;
+        public long LastInsertedId => _xConnection.LastInsertedId;
 
         public override void Cancel()
         {
@@ -596,11 +613,16 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderSelect(Arg.Any<IDbSelectStatement>()).Returns("SELECT * FROM Anzeigen WHERE idAnzeige=@id");
         var xConnection = new FakeDbConnection
         {
             ExecuteReaderResult = new FakeDbDataReader(["idAnzeige", "title"], [[5, "row"]])
         };
+        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "SELECT * FROM Anzeigen WHERE idAnzeige=@id";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
 
@@ -620,11 +642,16 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderSelect(Arg.Any<IDbSelectStatement>()).Returns("SELECT-STUB");
         var xConnection = new FakeDbConnection
         {
             ExecuteReaderResult = new FakeDbDataReader(["value"], [["ok"]])
         };
+        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "SELECT-STUB";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
 
@@ -651,12 +678,17 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderSelect(Arg.Any<IDbSelectStatement>()).Returns("SELECT-STUB");
         var dtValue = new DateTime(2024, 4, 3, 12, 13, 14);
         var xConnection = new FakeDbConnection
         {
             ExecuteReaderResult = new FakeDbDataReader(["created", "optional"], [[dtValue, DBNull.Value]])
         };
+        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "SELECT-STUB";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
 
@@ -673,8 +705,13 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderInsert(Arg.Any<IDbInsertStatement>()).Returns("INSERT-STUB");
         var xConnection = new FakeDbConnection { LastInsertedId = 88 };
+        xRenderer.CreateInsert(Arg.Any<string>(), Arg.Any<IEnumerable<KeyValuePair<string, string?>>>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "INSERT-STUB";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
         var dValues = new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -714,8 +751,13 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderInsert(Arg.Any<IDbInsertStatement>()).Returns("INSERT-LEGACY");
         var xConnection = new FakeDbConnection { LastInsertedId = 19 };
+        xRenderer.CreateInsert(Arg.Any<string>(), Arg.Any<IEnumerable<KeyValuePair<string, string?>>>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "INSERT-LEGACY";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
         var dValues = new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -786,8 +828,16 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderUpdate(Arg.Any<IDbUpdateStatement>()).Returns("UPDATE-STUB");
         var xConnection = new FakeDbConnection();
+        xRenderer.CreateUpdate(
+            Arg.Any<string>(), 
+            Arg.Any<IEnumerable<KeyValuePair<string, string?>>>(), 
+            Arg.Any<IEnumerable<DbFilterClause>>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "UPDATE-STUB";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
         var arrNew = new List<Dictionary<string, object?>>
@@ -823,8 +873,13 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderUpdate(Arg.Any<IDbUpdateStatement>()).Returns("UPDATE-TF");
         var xConnection = new FakeDbConnection();
+        xRenderer.CreateUpdate(Arg.Any<string>(), Arg.Any<IEnumerable<KeyValuePair<string, string?>>>(), Arg.Any<IEnumerable<DbFilterClause>>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "UPDATE-TF";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
         var arrNew = new List<Dictionary<string, object?>>
@@ -927,11 +982,16 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderSelect(Arg.Any<IDbSelectStatement>()).Returns("SELECT-NULL");
         var xConnection = new FakeDbConnection
         {
             ExecuteReaderResult = new FakeDbDataReader(["id"], [[1]])
         };
+        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "SELECT-NULL";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
 
@@ -948,8 +1008,16 @@ public sealed class TrauerDataRepositoryTests
     {
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
-        xRenderer.RenderUpdate(Arg.Any<IDbUpdateStatement>()).Returns("UPDATE-STUB");
         var xConnection = new FakeDbConnection();
+        xRenderer.CreateUpdate(
+            Arg.Any<string>(), 
+            Arg.Any<IEnumerable<KeyValuePair<string, string?>>>(), 
+            Arg.Any<IEnumerable<DbFilterClause>>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "UPDATE-STUB";
+            return dbCommand;
+        });
         xFactory.CreateStatementRenderer(xConnection).Returns(xRenderer);
         xFactory.CreateConnection(Arg.Any<IDBSettings>()).Returns(_ => xConnection);
         var arrNew = new List<Dictionary<string, object?>>

@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using GenFreeWin.Main;
 
 namespace GenFreeWin.ViewModels;
 

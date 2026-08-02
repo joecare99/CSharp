@@ -28,6 +28,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GenFreeWin.Main;
 
 namespace GenFreeWin.ViewModels;
 
@@ -166,7 +167,7 @@ public partial class RepoViewModel : BaseViewModelCT, IRepoViewModel
             // Select and load first repository
             if (Repolist_Items.Count > 0)
             {
-                MyListItem myListItem = (MyListItem)Repolist_Items[0];
+                ListItem<int> myListItem = (ListItem<int>)Repolist_Items[0];
                 SourceCount = 1;
                 int iRepoNr = myListItem.ItemData;
                 await LoadRepositoryDetailsAsync(iRepoNr);
@@ -309,7 +310,7 @@ public partial class RepoViewModel : BaseViewModelCT, IRepoViewModel
                 return;
             }
 
-            MyListItem myListItem = (MyListItem)Repolist_SelectedItem;
+            ListItem<int> myListItem = (ListItem<int>)Repolist_SelectedItem;
             SourceCount = myListItem.ItemData;
             await LoadRepositoryDetailsAsync(SourceCount);
             Button5_Visible = false;
@@ -333,7 +334,7 @@ public partial class RepoViewModel : BaseViewModelCT, IRepoViewModel
                 return;
             }
 
-            MyListItem myListItem = (MyListItem)Sources_SelectedItem;
+            ListItem<int> myListItem = (ListItem<int>)Sources_SelectedItem;
             DoClose?.Invoke();
             MainProject.Forms.Quellverw.btnHometown.Text = Modul1.IText[EUserText.tNMBack];
             Quellverw quellverw = MainProject.Forms.Quellverw;

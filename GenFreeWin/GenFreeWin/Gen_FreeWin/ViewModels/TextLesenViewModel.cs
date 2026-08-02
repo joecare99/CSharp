@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using GenFreeWin.Main;
 
 namespace GenFreeWin.ViewModels;
 
@@ -2221,8 +2222,7 @@ public partial class TextLesenViewModel : ObservableObject, ITextLesenViewModel
             {
                 Modul1.Ubg = List1_Items.ItemData<int>(View.List1.SelectedIndex);
                 Modul1.Schalt = (byte)List1_Items.ItemData(View.List1.SelectedIndex);
-                MainProject.Forms.Ortsver.Button10.Text = Modul1.IText[EUserText.tNMBack];
-                MainProject.Forms.Ortsver.Show();
+                MainProject.Forms.Ortsver.ShowDialog(btnCloseViewText: EUserText.tNMBack);
                 return;
             }
             if (View.List1.Text.Left(1) == "F")

@@ -7,6 +7,8 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
+using GenFreeWin.Main;
+
 
 //using DAO;
 using System;

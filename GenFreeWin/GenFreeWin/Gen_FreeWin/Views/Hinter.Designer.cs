@@ -356,7 +356,7 @@ public partial class Hinter
             // 
             this.Button10.BackColor = System.Drawing.Color.Lime;
             this.Button10.Location = new System.Drawing.Point(266, 441);
-            this.Button10.Name = "Button10";
+            this.Button10.Name = "btnCloseView";
             this.Button10.Size = new System.Drawing.Size(435, 65);
             this.Button10.TabIndex = 40;
             this.Button10.Text = "Interne Liste wiederbelegbarer Datensätze schreiben.\r\nIst erforderlich, um gelösc" +

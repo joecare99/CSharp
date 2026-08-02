@@ -6,6 +6,7 @@ using GenFree.Interfaces.Data;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
+using GenFreeWin.Main;
 using GenFreeWin.Views;
 using Microsoft.VisualBasic;
 using System;
@@ -2842,14 +2843,7 @@ public partial class FrmEreignis : Form
 
     private void Button13_Click(object sender, EventArgs e)
     {
-        MainProject.Forms.Ortsver.Close();
-        MainProject.Forms.Ortsver.Show();
-        MainProject.Forms.Ortsver.Button11.PerformClick();
-        MainProject.Forms.Ortsver.Button10.Visible = false;
-        MainProject.Forms.Ortsver.Button12.Visible = false;
-        MainProject.Forms.Ortsver.Button19.Visible = true;
-        MainProject.Forms.Ortsver.edtPlace.Text = TextBox5.Text.Left(1).ToUpper() + Strings.Mid(TextBox5.Text, 2, TextBox5.Text.Trim().Length);
-        MainProject.Forms.Ortsver.edtPlace.SelectionStart = MainProject.Forms.Ortsver.edtPlace.Text.Length;
+        MainProject.Forms.Ortsver.ShowEventPLace(TextBox5.Text.Left(1).ToUpper() + Strings.Mid(TextBox5.Text, 2, TextBox5.Text.Trim().Length));
     }
 
     private void Button14_Click_1(object sender, EventArgs e)

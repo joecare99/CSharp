@@ -1,5 +1,7 @@
 ﻿using AmtsblattLoader.Console.ViewModels;
 using AmtsblattLoader.Console.Views;
+using BaseLib.Models;
+using BaseLib.Models.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using RnzTrauer.Core;
 using RnzTrauer.Core.Services.Interfaces;

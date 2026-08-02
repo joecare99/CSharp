@@ -8,6 +8,8 @@ using BaseGenClasses.Helper;
 using BaseGenClasses.Helper.Interfaces;
 using BaseLib.Helper;
 using CommunityToolkit.Mvvm.Messaging;
+using GenSecure.Contracts;
+using GenSecure.Core;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
