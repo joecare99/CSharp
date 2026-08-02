@@ -1,0 +1,4 @@
+dkDeath=3. 10.
+dkAge=75
+dkPlace=Sinsheim-Rohrbach
+dkSex=M

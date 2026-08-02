@@ -1,0 +1,200 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="RnzTrauer.Avalonia.Views.MainWindow"
+        Width="1680"
+        Height="980"
+        MinWidth="1320"
+        MinHeight="780"
+        Title="RNZ-Anzeigen">
+  <Grid RowDefinitions="Auto,*,Auto">
+    <Border Grid.Row="0" BorderThickness="0,0,0,1" Padding="8,6">
+      <Grid ColumnDefinitions="560,Auto,Auto,Auto,Auto,230,Auto,Auto,*" ColumnSpacing="6">
+        <TextBox Grid.Column="0" PlaceholderText="HTML path / URL" Text="{Binding WebSourcePath, Mode=TwoWay}" />
+        <Button Grid.Column="1" Content="…" IsEnabled="False" ToolTip.Tip="File browse is not migrated yet." />
+        <Button Grid.Column="2" Content="Open" IsEnabled="False" />
+        <Button Grid.Column="3" Content="Parse" IsEnabled="False" />
+        <Button Grid.Column="4" Content="WWW" IsEnabled="False" />
+        <TextBox Grid.Column="5" PlaceholderText="Schema file" Text="{Binding SchemaPath, Mode=TwoWay}" />
+        <Button Grid.Column="6" Content="…" IsEnabled="False" />
+        <Button Grid.Column="7" Content="Open" IsEnabled="False" />
+        <StackPanel Grid.Column="8" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+          <CheckBox Content="Auto-Continue" IsChecked="{Binding AutoContinue, Mode=TwoWay}" />
+          <TextBlock VerticalAlignment="Center" Opacity="0.7" Text="Compiled: Avalonia" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <TabControl Grid.Row="1" Margin="8,8,8,0">
+      <TabItem Header="RNZ-Web">
+        <Grid Margin="8" RowDefinitions="Auto,*,Auto" ColumnDefinitions="2.5*,2*">
+          <TextBlock Grid.Row="0"
+                     Grid.ColumnSpan="2"
+                     Margin="0,0,0,8"
+                     TextWrapping="Wrap"
+                     Opacity="0.75"
+                     Text="Visual placeholder aligned with the legacy RNZ-Web page. Acquisition schema editor, HTML viewer, and parse output panes are planned for a next migration increment." />
+          <Border Grid.Row="1" Grid.Column="0" Margin="0,0,8,0" BorderThickness="1" Padding="8">
+            <TextBox AcceptsReturn="True" TextWrapping="Wrap" PlaceholderText="Legacy HTML preview / source area (planned)" />
+          </Border>
+          <Grid Grid.Row="1" Grid.Column="1" RowDefinitions="*,*" RowSpacing="8">
+            <Border Grid.Row="0" BorderThickness="1" Padding="8">
+              <TextBox AcceptsReturn="True" TextWrapping="NoWrap" PlaceholderText="Schema editor (planned)" />
+            </Border>
+            <Border Grid.Row="1" BorderThickness="1" Padding="8">
+              <TextBox AcceptsReturn="True" TextWrapping="NoWrap" PlaceholderText="Parser output / imported rows (planned)" />
+            </Border>
+          </Grid>
+          <Border Grid.Row="2" Grid.ColumnSpan="2" Margin="0,8,0,0" Padding="8,6" BorderThickness="1,1,1,0">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <CheckBox Content="Append DB" IsChecked="{Binding AppendToDatabase, Mode=TwoWay}" />
+              <CheckBox Content="Very verbose" IsChecked="{Binding Verbose, Mode=TwoWay}" />
+              <CheckBox Content="Schema verbose" IsChecked="{Binding VerboseSchema, Mode=TwoWay}" />
+            </StackPanel>
+          </Border>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Anzeigen-DB">
+        <Grid Margin="8" RowDefinitions="Auto,Auto,2.4*,2.2*" RowSpacing="8">
+          <Border Grid.Row="0" Padding="6" BorderThickness="1">
+            <Grid ColumnDefinitions="210,250,230,Auto,*" ColumnSpacing="8">
+              <TextBox Grid.Column="0" PlaceholderText="Auftragsnummer" Text="{Binding OrderNumberPrefix, Mode=TwoWay}" />
+              <TextBox Grid.Column="1" PlaceholderText="Stichwort" Text="{Binding KeywordContains, Mode=TwoWay}" />
+              <ComboBox Grid.Column="2" ItemsSource="{Binding ReviewQueues}" SelectedItem="{Binding SelectedQueue}" />
+              <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6">
+                <Button Content="Apply" Command="{Binding LoadCommand}" />
+                <Button Content="Save" Command="{Binding SaveCommand}" />
+                <Button Content="Parse text" Command="{Binding ParseSelectedCommand}" />
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <Border Grid.Row="1" Padding="6" BorderThickness="1">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Button Width="38" Content="All" Command="{Binding LoadQueueCommand}" CommandParameter="All" />
+              <Button Width="44" Content="nTx" Command="{Binding LoadQueueCommand}" CommandParameter="MissingText" ToolTip.Tip="Missing text" />
+              <Button Width="44" Content="nPl" Command="{Binding LoadQueueCommand}" CommandParameter="DeathNoticeWithoutPlace" ToolTip.Tip="Missing place" />
+              <Button Width="44" Content="wD" Command="{Binding LoadQueueCommand}" CommandParameter="ImplausibleDates" ToolTip.Tip="Wrong date" />
+              <Button Width="44" Content="†?♂" Command="{Binding LoadQueueCommand}" CommandParameter="MissingSex" ToolTip.Tip="Missing sex" />
+              <Button Width="44" Content="nL" Command="{Binding LoadQueueCommand}" CommandParameter="MissingLink" ToolTip.Tip="No link" />
+              <Button Width="44" Content="[]²" Command="{Binding LoadQueueCommand}" CommandParameter="DuplicateCandidates" ToolTip.Tip="Duplicate candidates" />
+              <Button Width="44" Content="♂N*" Command="{Binding LoadQueueCommand}" CommandParameter="MaleWithMaidenName" ToolTip.Tip="Male with maiden name" />
+              <Button Width="44" Content="nI" Command="{Binding LoadQueueCommand}" CommandParameter="RecentMissingProfileImage" ToolTip.Tip="Recent missing profile image" />
+              <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Opacity="0.75" Text="{Binding Status}" />
+            </StackPanel>
+          </Border>
+
+          <DataGrid Grid.Row="2"
+                    AutoGenerateColumns="False"
+                    IsReadOnly="False"
+                    ItemsSource="{Binding Notices}"
+                    SelectedItem="{Binding SelectedNotice, Mode=TwoWay}">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Auftrag" Binding="{Binding OrderNumber}" Width="120" />
+              <DataGridTextColumn Header="Erscheinungsdatum" Binding="{Binding PublishedOn, StringFormat={}{0:dd.MM.yyyy}}" Width="120" />
+              <DataGridTextColumn Header="Stichwort" Binding="{Binding Keyword}" Width="220" />
+              <DataGridTextColumn Header="Rubrik" Binding="{Binding Category}" Width="180" />
+              <DataGridTextColumn Header="Nachname" Binding="{Binding FamilyName}" Width="150" />
+              <DataGridTextColumn Header="Vorname" Binding="{Binding GivenName}" Width="150" />
+              <DataGridTextColumn Header="G." Binding="{Binding Sex}" Width="45" />
+              <DataGridTextColumn Header="Geburtsname" Binding="{Binding MaidenName}" Width="160" />
+              <DataGridTextColumn Header="Ort" Binding="{Binding Place}" Width="180" />
+              <DataGridTextColumn Header="Link" Binding="{Binding LinkedNoticeId}" Width="70" />
+              <DataGridTextColumn Header="ICnt" Binding="{Binding ProfileImageCount}" Width="60" />
+              <DataGridTextColumn Header="Pfad" Binding="{Binding Path}" Width="300" />
+            </DataGrid.Columns>
+          </DataGrid>
+
+          <Grid Grid.Row="3" ColumnDefinitions="2.1*,1.3*,1.4*" ColumnSpacing="8">
+            <Border Grid.Column="0" BorderThickness="1" Padding="8">
+              <ScrollViewer>
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="120,*" RowSpacing="6" ColumnSpacing="8">
+                  <TextBlock Grid.Row="0" Grid.ColumnSpan="2" FontWeight="SemiBold" Text="{Binding SelectedNoticeDescription}" />
+                  <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Geschlecht" />
+                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedNotice.Sex, Mode=TwoWay}" />
+                  <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Nachname" />
+                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedNotice.FamilyName, Mode=TwoWay}" />
+                  <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="Vorname" />
+                  <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedNotice.GivenName, Mode=TwoWay}" />
+                  <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Geburtsname" />
+                  <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SelectedNotice.MaidenName, Mode=TwoWay}" />
+                  <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Text="AKA" />
+                  <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedNotice.Keyword, Mode=TwoWay}" />
+                  <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="Titel" />
+                  <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SelectedNotice.Title, Mode=TwoWay}" />
+                  <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" Text="Geboren" />
+                  <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding SelectedNotice.BirthDate, Mode=TwoWay, StringFormat={}{0:dd.MM.yyyy}}" />
+                  <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="Gestorben" />
+                  <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding SelectedNotice.DeathDate, Mode=TwoWay, StringFormat={}{0:dd.MM.yyyy}}" />
+                  <TextBlock Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" Text="Begraben" />
+                  <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding SelectedNotice.BurialDate, Mode=TwoWay, StringFormat={}{0:dd.MM.yyyy}}" />
+                  <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" Text="Ort" />
+                  <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding SelectedNotice.Place, Mode=TwoWay}" />
+                  <TextBlock Grid.Row="11" Grid.Column="0" VerticalAlignment="Center" Text="Rubrik" />
+                  <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedNotice.Category, Mode=TwoWay}" />
+                </Grid>
+              </ScrollViewer>
+            </Border>
+
+            <Border Grid.Column="1" BorderThickness="1" Padding="8">
+              <Grid RowDefinitions="Auto,*,Auto" RowSpacing="6">
+                <TextBox Grid.Row="0" PlaceholderText="Link target" Text="{Binding SelectedNotice.LinkedNoticeId, Mode=TwoWay}" />
+                <TextBox Grid.Row="1"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalContentAlignment="Top"
+                         Text="{Binding SelectedNotice.Text, Mode=TwoWay}" />
+                <TextBlock Grid.Row="2" Opacity="0.75" Text="{Binding SelectedNoticePath}" />
+              </Grid>
+            </Border>
+
+            <Border Grid.Column="2" BorderThickness="1" Padding="8">
+              <Grid RowDefinitions="Auto,*,Auto,Auto" RowSpacing="6">
+                <TextBlock Grid.Row="0" Text="Profile image / media" FontWeight="SemiBold" />
+                <Border Grid.Row="1" BorderThickness="1" CornerRadius="4">
+                  <Grid>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.75" Text="Image preview placeholder" />
+                  </Grid>
+                </Border>
+                <TextBox Grid.Row="2" IsReadOnly="True" Text="{Binding SelectedNotice.ProfileImage}" />
+                <CheckBox Grid.Row="3" IsChecked="True" Content="Auto-Image" />
+              </Grid>
+            </Border>
+          </Grid>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Orte">
+        <Grid Margin="12" RowDefinitions="Auto,*" RowSpacing="8">
+          <TextBlock TextWrapping="Wrap" Opacity="0.8" Text="The legacy map/geonames place editor has not been migrated yet. This tab is kept for form parity and future component extraction." />
+          <Border Grid.Row="1" BorderThickness="1" Padding="12">
+            <TextBlock Opacity="0.7" Text="Place editor component planned (map, merge, and navigation)." />
+          </Border>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Einstellungen">
+        <Grid Margin="12" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="190,*" RowSpacing="8" ColumnSpacing="8">
+          <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="RNZ_DB_SERVER" />
+          <TextBox Grid.Row="0" Grid.Column="1" IsReadOnly="True" Text="{Binding DbServer}" />
+          <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="RNZ_DB_PORT" />
+          <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="{Binding DbPort}" />
+          <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="RNZ_DB_USER" />
+          <TextBox Grid.Row="2" Grid.Column="1" IsReadOnly="True" Text="{Binding DbUser}" />
+          <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="RNZ_DB_NAME" />
+          <TextBox Grid.Row="3" Grid.Column="1" IsReadOnly="True" Text="{Binding DbName}" />
+          <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Opacity="0.75" TextWrapping="Wrap"
+                     Text="Password is intentionally not rendered in this view. A dedicated secure settings component is part of the next migration increment." />
+        </Grid>
+      </TabItem>
+    </TabControl>
+
+    <Border Grid.Row="2" BorderThickness="0,1,0,0" Padding="8,6">
+      <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8">
+        <Button Grid.Column="0" Content="Export -> TSV" Command="{Binding ExportCsvCommand}" />
+        <Button Grid.Column="1" Content="Export -> GEDCOM" Command="{Binding ExportGedcomCommand}" />
+        <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="{Binding Status}" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

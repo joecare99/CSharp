@@ -1,0 +1,5 @@
+dkBirth=17. 9. 1941
+dkDeath=30. 3. 2021
+dkBurial=8. 04. 2021
+dkMaidenname=Buchloh
+dkSex=F

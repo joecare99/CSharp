@@ -1,0 +1,6 @@
+dkBirth=5. 3. 1947
+dkDeath=12. 12. 2018
+dkPlace=Heidelberg
+dkBurial=11. 01. 2019
+dkSex=F
+dkMaidenname=BÖhm

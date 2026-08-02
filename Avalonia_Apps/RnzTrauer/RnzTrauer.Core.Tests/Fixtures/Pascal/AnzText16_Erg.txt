@@ -1,0 +1,4 @@
+dkDeath=5. 04. 2021
+dkAge=81
+dkRubrik=8052
+dkSex=M

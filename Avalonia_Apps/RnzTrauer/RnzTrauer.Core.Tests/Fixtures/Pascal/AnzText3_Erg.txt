@@ -1,0 +1,3 @@
+dkPlace=Sinsheim
+dkSex=F
+dkMaidenname=Zwettler

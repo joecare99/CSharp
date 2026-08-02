@@ -1,0 +1,4 @@
+dkDeath=15. 01. 2017
+dkAge=73
+dkPlace=Handschuhsheim
+dkSex=F

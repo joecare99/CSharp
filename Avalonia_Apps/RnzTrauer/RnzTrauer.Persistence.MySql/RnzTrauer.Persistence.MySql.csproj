@@ -1,0 +1,14 @@
+<Project>
+  <Import Project="..\Application.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RnzTrauer.Persistence.MySql</RootNamespace>
+    <AssemblyName>RnzTrauer.Persistence.MySql</AssemblyName>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core2.csproj" />
+    <ProjectReference Include="..\..\..\Gen_FreeWin\DbCoreAbstractions\DbCoreAbstractions.csproj" />
+  </ItemGroup>
+</Project>
