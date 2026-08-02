@@ -25,4 +25,7 @@
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Core\AA98_AvlnCodeStudio.Planning.Core.csproj" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Local\AA98_AvlnCodeStudio.Planning.Local.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia" Version="12.1.1" />
+  </ItemGroup>
 </Project>

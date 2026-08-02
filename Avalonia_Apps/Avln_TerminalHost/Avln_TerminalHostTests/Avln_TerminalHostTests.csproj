@@ -23,4 +23,8 @@
     <ProjectReference Include="..\..\Libraries\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
     <ProjectReference Include="..\Avln_TerminalHost\Avln_TerminalHost.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Headless" Version="12.1.1" />
+    <PackageVersion Update="MSTest" Version="4.3.3" />
+  </ItemGroup>
 </Project>

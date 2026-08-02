@@ -18,4 +18,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\FroniusMonitor.Avalonia\FroniusMonitor.Avalonia.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageVersion Update="MSTest" Version="4.3.3" />
+	</ItemGroup>
 </Project>

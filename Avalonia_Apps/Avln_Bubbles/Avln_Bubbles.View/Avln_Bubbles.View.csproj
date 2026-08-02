@@ -31,4 +31,9 @@
   <ItemGroup>
 	<ProjectReference Include="..\Avln_Bubbles.Model\Avln_Bubbles.Model.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia" Version="12.1.1" />
+    <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.1.1" />
+    <PackageVersion Update="Avalonia.Themes.Fluent" Version="12.1.1" />
+  </ItemGroup>
 </Project>

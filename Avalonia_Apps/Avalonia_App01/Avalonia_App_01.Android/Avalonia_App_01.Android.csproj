@@ -38,4 +38,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalonia_App_01\Avalonia_App_01.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Android" Version="12.1.1" />
+  </ItemGroup>
 </Project>
