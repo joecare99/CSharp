@@ -28,7 +28,7 @@ public partial class FrmQuellSrchViewModel : BaseViewModelCT, IFrmQuellSrchViewM
 
     public void ListBox1_DoubleClick(object sender, EventArgs e)
     {
-        MyListItem myListItem = (MyListItem)View.frmSrch_ListBox1.SelectedItem;
+        ListItem<int> myListItem = (ListItem<int>)View.frmSrch_ListBox1.SelectedItem;
         long Satznr = View._Label1_13.Tag.AsInt();
         DataModul.DB_RepoTab.Index = "Dop";
         DataModul.DB_RepoTab.Seek("=", Satznr, myListItem.ItemData.ToString());
@@ -66,7 +66,7 @@ public partial class FrmQuellSrchViewModel : BaseViewModelCT, IFrmQuellSrchViewM
 
     public void btnDeleteEntry_Click(object sender, EventArgs e)
     {
-        MyListItem myListItem = (MyListItem)View.ComboBox1.SelectedItem;
+        ListItem<int> myListItem = (ListItem<int>)View.ComboBox1.SelectedItem;
         DataModul.DB_RepoTab.Index = "Dop";
         DataModul.DB_RepoTab.Seek("=", View._Label1_13.Tag, View.ComboBox1.Tag);
         if (!DataModul.DB_RepoTab.NoMatch)

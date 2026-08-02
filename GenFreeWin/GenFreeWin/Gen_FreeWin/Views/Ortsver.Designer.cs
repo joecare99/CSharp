@@ -75,7 +75,7 @@ partial class Ortsver
             this.btnConvertKoords = new System.Windows.Forms.Button();
             this.btnSearchName = new System.Windows.Forms.Button();
             this.btnSearchNumber = new System.Windows.Forms.Button();
-            this.Button10 = new System.Windows.Forms.Button();
+            this.btnCloseView = new System.Windows.Forms.Button();
             this.Button11 = new System.Windows.Forms.Button();
             this.Button12 = new System.Windows.Forms.Button();
             this.Frame1 = new System.Windows.Forms.GroupBox();
@@ -217,7 +217,6 @@ partial class Ortsver
             this.edtLong3.Name = "edtLong3";
             this.edtLong3.Size = new System.Drawing.Size(30, 17);
             this.edtLong3.TabIndex = 13;
-            this.edtLong3.TextChanged += new System.EventHandler(this.TextBox13_TextChanged);
             this.edtLong3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Textbox1_KeyPress);
             this.edtLong3.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TextBox1_KeyUp);
             // 
@@ -597,14 +596,14 @@ partial class Ortsver
             this.btnSearchNumber.Text = "Suche n&ach Nummer";
             this.btnSearchNumber.UseVisualStyleBackColor = false;
             // 
-            // Button10
+            // btnCloseView
             // 
-            this.Button10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.Button10.Location = new System.Drawing.Point(767, 685);
-            this.Button10.Name = "Button10";
-            this.Button10.Size = new System.Drawing.Size(175, 25);
-            this.Button10.TabIndex = 70;
-            this.Button10.UseVisualStyleBackColor = false;
+            this.btnCloseView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnCloseView.Location = new System.Drawing.Point(767, 685);
+            this.btnCloseView.Name = "btnCloseView";
+            this.btnCloseView.Size = new System.Drawing.Size(175, 25);
+            this.btnCloseView.TabIndex = 70;
+            this.btnCloseView.UseVisualStyleBackColor = false;
             // 
             // Button11
             // 
@@ -835,7 +834,6 @@ partial class Ortsver
             this.TextBox30.Size = new System.Drawing.Size(334, 17);
             this.TextBox30.TabIndex = 77;
             this.TextBox30.Visible = false;
-            this.TextBox30.TextChanged += new System.EventHandler(this.TextBox30_TextChanged);
             // 
             // Button17
             // 
@@ -1084,7 +1082,6 @@ partial class Ortsver
             this.TextBox32.Name = "TextBox32";
             this.TextBox32.Size = new System.Drawing.Size(283, 24);
             this.TextBox32.TabIndex = 1;
-            this.TextBox32.TextChanged += new System.EventHandler(this.TextBox32_TextChanged);
             // 
             // TextBox31
             // 
@@ -1092,7 +1089,6 @@ partial class Ortsver
             this.TextBox31.Name = "TextBox31";
             this.TextBox31.Size = new System.Drawing.Size(283, 24);
             this.TextBox31.TabIndex = 0;
-            this.TextBox31.TextChanged += new System.EventHandler(this.TextBox31_TextChanged);
             // 
             // CheckBox1
             // 
@@ -1126,7 +1122,7 @@ partial class Ortsver
             this.Controls.Add(this.Frame1);
             this.Controls.Add(this.Button12);
             this.Controls.Add(this.Button11);
-            this.Controls.Add(this.Button10);
+            this.Controls.Add(this.btnCloseView);
             this.Controls.Add(this.btnSearchNumber);
             this.Controls.Add(this.btnSearchName);
             this.Controls.Add(this.btnConvertKoords);
@@ -1190,32 +1186,46 @@ partial class Ortsver
 
     }
     [TextBinding(nameof(IOrtsVerViewModel.edtPlace_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtPlace_Visible))]
     internal TextBox edtPlace;
     [TextBinding(nameof(IOrtsVerViewModel.edtSuburb_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtPlace_Visible))]
     internal TextBox edtSuburb;
     [TextBinding(nameof(IOrtsVerViewModel.edtCounty_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtPlace_Visible))]
     internal TextBox edtCounty;
     [TextBinding(nameof(IOrtsVerViewModel.edtCountry_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtPlace_Visible))]
     internal TextBox edtCountry;
     [TextBinding(nameof(IOrtsVerViewModel.edtState_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtPlace_Visible))]
     internal TextBox edtState;
     [TextBinding(nameof(IOrtsVerViewModel.edtLocator_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtLocator_Visible))]
     internal TextBox edtLocator;
     [TextBinding(nameof(IOrtsVerViewModel.edtLat1_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtLocator_Visible))]
     internal TextBox edtLat1;
     [TextBinding(nameof(IOrtsVerViewModel.edtLong1_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtLocator_Visible))]
     internal TextBox edtLong1;
     [TextBinding(nameof(IOrtsVerViewModel.edtGOV_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtLocator_Visible))]
     internal TextBox edtGOV;
     [TextBinding(nameof(IOrtsVerViewModel.edtLat2_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtLocator_Visible))]
     internal TextBox edtLat2;
     [TextBinding(nameof(IOrtsVerViewModel.edtLat3_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtLocator_Visible))]
     internal TextBox edtLat3;
     [TextBinding(nameof(IOrtsVerViewModel.edtLong2_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtLocator_Visible))]
     internal TextBox edtLong2;
     [TextBinding(nameof(IOrtsVerViewModel.edtLong3_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtLocator_Visible))]
     internal TextBox edtLong3;
     [TextBinding(nameof(IOrtsVerViewModel.edtZIP_Text))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.edtPlace_Visible))]
     internal TextBox edtZIP;
     [TextBinding(nameof(IOrtsVerViewModel.edtAdditional_Text))]
     internal TextBox edtAdditional;
@@ -1291,16 +1301,16 @@ partial class Ortsver
     [VisibilityBinding(nameof(IOrtsVerViewModel.btnSearchNumber_Visible))]
     internal Button btnSearchNumber;
     [CommandBinding(nameof(IOrtsVerViewModel.CloseViewCommand))]
-    [VisibilityBinding(nameof(IOrtsVerViewModel.Button10_Visible))]
-    [TextBinding(nameof(IOrtsVerViewModel.Button10_Text))]
-    internal Button Button10;
+    [VisibilityBinding(nameof(IOrtsVerViewModel.CloseViewButtonVisible))]
+    [TextBinding(nameof(IOrtsVerViewModel.CloseViewButtonText))]
+    internal Button btnCloseView;
     [CommandBinding(nameof(IOrtsVerViewModel.BeginEditCommand))]
     [ApplTextBinding(EUserText.t73)]
-    [VisibilityBinding(nameof(IOrtsVerViewModel.Button11_Visible))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.BeginEditButtonVisible))]
     internal Button Button11;
     [CommandBinding(nameof(IOrtsVerViewModel.SavePlaceCommand))]
     [ApplTextBinding(EUserText.tNMSave)]
-    [VisibilityBinding(nameof(IOrtsVerViewModel.Button12_Visible))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.SavePlaceButtonVisible))]
     internal Button Button12;
     [CommandBinding(nameof(IOrtsVerViewModel.CalculateCoordinatesCommand))]
     [ApplTextBinding(EUserText.t296)]
@@ -1367,9 +1377,9 @@ partial class Ortsver
     internal Label Label3;
     [ApplTextBinding(nameof(IOrtsVerViewModel.SuburbLabelText))]
     internal Label Label2;
-    [ApplTextBinding(nameof(IOrtsVerViewModel.PlaceLabelText))]
     [TextBinding(nameof(IOrtsVerViewModel.Label1_Text))]
     internal Label Label1;
+    [ApplTextBinding(nameof(IOrtsVerViewModel.PlaceLabelText))]
     internal Label Label15;
     [ApplTextBinding(nameof(IOrtsVerViewModel.LocatorLabelText))]
     internal Label Label11;
@@ -1379,6 +1389,7 @@ partial class Ortsver
     internal Label Label14;
     [ApplTextBinding(nameof(IOrtsVerViewModel.AdditionalLabelText))]
     internal Label Label16;
+    [TextBinding(nameof(IOrtsVerViewModel.Label17_Text))]
     internal Label Label17;
     [ApplTextBinding(nameof(IOrtsVerViewModel.PoliticalNameLabelText))]
     internal Label Label18;
@@ -1391,7 +1402,7 @@ partial class Ortsver
     [ApplTextBinding(nameof(IOrtsVerViewModel.ConverterHeaderLabelText))]
     internal Label Label19;
     [ApplTextBinding(nameof(IOrtsVerViewModel.SearchPromptLabelText))]
-    [VisibilityBinding(nameof(IOrtsVerViewModel.Label22_Visible))]
+    [VisibilityBinding(nameof(IOrtsVerViewModel.TextBox30_Visible))]
     internal Label Label22;
     [VisibilityBinding(nameof(IOrtsVerViewModel.Panel1_Visible))]
     internal Panel Panel1;

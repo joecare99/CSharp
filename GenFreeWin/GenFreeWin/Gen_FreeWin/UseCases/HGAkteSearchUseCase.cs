@@ -44,9 +44,9 @@ namespace GenFreeWin.UseCases
         }
 
         /// <summary>
-        /// Loads all Akten as a collection of UI model (MyListItem).
+        /// Loads all Akten as a collection of UI model (ListItem<int>).
         /// </summary>
-        /// <returns>ObservableCollection of MyListItem for UI binding.</returns>
+        /// <returns>ObservableCollection of ListItem<int> for UI binding.</returns>
         public async Task<ObservableCollection<IListItem<int>>> LoadAktenAsync()
         {
             try
@@ -56,7 +56,7 @@ namespace GenFreeWin.UseCases
 
                 foreach (var akte in akten)
                 {
-                    items.Add(new MyListItem(akte.DisplayText, akte.Id));
+                    items.Add(new ListItem<int>(akte.DisplayText, akte.Id));
                 }
 
                 return items;
@@ -96,10 +96,10 @@ namespace GenFreeWin.UseCases
         }
 
         /// <summary>
-        /// Loads GBEs as a collection of UI model (MyListItem) for ComboBox binding.
+        /// Loads GBEs as a collection of UI model (ListItem<int>) for ComboBox binding.
         /// </summary>
         /// <param name="akteNumber">Akte number to load GBEs for.</param>
-        /// <returns>ObservableCollection of MyListItem for UI binding.</returns>
+        /// <returns>ObservableCollection of ListItem<int> for UI binding.</returns>
         public async Task<ObservableCollection<IListItem<int>>> LoadGBEsForAkteAsync(string akteNumber)
         {
             try
@@ -117,7 +117,7 @@ namespace GenFreeWin.UseCases
                     string displayText = $"{gbe.Jahr} {gbe.Name}".Trim() +
                         new string(' ', 240).Substring(0, 200) +
                         gbe.Id.ToString();
-                    items.Add(new MyListItem(displayText, gbe.Id));
+                    items.Add(new ListItem<int>(displayText, gbe.Id));
                 }
 
                 return items;
@@ -133,7 +133,7 @@ namespace GenFreeWin.UseCases
         /// Loads property usages (persons/entities linked to an Akte).
         /// </summary>
         /// <param name="akteNumber">Akte number to load usages for.</param>
-        /// <returns>ObservableCollection of MyListItem with person info.</returns>
+        /// <returns>ObservableCollection of ListItem<int> with person info.</returns>
         public async Task<ObservableCollection<IListItem<int>>> LoadPropertyUsagesAsync(string akteNumber)
         {
             try
@@ -156,7 +156,7 @@ namespace GenFreeWin.UseCases
                         new string(' ', 240)).Substring(0, 200) +
                         usage.PersonId.ToString();
 
-                    items.Add(new MyListItem(displayText, usage.PersonId));
+                    items.Add(new ListItem<int>(displayText, usage.PersonId));
                 }
 
                 return items;
@@ -172,7 +172,7 @@ namespace GenFreeWin.UseCases
         /// Searches Akten by pattern.
         /// </summary>
         /// <param name="searchPattern">Search pattern for Akte number.</param>
-        /// <returns>ObservableCollection of MyListItem matching the pattern.</returns>
+        /// <returns>ObservableCollection of ListItem<int> matching the pattern.</returns>
         public async Task<ObservableCollection<IListItem<int>>> SearchAktenAsync(string searchPattern)
         {
             try
@@ -186,7 +186,7 @@ namespace GenFreeWin.UseCases
                 var results = await _dataService.SearchAktenAsync(searchPattern);
                 foreach (var akte in results)
                 {
-                    items.Add(new MyListItem(akte.DisplayText, akte.Id));
+                    items.Add(new ListItem<int>(akte.DisplayText, akte.Id));
                 }
 
                 return items;

@@ -194,7 +194,7 @@ namespace GenFreeWin.ViewModels.Models
         // ====================================================================
 
         /// <summary>
-        /// Label 3 display text (legacy: Label3_Text)
+        /// Label 3 display text (legacy: CountyLabelText)
         /// </summary>
         public string Label3Text { get; set; } = "";
 

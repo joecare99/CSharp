@@ -52,7 +52,7 @@ namespace GenFreeWin.UseCases
                 var repos = await _dataService.LoadAllRepositoriesAsync();
                 foreach (var repo in repos)
                 {
-                    items.Add(new MyListItem(repo.DisplayText, repo.Id));
+                    items.Add(new ListItem<int>(repo.DisplayText, repo.Id));
                 }
             }
             catch (Exception ex)
@@ -80,7 +80,7 @@ namespace GenFreeWin.UseCases
                 var repos = await _dataService.SearchRepositoriesAsync(searchText.Trim());
                 foreach (var repo in repos)
                 {
-                    items.Add(new MyListItem(repo.DisplayText, repo.Id));
+                    items.Add(new ListItem<int>(repo.DisplayText, repo.Id));
                 }
             }
             catch (Exception ex)
@@ -128,7 +128,7 @@ namespace GenFreeWin.UseCases
                 var sources = await _dataService.LoadSourcesByRepositoryAsync(repoId);
                 foreach (var source in sources.OrderBy(s => s.SourceDescription))
                 {
-                    items.Add(new MyListItem(source.SourceDescription.Trim() + " ", source.SourceId));
+                    items.Add(new ListItem<int>(source.SourceDescription.Trim() + " ", source.SourceId));
                 }
             }
             catch (Exception ex)

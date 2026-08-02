@@ -2,6 +2,7 @@ using GenFree;
 using GenFree.Data;
 using GenFree.Interfaces.Sys;
 using GenFree.ViewModels.Interfaces;
+using GenFreeWin.Main;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

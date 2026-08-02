@@ -20,6 +20,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Views;
+using GenFreeWin.Main;
 
 namespace GenFreeWin;
 

@@ -811,7 +811,7 @@ internal partial class Fehlerli
         Button10.ForeColor = SystemColors.ControlText;
         Button10.Location = new Point(228, 690);
         Button10.Margin = new Padding(4);
-        Button10.Name = "Button10";
+        Button10.Name = "btnCloseView";
         Button10.RightToLeft = RightToLeft.No;
         Button10.Size = new Size(275, 22);
         Button10.TabIndex = 31;

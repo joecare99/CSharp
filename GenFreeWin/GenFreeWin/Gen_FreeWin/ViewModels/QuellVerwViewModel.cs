@@ -19,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using GenFreeWin.Main;
 
 namespace GenFreeWin.ViewModels;
 
@@ -1132,14 +1133,14 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
                                         if (!(DataModul.DB_RepoTab.Fields["Quelle"].Value != DataModul.DB_QuTable.Fields[QuFields._1].Value))
                                         {
                                             ComboBox comboBox = View.ComboBox1;
-                                            _ = comboBox.Items.Add(new MyListItem((DataModul.DB_RepoTable.Fields[RepoFields.Name].Value + " " + DataModul.DB_RepoTable.Fields[RepoFields.Ort].Value).AsString(), DataModul.DB_RepoTab.Fields["Repo"].AsInt()));
+                                            _ = comboBox.Items.Add(new ListItem<int>((DataModul.DB_RepoTable.Fields[RepoFields.Name].Value + " " + DataModul.DB_RepoTable.Fields[RepoFields.Ort].Value).AsString(), DataModul.DB_RepoTab.Fields["Repo"].AsInt()));
                                             comboBox = null;
                                         }
                                         else
                                             break;
                                     }
 
-                                    MyListItem myListItem = (MyListItem)View.ComboBox1.Items[0];
+                                    ListItem<int> myListItem = (ListItem<int>)View.ComboBox1.Items[0];
                                     View.ComboBox1.Text = myListItem.ItemString + "\r\n";
                                     View.ComboBox1.Tag = myListItem.ItemData.ToString();
                                     if (View.ComboBox1.Items.Count > 1)
@@ -1530,9 +1531,9 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
                         if (!(DataModul.DB_RepoTab.Fields["Quelle"].Value != DataModul.DB_QuTable.Fields[QuFields._1].Value))
                         {
                             ComboBox comboBox = View.ComboBox1;
-                            _ = comboBox.Items.Add(new MyListItem((DataModul.DB_RepoTable.Fields[RepoFields.Name].Value + " " + DataModul.DB_RepoTable.Fields[RepoFields.Ort].Value).AsString(), DataModul.DB_RepoTab.Fields["Repo"].AsInt()));
+                            _ = comboBox.Items.Add(new ListItem<int>((DataModul.DB_RepoTable.Fields[RepoFields.Name].Value + " " + DataModul.DB_RepoTable.Fields[RepoFields.Ort].Value).AsString(), DataModul.DB_RepoTab.Fields["Repo"].AsInt()));
                             comboBox = null;
-                            MyListItem myListItem = (MyListItem)View.ComboBox1.Items[0];
+                            ListItem<int> myListItem = (ListItem<int>)View.ComboBox1.Items[0];
                             View.ComboBox1.Text = myListItem.ItemString + "\r\n";
                             View.ComboBox1.Tag = myListItem.ItemData.ToString();
                             if (View.ComboBox1.Items.Count > 1)
@@ -2024,7 +2025,7 @@ public partial class QuellVerwViewModel : BaseViewModelCT, IQuellVerwViewModel
 
     public void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
-        MyListItem myListItem = (MyListItem)View.ComboBox1.SelectedItem;
+        ListItem<int> myListItem = (ListItem<int>)View.ComboBox1.SelectedItem;
         View.ComboBox1.Text = myListItem.ItemString + "\r\n";
         View.ComboBox1.Tag = myListItem.ItemData.ToString();
     }

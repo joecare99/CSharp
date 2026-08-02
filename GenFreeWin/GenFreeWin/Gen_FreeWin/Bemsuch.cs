@@ -16,6 +16,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using GenFreeWin.Main;
 
 namespace GenFreeWin;
 
@@ -1404,12 +1405,11 @@ internal class Bemsuch : Form
         else if (sListKenn == 'O')
         {
             Modul1.Schalt = (byte)List1.Items.ItemData<int>(List1.SelectedIndex);
-            MainProject.Forms.Ortsver.Button10.Text = Modul1.IText[EUserText.tNMBack];
-            _ = MainProject.Forms.Ortsver.ShowDialog();
+            MainProject.Forms.Ortsver.ShowDialog(btnCloseViewText: EUserText.tNMBack);
         }
         else if (sListKenn == 'Q')
         {
-            MainProject.Forms.Quellverw.ACommand1[6].Visible = true;
+            MainProject.Forms.Quellverw._Command1_6.Visible = true;
             _ = MainProject.Forms.Quellverw.ShowDialog(List1.Items.ItemData<int>(List1.SelectedIndex));
         }
         else

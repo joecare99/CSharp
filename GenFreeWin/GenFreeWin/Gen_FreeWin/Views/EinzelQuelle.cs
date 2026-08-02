@@ -2,6 +2,7 @@ using BaseLib.Helper;
 using GenFree;
 using GenFree.Data;
 using GenFree.Interfaces.Sys;
+using GenFreeWin.Main;
 using Microsoft.VisualBasic;
 using System;
 using System.Diagnostics;

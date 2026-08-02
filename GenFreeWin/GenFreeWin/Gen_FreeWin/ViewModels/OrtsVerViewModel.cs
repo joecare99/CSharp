@@ -19,6 +19,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Collections.ObjectModel;
+using GenFreeWin.Main;
 
 namespace GenFreeWin.ViewModels;
 
@@ -72,9 +73,9 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     [ObservableProperty] public partial bool btnConvertKoords_Visible { get; set; }
     [ObservableProperty] public partial bool btnSearchName_Visible { get; set; }
     [ObservableProperty] public partial bool btnSearchNumber_Visible { get; set; }
-    [ObservableProperty] public partial bool Button10_Visible { get; set; }
-    [ObservableProperty] public partial bool Button11_Visible { get; set; }
-    [ObservableProperty] public partial bool Button12_Visible { get; set; }
+    [ObservableProperty] public partial bool CloseViewButtonVisible { get; set; }
+    [ObservableProperty] public partial bool BeginEditButtonVisible { get; set; }
+    [ObservableProperty] public partial bool SavePlaceButtonVisible { get; set; }
     [ObservableProperty] public partial bool Button15_Visible { get; set; }
     [ObservableProperty] public partial bool Button17_Visible { get; set; }
     [ObservableProperty] public partial bool Button18_Visible { get; set; }
@@ -85,18 +86,11 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     [ObservableProperty] public partial bool ListBox2_Visible { get; set; }
     
     [ObservableProperty] public partial bool edtPlace_Visible { get; set; }
-    [ObservableProperty] public partial bool edtSuburb_Visible { get; set; }
-    [ObservableProperty] public partial bool edtCounty_Visible { get; set; }
-    [ObservableProperty] public partial bool edtCountry_Visible { get; set; }
-    [ObservableProperty] public partial bool edtState_Visible { get; set; }
+
     [ObservableProperty] public partial bool edtLocator_Visible { get; set; }
-    [ObservableProperty] public partial bool edtGOV_Visible { get; set; }
-    [ObservableProperty] public partial bool edtLat1_Visible { get; set; }
-    [ObservableProperty] public partial bool edtLong1_Visible { get; set; }
+
     [ObservableProperty] public partial bool Panel1_Visible { get; set; }
     
-    [ObservableProperty] public partial bool Label22_Visible { get; set; }
-
     [ObservableProperty] public partial EUserText CoordinatesDecimalHintText { get; set; }
     [ObservableProperty] public partial EUserText btnNext_Text { get; set; }
     [ObservableProperty] public partial EUserText btnPrev_Text { get; set; }
@@ -107,38 +101,38 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     [ObservableProperty] public partial EUserText btnConvertKoords_Text { get; set; }
     [ObservableProperty] public partial EUserText btnSearchName_Text { get; set; }
     [ObservableProperty] public partial EUserText btnSearchNumber_Text { get; set; }
-    [ObservableProperty] public partial EUserText Button10_Text { get; set; }
+    [ObservableProperty] public partial EUserText CloseViewButtonText { get; set; }
     [ObservableProperty] public partial EUserText Button11_Text { get; set; }
     [ObservableProperty] public partial EUserText Button12_Text { get; set; }
     [ObservableProperty] public partial EUserText Button13_Text { get; set; }
     [ObservableProperty] public partial EUserText Button14_Text { get; set; }
     [ObservableProperty] public partial EUserText Button15_Text { get; set; }
     [ObservableProperty] public partial string Button16_Text { get; set; }
-    [ObservableProperty] public partial EUserText Button17_Text { get; set; }
-    [ObservableProperty] public partial EUserText Button18_Text { get; set; }
-    [ObservableProperty] public partial EUserText Button19_Text { get; set; }
-    [ObservableProperty] public partial EUserText Button20_Text { get; set; }
+    [ObservableProperty] public partial EUserText CancelEditButtonText { get; set; }
+    [ObservableProperty] public partial EUserText DeletePlaceButtonText { get; set; }
+    [ObservableProperty] public partial EUserText SaveAndReturnButtonText { get; set; }
+    [ObservableProperty] public partial EUserText FindUnusedPlacesButtonText { get; set; }
     [ObservableProperty] public partial string Label1_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label2_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label3_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label4_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label5_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label7_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label8_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label9_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label10_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label11_Text { get; set; }
+    [ObservableProperty] public partial EUserText SuburbLabelText { get; set; }
+    [ObservableProperty] public partial EUserText CountyLabelText { get; set; }
+    [ObservableProperty] public partial EUserText CountryLabelText { get; set; }
+    [ObservableProperty] public partial EUserText StateLabelText { get; set; }
+    [ObservableProperty] public partial EUserText LatitudeLabelText { get; set; }
+    [ObservableProperty] public partial EUserText LongitudeLabelText { get; set; }
+    [ObservableProperty] public partial EUserText AdditionalOutputLabelText { get; set; }
+    [ObservableProperty] public partial EUserText GovLabelText { get; set; }
+    [ObservableProperty] public partial EUserText LocatorLabelText { get; set; }
     [ObservableProperty] public partial EUserText Label12_Text { get; set; }
     [ObservableProperty] public partial string Label13_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label14_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label15_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label16_Text { get; set; }
+    [ObservableProperty] public partial EUserText PostalCodeLabelText { get; set; }
+    [ObservableProperty] public partial EUserText PlaceLabelText { get; set; }
+    [ObservableProperty] public partial EUserText AdditionalLabelText { get; set; }
     [ObservableProperty] public partial EUserText Label17_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label18_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label19_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label20_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label21_Text { get; set; }
-    [ObservableProperty] public partial EUserText Label22_Text { get; set; }
+    [ObservableProperty] public partial EUserText PoliticalNameLabelText { get; set; }
+    [ObservableProperty] public partial EUserText ConverterHeaderLabelText { get; set; }
+    [ObservableProperty] public partial EUserText ConverterLongitudeLabelText { get; set; }
+    [ObservableProperty] public partial EUserText ConverterLatitudeLabelText { get; set; }
+    [ObservableProperty] public partial EUserText SearchPromptLabelText { get; set; }
     [ObservableProperty] public partial string Label25_Text { get; set; }
     [ObservableProperty] public partial string Label27_Text { get; set; }
     [ObservableProperty] public partial string Label28_Text { get; set; }
@@ -213,9 +207,9 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         btnConvertKoords_Text = EUserText.t358;
         btnSearchName_Text = EUserText.t273;
         btnSearchNumber_Text = EUserText.t272;
-        if (Button10_Text == null)
+        if (CloseViewButtonText == null)
         {
-            Button10_Text = EUserText.t158;
+            CloseViewButtonText = EUserText.t158;
         }
         Button11_Text = EUserText.t73;
         Button12_Text = EUserText.tNMSave;
@@ -223,30 +217,30 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         Button14_Text = EUserText.t67;
         Button15_Text = EUserText.t297;
         Button16_Text = Modul1.IText[EUserText.t129];
-        Button17_Text = EUserText.t354;
-        Button18_Text = EUserText.t363;
-        Button19_Text = EUserText.t361;
-        Button20_Text = EUserText.t362;
+        CancelEditButtonText = EUserText.t354;
+        DeletePlaceButtonText = EUserText.t363;
+        SaveAndReturnButtonText = EUserText.t361;
+        FindUnusedPlacesButtonText = EUserText.t362;
         Label1_Text = Modul1.IText[EUserText.tPlace] + ":";
         Label1_Tag = 0;
-        Label2_Text = EUserText.t140;
-        Label3_Text = EUserText.t141;
-        Label4_Text = EUserText.t142;
-        Label5_Text = EUserText.t143;
-        Label7_Text = EUserText.t146;
-        Label8_Text = EUserText.t145;
-        Label9_Text = EUserText.t283;
-        Label10_Text = EUserText.t350;
-        Label11_Text = EUserText.t149;
+        SuburbLabelText = EUserText.t140;
+        CountyLabelText = EUserText.t141;
+        CountryLabelText = EUserText.t142;
+        StateLabelText = EUserText.t143;
+        LatitudeLabelText = EUserText.t146;
+        LongitudeLabelText = EUserText.t145;
+        AdditionalOutputLabelText = EUserText.t283;
+        GovLabelText = EUserText.t350;
+        LocatorLabelText = EUserText.t149;
         Label13_Text = Modul1.IText[EUserText.t150] + ":";
         Label13_Tag = 0;
-        Label14_Text = EUserText.t148;
-        Label16_Text = EUserText.t147;
-        Label18_Text = EUserText.t351;
-        Label19_Text = EUserText.t365;
-        Label20_Text = EUserText.t145;
-        Label21_Text = EUserText.t146;
-        Label22_Text = EUserText.t353;
+        PostalCodeLabelText = EUserText.t148;
+        AdditionalLabelText = EUserText.t147;
+        PoliticalNameLabelText = EUserText.t351;
+        ConverterHeaderLabelText = EUserText.t365;
+        ConverterLongitudeLabelText = EUserText.t145;
+        ConverterLatitudeLabelText = EUserText.t146;
+        SearchPromptLabelText = EUserText.t353;
         TextBox21_Text = Modul1.IText[EUserText.t352];
 
         if (Directory.Exists(WinPath + "\\Microsoft.net\\Framework\\v3.5"))
@@ -599,7 +593,8 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         Button15_Visible = false;
     }
 
-    public void Button13_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void CalculateCoordinates()
     {
         if (TextBox22_Text == "" || TextBox27_Text == "")
         {
@@ -653,7 +648,8 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         }
     }
 
-    public void Button15_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void ApplyCoordinates()
     {
         if (!((TextBox23_Text.Trim() == "") | (TextBox27_Text.Trim() == "")))
         {
@@ -675,12 +671,13 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
             Frame1_Visible = false;
             if (!Button19_Visible)
             {
-                Button12_Visible = true;
+                SavePlaceButtonVisible = true;
             }
         }
     }
 
-    public void Button14_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void CloseCoordinateConverter()
     {
         TextBox22_Text = "";
         TextBox23_Text = "";
@@ -693,7 +690,8 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         Frame1_Visible = false;
     }
 
-    public void Button12_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void SavePlace()
     {
         btnNext_Visible = true;
         btnPrev_Visible = true;
@@ -704,15 +702,15 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         btnConvertKoords_Visible = true;
         btnSearchName_Visible = true;
         btnSearchNumber_Visible = true;
-        Button10_Visible = true;
-        Button11_Visible = true;
+        CloseViewButtonVisible = true;
+        BeginEditButtonVisible = true;
         Button21_Visible = true;
         Button23_Visible = true;
         if (Directory.Exists(WinPath + "\\Microsoft.net\\Framework\\v3.5"))
         {
             Button21_Visible = true;
         }
-        Button12_Visible = false;
+        SavePlaceButtonVisible = false;
         Button17_Visible = false;
 
         ListBox1_Items.Clear();
@@ -865,15 +863,15 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
                 }
                 else
                 {
-                    Button12_Visible = false;
+                    SavePlaceButtonVisible = false;
                     Button17_Visible = false;
-                    Button11_Visible = true;
+                    BeginEditButtonVisible = true;
                     btnNext_Visible = true;
                     btnPrev_Visible = true;
                     btnSearchName_Visible = true;
                     btnSearchNumber_Visible = true;
-                    Button11_Visible = true;
-                    Button11_Visible = true;
+                    BeginEditButtonVisible = true;
+                    BeginEditButtonVisible = true;
                     Button21_Visible = true;
                     Button23_Visible = true;
                     ListBox2_Items.Clear();
@@ -980,12 +978,13 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         ortles(0, Modul1.Ubg);
     }
 
-    public void Button10_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void CloseView()
     {
         View.Close();
     }
-
-    public void Button16_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void OpenPictures()
     {
         Modul1.Ubg = Label13_Tag;
         Modul1.sPKennz = "O";
@@ -1017,12 +1016,12 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         btnConvertKoords_Visible = false;
         btnSearchName_Visible = false;
         btnSearchNumber_Visible = false;
-        Button10_Visible = false;
-        Button11_Visible = false;
+        CloseViewButtonVisible = false;
+        BeginEditButtonVisible = false;
         Button23_Visible = false;
         if (!Button19_Visible)
         {
-            Button12_Visible = true;
+            SavePlaceButtonVisible = true;
         }
         Button17_Visible = true;
         switch (((TextBox)sender).TabIndex)
@@ -1077,13 +1076,10 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         ListBox1_Visible = false;
 
         edtPlace_Visible = false;
-        edtSuburb_Visible = false;
-        edtCounty_Visible = false;
-        edtCountry_Visible = false;
-        edtState_Visible = false;
+
         TextBox30_Visible = true;
 
-        Button11_Visible = false;
+        BeginEditButtonVisible = false;
         btnNext_Visible = false;
         btnPrev_Visible = false;
         btnSearchNumber_Visible = false;
@@ -1095,7 +1091,6 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         Button17_Visible = false;
         Button19_Visible = false;
 
-        Label22_Visible = true;
         _ = View.TextBox30.Focus();
         if (TextBox30_Text != "")
         {
@@ -1112,33 +1107,26 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     {
 
         TextBox30_Visible = false;
-        Label22_Visible = false;
         ProjectData.ClearProjectError();
         var ubg = ListBox2_SelectedItem.AsString().Right(10).AsInt();
         Button18_Visible = false;
         if (DataModul.Place.ReadData(ubg, out var cPlace))
         {
             edtPlace_Visible = true;
-            edtSuburb_Visible = true;
-            edtCounty_Visible = true;
-            edtCountry_Visible = true;
-            edtState_Visible = true;
+
             edtLocator_Visible = true;
-            edtLat1_Visible = true;
-            edtLong1_Visible = true;
-            edtGOV_Visible = true;
 
             SetData(cPlace);
             Geoles(cPlace);
             Verwend = Ortverwend(cPlace.ID);
             Button18_Visible = true;
-            Button11_Visible = true;
+            BeginEditButtonVisible = true;
             btnNext_Visible = true;
             btnPrev_Visible = true;
             btnSearchNumber_Visible = true;
             btnConvertKoords_Visible = true;
             btnSearchGOV_Visible = true;
-            Button10_Visible = true;
+            CloseViewButtonVisible = true;
             btnShowPlaceGM_Visible = true;
         }
         else
@@ -1164,14 +1152,14 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         RTB1_Text = "";
     }
 
-    public void TextBox30_TextChanged(object sender, EventArgs e)
+    partial void OnTextBox30_TextChanged(string value)
     {
-        if (TextBox30_Text == "")
+        if (value == "")
         {
             return;
         }
         ListBox2_Items.Clear();
-        Modul1.UbgT = TextBox30_Text.Trim();
+        Modul1.UbgT = value.Trim();
         DataModul.DOSB_OrtSTable.Index = "OrtSu";
         DataModul.DOSB_OrtSTable.Seek(">=", Modul1.UbgT);
         var M1_Iter = 1;
@@ -1199,7 +1187,8 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         }
     }
 
-    public void Button11_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void BeginEdit()
     {
         btnNext_Visible = false;
         btnPrev_Visible = false;
@@ -1210,8 +1199,8 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         btnConvertKoords_Visible = false;
         btnSearchName_Visible = false;
         btnSearchNumber_Visible = false;
-        Button10_Visible = false;
-        Button11_Visible = false;
+        CloseViewButtonVisible = false;
+        BeginEditButtonVisible = false;
 
         Button23_Visible = false;
 
@@ -1219,7 +1208,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
         ListBox1_Visible = true;
 
-        Button12_Visible = true;
+        SavePlaceButtonVisible = true;
         Button17_Visible = true;
         View_Ortmaskleer();
         DataModul.DB_PlaceTable.Index = nameof(PlaceIndex.OrtNr);
@@ -1407,7 +1396,8 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         }
     }
 
-    public void Button19_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void SaveAndReturn()
     {
         int num4;
         var xAddnew = DataModul.Place.ReadData(Label13_Tag, out var cPlace);
@@ -1552,15 +1542,15 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         }
 
     }
-
-    public void Button17_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void CancelEdit()
     {
         checked
         {
             if (!Button19_Visible)
             {
                 Modul1.Ubg = Label13_Tag;
-                Modul1.Schalt = Label13_Tag;
+                Modul1.Schalt = (byte)Label13_Tag;
                 View_Ortmaskleer();
                 btnNext_Visible = true;
                 btnPrev_Visible = true;
@@ -1571,15 +1561,15 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
                 btnConvertKoords_Visible = true;
                 btnSearchName_Visible = true;
                 btnSearchNumber_Visible = true;
-                Button10_Visible = true;
-                Button11_Visible = true;
+                CloseViewButtonVisible = true;
+                BeginEditButtonVisible = true;
                 Button21_Visible = true;
                 Button23_Visible = true;
                 if (Directory.Exists(WinPath + "\\Microsoft.net\\Framework\\v3.5"))
                 {
                     Button21_Visible = true;
                 }
-                Button12_Visible = false;
+                SavePlaceButtonVisible = false;
                 Button17_Visible = false;
                 Nr = Label13_Tag;
                 ortles(0, Modul1.Ubg);
@@ -1591,7 +1581,8 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         }
     }
 
-    public void Button18_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void DeletePlace()
     {
         DataModul.DOSB_OrtSTable.Index = "OrtNr";
         checked
@@ -1646,23 +1637,24 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         btnConvertKoords_Visible = false;
         btnSearchName_Visible = false;
         btnSearchNumber_Visible = false;
-        Button10_Visible = false;
-        Button11_Visible = false;
+        CloseViewButtonVisible = false;
+        BeginEditButtonVisible = false;
         Button21_Visible = false;
         Button23_Visible = false;
         if (!Button19_Visible)
         {
-            Button12_Visible = true;
+            SavePlaceButtonVisible = true;
         }
         Button17_Visible = true;
     }
 
-    public void Button20_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void FindUnusedPlaces()
     {
         OrtverwendA();
     }
-
-    public void Button21_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void DetectCoordinates()
     {
         string adrString = edtPlace_Text + " " + edtSuburb_Text + " " + edtCountry_Text + " " + edtState_Text;
         Geocode geocode = GeocodeAdress(adrString);
@@ -1780,15 +1772,16 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
     }
 
-    public void TextBox13_TextChanged(object sender, EventArgs e)
+    partial void OnedtLong3_TextChanged(string value)
     {
-        if (edtLong3_Text.Trim().Length == 2)
+        if (value.Trim().Length == 2)
         {
             Locber();
         }
     }
 
-    public void Button22_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void ResetSearchView()
     {
         ListBox1_Visible = true;
         ListBox2_Visible = false;
@@ -1800,38 +1793,38 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         btnConvertKoords_Visible = false;
         btnSearchName_Visible = false;
         btnSearchNumber_Visible = false;
-        Button10_Visible = false;
-        Button11_Visible = false;
+        CloseViewButtonVisible = false;
+        BeginEditButtonVisible = false;
         if (!Button19_Visible)
         {
-            Button12_Visible = true;
+            SavePlaceButtonVisible = true;
         }
         Button17_Visible = true;
     }
 
-    public void TextBox31_TextChanged(object sender, EventArgs e)
+    partial void OnTextBox31_TextChanged(string value)
     {
-        if (TextBox31_Text == "")
+        if (value == "")
         {
             return;
         }
         ListBox3_Items.Clear();
         var num = 0;
-        Modul1.UbgT = TextBox31_Text.Trim();
+        Modul1.UbgT = value.Trim();
         DataModul_OSBOrtS_ForeachIdxC("OrtSu", Modul1.UbgT, (i, s) => Filter_ByKoordinateB(i, s, (i, s)
             => ListBox3_Items.Add(new ListItem<int>($"{s,-42} {i}", i))) && num++ < 256);
         Label25_Text = (num - ListBox3_Items.Count).AsString() + " Orte wegen fehlender  Koordinaten übersprungen";
     }
 
-    public void TextBox32_TextChanged(object sender, EventArgs e)
+    partial void OnTextBox32_TextChanged(string value)
     {
-        if (TextBox32_Text == "")
+        if (value == "")
         {
             return;
         }
         ListBox4_Items.Clear();
         var num = 0;
-        Modul1.UbgT = TextBox32_Text.Trim();
+        Modul1.UbgT = value.Trim();
         DataModul_OSBOrtS_ForeachIdxC("OrtSu", Modul1.UbgT, (i, s) => Filter_ByKoordinateB(i, s, (i, s)
             => ListBox4_Items.Add(new ListItem<int>($"{s,-42} {i}", i))) && num++ < 256);
         Label35_Text = (num - ListBox4_Items.Count).AsString() + " Orte wegen fehlender  Koordinaten übersprungen";
@@ -2115,23 +2108,25 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     end_IL_0001_3:
         ;
     }
-    public void Button23_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void OpenDistancePanel()
     {
         View.Panel1.Location = new Point(1, 3);
         Panel1_Visible = true;
         _ = View.TextBox31.Focus();
     }
 
-    public void Button24_Click(object sender, EventArgs e)
+    [RelayCommand]
+    public void CloseDistancePanel()
     {
         Panel1_Visible = false;
     }
 
-    public void Label27_TextChanged(object sender, EventArgs e)
+    partial void OnLabel27_TextChanged(string value)
     {
         if ((Label29_Text != "") & (Label28_Text != "") & (Label30_Text != "") & (Label31_Text != ""))
         {
-            var instance = Strings.Split(Label27_Text, "\n");
+            var instance = Strings.Split(value, "\n");
             var instance2 = Strings.Split(Label32_Text, "\n");
             Label33_Text = "Die Luflinien-Entfernung zwischen " + Strings.Trim(
                 instance[0].AsString()) + " und " + Strings.Trim(
@@ -2140,12 +2135,12 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         }
     }
 
-    public void Label32_TextChanged(object sender, EventArgs e)
+    partial void OnLabel32_TextChanged(string value)
     {
         if ((Label29_Text != "") & (Label28_Text != "") & (Label30_Text != "") & (Label31_Text != ""))
         {
             var instance = Strings.Split(Label27_Text, "\n");
-            var instance2 = Strings.Split(Label32_Text, "\n");
+            var instance2 = Strings.Split(value, "\n");
             Label33_Text = "Die Luftlinien-Entfernung zwischen " + Strings.Trim(
                 instance[0].AsString()) + " und " + Strings.Trim(
                     instance2[0].AsString()) + " beträgt \n\n" +

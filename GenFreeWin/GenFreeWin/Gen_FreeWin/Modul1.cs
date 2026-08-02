@@ -27,6 +27,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
+using GenFreeWin.Main;
 
 namespace GenFree;
 

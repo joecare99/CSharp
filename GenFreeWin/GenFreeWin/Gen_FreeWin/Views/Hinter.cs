@@ -7,6 +7,7 @@ using GenFree.Interfaces.DB;
 using GenFree.Interfaces.Sys;
 using GenFree.Interfaces.VB;
 using GenFree.ViewModels.Interfaces;
+using GenFreeWin.Main;
 using GenFreeWin.Views;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;

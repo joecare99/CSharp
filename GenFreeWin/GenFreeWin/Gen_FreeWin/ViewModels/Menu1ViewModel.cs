@@ -19,6 +19,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
+using GenFreeWin.Main;
 
 namespace GenFreeWin.ViewModels;
 
