@@ -15,26 +15,7 @@ namespace Db.Provider.MySql
     {
         private readonly IDbConnection _dbConnection = dbConnection;
 
-        /// <inheritdoc />
-        public string RenderSelect(IDbSelectStatement xStatement)
-        {
-            if (xStatement is null)
-            {
-                throw new ArgumentNullException(nameof(xStatement));
-            }
-
-            var sFields = xStatement.Fields.Count == 0 || (xStatement.Fields.Count == 1 && xStatement.Fields[0] == "*") ? "*" : string.Join(",", xStatement.Fields.Select(QuoteIdentifier));
-            var xBuilder = new StringBuilder($"SELECT {sFields} FROM {QuoteIdentifier(xStatement.Table)}");
-            AppendFilters(xBuilder, xStatement.Filters);
-            if (xStatement.Limit.HasValue)
-            {
-                xBuilder.Append($" limit {xStatement.Limit.Value}");
-            }
-
-            return xBuilder.ToString();
-        }
-
-        public IDbCommand CreateQuery(IDbSelectStatement xStatement)
+       public IDbCommand CreateQuery(IDbSelectStatement xStatement)
         {
             if (xStatement is null)
             {
@@ -46,34 +27,7 @@ namespace Db.Provider.MySql
 
         public IDbCommand CreateQuery(string sTable, IEnumerable<string> arrFields, IEnumerable<IDbFilterClause> arrFilters, int? iLimit = null, object? offset = null)
             => CreateQuery(_dbConnection, sTable, arrFields, arrFilters, iLimit, offset);
-
-        /// <inheritdoc />
-        public string RenderInsert(IDbInsertStatement xStatement)
-        {
-            if (xStatement is null)
-            {
-                throw new ArgumentNullException(nameof(xStatement));
-            }
-
-            var sFields = string.Join(", ", xStatement.Fields.Select(xField => QuoteIdentifier(xField.Key)));
-            var sValues = string.Join(", ", xStatement.Fields.Select(xField => xField.Value));
-            return $"INSERT INTO {QuoteIdentifier(xStatement.Table)} ({sFields}) VALUES ({sValues});";
-        }
-
-        /// <inheritdoc />
-        public string RenderUpdate(IDbUpdateStatement xStatement)
-        {
-            if (xStatement is null)
-            {
-                throw new ArgumentNullException(nameof(xStatement));
-            }
-
-            var sSet = string.Join(", ", xStatement.Fields.Select(xField => $"{QuoteIdentifier(xField.Key)}={xField.Value}"));
-            var xBuilder = new StringBuilder($"UPDATE {QuoteIdentifier(xStatement.Table)} SET {sSet}");
-            AppendFilters(xBuilder, xStatement.Filters);
-            return xBuilder.ToString();
-        }
-
+ 
         private static void AppendFilters(StringBuilder xBuilder, IReadOnlyList<IDbFilterClause> arrFilters)
         {
             if (arrFilters.Count == 0)
@@ -140,6 +94,16 @@ namespace Db.Provider.MySql
         {
             var sSet = string.Join(", ", arrFields.Select(xField => $"{QuoteIdentifier(xField.Key)}={xField.Value}"));
             var xBuilder = new StringBuilder($"UPDATE {QuoteIdentifier(sTable)} SET {sSet}");
+            AppendFilters(xBuilder, arrFilters.ToList());
+
+            var xCommand = dbConnection.CreateCommand();
+            xCommand.CommandText = xBuilder.ToString();
+
+            return xCommand;
+        }
+        public IDbCommand CreateDelete(string sTable, IEnumerable<DbFilterClause> arrFilters)
+        {
+            var xBuilder = new StringBuilder($"DELETE FROM {QuoteIdentifier(sTable)}");
             AppendFilters(xBuilder, arrFilters.ToList());
 
             var xCommand = dbConnection.CreateCommand();
