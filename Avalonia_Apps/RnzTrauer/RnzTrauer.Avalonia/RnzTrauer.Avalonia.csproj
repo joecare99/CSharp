@@ -1,0 +1,25 @@
+<Project>
+  <Import Project="..\Application.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>RnzTrauer.Avalonia</AssemblyName>
+    <RootNamespace>RnzTrauer.Avalonia</RootNamespace>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core2.csproj" />
+    <ProjectReference Include="..\RnzTrauer.Persistence.MySql\RnzTrauer.Persistence.MySql.csproj" />
+    <ProjectReference Include="..\..\..\Gen_FreeWin\DbProviderMySql\DbProviderMySql.csproj" />
+  </ItemGroup>
+</Project>

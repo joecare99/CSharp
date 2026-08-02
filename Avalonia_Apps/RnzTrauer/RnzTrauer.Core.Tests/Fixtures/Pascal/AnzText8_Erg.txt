@@ -1,0 +1,5 @@
+dkBirth=29. 11. 1941
+dkDeath=19. 12. 2018
+dkPlace=Sinsheim-Rohrbach
+dkBurial=4. 01. 2019
+dkSex=F

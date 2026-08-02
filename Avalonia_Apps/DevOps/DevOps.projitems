@@ -13,7 +13,12 @@
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\AA98-Bl051-Code-Wiki-Vault-Baseline.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\Skills\PackageUsage\Inspect-PackageUsage.ps1" Link="Inspect-PackageUsage.ps1" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T067-Persist-Local-Planning-Document-Edits.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T068-Detect-Local-Planning-Document-Conflicts.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T083-Refine-Code-Wiki-To-Project-Level.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T084-Refine-Azure-DevOps-Field-Mapping.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T085-Implement-Azure-DevOps-Adapter-Skeleton.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\AA98-T086-Add-Azure-DevOps-Adapter-Contract-Tests.md" />
     <None Include="$(MSBuildThisFileDirectory)Vision.md" />
   </ItemGroup>
 </Project>

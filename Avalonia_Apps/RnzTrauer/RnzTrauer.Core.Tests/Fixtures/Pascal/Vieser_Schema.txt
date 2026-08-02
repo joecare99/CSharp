@@ -1,0 +1,57 @@
+]TS: !DOCTYPE
+]TS: BODY
+]TS: H2
++Name:
+[TS: a
++Ref:
+[TE: a
+]TE: H2
+]TS: UL
+]TS: EM
++info:
+[S:
+[TE: EM
++data:
+j14TS: BR
+j09TS: LI
+]TE: UL
+]TS: B 
+J30S: F
+j99 HR
+J23S: V
+J23S: M
+---------
++Eltern:
+]TE: B
+[TM: a,href
++Ref:
+j17TE: A
+]HR
+------- 
++Familie:
+]TE: B
++Partner:
+[TM: a,href
++Ref:
+]TE: A
+j18TS: B 
+j49TS: OL
+]TS: UL
+j36TE: UL
+]TS: EM
++info:
+[S:
+[TE: EM
++data:
+j39TS: BR
+j39TS: LI
+]TE: UL
+]TS: OL
+]TS: LI
++Kind:
+[TM: a,href
++Ref:
+]TE: A
+j17TE: OL
+j50TS: LI
+]HR

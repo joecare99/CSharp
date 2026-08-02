@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,10 @@ public partial class PlanningExplorerViewModel : ViewModelBase, IHasProperties
     public ObservableCollection<PlanningCategoryGroupViewModel> CategoryGroups { get; } = [];
 
     public ObservableCollection<Diagnostic> Diagnostics { get; } = [];
+
+    private readonly Dictionary<string, string> _loadedDocumentTexts = new(StringComparer.OrdinalIgnoreCase);
+
+    private PlanningReadRequest? _lastReadRequest;
 
     private ObservableCollection<IPropertyItem> PropertyItems { get; } = [];
 
@@ -125,15 +130,71 @@ public partial class PlanningExplorerViewModel : ViewModelBase, IHasProperties
         ViewMode = PlanningExplorerViewMode.Category;
     }
 
+    [RelayCommand]
+    private async Task SaveSelectedItemAsync()
+    {
+        if (SelectedItem is null || SelectedItem.IsVirtualNode)
+        {
+            return;
+        }
+
+        PlanningWriteRequest request = new()
+        {
+            RepositoryRootPath = RepositoryRootPath,
+            PlanningRootPath = GetPlanningRootPathForWrite(),
+        };
+        request.Items.Add(new PlanningItem
+        {
+            Id = SelectedItem.Id,
+            Title = SelectedItem.Title,
+            Kind = SelectedItem.Kind,
+            Status = SelectedItem.Status,
+            SourcePath = SelectedItem.SourcePath,
+            DocumentText = SelectedItem.DocumentText,
+        });
+        if (_loadedDocumentTexts.TryGetValue(SelectedItem.SourcePath, out string? loadedDocumentText))
+        {
+            request.ExpectedDocumentTexts[SelectedItem.SourcePath] = loadedDocumentText;
+        }
+
+        PlanningWriteResult result = await _planningProvider.WriteAsync(request).ConfigureAwait(false);
+        foreach (Diagnostic diagnostic in result.Diagnostics)
+        {
+            Diagnostics.Add(diagnostic);
+        }
+
+        StatusText = result.Diagnostics.Count == 0
+            ? $"Saved {SelectedItem.Id}."
+            : $"Saving {SelectedItem.Id} completed with {result.Diagnostics.Count} diagnostics.";
+    }
+
+    [RelayCommand]
+    private async Task ReloadAsync()
+    {
+        if (_lastReadRequest is null)
+        {
+            return;
+        }
+
+        await LoadAsync(_lastReadRequest).ConfigureAwait(false);
+        StatusText = $"Reloaded planning items. Local changes were discarded. Diagnostics: {Diagnostics.Count}.";
+    }
+
     public async Task LoadAsync(PlanningReadRequest request, CancellationToken cancellationToken = default)
     {
         PlanningReadResult result = await _planningProvider.ReadAsync(request, cancellationToken).ConfigureAwait(false);
+        _lastReadRequest = new PlanningReadRequest
+        {
+            RepositoryRootPath = request.RepositoryRootPath,
+            PlanningRootPath = request.PlanningRootPath,
+        };
         RepositoryRootPath = result.RepositoryRootPath;
         PlanningRootPath = result.PlanningRootPath;
 
         RootItems.Clear();
         CategoryGroups.Clear();
         Diagnostics.Clear();
+        _loadedDocumentTexts.Clear();
         SelectedItem = null;
 
         foreach (Diagnostic diagnostic in result.Diagnostics)
@@ -149,6 +210,11 @@ public partial class PlanningExplorerViewModel : ViewModelBase, IHasProperties
         {
             PlanningTreeItemViewModel node = new(item);
             allNodes.Add(node);
+
+            if (!string.IsNullOrWhiteSpace(item.SourcePath))
+            {
+                _loadedDocumentTexts[item.SourcePath] = item.DocumentText;
+            }
 
             if (!string.IsNullOrWhiteSpace(node.Id) && !nodesById.ContainsKey(node.Id))
             {
@@ -218,6 +284,16 @@ public partial class PlanningExplorerViewModel : ViewModelBase, IHasProperties
         }));
         PropertyItems.Add(new PlanningPropertyItemViewModel("Parent", "Parent", item.ParentId, false));
         PropertyItems.Add(new PlanningPropertyItemViewModel("SourcePath", "Source", item.SourcePath, false));
+    }
+
+    private string GetPlanningRootPathForWrite()
+    {
+        if (string.IsNullOrWhiteSpace(RepositoryRootPath) || string.IsNullOrWhiteSpace(PlanningRootPath))
+        {
+            return "DevOps";
+        }
+
+        return Path.GetRelativePath(RepositoryRootPath, PlanningRootPath);
     }
 
     private void BuildCategoryGroups(IReadOnlyList<PlanningTreeItemViewModel> allNodes)

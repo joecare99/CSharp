@@ -23,5 +23,8 @@ Select the first narrow Copilot-assisted workflow for AA98 self-hosting.
 ## Validation
 - Planning/design review only.
 
+## Progress Notes
+- The first narrow workflow selected for the initial skeleton is planning summarization, implemented through provider-neutral planning tool metadata and a planning-context-aware contribution.
+
 ## Status
-- Proposed
+- Completed

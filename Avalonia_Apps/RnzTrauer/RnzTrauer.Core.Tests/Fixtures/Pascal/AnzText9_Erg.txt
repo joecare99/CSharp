@@ -1,0 +1,5 @@
+dkBirth=20. 6. 1932
+dkDeath=24. 12. 2018
+dkPlace=Sinsheim
+dkBurial=4. 01. 2019
+dkSex=M

@@ -23,5 +23,8 @@ Define metadata required for AA98 commands to be safely usable as AI tools.
 ## Validation
 - Planning/design review only unless contract files are created in this task.
 
+## Progress Notes
+- Shared tool-capable command metadata contracts now live in `Libraries/AppKomponentBaseLib/Commands` and cover parameters, results, context requirements, safety levels, and consent metadata.
+
 ## Status
-- Proposed
+- Completed

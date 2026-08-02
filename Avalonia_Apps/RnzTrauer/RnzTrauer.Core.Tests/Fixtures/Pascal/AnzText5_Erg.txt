@@ -1,0 +1,3 @@
+dkDeath=15. 1. 2017
+dkAge=75
+dkSex=F

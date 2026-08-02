@@ -24,5 +24,8 @@ Implement the first AI tool workflow skeleton over provider-neutral command and 
 - Build changed projects.
 - Run AI workflow tests from `AA98-T081`.
 
+## Progress Notes
+- The initial AI tool workflow skeleton is implemented as a planning-summary contribution that uses the shared tool-command contracts and returns provider-neutral planning summaries for planning-context execution.
+
 ## Status
-- Proposed
+- Completed

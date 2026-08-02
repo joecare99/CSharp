@@ -33,5 +33,8 @@ A developer gets a first narrow, explicit AI-assisted workflow that helps with A
 1. Choose the first workflow after command metadata is stable.
 2. Keep the first provider path replaceable.
 
+## Progress Notes
+- The first narrow workflow is now represented by a planning-summary tool contribution built on provider-neutral contracts and validated through targeted tests.
+
 ## Status
-- Proposed
+- Completed

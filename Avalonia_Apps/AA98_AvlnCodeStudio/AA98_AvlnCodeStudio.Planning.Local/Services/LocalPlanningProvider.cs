@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -92,7 +93,15 @@ public sealed class LocalPlanningProvider : IPlanningProvider
                 Directory.CreateDirectory(directoryPath);
             }
 
-            string content = RenderTemplate(template.Content, item);
+            if (HasDocumentConflict(request, item, relativeSourcePath, fullSourcePath, out Diagnostic? conflictDiagnostic))
+            {
+                result.Diagnostics.Add(conflictDiagnostic);
+                continue;
+            }
+
+            string content = File.Exists(fullSourcePath)
+                ? UpdateExistingDocument(ResolveDocumentText(fullSourcePath, item), item)
+                : RenderTemplate(template.Content, item);
             await File.WriteAllTextAsync(fullSourcePath, content, cancellationToken).ConfigureAwait(false);
             result.WrittenSourcePaths.Add(relativeSourcePath);
         }
@@ -163,6 +172,79 @@ public sealed class LocalPlanningProvider : IPlanningProvider
             }, StringComparison.Ordinal)
             .Replace("{{ParentSection}}", parentSection, StringComparison.Ordinal)
             .ReplaceLineEndings(Environment.NewLine);
+    }
+
+    private static string ResolveDocumentText(string fullSourcePath, PlanningItem item)
+        => string.IsNullOrEmpty(item.DocumentText)
+            ? File.ReadAllText(fullSourcePath)
+            : item.DocumentText;
+
+    private static bool HasDocumentConflict(
+        PlanningWriteRequest request,
+        PlanningItem item,
+        string relativeSourcePath,
+        string fullSourcePath,
+        out Diagnostic? diagnostic)
+    {
+        diagnostic = null;
+        if (!File.Exists(fullSourcePath)
+            || !TryGetExpectedDocumentText(request, item.SourcePath, relativeSourcePath, out string? expectedDocumentText))
+        {
+            return false;
+        }
+
+        string currentDocumentText = File.ReadAllText(fullSourcePath);
+        if (string.Equals(currentDocumentText, expectedDocumentText, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        diagnostic = new Diagnostic
+        {
+            Code = "PLW002",
+            Message = "The planning document changed after it was loaded. Reload it before saving.",
+            Severity = DiagnosticSeverity.Error,
+            SourcePath = relativeSourcePath,
+        };
+        return true;
+    }
+
+    private static bool TryGetExpectedDocumentText(
+        PlanningWriteRequest request,
+        string sourcePath,
+        string relativeSourcePath,
+        out string? expectedDocumentText)
+    {
+        if (!string.IsNullOrWhiteSpace(sourcePath)
+            && request.ExpectedDocumentTexts.TryGetValue(sourcePath, out expectedDocumentText))
+        {
+            return true;
+        }
+
+        return request.ExpectedDocumentTexts.TryGetValue(relativeSourcePath, out expectedDocumentText);
+    }
+
+    private static string UpdateExistingDocument(string documentText, PlanningItem item)
+    {
+        string updatedDocument = Regex.Replace(
+            documentText,
+            "^# .*$",
+            $"# {item.Id} {item.Title}",
+            RegexOptions.Multiline);
+
+        string statusText = item.Status switch
+        {
+            PlanningItemStatus.InProgress => "In Progress",
+            PlanningItemStatus.Blocked => "Blocked",
+            PlanningItemStatus.Completed => "Done",
+            PlanningItemStatus.Cancelled => "Cancelled",
+            _ => "Proposed",
+        };
+
+        return Regex.Replace(
+            updatedDocument,
+            "(?ms)(^## Status\\r?\\n)(.*?)(?=^## |\\z)",
+            match => $"{match.Groups[1].Value}- {statusText}{Environment.NewLine}");
     }
 
     private static string BuildParentSection(PlanningItem item)

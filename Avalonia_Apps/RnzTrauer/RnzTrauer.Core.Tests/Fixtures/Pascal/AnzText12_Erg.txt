@@ -1,0 +1,5 @@
+dkBirth=12. 3. 1945
+dkDeath=17. 9. 2019
+dkPlace=Neckarsteinach
+dkBurial=30. 09. 2019
+dkSex=M

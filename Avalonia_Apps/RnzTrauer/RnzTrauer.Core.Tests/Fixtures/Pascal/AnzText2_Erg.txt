@@ -1,0 +1,6 @@
+dkBirth=29. 11. 1932
+dkDeath=28. 7. 2018
+dkPlace=Sinsheim-Rohrbach
+dkBurial=2. 08. 2018
+dkSex=F
+dkMaidenname=Musterfrau

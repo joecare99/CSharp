@@ -98,18 +98,26 @@
 			BorderBrush="{DynamicResource ThemeControlMidBrush}"
 			BorderThickness="1"
 			CornerRadius="4">
-	  <Grid RowDefinitions="Auto,Auto,2*,*"
+	  <Grid RowDefinitions="Auto,Auto,Auto,2*,*"
 			RowSpacing="8">
-		<TextBlock Grid.Row="0"
-				   Text="Dokument"
-				   FontWeight="SemiBold" />
+		<StackPanel Grid.Row="0"
+					Orientation="Horizontal"
+					Spacing="8">
+		  <TextBlock Text="Dokument"
+					 FontWeight="SemiBold"
+					 VerticalAlignment="Center" />
+		  <Button Content="Speichern"
+				  Command="{Binding SaveSelectedItemCommand}" />
+		  <Button Content="Neu laden"
+				  Command="{Binding ReloadCommand}" />
+		</StackPanel>
 		<TextBlock Grid.Row="1"
 				   Text="{Binding SelectedItemSourcePath}"
 				   Opacity="0.75"
 				   TextTrimming="CharacterEllipsis" />
-		<markdownControls:MarkdownEditorPreview Grid.Row="2"
+		<markdownControls:MarkdownEditorPreview Grid.Row="3"
 									 Text="{Binding SelectedItemDocumentText, Mode=TwoWay}" />
-		<controls:PropertiesPanel Grid.Row="3"
+		<controls:PropertiesPanel Grid.Row="4"
 							DataContext="{Binding}" />
 	  </Grid>
 	</Border>

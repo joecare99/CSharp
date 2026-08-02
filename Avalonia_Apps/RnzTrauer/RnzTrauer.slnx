@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="../../Gen_FreeWin/DbCoreAbstractions/DbCoreAbstractions.csproj" />
+  <Project Path="../../Gen_FreeWin/DbProviderMySql/DbProviderMySql.csproj" />
+  <Project Path="RnzTrauer.Avalonia/RnzTrauer.Avalonia.csproj" />
+  <Project Path="RnzTrauer.Core/RnzTrauer.Core2.csproj" />
+  <Project Path="RnzTrauer.Core.Tests/RnzTrauer.Core.Tests.csproj" />
+  <Project Path="RnzTrauer.Persistence.MySql/RnzTrauer.Persistence.MySql.csproj" />
+</Solution>

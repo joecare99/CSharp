@@ -1,0 +1,6 @@
+dkBirth=24. 03. 1923
+dkDeath=21. 12. 2018
+dkPlace=Heidelberg
+dkBurial=4. 01. 2019
+dkSex=F
+dkMaidenname=von der Meden

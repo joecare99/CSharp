@@ -22,5 +22,9 @@ Add tests for provider-neutral planning adapter contracts.
 ## Validation
 - Run targeted adapter contract tests.
 
+## Delivered
+- Added contract tests for import/export capability flags, local/provider identity separation, neutral synchronization, and abstract credential lookup.
+- Used in-memory fake implementations only; Azure DevOps and GitHub SDK dependencies remain absent.
+
 ## Status
-- Proposed
+- Completed

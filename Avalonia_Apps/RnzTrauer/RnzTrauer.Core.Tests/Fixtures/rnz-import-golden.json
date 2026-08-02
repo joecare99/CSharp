@@ -1,0 +1,25 @@
+{
+  "html": "<a href=\"/rnz/notice-100.pdf?download=1\">A-100</a>",
+  "schema": [
+    "[TS: A",
+    "+A"
+  ],
+  "expectedColumns": [
+    "",
+    "A-100",
+    "/rnz/notice-100.pdf",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ]
+}

@@ -29,8 +29,8 @@ External planning providers can later be added without reshaping the local plann
 - Should initial synchronization be pull-only, push-only, or import/export?
 
 ## Next Refinement Steps
-1. Implement neutral contracts before provider-specific adapters.
-2. Decide provider order after local planning validation is complete.
+1. Implement the Azure DevOps adapter baseline without leaking its SDK types into Planning.Core.
+2. Implement the GitHub adapter baseline where its issue and project model is useful.
 
 ## Status
-- Proposed
+- Completed
