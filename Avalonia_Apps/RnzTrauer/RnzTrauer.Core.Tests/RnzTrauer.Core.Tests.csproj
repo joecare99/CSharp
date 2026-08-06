@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core2.csproj" />
+    <ProjectReference Include="..\RnzTrauer.Import\RnzTrauer.Import.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Fixtures\**\*" CopyToOutputDirectory="PreserveNewest" />
