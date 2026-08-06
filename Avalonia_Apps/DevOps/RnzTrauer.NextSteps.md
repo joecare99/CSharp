@@ -186,11 +186,13 @@ flowchart TD
 
 ## Unmittelbarer nächster Task
 
-**Places-/Geocoding-Komponente mit offline geocoding fixture vertiefen.**  
+**Places-/Geocoding-Komponente um einen Host-Policybericht erweitern.**  
 Die erste Places-Komponente normalisiert Eingaben und klassifiziert bekannte,
 unbekannte sowie leere Orte ohne externe HTTP-Aufrufe und ohne erfundene
 Koordinaten. Alias-/Mehrdeutigkeitsverträge und das isolierte
-`IGeocodingAdapter`-Interface sind ergänzt. Als Nächstes folgt ein
-deterministischer Offline-Adapter/Host; Rate-Limit und Cache werden erst hinter
-dieser Grenze bewertet. Die Avalonia-Anwendung bleibt bis zur späteren
+`IGeocodingAdapter`, `OfflineGeocodingAdapter` sowie
+`CachingGeocodingAdapter` mit Fake-Zeit- und Rate-Limit-Tests sind ergänzt. Als
+Nächstes wird der Host um einen diagnostischen Policybericht für Cache-Hits,
+Misses und Rate-Limits erweitert; ein externer Provider bleibt bis dahin
+ausgeschlossen. Die Avalonia-Anwendung bleibt bis zur späteren
 Integrationsphase unverändert.

@@ -2,7 +2,21 @@
   <Project Path="../../Gen_FreeWin/DbCoreAbstractions/DbCoreAbstractions.csproj" />
   <Project Path="../../Gen_FreeWin/DbProviderMySql/DbProviderMySql.csproj" />
   <Project Path="RnzTrauer.Avalonia/RnzTrauer.Avalonia.csproj" />
+  <Project Path="RnzTrauer.Acquisition/RnzTrauer.Acquisition.csproj" />
+  <Project Path="RnzTrauer.Acquisition.Host/RnzTrauer.Acquisition.Host.csproj" />
+  <Project Path="RnzTrauer.Acquisition.Tests/RnzTrauer.Acquisition.Tests.csproj" />
   <Project Path="RnzTrauer.Core/RnzTrauer.Core2.csproj" />
   <Project Path="RnzTrauer.Core.Tests/RnzTrauer.Core.Tests.csproj" />
+  <Project Path="RnzTrauer.Import/RnzTrauer.Import.csproj" />
+  <Project Path="RnzTrauer.Import.Host/RnzTrauer.Import.Host.csproj" />
+  <Project Path="RnzTrauer.Import.Tests/RnzTrauer.Import.Tests.csproj" />
+  <Project Path="RnzTrauer.Media/RnzTrauer.Media.csproj" />
+  <Project Path="RnzTrauer.Media.Host/RnzTrauer.Media.Host.csproj" />
+  <Project Path="RnzTrauer.Media.Tests/RnzTrauer.Media.Tests.csproj" />
   <Project Path="RnzTrauer.Persistence.MySql/RnzTrauer.Persistence.MySql.csproj" />
+  <Project Path="RnzTrauer.Persistence.MySql.Tests/RnzTrauer.Persistence.MySql.Tests.csproj" />
+  <Project Path="RnzTrauer.Persistence.Host/RnzTrauer.Persistence.Host.csproj" />
+  <Project Path="RnzTrauer.Places/RnzTrauer.Places.csproj" />
+  <Project Path="RnzTrauer.Places.Host/RnzTrauer.Places.Host.csproj" />
+  <Project Path="RnzTrauer.Places.Tests/RnzTrauer.Places.Tests.csproj" />
 </Solution>

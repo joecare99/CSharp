@@ -1,5 +1,312 @@
 # RNZ Trauer migration baseline — Done
 
+## Current implementation plan
+
+The component-first implementation plan is maintained in
+[`RnzTrauer.NextSteps.md`](RnzTrauer.NextSteps.md). Each production component
+gets its own test project and executable host before the components are composed
+into the Avalonia application.
+
+## Increment 2026-08-06 — Independent import component scaffold
+
+### Completed
+
+1. Added `RnzTrauer.Import` with `IHtmlImportPipeline`, `HtmlImportPipeline`,
+   `HtmlImportReport`, and a default factory.
+2. Added the dedicated `RnzTrauer.Import.Tests` MSTest project with CP1252
+   and sixteen-column import coverage.
+3. Added `RnzTrauer.Import.Host`, a local JSON-producing CLI host with
+   `--html`, `--schema`, and `--output`.
+4. Added all three projects to `RnzTrauer.slnx`.
+5. Verified the host against the local Vieser I5 HTML fixture.
+
+### Validation
+
+- Import component tests: 2 passed, 0 failed.
+- Existing Core tests: 43 passed, 0 failed.
+- Complete solution build: successful, 0 errors.
+
+### Next task
+
+Create the next independent component, `RnzTrauer.Acquisition`, with a local
+fixture host for HTTP/local HTML acquisition and archive-safe file handling.
+
+## Increment 2026-08-06 — Independent acquisition component
+
+### Completed
+
+1. Added `RnzTrauer.Acquisition` with explicit file/HTTP(S) source handling.
+2. Added bounded asynchronous reads, cancellation propagation, status-code
+   validation, and media-type reporting.
+3. Added archive-safe writes using a temporary file followed by atomic move.
+4. Added `RnzTrauer.Acquisition.Tests` for local files, HTTP responses, archive
+   output, and maximum-size rejection.
+5. Added `RnzTrauer.Acquisition.Host` with `--source`, `--archive`,
+   `--output`, and `--max-bytes`.
+6. Added all projects to `RnzTrauer.slnx`.
+
+### Validation
+
+- Acquisition tests: 3 passed, 0 failed.
+- Acquisition host local-fixture run: successful.
+- Complete solution build: successful, 0 errors.
+
+### Next task
+
+Create the independent `RnzTrauer.Media` component for PDF/XML extraction and
+image candidates, initially with a deterministic fake/process host rather than
+any Windows PDF viewer automation.
+
+## Increment 2026-08-06 — Independent media component
+
+### Completed
+
+1. Added `RnzTrauer.Media` with safe argument-list process execution,
+   cancellation, timeout, stdout/stderr capture, and exit-code validation.
+2. Added `PdfXmlExtractionService` with bounded XML output, explicit PDF/XML
+   paths, and no shell command composition.
+3. Added `PdfXmlDocumentParser` for the legacy `DOCUMENT/PAGE/TEXT/IMAGE`
+   structure, including text lines and positioned image candidates.
+4. Added `RnzTrauer.Media.Tests` with parser and fake-process extraction tests.
+5. Added `RnzTrauer.Media.Host` for explicit PDF/tool/XML paths.
+6. Added all projects to `RnzTrauer.slnx`.
+
+### Validation
+
+- Media tests: 2 passed, 0 failed.
+- Media host help: successful.
+- Complete solution build: successful, 0 errors.
+
+### Deliberate boundary
+
+The component does not automate PDF-XChange Viewer windows, keyboard input, or
+clipboard access. The configured converter executable is an explicit process
+adapter and must be supplied by the host.
+
+### Next task
+
+Create the independent `RnzTrauer.Persistence` characterization component for
+repository contracts, SQL behavior, review queues, and transaction boundaries.
+
+## Increment 2026-08-06 — Persistence SQL characterization component
+
+### Completed
+
+1. Added `SqlStatement` and `MySqlNoticeSql` to isolate parameterized query
+   construction from database connections.
+2. Covered all named review queues, including the previously unhandled
+   `DuplicateCandidates` queue using `vNonSingletonName`.
+3. Routed repository find, place-name, and link-candidate operations through the
+   SQL builder.
+4. Added `RnzTrauer.Persistence.MySql.Tests` with queue, parameterization, and
+   link-candidate characterization.
+5. Added `RnzTrauer.Persistence.Host`, a DB-free CLI that emits queue SQL as
+   JSON for inspection and fixture generation.
+6. Added all projects to `RnzTrauer.slnx`.
+
+### Validation
+
+- Persistence SQL tests: 10 passed, 0 failed.
+- Persistence host DuplicateCandidates run: successful.
+- Complete solution build: successful, 0 errors.
+
+### Deliberate boundary
+
+The host does not connect to a production database. Database integration,
+transaction behavior, provider-neutral rendering, and row-mapping fixtures
+remain the next persistence increments.
+
+### Next task
+
+Add database-test doubles for command/parameter capture and characterize
+`SaveAsync`/`UpsertImportedAsync`, including affected-row behavior and
+transaction boundaries.
+
+## Increment 2026-08-06 — Vieser fixture expansion and import namespace cleanup
+
+### Completed
+
+1. Added portable Vieser HTML/schema/trace fixtures for I5, I12, I23, I134,
+   and I12577 to `RnzTrauer.Import.Tests`.
+2. Added parameterized golden characterization for schema advancement,
+   `Name:`/`Ref:` emissions, trace headers, and relationship counts.
+3. Renamed the extracted import implementation namespace from the temporary
+   `RnzTrauer.Core.Services` compatibility namespace to
+   `RnzTrauer.Import.Services`.
+4. Updated Avalonia and Core test consumers without renaming the unrelated
+   domain/parser services in `RnzTrauer.Core.Services`.
+
+### Validation
+
+- Import tests: 7 passed, 0 failed.
+- Core tests: 43 passed, 0 failed.
+- Complete solution build: successful, 0 errors.
+
+## Increment 2026-08-06 — Persistence command characterization
+
+### Completed
+
+1. Added provider-free ADO.NET test doubles for connection, command,
+   parameters, and disposal boundaries.
+2. Characterized `SaveAsync` and `UpsertImportedAsync` as one command per
+   operation with parameter binding and no explicit transaction.
+3. Verified that `UpsertImportedAsync` currently returns `true` for successful
+   command execution even when the provider reports zero affected rows.
+4. Kept the deliberate transaction boundary: each operation owns one
+   connection and one atomic SQL command; no multi-command unit of work exists
+   yet.
+
+### Validation
+
+- Persistence tests: 13 passed, 0 failed.
+- Existing MSBuild `MSB3539` intermediate-path warning remains unrelated.
+
+### Next task
+
+Evaluate provider-neutral statement rendering only after the remaining
+Persistence contracts (reader lifecycle and error propagation) are covered.
+
+## Increment 2026-08-06 — Persistence reader mapping characterization
+
+### Completed
+
+1. Added a `DataTableReader` fixture for the complete `Anzeigen` projection.
+2. Characterized nullable dates, date-qualification parsing, nullable
+   link/media fields, profile-image counts, and the default category fallback.
+3. Kept row mapping independent of MySQL-specific runtime types.
+
+### Validation
+
+- Persistence tests: 14 passed, 0 failed.
+
+### Next task
+
+No provider-neutral renderer is introduced at this stage: the Persistence
+component is explicitly MySQL-specific and depends on MySQL syntax and legacy
+views. Revisit this boundary only when a second provider is a concrete
+requirement.
+
+## Increment 2026-08-06 — Persistence lifecycle and error characterization
+
+### Completed
+
+1. Verified that `FindAsync` disposes the data reader and closes its owned
+   connection.
+2. Verified that provider exceptions from reader creation are propagated
+   unchanged while the connection is still disposed.
+3. Evaluated `IDbStatementRenderer`; no additional abstraction is justified
+   while the component targets only MySQL-specific SQL and views.
+
+### Validation
+
+- Persistence tests: 16 passed, 0 failed.
+
+### Decision
+
+Keep SQL construction in `RnzTrauer.Persistence.MySql` behind the existing
+`MySqlNoticeSql` boundary. Introduce a renderer only with a concrete second
+provider or a tested portability requirement.
+
+### Next task
+
+Begin the Places/Geocoding component with offline normalization fixtures and a
+small independent host.
+
+## Increment 2026-08-06 — Places normalization component scaffold
+
+### Completed
+
+1. Added `RnzTrauer.Places` with whitespace/Unicode normalization and
+   deterministic known/unknown/empty place classification.
+2. Added `RnzTrauer.Places.Tests` with offline normalization and resolution
+   fixtures.
+3. Added `RnzTrauer.Places.Host` with `--place`, optional `--known`, and
+   `--output` JSON reporting.
+4. Registered all three projects in `RnzTrauer.slnx`.
+
+### Validation
+
+- Places tests: 4 passed, 0 failed.
+- Places host help and local normalization run: successful.
+- Existing `MSB3539` intermediate-path warning remains unrelated.
+
+### Deliberate boundary
+
+This increment does not call GeoNames or any map service and does not invent
+coordinates. External geocoding, rate limiting, caching, and ambiguity
+handling remain explicit future adapters.
+
+### Next task
+
+Add an offline alias/ambiguity fixture contract, then add a geocoding adapter
+interface without coupling the normalization core to HTTP.
+
+## Increment 2026-08-06 — Places aliases and geocoding boundary
+
+### Completed
+
+1. Added alias resolution with canonical known-place matching.
+2. Added explicit ambiguity results that preserve all valid candidates instead
+   of selecting one heuristically.
+3. Added `IGeocodingAdapter` and `GeocodingResult` as an asynchronous,
+   cancellation-aware provider boundary with no HTTP implementation in Core.
+
+### Validation
+
+- Places tests: 6 passed, 0 failed.
+
+### Next task
+
+Add a deterministic offline geocoding adapter fixture and host mode, then
+evaluate rate-limit/cache behavior behind that interface.
+
+## Increment 2026-08-06 — Offline geocoding adapter
+
+### Completed
+
+1. Added `OfflineGeocodingAdapter` implementing `IGeocodingAdapter` with
+   normalized, case-insensitive fixture lookup.
+2. Added cancellation and hit/miss tests without network access.
+3. Extended `RnzTrauer.Places.Host` with optional `--geocode <json>` output.
+4. Verified a local JSON fixture produces deterministic coordinates and
+   display-name output.
+
+### Validation
+
+- Places tests: 8 passed, 0 failed.
+- Offline geocoding host fixture run: successful.
+
+### Deliberate boundary
+
+The adapter is intentionally fixture-backed. Rate limiting, caching,
+provider-specific retries, and HTTP transport remain outside the core
+component.
+
+### Next task
+
+Add cache and rate-limit policies around `IGeocodingAdapter`, using fake time
+and a fake adapter before introducing any external provider.
+
+## Increment 2026-08-06 — Geocoding cache and rate-limit policy
+
+### Completed
+
+1. Added `CachingGeocodingAdapter` with normalized case-insensitive cache
+   keys and configurable cache lifetime.
+2. Added deterministic `TimeProvider` injection for repeatable policy tests.
+3. Added explicit `GeocodingRateLimitException` with a calculated retry
+   duration for uncached requests made too soon.
+4. Ensured cache hits do not consume the remote-request interval.
+
+### Validation
+
+- Places tests: 10 passed, 0 failed.
+
+### Next task
+
+Add a host-level policy report for cache hits, misses, and rate-limit
+diagnostics before considering a real provider adapter.
+
 ## Delivered
 
 - Created standalone `RnzTrauer` Avalonia solution with UI-agnostic `RnzTrauer.Core2` and DI-composed Avalonia desktop app.
