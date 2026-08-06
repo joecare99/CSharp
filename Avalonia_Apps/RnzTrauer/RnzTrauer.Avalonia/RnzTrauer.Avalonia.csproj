@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core2.csproj" />
+    <ProjectReference Include="..\RnzTrauer.Import\RnzTrauer.Import.csproj" />
     <ProjectReference Include="..\RnzTrauer.Persistence.MySql\RnzTrauer.Persistence.MySql.csproj" />
     <ProjectReference Include="..\..\..\Gen_FreeWin\DbProviderMySql\DbProviderMySql.csproj" />
   </ItemGroup>
