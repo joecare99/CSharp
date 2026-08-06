@@ -34,7 +34,7 @@ public sealed class TrauerDataRepositoryTests
         var xFactory = Substitute.For<IDbConnectionFactory>();
         var xRenderer = Substitute.For<IDbStatementRenderer>();
         var xConnection = new FakeDbConnection();
-        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        xRenderer.CreateQuery(Arg.Any<string>(),Arg.Any<IEnumerable<string>>(), Arg.Any<IEnumerable<DbFilterClause>>()).Returns((o) =>
         {
             DbCommand dbCommand = xConnection.CreateCommand();
             dbCommand.CommandText = "SELECT `idTrauerfall`,`url` FROM `Trauerfall`";
@@ -617,7 +617,7 @@ public sealed class TrauerDataRepositoryTests
         {
             ExecuteReaderResult = new FakeDbDataReader(["idAnzeige", "title"], [[5, "row"]])
         };
-        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        xRenderer.CreateQuery(Arg.Any<string>(), Arg.Any<IEnumerable<string>>(), Arg.Any<IEnumerable<DbFilterClause>>()).Returns((o) =>
         {
             DbCommand dbCommand = xConnection.CreateCommand();
             dbCommand.CommandText = "SELECT * FROM Anzeigen WHERE idAnzeige=@id";
@@ -646,7 +646,13 @@ public sealed class TrauerDataRepositoryTests
         {
             ExecuteReaderResult = new FakeDbDataReader(["value"], [["ok"]])
         };
-        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        xRenderer.CreateQuery(Arg.Any<string>(), Arg.Any<IEnumerable<string>>(), Arg.Any<IEnumerable<DbFilterClause>>()).Returns((o) =>
+        {
+            DbCommand dbCommand = xConnection.CreateCommand();
+            dbCommand.CommandText = "SELECT-STUB";
+            return dbCommand;
+        });
+        xRenderer.CreateQuery(Arg.Any<string>(), Arg.Any<IEnumerable<string>>(), Arg.Any<IEnumerable<DbFilterClause>>(), Arg.Any<int>()).Returns((o) =>
         {
             DbCommand dbCommand = xConnection.CreateCommand();
             dbCommand.CommandText = "SELECT-STUB";
@@ -683,7 +689,7 @@ public sealed class TrauerDataRepositoryTests
         {
             ExecuteReaderResult = new FakeDbDataReader(["created", "optional"], [[dtValue, DBNull.Value]])
         };
-        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        xRenderer.CreateQuery(Arg.Any<string>(), Arg.Any<IEnumerable<string>>(), Arg.Any<IEnumerable<DbFilterClause>>(), Arg.Any<int>()).Returns((o) =>
         {
             DbCommand dbCommand = xConnection.CreateCommand();
             dbCommand.CommandText = "SELECT-STUB";
@@ -986,7 +992,7 @@ public sealed class TrauerDataRepositoryTests
         {
             ExecuteReaderResult = new FakeDbDataReader(["id"], [[1]])
         };
-        xRenderer.CreateQuery(Arg.Any<IDbSelectStatement>()).Returns((o) =>
+        xRenderer.CreateQuery(Arg.Any<string>(), Arg.Any<IEnumerable<string>>(), Arg.Any<IEnumerable<DbFilterClause>>(), Arg.Any<int>()).Returns((o) =>
         {
             DbCommand dbCommand = xConnection.CreateCommand();
             dbCommand.CommandText = "SELECT-NULL";
