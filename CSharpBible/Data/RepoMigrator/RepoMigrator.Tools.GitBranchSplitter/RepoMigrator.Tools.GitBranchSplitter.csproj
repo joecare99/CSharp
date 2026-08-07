@@ -11,7 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CommandlineHelper\CommandlineHelper.csproj" />
     <ProjectReference Include="..\..\CommandlineHelper.Generators\CommandlineHelper.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.32.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
   </ItemGroup>
 
