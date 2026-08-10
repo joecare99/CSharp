@@ -9,6 +9,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
     <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core2.csproj" />
+    <ProjectReference Include="..\RnzTrauer.Places\RnzTrauer.Places.csproj" />
     <ProjectReference Include="..\..\..\Gen_FreeWin\DbCoreAbstractions\DbCoreAbstractions.csproj" />
   </ItemGroup>
 </Project>
