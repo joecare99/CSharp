@@ -14,4 +14,9 @@
   <ItemGroup>
     <ProjectReference Include="..\RnzTrauer.Places\RnzTrauer.Places.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Fixtures\places-policy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
