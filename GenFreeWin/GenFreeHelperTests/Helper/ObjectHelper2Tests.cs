@@ -13,9 +13,9 @@ namespace GenFree.Helper.Tests
             { 9, null! } };
 
         [TestMethod()]
-        [DataRow(4, "DD")]
-        [DataRow(1, "AAA")]
-        [DataRow(0, "??")]
+        [DataRow(6, "DD")]
+        [DataRow(1, "BB")]
+        [DataRow(0, "A")]
         public void SetIndexTest(int iAct, string sAct)
         {
             testArray.SetIndex(sAct, iAct);

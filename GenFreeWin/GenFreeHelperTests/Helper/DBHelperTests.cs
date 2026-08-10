@@ -92,6 +92,7 @@ namespace GenFree.Helper.Tests
             tCols.Columns.Add("DATA_TYPE", typeof(string));
             tCols.Columns.Add("CHARACTER_MAXIMUM_LENGTH", typeof(int));
             tCols.Rows.Add("Test", "Int32", 0);
+          
             testDB.GetSchema("Tables").Returns(tTables);
             testDB.GetSchema("Columns", new[] { null, null, "Test" }).Returns(tCols);
             var tIdx = new DataTable("Tables");
@@ -102,7 +103,15 @@ namespace GenFree.Helper.Tests
             tIdx.Columns.Add("UNIQUE", typeof(bool));
             tIdx.Rows.Add("Test", "TestIdx", "Test", true, false);
             testDB.GetSchema("Indexes").Returns(tIdx);
-
+            var tDataTypes = new DataTable("DataTypes");
+            tDataTypes.Columns.Add("DATA_TYPE", typeof(string));
+            tDataTypes.Columns.Add("MAXIMUM_SCALE", typeof(int));
+            tDataTypes.Columns.Add("Dummy2", typeof(int));
+            tDataTypes.Columns.Add("Dummy3", typeof(int));
+            tDataTypes.Columns.Add("Dummy4", typeof(int));
+            tDataTypes.Columns.Add("INFO", typeof(string));
+            tDataTypes.Rows.Add("Int32", 10, 0, 0, 0, "Integer");
+            testDB.GetSchema("DataTypes").Returns(tDataTypes);
             //Act
             foreach (var td in testDB.TableDefs())
             {
