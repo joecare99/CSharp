@@ -6,6 +6,12 @@ namespace Db.Core.Abstractions.Sql
     public enum DbFilterOperator
     {
         Equal,
-        IsNull
+        IsNull,
+        Not,
+        Like,
+        GreaterThan,
+        GreaterThanOrEqual,
+        LessThan,
+        LessThanOrEqual
     }
 }
