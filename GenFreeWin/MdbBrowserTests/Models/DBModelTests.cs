@@ -34,9 +34,9 @@ namespace MdbBrowser.Models.Tests
 (N:Tables, K:Schema D:())
 (N:Views, K:Schema D:())
 (N:Users, K:Table D:())
-(N:Id, K:Column D:())
-(N:Name, K:Column D:())
-(N:Surname, K:Column D:())", string.Join("\r\n", testModel.dbMetaData));
+(N:Users.Id, K:Column D:())
+(N:Users.Name, K:Column D:())
+(N:Users.Surname, K:Column D:())", string.Join("\r\n", testModel.dbMetaData));
             Assert.AreEqual(@"(N:Short, K:DataTypes D:(System.Int16, 2, 5))
 (N:Long, K:DataTypes D:(System.Int32, 3, 10))
 (N:Single, K:DataTypes D:(System.Single, 4, 7))
