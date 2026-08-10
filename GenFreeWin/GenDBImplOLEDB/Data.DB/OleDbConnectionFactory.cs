@@ -1,5 +1,6 @@
 using Db.Core.Abstractions.Sql.Interfaaces;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
@@ -41,7 +42,14 @@ namespace GenFree.Data.DB
 
         public IDBSettings CreateSettingsStub()
         {
-            throw new NotImplementedException();
+            return new OleDbSettings();
+        }
+
+        /// <summary>
+        /// Lightweight settings wrapper so dictionary values can be returned as <see cref="IDBSettings"/>.
+        /// </summary>
+        private sealed class OleDbSettings : Dictionary<string, object>, IDBSettings
+        {
         }
 
         /// <inheritdoc />
