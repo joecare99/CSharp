@@ -1,0 +1,25 @@
+{
+  "knownPlaces": [
+    "Heidelberg",
+    "Frankfurt am Main",
+    "Frankfurt (Oder)"
+  ],
+  "aliases": {
+    "HD": [
+      "Heidelberg"
+    ],
+    "Frankfurt": [
+      "Frankfurt am Main",
+      "Frankfurt (Oder)"
+    ]
+  },
+  "geocoding": {
+    "Heidelberg": {
+      "Query": "Heidelberg",
+      "Latitude": 49.3988,
+      "Longitude": 8.6724,
+      "DisplayName": "Heidelberg, DE",
+      "IsApproximate": false
+    }
+  }
+}
