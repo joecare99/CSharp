@@ -165,10 +165,31 @@
       </TabItem>
 
       <TabItem Header="Orte">
-        <Grid Margin="12" RowDefinitions="Auto,*" RowSpacing="8">
+        <Grid Margin="12" RowDefinitions="Auto,Auto,*" RowSpacing="8">
           <TextBlock TextWrapping="Wrap" Opacity="0.8" Text="The legacy map/geonames place editor has not been migrated yet. This tab is kept for form parity and future component extraction." />
           <Border Grid.Row="1" BorderThickness="1" Padding="12">
-            <TextBlock Opacity="0.7" Text="Place editor component planned (map, merge, and navigation)." />
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto">
+              <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Coordinate schema:" />
+              <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding CoordinateSchemaStatus}" />
+              <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Opacity="0.75" Text="{Binding CoordinateSchemaDiagnosticCode}" />
+              <Button Grid.Row="0" Grid.Column="3" Content="Check schema" Command="{Binding ProbeCoordinateSchemaCommand}" />
+              <TextBlock Grid.Row="1" Grid.ColumnSpan="4" Margin="0,8,0,0" TextWrapping="Wrap" Opacity="0.75" Text="{Binding CoordinateSchemaDiagnostic}" />
+            </Grid>
+          </Border>
+          <Border Grid.Row="2" BorderThickness="1" Padding="12">
+            <Grid ColumnDefinitions="Auto,220,Auto,180,Auto,180,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+              <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Place" />
+              <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CoordinatePlace, Mode=TwoWay}" />
+              <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="Latitude" />
+              <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding CoordinateLatitude, Mode=TwoWay}" />
+              <TextBlock Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" Text="Longitude" />
+              <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding CoordinateLongitude, Mode=TwoWay}" />
+              <Button Grid.Row="0" Grid.Column="7" Content="Load" Command="{Binding LoadCoordinateCommand}" />
+              <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Source (session only)" />
+              <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CoordinateSource, Mode=TwoWay}" />
+              <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" Content="Approximate (session only)" IsChecked="{Binding CoordinateIsApproximate, Mode=TwoWay}" />
+              <Button Grid.Row="1" Grid.Column="7" Content="Save" Command="{Binding SaveCoordinateCommand}" IsEnabled="{Binding CoordinatePersistenceAvailable}" />
+            </Grid>
           </Border>
         </Grid>
       </TabItem>
