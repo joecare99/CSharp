@@ -721,3 +721,513 @@ Extract one portable C# golden fixture from the existing Vieser `.Exp` or `AnzTe
 
 - Full Core tests: 43 passed, 0 failed.
 - Full solution build: 0 warnings, 0 errors.
+
+## Increment 2026-08-06 — Places host policy report
+
+### Completed
+
+1. Added `GeocodingPolicyDiagnostics` with cache-hit, cache-miss,
+   remote-request, rate-limit-rejection, and retry-after fields.
+2. Counted policy events inside `CachingGeocodingAdapter` without coupling the
+   component to a provider or UI.
+3. Updated `RnzTrauer.Places.Host` to include policy diagnostics in its JSON
+   output for offline geocoding runs.
+4. Added assertions for the diagnostic counters to the cache and rate-limit
+   characterization tests.
+
+### Validation
+
+- Places tests: 10 passed, 0 failed.
+- Places host fixture run: successful.
+- Places host build: successful, 0 errors.
+
+### Next backlog step
+
+Add offline fixtures for cache expiration, misses, and ambiguous aliases
+before evaluating a real provider adapter.
+
+## Increment 2026-08-06 — Places offline policy fixtures
+
+### Completed
+
+1. Added `RnzTrauer.Places.Tests/Fixtures/places-policy.json` containing
+   known places, canonical/ambiguous aliases, and an offline geocoding result.
+2. Added fixture-backed coverage for alias ambiguity and unknown geocoding
+   misses without invented coordinates.
+3. Added cache-expiration coverage proving an expired entry causes a new
+   adapter request.
+
+### Validation
+
+- Places tests: 13 passed, 0 failed.
+
+### Next backlog step
+
+Decide whether coordinate persistence contracts are needed before evaluating a
+real provider adapter.
+
+## Increment 2026-08-06 — Provider-neutral place coordinate contract
+
+### Completed
+
+1. Added the immutable `PlaceCoordinate` value model.
+2. Added `IPlaceCoordinateStore` with cancellation-aware read and write
+   operations.
+3. Added `InMemoryPlaceCoordinateStore` for offline hosts and deterministic
+   tests; keys are normalized and coordinate ranges are validated.
+4. Preserved provider independence: no MySQL columns or external geocoder
+   assumptions were introduced.
+
+### Validation
+
+- Places tests: 15 passed, 0 failed.
+
+### Next backlog step
+
+Characterize how persisted coordinates should map to the legacy
+`Anzeigen.Ort` model before adding a MySQL implementation.
+
+## Increment 2026-08-06 — Legacy place-coordinate SQL characterization
+
+### Completed
+
+1. Confirmed that `Anzeigen.Ort` remains the textual notice-place field.
+2. Confirmed that the legacy Places UI reads `Latitude`/`Longitude` from
+   `Orte`, while the historical `CREATE TABLE Orte` statement does not define
+   those columns.
+3. Added `MySqlPlaceCoordinateSql` with normalized and parameterized read/update
+   statements for deployments that provide the optional columns.
+4. Added SQL characterization tests and kept the schema mismatch explicit
+   instead of adding a silent fallback.
+
+### Validation
+
+- Persistence tests: 18 passed, 0 failed.
+- Places tests: 15 passed, 0 failed.
+
+### Next backlog step
+
+Add a MySQL coordinate-store adapter only after defining the diagnostic
+behavior for deployments missing `Latitude`/`Longitude`.
+
+## Increment 2026-08-06 — MySQL place-coordinate store
+
+### Completed
+
+1. Added `MySqlPlaceCoordinateStore` implementing the provider-neutral
+   `IPlaceCoordinateStore`.
+2. Implemented normalized read/update operations against optional
+   `Orte.Latitude` and `Orte.Longitude` columns.
+3. Preserved explicit failure semantics: provider and missing-schema errors
+   propagate unchanged; no silent fallback is introduced.
+4. Added command, mapping, disposal, and parameter-binding characterization
+   coverage.
+
+### Validation
+
+- Persistence tests: 20 passed, 0 failed.
+- Places tests: 15 passed, 0 failed.
+
+### Next backlog step
+
+Expose the coordinate store through the offline/persistence host boundary and
+decide whether a real geocoding provider is warranted.
+
+## Increment 2026-08-06 — Offline coordinate-store host boundary
+
+### Completed
+
+1. Updated `RnzTrauer.Places.Host` to save successful offline geocoding
+   results through `IPlaceCoordinateStore`.
+2. Added `StoredCoordinate` to the JSON report after normalized
+   read-back from the store.
+3. Kept misses explicit: no coordinate record is created when the geocoder
+   returns no result.
+
+### Validation
+
+- Places host build: successful, 0 errors.
+- Offline host fixture run: successful.
+
+### Next backlog step
+
+Add persistence-host SQL inspection for coordinate reads/updates and an
+explicit diagnostic for deployments missing the optional columns.
+
+## Increment 2026-08-06 — Persistence host coordinate inspection
+
+### Completed
+
+1. Added `RnzTrauer.Persistence.Host --place <name>` for coordinate-read SQL
+   inspection.
+2. Added `--latitude <n> --longitude <n>` for coordinate-update SQL
+   inspection with invariant parsing.
+3. Included required optional columns and an explicit unverified-schema
+   diagnostic in both JSON reports.
+4. Registered the Places project reference in the Persistence host.
+
+### Validation
+
+- Persistence host build: successful, 0 errors.
+- Persistence host read and write inspection runs: successful.
+
+### Next backlog step
+
+Add an explicit host/configuration status model for available, missing, and
+unverified coordinate columns before any real provider work.
+
+## Increment 2026-08-06 — Coordinate schema status model
+
+### Completed
+
+1. Added `CoordinateSchemaStatus` with `Available`, `Missing`, and
+   `Unverified` states.
+2. Added `CoordinateSchemaReport` with required columns, diagnostics, and a
+   `CanPersist` decision.
+3. Added Persistence-host option
+   `--coordinate-schema <available|missing|unverified>`.
+4. Included structured schema status in coordinate read/write inspection
+   reports; default remains `Unverified`.
+
+### Validation
+
+- Places tests: 15 passed, 0 failed.
+- Persistence host build: successful, 0 errors.
+- Available and missing schema report runs: successful.
+
+### Next backlog step
+
+Wire the default `Unverified` state to an actual database schema capability
+probe when database integration begins.
+
+## Increment 2026-08-06 — Coordinate schema capability probe
+
+### Completed
+
+1. Added the provider-neutral `ICoordinateSchemaProbe` contract.
+2. Implemented the probe in `MySqlPlaceCoordinateStore` using a bounded
+   zero-row column query.
+3. Successful probes return `Available`; provider `DbException` results are
+   surfaced as explicit `Unverified` diagnostics.
+4. Added SQL and schema-report characterization coverage.
+
+### Validation
+
+- Places tests: 16 passed, 0 failed.
+- Persistence tests: 21 passed, 0 failed.
+
+### Next backlog step
+
+Expose the live probe through the Persistence host when a real database
+connection/configuration is available.
+
+## Increment 2026-08-06 — Live Persistence host schema probe
+
+### Completed
+
+1. Added `RnzTrauer.Persistence.Host --probe`.
+2. Reused `MySqlDbConnectionFactory` and the existing `RNZ_DB_*`
+   environment-variable convention without emitting passwords.
+3. Returned structured `Available`/`Unverified` diagnostics and exit status 1
+   when persistence capability is not verified.
+4. Added the MySQL provider project reference only to the host composition
+   boundary.
+
+### Validation
+
+- Persistence host restore/build: successful, 0 errors.
+- Unreachable local fixture probe: structured `Unverified` output and expected
+  non-success status.
+
+### Next backlog step
+
+Run the probe against a configured RNZ database and decide whether
+missing-column errors need a distinct classification from other provider
+failures.
+
+## Increment 2026-08-06 — Missing-column schema classification
+
+### Completed
+
+1. Classified `DbException.ErrorCode == 1054` as confirmed missing coordinate
+   columns.
+2. Kept connection, permission, and other provider failures as `Unverified`
+   rather than misreporting them as schema absence.
+3. Added status coverage proving `Missing` disables persistence.
+
+### Validation
+
+- Persistence tests: 22 passed, 0 failed.
+
+### Next backlog step
+
+Run the probe against a configured RNZ database and confirm error-code
+behavior for the deployed MySQL version.
+
+Added a provider-free synthetic `DbException` regression for error code 1054;
+the probe reports `Missing` and disables persistence without a live database.
+
+### Validation
+
+## Increment 2026-08-10 — Stable schema-probe diagnostics
+
+### Completed
+
+1. Added `DiagnosticCode` to `CoordinateSchemaReport`.
+2. Standardized codes for available, missing, unverified, and probe-failure
+   states without removing human-readable diagnostics.
+3. Executed the live probe. No `RNZ_DB_*` configuration was available, so the
+   host correctly used its documented local defaults and returned `Unverified`
+   with exit code 1.
+
+### Validation
+
+- Places tests: 16 passed, 0 failed.
+- Persistence tests: 23 passed, 0 failed.
+
+## Increment 2026-08-10 — Explicit coordinate schema migration inspection
+
+### Completed
+
+1. Added a MySQL SQL builder for the coordinate-column migration.
+2. Added `--coordinate-migration` to the Persistence host.
+3. Marked the host operation as inspection-only; no database command is
+   executed.
+4. Added SQL characterization coverage.
+
+### Validation
+
+- Persistence tests: 24 passed, 0 failed.
+- Migration inspection output: successful structured JSON.
+
+### Next backlog step
+
+Have the deployment owner review and execute the migration, or explicitly
+choose the deployment mode that keeps coordinate persistence disabled.
+
+## Increment 2026-08-10 — Coordinate save ViewModel coverage
+
+### Completed
+
+1. Added the positive save-path test for an `Available` coordinate schema.
+2. Verified store invocation and the `coordinate.saved` diagnostic code.
+
+### Validation
+
+- Avalonia ViewModel tests: 5 passed, 0 failed.
+
+### Next backlog step
+
+Keep the migration execution separate from application startup and obtain a
+deployment decision for missing coordinate columns.
+
+## Increment 2026-08-11 — Full component regression
+
+### Completed
+
+1. Ran the complete `RnzTrauer.slnx` test suite.
+2. Confirmed all component test projects execute together, including the new
+   Avalonia ViewModel tests.
+
+### Validation
+
+- 100 tests passed, 0 failed.
+
+### Next backlog step
+
+Resolve the deployment decision for missing coordinate columns and then
+repeat the live probe against a configured RNZ database.
+
+## Decision 2026-08-11 — Missing coordinate columns
+
+### Decision
+
+The safe default is to keep coordinate persistence disabled when the schema
+probe reports `Missing`. No application startup or UI action performs a schema
+migration. The reviewed migration output must be executed by the deployment
+process, followed by a probe that returns `Available`.
+
+### Consequence
+
+Deployments without the optional coordinate columns remain usable for notice
+workflows; only coordinate writes stay unavailable and visibly diagnosed.
+
+## Increment 2026-08-11 — Partial coordinate metadata transparency
+
+### Completed
+
+1. Made the current MySQL limitation explicit in the Avalonia save result.
+2. Added the stable `coordinate.saved_partial_metadata` diagnostic code.
+3. Updated the positive ViewModel test to verify the partial-persistence
+   status.
+
+### Validation
+
+- Avalonia ViewModel tests: 5 passed, 0 failed.
+- Avalonia build: successful, 0 errors.
+
+### Next backlog step
+
+Decide whether source and approximation require additional database columns or
+should remain UI-only metadata.
+
+The current UI now labels both fields as session-only, so the limitation is
+visible before editing or saving.
+
+The selection-linkage test also verifies that changing notices clears stale
+coordinate values and metadata.
+
+## Increment 2026-08-11 — Probe connection overrides
+
+### Completed
+
+1. Added CLI overrides for probe server, port, user, and database.
+2. Kept password input restricted to `RNZ_DB_PASSWORD`.
+3. Preserved structured status output and secret-free connection metadata.
+
+### Validation
+
+- Override probe returned structured `schema.probe_failed`/`Unverified` for
+  the intentionally unreachable `127.0.0.1:3307/RNZ_Test` endpoint.
+
+### Next backlog step
+
+Run the probe with approved deployment parameters and a configured password
+against a safe RNZ database.
+
+Explicit invalid `--port` input now fails with exit code 2 instead of using a
+silent default.
+
+## Increment 2026-08-11 — Offline export host
+
+### Completed
+
+1. Added `RnzTrauer.Export.Host` and registered it in `RnzTrauer.slnx`.
+2. Added a local JSON notice fixture.
+3. Exposed TSV and GEDCOM export through `--format`.
+4. Kept the host independent of Avalonia and database services.
+
+### Validation
+
+- TSV fixture export: successful.
+- GEDCOM fixture export: successful.
+- Temporary output files were removed after verification.
+
+### Next backlog step
+
+Characterize export destination policy, overwrite protection, and additional
+Pascal-compatible golden fixtures.
+
+The export host now blocks existing output files unless `--overwrite` is
+specified. Both the blocked and explicitly allowed paths were verified with a
+temporary TSV target.
+
+An edge fixture with a filtered category and tab/newline content produced one
+header plus one sanitized export row, confirming the existing Core behavior
+through the standalone host.
+
+Invalid JSON and missing input files now return concise diagnostics with
+exit code 2; no unhandled exception is exposed by the host.
+- No password was emitted by the probe.
+
+### Next backlog step
+
+Repeat the probe against a configured RNZ database and record the deployed
+MySQL provider's actual `Available`, `Missing`, or `Unverified` result.
+
+## Increment 2026-08-10 — Avalonia coordinate-service composition
+
+### Completed
+
+1. Added the `RnzTrauer.Places` project reference to the Avalonia application.
+2. Registered one `MySqlPlaceCoordinateStore` instance as both
+   `IPlaceCoordinateStore` and `ICoordinateSchemaProbe`.
+3. Kept geocoding provider registration deferred; no external service is
+   contacted by the composition root.
+
+### Validation
+
+- Avalonia build: successful, 0 errors.
+
+### Next backlog step
+
+Add a UI-facing ViewModel that invokes the schema probe asynchronously and
+surfaces its structured status without blocking application startup.
+
+## Increment 2026-08-10 — Asynchronous Avalonia schema status
+
+### Completed
+
+1. Injected `ICoordinateSchemaProbe` into `MainWindowViewModel`.
+2. Started the initial probe asynchronously and added a manual retry command.
+3. Added status, diagnostic-code, and diagnostic-text bindings to the Orte
+   tab.
+4. Kept failed or unavailable probes non-persistent and visibly diagnosable.
+
+### Validation
+
+- Avalonia build: successful, 0 errors.
+
+### Next backlog step
+
+Design the provider-neutral place selection and coordinate editing workflow;
+keep write actions disabled until the schema report is `Available`.
+
+## Increment 2026-08-10 — Provider-neutral coordinate editing
+
+### Completed
+
+1. Added provider-neutral coordinate fields and asynchronous Load/Save
+   commands to `MainWindowViewModel`.
+2. Connected the commands to `IPlaceCoordinateStore`.
+3. Disabled and guarded Save until schema capability is `Available`.
+4. Added stable diagnostics for required input, missing coordinates, and store
+   failures.
+
+### Validation
+
+- Avalonia build: successful, 0 errors.
+
+### Next backlog step
+
+Connect the coordinate editor to the selected notice place and add dedicated
+ViewModel tests for schema gating, validation, load, and save behavior.
+
+## Increment 2026-08-10 — Selected-notice place linkage
+
+### Completed
+
+1. Synchronized `SelectedNotice.Place` with the coordinate editor place field.
+2. Cleared coordinate values when the selected notice changes to avoid stale
+   edits.
+3. Added explicit diagnostics for a selected place and for missing place data.
+
+### Validation
+
+- Avalonia build: successful, 0 errors.
+
+### Next backlog step
+
+Create dedicated ViewModel tests covering selection linkage, schema gating,
+input validation, coordinate loading, and coordinate saving.
+
+## Increment 2026-08-10 — Avalonia ViewModel test coverage
+
+### Completed
+
+1. Added `RnzTrauer.Avalonia.Tests` as a dedicated MSTest project.
+2. Covered selected-notice place synchronization.
+3. Covered schema-gated save rejection and invalid coordinate input.
+4. Covered loading stored coordinates into the editor.
+5. Registered the test project in `RnzTrauer.slnx`.
+
+### Validation
+
+- Avalonia ViewModel tests: 4 passed, 0 failed.
+
+### Next backlog step
+
+Decide the operational response to missing `Orte.Latitude` and
+`Orte.Longitude` before enabling production coordinate writes.
+
+- Persistence tests: 23 passed, 0 failed.

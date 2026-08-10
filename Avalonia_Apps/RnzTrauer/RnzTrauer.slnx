@@ -2,6 +2,8 @@
   <Project Path="../../Gen_FreeWin/DbCoreAbstractions/DbCoreAbstractions.csproj" />
   <Project Path="../../Gen_FreeWin/DbProviderMySql/DbProviderMySql.csproj" />
   <Project Path="RnzTrauer.Avalonia/RnzTrauer.Avalonia.csproj" />
+  <Project Path="RnzTrauer.Avalonia.Tests/RnzTrauer.Avalonia.Tests.csproj" />
+  <Project Path="RnzTrauer.Export.Host/RnzTrauer.Export.Host.csproj" />
   <Project Path="RnzTrauer.Acquisition/RnzTrauer.Acquisition.csproj" />
   <Project Path="RnzTrauer.Acquisition.Host/RnzTrauer.Acquisition.Host.csproj" />
   <Project Path="RnzTrauer.Acquisition.Tests/RnzTrauer.Acquisition.Tests.csproj" />
