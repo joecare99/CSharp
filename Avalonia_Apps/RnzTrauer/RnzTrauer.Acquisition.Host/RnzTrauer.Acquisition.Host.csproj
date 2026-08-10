@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\Application.props" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,5 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\RnzTrauer.Acquisition\RnzTrauer.Acquisition.csproj" />
+    <ProjectReference Include="..\RnzTrauer.Avalonia\RnzTrauer.Avalonia.csproj" />
   </ItemGroup>
 </Project>

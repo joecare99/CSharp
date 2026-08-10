@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Db.Core.Abstractions.Sql.Interfaaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RnzTrauer.Core.Domain;
+using RnzTrauer.Places;
 using RnzTrauer.Persistence.MySql;
 
 #pragma warning disable CS8764
@@ -79,6 +80,56 @@ public sealed class MySqlNoticeRepositoryCommandTests
         Assert.IsTrue(result);
         Assert.AreEqual(1, connection.ExecuteNonQueryCount);
         Assert.AreEqual(0, connection.BeginTransactionCount);
+    }
+
+    [TestMethod]
+    public async Task PlaceCoordinateStore_GetAsync_MapsOptionalLegacyColumns()
+    {
+        var table = new DataTable();
+        table.Columns.Add("Ortname", typeof(string));
+        table.Columns.Add("Latitude", typeof(double));
+        table.Columns.Add("Longitude", typeof(double));
+        table.Rows.Add("Heidelberg", 49.3988, 8.6724);
+        var connection = new RecordingConnection { Reader = table.CreateDataReader() };
+
+        var result = await CreatePlaceStore(connection).GetAsync(" heidelberg ");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("Heidelberg", result!.Place);
+        Assert.AreEqual(49.3988, result.Latitude);
+        Assert.AreEqual(8.6724, result.Longitude);
+        Assert.AreEqual(1, connection.OpenCount);
+        Assert.AreEqual(1, connection.CloseCount);
+    }
+
+    [TestMethod]
+    public async Task PlaceCoordinateStore_SaveAsync_BindsNormalizedCoordinates()
+    {
+        var connection = new RecordingConnection();
+
+        await CreatePlaceStore(connection).SaveAsync(
+            new PlaceCoordinate(" Heidelberg ", 49.3988, 8.6724, "fixture", false));
+
+        Assert.IsNotNull(connection.LastCommand);
+        StringAssert.Contains(connection.LastCommand!.CommandText, "UPDATE `Orte`");
+        Assert.AreEqual("Heidelberg", connection.LastCommand.GetValue("@place"));
+        Assert.AreEqual(49.3988, connection.LastCommand.GetValue("@latitude"));
+        Assert.AreEqual(8.6724, connection.LastCommand.GetValue("@longitude"));
+        Assert.AreEqual(1, connection.ExecuteNonQueryCount);
+    }
+
+    [TestMethod]
+    public async Task PlaceCoordinateStore_ProbeAsync_ClassifiesUnknownColumn()
+    {
+        var connection = new RecordingConnection
+        {
+            ReaderException = new SyntheticDbException(1054),
+        };
+
+        var report = await CreatePlaceStore(connection).ProbeAsync();
+
+        Assert.AreEqual(CoordinateSchemaStatus.Missing, report.Status);
+        Assert.IsFalse(report.CanPersist);
     }
 
     [TestMethod]
@@ -181,6 +232,13 @@ public sealed class MySqlNoticeRepositoryCommandTests
             new DictionarySettings());
     }
 
+    private static MySqlPlaceCoordinateStore CreatePlaceStore(RecordingConnection connection)
+    {
+        return new MySqlPlaceCoordinateStore(
+            new RecordingFactory(connection),
+            new DictionarySettings());
+    }
+
     private sealed class RecordingFactory : IDbConnectionFactory
     {
         private readonly RecordingConnection _connection;
@@ -201,6 +259,15 @@ public sealed class MySqlNoticeRepositoryCommandTests
     }
 
     private sealed class DictionarySettings : Dictionary<string, object>, IDBSettings;
+
+    private sealed class SyntheticDbException : DbException
+    {
+        private readonly int _errorCode;
+
+        public SyntheticDbException(int errorCode) => _errorCode = errorCode;
+
+        public override int ErrorCode => _errorCode;
+    }
 
     private sealed class RecordingConnection : DbConnection
     {

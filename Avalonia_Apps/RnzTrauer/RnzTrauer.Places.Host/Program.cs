@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using RnzTrauer.Places;
 
@@ -18,6 +19,7 @@ internal static class Program
         {
             Console.WriteLine("RNZ places host");
             Console.WriteLine("Usage: RnzTrauer.Places.Host --place <name> [--known <file>] [--geocode <json>] [--output <file>]");
+            Console.WriteLine("The report includes geocoding cache and rate-limit diagnostics when --geocode is supplied.");
             return args.Length == 0 ? 2 : 0;
         }
 
@@ -35,13 +37,38 @@ internal static class Program
         var result = new PlaceNormalizer().Resolve(place, known);
         var geocodePath = GetOption(args, "--geocode");
         GeocodingResult? geocode = null;
+        GeocodingPolicyDiagnostics? policy = null;
+        PlaceCoordinate? storedCoordinate = null;
         if (geocodePath is not null)
         {
             var entries = JsonSerializer.Deserialize<Dictionary<string, GeocodingResult>>(
                 File.ReadAllText(geocodePath)) ?? new Dictionary<string, GeocodingResult>();
-            geocode = await new OfflineGeocodingAdapter(entries).ResolveAsync(place);
+            var adapter = new CachingGeocodingAdapter(
+                new OfflineGeocodingAdapter(entries),
+                TimeSpan.FromMinutes(10),
+                TimeSpan.FromMinutes(1));
+            geocode = await adapter.ResolveAsync(place, CancellationToken.None);
+            policy = adapter.GetDiagnostics();
+            if (geocode?.Latitude is double latitude
+                && geocode.Longitude is double longitude)
+            {
+                var coordinateStore = new InMemoryPlaceCoordinateStore();
+                await coordinateStore.SaveAsync(new PlaceCoordinate(
+                    geocode.Query,
+                    latitude,
+                    longitude,
+                    "offline-geocoding",
+                    geocode.IsApproximate));
+                storedCoordinate = await coordinateStore.GetAsync(place);
+            }
         }
-        var report = new { Match = result, Geocode = geocode };
+        var report = new
+        {
+            Match = result,
+            Geocode = geocode,
+            Policy = policy,
+            StoredCoordinate = storedCoordinate,
+        };
         var json = JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true });
         var output = GetOption(args, "--output");
         if (output is null)

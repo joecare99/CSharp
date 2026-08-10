@@ -12,11 +12,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RnzTrauer.Places\RnzTrauer.Places.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Fixtures\places-policy.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\RnzTrauer.Avalonia\RnzTrauer.Avalonia.csproj" />
   </ItemGroup>
 </Project>

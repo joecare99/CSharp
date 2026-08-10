@@ -7,8 +7,6 @@
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RnzTrauer.Persistence.MySql\RnzTrauer.Persistence.MySql.csproj" />
-    <ProjectReference Include="..\RnzTrauer.Places\RnzTrauer.Places.csproj" />
-    <ProjectReference Include="..\..\..\Gen_FreeWin\DbProviderMySql\DbProviderMySql.csproj" />
+    <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core2.csproj" />
   </ItemGroup>
 </Project>

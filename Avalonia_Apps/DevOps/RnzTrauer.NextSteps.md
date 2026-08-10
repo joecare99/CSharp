@@ -184,15 +184,105 @@ flowchart TD
 - Keine Ablehnung historisch unvollständiger Daten wegen Plausibilitätswarnungen.
 - Keine produktive Gesamtintegration, solange die Einzelhosts ihre Abnahmekriterien nicht erfüllen.
 
-## Unmittelbarer nächster Task
+## Erledigter nächster Schritt
 
-**Places-/Geocoding-Komponente um einen Host-Policybericht erweitern.**  
+**Places-/Geocoding-Komponente um einen Host-Policybericht erweitert.**  
 Die erste Places-Komponente normalisiert Eingaben und klassifiziert bekannte,
 unbekannte sowie leere Orte ohne externe HTTP-Aufrufe und ohne erfundene
 Koordinaten. Alias-/Mehrdeutigkeitsverträge und das isolierte
 `IGeocodingAdapter`, `OfflineGeocodingAdapter` sowie
 `CachingGeocodingAdapter` mit Fake-Zeit- und Rate-Limit-Tests sind ergänzt. Als
-Nächstes wird der Host um einen diagnostischen Policybericht für Cache-Hits,
-Misses und Rate-Limits erweitert; ein externer Provider bleibt bis dahin
-ausgeschlossen. Die Avalonia-Anwendung bleibt bis zur späteren
-Integrationsphase unverändert.
+der Host jetzt einen diagnostischen Policybericht für Cache-Hits, Misses,
+Remote-Requests und Rate-Limit-Ablehnungen ausgibt. Ein externer Provider
+bleibt bis zu einer späteren Entscheidung ausgeschlossen. Die
+Avalonia-Anwendung bleibt bis zur späteren Integrationsphase unverändert.
+
+## Unmittelbarer nächster Task
+
+Eine konfigurierte RNZ-Datenbank für den Live-Probe bereitstellen und den
+Status `Available` oder das reale Fehlercode-Verhalten des eingesetzten
+MySQL-Providers bestätigen. Der Probe liefert jetzt zusätzlich stabile Codes:
+`schema.available`, `schema.missing_columns`, `schema.unverified` und
+`schema.probe_failed`. Ohne Verbindung bleibt der Status `Unverified`.
+Bei fehlenden `Orte.Latitude`/`Orte.Longitude` muss Persistence deaktiviert
+oder über eine explizite Migration erweitert werden. Ein realer
+Geocoding-Provider bleibt bis zur fachlichen Freigabe ausgeschlossen.
+
+## Neuer Integrationsstand
+
+Die Avalonia-Kompositionswurzel referenziert jetzt `RnzTrauer.Places` und
+registriert den MySQL-Koordinatenspeicher unter
+`IPlaceCoordinateStore` und `ICoordinateSchemaProbe`. Als nächstes benötigt die
+UI ein eigenes ViewModel für den Schema-/Ortsstatus; die Datenbankprüfung darf
+dabei nicht synchron im UI-Start ausgeführt werden. Ein externer
+Geocoding-Provider wird erst nach einer fachlichen Anbieter- und
+Datenschutzentscheidung registriert.
+
+Das `MainWindowViewModel` startet den Koordinaten-Schema-Probe jetzt
+asynchron. Der Orte-Tab zeigt Status, stabilen Diagnosecode und Diagnose an
+und bietet eine manuelle Wiederholung. Der nächste UI-Schritt ist die
+fachliche Ortsauswahl bzw. Koordinatenbearbeitung; Schreibvorgänge bleiben
+bis zum Status `Available` gesperrt.
+
+Die erste provider-neutrale Koordinatenbearbeitung ist jetzt vorhanden:
+Ortsname, Latitude, Longitude, Quelle und Approximation können geladen und
+bearbeitet werden. Speichern bleibt bis zur bestätigten Schema-Verfügbarkeit
+deaktiviert. Als nächstes sollte die Ortsauswahl mit dem ausgewählten
+Todesanzeigen-Datensatz verbunden und durch eigene ViewModel-Tests abgesichert
+werden.
+
+Der Ortswert des ausgewählten Datensatzes ist jetzt direkt mit dem
+Koordinateneditor verbunden; beim Datensatzwechsel werden alte Koordinaten
+verworfen. Als nächstes folgen dedizierte ViewModel-Tests für Auswahlbindung,
+Schema-Gating, Validierung, Laden und Speichern.
+
+Das dedizierte Projekt `RnzTrauer.Avalonia.Tests` ist jetzt vorhanden und
+deckt diese vier Kernfälle ab. Der nächste fachliche Schritt ist die
+Entscheidung zur Behandlung fehlender Koordinatenspalten (Migration versus
+deaktivierte Persistenz), bevor produktive Schreibpfade freigegeben werden.
+
+Ein sicherer, nicht automatisch ausgeführter Migrationsentwurf ist jetzt über
+`RnzTrauer.Persistence.Host --coordinate-migration` verfügbar. Er gibt das
+`ALTER TABLE` für `Orte.Latitude` und `Orte.Longitude` nur zur Prüfung aus.
+Die fachliche Freigabe und Ausführung bleibt ein separater Deployment-Schritt.
+
+Die ViewModel-Testabdeckung enthält jetzt auch den erfolgreichen Save-Pfad bei
+`Available`; damit sind Auswahlbindung, Schema-Gating, Validierung, Laden und
+Speichern abgedeckt.
+
+Der vollständige Regressionlauf über `RnzTrauer.slnx` ist ebenfalls grün. Die
+Komponentensuite umfasst nun 100 bestandene Tests. Der nächste fachliche
+Blocker bleibt die Deployment-Entscheidung für fehlende Koordinatenspalten.
+
+## Betriebsentscheidung 2026-08-11
+
+Fehlende `Orte.Latitude`/`Orte.Longitude` deaktivieren die
+Koordinatenpersistenz standardmäßig. Die Anwendung führt keine
+Schemaänderung automatisch aus. Eine freigegebene Migration muss außerhalb
+der Anwendung ausgeführt werden; erst ein anschließender Probe-Status
+`Available` aktiviert Schreibvorgänge.
+
+Da das aktuelle Schema nur Latitude und Longitude speichert, weist die UI
+beim Speichern zusätzlich mit `coordinate.saved_partial_metadata` darauf hin,
+dass Quelle und Approximation noch nicht persistiert werden. Eine spätere
+Schemaerweiterung muss diese Metadaten ausdrücklich charakterisieren.
+Beide Felder sind im Orte-Tab zusätzlich als `session only` gekennzeichnet.
+Der Auswahlbindungstest schützt außerdem gegen das Übertragen alter
+Koordinaten auf einen neu ausgewählten Datensatz.
+
+Für den späteren Live-Probe können Server, Port, Benutzer und Datenbank jetzt
+über `--server`, `--port`, `--user` und `--database` überschrieben werden.
+Das Passwort bleibt ausschließlich in `RNZ_DB_PASSWORD`.
+Ungültige explizite Portwerte werden mit Exit-Code 2 abgewiesen und nicht
+mehr auf 3306 zurückgesetzt.
+
+Parallel zur blockierten Live-Datenbankprüfung ist der Export jetzt über
+`RnzTrauer.Export.Host` offline ausführbar. Der Host verarbeitet
+JSON-Fixtures mit `--format tsv|gedcom`; als nächstes sollten Dateiziele,
+Überschreibschutz und weitere Pascal-Golden-Fixtures charakterisiert werden.
+Der Überschreibschutz ist jetzt umgesetzt: ohne `--overwrite` endet ein
+bestehendes Ziel mit Exit-Code 2.
+Eine Edge-Fixture prüft zusätzlich Kategorienfilter und die Bereinigung von
+Tabulatoren/Zeilenumbrüchen; weitere Pascal-Golden-Fixtures bleiben offen.
+Beschädigte oder fehlende Eingabe-JSON-Dateien werden nun ebenfalls mit
+Exit-Code 2 und einer knappen Diagnose abgewiesen.

@@ -9,6 +9,7 @@ using RnzTrauer.Avalonia.ViewModels;
 using RnzTrauer.Avalonia.Views;
 using RnzTrauer.Core.Export;
 using RnzTrauer.Persistence.MySql;
+using RnzTrauer.Places;
 using RnzTrauer.Core.Services;
 using RnzTrauer.Import.Services;
 
@@ -32,6 +33,9 @@ public sealed partial class App : Application
         services.AddSingleton<IDbConnectionFactory>(factory)
             .AddSingleton<IDBSettings>(settings)
             .AddSingleton<INoticeRepository, MySqlNoticeRepository>()
+            .AddSingleton<MySqlPlaceCoordinateStore>()
+            .AddSingleton<IPlaceCoordinateStore>(services => services.GetRequiredService<MySqlPlaceCoordinateStore>())
+            .AddSingleton<ICoordinateSchemaProbe>(services => services.GetRequiredService<MySqlPlaceCoordinateStore>())
             .AddSingleton<INoticeTextParser, NoticeTextParser>()
             .AddSingleton<IHtmlTextNormalizer, HtmlTextNormalizer>()
             .AddSingleton<IHtmlEncodingDecoder, HtmlEncodingDecoder>()
