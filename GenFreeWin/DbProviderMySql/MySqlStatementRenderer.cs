@@ -45,6 +45,12 @@ namespace Db.Provider.MySql
             {
                 DbFilterOperator.Equal => $"{QuoteIdentifier(xClause.Field)}={xClause.ParameterName}",
                 DbFilterOperator.IsNull => $"{QuoteIdentifier(xClause.Field)} is null",
+                DbFilterOperator.Not => $"NOT ({QuoteIdentifier(xClause.Field)})",
+                DbFilterOperator.Like => $"{QuoteIdentifier(xClause.Field)} LIKE {xClause.ParameterName}",
+                DbFilterOperator.GreaterThan => $"{QuoteIdentifier(xClause.Field)}>{xClause.ParameterName}",
+                DbFilterOperator.GreaterThanOrEqual => $"{QuoteIdentifier(xClause.Field)}>={xClause.ParameterName}",
+                DbFilterOperator.LessThan => $"{QuoteIdentifier(xClause.Field)}<{xClause.ParameterName}",
+                DbFilterOperator.LessThanOrEqual => $"{QuoteIdentifier(xClause.Field)}<={xClause.ParameterName}",
                 _ => throw new NotSupportedException($"Unsupported filter operator {xClause.Operator}.")
             };
         }
