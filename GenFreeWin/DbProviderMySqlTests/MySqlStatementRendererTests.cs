@@ -1,9 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using Db.Core.Abstractions.Sql;
-using Db.Provider.MySql;
+using Db.Core.Abstractions.Sql.Interfaaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
 
 namespace Db.Provider.MySql.Tests
 {
@@ -11,70 +12,128 @@ namespace Db.Provider.MySql.Tests
     public class MySqlStatementRendererTests
     {
         [TestMethod]
-        public void RenderSelect_WithFiltersAndLimit_RendersExpectedSql()
+        public void CreateQuery_WithFieldsFiltersAndOffset_RendersExpectedSql()
         {
-            var xRenderer = new MySqlStatementRenderer();
-            var xFilter = Substitute.For<IDbFilterClause>();
-            xFilter.Field.Returns("Person.Id");
-            xFilter.Operator.Returns(DbFilterOperator.Equal);
-            xFilter.ParameterName.Returns("@id");
-
-            var xStatement = Substitute.For<IDbSelectStatement>();
-            xStatement.Table.Returns("Person");
-            xStatement.Fields.Returns(new[] { "Person.Id", "Name" });
-            xStatement.Filters.Returns(new[] { xFilter });
-            xStatement.Limit.Returns(5);
-
-            var sResult = xRenderer.RenderSelect(xStatement);
-
-            Assert.AreEqual("SELECT `Person`.`Id`,`Name` FROM `Person` WHERE `Person`.`Id`=@id limit 5", sResult);
-        }
-
-        [TestMethod]
-        public void RenderInsert_RendersExpectedSql()
-        {
-            var xRenderer = new MySqlStatementRenderer();
-            var xStatement = Substitute.For<IDbInsertStatement>();
-            xStatement.Table.Returns("Person");
-            xStatement.Fields.Returns(new List<KeyValuePair<string, string>>
+            using var xConnection = new TestDbConnection();
+            var xRenderer = new MySqlStatementRenderer(xConnection);
+            var arrFilters = new List<IDbFilterClause>
             {
-                new("Name", "@name"),
-                new("City", "@city")
-            });
+                new DbFilterClause("Person.Id", DbFilterOperator.Equal, "@id"),
+                new DbFilterClause("DeletedAt", DbFilterOperator.IsNull)
+            };
 
-            var sResult = xRenderer.RenderInsert(xStatement);
+            using var xCommand = xRenderer.CreateQuery("Person", new[] { "Person.Id", "Name" }, arrFilters, 5, "@offset");
 
-            Assert.AreEqual("INSERT INTO `Person` (`Name`, `City`) VALUES (@name, @city);", sResult);
+            Assert.AreEqual("SELECT `Person`.`Id`,`Name` FROM `Person` WHERE `Person`.`Id`=@id AND `DeletedAt` is null limit 5 offset @offset", xCommand.CommandText);
         }
 
         [TestMethod]
-        public void RenderUpdate_WithIsNullFilter_RendersExpectedSql()
+        public void CreateQuery_WithWildcardAndNoFilters_RendersExpectedSql()
         {
-            var xRenderer = new MySqlStatementRenderer();
-            var xFilter = Substitute.For<IDbFilterClause>();
-            xFilter.Field.Returns("DeletedAt");
-            xFilter.Operator.Returns(DbFilterOperator.IsNull);
-            xFilter.ParameterName.Returns((string?)null);
+            using var xConnection = new TestDbConnection();
+            var xRenderer = new MySqlStatementRenderer(xConnection);
 
-            var xStatement = Substitute.For<IDbUpdateStatement>();
-            xStatement.Table.Returns("Person");
-            xStatement.Fields.Returns(new List<KeyValuePair<string, string>>
+            using var xCommand = xRenderer.CreateQuery(xConnection, "Person", new[] { "*" }, Array.Empty<IDbFilterClause>());
+
+            Assert.AreEqual("SELECT * FROM `Person`", xCommand.CommandText);
+        }
+
+        [TestMethod]
+        public void CreateDelete_WithFilters_RendersExpectedSql()
+        {
+            using var xConnection = new TestDbConnection();
+            var xRenderer = new MySqlStatementRenderer(xConnection);
+            var arrFilters = new List<DbFilterClause>
             {
-                new("Name", "@name")
-            });
-            xStatement.Filters.Returns(new[] { xFilter });
+                new("DeletedAt", DbFilterOperator.IsNull)
+            };
 
-            var sResult = xRenderer.RenderUpdate(xStatement);
+            using var xCommand = xRenderer.CreateDelete("Person", arrFilters);
 
-            Assert.AreEqual("UPDATE `Person` SET `Name`=@name WHERE `DeletedAt` is null", sResult);
+            Assert.AreEqual("DELETE FROM `Person` WHERE `DeletedAt` is null", xCommand.CommandText);
         }
 
-        [TestMethod]
-        public void RenderSelect_WithNullStatement_Throws()
+        private sealed class TestDbConnection : IDbConnection
         {
-            var xRenderer = new MySqlStatementRenderer();
+            public string? ConnectionString { get; set; }
+            public int ConnectionTimeout { get; set; }
+            public string? Database { get; set; }
+            public ConnectionState State { get; set; }
 
-            Assert.ThrowsExactly<ArgumentNullException>(() => xRenderer.RenderSelect(null!));
+            public IDbTransaction BeginTransaction() => throw new NotSupportedException();
+            public IDbTransaction BeginTransaction(IsolationLevel il) => throw new NotSupportedException();
+            public void ChangeDatabase(string databaseName) => Database = databaseName;
+            public void Close() => State = ConnectionState.Closed;
+            public IDbCommand CreateCommand() => new TestDbCommand { Connection = this };
+            public void Open() => State = ConnectionState.Open;
+            public void Dispose() => State = ConnectionState.Closed;
+        }
+
+        private sealed class TestDbCommand : IDbCommand
+        {
+            public string? CommandText { get; set; }
+            public int CommandTimeout { get; set; }
+            public CommandType CommandType { get; set; }
+            public IDbConnection? Connection { get; set; }
+            public IDataParameterCollection Parameters { get; } = new TestParameterCollection();
+            public IDbTransaction? Transaction { get; set; }
+            public UpdateRowSource UpdatedRowSource { get; set; }
+
+            public void Cancel() { }
+            public IDbDataParameter CreateParameter() => new TestDbParameter();
+            public int ExecuteNonQuery() => 0;
+            public IDataReader ExecuteReader() => throw new NotSupportedException();
+            public IDataReader ExecuteReader(CommandBehavior behavior) => throw new NotSupportedException();
+            public object? ExecuteScalar() => null;
+            public void Prepare() { }
+            public void Dispose() { }
+        }
+
+        private sealed class TestDbParameter : IDbDataParameter
+        {
+            public DbType DbType { get; set; }
+            public ParameterDirection Direction { get; set; }
+            public bool IsNullable { get; set; }
+            public string? ParameterName { get; set; }
+            public string? SourceColumn { get; set; }
+            public DataRowVersion SourceVersion { get; set; }
+            public object? Value { get; set; }
+            public byte Precision { get; set; }
+            public byte Scale { get; set; }
+            public int Size { get; set; }
+        }
+
+        private sealed class TestParameterCollection : ArrayList, IDataParameterCollection
+        {
+            public object this[string parameterName]
+            {
+                get => this[IndexOf(parameterName)];
+                set => this[IndexOf(parameterName)] = value;
+            }
+
+            public bool Contains(string parameterName) => IndexOf(parameterName) >= 0;
+
+            public int IndexOf(string parameterName)
+            {
+                for (var i = 0; i < Count; i++)
+                {
+                    if (this[i] is IDataParameter parameter && string.Equals(parameter.ParameterName, parameterName, StringComparison.Ordinal))
+                    {
+                        return i;
+                    }
+                }
+
+                return -1;
+            }
+
+            public void RemoveAt(string parameterName)
+            {
+                var iIndex = IndexOf(parameterName);
+                if (iIndex >= 0)
+                {
+                    RemoveAt(iIndex);
+                }
+            }
         }
     }
 }
