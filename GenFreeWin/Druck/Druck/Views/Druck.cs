@@ -1543,7 +1543,7 @@ public partial class Druck : Form
     private void download()
     {
         WebClient webClient = new WebClient();
-        string uriString = "http://www.genpluswin.de/Up24/GPUpd1.exe";
+        string uriString = "https://www.genpluswin.de/Up24/GPUpd1.exe";
         string fileName = _Modul1.Instance.GenFreeDir + "GPUpd1.exe";
         btnUpdateCheck.Enabled = false;
         try
