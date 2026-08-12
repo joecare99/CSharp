@@ -2082,7 +2082,11 @@ public partial class Anzeige : Form
             {
                 text4 = " kirchl. Heiratsregister";
             }
-            else text4 = text4;
+            else
+            {
+                // Preserve the current value explicitly; this branch is part of the learning exercise.
+                text4 = text4;
+            }
         }
         void Handle_ListArt_101f(int iListArt, byte b2, int num9, int num10)
         {
