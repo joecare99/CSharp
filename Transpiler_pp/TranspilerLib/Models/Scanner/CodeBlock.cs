@@ -40,6 +40,10 @@ namespace TranspilerLib.Models.Scanner;
 /// </remarks>
 public class CodeBlock : ICodeBlock
 {
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj);
+
+    public override int GetHashCode() => base.GetHashCode();
+
     #region Properties
 
     /// <summary>
@@ -438,4 +442,3 @@ public class CodeBlock : ICodeBlock
         return this == other;
     }
 }
-

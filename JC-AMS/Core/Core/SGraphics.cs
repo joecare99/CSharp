@@ -270,7 +270,6 @@ namespace JCAMS.Core
                 Pt3,
 SMath2.ToPoint(PtDest)
             };
-            double Len = Length;
             PtDest = SMath2.PointVectorToPoint(PtDest, Angle, Length * 2.0);
             Pt2.X = (int)((double)PtDest.X - Math.Cos((Angle + 20.0) * Math.PI / 180.0) * (double)Length * 2.0);
             Pt2.Y = (int)((double)PtDest.Y - Math.Sin((Angle + 20.0) * Math.PI / 180.0) * (double)Length * 2.0);

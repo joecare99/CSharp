@@ -25,7 +25,7 @@ namespace RenderDemo.Pages
             _noSkia = new GlyphRun(Typeface.Default.GlyphTypeface, 12, text.AsMemory(), glyphs);
         }
         
-        class CustomDrawOp : ICustomDrawOperation
+        class CustomDrawOp : ICustomDrawOperation, IEquatable<CustomDrawOp>
         {
             private readonly IImmutableGlyphRunReference _noSkia;
 
@@ -42,7 +42,8 @@ namespace RenderDemo.Pages
 
             public Rect Bounds { get; }
             public bool HitTest(Point p) => false;
-            public bool Equals(ICustomDrawOperation other) => false;
+            public bool Equals(ICustomDrawOperation? other) => other is CustomDrawOp;
+            public bool Equals(CustomDrawOp? other) => other is not null;
             static Stopwatch St = Stopwatch.StartNew();
             public void Render(ImmediateDrawingContext context)
             {

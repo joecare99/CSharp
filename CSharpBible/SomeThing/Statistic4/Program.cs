@@ -131,8 +131,8 @@ class MicroVM
                         if (arg < 0 || arg >= templates.Length)
                             throw new IndexOutOfRangeException($"Template index {arg} out of range.");
                         string tmpl = templates[arg];
-                        Console.Write(string.Format(CultureInfo.InvariantCulture, tmpl, lastObj));
-                        System.Diagnostics.Debug.Write(string.Format(CultureInfo.InvariantCulture, tmpl, lastObj));
+                        Console.WriteLine(string.Format(CultureInfo.InvariantCulture, tmpl, lastObj));
+                        System.Diagnostics.Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, tmpl, lastObj));
                     }
                     else
                     {
