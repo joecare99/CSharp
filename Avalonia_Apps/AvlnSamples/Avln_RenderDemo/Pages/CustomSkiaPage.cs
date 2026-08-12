@@ -44,6 +44,8 @@ namespace RenderDemo.Pages
             public bool HitTest(Point p) => false;
             public bool Equals(ICustomDrawOperation? other) => other is CustomDrawOp;
             public bool Equals(CustomDrawOp? other) => other is not null;
+            public override bool Equals(object? obj) => obj is CustomDrawOp other && Equals(other);
+            public override int GetHashCode() => Bounds.GetHashCode();
             static Stopwatch St = Stopwatch.StartNew();
             public void Render(ImmediateDrawingContext context)
             {
