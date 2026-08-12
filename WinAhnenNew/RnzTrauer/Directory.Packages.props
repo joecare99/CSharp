@@ -9,7 +9,7 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
     <PackageVersion Include="MSTest" Version="4.3.3" />
-    <PackageVersion Include="NSubstitute" Version="6.1.0" />
+    <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="MySqlConnector" Version="2.6.1" />
     <PackageVersion Include="Selenium.WebDriver" Version="4.47.0" />
     <PackageVersion Include="Selenium.WebDriver.GeckoDriver" Version="0.37.1" />
