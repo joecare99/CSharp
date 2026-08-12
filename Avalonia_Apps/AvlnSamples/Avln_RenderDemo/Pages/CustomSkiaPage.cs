@@ -63,8 +63,8 @@ namespace RenderDemo.Pages
                         new SKColor(0, 255, 255)
                     };
 
-                    var sx = Animate(100, 2, 10);
-                    var sy = Animate(1000, 5, 15);
+                    _ = Animate(100, 2, 10);
+                    _ = Animate(1000, 5, 15);
                     var lightPosition = new SKPoint(
                         (float)(Bounds.Width / 2 + Math.Cos(St.Elapsed.TotalSeconds) * Bounds.Width / 4),
                         (float)(Bounds.Height / 2 + Math.Sin(St.Elapsed.TotalSeconds) * Bounds.Height / 4));

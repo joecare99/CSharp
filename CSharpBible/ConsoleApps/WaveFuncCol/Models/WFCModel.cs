@@ -209,9 +209,9 @@ public class WFCModel : IWFCModel
 
             for (int j = 0; j < D2SBuffer().Length; j++)
             {
-                int r = (int)Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j % D2Width - i * 0.4) * -0.6) * 1.5);
-                int g = (int)Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j / D2Width + j % D2Width / 2 + i * 0.4) * 0.6) * 1.5);
-                int b = (int)Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j / D2Width - j % D2Width / 2 - i * 0.4) * 0.6) * 1.5);
+                byte r = (byte)(Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j % D2Width - i * 0.4) * -0.6) * 1.5) * 64);
+                byte g = (byte)(Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j / D2Width + j % D2Width / 2 + i * 0.4) * 0.6) * 1.5) * 64);
+                byte b = (byte)(Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j / D2Width - j % D2Width / 2 - i * 0.4) * 0.6) * 1.5) * 64);
                 D2PutPixelC(j / D2Width, j % D2Width, (byte)(r * 64), (byte)(g * 64), (byte)(b * 64));
             }
 

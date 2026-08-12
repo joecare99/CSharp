@@ -273,9 +273,9 @@ namespace TestConsole.View
             var fw = fh/2-1;
             for (int i = 0; i < ScreenBuffer.Length; i++)
             {
-                e.Graphics.FillRectangle(new SolidBrush(ccolors[(int)ScreenBuffer[i].bgr]), (i % ConsoleSize.Width) * fw+2, (i / ConsoleSize.Width) * fh, fw, fh);
+                e.Graphics.FillRectangle(new SolidBrush(ccolors[(int)ScreenBuffer[i].bgr]), (i % ConsoleSize.Width) * fw + 2, (i / ConsoleSize.Width) * fh, fw, fh);
                 Brush brush = new SolidBrush(ccolors[(int)ScreenBuffer[i].fgr]);
-                e.Graphics.DrawString($"{ScreenBuffer[i].ch}", f, brush, (i % ConsoleSize.Width) * fw-2, (i / ConsoleSize.Width) * fh);
+                e.Graphics.DrawString($"{ScreenBuffer[i].ch}", f, brush, (i % ConsoleSize.Width) * fw - 2, (i / ConsoleSize.Width) * fh);
             }
             lastUpdate = DateTime.Now;
         }
