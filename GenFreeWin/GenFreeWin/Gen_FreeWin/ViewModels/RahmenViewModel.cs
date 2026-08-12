@@ -331,8 +331,7 @@ public partial class RahmenViewModel : BaseViewModelCT, IRahmenViewModel
             {
                 _ = DataModul.Link.Delete(Modul1.FamInArb, Modul1.PersInArb, Modul1.eLKennz);
                 View.Close();
-                short Rich;
-                Familie.Default.Fameinlesen(Modul1.FamInArb, out Rich);
+                Familie.Default.Fameinlesen(Modul1.FamInArb, out short rich);
             }
         }
     }
