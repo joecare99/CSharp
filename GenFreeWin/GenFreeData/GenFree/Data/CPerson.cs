@@ -83,7 +83,7 @@ public class CPerson : CUsesIndexedRSet<int, PersonIndex, PersonFields, IPersonD
         var dB_PersonTable = Seek(persInArb, out bool xBreak);
         var i = 0;
         while (xBreak
-            | (dB_PersonTable?.Fields[PersonFields.Pruefen]).AsString().Trim() == "G")
+            || (dB_PersonTable?.Fields[PersonFields.Pruefen]).AsString().Trim() == "G")
         {
             if (persInArb < 1)
             {

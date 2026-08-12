@@ -130,7 +130,7 @@ namespace JCAMS.Core
             if (xFull) { writer.WriteStartElement(pen.GetType().Name); sPrefix = "";EntryState = WriteState.Element; }
             writer.WriteAttributeString(sPrefix+nameof(pen.Width), pen.Width.ToString("0.00",CultureInfo.InvariantCulture));
             writer.WriteAttributeString(sPrefix + nameof(pen.PenType), ((int)pen.PenType).ToString());
-            pen.Color.WriteToXML(writer,xFull | EntryState== WriteState.Element, sPrefix + "Color.");
+            pen.Color.WriteToXML(writer, xFull || EntryState == WriteState.Element, sPrefix + "Color.");
             if (xFull) writer.WriteEndElement();
         }
 

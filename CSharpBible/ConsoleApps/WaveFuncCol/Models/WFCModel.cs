@@ -209,10 +209,10 @@ public class WFCModel : IWFCModel
 
             for (int j = 0; j < D2SBuffer().Length; j++)
             {
-                byte r = (byte)(Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j % D2Width - i * 0.4) * -0.6) * 1.5) * 64);
-                byte g = (byte)(Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j / D2Width + j % D2Width / 2 + i * 0.4) * 0.6) * 1.5) * 64);
-                byte b = (byte)(Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j / D2Width - j % D2Width / 2 - i * 0.4) * 0.6) * 1.5) * 64);
-                D2PutPixelC(j / D2Width, j % D2Width, (byte)(r * 64), (byte)(g * 64), (byte)(b * 64));
+                byte r = (byte)Math.Clamp(Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j % D2Width - i * 0.4) * -0.6) * 1.5) * 64, 0, 255);
+                byte g = (byte)Math.Clamp(Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j / D2Width + j % D2Width / 2 + i * 0.4) * 0.6) * 1.5) * 64, 0, 255);
+                byte b = (byte)Math.Clamp(Math.Round(1.25 + 0.5 * rnd.NextDouble() + Math.Sin((j / D2Width - j % D2Width / 2 - i * 0.4) * 0.6) * 1.5) * 64, 0, 255);
+                D2PutPixelC(j / D2Width, j % D2Width, r, g, b);
             }
 
             D3SBuffer()[i / 2 + (i + 1) / 2 % 2 * 50] = ConsoleColor.Green;
