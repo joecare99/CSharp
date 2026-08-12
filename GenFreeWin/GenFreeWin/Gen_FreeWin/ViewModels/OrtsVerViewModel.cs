@@ -2106,7 +2106,6 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         //    break;
         //}
     end_IL_0001_3:
-        ;
     }
     [RelayCommand]
     public void OpenDistancePanel()
