@@ -2468,7 +2468,7 @@ public partial class FrmEreignis : Form
                         IL_0ea8:
                             num = 228;
                             ListBox2.Visible = false;
-                            if (TextBox18.Visible & TextBox4.Text.Trim() != "")
+                            if (TextBox18.Visible && !string.IsNullOrWhiteSpace(TextBox4.Text))
                             {
                                 TextBox18.Enabled = true;
                                 _ = TextBox18.Focus();

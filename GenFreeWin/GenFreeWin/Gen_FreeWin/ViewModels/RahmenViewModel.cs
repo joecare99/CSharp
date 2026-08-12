@@ -1145,7 +1145,7 @@ public partial class RahmenViewModel : BaseViewModelCT, IRahmenViewModel
                     Modul1.Kont[97] = iAhn.AsString();
                     Modul1.Person.SetFullSurname(Modul1.BuildFullSurName(Modul1.Person));
                     Modul1_LiText = new string(' ', 80);
-                    if (Modul1.Person.FullSurName != "" | Modul1.Person.Givennames != "")
+                    if (!string.IsNullOrWhiteSpace(Modul1.Person.FullSurName) || !string.IsNullOrWhiteSpace(Modul1.Person.Givennames))
                     {
                         StringType.MidStmtStr(ref Modul1_LiText, 1, 60, "" + Modul1.sDatu.Right(6) + " " + Modul1.Person.Givennames + " " + Modul1.Person.FullSurName.TrimEnd());
                     }
@@ -1202,7 +1202,7 @@ public partial class RahmenViewModel : BaseViewModelCT, IRahmenViewModel
                     Modul1.Person_ReadNames(persInArb, Modul1.Person);
                     Modul1.Kont[10] = Modul1.Ancesters_GetPersonData(iPerNr, out int iAhn, out Modul1_Kont20);
                     Modul1.Kont[97] = iAhn.AsString();
-                    if (Modul1.Person.SurName != "" | Modul1.Person.Givennames != "")
+                    if (!string.IsNullOrWhiteSpace(Modul1.Person.SurName) || !string.IsNullOrWhiteSpace(Modul1.Person.Givennames))
                     {
                         StringType.MidStmtStr(ref Modul1_LiText, 1, 60, "" + Modul1.sDatu.Right(6) + " " + Modul1.Person.Givennames + " " + Modul1.Person.SurName.ToUpper().TrimEnd());
                     }
@@ -1972,7 +1972,7 @@ public partial class RahmenViewModel : BaseViewModelCT, IRahmenViewModel
                                 {
                                     Modul1.FamInArb = Familie.Default.iFamNr;
                                     DataModul.DB_FamilyTable.Edit();
-                                    if (View.Height != 365 & View.frmFrame1.Tag.AsInt() == (int)EUserText.tMarrWitness)
+                                    if (View.Height != 365 && View.frmFrame1.Tag.AsInt() == (int)EUserText.tMarrWitness)
                                     {
                                         DataModul.DB_FamilyTable.Fields[FamilyFields.Bem2].Value = View.RTB.Text;
                                     }

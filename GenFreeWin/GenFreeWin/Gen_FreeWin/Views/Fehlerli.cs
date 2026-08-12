@@ -1785,13 +1785,13 @@ internal partial class Fehlerli : Form
                                             IEventData Event = null;
                                             while (++num7 <= 507)
                                             {
-                                                if (!(num7 == 500 & !CheckBox6.Checked)
-                                                    && !(num7 == 501 & !CheckBox5.Checked)
-                                                    && !(num7 == 502 & !CheckBox7.Checked)
-                                                    && !(num7 == 503 & !CheckBox8.Checked)
-                                                    && !(num7 == 504 & !CheckBox9.Checked)
-                                                    && !(num7 == 505 & !CheckBox10.Checked)
-                                                    && !(num7 == 507 & !CheckBox11.Checked)
+                                                if ((num7 != 500 || CheckBox6.Checked)
+                                                    && (num7 != 501 || CheckBox5.Checked)
+                                                    && (num7 != 502 || CheckBox7.Checked)
+                                                    && (num7 != 503 || CheckBox8.Checked)
+                                                    && (num7 != 504 || CheckBox9.Checked)
+                                                    && (num7 != 505 || CheckBox10.Checked)
+                                                    && (num7 != 507 || CheckBox11.Checked)
                                                     && DataModul.Event.ReadData((EEventArt)num7, I1, out Event, 0))
                                                 {
                                                     break;
