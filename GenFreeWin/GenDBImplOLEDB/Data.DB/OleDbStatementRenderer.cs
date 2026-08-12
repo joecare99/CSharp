@@ -63,8 +63,8 @@ public sealed class OleDbStatementRenderer(IDbConnection dbConnection) : IDbStat
     public IDbCommand CreateQuery(IDbConnection dbConnection, string sTable, IEnumerable<string>? arrFields = null, IEnumerable<IDbFilterClause>? arrFilters = null, int? iLimit = null, object? offset = null)
     {
         var sFields = (arrFields?.Count() ?? 0) == 0
-        ? "*"
-        : string.Join(",", arrFields.Select(QuoteIdentifier));
+            ? "*"
+            : string.Join(",", arrFields.Select(QuoteIdentifier));
         var xBuilder = new StringBuilder($"SELECT {sFields} FROM {QuoteIdentifier(sTable)}");
         AppendFilters(xBuilder, arrFilters);
 
