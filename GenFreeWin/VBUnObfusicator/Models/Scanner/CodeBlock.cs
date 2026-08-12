@@ -31,6 +31,10 @@ namespace VBUnObfusicator.Models.Scanner;
 /// <seealso cref="ICodeBlock" />
 public class CodeBlock : ICodeBlock
 {
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj);
+
+    public override int GetHashCode() => base.GetHashCode();
+
     /// <summary>
     /// The parent
     /// </summary>

@@ -711,7 +711,7 @@ namespace Druck
                             num = 2;
                             text = "";
                             text2 = "";
-                            if ((Modul1.DAus[115] == "1") | (Modul1.DAus[116] == "1"))
+                            if ((Modul1.DAus[115] == "1") || (Modul1.DAus[116] == "1"))
                             {
                                 DataModul.DB_PictureTable.Index = "Perkenn";
                                 if (BiKe == "P")
@@ -729,9 +729,9 @@ namespace Druck
                             goto IL_0aa3;
                         IL_0231: // <========== 3
                             num = 27;
-                            if ((Modul1.DAus[116] == "1") | (Modul1.DAus[115] == "1"))
+                            if ((Modul1.DAus[116] == "1") || (Modul1.DAus[115] == "1"))
                             {
-                                if (((DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value == "Personenbild") | (DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value == "Familienbild")).AsBool())
+                                if (((DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value == "Personenbild") || (DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value == "Familienbild")).AsBool())
                                 {
                                     text3 = text3.Replace("#", "");
                                     fileStream2 = new FileStream(text3, FileMode.Open);
@@ -817,7 +817,7 @@ namespace Druck
                             }
                             if (left2 == "Ahnen")
                             {
-                                if ((text.Trim() != "") | (text2.Trim() != ""))
+                                if ((text.Trim() != "") || (text2.Trim() != ""))
                                 {
                                     MyProject.Forms.Ahnen.Anz[0].SelectedText = "\n";
                                     MyProject.Forms.Ahnen.Anz[0].Paste();
@@ -906,7 +906,7 @@ namespace Druck
                                 text3 = text3.Replace("#", "");
                                 if (!Information.IsDBNull(DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value))
                                 {
-                                    if (!((DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value == "Personenbild") | (DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value == "Familienbild")).AsBool())
+                                    if (!((DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value == "Personenbild") || (DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].Value == "Familienbild")).AsBool())
                                     {
                                         if (!(DataModul.DB_PictureTable.Fields[PictureFields.Beschreibung].AsString() == "Personenbild"))
                                         {

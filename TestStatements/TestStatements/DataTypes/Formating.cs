@@ -7,7 +7,7 @@
 // Last Modified On : 09-09-2022
 // ***********************************************************************
 // <copyright file="Formating.cs" company="JC-Soft">
-//     Copyright © JC-Soft 2020
+//     Copyright ï¿½ JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************

@@ -27,6 +27,6 @@ public partial class ScreensPage : UserControl
         ScreenWorkArea.Text = screen?.WorkingArea.ToString();
         ScreenScaling.Text = screen?.Scaling.ToString(CultureInfo.InvariantCulture);
         ScreenOrientation.Text = screen?.CurrentOrientation.ToString();
-        ScreenSameReference.Text = ReferenceEquals(lastScreen, screen).ToString();
+        ScreenSameReference.Text = (lastScreen == screen).ToString();
     }
 }

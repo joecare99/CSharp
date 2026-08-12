@@ -37,10 +37,10 @@ public class DisplayTest : IDisplayTest
 
             for (int j = 0; j < display2.ScreenBuffer.Length; j++)
             {
-                int r = (int)Math.Round(1.25 + 0.25 * random.NextDouble() + Math.Sin((j % 10 - i * 0.4) * -0.6) * 1.5);
-                int g = (int)Math.Round(1.25 + 0.25 * random.NextDouble() + Math.Sin((j / 10 + (j % 10) / 2 + i * 0.4) * 0.6) * 1.5);
-                int b = (int)Math.Round(1.25 + 0.25 * random.NextDouble() + Math.Sin((j / 10 - (j % 10) / 2 - i * 0.4) * 0.6) * 1.5);
-                display2.PutPixel((j / 10), (j % 10), (byte)(r * 64), (byte)(g * 64), (byte)(b * 64));
+                byte r = (byte)Math.Clamp(Math.Round(1.25 + 0.25 * random.NextDouble() + Math.Sin((j % 10 - i * 0.4) * -0.6) * 1.5) * 64, 0, 255);
+                byte g = (byte)Math.Clamp(Math.Round(1.25 + 0.25 * random.NextDouble() + Math.Sin((j / 10 + (j % 10) / 2 + i * 0.4) * 0.6) * 1.5) * 64, 0, 255);
+                byte b = (byte)Math.Clamp(Math.Round(1.25 + 0.25 * random.NextDouble() + Math.Sin((j / 10 - (j % 10) / 2 - i * 0.4) * 0.6) * 1.5) * 64, 0, 255);
+                display2.PutPixel((j / 10), (j % 10), r, g, b);
             }
 
             display3.ScreenBuffer[i / 2 + (((i + 1) / 2) % 2) * 50] = ConsoleColor.Green;

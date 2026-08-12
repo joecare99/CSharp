@@ -25,7 +25,7 @@ namespace RenderDemo.Pages
             _noSkia = new GlyphRun(Typeface.Default.GlyphTypeface, 12, text.AsMemory(), glyphs);
         }
         
-        class CustomDrawOp : ICustomDrawOperation
+        class CustomDrawOp : ICustomDrawOperation, IEquatable<CustomDrawOp>
         {
             private readonly IImmutableGlyphRunReference _noSkia;
 
@@ -42,7 +42,10 @@ namespace RenderDemo.Pages
 
             public Rect Bounds { get; }
             public bool HitTest(Point p) => false;
-            public bool Equals(ICustomDrawOperation other) => false;
+            public bool Equals(ICustomDrawOperation? other) => other is CustomDrawOp;
+            public bool Equals(CustomDrawOp? other) => other is not null;
+            public override bool Equals(object? obj) => obj is CustomDrawOp other && Equals(other);
+            public override int GetHashCode() => Bounds.GetHashCode();
             static Stopwatch St = Stopwatch.StartNew();
             public void Render(ImmediateDrawingContext context)
             {
@@ -62,8 +65,8 @@ namespace RenderDemo.Pages
                         new SKColor(0, 255, 255)
                     };
 
-                    var sx = Animate(100, 2, 10);
-                    var sy = Animate(1000, 5, 15);
+                    _ = Animate(100, 2, 10);
+                    _ = Animate(1000, 5, 15);
                     var lightPosition = new SKPoint(
                         (float)(Bounds.Width / 2 + Math.Cos(St.Elapsed.TotalSeconds) * Bounds.Width / 4),
                         (float)(Bounds.Height / 2 + Math.Sin(St.Elapsed.TotalSeconds) * Bounds.Height / 4));

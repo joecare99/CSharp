@@ -651,7 +651,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
     [RelayCommand]
     public void ApplyCoordinates()
     {
-        if (!((TextBox23_Text.Trim() == "") | (TextBox27_Text.Trim() == "")))
+        if (!string.IsNullOrWhiteSpace(TextBox23_Text) && !string.IsNullOrWhiteSpace(TextBox27_Text))
         {
             edtLat1_Text = TextBox23_Text;
             edtLat2_Text = TextBox24_Text;
@@ -2124,7 +2124,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
     partial void OnLabel27_TextChanged(string value)
     {
-        if ((Label29_Text != "") & (Label28_Text != "") & (Label30_Text != "") & (Label31_Text != ""))
+        if (!string.IsNullOrWhiteSpace(Label29_Text) && !string.IsNullOrWhiteSpace(Label28_Text) && !string.IsNullOrWhiteSpace(Label30_Text) && !string.IsNullOrWhiteSpace(Label31_Text))
         {
             var instance = Strings.Split(value, "\n");
             var instance2 = Strings.Split(Label32_Text, "\n");
@@ -2137,7 +2137,7 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
 
     partial void OnLabel32_TextChanged(string value)
     {
-        if ((Label29_Text != "") & (Label28_Text != "") & (Label30_Text != "") & (Label31_Text != ""))
+        if (!string.IsNullOrWhiteSpace(Label29_Text) && !string.IsNullOrWhiteSpace(Label28_Text) && !string.IsNullOrWhiteSpace(Label30_Text) && !string.IsNullOrWhiteSpace(Label31_Text))
         {
             var instance = Strings.Split(Label27_Text, "\n");
             var instance2 = Strings.Split(value, "\n");
