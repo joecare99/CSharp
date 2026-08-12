@@ -100,7 +100,7 @@ namespace TestStatements.DataTypes
             // The example displays the following output:
             //       {6324}        
 
-            string output3 = string.Format("{{{0:D} {0}}}", value);
+            string output3 = string.Format("{{{0:D} {0:}}}", value);
             Console.WriteLine(output3);
             //       {D}        
         }

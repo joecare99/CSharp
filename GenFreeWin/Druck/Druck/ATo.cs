@@ -1901,7 +1901,7 @@ namespace Druck
                 }
                 Text1 = Pername + "\t";
                 Text1 = Text1 + VNam + "\t";
-                if ((Gebdat.Trim() != "") | (Gebdat2.Trim() != ""))
+                if ((Gebdat.Trim() != "") || (Gebdat2.Trim() != ""))
                 {
                     Text1 += "* \t";
                 }
@@ -1910,7 +1910,7 @@ namespace Druck
                     Text1 += " \t";
                 }
                 Text1 = Text1 + Gebdat + "\t" + Gebdat2 + "\t";
-                if ((Sterdat.Trim() != "") | (sterdat2.Trim() != ""))
+                if ((Sterdat.Trim() != "") || (sterdat2.Trim() != ""))
                 {
                     Text1 += "+ \t";
                 }

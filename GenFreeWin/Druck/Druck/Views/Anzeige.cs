@@ -291,7 +291,7 @@ public partial class Anzeige : Form
                                         {
                                             RichTextBox1[4].SelectedText = ("Nr.: " + DataModul.DB_QuTable.Fields[QuFields._12].AsString());
                                         }
-                                        if ((Operators.CompareString(DataModul.DB_QuTable.Fields[QuFields._11].AsString().Trim(), "", TextCompare: false) != 0) | (Operators.CompareString(DataModul.DB_QuTable.Fields[QuFields._12].AsString().Trim(), "", TextCompare: false) != 0))
+                                        if ((Operators.CompareString(DataModul.DB_QuTable.Fields[QuFields._11].AsString().Trim(), "", TextCompare: false) != 0) || (Operators.CompareString(DataModul.DB_QuTable.Fields[QuFields._12].AsString().Trim(), "", TextCompare: false) != 0))
                                         {
                                             RichTextBox1[4].SelectedText = "\n";
                                         }
@@ -450,7 +450,7 @@ public partial class Anzeige : Form
             RichTextBox1[(short)i].Visible = false;
         }
         RichTextBox1[0].Visible = true;
-        if ((Listnam == 130) | (Listnam == 119))
+        if ((Listnam == 130) || (Listnam == 119))
         {
             Befehl[0].Visible = false;
             Befehl[6].Visible = false;
@@ -1107,7 +1107,7 @@ public partial class Anzeige : Form
                                 Aufhoer = " Jahr: " + Strings.Mid((num10 - 10000).AsString(), 2, 4);
                             }
                             Bezeichnung8.Text = "Einträge sortieren";
-                            if (iListArt < 400 | iListArt > 1000)
+                            if (iListArt < 400 || iListArt > 1000)
                             {
                                 Listnam = (short)iListArt;
                                 Bezeichnung1.Text = "Sortierte Personenliste nach" + text4;
@@ -2352,7 +2352,7 @@ public partial class Anzeige : Form
                     Datmit = 1;
                 }
                 _Modul1.Instance.Famles();
-                if ((_Modul1.Instance.Family.Mann > 0) | (_Modul1.Instance.Family.Frau > 0))
+                if ((_Modul1.Instance.Family.Mann > 0) || (_Modul1.Instance.Family.Frau > 0))
                 {
                     _Modul1.Instance.Famdatles(_Modul1.Instance.FamInArb, out var asFamDates3);
                     if (asFamDates3[iListArt - 500] == "")
@@ -2481,7 +2481,7 @@ public partial class Anzeige : Form
                     DataModul.Link.GetPersonFam(persInArb, ELinkKennz.lkChild, out _Modul1.Instance.FamInArb);
                     Datmit = 2;
                     _Modul1.Instance.Famles();
-                    if ((_Modul1.Instance.Family.Mann > 0) | (_Modul1.Instance.Family.Frau > 0)
+                    if ((_Modul1.Instance.Family.Mann > 0) || (_Modul1.Instance.Family.Frau > 0)
                             && _Modul1.Instance.Aus[51] == "Y")
                     {
                         if (b6 == 1)
@@ -2625,7 +2625,7 @@ public partial class Anzeige : Form
                     Datmit = 1;
                 }
                 _Modul1.Instance.Famles();
-                if ((_Modul1.Instance.Family.Mann > 0) | (_Modul1.Instance.Family.Frau > 0))
+                if ((_Modul1.Instance.Family.Mann > 0) || (_Modul1.Instance.Family.Frau > 0))
                 {
                     persInArb = _Modul1.Instance.Family.Mann;
                     if (_Modul1.Instance.Family.Mann > 0)
@@ -2756,7 +2756,7 @@ public partial class Anzeige : Form
                     }
                     DataModul.Link.GetPersonFam(persInArb, ELinkKennz.lkChild, out _Modul1.Instance.FamInArb);
                     _Modul1.Instance.Famles();
-                    if ((_Modul1.Instance.Family.Mann > 0) | (_Modul1.Instance.Family.Frau > 0))
+                    if ((_Modul1.Instance.Family.Mann > 0) || (_Modul1.Instance.Family.Frau > 0))
                     {
                         if (ausw_opt3_0)
                         {
@@ -2887,7 +2887,7 @@ public partial class Anzeige : Form
         DataModul.DSB_SortTable.Index = "Sort";
         DataModul.DSB_SortTable.Seek(">=", " ");
         IZahl = 0;
-        if ((Listnam == 130) | (Listnam == 119))
+        if ((Listnam == 130) || (Listnam == 119))
         {
             Befehl[0].Visible = false;
             Befehl[6].Visible = false;
@@ -3425,7 +3425,7 @@ public partial class Anzeige : Form
             this.PerPos = 2;
             if (_Modul1.Instance.Aus[51] == "Y")
             {
-                if ((_Modul1.Instance.Family.Mann > 0) | (_Modul1.Instance.Family.Frau > 0))
+                if ((_Modul1.Instance.Family.Mann > 0) || (_Modul1.Instance.Family.Frau > 0))
                 {
                     if (ausw_opt3_0)
                     {
@@ -3743,7 +3743,7 @@ public partial class Anzeige : Form
                     if (_Modul1.Instance.Aus[51] == "Y")
                     {
                         _Modul1.Instance.Famles();
-                        if ((_Modul1.Instance.Family.Mann > 0) | (_Modul1.Instance.Family.Frau > 0))
+                        if ((_Modul1.Instance.Family.Mann > 0) || (_Modul1.Instance.Family.Frau > 0))
                         {
                             if (Strings.Mid(richTextBox1_0.Text, richTextBox1_0.SelectionStart, 1) != ".")
                             {
@@ -4710,7 +4710,7 @@ public partial class Anzeige : Form
         }
         richTextBox1_0.SelectedText = sBez + "\n";
         richTextBox1_0.SelectionFont = fntRegular;
-        if ((Anfang != "") | (Aufhoer != ""))
+        if ((Anfang != "") || (Aufhoer != ""))
         {
             if (Anfang != "")
             {
@@ -4837,7 +4837,7 @@ public partial class Anzeige : Form
         {
             richTextBox1_0.SelectedText = ", Sippe " + _Modul1.Instance.Kont[5];
         }
-        if (ausw.Kontroll[10].Checked | ausw.Kontroll[11].Checked)
+        if (ausw.Kontroll[10].Checked || ausw.Kontroll[11].Checked)
         {
             WriteNachnr(richTextBox1_0);
         }
