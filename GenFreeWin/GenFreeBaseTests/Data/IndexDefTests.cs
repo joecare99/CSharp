@@ -10,13 +10,13 @@ namespace GenFree.Data.Tests
     {
         private ITableDef td;
         private IndexDef testClass;
-        private List<IIndexDef> _ix;
+        private readonly List<IIndexDef> _ix = new();
 
         [TestInitialize]
         public void Init()
         {
             td = Substitute.For<ITableDef>();
-            td.Indexes.Returns(_ix = new List<IIndexDef>());
+            td.Indexes.Returns(_ix);
             testClass = new IndexDef(td, "Name", "sField", true, false);
         }
 

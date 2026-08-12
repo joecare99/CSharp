@@ -13,6 +13,10 @@ namespace Game.Model.Tests;
 [TestClass]
 public class Playfield2DTests
 {
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj);
+
+    public override int GetHashCode() => base.GetHashCode();
+
 #pragma warning disable CS8618
     private Playfield2D<TestItem2D> _pf;
 #pragma warning restore CS8618

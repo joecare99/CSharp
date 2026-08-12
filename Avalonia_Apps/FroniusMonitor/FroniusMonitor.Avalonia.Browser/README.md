@@ -9,4 +9,4 @@ Default gateway base URL in this slice:
 ## Startup sequence
 1. Start `FroniusMonitor.Gateway`.
 2. Start `FroniusMonitor.Avalonia.Browser`.
-3. Ensure browser can reach gateway URL and CORS is enabled.
+3. Ensure browser can reach gateway URL and CORS is configured for the browser host origin.

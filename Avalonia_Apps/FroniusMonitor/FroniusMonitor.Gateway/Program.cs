@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -45,26 +46,16 @@ app.MapGet("/api/config", (FroniusDeviceEndpointOptions options) =>
         PowerFlowUri = options.BuildPowerFlowUri().ToString(),
     }));
 
-app.MapGet("/api/snapshot", async (string? host, IFroniusSnapshotService snapshotService, FroniusDeviceEndpointOptions options, CancellationToken cancellationToken) =>
+app.MapGet("/api/snapshot", async (IFroniusSnapshotService snapshotService, CancellationToken cancellationToken) =>
 {
-    if (!string.IsNullOrWhiteSpace(host))
-    {
-        options.Host = host;
-    }
-
     FroniusMonitor.Core.Models.FroniusSnapshotResult result = await snapshotService.GetSnapshotAsync(cancellationToken).ConfigureAwait(false);
     return Results.Ok(result);
 });
 
-app.MapGet("/api/snapshot/live", async (string? host, int count, int intervalMs, IFroniusSnapshotService snapshotService, FroniusDeviceEndpointOptions options, CancellationToken cancellationToken) =>
+app.MapGet("/api/snapshot/live", async (int count, int intervalMs, IFroniusSnapshotService snapshotService, CancellationToken cancellationToken) =>
 {
     int iCount = Math.Clamp(count <= 0 ? 5 : count, 1, 60);
     int iIntervalMs = Math.Clamp(intervalMs <= 0 ? 1000 : intervalMs, 250, 10000);
-
-    if (!string.IsNullOrWhiteSpace(host))
-    {
-        options.Host = host;
-    }
 
     List<FroniusMonitor.Core.Models.FroniusSnapshotResult> results = [];
     for (int i = 0; i < iCount; i++)

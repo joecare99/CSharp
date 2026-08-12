@@ -150,9 +150,10 @@ public class GameWorldTests
         // move ship away from center    
         gw.Ship.Position = new(104, 98);
         // place an asteroid at ship
-        var (asteroids, _) = GetSimLists(gw);
+        var (asteroids, bullets) = GetSimLists(gw);
         asteroids.Clear();
         asteroids.Add(new Asteroid { Position = gw.Ship.Position, Velocity = Vector2.Zero, Radius = 20 });
+        _ = bullets;
 
         gw.Update(_input, _time, _sound);
         _sound.Received().PlayBang();

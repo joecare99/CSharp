@@ -208,10 +208,13 @@ public class Datenversandt : Form
             SmtpClient smtpClient = new SmtpClient();
             SmtpClient smtpClient2 = smtpClient;
             smtpClient2.Host = "post.strato.de";
-            smtpClient2.Port = 25;
+            smtpClient2.Port = 587;
+            smtpClient2.EnableSsl = true;
             smtpClient2.UseDefaultCredentials = false;
             smtpClient2.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtpClient2.Credentials = new NetworkCredential("support@Genpluswin.de", "support1");
+            smtpClient2.Credentials = new NetworkCredential(
+                Environment.GetEnvironmentVariable("GENPLUSWIN_SMTP_USER") ?? throw new InvalidOperationException("Missing SMTP username."),
+                Environment.GetEnvironmentVariable("GENPLUSWIN_SMTP_PASSWORD") ?? throw new InvalidOperationException("Missing SMTP password."));
             MailMessage mailMessage2 = mailMessage;
             mailMessage2.Subject = "Datenbank";
             mailMessage2.IsBodyHtml = false;
