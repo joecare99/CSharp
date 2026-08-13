@@ -33,6 +33,7 @@ The purpose is to provide a consistent foundation for:
 - `Ollama.Client`
 - `Ollama.Tools`
 - `Ollama.Extensions.DependencyInjection`
+- `OpenAI/Ollama Coding Agent runtime and host`
 - Console and WPF sample applications
 
 ## Known Scenario Areas
@@ -52,3 +53,7 @@ The purpose is to provide a consistent foundation for:
 - [Project: Ollama.Protocol](../Projects/Ollama.Protocol.md)
 - [Project: Ollama.Tools](../Projects/Ollama.Tools.md)
 - [Project: Ollama.Wpf.TextAnalysis](../Projects/Ollama.Wpf.TextAnalysis.md)
+- [Project: OpenAI/Ollama Coding Agent](../Projects/OpenAIOllamaCodingAgent.md)
+
+## Related Features
+- [Feature: OpenAI/Ollama Coding Agent Platform](../Features/Feat-09-OpenAIOllamaCodingAgent.md)

@@ -1,0 +1,67 @@
+using System;
+
+namespace Ollama.CodingAgent;
+
+/// <summary>
+/// Defines runtime constraints for agent execution.
+/// </summary>
+public sealed class OllamaAgentRuntimeSettings
+{
+    /// <summary>
+    /// Gets the baseline timeout used for one model call.
+    /// </summary>
+    public static TimeSpan DefaultStepTimeout => TimeSpan.FromMinutes(12);
+
+    /// <summary>
+    /// Gets the baseline retry count used for one step.
+    /// </summary>
+    public static int DefaultRetryCount => 3;
+
+    /// <summary>
+    /// Gets the baseline maximum iteration cap used for one run.
+    /// </summary>
+    public static int DefaultMaxIterations => 80;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OllamaAgentRuntimeSettings"/> class.
+    /// </summary>
+    /// <param name="stepTimeout">The timeout for one model step.</param>
+    /// <param name="retryCount">The number of retries per model step.</param>
+    /// <param name="maxIterations">The hard iteration cap for one run.</param>
+    public OllamaAgentRuntimeSettings(TimeSpan stepTimeout, int retryCount, int maxIterations)
+    {
+        if (stepTimeout <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(stepTimeout), "The step timeout must be greater than zero.");
+        }
+
+        if (retryCount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(retryCount), "The retry count must be zero or greater.");
+        }
+
+        if (maxIterations <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maxIterations), "The maximum iteration count must be greater than zero.");
+        }
+
+        StepTimeout = stepTimeout;
+        RetryCount = retryCount;
+        MaxIterations = maxIterations;
+    }
+
+    /// <summary>
+    /// Gets the timeout for one model step.
+    /// </summary>
+    public TimeSpan StepTimeout { get; }
+
+    /// <summary>
+    /// Gets the number of retries per model step.
+    /// </summary>
+    public int RetryCount { get; }
+
+    /// <summary>
+    /// Gets the hard iteration cap for one run.
+    /// </summary>
+    public int MaxIterations { get; }
+}
