@@ -51,7 +51,7 @@ public partial class CommandParCalcViewModel : ViewModelBase, ICommandParCalcVie
     /// <summary>
     /// The model
     /// </summary>
-    private ICommandParCalcModel _model;
+    private readonly ICommandParCalcModel _model;
 
     public CommandParCalcViewModel()
     {
