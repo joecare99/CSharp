@@ -1,13 +1,18 @@
 <Project>
 	<Import Project="..\Libraries.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481;net48;net472;net462;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462;net8.0</TargetFrameworks>
 		<SignAssembly>True</SignAssembly>
-		<Configurations>Debug;Release;DesktopOnly</Configurations>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<ItemGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
 		<Compile Remove="obj\**" />
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
@@ -18,5 +23,4 @@
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 	</ItemGroup>
-	
 </Project>
