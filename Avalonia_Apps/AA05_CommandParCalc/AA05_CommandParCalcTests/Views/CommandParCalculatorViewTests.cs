@@ -34,17 +34,18 @@ public class CommandParCalculatorViewTests
     {
         // Arrange
         CommandParCalculatorView tv;
+        var vm = Substitute.For<ICommandParCalculatorViewModel>();
         var window = new Window()
         {
             Height = 800,
             Width = 1024,
             Content = tv = new CommandParCalculatorView()
             {
-                DataContext = _vm = Substitute.For<ICommandParCalculatorViewModel>()
+                DataContext = _vm = vm
             }
         };
 
-        if (_vm?.GetType().GetProperty(sRelayCmd)?.GetValue(_vm) is IRelayCommand iRc)
+        if (_vm.GetType().GetProperty(sRelayCmd)?.GetValue(_vm) is IRelayCommand iRc)
         {
             iRc.CanExecute(xEnum).Returns(true);
             iRc.CanExecuteChanged += Raise.Event<EventHandler>(_vm, EventArgs.Empty);

@@ -24,17 +24,18 @@ public class CommandParCalcViewTests
     {
         // Arrange
         CommandParCalcView tv;
+        var vm = Substitute.For<ICommandParCalcViewModel>();
         var window = new Window()
         {
             Height = 800,
             Width = 1024,
             Content = tv = new CommandParCalcView()
             {
-                DataContext = _vm = Substitute.For<ICommandParCalcViewModel>()
+                DataContext = _vm = vm
             }
         };
 
-        if (_vm?.GetType().GetProperty(sRelayCmd)?.GetValue(_vm) is IRelayCommand iRc)
+        if (_vm.GetType().GetProperty(sRelayCmd)?.GetValue(_vm) is IRelayCommand iRc)
         {  
             iRc.CanExecute(null).Returns(true);
             iRc.CanExecuteChanged += Raise.Event<EventHandler>(_vm.HomeCommand, EventArgs.Empty);
