@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <PackageVersion Update="Avalonia" Version="12.1.1" />
+    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.20" />
     <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.1.1" />
     <PackageVersion Update="Avalonia.Themes.Fluent" Version="12.1.1" />
   </ItemGroup>
