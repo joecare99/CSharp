@@ -65,7 +65,7 @@ public class ViewModelBase : ObservableObject ,IPropertyBinding
     private void InternalBindingHandler(object? sender, PropertyChangedEventArgs e)
     {
 
-        if (sender == this && _CommandCanExecuteBinding.TryGetValue(e.PropertyName ?? "", out var l))
+        if (ReferenceEquals(sender, this) && _CommandCanExecuteBinding.TryGetValue(e.PropertyName ?? "", out var l))
             foreach (var t in l)
                 switch (GetType().GetProperty(t.Item1))
                 {
@@ -89,8 +89,8 @@ public class ViewModelBase : ObservableObject ,IPropertyBinding
                             }
                             else if (mi.GetParameters().Length == 1)
                             {
-                                if (KnownParams.ContainsKey(t.Item1))
-                                    foreach (var para in KnownParams[t.Item1])
+                                if (KnownParams.TryGetValue(t.Item1, out var knownParams))
+                                    foreach (var para in knownParams)
                                     {
                                         var newVal = mi.Invoke(this,
                                         new object?[]
@@ -104,7 +104,9 @@ public class ViewModelBase : ObservableObject ,IPropertyBinding
 
         void NewMethod((string, bool) t, object? newVal, object? para = null)
         {
-            var oldVal = !_PropertyOldValue.ContainsKey((t.Item1, para)) ? null : _PropertyOldValue[(t.Item1, para)];
+            object? oldVal = _PropertyOldValue.TryGetValue((t.Item1, para), out var previousValue)
+                ? previousValue
+                : null;
             if (newVal == null && oldVal == null) return;
             if (t.Item2 || !(newVal ?? oldVal!).Equals(newVal != null ? oldVal : null))
             {
