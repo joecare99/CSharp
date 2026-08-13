@@ -42,7 +42,11 @@
     <Project Path="McpTools/McpTools.csproj" />
     <Project Path="Ollama.CodingAgent/Ollama.CodingAgent.csproj" />
     <Project Path="Ollama.CodingAgent.HostCheck/Ollama.CodingAgent.HostCheck.csproj" />
+    <Project Path="Ollama.CodingAgent.HostCheck.InternetInfo/Ollama.CodingAgent.HostCheck.InternetInfo.csproj" />
+    <Project Path="Ollama.CodingAgent.HostCheck.KnowledgeBase/Ollama.CodingAgent.HostCheck.KnowledgeBase.csproj" />
+    <Project Path="Ollama.CodingAgent.HostCheck.Planning/Ollama.CodingAgent.HostCheck.Planning.csproj" />
     <Project Path="Ollama.CodingAgent.Tests/Ollama.CodingAgent.Tests.csproj" />
+    <Project Path="OpenAI.CodingAgent/OpenAI.CodingAgent.csproj" />
     <Project Path="Ollama-Service1/Ollama-Service1.csproj" />
     <Project Path="Ollama-Service2/Ollama-Service2.csproj" />
     <Project Path="Ollama.Client.Tests/Ollama.Client.Tests.csproj" />
