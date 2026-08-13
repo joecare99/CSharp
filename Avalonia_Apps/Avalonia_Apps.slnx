@@ -519,6 +519,7 @@
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj">
        <BuildType Solution="DesktopOnly|*" Project="Debug" />
      </Project>
+     <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.AzureDevOps/AA98_AvlnCodeStudio.Planning.AzureDevOps.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.Core/AA98_AvlnCodeStudio.Planning.Core.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.Local/AA98_AvlnCodeStudio.Planning.Local.csproj" />
      <Project Path="AA98_AvlnCodeStudio/AA98_AvlnCodeStudio.Planning.UI/AA98_AvlnCodeStudio.Planning.UI.csproj" />
