@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+  <Project Path="MVVM_42a_3DView/MVVM_42a_3DView.csproj" />
+  <Project Path="MVVM_42a_3DView/MVVM_42a_3DView_net.csproj" />
+  <Project Path="MVVM_42b_3DView/MVVM_42b_3DView.csproj" />
+  <Project Path="MVVM_42b_3DView/MVVM_42b_3DView_net.csproj" />
+  <Project Path="MVVM_42_3DView/MVVM_42_3DView _net.csproj" />
+  <Project Path="MVVM_42_3DView/MVVM_42_3DView.csproj" />
+</Solution>

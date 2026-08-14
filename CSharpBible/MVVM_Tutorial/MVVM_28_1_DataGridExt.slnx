@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+  <Project Path="MVVM_28_1_DataGridExt/MVVM_28_1_DataGridExt.csproj" />
+  <Project Path="MVVM_28_1_DataGridExt/MVVM_28_1_DataGridExt_net.csproj" />
+  <Project Path="MVVM_28_1_DataGridExtTests/MVVM_28_1_DataGridExtTests.csproj" />
+  <Project Path="MVVM_28_1_DataGridExtTests/MVVM_28_1_DataGridExt_netTests.csproj" />
+</Solution>

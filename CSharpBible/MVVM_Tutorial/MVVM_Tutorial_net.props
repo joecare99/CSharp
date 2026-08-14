@@ -1,0 +1,10 @@
+<Project>
+  <Import Project="..\Solution_net.props"/>
+  <PropertyGroup>
+	  <UpDir>..\$(UpDir)</UpDir>
+	  <BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(UpDir)\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	  <RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net",""))</RootNamespace>
+    <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
+  </PropertyGroup>
+</Project>

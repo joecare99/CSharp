@@ -1,0 +1,31 @@
+<Solution>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries_net.props" />
+    <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
+    <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="MVVM_Tutorial.props" />
+    <File Path="MVVM_Tutorial_net.props" />
+  </Folder>
+  <Project Path="MVVM_31a_CTValidation1/MVVM_31a_CTValidation1.csproj" />
+  <Project Path="MVVM_31a_CTValidation1/MVVM_31a_CTValidation1_net.csproj" />
+  <Project Path="MVVM_31a_CTValidation1Tests/MVVM_31a_CTValidation1Tests.csproj" />
+  <Project Path="MVVM_31a_CTValidation1Tests/MVVM_31a_CTValidation1_netTests.csproj" />
+  <Project Path="MVVM_31a_CTValidation2/MVVM_31a_CTValidation2.csproj" />
+  <Project Path="MVVM_31a_CTValidation2/MVVM_31a_CTValidation2_net.csproj" />
+  <Project Path="MVVM_31a_CTValidation2Tests/MVVM_31a_CTValidation2Tests.csproj" />
+  <Project Path="MVVM_31a_CTValidation2Tests/MVVM_31a_CTValidation2_netTests.csproj" />
+  <Project Path="MVVM_31a_CTValidation3/MVVM_31a_CTValidation3.csproj" />
+  <Project Path="MVVM_31a_CTValidation3/MVVM_31a_CTValidation3_net.csproj" />
+  <Project Path="MVVM_31a_CTValidation3Tests/MVVM_31a_CTValidation3Tests.csproj" />
+  <Project Path="MVVM_31a_CTValidation3Tests/MVVM_31a_CTValidation3_netTests.csproj" />
+  <Project Path="MVVM_31_Validation1/MVVM_31_Validation1.csproj" />
+  <Project Path="MVVM_31_Validation1/MVVM_31_Validation1_net.csproj" />
+  <Project Path="MVVM_31_Validation1Tests/MVVM_31_Validation1Tests.csproj" />
+  <Project Path="MVVM_31_Validation1Tests/MVVM_31_Validation1_netTests.csproj" />
+  <Project Path="MVVM_31_Validation2/MVVM_31_Validation2.csproj" />
+  <Project Path="MVVM_31_Validation2/MVVM_31_Validation2_net.csproj" />
+  <Project Path="MVVM_31_Validation2Tests/MVVM_31_Validation2Tests.csproj" />
+  <Project Path="MVVM_31_Validation2Tests/MVVM_31_Validation2_netTests.csproj" />
+</Solution>

@@ -1,0 +1,9 @@
+<Project>
+  <Import Project="..\Solution.props"/>
+	<PropertyGroup>
+		<UpDir>..\$(UpDir)</UpDir>
+	  <BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	  <RootNamespace>$(MSBuildProjectName.Replace(".","_").Replace("_net",""))</RootNamespace>
+	</PropertyGroup>
+</Project>

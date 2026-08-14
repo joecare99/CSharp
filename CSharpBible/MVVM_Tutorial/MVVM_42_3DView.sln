@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{658BD492-33FF-4995-AAE7-4F6894E92F0C}"
+	ProjectSection(SolutionItems) = preProject
+		MVVM_Tutorial.props = MVVM_Tutorial.props
+		MVVM_Tutorial_net.props = MVVM_Tutorial_net.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLib", "..\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj", "{890CF504-3814-443B-9EE6-E8BCACF68203}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{AF041458-CF94-4D6D-BB0F-8BC50F4F099C}"
+	ProjectSection(SolutionItems) = preProject
+		..\Libraries\Libraries_net.props = ..\Libraries\Libraries_net.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVVM_BaseLibTests", "..\Libraries\MVVM_BaseLibTests\MVVM_BaseLibTests.csproj", "{66EB60F2-523D-47C8-95EA-C7E10759E239}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_42_3DView", "MVVM_42_3DView\MVVM_42_3DView.csproj", "{03610EB8-51A0-BFAB-D8A6-DE2339E8425D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_42_3DView _net", "MVVM_42_3DView\MVVM_42_3DView _net.csproj", "{61994990-80FA-86EC-4AA8-F81C6DAA30CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_42a_3DView", "MVVM_42a_3DView\MVVM_42a_3DView.csproj", "{7D0E4FF3-478E-D8E5-DDC6-D118D3DB0C49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_42a_3DView_net", "MVVM_42a_3DView\MVVM_42a_3DView_net.csproj", "{E082775F-8D6B-CF9C-350E-C8FE3A49C519}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_42b_3DView", "MVVM_42b_3DView\MVVM_42b_3DView.csproj", "{AD151734-FEE4-8025-BDD0-31A0495F2C4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM_42b_3DView_net", "MVVM_42b_3DView\MVVM_42b_3DView_net.csproj", "{86B0CDD6-2DEE-3323-839A-C3907CEB2596}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{890CF504-3814-443B-9EE6-E8BCACF68203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{890CF504-3814-443B-9EE6-E8BCACF68203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{890CF504-3814-443B-9EE6-E8BCACF68203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{890CF504-3814-443B-9EE6-E8BCACF68203}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66EB60F2-523D-47C8-95EA-C7E10759E239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66EB60F2-523D-47C8-95EA-C7E10759E239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66EB60F2-523D-47C8-95EA-C7E10759E239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66EB60F2-523D-47C8-95EA-C7E10759E239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03610EB8-51A0-BFAB-D8A6-DE2339E8425D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03610EB8-51A0-BFAB-D8A6-DE2339E8425D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03610EB8-51A0-BFAB-D8A6-DE2339E8425D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03610EB8-51A0-BFAB-D8A6-DE2339E8425D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61994990-80FA-86EC-4AA8-F81C6DAA30CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61994990-80FA-86EC-4AA8-F81C6DAA30CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61994990-80FA-86EC-4AA8-F81C6DAA30CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61994990-80FA-86EC-4AA8-F81C6DAA30CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D0E4FF3-478E-D8E5-DDC6-D118D3DB0C49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D0E4FF3-478E-D8E5-DDC6-D118D3DB0C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D0E4FF3-478E-D8E5-DDC6-D118D3DB0C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D0E4FF3-478E-D8E5-DDC6-D118D3DB0C49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E082775F-8D6B-CF9C-350E-C8FE3A49C519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E082775F-8D6B-CF9C-350E-C8FE3A49C519}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E082775F-8D6B-CF9C-350E-C8FE3A49C519}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E082775F-8D6B-CF9C-350E-C8FE3A49C519}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD151734-FEE4-8025-BDD0-31A0495F2C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD151734-FEE4-8025-BDD0-31A0495F2C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD151734-FEE4-8025-BDD0-31A0495F2C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD151734-FEE4-8025-BDD0-31A0495F2C4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86B0CDD6-2DEE-3323-839A-C3907CEB2596}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86B0CDD6-2DEE-3323-839A-C3907CEB2596}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86B0CDD6-2DEE-3323-839A-C3907CEB2596}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86B0CDD6-2DEE-3323-839A-C3907CEB2596}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{890CF504-3814-443B-9EE6-E8BCACF68203} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
+		{66EB60F2-523D-47C8-95EA-C7E10759E239} = {AF041458-CF94-4D6D-BB0F-8BC50F4F099C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FDFAA7DD-8D69-4264-A5D4-C3AEBBD82D25}
+	EndGlobalSection
+EndGlobal
