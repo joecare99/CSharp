@@ -49,7 +49,10 @@ Implement the provider-agnostic multi-turn runtime and normalize provider-specif
 - no provider-specific logic leaks into core runtime services
 
 ## Status
-In Progress
+Done
 
 ## Status Log
 - 2026-08-13: Implemented first provider-agnostic runtime skeleton with configurable timeout/retry/iteration defaults in dedicated `Ollama.CodingAgent` project.
+- 2026-08-13: Runtime diagnostics, optional thinking capture, and live delegated execution are validated.
+- 2026-08-13: Added `IAgentProviderClient`, `AgentProviderCapabilities`, the Ollama capability implementation, and the provider-specific `OpenAI.CodingAgent` adapter.
+- 2026-08-13: Added OpenAI-compatible adapter normalization tests; all 41 coding-agent tests pass.

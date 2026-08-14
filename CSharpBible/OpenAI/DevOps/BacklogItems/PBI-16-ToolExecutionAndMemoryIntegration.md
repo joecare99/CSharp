@@ -4,7 +4,7 @@
 [Feature: OpenAI/Ollama Coding Agent Platform](../Features/Feat-09-OpenAIOllamaCodingAgent.md)
 
 ## Status
-Draft
+Done
 
 ## Description
 As an engineer, I want safe tool execution and structured memory support so that the agent can solve realistic coding tasks across multiple turns without losing context or exceeding safety boundaries.
@@ -25,6 +25,7 @@ As an engineer, I want safe tool execution and structured memory support so that
 - Implement tool bridge for command and file operations with guardrails.
 - Implement session-memory schema and retrieval strategy.
 - Add integration tests for tool cycle and memory-assisted turns.
+- Define extension points for external knowledge connectors and local wiki tools.
 
 ## Test Tasks
 - Add allow/deny policy tests for path and command boundaries.
@@ -36,3 +37,10 @@ As an engineer, I want safe tool execution and structured memory support so that
 ## Open Questions
 - Should command execution start read-only and require explicit opt-in for write operations?
 - Which retention defaults should be used for session-memory trimming?
+- Should local wiki ingestion happen only via explicit agent tools or also from post-run summarization hooks?
+
+## Completion Log
+- 2026-08-13: Added explicit tool execution policy contracts and an allowlist implementation; unknown tools remain denied and registered tools can be restricted by host policy.
+- 2026-08-13: Added bounded multi-turn tool execution with request, execution, result reinjection, final-response detection, and iteration-limit handling.
+- 2026-08-13: Added `JsonSessionMemoryStore` with session scoping, durable local persistence, bounded retention, and token-overlap relevance retrieval.
+- 2026-08-13: Added policy, tool-loop, persistence, retrieval, and retention tests; `Ollama.Tools.Tests` passes 103 tests.

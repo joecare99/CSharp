@@ -25,14 +25,16 @@ Deliver a full-capability C# coding agent that can execute practical software-en
 2. [PBI-15 Provider-Agnostic Agent Runtime](../BacklogItems/PBI-15-ProviderAgnosticAgentRuntime.md)
 3. [PBI-16 Tool Execution and Memory Integration](../BacklogItems/PBI-16-ToolExecutionAndMemoryIntegration.md)
 4. [PBI-17 Agent Evaluation Hardening and Readiness](../BacklogItems/PBI-17-AgentEvaluationHardeningAndReadiness.md)
+5. [PBI-18 Web Knowledge and Local LLM Wiki](../BacklogItems/PBI-18-WebKnowledgeAndLocalLlmWiki.md)
+6. [PBI-19 Goal-Focused Task Planning and Execution](../BacklogItems/PBI-19-GoalFocusedTaskPlanningAndExecution.md)
 
 ## Concrete Project Mapping (Existing Code First)
 | Sprint | Primary Existing Projects | Planned Reuse |
 | --- | --- | --- |
 | Sprint 0 | `Ollama.Protocol`, `Ollama.Client`, `Ollama.Samples.TagsCheck`, `Ollama.Samples.ChatCheck` | endpoint/model preflight, first prompt roundtrip, baseline smoke harness |
 | Sprint 1 | `Ollama.Client`, `Ollama.Protocol`, `OpenAIPlayground`, `Ollama.Extensions.DependencyInjection` | provider adapter boundary, shared runtime envelope, DI-based composition |
-| Sprint 2 | `Ollama.Tools`, `Ollama.Tools.Tests`, `Ollama.Samples.ToolUse` | tool-call loop, orchestration reuse, safety policy integration |
-| Sprint 3 | `Ollama.Client.Tests`, `Ollama.Protocol.Tests`, `Ollama.Tools.Tests`, `Ollama.Wpf.TextAnalysis` | regression matrix, diagnostics hardening, scenario validation from existing hosts |
+| Sprint 2 | `Ollama.Tools`, `Ollama.Tools.Tests`, `Ollama.Samples.ToolUse`, `Ollama.CodingAgent.Tests` | tool-call loop, orchestration reuse, goal-focused subtask execution |
+| Sprint 3 | `Ollama.Client.Tests`, `Ollama.Protocol.Tests`, `Ollama.Tools.Tests`, `Ollama.Wpf.TextAnalysis`, `McpTools` | regression matrix, diagnostics hardening, source-aware knowledge and local wiki scenario validation |
 
 ## Proposed New Project Scope
 - Introduce one dedicated coding-agent host project from the beginning.
@@ -83,6 +85,20 @@ Add safe tool execution and structured memory integration for practical coding w
 - Session context persistence model.
 - Tests for tool errors, denied operations, and memory recall.
 
+### Planning Wave 1 - Goal-Focused Subtask Control
+**Objective**
+Add explicit planning state and drift-safe subtask execution so complex tasks remain aligned with the main goal.
+
+**Expected Outcomes**
+- Goal contract retained during the full run.
+- Subtask decomposition with dependencies and checkpoints.
+- Drift detection with targeted replanning behavior.
+
+**Primary Deliverables**
+- Plan-state model with checkpoint snapshots.
+- Planner/executor loop extension for subtasks.
+- Drift and resume regression tests.
+
 ### Sprint 3 - Evaluation and Hardening
 **Objective**
 Make the agent robust for repeated usage with measurable quality and operational diagnostics.
@@ -97,11 +113,26 @@ Make the agent robust for repeated usage with measurable quality and operational
 - Hardening fixes and operational guardrails.
 - "Definition of Ready/Done" checklist for further features.
 
+### Knowledge Wave 1 - Trusted Web Sources and Local Wiki
+**Objective**
+Enable bounded external knowledge lookup and local wiki accumulation for reusable coding guidance.
+
+**Expected Outcomes**
+- Trusted domain allowlist for external sources (Wikipedia, Rosetta Code, Microsoft Learn).
+- Citation envelope for responses that use external knowledge.
+- Local LLM wiki write/read/search flow with curation policy.
+
+**Primary Deliverables**
+- Web lookup tool contract and first source connector.
+- Local wiki storage contract and retrieval ranking behavior.
+- Host-check scenario for lookup + local wiki writeback.
+
 ## Cross-Cutting Tracks
 - **Security and safety:** command constraints, path boundaries, prompt-injection resilience.
 - **Diagnostics:** structured logs, correlation IDs, step traces.
 - **I18N readiness:** keep user-visible strings localizable.
 - **Testability:** provider mocks and deterministic scenario seeds.
+- **Knowledge governance:** domain allowlists, citation format, and local wiki curation workflow.
 
 ## Definition of Ready (DoR) per Sprint Slice
 - Parent backlog item is approved and linked.
@@ -122,6 +153,8 @@ Make the agent robust for repeated usage with measurable quality and operational
 | Runtime loop | deterministic transition tests | multi-turn scenario tests |
 | Tool execution | policy allow/deny tests | end-to-end tool-call scenario |
 | Memory integration | persistence and retrieval tests | follow-up turn recall scenarios |
+| Web knowledge + local wiki | allowlist/citation and wiki write/read tests | lookup + writeback + retrieval scenario |
+| Goal-focused planning | decomposition/dependency and drift tests | multi-subtask end-to-end plan execution |
 | Operational diagnostics | log schema assertions | failure replay with trace IDs |
 
 ## Existing Test Assets to Reuse
@@ -134,6 +167,10 @@ Make the agent robust for repeated usage with measurable quality and operational
 - Keep at least one tiny live-check host app in the solution (`Ollama.CodingAgent.HostCheck`).
 - Run the host check regularly in addition to unit tests to validate real Ollama behavior.
 - Use the baseline model `qwen2.5-coder:7b` for the first live-check pass before testing alternative models.
+- Add focused host checks for:
+  - planning behavior and malformed planning input handling,
+  - internet-source retrieval and malformed source/output handling,
+  - local knowledge-base write/search and malformed data handling.
 
 ## Risk Register
 1. Model output inconsistency for tool-call formats.

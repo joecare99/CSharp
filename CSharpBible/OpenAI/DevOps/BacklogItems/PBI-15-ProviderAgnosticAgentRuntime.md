@@ -4,7 +4,7 @@
 [Feature: OpenAI/Ollama Coding Agent Platform](../Features/Feat-09-OpenAIOllamaCodingAgent.md)
 
 ## Status
-Draft
+Done
 
 ## Description
 As an engineer, I want a provider-agnostic runtime with a deterministic multi-turn state machine so that the same C# agent orchestration can run against Ollama and OpenAI-compatible backends.
@@ -39,3 +39,10 @@ As an engineer, I want a provider-agnostic runtime with a deterministic multi-tu
 
 ## Open Questions
 - Should streaming support be mandatory in sprint 1 or feature-flagged for sprint 2?
+
+## Completion Log
+- 2026-08-13: Added the shared provider contract and explicit capability metadata while preserving the existing `IAgentModelClient` contract.
+- 2026-08-13: Exposed the configured Ollama model through the Ollama adapter and normalized Ollama completions through the shared envelope.
+- 2026-08-13: Added the provider-specific `OpenAI.CodingAgent` project with an OpenAI-compatible `/v1/chat/completions` adapter, bearer authentication, cancellation propagation, and response validation.
+- 2026-08-13: Added adapter fixture tests covering request normalization, response normalization, endpoint selection, capabilities, and malformed responses.
+- 2026-08-13: Existing runtime retry, timeout, cancellation, iteration-cap, and baseline-default tests remain green; the coding-agent test suite passes 41 tests.

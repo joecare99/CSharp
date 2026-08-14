@@ -4,7 +4,7 @@
 [Feature: OpenAI/Ollama Coding Agent Platform](../Features/Feat-09-OpenAIOllamaCodingAgent.md)
 
 ## Status
-Draft
+Done
 
 ## Description
 As an engineer, I want an evaluation and hardening phase so that the coding agent can be trusted for repeated local engineering workflows with measurable quality and clear operational diagnostics.
@@ -26,6 +26,7 @@ As an engineer, I want an evaluation and hardening phase so that the coding agen
 - Add runtime diagnostics and structured logs.
 - Execute hardening loop for highest-impact defects.
 - Produce readiness checklist and usage documentation.
+- Include source-citation and local wiki quality checks in readiness criteria.
 
 ## Test Tasks
 - Add repeatable scenario-runner tests for baseline, tool, and memory flows.
@@ -37,3 +38,9 @@ As an engineer, I want an evaluation and hardening phase so that the coding agen
 ## Open Questions
 - Which minimum reliability threshold should block release (pass rate, failure budget, or both)?
 - Should evaluation metrics be persisted per model or per provider+model combination?
+
+## Completion Log
+- 2026-08-13: Added the executable, versioned evaluation matrix with baseline, retry, tool-policy, tool-reinjection, memory, retention, and cancellation scenarios.
+- 2026-08-13: Added provider-neutral runtime diagnostics with correlation IDs, completion latency, retry attempt data, and structured failure details.
+- 2026-08-13: Added deterministic evaluation-runner threshold handling and exception-to-failed-outcome conversion.
+- 2026-08-13: Added diagnostics and evaluation contract tests; `Ollama.CodingAgent.Tests` passes 45 tests and `Ollama.Tools.Tests` passes 103 tests.

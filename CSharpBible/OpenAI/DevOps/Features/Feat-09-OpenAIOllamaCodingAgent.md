@@ -4,7 +4,7 @@
 [Epic: OpenAI/Ollama Platform and Shared Client Ecosystem](../Epics/Epic-OpenAI-Ollama.md)
 
 ## Status
-Draft
+In Progress
 
 ## Description
 Build a full-capability coding agent in C# that can run against local Ollama and OpenAI-compatible endpoints, starting with a stable local baseline (`qwen2.5-coder:7b`) and expanding into orchestration, memory, tool execution, and quality gates.
@@ -14,6 +14,8 @@ Build a full-capability coding agent in C# that can run against local Ollama and
 - Validate local Ollama reliability first using `qwen2.5-coder:7b`.
 - Support multi-turn planning and execution with bounded tool access.
 - Add memory and session context support with explicit policies.
+- Add trusted external knowledge retrieval (for example Wikipedia, Rosetta Code, Microsoft Learn) with citations.
+- Add local LLM wiki build/read workflows for reusable coding knowledge.
 - Add evaluation and hardening so the agent can be used repeatedly for real engineering tasks.
 
 ## Non-Goals (for this feature slice)
@@ -24,9 +26,10 @@ Build a full-capability coding agent in C# that can run against local Ollama and
 ## Architecture Intent
 1. **Provider layer:** OpenAI-compatible and Ollama providers behind one contract.
 2. **Agent runtime layer:** prompt policy, planning loop, step execution, stop conditions.
-3. **Tooling layer:** safe command execution, repository interaction, and bounded file operations.
-4. **Memory layer:** session transcript, short-term state, optional long-term retrieval.
-5. **Evaluation layer:** scenario tests, quality metrics, and regression checks.
+3. **Planning layer:** goal contract, subtask decomposition, dependency ordering, drift detection.
+4. **Tooling layer:** safe command execution, repository interaction, and bounded file operations.
+5. **Memory layer:** session transcript, short-term state, optional long-term retrieval.
+6. **Evaluation layer:** scenario tests, quality metrics, and regression checks.
 
 ## Existing Code and Project Reuse Plan
 - `Ollama.Protocol` for low-level `/api/tags`, `/api/chat`, `/api/generate`, and `/api/embed` transport.
@@ -60,6 +63,8 @@ Build a full-capability coding agent in C# that can run against local Ollama and
 - [PBI-15: Implement Provider-Agnostic Agent Runtime](../BacklogItems/PBI-15-ProviderAgnosticAgentRuntime.md)
 - [PBI-16: Add Tool Execution and Memory Integration](../BacklogItems/PBI-16-ToolExecutionAndMemoryIntegration.md)
 - [PBI-17: Add Evaluation, Hardening, and Delivery Readiness](../BacklogItems/PBI-17-AgentEvaluationHardeningAndReadiness.md)
+- [PBI-18: Add Web Knowledge Retrieval and Local LLM Wiki](../BacklogItems/PBI-18-WebKnowledgeAndLocalLlmWiki.md)
+- [PBI-19: Goal-Focused Task Planning and Execution](../BacklogItems/PBI-19-GoalFocusedTaskPlanningAndExecution.md)
 
 ## Open Questions
 - Should the first agent host live in `OpenAIPlayground` or a dedicated `Agent` project?

@@ -11,6 +11,7 @@ Validate quality, harden defects, and produce repeatable local delivery readines
 - add operational diagnostics and run-level observability
 - harden high-priority failure modes
 - finalize onboarding and operational guidance
+- validate knowledge-source citations and local wiki quality behavior
 
 ## Existing Project Integration
 - Build regression suites on `Ollama.Protocol.Tests`, `Ollama.Client.Tests`, and `Ollama.Tools.Tests`.
@@ -42,4 +43,11 @@ Validate quality, harden defects, and produce repeatable local delivery readines
 - local onboarding and runbook steps are complete and reproducible
 
 ## Status
-Draft
+Done
+
+## Status Log
+- 2026-08-13: Added output profiles, optional thinking output, structured delegated tool diagnostics, and tightened tool schemas.
+- 2026-08-13: `Ollama.CodingAgent.Tests` passed 35/35; live delegated execution repeated the same test task successfully three times.
+- 2026-08-13: Added the versioned executable evaluation matrix and documented deterministic readiness gates and live-run limits.
+- 2026-08-13: Added structured runtime diagnostics with correlation IDs, timing, retry attempts, and failure details.
+- 2026-08-13: Added evaluation threshold handling and regression coverage; 45 coding-agent tests and 103 tool tests pass.

@@ -45,7 +45,10 @@ Create a stable local-first baseline with Ollama and `qwen2.5-coder:7b`, then pr
 - troubleshooting notes exist for common startup failures
 
 ## Status
-In Progress
+Done
 
 ## Status Log
 - 2026-08-13: Started dedicated `Ollama.CodingAgent` host implementation and added first `Ollama.CodingAgent.HostCheck` live-check app for real Ollama response validation.
+- 2026-08-13: Real delegated runs against local `qwen2.5-coder:7b` completed and provided the live baseline evidence used for the final implementation.
+- 2026-08-13: Completed repeatable C# preflight and baseline smoke commands, focused failure/cancellation tests, and troubleshooting documentation.
+- 2026-08-13: Live `--preflight` and `--baseline-smoke` runs passed against local `qwen2.5-coder:7b`; targeted suite passed 39/39.

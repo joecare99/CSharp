@@ -14,6 +14,7 @@ Define and implement a reusable C# coding-agent runtime that can operate with lo
 - **OpenAI-compatible reference flow:** `OpenAIPlayground`
 - **Scenario and smoke references:** `Ollama.Samples.*`
 - **Dedicated live-response host checks:** `Ollama.CodingAgent.HostCheck`
+- **External source and connector bridge (optional):** `McpTools`
 
 ## Confirmed Implementation Decision
 - The coding agent will be implemented as a **dedicated project**.
@@ -34,6 +35,9 @@ Define and implement a reusable C# coding-agent runtime that can operate with lo
 - Keep provider-specific details in adapters, not in the core runtime loop.
 - Keep host-specific UI concerns outside shared runtime and tool assemblies.
 - Keep safety and diagnostics contracts reusable across console and WPF hosts.
+- Keep external knowledge usage bounded by source allowlist and citation requirements.
+- Keep local wiki entries curated summaries instead of raw unfiltered web mirrors.
+- Keep plan-state and subtask execution separated from single tool implementations to avoid goal drift coupling.
 
 ## Related Planning Items
 - [Feature: OpenAI/Ollama Coding Agent Platform](../Features/Feat-09-OpenAIOllamaCodingAgent.md)
@@ -42,3 +46,5 @@ Define and implement a reusable C# coding-agent runtime that can operate with lo
 - [PBI-15 Provider-Agnostic Agent Runtime](../BacklogItems/PBI-15-ProviderAgnosticAgentRuntime.md)
 - [PBI-16 Tool Execution and Memory Integration](../BacklogItems/PBI-16-ToolExecutionAndMemoryIntegration.md)
 - [PBI-17 Agent Evaluation Hardening and Readiness](../BacklogItems/PBI-17-AgentEvaluationHardeningAndReadiness.md)
+- [PBI-18 Web Knowledge and Local LLM Wiki](../BacklogItems/PBI-18-WebKnowledgeAndLocalLlmWiki.md)
+- [PBI-19 Goal-Focused Task Planning and Execution](../BacklogItems/PBI-19-GoalFocusedTaskPlanningAndExecution.md)

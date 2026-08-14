@@ -11,6 +11,7 @@ Enable practical coding-task execution through safe tools and memory-backed cont
 - add tool-call lifecycle integration into runtime loop
 - implement session memory write/read path
 - add safety and correctness tests for tool and memory behavior
+- prepare extension seams for trusted web-knowledge and local wiki tools
 
 ## Existing Project Integration
 - Extend `Ollama.Tools` around `OllamaToolOrchestrator` and `OllamaToolLoopRunner`.
@@ -43,9 +44,18 @@ Enable practical coding-task execution through safe tools and memory-backed cont
 - denied/failed tool behavior is explicit and test-covered
 
 ## Status
-In Progress
+Done
 
 ## Status Log
 - 2026-08-13: Added first delegated coding-task mode in `Ollama.CodingAgent` with safe workspace tools (`list_workspace_files`, `read_workspace_file`, `run_dotnet_build`) to transfer selected subtasks to the agent.
 - 2026-08-13: Verified delegated live run against local `qwen2.5-coder:7b`; the agent selected `list_workspace_files`, executed it successfully, and produced a coding next-step summary based on tool output.
 - 2026-08-13: Extended delegation from single-step to bounded multi-step execution (up to 3 delegated tool steps) with step history folded into final agent synthesis.
+- 2026-08-13: Hardened delegated mode against slow-model stalls by adding timeout-safe fallback behavior for tool selection and final summary synthesis; short-timeout live run now exits deterministically with a safe actionable fallback summary.
+- 2026-08-13: Expanded delegated coding toolset with controlled write support (`write_workspace_file`) and test execution support (`run_dotnet_test`) to cover end-to-end coding loops beyond read/build only.
+- 2026-08-13: Added deterministic fallback tool planning when model-based tool selection fails (intent-based fallback to `list_workspace_files`, `run_dotnet_build`, or `run_dotnet_test`) so delegated execution can still make concrete progress.
+- 2026-08-13: Hardened tool-input parsing to be case-insensitive and validated fallback build execution in delegated mode (`run_dotnet_build` executed successfully after selection timeout).
+- 2026-08-13: Fixed delegated `run_dotnet_test` execution for the repository's Microsoft.Testing.Platform setup by removing incompatible `--nologo`, using a workspace-relative project path, and adding `--no-restore`; live delegation then executed 35 tests successfully three times.
+- 2026-08-13: Added explicit allowlist-based tool execution policy with denied-operation results.
+- 2026-08-13: Added bounded request-execute-reinject tool cycles with final-response and iteration-limit handling.
+- 2026-08-13: Added durable, session-scoped JSON memory with bounded retention and relevance retrieval.
+- 2026-08-13: Added tool-policy, lifecycle, memory persistence, retrieval, and retention coverage; 103 tool tests pass.
