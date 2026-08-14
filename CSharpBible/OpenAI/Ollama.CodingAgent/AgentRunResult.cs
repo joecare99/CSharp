@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Ollama.CodingAgent;
 
 /// <summary>
@@ -24,4 +26,9 @@ public sealed class AgentRunResult
     /// Gets or sets a value indicating whether the final marker was used.
     /// </summary>
     public required bool FinalizedWithMarker { get; init; }
+
+    /// <summary>
+    /// Gets the model reasoning fragments collected during the run.
+    /// </summary>
+    public IReadOnlyList<string> Thinking { get; init; } = [];
 }

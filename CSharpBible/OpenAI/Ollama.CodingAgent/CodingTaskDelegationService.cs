@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -49,7 +50,8 @@ public sealed class CodingTaskDelegationService
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(userPrompt);
 
-        List<DelegatedToolStep> steps = await RunDelegatedStepsAsync(userPrompt, cancellationToken);
+        PlanState planState = SubtaskPlanner.CreateInitialPlan(userPrompt);
+        List<DelegatedToolStep> steps = await RunDelegatedStepsAsync(planState, cancellationToken);
         AgentRunResult result;
         try
         {
@@ -66,32 +68,60 @@ public sealed class CodingTaskDelegationService
             result = CreateFallbackSummaryResult(steps);
         }
 
-        string enriched = BuildDelegationReport(steps) + "\n\n" + $"Agent summary:\n{result.FinalResponse}";
+        List<string> thinking = result.Thinking
+            .Concat(steps.SelectMany(static step => step.Thinking))
+            .ToList();
+        string enriched = _runtimeSettings.Verbosity == AgentVerbosity.Quiet
+            ? result.FinalResponse
+            : PlanStateRenderer.Render(planState)
+                + "\n\n"
+                + BuildDelegationReport(steps, _runtimeSettings.Verbosity == AgentVerbosity.Verbose)
+                + "\n\n"
+                + $"Agent summary:\n{result.FinalResponse}";
         return new AgentRunResult
         {
             FinalResponse = enriched,
             IterationsUsed = result.IterationsUsed,
             RetryAttemptsUsed = result.RetryAttemptsUsed,
             FinalizedWithMarker = result.FinalizedWithMarker,
+            Thinking = thinking,
         };
     }
 
-    private async Task<List<DelegatedToolStep>> RunDelegatedStepsAsync(string userPrompt, CancellationToken cancellationToken)
+    private async Task<List<DelegatedToolStep>> RunDelegatedStepsAsync(PlanState planState, CancellationToken cancellationToken)
     {
         List<DelegatedToolStep> steps = [];
         for (int stepIndex = 1; stepIndex <= MaxDelegatedToolSteps; stepIndex++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            OllamaToolInvocationResult toolResult = await SelectAndExecuteToolAsync(userPrompt, steps, cancellationToken);
+            PlannedSubtask? plannedSubtask = planState.GetReadySubtasks().FirstOrDefault();
+            if (plannedSubtask is null)
+            {
+                break;
+            }
+
+            plannedSubtask.Status = PlannedSubtaskStatus.InProgress;
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            (OllamaToolInvocationResult toolResult, IReadOnlyList<string> selectionThinking) = await SelectAndExecuteToolAsync(
+                planState.GoalContract.Objective,
+                plannedSubtask,
+                steps,
+                cancellationToken);
+            stopwatch.Stop();
+            bool driftDetected = GoalDriftAnalyzer.IsDriftDetected(planState.GoalContract, plannedSubtask, NormalizeToolOutput(toolResult));
+            plannedSubtask.Status = toolResult.Success && !driftDetected ? PlannedSubtaskStatus.Done : PlannedSubtaskStatus.Blocked;
             steps.Add(new DelegatedToolStep
             {
                 StepIndex = stepIndex,
                 ToolName = toolResult.ToolName,
                 Success = toolResult.Success,
                 Output = NormalizeToolOutput(toolResult),
+                Input = toolResult.Input,
+                Duration = stopwatch.Elapsed,
+                Thinking = selectionThinking,
             });
 
-            if (string.Equals(toolResult.ToolName, "none", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(toolResult.ToolName, "none", StringComparison.OrdinalIgnoreCase) || !toolResult.Success || driftDetected)
             {
                 break;
             }
@@ -100,13 +130,14 @@ public sealed class CodingTaskDelegationService
         return steps;
     }
 
-    private async Task<OllamaToolInvocationResult> SelectAndExecuteToolAsync(
+    private async Task<(OllamaToolInvocationResult Result, IReadOnlyList<string> Thinking)> SelectAndExecuteToolAsync(
         string userPrompt,
+        PlannedSubtask plannedSubtask,
         IReadOnlyList<DelegatedToolStep> previousSteps,
         CancellationToken cancellationToken)
     {
         string instructions = OllamaToolPromptBuilder.BuildToolInstructions(_toolRegistry);
-        string selectionPrompt = BuildSelectionPrompt(userPrompt, previousSteps);
+        string selectionPrompt = BuildSelectionPrompt(userPrompt, plannedSubtask, previousSteps);
 
         OllamaChatCompletion completion;
         try
@@ -132,13 +163,19 @@ public sealed class CodingTaskDelegationService
         }
         catch (Exception ex)
         {
-            return new OllamaToolInvocationResult
+            OllamaToolCall fallbackCall = DelegationFallbackToolPlanner.CreateFallbackToolCall(userPrompt);
+            OllamaToolInvocationResult fallbackResult = await _toolOrchestrator.ExecuteAsync(fallbackCall, cancellationToken);
+            string fallbackOutput = NormalizeToolOutput(fallbackResult);
+            return (new OllamaToolInvocationResult
             {
-                ToolName = "none",
-                Success = false,
-                Error = $"Delegation selection failed: {ex.Message}",
-                Output = string.Empty,
-            };
+                ToolName = fallbackCall.ToolName,
+                Input = fallbackCall.Input,
+                Success = fallbackResult.Success,
+                Error = fallbackResult.Success ? null : $"Delegation selection failed: {ex.Message}",
+                Output = fallbackResult.Success
+                    ? $"Fallback tool execution after selection failure: {fallbackOutput}"
+                    : $"Delegation selection failed: {ex.Message}\nFallback tool output: {fallbackOutput}",
+            }, Array.Empty<string>());
         }
 
         try
@@ -146,25 +183,25 @@ public sealed class CodingTaskDelegationService
             OllamaToolCall parsedToolCall = ToolCallParser.Parse(completion.Content);
             if (string.Equals(parsedToolCall.ToolName, "none", StringComparison.OrdinalIgnoreCase))
             {
-                return new OllamaToolInvocationResult
+                return (new OllamaToolInvocationResult
                 {
                     ToolName = "none",
                     Success = true,
                     Output = "No further delegated tool step requested by model.",
-                };
+                }, completion.Thinking);
             }
 
-            return await _toolOrchestrator.ExecuteAsync(parsedToolCall, cancellationToken);
+            return (await _toolOrchestrator.ExecuteAsync(parsedToolCall, cancellationToken), completion.Thinking);
         }
         catch (Exception ex)
         {
-            return new OllamaToolInvocationResult
+            return (new OllamaToolInvocationResult
             {
                 ToolName = "none",
                 Success = false,
                 Error = $"Delegation fallback: {ex.Message}",
                 Output = completion.Content ?? string.Empty,
-            };
+            }, completion.Thinking);
         }
     }
 
@@ -186,12 +223,16 @@ public sealed class CodingTaskDelegationService
         };
     }
 
-    private static string BuildSelectionPrompt(string userPrompt, IReadOnlyList<DelegatedToolStep> previousSteps)
+    private static string BuildSelectionPrompt(string userPrompt, PlannedSubtask plannedSubtask, IReadOnlyList<DelegatedToolStep> previousSteps)
     {
         List<string> lines =
         [
             "Coding task:",
             userPrompt,
+            string.Empty,
+            "Current planned subtask:",
+            plannedSubtask.Title,
+            $"Rationale: {plannedSubtask.Rationale}",
             string.Empty,
             "Previous delegated steps:",
         ];
@@ -221,7 +262,7 @@ public sealed class CodingTaskDelegationService
             userPrompt,
             string.Empty,
             "Delegated tool execution history:",
-            BuildDelegationReport(steps),
+            BuildDelegationReport(steps, detailed: false),
             string.Empty,
             "Now provide a short implementation-oriented answer for the user.",
         ];
@@ -229,7 +270,7 @@ public sealed class CodingTaskDelegationService
         return string.Join("\n", lines);
     }
 
-    private static string BuildDelegationReport(IReadOnlyList<DelegatedToolStep> steps)
+    private static string BuildDelegationReport(IReadOnlyList<DelegatedToolStep> steps, bool detailed)
     {
         if (steps.Count == 0)
         {
@@ -240,9 +281,15 @@ public sealed class CodingTaskDelegationService
         foreach (DelegatedToolStep step in steps.OrderBy(static step => step.StepIndex))
         {
             builder.AppendLine($"Step {step.StepIndex}: {step.ToolName} | success={step.Success}");
+            if (detailed)
+            {
+                builder.AppendLine($"  Duration: {step.Duration.TotalMilliseconds:F0} ms");
+                builder.AppendLine($"  Validated input: {Truncate(step.Input, 1200)}");
+            }
+
             if (!string.IsNullOrWhiteSpace(step.Output))
             {
-                builder.AppendLine(step.Output);
+                builder.AppendLine(detailed ? Truncate(step.Output, 4000) : step.Output);
             }
 
             builder.AppendLine();
@@ -251,11 +298,26 @@ public sealed class CodingTaskDelegationService
         return builder.ToString().Trim();
     }
 
+    private static string Truncate(string value, int maximumLength)
+    {
+        if (value.Length <= maximumLength)
+        {
+            return value;
+        }
+
+        return value[..maximumLength] + "...";
+    }
+
     private static string NormalizeToolOutput(OllamaToolInvocationResult toolResult)
     {
-        if (toolResult.Success)
+        if (toolResult.Success && string.IsNullOrWhiteSpace(toolResult.Error))
         {
             return toolResult.Output;
+        }
+
+        if (!string.IsNullOrWhiteSpace(toolResult.Error) && !string.IsNullOrWhiteSpace(toolResult.Output))
+        {
+            return $"{toolResult.Error}\n{toolResult.Output}";
         }
 
         if (!string.IsNullOrWhiteSpace(toolResult.Error))

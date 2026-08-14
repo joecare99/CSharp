@@ -11,7 +11,7 @@ namespace Ollama.CodingAgent;
 /// <summary>
 /// Implements the agent model client using <see cref="OllamaChatClient"/>.
 /// </summary>
-public sealed class OllamaChatModelClient : IAgentModelClient
+public sealed class OllamaChatModelClient : IThinkingAgentModelClient, IAgentProviderClient
 {
     private readonly OllamaChatClient _chatClient;
 
@@ -25,7 +25,21 @@ public sealed class OllamaChatModelClient : IAgentModelClient
     }
 
     /// <inheritdoc />
+    public AgentProviderCapabilities Capabilities => new()
+    {
+        ProviderName = "ollama",
+        Model = _chatClient.Model,
+        SupportsStreaming = true,
+        SupportsToolCalls = false,
+        SupportsThinking = true,
+    };
+
+    /// <inheritdoc />
     public async Task<string> CompleteAsync(IReadOnlyList<AgentMessage> messages, CancellationToken cancellationToken = default)
+        => (await CompleteDetailedAsync(messages, cancellationToken)).Content;
+
+    /// <inheritdoc />
+    public async Task<AgentCompletion> CompleteDetailedAsync(IReadOnlyList<AgentMessage> messages, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(messages);
         if (messages.Count == 0)
@@ -45,6 +59,10 @@ public sealed class OllamaChatModelClient : IAgentModelClient
         };
 
         OllamaChatCompletion completion = await _chatClient.CompleteChatAsync(options, cancellationToken);
-        return completion.Content ?? string.Empty;
+        return new AgentCompletion
+        {
+            Content = completion.Content ?? string.Empty,
+            Thinking = completion.Thinking,
+        };
     }
 }

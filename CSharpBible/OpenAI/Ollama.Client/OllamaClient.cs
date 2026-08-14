@@ -1,6 +1,9 @@
 using System;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using Ollama.Protocol;
+using Ollama.Protocol.Models;
 
 namespace Ollama.Client;
 
@@ -36,6 +39,14 @@ public sealed class OllamaClient
     /// <param name="model">The target model name.</param>
     /// <returns>A chat client bound to the given model.</returns>
     public OllamaChatClient GetChatClient(string model) => new OllamaChatClient(_protocolAdapter, model);
+
+    /// <summary>
+    /// Gets the models currently available at the configured Ollama endpoint.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The available models.</returns>
+    public Task<OllamaTagsResponse> GetTagsAsync(CancellationToken cancellationToken = default)
+        => _protocolAdapter.GetTagsAsync(cancellationToken);
 
     /// <summary>
     /// Gets a generate client for the specified model.

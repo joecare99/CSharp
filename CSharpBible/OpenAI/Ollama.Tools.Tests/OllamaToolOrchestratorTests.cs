@@ -136,4 +136,69 @@ public sealed class OllamaToolOrchestratorTests
         Assert.IsNotNull(analysisTool.LastAnalyzedRequest);
         Assert.AreEqual("hello", analysisTool.LastAnalyzedRequest.Content);
     }
+
+    [TestMethod]
+    public async Task ExecuteAsync_ReturnsFailureWhenPolicyDeniesRegisteredTool()
+    {
+        OllamaToolRegistry registry = new([
+            new TestTool
+            {
+                Name = "write_file",
+                Description = "Writes a file.",
+                ResultText = "written",
+            },
+        ]);
+        OllamaToolOrchestrator orchestrator = new(
+            registry,
+            new OllamaToolAllowlistPolicy(["read_file"]));
+
+        OllamaToolInvocationResult result = await orchestrator.ExecuteAsync(new OllamaToolCall
+        {
+            ToolName = "write_file",
+            Input = "file.txt",
+        });
+
+        Assert.IsFalse(result.Success);
+        StringAssert.Contains(result.Error ?? string.Empty, "denied");
+    }
+
+    [TestMethod]
+    public async Task RunToCompletionAsync_ReinjectsToolResultBeforeFinalResponse()
+    {
+        OllamaToolRegistry registry = new([
+            new TestTool
+            {
+                Name = "clock",
+                Description = "Returns the current time.",
+                ResultText = "12:00",
+            },
+        ]);
+        int calls = 0;
+        TestOllamaToolChatRunner chatRunner = new()
+        {
+            CompleteChatAsyncHandler = (options, cancellationToken) =>
+            {
+                calls++;
+                if (calls == 1)
+                {
+                    return Task.FromResult(new OllamaChatCompletion
+                    {
+                        Content = "{\"toolName\":\"clock\",\"input\":\"now\"}",
+                    });
+                }
+
+                Assert.AreEqual(4, options.Messages.Count);
+                Assert.AreEqual("tool", options.Messages[3].Role);
+                Assert.AreEqual("12:00:now", options.Messages[3].Content);
+                return Task.FromResult(new OllamaChatCompletion { Content = "The time is 12:00." });
+            },
+        };
+        OllamaToolLoopRunner runner = new(chatRunner, registry, new OllamaToolOrchestrator(registry));
+
+        OllamaToolLoopResult result = await runner.RunToCompletionAsync("What time is it?");
+
+        Assert.IsTrue(result.Completed);
+        Assert.AreEqual("The time is 12:00.", result.FinalResponse);
+        Assert.AreEqual(1, result.Invocations.Count);
+    }
 }

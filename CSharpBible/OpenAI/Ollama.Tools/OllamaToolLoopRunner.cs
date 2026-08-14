@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,5 +72,88 @@ public sealed class OllamaToolLoopRunner
         }
 
         return await _toolOrchestrator.ExecuteAsync(toolCall, cancellationToken);
+    }
+
+    /// <summary>
+    /// Runs repeated model/tool turns and reinjects each tool result into the conversation.
+    /// </summary>
+    public async Task<OllamaToolLoopResult> RunToCompletionAsync(
+        string userPrompt,
+        int maximumIterations = 8,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(userPrompt);
+        if (maximumIterations <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maximumIterations));
+        }
+
+        string instructions = OllamaToolPromptBuilder.BuildToolInstructions(_toolRegistry);
+        List<Ollama.Client.Models.OllamaClientChatMessage> messages =
+        [
+            new()
+            {
+                Role = "system",
+                Content = instructions,
+            },
+            new()
+            {
+                Role = "user",
+                Content = userPrompt,
+            },
+        ];
+        List<OllamaToolInvocationResult> invocations = [];
+
+        for (int iteration = 0; iteration < maximumIterations; iteration++)
+        {
+            Ollama.Client.Models.OllamaChatCompletion completion = await _chatRunner.CompleteChatAsync(
+                new Ollama.Client.ChatCompletionOptions { Messages = messages },
+                cancellationToken);
+            if (!TryParseToolCall(completion.Content, out OllamaToolCall? toolCall) || toolCall is null)
+            {
+                return new OllamaToolLoopResult
+                {
+                    FinalResponse = completion.Content,
+                    Invocations = invocations,
+                    Completed = true,
+                };
+            }
+
+            OllamaToolInvocationResult invocation = await _toolOrchestrator.ExecuteAsync(toolCall, cancellationToken);
+            invocations.Add(invocation);
+            messages.Add(new Ollama.Client.Models.OllamaClientChatMessage
+            {
+                Role = "assistant",
+                Content = completion.Content,
+            });
+            messages.Add(new Ollama.Client.Models.OllamaClientChatMessage
+            {
+                Role = "tool",
+                Content = invocation.Success
+                    ? invocation.Output
+                    : $"Tool execution failed: {invocation.Error}",
+            });
+        }
+
+        return new OllamaToolLoopResult
+        {
+            FinalResponse = "The tool loop reached its iteration limit before producing a final response.",
+            Invocations = invocations,
+            Completed = false,
+        };
+    }
+
+    private static bool TryParseToolCall(string content, out OllamaToolCall? toolCall)
+    {
+        try
+        {
+            toolCall = JsonSerializer.Deserialize<OllamaToolCall>(content);
+            return toolCall is not null && !string.IsNullOrWhiteSpace(toolCall.ToolName);
+        }
+        catch (JsonException)
+        {
+            toolCall = null;
+            return false;
+        }
     }
 }

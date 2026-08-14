@@ -28,7 +28,12 @@ public sealed class OllamaAgentRuntimeSettings
     /// <param name="stepTimeout">The timeout for one model step.</param>
     /// <param name="retryCount">The number of retries per model step.</param>
     /// <param name="maxIterations">The hard iteration cap for one run.</param>
-    public OllamaAgentRuntimeSettings(TimeSpan stepTimeout, int retryCount, int maxIterations)
+    public OllamaAgentRuntimeSettings(
+        TimeSpan stepTimeout,
+        int retryCount,
+        int maxIterations,
+        AgentVerbosity verbosity = AgentVerbosity.Normal,
+        bool showThinking = false)
     {
         if (stepTimeout <= TimeSpan.Zero)
         {
@@ -48,6 +53,8 @@ public sealed class OllamaAgentRuntimeSettings
         StepTimeout = stepTimeout;
         RetryCount = retryCount;
         MaxIterations = maxIterations;
+        Verbosity = verbosity;
+        ShowThinking = showThinking;
     }
 
     /// <summary>
@@ -64,4 +71,14 @@ public sealed class OllamaAgentRuntimeSettings
     /// Gets the hard iteration cap for one run.
     /// </summary>
     public int MaxIterations { get; }
+
+    /// <summary>
+    /// Gets the requested output verbosity.
+    /// </summary>
+    public AgentVerbosity Verbosity { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether model reasoning should be displayed.
+    /// </summary>
+    public bool ShowThinking { get; }
 }

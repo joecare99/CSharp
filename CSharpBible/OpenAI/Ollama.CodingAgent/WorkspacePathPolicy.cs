@@ -32,7 +32,10 @@ public sealed class WorkspacePathPolicy
     /// <returns>The normalized absolute path.</returns>
     public string ResolveWorkspacePath(string relativePath)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(relativePath);
+        if (string.IsNullOrWhiteSpace(relativePath))
+        {
+            relativePath = ".";
+        }
 
         string combinedPath = Path.GetFullPath(Path.Combine(_workspaceRoot, relativePath));
         if (!combinedPath.StartsWith(_workspaceRoot, StringComparison.OrdinalIgnoreCase))

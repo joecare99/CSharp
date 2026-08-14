@@ -53,6 +53,16 @@ public sealed class OllamaAgentCliOptions
     public required bool ShowHelp { get; init; }
 
     /// <summary>
+    /// Gets a value indicating whether only endpoint/model preflight should run.
+    /// </summary>
+    public required bool PreflightOnly { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the baseline one-turn smoke check should run.
+    /// </summary>
+    public required bool BaselineSmoke { get; init; }
+
+    /// <summary>
     /// Parses command-line arguments into validated options.
     /// </summary>
     /// <param name="args">The incoming command-line arguments.</param>
@@ -66,11 +76,15 @@ public sealed class OllamaAgentCliOptions
         string? explicitPrompt = null;
         bool showHelp = false;
         bool delegateMode = false;
+        bool preflightOnly = false;
+        bool baselineSmoke = false;
         string workspaceRoot = Environment.CurrentDirectory;
 
         double timeoutMinutes = ParseDouble(Environment.GetEnvironmentVariable("AGENT_TIMEOUT_MINUTES"), 12d);
         int retries = ParseInt(Environment.GetEnvironmentVariable("AGENT_RETRY_COUNT"), OllamaAgentRuntimeSettings.DefaultRetryCount);
         int maxIterations = ParseInt(Environment.GetEnvironmentVariable("AGENT_MAX_ITERATIONS"), OllamaAgentRuntimeSettings.DefaultMaxIterations);
+        AgentVerbosity verbosity = ParseVerbosity(Environment.GetEnvironmentVariable("AGENT_VERBOSITY"), AgentVerbosity.Normal);
+        bool showThinking = ParseBool(Environment.GetEnvironmentVariable("AGENT_SHOW_THINKING"));
 
         List<string> promptParts = [];
         for (int i = 0; i < args.Length; i++)
@@ -96,6 +110,18 @@ public sealed class OllamaAgentCliOptions
                     break;
                 case "--max-iterations":
                     maxIterations = ParseRequiredInt(ReadNextValue(args, ref i, "--max-iterations"), "--max-iterations");
+                    break;
+                case "--verbosity":
+                    verbosity = ParseVerbosity(ReadNextValue(args, ref i, "--verbosity"), "--verbosity");
+                    break;
+                case "--show-thinking":
+                    showThinking = true;
+                    break;
+                case "--preflight":
+                    preflightOnly = true;
+                    break;
+                case "--baseline-smoke":
+                    baselineSmoke = true;
                     break;
                 case "--prompt":
                     explicitPrompt = ReadNextValue(args, ref i, "--prompt");
@@ -127,10 +153,17 @@ public sealed class OllamaAgentCliOptions
             Endpoint = endpoint,
             Model = model,
             Prompt = prompt,
-            RuntimeSettings = new OllamaAgentRuntimeSettings(TimeSpan.FromMinutes(timeoutMinutes), retries, maxIterations),
+            RuntimeSettings = new OllamaAgentRuntimeSettings(
+                TimeSpan.FromMinutes(timeoutMinutes),
+                retries,
+                maxIterations,
+                verbosity,
+                showThinking),
             DelegateMode = delegateMode,
             WorkspaceRoot = workspaceRoot,
             ShowHelp = showHelp,
+            PreflightOnly = preflightOnly,
+            BaselineSmoke = baselineSmoke,
         };
     }
 
@@ -196,4 +229,27 @@ public sealed class OllamaAgentCliOptions
 
         return parsedValue;
     }
+
+    private static AgentVerbosity ParseVerbosity(string? value, AgentVerbosity fallback)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return fallback;
+        }
+
+        return ParseVerbosity(value, nameof(value));
+    }
+
+    private static AgentVerbosity ParseVerbosity(string value, string optionName)
+    {
+        if (Enum.TryParse(value, ignoreCase: true, out AgentVerbosity parsedValue))
+        {
+            return parsedValue;
+        }
+
+        throw new ArgumentException($"Value '{value}' for '{optionName}' must be quiet, normal, or verbose.");
+    }
+
+    private static bool ParseBool(string? value)
+        => bool.TryParse(value, out bool parsedValue) && parsedValue;
 }

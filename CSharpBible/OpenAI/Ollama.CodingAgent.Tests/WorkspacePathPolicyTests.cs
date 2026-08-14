@@ -27,4 +27,16 @@ public sealed class WorkspacePathPolicyTests
 
         Assert.ThrowsExactly<InvalidOperationException>(() => policy.ResolveWorkspacePath("..\\outside.txt"));
     }
+
+    [TestMethod]
+    public void ResolveWorkspacePath_UsesWorkspaceRootForWhitespaceInput()
+    {
+        string workspaceRoot = Path.Combine(Path.GetTempPath(), "agent-policy-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(workspaceRoot);
+        WorkspacePathPolicy policy = new(workspaceRoot);
+
+        string resolved = policy.ResolveWorkspacePath("   ");
+
+        Assert.AreEqual(Path.GetFullPath(workspaceRoot), resolved);
+    }
 }

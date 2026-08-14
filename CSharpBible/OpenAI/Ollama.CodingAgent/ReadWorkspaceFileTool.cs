@@ -15,6 +15,11 @@ namespace Ollama.CodingAgent;
 /// </summary>
 public sealed class ReadWorkspaceFileTool : IOllamaTool
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+
     private readonly WorkspacePathPolicy _workspacePathPolicy;
 
     /// <summary>
@@ -35,28 +40,28 @@ public sealed class ReadWorkspaceFileTool : IOllamaTool
     /// <inheritdoc />
     public OllamaToolSchema Schema => new()
     {
-        Summary = "JSON with relativePath, optional startLine and lineCount.",
+        Summary = "Read a bounded line range from one existing workspace file. startLine defaults to 1 and lineCount to 120 (max 400).",
         Parameters =
         [
             new OllamaToolParameter
             {
                 Name = "relativePath",
                 Type = "string",
-                Description = "Relative file path under workspace root.",
+                Description = "Required relative file path, including extension. Must remain under workspace root.",
                 Required = true,
             },
             new OllamaToolParameter
             {
                 Name = "startLine",
                 Type = "number",
-                Description = "1-based start line, default 1.",
+                Description = "Optional 1-based line number; default 1.",
                 Required = false,
             },
             new OllamaToolParameter
             {
                 Name = "lineCount",
                 Type = "number",
-                Description = "Maximum lines to return, default 120, max 400.",
+                Description = "Optional number of lines from 1 to 400; default 120. Output includes line numbers.",
                 Required = false,
             },
         ],
@@ -72,7 +77,7 @@ public sealed class ReadWorkspaceFileTool : IOllamaTool
 
         try
         {
-            ReadWorkspaceFileToolInput payload = JsonSerializer.Deserialize<ReadWorkspaceFileToolInput>(input)
+            ReadWorkspaceFileToolInput payload = JsonSerializer.Deserialize<ReadWorkspaceFileToolInput>(input, JsonOptions)
                 ?? throw new InvalidOperationException("Invalid JSON input.");
             ArgumentException.ThrowIfNullOrWhiteSpace(payload.RelativePath);
             if (payload.StartLine < 1)
@@ -97,7 +102,7 @@ public sealed class ReadWorkspaceFileTool : IOllamaTool
     /// <inheritdoc />
     public Task<OllamaToolResult> ExecuteAsync(string input, CancellationToken cancellationToken = default)
     {
-        ReadWorkspaceFileToolInput payload = JsonSerializer.Deserialize<ReadWorkspaceFileToolInput>(input)
+        ReadWorkspaceFileToolInput payload = JsonSerializer.Deserialize<ReadWorkspaceFileToolInput>(input, JsonOptions)
             ?? throw new InvalidOperationException("Invalid JSON input.");
 
         string filePath = _workspacePathPolicy.ResolveWorkspacePath(payload.RelativePath);

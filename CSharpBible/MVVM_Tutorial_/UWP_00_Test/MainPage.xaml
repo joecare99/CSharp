@@ -1,0 +1,10 @@
+﻿<Page
+    x:Class="UWP_00_Test.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UWP_00_Test">
+
+    <Grid>
+        <TextBlock Text="Hello WinUI 3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Grid>
+</Page>

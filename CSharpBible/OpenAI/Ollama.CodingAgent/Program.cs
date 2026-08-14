@@ -42,6 +42,14 @@ internal static class Program
             OllamaClient client = provider.GetRequiredService<OllamaClient>();
             return client.GetChatClient(cliOptions.Model);
         });
+        services.AddSingleton<IOllamaBaselineClient>(provider =>
+            new OllamaClientBaselineAdapter(
+                provider.GetRequiredService<OllamaClient>(),
+                cliOptions.Model));
+        services.AddSingleton<OllamaBaselineService>(provider =>
+            new OllamaBaselineService(
+                provider.GetRequiredService<IOllamaBaselineClient>(),
+                cliOptions.Model));
         services.AddSingleton<IAgentModelClient, OllamaChatModelClient>();
         services.AddSingleton<AgentRunner>();
         services.AddSingleton<WorkspacePathPolicy>(provider => new WorkspacePathPolicy(cliOptions.WorkspaceRoot));
@@ -56,6 +64,31 @@ internal static class Program
 
         try
         {
+            if (cliOptions.PreflightOnly || cliOptions.BaselineSmoke)
+            {
+                OllamaBaselineService baselineService = serviceProvider.GetRequiredService<OllamaBaselineService>();
+                OllamaBaselineCheckResult baselineResult = cliOptions.BaselineSmoke
+                    ? await baselineService.RunSmokeAsync(cliOptions.Prompt, CancellationToken.None)
+                    : await baselineService.RunPreflightAsync(CancellationToken.None);
+
+                Console.WriteLine($"Endpoint: {cliOptions.Endpoint}");
+                Console.WriteLine($"Model: {cliOptions.Model}");
+                Console.WriteLine($"Preflight: {(baselineResult.Success ? "PASS" : "FAIL")}");
+                Console.WriteLine($"Available models: {string.Join(", ", baselineResult.AvailableModels)}");
+                if (!string.IsNullOrWhiteSpace(baselineResult.Response))
+                {
+                    Console.WriteLine("Baseline response:");
+                    Console.WriteLine(baselineResult.Response);
+                }
+
+                if (!baselineResult.Success && !string.IsNullOrWhiteSpace(baselineResult.Error))
+                {
+                    Console.WriteLine($"Error: {baselineResult.Error}");
+                }
+
+                return baselineResult.Success ? 0 : 1;
+            }
+
             AgentRunResult result;
             if (cliOptions.DelegateMode)
             {
@@ -72,20 +105,32 @@ internal static class Program
                 });
             }
 
-            Console.WriteLine($"Endpoint: {cliOptions.Endpoint}");
-            Console.WriteLine($"Model: {cliOptions.Model}");
-            Console.WriteLine($"Delegate mode: {cliOptions.DelegateMode}");
-            Console.WriteLine($"Iterations: {result.IterationsUsed}/{cliOptions.RuntimeSettings.MaxIterations}");
-            Console.WriteLine($"Retry attempts used: {result.RetryAttemptsUsed}/{cliOptions.RuntimeSettings.RetryCount * cliOptions.RuntimeSettings.MaxIterations}");
-            Console.WriteLine();
-            Console.WriteLine("Agent response:");
+            if (cliOptions.RuntimeSettings.Verbosity != AgentVerbosity.Quiet)
+            {
+                Console.WriteLine($"Endpoint: {cliOptions.Endpoint}");
+                Console.WriteLine($"Model: {cliOptions.Model}");
+                Console.WriteLine($"Delegate mode: {cliOptions.DelegateMode}");
+                Console.WriteLine($"Verbosity: {cliOptions.RuntimeSettings.Verbosity}");
+                Console.WriteLine($"Iterations: {result.IterationsUsed}/{cliOptions.RuntimeSettings.MaxIterations}");
+                Console.WriteLine($"Retry attempts used: {result.RetryAttemptsUsed}/{cliOptions.RuntimeSettings.RetryCount * cliOptions.RuntimeSettings.MaxIterations}");
+                Console.WriteLine();
+                Console.WriteLine("Agent response:");
+            }
+
             Console.WriteLine(result.FinalResponse);
+            if (cliOptions.RuntimeSettings.ShowThinking && result.Thinking.Count > 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Model thinking:");
+                Console.WriteLine(string.Join(string.Empty, result.Thinking));
+            }
+
             return 0;
         }
         catch (Exception ex)
         {
             Console.WriteLine("Agent execution failed.");
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.ToString());
             return 1;
         }
     }
@@ -103,6 +148,10 @@ internal static class Program
         Console.WriteLine("  --timeout-minutes <num>   Step timeout in minutes (default: 12)");
         Console.WriteLine("  --retries <num>           Retries per step (default: 3)");
         Console.WriteLine("  --max-iterations <num>    Hard iteration cap (default: 80)");
+        Console.WriteLine("  --verbosity <level>       Output level: quiet, normal, or verbose (default: normal)");
+        Console.WriteLine("  --show-thinking           Display model thinking fragments when available");
+        Console.WriteLine("  --preflight               Check endpoint reachability and configured model availability");
+        Console.WriteLine("  --baseline-smoke          Run preflight plus one bounded chat roundtrip");
         Console.WriteLine("  --prompt <text>           Prompt text (alternative to positional prompt)");
         Console.WriteLine("  --delegate                Enable delegated coding-task mode with safe workspace tools");
         Console.WriteLine("  --workspace-root <path>   Workspace root for delegated tool access (default: current directory)");

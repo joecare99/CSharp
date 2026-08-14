@@ -16,6 +16,10 @@ namespace Ollama.CodingAgent;
 public sealed class RunDotnetBuildTool : IOllamaTool
 {
     private readonly WorkspacePathPolicy _workspacePathPolicy;
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RunDotnetBuildTool"/> class.
@@ -35,21 +39,21 @@ public sealed class RunDotnetBuildTool : IOllamaTool
     /// <inheritdoc />
     public OllamaToolSchema Schema => new()
     {
-        Summary = "JSON with relativePath and optional configuration.",
+        Summary = "Run dotnet build on one existing .csproj, .sln, or .slnx file. configuration defaults to Debug.",
         Parameters =
         [
             new OllamaToolParameter
             {
                 Name = "relativePath",
                 Type = "string",
-                Description = "Relative .csproj, .sln, or .slnx path under workspace root.",
+                Description = "Required relative project/solution path under workspace root.",
                 Required = true,
             },
             new OllamaToolParameter
             {
                 Name = "configuration",
                 Type = "string",
-                Description = "Build configuration, default Debug.",
+                Description = "Optional configuration name; default Debug.",
                 Required = false,
             },
         ],
@@ -65,7 +69,7 @@ public sealed class RunDotnetBuildTool : IOllamaTool
 
         try
         {
-            RunDotnetBuildToolInput payload = JsonSerializer.Deserialize<RunDotnetBuildToolInput>(input)
+            RunDotnetBuildToolInput payload = JsonSerializer.Deserialize<RunDotnetBuildToolInput>(input, JsonOptions)
                 ?? throw new InvalidOperationException("Invalid JSON input.");
             ArgumentException.ThrowIfNullOrWhiteSpace(payload.RelativePath);
 
@@ -94,7 +98,7 @@ public sealed class RunDotnetBuildTool : IOllamaTool
     /// <inheritdoc />
     public async Task<OllamaToolResult> ExecuteAsync(string input, CancellationToken cancellationToken = default)
     {
-        RunDotnetBuildToolInput payload = JsonSerializer.Deserialize<RunDotnetBuildToolInput>(input)
+        RunDotnetBuildToolInput payload = JsonSerializer.Deserialize<RunDotnetBuildToolInput>(input, JsonOptions)
             ?? throw new InvalidOperationException("Invalid JSON input.");
         string fullPath = _workspacePathPolicy.ResolveWorkspacePath(payload.RelativePath);
 

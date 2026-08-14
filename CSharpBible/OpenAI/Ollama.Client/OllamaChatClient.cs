@@ -31,6 +31,11 @@ public sealed class OllamaChatClient
     }
 
     /// <summary>
+    /// Gets the model bound to this client.
+    /// </summary>
+    public string Model => _model;
+
+    /// <summary>
     /// Gets a buffered chat completion for the provided user message.
     /// </summary>
     /// <param name="message">The user message.</param>

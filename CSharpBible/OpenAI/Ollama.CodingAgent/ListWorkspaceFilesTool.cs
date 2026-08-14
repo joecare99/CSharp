@@ -14,6 +14,11 @@ namespace Ollama.CodingAgent;
 /// </summary>
 public sealed class ListWorkspaceFilesTool : IOllamaTool
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+
     private readonly WorkspacePathPolicy _workspacePathPolicy;
 
     /// <summary>
@@ -34,21 +39,21 @@ public sealed class ListWorkspaceFilesTool : IOllamaTool
     /// <inheritdoc />
     public OllamaToolSchema Schema => new()
     {
-        Summary = "JSON with optional relativePath and maxFiles.",
+        Summary = "List files recursively. Use {} for workspace root; maxFiles defaults to 100 and is capped at 300.",
         Parameters =
         [
             new OllamaToolParameter
             {
                 Name = "relativePath",
                 Type = "string",
-                Description = "Relative folder path under workspace root.",
+                Description = "Optional relative folder path; omit or use '.' for workspace root. Paths outside the root are rejected.",
                 Required = false,
             },
             new OllamaToolParameter
             {
                 Name = "maxFiles",
                 Type = "number",
-                Description = "Maximum number of files to return (1..300).",
+                Description = "Optional integer limit from 1 to 300; default 100. Results are relative paths.",
                 Required = false,
             },
         ],
@@ -64,7 +69,7 @@ public sealed class ListWorkspaceFilesTool : IOllamaTool
 
         try
         {
-            ListWorkspaceFilesToolInput payload = JsonSerializer.Deserialize<ListWorkspaceFilesToolInput>(input) ?? new ListWorkspaceFilesToolInput();
+            ListWorkspaceFilesToolInput payload = JsonSerializer.Deserialize<ListWorkspaceFilesToolInput>(input, JsonOptions) ?? new ListWorkspaceFilesToolInput();
             if (payload.MaxFiles < 1 || payload.MaxFiles > 300)
             {
                 return OllamaToolValidationResult.Failure("maxFiles must be between 1 and 300.");
@@ -84,7 +89,7 @@ public sealed class ListWorkspaceFilesTool : IOllamaTool
     {
         ListWorkspaceFilesToolInput payload = string.IsNullOrWhiteSpace(input)
             ? new ListWorkspaceFilesToolInput()
-            : JsonSerializer.Deserialize<ListWorkspaceFilesToolInput>(input) ?? new ListWorkspaceFilesToolInput();
+            : JsonSerializer.Deserialize<ListWorkspaceFilesToolInput>(input, JsonOptions) ?? new ListWorkspaceFilesToolInput();
         int maxFiles = Math.Clamp(payload.MaxFiles, 1, 300);
         string startPath = _workspacePathPolicy.ResolveWorkspacePath(payload.RelativePath);
 

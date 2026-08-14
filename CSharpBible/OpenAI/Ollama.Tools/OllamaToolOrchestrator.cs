@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ollama.Tools.Abstractions;
@@ -11,14 +12,19 @@ namespace Ollama.Tools;
 public sealed class OllamaToolOrchestrator
 {
     private readonly IOllamaToolRegistry _toolRegistry;
+    private readonly IOllamaToolExecutionPolicy _executionPolicy;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OllamaToolOrchestrator"/> class.
     /// </summary>
     /// <param name="toolRegistry">The tool registry.</param>
-    public OllamaToolOrchestrator(IOllamaToolRegistry toolRegistry)
+    public OllamaToolOrchestrator(
+        IOllamaToolRegistry toolRegistry,
+        IOllamaToolExecutionPolicy? executionPolicy = null)
     {
         _toolRegistry = toolRegistry ?? throw new ArgumentNullException(nameof(toolRegistry));
+        _executionPolicy = executionPolicy ?? new OllamaToolAllowlistPolicy(
+            toolRegistry.GetDescriptors().Select(static descriptor => descriptor.Name));
     }
 
     /// <summary>
@@ -39,6 +45,18 @@ public sealed class OllamaToolOrchestrator
                 Input = toolCall.Input,
                 Success = false,
                 Error = $"Tool '{toolCall.ToolName}' is not registered.",
+            };
+        }
+
+        OllamaToolPolicyDecision policyDecision = _executionPolicy.Evaluate(tool);
+        if (!policyDecision.IsAllowed)
+        {
+            return new OllamaToolInvocationResult
+            {
+                ToolName = toolCall.ToolName,
+                Input = toolCall.Input,
+                Success = false,
+                Error = policyDecision.Reason ?? "Tool execution was denied by policy.",
             };
         }
 
