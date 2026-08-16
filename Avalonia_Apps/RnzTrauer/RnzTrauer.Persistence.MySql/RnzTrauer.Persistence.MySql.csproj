@@ -11,5 +11,6 @@
     <ProjectReference Include="..\RnzTrauer.Core\RnzTrauer.Core2.csproj" />
     <ProjectReference Include="..\RnzTrauer.Places\RnzTrauer.Places.csproj" />
     <ProjectReference Include="..\..\..\Gen_FreeWin\DbCoreAbstractions\DbCoreAbstractions.csproj" />
+      <ProjectReference Include="..\Config.Service\Config.Service.csproj" />
   </ItemGroup>
 </Project>
