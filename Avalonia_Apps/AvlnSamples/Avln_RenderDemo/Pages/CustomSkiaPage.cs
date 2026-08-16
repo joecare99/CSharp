@@ -67,11 +67,13 @@ namespace RenderDemo.Pages
 
                     _ = Animate(100, 2, 10);
                     _ = Animate(1000, 5, 15);
+                    var centerX = (float)(Bounds.Width / 2d);
+                    var centerY = (float)(Bounds.Height / 2d);
                     var lightPosition = new SKPoint(
-                        (float)(Bounds.Width / 2 + Math.Cos(St.Elapsed.TotalSeconds) * Bounds.Width / 4),
-                        (float)(Bounds.Height / 2 + Math.Sin(St.Elapsed.TotalSeconds) * Bounds.Height / 4));
+                        centerX + (float)(Math.Cos(St.Elapsed.TotalSeconds) * Bounds.Width / 4d),
+                        centerY + (float)(Math.Sin(St.Elapsed.TotalSeconds) * Bounds.Height / 4d));
                     using (var sweep =
-                        SKShader.CreateSweepGradient(new SKPoint((int)Bounds.Width / 2, (int)Bounds.Height / 2), colors,
+                        SKShader.CreateSweepGradient(new SKPoint(centerX, centerY), colors,
                             null)) 
                     using(var turbulence = SKShader.CreatePerlinNoiseFractalNoise(0.05f, 0.05f, 4, 0))
                     using(var shader = SKShader.CreateCompose(sweep, turbulence, SKBlendMode.SrcATop))

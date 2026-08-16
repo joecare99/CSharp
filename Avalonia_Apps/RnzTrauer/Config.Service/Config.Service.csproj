@@ -2,10 +2,12 @@
   <Import Project="..\Application.props" />
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
+    <RootNamespace>Config.Service</RootNamespace>
+    <AssemblyName>Config.Service</AssemblyName>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
-  	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
 		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
@@ -15,11 +17,8 @@
 	</PropertyGroup>
 	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
 		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
-	</PropertyGroup>
+	</PropertyGroup>  
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Gen_FreeWin\DbCoreAbstractions\DbCoreAbstractions.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
-	<ItemGroup>
-    <ProjectReference Include="..\Config.Service\Config.Service.csproj" />
-	</ItemGroup>
 </Project>

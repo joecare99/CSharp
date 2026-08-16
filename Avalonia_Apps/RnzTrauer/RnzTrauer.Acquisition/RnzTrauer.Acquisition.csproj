@@ -5,4 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
+<ItemGroup>
+    <ProjectReference Include="..\Config.Service\Config.Service.csproj" />
+</ItemGroup>
 </Project>

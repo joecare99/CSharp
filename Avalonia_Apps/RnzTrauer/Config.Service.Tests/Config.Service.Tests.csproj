@@ -2,10 +2,14 @@
   <Import Project="..\Application.props" />
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
+    <RootNamespace>Config.Service.Tests</RootNamespace>
+    <AssemblyName>Config.Service.Tests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
-  	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
 		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
@@ -17,9 +21,11 @@
 		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
 	</PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Gen_FreeWin\DbCoreAbstractions\DbCoreAbstractions.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="MSTest" />
+    <PackageReference Include="NSubstitute" />
   </ItemGroup>
-	<ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Config.Service\Config.Service.csproj" />
-	</ItemGroup>
+  </ItemGroup>
 </Project>
