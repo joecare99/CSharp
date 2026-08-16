@@ -1,24 +1,82 @@
 <Solution>
-  <Project Path="../../Gen_FreeWin/DbCoreAbstractions/DbCoreAbstractions.csproj" />
-  <Project Path="../../Gen_FreeWin/DbProviderMySql/DbProviderMySql.csproj" />
-  <Project Path="RnzTrauer.Avalonia/RnzTrauer.Avalonia.csproj" />
-  <Project Path="RnzTrauer.Avalonia.Tests/RnzTrauer.Avalonia.Tests.csproj" />
-  <Project Path="RnzTrauer.Export.Host/RnzTrauer.Export.Host.csproj" />
-  <Project Path="RnzTrauer.Acquisition/RnzTrauer.Acquisition.csproj" />
+  <Folder Name="/DB/">
+    <Project Path="../../Gen_FreeWin/DbCoreAbstractions/DbCoreAbstractions.csproj" />
+    <Project Path="../../Gen_FreeWin/DbProviderMySql/DbProviderMySql.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../Libraries/AppKomponentBaseLib/AppKomponentBaseLib.csproj" />
+    <Project Path="../Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />
+    <Project Path="../Libraries/Avln_CommonDialogs.Avalonia/Avln_CommonDialogs.Avalonia.csproj" />
+    <Project Path="../Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="Config.Service.Tests/Config.Service.Tests.csproj" />
+    <Project Path="Config.Service/Config.Service.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="../.github/copilot-instructions.md" />
+    <File Path="Application.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="../../CodeWikiVault/" Type="Website" DisplayName="CodeWikiVault" Id="18ab383b-6bf8-e80a-515c-5d6f32cc8f0b">
+    <BuildType Project="Debug" />
+    <Properties Name="WebsiteProperties">
+      <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
+      <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+      <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+      <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;..\..\CodeWikiVault\&quot;" />
+      <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_53114\&quot;" />
+      <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+      <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_53114&quot;" />
+      <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
+      <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+      <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+      <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;..\..\CodeWikiVault\&quot;" />
+      <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_53114\&quot;" />
+      <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+      <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_53114&quot;" />
+      <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.8.1&quot;" />
+      <Property Name="VWDPort" Value="&quot;53114&quot;" />
+    </Properties>
+  </Project>
+  <Project Path="../DevOps/" Type="Website" DisplayName="DevOps">
+    <BuildType Project="Debug" />
+    <Properties Name="WebsiteProperties">
+      <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
+      <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+      <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+      <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;..\DevOps\&quot;" />
+      <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_63921\&quot;" />
+      <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+      <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_63921&quot;" />
+      <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
+      <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+      <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+      <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;..\DevOps\&quot;" />
+      <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_63921\&quot;" />
+      <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+      <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_63921&quot;" />
+      <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.8.1&quot;" />
+      <Property Name="VWDPort" Value="&quot;63921&quot;" />
+    </Properties>
+  </Project>
   <Project Path="RnzTrauer.Acquisition.Host/RnzTrauer.Acquisition.Host.csproj" />
   <Project Path="RnzTrauer.Acquisition.Tests/RnzTrauer.Acquisition.Tests.csproj" />
-  <Project Path="RnzTrauer.Core/RnzTrauer.Core2.csproj" />
+  <Project Path="RnzTrauer.Acquisition/RnzTrauer.Acquisition.csproj" />
+  <Project Path="RnzTrauer.Avalonia.Tests/RnzTrauer.Avalonia.Tests.csproj" />
+  <Project Path="RnzTrauer.Avalonia/RnzTrauer.Avalonia.csproj" />
   <Project Path="RnzTrauer.Core.Tests/RnzTrauer.Core.Tests.csproj" />
-  <Project Path="RnzTrauer.Import/RnzTrauer.Import.csproj" />
+  <Project Path="RnzTrauer.Core/RnzTrauer.Core2.csproj" />
+  <Project Path="RnzTrauer.Export.Host/RnzTrauer.Export.Host.csproj" />
   <Project Path="RnzTrauer.Import.Host/RnzTrauer.Import.Host.csproj" />
   <Project Path="RnzTrauer.Import.Tests/RnzTrauer.Import.Tests.csproj" />
-  <Project Path="RnzTrauer.Media/RnzTrauer.Media.csproj" />
+  <Project Path="RnzTrauer.Import/RnzTrauer.Import.csproj" />
   <Project Path="RnzTrauer.Media.Host/RnzTrauer.Media.Host.csproj" />
   <Project Path="RnzTrauer.Media.Tests/RnzTrauer.Media.Tests.csproj" />
-  <Project Path="RnzTrauer.Persistence.MySql/RnzTrauer.Persistence.MySql.csproj" />
-  <Project Path="RnzTrauer.Persistence.MySql.Tests/RnzTrauer.Persistence.MySql.Tests.csproj" />
+  <Project Path="RnzTrauer.Media/RnzTrauer.Media.csproj" />
   <Project Path="RnzTrauer.Persistence.Host/RnzTrauer.Persistence.Host.csproj" />
-  <Project Path="RnzTrauer.Places/RnzTrauer.Places.csproj" />
+  <Project Path="RnzTrauer.Persistence.MySql.Tests/RnzTrauer.Persistence.MySql.Tests.csproj" />
+  <Project Path="RnzTrauer.Persistence.MySql/RnzTrauer.Persistence.MySql.csproj" />
   <Project Path="RnzTrauer.Places.Host/RnzTrauer.Places.Host.csproj" />
   <Project Path="RnzTrauer.Places.Tests/RnzTrauer.Places.Tests.csproj" />
+  <Project Path="RnzTrauer.Places/RnzTrauer.Places.csproj" />
 </Solution>
