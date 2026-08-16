@@ -202,7 +202,7 @@ public partial class CalculatorModel : ObservableObject, ICalculatorModel
     {
         if (eO == EOperations.Nop) return true;
         if (eO == EOperations.CalcResult) return _Operation != null && Register != null;
-        if (eO > EOperations.CalcResult) return _editMode || Accumulator != 0d;
+        if (eO > EOperations.CalcResult) return _editMode || Math.Abs(Accumulator) > double.Epsilon;
         return false;
     }
 
@@ -264,9 +264,8 @@ public partial class CalculatorModel : ObservableObject, ICalculatorModel
         }
         if (eO > EOperations.CalcResult && !_unaryOperation.Contains(eO)) 
         { Register = Accumulator; };
-        var op = eO switch
+        Func<double, double>? op = eO switch
         {
-
             EOperations.CalcResult => null,
             EOperations.Add => (a) => Register!.Value + a,
             EOperations.Subtract => (a) => Register!.Value - a,
@@ -282,7 +281,7 @@ public partial class CalculatorModel : ObservableObject, ICalculatorModel
             EOperations.Tan => (a) => Math.Tan(a),
             EOperations.LogN => (a) => Math.Log(a),
             EOperations.ExpN => (a) => Math.Exp(a),
-            _ => (Func<double, double>?)null,
+            _ => null,
         };
         if (_unaryOperation.Contains(eO))
             Accumulator = op?.Invoke(Accumulator) ?? Accumulator;
