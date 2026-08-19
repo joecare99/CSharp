@@ -10,6 +10,11 @@
     <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
     <ItemGroup>
         <PackageReference Include="MSTest" />
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="coverlet.collector">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
  <ItemGroup>
         <ProjectReference Include="..\Ollama.Tools\Ollama.Tools.csproj" />

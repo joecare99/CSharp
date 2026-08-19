@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <PackageReference Include="LibGit2Sharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ollama.CodingAgent.Application\Ollama.CodingAgent.Application.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -67,8 +69,9 @@ public sealed class LocalWikiQualityTests
     [TestMethod]
     public async Task ImportAsync_ImportsMarkdownVaultPagesForWikiSearch()
     {
-        string vaultPath = Path.Combine(Path.GetTempPath(), $"ollama-vault-{Guid.NewGuid():N}");
-        string databasePath = Path.Combine(Path.GetTempPath(), $"ollama-wiki-{Guid.NewGuid():N}.json");
+        string testRoot = Path.Combine(AppContext.BaseDirectory, "CoverageWorkspaces", $"ollama-vault-{Guid.NewGuid():N}");
+        string vaultPath = Path.Combine(testRoot, "vault");
+        string databasePath = Path.Combine(testRoot, "ollama-wiki.json");
         try
         {
             Directory.CreateDirectory(Path.Combine(vaultPath, "how-tos"));
@@ -92,12 +95,19 @@ public sealed class LocalWikiQualityTests
                 Directory.Delete(vaultPath, recursive: true);
             }
 
-            DeleteTempFile(databasePath);
+            if (Directory.Exists(testRoot))
+            {
+                Directory.Delete(testRoot, recursive: true);
+            }
         }
     }
 
     private static string CreateTempPath()
-        => Path.Combine(Path.GetTempPath(), $"ollama-wiki-{Guid.NewGuid():N}.json");
+    {
+        string directory = Path.Combine(AppContext.BaseDirectory, "CoverageWorkspaces");
+        Directory.CreateDirectory(directory);
+        return Path.Combine(directory, $"ollama-wiki-{Guid.NewGuid():N}.json");
+    }
 
     private static void DeleteTempFile(string filePath)
     {

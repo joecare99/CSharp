@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.IO;
 using System.Linq;
@@ -85,7 +87,12 @@ public sealed class ReadWorkspaceFileTool : IOllamaTool
                 return OllamaToolValidationResult.Failure("startLine must be >= 1.");
             }
 
-            if (payload.LineCount < 1 || payload.LineCount > 400)
+            if (payload.LineCount < 1)
+            {
+                return OllamaToolValidationResult.Failure("lineCount must be between 1 and 400.");
+            }
+
+            if (payload.LineCount > 400)
             {
                 return OllamaToolValidationResult.Failure("lineCount must be between 1 and 400.");
             }

@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ollama.Client.Services;
 
 namespace Ollama.Extensions.DependencyInjection.Tests;
 
@@ -16,8 +17,8 @@ public sealed class OllamaServiceCollectionExtensionsTests
         services.AddOllamaClient(endpoint);
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        Ollama.Client.OllamaClient client = serviceProvider.GetRequiredService<Ollama.Client.OllamaClient>();
-        Ollama.Client.OllamaClientOptions options = serviceProvider.GetRequiredService<Ollama.Client.OllamaClientOptions>();
+        OllamaClient client = serviceProvider.GetRequiredService<OllamaClient>();
+        Ollama.Client.Models.OllamaClientOptions options = serviceProvider.GetRequiredService<Ollama.Client.Models.OllamaClientOptions>();
 
         Assert.IsNotNull(client);
         Assert.AreEqual(endpoint, options.Endpoint);
@@ -32,7 +33,7 @@ public sealed class OllamaServiceCollectionExtensionsTests
         services.AddOllamaChatClient("qwen3.5:4b");
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        Ollama.Client.OllamaChatClient client = serviceProvider.GetRequiredService<Ollama.Client.OllamaChatClient>();
+        OllamaChatClient client = serviceProvider.GetRequiredService<OllamaChatClient>();
 
         Assert.IsNotNull(client);
     }
@@ -46,7 +47,7 @@ public sealed class OllamaServiceCollectionExtensionsTests
         services.AddOllamaGenerateClient("qwen3.5:4b");
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        Ollama.Client.OllamaGenerateClient client = serviceProvider.GetRequiredService<Ollama.Client.OllamaGenerateClient>();
+        OllamaGenerateClient client = serviceProvider.GetRequiredService<OllamaGenerateClient>();
 
         Assert.IsNotNull(client);
     }
@@ -60,7 +61,7 @@ public sealed class OllamaServiceCollectionExtensionsTests
         services.AddOllamaEmbeddingClient("nomic-embed-text");
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        Ollama.Client.OllamaEmbeddingClient client = serviceProvider.GetRequiredService<Ollama.Client.OllamaEmbeddingClient>();
+        OllamaEmbeddingClient client = serviceProvider.GetRequiredService<OllamaEmbeddingClient>();
 
         Assert.IsNotNull(client);
     }

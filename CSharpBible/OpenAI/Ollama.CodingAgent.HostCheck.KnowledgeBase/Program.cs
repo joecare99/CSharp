@@ -2,17 +2,36 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Ollama.CodingAgent;
+using Ollama.CodingAgent.Models;
 
 namespace Ollama.CodingAgent.HostCheck.KnowledgeBase;
 
 internal static class Program
 {
+    private static Func<string> DefaultRootFactory = CreateDefaultRoot;
+    private static Func<LocalKnowledgeEntry> InvalidEntryFactory = static () => new()
+    {
+        Id = string.Empty,
+        Title = "bad",
+        Summary = "bad",
+    };
+
     private static async Task<int> Main(string[] args)
     {
-        string root = Path.Combine(
+        string root = DefaultRootFactory();
+        return await RunAsync(args, root);
+    }
+
+    private static string CreateDefaultRoot()
+        => Path.Combine(
             Path.GetTempPath(),
             "ollama-coding-agent-kb",
             DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"));
+
+    internal static async Task<int> RunAsync(string[] args, string root)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+        ArgumentException.ThrowIfNullOrWhiteSpace(root);
         string dbPath = Path.Combine(root, "knowledge.json");
         Directory.CreateDirectory(root);
 
@@ -54,12 +73,7 @@ internal static class Program
         await TryMalformedCaseAsync(async () => await store.SearchAsync(string.Empty), "Empty query");
         await TryMalformedCaseAsync(async () =>
         {
-            await store.AddOrUpdateAsync(new LocalKnowledgeEntry
-            {
-                Id = string.Empty,
-                Title = "bad",
-                Summary = "bad",
-            });
+            await store.AddOrUpdateAsync(InvalidEntryFactory());
         }, "Invalid entry");
 
         await File.WriteAllTextAsync(dbPath, "{ malformed json");

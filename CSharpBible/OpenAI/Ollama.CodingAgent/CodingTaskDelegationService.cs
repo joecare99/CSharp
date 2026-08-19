@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ollama.Client.Models;
+using Ollama.Tools.Abstractions;
 using Ollama.Tools;
 
 namespace Ollama.CodingAgent;
@@ -22,6 +25,7 @@ public sealed class CodingTaskDelegationService
     private readonly IOllamaToolRegistry _toolRegistry;
     private readonly OllamaToolOrchestrator _toolOrchestrator;
     private readonly OllamaAgentRuntimeSettings _runtimeSettings;
+    private readonly IAgentDiagnosticsSink? _diagnosticsSink;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CodingTaskDelegationService"/> class.
@@ -32,12 +36,27 @@ public sealed class CodingTaskDelegationService
         IOllamaToolRegistry toolRegistry,
         OllamaToolOrchestrator toolOrchestrator,
         OllamaAgentRuntimeSettings runtimeSettings)
+        : this(agentModelClient, toolChatRunnerAdapter, toolRegistry, toolOrchestrator, runtimeSettings, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance with a diagnostic event sink.
+    /// </summary>
+    public CodingTaskDelegationService(
+        IAgentModelClient agentModelClient,
+        OllamaToolChatRunnerAdapter toolChatRunnerAdapter,
+        IOllamaToolRegistry toolRegistry,
+        OllamaToolOrchestrator toolOrchestrator,
+        OllamaAgentRuntimeSettings runtimeSettings,
+        IAgentDiagnosticsSink? diagnosticsSink)
     {
         _agentModelClient = agentModelClient ?? throw new ArgumentNullException(nameof(agentModelClient));
         _toolChatRunnerAdapter = toolChatRunnerAdapter ?? throw new ArgumentNullException(nameof(toolChatRunnerAdapter));
         _toolRegistry = toolRegistry ?? throw new ArgumentNullException(nameof(toolRegistry));
         _toolOrchestrator = toolOrchestrator ?? throw new ArgumentNullException(nameof(toolOrchestrator));
         _runtimeSettings = runtimeSettings ?? throw new ArgumentNullException(nameof(runtimeSettings));
+        _diagnosticsSink = diagnosticsSink;
     }
 
     /// <summary>
@@ -47,11 +66,27 @@ public sealed class CodingTaskDelegationService
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The run result.</returns>
     public async Task<AgentRunResult> RunDelegatedAsync(string userPrompt, CancellationToken cancellationToken = default)
+        => await RunDelegatedAsync(userPrompt, null, cancellationToken);
+
+    /// <summary>
+    /// Runs delegated coding-task mode and reports live runtime updates.
+    /// </summary>
+    public async Task<AgentRunResult> RunDelegatedAsync(
+        string userPrompt,
+        Action<AgentRuntimeUpdate>? onUpdate,
+        CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(userPrompt);
 
         PlanState planState = SubtaskPlanner.CreateInitialPlan(userPrompt);
-        List<DelegatedToolStep> steps = await RunDelegatedStepsAsync(planState, cancellationToken);
+        string correlationId = Guid.NewGuid().ToString("N");
+        _diagnosticsSink?.Record(new AgentDiagnosticEvent
+        {
+            CorrelationId = correlationId,
+            EventName = "delegation.started",
+            Detail = "Delegated tool execution started.",
+        });
+        List<DelegatedToolStep> steps = await RunDelegatedStepsWithCorrelationAsync(planState, correlationId, cancellationToken, onUpdate);
         AgentRunResult result;
         try
         {
@@ -61,7 +96,7 @@ public sealed class CodingTaskDelegationService
             {
                 Prompt = summaryPrompt,
                 SystemPrompt = "You are a coding agent. Provide a concise final answer with [[FINAL]].",
-            }, cancellationToken);
+            }, cancellationToken, onUpdate);
         }
         catch
         {
@@ -88,7 +123,7 @@ public sealed class CodingTaskDelegationService
         };
     }
 
-    private async Task<List<DelegatedToolStep>> RunDelegatedStepsAsync(PlanState planState, CancellationToken cancellationToken)
+    private async Task<List<DelegatedToolStep>> RunDelegatedStepsWithCorrelationAsync(PlanState planState, string correlationId, CancellationToken cancellationToken, Action<AgentRuntimeUpdate>? onUpdate = null)
     {
         List<DelegatedToolStep> steps = [];
         for (int stepIndex = 1; stepIndex <= MaxDelegatedToolSteps; stepIndex++)
@@ -106,7 +141,9 @@ public sealed class CodingTaskDelegationService
                 planState.GoalContract.Objective,
                 plannedSubtask,
                 steps,
-                cancellationToken);
+                correlationId,
+                cancellationToken,
+                onUpdate);
             stopwatch.Stop();
             bool driftDetected = GoalDriftAnalyzer.IsDriftDetected(planState.GoalContract, plannedSubtask, NormalizeToolOutput(toolResult));
             plannedSubtask.Status = toolResult.Success && !driftDetected ? PlannedSubtaskStatus.Done : PlannedSubtaskStatus.Blocked;
@@ -130,21 +167,37 @@ public sealed class CodingTaskDelegationService
         return steps;
     }
 
+    private Task<List<DelegatedToolStep>> RunDelegatedStepsAsync(PlanState planState, CancellationToken cancellationToken)
+        => RunDelegatedStepsWithCorrelationAsync(planState, Guid.NewGuid().ToString("N"), cancellationToken);
+
     private async Task<(OllamaToolInvocationResult Result, IReadOnlyList<string> Thinking)> SelectAndExecuteToolAsync(
         string userPrompt,
         PlannedSubtask plannedSubtask,
         IReadOnlyList<DelegatedToolStep> previousSteps,
-        CancellationToken cancellationToken)
+        string correlationId,
+        CancellationToken cancellationToken,
+        Action<AgentRuntimeUpdate>? onUpdate = null)
     {
         string instructions = OllamaToolPromptBuilder.BuildToolInstructions(_toolRegistry);
         string selectionPrompt = BuildSelectionPrompt(userPrompt, plannedSubtask, previousSteps);
+        IReadOnlyList<OllamaChatTool> chatTools = OllamaToolChatDefinitionBuilder.Build(_toolRegistry);
+        _diagnosticsSink?.Record(new AgentDiagnosticEvent
+        {
+            CorrelationId = correlationId,
+            EventName = "tool.selection.requested",
+            Detail = "Tool definitions were included in the model request.",
+            Data = new Dictionary<string, string>
+            {
+                ["toolNames"] = string.Join(",", chatTools.Select(static tool => tool.Name)),
+            },
+        });
 
         OllamaChatCompletion completion;
         try
         {
             using CancellationTokenSource delegationStepTimeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             delegationStepTimeoutCts.CancelAfter(_runtimeSettings.StepTimeout);
-            completion = await _toolChatRunnerAdapter.CompleteChatAsync(new Ollama.Client.ChatCompletionOptions
+            Ollama.Client.Models.ChatCompletionOptions chatOptions = new()
             {
                 Messages =
                 [
@@ -159,11 +212,58 @@ public sealed class CodingTaskDelegationService
                         Content = selectionPrompt,
                     },
                 ],
-            }, delegationStepTimeoutCts.Token);
+                Tools = chatTools,
+            };
+            completion = _toolChatRunnerAdapter is IStreamingOllamaToolChatRunner streamingToolRunner && onUpdate is not null
+                ? await streamingToolRunner.CompleteChatAsync(chatOptions, fragment => onUpdate(new AgentRuntimeUpdate
+                {
+                    Kind = AgentRuntimeUpdateKind.Thinking,
+                    Content = fragment,
+                }), delegationStepTimeoutCts.Token)
+                : await _toolChatRunnerAdapter.CompleteChatAsync(chatOptions, delegationStepTimeoutCts.Token);
+            foreach (string fragment in completion.Thinking.Where(static fragment => !string.IsNullOrWhiteSpace(fragment)))
+            {
+                onUpdate?.Invoke(new AgentRuntimeUpdate
+                {
+                    Kind = AgentRuntimeUpdateKind.Thinking,
+                    Content = fragment,
+                });
+            }
+            _diagnosticsSink?.Record(new AgentDiagnosticEvent
+            {
+                CorrelationId = correlationId,
+                EventName = "tool.selection.completed",
+                Detail = "The model returned a tool selection response.",
+                Data = new Dictionary<string, string>
+                {
+                    ["nativeToolCalls"] = completion.ToolCalls.Count.ToString(),
+                },
+            });
+        }
+        catch (OperationCanceledException)
+        {
+            _diagnosticsSink?.Record(new AgentDiagnosticEvent
+            {
+                CorrelationId = correlationId,
+                EventName = "tool.selection.cancelled",
+                Detail = "Tool selection was cancelled.",
+            });
+            throw;
         }
         catch (Exception ex)
         {
             OllamaToolCall fallbackCall = DelegationFallbackToolPlanner.CreateFallbackToolCall(userPrompt);
+            _diagnosticsSink?.Record(new AgentDiagnosticEvent
+            {
+                CorrelationId = correlationId,
+                EventName = "tool.selection.fallback",
+                Detail = "Model tool selection failed; deterministic fallback selected.",
+                Error = ex.Message,
+                Data = new Dictionary<string, string>
+                {
+                    ["toolName"] = fallbackCall.ToolName,
+                },
+            });
             OllamaToolInvocationResult fallbackResult = await _toolOrchestrator.ExecuteAsync(fallbackCall, cancellationToken);
             string fallbackOutput = NormalizeToolOutput(fallbackResult);
             return (new OllamaToolInvocationResult
@@ -180,7 +280,8 @@ public sealed class CodingTaskDelegationService
 
         try
         {
-            OllamaToolCall parsedToolCall = ToolCallParser.Parse(completion.Content);
+            OllamaToolCall parsedToolCall = TryGetNativeToolCall(completion.ToolCalls)
+                ?? ToolCallParser.Parse(completion.Content);
             if (string.Equals(parsedToolCall.ToolName, "none", StringComparison.OrdinalIgnoreCase))
             {
                 return (new OllamaToolInvocationResult
@@ -191,8 +292,45 @@ public sealed class CodingTaskDelegationService
                 }, completion.Thinking);
             }
 
-            return (await _toolOrchestrator.ExecuteAsync(parsedToolCall, cancellationToken), completion.Thinking);
+            _diagnosticsSink?.Record(new AgentDiagnosticEvent
+            {
+                CorrelationId = correlationId,
+                EventName = "tool.call.requested",
+                Detail = "The model requested a registered tool.",
+                Data = new Dictionary<string, string>
+                {
+                    ["toolName"] = parsedToolCall.ToolName,
+                    ["input"] = parsedToolCall.Input,
+                },
+            });
+            onUpdate?.Invoke(new AgentRuntimeUpdate
+            {
+                Kind = AgentRuntimeUpdateKind.Tool,
+                Content = $"Tool requested: {parsedToolCall.ToolName}",
+            });
+            OllamaToolInvocationResult invocation = await _toolOrchestrator.ExecuteAsync(parsedToolCall, cancellationToken);
+            _diagnosticsSink?.Record(new AgentDiagnosticEvent
+            {
+                CorrelationId = correlationId,
+                EventName = "tool.call.completed",
+                Detail = invocation.Success ? "Tool execution completed." : "Tool execution failed.",
+                Error = invocation.Success ? null : invocation.Error,
+                Data = new Dictionary<string, string>
+                {
+                    ["toolName"] = invocation.ToolName,
+                    ["success"] = invocation.Success.ToString(),
+                },
+            });
+            onUpdate?.Invoke(new AgentRuntimeUpdate
+            {
+                Kind = AgentRuntimeUpdateKind.Tool,
+                Content = invocation.Success
+                    ? $"Tool completed: {invocation.ToolName}"
+                    : $"Tool failed: {invocation.ToolName} - {invocation.Error}",
+            });
+            return (invocation, completion.Thinking);
         }
+
         catch (Exception ex)
         {
             return (new OllamaToolInvocationResult
@@ -205,14 +343,26 @@ public sealed class CodingTaskDelegationService
         }
     }
 
+    private static OllamaToolCall? TryGetNativeToolCall(IReadOnlyList<OllamaChatToolCall> toolCalls)
+    {
+        OllamaChatToolCall? call = toolCalls.FirstOrDefault();
+        return call is null
+            ? null
+            : new OllamaToolCall
+            {
+                ToolName = call.Name,
+                Input = call.Arguments,
+            };
+    }
+
     private static AgentRunResult CreateFallbackSummaryResult(IReadOnlyList<DelegatedToolStep> steps)
     {
         string nextStep = steps
             .FirstOrDefault(static step => step.Success && !string.Equals(step.ToolName, "none", StringComparison.OrdinalIgnoreCase))
             ?.ToolName ?? "none";
         string summary = nextStep == "none"
-            ? "Delegation completed without a successful tool step. Next implementation step: run `list_workspace_files` first, then `read_workspace_file` on the target file and continue with a focused code change."
-            : $"Delegation completed. Next implementation step: continue from tool `{nextStep}` output and apply the smallest focused C# code change required by the task.";
+            ? "Delegation completed without a successful tool step. Next implementation step: run list_workspace_files first, then read_workspace_file on the target file and continue with a focused code change."
+            : $"Delegation completed. Next implementation step: continue from tool {nextStep} output and apply the smallest focused C# code change required by the task.";
 
         return new AgentRunResult
         {

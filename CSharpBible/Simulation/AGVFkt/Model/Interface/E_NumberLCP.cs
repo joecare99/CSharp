@@ -1,0 +1,10 @@
+﻿namespace AGVFkt.Model.Interface;
+
+public enum E_NumberLCP
+{
+    E_LCP_NO_TRACK_FOUND,
+    E_LCP_1_TRACK_FOUND = 2,
+    E_LCP_2_TRACK_FOUND_LEFT_DIV =3,
+    E_LCP_2_TRACK_FOUND_RIGHT_DIV = 6,
+    E_LCP_3_TRACK_FOUND_OR_INTERSECTION= 7
+}

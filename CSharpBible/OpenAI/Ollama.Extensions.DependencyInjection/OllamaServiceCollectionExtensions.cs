@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Ollama.Client.Services;
 
 namespace Ollama.Extensions.DependencyInjection;
 
@@ -20,13 +21,13 @@ public static class OllamaServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(endpoint);
 
-        services.AddSingleton(new Ollama.Client.OllamaClientOptions(endpoint));
+        services.AddSingleton(new Ollama.Client.Models.OllamaClientOptions(endpoint));
         services.AddSingleton<HttpClient>();
-        services.AddSingleton<Ollama.Client.OllamaClient>(serviceProvider =>
+        services.AddSingleton<OllamaClient>(serviceProvider =>
         {
             HttpClient httpClient = serviceProvider.GetRequiredService<HttpClient>();
-            Ollama.Client.OllamaClientOptions options = serviceProvider.GetRequiredService<Ollama.Client.OllamaClientOptions>();
-            return new Ollama.Client.OllamaClient(httpClient, options);
+            Ollama.Client.Models.OllamaClientOptions options = serviceProvider.GetRequiredService<Ollama.Client.Models.OllamaClientOptions>();
+            return new OllamaClient(httpClient, options);
         });
 
         return services;
@@ -44,7 +45,7 @@ public static class OllamaServiceCollectionExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(model);
 
         services.AddSingleton(serviceProvider =>
-            serviceProvider.GetRequiredService<Ollama.Client.OllamaClient>().GetChatClient(model));
+            serviceProvider.GetRequiredService<OllamaClient>().GetChatClient(model));
 
         return services;
     }
@@ -61,7 +62,7 @@ public static class OllamaServiceCollectionExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(model);
 
         services.AddSingleton(serviceProvider =>
-            serviceProvider.GetRequiredService<Ollama.Client.OllamaClient>().GetGenerateClient(model));
+            serviceProvider.GetRequiredService<OllamaClient>().GetGenerateClient(model));
 
         return services;
     }
@@ -78,7 +79,7 @@ public static class OllamaServiceCollectionExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(model);
 
         services.AddSingleton(serviceProvider =>
-            serviceProvider.GetRequiredService<Ollama.Client.OllamaClient>().GetEmbeddingClient(model));
+            serviceProvider.GetRequiredService<OllamaClient>().GetEmbeddingClient(model));
 
         return services;
     }

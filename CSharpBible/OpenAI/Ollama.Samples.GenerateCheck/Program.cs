@@ -2,7 +2,8 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Ollama.Protocol;
+using Ollama.Protocol.Models;
+using Ollama.Protocol.Services;
 using Ollama.Protocol.Models;
 
 namespace Ollama.Samples.GenerateCheck;
@@ -12,7 +13,14 @@ internal static class Program
     private const string DefaultEndpoint = "http://localhost:11434/";
     private const string DefaultModel = "gemma4:e2b";
 
-    private static async Task<int> Main(string[] args)
+    internal static Func<HttpClient> HttpClientFactory { get; set; } = CreateHttpClient;
+
+    internal static HttpClient CreateHttpClient() => new()
+    {
+        Timeout = Timeout.InfiniteTimeSpan,
+    };
+
+    internal static async Task<int> Main(string[] args)
     {
         string endpointValue = Environment.GetEnvironmentVariable("OLLAMA_ENDPOINT") ?? DefaultEndpoint;
         string model = Environment.GetEnvironmentVariable("OLLAMA_MODEL") ?? DefaultModel;
@@ -20,10 +28,7 @@ internal static class Program
             ? string.Join(" ", args)
             : "Explain AI in one sentence.";
 
-        using HttpClient httpClient = new()
-        {
-            Timeout = Timeout.InfiniteTimeSpan,
-        };
+        using HttpClient httpClient = HttpClientFactory();
         OllamaProtocolClient client = new(httpClient, new OllamaProtocolClientOptions(new Uri(endpointValue)));
 
         try

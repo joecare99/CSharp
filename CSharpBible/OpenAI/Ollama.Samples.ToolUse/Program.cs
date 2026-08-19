@@ -2,7 +2,9 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Ollama.Client;
+using Ollama.Client.Interfaces;
+using Ollama.Client.Models;
+using Ollama.Client.Services;
 using Ollama.Tools;
 using Ollama.Tools.Abstractions;
 
@@ -13,7 +15,14 @@ internal static class Program
     private const string DefaultEndpoint = "http://localhost:11434/";
     private const string DefaultModel = "qwen3.5:4b";
 
-    private static async Task<int> Main(string[] args)
+    internal static Func<HttpClient> HttpClientFactory { get; set; } = CreateHttpClient;
+
+    internal static HttpClient CreateHttpClient() => new()
+    {
+        Timeout = Timeout.InfiniteTimeSpan,
+    };
+
+    internal static async Task<int> Main(string[] args)
     {
         string endpointValue = Environment.GetEnvironmentVariable("OLLAMA_ENDPOINT") ?? DefaultEndpoint;
         string model = Environment.GetEnvironmentVariable("OLLAMA_MODEL") ?? DefaultModel;
@@ -21,10 +30,7 @@ internal static class Program
             ? string.Join(" ", args)
             : "Use the clock tool to tell me the current host time.";
 
-        using HttpClient httpClient = new()
-        {
-            Timeout = Timeout.InfiniteTimeSpan,
-        };
+        using HttpClient httpClient = HttpClientFactory();
         OllamaClient client = new(httpClient, new OllamaClientOptions(new Uri(endpointValue)));
         OllamaChatClient chatClient = client.GetChatClient(model);
         IOllamaTool[] tools =
@@ -71,6 +77,10 @@ internal static class Program
 
 internal sealed class ClockTool : IOllamaTool
 {
+    internal static Func<DateTimeOffset> CurrentTimeProvider { get; set; } = GetCurrentTime;
+
+    internal static DateTimeOffset GetCurrentTime() => DateTimeOffset.Now;
+
     public string Name => "clock";
 
     public string Description => "Returns the current host date and time.";
@@ -96,7 +106,7 @@ internal sealed class ClockTool : IOllamaTool
     public Task<OllamaToolResult> ExecuteAsync(string input, CancellationToken cancellationToken = default) 
         => Task.FromResult(new OllamaToolResult
     {
-        Output = DateTimeOffset.Now.ToString("O"),
+        Output = CurrentTimeProvider().ToString("O"),
         Success = true,
     });
 }

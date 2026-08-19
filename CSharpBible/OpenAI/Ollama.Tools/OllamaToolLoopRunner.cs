@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Ollama.Client;
+using Ollama.Client.Interfaces;
+using Ollama.Client.Models;
+using Ollama.Client.Services;
 using Ollama.Tools.Abstractions;
 
 namespace Ollama.Tools;
@@ -41,7 +44,7 @@ public sealed class OllamaToolLoopRunner
         ArgumentException.ThrowIfNullOrWhiteSpace(userPrompt);
 
         string instructions = OllamaToolPromptBuilder.BuildToolInstructions(_toolRegistry);
-        Ollama.Client.ChatCompletionOptions options = new()
+        Ollama.Client.Models.ChatCompletionOptions options = new()
         {
             Messages =
             [
@@ -56,10 +59,12 @@ public sealed class OllamaToolLoopRunner
                     Content = userPrompt,
                 },
             ],
+            Tools = BuildChatTools(),
         };
 
         Ollama.Client.Models.OllamaChatCompletion completion = await _chatRunner.CompleteChatAsync(options, cancellationToken);
-        OllamaToolCall? toolCall = JsonSerializer.Deserialize<OllamaToolCall>(completion.Content);
+        OllamaToolCall? toolCall = TryGetNativeToolCall(completion.ToolCalls)
+            ?? JsonSerializer.Deserialize<OllamaToolCall>(completion.Content);
         if (toolCall is null || string.IsNullOrWhiteSpace(toolCall.ToolName))
         {
             return new OllamaToolInvocationResult
@@ -107,9 +112,10 @@ public sealed class OllamaToolLoopRunner
         for (int iteration = 0; iteration < maximumIterations; iteration++)
         {
             Ollama.Client.Models.OllamaChatCompletion completion = await _chatRunner.CompleteChatAsync(
-                new Ollama.Client.ChatCompletionOptions { Messages = messages },
+                new Ollama.Client.Models.ChatCompletionOptions { Messages = messages, Tools = BuildChatTools() },
                 cancellationToken);
-            if (!TryParseToolCall(completion.Content, out OllamaToolCall? toolCall) || toolCall is null)
+            OllamaToolCall? toolCall = TryGetNativeToolCall(completion.ToolCalls);
+            if (toolCall is null && (!TryParseToolCall(completion.Content, out toolCall) || toolCall is null))
             {
                 return new OllamaToolLoopResult
                 {
@@ -155,5 +161,32 @@ public sealed class OllamaToolLoopRunner
             toolCall = null;
             return false;
         }
+    }
+
+    private IReadOnlyList<Ollama.Client.Models.OllamaChatTool> BuildChatTools()
+        => _toolRegistry.GetDescriptors().Select(static descriptor => new Ollama.Client.Models.OllamaChatTool
+        {
+            Name = descriptor.Name,
+            Description = descriptor.Description,
+            Parameters = descriptor.Schema.Parameters.ToDictionary(
+                static parameter => parameter.Name,
+                static parameter => new Ollama.Client.Models.OllamaChatToolParameter
+                {
+                    Type = parameter.Type,
+                    Description = parameter.Description,
+                    Required = parameter.Required,
+                }),
+        }).ToArray();
+
+    private static OllamaToolCall? TryGetNativeToolCall(IReadOnlyList<Ollama.Client.Models.OllamaChatToolCall> toolCalls)
+    {
+        Ollama.Client.Models.OllamaChatToolCall? call = toolCalls.FirstOrDefault();
+        return call is null
+            ? null
+            : new OllamaToolCall
+            {
+                ToolName = call.Name,
+                Input = call.Arguments,
+            };
     }
 }

@@ -14,23 +14,37 @@ public partial class App : Application
 {
     private ServiceProvider? _serviceProvider;
 
-    private void OnStartup(object sender, StartupEventArgs e)
+    internal static Action<MainWindow> MainWindowPresenter { get; set; } = ShowMainWindow;
+
+    internal void OnStartup(object sender, StartupEventArgs e)
     {
         ServiceCollection services = new();
         ConfigureServices(services);
         _serviceProvider = services.BuildServiceProvider();
 
         MainWindow mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-        mainWindow.Show();
+        MainWindowPresenter(mainWindow);
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
-        _serviceProvider?.Dispose();
+        DisposeServices();
         base.OnExit(e);
     }
 
-    private static void ConfigureServices(IServiceCollection services)
+    internal static void ShowMainWindow(MainWindow mainWindow)
+    {
+        ArgumentNullException.ThrowIfNull(mainWindow);
+        mainWindow.Show();
+    }
+
+    internal void DisposeServices()
+    {
+        _serviceProvider?.Dispose();
+        _serviceProvider = null;
+    }
+
+    internal static void ConfigureServices(IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
@@ -38,6 +52,7 @@ public partial class App : Application
         services.AddSingleton<CSharpCodeAnalysisTool>();
         services.AddSingleton<ContentAnalysisRouter>();
         services.AddSingleton<IContentAnalysisService, ContentAnalysisService>();
+        services.AddSingleton<ITextFilePicker, OpenFileDialogTextFilePicker>();
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<MainWindow>();
     }

@@ -4,16 +4,16 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Ollama.CodingAgent;
-using Ollama.Client;
+using Ollama.CodingAgent.Models;
+using Ollama.Client.Interfaces;
+using Ollama.Client.Models;
+using Ollama.Client.Services;
 using Ollama.Tools;
 
 namespace Ollama.CodingAgent.HostCheck;
 
 internal static class Program
 {
-    private const string DefaultEndpoint = "http://localhost:11434/";
-    private const string DefaultModel = "qwen2.5-coder:7b";
-
     private static readonly IReadOnlyList<string> DefaultScenarios =
     [
         "Read this task and summarize the intended C# change in 3 concise bullet points: add retry-aware agent runtime defaults.",
@@ -23,38 +23,13 @@ internal static class Program
 
     private static async Task<int> Main(string[] args)
     {
-        string endpoint = Environment.GetEnvironmentVariable("OLLAMA_ENDPOINT") ?? DefaultEndpoint;
-        string model = Environment.GetEnvironmentVariable("OLLAMA_MODEL") ?? DefaultModel;
-        bool singlePromptMode = false;
-        string? singlePrompt = null;
-        bool delegateMode = false;
-        string workspaceRoot = Environment.CurrentDirectory;
-
-        for (int i = 0; i < args.Length; i++)
-        {
-            string argument = args[i];
-            switch (argument)
-            {
-                case "--endpoint":
-                    endpoint = ReadNextValue(args, ref i, "--endpoint");
-                    break;
-                case "--model":
-                    model = ReadNextValue(args, ref i, "--model");
-                    break;
-                case "--prompt":
-                    singlePromptMode = true;
-                    singlePrompt = ReadNextValue(args, ref i, "--prompt");
-                    break;
-                case "--delegate":
-                    delegateMode = true;
-                    break;
-                case "--workspace-root":
-                    workspaceRoot = ReadNextValue(args, ref i, "--workspace-root");
-                    break;
-                default:
-                    throw new ArgumentException($"Unknown option '{argument}'.");
-            }
-        }
+        OllamaAgentCliOptions options = OllamaAgentCliOptions.Parse(args);
+        bool singlePromptMode = HasOption(args, "--prompt", "-p");
+        string endpoint = options.Endpoint;
+        string model = options.Model;
+        string? singlePrompt = options.Prompt;
+        bool delegateMode = options.DelegateMode;
+        string workspaceRoot = options.WorkspaceRoot;
 
         IReadOnlyList<string> scenarios = singlePromptMode && !string.IsNullOrWhiteSpace(singlePrompt)
             ? [singlePrompt]
@@ -102,6 +77,22 @@ internal static class Program
         }
 
         return 0;
+    }
+
+    private static bool HasOption(IReadOnlyList<string> args, params string[] optionNames)
+    {
+        foreach (string argument in args)
+        {
+            foreach (string optionName in optionNames)
+            {
+                if (string.Equals(argument, optionName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static string ReadNextValue(string[] args, ref int index, string optionName)

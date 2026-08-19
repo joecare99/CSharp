@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -45,7 +46,7 @@ public sealed class ContentAnalysisToolAdapter : IOllamaTool
             return OllamaToolValidationResult.Failure(errorMessage);
         }
 
-        ContentAnalysisRequest analysisRequest = request ?? throw new InvalidOperationException("The content analysis tool input must deserialize to a content analysis request.");
+        ContentAnalysisRequest analysisRequest = request;
 
         ContentAnalysisRequestValidationResult validationResult = _analysisTool.Validate(analysisRequest);
         if (validationResult.IsValid)
@@ -68,7 +69,7 @@ public sealed class ContentAnalysisToolAdapter : IOllamaTool
             };
         }
 
-        ContentAnalysisRequest analysisRequest = request ?? throw new InvalidOperationException("The content analysis tool input must deserialize to a content analysis request.");
+        ContentAnalysisRequest analysisRequest = request;
 
         ContentAnalysisRequestValidationResult validationResult = _analysisTool.Validate(analysisRequest);
         if (!validationResult.IsValid)
@@ -88,7 +89,10 @@ public sealed class ContentAnalysisToolAdapter : IOllamaTool
         };
     }
 
-    private static bool TryDeserializeRequest(string input, out ContentAnalysisRequest? request, out string errorMessage)
+    private static bool TryDeserializeRequest(
+        string input,
+        [NotNullWhen(true)] out ContentAnalysisRequest? request,
+        out string errorMessage)
     {
         if (string.IsNullOrWhiteSpace(input))
         {

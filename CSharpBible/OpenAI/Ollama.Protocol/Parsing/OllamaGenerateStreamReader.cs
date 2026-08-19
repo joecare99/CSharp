@@ -40,23 +40,29 @@ public sealed class OllamaGenerateStreamReader
     {
         ArgumentNullException.ThrowIfNull(stream);
 
-        using StreamReader reader = new(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, leaveOpen: true);
-
-        while (!reader.EndOfStream)
+        StreamReader reader = new(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, leaveOpen: true);
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            string? line = await reader.ReadLineAsync(cancellationToken);
-            if (string.IsNullOrWhiteSpace(line))
+            while (!reader.EndOfStream)
             {
-                continue;
-            }
+                cancellationToken.ThrowIfCancellationRequested();
 
-            OllamaGenerateResponseChunk? chunk = JsonSerializer.Deserialize<OllamaGenerateResponseChunk>(line, _jsonSerializerOptions);
-            if (chunk is not null)
-            {
-                yield return chunk;
+                string? line = await reader.ReadLineAsync(cancellationToken);
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+
+                OllamaGenerateResponseChunk? chunk = JsonSerializer.Deserialize<OllamaGenerateResponseChunk>(line, _jsonSerializerOptions);
+                if (chunk is not null)
+                {
+                    yield return chunk;
+                }
             }
+        }
+        finally
+        {
+            reader.Dispose();
         }
     }
 }

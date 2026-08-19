@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -12,8 +14,8 @@ public sealed class WriteWorkspaceFileToolTests
     [TestMethod]
     public async Task ExecuteAsync_WritesNewFile()
     {
-        string root = Path.Combine(Path.GetTempPath(), "write-tool-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(root);
+        using TestWorkspace workspace = new();
+        string root = workspace.RootPath;
         WriteWorkspaceFileTool tool = new(new WorkspacePathPolicy(root));
         string input = JsonSerializer.Serialize(new WriteWorkspaceFileToolInput
         {

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ollama.Client.Interfaces;
 using Ollama.Client.Models;
+using Ollama.Client.Services;
 using Ollama.Client.Tests.TestDoubles;
 using Ollama.Protocol.Models;
 

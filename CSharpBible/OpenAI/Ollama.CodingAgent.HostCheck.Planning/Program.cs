@@ -1,10 +1,15 @@
 using System;
+using Ollama.CodingAgent.Models;
 using Ollama.CodingAgent;
 
 namespace Ollama.CodingAgent.HostCheck.Planning;
 
 internal static class Program
 {
+    private static Func<string, PlanState> CreatePlan = SubtaskPlanner.CreateInitialPlan;
+    private static Func<string, System.Collections.Generic.IReadOnlyList<string>, GoalContract> CreateGoal =
+        static (objective, criteria) => new GoalContract(objective, criteria);
+
     private static int Main(string[] args)
     {
         string prompt = args.Length > 0
@@ -15,7 +20,7 @@ internal static class Program
         Console.WriteLine($"Prompt: {prompt}");
         Console.WriteLine();
 
-        PlanState plan = SubtaskPlanner.CreateInitialPlan(prompt);
+        PlanState plan = CreatePlan(prompt);
         Console.WriteLine(PlanStateRenderer.Render(plan));
         Console.WriteLine();
 
@@ -29,7 +34,7 @@ internal static class Program
         Console.WriteLine("Malformed input checks:");
         try
         {
-            _ = SubtaskPlanner.CreateInitialPlan(string.Empty);
+            _ = CreatePlan(string.Empty);
             Console.WriteLine("Unexpected: empty prompt accepted.");
             return 2;
         }
@@ -40,7 +45,7 @@ internal static class Program
 
         try
         {
-            _ = new GoalContract(string.Empty, []);
+            _ = CreateGoal(string.Empty, []);
             Console.WriteLine("Unexpected: invalid goal contract accepted.");
             return 3;
         }

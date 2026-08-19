@@ -19,7 +19,9 @@ public static class PdfStructureInspector
     private static readonly Regex FilterRegex = new("/Filter\\s*(?:\\[(?<array>[^\\]]*?)\\]|/(?<value>[^\\s/<>()\\[\\]]+))", RegexOptions.CultureInvariant);
     private static readonly Regex OperatorRegex = new(@"\b(?:BT|ET|Tf|Tj|TJ|Td|TD|Tm|T\*|q|Q|cm|m|l|c|re|h|S|s|f\*|f|B\*|B|n|W\*|W|Do|BI|ID|EI|gs|rg|RG|k|K|w|J|j|M|d|i|ri|Tr|Ts|Tc|Tw|TL|BDC|BMC|EMC|MP|DP|SCN|SC|scn|sc|cs|CS)\b", RegexOptions.CultureInvariant);
     private static readonly HashSet<string> GlyphBoundaryOperators = new(StringComparer.Ordinal) { "q", "Q", "BT", "ET", "BDC", "BMC", "EMC", "Do" };
+    private static readonly HashSet<string> GlyphFlushOperators = new(StringComparer.Ordinal) { "f", "f*", "S", "s", "B", "B*", "Do" };
     private static readonly HashSet<string> GlyphRelevantOperators = new(StringComparer.Ordinal) { "q", "Q", "cm", "m", "l", "c", "re", "h", "S", "s", "f", "f*", "B", "B*", "n", "W", "W*", "Do", "gs", "rg", "RG", "k", "K", "w", "J", "j", "M", "d", "i", "ri", "Tr", "Ts", "Tc", "Tw", "TL" };
+    private static readonly HashSet<string> DelimitedPdfOperators = new(StringComparer.Ordinal) { "BT", "ET", "BDC", "BMC", "EMC", "Do", "q", "Q" };
     private static readonly Regex MetadataRegex = new(@"/(?<key>Title|Author|Subject|Keywords|Creator|Producer|CreationDate|ModDate)\s*\((?<value>(?:\\.|[^()])*)\)", RegexOptions.CultureInvariant);
     private static readonly Regex TypeRegex = new(@"/Type\s*/(?<value>[A-Za-z0-9]+)", RegexOptions.CultureInvariant);
     private static readonly Regex SubtypeRegex = new(@"/Subtype\s*/(?<value>[A-Za-z0-9]+)", RegexOptions.CultureInvariant);
@@ -124,13 +126,13 @@ public static class PdfStructureInspector
         }
 
         streamStart += "stream".Length;
-        while (streamStart < body.Length && (body[streamStart] == '\r' || body[streamStart] == '\n' || body[streamStart] == ' ' || body[streamStart] == '\t'))
+        while (streamStart < body.Length && char.IsWhiteSpace(body[streamStart]))
         {
             streamStart++;
         }
 
         int streamEnd = body.IndexOf("endstream", streamStart, StringComparison.Ordinal);
-        if (streamEnd < 0 || streamEnd <= streamStart)
+        if (streamEnd <= streamStart)
         {
             return string.Empty;
         }
@@ -169,7 +171,7 @@ public static class PdfStructureInspector
                 }
 
                 int valueStart = index + marker.Length;
-                if (valueStart >= obj.RawBody.Length || obj.RawBody[valueStart] != '(')
+                if (!obj.RawBody[valueStart..].StartsWith('('))
                 {
                     continue;
                 }
@@ -211,7 +213,7 @@ public static class PdfStructureInspector
         {
             contentHints.Add("ToUnicode map present");
         }
-        if (objects.Any(static obj => string.Equals(obj.Filter, "FlateDecode", StringComparison.OrdinalIgnoreCase) || (obj.Filter?.Contains("FlateDecode", StringComparison.OrdinalIgnoreCase) ?? false)))
+        if (objects.Any(static obj => obj.Filter?.Contains("FlateDecode", StringComparison.OrdinalIgnoreCase) == true))
         {
             contentHints.Add("FlateDecode stream present");
         }
@@ -384,11 +386,6 @@ public static class PdfStructureInspector
             return match.Groups["value"].Value;
         }
 
-        if (!match.Groups["array"].Success)
-        {
-            return null;
-        }
-
         string[] parts = match.Groups["array"].Value.Split(new[] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
         return parts.FirstOrDefault(part => part.Contains("FlateDecode", StringComparison.OrdinalIgnoreCase)) ?? match.Groups["array"].Value;
     }
@@ -474,7 +471,7 @@ public static class PdfStructureInspector
             string token = match.Value;
             block.Add(token);
 
-            if (GlyphBoundaryOperators.Contains(token) || token is "f" or "f*" or "S" or "s" or "B" or "B*" or "Do")
+            if (GlyphBoundaryOperators.Contains(token) || GlyphFlushOperators.Contains(token))
             {
                 FlushBlock();
             }
@@ -515,8 +512,7 @@ public static class PdfStructureInspector
             previous = op;
         }
 
-        string signature = string.Join(" ", filtered);
-        return signature.Length <= 120 ? signature : signature[..120] + "…";
+        return string.Join(" ", filtered);
     }
 
     private static string DecodeStreamIfPossible(string streamContent, string? filter)
@@ -568,8 +564,8 @@ public static class PdfStructureInspector
         return normalized.Length <= 240 ? normalized : normalized[..240] + "…";
     }
 
-    private static string NormalizePdfOperator(string token)
-        => token is "BT" or "ET" or "BDC" or "BMC" or "EMC" or "Do" or "q" or "Q"
+    internal static string NormalizePdfOperator(string token)
+        => DelimitedPdfOperators.Contains(token)
             ? $"<{token}>"
             : token;
 

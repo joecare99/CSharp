@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,6 +40,15 @@ public sealed class AgentRunner
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The run result.</returns>
     public async Task<AgentRunResult> RunAsync(AgentRunRequest request, CancellationToken cancellationToken = default)
+        => await RunAsync(request, cancellationToken, null);
+
+    /// <summary>
+    /// Runs the agent loop and reports live runtime updates.
+    /// </summary>
+    public async Task<AgentRunResult> RunAsync(
+        AgentRunRequest request,
+        CancellationToken cancellationToken,
+        Action<AgentRuntimeUpdate>? onUpdate)
     {
         ArgumentNullException.ThrowIfNull(request);
         request.Validate();
@@ -61,9 +72,24 @@ public sealed class AgentRunner
             AgentCompletion completion = await CompleteWithRetryAsync(messages, cancellationToken, retryAttempts =>
             {
                 retriesUsed += retryAttempts;
-            }, correlationId, iteration);
+            }, correlationId, iteration, onUpdate);
             string response = completion.Content;
             thinking.AddRange(completion.Thinking.Where(static fragment => !string.IsNullOrWhiteSpace(fragment)));
+            foreach (string fragment in completion.Thinking.Where(static fragment => !string.IsNullOrWhiteSpace(fragment)))
+            {
+                _diagnosticsSink?.Record(new AgentDiagnosticEvent
+                {
+                    CorrelationId = correlationId,
+                    EventName = "completion.thinking",
+                    Iteration = iteration,
+                    Detail = fragment,
+                });
+                onUpdate?.Invoke(new AgentRuntimeUpdate
+                {
+                    Kind = AgentRuntimeUpdateKind.Thinking,
+                    Content = fragment,
+                });
+            }
 
             if (string.IsNullOrWhiteSpace(response))
             {
@@ -92,6 +118,12 @@ public sealed class AgentRunner
             }
         }
 
+        _diagnosticsSink?.Record(new AgentDiagnosticEvent
+        {
+            CorrelationId = correlationId,
+            EventName = "run.failed",
+            Error = $"The agent did not produce a response within {_runtimeSettings.MaxIterations} iterations.",
+        });
         throw new InvalidOperationException($"The agent did not produce a response within {_runtimeSettings.MaxIterations} iterations.");
     }
 
@@ -100,7 +132,8 @@ public sealed class AgentRunner
         CancellationToken cancellationToken,
         Action<int> onRetriesConsumed,
         string correlationId,
-        int iteration)
+        int iteration,
+        Action<AgentRuntimeUpdate>? onUpdate)
     {
         Exception? lastException = null;
         int retriesConsumed = 0;
@@ -113,7 +146,13 @@ public sealed class AgentRunner
             {
                 using CancellationTokenSource timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 timeoutCts.CancelAfter(_runtimeSettings.StepTimeout);
-                AgentCompletion completion = _modelClient is IThinkingAgentModelClient thinkingClient
+                AgentCompletion completion = _modelClient is IStreamingThinkingAgentModelClient streamingThinkingClient && onUpdate is not null
+                    ? await streamingThinkingClient.CompleteDetailedAsync(messages, fragment => onUpdate(new AgentRuntimeUpdate
+                    {
+                        Kind = AgentRuntimeUpdateKind.Thinking,
+                        Content = fragment,
+                    }), timeoutCts.Token)
+                    : _modelClient is IThinkingAgentModelClient thinkingClient
                     ? await thinkingClient.CompleteDetailedAsync(messages, timeoutCts.Token)
                     : new AgentCompletion
                     {

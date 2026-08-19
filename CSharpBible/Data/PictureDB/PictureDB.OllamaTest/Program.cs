@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Ollama.Client;
+using Ollama.Client.Services;
 using Ollama.Client.Models;
 
 namespace PictureDB.OllamaTest;

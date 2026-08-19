@@ -26,4 +26,8 @@ public sealed class OllamaChatRequest
     /// </summary>
     [JsonPropertyName("stream")]
     public bool Stream { get; init; }
+
+    [JsonPropertyName("tools")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<OllamaChatToolDefinition>? Tools { get; init; }
 }

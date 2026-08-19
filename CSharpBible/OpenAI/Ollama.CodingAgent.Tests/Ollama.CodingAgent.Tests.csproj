@@ -11,9 +11,11 @@
     <ItemGroup>
         <PackageReference Include="MSTest" />
         <PackageReference Include="NSubstitute" />
+        <PackageReference Include="coverlet.collector" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Ollama.CodingAgent\Ollama.CodingAgent.csproj" />
         <ProjectReference Include="..\OpenAI.CodingAgent\OpenAI.CodingAgent.csproj" />
+        <ProjectReference Include="..\..\Data\CommandlineHelper\CommandlineHelper.csproj" />
     </ItemGroup>
 </Project>

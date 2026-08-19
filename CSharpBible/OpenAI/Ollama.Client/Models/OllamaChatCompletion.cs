@@ -16,4 +16,9 @@ public sealed class OllamaChatCompletion
     /// Gets the collected thinking fragments.
     /// </summary>
     public IReadOnlyList<string> Thinking { get; init; } = new List<string>();
+
+    /// <summary>
+    /// Gets the collected tool calls.
+    /// </summary>
+    public IReadOnlyList<OllamaChatToolCall> ToolCalls { get; init; } = new List<OllamaChatToolCall>();
 }

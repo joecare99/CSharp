@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Ollama.Client.Models;
 
 /// <summary>
@@ -14,6 +16,11 @@ public sealed class OllamaStreamingChatUpdate
     /// Gets the streamed thinking fragment.
     /// </summary>
     public string? Thinking { get; init; }
+
+    /// <summary>
+    /// Gets streamed tool calls.
+    /// </summary>
+    public IReadOnlyList<OllamaChatToolCall> ToolCalls { get; init; } = new List<OllamaChatToolCall>();
 
     /// <summary>
     /// Gets a value indicating whether the stream completed.
