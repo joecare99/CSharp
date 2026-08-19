@@ -1,10 +1,9 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Ollama.Client;
-using Ollama.Tools;
 
 namespace Ollama.CodingAgent;
 
@@ -20,45 +19,7 @@ internal static class Program
         }
 
         ServiceCollection services = new();
-        services.AddSingleton(cliOptions.RuntimeSettings);
-        services.AddSingleton(cliOptions);
-        services.AddSingleton(new OllamaClientOptions(new Uri(cliOptions.Endpoint)));
-        services.AddSingleton(provider =>
-        {
-            HttpClient httpClient = new()
-            {
-                Timeout = Timeout.InfiniteTimeSpan,
-            };
-            return httpClient;
-        });
-        services.AddSingleton(provider =>
-        {
-            HttpClient httpClient = provider.GetRequiredService<HttpClient>();
-            OllamaClientOptions options = provider.GetRequiredService<OllamaClientOptions>();
-            return new OllamaClient(httpClient, options);
-        });
-        services.AddSingleton(provider =>
-        {
-            OllamaClient client = provider.GetRequiredService<OllamaClient>();
-            return client.GetChatClient(cliOptions.Model);
-        });
-        services.AddSingleton<IOllamaBaselineClient>(provider =>
-            new OllamaClientBaselineAdapter(
-                provider.GetRequiredService<OllamaClient>(),
-                cliOptions.Model));
-        services.AddSingleton<OllamaBaselineService>(provider =>
-            new OllamaBaselineService(
-                provider.GetRequiredService<IOllamaBaselineClient>(),
-                cliOptions.Model));
-        services.AddSingleton<IAgentModelClient, OllamaChatModelClient>();
-        services.AddSingleton<AgentRunner>();
-        services.AddSingleton<WorkspacePathPolicy>(provider => new WorkspacePathPolicy(cliOptions.WorkspaceRoot));
-        services.AddSingleton<CodingDelegationToolRegistryFactory>();
-        services.AddSingleton<IOllamaToolRegistry>(provider =>
-            provider.GetRequiredService<CodingDelegationToolRegistryFactory>().CreateRegistry());
-        services.AddSingleton<OllamaToolOrchestrator>();
-        services.AddSingleton<OllamaToolChatRunnerAdapter>();
-        services.AddSingleton<CodingTaskDelegationService>();
+        services.AddOllamaCodingAgent(cliOptions);
 
         using ServiceProvider serviceProvider = services.BuildServiceProvider();
 
@@ -155,6 +116,10 @@ internal static class Program
         Console.WriteLine("  --prompt <text>           Prompt text (alternative to positional prompt)");
         Console.WriteLine("  --delegate                Enable delegated coding-task mode with safe workspace tools");
         Console.WriteLine("  --workspace-root <path>   Workspace root for delegated tool access (default: current directory)");
+        Console.WriteLine("  --session <id>            Session identifier for logs (default: default)");
         Console.WriteLine("  --help                    Show help");
+        Console.WriteLine();
+        Console.WriteLine("LLM traffic is logged by default to <workspace>\\.agent\\logs\\<session>.jsonl.");
+        Console.WriteLine("Credentials are redacted before persistence. The --debug-log switch is planned, but not available yet.");
     }
 }

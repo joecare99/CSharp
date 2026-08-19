@@ -16,6 +16,49 @@ Dedicated C# coding-agent host project for local Ollama-first execution.
 dotnet run --project .\Ollama.CodingAgent\Ollama.CodingAgent.csproj -- "Summarize this repository architecture."
 ```
 
+## Interactive operator setup
+
+Install .NET 8, Git, and Ollama, then make a local model available (the default is
+`qwen2.5-coder:7b`). The interactive clients do not contact Ollama until an operator submits
+a prompt. Select an existing local workspace explicitly; session snapshots are stored only at
+`<workspace>\.agent\sessions\<session>.json` and can be resumed only with that same workspace
+and session identifier.
+
+```powershell
+# Persistent terminal session
+dotnet run --project .\Ollama.CodingAgent.Console\Ollama.CodingAgent.Console.csproj -- `
+  --workspace C:\Work\MyRepository --session daily-work
+
+# Avalonia desktop session with an explicit CodeWikiVault
+dotnet run --project .\Ollama.CodingAgent.Desktop\Ollama.CodingAgent.Desktop.csproj -- `
+  --workspace C:\Work\MyRepository --session daily-work `
+  --code-wiki-vault C:\Projekte\CSharp\CodeWikiVault
+```
+
+Use `--endpoint` and `--model` in either client to override the local defaults. The terminal
+offers `:reload` to resume the selected snapshot and `:transcript` to inspect it.
+
+### Git safety and recovery
+
+Git credentials must be configured by the operator in Git Credential Manager, SSH agent, or
+another local Git-supported credential helper before a fetch, pull, or push. Do not put tokens
+in a client argument, prompt, remote URL, or session file. The Git provider neither accepts nor
+stores credentials; remote displays and Git failure diagnostics redact URL user information.
+
+Every Git mutation is a mandatory approval boundary: inspect the exact preview, then use
+`:approve <id>` or the desktop approval control. Rejecting an approval, or cancelling while it
+is pending, performs no mutation. A failed non-fast-forward push leaves the remote unchanged:
+fetch/pull or rebase with normal Git tooling, resolve and commit any conflicts, verify status,
+then request a new approved push. Resolve conflicts or an in-progress merge/rebase before
+requesting any mutation; the provider rejects those states.
+
+### CodeWikiVault
+
+The desktop's CodeWikiVault panel imports Markdown from `--code-wiki-vault` (or
+`CODE_WIKI_VAULT`) into the workspace-local `.agent\local-wiki.json` store and searches that
+local copy. Import is operator-initiated; it does not watch, edit, publish, or synchronize the
+vault, and it does not make external web requests.
+
 ## Options
 
 - `--endpoint <url>`
@@ -30,6 +73,18 @@ dotnet run --project .\Ollama.CodingAgent\Ollama.CodingAgent.csproj -- "Summariz
 - `--prompt <text>`
 - `--delegate`
 - `--workspace-root <path>`
+
+### LLM debug logging
+
+The LLM traffic logger is enabled by default. It writes session-scoped diagnostic records below
+`<workspace>\\.agent\\logs`, including outgoing provider requests, incoming responses, and provider
+failures for Ollama and OpenAI-compatible endpoints.
+Credentials are always redacted before persistence. This includes authorization and bearer headers,
+API keys, JSON credential fields, and user information embedded in URLs. Non-sensitive prompt and
+response content remains available for diagnosis.
+
+The future `--debug-log` switch will provide explicit runtime control over this behavior. It is not
+available in the current command set yet. The current logger is intentionally always active.
 
 Environment variables are also supported:
 

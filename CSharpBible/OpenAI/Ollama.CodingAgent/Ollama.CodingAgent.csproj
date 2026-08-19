@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFrameworks>net8.0</TargetFrameworks>
@@ -8,6 +8,8 @@
     <ItemGroup>
         <ProjectReference Include="..\Ollama.Client\Ollama.Client.csproj" />
         <ProjectReference Include="..\Ollama.Tools\Ollama.Tools.csproj" />
+        <ProjectReference Include="..\..\Data\CommandlineHelper\CommandlineHelper.csproj" />
+        <ProjectReference Include="..\..\Data\CommandlineHelper.Generators\CommandlineHelper.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>

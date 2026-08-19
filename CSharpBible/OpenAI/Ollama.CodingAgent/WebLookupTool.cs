@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.Net.Http;
 using System.Text.Json;
@@ -20,14 +22,19 @@ public sealed class WebLookupTool : IOllamaTool
 
     private readonly HttpClient _httpClient;
     private readonly WebKnowledgePolicy _policy;
+    private readonly Func<Uri, bool> _isCitationUriAllowed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WebLookupTool"/> class.
     /// </summary>
-    public WebLookupTool(HttpClient httpClient, WebKnowledgePolicy policy)
+    public WebLookupTool(
+        HttpClient httpClient,
+        WebKnowledgePolicy policy,
+        Func<Uri, bool>? isCitationUriAllowed = null)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _policy = policy ?? throw new ArgumentNullException(nameof(policy));
+        _isCitationUriAllowed = isCitationUriAllowed ?? _policy.IsAllowedCitationUri;
     }
 
     /// <inheritdoc />
@@ -97,7 +104,7 @@ public sealed class WebLookupTool : IOllamaTool
         }
 
         Uri citationUri = new(url);
-        if (!_policy.IsAllowedCitationUri(citationUri))
+        if (!_isCitationUriAllowed(citationUri))
         {
             return new OllamaToolResult { Success = false, Output = "Resolved citation host is not allowed." };
         }

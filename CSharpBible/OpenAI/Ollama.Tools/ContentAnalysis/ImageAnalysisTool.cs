@@ -14,6 +14,7 @@ namespace Ollama.Tools.ContentAnalysis;
 public sealed class ImageAnalysisTool : IContentAnalysisTool
 {
     private readonly IFile _file;
+    private readonly Func<string, ImageInspection> _imageInspector;
 
     private static readonly OllamaToolSchema ToolSchema = new()
     {
@@ -65,8 +66,14 @@ public sealed class ImageAnalysisTool : IContentAnalysisTool
     /// </summary>
     /// <param name="file">The file abstraction used for metadata access.</param>
     public ImageAnalysisTool(IFile? file = null)
+        : this(file, null)
+    {
+    }
+
+    internal ImageAnalysisTool(IFile? file, Func<string, ImageInspection>? imageInspector)
     {
         _file = file ?? new BaseLib.Models.FileProxy();
+        _imageInspector = imageInspector ?? InspectImageFile;
     }
 
     /// <inheritdoc/>
@@ -134,7 +141,7 @@ public sealed class ImageAnalysisTool : IContentAnalysisTool
         cancellationToken.ThrowIfCancellationRequested();
 
         IFileInfo fileInfo = _file.GetFileInfo(request.FilePath);
-        ImageInspection imageInspection = InspectImageFile(fileInfo.FullName);
+        ImageInspection imageInspection = _imageInspector(fileInfo.FullName);
         long fileSizeBytes = fileInfo.Length;
 
         List<ContentAnalysisFinding> findings = [];
@@ -382,5 +389,5 @@ public sealed class ImageAnalysisTool : IContentAnalysisTool
             | bytes[3];
     }
 
-    private readonly record struct ImageInspection(string Format, int? Width, int? Height, int? BitsPerPixel);
+    internal readonly record struct ImageInspection(string Format, int? Width, int? Height, int? BitsPerPixel);
 }

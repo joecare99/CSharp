@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -17,14 +19,27 @@ public sealed class OpenAICompatibleChatModelClient : IThinkingAgentModelClient,
 {
     private readonly HttpClient _httpClient;
     private readonly OpenAICompatibleClientOptions _options;
+    private readonly ILlmTrafficLogger? _trafficLogger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OpenAICompatibleChatModelClient"/> class.
     /// </summary>
     public OpenAICompatibleChatModelClient(HttpClient httpClient, OpenAICompatibleClientOptions options)
+        : this(httpClient, options, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a client with optional provider traffic diagnostics.
+    /// </summary>
+    public OpenAICompatibleChatModelClient(
+        HttpClient httpClient,
+        OpenAICompatibleClientOptions options,
+        ILlmTrafficLogger? trafficLogger)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _options = options ?? throw new ArgumentNullException(nameof(options));
+        _trafficLogger = trafficLogger;
     }
 
     /// <inheritdoc />
@@ -52,7 +67,8 @@ public sealed class OpenAICompatibleChatModelClient : IThinkingAgentModelClient,
             throw new ArgumentException("At least one message is required.", nameof(messages));
         }
 
-        using HttpRequestMessage request = new(HttpMethod.Post, BuildCompletionEndpoint(_options.Endpoint))
+        Uri endpoint = BuildCompletionEndpoint(_options.Endpoint);
+        using HttpRequestMessage request = new(HttpMethod.Post, endpoint)
         {
             Content = JsonContent.Create(new
             {
@@ -71,24 +87,45 @@ public sealed class OpenAICompatibleChatModelClient : IThinkingAgentModelClient,
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
         }
 
-        using HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        using JsonDocument document = await JsonDocument.ParseAsync(
-            await response.Content.ReadAsStreamAsync(cancellationToken),
-            cancellationToken: cancellationToken);
-
-        if (!document.RootElement.TryGetProperty("choices", out JsonElement choices)
-            || choices.ValueKind != JsonValueKind.Array
-            || choices.GetArrayLength() == 0)
+        string requestPayload = await request.Content.ReadAsStringAsync(cancellationToken);
+        Dictionary<string, string> headers = new(StringComparer.OrdinalIgnoreCase);
+        foreach (KeyValuePair<string, IEnumerable<string>> header in request.Headers)
         {
-            throw new InvalidOperationException("The OpenAI-compatible response did not contain a choice.");
+            headers[header.Key] = string.Join(", ", header.Value);
         }
 
-        JsonElement message = choices[0].GetProperty("message");
-        string content = message.TryGetProperty("content", out JsonElement contentElement)
-            ? contentElement.GetString() ?? string.Empty
-            : string.Empty;
-        return new AgentCompletion { Content = content };
+        _trafficLogger?.LogRequest("openai-compatible", endpoint, "chat.completions", requestPayload, headers);
+        try
+        {
+            using HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
+            string responsePayload = await response.Content.ReadAsStringAsync(cancellationToken);
+            _trafficLogger?.LogResponse(
+                "openai-compatible",
+                endpoint,
+                "chat.completions",
+                (int)response.StatusCode,
+                responsePayload);
+            response.EnsureSuccessStatusCode();
+            using JsonDocument document = JsonDocument.Parse(responsePayload);
+
+            if (!document.RootElement.TryGetProperty("choices", out JsonElement choices)
+                || choices.ValueKind != JsonValueKind.Array
+                || choices.GetArrayLength() == 0)
+            {
+                throw new InvalidOperationException("The OpenAI-compatible response did not contain a choice.");
+            }
+
+            JsonElement message = choices[0].GetProperty("message");
+            string content = message.TryGetProperty("content", out JsonElement contentElement)
+                ? contentElement.GetString() ?? string.Empty
+                : string.Empty;
+            return new AgentCompletion { Content = content };
+        }
+        catch (Exception exception)
+        {
+            _trafficLogger?.LogFailure("openai-compatible", endpoint, "chat.completions", exception, requestPayload);
+            throw;
+        }
     }
 
     private static Uri BuildCompletionEndpoint(Uri endpoint)

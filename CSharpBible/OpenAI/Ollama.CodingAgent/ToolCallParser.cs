@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -22,10 +24,6 @@ public static class ToolCallParser
         string candidate = ExtractJsonObject(rawContent);
         using JsonDocument document = JsonDocument.Parse(candidate);
         JsonElement root = document.RootElement;
-        if (root.ValueKind != JsonValueKind.Object)
-        {
-            throw new InvalidOperationException("Model output did not contain a valid tool call.");
-        }
 
         Dictionary<string, JsonElement> values = new(StringComparer.OrdinalIgnoreCase);
         foreach (JsonProperty property in root.EnumerateObject())
@@ -151,7 +149,7 @@ public static class ToolCallParser
     {
         return value.ValueKind switch
         {
-            JsonValueKind.String => value.GetString() ?? string.Empty,
+            JsonValueKind.String => value.ToString(),
             JsonValueKind.Object or JsonValueKind.Array => value.GetRawText(),
             JsonValueKind.Null => string.Empty,
             _ => value.ToString(),

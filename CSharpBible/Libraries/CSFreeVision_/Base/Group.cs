@@ -1,0 +1,34 @@
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+
+namespace CSFreeVision.Base
+{
+    public partial class Group : View , IContainer
+    {
+        private Dictionary<string,View> _Components = new Dictionary<string, View>();
+
+        public Group()
+        {
+            InitializeComponent();
+        }
+
+        public Group(IContainer container)
+        {
+            container.Add(this);
+
+            InitializeComponent();
+        }
+
+        public ComponentCollection Components => (ComponentCollection)_Components.Values.Select(v=>v);
+
+        public void Add(IComponent component) => _Components.Add(null,(View)component);
+
+        public void Add(IComponent component, string name)
+        {
+            _Components.Add(name,(View)component);
+        }
+
+        public void Remove(IComponent component) => _Components.Remove(null);
+    }
+}

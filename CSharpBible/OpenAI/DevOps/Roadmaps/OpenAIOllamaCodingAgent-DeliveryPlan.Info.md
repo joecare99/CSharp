@@ -6,6 +6,8 @@ Deliver a full-capability C# coding agent that can execute practical software-en
 ## Delivery Strategy
 - **Local-first baseline:** stabilize Ollama + `qwen2.5-coder:7b` before advanced features.
 - **Provider-agnostic runtime:** isolate provider-specific request/response shaping.
+- **Diagnostic transparency:** enable redacted, session-scoped LLM traffic logging by default after
+  the provider boundary is stable; reserve `--debug-log` for the later runtime configuration slice.
 - **Incremental capability growth:** foundation -> runtime -> tools+memory -> hardening.
 - **Evidence-driven completion:** every increment includes scenario-level validation.
 
@@ -23,10 +25,16 @@ Deliver a full-capability C# coding agent that can execute practical software-en
 ## Ordered Backlog Sequence
 1. [PBI-14 Local Ollama Baseline and Agent Skeleton](../BacklogItems/PBI-14-LocalOllamaBaselineAndAgentSkeleton.md)
 2. [PBI-15 Provider-Agnostic Agent Runtime](../BacklogItems/PBI-15-ProviderAgnosticAgentRuntime.md)
-3. [PBI-16 Tool Execution and Memory Integration](../BacklogItems/PBI-16-ToolExecutionAndMemoryIntegration.md)
-4. [PBI-17 Agent Evaluation Hardening and Readiness](../BacklogItems/PBI-17-AgentEvaluationHardeningAndReadiness.md)
-5. [PBI-18 Web Knowledge and Local LLM Wiki](../BacklogItems/PBI-18-WebKnowledgeAndLocalLlmWiki.md)
-6. [PBI-19 Goal-Focused Task Planning and Execution](../BacklogItems/PBI-19-GoalFocusedTaskPlanningAndExecution.md)
+3. [PBI-25 LLM Debug Traffic Logging](../BacklogItems/PBI-25-LlmDebugTrafficLogging.md)
+4. [PBI-16 Tool Execution and Memory Integration](../BacklogItems/PBI-16-ToolExecutionAndMemoryIntegration.md)
+5. [PBI-17 Agent Evaluation Hardening and Readiness](../BacklogItems/PBI-17-AgentEvaluationHardeningAndReadiness.md)
+6. [PBI-18 Web Knowledge and Local LLM Wiki](../BacklogItems/PBI-18-WebKnowledgeAndLocalLlmWiki.md)
+7. [PBI-19 Goal-Focused Task Planning and Execution](../BacklogItems/PBI-19-GoalFocusedTaskPlanningAndExecution.md)
+8. [PBI-20 Shared Interactive Agent Application Layer](../BacklogItems/PBI-20-SharedInteractiveAgentApplicationLayer.md)
+9. [PBI-21 Approval-Gated Git Workspace Provider](../BacklogItems/PBI-21-ApprovalGatedGitWorkspaceProvider.md)
+10. [PBI-22 Persistent Coding-Agent Terminal Client](../BacklogItems/PBI-22-PersistentTerminalClient.md)
+11. [PBI-23 Avalonia Coding-Agent Desktop Client](../BacklogItems/PBI-23-AvaloniaDesktopClient.md)
+12. [PBI-24 Interactive Coding-Agent Operational Readiness](../BacklogItems/PBI-24-InteractiveAgentOperationalReadiness.md)
 
 ## Concrete Project Mapping (Existing Code First)
 | Sprint | Primary Existing Projects | Planned Reuse |
@@ -127,6 +135,60 @@ Enable bounded external knowledge lookup and local wiki accumulation for reusabl
 - Local wiki storage contract and retrieval ranking behavior.
 - Host-check scenario for lookup + local wiki writeback.
 
+### Sprint 5 - Approval-Gated Git Workspaces
+**Objective**
+Give interactive coding-agent clients safe, provider-specific access to local Git workspaces without coupling to migration providers.
+
+**Expected Outcomes**
+- Read-only repository discovery, status, bounded diffs, branches, and credential-sanitized remotes.
+- Typed stage, unstage, branch, commit, fetch, pull, and push operations.
+- One exact approval preview before every mutation, including remote operations.
+
+**Primary Deliverables**
+- `Ollama.CodingAgent.Git` provider and dedicated tests.
+- Shared `IAgentApprovalService` integration without a circular tool-registry dependency.
+
+### Sprint 6 - Persistent Terminal Client
+**Objective**
+Provide a small, durable operator interface over the shared application session without coupling application logic to a terminal framework.
+
+**Expected Outcomes**
+- Multiple prompts, transcript reload, and session clearing from one process.
+- Explicit status and approval decision commands.
+- ConsoleLib generic console abstraction reuse with a System.Console REPL fallback until a separate widget backend is available.
+
+**Primary Deliverables**
+- `Ollama.CodingAgent.Console` and focused terminal parser/projection tests.
+- Persistent session configuration for endpoint, model, workspace, and session identifier.
+
+### Sprint 7 - Avalonia Desktop Client
+**Objective**
+Provide a focused desktop operator adapter while retaining the shared application layer as the single owner of interactive session business logic.
+
+**Expected Outcomes**
+- An Avalonia `net8.0` client can submit prompts, show the persisted transcript, and surface session state.
+- Operators can resolve currently exposed approvals and use the existing local CodeWikiVault import/search capability.
+- Deferred plan, tool, and Git state remains visibly identified rather than duplicated or inferred by the desktop.
+
+**Primary Deliverables**
+- `Ollama.CodingAgent.Desktop`, reusable desktop widgets, and a focused MSTest project.
+- Central Avalonia package registration and solution integration.
+
+### Sprint 8 - Interactive Operational Readiness
+**Objective**
+Make the delivered interactive session, Git, terminal, and desktop boundaries repeatable for a
+local operator without requiring a live model or external Git host during validation.
+
+**Expected Outcomes**
+- Session resume is workspace-bound and local snapshot replacement does not leave a partial file.
+- Rejection and cancellation preserve the no-mutation approval boundary.
+- A local bare-repository divergence returns an actionable redacted failure.
+- Operator setup, recovery, and CodeWikiVault limitations are explicit.
+
+**Primary Deliverables**
+- PBI-24 readiness tests and concise operator guidance.
+- Local-only readiness/evaluation matrix and exact command evidence.
+
 ## Cross-Cutting Tracks
 - **Security and safety:** command constraints, path boundaries, prompt-injection resilience.
 - **Diagnostics:** structured logs, correlation IDs, step traces.
@@ -156,6 +218,7 @@ Enable bounded external knowledge lookup and local wiki accumulation for reusabl
 | Web knowledge + local wiki | allowlist/citation and wiki write/read tests | lookup + writeback + retrieval scenario |
 | Goal-focused planning | decomposition/dependency and drift tests | multi-subtask end-to-end plan execution |
 | Operational diagnostics | log schema assertions | failure replay with trace IDs |
+| Interactive readiness | approval, resume, redaction, and local-bare divergence tests | repeat the focused PBI-24 test commands without Ollama or external Git |
 
 ## Existing Test Assets to Reuse
 - `Ollama.Protocol.Tests` for streaming and parser behaviors.

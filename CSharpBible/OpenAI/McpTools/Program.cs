@@ -1,12 +1,30 @@
 using McpTools;
 
-var builder = WebApplication.CreateBuilder(args);
+internal static class Program
+{
+    internal static Func<WebApplication, Task> ApplicationRunner { get; set; } = static application => application.RunAsync();
 
-builder.Services.AddMcpServer()
-    .WithToolsFromAssembly();
+    internal static async Task Main(string[] args)
+    {
+        await using WebApplication application = CreateApplication(args);
+        await ApplicationRunner(application);
+    }
 
-var app = builder.Build();
+    internal static Task RunApplicationAsync(WebApplication application)
+    {
+        ArgumentNullException.ThrowIfNull(application);
+        return application.RunAsync();
+    }
 
-app.MapMcp();
+    internal static WebApplication CreateApplication(string[] args)
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddMcpServer()
+            .WithHttpTransport()
+            .WithToolsFromAssembly();
 
-app.Run();
+        WebApplication application = builder.Build();
+        application.MapMcp();
+        return application;
+    }
+}

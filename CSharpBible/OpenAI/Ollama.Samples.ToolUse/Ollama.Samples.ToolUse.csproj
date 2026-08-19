@@ -9,4 +9,9 @@
         <ProjectReference Include="..\Ollama.Client\Ollama.Client.csproj" />
         <ProjectReference Include="..\Ollama.Tools\Ollama.Tools.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>PeripheralProduction.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 </Project>

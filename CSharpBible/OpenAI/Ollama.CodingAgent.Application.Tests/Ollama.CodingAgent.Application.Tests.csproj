@@ -1,0 +1,23 @@
+﻿<Project>
+    <PropertyGroup>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <EnableMSTestRunner>true</EnableMSTestRunner>
+        <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    </PropertyGroup>
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="MSTest" />
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="coverlet.collector" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Ollama.CodingAgent.Application\Ollama.CodingAgent.Application.csproj" />
+        <ProjectReference Include="..\Ollama.Client\Ollama.Client.csproj" />
+        <ProjectReference Include="..\Ollama.Protocol\Ollama.Protocol.csproj" />
+        <ProjectReference Include="..\Ollama.Tools\Ollama.Tools.csproj" />
+    </ItemGroup>
+</Project>

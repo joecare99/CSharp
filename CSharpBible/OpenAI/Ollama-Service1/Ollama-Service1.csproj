@@ -8,4 +8,9 @@
 	<ItemGroup>
 	  <PackageReference Include="Azure.AI.OpenAI" />
 	</ItemGroup>
+	<ItemGroup>
+	  <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+	    <_Parameter1>PeripheralProduction.Tests</_Parameter1>
+	  </AssemblyAttribute>
+	</ItemGroup>
 </Project>

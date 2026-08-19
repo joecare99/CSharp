@@ -7,8 +7,18 @@ namespace Ollama.CodingAgent.HostCheck.InternetInfo;
 
 internal static class Program
 {
+    private static Func<HttpClient> HttpClientFactory = static () => new();
+
     private static async Task<int> Main(string[] args)
     {
+        using HttpClient httpClient = HttpClientFactory();
+        return await RunAsync(args, httpClient);
+    }
+
+    internal static async Task<int> RunAsync(string[] args, HttpClient httpClient)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+        ArgumentNullException.ThrowIfNull(httpClient);
         string source = args.Length > 0 ? args[0] : "wikipedia";
         string query = args.Length > 1 ? string.Join(" ", args, 1, args.Length - 1) : "C Sharp (programming language)";
 
@@ -17,7 +27,6 @@ internal static class Program
         Console.WriteLine($"Query: {query}");
         Console.WriteLine();
 
-        using HttpClient httpClient = new();
         try
         {
             string content = await FetchAsync(httpClient, source, query);
@@ -47,13 +56,23 @@ internal static class Program
             throw new ArgumentException("query must not be empty.", nameof(query));
         }
 
-        return source.ToLowerInvariant() switch
+        string normalizedSource = source.ToLowerInvariant();
+        if (normalizedSource == "wikipedia")
         {
-            "wikipedia" => await FetchWikipediaSummaryAsync(httpClient, query),
-            "rosettacode" => await FetchTextAsync(httpClient, $"https://rosettacode.org/wiki/{Uri.EscapeDataString(query)}"),
-            "mslearn" => await FetchTextAsync(httpClient, $"https://learn.microsoft.com/en-us/search/?terms={Uri.EscapeDataString(query)}"),
-            _ => throw new InvalidOperationException($"Source '{source}' is not allowed."),
-        };
+            return await FetchWikipediaSummaryAsync(httpClient, query);
+        }
+
+        if (normalizedSource == "rosettacode")
+        {
+            return await FetchTextAsync(httpClient, $"https://rosettacode.org/wiki/{Uri.EscapeDataString(query)}");
+        }
+
+        if (normalizedSource == "mslearn")
+        {
+            return await FetchTextAsync(httpClient, $"https://learn.microsoft.com/en-us/search/?terms={Uri.EscapeDataString(query)}");
+        }
+
+        throw new InvalidOperationException($"Source '{source}' is not allowed.");
     }
 
     private static async Task<string> FetchWikipediaSummaryAsync(HttpClient httpClient, string query)

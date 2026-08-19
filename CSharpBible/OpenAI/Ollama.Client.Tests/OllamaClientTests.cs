@@ -5,10 +5,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ollama.Client.Interfaces;
 using Ollama.Client.Models;
-using Ollama.Protocol;
-using Ollama.Client.Tests.TestDoubles;
+using Ollama.Client.Services;
 using Ollama.Protocol.Models;
+using Ollama.Protocol.Services;
+using Ollama.Client.Tests.TestDoubles;
 
 namespace Ollama.Client.Tests;
 

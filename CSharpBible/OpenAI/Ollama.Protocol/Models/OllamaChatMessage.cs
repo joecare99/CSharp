@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Ollama.Protocol.Models;
@@ -25,4 +26,11 @@ public sealed class OllamaChatMessage
     [JsonPropertyName("images")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string[]? Images { get; init; }
+
+    /// <summary>
+    /// Gets optional tool calls emitted by the assistant.
+    /// </summary>
+    [JsonPropertyName("tool_calls")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<OllamaChatToolCall>? ToolCalls { get; init; }
 }

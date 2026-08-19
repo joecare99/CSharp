@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Ollama.Client;
+using Ollama.Client.Interfaces;
+using Ollama.Client.Services;
 using Ollama.Client.Models;
 using Ollama.Protocol.Models;
 using Ollama.Tools.Tests.TestDoubles;
@@ -43,10 +44,10 @@ public sealed class OllamaToolCoverageTests
     public async Task ToolChatRunner_ForwardsCompletion()
     {
         ToolRunnerProtocolAdapter adapter = new();
-        Ollama.Client.OllamaChatClient chatClient = new(adapter, "qwen3.5:4b");
+        OllamaChatClient chatClient = new(adapter, "qwen3.5:4b");
         OllamaToolChatRunner runner = new(chatClient);
 
-        OllamaChatCompletion completion = await runner.CompleteChatAsync(new Ollama.Client.ChatCompletionOptions
+        OllamaChatCompletion completion = await runner.CompleteChatAsync(new Ollama.Client.Models.ChatCompletionOptions
         {
             Messages =
             [
@@ -108,7 +109,7 @@ public sealed class OllamaToolCoverageTests
 
         public IAsyncEnumerable<OllamaGenerateResponseChunk> GenerateStreamingAsync(OllamaGenerateRequest request, System.Threading.CancellationToken cancellationToken = default) => throw new NotSupportedException();
 
-        public async IAsyncEnumerable<OllamaChatResponseChunk> ChatStreamingAsync(OllamaChatRequest request, System.Threading.CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<OllamaChatResponseChunk> ChatStreamingAsync(OllamaChatRequest request, [System.Runtime.CompilerServices.EnumeratorCancellation] System.Threading.CancellationToken cancellationToken = default)
         {
             yield return new OllamaChatResponseChunk
             {

@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Ollama.Client;
+using Ollama.Client.Interfaces;
+using Ollama.Client.Models;
 using Ollama.Protocol.Models;
 
 namespace Ollama.Client.Tests.TestDoubles;

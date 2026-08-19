@@ -39,6 +39,8 @@
     <Project Path="ScreenX.BaseTests/ScreenX.BaseTests.csproj">
       <Platform Solution="*|x64" Project="x64" />
     </Project>
+    <Project Path="ScriptedSvgWpf/ScriptedSvgWpf.csproj" />
+    <Project Path="ScriptedSvgWpf.Tests/ScriptedSvgWpf.Tests.csproj" />
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="../Libraries/Libraries.props" />

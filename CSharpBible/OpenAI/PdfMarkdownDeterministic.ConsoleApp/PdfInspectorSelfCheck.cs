@@ -7,14 +7,20 @@ namespace PdfMarkdownDeterministic.ConsoleApp;
 
 internal static class PdfInspectorSelfCheck
 {
-    public static void Run()
+    public static void Run(string workingDirectory)
+        => Run(workingDirectory, PdfStructureInspector.Inspect);
+
+    internal static void Run(string workingDirectory, Func<string, PdfDocumentInspection> inspect)
     {
-        string path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".pdf");
+        ArgumentException.ThrowIfNullOrWhiteSpace(workingDirectory);
+        ArgumentNullException.ThrowIfNull(inspect);
+        Directory.CreateDirectory(workingDirectory);
+        string path = Path.Combine(workingDirectory, Guid.NewGuid().ToString("N") + ".pdf");
         File.WriteAllBytes(path, Encoding.ASCII.GetBytes(CreateSyntheticPdf()));
 
         try
         {
-            PdfDocumentInspection inspection = PdfStructureInspector.Inspect(path);
+            PdfDocumentInspection inspection = inspect(path);
 
             if (!inspection.HasTextOperators || !inspection.HasVectorDrawingHints || !inspection.HasToUnicodeMap || inspection.ImageObjectCount < 1 || inspection.XObjectReferenceCount < 1 || inspection.InlineImageMarkerCount < 1 || !inspection.Fonts.Contains("Helvetica") || !inspection.XObjects.Contains("Im0") || !inspection.ContentHints.Contains("Do operator present") || !inspection.ContentHints.Contains("ToUnicode map present"))
             {

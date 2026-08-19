@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,7 +12,8 @@ public sealed class WorkspacePathPolicyTests
     [TestMethod]
     public void ResolveWorkspacePath_AllowsPathInsideWorkspace()
     {
-        string workspaceRoot = Path.GetTempPath();
+        using TestWorkspace workspace = new();
+        string workspaceRoot = workspace.RootPath;
         WorkspacePathPolicy policy = new(workspaceRoot);
 
         string resolved = policy.ResolveWorkspacePath("sub\\file.txt");
@@ -21,8 +24,8 @@ public sealed class WorkspacePathPolicyTests
     [TestMethod]
     public void ResolveWorkspacePath_BlocksPathOutsideWorkspace()
     {
-        string workspaceRoot = Path.Combine(Path.GetTempPath(), "agent-policy-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(workspaceRoot);
+        using TestWorkspace workspace = new();
+        string workspaceRoot = workspace.RootPath;
         WorkspacePathPolicy policy = new(workspaceRoot);
 
         Assert.ThrowsExactly<InvalidOperationException>(() => policy.ResolveWorkspacePath("..\\outside.txt"));
@@ -31,8 +34,8 @@ public sealed class WorkspacePathPolicyTests
     [TestMethod]
     public void ResolveWorkspacePath_UsesWorkspaceRootForWhitespaceInput()
     {
-        string workspaceRoot = Path.Combine(Path.GetTempPath(), "agent-policy-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(workspaceRoot);
+        using TestWorkspace workspace = new();
+        string workspaceRoot = workspace.RootPath;
         WorkspacePathPolicy policy = new(workspaceRoot);
 
         string resolved = policy.ResolveWorkspacePath("   ");

@@ -7,7 +7,7 @@ namespace Ollama.Samples.TextAnalysis;
 
 internal static class Program
 {
-    private static async Task<int> Main(string[] args)
+    internal static async Task<int> Main(string[] args)
     {
         ContentAnalysisMode mode = ResolveMode(args);
         string[] inputArguments = FilterInputArguments(args);
@@ -55,7 +55,7 @@ internal static class Program
         return 0;
     }
 
-    private static ContentAnalysisMode ResolveMode(string[] args)
+    internal static ContentAnalysisMode ResolveMode(string[] args)
     {
         if (Array.Exists(args, static argument => string.Equals(argument, "--text", StringComparison.OrdinalIgnoreCase)))
         {
@@ -70,7 +70,7 @@ internal static class Program
         return ContentAnalysisMode.Auto;
     }
 
-    private static string[] FilterInputArguments(string[] args)
+    internal static string[] FilterInputArguments(string[] args)
     {
         return Array.FindAll(args, static argument => !string.Equals(argument, "--text", StringComparison.OrdinalIgnoreCase)
             && !string.Equals(argument, "--csharp", StringComparison.OrdinalIgnoreCase));

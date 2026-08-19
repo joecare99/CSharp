@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net.Mime;
 using System.Net.Http;
@@ -19,13 +19,17 @@ internal class Program
         PropertyNameCaseInsensitive = true,
     };
 
-    private static async Task<int> Main(string[] args)
+    internal static Func<HttpClient> HttpClientFactory { get; set; } = CreateHttpClient;
+
+    internal static HttpClient CreateHttpClient() => new();
+
+    internal static async Task<int> Main(string[] args)
     {
         string prompt = args.Length > 0
             ? string.Join(" ", args)
-            : "Erkläre KI in einem Satz.";
+            : "ErklÃ¤re KI in einem Satz.";
 
-        using HttpClient httpClient = new();
+        using HttpClient httpClient = HttpClientFactory();
         OllamaGenerateRequest request = new()
         {
             Model = DefaultModel,
@@ -33,6 +37,7 @@ internal class Program
             Stream = true,
         };
 
+        int exitCode;
         try
         {
             httpClient.Timeout = Timeout.InfiniteTimeSpan;
@@ -118,14 +123,16 @@ internal class Program
 
             Console.WriteLine();
 
-            return 0;
+            exitCode = 0;
         }
         catch (Exception ex)
         {
             Console.WriteLine("Aufruf an Ollama fehlgeschlagen.");
             Console.WriteLine(ex.Message);
-            return 1;
+            exitCode = 1;
         }
+
+        return exitCode;
     }
 }
 

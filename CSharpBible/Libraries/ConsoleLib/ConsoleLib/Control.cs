@@ -17,6 +17,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 
 namespace ConsoleLib;
@@ -733,7 +734,7 @@ public class Control : IControl
         if (!CanProcessInput)
             return;
         bool xFlag = false;
-        foreach (var ctrl in Children)
+        foreach (var ctrl in Children.ToList())
         {
             if (ctrl.Over(M.MousePos))
             {

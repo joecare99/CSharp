@@ -1,10 +1,8 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
 using Ollama.Tools.ContentAnalysis;
 using Ollama.Wpf.TextAnalysis.Services;
 
@@ -16,6 +14,7 @@ namespace Ollama.Wpf.TextAnalysis.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IContentAnalysisService _contentAnalysisService;
+    private readonly ITextFilePicker _textFilePicker;
     private string? _loadedFileName;
 
     [ObservableProperty]
@@ -56,9 +55,10 @@ public partial class MainWindowViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(AnalyzeTextCommand))]
     private bool _isBusy;
 
-    public MainWindowViewModel(IContentAnalysisService contentAnalysisService)
+    public MainWindowViewModel(IContentAnalysisService contentAnalysisService, ITextFilePicker textFilePicker)
     {
         _contentAnalysisService = contentAnalysisService ?? throw new ArgumentNullException(nameof(contentAnalysisService));
+        _textFilePicker = textFilePicker ?? throw new ArgumentNullException(nameof(textFilePicker));
     }
 
     private bool CanAnalyzeText() => !IsBusy && !string.IsNullOrWhiteSpace(InputText);
@@ -105,21 +105,15 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task LoadFileAsync()
     {
-        OpenFileDialog dialog = new()
-        {
-            Filter = "Text files|*.txt;*.md;*.log|All files|*.*",
-            CheckFileExists = true,
-            Multiselect = false,
-        };
-
-        if (dialog.ShowDialog() != true)
+        TextFileSelection? selection = await _textFilePicker.PickAndReadAsync();
+        if (selection is null)
         {
             return;
         }
 
-        InputText = await File.ReadAllTextAsync(dialog.FileName);
-        _loadedFileName = dialog.FileName;
-        StatusText = $"Loaded {Path.GetFileName(dialog.FileName)}.";
+        InputText = selection.Content;
+        _loadedFileName = selection.FilePath;
+        StatusText = $"Loaded {System.IO.Path.GetFileName(selection.FilePath)}.";
     }
 
     [RelayCommand]

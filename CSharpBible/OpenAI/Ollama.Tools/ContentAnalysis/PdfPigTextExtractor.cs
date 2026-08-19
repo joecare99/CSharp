@@ -41,7 +41,7 @@ public sealed class PdfPigTextExtractor : IPdfTextExtractor
             List<string> pageTexts = [];
             foreach (Page page in document.GetPages())
             {
-                pageTexts.Add(page.Text ?? string.Empty);
+                pageTexts.Add(page.Text);
             }
 
             string extractedText = string.Join(Environment.NewLine, pageTexts).Trim();

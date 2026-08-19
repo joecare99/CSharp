@@ -9,4 +9,9 @@
         <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
         <PackageReference Include="UglyToad.PdfPig" />
     </ItemGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Ollama.Tools.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 </Project>

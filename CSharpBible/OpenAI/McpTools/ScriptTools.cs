@@ -10,6 +10,8 @@ public sealed class ScriptTools
     private const string SourceDependenciesScript = @"C:\Projekte\CSharp\Tools\Skills\SourceDependencies\Get-SourceFileDependencies.ps1";
     private const string TestCoverageScript = @"C:\Projekte\CSharp\Tools\Skills\TestCoverage\Invoke-TestProjectCoverage.ps1";
 
+    internal static Func<IEnumerable<string>, Task<string>> PowerShellExecutionRunner { get; set; } = RunPowerShellAsync;
+
     [McpServerTool, Description("Lists direct dependencies for one or more C# source files.")]
     public async Task<string> GetSourceFileDependenciesAsync(
         [Description("One or more C# source file paths to analyze.")] string[] sourceFilePath,
@@ -52,7 +54,7 @@ public sealed class ScriptTools
             arguments.Add("-AsJson");
         }
 
-        return await RunPowerShellAsync(arguments);
+        return await PowerShellExecutionRunner(arguments);
     }
 
     [McpServerTool, Description("Runs a test project with coverage and returns the coverage summary.")]
@@ -149,10 +151,10 @@ public sealed class ScriptTools
             arguments.Add("-AsJson");
         }
 
-        return await RunPowerShellAsync(arguments);
+        return await PowerShellExecutionRunner(arguments);
     }
 
-    private static async Task<string> RunPowerShellAsync(IEnumerable<string> arguments)
+    internal static async Task<string> RunPowerShellAsync(IEnumerable<string> arguments)
     {
         var startInfo = new ProcessStartInfo
         {

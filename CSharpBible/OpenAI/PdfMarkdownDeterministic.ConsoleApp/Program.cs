@@ -11,7 +11,11 @@ namespace PdfMarkdownDeterministic.ConsoleApp;
 
 internal static class Program
 {
-    private static async Task<int> Main(string[] args)
+    internal static Func<IPdfTextExtractor> PdfTextExtractorFactory { get; set; } = CreatePdfTextExtractor;
+
+    internal static IPdfTextExtractor CreatePdfTextExtractor() => new PdfPigTextExtractor();
+
+    internal static async Task<int> Main(string[] args)
     {
         if (args.Length < 2)
         {
@@ -28,7 +32,7 @@ internal static class Program
             return 1;
         }
 
-        IPdfTextExtractor extractor = new PdfPigTextExtractor();
+        IPdfTextExtractor extractor = PdfTextExtractorFactory();
         PdfExtractionResult extractionResult = await extractor.ExtractAsync(new PdfExtractionRequest
         {
             FilePath = inputPdfPath,
@@ -42,14 +46,15 @@ internal static class Program
 
         PdfDocumentInspection inspection = PdfStructureInspector.Inspect(inputPdfPath);
         string markdown = BuildMarkdown(inputPdfPath, extractionResult, inspection);
-        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(outputMarkdownPath)) ?? ".");
+        string outputDirectory = Path.GetFullPath(Path.Combine(outputMarkdownPath, ".."));
+        Directory.CreateDirectory(outputDirectory);
         await File.WriteAllTextAsync(outputMarkdownPath, markdown, Encoding.UTF8);
 
         Console.WriteLine($"Markdown written to {outputMarkdownPath}");
         return 0;
     }
 
-    private static string BuildMarkdown(string inputPdfPath, PdfExtractionResult extractionResult, PdfDocumentInspection inspection)
+    internal static string BuildMarkdown(string inputPdfPath, PdfExtractionResult extractionResult, PdfDocumentInspection inspection)
     {
         StringBuilder builder = new();
         builder.AppendLine($"# {Path.GetFileNameWithoutExtension(inputPdfPath)}");
@@ -147,10 +152,7 @@ internal static class Program
             builder.AppendLine($"  - Text operators: {(pageObject.HasTextOperators ? "yes" : "no")}");
             builder.AppendLine($"  - Vector drawing hints: {(pageObject.HasVectorDrawingHints ? "yes" : "no")}");
             builder.AppendLine($"  - ToUnicode map: {(pageObject.HasToUnicodeMap ? "yes" : "no")}");
-            if (!string.IsNullOrWhiteSpace(pageObject.Type) || !string.IsNullOrWhiteSpace(pageObject.Subtype))
-            {
-                builder.AppendLine($"  - Type/Subtype: {pageObject.Type ?? "unknown"}/{pageObject.Subtype ?? "unknown"}");
-            }
+            builder.AppendLine($"  - Type/Subtype: {pageObject.Type}/{pageObject.Subtype ?? "unknown"}");
             if (pageObject.References.Count > 0)
             {
                 builder.AppendLine("  - References:");

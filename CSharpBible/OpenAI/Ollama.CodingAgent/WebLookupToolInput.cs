@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 namespace Ollama.CodingAgent;
 
 /// <summary>

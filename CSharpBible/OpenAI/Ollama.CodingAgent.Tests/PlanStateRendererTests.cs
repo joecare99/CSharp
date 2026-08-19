@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Ollama.CodingAgent.Tests;

@@ -7,7 +7,9 @@ internal static class Program
     private const string ApiKeyEnvironmentVariable = "OPENAI_API_KEY";
     private const string DefaultModel = "gpt-4o-mini";
 
-    private static async Task<int> Main(string[] args)
+    internal static Func<string, IOpenAIChatCompletionClient> ChatClientFactory { get; set; } = CreateChatClient;
+
+    internal static async Task<int> Main(string[] args)
     {
         string? apiKey = Environment.GetEnvironmentVariable(ApiKeyEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(apiKey))
@@ -23,7 +25,7 @@ internal static class Program
 
         try
         {
-            ChatClient client = new(model: DefaultModel, apiKey: apiKey);
+            IOpenAIChatCompletionClient client = ChatClientFactory(apiKey);
             ChatCompletion completion = await client.CompleteChatAsync(prompt);
 
             Console.WriteLine($"Model: {DefaultModel}");
@@ -51,4 +53,25 @@ internal static class Program
             return 2;
         }
     }
+
+    internal static IOpenAIChatCompletionClient CreateChatClient(string apiKey)
+        => new OpenAIChatCompletionClient(new ChatClient(model: DefaultModel, apiKey: apiKey));
+}
+
+internal interface IOpenAIChatCompletionClient
+{
+    Task<ChatCompletion> CompleteChatAsync(string prompt);
+}
+
+internal sealed class OpenAIChatCompletionClient : IOpenAIChatCompletionClient
+{
+    private readonly ChatClient _chatClient;
+
+    public OpenAIChatCompletionClient(ChatClient chatClient)
+    {
+        _chatClient = chatClient ?? throw new ArgumentNullException(nameof(chatClient));
+    }
+
+    public async Task<ChatCompletion> CompleteChatAsync(string prompt)
+        => await _chatClient.CompleteChatAsync(prompt);
 }

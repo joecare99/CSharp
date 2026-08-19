@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,6 +18,7 @@ namespace Ollama.CodingAgent;
 public sealed class RunDotnetTestTool : IOllamaTool
 {
     private readonly WorkspacePathPolicy _workspacePathPolicy;
+    private readonly Func<ProcessStartInfo, CancellationToken, Task<(int ExitCode, string Output, string Error)>> _processRunner;
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -26,8 +29,21 @@ public sealed class RunDotnetTestTool : IOllamaTool
     /// </summary>
     /// <param name="workspacePathPolicy">The workspace path policy.</param>
     public RunDotnetTestTool(WorkspacePathPolicy workspacePathPolicy)
+        : this(workspacePathPolicy, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance with a process execution seam.
+    /// </summary>
+    /// <param name="workspacePathPolicy">The workspace path policy.</param>
+    /// <param name="processRunner">The process runner used to execute dotnet.</param>
+    public RunDotnetTestTool(
+        WorkspacePathPolicy workspacePathPolicy,
+        Func<ProcessStartInfo, CancellationToken, Task<(int ExitCode, string Output, string Error)>>? processRunner)
     {
         _workspacePathPolicy = workspacePathPolicy ?? throw new ArgumentNullException(nameof(workspacePathPolicy));
+        _processRunner = processRunner ?? RunProcessAsync;
     }
 
     /// <inheritdoc />
@@ -140,6 +156,24 @@ public sealed class RunDotnetTestTool : IOllamaTool
             startInfo.ArgumentList.Add(payload.Framework);
         }
 
+        (int exitCode, string output, string error) processResult = await _processRunner(startInfo, cancellationToken);
+        string combined = CombineOutput(processResult.output, processResult.error);
+        if (combined.Length > 7000)
+        {
+            combined = combined[..7000];
+        }
+
+        return new OllamaToolResult
+        {
+            Success = processResult.exitCode == 0,
+            Output = combined,
+        };
+    }
+
+    private static async Task<(int ExitCode, string Output, string Error)> RunProcessAsync(
+        ProcessStartInfo startInfo,
+        CancellationToken cancellationToken)
+    {
         using Process process = new()
         {
             StartInfo = startInfo,
@@ -148,20 +182,7 @@ public sealed class RunDotnetTestTool : IOllamaTool
         Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
         Task<string> errorTask = process.StandardError.ReadToEndAsync();
         await process.WaitForExitAsync(cancellationToken);
-
-        string output = await outputTask;
-        string error = await errorTask;
-        string combined = CombineOutput(output, error);
-        if (combined.Length > 7000)
-        {
-            combined = combined[..7000];
-        }
-
-        return new OllamaToolResult
-        {
-            Success = process.ExitCode == 0,
-            Output = combined,
-        };
+        return (process.ExitCode, await outputTask, await errorTask);
     }
 
     private static string CombineOutput(string output, string error)

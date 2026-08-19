@@ -1,0 +1,21 @@
+<Project>
+    <PropertyGroup>
+        <TargetFrameworks>net8.0-windows</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <EnableMSTestRunner>true</EnableMSTestRunner>
+        <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    </PropertyGroup>
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="MSTest" />
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="coverlet.collector" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Ollama.CodingAgent.Console\Ollama.CodingAgent.Console.csproj" />
+        <ProjectReference Include="..\..\Data\CommandlineHelper\CommandlineHelper.csproj" />
+    </ItemGroup>
+</Project>

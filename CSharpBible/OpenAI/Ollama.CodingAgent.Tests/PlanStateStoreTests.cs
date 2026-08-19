@@ -1,3 +1,5 @@
+using Ollama.CodingAgent.Models;
+using Ollama.CodingAgent.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -11,7 +13,8 @@ public sealed class PlanStateStoreTests
     [TestMethod]
     public async Task SaveAsyncAndLoadAsync_PreserveGoalDependenciesAndStatuses()
     {
-        string filePath = Path.Combine(Path.GetTempPath(), $"ollama-plan-{Guid.NewGuid():N}.json");
+        using TestWorkspace workspace = new();
+        string filePath = workspace.GetPath("ollama-plan.json");
         try
         {
             PlanState plan = SubtaskPlanner.CreateInitialPlan("Run tests for the coding agent.");

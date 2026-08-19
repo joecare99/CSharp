@@ -1,6 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Ollama.Client;
+using Ollama.Client.Interfaces;
+using Ollama.Client.Models;
+using Ollama.Client.Services;
 using Ollama.Client.Models;
 
 namespace Ollama.Tools.Abstractions;

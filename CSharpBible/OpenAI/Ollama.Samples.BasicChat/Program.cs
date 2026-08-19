@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Ollama.Client;
+using Ollama.Client.Interfaces;
+using Ollama.Client.Models;
+using Ollama.Client.Services;
 using Ollama.Client.Models;
 
 namespace Ollama.Samples.BasicChat;
@@ -14,7 +16,14 @@ internal static class Program
     private const string DefaultEndpoint = "http://localhost:11434/";
     private const string DefaultModel = "qwen3.5:4b";
 
-    private static async Task<int> Main(string[] args)
+    internal static Func<HttpClient> HttpClientFactory { get; set; } = CreateHttpClient;
+
+    internal static HttpClient CreateHttpClient() => new()
+    {
+        Timeout = Timeout.InfiniteTimeSpan,
+    };
+
+    internal static async Task<int> Main(string[] args)
     {
         string endpointValue = Environment.GetEnvironmentVariable("OLLAMA_ENDPOINT") ?? DefaultEndpoint;
         string model = Environment.GetEnvironmentVariable("OLLAMA_MODEL") ?? DefaultModel;
@@ -22,10 +31,7 @@ internal static class Program
             ? string.Join(" ", args)
             : "Explain artificial intelligence in one short sentence.";
 
-        using HttpClient httpClient = new()
-        {
-            Timeout = Timeout.InfiniteTimeSpan,
-        };
+        using HttpClient httpClient = HttpClientFactory();
         OllamaClient client = new(httpClient, new OllamaClientOptions(new Uri(endpointValue)));
         OllamaChatClient chatClient = client.GetChatClient(model);
 
