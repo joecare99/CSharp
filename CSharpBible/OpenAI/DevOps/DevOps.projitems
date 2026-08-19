@@ -45,6 +45,8 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\CoverageWave-Ollama-Tools-AlreadyGreen-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\DocumentBaseCanonicalModel-01-ClassLayout.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\DocumentBaseContracts-01.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\OpenAIOllamaCodingAgent-Sprint9-01-LlmDebugTrafficLogging.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\OpenAIOllamaCodingAgent-Sprint9-02-LlmDebugTrafficLoggingTests.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\PDFAnalysis-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\PDFInternalStructureDiagnostics-01.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\PDFToDocumentModelImportApi-01-InterfaceSketch.md" />
