@@ -33,7 +33,7 @@ public class Cifar100Record
     {
         Label = (ECifar100Category)stream.ReadByte();    
         SubCategory = (byte)stream.ReadByte();    
-        stream.Read(ImageData, 0, 3072);
+        stream.ReadExactly(ImageData);
     }
 
 }
