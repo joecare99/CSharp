@@ -170,17 +170,23 @@ public sealed class AgentRunner
                 });
                 return completion;
             }
-            catch (OperationCanceledException ex) when (!cancellationToken.IsCancellationRequested && attempt < _runtimeSettings.RetryCount)
+            catch (OperationCanceledException ex) when (cancellationToken.IsCancellationRequested)
             {
-                retriesConsumed++;
-                lastException = ex;
-                RecordFailure(correlationId, iteration, attempt, stopwatch, ex);
+                throw;
             }
-            catch (Exception ex) when (attempt < _runtimeSettings.RetryCount)
+            catch (Exception ex) when (IsTransient(ex))
             {
                 retriesConsumed++;
                 lastException = ex;
                 RecordFailure(correlationId, iteration, attempt, stopwatch, ex);
+                if (attempt < _runtimeSettings.RetryCount)
+                {
+                    TimeSpan backoffDelay = TimeSpan.FromTicks(_runtimeSettings.RetryBackoff.Ticks * (1L << attempt));
+                    if (backoffDelay > TimeSpan.Zero)
+                    {
+                        await Task.Delay(backoffDelay, cancellationToken);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -190,10 +196,21 @@ public sealed class AgentRunner
             }
         }
 
-        throw new InvalidOperationException(
-            $"Model completion failed after {_runtimeSettings.RetryCount + 1} attempts.",
-            lastException);
+        System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(lastException!).Throw();
+        throw new InvalidOperationException($"Model completion failed after {_runtimeSettings.RetryCount + 1} attempts.", lastException);
     }
+
+    /// <summary>
+    /// Determines whether the exception represents a transient provider failure worth retrying.
+    /// </summary>
+    /// <param name="exception">The observed exception.</param>
+    /// <returns>True when the failure is classified as transient.</returns>
+    internal static bool IsTransient(Exception exception)
+        => exception is System.Net.Http.HttpRequestException
+            or TimeoutException
+            or System.IO.IOException
+            or System.Net.Sockets.SocketException
+            or OperationCanceledException;
 
     private void RecordFailure(
         string correlationId,

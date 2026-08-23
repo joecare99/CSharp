@@ -34,10 +34,27 @@ public static class OllamaCodingAgentServiceCollectionExtensions
         services.AddSingleton<BaseLib.Models.Interfaces.ILog>(provider =>
             provider.GetRequiredService<FileLlmTrafficLogger>());
         services.AddSingleton(new OllamaClientOptions(new Uri(cliOptions.Endpoint)));
-        services.AddSingleton(_ => new HttpClient
-        {
-            Timeout = System.Threading.Timeout.InfiniteTimeSpan,
-        });
+
+        // Provider traffic can stream for many minutes; the AgentRunner owns step timeouts.
+        // Resilience retries transient failures (timeouts, 5xx, 408, 429) with exponential backoff.
+        services.AddHttpClient(OllamaHttpClientNames.Agent, client =>
+            {
+                client.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
+            })
+            .AddStandardResilienceHandler(options =>
+            {
+                options.TotalRequestTimeout.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
+                options.AttemptTimeout.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
+            });
+
+        // Web lookups are short-lived and bounded; keep the standard resilience defaults.
+        services.AddHttpClient(OllamaHttpClientNames.WebLookup, client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+
+        services.AddSingleton(provider =>
+            provider.GetRequiredService<IHttpClientFactory>().CreateClient(OllamaHttpClientNames.Agent));
         services.AddSingleton(provider =>
         {
             HttpClient httpClient = provider.GetRequiredService<HttpClient>();
@@ -64,7 +81,9 @@ public static class OllamaCodingAgentServiceCollectionExtensions
                 provider.GetRequiredService<ILlmTrafficLogger>()));
         services.AddSingleton<AgentRunner>();
         services.AddSingleton(provider => new WorkspacePathPolicy(cliOptions.WorkspaceRoot));
-        services.AddSingleton<CodingDelegationToolRegistryFactory>();
+        services.AddSingleton(provider => new CodingDelegationToolRegistryFactory(
+            provider.GetRequiredService<WorkspacePathPolicy>(),
+            provider.GetRequiredService<IHttpClientFactory>()));
         services.AddSingleton<IOllamaToolRegistry>(provider =>
             provider.GetRequiredService<CodingDelegationToolRegistryFactory>().CreateRegistry());
         services.AddSingleton<OllamaToolOrchestrator>();

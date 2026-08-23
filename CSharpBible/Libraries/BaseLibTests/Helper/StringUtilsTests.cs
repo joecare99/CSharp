@@ -457,6 +457,167 @@ public class StringUtilsTests
     }
 
     /// <summary>
+    /// Verifies that a mask without placeholders is matched case-insensitively.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingMatchesLiteralCaseInsensitively()
+    {
+        var fills = new List<KeyValuePair<string, string>>();
+
+        var result = StringUtils.TryPlaceHolderMatching("Hello WORLD", "hello world", fills);
+
+        Assert.IsTrue(result);
+        Assert.AreEqual(0, fills.Count);
+    }
+
+    /// <summary>
+    /// Verifies that a placeholder bounded by literal text captures and trims its value.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingCapturesTrimmedValue()
+    {
+        var fills = new List<KeyValuePair<string, string>>();
+
+        var result = StringUtils.TryPlaceHolderMatching("Hello,   Alice   !", "hello, <Name>!", fills);
+
+        Assert.IsTrue(result);
+        CollectionAssert.AreEqual(
+            new[] { new KeyValuePair<string, string>("<Name>", "Alice") },
+            fills);
+    }
+
+    /// <summary>
+    /// Verifies that a charset callback can reject a placeholder value without recording it.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingRejectsValueRejectedByCharsetCallback()
+    {
+        var fills = CreateSeededWildcardFill();
+
+        var result = StringUtils.TryPlaceHolderMatching(
+            "id=not-a-number",
+            "id=<Integer:Id>",
+            fills,
+            testCharset);
+
+        Assert.IsFalse(result);
+        CollectionAssert.AreEqual(
+            new[] { new KeyValuePair<string, string>(RootPlaceholder, "0") },
+            fills);
+    }
+
+    /// <summary>
+    /// Verifies that a failed recursive branch rolls back all assignments made by that branch.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingRollsBackAssignmentsWhenSuffixDoesNotMatch()
+    {
+        var fills = CreateSeededWildcardFill();
+
+        var result = StringUtils.TryPlaceHolderMatching("prefix-value-X", "prefix-<Value>-Y", fills);
+
+        Assert.IsFalse(result);
+        CollectionAssert.AreEqual(
+            new[] { new KeyValuePair<string, string>(RootPlaceholder, "0") },
+            fills);
+    }
+
+    /// <summary>
+    /// Verifies that null probe and mask values are treated as empty strings.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingTreatsNullProbeAndMaskAsEmpty()
+    {
+        var fills = new List<KeyValuePair<string, string>>();
+
+        Assert.IsTrue(StringUtils.TryPlaceHolderMatching(null!, "", fills));
+        Assert.IsTrue(StringUtils.TryPlaceHolderMatching("", null!, fills));
+        Assert.AreEqual(0, fills.Count);
+    }
+
+    /// <summary>
+    /// Verifies that an empty value can be assigned when the placeholder is bounded by matching literals.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingAllowsEmptyPlaceholderValue()
+    {
+        var fills = new List<KeyValuePair<string, string>>();
+
+        var result = StringUtils.TryPlaceHolderMatching("prefixsuffix", "prefix<Value>suffix", fills);
+
+        Assert.IsTrue(result);
+        CollectionAssert.AreEqual(
+            new[] { new KeyValuePair<string, string>("<Value>", "") },
+            fills);
+    }
+
+    /// <summary>
+    /// Verifies that a placeholder without a closing angle bracket is rejected.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingRejectsUnclosedPlaceholder()
+    {
+        var fills = CreateSeededWildcardFill();
+
+        var result = StringUtils.TryPlaceHolderMatching("prefix-value", "prefix-<Value", fills);
+
+        Assert.IsFalse(result);
+        CollectionAssert.AreEqual(
+            new[] { new KeyValuePair<string, string>(RootPlaceholder, "0") },
+            fills);
+    }
+
+    /// <summary>
+    /// Verifies that a null fill list is rejected before matching starts.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingThrowsForNullFillList()
+    {
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
+            StringUtils.TryPlaceHolderMatching("value", "<Value>", null!));
+    }
+
+    /// <summary>
+    /// Verifies that several placeholders are resolved recursively from left to right.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingCapturesMultipleValues()
+    {
+        var fills = new List<KeyValuePair<string, string>>();
+
+        var result = StringUtils.TryPlaceHolderMatching("ID=42;Name=Alice", "id=<Id>;name=<Name>", fills);
+
+        Assert.IsTrue(result);
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                new KeyValuePair<string, string>("<Id>", "42"),
+                new KeyValuePair<string, string>("<Name>", "Alice")
+            },
+            fills);
+    }
+
+    /// <summary>
+    /// Verifies that the matcher tries a later anchor when the first possible split cannot complete the mask.
+    /// </summary>
+    [TestMethod]
+    public void TryPlaceHolderMatchingBacktracksAcrossRepeatedAnchors()
+    {
+        var fills = new List<KeyValuePair<string, string>>();
+
+        var result = StringUtils.TryPlaceHolderMatching("key=one=two;", "<Key>=<Value>;", fills);
+
+        Assert.IsTrue(result);
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                new KeyValuePair<string, string>("<Key>", "key"),
+                new KeyValuePair<string, string>("<Value>", "one=two")
+            },
+            fills);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="StringUtils.IntoString(string[], IList{string}?, int)"/> creates a new array when no target is supplied.
     /// </summary>
     [TestMethod]

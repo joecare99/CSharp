@@ -108,14 +108,13 @@ public sealed class AgentRunnerTests
 
         AgentRunner runner = new(modelClient, CreateBaselineSettings());
 
-        InvalidOperationException exception = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => runner.RunAsync(new AgentRunRequest
+        TimeoutException exception = await Assert.ThrowsExactlyAsync<TimeoutException>(() => runner.RunAsync(new AgentRunRequest
         {
             Prompt = "Failure scenario",
             SystemPrompt = "System",
         }));
 
-        StringAssert.Contains(exception.Message, "failed after");
-        Assert.IsNotNull(exception.InnerException);
+        StringAssert.Contains(exception.Message, "always failing");
     }
 
     [TestMethod]
@@ -186,6 +185,26 @@ public sealed class AgentRunnerTests
         Assert.AreEqual(0, failure.Attempt);
     }
 
+    [TestMethod]
+    public async Task RunAsync_DoesNotRetryNonTransientExceptions()
+    {
+        IAgentModelClient modelClient = Substitute.For<IAgentModelClient>();
+        modelClient
+            .CompleteAsync(Arg.Any<IReadOnlyList<AgentMessage>>(), Arg.Any<CancellationToken>())
+            .Returns(_ => Task.FromException<string>(new ArgumentException("not transient")));
+
+        AgentRunner runner = new(modelClient, CreateBaselineSettings());
+
+        ArgumentException exception = await Assert.ThrowsExactlyAsync<ArgumentException>(() => runner.RunAsync(new AgentRunRequest
+        {
+            Prompt = "Non transient failure",
+            SystemPrompt = "System",
+        }));
+
+        StringAssert.Contains(exception.Message, "not transient");
+        await modelClient.Received(1).CompleteAsync(Arg.Any<IReadOnlyList<AgentMessage>>(), Arg.Any<CancellationToken>());
+    }
+
     private static OllamaAgentRuntimeSettings CreateBaselineSettings()
-        => new(OllamaAgentRuntimeSettings.DefaultStepTimeout, OllamaAgentRuntimeSettings.DefaultRetryCount, OllamaAgentRuntimeSettings.DefaultMaxIterations);
+        => new(OllamaAgentRuntimeSettings.DefaultStepTimeout, OllamaAgentRuntimeSettings.DefaultRetryCount, OllamaAgentRuntimeSettings.DefaultMaxIterations, retryBackoff: TimeSpan.Zero);
 }

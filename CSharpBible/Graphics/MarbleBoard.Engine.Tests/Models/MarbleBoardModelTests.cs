@@ -73,4 +73,28 @@ public sealed class MarbleBoardModelTests
         Assert.IsNotNull(board.GetMarble(new BoardCoordinate(3, 1)));
         Assert.AreEqual(new BoardCoordinate(2, 1), board.SelectedCoordinate);
     }
+
+    [TestMethod]
+    public void BeginDrag_AndCancelDrag_ClearDragStateAndRaiseEvents()
+    {
+        MarbleBoardModel board = MarbleBoardModel.CreateSampleBoard();
+        int stateChanges = 0;
+        board.StateChanged += (_, _) => stateChanges++;
+
+        Assert.IsTrue(board.BeginDrag(new BoardCoordinate(2, 1)));
+        Assert.AreEqual(new BoardCoordinate(2, 1), board.DragOrigin);
+        board.CancelDrag();
+
+        Assert.IsNull(board.DragOrigin);
+        Assert.AreEqual(2, stateChanges);
+    }
+
+    [TestMethod]
+    public void GetMarble_OutsideBoard_ReturnsNull()
+    {
+        MarbleBoardModel board = new(2, 2);
+
+        Assert.IsFalse(board.IsInside(new BoardCoordinate(-1, 0)));
+        Assert.IsNull(board.GetMarble(new BoardCoordinate(2, 0)));
+    }
 }

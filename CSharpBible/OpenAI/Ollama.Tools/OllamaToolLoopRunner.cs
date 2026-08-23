@@ -63,9 +63,8 @@ public sealed class OllamaToolLoopRunner
         };
 
         Ollama.Client.Models.OllamaChatCompletion completion = await _chatRunner.CompleteChatAsync(options, cancellationToken);
-        OllamaToolCall? toolCall = TryGetNativeToolCall(completion.ToolCalls)
-            ?? JsonSerializer.Deserialize<OllamaToolCall>(completion.Content);
-        if (toolCall is null || string.IsNullOrWhiteSpace(toolCall.ToolName))
+        OllamaToolCall? toolCall = TryGetNativeToolCall(completion.ToolCalls);
+        if (toolCall is null && (!TryParseToolCall(completion.Content, out toolCall) || toolCall is null))
         {
             return new OllamaToolInvocationResult
             {

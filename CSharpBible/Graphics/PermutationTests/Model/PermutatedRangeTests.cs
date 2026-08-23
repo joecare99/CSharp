@@ -6,7 +6,7 @@ namespace Permutation.Model.Tests
     [TestClass()]
     public class PermutatedRangeTests
     {
-        [DataTestMethod()]
+        [TestMethod()]
         [DataRow(1, 1,new int[] {0,0,0,0 } )]
         [DataRow(2, 2, new int[] { 0, 1, 0, 1 })]
         [DataRow(4, 4, new int[] { 1, 5, 2, 4 })]
@@ -53,6 +53,25 @@ namespace Permutation.Model.Tests
                     r += (int)Math.Abs(s[i] - m);
                 }
                 Console.WriteLine($"{j}:{r}");
+            }
+        }
+
+        [TestMethod]
+        public void Indexer_ReturnsMinusOne_ForTheFirstIndexAfterTheRange()
+        {
+            var range = new PermutatedRange(8, 0);
+
+            Assert.AreEqual(-1, range[8]);
+        }
+
+        [TestMethod]
+        public void ZeroPermutationCount_PreservesTheIdentityRange()
+        {
+            var range = new PermutatedRange(8, 0);
+
+            for (int index = 0; index < 8; index++)
+            {
+                Assert.AreEqual(index, range[index]);
             }
         }
     }

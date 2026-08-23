@@ -81,7 +81,7 @@ public sealed class FinalCoreCoverageTests
             .Returns(
                 Task.FromCanceled<string>(timeoutCancellation.Token),
                 Task.FromResult("answer"));
-        AgentRunResult retryResult = await new AgentRunner(retryingClient, new OllamaAgentRuntimeSettings(TimeSpan.FromSeconds(1), 1, 1))
+        AgentRunResult retryResult = await new AgentRunner(retryingClient, new OllamaAgentRuntimeSettings(TimeSpan.FromSeconds(1), 1, 1, retryBackoff: TimeSpan.Zero))
             .RunAsync(new AgentRunRequest { Prompt = "prompt", SystemPrompt = "system" });
         Assert.AreEqual(1, retryResult.RetryAttemptsUsed);
 

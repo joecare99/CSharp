@@ -7,7 +7,7 @@ public class Layer
 {
     public float[] Neurons;      // Werte der Neuronen in diesem Layer
     public float[] Biases;       // Schwellenwerte
-    public float[][] Weights;    // Gewichte zum vorherigen Layer
+    public float[][] Weights = [];    // Gewichte zum vorherigen Layer
     public float[] Deltas;       // Fehlerwerte für Backpropagation
     public bool[] DropoutMask;    // Dropaut-Maske
     public Func<float, float> activation;

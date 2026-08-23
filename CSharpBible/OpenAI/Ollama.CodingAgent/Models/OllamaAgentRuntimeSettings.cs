@@ -18,6 +18,11 @@ public sealed class OllamaAgentRuntimeSettings
     public static int DefaultRetryCount => 3;
 
     /// <summary>
+    /// Gets the baseline delay before the first retry of a transient failure.
+    /// </summary>
+    public static TimeSpan DefaultRetryBackoff => TimeSpan.FromSeconds(2);
+
+    /// <summary>
     /// Gets the baseline maximum iteration cap used for one run.
     /// </summary>
     public static int DefaultMaxIterations => 80;
@@ -28,12 +33,16 @@ public sealed class OllamaAgentRuntimeSettings
     /// <param name="stepTimeout">The timeout for one model step.</param>
     /// <param name="retryCount">The number of retries per model step.</param>
     /// <param name="maxIterations">The hard iteration cap for one run.</param>
+    /// <param name="verbosity">The requested output verbosity.</param>
+    /// <param name="showThinking">Whether model reasoning should be displayed.</param>
+    /// <param name="retryBackoff">The base delay before the first retry; doubles for each subsequent retry. Defaults to <see cref="DefaultRetryBackoff"/>.</param>
     public OllamaAgentRuntimeSettings(
         TimeSpan stepTimeout,
         int retryCount,
         int maxIterations,
         AgentVerbosity verbosity = AgentVerbosity.Normal,
-        bool showThinking = false)
+        bool showThinking = false,
+        TimeSpan? retryBackoff = null)
     {
         if (stepTimeout <= TimeSpan.Zero)
         {
@@ -50,11 +59,17 @@ public sealed class OllamaAgentRuntimeSettings
             throw new ArgumentOutOfRangeException(nameof(maxIterations), "The maximum iteration count must be greater than zero.");
         }
 
+        if (retryBackoff.HasValue && retryBackoff.Value < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(retryBackoff), "The retry backoff must not be negative.");
+        }
+
         StepTimeout = stepTimeout;
         RetryCount = retryCount;
         MaxIterations = maxIterations;
         Verbosity = verbosity;
         ShowThinking = showThinking;
+        RetryBackoff = retryBackoff ?? DefaultRetryBackoff;
     }
 
     /// <summary>
@@ -66,6 +81,12 @@ public sealed class OllamaAgentRuntimeSettings
     /// Gets the number of retries per model step.
     /// </summary>
     public int RetryCount { get; }
+
+    /// <summary>
+    /// Gets the base delay applied before the first retry of a transient failure.
+    /// The delay doubles for each subsequent retry attempt.
+    /// </summary>
+    public TimeSpan RetryBackoff { get; }
 
     /// <summary>
     /// Gets the hard iteration cap for one run.

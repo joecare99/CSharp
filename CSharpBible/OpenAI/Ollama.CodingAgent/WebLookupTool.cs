@@ -15,6 +15,8 @@ namespace Ollama.CodingAgent;
 /// </summary>
 public sealed class WebLookupTool : IOllamaTool
 {
+    private const int MaxPreviewCharacters = 4000;
+
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -96,12 +98,11 @@ public sealed class WebLookupTool : IOllamaTool
         using HttpRequestMessage request = new(HttpMethod.Get, url);
         request.Headers.UserAgent.ParseAdd("OllamaCodingAgent/1.0 (+https://github.com)");
         request.Headers.Accept.ParseAdd("application/json, text/plain, text/html");
-        using HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
-        string raw = await response.Content.ReadAsStringAsync(cancellationToken);
-        if (raw.Length > 4000)
-        {
-            raw = raw[..4000];
-        }
+        using HttpResponseMessage response = await _httpClient.SendAsync(
+            request,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken);
+        string raw = await ReadBoundedContentAsync(response.Content, MaxPreviewCharacters, cancellationToken);
 
         Uri citationUri = new(url);
         if (!_isCitationUriAllowed(citationUri))
@@ -126,5 +127,21 @@ public sealed class WebLookupTool : IOllamaTool
             Success = response.IsSuccessStatusCode,
             Output = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true }),
         };
+    }
+
+    /// <summary>
+    /// Reads at most <paramref name="maxCharacters"/> characters from the response body
+    /// without buffering the entire content in memory.
+    /// </summary>
+    private static async Task<string> ReadBoundedContentAsync(
+        System.Net.Http.HttpContent content,
+        int maxCharacters,
+        CancellationToken cancellationToken)
+    {
+        await using System.IO.Stream stream = await content.ReadAsStreamAsync(cancellationToken);
+        using System.IO.StreamReader reader = new(stream);
+        char[] buffer = new char[maxCharacters];
+        int read = await reader.ReadBlockAsync(buffer.AsMemory(0, maxCharacters), cancellationToken);
+        return new string(buffer, 0, read);
     }
 }
