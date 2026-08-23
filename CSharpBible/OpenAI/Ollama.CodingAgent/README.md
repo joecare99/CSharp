@@ -76,15 +76,14 @@ vault, and it does not make external web requests.
 
 ### LLM debug logging
 
-The LLM traffic logger is enabled by default. It writes session-scoped diagnostic records below
-`<workspace>\\.agent\\logs`, including outgoing provider requests, incoming responses, and provider
-failures for Ollama and OpenAI-compatible endpoints.
+The LLM traffic logger is enabled by default and cannot be disabled in the current command set.
+It writes session-scoped diagnostic records to a central per-user location below
+`%APPDATA%\Ollama\CodingAgent\` (one JSON-lines file per agent session), including outgoing
+provider requests, incoming responses, and provider failures for Ollama and OpenAI-compatible
+endpoints.
 Credentials are always redacted before persistence. This includes authorization and bearer headers,
 API keys, JSON credential fields, and user information embedded in URLs. Non-sensitive prompt and
 response content remains available for diagnosis.
-
-The future `--debug-log` switch will provide explicit runtime control over this behavior. It is not
-available in the current command set yet. The current logger is intentionally always active.
 
 Environment variables are also supported:
 
