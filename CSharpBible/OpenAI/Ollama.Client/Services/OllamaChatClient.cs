@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ollama.Client.Interfaces;
@@ -72,31 +71,14 @@ public sealed class OllamaChatClient
         ArgumentNullException.ThrowIfNull(options);
         ValidateMessages(options.Messages);
 
-        StringBuilder contentBuilder = new();
-        List<string> thinking = [];
-        List<Ollama.Client.Models.OllamaChatToolCall> toolCalls = [];
+        OllamaStreamingChatAggregator aggregator = new();
 
         await foreach (OllamaStreamingChatUpdate update in CompleteChatStreamingAsync(options, cancellationToken))
         {
-            if (!string.IsNullOrWhiteSpace(update.Content))
-            {
-                contentBuilder.Append(update.Content);
-            }
-
-            if (!string.IsNullOrWhiteSpace(update.Thinking))
-            {
-                thinking.Add(update.Thinking);
-            }
-
-            toolCalls.AddRange(update.ToolCalls);
+            aggregator.Add(update);
         }
 
-        return new OllamaChatCompletion
-        {
-            Content = contentBuilder.ToString(),
-            Thinking = thinking,
-            ToolCalls = toolCalls,
-        };
+        return aggregator.ToCompletion();
     }
 
     /// <summary>

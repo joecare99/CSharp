@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ScriptedSvgWpf.Dsl;
+using ScriptedSvgWpf.Models;
 using ScriptedSvgWpf.Rendering;
 
 namespace ScriptedSvgWpf.Tests;
@@ -9,6 +11,98 @@ namespace ScriptedSvgWpf.Tests;
 [TestClass]
 public sealed class DslTests
 {
+    [TestMethod]
+    public void LexerHandlesCommentsEscapesNumbersAndOperators()
+    {
+        const string source = "// comment\n/* block */ let text = \"a\\n\\t\\\\\\\"\"; value += 1.5e-2; i++; j--; x *= 2; y /= 2; a != b && c || d <= e >= f;";
+
+        var tokens = new ScriptLexer(source).Lex();
+
+        Assert.AreEqual(TokenKind.Identifier, tokens[0].Kind);
+        Assert.AreEqual("let", tokens[0].Lexeme);
+        Assert.AreEqual("a\n\t\\\"", tokens[3].Lexeme);
+        Assert.IsTrue(tokens.Any(token => token.Kind == TokenKind.Float && token.Lexeme == "1.5e-2"));
+        CollectionAssert.AreEqual(
+            new[] { TokenKind.PlusEqual, TokenKind.PlusPlus, TokenKind.MinusMinus, TokenKind.StarEqual, TokenKind.SlashEqual, TokenKind.BangEqual, TokenKind.AndAnd, TokenKind.OrOr, TokenKind.LessEqual, TokenKind.GreaterEqual },
+            tokens.Where(token => token.Kind is TokenKind.PlusEqual or TokenKind.PlusPlus or TokenKind.MinusMinus or TokenKind.StarEqual or TokenKind.SlashEqual or TokenKind.BangEqual or TokenKind.AndAnd or TokenKind.OrOr or TokenKind.LessEqual or TokenKind.GreaterEqual).Select(token => token.Kind).ToArray());
+    }
+
+    [TestMethod]
+    public void LexerRejectsUnexpectedCharactersAndInvalidStrings()
+    {
+        var characterError = Assert.Throws<ScriptSyntaxException>(() => new ScriptLexer("@\n").Lex());
+        Assert.AreEqual(1, characterError.Line);
+        Assert.AreEqual(1, characterError.Column);
+
+        Assert.Throws<ScriptSyntaxException>(() => new ScriptLexer("\"unterminated").Lex());
+        Assert.Throws<ScriptSyntaxException>(() => new ScriptLexer("\"bad\\q\"").Lex());
+        Assert.Throws<ScriptSyntaxException>(() => new ScriptLexer("1e+").Lex());
+    }
+
+    [TestMethod]
+    public void ParserSupportsLetElseBlocksAndCompoundAssignments()
+    {
+        const string source = "let int value = 1; if (false) { value += 10; } else { value *= 3; }";
+
+        var document = new ScriptInterpreter().Execute(source);
+
+        Assert.AreEqual(640, document.Width);
+        Assert.AreEqual(480, document.Height);
+    }
+
+    [TestMethod]
+    public void ScriptValueConvertsAndFormatsAllSupportedKinds()
+    {
+        var values = new IReadOnlyList<ScriptValue>[]
+        {
+            Array.Empty<ScriptValue>()
+        };
+        var point = ScriptValue.From(new ScriptedSvgWpf.Models.ScriptPoint(1.5, 2));
+        var rectangle = ScriptValue.From(new ScriptedSvgWpf.Models.ScriptRect(1, 2, 3, 4));
+        var array = ScriptValue.From(values[0]);
+
+        Assert.AreEqual("null", ScriptValue.From(null).ToString());
+        Assert.AreEqual("1", ScriptValue.From(1).ToString());
+        Assert.AreEqual("1.5", ScriptValue.From(1.5).ToString());
+        Assert.AreEqual("true", ScriptValue.From(true).ToString());
+        Assert.AreEqual("text", ScriptValue.From("text").ToString());
+        Assert.AreEqual("1.5,2", point.ToString());
+        Assert.AreEqual("1,2,3,4", rectangle.ToString());
+        Assert.AreEqual("[]", array.ToString());
+        Assert.AreEqual(1.5, point.AsPoint().X);
+        Assert.AreEqual(4, rectangle.AsRect().Height);
+        Assert.AreEqual(0, array.AsArray().Count);
+    }
+
+    [TestMethod]
+    public void ScriptValueRejectsInvalidConversionsAndTypes()
+    {
+        Assert.Throws<ScriptRuntimeException>(() => ScriptValue.From("x").AsInt());
+        Assert.Throws<ScriptRuntimeException>(() => ScriptValue.From("x").AsNumber());
+        Assert.Throws<ScriptRuntimeException>(() => ScriptValue.From(1).AsBool());
+        Assert.Throws<ScriptRuntimeException>(() => ScriptValue.From(1).AsString());
+        Assert.Throws<ScriptRuntimeException>(() => ScriptValue.From(1).AsPoint());
+        Assert.Throws<ScriptRuntimeException>(() => ScriptValue.From(1).AsRect());
+        Assert.Throws<ScriptRuntimeException>(() => ScriptValue.From(1).AsArray());
+        Assert.Throws<ScriptRuntimeException>(() => ScriptValue.From(new object()));
+        Assert.Throws<OverflowException>(() => new ScriptValue(ScriptValueKind.Float, (double)int.MaxValue + 1).AsInt());
+    }
+
+    [TestMethod]
+    public void ErrorFormatterHandlesRuntimeWrappedAndGenericErrors()
+    {
+        var runtime = ScriptErrorFormatter.Format("source", new ScriptRuntimeException("bad value"));
+        StringAssert.StartsWith(runtime, "Runtime error:");
+
+        var wrapped = ScriptErrorFormatter.Format("source", new Exception("wrapper", new ScriptSyntaxException("bad syntax", 1, 2)));
+        StringAssert.Contains(wrapped, "Syntax error at line 1, column 2");
+
+        var generic = ScriptErrorFormatter.Format("source", new Exception());
+        StringAssert.Contains(generic, "Script error (Exception)");
+        Assert.Throws<ArgumentNullException>(() => ScriptErrorFormatter.Format(null!, new Exception()));
+        Assert.Throws<ArgumentNullException>(() => ScriptErrorFormatter.Format("source", null!));
+    }
+
     [TestMethod]
     public void ParsesAndExecutesTypedExpressionsAndMath()
     {
@@ -122,5 +216,59 @@ count = 1.5;
             new ScriptInterpreter().Execute(source));
 
         StringAssert.Contains(exception.Message, "Cannot assign");
+    }
+
+    [TestMethod]
+    public void EnforcesLoopAndDrawCommandLimits()
+    {
+        const string loopSource = """
+int i = 0;
+while (i < 3) {
+    i++;
+}
+""";
+
+        var loopException = Assert.Throws<ScriptRuntimeException>(() =>
+            new ScriptInterpreter().Execute(loopSource, new InterpreterOptions { MaxLoopIterations = 2 }));
+
+        StringAssert.Contains(loopException.Message, "Loop limit of 2");
+
+        const string drawSource = """
+rect(0, 0, 1, 1, "black");
+rect(1, 0, 1, 1, "black");
+""";
+
+        var drawException = Assert.Throws<ScriptRuntimeException>(() =>
+            new ScriptInterpreter().Execute(drawSource, new InterpreterOptions { MaxDrawCommands = 1 }));
+
+        StringAssert.Contains(drawException.Message, "Draw command limit of 1");
+    }
+
+    [TestMethod]
+    public void RejectsDivisionByZeroAndInvalidMembersOrFunctions()
+    {
+        Assert.Throws<ScriptRuntimeException>(() => new ScriptInterpreter().Execute("float value = 1 / 0;"));
+        Assert.Throws<ScriptRuntimeException>(() => new ScriptInterpreter().Execute("Point point = Point(1, 2); float value = point.Z;"));
+        Assert.Throws<ScriptRuntimeException>(() => new ScriptInterpreter().Execute("unknown(1);"));
+    }
+
+    [TestMethod]
+    public void KeepsBlockAndForVariablesInsideTheirScopes()
+    {
+        var blockException = Assert.Throws<ScriptRuntimeException>(() =>
+            new ScriptInterpreter().Execute("{ int local = 1; } int outside = local;"));
+        StringAssert.Contains(blockException.Message, "Unknown variable 'local'");
+
+        var forException = Assert.Throws<ScriptRuntimeException>(() =>
+            new ScriptInterpreter().Execute("for (int index = 0; index < 1; index++) { } int outside = index;"));
+        StringAssert.Contains(forException.Message, "Unknown variable 'index'");
+    }
+
+    [TestMethod]
+    public void ShortCircuitBooleanOperatorsDoNotEvaluateUnneededOperands()
+    {
+        var document = new ScriptInterpreter().Execute("bool left = false && (1 / 0 > 0); bool right = true || (1 / 0 > 0);");
+
+        Assert.AreEqual(0, document.Commands.Count);
     }
 }

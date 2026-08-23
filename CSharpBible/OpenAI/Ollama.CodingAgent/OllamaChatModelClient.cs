@@ -126,31 +126,13 @@ public sealed class OllamaChatModelClient : IStreamingThinkingAgentModelClient, 
             }
             else
             {
-                List<string> thinking = [];
-                System.Text.StringBuilder content = new();
-                List<OllamaChatToolCall> toolCalls = [];
+                OllamaStreamingChatAggregator aggregator = new(onThinkingFragment);
                 await foreach (OllamaStreamingChatUpdate update in _chatClient.CompleteChatStreamingAsync(options, cancellationToken))
                 {
-                    if (!string.IsNullOrWhiteSpace(update.Thinking))
-                    {
-                        thinking.Add(update.Thinking!);
-                        onThinkingFragment(update.Thinking!);
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(update.Content))
-                    {
-                        content.Append(update.Content);
-                    }
-
-                    toolCalls.AddRange(update.ToolCalls);
+                    aggregator.Add(update);
                 }
 
-                completion = new OllamaChatCompletion
-                {
-                    Content = content.ToString(),
-                    Thinking = thinking,
-                    ToolCalls = toolCalls,
-                };
+                completion = aggregator.ToCompletion();
             }
             _trafficLogger?.LogResponse(
                 "ollama",

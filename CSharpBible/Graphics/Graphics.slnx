@@ -3,6 +3,7 @@
     <Platform Name="Any CPU" />
     <Platform Name="x64" />
   </Configurations>
+  <Folder Name="/ConsoleApp1/" />
   <Folder Name="/Games/">
     <File Path="../Games/Games.props" />
     <File Path="../Games/Games_net.props" />
@@ -77,9 +78,11 @@
     <Project Path="libCIFAR/libCIFAR.csproj">
       <Platform Solution="*|x64" Project="x64" />
     </Project>
+    <Project Path="libCIFAR.Tests/libCIFAR.Tests.csproj" />
     <Project Path="libMachLearn/libMachLearn.csproj">
       <Platform Solution="*|x64" Project="x64" />
     </Project>
+    <Project Path="libMachLearn.Tests/libMachLearn.Tests.csproj" />
     <Project Path="MNIST1Learn/Mnist1Learn.csproj">
       <Platform Solution="*|x64" Project="x64" />
     </Project>
@@ -194,6 +197,9 @@
     <Platform Solution="*|x64" Project="x64" />
   </Project>
   <Project Path="CanvasWPF_CT/CanvasWPF_CT.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="ConsoleApp1.Tests/ConsoleApp1.Tests.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
   <Project Path="DynamicShapeWPF/DynamicShapeWPF.csproj">

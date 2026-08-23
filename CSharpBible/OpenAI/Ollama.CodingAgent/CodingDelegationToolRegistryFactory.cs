@@ -14,14 +14,19 @@ namespace Ollama.CodingAgent;
 public sealed class CodingDelegationToolRegistryFactory
 {
     private readonly WorkspacePathPolicy _workspacePathPolicy;
+    private readonly IHttpClientFactory? _httpClientFactory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CodingDelegationToolRegistryFactory"/> class.
     /// </summary>
     /// <param name="workspacePathPolicy">The workspace path policy.</param>
-    public CodingDelegationToolRegistryFactory(WorkspacePathPolicy workspacePathPolicy)
+    /// <param name="httpClientFactory">Optional HTTP client factory used for web lookups; when omitted a short-timeout client is created.</param>
+    public CodingDelegationToolRegistryFactory(
+        WorkspacePathPolicy workspacePathPolicy,
+        IHttpClientFactory? httpClientFactory = null)
     {
         _workspacePathPolicy = workspacePathPolicy ?? throw new ArgumentNullException(nameof(workspacePathPolicy));
+        _httpClientFactory = httpClientFactory;
     }
 
     /// <summary>
@@ -30,6 +35,9 @@ public sealed class CodingDelegationToolRegistryFactory
     /// <returns>The tool registry.</returns>
     public IOllamaToolRegistry CreateRegistry()
     {
+        HttpClient webLookupClient = _httpClientFactory?.CreateClient(OllamaHttpClientNames.WebLookup)
+            ?? new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
+
         IOllamaTool[] tools =
         [
             new ListWorkspaceFilesTool(_workspacePathPolicy),
@@ -37,7 +45,7 @@ public sealed class CodingDelegationToolRegistryFactory
             new WriteWorkspaceFileTool(_workspacePathPolicy),
             new RunDotnetBuildTool(_workspacePathPolicy),
             new RunDotnetTestTool(_workspacePathPolicy),
-            new WebLookupTool(new HttpClient { Timeout = TimeSpan.FromSeconds(30) }, new WebKnowledgePolicy()),
+            new WebLookupTool(webLookupClient, new WebKnowledgePolicy()),
             new LocalWikiWriteTool(new LocalKnowledgeBaseStore(Path.Combine(_workspacePathPolicy.WorkspaceRoot, ".agent", "local-wiki.json"))),
             new LocalWikiSearchTool(new LocalKnowledgeBaseStore(Path.Combine(_workspacePathPolicy.WorkspaceRoot, ".agent", "local-wiki.json"))),
         ];

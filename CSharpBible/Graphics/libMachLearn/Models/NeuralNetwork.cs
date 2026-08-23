@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace libMachLearn.Models;
 
+/// <summary>
+/// Represents a feed-forward neural network with optional backpropagation training.
+/// </summary>
 public class NeuralNetwork
 {
     private Layer[] _layers;
@@ -23,7 +26,14 @@ public class NeuralNetwork
         public eActivation activation { get; set; }
     }
 
+    /// <summary>
+    /// Gets the input layer followed by the configured processing layers.
+    /// </summary>
     public Layer[] Layers => _layers;
+
+    /// <summary>
+    /// Gets or sets the scalar used for weight and bias updates during training.
+    /// </summary>
     public double LearningRate { get => _learningRate; set => _learningRate = value; }
 
     public NeuralNetwork(double learningRate, int input, params (int size,eActivation eAct)[] layerDef)
@@ -41,6 +51,10 @@ public class NeuralNetwork
     }
 
 
+    /// <summary>
+    /// Saves the network topology, activation choices, weights, biases, and learning rate as JSON.
+    /// </summary>
+    /// <param name="path">The destination file path.</param>
     public void SaveModel(string path)
     {
         var modelData = new NetworkModelData
@@ -59,17 +73,28 @@ public class NeuralNetwork
         File.WriteAllText(path, json);
     }
 
+    /// <summary>
+    /// Loads a network previously written by <see cref="SaveModel"/>.
+    /// </summary>
+    /// <param name="path">The source model file path.</param>
+    /// <returns>The reconstructed neural network.</returns>
     public static NeuralNetwork LoadModel(string path)
     {
         string json = File.ReadAllText(path);
-        var data = JsonSerializer.Deserialize<NetworkModelData>(json);
+        NetworkModelData data = JsonSerializer.Deserialize<NetworkModelData>(json)
+            ?? throw new InvalidDataException("The model file does not contain a network.");
 
-        var nn = new NeuralNetwork(data.LearningRate, data.LayerSizes[0],data.LayerSizes.Zip(data.Layers.Select(l=> l.activation)).Skip(1).ToArray());
+        var nn = new NeuralNetwork(
+            data.LearningRate,
+            data.LayerSizes[0],
+            data.LayerSizes.Skip(1)
+                .Zip(data.Layers.Select(layer => layer.activation))
+                .ToArray());
         // Hier die Gewichte/Biases aus data.Layers zurück in die nn.Layers kopieren
         for (int i = 1; i < data.LayerSizes.Length; i++)
         {
-            nn.Layers[i].Weights = data.Layers[i].Weights;
-            nn.Layers[i].Biases = data.Layers[i].Biases;           
+            nn.Layers[i].Weights = data.Layers[i - 1].Weights;
+            nn.Layers[i].Biases = data.Layers[i - 1].Biases;
         }
 
         return nn;

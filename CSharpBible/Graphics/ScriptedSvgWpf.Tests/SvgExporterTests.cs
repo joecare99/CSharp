@@ -1,4 +1,6 @@
 using System.Linq;
+using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ScriptedSvgWpf.Dsl;
 using ScriptedSvgWpf.Rendering;
@@ -8,6 +10,47 @@ namespace ScriptedSvgWpf.Tests;
 [TestClass]
 public sealed class SvgExporterTests
 {
+    [TestMethod]
+    public void ExportsOptionalAttributesAndEscapesNullAndSpecialValues()
+    {
+        var document = new RenderDocument(12.5, 20, "<&\"");
+        document.Commands.Add(new PolygonCommand(
+            new[] { new ScriptedSvgWpf.Models.ScriptPoint(1, 2) },
+            "<&\"",
+            null));
+        document.Commands.Add(new PathCommand("M 0,0", null, 2, null));
+
+        var svg = new SvgExporter().Export(document);
+
+        StringAssert.Contains(svg, "width=\"12.5\"");
+        StringAssert.Contains(svg, "fill=\"&lt;&amp;&quot;\"");
+        StringAssert.Contains(svg, "<polygon points=\"1,2\"");
+        StringAssert.Contains(svg, "<path d=\"M 0,0\" fill=\"none\"");
+        Assert.IsFalse(svg.Contains("stroke=", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void ExportRejectsNullDocumentAndUnsupportedCommand()
+    {
+        var exporter = new SvgExporter();
+        Assert.Throws<ArgumentNullException>(() => exporter.Export(null!));
+
+        var document = new RenderDocument(10, 10, "white");
+        document.Commands.Add(new UnknownRenderCommand());
+        Assert.Throws<InvalidOperationException>(() => exporter.Export(document));
+    }
+
+    [TestMethod]
+    public void RectangleCenterReflectsPositionAndSize()
+    {
+        var rectangle = new RectangleCommand(2, 4, 10, 6, "red");
+
+        Assert.AreEqual(7, rectangle.Center.X);
+        Assert.AreEqual(7, rectangle.Center.Y);
+    }
+
+    private sealed record UnknownRenderCommand : RenderCommand;
+
     [TestMethod]
     public void ExportsAllSupportedCommandsAsSvg()
     {

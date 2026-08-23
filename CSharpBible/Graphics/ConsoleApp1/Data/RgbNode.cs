@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 
 namespace ColorVis.Data;
-class RgbNode
+public class RgbNode
 {
     public int R, G, B;           // 0..7
     public float H, S, L;         // 0..1

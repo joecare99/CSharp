@@ -30,7 +30,7 @@ public class Cifar10Record
     public void ReadFromStream(System.IO.Stream stream)
     {
         Label = (ECifar10Category)stream.ReadByte();    
-        stream.Read(ImageData, 0, 3072);
+        stream.ReadExactly(ImageData);
     }
 
 }

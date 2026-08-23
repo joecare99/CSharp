@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Ollama.CodingAgent.Desktop.Widgets.ActivityPanel">
+  <Border BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1" Padding="10">
+    <StackPanel Spacing="6">
+      <TextBlock FontSize="16" FontWeight="Bold" Text="Agent activity" />
+      <TextBlock Text="Thinking and tool activity is shown in the conversation transcript." TextWrapping="Wrap" />
+      <TextBlock Text="{Binding GitStatusMessage}" TextWrapping="Wrap" />
+    </StackPanel>
+  </Border>
+</UserControl>

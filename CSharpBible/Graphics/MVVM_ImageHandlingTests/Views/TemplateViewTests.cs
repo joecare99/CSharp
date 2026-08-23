@@ -12,6 +12,10 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using BaseLib.Helper;
+using MVVM_ImageHandling.Models;
+using NSubstitute;
+using System;
 using System.Threading;
 
 /// <summary>
@@ -27,6 +31,9 @@ namespace MVVM_ImageHandling.Views.Tests
     [TestClass()]
     public class TemplateViewTests
     {
+        private Func<Type, object?> _getServiceOld;
+        private Func<Type, object> _getRequiredServiceOld;
+
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         /// <summary>
         /// The test view
@@ -42,10 +49,24 @@ namespace MVVM_ImageHandling.Views.Tests
         [TestInitialize]
         public void Init()
         {
+            _getServiceOld = IoC.GetSrv;
+            _getRequiredServiceOld = IoC.GetReqSrv;
+
+            var model = Substitute.For<IImageHandlingModel>();
+            IoC.GetReqSrv = t => t == typeof(IImageHandlingModel)
+                ? model
+                : throw new InvalidOperationException($"No service for {t}");
+
             var t = new Thread(() => testView = new());
             t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
             t.Start();
             t.Join(); //Wait for the thread to end
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            IoC.GetReqSrv = _getRequiredServiceOld;
         }
 
         /// <summary>

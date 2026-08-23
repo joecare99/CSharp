@@ -15,7 +15,7 @@ public sealed class McpToolsTests
     public async Task GetSourceFileDependenciesAsync_BuildsEveryOptionalArgument()
     {
         IReadOnlyList<string>? capturedArguments = null;
-        ScriptTools.PowerShellExecutionRunner = arguments =>
+        ScriptTools.PowerShellExecutionRunner = (arguments, timeout, _) =>
         {
             capturedArguments = [.. arguments];
             return Task.FromResult("dependencies");
@@ -43,7 +43,7 @@ public sealed class McpToolsTests
     public async Task GetSourceFileDependenciesAsync_SkipsOptionalArguments()
     {
         IReadOnlyList<string>? capturedArguments = null;
-        ScriptTools.PowerShellExecutionRunner = arguments =>
+        ScriptTools.PowerShellExecutionRunner = (arguments, timeout, _) =>
         {
             capturedArguments = [.. arguments];
             return Task.FromResult(string.Empty);
@@ -64,7 +64,7 @@ public sealed class McpToolsTests
     public async Task InvokeTestProjectCoverageAsync_BuildsEveryOptionalArgument()
     {
         IReadOnlyList<string>? capturedArguments = null;
-        ScriptTools.PowerShellExecutionRunner = arguments =>
+        ScriptTools.PowerShellExecutionRunner = (arguments, timeout, _) =>
         {
             capturedArguments = [.. arguments];
             return Task.FromResult("coverage");
@@ -104,7 +104,7 @@ public sealed class McpToolsTests
     public async Task InvokeTestProjectCoverageAsync_SkipsOptionalArguments()
     {
         IReadOnlyList<string>? capturedArguments = null;
-        ScriptTools.PowerShellExecutionRunner = arguments =>
+        ScriptTools.PowerShellExecutionRunner = (arguments, timeout, _) =>
         {
             capturedArguments = [.. arguments];
             return Task.FromResult(string.Empty);
@@ -129,7 +129,8 @@ public sealed class McpToolsTests
             "-NoProfile",
             "-Command",
             "[Console]::Out.Write('deterministic output'); [Console]::Error.Write('diagnostic')",
-        ]);
+        ],
+        TimeSpan.FromMinutes(1));
 
         Assert.AreEqual("deterministic output", output);
     }
@@ -138,7 +139,7 @@ public sealed class McpToolsTests
     public async Task RunPowerShellAsync_ThrowsStandardErrorForFailedProcess()
     {
         InvalidOperationException exception = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
-            () => ScriptTools.RunPowerShellAsync(["-NoProfile", "-Command", "[Console]::Error.Write('expected failure'); exit 7"]));
+            () => ScriptTools.RunPowerShellAsync(["-NoProfile", "-Command", "[Console]::Error.Write('expected failure'); exit 7"], TimeSpan.FromMinutes(1)));
 
         StringAssert.Contains(exception.Message, "expected failure");
     }
@@ -147,9 +148,74 @@ public sealed class McpToolsTests
     public async Task RunPowerShellAsync_UsesExitCodeWhenStandardErrorIsEmpty()
     {
         InvalidOperationException exception = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
-            () => ScriptTools.RunPowerShellAsync(["-NoProfile", "-Command", "exit 9"]));
+            () => ScriptTools.RunPowerShellAsync(["-NoProfile", "-Command", "exit 9"], TimeSpan.FromMinutes(1)));
 
         StringAssert.Contains(exception.Message, "exit code 9");
+    }
+
+    [TestMethod]
+    public async Task RunPowerShellAsync_TerminatesProcessOnTimeout()
+    {
+        TimeoutException exception = await Assert.ThrowsExactlyAsync<TimeoutException>(
+            () => ScriptTools.RunPowerShellAsync(
+                ["-NoProfile", "-Command", "Start-Sleep -Seconds 30"],
+                TimeSpan.FromMilliseconds(200)));
+
+        StringAssert.Contains(exception.Message, "terminated");
+    }
+
+    [TestMethod]
+    public void ResolveMcpToolsOptions_PrefersConfigurationThenEnvironmentThenDefaults()
+    {
+        Microsoft.Extensions.Configuration.IConfiguration configuration = new StubConfiguration(new Dictionary<string, string?>
+        {
+            ["McpTools:SourceDependenciesScript"] = @"C:\configured\dependencies.ps1",
+            ["McpTools:ExecutionTimeoutMinutes"] = "5",
+        });
+        Environment.SetEnvironmentVariable("MCP_SOURCE_DEPENDENCIES_SCRIPT", @"C:\env\dependencies.ps1");
+        Environment.SetEnvironmentVariable("MCP_TEST_COVERAGE_SCRIPT", @"C:\env\coverage.ps1");
+        try
+        {
+            McpToolsOptions options = global::Program.ResolveMcpToolsOptions(configuration);
+
+            Assert.AreEqual(@"C:\configured\dependencies.ps1", options.SourceDependenciesScript);
+            Assert.AreEqual(@"C:\env\coverage.ps1", options.TestCoverageScript);
+            Assert.AreEqual(5, options.ExecutionTimeoutMinutes);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("MCP_SOURCE_DEPENDENCIES_SCRIPT", null);
+            Environment.SetEnvironmentVariable("MCP_TEST_COVERAGE_SCRIPT", null);
+        }
+    }
+
+    [TestMethod]
+    public void ResolveMcpToolsOptions_FallsBackToDefaultsWhenUnset()
+    {
+        McpToolsOptions options = global::Program.ResolveMcpToolsOptions(
+            new StubConfiguration([]));
+
+        Assert.AreEqual(@"C:\Projekte\CSharp\Tools\Skills\SourceDependencies\Get-SourceFileDependencies.ps1", options.SourceDependenciesScript);
+        Assert.AreEqual(@"C:\Projekte\CSharp\Tools\Skills\TestCoverage\Invoke-TestProjectCoverage.ps1", options.TestCoverageScript);
+        Assert.AreEqual(10, options.ExecutionTimeoutMinutes);
+    }
+
+    private sealed class StubConfiguration(Dictionary<string, string?> values)
+        : Microsoft.Extensions.Configuration.IConfiguration
+    {
+        public string? this[string key]
+        {
+            get => values.GetValueOrDefault(key);
+            set => values[key] = value;
+        }
+
+        public IEnumerable<Microsoft.Extensions.Configuration.IConfigurationSection> GetChildren() => [];
+
+        public Microsoft.Extensions.Primitives.IChangeToken GetReloadToken()
+            => throw new NotSupportedException("Not required for this stub.");
+
+        public Microsoft.Extensions.Configuration.IConfigurationSection GetSection(string key)
+            => throw new NotSupportedException("Not required for this stub.");
     }
 
     [TestMethod]

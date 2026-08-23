@@ -39,7 +39,7 @@ public sealed class RemainingCoverageTests
 
         AgentRunner runner = new(
             modelClient,
-            new OllamaAgentRuntimeSettings(TimeSpan.FromSeconds(1), retryCount: 1, maxIterations: 2));
+                new OllamaAgentRuntimeSettings(TimeSpan.FromSeconds(1), retryCount: 1, maxIterations: 2, retryBackoff: TimeSpan.Zero));
 
         AgentRunResult result = await runner.RunAsync(new AgentRunRequest
         {
@@ -60,10 +60,10 @@ public sealed class RemainingCoverageTests
             .CompleteAsync(Arg.Any<IReadOnlyList<AgentMessage>>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromException<string>(new OperationCanceledException("final cancellation")));
 
-        await Assert.ThrowsExactlyAsync<InvalidOperationException>(() =>
+        await Assert.ThrowsExactlyAsync<OperationCanceledException>(() =>
             new AgentRunner(
                 modelClient,
-                new OllamaAgentRuntimeSettings(TimeSpan.FromSeconds(1), retryCount: 0, maxIterations: 1))
+                new OllamaAgentRuntimeSettings(TimeSpan.FromSeconds(1), retryCount: 0, maxIterations: 1, retryBackoff: TimeSpan.Zero))
             .RunAsync(new AgentRunRequest { Prompt = "prompt", SystemPrompt = "system" }));
     }
 
@@ -83,7 +83,7 @@ public sealed class RemainingCoverageTests
         await Assert.ThrowsExactlyAsync<OperationCanceledException>(() =>
             new AgentRunner(
                 modelClient,
-                new OllamaAgentRuntimeSettings(TimeSpan.FromSeconds(1), retryCount: 1, maxIterations: 1))
+                new OllamaAgentRuntimeSettings(TimeSpan.FromSeconds(1), retryCount: 1, maxIterations: 1, retryBackoff: TimeSpan.Zero))
             .RunAsync(new AgentRunRequest { Prompt = "prompt", SystemPrompt = "system" }, cancellation.Token));
     }
 

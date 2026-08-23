@@ -6,7 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 
-partial class Program
+public partial class Program
 {
     static void Main()
     {
@@ -166,7 +166,7 @@ partial class Program
 
     // Helpers
 
-    static List<RgbNode> CreateNodes(int levels)
+    public static List<RgbNode> CreateNodes(int levels)
     {
         var list = new List<RgbNode>();
         for (int r = 0; r < levels; r++)
@@ -185,7 +185,7 @@ partial class Program
         return list;
     }
 
-    static void BuildNeighbors(List<RgbNode> nodes)
+    public static void BuildNeighbors(List<RgbNode> nodes)
     {
         for (int i = 0; i < nodes.Count; i++)
         {

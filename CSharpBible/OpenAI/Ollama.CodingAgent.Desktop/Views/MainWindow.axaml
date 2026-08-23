@@ -1,0 +1,91 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:widgets="clr-namespace:Ollama.CodingAgent.Desktop.Widgets"
+        x:Class="Ollama.CodingAgent.Desktop.Views.MainWindow"
+        Title="Ollama Coding Agent"
+        Width="1200"
+        Height="850"
+        MinWidth="900"
+        MinHeight="650">
+  <Grid Margin="16" RowDefinitions="Auto,*,Auto">
+    <Expander Header="Ollama configuration" IsExpanded="True">
+      <Grid Margin="0,8,0,0" ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Endpoint" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EditableEndpoint, UpdateSourceTrigger=PropertyChanged}" />
+        <Button Grid.Row="0" Grid.Column="2" Command="{Binding TestEndpointCommand}" Content="Test endpoint" />
+        <TextBlock Grid.Row="0" Grid.Column="3" Margin="8,0,0,0" VerticalAlignment="Center" Text="{Binding ConfigurationStatus}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Model" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding AvailableModels}" SelectedItem="{Binding EditableModel, Mode=TwoWay}" />
+        <TextBlock Grid.Row="1" Grid.Column="2" Margin="8,0,0,0" VerticalAlignment="Center" Text="Active model:" />
+        <TextBlock Grid.Row="1" Grid.Column="3" Margin="8,0,0,0" VerticalAlignment="Center" Text="Active: {Binding Model}" />
+        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Recent configuration" />
+        <ComboBox x:Name="RecentConfigurationsComboBox" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding RecentConfigurations}" SelectedItem="{Binding SelectedRecentConfiguration}" DisplayMemberBinding="{Binding Endpoint}" />
+        <Button Grid.Row="2" Grid.Column="2" Command="{Binding LoadRecentConfigurationsCommand}" Content="Refresh recent" />
+        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="Workspace" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EditableWorkspacePath, UpdateSourceTrigger=PropertyChanged}" />
+        <Button x:Name="OpenWorkspaceDirectoryButton" Grid.Row="3" Grid.Column="2" Content="Open directory" />
+        <TextBlock Grid.Row="3" Grid.Column="3" Margin="8,0,0,0" VerticalAlignment="Center" Text="Active: {Binding Session.WorkspacePath}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Session" />
+        <TextBox Grid.Row="4" Grid.Column="1" IsReadOnly="True" Text="{Binding Session.SessionId}" />
+        <Button Grid.Row="4" Grid.Column="2" Command="{Binding ApplyConfigurationCommand}" Content="Apply configuration for next prompt" />
+      </Grid>
+    </Expander>
+
+    <Grid Grid.Row="1" ColumnDefinitions="2*,*">
+      <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Command="{Binding Session.ReloadCommand}" Content="Reload session" />
+          <Button Command="{Binding Session.ClearCommand}" Content="Clear transcript" />
+          <Button Command="{Binding Session.CancelCommand}" Content="Cancel request" />
+          <TextBlock VerticalAlignment="Center" Text="{Binding Status}" />
+        </StackPanel>
+        <Border Grid.Row="1" BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1" Padding="8">
+          <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Session.Conversation}">
+              <ItemsControl.ItemTemplate>
+                 <DataTemplate>
+                   <Border Margin="0,0,0,8" Padding="8" Background="{DynamicResource SystemControlBackgroundBaseLowBrush}">
+                     <Expander IsExpanded="{Binding IsExpanded}">
+                       <Expander.Header>
+                         <StackPanel Orientation="Horizontal" Spacing="8">
+                           <TextBlock FontWeight="Bold" Text="{Binding Role}" />
+                           <TextBlock Text="{Binding Kind}" />
+                           <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsLive}" Width="36" Height="8" />
+                         </StackPanel>
+                       </Expander.Header>
+                       <StackPanel Spacing="4">
+                         <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
+                         <TextBlock FontSize="11" Opacity="0.7" Text="{Binding CreatedAt}" />
+                       </StackPanel>
+                     </Expander>
+                   </Border>
+                 </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Border>
+        <TextBlock Grid.Row="2" Foreground="IndianRed" IsVisible="{Binding HasErrorMessage}" Text="{Binding ErrorMessage}" TextWrapping="Wrap" />
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+          <TextBox AcceptsReturn="True"
+                   MinHeight="80"
+                   Text="{Binding Session.Prompt, UpdateSourceTrigger=PropertyChanged}"
+                   TextWrapping="Wrap"
+                   PlaceholderText="Describe the coding task for the agent." />
+          <Button Grid.Column="1" VerticalAlignment="Stretch" Command="{Binding Session.SubmitCommand}" Content="Send prompt" />
+        </Grid>
+      </Grid>
+
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Spacing="12">
+          <widgets:ApprovalPanel />
+          <widgets:ActivityPanel />
+          <widgets:CodeWikiPanel />
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+
+    <TextBlock Grid.Row="2"
+               Opacity="0.7"
+               Text="Endpoint and model changes are applied to new prompts; a running prompt keeps its configuration." />
+  </Grid>
+</Window>

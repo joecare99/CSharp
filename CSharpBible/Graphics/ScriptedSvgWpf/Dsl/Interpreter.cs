@@ -9,7 +9,7 @@ namespace ScriptedSvgWpf.Dsl;
 
 public sealed class InterpreterOptions
 {
-    public int MaxSteps { get; init; } = 250_000;
+    public int MaxSteps { get; init; } = 300_000;
     public int MaxLoopIterations { get; init; } = 25_000;
     public int MaxDrawCommands { get; init; } = 100_000;
 }

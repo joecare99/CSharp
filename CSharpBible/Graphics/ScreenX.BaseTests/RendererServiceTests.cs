@@ -45,4 +45,23 @@ public class RendererServiceTests
             Assert.AreNotEqual(0u, c);
         }
     }
+
+    [TestMethod]
+    public void Render_InvalidDimensions_Throws()
+    {
+        var options = new RenderOptions(0, 1, new ExRect(0, 0, 1, 1), [], _ => 0u);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => new RendererService().Render(options));
+    }
+
+    [TestMethod]
+    public void Render_CancellationToken_StopsRendering()
+    {
+        using CancellationTokenSource cancellation = new();
+        cancellation.Cancel();
+        var options = new RenderOptions(2, 2, new ExRect(0, 0, 1, 1), [], _ => 0u);
+
+        Assert.Throws<OperationCanceledException>(
+            () => new RendererService().Render(options, cancellation.Token));
+    }
 }

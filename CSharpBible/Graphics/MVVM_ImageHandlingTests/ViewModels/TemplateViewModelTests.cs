@@ -12,8 +12,10 @@
 // <summary></summary>
 // ***********************************************************************
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel;
 using MVVM.ViewModel;
+using MVVM_ImageHandling.Models;
+using NSubstitute;
+using System.ComponentModel;
 
 /// <summary>
 /// The Tests namespace.
@@ -43,7 +45,8 @@ namespace MVVM_ImageHandling.ViewModels.Tests
         [TestInitialize]
         public void Init()
         {
-            testModel = new();
+            var model = Substitute.For<IImageHandlingModel>();
+            testModel = new(model);
             testModel.PropertyChanged += OnVMPropertyChanged;
             if (testModel is INotifyPropertyChanging npchgn)
                 npchgn.PropertyChanging += OnVMPropertyChanging;

@@ -1,16 +1,57 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using ModelContextProtocol.Server;
 
 namespace McpTools;
 
+/// <summary>
+/// Configures the PowerShell skill scripts exposed by the MCP tools.
+/// </summary>
+public sealed class McpToolsOptions
+{
+    /// <summary>
+    /// Gets or sets the absolute path to the source-dependencies PowerShell script.
+    /// Configure via "McpTools:SourceDependenciesScript" or the environment variable MCP_SOURCE_DEPENDENCIES_SCRIPT.
+    /// </summary>
+    public string SourceDependenciesScript { get; set; } =
+        @"C:\Projekte\CSharp\Tools\Skills\SourceDependencies\Get-SourceFileDependencies.ps1";
+
+    /// <summary>
+    /// Gets or sets the absolute path to the test-coverage PowerShell script.
+    /// Configure via "McpTools:TestCoverageScript" or the environment variable MCP_TEST_COVERAGE_SCRIPT.
+    /// </summary>
+    public string TestCoverageScript { get; set; } =
+        @"C:\Projekte\CSharp\Tools\Skills\TestCoverage\Invoke-TestProjectCoverage.ps1";
+
+    /// <summary>
+    /// Gets or sets the maximum PowerShell execution time in minutes.
+    /// </summary>
+    public int ExecutionTimeoutMinutes { get; set; } = 10;
+}
+
 [McpServerToolType]
 public sealed class ScriptTools
 {
-    private const string SourceDependenciesScript = @"C:\Projekte\CSharp\Tools\Skills\SourceDependencies\Get-SourceFileDependencies.ps1";
-    private const string TestCoverageScript = @"C:\Projekte\CSharp\Tools\Skills\TestCoverage\Invoke-TestProjectCoverage.ps1";
+    internal static readonly McpToolsOptions DefaultOptions = new();
 
-    internal static Func<IEnumerable<string>, Task<string>> PowerShellExecutionRunner { get; set; } = RunPowerShellAsync;
+    internal static Func<IEnumerable<string>, TimeSpan, CancellationToken, Task<string>> PowerShellExecutionRunner { get; set; } = RunPowerShellAsync;
+
+    private readonly McpToolsOptions _options;
+
+    public ScriptTools()
+        : this(DefaultOptions)
+    {
+    }
+
+    public ScriptTools(McpToolsOptions options)
+    {
+        _options = options ?? throw new ArgumentNullException(nameof(options));
+    }
 
     [McpServerTool, Description("Lists direct dependencies for one or more C# source files.")]
     public async Task<string> GetSourceFileDependenciesAsync(
@@ -18,16 +59,22 @@ public sealed class ScriptTools
         [Description("Optional workspace root used for dependency resolution.")] string? workspaceRoot = null,
         [Description("Skip scanning workspace files for matching declared types.")] bool skipWorkspaceScan = false,
         [Description("Include namespace, declared types, using namespaces, contexts, and resolution details in text mode.")] bool detailedText = false,
-        [Description("Emit structured JSON instead of text.")] bool asJson = false)
+        [Description("Emit structured JSON instead of text.")] bool asJson = false,
+        CancellationToken cancellationToken = default)
     {
-        var arguments = new List<string>
-        {
+        string scriptPath = ResolveScriptPath(
+            _options.SourceDependenciesScript,
+            "McpTools:SourceDependenciesScript",
+            "MCP_SOURCE_DEPENDENCIES_SCRIPT");
+
+        List<string> arguments =
+        [
             "-NoProfile",
             "-ExecutionPolicy", "Bypass",
-            "-File", SourceDependenciesScript
-        };
+            "-File", scriptPath,
+        ];
 
-        foreach (var path in sourceFilePath)
+        foreach (string path in sourceFilePath)
         {
             arguments.Add("-SourceFilePath");
             arguments.Add(path);
@@ -54,7 +101,7 @@ public sealed class ScriptTools
             arguments.Add("-AsJson");
         }
 
-        return await PowerShellExecutionRunner(arguments);
+        return await PowerShellExecutionRunner(arguments, ExecutionTimeout, cancellationToken);
     }
 
     [McpServerTool, Description("Runs a test project with coverage and returns the coverage summary.")]
@@ -73,19 +120,25 @@ public sealed class ScriptTools
         [Description("Disable coverage-threshold filtering.")] bool disableCoverageThresholdFilter = false,
         [Description("Include strict uncovered ranges as a drill-down view.")] bool includeStrictRanges = false,
         [Description("Pass --no-build to dotnet test.")] bool noBuild = false,
-        [Description("Emit structured JSON output.")] bool asJson = false)
+        [Description("Emit structured JSON output.")] bool asJson = false,
+        CancellationToken cancellationToken = default)
     {
-        var arguments = new List<string>
-        {
+        string scriptPath = ResolveScriptPath(
+            _options.TestCoverageScript,
+            "McpTools:TestCoverageScript",
+            "MCP_TEST_COVERAGE_SCRIPT");
+
+        List<string> arguments =
+        [
             "-NoProfile",
             "-ExecutionPolicy", "Bypass",
-            "-File", TestCoverageScript,
+            "-File", scriptPath,
             "-TestProjectPath", testProjectPath,
             "-Configuration", configuration,
             "-RangeGapTolerance", rangeGapTolerance.ToString(),
             "-TopN", topN.ToString(),
-            "-CoverageThreshold", coverageThreshold.ToString(System.Globalization.CultureInfo.InvariantCulture)
-        };
+            "-CoverageThreshold", coverageThreshold.ToString(System.Globalization.CultureInfo.InvariantCulture),
+        ];
 
         if (!string.IsNullOrWhiteSpace(framework))
         {
@@ -101,7 +154,7 @@ public sealed class ScriptTools
 
         if (includeFilePathPatterns is { Length: > 0 })
         {
-            foreach (var pattern in includeFilePathPatterns)
+            foreach (string pattern in includeFilePathPatterns)
             {
                 arguments.Add("-IncludeFilePathPatterns");
                 arguments.Add(pattern);
@@ -110,7 +163,7 @@ public sealed class ScriptTools
 
         if (includeClassPatterns is { Length: > 0 })
         {
-            foreach (var pattern in includeClassPatterns)
+            foreach (string pattern in includeClassPatterns)
             {
                 arguments.Add("-IncludeClassPatterns");
                 arguments.Add(pattern);
@@ -119,7 +172,7 @@ public sealed class ScriptTools
 
         if (includeAssemblyPatterns is { Length: > 0 })
         {
-            foreach (var pattern in includeAssemblyPatterns)
+            foreach (string pattern in includeAssemblyPatterns)
             {
                 arguments.Add("-IncludeAssemblyPatterns");
                 arguments.Add(pattern);
@@ -151,34 +204,83 @@ public sealed class ScriptTools
             arguments.Add("-AsJson");
         }
 
-        return await PowerShellExecutionRunner(arguments);
+        return await PowerShellExecutionRunner(arguments, ExecutionTimeout, cancellationToken);
     }
 
-    internal static async Task<string> RunPowerShellAsync(IEnumerable<string> arguments)
+    private TimeSpan ExecutionTimeout
+        => TimeSpan.FromMinutes(Math.Max(1, _options.ExecutionTimeoutMinutes));
+
+    private static string ResolveScriptPath(string configuredPath, string configurationKey, string environmentVariable)
     {
-        var startInfo = new ProcessStartInfo
+        if (!File.Exists(configuredPath))
+        {
+            throw new InvalidOperationException(
+                $"The PowerShell script '{configuredPath}' does not exist. " +
+                $"Configure it via '{configurationKey}' in appsettings.json or the environment variable '{environmentVariable}'.");
+        }
+
+        return configuredPath;
+    }
+
+    internal static async Task<string> RunPowerShellAsync(
+        IEnumerable<string> arguments,
+        TimeSpan executionTimeout,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(arguments);
+        if (executionTimeout <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(executionTimeout));
+        }
+
+        ProcessStartInfo startInfo = new()
         {
             FileName = "powershell.exe",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
         };
 
-        foreach (var argument in arguments)
+        foreach (string argument in arguments)
         {
             startInfo.ArgumentList.Add(argument);
         }
 
-        using var process = new Process
+        using Process process = new()
         {
-            StartInfo = startInfo
+            StartInfo = startInfo,
         };
 
         process.Start();
-        var standardOutput = await process.StandardOutput.ReadToEndAsync();
-        var standardError = await process.StandardError.ReadToEndAsync();
-        await process.WaitForExitAsync();
+
+        Task<string> standardOutputTask = process.StandardOutput.ReadToEndAsync();
+        Task<string> standardErrorTask = process.StandardError.ReadToEndAsync();
+
+        using CancellationTokenSource timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutCts.CancelAfter(executionTimeout);
+
+        try
+        {
+            await process.WaitForExitAsync(timeoutCts.Token);
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            try
+            {
+                process.Kill(entireProcessTree: true);
+            }
+            catch (InvalidOperationException)
+            {
+                // The process already exited between the timeout and the kill attempt.
+            }
+
+            throw new TimeoutException(
+                $"The PowerShell script did not complete within {executionTimeout.TotalMinutes:0.##} minutes and was terminated.");
+        }
+
+        string standardOutput = await standardOutputTask;
+        string standardError = await standardErrorTask;
 
         if (process.ExitCode != 0)
         {
