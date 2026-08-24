@@ -9,7 +9,6 @@
     <Import_RootNamespace>DevOps</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)**\*.md" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)**\*.pdf" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-00-PlatformDocumentation.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-01-SummaryTool.md" />
@@ -23,6 +22,8 @@
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-11-PdfImageExportAndOcrFallback.md" />
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-13-DocumentModelCanonicalStructure.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
+    <None Include="$(MSBuildThisFileDirectory)Docs\api--chat.md" />
+    <None Include="$(MSBuildThisFileDirectory)Docs\Ollama-API\api-chat.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\Epic-PictureDatabase.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\Epic-WpfTextAnalysis.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\Feat-00-PlatformFoundation.md" />
