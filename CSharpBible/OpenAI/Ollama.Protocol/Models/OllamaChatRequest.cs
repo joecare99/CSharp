@@ -27,6 +27,13 @@ public sealed class OllamaChatRequest
     [JsonPropertyName("stream")]
     public bool Stream { get; init; }
 
+    /// <summary>
+    /// Gets a value indicating whether the model should emit thinking output.
+    /// </summary>
+    [JsonPropertyName("think")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? Think { get; init; }
+
     [JsonPropertyName("tools")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<OllamaChatToolDefinition>? Tools { get; init; }

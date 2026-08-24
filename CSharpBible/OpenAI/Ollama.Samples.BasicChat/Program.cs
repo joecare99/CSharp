@@ -13,8 +13,8 @@ namespace Ollama.Samples.BasicChat;
 
 internal static class Program
 {
-    private const string DefaultEndpoint = "http://localhost:11434/";
-    private const string DefaultModel = "qwen3.5:4b";
+    private const string DefaultEndpoint = "http://192.168.0.52:11434/";
+    private const string DefaultModel = "qwen3.8:27b";
 
     internal static Func<HttpClient> HttpClientFactory { get; set; } = CreateHttpClient;
 
@@ -43,7 +43,6 @@ internal static class Program
             Console.WriteLine("Prompt:");
             Console.WriteLine(prompt);
             Console.WriteLine();
-            Console.WriteLine("Thinking:");
 
             bool hasThinking = false;
             bool hasAnswer = false;
@@ -62,12 +61,17 @@ internal static class Program
                         Content = prompt,
                     },
                 },
+                Think = true,
             };
 
             await foreach (OllamaStreamingChatUpdate chunk in chatClient.CompleteChatStreamingAsync(options))
             {
                 if (!string.IsNullOrWhiteSpace(chunk.Thinking))
                 {
+                    if (!hasThinking)
+                    {
+                        Console.WriteLine("Thinking:");
+                    }
                     Console.Write(chunk.Thinking);
                     hasThinking = true;
                 }

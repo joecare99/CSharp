@@ -91,8 +91,8 @@ public sealed class OllamaProtocolClientTests
             StringAssert.Contains(body, "\"role\":\"user\"");
             StringAssert.Contains(body, "\"content\":\"Explain AI.\"");
 
-            string streamContent = "{\"message\":{\"role\":\"assistant\",\"content\":\"Hello\"},\"thinking\":\"Think\",\"done\":false}\n"
-                + "{\"message\":{\"role\":\"assistant\",\"content\":\" world\"},\"thinking\":\" more\",\"done\":true}\n";
+            string streamContent = "{\"message\":{\"role\":\"assistant\",\"thinking\":\"Think\",\"content\":\"Hello\"},\"done\":false}\n"
+                + "{\"message\":{\"role\":\"assistant\",\"thinking\":\" more\",\"content\":\" world\"},\"done\":true}\n";
             await Task.CompletedTask;
 
             return new HttpResponseMessage(HttpStatusCode.OK)

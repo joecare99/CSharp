@@ -159,6 +159,7 @@ public sealed class OllamaChatClient
                         },
                     },
                 }).ToArray(),
+            Think = options.Think,
             Stream = true,
         };
 
@@ -167,7 +168,7 @@ public sealed class OllamaChatClient
             yield return new OllamaStreamingChatUpdate
             {
                 Content = chunk.Message?.Content,
-                Thinking = chunk.Thinking,
+                Thinking = chunk.Message?.Thinking ?? chunk.Thinking,
                 Done = chunk.Done,
                 ToolCalls = chunk.Message?.ToolCalls is null
                     ? []

@@ -115,6 +115,7 @@ public sealed class OllamaClientCoverageCompletionTests
                     Content = "hello",
                 },
             ],
+            Think = true,
         }))
         {
         }
@@ -125,6 +126,7 @@ public sealed class OllamaClientCoverageCompletionTests
             .OfType<OllamaChatRequest>()
             .Single();
         Assert.IsNull(request.Messages[0].Images);
+        Assert.IsTrue(request.Think);
     }
 
     [TestMethod]

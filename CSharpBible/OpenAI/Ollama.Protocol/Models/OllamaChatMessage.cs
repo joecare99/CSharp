@@ -18,7 +18,14 @@ public sealed class OllamaChatMessage
     /// Gets the chat message content.
     /// </summary>
     [JsonPropertyName("content")]
-    public required string Content { get; init; }
+    public string Content { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Gets the thinking fragment emitted by a thinking-capable model.
+    /// </summary>
+    [JsonPropertyName("thinking")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Thinking { get; init; }
 
     /// <summary>
     /// Gets an optional list of base64-encoded images to be sent alongside the chat text.

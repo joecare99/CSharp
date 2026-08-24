@@ -17,4 +17,7 @@
         <ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
         <ProjectReference Include="..\..\Libraries\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Views\" />
+    </ItemGroup>
 </Project>

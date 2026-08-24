@@ -12,8 +12,8 @@ namespace Ollama_Service1;
 
 internal class Program
 {
-    private const string DefaultModel = "qwen3.5:9b";
-    private static readonly Uri GenerateEndpoint = new("http://localhost:11434/api/generate");
+    private const string DefaultModel = "qwen3.8:27b";
+    private static readonly Uri GenerateEndpoint = new("http://192.168.0.52:11434/api/generate");
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -62,7 +62,6 @@ internal class Program
             Console.WriteLine("Prompt:");
             Console.WriteLine(prompt);
             Console.WriteLine();
-            Console.WriteLine("Thinking:");
 
             await using Stream responseStream = await httpResponse.Content.ReadAsStreamAsync();
             using StreamReader reader = new(responseStream, Encoding.UTF8);
@@ -86,6 +85,10 @@ internal class Program
 
                 if (!string.IsNullOrWhiteSpace(chunk.Thinking))
                 {
+                    if (!hasThinkingOutput)
+                    {
+                        Console.WriteLine("Thinking:");
+                    }
                     Console.Write(chunk.Thinking);
                     hasThinkingOutput = true;
                 }
@@ -146,6 +149,7 @@ internal sealed class OllamaGenerateRequest
 
     [JsonPropertyName("stream")]
     public bool Stream { get; init; }
+
 }
 
 internal sealed class OllamaGenerateResponseChunk

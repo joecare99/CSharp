@@ -18,4 +18,9 @@ public sealed class ChatCompletionOptions
     /// Gets the tools available to the model.
     /// </summary>
     public IReadOnlyList<OllamaChatTool> Tools { get; init; } = Array.Empty<OllamaChatTool>();
+
+    /// <summary>
+    /// Gets a value indicating whether the model should emit thinking output.
+    /// </summary>
+    public bool? Think { get; init; }
 }

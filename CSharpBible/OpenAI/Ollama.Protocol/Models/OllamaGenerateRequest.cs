@@ -24,4 +24,12 @@ public sealed class OllamaGenerateRequest
     /// </summary>
     [JsonPropertyName("stream")]
     public bool Stream { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether thinking output is emitted. Ollama accepts
+    /// either a Boolean value or a thinking level such as <c>low</c>.
+    /// </summary>
+    [JsonPropertyName("think")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public object? Think { get; init; }
 }

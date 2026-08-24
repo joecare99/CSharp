@@ -296,8 +296,8 @@ public sealed class OllamaClientTests
             {
                 Role = "assistant",
                 Content = "Hello",
+                Thinking = "Think",
             },
-            Thinking = "Think",
             Done = false,
         };
 
@@ -309,8 +309,8 @@ public sealed class OllamaClientTests
             {
                 Role = "assistant",
                 Content = " world",
+                Thinking = " more",
             },
-            Thinking = " more",
             Done = true,
         };
     }
@@ -330,8 +330,8 @@ public sealed class OllamaClientTests
             {
                 Role = "assistant",
                 Content = "Option result",
+                Thinking = "Plan",
             },
-            Thinking = "Plan",
             Done = true,
         };
 
