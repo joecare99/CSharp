@@ -58,6 +58,23 @@ public sealed class OllamaProtocolClient
     }
 
     /// <summary>
+    /// Gets the models currently loaded into Ollama memory.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The running-model response.</returns>
+    public async Task<OllamaPsResponse> GetRunningModelsAsync(CancellationToken cancellationToken = default)
+    {
+        using HttpRequestMessage request = new(HttpMethod.Get, new Uri(_options.Endpoint, "/api/ps"));
+        using HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        await using Stream responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        OllamaPsResponse? psResponse = await JsonSerializer.DeserializeAsync<OllamaPsResponse>(responseStream, JsonSerializerOptions, cancellationToken);
+
+        return psResponse ?? new OllamaPsResponse();
+    }
+
+    /// <summary>
     /// Streams chunks from the Ollama generate endpoint.
     /// </summary>
     /// <param name="request">The generate request.</param>

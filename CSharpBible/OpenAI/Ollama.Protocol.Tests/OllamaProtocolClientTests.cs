@@ -39,6 +39,37 @@ public sealed class OllamaProtocolClientTests
     }
 
     [TestMethod]
+    public async Task GetRunningModelsAsync_ReturnsRunningModelDetails()
+    {
+        TestHttpMessageHandler handler = new(async (request, cancellationToken) =>
+        {
+            Assert.AreEqual(HttpMethod.Get, request.Method);
+            Assert.AreEqual("http://localhost:11434/api/ps", request.RequestUri?.ToString());
+            await Task.CompletedTask;
+
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(
+                    "{\"models\":[{\"name\":\"gemma4\",\"model\":\"gemma4\",\"size\":6591830464,\"digest\":\"abc\",\"details\":{\"format\":\"gguf\",\"family\":\"gemma4\",\"families\":[\"gemma4\"],\"parameter_size\":\"8.0B\",\"quantization_level\":\"Q4_K_M\"},\"expires_at\":\"2025-10-17T16:47:07.93355-07:00\",\"size_vram\":5333539264,\"context_length\":4096}]}",
+                    Encoding.UTF8,
+                    "application/json"),
+            };
+        });
+        using HttpClient httpClient = new(handler);
+        OllamaProtocolClient client = new(httpClient, new OllamaProtocolClientOptions(new Uri("http://localhost:11434/")));
+
+        OllamaPsResponse response = await client.GetRunningModelsAsync();
+
+        Assert.AreEqual(1, response.Models.Count);
+        Assert.AreEqual("gemma4", response.Models[0].Name);
+        Assert.AreEqual(6591830464L, response.Models[0].Size);
+        Assert.AreEqual("gguf", response.Models[0].Details?.Format);
+        Assert.AreEqual("Q4_K_M", response.Models[0].Details?.QuantizationLevel);
+        Assert.AreEqual(5333539264L, response.Models[0].SizeVram);
+        Assert.AreEqual(4096, response.Models[0].ContextLength);
+    }
+
+    [TestMethod]
     public async Task GenerateStreamingAsync_ReturnsStreamedChunks()
     {
         TestHttpMessageHandler handler = new(async (request, cancellationToken) =>

@@ -2,11 +2,13 @@ using Ollama.CodingAgent.Models;
 using Ollama.CodingAgent.Interfaces;
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Ollama.Client.Interfaces;
 using Ollama.Client.Models;
 using Ollama.Client.Services;
 using Ollama.Tools;
+using Polly;
 
 namespace Ollama.CodingAgent;
 
@@ -36,7 +38,7 @@ public static class OllamaCodingAgentServiceCollectionExtensions
         services.AddSingleton(new OllamaClientOptions(new Uri(cliOptions.Endpoint)));
 
         // Provider traffic can stream for many minutes; the AgentRunner owns step timeouts.
-        // Resilience retries transient failures (timeouts, 5xx, 408, 429) with exponential backoff.
+        // Keep retries without the standard handler's bounded timeout strategies.
         // The standard resilience handler validates timeouts against [10ms, 1 day] and rejects
         // Timeout.InfiniteTimeSpan, so derive finite bounds from the configured runtime settings.
         TimeSpan attemptTimeout = cliOptions.RuntimeSettings.StepTimeout;
@@ -48,7 +50,7 @@ public static class OllamaCodingAgentServiceCollectionExtensions
             {
                 client.Timeout = totalRequestTimeout;
             })
-            .AddStandardResilienceHandler(options =>
+            .AddResilienceHandler("ollama-agent-resilience", builder =>
             {
                 options.TotalRequestTimeout.Timeout = totalRequestTimeout;
                 options.AttemptTimeout.Timeout = attemptTimeout;
@@ -56,6 +58,7 @@ public static class OllamaCodingAgentServiceCollectionExtensions
                 // to be statistically meaningful. Scale it up while keeping it within the
                 // validator's [500ms, 1 day] ceiling and at least double the attempt timeout.
                 options.CircuitBreaker.SamplingDuration = ComputeBoundedCircuitBreakerSamplingDuration(attemptTimeout);
+                builder.AddRetry(new Microsoft.Extensions.Http.Resilience.HttpRetryStrategyOptions());
             });
 
         // Web lookups are short-lived and bounded; keep the standard resilience defaults.

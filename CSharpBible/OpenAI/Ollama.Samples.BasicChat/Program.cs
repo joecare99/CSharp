@@ -13,7 +13,7 @@ namespace Ollama.Samples.BasicChat;
 
 internal static class Program
 {
-    private const string DefaultEndpoint = "http://192.168.0.52:11434/";
+    private const string DefaultEndpoint = "http://localhost:11434/";
     private const string DefaultModel = "qwen3.8:27b";
 
     internal static Func<HttpClient> HttpClientFactory { get; set; } = CreateHttpClient;

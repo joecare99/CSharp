@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Ollama.Client.Interfaces;
@@ -49,6 +51,37 @@ public sealed class OllamaClient
     /// <returns>The available models.</returns>
     public Task<OllamaTagsResponse> GetTagsAsync(CancellationToken cancellationToken = default)
         => _protocolAdapter.GetTagsAsync(cancellationToken);
+
+    /// <summary>
+    /// Gets the models currently loaded into Ollama memory.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The running-model response.</returns>
+    public Task<OllamaPsResponse> GetRunningModelsAsync(CancellationToken cancellationToken = default)
+        => _protocolAdapter.GetRunningModelsAsync(cancellationToken);
+
+    /// <summary>
+    /// Polls the models currently loaded into Ollama memory at a regular interval.
+    /// </summary>
+    /// <param name="pollingInterval">The delay between consecutive requests.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>An asynchronous stream containing the response from each poll.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the polling interval is not positive.</exception>
+    public async IAsyncEnumerable<OllamaPsResponse> PollRunningModelsAsync(
+        TimeSpan pollingInterval,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (pollingInterval <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pollingInterval), "The polling interval must be positive.");
+        }
+
+        while (true)
+        {
+            yield return await GetRunningModelsAsync(cancellationToken);
+            await Task.Delay(pollingInterval, cancellationToken);
+        }
+    }
 
     /// <summary>
     /// Gets a generate client for the specified model.

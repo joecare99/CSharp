@@ -23,7 +23,10 @@
     <None Include="$(MSBuildThisFileDirectory)BacklogItems\PBI-13-DocumentModelCanonicalStructure.md" />
     <None Include="$(MSBuildThisFileDirectory)Data\**\*.*" Exclude="$(MSBuildThisFileDirectory)bin\**;$(MSBuildThisFileDirectory)obj\**;$(MSBuildThisFileDirectory).vs\**" />
     <None Include="$(MSBuildThisFileDirectory)Docs\api--chat.md" />
+    <None Include="$(MSBuildThisFileDirectory)Docs\api--ps.md" />
+    <None Include="$(MSBuildThisFileDirectory)Docs\api-ps.md" />
     <None Include="$(MSBuildThisFileDirectory)Docs\Ollama-API\api-chat.md" />
+    <None Include="$(MSBuildThisFileDirectory)Docs\OpenA!compatibility.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\Epic-PictureDatabase.md" />
     <None Include="$(MSBuildThisFileDirectory)Epics\Epic-WpfTextAnalysis.md" />
     <None Include="$(MSBuildThisFileDirectory)Features\Feat-00-PlatformFoundation.md" />
