@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ollama.Client.Interfaces;
@@ -149,6 +150,55 @@ public sealed class OllamaClientTests
         Assert.AreEqual(1, result.Embeddings.Count);
         Assert.AreEqual(2, result.Embeddings[0].Count);
         Assert.AreEqual(0.1d, result.Embeddings[0][0]);
+    }
+
+    [TestMethod]
+    public async Task PollRunningModelsAsync_ReturnsResultsUntilCanceled()
+    {
+        int requestCount = 0;
+        TestOllamaProtocolAdapter adapter = new()
+        {
+            GetRunningModelsAsyncHandler = cancellationToken =>
+            {
+                requestCount++;
+                return Task.FromResult(new OllamaPsResponse
+                {
+                    Models =
+                    [
+                        new OllamaRunningModel
+                        {
+                            Name = $"model-{requestCount}",
+                        },
+                    ],
+                });
+            },
+        };
+        OllamaClient client = new(adapter);
+        using CancellationTokenSource cancellationTokenSource = new();
+        List<OllamaPsResponse> responses = [];
+        bool wasCanceled = false;
+
+        try
+        {
+            await foreach (OllamaPsResponse response in client.PollRunningModelsAsync(TimeSpan.FromMilliseconds(1), cancellationTokenSource.Token))
+            {
+                responses.Add(response);
+                if (responses.Count == 2)
+                {
+                    cancellationTokenSource.Cancel();
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            wasCanceled = true;
+        }
+
+        Assert.IsTrue(wasCanceled);
+        Assert.AreEqual(2, responses.Count);
+        Assert.AreEqual("model-1", responses[0].Models[0].Name);
+        Assert.AreEqual("model-2", responses[1].Models[0].Name);
+        Assert.AreEqual(2, requestCount);
     }
 
     [TestMethod]

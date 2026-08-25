@@ -12,6 +12,8 @@ internal sealed class TestOllamaProtocolAdapter : IOllamaProtocolAdapter
 {
     public Func<CancellationToken, Task<OllamaTagsResponse>>? GetTagsAsyncHandler { get; init; }
 
+    public Func<CancellationToken, Task<OllamaPsResponse>>? GetRunningModelsAsyncHandler { get; init; }
+
     public Func<OllamaGenerateRequest, CancellationToken, IAsyncEnumerable<OllamaGenerateResponseChunk>>? GenerateStreamingAsyncHandler { get; init; }
 
     public Func<OllamaChatRequest, CancellationToken, IAsyncEnumerable<OllamaChatResponseChunk>>? ChatStreamingAsyncHandler { get; init; }
@@ -26,6 +28,16 @@ internal sealed class TestOllamaProtocolAdapter : IOllamaProtocolAdapter
         }
 
         return GetTagsAsyncHandler(cancellationToken);
+    }
+
+    public Task<OllamaPsResponse> GetRunningModelsAsync(CancellationToken cancellationToken = default)
+    {
+        if (GetRunningModelsAsyncHandler is null)
+        {
+            throw new InvalidOperationException("No handler was configured for GetRunningModelsAsync.");
+        }
+
+        return GetRunningModelsAsyncHandler(cancellationToken);
     }
 
     public IAsyncEnumerable<OllamaGenerateResponseChunk> GenerateStreamingAsync(OllamaGenerateRequest request, CancellationToken cancellationToken = default)

@@ -336,9 +336,79 @@ public sealed class FinalCoreCoverageTests
     }
 
     private static void AssertConstructorRejectsNull(Type type, object?[] arguments)
-        => Assert.ThrowsExactly<TargetInvocationException>(() => type.GetConstructors()
-            .Single(constructor => constructor.GetParameters().Length == arguments.Length)
-            .Invoke(arguments));
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(arguments);
+
+        ConstructorInfo? constructor = SelectConstructorForNullAssertion(type, arguments.Length);
+        Assert.IsNotNull(constructor, $"No suitable constructor found for type '{type.FullName}'.");
+
+        object?[] invocationArguments = BuildConstructorArguments(constructor!, arguments);
+        Assert.ThrowsExactly<TargetInvocationException>(() => constructor.Invoke(invocationArguments));
+    }
+
+    private static ConstructorInfo? SelectConstructorForNullAssertion(Type type, int providedArgumentCount)
+    {
+        ConstructorInfo[] constructors = type.GetConstructors();
+
+        ConstructorInfo? exactMatch = constructors
+            .SingleOrDefault(constructor => constructor.GetParameters().Length == providedArgumentCount);
+        if (exactMatch is not null)
+        {
+            return exactMatch;
+        }
+
+        ConstructorInfo? shorterMatch = constructors
+            .Where(constructor => constructor.GetParameters().Length < providedArgumentCount)
+            .OrderByDescending(constructor => constructor.GetParameters().Length)
+            .FirstOrDefault();
+        if (shorterMatch is not null)
+        {
+            return shorterMatch;
+        }
+
+        return constructors
+            .Where(constructor => constructor.GetParameters().Length > providedArgumentCount)
+            .OrderBy(constructor => constructor.GetParameters().Length)
+            .FirstOrDefault();
+    }
+
+    private static object?[] BuildConstructorArguments(ConstructorInfo constructor, object?[] providedArguments)
+    {
+        ParameterInfo[] parameters = constructor.GetParameters();
+        object?[] invocationArguments = new object?[parameters.Length];
+        int copiedLength = Math.Min(providedArguments.Length, parameters.Length);
+        Array.Copy(providedArguments, invocationArguments, copiedLength);
+
+        for (int index = copiedLength; index < parameters.Length; index++)
+        {
+            ParameterInfo parameter = parameters[index];
+            if (parameter.HasDefaultValue)
+            {
+                invocationArguments[index] = parameter.DefaultValue;
+                continue;
+            }
+
+            invocationArguments[index] = GetFallbackValue(parameter.ParameterType);
+        }
+
+        return invocationArguments;
+    }
+
+    private static object? GetFallbackValue(Type parameterType)
+    {
+        if (parameterType == typeof(string))
+        {
+            return string.Empty;
+        }
+
+        if (parameterType.IsValueType)
+        {
+            return Activator.CreateInstance(parameterType);
+        }
+
+        return null;
+    }
 
     private static void AssertStaticMethodRejectsNull(Type type, string methodName, object?[] arguments)
     {

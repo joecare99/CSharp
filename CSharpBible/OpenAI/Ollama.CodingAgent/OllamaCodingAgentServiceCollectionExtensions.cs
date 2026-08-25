@@ -2,11 +2,13 @@ using Ollama.CodingAgent.Models;
 using Ollama.CodingAgent.Interfaces;
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Ollama.Client.Interfaces;
 using Ollama.Client.Models;
 using Ollama.Client.Services;
 using Ollama.Tools;
+using Polly;
 
 namespace Ollama.CodingAgent;
 
@@ -36,15 +38,14 @@ public static class OllamaCodingAgentServiceCollectionExtensions
         services.AddSingleton(new OllamaClientOptions(new Uri(cliOptions.Endpoint)));
 
         // Provider traffic can stream for many minutes; the AgentRunner owns step timeouts.
-        // Resilience retries transient failures (timeouts, 5xx, 408, 429) with exponential backoff.
+        // Keep retries without the standard handler's bounded timeout strategies.
         services.AddHttpClient(OllamaHttpClientNames.Agent, client =>
             {
                 client.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
             })
-            .AddStandardResilienceHandler(options =>
+            .AddResilienceHandler("ollama-agent-resilience", builder =>
             {
-                options.TotalRequestTimeout.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
-                options.AttemptTimeout.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
+                builder.AddRetry(new Microsoft.Extensions.Http.Resilience.HttpRetryStrategyOptions());
             });
 
         // Web lookups are short-lived and bounded; keep the standard resilience defaults.

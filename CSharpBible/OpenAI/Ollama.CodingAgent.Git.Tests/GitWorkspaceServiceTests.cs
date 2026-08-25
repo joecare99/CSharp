@@ -46,10 +46,11 @@ public sealed class GitWorkspaceServiceTests
     [TestMethod]
     public void Discover_RejectsNonRepositoryWorkspace()
     {
-        string directory = Path.Combine(AppContext.BaseDirectory, "TestWorkspaces", $"coding-agent-git-{Guid.NewGuid():N}");
+        string directory = Path.Combine(Path.GetTempPath(), "coding-agent-git-tests", $"coding-agent-git-{Guid.NewGuid():N}");
         Directory.CreateDirectory(directory);
         try
         {
+            Assert.IsNull(Repository.Discover(directory));
             InvalidOperationException exception = Assert.ThrowsExactly<InvalidOperationException>(() => new GitWorkspaceService().Discover(directory));
             StringAssert.Contains(exception.Message, "not inside a supported Git repository");
         }
