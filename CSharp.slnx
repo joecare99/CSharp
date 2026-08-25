@@ -253,22 +253,6 @@
     <Project Path="CSharpBible/Calc/Calc64WFTests/Calc64WF_netTests.csproj" />
     <Project Path="CSharpBible/Calc/Calc64_Wpf/Calc64_Wpf.csproj" />
   </Folder>
-  <Folder Name="/CSharpBible/Calc/Calc32/">
-    <Project Path="CSharpBible/Calc/Calc32/Calc32.Model.csproj" />
-    <Project Path="CSharpBible/Calc/Calc32/Calc32.WForms.csproj" />
-    <Project Path="CSharpBible/Calc/Calc32/Calc32_net.WForms.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/Calc/Calc32Cons/">
-    <Project Path="CSharpBible/Calc/Calc32Cons/Calc32.Cons.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/Calc/Calc32Tests/" />
-  <Folder Name="/CSharpBible/Calc/Calc32WPF/">
-    <Project Path="CSharpBible/Calc/Calc32WPF/Calc32.WPF.csproj" />
-    <Project Path="CSharpBible/Calc/Calc32WPF/Calc32_net.WPF.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/Calc/Calc32WPFTests/" />
-  <Folder Name="/CSharpBible/Calc/Calc64WF/" />
-  <Folder Name="/CSharpBible/Calc/Calc64WFTests/" />
   <Folder Name="/CSharpBible/ConsoleApps/">
     <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
     <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
@@ -281,13 +265,6 @@
     <Project Path="CSharpBible/ConsoleApps/TestConsoleDemo/TestConsoleDemo.csproj" />
     <Project Path="CSharpBible/ConsoleApps/TestConsoleTests/TestConsoleTests.csproj" />
     <Project Path="CSharpBible/ConsoleApps/WaveFuncColFrm/WaveFuncColFrm.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/ConsoleApps/ConsoleMouseApp/">
-    <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp_net.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/ConsoleApps/Display_Test/" />
-  <Folder Name="/CSharpBible/ConsoleApps/TestConsole/">
-    <Project Path="CSharpBible/ConsoleApps/TestConsole/TestConsole_net.csproj" />
   </Folder>
   <Folder Name="/CSharpBible/ConsoleApps/WaveFuncCol/">
     <Project Path="CSharpBible/ConsoleApps/WaveFuncCol/WaveFunCollapse.csproj" />
@@ -388,8 +365,6 @@
     <Project Path="CSharpBible/DB/OLEDBTest2/OleDbTest2.csproj" />
     <Project Path="CSharpBible/DB/XSD_Data_Test/XSD_Data_Test.csproj" />
   </Folder>
-  <Folder Name="/CSharpBible/DB/OLEDBTest/" />
-  <Folder Name="/CSharpBible/DB/OLEDBTest2/" />
   <Folder Name="/CSharpBible/DependencyInjection/">
     <Project Path="CSharpBible/DependencyInjection/CustomerRepository/CustomerRepository.csproj" />
     <Project Path="CSharpBible/DependencyInjection/CustomerRepositoryTests/CustomerRepositoryTests.csproj" />
@@ -489,13 +464,7 @@
     <Project Path="CSharpBible/Games/Werner_Flaschbier_BaseTests/Werner_Flaschbier_ConsoleTests.csproj" />
   </Folder>
   <Folder Name="/CSharpBible/Games/Asteroids/" />
-  <Folder Name="/CSharpBible/Games/HexaBan_Console/">
-    <Project Path="CSharpBible/Games/HexaBan_Console/HexaBan_ConsoleLnx.csproj" />
-    <Project Path="CSharpBible/Games/HexaBan_Console/HexaBan_ConsoleWin.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/Games/Sokoban_Base/" />
   <Folder Name="/CSharpBible/Games/Werner_Flaschbier/" />
-  <Folder Name="/CSharpBible/Games/Werner_Flaschbier_BaseTests/" />
   <Folder Name="/CSharpBible/Graphics/">
     <Project Path="CSharpBible/Graphics/All_Graphics/All_Graphics_net.csproj" />
     <Project Path="CSharpBible/Graphics/CanvasWPF/CanvasWPF.csproj" />
@@ -579,10 +548,6 @@
   <Folder Name="/CSharpBible/Graphics/MNISTLearn/">
     <Project Path="CSharpBible/Graphics/MNISTLearn/Mnist6Learn.csproj" />
   </Folder>
-  <Folder Name="/CSharpBible/Graphics/MVVM_ImageHandling/" />
-  <Folder Name="/CSharpBible/Graphics/MVVM_ImageHandlingTests/" />
-  <Folder Name="/CSharpBible/Graphics/Polyline/" />
-  <Folder Name="/CSharpBible/Graphics/PolySpline/" />
   <Folder Name="/CSharpBible/Graphics/SuperResolutionOnnxSample/">
     <Project Path="CSharpBible/Graphics/SuperResolutionOnnxSample/SuperResolutionOnnxSample4.csproj" />
   </Folder>
@@ -612,11 +577,6 @@
     <Project Path="CSharpBible/Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
     <Project Path="CSharpBible/Libraries/WFSystem.Data/WFSystem.Windows.Data_net.csproj" />
   </Folder>
-  <Folder Name="/CSharpBible/Libraries/CommonDialogs/" />
-  <Folder Name="/CSharpBible/Libraries/ConsoleLib/">
-    <Project Path="CSharpBible/Libraries/ConsoleLib/ConsoleLib_net.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/Libraries/MathLIbrary/" />
   <Folder Name="/CSharpBible/Libraries/WFSystem.Data/" />
   <Folder Name="/CSharpBible/MVVM_Tutorial/">
     <Project Path="CSharpBible/MVVM_Tutorial/DemoLibrary/DemoLibrary.csproj" />
@@ -849,125 +809,7 @@
     <Project Path="CSharpBible/MVVM_Tutorial/WpfDemoUI1/WpfDemoUI1.csproj" />
     <Project Path="CSharpBible/MVVM_Tutorial/WpfDemoUI2/WpfDemoUI2.csproj" />
   </Folder>
-  <Folder Name="/CSharpBible/MVVM_Tutorial/ItemsControlTut3/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/ItemsControlTut4/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/ListBinding/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/ListBindingTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00a_CTTemplate/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00a_CTTemplateTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00_IoCTemplate/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00_IoCTemplateTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00_Template/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_00_TemplateTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_03a_CTNotifyChange/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_03a_CTNotifyChangeTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_03_NotifyChange/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_03_NotifyChangeTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_04a_CTRelayCommand/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_04a_CTRelayCommandTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_04_DelegateCommand/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_04_DelegateCommandTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_05a_CTCommandParCalc/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_05a_CTCommandParCalcTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_05_CommandParCalculator/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_05_CommandParCalculatorTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_2/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_3/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_3Tests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_4/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_06_Converters_4Tests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_09a_CTDialogBoxes/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_09a_CTDialogBoxesTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_09_DialogBoxes/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_09_DialogBoxesTest/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_16_Usercontrol1/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_16_UserControl1Tests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_16_Usercontrol2/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_Laden/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/">
-    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_Laden_netTests.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_18_MultiConverters/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_19_FilterLists/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_19_FilterListsTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_20a_CTSysdialogs/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_20a_CTSysdialogsTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_20_Sysdialogs/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_20_SysdialogsTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_21_Buttons/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_22_CTWpfCap/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_22_CTWpfCapTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_22_WpfCap/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_22_WpfCapTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24a_CTUserControl/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24a_CTUserControlTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24b_UserControl/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24b_UserControlTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24c_CTUserControl/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24c_CTUserControlTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24_UserControl/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_24_UserControlTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_25_RichTextEdit/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_25_RichTextEditTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_26_BindingGroupExp/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_26_CTBindingGroupExp/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_27_DataGrid/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_27_DataGridTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExt/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_1_CTDataGridExtTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_1_DataGridExt/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_1_DataGridExtTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_DataGrid/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_28_DataGridTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation1/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation1Tests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation2/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation2Tests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation3/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31a_CTValidation3Tests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31_Validation1/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31_Validation1Tests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31_Validation2/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_31_Validation2Tests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_33a_CTEvents_To_Commands/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_33a_CTEvents_To_CommandsTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_33_Events_to_Commands/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_33_Events_to_CommandsTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_34a_CTBindingEventArgs/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_34a_CTBindingEventArgsTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_34_BindingEventArgs/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_34_BindingEventArgsTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_35_CommunityToolkit/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_35_CommunityToolkitTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_36_ComToolKtSavesWork/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_36_ComToolKtSavesWorkTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_37_TreeView/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_37_TreeViewTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_38_CTDependencyInjection/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_38_CTDependencyInjectionTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_39_MultiModelTest/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_39_MultiModelTestTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_40_Wizzard/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_40_WizzardTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_41_Sudoku/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_41_SudokuTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_42a_3DView/">
-    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView_net.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_42b_3DView/">
-    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView_net.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_42_3DView/">
-    <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView _net.csproj" />
-  </Folder>
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_99_SomeIssue/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_99_SomeIssueTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_AllExamples/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/MVVM_AllExamplesTests/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/SyncAsyncParallel/" />
   <Folder Name="/CSharpBible/MVVM_Tutorial/WpfApp1/" />
-  <Folder Name="/CSharpBible/MVVM_Tutorial/WpfAppTests/" />
   <Folder Name="/CSharpBible/OpenAI/">
     <Project Path="CSharpBible/OpenAI/McpTools/McpTools.csproj" />
     <Project Path="CSharpBible/OpenAI/Ollama-Service1/Ollama-Service1.csproj" />
@@ -1086,24 +928,6 @@
     <Project Path="CSharpBible/WPFSamples_2/Styles_and_Templates/WPF_FindingElementsInTemplates/WPF_FindingElementsInTemplates.csproj" />
     <Project Path="CSharpBible/WPFSamples_2/Styles_and_Templates/WPF_IntroToStylingAndTemplating/WPF_IntroToStylingAndTemplating.csproj" />
   </Folder>
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_AnimationTiming/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_AnimationTimingTests/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Complex_Layout/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Complex_LayoutTests/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_ControlsAndLayout/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_ControlsAndLayoutTests/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_CustomAnimation/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_CustomAnimationTests/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Hello_World/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Hello_WorldTests/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_MasterDetail/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_MasterDetailTests/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_MoveWindow/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_MoveWindowTests/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Sample_Template/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_Sample_TemplateTests/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_StickyNotesDemo/" />
-  <Folder Name="/CSharpBible/WPFSamples_2/WPF_StickyNotesDemoTests/" />
   <Folder Name="/CSharpProgrammierHandbuch/">
     <Project Path="CSharpProgrammierHandbuch/CGui/CGui.csproj" Id="e31e6e91-35a3-4115-93b2-94ef8060d9e6" />
     <Project Path="CSharpProgrammierHandbuch/ConsoleTest/ConsoleTest.csproj" Id="967cbaec-29e3-4689-83bc-7275e3e6bf46" />
@@ -1196,11 +1020,6 @@
     <Project Path="TestStatements/Tutorials/Tutorials.csproj" />
     <Project Path="TestStatements/ZeroLengthChar/ZeroLengthChar.csproj" />
   </Folder>
-  <Folder Name="/TestStatements/AsyncExampleWPF/" />
-  <Folder Name="/TestStatements/CallAllExamples/" />
-  <Folder Name="/TestStatements/DynamicSample/" />
-  <Folder Name="/TestStatements/TestStatements/" />
-  <Folder Name="/TestStatements/TestStatementsTest/" />
   <Folder Name="/Transpiler_pp/">
     <Project Path="Transpiler_pp/TranspilerConsTest/TranspilerConsTest.csproj" />
     <Project Path="Transpiler_pp/TranspilerLib.CSharp.Tests/TranspilerLib.CSharp.Tests.csproj" />
@@ -1250,4 +1069,19 @@
     <Project Path="WinAhnenNew/RnzTrauer/RnzTrauer.WebDriver.Edge/RnzTrauer.WebDriver.Edge.csproj" />
     <Project Path="WinAhnenNew/RnzTrauer/RnzTrauer.WebDriver.Firefox/RnzTrauer.WebDriver.Firefox.csproj" />
   </Folder>
+  <Project Path="CSharpBible/Calc/Calc32/Calc32.Model.csproj" />
+  <Project Path="CSharpBible/Calc/Calc32/Calc32.WForms.csproj" />
+  <Project Path="CSharpBible/Calc/Calc32/Calc32_net.WForms.csproj" />
+  <Project Path="CSharpBible/Calc/Calc32Cons/Calc32.Cons.csproj" />
+  <Project Path="CSharpBible/Calc/Calc32WPF/Calc32.WPF.csproj" />
+  <Project Path="CSharpBible/Calc/Calc32WPF/Calc32_net.WPF.csproj" />
+  <Project Path="CSharpBible/ConsoleApps/ConsoleMouseApp/ConsoleMouseApp_net.csproj" />
+  <Project Path="CSharpBible/ConsoleApps/TestConsole/TestConsole_net.csproj" />
+  <Project Path="CSharpBible/Games/HexaBan_Console/HexaBan_ConsoleLnx.csproj" />
+  <Project Path="CSharpBible/Games/HexaBan_Console/HexaBan_ConsoleWin.csproj" />
+  <Project Path="CSharpBible/Libraries/ConsoleLib/ConsoleLib_net.csproj" />
+  <Project Path="CSharpBible/MVVM_Tutorial/MVVM_17_1_CSV_LadenTests/MVVM_17_1_CSV_Laden_netTests.csproj" />
+  <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42a_3DView/MVVM_42a_3DView_net.csproj" />
+  <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42b_3DView/MVVM_42b_3DView_net.csproj" />
+  <Project Path="CSharpBible/MVVM_Tutorial/MVVM_42_3DView/MVVM_42_3DView _net.csproj" />
 </Solution>

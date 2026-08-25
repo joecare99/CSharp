@@ -13,7 +13,7 @@ namespace Ollama.Samples.ToolUse;
 internal static class Program
 {
     private const string DefaultEndpoint = "http://localhost:11434/";
-    private const string DefaultModel = "qwen3.5:4b";
+    private const string DefaultModel = "qwen3.5:9b";
 
     internal static Func<HttpClient> HttpClientFactory { get; set; } = CreateHttpClient;
 
