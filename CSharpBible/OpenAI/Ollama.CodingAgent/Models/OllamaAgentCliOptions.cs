@@ -92,7 +92,8 @@ public sealed class OllamaAgentCliOptions
                 ParseInt(options.Retries, "--retries"),
                 ParseInt(options.MaxIterations, "--max-iterations"),
                 ParseVerbosity(options.Verbosity),
-                options.ShowThinking),
+                options.ShowThinking,
+                logToolCalls: options.LogToolCalls),
             DelegateMode = options.DelegateMode,
             WorkspaceRoot = options.WorkspaceRoot,
             SessionId = options.SessionId ?? Environment.GetEnvironmentVariable("AGENT_SESSION") ?? "default",
@@ -120,6 +121,13 @@ public sealed class OllamaAgentCliOptions
             effectiveArgs.Add("--show-thinking");
         }
 
+        if (!ContainsOption(args, "--log-tool-calls")
+            && bool.TryParse(Environment.GetEnvironmentVariable("AGENT_LOG_TOOL_CALLS"), out bool logToolCalls)
+            && logToolCalls)
+        {
+            effectiveArgs.Add("--log-tool-calls");
+        }
+
         return effectiveArgs.ToArray();
     }
 
@@ -133,7 +141,7 @@ public sealed class OllamaAgentCliOptions
         ];
         HashSet<string> flagOptions =
         [
-            "--help", "-h", "--show-thinking", "--preflight", "--baseline-smoke", "--delegate",
+            "--help", "-h", "--show-thinking", "--log-tool-calls", "--preflight", "--baseline-smoke", "--delegate",
         ];
         List<string> normalized = [];
         List<string> positional = [];

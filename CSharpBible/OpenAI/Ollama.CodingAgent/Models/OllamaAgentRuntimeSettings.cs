@@ -36,13 +36,15 @@ public sealed class OllamaAgentRuntimeSettings
     /// <param name="verbosity">The requested output verbosity.</param>
     /// <param name="showThinking">Whether model reasoning should be displayed.</param>
     /// <param name="retryBackoff">The base delay before the first retry; doubles for each subsequent retry. Defaults to <see cref="DefaultRetryBackoff"/>.</param>
+    /// <param name="logToolCalls">When true, every delegated tool call is emitted to the console as a single structured line (name, validated parameters, status, duration, truncated result). Quiet verbosity always suppresses this output regardless of this flag.</param>
     public OllamaAgentRuntimeSettings(
         TimeSpan stepTimeout,
         int retryCount,
         int maxIterations,
         AgentVerbosity verbosity = AgentVerbosity.Normal,
         bool showThinking = false,
-        TimeSpan? retryBackoff = null)
+        TimeSpan? retryBackoff = null,
+        bool logToolCalls = false)
     {
         if (stepTimeout <= TimeSpan.Zero)
         {
@@ -70,6 +72,7 @@ public sealed class OllamaAgentRuntimeSettings
         Verbosity = verbosity;
         ShowThinking = showThinking;
         RetryBackoff = retryBackoff ?? DefaultRetryBackoff;
+        LogToolCalls = logToolCalls;
     }
 
     /// <summary>
@@ -102,4 +105,10 @@ public sealed class OllamaAgentRuntimeSettings
     /// Gets a value indicating whether model reasoning should be displayed.
     /// </summary>
     public bool ShowThinking { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether every delegated tool call should be written
+    /// to the console as a single structured line. Quiet verbosity suppresses output regardless.
+    /// </summary>
+    public bool LogToolCalls { get; }
 }

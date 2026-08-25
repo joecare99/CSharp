@@ -111,6 +111,7 @@ internal static class Program
         Console.WriteLine("  --max-iterations <num>    Hard iteration cap (default: 80)");
         Console.WriteLine("  --verbosity <level>       Output level: quiet, normal, or verbose (default: normal)");
         Console.WriteLine("  --show-thinking           Display model thinking fragments when available");
+        Console.WriteLine("  --log-tool-calls          Emit one structured console line per delegated tool call (name, parameters, status, duration, truncated result). Suppressed at --verbosity quiet.");
         Console.WriteLine("  --preflight               Check endpoint reachability and configured model availability");
         Console.WriteLine("  --baseline-smoke          Run preflight plus one bounded chat roundtrip");
         Console.WriteLine("  --prompt <text>           Prompt text (alternative to positional prompt)");

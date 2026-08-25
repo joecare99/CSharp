@@ -26,6 +26,9 @@ internal sealed class OllamaAgentCommandOptions
     [CommandFlag("--show-thinking")]
     public bool ShowThinking { get; init; }
 
+    [CommandFlag("--log-tool-calls")]
+    public bool LogToolCalls { get; init; }
+
     [CommandFlag("--preflight")]
     public bool PreflightOnly { get; init; }
 

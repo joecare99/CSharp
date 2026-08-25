@@ -147,7 +147,7 @@ public sealed class CodingTaskDelegationService
             stopwatch.Stop();
             bool driftDetected = GoalDriftAnalyzer.IsDriftDetected(planState.GoalContract, plannedSubtask, NormalizeToolOutput(toolResult));
             plannedSubtask.Status = toolResult.Success && !driftDetected ? PlannedSubtaskStatus.Done : PlannedSubtaskStatus.Blocked;
-            steps.Add(new DelegatedToolStep
+            DelegatedToolStep recordedStep = new()
             {
                 StepIndex = stepIndex,
                 ToolName = toolResult.ToolName,
@@ -156,7 +156,9 @@ public sealed class CodingTaskDelegationService
                 Input = toolResult.Input,
                 Duration = stopwatch.Elapsed,
                 Thinking = selectionThinking,
-            });
+            };
+            steps.Add(recordedStep);
+            WriteToolCallLog(recordedStep);
 
             if (string.Equals(toolResult.ToolName, "none", StringComparison.OrdinalIgnoreCase) || !toolResult.Success || driftDetected)
             {
@@ -477,4 +479,25 @@ public sealed class CodingTaskDelegationService
 
         return toolResult.Output;
     }
+
+    private void WriteToolCallLog(DelegatedToolStep step)
+    {
+        if (!_runtimeSettings.LogToolCalls || _runtimeSettings.Verbosity == AgentVerbosity.Quiet)
+        {
+            return;
+        }
+
+        string status = step.Success ? "ok" : "fail";
+        string inputPreview = string.IsNullOrWhiteSpace(step.Input) ? "{}" : step.Input;
+        string outputPreview = string.IsNullOrWhiteSpace(step.Output) ? string.Empty : step.Output;
+        const int maxInline = 240;
+        if (outputPreview.Length > maxInline)
+        {
+            outputPreview = outputPreview[..maxInline] + "...";
+        }
+
+        Console.WriteLine(
+            $"[tool] step={step.StepIndex} name={step.ToolName} status={status} duration_ms={(int)step.Duration.TotalMilliseconds} input={inputPreview} result={outputPreview}");
+    }
+
 }
