@@ -18,6 +18,13 @@ public interface IOllamaProtocolAdapter
     Task<OllamaTagsResponse> GetTagsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Gets the models currently loaded into Ollama memory.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The running-model response.</returns>
+    Task<OllamaPsResponse> GetRunningModelsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Streams generate response chunks.
     /// </summary>
     /// <param name="request">The generate request.</param>

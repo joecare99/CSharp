@@ -27,6 +27,9 @@ public sealed class OllamaProtocolAdapter : IOllamaProtocolAdapter
     public Task<OllamaTagsResponse> GetTagsAsync(CancellationToken cancellationToken = default) => _protocolClient.GetTagsAsync(cancellationToken);
 
     /// <inheritdoc/>
+    public Task<OllamaPsResponse> GetRunningModelsAsync(CancellationToken cancellationToken = default) => _protocolClient.GetRunningModelsAsync(cancellationToken);
+
+    /// <inheritdoc/>
     public IAsyncEnumerable<OllamaGenerateResponseChunk> GenerateStreamingAsync(
         OllamaGenerateRequest request,
         CancellationToken cancellationToken = default) => _protocolClient.GenerateStreamingAsync(request, cancellationToken);

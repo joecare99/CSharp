@@ -7,6 +7,7 @@ using Ollama.Client.Services;
 using Ollama.Client.Models;
 using Ollama.Protocol.Models;
 using Ollama.Tools.Tests.TestDoubles;
+using System.Threading;
 
 namespace Ollama.Tools.Tests;
 
@@ -66,20 +67,32 @@ public sealed class OllamaToolCoverageTests
     public async Task RunAsync_ReturnsFailureForInvalidJson()
     {
         OllamaToolRegistry registry = new([]);
+        int completionCallCount = 0;
         TestOllamaToolChatRunner chatRunner = new()
         {
-            CompleteChatAsyncHandler = (options, cancellationToken) => Task.FromResult(new OllamaChatCompletion
+            CompleteChatAsyncHandler = (options, cancellationToken) =>
             {
-                Content = "not json",
-            }),
+                completionCallCount++;
+                return Task.FromResult(new OllamaChatCompletion
+                {
+                    Content = "not json",
+                });
+            },
         };
         OllamaToolLoopRunner runner = new(chatRunner, registry, new OllamaToolOrchestrator(registry));
 
-        await Assert.ThrowsExactlyAsync<System.Text.Json.JsonException>(() => runner.RunAsync("hello"));
+        OllamaToolInvocationResult result = await runner.RunAsync("hello");
+
+        Assert.AreEqual(1, completionCallCount);
+        Assert.IsFalse(result.Success);
+        Assert.AreEqual(string.Empty, result.ToolName);
+        Assert.AreEqual("hello", result.Input);
+        Assert.AreEqual(string.Empty, result.Output);
+        Assert.AreEqual("The model did not return a valid tool call JSON object.", result.Error);
     }
 
     [TestMethod]
-    public async Task RunAsync_ThrowsWhenToolNameIsMissing()
+    public async Task RunAsync_ReturnsFailureWhenToolNameIsMissing()
     {
         OllamaToolRegistry registry = new([]);
         TestOllamaToolChatRunner chatRunner = new()
@@ -125,5 +138,19 @@ public sealed class OllamaToolCoverageTests
         }
 
         public Task<OllamaEmbedResponse> EmbedAsync(OllamaEmbedRequest request, System.Threading.CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task<OllamaPsResponse> GetRunningModelsAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new OllamaPsResponse
+            {
+                Models =
+                [
+                    new OllamaRunningModel
+                    {
+                        Name = "model-1",
+                    },
+                ],
+            });
+        }
     }
 }
