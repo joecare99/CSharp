@@ -23,21 +23,21 @@ public static class Transformations
 
     public static ExPoint Strflucht(ExPoint p, ExPoint p0, ref bool brk)
     {
-        if (p.Y == 0) return new ExPoint(0, 0);
+        if (Math.Abs(p.Y) < double.Epsilon) return new ExPoint(0, 0);
         if (p.Y > 0) return new ExPoint(p.X * 4 / p.Y, 12 - (32 / p.Y));
         else return new ExPoint(p.X * 4 / p.Y, -12 - (32 / p.Y));
     }
 
     public static ExPoint Ballon(ExPoint p, ExPoint p0, ref bool brk)
     {
-        if (p.X == 0 && p.Y == 0) return new ExPoint(0, 0);
+        if (Math.Abs(p.X) < double.Epsilon && Math.Abs(p.Y) < double.Epsilon) return new ExPoint(0, 0);
         var force = 1 - 0.3 / (PQLength(p) / 100 + 0.3);
         return new ExPoint(p.X * force, p.Y * force);
     }
 
     public static ExPoint Sauger(ExPoint p, ExPoint p0, ref bool brk)
     {
-        if (p.X == 0 && p.Y == 0) return new ExPoint(0, 0);
+        if (Math.Abs(p.X) < double.Epsilon && Math.Abs(p.Y) < double.Epsilon) return new ExPoint(0, 0);
         var force = 1 + 0.3 / (PQLength(p) / 100 + 0.1);
         return new ExPoint(p.X * force, p.Y * force);
     }
@@ -45,7 +45,7 @@ public static class Transformations
     public static ExPoint Tunnel(ExPoint p, ExPoint p0, ref bool brk)
     {
         var y = PLength(p);
-        if (y == 0) return new ExPoint(0, 0);
+        if (Math.Abs(y) < double.Epsilon) return new ExPoint(0, 0);
         var x = ArcSinXp(p) / Math.PI;
         if (y > 0) return new ExPoint(x * 16, 10 - 32 / y);
         else return new ExPoint(x * 16, 0);
@@ -75,7 +75,7 @@ public static class Transformations
         double y;
         if (Math.Abs(r) < rm) y = (1 + Math.Cos(r * Math.PI / rm)) * Math.PI * 0.25;
         else y = 0;
-        if (r == 0) return new ExPoint(0, 0);
+        if (Math.Abs(r) < double.Epsilon) return new ExPoint(0, 0);
         var ny = Math.Cos(y) * p.Y - Math.Sin(y) * p.X;
         var nx = Math.Sin(y) * p.Y + Math.Cos(y) * p.X;
         return new ExPoint(nx, ny);
