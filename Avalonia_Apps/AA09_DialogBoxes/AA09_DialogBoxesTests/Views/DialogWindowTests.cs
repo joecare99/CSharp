@@ -51,8 +51,7 @@ public class DialogWindowTests : BaseTestViewModel
         t.Start();
         t.Join(); //Wait for the thread to end
         vm.PropertyChanged += OnVMPropertyChanged;
-        if (vm is INotifyPropertyChanging npchgn)
-            npchgn.PropertyChanging += OnVMPropertyChanging;
+        vm.PropertyChanging += OnVMPropertyChanging;
     }
 
     /// <summary>
