@@ -158,7 +158,7 @@ OnPropChanged: o:ViewModelBaseTests, p:Property2:4
 
     private bool LocalFunc(double arg)
     {
-        return arg == Math.Floor(arg);
+        return Math.Abs(arg - Math.Floor(arg)) < double.Epsilon;
     }
 
 }
