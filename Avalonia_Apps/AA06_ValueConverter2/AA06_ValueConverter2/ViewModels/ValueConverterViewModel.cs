@@ -92,7 +92,7 @@ public partial class ValueConverterViewModel : ViewModelBase, IValueConverterVie
 
     partial void OnInputValueChanged(double oldValue, double newValue)
     {
-        if (newValue == oldValue || newValue == _model.InputValue) return;
+        if (Math.Abs(newValue - oldValue) < double.Epsilon || Math.Abs(newValue - _model.InputValue) < double.Epsilon) return;
         _model.InputValue = newValue;
     }
 
