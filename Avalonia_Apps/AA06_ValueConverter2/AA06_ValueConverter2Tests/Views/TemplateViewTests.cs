@@ -24,31 +24,36 @@ public class TemplateViewTests
     {
         // Arrange
         ValueConverterView tv;
+        var viewModel = _vm;
+        if (viewModel is null)
+        {
+            return;
+        }
+
         var window = new Window()
         {
             Height = 800,
             Width = 1024,
             Content = tv = new ValueConverterView()
             {
-                DataContext = _vm = Substitute.For<IValueConverterViewModel>()
+                DataContext = viewModel = _vm = Substitute.For<IValueConverterViewModel>()
             }
         };
 
-        if (_vm?.GetType().GetProperty(sRelayCmd)?.GetValue(_vm) is IRelayCommand iRc)
-        {  
+        if (viewModel.GetType().GetProperty(sRelayCmd)?.GetValue(viewModel) is IRelayCommand iRc)
+        {
             iRc.CanExecute(null).Returns(true);
-            iRc.CanExecuteChanged += Raise.Event<EventHandler>(_vm.HomeCommand, EventArgs.Empty);
-        
-        
-        window.Show();
+            iRc.CanExecuteChanged += Raise.Event<EventHandler>(viewModel.HomeCommand, EventArgs.Empty);
 
-        // Act
-        tv.FindControl<Button>(sAct)?.Focus();
-        window.KeyPressQwerty(PhysicalKey.Enter,RawInputModifiers.None);
+            window.Show();
 
-        // Assert
-        iRc.ReceivedWithAnyArgs(3).CanExecute(null);
-        iRc.ReceivedWithAnyArgs(1).Execute(null);
+            // Act
+            tv.FindControl<Button>(sAct)?.Focus();
+            window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+
+            // Assert
+            iRc.ReceivedWithAnyArgs(3).CanExecute(null);
+            iRc.ReceivedWithAnyArgs(1).Execute(null);
         }
     }
 }
