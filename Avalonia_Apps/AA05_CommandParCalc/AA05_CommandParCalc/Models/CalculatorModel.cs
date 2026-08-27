@@ -321,10 +321,10 @@ public partial class CalculatorModel : ObservableObject, ICalculatorModel
                 Accumulator = Math.PI;
                 break;
             case ECommands.MS: Memory = Accumulator; break;
-            case ECommands.MR: Accumulator = Memory ?? 0d; break;
+            case ECommands.MR: Accumulator = Memory.GetValueOrDefault(); break;
             case ECommands.MC: Memory = null; break;
-            case ECommands.Mp: Memory = (Memory ?? 0d) + Accumulator; break;
-            case ECommands.Mm: Memory = (Memory ?? 0d) - Accumulator; break;
+            case ECommands.Mp: Memory = Memory.GetValueOrDefault() + Accumulator; break;
+            case ECommands.Mm: Memory = Memory.GetValueOrDefault() - Accumulator; break;
             default:
                 break;
         }
