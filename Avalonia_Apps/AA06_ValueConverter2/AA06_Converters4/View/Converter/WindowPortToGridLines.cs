@@ -159,7 +159,7 @@ result.Add(CreateLine(b, GetStroke(X1, Step, BigStep), P1x, P2x));
         if (Math.Abs((Math.Abs(X1) + Step / 5) % BigStep) < Step / 2)
     {
   result.Add(CreateLabel(X1, 
-               new Thickness((double)(P1x.X - lb.Width / 2d + 7), 0d, 0d, 0d), 
+               new Thickness(P1x.X - lb.Width / 2d + 7, 0d, 0d, 0d), 
            VerticalAlignment.Bottom, 
            HorizontalAlignment.Center));
     }
@@ -174,7 +174,7 @@ result.Add(CreateLine(b, GetStroke(X1, Step, BigStep), P1x, P2x));
    if (Math.Abs((Math.Abs(Y1) + Step / 5) % BigStep) < Step / 2)
      {
        result.Add(CreateLabel(Y1, 
-    new Thickness(0d, (double)(P1y.Y - hOffset - lb.Height + 5), 0d, 0d), 
+    new Thickness(0d, P1y.Y - hOffset - lb.Height + 5, 0d, 0d), 
      VerticalAlignment.Center, 
   HorizontalAlignment.Right));
              }
@@ -195,7 +195,7 @@ result.Add(CreateLine(b, GetStroke(X1, Step, BigStep), P1x, P2x));
         }
             return result;
           
- case DataSet[] ads: 
+ case DataSet[]:
           return new ObservableCollection<Control>();
   
             case ArrowList al: 
@@ -257,17 +257,21 @@ return 0.3d;
     {
         RectangleF port2;
         if (Math.Abs(WindowSize.Width * c.port.Height) < Math.Abs(WindowSize.Height * c.port.Width))
-       port2 = new RectangleF(
-      c.port.Left, 
- (float)(c.port.Top + c.port.Height * 0.5f - (WindowSize.Height * 0.5f) * c.port.Width / (float)WindowSize.Width), 
-     c.port.Width, 
-    (float)(c.WindowSize.Height * c.port.Width / WindowSize.Width));
+        {
+            port2 = new RectangleF(
+                c.port.Left,
+                (float)(c.port.Top + c.port.Height * 0.5f - (WindowSize.Height * 0.5f) * c.port.Width / (float)WindowSize.Width),
+                c.port.Width,
+                (float)(c.WindowSize.Height * c.port.Width / WindowSize.Width));
+        }
         else
-        port2 = new RectangleF(
-        (float)(c.port.Left + c.port.Width * 0.5 - (WindowSize.Width / 2) * c.port.Height / WindowSize.Height), 
-    c.port.Top, 
-      (float)(WindowSize.Width * c.port.Height / WindowSize.Height), 
-        c.port.Height);
+        {
+            port2 = new RectangleF(
+                (float)(c.port.Left + c.port.Width * 0.5 - (WindowSize.Width / 2) * c.port.Height / WindowSize.Height),
+                c.port.Top,
+                (float)(WindowSize.Width * c.port.Height / WindowSize.Height),
+                c.port.Height);
+        }
         return port2;
     }
 

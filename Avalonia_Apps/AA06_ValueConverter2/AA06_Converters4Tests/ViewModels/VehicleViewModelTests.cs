@@ -31,8 +31,7 @@ public class VehicleViewModelTests : BaseTestViewModel
    testModel2 = new VehicleViewModel(_testModel);
         
         // Event-Handler registrieren
-if (testModel is INotifyPropertyChanged inpc)
-            inpc.PropertyChanged += OnVMPropertyChanged;
+        testModel.PropertyChanged += OnVMPropertyChanged;
     }
     
     [TestMethod()]
@@ -74,11 +73,11 @@ if (testModel is INotifyPropertyChanged inpc)
     break;
     case TypeCode.Object when p.PropertyType == typeof(DateTime?):
    yield return new object[] { p.Name, "Null", null!, null! };
-   yield return new object[] { p.Name, "0", (DateTime?)new DateTime(1980, 1, 1), (DateTime?)new DateTime(1980, 1, 1) };
-    yield return new object[] { p.Name, "1", (DateTime?)new DateTime(2001, 1, 1), new DateTime(2001, 1, 1) };
-           yield return new object[] { p.Name, "Today", (DateTime?)DateTime.Today, DateTime.Today };
-      yield return new object[] { p.Name, "MaxDate", (DateTime?)DateTime.MaxValue, DateTime.MaxValue };
-          yield return new object[] { p.Name, "MinDate", (DateTime?)DateTime.MinValue, DateTime.MinValue };
+   yield return new object[] { p.Name, "0", new DateTime(1980, 1, 1), new DateTime(1980, 1, 1) };
+    yield return new object[] { p.Name, "1", new DateTime(2001, 1, 1), new DateTime(2001, 1, 1) };
+           yield return new object[] { p.Name, "Today", DateTime.Today, DateTime.Today };
+      yield return new object[] { p.Name, "MaxDate", DateTime.MaxValue, DateTime.MaxValue };
+          yield return new object[] { p.Name, "MinDate", DateTime.MinValue, DateTime.MinValue };
        break;
     default:
       yield return new object[] { p.Name, "Null", null!, null! };

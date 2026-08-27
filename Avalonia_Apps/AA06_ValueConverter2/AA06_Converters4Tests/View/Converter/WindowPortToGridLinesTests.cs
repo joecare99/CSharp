@@ -40,7 +40,7 @@ public class WindowPortToGridLinesTests
     [DynamicData(nameof(ConvertTestData))]
     public void ConvertTest(object o)
     {
-        var test = testVC.Convert(o, null, null, null);
+        testVC.Convert(o, null, null, null);
         Assert.Fail();
     }
 

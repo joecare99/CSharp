@@ -31,10 +31,10 @@ public partial class RenderViewModel : ObservableObject
     partial void OnSourceChanged(ExRect value)
     {
         // Keep scalar properties in sync when Source changes programmatically
-        if (X1 != value.X1) X1 = value.X1;
-        if (Y1 != value.Y1) Y1 = value.Y1;
-        if (X2 != value.X2) X2 = value.X2;
-        if (Y2 != value.Y2) Y2 = value.Y2;
+        if (Math.Abs(X1 - value.X1) > double.Epsilon) X1 = value.X1;
+        if (Math.Abs(Y1 - value.Y1) > double.Epsilon) Y1 = value.Y1;
+        if (Math.Abs(X2 - value.X2) > double.Epsilon) X2 = value.X2;
+        if (Math.Abs(Y2 - value.Y2) > double.Epsilon) Y2 = value.Y2;
     }
 
     // UI parameters (from LFM)

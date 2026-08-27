@@ -26,8 +26,7 @@ public class DialogWindowViewModelTests : BaseTestViewModel
     {
         testModel = new();
         testModel.PropertyChanged += OnVMPropertyChanged;
-        if (testModel is INotifyPropertyChanging npchgn)
-            npchgn.PropertyChanging += OnVMPropertyChanging;
+        testModel.PropertyChanging += OnVMPropertyChanging;
         testModel.DoCancel += DoCancelTest;
         testModel.DoOK += DoOKTest;
         ClearLog();
