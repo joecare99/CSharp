@@ -55,7 +55,7 @@ public class DoubleValueConverterTests
     [DataRow(null, "")]
     public void ConvertTest(object? value, string expected)
     {
-        if (value is double d) value = (double)d;
+        if (value is double d) value = d;
         var result = testConv.Convert(value!, typeof(string), null!, CultureInfo.InvariantCulture);
         Assert.AreEqual(expected, result);
     }
@@ -73,7 +73,7 @@ public class DoubleValueConverterTests
     [DataRow(null, "")]
     public void ConvertTest2(object? value, string expected)
     {
-        if (value is double d) value = (double)d;
+        if (value is double d) value = d;
         var result = testConv.Convert(value!, typeof(string), "0.00€", CultureInfo.InvariantCulture);
         Assert.AreEqual(expected, result);
     }
