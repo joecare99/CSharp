@@ -9,7 +9,7 @@
 // <copyright file="DynamicPlotCanvas.cs" company="JC-Soft">
 //     (c) by Joe Care 2024
 // </copyright>
-// <summary>Dynamisches Canvas-Control für Avalonia mit MVVM-Support</summary>
+// <summary>Dynamisches Canvas-Control fï¿½r Avalonia mit MVVM-Support</summary>
 // ***********************************************************************
 
 using Avalonia;
@@ -19,33 +19,33 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using System;
 using System.Collections.ObjectModel;
-using System.Drawing; // Nur für PointF, RectangleF
+using System.Drawing; // Nur fÃ¼r PointF, RectangleF
 using AA06_Converters_4.ViewModels;
-using AvaloniaColor = Avalonia.Media.Color; // Alias für Avalonia Color
+using AvaloniaColor = Avalonia.Media.Color; // Alias fï¿½r Avalonia Color
 
 namespace AA06_Converters_4.View.Controls;
 
 /// <summary>
-/// Dynamisches Canvas-Control für Koordinatensystem-Darstellung
-/// Unterstützt Pan, Zoom und dynamische Elemente via MVVM
+/// Dynamisches Canvas-Control fÃ¼r Koordinatensystem-Darstellung
+/// UnterstÃ¼tzt Pan, Zoom und dynamische Elemente via MVVM
 /// </summary>
 public class DynamicPlotCanvas : Control
 {
     private PointF? _dragStartPos;
     private RectangleF? _dragStartViewport; // Viewport beim Drag-Start
     private bool _isDragging;
-    private RectangleF _isometricViewport; // Cache für isometrischen Viewport
-    private bool _isRenderScheduled; // Flag für Render-Throttling
-    private DispatcherTimer? _renderThrottleTimer; // Timer für Render-Throttling
+    private RectangleF _isometricViewport; // Cache fÃ¼r isometrischen Viewport
+    private bool _isRenderScheduled; // Flag fÃ¼r Render-Throttling
+    private DispatcherTimer? _renderThrottleTimer; // Timer fÃ¼r Render-Throttling
 
     /// <summary>
-    /// Styled Property für das ViewModel (DataContext wird automatisch gebunden)
+    /// Styled Property fÃ¼r das ViewModel (DataContext wird automatisch gebunden)
     /// </summary>
     public static readonly StyledProperty<PlotFrameViewModel?> ViewModelProperty =
         AvaloniaProperty.Register<DynamicPlotCanvas, PlotFrameViewModel?>(nameof(ViewModel));
 
     /// <summary>
-    /// Styled Property für den Hintergrund
+    /// Styled Property fÃ¼r den Hintergrund
     /// </summary>
     public static readonly StyledProperty<IBrush?> BackgroundProperty =
      AvaloniaProperty.Register<DynamicPlotCanvas, IBrush?>(
@@ -92,7 +92,7 @@ public class DynamicPlotCanvas : Control
                    InvalidateVisual();
                };
 
-        // Event-Handler für Interaktivität
+        // Event-Handler fÃ¼r InteraktivitÃ¤t
         PointerPressed += OnPointerPressed;
         PointerMoved += OnPointerMoved;
         PointerReleased += OnPointerReleased;
@@ -129,10 +129,10 @@ public class DynamicPlotCanvas : Control
 
     private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        // Während des Dragging nur bei bestimmten Properties rendern
+        // WÃ¤hrend des Dragging nur bei bestimmten Properties rendern
         if (_isDragging && e.PropertyName == nameof(PlotFrameViewModel.VPWindow))
         {
-            // Viewport-Änderung während Drag -> Throttled Render
+            // Viewport-Ã„nderung wÃ¤hrend Drag -> Throttled Render
             ScheduleRender();
             return;
         }
@@ -149,7 +149,7 @@ public class DynamicPlotCanvas : Control
 
     private void Model_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        // Bei Models-Änderungen nur außerhalb von Drag-Operationen sofort rendern
+        // Bei Models-Ã„nderungen nur auÃŸerhalb von Drag-Operationen sofort rendern
         if (!_isDragging)
         {
             ScheduleRender();
@@ -167,13 +167,13 @@ public class DynamicPlotCanvas : Control
 
         if (_isDragging)
         {
-            // Während Dragging: Throttle auf 60 FPS
+            // WÃ¤hrend Dragging: Throttle auf 60 FPS
             _renderThrottleTimer?.Stop();
             _renderThrottleTimer?.Start();
         }
         else
         {
-            // Außerhalb Dragging: Sofort rendern
+            // AuÃŸerhalb Dragging: Sofort rendern
             Dispatcher.UIThread.Post(() =>
              {
                  _isRenderScheduled = false;
@@ -189,7 +189,7 @@ public class DynamicPlotCanvas : Control
         if (change.Property == BoundsProperty && ViewModel != null)
         {
             ViewModel.WindowSize = new Avalonia.Size(Bounds.Width, Bounds.Height);
-            // Viewport anpassen für isometrische Darstellung
+            // Viewport anpassen fÃ¼r isometrische Darstellung
             UpdateIsometricViewport();
         }
     }
@@ -199,7 +199,7 @@ public class DynamicPlotCanvas : Control
     /// </summary>
     private void UpdateIsometricViewport()
     {
-        if (ViewModel == null || Bounds.Width == 0 || Bounds.Height == 0)
+        if (ViewModel == null || Math.Abs(Bounds.Width) < double.Epsilon || Math.Abs(Bounds.Height) < double.Epsilon)
             return;
 
         const double margin = 50;
@@ -214,7 +214,7 @@ public class DynamicPlotCanvas : Control
 
         if (viewportAspect > aspectRatio)
         {
-            // Viewport ist breiter -> Höhe anpassen
+            // Viewport ist breiter -> HÃ¶he anpassen
             var newHeight = (float)(viewport.Width / aspectRatio);
             var centerY = viewport.Top + viewport.Height / 2;
             adjustedViewport = new RectangleF(
@@ -225,7 +225,7 @@ public class DynamicPlotCanvas : Control
         }
         else
         {
-            // Viewport ist höher -> Breite anpassen
+            // Viewport ist hÃ¶her -> Breite anpassen
             var newWidth = (float)(viewport.Height * aspectRatio);
             var centerX = viewport.Left + viewport.Width / 2;
             adjustedViewport = new RectangleF(
@@ -242,7 +242,7 @@ public class DynamicPlotCanvas : Control
     {
         base.Render(context);
 
-        if (Bounds.Width == 0 || Bounds.Height == 0)
+        if (Math.Abs(Bounds.Width) < double.Epsilon || Math.Abs(Bounds.Height) < double.Epsilon)
             return;
 
         // Hintergrund (verwendet Background-Property)
@@ -254,8 +254,8 @@ public class DynamicPlotCanvas : Control
         if (ViewModel == null)
             return;
 
-        // Während Dragging: Verwende gecachten Viewport (verhindert Wackeln)
-        // Außerhalb Dragging: Berechne isometrischen Viewport neu
+        // WÃ¤hrend Dragging: Verwende gecachten Viewport (verhindert Wackeln)
+        // AuÃŸerhalb Dragging: Berechne isometrischen Viewport neu
         if (!_isDragging)
         {
             UpdateIsometricViewport();
@@ -316,7 +316,8 @@ public class DynamicPlotCanvas : Control
         var brush = ViewModel?.Polynomes?.PenData?.Item1 ?? Brushes.Blue;
         var thickness = ViewModel?.Polynomes?.PenData?.Item2 ?? 2.0;
 
-        context.DrawGeometry(null, new Pen(brush, thickness), geometry);
+        using var polygonPen = new Pen(brush, thickness);
+        context.DrawGeometry(null, polygonPen, geometry);
     }
 
     private void DrawCircle(DrawingContext context, RectangleF viewport, CircleData circle)
@@ -331,7 +332,8 @@ public class DynamicPlotCanvas : Control
         var brush = ViewModel?.Circles?.PenData?.Item1 ?? Brushes.Green;
         var thickness = ViewModel?.Circles?.PenData?.Item2 ?? 1.0;
 
-        context.DrawEllipse(null, new Pen(brush, thickness), center, radius, radius);
+        using var circlePen = new Pen(brush, thickness);
+        context.DrawEllipse(null, circlePen, center, radius, radius);
     }
 
     private void DrawArrow(DrawingContext context, RectangleF viewport, ArrowData arrow)
@@ -343,7 +345,8 @@ public class DynamicPlotCanvas : Control
         var thickness = ViewModel?.Arrows?.PenData?.Item2 ?? 2.0;
 
         // Hauptlinie
-        context.DrawLine(new Pen(brush, thickness), start, end);
+        using var arrowPen = new Pen(brush, thickness);
+        context.DrawLine(arrowPen, start, end);
 
         // Pfeilspitze
         DrawArrowHead(context, start, end, brush, thickness);
@@ -351,11 +354,11 @@ public class DynamicPlotCanvas : Control
 
     private void DrawCoordinateSystem(DrawingContext context, RectangleF viewport, SWindowPort windowPort)
     {
-        var pen = new Pen(Brushes.LightGray, 0.5);
-        var axisPen = new Pen(Brushes.Black, 1.5);
+        using var pen = new Pen(Brushes.LightGray, 0.5);
+        using var axisPen = new Pen(Brushes.Black, 1.5);
         var textBrush = Brushes.Black;
 
-        // Berechne Schrittweite für Gitterlinien
+        // Berechne Schrittweite fÃ¼r Gitterlinien
         double gridStep = CalculateGridStep(viewport.Width, viewport.Height);
 
         // Vertikale Gitterlinien
@@ -411,7 +414,8 @@ public class DynamicPlotCanvas : Control
 
         // Nullpunkt markieren
         var origin = Real2Vis(new PointF(0, 0), viewport);
-        context.DrawEllipse(Brushes.Red, new Pen(Brushes.DarkRed, 2), origin, 5, 5);
+        using var originPen = new Pen(Brushes.DarkRed, 2);
+        context.DrawEllipse(Brushes.Red, originPen, origin, 5, 5);
     }
 
     private void DrawAGV(DrawingContext context, RectangleF viewport)
@@ -436,8 +440,9 @@ public class DynamicPlotCanvas : Control
         };
 
         var geometry = new PolylineGeometry(corners, true);
+        using var agvPen = new Pen(Brushes.Blue, 2);
         context.DrawGeometry(new SolidColorBrush(AvaloniaColor.FromArgb(100, 0, 100, 255)),
-            new Pen(Brushes.Blue, 2), geometry);
+            agvPen, geometry);
 
         // Zeichne Drehschemel
         DrawSwivel(context, viewport, new PointF((float)swivelKoor.x, (float)swivelKoor.y), agv.Swivel1Angle, agv.AxisOffset);
@@ -453,16 +458,18 @@ public class DynamicPlotCanvas : Control
         var center = Real2Vis(position, viewport);
 
         // Drehschemel-Kreis
-        context.DrawEllipse(Brushes.LightBlue, new Pen(Brushes.DarkBlue, 1.5), center, 8, 8);
+        using var swivelPen = new Pen(Brushes.DarkBlue, 1.5);
+        context.DrawEllipse(Brushes.LightBlue, swivelPen, center, 8, 8);
 
         // Ausrichtungs-Pfeil
         var endX = position.X + (float)(Math.Cos(angle) * 50);
         var endY = position.Y + (float)(Math.Sin(angle) * 50);
         var endPoint = Real2Vis(new PointF(endX, endY), viewport);
 
-        context.DrawLine(new Pen(Brushes.DarkBlue, 2), center, endPoint);
+        using var swivelLinePen = new Pen(Brushes.DarkBlue, 2);
+        context.DrawLine(swivelLinePen, center, endPoint);
 
-        // Räder
+        // RÃ¤der
         var wheelHalfOffset = axisOffset / 2;
         var perpX = -Math.Sin(angle);
         var perpY = Math.Cos(angle);
@@ -486,8 +493,8 @@ public class DynamicPlotCanvas : Control
         var origin = Real2Vis(new PointF(0, 0), viewport);
         var endPoint = Real2Vis(new PointF((float)velocity.x / 10, (float)velocity.y / 10), viewport);
 
-        var pen = new Pen(Brushes.Green, 3);
-        context.DrawLine(pen, origin, endPoint);
+        using var velocityPen = new Pen(Brushes.Green, 3);
+        context.DrawLine(velocityPen, origin, endPoint);
 
         // Pfeilspitze
         DrawArrowHead(context, origin, endPoint, Brushes.Green, 3);
@@ -511,7 +518,8 @@ public class DynamicPlotCanvas : Control
   end.Y - arrowLength * Math.Sin(angle + arrowAngle));
 
         var geometry = new PolylineGeometry(new[] { p1, end, p2 }, false);
-        context.DrawGeometry(null, new Pen(brush, thickness), geometry);
+        using var arrowHeadPen = new Pen(brush, thickness);
+        context.DrawGeometry(null, arrowHeadPen, geometry);
     }
 
     private double CalculateGridStep(double width, double height)
@@ -529,7 +537,7 @@ public class DynamicPlotCanvas : Control
 
     private Avalonia.Point Real2Vis(PointF realPoint, RectangleF viewport)
     {
-        const double margin = 50; // Rand für Beschriftungen
+        const double margin = 50; // Rand fÃ¼r Beschriftungen
 
         var x = margin + (realPoint.X - viewport.Left) * (Bounds.Width - 2 * margin) / viewport.Width;
         var y = Bounds.Height - margin - (realPoint.Y - viewport.Top) * (Bounds.Height - 2 * margin) / viewport.Height;
@@ -547,7 +555,7 @@ public class DynamicPlotCanvas : Control
         return new PointF((float)x, (float)y);
     }
 
-    // Interaktivität
+    // InteraktivitÃ¤t
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (ViewModel == null) return;
@@ -575,7 +583,7 @@ public class DynamicPlotCanvas : Control
         var deltaX = _dragStartPos.Value.X - currentPos.X;
         var deltaY = _dragStartPos.Value.Y - currentPos.Y;
 
-        // Verschiebe den URSPRÜNGLICHEN Viewport (nicht den aktuellen!)
+        // Verschiebe den URSPRÃœNGLICHEN Viewport (nicht den aktuellen!)
         // Das verhindert das Akkumulieren von Rundungsfehlern
         var newViewport = new RectangleF(
           _dragStartViewport.Value.Left + deltaX,
@@ -586,8 +594,8 @@ public class DynamicPlotCanvas : Control
         // Setze neuen Viewport
         ViewModel.VPWindow = newViewport;
 
-        // Aktualisiere isometrischen Viewport für diesen Frame
-        // (aber nur die Translation, nicht die Größenanpassung)
+        // Aktualisiere isometrischen Viewport fÃ¼r diesen Frame
+        // (aber nur die Translation, nicht die GrÃ¶ÃŸenanpassung)
         _isometricViewport = new RectangleF(
   _isometricViewport.Left + deltaX,
     _isometricViewport.Top + deltaY,
