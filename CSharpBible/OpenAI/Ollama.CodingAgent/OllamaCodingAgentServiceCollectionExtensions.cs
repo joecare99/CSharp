@@ -49,17 +49,9 @@ public static class OllamaCodingAgentServiceCollectionExtensions
         services.AddHttpClient(OllamaHttpClientNames.Agent, client =>
             {
                 client.Timeout = totalRequestTimeout;
-            })
-            .AddResilienceHandler("ollama-agent-resilience", builder =>
-            {
-                options.TotalRequestTimeout.Timeout = totalRequestTimeout;
-                options.AttemptTimeout.Timeout = attemptTimeout;
-                // The default circuit-breaker sampling duration (30s) must be >= 2 * AttemptTimeout
-                // to be statistically meaningful. Scale it up while keeping it within the
-                // validator's [500ms, 1 day] ceiling and at least double the attempt timeout.
-                options.CircuitBreaker.SamplingDuration = ComputeBoundedCircuitBreakerSamplingDuration(attemptTimeout);
-                builder.AddRetry(new Microsoft.Extensions.Http.Resilience.HttpRetryStrategyOptions());
             });
+
+
 
         // Web lookups are short-lived and bounded; keep the standard resilience defaults.
         services.AddHttpClient(OllamaHttpClientNames.WebLookup, client =>
