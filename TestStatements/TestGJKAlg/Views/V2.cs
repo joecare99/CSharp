@@ -6,7 +6,7 @@ namespace TestGJKAlg.Views;
 /// <summary>
 /// Klasse V2 repräsentiert einen 3D-Vektor mit X, Y und Z Komponenten
 /// </summary>
-public class V2
+public class V2 : IEquatable<V2>
 {
     /// <summary>
     /// Eigenschaften für die X, Y und Z Komponenten des Vektors
@@ -152,5 +152,14 @@ public class V2
     public static V2 EY => new V2(0, 1);
     public static V2 EZ => Cross(EX, EY);
 
-    public override bool Equals(object obj) => obj is V2 o ? o.X == X && o.Y == Y : false;
+    public bool Equals(V2 other) =>
+        other is not null &&
+        X.Equals(other.X) &&
+        Y.Equals(other.Y) &&
+        Z.Equals(other.Z);
+
+    public override bool Equals(object obj) => Equals(obj as V2);
+
+    public override int GetHashCode() =>
+        unchecked((X.GetHashCode() * 397) ^ (Y.GetHashCode() * 397) ^ Z.GetHashCode());
 }
