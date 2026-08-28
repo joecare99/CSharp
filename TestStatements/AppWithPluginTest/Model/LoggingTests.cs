@@ -54,7 +54,7 @@ namespace AppWithPlugin.Model.Tests
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(IDisposable));
             object? target = null;
-            Assert.AreEqual(true, result.GetProp("State", (WeakReference<object>)null)?.TryGetTarget(out target));
+            Assert.AreEqual(true, result.GetProp("State", null)?.TryGetTarget(out target));
             Assert.AreEqual(state, target);
 
             result.Dispose();
