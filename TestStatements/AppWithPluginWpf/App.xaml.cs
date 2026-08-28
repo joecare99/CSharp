@@ -39,7 +39,7 @@ public partial class App : Application, IEnvironment
             _sp = _sc!.BuildServiceProvider();
             return true;
         }
-        catch (Exception ex)
+        catch
         {
             // Logging
             return false;
@@ -170,7 +170,6 @@ public partial class App : Application, IEnvironment
         {
             var name = assembly.GetName();
             var publicKey = name.GetPublicKey();
-            var hash = assembly.GetHashCode(); // 30015890
             return publicKey != null && publicKey.Length > 0;
         }
         catch
@@ -180,4 +179,3 @@ public partial class App : Application, IEnvironment
     }
 
 }
-
