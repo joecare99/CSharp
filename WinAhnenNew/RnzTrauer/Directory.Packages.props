@@ -11,7 +11,7 @@
     <PackageVersion Include="MSTest" Version="4.3.3" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="MySqlConnector" Version="2.6.2" />
-    <PackageVersion Include="Selenium.WebDriver" Version="4.47.0" />
+    <PackageVersion Include="Selenium.WebDriver" Version="4.48.0" />
     <PackageVersion Include="Selenium.WebDriver.GeckoDriver" Version="0.37.1" />
     <PackageVersion Include="Selenium.WebDriver.MSEdgeDriver" Version="151.0.4129.59" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="10.0.11" />
