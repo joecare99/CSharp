@@ -84,7 +84,7 @@ namespace TestStatements.Anweisungen
             if (a) ; // Warning but OK in syntax 
 #pragma warning restore CS0642 // Möglicherweise falsche leere Anweisung
             //---------------
-            if (a) { }
+            if (a) { Console.WriteLine("Condition was true."); }
             //---------------
             if (a) DoIt();
             //---------------
@@ -92,13 +92,13 @@ namespace TestStatements.Anweisungen
             //---------------
             if (a)
 #pragma warning disable CS0642 // Möglicherweise falsche leere Anweisung
-                if (b) ; // Warning but OK in syntax 
-                else; // Warning but OK in syntax
+                if (b) DoIt();
+                else DoIt();
 #pragma warning restore CS0642 // Möglicherweise falsche leere Anweisung
             else DoIt();
             { }
 #pragma warning disable CS0642 // Möglicherweise falsche leere Anweisung
-            { if (!a) DoIt(); else; } // Warning but OK in syntax
+            { if (!a) DoIt(); else DoIt(); }
 #pragma warning restore CS0642 // Möglicherweise falsche leere Anweisung
             DoIt();
         }

@@ -7,7 +7,7 @@
 // Last Modified On : 09-09-2022
 // ***********************************************************************
 // <copyright file="SwitchStatement2.cs" company="JC-Soft">
-//     Copyright © JC-Soft 2020
+//     Copyright ï¿½ JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
@@ -171,17 +171,13 @@ namespace TestStatements.Anweisungen
         {
             switch (sh)
             {
-                // Note that this code never evaluates to true.
-                case Shape shape when shape == null:
-                    Console.WriteLine($"An uninitialized shape (shape == null)");
-                    break;
                 case null:
                     Console.WriteLine($"An uninitialized shape");
                     break;
-                case Shape shape when sh.Area == 0:
-                    Console.WriteLine($"The shape: {sh.GetType().Name} with no dimensions");
+                case Shape shape when shape.Area == 0:
+                    Console.WriteLine($"The shape: {shape.GetType().Name} with no dimensions");
                     break;
-                case Square sq when sh.Area > 0:
+                case Square sq when sq.Area > 0:
                     Console.WriteLine("Information about square:");
                     Console.WriteLine($"   Length of a side: {sq.Side}");
                     Console.WriteLine($"   Area: {sq.Area}");
@@ -191,13 +187,13 @@ namespace TestStatements.Anweisungen
                     Console.WriteLine($"   Length of a side: {r.Length}");
                     Console.WriteLine($"   Area: {r.Area}");
                     break;
-                case Rectangle r when sh.Area > 0:
+                case Rectangle r when r.Area > 0:
                     Console.WriteLine("Information about rectangle:");
                     Console.WriteLine($"   Dimensions: {r.Length} x {r.Width}");
                     Console.WriteLine($"   Area: {r.Area}");
                     break;
-                case Shape shape when sh != null:
-                    Console.WriteLine($"A {sh.GetType().Name} shape");
+                case Shape shape:
+                    Console.WriteLine($"A {shape.GetType().Name} shape");
                     break;
                 default:
                     Console.WriteLine($"The {nameof(sh)} variable does not represent a Shape.");

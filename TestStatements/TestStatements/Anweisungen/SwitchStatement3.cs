@@ -126,10 +126,10 @@ namespace TestStatements.Anweisungen
         public decimal CalculateToll(object vehicle) =>
             vehicle switch
             {
-                Taxi t => 3.50m,
-                Car c => 2.00m,
-                Bus b => 5.00m,
-                Truck t => 10.00m,
+                Taxi => 3.50m,
+                Car => 2.00m,
+                Bus => 5.00m,
+                Truck => 10.00m,
                 { } => throw new ArgumentException(message: "Not a known vehicle type", paramName: nameof(vehicle)),
                 null => throw new ArgumentNullException(nameof(vehicle))
             };

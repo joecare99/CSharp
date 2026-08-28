@@ -230,7 +230,7 @@ namespace TestStatements.Collection.Generic
     /// Implements the <see cref="IComparable{Box}" />
     /// </summary>
     /// <seealso cref="IComparable{Box}" />
-    public class Box : IComparable<Box>
+    public class Box : IComparable<Box>, IEquatable<Box>
     {
 
         /// <summary>
@@ -267,8 +267,13 @@ namespace TestStatements.Collection.Generic
         /// <param name="other">Ein Objekt, das mit dieser Instanz verglichen werden soll.</param>
         /// <returns>Ein Wert, der die relative Reihenfolge der verglichenen Objekte angibt. Der Rückgabewert hat folgende Bedeutung:
         /// Wert   Bedeutung   Kleiner als 0 (null)   Diese Instanz steht in der Sortierreihenfolge vor <paramref name="other" />.   0 (null)   Diese Instanz tritt in der Sortierreihenfolge an der gleichen Position wie <paramref name="other" /> auf.   Größer als 0 (null)   Diese Instanz folgt in der Sortierreihenfolge auf <paramref name="other" />.</returns>
-        public int CompareTo(Box other)
+        public int CompareTo(Box? other)
         {
+            if (other is null)
+            {
+                return 1;
+            }
+
             // Compares Height, Length, and Width.
             if (this.Height.CompareTo(other.Height) != 0)
             {
@@ -287,5 +292,16 @@ namespace TestStatements.Collection.Generic
                 return 0;
             }
         }
+
+        public bool Equals(Box? other) =>
+            other is not null &&
+            Height == other.Height &&
+            Length == other.Length &&
+            Width == other.Width;
+
+        public override bool Equals(object? obj) => Equals(obj as Box);
+
+        public override int GetHashCode() =>
+            unchecked((Height * 397) ^ (Length * 397) ^ Width);
     }
 }
