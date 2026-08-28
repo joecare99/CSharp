@@ -64,9 +64,9 @@ public class RMatrix
         if (a.Rows != b.Rows || a.Cols != b.Cols)
             throw new ArgumentException("Matrix dimensions must match for addition.");
 
-        var deviceMatrixA = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
-        var deviceMatrixB = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
-        var deviceResult = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
+        using var deviceMatrixA = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
+        using var deviceMatrixB = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
+        using var deviceResult = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
 
         deviceMatrixA.CopyFromCPU(a.matrix_);
         deviceMatrixB.CopyFromCPU(b.matrix_);
@@ -81,17 +81,13 @@ public class RMatrix
         int[,] hostResult = new int[a.Rows, a.Cols];
         deviceResult.CopyToCPU(hostResult);
 
-        deviceMatrixA.Dispose();
-        deviceMatrixB.Dispose();
-        deviceResult.Dispose();
-
         return new RMatrix(hostResult);
     }
 
     public static RMatrix operator *(RMatrix a, int scalar)
     {
-        var deviceMatrixA = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
-        var deviceResult = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
+        using var deviceMatrixA = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
+        using var deviceResult = accelerator_.Allocate2DDenseX<int>(new Index2D(a.Rows, a.Cols));
 
         deviceMatrixA.CopyFromCPU(a.matrix_);
 
@@ -104,9 +100,6 @@ public class RMatrix
 
         int[,] hostResult = new int[a.Rows, a.Cols];
         deviceResult.CopyToCPU(hostResult);
-
-        deviceMatrixA.Dispose();
-        deviceResult.Dispose();
 
         return new RMatrix(hostResult);
     }
