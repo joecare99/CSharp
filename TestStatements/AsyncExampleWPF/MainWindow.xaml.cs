@@ -79,10 +79,9 @@ namespace AsyncExampleWPF
             // Declare an HttpClient object and increase the buffer size. The
             // default buffer size is 65,536.
 #if NET5_0_OR_GREATER
-            HttpClient client =
-                new HttpClient() { MaxResponseContentBufferSize = 1000000 };
+            using HttpClient client = new() { MaxResponseContentBufferSize = 1000000 };
 #else
-            WebClient client = new WebClient();
+            using WebClient client = new();
 #endif
 
             // Make a list of web addresses.
@@ -133,10 +132,9 @@ namespace AsyncExampleWPF
             // Declare an HttpClient object and increase the buffer size. The
             // default buffer size is 65,536.
 #if NET5_0_OR_GREATER
-            HttpClient client =
-                new HttpClient() { MaxResponseContentBufferSize = 1000000 };
+            using HttpClient client = new() { MaxResponseContentBufferSize = 1000000 };
 #else
-            var client = new WebClient();
+            using var client = new WebClient();
 #endif
 
             // Make a list of web addresses.
@@ -199,49 +197,24 @@ namespace AsyncExampleWPF
 
         private byte[] GetURLContents(string url)
         {
-            // The downloaded resource ends up in the variable named content.
-            var content = new MemoryStream();
-
-            // Initialize an HttpWebRequest for the current URL.
-
-            var webReq = (HttpWebRequest)WebRequest.Create(url);
-
-            // Send the request to the Internet resource and wait for
-            // the response.
-            // Note: you can't use HttpWebRequest.GetResponse in a Windows Store app.
-            using var response = webReq.GetResponse();
-
-            // Get the data stream that is associated with the specified URL.
-            using Stream responseStream = response.GetResponseStream();
-            // Read the bytes in responseStream and copy them to content.
-            responseStream.CopyTo(content);
-
-            // Return the result as a byte array.
-            return content.ToArray();
+#if NET5_0_OR_GREATER
+            using HttpClient client = new();
+            return client.GetByteArrayAsync(url).GetAwaiter().GetResult();
+#else
+            using WebClient client = new();
+            return client.DownloadData(url);
+#endif
         }
 
         private async Task<byte[]> GetURLContentsAsync(string url)
         {
-            // The downloaded resource ends up in the variable named content.
-            var content = new MemoryStream();
-
-            // Initialize an HttpWebRequest for the current URL.
-            var webReq = (HttpWebRequest)WebRequest.Create(url);
-
-            // Send the request to the Internet resource and wait for
-            // the response.
-            // Note: you can't use HttpWebRequest.GetResponse in a Windows Store app.
-            using (WebResponse response = await webReq.GetResponseAsync())
-            {
-
-                // Get the data stream that is associated with the specified URL.
-                using Stream responseStream = response.GetResponseStream();
-                // Read the bytes in responseStream and copy them to content.
-                await responseStream.CopyToAsync(content);
-            }
-
-            // Return the result as a byte array.
-            return content.ToArray();
+#if NET5_0_OR_GREATER
+            using HttpClient client = new();
+            return await client.GetByteArrayAsync(url);
+#else
+            using WebClient client = new();
+            return await client.DownloadDataTaskAsync(new Uri(url));
+#endif
         }
 
         private void DisplayResults(string url, byte[] content)

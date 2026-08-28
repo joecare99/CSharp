@@ -20,9 +20,9 @@ namespace AppWithPlugin.Model.Tests
         public void RandomTest()
         {
             // Assert
-            Assert.IsNotNull((Random?)_testClass);
-            Assert.IsInstanceOfType((Random?)_testClass, typeof(Random));
-            Assert.IsInstanceOfType((Random?)_testClass, typeof(IRandom));
+            Assert.IsNotNull(_testClass);
+            Assert.IsInstanceOfType(_testClass, typeof(Random));
+            Assert.IsInstanceOfType(_testClass, typeof(IRandom));
         }
 
         [TestMethod()]

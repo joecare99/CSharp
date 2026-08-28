@@ -7,7 +7,7 @@
 // Last Modified On : 09-09-2022
 // ***********************************************************************
 // <copyright file="SwitchStatement.cs" company="JC-Soft">
-//     Copyright © JC-Soft 2020
+//     Copyright ï¿½ JC-Soft 2020
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
@@ -329,7 +329,7 @@ namespace TestStatements.Anweisungen
                         sum += DiceSum(subList);
                         break;
                     // An empty collection.
-                    case IEnumerable<object> subList:
+                    case IEnumerable<object> _:
                         break;
                     //  A null reference.
                     case null:

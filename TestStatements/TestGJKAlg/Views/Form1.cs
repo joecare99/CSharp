@@ -28,6 +28,7 @@ public partial class Form1 : Form
 
     List<V2> ShapeA = new List<V2>();
     List<V2> ShapeB = new List<V2>();
+    private System.Windows.Forms.Timer _timer;
 
     private void Form1_Paint(object sender, PaintEventArgs e)
     {
@@ -35,7 +36,8 @@ public partial class Form1 : Form
         V2 Direction = ShapeDirection;
 
         //Draw Shape A
-        DrawShape(g, ShapeA, new Pen(Brushes.Black, 2));
+        using var shapePen = new Pen(Brushes.Black, 2);
+        DrawShape(g, ShapeA, shapePen);
 
         //Move Shape B
         for (int i = 0; i < ShapeB.Count; i++)
@@ -44,7 +46,7 @@ public partial class Form1 : Form
         }
 
         //Draw Shape B
-        DrawShape(g, ShapeB, new Pen(Brushes.Black, 2));
+        DrawShape(g, ShapeB, shapePen);
         
         //Offset origin to see minkowski difference points
         g.TranslateTransform(900, 600);        
@@ -67,19 +69,17 @@ public partial class Form1 : Form
         V2 B = SupportPoint(ShapeA, Direction) - SupportPoint(ShapeB, Direction.Inverse());
 
         V2 Cline = B - C;
-        V2 C0 = C.Inverse();
-
         Direction = new V2(Cline.Y, -Cline.X);
         if (V2.Dot(Direction,C) >0)
             Direction = Direction.Inverse();
 
         V2 A = SupportPoint(ShapeA, Direction) - SupportPoint(ShapeB, Direction.Inverse());
 
-        g.DrawLine(new Pen(Brushes.Yellow, 2), new Point((int)A.X, (int)A.Y), new Point((int)B.X, (int)B.Y));
-
-        g.DrawLine(new Pen(Brushes.Pink, 2), new Point((int)B.X, (int)B.Y), new Point((int)C.X, (int)C.Y));
-
-        g.DrawLine(new Pen(Brushes.Yellow, 2), new Point((int)A.X, (int)A.Y), new Point((int)C.X, (int)C.Y));
+        using var yellowPen = new Pen(Brushes.Yellow, 2);
+        using var pinkPen = new Pen(Brushes.Pink, 2);
+        g.DrawLine(yellowPen, new Point((int)A.X, (int)A.Y), new Point((int)B.X, (int)B.Y));
+        g.DrawLine(pinkPen, new Point((int)B.X, (int)B.Y), new Point((int)C.X, (int)C.Y));
+        g.DrawLine(yellowPen, new Point((int)A.X, (int)A.Y), new Point((int)C.X, (int)C.Y));
     }
 
     private List<V2> GetShapeA()
@@ -148,10 +148,9 @@ public partial class Form1 : Form
 
     private void Form1_Load(object sender, EventArgs e)
     {
-        System.Windows.Forms.Timer timer1 = new System.Windows.Forms.Timer();
-        timer1.Interval = 1;
-        timer1.Enabled = true;
-        timer1.Tick += timer1_Tick;
+        _timer = new System.Windows.Forms.Timer { Interval = 1, Enabled = true };
+        _timer.Tick += timer1_Tick;
+        FormClosed += (_, _) => _timer.Dispose();
         this.DoubleBuffered = true;
         this.Size = new Size(1200, 1000);
         this.StartPosition = FormStartPosition.CenterScreen;

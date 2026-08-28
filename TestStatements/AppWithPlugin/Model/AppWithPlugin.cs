@@ -66,7 +66,6 @@ public class AppWithPlugin : IEnvironment, IUserInterface
         {
             var name = assembly.GetName();
             var publicKey = name.GetPublicKey();
-            var hash = assembly.GetHashCode(); // 30015890
             return publicKey != null && publicKey.Length > 0;
         }
         catch
