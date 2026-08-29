@@ -39,4 +39,5 @@
     <File Path="Calc.props" />
     <File Path="Calc_net.props" />
   </Folder>
+  <Project Path="Calc32Cons.Cxaml/Calc32Cons.Cxaml.csproj" />
 </Solution>
