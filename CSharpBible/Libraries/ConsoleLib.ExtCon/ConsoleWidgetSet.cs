@@ -46,9 +46,21 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
 
     public void InitializeApplication(IApplication application)
     {
-        extendedConsole.MouseEvent += (_, e) => application.RaiseMouseEvent(e);
-        extendedConsole.KeyEvent += (_, e) => application.RaiseKeyEvent(e);
-        extendedConsole.WindowBufferSizeEvent += (_, e) => application.RaiseResizeEvent(e);
+        extendedConsole.MouseEvent += (_, e) =>
+        {
+            application.Dispatch(() => application.RaiseMouseEvent(e));
+            Control.SignalMessageWaitHandle();
+        };
+        extendedConsole.KeyEvent += (_, e) =>
+        {
+            application.Dispatch(() => application.RaiseKeyEvent(e));
+            Control.SignalMessageWaitHandle();
+        };
+        extendedConsole.WindowBufferSizeEvent += (_, e) =>
+        {
+            application.Dispatch(() => application.RaiseResizeEvent(e));
+            Control.SignalMessageWaitHandle();
+        };
     }
 
     public void RunApplication(IApplication application)
@@ -143,23 +155,25 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
     {
         lock (control)
         {
-            if (control.RealDim.Width > 0 && control.RealDim.Height > 0)
+            Rectangle realDim = control.RealDim;
+
+            if (realDim.Width > 0 && realDim.Height > 0)
             {
-                ConsoleFramework.Canvas.FillRect(control.RealDim, control.GetActualForeColor(), control.GetActualBackColor(), ResolveGlyph(GlyphStyle.Blank));
+                ConsoleFramework.Canvas.FillRect(realDim, control.GetActualForeColor(), control.GetActualBackColor(), ResolveGlyph(GlyphStyle.Blank));
             }
 
-            string buttonText = $"{control.Text}";
-            if (buttonText.Length > control.RealDim.Width - 2)
-            {
-                buttonText = buttonText.Substring(0, control.RealDim.Width - 2);
-            }
-
-            if (control.RealDim.Width <= 0 || control.RealDim.Height <= 0)
+            if (realDim.Width < 3 || realDim.Height <= 0)
             {
                 return;
             }
 
-            int innerWidth = Math.Max(0, control.RealDim.Width - 2);
+            string buttonText = $"{control.Text}";
+            if (buttonText.Length > realDim.Width - 2)
+            {
+                buttonText = buttonText.Substring(0, realDim.Width - 2);
+            }
+
+            int innerWidth = realDim.Width - 2;
             string centeredButtonText = buttonText.Length > innerWidth
                 ? buttonText.Substring(0, innerWidth)
                 : buttonText;
@@ -172,7 +186,7 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
 
             ConsoleFramework.console.ForegroundColor = control.GetActualForeColor();
             ConsoleFramework.console.BackgroundColor = control.GetActualBackColor();
-            ConsoleFramework.console.SetCursorPosition(control.RealDim.X, control.RealDim.Y + control.RealDim.Height / 2);
+            ConsoleFramework.console.SetCursorPosition(realDim.X, realDim.Y + realDim.Height / 2);
             ConsoleFramework.console.Write(buttonText);
             ConsoleFramework.console.BackgroundColor = ConsoleColor.Black;
         }
@@ -257,15 +271,16 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
             return;
         }
 
-        Rectangle innerRect = panel.Dimension;
+        Rectangle panelRect = new(0, 0, panel.Dimension.Width, panel.Dimension.Height);
+        Rectangle innerRect = panelRect;
         innerRect.Inflate(-1, -1);
         Rectangle clip = dimension;
         clip.Intersect(innerRect);
 
-        try
-        {
-            ConsoleFramework.Canvas.FillRect(panel.RealDimOf(clip), panel.ForeColor, panel.BackColor, ResolveGlyph(GlyphStyle.PanelFill));
-            if (border != null && border.Length > 5 && panel.Dimension.IntersectsWith(dimension) &&
+        Rectangle absoluteClip = clip;
+        absoluteClip.Offset(panel.RealDim.Location);
+        ConsoleFramework.Canvas.FillRect(absoluteClip, panel.ForeColor, panel.BackColor, ResolveGlyph(GlyphStyle.PanelFill));
+            if (border != null && border.Length > 5 && panelRect.IntersectsWith(dimension) &&
                 !(innerRect.Contains(dimension.Location) && innerRect.Contains(Point.Subtract(Point.Add(dimension.Location, dimension.Size), new Size(1, 1)))))
             {
                 ConsoleFramework.Canvas.DrawRect(panel.RealDim, panel.BorderColor, panel.BackColor, border);
@@ -282,21 +297,18 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
                 {
                     Rectangle shadowDimension = child.Dimension;
                     shadowDimension.Offset(1, 1);
-                    shadowDimension.Offset(panel.Position);
                     shadowDimension.Intersect(dimension);
-                    ConsoleFramework.Canvas.FillRect(panel.RealDimOf(shadowDimension), ConsoleColor.DarkGray, ConsoleColor.Black, ResolveGlyph(GlyphStyle.ShadowFill));
+                    shadowDimension.Offset(panel.RealDim.Location);
+                    ConsoleFramework.Canvas.FillRect(shadowDimension, ConsoleColor.DarkGray, ConsoleColor.Black, ResolveGlyph(GlyphStyle.ShadowFill));
                 }
 
                 Rectangle childClip = dimension;
-                childClip.Location = Point.Subtract(dimension.Location, (Size)panel.Dimension.Location);
+                if (child is Panel)
+                    childClip.Offset(-child.Position.X, -child.Position.Y);
                 child.ReDraw(childClip);
             }
 
-            panel.Valid = true;
-        }
-        catch
-        {
-        }
+        panel.Valid = true;
     }
 
     public void DrawMenuItem(IControl menuItemControl)
@@ -314,7 +326,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
             return;
         }
 
-        ConsoleColor fg = menuItem.Enabled ? (menuItem.IsHovered ? menuItem.HotColor : menuItem.ForeColor) : menuItem.DisabledForeColor;
+        var showAccelerator = menuItem.Parent is MenuBar menuBar && menuBar.ShowAccelerators;
+        ConsoleColor fg = menuItem.Enabled ? (menuItem.IsHovered || (showAccelerator && menuItem.Accelerator != '\0') ? menuItem.HotColor : menuItem.ForeColor) : menuItem.DisabledForeColor;
         ConsoleColor bg = menuItem.IsHovered ? menuItem.HotBackColor : menuItem.BackColor;
         ConsoleFramework.Canvas.FillRect(dim, fg, bg, ' ');
         string text = (menuItem.Text ?? string.Empty).Replace("&&", "\u0001");
@@ -328,6 +341,12 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
         ConsoleFramework.console.BackgroundColor = bg;
         ConsoleFramework.console.SetCursorPosition(dim.X + 1, dim.Y);
         ConsoleFramework.console.Write(text.PadRight(Math.Max(0, dim.Width - 2)));
+        if (showAccelerator && accIndex >= 0 && accIndex < text.Length)
+        {
+            ConsoleFramework.console.ForegroundColor = menuItem.HotColor;
+            ConsoleFramework.console.SetCursorPosition(dim.X + 1 + accIndex, dim.Y);
+            ConsoleFramework.console.Write(text[accIndex].ToString());
+        }
         ConsoleFramework.console.BackgroundColor = ConsoleColor.Black;
     }
 

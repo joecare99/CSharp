@@ -294,8 +294,41 @@ public class ListBox : Control, IDisposable, IHasBorder
         { return; }
         if (!e.bKeyDown)
             return;
-        switch (char.ToUpperInvariant(e.KeyChar))
+        switch (e.usKeyCode)
         {
+            case (ushort)ConsoleKey.DownArrow:
+                if (SelectedIndex < ItemCount - 1)
+                    SelectedIndex++;
+                e.Handled = true;
+                break;
+            case (ushort)ConsoleKey.UpArrow:
+                if (SelectedIndex > 0)
+                    SelectedIndex--;
+                e.Handled = true;
+                break;
+            case (ushort)ConsoleKey.Home:
+                if (ItemCount > 0)
+                    SelectedIndex = 0;
+                e.Handled = true;
+                break;
+            case (ushort)ConsoleKey.End:
+                if (ItemCount > 0)
+                    SelectedIndex = ItemCount - 1;
+                e.Handled = true;
+                break;
+            case (ushort)ConsoleKey.PageDown:
+                SelectedIndex = Math.Min(ItemCount - 1, SelectedIndex + Math.Max(1, VisibleRows - 1));
+                e.Handled = true;
+                break;
+            case (ushort)ConsoleKey.PageUp:
+                SelectedIndex = Math.Max(0, SelectedIndex - Math.Max(1, VisibleRows - 1));
+                e.Handled = true;
+                break;
+        }
+        if (!e.Handled)
+        {
+            switch (char.ToUpperInvariant(e.KeyChar))
+            {
             case 'J':
             case '+':
                 if (SelectedIndex < ItemCount - 1)
@@ -316,6 +349,7 @@ public class ListBox : Control, IDisposable, IHasBorder
                 SelectedIndex = Math.Max(0, SelectedIndex - Math.Max(1, VisibleRows - 1));
                 e.Handled = true;
                 break;
+            }
         }
         if (e.Handled)
             EnsureSelectedVisible();
@@ -328,6 +362,8 @@ public class ListBox : Control, IDisposable, IHasBorder
     {
         if (model == null)
             throw new ArgumentNullException(nameof(model));
+        if (string.IsNullOrWhiteSpace(propertyName))
+            throw new ArgumentException("A property name is required.", nameof(propertyName));
 
         DetachSelectedBinding();
 
@@ -336,13 +372,9 @@ public class ListBox : Control, IDisposable, IHasBorder
         _selBindingPropInfo = model.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         if (_selBindingPropInfo != null && _selBindingPropInfo.CanRead)
         {
-            try
-            {
-                var val = _selBindingPropInfo.GetValue(model);
-                if (val != null)
-                    SelectedItem = val;
-            }
-            catch { }
+            var val = _selBindingPropInfo.GetValue(model);
+            if (val != null)
+                SelectedItem = val;
         }
         _selBindingModel.PropertyChanged += SelModel_PropertyChanged;
     }
@@ -351,17 +383,19 @@ public class ListBox : Control, IDisposable, IHasBorder
     {
         if (sender == _selBindingModel && e.PropertyName == _selBindingPropertyName && _selBindingPropInfo != null)
         {
-            try
+            var val = _selBindingPropInfo.GetValue(_selBindingModel);
+            if (!ReferenceEquals(val, _selectedItem))
             {
-                var val = _selBindingPropInfo.GetValue(_selBindingModel);
-                if (!ReferenceEquals(val, _selectedItem))
+                _internalSelUpdate = true;
+                try
                 {
-                    _internalSelUpdate = true;
                     SelectedItem = val;
+                }
+                finally
+                {
                     _internalSelUpdate = false;
                 }
             }
-            catch { }
         }
     }
 
@@ -371,9 +405,7 @@ public class ListBox : Control, IDisposable, IHasBorder
             return;
         if (_selBindingModel != null && _selBindingPropInfo != null && _selBindingPropInfo.CanWrite)
         {
-            try
-            { _selBindingPropInfo.SetValue(_selBindingModel, _selectedItem); }
-            catch { }
+            _selBindingPropInfo.SetValue(_selBindingModel, _selectedItem);
         }
     }
 

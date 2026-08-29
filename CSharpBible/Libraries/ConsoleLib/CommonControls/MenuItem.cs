@@ -105,7 +105,7 @@ public class MenuItem : CommandControl
     {
         if (!Enabled)
             return;
-        if (char.ToUpperInvariant(e.KeyChar) == Accelerator && Accelerator != '\0')
+        if (e.bKeyDown && char.ToUpperInvariant(e.KeyChar) == Accelerator && Accelerator != '\0')
         {
             e.Handled = true;
             Click();

@@ -13,6 +13,7 @@
 // ***********************************************************************
 using System;
 using System.Drawing;
+using ConsoleLib.Interfaces;
 
 namespace ConsoleLib.CommonControls;
 
@@ -104,5 +105,19 @@ public class Button : CommandControl
         base.Draw();
         ForeColor = oldFore;
         BackColor = oldBack;
+    }
+
+    public override void HandlePressKeyEvents(IKeyEvent e)
+    {
+        if (Enabled && Active && e.bKeyDown &&
+            (e.usKeyCode == (ushort)ConsoleKey.Spacebar || e.usKeyCode == (ushort)ConsoleKey.Enter ||
+             e.KeyChar is ' ' or '\r' or '\n'))
+        {
+            Click();
+            e.Handled = true;
+            return;
+        }
+
+        base.HandlePressKeyEvents(e);
     }
 }

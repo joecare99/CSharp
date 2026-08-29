@@ -1,0 +1,28 @@
+<Panel Name="Calculator" Text="Calc32" Width="50" Height="20" X="3" Y="5" ForeColor="Blue" BackColor="DarkBlue" BorderStyle="Double" BorderColor="Green" Shadow="true">
+  <Label Name="Accumulator" Text="{Binding Accumulator}" Width="38" Height="1" X="2" Y="1" ForeColor="White" BackColor="DarkCyan" />
+  <Label Name="Operation" Text="{Binding OperationText}" Width="5" Height="1" X="41" Y="1" ForeColor="White" BackColor="DarkCyan" />
+  <Button Name="Number0" Text="░0░" Tag="0" Accelerator="0" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="18" Y="14" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Number1" Text="░1░" Tag="1" Accelerator="1" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="10" Y="12" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Number2" Text="░2░" Tag="2" Accelerator="2" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="18" Y="12" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Number3" Text="░3░" Tag="3" Accelerator="3" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="26" Y="12" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Number4" Text="░4░" Tag="4" Accelerator="4" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="10" Y="10" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Number5" Text="░5░" Tag="5" Accelerator="5" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="18" Y="10" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Number6" Text="░6░" Tag="6" Accelerator="6" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="26" Y="10" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Number7" Text="░7░" Tag="7" Accelerator="7" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="10" Y="8" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Number8" Text="░8░" Tag="8" Accelerator="8" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="18" Y="8" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Number9" Text="░9░" Tag="9" Accelerator="9" Shadow="true" HLBackColor="Green" Width="5" Height="1" X="26" Y="8" ForeColor="White" BackColor="DarkGreen" Command="{Binding NumberCommand}" />
+  <Button Name="Equals" Text="░=░" Tag="1" Accelerator="=" Shadow="true" HLBackColor="Cyan" Width="5" Height="3" X="34" Y="12" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Add" Text="░+░" Tag="2" Accelerator="+" Shadow="true" HLBackColor="Cyan" Width="5" Height="3" X="34" Y="8" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Subtract" Text="░-░" Tag="3" Accelerator="-" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="34" Y="6" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Multiply" Text="░*░" Tag="4" Accelerator="*" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="26" Y="6" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Divide" Text="░/░" Tag="5" Accelerator="/" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="18" Y="6" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="And" Text="░&amp;░" Tag="6" Accelerator="&amp;" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="42" Y="14" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Or" Text="░|░" Tag="7" Accelerator="|" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="42" Y="12" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Xor" Text="░x░" Tag="8" Accelerator="x" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="42" Y="10" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Not" Text="░!░" Tag="9" Accelerator="!" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="42" Y="8" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Negate" Text="+/-" Tag="10" Accelerator="n" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="26" Y="14" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="ClearAll" Text="CE" Tag="-3" Accelerator="e" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="2" Y="6" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Backspace" Text="&lt;=" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="2" Y="8" ForeColor="White" BackColor="DarkCyan" Command="{Binding BackSpaceCommand}" />
+  <Button Name="ClearEntry" Text="C" Tag="-1" Accelerator="c" Shadow="true" HLBackColor="Cyan" Width="5" Height="1" X="10" Y="6" ForeColor="White" BackColor="DarkCyan" Command="{Binding OperationCommand}" />
+  <Button Name="Close" Text="░Close░" Accelerator="q" Shadow="true" Width="9" Height="1" X="14" Y="16" ForeColor="White" BackColor="DarkGray" />
+</Panel>

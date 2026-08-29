@@ -71,7 +71,8 @@ namespace TestConsole.View
         /// </summary>
         public void Clear()
         {
-            ScreenBuffer = new ConsoleCharInfo[80 * 25];
+            ScreenBuffer = new ConsoleCharInfo[Math.Max(1, ConsoleSize.Width * ConsoleSize.Height)];
+            OutBuffer = new ConsoleCharInfo[ScreenBuffer.Length];
             cursorPosition = new Point(0, 0);
             pictureBox1.Invalidate();
         }

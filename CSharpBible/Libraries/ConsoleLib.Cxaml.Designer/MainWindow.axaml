@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ConsoleLib.Cxaml.Designer.MainWindow"
+        Width="1000" Height="650" Title="ConsoleLib CXAML Designer">
+  <Grid ColumnDefinitions="180,*,220" RowDefinitions="*,Auto">
+    <StackPanel Grid.Column="0" Margin="8" Spacing="8">
+      <ListBox ItemsSource="{Binding Toolbox}" SelectedItem="{Binding SelectedTool}" />
+      <Button Content="Insert selected" Command="{Binding InsertSelectedToolCommand}" />
+      <TextBox Text="{Binding FilePath}" PlaceholderText="CXAML file path" />
+      <Button Content="Load CXAML" Command="{Binding LoadFileCommand}" />
+      <Button Content="Save CXAML" Command="{Binding SaveFileCommand}" />
+    </StackPanel>
+    <Grid Grid.Column="1" RowDefinitions="*,*">
+      <TextBox Grid.Row="0" Text="{Binding Markup}" AcceptsReturn="True" FontFamily="Consolas" />
+      <Border Grid.Row="1" Margin="8" BorderBrush="Gray" BorderThickness="1" Padding="8">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+          <ContentControl Content="{Binding RenderedPreview}"
+                          HorizontalContentAlignment="Left"
+                          VerticalContentAlignment="Top" />
+        </ScrollViewer>
+      </Border>
+    </Grid>
+    <Border Grid.Column="2" Margin="8" BorderBrush="Gray" BorderThickness="1" Padding="8">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Inspector" FontWeight="Bold" />
+        <TextBlock Text="{Binding SelectedElement}" />
+        <TextBlock Text="{Binding Preview}" FontFamily="Consolas" />
+        <TextBlock Text="Virtual AXAML" FontWeight="Bold" />
+        <TextBox Text="{Binding VirtualAxaml}" IsReadOnly="True"
+                 AcceptsReturn="True" FontFamily="Consolas"
+                 MinHeight="100" TextWrapping="NoWrap" />
+        <ComboBox ItemsSource="{Binding InspectorProperties}" SelectedItem="{Binding SelectedPropertyName}" />
+        <TextBox Text="{Binding SelectedPropertyValue}" />
+        <Button Content="Apply property" Command="{Binding ApplySelectedPropertyCommand}" />
+        <TextBlock Text="{Binding InspectorStatus}" />
+      </StackPanel>
+    </Border>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Margin="8" Text="{Binding Diagnostics}" />
+  </Grid>
+</Window>

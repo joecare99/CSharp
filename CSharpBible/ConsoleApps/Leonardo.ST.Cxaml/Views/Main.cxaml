@@ -1,0 +1,9 @@
+<Panel Name="Leonardo" Text="Leonardo" Width="60" Height="22" X="3" Y="5" ForeColor="Blue" BackColor="DarkBlue" BorderStyle="Double" BorderColor="Green" Shadow="true">
+  <Label Name="Message" Text="{Binding MessageText}" Width="56" Height="1" X="2" Y="1" ForeColor="White" BackColor="DarkCyan" />
+  <Terminal Name="Output" Width="56" Height="8" X="2" Y="3" ForeColor="Gray" BackColor="Black" BorderStyle="Single" BorderColor="DarkCyan" Shadow="true" />
+  <Button Name="Encode" Text="Encode" Accelerator="e" Shadow="true" Width="15" Height="3" X="3" Y="12" ForeColor="White" BackColor="DarkGray" Command="{Binding EncodeCommand}" />
+  <Button Name="Decode" Text="Decode" Accelerator="d" Shadow="true" Width="15" Height="3" X="23" Y="12" ForeColor="White" BackColor="DarkGray" Command="{Binding DecodeCommand}" />
+  <Button Name="Generate" Text="Generate" Accelerator="g" Shadow="true" Width="15" Height="3" X="43" Y="12" ForeColor="White" BackColor="DarkGray" Command="{Binding GenerateCommand}" />
+  <Button Name="Test" Text="Test" Accelerator="t" Shadow="true" Width="20" Height="1" X="2" Y="16" ForeColor="White" BackColor="DarkGray" />
+  <Button Name="Close" Text="░Close░" Accelerator="q" Shadow="true" Width="20" Height="3" X="38" Y="16" ForeColor="White" BackColor="DarkGray" />
+</Panel>

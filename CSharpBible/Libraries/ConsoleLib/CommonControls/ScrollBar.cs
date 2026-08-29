@@ -84,11 +84,7 @@ public class ScrollBar : Control
             _value = v;
             // update model if bound
             if (_valueBindingModel != null && _valueBindingPropInfo != null && !_internalBindingUpdate)
-            {
-                try
-                { _valueBindingPropInfo.SetValue(_valueBindingModel, _value); }
-                catch { }
-            }
+                _valueBindingPropInfo.SetValue(_valueBindingModel, _value);
             OnValueChanged?.Invoke(this, EventArgs.Empty);
             Invalidate();
         }
@@ -291,23 +287,30 @@ public class ScrollBar : Control
     /// </summary>
     public void BindValue(INotifyPropertyChanged model, string propertyName)
     {
+        if (model == null)
+            throw new ArgumentNullException(nameof(model));
+        if (string.IsNullOrWhiteSpace(propertyName))
+            throw new ArgumentException("A property name is required.", nameof(propertyName));
+
         _valueBindingModel = model;
         _valueBindingPropertyName = propertyName;
         _valueBindingPropInfo = model.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         if (_valueBindingPropInfo != null && _valueBindingPropInfo.CanRead)
         {
-            try
+            var raw = _valueBindingPropInfo.GetValue(model);
+            if (raw != null)
             {
-                var raw = _valueBindingPropInfo.GetValue(model);
-                if (raw != null)
+                int nv = Convert.ToInt32(raw);
+                _internalBindingUpdate = true;
+                try
                 {
-                    int nv = Convert.ToInt32(raw);
-                    _internalBindingUpdate = true;
-                    Value = nv; // sets internal without model re-entry
+                    Value = nv;
+                }
+                finally
+                {
                     _internalBindingUpdate = false;
                 }
             }
-            catch { }
         }
         model.PropertyChanged += Model_PropertyChanged;
     }
@@ -316,21 +319,23 @@ public class ScrollBar : Control
     {
         if (sender == _valueBindingModel && e.PropertyName == _valueBindingPropertyName && _valueBindingPropInfo != null)
         {
-            try
+            var raw = _valueBindingPropInfo.GetValue(_valueBindingModel);
+            if (raw != null)
             {
-                var raw = _valueBindingPropInfo.GetValue(_valueBindingModel);
-                if (raw != null)
+                int nv = Convert.ToInt32(raw);
+                if (nv != _value)
                 {
-                    int nv = Convert.ToInt32(raw);
-                    if (nv != _value)
+                    _internalBindingUpdate = true;
+                    try
                     {
-                        _internalBindingUpdate = true;
-                        Value = nv; // uses setter
+                        Value = nv;
+                    }
+                    finally
+                    {
                         _internalBindingUpdate = false;
                     }
                 }
             }
-            catch { }
         }
     }
     #endregion

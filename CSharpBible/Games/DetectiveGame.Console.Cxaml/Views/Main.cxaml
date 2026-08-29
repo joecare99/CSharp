@@ -1,0 +1,11 @@
+<Panel Name="Game" Text="Detektivspiel" Width="80" Height="22" ForeColor="Gray" BackColor="Black" BorderStyle="Single" BorderColor="Gray" Shadow="true">
+  <Button Name="Start" Text="Start" Accelerator="s" Shadow="true" Width="7" Height="1" X="0" Y="0" ForeColor="White" BackColor="DarkBlue" Command="{Binding StartCommand}" />
+  <Button Name="Suggest" Text="Verdacht" Accelerator="v" Shadow="true" Width="10" Height="1" X="8" Y="0" ForeColor="White" BackColor="DarkGreen" Command="{Binding SuggestCommand}" />
+  <Button Name="Accuse" Text="Anklage" Accelerator="a" Shadow="true" Width="9" Height="1" X="20" Y="0" ForeColor="White" BackColor="DarkRed" Command="{Binding AccuseCommand}" />
+  <Button Name="Next" Text="Next" Accelerator="n" Shadow="true" Width="7" Height="1" X="30" Y="0" ForeColor="White" BackColor="DarkCyan" Command="{Binding NextCommand}" />
+  <Button Name="Help" Text="?" Accelerator="?" Shadow="true" Width="3" Height="1" X="38" Y="0" ForeColor="Black" BackColor="DarkYellow" Command="{Binding HelpCommand}" />
+  <Button Name="Close" Text="Close" Accelerator="q" Shadow="true" Width="7" Height="1" X="72" Y="0" ForeColor="White" BackColor="DarkGray" />
+  <ListBox Name="Players" Text="Spieler" Width="20" Height="10" X="0" Y="1" ItemsSource="{Binding Players}" />
+  <ListBox Name="History" Text="History" Width="58" Height="16" X="22" Y="1" Enabled="false" ItemsSource="{Binding History}" />
+  <Label Name="SuggestionLimitation" Text="Verdacht verwendet Person1, Weapon1 und Room1 (aktuelles Game-ViewModel)." Width="78" Height="1" X="0" Y="18" ForeColor="Yellow" BackColor="Black" />
+</Panel>

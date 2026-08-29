@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="MSTest.TestAdapter" VersionOverride="4.3.3" />
+    <PackageReference Include="MSTest.TestFramework" VersionOverride="4.3.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Calc32Cons.Cxaml\Calc32Cons.Cxaml.csproj" />
+  </ItemGroup>
+</Project>

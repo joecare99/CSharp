@@ -1,0 +1,11 @@
+<Panel Name="Workspace" Text="Ollama Coding Agent" Width="100" Height="30" ForeColor="Gray" BackColor="Black" BorderStyle="None" Shadow="true">
+  <Terminal Name="Transcript" Width="74" Height="22" X="0" Y="2" ForeColor="Gray" BackColor="Black" BorderStyle="Single" BorderColor="DarkCyan" Shadow="true" />
+  <ListBox Name="Planning" Text="Planning" Width="25" Height="22" X="75" Y="2" ForeColor="Gray" BackColor="Black" BorderStyle="Single" BorderColor="DarkYellow" Shadow="true" />
+  <TextBox Name="Prompt" Text="{Binding Prompt}" Width="65" Height="1" X="0" Y="25" ForeColor="White" BackColor="DarkBlue" />
+  <Button Name="Send" Text="Send" Accelerator="s" Shadow="true" Width="9" Height="1" X="66" Y="25" ForeColor="White" BackColor="DarkGreen" Command="{Binding SubmitCommand}" />
+  <Button Name="Clear" Text="Clear" Accelerator="c" Shadow="true" Width="8" Height="1" X="76" Y="25" ForeColor="White" BackColor="DarkCyan" Command="{Binding ClearCommand}" />
+  <Button Name="Reload" Text="Reload" Accelerator="r" Shadow="true" Width="8" Height="1" X="85" Y="25" ForeColor="White" BackColor="DarkCyan" Command="{Binding ReloadCommand}" />
+  <Button Name="Cancel" Text="Cancel" Accelerator="x" Shadow="true" Width="9" Height="1" X="0" Y="27" ForeColor="White" BackColor="DarkRed" Command="{Binding CancelCommand}" />
+  <Button Name="Exit" Text="Exit" Accelerator="q" Shadow="true" Width="8" Height="1" X="92" Y="27" ForeColor="White" BackColor="DarkGray" />
+  <Label Name="Status" Width="100" Height="1" X="0" Y="29" ForeColor="White" BackColor="DarkBlue" />
+</Panel>

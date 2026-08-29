@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
+    <ProjectReference Include="..\..\..\Leonardo\Leonardo.Model\Leonardo.Model.csproj" />
+    <EmbeddedResource Include="Views\Main.cxaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Calc32\Models\CalculatorClass.cs" Link="Models\CalculatorClass.cs" />
+    <Compile Include="..\Calc32\Models\Interfaces\ICalculatorClass.cs" Link="Models\Interfaces\ICalculatorClass.cs" />
+    <Compile Include="..\Calc32\ViewModels\CalculatorViewModel.cs" Link="ViewModels\CalculatorViewModel.cs" />
+    <Compile Include="..\Calc32\ViewModels\Interfaces\ICalculatorViewModel.cs" Link="ViewModels\Interfaces\ICalculatorViewModel.cs" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
+    <EmbeddedResource Include="Views\Main.cxaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+</Project>

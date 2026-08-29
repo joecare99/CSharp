@@ -1,0 +1,21 @@
+<Project>
+  <Import Project="..\Libraries.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <LangVersion>13.0</LangVersion>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Calc\Calc32Cons.Cxaml\Calc32Cons.Cxaml.csproj" />
+    <ProjectReference Include="..\..\ConsoleApps\Leonardo.ST.Cxaml\Leonardo.ST.Cxaml.csproj" />
+    <ProjectReference Include="..\..\Games\DetectiveGame.Console.Cxaml\DetectiveGame.Console.Cxaml.csproj" />
+    <ProjectReference Include="..\..\OpenAI\Ollama.CodingAgent.Console.Cxaml\Ollama.CodingAgent.Console.Cxaml.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageReference Include="coverlet.collector" Version="10.0.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+  </ItemGroup>
+</Project>

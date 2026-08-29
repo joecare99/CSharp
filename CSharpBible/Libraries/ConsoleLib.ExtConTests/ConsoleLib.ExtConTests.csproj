@@ -1,0 +1,27 @@
+﻿<Project>
+  <Import Project="..\Libraries.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <LangVersion>13.0</LangVersion>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <Compile Include="..\ConsoleLib.CoreTests\CommonControls\TestBase.cs" Link="CommonControls\TestBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleLib\ConsoleLib.csproj" />
+    <ProjectReference Include="..\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
+    <ProjectReference Include="..\..\ConsoleApps\TestConsole\TestConsole_net.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageReference Include="coverlet.collector" Version="10.0.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+  </ItemGroup>
+</Project>

@@ -1,7 +1,8 @@
 ﻿<Project>
   <Import Project="..\Libraries.props" />
   <PropertyGroup>
-    <TargetFrameworks>net481;net48;net472;net462;net8.0-windows</TargetFrameworks>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <IsPackable>false</IsPackable>
     <LangVersion>13.0</LangVersion>
     <UseWPF>true</UseWPF>
@@ -9,18 +10,14 @@
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
-    <TargetFrameworks>$(TargetFrameworks);net9.0-windows</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
-    <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
-  </PropertyGroup>
   <ItemGroup>
-    <!-- Adjust relative path to actual ConsoleLib project (outside ConsoleApps folder) -->
-    <ProjectReference Condition="!$(TargetFramework.StartsWith('net4'))" Include="..\..\ConsoleApps\TestConsole\TestConsole_net.csproj" />
-    <ProjectReference Condition="$(TargetFramework.StartsWith('net4'))" Include="..\..\ConsoleApps\TestConsole\TestConsole.csproj" />
+    <ProjectReference Include="..\ConsoleLib.CoreTests\ConsoleLib.CoreTests.csproj" />
+    <ProjectReference Include="..\ConsoleLib.ExtConTests\ConsoleLib.ExtConTests.csproj" />
+    <ProjectReference Include="..\ConsoleLib.PosixTests\ConsoleLib.PosixTests.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageReference Include="coverlet.collector" Version="10.0.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
     <PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
     <PackageReference Include="NSubstitute" Version="6.2.0" />

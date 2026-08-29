@@ -20,11 +20,16 @@ class Program
     private static Application? _app;
     private static Panel? _panelA;
     private static Panel? _panelB;
+    private static Panel? _panelC;
+    private static Panel? _panelD;
     private static Button? _btnA;
     private static Button? _btnB;
+    private static Button? _btnC;
+    private static Button? _btnD;
     private static Timer? _timer;
     private static int _dxA = 1, _dyA = 0;
     private static int _dxB = -1, _dyB = 0;
+    private static int _dxD = 1, _dyD = 0;
     private static int _tick;
 
     static void Main(string[] _)
@@ -88,6 +93,45 @@ class Program
             ForeColor = ConsoleColor.White
         };
 
+        _panelC = new Panel
+        {
+            Parent = _app,
+            Dimension = new Rectangle(5, 12, 20, 5),
+            BorderStyle = ConsoleLib.Data.BorderStyle.Single,
+            BackColor = ConsoleColor.DarkGray,
+            ForeColor = ConsoleColor.White,
+            BorderColor = ConsoleColor.Yellow,
+            Shadow = true
+        };
+        _btnC = new Button
+        {
+            Parent = _panelC,
+            Position = new Point(2, 2),
+            Text = "C",
+            BackColor = ConsoleColor.Blue,
+            ForeColor = ConsoleColor.White
+        };
+
+        _panelD = new Panel
+        {
+            Parent = _app,
+            Dimension = new Rectangle(25, 12, 20, 5),
+            BorderStyle = ConsoleLib.Data.BorderStyle.Single,
+            BackColor = ConsoleColor.DarkGray,
+            ForeColor = ConsoleColor.White,
+            BorderColor = ConsoleColor.Cyan,
+            Shadow = true
+        };
+        _btnD = new Button
+        {
+            Parent = _panelD,
+            Position = new Point(2, 2),
+            Text = "D",
+            BackColor = ConsoleColor.DarkRed,
+            ForeColor = ConsoleColor.White
+        };
+
+
         _app.OnCanvasResize += (_,p)=> { var r = ConsoleFramework.Canvas.ClipRect; r.Inflate(-2,-2); _app.Dimension = r; };
 
         // movement timer (approx 5 fps)
@@ -112,10 +156,26 @@ class Program
             _dxB = -_dxB;
         }
         if (_dxB==0) _dxB = -1;
-        
+        if (_panelD.Position.X + _dxD < 1 || _panelD.Position.X + _panelD.size.Width + _dxD > _app.size.Width - 1)
+        {
+            // reverse D
+            _dxD = -_dxD;
+        }
+        if (_dxD == 0) _dxD = -1;
+
         // move panels horizontally creating overlap
-        Shift(_panelA, _dxA, _dyA);
-        Shift(_panelB, _dxB, _dyB);
+        if (_dxA >= _dxB)
+        {
+            Shift(_panelA, _dxA, _dyA);
+            Shift(_panelB, _dxB, _dyB);
+        }
+        else
+        {
+            Shift(_panelB, _dxB, _dyB);
+            Shift(_panelA, _dxA, _dyA);
+        }
+        //        Shift(_panelC, _dxC, _dyC);
+        Shift(_panelD, _dxD, _dyD);
         // force redraw: invalidate both panels & app
     }
 

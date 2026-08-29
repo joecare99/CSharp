@@ -14,9 +14,9 @@
 using ConsoleLib.Data;
 using ConsoleLib.Interfaces;
 using System;
-using System.Collections.Concurrent;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 
 namespace ConsoleLib.CommonControls;
 
@@ -25,8 +25,9 @@ namespace ConsoleLib.CommonControls;
 /// Implements the <see cref="ConsoleLib.CommonControls.Panel" />
 /// </summary>
 /// <seealso cref="ConsoleLib.CommonControls.Panel" />
-public class Application : Panel, IApplication, IHasWidgetSet
+public class Application : Panel, IApplication, IHasWidgetSet, IDisposable
 {
+    private const ushort AltVirtualKey = 0x12;
     /// <summary>
     /// Gets the mouse Position.
     /// </summary>
@@ -40,6 +41,18 @@ public class Application : Panel, IApplication, IHasWidgetSet
 
     public new IWidgetSet WidgetSet { get; private set; }
 
+    /// <summary>Gets the application-scoped callback queue.</summary>
+    public new IMessageQueue MessageQueue { get; }
+
+    /// <summary>Gets the application-scoped dispatcher.</summary>
+    public IDispatcher Dispatcher { get; }
+
+    /// <summary>Gets the application-scoped scheduler.</summary>
+    public IScheduler Scheduler { get; }
+
+    /// <summary>Gets the keyboard focus manager for this application.</summary>
+    public IFocusManager FocusManager { get; }
+
     public static IApplication? Default { get; private set; }
 
     /// <summary>
@@ -51,12 +64,17 @@ public class Application : Panel, IApplication, IHasWidgetSet
     /// The m buttons
     /// </summary>
     private IMouseEvent? MButtons = default;
+    private IControl? _focusBeforeMenu;
+    private int _disposed;
 
     public Application(IWidgetSet widgetSet)
     {
         this.WidgetSet = widgetSet;
         BorderStyle = BorderStyle.None;
-        Control.MessageQueue ??= new ConcurrentQueue<(Action<object, EventArgs>, object, EventArgs)>();
+        MessageQueue = new ApplicationMessageQueue();
+        Dispatcher = new ApplicationDispatcher(MessageQueue);
+        Scheduler = new ApplicationScheduler(Dispatcher, new SystemClock());
+        FocusManager = new FocusManager(this);
         this.WidgetSet.InitializeApplication(this);
         Default = this;
     }
@@ -80,16 +98,61 @@ public class Application : Panel, IApplication, IHasWidgetSet
     /// <param name="e">The e.</param>
     private void HandleKeyEvent(object? sender, IKeyEvent e)
     {
-        // Determine the Control to send the Event to
-
-        if (e.bKeyDown)
+        var menuBar = FindMenuBar(this);
+        if (e.usKeyCode == (ushort)ConsoleKey.F10 && e.bKeyDown && menuBar is not null)
         {
-            base.HandlePressKeyEvents(e);
+            if (menuBar.IsKeyboardActive)
+            {
+                menuBar.DeactivateKeyboard();
+                if (_focusBeforeMenu is not null)
+                    FocusManager.Focus(_focusBeforeMenu);
+                else
+                    FocusManager.Clear();
+                _focusBeforeMenu = null;
+            }
+            else
+            {
+                _focusBeforeMenu = FocusManager.FocusedControl;
+                FocusManager.Focus(menuBar);
+                menuBar.ActivateKeyboard();
+            }
+            e.Handled = true;
         }
-        else
-        { }
-        ;
 
+        if (e.usKeyCode == AltVirtualKey && menuBar is not null)
+        {
+            menuBar.SetAcceleratorVisibility(e.bKeyDown);
+        }
+
+        if (e.bKeyDown && e.usKeyCode == (ushort)ConsoleKey.Tab)
+        {
+            var modifiers = KeyModifiers.None;
+            if ((e.dwControlKeyState & 0x10) != 0)
+                modifiers |= KeyModifiers.Shift;
+            if ((e.dwControlKeyState & (0x08 | 0x04)) != 0)
+                modifiers |= KeyModifiers.Control;
+            if ((e.dwControlKeyState & (0x02 | 0x01)) != 0)
+                modifiers |= KeyModifiers.Alt;
+
+            e.Handled = FocusManager.HandleKey(new KeyInput(ConsoleKey.Tab, e.KeyChar, modifiers, true));
+        }
+
+        if (!e.Handled)
+            base.HandlePressKeyEvents(e);
+
+    }
+
+    private static MenuBar? FindMenuBar(IControl control)
+    {
+        foreach (var child in control.Children)
+        {
+            if (child is MenuBar menuBar)
+                return menuBar;
+            var nested = FindMenuBar(child);
+            if (nested is not null)
+                return nested;
+        }
+        return null;
     }
 
     /// <summary>
@@ -163,6 +226,7 @@ public class Application : Panel, IApplication, IHasWidgetSet
     /// </summary>
     public void ProcessPendingMessages()
     {
+        Dispatcher.ProcessPending();
         bool processed = false;
         while (Control.TryDequeueMessage(out var workItem))
         {
@@ -185,6 +249,9 @@ public class Application : Panel, IApplication, IHasWidgetSet
     /// </summary>
     public void Stop()
     {
+        if (Volatile.Read(ref _disposed) != 0)
+            return;
+
         Running = false;
         Control.EnqueueMessage(static (_, _) => { }, this, EventArgs.Empty);
         WidgetSet.StopApplication(this);
@@ -192,8 +259,21 @@ public class Application : Panel, IApplication, IHasWidgetSet
 
     public void Dispatch(Action act)
     {
-        if (act == null)
+        if (act == null || Volatile.Read(ref _disposed) != 0)
             return;
-        Control.EnqueueMessage((_, _) => act(), this, EventArgs.Empty);
+        Dispatcher.Dispatch(act);
+    }
+
+    /// <summary>Stops the application and releases application-scoped services.</summary>
+    public void Dispose()
+    {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+            return;
+
+        Running = false;
+        Scheduler.Dispose();
+        (MessageQueue as IDisposable)?.Dispose();
+        if (ReferenceEquals(Default, this))
+            Default = null;
     }
 }

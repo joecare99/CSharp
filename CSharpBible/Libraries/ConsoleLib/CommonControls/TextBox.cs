@@ -14,6 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel; // Added for binding
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ConsoleLib.CommonControls;
 
@@ -47,6 +49,7 @@ public class TextBox : Control
     private bool _multiLine = true;
     private DateTime _lastBlink = DateTime.Now;
     private bool _showCaret = true;
+    private int? _selectionAnchor;
 
     // Two-way binding backing fields
     private INotifyPropertyChanged? _boundModel;
@@ -88,6 +91,9 @@ public class TextBox : Control
 
     public ConsoleColor CaretColor { get; set; } = ConsoleColor.Yellow;
     public ConsoleColor DisabledForeColor { get; set; } = ConsoleColor.DarkGray;
+    public ITextLayoutService TextLayoutService { get; set; } = new UnicodeTextLayoutService();
+    public IClipboardService? ClipboardService { get; set; }
+    public event EventHandler<IKeyEvent>? OnEnterKey;
 
     public TextBox()
     {
@@ -136,18 +142,20 @@ public class TextBox : Control
     {
         if (_boundModel == null || _boundPropInfo == null)
             return;
-        try
+        var val = _boundPropInfo.GetValue(_boundModel);
+        var str = val?.ToString() ?? string.Empty;
+        if (!string.Equals(str, Text, StringComparison.Ordinal))
         {
-            var val = _boundPropInfo.GetValue(_boundModel);
-            var str = val?.ToString() ?? string.Empty;
-            if (!string.Equals(str, Text, StringComparison.Ordinal))
+            _suppressModelUpdate = true;
+            try
             {
-                _suppressModelUpdate = true;
                 SetText(str);
+            }
+            finally
+            {
                 _suppressModelUpdate = false;
             }
         }
-        catch { /* ignore */ }
     }
 
     public override void SetText(string value)
@@ -175,6 +183,7 @@ public class TextBox : Control
         _caretLine = _lines.Count - 1;
         _caretCol = _lines[_caretLine].Length;
         _firstVisibleLine = Math.Max(0, _caretLine - size.Height + 1);
+        UpdateBoundProperty(normalizedValue);
         NotifyWidgetStateChanged();
     }
 
@@ -208,14 +217,40 @@ public class TextBox : Control
     public int GetFirstVisibleLine() => _firstVisibleLine;
     public int GetCaretLine() => _caretLine;
     public int GetCaretColumn() => _caretCol;
+    public int GetCaretCellColumn() => TextLayoutService.GetCellWidth(_lines[_caretLine].Substring(0, _caretCol));
+
+    public Task<bool> CopyAsync(CancellationToken cancellationToken = default) =>
+        ClipboardService is null ? Task.FromResult(false) : ClipboardService.CopyAsync(GetSelectionLength() == 0 ? Text : GetSelectedText(), cancellationToken);
+
+    public async Task<bool> PasteAsync(CancellationToken cancellationToken = default)
+    {
+        if (ClipboardService is null)
+            return false;
+        var text = await ClipboardService.PasteAsync(cancellationToken).ConfigureAwait(false);
+        if (text is null)
+            return false;
+        var start = GetSelectionStart();
+        var length = GetSelectionLength();
+        var newText = Text.Remove(start, length).Insert(start, text);
+        SetText(newText);
+        SetCaretFromAbsolute(start + text.Length);
+        ClearSelection();
+        return true;
+    }
+
+    public string SelectedText => GetSelectedText();
+
+    public void SelectAll()
+    {
+        _selectionAnchor = 0;
+        SetCaretFromAbsolute(Text.Length);
+        Invalidate();
+    }
     public bool ShouldShowCaret() => _showCaret;
     public string GetDisplayLine(int index) => GetLineForDisplay(index);
     public void ApplyNativeText(string value)
     {
-        _suppressModelUpdate = true;
         SetText(value);
-        _suppressModelUpdate = false;
-        UpdateTextProperty();
     }
 
     private string GetLineForDisplay(int idx)
@@ -230,20 +265,91 @@ public class TextBox : Control
         if (!Enabled || !Active)
         { base.HandlePressKeyEvents(e); return; }
 
+        if (e.bKeyDown && IsControlPressed(e))
+        {
+            var shortcut = char.ToUpperInvariant(e.KeyChar);
+            if (shortcut == 'A' || e.usKeyCode == (ushort)ConsoleKey.A)
+            {
+                SelectAll();
+                e.Handled = true;
+                return;
+            }
+            if (shortcut == 'C' || e.usKeyCode == (ushort)ConsoleKey.C)
+            {
+                _ = CopyAsync().GetAwaiter().GetResult();
+                e.Handled = true;
+                return;
+            }
+            if (shortcut == 'X' || e.usKeyCode == (ushort)ConsoleKey.X)
+            {
+                if (GetSelectionLength() > 0)
+                {
+                    _ = CopyAsync().GetAwaiter().GetResult();
+                    ReplaceSelection(string.Empty);
+                }
+                e.Handled = true;
+                return;
+            }
+            if (shortcut == 'V' || e.usKeyCode == (ushort)ConsoleKey.V)
+            {
+                _ = PasteAsync().GetAwaiter().GetResult();
+                e.Handled = true;
+                return;
+            }
+        }
+
         // Navigation keys (check usKeyCode)
         if (e.bKeyDown && e.KeyChar == '\0') // typical for non-char keys
         {
-            bool navHandled = HandleNavigationKey(e.usKeyCode);
+            var selectionBeforeNavigation = GetCaretAbsoluteIndex();
+            bool navHandled = HandleNavigationKey(e.usKeyCode, IsControlPressed(e));
             if (navHandled)
             {
+                if (IsShiftPressed(e))
+                    _selectionAnchor ??= selectionBeforeNavigation;
+                else
+                    ClearSelection();
                 e.Handled = true;
                 return; // swallow
             }
         }
 
-        // Basic editing
         bool handled = false;
         char ch = e.KeyChar;
+        if (e.bKeyDown && IsControlPressed(e) && GetSelectionLength() == 0)
+        {
+            if (ch == (char)8)
+            {
+                handled = DeleteWordBackward();
+            }
+            else if (ch == (char)127)
+            {
+                handled = DeleteWordForward();
+            }
+            if (handled)
+            {
+                UpdateTextProperty();
+                e.Handled = true;
+                return;
+            }
+        }
+
+        // Basic editing
+        if (GetSelectionLength() > 0 && (ch == (char)8 || ch == (char)127 || ch == '\r' || ch == '\n' || !char.IsControl(ch)))
+        {
+            if (ch == '\r' || ch == '\n')
+                handled = MultiLine ? ReplaceSelection("\n") : false;
+            else if (ch == (char)8 || ch == (char)127)
+                handled = ReplaceSelection(string.Empty);
+            else
+                handled = ReplaceSelection(ch.ToString());
+            if (handled)
+            {
+                UpdateTextProperty();
+                e.Handled = true;
+                return;
+            }
+        }
         switch (ch)
         {
             case (char)8: // Backspace
@@ -255,9 +361,19 @@ public class TextBox : Control
                 {
                     handled = NewLine();
                 }
+                else if (OnEnterKey is not null)
+                {
+                    OnEnterKey.Invoke(this, e);
+                    handled = e.Handled;
+                    if (!handled)
+                        e.Handled = true;
+                    return;
+                }
                 else
                 {
-                    handled = false; // allow propagate maybe as click
+                    if (Parent is Control parent)
+                        parent.HandleUnhandledChildKeyEvent(e, this);
+                    return;
                 }
                 break;
             case (char)27: // ESC ignore
@@ -279,16 +395,16 @@ public class TextBox : Control
             base.HandlePressKeyEvents(e);
     }
 
-    private bool HandleNavigationKey(ushort keyCode)
+    private bool HandleNavigationKey(ushort keyCode, bool controlPressed)
     {
         var keyMap = GetWidgetSetCapability<IHasConsoleKeyMap>() ?? DefaultConsoleKeyMap.Instance;
 
         switch (keyCode)
         {
             case var _ when keyCode == keyMap.KeyLeft:
-                return CaretLeft();
+                return controlPressed ? CaretByWord(-1) : CaretLeft();
             case var _ when keyCode == keyMap.KeyRight:
-                return CaretRight();
+                return controlPressed ? CaretByWord(1) : CaretRight();
             case var _ when keyCode == keyMap.KeyUp:
                 return CaretUp();
             case var _ when keyCode == keyMap.KeyDown:
@@ -305,6 +421,61 @@ public class TextBox : Control
                 return PageDown();
         }
         return false;
+    }
+
+    private static bool IsControlPressed(IKeyEvent e) =>
+            (e.dwControlKeyState & (0x0004u | 0x0008u)) != 0;
+
+    private static bool IsShiftPressed(IKeyEvent e) => (e.dwControlKeyState & 0x0010u) != 0;
+
+        private int GetCaretAbsoluteIndex()
+        {
+            var index = 0;
+            for (var i = 0; i < _caretLine; i++)
+                index += _lines[i].Length + 1;
+            return index + _caretCol;
+        }
+
+        private int GetSelectionStart() =>
+            Math.Min(_selectionAnchor ?? GetCaretAbsoluteIndex(), GetCaretAbsoluteIndex());
+
+        private int GetSelectionLength() =>
+            Math.Abs((_selectionAnchor ?? GetCaretAbsoluteIndex()) - GetCaretAbsoluteIndex());
+
+        private string GetSelectedText() =>
+            GetSelectionLength() == 0 ? string.Empty : Text.Substring(GetSelectionStart(), GetSelectionLength());
+
+        private void ClearSelection() => _selectionAnchor = null;
+
+        private bool ReplaceSelection(string replacement)
+        {
+            var start = GetSelectionStart();
+            SetText(Text.Remove(start, GetSelectionLength()).Insert(start, replacement));
+            SetCaretFromAbsolute(start + replacement.Length);
+            ClearSelection();
+            return true;
+        }
+
+        private void SetCaretFromAbsolute(int index)
+        {
+            index = Math.Max(0, Math.Min(index, Text.Length));
+            var remaining = index;
+            for (var line = 0; line < _lines.Count; line++)
+            {
+                if (remaining <= _lines[line].Length)
+                {
+                    _caretLine = line;
+                    _caretCol = remaining;
+                    EnsureCaretVisible();
+                    return;
+                }
+                remaining -= _lines[line].Length;
+                if (line < _lines.Count - 1)
+                    remaining--;
+            }
+            _caretLine = _lines.Count - 1;
+            _caretCol = _lines[_caretLine].Length;
+            EnsureCaretVisible();
     }
 
     private bool CaretLeft()
@@ -343,6 +514,32 @@ public class TextBox : Control
             return true;
         }
         return false;
+    }
+
+    private bool CaretByWord(int direction)
+    {
+        var current = GetCaretAbsoluteIndex();
+        var target = current;
+        if (direction < 0)
+        {
+            while (target > 0 && char.IsWhiteSpace(Text[target - 1]))
+                target--;
+            while (target > 0 && !char.IsWhiteSpace(Text[target - 1]))
+                target--;
+        }
+        else
+        {
+            while (target < Text.Length && !char.IsWhiteSpace(Text[target]))
+                target++;
+            while (target < Text.Length && char.IsWhiteSpace(Text[target]))
+                target++;
+        }
+
+        if (target == current)
+            return false;
+        SetCaretFromAbsolute(target);
+        Invalidate();
+        return true;
     }
     private bool CaretUp()
     {
@@ -410,6 +607,8 @@ public class TextBox : Control
 
     private bool InsertChar(char ch)
     {
+        if (GetSelectionLength() > 0)
+            return ReplaceSelection(ch.ToString());
         var line = _lines[_caretLine];
         if (line.Length >= 2000)
             return false; // simple guard
@@ -423,6 +622,8 @@ public class TextBox : Control
 
     private bool Backspace()
     {
+        if (GetSelectionLength() > 0)
+            return ReplaceSelection(string.Empty);
         if (_caretCol > 0)
         {
             var line = _lines[_caretLine];
@@ -450,6 +651,8 @@ public class TextBox : Control
 
     private bool Delete()
     {
+        if (GetSelectionLength() > 0)
+            return ReplaceSelection(string.Empty);
         var line = _lines[_caretLine];
         if (_caretCol < line.Length)
         {
@@ -469,6 +672,40 @@ public class TextBox : Control
             return true;
         }
         return false;
+    }
+
+    private bool DeleteWordBackward()
+    {
+        var caret = GetCaretAbsoluteIndex();
+        var start = caret;
+        while (start > 0 && char.IsWhiteSpace(Text[start - 1]))
+            start--;
+        while (start > 0 && !char.IsWhiteSpace(Text[start - 1]))
+            start--;
+        if (start == caret)
+            return false;
+
+        SetText(Text.Remove(start, caret - start));
+        SetCaretFromAbsolute(start);
+        Invalidate();
+        return true;
+    }
+
+    private bool DeleteWordForward()
+    {
+        var caret = GetCaretAbsoluteIndex();
+        var end = caret;
+        while (end < Text.Length && char.IsWhiteSpace(Text[end]))
+            end++;
+        while (end < Text.Length && !char.IsWhiteSpace(Text[end]))
+            end++;
+        if (end == caret)
+            return false;
+
+        SetText(Text.Remove(caret, end - caret));
+        SetCaretFromAbsolute(caret);
+        Invalidate();
+        return true;
     }
 
     private bool NewLine()
@@ -502,13 +739,15 @@ public class TextBox : Control
         if (Text != newText)
         {
             base.SetText(newText); // base handles OnChange + Invalidate
-            // push to model if bound (two-way)
-            if (!_suppressModelUpdate && _boundModel != null && _boundPropInfo != null && _boundPropInfo.CanWrite)
-            {
-                try
-                { _boundPropInfo.SetValue(_boundModel, newText); }
-                catch { /* ignore */ }
-            }
+            UpdateBoundProperty(newText);
+        }
+    }
+
+    private void UpdateBoundProperty(string value)
+    {
+        if (!_suppressModelUpdate && _boundModel != null && _boundPropInfo != null && _boundPropInfo.CanWrite)
+        {
+            _boundPropInfo.SetValue(_boundModel, value);
         }
     }
 }

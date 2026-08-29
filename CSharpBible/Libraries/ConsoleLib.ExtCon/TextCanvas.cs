@@ -24,7 +24,7 @@ using BaseLib.Interfaces;
 using System;
 using System.Drawing;
 
-namespace ConsoleLib;
+namespace ConsoleLib.ExtCon;
 
 /// <summary>
 /// Stellt eine Zeichenfläche (logisches Konsolen-Viewport) bereit, auf die mit

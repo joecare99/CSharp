@@ -44,11 +44,13 @@ public class Control : IControl
     /// Gets or sets the message queue.
     /// </summary>
     /// <value>The message queue.</value>
-    public static ConcurrentQueue<(Action<object, EventArgs>, object, EventArgs)>? MessageQueue { get; set; } = default;
+    public static ConcurrentQueue<(Action<object, EventArgs>, object, EventArgs)>? MessageQueue { get; set; } = new();
 
     public static WaitHandle MessageWaitHandle => _messageSignal;
 
     private static readonly AutoResetEvent _messageSignal = new(false);
+
+    public static void SignalMessageWaitHandle() => _messageSignal.Set();
 
     public static bool TryDequeueMessage(out (Action<object, EventArgs> handler, object sender, EventArgs args) workItem)
     {
@@ -386,21 +388,15 @@ public class Control : IControl
             var consoleHost = GetWidgetSetCapability<IConsoleWidgetHost>();
             if (consoleHost != null)
             {
-                try
-                {
-                    consoleHost.FillShadow(lastDim, ConsoleColor.Gray, ConsoleColor.Black, consoleHost.ShadeChars[4]);
-                }
-                catch { }
+                consoleHost.FillShadow(lastDim, ConsoleColor.Gray, ConsoleColor.Black, consoleHost.ShadeChars[4]);
             }
         }
 
         else
         {
-            var redrawRect = lastDim;
+            var redrawRect = Rectangle.Union(lastDim, _dimension);
             if (Shadow)
-            {
                 redrawRect.Inflate(1, 1);
-            }
             Parent.ReDraw(redrawRect);
         }
         if (IsVisible)
@@ -589,7 +585,7 @@ public class Control : IControl
     /// </summary>
     /// <param name="control">The control.</param>
     /// <returns>Control.</returns>
-    public IControl Add(IControl control)
+    public virtual IControl Add(IControl control)
     {
         if (control.Parent != this)
             control.Parent?.Remove(control);
@@ -609,7 +605,7 @@ public class Control : IControl
     /// </summary>
     /// <param name="control">The control.</param>
     /// <returns>Control.</returns>
-    public IControl Remove(IControl control)
+    public virtual IControl Remove(IControl control)
     {
         control.Parent = null;
         Children.Remove(control);
@@ -756,25 +752,56 @@ public class Control : IControl
         if (!CanProcessInput)
             return;
 
-        if (e.KeyChar == Accelerator && Accelerator != '\0')
+        ActiveControl?.HandlePressKeyEvents(e);
+        if (!e.Handled
+            && e.bKeyDown
+            && char.ToUpperInvariant(e.KeyChar) == char.ToUpperInvariant(Accelerator)
+            && Accelerator != '\0')
         {
             Click();
             e.Handled = true;
-        }
-        else
-        {
-            ActiveControl?.HandlePressKeyEvents(e);
-            if (!e.Handled)
-                foreach (var ctrl in Children)
-                {
-                    ctrl.HandlePressKeyEvents(e);
-                    if (e.Handled)
-                        break;
-                }
-            if (!e.Handled)
-                OnKeyPressed?.Invoke(this, e);
+            return;
         }
 
+        if (!e.Handled)
+            foreach (var ctrl in Children)
+            {
+                if (ReferenceEquals(ctrl, ActiveControl))
+                    continue;
+                ctrl.HandlePressKeyEvents(e);
+                if (e.Handled)
+                    break;
+            }
+        if (!e.Handled)
+            OnKeyPressed?.Invoke(this, e);
+
+    }
+
+    internal void HandleUnhandledChildKeyEvent(IKeyEvent e, IControl source)
+    {
+        if (!CanProcessInput || e.Handled)
+            return;
+
+        if (e.bKeyDown && char.ToUpperInvariant(e.KeyChar) == char.ToUpperInvariant(Accelerator) && Accelerator != '\0')
+        {
+            Click();
+            e.Handled = true;
+            return;
+        }
+
+        foreach (var child in Children)
+        {
+            if (ReferenceEquals(child, source))
+                continue;
+
+            child.HandlePressKeyEvents(e);
+            if (e.Handled)
+                return;
+        }
+
+        OnKeyPressed?.Invoke(this, e);
+        if (!e.Handled && Parent is Control parent)
+            parent.HandleUnhandledChildKeyEvent(e, this);
     }
     /// <summary>
     /// Does the update.

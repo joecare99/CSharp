@@ -4,6 +4,7 @@
 // Created          : 09-26-2025
 // ***********************************************************************
 using ConsoleLib.Data;
+using ConsoleLib.Interfaces;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -15,6 +16,10 @@ namespace ConsoleLib.CommonControls;
 /// </summary>
 public class MenuBar : Panel
 {
+    private int _keyboardIndex = -1;
+
+    public bool IsKeyboardActive { get; private set; }
+    public bool ShowAccelerators { get; private set; }
     public MenuBar()
     {
         BackColor = ConsoleColor.DarkGray;
@@ -81,6 +86,87 @@ public class MenuBar : Panel
         foreach (MenuItem mi in Children.OfType<MenuItem>())
         {
             mi.SubMenu?.Hide();
+        }
+    }
+
+    public bool ActivateKeyboard()
+    {
+        var items = Children.OfType<MenuItem>().Where(item => item.Enabled).ToArray();
+        if (items.Length == 0)
+            return false;
+
+        IsKeyboardActive = true;
+        _keyboardIndex = 0;
+        ActiveControl = items[0];
+        items[0].Active = true;
+        ShowKeyboardSubMenu(items[0]);
+        Invalidate();
+        return true;
+    }
+
+    public void DeactivateKeyboard()
+        {
+            IsKeyboardActive = false;
+            if (ActiveControl is not null)
+                ActiveControl.Active = false;
+            ActiveControl = null;
+            _keyboardIndex = -1;
+            HideAllPopups();
+            Invalidate();
+        }
+
+    public void SetAcceleratorVisibility(bool visible)
+        {
+            if (ShowAccelerators == visible)
+                return;
+            ShowAccelerators = visible;
+            Invalidate();
+        }
+
+    public override void HandlePressKeyEvents(IKeyEvent e)
+    {
+        if (IsKeyboardActive && e.bKeyDown)
+        {
+            var items = Children.OfType<MenuItem>().Where(item => item.Enabled).ToArray();
+            if (items.Length != 0)
+            {
+                if (e.usKeyCode is (ushort)ConsoleKey.LeftArrow or (ushort)ConsoleKey.RightArrow)
+                {
+                    var direction = e.usKeyCode == (ushort)ConsoleKey.LeftArrow ? -1 : 1;
+                    _keyboardIndex = (_keyboardIndex + direction + items.Length) % items.Length;
+                    if (ActiveControl is not null)
+                        ActiveControl.Active = false;
+                    ActiveControl = items[_keyboardIndex];
+                    ActiveControl.Active = true;
+                    ShowKeyboardSubMenu(items[_keyboardIndex]);
+                    e.Handled = true;
+                    return;
+                }
+
+                if (e.usKeyCode == (ushort)ConsoleKey.Escape)
+                {
+                    DeactivateKeyboard();
+                    e.Handled = true;
+                    return;
+                }
+            }
+        }
+
+        base.HandlePressKeyEvents(e);
+    }
+
+    private void ShowKeyboardSubMenu(MenuItem item)
+    {
+        foreach (var candidate in Children.OfType<MenuItem>())
+        {
+            if (!ReferenceEquals(candidate, item))
+                candidate.SubMenu?.Hide();
+        }
+
+        if (item.SubMenu is not null)
+        {
+            item.SubMenu.Position = new Point(item.Position.X + 1, 2);
+            item.SubMenu.Show();
         }
     }
 
