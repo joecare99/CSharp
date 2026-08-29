@@ -153,6 +153,7 @@
   <Project Path="BoxFlight/BoxFlight.csproj" />
   <Project Path="CreateCards/CreateCards.csproj" />
   <Project Path="CsEpiphany/CsEpiphany.csproj" />
+  <Project Path="DetectiveGame.Console.Cxaml/DetectiveGame.Console.Cxaml.csproj" />
   <Project Path="Game_Base/Game_Base.csproj" />
   <Project Path="Game_BaseTests/Game_BaseTests.csproj" />
   <Project Path="MidiSwing.MVVM/MidiSwing.MVVM.csproj" />
