@@ -96,4 +96,5 @@
     <Project Path="../Data/PictureDB/PictureDB.OllamaTest/PictureDB.OllamaTest.csproj" />
     <Project Path="../Data/PictureDB/PictureDB.UI/PictureDB.UI.csproj" />
   </Folder>
+  <Project Path="Ollama.CodingAgent.Console.Cxaml/Ollama.CodingAgent.Console.Cxaml.csproj" />
  </Solution>
