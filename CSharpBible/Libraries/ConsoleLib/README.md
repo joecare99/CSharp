@@ -1,6 +1,9 @@
 # ConsoleLib
 
-Rich, testable console UI toolkit for .NET / Windows terminals. Provides an abstraction (`IConsole`) plus higher level controls (Label, TextBox, ListBox, Application, layout helpers) with a simple invalidation + message queue system. Targets multiple frameworks including classic .NET Framework (for legacy host apps) and modern .NET 6–9.
+Rich, testable console UI toolkit for .NET terminals. The core is host-neutral;
+`ConsoleLib.ExtCon` provides the Windows/ExtendedConsole backend and
+`ConsoleLib.Posix` provides ANSI/VT output and input for Linux, macOS, SSH,
+tmux, and redirected streams.
 
 ## Purpose
 Enable structured, MVVM-friendly console applications (prototyping, headless admin tools, data / search demos) without dropping to raw `System.Console` calls. Focus on:
@@ -13,11 +16,13 @@ Enable structured, MVVM-friendly console applications (prototyping, headless adm
 - `Application` root control with message loop integration.
 - Focus / active control handling.
 - Text input with caret, multi-line editing, navigation.
-- List rendering (scrolling, selection – extensible).
+- List rendering (scrolling, selection ï¿½ extensible).
 - Basic 2?way binding support for `TextBox` (model <-> text) and (extension ready) selection.
 - Drawing API via `TextCanvas` (rect fill, bordered boxes, character output).
 - Separation of concerns through `IConsole` and `IWidgetSet` abstractions.
 - Backend-specific rendering and host-loop implementations can live in separate projects such as `ConsoleLib.ExtCon` or other host-specific adapters.
+- CXAML loading, deterministic source generation, and the Avalonia designer are
+  available through the CXAML projects and use the same runtime loader.
 
 ## Targets
 ```
@@ -32,7 +37,37 @@ net8.0; net9.0; net10.0
 ```
 
 ## Basic Usage
-Reference the core project plus a concrete widget-set backend such as `ConsoleLib.ExtCon`, then create the application with an `IWidgetSet` implementation.
+Reference the core project plus a concrete backend such as `ConsoleLib.ExtCon`
+or `ConsoleLib.Posix`, then create the application with an `IWidgetSet`
+implementation. For a declarative view, embed a `.cxaml` file and load it with
+`CxamlLoader`; the parallel examples under `Calc`, `ConsoleApps`, `Games`, and
+`OpenAI` demonstrate this without replacing the imperative applications.
+
+## POSIX host safety
+
+Use `PosixTerminalTransport` with redirected streams in CI and a TTY in
+interactive sessions. Raw mode is scoped to the host lifetime and restored on
+normal completion, cancellation, and transport failure. Terminals without SGR
+mouse support remain keyboard-operable; clipboard integration is opt-in.
+
+## Validation
+
+The split test projects are `ConsoleLib.CoreTests`, `ConsoleLib.ExtConTests`,
+`ConsoleLib.PosixTests`, `ConsoleLib.Cxaml.DesignerTests`, and
+`ConsoleLib.Cxaml.ExamplesTests`. Run them individually when diagnosing a
+backend and collect line coverage with:
+
+```text
+dotnet test <test-project.csproj> --collect:"XPlat Code Coverage"
+```
+
+## Application services
+
+The core also provides independent, DI-friendly application services:
+`ApplicationMessageQueue` and `ApplicationDispatcher` provide an instance-scoped
+FIFO dispatch queue, while `ApplicationScheduler` schedules work onto that
+dispatcher through the `IScheduler` and `IClock` abstractions. These services
+are additive and do not replace the legacy `Control.MessageQueue`.
 
 ## Binding Example
 ```csharp
@@ -60,4 +95,4 @@ box.BindTwoWay(viewModel, nameof(viewModel.SearchText));
 3. PR must include scenario description and (if feasible) a small demo snippet.
 
 ## License
-(Insert license notice here – e.g. MIT / proprietary.)
+(Insert license notice here ï¿½ e.g. MIT / proprietary.)
