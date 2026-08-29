@@ -70,4 +70,9 @@
       <Property Name="VWDPort" Value="&quot;53114&quot;" />
     </Properties>
   </Project>
+  <Project Path="../Calc/Calc32Cons.Cxaml/Calc32Cons.Cxaml.csproj" />
+  <Project Path="../ConsoleApps/Leonardo.ST.Cxaml/Leonardo.ST.Cxaml.csproj" />
+  <Project Path="../Games/DetectiveGame.Console.Cxaml/DetectiveGame.Console.Cxaml.csproj" />
+  <Project Path="../OpenAI/Ollama.CodingAgent.Console.Cxaml/Ollama.CodingAgent.Console.Cxaml.csproj" />
+  <Project Path="ConsoleLib.Cxaml.ExamplesTests/ConsoleLib.Cxaml.ExamplesTests.csproj" />
 </Solution>
