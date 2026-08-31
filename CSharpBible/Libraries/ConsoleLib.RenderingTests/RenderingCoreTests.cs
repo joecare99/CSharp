@@ -176,4 +176,50 @@ public sealed class RenderingCoreTests
         Assert.ThrowsExactly<InvalidOperationException>(() => service.GetSnapshot());
         Assert.AreEqual(0, changes);
     }
+
+    [TestMethod]
+    public void TrackerReturnsNoDirtyRegionForIdenticalFrame()
+    {
+        var label = new Label { Text = "Same", size = new Size(8, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(8, 1));
+        var tracker = new FrameOutputTracker();
+        tracker.Acquire(service.GetSnapshot());
+
+        var delta = tracker.Acquire(service.GetSnapshot());
+
+        Assert.IsFalse(delta.IsDirty);
+        Assert.AreEqual(Rectangle.Empty, delta.DirtyRegion);
+    }
+
+    [TestMethod]
+    public void TrackerMarksResizeAsFullFrame()
+    {
+        var label = new Label { Text = "Resize", size = new Size(4, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(4, 1));
+        var tracker = new FrameOutputTracker();
+        tracker.Acquire(service.GetSnapshot());
+
+        service.Resize(new Size(6, 2));
+        var delta = tracker.Acquire(service.GetSnapshot());
+
+        Assert.AreEqual(new Rectangle(0, 0, 6, 2), delta.DirtyRegion);
+    }
+
+    [TestMethod]
+    public void TrackerRecoversWithFullFrameAfterOutputFailure()
+    {
+        var label = new Label { Text = "Recover", size = new Size(8, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(8, 1));
+        var tracker = new FrameOutputTracker();
+        tracker.Acquire(service.GetSnapshot());
+
+        tracker.ResetAfterOutputFailure();
+        var delta = tracker.Acquire(service.GetSnapshot());
+
+        Assert.IsTrue(delta.IsDirty);
+        Assert.AreEqual(new Rectangle(0, 0, 8, 1), delta.DirtyRegion);
+    }
 }

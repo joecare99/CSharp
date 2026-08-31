@@ -25,6 +25,9 @@ public sealed class FrameOutputTracker
 
     public void Reset() => _last = null;
 
+    /// <summary>Forces the next acquisition to redraw the complete frame after host output failure.</summary>
+    public void ResetAfterOutputFailure() => Reset();
+
     private static Rectangle FindDifference(IRenderSnapshot previous, IRenderSnapshot current)
     {
         var bounds = Rectangle.Empty;
