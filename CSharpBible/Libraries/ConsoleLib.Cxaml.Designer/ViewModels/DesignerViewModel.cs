@@ -17,13 +17,17 @@ namespace ConsoleLib.Cxaml.Designer.ViewModels;
 public sealed partial class DesignerViewModel : ObservableObject
 {
     private readonly AvaloniaPreviewRenderer _previewRenderer = new();
+    private readonly ConsolePreviewRenderer _consolePreviewRenderer = new();
     private IControl? _previewControl;
     private DesignerPreviewState _previewState = DesignerPreviewState.Unavailable();
     private string _preview = "Preview unavailable";
     private string _diagnostics = "No diagnostics";
     private string _virtualAxaml = "No virtual AXAML generated.";
     private IReadOnlyList<string> _inspectorProperties = Array.Empty<string>();
+    private IReadOnlyList<InspectorPropertyViewModel> _categorizedInspectorProperties = Array.Empty<InspectorPropertyViewModel>();
     private string? _selectedPreviewId;
+    private string _consolePreview = string.Empty;
+    private bool _updatingSourceCaret;
 
     public IReadOnlyList<string> Toolbox { get; } = new[]
     {
@@ -48,6 +52,9 @@ public sealed partial class DesignerViewModel : ObservableObject
     [ObservableProperty]
     private string _filePath = string.Empty;
 
+    [ObservableProperty]
+    private int _sourceCaretOffset;
+
     public string Preview => _preview;
     public string Diagnostics => _diagnostics;
     public string VirtualAxaml => _virtualAxaml;
@@ -58,6 +65,19 @@ public sealed partial class DesignerViewModel : ObservableObject
     public string? SelectedPreviewControlId => _selectedPreviewId;
     public string? SelectedSourceElementPath => _selectedPreviewId;
     public IReadOnlyList<string> InspectorProperties => _inspectorProperties;
+    public IReadOnlyList<InspectorPropertyViewModel> CategorizedInspectorProperties => _categorizedInspectorProperties;
+    public IReadOnlyList<string> PreviewModes { get; } = new[] { "Visual", "Console" };
+    public int SelectedPreviewTabIndex
+    {
+        get => IsConsolePreview ? 1 : 0;
+        set => SelectedPreviewMode = value == 1 ? "Console" : "Visual";
+    }
+
+    [ObservableProperty]
+    private string _selectedPreviewMode = "Visual";
+
+    public bool IsConsolePreview => string.Equals(SelectedPreviewMode, "Console", StringComparison.Ordinal);
+    public string ConsolePreview => _consolePreview;
     public string SelectedElement
     {
         get
@@ -74,6 +94,17 @@ public sealed partial class DesignerViewModel : ObservableObject
     partial void OnMarkupChanged(string value) => RefreshPreview();
 
     partial void OnSelectedPropertyNameChanged(string? value) => UpdateSelectedPropertyValue();
+    partial void OnSourceCaretOffsetChanged(int value)
+    {
+        if (!_updatingSourceCaret)
+            SelectSourceElementAtOffset(value);
+    }
+    partial void OnSelectedPreviewModeChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsConsolePreview));
+        OnPropertyChanged(nameof(ConsolePreview));
+        OnPropertyChanged(nameof(SelectedPreviewTabIndex));
+    }
 
     [RelayCommand]
     private void InsertSelectedTool()
@@ -192,7 +223,14 @@ public sealed partial class DesignerViewModel : ObservableObject
 
     public bool ActivatePreviewSelection(string controlId)
     {
-        return _previewState.ActivateSelection(controlId);
+        var activated = _previewState.ActivateSelection(controlId);
+        if (activated)
+        {
+            var mapping = _previewState.SelectedMapping;
+            if (mapping is not null)
+                SetSourceCaret(GetElementOffset(mapping.SourcePath));
+        }
+        return activated;
     }
 
     public bool SelectPreviewControl(string controlId) => ActivatePreviewSelection(controlId);
@@ -223,6 +261,7 @@ public sealed partial class DesignerViewModel : ObservableObject
                 _virtualAxaml = CreateVirtualAxaml(_previewControl).ToString(SaveOptions.None);
                 InspectorStatus = "Rendering preview...";
                 _previewState = _previewRenderer.Render(_previewControl);
+                _consolePreview = _consolePreviewRenderer.Render(_previewControl);
                 foreach (var mapping in _previewState.Mappings)
                 {
                     mapping.SourceName = loadResult.NamedControls
@@ -231,7 +270,8 @@ public sealed partial class DesignerViewModel : ObservableObject
                 _previewState.SelectionChanged += PreviewState_SelectionChanged;
                 _preview = _previewControl.GetType().Name + " (" + _previewControl.Children.Count + " children)";
                 InspectorStatus = "Preview rendered: " + _previewState.Mappings.Count + " mapped control(s).";
-                _inspectorProperties = GetInspectorProperties(_previewControl);
+                _categorizedInspectorProperties = GetInspectorProperties(_previewControl);
+                _inspectorProperties = _categorizedInspectorProperties.Select(property => property.Name).ToArray();
                 if (previousSelection is not null)
                     _previewState.ActivateSelection(previousSelection);
             }
@@ -257,6 +297,8 @@ public sealed partial class DesignerViewModel : ObservableObject
         OnPropertyChanged(nameof(PreviewState));
         OnPropertyChanged(nameof(PreviewMappings));
         OnPropertyChanged(nameof(InspectorProperties));
+        OnPropertyChanged(nameof(CategorizedInspectorProperties));
+        OnPropertyChanged(nameof(ConsolePreview));
         OnPropertyChanged(nameof(SelectedElement));
         OnPropertyChanged(nameof(SelectedPreviewControlId));
         OnPropertyChanged(nameof(SelectedSourceElementPath));
@@ -273,7 +315,9 @@ public sealed partial class DesignerViewModel : ObservableObject
         if (clearVirtualAxaml)
             _virtualAxaml = "No virtual AXAML generated.";
         _inspectorProperties = Array.Empty<string>();
+        _categorizedInspectorProperties = Array.Empty<InspectorPropertyViewModel>();
         _selectedPreviewId = null;
+        _consolePreview = string.Empty;
     }
 
     private static XElement CreateVirtualAxaml(IControl control)
@@ -300,9 +344,12 @@ public sealed partial class DesignerViewModel : ObservableObject
     private void PreviewState_SelectionChanged(object? sender, PreviewSelectionChangedEventArgs e)
     {
         _selectedPreviewId = e.Mapping.Id;
-        _inspectorProperties = GetInspectorProperties(e.Mapping.ConsoleControl);
+        _categorizedInspectorProperties = GetInspectorProperties(e.Mapping.ConsoleControl);
+        _inspectorProperties = _categorizedInspectorProperties.Select(property => property.Name).ToArray();
+        SetSourceCaret(GetElementOffset(e.Mapping.SourcePath));
         UpdateSelectedPropertyValue();
         OnPropertyChanged(nameof(InspectorProperties));
+        OnPropertyChanged(nameof(CategorizedInspectorProperties));
         OnPropertyChanged(nameof(SelectedElement));
         OnPropertyChanged(nameof(SelectedPreviewControlId));
         OnPropertyChanged(nameof(SelectedSourceElementPath));
@@ -330,19 +377,130 @@ public sealed partial class DesignerViewModel : ObservableObject
         return element;
     }
 
-    private static IReadOnlyList<string> GetInspectorProperties(IControl control)
+    private void SelectSourceElementAtOffset(int offset)
     {
-        return control.GetType()
+        if (_previewState.Mappings.Count == 0)
+            return;
+
+        try
+        {
+            var document = XDocument.Parse(Markup, LoadOptions.SetLineInfo | LoadOptions.PreserveWhitespace);
+            var selected = _previewState.Mappings
+                .Select(mapping => (mapping, start: GetElementOffset(document, mapping.SourcePath), length: GetElementLength(document, mapping.SourcePath)))
+                .Where(item => item.start >= 0 && offset >= item.start && offset <= item.start + item.length)
+                .OrderByDescending(item => item.start)
+                .FirstOrDefault();
+            if (selected.mapping is not null && selected.mapping.Id != _selectedPreviewId)
+                _previewState.ActivateSelection(selected.mapping.Id);
+        }
+        catch (XmlException)
+        {
+            // Validation diagnostics are already exposed by RefreshPreview.
+        }
+    }
+
+    private void SetSourceCaret(int offset)
+    {
+        _updatingSourceCaret = true;
+        SourceCaretOffset = Math.Clamp(offset, 0, Markup.Length);
+        _updatingSourceCaret = false;
+    }
+
+    private int GetElementOffset(IReadOnlyList<int> path)
+    {
+        try
+        {
+            var document = XDocument.Parse(Markup, LoadOptions.SetLineInfo | LoadOptions.PreserveWhitespace);
+            return GetElementOffset(document, path);
+        }
+        catch (XmlException)
+        {
+            return 0;
+        }
+    }
+
+    private int GetElementOffset(XDocument document, IReadOnlyList<int> path)
+    {
+        var element = FindElement(document.Root!, path);
+        if (element is not IXmlLineInfo lineInfo || !lineInfo.HasLineInfo())
+            return 0;
+        return GetLineStartOffset(Markup, lineInfo.LineNumber) + lineInfo.LinePosition - 1;
+    }
+
+    private int GetElementLength(XDocument document, IReadOnlyList<int> path)
+    {
+        var element = FindElement(document.Root!, path);
+        return element.ToString(SaveOptions.DisableFormatting).Length;
+    }
+
+    private static int GetLineStartOffset(string text, int line)
+    {
+        var currentLine = 1;
+        for (var index = 0; index < text.Length; index++)
+        {
+            if (currentLine == line)
+                return index;
+            if (text[index] == '\n')
+                currentLine++;
+        }
+        return text.Length;
+    }
+
+    private IReadOnlyList<InspectorPropertyViewModel> GetInspectorProperties(IControl control)
+    {
+        var names = control.GetType()
             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(property => property.CanWrite &&
+            .Where(property => property.CanRead &&
                 (property.PropertyType == typeof(string) || property.PropertyType.IsValueType ||
                  property.PropertyType.IsEnum))
-            .Select(property => property.Name)
-            .Concat(new[] { "Width", "Height" })
-            .Distinct(StringComparer.Ordinal)
-            .OrderBy(name => name, StringComparer.Ordinal)
+            .Select(property => (property.Name, property.PropertyType))
+            .Concat(new[] { ("Width", typeof(int)), ("Height", typeof(int)) })
+            .GroupBy(item => item.Item1, StringComparer.Ordinal)
+            .Select(group => group.First())
+            .Select(item => new InspectorPropertyViewModel(
+                control,
+                item.Item1,
+                GetPropertyCategory(item.Item1),
+                item.Item2,
+                GetPropertyValue(control, item.Item1),
+                !CanEditProperty(control, item.Item1),
+                ApplyInspectorValue))
+            .OrderBy(item => item.Category, StringComparer.Ordinal)
+            .ThenBy(item => item.Name, StringComparer.Ordinal)
             .ToArray();
+        return names;
     }
+
+    private void ApplyInspectorValue(string propertyName, string value)
+    {
+        SelectedPropertyName = propertyName;
+        SelectedPropertyValue = value;
+        ApplySelectedProperty();
+    }
+
+    private static bool CanEditProperty(IControl control, string name) =>
+        name.Equals("Width", StringComparison.OrdinalIgnoreCase) ||
+        name.Equals("Height", StringComparison.OrdinalIgnoreCase) ||
+        control.GetType().GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase)?.CanWrite == true;
+
+    private static string GetPropertyValue(IControl control, string name)
+    {
+        if (name.Equals("Width", StringComparison.OrdinalIgnoreCase))
+            return control.size.Width.ToString();
+        if (name.Equals("Height", StringComparison.OrdinalIgnoreCase))
+            return control.size.Height.ToString();
+        return Convert.ToString(control.GetType().GetProperty(name)?.GetValue(control), System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty;
+    }
+
+    private static string GetPropertyCategory(string name) =>
+        name switch
+        {
+            "Width" or "Height" or "X" or "Y" => "Layout",
+            "BackColor" or "ForeColor" or "BorderColor" or "BorderStyle" => "Appearance",
+            "Text" or "Items" or "ItemsSource" => "Content",
+            "Enabled" or "Visible" or "Shadow" => "Behavior",
+            _ => "Advanced"
+        };
 
     private void UpdateSelectedPropertyValue()
     {
