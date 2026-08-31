@@ -55,8 +55,7 @@ public class RichTextEditModelTests : BaseTestViewModel
         _log = Substitute.For<ILog>();
         testModel = new(_sysTime,_log);
         testModel.PropertyChanged += OnVMPropertyChanged;
-        if (testModel is INotifyPropertyChanging npchgn)
-            npchgn.PropertyChanging += OnVMPropertyChanging;
+        testModel.PropertyChanging += OnVMPropertyChanging;
         ClearLog();
     }
 

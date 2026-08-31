@@ -10,6 +10,9 @@
     <Project Path="ConsoleMouseApp/ConsoleMouseApp.csproj" />
     <Project Path="ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
     <Project Path="ConsoleOverlapApp/ConsoleOverlapApp.csproj" />
+    <Project Path="ConsoleLib.Showcase/ConsoleLib.Showcase.csproj" />
+    <Project Path="ConsoleLib.Showcase.Tests/ConsoleLib.Showcase.Tests.csproj" />
+    <Project Path="ConsoleLib.Showcase.Terminal.Core/ConsoleLib.Showcase.Terminal.Core.csproj" />
     <Project Path="Display_Test/Display_netTest.csproj" />
     <Project Path="Leonardo.ST.Cxaml/Leonardo.ST.Cxaml.csproj" />
     <Project Path="TestConsole/TestConsole.csproj" />
@@ -47,6 +50,7 @@
     <Project Path="../Libraries/ConsoleLib/ConsoleLib.csproj" />
     <Project Path="../Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
     <Project Path="../Libraries/ExtendedConsole/ExtendedConsole.csproj" />
+    <Project Path="../Libraries/Terminal.Core/Terminal.Core.csproj" />
     <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
     <Project Path="../Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />

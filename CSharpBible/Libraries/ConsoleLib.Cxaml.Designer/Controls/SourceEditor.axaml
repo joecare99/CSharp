@@ -1,0 +1,10 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:avalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+             x:Class="ConsoleLib.Cxaml.Designer.Controls.SourceEditor">
+  <avalonEdit:TextEditor Name="PART_Editor"
+                         ShowLineNumbers="True"
+                         HorizontalScrollBarVisibility="Auto"
+                         VerticalScrollBarVisibility="Auto"
+                         FontFamily="Consolas" />
+</UserControl>

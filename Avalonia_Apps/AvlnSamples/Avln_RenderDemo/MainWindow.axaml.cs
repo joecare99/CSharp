@@ -35,17 +35,13 @@ namespace RenderDemo
                 // initial apply
                 Apply(GetValue());
 
-                // subscribe using INotifyPropertyChanged
-                if (_vm is INotifyPropertyChanged inpc)
+                _vm.PropertyChanged += (_, e) =>
                 {
-                    inpc.PropertyChanged += (_, e) =>
+                    if (e.PropertyName == propertyName)
                     {
-                        if (e.PropertyName == propertyName)
-                        {
-                            Apply(GetValue());
-                        }
-                    };
-                }
+                        Apply(GetValue());
+                    }
+                };
             }
 
             BindOverlay("DrawDirtyRects", RendererDebugOverlays.DirtyRects);

@@ -15,6 +15,7 @@ using BaseLib.Interfaces;
 using ConsoleLib.Data;
 using ConsoleLib.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace ConsoleLib.CommonControls;
@@ -118,6 +119,45 @@ public class Terminal : Control, IConsole
     }
 
     public ScreenCell GetScreenCell(int x, int y) => ScBuffer[x, y];
+
+    /// <summary>Occurs when a mouse event is delivered to the terminal widget.</summary>
+    public event EventHandler<IMouseEvent>? OnMouseInput;
+
+    /// <summary>
+    /// Replaces the visible terminal rows without moving the widget's console cursor.
+    /// </summary>
+    public void RenderRows(IReadOnlyList<string> rows)
+    {
+        if (rows is null)
+            throw new ArgumentNullException(nameof(rows));
+
+        var width = Math.Max(0, size.Width - 2);
+        var height = Math.Max(0, size.Height - 2);
+        for (var y = 0; y < height; y++)
+        {
+            var row = y < rows.Count ? rows[y] : string.Empty;
+            for (var x = 0; x < width; x++)
+            {
+                var character = x < row.Length ? row[x] : ' ';
+                ScBuffer[x, y] = (character, (_ForegroundColor, _BackgroundColor));
+                ConsoleHost?.WriteTerminalCell(this, x, y, character, _ForegroundColor, _BackgroundColor);
+            }
+        }
+
+        Invalidate();
+    }
+
+    public override void MouseClick(IMouseEvent mouseEvent)
+    {
+        OnMouseInput?.Invoke(this, mouseEvent);
+        base.MouseClick(mouseEvent);
+    }
+
+    public override void MouseMove(IMouseEvent mouseEvent, Point lastMousePos)
+    {
+        OnMouseInput?.Invoke(this, mouseEvent);
+        base.MouseMove(mouseEvent, lastMousePos);
+    }
 
     public void Beep(int freq, int len) => ConsoleHost?.Beep(freq, len);
 

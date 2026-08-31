@@ -85,7 +85,7 @@ public partial class BoardView : UserControl
         Visual? current = source;
         while (current is not null)
         {
-            if (current is StyledElement element && element.DataContext is MarbleViewModel marbleViewModel)
+            if (current.DataContext is MarbleViewModel marbleViewModel)
             {
                 marble = marbleViewModel;
                 return true;

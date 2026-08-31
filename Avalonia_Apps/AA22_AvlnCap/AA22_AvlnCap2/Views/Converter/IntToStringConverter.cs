@@ -39,7 +39,7 @@ public class IntToStringConverter : IValueConverter
         {
             int i => i.ToString(CultureInfo.InvariantCulture),
             null => string.Empty,
-            _ => value?.ToString() ?? string.Empty,
+            _ => value.ToString() ?? string.Empty,
         };
     }
 
