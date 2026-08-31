@@ -300,4 +300,40 @@ public sealed class RenderingCoreTests
             characters[x] = snapshot.GetCell(x, y).Character;
         return new string(characters);
     }
+
+    [TestMethod]
+    public void RendererUsesDisabledButtonColors()
+    {
+        var button = new Button
+        {
+            Text = "Off",
+            Enabled = false,
+            DisabledFrontColor = ConsoleColor.DarkYellow,
+            DisabledBackColor = ConsoleColor.DarkRed,
+            size = new Size(5, 1)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(button, new Size(5, 1));
+        var cell = service.GetSnapshot().GetCell(1, 0);
+
+        Assert.AreEqual('O', cell.Character);
+        Assert.AreEqual(ConsoleColor.DarkYellow, cell.Foreground);
+        Assert.AreEqual(ConsoleColor.DarkRed, cell.Background);
+    }
+
+    [TestMethod]
+    public void RendererCompositesFirstChildAsFrontMost()
+    {
+        var panel = new Panel { size = new Size(4, 1) };
+        var back = new Label { Text = "Back", size = new Size(4, 1) };
+        var front = new Label { Text = "Front", size = new Size(4, 1) };
+        panel.Add(back);
+        panel.Add(front);
+        panel.BringToFront(back);
+
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(4, 1));
+
+        Assert.AreEqual('B', service.GetSnapshot().GetCell(0, 0).Character);
+    }
 }

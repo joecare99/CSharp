@@ -51,6 +51,7 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var lines = wraps
             ? WrapLines(textValue, textWidth)
             : new[] { textValue };
+        var (foreground, background) = GetColors(control);
         for (var lineIndex = 0; lineIndex < lines.Count; lineIndex++)
         {
             if (y + lineIndex < 0 || y + lineIndex >= size.Height)
@@ -60,12 +61,21 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             {
                 var cellX = x + textStart + index;
                 if (cellX >= 0 && cellX < size.Width)
-                    cells[cellX, y + lineIndex] = new TerminalCell(line[index], control.GetActualForeColor(), control.GetActualBackColor());
+                    cells[cellX, y + lineIndex] = new TerminalCell(line[index], foreground, background);
             }
         }
 
-        foreach (var child in control.Children)
-            DrawControl(child, cells, size);
+        for (var index = control.Children.Count - 1; index >= 0; index--)
+            DrawControl(control.Children[index], cells, size);
+    }
+
+    private static (ConsoleColor Foreground, ConsoleColor Background) GetColors(IControl control)
+    {
+        if (control.Enabled)
+            return (control.GetActualForeColor(), control.GetActualBackColor());
+        if (control is Button button)
+            return (button.DisabledFrontColor, button.DisabledBackColor);
+        return (ConsoleColor.DarkGray, control.GetActualBackColor());
     }
 
     private static string GetDisplayText(IControl control)
