@@ -31,8 +31,6 @@ public class MainWindowTests
         window.Show();
 
         // Act: Find the button and simulate Enter press on it
-        var btn = window.FindControl<Button>("OnNewClick"); // name not set; fallback to call handler via Click routed event.
-                                                            // Since the XAML doesn't set Name, trigger by raising the event handler directly via routed event on the found button by content
         var button = window.GetVisualDescendants().OfType<Button>().FirstOrDefault(b => (b.Content as string) == "Neu");
         button?.Focus();
         window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);

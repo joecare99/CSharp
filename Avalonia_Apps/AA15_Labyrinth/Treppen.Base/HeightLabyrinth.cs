@@ -163,23 +163,37 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
             for (int y = (_dimension.Height - 1) | 1; y >= 0; y--)
             {
                 var pp = new Point(x ^ 1, y ^ 1);
-                if (!InBounds(pp.X, pp.Y) || _z[pp.X, pp.Y] != 0) continue;
+                if (!InBounds(pp.X, pp.Y)) continue;
+                var z = _z;
+                if (z is null || z[pp.X, pp.Y] != 0) continue;
 
                 bool first = true; int zm = 0, cn = 0, zx = 0, cx = 0;
 
                 for (int i = 1; i < Dir4.Length; i++)
                 {
                     var n = new Point(pp.X + Dir4[i].X, pp.Y + Dir4[i].Y);
-                    var zz = InBounds(n.X, n.Y) ? _z[n.X, n.Y] : 0;
+                    var zz = InBounds(n.X, n.Y) ? z[n.X, n.Y] : 0;
 
-                    if (zz > 0 && (first || zz <= zm)) { if (zz < zm) cn = 0; zm = zz; if (cn < 2) cn++; }
-                    if (zz > 0 && (first || zz >= zx)) { if (zz > zx) cx = 0; zx = zz; if (cx < 2) cx++; first = false; }
+                    if (zz > 0 && (first || zz <= zm))
+                    {
+                        if (zz < zm) cn = 0;
+                        zm = zz;
+                        if (cn < 2) cn++;
+                    }
+
+                    if (zz > 0 && (first || zz >= zx))
+                    {
+                        if (zz > zx) cx = 0;
+                        zx = zz;
+                        if (cx < 2) cx++;
+                        first = false;
+                    }
                 }
 
                 if (zm > 0)
-                    _z[pp.X, pp.Y] = (cx == 1 && zx - zm < 6) ? zx + cx : zm - cn;
+                    z[pp.X, pp.Y] = (cx == 1 && zx - zm < 6) ? zx + cx : zm - cn;
                 else
-                    _z[pp.X, pp.Y] = BaseLevel(pp.X, pp.Y);
+                    z[pp.X, pp.Y] = BaseLevel(pp.X, pp.Y);
             }
     }
 

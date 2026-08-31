@@ -80,7 +80,7 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
         {
             while (reader.MoveToNextAttribute())
             {
-                if (!IsSupportedAttribute(reader.LocalName, type))
+                if (!IsSupportedAttribute(reader.Name, type))
                     diagnostics.Add(new CxamlDiagnostic(CxamlDiagnosticSeverity.Error,
                         "Unsupported CXAML attribute '" + reader.LocalName + "' on " + controlName));
             }
@@ -95,7 +95,45 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
         while (!(reader.NodeType == XmlNodeType.EndElement && reader.Depth == depth))
         {
             if (reader.NodeType == XmlNodeType.Element)
-                ValidateControl(reader, diagnostics);
+            {
+                if (type == typeof(Grid) && IsGridDefinitionElement(reader.Name))
+                    ValidateGridDefinitions(reader, diagnostics);
+                else
+                    ValidateControl(reader, diagnostics);
+            }
+            reader.Read();
+        }
+    }
+
+    private static void ValidateGridDefinitions(XmlReader reader, ICollection<CxamlDiagnostic> diagnostics)
+    {
+        var isRows = reader.Name == "Grid.RowDefinitions";
+        if (reader.IsEmptyElement)
+            return;
+
+        var depth = reader.Depth;
+        reader.Read();
+        while (!(reader.NodeType == XmlNodeType.EndElement && reader.Depth == depth))
+        {
+            if (reader.NodeType == XmlNodeType.Element)
+            {
+                var expected = isRows ? "RowDefinition" : "ColumnDefinition";
+                if (reader.LocalName != expected)
+                    diagnostics.Add(new CxamlDiagnostic(CxamlDiagnosticSeverity.Error,
+                        "Unsupported Grid definition element: " + reader.Name));
+                else
+                {
+                    var attribute = isRows ? "Height" : "Width";
+                    if (reader.HasAttributes)
+                    {
+                        while (reader.MoveToNextAttribute())
+                            if (reader.LocalName != attribute)
+                                diagnostics.Add(new CxamlDiagnostic(CxamlDiagnosticSeverity.Error,
+                                    "Unsupported Grid definition attribute '" + reader.Name + "'."));
+                        reader.MoveToElement();
+                    }
+                }
+            }
             reader.Read();
         }
     }
@@ -126,7 +164,7 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
                         y = ParseInt(reader.Value, reader.LocalName);
                         break;
                     default:
-                        ApplyAttribute(control, reader.LocalName, reader.Value, context, namedControls);
+                        ApplyAttribute(control, reader.Name, reader.Value, context, namedControls);
                         break;
                 }
             }
@@ -150,8 +188,10 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
         {
             if (reader.NodeType == XmlNodeType.Element)
             {
-                var child = ReadControl(reader, context, namedControls);
-                control.Add(child);
+                if (control is Grid grid && IsGridDefinitionElement(reader.Name))
+                    ReadGridDefinitions(reader, grid);
+                else
+                    control.Add(ReadControl(reader, context, namedControls));
             }
             else if (reader.NodeType == XmlNodeType.Text && !string.IsNullOrWhiteSpace(reader.Value))
             {
@@ -257,6 +297,24 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
             case "IsChecked" when control is CheckBox checkBox:
                 checkBox.IsChecked = ParseBool(value, name);
                 break;
+            case "Grid.Row":
+                Grid.SetRow(control, ParseInt(value, name));
+                break;
+            case "Grid.Column":
+                Grid.SetColumn(control, ParseInt(value, name));
+                break;
+            case "Grid.RowSpan":
+                Grid.SetRowSpan(control, ParseInt(value, name));
+                break;
+            case "Grid.ColumnSpan":
+                Grid.SetColumnSpan(control, ParseInt(value, name));
+                break;
+            case "RowDefinitions" when control is Grid grid:
+                ParseCompactRows(grid, value);
+                break;
+            case "ColumnDefinitions" when control is Grid grid:
+                ParseCompactColumns(grid, value);
+                break;
             default:
                 throw new CxamlParseException("Unsupported CXAML attribute '" + name + "' on " + control.GetType().Name);
         }
@@ -279,10 +337,85 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
 
     private static bool IsSupportedAttribute(string name, Type? controlType) =>
         name is "Name" or "Text" or "Width" or "Height" or "X" or "Y" or "Visible" or "Enabled" or "BackColor" or "ForeColor" or "Tag" or "Accelerator" or "Shadow" or "Command" or "ItemsSource"
+        || name is "Grid.Row" or "Grid.Column" or "Grid.RowSpan" or "Grid.ColumnSpan"
+        || name is "RowDefinitions" or "ColumnDefinitions" && controlType is not null && typeof(Grid).IsAssignableFrom(controlType)
         || name is ("BorderStyle" or "BorderColor") && controlType is not null &&
             (typeof(IHasBorder).IsAssignableFrom(controlType) || typeof(Terminal).IsAssignableFrom(controlType))
         || name == "HLBackColor" && controlType == typeof(Button)
         || name == "IsChecked" && controlType == typeof(CheckBox);
+
+    private static bool IsGridDefinitionElement(string name) =>
+        name is "Grid.RowDefinitions" or "Grid.ColumnDefinitions";
+
+    private static void ReadGridDefinitions(XmlReader reader, Grid grid)
+    {
+        var isRows = reader.Name == "Grid.RowDefinitions";
+        if (reader.IsEmptyElement)
+            return;
+
+        var depth = reader.Depth;
+        reader.Read();
+        while (!(reader.NodeType == XmlNodeType.EndElement && reader.Depth == depth))
+        {
+            if (reader.NodeType == XmlNodeType.Element)
+            {
+                var definitionName = reader.LocalName;
+                if (isRows && definitionName == "RowDefinition")
+                    grid.RowDefinitions.Add(new RowDefinition { Height = ReadGridLength(reader, "Height") });
+                else if (!isRows && definitionName == "ColumnDefinition")
+                    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = ReadGridLength(reader, "Width") });
+                else
+                    throw new CxamlParseException("Unsupported Grid definition element: " + reader.Name);
+            }
+            reader.Read();
+        }
+    }
+
+    private static GridLength ReadGridLength(XmlReader reader, string attributeName)
+    {
+        var value = reader.GetAttribute(attributeName);
+        if (string.IsNullOrWhiteSpace(value))
+            return GridLength.Star;
+        return ParseGridLength(value);
+    }
+
+    private static void ParseCompactRows(Grid grid, string value)
+    {
+        grid.RowDefinitions.Clear();
+        foreach (var item in SplitDefinitionList(value))
+            grid.RowDefinitions.Add(new RowDefinition { Height = ParseGridLength(item) });
+    }
+
+    private static void ParseCompactColumns(Grid grid, string value)
+    {
+        grid.ColumnDefinitions.Clear();
+        foreach (var item in SplitDefinitionList(value))
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = ParseGridLength(item) });
+    }
+
+    private static IEnumerable<string> SplitDefinitionList(string value) =>
+        value.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(item => item.Trim())
+            .Where(item => item.Length != 0);
+
+    private static GridLength ParseGridLength(string value)
+    {
+        if (value.Equals("Auto", StringComparison.OrdinalIgnoreCase))
+            return GridLength.Auto;
+        if (value.EndsWith("*", StringComparison.Ordinal))
+        {
+            var starValue = value[..^1];
+            var weight = starValue.Length == 0
+                ? 1
+                : double.TryParse(starValue, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
+                    ? parsed
+                    : throw new CxamlParseException("Invalid Grid star length: " + value);
+            return new GridLength(weight, GridUnitType.Star);
+        }
+        if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var pixels))
+            return new GridLength(pixels, GridUnitType.Pixel);
+        throw new CxamlParseException("Invalid Grid length: " + value);
+    }
 
     private static void SetBorderStyle(IControl control, string value)
     {

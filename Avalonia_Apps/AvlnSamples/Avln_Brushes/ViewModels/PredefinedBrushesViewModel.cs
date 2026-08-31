@@ -100,13 +100,13 @@ public class ColorInfo
      double min = Math.Min(r, Math.Min(g, b));
           double delta = max - min;
 
-            if (delta == 0)
-          return 0;
+            if (Math.Abs(delta) < double.Epsilon)
+                return 0;
 
           double hue;
-       if (max == r)
-     hue = ((g - b) / delta) % 6;
- else if (max == g)
+        if (max >= r && max >= g)
+      hue = ((g - b) / delta) % 6;
+  else if (max >= g)
            hue = (b - r) / delta + 2;
      else
             hue = (r - g) / delta + 4;
@@ -140,7 +140,7 @@ public class ColorInfo
             double max = Math.Max(r, Math.Max(g, b));
      double min = Math.Min(r, Math.Min(g, b));
 
-         if (max == 0)
+          if (Math.Abs(max) < double.Epsilon)
      return 0;
 
             return (max - min) / max;
@@ -176,9 +176,9 @@ public class ColorInfo
   double hue = 0;
       if (delta != 0)
             {
-  if (max == r)
+   if (max >= r && max >= g)
      hue = ((g - b) / delta) % 6;
-else if (max == g)
+ else if (max >= g)
              hue = (b - r) / delta + 2;
                 else
      hue = (r - g) / delta + 4;

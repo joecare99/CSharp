@@ -76,6 +76,61 @@ public class CxamlLoaderTests
     }
 
     [TestMethod]
+    public void Loader_ParsesDetailedGridDefinitionsAndAttachedPlacement()
+    {
+        var root = (Grid)new CxamlLoader().Load(new StringReader(
+            "<Grid Width=\"20\" Height=\"10\">" +
+            "<Grid.RowDefinitions><RowDefinition Height=\"Auto\" /><RowDefinition Height=\"2*\" /></Grid.RowDefinitions>" +
+            "<Grid.ColumnDefinitions><ColumnDefinition Width=\"4\" /><ColumnDefinition Width=\"*\" /></Grid.ColumnDefinitions>" +
+            "<Label Text=\"Cell\" Grid.Row=\"1\" Grid.Column=\"1\" Grid.RowSpan=\"1\" Grid.ColumnSpan=\"1\" />" +
+            "</Grid>"));
+
+        Assert.AreEqual(2, root.RowDefinitions.Count);
+        Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);
+        Assert.AreEqual(2d, root.RowDefinitions[1].Height.Value);
+        Assert.AreEqual(2, root.ColumnDefinitions.Count);
+        Assert.AreEqual(4d, root.ColumnDefinitions[0].Width.Value);
+        Assert.AreEqual(GridUnitType.Star, root.ColumnDefinitions[1].Width.GridUnitType);
+        Assert.AreEqual(1, Grid.GetRow(root.Children[0]));
+        Assert.AreEqual(1, Grid.GetColumn(root.Children[0]));
+    }
+
+    [TestMethod]
+    public void Loader_ParsesCompactGridDefinitions()
+    {
+        var root = (Grid)new CxamlLoader().Load(new StringReader(
+            "<Grid RowDefinitions=\"Auto,24,2*\" ColumnDefinitions=\"*,3*\" />"));
+
+        Assert.AreEqual(3, root.RowDefinitions.Count);
+        Assert.AreEqual(GridUnitType.Auto, root.RowDefinitions[0].Height.GridUnitType);
+        Assert.AreEqual(24d, root.RowDefinitions[1].Height.Value);
+        Assert.AreEqual(2d, root.RowDefinitions[2].Height.Value);
+        Assert.AreEqual(2, root.ColumnDefinitions.Count);
+        Assert.AreEqual(1d, root.ColumnDefinitions[0].Width.Value);
+        Assert.AreEqual(3d, root.ColumnDefinitions[1].Width.Value);
+    }
+
+    [TestMethod]
+    public void Validator_AcceptsDetailedGridDefinitions()
+    {
+        var diagnostics = new CxamlLoader().Validate(new StringReader(
+            "<Grid><Grid.RowDefinitions><RowDefinition Height=\"1*\" /></Grid.RowDefinitions>" +
+            "<Grid.ColumnDefinitions><ColumnDefinition Width=\"Auto\" /></Grid.ColumnDefinitions>" +
+            "<Button Grid.Row=\"0\" Grid.Column=\"0\" /></Grid>"));
+
+        Assert.AreEqual(0, diagnostics.Count);
+    }
+
+    [TestMethod]
+    public void Loader_RejectsInvalidGridLength()
+    {
+        var error = Assert.ThrowsExactly<CxamlParseException>(() =>
+            new CxamlLoader().Load(new StringReader("<Grid RowDefinitions=\"Auto,invalid\" />")));
+
+        StringAssert.Contains(error.Message, "Grid");
+    }
+
+    [TestMethod]
     public void Loader_RejectsMalformedAndMultipleRootMarkup()
     {
         var malformed = Assert.ThrowsExactly<CxamlParseException>(() =>
