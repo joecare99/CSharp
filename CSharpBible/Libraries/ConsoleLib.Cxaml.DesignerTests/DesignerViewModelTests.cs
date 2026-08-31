@@ -91,6 +91,21 @@ public sealed class DesignerViewModelTests
     }
 
     [TestMethod]
+    public void SourceCaretSelectsInnermostControlAndPreviewSelectionMovesCaret()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<StackPanel>\n  <Button Name=\"save\" Text=\"Save\" />\n</StackPanel>"
+        };
+
+        viewModel.SourceCaretOffset = viewModel.Markup.IndexOf("Button", StringComparison.Ordinal);
+
+        Assert.AreEqual("root/0", viewModel.SelectedPreviewControlId);
+        Assert.IsTrue(viewModel.ActivatePreviewSelection("root"));
+        Assert.AreEqual(viewModel.Markup.IndexOf("StackPanel", StringComparison.Ordinal), viewModel.SourceCaretOffset);
+    }
+
+    [TestMethod]
     public void InvalidMarkupRemovesRenderedPreviewAndMappings()
     {
         var viewModel = new DesignerViewModel();
@@ -148,6 +163,24 @@ public sealed class DesignerViewModelTests
         Assert.AreEqual("[Caption]", viewModel.PreviewMappings[1].ConsoleControl.Text);
         Assert.AreEqual("[Caption]", ((Button)viewModel.PreviewMappings[1].PreviewControl).Content);
         StringAssert.Contains(viewModel.InspectorStatus, "Preview rendered");
+    }
+
+    [TestMethod]
+    public void InspectorExposesCategorizedPropertiesAndConsolePreview()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Button Text=\"Run\" Width=\"10\" />"
+        };
+
+        Assert.IsTrue(viewModel.CategorizedInspectorProperties.Any(property => property.Name == "Width" && property.Category == "Layout"));
+        Assert.IsTrue(viewModel.CategorizedInspectorProperties.Any(property => property.Name == "Text" && property.Category == "Content"));
+        StringAssert.Contains(viewModel.ConsolePreview, "Run");
+
+        viewModel.SelectedPreviewMode = "Console";
+
+        Assert.IsTrue(viewModel.IsConsolePreview);
+        Assert.AreEqual(1, viewModel.SelectedPreviewTabIndex);
     }
 
     [TestMethod]
