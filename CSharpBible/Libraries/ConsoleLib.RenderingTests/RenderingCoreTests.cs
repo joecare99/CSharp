@@ -352,6 +352,59 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void RendererDisplaysExpandedTreeHierarchyAndSelectedNode()
+    {
+        var tree = new TreeView { size = new Size(16, 3) };
+        var root = new TreeNode("Root") { IsExpanded = true };
+        root.Add(new TreeNode("Child"));
+        tree.Nodes.Add(root);
+        Assert.IsTrue(tree.SelectNext());
+        Assert.IsTrue(tree.SelectNext());
+
+        var service = new AttachedRenderService();
+        service.Attach(tree, new Size(16, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("- Root          ", ReadRow(frame, 0, 16));
+        Assert.AreEqual("    Child       ", ReadRow(frame, 1, 16));
+        Assert.AreEqual(ConsoleColor.Yellow, frame.GetCell(0, 1).Foreground);
+    }
+
+    [TestMethod]
+    public void RendererOmitsCollapsedTreeChildrenAndUsesExpandMarker()
+    {
+        var tree = new TreeView { size = new Size(12, 3) };
+        var root = new TreeNode("Root");
+        root.Add(new TreeNode("Hidden"));
+        tree.Nodes.Add(root);
+
+        var service = new AttachedRenderService();
+        service.Attach(tree, new Size(12, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("+ Root      ", ReadRow(frame, 0, 12));
+        Assert.AreEqual("            ", ReadRow(frame, 1, 12));
+    }
+
+    [TestMethod]
+    public void RendererClipsIndentedTreeTextToControlAndViewport()
+    {
+        var tree = new TreeView
+        {
+            Position = new Point(-2, 1),
+            size = new Size(20, 2)
+        };
+        tree.Nodes.Add(new TreeNode("LongNode"));
+
+        var service = new AttachedRenderService();
+        service.Attach(tree, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("Long", ReadRow(frame, 1, 4));
+        Assert.AreEqual("    ", ReadRow(frame, 2, 4));
+    }
+
+    [TestMethod]
     public void RendererClipsListBoxItemsToViewportAndControlWidth()
     {
         var listBox = new ListBox

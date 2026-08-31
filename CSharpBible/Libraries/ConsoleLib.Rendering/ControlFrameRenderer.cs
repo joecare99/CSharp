@@ -53,6 +53,12 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             DrawChildren(control, cells, size);
             return;
         }
+        if (control is TreeView treeView)
+        {
+            DrawTreeView(treeView, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
 
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -167,6 +173,35 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             for (var tileRow = 0; tileRow < tileHeight; tileRow++)
                 DrawLine(cells, size, x, y + tileRow, tileWidth, tileRow == 0 ? visible[index].Text : string.Empty, colors.Item1, colors.Item2);
         }
+    }
+
+    private static void DrawTreeView(TreeView treeView, TerminalCell[,] cells, Size size)
+    {
+        var nodes = treeView.GetVisibleNodes();
+        var defaultColors = GetColors(treeView);
+        var row = treeView.Position.Y;
+        foreach (var node in nodes)
+        {
+            if (row >= treeView.Position.Y + Math.Max(1, treeView.size.Height))
+                break;
+
+            var depth = GetTreeDepth(node);
+            var marker = node.Children.Count == 0 ? ' ' : node.IsExpanded ? '-' : '+';
+            var text = marker + " " + new string(' ', depth * 2) + node.Text;
+            var colors = node.IsSelected
+                ? (ConsoleColor.Yellow, defaultColors.Background)
+                : defaultColors;
+            DrawLine(cells, size, treeView.Position.X, row, treeView.size.Width, text, colors.Item1, colors.Item2);
+            row++;
+        }
+    }
+
+    private static int GetTreeDepth(TreeNode node)
+    {
+        var depth = 0;
+        for (var parent = node.Parent; parent is not null; parent = parent.Parent)
+            depth++;
+        return depth;
     }
 
     private static void DrawLine(
