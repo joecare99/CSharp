@@ -16,5 +16,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ConsoleLib\ConsoleLib.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Rendering\ConsoleLib.Rendering.csproj" />
   </ItemGroup>
 </Project>

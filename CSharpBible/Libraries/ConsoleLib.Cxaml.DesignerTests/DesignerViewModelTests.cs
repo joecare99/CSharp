@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia;
 using Avalonia.Headless;
 using System.IO;
+using ConsoleLib.Cxaml.Designer.Preview;
 
 namespace ConsoleLib.Cxaml.DesignerTests;
 
@@ -218,6 +219,44 @@ public sealed class DesignerViewModelTests
 
         Assert.AreEqual(1, viewModel.GridRows.Count);
         Assert.AreEqual("A Grid must keep at least one definition.", viewModel.InspectorStatus);
+    }
+
+    [TestMethod]
+    public void ConsolePreviewUsesSharedSnapshotDimensionsAndColors()
+    {
+        var renderer = new ConsolePreviewRenderer();
+        var control = new ConsoleLib.CommonControls.Label
+        {
+            Text = "Hi",
+            ForeColor = ConsoleColor.Yellow,
+            BackColor = ConsoleColor.DarkBlue,
+            size = new System.Drawing.Size(5, 2)
+        };
+
+        var output = renderer.Render(control);
+        var snapshot = renderer.LastSnapshot;
+
+        Assert.IsNotNull(snapshot);
+        Assert.AreEqual(new System.Drawing.Size(5, 2), snapshot!.Size);
+        Assert.AreEqual('H', snapshot.GetCell(0, 0).Character);
+        Assert.AreEqual(ConsoleColor.Yellow, snapshot.GetCell(0, 0).Foreground);
+        Assert.AreEqual(ConsoleColor.DarkBlue, snapshot.GetCell(0, 0).Background);
+        Assert.AreEqual(2, output.Split(Environment.NewLine).Length);
+    }
+
+    [TestMethod]
+    public void ConsolePreviewOmitsInvisibleControlsThroughSharedRenderer()
+    {
+        var renderer = new ConsolePreviewRenderer();
+        var control = new ConsoleLib.CommonControls.Panel
+        {
+            size = new System.Drawing.Size(8, 2)
+        };
+        control.Add(new ConsoleLib.CommonControls.Label { Text = "Hidden", Visible = false });
+
+        var output = renderer.Render(control);
+
+        Assert.IsFalse(output.Contains("Hidden", StringComparison.Ordinal));
     }
 
     [TestMethod]
