@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Avln_TestConsole\Avln_TestConsole.csproj" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
     <ProjectReference Include="..\Avln_BaseLibTests\Avln_BaseLibTests.csproj" />
   </ItemGroup>
 </Project>

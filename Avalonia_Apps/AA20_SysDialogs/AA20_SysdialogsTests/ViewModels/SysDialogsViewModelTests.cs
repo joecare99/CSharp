@@ -283,7 +283,8 @@ public class SysDialogsViewModelTests
     public void SysDialogsViewModelTest_SetMyFont()
     {
         Assert.AreEqual("", _testResult);
-        _testViewModel.MyFont = new Font("Arial", 12);
+         using var font = new Font("Arial", 12);
+         _testViewModel.MyFont = font;
         Assert.AreEqual(cExpSetMyFont, _testResult);
     }
 #pragma warning restore CA1416

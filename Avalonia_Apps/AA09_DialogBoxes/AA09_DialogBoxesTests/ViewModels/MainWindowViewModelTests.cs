@@ -30,8 +30,7 @@ public class MainWindowViewModelTests : BaseTestViewModel
     {
         testModel = new();
         testModel.PropertyChanged += OnVMPropertyChanged;
-        if (testModel is INotifyPropertyChanging npchgn)
-            npchgn.PropertyChanging += OnVMPropertyChanging;
+        testModel.PropertyChanging += OnVMPropertyChanging;
         WeakReferenceMessenger.Default.Register<MainWindowViewModelTests, MessageBoxRequestMessage>(this, static (r, m) =>
         {
             r.DoLog($"DoOpenMessageBox({m.Title},{m.Content})=>{r.mbResult}");
