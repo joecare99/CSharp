@@ -123,7 +123,7 @@ public sealed partial class DesignerViewModel : ObservableObject
     {
         if (_previewControl is not null)
         {
-            _consolePreview = _consolePreviewRenderer.Render(_previewControl, ParseConsoleFrameSize(value));
+            _consolePreview = RenderConsolePreview();
             OnPropertyChanged(nameof(ConsolePreview));
         }
     }
@@ -264,6 +264,15 @@ public sealed partial class DesignerViewModel : ObservableObject
         return mapping is not null && ActivatePreviewSelection(mapping.Id);
     }
 
+    private string RenderConsolePreview()
+    {
+        var selectedControl = _previewState.SelectedMapping?.ConsoleControl;
+        return _consolePreviewRenderer.Render(
+            _previewControl!,
+            ParseConsoleFrameSize(SelectedConsoleFrameSize),
+            selectedControl);
+    }
+
     public void RefreshPreview()
     {
         var previousSelection = _selectedPreviewId;
@@ -289,7 +298,7 @@ public sealed partial class DesignerViewModel : ObservableObject
                 _virtualAxaml = CreateVirtualAxaml(_previewControl).ToString(SaveOptions.None);
                 InspectorStatus = "Rendering preview...";
                 _previewState = _previewRenderer.Render(_previewControl);
-                _consolePreview = _consolePreviewRenderer.Render(_previewControl, ParseConsoleFrameSize(SelectedConsoleFrameSize));
+                _consolePreview = RenderConsolePreview();
                 foreach (var mapping in _previewState.Mappings)
                 {
                     mapping.SourceName = loadResult.NamedControls
@@ -384,6 +393,7 @@ public sealed partial class DesignerViewModel : ObservableObject
     private void PreviewState_SelectionChanged(object? sender, PreviewSelectionChangedEventArgs e)
     {
         _selectedPreviewId = e.Mapping.Id;
+        _consolePreview = RenderConsolePreview();
         _categorizedInspectorProperties = GetInspectorProperties(e.Mapping.ConsoleControl);
         RefreshGridDefinitions(e.Mapping.ConsoleControl);
         _inspectorProperties = _categorizedInspectorProperties.Select(property => property.Name).ToArray();
@@ -397,6 +407,7 @@ public sealed partial class DesignerViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedElement));
         OnPropertyChanged(nameof(SelectedPreviewControlId));
         OnPropertyChanged(nameof(SelectedSourceElementPath));
+        OnPropertyChanged(nameof(ConsolePreview));
     }
 
     private void UpdateSourceAttribute(PreviewControlMapping? selected, string propertyName, string value)

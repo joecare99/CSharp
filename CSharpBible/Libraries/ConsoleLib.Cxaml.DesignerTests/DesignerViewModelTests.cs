@@ -260,6 +260,45 @@ public sealed class DesignerViewModelTests
     }
 
     [TestMethod]
+    public void ConsolePreviewSelectionDrawsOutlineWithoutChangingCanonicalSnapshot()
+    {
+        var renderer = new ConsolePreviewRenderer();
+        var control = new ConsoleLib.CommonControls.Panel
+        {
+            size = new System.Drawing.Size(8, 3)
+        };
+        var label = new ConsoleLib.CommonControls.Label
+        {
+            Text = "Item",
+            size = new System.Drawing.Size(4, 1),
+            Position = new System.Drawing.Point(2, 1)
+        };
+        control.Add(label);
+
+        var output = renderer.Render(control, new System.Drawing.Size(8, 3), label);
+
+        StringAssert.Contains(output, "╔══╗");
+        Assert.AreEqual('I', renderer.LastSnapshot!.GetCell(2, 1).Character);
+    }
+
+    [TestMethod]
+    public void ConsolePreviewSelectionRefreshesAfterSelectionAndViewportChanges()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"10\" Height=\"3\"><Label Text=\"Item\" Width=\"4\" Height=\"1\" X=\"2\" Y=\"1\" /></Panel>"
+        };
+
+        Assert.IsTrue(viewModel.ActivatePreviewSelection("root/0"));
+        StringAssert.Contains(viewModel.ConsolePreview, "╔══╗");
+
+        viewModel.SelectedConsoleFrameSize = "80x25";
+
+        StringAssert.Contains(viewModel.ConsolePreview, "╔══╗");
+        Assert.AreEqual("root/0", viewModel.SelectedPreviewControlId);
+    }
+
+    [TestMethod]
     public void ConsoleFrameSizeSelectionChangesViewportWithoutMutatingControl()
     {
         var viewModel = new DesignerViewModel
