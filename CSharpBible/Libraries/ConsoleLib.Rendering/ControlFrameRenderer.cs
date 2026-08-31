@@ -41,6 +41,18 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             DrawChildren(control, cells, size);
             return;
         }
+        if (control is TabControl tabControl)
+        {
+            DrawTabControl(tabControl, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
+        if (control is TileView tileView)
+        {
+            DrawTileView(tileView, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
 
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -118,6 +130,42 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
                 ? (listBox.SelectedForeColor, listBox.SelectedBackColor)
                 : GetColors(listBox);
             DrawLine(cells, size, left, top + row, contentWidth, text, foreground, background);
+        }
+    }
+
+    private static void DrawTabControl(TabControl tabControl, TerminalCell[,] cells, Size size)
+    {
+        var text = string.Empty;
+        foreach (var item in tabControl.Items)
+        {
+            text += ReferenceEquals(item, tabControl.SelectedItem)
+                ? "[" + item.Header + "]"
+                : " " + item.Header + " ";
+        }
+
+        var (foreground, background) = GetColors(tabControl);
+        DrawLine(cells, size, tabControl.Position.X, tabControl.Position.Y, tabControl.size.Width, text, foreground, background);
+    }
+
+    private static void DrawTileView(TileView tileView, TerminalCell[,] cells, Size size)
+    {
+        var tileWidth = Math.Max(1, tileView.TileWidth);
+        var tileHeight = Math.Max(1, tileView.TileHeight);
+        var columns = Math.Max(1, tileView.size.Width / tileWidth);
+        var visible = tileView.GetVisibleItems();
+        var defaultColors = GetColors(tileView);
+        for (var index = 0; index < visible.Count; index++)
+        {
+            var column = index % columns;
+            var row = index / columns;
+            var x = tileView.Position.X + column * tileWidth;
+            var y = tileView.Position.Y + row * tileHeight;
+            var selected = ReferenceEquals(visible[index], tileView.SelectedItem);
+            var colors = selected
+                ? (ConsoleColor.Yellow, defaultColors.Background)
+                : defaultColors;
+            for (var tileRow = 0; tileRow < tileHeight; tileRow++)
+                DrawLine(cells, size, x, y + tileRow, tileWidth, tileRow == 0 ? visible[index].Text : string.Empty, colors.Item1, colors.Item2);
         }
     }
 

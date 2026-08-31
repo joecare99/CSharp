@@ -294,6 +294,64 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void RendererDisplaysTabsWithSelectedHeaderMarkers()
+    {
+        var tabs = new TabControl { size = new Size(16, 1) };
+        var first = new TabItem("One");
+        var second = new TabItem("Two");
+        tabs.Items.Add(first);
+        tabs.Items.Add(second);
+        Assert.IsTrue(tabs.SelectNext());
+        Assert.IsTrue(tabs.SelectNext());
+
+        var service = new AttachedRenderService();
+        service.Attach(tabs, new Size(16, 1));
+
+        Assert.AreEqual(" One [Two]      ", ReadRow(service.GetSnapshot(), 0, 16));
+    }
+
+    [TestMethod]
+    public void RendererDisplaysTileViewInGridWithSelectedColors()
+    {
+        var tiles = new TileView
+        {
+            size = new Size(8, 2),
+            TileWidth = 4,
+            TileHeight = 1
+        };
+        tiles.SetItems(new[] { new TileItem("One"), new TileItem("Two") });
+        Assert.IsTrue(tiles.SelectNext());
+
+        var service = new AttachedRenderService();
+        service.Attach(tiles, new Size(8, 2));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("One Two ", ReadRow(frame, 0, 8));
+        Assert.AreEqual(ConsoleColor.Yellow, frame.GetCell(4, 0).Foreground);
+        Assert.AreEqual(' ', frame.GetCell(0, 1).Character);
+    }
+
+    [TestMethod]
+    public void RendererClipsTileTextAndRowsToViewport()
+    {
+        var tiles = new TileView
+        {
+            Position = new Point(-1, 1),
+            size = new Size(8, 3),
+            TileWidth = 4,
+            TileHeight = 2
+        };
+        tiles.SetItems(new[] { new TileItem("Long"), new TileItem("Next"), new TileItem("Third") });
+
+        var service = new AttachedRenderService();
+        service.Attach(tiles, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("ongN", ReadRow(frame, 1, 4));
+        Assert.AreEqual("    ", ReadRow(frame, 2, 4));
+    }
+
+    [TestMethod]
     public void RendererClipsListBoxItemsToViewportAndControlWidth()
     {
         var listBox = new ListBox
