@@ -3,6 +3,7 @@ using System.Drawing;
 using ConsoleLib.Interfaces;
 using ConsoleLib.Data;
 using ConsoleLib.CommonControls;
+using System.Collections.Generic;
 
 namespace ConsoleLib.Rendering;
 
@@ -35,22 +36,32 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         DrawBorder(control, cells, size, width, height);
         var text = GetDisplayText(control);
         var x = control.Position.X;
-        var y = control.Position.Y + Math.Max(0, (height - 1) / 2);
+        var y = control is TextBox { MultiLine: true }
+            ? control.Position.Y
+            : control.Position.Y + Math.Max(0, (height - 1) / 2);
         var border = GetBorder(control);
         var textStart = border ? 1 : 0;
         var textWidth = Math.Max(0, width - (border ? 2 : 0));
-        var textValue = text.Length > textWidth && textWidth >= 1
+        var wraps = control is TextBox { MultiLine: true };
+        var textValue = !wraps && text.Length > textWidth && textWidth >= 1
             ? textWidth == 1 ? "…" : text[..(textWidth - 1)] + "…"
             : text;
         if (control is Button && textValue.Length < textWidth)
             textStart += (textWidth - textValue.Length) / 2;
-        var maxLength = Math.Min(textValue.Length, textWidth);
-        for (var index = 0; index < maxLength; index++)
+        var lines = wraps
+            ? WrapLines(textValue, textWidth)
+            : new[] { textValue };
+        for (var lineIndex = 0; lineIndex < lines.Count; lineIndex++)
         {
-            var cellX = x + textStart + index;
-            if (cellX < 0 || cellX >= size.Width || y < 0 || y >= size.Height)
+            if (y + lineIndex < 0 || y + lineIndex >= size.Height)
                 continue;
-            cells[cellX, y] = new TerminalCell(textValue[index], control.GetActualForeColor(), control.GetActualBackColor());
+            var line = lines[lineIndex];
+            for (var index = 0; index < Math.Min(line.Length, textWidth); index++)
+            {
+                var cellX = x + textStart + index;
+                if (cellX >= 0 && cellX < size.Width)
+                    cells[cellX, y + lineIndex] = new TerminalCell(line[index], control.GetActualForeColor(), control.GetActualBackColor());
+            }
         }
 
         foreach (var child in control.Children)
@@ -62,6 +73,38 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         if (control is CheckBox checkBox)
             return (checkBox.IsChecked ? "[x] " : "[ ] ") + (control.Text ?? string.Empty);
         return control.Text ?? string.Empty;
+    }
+
+    private static IReadOnlyList<string> WrapLines(string text, int width)
+    {
+        if (width <= 0)
+            return Array.Empty<string>();
+        var lines = new List<string>();
+        foreach (var sourceLine in text.Replace("\r", string.Empty).Split('\n'))
+        {
+            if (sourceLine.Length == 0)
+            {
+                lines.Add(string.Empty);
+                continue;
+            }
+            for (var offset = 0; offset < sourceLine.Length;)
+            {
+                var length = Math.Min(width, sourceLine.Length - offset);
+                if (offset + length < sourceLine.Length)
+                {
+                    var split = sourceLine.LastIndexOf(' ', offset + length - 1, length);
+                    var endsAtWordBoundary = offset + length >= sourceLine.Length
+                        || char.IsWhiteSpace(sourceLine[offset + length]);
+                    if (split >= offset && !endsAtWordBoundary)
+                        length = split - offset;
+                }
+                lines.Add(sourceLine.Substring(offset, length).TrimEnd());
+                offset += length;
+                while (offset < sourceLine.Length && sourceLine[offset] == ' ')
+                    offset++;
+            }
+        }
+        return lines;
     }
 
     private static bool GetBorder(IControl control) =>

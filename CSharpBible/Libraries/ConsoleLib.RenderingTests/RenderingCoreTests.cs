@@ -268,4 +268,36 @@ public sealed class RenderingCoreTests
         Assert.AreEqual('[', row.GetCell(0, 0).Character);
         Assert.AreEqual('…', row.GetCell(4, 0).Character);
     }
+
+    [TestMethod]
+    public void RendererWrapsMultilineTextBoxAtWordBoundaries()
+    {
+        var textBox = new TextBox { Text = "one two three", MultiLine = true, size = new Size(7, 3) };
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(7, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("one two", ReadRow(frame, 0, 7));
+        Assert.AreEqual("three  ", ReadRow(frame, 1, 7));
+    }
+
+    [TestMethod]
+    public void RendererSplitsOverlongWordsWithoutExceedingHeight()
+    {
+        var textBox = new TextBox { Text = "abcdefgh", MultiLine = true, size = new Size(3, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(3, 2));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("abc", ReadRow(frame, 0, 3));
+        Assert.AreEqual("def", ReadRow(frame, 1, 3));
+    }
+
+    private static string ReadRow(IRenderSnapshot snapshot, int y, int width)
+    {
+        var characters = new char[width];
+        for (var x = 0; x < width; x++)
+            characters[x] = snapshot.GetCell(x, y).Character;
+        return new string(characters);
+    }
 }
