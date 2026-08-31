@@ -59,6 +59,12 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             DrawChildren(control, cells, size);
             return;
         }
+        if (control is ScrollBar scrollBar)
+        {
+            DrawScrollBar(scrollBar, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
 
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -204,6 +210,41 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         return depth;
     }
 
+    private static void DrawScrollBar(ScrollBar scrollBar, TerminalCell[,] cells, Size size)
+    {
+        var width = Math.Max(1, scrollBar.size.Width);
+        var height = Math.Max(1, scrollBar.size.Height);
+        var disabled = !scrollBar.Enabled;
+        var trackForeground = disabled ? scrollBar.DisabledColor : scrollBar.TrackColor;
+        var trackBackground = disabled ? scrollBar.DisabledBackColor : scrollBar.BackColor;
+        var thumbForeground = disabled ? scrollBar.DisabledColor : scrollBar.ThumbColor;
+        var thumbBackground = disabled ? scrollBar.DisabledThumbBackColor : scrollBar.TrackColor;
+        var arrowForeground = disabled ? scrollBar.DisabledColor : scrollBar.ArrowColor;
+        var arrowBackground = disabled ? scrollBar.DisabledBackColor : scrollBar.BackColor;
+
+        if (scrollBar.Vertical)
+        {
+            for (var row = 1; row < height - 1; row++)
+                PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y + row, '│', trackForeground, trackBackground);
+            PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y, '▲', arrowForeground, arrowBackground);
+            PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y + height - 1, '▼', arrowForeground, arrowBackground);
+        }
+        else
+        {
+            DrawLine(cells, size, scrollBar.Position.X + 1, scrollBar.Position.Y, Math.Max(0, width - 2), new string('─', Math.Max(0, width - 2)), trackForeground, trackBackground);
+            PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y, '◀', arrowForeground, arrowBackground);
+            PutCell(cells, size, scrollBar.Position.X + width - 1, scrollBar.Position.Y, '▶', arrowForeground, arrowBackground);
+        }
+
+        var (thumbStart, thumbLength) = scrollBar.GetThumbData();
+        for (var index = 0; index < thumbLength; index++)
+        {
+            var x = scrollBar.Position.X + (scrollBar.Vertical ? 0 : thumbStart + index);
+            var y = scrollBar.Position.Y + (scrollBar.Vertical ? thumbStart + index : 0);
+            PutCell(cells, size, x, y, '█', thumbForeground, thumbBackground);
+        }
+    }
+
     private static void DrawLine(
         TerminalCell[,] cells,
         Size size,
@@ -222,6 +263,19 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             var character = index < text.Length ? text[index] : ' ';
             cells[cellX, y] = new TerminalCell(character, foreground, background);
         }
+    }
+
+    private static void PutCell(
+        TerminalCell[,] cells,
+        Size size,
+        int x,
+        int y,
+        char character,
+        ConsoleColor foreground,
+        ConsoleColor background)
+    {
+        if (x >= 0 && x < size.Width && y >= 0 && y < size.Height)
+            cells[x, y] = new TerminalCell(character, foreground, background);
     }
 
     private static IReadOnlyList<string> WrapLines(string text, int width)

@@ -405,6 +405,73 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void RendererDisplaysVerticalScrollBarTrackThumbAndArrows()
+    {
+        var scrollBar = new ScrollBar
+        {
+            Vertical = true,
+            Minimum = 0,
+            Maximum = 100,
+            LargeChange = 10,
+            Value = 50,
+            size = new Size(1, 10)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(scrollBar, new Size(1, 10));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('▲', frame.GetCell(0, 0).Character);
+        Assert.AreEqual('│', frame.GetCell(0, 1).Character);
+        Assert.AreEqual('█', frame.GetCell(0, 5).Character);
+        Assert.AreEqual(scrollBar.ThumbColor, frame.GetCell(0, 5).Foreground);
+        Assert.AreEqual('▼', frame.GetCell(0, 9).Character);
+    }
+
+    [TestMethod]
+    public void RendererDisplaysHorizontalScrollBarAndClipsToViewport()
+    {
+        var scrollBar = new ScrollBar
+        {
+            Vertical = false,
+            Minimum = 0,
+            Maximum = 0,
+            size = new Size(8, 1),
+            Position = new Point(-2, 1)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(scrollBar, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('█', frame.GetCell(0, 1).Character);
+        Assert.AreEqual('█', frame.GetCell(1, 1).Character);
+        Assert.AreEqual('█', frame.GetCell(2, 1).Character);
+        Assert.AreEqual('█', frame.GetCell(3, 1).Character);
+    }
+
+    [TestMethod]
+    public void RendererUsesDisabledScrollBarColorsForEveryPart()
+    {
+        var scrollBar = new ScrollBar
+        {
+            Enabled = false,
+            Vertical = true,
+            LargeChange = 100,
+            DisabledColor = ConsoleColor.DarkRed,
+            DisabledBackColor = ConsoleColor.Blue,
+            DisabledThumbBackColor = ConsoleColor.Green,
+            size = new Size(1, 5)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(scrollBar, new Size(1, 5));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual(ConsoleColor.DarkRed, frame.GetCell(0, 0).Foreground);
+        Assert.AreEqual(ConsoleColor.Blue, frame.GetCell(0, 0).Background);
+        Assert.AreEqual(ConsoleColor.DarkRed, frame.GetCell(0, 2).Foreground);
+        Assert.AreEqual(ConsoleColor.Green, frame.GetCell(0, 2).Background);
+    }
+
+    [TestMethod]
     public void RendererClipsListBoxItemsToViewportAndControlWidth()
     {
         var listBox = new ListBox
