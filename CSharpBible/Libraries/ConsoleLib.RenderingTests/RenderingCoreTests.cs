@@ -127,4 +127,53 @@ public sealed class RenderingCoreTests
 
         Assert.AreEqual('X', service.GetSnapshot().GetCell(4, 2).Character);
     }
+
+    [TestMethod]
+    public void ResizeSynchronizesRootAndPublishesNewViewport()
+    {
+        var panel = new Panel { size = new Size(4, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(4, 2));
+        var revision = service.Revision;
+
+        service.Resize(new Size(8, 5));
+
+        Assert.AreEqual(new Size(8, 5), service.Size);
+        Assert.AreEqual(new Size(8, 5), panel.size);
+        Assert.IsTrue(service.Revision > revision);
+        Assert.AreEqual(new Size(8, 5), service.GetSnapshot().Size);
+    }
+
+    [TestMethod]
+    public void RefreshTreeSubscribesControlsAddedAfterAttach()
+    {
+        var panel = new Panel { size = new Size(8, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(8, 2));
+        var label = new Label { Text = "Later", Position = new Point(0, 1), size = new Size(8, 1) };
+        panel.Add(label);
+        var beforeRefresh = service.Revision;
+
+        service.RefreshTree();
+        label.Text = "Updated";
+
+        Assert.IsTrue(service.Revision > beforeRefresh);
+        Assert.AreEqual('U', service.GetSnapshot().GetCell(0, 1).Character);
+    }
+
+    [TestMethod]
+    public void DetachStopsUpdatesAndRejectsSnapshotRequests()
+    {
+        var label = new Label { Text = "Live" };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(8, 1));
+        var changes = 0;
+        service.FrameChanged += (_, _) => changes++;
+        service.Detach();
+        label.Text = "Detached";
+
+        Assert.IsFalse(service.IsAttached);
+        Assert.ThrowsExactly<InvalidOperationException>(() => service.GetSnapshot());
+        Assert.AreEqual(0, changes);
+    }
 }

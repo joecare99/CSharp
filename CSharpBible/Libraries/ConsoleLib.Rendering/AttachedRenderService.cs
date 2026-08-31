@@ -13,6 +13,7 @@ public sealed class AttachedRenderService : IDisposable
     private Size _size;
     private long _revision;
     private bool _disposed;
+    private bool _synchronizingSize;
 
     public AttachedRenderService(IControlFrameRenderer? renderer = null)
     {
@@ -61,7 +62,23 @@ public sealed class AttachedRenderService : IDisposable
             throw new ArgumentOutOfRangeException(nameof(size));
         _size = size;
         if (_root is not null)
+        {
+            _synchronizingSize = true;
+            _root.size = size;
+            _synchronizingSize = false;
             RenderCore();
+        }
+    }
+
+    /// <summary>Refreshes event subscriptions after controls are added or removed.</summary>
+    public void RefreshTree()
+    {
+        ThrowIfDisposed();
+        if (_root is null)
+            throw new InvalidOperationException("No control tree is attached.");
+        UnsubscribeTree(_root);
+        SubscribeTree(_root);
+        RenderCore();
     }
 
     public void Detach()
@@ -108,7 +125,11 @@ public sealed class AttachedRenderService : IDisposable
             UnsubscribeTree(child);
     }
 
-    private void ControlChanged(object? sender, EventArgs e) => RenderCore();
+    private void ControlChanged(object? sender, EventArgs e)
+    {
+        if (!_synchronizingSize)
+            RenderCore();
+    }
 
     private void ThrowIfDisposed()
     {
