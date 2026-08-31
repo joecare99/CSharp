@@ -83,6 +83,11 @@ public sealed partial class DesignerViewModel : ObservableObject
     [ObservableProperty]
     private string _selectedPreviewMode = "Visual";
 
+    [ObservableProperty]
+    private string _selectedConsoleFrameSize = "Designer Size";
+
+    public IReadOnlyList<string> ConsoleFrameSizes { get; } = new[] { "Designer Size", "80x25", "80x50", "132x60" };
+
     public bool IsConsolePreview => string.Equals(SelectedPreviewMode, "Console", StringComparison.Ordinal);
     public string ConsolePreview => _consolePreview;
     public string SelectedElement
@@ -111,6 +116,14 @@ public sealed partial class DesignerViewModel : ObservableObject
         OnPropertyChanged(nameof(IsConsolePreview));
         OnPropertyChanged(nameof(ConsolePreview));
         OnPropertyChanged(nameof(SelectedPreviewTabIndex));
+    }
+    partial void OnSelectedConsoleFrameSizeChanged(string value)
+    {
+        if (_previewControl is not null)
+        {
+            _consolePreview = _consolePreviewRenderer.Render(_previewControl, ParseConsoleFrameSize(value));
+            OnPropertyChanged(nameof(ConsolePreview));
+        }
     }
 
     [RelayCommand]
@@ -268,7 +281,7 @@ public sealed partial class DesignerViewModel : ObservableObject
                 _virtualAxaml = CreateVirtualAxaml(_previewControl).ToString(SaveOptions.None);
                 InspectorStatus = "Rendering preview...";
                 _previewState = _previewRenderer.Render(_previewControl);
-                _consolePreview = _consolePreviewRenderer.Render(_previewControl);
+                _consolePreview = _consolePreviewRenderer.Render(_previewControl, ParseConsoleFrameSize(SelectedConsoleFrameSize));
                 foreach (var mapping in _previewState.Mappings)
                 {
                     mapping.SourceName = loadResult.NamedControls
@@ -350,6 +363,15 @@ public sealed partial class DesignerViewModel : ObservableObject
 
         return element;
     }
+
+    private static System.Drawing.Size? ParseConsoleFrameSize(string value) =>
+        value switch
+        {
+            "80x25" => new System.Drawing.Size(80, 25),
+            "80x50" => new System.Drawing.Size(80, 50),
+            "132x60" => new System.Drawing.Size(132, 60),
+            _ => null
+        };
 
     private void PreviewState_SelectionChanged(object? sender, PreviewSelectionChangedEventArgs e)
     {

@@ -46,6 +46,9 @@ xmlns:designer="using:ConsoleLib.Cxaml.Designer.Controls"
                   PlaceholderText="Select element" />
         <TextBlock Text="{Binding SelectedElement}" />
         <TextBlock Text="{Binding Preview}" FontFamily="Consolas" />
+        <ComboBox ItemsSource="{Binding ConsoleFrameSizes}"
+                  SelectedItem="{Binding SelectedConsoleFrameSize}"
+                  PlaceholderText="Console frame size" />
         <TextBlock Text="Virtual AXAML" FontWeight="Bold" />
         <TextBox Text="{Binding VirtualAxaml}" IsReadOnly="True"
                  AcceptsReturn="True" FontFamily="Consolas"

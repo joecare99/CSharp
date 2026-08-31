@@ -260,6 +260,36 @@ public sealed class DesignerViewModelTests
     }
 
     [TestMethod]
+    public void ConsoleFrameSizeSelectionChangesViewportWithoutMutatingControl()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"10\" Height=\"2\"><Label Text=\"Preview\" /></Panel>"
+        };
+        var control = viewModel.PreviewControl!;
+
+        viewModel.SelectedConsoleFrameSize = "80x25";
+
+        Assert.AreEqual(new System.Drawing.Size(10, 2), control.size);
+        Assert.AreEqual(25, viewModel.ConsolePreview.Split(Environment.NewLine).Length);
+    }
+
+    [TestMethod]
+    public void ConsoleFrameSizeDesignerModeUsesRootDimensions()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Label Width=\"12\" Height=\"3\" Text=\"Preview\" />"
+        };
+
+        viewModel.SelectedConsoleFrameSize = "80x50";
+        viewModel.SelectedConsoleFrameSize = "Designer Size";
+
+        Assert.AreEqual(3, viewModel.ConsolePreview.Split(Environment.NewLine).Length);
+        StringAssert.Contains(viewModel.ConsolePreview, "Preview");
+    }
+
+    [TestMethod]
     public void PanelPreviewKeepsLowerControlsInsideScrollableCanvas()
     {
         var viewModel = new DesignerViewModel
