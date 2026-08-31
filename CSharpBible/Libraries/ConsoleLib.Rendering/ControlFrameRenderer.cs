@@ -35,6 +35,13 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var height = Math.Max(1, control.size.Height);
         DrawShadow(control, cells, size, width, height);
         DrawBorder(control, cells, size, width, height);
+        if (control is ListBox listBox)
+        {
+            DrawListBox(listBox, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
+
         var text = GetDisplayText(control);
         var x = control.Position.X;
         var y = control is TextBox { MultiLine: true }
@@ -66,6 +73,11 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             }
         }
 
+        DrawChildren(control, cells, size);
+    }
+
+    private static void DrawChildren(IControl control, TerminalCell[,] cells, Size size)
+    {
         for (var index = control.Children.Count - 1; index >= 0; index--)
             DrawControl(control.Children[index], cells, size);
     }
@@ -83,7 +95,50 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
     {
         if (control is CheckBox checkBox)
             return (checkBox.IsChecked ? "[x] " : "[ ] ") + (control.Text ?? string.Empty);
+        if (control is ComboBox comboBox)
+            return "[" + (comboBox.SelectedItem ?? string.Empty) + "]";
         return control.Text ?? string.Empty;
+    }
+
+    private static void DrawListBox(ListBox listBox, TerminalCell[,] cells, Size size)
+    {
+        var border = GetBorder(listBox);
+        var left = listBox.Position.X + (border ? 1 : 0);
+        var top = listBox.Position.Y + (border ? 1 : 0);
+        var contentWidth = Math.Max(0, listBox.size.Width - (border ? 2 : 0));
+        var contentHeight = Math.Max(0, listBox.size.Height - (border ? 2 : 0));
+        var visibleRows = Math.Min(contentHeight, listBox.GetVisibleRows());
+        for (var row = 0; row < visibleRows; row++)
+        {
+            var itemIndex = listBox.GetTopIndex() + row;
+            var text = itemIndex >= 0 && itemIndex < listBox.GetItemCount()
+                ? listBox.GetItemAt(itemIndex)?.ToString() ?? string.Empty
+                : string.Empty;
+            var (foreground, background) = itemIndex == listBox.GetSelectedIndex()
+                ? (listBox.SelectedForeColor, listBox.SelectedBackColor)
+                : GetColors(listBox);
+            DrawLine(cells, size, left, top + row, contentWidth, text, foreground, background);
+        }
+    }
+
+    private static void DrawLine(
+        TerminalCell[,] cells,
+        Size size,
+        int x,
+        int y,
+        int width,
+        string text,
+        ConsoleColor foreground,
+        ConsoleColor background)
+    {
+        for (var index = 0; index < width; index++)
+        {
+            var cellX = x + index;
+            if (cellX < 0 || cellX >= size.Width || y < 0 || y >= size.Height)
+                continue;
+            var character = index < text.Length ? text[index] : ' ';
+            cells[cellX, y] = new TerminalCell(character, foreground, background);
+        }
     }
 
     private static IReadOnlyList<string> WrapLines(string text, int width)

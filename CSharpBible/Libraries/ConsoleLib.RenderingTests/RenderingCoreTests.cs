@@ -257,6 +257,62 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void RendererDisplaysSelectedComboBoxItemWithCanonicalBrackets()
+    {
+        var comboBox = new ComboBox { size = new Size(12, 1) };
+        comboBox.Items.Add("First");
+        comboBox.Items.Add("Second");
+        Assert.IsTrue(comboBox.SelectNext());
+        Assert.IsTrue(comboBox.SelectNext());
+
+        var service = new AttachedRenderService();
+        service.Attach(comboBox, new Size(12, 1));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("[Second]    ", ReadRow(frame, 0, 12));
+    }
+
+    [TestMethod]
+    public void RendererDisplaysListBoxItemsAndSelectedColors()
+    {
+        var listBox = new ListBox
+        {
+            ItemsSource = new[] { "One", "Two", "Three" },
+            SelectedIndex = 1,
+            size = new Size(7, 3)
+        };
+        listBox.BorderDefinition = new BorderDef { Style = BorderStyle.None };
+        var service = new AttachedRenderService();
+        service.Attach(listBox, new Size(7, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("One    ", ReadRow(frame, 0, 7));
+        Assert.AreEqual("Two    ", ReadRow(frame, 1, 7));
+        Assert.AreEqual(listBox.SelectedForeColor, frame.GetCell(0, 1).Foreground);
+        Assert.AreEqual(listBox.SelectedBackColor, frame.GetCell(0, 1).Background);
+        Assert.AreEqual("Three  ", ReadRow(frame, 2, 7));
+    }
+
+    [TestMethod]
+    public void RendererClipsListBoxItemsToViewportAndControlWidth()
+    {
+        var listBox = new ListBox
+        {
+            ItemsSource = new[] { "VeryLongItem", "Second" },
+            SelectedIndex = 0,
+            Position = new Point(-2, 1),
+            size = new Size(8, 2)
+        };
+        listBox.BorderDefinition = new BorderDef { Style = BorderStyle.None };
+        var service = new AttachedRenderService();
+        service.Attach(listBox, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("ryLo", ReadRow(frame, 1, 4));
+        Assert.AreEqual("cond", ReadRow(frame, 2, 4));
+    }
+
+    [TestMethod]
     public void RendererTruncatesCheckboxTextWithoutWritingOutsideFrame()
     {
         var checkBox = new CheckBox { Text = "Very long", size = new Size(5, 1) };
