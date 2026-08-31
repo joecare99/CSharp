@@ -290,6 +290,53 @@ public sealed class DesignerViewModelTests
     }
 
     [TestMethod]
+    public void ConsoleCellSelectsFrontMostVisibleControlAndMovesSourceCaret()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"20\" Height=\"5\">" +
+                     "<Button Name=\"front\" Text=\"Front\" Width=\"6\" Height=\"2\" X=\"2\" Y=\"1\" />" +
+                     "<Button Name=\"back\" Text=\"Back\" Width=\"6\" Height=\"2\" X=\"2\" Y=\"1\" />" +
+                     "</Panel>"
+        };
+
+        Assert.IsTrue(viewModel.ActivateConsoleSelection(3, 1));
+
+        Assert.AreEqual("root/0", viewModel.SelectedPreviewControlId);
+        Assert.AreEqual(viewModel.Markup.IndexOf("Button", StringComparison.Ordinal), viewModel.SourceCaretOffset);
+    }
+
+    [TestMethod]
+    public void ConsoleCellSelectionUsesChildWhenCellIsInsideChildAndRootOtherwise()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"20\" Height=\"5\"><Label Text=\"Child\" Width=\"5\" Height=\"1\" X=\"4\" Y=\"2\" /></Panel>"
+        };
+
+        Assert.IsTrue(viewModel.ActivateConsoleSelection(4, 2));
+        Assert.AreEqual("root/0", viewModel.SelectedPreviewControlId);
+
+        Assert.IsTrue(viewModel.ActivateConsoleSelection(0, 0));
+        Assert.AreEqual("root", viewModel.SelectedPreviewControlId);
+    }
+
+    [TestMethod]
+    public void ConsoleCellSelectionIgnoresHiddenControlsAndOutOfBoundsCells()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"10\" Height=\"3\">" +
+                     "<Label Text=\"Hidden\" Width=\"5\" Height=\"1\" X=\"1\" Y=\"1\" Visible=\"false\" />" +
+                     "</Panel>"
+        };
+
+        Assert.IsTrue(viewModel.ActivateConsoleSelection(1, 1));
+        Assert.AreEqual("root", viewModel.SelectedPreviewControlId);
+        Assert.IsFalse(viewModel.ActivateConsoleSelection(10, 3));
+    }
+
+    [TestMethod]
     public void PanelPreviewKeepsLowerControlsInsideScrollableCanvas()
     {
         var viewModel = new DesignerViewModel

@@ -31,7 +31,10 @@ xmlns:designer="using:ConsoleLib.Cxaml.Designer.Controls"
         <TabItem Header="Console">
           <Border BorderBrush="Gray" BorderThickness="1" Padding="8">
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-              <TextBlock Text="{Binding ConsolePreview}" FontFamily="Consolas" />
+              <TextBlock x:Name="ConsolePreviewText"
+                         Text="{Binding ConsolePreview}"
+                         FontFamily="Consolas"
+                         PointerPressed="ConsolePreviewText_OnPointerPressed" />
             </ScrollViewer>
           </Border>
         </TabItem>

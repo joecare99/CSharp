@@ -90,6 +90,8 @@ public sealed partial class DesignerViewModel : ObservableObject
 
     public bool IsConsolePreview => string.Equals(SelectedPreviewMode, "Console", StringComparison.Ordinal);
     public string ConsolePreview => _consolePreview;
+    public ConsolePreviewHitTester ConsolePreviewHitTester =>
+        new(_previewState.Mappings);
     public string SelectedElement
     {
         get
@@ -255,6 +257,12 @@ public sealed partial class DesignerViewModel : ObservableObject
 
     public bool SelectPreviewControl(string controlId) => ActivatePreviewSelection(controlId);
     public bool SelectSourceElement(string controlId) => ActivatePreviewSelection(controlId);
+
+    public bool ActivateConsoleSelection(int x, int y)
+    {
+        var mapping = ConsolePreviewHitTester.HitTest(x, y);
+        return mapping is not null && ActivatePreviewSelection(mapping.Id);
+    }
 
     public void RefreshPreview()
     {
