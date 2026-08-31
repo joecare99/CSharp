@@ -39,7 +39,7 @@ public class RichTextBoxHelper : DependencyObject
                 { 
                     try
                     {
-                        var stream = new MemoryStream(Encoding.UTF8.GetBytes(GetDocumentXaml(richTextBox)));
+                        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(GetDocumentXaml(richTextBox)));
                         var doc = (FlowDocument)XamlReader.Load(stream);
 
                         richTextBox.Document = doc;

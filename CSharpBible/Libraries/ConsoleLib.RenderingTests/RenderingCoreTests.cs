@@ -1,0 +1,532 @@
+using System;
+using System.Drawing;
+using ConsoleLib.CommonControls;
+using ConsoleLib.Interfaces;
+using ConsoleLib.Rendering;
+using ConsoleLib.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace ConsoleLib.RenderingTests;
+
+[TestClass]
+public sealed class RenderingCoreTests
+{
+    [TestMethod]
+    public void AttachedServicePublishesCurrentImmutableSnapshot()
+    {
+        var button = new Button { Text = "Run" };
+        var service = new AttachedRenderService();
+        var changes = 0;
+        service.FrameChanged += (_, _) => changes++;
+
+        service.Attach(button, new Size(10, 3));
+        var first = service.GetSnapshot();
+        button.Text = "Go";
+        var second = service.GetSnapshot();
+
+        Assert.AreEqual(1L, first.Revision);
+        Assert.IsTrue(second.Revision > first.Revision);
+        Assert.IsTrue(changes > 1);
+        Assert.AreNotEqual(first.GetCell(1, 0), second.GetCell(1, 0));
+    }
+
+    [TestMethod]
+    public void SnapshotIsNotChangedByLaterRendering()
+    {
+        var button = new Button { Text = "Old" };
+        var service = new AttachedRenderService();
+        service.Attach(button, new Size(10, 3));
+        var snapshot = service.GetSnapshot();
+
+        button.Text = "New";
+
+        Assert.AreEqual('O', snapshot.GetCell(1, 0).Character);
+    }
+
+    [TestMethod]
+    public void TrackerMarksFirstFrameAndResetAsFull()
+    {
+        var button = new Button { Text = "Run" };
+        var service = new AttachedRenderService();
+        service.Attach(button, new Size(4, 2));
+        var tracker = new FrameOutputTracker();
+
+        var first = tracker.Acquire(service.GetSnapshot());
+        tracker.Reset();
+        var afterReset = tracker.Acquire(service.GetSnapshot());
+
+        Assert.AreEqual(new Rectangle(0, 0, 4, 2), first.DirtyRegion);
+        Assert.AreEqual(new Rectangle(0, 0, 4, 2), afterReset.DirtyRegion);
+    }
+
+    [TestMethod]
+    public void TrackerReportsSmallestChangedRegion()
+    {
+        var button = new Button { Text = "Run" };
+        var service = new AttachedRenderService();
+        service.Attach(button, new Size(10, 3));
+        var tracker = new FrameOutputTracker();
+        tracker.Acquire(service.GetSnapshot());
+
+        button.Text = "Go";
+        var delta = tracker.Acquire(service.GetSnapshot());
+
+        Assert.AreEqual(new Rectangle(1, 0, 3, 1), delta.DirtyRegion);
+    }
+
+    [TestMethod]
+    public void RendererUsesCanonicalSingleBorderAndEllipsis()
+    {
+        var panel = new Panel
+        {
+            Text = "Long text",
+            BorderStyle = BorderStyle.Single,
+            size = new Size(6, 3)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(6, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('┌', frame.GetCell(0, 0).Character);
+        Assert.AreEqual('┐', frame.GetCell(5, 0).Character);
+        Assert.AreEqual('│', frame.GetCell(0, 1).Character);
+        Assert.AreEqual('L', frame.GetCell(1, 1).Character);
+        Assert.AreEqual('…', frame.GetCell(4, 1).Character);
+        Assert.AreEqual('┘', frame.GetCell(5, 2).Character);
+    }
+
+    [TestMethod]
+    public void RendererClipsControlsOutsideFrameBounds()
+    {
+        var label = new Label { Text = "Visible", Position = new Point(-2, 1), size = new Size(10, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('s', frame.GetCell(0, 1).Character);
+        Assert.AreEqual('i', frame.GetCell(1, 1).Character);
+        Assert.AreEqual('b', frame.GetCell(2, 1).Character);
+        Assert.AreEqual('l', frame.GetCell(3, 1).Character);
+    }
+
+    [TestMethod]
+    public void RendererPreservesGridChildPlacement()
+    {
+        var grid = new Grid { size = new Size(8, 4) };
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2) });
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(4) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(4) });
+        var label = new Label { Text = "X" };
+        Grid.SetRow(label, 1);
+        Grid.SetColumn(label, 1);
+        grid.Add(label);
+
+        var service = new AttachedRenderService();
+        service.Attach(grid, new Size(8, 4));
+
+        Assert.AreEqual('X', service.GetSnapshot().GetCell(4, 2).Character);
+    }
+
+    [TestMethod]
+    public void ResizeSynchronizesRootAndPublishesNewViewport()
+    {
+        var panel = new Panel { size = new Size(4, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(4, 2));
+        var revision = service.Revision;
+
+        service.Resize(new Size(8, 5));
+
+        Assert.AreEqual(new Size(8, 5), service.Size);
+        Assert.AreEqual(new Size(8, 5), panel.size);
+        Assert.IsTrue(service.Revision > revision);
+        Assert.AreEqual(new Size(8, 5), service.GetSnapshot().Size);
+    }
+
+    [TestMethod]
+    public void RefreshTreeSubscribesControlsAddedAfterAttach()
+    {
+        var panel = new Panel { size = new Size(8, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(8, 2));
+        var label = new Label { Text = "Later", Position = new Point(0, 1), size = new Size(8, 1) };
+        panel.Add(label);
+        var beforeRefresh = service.Revision;
+
+        service.RefreshTree();
+        label.Text = "Updated";
+
+        Assert.IsTrue(service.Revision > beforeRefresh);
+        Assert.AreEqual('U', service.GetSnapshot().GetCell(0, 1).Character);
+    }
+
+    [TestMethod]
+    public void DetachStopsUpdatesAndRejectsSnapshotRequests()
+    {
+        var label = new Label { Text = "Live" };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(8, 1));
+        var changes = 0;
+        service.FrameChanged += (_, _) => changes++;
+        service.Detach();
+        label.Text = "Detached";
+
+        Assert.IsFalse(service.IsAttached);
+        Assert.ThrowsExactly<InvalidOperationException>(() => service.GetSnapshot());
+        Assert.AreEqual(0, changes);
+    }
+
+    [TestMethod]
+    public void TrackerReturnsNoDirtyRegionForIdenticalFrame()
+    {
+        var label = new Label { Text = "Same", size = new Size(8, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(8, 1));
+        var tracker = new FrameOutputTracker();
+        tracker.Acquire(service.GetSnapshot());
+
+        var delta = tracker.Acquire(service.GetSnapshot());
+
+        Assert.IsFalse(delta.IsDirty);
+        Assert.AreEqual(Rectangle.Empty, delta.DirtyRegion);
+    }
+
+    [TestMethod]
+    public void TrackerMarksResizeAsFullFrame()
+    {
+        var label = new Label { Text = "Resize", size = new Size(4, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(4, 1));
+        var tracker = new FrameOutputTracker();
+        tracker.Acquire(service.GetSnapshot());
+
+        service.Resize(new Size(6, 2));
+        var delta = tracker.Acquire(service.GetSnapshot());
+
+        Assert.AreEqual(new Rectangle(0, 0, 6, 2), delta.DirtyRegion);
+    }
+
+    [TestMethod]
+    public void TrackerRecoversWithFullFrameAfterOutputFailure()
+    {
+        var label = new Label { Text = "Recover", size = new Size(8, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(8, 1));
+        var tracker = new FrameOutputTracker();
+        tracker.Acquire(service.GetSnapshot());
+
+        tracker.ResetAfterOutputFailure();
+        var delta = tracker.Acquire(service.GetSnapshot());
+
+        Assert.IsTrue(delta.IsDirty);
+        Assert.AreEqual(new Rectangle(0, 0, 8, 1), delta.DirtyRegion);
+    }
+
+    [TestMethod]
+    public void RendererCentersButtonTextInsideItsAvailableWidth()
+    {
+        var button = new Button { Text = "Go", size = new Size(8, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(button, new Size(8, 1));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual(' ', frame.GetCell(0, 0).Character);
+        Assert.AreEqual(' ', frame.GetCell(2, 0).Character);
+        Assert.AreEqual('G', frame.GetCell(3, 0).Character);
+        Assert.AreEqual('o', frame.GetCell(4, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererDisplaysCheckedAndUncheckedCheckboxMarkers()
+    {
+        var checkBox = new CheckBox { Text = "Ready", size = new Size(9, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(checkBox, new Size(9, 1));
+        var uncheckedFrame = service.GetSnapshot();
+
+        checkBox.IsChecked = true;
+        service.Render();
+        var checkedFrame = service.GetSnapshot();
+
+        Assert.AreEqual('[', uncheckedFrame.GetCell(0, 0).Character);
+        Assert.AreEqual(' ', uncheckedFrame.GetCell(1, 0).Character);
+        Assert.AreEqual(']', uncheckedFrame.GetCell(2, 0).Character);
+        Assert.AreEqual('x', checkedFrame.GetCell(1, 0).Character);
+        Assert.AreEqual('R', checkedFrame.GetCell(4, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererDisplaysSelectedComboBoxItemWithCanonicalBrackets()
+    {
+        var comboBox = new ComboBox { size = new Size(12, 1) };
+        comboBox.Items.Add("First");
+        comboBox.Items.Add("Second");
+        Assert.IsTrue(comboBox.SelectNext());
+        Assert.IsTrue(comboBox.SelectNext());
+
+        var service = new AttachedRenderService();
+        service.Attach(comboBox, new Size(12, 1));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("[Second]    ", ReadRow(frame, 0, 12));
+    }
+
+    [TestMethod]
+    public void RendererDisplaysListBoxItemsAndSelectedColors()
+    {
+        var listBox = new ListBox
+        {
+            ItemsSource = new[] { "One", "Two", "Three" },
+            SelectedIndex = 1,
+            size = new Size(7, 3)
+        };
+        listBox.BorderDefinition = new BorderDef { Style = BorderStyle.None };
+        var service = new AttachedRenderService();
+        service.Attach(listBox, new Size(7, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("One    ", ReadRow(frame, 0, 7));
+        Assert.AreEqual("Two    ", ReadRow(frame, 1, 7));
+        Assert.AreEqual(listBox.SelectedForeColor, frame.GetCell(0, 1).Foreground);
+        Assert.AreEqual(listBox.SelectedBackColor, frame.GetCell(0, 1).Background);
+        Assert.AreEqual("Three  ", ReadRow(frame, 2, 7));
+    }
+
+    [TestMethod]
+    public void RendererDisplaysTabsWithSelectedHeaderMarkers()
+    {
+        var tabs = new TabControl { size = new Size(16, 1) };
+        var first = new TabItem("One");
+        var second = new TabItem("Two");
+        tabs.Items.Add(first);
+        tabs.Items.Add(second);
+        Assert.IsTrue(tabs.SelectNext());
+        Assert.IsTrue(tabs.SelectNext());
+
+        var service = new AttachedRenderService();
+        service.Attach(tabs, new Size(16, 1));
+
+        Assert.AreEqual(" One [Two]      ", ReadRow(service.GetSnapshot(), 0, 16));
+    }
+
+    [TestMethod]
+    public void RendererDisplaysTileViewInGridWithSelectedColors()
+    {
+        var tiles = new TileView
+        {
+            size = new Size(8, 2),
+            TileWidth = 4,
+            TileHeight = 1
+        };
+        tiles.SetItems(new[] { new TileItem("One"), new TileItem("Two") });
+        Assert.IsTrue(tiles.SelectNext());
+
+        var service = new AttachedRenderService();
+        service.Attach(tiles, new Size(8, 2));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("One Two ", ReadRow(frame, 0, 8));
+        Assert.AreEqual(ConsoleColor.Yellow, frame.GetCell(4, 0).Foreground);
+        Assert.AreEqual(' ', frame.GetCell(0, 1).Character);
+    }
+
+    [TestMethod]
+    public void RendererClipsTileTextAndRowsToViewport()
+    {
+        var tiles = new TileView
+        {
+            Position = new Point(-1, 1),
+            size = new Size(8, 3),
+            TileWidth = 4,
+            TileHeight = 2
+        };
+        tiles.SetItems(new[] { new TileItem("Long"), new TileItem("Next"), new TileItem("Third") });
+
+        var service = new AttachedRenderService();
+        service.Attach(tiles, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("ongN", ReadRow(frame, 1, 4));
+        Assert.AreEqual("    ", ReadRow(frame, 2, 4));
+    }
+
+    [TestMethod]
+    public void RendererDisplaysExpandedTreeHierarchyAndSelectedNode()
+    {
+        var tree = new TreeView { size = new Size(16, 3) };
+        var root = new TreeNode("Root") { IsExpanded = true };
+        root.Add(new TreeNode("Child"));
+        tree.Nodes.Add(root);
+        Assert.IsTrue(tree.SelectNext());
+        Assert.IsTrue(tree.SelectNext());
+
+        var service = new AttachedRenderService();
+        service.Attach(tree, new Size(16, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("- Root          ", ReadRow(frame, 0, 16));
+        Assert.AreEqual("    Child       ", ReadRow(frame, 1, 16));
+        Assert.AreEqual(ConsoleColor.Yellow, frame.GetCell(0, 1).Foreground);
+    }
+
+    [TestMethod]
+    public void RendererOmitsCollapsedTreeChildrenAndUsesExpandMarker()
+    {
+        var tree = new TreeView { size = new Size(12, 3) };
+        var root = new TreeNode("Root");
+        root.Add(new TreeNode("Hidden"));
+        tree.Nodes.Add(root);
+
+        var service = new AttachedRenderService();
+        service.Attach(tree, new Size(12, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("+ Root      ", ReadRow(frame, 0, 12));
+        Assert.AreEqual("            ", ReadRow(frame, 1, 12));
+    }
+
+    [TestMethod]
+    public void RendererClipsIndentedTreeTextToControlAndViewport()
+    {
+        var tree = new TreeView
+        {
+            Position = new Point(-2, 1),
+            size = new Size(20, 2)
+        };
+        tree.Nodes.Add(new TreeNode("LongNode"));
+
+        var service = new AttachedRenderService();
+        service.Attach(tree, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("Long", ReadRow(frame, 1, 4));
+        Assert.AreEqual("    ", ReadRow(frame, 2, 4));
+    }
+
+    [TestMethod]
+    public void RendererClipsListBoxItemsToViewportAndControlWidth()
+    {
+        var listBox = new ListBox
+        {
+            ItemsSource = new[] { "VeryLongItem", "Second" },
+            SelectedIndex = 0,
+            Position = new Point(-2, 1),
+            size = new Size(8, 2)
+        };
+        listBox.BorderDefinition = new BorderDef { Style = BorderStyle.None };
+        var service = new AttachedRenderService();
+        service.Attach(listBox, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("ryLo", ReadRow(frame, 1, 4));
+        Assert.AreEqual("cond", ReadRow(frame, 2, 4));
+    }
+
+    [TestMethod]
+    public void RendererTruncatesCheckboxTextWithoutWritingOutsideFrame()
+    {
+        var checkBox = new CheckBox { Text = "Very long", size = new Size(5, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(checkBox, new Size(5, 1));
+
+        var row = service.GetSnapshot();
+
+        Assert.AreEqual('[', row.GetCell(0, 0).Character);
+        Assert.AreEqual('…', row.GetCell(4, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererWrapsMultilineTextBoxAtWordBoundaries()
+    {
+        var textBox = new TextBox { Text = "one two three", MultiLine = true, size = new Size(7, 3) };
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(7, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("one two", ReadRow(frame, 0, 7));
+        Assert.AreEqual("three  ", ReadRow(frame, 1, 7));
+    }
+
+    [TestMethod]
+    public void RendererSplitsOverlongWordsWithoutExceedingHeight()
+    {
+        var textBox = new TextBox { Text = "abcdefgh", MultiLine = true, size = new Size(3, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(3, 2));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("abc", ReadRow(frame, 0, 3));
+        Assert.AreEqual("def", ReadRow(frame, 1, 3));
+    }
+
+    private static string ReadRow(IRenderSnapshot snapshot, int y, int width)
+    {
+        var characters = new char[width];
+        for (var x = 0; x < width; x++)
+            characters[x] = snapshot.GetCell(x, y).Character;
+        return new string(characters);
+    }
+
+    [TestMethod]
+    public void RendererUsesDisabledButtonColors()
+    {
+        var button = new Button
+        {
+            Text = "Off",
+            Enabled = false,
+            DisabledFrontColor = ConsoleColor.DarkYellow,
+            DisabledBackColor = ConsoleColor.DarkRed,
+            size = new Size(5, 1)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(button, new Size(5, 1));
+        var cell = service.GetSnapshot().GetCell(1, 0);
+
+        Assert.AreEqual('O', cell.Character);
+        Assert.AreEqual(ConsoleColor.DarkYellow, cell.Foreground);
+        Assert.AreEqual(ConsoleColor.DarkRed, cell.Background);
+    }
+
+    [TestMethod]
+    public void RendererCompositesFirstChildAsFrontMost()
+    {
+        var panel = new Panel { size = new Size(4, 1) };
+        var back = new Label { Text = "Back", size = new Size(4, 1) };
+        var front = new Label { Text = "Front", size = new Size(4, 1) };
+        panel.Add(back);
+        panel.Add(front);
+        panel.BringToFront(back);
+
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(4, 1));
+
+        Assert.AreEqual('B', service.GetSnapshot().GetCell(0, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererPlacesShadowBehindControlContent()
+    {
+        var label = new Label { Text = "A", Shadow = true, size = new Size(2, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('A', frame.GetCell(0, 0).Character);
+        Assert.AreEqual('░', frame.GetCell(1, 1).Character);
+        Assert.AreEqual(ConsoleColor.Gray, frame.GetCell(1, 1).Foreground);
+        Assert.AreEqual(ConsoleColor.Black, frame.GetCell(1, 1).Background);
+    }
+
+    [TestMethod]
+    public void RendererClipsShadowAtViewportBoundary()
+    {
+        var label = new Label { Text = "A", Shadow = true, Position = new Point(2, 1), size = new Size(2, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('░', frame.GetCell(3, 2).Character);
+        Assert.AreEqual(' ', frame.GetCell(0, 0).Character);
+    }
+}

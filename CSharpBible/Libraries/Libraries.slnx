@@ -15,9 +15,6 @@
     <Project Path="CommonDialogs/CommonDialogs_net.csproj" />
     <Project Path="ConsoleDisplay/ConsoleDisplay.csproj" />
     <Project Path="ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
-    <Project Path="ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
-    <Project Path="ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
-    <Project Path="ConsoleLib/ConsoleLib.csproj" />
     <Project Path="CSFreeVision/CSFreeVision.csproj" />
     <Project Path="ExtendedConsole/ExtendedConsole.csproj" />
     <Project Path="GenInterfaces/GenInterfaces.csproj" />
@@ -28,6 +25,13 @@
     <Project Path="MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
     <Project Path="WFSystem.Data/WFSystem.Windows.Data.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/ConsoleLib/">
+    <Project Path="ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
+    <Project Path="ConsoleLib.Rendering/ConsoleLib.Rendering.csproj" />
+    <Project Path="ConsoleLib.RenderingTests/ConsoleLib.RenderingTests.csproj" />
+    <Project Path="ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
+    <Project Path="ConsoleLib/ConsoleLib.csproj" />
   </Folder>
   <Folder Name="/Libraries/TerminalHost/">
     <Project Path="Terminal.Avalonia.Host/Terminal.Avalonia.Host.csproj" />

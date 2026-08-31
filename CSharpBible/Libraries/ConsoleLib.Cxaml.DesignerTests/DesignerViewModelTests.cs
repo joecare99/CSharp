@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia;
 using Avalonia.Headless;
 using System.IO;
+using ConsoleLib.Cxaml.Designer.Preview;
 
 namespace ConsoleLib.Cxaml.DesignerTests;
 
@@ -91,6 +92,21 @@ public sealed class DesignerViewModelTests
     }
 
     [TestMethod]
+    public void SourceCaretSelectsInnermostControlAndPreviewSelectionMovesCaret()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<StackPanel>\n  <Button Name=\"save\" Text=\"Save\" />\n</StackPanel>"
+        };
+
+        viewModel.SourceCaretOffset = viewModel.Markup.IndexOf("Button", StringComparison.Ordinal);
+
+        Assert.AreEqual("root/0", viewModel.SelectedPreviewControlId);
+        Assert.IsTrue(viewModel.ActivatePreviewSelection("root"));
+        Assert.AreEqual(viewModel.Markup.IndexOf("StackPanel", StringComparison.Ordinal), viewModel.SourceCaretOffset);
+    }
+
+    [TestMethod]
     public void InvalidMarkupRemovesRenderedPreviewAndMappings()
     {
         var viewModel = new DesignerViewModel();
@@ -148,6 +164,215 @@ public sealed class DesignerViewModelTests
         Assert.AreEqual("[Caption]", viewModel.PreviewMappings[1].ConsoleControl.Text);
         Assert.AreEqual("[Caption]", ((Button)viewModel.PreviewMappings[1].PreviewControl).Content);
         StringAssert.Contains(viewModel.InspectorStatus, "Preview rendered");
+    }
+
+    [TestMethod]
+    public void InspectorExposesCategorizedPropertiesAndConsolePreview()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Button Text=\"Run\" Width=\"10\" />"
+        };
+
+        Assert.IsTrue(viewModel.CategorizedInspectorProperties.Any(property => property.Name == "Width" && property.Category == "Layout"));
+        Assert.IsTrue(viewModel.CategorizedInspectorProperties.Any(property => property.Name == "Text" && property.Category == "Content"));
+        StringAssert.Contains(viewModel.ConsolePreview, "Run");
+
+        viewModel.SelectedPreviewMode = "Console";
+
+        Assert.IsTrue(viewModel.IsConsolePreview);
+        Assert.AreEqual(1, viewModel.SelectedPreviewTabIndex);
+    }
+
+    [TestMethod]
+    public void GridEditorLoadsDefinitionsAndWritesDetailedCxaml()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Grid><Grid.RowDefinitions><RowDefinition Height=\"Auto\" /></Grid.RowDefinitions><Label Text=\"Cell\" /></Grid>"
+        };
+
+        Assert.IsTrue(viewModel.ActivatePreviewSelection("root"));
+        Assert.IsTrue(viewModel.IsGridSelected);
+        Assert.AreEqual(1, viewModel.GridRows.Count);
+        Assert.AreEqual(ConsoleLib.CommonControls.GridUnitType.Auto, viewModel.GridRows[0].Unit);
+
+        viewModel.AddGridRowCommand.Execute(null);
+        viewModel.GridRows[1].Unit = ConsoleLib.CommonControls.GridUnitType.Star;
+        viewModel.GridRows[1].Value = 2;
+        viewModel.ApplyGridDefinitionsCommand.Execute(null);
+
+        StringAssert.Contains(viewModel.Markup, "Grid.RowDefinitions");
+        StringAssert.Contains(viewModel.Markup, "Height=\"2*\"");
+        var renderedGrid = (ConsoleLib.CommonControls.Grid)viewModel.PreviewControl!;
+        Assert.IsTrue(renderedGrid.RowDefinitions.Count >= 2);
+        Assert.AreEqual(2d, renderedGrid.RowDefinitions[^1].Height.Value);
+    }
+
+    [TestMethod]
+    public void GridEditorKeepsAtLeastOneDefinition()
+    {
+        var viewModel = new DesignerViewModel { Markup = "<Grid />" };
+        Assert.IsTrue(viewModel.ActivatePreviewSelection("root"));
+
+        viewModel.RemoveGridRowCommand.Execute(viewModel.GridRows[0]);
+
+        Assert.AreEqual(1, viewModel.GridRows.Count);
+        Assert.AreEqual("A Grid must keep at least one definition.", viewModel.InspectorStatus);
+    }
+
+    [TestMethod]
+    public void ConsolePreviewUsesSharedSnapshotDimensionsAndColors()
+    {
+        var renderer = new ConsolePreviewRenderer();
+        var control = new ConsoleLib.CommonControls.Label
+        {
+            Text = "Hi",
+            ForeColor = ConsoleColor.Yellow,
+            BackColor = ConsoleColor.DarkBlue,
+            size = new System.Drawing.Size(5, 2)
+        };
+
+        var output = renderer.Render(control);
+        var snapshot = renderer.LastSnapshot;
+
+        Assert.IsNotNull(snapshot);
+        Assert.AreEqual(new System.Drawing.Size(5, 2), snapshot!.Size);
+        Assert.AreEqual('H', snapshot.GetCell(0, 0).Character);
+        Assert.AreEqual(ConsoleColor.Yellow, snapshot.GetCell(0, 0).Foreground);
+        Assert.AreEqual(ConsoleColor.DarkBlue, snapshot.GetCell(0, 0).Background);
+        Assert.AreEqual(2, output.Split(Environment.NewLine).Length);
+    }
+
+    [TestMethod]
+    public void ConsolePreviewOmitsInvisibleControlsThroughSharedRenderer()
+    {
+        var renderer = new ConsolePreviewRenderer();
+        var control = new ConsoleLib.CommonControls.Panel
+        {
+            size = new System.Drawing.Size(8, 2)
+        };
+        control.Add(new ConsoleLib.CommonControls.Label { Text = "Hidden", Visible = false });
+
+        var output = renderer.Render(control);
+
+        Assert.IsFalse(output.Contains("Hidden", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void ConsolePreviewSelectionDrawsOutlineWithoutChangingCanonicalSnapshot()
+    {
+        var renderer = new ConsolePreviewRenderer();
+        var control = new ConsoleLib.CommonControls.Panel
+        {
+            size = new System.Drawing.Size(8, 3)
+        };
+        var label = new ConsoleLib.CommonControls.Label
+        {
+            Text = "Item",
+            size = new System.Drawing.Size(4, 1),
+            Position = new System.Drawing.Point(2, 1)
+        };
+        control.Add(label);
+
+        var output = renderer.Render(control, new System.Drawing.Size(8, 3), label);
+
+        StringAssert.Contains(output, "╔══╗");
+        Assert.AreEqual('I', renderer.LastSnapshot!.GetCell(2, 1).Character);
+    }
+
+    [TestMethod]
+    public void ConsolePreviewSelectionRefreshesAfterSelectionAndViewportChanges()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"10\" Height=\"3\"><Label Text=\"Item\" Width=\"4\" Height=\"1\" X=\"2\" Y=\"1\" /></Panel>"
+        };
+
+        Assert.IsTrue(viewModel.ActivatePreviewSelection("root/0"));
+        StringAssert.Contains(viewModel.ConsolePreview, "╔══╗");
+
+        viewModel.SelectedConsoleFrameSize = "80x25";
+
+        StringAssert.Contains(viewModel.ConsolePreview, "╔══╗");
+        Assert.AreEqual("root/0", viewModel.SelectedPreviewControlId);
+    }
+
+    [TestMethod]
+    public void ConsoleFrameSizeSelectionChangesViewportWithoutMutatingControl()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"10\" Height=\"2\"><Label Text=\"Preview\" /></Panel>"
+        };
+        var control = viewModel.PreviewControl!;
+
+        viewModel.SelectedConsoleFrameSize = "80x25";
+
+        Assert.AreEqual(new System.Drawing.Size(10, 2), control.size);
+        Assert.AreEqual(25, viewModel.ConsolePreview.Split(Environment.NewLine).Length);
+    }
+
+    [TestMethod]
+    public void ConsoleFrameSizeDesignerModeUsesRootDimensions()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Label Width=\"12\" Height=\"3\" Text=\"Preview\" />"
+        };
+
+        viewModel.SelectedConsoleFrameSize = "80x50";
+        viewModel.SelectedConsoleFrameSize = "Designer Size";
+
+        Assert.AreEqual(3, viewModel.ConsolePreview.Split(Environment.NewLine).Length);
+        StringAssert.Contains(viewModel.ConsolePreview, "Preview");
+    }
+
+    [TestMethod]
+    public void ConsoleCellSelectsFrontMostVisibleControlAndMovesSourceCaret()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"20\" Height=\"5\">" +
+                     "<Button Name=\"front\" Text=\"Front\" Width=\"6\" Height=\"2\" X=\"2\" Y=\"1\" />" +
+                     "<Button Name=\"back\" Text=\"Back\" Width=\"6\" Height=\"2\" X=\"2\" Y=\"1\" />" +
+                     "</Panel>"
+        };
+
+        Assert.IsTrue(viewModel.ActivateConsoleSelection(3, 1));
+
+        Assert.AreEqual("root/0", viewModel.SelectedPreviewControlId);
+        Assert.AreEqual(viewModel.Markup.IndexOf("Button", StringComparison.Ordinal), viewModel.SourceCaretOffset);
+    }
+
+    [TestMethod]
+    public void ConsoleCellSelectionUsesChildWhenCellIsInsideChildAndRootOtherwise()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"20\" Height=\"5\"><Label Text=\"Child\" Width=\"5\" Height=\"1\" X=\"4\" Y=\"2\" /></Panel>"
+        };
+
+        Assert.IsTrue(viewModel.ActivateConsoleSelection(4, 2));
+        Assert.AreEqual("root/0", viewModel.SelectedPreviewControlId);
+
+        Assert.IsTrue(viewModel.ActivateConsoleSelection(0, 0));
+        Assert.AreEqual("root", viewModel.SelectedPreviewControlId);
+    }
+
+    [TestMethod]
+    public void ConsoleCellSelectionIgnoresHiddenControlsAndOutOfBoundsCells()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Panel Width=\"10\" Height=\"3\">" +
+                     "<Label Text=\"Hidden\" Width=\"5\" Height=\"1\" X=\"1\" Y=\"1\" Visible=\"false\" />" +
+                     "</Panel>"
+        };
+
+        Assert.IsTrue(viewModel.ActivateConsoleSelection(1, 1));
+        Assert.AreEqual("root", viewModel.SelectedPreviewControlId);
+        Assert.IsFalse(viewModel.ActivateConsoleSelection(10, 3));
     }
 
     [TestMethod]
