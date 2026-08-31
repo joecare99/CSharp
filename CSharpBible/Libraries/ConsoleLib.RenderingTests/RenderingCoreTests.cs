@@ -336,4 +336,30 @@ public sealed class RenderingCoreTests
 
         Assert.AreEqual('B', service.GetSnapshot().GetCell(0, 0).Character);
     }
+
+    [TestMethod]
+    public void RendererPlacesShadowBehindControlContent()
+    {
+        var label = new Label { Text = "A", Shadow = true, size = new Size(2, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('A', frame.GetCell(0, 0).Character);
+        Assert.AreEqual('░', frame.GetCell(1, 1).Character);
+        Assert.AreEqual(ConsoleColor.Gray, frame.GetCell(1, 1).Foreground);
+        Assert.AreEqual(ConsoleColor.Black, frame.GetCell(1, 1).Background);
+    }
+
+    [TestMethod]
+    public void RendererClipsShadowAtViewportBoundary()
+    {
+        var label = new Label { Text = "A", Shadow = true, Position = new Point(2, 1), size = new Size(2, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('░', frame.GetCell(3, 2).Character);
+        Assert.AreEqual(' ', frame.GetCell(0, 0).Character);
+    }
 }

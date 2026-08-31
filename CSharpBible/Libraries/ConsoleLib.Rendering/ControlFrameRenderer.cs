@@ -33,6 +33,7 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
 
         var width = Math.Max(1, control.size.Width);
         var height = Math.Max(1, control.size.Height);
+        DrawShadow(control, cells, size, width, height);
         DrawBorder(control, cells, size, width, height);
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -119,6 +120,20 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
 
     private static bool GetBorder(IControl control) =>
         control is IHasBorder { BorderDefinition.Style: not BorderStyle.None };
+
+    private static void DrawShadow(IControl control, TerminalCell[,] cells, Size size, int width, int height)
+    {
+        if (!control.Shadow)
+            return;
+        for (var row = 0; row < height; row++)
+            for (var column = 0; column < width; column++)
+            {
+                var x = control.Position.X + column + 1;
+                var y = control.Position.Y + row + 1;
+                if (x >= 0 && x < size.Width && y >= 0 && y < size.Height)
+                    cells[x, y] = new TerminalCell('░', ConsoleColor.Gray, ConsoleColor.Black);
+            }
+    }
 
     private static void DrawBorder(IControl control, TerminalCell[,] cells, Size size, int width, int height)
     {
