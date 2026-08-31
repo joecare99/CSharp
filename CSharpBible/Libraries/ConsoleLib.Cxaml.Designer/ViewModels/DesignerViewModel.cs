@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ConsoleLib;
@@ -28,6 +30,8 @@ public sealed partial class DesignerViewModel : ObservableObject
     private string? _selectedPreviewId;
     private string _consolePreview = string.Empty;
     private bool _updatingSourceCaret;
+    private readonly ObservableCollection<GridDefinitionViewModel> _gridRows = new();
+    private readonly ObservableCollection<GridDefinitionViewModel> _gridColumns = new();
 
     public IReadOnlyList<string> Toolbox { get; } = new[]
     {
@@ -66,6 +70,9 @@ public sealed partial class DesignerViewModel : ObservableObject
     public string? SelectedSourceElementPath => _selectedPreviewId;
     public IReadOnlyList<string> InspectorProperties => _inspectorProperties;
     public IReadOnlyList<InspectorPropertyViewModel> CategorizedInspectorProperties => _categorizedInspectorProperties;
+    public ObservableCollection<GridDefinitionViewModel> GridRows => _gridRows;
+    public ObservableCollection<GridDefinitionViewModel> GridColumns => _gridColumns;
+    public bool IsGridSelected => _previewState.SelectedMapping?.ConsoleControl is ConsoleLib.CommonControls.Grid;
     public IReadOnlyList<string> PreviewModes { get; } = new[] { "Visual", "Console" };
     public int SelectedPreviewTabIndex
     {
@@ -271,6 +278,7 @@ public sealed partial class DesignerViewModel : ObservableObject
                 _preview = _previewControl.GetType().Name + " (" + _previewControl.Children.Count + " children)";
                 InspectorStatus = "Preview rendered: " + _previewState.Mappings.Count + " mapped control(s).";
                 _categorizedInspectorProperties = GetInspectorProperties(_previewControl);
+                RefreshGridDefinitions(_previewControl);
                 _inspectorProperties = _categorizedInspectorProperties.Select(property => property.Name).ToArray();
                 if (previousSelection is not null)
                     _previewState.ActivateSelection(previousSelection);
@@ -316,6 +324,8 @@ public sealed partial class DesignerViewModel : ObservableObject
             _virtualAxaml = "No virtual AXAML generated.";
         _inspectorProperties = Array.Empty<string>();
         _categorizedInspectorProperties = Array.Empty<InspectorPropertyViewModel>();
+        _gridRows.Clear();
+        _gridColumns.Clear();
         _selectedPreviewId = null;
         _consolePreview = string.Empty;
     }
@@ -345,11 +355,15 @@ public sealed partial class DesignerViewModel : ObservableObject
     {
         _selectedPreviewId = e.Mapping.Id;
         _categorizedInspectorProperties = GetInspectorProperties(e.Mapping.ConsoleControl);
+        RefreshGridDefinitions(e.Mapping.ConsoleControl);
         _inspectorProperties = _categorizedInspectorProperties.Select(property => property.Name).ToArray();
         SetSourceCaret(GetElementOffset(e.Mapping.SourcePath));
         UpdateSelectedPropertyValue();
         OnPropertyChanged(nameof(InspectorProperties));
         OnPropertyChanged(nameof(CategorizedInspectorProperties));
+        OnPropertyChanged(nameof(GridRows));
+        OnPropertyChanged(nameof(GridColumns));
+        OnPropertyChanged(nameof(IsGridSelected));
         OnPropertyChanged(nameof(SelectedElement));
         OnPropertyChanged(nameof(SelectedPreviewControlId));
         OnPropertyChanged(nameof(SelectedSourceElementPath));
@@ -373,8 +387,114 @@ public sealed partial class DesignerViewModel : ObservableObject
     {
         var element = root;
         foreach (var index in path)
-            element = element.Elements().ElementAt(index);
+            element = element.Elements().Where(IsControlElement).ElementAt(index);
         return element;
+    }
+
+    private static bool IsControlElement(XElement element) =>
+        element.Name.LocalName is not ("RowDefinitions" or "ColumnDefinitions" or "Grid.RowDefinitions" or "Grid.ColumnDefinitions")
+        && element.Name.LocalName is not ("RowDefinition" or "ColumnDefinition");
+
+    private void RefreshGridDefinitions(IControl? control)
+    {
+        _gridRows.Clear();
+        _gridColumns.Clear();
+        if (control is not ConsoleLib.CommonControls.Grid grid)
+            return;
+        for (var i = 0; i < grid.RowDefinitions.Count; i++)
+            _gridRows.Add(new GridDefinitionViewModel(i, true, grid.RowDefinitions[i].Height));
+        for (var i = 0; i < grid.ColumnDefinitions.Count; i++)
+            _gridColumns.Add(new GridDefinitionViewModel(i, false, grid.ColumnDefinitions[i].Width));
+        if (_gridRows.Count == 0)
+            _gridRows.Add(new GridDefinitionViewModel(0, true, ConsoleLib.CommonControls.GridLength.Star));
+        if (_gridColumns.Count == 0)
+            _gridColumns.Add(new GridDefinitionViewModel(0, false, ConsoleLib.CommonControls.GridLength.Star));
+    }
+
+    [RelayCommand]
+    private void AddGridRow() => AddGridDefinition(true);
+
+    [RelayCommand]
+    private void AddGridColumn() => AddGridDefinition(false);
+
+    [RelayCommand]
+    private void RemoveGridRow(GridDefinitionViewModel? definition) => RemoveGridDefinition(definition, true);
+
+    [RelayCommand]
+    private void RemoveGridColumn(GridDefinitionViewModel? definition) => RemoveGridDefinition(definition, false);
+
+    [RelayCommand]
+    private void ApplyGridDefinitions()
+    {
+        var grid = _previewState.SelectedMapping?.ConsoleControl as ConsoleLib.CommonControls.Grid;
+        var mapping = _previewState.SelectedMapping;
+        if (grid is null || mapping is null)
+        {
+            InspectorStatus = "Select a Grid to edit its definitions.";
+            return;
+        }
+        grid.RowDefinitions.Clear();
+        foreach (var row in _gridRows)
+            grid.RowDefinitions.Add(new ConsoleLib.CommonControls.RowDefinition { Height = row.ToGridLength() });
+        grid.ColumnDefinitions.Clear();
+        foreach (var column in _gridColumns)
+            grid.ColumnDefinitions.Add(new ConsoleLib.CommonControls.ColumnDefinition { Width = column.ToGridLength() });
+        UpdateGridDefinitionElements(mapping.SourcePath);
+        InspectorStatus = "Grid definitions applied.";
+        RefreshPreview();
+    }
+
+    private void AddGridDefinition(bool row)
+    {
+        if (!IsGridSelected)
+        {
+            InspectorStatus = "Select a Grid to edit its definitions.";
+            return;
+        }
+        var definitions = row ? _gridRows : _gridColumns;
+        definitions.Add(new GridDefinitionViewModel(definitions.Count, row, ConsoleLib.CommonControls.GridLength.Star));
+    }
+
+    private void RemoveGridDefinition(GridDefinitionViewModel? definition, bool row)
+    {
+        if (definition is null)
+            return;
+        var definitions = row ? _gridRows : _gridColumns;
+        if (definitions.Count <= 1)
+        {
+            InspectorStatus = "A Grid must keep at least one definition.";
+            return;
+        }
+        definitions.Remove(definition);
+        for (var i = 0; i < definitions.Count; i++)
+            definitions[i].Reindex(i);
+    }
+
+    private void UpdateGridDefinitionElements(IReadOnlyList<int> path)
+    {
+        var document = XDocument.Parse(Markup, LoadOptions.PreserveWhitespace);
+        var element = FindElement(document.Root!, path);
+        element.Elements().Where(child => child.Name.LocalName.EndsWith("RowDefinitions", StringComparison.Ordinal)
+            || child.Name.LocalName.EndsWith("ColumnDefinitions", StringComparison.Ordinal)).Remove();
+        element.Add(CreateDefinitionElement("Grid.RowDefinitions", "RowDefinition", "Height", _gridRows));
+        element.Add(CreateDefinitionElement("Grid.ColumnDefinitions", "ColumnDefinition", "Width", _gridColumns));
+        Markup = document.ToString(SaveOptions.DisableFormatting);
+    }
+
+    private static XElement CreateDefinitionElement(string name, string itemName, string attribute, IEnumerable<GridDefinitionViewModel> definitions)
+    {
+        var container = new XElement(name);
+        foreach (var definition in definitions)
+        {
+            var length = definition.ToGridLength();
+            var value = length.GridUnitType == ConsoleLib.CommonControls.GridUnitType.Auto
+                ? "Auto"
+                : length.GridUnitType == ConsoleLib.CommonControls.GridUnitType.Star
+                    ? (length.Value == 1 ? "*" : length.Value.ToString(CultureInfo.InvariantCulture) + "*")
+                    : length.Value.ToString(CultureInfo.InvariantCulture);
+            container.Add(new XElement(itemName, new XAttribute(attribute, value)));
+        }
+        return container;
     }
 
     private void SelectSourceElementAtOffset(int offset)

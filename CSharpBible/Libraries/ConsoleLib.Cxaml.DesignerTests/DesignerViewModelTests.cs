@@ -184,6 +184,43 @@ public sealed class DesignerViewModelTests
     }
 
     [TestMethod]
+    public void GridEditorLoadsDefinitionsAndWritesDetailedCxaml()
+    {
+        var viewModel = new DesignerViewModel
+        {
+            Markup = "<Grid><Grid.RowDefinitions><RowDefinition Height=\"Auto\" /></Grid.RowDefinitions><Label Text=\"Cell\" /></Grid>"
+        };
+
+        Assert.IsTrue(viewModel.ActivatePreviewSelection("root"));
+        Assert.IsTrue(viewModel.IsGridSelected);
+        Assert.AreEqual(1, viewModel.GridRows.Count);
+        Assert.AreEqual(ConsoleLib.CommonControls.GridUnitType.Auto, viewModel.GridRows[0].Unit);
+
+        viewModel.AddGridRowCommand.Execute(null);
+        viewModel.GridRows[1].Unit = ConsoleLib.CommonControls.GridUnitType.Star;
+        viewModel.GridRows[1].Value = 2;
+        viewModel.ApplyGridDefinitionsCommand.Execute(null);
+
+        StringAssert.Contains(viewModel.Markup, "Grid.RowDefinitions");
+        StringAssert.Contains(viewModel.Markup, "Height=\"2*\"");
+        var renderedGrid = (ConsoleLib.CommonControls.Grid)viewModel.PreviewControl!;
+        Assert.IsTrue(renderedGrid.RowDefinitions.Count >= 2);
+        Assert.AreEqual(2d, renderedGrid.RowDefinitions[^1].Height.Value);
+    }
+
+    [TestMethod]
+    public void GridEditorKeepsAtLeastOneDefinition()
+    {
+        var viewModel = new DesignerViewModel { Markup = "<Grid />" };
+        Assert.IsTrue(viewModel.ActivatePreviewSelection("root"));
+
+        viewModel.RemoveGridRowCommand.Execute(viewModel.GridRows[0]);
+
+        Assert.AreEqual(1, viewModel.GridRows.Count);
+        Assert.AreEqual("A Grid must keep at least one definition.", viewModel.InspectorStatus);
+    }
+
+    [TestMethod]
     public void PanelPreviewKeepsLowerControlsInsideScrollableCanvas()
     {
         var viewModel = new DesignerViewModel

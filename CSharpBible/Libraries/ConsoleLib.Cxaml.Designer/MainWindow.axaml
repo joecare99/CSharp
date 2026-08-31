@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 xmlns:designer="using:ConsoleLib.Cxaml.Designer.Controls"
+        xmlns:vm="using:ConsoleLib.Cxaml.Designer.ViewModels"
         x:Class="ConsoleLib.Cxaml.Designer.MainWindow"
         Width="1000" Height="650" Title="ConsoleLib CXAML Designer">
   <Grid ColumnDefinitions="180,*,280" RowDefinitions="*,Auto">
@@ -63,6 +64,42 @@ xmlns:designer="using:ConsoleLib.Cxaml.Designer.Controls"
                   SelectedItem="{Binding SelectedPropertyName}" />
         <TextBox Text="{Binding SelectedPropertyValue}" />
         <Button Content="Apply property" Command="{Binding ApplySelectedPropertyCommand}" />
+        <StackPanel IsVisible="{Binding IsGridSelected}" Spacing="4">
+          <TextBlock Text="Grid definitions" FontWeight="Bold" />
+          <TextBlock Text="Rows" Foreground="Gray" />
+          <ItemsControl ItemsSource="{Binding GridRows}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid ColumnDefinitions="*,70,70,Auto">
+                  <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
+                  <ComboBox Grid.Column="1" ItemsSource="{Binding Source={x:Static vm:GridUnitTypeValues.All}}"
+                            SelectedItem="{Binding Unit}" />
+                  <NumericUpDown Grid.Column="2" Value="{Binding Value}" Minimum="0" />
+                  <Button Grid.Column="3" Content="-" Command="{Binding $parent[Window].DataContext.RemoveGridRowCommand}"
+                          CommandParameter="{Binding}" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <Button Content="Add row" Command="{Binding AddGridRowCommand}" />
+          <TextBlock Text="Columns" Foreground="Gray" />
+          <ItemsControl ItemsSource="{Binding GridColumns}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid ColumnDefinitions="*,70,70,Auto">
+                  <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
+                  <ComboBox Grid.Column="1" ItemsSource="{Binding Source={x:Static vm:GridUnitTypeValues.All}}"
+                            SelectedItem="{Binding Unit}" />
+                  <NumericUpDown Grid.Column="2" Value="{Binding Value}" Minimum="0" />
+                  <Button Grid.Column="3" Content="-" Command="{Binding $parent[Window].DataContext.RemoveGridColumnCommand}"
+                          CommandParameter="{Binding}" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <Button Content="Add column" Command="{Binding AddGridColumnCommand}" />
+          <Button Content="Apply Grid definitions" Command="{Binding ApplyGridDefinitionsCommand}" />
+        </StackPanel>
         <TextBlock Text="{Binding InspectorStatus}" />
       </StackPanel>
     </Border>
