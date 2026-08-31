@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using ConsoleLib.Interfaces;
 using ConsoleLib.Data;
+using ConsoleLib.CommonControls;
 
 namespace ConsoleLib.Rendering;
 
@@ -32,7 +33,7 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var width = Math.Max(1, control.size.Width);
         var height = Math.Max(1, control.size.Height);
         DrawBorder(control, cells, size, width, height);
-        var text = control.Text ?? string.Empty;
+        var text = GetDisplayText(control);
         var x = control.Position.X;
         var y = control.Position.Y + Math.Max(0, (height - 1) / 2);
         var border = GetBorder(control);
@@ -41,6 +42,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var textValue = text.Length > textWidth && textWidth >= 1
             ? textWidth == 1 ? "…" : text[..(textWidth - 1)] + "…"
             : text;
+        if (control is Button && textValue.Length < textWidth)
+            textStart += (textWidth - textValue.Length) / 2;
         var maxLength = Math.Min(textValue.Length, textWidth);
         for (var index = 0; index < maxLength; index++)
         {
@@ -52,6 +55,13 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
 
         foreach (var child in control.Children)
             DrawControl(child, cells, size);
+    }
+
+    private static string GetDisplayText(IControl control)
+    {
+        if (control is CheckBox checkBox)
+            return (checkBox.IsChecked ? "[x] " : "[ ] ") + (control.Text ?? string.Empty);
+        return control.Text ?? string.Empty;
     }
 
     private static bool GetBorder(IControl control) =>

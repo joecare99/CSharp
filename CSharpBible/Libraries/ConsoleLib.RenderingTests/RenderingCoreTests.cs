@@ -27,7 +27,7 @@ public sealed class RenderingCoreTests
         Assert.AreEqual(1L, first.Revision);
         Assert.IsTrue(second.Revision > first.Revision);
         Assert.IsTrue(changes > 1);
-        Assert.AreNotEqual(first.GetCell(0, 0), second.GetCell(0, 0));
+        Assert.AreNotEqual(first.GetCell(1, 0), second.GetCell(1, 0));
     }
 
     [TestMethod]
@@ -40,7 +40,7 @@ public sealed class RenderingCoreTests
 
         button.Text = "New";
 
-        Assert.AreEqual('O', snapshot.GetCell(0, 0).Character);
+        Assert.AreEqual('O', snapshot.GetCell(1, 0).Character);
     }
 
     [TestMethod]
@@ -71,7 +71,7 @@ public sealed class RenderingCoreTests
         button.Text = "Go";
         var delta = tracker.Acquire(service.GetSnapshot());
 
-        Assert.AreEqual(new Rectangle(0, 0, 3, 1), delta.DirtyRegion);
+        Assert.AreEqual(new Rectangle(1, 0, 3, 1), delta.DirtyRegion);
     }
 
     [TestMethod]
@@ -221,5 +221,51 @@ public sealed class RenderingCoreTests
 
         Assert.IsTrue(delta.IsDirty);
         Assert.AreEqual(new Rectangle(0, 0, 8, 1), delta.DirtyRegion);
+    }
+
+    [TestMethod]
+    public void RendererCentersButtonTextInsideItsAvailableWidth()
+    {
+        var button = new Button { Text = "Go", size = new Size(8, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(button, new Size(8, 1));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual(' ', frame.GetCell(0, 0).Character);
+        Assert.AreEqual(' ', frame.GetCell(2, 0).Character);
+        Assert.AreEqual('G', frame.GetCell(3, 0).Character);
+        Assert.AreEqual('o', frame.GetCell(4, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererDisplaysCheckedAndUncheckedCheckboxMarkers()
+    {
+        var checkBox = new CheckBox { Text = "Ready", size = new Size(9, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(checkBox, new Size(9, 1));
+        var uncheckedFrame = service.GetSnapshot();
+
+        checkBox.IsChecked = true;
+        service.Render();
+        var checkedFrame = service.GetSnapshot();
+
+        Assert.AreEqual('[', uncheckedFrame.GetCell(0, 0).Character);
+        Assert.AreEqual(' ', uncheckedFrame.GetCell(1, 0).Character);
+        Assert.AreEqual(']', uncheckedFrame.GetCell(2, 0).Character);
+        Assert.AreEqual('x', checkedFrame.GetCell(1, 0).Character);
+        Assert.AreEqual('R', checkedFrame.GetCell(4, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererTruncatesCheckboxTextWithoutWritingOutsideFrame()
+    {
+        var checkBox = new CheckBox { Text = "Very long", size = new Size(5, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(checkBox, new Size(5, 1));
+
+        var row = service.GetSnapshot();
+
+        Assert.AreEqual('[', row.GetCell(0, 0).Character);
+        Assert.AreEqual('…', row.GetCell(4, 0).Character);
     }
 }
