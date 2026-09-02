@@ -13,6 +13,30 @@ namespace ConsoleLib.RenderingTests;
 [TestClass]
 public sealed class RenderingCoreTests
 {
+    private sealed class WidgetSetStub : IWidgetSet
+    {
+        public Rectangle ClipRect => Rectangle.Empty;
+        public void InitializeApplication(IApplication application) { }
+        public void RunApplication(IApplication application) { }
+        public void StopApplication(IApplication application) { }
+        public void AttachControl(IControl control) { }
+        public void DetachControl(IControl control) { }
+        public void SynchronizeControl(IControl control) { }
+        public void DrawControl(IControl control) { }
+        public void DrawLabel(IControl label) { }
+        public void DrawPixel(IControl pixel) { }
+        public void DrawPanel(IGroupControl panel) { }
+        public void RedrawPanel(IGroupControl panel, Rectangle dimension) { }
+        public void DrawMenuItem(IControl menuItem) { }
+        public void DrawMenuBar(IGroupControl menuBar) { }
+        public void DrawListBox(IControl listBox) { }
+        public void DrawScrollBar(IControl scrollBar) { }
+        public void DrawTextBox(IControl textBox) { }
+        public void DrawTerminal(IControl terminal) { }
+        public void RedrawTerminal(IControl terminal, Rectangle dimension) { }
+        public void SetTitle(string value) { }
+    }
+
     [TestMethod]
     public void AttachedServicePublishesCurrentImmutableSnapshot()
     {
@@ -165,6 +189,52 @@ public sealed class RenderingCoreTests
         Assert.AreEqual(new Size(8, 5), panel.size);
         Assert.IsTrue(service.Revision > revision);
         Assert.AreEqual(new Size(8, 5), service.GetSnapshot().Size);
+    }
+
+    [TestMethod]
+    public void RendererComposesApplicationChildrenAndTracksResize()
+    {
+        var application = new Application(new WidgetSetStub())
+        {
+            size = new Size(8, 3)
+        };
+        var label = new Label
+        {
+            Text = "A",
+            Position = new Point(6, 1),
+            size = new Size(1, 1)
+        };
+        application.Add(label);
+
+        var service = new AttachedRenderService();
+        service.Attach(application, new Size(8, 3));
+        Assert.AreEqual('A', service.GetSnapshot().GetCell(6, 1).Character);
+
+        service.Resize(new Size(12, 4));
+
+        Assert.AreEqual(new Size(12, 4), application.size);
+        Assert.AreEqual('A', service.GetSnapshot().GetCell(6, 1).Character);
+    }
+
+    [TestMethod]
+    public void RendererOmitsHiddenApplicationChildAndRestoresIt()
+    {
+        var application = new Application(new WidgetSetStub())
+        {
+            size = new Size(6, 2)
+        };
+        var label = new Label { Text = "X", size = new Size(1, 1) };
+        application.Add(label);
+        var service = new AttachedRenderService();
+        service.Attach(application, new Size(6, 2));
+
+        label.Visible = false;
+        service.RefreshTree();
+        Assert.AreEqual(' ', service.GetSnapshot().GetCell(0, 0).Character);
+
+        label.Visible = true;
+        service.RefreshTree();
+        Assert.AreEqual('X', service.GetSnapshot().GetCell(0, 0).Character);
     }
 
     [TestMethod]

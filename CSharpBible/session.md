@@ -197,6 +197,31 @@ sufficient; no dedicated renderer branch or production change was required.
 The next remaining candidate is the canonical control-family review for `Application`,
 `Panel`, and any still-uncovered visibility or root-resize transitions.
 
+## Latest completed slice: Application root rendering regression coverage
+
+The Application slice expanded canonical root composition coverage for positioned
+children, viewport resize synchronization, and hidden/visible child transitions.
+The existing generic renderer path remains sufficient; no production renderer branch
+or control change was required.
+
+### Covered behavior
+
+- Application composes positioned child content in the canonical frame.
+- AttachedRenderService resize updates the Application root viewport while preserving child output.
+- Hidden Application children are omitted and become visible again after an explicit refresh.
+
+### Validation and repository state
+
+- `ConsoleLib.CoreTests`: **213 passed**.
+- `ConsoleLib.RenderingTests`: **255 passed** on net8.0, net9.0, and net10.0.
+- `ConsoleLib.Cxaml.DesignerTests`: **25 passed**.
+- Scoped `ControlFrameRenderer` coverage: **100% line coverage, 380/380 lines** on all three targets.
+- `git diff --check`: passed.
+- Production changes: none; focused Application rendering regressions were added.
+
+The next remaining candidate is the canonical review of `Label` and `CommandControl`
+fallback semantics, unless host-specific behavior is intentionally deferred.
+
 ## Test baseline
 
 ## Latest completed slice: Grid lifecycle and rendering regression coverage
