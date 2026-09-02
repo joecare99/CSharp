@@ -1,5 +1,5 @@
 # Copilot Instructions
-
+ 
 These instructions define the default engineering policy for this repository.
 
 ## Output Language Overrides
@@ -102,6 +102,9 @@ These instructions define the default engineering policy for this repository.
 - Do not propose workarounds that merely hide technical debt.
 - If multiple good solutions exist, prefer the simpler and more maintainable one.
 - When doing architecture-related work, also provide suitable tests and concise documentation.
+
+## Test Coverage
+- For coverage work in the repository, use the script `C:\Projekte\CSharp\Tools\Skills\TestCoverage\Invoke-TestProjectCoverage.ps1`.
 
 ## Preferred Outcome
 - The result should be technically correct, structured, testable, and calm in style.
