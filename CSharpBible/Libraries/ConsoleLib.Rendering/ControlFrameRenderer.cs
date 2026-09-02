@@ -148,6 +148,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
     {
         if (control is CheckBox checkBox)
             return (checkBox.IsChecked ? "[x] " : "[ ] ") + (control.Text ?? string.Empty);
+        if (control is RadioButton radioButton)
+            return (radioButton.IsChecked ? "(*) " : "( ) ") + (control.Text ?? string.Empty);
         if (control is ComboBox comboBox)
             return "[" + (comboBox.SelectedItem ?? string.Empty) + "]";
         return control.Text ?? string.Empty;

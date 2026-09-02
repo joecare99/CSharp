@@ -83,6 +83,7 @@ Project: `Libraries\ConsoleLib.Rendering`
 - `ScrollBar`: horizontal/vertical arrows, tracks, proportional thumbs, disabled colors, degenerate ranges, and clipping.
 - `ProgressBar`: determinate filled/unfilled cells, fractional values, disabled colors, and clipping.
 - `StatusBar`: status text, custom status colors, disabled colors, and clipping.
+- `RadioButton`: checked/unchecked markers, disabled colors, and clipping.
 - `MenuBar` and `MenuItem`: horizontal layout, mnemonic normalization, accelerator highlighting, active/disabled colors, and clipping.
 - `MenuPopup`: bordered popup backgrounds, local item positions, selection colors, separators, and clipping.
 
@@ -110,11 +111,11 @@ Earlier commits established `ConsoleLib.Rendering`, its test project, Grid loadi
 
 Latest successful targeted runs:
 
-- `ConsoleLib.RenderingTests`: **52 passed**
+- `ConsoleLib.RenderingTests`: **56 passed**
 - `ConsoleLib.Cxaml.DesignerTests`: **25 passed**
 
 Existing nullable event-handler warnings in legacy ConsoleLib controls are unrelated to the rendering work.
-The Test-Coverage skill reports **100% scoped line coverage** for `ControlFrameRenderer` (364/364 lines).
+The Test-Coverage skill reports **100% scoped line coverage** for `ControlFrameRenderer` (366/366 lines).
 
 Run tests from PowerShell with Windows paths:
 

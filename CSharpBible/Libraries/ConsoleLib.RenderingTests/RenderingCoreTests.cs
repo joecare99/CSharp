@@ -878,4 +878,49 @@ public sealed class RenderingCoreTests
 
         Assert.AreEqual("Item X", ReadRow(service.GetSnapshot(), 0, 6));
     }
+
+    [TestMethod]
+    public void RendererDisplaysUncheckedRadioButton()
+    {
+        var radio = new RadioButton { Text = "Choice", size = new Size(10, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(radio, new Size(10, 1));
+
+        Assert.AreEqual("( ) Choice", ReadRow(service.GetSnapshot(), 0, 10));
+    }
+
+    [TestMethod]
+    public void RendererDisplaysSelectedRadioButton()
+    {
+        var panel = new Panel { size = new Size(12, 1) };
+        var second = new RadioButton { Text = "Second", Position = new Point(0, 0), size = new Size(10, 1) };
+        panel.Add(second);
+        second.Select();
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(12, 1));
+
+        Assert.AreEqual("(*) Second  ", ReadRow(service.GetSnapshot(), 0, 12));
+    }
+
+    [TestMethod]
+    public void RendererUsesDisabledRadioButtonColors()
+    {
+        var radio = new RadioButton { Text = "Off", Enabled = false, size = new Size(7, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(radio, new Size(7, 1));
+        var cell = service.GetSnapshot().GetCell(0, 0);
+
+        Assert.AreEqual('(', cell.Character);
+        Assert.AreEqual(ConsoleColor.DarkGray, cell.Foreground);
+    }
+
+    [TestMethod]
+    public void RendererClipsRadioButtonMarkerAndText()
+    {
+        var radio = new RadioButton { Text = "Choice", Position = new Point(-2, 0), size = new Size(10, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(radio, new Size(5, 1));
+
+        Assert.AreEqual(") Cho", ReadRow(service.GetSnapshot(), 0, 5));
+    }
 }
