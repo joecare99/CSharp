@@ -681,6 +681,75 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void RendererOmitsHiddenDialogAndRendersShownDialog()
+    {
+        var dialog = new Dialog
+        {
+            Text = "Dialog",
+            BorderStyle = BorderStyle.Single,
+            size = new Size(8, 3),
+            Position = new Point(1, 1)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(dialog, new Size(10, 5));
+
+        Assert.AreEqual(' ', service.GetSnapshot().GetCell(1, 1).Character);
+
+        dialog.Show();
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual('┌', frame.GetCell(1, 1).Character);
+        Assert.AreEqual('D', frame.GetCell(2, 2).Character);
+    }
+
+    [TestMethod]
+    public void RendererComposesActiveModalDialogAndRemovesItWhenClosed()
+    {
+        var host = new ModalHost { size = new Size(10, 4) };
+        var dialog = new Dialog
+        {
+            Text = "Modal",
+            BorderStyle = BorderStyle.Double,
+            size = new Size(7, 3),
+            Position = new Point(2, 0)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(host, new Size(10, 4));
+
+        host.Show(dialog);
+        service.RefreshTree();
+
+        Assert.AreEqual('╔', service.GetSnapshot().GetCell(2, 0).Character);
+        Assert.AreEqual('M', service.GetSnapshot().GetCell(3, 1).Character);
+
+        host.Close();
+        service.RefreshTree();
+
+        Assert.AreEqual(' ', service.GetSnapshot().GetCell(2, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererUsesStackPanelArrangedChildPositions()
+    {
+        var stack = new StackPanel
+        {
+            Orientation = Orientation.Vertical,
+            Spacing = 1,
+            size = new Size(6, 4)
+        };
+        stack.Add(new Label { Text = "A", size = new Size(6, 1) });
+        stack.Add(new Label { Text = "B", size = new Size(6, 1) });
+
+        var service = new AttachedRenderService();
+        service.Attach(stack, new Size(6, 4));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('A', frame.GetCell(0, 0).Character);
+        Assert.AreEqual(' ', frame.GetCell(0, 1).Character);
+        Assert.AreEqual('B', frame.GetCell(0, 2).Character);
+    }
+
+    [TestMethod]
     public void RendererPlacesShadowBehindControlContent()
     {
         var label = new Label { Text = "A", Shadow = true, size = new Size(2, 1) };

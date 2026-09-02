@@ -16,7 +16,7 @@ Work is delivered in focused slices. Each slice should:
 - Repository: `ChristianRosewich/CSharp`
 - Working directory: `D:\Projekte\GitHub\CSharp\CSharpBible`
 - Current branch: `master`
-- Latest relevant commit: pending `feat: render canonical pixels`
+- Latest relevant commit: pending `test: cover container composition`
 - The working tree was clean when this file was created.
 - Session plan: `C:\Users\DEROSCHR\.copilot\session-state\cb26ebc1-c49b-46fe-9e16-66dea4314ece\plan.md`
 - SQL session todos: all currently recorded todos are done.
@@ -90,6 +90,7 @@ Project: `Libraries\ConsoleLib.Rendering`
 - `Terminal`: bordered screen-cell output, per-cell colors, empty-cell preservation, and clipping.
 - `ScrollViewer`: hosted-content offset translation, viewport/frame clipping, and content color/border preservation.
 - `Pixel`: single-cell character output, color preservation, disabled colors, and clipping.
+- Container composition: `Dialog` visibility, `ModalHost` popup lifecycle, and `StackPanel` child placement through the shared fallback renderer.
 
 ## Recent commits
 
@@ -118,9 +119,10 @@ Latest successful targeted runs:
 
 - `ConsoleLib.RenderingTests`: **63 passed**
 - `ConsoleLib.Cxaml.DesignerTests`: **25 passed**
+- Container composition regressions pass on net8.0, net9.0, and net10.0.
 
 Existing nullable event-handler warnings in legacy ConsoleLib controls are unrelated to the rendering work.
-The Test-Coverage skill reports **100% scoped line coverage** for `ControlFrameRenderer` (420/420 lines).
+The Test-Coverage skill reports **100% scoped line coverage** for `ControlFrameRenderer` (490/490 lines).
 
 The current checkout does not contain the previously referenced Test-Coverage script; coverlet collector execution completed successfully and produced scoped Cobertura reports.
 
