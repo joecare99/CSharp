@@ -165,4 +165,22 @@ public class SmallControlsCoverageTests
         Assert.AreEqual(1, panel.Children.Count);
         ((IGroupControl)panel).BringToFront(second);
     }
+
+    [TestMethod]
+    public void StackPanel_ReflowsRemainingChildrenAfterRemoval()
+    {
+        var panel = new StackPanel { Dimension = new Rectangle(0, 0, 8, 8), Spacing = 1 };
+        var first = new Label { size = new Size(8, 2) };
+        var second = new Label { size = new Size(8, 2) };
+        var third = new Label { size = new Size(8, 2) };
+        panel.Add(first);
+        panel.Add(second);
+        panel.Add(third);
+        panel.Dimension = new Rectangle(0, 0, 8, 8);
+
+        panel.Remove(first);
+
+        Assert.AreEqual(new Rectangle(0, 0, 8, 2), second.Dimension);
+        Assert.AreEqual(new Rectangle(0, 3, 8, 2), third.Dimension);
+    }
 }

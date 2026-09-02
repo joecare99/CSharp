@@ -172,6 +172,31 @@ arranges child dimensions correctly, and the generic child-recursion path in
 - `git diff --check`: pending final commit validation.
 - Production changes: none; only focused renderer regression tests were added.
 
+## Latest completed slice: Generic container composition regression coverage
+
+The generic container slice expanded lifecycle and canonical composition coverage for
+`StackPanel` and `ModalHost`. The existing fallback child-recursion path remains
+sufficient; no dedicated renderer branch or production change was required.
+
+### Covered behavior
+
+- StackPanel reflows remaining children after removal.
+- ModalHost close is idempotent when no popup is active.
+- Canonical StackPanel output reflects child removal and reflow.
+- Canonical ModalHost output removes a closed popup from the frame.
+
+### Validation and repository state
+
+- `ConsoleLib.CoreTests`: **213 passed**.
+- `ConsoleLib.RenderingTests`: **249 passed** on net8.0, net9.0, and net10.0.
+- `ConsoleLib.Cxaml.DesignerTests`: **25 passed**.
+- Scoped `ControlFrameRenderer` coverage: **100% line coverage, 380/380 lines** on all three targets.
+- `git diff --check`: passed.
+- Production changes: none; focused Core and Rendering regression tests were added.
+
+The next remaining candidate is the canonical control-family review for `Application`,
+`Panel`, and any still-uncovered visibility or root-resize transitions.
+
 ## Test baseline
 
 ## Latest completed slice: Grid lifecycle and rendering regression coverage

@@ -109,6 +109,17 @@ public class BasicPopupControlCoverageTests
         Assert.IsNull(host.ActivePopup);
     }
 
+    [TestMethod]
+    public void ModalHost_CloseWithoutPopupIsIdempotent()
+    {
+        var host = new ModalHost();
+
+        host.Close();
+
+        Assert.IsNull(host.ActivePopup);
+        Assert.AreEqual(0, host.Children.Count);
+    }
+
     private sealed class KeyEventStub : IKeyEvent
     {
         public KeyEventStub(ushort keyCode) => usKeyCode = keyCode;

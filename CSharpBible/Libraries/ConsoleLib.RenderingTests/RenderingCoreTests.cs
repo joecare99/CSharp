@@ -861,6 +861,48 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void RendererUpdatesStackPanelAfterChildRemoval()
+    {
+        var stack = new StackPanel { size = new Size(6, 4), Spacing = 1 };
+        var first = new Label { Text = "A", size = new Size(6, 1) };
+        var second = new Label { Text = "B", size = new Size(6, 1) };
+        stack.Add(first);
+        stack.Add(second);
+        var service = new AttachedRenderService();
+        service.Attach(stack, new Size(6, 4));
+
+        stack.Remove(first);
+        service.RefreshTree();
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual('B', frame.GetCell(0, 0).Character);
+        Assert.AreEqual(' ', frame.GetCell(0, 2).Character);
+    }
+
+    [TestMethod]
+    public void RendererRemovesClosedModalPopupFromFrame()
+    {
+        var host = new ModalHost { size = new Size(8, 3) };
+        var dialog = new Dialog
+        {
+            Text = "X",
+            BorderStyle = BorderStyle.Single,
+            size = new Size(4, 3)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(host, new Size(8, 3));
+
+        host.Show(dialog);
+        service.RefreshTree();
+        Assert.AreEqual('┌', service.GetSnapshot().GetCell(0, 0).Character);
+
+        host.Close();
+        service.RefreshTree();
+
+        Assert.AreEqual(' ', service.GetSnapshot().GetCell(0, 0).Character);
+    }
+
+    [TestMethod]
     public void RendererUsesDockPanelPositionsAndLastChildFill()
     {
         var dock = new DockPanel { size = new Size(12, 6) };
