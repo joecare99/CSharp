@@ -62,6 +62,7 @@ public class ListBox : Control, IDisposable, IHasBorder
             UpdateSelectedBinding();
             EnsureSelectedVisible();
             NotifyWidgetStateChanged();
+            NotifyControlChanged();
             Invalidate();
         }
     }
@@ -81,6 +82,7 @@ public class ListBox : Control, IDisposable, IHasBorder
                 UpdateSelectedBinding();
                 EnsureSelectedVisible();
                 NotifyWidgetStateChanged();
+                NotifyControlChanged();
                 Invalidate();
             }
         }
@@ -136,6 +138,7 @@ public class ListBox : Control, IDisposable, IHasBorder
         }
         EnsureSelectedVisible();
         NotifyWidgetStateChanged();
+        NotifyControlChanged();
         Invalidate();
     }
 

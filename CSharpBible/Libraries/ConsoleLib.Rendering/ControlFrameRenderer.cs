@@ -4,6 +4,7 @@ using ConsoleLib.Interfaces;
 using ConsoleLib.Data;
 using ConsoleLib.CommonControls;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ConsoleLib.Rendering;
 
@@ -59,6 +60,62 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             DrawChildren(control, cells, size);
             return;
         }
+        if (control is ScrollBar scrollBar)
+        {
+            DrawScrollBar(scrollBar, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
+        if (control is ProgressBar progressBar)
+        {
+            DrawProgressBar(progressBar, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
+        if (control is MenuBar menuBar)
+        {
+            DrawMenuBar(menuBar, cells, size);
+            return;
+        }
+        if (control is MenuPopup menuPopup)
+        {
+            DrawMenuPopup(menuPopup, cells, size);
+            return;
+        }
+        if (control is MenuItem menuItem)
+        {
+            DrawMenuItem(menuItem, cells, size, menuItem.Position);
+            DrawChildren(control, cells, size);
+            return;
+        }
+        if (control is StatusBar statusBar)
+        {
+            DrawStatusBar(statusBar, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
+        if (control is TextBox textBox)
+        {
+            DrawTextBox(textBox, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
+        if (control is Terminal terminal)
+        {
+            DrawTerminal(terminal, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
+        if (control is ScrollViewer scrollViewer)
+        {
+            DrawScrollViewer(scrollViewer, cells, size);
+            return;
+        }
+        if (control is Pixel pixel)
+        {
+            DrawPixel(pixel, cells, size);
+            return;
+        }
 
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -70,11 +127,11 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var textWidth = Math.Max(0, width - (border ? 2 : 0));
         var wraps = control is TextBox { MultiLine: true };
         var textValue = !wraps && text.Length > textWidth && textWidth >= 1
-            ? textWidth == 1 ? "…" : text[..(textWidth - 1)] + "…"
+            ? textWidth == 1 ? "…" : text.Substring(0, textWidth - 1) + "…"
             : text;
         if (control is Button && textValue.Length < textWidth)
             textStart += (textWidth - textValue.Length) / 2;
-        var lines = wraps
+        var lines = wraps && textWidth > 0
             ? WrapLines(textValue, textWidth)
             : new[] { textValue };
         var (foreground, background) = GetColors(control);
@@ -92,6 +149,13 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         }
 
         DrawChildren(control, cells, size);
+    }
+
+    private static void DrawPixel(Pixel pixel, TerminalCell[,] cells, Size size)
+    {
+        var (foreground, background) = GetColors(pixel);
+        var character = string.IsNullOrEmpty(pixel.Text) ? ' ' : pixel.Text[0];
+        PutCell(cells, size, pixel.Position.X, pixel.Position.Y, character, foreground, background);
     }
 
     private static void DrawChildren(IControl control, TerminalCell[,] cells, Size size)
@@ -113,9 +177,124 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
     {
         if (control is CheckBox checkBox)
             return (checkBox.IsChecked ? "[x] " : "[ ] ") + (control.Text ?? string.Empty);
+        if (control is RadioButton radioButton)
+            return (radioButton.IsChecked ? "(*) " : "( ) ") + (control.Text ?? string.Empty);
         if (control is ComboBox comboBox)
             return "[" + (comboBox.SelectedItem ?? string.Empty) + "]";
         return control.Text ?? string.Empty;
+    }
+
+    private static void DrawTextBox(TextBox textBox, TerminalCell[,] cells, Size size)
+    {
+        var width = Math.Max(1, textBox.size.Width);
+        var height = Math.Max(1, textBox.size.Height);
+        var firstVisibleLine = textBox.GetFirstVisibleLine();
+        if (firstVisibleLine > 0 && string.IsNullOrEmpty(textBox.GetDisplayLine(firstVisibleLine)))
+            firstVisibleLine = 0;
+        var displayLines = new List<string>();
+        if (textBox.MultiLine)
+        {
+            for (var lineIndex = firstVisibleLine; lineIndex < firstVisibleLine + height; lineIndex++)
+                displayLines.AddRange(WrapLines(textBox.GetDisplayLine(lineIndex), width));
+        }
+        else
+        {
+            displayLines.Add(textBox.GetDisplayLine(firstVisibleLine));
+        }
+        var foreground = textBox.Enabled ? textBox.GetActualForeColor() : textBox.DisabledForeColor;
+        var background = textBox.GetActualBackColor();
+        var x = textBox.Position.X;
+        var y = textBox.Position.Y;
+
+        for (var row = 0; row < height; row++)
+        {
+            var line = row < displayLines.Count ? displayLines[row] : string.Empty;
+            for (var column = 0; column < width; column++)
+            {
+                var cellX = x + column;
+                var cellY = y + row;
+                if (cellX >= 0 && cellX < size.Width && cellY >= 0 && cellY < size.Height)
+                {
+                    var character = column < line.Length ? line[column] : ' ';
+                    cells[cellX, cellY] = new TerminalCell(character, foreground, background);
+                }
+            }
+        }
+
+        if (textBox.Active && textBox.Enabled && textBox.ShouldShowCaret()
+            && textBox.GetCaretLine() >= firstVisibleLine
+            && textBox.GetCaretLine() < firstVisibleLine + height)
+        {
+            var caretRow = textBox.GetCaretLine() - firstVisibleLine;
+            var caretColumn = Math.Min(textBox.GetCaretColumn(), width - 1);
+            var cellX = x + caretColumn;
+            var cellY = y + caretRow;
+            if (cellX >= 0 && cellX < size.Width && cellY >= 0 && cellY < size.Height)
+            {
+                var line = textBox.GetDisplayLine(textBox.GetCaretLine());
+                var character = caretColumn < line.Length ? line[caretColumn] : ' ';
+                cells[cellX, cellY] = new TerminalCell(character, textBox.BackColor, textBox.CaretColor);
+            }
+        }
+    }
+
+    private static void DrawTerminal(Terminal terminal, TerminalCell[,] cells, Size size)
+    {
+        var border = GetBorder(terminal);
+        var left = terminal.Position.X + (border ? 1 : 0);
+        var top = terminal.Position.Y + (border ? 1 : 0);
+        var width = Math.Min(
+            Math.Max(0, terminal.size.Width - (border ? 2 : 0)),
+            Math.Max(0, terminal.WindowWidth));
+        var height = Math.Min(
+            Math.Max(0, terminal.size.Height - (border ? 2 : 0)),
+            Math.Max(0, terminal.WindowHeight));
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                var cellX = left + x;
+                var cellY = top + y;
+                if (cellX < 0 || cellX >= size.Width || cellY < 0 || cellY >= size.Height)
+                    continue;
+
+                var cell = terminal.GetScreenCell(x, y);
+                cells[cellX, cellY] = new TerminalCell(cell.c, cell.fc.Fg, cell.fc.Bg);
+            }
+        }
+    }
+
+    private static void DrawScrollViewer(ScrollViewer scrollViewer, TerminalCell[,] cells, Size size)
+    {
+        var width = Math.Max(0, scrollViewer.size.Width);
+        var height = Math.Max(0, scrollViewer.size.Height);
+        var (foreground, background) = GetColors(scrollViewer);
+        for (var y = 0; y < height; y++)
+            DrawLine(cells, size, scrollViewer.Position.X, scrollViewer.Position.Y + y, width, string.Empty, foreground, background);
+
+        if (scrollViewer.Content is null || width == 0 || height == 0)
+            return;
+
+        var contentWidth = Math.Max(1, scrollViewer.Content.size.Width);
+        var contentHeight = Math.Max(1, scrollViewer.Content.size.Height);
+        var contentCells = new TerminalCell[contentWidth, contentHeight];
+        new ControlFrameRenderer().Render(scrollViewer.Content, contentCells, new Size(contentWidth, contentHeight));
+        for (var y = 0; y < height; y++)
+        {
+            var sourceY = y + scrollViewer.Offset.Y;
+            if (sourceY < 0 || sourceY >= contentHeight)
+                continue;
+            for (var x = 0; x < width; x++)
+            {
+                var sourceX = x + scrollViewer.Offset.X;
+                if (sourceX < 0 || sourceX >= contentWidth)
+                    continue;
+                var targetX = scrollViewer.Position.X + x;
+                var targetY = scrollViewer.Position.Y + y;
+                if (targetX >= 0 && targetX < size.Width && targetY >= 0 && targetY < size.Height)
+                    cells[targetX, targetY] = contentCells[sourceX, sourceY];
+            }
+        }
     }
 
     private static void DrawListBox(ListBox listBox, TerminalCell[,] cells, Size size)
@@ -204,6 +383,121 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         return depth;
     }
 
+    private static void DrawScrollBar(ScrollBar scrollBar, TerminalCell[,] cells, Size size)
+    {
+        var width = Math.Max(1, scrollBar.size.Width);
+        var height = Math.Max(1, scrollBar.size.Height);
+        var disabled = !scrollBar.Enabled;
+        var trackForeground = disabled ? scrollBar.DisabledColor : scrollBar.TrackColor;
+        var trackBackground = disabled ? scrollBar.DisabledBackColor : scrollBar.BackColor;
+        var thumbForeground = disabled ? scrollBar.DisabledColor : scrollBar.ThumbColor;
+        var thumbBackground = disabled ? scrollBar.DisabledThumbBackColor : scrollBar.TrackColor;
+        var arrowForeground = disabled ? scrollBar.DisabledColor : scrollBar.ArrowColor;
+        var arrowBackground = disabled ? scrollBar.DisabledBackColor : scrollBar.BackColor;
+
+        if (scrollBar.Vertical)
+        {
+            for (var row = 1; row < height - 1; row++)
+                PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y + row, '│', trackForeground, trackBackground);
+            PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y, '▲', arrowForeground, arrowBackground);
+            PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y + height - 1, '▼', arrowForeground, arrowBackground);
+        }
+        else
+        {
+            DrawLine(cells, size, scrollBar.Position.X + 1, scrollBar.Position.Y, Math.Max(0, width - 2), new string('─', Math.Max(0, width - 2)), trackForeground, trackBackground);
+            PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y, '◀', arrowForeground, arrowBackground);
+            PutCell(cells, size, scrollBar.Position.X + width - 1, scrollBar.Position.Y, '▶', arrowForeground, arrowBackground);
+        }
+
+        var (thumbStart, thumbLength) = scrollBar.GetThumbData();
+        for (var index = 0; index < thumbLength; index++)
+        {
+            var x = scrollBar.Position.X + (scrollBar.Vertical ? 0 : thumbStart + index);
+            var y = scrollBar.Position.Y + (scrollBar.Vertical ? thumbStart + index : 0);
+            PutCell(cells, size, x, y, '█', thumbForeground, thumbBackground);
+        }
+    }
+
+    private static void DrawProgressBar(ProgressBar progressBar, TerminalCell[,] cells, Size size)
+    {
+        var border = GetBorder(progressBar);
+        var width = Math.Max(0, progressBar.size.Width - (border ? 2 : 0));
+        var fraction = Math.Max(0, Math.Min(1, progressBar.Fraction));
+        var filled = (int)Math.Floor(width * fraction);
+        var (foreground, background) = GetColors(progressBar);
+        var x = progressBar.Position.X + (border ? 1 : 0);
+        var y = progressBar.Position.Y + (border ? 1 : 0);
+        DrawLine(cells, size, x, y, filled, new string('#', filled), foreground, background);
+        DrawLine(cells, size, x + filled, y, width - filled, new string('-', width - filled), foreground, background);
+    }
+
+    private static void DrawMenuBar(MenuBar menuBar, TerminalCell[,] cells, Size size)
+    {
+        DrawLine(cells, size, menuBar.Position.X, menuBar.Position.Y, menuBar.size.Width, string.Empty, menuBar.ForeColor, menuBar.BackColor);
+        foreach (var item in menuBar.Children.OfType<MenuItem>())
+            DrawMenuItem(item, cells, size, new Point(menuBar.Position.X + item.Position.X, menuBar.Position.Y + item.Position.Y));
+    }
+
+    private static void DrawMenuPopup(MenuPopup menuPopup, TerminalCell[,] cells, Size size)
+    {
+        var border = GetBorder(menuPopup);
+        var contentWidth = Math.Max(0, menuPopup.size.Width - (border ? 2 : 0));
+        var contentHeight = Math.Max(0, menuPopup.size.Height - (border ? 2 : 0));
+        var contentX = menuPopup.Position.X + (border ? 1 : 0);
+        var contentY = menuPopup.Position.Y + (border ? 1 : 0);
+        for (var row = 0; row < contentHeight; row++)
+            DrawLine(cells, size, contentX, contentY + row, contentWidth, string.Empty, menuPopup.ForeColor, menuPopup.BackColor);
+        foreach (var item in menuPopup.Children.OfType<MenuItem>())
+        {
+            var origin = new Point(menuPopup.Position.X + item.Position.X, menuPopup.Position.Y + item.Position.Y);
+            var width = item.IsSeparator ? contentWidth : item.size.Width;
+            DrawMenuItem(item, cells, size, origin, width);
+        }
+    }
+
+    private static void DrawMenuItem(MenuItem menuItem, TerminalCell[,] cells, Size size, Point origin, int? widthOverride = null)
+    {
+        var width = Math.Max(0, widthOverride ?? menuItem.size.Width);
+        if (menuItem.IsSeparator)
+        {
+            DrawLine(cells, size, origin.X, origin.Y, width, new string('─', width), menuItem.ForeColor, menuItem.BackColor);
+            return;
+        }
+
+        var text = NormalizeMenuText(menuItem.Text ?? string.Empty, out var acceleratorIndex);
+        var selected = menuItem.IsHovered || menuItem.Active;
+        var foreground = !menuItem.Enabled
+            ? menuItem.DisabledForeColor
+            : selected || (menuItem.Parent is MenuBar menuBar && menuBar.ShowAccelerators && acceleratorIndex >= 0)
+                ? menuItem.HotColor
+                : menuItem.ForeColor;
+        var background = selected ? menuItem.HotBackColor : menuItem.BackColor;
+        DrawLine(cells, size, origin.X, origin.Y, width, text, foreground, background);
+
+        if (menuItem.Enabled && menuItem.Parent is MenuBar { ShowAccelerators: true } && acceleratorIndex >= 0 && acceleratorIndex < width && origin.X + acceleratorIndex >= 0 && origin.X + acceleratorIndex < size.Width && origin.Y >= 0 && origin.Y < size.Height)
+            cells[origin.X + acceleratorIndex, origin.Y] = new TerminalCell(text[acceleratorIndex], menuItem.HotColor, background);
+    }
+
+    private static string NormalizeMenuText(string text, out int acceleratorIndex)
+    {
+        var normalized = text.Replace("&&", "\0");
+        acceleratorIndex = normalized.IndexOf('&');
+        if (acceleratorIndex >= 0)
+            normalized = normalized.Remove(acceleratorIndex, 1);
+        return normalized.Replace('\0', '&');
+    }
+
+    private static void DrawStatusBar(StatusBar statusBar, TerminalCell[,] cells, Size size)
+    {
+        var (foreground, background) = GetColors(statusBar);
+        var statusForeground = statusBar.Enabled ? statusBar.StatusColor : foreground;
+        var border = GetBorder(statusBar);
+        var x = statusBar.Position.X + (border ? 1 : 0);
+        var y = statusBar.Position.Y + (border ? 1 : 0);
+        var width = Math.Max(0, statusBar.size.Width - (border ? 2 : 0));
+        DrawLine(cells, size, x, y, width, statusBar.Status ?? string.Empty, statusForeground, background);
+    }
+
     private static void DrawLine(
         TerminalCell[,] cells,
         Size size,
@@ -224,10 +518,21 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         }
     }
 
+    private static void PutCell(
+        TerminalCell[,] cells,
+        Size size,
+        int x,
+        int y,
+        char character,
+        ConsoleColor foreground,
+        ConsoleColor background)
+    {
+        if (x >= 0 && x < size.Width && y >= 0 && y < size.Height)
+            cells[x, y] = new TerminalCell(character, foreground, background);
+    }
+
     private static IReadOnlyList<string> WrapLines(string text, int width)
     {
-        if (width <= 0)
-            return Array.Empty<string>();
         var lines = new List<string>();
         foreach (var sourceLine in text.Replace("\r", string.Empty).Split('\n'))
         {

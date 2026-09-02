@@ -2,7 +2,9 @@ using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Drawing;
 using System.Linq;
+using NSubstitute;
 
 namespace ConsoleLib.Tests;
 
@@ -68,6 +70,37 @@ public class TileViewTests
         view.HandlePressKeyEvents(atEnd);
         Assert.IsFalse(atEnd.Handled);
         Assert.AreEqual(1, view.SelectedIndex);
+    }
+
+    [TestMethod]
+    public void TileView_PreviousNavigationAndBoundaryValuesAreHandled()
+    {
+        var view = new TileView { size = new Size(0, 0), TileWidth = 0, TileHeight = 0 };
+        view.SetItems(new[] { new TileItem("One"), new TileItem("Two") });
+
+        Assert.IsFalse(view.SelectPrevious());
+        Assert.IsTrue(view.SelectNext());
+        Assert.IsTrue(view.SelectPrevious());
+        Assert.AreEqual(0, view.SelectedIndex);
+        Assert.AreEqual(1, view.GetVisibleItems().Count);
+
+        view.Active = false;
+        var ignored = new KeyEventStub((ushort)ConsoleKey.RightArrow);
+        view.HandlePressKeyEvents(ignored);
+        Assert.IsFalse(ignored.Handled);
+        Assert.AreEqual(0, view.SelectedIndex);
+    }
+
+    [TestMethod]
+    public void TileView_DrawUsesOptionalRenderer()
+    {
+        var renderer = Substitute.For<IWidgetSet, ITileViewRenderer>();
+        var app = new Application(renderer);
+        var view = new TileView { Parent = app };
+
+        view.Draw();
+
+        ((ITileViewRenderer)renderer).Received(1).DrawTileView(view);
     }
 
     private sealed class KeyEventStub : IKeyEvent

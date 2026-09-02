@@ -343,6 +343,94 @@ public class TextBoxTests : TestBase
         Assert.AreEqual((0, 0), tb.Caret);
     }
 
+    [TestMethod]
+    public void Navigation_HandlesHomeEndVerticalAndPageKeys()
+    {
+        var tb = new TextBox { MultiLine = true, size = new System.Drawing.Size(10, 2) };
+        SetActive(tb, true);
+        tb.SetText("first\nsecond\nthird\nfourth");
+        tb.Caret = (3, 2);
+
+        tb.HandlePressKeyEvents(KeyEventStub.Nav(ConsoleFramework.VK_HOME));
+        Assert.AreEqual((0, 2), tb.Caret);
+        tb.HandlePressKeyEvents(KeyEventStub.Nav(ConsoleFramework.VK_END));
+        Assert.AreEqual((5, 2), tb.Caret);
+        tb.HandlePressKeyEvents(KeyEventStub.Nav(ConsoleFramework.VK_UP));
+        Assert.AreEqual((5, 1), tb.Caret);
+        tb.HandlePressKeyEvents(KeyEventStub.Nav(ConsoleFramework.VK_DOWN));
+        Assert.AreEqual((5, 2), tb.Caret);
+        tb.HandlePressKeyEvents(KeyEventStub.Nav((ushort)ConsoleKey.PageUp));
+        Assert.AreEqual((5, 1), tb.Caret);
+        tb.HandlePressKeyEvents(KeyEventStub.Nav((ushort)ConsoleKey.PageDown));
+        Assert.AreEqual((5, 2), tb.Caret);
+        Assert.AreEqual(1, tb.GetFirstVisibleLine());
+    }
+
+    [TestMethod]
+    public void Navigation_AtBoundariesFallsThroughWithoutHandling()
+    {
+        var tb = new TextBox { MultiLine = false };
+        SetActive(tb, true);
+        tb.SetText("x");
+
+        var left = KeyEventStub.Nav(ConsoleFramework.VK_LEFT);
+        tb.Caret = (0, 0);
+        tb.HandlePressKeyEvents(left);
+        Assert.IsFalse(left.Handled);
+
+        var right = KeyEventStub.Nav(ConsoleFramework.VK_RIGHT);
+        tb.Caret = (1, 0);
+        tb.HandlePressKeyEvents(right);
+        Assert.IsFalse(right.Handled);
+    }
+
+    [TestMethod]
+    public void Enter_InvokesHandlerForSingleLineAndMarksUnhandledParentEvent()
+    {
+        var tb = new TextBox { MultiLine = false };
+        SetActive(tb, true);
+        var invoked = false;
+        tb.OnEnterKey += (_, e) => invoked = true;
+
+        var enter = KeyEventStub.Char('\r');
+        tb.HandlePressKeyEvents(enter);
+
+        Assert.IsTrue(invoked);
+        Assert.IsTrue(enter.Handled);
+    }
+
+    [TestMethod]
+    public void ClipboardOperations_ReturnFalseWithoutServiceOrWhenPasteIsNull()
+    {
+        var withoutClipboard = new TextBox();
+        Assert.IsFalse(withoutClipboard.CopyAsync().GetAwaiter().GetResult());
+        Assert.IsFalse(withoutClipboard.PasteAsync().GetAwaiter().GetResult());
+
+        var clipboard = new ClipboardStub { PasteText = null };
+        var withClipboard = new TextBox { ClipboardService = clipboard };
+        withClipboard.SetText("unchanged");
+
+        Assert.IsFalse(withClipboard.PasteAsync().GetAwaiter().GetResult());
+        Assert.AreEqual("unchanged", withClipboard.Text);
+    }
+
+    [TestMethod]
+    public void DisplayAndCaretHelpers_ReturnExpectedValues()
+    {
+        var tb = new TextBox { MultiLine = true };
+        tb.SetText("A界\nB");
+        tb.Caret = (2, 0);
+
+        Assert.AreEqual(3, tb.GetCaretCellColumn());
+        Assert.AreEqual("A界", tb.GetDisplayLine(0));
+        Assert.AreEqual("", tb.GetDisplayLine(-1));
+        Assert.AreEqual("", tb.GetDisplayLine(99));
+        Assert.AreEqual(tb.ShouldShowCaret(), tb.ShouldShowCaret());
+
+        tb.ApplyNativeText("native");
+        Assert.AreEqual("native", tb.Text);
+    }
+
     private sealed class ReadOnlyObject : INotifyPropertyChanged
     {
         private string _name = string.Empty;

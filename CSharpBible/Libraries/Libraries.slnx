@@ -27,6 +27,9 @@
     <Project Path="WFSystem.Data/WFSystem.Windows.Data.csproj" />
   </Folder>
   <Folder Name="/Libraries/ConsoleLib/">
+    <Project Path="ConsoleLib.CoreTests/ConsoleLib.CoreTests.csproj" />
+    <Project Path="ConsoleLib.Cxaml.Designer/ConsoleLib.Cxaml.Designer.csproj" />
+    <Project Path="ConsoleLib.Cxaml.DesignerTests/ConsoleLib.Cxaml.DesignerTests.csproj" />
     <Project Path="ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
     <Project Path="ConsoleLib.Rendering/ConsoleLib.Rendering.csproj" />
     <Project Path="ConsoleLib.RenderingTests/ConsoleLib.RenderingTests.csproj" />
@@ -74,9 +77,4 @@
       <Property Name="VWDPort" Value="&quot;53114&quot;" />
     </Properties>
   </Project>
-  <Project Path="../Calc/Calc32Cons.Cxaml/Calc32Cons.Cxaml.csproj" />
-  <Project Path="../ConsoleApps/Leonardo.ST.Cxaml/Leonardo.ST.Cxaml.csproj" />
-  <Project Path="../Games/DetectiveGame.Console.Cxaml/DetectiveGame.Console.Cxaml.csproj" />
-  <Project Path="../OpenAI/Ollama.CodingAgent.Console.Cxaml/Ollama.CodingAgent.Console.Cxaml.csproj" />
-  <Project Path="ConsoleLib.Cxaml.ExamplesTests/ConsoleLib.Cxaml.ExamplesTests.csproj" />
 </Solution>

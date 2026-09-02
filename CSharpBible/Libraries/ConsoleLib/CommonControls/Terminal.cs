@@ -25,7 +25,7 @@ namespace ConsoleLib.CommonControls;
 /// Implements the <see cref="ConsoleLib.Control" />
 /// </summary>
 /// <seealso cref="ConsoleLib.Control" />
-public class Terminal : Control, IConsole
+public class Terminal : Control, IConsole, IHasBorder
 {
     private IConsoleWidgetHost? ConsoleHost => GetWidgetSetCapability<IConsoleWidgetHost>();
 

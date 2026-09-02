@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : ConsoleLib
 // Author           : Mir
 // Created          : 08-11-2022
@@ -627,6 +627,8 @@ public class Control : IControl
     {
         WidgetSet?.SynchronizeControl(this);
     }
+
+    protected void NotifyControlChanged() => OnChange?.Invoke(this, EventArgs.Empty);
 
     protected IApplication? TryGetApplicationRoot() => Root as IApplication;
 
