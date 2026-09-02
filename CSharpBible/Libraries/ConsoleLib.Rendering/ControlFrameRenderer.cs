@@ -4,6 +4,7 @@ using ConsoleLib.Interfaces;
 using ConsoleLib.Data;
 using ConsoleLib.CommonControls;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ConsoleLib.Rendering;
 
@@ -68,6 +69,22 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         if (control is ProgressBar progressBar)
         {
             DrawProgressBar(progressBar, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
+        if (control is MenuBar menuBar)
+        {
+            DrawMenuBar(menuBar, cells, size);
+            return;
+        }
+        if (control is MenuPopup menuPopup)
+        {
+            DrawMenuPopup(menuPopup, cells, size);
+            return;
+        }
+        if (control is MenuItem menuItem)
+        {
+            DrawMenuItem(menuItem, cells, size, menuItem.Position);
             DrawChildren(control, cells, size);
             return;
         }
@@ -268,6 +285,62 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var y = progressBar.Position.Y + (border ? 1 : 0);
         DrawLine(cells, size, x, y, filled, new string('#', filled), foreground, background);
         DrawLine(cells, size, x + filled, y, width - filled, new string('-', width - filled), foreground, background);
+    }
+
+    private static void DrawMenuBar(MenuBar menuBar, TerminalCell[,] cells, Size size)
+    {
+        DrawLine(cells, size, menuBar.Position.X, menuBar.Position.Y, menuBar.size.Width, string.Empty, menuBar.GetActualForeColor(), menuBar.GetActualBackColor());
+        foreach (var item in menuBar.Children.OfType<MenuItem>())
+            DrawMenuItem(item, cells, size, new Point(menuBar.Position.X + item.Position.X, menuBar.Position.Y + item.Position.Y));
+    }
+
+    private static void DrawMenuPopup(MenuPopup menuPopup, TerminalCell[,] cells, Size size)
+    {
+        var border = GetBorder(menuPopup);
+        var contentWidth = Math.Max(0, menuPopup.size.Width - (border ? 2 : 0));
+        var contentHeight = Math.Max(0, menuPopup.size.Height - (border ? 2 : 0));
+        var contentX = menuPopup.Position.X + (border ? 1 : 0);
+        var contentY = menuPopup.Position.Y + (border ? 1 : 0);
+        for (var row = 0; row < contentHeight; row++)
+            DrawLine(cells, size, contentX, contentY + row, contentWidth, string.Empty, menuPopup.GetActualForeColor(), menuPopup.GetActualBackColor());
+        foreach (var item in menuPopup.Children.OfType<MenuItem>())
+        {
+            var origin = new Point(menuPopup.Position.X + item.Position.X, menuPopup.Position.Y + item.Position.Y);
+            var width = item.IsSeparator ? contentWidth : item.size.Width;
+            DrawMenuItem(item, cells, size, origin, width);
+        }
+    }
+
+    private static void DrawMenuItem(MenuItem menuItem, TerminalCell[,] cells, Size size, Point origin, int? widthOverride = null)
+    {
+        var width = Math.Max(0, widthOverride ?? menuItem.size.Width);
+        if (menuItem.IsSeparator)
+        {
+            DrawLine(cells, size, origin.X, origin.Y, width, new string('─', width), menuItem.ForeColor, menuItem.BackColor);
+            return;
+        }
+
+        var text = NormalizeMenuText(menuItem.Text ?? string.Empty, out var acceleratorIndex);
+        var selected = menuItem.IsHovered || menuItem.Active;
+        var foreground = !menuItem.Enabled
+            ? menuItem.DisabledForeColor
+            : selected || (menuItem.Parent is MenuBar menuBar && menuBar.ShowAccelerators && acceleratorIndex >= 0)
+                ? menuItem.HotColor
+                : menuItem.GetActualForeColor();
+        var background = selected ? menuItem.HotBackColor : menuItem.GetActualBackColor();
+        DrawLine(cells, size, origin.X, origin.Y, width, text, foreground, background);
+
+        if (menuItem.Enabled && menuItem.Parent is MenuBar { ShowAccelerators: true } && acceleratorIndex >= 0 && acceleratorIndex < width && origin.X + acceleratorIndex >= 0 && origin.X + acceleratorIndex < size.Width && origin.Y >= 0 && origin.Y < size.Height)
+            cells[origin.X + acceleratorIndex, origin.Y] = new TerminalCell(text[acceleratorIndex], menuItem.HotColor, background);
+    }
+
+    private static string NormalizeMenuText(string text, out int acceleratorIndex)
+    {
+        var normalized = text.Replace("&&", "\0");
+        acceleratorIndex = normalized.IndexOf('&');
+        if (acceleratorIndex >= 0)
+            normalized = normalized.Remove(acceleratorIndex, 1);
+        return normalized.Replace('\0', '&');
     }
 
     private static void DrawStatusBar(StatusBar statusBar, TerminalCell[,] cells, Size size)

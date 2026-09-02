@@ -1,0 +1,9 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="ConsoleLib.Cxaml.Designer.Views.ToolboxView">
+  <StackPanel Spacing="8">
+	<TextBlock Text="Toolbox" FontWeight="Bold" />
+	<ListBox ItemsSource="{Binding Toolbox}" SelectedItem="{Binding SelectedTool}" />
+	<Button Content="Insert selected" Command="{Binding InsertSelectedToolCommand}" />
+  </StackPanel>
+</UserControl>

@@ -1,114 +1,16 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-xmlns:designer="using:ConsoleLib.Cxaml.Designer.Controls"
-        xmlns:vm="using:ConsoleLib.Cxaml.Designer.ViewModels"
+        xmlns:views="using:ConsoleLib.Cxaml.Designer.Views"
         x:Class="ConsoleLib.Cxaml.Designer.MainWindow"
         Width="1000" Height="650" Title="ConsoleLib CXAML Designer">
-  <Grid ColumnDefinitions="180,*,280" RowDefinitions="*,Auto">
-    <StackPanel Grid.Column="0" Margin="8" Spacing="8">
-      <ListBox ItemsSource="{Binding Toolbox}" SelectedItem="{Binding SelectedTool}" />
-      <Button Content="Insert selected" Command="{Binding InsertSelectedToolCommand}" />
-      <TextBox Text="{Binding FilePath}" PlaceholderText="CXAML file path" />
-      <Button Content="Load CXAML" Command="{Binding LoadFileCommand}" />
-      <Button Content="Save CXAML" Command="{Binding SaveFileCommand}" />
+  <Grid ColumnDefinitions="220,*,330" RowDefinitions="*,Auto">
+    <StackPanel Grid.Column="0" Margin="8" Spacing="16">
+      <views:ToolboxView />
+      <views:ConfigurationView />
     </StackPanel>
-    <Grid Grid.Column="1" RowDefinitions="*,*">
-      <Grid Grid.Row="0" RowDefinitions="*,Auto">
-        <designer:SourceEditor Text="{Binding Markup, Mode=TwoWay}"
-                               CaretOffset="{Binding SourceCaretOffset, Mode=TwoWay}" />
-        <TextBlock Grid.Row="1" Text="{Binding Diagnostics}" Foreground="DarkRed" />
-      </Grid>
-      <TabControl Grid.Row="1" Margin="8" SelectedIndex="{Binding SelectedPreviewTabIndex}">
-        <TabItem Header="Visual">
-          <Border BorderBrush="Gray" BorderThickness="1" Padding="8">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-              <ContentControl Content="{Binding RenderedPreview}"
-                              HorizontalContentAlignment="Left"
-                              VerticalContentAlignment="Top" />
-            </ScrollViewer>
-          </Border>
-        </TabItem>
-        <TabItem Header="Console">
-          <Border BorderBrush="Gray" BorderThickness="1" Padding="8">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-              <TextBlock x:Name="ConsolePreviewText"
-                         Text="{Binding ConsolePreview}"
-                         FontFamily="Consolas"
-                         PointerPressed="ConsolePreviewText_OnPointerPressed" />
-            </ScrollViewer>
-          </Border>
-        </TabItem>
-      </TabControl>
-    </Grid>
+    <views:EditorPreviewView Grid.Column="1" Margin="8" />
     <Border Grid.Column="2" Margin="8" BorderBrush="Gray" BorderThickness="1" Padding="8">
-      <StackPanel Spacing="8">
-        <TextBlock Text="Inspector" FontWeight="Bold" />
-        <ComboBox ItemsSource="{Binding PreviewMappings}"
-                  SelectedValue="{Binding SelectedPreviewControlId}"
-                  SelectedValueBinding="{Binding Id}"
-                  PlaceholderText="Select element" />
-        <TextBlock Text="{Binding SelectedElement}" />
-        <TextBlock Text="{Binding Preview}" FontFamily="Consolas" />
-        <ComboBox ItemsSource="{Binding ConsoleFrameSizes}"
-                  SelectedItem="{Binding SelectedConsoleFrameSize}"
-                  PlaceholderText="Console frame size" />
-        <TextBlock Text="Virtual AXAML" FontWeight="Bold" />
-        <TextBox Text="{Binding VirtualAxaml}" IsReadOnly="True"
-                 AcceptsReturn="True" FontFamily="Consolas"
-                 MinHeight="100" TextWrapping="NoWrap" />
-        <ItemsControl ItemsSource="{Binding CategorizedInspectorProperties}">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <Grid ColumnDefinitions="110,*" Margin="0,2">
-                <TextBlock Text="{Binding Category}" Foreground="Gray" />
-                <TextBlock Grid.Column="1" Text="{Binding Name}" />
-              </Grid>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <ComboBox ItemsSource="{Binding InspectorProperties}" DisplayMemberBinding="{Binding Name}"
-                  SelectedItem="{Binding SelectedPropertyName}" />
-        <TextBox Text="{Binding SelectedPropertyValue}" />
-        <Button Content="Apply property" Command="{Binding ApplySelectedPropertyCommand}" />
-        <StackPanel IsVisible="{Binding IsGridSelected}" Spacing="4">
-          <TextBlock Text="Grid definitions" FontWeight="Bold" />
-          <TextBlock Text="Rows" Foreground="Gray" />
-          <ItemsControl ItemsSource="{Binding GridRows}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <Grid ColumnDefinitions="*,70,70,Auto">
-                  <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
-                  <ComboBox Grid.Column="1" ItemsSource="{Binding Source={x:Static vm:GridUnitTypeValues.All}}"
-                            SelectedItem="{Binding Unit}" />
-                  <NumericUpDown Grid.Column="2" Value="{Binding Value}" Minimum="0" />
-                  <Button Grid.Column="3" Content="-" Command="{Binding $parent[Window].DataContext.RemoveGridRowCommand}"
-                          CommandParameter="{Binding}" />
-                </Grid>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-          <Button Content="Add row" Command="{Binding AddGridRowCommand}" />
-          <TextBlock Text="Columns" Foreground="Gray" />
-          <ItemsControl ItemsSource="{Binding GridColumns}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <Grid ColumnDefinitions="*,70,70,Auto">
-                  <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
-                  <ComboBox Grid.Column="1" ItemsSource="{Binding Source={x:Static vm:GridUnitTypeValues.All}}"
-                            SelectedItem="{Binding Unit}" />
-                  <NumericUpDown Grid.Column="2" Value="{Binding Value}" Minimum="0" />
-                  <Button Grid.Column="3" Content="-" Command="{Binding $parent[Window].DataContext.RemoveGridColumnCommand}"
-                          CommandParameter="{Binding}" />
-                </Grid>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-          <Button Content="Add column" Command="{Binding AddGridColumnCommand}" />
-          <Button Content="Apply Grid definitions" Command="{Binding ApplyGridDefinitionsCommand}" />
-        </StackPanel>
-        <TextBlock Text="{Binding InspectorStatus}" />
-      </StackPanel>
+      <views:InspectorView />
     </Border>
-    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Margin="8" Text="{Binding Diagnostics}" />
   </Grid>
 </Window>
