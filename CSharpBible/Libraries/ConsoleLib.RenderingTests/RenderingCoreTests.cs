@@ -840,6 +840,77 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void RendererUsesDockPanelPositionsAndLastChildFill()
+    {
+        var dock = new DockPanel { size = new Size(12, 6) };
+        var left = new Label { Text = "L", size = new Size(2, 1) };
+        var top = new Label { Text = "T", size = new Size(1, 1) };
+        var right = new Label { Text = "R", size = new Size(2, 1) };
+        var bottom = new Label { Text = "B", size = new Size(1, 1) };
+        var fill = new Label { Text = "F", size = new Size(1, 1) };
+        dock.LastChildFill = false;
+        DockPanel.SetDock(left, Dock.Left);
+        DockPanel.SetDock(top, Dock.Top);
+        DockPanel.SetDock(right, Dock.Right);
+        DockPanel.SetDock(bottom, Dock.Bottom);
+        DockPanel.SetDock(fill, Dock.Left);
+        dock.Add(left);
+        dock.Add(top);
+        dock.Add(right);
+        dock.Add(bottom);
+        dock.Add(fill);
+
+        var service = new AttachedRenderService();
+        service.Attach(dock, new Size(12, 6));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('L', frame.GetCell(0, 2).Character);
+        Assert.AreEqual('T', frame.GetCell(2, 0).Character);
+        Assert.AreEqual('R', frame.GetCell(10, 3).Character);
+        Assert.AreEqual('B', frame.GetCell(2, 5).Character);
+        Assert.AreEqual('F', frame.GetCell(2, 2).Character);
+    }
+
+    [TestMethod]
+    public void RendererReflowsDockPanelChildrenAfterResize()
+    {
+        var dock = new DockPanel { size = new Size(8, 4) };
+        var left = new Label { Text = "L", size = new Size(2, 1) };
+        var fill = new Label { Text = "F", size = new Size(1, 1) };
+        DockPanel.SetDock(left, Dock.Left);
+        dock.Add(left);
+        dock.Add(fill);
+        var service = new AttachedRenderService();
+        service.Attach(dock, new Size(8, 4));
+
+        service.Resize(new Size(12, 6));
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual('L', frame.GetCell(0, 2).Character);
+        Assert.AreEqual('F', frame.GetCell(2, 2).Character);
+        Assert.AreEqual(' ', frame.GetCell(11, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererClipsDockPanelChildrenToViewport()
+    {
+        var dock = new DockPanel { size = new Size(10, 3) };
+        var left = new Label { Text = "LEFT", size = new Size(6, 1) };
+        var right = new Label { Text = "RIGHT", size = new Size(6, 1) };
+        dock.LastChildFill = false;
+        DockPanel.SetDock(left, Dock.Left);
+        DockPanel.SetDock(right, Dock.Right);
+        dock.Add(left);
+        dock.Add(right);
+
+        var service = new AttachedRenderService();
+        service.Attach(dock, new Size(4, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("LEFT", ReadRow(frame, 1, 4));
+    }
+
+    [TestMethod]
     public void RendererPlacesShadowBehindControlContent()
     {
         var label = new Label { Text = "A", Shadow = true, size = new Size(2, 1) };
