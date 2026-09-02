@@ -529,9 +529,14 @@ public sealed class RenderingCoreTests
 
     private static string ReadRow(IRenderSnapshot snapshot, int y, int width)
     {
+        return ReadRowAt(snapshot, 0, y, width);
+    }
+
+    private static string ReadRowAt(IRenderSnapshot snapshot, int x, int y, int width)
+    {
         var characters = new char[width];
-        for (var x = 0; x < width; x++)
-            characters[x] = snapshot.GetCell(x, y).Character;
+        for (var index = 0; index < width; index++)
+            characters[index] = snapshot.GetCell(x + index, y).Character;
         return new string(characters);
     }
 
@@ -595,5 +600,197 @@ public sealed class RenderingCoreTests
 
         Assert.AreEqual('░', frame.GetCell(3, 2).Character);
         Assert.AreEqual(' ', frame.GetCell(0, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererFillsProgressBarAccordingToFraction()
+    {
+        var progress = new ProgressBar
+        {
+            Minimum = 0,
+            Maximum = 100,
+            Value = 50,
+            size = new Size(8, 1)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(progress, new Size(8, 1));
+
+        Assert.AreEqual("####----", ReadRow(service.GetSnapshot(), 0, 8));
+    }
+
+    [TestMethod]
+    public void RendererTruncatesFractionAndRendersProgressEndpoints()
+    {
+        var progress = new ProgressBar { Maximum = 3, Value = 1, size = new Size(7, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(progress, new Size(7, 1));
+
+        Assert.AreEqual("##-----", ReadRow(service.GetSnapshot(), 0, 7));
+
+        progress.Value = 3;
+        service.Render();
+        Assert.AreEqual("#######", ReadRow(service.GetSnapshot(), 0, 7));
+
+        progress.Value = 0;
+        service.Render();
+        Assert.AreEqual("-------", ReadRow(service.GetSnapshot(), 0, 7));
+    }
+
+    [TestMethod]
+    public void RendererHandlesDegenerateProgressRange()
+    {
+        var progress = new ProgressBar
+        {
+            Minimum = 5,
+            Maximum = 5,
+            Value = 5,
+            size = new Size(6, 1)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(progress, new Size(6, 1));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("------", ReadRow(frame, 0, 6));
+    }
+
+    [TestMethod]
+    public void RendererClipsProgressBarAndUsesDisabledColors()
+    {
+        var progress = new ProgressBar
+        {
+            Value = 50,
+            Enabled = false,
+            Position = new Point(-2, 0),
+            size = new Size(8, 1)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(progress, new Size(4, 1));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("##--", ReadRow(frame, 0, 4));
+        Assert.AreEqual(ConsoleColor.DarkGray, frame.GetCell(0, 0).Foreground);
+        Assert.AreEqual(ConsoleColor.Black, frame.GetCell(0, 0).Background);
+    }
+
+    [TestMethod]
+    public void RendererUsesStatusTextAndStatusColor()
+    {
+        var status = new StatusBar
+        {
+            Status = "Ready",
+            StatusColor = ConsoleColor.Green,
+            Position = new Point(0, 1),
+            size = new Size(8, 1)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(status, new Size(8, 3));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("Ready   ", ReadRow(frame, 1, 8));
+        Assert.AreEqual(ConsoleColor.Green, frame.GetCell(0, 1).Foreground);
+        Assert.AreEqual(ConsoleColor.Black, frame.GetCell(7, 1).Background);
+    }
+
+    [TestMethod]
+    public void RendererUsesDisabledStatusColorsAndClipsStatusText()
+    {
+        var status = new StatusBar
+        {
+            Status = "Loading data",
+            StatusColor = ConsoleColor.Green,
+            Enabled = false,
+            size = new Size(5, 1)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(status, new Size(5, 1));
+        var cell = service.GetSnapshot().GetCell(0, 0);
+
+        Assert.AreEqual("Loadi", ReadRow(service.GetSnapshot(), 0, 5));
+        Assert.AreEqual(ConsoleColor.DarkGray, cell.Foreground);
+    }
+
+    [TestMethod]
+    public void RendererRejectsNullRoot()
+    {
+        var renderer = new ControlFrameRenderer();
+        var exceptionThrown = false;
+
+        try
+        {
+            renderer.Render(null!, new TerminalCell[1, 1], new Size(1, 1));
+        }
+        catch (ArgumentNullException)
+        {
+            exceptionThrown = true;
+        }
+
+        Assert.IsTrue(exceptionThrown);
+    }
+
+    [TestMethod]
+    public void RendererSkipsInvisibleControls()
+    {
+        var label = new Label { Text = "Hidden", Visible = false, size = new Size(6, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(6, 1));
+
+        Assert.AreEqual("      ", ReadRow(service.GetSnapshot(), 0, 6));
+    }
+
+    [TestMethod]
+    public void RendererUsesDoubleBorderGlyphs()
+    {
+        var panel = new Panel { BorderStyle = BorderStyle.Double, size = new Size(3, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(3, 2));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('╔', frame.GetCell(0, 0).Character);
+        Assert.AreEqual('╝', frame.GetCell(2, 1).Character);
+    }
+
+    [TestMethod]
+    public void RendererClipsShadowWhenShadowStartsOutsideViewport()
+    {
+        var label = new Label { Text = "A", Shadow = true, Position = new Point(-1, -1), size = new Size(2, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(2, 2));
+
+        Assert.AreEqual('░', service.GetSnapshot().GetCell(0, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererStopsTreeRowsAtControlHeight()
+    {
+        var tree = new TreeView { size = new Size(8, 1) };
+        tree.Nodes.Add(new TreeNode("First"));
+        tree.Nodes.Add(new TreeNode("Second"));
+        var service = new AttachedRenderService();
+        service.Attach(tree, new Size(8, 1));
+
+        Assert.AreEqual("  First ", ReadRow(service.GetSnapshot(), 0, 8));
+    }
+
+    [TestMethod]
+    public void RendererPreservesEmptyMultilineRows()
+    {
+        var textBox = new TextBox { Text = "top\n\nbottom", MultiLine = true, size = new Size(6, 3) };
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(6, 3));
+
+        Assert.AreEqual("top   ", ReadRow(service.GetSnapshot(), 0, 6));
+        Assert.AreEqual("      ", ReadRow(service.GetSnapshot(), 1, 6));
+        Assert.AreEqual("bottom", ReadRow(service.GetSnapshot(), 2, 6));
+    }
+
+    [TestMethod]
+    public void RendererBreaksMultilineWordsAtAvailableSpaces()
+    {
+        var textBox = new TextBox { Text = "one two", MultiLine = true, size = new Size(5, 2) };
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(5, 2));
+
+        Assert.AreEqual("one  ", ReadRow(service.GetSnapshot(), 0, 5));
+        Assert.AreEqual("two  ", ReadRow(service.GetSnapshot(), 1, 5));
     }
 }

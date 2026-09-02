@@ -65,6 +65,18 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             DrawChildren(control, cells, size);
             return;
         }
+        if (control is ProgressBar progressBar)
+        {
+            DrawProgressBar(progressBar, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
+        if (control is StatusBar statusBar)
+        {
+            DrawStatusBar(statusBar, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
 
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -76,11 +88,11 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var textWidth = Math.Max(0, width - (border ? 2 : 0));
         var wraps = control is TextBox { MultiLine: true };
         var textValue = !wraps && text.Length > textWidth && textWidth >= 1
-            ? textWidth == 1 ? "…" : text[..(textWidth - 1)] + "…"
+            ? textWidth == 1 ? "…" : text.Substring(0, textWidth - 1) + "…"
             : text;
         if (control is Button && textValue.Length < textWidth)
             textStart += (textWidth - textValue.Length) / 2;
-        var lines = wraps
+        var lines = wraps && textWidth > 0
             ? WrapLines(textValue, textWidth)
             : new[] { textValue };
         var (foreground, background) = GetColors(control);
@@ -245,6 +257,30 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         }
     }
 
+    private static void DrawProgressBar(ProgressBar progressBar, TerminalCell[,] cells, Size size)
+    {
+        var border = GetBorder(progressBar);
+        var width = Math.Max(0, progressBar.size.Width - (border ? 2 : 0));
+        var fraction = Math.Max(0, Math.Min(1, progressBar.Fraction));
+        var filled = (int)Math.Floor(width * fraction);
+        var (foreground, background) = GetColors(progressBar);
+        var x = progressBar.Position.X + (border ? 1 : 0);
+        var y = progressBar.Position.Y + (border ? 1 : 0);
+        DrawLine(cells, size, x, y, filled, new string('#', filled), foreground, background);
+        DrawLine(cells, size, x + filled, y, width - filled, new string('-', width - filled), foreground, background);
+    }
+
+    private static void DrawStatusBar(StatusBar statusBar, TerminalCell[,] cells, Size size)
+    {
+        var (foreground, background) = GetColors(statusBar);
+        var statusForeground = statusBar.Enabled ? statusBar.StatusColor : foreground;
+        var border = GetBorder(statusBar);
+        var x = statusBar.Position.X + (border ? 1 : 0);
+        var y = statusBar.Position.Y + (border ? 1 : 0);
+        var width = Math.Max(0, statusBar.size.Width - (border ? 2 : 0));
+        DrawLine(cells, size, x, y, width, statusBar.Status ?? string.Empty, statusForeground, background);
+    }
+
     private static void DrawLine(
         TerminalCell[,] cells,
         Size size,
@@ -280,8 +316,6 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
 
     private static IReadOnlyList<string> WrapLines(string text, int width)
     {
-        if (width <= 0)
-            return Array.Empty<string>();
         var lines = new List<string>();
         foreach (var sourceLine in text.Replace("\r", string.Empty).Split('\n'))
         {
