@@ -259,6 +259,52 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void RendererDisplaysRadioButtonSelectionAndMutualExclusion()
+    {
+        var panel = new Panel { size = new Size(12, 2) };
+        var first = new RadioButton { Text = "First", size = new Size(12, 1) };
+        var second = new RadioButton { Text = "Second", Position = new Point(0, 1), size = new Size(12, 1) };
+        panel.Add(first);
+        panel.Add(second);
+        first.Select();
+
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(12, 2));
+        var selectedFirst = service.GetSnapshot();
+
+        Assert.AreEqual("(*) First   ", ReadRow(selectedFirst, 0, 12));
+        Assert.AreEqual("( ) Second  ", ReadRow(selectedFirst, 1, 12));
+
+        second.Select();
+        service.Render();
+
+        var selectedSecond = service.GetSnapshot();
+        Assert.IsFalse(first.IsChecked);
+        Assert.IsTrue(second.IsChecked);
+        Assert.AreEqual("( ) First   ", ReadRow(selectedSecond, 0, 12));
+        Assert.AreEqual("(*) Second  ", ReadRow(selectedSecond, 1, 12));
+    }
+
+    [TestMethod]
+    public void RendererUsesDisabledRadioButtonColorsAndClipsItsMarkerText()
+    {
+        var radio = new RadioButton
+        {
+            Text = "Long label",
+            Enabled = false,
+            size = new Size(5, 1)
+        };
+
+        var service = new AttachedRenderService();
+        service.Attach(radio, new Size(5, 1));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("( ) …", ReadRow(frame, 0, 5));
+        Assert.AreEqual(ConsoleColor.DarkGray, frame.GetCell(0, 0).Foreground);
+        Assert.AreEqual(radio.GetActualBackColor(), frame.GetCell(0, 0).Background);
+    }
+
+    [TestMethod]
     public void RendererDisplaysSelectedComboBoxItemWithCanonicalBrackets()
     {
         var comboBox = new ComboBox { size = new Size(12, 1) };

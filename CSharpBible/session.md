@@ -16,7 +16,7 @@ Work is delivered in focused slices. Each slice should:
 - Repository: `ChristianRosewich/CSharp`
 - Working directory: `D:\Projekte\GitHub\CSharp\CSharpBible`
 - Current branch: `master`
-- Latest relevant commit: pending `feat: sync list collection rendering`
+- Latest relevant commit: pending `feat: cover radio button rendering`
 - The working tree was clean when this file was created.
 - Session plan: `C:\Users\DEROSCHR\.copilot\session-state\cb26ebc1-c49b-46fe-9e16-66dea4314ece\plan.md`
 - SQL session todos: all currently recorded todos are done.
@@ -92,6 +92,7 @@ Project: `Libraries\ConsoleLib.Rendering`
 - `Pixel`: single-cell character output, color preservation, disabled colors, and clipping.
 - Container composition: `Dialog` visibility, `ModalHost` popup lifecycle, and `StackPanel` child placement through the shared fallback renderer.
 - Dynamic collections: `ListBox` collection updates and selection scrolling are propagated to the shared renderer.
+- `RadioButton`: checked/unchecked markers, mutual exclusion, disabled colors, and clipping.
 
 ## Recent commits
 
@@ -118,9 +119,10 @@ Earlier commits established `ConsoleLib.Rendering`, its test project, Grid loadi
 
 Latest successful targeted runs:
 
-- `ConsoleLib.RenderingTests`: **65 passed**
+- `ConsoleLib.RenderingTests`: **67 passed**
 - `ConsoleLib.Cxaml.DesignerTests`: **25 passed**
 - Container composition and dynamic ListBox collection regressions pass on net8.0, net9.0, and net10.0.
+- RadioButton rendering regressions pass on net8.0, net9.0, and net10.0.
 
 Existing nullable event-handler warnings in legacy ConsoleLib controls are unrelated to the rendering work.
 The Test-Coverage skill reports **100% scoped line coverage** for `ControlFrameRenderer` (490/490 lines).
