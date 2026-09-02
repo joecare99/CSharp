@@ -793,4 +793,89 @@ public sealed class RenderingCoreTests
         Assert.AreEqual("one  ", ReadRow(service.GetSnapshot(), 0, 5));
         Assert.AreEqual("two  ", ReadRow(service.GetSnapshot(), 1, 5));
     }
+
+    [TestMethod]
+    public void RendererLayoutsMenuBarItemsAndHighlightsAccelerator()
+    {
+        var menuBar = new MenuBar { size = new Size(14, 1) };
+        var file = new MenuItem { Text = "&File", HotColor = ConsoleColor.Yellow };
+        var edit = new MenuItem { Text = "Edit" };
+        menuBar.AddRootItem(file);
+        menuBar.AddRootItem(edit);
+        menuBar.SetAcceleratorVisibility(true);
+        var service = new AttachedRenderService();
+        service.Attach(menuBar, new Size(14, 1));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("File   Edit   ", ReadRow(frame, 0, 14));
+        Assert.AreEqual(ConsoleColor.Yellow, frame.GetCell(0, 0).Foreground);
+        Assert.AreEqual(ConsoleColor.Yellow, frame.GetCell(1, 0).Foreground);
+    }
+
+    [TestMethod]
+    public void RendererHighlightsActiveAndDisabledMenuItems()
+    {
+        var menuBar = new MenuBar { size = new Size(14, 1) };
+        var active = new MenuItem { Text = "Active", HotColor = ConsoleColor.White, HotBackColor = ConsoleColor.Blue };
+        var disabled = new MenuItem { Text = "Disabled", Enabled = false, DisabledForeColor = ConsoleColor.DarkGray };
+        menuBar.AddRootItem(active);
+        menuBar.AddRootItem(disabled);
+        active.Active = true;
+        var service = new AttachedRenderService();
+        service.Attach(menuBar, new Size(14, 1));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual(ConsoleColor.White, frame.GetCell(0, 0).Foreground);
+        Assert.AreEqual(ConsoleColor.Blue, frame.GetCell(0, 0).Background);
+        Assert.AreEqual(ConsoleColor.DarkGray, frame.GetCell(8, 0).Foreground);
+    }
+
+    [TestMethod]
+    public void RendererDrawsPopupBorderItemsAndSelection()
+    {
+        var root = new Panel { size = new Size(16, 7) };
+        var popup = new MenuPopup { Position = new Point(2, 1) };
+        popup.AddItem(new MenuItem { Text = "Open" });
+        var selected = new MenuItem { Text = "Save" };
+        popup.AddItem(selected);
+        selected.Active = true;
+        popup.Show();
+        root.Add(popup);
+        var service = new AttachedRenderService();
+        service.Attach(root, new Size(16, 7));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('┌', frame.GetCell(2, 1).Character);
+        Assert.AreEqual('O', frame.GetCell(3, 2).Character);
+        Assert.AreEqual('S', frame.GetCell(3, 3).Character);
+        Assert.AreEqual(ConsoleColor.Black, frame.GetCell(3, 2).Background);
+        Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(3, 3).Background);
+    }
+
+    [TestMethod]
+    public void RendererDrawsPopupSeparatorsAndClipsItems()
+    {
+        var popup = new MenuPopup { Position = new Point(-1, 0) };
+        popup.AddItem(new MenuItem { Text = "Long entry" });
+        popup.AddItem(new MenuItem { IsSeparator = true, Text = string.Empty });
+        var service = new AttachedRenderService();
+        popup.Show();
+        service.Attach(popup, new Size(5, 4));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("Long ", ReadRow(frame, 1, 5));
+        Assert.AreEqual("─────", ReadRow(frame, 2, 5));
+        Assert.AreEqual('─', frame.GetCell(0, 0).Character);
+    }
+
+    [TestMethod]
+    public void RendererDrawsStandaloneMenuItemAndChildren()
+    {
+        var item = new MenuItem { Text = "Item", size = new Size(6, 1) };
+        item.Add(new Label { Text = "X", Position = new Point(5, 0), size = new Size(1, 1) });
+        var service = new AttachedRenderService();
+        service.Attach(item, new Size(6, 1));
+
+        Assert.AreEqual("Item X", ReadRow(service.GetSnapshot(), 0, 6));
+    }
 }

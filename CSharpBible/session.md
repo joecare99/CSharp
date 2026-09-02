@@ -83,11 +83,12 @@ Project: `Libraries\ConsoleLib.Rendering`
 - `ScrollBar`: horizontal/vertical arrows, tracks, proportional thumbs, disabled colors, degenerate ranges, and clipping.
 - `ProgressBar`: determinate filled/unfilled cells, fractional values, disabled colors, and clipping.
 - `StatusBar`: status text, custom status colors, disabled colors, and clipping.
-- `ProgressBar`: determinate filled/unfilled cells, fractional values, disabled colors, and clipping.
-- `StatusBar`: status text, custom status colors, disabled colors, and clipping.
+- `MenuBar` and `MenuItem`: horizontal layout, mnemonic normalization, accelerator highlighting, active/disabled colors, and clipping.
+- `MenuPopup`: bordered popup backgrounds, local item positions, selection colors, separators, and clipping.
 
 ## Recent commits
 
+- `cc1466796 feat: render progress and status controls`
 - `b88ff19e8 feat: render canonical scrollbars`
 - `fe395582c feat: render TreeView controls`
 - `42d4b790a feat: render tabs and tiles`
@@ -109,11 +110,11 @@ Earlier commits established `ConsoleLib.Rendering`, its test project, Grid loadi
 
 Latest successful targeted runs:
 
-- `ConsoleLib.RenderingTests`: **47 passed**
+- `ConsoleLib.RenderingTests`: **52 passed**
 - `ConsoleLib.Cxaml.DesignerTests`: **25 passed**
 
 Existing nullable event-handler warnings in legacy ConsoleLib controls are unrelated to the rendering work.
-The Test-Coverage skill reports **100% scoped line coverage** for `ControlFrameRenderer` (306/306 lines).
+The Test-Coverage skill reports **100% scoped line coverage** for `ControlFrameRenderer` (364/364 lines).
 
 Run tests from PowerShell with Windows paths:
 
@@ -128,11 +129,10 @@ Run the two commands sequentially when possible because parallel builds can cont
 
 Continue the canonical renderer before migrating hosts:
 
-1. Menu and menu-popup rendering.
-2. Form/collection controls not yet covered by the shared renderer.
-3. Canonical terminal/control-specific output where existing ExtCon or Posix behavior exists.
-4. Migrate ExtCon to `ConsoleLib.Rendering`.
-5. Migrate Posix to `ConsoleLib.Rendering`.
+1. Form/collection controls not yet covered by the shared renderer.
+2. Canonical terminal/control-specific output where existing ExtCon or Posix behavior exists.
+3. Migrate ExtCon to `ConsoleLib.Rendering`.
+4. Migrate Posix to `ConsoleLib.Rendering`.
 
 Designer-specific follow-up work:
 

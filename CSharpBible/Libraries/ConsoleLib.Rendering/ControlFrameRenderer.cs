@@ -289,7 +289,7 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
 
     private static void DrawMenuBar(MenuBar menuBar, TerminalCell[,] cells, Size size)
     {
-        DrawLine(cells, size, menuBar.Position.X, menuBar.Position.Y, menuBar.size.Width, string.Empty, menuBar.GetActualForeColor(), menuBar.GetActualBackColor());
+        DrawLine(cells, size, menuBar.Position.X, menuBar.Position.Y, menuBar.size.Width, string.Empty, menuBar.ForeColor, menuBar.BackColor);
         foreach (var item in menuBar.Children.OfType<MenuItem>())
             DrawMenuItem(item, cells, size, new Point(menuBar.Position.X + item.Position.X, menuBar.Position.Y + item.Position.Y));
     }
@@ -302,7 +302,7 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var contentX = menuPopup.Position.X + (border ? 1 : 0);
         var contentY = menuPopup.Position.Y + (border ? 1 : 0);
         for (var row = 0; row < contentHeight; row++)
-            DrawLine(cells, size, contentX, contentY + row, contentWidth, string.Empty, menuPopup.GetActualForeColor(), menuPopup.GetActualBackColor());
+            DrawLine(cells, size, contentX, contentY + row, contentWidth, string.Empty, menuPopup.ForeColor, menuPopup.BackColor);
         foreach (var item in menuPopup.Children.OfType<MenuItem>())
         {
             var origin = new Point(menuPopup.Position.X + item.Position.X, menuPopup.Position.Y + item.Position.Y);
@@ -326,8 +326,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             ? menuItem.DisabledForeColor
             : selected || (menuItem.Parent is MenuBar menuBar && menuBar.ShowAccelerators && acceleratorIndex >= 0)
                 ? menuItem.HotColor
-                : menuItem.GetActualForeColor();
-        var background = selected ? menuItem.HotBackColor : menuItem.GetActualBackColor();
+                : menuItem.ForeColor;
+        var background = selected ? menuItem.HotBackColor : menuItem.BackColor;
         DrawLine(cells, size, origin.X, origin.Y, width, text, foreground, background);
 
         if (menuItem.Enabled && menuItem.Parent is MenuBar { ShowAccelerators: true } && acceleratorIndex >= 0 && acceleratorIndex < width && origin.X + acceleratorIndex >= 0 && origin.X + acceleratorIndex < size.Width && origin.Y >= 0 && origin.Y < size.Height)
