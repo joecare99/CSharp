@@ -94,6 +94,12 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             DrawChildren(control, cells, size);
             return;
         }
+        if (control is TextBox textBox)
+        {
+            DrawTextBox(textBox, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
 
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -153,6 +159,60 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         if (control is ComboBox comboBox)
             return "[" + (comboBox.SelectedItem ?? string.Empty) + "]";
         return control.Text ?? string.Empty;
+    }
+
+    private static void DrawTextBox(TextBox textBox, TerminalCell[,] cells, Size size)
+    {
+        var width = Math.Max(1, textBox.size.Width);
+        var height = Math.Max(1, textBox.size.Height);
+        var firstVisibleLine = textBox.GetFirstVisibleLine();
+        if (firstVisibleLine > 0 && string.IsNullOrEmpty(textBox.GetDisplayLine(firstVisibleLine)))
+            firstVisibleLine = 0;
+        var displayLines = new List<string>();
+        if (textBox.MultiLine)
+        {
+            for (var lineIndex = firstVisibleLine; lineIndex < firstVisibleLine + height; lineIndex++)
+                displayLines.AddRange(WrapLines(textBox.GetDisplayLine(lineIndex), width));
+        }
+        else
+        {
+            displayLines.Add(textBox.GetDisplayLine(firstVisibleLine));
+        }
+        var foreground = textBox.Enabled ? textBox.GetActualForeColor() : textBox.DisabledForeColor;
+        var background = textBox.GetActualBackColor();
+        var x = textBox.Position.X;
+        var y = textBox.Position.Y;
+
+        for (var row = 0; row < height; row++)
+        {
+            var line = row < displayLines.Count ? displayLines[row] : string.Empty;
+            for (var column = 0; column < width; column++)
+            {
+                var cellX = x + column;
+                var cellY = y + row;
+                if (cellX >= 0 && cellX < size.Width && cellY >= 0 && cellY < size.Height)
+                {
+                    var character = column < line.Length ? line[column] : ' ';
+                    cells[cellX, cellY] = new TerminalCell(character, foreground, background);
+                }
+            }
+        }
+
+        if (textBox.Active && textBox.Enabled && textBox.ShouldShowCaret()
+            && textBox.GetCaretLine() >= firstVisibleLine
+            && textBox.GetCaretLine() < firstVisibleLine + height)
+        {
+            var caretRow = textBox.GetCaretLine() - firstVisibleLine;
+            var caretColumn = Math.Min(textBox.GetCaretColumn(), width - 1);
+            var cellX = x + caretColumn;
+            var cellY = y + caretRow;
+            if (cellX >= 0 && cellX < size.Width && cellY >= 0 && cellY < size.Height)
+            {
+                var line = textBox.GetDisplayLine(textBox.GetCaretLine());
+                var character = caretColumn < line.Length ? line[caretColumn] : ' ';
+                cells[cellX, cellY] = new TerminalCell(character, textBox.BackColor, textBox.CaretColor);
+            }
+        }
     }
 
     private static void DrawListBox(ListBox listBox, TerminalCell[,] cells, Size size)

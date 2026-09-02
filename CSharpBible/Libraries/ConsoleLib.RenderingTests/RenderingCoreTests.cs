@@ -527,6 +527,59 @@ public sealed class RenderingCoreTests
         Assert.AreEqual("def", ReadRow(frame, 1, 3));
     }
 
+    [TestMethod]
+    public void RendererUsesTextBoxViewportLines()
+    {
+        var textBox = new TextBox { size = new Size(6, 2), Text = "top\nmiddle\nbottom", MultiLine = true };
+        textBox.Caret = (0, 2);
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(6, 2));
+
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("middle", ReadRow(frame, 0, 6));
+        Assert.AreEqual("bottom", ReadRow(frame, 1, 6));
+    }
+
+    [TestMethod]
+    public void RendererUsesDisabledTextBoxColorAndBackground()
+    {
+        var textBox = new TextBox { Text = "Input", Enabled = false, size = new Size(5, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(5, 1));
+
+        var cell = service.GetSnapshot().GetCell(0, 0);
+
+        Assert.AreEqual('I', cell.Character);
+        Assert.AreEqual(textBox.DisabledForeColor, cell.Foreground);
+        Assert.AreEqual(textBox.BackColor, cell.Background);
+    }
+
+    [TestMethod]
+    public void RendererDrawsActiveTextBoxCaretWithCaretColors()
+    {
+        var textBox = new TextBox { Text = "abc", MultiLine = false, Active = true, size = new Size(5, 1) };
+        textBox.Caret = (1, 0);
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(5, 1));
+
+        var cell = service.GetSnapshot().GetCell(1, 0);
+
+        Assert.AreEqual('b', cell.Character);
+        Assert.AreEqual(textBox.BackColor, cell.Foreground);
+        Assert.AreEqual(textBox.CaretColor, cell.Background);
+    }
+
+    [TestMethod]
+    public void RendererClipsTextBoxViewportAtFrameBounds()
+    {
+        var textBox = new TextBox { Text = "abcdef", MultiLine = false, Position = new Point(-2, 0), size = new Size(6, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(textBox, new Size(3, 1));
+
+        Assert.AreEqual("cde", ReadRow(service.GetSnapshot(), 0, 3));
+    }
+
     private static string ReadRow(IRenderSnapshot snapshot, int y, int width)
     {
         return ReadRowAt(snapshot, 0, y, width);
