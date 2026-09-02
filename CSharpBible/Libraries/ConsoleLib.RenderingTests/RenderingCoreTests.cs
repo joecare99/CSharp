@@ -1027,4 +1027,73 @@ public sealed class RenderingCoreTests
 
         Assert.AreEqual(") Cho", ReadRow(service.GetSnapshot(), 0, 5));
     }
+
+    [TestMethod]
+    public void RendererTranslatesScrollViewerContentByOffset()
+    {
+        var viewer = new ScrollViewer { Position = new Point(2, 1), size = new Size(5, 2) };
+        var content = new Label { Text = "0123456789", size = new Size(10, 1) };
+        viewer.SetContent(content);
+        viewer.ScrollBy(3, 0);
+        var service = new AttachedRenderService();
+        service.Attach(viewer, new Size(10, 5));
+
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("34567", ReadRow(frame, 1, 10).Substring(2, 5));
+        Assert.AreEqual(' ', frame.GetCell(2, 2).Character);
+    }
+
+    [TestMethod]
+    public void RendererClipsScrollViewerContentToViewportAndFrame()
+    {
+        var viewer = new ScrollViewer { Position = new Point(-1, 0), size = new Size(5, 2) };
+        viewer.SetContent(new Label { Text = "abcdefghi", size = new Size(9, 2) });
+        var service = new AttachedRenderService();
+        service.Attach(viewer, new Size(3, 2));
+
+        Assert.AreEqual("bcd", ReadRow(service.GetSnapshot(), 0, 3));
+        Assert.AreEqual("   ", ReadRow(service.GetSnapshot(), 1, 3));
+    }
+
+    [TestMethod]
+    public void RendererPreservesScrollViewerContentBorderAndColors()
+    {
+        var viewer = new ScrollViewer { size = new Size(4, 2), ForeColor = ConsoleColor.Green, BackColor = ConsoleColor.DarkBlue };
+        var content = new Panel
+        {
+            Text = "Hi",
+            BorderStyle = BorderStyle.Single,
+            BorderColor = ConsoleColor.Yellow,
+            ForeColor = ConsoleColor.Cyan,
+            BackColor = ConsoleColor.DarkRed,
+            size = new Size(4, 2)
+        };
+        viewer.SetContent(content);
+        var service = new AttachedRenderService();
+        service.Attach(viewer, new Size(4, 2));
+
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('┌', frame.GetCell(0, 0).Character);
+        Assert.AreEqual(ConsoleColor.Cyan, frame.GetCell(1, 0).Foreground);
+        Assert.AreEqual(ConsoleColor.DarkRed, frame.GetCell(1, 0).Background);
+    }
+
+    [TestMethod]
+    public void RendererHandlesEmptyAndSmallerScrollViewerContent()
+    {
+        var empty = new ScrollViewer { size = new Size(2, 1) };
+        var emptyService = new AttachedRenderService();
+        emptyService.Attach(empty, new Size(2, 1));
+        Assert.AreEqual("  ", ReadRow(emptyService.GetSnapshot(), 0, 2));
+
+        var viewer = new ScrollViewer { size = new Size(3, 2) };
+        viewer.SetContent(new Label { Text = "x", size = new Size(1, 1) });
+        var service = new AttachedRenderService();
+        service.Attach(viewer, new Size(3, 2));
+
+        Assert.AreEqual("x  ", ReadRow(service.GetSnapshot(), 0, 3));
+        Assert.AreEqual("   ", ReadRow(service.GetSnapshot(), 1, 3));
+    }
 }

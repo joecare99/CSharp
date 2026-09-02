@@ -106,6 +106,11 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             DrawChildren(control, cells, size);
             return;
         }
+        if (control is ScrollViewer scrollViewer)
+        {
+            DrawScrollViewer(scrollViewer, cells, size);
+            return;
+        }
 
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -243,6 +248,39 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
 
                 var cell = terminal.GetScreenCell(x, y);
                 cells[cellX, cellY] = new TerminalCell(cell.c, cell.fc.Fg, cell.fc.Bg);
+            }
+        }
+    }
+
+    private static void DrawScrollViewer(ScrollViewer scrollViewer, TerminalCell[,] cells, Size size)
+    {
+        var width = Math.Max(0, scrollViewer.size.Width);
+        var height = Math.Max(0, scrollViewer.size.Height);
+        var (foreground, background) = GetColors(scrollViewer);
+        for (var y = 0; y < height; y++)
+            DrawLine(cells, size, scrollViewer.Position.X, scrollViewer.Position.Y + y, width, string.Empty, foreground, background);
+
+        if (scrollViewer.Content is null || width == 0 || height == 0)
+            return;
+
+        var contentWidth = Math.Max(1, scrollViewer.Content.size.Width);
+        var contentHeight = Math.Max(1, scrollViewer.Content.size.Height);
+        var contentCells = new TerminalCell[contentWidth, contentHeight];
+        new ControlFrameRenderer().Render(scrollViewer.Content, contentCells, new Size(contentWidth, contentHeight));
+        for (var y = 0; y < height; y++)
+        {
+            var sourceY = y + scrollViewer.Offset.Y;
+            if (sourceY < 0 || sourceY >= contentHeight)
+                continue;
+            for (var x = 0; x < width; x++)
+            {
+                var sourceX = x + scrollViewer.Offset.X;
+                if (sourceX < 0 || sourceX >= contentWidth)
+                    continue;
+                var targetX = scrollViewer.Position.X + x;
+                var targetY = scrollViewer.Position.Y + y;
+                if (targetX >= 0 && targetX < size.Width && targetY >= 0 && targetY < size.Height)
+                    cells[targetX, targetY] = contentCells[sourceX, sourceY];
             }
         }
     }

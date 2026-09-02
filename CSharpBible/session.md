@@ -88,6 +88,7 @@ Project: `Libraries\ConsoleLib.Rendering`
 - `MenuPopup`: bordered popup backgrounds, local item positions, selection colors, separators, and clipping.
 - `TextBox`: visible viewport lines, multiline wrapping, disabled colors, caret colors, and clipping.
 - `Terminal`: bordered screen-cell output, per-cell colors, empty-cell preservation, and clipping.
+- `ScrollViewer`: hosted-content offset translation, viewport/frame clipping, and content color/border preservation.
 
 ## Recent commits
 
