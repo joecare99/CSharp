@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using BaseLib.Interfaces;
 using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
 using ConsoleLib.Rendering;
@@ -578,6 +579,56 @@ public sealed class RenderingCoreTests
         service.Attach(textBox, new Size(3, 1));
 
         Assert.AreEqual("cde", ReadRow(service.GetSnapshot(), 0, 3));
+    }
+
+    [TestMethod]
+    public void RendererDisplaysTerminalCellsInsideBorder()
+    {
+        var terminal = new Terminal { size = new Size(7, 4) };
+        terminal.RenderRows(new[] { "ABC", "123" });
+        var service = new AttachedRenderService();
+        service.Attach(terminal, new Size(7, 4));
+
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("┌─────┐", ReadRow(frame, 0, 7));
+        Assert.AreEqual("│ABC  │", ReadRow(frame, 1, 7));
+        Assert.AreEqual("│123  │", ReadRow(frame, 2, 7));
+        Assert.AreEqual("└─────┘", ReadRow(frame, 3, 7));
+    }
+
+    [TestMethod]
+    public void RendererPreservesTerminalCellColorsAndClearedSpaces()
+    {
+        var terminal = new Terminal { size = new Size(5, 4) };
+        ((IConsole)terminal).ForegroundColor = ConsoleColor.Green;
+        ((IConsole)terminal).BackgroundColor = ConsoleColor.DarkBlue;
+        terminal.RenderRows(new[] { "X" });
+        var cells = new TerminalCell[5, 3];
+        new ControlFrameRenderer().Render(terminal, cells, new Size(5, 3));
+
+        var content = cells[1, 1];
+        var blank = cells[2, 1];
+
+        Assert.AreEqual('X', content.Character);
+        Assert.AreEqual(ConsoleColor.Green, content.Foreground);
+        Assert.AreEqual(ConsoleColor.DarkBlue, content.Background);
+        Assert.AreEqual(' ', blank.Character);
+        Assert.AreEqual(ConsoleColor.Green, blank.Foreground);
+        Assert.AreEqual(ConsoleColor.DarkBlue, blank.Background);
+    }
+
+    [TestMethod]
+    public void RendererClipsTerminalAtFrameBounds()
+    {
+        var terminal = new Terminal { Position = new Point(-1, 0), size = new Size(6, 4) };
+        terminal.BorderStyle = BorderStyle.None;
+        terminal.RenderRows(new[] { "ABCDE", "FGHIJ" });
+        var cells = new TerminalCell[4, 3];
+        new ControlFrameRenderer().Render(terminal, cells, new Size(4, 3));
+
+        Assert.AreEqual("BCD ", new string(new[] { cells[0, 0].Character, cells[1, 0].Character, cells[2, 0].Character, cells[3, 0].Character }));
+        Assert.AreEqual("GHI ", new string(new[] { cells[0, 1].Character, cells[1, 1].Character, cells[2, 1].Character, cells[3, 1].Character }));
     }
 
     private static string ReadRow(IRenderSnapshot snapshot, int y, int width)

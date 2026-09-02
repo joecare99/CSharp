@@ -100,6 +100,12 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             DrawChildren(control, cells, size);
             return;
         }
+        if (control is Terminal terminal)
+        {
+            DrawTerminal(terminal, cells, size);
+            DrawChildren(control, cells, size);
+            return;
+        }
 
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -211,6 +217,32 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
                 var line = textBox.GetDisplayLine(textBox.GetCaretLine());
                 var character = caretColumn < line.Length ? line[caretColumn] : ' ';
                 cells[cellX, cellY] = new TerminalCell(character, textBox.BackColor, textBox.CaretColor);
+            }
+        }
+    }
+
+    private static void DrawTerminal(Terminal terminal, TerminalCell[,] cells, Size size)
+    {
+        var border = GetBorder(terminal);
+        var left = terminal.Position.X + (border ? 1 : 0);
+        var top = terminal.Position.Y + (border ? 1 : 0);
+        var width = Math.Min(
+            Math.Max(0, terminal.size.Width - (border ? 2 : 0)),
+            Math.Max(0, terminal.WindowWidth));
+        var height = Math.Min(
+            Math.Max(0, terminal.size.Height - (border ? 2 : 0)),
+            Math.Max(0, terminal.WindowHeight));
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                var cellX = left + x;
+                var cellY = top + y;
+                if (cellX < 0 || cellX >= size.Width || cellY < 0 || cellY >= size.Height)
+                    continue;
+
+                var cell = terminal.GetScreenCell(x, y);
+                cells[cellX, cellY] = new TerminalCell(cell.c, cell.fc.Fg, cell.fc.Bg);
             }
         }
     }

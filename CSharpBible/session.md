@@ -87,6 +87,7 @@ Project: `Libraries\ConsoleLib.Rendering`
 - `MenuBar` and `MenuItem`: horizontal layout, mnemonic normalization, accelerator highlighting, active/disabled colors, and clipping.
 - `MenuPopup`: bordered popup backgrounds, local item positions, selection colors, separators, and clipping.
 - `TextBox`: visible viewport lines, multiline wrapping, disabled colors, caret colors, and clipping.
+- `Terminal`: bordered screen-cell output, per-cell colors, empty-cell preservation, and clipping.
 
 ## Recent commits
 
@@ -117,6 +118,8 @@ Latest successful targeted runs:
 
 Existing nullable event-handler warnings in legacy ConsoleLib controls are unrelated to the rendering work.
 The Test-Coverage skill reports **100% scoped line coverage** for `ControlFrameRenderer` (420/420 lines).
+
+The current checkout does not contain the previously referenced Test-Coverage script; coverlet collector execution completed successfully and produced scoped Cobertura reports.
 
 Run tests from PowerShell with Windows paths:
 
