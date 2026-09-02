@@ -16,7 +16,7 @@ Work is delivered in focused slices. Each slice should:
 - Repository: `ChristianRosewich/CSharp`
 - Working directory: `D:\Projekte\GitHub\CSharp\CSharpBible`
 - Current branch: `master`
-- Latest relevant commit: pending `test: cover container composition`
+- Latest relevant commit: pending `feat: sync list collection rendering`
 - The working tree was clean when this file was created.
 - Session plan: `C:\Users\DEROSCHR\.copilot\session-state\cb26ebc1-c49b-46fe-9e16-66dea4314ece\plan.md`
 - SQL session todos: all currently recorded todos are done.
@@ -91,6 +91,7 @@ Project: `Libraries\ConsoleLib.Rendering`
 - `ScrollViewer`: hosted-content offset translation, viewport/frame clipping, and content color/border preservation.
 - `Pixel`: single-cell character output, color preservation, disabled colors, and clipping.
 - Container composition: `Dialog` visibility, `ModalHost` popup lifecycle, and `StackPanel` child placement through the shared fallback renderer.
+- Dynamic collections: `ListBox` collection updates and selection scrolling are propagated to the shared renderer.
 
 ## Recent commits
 
@@ -117,9 +118,9 @@ Earlier commits established `ConsoleLib.Rendering`, its test project, Grid loadi
 
 Latest successful targeted runs:
 
-- `ConsoleLib.RenderingTests`: **63 passed**
+- `ConsoleLib.RenderingTests`: **65 passed**
 - `ConsoleLib.Cxaml.DesignerTests`: **25 passed**
-- Container composition regressions pass on net8.0, net9.0, and net10.0.
+- Container composition and dynamic ListBox collection regressions pass on net8.0, net9.0, and net10.0.
 
 Existing nullable event-handler warnings in legacy ConsoleLib controls are unrelated to the rendering work.
 The Test-Coverage skill reports **100% scoped line coverage** for `ControlFrameRenderer` (490/490 lines).
@@ -139,7 +140,7 @@ Run the two commands sequentially when possible because parallel builds can cont
 
 Continue the canonical renderer before migrating hosts:
 
-1. Form/collection controls not yet covered by the shared renderer.
+1. Remaining form/collection controls not yet covered by the shared renderer.
 2. Canonical terminal/control-specific output where existing ExtCon or Posix behavior exists.
 3. Migrate ExtCon to `ConsoleLib.Rendering`.
 4. Migrate Posix to `ConsoleLib.Rendering`.

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using BaseLib.Interfaces;
 using ConsoleLib.CommonControls;
@@ -292,6 +293,49 @@ public sealed class RenderingCoreTests
         Assert.AreEqual(listBox.SelectedForeColor, frame.GetCell(0, 1).Foreground);
         Assert.AreEqual(listBox.SelectedBackColor, frame.GetCell(0, 1).Background);
         Assert.AreEqual("Three  ", ReadRow(frame, 2, 7));
+    }
+
+    [TestMethod]
+    public void RendererUpdatesListBoxWhenObservableItemsChange()
+    {
+        var items = new ObservableCollection<string> { "One", "Two" };
+        var listBox = new ListBox
+        {
+            ItemsSource = items,
+            size = new Size(7, 3)
+        };
+        listBox.BorderDefinition = new BorderDef { Style = BorderStyle.None };
+        var service = new AttachedRenderService();
+        service.Attach(listBox, new Size(7, 3));
+
+        items.Add("Three");
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual("Three  ", ReadRow(frame, 2, 7));
+        Assert.IsFalse(listBox.GetNeedScrollBar());
+    }
+
+    [TestMethod]
+    public void RendererFollowsListBoxSelectionAndScrollAfterCollectionChanges()
+    {
+        var items = new ObservableCollection<string> { "One", "Two", "Three", "Four" };
+        var listBox = new ListBox
+        {
+            ItemsSource = items,
+            size = new Size(7, 2)
+        };
+        listBox.BorderDefinition = new BorderDef { Style = BorderStyle.None };
+        var service = new AttachedRenderService();
+        service.Attach(listBox, new Size(7, 2));
+
+        listBox.SelectedIndex = 3;
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual(2, listBox.GetTopIndex());
+        Assert.AreEqual("Three  ", ReadRow(frame, 0, 7));
+        Assert.AreEqual("Four   ", ReadRow(frame, 1, 7));
+        Assert.AreEqual(listBox.SelectedForeColor, frame.GetCell(0, 1).Foreground);
+        Assert.AreEqual(listBox.SelectedBackColor, frame.GetCell(0, 1).Background);
     }
 
     [TestMethod]
