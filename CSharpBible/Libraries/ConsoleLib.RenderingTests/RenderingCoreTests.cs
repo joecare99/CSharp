@@ -1096,4 +1096,49 @@ public sealed class RenderingCoreTests
         Assert.AreEqual("x  ", ReadRow(service.GetSnapshot(), 0, 3));
         Assert.AreEqual("   ", ReadRow(service.GetSnapshot(), 1, 3));
     }
+
+    [TestMethod]
+    public void RendererDrawsPixelAsOneColoredCell()
+    {
+        var pixel = new Pixel
+        {
+            Text = "XY",
+            Position = new Point(2, 1),
+            ForeColor = ConsoleColor.Green,
+            BackColor = ConsoleColor.DarkBlue
+        };
+        var service = new AttachedRenderService();
+        service.Attach(pixel, new Size(5, 3));
+
+        var cell = service.GetSnapshot().GetCell(2, 1);
+
+        Assert.AreEqual('X', cell.Character);
+        Assert.AreEqual(ConsoleColor.Green, cell.Foreground);
+        Assert.AreEqual(ConsoleColor.DarkBlue, cell.Background);
+        Assert.AreEqual(' ', service.GetSnapshot().GetCell(3, 1).Character);
+    }
+
+    [TestMethod]
+    public void RendererUsesBlankAndDisabledColorsForEmptyPixel()
+    {
+        var pixel = new Pixel { Position = new Point(1, 0), Enabled = false, BackColor = ConsoleColor.DarkRed };
+        var service = new AttachedRenderService();
+        service.Attach(pixel, new Size(3, 1));
+
+        var cell = service.GetSnapshot().GetCell(1, 0);
+
+        Assert.AreEqual(' ', cell.Character);
+        Assert.AreEqual(ConsoleColor.DarkGray, cell.Foreground);
+        Assert.AreEqual(ConsoleColor.DarkRed, cell.Background);
+    }
+
+    [TestMethod]
+    public void RendererClipsPixelOutsideFrame()
+    {
+        var pixel = new Pixel { Text = "X", Position = new Point(-1, 1) };
+        var service = new AttachedRenderService();
+        service.Attach(pixel, new Size(2, 2));
+
+        Assert.AreEqual("  ", ReadRow(service.GetSnapshot(), 1, 2));
+    }
 }

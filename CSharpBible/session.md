@@ -16,7 +16,7 @@ Work is delivered in focused slices. Each slice should:
 - Repository: `ChristianRosewich/CSharp`
 - Working directory: `D:\Projekte\GitHub\CSharp\CSharpBible`
 - Current branch: `master`
-- Latest relevant commit: `b88ff19e8 feat: render canonical scrollbars`
+- Latest relevant commit: pending `feat: render canonical pixels`
 - The working tree was clean when this file was created.
 - Session plan: `C:\Users\DEROSCHR\.copilot\session-state\cb26ebc1-c49b-46fe-9e16-66dea4314ece\plan.md`
 - SQL session todos: all currently recorded todos are done.
@@ -89,11 +89,13 @@ Project: `Libraries\ConsoleLib.Rendering`
 - `TextBox`: visible viewport lines, multiline wrapping, disabled colors, caret colors, and clipping.
 - `Terminal`: bordered screen-cell output, per-cell colors, empty-cell preservation, and clipping.
 - `ScrollViewer`: hosted-content offset translation, viewport/frame clipping, and content color/border preservation.
+- `Pixel`: single-cell character output, color preservation, disabled colors, and clipping.
 
 ## Recent commits
 
 - `cc1466796 feat: render progress and status controls`
 - `b88ff19e8 feat: render canonical scrollbars`
+- `7cff7deea feat: render canonical scroll viewers`
 - `fe395582c feat: render TreeView controls`
 - `42d4b790a feat: render tabs and tiles`
 - `d1130f2d7 feat: render ComboBox and ListBox`
@@ -114,7 +116,7 @@ Earlier commits established `ConsoleLib.Rendering`, its test project, Grid loadi
 
 Latest successful targeted runs:
 
-- `ConsoleLib.RenderingTests`: **60 passed**
+- `ConsoleLib.RenderingTests`: **63 passed**
 - `ConsoleLib.Cxaml.DesignerTests`: **25 passed**
 
 Existing nullable event-handler warnings in legacy ConsoleLib controls are unrelated to the rendering work.

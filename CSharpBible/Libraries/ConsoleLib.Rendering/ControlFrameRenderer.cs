@@ -111,6 +111,11 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             DrawScrollViewer(scrollViewer, cells, size);
             return;
         }
+        if (control is Pixel pixel)
+        {
+            DrawPixel(pixel, cells, size);
+            return;
+        }
 
         var text = GetDisplayText(control);
         var x = control.Position.X;
@@ -144,6 +149,13 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         }
 
         DrawChildren(control, cells, size);
+    }
+
+    private static void DrawPixel(Pixel pixel, TerminalCell[,] cells, Size size)
+    {
+        var (foreground, background) = GetColors(pixel);
+        var character = string.IsNullOrEmpty(pixel.Text) ? ' ' : pixel.Text[0];
+        PutCell(cells, size, pixel.Position.X, pixel.Position.Y, character, foreground, background);
     }
 
     private static void DrawChildren(IControl control, TerminalCell[,] cells, Size size)
