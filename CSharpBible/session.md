@@ -222,6 +222,34 @@ or control change was required.
 The next remaining candidate is the canonical review of `Label` and `CommandControl`
 fallback semantics, unless host-specific behavior is intentionally deferred.
 
+## Latest completed slice: Label and CommandControl fallback rendering coverage
+
+The Label and CommandControl slice was completed as a regression-only slice. The
+generic renderer already provides the required portable cell semantics; no dedicated
+renderer branch or production control change was required. `Label.ParentBackground`
+remains host-specific behavior and was intentionally not promoted into the canonical
+renderer.
+
+### Covered behavior
+
+- Positioned Label text and its explicit foreground/background colors.
+- Disabled Label clipping and canonical disabled foreground color.
+- CommandControl rendering before and after an `ICommand.CanExecute` transition.
+- CommandControl disabled foreground/background colors after `CanExecuteChanged`.
+- The tests use a local command stub and host-neutral frame-cell assertions.
+
+### Validation and repository state
+
+- `ConsoleLib.RenderingTests`: **258 passed** on net8.0, net9.0, and net10.0.
+- `ConsoleLib.CoreTests`: **213 passed**.
+- `ConsoleLib.Cxaml.DesignerTests`: **25 passed**.
+- Scoped `ControlFrameRenderer` coverage: **100% line coverage, 490/490 lines** on all three targets.
+- `git diff --check`: pending final commit validation.
+- Production changes: none; focused Label and CommandControl rendering regressions were added.
+
+The next remaining candidate is selection from the still-uncovered control-family
+inventory before beginning host migration.
+
 ## Test baseline
 
 ## Latest completed slice: Grid lifecycle and rendering regression coverage

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Windows.Input;
 using BaseLib.Interfaces;
 using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
@@ -35,6 +36,15 @@ public sealed class RenderingCoreTests
         public void DrawTerminal(IControl terminal) { }
         public void RedrawTerminal(IControl terminal, Rectangle dimension) { }
         public void SetTitle(string value) { }
+    }
+
+    private sealed class ToggleCommand : ICommand
+    {
+        public bool CanExecuteValue { get; set; } = true;
+        public event EventHandler? CanExecuteChanged;
+        public bool CanExecute(object? parameter) => CanExecuteValue;
+        public void Execute(object? parameter) { }
+        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 
     [TestMethod]
@@ -133,6 +143,77 @@ public sealed class RenderingCoreTests
         Assert.AreEqual('i', frame.GetCell(1, 1).Character);
         Assert.AreEqual('b', frame.GetCell(2, 1).Character);
         Assert.AreEqual('l', frame.GetCell(3, 1).Character);
+    }
+
+    [TestMethod]
+    public void RendererComposesLabelAtPositionWithCanonicalColors()
+    {
+        var label = new Label
+        {
+            Text = "Label",
+            Position = new Point(2, 1),
+            size = new Size(5, 1),
+            ForeColor = ConsoleColor.Yellow,
+            BackColor = ConsoleColor.DarkBlue
+        };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(8, 3));
+
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("Label", ReadRowAt(frame, 2, 1, 5));
+        Assert.AreEqual(ConsoleColor.Yellow, frame.GetCell(2, 1).Foreground);
+        Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(2, 1).Background);
+    }
+
+    [TestMethod]
+    public void RendererClipsDisabledLabelAndUsesDisabledForeground()
+    {
+        var label = new Label
+        {
+            Text = "Hidden at edge",
+            Position = new Point(-2, 0),
+            size = new Size(8, 1),
+            Enabled = false,
+            BackColor = ConsoleColor.DarkBlue
+        };
+        var service = new AttachedRenderService();
+        service.Attach(label, new Size(4, 1));
+
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual("dden", ReadRow(frame, 0, 4));
+        Assert.AreEqual(ConsoleColor.DarkGray, frame.GetCell(0, 0).Foreground);
+        Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(0, 0).Background);
+    }
+
+    [TestMethod]
+    public void RendererReflectsCommandCanExecuteStateTransition()
+    {
+        var command = new ToggleCommand();
+        var control = new CommandControl
+        {
+            Text = "Run",
+            size = new Size(5, 1),
+            ForeColor = ConsoleColor.White,
+            BackColor = ConsoleColor.DarkGreen,
+            Command = command
+        };
+        var service = new AttachedRenderService();
+        service.Attach(control, new Size(5, 1));
+
+        var enabledFrame = service.GetSnapshot();
+        Assert.AreEqual(ConsoleColor.White, enabledFrame.GetCell(0, 0).Foreground);
+
+        command.CanExecuteValue = false;
+        command.RaiseCanExecuteChanged();
+        service.RefreshTree();
+
+        var disabledFrame = service.GetSnapshot();
+        Assert.IsFalse(control.Enabled);
+        Assert.AreEqual("Run ", ReadRow(disabledFrame, 0, 4));
+        Assert.AreEqual(ConsoleColor.DarkGray, disabledFrame.GetCell(0, 0).Foreground);
+        Assert.AreEqual(ConsoleColor.DarkGreen, disabledFrame.GetCell(0, 0).Background);
     }
 
     [TestMethod]
