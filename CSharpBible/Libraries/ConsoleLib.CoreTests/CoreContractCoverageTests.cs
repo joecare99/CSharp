@@ -149,6 +149,65 @@ public class CoreContractCoverageTests
     }
 
     [TestMethod]
+    public void ApplicationMessageQueue_ProcessesCallbacksInOrderAndSignalsEnqueue()
+    {
+        using var queue = new ApplicationMessageQueue();
+        var callbacks = new System.Collections.Generic.List<int>();
+
+        queue.Enqueue(() => callbacks.Add(1));
+        queue.Enqueue(() => callbacks.Add(2));
+
+        Assert.AreEqual(2, queue.Count);
+        Assert.IsTrue(queue.Signal.WaitOne(0));
+        Assert.AreEqual(2, queue.ProcessPending());
+        CollectionAssert.AreEqual(new[] { 1, 2 }, callbacks);
+        Assert.AreEqual(0, queue.Count);
+    }
+
+    [TestMethod]
+    public void ApplicationMessageQueue_SkipsCancelledCallbacksAndReportsHandledErrors()
+    {
+        using var queue = new ApplicationMessageQueue();
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        var ran = false;
+        var errors = new System.Collections.Generic.List<Exception>();
+
+        queue.Enqueue(() => ran = true, cancellation.Token);
+        queue.Enqueue(() => throw new InvalidOperationException("expected"));
+
+        Assert.AreEqual(1, queue.ProcessPending(errors.Add));
+        Assert.IsFalse(ran);
+        Assert.AreEqual(1, errors.Count);
+        Assert.AreEqual("expected", errors[0].Message);
+    }
+
+    [TestMethod]
+    public void ApplicationMessageQueue_ValidatesCallbacksAndDisposedState()
+    {
+        var queue = new ApplicationMessageQueue();
+
+        Assert.Throws<ArgumentNullException>(() => queue.Enqueue(null!));
+
+        queue.Dispose();
+        queue.Dispose();
+        Assert.Throws<ObjectDisposedException>(() => queue.Enqueue(() => { }));
+        Assert.Throws<ObjectDisposedException>(() => queue.Signal.WaitOne(0));
+    }
+
+    [TestMethod]
+    public void ApplicationMessageQueue_RethrowsCallbackErrorsWithoutHandler()
+    {
+        using var queue = new ApplicationMessageQueue();
+        queue.Enqueue(() => throw new InvalidOperationException("expected"));
+
+        var error = Assert.Throws<InvalidOperationException>(() => queue.ProcessPending());
+
+        Assert.AreEqual("expected", error.Message);
+        Assert.AreEqual(0, queue.Count);
+    }
+
+    [TestMethod]
     public void TerminalCell_EqualityUsesAllCellValues()
     {
         var cell = new TerminalCell('X', ConsoleColor.White, ConsoleColor.Black);
