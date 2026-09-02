@@ -16,8 +16,8 @@ Work is delivered in focused slices. Each slice should:
 - Repository: `ChristianRosewich/CSharp`
 - Working directory: `C:\Projekte\GitHub\CSharp\CSharpBible`
 - Current branch: `master`
-- Latest relevant commit: `720a46ae8 test: cover radio button rendering`
-- The working tree contains the uncommitted DockPanel rendering regression slice until
+- Latest relevant commit: `556cf8b63 merge: synchronize master with origin`
+- The working tree contains the uncommitted Grid lifecycle and rendering regression slice until
   the focused commit is created below.
 - Session plan: `C:\Users\DEROSCHR\.copilot\session-state\cb26ebc1-c49b-46fe-9e16-66dea4314ece\plan.md`
 - SQL session todos: all currently recorded todos are done.
@@ -173,6 +173,29 @@ arranges child dimensions correctly, and the generic child-recursion path in
 - Production changes: none; only focused renderer regression tests were added.
 
 ## Test baseline
+
+## Latest completed slice: Grid lifecycle and rendering regression coverage
+
+The Grid slice fixed incorrect prefix calculations for row and column positions
+and prevented reentrant layout callbacks from corrupting child placement during
+attachment and resize. The generic renderer continues to compose Grid children
+without a dedicated renderer branch.
+
+### Covered behavior
+
+- Default-cell placement and attached row/column/span values before and after `Add`.
+- Row and column spans, out-of-range coordinates, alignment, removal, and resize.
+- Canonical rendering after attaching and resizing a Grid viewport.
+
+### Validation and repository state
+
+- `ConsoleLib.CoreTests`: **161 passed**.
+- `ConsoleLib.RenderingTests`: **243 passed** on net8.0, net9.0, and net10.0.
+- `ConsoleLib.Cxaml.DesignerTests`: **25 passed**.
+- Scoped `ControlFrameRenderer` coverage: **100% line coverage** on all three targets.
+- `git diff --check`: passed before commit.
+- Production changes: `Grid` lifecycle and prefix-position calculation fixes.
+
 
 Latest successful targeted runs:
 

@@ -131,6 +131,27 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void RendererPreservesGridPlacementAfterChildAddAndResize()
+    {
+        var grid = new Grid { size = new Size(10, 6) };
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+        var label = new Label { Text = "X" };
+        Grid.SetRow(label, 1);
+        Grid.SetColumn(label, 1);
+        grid.Add(label);
+
+        var service = new AttachedRenderService();
+        service.Attach(grid, new Size(10, 6));
+        service.Resize(new Size(14, 8));
+
+        Assert.AreEqual(new Rectangle(7, 4, 7, 4), label.Dimension);
+        Assert.AreEqual('X', service.GetSnapshot().GetCell(label.Position.X, label.Position.Y + 1).Character);
+    }
+
+    [TestMethod]
     public void ResizeSynchronizesRootAndPublishesNewViewport()
     {
         var panel = new Panel { size = new Size(4, 2) };
