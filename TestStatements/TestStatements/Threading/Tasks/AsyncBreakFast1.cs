@@ -102,17 +102,17 @@ namespace TestStatements.Threading.Tasks
             var baconTask = FryBaconAsync(3);
             var toastTask = MakeToastWithButterAndJamAsync(2);
 
-            var eggs = await eggsTask;
+            _ = await eggsTask;
             Console.WriteLine($"{s.Elapsed}: eggs are ready");
 
-            var bacon = await baconTask;
+            _ = await baconTask;
             Console.WriteLine($"{s.Elapsed}: bacon is ready");
 
-            var toast = await toastTask;
+            _ = await toastTask;
             Console.WriteLine($"{s.Elapsed}: toast is ready");
 
-            Juice oj = PourOJ();
-            Console.WriteLine($"{s.Elapsed}: oj is ready");
+            _ = PourOJ();
+            Console.WriteLine($"{s.Elapsed}: orange juice is ready");
             s.Stop();
             Console.WriteLine($"{s.Elapsed}: Breakfast is ready!");
         }
@@ -154,8 +154,8 @@ namespace TestStatements.Threading.Tasks
                 breakfastTasks.Remove(finishedTask);
             }
 
-            Juice oj = PourOJ();
-            Console.WriteLine($"{s.Elapsed}: oj is ready");
+            _ = PourOJ();
+            Console.WriteLine($"{s.Elapsed}: orange juice is ready");
             s.Stop();
             Console.WriteLine($"{s.Elapsed}: Breakfast is ready!");
         }
