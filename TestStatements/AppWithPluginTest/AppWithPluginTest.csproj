@@ -4,7 +4,7 @@
 	</ImportGroup>
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
@@ -18,7 +18,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-		<PackageReference Include="MSTest" Version="4.3.3" />
+		<PackageReference Include="MSTest" Version="4.4.0" />
 		<PackageReference Include="NSubstitute" Version="6.2.0" />
 	</ItemGroup>
 

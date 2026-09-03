@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using BaseLib.Helper;
 using NSubstitute;
+using System.Data.SqlTypes;
 
 namespace AppWithPlugin.Model.Tests
 {
@@ -52,9 +53,9 @@ namespace AppWithPlugin.Model.Tests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result, typeof(IDisposable));
+            Assert.IsInstanceOfType<IDisposable>(result);
             object? target = null;
-            Assert.AreEqual(true, result.GetProp("State", null)?.TryGetTarget(out target));
+            Assert.IsTrue(result.GetProp("State", (WeakReference<object>?)null)?.TryGetTarget(out target));
             Assert.AreEqual(state, target);
 
             result.Dispose();
