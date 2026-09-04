@@ -21,13 +21,13 @@
   <ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-		<PackageReference Include="MSTest" Version="4.3.3" />
+		<PackageReference Include="MSTest" Version="4.4.0" />
 		<PackageReference Include="coverlet.collector" Version="10.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="FluentAssertions" Version="8.10.0" />
-		<PackageReference Include="Avalonia.Headless" Version="12.1.1" />
+		<PackageReference Include="Avalonia.Headless" Version="12.1.2" />
 		<PackageReference Include="NSubstitute" Version="6.2.0" />
 	</ItemGroup>
 	<ItemGroup>
