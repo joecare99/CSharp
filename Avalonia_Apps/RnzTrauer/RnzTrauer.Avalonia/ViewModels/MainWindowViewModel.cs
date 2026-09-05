@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,30 +18,37 @@ namespace RnzTrauer.Avalonia.ViewModels;
 public sealed partial class MainWindowViewModel : ObservableObject
 {
     private readonly INoticeRepository _repository;
+    private readonly INoticeSearchService _searchService;
     private readonly INoticeTextParser _parser;
     private readonly IExportService _exporter;
     private readonly ICoordinateSchemaProbe _coordinateSchemaProbe;
     private readonly IPlaceCoordinateStore _coordinateStore;
+    private readonly INoticeDetailService _detailService;
     private IReadOnlyCollection<string> _places = Array.Empty<string>();
 
     public MainWindowViewModel(
         INoticeRepository repository,
+        INoticeSearchService searchService,
         INoticeTextParser parser,
         IExportService exporter,
         ICoordinateSchemaProbe coordinateSchemaProbe,
-        IPlaceCoordinateStore coordinateStore)
+        IPlaceCoordinateStore coordinateStore,
+        INoticeDetailService? detailService = null,
+        bool readOnly = false)
     {
         _repository = repository;
+        _searchService = searchService;
         _parser = parser;
         _exporter = exporter;
         _coordinateSchemaProbe = coordinateSchemaProbe;
         _coordinateStore = coordinateStore;
-        _ = LoadAsync();
-        _ = ProbeCoordinateSchemaAsync();
+        _detailService = detailService ?? new NoticeDetailService(repository);
+        IsReadOnly = readOnly;
     }
 
-    /// <summary>Main editable record list rendered in the DB tab grid.</summary>
-    public ObservableCollection<DeathNotice> Notices { get; } = [];
+    /// <summary>Notice projection rendered in the DB tab grid.</summary>
+    public ObservableCollection<NoticeProjection> Notices { get; } = [];
+    public ObservableCollection<NoticeProjection> LinkCandidates { get; } = [];
 
     /// <summary>Queue list equivalent to the legacy filter frame options.</summary>
     public ObservableCollection<NoticeFilterKind> ReviewQueues { get; } = new((NoticeFilterKind[])Enum.GetValues(typeof(NoticeFilterKind)));
@@ -52,7 +61,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(ParseSelectedCommand))]
     [NotifyPropertyChangedFor(nameof(SelectedNoticeDescription))]
     [NotifyPropertyChangedFor(nameof(SelectedNoticePath))]
-    private DeathNotice? _selectedNotice;
+    private NoticeProjection? _selectedNotice;
+
+    [ObservableProperty] private string _selectedNoticePlace = "<no place>";
+    [ObservableProperty] private string _selectedNoticeMediaSummary = "Detail not loaded";
 
     [ObservableProperty] private string _orderNumberPrefix = string.Empty;
     [ObservableProperty] private string _keywordContains = string.Empty;
@@ -77,6 +89,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private string _coordinateLongitude = string.Empty;
     [ObservableProperty] private string _coordinateSource = string.Empty;
     [ObservableProperty] private bool _coordinateIsApproximate;
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ParseSelectedCommand))]
+    private bool _isReadOnly;
 
     /// <summary>Legacy-style linked-record display text shown in the detail header.</summary>
     public string SelectedNoticeDescription => SelectedNotice?.Description ?? "<no selection>";
@@ -84,7 +100,20 @@ public sealed partial class MainWindowViewModel : ObservableObject
     /// <summary>Current notice source path shown in the footer-like detail line.</summary>
     public string SelectedNoticePath => SelectedNotice?.Path ?? "<no path>";
 
-    partial void OnSelectedNoticeChanged(DeathNotice? value)
+    /// <summary>
+    /// Loads the initial projection and capability state for the hosting view.
+    /// The constructor remains side-effect free so tests and other hosts can
+    /// control initialization and cancellation explicitly.
+    /// </summary>
+    public async Task InitializeAsync(CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        await LoadAsync(cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        await ProbeCoordinateSchemaAsync().ConfigureAwait(false);
+    }
+
+    partial void OnSelectedNoticeChanged(NoticeProjection? value)
     {
         CoordinatePlace = value?.Place ?? string.Empty;
         CoordinateLatitude = string.Empty;
@@ -100,10 +129,25 @@ public sealed partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task LoadAsync()
+    private Task LoadAsync() => LoadAsync(CancellationToken.None);
+
+    private async Task LoadAsync(CancellationToken cancellationToken)
     {
-        try { Status = "Loading…"; _places = await _repository.GetPlaceNamesAsync(); var results = await _repository.FindAsync(new NoticeFilter(OrderNumberPrefix, KeywordContains, SelectedQueue)); Notices.Clear(); foreach (var notice in results) Notices.Add(notice); Status = $"{Notices.Count} records"; }
-        catch (Exception ex) { Status = $"Database unavailable: {ex.Message}"; }
+        Status = "Loading…";
+        _places = await _repository.GetPlaceNamesAsync(cancellationToken);
+        var result = await _searchService.SearchAsync(
+            new NoticeSearchRequest(new NoticeFilter(OrderNumberPrefix, KeywordContains, SelectedQueue)),
+            cancellationToken);
+        Notices.Clear();
+        foreach (var notice in result.Notices)
+            Notices.Add(notice);
+        Status = result.Status switch
+        {
+            NoticeSearchStatus.Succeeded => $"{Notices.Count} records",
+            NoticeSearchStatus.InvalidRequest => result.ErrorMessage ?? "Invalid search request.",
+            NoticeSearchStatus.Failed => result.ErrorMessage ?? "Database unavailable.",
+            _ => "Search unavailable.",
+        };
     }
 
     [RelayCommand]
@@ -167,9 +211,29 @@ public sealed partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task LoadSelectedDetailAsync()
+    {
+        if (SelectedNotice is null)
+        {
+            LinkCandidates.Clear();
+            SelectedNoticePlace = "<no place>";
+            SelectedNoticeMediaSummary = "No notice selected";
+            return;
+        }
+
+        var detail = await _detailService.LoadAsync(
+            new NoticeDetailRequest(SelectedNotice.ToDomain()));
+        LinkCandidates.Clear();
+        foreach (var candidate in detail.LinkCandidates)
+            LinkCandidates.Add(candidate);
+        SelectedNoticePlace = detail.PlaceName ?? "<no place>";
+        SelectedNoticeMediaSummary = detail.Media.Summary;
+    }
+
+    [RelayCommand]
     private async Task SaveCoordinateAsync()
     {
-        if (!CoordinatePersistenceAvailable)
+        if (IsReadOnly || !CoordinatePersistenceAvailable)
         {
             CoordinateSchemaDiagnostic = "Coordinate persistence is unavailable until the schema is confirmed.";
             CoordinateSchemaDiagnosticCode = "coordinate.persistence_unavailable";
@@ -216,11 +280,43 @@ public sealed partial class MainWindowViewModel : ObservableObject
         await LoadAsync();
     }
 
-    [RelayCommand(CanExecute = nameof(HasSelection))]
-    private async Task SaveAsync() { if (SelectedNotice is null) return; await _repository.SaveAsync(SelectedNotice); Status = "Record saved."; }
-    [RelayCommand(CanExecute = nameof(HasSelection))]
-    private void ParseSelected() { if (SelectedNotice is null) return; var facts = _parser.Parse(SelectedNotice, SelectedNotice.Text ?? string.Empty, _places); SelectedNotice.BirthDate ??= facts.BirthDate; SelectedNotice.DeathDate ??= facts.DeathDate; SelectedNotice.BurialDate ??= facts.BurialDate; SelectedNotice.MaidenName ??= facts.MaidenName; SelectedNotice.Place ??= facts.Place; if (facts.AdjustedCategory is not null) SelectedNotice.Category = facts.AdjustedCategory.Value; Status = "Text parsed; extracted values are ready for review and Save."; }
-    [RelayCommand] private Task ExportCsvAsync() => _exporter.ExportCsvAsync("RNZ-Anzeigen.csv", Notices);
-    [RelayCommand] private Task ExportGedcomAsync() => _exporter.ExportGedcomAsync("RNZ-Anzeigen.ged", Notices);
+    [RelayCommand(CanExecute = nameof(CanMutateNotice))]
+    private async Task SaveAsync()
+    {
+        if (SelectedNotice is null)
+            return;
+        await _repository.SaveAsync(SelectedNotice.ToDomain());
+        Status = "Record saved.";
+    }
+
+    [RelayCommand(CanExecute = nameof(CanMutateNotice))]
+    private void ParseSelected()
+    {
+        if (SelectedNotice is null)
+            return;
+
+        var notice = SelectedNotice.ToDomain();
+        var facts = _parser.Parse(notice, notice.Text ?? string.Empty, _places);
+        notice.BirthDate ??= facts.BirthDate;
+        notice.DeathDate ??= facts.DeathDate;
+        notice.BurialDate ??= facts.BurialDate;
+        notice.MaidenName ??= facts.MaidenName;
+        notice.Place ??= facts.Place;
+        if (facts.AdjustedCategory is not null)
+            notice.Category = facts.AdjustedCategory.Value;
+        SelectedNotice = NoticeProjection.FromDomain(notice);
+        Status = "Text parsed; extracted values are ready for review and Save.";
+    }
+
+    [RelayCommand]
+    private Task ExportCsvAsync() =>
+        _exporter.ExportCsvAsync("RNZ-Anzeigen.csv",
+            Notices.Select(notice => notice.ToDomain()).ToArray());
+
+    [RelayCommand]
+    private Task ExportGedcomAsync() =>
+        _exporter.ExportGedcomAsync("RNZ-Anzeigen.ged",
+            Notices.Select(notice => notice.ToDomain()).ToArray());
     private bool HasSelection() => SelectedNotice is not null;
+    private bool CanMutateNotice() => !IsReadOnly && HasSelection();
 }

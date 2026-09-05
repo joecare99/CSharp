@@ -33,6 +33,8 @@ public sealed partial class App : Application
         services.AddSingleton<IDbConnectionFactory>(factory)
             .AddSingleton<IDBSettings>(settings)
             .AddSingleton<INoticeRepository, MySqlNoticeRepository>()
+            .AddSingleton<INoticeSearchService, NoticeSearchService>()
+            .AddSingleton<INoticeDetailService, NoticeDetailService>()
             .AddSingleton<MySqlPlaceCoordinateStore>()
             .AddSingleton<IPlaceCoordinateStore>(services => services.GetRequiredService<MySqlPlaceCoordinateStore>())
             .AddSingleton<ICoordinateSchemaProbe>(services => services.GetRequiredService<MySqlPlaceCoordinateStore>())
@@ -44,10 +46,23 @@ public sealed partial class App : Application
             .AddTransient<ISchemaImportAccumulator, SchemaImportAccumulator>()
             .AddTransient<IHtmlSchemaImporter, HtmlSchemaImporter>()
             .AddSingleton<IExportService, NoticeExportService>()
-            .AddSingleton<MainWindowViewModel>();
+            .AddSingleton<MainWindowViewModel>(services =>
+                new MainWindowViewModel(
+                    services.GetRequiredService<INoticeRepository>(),
+                    services.GetRequiredService<INoticeSearchService>(),
+                    services.GetRequiredService<INoticeTextParser>(),
+                    services.GetRequiredService<IExportService>(),
+                    services.GetRequiredService<ICoordinateSchemaProbe>(),
+                    services.GetRequiredService<IPlaceCoordinateStore>(),
+                    services.GetRequiredService<INoticeDetailService>(),
+                    readOnly: true));
         var provider = services.BuildServiceProvider();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow { DataContext = provider.GetRequiredService<MainWindowViewModel>() };
+        {
+            var viewModel = provider.GetRequiredService<MainWindowViewModel>();
+            desktop.MainWindow = new MainWindow { DataContext = viewModel };
+            _ = viewModel.InitializeAsync();
+        }
         base.OnFrameworkInitializationCompleted();
     }
 }
