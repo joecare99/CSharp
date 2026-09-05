@@ -53,6 +53,53 @@ namespace Db.Provider.MySql.Tests
             Assert.AreEqual("DELETE FROM `Person` WHERE `DeletedAt` is null", xCommand.CommandText);
         }
 
+        [TestMethod]
+        [DataRow(DbFilterOperator.Equal, "`Value`=@value")]
+        [DataRow(DbFilterOperator.IsNull, "`Value` is null")]
+        [DataRow(DbFilterOperator.Not, "NOT (`Value`)")]
+        [DataRow(DbFilterOperator.Like, "`Value` LIKE @value")]
+        [DataRow(DbFilterOperator.GreaterThan, "`Value`>@value")]
+        [DataRow(DbFilterOperator.GreaterThanOrEqual, "`Value`>=@value")]
+        [DataRow(DbFilterOperator.LessThan, "`Value`<@value")]
+        [DataRow(DbFilterOperator.LessThanOrEqual, "`Value`<=@value")]
+        public void CreateQuery_RendersEverySupportedFilterOperator(
+            DbFilterOperator filterOperator,
+            string expectedPredicate)
+        {
+            using var connection = new TestDbConnection();
+            var renderer = new MySqlStatementRenderer(connection);
+            var parameterName = filterOperator == DbFilterOperator.IsNull ? null : "@value";
+
+            using var command = renderer.CreateQuery(
+                "Person",
+                new[] { "Value" },
+                new[] { new DbFilterClause("Value", filterOperator, parameterName) });
+
+            StringAssert.Contains(command.CommandText, expectedPredicate);
+        }
+
+        [TestMethod]
+        public void CreateInsertAndUpdate_QuoteIdentifiersAndPreserveParameters()
+        {
+            using var connection = new TestDbConnection();
+            var renderer = new MySqlStatementRenderer(connection);
+
+            using var insert = renderer.CreateInsert(
+                "Person",
+                new[] { new KeyValuePair<string, string>("Given.Name", "@given") });
+            using var update = renderer.CreateUpdate(
+                "Person",
+                new[] { new KeyValuePair<string, string>("Given.Name", "@given") },
+                new[] { new DbFilterClause("Id", DbFilterOperator.Equal, "@id") });
+
+            Assert.AreEqual(
+                "INSERT INTO `Person` (`Given`.`Name`) VALUES (@given);",
+                insert.CommandText);
+            Assert.AreEqual(
+                "UPDATE `Person` SET `Given`.`Name`=@given WHERE `Id`=@id",
+                update.CommandText);
+        }
+
         private sealed class TestDbConnection : IDbConnection
         {
             public string? ConnectionString { get; set; }
