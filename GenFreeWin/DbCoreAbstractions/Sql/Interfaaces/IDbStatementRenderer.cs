@@ -26,6 +26,6 @@ public interface IDbStatementRenderer
     IDbCommand CreateQuery(string sTable, IEnumerable<string> arrFields, IEnumerable<IDbFilterClause> arrFilters, int? iLimit = null, object? offset = null);
     IDbCommand CreateQuery(IDbConnection dbConnection, string sTable, IEnumerable<string> arrFields, IEnumerable<IDbFilterClause> arrFilters, int? iLimit = null, object? offset = null);
     IDbCommand CreateInsert(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields);
-    IDbCommand CreateUpdate(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields, IEnumerable<DbFilterClause> arrFilters);
-    IDbCommand CreateDelete(string sTable, IEnumerable<DbFilterClause> arrFilters);
+    IDbCommand CreateUpdate(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields, IEnumerable<IDbFilterClause> arrFilters);
+    IDbCommand CreateDelete(string sTable, IEnumerable<IDbFilterClause> arrFilters);
 }
