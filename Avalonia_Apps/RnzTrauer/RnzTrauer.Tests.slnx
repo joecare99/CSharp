@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/DB/">
+    <Project Path="../../Gen_FreeWin/DbCoreAbstractions/DbCoreAbstractions.csproj" />
+    <Project Path="../../Gen_FreeWin/DbProviderMySql/DbProviderMySql.csproj" />
+  </Folder>
+  <Project Path="Config.Service.Tests/Config.Service.Tests.csproj" />
+  <Project Path="RnzTrauer.Acquisition.Tests/RnzTrauer.Acquisition.Tests.csproj" />
+  <Project Path="RnzTrauer.Avalonia.Tests/RnzTrauer.Avalonia.Tests.csproj" />
+  <Project Path="RnzTrauer.Core.Tests/RnzTrauer.Core.Tests.csproj" />
+  <Project Path="RnzTrauer.Import.Tests/RnzTrauer.Import.Tests.csproj" />
+  <Project Path="RnzTrauer.Media.Tests/RnzTrauer.Media.Tests.csproj" />
+  <Project Path="RnzTrauer.Persistence.MySql.Tests/RnzTrauer.Persistence.MySql.Tests.csproj" />
+  <Project Path="RnzTrauer.Places.Tests/RnzTrauer.Places.Tests.csproj" />
+</Solution>

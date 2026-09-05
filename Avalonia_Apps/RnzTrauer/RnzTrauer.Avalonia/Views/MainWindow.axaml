@@ -63,8 +63,8 @@
               <ComboBox Grid.Column="2" ItemsSource="{Binding ReviewQueues}" SelectedItem="{Binding SelectedQueue}" />
               <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6">
                 <Button Content="Apply" Command="{Binding LoadCommand}" />
-                <Button Content="Save" Command="{Binding SaveCommand}" />
-                <Button Content="Parse text" Command="{Binding ParseSelectedCommand}" />
+                <Button Content="Save" Command="{Binding SaveCommand}" IsEnabled="False" ToolTip.Tip="Write operations are disabled in the read-only migration pilot." />
+                <Button Content="Parse text" Command="{Binding ParseSelectedCommand}" IsEnabled="False" ToolTip.Tip="Mutation is disabled in the read-only migration pilot." />
               </StackPanel>
             </Grid>
           </Border>
@@ -111,40 +111,49 @@
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="120,*" RowSpacing="6" ColumnSpacing="8">
                   <TextBlock Grid.Row="0" Grid.ColumnSpan="2" FontWeight="SemiBold" Text="{Binding SelectedNoticeDescription}" />
                   <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Geschlecht" />
-                  <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedNotice.Sex, Mode=TwoWay}" />
+                  <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.Sex}" />
                   <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Nachname" />
-                  <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedNotice.FamilyName, Mode=TwoWay}" />
+                  <TextBox Grid.Row="2" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.FamilyName}" />
                   <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="Vorname" />
-                  <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedNotice.GivenName, Mode=TwoWay}" />
+                  <TextBox Grid.Row="3" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.GivenName}" />
                   <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Geburtsname" />
-                  <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SelectedNotice.MaidenName, Mode=TwoWay}" />
+                  <TextBox Grid.Row="4" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.MaidenName}" />
                   <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Text="AKA" />
-                  <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedNotice.Keyword, Mode=TwoWay}" />
+                  <TextBox Grid.Row="5" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.Keyword}" />
                   <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Text="Titel" />
-                  <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding SelectedNotice.Title, Mode=TwoWay}" />
+                  <TextBox Grid.Row="6" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.Title}" />
                   <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" Text="Geboren" />
-                  <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding SelectedNotice.BirthDate, Mode=TwoWay, StringFormat={}{0:dd.MM.yyyy}}" />
+                  <TextBox Grid.Row="7" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.BirthDate, StringFormat={}{0:dd.MM.yyyy}}" />
                   <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Text="Gestorben" />
-                  <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding SelectedNotice.DeathDate, Mode=TwoWay, StringFormat={}{0:dd.MM.yyyy}}" />
+                  <TextBox Grid.Row="8" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.DeathDate, StringFormat={}{0:dd.MM.yyyy}}" />
                   <TextBlock Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" Text="Begraben" />
-                  <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding SelectedNotice.BurialDate, Mode=TwoWay, StringFormat={}{0:dd.MM.yyyy}}" />
+                  <TextBox Grid.Row="9" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.BurialDate, StringFormat={}{0:dd.MM.yyyy}}" />
                   <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" Text="Ort" />
-                  <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding SelectedNotice.Place, Mode=TwoWay}" />
+                  <TextBox Grid.Row="10" Grid.Column="1" IsReadOnly="True" Text="{Binding SelectedNotice.Place}" />
                   <TextBlock Grid.Row="11" Grid.Column="0" VerticalAlignment="Center" Text="Rubrik" />
-                  <ComboBox Grid.Row="11" Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedNotice.Category, Mode=TwoWay}" />
+                  <ComboBox Grid.Row="11" Grid.Column="1" IsEnabled="False" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedNotice.Category}" />
                 </Grid>
               </ScrollViewer>
             </Border>
 
             <Border Grid.Column="1" BorderThickness="1" Padding="8">
               <Grid RowDefinitions="Auto,*,Auto" RowSpacing="6">
-                <TextBox Grid.Row="0" PlaceholderText="Link target" Text="{Binding SelectedNotice.LinkedNoticeId, Mode=TwoWay}" />
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                  <TextBox Grid.Column="0" IsReadOnly="True" PlaceholderText="Link target" Text="{Binding SelectedNotice.LinkedNoticeId}" />
+                  <Button Grid.Column="1" Content="Load detail" Command="{Binding LoadSelectedDetailCommand}" />
+                </Grid>
                 <TextBox Grid.Row="1"
                          AcceptsReturn="True"
                          TextWrapping="Wrap"
                          VerticalContentAlignment="Top"
-                         Text="{Binding SelectedNotice.Text, Mode=TwoWay}" />
-                <TextBlock Grid.Row="2" Opacity="0.75" Text="{Binding SelectedNoticePath}" />
+                         IsReadOnly="True"
+                         Text="{Binding SelectedNotice.Text}" />
+                <StackPanel Grid.Row="2" Spacing="3">
+                  <TextBlock Opacity="0.75" Text="{Binding SelectedNoticePath}" />
+                  <TextBlock Opacity="0.75" Text="{Binding SelectedNoticePlace}" />
+                  <TextBlock Opacity="0.75" Text="{Binding SelectedNoticeMediaSummary}" />
+                  <TextBlock Opacity="0.75" Text="{Binding LinkCandidates.Count, StringFormat={}Link candidates: {0}}" />
+                </StackPanel>
               </Grid>
             </Border>
 
@@ -188,7 +197,7 @@
               <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Source (session only)" />
               <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CoordinateSource, Mode=TwoWay}" />
               <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" Content="Approximate (session only)" IsChecked="{Binding CoordinateIsApproximate, Mode=TwoWay}" />
-              <Button Grid.Row="1" Grid.Column="7" Content="Save" Command="{Binding SaveCoordinateCommand}" IsEnabled="{Binding CoordinatePersistenceAvailable}" />
+              <Button Grid.Row="1" Grid.Column="7" Content="Save" Command="{Binding SaveCoordinateCommand}" IsEnabled="False" ToolTip.Tip="Write operations are disabled in the read-only migration pilot." />
             </Grid>
           </Border>
         </Grid>
@@ -212,8 +221,8 @@
 
     <Border Grid.Row="2" BorderThickness="0,1,0,0" Padding="8,6">
       <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8">
-        <Button Grid.Column="0" Content="Export -> TSV" Command="{Binding ExportCsvCommand}" />
-        <Button Grid.Column="1" Content="Export -> GEDCOM" Command="{Binding ExportGedcomCommand}" />
+        <Button Grid.Column="0" Content="Export -> TSV" Command="{Binding ExportCsvCommand}" IsEnabled="False" ToolTip.Tip="Export is disabled in the read-only migration pilot." />
+        <Button Grid.Column="1" Content="Export -> GEDCOM" Command="{Binding ExportGedcomCommand}" IsEnabled="False" ToolTip.Tip="Export is disabled in the read-only migration pilot." />
         <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="{Binding Status}" />
       </Grid>
     </Border>

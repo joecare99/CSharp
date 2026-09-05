@@ -18,12 +18,14 @@ public sealed class MainWindowViewModelTests
         var store = new FakeCoordinateStore();
         var viewModel = CreateViewModel(store, CoordinateSchemaStatus.Available);
 
-        viewModel.SelectedNotice = new DeathNotice { Place = "Heidelberg" };
+        viewModel.SelectedNotice = NoticeProjection.FromDomain(
+            new DeathNotice { Place = "Heidelberg" });
         viewModel.CoordinateLatitude = "49.3988";
         viewModel.CoordinateLongitude = "8.6724";
         viewModel.CoordinateSource = "fixture";
         viewModel.CoordinateIsApproximate = true;
-        viewModel.SelectedNotice = new DeathNotice { Place = "Mannheim" };
+        viewModel.SelectedNotice = NoticeProjection.FromDomain(
+            new DeathNotice { Place = "Mannheim" });
 
         Assert.AreEqual("Mannheim", viewModel.CoordinatePlace);
         Assert.AreEqual(string.Empty, viewModel.CoordinateLatitude);
@@ -99,16 +101,60 @@ public sealed class MainWindowViewModelTests
         Assert.AreEqual("coordinate.loaded", viewModel.CoordinateSchemaDiagnosticCode);
     }
 
+    [TestMethod]
+    public async Task ReadOnlyModeDisablesAllWriteCommands()
+    {
+        var store = new FakeCoordinateStore();
+        var viewModel = CreateViewModel(store, CoordinateSchemaStatus.Available, readOnly: true);
+        viewModel.SelectedNotice = NoticeProjection.FromDomain(
+            new DeathNotice { Text = "legacy text" });
+        viewModel.CoordinatePlace = "Heidelberg";
+        viewModel.CoordinateLatitude = "49.3988";
+        viewModel.CoordinateLongitude = "8.6724";
+
+        Assert.IsFalse(viewModel.SaveCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.ParseSelectedCommand.CanExecute(null));
+        await viewModel.SaveCoordinateCommand.ExecuteAsync(null);
+
+        Assert.IsFalse(store.HasSavedCoordinate);
+    }
+
+    [TestMethod]
+    public async Task LoadingSelectedDetailUsesImmutableProjection()
+    {
+        var store = new FakeCoordinateStore();
+        var detailService = new FakeDetailService();
+        var viewModel = CreateViewModel(
+            store, CoordinateSchemaStatus.Available, detailService: detailService);
+        viewModel.SelectedNotice = NoticeProjection.FromDomain(
+            new DeathNotice { Id = 42, Place = "Heidelberg" });
+
+        await viewModel.LoadSelectedDetailCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(42, detailService.RequestedNoticeId);
+        Assert.AreEqual("Heidelberg", viewModel.SelectedNoticePlace);
+        Assert.AreEqual("PNG available", viewModel.SelectedNoticeMediaSummary);
+        Assert.AreEqual(1, viewModel.LinkCandidates.Count);
+    }
+
     private static MainWindowViewModel CreateViewModel(
         FakeCoordinateStore store,
-        CoordinateSchemaStatus status)
+        CoordinateSchemaStatus status,
+        bool readOnly = false,
+        INoticeDetailService? detailService = null)
     {
-        return new MainWindowViewModel(
-            new FakeNoticeRepository(),
+        var repository = new FakeNoticeRepository();
+        var viewModel = new MainWindowViewModel(
+            repository,
+            new NoticeSearchService(repository),
             new FakeNoticeTextParser(),
             new FakeExportService(),
             new FakeSchemaProbe(status),
-            store);
+            store,
+            detailService: detailService,
+            readOnly: readOnly);
+        viewModel.CoordinatePersistenceAvailable = status == CoordinateSchemaStatus.Available;
+        return viewModel;
     }
 
     private sealed class FakeCoordinateStore : IPlaceCoordinateStore
@@ -152,6 +198,24 @@ public sealed class MainWindowViewModelTests
 
         public Task<IReadOnlyList<DeathNotice>> GetLinkCandidatesAsync(long noticeId, CancellationToken cancellationToken = default) =>
             Task.FromResult<IReadOnlyList<DeathNotice>>(new List<DeathNotice>());
+    }
+
+    private sealed class FakeDetailService : INoticeDetailService
+    {
+        public long RequestedNoticeId { get; private set; }
+
+        public Task<NoticeDetailResult> LoadAsync(
+            NoticeDetailRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            RequestedNoticeId = request.Notice.Id;
+            var candidate = NoticeProjection.FromDomain(new DeathNotice { Id = 43 });
+            return Task.FromResult(new NoticeDetailResult(
+                NoticeProjection.FromDomain(request.Notice),
+                new[] { candidate },
+                request.Notice.Place,
+                new NoticeMediaState(false, true, false)));
+        }
     }
 
     private sealed class FakeNoticeTextParser : INoticeTextParser
