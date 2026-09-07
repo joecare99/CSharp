@@ -29,7 +29,7 @@ public sealed class NoticeDetailService : INoticeDetailService
             !string.IsNullOrWhiteSpace(request.Notice.PngFile),
             !string.IsNullOrWhiteSpace(request.Notice.ProfileImage));
         return new NoticeDetailResult(
-            NoticeProjection.FromDomain(request.Notice),
+            request.Notice,
             candidates.Select(NoticeProjection.FromDomain).ToArray(),
             request.Notice.Place,
             media);
