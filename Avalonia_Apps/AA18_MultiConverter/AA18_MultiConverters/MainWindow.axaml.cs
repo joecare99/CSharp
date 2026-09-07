@@ -4,6 +4,11 @@ namespace AA18_MultiConverter;
 
 public partial class MainWindow : Window
 {
+    public MainWindow()
+        : this(new Views.DateDifView())
+    {
+    }
+
     public MainWindow(Views.DateDifView view)
     {
         InitializeComponent();
