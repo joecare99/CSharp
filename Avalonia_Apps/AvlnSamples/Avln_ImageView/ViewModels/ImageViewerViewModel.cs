@@ -11,6 +11,8 @@ namespace Avln_ImageView.ViewModels;
 public partial class ImageViewerViewModel : ObservableObject
 {
     private readonly IImageViewerModel _model;
+    private Bitmap? _bitmap;
+    private Bitmap? _bitmap;
     public ArrayList ImageFiles => _model.ImageFiles;
 
     [ObservableProperty]
@@ -41,14 +43,11 @@ public partial class ImageViewerViewModel : ObservableObject
             if (selection is FileInfo fi)
             {
                 // Dispose previous image if needed
-                if (Image is Bitmap oldBmp)
-                {
-                    oldBmp.Dispose();
-                }
+                _bitmap?.Dispose();
 
-                var bmp = new Bitmap(fi.FullName);
-                Image = bmp;
-                var px = bmp.PixelSize;
+                _bitmap = new Bitmap(fi.FullName);
+                Image = _bitmap;
+                var px = _bitmap.PixelSize;
                 ImageSize = px.Width + " x " + px.Height;
                 ImageFormat = "Bitmap";
                 FileSize = ((fi.Length + 512) / 1024) + "k";

@@ -24,8 +24,8 @@
 	<None Include="$(UpDir)\..\bin\CommonDialogs\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
 	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
 	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
-	<None Include="$(UpDir)\..\bin\ConsoleLib_net\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
-	<None Include="$(UpDir)\..\bin\ConsoleLib_net\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
 	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
 	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />
 	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib\%(RecursiveDir)" Visible="false" />

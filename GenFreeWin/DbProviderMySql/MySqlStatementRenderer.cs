@@ -96,7 +96,7 @@ namespace Db.Provider.MySql
             return xCommand;
         }
 
-        public IDbCommand CreateUpdate(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields, IEnumerable<DbFilterClause> arrFilters)
+        public IDbCommand CreateUpdate(string sTable, IEnumerable<KeyValuePair<string, string>> arrFields, IEnumerable<IDbFilterClause> arrFilters)
         {
             var sSet = string.Join(", ", arrFields.Select(xField => $"{QuoteIdentifier(xField.Key)}={xField.Value}"));
             var xBuilder = new StringBuilder($"UPDATE {QuoteIdentifier(sTable)} SET {sSet}");
@@ -107,7 +107,7 @@ namespace Db.Provider.MySql
 
             return xCommand;
         }
-        public IDbCommand CreateDelete(string sTable, IEnumerable<DbFilterClause> arrFilters)
+        public IDbCommand CreateDelete(string sTable, IEnumerable<IDbFilterClause> arrFilters)
         {
             var xBuilder = new StringBuilder($"DELETE FROM {QuoteIdentifier(sTable)}");
             AppendFilters(xBuilder, arrFilters.ToList());

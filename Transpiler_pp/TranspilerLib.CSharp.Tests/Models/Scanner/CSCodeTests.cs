@@ -1,6 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using NSubstitute;
 using System;
 using System.Collections.Generic;

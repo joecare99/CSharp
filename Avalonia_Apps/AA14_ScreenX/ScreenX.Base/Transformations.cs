@@ -54,7 +54,7 @@ public static class Transformations
     public static ExPoint Schnecke2(ExPoint p, ExPoint p0, ref bool brk)
     {
         var y = PLength(p);
-        if (y == 0) return new ExPoint(0, 0);
+        if (Math.Abs(y) < double.Epsilon) return new ExPoint(0, 0);
         var x = ArcSinXp(p);
         return new ExPoint(x * 32 / Math.PI, y + (x * 4 / Math.PI) - 6);
     }
@@ -62,7 +62,7 @@ public static class Transformations
     public static ExPoint Strudel(ExPoint p, ExPoint p0, ref bool brk)
     {
         var y = PLength(p);
-        if (y == 0) return new ExPoint(0, 0);
+        if (Math.Abs(y) < double.Epsilon) return new ExPoint(0, 0);
         var x = ArcSinXp(p);
         var ang = x + Math.PI - Math.PI * Math.Pow((y - 1) / y, 2);
         return new ExPoint(Math.Sin(ang) * y, Math.Cos(ang) * y);

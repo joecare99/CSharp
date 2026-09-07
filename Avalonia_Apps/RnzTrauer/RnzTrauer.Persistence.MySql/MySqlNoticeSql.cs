@@ -32,9 +32,31 @@ public static class MySqlNoticeSql
         }
 
         AddReviewWhere(filter, where, values);
+        var limit = filter.Kind switch
+        {
+            NoticeFilterKind.MissingText => 300,
+            NoticeFilterKind.DeathNoticeWithoutPlace => 100,
+            NoticeFilterKind.MissingSex => 100,
+            NoticeFilterKind.MissingLink => 300,
+            NoticeFilterKind.DuplicateCandidates => 300,
+            NoticeFilterKind.MaleWithMaidenName => 300,
+            NoticeFilterKind.RecentMissingProfileImage => 2000,
+            NoticeFilterKind.ImplausibleDates => 300,
+            _ => 300,
+        };
+        var orderBy = filter.Kind switch
+        {
+            NoticeFilterKind.DeathNoticeWithoutPlace
+                or NoticeFilterKind.DuplicateCandidates
+                or NoticeFilterKind.MaleWithMaidenName
+                or NoticeFilterKind.RecentMissingProfileImage
+                or NoticeFilterKind.ImplausibleDates => " ORDER BY `Auftrag` DESC",
+            _ => string.Empty,
+        };
         var sql = "SELECT " + NoticeColumns + " FROM `Anzeigen`"
             + (where.Count == 0 ? string.Empty : " WHERE " + string.Join(" AND ", where))
-            + " ORDER BY `Auftrag` DESC LIMIT 2000";
+            + orderBy
+            + " LIMIT " + limit;
         return new SqlStatement(sql, values);
     }
 
@@ -70,19 +92,19 @@ public static class MySqlNoticeSql
                 where.Add("`Rubrik`=8050 AND `Ort` IS NULL");
                 break;
             case NoticeFilterKind.MissingSex:
-                where.Add("(`Geschlecht` IS NULL OR `Geschlecht` NOT IN ('M','F')) AND `Vorname` <> ''");
+                where.Add("(`Geschlecht` IS NULL OR `Geschlecht` NOT IN ('M','F')) AND `Vorname` IS NOT NULL AND `Vorname` <> '' AND `Rubrik` IN (8050,8051,8052,8055,8060,8070,8080)");
                 break;
             case NoticeFilterKind.MissingLink:
-                where.Add("`LinkID` IS NULL AND `Rubrik` IN (8055,8060,8070,8080)");
+                where.Add("`LinkID` IS NULL");
                 break;
             case NoticeFilterKind.DuplicateCandidates:
-                where.Add("`idAnzeige` IN (SELECT `idAnzeige` FROM `vNonSingletonName`)");
+                where.Add("`idAnzeige` IN (SELECT `idAnzeige_min` FROM `vNonSingletonName` UNION SELECT `idAnzeige_max` FROM `vNonSingletonName`)");
                 break;
             case NoticeFilterKind.MaleWithMaidenName:
                 where.Add("`Geschlecht`='M' AND `Geburtsname` IS NOT NULL AND `Geburtsname`<>''");
                 break;
             case NoticeFilterKind.RecentMissingProfileImage:
-                where.Add("`TimeStamp` > NOW() - INTERVAL 14 DAY AND `ProfileImg` IS NULL AND `ProfImgCount` > 0");
+                where.Add("`TimeStamp` > NOW() - INTERVAL 14 DAY AND `ProfileImg` IS NULL AND `ProfImgCount` > 0 AND `Rubrik` IN (8050,8051,8052,8056,8061,8071,8081)");
                 break;
             case NoticeFilterKind.ImplausibleDates:
                 where.Add("`idAnzeige` IN (SELECT `idAnzeige` FROM `vWrongDate`)");

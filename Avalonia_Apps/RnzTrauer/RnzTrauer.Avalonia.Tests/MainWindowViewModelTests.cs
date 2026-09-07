@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -6,6 +8,7 @@ using RnzTrauer.Avalonia.ViewModels;
 using RnzTrauer.Core.Domain;
 using RnzTrauer.Core.Services;
 using RnzTrauer.Places;
+using RnzTrauer.Media;
 
 namespace RnzTrauer.Avalonia.Tests;
 
@@ -18,12 +21,14 @@ public sealed class MainWindowViewModelTests
         var store = new FakeCoordinateStore();
         var viewModel = CreateViewModel(store, CoordinateSchemaStatus.Available);
 
-        viewModel.SelectedNotice = new DeathNotice { Place = "Heidelberg" };
+        viewModel.SelectedNotice = NoticeProjection.FromDomain(
+            new DeathNotice { Place = "Heidelberg" });
         viewModel.CoordinateLatitude = "49.3988";
         viewModel.CoordinateLongitude = "8.6724";
         viewModel.CoordinateSource = "fixture";
         viewModel.CoordinateIsApproximate = true;
-        viewModel.SelectedNotice = new DeathNotice { Place = "Mannheim" };
+        viewModel.SelectedNotice = NoticeProjection.FromDomain(
+            new DeathNotice { Place = "Mannheim" });
 
         Assert.AreEqual("Mannheim", viewModel.CoordinatePlace);
         Assert.AreEqual(string.Empty, viewModel.CoordinateLatitude);
@@ -99,16 +104,90 @@ public sealed class MainWindowViewModelTests
         Assert.AreEqual("coordinate.loaded", viewModel.CoordinateSchemaDiagnosticCode);
     }
 
+    [TestMethod]
+    public async Task ReadOnlyModeDisablesAllWriteCommands()
+    {
+        var store = new FakeCoordinateStore();
+        var viewModel = CreateViewModel(store, CoordinateSchemaStatus.Available, readOnly: true);
+        viewModel.SelectedNotice = NoticeProjection.FromDomain(
+            new DeathNotice { Text = "legacy text" });
+        viewModel.CoordinatePlace = "Heidelberg";
+        viewModel.CoordinateLatitude = "49.3988";
+        viewModel.CoordinateLongitude = "8.6724";
+
+        Assert.IsFalse(viewModel.SaveCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.ParseSelectedCommand.CanExecute(null));
+        await viewModel.SaveCoordinateCommand.ExecuteAsync(null);
+
+        Assert.IsFalse(store.HasSavedCoordinate);
+    }
+
+    [TestMethod]
+    public async Task LoadingSelectedDetailUsesImmutableProjection()
+    {
+        var store = new FakeCoordinateStore();
+        var detailService = new FakeDetailService();
+        var viewModel = CreateViewModel(
+            store, CoordinateSchemaStatus.Available, detailService: detailService);
+        viewModel.SelectedNotice = NoticeProjection.FromDomain(
+            new DeathNotice { Id = 42, Place = "Heidelberg" });
+
+        await viewModel.LoadSelectedDetailCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(42, detailService.RequestedNoticeId);
+        Assert.AreEqual("Heidelberg", viewModel.SelectedNoticePlace);
+        Assert.AreEqual("PNG available", viewModel.SelectedNoticeMediaSummary);
+        Assert.AreEqual(1, viewModel.LinkCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task ExtractingPdfOcrIsReadOnlyAndUsesSelectedPdf()
+    {
+        var store = new FakeCoordinateStore();
+        var ocr = new FakePdfOcrService();
+        var directory = Path.Combine(Path.GetTempPath(), "rnz-vm-" + Guid.NewGuid());
+        Directory.CreateDirectory(directory);
+        var pdfFile = Path.Combine(directory, "notice.pdf");
+        File.WriteAllBytes(pdfFile, [1]);
+        try
+        {
+            var viewModel = CreateViewModel(
+                store, CoordinateSchemaStatus.Available, pdfOcrService: ocr);
+            viewModel.SelectedNotice = NoticeProjection.FromDomain(
+                new DeathNotice { Path = directory, PdfFile = "notice.pdf" });
+
+            await viewModel.ExtractSelectedPdfOcrCommand.ExecuteAsync(null);
+
+            Assert.AreEqual(pdfFile, ocr.RequestedPath);
+            Assert.AreEqual("OCR fixture text", viewModel.SelectedNoticeOcrText);
+            Assert.AreEqual("OCR completed (1 pages).", viewModel.OcrStatus);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
     private static MainWindowViewModel CreateViewModel(
         FakeCoordinateStore store,
-        CoordinateSchemaStatus status)
+        CoordinateSchemaStatus status,
+        bool readOnly = false,
+        INoticeDetailService? detailService = null,
+        IPdfOcrService? pdfOcrService = null)
     {
-        return new MainWindowViewModel(
-            new FakeNoticeRepository(),
+        var repository = new FakeNoticeRepository();
+        var viewModel = new MainWindowViewModel(
+            repository,
+            new NoticeSearchService(repository),
             new FakeNoticeTextParser(),
             new FakeExportService(),
             new FakeSchemaProbe(status),
-            store);
+            store,
+            detailService: detailService,
+            pdfOcrService: pdfOcrService,
+            readOnly: readOnly);
+        viewModel.CoordinatePersistenceAvailable = status == CoordinateSchemaStatus.Available;
+        return viewModel;
     }
 
     private sealed class FakeCoordinateStore : IPlaceCoordinateStore
@@ -152,6 +231,40 @@ public sealed class MainWindowViewModelTests
 
         public Task<IReadOnlyList<DeathNotice>> GetLinkCandidatesAsync(long noticeId, CancellationToken cancellationToken = default) =>
             Task.FromResult<IReadOnlyList<DeathNotice>>(new List<DeathNotice>());
+    }
+
+    private sealed class FakeDetailService : INoticeDetailService
+    {
+        public long RequestedNoticeId { get; private set; }
+
+        public Task<NoticeDetailResult> LoadAsync(
+            NoticeDetailRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            RequestedNoticeId = request.Notice.Id;
+            var candidate = NoticeProjection.FromDomain(new DeathNotice { Id = 43 });
+            return Task.FromResult(new NoticeDetailResult(
+                request.Notice,
+                new[] { candidate },
+                request.Notice.Place,
+                new NoticeMediaState(false, true, false)));
+        }
+    }
+
+    private sealed class FakePdfOcrService : IPdfOcrService
+        {
+            public string? RequestedPath { get; private set; }
+
+            public Task<PdfOcrResult> ExtractAsync(
+                PdfOcrRequest request,
+                CancellationToken cancellationToken = default)
+            {
+                RequestedPath = request.PdfPath;
+                return Task.FromResult(new PdfOcrResult(
+                    request.PdfPath,
+                    new[] { "OCR fixture text" },
+                    "OCR fixture text"));
+            }
     }
 
     private sealed class FakeNoticeTextParser : INoticeTextParser

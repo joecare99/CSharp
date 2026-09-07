@@ -155,6 +155,9 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
     {
         lock (control)
         {
+            if (IsObscured(control))
+                return;
+
             Rectangle realDim = control.RealDim;
 
             if (realDim.Width > 0 && realDim.Height > 0)
@@ -194,6 +197,15 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
 
     public void DrawLabel(IControl label)
     {
+        if (IsObscured(label))
+            return;
+
+        if (label is ICellColorSource coloredLabel)
+        {
+            DrawColoredLabel(label, coloredLabel);
+            return;
+        }
+
         Console.ForegroundColor = label.ForeColor;
         if (label is Label l && l.ParentBackground && label.Parent != null)
         {
@@ -204,10 +216,63 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
             Console.BackgroundColor = label.BackColor;
         }
 
-        ConsoleFramework.Canvas.OutTextXY(
-            label.RealDim.Location,
-            (" " + (label.Text ?? string.Empty) + "                  ").Substring(0, Math.Min(label.size.Width, (label.Text ?? string.Empty).Length + 14)));
+        var width = Math.Max(0, label.size.Width);
+        var height = Math.Max(0, label.size.Height);
+        var lines = (label.Text ?? string.Empty)
+            .Replace("\r", string.Empty)
+            .Split('\n');
+
+        for (var row = 0; row < height && row < lines.Length; row++)
+        {
+            var line = " " + lines[row];
+            if (line.Length < width)
+                line = line.PadRight(width);
+            else if (line.Length > width)
+                line = line[..width];
+
+            ConsoleFramework.Canvas.OutTextXY(
+                new Point(label.RealDim.X, label.RealDim.Y + row),
+                line);
+        }
         Console.BackgroundColor = ConsoleColor.Black;
+    }
+
+    private static void DrawColoredLabel(IControl label, ICellColorSource coloredLabel)
+    {
+        var width = Math.Max(0, label.size.Width);
+        var height = Math.Max(0, label.size.Height);
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                Console.ForegroundColor = coloredLabel.GetCellForeground(x, y);
+                Console.BackgroundColor = coloredLabel.GetCellBackground(x, y);
+                Console.SetCursorPosition(label.RealDim.X + x, label.RealDim.Y + y);
+                Console.Write('▄');
+            }
+        }
+        Console.ForegroundColor = label.ForeColor;
+        Console.BackgroundColor = label.BackColor;
+    }
+
+    private static bool IsObscured(IControl control)
+    {
+        if (control.Parent is not Control parent)
+            return false;
+
+        var index = parent.Children.IndexOf(control);
+        if (index < 0)
+            return false;
+
+        var controlRect = control.RealDim;
+        for (var siblingIndex = 0; siblingIndex < index; siblingIndex++)
+        {
+            var sibling = parent.Children[siblingIndex];
+            if (sibling.Visible && sibling is IHasBorder && sibling.RealDim.IntersectsWith(controlRect))
+                return true;
+        }
+
+        return IsObscured(parent);
     }
 
     public void DrawPixel(IControl pixel)

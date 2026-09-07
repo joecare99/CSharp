@@ -1,0 +1,13 @@
+<Project>
+  <Import Project="..\ConsoleApps.props" />
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Terminal.Core\Terminal.Core.csproj" />
+  </ItemGroup>
+</Project>

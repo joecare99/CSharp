@@ -18,6 +18,6 @@
     <None Update="Fixtures\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="MSTest" Version="4.3.3" />
+    <PackageVersion Update="MSTest" Version="4.4.0" />
   </ItemGroup>
 </Project>

@@ -73,7 +73,7 @@ public class GlyphRunControl : Control
 
         _characters[0] = c;
 
-        var glyphRun = new GlyphRun(_glyphTypeface, _fontSize, _characters, _glyphIndices);
+        using var glyphRun = new GlyphRun(_glyphTypeface, _fontSize, _characters, _glyphIndices);
 
         context.DrawGlyphRun(Brushes.Black, glyphRun);
     }
@@ -132,9 +132,9 @@ public class GlyphRunGeometryControl : Control
 
         _characters[0] = c;
 
-        var glyphRun = new GlyphRun(_glyphTypeface, _fontSize, _characters, _glyphIndices);
+        using var glyphRun = new GlyphRun(_glyphTypeface, _fontSize, _characters, _glyphIndices);
 
-        var geometry = glyphRun.BuildGeometry();          
+        var geometry = glyphRun.BuildGeometry();
 
         context.DrawGeometry(Brushes.Green, null, geometry);          
     }

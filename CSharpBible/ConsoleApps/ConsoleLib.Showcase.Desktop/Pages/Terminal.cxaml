@@ -1,0 +1,6 @@
+<Panel Name="Terminal" Text="Terminal" Width="78" Height="22" BorderStyle="Single" BorderColor="DarkCyan" ForeColor="Gray" BackColor="Black">
+  <Label Name="Status" Text="{Binding Status}" Width="72" Height="1" X="2" Y="1" ForeColor="Yellow" />
+  <Label Name="Output" Text="{Binding Output}" Width="72" Height="14" X="2" Y="3" />
+  <Button Name="Start" Text="Start" Width="10" Height="1" X="2" Y="19" Command="{Binding StartCommand}" />
+  <Button Name="Stop" Text="Stop" Width="10" Height="1" X="14" Y="19" Command="{Binding StopCommand}" />
+</Panel>

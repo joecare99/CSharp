@@ -86,10 +86,12 @@
     <Project Path="Ollama.Tools.Tests/Ollama.Tools.Tests.csproj" />
     <Project Path="Ollama.Tools/Ollama.Tools.csproj" />
     <Project Path="Ollama.Wpf.TextAnalysis/Ollama.Wpf.TextAnalysis.csproj" />
+    <Project Path="OllamaHarness/OllamaHarness.csproj" />
     <Project Path="OpenAI.CodingAgent/OpenAI.CodingAgent.csproj" />
     <Project Path="OpenAIPlayground/OpenAIPlayground.csproj" />
     <Project Path="PdfMarkdownDeterministic.ConsoleApp/PdfMarkdownDeterministic.ConsoleApp.csproj" />
     <Project Path="PeripheralProduction.Tests/PeripheralProduction.Tests.csproj" />
+    <Project Path="SelfImprovingHarness/SelfImprovingHarness.csproj" />
   </Folder>
   <Folder Name="/PictureDB/">
     <Project Path="../Data/PictureDB/PictureDB.Base/PictureDB.Base.csproj" />

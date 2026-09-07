@@ -18,7 +18,7 @@ public static class Printing_Ex
     public static void PrintDocument()
     {
 #if !NET5_0_OR_GREATER
-        PrintDocument pd = new PrintDocument();
+        using PrintDocument pd = new PrintDocument();
         pd.DocumentName = "Hello, Printer! Document";
         pd.PrinterSettings.PrinterName = "Microsoft Print to PDF";
         pd.PrintPage += (sender, e) =>
@@ -33,7 +33,7 @@ public static class Printing_Ex
         };
         pd.Print();
 #else
-        PrintQueue printQueue = new LocalPrintServer().GetPrintQueues().FirstOrDefault(p => p.Name.Contains("PDF"));        
+        using PrintQueue printQueue = new LocalPrintServer().GetPrintQueues().FirstOrDefault(p => p.Name.Contains("PDF"));        
         printQueue.Comment = "Hello, Printer! Document";
         var ticket = printQueue.UserPrintTicket;
         ticket.PageMediaSize = new PageMediaSize(PageMediaSizeName.ISOA4);
@@ -49,7 +49,7 @@ public static class Printing_Ex
             (297.0-10) * iScreenPPI / fmmPerInch  , (210.0-10) * iScreenPPI / fmmPerInch );
 
         var visual = new DrawingVisual();
-        DrawingContext dc = visual.RenderOpen();                
+        using DrawingContext dc = visual.RenderOpen();                
         dc.DrawText(new FormattedText("Hello, Printer!", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Arial"), 24, Brushes.Black), r.TopLeft );
         dc.DrawLine(new Pen(Brushes.Black, 0.5), r.TopLeft, r.BottomRight);
         dc.DrawLine(new Pen(Brushes.Black, 0.5), r.TopRight, r.BottomLeft);

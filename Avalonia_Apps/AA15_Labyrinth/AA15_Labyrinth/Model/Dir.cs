@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace AA15_Labyrinth.Model;
@@ -23,4 +24,5 @@ public readonly record struct Dir(int Dx, int Dy)
             arr[i++] = new Dir(v.Item1, v.Item2);
         return arr;
     }
+
 }

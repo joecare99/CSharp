@@ -42,9 +42,9 @@ namespace RenderDemo.Pages
 
             public Rect Bounds { get; }
             public bool HitTest(Point p) => false;
-            public bool Equals(ICustomDrawOperation? other) => other is CustomDrawOp;
+            public bool Equals(ICustomDrawOperation? other) => other is CustomDrawOp customDrawOp && Equals(customDrawOp);
             public bool Equals(CustomDrawOp? other) => other is not null;
-            public override bool Equals(object? obj) => obj is CustomDrawOp other && Equals(other);
+            public override bool Equals(object? obj) => Equals(obj as CustomDrawOp);
             public override int GetHashCode() => Bounds.GetHashCode();
             static Stopwatch St = Stopwatch.StartNew();
             public void Render(ImmediateDrawingContext context)

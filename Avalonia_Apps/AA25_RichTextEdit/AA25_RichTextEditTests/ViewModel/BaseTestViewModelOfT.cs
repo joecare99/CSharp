@@ -64,7 +64,7 @@ public abstract class BaseTestViewModel<T> : BaseTestViewModel where T : class, 
             {
                 var command = testModel.GetProp(propertyName) as ICommand;
                 Assert.IsNotNull(command);
-                Assert.AreEqual(defaultValue, command.CanExecute(null));
+                Assert.AreEqual(defaultValue, command?.CanExecute(null));
             }
             else
             {

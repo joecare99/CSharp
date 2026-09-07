@@ -23,6 +23,6 @@
 	<ProjectReference Include="..\..\Libraries\AppKomponentBaseLib\AppKomponentBaseLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="Avalonia" Version="12.1.1" />
+    <PackageVersion Update="Avalonia" Version="12.1.2" />
   </ItemGroup>
 </Project>

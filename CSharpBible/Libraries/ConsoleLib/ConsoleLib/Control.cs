@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Assembly         : ConsoleLib
 // Author           : Mir
 // Created          : 08-11-2022
@@ -92,6 +92,8 @@ public class Control : IControl
                     Parent.ActiveControl = null;
                 else
                 {
+                    if (Parent is Control parentControl && !parentControl.Active)
+                        parentControl.Active = true;
                     if (Parent.ActiveControl != null)
                         Parent.ActiveControl.Active = false;
                     Parent.ActiveControl = this;
@@ -628,6 +630,8 @@ public class Control : IControl
         WidgetSet?.SynchronizeControl(this);
     }
 
+    protected void NotifyControlChanged() => OnChange?.Invoke(this, EventArgs.Empty);
+
     protected IApplication? TryGetApplicationRoot() => Root as IApplication;
 
     private void UpdateRoot(Control? parent)
@@ -729,16 +733,18 @@ public class Control : IControl
     {
         if (!CanProcessInput)
             return;
-        bool xFlag = false;
         foreach (var ctrl in Children.ToList())
         {
             if (ctrl.Over(M.MousePos))
             {
-                xFlag = true;
+                if (M.MouseButtonLeft && ctrl is Control childControl && childControl.Enabled)
+                    childControl.Active = true;
                 ctrl.MouseClick(M);
+                M.Handled = true;
+                return;
             }
         }
-        if (!xFlag && M.MouseButtonLeft)
+        if (M.MouseButtonLeft)
             Click();
 
     }

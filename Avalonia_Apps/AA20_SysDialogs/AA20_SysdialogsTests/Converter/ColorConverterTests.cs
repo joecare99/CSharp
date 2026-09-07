@@ -34,7 +34,10 @@ public class ColorConverterTests
         var result = _testConverter.Convert(System.Drawing.Color.Red, typeof(Brush), null!, CultureInfo.InvariantCulture);
         Assert.IsInstanceOfType(result, typeof(SolidColorBrush));
         var brush = (SolidColorBrush)result!;
-        Assert.AreEqual("#FFFF0000", brush.Color.ToString());
+        Assert.AreEqual(255, brush.Color.A);
+        Assert.AreEqual(255, brush.Color.R);
+        Assert.AreEqual(0, brush.Color.G);
+        Assert.AreEqual(0, brush.Color.B);
     }
 
     [TestMethod()]

@@ -69,14 +69,14 @@ namespace IntegrationTestApp
 
         private void InitializeViewMenu(IEnumerable<DemoPage> pages)
         {
-            var viewMenu = (NativeMenuItem?)NativeMenu.GetMenu(this)?.Items[1];
+            var viewMenu = NativeMenu.GetMenu(this)?.Items[1] as NativeMenuItem;
 
             foreach (var page in pages)
             {
                 var menuItem = new NativeMenuItem
                 {
-                    Header = (string?)page.Name,
-                    ToolTip = $"Tip:{(string?)page.Name}",
+                    Header = page.Name,
+                    ToolTip = $"Tip:{page.Name}",
                     ToggleType = MenuItemToggleType.Radio,
                 };
 

@@ -11,7 +11,9 @@ internal class MacOSTextBoxFactory : INativeTextBoxFactory
     public INativeTextBoxImpl CreateControl(IPlatformHandle parent)
     {
         MacHelper.EnsureInitialized();
-        return new MacOSTextBox();
+        var textBox = new MacOSTextBox();
+        textBox.InitializeTextStorage();
+        return textBox;
     }
 
     private class MacOSTextBox : NSTextView, INativeTextBoxImpl
@@ -20,7 +22,6 @@ internal class MacOSTextBoxFactory : INativeTextBoxFactory
         
         public MacOSTextBox()
         {
-            TextStorage.Append(new("Native text box"));
             Handle = new MacOSViewHandle(this);
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromMilliseconds(400);
@@ -29,6 +30,12 @@ internal class MacOSTextBoxFactory : INativeTextBoxFactory
                 Hovered?.Invoke(this, EventArgs.Empty);
                 _timer.Stop();
             };
+        }
+
+        public void InitializeTextStorage()
+        {
+            using var text = new NSAttributedString("Native text box");
+            TextStorage.Append(text);
         }
 
         public new IPlatformHandle Handle { get; }

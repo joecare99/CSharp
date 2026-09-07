@@ -28,9 +28,9 @@ public class TimeSpanConverter : IMultiValueConverter
     public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
     {
         var df = DateDifFormat.Days;
-        if (values.Count >= 2 && values[1] is DateDifFormat d)
+        if (values is not null && values.Count >= 2 && values[1] is DateDifFormat d)
             df = d;
-        if (values.Count >= 1 && values[0] is TimeSpan ts)
+        if (values is not null && values.Count >= 1 && values[0] is TimeSpan ts)
         {
             var fmt = parameter as string ?? "F2";
             return df switch

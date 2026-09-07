@@ -152,7 +152,7 @@ public class EditorWorkflowTests
         var document = new FileEditorDocument();
         var dialogService = Substitute.For<IEditorFileDialogService>();
         var storageService = Substitute.For<ITextDocumentStorageService>();
-        dialogService.ShowOpenFileDialogAsync(Arg.Any<string?>(), default).Returns((string?)null);
+        dialogService.ShowOpenFileDialogAsync(Arg.Any<string?>(), default).Returns(_ => (string?)null);
         var workflow = new EditorWorkflow(document, dialogService, storageService);
 
         var result = await workflow.OpenAsync();
@@ -174,7 +174,7 @@ public class EditorWorkflowTests
         var document = new FileEditorDocument();
         var dialogService = Substitute.For<IEditorFileDialogService>();
         var storageService = Substitute.For<ITextDocumentStorageService>();
-        dialogService.ShowOpenFileDialogAsync(currentDirectory, default).Returns((string?)null);
+        dialogService.ShowOpenFileDialogAsync(currentDirectory, default).Returns(_ => (string?)null);
         var workflow = new EditorWorkflow(document, dialogService, storageService);
 
         await workflow.OpenAsync();

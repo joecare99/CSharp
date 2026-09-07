@@ -22,7 +22,8 @@ public class FontConverterTests
  [TestMethod()]
  public void ConvertTest_Arial()
  {
- var result = _testConverter.Convert(new System.Drawing.Font("Arial", 12f), typeof(FontFamily), null!, CultureInfo.InvariantCulture);
+  using var font = new System.Drawing.Font("Arial", 12f);
+  var result = _testConverter.Convert(font, typeof(FontFamily), null!, CultureInfo.InvariantCulture);
  Assert.IsInstanceOfType(result, typeof(FontFamily));
  var fontFamily = (FontFamily)result!;
  Assert.AreEqual("Arial", fontFamily.Name);

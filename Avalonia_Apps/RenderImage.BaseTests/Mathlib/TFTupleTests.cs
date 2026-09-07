@@ -36,7 +36,7 @@ public class TFTupleTests
         Assert.AreEqual("<0.00;0.00>", _t.ToString());
         Assert.AreEqual("<0.00;0.00>", TFTuple.Zero.ToString());
         _t.Init(1.0, -1.0);
-        Assert.AreEqual("<1.00; -1.00>", _t.ToString());
+        Assert.AreEqual("<1.00;-1.00>", _t.ToString());
         Assert.AreEqual(1.0, _t[0], 1e-20);
         Assert.AreEqual(-1.0, _t[1], 1e-20);
         _t.Init(23.0, 17.0);
@@ -49,7 +49,7 @@ public class TFTupleTests
             var x1 = (rnd.NextDouble() - 0.5) * int.MaxValue;
             var y1 = (rnd.NextDouble() - 0.5) * int.MaxValue;
             _t.Init(x1, y1);
-            var exp = $"<{x1.ToString("F2", Invar)}; {y1.ToString("F2", Invar)}>";
+            var exp = $"<{x1.ToString("F2", Invar)};{y1.ToString("F2", Invar)}>";
         Assert.AreEqual(exp, _t.ToString(), $"init({x1},{y1})");
         Assert.AreEqual(x1, _t.X, 1e-12);
         Assert.AreEqual(y1, _t.Y, 1e-12);

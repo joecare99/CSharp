@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 x:Class="ConsoleLib.Cxaml.Designer.Views.ConfigurationView">
+  <StackPanel Spacing="8">
+	<TextBlock Text="Configuration" FontWeight="Bold" />
+	<TextBox Text="{Binding FilePath}" PlaceholderText="CXAML file path" />
+	<Button Content="Load CXAML" Command="{Binding LoadFileCommand}" />
+	<Button Content="Save CXAML" Command="{Binding SaveFileCommand}" />
+	<ComboBox ItemsSource="{Binding ConsoleFrameSizes}"
+			  SelectedItem="{Binding SelectedConsoleFrameSize}"
+			  PlaceholderText="Console frame size" />
+	<TextBlock Text="Virtual AXAML" FontWeight="Bold" />
+	<TextBox Text="{Binding VirtualAxaml}" IsReadOnly="True"
+			 AcceptsReturn="True" FontFamily="Consolas"
+			 MinHeight="100" TextWrapping="NoWrap" />
+  </StackPanel>
+</UserControl>

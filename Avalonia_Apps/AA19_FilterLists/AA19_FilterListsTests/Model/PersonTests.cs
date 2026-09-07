@@ -306,7 +306,7 @@ namespace AA19_FilterLists.Model.Tests
             void SetData(Person? p)
             {
                 if (p == null) return;
-                if (aId != null) p.Id = aId ??0; // Soll die IDänderbar sein ? 
+                if (aId != null) p.Id = aId.Value;
                 if (aFirstname != null) p.FirstName = aFirstname;
                 if (aLastname != null) p.LastName = aLastname;
                 if (aTitle != null) p.Title = aTitle;

@@ -37,7 +37,7 @@ public class TemplateViewTests
         if (_vm?.GetType().GetProperty(sRelayCmd)?.GetValue(_vm) is IRelayCommand iRc)
         {  
             iRc.CanExecute(null).Returns(true);
-            iRc.CanExecuteChanged += Raise.Event<EventHandler>(_vm.HomeCommand, EventArgs.Empty);
+            iRc.CanExecuteChanged += Raise.Event<EventHandler>(EventArgs.Empty);
         
         
         window.Show();

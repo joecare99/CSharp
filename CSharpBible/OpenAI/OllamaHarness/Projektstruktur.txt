@@ -1,0 +1,15 @@
+OllamaHarness/
+├── OllamaHarness.csproj
+├── Program.cs
+├── Core/
+│   ├── OllamaClient.cs
+│   ├── CodeGenerator.cs
+│   ├── Compiler.cs
+│   ├── Validator.cs
+│   └── VersionManager.cs
+├── Bootstrap/
+│   └── SelfOptimizer.cs
+├── Config/
+│   └── HarnessConfig.cs
+└── Sources/            ← wird zur Laufzeit gelesen/geschrieben
+    └── (eigene .cs-Dateien)

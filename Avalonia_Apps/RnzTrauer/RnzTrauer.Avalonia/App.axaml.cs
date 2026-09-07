@@ -12,6 +12,7 @@ using RnzTrauer.Persistence.MySql;
 using RnzTrauer.Places;
 using RnzTrauer.Core.Services;
 using RnzTrauer.Import.Services;
+using RnzTrauer.Media;
 
 namespace RnzTrauer.Avalonia;
 
@@ -33,6 +34,8 @@ public sealed partial class App : Application
         services.AddSingleton<IDbConnectionFactory>(factory)
             .AddSingleton<IDBSettings>(settings)
             .AddSingleton<INoticeRepository, MySqlNoticeRepository>()
+            .AddSingleton<INoticeSearchService, NoticeSearchService>()
+            .AddSingleton<INoticeDetailService, NoticeDetailService>()
             .AddSingleton<MySqlPlaceCoordinateStore>()
             .AddSingleton<IPlaceCoordinateStore>(services => services.GetRequiredService<MySqlPlaceCoordinateStore>())
             .AddSingleton<ICoordinateSchemaProbe>(services => services.GetRequiredService<MySqlPlaceCoordinateStore>())
@@ -43,11 +46,40 @@ public sealed partial class App : Application
             .AddTransient<ISchemaFilter, SchemaFilter>()
             .AddTransient<ISchemaImportAccumulator, SchemaImportAccumulator>()
             .AddTransient<IHtmlSchemaImporter, HtmlSchemaImporter>()
+            .AddSingleton<IExternalProcessRunner, SystemExternalProcessRunner>()
+            .AddSingleton<IPdfImageRenderer>(services =>
+                new PopplerPdfImageRenderer(
+                    new PopplerPdfImageRendererOptions(
+                        Environment.GetEnvironmentVariable("RNZ_PDFTOPPM_PATH") ?? "pdftoppm"),
+                    services.GetRequiredService<IExternalProcessRunner>()))
+            .AddSingleton<IOcrEngine>(services =>
+                new TesseractOcrEngine(
+                    new TesseractOcrOptions(
+                        Environment.GetEnvironmentVariable("RNZ_TESSERACT_PATH") ?? "tesseract"),
+                    services.GetRequiredService<IExternalProcessRunner>()))
+            .AddSingleton<IPdfOcrService>(services =>
+                new PdfOcrService(
+                    services.GetRequiredService<IPdfImageRenderer>(),
+                    services.GetRequiredService<IOcrEngine>()))
             .AddSingleton<IExportService, NoticeExportService>()
-            .AddSingleton<MainWindowViewModel>();
+            .AddSingleton<MainWindowViewModel>(services =>
+                new MainWindowViewModel(
+                    services.GetRequiredService<INoticeRepository>(),
+                    services.GetRequiredService<INoticeSearchService>(),
+                    services.GetRequiredService<INoticeTextParser>(),
+                    services.GetRequiredService<IExportService>(),
+                    services.GetRequiredService<ICoordinateSchemaProbe>(),
+                    services.GetRequiredService<IPlaceCoordinateStore>(),
+                    services.GetRequiredService<INoticeDetailService>(),
+                    services.GetRequiredService<IPdfOcrService>(),
+                    readOnly: true));
         var provider = services.BuildServiceProvider();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow { DataContext = provider.GetRequiredService<MainWindowViewModel>() };
+        {
+            var viewModel = provider.GetRequiredService<MainWindowViewModel>();
+            desktop.MainWindow = new MainWindow { DataContext = viewModel };
+            _ = viewModel.InitializeAsync();
+        }
         base.OnFrameworkInitializationCompleted();
     }
 }

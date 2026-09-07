@@ -25,7 +25,7 @@
 	<PackageReference Include="NSubstitute" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="MSTest" Version="4.3.3" />
+    <PackageVersion Update="MSTest" Version="4.4.0" />
     <PackageVersion Update="NSubstitute" Version="6.2.0" />
   </ItemGroup>
 </Project>

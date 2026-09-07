@@ -20,6 +20,6 @@
 	<PackageReference Include="Markdown.Avalonia" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="Avalonia" Version="12.1.1" />
+    <PackageVersion Update="Avalonia" Version="12.1.2" />
   </ItemGroup>
 </Project>

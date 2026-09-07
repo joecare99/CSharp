@@ -10,4 +10,5 @@ public sealed partial class MainWindow : Window
         InitializeComponent();
         DataContext = new DesignerViewModel();
     }
+
 }

@@ -37,6 +37,8 @@ public class Grid : Control, IGroupControl
 {
     private readonly Dictionary<IControl, int[]> _attached = new Dictionary<IControl, int[]>();
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<IControl, AttachedValues> Pending = new();
+    private bool _arranging;
+    private bool _adding;
     public ObservableCollection<RowDefinition> RowDefinitions { get; } = new ObservableCollection<RowDefinition>();
     public ObservableCollection<ColumnDefinition> ColumnDefinitions { get; } = new ObservableCollection<ColumnDefinition>();
     public HorizontalAlignment HorizontalContentAlignment { get; set; } = HorizontalAlignment.Stretch;
@@ -51,16 +53,26 @@ public class Grid : Control, IGroupControl
 
     public override IControl Add(IControl control)
     {
-        var result = base.Add(control);
+        if (_adding)
+            return this;
+        _adding = true;
+        try
+        {
         if (Pending.TryGetValue(control, out var pending))
         {
-        _attached[control] = pending.Values;
+            _attached[control] = pending.Values;
             Pending.Remove(control);
         }
+        var result = base.Add(control);
         control.OnResize += ChildChanged;
         control.OnMove += ChildChanged;
         Arrange();
         return result;
+        }
+        finally
+        {
+            _adding = false;
+        }
     }
 
     public override IControl Remove(IControl control)
@@ -143,20 +155,32 @@ public class Grid : Control, IGroupControl
 
     private void Arrange()
     {
+        if (_arranging)
+            return;
         if (Children.Count == 0) return;
         if (RowDefinitions.Count == 0) RowDefinitions.Add(new RowDefinition());
         if (ColumnDefinitions.Count == 0) ColumnDefinitions.Add(new ColumnDefinition());
-        var rows = ResolveRows(Dimension.Height);
-        var cols = ResolveColumns(Dimension.Width);
-        foreach (var child in Children)
+        _arranging = true;
+        try
         {
-            if (!_attached.ContainsKey(child)) _attached[child] = new[] { 0, 0, 1, 1 };
-            var p = _attached[child];
-            var r = Math.Min(p[0], rows.Length - 1); var c = Math.Min(p[1], cols.Length - 1);
-            var rs = Math.Min(p[2], rows.Length - r); var cs = Math.Min(p[3], cols.Length - c);
-            var x = Sum(cols, c); var y = Sum(rows, r);
-            var w = Sum(cols, c, cs); var h = Sum(rows, r, rs);
-            child.Dimension = Align(child, new Rectangle(x, y, w, h), HorizontalContentAlignment, VerticalContentAlignment);
+            {
+                var rows = ResolveRows(Dimension.Height);
+                var cols = ResolveColumns(Dimension.Width);
+                foreach (var child in Children)
+                {
+                    if (!_attached.ContainsKey(child)) _attached[child] = new[] { 0, 0, 1, 1 };
+                    var p = _attached[child];
+                    var r = Math.Min(p[0], rows.Length - 1); var c = Math.Min(p[1], cols.Length - 1);
+                    var rs = Math.Min(p[2], rows.Length - r); var cs = Math.Min(p[3], cols.Length - c);
+                    var x = Sum(cols, 0, c); var y = Sum(rows, 0, r);
+                    var w = Sum(cols, c, cs); var h = Sum(rows, r, rs);
+                    child.Dimension = Align(child, new Rectangle(x, y, w, h), HorizontalContentAlignment, VerticalContentAlignment);
+                }
+            }
+        }
+        finally
+        {
+            _arranging = false;
         }
     }
 

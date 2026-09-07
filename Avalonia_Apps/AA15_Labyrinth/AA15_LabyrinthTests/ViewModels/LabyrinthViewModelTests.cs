@@ -127,7 +127,6 @@ public partial class LabyrinthViewModelTests
     public void Randomize_Changes_Seed_Or_Clears_Geometries()
     {
         var vm = new LabyrinthViewModel(new FakeGen(), new FakeRandom());
-        var oldSeed = vm.Seed;
         vm.Randomize();
         // Seed might coincidentally match, but geometries must be cleared
         Assert.IsNull(vm.MazeGeometry);

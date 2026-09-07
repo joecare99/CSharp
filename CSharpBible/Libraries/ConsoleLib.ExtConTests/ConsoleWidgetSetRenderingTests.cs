@@ -61,6 +61,40 @@ public class ConsoleWidgetSetRenderingTests
         Assert.AreEqual(new Size(8, 1), button.Dimension.Size);
     }
 
+    [TestMethod]
+    public void HostOperations_DelegateToConsoleAndExtendedConsole()
+    {
+        var console = CreateConsole();
+        console.IsOutputRedirected.Returns(true);
+        var extendedConsole = Substitute.For<IExtendedConsole>();
+        var widgetSet = new ConsoleWidgetSet(console, extendedConsole);
+
+        Assert.AreEqual(80, widgetSet.WindowWidth);
+        Assert.IsTrue(widgetSet.IsOutputRedirected);
+        Assert.AreEqual(ConsoleFramework.VK_ENTER, widgetSet.KeyEnter);
+        Assert.AreEqual(ConsoleFramework.VK_ESC, widgetSet.KeyEsc);
+        Assert.AreEqual(ConsoleFramework.VK_TAB, widgetSet.KeyTab);
+        Assert.AreEqual(ConsoleFramework.VK_LEFT, widgetSet.KeyLeft);
+        Assert.AreEqual(ConsoleFramework.VK_UP, widgetSet.KeyUp);
+        Assert.AreEqual(ConsoleFramework.VK_RIGHT, widgetSet.KeyRight);
+        Assert.AreEqual(ConsoleFramework.VK_DOWN, widgetSet.KeyDown);
+        Assert.AreEqual(ConsoleFramework.VK_HOME, widgetSet.KeyHome);
+        Assert.AreEqual(ConsoleFramework.VK_END, widgetSet.KeyEnd);
+        Assert.AreEqual(ConsoleFramework.VK_DELETE, widgetSet.KeyDelete);
+        Assert.AreEqual(ConsoleFramework.VK_PRIOR, widgetSet.KeyPageUp);
+        Assert.AreEqual(ConsoleFramework.VK_NEXT, widgetSet.KeyPageDown);
+
+        widgetSet.ClearHost();
+        widgetSet.StopHost();
+        widgetSet.Beep(440, 100);
+        widgetSet.SetCursorPosition(4, 5);
+
+        console.Received().Clear();
+        extendedConsole.Received().Stop();
+        console.Received().Beep(440, 100);
+        console.Received().SetCursorPosition(4, 5);
+    }
+
     private static IConsole CreateConsole()
     {
         var console = Substitute.For<IConsole>();

@@ -17,7 +17,7 @@ public class DateDifViewTests
     [TestInitialize]
     public void TestInitialize()
     {
-        var services = typeof(App).GetProperty(nameof(App.Services));
+        var services = typeof(App).GetProperty(nameof(App.Services))!;
         services.SetValue(null,Substitute.For<IServiceProvider>());
         App.Services.GetService(typeof(IDateDifViewModel)).Returns(Substitute.For<IDateDifViewModel>());
     }
@@ -26,7 +26,6 @@ public class DateDifViewTests
     public void DateDifViewTest()
     {
         testView = new();
-        Assert.IsNotNull(testView);
         Assert.IsInstanceOfType(testView, typeof(DateDifView));
     }
 }

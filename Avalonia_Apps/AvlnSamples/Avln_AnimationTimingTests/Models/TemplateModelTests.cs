@@ -39,8 +39,7 @@ namespace Avln_AnimationTiming.Models.Tests
   {
    testModel = new();
         testModel.PropertyChanged += OnVMPropertyChanged;
-       if (testModel is INotifyPropertyChanging npchgn)
-   npchgn.PropertyChanging += OnVMPropertyChanging;
+       testModel.PropertyChanging += OnVMPropertyChanging;
       ClearLog();
     }
 

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Windows.Input;
 
 namespace Avalonia.ViewModels;
@@ -29,5 +30,10 @@ public class BaseTestViewModel
         => DoLog($"PropChgn({sender?.GetType().Name},{e.PropertyName})={sender?.GetProp(e.PropertyName ?? string.Empty)}");
 
     protected virtual void OnVMErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
-        => DoLog($"ErrorsChanged({sender?.GetType().Name},{e.PropertyName})={string.Join(",", ((List<ValidationResult>)(sender as INotifyDataErrorInfo)!.GetErrors(e.PropertyName)).ConvertAll(o => o.ErrorMessage))}");
+    {
+        var errors = sender is INotifyDataErrorInfo errorInfo
+            ? errorInfo.GetErrors(e.PropertyName).OfType<ValidationResult>()
+            : Enumerable.Empty<ValidationResult>();
+        DoLog($"ErrorsChanged({sender?.GetType().Name},{e.PropertyName})={string.Join(",", errors.Select(o => o.ErrorMessage))}");
+    }
 }

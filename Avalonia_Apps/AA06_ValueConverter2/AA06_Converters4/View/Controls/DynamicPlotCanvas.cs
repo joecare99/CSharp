@@ -161,7 +161,8 @@ public class DynamicPlotCanvas : Control
     /// </summary>
     private void ScheduleRender()
     {
-        if (_isRenderScheduled) return;
+        if (_isRenderScheduled)
+            return;
 
         _isRenderScheduled = true;
 
@@ -316,7 +317,7 @@ public class DynamicPlotCanvas : Control
         var brush = ViewModel?.Polynomes?.PenData?.Item1 ?? Brushes.Blue;
         var thickness = ViewModel?.Polynomes?.PenData?.Item2 ?? 2.0;
 
-        using var polygonPen = new Pen(brush, thickness);
+        var polygonPen = new Pen(brush, thickness);
         context.DrawGeometry(null, polygonPen, geometry);
     }
 
@@ -332,7 +333,7 @@ public class DynamicPlotCanvas : Control
         var brush = ViewModel?.Circles?.PenData?.Item1 ?? Brushes.Green;
         var thickness = ViewModel?.Circles?.PenData?.Item2 ?? 1.0;
 
-        using var circlePen = new Pen(brush, thickness);
+        var circlePen = new Pen(brush, thickness);
         context.DrawEllipse(null, circlePen, center, radius, radius);
     }
 
@@ -345,7 +346,7 @@ public class DynamicPlotCanvas : Control
         var thickness = ViewModel?.Arrows?.PenData?.Item2 ?? 2.0;
 
         // Hauptlinie
-        using var arrowPen = new Pen(brush, thickness);
+        var arrowPen = new Pen(brush, thickness);
         context.DrawLine(arrowPen, start, end);
 
         // Pfeilspitze
@@ -354,8 +355,8 @@ public class DynamicPlotCanvas : Control
 
     private void DrawCoordinateSystem(DrawingContext context, RectangleF viewport, SWindowPort windowPort)
     {
-        using var pen = new Pen(Brushes.LightGray, 0.5);
-        using var axisPen = new Pen(Brushes.Black, 1.5);
+        var pen = new Pen(Brushes.LightGray, 0.5);
+        var axisPen = new Pen(Brushes.Black, 1.5);
         var textBrush = Brushes.Black;
 
         // Berechne Schrittweite für Gitterlinien
@@ -414,7 +415,7 @@ public class DynamicPlotCanvas : Control
 
         // Nullpunkt markieren
         var origin = Real2Vis(new PointF(0, 0), viewport);
-        using var originPen = new Pen(Brushes.DarkRed, 2);
+        var originPen = new Pen(Brushes.DarkRed, 2);
         context.DrawEllipse(Brushes.Red, originPen, origin, 5, 5);
     }
 
@@ -440,7 +441,7 @@ public class DynamicPlotCanvas : Control
         };
 
         var geometry = new PolylineGeometry(corners, true);
-        using var agvPen = new Pen(Brushes.Blue, 2);
+        var agvPen = new Pen(Brushes.Blue, 2);
         context.DrawGeometry(new SolidColorBrush(AvaloniaColor.FromArgb(100, 0, 100, 255)),
             agvPen, geometry);
 
@@ -458,7 +459,7 @@ public class DynamicPlotCanvas : Control
         var center = Real2Vis(position, viewport);
 
         // Drehschemel-Kreis
-        using var swivelPen = new Pen(Brushes.DarkBlue, 1.5);
+        var swivelPen = new Pen(Brushes.DarkBlue, 1.5);
         context.DrawEllipse(Brushes.LightBlue, swivelPen, center, 8, 8);
 
         // Ausrichtungs-Pfeil
@@ -466,7 +467,7 @@ public class DynamicPlotCanvas : Control
         var endY = position.Y + (float)(Math.Sin(angle) * 50);
         var endPoint = Real2Vis(new PointF(endX, endY), viewport);
 
-        using var swivelLinePen = new Pen(Brushes.DarkBlue, 2);
+        var swivelLinePen = new Pen(Brushes.DarkBlue, 2);
         context.DrawLine(swivelLinePen, center, endPoint);
 
         // Räder
@@ -488,12 +489,13 @@ public class DynamicPlotCanvas : Control
     private void DrawVelocityVector(DrawingContext context, RectangleF viewport,
       MathLibrary.TwoDim.Math2d.Vector velocity)
     {
-        if (velocity.Length() < 0.1) return;
+        if (velocity.Length() < 0.1)
+            return;
 
         var origin = Real2Vis(new PointF(0, 0), viewport);
         var endPoint = Real2Vis(new PointF((float)velocity.x / 10, (float)velocity.y / 10), viewport);
 
-        using var velocityPen = new Pen(Brushes.Green, 3);
+        var velocityPen = new Pen(Brushes.Green, 3);
         context.DrawLine(velocityPen, origin, endPoint);
 
         // Pfeilspitze
@@ -511,14 +513,14 @@ public class DynamicPlotCanvas : Control
 
         var p1 = new Avalonia.Point(
             end.X - arrowLength * Math.Cos(angle - arrowAngle),
-    end.Y - arrowLength * Math.Sin(angle - arrowAngle));
+            end.Y - arrowLength * Math.Sin(angle - arrowAngle));
 
         var p2 = new Avalonia.Point(
-    end.X - arrowLength * Math.Cos(angle + arrowAngle),
-  end.Y - arrowLength * Math.Sin(angle + arrowAngle));
+            end.X - arrowLength * Math.Cos(angle + arrowAngle),
+            end.Y - arrowLength * Math.Sin(angle + arrowAngle));
 
         var geometry = new PolylineGeometry(new[] { p1, end, p2 }, false);
-        using var arrowHeadPen = new Pen(brush, thickness);
+        var arrowHeadPen = new Pen(brush, thickness);
         context.DrawGeometry(null, arrowHeadPen, geometry);
     }
 
@@ -558,7 +560,8 @@ public class DynamicPlotCanvas : Control
     // Interaktivität
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (ViewModel == null) return;
+        if (ViewModel == null)
+            return;
 
         var point = e.GetCurrentPoint(this);
         if (point.Properties.IsLeftButtonPressed)
@@ -619,7 +622,8 @@ public class DynamicPlotCanvas : Control
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
-        if (ViewModel == null) return;
+        if (ViewModel == null)
+            return;
 
         var viewport = ViewModel.VPWindow;
         var zoomFactor = e.Delta.Y > 0 ? 0.9f : 1.1f;

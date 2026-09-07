@@ -27,6 +27,39 @@ public sealed class MySqlNoticeSqlTests
     }
 
     [TestMethod]
+    [DataRow(NoticeFilterKind.MissingText, "LIMIT 300")]
+    [DataRow(NoticeFilterKind.DeathNoticeWithoutPlace, "ORDER BY `Auftrag` DESC LIMIT 100")]
+    [DataRow(NoticeFilterKind.MissingSex, "LIMIT 100")]
+    [DataRow(NoticeFilterKind.MissingLink, "LIMIT 300")]
+    [DataRow(NoticeFilterKind.DuplicateCandidates, "ORDER BY `Auftrag` DESC LIMIT 300")]
+    [DataRow(NoticeFilterKind.MaleWithMaidenName, "ORDER BY `Auftrag` DESC LIMIT 300")]
+    [DataRow(NoticeFilterKind.RecentMissingProfileImage, "ORDER BY `Auftrag` DESC LIMIT 2000")]
+    [DataRow(NoticeFilterKind.ImplausibleDates, "ORDER BY `Auftrag` DESC LIMIT 300")]
+    public void BuildFind_PreservesPascalQueueLimitAndOrdering(
+        NoticeFilterKind kind,
+        string expectedFragment)
+    {
+        var statement = MySqlNoticeSql.BuildFind(new NoticeFilter(Kind: kind));
+
+        StringAssert.Contains(statement.CommandText, expectedFragment);
+    }
+
+    [TestMethod]
+    public void BuildFind_UsesPascalDefaultQueuePredicates()
+    {
+        var missingSex = MySqlNoticeSql.BuildFind(
+            new NoticeFilter(Kind: NoticeFilterKind.MissingSex));
+        var recentProfile = MySqlNoticeSql.BuildFind(
+            new NoticeFilter(Kind: NoticeFilterKind.RecentMissingProfileImage));
+        var duplicates = MySqlNoticeSql.BuildFind(
+            new NoticeFilter(Kind: NoticeFilterKind.DuplicateCandidates));
+
+        StringAssert.Contains(missingSex.CommandText, "Rubrik` IN (8050,8051,8052,8055,8060,8070,8080)");
+        StringAssert.Contains(recentProfile.CommandText, "Rubrik` IN (8050,8051,8052,8056,8061,8071,8081)");
+        StringAssert.Contains(duplicates.CommandText, "idAnzeige_min` FROM `vNonSingletonName` UNION SELECT `idAnzeige_max`");
+    }
+
+    [TestMethod]
     public void BuildFind_ParameterizesUserFiltersAndChangedSince()
     {
         var changedSince = new DateTime(2026, 8, 1);

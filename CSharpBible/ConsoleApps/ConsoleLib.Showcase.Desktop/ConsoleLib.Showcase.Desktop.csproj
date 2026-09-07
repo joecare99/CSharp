@@ -1,0 +1,35 @@
+<Project>
+  <Import Project="..\ConsoleApps.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\Desktop.cxaml" />
+    <EmbeddedResource Include="Pages\Calendar.cxaml" />
+    <EmbeddedResource Include="Pages\Calculator.cxaml" />
+    <EmbeddedResource Include="Pages\Notepad.cxaml" />
+    <EmbeddedResource Include="Pages\Characters.cxaml" />
+    <EmbeddedResource Include="Pages\Clock.cxaml" />
+    <EmbeddedResource Include="Pages\Terminal.cxaml" />
+    <EmbeddedResource Include="Pages\About.cxaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
+    <ProjectReference Include="..\..\Libraries\ConsoleLib.Rendering\ConsoleLib.Rendering.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ConsoleLib.Showcase\Models\CalculatorOperation.cs" Link="Models\CalculatorOperation.cs" />
+    <Compile Include="..\ConsoleLib.Showcase\Models\CalculatorEngine.cs" Link="Models\CalculatorEngine.cs" />
+    <Compile Include="..\ConsoleLib.Showcase\Models\MonthGrid.cs" Link="Models\MonthGrid.cs" />
+    <Compile Include="..\ConsoleLib.Showcase\Services\DesktopWindow.cs" Link="Services\DesktopWindow.cs" />
+    <Compile Include="..\ConsoleLib.Showcase\Services\DesktopWindowManager.cs" Link="Services\DesktopWindowManager.cs" />
+  </ItemGroup>
+</Project>
