@@ -30,7 +30,7 @@ namespace AA15_Labyrinth.Model.Tests
             CollectionAssert.AreEqual(expected, keys);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         // Proper crossing
         [DataRow(true, 0, 0, 4, 4, 0, 4, 4, 0)]
         // Disjoint separate
@@ -65,7 +65,7 @@ namespace AA15_Labyrinth.Model.Tests
                 $"Erwartet={expected} für AB=({ax},{ay})->({bx},{by}) und CD=({cx},{cy})->({dx},{dy}).");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         // Reuse a subset of above cases to validate symmetry and endpoint reversal invariants
         [DataRow(true, 0, 0, 4, 4, 0, 4, 4, 0)]     // proper crossing
         [DataRow(false, 0, 0, 2, 0, 3, 0, 5, 0)]     // collinear disjoint

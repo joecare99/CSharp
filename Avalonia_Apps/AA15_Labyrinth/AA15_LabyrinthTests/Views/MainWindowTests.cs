@@ -51,10 +51,10 @@ public class MainWindowTests
         window.Show();
 
         // Invoke handler safely via Enter on button
-        var button = window.GetVisualDescendants().OfType<Button>().FirstOrDefault(b => (b.Content as string) == "Neu");
+        Button? button = window.GetVisualDescendants().OfType<Button>().FirstOrDefault(b => (b.Content as string) == "Neu");
         button?.Focus();
         window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
 
-        Assert.IsTrue(true);
+        Assert.IsNull(window.DataContext);
     }
 }

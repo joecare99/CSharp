@@ -21,4 +21,7 @@
     <PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
 	  <PackageReference Include="coverlet.collector" Version="10.0.1" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestResults\1505e677-dd2f-421b-9d72-66789b9cae7c\" />
+  </ItemGroup>
 </Project>
