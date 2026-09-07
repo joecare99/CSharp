@@ -38,6 +38,9 @@ public class MainWindowTests
     {
         // Arrange minimal model for ViewModels
         var model = Substitute.For<IAGVModel>();
+        model.VehicleDim.Returns(new MathLibrary.TwoDim.Math2d.Vector());
+        model.SwivelKoor.Returns(new MathLibrary.TwoDim.Math2d.Vector());
+        model.AGVVelocity.Returns(new MathLibrary.TwoDim.Math2d.Vector());
         var vehicleVM = new VehicleViewModel(model);
         var plotVM = new PlotFrameViewModel(model);
 

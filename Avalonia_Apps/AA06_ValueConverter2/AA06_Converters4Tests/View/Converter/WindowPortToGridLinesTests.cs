@@ -1,7 +1,9 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace AA06_Converters_4.View.Converter.Tests;
 
@@ -33,15 +35,19 @@ public class WindowPortToGridLinesTests
     [TestMethod()]
     public void WindowPortToGridLinesTest()
     {
-        Assert.Fail();
+        Assert.AreEqual(new Size(200, 100), testVC.WindowSize);
     }
 
     [TestMethod()]
     [DynamicData(nameof(ConvertTestData))]
     public void ConvertTest(object o)
     {
-        testVC.Convert(o, null, null, null);
-        Assert.Fail();
+        wp.WindowSize = testVC.WindowSize;
+
+        var result = testVC.Convert(o, typeof(object), null, System.Globalization.CultureInfo.InvariantCulture);
+
+        Assert.IsInstanceOfType(result, typeof(ObservableCollection<Control>));
+        Assert.IsNotNull(result);
     }
 
     [TestMethod()]
@@ -55,6 +61,6 @@ public class WindowPortToGridLinesTests
     [TestMethod()]
     public void ConvertBackTest()
     {
-        Assert.ThrowsExactly<NotImplementedException>(() => testVC.ConvertBack(null!, null, null, null));
+        Assert.ThrowsExactly<NotImplementedException>(() => testVC.ConvertBack(null!, null!, null!, null!));
     }
 }
