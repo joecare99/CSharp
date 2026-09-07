@@ -1,0 +1,7 @@
+<Panel Name="Calendar" Text="Calendar" Width="42" Height="16" BorderStyle="Single" BorderColor="DarkCyan" ForeColor="Gray" BackColor="Black">
+  <Label Name="Month" Text="{Binding MonthTitle}" Width="36" Height="1" X="2" Y="1" ForeColor="Yellow" />
+  <Button Name="Previous" Text="Previous" Width="12" Height="1" X="2" Y="3" Command="{Binding PreviousCommand}" />
+  <Button Name="Next" Text="Next" Width="12" Height="1" X="16" Y="3" Command="{Binding NextCommand}" />
+  <Label Name="Grid" Text="Mo Tu We Th Fr Sa Su" Width="36" Height="1" X="2" Y="5" />
+  <Label Name="Days" Text="{Binding DaysText}" Width="36" Height="6" X="2" Y="6" />
+</Panel>

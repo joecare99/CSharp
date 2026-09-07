@@ -18,5 +18,13 @@
     <ProjectReference Include="..\..\Libraries\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
     <ProjectReference Include="..\..\Libraries\Terminal.Core\Terminal.Core.csproj" />
     <ProjectReference Include="..\ConsoleLib.Showcase.Terminal.Core\ConsoleLib.Showcase.Terminal.Core.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Desktop\ConsoleLib.Showcase.Desktop.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Models\CalculatorEngine.cs" />
+    <Compile Remove="Models\CalculatorOperation.cs" />
+    <Compile Remove="Models\MonthGrid.cs" />
+    <Compile Remove="Services\DesktopWindow.cs" />
+    <Compile Remove="Services\DesktopWindowManager.cs" />
   </ItemGroup>
 </Project>

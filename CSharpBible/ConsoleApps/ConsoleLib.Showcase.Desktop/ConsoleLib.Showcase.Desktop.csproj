@@ -13,6 +13,13 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\Desktop.cxaml" />
+    <EmbeddedResource Include="Pages\Calendar.cxaml" />
+    <EmbeddedResource Include="Pages\Calculator.cxaml" />
+    <EmbeddedResource Include="Pages\Notepad.cxaml" />
+    <EmbeddedResource Include="Pages\Characters.cxaml" />
+    <EmbeddedResource Include="Pages\Clock.cxaml" />
+    <EmbeddedResource Include="Pages\Terminal.cxaml" />
+    <EmbeddedResource Include="Pages\About.cxaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />

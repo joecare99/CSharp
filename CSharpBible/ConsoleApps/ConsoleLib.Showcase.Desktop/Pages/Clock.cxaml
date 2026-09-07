@@ -1,0 +1,6 @@
+<Panel Name="Clock" Text="Analog alarm clock" Width="38" Height="22" BorderStyle="Single" BorderColor="DarkRed" ForeColor="Gray" BackColor="Black">
+  <ClockPixelCanvas Name="PixelFace" Text="{Binding PixelFrame}" Width="29" Height="14" X="3" Y="1" ForeColor="Gray" />
+  <Label Name="Time" Text="{Binding TimeText}" Width="10" Height="1" X="14" Y="16" ForeColor="White" />
+  <Button Name="SetAlarm" Text="Set alarm" Width="12" Height="1" X="4" Y="19" Command="{Binding SetAlarmCommand}" />
+  <Button Name="Stop" Text="Stop" Width="12" Height="1" X="20" Y="19" Command="{Binding StopAlarmCommand}" />
+</Panel>

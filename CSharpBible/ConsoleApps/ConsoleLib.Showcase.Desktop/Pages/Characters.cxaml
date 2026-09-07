@@ -1,0 +1,8 @@
+<Panel Name="Characters" Text="Character table" Width="58" Height="20" BorderStyle="Single" BorderColor="DarkMagenta" ForeColor="Gray" BackColor="Black">
+  <Label Name="Block" Text="ASCII" Width="24" Height="1" X="2" Y="1" ForeColor="Yellow" />
+  <Label Name="Table" Text="{Binding TableText}" Width="50" Height="8" X="2" Y="3" />
+  <Label Name="Preview" Text="{Binding Preview}" Width="50" Height="1" X="2" Y="13" />
+  <Button Name="Previous" Text="Previous" Width="12" Height="1" X="2" Y="15" Command="{Binding PreviousCommand}" />
+  <Button Name="Next" Text="Next" Width="10" Height="1" X="16" Y="15" Command="{Binding NextCommand}" />
+  <Button Name="Copy" Text="Copy" Width="10" Height="1" X="28" Y="15" Command="{Binding CopyCommand}" />
+</Panel>

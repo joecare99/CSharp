@@ -22,7 +22,7 @@ public sealed class DesktopWindowManager
     /// <summary>Optional gate: return false to veto opening a new window (e.g., single-instance resources).</summary>
     public Func<string, bool>? CanOpen { get; set; }
 
-    /// <summary>Hook called after a new window has been opened; the shell creates the app content.</summary>
+    /// <summary>Hook called whenever a window becomes open and needs app content.</summary>
     public Action<DesktopWindow>? OnOpened { get; set; }
 
     /// <summary>All known windows in open order (open and closed).</summary>
@@ -49,6 +49,7 @@ public sealed class DesktopWindowManager
             {
                 existing.IsOpen = true;
                 existing.IsMinimized = false;
+                OnOpened?.Invoke(existing);
             }
 
             Activate(id);

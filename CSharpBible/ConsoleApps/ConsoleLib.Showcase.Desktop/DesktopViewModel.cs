@@ -20,4 +20,13 @@ public partial class DesktopViewModel : ObservableObject
 
     [RelayCommand]
     private void OpenCharacters() => Status = "Character table requested.";
+
+    [RelayCommand]
+    private void OpenClock() => Status = "Analog clock requested.";
+
+    [RelayCommand]
+    private void OpenTerminal() => Status = "Terminal requested.";
+
+    [RelayCommand]
+    private void OpenAbout() => Status = "About requested.";
 }

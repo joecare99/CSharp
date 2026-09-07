@@ -17,6 +17,9 @@ public interface IShowcaseHostCapabilities
     /// <summary>Whether a terminal session provider is available.</summary>
     bool SupportsTerminal { get; }
 
+    /// <summary>Optional terminal session implementation supplied by the host.</summary>
+    IShowcaseTerminalCapability? Terminal { get; }
+
     /// <summary>Host alert output, which may be unavailable.</summary>
     IShowcaseAlertService Alert { get; }
 }
