@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ConsoleLib.Showcase\ConsoleLib.Showcase.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Desktop\ConsoleLib.Showcase.Desktop.csproj" />
     <ProjectReference Include="..\ConsoleLib.Showcase.Terminal.Core\ConsoleLib.Showcase.Terminal.Core.csproj" />
   </ItemGroup>
 </Project>

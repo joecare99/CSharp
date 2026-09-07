@@ -5,4 +5,7 @@
   <Button Name="Calculator" Text="Calculator" Accelerator="a" Width="14" Height="1" X="18" Y="5" Command="{Binding OpenCalculatorCommand}" />
   <Button Name="Notepad" Text="Notepad" Accelerator="n" Width="14" Height="1" X="34" Y="5" Command="{Binding OpenNotepadCommand}" />
   <Button Name="Characters" Text="Characters" Accelerator="h" Width="14" Height="1" X="50" Y="5" Command="{Binding OpenCharactersCommand}" />
+  <Button Name="Clock" Text="Clock" Accelerator="k" Width="14" Height="1" X="2" Y="7" Command="{Binding OpenClockCommand}" />
+  <Button Name="Terminal" Text="Terminal" Accelerator="t" Width="14" Height="1" X="18" Y="7" Command="{Binding OpenTerminalCommand}" />
+  <Button Name="About" Text="About" Accelerator="b" Width="14" Height="1" X="34" Y="7" Command="{Binding OpenAboutCommand}" />
 </Panel>

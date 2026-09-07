@@ -204,7 +204,10 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
 
     private static IControl CreateControl(string name)
     {
-        var type = Type.GetType("ConsoleLib.CommonControls." + name + ", ConsoleLib", throwOnError: false);
+        var type = Type.GetType("ConsoleLib.CommonControls." + name + ", ConsoleLib", throwOnError: false)
+            ?? AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType("ConsoleLib.Showcase.Desktop.Controls." + name, throwOnError: false))
+                .FirstOrDefault(candidate => candidate is not null);
         if (type is null || !typeof(IControl).IsAssignableFrom(type))
             throw new CxamlParseException("Unsupported CXAML control: " + name);
         try

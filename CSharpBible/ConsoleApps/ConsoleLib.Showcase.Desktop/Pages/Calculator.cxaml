@@ -1,0 +1,23 @@
+<Panel Name="Calculator" Text="Calculator" Width="34" Height="16" BorderStyle="Single" BorderColor="DarkGreen" ForeColor="Gray" BackColor="Black">
+  <Label Name="Display" Text="{Binding Display}" Width="28" Height="1" X="2" Y="1" ForeColor="White" BackColor="DarkBlue" />
+  <Label Name="Indicator" Text="{Binding Indicator}" Width="4" Height="1" X="29" Y="1" ForeColor="Yellow" />
+  <Button Name="Clear" Text="Clear" Width="8" Height="1" X="2" Y="3" Command="{Binding ClearCommand}" />
+  <Button Name="Backspace" Text="Back" Width="8" Height="1" X="12" Y="3" Command="{Binding BackspaceCommand}" />
+  <Button Name="Sign" Text="+/-" Width="8" Height="1" X="22" Y="3" Command="{Binding ToggleSignCommand}" />
+  <Button Name="Seven" Text="7" Width="5" Height="1" X="2" Y="5" Command="{Binding SevenCommand}" />
+  <Button Name="Eight" Text="8" Width="5" Height="1" X="8" Y="5" Command="{Binding EightCommand}" />
+  <Button Name="Nine" Text="9" Width="5" Height="1" X="14" Y="5" Command="{Binding NineCommand}" />
+  <Button Name="Divide" Text="/" Width="5" Height="1" X="20" Y="5" Command="{Binding DivideCommand}" />
+  <Button Name="Four" Text="4" Width="5" Height="1" X="2" Y="7" Command="{Binding FourCommand}" />
+  <Button Name="Five" Text="5" Width="5" Height="1" X="8" Y="7" Command="{Binding FiveCommand}" />
+  <Button Name="Six" Text="6" Width="5" Height="1" X="14" Y="7" Command="{Binding SixCommand}" />
+  <Button Name="Multiply" Text="*" Width="5" Height="1" X="20" Y="7" Command="{Binding MultiplyCommand}" />
+  <Button Name="One" Text="1" Width="5" Height="1" X="2" Y="9" Command="{Binding OneCommand}" />
+  <Button Name="Two" Text="2" Width="5" Height="1" X="8" Y="9" Command="{Binding TwoCommand}" />
+  <Button Name="Three" Text="3" Width="5" Height="1" X="14" Y="9" Command="{Binding ThreeCommand}" />
+  <Button Name="Subtract" Text="-" Width="5" Height="1" X="20" Y="9" Command="{Binding SubtractCommand}" />
+  <Button Name="Zero" Text="0" Width="5" Height="1" X="2" Y="11" Command="{Binding ZeroCommand}" />
+  <Button Name="Decimal" Text="." Width="5" Height="1" X="8" Y="11" Command="{Binding DecimalCommand}" />
+  <Button Name="Equals" Text="=" Width="5" Height="1" X="14" Y="11" Command="{Binding EqualsCommand}" />
+  <Button Name="Add" Text="+" Width="5" Height="1" X="20" Y="11" Command="{Binding AddCommand}" />
+</Panel>

@@ -178,7 +178,11 @@ public class Application : Panel, IApplication, IHasWidgetSet, IDisposable
             foreach (var ctrl in Children.ToList())
             {
                 if (ctrl.Over(MousePos))
+                {
                     ctrl.MouseClick(e);
+                    if (e.Handled)
+                        break;
+                }
             }
         }
         else
