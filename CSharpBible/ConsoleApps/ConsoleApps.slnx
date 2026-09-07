@@ -11,6 +11,8 @@
     <Project Path="ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
     <Project Path="ConsoleOverlapApp/ConsoleOverlapApp.csproj" />
     <Project Path="ConsoleLib.Showcase/ConsoleLib.Showcase.csproj" />
+    <Project Path="ConsoleLib.Showcase.Desktop/ConsoleLib.Showcase.Desktop.csproj" />
+    <Project Path="ConsoleLib.Showcase.Desktop.Tests/ConsoleLib.Showcase.Desktop.Tests.csproj" />
     <Project Path="ConsoleLib.Showcase.Tests/ConsoleLib.Showcase.Tests.csproj" />
     <Project Path="ConsoleLib.Showcase.Terminal.Core/ConsoleLib.Showcase.Terminal.Core.csproj" />
     <Project Path="Display_Test/Display_netTest.csproj" />
