@@ -12,7 +12,7 @@ public class EnumToColorStringConverterTests
     private static string Hex(object? result)
     {
         if (result is ISolidColorBrush scb)
-            return scb.Color.ToString();
+            return $"#{scb.Color.A:X2}{scb.Color.R:X2}{scb.Color.G:X2}{scb.Color.B:X2}";
         return string.Empty;
     }
 
@@ -35,8 +35,8 @@ public class EnumToColorStringConverterTests
     [DataRow("#FFFF0000", false, null)]
     [DataRow("#FF008000", true, "345")]
     [DataRow("#FFFF0000", false, "345")]
-    [DataRow("", new bool[] { true, false }, null)]
-    [DataRow("", new bool[] { false,true }, null)]
+    [DataRow("#00FFFFFF", new bool[] { true, false }, null)]
+    [DataRow("#00FFFFFF", new bool[] { false,true }, null)]
     [DataRow("#FF008000", new bool[] { true, true }, "0")]
     [DataRow("#FF008000", new bool[] { true, false }, "0")]
     [DataRow("#FFFF0000", new bool[] { false, true }, "0")]
@@ -45,14 +45,14 @@ public class EnumToColorStringConverterTests
     [DataRow("#FFFF0000", new bool[] { true, false }, "1")]
     [DataRow("#FF008000", new bool[] { false, true }, "1")]
     [DataRow("#FFFF0000", new bool[] { false, false }, "1")]
-    [DataRow("", new bool[] { false, false }, null)]
+    [DataRow("#00FFFFFF", new bool[] { false, false }, null)]
     [DataRow("#FF000000", new int[] { 0, 1, 2, 3, 4, 5 }, "0")]
     [DataRow("#FFFF0000", new int[] { 0, 1, 2, 3, 4, 5 }, "1")]
     [DataRow("#FF008000", new int[] { 0, 1, 2, 3, 4, 5 }, "2")]
     [DataRow("#FFFFFF00", new int[] { 0, 1, 2, 3, 4, 5 }, "3")]
     [DataRow("#FF0000FF", new int[] { 0, 1, 2, 3, 4, 5 }, "4")]
     [DataRow("#FF000000", new int[] { 0, 1, 2, 3, 4, 5 }, "5")]
-    [DataRow("", new int[] { 0, 1, 2, 3, 4, 5 }, "6")]
+    [DataRow("#00FFFFFF", new int[] { 0, 1, 2, 3, 4, 5 }, "6")]
     [DataRow("#FF000000", new int[] { 0, 1, 2, 3, 4, 5, 6 }, "6")]
     [DataRow("#FF000000", new int[] { 5, 4, 3, 2, 1, 0 }, "0")]
     [DataRow("#FF0000FF", new int[] { 5, 4, 3, 2, 1, 0 }, "1")]
@@ -60,8 +60,8 @@ public class EnumToColorStringConverterTests
     [DataRow("#FF008000", new int[] { 5, 4, 3, 2, 1, 0 }, "3")]
     [DataRow("#FFFF0000", new int[] { 5, 4, 3, 2, 1, 0 }, "4")]
     [DataRow("#FF000000", new int[] { 5, 4, 3, 2, 1, 0 }, "5")]
-    [DataRow("", new int[] { 5, 4, 3, 2, 1, 0 }, "6")]
-    [DataRow("", new int[] { 5, 4, 3, 2, 1, 0 }, null)]
+    [DataRow("#00FFFFFF", new int[] { 5, 4, 3, 2, 1, 0 }, "6")]
+    [DataRow("#00FFFFFF", new int[] { 5, 4, 3, 2, 1, 0 }, null)]
     public void ConvertTest(string sExp, object o,object p)
     {
         var r = _testConverter.Convert(o, typeof(object), p, CultureInfo.InvariantCulture);
@@ -74,8 +74,8 @@ public class EnumToColorStringConverterTests
     [DataRow("#FFA52A2A", false, null, true)]
     [DataRow("#FF008000", true, "345")] 
     [DataRow("#FFFF0000", false, "345")] 
-    [DataRow("", new bool[] { true, false }, null)]
-    [DataRow("", new bool[] { false, true }, null)]
+    [DataRow("#00FFFFFF", new bool[] { true, false }, null)]
+    [DataRow("#00FFFFFF", new bool[] { false, true }, null)]
     [DataRow("#FF008000", new bool[] { true, true }, "0")]
     [DataRow("#FF008000", new bool[] { true, false }, "0")]
     [DataRow("#FFFF0000", new bool[] { false, true }, "0")]
@@ -91,7 +91,7 @@ public class EnumToColorStringConverterTests
     [DataRow("#FFEE82EE", new int[] { 0, 1, 2, 3, 4, 5 }, "4", true)]
     [DataRow("#FF000000", new int[] { 0, 1, 2, 3, 4, 5 }, "5", true)]
     [DataRow("#FF000000", new int[] { 0, 1, 2, 3, 4, 5 , 6}, "6", true)]
-    [DataRow("", new int[] { 0, 1, 2, 3, 4, 5 }, "6", true)]
+    [DataRow("#00FFFFFF", new int[] { 0, 1, 2, 3, 4, 5 }, "6", true)]
     [DataRow("#FF000000", new int[] { 5, 4, 3, 2, 1, 0 }, "0", true)]
     [DataRow("#FFEE82EE", new int[] { 5, 4, 3, 2, 1, 0 }, "1", true)]
     [DataRow("#FF00008B", new int[] { 5, 4, 3, 2, 1, 0 }, "2", true)]
