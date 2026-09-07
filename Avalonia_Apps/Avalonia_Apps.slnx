@@ -388,6 +388,14 @@
     <File Path="Packages.props" />
     <File Path="Solution.props" />
   </Folder>
+  <Folder Name="/RnzTrauer/">
+    <Project Path="RnzTrauer/RnzTrauer.Core.Tests/RnzTrauer.Core.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+    <Project Path="RnzTrauer/RnzTrauer.Core/RnzTrauer.Core2.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+  </Folder>
   <Folder Name="/Samples/">
     <Project Path="AvlnSamples/Avln_AnimationTiming/Avln_AnimationTiming.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
