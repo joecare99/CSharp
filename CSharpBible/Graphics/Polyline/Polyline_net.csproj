@@ -28,7 +28,7 @@
 		<Folder Include="Models\" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.158" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />

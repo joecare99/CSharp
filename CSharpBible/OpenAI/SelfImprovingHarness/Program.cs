@@ -2,9 +2,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Configuration.CommandLine;
 using SelfImprovingHarness;
-var root = AppContext.BaseDirectory; while (!File.Exists(Path.Combine(root, "SelfImprovingHarness.csproj")) && Directory.GetParent(root) is { } p) root = p.FullName;
+var root = AppContext.BaseDirectory; 
+while (!File.Exists(Path.Combine(root, "SelfImprovingHarness.csproj")) 
+    && Directory.GetParent(root) is { } p) 
+    root = p.FullName;
 var config = new ConfigurationBuilder().SetBasePath(root).AddJsonFile("appsettings.json", optional: true).AddCommandLine(args).Build();
 // Short CLI aliases are mapped explicitly to the nested option sections.
 var cli = new Dictionary<string, string?>();
