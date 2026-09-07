@@ -105,6 +105,7 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
         }
     }
 
+    /// <inheritdoc/>
     public void Generate()
     {
         if (_z != null)
@@ -115,9 +116,9 @@ public sealed class HeightLabyrinth : IHeightLabyrinth
 
         var start = new Point(1, Math.Min(6, Math.Max(0, _dimension.Height - 1)));
         if (!InBounds(start.X, start.Y)) return;
+        if (_z is null) return;
 
-        if (_z != null)
-            _z[start.X, start.Y] = BaseLevel(start.X, start.Y) - 1;
+        _z[start.X, start.Y] = BaseLevel(start.X, start.Y) - 1;
 
         var fifo = new Point[_dimension.Width * _dimension.Height];
         int push = 0, pop = 0;
