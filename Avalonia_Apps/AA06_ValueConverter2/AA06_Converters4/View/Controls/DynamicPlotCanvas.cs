@@ -161,7 +161,8 @@ public class DynamicPlotCanvas : Control
     /// </summary>
     private void ScheduleRender()
     {
-        if (_isRenderScheduled) return;
+        if (_isRenderScheduled)
+            return;
 
         _isRenderScheduled = true;
 
@@ -488,7 +489,8 @@ public class DynamicPlotCanvas : Control
     private void DrawVelocityVector(DrawingContext context, RectangleF viewport,
       MathLibrary.TwoDim.Math2d.Vector velocity)
     {
-        if (velocity.Length() < 0.1) return;
+        if (velocity.Length() < 0.1)
+            return;
 
         var origin = Real2Vis(new PointF(0, 0), viewport);
         var endPoint = Real2Vis(new PointF((float)velocity.x / 10, (float)velocity.y / 10), viewport);
@@ -511,11 +513,11 @@ public class DynamicPlotCanvas : Control
 
         var p1 = new Avalonia.Point(
             end.X - arrowLength * Math.Cos(angle - arrowAngle),
-    end.Y - arrowLength * Math.Sin(angle - arrowAngle));
+            end.Y - arrowLength * Math.Sin(angle - arrowAngle));
 
         var p2 = new Avalonia.Point(
-    end.X - arrowLength * Math.Cos(angle + arrowAngle),
-  end.Y - arrowLength * Math.Sin(angle + arrowAngle));
+            end.X - arrowLength * Math.Cos(angle + arrowAngle),
+            end.Y - arrowLength * Math.Sin(angle + arrowAngle));
 
         var geometry = new PolylineGeometry(new[] { p1, end, p2 }, false);
         var arrowHeadPen = new Pen(brush, thickness);
@@ -558,7 +560,8 @@ public class DynamicPlotCanvas : Control
     // Interaktivität
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (ViewModel == null) return;
+        if (ViewModel == null)
+            return;
 
         var point = e.GetCurrentPoint(this);
         if (point.Properties.IsLeftButtonPressed)
@@ -619,7 +622,8 @@ public class DynamicPlotCanvas : Control
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
-        if (ViewModel == null) return;
+        if (ViewModel == null)
+            return;
 
         var viewport = ViewModel.VPWindow;
         var zoomFactor = e.Delta.Y > 0 ? 0.9f : 1.1f;
