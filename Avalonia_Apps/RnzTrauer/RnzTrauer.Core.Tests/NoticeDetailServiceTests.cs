@@ -25,7 +25,7 @@ public sealed class NoticeDetailServiceTests
         var repository = new FakeNoticeRepository { LinkCandidates = new[] { candidate } };
 
         var result = await new NoticeDetailService(repository).LoadAsync(
-            new NoticeDetailRequest(notice));
+            new NoticeDetailRequest(NoticeProjection.FromDomain(notice)));
 
         Assert.AreEqual("Heidelberg", result.PlaceName);
         Assert.AreEqual(candidate.Id, result.LinkCandidates[0].Id);
@@ -41,9 +41,48 @@ public sealed class NoticeDetailServiceTests
     public async Task LoadAsyncDoesNotQueryCandidatesForUnsavedNotice()
     {
         var result = await new NoticeDetailService(new FakeNoticeRepository()).LoadAsync(
-            new NoticeDetailRequest(new DeathNotice { Place = "Mannheim" }));
+            new NoticeDetailRequest(
+                NoticeProjection.FromDomain(new DeathNotice { Place = "Mannheim" })));
 
         Assert.AreEqual(0, result.LinkCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task LoadAsyncReturnsTheImmutableRequestProjectionWithoutAliasingDomainObjects()
+    {
+        var domainNotice = new DeathNotice
+        {
+            Id = 7,
+            Place = "Heidelberg",
+            PdfFile = "notice.pdf",
+        };
+        var projection = NoticeProjection.FromDomain(domainNotice);
+        var result = await new NoticeDetailService(new FakeNoticeRepository()).LoadAsync(
+            new NoticeDetailRequest(projection));
+
+        Assert.AreSame(projection, result.Notice);
+        Assert.AreEqual("Heidelberg", result.PlaceName);
+        Assert.AreEqual("notice.pdf", result.Notice.PdfFile);
+        Assert.IsFalse(ReferenceEquals(domainNotice, result.Notice));
+    }
+
+    [TestMethod]
+    public async Task LoadAsyncPropagatesCancellationBeforeRepositoryAccess()
+    {
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+
+        try
+        {
+            await new NoticeDetailService(new FakeNoticeRepository()).LoadAsync(
+                new NoticeDetailRequest(
+                    NoticeProjection.FromDomain(new DeathNotice { Id = 42 })),
+                cancellation.Token);
+            Assert.Fail("Expected cancellation.");
+        }
+        catch (OperationCanceledException)
+        {
+        }
     }
 
     private sealed class FakeNoticeRepository : INoticeRepository
