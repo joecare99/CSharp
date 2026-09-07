@@ -92,7 +92,7 @@ else if (p.PropertyType == typeof(Int32))
         }
     }
     
-    [DataTestMethod]
+    [TestMethod]
     [DynamicData(nameof(VehicleViewModelPropertyTestData))] // Korrektur: ] hinzugefügt
  public void TestProperties(string sProp, string sName, object oVal, object oExp)
     {
@@ -103,7 +103,7 @@ else if (p.PropertyType == typeof(Int32))
         Assert.AreEqual(oExp, testModel.GetProp(sProp));
     }
     
-    [DataTestMethod()]
+    [TestMethod]
     [DataRow(nameof(IAGVModel.VehicleDim), new[] { @"PropChg(VehicleViewModel,VehicleLength)=0
 PropChg(VehicleViewModel,VehicleWidth)=0
 " })]

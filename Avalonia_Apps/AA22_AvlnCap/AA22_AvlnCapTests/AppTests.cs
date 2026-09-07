@@ -4,6 +4,7 @@ using AA22_AvlnCap.Model;
 using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Headless.MSTest;
 
 namespace AA22_AvlnCap.Tests;
 
@@ -41,13 +42,13 @@ public class AppTests
         IoC.GetReqSrv = _grsold;
     }
 
-    [TestMethod]
+    [AvaloniaTestMethod]
     public void AppTest()
     {
         Assert.IsNotNull(app);
     }
 
-    [TestMethod]
+    [AvaloniaTestMethod]
     public void AppInit_SetsIoC()
     {
         app.DoInit();

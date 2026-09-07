@@ -15,7 +15,7 @@ public class MainWindowTests
     [TestInitialize]
     public void TestInitialize()
     {
-        var services = typeof(App).GetProperty(nameof(App.Services));
+        var services = typeof(App).GetProperty(nameof(App.Services))!;
         services.SetValue(null, Substitute.For<IServiceProvider>());
         App.Services.GetService(typeof(IDateDifViewModel)).Returns(Substitute.For<IDateDifViewModel>());
     }
@@ -23,8 +23,7 @@ public class MainWindowTests
     [AvaloniaTestMethod()]
     public void MainWindowTest()
     {
-        testView = new(null);
-        Assert.IsNotNull(testView);
+        testView = new(new AA18_MultiConverter.Views.DateDifView());
         Assert.IsInstanceOfType(testView, typeof(MainWindow));
     }
 }

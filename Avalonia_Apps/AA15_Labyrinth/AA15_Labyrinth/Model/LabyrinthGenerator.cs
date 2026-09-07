@@ -151,6 +151,6 @@ public sealed class LabyrinthGenerator : ILabyrinthGenerator
         if (o2 == 0 && OnSeg(ax, ay, dx, dy, bx, by)) return true;
         if (o3 == 0 && OnSeg(cx, cy, ax, ay, dx, dy)) return true;
         if (o4 == 0 && OnSeg(cx, cy, bx, by, dx, dy)) return true;
-        return (o1 > 0 == o2 > 0) && (o3 > 0 == o4 > 0);
+        return (o1 > 0 != o2 > 0) && (o3 > 0 != o4 > 0);
     }
 }

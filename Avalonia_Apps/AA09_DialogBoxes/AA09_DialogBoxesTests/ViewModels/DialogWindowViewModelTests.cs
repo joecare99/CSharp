@@ -32,12 +32,12 @@ public class DialogWindowViewModelTests : BaseTestViewModel
         ClearLog();
     }
 
-    private void DoOKTest(object o, EventArgs e)
+    private void DoOKTest(object? o, EventArgs e)
     {
        DoLog($"DoOK({o},{e})"); 
     }
 
-    private void DoCancelTest(object o, EventArgs e)
+    private void DoCancelTest(object? o, EventArgs e)
     {
         DoLog($"DoCancel({o},{e})");
     }
@@ -60,10 +60,10 @@ public class DialogWindowViewModelTests : BaseTestViewModel
     }
 
     [TestMethod()]
-    [DataRow(true, new[] { @"DoCancel(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
+    [DataRow(true, new[] { @"DoCancel(AA09_DialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
     [DataRow(false, new[] { @"" })]
-    [DataRow(null, new[] { @"DoCancel(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
+    [DataRow(null, new[] { @"DoCancel(AA09_DialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
     public void CancelCommandTest(bool? oAct, string[] asExp)
     {
@@ -74,10 +74,10 @@ public class DialogWindowViewModelTests : BaseTestViewModel
     }
 
     [TestMethod()]
-    [DataRow(true, new[] { @"DoOK(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
+    [DataRow(true, new[] { @"DoOK(AA09_DialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
     [DataRow(false, new[] { @"" })]
-    [DataRow(null, new[] { @"DoOK(MVVM_09a_CTDialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
+    [DataRow(null, new[] { @"DoOK(AA09_DialogBoxes.ViewModels.DialogWindowViewModel,System.EventArgs)
 " })]
     public void OKCommandTest(bool? oAct, string[] asExp)
     {
