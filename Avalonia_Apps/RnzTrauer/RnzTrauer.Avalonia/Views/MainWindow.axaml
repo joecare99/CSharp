@@ -137,10 +137,11 @@
             </Border>
 
             <Border Grid.Column="1" BorderThickness="1" Padding="8">
-              <Grid RowDefinitions="Auto,*,Auto" RowSpacing="6">
-                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="6">
+              <Grid RowDefinitions="Auto,*,Auto,Auto" RowSpacing="6">
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
                   <TextBox Grid.Column="0" IsReadOnly="True" PlaceholderText="Link target" Text="{Binding SelectedNotice.LinkedNoticeId}" />
                   <Button Grid.Column="1" Content="Load detail" Command="{Binding LoadSelectedDetailCommand}" />
+                  <Button Grid.Column="2" Content="OCR PDF" Command="{Binding ExtractSelectedPdfOcrCommand}" />
                 </Grid>
                 <TextBox Grid.Row="1"
                          AcceptsReturn="True"
@@ -148,10 +149,20 @@
                          VerticalContentAlignment="Top"
                          IsReadOnly="True"
                          Text="{Binding SelectedNotice.Text}" />
-                <StackPanel Grid.Row="2" Spacing="3">
+                <TextBox Grid.Row="2"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalContentAlignment="Top"
+                         IsReadOnly="True"
+                         MinHeight="80"
+                         PlaceholderText="OCR preview"
+                         Text="{Binding SelectedNoticeOcrText}" />
+                <StackPanel Grid.Row="3" Spacing="3">
                   <TextBlock Opacity="0.75" Text="{Binding SelectedNoticePath}" />
                   <TextBlock Opacity="0.75" Text="{Binding SelectedNoticePlace}" />
                   <TextBlock Opacity="0.75" Text="{Binding SelectedNoticeMediaSummary}" />
+                  <TextBlock Opacity="0.75" Text="{Binding OcrStatus}" />
+                  <Button Content="Cancel OCR" Command="{Binding CancelPdfOcrCommand}" />
                   <TextBlock Opacity="0.75" Text="{Binding LinkCandidates.Count, StringFormat={}Link candidates: {0}}" />
                 </StackPanel>
               </Grid>

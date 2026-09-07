@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using CommunityToolkit.Mvvm.Input;
 using RnzTrauer.Core.Domain;
 using RnzTrauer.Core.Services;
 using RnzTrauer.Import.Services;
+using RnzTrauer.Media;
 using RnzTrauer.Places;
 
 namespace RnzTrauer.Avalonia.ViewModels;
@@ -24,6 +26,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly ICoordinateSchemaProbe _coordinateSchemaProbe;
     private readonly IPlaceCoordinateStore _coordinateStore;
     private readonly INoticeDetailService _detailService;
+    private readonly IPdfOcrService? _pdfOcrService;
+    private CancellationTokenSource? _ocrCancellation;
     private IReadOnlyCollection<string> _places = Array.Empty<string>();
 
     public MainWindowViewModel(
@@ -34,6 +38,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         ICoordinateSchemaProbe coordinateSchemaProbe,
         IPlaceCoordinateStore coordinateStore,
         INoticeDetailService? detailService = null,
+        IPdfOcrService? pdfOcrService = null,
         bool readOnly = false)
     {
         _repository = repository;
@@ -43,6 +48,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _coordinateSchemaProbe = coordinateSchemaProbe;
         _coordinateStore = coordinateStore;
         _detailService = detailService ?? new NoticeDetailService(repository);
+        _pdfOcrService = pdfOcrService;
         IsReadOnly = readOnly;
     }
 
@@ -65,6 +71,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty] private string _selectedNoticePlace = "<no place>";
     [ObservableProperty] private string _selectedNoticeMediaSummary = "Detail not loaded";
+    [ObservableProperty] private string _selectedNoticeOcrText = string.Empty;
+    [ObservableProperty] private string _ocrStatus = "OCR not started";
+    [ObservableProperty] private bool _isOcrRunning;
 
     [ObservableProperty] private string _orderNumberPrefix = string.Empty;
     [ObservableProperty] private string _keywordContains = string.Empty;
@@ -115,6 +124,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     partial void OnSelectedNoticeChanged(NoticeProjection? value)
     {
+        SelectedNoticeOcrText = string.Empty;
+        OcrStatus = "OCR not started";
         CoordinatePlace = value?.Place ?? string.Empty;
         CoordinateLatitude = string.Empty;
         CoordinateLongitude = string.Empty;
@@ -222,13 +233,61 @@ public sealed partial class MainWindowViewModel : ObservableObject
         }
 
         var detail = await _detailService.LoadAsync(
-            new NoticeDetailRequest(SelectedNotice.ToDomain()));
+            new NoticeDetailRequest(SelectedNotice));
         LinkCandidates.Clear();
         foreach (var candidate in detail.LinkCandidates)
             LinkCandidates.Add(candidate);
         SelectedNoticePlace = detail.PlaceName ?? "<no place>";
         SelectedNoticeMediaSummary = detail.Media.Summary;
     }
+
+    [RelayCommand]
+    private async Task ExtractSelectedPdfOcrAsync()
+    {
+        if (_pdfOcrService is null || SelectedNotice is null)
+        {
+            OcrStatus = "OCR is unavailable.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(SelectedNotice.PdfFile))
+        {
+            OcrStatus = "The selected notice has no PDF.";
+            return;
+        }
+
+        var pdfPath = Path.IsPathRooted(SelectedNotice.PdfFile)
+            ? SelectedNotice.PdfFile
+            : Path.Combine(SelectedNotice.Path ?? string.Empty, SelectedNotice.PdfFile);
+        _ocrCancellation?.Cancel();
+        _ocrCancellation?.Dispose();
+        _ocrCancellation = new CancellationTokenSource();
+        IsOcrRunning = true;
+        OcrStatus = "Running OCR…";
+        try
+        {
+            var result = await _pdfOcrService.ExtractAsync(
+                new PdfOcrRequest(pdfPath),
+                _ocrCancellation.Token);
+            SelectedNoticeOcrText = result.Text;
+            OcrStatus = $"OCR completed ({result.PageTexts.Count} pages).";
+        }
+        catch (OperationCanceledException)
+        {
+            OcrStatus = "OCR cancelled.";
+        }
+        catch (Exception exception)
+        {
+            OcrStatus = $"OCR failed: {exception.Message}";
+        }
+        finally
+        {
+            IsOcrRunning = false;
+        }
+    }
+
+    [RelayCommand]
+    private void CancelPdfOcr() => _ocrCancellation?.Cancel();
 
     [RelayCommand]
     private async Task SaveCoordinateAsync()

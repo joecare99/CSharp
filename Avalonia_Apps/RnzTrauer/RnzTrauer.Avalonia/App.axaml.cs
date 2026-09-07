@@ -12,6 +12,7 @@ using RnzTrauer.Persistence.MySql;
 using RnzTrauer.Places;
 using RnzTrauer.Core.Services;
 using RnzTrauer.Import.Services;
+using RnzTrauer.Media;
 
 namespace RnzTrauer.Avalonia;
 
@@ -45,6 +46,21 @@ public sealed partial class App : Application
             .AddTransient<ISchemaFilter, SchemaFilter>()
             .AddTransient<ISchemaImportAccumulator, SchemaImportAccumulator>()
             .AddTransient<IHtmlSchemaImporter, HtmlSchemaImporter>()
+            .AddSingleton<IExternalProcessRunner, SystemExternalProcessRunner>()
+            .AddSingleton<IPdfImageRenderer>(services =>
+                new PopplerPdfImageRenderer(
+                    new PopplerPdfImageRendererOptions(
+                        Environment.GetEnvironmentVariable("RNZ_PDFTOPPM_PATH") ?? "pdftoppm"),
+                    services.GetRequiredService<IExternalProcessRunner>()))
+            .AddSingleton<IOcrEngine>(services =>
+                new TesseractOcrEngine(
+                    new TesseractOcrOptions(
+                        Environment.GetEnvironmentVariable("RNZ_TESSERACT_PATH") ?? "tesseract"),
+                    services.GetRequiredService<IExternalProcessRunner>()))
+            .AddSingleton<IPdfOcrService>(services =>
+                new PdfOcrService(
+                    services.GetRequiredService<IPdfImageRenderer>(),
+                    services.GetRequiredService<IOcrEngine>()))
             .AddSingleton<IExportService, NoticeExportService>()
             .AddSingleton<MainWindowViewModel>(services =>
                 new MainWindowViewModel(
@@ -55,6 +71,7 @@ public sealed partial class App : Application
                     services.GetRequiredService<ICoordinateSchemaProbe>(),
                     services.GetRequiredService<IPlaceCoordinateStore>(),
                     services.GetRequiredService<INoticeDetailService>(),
+                    services.GetRequiredService<IPdfOcrService>(),
                     readOnly: true));
         var provider = services.BuildServiceProvider();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

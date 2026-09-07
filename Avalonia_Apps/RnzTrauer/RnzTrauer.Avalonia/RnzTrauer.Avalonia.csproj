@@ -22,6 +22,7 @@
     <ProjectReference Include="..\RnzTrauer.Import\RnzTrauer.Import.csproj" />
     <ProjectReference Include="..\RnzTrauer.Places\RnzTrauer.Places.csproj" />
     <ProjectReference Include="..\RnzTrauer.Persistence.MySql\RnzTrauer.Persistence.MySql.csproj" />
+    <ProjectReference Include="..\RnzTrauer.Media\RnzTrauer.Media.csproj" />
     <ProjectReference Include="..\..\..\Gen_FreeWin\DbProviderMySql\DbProviderMySql.csproj" />
   </ItemGroup>
   <ItemGroup>
