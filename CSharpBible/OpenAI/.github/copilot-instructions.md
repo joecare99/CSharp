@@ -20,7 +20,8 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Prefer reusable scripts and skills from `C:\Projekte\CSharp\Tools` and its sub-directories over ad-hoc terminal commands whenever they fit the task, especially for coverage analysis, build and test diagnostics, reporting, automation, and similar repository-wide workflows.
 - Read adjacent `*.md` documentation in that tools area only when needed to confirm applicability or usage.
 - For this repository, prefer keeping RepoMigrator.Core provider-agnostic via broader migration source provider abstractions instead of forcing archive inputs into IVersionControlProvider. Additionally, provider-specific files should live in their specific provider projects; RepoMigrator.Core should contain only provider-agnostic shared abstractions and models. Sub-provider concerns such as compression formats should also live in dedicated specific projects (for example, a Zip compression provider project).
-- In this repository, diagnostics contracts should be application-wide and live in AppKomponentBaseLib rather than in a planning-specific or AA98-specific base project when they are meant to be cross-application foundations.
+- In this repository, diagnostics contracts should be application-wide and live in `AppKomponentBaseLib` rather than in a planning-specific or AA98-specific base project when they are meant to be cross-application foundations. `AppKomponentBaseLib` is the shared base library for interfaces and base classes used by all application components.
+- The strong-name key for this workspace is located at `C:\Projekte\CSharp\Avalonia_Apps\Libraries\sgLib.snk`.
 
 ## Code Organization
 - Prefer one class/interface/struct per file.
@@ -47,11 +48,11 @@ Apply these defaults when working in this repository unless the user explicitly 
 
 ## MVVM Requirements
 - In WPF UI projects, ViewModels must use CommunityToolkit.Mvvm.
-- Prefer inheriting from ObservableObject instead of custom base classes unless a documented exception exists.
-- Use [ObservableProperty] for observable state where practical.
-- Use [RelayCommand] or [AsyncRelayCommand] for commands where practical.
-- Use [NotifyPropertyChangedFor] instead of manual dependent property notifications where applicable.
-- Do not introduce new WPF ViewModels based on manual ICommand and manual property boilerplate unless required by framework constraints.
+- Prefer inheriting from `ObservableObject` instead of custom base classes unless a documented exception exists.
+- Use `[ObservableProperty]` for observable state where practical.
+- Use `[RelayCommand]` or `[AsyncRelayCommand]` for commands where practical.
+- Use `[NotifyPropertyChangedFor]` instead of manual dependent property notifications where applicable.
+- Do not introduce new WPF ViewModels based on manual `ICommand` and manual property boilerplate unless required by framework constraints.
 
 ## Naming Conventions
 - Distinguish between UI control naming and variable/field naming.
