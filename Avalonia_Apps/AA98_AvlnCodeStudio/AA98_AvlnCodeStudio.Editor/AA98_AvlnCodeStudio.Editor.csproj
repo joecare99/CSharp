@@ -18,5 +18,6 @@
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.UI\AA98_AvlnCodeStudio.Base.UI.csproj" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.OS\AA98_AvlnCodeStudio.Base.OS.csproj" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Model\AA98_AvlnCodeStudio.Model.csproj" />
+	  <ProjectReference Include="..\..\Libraries\Code.Navigation\Code.Navigation.csproj" />
   </ItemGroup>
 </Project>
