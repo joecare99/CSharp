@@ -5,16 +5,16 @@
     <Project Path="../Calc/Calc32Cons/Calc32.Cons.csproj" />
   </Folder>
   <Folder Name="/ConsoleApps/">
+    <Project Path="ConsoleLib.Showcase.Desktop.Tests/ConsoleLib.Showcase.Desktop.Tests.csproj" />
+    <Project Path="ConsoleLib.Showcase.Desktop/ConsoleLib.Showcase.Desktop.csproj" />
+    <Project Path="ConsoleLib.Showcase.Terminal.Core/ConsoleLib.Showcase.Terminal.Core.csproj" />
+    <Project Path="ConsoleLib.Showcase.Tests/ConsoleLib.Showcase.Tests.csproj" />
+    <Project Path="ConsoleLib.Showcase/ConsoleLib.Showcase.csproj" />
     <Project Path="ConsoleMouseApp.WinForms/ConsoleMouseApp.WinForms.csproj" />
     <Project Path="ConsoleMouseApp/ConsoleMouseApp.Base.csproj" />
     <Project Path="ConsoleMouseApp/ConsoleMouseApp.csproj" />
     <Project Path="ConsoleMouseApp/ConsoleMouseApp.ExtCons.csproj" />
     <Project Path="ConsoleOverlapApp/ConsoleOverlapApp.csproj" />
-    <Project Path="ConsoleLib.Showcase/ConsoleLib.Showcase.csproj" />
-    <Project Path="ConsoleLib.Showcase.Desktop/ConsoleLib.Showcase.Desktop.csproj" />
-    <Project Path="ConsoleLib.Showcase.Desktop.Tests/ConsoleLib.Showcase.Desktop.Tests.csproj" />
-    <Project Path="ConsoleLib.Showcase.Tests/ConsoleLib.Showcase.Tests.csproj" />
-    <Project Path="ConsoleLib.Showcase.Terminal.Core/ConsoleLib.Showcase.Terminal.Core.csproj" />
     <Project Path="Display_Test/Display_netTest.csproj" />
     <Project Path="Leonardo.ST.Cxaml/Leonardo.ST.Cxaml.csproj" />
     <Project Path="TestConsole/TestConsole.csproj" />
@@ -48,23 +48,31 @@
     <Project Path="../Libraries/ConsoleLib.ExtConTests/ConsoleLib.ExtConTests.csproj" />
     <Project Path="../Libraries/ConsoleLib.Posix/ConsoleLib.Posix.csproj" />
     <Project Path="../Libraries/ConsoleLib.PosixTests/ConsoleLib.PosixTests.csproj" />
+    <Project Path="../Libraries/ConsoleLib.Rendering/ConsoleLib.Rendering.csproj" />
     <Project Path="../Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
     <Project Path="../Libraries/ConsoleLib/ConsoleLib.csproj" />
     <Project Path="../Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
     <Project Path="../Libraries/ExtendedConsole/ExtendedConsole.csproj" />
-    <Project Path="../Libraries/Terminal.Core/Terminal.Core.csproj" />
     <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+    <Project Path="../Libraries/Terminal.Core/Terminal.Core.csproj" />
     <Project Path="../Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
   </Folder>
   <Folder Name="/OpenAI/">
+    <Project Path="../OpenAI/Ollama.Client/Ollama.Client.csproj" />
     <Project Path="../OpenAI/Ollama.CodingAgent.Application/Ollama.CodingAgent.Application.csproj" />
     <Project Path="../OpenAI/Ollama.CodingAgent.Console.Cxaml/Ollama.CodingAgent.Console.Cxaml.csproj" />
     <Project Path="../OpenAI/Ollama.CodingAgent.Console/Ollama.CodingAgent.Console.csproj" />
+    <Project Path="../OpenAI/Ollama.CodingAgent.Git/Ollama.CodingAgent.Git.csproj" />
     <Project Path="../OpenAI/Ollama.CodingAgent/Ollama.CodingAgent.csproj" />
+    <Project Path="../OpenAI/Ollama.Protocol/Ollama.Protocol.csproj" />
+    <Project Path="../OpenAI/Ollama.Tools/Ollama.Tools.csproj" />
   </Folder>
   <Folder Name="/Projektmappenelemente/">
     <File Path="ConsoleApps.props" />
     <File Path="ConsoleApps_net.props" />
   </Folder>
+  <Properties Name="SolutionProperties">
+    <Property Name="WorkspaceFolder" Value="..\.." />
+  </Properties>
 </Solution>

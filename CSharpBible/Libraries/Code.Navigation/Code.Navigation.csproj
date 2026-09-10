@@ -1,0 +1,25 @@
+<Project>
+  <Import Project="..\Libraries.props" />
+  <PropertyGroup>
+	<TargetFrameworks>net8.0</TargetFrameworks>
+	<RootNamespace>Code.Navigation</RootNamespace>
+	<AssemblyName>Code.Navigation</AssemblyName>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+	<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+	<Compile Include="..\..\..\Avalonia_Apps\Libraries\Code.Navigation\CodeLocation.cs" Link="CodeLocation.cs" />
+	<Compile Include="..\..\..\Avalonia_Apps\Libraries\Code.Navigation\ICodeNavigator.cs" Link="ICodeNavigator.cs" />
+  </ItemGroup>
+</Project>
