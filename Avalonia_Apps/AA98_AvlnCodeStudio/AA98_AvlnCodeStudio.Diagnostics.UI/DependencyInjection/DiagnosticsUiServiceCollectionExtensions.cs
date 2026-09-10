@@ -1,5 +1,6 @@
 using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
 using AppKomponentBaseLib.Diagnostics;
+using Diagnostics.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -19,6 +20,7 @@ public static class DiagnosticsUiServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        services.AddSingleton<DiagnosticLocationMapper>();
         services.AddSingleton<DiagnosticCollectionViewModel>();
         services.AddSingleton<IDiagnosticConsumer>(serviceProvider => serviceProvider.GetRequiredService<DiagnosticCollectionViewModel>());
         return services;
