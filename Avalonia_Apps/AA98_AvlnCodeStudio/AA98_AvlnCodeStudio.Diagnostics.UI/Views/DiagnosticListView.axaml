@@ -36,6 +36,9 @@
 									<TextBlock Text="{Binding SourcePath, StringFormat='Source: {0}'}"
 											   TextWrapping="Wrap" />
 									<TextBlock Text="{Binding LineNumber, StringFormat='Line: {0}'}" />
+									<Button Content="Open source location"
+											Command="{Binding $parent[UserControl].DataContext.ActivateDiagnosticCommand}"
+											CommandParameter="{Binding}" />
 								</StackPanel>
 							</Border>
 						</DataTemplate>

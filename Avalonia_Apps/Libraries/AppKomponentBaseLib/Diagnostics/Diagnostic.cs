@@ -29,4 +29,9 @@ public sealed class Diagnostic
     /// Gets or sets the optional source line number associated with the diagnostic.
     /// </summary>
     public int? LineNumber { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional one-based source column number associated with the diagnostic.
+    /// </summary>
+    public int? ColumnNumber { get; set; }
 }

@@ -1,9 +1,13 @@
 <Project>
-  <Import Project="..\AA98_AvlnCodeStudio.props" />
+  <Import Project="..\Libraries.props" />
   <PropertyGroup>
 	<TargetFrameworks>net8.0</TargetFrameworks>
+	<RootNamespace>AppKomponentBaseLib.Tests</RootNamespace>
+	<AssemblyName>AppKomponentBaseLib.Tests</AssemblyName>
+	<IsPackable>false</IsPackable>
+	<IsTestProject>true</IsTestProject>
 	<Nullable>enable</Nullable>
-	<Configurations>Debug;Release;DesktopOnly</Configurations>
+	<ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -14,10 +18,11 @@
 	<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base\AA98_AvlnCodeStudio.Base.csproj" />
-	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.UI\AA98_AvlnCodeStudio.Base.UI.csproj" />
-	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.OS\AA98_AvlnCodeStudio.Base.OS.csproj" />
-	<ProjectReference Include="..\AA98_AvlnCodeStudio.Model\AA98_AvlnCodeStudio.Model.csproj" />
-	  <ProjectReference Include="..\..\Libraries\Code.Navigation\Code.Navigation.csproj" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+	<PackageReference Include="MSTest" Version="4.4.0" />
+	<PackageReference Include="NSubstitute" Version="6.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\AppKomponentBaseLib\AppKomponentBaseLib.csproj" />
   </ItemGroup>
 </Project>

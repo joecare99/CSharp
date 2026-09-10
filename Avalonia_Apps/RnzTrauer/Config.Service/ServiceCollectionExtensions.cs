@@ -41,6 +41,11 @@ public static class ServiceCollectionExtensions
         ArgumentException.ThrowIfNullOrEmpty(baseKey);
 
         var parts = baseKey.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length == 0)
+        {
+            throw new ArgumentException("The base key must contain at least one non-empty segment.", nameof(baseKey));
+        }
+
         if (parts.Length >= 2)
         {
             return services.AddConfigService(parts[0], string.Join('.', parts.Skip(1)));
@@ -52,6 +57,8 @@ public static class ServiceCollectionExtensions
     /// <summary>Registers a configuration section provider and its model type.</summary>
     public static IServiceCollection AddConfigSection<TModel>(this IServiceCollection services, IConfigSectionProvider section) where TModel : notnull
     {
+        ArgumentNullException.ThrowIfNull(section);
+
         return services.AddConfigSection<TModel>(section, section.Description);
     }
 
