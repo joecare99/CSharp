@@ -12,6 +12,7 @@ public sealed class ExtConShowcaseHostCapabilities : IShowcaseHostCapabilities
     {
         Alert = new ConsoleAlertService(console);
         Terminal = new ExtConTerminalCapability(terminal);
+        FileDialogs = new ConsoleLib.Showcase.Apps.UnavailableShowcaseFileDialogService();
     }
 
     public IClipboardService? Clipboard => null;
@@ -23,4 +24,6 @@ public sealed class ExtConShowcaseHostCapabilities : IShowcaseHostCapabilities
     public IShowcaseTerminalCapability Terminal { get; }
 
     public IShowcaseAlertService Alert { get; }
+
+    public ConsoleLib.Showcase.Apps.IShowcaseFileDialogService FileDialogs { get; }
 }

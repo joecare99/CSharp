@@ -1,0 +1,21 @@
+<Project>
+  <Import Project="..\ConsoleApps.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Abstractions\ConsoleLib.Showcase.Apps.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
+  </ItemGroup>
+  <ItemGroup><EmbeddedResource Include="Pages\Calculator.cxaml" /></ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ConsoleLib.Showcase\Models\CalculatorOperation.cs" Link="CalculatorOperation.cs" />
+    <Compile Include="..\ConsoleLib.Showcase\Models\CalculatorEngine.cs" Link="CalculatorEngine.cs" />
+  </ItemGroup>
+</Project>

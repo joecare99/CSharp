@@ -7,9 +7,9 @@ using DetectiveGame.Engine.Game;
 namespace DetectiveGame.Console.Views;
 
 /// <summary>
-/// Ein modales Panel zum Auswählen einer Verdachts-Kombination
+/// Ein modales Panel zum Auswï¿½hlen einer Verdachts-Kombination
 /// </summary>
-public class SuggestionDialog : Panel, IPopup
+public class SuggestionDialog : Dialog
 {
     private readonly ListBox _persons;
     private readonly ListBox _weapons;
@@ -38,7 +38,7 @@ public class SuggestionDialog : Panel, IPopup
         // Listen
         _persons = new ListBox { Position = new System.Drawing.Point(1, 2), size = new System.Drawing.Size(16, 6), Text = "Personen" };
         _weapons = new ListBox { Position = new System.Drawing.Point(20, 2), size = new System.Drawing.Size(16, 6), Text = "Waffen" };
-        _rooms = new ListBox { Position = new System.Drawing.Point(39, 2), size = new System.Drawing.Size(16, 6), Text = "Räume" };
+        _rooms = new ListBox { Position = new System.Drawing.Point(39, 2), size = new System.Drawing.Size(16, 6), Text = "Rï¿½ume" };
 
         _persons.ItemsSource = GameData.Persons.Select(c => c.Name).ToList();
         _weapons.ItemsSource = GameData.Weapons.Select(c => c.Name).ToList();
@@ -93,7 +93,6 @@ public class SuggestionDialog : Panel, IPopup
         Accepted = accept;
         Closed?.Invoke();
         Hide();
-        Parent?.Remove(this);
     }
 
     public void Hide()

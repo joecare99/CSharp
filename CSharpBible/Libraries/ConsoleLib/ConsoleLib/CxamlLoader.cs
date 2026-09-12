@@ -17,6 +17,11 @@ namespace ConsoleLib;
 /// <summary>Minimal reflection-based CXAML runtime loader for ConsoleLib controls.</summary>
 public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
 {
+    private readonly ICxamlComponentRegistry? _components;
+
+    public CxamlLoader(ICxamlComponentRegistry? components = null)
+        => _components = components;
+
     public IReadOnlyList<CxamlDiagnostic> Validate(TextReader markup)
     {
         if (markup is null)
@@ -26,8 +31,13 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
         try
         {
             using var reader = XmlReader.Create(markup, new XmlReaderSettings { IgnoreComments = true, IgnoreWhitespace = true });
-            reader.MoveToContent();
-            ValidateControl(reader, diagnostics);
+            if (reader.MoveToContent() == XmlNodeType.None)
+            {
+                diagnostics.Add(new CxamlDiagnostic(CxamlDiagnosticSeverity.Error, "CXAML markup does not contain a root control."));
+                return diagnostics;
+            }
+
+            ValidateControl(reader, diagnostics, new Dictionary<string, string>(StringComparer.Ordinal));
         }
         catch (XmlException error)
         {
@@ -48,7 +58,34 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
         return new CxamlLoadResult(LoadCore(markup, context, namedControls), namedControls);
     }
 
-    private static IControl LoadCore(TextReader markup, CxamlLoadContext? context, IDictionary<string, IControl>? namedControls)
+    /// <summary>Loads markup whose root must be a non-floating page.</summary>
+    public CxamlLoadResult LoadPage(TextReader markup, CxamlLoadContext context)
+        => LoadExpectedRoot(markup, context, static root => root is Page,
+            "CXAML page roots must use <Page>.");
+
+    /// <summary>Loads markup whose root must be a reusable user control.</summary>
+    public CxamlLoadResult LoadUserControl(TextReader markup, CxamlLoadContext context)
+        => LoadExpectedRoot(markup, context, static root => root is UserControl,
+            "CXAML user-control roots must use <UserControl>.");
+
+    /// <summary>Loads markup whose root must be a floating dialog.</summary>
+    public CxamlLoadResult LoadDialog(TextReader markup, CxamlLoadContext context)
+        => LoadExpectedRoot(markup, context, static root => root is Dialog,
+            "CXAML dialog roots must use <Dialog>.");
+
+    private CxamlLoadResult LoadExpectedRoot(
+        TextReader markup,
+        CxamlLoadContext context,
+        Func<IControl, bool> predicate,
+        string message)
+    {
+        var result = Load(markup, context);
+        if (!predicate(result.Root))
+            throw new CxamlParseException(message);
+        return result;
+    }
+
+    private IControl LoadCore(TextReader markup, CxamlLoadContext? context, IDictionary<string, IControl>? namedControls)
     {
         if (markup is null)
             throw new ArgumentNullException(nameof(markup));
@@ -69,17 +106,27 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
         }
     }
 
-    private static void ValidateControl(XmlReader reader, ICollection<CxamlDiagnostic> diagnostics)
+    private void ValidateControl(XmlReader reader, ICollection<CxamlDiagnostic> diagnostics, IDictionary<string, string> inheritedXmlns)
     {
         var controlName = reader.LocalName;
         var type = Type.GetType("ConsoleLib.CommonControls." + controlName + ", ConsoleLib", throwOnError: false);
         if (type is null || !typeof(IControl).IsAssignableFrom(type))
             diagnostics.Add(new CxamlDiagnostic(CxamlDiagnosticSeverity.Error, "Unsupported CXAML control: " + controlName));
 
+        var xmlns = new Dictionary<string, string>(inheritedXmlns, StringComparer.Ordinal);
         if (reader.HasAttributes)
         {
             while (reader.MoveToNextAttribute())
             {
+                if (reader.Name == "xmlns" || reader.Prefix == "xmlns")
+                {
+                    if (reader.Name == "xmlns")
+                        xmlns[string.Empty] = reader.Value;
+                    else
+                        xmlns[reader.LocalName] = reader.Value;
+                    continue;
+                }
+
                 if (!IsSupportedAttribute(reader.Name, type))
                     diagnostics.Add(new CxamlDiagnostic(CxamlDiagnosticSeverity.Error,
                         "Unsupported CXAML attribute '" + reader.LocalName + "' on " + controlName));
@@ -87,21 +134,50 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
             reader.MoveToElement();
         }
 
-        if (reader.IsEmptyElement)
+        ValidateNamespace(reader, controlName, xmlns, diagnostics);
+
+        var isRoot = reader.Depth == 0;
+        var framePageCount = 0;
+        if (!reader.IsEmptyElement)
+        {
+            var depth = reader.Depth;
+            reader.Read();
+            while (!(reader.NodeType == XmlNodeType.EndElement && reader.Depth == depth))
+            {
+                if (reader.NodeType == XmlNodeType.Element)
+                {
+                    if (isRoot && controlName == "Frame" && reader.LocalName == "Page")
+                        framePageCount++;
+
+                    if (type == typeof(Grid) && IsGridDefinitionElement(reader.Name))
+                        ValidateGridDefinitions(reader, diagnostics);
+                    else
+                        ValidateControl(reader, diagnostics, xmlns);
+                }
+                reader.Read();
+            }
+        }
+
+        if (isRoot && controlName == "Frame" && framePageCount != 1)
+            diagnostics.Add(new CxamlDiagnostic(CxamlDiagnosticSeverity.Warning,
+                "A Frame root should host exactly one Page."));
+    }
+
+    private static void ValidateNamespace(XmlReader reader, string controlName, IReadOnlyDictionary<string, string> xmlns, ICollection<CxamlDiagnostic> diagnostics)
+    {
+        var prefix = reader.Prefix;
+        if (string.IsNullOrEmpty(prefix) || prefix == "xmlns")
             return;
 
-        var depth = reader.Depth;
-        reader.Read();
-        while (!(reader.NodeType == XmlNodeType.EndElement && reader.Depth == depth))
+        if (!xmlns.TryGetValue(prefix, out var uri))
         {
-            if (reader.NodeType == XmlNodeType.Element)
-            {
-                if (type == typeof(Grid) && IsGridDefinitionElement(reader.Name))
-                    ValidateGridDefinitions(reader, diagnostics);
-                else
-                    ValidateControl(reader, diagnostics);
-            }
-            reader.Read();
+            diagnostics.Add(new CxamlDiagnostic(CxamlDiagnosticSeverity.Error,
+                "Unbound XML namespace prefix '" + prefix + "' on " + controlName + "."));
+        }
+        else if (!CxamlNamespaces.Recognized.Contains(uri))
+        {
+            diagnostics.Add(new CxamlDiagnostic(CxamlDiagnosticSeverity.Warning,
+                "Unrecognized CXAML namespace '" + uri + "' for prefix '" + prefix + "'."));
         }
     }
 
@@ -138,9 +214,9 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
         }
     }
 
-    private static IControl ReadControl(XmlReader reader, CxamlLoadContext? context, IDictionary<string, IControl>? namedControls)
+    private IControl ReadControl(XmlReader reader, CxamlLoadContext? context, IDictionary<string, IControl>? namedControls)
     {
-        var control = CreateControl(reader.LocalName);
+        var control = CreateControl(reader.Name, reader.LocalName, context);
         int? width = null;
         int? height = null;
         int? x = null;
@@ -149,6 +225,8 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
         {
             while (reader.MoveToNextAttribute())
             {
+                if (reader.Prefix == "xmlns" || reader.Name == "xmlns")
+                    continue;
                 switch (reader.LocalName)
                 {
                     case "Width":
@@ -202,33 +280,36 @@ public sealed class CxamlLoader : ICxamlLoader, ICxamlValidator
         return control;
     }
 
-    private static IControl CreateControl(string name)
+    private IControl CreateControl(string xmlName, string localName, CxamlLoadContext? context)
     {
-        var type = Type.GetType("ConsoleLib.CommonControls." + name + ", ConsoleLib", throwOnError: false)
+        if (_components is not null && context is not null && _components.TryCreate(xmlName, context, out var component))
+            return component;
+
+        var type = Type.GetType("ConsoleLib.CommonControls." + localName + ", ConsoleLib", throwOnError: false)
             ?? AppDomain.CurrentDomain.GetAssemblies()
-                .Select(assembly => assembly.GetType("ConsoleLib.Showcase.Desktop.Controls." + name, throwOnError: false))
+                .Select(assembly => assembly.GetType("ConsoleLib.Showcase.Desktop.Controls." + localName, throwOnError: false))
                 .FirstOrDefault(candidate => candidate is not null);
         if (type is null || !typeof(IControl).IsAssignableFrom(type))
-            throw new CxamlParseException("Unsupported CXAML control: " + name);
+            throw new CxamlParseException("Unsupported CXAML control: " + xmlName);
         try
         {
             return (IControl)Activator.CreateInstance(type)!;
         }
         catch (MissingMethodException error)
         {
-            throw new CxamlParseException("Unable to create CXAML control: " + name, error);
+            throw new CxamlParseException("Unable to create CXAML control: " + xmlName, error);
         }
         catch (MemberAccessException error)
         {
-            throw new CxamlParseException("Unable to create CXAML control: " + name, error);
+            throw new CxamlParseException("Unable to create CXAML control: " + xmlName, error);
         }
         catch (InvalidCastException error)
         {
-            throw new CxamlParseException("Unable to create CXAML control: " + name, error);
+            throw new CxamlParseException("Unable to create CXAML control: " + xmlName, error);
         }
         catch (System.Reflection.TargetInvocationException error)
         {
-            throw new CxamlParseException("Unable to create CXAML control: " + name, error);
+            throw new CxamlParseException("Unable to create CXAML control: " + xmlName, error);
         }
     }
 

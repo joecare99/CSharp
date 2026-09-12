@@ -25,6 +25,10 @@ public static class HalfBlockClockRenderer
         DrawHand(pixels, centerX, centerY, radius - 4, time.Minute * 6d+ time.Second * 0.1d, ConsoleColor.White);
         SetPixel(pixels, centerX, centerY, ConsoleColor.White);
 
+        // Keep a stable sixteen-color legend in the diagnostic color-map frame.
+        for (var color = 0; color < 16 && color < pixelWidth; color++)
+            SetPixel(pixels, color, pixelHeight - 1, (ConsoleColor)color);
+
         var rows = new string[pixelHeight];
         for (var y = 0; y < pixelHeight; y++)
         {

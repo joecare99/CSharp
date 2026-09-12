@@ -27,6 +27,7 @@ namespace ConsoleLib.CommonControls;
 /// <seealso cref="ConsoleLib.CommonControls.Panel" />
 public class Application : Panel, IApplication, IHasWidgetSet, IDisposable
 {
+    public IDialogManager DialogManager { get; } = new DialogManager();
     private const ushort AltVirtualKey = 0x12;
     /// <summary>
     /// Gets the mouse Position.
@@ -86,7 +87,6 @@ public class Application : Panel, IApplication, IHasWidgetSet, IDisposable
     /// <param name="e">The e.</param>
     private void HandleWinBufEvent(object? sender, Point e)
     {
-        (WidgetSet as IConsoleWidgetHost)?.ClearHost();
         OnCanvasResize?.Invoke(this, e);
         Invalidate();
     }
@@ -98,6 +98,14 @@ public class Application : Panel, IApplication, IHasWidgetSet, IDisposable
     /// <param name="e">The e.</param>
     private void HandleKeyEvent(object? sender, IKeyEvent e)
     {
+        var activeModal = DialogManager.ActiveModal;
+        if (activeModal is not null)
+        {
+            activeModal.Dialog.HandlePressKeyEvents(e);
+            e.Handled = true;
+            return;
+        }
+
         var menuBar = FindMenuBar(this);
         if (e.usKeyCode == (ushort)ConsoleKey.F10 && e.bKeyDown && menuBar is not null)
         {
@@ -162,6 +170,14 @@ public class Application : Panel, IApplication, IHasWidgetSet, IDisposable
     /// <param name="e">The e.</param>
     private void HandleMouseEvent(object? sender, IMouseEvent e)
     {
+        var activeModal = DialogManager.ActiveModal;
+        if (activeModal is not null)
+        {
+            activeModal.Dialog.MouseClick(e);
+            e.Handled = true;
+            return;
+        }
+
         if (e.MouseMoved)
         {
             Point lastMousePos = MousePos;
@@ -275,6 +291,7 @@ public class Application : Panel, IApplication, IHasWidgetSet, IDisposable
             return;
 
         Running = false;
+        DialogManager.CloseAll();
         Scheduler.Dispose();
         (MessageQueue as IDisposable)?.Dispose();
         if (ReferenceEquals(Default, this))

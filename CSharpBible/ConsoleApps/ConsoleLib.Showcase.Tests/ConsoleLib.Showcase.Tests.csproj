@@ -17,5 +17,7 @@
     <ProjectReference Include="..\ConsoleLib.Showcase\ConsoleLib.Showcase.csproj" />
     <ProjectReference Include="..\ConsoleLib.Showcase.Desktop\ConsoleLib.Showcase.Desktop.csproj" />
     <ProjectReference Include="..\ConsoleLib.Showcase.Terminal.Core\ConsoleLib.Showcase.Terminal.Core.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Calendar\ConsoleLib.Showcase.Apps.Calendar.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Calculator\ConsoleLib.Showcase.Apps.Calculator.csproj" />
   </ItemGroup>
 </Project>

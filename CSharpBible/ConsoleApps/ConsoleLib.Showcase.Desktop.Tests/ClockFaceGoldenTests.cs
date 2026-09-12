@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ConsoleLib.Showcase.Desktop.ViewModels;
+using ConsoleLib.Showcase.Apps.Clock;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleLib.Showcase.Desktop.Tests;

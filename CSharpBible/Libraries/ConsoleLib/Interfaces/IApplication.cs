@@ -18,6 +18,7 @@ namespace ConsoleLib.Interfaces;
 
 public interface IApplication : IGroupControl
 {
+    IDialogManager DialogManager { get; }
     Point MousePos { get; }
     bool Running { get; }
 

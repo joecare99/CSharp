@@ -122,6 +122,58 @@ public class CxamlLoaderTests
     }
 
     [TestMethod]
+    public void Validator_ReportsUnboundNamespacePrefix()
+    {
+        var diagnostics = new CxamlLoader().Validate(new StringReader("<local:Button />"));
+
+        Assert.AreEqual(1, diagnostics.Count);
+        Assert.AreEqual(CxamlDiagnosticSeverity.Error, diagnostics[0].Severity);
+        StringAssert.Contains(diagnostics[0].Message, "local");
+    }
+
+    [TestMethod]
+    public void Validator_ReportsUnrecognizedNamespace()
+    {
+        var diagnostics = new CxamlLoader().Validate(new StringReader(
+            "<local:Button xmlns:local=\"http://example.com/unknown\" />"));
+
+        Assert.AreEqual(1, diagnostics.Count);
+        Assert.AreEqual(CxamlDiagnosticSeverity.Warning, diagnostics[0].Severity);
+        StringAssert.Contains(diagnostics[0].Message, "http://example.com/unknown");
+    }
+
+    [TestMethod]
+    public void Validator_AcceptsRecognizedCoreNamespace()
+    {
+        var diagnostics = new CxamlLoader().Validate(new StringReader(
+            "<local:Button xmlns:local=\"" + CxamlNamespaces.Core + "\" />"));
+
+        Assert.AreEqual(0, diagnostics.Count);
+    }
+
+    [TestMethod]
+    public void Validator_WarnsFrameRootWithoutSinglePage()
+    {
+        var emptyFrame = new CxamlLoader().Validate(new StringReader("<Frame />"));
+        Assert.AreEqual(1, emptyFrame.Count);
+        Assert.AreEqual(CxamlDiagnosticSeverity.Warning, emptyFrame[0].Severity);
+        StringAssert.Contains(emptyFrame[0].Message, "Page");
+
+        var labelChild = new CxamlLoader().Validate(new StringReader("<Frame><Label Text=\"Hi\" /></Frame>"));
+        Assert.AreEqual(1, labelChild.Count);
+        StringAssert.Contains(labelChild[0].Message, "Page");
+    }
+
+    [TestMethod]
+    public void Validator_AcceptsFrameRootWithSinglePage()
+    {
+        var diagnostics = new CxamlLoader().Validate(new StringReader(
+            "<Frame Width=\"40\" Height=\"10\"><Page Width=\"40\" Height=\"10\"><Label Text=\"Page\" /></Page></Frame>"));
+
+        Assert.AreEqual(0, diagnostics.Count);
+    }
+
+    [TestMethod]
     public void Loader_RejectsInvalidGridLength()
     {
         var error = Assert.ThrowsExactly<CxamlParseException>(() =>
@@ -143,7 +195,7 @@ public class CxamlLoaderTests
     }
 
     [TestMethod]
-    public void Generator_ProducesDeterministicFactoryForValidMarkup()
+    public void Generator_ProducesDeterministicDirectFactoryForValidMarkup()
     {
         var result = new CxamlCodeGenerator().Generate(
             "<Label Text=\"Say &quot;hi&quot;\" />", "GeneratedView", "Demo.Views");
@@ -151,8 +203,9 @@ public class CxamlLoaderTests
         Assert.IsTrue(result.Succeeded);
         StringAssert.Contains(result.GeneratedCode, "namespace Demo.Views;");
         StringAssert.Contains(result.GeneratedCode, "public static class GeneratedView");
-        StringAssert.Contains(result.GeneratedCode, "&quot;hi&quot;");
-        StringAssert.Contains(result.GeneratedCode, "new ConsoleLib.CxamlLoader().Load");
+        StringAssert.Contains(result.GeneratedCode, "new ConsoleLib.CommonControls.Label()");
+        StringAssert.Contains(result.GeneratedCode, "control0.Text = \"Say \\\"hi\\\"\";");
+        Assert.IsFalse(result.GeneratedCode.Contains("CxamlLoader", StringComparison.Ordinal));
     }
 
     [TestMethod]

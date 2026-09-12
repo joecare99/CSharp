@@ -22,7 +22,7 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        if (!OperatingSystem.IsWindows())
+        if (!OperatingSystem.IsWindows() && !Console.IsOutputRedirected)
         {
             Console.WriteLine("ConsoleLib Showcase requires Windows and the native ExtendedConsole host.");
             return;
@@ -44,7 +44,9 @@ public static class Program
     internal static IServiceCollection ConfigureServices()
     {
         return new ServiceCollection()
-            .AddSingleton<IExtendedConsole, ExtendedConsole>()
+            .AddSingleton<IExtendedConsole>(_ => Console.IsOutputRedirected
+                ? new RedirectedConsole()
+                : new ExtendedConsole())
             .AddSingleton<IConsole, ConsoleProxy>()
             .AddSingleton<IWidgetSet, ConsoleWidgetSet>()
             .AddSingleton<IShowcaseHostCapabilities, ExtConShowcaseHostCapabilities>()

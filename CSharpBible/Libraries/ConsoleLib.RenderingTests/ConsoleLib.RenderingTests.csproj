@@ -13,15 +13,17 @@
 		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Compile Remove="TestResults\**" />
+	  <EmbeddedResource Remove="TestResults\**" />
+	  <None Remove="TestResults\**" />
+	</ItemGroup>
+	<ItemGroup>
     <ProjectReference Include="..\ConsoleLib.Rendering\ConsoleLib.Rendering.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="4.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="4.4.0" />
 	  <PackageReference Include="coverlet.collector" Version="10.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TestResults\1505e677-dd2f-421b-9d72-66789b9cae7c\" />
   </ItemGroup>
 </Project>

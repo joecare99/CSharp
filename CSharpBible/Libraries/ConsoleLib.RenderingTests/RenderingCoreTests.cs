@@ -41,9 +41,10 @@ public sealed class RenderingCoreTests
     private sealed class ToggleCommand : ICommand
     {
         public bool CanExecuteValue { get; set; } = true;
+        public Action<object?>? ExecuteAction { get; set; }
         public event EventHandler? CanExecuteChanged;
         public bool CanExecute(object? parameter) => CanExecuteValue;
-        public void Execute(object? parameter) { }
+        public void Execute(object? parameter) => ExecuteAction?.Invoke(parameter);
         public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -129,6 +130,60 @@ public sealed class RenderingCoreTests
         Assert.AreEqual('L', frame.GetCell(1, 1).Character);
         Assert.AreEqual('…', frame.GetCell(4, 1).Character);
         Assert.AreEqual('┘', frame.GetCell(5, 2).Character);
+    }
+
+    [TestMethod]
+    public void RendererDrawsDialogTitleBarButtonsAndContrastingCloseButton()
+    {
+        var dialog = new Dialog
+        {
+            Text = "About",
+            BorderStyle = BorderStyle.Double,
+            BorderColor = ConsoleColor.Yellow,
+            ForeColor = ConsoleColor.White,
+            BackColor = ConsoleColor.DarkBlue,
+            Position = new Point(0, 0),
+            size = new Size(30, 10)
+        };
+        var close = new Button
+        {
+            Text = "Close",
+            ForeColor = ConsoleColor.White,
+            BackColor = ConsoleColor.DarkBlue,
+            Position = new Point(2, 7),
+            size = new Size(10, 1)
+        };
+        dialog.Add(close);
+        dialog.Show();
+
+        var service = new AttachedRenderService();
+        service.Attach(dialog, new Size(30, 10));
+        var frame = service.GetSnapshot();
+
+        Assert.AreEqual('A', frame.GetCell(2, 1).Character);
+        Assert.AreEqual('[', frame.GetCell(14, 1).Character);
+        Assert.AreEqual('X', frame.GetCell(27, 1).Character);
+        Assert.AreEqual(ConsoleColor.White, frame.GetCell(4, 8).Foreground);
+        Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(4, 8).Background);
+    }
+
+    [TestMethod]
+    public void RendererFillsPanelSurfaceWithItsBackgroundColor()
+    {
+        var panel = new Panel
+        {
+            BackColor = ConsoleColor.DarkBlue,
+            ForeColor = ConsoleColor.White,
+            size = new Size(6, 3)
+        };
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(6, 3));
+
+        var cell = service.GetSnapshot().GetCell(5, 2);
+
+        Assert.AreEqual(' ', cell.Character);
+        Assert.AreEqual(ConsoleColor.DarkBlue, cell.Background);
+        Assert.AreEqual(ConsoleColor.White, cell.Foreground);
     }
 
     [TestMethod]
@@ -965,6 +1020,45 @@ public sealed class RenderingCoreTests
     }
 
     [TestMethod]
+    public void ButtonCommandOpensDialogSessionAndRendersOverlay()
+    {
+        var host = new Panel { size = new Size(12, 5) };
+        var manager = new DialogManager();
+        var dialog = new Dialog
+        {
+            Text = "About",
+            BorderStyle = BorderStyle.Single,
+            size = new Size(8, 3),
+            Position = new Point(2, 1)
+        };
+        var button = new Button { Text = "Open", size = new Size(6, 1) };
+        button.Command = new ToggleCommand
+        {
+            ExecuteAction = _ => manager.Open(dialog, host, modal: true)
+        };
+        host.Add(button);
+
+        var service = new AttachedRenderService();
+        service.Attach(host, new Size(12, 5));
+
+        button.Click();
+        service.RefreshTree();
+
+        Assert.AreEqual(1, manager.Sessions.Count);
+        Assert.IsTrue(manager.ActiveModal?.Dialog.IsVisible);
+        Assert.AreEqual(host, dialog.Parent);
+        Assert.AreEqual('┌', service.GetSnapshot().GetCell(2, 1).Character);
+        Assert.AreEqual('A', service.GetSnapshot().GetCell(3, 2).Character);
+
+        manager.Close(manager.ActiveModal);
+        service.RefreshTree();
+
+        Assert.AreEqual(0, manager.Sessions.Count);
+        Assert.IsNull(dialog.Parent);
+        Assert.AreEqual(' ', service.GetSnapshot().GetCell(2, 1).Character);
+    }
+
+    [TestMethod]
     public void RendererComposesActiveModalDialogAndRemovesItWhenClosed()
     {
         var host = new ModalHost { size = new Size(10, 4) };
@@ -1584,5 +1678,243 @@ public sealed class RenderingCoreTests
         service.Attach(pixel, new Size(2, 2));
 
         Assert.AreEqual("  ", ReadRow(service.GetSnapshot(), 1, 2));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 2a — Regression: nested controls with non-zero parent offset
+    // Position is parent-relative (local); RealDim = Position + Parent.RealDim.Location.
+    // The canonical renderer must paint children at their REAL (absolute) canvas
+    // location — not at the raw local Position — or every nested control is
+    // shifted up-left by the parent's offset.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    [TestMethod]
+    public void RendererPaintsNestedLabelAtParentAccumulatedOffset()
+    {
+        var panel = new Panel
+        {
+            Position = new Point(3, 2),
+            size = new Size(6, 2),
+            BackColor = ConsoleColor.DarkBlue,
+            ForeColor = ConsoleColor.White
+        };
+        var target = new Label
+        {
+            Text = "NestedLabel",
+            Position = new Point(2, 0),
+            size = new Size(11, 1)
+        };
+        panel.Add(target);
+
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(14, 6));
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual("NestedLabel", ReadRowAt(frame, 5, 2, 11));
+        Assert.AreEqual(ConsoleColor.White, frame.GetCell(9, 2).Foreground);
+        Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(9, 2).Background);
+    }
+
+    [TestMethod]
+    public void RendererPaintsNestedDialogWithItsOwnBorderAndChromeAtAccumulatedOffset()
+    {
+        var panel = new Panel
+        {
+            Position = new Point(2, 1),
+            size = new Size(12, 8),
+            BackColor = ConsoleColor.Black,
+            ForeColor = ConsoleColor.White
+        };
+        var dialog = new Dialog
+        {
+            Text = "Help",
+            BorderStyle = BorderStyle.Double,
+            Position = new Point(2, 2),
+            size = new Size(12, 6),
+            ForeColor = ConsoleColor.White,
+            BackColor = ConsoleColor.DarkBlue
+        };
+        dialog.Show();
+        panel.Add(dialog);
+
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(20, 12));
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual('\u2554', frame.GetCell(4, 3).Character);
+        Assert.AreEqual('\u2557', frame.GetCell(15, 3).Character);
+        Assert.AreEqual('H', frame.GetCell(6, 4).Character);
+        Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(4, 4).Background);
+    }
+
+    [TestMethod]
+    public void RendererPaintsNestedButtonAboveItsParentSurface()
+    {
+        var panel = new Panel
+        {
+            Position = new Point(3, 2),
+            size = new Size(6, 2),
+            BackColor = ConsoleColor.DarkBlue,
+            ForeColor = ConsoleColor.White
+        };
+        var button = new Button
+        {
+            Text = "Button",
+            Position = new Point(1, 0),
+            size = new Size(8, 1),
+            ForeColor = ConsoleColor.White,
+            BackColor = ConsoleColor.Red
+        };
+        panel.Add(button);
+
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(14, 6));
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual('B', frame.GetCell(4, 2).Character);
+        Assert.AreEqual(ConsoleColor.Red, frame.GetCell(4, 2).Background);
+    }
+
+    [TestMethod]
+    public void RendererPaintsNestedPanelInPanelSurfaceAndBorderAtAccumulatedOffsets()
+    {
+        var outer = new Panel
+        {
+            Position = new Point(1, 1),
+            size = new Size(14, 8),
+            BackColor = ConsoleColor.Black,
+            ForeColor = ConsoleColor.White
+        };
+        var inner = new Panel
+        {
+            Position = new Point(4, 3),
+            size = new Size(6, 3),
+            BorderStyle = BorderStyle.Single,
+            BorderColor = ConsoleColor.Yellow,
+            BackColor = ConsoleColor.DarkBlue,
+            ForeColor = ConsoleColor.White
+        };
+        outer.Add(inner);
+
+        var service = new AttachedRenderService();
+        service.Attach(outer, new Size(20, 12));
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual('\u250c', frame.GetCell(5, 4).Character);
+        Assert.AreEqual('\u2502', frame.GetCell(5, 5).Character);
+        Assert.AreEqual('\u2518', frame.GetCell(10, 6).Character);
+        Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(6, 5).Background);
+    }
+
+    [TestMethod]
+    public void RendererPaintsNestedMenuBarItemsAtAccumulatedOffsets()
+    {
+        var panel = new Panel
+        {
+            Position = new Point(3, 2),
+            size = new Size(16, 6),
+            BackColor = ConsoleColor.Black,
+            ForeColor = ConsoleColor.White
+        };
+        var menuBar = new MenuBar { size = new Size(16, 1), Position = new Point(2, 1) };
+        menuBar.AddRootItem(new MenuItem { Text = "File" });
+        menuBar.AddRootItem(new MenuItem { Text = "Edit" });
+        panel.Add(menuBar);
+
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(24, 10));
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual("FileEdit", ReadRowAt(frame, 5, 3, 8).Replace(" ", ""));
+        Assert.AreEqual(ConsoleColor.Black, frame.GetCell(5, 3).Background);
+    }
+
+    [TestMethod]
+    public void RendererPaintsNestedVerticalScrollBarArrowsAtAccumulatedOffset()
+    {
+        var panel = new Panel
+        {
+            Position = new Point(3, 2),
+            size = new Size(8, 9),
+            BackColor = ConsoleColor.Black,
+            ForeColor = ConsoleColor.White
+        };
+        var bar = new ScrollBar
+        {
+            Vertical = true,
+            Position = new Point(2, 1),
+            size = new Size(1, 7)
+        };
+        panel.Add(bar);
+
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(12, 14));
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual('\u25b2', frame.GetCell(5, 3).Character);
+        Assert.AreEqual('\u25bc', frame.GetCell(5, 9).Character);
+        Assert.AreEqual('\u2502', frame.GetCell(5, 4).Character);
+    }
+
+    [TestMethod]
+    public void RendererBlitsNestedScrollViewerViewportAtAccumulatedOffset()
+    {
+        var panel = new Panel
+        {
+            Position = new Point(3, 2),
+            size = new Size(9, 4),
+            BackColor = ConsoleColor.Black,
+            ForeColor = ConsoleColor.White
+        };
+        var viewer = new ScrollViewer
+        {
+            Position = new Point(2, 1),
+            size = new Size(5, 2)
+        };
+        viewer.SetContent(new Label { Text = "xy", size = new Size(2, 2) });
+        panel.Add(viewer);
+
+        var service = new AttachedRenderService();
+        service.Attach(panel, new Size(16, 8));
+
+        var frame = service.GetSnapshot();
+        Assert.AreEqual('x', frame.GetCell(5, 3).Character);
+        Assert.AreEqual('y', frame.GetCell(5, 4).Character);
+    }
+
+    [TestMethod]
+    public void RendererPaintsThreeLevelNestedLabelAtFullyAccumulatedOffset()
+    {
+        var outer = new Panel
+        {
+            Position = new Point(1, 0),
+            size = new Size(18, 10),
+            BackColor = ConsoleColor.Black,
+            ForeColor = ConsoleColor.White
+        };
+        var middle = new Panel
+        {
+            Position = new Point(2, 1),
+            size = new Size(14, 7),
+            BackColor = ConsoleColor.DarkGray,
+            ForeColor = ConsoleColor.White
+        };
+        var target = new Label
+        {
+            Text = "Triple",
+            Position = new Point(1, 1),
+            size = new Size(6, 1),
+            ForeColor = ConsoleColor.White,
+            BackColor = ConsoleColor.DarkRed
+        };
+        outer.Add(middle);
+        middle.Add(target);
+
+        var service = new AttachedRenderService();
+        service.Attach(outer, new Size(24, 14));
+
+        var snap = service.GetSnapshot();
+        Assert.AreEqual("Triple", ReadRowAt(snap, 4, 2, 6));
+        Assert.AreEqual(ConsoleColor.DarkRed, snap.GetCell(4, 2).Background);
     }
 }

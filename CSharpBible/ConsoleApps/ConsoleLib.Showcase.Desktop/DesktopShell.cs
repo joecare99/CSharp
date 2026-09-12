@@ -1,12 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using ConsoleLib.CommonControls;
 using ConsoleLib.Interfaces;
 using ConsoleLib.Showcase.Services;
-using ConsoleLib.Showcase.Desktop.ViewModels;
 using ConsoleLib.Showcase.Desktop.Capabilities;
+using ConsoleLib.Showcase.Apps;
+using ConsoleLib.Showcase.Apps.Calendar;
+using ConsoleLib.Showcase.Apps.Gallery;
+using ConsoleLib.Showcase.Apps.TicTacToe;
+using ConsoleLib.Showcase.Apps.Memory;
+using ConsoleLib.Showcase.Apps.Calculator;
+using ConsoleLib.Showcase.Apps.Notepad;
+using ConsoleLib.Showcase.Apps.Characters;
+using ConsoleLib.Showcase.Apps.Clock;
+using ConsoleLib.Showcase.Apps.Terminal;
+using ConsoleLib.Showcase.Apps.Dialogs;
 
 namespace ConsoleLib.Showcase.Desktop;
 
@@ -17,14 +28,15 @@ namespace ConsoleLib.Showcase.Desktop;
 public sealed class DesktopShell : Application
 {
     private readonly DesktopPage _desktopPage;
-    private readonly ShowcasePageLoader _pageLoader;
     private readonly DesktopViewModel _viewModel;
     private readonly IShowcaseHostCapabilities _capabilities;
     private readonly DesktopWindowManager _windowManager = new();
-    private readonly Dictionary<string, DesktopAppDescriptor> _descriptors;
+    private readonly Dictionary<string, ShowcaseAppDescriptor> _descriptors;
     private readonly Dictionary<string, DesktopWindowView> _views = new(StringComparer.Ordinal);
     private readonly Dictionary<string, object> _windowModels = new(StringComparer.Ordinal);
     private readonly List<Button> _taskbarButtons = new();
+    private readonly IServiceProvider _services;
+    private Dialog? _aboutDialog;
     private IControl? _desktopRoot;
     private Label? _status;
 
@@ -32,15 +44,15 @@ public sealed class DesktopShell : Application
         IWidgetSet widgetSet,
         DesktopViewModel viewModel,
         DesktopPage? desktopPage = null,
-        ShowcasePageLoader? pageLoader = null,
-        IShowcaseHostCapabilities? capabilities = null)
+        IShowcaseHostCapabilities? capabilities = null,
+        IEnumerable<IShowcaseAppModule>? modules = null)
         : base(widgetSet)
     {
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
         _desktopPage = desktopPage ?? new DesktopPage();
-        _pageLoader = pageLoader ?? new ShowcasePageLoader();
         _capabilities = capabilities ?? new UnavailableShowcaseHostCapabilities();
-        _descriptors = CreateDescriptors().ToDictionary(item => item.Id, StringComparer.Ordinal);
+        _services = new ShowcaseServiceProvider(_capabilities);
+        _descriptors = RegisterModules(modules).Apps.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
         _windowManager.Changed += WindowManager_Changed;
         _windowManager.OnOpened = CreateWindow;
         _windowManager.WindowClosed += WindowManager_WindowClosed;
@@ -72,6 +84,9 @@ public sealed class DesktopShell : Application
             }
         }
 
+        if (page.NamedControls.TryGetValue("About", out var aboutButton))
+            aboutButton.OnClick += (_, _) => OpenAboutDialog();
+
         _status = new Label
         {
             Parent = this,
@@ -82,6 +97,52 @@ public sealed class DesktopShell : Application
         };
 
         BuildTaskbar();
+    }
+
+    private void OpenAboutDialog()
+    {
+        if (_aboutDialog is null)
+        {
+            var result = LoadAboutDialog();
+            _aboutDialog = (Dialog)result.Root;
+            if (result.NamedControls.TryGetValue("Close", out var closeControl) &&
+                closeControl is Button closeButton)
+            {
+                closeButton.OnClick += (_, _) =>
+                {
+                    var session = DialogManager.Sessions.FirstOrDefault(
+                        candidate => ReferenceEquals(candidate.Dialog, _aboutDialog));
+                    DialogManager.Close(session);
+                };
+            }
+        }
+
+        if (_aboutDialog.Parent is null)
+        {
+            _aboutDialog.Position = new Point(
+                Math.Max(1, (Dimension.Width - _aboutDialog.size.Width) / 2),
+                Math.Max(2, (Dimension.Height - _aboutDialog.size.Height) / 2));
+            DialogManager.Open(_aboutDialog, this, modal: true);
+        }
+        else
+        {
+            var session = DialogManager.Sessions.FirstOrDefault(
+                candidate => ReferenceEquals(candidate.Dialog, _aboutDialog));
+            if (session is not null)
+                DialogManager.Activate(session);
+        }
+    }
+
+    private static CxamlLoadResult LoadAboutDialog()
+    {
+        var assembly = typeof(DesktopShell).Assembly;
+        var resourceName = assembly.GetManifestResourceNames()
+            .SingleOrDefault(name => name.EndsWith(".About.cxaml", StringComparison.Ordinal))
+            ?? throw new InvalidOperationException("The Desktop About dialog resource is missing.");
+        using var stream = assembly.GetManifestResourceStream(resourceName)
+            ?? throw new InvalidOperationException("The Desktop About dialog resource could not be opened.");
+        using var reader = new StreamReader(stream);
+        return new CxamlLoader().LoadDialog(reader, new CxamlLoadContext(new object()));
     }
 
     private void BuildTaskbar()
@@ -165,8 +226,8 @@ public sealed class DesktopShell : Application
     private void CreateWindow(DesktopWindow state)
     {
         var descriptor = _descriptors[state.Id];
-        var model = CreatePageViewModel(descriptor.Page);
-        var page = _pageLoader.Load(descriptor.Page, model);
+        var model = descriptor.CreateViewModel(_services);
+        var page = descriptor.LoadPage(_services, model);
         var view = new DesktopWindowView(
             state,
             page.Root,
@@ -182,7 +243,7 @@ public sealed class DesktopShell : Application
         _windowModels[state.Id] = model;
         view.Synchronize();
 
-        if (model is TerminalViewModel terminalViewModel)
+        if (model is ConsoleLib.Showcase.Apps.Terminal.TerminalViewModel terminalViewModel)
             _ = terminalViewModel.StartCommand.ExecuteAsync(null);
     }
 
@@ -221,28 +282,41 @@ public sealed class DesktopShell : Application
         }
     }
 
-    private static IReadOnlyList<DesktopAppDescriptor> CreateDescriptors() =>
-        new[]
-        {
-            new DesktopAppDescriptor("Calendar", "Calendar", ShowcasePage.Calendar, new Point(3, 4), new Size(44, 18)),
-            new DesktopAppDescriptor("Calculator", "Calculator", ShowcasePage.Calculator, new Point(10, 6), new Size(36, 18)),
-            new DesktopAppDescriptor("Notepad", "Notepad", ShowcasePage.Notepad, new Point(16, 3), new Size(60, 22)),
-            new DesktopAppDescriptor("Characters", "Characters", ShowcasePage.Characters, new Point(20, 5), new Size(60, 22)),
-            new DesktopAppDescriptor("Clock", "Clock", ShowcasePage.Clock, new Point(12, 3), new Size(38, 22)),
-            new DesktopAppDescriptor("Terminal", "Terminal", ShowcasePage.Terminal, new Point(5, 2), new Size(78, 22)),
-            new DesktopAppDescriptor("About", "About", ShowcasePage.About, new Point(20, 7), new Size(58, 12)),
-        };
-
-    private object CreatePageViewModel(ShowcasePage page) => page switch
+    private ShowcaseAppRegistrationContext RegisterModules(IEnumerable<IShowcaseAppModule>? modules)
     {
-        ShowcasePage.Calendar => new CalendarViewModel(),
-        ShowcasePage.Calculator => new CalculatorViewModel(),
-        ShowcasePage.Notepad => new NotepadViewModel(_capabilities.Clipboard),
-        ShowcasePage.Characters => new CharactersViewModel(_capabilities.Clipboard),
-        ShowcasePage.Clock => new ClockViewModel(alert: _capabilities.Alert),
-        ShowcasePage.Terminal => new TerminalViewModel(_capabilities.Terminal),
-        _ => _viewModel
-    };
+        var context = new ShowcaseAppRegistrationContext(_services);
+        foreach (var module in modules ?? new IShowcaseAppModule[]
+        {
+            new CalendarAppModule(),
+            new GalleryAppModule(),
+            new TicTacToeAppModule(),
+            new MemoryAppModule(),
+            new CalculatorAppModule(),
+            new NotepadAppModule(),
+            new CharactersAppModule(),
+            new ClockAppModule(),
+            new TerminalAppModule(),
+            new DialogsAppModule()
+        })
+            module.Register(context);
+        return context;
+    }
+
+    private sealed class ShowcaseServiceProvider : IServiceProvider
+    {
+        private readonly IShowcaseHostCapabilities _capabilities;
+
+        public ShowcaseServiceProvider(IShowcaseHostCapabilities capabilities) => _capabilities = capabilities;
+
+        public object? GetService(Type serviceType) =>
+            serviceType == typeof(ConsoleLib.Interfaces.IClipboardService) ? _capabilities.Clipboard :
+            serviceType == typeof(ConsoleLib.Showcase.Desktop.Capabilities.IShowcaseAlertService) || serviceType == typeof(ConsoleLib.Showcase.Apps.IShowcaseAlertService)
+                ? _capabilities.Alert :
+            serviceType == typeof(ConsoleLib.Showcase.Desktop.Capabilities.IShowcaseTerminalCapability) || serviceType == typeof(ConsoleLib.Showcase.Apps.IShowcaseTerminalCapability)
+                ? _capabilities.Terminal :
+            serviceType == typeof(IShowcaseHostCapabilities) ? _capabilities :
+            null;
+    }
 
     public new void Dispose()
     {

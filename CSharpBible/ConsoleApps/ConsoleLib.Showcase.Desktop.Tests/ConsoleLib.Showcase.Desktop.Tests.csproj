@@ -1,7 +1,8 @@
 <Project>
   <Import Project="..\ConsoleApps.props" />
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Nullable>enable</Nullable>
@@ -14,6 +15,13 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ConsoleLib.Showcase.Desktop\ConsoleLib.Showcase.Desktop.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Calendar\ConsoleLib.Showcase.Apps.Calendar.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Calculator\ConsoleLib.Showcase.Apps.Calculator.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Notepad\ConsoleLib.Showcase.Apps.Notepad.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Characters\ConsoleLib.Showcase.Apps.Characters.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Clock\ConsoleLib.Showcase.Apps.Clock.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Terminal\ConsoleLib.Showcase.Apps.Terminal.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Desktop.Windows\ConsoleLib.Showcase.Desktop.Windows.csproj" />
     <ProjectReference Include="..\..\Libraries\ConsoleLib.Posix\ConsoleLib.Posix.csproj" />
   </ItemGroup>
 </Project>

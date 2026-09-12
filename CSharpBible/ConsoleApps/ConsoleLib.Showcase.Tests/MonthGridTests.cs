@@ -1,4 +1,5 @@
-using ConsoleLib.Showcase.Models;
+using System.Linq;
+using ConsoleLib.Showcase.Apps.Calendar;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleLib.Showcase.Tests;
@@ -11,7 +12,7 @@ public sealed class MonthGridTests
     {
         var grid = MonthGrid.For(2024, 2);
 
-        Assert.AreEqual(29, grid.DayCount);
+        Assert.AreEqual(29, grid.Cells.Count(day => day != 0));
         Assert.AreEqual(5, grid.WeekCount);
         Assert.AreEqual(1, grid.Cell(0, 3));
         Assert.AreEqual(29, grid.Cell(4, 3));

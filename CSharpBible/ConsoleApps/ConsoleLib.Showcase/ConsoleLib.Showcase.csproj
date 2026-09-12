@@ -10,7 +10,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
@@ -18,6 +18,8 @@
     <ProjectReference Include="..\..\Libraries\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
     <ProjectReference Include="..\..\Libraries\Terminal.Core\Terminal.Core.csproj" />
     <ProjectReference Include="..\ConsoleLib.Showcase.Terminal.Core\ConsoleLib.Showcase.Terminal.Core.csproj" />
+    <ProjectReference Include="..\..\Libraries\ExtendedConsoleSim\ExtendedConsoleSim.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Abstractions\ConsoleLib.Showcase.Apps.Abstractions.csproj" />
     <ProjectReference Include="..\ConsoleLib.Showcase.Desktop\ConsoleLib.Showcase.Desktop.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,23 @@
+<Project>
+  <Import Project="..\ConsoleApps.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Abstractions\ConsoleLib.Showcase.Apps.Abstractions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Dialogs.cxaml" />
+    <EmbeddedResource Include="SettingsDialog.cxaml" />
+    <EmbeddedResource Include="OpenFileDialog.cxaml" />
+    <EmbeddedResource Include="SaveFileDialog.cxaml" />
+    <EmbeddedResource Include="PickFolderDialog.cxaml" />
+  </ItemGroup>
+</Project>
