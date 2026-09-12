@@ -7,6 +7,8 @@
   <Folder Name="/ConsoleApps/">
     <Project Path="ConsoleLib.Showcase.Desktop.Tests/ConsoleLib.Showcase.Desktop.Tests.csproj" />
     <Project Path="ConsoleLib.Showcase.Desktop/ConsoleLib.Showcase.Desktop.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Dialogs.Tests/ConsoleLib.Showcase.Apps.Dialogs.Tests.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Dialogs/ConsoleLib.Showcase.Apps.Dialogs.csproj" />
     <Project Path="ConsoleLib.Showcase.Terminal.Core/ConsoleLib.Showcase.Terminal.Core.csproj" />
     <Project Path="ConsoleLib.Showcase.Tests/ConsoleLib.Showcase.Tests.csproj" />
     <Project Path="ConsoleLib.Showcase/ConsoleLib.Showcase.csproj" />
@@ -49,6 +51,7 @@
     <Project Path="../Libraries/ConsoleLib.Posix/ConsoleLib.Posix.csproj" />
     <Project Path="../Libraries/ConsoleLib.PosixTests/ConsoleLib.PosixTests.csproj" />
     <Project Path="../Libraries/ConsoleLib.Rendering/ConsoleLib.Rendering.csproj" />
+    <Project Path="../Libraries/ConsoleLib.RenderingTests/ConsoleLib.RenderingTests.csproj" />
     <Project Path="../Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
     <Project Path="../Libraries/ConsoleLib/ConsoleLib.csproj" />
     <Project Path="../Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />

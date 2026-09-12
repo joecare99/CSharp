@@ -39,6 +39,98 @@ sessions, alerts, and pointer support are supplied by a selected host through
 capability contracts; no Windows APIs or P/Invoke are used by the portable
 pages and ViewModels.
 
+## Standalone app modules
+
+Showcase applications are standalone `ConsoleLib.Showcase.Apps.*` projects.
+Each project contains its ViewModel, embedded CXAML page, and an
+`IShowcaseAppModule` implementation. The module projects reference the
+`ConsoleLib.Showcase.Apps.Abstractions` contracts and the ConsoleLib controls
+they use; they do not reference the Desktop shell or a host executable. This
+keeps a feature consumable by a different desktop, terminal, or test host.
+
+`IShowcaseAppModule.Register` is the explicit composition boundary. A module
+adds a `ShowcaseAppDescriptor` to the host-supplied
+`ShowcaseAppRegistrationContext`; the descriptor supplies the app ID, metadata,
+ViewModel factory, and page factory:
+
+```csharp
+var context = new ShowcaseAppRegistrationContext(hostServices);
+new GalleryAppModule().Register(context);
+new TicTacToeAppModule().Register(context);
+
+var gallery = context.Apps[GalleryAppModule.AppId];
+var model = gallery.CreateViewModel(context.Services);
+var page = gallery.LoadPage(context.Services, model);
+```
+
+There is deliberately no assembly scanning or convention-based discovery.
+The host references the module project(s) it wants and registers concrete
+modules in its composition root. This makes the selected feature set visible,
+deterministic, linker-friendly, and easy to replace in tests.
+
+### Consuming modules from Desktop
+
+Pass the selected modules to `DesktopShell` explicitly. The shell registers
+each module, creates windows from the resulting descriptors, and exposes only
+the selected applications:
+
+```csharp
+var modules = new IShowcaseAppModule[]
+{
+    new GalleryAppModule(),
+    new TicTacToeAppModule()
+};
+
+using var shell = new DesktopShell(
+    widgetSet,
+    new DesktopViewModel(),
+    capabilities: hostCapabilities,
+    modules: modules);
+```
+
+Omitting `modules` uses the shell's built-in showcase list for the native
+sample. A different Desktop host should pass its own list rather than relying
+on that convenience default.
+
+### Consuming modules from ExtCon
+
+The native ExtCon composition root can use the same explicit mechanism with
+`Microsoft.Extensions.DependencyInjection`. Add project references to the
+chosen `ConsoleLib.Showcase.Apps.*` projects and register each module as an
+`IShowcaseAppModule`; `DesktopShell` receives the resulting
+`IEnumerable<IShowcaseAppModule>`:
+
+```csharp
+return new ServiceCollection()
+    .AddSingleton<IShowcaseHostCapabilities, ExtConShowcaseHostCapabilities>()
+    .AddSingleton<IShowcaseAppModule, GalleryAppModule>()
+    .AddSingleton<IShowcaseAppModule, TicTacToeAppModule>()
+    .AddSingleton<DesktopViewModel>()
+    .AddSingleton<DesktopShell>();
+```
+
+This is still explicit registration: adding a module means adding its project
+reference and one registration line. The host never loads arbitrary assemblies
+just because they contain a type with a matching name.
+
+### Host capability injection
+
+`ShowcaseAppRegistrationContext.Services` is the host capability boundary.
+Modules request optional services from it instead of detecting Windows,
+ExtendedConsole, or a particular widget set:
+
+- `NotepadAppModule` consumes `IClipboardService` when the host supplies one.
+- `DialogsAppModule` consumes `IShowcaseFileDialogService` and falls back to
+  an explicit unavailable result.
+- `TerminalAppModule` consumes `IShowcaseTerminalCapability`.
+- alert-capable pages consume `IShowcaseAlertService`.
+
+`IShowcaseHostCapabilities` groups those services for Desktop composition.
+`ExtConShowcaseHostCapabilities` adapts native console input, alerts, file
+dialogs, and the Showcase-owned ConPTY terminal service; a portable host can
+provide the same contracts with different implementations. Missing optional
+capabilities remain unavailable rather than causing module loading to fail.
+
 The native Showcase composition root now registers the ExtCon capability
 adapter. It advertises native mouse and terminal support, keeps clipboard
 optional, and maps the clock alarm to an interactive console beep while
@@ -105,10 +197,22 @@ height, which is required by the calendar and character table pages.
 ## Validation
 
 ```powershell
+dotnet test ConsoleLib.Showcase.Apps.Dialogs.Tests\ConsoleLib.Showcase.Apps.Dialogs.Tests.csproj --no-restore --disable-build-servers
+dotnet test ConsoleLib.Showcase.Apps.Gallery.Tests\ConsoleLib.Showcase.Apps.Gallery.Tests.csproj --no-restore --disable-build-servers
+dotnet test ConsoleLib.Showcase.Apps.Memory.Tests\ConsoleLib.Showcase.Apps.Memory.Tests.csproj --no-restore --disable-build-servers
+dotnet test ConsoleLib.Showcase.Apps.TicTacToe.Tests\ConsoleLib.Showcase.Apps.TicTacToe.Tests.csproj --no-restore --disable-build-servers
 dotnet test ConsoleLib.Showcase.Desktop.Tests\ConsoleLib.Showcase.Desktop.Tests.csproj --no-restore --disable-build-servers
 dotnet test ConsoleLib.Showcase.Tests\ConsoleLib.Showcase.Tests.csproj --no-restore --disable-build-servers
+dotnet test ..\Games\DetectiveGame.Tests\DetectiveGame.Tests.csproj --no-restore --disable-build-servers
+dotnet test ..\Games\DetectiveGame.Console.Cxaml.Tests\DetectiveGame.Console.Cxaml.Tests.csproj --no-restore --disable-build-servers
 ```
 
-The portable desktop test project also references the existing Posix adapter
-and verifies that a loaded desktop CXAML page produces a canonical snapshot
-which `AnsiFrameRenderer` consumes and terminates with a clean ANSI reset.
+Run the commands serially. The first four projects cover standalone module
+registration and app behavior; `ConsoleLib.Showcase.Desktop.Tests` covers
+Desktop composition and CXAML rendering; `ConsoleLib.Showcase.Tests` covers
+the native ExtCon host capability adapter and host-facing behavior. The two
+DetectiveGame projects cover the affected engine unit tests and the
+Console/CXAML integration path. The portable desktop test project also
+references the existing Posix adapter and verifies that a loaded desktop CXAML
+page produces a canonical snapshot which `AnsiFrameRenderer` consumes and
+terminates with a clean ANSI reset.

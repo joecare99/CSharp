@@ -2,6 +2,7 @@ using BaseLib.Interfaces;
 using ConsoleLib.CommonControls;
 using ConsoleLib.Data;
 using ConsoleLib.Interfaces;
+using ConsoleLib.Rendering;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -15,6 +16,9 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
 {
     private static readonly char[] RaisedBorder = { '▀', '▌', '▛', '▜', '▙', '▟', '▌', '▐', '▀', '▄', '█' };
     private static readonly char[] LoweredBorder = { '▄', '▐', '▙', '▟', '▛', '▜', '▌', '▐', '▀', '▄', '█' };
+    private AttachedRenderService? _renderService;
+    private readonly FrameOutputTracker _frameTracker = new();
+    private IControl? _attachedRoot;
 
     public IConsole console { get; private set; }
     public IExtendedConsole extendedConsole { get; private set; }
@@ -46,6 +50,14 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
 
     public void InitializeApplication(IApplication application)
     {
+        if (extendedConsole is ConsoleLib.Interfaces.IInputEndNotification endOfInput)
+        {
+            endOfInput.EndOfInput += (_, _) => application.Dispatch(() =>
+            {
+                application.SetRunning(false);
+                Control.SignalMessageWaitHandle();
+            });
+        }
         extendedConsole.MouseEvent += (_, e) =>
         {
             application.Dispatch(() => application.RaiseMouseEvent(e));
@@ -61,6 +73,10 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
             application.Dispatch(() => application.RaiseResizeEvent(e));
             Control.SignalMessageWaitHandle();
         };
+        if (extendedConsole is IInitialConsoleSize simulated)
+        {
+            application.Dispatch(() => application.RaiseResizeEvent(simulated.InitialSize));
+        }
     }
 
     public void RunApplication(IApplication application)
@@ -100,14 +116,119 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
 
     public void AttachControl(IControl control)
     {
+        if (control is null)
+            throw new ArgumentNullException(nameof(control));
+        var root = GetVisualRoot(control);
+        if (ReferenceEquals(_attachedRoot, root))
+        {
+            if (_renderService is not null)
+            {
+                var size = GetRenderSize(root);
+                if (_renderService.Size != size)
+                    _renderService.Resize(size);
+                else
+                    _renderService.RefreshTree();
+            }
+            FlushCanonicalFrame();
+            return;
+        }
+
+        _renderService?.Dispose();
+        _frameTracker.Reset();
+        _renderService = new AttachedRenderService();
+        _attachedRoot = root;
+        _renderService.Attach(root, GetRenderSize(root));
+        FlushCanonicalFrame();
     }
 
     public void DetachControl(IControl control)
     {
+        var root = GetVisualRoot(control);
+        if (!ReferenceEquals(_attachedRoot, root))
+            return;
+        _renderService?.Dispose();
+        _renderService = null;
+        _attachedRoot = null;
+        _frameTracker.Reset();
     }
 
     public void SynchronizeControl(IControl control)
     {
+        var root = GetVisualRoot(control);
+        if (!ReferenceEquals(_attachedRoot, root) || _renderService is null)
+        {
+            AttachControl(root);
+            return;
+        }
+        var size = GetRenderSize(root);
+        if (_renderService.Size != size)
+            _renderService.Resize(size);
+        else
+            _renderService.RefreshTree();
+        FlushCanonicalFrame();
+    }
+
+    private static IControl GetVisualRoot(IControl control)
+    {
+        var root = control;
+        while (root.Parent is not null)
+            root = root.Parent;
+        return root;
+    }
+
+    private Size GetRenderSize(IControl root)
+    {
+        var size = root.size;
+        return size.Width > 0 && size.Height > 0
+            ? size
+            : new Size(console.WindowWidth, Math.Max(1, console.BufferHeight));
+    }
+
+    private void FlushCanonicalFrame()
+    {
+        if (_renderService is null)
+            return;
+        var delta = _frameTracker.Acquire(_renderService.GetSnapshot());
+        if (!delta.IsDirty)
+            return;
+
+        var canvasClip = ConsoleFramework.Canvas.ClipRect;
+        var bufferWidth = console.BufferWidth > 0 ? console.BufferWidth : canvasClip.Width;
+        var bufferHeight = console.BufferHeight > 0 ? console.BufferHeight : canvasClip.Height;
+        var clip = Rectangle.Intersect(delta.DirtyRegion, canvasClip);
+        clip.Intersect(new Rectangle(0, 0, bufferWidth, bufferHeight));
+        for (var y = clip.Top; y < clip.Bottom; y++)
+        {
+            var x = clip.Left;
+            while (x < clip.Right)
+            {
+                var cell = delta.Snapshot.GetCell(x, y);
+                var runStart = x;
+                var runLength = 1;
+                while (x + runLength < clip.Right)
+                {
+                    var next = delta.Snapshot.GetCell(x + runLength, y);
+                    if (next.Foreground != cell.Foreground || next.Background != cell.Background)
+                        break;
+                    runLength++;
+                }
+
+                console.ForegroundColor = cell.Foreground;
+                console.BackgroundColor = cell.Background;
+                console.SetCursorPosition(runStart, y);
+                console.Write(string.Concat(Enumerable.Range(0, runLength)
+                    .Select(index => delta.Snapshot.GetCell(runStart + index, y).Character)));
+                x += runLength;
+            }
+        }
+    }
+
+    internal FrameOutputDelta? GetCanonicalSnapshot()
+    {
+        if (_renderService is null)
+            return null;
+
+        return _frameTracker.Acquire(_renderService.GetSnapshot());
     }
 
     private static char ResolveGlyph(GlyphStyle glyphStyle)
@@ -193,6 +314,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
             ConsoleFramework.console.Write(buttonText);
             ConsoleFramework.console.BackgroundColor = ConsoleColor.Black;
         }
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     public void DrawLabel(IControl label)
@@ -235,6 +358,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
                 line);
         }
         Console.BackgroundColor = ConsoleColor.Black;
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     private static void DrawColoredLabel(IControl label, ICellColorSource coloredLabel)
@@ -288,6 +413,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
             ConsoleFramework.Canvas.OutTextXY(pixel.RealDim.Location, $"{pixel.Text}");
             Console.BackgroundColor = ConsoleColor.Black;
         });
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     public void DrawPanel(IGroupControl panel)
@@ -321,6 +448,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
         }
 
         panel.Valid = true;
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     public void RedrawPanel(IGroupControl groupControl, Rectangle dimension)
@@ -413,6 +542,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
             ConsoleFramework.console.Write(text[accIndex].ToString());
         }
         ConsoleFramework.console.BackgroundColor = ConsoleColor.Black;
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     public void DrawMenuBar(IGroupControl menuBarControl)
@@ -434,6 +565,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
         }
 
         menuBar.Valid = true;
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     public void DrawListBox(IControl listBoxControl)
@@ -474,6 +607,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
         }
 
         listBox.GetVerticalScrollBar()?.Draw();
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     public void DrawScrollBar(IControl scrollBarControl)
@@ -540,6 +675,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
                 }
             }
         }
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     public void DrawTextBox(IControl textBoxControl)
@@ -573,6 +710,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
                 ConsoleFramework.Canvas.OutTextXY(r.Left + cx, r.Top + cy, caretChar, textBox.BackColor, textBox.CaretColor);
             }
         }
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     public void DrawTerminal(IControl terminalControl)
@@ -615,6 +754,8 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
 
             child.Draw();
         }
+        if (_renderService != null)
+            FlushCanonicalFrame();
     }
 
     public void RedrawTerminal(IControl terminalControl, Rectangle dimension)
@@ -688,3 +829,4 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
         console.Title = v;
     }
 }
+

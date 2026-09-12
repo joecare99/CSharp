@@ -1,4 +1,4 @@
-<Panel Name="Desktop" Text="ConsoleLib Desktop" Width="80" Height="25" BorderStyle="Double" BorderColor="DarkCyan" ForeColor="Gray" BackColor="Black">
+<Panel Name="Desktop" Width="80" Height="25" BorderStyle="Double" BorderColor="DarkCyan" ForeColor="Gray" BackColor="Black">
   <Label Name="Title" Text="ConsoleLib Virtual Desktop" Width="76" Height="1" X="2" Y="1" ForeColor="Yellow" />
   <Label Name="Status" Text="{Binding Status}" Width="76" Height="1" X="2" Y="3" ForeColor="DarkCyan" />
   <Button Name="Calendar" Text="Calendar" Accelerator="c" Width="14" Height="1" X="2" Y="5" Command="{Binding OpenCalendarCommand}" />

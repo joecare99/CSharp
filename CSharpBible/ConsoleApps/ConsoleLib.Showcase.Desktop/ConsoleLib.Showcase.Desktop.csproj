@@ -13,22 +13,24 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\Desktop.cxaml" />
-    <EmbeddedResource Include="Pages\Calendar.cxaml" />
-    <EmbeddedResource Include="Pages\Calculator.cxaml" />
-    <EmbeddedResource Include="Pages\Notepad.cxaml" />
-    <EmbeddedResource Include="Pages\Characters.cxaml" />
-    <EmbeddedResource Include="Pages\Clock.cxaml" />
-    <EmbeddedResource Include="Pages\Terminal.cxaml" />
     <EmbeddedResource Include="Pages\About.cxaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ConsoleLib\ConsoleLib.csproj" />
     <ProjectReference Include="..\..\Libraries\ConsoleLib.Rendering\ConsoleLib.Rendering.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Abstractions\ConsoleLib.Showcase.Apps.Abstractions.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Calendar\ConsoleLib.Showcase.Apps.Calendar.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Gallery\ConsoleLib.Showcase.Apps.Gallery.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.TicTacToe\ConsoleLib.Showcase.Apps.TicTacToe.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Memory\ConsoleLib.Showcase.Apps.Memory.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Calculator\ConsoleLib.Showcase.Apps.Calculator.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Notepad\ConsoleLib.Showcase.Apps.Notepad.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Characters\ConsoleLib.Showcase.Apps.Characters.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Clock\ConsoleLib.Showcase.Apps.Clock.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Terminal\ConsoleLib.Showcase.Apps.Terminal.csproj" />
+    <ProjectReference Include="..\ConsoleLib.Showcase.Apps.Dialogs\ConsoleLib.Showcase.Apps.Dialogs.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\ConsoleLib.Showcase\Models\CalculatorOperation.cs" Link="Models\CalculatorOperation.cs" />
-    <Compile Include="..\ConsoleLib.Showcase\Models\CalculatorEngine.cs" Link="Models\CalculatorEngine.cs" />
-    <Compile Include="..\ConsoleLib.Showcase\Models\MonthGrid.cs" Link="Models\MonthGrid.cs" />
     <Compile Include="..\ConsoleLib.Showcase\Services\DesktopWindow.cs" Link="Services\DesktopWindow.cs" />
     <Compile Include="..\ConsoleLib.Showcase\Services\DesktopWindowManager.cs" Link="Services\DesktopWindowManager.cs" />
   </ItemGroup>

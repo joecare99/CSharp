@@ -1,4 +1,5 @@
 using ConsoleLib.Interfaces;
+using ConsoleLib.Showcase.Apps;
 
 namespace ConsoleLib.Showcase.Desktop.Capabilities;
 
@@ -14,4 +15,6 @@ public sealed class UnavailableShowcaseHostCapabilities : IShowcaseHostCapabilit
     public IShowcaseTerminalCapability? Terminal => null;
 
     public IShowcaseAlertService Alert { get; } = new UnavailableShowcaseAlertService();
+
+    public IShowcaseFileDialogService FileDialogs { get; } = new UnavailableShowcaseFileDialogService();
 }

@@ -32,11 +32,11 @@ public class GameView
         {
             "Anleitung:",
             "Start: Neues Spiel mit den Spielern.",
-            "Verdacht: Prüft Widerlegung.",
+            "Verdacht: Prï¿½ft Widerlegung.",
             "Anklage: Finale Vermutung.",
-            "Next: Nächster Spieler.",
+            "Next: Nï¿½chster Spieler.",
             "Ziel: Kombination finden.",
-            "? erneut für Hilfe."};
+            "? erneut fï¿½r Hilfe."};
 
         _vm.DisplayHelp += () =>
         {
@@ -110,15 +110,16 @@ public class GameView
         {
             if (dlg.Accepted && dlg.SelectedPerson!=null && dlg.SelectedWeapon!=null && dlg.SelectedRoom!=null)
             {
-                // Führe SuggestCommand mit Parametern aus => Erweiterung nötig? Temporär direkt Service im VM erweitern wäre besser
-                // Interim: direkten History-Eintrag erzeugen über VM StartCommand Logik simulieren
-                // Besser: IGameViewModel erweitern – hier nur Trigger
-                _vm.History.Add($"Verdacht gewählt: {dlg.SelectedPerson.Name}/{dlg.SelectedWeapon.Name}/{dlg.SelectedRoom.Name}");
-                // Falls VM später Parameter akzeptiert: _vm.Suggest(dlg.SelectedPerson,...)
+                // Fï¿½hre SuggestCommand mit Parametern aus => Erweiterung nï¿½tig? Temporï¿½r direkt Service im VM erweitern wï¿½re besser
+                // Interim: direkten History-Eintrag erzeugen ï¿½ber VM StartCommand Logik simulieren
+                // Besser: IGameViewModel erweitern ï¿½ hier nur Trigger
+                _vm.History.Add($"Verdacht gewï¿½hlt: {dlg.SelectedPerson.Name}/{dlg.SelectedWeapon.Name}/{dlg.SelectedRoom.Name}");
+                // Falls VM spï¿½ter Parameter akzeptiert: _vm.Suggest(dlg.SelectedPerson,...)
             }
         };
-        _app.Add(dlg);
-        (dlg as IPopup).Show();
+        DialogSession? session = null;
+        dlg.Closed += () => _app.DialogManager.Close(session);
+        session = _app.DialogManager.Open(dlg, _app, modal: true);
         dlg.Invalidate();
     }
 

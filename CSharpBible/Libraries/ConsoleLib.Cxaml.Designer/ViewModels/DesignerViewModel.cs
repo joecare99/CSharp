@@ -35,7 +35,9 @@ public sealed partial class DesignerViewModel : ObservableObject
 
     public IReadOnlyList<string> Toolbox { get; } = new[]
     {
-        "Panel", "StackPanel", "Grid", "Button", "Label", "TextBox", "CheckBox", "ComboBox", "TreeView", "TileView"
+        "Frame", "Page", "UserControl", "Dialog",
+        "Panel", "StackPanel", "Grid",
+        "Button", "Label", "TextBox", "CheckBox", "ComboBox", "TreeView", "TileView"
     };
 
     [ObservableProperty]
@@ -58,6 +60,9 @@ public sealed partial class DesignerViewModel : ObservableObject
 
     [ObservableProperty]
     private int _sourceCaretOffset;
+
+    [ObservableProperty]
+    private bool _isSourceEditorVisible = true;
 
     public string Preview => _preview;
     public string Diagnostics => _diagnostics;
@@ -134,8 +139,27 @@ public sealed partial class DesignerViewModel : ObservableObject
         if (string.IsNullOrWhiteSpace(SelectedTool))
             return;
 
-        Markup = "<" + SelectedTool + " />";
+        Markup = CreateToolSkeleton(SelectedTool);
     }
+
+    private static string CreateToolSkeleton(string tool) => tool switch
+    {
+        "Frame" => "<Frame Width=\"40\" Height=\"10\"><Page Width=\"40\" Height=\"10\"><Label Text=\"Page\" /></Page></Frame>",
+        "Page" => "<Page Width=\"40\" Height=\"10\"><Label Text=\"Page\" /></Page>",
+        "UserControl" => "<UserControl Width=\"40\" Height=\"10\"><Label Text=\"User control\" /></UserControl>",
+        "Dialog" => "<Dialog Width=\"40\" Height=\"10\"><Label Text=\"Dialog\" /></Dialog>",
+        "Panel" => "<Panel Width=\"40\" Height=\"10\" />",
+        "StackPanel" => "<StackPanel Width=\"40\" Height=\"10\" />",
+        "Grid" => "<Grid Width=\"40\" Height=\"10\" />",
+        "Button" => "<Button Text=\"Button\" Width=\"8\" Height=\"2\" />",
+        "Label" => "<Label Text=\"Label\" Width=\"10\" Height=\"1\" />",
+        "TextBox" => "<TextBox Text=\"Text\" Width=\"20\" Height=\"1\" />",
+        "CheckBox" => "<CheckBox Text=\"Check\" Width=\"10\" Height=\"1\" />",
+        "ComboBox" => "<ComboBox Width=\"16\" Height=\"1\" />",
+        "TreeView" => "<TreeView Width=\"20\" Height=\"8\" />",
+        "TileView" => "<TileView Width=\"20\" Height=\"8\" />",
+        _ => "<" + tool + " />"
+    };
 
     [RelayCommand]
     private void LoadFile()

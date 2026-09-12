@@ -1,12 +1,17 @@
 using System;
+using System.Collections.Generic;
+using ConsoleLib;
 using ConsoleLib.Cxaml.Designer.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia;
 using Avalonia.Headless;
+using Avalonia.VisualTree;
+using AvaloniaEdit;
 using System.IO;
 using ConsoleLib.Cxaml.Designer.Preview;
+using ConsoleLib.Cxaml.Designer.Views;
 
 namespace ConsoleLib.Cxaml.DesignerTests;
 
@@ -21,6 +26,49 @@ public sealed class DesignerViewModelTests
         Assert.IsNotNull(viewModel.PreviewControl);
         StringAssert.Contains(viewModel.Preview, "StackPanel");
         CollectionAssert.Contains(viewModel.InspectorProperties.ToArray(), "Width");
+    }
+
+    [TestMethod]
+    public void ToolboxListsSemanticRootsFirst()
+    {
+        var viewModel = new DesignerViewModel();
+
+        var toolbox = viewModel.Toolbox.ToArray();
+        CollectionAssert.AreEqual(
+            new[] { "Frame", "Page", "UserControl", "Dialog" },
+            toolbox.Take(4).ToArray());
+        CollectionAssert.Contains(toolbox, "StackPanel");
+        CollectionAssert.Contains(toolbox, "Grid");
+    }
+
+    [TestMethod]
+    public void InsertSelectedToolCreatesValidRootSkeletonForSemanticRoots()
+    {
+        var validator = new CxamlLoader();
+
+        foreach (var tool in new[] { "Frame", "Page", "UserControl", "Dialog" })
+        {
+            var viewModel = new DesignerViewModel { SelectedTool = tool };
+            viewModel.InsertSelectedToolCommand.Execute(null);
+
+            StringAssert.StartsWith(viewModel.Markup, "<" + tool);
+            Assert.AreEqual(0, validator.Validate(new StringReader(viewModel.Markup)).Count);
+        }
+    }
+
+    [TestMethod]
+    public void SourceEditorIsVisibleByDefaultAndRaisesChangeNotifications()
+    {
+        var viewModel = new DesignerViewModel();
+        var raised = new List<string>();
+        viewModel.PropertyChanged += (_, e) => raised.Add(e.PropertyName!);
+
+        Assert.IsTrue(viewModel.IsSourceEditorVisible);
+        viewModel.IsSourceEditorVisible = false;
+        Assert.IsFalse(viewModel.IsSourceEditorVisible);
+        viewModel.IsSourceEditorVisible = true;
+
+        CollectionAssert.Contains(raised, nameof(DesignerViewModel.IsSourceEditorVisible));
     }
 
     [TestMethod]
@@ -68,6 +116,35 @@ public sealed class DesignerViewModelTests
             viewModel.PreviewMappings.Select(mapping => mapping.Id).ToArray());
         Assert.IsInstanceOfType(viewModel.RenderedPreview, typeof(StackPanel));
         Assert.IsInstanceOfType(viewModel.PreviewMappings[1].PreviewControl, typeof(Button));
+    }
+
+    [TestMethod]
+    public void EditorPreviewShowsSourceEditorWithInitialMarkup()
+    {
+        EnsureHeadlessPlatform();
+
+        var window = new Window
+        {
+            Width = 640,
+            Height = 480,
+            Content = new EditorPreviewView
+            {
+                DataContext = new DesignerViewModel
+                {
+                    Markup = "<Panel><Label Text=\"Visible\" /></Panel>"
+                }
+            }
+        };
+
+        window.Show();
+        window.UpdateLayout();
+
+        var editor = window.GetVisualDescendants().OfType<TextEditor>().Single();
+
+        Assert.IsTrue(editor.Bounds.Width > 0);
+        Assert.IsTrue(editor.Bounds.Height > 0);
+        Assert.AreEqual("<Panel><Label Text=\"Visible\" /></Panel>", editor.Text);
+        window.Close();
     }
 
     [TestMethod]
@@ -121,9 +198,7 @@ public sealed class DesignerViewModelTests
     [TestMethod]
     public void RenderedPreviewCanBeHostedOnAvaloniaHeadlessPlatform()
     {
-        AppBuilder.Configure<ConsoleLib.Cxaml.Designer.App>()
-            .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-            .SetupWithoutStarting();
+        EnsureHeadlessPlatform();
 
         var viewModel = new DesignerViewModel
         {
@@ -132,6 +207,16 @@ public sealed class DesignerViewModelTests
 
         Assert.IsNotNull(viewModel.RenderedPreview);
         Assert.IsInstanceOfType(viewModel.RenderedPreview, typeof(StackPanel));
+    }
+
+    private static void EnsureHeadlessPlatform()
+    {
+        if (Application.Current is null)
+        {
+            AppBuilder.Configure<ConsoleLib.Cxaml.Designer.App>()
+                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
+                .SetupWithoutStarting();
+        }
     }
 
     [TestMethod]

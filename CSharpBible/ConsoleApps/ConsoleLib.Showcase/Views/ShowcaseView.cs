@@ -7,6 +7,7 @@ using ConsoleLib.Showcase.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using Terminal.Core;
 using TerminalWidget = ConsoleLib.CommonControls.Terminal;
 
@@ -295,9 +296,23 @@ public sealed class ShowcaseView : Application
         Stop();
     }
 
-    private void ViewModel_RequestAbout(object? sender, EventArgs e) => _aboutDialog?.Show();
+    private void ViewModel_RequestAbout(object? sender, EventArgs e)
+    {
+        if (_aboutDialog is null)
+            return;
+        if (!DialogManager.Sessions.Any(session => ReferenceEquals(session.Dialog, _aboutDialog)))
+            DialogManager.Open(_aboutDialog, this, modal: true);
+        else
+            DialogManager.Activate(DialogManager.Sessions.First(session => ReferenceEquals(session.Dialog, _aboutDialog)));
+    }
 
-    private void ViewModel_RequestCloseAbout(object? sender, EventArgs e) => _aboutDialog?.Hide();
+    private void ViewModel_RequestCloseAbout(object? sender, EventArgs e)
+    {
+        if (_aboutDialog is null)
+            return;
+        var session = DialogManager.Sessions.FirstOrDefault(candidate => ReferenceEquals(candidate.Dialog, _aboutDialog));
+        DialogManager.Close(session);
+    }
 
     private void TerminalService_SnapshotChanged(object? sender, TerminalSnapshot snapshot)
     {

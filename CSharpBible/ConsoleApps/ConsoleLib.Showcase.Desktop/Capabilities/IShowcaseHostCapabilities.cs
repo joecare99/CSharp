@@ -1,4 +1,5 @@
 using ConsoleLib.Interfaces;
+using ConsoleLib.Showcase.Apps;
 
 namespace ConsoleLib.Showcase.Desktop.Capabilities;
 
@@ -22,4 +23,7 @@ public interface IShowcaseHostCapabilities
 
     /// <summary>Host alert output, which may be unavailable.</summary>
     IShowcaseAlertService Alert { get; }
+
+    /// <summary>File and folder dialogs, or an explicit unavailable capability.</summary>
+    IShowcaseFileDialogService FileDialogs { get; }
 }

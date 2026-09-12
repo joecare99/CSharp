@@ -1,5 +1,11 @@
 using ConsoleLib.Showcase.Desktop;
-using ConsoleLib.Showcase.Desktop.ViewModels;
+using ConsoleLib.Showcase.Apps;
+using ConsoleLib.Showcase.Apps.Calendar;
+using ConsoleLib.Showcase.Apps.Calculator;
+using ConsoleLib.Showcase.Apps.Notepad;
+using ConsoleLib.Showcase.Apps.Characters;
+using ConsoleLib.Showcase.Apps.Clock;
+using ConsoleLib.Showcase.Apps.Terminal;
 using ConsoleLib.Rendering;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
@@ -15,7 +21,7 @@ public sealed class DesktopPageTests
         var viewModel = new DesktopViewModel();
         var result = new DesktopPage().Load(viewModel);
 
-        Assert.AreEqual("ConsoleLib Desktop", result.Root.Text);
+        Assert.AreEqual(string.Empty, result.Root.Text);
         Assert.IsTrue(result.NamedControls.ContainsKey("Calendar"));
         Assert.IsTrue(result.NamedControls.ContainsKey("Calculator"));
         Assert.IsTrue(result.NamedControls.ContainsKey("Notepad"));
@@ -52,28 +58,28 @@ public sealed class DesktopPageTests
     [TestMethod]
     public void EveryShowcasePageLoadsFromEmbeddedCXaml()
     {
-        var loader = new ShowcasePageLoader();
-
-        foreach (var page in Enum.GetValues<ShowcasePage>())
+        var modules = new IShowcaseAppModule[]
         {
-            var result = loader.Load(page, CreateViewModel(page));
+            new CalendarAppModule(), new CalculatorAppModule(), new NotepadAppModule(),
+            new CharactersAppModule(), new ClockAppModule(), new TerminalAppModule()
+        };
+        foreach (var module in modules)
+        {
+            var context = new ShowcaseAppRegistrationContext(new EmptyServiceProvider());
+            module.Register(context);
+            var descriptor = context.Apps.Values.Single();
+            var result = descriptor.LoadPage(new EmptyServiceProvider(), descriptor.CreateViewModel(new EmptyServiceProvider()));
             using var service = new AttachedRenderService();
 
-            Assert.IsNotNull(result.Root, page.ToString());
-            Assert.IsTrue(result.NamedControls.Count > 0, page.ToString());
+            Assert.IsNotNull(result.Root, descriptor.Id);
+            Assert.IsTrue(result.NamedControls.Count > 0, descriptor.Id);
             service.Attach(result.Root, new Size(80, 25));
-            Assert.IsTrue(service.GetSnapshot().Revision > 0, page.ToString());
+            Assert.IsTrue(service.GetSnapshot().Revision > 0, descriptor.Id);
         }
     }
 
-    private static object CreateViewModel(ShowcasePage page) => page switch
+    private sealed class EmptyServiceProvider : IServiceProvider
     {
-        ShowcasePage.Calendar => new CalendarViewModel(new DateTime(2026, 9, 1)),
-        ShowcasePage.Calculator => new CalculatorViewModel(),
-        ShowcasePage.Notepad => new NotepadViewModel(),
-        ShowcasePage.Characters => new CharactersViewModel(),
-        ShowcasePage.Clock => new ClockViewModel(new DateTime(2026, 9, 1, 10, 15, 0)),
-        ShowcasePage.Terminal => new TerminalViewModel(),
-        _ => new DesktopViewModel()
-    };
+        public object? GetService(Type serviceType) => null;
+    }
 }

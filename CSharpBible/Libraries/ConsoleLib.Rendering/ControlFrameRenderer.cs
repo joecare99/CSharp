@@ -34,8 +34,12 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
 
         var width = Math.Max(1, control.size.Width);
         var height = Math.Max(1, control.size.Height);
+        var (surfaceForeground, surfaceBackground) = GetColors(control);
+        FillControlSurface(control, cells, size, width, height, surfaceForeground, surfaceBackground);
         DrawShadow(control, cells, size, width, height);
         DrawBorder(control, cells, size, width, height);
+        if (control is Dialog dialog)
+            DrawDialogChrome(dialog, cells, size, width, height);
         if (control is ListBox listBox)
         {
             DrawListBox(listBox, cells, size);
@@ -84,7 +88,7 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         }
         if (control is MenuItem menuItem)
         {
-            DrawMenuItem(menuItem, cells, size, menuItem.Position);
+            DrawMenuItem(menuItem, cells, size, menuItem.RealDim.Location);
             DrawChildren(control, cells, size);
             return;
         }
@@ -118,10 +122,10 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         }
 
         var text = GetDisplayText(control);
-        var x = control.Position.X;
+        var x = control.RealDim.Location.X;
         var y = control is TextBox { MultiLine: true }
-            ? control.Position.Y
-            : control.Position.Y + Math.Max(0, (height - 1) / 2);
+            ? control.RealDim.Location.Y
+            : control.RealDim.Location.Y + Math.Max(0, (height - 1) / 2);
         var border = GetBorder(control);
         var textStart = border ? 1 : 0;
         var textWidth = Math.Max(0, width - (border ? 2 : 0));
@@ -151,11 +155,69 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         DrawChildren(control, cells, size);
     }
 
+    private static void DrawDialogChrome(Dialog dialog, TerminalCell[,] cells, Size size, int width, int height)
+    {
+        if (height < 3 || width < 8)
+            return;
+
+        var x = dialog.RealDim.Location.X;
+        var y = dialog.RealDim.Location.Y + 1;
+        var background = dialog.GetActualBackColor();
+        var foreground = dialog.GetActualForeColor();
+        for (var column = 1; column < width - 1; column++)
+            PutCell(cells, size, x + column, y, ' ', foreground, background);
+
+        PutText(cells, size, x + 2, y, dialog.Text ?? string.Empty, width - 18, foreground, background);
+
+        if (width >= 20)
+        {
+            const string buttons = "[ _ ][ □ ][ X ]";
+            var buttonX = x + width - buttons.Length - 1;
+            PutText(cells, size, buttonX, y, buttons, buttons.Length, foreground, background);
+            PutText(cells, size, buttonX + buttons.Length - 3, y, " X ", 3, ConsoleColor.Red, background);
+        }
+    }
+
+    private static void FillControlSurface(
+        IControl control,
+        TerminalCell[,] cells,
+        Size size,
+        int width,
+        int height,
+        ConsoleColor foreground,
+        ConsoleColor background)
+    {
+        for (var row = 0; row < height; row++)
+            for (var column = 0; column < width; column++)
+                PutCell(
+                    cells,
+                    size,
+                    control.RealDim.Location.X + column,
+                    control.RealDim.Location.Y + row,
+                    ' ',
+                    foreground,
+                    background);
+    }
+
+    private static void PutText(
+        TerminalCell[,] cells,
+        Size size,
+        int x,
+        int y,
+        string text,
+        int maxWidth,
+        ConsoleColor foreground,
+        ConsoleColor background)
+    {
+        for (var index = 0; index < text.Length && index < maxWidth; index++)
+            PutCell(cells, size, x + index, y, text[index], foreground, background);
+    }
+
     private static void DrawPixel(Pixel pixel, TerminalCell[,] cells, Size size)
     {
         var (foreground, background) = GetColors(pixel);
         var character = string.IsNullOrEmpty(pixel.Text) ? ' ' : pixel.Text[0];
-        PutCell(cells, size, pixel.Position.X, pixel.Position.Y, character, foreground, background);
+        PutCell(cells, size, pixel.RealDim.Location.X, pixel.RealDim.Location.Y, character, foreground, background);
     }
 
     private static void DrawChildren(IControl control, TerminalCell[,] cells, Size size)
@@ -203,8 +265,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         }
         var foreground = textBox.Enabled ? textBox.GetActualForeColor() : textBox.DisabledForeColor;
         var background = textBox.GetActualBackColor();
-        var x = textBox.Position.X;
-        var y = textBox.Position.Y;
+        var x = textBox.RealDim.Location.X;
+        var y = textBox.RealDim.Location.Y;
 
         for (var row = 0; row < height; row++)
         {
@@ -241,8 +303,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
     private static void DrawTerminal(Terminal terminal, TerminalCell[,] cells, Size size)
     {
         var border = GetBorder(terminal);
-        var left = terminal.Position.X + (border ? 1 : 0);
-        var top = terminal.Position.Y + (border ? 1 : 0);
+        var left = terminal.RealDim.Location.X + (border ? 1 : 0);
+        var top = terminal.RealDim.Location.Y + (border ? 1 : 0);
         var width = Math.Min(
             Math.Max(0, terminal.size.Width - (border ? 2 : 0)),
             Math.Max(0, terminal.WindowWidth));
@@ -270,7 +332,7 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var height = Math.Max(0, scrollViewer.size.Height);
         var (foreground, background) = GetColors(scrollViewer);
         for (var y = 0; y < height; y++)
-            DrawLine(cells, size, scrollViewer.Position.X, scrollViewer.Position.Y + y, width, string.Empty, foreground, background);
+            DrawLine(cells, size, scrollViewer.RealDim.Location.X, scrollViewer.RealDim.Location.Y + y, width, string.Empty, foreground, background);
 
         if (scrollViewer.Content is null || width == 0 || height == 0)
             return;
@@ -289,8 +351,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
                 var sourceX = x + scrollViewer.Offset.X;
                 if (sourceX < 0 || sourceX >= contentWidth)
                     continue;
-                var targetX = scrollViewer.Position.X + x;
-                var targetY = scrollViewer.Position.Y + y;
+                var targetX = scrollViewer.RealDim.Location.X + x;
+                var targetY = scrollViewer.RealDim.Location.Y + y;
                 if (targetX >= 0 && targetX < size.Width && targetY >= 0 && targetY < size.Height)
                     cells[targetX, targetY] = contentCells[sourceX, sourceY];
             }
@@ -300,8 +362,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
     private static void DrawListBox(ListBox listBox, TerminalCell[,] cells, Size size)
     {
         var border = GetBorder(listBox);
-        var left = listBox.Position.X + (border ? 1 : 0);
-        var top = listBox.Position.Y + (border ? 1 : 0);
+        var left = listBox.RealDim.Location.X + (border ? 1 : 0);
+        var top = listBox.RealDim.Location.Y + (border ? 1 : 0);
         var contentWidth = Math.Max(0, listBox.size.Width - (border ? 2 : 0));
         var contentHeight = Math.Max(0, listBox.size.Height - (border ? 2 : 0));
         var visibleRows = Math.Min(contentHeight, listBox.GetVisibleRows());
@@ -329,7 +391,7 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         }
 
         var (foreground, background) = GetColors(tabControl);
-        DrawLine(cells, size, tabControl.Position.X, tabControl.Position.Y, tabControl.size.Width, text, foreground, background);
+        DrawLine(cells, size, tabControl.RealDim.Location.X, tabControl.RealDim.Location.Y, tabControl.size.Width, text, foreground, background);
     }
 
     private static void DrawTileView(TileView tileView, TerminalCell[,] cells, Size size)
@@ -343,8 +405,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         {
             var column = index % columns;
             var row = index / columns;
-            var x = tileView.Position.X + column * tileWidth;
-            var y = tileView.Position.Y + row * tileHeight;
+            var x = tileView.RealDim.Location.X + column * tileWidth;
+            var y = tileView.RealDim.Location.Y + row * tileHeight;
             var selected = ReferenceEquals(visible[index], tileView.SelectedItem);
             var colors = selected
                 ? (ConsoleColor.Yellow, defaultColors.Background)
@@ -358,10 +420,10 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
     {
         var nodes = treeView.GetVisibleNodes();
         var defaultColors = GetColors(treeView);
-        var row = treeView.Position.Y;
+        var row = treeView.RealDim.Location.Y;
         foreach (var node in nodes)
         {
-            if (row >= treeView.Position.Y + Math.Max(1, treeView.size.Height))
+            if (row >= treeView.RealDim.Location.Y + Math.Max(1, treeView.size.Height))
                 break;
 
             var depth = GetTreeDepth(node);
@@ -370,7 +432,7 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
             var colors = node.IsSelected
                 ? (ConsoleColor.Yellow, defaultColors.Background)
                 : defaultColors;
-            DrawLine(cells, size, treeView.Position.X, row, treeView.size.Width, text, colors.Item1, colors.Item2);
+            DrawLine(cells, size, treeView.RealDim.Location.X, row, treeView.size.Width, text, colors.Item1, colors.Item2);
             row++;
         }
     }
@@ -398,22 +460,22 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         if (scrollBar.Vertical)
         {
             for (var row = 1; row < height - 1; row++)
-                PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y + row, '│', trackForeground, trackBackground);
-            PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y, '▲', arrowForeground, arrowBackground);
-            PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y + height - 1, '▼', arrowForeground, arrowBackground);
+                PutCell(cells, size, scrollBar.RealDim.Location.X, scrollBar.RealDim.Location.Y + row, '│', trackForeground, trackBackground);
+            PutCell(cells, size, scrollBar.RealDim.Location.X, scrollBar.RealDim.Location.Y, '▲', arrowForeground, arrowBackground);
+            PutCell(cells, size, scrollBar.RealDim.Location.X, scrollBar.RealDim.Location.Y + height - 1, '▼', arrowForeground, arrowBackground);
         }
         else
         {
-            DrawLine(cells, size, scrollBar.Position.X + 1, scrollBar.Position.Y, Math.Max(0, width - 2), new string('─', Math.Max(0, width - 2)), trackForeground, trackBackground);
-            PutCell(cells, size, scrollBar.Position.X, scrollBar.Position.Y, '◀', arrowForeground, arrowBackground);
-            PutCell(cells, size, scrollBar.Position.X + width - 1, scrollBar.Position.Y, '▶', arrowForeground, arrowBackground);
+            DrawLine(cells, size, scrollBar.RealDim.Location.X + 1, scrollBar.RealDim.Location.Y, Math.Max(0, width - 2), new string('─', Math.Max(0, width - 2)), trackForeground, trackBackground);
+            PutCell(cells, size, scrollBar.RealDim.Location.X, scrollBar.RealDim.Location.Y, '◀', arrowForeground, arrowBackground);
+            PutCell(cells, size, scrollBar.RealDim.Location.X + width - 1, scrollBar.RealDim.Location.Y, '▶', arrowForeground, arrowBackground);
         }
 
         var (thumbStart, thumbLength) = scrollBar.GetThumbData();
         for (var index = 0; index < thumbLength; index++)
         {
-            var x = scrollBar.Position.X + (scrollBar.Vertical ? 0 : thumbStart + index);
-            var y = scrollBar.Position.Y + (scrollBar.Vertical ? thumbStart + index : 0);
+            var x = scrollBar.RealDim.Location.X + (scrollBar.Vertical ? 0 : thumbStart + index);
+            var y = scrollBar.RealDim.Location.Y + (scrollBar.Vertical ? thumbStart + index : 0);
             PutCell(cells, size, x, y, '█', thumbForeground, thumbBackground);
         }
     }
@@ -425,17 +487,17 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var fraction = Math.Max(0, Math.Min(1, progressBar.Fraction));
         var filled = (int)Math.Floor(width * fraction);
         var (foreground, background) = GetColors(progressBar);
-        var x = progressBar.Position.X + (border ? 1 : 0);
-        var y = progressBar.Position.Y + (border ? 1 : 0);
+        var x = progressBar.RealDim.Location.X + (border ? 1 : 0);
+        var y = progressBar.RealDim.Location.Y + (border ? 1 : 0);
         DrawLine(cells, size, x, y, filled, new string('#', filled), foreground, background);
         DrawLine(cells, size, x + filled, y, width - filled, new string('-', width - filled), foreground, background);
     }
 
     private static void DrawMenuBar(MenuBar menuBar, TerminalCell[,] cells, Size size)
     {
-        DrawLine(cells, size, menuBar.Position.X, menuBar.Position.Y, menuBar.size.Width, string.Empty, menuBar.ForeColor, menuBar.BackColor);
+        DrawLine(cells, size, menuBar.RealDim.Location.X, menuBar.RealDim.Location.Y, menuBar.size.Width, string.Empty, menuBar.ForeColor, menuBar.BackColor);
         foreach (var item in menuBar.Children.OfType<MenuItem>())
-            DrawMenuItem(item, cells, size, new Point(menuBar.Position.X + item.Position.X, menuBar.Position.Y + item.Position.Y));
+            DrawMenuItem(item, cells, size, item.RealDim.Location);
     }
 
     private static void DrawMenuPopup(MenuPopup menuPopup, TerminalCell[,] cells, Size size)
@@ -443,13 +505,13 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var border = GetBorder(menuPopup);
         var contentWidth = Math.Max(0, menuPopup.size.Width - (border ? 2 : 0));
         var contentHeight = Math.Max(0, menuPopup.size.Height - (border ? 2 : 0));
-        var contentX = menuPopup.Position.X + (border ? 1 : 0);
-        var contentY = menuPopup.Position.Y + (border ? 1 : 0);
+        var contentX = menuPopup.RealDim.Location.X + (border ? 1 : 0);
+        var contentY = menuPopup.RealDim.Location.Y + (border ? 1 : 0);
         for (var row = 0; row < contentHeight; row++)
             DrawLine(cells, size, contentX, contentY + row, contentWidth, string.Empty, menuPopup.ForeColor, menuPopup.BackColor);
         foreach (var item in menuPopup.Children.OfType<MenuItem>())
         {
-            var origin = new Point(menuPopup.Position.X + item.Position.X, menuPopup.Position.Y + item.Position.Y);
+            var origin = item.RealDim.Location;
             var width = item.IsSeparator ? contentWidth : item.size.Width;
             DrawMenuItem(item, cells, size, origin, width);
         }
@@ -492,8 +554,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         var (foreground, background) = GetColors(statusBar);
         var statusForeground = statusBar.Enabled ? statusBar.StatusColor : foreground;
         var border = GetBorder(statusBar);
-        var x = statusBar.Position.X + (border ? 1 : 0);
-        var y = statusBar.Position.Y + (border ? 1 : 0);
+        var x = statusBar.RealDim.Location.X + (border ? 1 : 0);
+        var y = statusBar.RealDim.Location.Y + (border ? 1 : 0);
         var width = Math.Max(0, statusBar.size.Width - (border ? 2 : 0));
         DrawLine(cells, size, x, y, width, statusBar.Status ?? string.Empty, statusForeground, background);
     }
@@ -571,8 +633,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
         for (var row = 0; row < height; row++)
             for (var column = 0; column < width; column++)
             {
-                var x = control.Position.X + column + 1;
-                var y = control.Position.Y + row + 1;
+                var x = control.RealDim.Location.X + column + 1;
+                var y = control.RealDim.Location.Y + row + 1;
                 if (x >= 0 && x < size.Width && y >= 0 && y < size.Height)
                     cells[x, y] = new TerminalCell('░', ConsoleColor.Gray, ConsoleColor.Black);
             }
@@ -582,8 +644,8 @@ public sealed class ControlFrameRenderer : IControlFrameRenderer
     {
         if (control is not IHasBorder { BorderDefinition: { } definition } || definition.Style == BorderStyle.None)
             return;
-        var x = control.Position.X;
-        var y = control.Position.Y;
+        var x = control.RealDim.Location.X;
+        var y = control.RealDim.Location.Y;
         var glyphs = definition.Style == BorderStyle.Double
             ? new[] { '═', '║', '╔', '╗', '╚', '╝' }
             : new[] { '─', '│', '┌', '┐', '└', '┘' };
