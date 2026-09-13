@@ -18,5 +18,10 @@ Extend the existing app-wide diagnostic UI and debug output so diagnostics carry
 ## Tasks
 T-020 Done, T-021 Done, T-022 Done
 
+## Current handoff
+- T-022 validates the full AA98 CodeStudio workbench DI composition.
+- `AA98.DevOpsPlanning.Host` remains a thin planning host and intentionally
+  does not own editor navigation.
+
 ## Gates
 G-Architecture after T-020; G-Integration after T-022.

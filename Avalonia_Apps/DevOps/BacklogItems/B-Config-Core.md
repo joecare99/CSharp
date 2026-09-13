@@ -7,7 +7,11 @@ F-Shared-CodeStudio-Components
 Done
 
 ## Request
-Adopt `RnzTrauer/Config.Service` as the standalone, product-neutral configuration component for shared hosts. Preserve its `IConfigStore`, `IConfigSectionRegistry`, `IConfigSectionProvider`, `ConfigService`, JSON persistence, `%LOCALAPPDATA%/<Vendor>/<Application>/config` convention, and `CONFIG_ROOT` override.
+Adopt `Libraries/Config.Service` as the standalone, product-neutral
+configuration component for shared hosts. Preserve its `IConfigStore`,
+`IConfigSectionRegistry`, `IConfigSectionProvider`, `ConfigService`, JSON
+persistence, `%LOCALAPPDATA%/<Vendor>/<Application>/config` convention, and
+`CONFIG_ROOT` override.
 
 ## Acceptance criteria
 - No RnzTrauer, Avalonia, ConsoleLib, or CodeStudio model types in the core.
@@ -23,3 +27,9 @@ G-Architecture before T-002; G-Component-Quality after T-004.
 
 ## Completion evidence
 Task test reports, SVN revisions, dependency audit, and next backlog status.
+
+## Repository location
+The implementation and dedicated test project were moved from the historical
+`RnzTrauer` location to `Libraries` after feature delivery. All RnzTrauer,
+CodeStudio, and Config.UI references now consume the canonical
+`Libraries\Config.Service` project.
