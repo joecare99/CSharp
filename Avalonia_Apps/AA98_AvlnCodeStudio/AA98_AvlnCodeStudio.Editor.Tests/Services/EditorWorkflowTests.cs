@@ -59,6 +59,27 @@ public class EditorWorkflowTests
     }
 
     /// <summary>
+    /// Verifies that source navigation can open a known file path without
+    /// requiring a file-dialog interaction.
+    /// </summary>
+    [TestMethod]
+    public async Task OpenFileAsync_LoadsKnownDocumentWithoutShowingDialog()
+    {
+        var document = new FileEditorDocument();
+        var dialogService = Substitute.For<IEditorFileDialogService>();
+        var storageService = Substitute.For<ITextDocumentStorageService>();
+        storageService.ReadAllTextAsync(@"C:\Temp\diagnostic.cs", default).Returns("class Diagnostic {}\n");
+        var workflow = new EditorWorkflow(document, dialogService, storageService);
+
+        var result = await workflow.OpenFileAsync(@"C:\Temp\diagnostic.cs");
+
+        Assert.IsTrue(result.IsCompleted);
+        Assert.AreEqual(@"C:\Temp\diagnostic.cs", document.FilePath);
+        Assert.AreEqual("class Diagnostic {}\n", document.Content);
+        await dialogService.DidNotReceive().ShowOpenFileDialogAsync(Arg.Any<string?>(), default);
+    }
+
+    /// <summary>
     /// Verifies that opening a Linux-path source file loads the selected content.
     /// </summary>
     [TestMethod]
