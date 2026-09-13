@@ -21,6 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Update="Avalonia.Desktop" Version="12.1.2" />
-    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.20" />
+    <PackageVersion Update="Avalonia.Diagnostics" Version="11.3.21" />
   </ItemGroup>
 </Project>
