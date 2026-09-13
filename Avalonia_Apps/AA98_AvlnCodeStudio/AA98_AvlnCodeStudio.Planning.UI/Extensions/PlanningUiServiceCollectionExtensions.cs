@@ -1,6 +1,7 @@
 using AA98_AvlnCodeStudio.Planning.Local.Extensions;
 using AA98_AvlnCodeStudio.Planning.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Property.Editor.Avalonia.DependencyInjection;
 
 namespace AA98_AvlnCodeStudio.Planning.UI.Extensions;
 
@@ -12,6 +13,7 @@ public static class PlanningUiServiceCollectionExtensions
     public static IServiceCollection AddPlanningUi(this IServiceCollection services)
     {
         services.AddLocalPlanning();
+        services.AddPropertyEditorAvalonia();
         services.AddSingleton<PlanningExplorerViewModel>();
         return services;
     }

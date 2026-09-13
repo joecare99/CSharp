@@ -24,6 +24,8 @@
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.UI\AA98_AvlnCodeStudio.Base.UI.csproj" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Core\AA98_AvlnCodeStudio.Planning.Core.csproj" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Local\AA98_AvlnCodeStudio.Planning.Local.csproj" />
+	<ProjectReference Include="..\..\Libraries\Property.Editor\Property.Editor.csproj" />
+	<ProjectReference Include="..\..\Libraries\Property.Editor.Avalonia\Property.Editor.Avalonia.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Update="Avalonia" Version="12.1.2" />
