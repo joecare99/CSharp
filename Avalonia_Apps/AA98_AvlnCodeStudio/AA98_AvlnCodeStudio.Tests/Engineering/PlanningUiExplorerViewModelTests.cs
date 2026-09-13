@@ -1,10 +1,11 @@
-using AA98_AvlnCodeStudio.Base.UI.Properties;
 using AA98_AvlnCodeStudio.Planning.Core.Models;
 using AA98_AvlnCodeStudio.Planning.Core.Services;
 using AppKomponentBaseLib.Diagnostics;
 using AA98_AvlnCodeStudio.Planning.UI.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Property.Editor;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,12 +73,41 @@ public class PlanningUiExplorerViewModelTests
         Assert.IsNotNull(titleProperty);
         Assert.IsNotNull(idProperty);
         Assert.IsTrue(titleProperty!.IsEditable);
-        Assert.IsTrue(idProperty!.IsReadOnly);
+        Assert.IsFalse(idProperty!.IsEditable);
+        Assert.AreEqual(typeof(string), titleProperty.ValueType);
+        Assert.AreEqual("Planning", titleProperty.Category.Name);
 
-        titleProperty.Value = "Updated Epic Title";
+        Assert.IsTrue(titleProperty.TrySetValue("Updated Epic Title"));
 
         Assert.AreEqual("Updated Epic Title", viewModel.SelectedItemTitle);
         StringAssert.Contains(viewModel.ExplorerStatusText, "Selected: AA98-E12");
+    }
+
+    /// <summary>
+    /// Verifies that the Planning adapter keeps the neutral item's type and
+    /// closed options enforcement while applying valid model updates.
+    /// </summary>
+    [TestMethod]
+    public async Task SelectedItem_StatusProperty_RejectsInvalidValuesAndAppliesValidOption()
+    {
+        IPlanningProvider provider = Substitute.For<IPlanningProvider>();
+        provider
+            .ReadAsync(Arg.Any<PlanningReadRequest>(), Arg.Any<CancellationToken>())
+            .Returns(_ => Task.FromResult(CreateResult()));
+
+        PlanningExplorerViewModel viewModel = new(provider);
+        await viewModel.LoadAsync(new PlanningReadRequest());
+
+        IPropertyItem statusProperty = viewModel.Properties.Single(static property => property.Name == "Status");
+
+        Assert.AreEqual(typeof(PlanningItemStatus), statusProperty.ValueType);
+        Assert.AreEqual(PropertyEditorKind.Enum, statusProperty.EditorKind);
+        Assert.AreEqual(Enum.GetValues<PlanningItemStatus>().Length, statusProperty.Options.Count);
+        Assert.IsFalse(statusProperty.TrySetValue("Completed"));
+        Assert.AreEqual(PlanningItemStatus.InProgress, statusProperty.Value);
+
+        Assert.IsTrue(statusProperty.TrySetValue(PlanningItemStatus.Completed));
+        Assert.AreEqual(PlanningItemStatus.Completed, viewModel.SelectedItemStatus);
     }
 
     /// <summary>

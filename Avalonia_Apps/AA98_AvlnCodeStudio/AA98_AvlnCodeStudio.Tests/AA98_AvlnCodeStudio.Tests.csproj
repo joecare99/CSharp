@@ -38,6 +38,14 @@
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Diagnostics.Debug\AA98_AvlnCodeStudio.Diagnostics.Debug.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Diagnostics.UI\AA98_AvlnCodeStudio.Diagnostics.UI.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Editor\AA98_AvlnCodeStudio.Editor.csproj" />
+    <ProjectReference Include="..\..\Libraries\Code.Navigation\Code.Navigation.csproj" />
+    <ProjectReference Include="..\..\Libraries\Diagnostics.Navigation\Diagnostics.Navigation.csproj" />
+    <ProjectReference Include="..\..\Libraries\Property.Editor\Property.Editor.csproj" />
+    <ProjectReference Include="..\..\Libraries\Config.UI\Config.UI.csproj" />
+    <ProjectReference Include="..\..\Libraries\Config.UI.Avalonia\Config.UI.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Libraries\Project.Explorer\Project.Explorer.csproj" />
+    <ProjectReference Include="..\..\Libraries\Project.Explorer.Avalonia\Project.Explorer.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Libraries\Config.Service\Config.Service.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Core\AA98_AvlnCodeStudio.Planning.Core.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.AzureDevOps\AA98_AvlnCodeStudio.Planning.AzureDevOps.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Local\AA98_AvlnCodeStudio.Planning.Local.csproj" />
