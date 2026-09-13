@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Config.UI.Avalonia.ViewModels;
 using RnzTrauer.Core.Domain;
 using RnzTrauer.Core.Services;
 using RnzTrauer.Import.Services;
@@ -39,6 +40,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         IPlaceCoordinateStore coordinateStore,
         INoticeDetailService? detailService = null,
         IPdfOcrService? pdfOcrService = null,
+        ConfigUiViewModel? configUi = null,
         bool readOnly = false)
     {
         _repository = repository;
@@ -49,12 +51,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _coordinateStore = coordinateStore;
         _detailService = detailService ?? new NoticeDetailService(repository);
         _pdfOcrService = pdfOcrService;
+        ConfigUi = configUi;
         IsReadOnly = readOnly;
     }
 
     /// <summary>Notice projection rendered in the DB tab grid.</summary>
     public ObservableCollection<NoticeProjection> Notices { get; } = [];
     public ObservableCollection<NoticeProjection> LinkCandidates { get; } = [];
+
+    /// <summary>
+    /// Gets the reusable configuration UI registered by the application host.
+    /// </summary>
+    public ConfigUiViewModel? ConfigUi { get; }
 
     /// <summary>Queue list equivalent to the legacy filter frame options.</summary>
     public ObservableCollection<NoticeFilterKind> ReviewQueues { get; } = new((NoticeFilterKind[])Enum.GetValues(typeof(NoticeFilterKind)));

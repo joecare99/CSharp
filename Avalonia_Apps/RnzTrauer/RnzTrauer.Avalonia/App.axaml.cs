@@ -4,13 +4,19 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Db.Core.Abstractions.Sql.Interfaaces;
 using Db.Provider.MySql;
+using Config.Service;
+using Config.UI.Avalonia.DependencyInjection;
+using Config.UI.Avalonia.ViewModels;
+using Config.UI.ConfigService.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using RnzTrauer.Avalonia.ViewModels;
 using RnzTrauer.Avalonia.Views;
 using RnzTrauer.Core.Export;
+using RnzTrauer.Acquisition;
 using RnzTrauer.Persistence.MySql;
 using RnzTrauer.Places;
 using RnzTrauer.Core.Services;
+using RnzTrauer.Core;
 using RnzTrauer.Import.Services;
 using RnzTrauer.Media;
 
@@ -31,6 +37,7 @@ public sealed partial class App : Application
         settings["UserID"] = Environment.GetEnvironmentVariable("RNZ_DB_USER") ?? "root";
         settings["Password"] = Environment.GetEnvironmentVariable("RNZ_DB_PASSWORD") ?? string.Empty;
         settings["Database"] = Environment.GetEnvironmentVariable("RNZ_DB_NAME") ?? "RNZ";
+        AddConfigurationUi(services);
         services.AddSingleton<IDbConnectionFactory>(factory)
             .AddSingleton<IDBSettings>(settings)
             .AddSingleton<INoticeRepository, MySqlNoticeRepository>()
@@ -72,6 +79,7 @@ public sealed partial class App : Application
                     services.GetRequiredService<IPlaceCoordinateStore>(),
                     services.GetRequiredService<INoticeDetailService>(),
                     services.GetRequiredService<IPdfOcrService>(),
+                    services.GetRequiredService<ConfigUiViewModel>(),
                     readOnly: true));
         var provider = services.BuildServiceProvider();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -81,5 +89,23 @@ public sealed partial class App : Application
             _ = viewModel.InitializeAsync();
         }
         base.OnFrameworkInitializationCompleted();
+    }
+
+    /// <summary>
+    /// Registers RnzTrauer-owned configuration sections and the shared
+    /// configuration UI without exposing product models to Config.UI.
+    /// </summary>
+    public static IServiceCollection AddConfigurationUi(IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        return services
+            .AddConfigService("JC-Soft", "RnzTrauer")
+            .AddConfigSection<DatabaseConfig>(new DatabaseConfigProvider())
+            .AddConfigSection<PlaceConfig>(new PlaceConfigProvider())
+            .AddConfigSection<AcquisitionConfig>(new AcquisitionConfigProvider())
+            .AddConfigSection<AnnouncementsConfig>(new AnnouncementsConfigProvider())
+            .AddConfigServiceUi(isReadOnly: false)
+            .AddConfigUiAvalonia();
     }
 }
