@@ -20,6 +20,6 @@
     <ProjectReference Include="..\..\..\Gen_FreeWin\DbCoreAbstractions\DbCoreAbstractions.csproj" />
   </ItemGroup>
 	<ItemGroup>
-    <ProjectReference Include="..\Config.Service\Config.Service.csproj" />
+    <ProjectReference Include="..\..\Libraries\Config.Service\Config.Service.csproj" />
 	</ItemGroup>
 </Project>
