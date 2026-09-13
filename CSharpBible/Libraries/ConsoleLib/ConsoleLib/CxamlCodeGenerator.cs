@@ -122,8 +122,8 @@ public sealed class CxamlCodeGenerator
     private static string EmitNode(StringBuilder builder, Node node, int indent, ref int counter)
     {
         var variable = "control" + counter++;
-        var typeName = node.Name.Contains(':', StringComparison.Ordinal)
-            ? node.Name.Replace(":", ".", StringComparison.Ordinal)
+        var typeName = node.Name.IndexOf(':') >= 0
+            ? node.Name.Replace(":", ".")
             : "ConsoleLib.CommonControls." + node.Name;
         AppendIndent(builder, indent);
         builder.Append("var ").Append(variable).Append(" = new ").Append(typeName).AppendLine("();");

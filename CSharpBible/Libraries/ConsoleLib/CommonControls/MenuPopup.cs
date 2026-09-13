@@ -61,4 +61,38 @@ public class MenuPopup : Panel, IPopup
         base.MouseLeave(M);
         // Optionally auto-hide? keep for now
     }
+
+    // IGroupControl implementation
+
+    public System.Collections.Generic.IEnumerable<IControl> FixedChildren
+
+    {
+
+        get { return Children; }  // For now, all children are fixed (non-scrollable)
+
+    }
+
+
+    public IGroupControl AddFixedChild(IControl control)
+
+    {
+
+        control.IsFixed = true;
+
+        Children.Add(control);
+
+        return this;
+
+    }
+
+
+    public void RemoveFixedChild(IControl control)
+
+    {
+
+        Children.Remove(control);
+
+    }
+
+
 }

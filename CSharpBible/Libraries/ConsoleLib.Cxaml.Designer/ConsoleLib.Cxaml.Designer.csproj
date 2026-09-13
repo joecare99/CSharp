@@ -17,5 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ConsoleLib\ConsoleLib.csproj" />
     <ProjectReference Include="..\ConsoleLib.Rendering\ConsoleLib.Rendering.csproj" />
+    <ProjectReference Include="..\Code.Navigation\Code.Navigation.csproj" />
+    <ProjectReference Include="..\Property.Editor\Property.Editor.csproj" />
   </ItemGroup>
 </Project>

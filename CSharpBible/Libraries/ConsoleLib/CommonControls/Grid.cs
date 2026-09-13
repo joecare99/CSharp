@@ -33,7 +33,7 @@ public sealed class ColumnDefinition
     public GridLength Width { get; set; } = GridLength.Star;
 }
 
-public class Grid : Control, IGroupControl
+public class Grid : Panel, IGroupControl
 {
     private readonly Dictionary<IControl, int[]> _attached = new Dictionary<IControl, int[]>();
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<IControl, AttachedValues> Pending = new();
@@ -202,4 +202,34 @@ public class Grid : Control, IGroupControl
     {
         public int[] Values { get; } = { 0, 0, 1, 1 };
     }
+
+    // IGroupControl implementation
+
+    public System.Collections.Generic.IEnumerable<IControl> FixedChildren
+
+    {
+
+        get { return Children; }  // For now, all children are fixed (non-scrollable)
+
+    }
+
+
+    public IGroupControl AddFixedChild(IControl control)
+
+    {
+
+        control.IsFixed = true;
+        Children.Add(control);
+        return this;
+
+    }
+
+
+    public void RemoveFixedChild(IControl control)
+    {
+        Children.Remove(control);
+
+    }
+
+
 }

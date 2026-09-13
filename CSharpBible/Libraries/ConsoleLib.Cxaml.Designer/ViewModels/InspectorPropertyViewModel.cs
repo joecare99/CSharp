@@ -5,10 +5,11 @@ using System.Globalization;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ConsoleLib.Interfaces;
+using Property.Editor;
 
 namespace ConsoleLib.Cxaml.Designer.ViewModels;
 
-public sealed partial class InspectorPropertyViewModel : ObservableObject
+public sealed partial class InspectorPropertyViewModel : ObservableObject, IPropertyItem
 {
     private readonly IControl _control;
     private readonly PropertyDescriptor? _property;
@@ -49,6 +50,49 @@ public sealed partial class InspectorPropertyViewModel : ObservableObject
     [ObservableProperty]
     private string _value;
 
+    /// <inheritdoc />
+    PropertyCategory IPropertyItem.Category => new(Category, Category);
+
+    /// <inheritdoc />
+    string IPropertyItem.DisplayName => Name;
+
+    /// <inheritdoc />
+    PropertyEditorKind IPropertyItem.EditorKind => IsBoolean
+        ? PropertyEditorKind.Boolean
+        : IsEnum
+            ? PropertyEditorKind.Enum
+            : PropertyEditorKind.Scalar;
+
+    /// <inheritdoc />
+    bool IPropertyItem.IsNullable => false;
+
+    /// <inheritdoc />
+    bool IPropertyItem.IsEditable => !IsReadOnly;
+
+    /// <inheritdoc />
+    bool IPropertyItem.IsSensitive => false;
+
+    /// <inheritdoc />
+    object? IPropertyItem.Value => Value;
+
+    /// <inheritdoc />
+    IReadOnlyList<PropertyOption> IPropertyItem.Options => Choices
+        .Select(choice => new PropertyOption(choice, choice))
+        .ToArray();
+
+    /// <inheritdoc />
+    PropertyValidationResult IPropertyItem.ValidationResult => PropertyValidationResult.Valid;
+
+    /// <inheritdoc />
+    int IPropertyItem.SortOrder => 0;
+
+    /// <inheritdoc />
+    event EventHandler<PropertyValueChangedEventArgs>? IPropertyItem.ValueChanged
+    {
+        add { }
+        remove { }
+    }
+
     public void Refresh()
     {
         if (_property is not null)
@@ -56,4 +100,17 @@ public sealed partial class InspectorPropertyViewModel : ObservableObject
     }
 
     public void ApplyValue(string value) => _apply(Name, value);
+
+    /// <inheritdoc />
+    bool IPropertyItem.TrySetValue(object? value)
+    {
+        if (IsReadOnly || value is null)
+        {
+            return false;
+        }
+
+        ApplyValue(Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty);
+        Refresh();
+        return true;
+    }
 }

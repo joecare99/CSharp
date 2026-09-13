@@ -1,0 +1,28 @@
+<Project>
+  <Import Project="..\Libraries.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <RootNamespace>Property.Editor</RootNamespace>
+    <AssemblyName>Property.Editor</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\Avalonia_Apps\Libraries\Property.Editor\IPropertyItem.cs" Link="IPropertyItem.cs" />
+    <Compile Include="..\..\..\Avalonia_Apps\Libraries\Property.Editor\PropertyCategory.cs" Link="PropertyCategory.cs" />
+    <Compile Include="..\..\..\Avalonia_Apps\Libraries\Property.Editor\PropertyEditorKind.cs" Link="PropertyEditorKind.cs" />
+    <Compile Include="..\..\..\Avalonia_Apps\Libraries\Property.Editor\PropertyItem.cs" Link="PropertyItem.cs" />
+    <Compile Include="..\..\..\Avalonia_Apps\Libraries\Property.Editor\PropertyItemOrdering.cs" Link="PropertyItemOrdering.cs" />
+    <Compile Include="..\..\..\Avalonia_Apps\Libraries\Property.Editor\PropertyOption.cs" Link="PropertyOption.cs" />
+    <Compile Include="..\..\..\Avalonia_Apps\Libraries\Property.Editor\PropertyValidationResult.cs" Link="PropertyValidationResult.cs" />
+    <Compile Include="..\..\..\Avalonia_Apps\Libraries\Property.Editor\PropertyValueChangedEventArgs.cs" Link="PropertyValueChangedEventArgs.cs" />
+  </ItemGroup>
+</Project>

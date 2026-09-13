@@ -5,19 +5,19 @@ using ConsoleLib.Interfaces;
 namespace ConsoleLib.CommonControls;
 
 /// <summary>Provides bounded scrolling offsets for a hosted content control.</summary>
-public sealed class ScrollViewer : Control
+public sealed class ScrollViewer : Panel
 {
     private Point _offset;
 
     public IControl? Content { get; private set; }
-    public Point Offset => _offset;
+    public override Point Offset => _offset;
 
     public void SetContent(IControl content)
     {
         if (Content is not null)
             Content.Parent = null;
         Content = content ?? throw new ArgumentNullException(nameof(content));
-        Add(content);
+        AddChild(content);
         ClampOffset();
     }
 

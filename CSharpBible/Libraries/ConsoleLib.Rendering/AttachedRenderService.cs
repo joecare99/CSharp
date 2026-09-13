@@ -37,6 +37,9 @@ public sealed class AttachedRenderService : IDisposable
         _root = root;
         _size = size;
         SubscribeTree(root);
+                AccumulateDimensionsRecursive(root);
+        DebugPrintDimensions(_root);
+
         RenderCore();
     }
 
@@ -78,6 +81,7 @@ public sealed class AttachedRenderService : IDisposable
             throw new InvalidOperationException("No control tree is attached.");
         UnsubscribeTree(_root);
         SubscribeTree(_root);
+        AccumulateDimensionsRecursive(_root);
         RenderCore();
     }
 
@@ -131,9 +135,35 @@ public sealed class AttachedRenderService : IDisposable
             RenderCore();
     }
 
+
+    /// <summary>Recurse the tree and compute _dimension through parent positions.</summary>
+
+    /// <summary>Set _dimension (relative, parent-referenced) for all controls.</summary>
+    private static void AccumulateDimensionsRecursive(IControl control)
+    {
+        // Set _dimension to the control’s local position
+        control.Dimension = new Rectangle(control.Position.X, control.Position.Y, control.size.Width, control.size.Height);
+        foreach (var child in control.Children)
+            AccumulateDimensionsRecursive(child);
+    }
+
+
+    /// <summary>Debug: print all control dimensions through tree.</summary>
+    private static void DebugPrintDimensions(IControl control)
+    {
+        System.Console.WriteLine($"  Control '{control.GetType().Name}' dim=({control.Dimension.X},{control.Dimension.Y}) RealDim=({control.RealDim.X},{control.RealDim.Y})");
+        foreach (var child in control.Children)
+            DebugPrintDimensions(child);
+    }
+
     private void ThrowIfDisposed()
     {
         if (_disposed)
             throw new ObjectDisposedException(nameof(AttachedRenderService));
     }
 }
+
+
+
+
+

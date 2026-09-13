@@ -6,7 +6,7 @@ namespace ConsoleLib.CommonControls;
 
 public enum Orientation { Horizontal, Vertical }
 
-public class StackPanel : Control, IGroupControl
+public class StackPanel : Panel, IGroupControl
 {
     private Orientation _orientation = Orientation.Vertical;
     private int _spacing;
@@ -43,4 +43,34 @@ public class StackPanel : Control, IGroupControl
         return new Rectangle(x, y, w, h);
     }
     void IGroupControl.BringToFront(IControl control) { if (Children.Contains(control)) { Children.Remove(control); Children.Insert(0, control); } }
+
+    // IGroupControl implementation
+
+    public System.Collections.Generic.IEnumerable<IControl> FixedChildren
+
+    {
+
+        get { return Children; }  // For now, all children are fixed (non-scrollable)
+
+    }
+
+
+    public IGroupControl AddChild(IControl control)
+
+    {
+
+        Children.Add(control);
+        return this;
+    }
+
+
+    public void RemoveChild(IControl control)
+
+    {
+
+        Children.Remove(control);
+
+    }
+
+
 }

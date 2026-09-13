@@ -12,6 +12,8 @@ using AvaloniaEdit;
 using System.IO;
 using ConsoleLib.Cxaml.Designer.Preview;
 using ConsoleLib.Cxaml.Designer.Views;
+using Code.Navigation;
+using Property.Editor;
 
 namespace ConsoleLib.Cxaml.DesignerTests;
 
@@ -267,6 +269,25 @@ public sealed class DesignerViewModelTests
 
         Assert.IsTrue(viewModel.IsConsolePreview);
         Assert.AreEqual(1, viewModel.SelectedPreviewTabIndex);
+    }
+
+    [TestMethod]
+    public void InspectorExposesSharedPropertyContractAndSelectionSourceLocation()
+    {
+        string filePath = Path.GetTempFileName();
+        var viewModel = new DesignerViewModel
+        {
+            FilePath = filePath,
+            Markup = "<StackPanel><Button Text=\"Run\" /></StackPanel>"
+        };
+
+        Assert.IsTrue(viewModel.ActivatePreviewSelection("root/0"));
+        IPropertyItem property = viewModel.CategorizedInspectorProperties.First();
+
+        Assert.IsNotNull(property.Category);
+        Assert.IsFalse(property.IsSensitive);
+        Assert.IsInstanceOfType(viewModel.SelectedSourceLocation, typeof(CodeLocation));
+        Assert.AreEqual(Path.GetFullPath(filePath), viewModel.SelectedSourceLocation!.Path);
     }
 
     [TestMethod]

@@ -14,6 +14,7 @@
 using ConsoleLib.Data;
 using ConsoleLib.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace ConsoleLib.CommonControls;
@@ -43,6 +44,8 @@ public class Panel : Control, IGroupControl, IHasBorder
         }
     }
 
+    public virtual Point Offset => Point.Empty;
+
     public IBorderDefinition BorderDefinition { get; set; } = new BorderDef
     { Style = BorderStyle.None };
 
@@ -55,6 +58,9 @@ public class Panel : Control, IGroupControl, IHasBorder
             CustomChars = value == BorderStyle.Custom ? BorderDefinition.CustomChars : null
         };
     }
+
+    public IEnumerable<IControl> FixedChildren => throw new NotImplementedException();
+
     /// <summary>
     /// The border color
     /// </summary>
@@ -104,4 +110,14 @@ public class Panel : Control, IGroupControl, IHasBorder
         WidgetSet?.RedrawPanel(this, dimension);
     }
 
+    public virtual IGroupControl AddChild(IControl control)
+    {
+        Children.Add(control);
+        return this;
+    }
+
+    public void RemoveChild(IControl control)
+    {
+        Children.Remove(control);
+    }
 }

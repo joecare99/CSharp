@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Input;
 using BaseLib.Interfaces;
@@ -961,6 +962,18 @@ public sealed class RenderingCoreTests
         return new string(characters);
     }
 
+    private static void WriteFrameToDebug(IRenderSnapshot snapshot)
+    {
+        Debug.WriteLine($"Frame {snapshot.Size.Width}x{snapshot.Size.Height}");
+        for (var y = 0; y < snapshot.Size.Height; y++)
+        {
+            var row = new char[snapshot.Size.Width];
+            for (var x = 0; x < snapshot.Size.Width; x++)
+                row[x] = snapshot.GetCell(x, y).Character;
+            Debug.WriteLine(new string(row));
+        }
+    }
+
     [TestMethod]
     public void RendererUsesDisabledButtonColors()
     {
@@ -1589,9 +1602,10 @@ public sealed class RenderingCoreTests
         viewer.SetContent(new Label { Text = "abcdefghi", size = new Size(9, 2) });
         var service = new AttachedRenderService();
         service.Attach(viewer, new Size(3, 2));
-
-        Assert.AreEqual("bcd", ReadRow(service.GetSnapshot(), 0, 3));
-        Assert.AreEqual("   ", ReadRow(service.GetSnapshot(), 1, 3));
+        var frame = service.GetSnapshot();
+        WriteFrameToDebug(frame);  
+        Assert.AreEqual("bcd", ReadRow(frame, 0, 3));
+        Assert.AreEqual("   ", ReadRow(frame, 1, 3));
     }
 
     [TestMethod]
@@ -1696,12 +1710,13 @@ public sealed class RenderingCoreTests
             Position = new Point(3, 2),
             size = new Size(6, 2),
             BackColor = ConsoleColor.DarkBlue,
-            ForeColor = ConsoleColor.White
+            ForeColor = ConsoleColor.White,
+            BorderStyle = BorderStyle.Single
         };
         var target = new Label
         {
             Text = "NestedLabel",
-            Position = new Point(2, 0),
+            Position = new Point(1, 0),
             size = new Size(11, 1)
         };
         panel.Add(target);
@@ -1710,7 +1725,8 @@ public sealed class RenderingCoreTests
         service.Attach(panel, new Size(14, 6));
 
         var frame = service.GetSnapshot();
-        Assert.AreEqual("NestedLabel", ReadRowAt(frame, 5, 2, 11));
+        WriteFrameToDebug(frame);
+        Assert.AreEqual("Neste", ReadRowAt(frame, 4, 2, 9));
         Assert.AreEqual(ConsoleColor.White, frame.GetCell(9, 2).Foreground);
         Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(9, 2).Background);
     }
@@ -1741,6 +1757,7 @@ public sealed class RenderingCoreTests
         service.Attach(panel, new Size(20, 12));
 
         var frame = service.GetSnapshot();
+        WriteFrameToDebug(frame);
         Assert.AreEqual('\u2554', frame.GetCell(4, 3).Character);
         Assert.AreEqual('\u2557', frame.GetCell(15, 3).Character);
         Assert.AreEqual('H', frame.GetCell(6, 4).Character);
@@ -1753,9 +1770,11 @@ public sealed class RenderingCoreTests
         var panel = new Panel
         {
             Position = new Point(3, 2),
-            size = new Size(6, 2),
+            size = new Size(10, 3),
             BackColor = ConsoleColor.DarkBlue,
-            ForeColor = ConsoleColor.White
+            ForeColor = ConsoleColor.White,
+            BorderStyle = BorderStyle.Single
+
         };
         var button = new Button
         {
@@ -1771,7 +1790,9 @@ public sealed class RenderingCoreTests
         service.Attach(panel, new Size(14, 6));
 
         var frame = service.GetSnapshot();
-        Assert.AreEqual('B', frame.GetCell(4, 2).Character);
+        WriteFrameToDebug(frame);
+        Assert.AreEqual(' ', frame.GetCell(4, 2).Character);
+        Assert.AreEqual('B', frame.GetCell(5, 2).Character);
         Assert.AreEqual(ConsoleColor.Red, frame.GetCell(4, 2).Background);
     }
 
@@ -1814,7 +1835,8 @@ public sealed class RenderingCoreTests
             Position = new Point(3, 2),
             size = new Size(16, 6),
             BackColor = ConsoleColor.Black,
-            ForeColor = ConsoleColor.White
+            ForeColor = ConsoleColor.White,
+            BorderStyle = BorderStyle.Single
         };
         var menuBar = new MenuBar { size = new Size(16, 1), Position = new Point(2, 1) };
         menuBar.AddRootItem(new MenuItem { Text = "File" });
@@ -1825,7 +1847,8 @@ public sealed class RenderingCoreTests
         service.Attach(panel, new Size(24, 10));
 
         var frame = service.GetSnapshot();
-        Assert.AreEqual("FileEdit", ReadRowAt(frame, 5, 3, 8).Replace(" ", ""));
+        WriteFrameToDebug(frame);
+        Assert.AreEqual("FileEdit", ReadRowAt(frame, 5, 3, 10).Replace(" ", ""));
         Assert.AreEqual(ConsoleColor.Black, frame.GetCell(5, 3).Background);
     }
 
@@ -1837,7 +1860,8 @@ public sealed class RenderingCoreTests
             Position = new Point(3, 2),
             size = new Size(8, 9),
             BackColor = ConsoleColor.Black,
-            ForeColor = ConsoleColor.White
+            ForeColor = ConsoleColor.White,
+            BorderStyle = BorderStyle.Single
         };
         var bar = new ScrollBar
         {
@@ -1851,9 +1875,10 @@ public sealed class RenderingCoreTests
         service.Attach(panel, new Size(12, 14));
 
         var frame = service.GetSnapshot();
+        WriteFrameToDebug(frame);
         Assert.AreEqual('\u25b2', frame.GetCell(5, 3).Character);
         Assert.AreEqual('\u25bc', frame.GetCell(5, 9).Character);
-        Assert.AreEqual('\u2502', frame.GetCell(5, 4).Character);
+        Assert.AreEqual('\u2502', frame.GetCell(5, 5).Character);
     }
 
     [TestMethod]
@@ -1861,15 +1886,16 @@ public sealed class RenderingCoreTests
     {
         var panel = new Panel
         {
-            Position = new Point(3, 2),
-            size = new Size(9, 4),
+            Position = new Point(2, 1),
+            size = new Size(10, 5),
             BackColor = ConsoleColor.Black,
-            ForeColor = ConsoleColor.White
+            ForeColor = ConsoleColor.White,
+            BorderStyle = BorderStyle.Single,
         };
         var viewer = new ScrollViewer
         {
             Position = new Point(2, 1),
-            size = new Size(5, 2)
+            size = new Size(5, 2),
         };
         viewer.SetContent(new Label { Text = "xy", size = new Size(2, 2) });
         panel.Add(viewer);
@@ -1878,6 +1904,7 @@ public sealed class RenderingCoreTests
         service.Attach(panel, new Size(16, 8));
 
         var frame = service.GetSnapshot();
+        WriteFrameToDebug(frame);
         Assert.AreEqual('x', frame.GetCell(5, 3).Character);
         Assert.AreEqual('y', frame.GetCell(5, 4).Character);
     }

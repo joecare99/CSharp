@@ -13,6 +13,7 @@ using CommunityToolkit.Mvvm.Input;
 using ConsoleLib;
 using ConsoleLib.Cxaml.Designer.Preview;
 using ConsoleLib.Interfaces;
+using Code.Navigation;
 
 namespace ConsoleLib.Cxaml.Designer.ViewModels;
 
@@ -73,6 +74,10 @@ public sealed partial class DesignerViewModel : ObservableObject
     public IReadOnlyList<PreviewControlMapping> PreviewMappings => _previewState.Mappings;
     public string? SelectedPreviewControlId => _selectedPreviewId;
     public string? SelectedSourceElementPath => _selectedPreviewId;
+    /// <summary>Gets the source location for the selected CXAML element when it originates from a file.</summary>
+    public CodeLocation? SelectedSourceLocation => string.IsNullOrWhiteSpace(FilePath)
+        ? null
+        : new CodeLocation(FilePath, offset: SourceCaretOffset);
     public IReadOnlyList<string> InspectorProperties => _inspectorProperties;
     public IReadOnlyList<InspectorPropertyViewModel> CategorizedInspectorProperties => _categorizedInspectorProperties;
     public ObservableCollection<GridDefinitionViewModel> GridRows => _gridRows;
@@ -364,6 +369,7 @@ public sealed partial class DesignerViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedElement));
         OnPropertyChanged(nameof(SelectedPreviewControlId));
         OnPropertyChanged(nameof(SelectedSourceElementPath));
+        OnPropertyChanged(nameof(SelectedSourceLocation));
         UpdateSelectedPropertyValue();
     }
 

@@ -376,6 +376,27 @@ public class Control : IControl
     #endregion
 
 
+    // Anchor booleans for dynamic layout behavior (default: Top+Left)
+    private bool _anchorLeft = true;
+    private bool _anchorRight = false;
+    private bool _anchorTop = true;
+    private bool _anchorBottom = false;
+
+    /// <summary>Anchor to left edge (stays at fixed X during parent resize).</summary>
+    public bool IsAnchorLeft { get => _anchorLeft; set { if (_anchorLeft != value) { _anchorLeft = value; Invalidate(); } } }
+
+    /// <summary>Anchor to right edge (stays at fixed distance from right).</summary>
+    public bool IsAnchorRight { get => _anchorRight; set { if (_anchorRight != value) { _anchorRight = value; Invalidate(); } } }
+
+    /// <summary>Anchor to top edge (stays at fixed Y during parent resize).</summary>
+    public bool IsAnchorTop { get => _anchorTop; set { if (_anchorTop != value) { _anchorTop = value; Invalidate(); } } }
+
+    /// <summary>Anchor to bottom edge (stays at fixed distance from bottom).</summary>
+    public bool IsAnchorBottom { get => _anchorBottom; set { if (_anchorBottom != value) { _anchorBottom = value; Invalidate(); } } }
+
+    /// <summary>Child is fixed (attached to parent frame, does not scroll with content).</summary>
+    public bool IsFixed { get; set; }
+
     #endregion
 
     #region Methods
@@ -437,9 +458,12 @@ public class Control : IControl
     public Rectangle RealDimOf(Rectangle aDim)
     {
         var result = aDim;
-        if (Parent != null)
+        if (Parent is IGroupControl igc)
         {
-            result.Offset(Parent.RealDim.Location);
+            if (igc.IsFixed)
+                result.Offset(igc.RealDim.Location);
+            else
+                result.Offset(Point.Subtract(igc.RealDim.Location, (Size)igc.Offset));
         }
         return result;
     }

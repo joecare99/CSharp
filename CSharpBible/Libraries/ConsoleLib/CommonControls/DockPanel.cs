@@ -7,7 +7,7 @@ namespace ConsoleLib.CommonControls;
 
 public enum Dock { Left, Top, Right, Bottom }
 
-public class DockPanel : Control, IGroupControl
+public class DockPanel : Panel, IGroupControl
 {
     private readonly Dictionary<IControl, Dock> _docks = new Dictionary<IControl, Dock>();
     private readonly Dictionary<IControl, Size> _sizes = new Dictionary<IControl, Size>();
@@ -58,4 +58,34 @@ public class DockPanel : Control, IGroupControl
         public PendingDock(Dock value) => Value = value;
         public Dock Value { get; }
     }
+
+    // IGroupControl implementation
+
+    public System.Collections.Generic.IEnumerable<IControl> FixedChildren
+
+    {
+
+        get { return Children; }  // For now, all children are fixed (non-scrollable)
+
+    }
+
+
+    public IGroupControl AddFixedChild(IControl control)
+
+    {
+
+        control.IsFixed = true;
+        Children.Add(control);
+        return this;
+
+    }
+
+
+    public void RemoveFixedChild(IControl control)
+    {
+        Children.Remove(control);
+
+    }
+
+
 }

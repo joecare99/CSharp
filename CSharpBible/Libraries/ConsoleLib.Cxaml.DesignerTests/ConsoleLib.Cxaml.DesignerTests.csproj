@@ -10,6 +10,8 @@
   <ItemGroup>
     <ProjectReference Include="..\ConsoleLib.Cxaml.Designer\ConsoleLib.Cxaml.Designer.csproj" />
     <ProjectReference Include="..\ConsoleLib.Rendering\ConsoleLib.Rendering.csproj" />
+    <ProjectReference Include="..\Code.Navigation\Code.Navigation.csproj" />
+    <ProjectReference Include="..\Property.Editor\Property.Editor.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.0" />
     <PackageReference Include="coverlet.collector" Version="10.0.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="4.4.0" />

@@ -68,4 +68,8 @@ public interface IControl
     void ReDraw(Rectangle dimension);
     IControl Remove(IControl control);
     void SetText(string value);
+
+    /// <summary>When true, the control is rendered relative to parent frame instead of scrolling with content.</summary>
+    bool IsFixed { get; set; }
+
 }

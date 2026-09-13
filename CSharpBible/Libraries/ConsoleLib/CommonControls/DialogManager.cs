@@ -77,4 +77,5 @@ public sealed class DialogManager : IDialogManager
         foreach (var session in _sessions.ToArray())
             Close(session);
     }
+
 }
