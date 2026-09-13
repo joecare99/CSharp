@@ -10,9 +10,12 @@
   <ItemGroup>
     <PackageReference Include="MSTest" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RnzTrauer.Avalonia\RnzTrauer.Avalonia.csproj" />
     <ProjectReference Include="..\RnzTrauer.Media\RnzTrauer.Media.csproj" />
+    <ProjectReference Include="..\..\Libraries\Config.Service\Config.Service.csproj" />
+    <ProjectReference Include="..\..\Libraries\Config.UI\Config.UI.csproj" />
   </ItemGroup>
 </Project>
