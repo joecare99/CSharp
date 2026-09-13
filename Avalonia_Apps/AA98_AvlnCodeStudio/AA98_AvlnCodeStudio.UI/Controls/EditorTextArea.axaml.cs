@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using AvaloniaEdit;
+using Code.Navigation;
 using System;
 
 namespace AA98_AvlnCodeStudio.UI.Controls;
@@ -41,6 +42,26 @@ public partial class EditorTextArea : UserControl
         set => SetValue(TextProperty, value);
     }
 
+    /// <summary>
+    /// Focuses the editor and moves the caret to the supplied neutral source
+    /// location. Coordinates outside the loaded document are clamped.
+    /// </summary>
+    /// <param name="location">The source location to activate.</param>
+    public void FocusAndMoveCaret(CodeLocation location)
+    {
+        ArgumentNullException.ThrowIfNull(location);
+
+        if (_editor is null)
+        {
+            throw new InvalidOperationException("The Avalonia editor control is unavailable.");
+        }
+
+        var text = _editor.Text ?? string.Empty;
+        var requestedOffset = location.Offset ?? GetOffset(text, location.Line, location.Column);
+        _editor.CaretOffset = Math.Clamp(requestedOffset, 0, text.Length);
+        _editor.Focus();
+    }
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -74,5 +95,37 @@ public partial class EditorTextArea : UserControl
         _isUpdatingFromEditor = true;
         Text = _editor.Text;
         _isUpdatingFromEditor = false;
+    }
+
+    private static int GetOffset(string text, int? line, int? column)
+    {
+        if (line is null)
+        {
+            return 0;
+        }
+
+        var currentLine = 1;
+        var offset = 0;
+        while (offset < text.Length && currentLine < line.Value)
+        {
+            if (text[offset++] == '\n')
+            {
+                currentLine++;
+            }
+        }
+
+        if (currentLine < line.Value)
+        {
+            return text.Length;
+        }
+
+        var requestedColumn = column ?? 1;
+        var lineEnd = text.IndexOf('\n', offset);
+        if (lineEnd < 0)
+        {
+            lineEnd = text.Length;
+        }
+
+        return Math.Min(offset + requestedColumn - 1, lineEnd);
     }
 }

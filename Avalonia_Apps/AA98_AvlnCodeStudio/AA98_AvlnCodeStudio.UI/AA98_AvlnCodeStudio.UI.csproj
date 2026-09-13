@@ -47,6 +47,12 @@
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Testing\AA98_AvlnCodeStudio.Base.Testing.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Debugging\AA98_AvlnCodeStudio.Base.Debugging.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Editor\AA98_AvlnCodeStudio.Editor.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Diagnostics.UI\AA98_AvlnCodeStudio.Diagnostics.UI.csproj" />
+    <ProjectReference Include="..\..\Libraries\Config.Service\Config.Service.csproj" />
+    <ProjectReference Include="..\..\Libraries\Config.UI.ConfigService\Config.UI.ConfigService.csproj" />
+    <ProjectReference Include="..\..\Libraries\Config.UI.Avalonia\Config.UI.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Libraries\Project.Explorer.FileSystem\Project.Explorer.FileSystem.csproj" />
+    <ProjectReference Include="..\..\Libraries\Project.Explorer.Avalonia\Project.Explorer.Avalonia.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Model\AA98_AvlnCodeStudio.Model.csproj" />
     <ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Avalonia\Avln_CommonDialogs.Avalonia.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Core\AA98_AvlnCodeStudio.Planning.Core.csproj" />

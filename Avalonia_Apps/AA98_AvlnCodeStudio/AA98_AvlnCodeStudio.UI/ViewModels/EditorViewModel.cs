@@ -4,6 +4,7 @@ using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels;
@@ -98,6 +99,26 @@ public partial class EditorViewModel : CodeStudioViewModelBase
         Text = _workflow.Document.Content;
         SynchronizeFromDocument();
         ApplyResult(result, string.Format(UiStrings.OpenedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.LoadedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.OpenCanceledStatusText, UiStrings.OpenCanceledNotificationText);
+    }
+
+    /// <summary>
+    /// Opens a known document for a navigation request without showing a file
+    /// dialog and synchronizes the editor view model with the loaded state.
+    /// </summary>
+    /// <param name="filePath">The path of the document to load.</param>
+    /// <param name="cancellationToken">Cancels the open operation.</param>
+    /// <returns>A task that completes when the document is available.</returns>
+    public async Task OpenFileAsync(string filePath, CancellationToken cancellationToken = default)
+    {
+        var result = await _workflow.OpenFileAsync(filePath, cancellationToken).ConfigureAwait(false);
+        Text = _workflow.Document.Content;
+        SynchronizeFromDocument();
+        ApplyResult(
+            result,
+            string.Format(UiStrings.OpenedDocumentStatusFormat, _workflow.Document.DisplayName),
+            string.Format(UiStrings.LoadedDocumentNotificationFormat, _workflow.Document.DisplayName),
+            UiStrings.OpenCanceledStatusText,
+            UiStrings.OpenCanceledNotificationText);
     }
 
     /// <summary>
