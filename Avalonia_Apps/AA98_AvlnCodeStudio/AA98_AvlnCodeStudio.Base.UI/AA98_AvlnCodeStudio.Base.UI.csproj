@@ -16,5 +16,6 @@
   <ItemGroup>
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base\AA98_AvlnCodeStudio.Base.csproj" />
+	<ProjectReference Include="..\..\Libraries\Property.Editor\Property.Editor.csproj" />
   </ItemGroup>
 </Project>
