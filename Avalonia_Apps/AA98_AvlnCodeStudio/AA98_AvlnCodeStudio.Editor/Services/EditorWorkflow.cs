@@ -59,6 +59,17 @@ public sealed class EditorWorkflow : IEditorWorkflow
             return EditorOperationResult.Canceled(EditorOperationKind.Open, _document.DisplayName, _document.FilePath);
         }
 
+        return await OpenFileAsync(filePath, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    public async Task<EditorOperationResult> OpenFileAsync(string filePath, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new ArgumentException("A file path is required.", nameof(filePath));
+        }
+
         var content = await _storageService.ReadAllTextAsync(filePath, cancellationToken).ConfigureAwait(false);
         _document.Load(filePath, content);
         return EditorOperationResult.Completed(EditorOperationKind.Open, _document.DisplayName, _document.FilePath);

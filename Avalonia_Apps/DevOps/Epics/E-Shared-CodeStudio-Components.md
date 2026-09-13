@@ -1,7 +1,7 @@
 # E-Shared-CodeStudio-Components
 
 ## Status
-Planned
+Done
 
 ## Goal
 Deliver a component-based shared foundation for RnzTrauer, AA98_AvlnCodeStudio, and later ConsoleLib.Cxaml.Designer.
@@ -25,5 +25,11 @@ Deliver a component-based shared foundation for RnzTrauer, AA98_AvlnCodeStudio, 
 ## Children
 - F-Shared-CodeStudio-Components
 
+## Completion
+T-001 through T-022 are complete. The delivered shared components have passed
+their architecture, quality, integration, and release-readiness gates.
+
 ## Completion gate
-All child backlog items have passed their quality and integration gates, have recorded test evidence, an English SVN commit, and current/next work-item status.
+All child backlog items have passed their quality and integration gates, have
+recorded test evidence and English SVN commits, and have consistent final
+work-item status.

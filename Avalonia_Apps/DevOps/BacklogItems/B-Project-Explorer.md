@@ -4,7 +4,7 @@
 F-Shared-CodeStudio-Components
 
 ## Status
-Planned
+Done
 
 ## Request
 Build a general project/file explorer separate from the existing Planning Explorer, with neutral hierarchy and opening capabilities and an Avalonia UI consumer.
@@ -18,4 +18,9 @@ Build a general project/file explorer separate from the existing Planning Explor
 T-015, T-016, T-017
 
 ## Gates
-G-Architecture after T-015; G-Integration after T-017.
+G-Architecture passed after T-015; G-Integration passed after T-017.
+
+## Current handoff
+T-015 through T-017 are Done. The shared explorer has neutral contracts, a
+filesystem source, a reusable Avalonia consumer, and CodeStudio navigation
+integration without affecting the Planning Explorer.

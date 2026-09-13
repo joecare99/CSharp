@@ -35,6 +35,14 @@ public interface IEditorWorkflow
     Task<EditorOperationResult> OpenAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Opens a known text document without showing a file dialog.
+    /// </summary>
+    /// <param name="filePath">The path of the document to open.</param>
+    /// <param name="cancellationToken">Cancels the open operation.</param>
+    /// <returns>The workflow result.</returns>
+    Task<EditorOperationResult> OpenFileAsync(string filePath, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Saves the current document.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>

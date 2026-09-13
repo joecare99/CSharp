@@ -4,13 +4,24 @@
 E-Shared-CodeStudio-Components
 
 ## Status
-In Progress
+Done
 
 ## Current handoff
 - `B-Config-Core`: Done.
 - `B-Code-Navigation`: Done after T-007 and G-Component-Quality.
-- `B-Diagnostics-Jump-To-Code`: Done after T-020, T-021, T-022 and G-Integration.
-- `B-Property-Editor`: In Progress; T-008 is active.
+- `B-Diagnostics-Jump-To-Code`: Done after T-022 and G-Integration.
+- `B-Property-Editor`: Done after T-008 through T-010 and
+  G-Component-Quality; the canonical contracts, reusable Avalonia UI, and
+  host-independent fixture validation are complete.
+- `B-Config-UI`: Done. T-011 through T-014 delivered the greenfield
+  boundary, Config.Service adapter, reusable Avalonia UI, and isolated
+  RnzTrauer/CodeStudio DI integration.
+- `B-Project-Explorer`: Done. T-015 through T-017 delivered neutral
+  contracts, a filesystem source, Avalonia UI, and CodeStudio navigation
+  integration.
+- `B-Designer-Consumption`: Done. T-018 established linked canonical
+  Property.Editor consumption in the CXAML designer; T-019 passed release
+  readiness.
 - `AppKomponentBaseLib`: shared base for component interfaces and base classes.
 
 ## Value
@@ -42,4 +53,4 @@ Applications consume shared, independently testable components instead of duplic
 B-Config-Core; B-Code-Navigation; B-Diagnostics-Jump-To-Code; B-Property-Editor; B-Config-UI; B-Project-Explorer; B-Designer-Consumption
 
 ## Completion
-Set Done only after every child backlog item is Done and all gate evidence is linked.
+Done. Every child backlog item is Done and all required gate evidence is linked.

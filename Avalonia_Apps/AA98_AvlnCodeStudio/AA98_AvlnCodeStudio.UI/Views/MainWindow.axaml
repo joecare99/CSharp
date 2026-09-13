@@ -3,6 +3,9 @@
         xmlns:vm="using:AA98_AvlnCodeStudio.UI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:diagnostics="using:AA98_AvlnCodeStudio.Diagnostics.UI.Views"
+        xmlns:configUi="using:Config.UI.Avalonia.Views"
+        xmlns:projectExplorer="using:Project.Explorer.Avalonia.Views"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="AA98_AvlnCodeStudio.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -59,7 +62,7 @@
                 BorderBrush="{DynamicResource ThemeControlMidBrush}"
                 BorderThickness="1"
                 CornerRadius="4">
-            <Grid RowDefinitions="Auto,Auto,*"
+            <Grid RowDefinitions="Auto,Auto,180,*,Auto"
                   RowSpacing="8">
                 <TextBlock Grid.Row="0"
                            Text="{Binding NavigationTitle}"
@@ -68,7 +71,9 @@
                            Text="{Binding PlanningExplorerTitle}"
                            Opacity="0.7"
                            TextWrapping="Wrap" />
-                <TreeView Grid.Row="2"
+                <projectExplorer:ProjectExplorerView Grid.Row="2"
+                                                      DataContext="{Binding ProjectExplorer}" />
+                <TreeView Grid.Row="3"
                           ItemsSource="{Binding PlanningExplorer.RootItems}"
                           SelectedItem="{Binding PlanningExplorer.SelectedItem, Mode=TwoWay}">
                     <TreeView.ItemTemplate>
@@ -80,6 +85,9 @@
                         </TreeDataTemplate>
                     </TreeView.ItemTemplate>
                 </TreeView>
+                <configUi:ConfigUiView Grid.Row="4"
+                                       DataContext="{Binding ConfigUi}"
+                                       Margin="0,8,0,0" />
             </Grid>
         </Border>
 
@@ -98,9 +106,12 @@
             </DockPanel>
         </Border>
 
-        <Border Grid.Row="2"
+        <Grid Grid.Row="2"
                 Grid.ColumnSpan="2"
                 Margin="0,12,0,0"
+                RowDefinitions="Auto,Auto"
+                RowSpacing="8">
+        <Border Grid.Row="0"
                 Padding="8,6"
                 BorderBrush="{DynamicResource ThemeControlMidBrush}"
                 BorderThickness="1"
@@ -123,6 +134,9 @@
                 </DockPanel>
             </StackPanel>
         </Border>
+        <diagnostics:DiagnosticListView Grid.Row="1"
+                                         DataContext="{Binding DiagnosticCollection}" />
+        </Grid>
     </Grid>
 
 </Window>

@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Project.Explorer.Avalonia.ViewModels"
+             x:Class="Project.Explorer.Avalonia.Views.ProjectExplorerView"
+             x:DataType="vm:ProjectExplorerViewModel">
+  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="8">
+    <Button Content="Refresh" Command="{Binding RefreshCommand}" IsEnabled="{Binding !IsBusy}" />
+    <TreeView Grid.Row="1"
+              ItemsSource="{Binding RootItems}"
+              SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+      <TreeView.ItemContainerTheme>
+        <ControlTheme TargetType="TreeViewItem">
+          <Setter Property="IsExpanded" Value="{ReflectionBinding IsExpanded, Mode=TwoWay}" />
+        </ControlTheme>
+      </TreeView.ItemContainerTheme>
+      <TreeView.ItemTemplate>
+        <TreeDataTemplate ItemsSource="{Binding Children}">
+          <TextBlock Text="{Binding Name}" />
+        </TreeDataTemplate>
+      </TreeView.ItemTemplate>
+    </TreeView>
+    <TextBlock Grid.Row="2"
+               Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+               Text="{Binding ErrorMessage}"
+               TextWrapping="Wrap" />
+  </Grid>
+</UserControl>

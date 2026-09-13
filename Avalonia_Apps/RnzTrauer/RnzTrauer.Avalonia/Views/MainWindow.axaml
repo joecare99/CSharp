@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:configUi="using:Config.UI.Avalonia.Views"
         x:Class="RnzTrauer.Avalonia.Views.MainWindow"
         Width="1680"
         Height="980"
@@ -215,18 +216,7 @@
       </TabItem>
 
       <TabItem Header="Einstellungen">
-        <Grid Margin="12" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="190,*" RowSpacing="8" ColumnSpacing="8">
-          <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="RNZ_DB_SERVER" />
-          <TextBox Grid.Row="0" Grid.Column="1" IsReadOnly="True" Text="{Binding DbServer}" />
-          <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="RNZ_DB_PORT" />
-          <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="{Binding DbPort}" />
-          <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="RNZ_DB_USER" />
-          <TextBox Grid.Row="2" Grid.Column="1" IsReadOnly="True" Text="{Binding DbUser}" />
-          <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="RNZ_DB_NAME" />
-          <TextBox Grid.Row="3" Grid.Column="1" IsReadOnly="True" Text="{Binding DbName}" />
-          <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Opacity="0.75" TextWrapping="Wrap"
-                     Text="Password is intentionally not rendered in this view. A dedicated secure settings component is part of the next migration increment." />
-        </Grid>
+        <configUi:ConfigUiView Margin="12" DataContext="{Binding ConfigUi}" />
       </TabItem>
     </TabControl>
 

@@ -11,6 +11,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Property.Editor;
+using Property.Editor.Avalonia;
 
 namespace AA98_AvlnCodeStudio.Planning.UI.ViewModels;
 
@@ -22,8 +24,20 @@ public partial class PlanningExplorerViewModel : ViewModelBase, IHasProperties
     private readonly IPlanningProvider _planningProvider;
 
     public PlanningExplorerViewModel(IPlanningProvider planningProvider)
+        : this(planningProvider, new PropertyEditorViewModel())
+    {
+    }
+
+    /// <summary>
+    /// Initializes a planning explorer with its reusable Property.Editor UI
+    /// state supplied by the host composition root.
+    /// </summary>
+    public PlanningExplorerViewModel(
+        IPlanningProvider planningProvider,
+        PropertyEditorViewModel propertyEditor)
     {
         _planningProvider = planningProvider ?? throw new ArgumentNullException(nameof(planningProvider));
+        PropertyEditor = propertyEditor ?? throw new ArgumentNullException(nameof(propertyEditor));
     }
 
     public ObservableCollection<PlanningTreeItemViewModel> RootItems { get; } = [];
@@ -32,9 +46,16 @@ public partial class PlanningExplorerViewModel : ViewModelBase, IHasProperties
 
     public ObservableCollection<Diagnostic> Diagnostics { get; } = [];
 
+    /// <summary>
+    /// Gets the reusable property editor state for the selected Planning item.
+    /// </summary>
+    public PropertyEditorViewModel PropertyEditor { get; }
+
     private readonly Dictionary<string, string> _loadedDocumentTexts = new(StringComparer.OrdinalIgnoreCase);
 
     private PlanningReadRequest? _lastReadRequest;
+
+    private static readonly PropertyCategory PlanningCategory = new("Planning", "Planning");
 
     private ObservableCollection<IPropertyItem> PropertyItems { get; } = [];
 
@@ -262,28 +283,36 @@ public partial class PlanningExplorerViewModel : ViewModelBase, IHasProperties
         PropertyItems.Clear();
         if (item is null)
         {
+            PropertyEditor.SetItems(PropertyItems);
             return;
         }
 
-        PropertyItems.Add(new PlanningPropertyItemViewModel("Id", "ID", item.Id, false));
-        PropertyItems.Add(new PlanningPropertyItemViewModel("Title", "Title", item.Title, true, value =>
+        PropertyItems.Add(new PlanningPropertyItemViewModel(PlanningCategory, "Id", "ID", typeof(string), item.Id, false));
+        PropertyItems.Add(new PlanningPropertyItemViewModel(PlanningCategory, "Title", "Title", typeof(string), item.Title, true, value =>
         {
-            item.Title = value ?? string.Empty;
+            item.Title = (string?)value ?? string.Empty;
             OnPropertyChanged(nameof(SelectedItemTitle));
         }));
-        PropertyItems.Add(new PlanningPropertyItemViewModel("Kind", "Kind", item.Kind.ToString(), false));
-        PropertyItems.Add(new PlanningPropertyItemViewModel("Status", "Status", item.Status.ToString(), true, value =>
+        PropertyItems.Add(new PlanningPropertyItemViewModel(PlanningCategory, "Kind", "Kind", typeof(PlanningItemKind), item.Kind, false));
+        PropertyItems.Add(new PlanningPropertyItemViewModel(
+            PlanningCategory,
+            "Status",
+            "Status",
+            typeof(PlanningItemStatus),
+            item.Status,
+            true,
+            value =>
         {
-            if (!Enum.TryParse(value, true, out PlanningItemStatus parsedStatus))
-            {
-                return;
-            }
-
-            item.Status = parsedStatus;
+            item.Status = (PlanningItemStatus)value!;
             OnPropertyChanged(nameof(SelectedItemStatus));
-        }));
-        PropertyItems.Add(new PlanningPropertyItemViewModel("Parent", "Parent", item.ParentId, false));
-        PropertyItems.Add(new PlanningPropertyItemViewModel("SourcePath", "Source", item.SourcePath, false));
+        },
+            Enum.GetValues<PlanningItemStatus>()
+                .Select(static status => new PropertyOption(status, status.ToString()))
+                .ToArray(),
+            static value => Enum.TryParse(value, true, out PlanningItemStatus status) ? status : value));
+        PropertyItems.Add(new PlanningPropertyItemViewModel(PlanningCategory, "Parent", "Parent", typeof(string), item.ParentId, false));
+        PropertyItems.Add(new PlanningPropertyItemViewModel(PlanningCategory, "SourcePath", "Source", typeof(string), item.SourcePath, false));
+        PropertyEditor.SetItems(PropertyItems);
     }
 
     private string GetPlanningRootPathForWrite()

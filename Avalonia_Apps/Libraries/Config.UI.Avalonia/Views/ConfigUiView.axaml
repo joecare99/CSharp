@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:propertyEditor="using:Property.Editor.Avalonia.Views"
+             xmlns:vm="using:Config.UI.Avalonia.ViewModels"
+             x:Class="Config.UI.Avalonia.Views.ConfigUiView"
+             x:DataType="vm:ConfigUiViewModel">
+  <Grid ColumnDefinitions="180,*" ColumnSpacing="8">
+    <ListBox ItemsSource="{Binding Sections}"
+             SelectedItem="{Binding SelectedSection, Mode=TwoWay}">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Section.DisplayName}" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="8">
+      <StackPanel Spacing="2">
+        <TextBlock FontWeight="SemiBold" Text="{Binding SelectedSection.Section.DisplayName}" />
+        <TextBlock Opacity="0.75" Text="{Binding SelectedSection.Section.Description}" TextWrapping="Wrap" />
+      </StackPanel>
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6">
+        <Button Content="Load" Command="{Binding LoadCommand}" />
+        <Button Content="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" />
+        <Button Content="Reset" Command="{Binding ResetCommand}" IsEnabled="{Binding CanSave}" />
+      </StackPanel>
+      <propertyEditor:PropertyEditorPanel Grid.Row="2" DataContext="{Binding PropertyEditor}" />
+      <TextBlock Grid.Row="3"
+                 Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                 Text="{Binding ErrorMessage}"
+                 TextWrapping="Wrap" />
+    </Grid>
+  </Grid>
+</UserControl>

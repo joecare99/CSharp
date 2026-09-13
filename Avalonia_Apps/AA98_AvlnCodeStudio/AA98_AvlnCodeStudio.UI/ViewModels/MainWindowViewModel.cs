@@ -1,7 +1,11 @@
 ﻿using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.Editor.Services;
+using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
+using System;
 using System.IO;
 using AA98_AvlnCodeStudio.Planning.Core.Services;
+using Config.UI.Avalonia.ViewModels;
+using Project.Explorer.Avalonia.ViewModels;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels
 {
@@ -18,21 +22,43 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                         new Services.DesignTextDocumentStorageService()),
                     new EditorViewModel(),
                     new Controls.EditorTextArea()),
-                new PlanningExplorerViewModel(new MarkdownPlanningReader()))
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                new DiagnosticCollectionViewModel(),
+                null,
+                null)
         {
         }
 
-        public MainWindowViewModel(Components.IAvaloniaEditorComponent editorComponent, PlanningExplorerViewModel planningExplorer)
+        public MainWindowViewModel(
+            Components.IAvaloniaEditorComponent editorComponent,
+            PlanningExplorerViewModel planningExplorer,
+            DiagnosticCollectionViewModel diagnosticCollection,
+            ConfigUiViewModel? configUi,
+            ProjectExplorerViewModel? projectExplorer)
         {
             _editorComponent = editorComponent;
             Editor = editorComponent.EditorViewModel;
             PlanningExplorer = planningExplorer;
+            DiagnosticCollection = diagnosticCollection ?? throw new ArgumentNullException(nameof(diagnosticCollection));
+            ConfigUi = configUi;
+            ProjectExplorer = projectExplorer;
             PlanningExplorer.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
+            ProjectExplorer?.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
         }
 
         public EditorViewModel Editor { get; }
 
         public PlanningExplorerViewModel PlanningExplorer { get; }
+
+        public DiagnosticCollectionViewModel DiagnosticCollection { get; }
+
+        /// <summary>
+        /// Gets the host-composed reusable configuration UI state.
+        /// </summary>
+        public ConfigUiViewModel? ConfigUi { get; }
+
+        /// <summary>Gets the host-composed reusable project explorer state.</summary>
+        public ProjectExplorerViewModel? ProjectExplorer { get; }
 
         public Components.IAvaloniaEditorComponent EditorComponent => _editorComponent;
 

@@ -350,9 +350,9 @@
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="Libraries/Libraries.props" />
-    <Project Path="../CSharpBible/Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
-    <Project Path="../CSharpBible/Libraries/ConsoleLib.WinForms/ConsoleLib.WinForms.csproj" />
-    <Project Path="../CSharpBible/Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="Libraries/AppKomponentBaseLib.Tests/AppKomponentBaseLib.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
     <Project Path="Libraries/AppKomponentBaseLib/AppKomponentBaseLib.csproj" />
     <Project Path="Libraries/Avln_BaseLib/Avln_BaseLib.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
@@ -378,7 +378,79 @@
     <Project Path="Libraries/BaseLibTests/BaseLibTests.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
+    <Project Path="Libraries/Code.Navigation.Tests/Code.Navigation.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Code.Navigation/Code.Navigation.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Config.Service.Tests/Config.Service.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Config.Service/Config.Service.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Config.UI.Avalonia.Tests/Config.UI.Avalonia.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Config.UI.Avalonia/Config.UI.Avalonia.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Config.UI.ConfigService.Tests/Config.UI.ConfigService.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Config.UI.ConfigService/Config.UI.ConfigService.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Config.UI.Tests/Config.UI.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Config.UI/Config.UI.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/ConsoleLib.ExtCon/ConsoleLib.ExtCon.csproj" />
+    <Project Path="Libraries/ConsoleLib.Rendering/ConsoleLib.Rendering.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Release" />
+    </Project>
+    <Project Path="Libraries/ConsoleLib/ConsoleLib.csproj" />
+    <Project Path="Libraries/Diagnostics.Navigation.Tests/Diagnostics.Navigation.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Diagnostics.Navigation/Diagnostics.Navigation.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/ExtendedConsole/ExtendedConsole.csproj" />
     <Project Path="Libraries/MathLibrary/MathLibrary.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Project.Explorer.Avalonia.Tests/Project.Explorer.Avalonia.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Project.Explorer.Avalonia/Project.Explorer.Avalonia.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Project.Explorer.FileSystem.Tests/Project.Explorer.FileSystem.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Project.Explorer.FileSystem/Project.Explorer.FileSystem.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Project.Explorer.Tests/Project.Explorer.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Project.Explorer/Project.Explorer.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Property.Editor.Avalonia.Tests/Property.Editor.Avalonia.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Property.Editor.Avalonia/Property.Editor.Avalonia.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Property.Editor.Tests/Property.Editor.Tests.csproj">
+      <BuildType Solution="DesktopOnly|*" Project="Debug" />
+    </Project>
+    <Project Path="Libraries/Property.Editor/Property.Editor.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
     </Project>
   </Folder>
