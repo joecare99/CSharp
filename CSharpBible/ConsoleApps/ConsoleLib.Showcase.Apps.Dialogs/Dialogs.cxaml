@@ -1,0 +1,9 @@
+<Page Name="DialogsPage" Width="68" Height="19" BorderStyle="Single" BorderColor="DarkCyan" ForeColor="Gray" BackColor="Black">
+  <Label Name="DialogsTitle" Text="{Binding Title}" Width="62" Height="1" X="2" Y="1" ForeColor="Yellow" />
+  <Label Name="DialogsStatus" Text="{Binding Status}" Width="62" Height="1" X="2" Y="3" ForeColor="Cyan" />
+  <Button Name="SettingsButton" Text="Settings" Width="14" Height="1" X="2" Y="6" Command="{Binding OpenSettingsCommand}" />
+  <Button Name="OpenFileButton" Text="Open file" Width="14" Height="1" X="18" Y="6" Command="{Binding OpenFileCommand}" />
+  <Button Name="SaveFileButton" Text="Save file" Width="14" Height="1" X="34" Y="6" Command="{Binding SaveFileCommand}" />
+  <Button Name="PickFolderButton" Text="Pick folder" Width="14" Height="1" X="50" Y="6" Command="{Binding PickFolderCommand}" />
+  <Label Name="DialogsHint" Text="All dialogs are host-neutral resources." Width="62" Height="1" X="2" Y="10" />
+</Page>

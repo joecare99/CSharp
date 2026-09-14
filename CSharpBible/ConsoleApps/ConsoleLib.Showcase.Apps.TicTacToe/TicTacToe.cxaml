@@ -1,0 +1,13 @@
+<Page Name="TicTacToe" Text="Tic-Tac-Toe" Width="30" Height="15" BorderStyle="Single" BorderColor="DarkCyan" ForeColor="Gray" BackColor="Black">
+  <Label Name="Status" Text="{Binding Status}" Width="24" Height="1" X="2" Y="1" ForeColor="Yellow" />
+  <Button Name="Cell0" Text="{Binding Cell0Text}" Width="6" Height="1" X="3" Y="3" Command="{Binding Play0Command}" />
+  <Button Name="Cell1" Text="{Binding Cell1Text}" Width="6" Height="1" X="11" Y="3" Command="{Binding Play1Command}" />
+  <Button Name="Cell2" Text="{Binding Cell2Text}" Width="6" Height="1" X="19" Y="3" Command="{Binding Play2Command}" />
+  <Button Name="Cell3" Text="{Binding Cell3Text}" Width="6" Height="1" X="3" Y="5" Command="{Binding Play3Command}" />
+  <Button Name="Cell4" Text="{Binding Cell4Text}" Width="6" Height="1" X="11" Y="5" Command="{Binding Play4Command}" />
+  <Button Name="Cell5" Text="{Binding Cell5Text}" Width="6" Height="1" X="19" Y="5" Command="{Binding Play5Command}" />
+  <Button Name="Cell6" Text="{Binding Cell6Text}" Width="6" Height="1" X="3" Y="7" Command="{Binding Play6Command}" />
+  <Button Name="Cell7" Text="{Binding Cell7Text}" Width="6" Height="1" X="11" Y="7" Command="{Binding Play7Command}" />
+  <Button Name="Cell8" Text="{Binding Cell8Text}" Width="6" Height="1" X="19" Y="7" Command="{Binding Play8Command}" />
+  <Button Name="Restart" Text="Restart" Width="12" Height="1" X="9" Y="10" Command="{Binding RestartCommand}" />
+</Page>

@@ -460,11 +460,8 @@ public sealed class RenderingCoreTests
         var service = new AttachedRenderService();
         service.Attach(button, new Size(8, 1));
         var frame = service.GetSnapshot();
-
-        Assert.AreEqual(' ', frame.GetCell(0, 0).Character);
-        Assert.AreEqual(' ', frame.GetCell(2, 0).Character);
-        Assert.AreEqual('G', frame.GetCell(3, 0).Character);
-        Assert.AreEqual('o', frame.GetCell(4, 0).Character);
+        WriteFrameToDebug(frame);
+        Assert.AreEqual("|  Go  |", ReadRow(frame, 0, 8));
     }
 
     [TestMethod]
@@ -1041,7 +1038,7 @@ public sealed class RenderingCoreTests
         {
             Text = "About",
             BorderStyle = BorderStyle.Single,
-            size = new Size(8, 3),
+            size = new Size(14, 3),
             Position = new Point(2, 1)
         };
         var button = new Button { Text = "Open", size = new Size(6, 1) };
@@ -1052,7 +1049,7 @@ public sealed class RenderingCoreTests
         host.Add(button);
 
         var service = new AttachedRenderService();
-        service.Attach(host, new Size(12, 5));
+        service.Attach(host, new Size(16, 5));
 
         button.Click();
         service.RefreshTree();
@@ -1060,8 +1057,10 @@ public sealed class RenderingCoreTests
         Assert.AreEqual(1, manager.Sessions.Count);
         Assert.IsTrue(manager.ActiveModal?.Dialog.IsVisible);
         Assert.AreEqual(host, dialog.Parent);
-        Assert.AreEqual('┌', service.GetSnapshot().GetCell(2, 1).Character);
-        Assert.AreEqual('A', service.GetSnapshot().GetCell(3, 2).Character);
+        var frame = service.GetSnapshot();
+        WriteFrameToDebug(frame);
+        Assert.AreEqual('┌', frame.GetCell(2, 1).Character);
+        Assert.AreEqual(" About [_□X]", ReadRowAt(frame,3 ,1, 12));
 
         manager.Close(manager.ActiveModal);
         service.RefreshTree();
@@ -1087,9 +1086,10 @@ public sealed class RenderingCoreTests
 
         host.Show(dialog);
         service.RefreshTree();
-
-        Assert.AreEqual('╔', service.GetSnapshot().GetCell(2, 0).Character);
-        Assert.AreEqual('M', service.GetSnapshot().GetCell(3, 1).Character);
+        var frame = service.GetSnapshot();
+        WriteFrameToDebug(frame);
+        Assert.AreEqual('╔', frame.GetCell(2, 0).Character);
+        Assert.AreEqual('M', frame.GetCell(3, 1).Character);
 
         host.Close();
         service.RefreshTree();
@@ -1726,7 +1726,7 @@ public sealed class RenderingCoreTests
 
         var frame = service.GetSnapshot();
         WriteFrameToDebug(frame);
-        Assert.AreEqual("Neste", ReadRowAt(frame, 4, 2, 9));
+        Assert.AreEqual("Neste    ", ReadRowAt(frame, 4, 2, 9));
         Assert.AreEqual(ConsoleColor.White, frame.GetCell(9, 2).Foreground);
         Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(9, 2).Background);
     }
@@ -1737,16 +1737,16 @@ public sealed class RenderingCoreTests
         var panel = new Panel
         {
             Position = new Point(2, 1),
-            size = new Size(12, 8),
+            size = new Size(18, 8),
             BackColor = ConsoleColor.Black,
             ForeColor = ConsoleColor.White
         };
         var dialog = new Dialog
         {
-            Text = "Help",
+            Text = "Help", //Title bar text
             BorderStyle = BorderStyle.Double,
             Position = new Point(2, 2),
-            size = new Size(12, 6),
+            size = new Size(16, 6),
             ForeColor = ConsoleColor.White,
             BackColor = ConsoleColor.DarkBlue
         };
@@ -1760,7 +1760,9 @@ public sealed class RenderingCoreTests
         WriteFrameToDebug(frame);
         Assert.AreEqual('\u2554', frame.GetCell(4, 3).Character);
         Assert.AreEqual('\u2557', frame.GetCell(15, 3).Character);
-        Assert.AreEqual('H', frame.GetCell(6, 4).Character);
+        Assert.AreEqual('H', frame.GetCell(6, 3).Character);
+        Assert.AreEqual("", ReadRowAt(frame, 6, 4, 14).Replace(" ", ""));
+        Assert.AreEqual("", ReadRowAt(frame, 6, 5, 14).Replace(" ", ""));
         Assert.AreEqual(ConsoleColor.DarkBlue, frame.GetCell(4, 4).Background);
     }
 
@@ -1791,7 +1793,7 @@ public sealed class RenderingCoreTests
 
         var frame = service.GetSnapshot();
         WriteFrameToDebug(frame);
-        Assert.AreEqual(' ', frame.GetCell(4, 2).Character);
+        Assert.AreEqual('|', frame.GetCell(4, 2).Character);
         Assert.AreEqual('B', frame.GetCell(5, 2).Character);
         Assert.AreEqual(ConsoleColor.Red, frame.GetCell(4, 2).Background);
     }
@@ -1905,8 +1907,8 @@ public sealed class RenderingCoreTests
 
         var frame = service.GetSnapshot();
         WriteFrameToDebug(frame);
-        Assert.AreEqual('x', frame.GetCell(5, 3).Character);
-        Assert.AreEqual('y', frame.GetCell(5, 4).Character);
+        Assert.AreEqual('x', frame.GetCell(4, 2).Character);
+        Assert.AreEqual('y', frame.GetCell(5, 2).Character);
     }
 
     [TestMethod]

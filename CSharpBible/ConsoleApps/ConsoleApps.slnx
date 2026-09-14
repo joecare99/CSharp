@@ -5,10 +5,21 @@
     <Project Path="../Calc/Calc32Cons/Calc32.Cons.csproj" />
   </Folder>
   <Folder Name="/ConsoleApps/">
-    <Project Path="ConsoleLib.Showcase.Desktop.Tests/ConsoleLib.Showcase.Desktop.Tests.csproj" />
-    <Project Path="ConsoleLib.Showcase.Desktop/ConsoleLib.Showcase.Desktop.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Abstractions/ConsoleLib.Showcase.Apps.Abstractions.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Calculator/ConsoleLib.Showcase.Apps.Calculator.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Calendar/ConsoleLib.Showcase.Apps.Calendar.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Characters/ConsoleLib.Showcase.Apps.Characters.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Clock/ConsoleLib.Showcase.Apps.Clock.csproj" />
     <Project Path="ConsoleLib.Showcase.Apps.Dialogs.Tests/ConsoleLib.Showcase.Apps.Dialogs.Tests.csproj" />
     <Project Path="ConsoleLib.Showcase.Apps.Dialogs/ConsoleLib.Showcase.Apps.Dialogs.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Gallery/ConsoleLib.Showcase.Apps.Gallery.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Memory/ConsoleLib.Showcase.Apps.Memory.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Notepad/ConsoleLib.Showcase.Apps.Notepad.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.Terminal/ConsoleLib.Showcase.Apps.Terminal.csproj" />
+    <Project Path="ConsoleLib.Showcase.Apps.TicTacToe/ConsoleLib.Showcase.Apps.TicTacToe.csproj" />
+    <Project Path="ConsoleLib.Showcase.Desktop.Tests/ConsoleLib.Showcase.Desktop.Tests.csproj" />
+    <Project Path="ConsoleLib.Showcase.Desktop.Windows/ConsoleLib.Showcase.Desktop.Windows.csproj" />
+    <Project Path="ConsoleLib.Showcase.Desktop/ConsoleLib.Showcase.Desktop.csproj" />
     <Project Path="ConsoleLib.Showcase.Terminal.Core/ConsoleLib.Showcase.Terminal.Core.csproj" />
     <Project Path="ConsoleLib.Showcase.Tests/ConsoleLib.Showcase.Tests.csproj" />
     <Project Path="ConsoleLib.Showcase/ConsoleLib.Showcase.csproj" />
@@ -42,6 +53,9 @@
     <File Path="../Libraries/Libraries_net.props" />
     <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
     <Project Path="../Libraries/BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="../Libraries/Code.Navigation/Code.Navigation.csproj" />
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs.csproj" />
+    <Project Path="../Libraries/CommonDialogs/CommonDialogs_net.csproj" />
     <Project Path="../Libraries/ConsoleDisplay/ConsoleDisplay.csproj" />
     <Project Path="../Libraries/ConsoleDisplayTests/ConsoleDisplayTests.csproj" />
     <Project Path="../Libraries/ConsoleLib.CoreTests/ConsoleLib.CoreTests.csproj" />
@@ -56,10 +70,13 @@
     <Project Path="../Libraries/ConsoleLib/ConsoleLib.csproj" />
     <Project Path="../Libraries/ConsoleLibTests/ConsoleLibTests.csproj" />
     <Project Path="../Libraries/ExtendedConsole/ExtendedConsole.csproj" />
+    <Project Path="../Libraries/ExtendedConsoleSim/ExtendedConsoleSim.csproj" />
     <Project Path="../Libraries/MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="../Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+    <Project Path="../Libraries/Property.Editor/Property.Editor.csproj" />
     <Project Path="../Libraries/Terminal.Core/Terminal.Core.csproj" />
     <Project Path="../Libraries/WFSystem.Data/WFSystem.Windows.Data.csproj" />
+    <Project Path="C:/Projekte/CSharp/CSharpBible/Libraries/CommonDialogs.Abstractions/CommonDialogs.Abstractions.csproj" />
   </Folder>
   <Folder Name="/OpenAI/">
     <Project Path="../OpenAI/Ollama.Client/Ollama.Client.csproj" />

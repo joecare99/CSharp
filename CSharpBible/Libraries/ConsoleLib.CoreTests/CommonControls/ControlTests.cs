@@ -98,6 +98,17 @@ public class ControlTests : TestBase
     }
 
     [TestMethod]
+    public void RealDimAndLocalDim_Work2()
+    {
+        var p = new Panel { Dimension = new Rectangle(2, 2, 10, 2) };
+        var c = new TestControl { Dimension = new Rectangle(3, 0, 5, 1), Parent = p };
+        var real = c.RealDim;
+        Assert.AreEqual(new Rectangle(5, 2, 5, 1), real);
+        var loc = c.LocalDimOf(real, p);
+        Assert.AreEqual(new Rectangle(2, 2, 5, 1), loc);
+    }
+
+    [TestMethod]
     public void Click_Raises_OnClick()
     {
         var c = new TestControl();

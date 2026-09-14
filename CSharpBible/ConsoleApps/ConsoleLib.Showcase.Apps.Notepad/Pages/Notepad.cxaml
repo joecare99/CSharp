@@ -1,0 +1,8 @@
+<Panel Name="Notepad" Text="Notepad" Width="58" Height="20" BorderStyle="Single" BorderColor="DarkYellow" ForeColor="Gray" BackColor="Black">
+  <TextBox Name="Editor" Text="{Binding Document}" Width="52" Height="12" X="2" Y="2" />
+  <Button Name="New" Text="New" Width="10" Height="1" X="2" Y="15" Command="{Binding NewDocumentCommand}" />
+  <Button Name="Copy" Text="Copy" Width="10" Height="1" X="14" Y="15" Command="{Binding CopyCommand}" />
+  <Button Name="Paste" Text="Paste" Width="10" Height="1" X="26" Y="15" Command="{Binding PasteCommand}" />
+  <Label Name="Statistics" Text="{Binding Statistics}" Width="24" Height="1" X="2" Y="17" />
+  <Label Name="ClipboardStatus" Text="{Binding ClipboardStatus}" Width="30" Height="1" X="28" Y="17" ForeColor="DarkCyan" />
+</Panel>

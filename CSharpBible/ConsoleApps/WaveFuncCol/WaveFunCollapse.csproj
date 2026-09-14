@@ -1,12 +1,16 @@
 ﻿<Project>
 	<Import Project="..\ConsoleApps.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481;net48;net472;net462</TargetFrameworks>
+		<TargetFrameworks>net481;net48;net472;net462;net8.0</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="obj\**" />
@@ -21,6 +25,9 @@
 	  <Content Include="Resources\**">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Drawing.Common" Version="10.0.12" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />

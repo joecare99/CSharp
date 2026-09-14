@@ -37,6 +37,8 @@
 	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\Libraries\BaseLib\BaseLib.csproj" />
 		<ProjectReference Include="$(UpDir)\Libraries\ConsoleLib\ConsoleLib.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\ConsoleLib.ExtCon\ConsoleLib.ExtCon.csproj" />
+		<ProjectReference Include="$(UpDir)\Libraries\ExtendedConsole\ExtendedConsole.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Properties\Resources.Designer.cs">

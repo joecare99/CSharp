@@ -219,4 +219,5 @@ public class CxamlLoaderTests
         Assert.AreEqual(1, result.Diagnostics.Count);
         StringAssert.Contains(result.Diagnostics[0].Message, "ForeColor");
     }
-}
+
+    }
