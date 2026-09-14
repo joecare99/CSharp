@@ -1,3 +1,4 @@
+using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Dynamic;
@@ -70,14 +71,14 @@ namespace GenFree.Helper.Tests
             dynamic proxy = new DynProxy(typeof(SampleTarget));
 
             // Act / Assert
-            Assert.ThrowsException<RuntimeBinderException>(() => _ = proxy.MissingMember);
+            Assert.Throws<RuntimeBinderException>(() => _ = proxy.MissingMember);
         }
 
         [TestMethod]
         public void Constructor_WithNullType_ThrowsArgumentNullException()
         {
             // Act / Assert
-            Assert.ThrowsException<ArgumentNullException>(() => new DynProxy(null!));
+            Assert.Throws<ArgumentNullException>(() => new DynProxy(null!));
         }
     }
 }

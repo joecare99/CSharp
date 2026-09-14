@@ -2105,7 +2105,6 @@ public partial class OrtsVerViewModel : BaseViewModelCT, IOrtsVerViewModel
         //    Label32_Text = "Gewählter Ort\n" + ListBox4_SelectedItem.AsString().Left(-10);
         //    break;
         //}
-    end_IL_0001_3:
     }
     [RelayCommand]
     public void OpenDistancePanel()
