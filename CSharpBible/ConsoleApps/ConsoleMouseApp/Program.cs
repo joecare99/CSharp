@@ -55,7 +55,7 @@ namespace ConsoleMouseApp
             App?.Run();
 
             Console.Write("Programm end ...");
-            ConsoleLib.ExtCon.ConsoleFramework.ExtendedConsole?.Stop();
+            ConsoleFramework.ExtendedConsole?.Stop();
         }
 
         private static void Init()

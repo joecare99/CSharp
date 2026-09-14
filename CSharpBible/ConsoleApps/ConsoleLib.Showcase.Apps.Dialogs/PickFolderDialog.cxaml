@@ -1,0 +1,6 @@
+<Dialog Name="PickFolderDialog" Width="58" Height="10" BorderStyle="Single" BorderColor="DarkCyan" ForeColor="Gray" BackColor="Black">
+  <Label Name="DialogTitle" Text="{Binding Title}" Width="52" Height="1" X="2" Y="1" ForeColor="Yellow" />
+  <TextBox Name="PathTextBox" Width="52" Height="1" X="2" Y="3" Text="{Binding Path}" />
+  <Button Name="SelectButton" Text="Select" Width="10" Height="1" X="29" Y="7" />
+  <Button Name="CancelButton" Text="Cancel" Width="10" Height="1" X="42" Y="7" />
+</Dialog>

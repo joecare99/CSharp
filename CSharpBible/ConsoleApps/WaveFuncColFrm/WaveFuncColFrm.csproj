@@ -20,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\WFSystem.Data\WFSystem.Windows.Data.csproj" />
     <ProjectReference Include="..\TestConsole\TestConsole_net.csproj" />
-    <ProjectReference Include="..\WaveFuncCol\WaveFunCollapse_net.csproj" />
+    <ProjectReference Include="..\WaveFuncCol\WaveFunCollapse.csproj" />
   </ItemGroup>
 
   <ItemGroup>

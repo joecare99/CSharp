@@ -1,0 +1,9 @@
+<Dialog Name="SettingsDialog" Width="48" Height="12" BorderStyle="Single" BorderColor="DarkCyan" ForeColor="Gray" BackColor="Black">
+  <Label Name="SettingsTitle" Text="{Binding Title}" Width="42" Height="1" X="2" Y="1" ForeColor="Yellow" />
+  <Label Name="ThemeLabel" Text="Theme:" Width="10" Height="1" X="2" Y="3" />
+  <TextBox Name="ThemeTextBox" Width="27" Height="1" X="13" Y="3" Text="{Binding Theme}" />
+  <CheckBox Name="AnimationsCheckBox" Text="Enable animations" Width="24" Height="1" X="2" Y="5" IsChecked="true" />
+  <CheckBox Name="StatusBarCheckBox" Text="Show status bar" Width="20" Height="1" X="2" Y="6" IsChecked="true" />
+  <Button Name="ApplyButton" Text="Apply" Width="10" Height="1" X="24" Y="9" />
+  <Button Name="CancelButton" Text="Cancel" Width="10" Height="1" X="35" Y="9" />
+</Dialog>

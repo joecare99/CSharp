@@ -102,6 +102,31 @@ public sealed class CxamlBindingTests
         Assert.AreEqual(ConsoleColor.Cyan, button.HLBackColor);
     }
 
+    [TestMethod]
+    public void Load_RejectsInvalidAcceleratorLength()
+    {
+        var error = Assert.ThrowsExactly<CxamlParseException>(() =>
+            new CxamlLoader().Load(new StringReader("<Button Accelerator=\"AB\" />")));
+
+        StringAssert.Contains(error.Message, "Accelerator");
+    }
+
+    [TestMethod]
+    public void Load_RejectsInvalidOrDuplicateNameInLoadContext()
+    {
+        var invalidName = Assert.ThrowsExactly<CxamlParseException>(() =>
+            new CxamlLoader().Load(
+                new StringReader("<StackPanel><Button Name=\"1bad\" /></StackPanel>"),
+                new CxamlLoadContext(new BindingModel())));
+        StringAssert.Contains(invalidName.Message, "Invalid or duplicate");
+
+        var duplicateName = Assert.ThrowsExactly<CxamlParseException>(() =>
+            new CxamlLoader().Load(
+                new StringReader("<StackPanel><Button Name=\"item\" /><Label Name=\"item\" /></StackPanel>"),
+                new CxamlLoadContext(new BindingModel())));
+        StringAssert.Contains(duplicateName.Message, "Invalid or duplicate");
+    }
+
     private sealed class BindingModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;

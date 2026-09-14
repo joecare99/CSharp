@@ -1,0 +1,12 @@
+<Page Name="Memory" Text="Memory" Width="32" Height="15" BorderStyle="Single" BorderColor="DarkMagenta" ForeColor="Gray" BackColor="Black">
+  <Label Name="Status" Text="{Binding Status}" Width="28" Height="1" X="2" Y="1" ForeColor="Yellow" />
+  <Button Name="Card0" Text="{Binding Card0Text}" Width="6" Height="1" X="4" Y="3" Command="{Binding Select0Command}" />
+  <Button Name="Card1" Text="{Binding Card1Text}" Width="6" Height="1" X="12" Y="3" Command="{Binding Select1Command}" />
+  <Button Name="Card2" Text="{Binding Card2Text}" Width="6" Height="1" X="20" Y="3" Command="{Binding Select2Command}" />
+  <Button Name="Card3" Text="{Binding Card3Text}" Width="6" Height="1" X="4" Y="5" Command="{Binding Select3Command}" />
+  <Button Name="Card4" Text="{Binding Card4Text}" Width="6" Height="1" X="12" Y="5" Command="{Binding Select4Command}" />
+  <Button Name="Card5" Text="{Binding Card5Text}" Width="6" Height="1" X="20" Y="5" Command="{Binding Select5Command}" />
+  <Button Name="Card6" Text="{Binding Card6Text}" Width="6" Height="1" X="8" Y="7" Command="{Binding Select6Command}" />
+  <Button Name="Card7" Text="{Binding Card7Text}" Width="6" Height="1" X="16" Y="7" Command="{Binding Select7Command}" />
+  <Button Name="Restart" Text="Restart" Width="12" Height="1" X="10" Y="10" Command="{Binding RestartCommand}" />
+</Page>

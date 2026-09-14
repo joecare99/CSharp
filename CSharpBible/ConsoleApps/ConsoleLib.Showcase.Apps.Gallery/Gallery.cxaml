@@ -1,0 +1,4 @@
+<Page Name="GalleryPage" Width="80" Height="28" BorderStyle="Single" BorderColor="DarkCyan" ForeColor="Gray" BackColor="Black">
+  <Label Name="GalleryTitle" Text="{Binding Title}" Width="76" Height="1" X="2" Y="2" ForeColor="Yellow" />
+  <Button Name="AdvanceButton" Text="Advance" Width="12" Height="1" X="63" Y="2" Command="{Binding AdvanceCommand}" />
+</Page>
