@@ -465,6 +465,10 @@ public class Control : IControl
             else
                 result.Offset(Point.Subtract(igc.RealDim.Location, (Size)igc.Offset));
         }
+        else
+            if (Parent is IControl ict)
+                result.Offset(ict.RealDim.Location);
+
         return result;
     }
 
