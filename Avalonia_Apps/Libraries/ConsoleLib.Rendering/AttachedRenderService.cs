@@ -149,11 +149,15 @@ public sealed class AttachedRenderService : IDisposable
 
 
     /// <summary>Debug: print all control dimensions through tree.</summary>
-    private static void DebugPrintDimensions(IControl control)
+    private static void DebugPrintDimensions(IControl control, int indent = 0)
     {
-        System.Console.WriteLine($"  Control '{control.GetType().Name}' dim=({control.Dimension.X},{control.Dimension.Y}) RealDim=({control.RealDim.X},{control.RealDim.Y})");
+        var indentString = new string(' ', indent * 2);
+        if (control is IGroupControl igc)
+            System.Console.WriteLine($"{indentString}Group '{igc.GetType().Name}' dim=({igc.Dimension.X},{igc.Dimension.Y}) RealDim=({igc.RealDim.X},{igc.RealDim.Y}) Ofs=({igc.Offset.X},{igc.Offset.Y})");
+        else
+            System.Console.WriteLine($"{indentString}Control '{control.GetType().Name}' dim=({control.Dimension.X},{control.Dimension.Y}) RealDim=({control.RealDim.X},{control.RealDim.Y})");
         foreach (var child in control.Children)
-            DebugPrintDimensions(child);
+            DebugPrintDimensions(child, indent + 1);
     }
 
     private void ThrowIfDisposed()
