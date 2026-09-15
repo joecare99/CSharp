@@ -351,8 +351,11 @@ public sealed class ConsoleWidgetSet : IWidgetSet, IConsoleWidgetHost
             if (line.Length < width)
                 line = line.PadRight(width);
             else if (line.Length > width)
+#if NET5_0_OR_GREATER
                 line = line[..width];
-
+#else
+                line = line.Substring(0, width);
+#endif
             ConsoleFramework.Canvas.OutTextXY(
                 new Point(label.RealDim.X, label.RealDim.Y + row),
                 line);
