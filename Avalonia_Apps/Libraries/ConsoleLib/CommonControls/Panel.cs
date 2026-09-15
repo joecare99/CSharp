@@ -112,7 +112,15 @@ public class Panel : Control, IGroupControl, IHasBorder
 
     public virtual IGroupControl AddChild(IControl control)
     {
-        Children.Add(control);
+        if (control.Parent != this)
+            control.Parent?.Remove(control);
+        if (control.Parent == null)
+        {
+            Children.Add(control);
+            control.Parent = this;
+        }
+        else if (!Children.Contains(control))
+            Children.Add(control);
         return this;
     }
 
