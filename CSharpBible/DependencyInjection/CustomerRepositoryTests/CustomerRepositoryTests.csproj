@@ -13,7 +13,7 @@
     <PackageReference Include="NSubstitute" Version="6.2.0" />
     <PackageReference Include="JustMock" Version="2026.3.811.528" />
     <PackageReference Include="Castle.Windsor" Version="6.0.0" />
-    <PackageReference Include="FluentAssertions" Version="8.10.0" />
+    <PackageReference Include="FluentAssertions" Version="8.11.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageReference Include="MSTest" Version="4.4.0" />
     <PackageReference Include="coverlet.collector" Version="10.0.1">
