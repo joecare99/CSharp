@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>OFBCreator.Console</RootNamespace>
+    <AssemblyName>OFBCreator.Console</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Libraries\sgLib.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <!-- Core OFB Creator Libraries -->
+    <ProjectReference Include="..\OFBCreator.Abstractions\OFBCreator.Abstractions.csproj" />
+    <ProjectReference Include="..\OFBCreator.Core\OFBCreator.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Application packages -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+</Project>

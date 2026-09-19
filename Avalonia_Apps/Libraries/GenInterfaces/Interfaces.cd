@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenBase">
+    <Position X="14.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Interfaces\Genealogic\IGenBase.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="eGenType" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenFact">
+    <Position X="15.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAIAAAAAAAQABABAEEAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Genealogic\IGenFact.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MainEntity" />
+      <Property Name="Date" />
+      <Property Name="eFactType" />
+      <Property Name="Place" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Sources" />
+      <Property Name="Entities" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenEntity">
+    <Position X="13.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAJAAAAAACAAAAAAAAAAAAAAAAEQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Genealogic\IGenEntity.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="End" />
+      <Property Name="Start" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Connects" />
+      <Property Name="Facts" />
+      <Property Name="Sources" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenPlace">
+    <Position X="17.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAEAAAAAAAAAIQAQQAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Genealogic\IGenPlace.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Parent" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenConnects">
+    <Position X="11" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Genealogic\IGenConnects.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Entity" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="GenFree2Base.Interfaces.IGenTransaction" Collapsed="true">
+    <Position X="8.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAICAAAAAAAAAFAAAAAAAAAAgAA=</HashCode>
+      <FileName>Interfaces\IGenTransaction.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenealogy">
+    <Position X="6.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAABAAAAAAgQCAAAAEAAAAAIAIA=</HashCode>
+      <FileName>Interfaces\Genealogic\IGenealogy.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Entitys" />
+      <Property Name="Transactions" />
+      <Property Name="Places" />
+      <Property Name="Sources" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenObject" Collapsed="true">
+    <Position X="17.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Genealogic\IGenObject.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenDate">
+    <Position X="20" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Genealogic\IGenDate.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GenInterfaces.Interfaces.Genealogic.IGenSources">
+    <Position X="22.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Genealogic\IGenSources.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="GenInterfaces.Data.EFactType" Collapsed="true">
+    <Position X="15.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAkVAlCAYuAglNQgQUAgSYoQDABIAAAga5AgAVQsIQg=</HashCode>
+      <FileName>Data\EFactType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="GenInterfaces.Data.EGenType" Collapsed="true">
+    <Position X="17.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAABAAAAAAAEABAIAAAAEAAAAAICIA=</HashCode>
+      <FileName>Data\EGenType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
