@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>OFBCreator.Abstractions</RootNamespace>
+    <AssemblyName>OFBCreator.Abstractions</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Libraries\sgLib.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <!-- Reference local Avalonia_Apps Libraries for base interfaces -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\GenInterfaces\GenInterfaces.csproj" />
+    <ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
+    <!--<ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Base\Avln_CommonDialogs.Base.csproj" />-->
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/DocumentUtils/">
+    <Project Path="../../CSharpBible/Data/DocumentUtils/Document.Base/Document.Base.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <File Path="../Libraries/Libraries.props" />
+    <Project Path="../Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
+    <Project Path="../Libraries/BaseLib/BaseLib.csproj" />
+    <Project Path="../Libraries/GenInterfaces/GenInterfaces.csproj" />
+  </Folder>
+  <Folder Name="/OFBCreator/">
+    <File Path="Directory.Packages.props" />
+    <File Path="Directory.target.props" />
+    <Project Path="OFBCreator.Abstractions.Tests/OFBCreator.Abstractions.Tests.csproj" />
+    <Project Path="OFBCreator.Abstractions/OFBCreator.Abstractions.csproj" />
+    <Project Path="OFBCreator.Console/OFBCreator.Console.csproj" />
+    <Project Path="OFBCreator.Core.Tests/OFBCreator.Core.Tests.csproj" />
+    <Project Path="OFBCreator.Core/OFBCreator.Core.csproj" />
+  </Folder>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="../Packages.props" />
+  </Folder>
+</Solution>
