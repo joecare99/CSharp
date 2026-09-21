@@ -680,8 +680,15 @@ public sealed partial class DesignerViewModel : ObservableObject
             return control.size.Width.ToString();
         if (name.Equals("Height", StringComparison.OrdinalIgnoreCase))
             return control.size.Height.ToString();
-        return Convert.ToString(control.GetType().GetProperty(name)?.GetValue(control), System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty;
-    }
+        try
+        {
+            return  Convert.ToString(control.GetType().GetProperty(name)?.GetValue(control), System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty;
+        }
+        catch(Exception e)
+        {
+            return e.Message;
+        }
+        }
 
     private static string GetPropertyCategory(string name) =>
         name switch
