@@ -8,6 +8,8 @@
     <Project Path="BaseLib.Show/BaseLib.Show.csproj" />
     <Project Path="BaseLib/BaseLib.csproj" />
     <Project Path="BaseLibTests/BaseLibTests.csproj" />
+    <Project Path="Code.Navigation.Tests/Code.Navigation.Tests.csproj" />
+    <Project Path="Code.Navigation/Code.Navigation.csproj" />
     <Project Path="CommonDialogs.Abstractions/CommonDialogs.Abstractions.csproj">
       <Build Solution="Debug|*" Project="false" />
     </Project>
@@ -24,6 +26,8 @@
     <Project Path="MathLibraryTests/MathLibraryTests.csproj" />
     <Project Path="MVVM_BaseLib/MVVM_BaseLib.csproj" />
     <Project Path="MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
+    <Project Path="Property.Editor.Tests/Property.Editor.Tests.csproj" />
+    <Project Path="Property.Editor/Property.Editor.csproj" />
     <Project Path="WFSystem.Data/WFSystem.Windows.Data.csproj" />
   </Folder>
   <Folder Name="/Libraries/ConsoleLib/">
