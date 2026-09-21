@@ -3,5 +3,6 @@
              x:Class="ConsoleLib.Cxaml.Designer.App">
   <Application.Styles>
     <FluentTheme />
+	  <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
   </Application.Styles>
 </Application>
