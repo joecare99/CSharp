@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using GenInterfaces.Interfaces.Genealogic;
 
 namespace OFBCreator.Abstractions.Models;

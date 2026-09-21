@@ -3,6 +3,8 @@
 /// </summary>
 namespace OFBCreator.Abstractions.Models;
 
+using System;
+using System.Collections.Generic;
 using GenInterfaces.Interfaces;
 using OFBCreator.Abstractions.Interfaces;
 

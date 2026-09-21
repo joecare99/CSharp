@@ -1,3 +1,5 @@
+using System;
+
 namespace OFBCreator.Abstractions.Models;
 
 /// <summary>

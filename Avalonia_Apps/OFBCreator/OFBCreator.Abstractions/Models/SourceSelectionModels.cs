@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
 
@@ -109,6 +111,14 @@ public sealed class OFBSourceSelection
     /// Global identity counter — the last assigned family number used for display formatting.
     /// </summary>
     public int LastGlobalNumber { get; init; }
+
+    /// <summary>
+    /// Test data source for unit test scenarios. Contains raw object arrays (e.g., OFBFamilyModel)
+    /// that support duck-typed property access (SourceRefId, Husband, Wife, Children, etc.).
+    /// When populated, DocumentComposer uses this instead of SelectedFamilies to enable
+    /// testing without full IGenFamily implementations. Should be null in production.
+    /// </summary>
+    public object? TestFamilyData { get; set; }
 
     /// <summary>
     /// Creates an empty selection with no data and a zero global counter.
