@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>OFBCreator.Core</RootNamespace>
     <AssemblyName>OFBCreator.Core</AssemblyName>
     <SignAssembly>true</SignAssembly>
@@ -29,7 +29,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 
-  <!-- Document Utils (from CSharpBible Data) -->
+  <!-- Document Base (IUserDocument interface) -->
   <ItemGroup>
     <ProjectReference Include="..\..\..\CSharpBible\Data\DocumentUtils\Document.Base\Document.Base.csproj" />
   </ItemGroup>

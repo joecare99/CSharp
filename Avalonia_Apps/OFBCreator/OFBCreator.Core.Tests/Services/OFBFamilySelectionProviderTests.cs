@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using GenInterfaces.Interfaces.Genealogic;

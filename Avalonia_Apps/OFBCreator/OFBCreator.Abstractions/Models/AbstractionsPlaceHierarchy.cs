@@ -1,3 +1,5 @@
+using System;
+
 /// <summary>
 /// Hierarchical place node for tree-structured place index.
 /// Shared contract between Abstractions and Core — both layers use this type directly.

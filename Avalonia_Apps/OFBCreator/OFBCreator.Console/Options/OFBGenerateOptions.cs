@@ -61,4 +61,10 @@ public sealed class OFBGenerateOptions
     /// Determines the file extension for the output document based on selected format.
     /// </summary>
     public string OutputExtension => UseDocxFormat ? "docx" : "odt";
+
+    /// <summary>
+    /// Optional explicit data source provider identifier (e.g., 'gedcom', 'winahnen').
+    /// When null or empty, the data source is auto-detected by probing with CanRead.
+    /// </summary>
+    public string? DataSource { get; init; }
 }
