@@ -7,12 +7,12 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageReference Include="MSTest.TestAdapter" VersionOverride="4.3.3">
-      <Version>4.4.0</Version>
+      <Version>4.4.1</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework" VersionOverride="4.3.3">
-      <Version>4.4.0</Version>
+      <Version>4.4.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
