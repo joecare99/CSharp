@@ -154,6 +154,7 @@
       <BuildDependency Project="../CSharpBible/Libraries/MVVM_BaseLibTests/MVVM_BaseLibTests.csproj" />
     </Project>
     <Project Path="GenFreeWinVm2/GenFreeWinVm2.csproj" />
+    <Project Path="VBUnObfusicator.Cli/VBUnObfusicator.Cli.csproj" />
     <Project Path="GPUpd1/GPUpd1.csproj" />
     <Project Path="MapDemo/MapDemo.csproj" />
     <Project Path="PlaceAuthorityConsoleDemo/PlaceAuthorityConsoleDemo.csproj" />

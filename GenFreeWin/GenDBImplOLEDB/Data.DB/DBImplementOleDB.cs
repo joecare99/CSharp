@@ -11,6 +11,8 @@ using System.Data.OleDb;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace GenFree.Data.DB;
 
@@ -136,23 +138,45 @@ public static class DBImplementOleDB
 
         public IDatabase CreateDatabase(string sDBName, string? sSQLChreate = null)
         {
-            // Pseudocode:
-            // 1. Erzeuge eine neue Access-Datenbankdatei mit ADOX.
-            // 2. Nutze SQL DDL, um ggf. Initialstruktur zu erzeugen (optional).
-            // 3. Öffne die neue Datenbank und gib ein IDatabase-Objekt zurück.
-
-            // 1. Überprüfe, ob die Datei existiert und lösche sie ggf.
             if (System.IO.File.Exists(sDBName))
-                System.IO.File.Delete(sDBName);
-
-            // 2. Erstelle die Datenbank mit ADOX
-
-            // 4. Öffne die neue Datenbank und gib das IDatabase-Objekt zurück
-            var result = new OleDbConnection(new OleDbConnectionStringBuilder
             {
-                Provider = (IntPtr.Size == 8) ? Settings.Default.OleDB_Provider64 : Settings.Default.OleDB_Provider,
+                System.IO.File.Delete(sDBName);
+            }
+
+            var provider = IntPtr.Size == 8 ? Settings.Default.OleDB_Provider64 : Settings.Default.OleDB_Provider;
+            var connectionString = new OleDbConnectionStringBuilder
+            {
+                Provider = provider,
                 DataSource = sDBName
-            }.ConnectionString);
+            }.ConnectionString;
+
+            var catalogType = Type.GetTypeFromProgID("ADOX.Catalog");
+            if (catalogType == null)
+            {
+                throw new NotSupportedException(
+                    "The ADOX.Catalog COM component is required to create an Access database.");
+            }
+
+            object? catalog = null;
+            try
+            {
+                catalog = Activator.CreateInstance(catalogType);
+                catalogType.InvokeMember(
+                    "Create",
+                    BindingFlags.InvokeMethod,
+                    binder: null,
+                    target: catalog,
+                    args: new object[] { connectionString });
+            }
+            finally
+            {
+                if (catalog != null && Marshal.IsComObject(catalog))
+                {
+                    Marshal.FinalReleaseComObject(catalog);
+                }
+            }
+
+            var result = new OleDbConnection(connectionString);
             result.Open();
             return new CDatabase(result);
         }
