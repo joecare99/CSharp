@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace OFBCreator.Abstractions.Tests.Models;
