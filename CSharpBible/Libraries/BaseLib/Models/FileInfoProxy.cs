@@ -1,4 +1,5 @@
 using BaseLib.Models.Interfaces;
+using System;
 using System.IO;
 
 namespace BaseLib.Models;
@@ -24,6 +25,9 @@ public sealed class FileInfoProxy : IFileInfo
     public string Extension => _fileInfo.Extension;
 
     public long Length => _fileInfo.Length;
+
+    /// <inheritdoc />
+    public DateTime LastWriteTime => _fileInfo.LastWriteTime;
 
     public bool Exists => _fileInfo.Exists;
 }

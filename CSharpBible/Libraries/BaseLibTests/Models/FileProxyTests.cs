@@ -54,6 +54,7 @@ public sealed class FileProxyTests
         Assert.AreEqual("info.txt", fileInfo.Name);
         Assert.AreEqual(".txt", fileInfo.Extension);
         Assert.AreEqual(sContents.Length, fileInfo.Length);
+        Assert.IsTrue(fileInfo.LastWriteTime <= DateTime.Now);
     }
 
     [TestMethod]
@@ -197,6 +198,17 @@ public sealed class FileProxyTests
     }
 
     [TestMethod]
+    public void GetAccessControl_ForExistingFile_ReturnsSecurityDescriptor()
+    {
+        var sPath = Path.Combine(_sTestDirectory, "access-control.txt");
+        File.WriteAllText(sPath, "content");
+
+        var fileSecurity = _fileProxy.GetAccessControl(sPath);
+
+        Assert.IsNotNull(fileSecurity);
+    }
+
+    [TestMethod]
     [DataRow(false, "source")]
     [DataRow(true, "new")]
     public void Copy_CopiesFileToDestination(bool xOverwrite, string sExpectedDestinationContent)
@@ -223,5 +235,20 @@ public sealed class FileProxyTests
 
         Assert.IsFalse(File.Exists(sSourcePath));
         Assert.AreEqual("moved", File.ReadAllText(sDestinationPath));
+    }
+
+    [TestMethod]
+    public void Replace_ReplacesDestinationAndCreatesBackup()
+    {
+        var sSourcePath = Path.Combine(_sTestDirectory, "source-replace.txt");
+        var sDestinationPath = Path.Combine(_sTestDirectory, "destination-replace.txt");
+        var sBackupPath = Path.Combine(_sTestDirectory, "backup-replace.txt");
+        File.WriteAllText(sSourcePath, "new");
+        File.WriteAllText(sDestinationPath, "old");
+
+        _fileProxy.Replace(sSourcePath, sDestinationPath, sBackupPath);
+
+        Assert.AreEqual("new", File.ReadAllText(sDestinationPath));
+        Assert.AreEqual("old", File.ReadAllText(sBackupPath));
     }
 }
