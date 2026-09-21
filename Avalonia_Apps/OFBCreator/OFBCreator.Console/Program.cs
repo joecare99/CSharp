@@ -1,20 +1,12 @@
-/// <summary>
-/// OFB Creator - Ortsfamilienbuch Generator (Console Application).
-/// </summary>
-/// <remarks>
-/// Headless CLI for batch generation of local family books from GEDCOM data.
-/// Output is generated via IUserDocument abstraction for maximum format flexibility.
-/// Supported indices: Person, Occupation, Property, Place Hierarchy, Place Alphabetical.
-/// </remarks>
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using GenInterfaces.Interfaces.Genealogic.Drivers;
-using IGenImportDriver = GenInterfaces.Interfaces.Genealogic.Drivers.IGenImportDriver<GenInterfaces.Interfaces.Genealogic.IGenealogy>;
-using Document.Base.Factories;
-using Document.Base.Models.Interfaces;
+using Microsoft.Extensions.Logging;
+using OFBCreator.Abstractions.Interfaces;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
 
@@ -26,95 +18,86 @@ public static class Program
     /// <summary>
     /// Entry point for the OFB Creator console application.
     /// </summary>
-    private static async Task<int> Main( string[] args )
+    private static async Task<int> Main(string[] args)
     {
         var services = new ServiceCollection();
 
-        // Register GEDCOM import driver (user will configure via DI)
-        // For now, register a placeholder — user can override with their own setup
-        services.AddSingleton<IGenImportDriver>( _ => null! ); // Replace with actual IGenImportDriver implementation
-        services.AddSingleton<IUserDocumentFactory, UserDocumentFactoryImpl>();
+        // Register data source providers
+        services.AddSingleton<GedComDataSource>();
+        services.AddSingleton<WinAhnenDataSource>();
+        services.AddSingleton<SecureStoreDataSource>();
+
+        // Register the registry and populate with default providers
+        services.AddSingleton<IFamilyDataSourceRegistry>(sp =>
+        {
+            var registry = new DefaultFamilyDataSourceRegistry();
+            registry.RegisterProvider(sp.GetRequiredService<GedComDataSource>());
+            registry.RegisterProvider(sp.GetRequiredService<WinAhnenDataSource>());
+            registry.RegisterProvider(sp.GetRequiredService<SecureStoreDataSource>());
+            return registry;
+        });
+
+        // Register document factory (wraps CSharpBible DocumentUtils)
+        services.AddSingleton<IUserDocumentFactory, OFBDocumentFactory>();
 
         var serviceProvider = services.BuildServiceProvider();
 
-        var rootCommand = new RootCommand( "Ortsfamilienbuch Generator" )
-        {
-            GenerateCommand( serviceProvider ),
-            ExportCommand( serviceProvider )
-        };
+        var rootCommand = new RootCommand("Ortsfamilienbuch Generator");
+        var generateCmd = GenerateCommand(serviceProvider);
+        var exportCmd = ExportCommand(serviceProvider);
+        rootCommand.Add(generateCmd);
+        rootCommand.Add(exportCmd);
 
-        return await rootCommand.InvokeAsync( args );
+        return await rootCommand.Parse(args).InvokeAsync();
     }
 
     /// <summary>
     /// Creates the 'generate' command with all GEDCOM-to-OFB options.
     /// </summary>
-    private static Command GenerateCommand( IServiceProvider serviceProvider )
+    private static Command GenerateCommand(IServiceProvider serviceProvider)
     {
-        var inputOption = new Option<string>(
-            name: "--input",
-            description: "Path to the source GEDCOM file" )
-        { IsRequired = true };
+        var inputOption = new Option<string>("--input", "Path to the source data file (GEDCOM or other format)");
+        var outputOption = new Option<string>("--output", "Path to the output OFB document (.docx/.odt)");
+        var titleOption = new Option<string>("--title", "Title of the Ortsfamilienbuch");
+        var placeIdOption = new Option<string?>("--place-id", "GedCom reference ID for the primary place filter (optional)");
+        var includeDescendants = new Option<bool>("--include-descendants", "Include descendants of families in this place");
+        var prefaceOption = new Option<string?>("--preface", "Preface/introduction text for the OFB");
+        var legendOption = new Option<string?>("--legend", "Character explanation/legend text");
+        var docxOption = new Option<bool>("--docx", "Use DOCX format (default)");
+        var odtOption = new Option<bool>("--odt", "Use ODF (ODT) format instead of DOCX");
+        var dataSourceOption = new Option<string>("--data-source", "-s",
+            "Data source provider: 'gedcom' (default), 'winahnen', 'securestore', or leave empty for auto-detect");
 
-        var outputOption = new Option<string>(
-            name: "--output",
-            description: "Path to the output OFB document (.docx/.odt)" )
-        { IsRequired = true };
-
-        var titleOption = new Option<string>(
-            name: "--title",
-            description: "Title of the Ortsfamilienbuch" )
-        { IsRequired = true };
-
-        var placeIdOption = new Option<string?>(
-            name: "--place-id",
-            description: "GedCom reference ID for the primary place filter (optional)" );
-
-        var includeDescendants = new Option<bool>(
-            name: "--include-descendants",
-            description: "Include descendants of families in this place" );
-
-        var prefaceOption = new Option<string?>(
-            name: "--preface",
-            description: "Preface/introduction text for the OFB" );
-
-        var legendOption = new Option<string?>(
-            name: "--legend",
-            description: "Character explanation/legend text" );
-
-        var docxOption = new Option<bool>(
-            name: "--docx",
-            description: "Use DOCX format (default)" );
-        docxOption.AddAlias( "-d" );
-
-        var odtOption = new Option<bool>(
-            name: "--odt",
-            description: "Use ODF (ODT) format instead of DOCX" );
-        odtOption.AddAlias( "-o" );
-
-        var command = new Command( "generate", "Generate OFB from GEDCOM data" )
+        var command = new Command("generate", "Generate OFB from genealogical data")
         {
             inputOption, outputOption, titleOption, placeIdOption,
-            includeDescendants, prefaceOption, legendOption, docxOption, odtOption
+            includeDescendants, prefaceOption, legendOption, docxOption, odtOption, dataSourceOption
         };
 
-        command.SetHandler( async context =>
+        command.SetAction(async context =>
         {
+            var dataSource = string.IsNullOrWhiteSpace(context.GetValue(dataSourceOption))
+                ? null
+                : context.GetValue(dataSourceOption);
+
+            var docxUsed = context.GetValue(docxOption);
+            var odtUsed = context.GetValue(odtOption);
+
             var options = new OFBGenerateOptions()
             {
-                InputPath = context.ParseResult.GetValueForOption( inputOption ),
-                OutputPath = context.ParseResult.GetValueForOption( outputOption ),
-                Title = context.ParseResult.GetValueForOption( titleOption ),
-                PlaceId = context.ParseResult.GetValueForOption( placeIdOption ),
-                IncludeDescendants = context.ParseResult.GetValueForOption( includeDescendants ),
-                Preface = context.ParseResult.GetValueForOption( prefaceOption ),
-                Legend = context.ParseResult.GetValueForOption( legendOption ),
-                UseDocxFormat = context.ParseResult.GetValueForOption( docxOption ) ||
-                                !context.ParseResult.GetValueForOption( odtOption ),
+                InputPath = context.GetValue(inputOption)!,
+                OutputPath = context.GetValue(outputOption)!,
+                Title = context.GetValue(titleOption)!,
+                PlaceId = context.GetValue(placeIdOption),
+                IncludeDescendants = context.GetValue(includeDescendants),
+                Preface = context.GetValue(prefaceOption),
+                Legend = context.GetValue(legendOption),
+                UseDocxFormat = docxUsed || (!odtUsed && !context.GetValue(odtOption)),
+                DataSource = dataSource,
             };
 
-            await RunExportAsync( options, serviceProvider );
-        } );
+            await RunExportAsync(options, serviceProvider);
+        });
 
         return command;
     }
@@ -122,31 +105,35 @@ public static class Program
     /// <summary>
     /// Creates the 'export' command for loading from a JSON config file.
     /// </summary>
-    private static Command ExportCommand( IServiceProvider serviceProvider )
+    private static Command ExportCommand(IServiceProvider serviceProvider)
     {
-        var configOption = new Option<string>(
-            name: "--config",
-            description: "Path to OFB configuration JSON file" )
-        { IsRequired = true };
+        var configOption = new Option<string>("--config");
 
-        var command = new Command( "export", "Export OFB using JSON configuration" )
+        var command = new Command("export", "Export OFB using JSON configuration")
         {
             configOption
         };
 
-        command.SetHandler( async context =>
+        command.SetAction(context =>
         {
-            var configPath = context.ParseResult.GetValueForOption( configOption );
-            var options = await LoadConfigAsync( configPath );
-            if ( options is null )
+            var configPath = context.GetValue(configOption);
+            if (string.IsNullOrEmpty(configPath))
             {
-                System.Console.Error.WriteLine( $"Error: Failed to load config from '{configPath}'" );
-                Environment.Exit( 1 );
+                System.Console.Error.WriteLine("Error: Config path is required");
+                Environment.Exit(1);
                 return;
             }
 
-            await RunExportAsync( options, serviceProvider );
-        } );
+            var options = LoadConfigAsync(configPath).GetAwaiter().GetResult();
+            if (options is null)
+            {
+                System.Console.Error.WriteLine($"Error: Failed to load config from '{configPath}'");
+                Environment.Exit(1);
+                return;
+            }
+
+            RunExportAsync(options, serviceProvider).GetAwaiter().GetResult();
+        });
 
         return command;
     }
@@ -154,45 +141,62 @@ public static class Program
     /// <summary>
     /// Orchestrates the full OFB generation pipeline.
     /// </summary>
-    private static async Task RunExportAsync( OFBGenerateOptions options, IServiceProvider serviceProvider )
+    private static async Task RunExportAsync(OFBGenerateOptions options, IServiceProvider serviceProvider)
     {
         try
         {
-            System.Console.WriteLine( "Starting OFB Creator..." );
-            System.Console.WriteLine( $"  Input:    {options.InputPath}" );
-            System.Console.WriteLine( $"  Output:   {options.OutputPath}" );
-            System.Console.WriteLine( $"  Title:    {options.Title}" );
+            System.Console.WriteLine("Starting OFB Creator...");
+            System.Console.WriteLine($"  Input:    {options.InputPath}");
+            System.Console.WriteLine($"  Output:   {options.OutputPath}");
+            System.Console.WriteLine($"  Title:    {options.Title}");
 
-            var exportService = new ConsoleExportService(
-                serviceProvider.GetRequiredService<IGenImportDriver>(),
-                serviceProvider.GetRequiredService<IUserDocumentFactory>() );
-            await exportService.ExportAsync( options );
+            // Resolve data source provider (or auto-detect)
+            var registry = serviceProvider.GetRequiredService<IFamilyDataSourceRegistry>();
+            IFamilyDataSource dataSource;
 
-            System.Console.WriteLine( "OFB generation completed successfully." );
-        }
-        catch ( Exception ex )
-        {
-            System.Console.Error.WriteLine( $"\nError during OFB generation:" );
-            System.Console.Error.WriteLine( ex.Message );
-
-            if ( Environment.GetEnvironmentVariable( "OFBCREATOR_DEBUG" ) == "1" )
+            if (!string.IsNullOrWhiteSpace(options.DataSource))
             {
-                System.Console.Error.WriteLine( $"\nStack trace:\n{ex.StackTrace}" );
+                dataSource = registry.GetProvider(options.DataSource)
+                    ?? throw new ArgumentException($"Unknown data source: '{options.DataSource}'. Available: {string.Join(", ", registry.ListProviders().Select(p => p.SourceId))}");
+                System.Console.WriteLine($"  Data Source: {dataSource.DisplayName}");
+            }
+            else
+            {
+                // Auto-detect by probing the stream with each provider's CanRead
+                using var probeStream = new FileStream(options.InputPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                dataSource = registry.DetectProvider(probeStream)
+                    ?? throw new ArgumentException($"Unable to detect data source for '{options.InputPath}'. Use --data-source to specify.");
+                System.Console.WriteLine($"  Data Source: {dataSource.DisplayName} (auto-detected)");
             }
 
-            Environment.Exit( 1 );
+            var exportService = new ConsoleExportService(dataSource, serviceProvider.GetRequiredService<IUserDocumentFactory>());
+            await exportService.ExportAsync(options);
+
+            System.Console.WriteLine("OFB generation completed successfully.");
+        }
+        catch (Exception ex)
+        {
+            System.Console.Error.WriteLine($"\nError during OFB generation:");
+            System.Console.Error.WriteLine(ex.Message);
+
+            if (Environment.GetEnvironmentVariable("OFBCREATOR_DEBUG") == "1")
+            {
+                System.Console.Error.WriteLine($"\nStack trace:\n{ex.StackTrace}");
+            }
+
+            Environment.Exit(1);
         }
     }
 
     /// <summary>
     /// Loads OFB generation options from a JSON configuration file.
     /// </summary>
-    private static async Task<OFBGenerateOptions?> LoadConfigAsync( string configPath )
+    private static async Task<OFBGenerateOptions?> LoadConfigAsync(string configPath)
     {
-        if ( !File.Exists( configPath ) )
+        if (!File.Exists(configPath))
             return null;
 
-        var json = await File.ReadAllTextAsync( configPath );
-        return System.Text.Json.JsonSerializer.Deserialize<OFBGenerateOptions>( json );
+        var json = await File.ReadAllTextAsync(configPath);
+        return System.Text.Json.JsonSerializer.Deserialize<OFBGenerateOptions>(json);
     }
 }

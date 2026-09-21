@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+
 using BaseLib.Models.Interfaces;
 using Document.Base.Models.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
-using IGenImportDriver = GenInterfaces.Interfaces.Genealogic.Drivers.IGenImportDriver<GenInterfaces.Interfaces.Genealogic.IGenealogy>;
+using OFBCreator.Abstractions.Interfaces;
 using OFBCreator.Abstractions.Models;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
@@ -15,15 +17,15 @@ using OFBCreator.Core.Services;
 /// </summary>
 /// <remarks>
 /// Responsibilities:
-/// 1. Load GEDCOM via IGenImportDriver dependency injection.
+/// 1. Load genealogical data via IFamilyDataSource dependency injection.
 /// 2. Build name groups and sort families by FamilyName + FormationDate.
 /// 3. Assign global family numbers (4-5 digit with leading zeros).
 /// 4. Generate all indices (Person, Occupation, Property, PlaceHierarchy, PlaceAlphabetical).
 /// 5. Compose the OFB document via IUserDocument abstraction (DOCX or ODT).
 /// </remarks>
-public sealed class ConsoleExportService( IGenImportDriver gedcomDriver, IUserDocumentFactory documentFactory )
+public sealed class ConsoleExportService( IFamilyDataSource dataSource, IUserDocumentFactory documentFactory )
 {
-    private readonly IGenImportDriver _gedcomDriver = gedcomDriver;
+    private readonly IFamilyDataSource _dataSource = dataSource;
     private readonly IUserDocumentFactory _documentFactory = documentFactory;
 
     /// <summary>
@@ -40,15 +42,10 @@ public sealed class ConsoleExportService( IGenImportDriver gedcomDriver, IUserDo
         if ( string.IsNullOrWhiteSpace( options.Title ) )
             throw new ArgumentException( "OFB title is required.", nameof( options ) );
 
-        // Step 1: Load GEDCOM data
-        System.Console.WriteLine( "Loading GEDCOM..." );
+        // Step 1: Load genealogical data via IFamilyDataSource (GEDCOM or other source)
+        System.Console.WriteLine( $"Loading from {_dataSource.DisplayName}..." );
         using var fs = new FileStream( options.InputPath, FileMode.Open, FileAccess.Read, FileShare.Read );
-        var result = await _gedcomDriver.ImportAsync( fs );
-
-        if ( result == null || !result.Success || result.Payload?.Entitys == null )
-            throw new InvalidOperationException( $"No families found in '{options.InputPath}'" );
-
-        var genealogy = result.Payload;
+        var genealogy = await _dataSource.ImportAsync( fs );
         var allFamilies = genealogy.Entitys.OfType<IGenFamily>().ToList();
 
         if ( allFamilies.Count == 0 )
