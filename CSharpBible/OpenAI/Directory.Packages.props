@@ -16,7 +16,7 @@
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.10.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.12" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.10.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.2" />
     <PackageVersion Include="UglyToad.PdfPig" Version="1.7.0-custom-5" />
@@ -26,9 +26,9 @@
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     <PackageVersion Include="System.Text.Json" Version="10.0.11" />
     <PackageVersion Include="System.ValueTuple" Version="4.6.2" />
-    <PackageVersion Include="MSTest" Version="4.4.0" />
+    <PackageVersion Include="MSTest" Version="4.4.1" />
     <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
-    <PackageVersion Include="OpenAI" Version="2.13.0" />
+    <PackageVersion Include="OpenAI" Version="2.14.0" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <!-- Add runtime dependency for non-string resources used by net481 build; pick version with netstandard2.0 support -->
     <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="2.2.0" />
