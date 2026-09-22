@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 
 namespace BaseLib.Models.Interfaces;
@@ -19,4 +20,12 @@ public interface IDirectory
     /// </summary>
     /// <param name="sPath">The directory path.</param>
     void CreateDirectory(string sPath);
+
+    /// <summary>
+    /// Gets the files directly contained in the specified directory.
+    /// </summary>
+    /// <param name="sPath">The directory path.</param>
+    /// <param name="sSearchPattern">The search pattern.</param>
+    /// <returns>Metadata abstractions for the matching files.</returns>
+    IReadOnlyList<IFileInfo> GetFiles(string sPath, string sSearchPattern);
 }

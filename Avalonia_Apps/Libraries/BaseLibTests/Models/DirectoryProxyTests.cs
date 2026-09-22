@@ -54,4 +54,17 @@ public sealed class DirectoryProxyTests
 
         Assert.IsTrue(Directory.Exists(sNestedDirectory));
     }
+
+    [TestMethod]
+    public void GetFiles_ReturnsMatchingFileMetadata()
+    {
+        Directory.CreateDirectory(_sTestDirectory);
+        File.WriteAllText(Path.Combine(_sTestDirectory, "first.log"), "first");
+        File.WriteAllText(Path.Combine(_sTestDirectory, "second.txt"), "second");
+
+        var files = _directoryProxy.GetFiles(_sTestDirectory, "*.log");
+
+        Assert.AreEqual(1, files.Count);
+        Assert.AreEqual("first.log", files[0].Name);
+    }
 }

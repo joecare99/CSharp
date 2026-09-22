@@ -1,3 +1,5 @@
+using System;
+
 namespace BaseLib.Models.Interfaces;
 
 /// <summary>
@@ -29,6 +31,11 @@ public interface IFileInfo
     /// Gets the file length in bytes.
     /// </summary>
     long Length { get; }
+
+    /// <summary>
+    /// Gets the date and time when the file was last written.
+    /// </summary>
+    DateTime LastWriteTime { get; }
 
     /// <summary>
     /// Gets whether the file exists.

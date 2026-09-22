@@ -1,4 +1,5 @@
 ﻿using BaseLib.Models.Interfaces;
+using System.Security.AccessControl;
 using System.IO;
 using System.Text;
 
@@ -8,6 +9,10 @@ public class FileProxy : IFile
 {
     public bool Exists(string sPath)
         => File.Exists(sPath);
+
+    /// <inheritdoc />
+    public FileSecurity GetAccessControl(string sPath)
+        => new FileInfo(sPath).GetAccessControl();
 
     public IFileInfo GetFileInfo(string sPath)
         => new FileInfoProxy(sPath);
@@ -36,4 +41,8 @@ public class FileProxy : IFile
         => File.Copy(sSourceFileName, sDestFileName, xOverwrite);
     public void Move(string sSourceFileName, string sDestFileName)
         => File.Move(sSourceFileName, sDestFileName);
+
+    /// <inheritdoc />
+    public void Replace(string sSourceFileName, string sDestinationFileName, string sDestinationBackupFileName)
+        => File.Replace(sSourceFileName, sDestinationFileName, sDestinationBackupFileName);
 }
