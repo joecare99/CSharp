@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Security.AccessControl;
 using System.Text;
 
 namespace BaseLib.Models.Interfaces;
@@ -14,6 +15,13 @@ public interface IFile
     /// <param name="sPath">The file path.</param>
     /// <returns><see langword="true"/> if the file exists; otherwise <see langword="false"/>.</returns>
     bool Exists(string sPath);
+
+    /// <summary>
+    /// Gets the access-control information for the specified file.
+    /// </summary>
+    /// <param name="sPath">The file path.</param>
+    /// <returns>The file access-control information.</returns>
+    FileSecurity GetAccessControl(string sPath);
 
     /// <summary>
     /// Gets file metadata for the specified path.
@@ -107,4 +115,12 @@ public interface IFile
     /// <param name="sSourceFileName">The source file path.</param>
     /// <param name="sDestFileName">The destination file path.</param>
     void Move(string sSourceFileName, string sDestFileName);
+
+    /// <summary>
+    /// Replaces the destination file with the source file and creates a backup.
+    /// </summary>
+    /// <param name="sSourceFileName">The source file path.</param>
+    /// <param name="sDestinationFileName">The destination file path.</param>
+    /// <param name="sDestinationBackupFileName">The backup file path.</param>
+    void Replace(string sSourceFileName, string sDestinationFileName, string sDestinationBackupFileName);
 }
