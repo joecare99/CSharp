@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 
 namespace BaseLib.Models;
@@ -16,6 +17,9 @@ public sealed class FakeFileSystem : IFile, IDirectory, IPath
 
     public bool Exists(string sPath)
         => _files.ContainsKey(sPath) || _directories.Contains(sPath);
+
+    public FileSecurity GetAccessControl(string sPath)
+        => throw new NotSupportedException();
 
     public IFileInfo GetFileInfo(string sPath)
         => _fileInfos.TryGetValue(sPath, out var fileInfo)
@@ -77,6 +81,12 @@ public sealed class FakeFileSystem : IFile, IDirectory, IPath
         }
     }
 
+    public void Replace(string sSourceFileName, string sDestinationFileName, string sDestinationBackupFileName)
+    {
+        Copy(sDestinationFileName, sDestinationBackupFileName, xOverwrite: true);
+        Move(sSourceFileName, sDestinationFileName);
+    }
+
     public void Move(string sSourceFileName, string sDestFileName)
     {
         _files[sDestFileName] = ReadAllBytes(sSourceFileName).ToArray();
@@ -90,6 +100,13 @@ public sealed class FakeFileSystem : IFile, IDirectory, IPath
 
     public void CreateDirectory(string sPath)
         => _directories.Add(sPath);
+
+    public IReadOnlyList<IFileInfo> GetFiles(string sPath, string sSearchPattern)
+        => _fileInfos.Values
+            .Where(fileInfo => string.Equals(fileInfo.DirectoryName, sPath, StringComparison.OrdinalIgnoreCase))
+            .Where(fileInfo => fileInfo.Name.EndsWith(sSearchPattern.TrimStart('*'), StringComparison.OrdinalIgnoreCase))
+            .Cast<IFileInfo>()
+            .ToArray();
 
     public string GetFullPath(string sPath)
         => sPath.StartsWith("ROOT:", StringComparison.OrdinalIgnoreCase) ? sPath : "ROOT:" + sPath;
@@ -150,6 +167,7 @@ public sealed class FakeFileSystem : IFile, IDirectory, IPath
             Extension = Path.GetExtension(sPath);
             Exists = xExists;
             Length = fLength;
+            LastWriteTime = DateTime.Now;
         }
 
         public string FullName { get; }
@@ -163,6 +181,8 @@ public sealed class FakeFileSystem : IFile, IDirectory, IPath
         public long Length { get; }
 
         public bool Exists { get; }
+
+        public DateTime LastWriteTime { get; }
 
         public FakeFileInfo WithPath(string sPath)
             => new(sPath, Exists, Length);
