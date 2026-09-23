@@ -441,4 +441,31 @@ public class CodeBlock : ICodeBlock
     {
         return this == other;
     }
+
+    /// <summary>
+    /// Calculates the size of a contiguous chunk of sibling code blocks starting at the specified block.
+    /// </summary>
+    /// <remarks>Scanning proceeds through following siblings and stops when the condition evaluates to false
+    /// or when the sibling index reaches the method's upper boundary check.</remarks>
+    /// <param name="item">Code block that defines the chunk start and provides parent and index context.</param>
+    /// <param name="predicate">Optional condition that each subsequent sibling must satisfy to remain in the chunk; when null, all eligible
+    /// siblings are accepted.</param>
+    /// <returns>The number of blocks in the chunk, including the starting block, or 0 when no parent code block is available or
+    /// the index is outside the valid range.</returns>
+    public static int CalcChunksize(ICodeBlock item, Predicate<ICodeBlock>? predicate = null)
+    {
+        if (item.Parent is ICodeBlock codeBlock)
+        {
+            if (item.Index < 0 || item.Index >= codeBlock.SubBlocks.Count)
+                return 0;
+
+            int l = 1;
+            while (item.Index + l < codeBlock.SubBlocks.Count - 1
+                && predicate?.Invoke(codeBlock.SubBlocks[item.Index + l]) != false)
+                l++;
+            return l;
+        }
+        else
+            return 0;
+    }
 }

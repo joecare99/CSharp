@@ -1527,6 +1527,18 @@
             <param name="other">Other block to compare.</param>
             <returns><c>true</c> if same reference; otherwise <c>false</c>.</returns>
         </member>
+        <member name="M:TranspilerLib.Models.Scanner.CodeBlock.CalcChunksize(TranspilerLib.Interfaces.Code.ICodeBlock,System.Predicate{TranspilerLib.Interfaces.Code.ICodeBlock})">
+            <summary>
+            Calculates the size of a contiguous chunk of sibling code blocks starting at the specified block.
+            </summary>
+            <remarks>Scanning proceeds through following siblings and stops when the condition evaluates to false
+            or when the sibling index reaches the method's upper boundary check.</remarks>
+            <param name="item">Code block that defines the chunk start and provides parent and index context.</param>
+            <param name="predicate">Optional condition that each subsequent sibling must satisfy to remain in the chunk; when null, all eligible
+            siblings are accepted.</param>
+            <returns>The number of blocks in the chunk, including the starting block, or 0 when no parent code block is available or
+            the index is outside the valid range.</returns>
+        </member>
         <member name="T:TranspilerLib.Models.Scanner.CodeBuilder">
             <summary>
             Abstrakte Basisklasse zur Erstellung eines hierarchischen <see cref="T:TranspilerLib.Interfaces.Code.ICodeBlock"/>-Baumes
