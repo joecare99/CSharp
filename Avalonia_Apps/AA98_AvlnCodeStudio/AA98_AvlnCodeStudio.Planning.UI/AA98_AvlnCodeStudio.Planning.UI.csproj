@@ -28,6 +28,6 @@
 	<ProjectReference Include="..\..\Libraries\Property.Editor.Avalonia\Property.Editor.Avalonia.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="Avalonia" Version="12.1.2" />
+    <PackageVersion Update="Avalonia" Version="12.1.3" />
   </ItemGroup>
 </Project>
