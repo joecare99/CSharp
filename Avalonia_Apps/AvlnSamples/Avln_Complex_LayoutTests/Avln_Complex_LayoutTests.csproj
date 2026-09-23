@@ -7,7 +7,7 @@
  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
  <PackageReference Include="MSTest" Version="4.4.1" />
  <PackageReference Include="NSubstitute" Version="6.2.0" />
- <PackageReference Include="Avalonia.Headless" Version="12.1.2" />
+ <PackageReference Include="Avalonia.Headless" Version="12.1.3" />
  </ItemGroup>
  <ItemGroup>
  <ProjectReference Include="..\Avln_Complex_Layout\Avln_Complex_Layout.csproj" />
