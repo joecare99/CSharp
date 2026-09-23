@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseLib.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TranspilerLib.CSharp.Data;
@@ -71,7 +72,7 @@ public partial class CSCode : CodeBase, ICSCode
     {
         stringEndChars = stringEndChars,
         reservedWords = ReservedWords
-    }, new CSCodeBuilder(), new CodeOptimizer())
+    }, IoC.GetRequiredService<ICodeBuilder>(), IoC.GetRequiredService<ICodeOptimizer>())
     {
     }
 
@@ -196,7 +197,7 @@ public partial class CSCode : CodeBase, ICSCode
             for (var i = labels.Count - 1; i > 0; i--)
                 if (labels[i - 1].Index > labels[i].Index)
                 {
-                    var l = CodeOptimizer.CalcChunksize(labels[i - 1]);
+                    var l = CodeBlock.CalcChunksize(labels[i - 1], cb => cb.Type is not CodeBlockType.Label and not CodeBlockType.Block);
                     //   System.Diagnostics.Debug.WriteLine($"Move[{i - 1}] ({labels[i - 1].Index},{labels[i].Index},{l})");
                     _ = codeBlock.MoveSubBlocks(labels[i - 1].Index, labels[i], l);
                     // System.Diagnostics.Debug.WriteLine($"List: ({string.Join(", ", labels.Cast<CodeBlock>().Select((cb) => cb.Index))})");
