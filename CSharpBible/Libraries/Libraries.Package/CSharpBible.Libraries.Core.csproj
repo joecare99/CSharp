@@ -8,7 +8,7 @@
 		<PackageId>JCSoft.CSharpBible.Libraries.Core</PackageId>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageOutputPath>$(UpDir)\..\.packages</PackageOutputPath>
-		<Version>1.0.1-b</Version>
+		<Version>1.0.2</Version>
 		<Title>CSharpBible Libraries Core</Title>
 		<Description>Core package for the platform-neutral CSharpBible libraries.</Description>
 		<PackageReadmeFile>README.Core.md</PackageReadmeFile>
