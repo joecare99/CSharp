@@ -21,6 +21,10 @@ public class ConsoleProxy : IConsole
     private int _windowTop;
     private int _windowWidth;
 
+    public ITextWriter Error { get; } = new TextWriterProxy(Console.Error);
+    public ITextReader In { get; } = new TextReaderProxy(Console.In);
+    public ITextWriter Out { get; } = new TextWriterProxy(Console.Out);
+
     public ConsoleColor ForegroundColor
     {
         get => GetValue(() => Console.ForegroundColor, _foregroundColor);
