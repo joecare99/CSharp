@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Osb.Core.Selection;
 
@@ -56,6 +57,28 @@ public sealed record FamilySelectionRequest
     public short TraversalStep { get; }
 
     public FamilySelectionOptions Options { get; }
+
+    public static FamilySelectionRequest FromLegacyState(
+        int initialPersonId,
+        int initialFamilyId,
+        int malePersonId,
+        int femalePersonId,
+        short traversalStep,
+        IReadOnlyList<string?> legacyOptions)
+    {
+        if (legacyOptions == null)
+        {
+            throw new ArgumentNullException(nameof(legacyOptions));
+        }
+
+        return new FamilySelectionRequest(
+            initialPersonId,
+            initialFamilyId,
+            malePersonId,
+            femalePersonId,
+            traversalStep,
+            FamilySelectionOptions.FromLegacySlots(legacyOptions));
+    }
 }
 
 public sealed record FamilySelectionOptions
@@ -100,6 +123,20 @@ public sealed record FamilySelectionOptions
 
     public bool ExcludeSponsorOrWitnessOnlyPeople { get; }
 
+    public static FamilySelectionOptions FromLegacySlots(IReadOnlyList<string?> legacyOptions)
+    {
+        if (legacyOptions == null)
+        {
+            throw new ArgumentNullException(nameof(legacyOptions));
+        }
+
+        return new FamilySelectionOptions(
+            GetRequiredSlot(legacyOptions, 81),
+            GetSwitch(legacyOptions, 82),
+            GetRequiredSlot(legacyOptions, 83),
+            GetSwitch(legacyOptions, 94));
+    }
+
     private static bool IsDigitsOnly(string value)
     {
         for (var index = 0; index < value.Length; index++)
@@ -111,5 +148,32 @@ public sealed record FamilySelectionOptions
         }
 
         return true;
+    }
+
+    private static string GetRequiredSlot(IReadOnlyList<string?> legacyOptions, int index)
+    {
+        if (index >= legacyOptions.Count)
+        {
+            throw new ArgumentException($"Legacy option slot {index} is missing.", nameof(legacyOptions));
+        }
+
+        var value = legacyOptions[index];
+        if (value == null)
+        {
+            throw new ArgumentException($"Legacy option slot {index} is null.", nameof(legacyOptions));
+        }
+
+        return value;
+    }
+
+    private static bool GetSwitch(IReadOnlyList<string?> legacyOptions, int index)
+    {
+        var value = GetRequiredSlot(legacyOptions, index);
+        return value switch
+        {
+            "0" => false,
+            "1" => true,
+            _ => throw new ArgumentException($"Legacy option slot {index} must contain 0 or 1.", nameof(legacyOptions))
+        };
     }
 }
