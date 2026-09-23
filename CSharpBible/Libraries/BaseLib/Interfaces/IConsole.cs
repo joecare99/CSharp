@@ -213,4 +213,9 @@ public interface IConsole
     /// </summary>
     /// <param name="st">The string to write. Can be <c>null</c> or empty. Defaults to an empty string.</param>
     void WriteLine(string? st = "");
+
+    ITextWriter Error { get; }
+    ITextReader In { get; }
+    ITextWriter Out { get; }
+
 }
