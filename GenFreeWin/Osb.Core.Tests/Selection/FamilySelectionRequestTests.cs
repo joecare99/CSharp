@@ -52,6 +52,39 @@ public sealed class FamilySelectionRequestTests
             () => new FamilySelectionOptions("20200000", false, "2020ABCD", false));
     }
 
+    [TestMethod]
+    public void FromLegacyState_MapsOnlySelectionRelevantSlots()
+    {
+        var legacyOptions = new string?[95];
+        legacyOptions[81] = "20200000";
+        legacyOptions[82] = "1";
+        legacyOptions[83] = "20210000";
+        legacyOptions[94] = "0";
+
+        var request = FamilySelectionRequest.FromLegacyState(1, 2, 3, 4, 5, legacyOptions);
+
+        Assert.AreEqual("20200000", request.Options.PersonCutoffDate);
+        Assert.IsTrue(request.Options.ExcludeFamiliesAfterCutoff);
+        Assert.AreEqual("20210000", request.Options.FamilyCutoffDate);
+        Assert.IsFalse(request.Options.ExcludeSponsorOrWitnessOnlyPeople);
+    }
+
+    [TestMethod]
+    public void FromLegacyState_RejectsMissingOrInvalidSelectionSlots()
+    {
+        var missingOptions = new string?[94];
+        Assert.ThrowsExactly<ArgumentException>(
+            () => FamilySelectionRequest.FromLegacyState(0, 0, 0, 0, 0, missingOptions));
+
+        var invalidOptions = new string?[95];
+        invalidOptions[81] = "20200000";
+        invalidOptions[82] = "yes";
+        invalidOptions[83] = "20210000";
+        invalidOptions[94] = "0";
+        Assert.ThrowsExactly<ArgumentException>(
+            () => FamilySelectionRequest.FromLegacyState(0, 0, 0, 0, 0, invalidOptions));
+    }
+
     private static FamilySelectionRequest CreateRequest()
     {
         return new FamilySelectionRequest(
