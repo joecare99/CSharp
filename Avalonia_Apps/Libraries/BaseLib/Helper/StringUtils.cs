@@ -17,6 +17,7 @@
 using BaseLib.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security;
 
@@ -635,9 +636,11 @@ public static class StringUtils
     {
         string s => s,
         IHasValue f => f.Value.AsString(),
+        byte[] ab => "(" + string.Join(", ", ab) + ")",
         null => "",
         object o => o.ToString() ?? "",
     };
+
 
     /// <summary>
     /// Copies elements from a string array into a target list of strings at a specified offset.

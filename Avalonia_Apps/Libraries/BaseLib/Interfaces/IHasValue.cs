@@ -5,5 +5,5 @@ public interface IHasValue : IHasValue<object>
 }
 public interface IHasValue<T>
 {
-    T? Value { get; }
+    T? Value { get; set; }
 }
