@@ -75,6 +75,8 @@ public static class ObjectHelper
             int i => i,
             uint ui => unchecked((int)ui),
             string s => int.TryParse(s, out int i) ? i : def,
+            float f => (int)f,
+            double d => (int)d,
             IHasValue f => f.Value.AsInt(),
             null => def,
             DBNull => def,
@@ -82,6 +84,45 @@ public static class ObjectHelper
             _ => def
         };
 
+        /// <summary>
+        /// Converts an object to a 32-bit signed integer.
+        /// </summary>
+        /// <param name="obj">The object to convert. Can be <see langword="null"/>.</param>
+        /// <param name="format">The format provider to use for conversion. Defaults to <see cref="CultureInfo.InvariantCulture"/>.</param>
+        /// <returns>
+        /// The converted <see cref="int"/> value, or <paramref name="def"/> if conversion is not possible.
+        /// </returns>
+        /// <remarks>
+        /// <para>The conversion is performed using the following priority:</para>
+        /// <list type="number">
+        ///   <item><description>If <paramref name="obj"/> is already an <see cref="int"/>, returns it directly.</description></item>
+        ///   <item><description>If <paramref name="obj"/> is a <see cref="uint"/>, performs an unchecked cast to <see cref="int"/>.</description></item>
+        ///   <item><description>If <paramref name="obj"/> is a <see cref="string"/>, attempts to parse it as an integer.</description></item>
+        ///   <item><description>If <paramref name="obj"/> implements <see cref="IHasValue"/>, recursively converts its <see cref="IHasValue.Value"/>.</description></item>
+        ///   <item><description>If <paramref name="obj"/> is <see langword="null"/> or <see cref="DBNull"/>, returns <paramref name="def"/>.</description></item>
+        ///   <item><description>If <paramref name="obj"/> implements <see cref="IConvertible"/>, uses <see cref="IConvertible.ToInt32(IFormatProvider)"/> with <see cref="CultureInfo.InvariantCulture"/>.</description></item>
+        /// </list>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// uint result1 = "42".AsUInt();           // Returns 42
+        /// uint result2 = ((object)null).AsUInt(); // Returns 0
+        /// uint result3 = "invalid".AsUInt();    // Returns 0
+        /// </code>
+        /// </example>
+        public uint AsUInt(IFormatProvider? format = null) => obj switch
+        {
+            uint u => u,
+            int i => (uint)i,
+            float f => (uint)f,
+            double d => (uint)d,
+            string s when uint.TryParse(s, NumberStyles.Float, format ?? CultureInfo.InvariantCulture, out var u) => u,
+            string _ => default,
+            IHasValue hv => hv.Value.AsUInt(format),
+            null => default,
+            IConvertible c => c.ToUInt32(format ?? CultureInfo.InvariantCulture),
+            _ => default,
+        };
         /// <summary>
         /// Converts an object to a 64-bit signed integer.
         /// </summary>
@@ -240,11 +281,12 @@ public static class ObjectHelper
         /// double result3 = ((object)null).AsDouble();                      // Returns 0.0
         /// </code>
         /// </example>
-        public double AsDouble(CultureInfo? culture = null) => obj switch
+        public double AsDouble(IFormatProvider? culture = null) => obj switch
         {
             double d => d,
+            float f => (double)f,
             string s when double.TryParse(s, NumberStyles.Float, culture ?? CultureInfo.InvariantCulture, out var d) => d,
-            string s => default,
+            string _ => default,
             IHasValue f => f.Value.AsDouble(culture),
             null => default,
             DBNull => default,

@@ -1,7 +1,7 @@
 <Project>
   <Import Project="..\Libraries.props" />
   <PropertyGroup>
-	<TargetFrameworks>net462;net472;net48;net481;net8.0</TargetFrameworks>
+		<TargetFrameworks>net462;net472;net48;net481;net6.0-windows10.0.19041.0;net7.0-windows10.0.19041.0;net8.0;net8.0-windows10.0.19041.0</TargetFrameworks>
 	<NoDefaultExcludes>true</NoDefaultExcludes>
 	<IsPackable>true</IsPackable>
 	<IncludeBuildOutput>false</IncludeBuildOutput>
@@ -17,35 +17,61 @@
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
-		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+		<TargetFrameworks>$(TargetFrameworks);net9.0;net9.0-windows10.0.19041.0</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
-		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+		<TargetFrameworks>$(TargetFrameworks);net10.0;net10.0-windows10.0.19041.0</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
 		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
 	</PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-	<PackageReference Include="JCSoft.CSharpBible.Libraries.Core" Version="1.0.0-b" />
+	<!--<PackageReference Include="JCSoft.CSharpBible.Libraries.Core" Version="1.0.1" />-->
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
   </ItemGroup>
 
   <ItemGroup>
 	<None Include="README.Windows.md" Pack="true" PackagePath="\" />
-	<None Include="$(UpDir)\..\bin\CommonDialogs\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\CommonDialogs\$(Configuration)\**\CommonDialogs.dll" Pack="true" PackagePath="lib" Visible="false" />
 	<None Include="$(UpDir)\..\bin\CommonDialogs\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\**\*.dll" Pack="true" PackagePath="lib" Visible="false" />
-	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\**\*.xml" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\**\CommonDialogs_net.dll" Exclude="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\**\*.xml" Exclude="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\**\ConsoleLib.ExtCon.dll" Exclude="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\**\*.xml" Exclude="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\**\ExtendedConsole.dll" Exclude="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\**\*.xml" Exclude="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\**\MVVM_BaseLib.dll" Exclude="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\**\*.xml" Exclude="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\**\WFSystem.Windows.Data.dll" Exclude="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
+	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\**\*.xml" Exclude="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net*-windows\**" Pack="true" PackagePath="lib" Visible="false" />
   </ItemGroup>
+
+	<ItemGroup>
+	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net6.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net6.0-windows\*.xml" Pack="true" PackagePath="lib\net6.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net7.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net7.0-windows\*.xml" Pack="true" PackagePath="lib\net7.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net8.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net8.0-windows\*.xml" Pack="true" PackagePath="lib\net8.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net9.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net9.0-windows\*.xml" Pack="true" PackagePath="lib\net9.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net10.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net10.0-windows\*.xml" Pack="true" PackagePath="lib\net10.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net8.0-windows\ConsoleLib.ExtCon.dll;$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net8.0-windows\*.xml" Pack="true" PackagePath="lib\net8.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net9.0-windows\ConsoleLib.ExtCon.dll;$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net9.0-windows\*.xml" Pack="true" PackagePath="lib\net9.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net10.0-windows\ConsoleLib.ExtCon.dll;$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net10.0-windows\*.xml" Pack="true" PackagePath="lib\net10.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net6.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net6.0-windows\*.xml" Pack="true" PackagePath="lib\net6.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net7.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net7.0-windows\*.xml" Pack="true" PackagePath="lib\net7.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net8.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net8.0-windows\*.xml" Pack="true" PackagePath="lib\net8.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net9.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net9.0-windows\*.xml" Pack="true" PackagePath="lib\net9.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net10.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net10.0-windows\*.xml" Pack="true" PackagePath="lib\net10.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net6.0-windows\MVVM_BaseLib.dll;$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net6.0-windows\*.xml" Pack="true" PackagePath="lib\net6.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net7.0-windows\MVVM_BaseLib.dll;$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net7.0-windows\*.xml" Pack="true" PackagePath="lib\net7.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net8.0-windows\MVVM_BaseLib.dll;$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net8.0-windows\*.xml" Pack="true" PackagePath="lib\net8.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net9.0-windows\MVVM_BaseLib.dll;$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net9.0-windows\*.xml" Pack="true" PackagePath="lib\net9.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net10.0-windows\MVVM_BaseLib.dll;$(UpDir)\..\bin\MVVM_BaseLib\$(Configuration)\net10.0-windows\*.xml" Pack="true" PackagePath="lib\net10.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net6.0-windows\*.dll;$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net6.0-windows\*.xml" Pack="true" PackagePath="lib\net6.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net7.0-windows\*.dll;$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net7.0-windows\*.xml" Pack="true" PackagePath="lib\net7.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net8.0-windows\*.dll;$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net8.0-windows\*.xml" Pack="true" PackagePath="lib\net8.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net9.0-windows\*.dll;$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net9.0-windows\*.xml" Pack="true" PackagePath="lib\net9.0-windows10.0.19041.0" Visible="false" />
+	<None Include="$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net10.0-windows\*.dll;$(UpDir)\..\bin\WFSystem.Windows.Data\$(Configuration)\net10.0-windows\*.xml" Pack="true" PackagePath="lib\net10.0-windows10.0.19041.0" Visible="false" />
+	</ItemGroup>
 
   <ItemGroup>
     <Compile Remove="obj\**" />
