@@ -1,0 +1,20 @@
+/// <summary>
+/// Demonstrates two switch cases that share an outer goto target.
+/// The target does not immediately follow the switch, but
+/// a goto to the same label. so both inner gotos can be replaced
+/// by break
+/// </summary>
+private void Test19Dat(int state)
+{
+    switch (state)
+    {
+        case 1:
+            goto end;
+        default:
+            goto end;
+    }
+
+    goto end;
+end:
+    return;
+}

@@ -1,0 +1,26 @@
+///Declaration MainBlock 0,0
+private void Test19Dat(int state)
+///BlockStart Block 1,0
+{
+///Operation Operation 1,1
+switch (state)
+///BlockStart Block 2,0
+{
+///Label Label 2,1
+case 1:
+///Operation Operation 2,2
+break;
+///Label Label 2,3
+default:
+///Operation Operation 2,4
+break;
+///BlockEnd Block 2,5
+}
+///Goto Goto 1,2 Dest:OK
+goto end;
+///Label Label 1,3 1
+end:
+///Operation Operation 1,4
+return;
+///BlockEnd Block 1,5
+}

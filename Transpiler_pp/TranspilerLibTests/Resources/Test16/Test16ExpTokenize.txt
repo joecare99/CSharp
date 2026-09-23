@@ -1,0 +1,30 @@
+﻿T:Operation,0,public void Test16Dat()
+T:Block,1,{
+T:Operation,1,while
+T:Operation,1,(b1)
+T:Block,2,{
+T:Operation,2,if
+T:Operation,2,(b2)
+T:Block,3,{
+T:Goto,3,goto l1;
+T:Operation,3,
+T:LComment,3,// must not be removed, even if it is the last statement in the block
+T:Operation,3,
+T:LComment,3,// end of block
+T:Block,3,}
+T:Operation,2,else
+T:Block,3,{
+T:Operation,3,
+T:LComment,3,// some other code
+T:Block,3,}
+T:Operation,2,
+T:LComment,2,// some comment
+T:Block,2,}
+T:Operation,1,
+T:LComment,1,// some other comment
+T:Goto,1,goto l1;
+T:Label,1,l1:
+T:Operation,1,
+T:LComment,1,// nop
+T:Operation,1,return;
+T:Block,1,}
