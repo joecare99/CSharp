@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.1.2" />
-    <PackageVersion Update="Avalonia.Headless" Version="12.1.2" />
+    <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.1.3" />
+    <PackageVersion Update="Avalonia.Headless" Version="12.1.3" />
     <PackageVersion Update="MSTest" Version="4.4.1" />
     <PackageVersion Update="NSubstitute" Version="6.2.0" />
   </ItemGroup>
