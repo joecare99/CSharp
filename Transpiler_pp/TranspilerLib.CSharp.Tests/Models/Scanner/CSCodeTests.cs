@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseLib.Helper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,11 @@ public class CSCodeTests : TestBase
         ["9", TestCSDataClass.TestDataList9(), new[] { TestCSDataClass.testDataExpRemoveL9 }],
         ["12", TestCSDataClass.TestDataList12(), new[] { TestCSDataClass.testDataExpRemoveL12 }],
         ["13", TestCSDataClass.TestDataList13(), new[] { TestCSDataClass.testDataExpRemoveL13 }],
+        ["15", TestCSDataClass.TestDataList15(), new[] { TestCSDataClass.testDataExpRemoveL15 }],
+        ["16", TestCSDataClass.TestDataList16(), new[] { TestCSDataClass.testDataExpRemoveL16 }],
+        ["17", TestCSDataClass.TestDataList17(), new[] { TestCSDataClass.testDataExpRemoveL17 }],
+        ["18", TestCSDataClass.TestDataList18(), new[] { TestCSDataClass.testDataExpRemoveL18 }],
+        ["19", TestCSDataClass.TestDataList19(), new[] { TestCSDataClass.testDataExpRemoveL19 }],
 };
 
     public static IEnumerable<object[]> TestListParse2 => new object[][]
@@ -110,6 +116,11 @@ public class CSCodeTests : TestBase
     [TestInitialize]
     public void TestInitialize()
     {
+        IoC.GetReqSrv =(t)=>(t) switch {
+            _ when t == typeof(ITokenHandler) => new CSTokenHandler() { reservedWords = CSCode.ReservedWords, stringEndChars = CSCode.stringEndChars },
+            _ when t == typeof(ICodeBuilder) => new CSCodeBuilder(),
+            _ when t == typeof(ICodeOptimizer) => new CodeOptimizer(),
+            _ => throw new NotImplementedException($"Please initialize the service for {t.FullName} first.")};
         _testClass = new();
     }
 
@@ -139,6 +150,9 @@ public class CSCodeTests : TestBase
         ["11", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test11Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExp11Log )}],
         ["12", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test12Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExp12Log )}],
         ["13", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test13Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExp13Log )}],
+        ["14", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test14Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExp14Log )}],
+        ["15", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test15Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExp15Log )}],
+        ["16", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test16Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExp16Log )}],
     };
 
     [TestMethod()]
@@ -207,6 +221,9 @@ public class CSCodeTests : TestBase
         ["11",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test11Data), Encoding.UTF8.GetBytes(TestCSDataClass.test11DataExp )}],
         ["12",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test12Data), Encoding.UTF8.GetBytes(TestCSDataClass.test12DataExp )}],
         ["13",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test13Data), Encoding.UTF8.GetBytes(TestCSDataClass.test13DataExp )}],
+        ["14",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test14Data), Encoding.UTF8.GetBytes(TestCSDataClass.test14DataExp )}],
+        ["15",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test15Data), Encoding.UTF8.GetBytes(TestCSDataClass.test15DataExp )}],
+        ["16",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test16Data), Encoding.UTF8.GetBytes(TestCSDataClass.test16DataExp )}],
             };
 
 
@@ -282,7 +299,7 @@ public class CSCodeTests : TestBase
 
     [TestMethod()]
     [DataRow([TestCSDataClass.testData0, TestCSDataClass.cExpLog0], DisplayName = "0")]
-    [DataRow([TestCSDataClass.testData5, TestCSDataClass.cExpLog0], DisplayName = "0")]
+    [DataRow([TestCSDataClass.testData5, TestCSDataClass.cExpLog5], DisplayName = "5")]
     public void Tokenize0Test(string[] data)
     {
         _testClass.OriginalCode = data[0];

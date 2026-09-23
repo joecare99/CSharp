@@ -11,6 +11,207 @@ public class CodeOptimizer : ICodeOptimizer
 {
     public bool _noWhile { get; set; } = false;
 
+    /// <summary>
+    /// Removes consecutive goto instructions that target the same label.
+    /// Comments and labels between both instructions do not affect control flow and are skipped.
+    /// </summary>
+    /// <param name="label">The label whose incoming goto instructions are inspected.</param>
+    /// <returns><c>true</c> when a redundant goto was removed; otherwise, <c>false</c>.</returns>
+    private static bool RemoveGotoWhenNextInstructionTargetsSameLabel(ICodeBlock label)
+    {
+        foreach (var sourceReference in label.Sources.ToArray())
+        {
+            if (!sourceReference.TryGetTarget(out var source)
+                || source.Type != CodeBlockType.Goto
+                || IsLastStatementOfSwitchCase(source)
+                || FindNextExecutableSibling(source) is not ICodeBlock nextInstruction
+                || nextInstruction.Type != CodeBlockType.Goto
+                || nextInstruction.Destination is null
+                || !nextInstruction.Destination.TryGetTarget(out var nextTarget)
+                || nextTarget != label
+                || source.Parent is not ICodeBlock parent
+                || !parent.DeleteSubBlocks(source.Index, 1))
+            {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Replaces final switch-case gotos with breaks when their target is reached immediately after the switch.
+    /// </summary>
+    /// <param name="label">The label targeted by the goto instruction.</param>
+    /// <returns><c>true</c> when a goto instruction was replaced; otherwise, <c>false</c>.</returns>
+    private static bool ReplaceFinalSwitchGotoWithBreak(ICodeBlock label)
+    {
+        var replaced = false;
+        foreach (var sourceReference in label.Sources.ToArray())
+        {
+            if (!sourceReference.TryGetTarget(out var source)
+                || source.Type != CodeBlockType.Goto
+                || source.Parent is not ICodeBlock switchBlock
+                || !StartsWithKeyword(switchBlock.Code.TrimStart(), "switch")
+                || !IsLastStatementOfSwitchCase(source)
+                || label.Parent != switchBlock.Parent
+                || !ImmediatelyFollowsSwitch(label, switchBlock))
+            {
+                continue;
+            }
+
+            source.Code = "break;";
+            source.Type = CodeBlockType.Operation;
+            source.Destination = null;
+            _ = label.Sources.Remove(sourceReference);
+            replaced = true;
+        }
+
+        return replaced;
+    }
+
+    /// <summary>
+    /// Determines whether a goto is the final executable statement of a switch case.
+    /// </summary>
+    /// <param name="item">The goto instruction to inspect.</param>
+    /// <returns><c>true</c> when the goto terminates a switch case; otherwise, <c>false</c>.</returns>
+    private static bool IsLastStatementOfSwitchCase(ICodeBlock item)
+    {
+        return item.Parent is ICodeBlock parent
+            && StartsWithKeyword(parent.Code.TrimStart(), "switch")
+            && IsLastStatementOfCaseBlock(item);
+    }
+
+    /// <summary>
+    /// Determines whether no executable instruction follows a goto before the next case label.
+    /// </summary>
+    /// <param name="item">The goto instruction to inspect.</param>
+    /// <returns><c>true</c> when the goto terminates its case; otherwise, <c>false</c>.</returns>
+    private static bool IsLastStatementOfCaseBlock(ICodeBlock item)
+    {
+        for (var next = item.Next; next is not null; next = next.Next)
+        {
+            if (next.Type == CodeBlockType.Label)
+                return true;
+
+            if (!IsNonExecutable(next))
+                return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Determines whether a label is reached directly after a switch completes.
+    /// </summary>
+    /// <param name="label">The outer label targeted by the switch branch.</param>
+    /// <param name="switchBlock">The containing switch operation.</param>
+    /// <returns><c>true</c> when only non-executable items or a direct goto to the label separate the switch and label.</returns>
+    private static bool ImmediatelyFollowsSwitch(ICodeBlock label, ICodeBlock switchBlock)
+    {
+        for (var next = switchBlock.Next; next is not null; next = next.Next)
+        {
+            if (next == label)
+                return true;
+
+            if (next.Type == CodeBlockType.Goto
+                && next.Destination is not null
+                && next.Destination.TryGetTarget(out var destination)
+                && destination == label)
+            {
+                return true;
+            }
+
+            if (!IsNonExecutable(next))
+                return false;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Finds the next sibling that participates in execution.
+    /// </summary>
+    /// <param name="item">The block after which the executable sibling is searched.</param>
+    /// <returns>The next executable sibling, or <c>null</c> when no such sibling exists.</returns>
+    private static ICodeBlock? FindNextExecutableSibling(ICodeBlock item)
+    {
+        ICodeBlock current = item;
+        while (true)
+        {
+            var next = current.Next;
+            while (next is not null && IsNonExecutable(next))
+                next = next.Next;
+
+            if (next is not null)
+                return next;
+
+            if (current.Parent is not ICodeBlock parent || IsExecutionBoundary(parent))
+                return null;
+
+            current = parent;
+        }
+    }
+
+    /// <summary>
+    /// Determines whether a block can be skipped when searching for the next instruction.
+    /// </summary>
+    /// <param name="item">The block to classify.</param>
+    /// <returns><c>true</c> when the block does not execute code; otherwise, <c>false</c>.</returns>
+    private static bool IsNonExecutable(ICodeBlock item)
+    {
+        return item.Type is CodeBlockType.Block
+            or CodeBlockType.Label
+            or CodeBlockType.Comment
+            or CodeBlockType.LComment
+            or CodeBlockType.FLComment
+            || IsElseStatement(item);
+    }
+
+    /// <summary>
+    /// Determines whether execution must not continue outside the specified enclosing block.
+    /// </summary>
+    /// <param name="item">The enclosing block to inspect.</param>
+    /// <returns><c>true</c> for loop, switch, function, and procedure boundaries; otherwise, <c>false</c>.</returns>
+    private static bool IsExecutionBoundary(ICodeBlock item)
+    {
+        if (item.Type == CodeBlockType.Function)
+            return true;
+
+        if (item.Type != CodeBlockType.Operation)
+            return false;
+
+        var code = item.Code.TrimStart();
+        return StartsWithKeyword(code, "while")
+            || StartsWithKeyword(code, "for")
+            || StartsWithKeyword(code, "foreach")
+            || StartsWithKeyword(code, "do")
+            || StartsWithKeyword(code, "switch")
+            || IsFunctionOrProcedureDeclaration(code);
+    }
+
+    private static bool StartsWithKeyword(string code, string keyword)
+    {
+        return code == keyword
+            || (code.StartsWith(keyword)
+                && code.Length > keyword.Length
+                && (char.IsWhiteSpace(code[keyword.Length]) || code[keyword.Length] == '('));
+    }
+
+    private static bool IsFunctionOrProcedureDeclaration(string code)
+    {
+        if (!code.EndsWith(")"))
+            return false;
+
+        return !(StartsWithKeyword(code, "if")
+            || StartsWithKeyword(code, "switch")
+            || StartsWithKeyword(code, "catch")
+            || StartsWithKeyword(code, "using")
+            || StartsWithKeyword(code, "lock"));
+    }
+
     private ICodeBlock? RemoveGotoAndLabel(ICodeBlock item, ICodeBlock source)
     {
         var p = source.Parent;
@@ -55,7 +256,7 @@ public class CodeOptimizer : ICodeOptimizer
                     )))
         {
             // Calculate Chunksize
-            var l = CalcChunksize(item);
+            var l = CodeBlock.CalcChunksize(item, cb => cb.Type is not CodeBlockType.Label and not CodeBlockType.Block);
             if (l <= 0)
                 return;
             var cDst = source;
@@ -248,6 +449,16 @@ public class CodeOptimizer : ICodeOptimizer
 
     public void TestItem(ICodeBlock item)
     {
+        if (ReplaceFinalSwitchGotoWithBreak(item))
+            return;
+
+        var redundantGotoRemoved = false;
+        while (RemoveGotoWhenNextInstructionTargetsSameLabel(item))
+            redundantGotoRemoved = true;
+
+        if (redundantGotoRemoved)
+            return;
+
         RemoveResumeNextCode(item);
         if (item.Sources.Count == 1
             && item.Sources[0].TryGetTarget(out var source))
@@ -374,24 +585,7 @@ public class CodeOptimizer : ICodeOptimizer
                         _ = parent.DeleteSubBlocks(deleteIndex, l);
                     break;
                 }
-    }
-
-    public static int CalcChunksize(ICodeBlock item)
-    {
-        if (item.Parent is ICodeBlock codeBlock)
-        {
-            if (item.Index < 0 || item.Index >= codeBlock.SubBlocks.Count)
-                return 0;
-
-            int l = 1;
-            while (item.Index + l < codeBlock.SubBlocks.Count - 1
-                && codeBlock.SubBlocks[item.Index + l].Type is not CodeBlockType.Label and not CodeBlockType.Block)
-                l++;
-            return l;
-        }
-        else
-            return 0;
-    }
+    }   
 
 }
 

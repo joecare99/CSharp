@@ -42,10 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\TranspilerLib.CSharp\TranspilerLib.CSharp.csproj" />
-		<ProjectReference Include="..\TranspilerLib.IEC\TranspilerLib.IEC.csproj" />
 		<ProjectReference Include="..\TranspilerLib\TranspilerLib.csproj" />
-    <ProjectReference Include="..\TranspilerLib.Pascal\TranspilerLib.Pascal.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
