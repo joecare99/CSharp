@@ -17,6 +17,7 @@
 	</PropertyGroup>
 	<ItemGroup>
     <ProjectReference Include="..\TranspilerLib.CSharp\TranspilerLib.CSharp.csproj" />
+	<ProjectReference Include="..\TranspilerLib.CSharp.Optimizer\TranspilerLib.CSharp.Optimizer.csproj" />
     <ProjectReference Include="..\TranspilerLibTests\TranspilerLibTests.csproj" />
   </ItemGroup>
 	<ItemGroup>

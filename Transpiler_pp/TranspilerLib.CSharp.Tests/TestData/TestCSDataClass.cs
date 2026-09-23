@@ -130,6 +130,9 @@ Modul1.UbgT = (Text2[0].Text).Trim();
     public static readonly string test11Data = Resources.Test11Dat_cs;
     public static readonly string test12Data = Resources.Test12Dat_cs;
     public static readonly string test13Data = Resources.Test13Dat_cs;
+    public static readonly string test14Data = Resources.Test14Dat_cs;
+    public static readonly string test15Data = Resources.Test15Dat_cs;
+    public static readonly string test16Data = Resources.Test16Dat_cs;
 
     #endregion
 
@@ -348,6 +351,9 @@ return;
     public static readonly string test11DataExp = Resources.Test11ExpParse;
     public static readonly string test12DataExp = Resources.Test12ExpParse;
     public static readonly string test13DataExp = Resources.Test13ExpParse;
+    public static readonly string test14DataExp = Resources.Test14ExpParse;
+    public static readonly string test15DataExp = Resources.Test15ExpParse;
+    public static readonly string test16DataExp = Resources.Test16ExpParse;
     //====================================================================================================================================================================
 
     public const string testDataMoveExp0 = @"";
@@ -2403,6 +2409,11 @@ return;
     public static string testDataExpRemoveL9 { get; } = Resources.Test9ExpParseRL;
     public static string testDataExpRemoveL12 { get; } = Resources.Test12ExpParseRL;
     public static string testDataExpRemoveL13 { get; } = Resources.Test13ExpParseRL;
+    public static string testDataExpRemoveL15 { get; } = Resources.Test15ExpParseRL;
+    public static string testDataExpRemoveL16 { get; } = Resources.Test16ExpParseRL;
+    public static string testDataExpRemoveL17 { get; } = Resources.Test17ExpParseRL;
+    public static string testDataExpRemoveL18 { get; } = Resources.Test18ExpParseRL;
+    public static string testDataExpRemoveL19 { get; } = Resources.Test19ExpParseRL;
     #endregion
 
     #region Expected data for Tokenizer
@@ -2569,6 +2580,10 @@ T:Block,1,}
     public static readonly string cExp11Log = Resources.Test11ExpTokenize;
     public static readonly string cExp12Log = Resources.Test12ExpTokenize;
     public static readonly string cExp13Log = Resources.Test13ExpTokenize;
+    public static readonly string cExp14Log = Resources.Test14ExpTokenize;
+    public static readonly string cExp15Log = Resources.Test15ExpTokenize;
+    public static readonly string cExp16Log = Resources.Test16ExpTokenize;
+
 
     #endregion
 
@@ -3344,5 +3359,10 @@ T:Block,1,}
     public static object TestDataList11() => ReadObject(Resources.Test11DataList)!;
     public static object TestDataList12() => ReadObject(Resources.Test12DataList)!;
     public static object TestDataList13() => ReadObject(Resources.Test13DataList)!;
+    public static object TestDataList15() => ReadObject(Resources.Test15DataList)!;
+    public static object TestDataList16() => ReadObject(Resources.Test16DataList)!;
+    public static object TestDataList17() => ReadObject(Resources.Test17DataList)!;
+    public static object TestDataList18() => ReadObject(Resources.Test18DataList)!;
+    public static object TestDataList19() => ReadObject(Resources.Test19DataList)!;
     #endregion
 }

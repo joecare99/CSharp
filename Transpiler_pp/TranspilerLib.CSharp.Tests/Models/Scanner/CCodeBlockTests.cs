@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using BaseLib.Helper;
+using System;
+using System.Collections.Generic;
 using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models.Tests;
 using TranspilerLibTests.TestData;
 using static TranspilerLib.Helper.TestHelper;
@@ -56,6 +59,12 @@ public class CCodeBlockTests : TestBase
     [TestInitialize]
     public void TestInitialize()
     {
+        IoC.GetReqSrv = (t) => (t) switch {
+            _ when t == typeof(ITokenHandler) => new CSTokenHandler() { reservedWords = CSCode.ReservedWords, stringEndChars = CSCode.stringEndChars },
+            _ when t == typeof(ICodeBuilder) => new CSCodeBuilder(),
+            _ when t == typeof(ICodeOptimizer) => new CodeOptimizer(),
+            _ => throw new NotImplementedException($"Please initialize the service for {t.FullName} first.")
+        };
         _testClass = new();
     }
 
