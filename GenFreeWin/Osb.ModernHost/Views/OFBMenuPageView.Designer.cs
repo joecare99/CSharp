@@ -42,8 +42,8 @@ internal sealed partial class OFBMenuPageView
         _placeSelectionButton = new Button();
         _statisticsButton = new Button();
         var headerPanel = new Panel { Dock = DockStyle.Top, Height = 84 };
-        var productLabel = CreateHeaderLabel("GEN_PLUSWIN das Genealogie-Programm mit den Pluspunkten", 28);
-        var copyrightLabel = CreateHeaderLabel("(c) 1994-2018 Gisbert Berwe · Osnabrück", 56);
+        var productLabel = CreateHeaderLabel("GEN_FREEWIN das freie Genealogie-Programm", 28);
+        var copyrightLabel = CreateHeaderLabel("(c) 1994-2026 Joe Care · Germany", 56);
         ConfigureHeader(_applicationNameLabel, Color.Red, Color.White, FontStyle.Bold, 0);
         headerPanel.Controls.Add(copyrightLabel);
         headerPanel.Controls.Add(productLabel);
