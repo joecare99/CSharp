@@ -40,6 +40,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="$(UpDir)\..\CSharpBible\Libraries\MVVM_BaseLib\MVVM_BaseLib.csproj" />
+		<ProjectReference Include="..\..\Transpiler_pp\TranspilerLib.CSharp.Optimizer\TranspilerLib.CSharp.Optimizer.csproj" />
 		<ProjectReference Include="..\..\Transpiler_pp\TranspilerLib.CSharp\TranspilerLib.CSharp.csproj" />
 		<ProjectReference Include="..\..\Transpiler_pp\TranspilerLib\TranspilerLib.csproj" />
 	</ItemGroup>
