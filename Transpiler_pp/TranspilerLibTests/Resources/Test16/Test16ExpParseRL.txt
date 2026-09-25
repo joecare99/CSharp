@@ -1,10 +1,44 @@
 ﻿///Declaration MainBlock 0,0
-private bool Test13Dat()
+public void Test16Dat()
 ///BlockStart Block 1,0
 {
-///Comment LComment 1,1
-// Compare this snippet from VBUnObfusicatorTests/Resources/Test13Dat.cs:
-///Operation Operation 1,2
-return 0 < System.SomeFunc(123);
-///BlockEnd Block 1,3
+///Operation Operation 1,1
+while (b1)
+///BlockStart Block 2,0
+{
+///Operation Operation 2,1
+if (b2)
+///BlockStart Block 3,0
+{
+///Goto Goto 3,1 Dest:OK
+goto l1;
+///Comment LComment 3,2
+// must not be removed, even if it is the last statement in the block
+///Comment LComment 3,3
+// end of block
+///BlockEnd Block 3,4
+}
+///Operation Operation 2,2
+else
+///BlockStart Block 3,0
+{
+///Comment LComment 3,1
+// some other code
+///BlockEnd Block 3,2
+}
+///Comment LComment 2,3
+// some comment
+///BlockEnd Block 2,4
+}
+///Comment LComment 1,2
+// some other comment
+///Goto Goto 1,3 Dest:OK
+goto l1;
+///Label Label 1,4 2
+l1:
+///Comment LComment 1,5
+// nop
+///Operation Operation 1,6
+return;
+///BlockEnd Block 1,7
 }

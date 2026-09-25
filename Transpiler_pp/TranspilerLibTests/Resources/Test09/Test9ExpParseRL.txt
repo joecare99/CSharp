@@ -194,7 +194,7 @@ goto IL_45bd;
 }
 ///BlockEnd Block 6,5
 }
-///Label Label 5,6 1
+///Label Label 5,6 2
 end_IL_0001:
 ///Operation Operation 5,7
 break;
@@ -3245,46 +3245,50 @@ case 785:
 ///Goto Goto 6,280 Dest:OK
 goto IL_44d6;
 ///Label Label 6,281
-case 46:
-///Label Label 6,282
-case 52:
+default:
+///Goto Goto 6,282 Dest:OK
+goto end_IL_0001;
 ///Label Label 6,283
-case 56:
+case 46:
 ///Label Label 6,284
-case 178:
+case 52:
 ///Label Label 6,285
-case 184:
+case 56:
 ///Label Label 6,286
-case 319:
+case 178:
 ///Label Label 6,287
-case 355:
+case 184:
 ///Label Label 6,288
-case 361:
+case 319:
 ///Label Label 6,289
-case 436:
+case 355:
 ///Label Label 6,290
-case 448:
+case 361:
 ///Label Label 6,291
-case 454:
+case 436:
 ///Label Label 6,292
-case 458:
+case 448:
 ///Label Label 6,293
-case 623:
+case 454:
 ///Label Label 6,294
-case 629:
+case 458:
 ///Label Label 6,295
-case 633:
+case 623:
 ///Label Label 6,296
-case 720:
+case 629:
 ///Label Label 6,297
-case 787:
+case 633:
 ///Label Label 6,298
-case 788:
+case 720:
 ///Label Label 6,299
+case 787:
+///Label Label 6,300
+case 788:
+///Label Label 6,301
 case 798:
-///Goto Goto 6,300 Dest:OK
+///Goto Goto 6,302 Dest:OK
 goto end_IL_0001_2;
-///BlockEnd Block 6,301
+///BlockEnd Block 6,303
 }
 ///Goto Goto 5,365 Dest:OK
 goto default;

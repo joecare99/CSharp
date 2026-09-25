@@ -1,24 +1,36 @@
 ///Declaration MainBlock 0,0
+
+///Comment LComment 1,0
+/// <summary>
+///Comment LComment 1,1
+/// Demonstrates a switch branch that exits to a label outside the switch.
+///Comment LComment 1,2
+/// Replacing the goto with a switch-local break preserves the control flow
+///Comment LComment 1,3
+/// because execution continues at the statement immediately after the switch.
+///Comment LComment 1,4
+/// </summary>
+///Operation Operation 1,5
 private void Test17Dat(int state)
-///BlockStart Block 1,0
-{
-///Operation Operation 1,1
-switch (state)
 ///BlockStart Block 2,0
 {
-///Label Label 2,1
+///Operation Operation 2,1
+switch (state)
+///BlockStart Block 3,0
+{
+///Label Label 3,1
 case 1:
-///Operation Operation 2,2
+///Operation Operation 3,2
 break;
-///Label Label 2,3
+///Label Label 3,3
 default:
-///Operation Operation 2,4
+///Operation Operation 3,4
 break;
-///BlockEnd Block 2,5
+///BlockEnd Block 3,5
 }
-///Label Label 1,2
+///Label Label 2,2
 end:
-///Operation Operation 1,3
+///Operation Operation 2,3
 return;
-///BlockEnd Block 1,4
+///BlockEnd Block 2,4
 }
