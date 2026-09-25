@@ -149,7 +149,7 @@ public class CSCodeBuilder : CodeBuilder
             Name = $"Comment",
             Type = tokenData.type,
             Code = tokenData.Code,
-            Parent = data.actualBlock.Parent,
+            Parent = data.actualBlock.Parent ?? data.actualBlock,
             SourcePos = tokenData.Pos
         };
     }
@@ -170,6 +170,23 @@ public class CSCodeBuilder : CodeBuilder
 
     private void BuildInstruction(TokenData tokenData, ICodeBuilderData data)
     {
+        var previousCode = data.actualBlock.Code.Trim();
+        if (data.actualBlock.Type == CodeBlockType.Operation
+            && previousCode == "else"
+            && tokenData.Code.StartsWith("if", StringComparison.OrdinalIgnoreCase))
+        {
+            data.actualBlock = new CodeBlock()
+            {
+                Name = $"{tokenData.type}",
+                Type = tokenData.type,
+                Code = tokenData.Code,
+                Parent = data.actualBlock.Parent ?? data.actualBlock,
+                SourcePos = tokenData.Pos
+            };
+            data.xBreak = tokenData.Code.Contains("break;");
+            return;
+        }
+
         if (data.actualBlock.Type is not CodeBlockType.Operation and not CodeBlockType.MainBlock
             || (data.cbtLast is not CodeBlockType.Operation and not CodeBlockType.String and not CodeBlockType.Unknown)
             || (!string.IsNullOrEmpty(data.actualBlock.Code) && data.actualBlock.Code.EndsWith(";")))
@@ -179,7 +196,8 @@ public class CSCodeBuilder : CodeBuilder
                 Name = $"{tokenData.type}",
                 Type = tokenData.type,
                 Code = tokenData.Code,
-                Parent = data.actualBlock.Parent ?? data.actualBlock
+                Parent = data.actualBlock.Parent ?? data.actualBlock,
+                SourcePos = tokenData.Pos
             };
         }
         else
