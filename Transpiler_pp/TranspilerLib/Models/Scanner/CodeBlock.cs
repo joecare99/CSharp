@@ -312,7 +312,20 @@ public class CodeBlock : ICodeBlock
         string codeComment = string.Empty;
         if (Type is CodeBlockType.Label && Sources.Count > 2)
             codeComment = $" // <========== {Sources.Count}";
-        return $"{new string(' ', Type is CodeBlockType.Block or CodeBlockType.Label ? indent - 4 : indent)}{Code}{codeComment}{(SubBlocks.Count > 0 ? Environment.NewLine : string.Empty)}{string.Join(Environment.NewLine, SubBlocks.Select((c) => c.ToCode(indent + 4)))}";
+
+        var prefix = new string(' ', Type is CodeBlockType.Block or CodeBlockType.Label ? indent - 4 : indent);
+        if (Code == "else"
+            && SubBlocks.Count > 0
+            && SubBlocks[0].Type == CodeBlockType.Operation
+            && (SubBlocks[0].Code.StartsWith("if ")
+                || SubBlocks[0].Code.StartsWith("if(")))
+        {
+            var firstChild = SubBlocks[0].ToCode(indent).TrimStart();
+            var remainingChildren = SubBlocks.Skip(1).Select(c => c.Code == "else" ? c.ToCode(indent) : c.ToCode(indent + 4));
+            return $"{prefix}{Code}{(codeComment)} {firstChild}{(remainingChildren.Any() ? Environment.NewLine + string.Join(Environment.NewLine, remainingChildren) : string.Empty)}";
+        }
+
+        return $"{prefix}{Code}{codeComment}{(SubBlocks.Count > 0 ? Environment.NewLine : string.Empty)}{string.Join(Environment.NewLine, SubBlocks.Select((c) => c.ToCode(indent + 4)))}";
     }
 
     /// <summary>
