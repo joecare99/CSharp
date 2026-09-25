@@ -1,3 +1,4 @@
+using System;
 using TranspilerLib.Data;
 using TranspilerLib.CSharp.Data;
 using TranspilerLib.Interfaces.Code;
@@ -130,6 +131,115 @@ public class CodeOptimizerTests
         var root = ParseAndOptimize(source);
 
         Assert.AreEqual(expectedGotoCount, CountGotos(root));
+    }
+
+    [TestMethod]
+    public void Parse_SeparatesElseAndFollowingIfBranches()
+    {
+        const string source = @"private void Test20Dat(bool b1, bool b2)
+{
+    if (b1)
+    {
+        // some code 1
+    }
+    else if (b2)
+    {
+        // some code 2
+    }
+}";
+
+        var code = new CSCode(new CSTokenHandler()
+        {
+            stringEndChars = CSCode.stringEndChars,
+            reservedWords = CSCode.ReservedWords
+        }, new CSCodeBuilder(), new CodeOptimizer())
+        {
+            OriginalCode = source
+        };
+
+        var root = code.Parse() ?? throw new InvalidOperationException("The parser should produce a root block.");
+        var parsed = root.ToString() ?? string.Empty;
+
+        Assert.IsTrue(parsed.Contains("else", StringComparison.Ordinal));
+        Assert.IsTrue(parsed.Contains("if (b2)", StringComparison.Ordinal));
+        Assert.IsFalse(parsed.Contains("else if", StringComparison.Ordinal));
+        Assert.IsFalse(parsed.Contains("elseif", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [TestMethod]
+    public void RemoveSingleSourceLabels1_PreservesChainedConditionalGotoStructure()
+    {
+        const string source = @"private void Test21Dat(bool b1, bool b2, bool b3)
+{
+    if (b1)
+    {
+        // some code 1
+        goto End;
+    }
+    if (b2)
+    {
+        // some code 2
+        goto End;
+    }
+    if (b3)
+    {
+        // some code 3
+    }
+    goto End;
+End:
+    // some code 4
+    return;
+}";
+
+        var code = new CSCode(new CSTokenHandler()
+        {
+            stringEndChars = CSCode.stringEndChars,
+            reservedWords = CSCode.ReservedWords
+        }, new CSCodeBuilder(), new CodeOptimizer())
+        {
+            OriginalCode = source
+        };
+
+        var root = code.Parse() ?? throw new InvalidOperationException("The parser should produce a root block.");
+        code.RemoveSingleSourceLabels1(root);
+        var parsed = root.ToString() ?? string.Empty;
+
+        var output = root.ToCode();
+        Assert.IsTrue(parsed.Contains("else", StringComparison.Ordinal));
+        Assert.IsTrue(parsed.Contains("if (b2)", StringComparison.Ordinal));
+        Assert.IsTrue(parsed.Contains("if (b3)", StringComparison.Ordinal));
+        Assert.AreEqual(1, CountGotos(root));
+        Assert.IsTrue(output.Contains("else if (b2)", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("else if (b3)", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("goto End;", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("End:", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void RemoveSingleSourceLabels1_PreservesSwitchGotoWhenCodePrecedesOuterGoto()
+    {
+        const string source = @"private void Test19aDat(int state)
+{
+    switch (state)
+    {
+        case 1:
+            goto end;
+        default:
+            goto end;
+    }
+    AfterSwitch();
+    goto end;
+end:
+    return;
+}";
+
+        var root = ParseAndOptimize(source);
+        var output = root.ToCode();
+
+        Assert.AreEqual(3, CountGotos(root));
+        Assert.IsTrue(output.Contains("case 1:", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("goto end;", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("AfterSwitch();", StringComparison.Ordinal));
     }
 
     private static ICodeBlock ParseAndOptimize(string source)

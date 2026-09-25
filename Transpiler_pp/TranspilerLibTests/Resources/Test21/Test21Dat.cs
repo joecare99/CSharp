@@ -1,0 +1,24 @@
+/// <summary>
+/// This method demonstrates the use of goto statements to control the flow of execution based on boolean conditions.
+/// </summary>
+private void Test21Dat(bool b1, bool b2, bool b3)
+{
+    if (b1)    
+    {
+        // some code 1
+        goto End;
+    }
+    if (b2)
+    {
+        // some code 2
+        goto End;
+    }
+    if (b3)
+    {
+        // some code 3
+    }
+    goto End;
+End:
+    // some code 4
+    return
+}

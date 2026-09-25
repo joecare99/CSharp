@@ -45,6 +45,16 @@ public class CSCodeTests : TestBase
         [ "11", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test11Data) },                    TestCSDataClass.TestDataList11()! ],
         [ "12", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test12Data) },                    TestCSDataClass.TestDataList12()! ],
         [ "13", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test13Data) },                    TestCSDataClass.TestDataList13()! ],
+        [ "14", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test14Data) },                    TestCSDataClass.TestDataList14()! ],
+        [ "15", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test15Data) },                    TestCSDataClass.TestDataList15()! ],
+        [ "16", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test16Data) },                    TestCSDataClass.TestDataList16()! ],
+        [ "17", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test17Data) },                    TestCSDataClass.TestDataList17()! ],
+        [ "18", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test18Data) },                    TestCSDataClass.TestDataList18()! ],
+        [ "19", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test19Data) },                    TestCSDataClass.TestDataList19()! ],
+        [ "19a", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test19aData) },                    TestCSDataClass.TestDataList19a()! ],
+        [ "20", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test20Data) },                    TestCSDataClass.TestDataList20()! ],
+        [ "21", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test21Data) },                    TestCSDataClass.TestDataList21()! ],
+
 
     };
 
@@ -72,20 +82,20 @@ public class CSCodeTests : TestBase
 };
     public static IEnumerable<object[]> RemoveLabelsData => new object[][]
 {
-        ["0", TestCSDataClass.TestDataList0(), new[] { TestCSDataClass.testDataExpRemoveL0 }],
-        ["1", TestCSDataClass.TestDataList1(), new[] { TestCSDataClass.testDataExpRemoveL1 }],
-        ["2", TestCSDataClass.TestDataList2(), new[] { TestCSDataClass.testDataExpRemoveL2 }],
-        ["3", TestCSDataClass.TestDataList3(), new[] { TestCSDataClass.testDataExpRemoveL3 }],
-        ["4", TestCSDataClass.TestDataList4(), new[] { TestCSDataClass.testDataExpRemoveL4 }],
-        ["7", TestCSDataClass.TestDataList7(), new[] { TestCSDataClass.testDataExpRemoveL7 }],
-        ["9", TestCSDataClass.TestDataList9(), new[] { TestCSDataClass.testDataExpRemoveL9 }],
-        ["12", TestCSDataClass.TestDataList12(), new[] { TestCSDataClass.testDataExpRemoveL12 }],
-        ["13", TestCSDataClass.TestDataList13(), new[] { TestCSDataClass.testDataExpRemoveL13 }],
-        ["15", TestCSDataClass.TestDataList15(), new[] { TestCSDataClass.testDataExpRemoveL15 }],
-        ["16", TestCSDataClass.TestDataList16(), new[] { TestCSDataClass.testDataExpRemoveL16 }],
-        ["17", TestCSDataClass.TestDataList17(), new[] { TestCSDataClass.testDataExpRemoveL17 }],
-        ["18", TestCSDataClass.TestDataList18(), new[] { TestCSDataClass.testDataExpRemoveL18 }],
-        ["19", TestCSDataClass.TestDataList19(), new[] { TestCSDataClass.testDataExpRemoveL19 }],
+        ["Test00"],
+        ["Test01"],
+        ["Test02"],
+        ["Test03"],
+        ["Test04"],
+        ["Test07"],
+        ["Test09"],
+        ["Test12"],
+        ["Test13"],
+        ["Test15"],
+        ["Test16"],
+        ["Test17"],
+        ["Test18"],
+        ["Test19"],
 };
 
     public static IEnumerable<object[]> TestListParse2 => new object[][]
@@ -373,17 +383,18 @@ public class CSCodeTests : TestBase
 
     [TestMethod()]
     [DynamicData(nameof(RemoveLabelsData))]
-    public void RemoveLabelsTest(string _, List<TokenData> actList, string[] data)
+    public void RemoveLabelsTest(string resourceName)
     {
+        var (actList, expected) = TestCSDataClass.GetRemoveLabelsData(resourceName);
         var act = _testClass.Parse(actList);
         _testClass.ReorderLabels(act);
         _testClass.RemoveSingleSourceLabels1(act);
         var sAct = act.ToString();
-        if (sAct != data[0])
+        if (sAct != expected)
             DoLog(sAct);
         else
             DoLog(_testClass.ToCode(act, 4));
-        AssertAreEqual(data[0], sAct);
+        AssertAreEqual(expected, sAct);
     }
 
     [TestMethod]

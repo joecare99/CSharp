@@ -316,6 +316,12 @@
   <data name="Test19DataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test19\Test19DataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Test20Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test20\Test20Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test21Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test21\Test21Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="Test14Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test14\Test14Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -360,5 +366,29 @@
   </data>
   <data name="Test16ExpParse" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test16\Test16ExpParse.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test14DataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test14\Test14DataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Test17Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test17\Test17Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test19aDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test19\Test19aDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test19Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test19\Test19Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test19aDataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test19\Test19aDataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Test20DataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test20\Test20DataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Test21DataList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test21\Test21DataList.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Test18Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test18\Test18Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

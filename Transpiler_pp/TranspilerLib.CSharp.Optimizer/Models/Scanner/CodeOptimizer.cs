@@ -1,4 +1,5 @@
 ﻿using BaseLib.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TranspilerLib.Data;
@@ -24,12 +25,14 @@ public class CodeOptimizer : ICodeOptimizer
             if (!sourceReference.TryGetTarget(out var source)
                 || source.Type != CodeBlockType.Goto
                 || IsLastStatementOfSwitchCase(source)
-                || FindNextExecutableSibling(source) is not ICodeBlock nextInstruction
+                ) continue; 
+            else if (FindNextExecutableSibling(source) is not ICodeBlock nextInstruction
                 || nextInstruction.Type != CodeBlockType.Goto
                 || nextInstruction.Destination is null
                 || !nextInstruction.Destination.TryGetTarget(out var nextTarget)
                 || nextTarget != label
-                || source.Parent is not ICodeBlock parent
+                ) continue;
+            else if (source.Parent is not ICodeBlock parent
                 || !parent.DeleteSubBlocks(source.Index, 1))
             {
                 continue;
@@ -48,6 +51,21 @@ public class CodeOptimizer : ICodeOptimizer
     /// <returns><c>true</c> when a goto instruction was replaced; otherwise, <c>false</c>.</returns>
     private static bool ReplaceFinalSwitchGotoWithBreak(ICodeBlock label)
     {
+        var sources = label.Sources
+            .Select(reference => reference.TryGetTarget(out var source) ? source : null)
+            .Where(source => source is not null)
+            .Cast<ICodeBlock>()
+            .ToArray();
+        var switchSources = sources
+            .Where(source => source.Parent is ICodeBlock switchBlock
+                && StartsWithKeyword(switchBlock.Code.TrimStart(), "switch")
+                && IsLastStatementOfSwitchCase(source))
+            .ToArray();
+        var hasDirectOuterGoto = sources.Any(source => source.Parent == label.Parent);
+
+        if (switchSources.Length == 1 && hasDirectOuterGoto)
+            return false;
+
         var replaced = false;
         foreach (var sourceReference in label.Sources.ToArray())
         {
@@ -64,6 +82,7 @@ public class CodeOptimizer : ICodeOptimizer
 
             source.Code = "break;";
             source.Type = CodeBlockType.Operation;
+            source.Name = nameof(CodeBlockType.Operation);
             source.Destination = null;
             _ = label.Sources.Remove(sourceReference);
             replaced = true;
@@ -81,7 +100,23 @@ public class CodeOptimizer : ICodeOptimizer
     {
         return item.Parent is ICodeBlock parent
             && StartsWithKeyword(parent.Code.TrimStart(), "switch")
+            && HasSwitchCaseLabel(item)
             && IsLastStatementOfCaseBlock(item);
+    }
+
+    private static bool HasSwitchCaseLabel(ICodeBlock item)
+    {
+        for (var previous = item.Prev; previous is not null; previous = previous.Prev)
+        {
+            if (previous.Type == CodeBlockType.Label)
+                return previous.Code.StartsWith("case ", StringComparison.Ordinal)
+                    || previous.Code.StartsWith("default:", StringComparison.Ordinal);
+
+            if (previous.Type == CodeBlockType.Block)
+                return false;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -143,7 +178,11 @@ public class CodeOptimizer : ICodeOptimizer
         {
             var next = current.Next;
             while (next is not null && IsNonExecutable(next))
+            {
+                if (next.Type == CodeBlockType.Label)
+                    return null;
                 next = next.Next;
+            }
 
             if (next is not null)
                 return next;
@@ -340,6 +379,113 @@ public class CodeOptimizer : ICodeOptimizer
             return null;
     }
 
+    private static ICodeBlock? FindTailingGoto(ICodeBlock codeBlock)
+    {
+        for (var i = codeBlock.SubBlocks.Count - 1; i >= 0; i--)
+        {
+            var child = codeBlock.SubBlocks[i];
+            if (IsCommentLike(child))
+                continue;
+
+            if (child.Type == CodeBlockType.Goto)
+                return child;
+
+            if (child.SubBlocks.Count > 0
+                && FindTailingGoto(child) is ICodeBlock nestedGoto)
+                return nestedGoto;
+
+            if (child.Type != CodeBlockType.Block)
+                return null;
+        }
+
+        return null;
+    }
+
+    private static ICodeBlock? FindPreviousExecutableSibling(ICodeBlock item)
+    {
+        for (var previous = item.Prev; previous is not null; previous = previous.Prev)
+            if (!IsNonExecutable(previous))
+                return previous;
+
+        return null;
+    }
+
+    private static bool HasDestination(ICodeBlock item, ICodeBlock destination)
+    {
+        return item.Destination is not null
+            && item.Destination.TryGetTarget(out var target)
+            && target == destination;
+    }
+
+    private static bool TryConvertGotoChain(ICodeBlock label)
+    {
+        if (label.Parent is not ICodeBlock parent
+            || FindPreviousExecutableSibling(label) is not ICodeBlock finalGoto
+            || finalGoto.Type != CodeBlockType.Goto
+            || !HasDestination(finalGoto, label)
+            || finalGoto.Parent != parent)
+            return false;
+
+        var candidates = new List<ICodeBlock>();
+        var current = FindPreviousExecutableSibling(finalGoto);
+        while (current is ICodeBlock ifBlock
+            && IsIfStatement(ifBlock)
+            && ifBlock.Parent == parent)
+        {
+            candidates.Add(ifBlock);
+            current = FindPreviousExecutableSibling(ifBlock);
+        }
+
+        if (candidates.Count < 2)
+            return false;
+
+        for (var i = 0; i < candidates.Count; i++)
+        {
+            var branchGoto = FindTailingGoto(candidates[i]);
+            if (branchGoto is null)
+            {
+                if (i > 0)
+                    return false;
+                continue;
+            }
+
+            if (!HasDestination(branchGoto, label))
+                return false;
+        }
+
+        for (var i = candidates.Count - 1; i >= 0; i--)
+        {
+            var ifBlock = candidates[i];
+            if (FindTailingGoto(ifBlock) is ICodeBlock branchGoto)
+                _ = branchGoto.Parent?.DeleteSubBlocks(branchGoto.Index, 1);
+
+            if (i == 0)
+                continue;
+
+            var child = candidates[i - 1];
+            if (ifBlock.Parent is not ICodeBlock ifParent)
+                return false;
+
+            var elseBlock = new CodeBlock()
+            {
+                Name = "Operation",
+                Type = CodeBlockType.Operation,
+                Code = "else",
+            };
+            elseBlock.Parent = ifParent;
+            var appendedIndex = elseBlock.Index;
+            if (appendedIndex != ifBlock.Index + 1)
+            {
+                ifParent.SubBlocks.Remove(elseBlock);
+                ifParent.SubBlocks.Insert(ifBlock.Index + 1, elseBlock);
+            }
+
+            child.Parent = elseBlock;
+        }
+
+        return true;
+    }
+
     private void TestEndGotoUpLevel(ICodeBlock? actParent)
     {
         if (actParent is ICodeBlock a
@@ -457,6 +603,9 @@ public class CodeOptimizer : ICodeOptimizer
             redundantGotoRemoved = true;
 
         if (redundantGotoRemoved)
+            return;
+
+        if (TryConvertGotoChain(item))
             return;
 
         RemoveResumeNextCode(item);
@@ -581,12 +730,12 @@ public class CodeOptimizer : ICodeOptimizer
                         && parent.SubBlocks[source.Index - l].Type == CodeBlockType.Label)
                         l++;
                     var deleteIndex = source.Index - l + 1;
-                    if (deleteIndex >= 0 && deleteIndex + l <= parent.SubBlocks.Count)
+                    if (deleteIndex >= 0 
+                        && deleteIndex + l <= parent.SubBlocks.Count 
+                        && parent.SubBlocks[deleteIndex].Code != "default:")
                         _ = parent.DeleteSubBlocks(deleteIndex, l);
                     break;
                 }
     }   
 
 }
-
-

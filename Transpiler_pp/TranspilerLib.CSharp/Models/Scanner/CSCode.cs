@@ -229,7 +229,9 @@ public partial class CSCode : CodeBase, ICSCode
         List<ICodeBlock> labels = new();
         foreach (var item in codeBlock.SubBlocks)
             if (item.Type is CodeBlockType.Label
-                && item.Sources.Count <= 2
+                && (item.Sources.Count <= 2
+                    || IsConditionalGotoChainTarget(item)
+                    || IsSafeSwitchContinuationLabel(item))
                 && item.Sources.Count > 0
                 && !item.Code.StartsWith("case ")
                 && !item.Code.StartsWith("default:"))
@@ -242,6 +244,112 @@ public partial class CSCode : CodeBase, ICSCode
         foreach (var item in codeBlock.SubBlocks.ToArray())
             if (item.SubBlocks.Count > 0)
                 RemoveSingleSourceLabels1(item);
+    }
+
+    private static bool IsConditionalGotoChainTarget(ICodeBlock label)
+    {
+        if (label.Sources.Count < 3
+            || label.Prev is not ICodeBlock finalGoto
+            || finalGoto.Type != CodeBlockType.Goto
+            || !HasDestination(finalGoto, label)
+            || finalGoto.Prev is not ICodeBlock nearestIf
+            || !IsIfStatement(nearestIf)
+            || nearestIf.Prev is not ICodeBlock previousIf
+            || !IsIfStatement(previousIf))
+            return false;
+
+        return ContainsGotoTo(previousIf, label)
+            && previousIf.Prev is ICodeBlock outerIf
+            && IsIfStatement(outerIf)
+            && ContainsGotoTo(outerIf, label);
+    }
+
+    private static bool ContainsGotoTo(ICodeBlock block, ICodeBlock destination)
+    {
+        if (block.Type == CodeBlockType.Goto)
+            return HasDestination(block, destination);
+
+        return block.SubBlocks.Any(child => ContainsGotoTo(child, destination));
+    }
+
+    private static bool HasDestination(ICodeBlock block, ICodeBlock destination)
+    {
+        return block.Destination is not null
+            && block.Destination.TryGetTarget(out var target)
+            && target == destination;
+    }
+
+    private static bool IsIfStatement(ICodeBlock block)
+    {
+        return block.Type == CodeBlockType.Operation
+            && (block.Code.StartsWith("if ", StringComparison.Ordinal)
+                || block.Code.StartsWith("if(", StringComparison.Ordinal));
+    }
+
+    private static bool IsSafeSwitchContinuationLabel(ICodeBlock label)
+    {
+        if (label.Parent is not ICodeBlock parent
+            || label.Sources.Count <= 2)
+            return false;
+
+        var switchSources = label.Sources
+            .Select(reference => reference.TryGetTarget(out var source) ? source : null)
+            .Where(source => source is not null)
+            .Cast<ICodeBlock>()
+            .ToArray();
+
+        var switchCaseSources = switchSources
+            .Where(source => source.Parent is ICodeBlock switchBlock
+                && switchBlock.Code.TrimStart().StartsWith("switch", StringComparison.Ordinal)
+                && switchBlock.Parent == parent)
+            .ToArray();
+
+        if (switchCaseSources.Length < 2
+            || switchSources.Any(source => source.Parent is not ICodeBlock sourceParent
+                || (sourceParent != parent
+                    && (sourceParent.Code.TrimStart().StartsWith("switch", StringComparison.Ordinal)
+                        ? sourceParent.Parent != parent
+                        : true))
+                || (sourceParent != parent && !IsLastStatementOfSwitchCase(source)))
+            || switchCaseSources.Any(source => source.Parent is not ICodeBlock switchBlock
+                || !switchBlock.Code.TrimStart().StartsWith("switch", StringComparison.Ordinal)
+                || switchBlock.Parent != parent
+                || !IsLastStatementOfSwitchCase(source)))
+            return false;
+
+        for (var next = label.Prev; next is not null; next = next.Prev)
+        {
+            if (next.Type == CodeBlockType.Comment
+                || next.Type == CodeBlockType.LComment
+                || next.Type == CodeBlockType.FLComment
+                || next.Type == CodeBlockType.Block)
+                continue;
+
+            return next.Type == CodeBlockType.Goto
+                && HasDestination(next, label);
+        }
+
+        return false;
+    }
+
+    private static bool IsLastStatementOfSwitchCase(ICodeBlock item)
+    {
+        if (item.Parent is not ICodeBlock parent)
+            return false;
+
+        for (var next = item.Next; next is not null; next = next.Next)
+        {
+            if (next.Type == CodeBlockType.Label)
+                return true;
+
+            if (next.Type is not CodeBlockType.Block
+                and not CodeBlockType.Comment
+                and not CodeBlockType.LComment
+                and not CodeBlockType.FLComment)
+                return false;
+        }
+
+        return true;
     }
 
 }

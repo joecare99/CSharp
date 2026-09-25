@@ -133,6 +133,12 @@ Modul1.UbgT = (Text2[0].Text).Trim();
     public static readonly string test14Data = Resources.Test14Dat_cs;
     public static readonly string test15Data = Resources.Test15Dat_cs;
     public static readonly string test16Data = Resources.Test16Dat_cs;
+    public static readonly string test17Data = Resources.Test17Dat_cs;
+    public static readonly string test18Data = Resources.Test18Dat_cs;
+    public static readonly string test19Data = Resources.Test19Dat_cs;
+    public static readonly string test19aData = Resources.Test19aDat_cs;
+    public static readonly string test20Data = Resources.Test20Dat_cs;
+    public static readonly string test21Data = Resources.Test21Dat_cs;
 
     #endregion
 
@@ -3359,10 +3365,36 @@ T:Block,1,}
     public static object TestDataList11() => ReadObject(Resources.Test11DataList)!;
     public static object TestDataList12() => ReadObject(Resources.Test12DataList)!;
     public static object TestDataList13() => ReadObject(Resources.Test13DataList)!;
+    public static object TestDataList14() => ReadObject(Resources.Test14DataList)!;
     public static object TestDataList15() => ReadObject(Resources.Test15DataList)!;
     public static object TestDataList16() => ReadObject(Resources.Test16DataList)!;
     public static object TestDataList17() => ReadObject(Resources.Test17DataList)!;
     public static object TestDataList18() => ReadObject(Resources.Test18DataList)!;
     public static object TestDataList19() => ReadObject(Resources.Test19DataList)!;
+    public static object TestDataList19a() => ReadObject(Resources.Test19aDataList)!;
+    public static object TestDataList20() => ReadObject(Resources.Test20DataList)!;
+    public static object TestDataList21() => ReadObject(Resources.Test21DataList)!;
+
+    public static (List<TokenData> Tokens, string Expected) GetRemoveLabelsData(string resourceName)
+    {
+        return resourceName switch
+        {
+            "Test00" => ((List<TokenData>)TestDataList0(), testDataExpRemoveL0),
+            "Test01" => ((List<TokenData>)TestDataList1(), testDataExpRemoveL1),
+            "Test02" => ((List<TokenData>)TestDataList2(), testDataExpRemoveL2),
+            "Test03" => ((List<TokenData>)TestDataList3(), testDataExpRemoveL3),
+            "Test04" => ((List<TokenData>)TestDataList4(), testDataExpRemoveL4),
+            "Test07" => ((List<TokenData>)TestDataList7(), testDataExpRemoveL7),
+            "Test09" => ((List<TokenData>)TestDataList9(), testDataExpRemoveL9),
+            "Test12" => ((List<TokenData>)TestDataList12(), testDataExpRemoveL12),
+            "Test13" => ((List<TokenData>)TestDataList13(), testDataExpRemoveL13),
+            "Test15" => ((List<TokenData>)TestDataList15(), testDataExpRemoveL15),
+            "Test16" => ((List<TokenData>)TestDataList16(), testDataExpRemoveL16),
+            "Test17" => ((List<TokenData>)TestDataList17(), testDataExpRemoveL17),
+            "Test18" => ((List<TokenData>)TestDataList18(), testDataExpRemoveL18),
+            "Test19" => ((List<TokenData>)TestDataList19(), testDataExpRemoveL19),
+            _ => throw new KeyNotFoundException($"Unknown RemoveLabels resource '{resourceName}'."),
+        };
+    }
     #endregion
 }
