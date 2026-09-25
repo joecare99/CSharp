@@ -13,7 +13,7 @@
     <PackageVersion Include="MySqlConnector" Version="2.6.2" />
     <PackageVersion Include="Selenium.WebDriver" Version="4.49.0" />
     <PackageVersion Include="Selenium.WebDriver.GeckoDriver" Version="0.37.1" />
-    <PackageVersion Include="Selenium.WebDriver.MSEdgeDriver" Version="151.0.4129.59" />
+    <PackageVersion Include="Selenium.WebDriver.MSEdgeDriver" Version="153.0.4234.48" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="10.0.12" />
     <PackageVersion Include="UglyToad.PdfPig" Version="1.7.0-custom-5" />
   </ItemGroup>

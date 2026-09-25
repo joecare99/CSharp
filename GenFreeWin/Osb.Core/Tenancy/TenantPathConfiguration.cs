@@ -4,7 +4,7 @@ using System.IO;
 namespace Osb.Core.Tenancy;
 
 /// <summary>
-/// Represents the absolute directory of a Gen_Plus tenant supplied at application startup.
+/// Represents the absolute directory of a Gen_Free tenant supplied at application startup.
 /// </summary>
 public sealed class TenantPathConfiguration
 {
