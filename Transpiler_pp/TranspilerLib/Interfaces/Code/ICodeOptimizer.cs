@@ -15,5 +15,6 @@
         /// </summary>
         /// <param name="item">The code block candidate to test and optimize.</param>
         void TestItem(ICodeBlock item);
+
     }
 }

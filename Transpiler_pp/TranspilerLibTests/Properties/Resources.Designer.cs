@@ -795,7 +795,7 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die private void Test14Dat()
+        ///   Sucht eine lokalisierte Zeichenfolge, die private void Test15Dat()
         ///{
         ///    if (b1)
         ///    {
@@ -811,6 +811,8 @@ namespace TranspilerLibTests.Properties {
         ///        // some comment
         ///    }
         ///    // some other comment
+        ///    goto l1;
+        ///l2: // some other code
         ///    goto l1;
         ///l1: // nop
         ///    return;
@@ -833,26 +835,28 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die private void Test14Dat()
-        ///{
-        ///    if (b1)
+        ///   Sucht eine lokalisierte Zeichenfolge, die     private void Test15Dat()
         ///    {
-        ///        if (b2)
+        ///        if (b1)
         ///        {
-        ///            // can be removed, because the next unconditional jump is the same as this one
-        ///            // end of block
+        ///            if (b2)
+        ///            {
+        ///                goto l1;
+        ///                // can be removed, because the next unconditional jump is the same as this one
+        ///                // end of block
+        ///            }
+        ///            else
+        ///            {
+        ///                // some other code
+        ///            }
+        ///            // some comment
         ///        }
-        ///        else
-        ///        {
-        ///            // some other code
-        ///        }
-        ///        // some comment
-        ///    }
-        ///    // some other comment
-        ///    goto l1;
-        ///l1: // nop
-        ///    return;
-        ///} ähnelt.
+        ///        // some other comment
+        ///        goto l1;
+        ///    l2:
+        ///        // some other code
+        ///        goto l1;
+        ///    l1: // &lt;= [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string Test15ExpCode {
             get {
@@ -862,7 +866,7 @@ namespace TranspilerLibTests.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
-        ///private void Test14Dat()
+        ///private void Test15Dat()
         //////BlockStart Block 1,0
         ///{
         //////Operation Operation 1,1
@@ -896,15 +900,30 @@ namespace TranspilerLibTests.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
-        ///private bool Test13Dat()
+        ///private void Test15Dat()
         //////BlockStart Block 1,0
         ///{
-        //////Comment LComment 1,1
-        ///// Compare this snippet from VBUnObfusicatorTests/Resources/Test13Dat.cs:
-        //////Operation Operation 1,2
-        ///return 0 &lt; System.SomeFunc(123);
-        //////BlockEnd Block 1,3
-        ///} ähnelt.
+        //////Operation Operation 1,1
+        ///if (b1)
+        //////BlockStart Block 2,0
+        ///{
+        //////Operation Operation 2,1
+        ///if (b2)
+        //////BlockStart Block 3,0
+        ///{
+        //////Comment LComment 3,1
+        ///// can be removed, because the next unconditional jump is the same as this one
+        //////Comment LComment 3,2
+        ///// end of block
+        //////BlockEnd Block 3,3
+        ///}
+        //////Operation Operation 2,2
+        ///else
+        //////BlockStart Block 3,0
+        ///{
+        //////Comment LComment 3,1
+        ///// some other code
+        //////BlockEnd Block  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string Test15ExpParseRL {
             get {
@@ -913,7 +932,7 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die T:Operation,0,private void Test14Dat()
+        ///   Sucht eine lokalisierte Zeichenfolge, die T:Operation,0,private void Test15Dat()
         ///T:Block,1,{
         ///T:Operation,1,if
         ///T:Operation,1,(b1)
@@ -962,7 +981,7 @@ namespace TranspilerLibTests.Properties {
         ///    }
         ///    // some other comment
         ///    goto l1;
-        ///l1: // nop
+        ///l1: // must have 3 gotos to this label, even if it is the last statement in the method
         ///    return;
         ///} ähnelt.
         /// </summary>
@@ -979,6 +998,34 @@ namespace TranspilerLibTests.Properties {
             get {
                 object obj = ResourceManager.GetObject("Test16DataList", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die     public void Test16Dat()
+        ///    {
+        ///        while (b1)
+        ///        {
+        ///            if (b2)
+        ///            {
+        ///                goto l1;
+        ///                // must not be removed, even if it is the last statement in the block
+        ///                // end of block
+        ///            }
+        ///            else
+        ///            {
+        ///                // some other code
+        ///            }
+        ///            // some comment
+        ///        }
+        ///        // some other comment
+        ///        goto l1;
+        ///    l1:
+        ///        // must have 3 gotos to this label, even if it is the last [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Test16ExpCode {
+            get {
+                return ResourceManager.GetString("Test16ExpCode", resourceCulture);
             }
         }
         
@@ -1018,15 +1065,31 @@ namespace TranspilerLibTests.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
-        ///private bool Test13Dat()
+        ///public void Test16Dat()
         //////BlockStart Block 1,0
         ///{
-        //////Comment LComment 1,1
-        ///// Compare this snippet from VBUnObfusicatorTests/Resources/Test13Dat.cs:
-        //////Operation Operation 1,2
-        ///return 0 &lt; System.SomeFunc(123);
-        //////BlockEnd Block 1,3
-        ///} ähnelt.
+        //////Operation Operation 1,1
+        ///while (b1)
+        //////BlockStart Block 2,0
+        ///{
+        //////Operation Operation 2,1
+        ///if (b2)
+        //////BlockStart Block 3,0
+        ///{
+        //////Goto Goto 3,1 Dest:OK
+        ///goto l1;
+        //////Comment LComment 3,2
+        ///// must not be removed, even if it is the last statement in the block
+        //////Comment LComment 3,3
+        ///// end of block
+        //////BlockEnd Block 3,4
+        ///}
+        //////Operation Operation 2,2
+        ///else
+        //////BlockStart Block 3,0
+        ///{
+        //////Comment LComment 3,1
+        ///// some o [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string Test16ExpParseRL {
             get {
@@ -1104,30 +1167,46 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die     
+        ///        /// &lt;summary&gt;
+        ///        /// Demonstrates a switch branch that exits to a label outside the switch.
+        ///        /// Replacing the goto with a switch-local break preserves the control flow
+        ///        /// because execution continues at the statement immediately after the switch.
+        ///        /// &lt;/summary&gt;
+        ///        private void Test17Dat(int state)
+        ///        {
+        ///            switch (state)
+        ///            {
+        ///            case 1:
+        ///                goto end;
+        ///            default:
+        ///                break;
+        ///            [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Test17ExpCode {
+            get {
+                return ResourceManager.GetString("Test17ExpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
+        ///
+        //////Comment LComment 1,0
+        ////// &lt;summary&gt;
+        //////Comment LComment 1,1
+        ////// Demonstrates a switch branch that exits to a label outside the switch.
+        //////Comment LComment 1,2
+        ////// Replacing the goto with a switch-local break preserves the control flow
+        //////Comment LComment 1,3
+        ////// because execution continues at the statement immediately after the switch.
+        //////Comment LComment 1,4
+        ////// &lt;/summary&gt;
+        //////Operation Operation 1,5
         ///private void Test17Dat(int state)
-        //////BlockStart Block 1,0
-        ///{
-        //////Operation Operation 1,1
-        ///switch (state)
         //////BlockStart Block 2,0
         ///{
-        //////Label Label 2,1
-        ///case 1:
-        //////Operation Operation 2,2
-        ///break;
-        //////Label Label 2,3
-        ///default:
-        //////Operation Operation 2,4
-        ///break;
-        //////BlockEnd Block 2,5
-        ///}
-        //////Label Label 1,2
-        ///end:
-        //////Operation Operation 1,3
-        ///return;
-        //////BlockEnd Block 1,4
-        ///} ähnelt.
+        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string Test17ExpParseRL {
             get {
@@ -1174,32 +1253,47 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die     
+        ///        /// &lt;summary&gt;
+        ///        /// Demonstrates two switch cases that share an outer goto target.
+        ///        /// The target does not immediately follow the switch, so neither goto can
+        ///        /// be replaced with break or removed as a duplicate case terminator.
+        ///        /// &lt;/summary&gt;
+        ///        private void Test18Dat(int state)
+        ///        {
+        ///            switch (state)
+        ///            {
+        ///            case 1:
+        ///                goto end;
+        ///            default:
+        ///                goto end;
+        ///            }
+        ///            [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Test18ExpCode {
+            get {
+                return ResourceManager.GetString("Test18ExpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
+        ///
+        //////Comment LComment 1,0
+        ////// &lt;summary&gt;
+        //////Comment LComment 1,1
+        ////// Demonstrates two switch cases that share an outer goto target.
+        //////Comment LComment 1,2
+        ////// The target does not immediately follow the switch, so neither goto can
+        //////Comment LComment 1,3
+        ////// be replaced with break or removed as a duplicate case terminator.
+        //////Comment LComment 1,4
+        ////// &lt;/summary&gt;
+        //////Operation Operation 1,5
         ///private void Test18Dat(int state)
-        //////BlockStart Block 1,0
-        ///{
-        //////Operation Operation 1,1
-        ///switch (state)
         //////BlockStart Block 2,0
         ///{
-        //////Label Label 2,1
-        ///case 1:
-        //////Goto Goto 2,2 Dest:OK
-        ///goto end;
-        //////Label Label 2,3
-        ///default:
-        //////Goto Goto 2,4 Dest:OK
-        ///goto end;
-        //////BlockEnd Block 2,5
-        ///}
-        //////Operation Operation 1,2
-        ///AfterSwitch();
-        //////Label Label 1,3 2
-        ///end:
-        //////Operation Operation 1,4
-        ///return;
-        //////BlockEnd Block 1,5
-        ///} ähnelt.
+        //////Operation Opera [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string Test18ExpParseRL {
             get {
@@ -1247,6 +1341,58 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die     
+        ///        /// &lt;summary&gt;
+        ///        /// Demonstrates two switch cases that share an outer goto target.
+        ///        /// The target does not immediately follow the switch, not even
+        ///        /// a goto to the same label. so both inner gotos can not be replaced
+        ///        /// by break
+        ///        /// &lt;/summary&gt;
+        ///        private void Test19aDat(int state)
+        ///        {
+        ///            switch (state)
+        ///            {
+        ///            case 1:
+        ///                goto end;
+        ///            default:
+        ///                goto end;
+        ///            }
+        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Test19aExpCode {
+            get {
+                return ResourceManager.GetString("Test19aExpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
+        ///
+        //////Comment LComment 1,0
+        ////// &lt;summary&gt;
+        //////Comment LComment 1,1
+        ////// Demonstrates two switch cases that share an outer goto target.
+        //////Comment LComment 1,2
+        ////// The target does not immediately follow the switch, but
+        //////Comment LComment 1,3
+        ////// a goto to the same label. so both inner gotos can be replaced
+        //////Comment LComment 1,4
+        ////// by break
+        //////Comment LComment 1,5
+        ////// &lt;/summary&gt;
+        //////Operation Operation 1,6
+        ///private void Test19Dat(int state)
+        //////BlockStart Block 2,0
+        ///{
+        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Test19aExpParseRL {
+            get {
+                return ResourceManager.GetString("Test19aExpParseRL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die /// &lt;summary&gt;
         ////// Demonstrates two switch cases that share an outer goto target.
         ////// The target does not immediately follow the switch, but
@@ -1286,32 +1432,50 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die     
+        ///        /// &lt;summary&gt;
+        ///        /// Demonstrates two switch cases that share an outer goto target.
+        ///        /// The target does not immediately follow the switch, but
+        ///        /// a goto to the same label. so both inner gotos can be replaced
+        ///        /// by break
+        ///        /// &lt;/summary&gt;
+        ///        private void Test19Dat(int state)
+        ///        {
+        ///            switch (state)
+        ///            {
+        ///            case 1:
+        ///                goto end;
+        ///            default:
+        ///                goto end;
+        ///            }
+        ///          [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Test19ExpCode {
+            get {
+                return ResourceManager.GetString("Test19ExpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ///Declaration MainBlock 0,0
+        ///
+        //////Comment LComment 1,0
+        ////// &lt;summary&gt;
+        //////Comment LComment 1,1
+        ////// Demonstrates two switch cases that share an outer goto target.
+        //////Comment LComment 1,2
+        ////// The target does not immediately follow the switch, but
+        //////Comment LComment 1,3
+        ////// a goto to the same label. so both inner gotos can be replaced
+        //////Comment LComment 1,4
+        ////// by break
+        //////Comment LComment 1,5
+        ////// &lt;/summary&gt;
+        //////Operation Operation 1,6
         ///private void Test19Dat(int state)
-        //////BlockStart Block 1,0
-        ///{
-        //////Operation Operation 1,1
-        ///switch (state)
         //////BlockStart Block 2,0
         ///{
-        //////Label Label 2,1
-        ///case 1:
-        //////Operation Operation 2,2
-        ///break;
-        //////Label Label 2,3
-        ///default:
-        //////Operation Operation 2,4
-        ///break;
-        //////BlockEnd Block 2,5
-        ///}
-        //////Goto Goto 1,2 Dest:OK
-        ///goto end;
-        //////Label Label 1,3 1
-        ///end:
-        //////Operation Operation 1,4
-        ///return;
-        //////BlockEnd Block 1,5
-        ///} ähnelt.
+        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string Test19ExpParseRL {
             get {
@@ -1509,6 +1673,30 @@ namespace TranspilerLibTests.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die     
+        ///        /// &lt;summary&gt;
+        ///        /// This method tests two boolean conditions and executes different code blocks based on their values.
+        ///        /// &lt;/summary&gt;
+        ///        private void Test20Dat(bool b1, bool b2)
+        ///        {
+        ///            if (b1)
+        ///            {
+        ///                // some code 1
+        ///            }
+        ///            else
+        ///            if (b2)
+        ///            {
+        ///                // some code 2
+        ///            }
+        ///        } ähnelt.
+        /// </summary>
+        public static string Test20ExpCode {
+            get {
+                return ResourceManager.GetString("Test20ExpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die /// &lt;summary&gt;
         ////// This method demonstrates the use of goto statements to control the flow of execution based on boolean conditions.
         ////// &lt;/summary&gt;
@@ -1548,6 +1736,114 @@ namespace TranspilerLibTests.Properties {
             get {
                 object obj = ResourceManager.GetObject("Test21DataList", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die     
+        ///        /// &lt;summary&gt;
+        ///        /// This method demonstrates the use of goto statements to control the flow of execution based on boolean conditions.
+        ///        /// &lt;/summary&gt;
+        ///        private void Test21Dat(bool b1, bool b2, bool b3)
+        ///        {
+        ///            if (b1)
+        ///            {
+        ///                // some code 1
+        ///                goto End;
+        ///            }
+        ///            if (b2)
+        ///            {
+        ///                // some code 2
+        ///                goto End;
+        ///            }
+        ///            if (b3)
+        ///            {
+        ///       [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Test21ExpCode {
+            get {
+                return ResourceManager.GetString("Test21ExpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        /// </summary>
+        public static string Test21ExpParseRL {
+            get {
+                return ResourceManager.GetString("Test21ExpParseRL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die /// &lt;summary&gt;
+        ////// Converts a date string in the format &quot;YYYYMMDD&quot; to a more readable format, optionally adding prefixes based on certain conditions.
+        ////// Several optimizations are supposesed to be done by the optimizer.
+        ////// &lt;/summary&gt;
+        ///public static void Datwand1(ref string Datu, byte nonul = 0)
+        ///{
+        ///    int try0000_dispatch = -1;
+        ///    int num = default(int);
+        ///    int num2 = default(int);
+        ///    int num3 = default(int);
+        ///    string left = default(string);
+        ///    while (true)
+        ///    {
+        ///        try
+        ///        {
+        ///    [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Test22Dat_cs {
+            get {
+                return ResourceManager.GetString("Test22Dat_cs", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die die Test23-Quelldaten enthält.
+        /// </summary>
+        public static string Test23Dat_cs {
+            get {
+                return ResourceManager.GetString("Test23Dat_cs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        public static byte[] Test22DataList {
+            get {
+                object obj = ResourceManager.GetObject("Test22DataList", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die     
+        ///        /// &lt;summary&gt;
+        ///        /// Converts a date string in the format &quot;YYYYMMDD&quot; to a more readable format, optionally adding prefixes based on certain conditions.
+        ///        /// Several optimizations are supposesed to be done by the optimizer.
+        ///        /// &lt;/summary&gt;
+        ///        public static void Datwand1(ref string Datu, byte nonul = 0)
+        ///        {
+        ///            int try0000_dispatch = -1;
+        ///            int num = default(int);
+        ///            int num2 = default(int);
+        ///            int num3 = default(int);
+        ///   [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string Test22ExpCode {
+            get {
+                return ResourceManager.GetString("Test22ExpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        /// </summary>
+        public static string Test22ExpParseRL {
+            get {
+                return ResourceManager.GetString("Test22ExpParseRL", resourceCulture);
             }
         }
         
@@ -2162,7 +2458,8 @@ namespace TranspilerLibTests.Properties {
         //////Function Function 3,91,0
         ///Len
         //////Operation Operation 3,100,1
-        ///:        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///:
+        /// [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string TestExpParse02 {
             get {

@@ -15,6 +15,6 @@
     }
     // some other comment
     goto l1;
-l1: // nop
+l1: // must have 3 gotos to this label, even if it is the last statement in the method
     return;
 }

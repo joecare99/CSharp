@@ -1,0 +1,245 @@
+﻿/// <summary>
+/// Converts a date string in the format "YYYYMMDD" to a more readable format, optionally adding prefixes based on certain conditions.
+/// Several optimizations are supposesed to be done by the optimizer.
+/// </summary>
+public static void Datwand1(ref string Datu, byte nonul = 0)
+{
+    int try0000_dispatch = -1;
+    int num = default(int);
+    int num2 = default(int);
+    int num3 = default(int);
+    string left = default(string);
+    while (true)
+    {
+        try
+        {
+            /*Note: ILSpy has introduced the following switch to emulate a goto from catch-block to try-block*/
+            ;
+            int num4;
+            switch (try0000_dispatch)
+            {
+                default:
+                    num = 1;
+                    DatSp = "";
+                    goto IL_000d;
+                case 1779:
+                    {
+                        num2 = num;
+                        switch (num3)
+                        {
+                            case 2:
+                                break;
+                            case 1:
+                                goto IL_056f;
+                            default:
+                                goto end_IL_0000;
+                        }
+                        if (Information.Err().Number == 3021)
+                        {
+                            goto end_IL_0000_2;
+                        }
+                        if (Interaction.MsgBox(Conversion.ErrorToString(), MsgBoxStyle.OkCancel, Information.Err().Number.AsString()) == MsgBoxResult.Cancel)
+                        {
+                            ProjectData.EndApp();
+                        }
+                        ProjectData.ClearProjectError();
+                        if (num2 == 0)
+                        {
+                            throw ProjectData.CreateProjectError(-2146828268);
+                        }
+                        num4 = num2;
+                        goto IL_0572;
+                    }
+                end_IL_0000:
+                    break;
+                IL_000d:
+                    num = 2;
+                    if (aus[108] == "1")
+                    {
+                        if (Operators.CompareString(Datu, aus[173], TextCompare: false) > 0)
+                        {
+                            Datu = "";
+                            goto end_IL_0000_2;
+                        }
+                    }
+                    ProjectData.ClearProjectError();
+                    num3 = 2;
+                    if (Strings.Len(Datu) < 8)
+                    {
+                        Datu = Strings.Left(Datu + "00000000", 8);
+                    }
+                    DatSp = Strings.Mid(Datu, 7, 2) + "." + Strings.Mid(Datu, 5, 2) + "." + Strings.Mid(Datu, 1, 4);
+                    if (Conversion.Val(Strings.Mid(Datu, 7, 2)) == 0.0)
+                    {
+                        StringType.MidStmtStr(ref Datu, 7, 2, "  ");
+                    }
+                    if (Conversion.Val(Strings.Mid(Datu, 5, 2)) == 0.0)
+                    {
+                        StringType.MidStmtStr(ref Datu, 5, 2, "  ");
+                    }
+                    Datu = LegacyTextFormatting.FormatLegacyDate(Datu);
+                    Datu = Strings.RTrim(Strings.LTrim(Datu));
+                    if (Strings.Len(Datu) > 0)
+                    {
+                        Datu = Strings.Replace(Datu, " ", ".");
+                        if (aus[176].AsDouble() == 1.0 && nonul == 0)
+                        {
+                            if (Strings.Mid(Datu, 3, 2) == ".0")
+                            {
+                                StringType.MidStmtStr(ref Datu, 3, 2, ".R");
+                            }
+                            goto IL_01f7;
+                        }
+                    }
+                    goto IL_023d;
+                IL_01f7:
+                    num = 27;
+                    if (Strings.Mid(Datu, 1, 1) == "0")
+                    {
+                        StringType.MidStmtStr(ref Datu, 1, 1, "R");
+                    }
+                    goto IL_0223;
+                IL_0223:
+                    num = 30;
+                    Datu = Strings.Replace(Datu, "R", "");
+                    goto IL_023d;
+                IL_023d: // <========== 3
+                    num = 33;
+                    if (Strings.Trim(Kont[35]) != "")
+                    {
+                        left = Strings.UCase(Kont[35]);
+                        if ((left == "U") || (left == "u"))
+                        {
+                            Datu = "um " + Datu;
+                            goto end_IL_0000_2;
+                        }
+                        if ((left == "V") || (left == "v"))
+                        {
+                            Datu = "vor " + Datu;
+                            goto end_IL_0000_2;
+                        }
+                        if ((left == "N") || (left == "n"))
+                        {
+                            Datu = "nach " + Datu;
+                            goto end_IL_0000_2;
+                        }
+                        if ((left == "R") || (left == "r"))
+                        {
+                            Datu = "errech. " + Datu;
+                            goto end_IL_0000_2;
+                        }
+                        if (left == "?")
+                        {
+                            Datu = Operators.AddObject(Datu, ErTable.Fields["DatumV_S"].Value).AsString();
+                            goto end_IL_0000_2;
+                        }
+                        if (left == "Z")
+                        {
+                            Datu = "zwischen " + Datu;
+                            goto end_IL_0000_2;
+                        }
+                        if (left == "A")
+                        {
+                            Datu = " und " + Datu;
+                            goto end_IL_0000_2;
+                        }
+                        if (left == "B")
+                        {
+                            Datu = " bis " + Datu;
+                            goto end_IL_0000_2;
+                        }
+                        if (left == "C")
+                        {
+                            Datu = "calc. " + Datu;
+                            goto end_IL_0000_2;
+                        }
+                        if (Ubg != 500)
+                        {
+                            Datu = Kont[35] + " " + Datu;
+                            goto end_IL_0000_2;
+                        }
+                        Datu = Datu;
+                        if (aus[46] != "1")
+                        {
+                            goto end_IL_0000_2;
+                        }
+                        if (Information.UBound(Strings.Split(Datu, ".")) != 2)
+                        {
+                            goto end_IL_0000_2;
+                        }
+                        Datu = "am " + Datu;
+                        goto end_IL_0000_2;
+                    }
+                    if (aus[46] != "1")
+                    {
+                        goto end_IL_0000_2;
+                    }
+                    if (Information.UBound(Strings.Split(Datu, ".")) != 2)
+                    {
+                        goto end_IL_0000_2;
+                    }
+                    Datu = "am " + Datu;
+                    goto end_IL_0000_2;
+                IL_056f:
+                    num4 = num2 + 1;
+                    goto IL_0572;
+                IL_0572:
+                    num2 = 0;
+                    switch (num4)
+                    {
+                        case 1:
+                            break;
+                        case 26:
+                        case 27:
+                            goto IL_01f7;
+                        case 29:
+                        case 30:
+                            goto IL_0223;
+                        case 31:
+                        case 32:
+                        case 33:
+                            goto IL_023d;
+                        default:
+                            goto end_IL_0000;
+                        case 5:
+                        case 35:
+                        case 39:
+                        case 42:
+                        case 45:
+                        case 48:
+                        case 51:
+                        case 54:
+                        case 57:
+                        case 60:
+                        case 63:
+                        case 67:
+                        case 73:
+                        case 75:
+                        case 76:
+                        case 77:
+                        case 82:
+                        case 84:
+                        case 85:
+                        case 87:
+                        case 93:
+                            goto end_IL_0000_2;
+                    }
+                    goto default;
+            }
+        }
+        catch (Exception obj) when (num3 != 0 && num2 == 0)
+        {
+            ProjectData.SetProjectError((Exception)obj);
+            try0000_dispatch = 1779;
+            continue;
+        }
+        throw ProjectData.CreateProjectError(-2146828237);
+        continue;
+    end_IL_0000_2: // <========== 19
+        break;
+    }
+    if (num2 != 0)
+    {
+        ProjectData.ClearProjectError();
+    }
+}

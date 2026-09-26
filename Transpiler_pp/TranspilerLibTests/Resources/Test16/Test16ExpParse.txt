@@ -37,7 +37,7 @@ goto l1;
 ///Label Label 1,4 2
 l1:
 ///Comment LComment 1,5
-// nop
+// must have 3 gotos to this label, even if it is the last statement in the method
 ///Operation Operation 1,6
 return;
 ///BlockEnd Block 1,7

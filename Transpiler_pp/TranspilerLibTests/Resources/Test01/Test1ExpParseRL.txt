@@ -1,4 +1,4 @@
-﻿///Declaration MainBlock 0,0
+///Declaration MainBlock 0,0
 private void Befehl_Click(object eventSender, EventArgs eventArgs)
 ///BlockStart Block 1,0
 {
@@ -94,51 +94,55 @@ if (num2 == 0)
 throw ProjectData.CreateProjectError(-2146828268);
 ///BlockEnd Block 7,2
 }
-///Goto Goto 6,5 Dest:OK
-goto IL_0315;
-///BlockEnd Block 6,6
+///BlockEnd Block 6,5
 }
 ///Operation Operation 5,5
+else
+///Operation Operation 6,0
 if (number == 55)
-///BlockStart Block 6,0
-{
-///Operation Operation 6,1
-FileSystem.FileClose();
-///Operation Operation 6,2
-ProjectData.ClearProjectError();
-///Operation Operation 6,3
-if (num2 == 0)
 ///BlockStart Block 7,0
 {
 ///Operation Operation 7,1
+FileSystem.FileClose();
+///Operation Operation 7,2
+ProjectData.ClearProjectError();
+///Operation Operation 7,3
+if (num2 == 0)
+///BlockStart Block 8,0
+{
+///Operation Operation 8,1
 throw ProjectData.CreateProjectError(-2146828268);
-///BlockEnd Block 7,2
+///BlockEnd Block 8,2
 }
-///Goto Goto 6,4 Dest:OK
-goto IL_0315;
-///BlockEnd Block 6,5
+///BlockEnd Block 7,4
 }
 ///Operation Operation 5,6
+else
+///Block Block 6,0
+{
+///Operation Operation 7,0
 if (Interaction.MsgBox(Conversion.ErrorToString(), MsgBoxStyle.OkCancel, (Information.Err().Number).AsString()) == MsgBoxResult.Cancel)
-///BlockStart Block 6,0
+///BlockStart Block 8,0
 {
-///Operation Operation 6,1
+///Operation Operation 8,1
 ProjectData.EndApp();
-///BlockEnd Block 6,2
+///BlockEnd Block 8,2
 }
-///Operation Operation 5,7
+///Operation Operation 7,1
 ProjectData.ClearProjectError();
-///Operation Operation 5,8
+///Operation Operation 7,2
 if (num2 == 0)
-///BlockStart Block 6,0
+///BlockStart Block 8,0
 {
-///Operation Operation 6,1
+///Operation Operation 8,1
 throw ProjectData.CreateProjectError(-2146828268);
-///BlockEnd Block 6,2
+///BlockEnd Block 8,2
 }
-///Goto Goto 5,9 Dest:OK
+///End Block 6,1
+}
+///Goto Goto 5,7 Dest:OK
 goto IL_0315;
-///BlockEnd Block 5,10
+///BlockEnd Block 5,8
 }
 ///Label Label 4,6 2
 end_IL_0000:
@@ -244,7 +248,7 @@ num = 31;
 RichTextBox1.SaveFile(MyProject.Forms.Hinter.CommonDialog1Save.FileName, RichTextBoxStreamType.RichText);
 ///Goto Goto 4,36 Dest:OK
 goto end_IL_0000_2;
-///Label Label 4,37 3
+///Label Label 4,37 1
 IL_0315:
 ///Operation Operation 4,38
 num4 = num2;

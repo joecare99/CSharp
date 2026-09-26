@@ -25,6 +25,6 @@ T:LComment,1,// some other comment
 T:Goto,1,goto l1;
 T:Label,1,l1:
 T:Operation,1,
-T:LComment,1,// nop
+T:LComment,1,// must have 3 gotos to this label, even if it is the last statement in the method
 T:Operation,1,return;
 T:Block,1,}

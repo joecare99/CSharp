@@ -38,7 +38,7 @@ public class CSCodeTests : TestBase
         [ "4",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testData4 ) },                    TestCSDataClass.TestDataList4()  ],
         [ "5",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testData5 ) },                    TestCSDataClass.TestDataList5()  ],
         [ "6",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testData6 ) },                    TestCSDataClass.TestDataList6()  ],
-        [ "7",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testData7 ) },                    TestCSDataClass.TestDataList7()  ],
+        [ "7",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test7Data ) },                    TestCSDataClass.TestDataList7()  ],
         [ "8",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test8Data ) },                    TestCSDataClass.TestDataList8()!  ],
         [ "9",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test9Data ) },                    TestCSDataClass.TestDataList9()!  ],
         [ "10", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test10Data) },                    TestCSDataClass.TestDataList10()! ],
@@ -54,20 +54,21 @@ public class CSCodeTests : TestBase
         [ "19a", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test19aData) },                    TestCSDataClass.TestDataList19a()! ],
         [ "20", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test20Data) },                    TestCSDataClass.TestDataList20()! ],
         [ "21", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test21Data) },                    TestCSDataClass.TestDataList21()! ],
+        [ "22", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test22Data) },                    TestCSDataClass.TestDataList22()! ],
 
 
     };
 
     public static IEnumerable<object[]> TestListParse => new object[][]
 {
-        ["0", TestCSDataClass.TestDataList0()!, new[] { TestCSDataClass.testDataExp0 }],
-        ["1", TestCSDataClass.TestDataList1()!, new[] { TestCSDataClass.testDataExp1 }],
-        ["2", TestCSDataClass.TestDataList2()!, new[] { TestCSDataClass.testDataExp2 }],
-        ["3", TestCSDataClass.TestDataList3(), new[] { TestCSDataClass.testDataExp3 }],
-        ["4", TestCSDataClass.TestDataList4(), new[] { TestCSDataClass.testDataExp4 }],
-        ["5", TestCSDataClass.TestDataList5(), new[] { TestCSDataClass.testDataExp5 }],
-        ["6", TestCSDataClass.TestDataList6(), new[] { TestCSDataClass.testDataExp6 }],
-        ["7", TestCSDataClass.TestDataList7(), new[] { TestCSDataClass.testDataExp7 }],
+        ["0", TestCSDataClass.TestDataList0()!, new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp0) } }],
+        ["1", TestCSDataClass.TestDataList1()!, new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp1) } }],
+        ["2", TestCSDataClass.TestDataList2()!, new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp2) } }],
+        ["3", TestCSDataClass.TestDataList3(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp3) } }],
+        ["4", TestCSDataClass.TestDataList4(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp4) } }],
+        ["5", TestCSDataClass.TestDataList5(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp5) } }],
+        ["6", TestCSDataClass.TestDataList6(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp6) } }],
+        ["7", TestCSDataClass.TestDataList7(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test7DataExp) } }],
    };
     public static IEnumerable<object[]> ReorderListData => new object[][]
 {
@@ -76,7 +77,7 @@ public class CSCodeTests : TestBase
         ["2", TestCSDataClass.TestDataList2(), new[] { TestCSDataClass.testDataExpReorder2 }],
         ["3", TestCSDataClass.TestDataList3(), new[] { TestCSDataClass.testDataExpReorder3 }],
         ["4", TestCSDataClass.TestDataList4(), new[] { TestCSDataClass.testDataExpReorder4 }],
-        ["7", TestCSDataClass.TestDataList7(), new[] { TestCSDataClass.testDataExp7 }],
+        ["7", TestCSDataClass.TestDataList7(), new[] { TestCSDataClass.test7DataExp }],
         ["8", TestCSDataClass.TestDataList8(), new[] { TestCSDataClass.test8DataExp }],
         ["9", TestCSDataClass.TestDataList9(), new[] { TestCSDataClass.testDataExpReorder9 }],
 };
@@ -96,20 +97,23 @@ public class CSCodeTests : TestBase
         ["Test17"],
         ["Test18"],
         ["Test19"],
+        ["Test19a"],
+        ["Test21"],
+        ["Test22"],
 };
 
     public static IEnumerable<object[]> TestListParse2 => new object[][]
 {
-        ["0", TestCSDataClass.TestDataList0(), new[] { TestCSDataClass.cExpCode0 }],
-        ["1", TestCSDataClass.TestDataList1(), new[] { TestCSDataClass.cExpCode1 }],
-        ["2", TestCSDataClass.TestDataList2(), new[] { TestCSDataClass.cExpCode2 }],
-        ["3", TestCSDataClass.TestDataList3(), new[] { TestCSDataClass.cExpCode3 }],
-        ["4", TestCSDataClass.TestDataList4(), new[] { TestCSDataClass.cExpCode4 }],
-        ["5", TestCSDataClass.TestDataList5(), new[] { TestCSDataClass.cExpCode5 }],
-        ["6", TestCSDataClass.TestDataList6(), new[] { TestCSDataClass.cExpCode6 }],
-        ["7", TestCSDataClass.TestDataList7(), new[] { TestCSDataClass.cExpCode7 }],
-        ["8", TestCSDataClass.TestDataList8(), new[] { TestCSDataClass.cExpCode8 }],
-        ["9", TestCSDataClass.TestDataList9(), new[] { TestCSDataClass.cExpCode9 }],
+        ["0", TestCSDataClass.TestDataList0(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode0) }],
+        ["1", TestCSDataClass.TestDataList1(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode1) }],
+        ["2", TestCSDataClass.TestDataList2(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode2) }],
+        ["3", TestCSDataClass.TestDataList3(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode3) }],
+        ["4", TestCSDataClass.TestDataList4(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode4) }],
+        ["5", TestCSDataClass.TestDataList5(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode5) }],
+        ["6", TestCSDataClass.TestDataList6(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode6) }],
+        ["7", TestCSDataClass.TestDataList7(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode7) }],
+        ["8", TestCSDataClass.TestDataList8(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode8) }],
+        ["9", TestCSDataClass.TestDataList9(), new[] { Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode9 )}],
 };
 
     private static readonly JsonSerializerOptions _jsonOptions = new()
@@ -172,7 +176,7 @@ public class CSCodeTests : TestBase
     [DataRow("4", new[] { TestCSDataClass.testData4, TestCSDataClass.cExpLog4 }, DisplayName = "4")]
     [DataRow("5", new[] { TestCSDataClass.testData5, TestCSDataClass.cExpLog5 }, DisplayName = "5")]
     [DataRow("6", new[] { TestCSDataClass.testData6, TestCSDataClass.cExpLog6 }, DisplayName = "6")]
-    [DataRow("7", new[] { TestCSDataClass.testData7, TestCSDataClass.cExpLog7 }, DisplayName = "7")]
+    [DataRow("7", new[] { TestCSDataClass.test7Data, TestCSDataClass.cExpLog7 }, DisplayName = "7")]
     [DynamicData(nameof(TokenizeTestData))]
     public void TokenizeTest(string _, object[] data)
     {
@@ -225,6 +229,7 @@ public class CSCodeTests : TestBase
             {
         ["1",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test1Data), Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp1) }],
         ["2",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test2Data), Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp2    )}],
+        ["7",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test7Data),   Encoding.UTF8.GetBytes(TestCSDataClass.test7DataExp  )}],
         ["8",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test8Data),   Encoding.UTF8.GetBytes(TestCSDataClass.test8DataExp  )}],
         ["9",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test9Data),   Encoding.UTF8.GetBytes(TestCSDataClass.test9DataExp  )}],
         ["10",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test10Data), Encoding.UTF8.GetBytes(TestCSDataClass.test10DataExp )}],
@@ -244,7 +249,6 @@ public class CSCodeTests : TestBase
     [DataRow("4", new[] { TestCSDataClass.testData4, TestCSDataClass.testDataExp4 }, DisplayName = "4")]
     [DataRow("5", new[] { TestCSDataClass.testData5, TestCSDataClass.testDataExp5 }, DisplayName = "5")]
     [DataRow("6", new[] { TestCSDataClass.testData6, TestCSDataClass.testDataExp6 }, DisplayName = "6")]
-    [DataRow("7", new[] { TestCSDataClass.testData7, TestCSDataClass.testDataExp7 }, DisplayName = "7")]
     [DynamicData(nameof(ParseTestData))]
     public void ParseTest(string name, object[] data)
     {
@@ -277,14 +281,24 @@ public class CSCodeTests : TestBase
     }
     public static IEnumerable<object[]> Parse2TestData => new object[][]
             {
-        ["1", new[] { TestCSDataClass.test1Data, TestCSDataClass.cExpCode1 }],
-        ["2", new[] { TestCSDataClass.test2Data, TestCSDataClass.cExpCode2 }],
-        ["8", new[] { TestCSDataClass.test8Data, TestCSDataClass.cExpCode8 }],
-        ["9", new[] { TestCSDataClass.test9Data, TestCSDataClass.cExpCode9 }],
-        ["10", new[] { TestCSDataClass.test10Data, TestCSDataClass.cExpCode10 }],
-        ["11", new[] { TestCSDataClass.test11Data, TestCSDataClass.cExpCode11 }],
-        ["12", new[] { TestCSDataClass.test12Data, TestCSDataClass.cExpCode12 }],
-        ["13", new[] { TestCSDataClass.test13Data, TestCSDataClass.cExpCode13 }],
+        ["1",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test1Data),  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode1) }],
+        ["2",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test2Data),  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode2) }],
+        ["8",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test8Data),  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode8) }],
+        ["9",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test9Data),  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode9) }],
+        ["10", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test10Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode10) }],
+        ["11", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test11Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode11) }],
+        ["12", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test12Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode12) }],
+        ["13", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test13Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode13) }],
+        ["14", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test14Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode14) }],
+        ["15", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test15Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode15) }],
+        ["16", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test16Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode16) }],
+        ["17", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test17Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode17) }],
+        ["18", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test18Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode18) }],
+        ["19", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test19Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode19) }],
+        ["19a",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test19aData),Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode19a) }],
+        ["20", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test20Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode20) }],
+        ["21", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test21Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode21) }],
+        ["22", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test22Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode22) }],
             };
 
     [TestMethod()]
@@ -295,16 +309,33 @@ public class CSCodeTests : TestBase
     [DataRow("4", new[] { TestCSDataClass.testData4, TestCSDataClass.cExpCode4 }, DisplayName = "4")]
     [DataRow("5", new[] { TestCSDataClass.testData5, TestCSDataClass.cExpCode5 }, DisplayName = "5")]
     [DataRow("6", new[] { TestCSDataClass.testData6, TestCSDataClass.cExpCode6 }, DisplayName = "6")]
-    [DataRow("7", new[] { TestCSDataClass.testData7, TestCSDataClass.cExpCode7 }, DisplayName = "7")]
+    [DataRow("7", new[] { TestCSDataClass.test7Data, TestCSDataClass.cExpCode7 }, DisplayName = "7")]
     [DynamicData(nameof(Parse2TestData))]
-    public void Parse2Test(string _, string[] data)
+    public void Parse2Test(string _, object[] data)
     {
-        _testClass.OriginalCode = data[0];
+        //Arrange
+        if (data[0] is byte[] bAct)
+            _testClass.OriginalCode = Encoding.UTF8.GetString(bAct);
+        else
+            _testClass.OriginalCode = data[0] as string ?? "";
+        //Act
         var act = _testClass.Parse();
         var sAct = act.ToCode();
-        if (sAct != data[1])
+
+        //Assert
+        string sExp = "";
+        if (data[1] is byte[] bExp)
+        {
+            sExp = Encoding.UTF8.GetString(bExp);
+        }
+        else if (data[1] is string _sExp)
+        {
+            sExp = _sExp;
+        }
+
+        if (sAct != sExp)
             DoLog(sAct);
-        AssertAreEqual(data[1], sAct);
+        AssertAreEqual(sExp, sAct);
     }
 
     [TestMethod()]
@@ -352,19 +383,25 @@ public class CSCodeTests : TestBase
 
     [TestMethod()]
     [DynamicData(nameof(TestListParse))]
-    public void ParseEnumTest(string _, List<TokenData> actList, string[] data)
+    public void ParseEnumTest(string _, List<TokenData> actList, object data)
     {
         var act = _testClass.Parse(actList);
-        AssertAreEqual(data[0], act?.ToString()?.Replace("\"+", "\" +"));
+        if (data is string _sExp)
+            AssertAreEqual(_sExp, act?.ToString()?.Replace("\"+", "\" +"));
+        else if (data is byte[] _bExp)
+            AssertAreEqual(Encoding.UTF8.GetString(_bExp), act?.ToString()?.Replace("\"+", "\" +"));
     }
 
 
     [TestMethod()]
     [DynamicData(nameof(TestListParse2))]
-    public void ParseEnum2Test(string _, List<TokenData> actList, string[] data)
+    public void ParseEnum2Test(string _, List<TokenData> actList, object data)
     {
         var act = _testClass.Parse(actList);
-        AssertAreEqual(data[0], act.ToCode());
+        if (data is string _sExp)
+            AssertAreEqual(_sExp, act.ToCode());
+        else if (data is byte[] _bExp)
+            AssertAreEqual(Encoding.UTF8.GetString(_bExp), act.ToCode());
     }
 
     [TestMethod()]

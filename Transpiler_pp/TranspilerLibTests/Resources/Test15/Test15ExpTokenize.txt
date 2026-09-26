@@ -1,4 +1,4 @@
-﻿T:Operation,0,private void Test14Dat()
+﻿T:Operation,0,private void Test15Dat()
 T:Block,1,{
 T:Operation,1,if
 T:Operation,1,(b1)
@@ -22,6 +22,10 @@ T:LComment,2,// some comment
 T:Block,2,}
 T:Operation,1,
 T:LComment,1,// some other comment
+T:Goto,1,goto l1;
+T:Label,1,l2:
+T:Operation,1,
+T:LComment,1,// some other code
 T:Goto,1,goto l1;
 T:Label,1,l1:
 T:Operation,1,

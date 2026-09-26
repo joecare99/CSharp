@@ -1,4 +1,4 @@
-﻿///Declaration MainBlock 0,0
+///Declaration MainBlock 0,0
 private void Command1_Click(object eventSender, EventArgs eventArgs)
 ///BlockStart Block 1,0
 {
@@ -2367,8 +2367,6 @@ goto IL_4454;
 ///Label Label 5,336 3
 IL_441a:
 ///Operation Operation 5,337
-num = 733;
-///Operation Operation 5,338
 if (!DataModul.DB_PlaceTable.EOF)
 ///BlockStart Block 6,0
 {
@@ -2474,13 +2472,13 @@ DataModul.DB_PlaceTable.MoveNext();
 goto IL_441a;
 ///BlockEnd Block 6,18
 }
-///Goto Goto 5,339 Dest:OK
+///Goto Goto 5,338 Dest:OK
 goto IL_4454;
-///Label Label 5,340 3
+///Label Label 5,339 3
 IL_4454:
-///Operation Operation 5,341
+///Operation Operation 5,340
 num = 777;
-///Operation Operation 5,342
+///Operation Operation 5,341
 if (DataModul.DB_PlaceTable.EOF)
 ///BlockStart Block 6,0
 {
@@ -2488,15 +2486,15 @@ if (DataModul.DB_PlaceTable.EOF)
 List2.Items.Add("Ende der Liste");
 ///BlockEnd Block 6,2
 }
-///Goto Goto 5,343 Dest:OK
+///Goto Goto 5,342 Dest:OK
 goto IL_448a;
-///Label Label 5,344 9
+///Label Label 5,343 9
 IL_448a:
-///Operation Operation 5,345
+///Operation Operation 5,344
 num = 781;
-///Operation Operation 5,346
+///Operation Operation 5,345
 lErl = 4;
-///Operation Operation 5,347
+///Operation Operation 5,346
 if (!RadioButton2.Checked)
 ///BlockStart Block 6,0
 {
@@ -2504,25 +2502,25 @@ if (!RadioButton2.Checked)
 goto end_IL_0001_2;
 ///BlockEnd Block 6,2
 }
-///Operation Operation 5,348
+///Operation Operation 5,347
 List1.Items.Add("Ende der Liste");
-///Operation Operation 5,349
+///Operation Operation 5,348
 Modul1.I = 1;
-///Goto Goto 5,350 Dest:OK
+///Goto Goto 5,349 Dest:OK
 goto IL_44d6;
-///Label Label 5,351 3
+///Label Label 5,350 3
 IL_44d6:
-///Operation Operation 5,352
+///Operation Operation 5,351
 num = 785;
-///Operation Operation 5,353
+///Operation Operation 5,352
 List1.Items.Add("");
-///Operation Operation 5,354
+///Operation Operation 5,353
 Modul1.I++;
-///Operation Operation 5,355
+///Operation Operation 5,354
 i17 = Modul1.I;
-///Operation Operation 5,356
+///Operation Operation 5,355
 num5 = 17;
-///Operation Operation 5,357
+///Operation Operation 5,356
 if (i17 > num5)
 ///BlockStart Block 6,0
 {
@@ -2530,19 +2528,19 @@ if (i17 > num5)
 goto end_IL_0001_2;
 ///BlockEnd Block 6,2
 }
-///Goto Goto 5,358 Dest:OK
+///Goto Goto 5,357 Dest:OK
 goto IL_44d6;
-///Label Label 5,359 2
+///Label Label 5,358 2
 IL_45b9:
-///Operation Operation 5,360
+///Operation Operation 5,359
 num4 = unchecked(num2 + 1);
-///Goto Goto 5,361 Dest:OK
+///Goto Goto 5,360 Dest:OK
 goto IL_45bd;
-///Label Label 5,362 2
+///Label Label 5,361 2
 IL_45bd:
-///Operation Operation 5,363
+///Operation Operation 5,362
 num2 = 0;
-///Operation Operation 5,364
+///Operation Operation 5,363
 switch (num4)
 ///BlockStart Block 6,0
 {
@@ -3290,9 +3288,9 @@ case 798:
 goto end_IL_0001_2;
 ///BlockEnd Block 6,303
 }
-///Goto Goto 5,365 Dest:OK
+///Goto Goto 5,364 Dest:OK
 goto default;
-///BlockEnd Block 5,366
+///BlockEnd Block 5,365
 }
 ///BlockEnd Block 4,28
 }
