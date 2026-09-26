@@ -217,7 +217,7 @@ public partial class CSCode : CodeBase, ICSCode
     }
 
     /// <summary>
-    /// Simplifies labels that are referenced only from a single source (or at most two), recursively across the tree.
+    /// Simplifies labels that have executable goto sources, recursively across the tree.
     /// </summary>
     /// <param name="codeBlock">The root block to inspect and simplify.</param>
     /// <remarks>
@@ -231,7 +231,9 @@ public partial class CSCode : CodeBase, ICSCode
             if (item.Type is CodeBlockType.Label
                 && (item.Sources.Count <= 2
                     || IsConditionalGotoChainTarget(item)
-                    || IsSafeSwitchContinuationLabel(item))
+                    || IsConsecutiveConditionalGotoBranchTarget(item)
+                    || IsSafeSwitchContinuationLabel(item)
+                    || IsSafeMultiSourceGotoReductionTarget(item))
                 && item.Sources.Count > 0
                 && !item.Code.StartsWith("case ")
                 && !item.Code.StartsWith("default:"))
@@ -241,11 +243,19 @@ public partial class CSCode : CodeBase, ICSCode
         {
             codeOptimizer.TestItem(item);
         }
+
         foreach (var item in codeBlock.SubBlocks.ToArray())
             if (item.SubBlocks.Count > 0)
                 RemoveSingleSourceLabels1(item);
     }
 
+    /// <summary>
+    /// Determines whether a given label is the target of a conditional goto chain, which can be simplified.
+    /// </summary>
+    /// <param name="label">The label.</param>
+    /// <returns>
+    ///   <c>true</c> if [is conditional goto chain target] [the specified label]; otherwise, <c>false</c>.
+    /// </returns>
     private static bool IsConditionalGotoChainTarget(ICodeBlock label)
     {
         if (label.Sources.Count < 3
@@ -262,6 +272,75 @@ public partial class CSCode : CodeBase, ICSCode
             && previousIf.Prev is ICodeBlock outerIf
             && IsIfStatement(outerIf)
             && ContainsGotoTo(outerIf, label);
+    }
+
+    private static bool IsSafeMultiSourceGotoReductionTarget(ICodeBlock label)
+    {
+        if (label.Sources.Count <= 2
+            || label.Prev is not ICodeBlock finalGoto
+            || finalGoto.Type != CodeBlockType.Goto
+            || !HasDestination(finalGoto, label))
+            return false;
+
+        if (label.Parent is ICodeBlock switchBlock
+            && switchBlock.Type == CodeBlockType.Operation
+            && switchBlock.Code.TrimStart().StartsWith("switch", StringComparison.Ordinal))
+            return true;
+
+        return label.Sources
+            .Select(reference => reference.TryGetTarget(out var source) ? source : null)
+            .Where(source => source is not null)
+            .Cast<ICodeBlock>()
+            .Any(source => HasConditionalAncestorWithoutLoopOrSwitch(source));
+    }
+
+    private static bool IsConsecutiveConditionalGotoBranchTarget(ICodeBlock label)
+    {
+        foreach (var sourceReference in label.Sources)
+        {
+            if (!sourceReference.TryGetTarget(out var source))
+                continue;
+
+            for (var branch = source.Parent as ICodeBlock;
+                 branch is not null;
+                 branch = branch.Parent as ICodeBlock)
+            {
+                if (!IsIfStatement(branch)
+                    || branch.Parent is not ICodeBlock parent)
+                {
+                    continue;
+                }
+
+                var previous = branch.Prev;
+                var next = branch.Next;
+                if ((previous is not null && IsIfStatement(previous) && ContainsGotoTo(previous, label))
+                    || (next is not null && IsIfStatement(next) && ContainsGotoTo(next, label)))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasConditionalAncestorWithoutLoopOrSwitch(ICodeBlock source)
+    {
+        var hasConditionalAncestor = false;
+        for (var current = source.Parent as ICodeBlock; current is not null; current = current.Parent as ICodeBlock)
+        {
+            var code = current.Code.TrimStart();
+            if (code.StartsWith("switch", StringComparison.Ordinal)
+                || code.StartsWith("while", StringComparison.Ordinal)
+                || code.StartsWith("for", StringComparison.Ordinal)
+                || code.StartsWith("do", StringComparison.Ordinal))
+                return false;
+
+            if (IsIfStatement(current))
+                hasConditionalAncestor = true;
+        }
+
+        return hasConditionalAncestor;
     }
 
     private static bool ContainsGotoTo(ICodeBlock block, ICodeBlock destination)
