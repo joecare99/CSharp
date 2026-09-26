@@ -328,6 +328,69 @@
   <data name="Test23Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test23\Test23Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="Test24Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test24\Test24Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test24aDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test24\Test24aDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test24bDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test24\Test24bDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test24cDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test24\Test24cDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test25Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test25\Test25Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test25aDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test25\Test25aDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test25bDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test25\Test25bDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test25cDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test25\Test25cDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test26Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test26\Test26Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test26aDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test26\Test26aDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test26bDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test26\Test26bDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test26cDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test26\Test26cDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test27Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test27\Test27Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test27aDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test27\Test27aDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test27bDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test27\Test27bDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test27cDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test27\Test27cDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test28Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test28\Test28Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test28aDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test28\Test28aDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test28bDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test28\Test28bDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test28cDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test28\Test28cDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Test28dDat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Test28\Test28dDat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="Test14Dat_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Test14\Test14Dat.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

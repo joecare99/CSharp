@@ -438,6 +438,12 @@
             </summary>
             <param name="item">The code block candidate to test and optimize.</param>
         </member>
+        <member name="M:TranspilerLib.Interfaces.Code.ICodeOptimizer.OptimizeIfChains(TranspilerLib.Interfaces.Code.ICodeBlock)">
+            <summary>
+            Simplifies deterministic conditional chains in the supplied code tree.
+            </summary>
+            <param name="root">The root block whose conditional statements are inspected.</param>
+        </member>
         <member name="T:TranspilerLib.Interfaces.Code.IIECCode">
             <summary>
             Represents an interface for IEC (International Electrotechnical Commission) codes,  extending the functionality of

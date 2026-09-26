@@ -226,6 +226,8 @@ public partial class CSCode : CodeBase, ICSCode
     /// </remarks>
     public void RemoveSingleSourceLabels1(ICodeBlock codeBlock)
     {
+        codeOptimizer.OptimizeIfChains(codeBlock);
+
         List<ICodeBlock> labels = new();
         foreach (var item in codeBlock.SubBlocks)
             if (item.Type is CodeBlockType.Label
