@@ -632,17 +632,13 @@ Modul1.LiText += sDest2;
 Modul1.PerSatzLes();
 ///Operation Operation 6,3
 if (null != DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value)
-///BlockStart Block 7,0
-{
-///Operation Operation 7,1
+///Operation Operation 7,0
 if (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value, "", TextCompare: false))
 ///BlockStart Block 8,0
 {
 ///Operation Operation 8,1
 StringType.MidStmtStr(ref Modul1.LiText, 77, 1, "J");
 ///BlockEnd Block 8,2
-}
-///BlockEnd Block 7,2
 }
 ///Operation Operation 6,4
 DataModul.TTable.Index = "Tab";
@@ -1995,32 +1991,14 @@ Modul1.Datles();
 ///Operation Operation 8,7
 sDest2 = "                                                                            ";
 ///Operation Operation 8,8
-if ((Modul1.Kont[11]).Trim() == "")
+if (((((Modul1.Kont[11]).Trim() == "") && ((Modul1.Kont[12]).Trim() == "")) && ((Modul1.Kont[13]).Trim() == "")) && ((Modul1.Kont[14]).Trim() == ""))
 ///BlockStart Block 9,0
 {
 ///Operation Operation 9,1
-if ((Modul1.Kont[12]).Trim() == "")
-///BlockStart Block 10,0
-{
-///Operation Operation 10,1
-if ((Modul1.Kont[13]).Trim() == "")
-///BlockStart Block 11,0
-{
-///Operation Operation 11,1
-if ((Modul1.Kont[14]).Trim() == "")
-///BlockStart Block 12,0
-{
-///Operation Operation 12,1
 num12 = 300;
-///Goto Goto 12,2 Dest:OK
+///Goto Goto 9,2 Dest:OK
 goto IL_2956;
-///BlockEnd Block 12,3
-}
-///BlockEnd Block 11,2
-}
-///BlockEnd Block 10,2
-}
-///BlockEnd Block 9,2
+///BlockEnd Block 9,3
 }
 ///BlockEnd Block 8,9
 }

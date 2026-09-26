@@ -114,9 +114,7 @@ IL_000d:
 num = 2;
 ///Operation Operation 5,10
 if (aus[108] == "1")
-///BlockStart Block 6,0
-{
-///Operation Operation 6,1
+///Operation Operation 6,0
 if(Operators.CompareString(Datu, aus[173], TextCompare: false) > 0)
 ///BlockStart Block 7,0
 {
@@ -125,8 +123,6 @@ Datu = "";
 ///Goto Goto 7,2 Dest:OK
 goto end_IL_0000_2;
 ///BlockEnd Block 7,3
-}
-///BlockEnd Block 6,2
 }
 ///Operation Operation 5,11
 ProjectData.ClearProjectError();
