@@ -107,7 +107,7 @@ Modul1.UbgT = (Text2[0].Text).Trim();
     IL_107c:
         return;
 }";
-    public const string testData7 = @"public void Test7(){
+    public const string test7Data = @"public void Test7(){
         if (true)
             goto IL_105c;
         else
@@ -139,6 +139,7 @@ Modul1.UbgT = (Text2[0].Text).Trim();
     public static readonly string test19aData = Resources.Test19aDat_cs;
     public static readonly string test20Data = Resources.Test20Dat_cs;
     public static readonly string test21Data = Resources.Test21Dat_cs;
+    public static readonly string test22Data = Resources.Test22Dat_cs;
 
     #endregion
 
@@ -315,7 +316,7 @@ IL_107c:
 return;
 ///BlockEnd Block 1,8
 }";
-    public const string testDataExp7 = @"///Declaration MainBlock 0,0
+    public const string test7DataExp = @"///Declaration MainBlock 0,0
 public void Test7()
 ///BlockStart Block 1,0
 {
@@ -2420,6 +2421,9 @@ return;
     public static string testDataExpRemoveL17 { get; } = Resources.Test17ExpParseRL;
     public static string testDataExpRemoveL18 { get; } = Resources.Test18ExpParseRL;
     public static string testDataExpRemoveL19 { get; } = Resources.Test19ExpParseRL;
+    public static string testDataExpRemoveL19a { get; } = Resources.Test19aExpParseRL;
+    public static string testDataExpRemoveL21 { get; } = Resources.Test21ExpParseRL;
+    public static string testDataExpRemoveL22 { get; } = Resources.Test22ExpParseRL;
     #endregion
 
     #region Expected data for Tokenizer
@@ -2705,6 +2709,16 @@ T:Block,1,}
     public static string cExpCode11 { get; } = Resources.Test11ExpCode;
     public static string cExpCode12 { get; } = Resources.Test12ExpCode;
     public static string cExpCode13 { get; } = Resources.Test13ExpCode;
+    public static string cExpCode14 { get; } = Resources.Test14ExpCode;
+    public static string cExpCode15 { get; } = Resources.Test15ExpCode;
+    public static string cExpCode16 { get; } = Resources.Test16ExpCode;
+    public static string cExpCode17 { get; } = Resources.Test17ExpCode;
+    public static string cExpCode18 { get; } = Resources.Test18ExpCode;
+    public static string cExpCode19 { get; } = Resources.Test19ExpCode;
+    public static string cExpCode19a { get; } = Resources.Test19aExpCode;
+    public static string cExpCode20 { get; } = Resources.Test20ExpCode;
+    public static string cExpCode21 { get; } = Resources.Test21ExpCode;
+    public static string cExpCode22 { get; } = Resources.Test22ExpCode;
     #endregion
     private static object? ReadObject(byte[] JsonData) => JsonSerializer.Deserialize<List<TokenData>>(new MemoryStream(JsonData),_jsonOptions);
 
@@ -3374,6 +3388,7 @@ T:Block,1,}
     public static object TestDataList19a() => ReadObject(Resources.Test19aDataList)!;
     public static object TestDataList20() => ReadObject(Resources.Test20DataList)!;
     public static object TestDataList21() => ReadObject(Resources.Test21DataList)!;
+    public static object TestDataList22() => ReadObject(Resources.Test22DataList)!;
 
     public static (List<TokenData> Tokens, string Expected) GetRemoveLabelsData(string resourceName)
     {
@@ -3393,6 +3408,9 @@ T:Block,1,}
             "Test17" => ((List<TokenData>)TestDataList17(), testDataExpRemoveL17),
             "Test18" => ((List<TokenData>)TestDataList18(), testDataExpRemoveL18),
             "Test19" => ((List<TokenData>)TestDataList19(), testDataExpRemoveL19),
+            "Test19a" => ((List<TokenData>)TestDataList19a(), testDataExpRemoveL19a),
+            "Test21" => ((List<TokenData>)TestDataList21(), testDataExpRemoveL21),
+            "Test22" => ((List<TokenData>)TestDataList22(), testDataExpRemoveL22),
             _ => throw new KeyNotFoundException($"Unknown RemoveLabels resource '{resourceName}'."),
         };
     }

@@ -121,7 +121,7 @@ public class CodeOptimizerTests
     }
 
     [TestMethod]
-    [DataRow("Test15Dat_cs", 1, DisplayName = "Removes goto across nested if blocks")]
+    [DataRow("Test15Dat_cs", 2, DisplayName = "Reduces goto across nested if blocks")]
     [DataRow("Test16Dat_cs", 2, DisplayName = "Keeps goto across while boundary")]
     public void RemoveSingleSourceLabels1_HandlesGotoAcrossControlFlowBoundaries(string resourceName, int expectedGotoCount)
     {
@@ -208,7 +208,7 @@ End:
         Assert.IsTrue(parsed.Contains("else", StringComparison.Ordinal));
         Assert.IsTrue(parsed.Contains("if (b2)", StringComparison.Ordinal));
         Assert.IsTrue(parsed.Contains("if (b3)", StringComparison.Ordinal));
-        Assert.AreEqual(1, CountGotos(root));
+        Assert.AreEqual(1, CountGotos(root), output);
         Assert.IsTrue(output.Contains("else if (b2)", StringComparison.Ordinal));
         Assert.IsTrue(output.Contains("else if (b3)", StringComparison.Ordinal));
         Assert.IsTrue(output.Contains("goto End;", StringComparison.Ordinal));
@@ -240,6 +240,36 @@ end:
         Assert.IsTrue(output.Contains("case 1:", StringComparison.Ordinal));
         Assert.IsTrue(output.Contains("goto end;", StringComparison.Ordinal));
         Assert.IsTrue(output.Contains("AfterSwitch();", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void RemoveSingleSourceLabels1_ReducesTest22ControlFlow()
+    {
+        var root = ParseAndOptimize(Resources.Test22Dat_cs);
+        var output = root.ToCode();
+
+        Assert.IsFalse(output.Contains("IL_023d:", StringComparison.Ordinal));
+        Assert.IsFalse(output.Contains("goto IL_023d;", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("else if ((left == \"V\") || (left == \"v\"))", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("else if (aus[46] != \"1\")", StringComparison.Ordinal));
+        Assert.IsTrue(System.Text.RegularExpressions.Regex.IsMatch(
+            output,
+            @"else\r?\n\s*\{\r?\n\s*Datu = Datu;\r?\n\s*if \(aus\[46\] != ""1""\)"));
+        Assert.IsFalse(output.Contains("Datu = \"um \" + Datu;\r\n                            goto end_IL_0000_2;", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void RemoveSingleSourceLabels1_ReducesTest23InnerGotos()
+    {
+        var root = ParseAndOptimize(Resources.Test23Dat_cs);
+        var output = root.ToCode();
+
+        Assert.AreEqual(2, output.Split("goto IL_05f8;", StringSplitOptions.None).Length - 1, output);
+        Assert.IsFalse(output.Contains("goto IL_0539;", StringComparison.Ordinal));
+        Assert.IsFalse(output.Contains("IL_0539:", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("IL_05f8:", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("else if (aus[75] == \"1\")", StringComparison.Ordinal));
+        Assert.IsTrue(output.Contains("OrtTable.Fields[\"Zusatz\"]", StringComparison.Ordinal));
     }
 
     private static ICodeBlock ParseAndOptimize(string source)
