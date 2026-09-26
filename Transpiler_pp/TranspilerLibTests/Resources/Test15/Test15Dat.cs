@@ -1,4 +1,4 @@
-﻿private void Test14Dat()
+﻿private void Test15Dat()
 {
     if (b1)
     {
@@ -14,6 +14,8 @@
         // some comment
     }
     // some other comment
+    goto l1;
+l2: // some other code
     goto l1;
 l1: // nop
     return;

@@ -1,5 +1,5 @@
 ﻿///Declaration MainBlock 0,0
-private void Test14Dat()
+private void Test15Dat()
 ///BlockStart Block 1,0
 {
 ///Operation Operation 1,1
@@ -32,11 +32,17 @@ else
 // some other comment
 ///Goto Goto 1,3 Dest:OK
 goto l1;
-///Label Label 1,4 1
+///Label Label 1,4 2
 l1:
 ///Comment LComment 1,5
 // nop
 ///Operation Operation 1,6
 return;
-///BlockEnd Block 1,7
+///Label Label 1,7
+l2:
+///Comment LComment 1,8
+// some other code
+///Goto Goto 1,9 Dest:OK
+goto l1;
+///BlockEnd Block 1,10
 }
