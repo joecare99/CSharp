@@ -850,7 +850,7 @@ public class CodeOptimizer : ICodeOptimizer
 
     private static bool IsCommentLike(ICodeBlock item)
     {
-        return item.Type is CodeBlockType.Comment or CodeBlockType.LComment;
+        return item.Type is CodeBlockType.Comment or CodeBlockType.LComment or CodeBlockType.FLComment;
     }
 
     private static bool IsElseStatement(ICodeBlock item)
@@ -937,6 +937,548 @@ public class CodeOptimizer : ICodeOptimizer
         }
         else if (item.Sources.Count > 1)
             TestForEasyWhileLoops(item);
+    }
+
+    /// <summary>
+    /// Simplifies conservative two-condition if chains while retaining short-circuit evaluation order.
+    /// </summary>
+    /// <param name="root">The root block whose conditional statements are inspected.</param>
+    public void OptimizeIfChains(ICodeBlock root)
+    {
+        foreach (var child in root.SubBlocks.ToArray())
+            OptimizeIfChains(child);
+
+        for (var index = 0; index < root.SubBlocks.Count;)
+        {
+            if (TryFlattenConditionalBlock(root.SubBlocks[index]))
+            {
+                index = 0;
+                continue;
+            }
+
+            if (TryMergeNestedIfWithAnd(root.SubBlocks[index]))
+                continue;
+
+            if (TryMergeElseIfWithOr(root, index))
+                continue;
+
+            index++;
+        }
+    }
+
+    private static bool TryFlattenConditionalBlock(ICodeBlock conditional)
+    {
+        if ((!IsIfStatement(conditional) && !IsElseStatement(conditional))
+            || conditional.Parent is not ICodeBlock parent
+            || conditional.SubBlocks.Count < 2
+            || !IsOpeningBlock(conditional.SubBlocks[0])
+            || !IsClosingBlock(conditional.SubBlocks[^1]))
+        {
+            return false;
+        }
+
+        var openingBlock = conditional.SubBlocks[0];
+        var closingBlock = conditional.SubBlocks[^1];
+        var bodyIsNested = openingBlock.SubBlocks.Count > 0;
+        var body = bodyIsNested
+            ? openingBlock.SubBlocks.ToArray()
+            : conditional.SubBlocks.Skip(1).Take(conditional.SubBlocks.Count - 2).ToArray();
+        if (body.Length == 0)
+            return false;
+
+        var bodyStatements = body.Where(child => !IsCommentLike(child)).ToArray();
+        var isNestedBlock = IsEntireBlock(bodyStatements);
+        if (!isNestedBlock
+            && (bodyStatements.Length == 0
+                || !IsIfStatement(bodyStatements[0])
+                || bodyStatements.Skip(1).Any(statement => !IsElseStatement(statement))
+                || body.Any(comment => IsCommentLike(comment) && comment.Type != CodeBlockType.LComment)))
+        {
+            return false;
+        }
+
+        var leadingLineComments = body.TakeWhile(child => child.Type == CodeBlockType.LComment).ToArray();
+        foreach (var comment in Enumerable.Reverse(leadingLineComments))
+        {
+            comment.Parent = parent;
+            _ = parent.SubBlocks.Remove(comment);
+            parent.SubBlocks.Insert(conditional.Index, comment);
+        }
+
+        if (bodyIsNested)
+        {
+            closingBlock.Parent = null;
+            openingBlock.Parent = null;
+            var insertionIndex = 0;
+            foreach (var child in body)
+            {
+                if (leadingLineComments.Contains(child))
+                    continue;
+
+                child.Parent = conditional;
+                _ = conditional.SubBlocks.Remove(child);
+                conditional.SubBlocks.Insert(insertionIndex++, child);
+            }
+        }
+        else
+        {
+            closingBlock.Parent = null;
+            openingBlock.Parent = null;
+        }
+
+        return true;
+    }
+
+    private static bool IsEntireBlock(IReadOnlyList<ICodeBlock> blocks)
+    {
+        if (blocks.Count < 2 || !IsOpeningBlock(blocks[0]) || !IsClosingBlock(blocks[^1]))
+            return false;
+
+        var depth = 0;
+        for (var index = 0; index < blocks.Count; index++)
+        {
+            if (IsOpeningBlock(blocks[index]))
+                depth++;
+            else if (IsClosingBlock(blocks[index]))
+                depth--;
+
+            if (depth == 0 && index < blocks.Count - 1)
+                return false;
+        }
+
+        return depth == 0;
+    }
+
+    private static bool IsOpeningBlock(ICodeBlock block)
+    {
+        return block.Type == CodeBlockType.Block && block.Code == "{";
+    }
+
+    private static bool IsClosingBlock(ICodeBlock block)
+    {
+        return block.Type == CodeBlockType.Block && block.Code == "}";
+    }
+
+    private static bool TryMergeNestedIfWithAnd(ICodeBlock outerIf)
+    {
+        if (!IsIfStatement(outerIf)
+            || outerIf.Next is ICodeBlock outerElse && IsElseStatement(outerElse)
+            || !TryGetCondition(outerIf.Code, out var outerCondition)
+            || !IsSafeBooleanCondition(outerCondition, outerIf))
+        {
+            return false;
+        }
+
+        var outerStatements = GetBodyStatements(outerIf);
+        if (outerStatements.Length != 1
+            || !IsIfStatement(outerStatements[0]))
+        {
+            return false;
+        }
+
+        var innerIf = outerStatements[0];
+        if (!TryGetCondition(innerIf.Code, out var innerCondition)
+            || !IsSafeBooleanCondition(innerCondition, innerIf))
+        {
+            return false;
+        }
+
+        var innerStatements = GetBodyStatements(innerIf);
+        var innerBodyBlocks = innerIf.SubBlocks.ToArray();
+        if (innerStatements.Any(statement => ContainsUnsafeControlFlow(statement, allowGoto: true)))
+            return false;
+
+        var outerEnd = FindBlockEnd(outerIf);
+
+        outerIf.Code = $"if ({CombineNestedAndConditions(outerCondition, innerCondition)})";
+        if (outerEnd is not null)
+            outerEnd.Parent = null;
+        innerIf.Parent = null;
+        foreach (var bodyBlock in innerBodyBlocks)
+            bodyBlock.Parent = outerIf;
+        if (outerEnd is not null)
+            outerEnd.Parent = outerIf;
+        _ = TryRemoveSingleOperationBlock(outerIf);
+
+        return true;
+    }
+
+    private static string CombineNestedAndConditions(string outerCondition, string innerCondition)
+    {
+        var innerConditions = GetGeneratedAndOperands(innerCondition);
+        var combinedCondition = $"({outerCondition.Trim()}) && ({innerConditions[0]})";
+        for (var index = 1; index < innerConditions.Count; index++)
+            combinedCondition = $"({combinedCondition}) && ({innerConditions[index]})";
+
+        return combinedCondition;
+    }
+
+    private static IReadOnlyList<string> GetGeneratedAndOperands(string condition)
+    {
+        condition = StripOuterParentheses(condition.Trim());
+        if (!TrySplitTopLevelLogicalOperator(condition, out var operatorIndex, out var operatorLength)
+            || condition[operatorIndex] != '&'
+            || !IsWrappedInParentheses(condition[..operatorIndex])
+            || !IsWrappedInParentheses(condition[(operatorIndex + operatorLength)..]))
+        {
+            return new[] { condition };
+        }
+
+        return GetGeneratedAndOperands(condition[..operatorIndex])
+            .Concat(GetGeneratedAndOperands(condition[(operatorIndex + operatorLength)..]))
+            .ToArray();
+    }
+
+    private static bool IsWrappedInParentheses(string condition)
+    {
+        var trimmedCondition = condition.Trim();
+        return StripOuterParentheses(trimmedCondition) != trimmedCondition;
+    }
+
+    private static bool TryRemoveSingleOperationBlock(ICodeBlock conditional)
+    {
+        if (conditional.SubBlocks.Count < 3
+            || !IsOpeningBlock(conditional.SubBlocks[0])
+            || !IsClosingBlock(conditional.SubBlocks[^1]))
+        {
+            return false;
+        }
+
+        var body = conditional.SubBlocks.Skip(1).Take(conditional.SubBlocks.Count - 2).ToArray();
+        if (body.Length != 1
+            || body[0].Type != CodeBlockType.Operation
+            || !IsSafeEquivalentBodyStatement(body[0]))
+        {
+            return false;
+        }
+
+        conditional.SubBlocks[^1].Parent = null;
+        conditional.SubBlocks[0].Parent = null;
+        return true;
+    }
+
+    private static bool TryMergeElseIfWithOr(ICodeBlock parent, int index)
+    {
+        if (index + 2 >= parent.SubBlocks.Count)
+            return false;
+
+        var firstIf = parent.SubBlocks[index];
+        var elseBlock = parent.SubBlocks[index + 1];
+        var secondIf = parent.SubBlocks[index + 2];
+        if (!IsIfStatement(firstIf)
+            || index > 0 && IsElseStatement(parent.SubBlocks[index - 1])
+            || !IsElseStatement(elseBlock)
+            || elseBlock.SubBlocks.Any(child => !IsCommentLike(child))
+            || !IsIfStatement(secondIf)
+            || !TryGetCondition(firstIf.Code, out var firstCondition)
+            || !TryGetCondition(secondIf.Code, out var secondCondition)
+            || !IsSafeBooleanCondition(firstCondition, firstIf)
+            || !IsSafeBooleanCondition(secondCondition, secondIf)
+            || !HaveEquivalentBodies(firstIf, secondIf))
+        {
+            return false;
+        }
+
+        MergeEquivalentBlocks(firstIf, elseBlock);
+        MergeEquivalentBlocks(firstIf, secondIf);
+        firstIf.Code = $"if (({firstCondition}) || ({secondCondition}))";
+        secondIf.Parent = null;
+        elseBlock.Parent = null;
+        return true;
+    }
+
+    private static bool HaveEquivalentBodies(ICodeBlock first, ICodeBlock second)
+    {
+        var firstStatements = GetBodyStatements(first);
+        var secondStatements = GetBodyStatements(second);
+        if (firstStatements.Length == 0 || firstStatements.Length != secondStatements.Length)
+            return false;
+
+        for (var index = 0; index < firstStatements.Length; index++)
+        {
+            if (ContainsUnsafeControlFlow(firstStatements[index])
+                || !IsSafeEquivalentBodyStatement(firstStatements[index])
+                || !AreEquivalentBlocks(firstStatements[index], secondStatements[index]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsSafeEquivalentBodyStatement(ICodeBlock block)
+    {
+        if (block.Type != CodeBlockType.Operation)
+            return false;
+
+        var statement = block.Code.Trim();
+        return (statement.EndsWith(");", StringComparison.Ordinal)
+                && statement.Contains('(')
+                && !statement.Contains(" = ", StringComparison.Ordinal))
+            || System.Text.RegularExpressions.Regex.IsMatch(
+                statement,
+                @"^[A-Za-z_]\w*(?:\s*(?:\.\s*[A-Za-z_]\w*|\s*\[[^\]\r\n]+\]))*\s*=\s*.+;$",
+                System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+    }
+
+    private static bool AreEquivalentBlocks(ICodeBlock first, ICodeBlock second)
+    {
+        if (first.Type != second.Type || first.Code != second.Code)
+            return false;
+
+        var firstChildren = first.SubBlocks
+            .Where(child => !IsBlockDelimiter(child) && !IsCommentLike(child))
+            .ToArray();
+        var secondChildren = second.SubBlocks
+            .Where(child => !IsBlockDelimiter(child) && !IsCommentLike(child))
+            .ToArray();
+        if (firstChildren.Length != secondChildren.Length)
+            return false;
+
+        for (var index = 0; index < firstChildren.Length; index++)
+        {
+            if (!AreEquivalentBlocks(firstChildren[index], secondChildren[index]))
+                return false;
+        }
+
+        return true;
+    }
+
+    private static ICodeBlock[] GetBodyStatements(ICodeBlock block)
+    {
+        return block.SubBlocks
+            .Where(child => !IsBlockDelimiter(child) && !IsCommentLike(child))
+            .ToArray();
+    }
+
+    private static void MergeEquivalentBlocks(ICodeBlock target, ICodeBlock source)
+    {
+        var targetStatements = GetBodyStatements(target);
+        var statementIndex = 0;
+
+        foreach (var sourceChild in source.SubBlocks.ToArray())
+        {
+            if (IsBlockDelimiter(sourceChild))
+                continue;
+
+            if (IsCommentLike(sourceChild))
+            {
+                var insertionIndex = statementIndex < targetStatements.Length
+                    ? targetStatements[statementIndex].Index
+                    : FindBlockEnd(target)?.Index ?? target.SubBlocks.Count;
+                sourceChild.Parent = target;
+                _ = target.SubBlocks.Remove(sourceChild);
+                target.SubBlocks.Insert(insertionIndex, sourceChild);
+                continue;
+            }
+
+            MergeEquivalentBlocks(targetStatements[statementIndex], sourceChild);
+            statementIndex++;
+        }
+    }
+
+    private static ICodeBlock? FindBlockEnd(ICodeBlock block)
+    {
+        return block.SubBlocks.LastOrDefault(child => child.Type == CodeBlockType.Block && child.Code == "}");
+    }
+
+    private static bool IsBlockDelimiter(ICodeBlock block)
+    {
+        return block.Type == CodeBlockType.Block && block.Code is "{" or "}";
+    }
+
+    private static bool TryGetCondition(string code, out string condition)
+    {
+        condition = string.Empty;
+        var text = code.Trim();
+        if (text.Length < 5)
+        {
+            return false;
+        }
+
+        var openIndex = text.IndexOf('(');
+        if (openIndex < 0 || text[^1] != ')')
+            return false;
+
+        condition = text[(openIndex + 1)..^1].Trim();
+        return condition.Length > 0;
+    }
+
+    private static bool IsSafeBooleanCondition(string condition, ICodeBlock conditional)
+    {
+        condition = StripOuterParentheses(condition.Trim());
+        if (condition.Length == 0)
+            return false;
+
+        if (TrySplitTopLevelLogicalOperator(condition, out var operatorIndex, out var operatorLength))
+        {
+            return IsSafeBooleanCondition(condition[..operatorIndex], conditional)
+                && IsSafeBooleanCondition(condition[(operatorIndex + operatorLength)..], conditional);
+        }
+
+        if (condition is "true" or "false")
+            return true;
+
+        if (IsIdentifierCondition(condition))
+        {
+            var parameterPattern = @"\bbool\s+" + System.Text.RegularExpressions.Regex.Escape(condition) + @"\b";
+            for (var current = conditional; current is not null; current = current.Parent as ICodeBlock)
+            {
+                if (System.Text.RegularExpressions.Regex.IsMatch(
+                    current.Code,
+                    parameterPattern,
+                    System.Text.RegularExpressions.RegexOptions.CultureInvariant))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return ContainsTopLevelEquality(condition);
+    }
+
+    private static string StripOuterParentheses(string condition)
+    {
+        while (condition.Length >= 2 && condition[0] == '(' && condition[^1] == ')')
+        {
+            var depth = 0;
+            var wrapsEntireCondition = true;
+            for (var index = 0; index < condition.Length; index++)
+            {
+                if (condition[index] == '(')
+                    depth++;
+                else if (condition[index] == ')')
+                    depth--;
+
+                if (depth == 0 && index < condition.Length - 1)
+                {
+                    wrapsEntireCondition = false;
+                    break;
+                }
+            }
+
+            if (!wrapsEntireCondition || depth != 0)
+                break;
+
+            condition = condition[1..^1].Trim();
+        }
+
+        return condition;
+    }
+
+    private static bool TrySplitTopLevelLogicalOperator(string condition, out int operatorIndex, out int operatorLength)
+    {
+        var depth = 0;
+        for (var index = 0; index < condition.Length - 1; index++)
+        {
+            if (condition[index] == '(')
+            {
+                depth++;
+                continue;
+            }
+
+            if (condition[index] == ')')
+            {
+                depth--;
+                continue;
+            }
+
+            if (depth == 0
+                && condition[index] is '&' or '|'
+                && condition[index] == condition[index + 1])
+            {
+                operatorIndex = index;
+                operatorLength = 2;
+                return true;
+            }
+        }
+
+        operatorIndex = -1;
+        operatorLength = 0;
+        return false;
+    }
+
+    private static bool IsIdentifierCondition(string condition)
+    {
+        if (!(char.IsLetter(condition[0]) || condition[0] == '_'))
+            return false;
+
+        for (var index = 1; index < condition.Length; index++)
+        {
+            if (!char.IsLetterOrDigit(condition[index]) && condition[index] != '_')
+                return false;
+        }
+
+        return true;
+    }
+
+    private static bool ContainsTopLevelEquality(string condition)
+    {
+        var depth = 0;
+        for (var index = 0; index < condition.Length; index++)
+        {
+            var character = condition[index];
+            if (character == '(')
+            {
+                depth++;
+                continue;
+            }
+
+            if (character == ')')
+            {
+                depth--;
+                continue;
+            }
+
+            if (depth != 0)
+                continue;
+
+            if (index + 1 >= condition.Length)
+                continue;
+
+            var nextCharacter = condition[index + 1];
+            if ((character == '=' && nextCharacter == '=')
+                || (character == '!' && nextCharacter == '='))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsUnsafeControlFlow(ICodeBlock block, bool allowGoto = false)
+    {
+        if (block.Type == CodeBlockType.Label
+            || !allowGoto && block.Type == CodeBlockType.Goto)
+            return true;
+
+        var code = block.Code.TrimStart();
+        if (!allowGoto && StartsWithKeyword(code, "goto")
+            || StartsWithKeyword(code, "if")
+            || StartsWithKeyword(code, "else")
+            || StartsWithKeyword(code, "switch")
+            || StartsWithKeyword(code, "while")
+            || StartsWithKeyword(code, "for")
+            || StartsWithKeyword(code, "do")
+            || StartsWithStatementKeyword(code, "return")
+            || StartsWithKeyword(code, "throw")
+            || StartsWithStatementKeyword(code, "break")
+            || StartsWithStatementKeyword(code, "continue"))
+        {
+            return true;
+        }
+
+        return block.SubBlocks.Any(child => ContainsUnsafeControlFlow(child, allowGoto));
+    }
+
+    private static bool StartsWithStatementKeyword(string code, string keyword)
+    {
+        return StartsWithKeyword(code, keyword)
+            || code.StartsWith(keyword + ";", StringComparison.Ordinal);
     }
 
     private void TestForEasyWhileLoops(ICodeBlock item)
