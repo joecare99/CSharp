@@ -1,29 +1,74 @@
 # WFSystem.Windows.Data
 
-Lightweight binding / attribute library supporting WinForms MVVM patterns. Provides declarative attributes evaluated by a binding framework (reflection / runtime adapters).
+`WFSystem.Windows.Data` supplies lightweight, attribute-based bindings for
+WinForms MVVM views. It is intended for views that keep their controls in the
+`Views` layer and expose all presentation state and actions through a
+ViewModel.
 
-## Key Attributes
-- `TextBindingAttribute`
-- `CheckedBindingAttribute`
-- `EnabledBindingAttribute`
-- `VisibilityBindingAttribute`
-- `BackColorBindingAttribute`
-- `ListBindingAttribute`
-- `CommandBindingAttribute`
-- `DblClickBindingAttribute`
-- `KeyBindingAttribute`
+## Binding a ViewModel to a WinForms View
 
-These attributes decorate control classes or properties and allow automatic connection to view model properties / commands.
+1. Place the form or user control in the application's `Views` namespace.
+2. Add the appropriate binding attribute to each control field.
+3. Inject the ViewModel into the View constructor.
+4. Call `ViewBinding.Commit(this, viewModel)` once after `InitializeComponent`.
+
+```csharp
+using System.Windows.Forms;
+using Views;
+
+internal sealed class StatusPage : UserControl
+{
+    [TextBinding(nameof(StatusPageViewModel.StatusText))]
+    private readonly Label _statusLabel = new();
+
+    [CommandBinding(nameof(StatusPageViewModel.RefreshCommand))]
+    private readonly Button _refreshButton = new();
+
+    public StatusPage(StatusPageViewModel viewModel)
+    {
+        Controls.Add(_statusLabel);
+        Controls.Add(_refreshButton);
+        ViewBinding.Commit(this, viewModel);
+    }
+}
+```
+
+`ViewBinding.Commit` is the standard entry point. It activates every current
+binding attribute in a deterministic order and preserves the individual
+attribute `Commit` methods for existing views.
+
+## Supported Attributes
+
+| Attribute | Binds |
+|---|---|
+| `TextBindingAttribute` | `Control.Text` and writable string properties |
+| `CheckedBindingAttribute` | `CheckBox` or `RadioButton` values |
+| `ListBindingAttribute` | `ListBox` and `ComboBox` items and selection |
+| `EnabledBindingAttribute` | `Control.Enabled` |
+| `VisibilityBindingAttribute` | `Control.Visible` |
+| `BackColorBindingAttribute` | `Control.BackColor` |
+| `CommandBindingAttribute` | Click actions through `ICommand` |
+| `DblClickBindingAttribute` | Double-click and Enter actions through `ICommand` |
+| `KeyBindingAttribute` | A configured key through `ICommand` |
 
 ## Interfaces
-- `IValueConverter` (similar to the WPF concept) for transforming values between model and UI.
 
-## Usage
-Used in WinForms parts (`Calc32`, `Calc64WF`) to achieve a WPF-like binding experience without heavy frameworks.
+- `IValueConverter` transforms values between a ViewModel and a control when a
+  custom representation is needed.
 
-## Extension
-- Add new attributes following the naming convention (suffix `BindingAttribute`).
-- Central binding engine (not included here) should treat attributes generically ? minimal changes required.
+## How It Helps
+
+- Keeps binding declarations beside their corresponding controls.
+- Removes repetitive binding setup from Forms and UserControls.
+- Lets the ViewModel remain the owner of presentation state and commands.
+- Supports thin WinForms Views without introducing a second binding framework.
 
 ## Limitations
-- Focus on common standard cases (text, lists, enabled). Not a full DataBinding replacement, but a targeted simplification.
+
+- The library is a focused WinForms MVVM helper, not a replacement for every
+  built-in `System.Windows.Forms.Binding` scenario.
+- Bindings are activated once per ViewModel/View pair; do not call
+  `ViewBinding.Commit` repeatedly for the same controls because the individual
+  attributes subscribe to events.
+- Views must not use these attributes to bypass ViewModels and bind directly to
+  database, filesystem, or domain services.
