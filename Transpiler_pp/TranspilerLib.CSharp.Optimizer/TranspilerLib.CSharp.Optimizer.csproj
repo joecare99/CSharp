@@ -24,5 +24,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-	</ItemGroup>
+    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.1.1" />
+  </ItemGroup>
 </Project>

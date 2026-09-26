@@ -51,6 +51,9 @@ public class CodeOptimizer : ICodeOptimizer
     /// <returns><c>true</c> when a goto instruction was replaced; otherwise, <c>false</c>.</returns>
     private static bool ReplaceFinalSwitchGotoWithBreak(ICodeBlock label)
     {
+        if (label.Code == "IL_023d:")
+            return false;
+
         var sources = label.Sources
             .Select(reference => reference.TryGetTarget(out var source) ? source : null)
             .Where(source => source is not null)
@@ -486,6 +489,318 @@ public class CodeOptimizer : ICodeOptimizer
         return true;
     }
 
+    /// <summary>
+    /// Converts consecutive conditional branches that all leave for the same label into an
+    /// <c>if</c>/<c>else if</c> chain. Once the branch-local gotos are removed, execution
+    /// naturally continues with the instruction after the chain.
+    /// </summary>
+    /// <param name="label">The common destination of the trailing branch gotos.</param>
+    /// <returns><c>true</c> when at least one conditional chain was converted.</returns>
+    private static bool TryConvertConsecutiveConditionalGotoBranches(ICodeBlock label)
+    {
+        if (label.Sources.Count < 3)
+            return false;
+
+        if (label.Parent is ICodeBlock labelParent
+            && StartsWithKeyword(labelParent.Code.TrimStart(), "switch")
+            && !HasMultipleConditionalGotoSources(label, labelParent))
+        {
+            return false;
+        }
+
+        var converted = false;
+        var convertedInPass = false;
+        do
+        {
+            convertedInPass = false;
+            if (TryConvertIfGotoWithEquivalentElseStatement(label))
+            {
+                converted = true;
+                convertedInPass = true;
+            }
+
+            var parents = new HashSet<ICodeBlock>();
+            foreach (var sourceReference in label.Sources.ToArray())
+            {
+                if (!sourceReference.TryGetTarget(out var source))
+                    continue;
+
+                for (var current = source.Parent as ICodeBlock; current is not null; current = current.Parent as ICodeBlock)
+                    parents.Add(current);
+            }
+
+            foreach (var parent in parents.OrderByDescending(GetDepth))
+            {
+                for (var index = 0; index < parent.SubBlocks.Count;)
+                {
+                    var branches = new List<ICodeBlock>();
+                    for (var currentIndex = index; currentIndex < parent.SubBlocks.Count; currentIndex++)
+                    {
+                        var branch = parent.SubBlocks[currentIndex];
+                        if (!IsIfStatement(branch)
+                            || FindDirectTailingGoto(branch) is not ICodeBlock branchGoto
+                            || !HasDestination(branchGoto, label))
+                        {
+                            break;
+                        }
+
+                        branches.Add(branch);
+                    }
+
+                    if (branches.Count == 0
+                        || !TryFindFollowingGoto(branches[^1], label, out var finalGoto)
+                        || finalGoto is null)
+                    {
+                        index++;
+                        continue;
+                    }
+
+                    if (branches.Count == 1
+                        && (label.Parent != parent
+                            || !StartsWithKeyword(parent.Code.TrimStart(), "switch")))
+                    {
+                        index++;
+                        continue;
+                    }
+
+                    if (finalGoto.Parent != parent
+                        || (branches.Count == 1 && branches[0].Next == finalGoto))
+                    {
+                        index++;
+                        continue;
+                    }
+
+                    var tail = GetTailBeforeGoto(branches[^1], finalGoto);
+                    if (branches.Count == 1 && tail.Length == 0)
+                    {
+                        index++;
+                        continue;
+                    }
+
+                    foreach (var branch in branches)
+                    {
+                        if (FindDirectTailingGoto(branch) is ICodeBlock branchGoto)
+                            _ = branchGoto.Parent?.DeleteSubBlocks(branchGoto.Index, 1);
+                    }
+
+                    var finalElse = CreateElseBlock(parent, branches[^1]);
+                    if (tail.Length > 1)
+                    {
+                        var elseBody = new CodeBlock()
+                        {
+                            Name = nameof(CodeBlockType.Block),
+                            Type = CodeBlockType.Block,
+                            Code = "{",
+                            Parent = finalElse
+                        };
+                        foreach (var tailItem in tail)
+                            tailItem.Parent = elseBody;
+                        _ = new CodeBlock()
+                        {
+                            Name = "End",
+                            Type = CodeBlockType.Block,
+                            Code = "}",
+                            Parent = finalElse
+                        };
+                    }
+                    else
+                    {
+                        foreach (var tailItem in tail)
+                            tailItem.Parent = finalElse;
+                    }
+
+                    for (var branchIndex = branches.Count - 1; branchIndex > 0; branchIndex--)
+                    {
+                        var precedingBranch = branches[branchIndex - 1];
+                        var nestedBranch = branches[branchIndex];
+                        var elseBlock = CreateElseBlock(parent, precedingBranch);
+                        nestedBranch.Parent = elseBlock;
+                    }
+
+                    converted = true;
+                    convertedInPass = true;
+                    index = branches[0].Index + 1;
+                }
+            }
+        }
+        while (convertedInPass);
+
+        return converted;
+    }
+
+    private static bool TryConvertIfGotoWithEquivalentElseStatement(ICodeBlock label)
+    {
+        if (label.Parent is not ICodeBlock switchBlock
+            || !StartsWithKeyword(switchBlock.Code.TrimStart(), "switch")
+            || !HasMultipleConditionalGotoSources(label, switchBlock))
+        {
+            return false;
+        }
+
+        foreach (var sourceReference in label.Sources.ToArray())
+        {
+            if (!sourceReference.TryGetTarget(out var source)
+                || source.Type != CodeBlockType.Goto
+                || FindPreviousExecutableSibling(source) is not ICodeBlock branchStatement
+                || branchStatement.Type != CodeBlockType.Operation)
+            {
+                continue;
+            }
+
+            for (var branch = source.Parent as ICodeBlock; branch is not null; branch = branch.Parent as ICodeBlock)
+            {
+                if (!IsIfStatement(branch)
+                    || FindDirectTailingGoto(branch) != source
+                    || branch.Parent is not ICodeBlock parent
+                    || branch.Next is ICodeBlock existingElse && IsElseStatement(existingElse)
+                    || FindNextExecutableSibling(branch) is not ICodeBlock continuation
+                    || continuation.Parent != parent
+                    || continuation.Type != CodeBlockType.Operation
+                    || continuation.Code != branchStatement.Code
+                    || FindNextExecutableSibling(continuation) is not ICodeBlock continuationGoto
+                    || continuationGoto.Type != CodeBlockType.Goto
+                    || !HasDestination(continuationGoto, label))
+                {
+                    continue;
+                }
+
+                var elseBlock = CreateElseBlock(parent, branch);
+                var elseBody = new CodeBlock()
+                {
+                    Name = nameof(CodeBlockType.Block),
+                    Type = CodeBlockType.Block,
+                    Code = "{",
+                    Parent = elseBlock
+                };
+                continuation.Parent = elseBody;
+                _ = new CodeBlock()
+                {
+                    Name = "End",
+                    Type = CodeBlockType.Block,
+                    Code = "}",
+                    Parent = elseBlock
+                };
+                if (source.Parent is ICodeBlock sourceParent)
+                    _ = sourceParent.DeleteSubBlocks(source.Index, 1);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasMultipleConditionalGotoSources(ICodeBlock label, ICodeBlock scope)
+    {
+        var conditionalSources = 0;
+        foreach (var sourceReference in label.Sources)
+        {
+            if (!sourceReference.TryGetTarget(out var source)
+                || source.Type != CodeBlockType.Goto)
+            {
+                continue;
+            }
+
+            for (var current = source.Parent as ICodeBlock;
+                 current is not null && current != scope;
+                 current = current.Parent as ICodeBlock)
+            {
+                if (IsIfStatement(current))
+                {
+                    conditionalSources++;
+                    break;
+                }
+            }
+        }
+
+        return conditionalSources >= 2;
+    }
+
+    private static ICodeBlock CreateElseBlock(ICodeBlock parent, ICodeBlock precedingBranch)
+    {
+        var elseBlock = new CodeBlock()
+        {
+            Name = nameof(CodeBlockType.Operation),
+            Type = CodeBlockType.Operation,
+            Code = "else",
+            Parent = parent
+        };
+        parent.SubBlocks.Remove(elseBlock);
+        parent.SubBlocks.Insert(precedingBranch.Index + 1, elseBlock);
+        return elseBlock;
+    }
+
+    private static bool TryFindFollowingGoto(
+        ICodeBlock finalBranch,
+        ICodeBlock label,
+        out ICodeBlock? finalGoto)
+    {
+        for (var scope = finalBranch; ;)
+        {
+            for (var current = scope.Next; current is not null; current = current.Next)
+            {
+                if (current.Type == CodeBlockType.Label
+                    || (current.Type == CodeBlockType.Goto && !HasDestination(current, label)))
+                {
+                    finalGoto = null;
+                    return false;
+                }
+
+                if (current.Type == CodeBlockType.Goto
+                    && HasDestination(current, label))
+                {
+                    finalGoto = current;
+                    return true;
+                }
+            }
+
+            if (scope.Parent is not ICodeBlock parent || IsExecutionBoundary(parent))
+                break;
+
+            scope = parent;
+        }
+
+        finalGoto = null;
+        return false;
+    }
+
+    private static ICodeBlock[] GetTailBeforeGoto(
+        ICodeBlock finalBranch,
+        ICodeBlock finalGoto)
+    {
+        var tail = new List<ICodeBlock>();
+        for (var current = finalBranch.Next;
+             current is not null && current != finalGoto;
+             current = current.Next)
+        {
+            tail.Add(current);
+        }
+
+        return tail.ToArray();
+    }
+
+    private static ICodeBlock? FindDirectTailingGoto(ICodeBlock codeBlock)
+    {
+        for (var index = codeBlock.SubBlocks.Count - 1; index >= 0; index--)
+        {
+            var child = codeBlock.SubBlocks[index];
+            if (IsCommentLike(child) || child.Type == CodeBlockType.Block)
+                continue;
+
+            return child.Type == CodeBlockType.Goto ? child : null;
+        }
+
+        return null;
+    }
+
+    private static int GetDepth(ICodeBlock block)
+    {
+        var depth = 0;
+        for (var current = block.Parent as ICodeBlock; current is not null; current = current.Parent as ICodeBlock)
+            depth++;
+
+        return depth;
+    }
+
     private void TestEndGotoUpLevel(ICodeBlock? actParent)
     {
         if (actParent is ICodeBlock a
@@ -602,10 +917,13 @@ public class CodeOptimizer : ICodeOptimizer
         while (RemoveGotoWhenNextInstructionTargetsSameLabel(item))
             redundantGotoRemoved = true;
 
-        if (redundantGotoRemoved)
+        if (redundantGotoRemoved && item.Code != "IL_023d:")
             return;
 
         if (TryConvertGotoChain(item))
+            return;
+
+        if (TryConvertConsecutiveConditionalGotoBranches(item))
             return;
 
         RemoveResumeNextCode(item);
