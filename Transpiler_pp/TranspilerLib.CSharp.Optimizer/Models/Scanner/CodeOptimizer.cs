@@ -1308,7 +1308,7 @@ public class CodeOptimizer : ICodeOptimizer
     private static bool IsSafeBooleanCondition(string condition, ICodeBlock conditional)
     {
         condition = StripOuterParentheses(condition.Trim());
-        if (condition.Length == 0)
+        if (condition.Length == 0 || !HasWellFormedQuotedLiterals(condition))
             return false;
 
         if (TrySplitTopLevelLogicalOperator(condition, out var operatorIndex, out var operatorLength))
@@ -1319,6 +1319,9 @@ public class CodeOptimizer : ICodeOptimizer
 
         if (condition is "true" or "false")
             return true;
+
+        if (condition[0] == '!' && (condition.Length == 1 || condition[1] != '='))
+            return IsSafeBooleanCondition(condition[1..], conditional);
 
         if (IsIdentifierCondition(condition))
         {
@@ -1337,7 +1340,26 @@ public class CodeOptimizer : ICodeOptimizer
             return false;
         }
 
-        return ContainsTopLevelEquality(condition);
+        return ContainsTopLevelBooleanComparison(condition)
+            || IsWhitelistedBooleanInvocation(condition)
+            || IsSafeBooleanMemberPath(condition);
+    }
+
+    private static bool HasWellFormedQuotedLiterals(string condition)
+    {
+        for (var index = 0; index < condition.Length; index++)
+        {
+            var isVerbatimLiteralStart = condition[index] == '@'
+                && index + 1 < condition.Length
+                && condition[index + 1] == '"';
+            if (!isVerbatimLiteralStart && condition[index] is not ('"' or '\''))
+                continue;
+
+            if (!TrySkipQuotedLiteral(condition, ref index))
+                return false;
+        }
+
+        return true;
     }
 
     private static string StripOuterParentheses(string condition)
@@ -1372,8 +1394,12 @@ public class CodeOptimizer : ICodeOptimizer
     private static bool TrySplitTopLevelLogicalOperator(string condition, out int operatorIndex, out int operatorLength)
     {
         var depth = 0;
+        var squareBracketDepth = 0;
         for (var index = 0; index < condition.Length - 1; index++)
         {
+            if (TrySkipQuotedLiteral(condition, ref index))
+                continue;
+
             if (condition[index] == '(')
             {
                 depth++;
@@ -1386,12 +1412,24 @@ public class CodeOptimizer : ICodeOptimizer
                 continue;
             }
 
+            if (condition[index] == '[')
+            {
+                squareBracketDepth++;
+                continue;
+            }
+
+            if (condition[index] == ']')
+            {
+                squareBracketDepth--;
+                continue;
+            }
+
             if (depth == 0
-                && condition[index] is '&' or '|'
-                && condition[index] == condition[index + 1])
+                && squareBracketDepth == 0
+                && condition[index] is '&' or '|')
             {
                 operatorIndex = index;
-                operatorLength = 2;
+                operatorLength = condition[index] == condition[index + 1] ? 2 : 1;
                 return true;
             }
         }
@@ -1415,11 +1453,14 @@ public class CodeOptimizer : ICodeOptimizer
         return true;
     }
 
-    private static bool ContainsTopLevelEquality(string condition)
+    private static bool ContainsTopLevelBooleanComparison(string condition)
     {
         var depth = 0;
         for (var index = 0; index < condition.Length; index++)
         {
+            if (TrySkipQuotedLiteral(condition, ref index))
+                continue;
+
             var character = condition[index];
             if (character == '(')
             {
@@ -1436,15 +1477,197 @@ public class CodeOptimizer : ICodeOptimizer
             if (depth != 0)
                 continue;
 
-            if (index + 1 >= condition.Length)
+            if (character is '=' or '!')
+            {
+                var next = index + 1 < condition.Length ? condition[index + 1] : '\0';
+                if (next == '=')
+                {
+                    return HasComparisonOperands(condition, index, 2);
+                }
+            }
+            else if (character is '<' or '>')
+            {
+                var next = index + 1 < condition.Length ? condition[index + 1] : '\0';
+                var previous = index > 0 ? condition[index - 1] : '\0';
+                if (next == '=')
+                    return HasComparisonOperands(condition, index, 2);
+                if (next == character || previous == character)
+                    continue;
+                return HasComparisonOperands(condition, index, 1);
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasComparisonOperands(string condition, int operatorIndex, int operatorLength)
+    {
+        return condition[..operatorIndex].Trim().Length > 0
+            && condition[(operatorIndex + operatorLength)..].Trim().Length > 0;
+    }
+
+    private static bool IsSafeBooleanMemberPath(string condition)
+    {
+        var index = 0;
+        if (!TryReadIdentifier(condition, ref index))
+            return false;
+
+        while (index < condition.Length)
+        {
+            if (char.IsWhiteSpace(condition[index]))
+            {
+                index++;
+                continue;
+            }
+
+            if (condition[index] == '.')
+            {
+                index++;
+                SkipWhitespace(condition, ref index);
+                if (!TryReadIdentifier(condition, ref index))
+                    return false;
+                continue;
+            }
+
+            if (condition[index] == '[')
+            {
+                index++;
+                var bracketStart = index;
+                var depth = 1;
+                while (index < condition.Length && depth > 0)
+                {
+                    if (TrySkipQuotedLiteral(condition, ref index))
+                    {
+                        index++;
+                        continue;
+                    }
+
+                    if (condition[index] == '[')
+                        depth++;
+                    else if (condition[index] == ']')
+                        depth--;
+                    index++;
+                }
+
+                if (depth != 0 || index - bracketStart <= 1)
+                    return false;
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool IsWhitelistedBooleanInvocation(string condition)
+    {
+        if (!TryGetInvocationName(condition, out var invocationName))
+            return false;
+
+        return invocationName is "Information.IsDBNull"
+                or "Conversions.ToBoolean"
+                or "Operators.ConditionalCompareObjectEqual"
+                or "Operators.ConditionalCompareObjectNotEqual"
+                or "Operators.ConditionalCompareObjectGreater"
+                or "Operators.ConditionalCompareObjectLess"
+                or "Operators.ConditionalCompareObjectGreaterOrEqual"
+                or "Operators.ConditionalCompareObjectLessOrEqual";
+    }
+
+    private static bool TryGetInvocationName(string condition, out string invocationName)
+    {
+        invocationName = string.Empty;
+        var index = 0;
+        SkipWhitespace(condition, ref index);
+        if (!TryReadIdentifier(condition, ref index))
+            return false;
+
+        while (true)
+        {
+            var separatorStart = index;
+            SkipWhitespace(condition, ref index);
+            if (index >= condition.Length || condition[index] != '.')
+            {
+                index = separatorStart;
+                break;
+            }
+
+            index++;
+            SkipWhitespace(condition, ref index);
+            if (!TryReadIdentifier(condition, ref index))
+                return false;
+        }
+
+        invocationName = condition[..index].Trim();
+        SkipWhitespace(condition, ref index);
+        if (index >= condition.Length || condition[index] != '(')
+            return false;
+
+        var depth = 0;
+        for (; index < condition.Length; index++)
+        {
+            if (TrySkipQuotedLiteral(condition, ref index))
                 continue;
 
-            var nextCharacter = condition[index + 1];
-            if ((character == '=' && nextCharacter == '=')
-                || (character == '!' && nextCharacter == '='))
+            if (condition[index] == '(')
+                depth++;
+            else if (condition[index] == ')' && --depth == 0)
             {
-                return true;
+                index++;
+                SkipWhitespace(condition, ref index);
+                return index == condition.Length;
             }
+        }
+
+        return false;
+    }
+
+    private static bool TryReadIdentifier(string condition, ref int index)
+    {
+        SkipWhitespace(condition, ref index);
+        if (index >= condition.Length || !(char.IsLetter(condition[index]) || condition[index] == '_'))
+            return false;
+
+        index++;
+        while (index < condition.Length && (char.IsLetterOrDigit(condition[index]) || condition[index] == '_'))
+            index++;
+        return true;
+    }
+
+    private static void SkipWhitespace(string condition, ref int index)
+    {
+        while (index < condition.Length && char.IsWhiteSpace(condition[index]))
+            index++;
+    }
+
+    private static bool TrySkipQuotedLiteral(string text, ref int index)
+    {
+        var quoteIndex = index;
+        var isVerbatim = text[index] == '@' && index + 1 < text.Length && text[index + 1] == '"';
+        if (isVerbatim)
+            quoteIndex = ++index;
+
+        var quote = text[quoteIndex];
+        if (quote is not ('"' or '\''))
+            return false;
+
+        for (index = quoteIndex + 1; index < text.Length; index++)
+        {
+            if (isVerbatim && text[index] == quote && index + 1 < text.Length && text[index + 1] == quote)
+            {
+                index++;
+                continue;
+            }
+
+            if (!isVerbatim && text[index] == '\\')
+            {
+                index++;
+                continue;
+            }
+
+            if (text[index] == quote)
+                return true;
         }
 
         return false;
