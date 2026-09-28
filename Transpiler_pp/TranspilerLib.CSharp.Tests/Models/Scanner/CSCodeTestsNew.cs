@@ -1,0 +1,550 @@
+﻿using BaseLib.Helper;
+using BaseLib.Models.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Xml.Linq;
+using TranspilerLib.Data;
+using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models.Tests;
+using TranspilerLibTests.TestData;
+using static System.Net.Mime.MediaTypeNames;
+using static TranspilerLib.Helper.TestHelper;
+
+#pragma warning disable IDE0130 // Der Namespace entspricht stimmt nicht der Ordnerstruktur.
+namespace TranspilerLib.Models.Scanner.Tests;
+#pragma warning restore IDE0130 // Der Namespace entspricht stimmt nicht der Ordnerstruktur.
+
+
+[TestClass()]
+public class CSCodeTestsNew : TestBase
+{
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+    private CSCode _testClass;
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        AllowTrailingCommas = true,
+        Converters = {
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true),
+        }
+    };
+
+
+    private static object? ReadObject(byte[] JsonData) => JsonSerializer.Deserialize<List<TokenData>>(new MemoryStream(JsonData), _jsonOptions);
+
+
+    public static IEnumerable<object[]> TestTokenizeList => new object[][]
+    {
+        [ "0",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testData0 ) },                    TestCSDataClass.TestDataList0()  ],
+        [ "1",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test1Data ) },                    TestCSDataClass.TestDataList1()!  ],
+        [ "2",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test2Data ) },                    TestCSDataClass.TestDataList2()!  ],
+        [ "3",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testData3 ) },                    TestCSDataClass.TestDataList3()  ],
+        [ "4",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testData4 ) },                    TestCSDataClass.TestDataList4()  ],
+        [ "5",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testData5 ) },                    TestCSDataClass.TestDataList5()  ],
+        [ "6",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testData6 ) },                    TestCSDataClass.TestDataList6()  ],
+        [ "7",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test7Data ) },                    TestCSDataClass.TestDataList7()  ],
+        [ "8",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test8Data ) },                    TestCSDataClass.TestDataList8()!  ],
+        [ "9",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test9Data ) },                    TestCSDataClass.TestDataList9()!  ],
+        [ "10", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test10Data) },                    TestCSDataClass.TestDataList10()! ],
+        [ "11", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test11Data) },                    TestCSDataClass.TestDataList11()! ],
+        [ "12", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test12Data) },                    TestCSDataClass.TestDataList12()! ],
+        [ "13", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test13Data) },                    TestCSDataClass.TestDataList13()! ],
+        [ "14", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test14Data) },                    TestCSDataClass.TestDataList14()! ],
+        [ "15", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test15Data) },                    TestCSDataClass.TestDataList15()! ],
+        [ "16", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test16Data) },                    TestCSDataClass.TestDataList16()! ],
+        [ "17", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test17Data) },                    TestCSDataClass.TestDataList17()! ],
+        [ "18", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test18Data) },                    TestCSDataClass.TestDataList18()! ],
+        [ "19", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test19Data) },                    TestCSDataClass.TestDataList19()! ],
+        [ "19a", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test19aData) },                    TestCSDataClass.TestDataList19a()! ],
+        [ "20", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test20Data) },                    TestCSDataClass.TestDataList20()! ],
+        [ "21", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test21Data) },                    TestCSDataClass.TestDataList21()! ],
+        [ "22", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test22Data) },                    TestCSDataClass.TestDataList22()! ],
+
+
+    };
+
+    public static IEnumerable<object[]> TestListParse => new object[][]
+{
+        ["0", TestCSDataClass.TestDataList0()!, new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp0) } }],
+        ["1", TestCSDataClass.TestDataList1()!, new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp1) } }],
+        ["2", TestCSDataClass.TestDataList2()!, new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp2) } }],
+        ["3", TestCSDataClass.TestDataList3(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp3) } }],
+        ["4", TestCSDataClass.TestDataList4(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp4) } }],
+        ["5", TestCSDataClass.TestDataList5(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp5) } }],
+        ["6", TestCSDataClass.TestDataList6(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp6) } }],
+        ["7", TestCSDataClass.TestDataList7(), new[] { new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test7DataExp) } }],
+   };
+    public static IEnumerable<object[]> ReorderListData => new object[][]
+{
+        ["0", TestCSDataClass.TestDataList0(), new[] { TestCSDataClass.testDataExp0 }],
+        ["1", TestCSDataClass.TestDataList1(), new[] { TestCSDataClass.testDataExpReorder1 }],
+        ["2", TestCSDataClass.TestDataList2(), new[] { TestCSDataClass.testDataExpReorder2 }],
+        ["3", TestCSDataClass.TestDataList3(), new[] { TestCSDataClass.testDataExpReorder3 }],
+        ["4", TestCSDataClass.TestDataList4(), new[] { TestCSDataClass.testDataExpReorder4 }],
+        ["7", TestCSDataClass.TestDataList7(), new[] { TestCSDataClass.test7DataExp }],
+        ["8", TestCSDataClass.TestDataList8(), new[] { TestCSDataClass.test8DataExp }],
+        ["9", TestCSDataClass.TestDataList9(), new[] { TestCSDataClass.testDataExpReorder9 }],
+};
+    public static IEnumerable<object[]> RemoveLabelsData => new object[][]
+{
+        ["Test00"],
+        ["Test01"],
+        ["Test02"],
+        ["Test03"],
+        ["Test04"],
+        ["Test07"],
+        ["Test09"],
+        ["Test12"],
+        ["Test13"],
+        ["Test15"],
+        ["Test16"],
+        ["Test17"],
+        ["Test18"],
+        ["Test19"],
+        ["Test19a"],
+        ["Test21"],
+        ["Test22"],
+};
+
+    public static IEnumerable<object[]> TestListParse2 => new object[][]
+{
+        ["0", TestCSDataClass.TestDataList0(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode0) }],
+        ["1", TestCSDataClass.TestDataList1(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode1) }],
+        ["2", TestCSDataClass.TestDataList2(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode2) }],
+        ["3", TestCSDataClass.TestDataList3(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode3) }],
+        ["4", TestCSDataClass.TestDataList4(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode4) }],
+        ["5", TestCSDataClass.TestDataList5(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode5) }],
+        ["6", TestCSDataClass.TestDataList6(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode6) }],
+        ["7", TestCSDataClass.TestDataList7(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode7) }],
+        ["8", TestCSDataClass.TestDataList8(), new[] {  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode8) }],
+        ["9", TestCSDataClass.TestDataList9(), new[] { Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode9 )}],
+};
+
+
+    [TestInitialize]
+    public void TestInitialize()
+    {
+        IoC.GetReqSrv =(t)=>(t) switch {
+            _ when t == typeof(ITokenHandler) => new CSTokenHandlerNew() { reservedWords = CSCode.ReservedWords, stringEndChars = CSCode.stringEndChars },
+            _ when t == typeof(ICodeBuilder) => new CSCodeBuilder(),
+            _ when t == typeof(ICodeOptimizer) => new CodeOptimizer(),
+            _ => throw new NotImplementedException($"Please initialize the service for {t.FullName} first.")};
+        _testClass = new();
+    }
+
+    [TestMethod()]
+    public void SetUpTest()
+    {
+        Assert.IsNotNull(_testClass);
+        /*
+        using var ms = new FileStream(nameof(TestDataClass.Test1DataList)+".json",FileMode.OpenOrCreate);
+        ms.SetLength(0);
+        ms.Position = 0;
+        var l = TestDataClass.Test1DataList();
+        // Serialize l as a JSON array.
+        DataContractJsonSerializer ser = new(typeof(List<(string, ICSCode.CodeBlockType, int)>));
+        ser.WriteObject(ms, l);
+        ms.Close();
+        */
+    }
+
+    public static IEnumerable<object[]> TokenizeTestData => new object[][]
+    {
+        ["Test08","Test08"  ],
+    };
+
+    [TestMethod()]
+    [DynamicData(nameof(TokenizeTestData))]
+    public void TokenizeTest(string path, string test)
+    {
+        string sExp = "";
+        string sExpPath = Path.Combine("Resources", path, $"{test}ExpTokenize.txt");
+        string sActPath = Path.Combine("Resources", path, $"{test}Dat.cs");
+        if (File.Exists(sActPath) 
+            && File.Exists(sExpPath))
+        {
+            _testClass.OriginalCode = File.ReadAllText(sActPath);
+            sExp = File.ReadAllText(sExpPath);
+        }
+        else 
+            Assert.Fail($"No test data found for {test}. Please ensure that the files {test}Dat.cs and {test}ExpTokenize.txt exist in the test data directory.");
+
+        CSharpTokenizationResult tokenization = CSharpLexer.Tokenize(_testClass.OriginalCode);
+        if (tokenization.Error is not null)
+        {
+            Assert.IsNotNull(tokenization.ErrorPosition);
+            return;
+        }
+
+        var enumerated = _testClass.Tokenize().ToArray();
+        var streamed = new List<TokenData>();
+        _testClass.Tokenize(streamed.Add);
+
+        CollectionAssert.AreEqual(enumerated, streamed);
+        Assert.IsTrue(enumerated.All(token =>
+            token.type != CodeBlockType.Unknown &&
+            token.Length == token.Code.Length &&
+            _testClass.OriginalCode.Substring(token.Pos, token.Length) == token.Code));
+    }
+
+    [TestMethod]
+    public void TokenizeTest2()
+    {
+        // Arrange
+        ITokenHandler _th;
+        _testClass = new CSCode(
+            _th = Substitute.For<ITokenHandler>(),
+            Substitute.For<ICodeBuilder>(),
+            Substitute.For<ICodeOptimizer>());
+
+        var handlerProvided = false;
+        _th.TryGetValue(Arg.Any<int>(), out _).Returns(ci =>
+        {
+            if (handlerProvided)
+            {
+                ci[1] = null;
+                return false;
+            }
+
+            handlerProvided = true;
+            Action<ICodeBase.TokenDelegate?, string, TokenizeData> v = (t, s, d) =>
+            {
+                DoLog($"T:{d.Pos},{s},{d.State}");
+                t?.Invoke(new("int", CodeBlockType.Operation, d.Stack, d.Pos));
+                t?.Invoke(new("i", CodeBlockType.Operation, d.Stack, d.Pos + 4));
+                t?.Invoke(new(";", CodeBlockType.Operation, d.Stack, d.Pos + 5));
+            };
+            ci[1] = v;
+            return true;
+        });
+
+        _testClass.OriginalCode = "int i;";
+
+        var list = _testClass.Tokenize().ToList();
+
+        Assert.AreEqual(3, list.Count);
+        CollectionAssert.AreEqual(new[] { "int", "i", ";" }, list.Select(token => token.Code).ToArray());
+        Assert.AreEqual("T:0,int i;,0\r\n", DebugLog);
+    }
+    [TestMethod()]
+    [DataRow("Test08","Test08", DisplayName = "8")]
+    public void Tokenize0Test(string path, string test)
+    {
+        string sExp = "";
+        string sActPath = Path.Combine("Resources", path, $"{test}Dat.cs");
+        if (File.Exists(sActPath))
+        {
+            _testClass.OriginalCode = File.ReadAllText(sActPath);
+        }
+        else
+            Assert.Fail($"No test data found for {test}. Please ensure that the files {test}Dat.cs and {test}ExpTokenize.txt exist in the test data directory.");
+
+        _testClass.Tokenize(null);
+        AssertAreEqual("", DebugLog);
+    }
+
+
+    [TestMethod()]
+    [DataRow("Test08", "Test08", DisplayName = "8")]
+    public void Tokenize2Test(string path, string test)
+    {
+        List<TokenData>? expList=null;
+        string sActPath = Path.Combine("Resources", path, $"{test}Dat.cs");
+        string sExpPath = Path.Combine("Resources", path, $"{test}TokenList.json");
+        if (File.Exists(sActPath)
+            && File.Exists(sExpPath))
+        {
+            _testClass.OriginalCode = File.ReadAllText(sActPath);
+            expList = (List<TokenData>)ReadObject( File.ReadAllBytes(sExpPath));
+        }
+        else
+            Assert.Fail($"No test data found for {test}. Please ensure that the files {test}Dat.cs and {test}TokenList.json exist in the test data directory.");
+        //var sExp = "";
+        //if (data[1] is byte[] bExp)
+        //    sExp = Encoding.UTF8.GetString(bExp);
+        //else
+        //    sExp = data[1] as string;
+
+        CSharpTokenizationResult tokenization = CSharpLexer.Tokenize(_testClass.OriginalCode);
+        if (tokenization.Error is not null)
+        {
+            Assert.IsNotNull(tokenization.ErrorPosition);
+            return;
+        }
+
+        var tokens = _testClass.Tokenize().ToArray();
+        using var ms = new FileStream(Path.Combine("Resources",path,$"{test}TokenAct2.json"), FileMode.Create);
+        new DataContractJsonSerializer(
+            typeof(List<TokenData>),
+            new DataContractJsonSerializerSettings()
+            {
+                EmitTypeInformation = EmitTypeInformation.AsNeeded
+            })
+        .WriteObject(ms, tokens);
+        ms.Close();
+
+        Assert.IsTrue(tokens.Length == expList.Count, $"Expected {expList.Count} tokens for sample {test}.");
+        Assert.IsTrue(tokens.All(token => token.Length > 0 && token.type != CodeBlockType.Unknown));
+        Assert.IsTrue(tokens.Zip(tokens.Skip(1), (first, second) => first.End <= second.Pos).All(isOrdered => isOrdered));
+    }
+
+    public static IEnumerable<object[]> ParseTestData => new object[][]
+            {
+        ["1",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test1Data), Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp1) }],
+        ["2",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test2Data), Encoding.UTF8.GetBytes(TestCSDataClass.testDataExp2    )}],
+        ["7",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test7Data),   Encoding.UTF8.GetBytes(TestCSDataClass.test7DataExp  )}],
+        ["8",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test8Data),   Encoding.UTF8.GetBytes(TestCSDataClass.test8DataExp  )}],
+        ["9",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test9Data),   Encoding.UTF8.GetBytes(TestCSDataClass.test9DataExp  )}],
+        ["10",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test10Data), Encoding.UTF8.GetBytes(TestCSDataClass.test10DataExp )}],
+        ["11",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test11Data), Encoding.UTF8.GetBytes(TestCSDataClass.test11DataExp )}],
+        ["12",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test12Data), Encoding.UTF8.GetBytes(TestCSDataClass.test12DataExp )}],
+        ["13",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test13Data), Encoding.UTF8.GetBytes(TestCSDataClass.test13DataExp )}],
+        ["14",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test14Data), Encoding.UTF8.GetBytes(TestCSDataClass.test14DataExp )}],
+        ["15",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test15Data), Encoding.UTF8.GetBytes(TestCSDataClass.test15DataExp )}],
+        ["16",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test16Data), Encoding.UTF8.GetBytes(TestCSDataClass.test16DataExp )}],
+            };
+
+
+    [TestMethod()]
+    [DataRow("0", new[] { TestCSDataClass.testData0, TestCSDataClass.testDataExp0 }, DisplayName = "0")]
+    //  [DataRow("2", new[] { TestDataClass.test2Data, TestDataClass.testDataExp2 }, DisplayName = "2")]
+    [DataRow("3", new[] { TestCSDataClass.testData3, TestCSDataClass.testDataExp3 }, DisplayName = "3")]
+    [DataRow("4", new[] { TestCSDataClass.testData4, TestCSDataClass.testDataExp4 }, DisplayName = "4")]
+    [DataRow("5", new[] { TestCSDataClass.testData5, TestCSDataClass.testDataExp5 }, DisplayName = "5")]
+    [DataRow("6", new[] { TestCSDataClass.testData6, TestCSDataClass.testDataExp6 }, DisplayName = "6")]
+    [DynamicData(nameof(ParseTestData))]
+    public void ParseTest(string name, object[] data)
+    {
+        if (data[0] is string _sAct)
+            _testClass.OriginalCode = _sAct;
+        else if (data[0] is byte[] _bAct)
+            _testClass.OriginalCode = Encoding.UTF8.GetString(_bAct);
+        string sExp = "";
+        if (data[1] is string _sExp)
+            sExp = _sExp;
+        else if (data[1] is byte[] _bExp)
+            sExp = Encoding.UTF8.GetString(_bExp);
+
+        var act = _testClass.Parse();
+        var sAct = act.ToString();
+        using var ms = new FileStream("Test" + name + "CodeBlock.json", FileMode.Create);
+        new DataContractJsonSerializer(
+            typeof(CodeBlock),
+            new DataContractJsonSerializerSettings()
+            {
+                EmitTypeInformation = EmitTypeInformation.AsNeeded
+            })
+        .WriteObject(ms, act);
+        ms.Close();
+        if (sAct != sExp)
+        {
+            DoLog(sAct);
+        }
+        AssertAreEqual(sExp, sAct);
+    }
+    public static IEnumerable<object[]> Parse2TestData => new object[][]
+            {
+        ["1",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test1Data),  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode1) }],
+        ["2",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test2Data),  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode2) }],
+        ["8",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test8Data),  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode8) }],
+        ["9",  new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test9Data),  Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode9) }],
+        ["10", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test10Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode10) }],
+        ["11", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test11Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode11) }],
+        ["12", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test12Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode12) }],
+        ["13", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test13Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode13) }],
+        ["14", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test14Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode14) }],
+        ["15", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test15Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode15) }],
+        ["16", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test16Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode16) }],
+        ["17", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test17Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode17) }],
+        ["18", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test18Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode18) }],
+        ["19", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test19Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode19) }],
+        ["19a",new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test19aData),Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode19a) }],
+        ["20", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test20Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode20) }],
+        ["21", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test21Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode21) }],
+        ["22", new[] { Encoding.UTF8.GetBytes(TestCSDataClass.test22Data), Encoding.UTF8.GetBytes(TestCSDataClass.cExpCode22) }],
+            };
+
+    [TestMethod()]
+    [DataRow("0", new[] { TestCSDataClass.testData0, TestCSDataClass.cExpCode0 }, DisplayName = "0")]
+    //[DataRow("1", new[] { TestDataClass.test1Data, TestDataClass.cExpCode1 }, DisplayName = "1")]
+    //[DataRow("2", new[] { TestDataClass.test2Data, TestDataClass.cExpCode2 }, DisplayName = "2")]
+    [DataRow("3", new[] { TestCSDataClass.testData3, TestCSDataClass.cExpCode3 }, DisplayName = "3")]
+    [DataRow("4", new[] { TestCSDataClass.testData4, TestCSDataClass.cExpCode4 }, DisplayName = "4")]
+    [DataRow("5", new[] { TestCSDataClass.testData5, TestCSDataClass.cExpCode5 }, DisplayName = "5")]
+    [DataRow("6", new[] { TestCSDataClass.testData6, TestCSDataClass.cExpCode6 }, DisplayName = "6")]
+    [DataRow("7", new[] { TestCSDataClass.test7Data, TestCSDataClass.cExpCode7 }, DisplayName = "7")]
+    [DynamicData(nameof(Parse2TestData))]
+    public void Parse2Test(string _, object[] data)
+    {
+        //Arrange
+        if (data[0] is byte[] bAct)
+            _testClass.OriginalCode = Encoding.UTF8.GetString(bAct);
+        else
+            _testClass.OriginalCode = data[0] as string ?? "";
+        //Act
+        var act = _testClass.Parse();
+        var sAct = act.ToCode();
+
+        //Assert
+        string sExp = "";
+        if (data[1] is byte[] bExp)
+        {
+            sExp = Encoding.UTF8.GetString(bExp);
+        }
+        else if (data[1] is string _sExp)
+        {
+            sExp = _sExp;
+        }
+
+        if (sAct != sExp)
+            DoLog(sAct);
+        AssertAreEqual(sExp, sAct);
+    }
+
+    [TestMethod]
+    public void Parse_PreservesSeparatorBeforeUnderscoreIdentifier()
+    {
+        _testClass.OriginalCode = @"private int Test()
+{
+    return _field;
+}";
+
+        var output = _testClass.Parse().ToCode();
+
+        Assert.IsTrue(output.Contains("return _field;", StringComparison.Ordinal), output);
+        Assert.IsFalse(output.Contains("return_field", StringComparison.Ordinal), output);
+    }
+
+
+
+    [TestMethod]
+    public void Tokenize_EmitsFineGrainedTokensAndSourceSpans()
+    {
+        _testClass.OriginalCode = "int i = left + 2;";
+
+        TokenData[] tokens = _testClass.Tokenize().ToArray();
+
+        CollectionAssert.AreEqual(new[] { "int", "i", "=", "left", "+", "2", ";" }, tokens.Select(token => token.Code).ToArray());
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                CodeBlockType.Identifier, CodeBlockType.Identifier, CodeBlockType.Operator,
+                CodeBlockType.Identifier, CodeBlockType.Operator, CodeBlockType.Number,
+                CodeBlockType.Punctuation
+            },
+            tokens.Select(token => token.type).ToArray());
+        Assert.AreEqual("int i = left + 2;".Length, tokens[^1].End);
+    }
+
+    [TestMethod]
+    public void Tokenize_RecognizesMultiCharacterOperatorsAndKeepsInterpolatedStringsAtomic()
+    {
+        _testClass.OriginalCode = "if (left <= right && left != 0) { var text = $\"{Format(@\"value\", (x > 1))}\"; }";
+
+        TokenData[] tokens = _testClass.Tokenize().ToArray();
+
+        CollectionAssert.IsSubsetOf(new[] { "<=", "&&", "!=" }, tokens.Select(token => token.Code).ToArray());
+        Assert.AreEqual(1, tokens.Count(token => token.type == CodeBlockType.Identifier));
+        Assert.IsTrue(tokens.Any(token => token.Code.Contains("Format(@\"value\", (x > 1))", StringComparison.Ordinal)));
+    }
+
+    [TestMethod]
+    public void Tokenize_ReportsUnterminatedQuotedLiterals()
+    {
+        CSharpTokenizationResult result = CSharpLexer.Tokenize("var value = \"unterminated");
+
+        Assert.IsNotNull(result.Error);
+        Assert.AreEqual(12, result.ErrorPosition);
+    }
+
+    [TestMethod()]
+    [DynamicData(nameof(TestListParse))]
+    public void ParseEnumTest(string _, List<TokenData> actList, object data)
+    {
+        var act = _testClass.Parse(actList);
+        if (data is string _sExp)
+            AssertAreEqual(_sExp, act?.ToString()?.Replace("\"+", "\" +"));
+        else if (data is byte[] _bExp)
+            AssertAreEqual(Encoding.UTF8.GetString(_bExp), act?.ToString()?.Replace("\"+", "\" +"));
+    }
+
+
+    [TestMethod()]
+    [DynamicData(nameof(TestListParse2))]
+    public void ParseEnum2Test(string _, List<TokenData> actList, object data)
+    {
+        var act = _testClass.Parse(actList);
+        if (data is string _sExp)
+            AssertAreEqual(_sExp, act.ToCode());
+        else if (data is byte[] _bExp)
+            AssertAreEqual(Encoding.UTF8.GetString(_bExp), act.ToCode());
+    }
+
+    [TestMethod()]
+    [DynamicData(nameof(ReorderListData))]
+    public void ReorderLabelsTest(string _, List<TokenData> actList, string[] data)
+    {
+        var act = _testClass.Parse(actList);
+        _testClass.ReorderLabels(act);
+        var sAct = act.ToString();
+        if (sAct != data[0])
+            DoLog(sAct);
+        //   else
+        //       DoLog(_testClass.ToCode(act,4));
+        AssertAreEqual(data[0], sAct);
+    }
+
+    [TestMethod()]
+    [DynamicData(nameof(RemoveLabelsData))]
+    public void RemoveLabelsTest(string resourceName)
+    {
+        var (actList, expected) = TestCSDataClass.GetRemoveLabelsData(resourceName);
+        var act = _testClass.Parse(actList);
+        _testClass.ReorderLabels(act);
+        _testClass.RemoveSingleSourceLabels1(act);
+        var sAct = act.ToString();
+        if (sAct != expected)
+            DoLog(sAct);
+        else
+            DoLog(_testClass.ToCode(act, 4));
+        AssertAreEqual(expected, sAct);
+    }
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void DoWhileTest(bool xAct)
+    {
+        ICodeOptimizer _co;
+        // Arrange
+        _testClass = new CSCode(
+            Substitute.For<ITokenHandler>(),
+            Substitute.For<ICodeBuilder>(),
+            _co = Substitute.For<ICodeOptimizer>()) ;
+
+        // Act
+        _testClass.DoWhile = xAct;
+
+        // Assert
+        _co.Received(1)._noWhile = !xAct;
+        _=_co.Received(0)._noWhile;
+        Assert.AreEqual(!xAct, _co._noWhile);
+        // Assert & Act 2
+        Assert.AreEqual(xAct, _testClass.DoWhile);
+        // Assert 2
+        _ = _co.Received(2)._noWhile;
+
+
+    }
+}

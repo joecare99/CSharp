@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "id": "VB.Strings.Trim",
+      "sourceTemplate": "Strings.Trim(<Param1>)",
+      "replacementTemplate": "((<Param1>) ?? string.Empty).Trim(' ')",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Trims U+0020 spaces only and treats null input as an empty string, matching Visual Basic Strings.Trim."
+    },
+    {
+      "id": "VB.Strings.LTrim",
+      "sourceTemplate": "Strings.LTrim(<Param1>)",
+      "replacementTemplate": "((<Param1>) ?? string.Empty).TrimStart(' ')",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Trims leading U+0020 spaces only and treats null input as an empty string, matching Visual Basic Strings.LTrim."
+    },
+    {
+      "id": "VB.Strings.RTrim",
+      "sourceTemplate": "Strings.RTrim(<Param1>)",
+      "replacementTemplate": "((<Param1>) ?? string.Empty).TrimEnd(' ')",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Trims trailing U+0020 spaces only and treats null input as an empty string, matching Visual Basic Strings.RTrim."
+    },
+    {
+      "id": "VB.Information.IsDBNull",
+      "sourceTemplate": "Information.IsDBNull(<Param1>)",
+      "replacementTemplate": "Convert.IsDBNull(<Param1>)",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Uses the BCL DBNull predicate with the same object input and result semantics."
+    },
+    {
+      "id": "VB.DateAndTime.Now",
+      "sourceTemplate": "DateAndTime.Now",
+      "replacementTemplate": "DateTime.Now",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Rewrites the Visual Basic local current-date-and-time property to its BCL equivalent."
+    },
+    {
+      "id": "VB.DateAndTime.Today",
+      "sourceTemplate": "DateAndTime.Today",
+      "replacementTemplate": "DateTime.Today",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Rewrites the Visual Basic local current-date property to its BCL equivalent."
+    }
+  ]
+}

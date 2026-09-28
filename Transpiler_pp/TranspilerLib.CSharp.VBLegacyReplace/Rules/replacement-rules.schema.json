@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:transpiler:csharp-vb-legacy-replacement-rules:v1",
+  "title": "Transpiler C# VB legacy replacement rules",
+  "description": "Version 1 token-template rule-set format. Placeholders use the form <Param1> or <Param1:bool>.",
+  "type": "object",
+  "required": ["schemaVersion", "rules"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "sourceTemplate", "replacementTemplate"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "sourceTemplate": { "type": "string", "minLength": 1 },
+          "replacementTemplate": { "type": "string" },
+          "requiredUsings": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+          "priority": { "type": "integer", "default": 0 },
+          "enabled": { "type": "boolean", "default": true },
+          "documentation": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
+
