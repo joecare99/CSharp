@@ -94,22 +94,31 @@ public partial class CSCode : CodeBase, ICSCode
     /// </returns>
     /// <remarks>
     /// This method iteratively invokes the configured <see cref="ITokenHandler"/> states until the end of the input is reached.
-    /// Internally, tokens collected on a stack are reversed to preserve their semantic order before being yielded.
+    /// Tokens emitted by each handler are yielded in their original order before scanning continues.
     /// </remarks>
     public override IEnumerable<TokenData> Tokenize()
     {
+        if (tokenHandler is CSTokenHandler)
+        {
+            CSharpTokenizationResult result = CSharpLexer.Tokenize(OriginalCode);
+            if (result.Error is null)
+            {
+                foreach (TokenData token in result.Tokens)
+                    yield return token;
+                yield break;
+            }
+        }
+
         TokenizeData data = new();
-        Stack<TokenData> stack = new();
-        while (
-                data.Pos < OriginalCode.Length
-                && tokenHandler.TryGetValue(data.State, out var Handler))
+        List<TokenData> tokens = new();
+        while (data.Pos < OriginalCode.Length && tokenHandler.TryGetValue(data.State, out var Handler))
         {
             string debug = GetDebug(data, OriginalCode);
 
-            Handler?.Invoke(t => stack.Push(t), OriginalCode, data);
-            stack.Reverse();
-            while (stack.Count > 0)
-                yield return stack.Pop();
+            Handler?.Invoke(tokens.Add, OriginalCode, data);
+            foreach (var token in tokens)
+                yield return token;
+            tokens.Clear();
             data.Pos++;
         }
     }
@@ -124,6 +133,17 @@ public partial class CSCode : CodeBase, ICSCode
     /// </remarks>
     public override void Tokenize(TokenDelegate? token)
     {
+        if (tokenHandler is CSTokenHandler)
+        {
+            CSharpTokenizationResult result = CSharpLexer.Tokenize(OriginalCode);
+            if (result.Error is null)
+            {
+                foreach (TokenData tokenData in result.Tokens)
+                    token?.Invoke(tokenData);
+                return;
+            }
+        }
+
         TokenizeData data = new();
         while (data.Pos < OriginalCode.Length && tokenHandler.TryGetValue(data.State, out var Handler))
         {
@@ -158,6 +178,8 @@ public partial class CSCode : CodeBase, ICSCode
             {
                 codeBuilder.OnToken(item, data);
             }
+        if (codeBuilder is CSCodeBuilder csharpCodeBuilder)
+            csharpCodeBuilder.Complete(data);
 
         foreach (var item in data.gotos)
         {
@@ -231,14 +253,7 @@ public partial class CSCode : CodeBase, ICSCode
         List<ICodeBlock> labels = new();
         foreach (var item in codeBlock.SubBlocks)
             if (item.Type is CodeBlockType.Label
-                && (item.Sources.Count <= 2
-                    || IsConditionalGotoChainTarget(item)
-                    || IsConsecutiveConditionalGotoBranchTarget(item)
-                    || IsSafeSwitchContinuationLabel(item)
-                    || IsSafeMultiSourceGotoReductionTarget(item))
-                && item.Sources.Count > 0
-                && !item.Code.StartsWith("case ")
-                && !item.Code.StartsWith("default:"))
+                   && CanBeOptimized(item))
                 labels.Add(item);
 
         foreach (var item in labels)
@@ -249,6 +264,18 @@ public partial class CSCode : CodeBase, ICSCode
         foreach (var item in codeBlock.SubBlocks.ToArray())
             if (item.SubBlocks.Count > 0)
                 RemoveSingleSourceLabels1(item);
+    }
+
+    private static bool CanBeOptimized(ICodeBlock item)
+    {
+        return  (item.Sources.Count <= 2
+                            || IsConditionalGotoChainTarget(item)
+                            || IsConsecutiveConditionalGotoBranchTarget(item)
+                            || IsSafeSwitchContinuationLabel(item)
+                            || IsSafeMultiSourceGotoReductionTarget(item))
+                        && item.Sources.Count > 0
+                        && !item.Code.StartsWith("case ")
+                        && !item.Code.StartsWith("default:");
     }
 
     /// <summary>
