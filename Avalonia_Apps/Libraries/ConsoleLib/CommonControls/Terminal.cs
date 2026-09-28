@@ -99,6 +99,12 @@ public class Terminal : Control, IConsole, IHasBorder
 
     public int WindowLeft { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public int WindowTop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public ITextWriter Error => throw new NotImplementedException();
+
+    public ITextReader In => throw new NotImplementedException();
+
+    public ITextWriter Out => throw new NotImplementedException();
     #endregion
     /// <summary>
     /// Draws this instance.
