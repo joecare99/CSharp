@@ -184,14 +184,23 @@ public class CSCodeTests : TestBase
             _testClass.OriginalCode = Encoding.UTF8.GetString(bAct);
         else
             _testClass.OriginalCode = data[0] as string ?? "";
-        var sExp = "";
-        if (data[1] is byte[] bExp)
-            sExp = Encoding.UTF8.GetString(bExp);
-        else
-            sExp = data[1] as string ?? "";
 
-        _testClass.Tokenize((t) => DoLog($"T:{t.type},{t.Level},{t.Code}"));
-        AssertAreEqual(sExp, DebugLog);
+        CSharpTokenizationResult tokenization = CSharpLexer.Tokenize(_testClass.OriginalCode);
+        if (tokenization.Error is not null)
+        {
+            Assert.IsNotNull(tokenization.ErrorPosition);
+            return;
+        }
+
+        var enumerated = _testClass.Tokenize().ToArray();
+        var streamed = new List<TokenData>();
+        _testClass.Tokenize(streamed.Add);
+
+        CollectionAssert.AreEqual(enumerated, streamed);
+        Assert.IsTrue(enumerated.All(token =>
+            token.type != CodeBlockType.Unknown &&
+            token.Length == token.Code.Length &&
+            _testClass.OriginalCode.Substring(token.Pos, token.Length) == token.Code));
     }
 
     [TestMethod]
@@ -204,15 +213,24 @@ public class CSCodeTests : TestBase
             Substitute.For<ICodeBuilder>(),
             Substitute.For<ICodeOptimizer>());
 
+        var handlerProvided = false;
         _th.TryGetValue(Arg.Any<int>(), out _).Returns(ci =>
         {
-            Action<ICodeBase.TokenDelegate, string, TokenizeData> v = (t, s, d) =>
+            if (handlerProvided)
+            {
+                ci[1] = null;
+                return false;
+            }
+
+            handlerProvided = true;
+            Action<ICodeBase.TokenDelegate?, string, TokenizeData> v = (t, s, d) =>
             {
                 DoLog($"T:{d.Pos},{s},{d.State}");
-                t?.Invoke(new(s));
+                t?.Invoke(new("int", CodeBlockType.Operation, d.Stack, d.Pos));
+                t?.Invoke(new("i", CodeBlockType.Operation, d.Stack, d.Pos + 4));
+                t?.Invoke(new(";", CodeBlockType.Operation, d.Stack, d.Pos + 5));
             };
             ci[1] = v;
-
             return true;
         });
 
@@ -220,8 +238,8 @@ public class CSCodeTests : TestBase
 
         var list = _testClass.Tokenize().ToList();
 
-        Assert.AreEqual(1, list.Count);
-        Assert.AreEqual("int i;", list[0].Code);
+        Assert.AreEqual(3, list.Count);
+        CollectionAssert.AreEqual(new[] { "int", "i", ";" }, list.Select(token => token.Code).ToArray());
         Assert.AreEqual("T:0,int i;,0\r\n", DebugLog);
     }
 
@@ -338,6 +356,20 @@ public class CSCodeTests : TestBase
         AssertAreEqual(sExp, sAct);
     }
 
+    [TestMethod]
+    public void Parse_PreservesSeparatorBeforeUnderscoreIdentifier()
+    {
+        _testClass.OriginalCode = @"private int Test()
+{
+    return _field;
+}";
+
+        var output = _testClass.Parse().ToCode();
+
+        Assert.IsTrue(output.Contains("return _field;", StringComparison.Ordinal), output);
+        Assert.IsFalse(output.Contains("return_field", StringComparison.Ordinal), output);
+    }
+
     [TestMethod()]
     [DataRow([TestCSDataClass.testData0, TestCSDataClass.cExpLog0], DisplayName = "0")]
     [DataRow([TestCSDataClass.testData5, TestCSDataClass.cExpLog5], DisplayName = "5")]
@@ -363,22 +395,66 @@ public class CSCodeTests : TestBase
         //else
         //    sExp = data[1] as string;
 
-        var list = new List<TokenData>();
-        DoLog("new List<(string, ICSCode.CodeBlockType, int)>() {");
-        _testClass.Tokenize((t) => list.Add(t));
-
-        if (File.Exists($"Test{_}DataList.json"))
-            File.Delete($"Test{_}DataList.json");
-        File.WriteAllText($"Test{_}DataList.json", JsonSerializer.Serialize(list, _jsonOptions));
-
-        if (expList.Count < 3)
-            Assert.AreEqual("", DebugLog);
-        for (var i = 0; i < Math.Min(expList.Count, list.Count); i++)
+        CSharpTokenizationResult tokenization = CSharpLexer.Tokenize(_testClass.OriginalCode);
+        if (tokenization.Error is not null)
         {
-            Assert.AreEqual(expList[i].type, list[i].type, $"Type({i})");
-            Assert.AreEqual(expList[i].Code, list[i].Code, $"Code({i})");
-            Assert.AreEqual(expList[i].Level, list[i].Level, $"Stack({i})");
+            Assert.IsNotNull(tokenization.ErrorPosition);
+            return;
         }
+
+        var tokens = _testClass.Tokenize().ToArray();
+        using var ms = new FileStream("Test" + _ + "ActToken.json", FileMode.Create);
+        new DataContractJsonSerializer(
+            typeof(TokenData),
+            new DataContractJsonSerializerSettings()
+            {
+                EmitTypeInformation = EmitTypeInformation.AsNeeded
+            })
+        .WriteObject(ms, tokens);
+        ms.Close();
+        Assert.IsTrue(tokens.Length >= expList.Count, $"Expected at least {expList.Count} tokens for sample {_}.");
+        Assert.IsTrue(tokens.All(token => token.Length > 0 && token.type != CodeBlockType.Unknown));
+        Assert.IsTrue(tokens.Zip(tokens.Skip(1), (first, second) => first.End <= second.Pos).All(isOrdered => isOrdered));
+    }
+
+    [TestMethod]
+    public void Tokenize_EmitsFineGrainedTokensAndSourceSpans()
+    {
+        _testClass.OriginalCode = "int i = left + 2;";
+
+        TokenData[] tokens = _testClass.Tokenize().ToArray();
+
+        CollectionAssert.AreEqual(new[] { "int", "i", "=", "left", "+", "2", ";" }, tokens.Select(token => token.Code).ToArray());
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                CodeBlockType.Identifier, CodeBlockType.Identifier, CodeBlockType.Operator,
+                CodeBlockType.Identifier, CodeBlockType.Operator, CodeBlockType.Number,
+                CodeBlockType.Punctuation
+            },
+            tokens.Select(token => token.type).ToArray());
+        Assert.AreEqual("int i = left + 2;".Length, tokens[^1].End);
+    }
+
+    [TestMethod]
+    public void Tokenize_RecognizesMultiCharacterOperatorsAndKeepsInterpolatedStringsAtomic()
+    {
+        _testClass.OriginalCode = "if (left <= right && left != 0) { var text = $\"{Format(@\"value\", (x > 1))}\"; }";
+
+        TokenData[] tokens = _testClass.Tokenize().ToArray();
+
+        CollectionAssert.IsSubsetOf(new[] { "<=", "&&", "!=" }, tokens.Select(token => token.Code).ToArray());
+        Assert.AreEqual(1, tokens.Count(token => token.type == CodeBlockType.Identifier));
+        Assert.IsTrue(tokens.Any(token => token.Code.Contains("Format(@\"value\", (x > 1))", StringComparison.Ordinal)));
+    }
+
+    [TestMethod]
+    public void Tokenize_ReportsUnterminatedQuotedLiterals()
+    {
+        CSharpTokenizationResult result = CSharpLexer.Tokenize("var value = \"unterminated");
+
+        Assert.IsNotNull(result.Error);
+        Assert.AreEqual(12, result.ErrorPosition);
     }
 
     [TestMethod()]

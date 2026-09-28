@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using TranspilerLib.Data;
 using TranspilerLib.CSharp.Data;
@@ -504,6 +505,48 @@ End:
     }
 
     [TestMethod]
+    [DataRow(false, false)]
+    [DataRow(false, true)]
+    [DataRow(true, false)]
+    [DataRow(true, true)]
+    public void OptimizeIfChains_PreservesSideEffectAndShortCircuitTrace(bool firstResult, bool secondResult)
+    {
+        const string source = @"private void Test()
+{
+    if (probe.First)
+    {
+        if (probe.Second)
+        {
+            probe.Action();
+        }
+    }
+}";
+        var root = ParseWithoutLabelReduction(source);
+        new CodeOptimizer().OptimizeIfChains(root);
+        var optimizedCode = root.ToCode();
+        Assert.IsTrue(optimizedCode.Contains("if ((probe.First) && (probe.Second))", StringComparison.Ordinal), optimizedCode);
+
+        var nestedProbe = new BooleanProbe(firstResult, secondResult);
+        if (nestedProbe.First)
+        {
+            if (nestedProbe.Second)
+                nestedProbe.Action();
+        }
+
+        var mergedProbe = new BooleanProbe(firstResult, secondResult);
+        if (mergedProbe.First && mergedProbe.Second)
+            mergedProbe.Action();
+
+        CollectionAssert.AreEqual(nestedProbe.Trace, mergedProbe.Trace);
+        Assert.AreEqual(1, nestedProbe.FirstReads);
+        Assert.AreEqual(1, mergedProbe.FirstReads);
+        Assert.AreEqual(firstResult ? 1 : 0, nestedProbe.SecondReads);
+        Assert.AreEqual(firstResult ? 1 : 0, mergedProbe.SecondReads);
+        Assert.AreEqual(firstResult && secondResult ? 1 : 0, nestedProbe.ActionCalls);
+        Assert.AreEqual(firstResult && secondResult ? 1 : 0, mergedProbe.ActionCalls);
+    }
+
+    [TestMethod]
     public void OptimizeIfChains_MergesNestedIfWithoutBlockDelimiters()
     {
         var root = CreateBlock(CodeBlockType.MainBlock, "private void Test(bool b1, bool b2)");
@@ -516,6 +559,33 @@ End:
         Assert.AreEqual("if ((b1) && (b2))", outerIf.Code);
         Assert.AreEqual(1, outerIf.SubBlocks.Count);
         Assert.AreEqual("SomeFunction();", outerIf.SubBlocks[0].Code);
+    }
+
+    [TestMethod]
+    public void OptimizeIfChains_MergesNestedIfAndRemovesRedundantOuterBody()
+    {
+        var root = CreateBlock(CodeBlockType.MainBlock, "private void Test(bool b1, bool b2)");
+        var outerIf = CreateBlock(CodeBlockType.Operation, "if (b1)", root);
+        var outerOpen = CreateBlock(CodeBlockType.Block, "{", outerIf);
+        _ = CreateBlock(CodeBlockType.Comment, "/* keep scope */", outerIf);
+        var innerIf = CreateBlock(CodeBlockType.Operation, "if (b2)", outerIf);
+        var innerOpen = CreateBlock(CodeBlockType.Block, "{", innerIf);
+        var firstAction = CreateBlock(CodeBlockType.Operation, "First();", innerIf);
+        var secondAction = CreateBlock(CodeBlockType.Operation, "Second();", innerIf);
+        var innerClose = CreateBlock(CodeBlockType.Block, "}", innerIf);
+        var outerClose = CreateBlock(CodeBlockType.Block, "}", outerIf);
+
+        new CodeOptimizer().OptimizeIfChains(root);
+        var output = root.ToCode();
+
+        Assert.AreEqual("if ((b1) && (b2))", outerIf.Code);
+        Assert.IsNull(innerIf.Parent);
+        Assert.IsNull(outerOpen.Parent, output);
+        Assert.IsNull(outerClose.Parent, output);
+        Assert.AreSame(outerIf, innerOpen.Parent, output);
+        Assert.AreSame(outerIf, innerClose.Parent, output);
+        Assert.AreSame(outerIf, firstAction.Parent, output);
+        Assert.AreSame(outerIf, secondAction.Parent, output);
     }
 
     [TestMethod]
@@ -572,12 +642,61 @@ End:
         "if ((GetFirstCharacter() == 'A') && (GetSecondCharacter() == 'B'))",
         DisplayName = "Merges character equality conditions")]
     [DataRow("true", "false", "if ((true) && (false))", DisplayName = "Merges boolean literals")]
+    [DataRow("COND.FamNrTable.NoMatch", "!COND.FamNrTable.NoMatch",
+        "if ((COND.FamNrTable.NoMatch) && (!COND.FamNrTable.NoMatch))",
+        DisplayName = "Merges qualified boolean member and its negation")]
+    [DataRow("num17 > 0", "(double)num17 < Conversion.Val(COND.aus[83])",
+        "if ((num17 > 0) && ((double)num17 < Conversion.Val(COND.aus[83])))",
+        DisplayName = "Merges greater-than and less-than comparisons")]
+    [DataRow("value >= lowerBound", "value <= upperBound",
+        "if ((value >= lowerBound) && (value <= upperBound))",
+        DisplayName = "Merges inclusive relational comparisons")]
+    [DataRow("!Information.IsDBNull(RuntimeHelpers.GetObjectValue(field))",
+        "Operators.ConditionalCompareObjectGreater(field, 0, TextCompare: false)",
+        "if ((!Information.IsDBNull(RuntimeHelpers.GetObjectValue(field))) && (Operators.ConditionalCompareObjectGreater(field, 0, TextCompare: false)))",
+        DisplayName = "Merges whitelisted Visual Basic runtime boolean predicates")]
+    [DataRow("Conversions.ToBoolean(flag)", "Operators.ConditionalCompareObjectEqual(value, 1, TextCompare: false)",
+        "if ((Conversions.ToBoolean(flag)) && (Operators.ConditionalCompareObjectEqual(value, 1, TextCompare: false)))",
+        DisplayName = "Merges Visual Basic boolean conversion and equality predicates")]
+    [DataRow("Operators.ConditionalCompareObjectNotEqual(value, 0, TextCompare: false)",
+        "Operators.ConditionalCompareObjectLess(value, limit, TextCompare: false)",
+        "if ((Operators.ConditionalCompareObjectNotEqual(value, 0, TextCompare: false)) && (Operators.ConditionalCompareObjectLess(value, limit, TextCompare: false)))",
+        DisplayName = "Merges inequality and less-than comparison helpers")]
+    [DataRow("Operators.ConditionalCompareObjectGreaterOrEqual(value, lower, TextCompare: false)",
+        "Operators.ConditionalCompareObjectLessOrEqual(value, upper, TextCompare: false)",
+        "if ((Operators.ConditionalCompareObjectGreaterOrEqual(value, lower, TextCompare: false)) && (Operators.ConditionalCompareObjectLessOrEqual(value, upper, TextCompare: false)))",
+        DisplayName = "Merges inclusive Visual Basic comparison helpers")]
+    [DataRow("(b1) & (b2)", "b3", "if (((b1) & (b2)) && (b3))",
+        DisplayName = "Merges validated boolean bitwise operands")]
+    [DataRow("(b1) | (b2)", "b3", "if (((b1) | (b2)) && (b3))",
+        DisplayName = "Merges validated boolean bitwise alternatives")]
+    [DataRow("flags[index]", "!flags[otherIndex]",
+        "if ((flags[index]) && (!flags[otherIndex]))",
+        DisplayName = "Merges boolean indexer paths and negation")]
+    [DataRow("probe . Ready", "probe.OtherReady",
+        "if ((probe . Ready) && (probe.OtherReady))",
+        DisplayName = "Merges member paths with whitespace around the separator")]
+    [DataRow("flags[indices[index]]", "flags[\"active\"]",
+        "if ((flags[indices[index]]) && (flags[\"active\"]))",
+        DisplayName = "Merges nested indexers while ignoring quoted operator characters")]
+    [DataRow("_probe.Ready", "!_probe.OtherReady",
+        "if ((_probe.Ready) && (!_probe.OtherReady))",
+        DisplayName = "Merges underscore-prefixed qualified boolean members")]
+    [DataRow("GetText(\"a\\\"> b\") == expected", "otherLabel != \">\"",
+        "if ((GetText(\"a\\\"> b\") == expected) && (otherLabel != \">\"))",
+        DisplayName = "Skips escaped quotes while scanning a string before comparisons")]
+    [DataRow("label == @\"a > b\"", "otherLabel != \">\"",
+        "if ((label == @\"a > b\") && (otherLabel != \">\"))",
+        DisplayName = "Ignores relational characters inside quoted literals")]
+    [DataRow("label == @\"a\"\" > b\"", "otherLabel != \">\"",
+        "if ((label == @\"a\"\" > b\") && (otherLabel != \">\"))",
+        DisplayName = "Skips doubled quotes inside verbatim string literals")]
     public void OptimizeIfChains_MergesSupportedConditions(
         string firstCondition,
         string secondCondition,
         string expectedCondition)
     {
-        var root = CreateBlock(CodeBlockType.MainBlock, "private void Test(bool b1, bool b2)");
+        var root = CreateBlock(CodeBlockType.MainBlock, "private void Test(bool b1, bool b2, bool b3)");
         var firstIf = CreateBlock(CodeBlockType.Operation, $"if ({firstCondition})", root);
         var secondIf = CreateBlock(CodeBlockType.Operation, $"if ({secondCondition})", firstIf);
         _ = CreateBlock(CodeBlockType.Operation, "SomeFunction();", secondIf);
@@ -591,6 +710,42 @@ End:
     [DataRow("root", "if (b1)", "if (b2)", DisplayName = "Rejects unresolved boolean identifiers")]
     [DataRow("private void Test(bool b1, bool b2)", "if (b1 = b2)", "if (b2)",
         DisplayName = "Rejects a single assignment operator")]
+    [DataRow("private void Test(bool b1)", "if (GetUnknownCondition())", "if (b1)",
+        DisplayName = "Rejects an unknown method return type")]
+    [DataRow("private void Test(bool b1)", "if (GetCondition(\"a > b\"))", "if (b1)",
+        DisplayName = "Does not treat comparison text inside a string as boolean proof")]
+    [DataRow("private void Test(bool b1)", "if (value == \"unterminated)", "if (b1)",
+        DisplayName = "Rejects an unterminated string literal before comparison proof")]
+    [DataRow("private void Test(bool b1)", "if (flags[])", "if (b1)",
+        DisplayName = "Rejects an empty indexer")]
+    [DataRow("private void Test(bool b1)", "if (flags[unfinished)", "if (b1)",
+        DisplayName = "Rejects an unterminated indexer")]
+    [DataRow("private void Test(bool b1)", "if (probe.)", "if (b1)",
+        DisplayName = "Rejects an incomplete member path")]
+    [DataRow("private void Test(bool b1)", "if (Information.IsDBNull(value) extra)", "if (b1)",
+        DisplayName = "Rejects a whitelisted invocation with trailing expression text")]
+    [DataRow("private void Test(bool b1)", "if (Information.IsDBNull(value)", "if (b1)",
+        DisplayName = "Rejects an unterminated whitelisted invocation")]
+    [DataRow("private void Test(bool b1)", "if (!)", "if (b1)",
+        DisplayName = "Rejects an empty negated expression")]
+    [DataRow("private void Test(bool b1)", "if (b1 + 1)", "if (b1)",
+        DisplayName = "Rejects an expression without a boolean operator")]
+    [DataRow("private void Test(bool b1)", "if (b1 ==)", "if (b1)",
+        DisplayName = "Rejects a comparison with a missing right operand")]
+    [DataRow("private void Test(bool b1)", "if (b1 =)", "if (b1)",
+        DisplayName = "Rejects a comparison character at the end of the expression")]
+    [DataRow("private void Test(bool b1)", "if (> b1)", "if (b1)",
+        DisplayName = "Rejects a comparison with a missing left operand")]
+    [DataRow("private void Test(bool b1)", "if (b1 >)", "if (b1)",
+        DisplayName = "Rejects a relational comparison with a missing right operand")]
+    [DataRow("private void Test(bool b1)", "if (left ! right)", "if (b1)",
+        DisplayName = "Rejects a standalone exclamation mark instead of equality")]
+    [DataRow("private void Test(bool b1)", "if (left >> 1)", "if (b1)",
+        DisplayName = "Rejects shift operators instead of treating them as relational comparisons")]
+    [DataRow("private void Test(bool b1)", "if (Information.IsDBNull.)", "if (b1)",
+        DisplayName = "Rejects an incomplete qualified whitelisted method name")]
+    [DataRow("private void Test(bool b1)", "if (Information.IsDBNull extra)", "if (b1)",
+        DisplayName = "Rejects a whitelisted method name followed by non-invocation text")]
     [DataRow("private void Test(bool b1)", "if (b1)", "if (b2",
         DisplayName = "Rejects a malformed inner condition")]
     public void OptimizeIfChains_RejectsUnprovenOrMalformedConditions(
@@ -1091,6 +1246,40 @@ end:
         Assert.IsTrue(output.Contains("IL_05f8:", StringComparison.Ordinal));
         Assert.IsTrue(output.Contains("else if (aus[75] == \"1\")", StringComparison.Ordinal));
         Assert.IsTrue(output.Contains("OrtTable.Fields[\"Zusatz\"]", StringComparison.Ordinal));
+    }
+
+    private sealed class BooleanProbe(bool firstResult, bool secondResult)
+    {
+        public List<string> Trace { get; } = new();
+        public int FirstReads { get; private set; }
+        public int SecondReads { get; private set; }
+        public int ActionCalls { get; private set; }
+
+        public bool First
+        {
+            get
+            {
+                FirstReads++;
+                Trace.Add("first");
+                return firstResult;
+            }
+        }
+
+        public bool Second
+        {
+            get
+            {
+                SecondReads++;
+                Trace.Add("second");
+                return secondResult;
+            }
+        }
+
+        public void Action()
+        {
+            ActionCalls++;
+            Trace.Add("action");
+        }
     }
 
     private static ICodeBlock ParseAndOptimize(string source)
