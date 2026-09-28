@@ -106,4 +106,11 @@ public enum CodeBlockType
     /// A code-separator (e.g. ';' or ',') 
     /// </summary> 
     Separator,
+    Identifier,
+
+    Character,
+    Operator,
+    Punctuation,
+    Invalid
+
 }

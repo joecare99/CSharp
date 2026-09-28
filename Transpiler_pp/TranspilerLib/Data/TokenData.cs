@@ -13,6 +13,9 @@
 // ***********************************************************************
 namespace TranspilerLib.Data;
 
+/// <summary>Identifies a fine-grained C# lexical token.</summary>
+
+
 /// <summary>
 /// Represents a single token with its lexeme, token kind and nesting level information.
 /// </summary>
@@ -22,6 +25,15 @@ namespace TranspilerLib.Data;
 /// <param name="Pos">Optional absolute character position in the source.</param>
 public record struct TokenData(string Code, CodeBlockType type = CodeBlockType.Unknown, int Level = -1, int Pos = 0)
 {
+    /// <summary>Gets or initializes the token's source length.</summary>
+    public int Length { get; init; }
+
+    /// <summary>Gets or initializes the whitespace preceding this token in the original source.</summary>
+    public string LeadingTrivia { get; init; } = string.Empty;
+
+    /// <summary>Gets the exclusive end offset of the token.</summary>
+    public int End => Pos + Length;
+
     /* 
        public static implicit operator (string, ICSCode.CodeBlockType, int)(TokenData value)
        {

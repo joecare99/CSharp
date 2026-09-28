@@ -175,6 +175,7 @@
             </summary> 
         </member>
         <member name="T:TranspilerLib.Data.TokenData">
+            <summary>Identifies a fine-grained C# lexical token.</summary>
             <summary>
             Represents a single token with its lexeme, token kind and nesting level information.
             </summary>
@@ -184,6 +185,7 @@
             <param name="Pos">Optional absolute character position in the source.</param>
         </member>
         <member name="M:TranspilerLib.Data.TokenData.#ctor(System.String,TranspilerLib.Data.CodeBlockType,System.Int32,System.Int32)">
+            <summary>Identifies a fine-grained C# lexical token.</summary>
             <summary>
             Represents a single token with its lexeme, token kind and nesting level information.
             </summary>
@@ -203,6 +205,15 @@
         </member>
         <member name="P:TranspilerLib.Data.TokenData.Pos">
             <summary>Optional absolute character position in the source.</summary>
+        </member>
+        <member name="P:TranspilerLib.Data.TokenData.Length">
+            <summary>Gets or initializes the token's source length.</summary>
+        </member>
+        <member name="P:TranspilerLib.Data.TokenData.LeadingTrivia">
+            <summary>Gets or initializes the whitespace preceding this token in the original source.</summary>
+        </member>
+        <member name="P:TranspilerLib.Data.TokenData.End">
+            <summary>Gets the exclusive end offset of the token.</summary>
         </member>
         <member name="M:TranspilerLib.Data.TokenData.op_Implicit(System.ValueTuple{System.String,TranspilerLib.Data.CodeBlockType,System.Int32})~TranspilerLib.Data.TokenData">
             <summary>
@@ -1469,7 +1480,8 @@
             <param name="indent">Current indentation level (spaces). First nested blocks increase indentation.</param>
             <returns>Formatted code snippet (not necessarily identical to original source).</returns>
             <remarks>
-            Adds an inline comment annotation for label blocks receiving more than two incoming sources.
+            Adds an inline comment annotation for label blocks receiving more than two incoming sources and keeps
+            directly adjacent unbraced <c>if</c> chains on one line.
             </remarks>
         </member>
         <member name="M:TranspilerLib.Models.Scanner.CodeBlock.MoveSubBlocks(System.Int32,System.Int32,System.Int32)">
