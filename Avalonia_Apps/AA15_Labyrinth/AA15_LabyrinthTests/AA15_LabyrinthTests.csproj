@@ -1,7 +1,7 @@
 ﻿<Project>
 	<Import Project="..\Application.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<OutputType>Library</OutputType>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Configurations>Debug;Release;DesktopOnly</Configurations>
