@@ -57,7 +57,7 @@
                         num = 2;
                         if (aus[108] == "1")
                         {
-                            if(Operators.CompareString(Datu, aus[173], TextCompare: false) > 0)
+                            if (Operators.CompareString(Datu, aus[173], TextCompare: false) > 0)
                             {
                                 Datu = "";
                                 goto end_IL_0000_2;

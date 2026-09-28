@@ -631,15 +631,9 @@ Modul1.LiText += sDest2;
 ///Operation Operation 6,2
 Modul1.PerSatzLes();
 ///Operation Operation 6,3
-if (null != DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value)
+if ((null != DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value) && (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value, "", TextCompare: false)))
 ///Operation Operation 7,0
-if (Operators.ConditionalCompareObjectNotEqual(DataModul.DB_PersonTable.Fields[nameof(DataModul.PersonFields.Bem3)].Value, "", TextCompare: false))
-///BlockStart Block 8,0
-{
-///Operation Operation 8,1
 StringType.MidStmtStr(ref Modul1.LiText, 77, 1, "J");
-///BlockEnd Block 8,2
-}
 ///Operation Operation 6,4
 DataModul.TTable.Index = "Tab";
 ///Operation Operation 6,5
