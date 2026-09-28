@@ -104,6 +104,12 @@ public sealed class AvaloniaTestConsole : IAvaloniaConsole
     public int WindowLeft { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public int WindowTop { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+    public ITextWriter Error => throw new NotImplementedException();
+
+    public ITextReader In => throw new NotImplementedException();
+
+    public ITextWriter Out => throw new NotImplementedException();
+
     /// <inheritdoc/>
     public void Beep(int freq, int len)
     {
