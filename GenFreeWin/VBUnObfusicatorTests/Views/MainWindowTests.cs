@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
+using VBUnObfusicator.Tests;
 
 namespace VBUnObfusicator.Views.Tests
 {
@@ -10,7 +11,11 @@ namespace VBUnObfusicator.Views.Tests
         public void MainWindowTest()
         {
             MainWindow? mw = null;
-            var t = new Thread(() => mw = new());
+            var t = new Thread(() =>
+            {
+                WpfTestApplication.EnsureCreated();
+                mw = new();
+            });
             t.SetApartmentState(ApartmentState.STA); //Set the thread to STA
             t.Start();
             t.Join(); //Wait for the thread to end

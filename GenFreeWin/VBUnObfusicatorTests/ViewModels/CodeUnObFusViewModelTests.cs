@@ -4,6 +4,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+#if NET8_0_OR_GREATER
+using TranspilerLib.CSharp.StatEqualCheck;
+using TranspilerLib.CSharp.VBLegacyReplace;
+#endif
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
 using TranspilerLib.Models.Scanner;
@@ -15,15 +20,18 @@ namespace VBUnObfusicator.ViewModels.Tests
 #pragma warning restore IDE0130 // Der Namespace entspricht stimmt nicht der Ordnerstruktur.
 {
     [TestClass]
+    [DoNotParallelize]
     public class CodeUnObFusViewModelTests : TestBase, ICSCode
     {
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         private CodeUnObFusViewModel _testViewModel;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+        private Func<Type, object>? _previousGetReqSrv;
         private ICodeBlock _parseResult = new CodeBlock() { Type = CodeBlockType.Unknown, Code = "<ParseResult>", Name = "ParseResult" };
         private string _toCodeResult = "<ToCodeResult>";
         private string _orginalCode = string.Empty;
         private bool _doWhile = false;
+        private bool _parseThrows;
 
         public string OriginalCode { get => _orginalCode; set => value.SetProperty(ref _orginalCode, (s, o, n) => DoLog($"SetProp({s},{o},{n})")); }
         public bool DoWhile { get => _doWhile; set => value.SetProperty(ref _doWhile, (s, o, n) => DoLog($"SetProp({s},{o},{n})")); }
@@ -33,16 +41,28 @@ namespace VBUnObfusicator.ViewModels.Tests
         {
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
 
+            _previousGetReqSrv = IoC.GetReqSrv;
             IoC.GetReqSrv = (t) => t switch
             {
                 Type tp when tp == typeof(ICSCode) => this,
                 _ => throw new NotImplementedException()
             };
-            _testViewModel = new();
+#if NET8_0_OR_GREATER
+            _testViewModel = new(this, StatEqualCheck.Compare, LegacyReplacementEngine.LoadDefaultRules());
+#else
+            _testViewModel = new(this);
+#endif
             _testViewModel.PropertyChanging += OnVMPropertyChanging;
             _testViewModel.PropertyChanged += OnVMPropertyChanged;
             _testViewModel.ErrorsChanged += OnVMErrorsChanged;
             //   _testViewModel. += OnCanExChanged;
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            if (_previousGetReqSrv is not null)
+                IoC.GetReqSrv = _previousGetReqSrv;
         }
         [TestMethod]
         public void SetUpTest()
@@ -199,11 +219,16 @@ Lines 0 => 0
             _testViewModel.DoWhile = param[3] is not false and not null;
             _testViewModel.ExecuteCommand.Execute(null);
             Assert.AreEqual(asExp[0], _testViewModel.Result);
-            AssertAreEqual(asExp[1], DebugLog);
+            var debugLogWithoutComparisonOutput = string.Join(Environment.NewLine,
+                DebugLog.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+                    .Where(line => !line.Contains(",ComparisonOutput)=")));
+            AssertAreEqual(asExp[1], debugLogWithoutComparisonOutput);
         }
 
         public ICodeBlock Parse(IEnumerable<TokenData>? values = null)
         {
+            if (_parseThrows)
+                throw new InvalidOperationException("parser failed");
             DoLog($"Parse({values?.ToString() ?? "null"})");
             return _parseResult;
         }
@@ -223,23 +248,64 @@ Lines 0 => 0
         [TestMethod]
         public void Execute_ExceptionIsThrown_Result2ContainsExceptionMessage()
         {
-            // Arrange
-            var viewModel = new CodeUnObFusViewModel();
-            IoC.GetReqSrv = (t) => t switch
-            {
-                _ => throw new NotImplementedException()
-            };
-
-            // Simuliere einen Fehler durch ungültigen Code, der im Parser eine Exception auslöst
+#if NET5_0_OR_GREATER
+            var viewModel = new CodeUnObFusViewModel(this, StatEqualCheck.Compare, LegacyReplacementEngine.LoadDefaultRules());
+#else
+            var viewModel = new CodeUnObFusViewModel(this);
+#endif
+            _parseThrows = true;
             viewModel.Code = "\u0000"; // ungültiges Zeichen
+            viewModel.ExecuteCommand.Execute(null);
 
-            // Act
-            var method = typeof(CodeUnObFusViewModel).GetMethod("Execute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            method.Invoke(viewModel, null);
-
-            // Assert
             Assert.IsFalse(string.IsNullOrEmpty(viewModel.Result2), "Result2 sollte eine Fehlermeldung enthalten.");
             Assert.AreEqual(string.Empty, viewModel.Result, "Result sollte leer sein, wenn eine Exception auftritt.");
+            Assert.IsFalse(string.IsNullOrEmpty(viewModel.ErrorMessage), "The error must be visible in the view model.");
+            _parseThrows = false;
+        }
+
+#if NET5_0_OR_GREATER
+        [TestMethod]
+        public void Execute_EquivalenceRunsBeforeOptionalLegacyReplacement()
+        {
+            ICodeBlock? originalSeenByComparer = null;
+            ICodeBlock? candidateSeenByComparer = null;
+            System.Collections.Generic.IEnumerable<ICodeBlock>? originalTerminals = null;
+            System.Collections.Generic.IEnumerable<ICodeBlock>? candidateTerminals = null;
+            var viewModel = new CodeUnObFusViewModel(
+                this,
+                (original, candidate, originalTerminalBlocks, candidateTerminalBlocks) =>
+                {
+                    originalSeenByComparer = original;
+                    candidateSeenByComparer = candidate;
+                    originalTerminals = originalTerminalBlocks;
+                    candidateTerminals = candidateTerminalBlocks;
+                    return new StatEqualResult(StatEqualStatus.Equivalent, Array.Empty<StatEqualFinding>());
+                },
+                LegacyReplacementEngine.LoadDefaultRules());
+            _toCodeResult = "Strings.Trim(value)";
+            viewModel.Code = "void Test() { }";
+            viewModel.CheckEquivalence = true;
+            viewModel.ReplaceVbLegacy = true;
+
+            viewModel.ExecuteCommand.Execute(null);
+
+            Assert.IsNotNull(originalSeenByComparer);
+            Assert.IsNotNull(candidateSeenByComparer);
+            Assert.AreEqual("void Test() { }", originalSeenByComparer.Code);
+            Assert.AreEqual("Strings.Trim(value)", candidateSeenByComparer.Code);
+            Assert.IsNull(originalTerminals);
+            Assert.IsNull(candidateTerminals);
+            Assert.AreEqual("Strings.Trim(value)", viewModel.ComparisonOutput);
+            Assert.AreEqual("(value).Trim()", viewModel.Result);
+            Assert.AreEqual("Behavioral equivalence: Equivalent", viewModel.AnalysisSummary);
+        }
+#endif
+
+        [TestMethod]
+        public void NewOptionsDefaultOff()
+        {
+            Assert.IsFalse(_testViewModel.CheckEquivalence);
+            Assert.IsFalse(_testViewModel.ReplaceVbLegacy);
         }
 
         public void Tokenize(ICSCode.TokenDelegate? token)
@@ -249,3 +315,4 @@ Lines 0 => 0
             => throw new NotImplementedException();
     }
 }
+
