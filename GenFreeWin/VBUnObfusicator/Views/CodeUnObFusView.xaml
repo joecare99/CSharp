@@ -5,18 +5,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:VBUnObfusicator.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:mvvm="clr-namespace:VBUnObfusicator.ViewModels"
     Title="CodeUnObFusView"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Page.DataContext>
-        <mvvm:CodeUnObFusViewModel />
-    </Page.DataContext>
     <Grid d:Background="DarkGray">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <Grid>
@@ -28,6 +24,7 @@
             <TextBox
                 Grid.Row="1"
                 Margin="5,5,5,5"
+                x:Name="OriginalCodeTextBox"
                 d:Text="TextBox: Code"
                 AcceptsReturn="True"
                 FontFamily="Cascadia Code"
@@ -40,14 +37,45 @@
             <CheckBox Content="Reorder Labels" IsChecked="{Binding Reorder}" />
             <CheckBox Content="Remove Labels" IsChecked="{Binding RemoveLbl}" />
             <CheckBox Content="Create While" IsChecked="{Binding DoWhile}" />
+            <CheckBox Content="{Binding CheckEquivalenceLabel}" IsChecked="{Binding CheckEquivalence}" />
+            <CheckBox Content="{Binding ReplaceVbLegacyLabel}" IsChecked="{Binding ReplaceVbLegacy}" />
+            <TextBlock Margin="4,8,4,2" Text="{Binding LegacyRulesLabel}" TextWrapping="Wrap" />
+            <TextBox Margin="4" Text="{Binding LegacyRulesPath, UpdateSourceTrigger=PropertyChanged}" />
             <Button
-                Height="80"
+                Height="48"
                 Command="{Binding ExecuteCommand}"
                 Content="Work --&gt;" />
             <TextBlock
+                Margin="4"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Text="{Binding Result2}" />
+            <TextBlock
+                Margin="4"
+                FontWeight="SemiBold"
+                Text="{Binding AnalysisSummary}"
+                TextWrapping="Wrap" />
+            <TextBlock
+                Margin="4"
+                Foreground="Firebrick"
+                Text="{Binding ErrorMessage}"
+                TextWrapping="Wrap" />
+            <TextBlock Margin="4,8,4,2" Text="{Binding FindingsLabel}" />
+            <ListBox
+                MaxHeight="250"
+                ItemsSource="{Binding Findings}"
+                SelectedItem="{Binding SelectedFinding}"
+                SelectionChanged="FindingsList_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="2">
+                            <TextBlock FontWeight="SemiBold" Text="{Binding Severity}" />
+                            <TextBlock Text="{Binding Code}" />
+                            <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
@@ -55,17 +83,44 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Label HorizontalContentAlignment="Center" Content="Generated Code" />
-            <TextBox
-                Grid.Row="1"
-                Margin="5"
-                d:Text="TextBox: Result"
-                AllowDrop="False"
-                FontFamily="Cascadia Code"
-                HorizontalScrollBarVisibility="Auto"
-                IsReadOnly="True"
-                Text="{Binding Result}"
-                TextWrapping="NoWrap"
-                VerticalScrollBarVisibility="Auto" />
+            <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedOutputTabIndex}">
+                <TabItem Header="{Binding OptimizedOutputLabel}">
+                    <TextBox
+                        x:Name="GeneratedCodeTextBox"
+                        Margin="5"
+                        d:Text="TextBox: ComparisonOutput"
+                        AllowDrop="False"
+                        FontFamily="Cascadia Code"
+                        HorizontalScrollBarVisibility="Auto"
+                        IsReadOnly="True"
+                        Text="{Binding ComparisonOutput}"
+                        TextWrapping="NoWrap"
+                        VerticalScrollBarVisibility="Auto" />
+                </TabItem>
+                <TabItem Header="{Binding FinalOutputLabel}">
+                    <TabItem.Style>
+                        <Style TargetType="TabItem">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ReplaceVbLegacy}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TabItem.Style>
+                    <TextBox
+                        x:Name="FinalCodeTextBox"
+                        Margin="5"
+                        d:Text="TextBox: Result"
+                        AllowDrop="False"
+                        FontFamily="Cascadia Code"
+                        HorizontalScrollBarVisibility="Auto"
+                        IsReadOnly="True"
+                        Text="{Binding Result}"
+                        TextWrapping="NoWrap"
+                        VerticalScrollBarVisibility="Auto" />
+                </TabItem>
+            </TabControl>
         </Grid>
     </Grid>
 </Page>

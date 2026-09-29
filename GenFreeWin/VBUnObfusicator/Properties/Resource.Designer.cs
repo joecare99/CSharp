@@ -78,5 +78,47 @@ namespace VBUnObfusicator.Properties {
                 return ResourceManager.GetString("Result2", resourceCulture);
             }
         }
+
+        internal static string CheckEquivalenceLabel {
+            get {
+                return ResourceManager.GetString("CheckEquivalenceLabel", resourceCulture);
+            }
+        }
+
+        internal static string ReplaceVbLegacyLabel {
+            get {
+                return ResourceManager.GetString("ReplaceVbLegacyLabel", resourceCulture);
+            }
+        }
+
+        internal static string LegacyRulesLabel {
+            get {
+                return ResourceManager.GetString("LegacyRulesLabel", resourceCulture);
+            }
+        }
+
+        internal static string FindingsLabel {
+            get {
+                return ResourceManager.GetString("FindingsLabel", resourceCulture);
+            }
+        }
+
+        internal static string EquivalenceSummary {
+            get {
+                return ResourceManager.GetString("EquivalenceSummary", resourceCulture);
+            }
+        }
+
+        internal static string OptimizedOutputLabel {
+            get {
+                return ResourceManager.GetString("OptimizedOutputLabel", resourceCulture);
+            }
+        }
+
+        internal static string FinalOutputLabel {
+            get {
+                return ResourceManager.GetString("FinalOutputLabel", resourceCulture);
+            }
+        }
     }
 }

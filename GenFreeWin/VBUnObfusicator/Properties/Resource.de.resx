@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -123,5 +123,26 @@
   <data name="Result2" xml:space="preserve">
     <value>Code: {0} ==&gt; {2}
 Zeile {1} =&gt; {3}</value>
+  </data>
+  <data name="CheckEquivalenceLabel" xml:space="preserve">
+    <value>Verhaltensgleichheit prüfen</value>
+  </data>
+  <data name="ReplaceVbLegacyLabel" xml:space="preserve">
+    <value>VB-Legacy-Ersetzungen anwenden</value>
+  </data>
+  <data name="LegacyRulesLabel" xml:space="preserve">
+    <value>JSON-Datei mit Legacy-Regeln</value>
+  </data>
+  <data name="FindingsLabel" xml:space="preserve">
+    <value>Analysebefunde</value>
+  </data>
+  <data name="EquivalenceSummary" xml:space="preserve">
+    <value>Verhaltensgleichheit: {0}</value>
+  </data>
+  <data name="OptimizedOutputLabel" xml:space="preserve">
+    <value>Optimierte Ausgabe</value>
+  </data>
+  <data name="FinalOutputLabel" xml:space="preserve">
+    <value>Endausgabe mit Legacy-Ersetzungen</value>
   </data>
 </root>
