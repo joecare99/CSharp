@@ -370,6 +370,72 @@ public class CSCodeTests : TestBase
         Assert.IsFalse(output.Contains("return_field", StringComparison.Ordinal), output);
     }
 
+    /// <summary>
+    /// Verifies that fine-grained lexical tokens are converted into the token contract used by the legacy builder.
+    /// </summary>
+    [TestMethod]
+    public void LegacyTokenCombiner_CombinesOperationsGotoLabelsAndBlocks()
+    {
+        TokenData[] lexicalTokens =
+        [
+            new("goto", CodeBlockType.Identifier, 1, 0),
+            new("target", CodeBlockType.Identifier, 1, 5) { LeadingTrivia = " " },
+            new(";", CodeBlockType.Separator, 1, 11),
+            new("target", CodeBlockType.Identifier, 1, 13),
+            new(":", CodeBlockType.Label, 1, 19),
+            new("{", CodeBlockType.Block, 1, 21),
+            new("}", CodeBlockType.Block, 0, 22),
+        ];
+
+        TokenData[] combined = LegacyTokenCombiner.Combine(lexicalTokens).ToArray();
+
+        CollectionAssert.AreEqual(
+            new[] { CodeBlockType.Goto, CodeBlockType.Label, CodeBlockType.Block, CodeBlockType.Block },
+            combined.Select(token => token.type).ToArray());
+        CollectionAssert.AreEqual(
+            new[] { "goto target;", "target:", "{", "}" },
+            combined.Select(token => token.Code).ToArray());
+        CollectionAssert.AreEqual(new[] { 0, 13, 21, 22 }, combined.Select(token => token.Pos).ToArray());
+    }
+
+    [TestMethod]
+    public void LegacyTokenCombiner_CombinesSwitchCasesAndDefaultLabels()
+    {
+        TokenData[] lexicalTokens =
+        [
+            new("switch", CodeBlockType.Identifier, 1, 0),
+            new("(", CodeBlockType.Bracket, 1, 7) { LeadingTrivia = " " },
+            new("value", CodeBlockType.Identifier, 1, 8),
+            new(")", CodeBlockType.Bracket, 1, 13),
+            new("{", CodeBlockType.Block, 1, 15),
+            new("case", CodeBlockType.Identifier, 2, 0),
+            new("1", CodeBlockType.Number, 2, 5) { LeadingTrivia = " " },
+            new(":", CodeBlockType.Label, 2, 6),
+            new("break", CodeBlockType.Identifier, 3, 4),
+            new(";", CodeBlockType.Separator, 3, 9),
+            new("default", CodeBlockType.Identifier, 4, 0),
+            new(":", CodeBlockType.Label, 4, 7),
+            new("goto", CodeBlockType.Identifier, 5, 4),
+            new("end", CodeBlockType.Identifier, 5, 9) { LeadingTrivia = " " },
+            new(";", CodeBlockType.Separator, 5, 12),
+            new("}", CodeBlockType.Block, 6, 0),
+        ];
+
+        TokenData[] combined = LegacyTokenCombiner.Combine(lexicalTokens).ToArray();
+
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                CodeBlockType.Operation, CodeBlockType.Block, CodeBlockType.Label,
+                CodeBlockType.Operation, CodeBlockType.Label, CodeBlockType.Goto, CodeBlockType.Block
+            },
+            combined.Select(token => token.type).ToArray());
+        CollectionAssert.AreEqual(
+            new[] { "switch (value)", "{", "case 1:", "break;", "default:", "goto end;", "}" },
+            combined.Select(token => token.Code).ToArray());
+        CollectionAssert.AreEqual(new[] { 0, 15, 0, 4, 0, 4, 0 }, combined.Select(token => token.Pos).ToArray());
+    }
+
     [TestMethod()]
     [DataRow([TestCSDataClass.testData0, TestCSDataClass.cExpLog0], DisplayName = "0")]
     [DataRow([TestCSDataClass.testData5, TestCSDataClass.cExpLog5], DisplayName = "5")]
