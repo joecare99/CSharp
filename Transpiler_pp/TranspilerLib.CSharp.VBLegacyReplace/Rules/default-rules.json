@@ -4,29 +4,56 @@
     {
       "id": "VB.Strings.Trim",
       "sourceTemplate": "Strings.Trim(<Param1>)",
-      "replacementTemplate": "((<Param1>) ?? string.Empty).Trim(' ')",
+      "replacementTemplate": "(<Param1>).Trim(' ')",
       "requiredUsings": [],
       "priority": 100,
       "enabled": true,
-      "documentation": "Trims U+0020 spaces only and treats null input as an empty string, matching Visual Basic Strings.Trim."
+      "documentation": "Trims U+0020 spaces only and treats null input invalid, mostly matching Visual Basic Strings.Trim."
     },
     {
       "id": "VB.Strings.LTrim",
       "sourceTemplate": "Strings.LTrim(<Param1>)",
-      "replacementTemplate": "((<Param1>) ?? string.Empty).TrimStart(' ')",
+      "replacementTemplate": "(<Param1>).TrimStart(' ')",
       "requiredUsings": [],
       "priority": 100,
       "enabled": true,
-      "documentation": "Trims leading U+0020 spaces only and treats null input as an empty string, matching Visual Basic Strings.LTrim."
+      "documentation": "Trims leading U+0020 spaces only and treats null input invalid, mostly matching Visual Basic Strings.LTrim."
     },
     {
       "id": "VB.Strings.RTrim",
       "sourceTemplate": "Strings.RTrim(<Param1>)",
-      "replacementTemplate": "((<Param1>) ?? string.Empty).TrimEnd(' ')",
+      "replacementTemplate": "(<Param1>).TrimEnd(' ')",
       "requiredUsings": [],
       "priority": 100,
       "enabled": true,
-      "documentation": "Trims trailing U+0020 spaces only and treats null input as an empty string, matching Visual Basic Strings.RTrim."
+      "documentation": "Trims trailing U+0020 spaces only and treats null input invalid, mostly matching Visual Basic Strings.RTrim."
+    },
+    {
+      "id": "VB.Strings.LCase",
+      "sourceTemplate": "Strings.LCase(<Param1>)",
+      "replacementTemplate": "(<Param1>).ToLower()",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Converts text by using the current culture and treats null input invalid rather than converting it to an empty string."
+    },
+    {
+      "id": "VB.Strings.UCase",
+      "sourceTemplate": "Strings.UCase(<Param1>)",
+      "replacementTemplate": "(<Param1>).ToUpper()",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Converts text by using the current culture and treats null input invalid rather than converting it to an empty string."
+    },
+    {
+      "id": "VB.Strings.StrReverse",
+      "sourceTemplate": "Strings.StrReverse(<Param1>)",
+      "replacementTemplate": "new string((<Param1>).Reverse().ToArray())",
+      "requiredUsings": ["System.Linq"],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Reverses UTF-16 code units and treats null input invalid rather than converting it to an empty string."
     },
     {
       "id": "VB.Information.IsDBNull",
@@ -36,6 +63,24 @@
       "priority": 100,
       "enabled": true,
       "documentation": "Uses the BCL DBNull predicate with the same object input and result semantics."
+    },
+    {
+      "id": "VB.Information.IsNothing",
+      "sourceTemplate": "Information.IsNothing(<Param1>)",
+      "replacementTemplate": "(<Param1>) is null",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Uses a C# null pattern with the same null test semantics."
+    },
+    {
+      "id": "VB.Information.IsArray",
+      "sourceTemplate": "Information.IsArray(<Param1>)",
+      "replacementTemplate": "(<Param1>) is Array",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Uses a C# array type pattern with the same null and managed-array test semantics."
     },
     {
       "id": "VB.DateAndTime.Now",
@@ -54,6 +99,33 @@
       "priority": 100,
       "enabled": true,
       "documentation": "Rewrites the Visual Basic local current-date property to its BCL equivalent."
+    },
+    {
+      "id": "VB.DateAndTime.TimeOfDay",
+      "sourceTemplate": "DateAndTime.TimeOfDay",
+      "replacementTemplate": "DateTime.Now.TimeOfDay",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Rewrites the Visual Basic local current-time property to its BCL equivalent."
+    },
+    {
+      "id": "VB.DateAndTime.DateString",
+      "sourceTemplate": "DateAndTime.DateString",
+      "replacementTemplate": "DateTime.Today.ToShortDateString()",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Formats the local current date using the current culture's short-date pattern."
+    },
+    {
+      "id": "VB.DateAndTime.TimeString",
+      "sourceTemplate": "DateAndTime.TimeString",
+      "replacementTemplate": "DateTime.Now.ToLongTimeString()",
+      "requiredUsings": [],
+      "priority": 100,
+      "enabled": true,
+      "documentation": "Formats the local current time using the current culture's long-time pattern."
     }
   ]
 }
