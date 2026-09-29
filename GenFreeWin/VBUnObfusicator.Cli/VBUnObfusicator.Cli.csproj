@@ -1,26 +1,30 @@
 ﻿<Project>
-	<Import Project="..\GenFreeWin.props" />
+  <Import Project="..\GenFreeWin.props" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>net481;net8.0</TargetFrameworks>
   </PropertyGroup>
-	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
-	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
-		<TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
-	</PropertyGroup>
-	<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
-		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
-	</PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
 
-	<ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageReference Include="System.CommandLine" Version="2.0.12" />
+    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="System.Text.Json" Version="10.0.12" />
+    <PackageReference Condition="$(TargetFramework.StartsWith(net4))" Include="IndexRange" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\CSharpBible\Libraries\BaseLib\BaseLib.csproj" />
     <ProjectReference Include="..\..\Transpiler_pp\TranspilerLib.CSharp.Optimizer\TranspilerLib.CSharp.Optimizer.csproj" />
     <ProjectReference Include="..\..\Transpiler_pp\TranspilerLib.CSharp\TranspilerLib.CSharp.csproj" />
+    <ProjectReference Condition="'$(TargetFramework)' != 'net481'" Include="..\..\Transpiler_pp\TranspilerLib.CSharp.StatEqualCheck\TranspilerLib.CSharp.StatEqualCheck.csproj" />
+    <ProjectReference Include="..\..\Transpiler_pp\TranspilerLib.CSharp.VBLegacyReplace\TranspilerLib.CSharp.VBLegacyReplace.csproj" />
   </ItemGroup>
 </Project>

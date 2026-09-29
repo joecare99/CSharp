@@ -124,4 +124,25 @@
     <value>Code: {0} ==&gt; {2}
 Lines {1} =&gt; {3}</value>
   </data>
+  <data name="CheckEquivalenceLabel" xml:space="preserve">
+    <value>Check behavioral equivalence</value>
+  </data>
+  <data name="ReplaceVbLegacyLabel" xml:space="preserve">
+    <value>Apply VB legacy replacements</value>
+  </data>
+  <data name="LegacyRulesLabel" xml:space="preserve">
+    <value>Legacy rules JSON file</value>
+  </data>
+  <data name="FindingsLabel" xml:space="preserve">
+    <value>Analysis findings</value>
+  </data>
+  <data name="EquivalenceSummary" xml:space="preserve">
+    <value>Behavioral equivalence: {0}</value>
+  </data>
+  <data name="OptimizedOutputLabel" xml:space="preserve">
+    <value>Optimized output</value>
+  </data>
+  <data name="FinalOutputLabel" xml:space="preserve">
+    <value>Final output with legacy replacements</value>
+  </data>
 </root>

@@ -1,14 +1,20 @@
 ﻿<Project>
 	<Import Project="..\GenFreeWin.props" />
 	<PropertyGroup>
-		<TargetFrameworks>net481;net8.0-windows;net9.0-windows</TargetFrameworks>
+		<TargetFrameworks>net481;net8.0-windows</TargetFrameworks>
 		<Nullable>enable</Nullable>
 
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
-	<ItemGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0-windows</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0-windows</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
 	  <Compile Remove="bin\**" />
 	  <Compile Remove="obj\**" />
 	  <EmbeddedResource Remove="bin\**" />
@@ -25,11 +31,12 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
 		<PackageReference Include="MSTest" Version="4.4.1" />
-		<PackageReference Include="coverlet.collector" Version="10.0.1">
+		<PackageReference Include="coverlet.collector" Version="10.1.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="NSubstitute" Version="6.2.0" />
+		<PackageReference Include="System.CommandLine" Version="2.0.12" />
 		<PackageReference Condition="$(TargetFramework.Contains('net4'))" Include="System.Text.Json" Version="10.0.12" />
 	</ItemGroup>
 
@@ -39,6 +46,9 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\VBUnObfusicator\VBUnObfusicator.csproj" />
+	  <ProjectReference Condition="'$(TargetFramework)' != 'net481'" Include="..\VBUnObfusicator.Cli\VBUnObfusicator.Cli.csproj" />
+	  <ProjectReference Condition="'$(TargetFramework)' != 'net481'" Include="..\..\Transpiler_pp\TranspilerLib.CSharp.StatEqualCheck\TranspilerLib.CSharp.StatEqualCheck.csproj" />
+	  <ProjectReference Condition="'$(TargetFramework)' != 'net481'" Include="..\..\Transpiler_pp\TranspilerLib.CSharp.VBLegacyReplace\TranspilerLib.CSharp.VBLegacyReplace.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -43,6 +43,8 @@
 		<ProjectReference Include="..\..\Transpiler_pp\TranspilerLib.CSharp.Optimizer\TranspilerLib.CSharp.Optimizer.csproj" />
 		<ProjectReference Include="..\..\Transpiler_pp\TranspilerLib.CSharp\TranspilerLib.CSharp.csproj" />
 		<ProjectReference Include="..\..\Transpiler_pp\TranspilerLib\TranspilerLib.csproj" />
+		<ProjectReference Condition="'$(TargetFramework)' != 'net481'" Include="..\..\Transpiler_pp\TranspilerLib.CSharp.StatEqualCheck\TranspilerLib.CSharp.StatEqualCheck.csproj" />
+		<ProjectReference Condition="'$(TargetFramework)' != 'net481'" Include="..\..\Transpiler_pp\TranspilerLib.CSharp.VBLegacyReplace\TranspilerLib.CSharp.VBLegacyReplace.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Properties\Resource.Designer.cs">

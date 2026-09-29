@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
 
 namespace VBUnObfusicator.Tests
 {
@@ -8,7 +9,15 @@ namespace VBUnObfusicator.Tests
         [TestMethod()]
         public void AppTest()
         {
-            var app = new App();
+            App? app = null;
+            var thread = new Thread(() =>
+            {
+                WpfTestApplication.EnsureCreated();
+                app = WpfTestApplication.Instance;
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
             Assert.IsNotNull(app);
         }
     }

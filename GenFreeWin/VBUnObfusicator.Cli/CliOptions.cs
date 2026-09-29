@@ -1,4 +1,4 @@
-using BaseLib.Helper;
+﻿using BaseLib.Helper;
 using BaseLib.Interfaces;
 using BaseLib.Models.Interfaces;
 using System;
@@ -13,6 +13,12 @@ public sealed class CliOptions
     public bool ReadFromStdin { get; private set; }
     public bool ReorderLabels { get; private set; }
     public bool RemoveSingleSourceLabels { get; private set; }
+    public bool CheckEquivalence { get; private set; }
+    public string? CompareAgainstPath { get; private set; }
+    public string? EquivalenceJsonPath { get; private set; }
+    public bool FailOnMismatch { get; private set; }
+    public bool ReplaceVbLegacy { get; private set; }
+    public string? LegacyRulesPath { get; private set; }
     public int Indent { get; private set; } = 4;
     public bool HasInputSource => ReadFromStdin || !string.IsNullOrWhiteSpace(InputPath);
 
@@ -27,6 +33,19 @@ public sealed class CliOptions
         if (Indent < 0)
         {
             errorMessage = "--indent requires a non-negative integer value.";
+            return false;
+        }
+
+        if (CheckEquivalence && !string.IsNullOrWhiteSpace(CompareAgainstPath))
+        {
+            errorMessage = "--check-equivalence and --compare-against are alternative comparison modes; specify one.";
+            return false;
+        }
+
+        if (!CheckEquivalence && string.IsNullOrWhiteSpace(CompareAgainstPath) &&
+            (!string.IsNullOrWhiteSpace(EquivalenceJsonPath) || FailOnMismatch))
+        {
+            errorMessage = "--equivalence-json and --fail-on-mismatch require --check-equivalence or --compare-against.";
             return false;
         }
 
@@ -45,6 +64,18 @@ public sealed class CliOptions
             return false;
         }
 
+        if (!string.IsNullOrWhiteSpace(CompareAgainstPath) && !File.Exists(CompareAgainstPath))
+        {
+            errorMessage = $"Comparison file '{CompareAgainstPath}' does not exist.";
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(LegacyRulesPath) && !File.Exists(LegacyRulesPath))
+        {
+            errorMessage = $"Legacy replacement rule file '{LegacyRulesPath}' does not exist.";
+            return false;
+        }
+
         errorMessage = null;
         return true;
     }
@@ -56,6 +87,12 @@ public sealed class CliOptions
         var stdinOption = new Option<bool>("--stdin") { Description = "Read source from standard input instead of a file" };
         var reorderLabelsOption = new Option<bool>("--reorder-labels") { Description = "Reorder labels using the decompiler normalization pass" };
         var removeSingleSourceLabelsOption = new Option<bool>("--remove-single-source-labels") { Description = "Remove low-confidence single-source labels" };
+        var checkEquivalenceOption = new Option<bool>("--check-equivalence") { Description = "Compare original and optimized source behavior before optional legacy replacements" };
+        var compareAgainstOption = new Option<string?>("--compare-against") { Description = "Compare the input source against another C# source file" };
+        var equivalenceJsonOption = new Option<string?>("--equivalence-json") { Description = "Write equivalence status and findings to a JSON file" };
+        var failOnMismatchOption = new Option<bool>("--fail-on-mismatch") { Description = "Return a nonzero exit code only when a behavioral mismatch is proven" };
+        var replaceVbLegacyOption = new Option<bool>("--replace-vb-legacy") { Description = "Apply configured Visual Basic legacy replacements to the generated output" };
+        var legacyRulesOption = new Option<string?>("--legacy-rules") { Description = "Load a JSON legacy replacement rule set" };
         var indentOption = new Option<int>("--indent")
         {
             DefaultValueFactory = _ => 4,
@@ -68,6 +105,12 @@ public sealed class CliOptions
         command.Options.Add(stdinOption);
         command.Options.Add(reorderLabelsOption);
         command.Options.Add(removeSingleSourceLabelsOption);
+        command.Options.Add(checkEquivalenceOption);
+        command.Options.Add(compareAgainstOption);
+        command.Options.Add(equivalenceJsonOption);
+        command.Options.Add(failOnMismatchOption);
+        command.Options.Add(replaceVbLegacyOption);
+        command.Options.Add(legacyRulesOption);
         command.Options.Add(indentOption);
         command.SetAction((ParseResult result) => execute(new CliOptions
         {
@@ -76,6 +119,12 @@ public sealed class CliOptions
             ReadFromStdin = result.GetValue(stdinOption),
             ReorderLabels = result.GetValue(reorderLabelsOption),
             RemoveSingleSourceLabels = result.GetValue(removeSingleSourceLabelsOption),
+            CheckEquivalence = result.GetValue(checkEquivalenceOption),
+            CompareAgainstPath = result.GetValue(compareAgainstOption),
+            EquivalenceJsonPath = result.GetValue(equivalenceJsonOption),
+            FailOnMismatch = result.GetValue(failOnMismatchOption),
+            ReplaceVbLegacy = result.GetValue(replaceVbLegacyOption),
+            LegacyRulesPath = result.GetValue(legacyRulesOption),
             Indent = result.GetValue(indentOption)
         }));
 
