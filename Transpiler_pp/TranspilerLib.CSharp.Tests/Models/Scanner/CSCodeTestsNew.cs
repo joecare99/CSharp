@@ -14,6 +14,7 @@ using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using TranspilerLib.Data;
 using TranspilerLib.Interfaces.Code;
+using TranspilerLib.Models.Scanner;
 using TranspilerLib.Models.Tests;
 using TranspilerLibTests.TestData;
 using static System.Net.Mime.MediaTypeNames;
@@ -137,7 +138,7 @@ public class CSCodeTestsNew : TestBase
     {
         IoC.GetReqSrv =(t)=>(t) switch {
             _ when t == typeof(ITokenHandler) => new CSTokenHandlerNew() { reservedWords = CSCode.ReservedWords, stringEndChars = CSCode.stringEndChars },
-            _ when t == typeof(ICodeBuilder) => new CSCodeBuilder(),
+            _ when t == typeof(ICodeBuilder) => new CSCodeBuilderNew(),
             _ when t == typeof(ICodeOptimizer) => new CodeOptimizer(),
             _ => throw new NotImplementedException($"Please initialize the service for {t.FullName} first.")};
         _testClass = new();

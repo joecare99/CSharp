@@ -159,15 +159,51 @@ public sealed class LegacyReplacementEngine
     /// <summary>Creates an engine from the conservative rules embedded in this assembly.</summary>
     /// <returns>An engine loaded with the library's default rules.</returns>
     public static LegacyReplacementEngine LoadDefaultRules()
+        => LoadEmbeddedRuleSets("default-rules.json");
+
+    /// <summary>Creates an engine from the conservative and BCL compatibility rules embedded in this assembly.</summary>
+    /// <returns>An engine loaded with the default and BCL compatibility rules.</returns>
+    public static LegacyReplacementEngine LoadDefaultRulesWithCompatibilityRules()
+        => LoadEmbeddedRuleSets("default-rules.json", "compatibility-rules.json");
+
+    /// <summary>Creates an engine from the conservative and BaseLib compatibility rules embedded in this assembly.</summary>
+    /// <returns>An engine loaded with the default and BaseLib compatibility rules.</returns>
+    /// <remarks>The transformed source requires a BaseLib version that provides the documented compatibility APIs.</remarks>
+    public static LegacyReplacementEngine LoadDefaultRulesWithBaseLibCompatibilityRules()
+        => LoadEmbeddedRuleSets("default-rules.json", "baselib-compatibility-rules.json");
+
+    /// <summary>Creates an engine from all embedded default and compatibility rules.</summary>
+    /// <returns>An engine loaded with the default, BCL compatibility, and BaseLib compatibility rules.</returns>
+    /// <remarks>The transformed source requires a BaseLib version that provides the documented compatibility APIs.</remarks>
+    public static LegacyReplacementEngine LoadAllEmbeddedRules()
+        => LoadEmbeddedRuleSets("default-rules.json", "compatibility-rules.json", "baselib-compatibility-rules.json");
+
+    private static LegacyReplacementEngine LoadEmbeddedRuleSets(params string[] resourceFileNames)
+    {
+        var engines = new List<LegacyReplacementEngine>();
+        foreach (string resourceFileName in resourceFileNames)
+            engines.Add(LoadJson(ReadEmbeddedRules(resourceFileName)));
+
+        var rules = new List<ReplacementRule>();
+        var diagnostics = new List<RuleDiagnostic>();
+        foreach (LegacyReplacementEngine engine in engines)
+        {
+            diagnostics.AddRange(engine._configurationDiagnostics);
+            rules.AddRange(engine._rules.Select(rule => rule.Definition));
+        }
+        return new LegacyReplacementEngine(new ReplacementRuleSet { Rules = rules }, diagnostics);
+    }
+
+    private static string ReadEmbeddedRules(string resourceFileName)
     {
         string? resourceName = typeof(LegacyReplacementEngine).Assembly.GetManifestResourceNames()
-            .SingleOrDefault(name => name.EndsWith("default-rules.json", StringComparison.Ordinal));
+            .SingleOrDefault(name => name.EndsWith($".Rules.{resourceFileName}", StringComparison.Ordinal));
         if (resourceName is null)
-            throw new InvalidOperationException("The embedded default replacement rules resource is missing.");
+            throw new InvalidOperationException($"The embedded replacement rules resource '{resourceFileName}' is missing.");
         using Stream stream = typeof(LegacyReplacementEngine).Assembly.GetManifestResourceStream(resourceName)
             ?? throw new InvalidOperationException($"Unable to open embedded rules resource '{resourceName}'.");
         using var reader = new StreamReader(stream);
-        return LoadJson(reader.ReadToEnd());
+        return reader.ReadToEnd();
     }
 
     /// <summary>Applies the highest-priority, non-overlapping rule matches to source text.</summary>

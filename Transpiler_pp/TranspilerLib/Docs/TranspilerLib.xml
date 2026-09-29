@@ -1617,6 +1617,18 @@
             <param name="data">Mutable Builder-Daten (enthält u.a. den aktuellen Block).</param>
             <exception cref="T:System.NotImplementedException">Geworfen wenn eine unvorhergesehene Level-Differenz auftritt.</exception>
         </member>
+        <member name="T:TranspilerLib.Models.Scanner.LegacyTokenCombiner">
+            <summary>
+            Converts fine-grained lexical tokens into the semantic token stream consumed by legacy code builders.
+            </summary>
+        </member>
+        <member name="M:TranspilerLib.Models.Scanner.LegacyTokenCombiner.Combine(System.Collections.Generic.IEnumerable{TranspilerLib.Data.TokenData})">
+            <summary>
+            Combines lexical tokens into operations, labels, blocks, comments, strings, and goto statements.
+            </summary>
+            <param name="tokens">The lexical tokens to combine.</param>
+            <returns>The compatible legacy token stream.</returns>
+        </member>
         <member name="T:TranspilerLib.Models.Scanner.TokenHandlerBase">
             <summary>
             Basisklasse für spezifische Token-Handler innerhalb des Scannervorgangs.

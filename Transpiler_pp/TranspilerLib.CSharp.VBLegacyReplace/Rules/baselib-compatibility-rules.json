@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "id": "VB.BaseLib.Conversion.Val",
+      "sourceTemplate": "Conversion.Val(<Param1>)",
+      "replacementTemplate": "(<Param1>).AsDouble()",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Uses BaseLib ObjectHelper.AsDouble. It intentionally differs from Visual Basic Val for parsing, culture, invalid input, and null-like values."
+    },
+    {
+      "id": "VB.BaseLib.Conversions.ToInteger",
+      "sourceTemplate": "Conversions.ToInteger(<Param1>)",
+      "replacementTemplate": "(<Param1>).AsInt()",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Uses BaseLib ObjectHelper.AsInt and therefore has BaseLib fallback and conversion behavior."
+    },
+    {
+      "id": "VB.BaseLib.Conversions.ToLong",
+      "sourceTemplate": "Conversions.ToLong(<Param1>)",
+      "replacementTemplate": "(<Param1>).AsLong()",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Uses BaseLib ObjectHelper.AsLong and therefore has BaseLib fallback and conversion behavior."
+    },
+    {
+      "id": "VB.BaseLib.Conversions.ToDouble",
+      "sourceTemplate": "Conversions.ToDouble(<Param1>)",
+      "replacementTemplate": "(<Param1>).AsDouble()",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Uses BaseLib ObjectHelper.AsDouble and therefore has BaseLib fallback and conversion behavior."
+    },
+    {
+      "id": "VB.BaseLib.Conversions.ToBoolean",
+      "sourceTemplate": "Conversions.ToBoolean(<Param1>)",
+      "replacementTemplate": "(<Param1>).AsBool()",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Uses BaseLib ObjectHelper.AsBool and therefore has BaseLib fallback and conversion behavior."
+    },
+    {
+      "id": "VB.BaseLib.Conversions.ToDate",
+      "sourceTemplate": "Conversions.ToDate(<Param1>)",
+      "replacementTemplate": "(<Param1>).AsDate()",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Uses BaseLib ObjectHelper.AsDate and therefore has BaseLib fallback and conversion behavior."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectEqual.Ordinal",
+      "sourceTemplate": "Operators.ConditionalCompareObjectEqual(<Param1>, <Param2>, TextCompare: false)",
+      "replacementTemplate": "ObjectComparison.AreEqual(<Param1>, <Param2>, StringComparison.Ordinal)",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic binary text comparison to ordinal string comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectEqual.IgnoreCase",
+      "sourceTemplate": "Operators.ConditionalCompareObjectEqual(<Param1>, <Param2>, TextCompare: true)",
+      "replacementTemplate": "ObjectComparison.AreEqual(<Param1>, <Param2>, StringComparison.CurrentCultureIgnoreCase)",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic text comparison to current-culture case-insensitive comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectNotEqual.Ordinal",
+      "sourceTemplate": "Operators.ConditionalCompareObjectNotEqual(<Param1>, <Param2>, TextCompare: false)",
+      "replacementTemplate": "!ObjectComparison.AreEqual(<Param1>, <Param2>, StringComparison.Ordinal)",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic binary text comparison to ordinal string comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectNotEqual.IgnoreCase",
+      "sourceTemplate": "Operators.ConditionalCompareObjectNotEqual(<Param1>, <Param2>, TextCompare: true)",
+      "replacementTemplate": "!ObjectComparison.AreEqual(<Param1>, <Param2>, StringComparison.CurrentCultureIgnoreCase)",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic text comparison to current-culture case-insensitive comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectGreater.Ordinal",
+      "sourceTemplate": "Operators.ConditionalCompareObjectGreater(<Param1>, <Param2>, TextCompare: false)",
+      "replacementTemplate": "ObjectComparison.Compare(<Param1>, <Param2>, StringComparison.Ordinal) > 0",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic binary text comparison to ordinal string comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectGreaterEqual.Ordinal",
+      "sourceTemplate": "Operators.ConditionalCompareObjectGreaterEqual(<Param1>, <Param2>, TextCompare: false)",
+      "replacementTemplate": "ObjectComparison.Compare(<Param1>, <Param2>, StringComparison.Ordinal) >= 0",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic binary text comparison to ordinal string comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectGreater.IgnoreCase",
+      "sourceTemplate": "Operators.ConditionalCompareObjectGreater(<Param1>, <Param2>, TextCompare: true)",
+      "replacementTemplate": "ObjectComparison.Compare(<Param1>, <Param2>, StringComparison.CurrentCultureIgnoreCase) > 0",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic text comparison to current-culture case-insensitive comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectGreaterEqual.IgnoreCase",
+      "sourceTemplate": "Operators.ConditionalCompareObjectGreaterEqual(<Param1>, <Param2>, TextCompare: true)",
+      "replacementTemplate": "ObjectComparison.Compare(<Param1>, <Param2>, StringComparison.CurrentCultureIgnoreCase) >= 0",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic text comparison to current-culture case-insensitive comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectLess.Ordinal",
+      "sourceTemplate": "Operators.ConditionalCompareObjectLess(<Param1>, <Param2>, TextCompare: false)",
+      "replacementTemplate": "ObjectComparison.Compare(<Param1>, <Param2>, StringComparison.Ordinal) < 0",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic binary text comparison to ordinal string comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectLess.IgnoreCase",
+      "sourceTemplate": "Operators.ConditionalCompareObjectLess(<Param1>, <Param2>, TextCompare: true)",
+      "replacementTemplate": "ObjectComparison.Compare(<Param1>, <Param2>, StringComparison.CurrentCultureIgnoreCase) < 0",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic text comparison to current-culture case-insensitive comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectLessEqual.IgnoreCase",
+      "sourceTemplate": "Operators.ConditionalCompareObjectLessEqual(<Param1>, <Param2>, TextCompare: true)",
+      "replacementTemplate": "ObjectComparison.Compare(<Param1>, <Param2>, StringComparison.CurrentCultureIgnoreCase) <= 0",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic text comparison to current-culture case-insensitive comparison; object coercion can differ."
+    },
+    {
+      "id": "VB.BaseLib.Operators.ConditionalCompareObjectLessEqual.Ordinal",
+      "sourceTemplate": "Operators.ConditionalCompareObjectLessEqual(<Param1>, <Param2>, TextCompare: false)",
+      "replacementTemplate": "ObjectComparison.Compare(<Param1>, <Param2>, StringComparison.Ordinal) <= 0",
+      "requiredUsings": ["BaseLib.Helper"],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Requires BaseLib ObjectComparison. Maps Visual Basic binary text comparison to ordinal string comparison; object coercion can differ."
+    }
+  ]
+}

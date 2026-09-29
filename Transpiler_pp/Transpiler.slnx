@@ -47,8 +47,6 @@
     <Project Path="Analyzer1/Analyzer1/Analyzer1.csproj" />
     <Project Path="DevOps/DevOps.shproj" Id="b7d27d6f-34e9-4f5a-bb5f-6a0d3f0f2c7c" />
     <Project Path="TranspilerConsTest/TranspilerConsTest.csproj" />
-    <Project Path="TranspilerLib.CSharp.Tests/TranspilerLib.CSharp.Tests.csproj" />
-    <Project Path="TranspilerLib.CSharp/TranspilerLib.CSharp.csproj" />
     <Project Path="TranspilerLib.DriveBASIC.Tests/TranspilerLib.DriveBASIC.Tests.csproj" />
     <Project Path="TranspilerLib.DriveBASIC/TranspilerLib.DriveBASIC.csproj" />
     <Project Path="TranspilerLib.IEC.Tests/TranspilerLib.IEC.Tests.csproj" />
@@ -64,5 +62,14 @@
     <Project Path="Trnsp.Show.Lfm/Trnsp.Show.Lfm.csproj" />
     <Project Path="Trnsp.Show.Pas.Tests/Trnsp.Show.Pas.Tests.csproj" />
     <Project Path="Trnsp.Show.Pas/Trnsp.Show.Pas.csproj" />
+  </Folder>
+  <Folder Name="/Transpiler/CSharp/">
+    <Project Path="TranspilerLib.CSharp.Optimizer/TranspilerLib.CSharp.Optimizer.csproj" />
+    <Project Path="TranspilerLib.CSharp.StatEqualCheck.Tests/TranspilerLib.CSharp.StatEqualCheck.Tests.csproj" />
+    <Project Path="TranspilerLib.CSharp.StatEqualCheck/TranspilerLib.CSharp.StatEqualCheck.csproj" />
+    <Project Path="TranspilerLib.CSharp.Tests/TranspilerLib.CSharp.Tests.csproj" />
+    <Project Path="TranspilerLib.CSharp.VBLegacyReplace.Tests/TranspilerLib.CSharp.VBLegacyReplace.Tests.csproj" />
+    <Project Path="TranspilerLib.CSharp.VBLegacyReplace/TranspilerLib.CSharp.VBLegacyReplace.csproj" />
+    <Project Path="TranspilerLib.CSharp/TranspilerLib.CSharp.csproj" />
   </Folder>
 </Solution>

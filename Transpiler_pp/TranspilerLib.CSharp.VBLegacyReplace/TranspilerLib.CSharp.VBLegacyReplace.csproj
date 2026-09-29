@@ -18,6 +18,8 @@
   
   <ItemGroup>
     <EmbeddedResource Include="Rules\default-rules.json" />
+    <EmbeddedResource Include="Rules\compatibility-rules.json" />
+    <EmbeddedResource Include="Rules\baselib-compatibility-rules.json" />
     <None Update="Rules\replacement-rules.schema.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
