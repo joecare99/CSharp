@@ -68,11 +68,7 @@ public partial class CSCode : CodeBase, ICSCode
     /// The constructor wires <see cref="CSTokenHandler"/> with <see cref="stringEndChars"/> and <see cref="ReservedWords"/>, 
     /// uses a <see cref="CSCodeBuilder"/> to construct block trees, and applies a default <c>CodeOptimizer</c> for structural clean-up.
     /// </remarks>
-    public CSCode() : this(new CSTokenHandler()
-    {
-        stringEndChars = stringEndChars,
-        reservedWords = ReservedWords
-    }, IoC.GetRequiredService<ICodeBuilder>(), IoC.GetRequiredService<ICodeOptimizer>())
+    public CSCode() : this(IoC.GetRequiredService<ITokenHandler>(), IoC.GetRequiredService<ICodeBuilder>(), IoC.GetRequiredService<ICodeOptimizer>())
     {
     }
 
@@ -144,10 +140,14 @@ public partial class CSCode : CodeBase, ICSCode
             }
         }
 
+        TokenizeLegacy(tokenHandler, token);
+    }
+
+    private void TokenizeLegacy(ITokenHandler handler, TokenDelegate? token)
+    {
         TokenizeData data = new();
-        while (data.Pos < OriginalCode.Length && tokenHandler.TryGetValue(data.State, out var Handler))
+        while (data.Pos < OriginalCode.Length && handler.TryGetValue(data.State, out var Handler))
         {
-            //Debug:
             string debug = GetDebug(data, OriginalCode);
             Handler?.Invoke(token, OriginalCode, data);
             data.Pos++;
@@ -171,15 +171,33 @@ public partial class CSCode : CodeBase, ICSCode
         ICodeBlock codeBlock = new CodeBlock() { Name = "Declaration", Type = CodeBlockType.MainBlock, Code = "", Parent = null };
         var data = codeBuilder.NewData(codeBlock);
 
-        if (values == null)
-            Tokenize((tokenData) => codeBuilder.OnToken(tokenData, data));
+        if (values == null && codeBuilder is CSCodeBuilder)
+        {
+            if (tokenHandler is CSTokenHandler)
+            {
+                TokenizeLegacy(tokenHandler, tokenData => codeBuilder.OnToken(tokenData, data));
+            }
+            else if (tokenHandler is CSTokenHandlerNew)
+            {
+                var streamedTokens = new List<TokenData>();
+                Tokenize(streamedTokens.Add);
+                foreach (TokenData combined in LegacyTokenCombiner.Combine(streamedTokens))
+                    codeBuilder.OnToken(combined, data);
+            }
+            else
+            {
+                Tokenize(tokenData => codeBuilder.OnToken(tokenData, data));
+            }
+        }
+        else if (values == null)
+        {
+            Tokenize(tokenData => codeBuilder.OnToken(tokenData, data));
+        }
         else
             foreach (var item in values)
             {
                 codeBuilder.OnToken(item, data);
             }
-        if (codeBuilder is CSCodeBuilder csharpCodeBuilder)
-            csharpCodeBuilder.Complete(data);
 
         foreach (var item in data.gotos)
         {
