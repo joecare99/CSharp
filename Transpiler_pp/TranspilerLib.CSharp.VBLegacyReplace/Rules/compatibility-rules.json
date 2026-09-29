@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "id": "VB.Compatibility.Strings.Len",
+      "sourceTemplate": "Strings.Len(<Param1>)",
+      "replacementTemplate": "/* VB compatibility approximation: requires a string and differs for null, arrays, and non-string values. */ (<Param1>).Length",
+      "requiredUsings": [],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Approximates the string overload only. Visual Basic Len also handles object and array values differently."
+    },
+    {
+      "id": "VB.Compatibility.Strings.Left",
+      "sourceTemplate": "Strings.Left(<Param1>, <Param2>)",
+      "replacementTemplate": "/* VB compatibility approximation: range validation and null handling can differ. */ (<Param1>).Substring(0, Math.Min(<Param2>, (<Param1>).Length))",
+      "requiredUsings": [],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Approximates the Visual Basic substring result for non-null strings and non-negative lengths."
+    },
+    {
+      "id": "VB.Compatibility.Strings.Right",
+      "sourceTemplate": "Strings.Right(<Param1>, <Param2>)",
+      "replacementTemplate": "/* VB compatibility approximation: range validation and null handling can differ. */ (<Param1>).Substring(Math.Max(0, (<Param1>).Length - <Param2>))",
+      "requiredUsings": [],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Approximates the Visual Basic substring result for non-null strings and non-negative lengths."
+    },
+    {
+      "id": "VB.Compatibility.Strings.Mid.WithLength",
+      "sourceTemplate": "Strings.Mid(<Param1>, <Param2>, <Param3>)",
+      "replacementTemplate": "/* VB compatibility approximation: Visual Basic uses one-based positions and has different bounds handling. */ (<Param1>).Substring(<Param2> - 1, <Param3>)",
+      "requiredUsings": [],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Translates the one-based start position but does not reproduce Visual Basic bounds and null behavior."
+    },
+    {
+      "id": "VB.Compatibility.Strings.Mid.ToEnd",
+      "sourceTemplate": "Strings.Mid(<Param1>, <Param2>)",
+      "replacementTemplate": "/* VB compatibility approximation: Visual Basic uses one-based positions and has different bounds handling. */ (<Param1>).Substring(<Param2> - 1)",
+      "requiredUsings": [],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Translates the one-based start position but does not reproduce Visual Basic bounds and null behavior."
+    },
+    {
+      "id": "VB.Compatibility.Strings.InStr",
+      "sourceTemplate": "Strings.InStr(<Param1>, <Param2>)",
+      "replacementTemplate": "/* VB compatibility approximation: compare mode, start position, and null behavior can differ. */ (<Param1>).IndexOf(<Param2>, StringComparison.Ordinal) + 1",
+      "requiredUsings": [],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Approximates the two-argument form with a one-based result and ordinal string comparison only."
+    },
+    {
+      "id": "VB.Compatibility.Strings.Replace",
+      "sourceTemplate": "Strings.Replace(<Param1>, <Param2>, <Param3>)",
+      "replacementTemplate": "/* VB compatibility approximation: start, count, compare mode, and null behavior can differ. */ (<Param1>).Replace(<Param2>, <Param3>)",
+      "requiredUsings": [],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Approximates the three-argument overload only and does not model Visual Basic comparison options."
+    },
+    {
+      "id": "VB.Compatibility.Strings.Space",
+      "sourceTemplate": "Strings.Space(<Param1>)",
+      "replacementTemplate": "/* VB compatibility approximation: negative-length exception behavior can differ. */ new string(' ', <Param1>)",
+      "requiredUsings": [],
+      "priority": 50,
+      "enabled": true,
+      "documentation": "Creates the same U+0020 sequence for non-negative lengths but can throw a different exception for negative lengths."
+    }
+  ]
+}
