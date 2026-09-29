@@ -16,7 +16,7 @@ public sealed class LegacyReplacementEngineTests
 
         ReplacementResult result = engine.Apply(source);
 
-        Assert.AreEqual("var result = ((Call( new[] { \")\", \"x\" }[index], nested(a, b) )) ?? string.Empty).Trim(' ');", result.Source);
+        Assert.AreEqual("var result = (Call( new[] { \")\", \"x\" }[index], nested(a, b) )).Trim(' ');", result.Source);
         Assert.AreEqual("VB.Strings.Trim", result.Diagnostics.Single(d => d.Kind == RuleDiagnosticKind.Applied).RuleId);
         Assert.AreEqual(0, result.RequiredUsings.Count);
     }
@@ -30,7 +30,7 @@ public sealed class LegacyReplacementEngineTests
             "var all = Strings.Trim(value); var left = Strings.LTrim(null); var right = Strings.RTrim(source);");
 
         Assert.AreEqual(
-            "var all = ((value) ?? string.Empty).Trim(' '); var left = ((null) ?? string.Empty).TrimStart(' '); var right = ((source) ?? string.Empty).TrimEnd(' ');",
+            "var all = (value).Trim(' '); var left = (null).TrimStart(' '); var right = (source).TrimEnd(' ');",
             result.Source);
         CollectionAssert.AreEquivalent(
             new[] { "VB.Strings.Trim", "VB.Strings.LTrim", "VB.Strings.RTrim" },
@@ -45,7 +45,7 @@ public sealed class LegacyReplacementEngineTests
         ReplacementResult result = engine.Apply("var text = Strings.Trim(Strings.LTrim(value));");
 
         Assert.AreEqual(
-            "var text = ((((value) ?? string.Empty).TrimStart(' ')) ?? string.Empty).Trim(' ');",
+            "var text = ((value).TrimStart(' ')).Trim(' ');",
             result.Source);
         CollectionAssert.AreEqual(
             new[] { "VB.Strings.LTrim", "VB.Strings.Trim" },
@@ -76,7 +76,7 @@ public sealed class LegacyReplacementEngineTests
         ReplacementResult character = engine.Apply("Strings.Trim(GetChar(')', values[index]))");
         ReplacementResult multipleArguments = engine.Apply("Strings.Trim(value, other)");
 
-        Assert.AreEqual("((GetChar(')', values[index])) ?? string.Empty).Trim(' ')", character.Source);
+        Assert.AreEqual("(GetChar(')', values[index])).Trim(' ')", character.Source);
         Assert.AreEqual("Strings.Trim(value, other)", multipleArguments.Source);
         Assert.IsTrue(multipleArguments.Diagnostics.Any(d => d.Kind == RuleDiagnosticKind.Skipped));
     }
@@ -88,7 +88,7 @@ public sealed class LegacyReplacementEngineTests
 
         ReplacementResult result = engine.Apply("var text = Strings /* legacy */ . Trim ( value /* captured */ + other ); var literal = \"Strings.Trim(no)\";");
 
-        Assert.AreEqual("var text = ((value /* captured */ + other) ?? string.Empty).Trim(' '); var literal = \"Strings.Trim(no)\";", result.Source);
+        Assert.AreEqual("var text = (value /* captured */ + other).Trim(' '); var literal = \"Strings.Trim(no)\";", result.Source);
         Assert.AreEqual(1, result.Diagnostics.Count(d => d.Kind == RuleDiagnosticKind.Applied));
     }
 
@@ -212,6 +212,80 @@ public sealed class LegacyReplacementEngineTests
         Assert.IsTrue(engine.ConfigurationDiagnostics.Any(d => d.Kind == RuleDiagnosticKind.Malformed && d.RuleId == "bad"));
         Assert.IsTrue(engine.ConfigurationDiagnostics.Any(d => d.Kind == RuleDiagnosticKind.Malformed && d.RuleId == "bad-unclosed"));
         Assert.IsTrue(engine.ConfigurationDiagnostics.Any(d => d.Kind == RuleDiagnosticKind.Skipped && d.RuleId == "off"));
+    }
+
+    [TestMethod]
+    public void DefaultRules_ReplacesExtendedConservativeApis()
+    {
+        LegacyReplacementEngine engine = LegacyReplacementEngine.LoadDefaultRules();
+
+        ReplacementResult result = engine.Apply(
+            "var lower = Strings.LCase(value); var upper = Strings.UCase(value); var reverse = Strings.StrReverse(value); " +
+            "var nothing = Information.IsNothing(value); var array = Information.IsArray(value); " +
+            "var time = DateAndTime.TimeOfDay; var date = DateAndTime.DateString; var clock = DateAndTime.TimeString;");
+
+        Assert.AreEqual(
+            "var lower = (value).ToLower(); var upper = (value).ToUpper(); var reverse = new string((value).Reverse().ToArray()); " +
+            "var nothing = (value) is null; var array = (value) is Array; " +
+            "var time = DateTime.Now.TimeOfDay; var date = DateTime.Today.ToShortDateString(); var clock = DateTime.Now.ToLongTimeString();",
+            result.Source);
+        CollectionAssert.Contains(result.RequiredUsings.ToArray(), "System.Linq");
+        Assert.AreEqual(8, result.Diagnostics.Count(d => d.Kind == RuleDiagnosticKind.Applied));
+    }
+
+    [TestMethod]
+    public void DefaultRules_DoNotApplyOptionalCompatibilityRules()
+    {
+        LegacyReplacementEngine engine = LegacyReplacementEngine.LoadDefaultRules();
+
+        ReplacementResult result = engine.Apply("var length = Strings.Len(value);");
+
+        Assert.AreEqual("var length = Strings.Len(value);", result.Source);
+        Assert.IsFalse(result.Diagnostics.Any(d => d.Kind == RuleDiagnosticKind.Applied));
+    }
+
+    [TestMethod]
+    public void CompatibilityRules_ApplyDocumentedBclApproximation()
+    {
+        LegacyReplacementEngine engine = LegacyReplacementEngine.LoadDefaultRulesWithCompatibilityRules();
+
+        ReplacementResult result = engine.Apply("var length = Strings.Len(value); var part = Strings.Mid(text, 2, 3);");
+
+        Assert.AreEqual(
+            "var length = /* VB compatibility approximation: requires a string and differs for null, arrays, and non-string values. */ (value).Length; " +
+            "var part = /* VB compatibility approximation: Visual Basic uses one-based positions and has different bounds handling. */ (text).Substring(2 - 1, 3);",
+            result.Source);
+        Assert.IsTrue(result.Diagnostics.Any(d => d.RuleId == "VB.Compatibility.Strings.Len" && d.Kind == RuleDiagnosticKind.Applied));
+        Assert.IsTrue(result.Diagnostics.Any(d => d.RuleId == "VB.Compatibility.Strings.Mid.WithLength" && d.Kind == RuleDiagnosticKind.Applied));
+    }
+
+    [TestMethod]
+    public void BaseLibCompatibilityRules_ApplyConversionsAndObjectComparisons()
+    {
+        LegacyReplacementEngine engine = LegacyReplacementEngine.LoadDefaultRulesWithBaseLibCompatibilityRules();
+
+        ReplacementResult result = engine.Apply(
+            "var number = Conversion.Val(value); if (Operators.ConditionalCompareObjectNotEqual(left, right, TextCompare: false)) return;");
+
+        Assert.AreEqual(
+            "var number = (value).AsDouble(); if (!ObjectComparison.AreEqual(left, right, StringComparison.Ordinal)) return;",
+            result.Source);
+        CollectionAssert.AreEqual(new[] { "BaseLib.Helper" }, result.RequiredUsings.ToArray());
+        Assert.IsTrue(result.Diagnostics.Any(d => d.RuleId == "VB.BaseLib.Conversion.Val" && d.Kind == RuleDiagnosticKind.Applied));
+        Assert.IsTrue(result.Diagnostics.Any(d => d.RuleId == "VB.BaseLib.Operators.ConditionalCompareObjectNotEqual.Ordinal" && d.Kind == RuleDiagnosticKind.Applied));
+    }
+
+    [TestMethod]
+    public void AllEmbeddedRules_CombineBothOptionalProfiles()
+    {
+        LegacyReplacementEngine engine = LegacyReplacementEngine.LoadAllEmbeddedRules();
+
+        ReplacementResult result = engine.Apply("var text = Strings.Right(value, 2); var number = Conversions.ToInteger(value);");
+
+        Assert.AreEqual(
+            "var text = /* VB compatibility approximation: range validation and null handling can differ. */ (value).Substring(Math.Max(0, (value).Length - 2)); var number = (value).AsInt();",
+            result.Source);
+        CollectionAssert.AreEqual(new[] { "BaseLib.Helper" }, result.RequiredUsings.ToArray());
     }
 
     private static string RuleJson(string sourceTemplate, string replacementTemplate, params string[] usings)
