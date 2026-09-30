@@ -24,6 +24,8 @@ public sealed class AnalysisItem
 
     public uint? ClassVmtAddress { get; set; }
 
+    public uint? ClassInstanceSizeBytes { get; set; }
+
     public uint? ParentTypeInfoAddress { get; set; }
 
     public string? UnitName { get; set; }

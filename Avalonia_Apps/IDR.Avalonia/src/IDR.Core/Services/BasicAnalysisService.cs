@@ -361,6 +361,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                         out uint vmtRva,
                         out string? className,
                         out uint classNameRva,
+                        out uint classInstanceSize,
                         out uint? fieldTableRva,
                         out uint? initializationTableRva,
                         out uint? dynamicMethodTableRva,
@@ -374,6 +375,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                         AnalysisItem vmtItem = session.GetOrAddItem(vmtRva);
                         vmtItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.Vmt);
                         vmtItem.Name ??= className;
+                        vmtItem.ClassInstanceSizeBytes = classInstanceSize;
                         vmtItem.ParentAddress = parentVmtRva;
                         vmtItem.FieldTableAddress = fieldTableRva;
                         vmtItem.InitializationTableAddress = initializationTableRva;
@@ -540,6 +542,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         out uint vmtRva,
         out string? className,
         out uint classNameRva,
+        out uint classInstanceSize,
         out uint? fieldTableRva,
         out uint? initializationTableRva,
         out uint? dynamicMethodTableRva,
@@ -552,6 +555,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         vmtRva = 0;
         className = null;
         classNameRva = 0;
+        classInstanceSize = 0;
         fieldTableRva = null;
         initializationTableRva = null;
         dynamicMethodTableRva = null;
@@ -616,6 +620,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         {
             return false;
         }
+        classInstanceSize = instanceSize;
 
         if (parentVa != 0)
         {
@@ -4161,31 +4166,106 @@ public sealed class BasicAnalysisService : IAnalysisService
         out string? fieldName,
         out uint? typeInfoAddress)
     {
+        if (offset < 0)
+        {
+            fieldName = null;
+            typeInfoAddress = null;
+            return false;
+        }
+
         AnalysisItem? vmt = session.Items.Values.FirstOrDefault(candidate =>
             candidate.Flags.HasFlag(AnalysisFlags.Vmt)
             && string.Equals(candidate.Name, typeName, StringComparison.Ordinal));
-        HashSet<uint> visitedVmts = [];
-        while (vmt is not null && visitedVmts.Add(vmt.Address))
+
+        if (vmt is not null && vmt.ClassInstanceSizeBytes is uint classSize)
         {
-            DelphiVmtField? classField = vmt.Fields.FirstOrDefault(candidate =>
+            if ((uint)offset >= classSize)
+            {
+                fieldName = null;
+                typeInfoAddress = null;
+                return false;
+            }
+
+            HashSet<uint> visitedSizedVmts = [vmt.Address];
+            while (vmt.ParentAddress is uint parentAddress
+                && session.Items.TryGetValue(parentAddress, out AnalysisItem? parent)
+                && parent is not null
+                && parent.Flags.HasFlag(AnalysisFlags.Vmt)
+                && parent.ClassInstanceSizeBytes is uint parentSize
+                && (uint)offset < parentSize
+                && visitedSizedVmts.Add(parent.Address))
+            {
+                vmt = parent;
+            }
+
+            DelphiVmtField? exactField = vmt.Fields.FirstOrDefault(candidate =>
                 candidate.Offset == offset);
-            if (classField is not null)
+            if (exactField is not null)
+            {
+                fieldName = exactField.Name;
+                typeInfoAddress = exactField.TypeInfoAddress;
+                return true;
+            }
+
+            if (TryResolveNestedRecordField(
+                    session,
+                    vmt.Fields,
+                    offset,
+                    vmt.ClassInstanceSizeBytes,
+                    visitedRecordTypes,
+                    out fieldName,
+                    out typeInfoAddress))
+            {
+                return true;
+            }
+
+            if (TryGetVmtFieldAtOffset(vmt, offset, out DelphiVmtField? classField)
+                && classField is not null)
             {
                 fieldName = classField.Name;
                 typeInfoAddress = classField.TypeInfoAddress;
                 return true;
             }
 
+            fieldName = null;
+            typeInfoAddress = null;
+            return false;
+        }
+
+        HashSet<uint> visitedVmts = [];
+        while (vmt is not null && visitedVmts.Add(vmt.Address))
+        {
+            DelphiVmtField? exactField = vmt.Fields.FirstOrDefault(candidate =>
+                candidate.Offset == offset);
+            if (exactField is not null)
+            {
+                fieldName = exactField.Name;
+                typeInfoAddress = exactField.TypeInfoAddress;
+                return true;
+            }
+
             if (TryResolveNestedRecordField(
                     session,
-                    vmt.Fields
-                        .Where(candidate => candidate.Offset < offset)
-                        .OrderByDescending(candidate => candidate.Offset),
+                    vmt.Fields,
                     offset,
+                    vmt.ClassInstanceSizeBytes,
                     visitedRecordTypes,
                     out fieldName,
                     out typeInfoAddress))
             {
+                return true;
+            }
+
+            if (TryGetFieldAtOffset(
+                    vmt.Fields,
+                    offset,
+                    vmt.ClassInstanceSizeBytes,
+                    static candidate => candidate.Offset,
+                    out DelphiVmtField? classField)
+                && classField is not null)
+            {
+                fieldName = classField.Name;
+                typeInfoAddress = classField.TypeInfoAddress;
                 return true;
             }
 
@@ -4201,31 +4281,41 @@ public sealed class BasicAnalysisService : IAnalysisService
             && string.Equals(candidate.Name, typeName, StringComparison.Ordinal));
         if (recordType is not null)
         {
-            DelphiRttiRecordField? recordField = recordType.RecordFields.FirstOrDefault(candidate =>
+            DelphiRttiRecordField? exactField = recordType.RecordFields.FirstOrDefault(candidate =>
                 candidate.Offset == offset);
-            if (recordField is not null)
+            if (exactField is not null)
             {
-                fieldName = recordField.Name;
-                typeInfoAddress = recordField.TypeInfoAddress;
+                fieldName = exactField.Name;
+                typeInfoAddress = exactField.TypeInfoAddress;
                 return true;
             }
 
             if (recordType.RecordSizeBytes is uint recordSize
-                && offset >= 0
                 && (uint)offset < recordSize
-                && visitedRecordTypes.Add(recordType.Address)
                 && TryResolveNestedRecordField(
                     session,
-                    recordType.RecordFields
-                        .Where(candidate => candidate.Offset < offset)
-                        .OrderByDescending(candidate => candidate.Offset),
+                    recordType.RecordFields,
                     offset,
+                    recordSize,
                     visitedRecordTypes,
                     out string? nestedFieldName,
                     out uint? nestedTypeInfoAddress))
             {
                 fieldName = nestedFieldName;
                 typeInfoAddress = nestedTypeInfoAddress;
+                return true;
+            }
+
+            if (TryGetFieldAtOffset(
+                    recordType.RecordFields,
+                    offset,
+                    recordType.RecordSizeBytes,
+                    static candidate => candidate.Offset,
+                    out DelphiRttiRecordField? recordField)
+                && recordField is not null)
+            {
+                fieldName = recordField.Name;
+                typeInfoAddress = recordField.TypeInfoAddress;
                 return true;
             }
         }
@@ -4235,63 +4325,158 @@ public sealed class BasicAnalysisService : IAnalysisService
         return false;
     }
 
+    private static bool TryGetVmtFieldAtOffset(
+        AnalysisItem vmt,
+        int offset,
+        out DelphiVmtField? field)
+    {
+        return TryGetFieldAtOffset(
+            vmt.Fields,
+            offset,
+            vmt.ClassInstanceSizeBytes,
+            static candidate => candidate.Offset,
+            out field);
+    }
+
+    private static bool TryGetFieldAtOffset<TField>(
+        IEnumerable<TField> fields,
+        int offset,
+        uint? containingSize,
+        Func<TField, int> getOffset,
+        out TField? selectedField)
+        where TField : class
+    {
+        selectedField = null;
+        if (offset < 0 || (containingSize is uint size && (uint)offset >= size))
+        {
+            return false;
+        }
+
+        int selectedOffset = int.MinValue;
+        bool hasNextField = false;
+        foreach (TField field in fields)
+        {
+            int fieldOffset = getOffset(field);
+            if (fieldOffset <= offset && fieldOffset > selectedOffset)
+            {
+                selectedField = field;
+                selectedOffset = fieldOffset;
+            }
+        }
+
+        if (selectedField is null)
+        {
+            return false;
+        }
+
+        foreach (TField field in fields)
+        {
+            if (getOffset(field) > selectedOffset)
+            {
+                hasNextField = true;
+                break;
+            }
+        }
+
+        return offset == selectedOffset || containingSize is not null || hasNextField;
+    }
+
     private static bool TryResolveNestedRecordField<TField>(
         AnalysisSession session,
         IEnumerable<TField> fields,
         int absoluteOffset,
+        uint? containingSize,
         HashSet<uint> visitedRecordTypes,
         out string? fieldName,
         out uint? typeInfoAddress)
-        where TField : notnull
+        where TField : class
     {
+        TField? containingField = null;
+        int containingFieldOffset = int.MinValue;
+        int nextFieldOffset = int.MaxValue;
         foreach (TField field in fields)
         {
             int fieldOffset;
-            string name;
-            uint? fieldTypeInfoAddress;
             switch (field)
             {
                 case DelphiVmtField classField:
                     fieldOffset = classField.Offset;
-                    name = classField.Name;
-                    fieldTypeInfoAddress = classField.TypeInfoAddress;
                     break;
                 case DelphiRttiRecordField recordField:
                     fieldOffset = recordField.Offset;
-                    name = recordField.Name;
-                    fieldTypeInfoAddress = recordField.TypeInfoAddress;
                     break;
                 default:
                     continue;
             }
 
-            int nestedOffset = absoluteOffset - fieldOffset;
-            if (nestedOffset <= 0
-                || fieldTypeInfoAddress is not uint typeInfoAddressValue
-                || !session.Items.TryGetValue(typeInfoAddressValue, out AnalysisItem? nestedType)
-                || nestedType.TypeKind != DelphiTypeKind.Record
-                || nestedType.RecordSizeBytes is not uint nestedRecordSize
-                || (uint)nestedOffset >= nestedRecordSize
-                || !visitedRecordTypes.Add(typeInfoAddressValue)
-                || !TryGetTypedField(
-                    session,
-                    nestedType.Name ?? string.Empty,
-                    nestedOffset,
-                    visitedRecordTypes,
-                    out string? nestedName,
-                    out uint? nestedTypeInfoAddress))
+            if (fieldOffset <= absoluteOffset && fieldOffset > containingFieldOffset)
             {
-                continue;
+                containingField = field;
+                containingFieldOffset = fieldOffset;
             }
-
-            fieldName = $"{name}.{nestedName}";
-            typeInfoAddress = nestedTypeInfoAddress;
-            return true;
+            else if (fieldOffset > absoluteOffset && fieldOffset < nextFieldOffset)
+            {
+                nextFieldOffset = fieldOffset;
+            }
         }
 
-        fieldName = null;
-        typeInfoAddress = null;
-        return false;
+        int nestedOffset = absoluteOffset - containingFieldOffset;
+        if (containingField is null
+            || nestedOffset <= 0
+            || (containingSize is uint size && (uint)absoluteOffset >= size)
+            || absoluteOffset >= nextFieldOffset
+            || !TryGetFieldTypeInfoAddress(containingField, out string? name, out uint? fieldTypeInfoAddress)
+            || fieldTypeInfoAddress is not uint typeInfoAddressValue
+            || visitedRecordTypes.Contains(typeInfoAddressValue)
+            || !session.Items.TryGetValue(typeInfoAddressValue, out AnalysisItem? nestedType)
+            || nestedType.TypeKind != DelphiTypeKind.Record
+            || nestedType.RecordSizeBytes is not uint nestedRecordSize
+            || (uint)nestedOffset >= nestedRecordSize)
+        {
+            fieldName = null;
+            typeInfoAddress = null;
+            return false;
+        }
+
+        HashSet<uint> nestedRecordPath = [.. visitedRecordTypes, typeInfoAddressValue];
+        if (!TryGetTypedField(
+                session,
+                nestedType.Name ?? string.Empty,
+                nestedOffset,
+                nestedRecordPath,
+                out string? nestedName,
+                out uint? nestedTypeInfoAddress))
+        {
+            fieldName = null;
+            typeInfoAddress = null;
+            return false;
+        }
+
+        fieldName = $"{name}.{nestedName}";
+        typeInfoAddress = nestedTypeInfoAddress;
+        return true;
+    }
+
+    private static bool TryGetFieldTypeInfoAddress<TField>(
+        TField field,
+        out string? name,
+        out uint? typeInfoAddress)
+    {
+        switch (field)
+        {
+            case DelphiVmtField classField:
+                name = classField.Name;
+                typeInfoAddress = classField.TypeInfoAddress;
+                return true;
+            case DelphiRttiRecordField recordField:
+                name = recordField.Name;
+                typeInfoAddress = recordField.TypeInfoAddress;
+                return true;
+            default:
+                name = null;
+                typeInfoAddress = null;
+                return false;
+        }
     }
 
     private static bool TryGetRecentImmediateRegisterValue(
