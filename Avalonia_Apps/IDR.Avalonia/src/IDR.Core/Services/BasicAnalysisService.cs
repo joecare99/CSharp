@@ -11,8 +11,8 @@ namespace IDR.Core.Services;
 
 public sealed class BasicAnalysisService : IAnalysisService
 {
-    private const int MaximumInstructionsPerProcedure = 512;
-    private const int MaximumCodeStarts = 64;
+    private const int MaximumInstructionsPerProcedure = 4096;
+    private const int MaximumCodeStarts = 16384;
     private const int MaximumMetadataEntryCount = 10000;
     private const int MaximumKnowledgeBaseSignatureSize = 512;
     private const int MaximumSwitchTableEntryCount = 4096;
@@ -2659,6 +2659,11 @@ public sealed class BasicAnalysisService : IAnalysisService
         {
             cancellationToken.ThrowIfCancellationRequested();
             (uint codeStart, bool isProcedureStart) = codeStarts.Dequeue();
+            if (decodedAddresses.Contains(codeStart))
+            {
+                continue;
+            }
+
             if (!TryGetCodeSection(session, codeStart, out PeSection? section, out int rawOffset))
             {
                 if (codeStart == session.EntryPointRva)
@@ -2703,6 +2708,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             Dictionary<int, string> classRegisterTypes = [];
             Dictionary<int, ulong> registerAddressValues = [];
             Dictionary<int, int> registerLocalOffsets = [];
+            Dictionary<int, uint> registerStackArgumentOffsets = [];
             Dictionary<int, StackLocalVariable> stackLocalVariables = [];
             string? returnTypeCandidate = null;
             bool reachedTerminator = false;
@@ -2768,6 +2774,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 
                 decodedInstructions.Add(currentRva, instruction);
                 decodedCount++;
+                DecodedInstruction classTypeInstruction = instruction;
                 AnalysisItem item = session.GetOrAddItem(currentRva);
                 item.SetFlags(AnalysisFlags.Code | AnalysisFlags.Instruction);
                 if (markNextInstructionAsFinallyExit)
@@ -2849,7 +2856,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                             resolvedCallTargets.Add(virtualMethodTarget);
                         }
 
-                        foreach (uint resolvedCallTarget in resolvedCallTargets.Distinct())
+                        uint[] uniqueResolvedCallTargets = resolvedCallTargets.Distinct().ToArray();
+                        foreach (uint resolvedCallTarget in uniqueResolvedCallTargets)
                         {
                             session.AddCrossReference(currentRva, resolvedCallTarget, CrossReferenceKind.Call);
                             item.SetFlags(AnalysisFlags.Call);
@@ -2878,18 +2886,41 @@ public sealed class BasicAnalysisService : IAnalysisService
                             markNextInstructionAsFinallyExit = true;
                         }
 
-                        ApplyKnownCallDataTypeCandidate(instruction, session, registerAddressValues);
+                        DecodedInstruction knownCallInstruction = instruction;
+                        if (instruction.NearBranchTarget is null
+                            && uniqueResolvedCallTargets.Length == 1)
+                        {
+                            knownCallInstruction = instruction with
+                            {
+                                NearBranchTarget = uniqueResolvedCallTargets[0]
+                            };
+                        }
+
+                        classTypeInstruction = knownCallInstruction;
+                        ApplyKnownCallDataTypeCandidate(
+                            knownCallInstruction,
+                            session,
+                            registerAddressValues,
+                            classRegisterTypes);
                         ApplyKnownCallLocalDataTypes(
-                            instruction,
+                            knownCallInstruction,
                             session,
                             registerLocalOffsets,
                             registerAddressValues,
+                            classRegisterTypes,
                             stackLocalVariables);
+                        ApplyKnownCallStackArgumentTypes(
+                            knownCallInstruction,
+                            session,
+                            registerStackArgumentOffsets,
+                            registerAddressValues,
+                            classRegisterTypes,
+                            stackArguments);
                         returnTypeCandidate = GetKnownCallReturnTypeCandidate(
-                            instruction,
+                            knownCallInstruction,
                             session,
                             classRegisterTypes);
-                        pendingReturnCallTarget = instruction.NearBranchTarget is ulong callTarget
+                        pendingReturnCallTarget = knownCallInstruction.NearBranchTarget is ulong callTarget
                             && callTarget <= uint.MaxValue
                                 ? (uint)callTarget
                                 : null;
@@ -2905,9 +2936,18 @@ public sealed class BasicAnalysisService : IAnalysisService
                     }
 
                     ApplyKnownClassFieldAccess(instruction, session, classRegisterTypes, item);
-                    UpdateClassRegisterTypes(instruction, session, classRegisterTypes);
+                    UpdateClassRegisterTypes(
+                        classTypeInstruction,
+                        session,
+                        classRegisterTypes,
+                        stackLocalVariables,
+                        stackArguments);
                     UpdateRegisterAddressValues(instruction, session, registerAddressValues);
                     UpdateRegisterLocalOffsets(instruction, session, registerLocalOffsets);
+                    UpdateRegisterStackArgumentOffsets(
+                        instruction,
+                        session,
+                        registerStackArgumentOffsets);
                 }
 
                 if (isProcedureStart && startItem.UsesFramePointer)
@@ -4609,6 +4649,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         AnalysisSession session,
         IReadOnlyDictionary<int, int> registerLocalOffsets,
         IReadOnlyDictionary<int, ulong> registerAddressValues,
+        IReadOnlyDictionary<int, string> classRegisterTypes,
         Dictionary<int, StackLocalVariable> stackLocalVariables)
     {
         if (instruction.NearBranchTarget is not ulong targetAddress
@@ -4621,7 +4662,22 @@ public sealed class BasicAnalysisService : IAnalysisService
         string helperName = target.Name is string resolvedName && resolvedName.StartsWith('@')
             ? resolvedName[1..]
             : target.Name ?? string.Empty;
-        if (IsLocalStringArrayCleanupHelper(helperName)
+        if (string.Equals(helperName, "TApplication.CreateForm", StringComparison.OrdinalIgnoreCase)
+            && registerLocalOffsets.TryGetValue(2, out int formLocalOffset)
+            && classRegisterTypes.TryGetValue(1, out string? formClassName))
+        {
+            AddStackLocalVariable(stackLocalVariables, formLocalOffset, formClassName, overwrite: false);
+        }
+        else if ((string.Equals(helperName, "IntfClear", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(helperName, "VarClr", StringComparison.OrdinalIgnoreCase))
+            && registerLocalOffsets.TryGetValue(0, out int clearedLocalOffset))
+        {
+            string clearedTypeName = string.Equals(helperName, "IntfClear", StringComparison.OrdinalIgnoreCase)
+                ? "IInterface"
+                : "Variant";
+            AddStackLocalVariable(stackLocalVariables, clearedLocalOffset, clearedTypeName, overwrite: false);
+        }
+        else if (IsLocalStringArrayCleanupHelper(helperName)
             && registerLocalOffsets.TryGetValue(0, out int firstLocalOffset)
             && registerAddressValues.TryGetValue(1, out ulong countValue)
             && countValue is > 0 and <= 256)
@@ -4655,6 +4711,18 @@ public sealed class BasicAnalysisService : IAnalysisService
         {
             AddStackLocalVariable(stackLocalVariables, recordLocalOffset, recordTypeName, overwrite: false);
         }
+        else if (string.Equals(helperName, "FinalizeArray", StringComparison.OrdinalIgnoreCase)
+            && registerLocalOffsets.TryGetValue(0, out int finalizedArrayLocalOffset)
+            && TryGetKnownTypeInfoName(session, registerAddressValues, out string? arrayElementTypeName)
+            && registerAddressValues.TryGetValue(2, out ulong arrayElementCount)
+            && arrayElementCount <= int.MaxValue)
+        {
+            AddStackLocalVariable(
+                stackLocalVariables,
+                finalizedArrayLocalOffset,
+                $"array[{arrayElementCount}] of {arrayElementTypeName}",
+                overwrite: false);
+        }
         else if (string.Equals(helperName, "DynArrayAddRef", StringComparison.OrdinalIgnoreCase)
             && registerLocalOffsets.TryGetValue(0, out int arrayLocalOffset))
         {
@@ -4674,6 +4742,93 @@ public sealed class BasicAnalysisService : IAnalysisService
                 AddStackLocalVariable(stackLocalVariables, destinationOffset, elementTypeName, overwrite: false);
             }
         }
+    }
+
+    private static void ApplyKnownCallStackArgumentTypes(
+        DecodedInstruction instruction,
+        AnalysisSession session,
+        IReadOnlyDictionary<int, uint> registerStackArgumentOffsets,
+        IReadOnlyDictionary<int, ulong> registerAddressValues,
+        IReadOnlyDictionary<int, string> classRegisterTypes,
+        Dictionary<uint, StackArgument> stackArguments)
+    {
+        if (instruction.NearBranchTarget is not ulong targetAddress
+            || targetAddress > uint.MaxValue
+            || !session.Items.TryGetValue((uint)targetAddress, out AnalysisItem? target))
+        {
+            return;
+        }
+
+        string helperName = target.Name is string resolvedName && resolvedName.StartsWith('@')
+            ? resolvedName[1..]
+            : target.Name ?? string.Empty;
+        if (string.Equals(helperName, "TApplication.CreateForm", StringComparison.OrdinalIgnoreCase)
+            && registerStackArgumentOffsets.TryGetValue(2, out uint formArgumentOffset)
+            && classRegisterTypes.TryGetValue(1, out string? formClassName))
+        {
+            SetStackArgumentType(stackArguments, formArgumentOffset, formClassName);
+        }
+        else if ((string.Equals(helperName, "IntfClear", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(helperName, "VarClr", StringComparison.OrdinalIgnoreCase))
+            && registerStackArgumentOffsets.TryGetValue(0, out uint clearedArgumentOffset))
+        {
+            string clearedTypeName = string.Equals(helperName, "IntfClear", StringComparison.OrdinalIgnoreCase)
+                ? "IInterface"
+                : "Variant";
+            SetStackArgumentType(stackArguments, clearedArgumentOffset, clearedTypeName);
+        }
+        else if (string.Equals(helperName, "FinalizeRecord", StringComparison.OrdinalIgnoreCase)
+            && registerStackArgumentOffsets.TryGetValue(0, out uint recordArgumentOffset)
+            && TryGetKnownTypeInfoName(session, registerAddressValues, out string? recordTypeName))
+        {
+            SetStackArgumentType(stackArguments, recordArgumentOffset, recordTypeName);
+        }
+        else if (string.Equals(helperName, "FinalizeArray", StringComparison.OrdinalIgnoreCase)
+            && registerStackArgumentOffsets.TryGetValue(0, out uint finalizedArrayArgumentOffset)
+            && TryGetKnownTypeInfoName(session, registerAddressValues, out string? arrayElementTypeName)
+            && registerAddressValues.TryGetValue(2, out ulong arrayElementCount)
+            && arrayElementCount <= int.MaxValue)
+        {
+            SetStackArgumentType(
+                stackArguments,
+                finalizedArrayArgumentOffset,
+                $"array[{arrayElementCount}] of {arrayElementTypeName}");
+        }
+        else if (string.Equals(helperName, "DynArrayAddRef", StringComparison.OrdinalIgnoreCase)
+            && registerStackArgumentOffsets.TryGetValue(0, out uint arrayArgumentOffset))
+        {
+            SetStackArgumentType(stackArguments, arrayArgumentOffset, "array of ?");
+        }
+        else if (IsDynamicArrayTypeHelper(helperName)
+            && TryGetKnownTypeInfoName(session, registerAddressValues, out string? elementTypeName))
+        {
+            if (registerStackArgumentOffsets.TryGetValue(0, out uint sourceArgumentOffset))
+            {
+                SetStackArgumentType(stackArguments, sourceArgumentOffset, elementTypeName);
+            }
+
+            if (string.Equals(helperName, "DynArrayCopy", StringComparison.OrdinalIgnoreCase)
+                && registerStackArgumentOffsets.TryGetValue(2, out uint destinationArgumentOffset))
+            {
+                SetStackArgumentType(stackArguments, destinationArgumentOffset, elementTypeName);
+            }
+        }
+    }
+
+    private static void SetStackArgumentType(
+        Dictionary<uint, StackArgument> stackArguments,
+        uint offset,
+        string? typeName)
+    {
+        if (string.IsNullOrWhiteSpace(typeName)
+            || !stackArguments.TryGetValue(offset, out StackArgument? argument)
+            || argument is null
+            || !string.IsNullOrWhiteSpace(argument.TypeName))
+        {
+            return;
+        }
+
+        stackArguments[offset] = argument with { TypeName = typeName };
     }
 
     private static bool IsLocalStringArrayCleanupHelper(string helperName) =>
@@ -4705,7 +4860,8 @@ public sealed class BasicAnalysisService : IAnalysisService
     private static void ApplyKnownCallDataTypeCandidate(
         DecodedInstruction instruction,
         AnalysisSession session,
-        IReadOnlyDictionary<int, ulong> registerAddressValues)
+        IReadOnlyDictionary<int, ulong> registerAddressValues,
+        IReadOnlyDictionary<int, string> classRegisterTypes)
     {
         if (instruction.NearBranchTarget is not ulong targetAddress
             || targetAddress > uint.MaxValue
@@ -4717,7 +4873,25 @@ public sealed class BasicAnalysisService : IAnalysisService
         string helperName = target.Name is string resolvedName && resolvedName.StartsWith('@')
             ? resolvedName[1..]
             : target.Name ?? string.Empty;
-        if (string.Equals(helperName, "IntfClear", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(helperName, "TApplication.CreateForm", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!classRegisterTypes.TryGetValue(1, out string? formClassName)
+                && (!registerAddressValues.TryGetValue(1, out ulong selfPointerValue)
+                    || !TryGetVmtClassNameFromSelfPointer(
+                        session,
+                        selfPointerValue,
+                        out formClassName)))
+            {
+                return;
+            }
+
+            ApplyRegisterDataTypeCandidate(
+                session,
+                registerAddressValues,
+                2,
+                formClassName);
+        }
+        else if (string.Equals(helperName, "IntfClear", StringComparison.OrdinalIgnoreCase))
         {
             ApplyRegisterDataTypeCandidate(session, registerAddressValues, 0, "IInterface");
         }
@@ -4804,7 +4978,6 @@ public sealed class BasicAnalysisService : IAnalysisService
         if ((typeName is null && additionalFlags == AnalysisFlags.None)
             || value > uint.MaxValue
             || !TryVaToRva(session, (uint)value, out uint dataRva)
-            || !TryGetRawOffset(session, dataRva, out _)
             || !session.Sections.Any(section =>
                 !section.ContainsCode
                 && dataRva >= section.VirtualAddress
@@ -5062,10 +5235,99 @@ public sealed class BasicAnalysisService : IAnalysisService
         }
     }
 
+    private static void UpdateRegisterStackArgumentOffsets(
+        DecodedInstruction instruction,
+        AnalysisSession session,
+        Dictionary<int, uint> registerStackArgumentOffsets)
+    {
+        if (instruction.FlowControl != InstructionFlowControl.Next)
+        {
+            if (instruction.FlowControl == InstructionFlowControl.Call
+                && IsRegisterPreservingCall(instruction, session))
+            {
+                return;
+            }
+
+            registerStackArgumentOffsets.Clear();
+            return;
+        }
+
+        bool isMov = string.Equals(instruction.Mnemonic, "Mov", StringComparison.OrdinalIgnoreCase);
+        bool isLea = string.Equals(instruction.Mnemonic, "Lea", StringComparison.OrdinalIgnoreCase);
+        if ((isMov || isLea)
+            && instruction.Operands.Count == 2
+            && instruction.Operands[0].Kind == DecodedOperandKind.Register
+            && GetFullRegisterArgumentIndex(instruction.Operands[0].Register) is int destinationIndex)
+        {
+            uint? argumentOffset = null;
+            DecodedOperand source = instruction.Operands[1];
+            if (isMov
+                && source.Kind == DecodedOperandKind.Register
+                && GetFullRegisterArgumentIndex(source.Register) is int sourceIndex
+                && registerStackArgumentOffsets.TryGetValue(sourceIndex, out uint sourceOffset))
+            {
+                argumentOffset = sourceOffset;
+            }
+            else if (source.Kind == DecodedOperandKind.Memory
+                && string.Equals(source.BaseRegister, "EBP", StringComparison.OrdinalIgnoreCase)
+                && source.IndexRegister is null
+                && source.Displacement is >= 8 and <= 0x10000
+                && (isMov || isLea))
+            {
+                argumentOffset = (uint)source.Displacement.Value;
+            }
+
+            registerStackArgumentOffsets.Remove(destinationIndex);
+            if (argumentOffset is uint knownOffset)
+            {
+                registerStackArgumentOffsets[destinationIndex] = knownOffset;
+            }
+
+            return;
+        }
+
+        if (string.Equals(instruction.Mnemonic, "Xchg", StringComparison.OrdinalIgnoreCase)
+            && instruction.Operands.Count == 2
+            && instruction.Operands[0].Kind == DecodedOperandKind.Register
+            && instruction.Operands[1].Kind == DecodedOperandKind.Register
+            && GetFullRegisterArgumentIndex(instruction.Operands[0].Register) is int firstIndex
+            && GetFullRegisterArgumentIndex(instruction.Operands[1].Register) is int secondIndex)
+        {
+            if (firstIndex != secondIndex)
+            {
+                bool hasFirstOffset = registerStackArgumentOffsets.TryGetValue(firstIndex, out uint firstOffset);
+                bool hasSecondOffset = registerStackArgumentOffsets.TryGetValue(secondIndex, out uint secondOffset);
+                registerStackArgumentOffsets.Remove(firstIndex);
+                registerStackArgumentOffsets.Remove(secondIndex);
+                if (hasFirstOffset)
+                {
+                    registerStackArgumentOffsets[secondIndex] = firstOffset;
+                }
+
+                if (hasSecondOffset)
+                {
+                    registerStackArgumentOffsets[firstIndex] = secondOffset;
+                }
+            }
+
+            return;
+        }
+
+        for (int argumentIndex = 0; argumentIndex < 3; argumentIndex++)
+        {
+            if (WritesRegisterArgument(instruction, argumentIndex))
+            {
+                registerStackArgumentOffsets.Remove(argumentIndex);
+            }
+        }
+    }
+
     private static void UpdateClassRegisterTypes(
         DecodedInstruction instruction,
         AnalysisSession session,
-        Dictionary<int, string> classRegisterTypes)
+        Dictionary<int, string> classRegisterTypes,
+        IReadOnlyDictionary<int, StackLocalVariable> stackLocalVariables,
+        IReadOnlyDictionary<uint, StackArgument> stackArguments)
     {
         if (instruction.FlowControl != InstructionFlowControl.Next)
         {
@@ -5147,6 +5409,17 @@ public sealed class BasicAnalysisService : IAnalysisService
                     className = fieldTypeInfo.Name;
                 }
             }
+            else if (isMov
+                && source.Kind == DecodedOperandKind.Memory
+                && string.Equals(source.BaseRegister, "EBP", StringComparison.OrdinalIgnoreCase)
+                && source.IndexRegister is null
+                && source.Displacement is >= 8 and <= 0x10000
+                && stackArguments.TryGetValue((uint)source.Displacement.Value, out StackArgument? argument)
+                && argument is not null
+                && !string.IsNullOrWhiteSpace(argument.TypeName))
+            {
+                className = argument.TypeName;
+            }
             else if (isLea
                 && source.Kind == DecodedOperandKind.Memory
                 && source.BaseRegister is null
@@ -5155,6 +5428,39 @@ public sealed class BasicAnalysisService : IAnalysisService
                 && TryGetVmtClassName(session, absoluteAddress, out string? addressClassName))
             {
                 className = addressClassName;
+            }
+            else if (isLea
+                && source.Kind == DecodedOperandKind.Memory
+                && string.Equals(source.BaseRegister, "EBP", StringComparison.OrdinalIgnoreCase)
+                && source.IndexRegister is null
+                && source.Displacement is ulong localDisplacement
+                && localDisplacement <= uint.MaxValue
+                && unchecked((int)(uint)localDisplacement) < 0
+                && stackLocalVariables.TryGetValue(
+                    unchecked((int)(uint)localDisplacement),
+                    out StackLocalVariable? localVariable)
+                && localVariable is not null)
+            {
+                className = localVariable.TypeName;
+            }
+            else if (isLea
+                && source.Kind == DecodedOperandKind.Memory
+                && source.IndexRegister is null
+                && source.Displacement is > 0 and <= int.MaxValue
+                && GetFullRegisterArgumentIndex(source.BaseRegister) is int leaBaseRegisterIndex
+                && classRegisterTypes.TryGetValue(leaBaseRegisterIndex, out string? ownerTypeName)
+                && TryGetTypedField(
+                    session,
+                    ownerTypeName,
+                    (int)source.Displacement.Value,
+                    out _,
+                    out uint? leaFieldTypeInfoAddress)
+                && leaFieldTypeInfoAddress is uint resolvedLeaFieldTypeInfoAddress
+                && session.Items.TryGetValue(resolvedLeaFieldTypeInfoAddress, out AnalysisItem? leaFieldTypeInfo)
+                && leaFieldTypeInfo.TypeKind == DelphiTypeKind.Record
+                && !string.IsNullOrWhiteSpace(leaFieldTypeInfo.Name))
+            {
+                className = leaFieldTypeInfo.Name;
             }
 
             classRegisterTypes.Remove(destinationIndex);
@@ -5228,6 +5534,32 @@ public sealed class BasicAnalysisService : IAnalysisService
         {
             className = item.Name;
             return true;
+        }
+
+        className = null;
+        return false;
+    }
+
+    private static bool TryGetVmtClassNameFromSelfPointer(
+        AnalysisSession session,
+        ulong selfPointerAddress,
+        out string? className)
+    {
+        if (selfPointerAddress <= uint.MaxValue
+            && TryVaToRva(session, (uint)selfPointerAddress, out uint selfPointerRva))
+        {
+            foreach (VmtLayout layout in VmtLayouts)
+            {
+                ulong vmtRvaValue = (ulong)selfPointerRva + layout.SelfPointerDisplacement;
+                if (vmtRvaValue <= uint.MaxValue
+                    && session.Items.TryGetValue((uint)vmtRvaValue, out AnalysisItem? vmt)
+                    && vmt.Flags.HasFlag(AnalysisFlags.Vmt)
+                    && !string.IsNullOrWhiteSpace(vmt.Name))
+                {
+                    className = vmt.Name;
+                    return true;
+                }
+            }
         }
 
         className = null;
