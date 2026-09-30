@@ -1817,6 +1817,117 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisTypesGlobalFormVariableFromCreateFormCall()
+    {
+        byte[] image = new byte[0xc0];
+        byte[] code =
+        [
+            0x8d, 0x15, 0x20, 0x20, 0x40, 0x00,
+            0xb9, 0x34, 0x20, 0x40, 0x00,
+            0xe8, 0x10, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "create-form.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x1fc0, 0x80, 0x40, 0x80, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem vmt = session.GetOrAddItem(0x2020);
+        vmt.Name = "TMainForm";
+        vmt.SetFlags(AnalysisFlags.Vmt);
+        session.GetOrAddItem(0x1020).Name = "TApplication.CreateForm";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TMainForm", session.Items[0x2034].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesLocalFormVariableFromCreateFormCall()
+    {
+        byte[] image = new byte[0xc0];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8d, 0x15, 0x20, 0x20, 0x40, 0x00,
+            0x8d, 0x4d, 0xfc,
+            0xe8, 0x0f, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "create-form-local.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x1fc0, 0x80, 0x40, 0x80, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem vmt = session.GetOrAddItem(0x2020);
+        vmt.Name = "TMainForm";
+        vmt.SetFlags(AnalysisFlags.Vmt);
+        session.GetOrAddItem(0x1020).Name = "TApplication.CreateForm";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        CollectionAssert.AreEqual(
+            new[] { new StackLocalVariable(-4, 4, "TMainForm") },
+            session.Items[0x1000].StackLocalVariables.ToArray());
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesFormStackArgumentFromCreateFormCall()
+    {
+        byte[] image = new byte[0xc0];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8d, 0x15, 0x20, 0x20, 0x40, 0x00,
+            0x8d, 0x4d, 0x08,
+            0xe8, 0x0f, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "create-form-stack-argument.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x1fc0, 0x80, 0x40, 0x80, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem vmt = session.GetOrAddItem(0x2020);
+        vmt.Name = "TMainForm";
+        vmt.SetFlags(AnalysisFlags.Vmt);
+        session.GetOrAddItem(0x1020).Name = "TApplication.CreateForm";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        StackArgument argument = session.Items[0x1000].StackArguments.Single();
+        Assert.AreEqual(8u, argument.Offset);
+        Assert.AreEqual("TMainForm", argument.TypeName);
+    }
+
+    [TestMethod]
     public async Task AnalysisTypesGlobalVariantClearedByRuntimeHelper()
     {
         AnalysisSession session = CreateRuntimeVariableTypeSession("@VarClr", 0x402004);
@@ -1843,6 +1954,26 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.AreEqual("TRecord", session.Items[0x2004].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesUninitializedGlobalRecordFinalizedWithKnownRtti()
+    {
+        AnalysisSession session = CreateRuntimeVariableTypeSession(
+            "@FinalizeRecord",
+            0x402004,
+            typeInfoAddress: 0x402008,
+            zeroFillDataSection: true);
+        AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+        typeInfo.Name = "TRecord";
+        typeInfo.TypeKind = DelphiTypeKind.Record;
+        typeInfo.SetFlags(AnalysisFlags.Rtti);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TRecord", session.Items[0x2004].DataTypeCandidate);
+        Assert.IsTrue(session.Items[0x2004].Flags.HasFlag(AnalysisFlags.Data));
     }
 
     [TestMethod]
@@ -2022,6 +2153,291 @@ public sealed class StackInstructionAnalysisTests
         CollectionAssert.AreEqual(
             new[] { new StackLocalVariable(-8, 4, "TRecord") },
             session.Items[0x1000].StackLocalVariables.ToArray());
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesLocalVariableClearedByRuntimeHelpers()
+    {
+        foreach ((string helperName, string expectedType) in new[]
+        {
+            ("@IntfClear", "IInterface"),
+            ("@VarClr", "Variant")
+        })
+        {
+            AnalysisSession session = CreateLocalRuntimeClearSession(helperName);
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            CollectionAssert.AreEqual(
+                new[] { new StackLocalVariable(-8, 4, expectedType) },
+                session.Items[0x1000].StackLocalVariables.ToArray());
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesStackArgumentClearedByRuntimeHelpers()
+    {
+        foreach ((string helperName, string expectedType) in new[]
+        {
+            ("@IntfClear", "IInterface"),
+            ("@VarClr", "Variant")
+        })
+        {
+            AnalysisSession session = CreateStackRuntimeClearSession(helperName);
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            StackArgument argument = session.Items[0x1000].StackArguments.Single();
+            Assert.AreEqual(8u, argument.Offset);
+            Assert.AreEqual(expectedType, argument.TypeName);
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesLocalFixedArrayFinalizedWithKnownRttiAndCount()
+    {
+        byte[] image = new byte[0x50];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8d, 0x45, 0xf8,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0xb9, 0x01, 0x01, 0x00, 0x00,
+            0xe8, 0x0b, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "local-fixed-array-finalize.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x28, 0, 0x28, true),
+                new PeSection(".data", 0x2000, 0x20, 0x28, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = "@FinalizeArray";
+        AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+        typeInfo.Name = "TItem";
+        typeInfo.TypeKind = DelphiTypeKind.Record;
+        typeInfo.SetFlags(AnalysisFlags.Rtti);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        CollectionAssert.AreEqual(
+            new[] { new StackLocalVariable(-8, 4, "array[257] of TItem") },
+            session.Items[0x1000].StackLocalVariables.ToArray());
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesStackArgumentFinalizedWithKnownRtti()
+    {
+        byte[] image = new byte[0x60];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0xe8, 0x20, 0x00, 0x00, 0x00,
+            0x8b, 0x45, 0x08,
+            0x8b, 0x48, 0x04,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x30] = 0xc3;
+        AnalysisSession session = new(
+            "stack-record-finalize.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x20, 0x40, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1030).Name = "@FinalizeRecord";
+        AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+        typeInfo.Name = "TRecord";
+        typeInfo.TypeKind = DelphiTypeKind.Record;
+        typeInfo.SetFlags(AnalysisFlags.Rtti);
+        typeInfo.RecordSizeBytes = 8;
+        typeInfo.RecordFields = [new DelphiRttiRecordField("FValue", 4, 0x2010)];
+        AnalysisItem integerType = session.GetOrAddItem(0x2010);
+        integerType.Name = "Integer";
+        integerType.TypeKind = DelphiTypeKind.Integer;
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        StackArgument argument = session.Items[0x1000].StackArguments.Single();
+        Assert.AreEqual(8u, argument.Offset);
+        Assert.AreEqual("TRecord", argument.TypeName);
+        MemberAccessCandidate access = session.Items[0x1013].MemberAccessCandidates.Single();
+        Assert.AreEqual("TRecord", access.OwnerTypeName);
+        Assert.AreEqual("FValue", access.FieldName);
+        Assert.AreEqual("Integer", access.TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesStackArrayArgumentFinalizedWithKnownRttiAndCount()
+    {
+        byte[] image = new byte[0x60];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0xb9, 0x01, 0x01, 0x00, 0x00,
+            0xe8, 0x1b, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x30] = 0xc3;
+        AnalysisSession session = new(
+            "stack-fixed-array-finalize.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x20, 0x40, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1030).Name = "@FinalizeArray";
+        AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+        typeInfo.Name = "TItem";
+        typeInfo.TypeKind = DelphiTypeKind.Record;
+        typeInfo.SetFlags(AnalysisFlags.Rtti);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        StackArgument argument = session.Items[0x1000].StackArguments.Single();
+        Assert.AreEqual(8u, argument.Offset);
+        Assert.AreEqual("array[257] of TItem", argument.TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotTypeStackArgumentAfterItsRegisterIsClobbered()
+    {
+        byte[] image = new byte[0x60];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0x31, 0xc0,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0xe8, 0x06, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "stack-record-finalize-clobbered.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x20, 0x40, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = "@FinalizeRecord";
+        AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+        typeInfo.Name = "TRecord";
+        typeInfo.TypeKind = DelphiTypeKind.Record;
+        typeInfo.SetFlags(AnalysisFlags.Rtti);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        StackArgument argument = session.Items[0x1000].StackArguments.Single();
+        Assert.AreEqual(8u, argument.Offset);
+        Assert.IsNull(argument.TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisMarksStackArgumentPassedToDynamicArrayAddRef()
+    {
+        byte[] image = new byte[0x40];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0xe8, 0x0d, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "stack-dynarray-addref.exe",
+            image,
+            [new PeSection(".text", 0x1000, 0x20, 0, 0x20, true)],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = "@DynArrayAddRef";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("array of ?", session.Items[0x1000].StackArguments.Single().TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesLocalRecordTypeThroughFrameRelativeLea()
+    {
+        byte[] image = new byte[0x48];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8d, 0x45, 0xf8,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0xe8, 0x08, 0x00, 0x00, 0x00,
+            0x8d, 0x4d, 0xf8,
+            0x8b, 0x41, 0x04, 0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "local-record-field-access.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x28, 0, 0x28, true),
+                new PeSection(".data", 0x2000, 0x20, 0x28, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = "@FinalizeRecord";
+        AnalysisItem recordType = session.GetOrAddItem(0x2008);
+        recordType.Name = "TRecord";
+        recordType.TypeKind = DelphiTypeKind.Record;
+        recordType.SetFlags(AnalysisFlags.Rtti);
+        recordType.RecordSizeBytes = 8;
+        recordType.RecordFields = [new DelphiRttiRecordField("FValue", 4, 0x2010)];
+        AnalysisItem integerType = session.GetOrAddItem(0x2010);
+        integerType.Name = "Integer";
+        integerType.TypeKind = DelphiTypeKind.Integer;
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1013].MemberAccessCandidates.Single();
+        Assert.AreEqual("TRecord", access.OwnerTypeName);
+        Assert.AreEqual("FValue", access.FieldName);
+        Assert.AreEqual("Integer", access.TypeName);
     }
 
     [TestMethod]
@@ -2223,6 +2639,60 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisTypesFormVariableFromResolvedVirtualCreateFormCall()
+    {
+        AnalysisSession session = CreateVirtualMethodSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xba, 0x10, 0x20, 0x40, 0x00,
+                0xb9, 0x18, 0x20, 0x40, 0x00,
+                0xff, 0x50, 0x04,
+                0xc3
+            ]);
+        AnalysisItem applicationVmt = session.Items[0x2000];
+        applicationVmt.Name = "TApplication";
+        applicationVmt.VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1030)];
+        AnalysisItem formVmt = session.GetOrAddItem(0x2010);
+        formVmt.Name = "TForm";
+        formVmt.SetFlags(AnalysisFlags.Vmt);
+        session.GetOrAddItem(0x1030).Name = "TApplication.CreateForm";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items[0x100f].CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
+        Assert.AreEqual("TForm", session.Items[0x2018].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPreservesKnownReturnTypeFromResolvedIndirectCall()
+    {
+        AnalysisSession session = CreateVirtualMethodSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xff, 0x50, 0x04,
+                0xff, 0x50, 0x08,
+                0xc3
+            ]);
+        AnalysisItem classVmt = session.Items[0x2000];
+        classVmt.Name = "TChild";
+        classVmt.VirtualMethods =
+        [
+            new DelphiVmtVirtualMethod(4, 0x1030),
+            new DelphiVmtVirtualMethod(8, 0x1034)
+        ];
+        session.GetOrAddItem(0x1030).Name = "@ClassCreate";
+        session.GetOrAddItem(0x1034).Name = "TChild.GetValue";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items[0x1008].CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1034));
+    }
+
+    [TestMethod]
     public async Task AnalysisResolvesInheritedIndirectVirtualCallFromParentVmt()
     {
         AnalysisSession session = CreateVirtualMethodSession(
@@ -2270,6 +2740,22 @@ public sealed class StackInstructionAnalysisTests
         Assert.AreEqual(8, access.Offset);
         Assert.AreEqual("FCount", access.FieldName);
         Assert.AreEqual("Integer", access.TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisResolvesClassFieldAccessInsideFieldRange()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0xb8, 0x00, 0x20, 0x40, 0x00, 0xe8, 0x16, 0x00, 0x00, 0x00, 0x89, 0xc2, 0x8b, 0x4a, 0x0a, 0xc3],
+            useParentField: true);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x100c].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual(10, access.Offset);
+        Assert.AreEqual("FCount", access.FieldName);
     }
 
     [TestMethod]
@@ -2352,10 +2838,43 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisPropagatesInlineRecordTypeThroughFieldLea()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x8d, 0x50, 0x08,
+                0x8b, 0x4a, 0x04,
+                0xc3
+            ],
+            useParentField: false);
+        AnalysisItem recordType = session.Items[0x2018];
+        recordType.Name = "TInline";
+        recordType.TypeKind = DelphiTypeKind.Record;
+        recordType.RecordSizeBytes = 8;
+        recordType.RecordFields = [new DelphiRttiRecordField("FValue", 4, 0x2020)];
+        AnalysisItem integerType = session.GetOrAddItem(0x2020);
+        integerType.Name = "Integer";
+        integerType.TypeKind = DelphiTypeKind.Integer;
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate addressAccess = session.Items[0x100a].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", addressAccess.OwnerTypeName);
+        Assert.AreEqual("FCount", addressAccess.FieldName);
+        MemberAccessCandidate valueAccess = session.Items[0x100d].MemberAccessCandidates.Single();
+        Assert.AreEqual("TInline", valueAccess.OwnerTypeName);
+        Assert.AreEqual("FValue", valueAccess.FieldName);
+        Assert.AreEqual("Integer", valueAccess.TypeName);
+    }
+
+    [TestMethod]
     public async Task AnalysisResolvesNestedRecordFieldFromCombinedObjectOffset()
     {
         AnalysisSession session = CreateClassFieldAccessSession(
-            [0xb8, 0x00, 0x20, 0x40, 0x00, 0xe8, 0x16, 0x00, 0x00, 0x00, 0x89, 0xc2, 0x8b, 0x42, 0x0c, 0xc3],
+            [0xb8, 0x00, 0x20, 0x40, 0x00, 0xe8, 0x16, 0x00, 0x00, 0x00, 0x89, 0xc2, 0x8b, 0x42, 0x0e, 0xc3],
             useParentField: false);
         AnalysisItem recordTypeInfo = session.Items[0x2018];
         recordTypeInfo.TypeKind = DelphiTypeKind.Record;
@@ -3058,7 +3577,8 @@ public sealed class StackInstructionAnalysisTests
         uint variableAddress,
         bool overwriteEax = false,
         uint? typeInfoAddress = null,
-        uint? ecxValue = null)
+        uint? ecxValue = null,
+        bool zeroFillDataSection = false)
     {
         byte[] image = new byte[0x40];
         image[0] = 0xb8;
@@ -3104,11 +3624,64 @@ public sealed class StackInstructionAnalysisTests
         AnalysisSession session = new(
             "runtime-type.exe",
             image,
-            [
-                new PeSection(".text", 0x1000, 0x20, 0, 0x20, true),
-                new PeSection(".data", 0x2000, 0x20, 0x20, 0x20, false)
-            ],
+            zeroFillDataSection
+                ?
+                [
+                    new PeSection(".text", 0x1000, 0x20, 0, 0x20, true),
+                    new PeSection(".bss", 0x2000, 0x20, 0x20, 0, false)
+                ]
+                :
+                [
+                    new PeSection(".text", 0x1000, 0x20, 0, 0x20, true),
+                    new PeSection(".data", 0x2000, 0x20, 0x20, 0x20, false)
+                ],
             0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = helperName;
+        return session;
+    }
+
+    private static AnalysisSession CreateLocalRuntimeClearSession(string helperName)
+    {
+        byte[] image = new byte[0x30];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8d, 0x45, 0xf8,
+            0xe8, 0x0d, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "local-runtime-clear.exe",
+            image,
+            [new PeSection(".text", 0x1000, 0x20, 0, 0x20, true)])
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = helperName;
+        return session;
+    }
+
+    private static AnalysisSession CreateStackRuntimeClearSession(string helperName)
+    {
+        byte[] image = new byte[0x30];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0xe8, 0x0d, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "stack-runtime-clear.exe",
+            image,
+            [new PeSection(".text", 0x1000, 0x20, 0, 0x20, true)])
         {
             EntryPointRva = 0x1000
         };
@@ -3374,12 +3947,14 @@ public sealed class StackInstructionAnalysisTests
         AnalysisItem childVmt = session.GetOrAddItem(0x2000);
         childVmt.Name = "TChild";
         childVmt.SetFlags(AnalysisFlags.Vmt);
+        childVmt.ClassInstanceSizeBytes = 20;
         if (useParentField)
         {
             childVmt.ParentAddress = 0x2010;
             AnalysisItem parentVmt = session.GetOrAddItem(0x2010);
             parentVmt.Name = "TBase";
             parentVmt.SetFlags(AnalysisFlags.Vmt);
+            parentVmt.ClassInstanceSizeBytes = 12;
             parentVmt.Fields = [new DelphiVmtField("FCount", 8, 0x2018)];
             session.GetOrAddItem(0x2018).Name = "Integer";
         }
