@@ -87,6 +87,24 @@ public sealed class ArchitectureTests
         }
     }
 
+    private sealed class AdjacentBranchTargetDecoder : IInstructionDecoder
+    {
+        public DecodedInstruction Decode(ReadOnlySpan<byte> bytes, ulong address, int bitness)
+        {
+            if (((address - 0x1000) % 3) == 0)
+            {
+                return new DecodedInstruction(
+                    address,
+                    1,
+                    "Jne",
+                    address + 1,
+                    InstructionFlowControl.ConditionalBranch);
+            }
+
+            return new DecodedInstruction(address, 1, "Ret", null, InstructionFlowControl.Return);
+        }
+    }
+
     private sealed class DirectProcedureTargetDecoder : IInstructionDecoder
     {
         public DecodedInstruction Decode(ReadOnlySpan<byte> bytes, ulong address, int bitness)
@@ -227,7 +245,7 @@ public sealed class ArchitectureTests
         Assert.IsTrue(progress.Values.Any(value => value.Phase == "VmtScan"));
         Assert.AreEqual("CodeScan", progress.Values[^1].Phase);
         Assert.AreEqual(1, progress.Values[^1].Completed);
-        Assert.AreEqual(64, progress.Values[^1].Total);
+        Assert.AreEqual(16384, progress.Values[^1].Total);
     }
 
     [TestMethod]
@@ -511,6 +529,7 @@ public sealed class ArchitectureTests
         Assert.AreEqual("TTestClass", vmt.Name);
         Assert.IsTrue(vmt.Flags.HasFlag(AnalysisFlags.Vmt));
         Assert.IsTrue(vmt.Flags.HasFlag(AnalysisFlags.Data));
+        Assert.AreEqual(0x20U, vmt.ClassInstanceSizeBytes);
         Assert.AreEqual(parentVmtRva, vmt.ParentAddress);
         Assert.IsTrue(session.Items[classNameRva].Flags.HasFlag(AnalysisFlags.Data));
         Assert.IsTrue(session.Items[typeInfoRva].Flags.HasFlag(AnalysisFlags.Rtti));
@@ -1366,7 +1385,7 @@ public sealed class ArchitectureTests
         Assert.IsFalse(session.Items[0x1009].Flags.HasFlag(AnalysisFlags.ProcedureStart));
         AnalysisProgress finalProgress = progress.Values.Last(value => value.Phase == "CodeScan");
         Assert.AreEqual(2, finalProgress.Completed);
-        Assert.AreEqual(64, finalProgress.Total);
+        Assert.AreEqual(16384, finalProgress.Total);
     }
 
     [TestMethod]
@@ -1582,7 +1601,7 @@ public sealed class ArchitectureTests
     [TestMethod]
     public async Task BasicAnalysisReportsProcedureStartLimit()
     {
-        const int procedureCount = 70;
+        const int procedureCount = 16390;
         AnalysisSession session = new(
             "sample.exe",
             new byte[procedureCount * 2],
@@ -1594,10 +1613,35 @@ public sealed class ArchitectureTests
 
         AnalysisResult result = await service.AnalyzeAsync(session, null, CancellationToken.None);
 
-        Assert.AreEqual(64, session.DisassemblyLines.Count / 2);
+        Assert.AreEqual(16384, session.DisassemblyLines.Count / 2);
         CollectionAssert.Contains(
             result.Diagnostics.ToArray(),
-            "Code scan stopped after 64 code starts.");
+            "Code scan stopped after 16384 code starts.");
+    }
+
+    [TestMethod]
+    public async Task BasicAnalysisDoesNotCountAlreadyDecodedBranchTargetsAgainstStartLimit()
+    {
+        const int procedureCount = 10000;
+        AnalysisSession session = new(
+            "sample.exe",
+            new byte[procedureCount * 3],
+            [new PeSection(".text", 0x1000, procedureCount * 3u, 0, procedureCount * 3u, true)])
+        {
+            EntryPointRva = 0x1000
+        };
+        for (uint index = 1; index < procedureCount; index++)
+        {
+            session.GetOrAddItem(0x1000 + index * 3).SetFlags(AnalysisFlags.ProcedureStart);
+        }
+
+        BasicAnalysisService service = new(new AdjacentBranchTargetDecoder());
+
+        AnalysisResult result = await service.AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(procedureCount * 2, session.DisassemblyLines.Count);
+        Assert.IsFalse(result.Diagnostics.Any(diagnostic =>
+            diagnostic.StartsWith("Code scan stopped after", StringComparison.Ordinal)));
     }
 
     [TestMethod]
@@ -1651,10 +1695,19 @@ public sealed class ArchitectureTests
     [TestMethod]
     public async Task BasicAnalysisReportsInstructionLimit()
     {
+        const int instructionLimit = 4096;
         AnalysisSession session = new(
             "sample.exe",
-            new byte[600],
-            [new PeSection(".text", 0x1000, 600, 0, 600, true)])
+            new byte[instructionLimit + 88],
+            [
+                new PeSection(
+                    ".text",
+                    0x1000,
+                    instructionLimit + 88u,
+                    0,
+                    instructionLimit + 88u,
+                    true)
+            ])
         {
             EntryPointRva = 0x1000
         };
@@ -1662,10 +1715,10 @@ public sealed class ArchitectureTests
 
         AnalysisResult result = await service.AnalyzeAsync(session, null, CancellationToken.None);
 
-        Assert.AreEqual(512, session.Items.Count);
+        Assert.AreEqual(instructionLimit, session.Items.Count);
         CollectionAssert.Contains(
             result.Diagnostics.ToArray(),
-            "Entry-point disassembly stopped after 512 instructions.");
+            $"Entry-point disassembly stopped after {instructionLimit} instructions.");
     }
 
     [TestMethod]
