@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IDR.Core</RootNamespace>
+  </PropertyGroup>
+</Project>

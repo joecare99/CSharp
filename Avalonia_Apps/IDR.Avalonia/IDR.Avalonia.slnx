@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="src\IDR.Core\IDR.Core.csproj" />
+  <Project Path="src\IDR.Infrastructure\IDR.Infrastructure.csproj" />
+  <Project Path="src\IDR.App\IDR.App.csproj" />
+  <Project Path="tests\IDR.Core.Tests\IDR.Core.Tests.csproj" />
+  <Project Path="tests\IDR.Infrastructure.Tests\IDR.Infrastructure.Tests.csproj" />
+  <Project Path="tests\IDR.App.Tests\IDR.App.Tests.csproj" />
+</Solution>

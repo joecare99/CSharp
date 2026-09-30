@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IDR.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IDR.Core\IDR.Core.csproj" />
+    <PackageReference Include="Iced" />
+  </ItemGroup>
+</Project>
