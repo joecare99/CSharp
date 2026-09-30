@@ -171,6 +171,7 @@ public sealed class MainWindowViewModelTests
         AnalysisSession session = new("sample.exe", ReadOnlyMemory<byte>.Empty);
         AnalysisItem item = session.GetOrAddItem(0x1000);
         item.RecordSizeBytes = 12;
+        item.ClassInstanceSizeBytes = 24;
         item.RecordFields = [new DelphiRttiRecordField("f4", 4, 0x2000)];
         session.GetOrAddItem(0x2000).Name = "Integer";
         item.MemberAccessCandidates =
@@ -182,6 +183,7 @@ public sealed class MainWindowViewModelTests
 
         Assert.AreEqual("TForm.FCount (+0x8): Integer", viewModel.MemberAccessCandidates);
         Assert.AreEqual("12 bytes", viewModel.RecordSize);
+        Assert.AreEqual("24 bytes", viewModel.ClassInstanceSize);
         Assert.AreEqual("f4 @ 4: Integer", viewModel.RecordFields);
     }
 

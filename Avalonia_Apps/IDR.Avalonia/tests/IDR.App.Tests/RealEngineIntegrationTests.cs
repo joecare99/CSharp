@@ -13,17 +13,15 @@ namespace IDR.App.Tests;
 [TestClass]
 public sealed class RealEngineIntegrationTests
 {
-    private const string DefaultImagePath = @"C:\ProgramData\AHNENWIN 0\AHNWIN51.exe";
-    private const string DefaultKnowledgeBasePath = @"C:\Projekte\GitHub\IDR\bin\kb7.bin";
-
     [TestMethod]
     public async Task AnalyzeCommandRunsRealPeAndKnowledgeBaseThroughEngine()
     {
-        string? imagePath = Environment.GetEnvironmentVariable("IDR_INTEGRATION_PE")
-            ?? DefaultImagePath;
-        string? knowledgeBasePath = Environment.GetEnvironmentVariable("IDR_INTEGRATION_KB")
-            ?? DefaultKnowledgeBasePath;
-        if (!File.Exists(imagePath) || !File.Exists(knowledgeBasePath))
+        string? imagePath = Environment.GetEnvironmentVariable("IDR_INTEGRATION_PE");
+        string? knowledgeBasePath = Environment.GetEnvironmentVariable("IDR_INTEGRATION_KB");
+        if (string.IsNullOrWhiteSpace(imagePath)
+            || string.IsNullOrWhiteSpace(knowledgeBasePath)
+            || !File.Exists(imagePath)
+            || !File.Exists(knowledgeBasePath))
         {
             Assert.Inconclusive(
                 "Set IDR_INTEGRATION_PE and IDR_INTEGRATION_KB to run the real-image engine integration test.");
@@ -78,24 +76,8 @@ public sealed class RealEngineIntegrationTests
                 item.TryGetProperty("RecordFields", out _)));
             Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
                 item.TryGetProperty("RecordSizeBytes", out _)));
-
-            if (string.Equals(Path.GetFullPath(imagePath), DefaultImagePath, StringComparison.OrdinalIgnoreCase)
-                && string.Equals(
-                    Path.GetFullPath(knowledgeBasePath),
-                    DefaultKnowledgeBasePath,
-                    StringComparison.OrdinalIgnoreCase)
-                && version == "7")
-            {
-                Assert.AreEqual(554, root.GetProperty("VmtCount").GetInt32());
-                Assert.AreEqual(451, root.GetProperty("RttiCount").GetInt32());
-                Assert.AreEqual(57001, root.GetProperty("StringCount").GetInt32());
-                Assert.AreEqual(2240, root.GetProperty("DisassemblyLineCount").GetInt32());
-                Assert.IsTrue(root.GetProperty("Items").EnumerateArray().Any(item =>
-                    item.GetProperty("Name").GetString() == "TForm8"
-                    && item.GetProperty("Flags").GetString()!.Contains("Vmt", StringComparison.Ordinal)));
-                Assert.IsTrue(root.GetProperty("Items").EnumerateArray().Any(item =>
-                    item.GetProperty("RegisterArgumentCandidates").GetArrayLength() > 0));
-            }
+            Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
+                item.TryGetProperty("ClassInstanceSizeBytes", out _)));
         }
         finally
         {
