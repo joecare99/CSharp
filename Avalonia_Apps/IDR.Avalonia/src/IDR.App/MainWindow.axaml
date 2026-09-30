@@ -49,6 +49,7 @@
                 <dg:DataGridTextColumn Header="Flags" Binding="{Binding Flags}" />
                 <dg:DataGridTextColumn Header="Type kind" Binding="{Binding TypeKind}" />
                 <dg:DataGridTextColumn Header="Record size" Binding="{Binding RecordSize}" />
+                <dg:DataGridTextColumn Header="Class size" Binding="{Binding ClassInstanceSize}" />
                 <dg:DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                 <dg:DataGridTextColumn Header="Unit" Binding="{Binding UnitName}" />
                 <dg:DataGridTextColumn Header="Class VMT" Binding="{Binding ClassVmt}" />

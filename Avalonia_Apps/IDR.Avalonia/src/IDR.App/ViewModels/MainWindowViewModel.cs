@@ -440,6 +440,9 @@ public sealed record AnalysisItemViewModel(
         RecordSize = item.RecordSizeBytes is uint recordSizeBytes
             ? $"{recordSizeBytes} bytes"
             : string.Empty;
+        ClassInstanceSize = item.ClassInstanceSizeBytes is uint classInstanceSizeBytes
+            ? $"{classInstanceSizeBytes} bytes"
+            : string.Empty;
         UnitName = item.UnitName ?? string.Empty;
         ClassVmt = item.ClassVmtAddress is uint classVmtAddress
             ? $"0x{classVmtAddress:X8}"
@@ -505,6 +508,8 @@ public sealed record AnalysisItemViewModel(
     public string TypeKind { get; init; } = string.Empty;
 
     public string RecordSize { get; init; } = string.Empty;
+
+    public string ClassInstanceSize { get; init; } = string.Empty;
 
     public string UnitName { get; init; } = string.Empty;
 
