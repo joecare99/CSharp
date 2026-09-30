@@ -27,7 +27,7 @@
     <PackageVersion Include="FontPickerAvalonia" Version="0.10.18.1" />
     <PackageVersion Include="Avalonia.Svg.Skia" Version="11.3.0" />
     <PackageVersion Include="Avalonia.ReactiveUI" Version="11.3.8" />
-    <PackageVersion Include="Simplecto.Avalonia.RichTextBox" Version="1.11.2" />
+    <PackageVersion Include="Simplecto.Avalonia.RichTextBox" Version="1.11.3" />
     <PackageVersion Include="MessageBox.Avalonia" Version="12.0.0" />
     <PackageVersion Include="MsBox.Avalonia" Version="3.0.0-rc2" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -41,7 +41,7 @@
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="MSTest" Version="4.4.1" />
     <PackageVersion Include="FluentAssertions" Version="8.11.0" />
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.DiagnosticsHub.BenchmarkDotNetDiagnosers" Version="18.7.37220.1" />
