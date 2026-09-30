@@ -1,0 +1,108 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dg="using:Avalonia.Controls"
+        xmlns:vm="using:IDR.App.ViewModels"
+        x:Class="IDR.App.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="900"
+        Height="600"
+        Title="{Binding WindowTitle}">
+  <Grid RowDefinitions="Auto,*">
+    <Menu>
+      <MenuItem Header="_File">
+        <MenuItem Header="_Open..." Command="{Binding OpenCommand}" />
+        <MenuItem Header="_Cancel" Command="{Binding CancelCommand}" />
+      </MenuItem>
+    </Menu>
+    <Grid Grid.Row="1" Margin="16" RowDefinitions="Auto,Auto,Auto,Auto,*" RowSpacing="8">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Open EXE/DLL" Command="{Binding OpenCommand}" />
+        <Button Content="Cancel" Command="{Binding CancelCommand}" />
+        <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" />
+      </StackPanel>
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="16">
+        <TextBlock Text="{Binding SourcePath}" TextTrimming="CharacterEllipsis" />
+        <TextBlock Text="{Binding DetectedVersionText}" />
+        <TextBlock Text="{Binding KnowledgeBaseText}" />
+      </StackPanel>
+      <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
+        <ComboBox Width="180"
+                  ItemsSource="{Binding VersionOptions}"
+                  SelectedItem="{Binding SelectedVersion}"
+                  DisplayMemberBinding="{Binding DisplayName}" />
+        <Button Content="Load Knowledge Base"
+                Command="{Binding LoadKnowledgeBaseCommand}" />
+      </StackPanel>
+      <TextBlock Grid.Row="3" Text="{Binding DiagnosticText}" Foreground="OrangeRed" TextWrapping="Wrap" />
+      <TabControl Grid.Row="4">
+        <TabItem Header="Analysis items">
+          <Grid RowDefinitions="Auto,*" RowSpacing="6">
+            <Button Content="Follow cross-reference"
+                    HorizontalAlignment="Left"
+                    Command="{Binding FollowCrossReferenceCommand}" />
+            <dg:DataGrid Grid.Row="1"
+                         ItemsSource="{Binding Items}"
+                         SelectedItem="{Binding SelectedAnalysisItem}"
+                         AutoGenerateColumns="False">
+              <dg:DataGrid.Columns>
+                <dg:DataGridTextColumn Header="Address" Binding="{Binding Address}" />
+                <dg:DataGridTextColumn Header="Flags" Binding="{Binding Flags}" />
+                <dg:DataGridTextColumn Header="Type kind" Binding="{Binding TypeKind}" />
+                <dg:DataGridTextColumn Header="Record size" Binding="{Binding RecordSize}" />
+                <dg:DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <dg:DataGridTextColumn Header="Unit" Binding="{Binding UnitName}" />
+                <dg:DataGridTextColumn Header="Class VMT" Binding="{Binding ClassVmt}" />
+                <dg:DataGridTextColumn Header="Parent RTTI" Binding="{Binding ParentTypeInfo}" />
+                <dg:DataGridTextColumn Header="Properties" Binding="{Binding Properties}" />
+                <dg:DataGridTextColumn Header="Methods" Binding="{Binding Methods}" />
+                <dg:DataGridTextColumn Header="Fields" Binding="{Binding Fields}" />
+                <dg:DataGridTextColumn Header="Record fields" Binding="{Binding RecordFields}" />
+                <dg:DataGridTextColumn Header="Field accesses" Binding="{Binding MemberAccessCandidates}" />
+                <dg:DataGridTextColumn Header="Interfaces" Binding="{Binding Interfaces}" />
+                <dg:DataGridTextColumn Header="Dynamic methods" Binding="{Binding DynamicMethods}" />
+                <dg:DataGridTextColumn Header="Automated methods" Binding="{Binding AutoMethods}" />
+                <dg:DataGridTextColumn Header="Initialized fields" Binding="{Binding InitializationFields}" />
+                <dg:DataGridTextColumn Header="Virtual slots" Binding="{Binding VirtualMethods}" />
+                <dg:DataGridTextColumn Header="Exception handlers" Binding="{Binding ExceptionHandlers}" />
+                <dg:DataGridTextColumn Header="Exception region handler" Binding="{Binding ExceptionRegionHandler}" />
+                <dg:DataGridTextColumn Header="Finally region end" Binding="{Binding FinallyRegionEnd}" />
+                <dg:DataGridTextColumn Header="Int64 comparison end" Binding="{Binding Int64ComparisonEnd}" />
+                <dg:DataGridTextColumn Header="Procedure size (bytes)" Binding="{Binding ProcedureSizeBytes}" />
+                <dg:DataGridTextColumn Header="Return stack bytes" Binding="{Binding ReturnStackBytes}" />
+                <dg:DataGridTextColumn Header="Return type candidate" Binding="{Binding ReturnTypeCandidate}" />
+                <dg:DataGridTextColumn Header="Data type candidate" Binding="{Binding DataTypeCandidate}" />
+                <dg:DataGridTextColumn Header="Frame pointer" Binding="{Binding UsesFramePointer}" />
+                <dg:DataGridTextColumn Header="Stack delta (bytes)" Binding="{Binding StackPointerDeltaBytes}" />
+                <dg:DataGridTextColumn Header="Stack arguments" Binding="{Binding StackArguments}" />
+                <dg:DataGridTextColumn Header="Stack local variables" Binding="{Binding StackLocalVariables}" />
+                <dg:DataGridTextColumn Header="Register argument candidates" Binding="{Binding RegisterArgumentCandidates}" />
+                <dg:DataGridTextColumn Header="Parent VMT" Binding="{Binding ParentVmt}" />
+                <dg:DataGridTextColumn Header="Outgoing" Binding="{Binding CrossReferenceCount}" />
+                <dg:DataGridTextColumn Header="Incoming" Binding="{Binding IncomingCrossReferenceCount}" />
+                <dg:DataGridTextColumn Header="Xref targets" Binding="{Binding CrossReferenceTargets}" />
+              </dg:DataGrid.Columns>
+            </dg:DataGrid>
+          </Grid>
+        </TabItem>
+        <TabItem Header="Entry-point disassembly">
+          <Grid RowDefinitions="Auto,*" RowSpacing="6">
+            <Button Content="Follow branch"
+                    HorizontalAlignment="Left"
+                    Command="{Binding FollowBranchCommand}" />
+            <dg:DataGrid Grid.Row="1"
+                         ItemsSource="{Binding DisassemblyLines}"
+                         SelectedItem="{Binding SelectedDisassemblyLine}"
+                         AutoGenerateColumns="False">
+              <dg:DataGrid.Columns>
+                <dg:DataGridTextColumn Header="Address" Binding="{Binding Address}" />
+                <dg:DataGridTextColumn Header="Bytes" Binding="{Binding Bytes}" />
+                <dg:DataGridTextColumn Header="Instruction" Binding="{Binding FormattedText}" />
+                <dg:DataGridTextColumn Header="Branch target" Binding="{Binding BranchTarget}" />
+              </dg:DataGrid.Columns>
+            </dg:DataGrid>
+          </Grid>
+        </TabItem>
+      </TabControl>
+    </Grid>
+  </Grid>
+</Window>
