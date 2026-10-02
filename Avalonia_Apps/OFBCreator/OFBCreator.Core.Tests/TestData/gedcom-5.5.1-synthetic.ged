@@ -1,0 +1,27 @@
+0 HEAD
+1 CHAR UTF-8
+1 GEDC
+2 VERS 5.5.1
+0 @I1@ INDI
+1 NAME Ada /Beispiel/
+2 GIVN Ada
+2 SURN Beispiel
+1 SEX F
+1 NOTE synthetische Notiz
+2 CONT zweite Zeile
+1 FAMS @F1@
+0 @I2@ INDI
+1 NAME Emil /Muster/
+1 SEX M
+1 FAMS @F1@
+0 @I3@ INDI
+1 NAME Kind /Beispiel/
+1 FAMC @F1@
+0 @F1@ FAM
+1 HUSB @I2@
+1 WIFE @I1@
+1 CHIL @I3@
+1 MARR
+2 DATE 1 JAN 2000
+2 PLAC München
+0 TRLR
