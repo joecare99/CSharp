@@ -62,6 +62,56 @@ public class OFBFamilySorterTests
     }
 
     [TestMethod]
+    public void SortAndNumber_UsesMostFrequentChildSurnameAsSingleFamilyName()
+    {
+        var family = CreateFamilyWithChildren("Müller", "Schmidt", "Schmidt");
+
+        var result = new OFBFamilySorter().SortAndNumber(new[] { family });
+
+        Assert.AreEqual("Schmidt", result.Single().FamilyName);
+    }
+
+    [TestMethod]
+    public void SortAndNumber_WhenChildSurnameCountsTie_UsesAlphabeticallyFirstName()
+    {
+        var family = CreateFamilyWithChildren("Zeller", "Adler");
+
+        var result = new OFBFamilySorter().SortAndNumber(new[] { family });
+
+        Assert.AreEqual("Adler", result.Single().FamilyName);
+    }
+
+    [TestMethod]
+    public void SortAndNumber_WithoutChildren_FallsBackToHusbandThenWifeSurname()
+    {
+        var family = Substitute.For<IGenFamily>();
+        var husband = Substitute.For<IGenPerson>();
+        husband.Surname.Returns("Vatername");
+        var wife = Substitute.For<IGenPerson>();
+        wife.Surname.Returns("Muttername");
+        family.Husband.Returns(husband);
+        family.Wife.Returns(wife);
+        family.Children.Returns(new TestIndexedList<IGenPerson>());
+
+        var result = new OFBFamilySorter().SortAndNumber(new[] { family });
+
+        Assert.AreEqual("Vatername", result.Single().FamilyName);
+    }
+
+    [TestMethod]
+    public void SortAndNumber_UsesGermanAlphabeticalOrderForUmlauts()
+    {
+        var result = new OFBFamilySorter().SortAndNumber(new[]
+        {
+            CreateFamilyWithChildren("Öster"),
+            CreateFamilyWithChildren("Ober"),
+            CreateFamilyWithChildren("Müller")
+        });
+
+        CollectionAssert.AreEqual(new[] { "Müller", "Ober", "Öster" }, result.Select(family => family.FamilyName).ToArray());
+    }
+
+    [TestMethod]
     public void SortAndNumber_ShouldSortByFamilyNameThenDate()
     {
         // Arrange
@@ -250,6 +300,23 @@ public class OFBFamilySorterTests
             family.MarriageDate.Returns(marriageDateObj);
         }
 
+        return family;
+    }
+
+    private static IGenFamily CreateFamilyWithChildren(params string[] childSurnames)
+    {
+        var family = Substitute.For<IGenFamily>();
+        var children = childSurnames.Select(surname =>
+        {
+            var child = Substitute.For<IGenPerson>();
+            child.Surname.Returns(surname);
+            return child;
+        }).ToList();
+        var indexedChildren = new TestIndexedList<IGenPerson>();
+        foreach (var child in children)
+            indexedChildren.Add(child);
+        family.Children.Returns(indexedChildren);
+        family.ChildCount.Returns(children.Count);
         return family;
     }
 

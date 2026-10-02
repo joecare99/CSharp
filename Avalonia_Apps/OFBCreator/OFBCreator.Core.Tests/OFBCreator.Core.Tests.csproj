@@ -31,6 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestData\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageVersion Update="MSTest" Version="4.4.1" />
   </ItemGroup>

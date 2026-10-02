@@ -75,6 +75,46 @@ public class FamilyNameGroupBuilderTests
         Assert.AreEqual(2, group!.Count);
     }
 
+    [TestMethod]
+    public void BuildGroups_WithSingleParentSurnameTransition_ShouldKeepGroupsSeparate()
+    {
+        var transitionFamily = CreateFamily("Alt", "Neu", "Neu");
+        var altFamily = CreateFamilyWithSurname("Alt");
+        var neuFamily = CreateFamilyWithSurname("Neu");
+        var builder = new FamilyNameGroupBuilder();
+
+        builder.BuildGroups(new[] { transitionFamily, altFamily, neuFamily });
+
+        Assert.AreEqual(2, builder.GroupKeys.Count);
+    }
+
+    [TestMethod]
+    public void BuildGroups_WithRepeatedParentSurnameTransition_ShouldMergeGroups()
+    {
+        var firstTransition = CreateFamily("Alt", "Neu", "Neu");
+        var secondTransition = CreateFamily("Alt", "Neu", "Neu");
+        var altFamily = CreateFamilyWithSurname("Alt");
+        var neuFamily = CreateFamilyWithSurname("Neu");
+        var builder = new FamilyNameGroupBuilder();
+
+        builder.BuildGroups(new[] { firstTransition, secondTransition, altFamily, neuFamily });
+
+        Assert.AreEqual(1, builder.GroupKeys.Count);
+        Assert.AreEqual(4, builder.GetGroup(builder.GroupKeys.Single())!.Count);
+    }
+
+    [TestMethod]
+    public void BuildGroups_WithAcousticallyRelatedFamilySurnames_ShouldMergeGroups()
+    {
+        var mueller = CreateFamilyWithSurname("Müller");
+        var muellerVariant = CreateFamilyWithSurname("Mueller");
+        var builder = new FamilyNameGroupBuilder();
+
+        builder.BuildGroups(new[] { mueller, muellerVariant });
+
+        Assert.AreEqual(1, builder.GroupKeys.Count);
+    }
+
     #endregion
 
     #region Phase 2: Parent→Child phonetic bridge detection
@@ -161,7 +201,8 @@ public class FamilyNameGroupBuilderTests
         father.Surname.Returns("Heis");
         var child = Substitute.For<IGenPerson>();
         child.Surname.Returns("Schmidt");
-        var childrenList = new TestIndexedList<IGenPerson> { child };
+        var childrenList = new TestIndexedList<IGenPerson>();
+        childrenList.Add(child);
         var family = Substitute.For<IGenFamily>();
         family.Husband.Returns(father);
         family.Wife.Returns((IGenPerson)null!);
@@ -218,7 +259,7 @@ public class FamilyNameGroupBuilderTests
     }
 
     [TestMethod]
-    public void BuildGroups_WithSeparatePhoneticLineages_ShouldStaySeparate()
+    public void BuildGroups_WithPhoneticallyCloseSurnames_ShouldBeGroupedTogether()
     {
         // Test: "Heiss → Heiß → Heuss" and "Heis → Heus → Hös" are two separate groups
         var builder = new FamilyNameGroupBuilder();
@@ -273,8 +314,8 @@ public class FamilyNameGroupBuilderTests
 
         builder.BuildGroups(new List<IGenFamily> { l1g1, l1g2, l1g3, l2g1, l2g2, l2g3 });
 
-        // Two separate groups: Lineage 1 (Heis/Heus/Hös) and Lineage 2 (Heiss/Heiß/Heuss)
-        Assert.AreEqual(2, builder.GroupKeys.Count);
+        // All surnames are within the configured acoustic-distance threshold.
+        Assert.AreEqual(1, builder.GroupKeys.Count);
     }
 
     [TestMethod]
@@ -339,6 +380,28 @@ public class FamilyNameGroupBuilderTests
         family.Children.Returns(childrenList);
         family.ChildCount.Returns(1);
 
+        return family;
+    }
+
+    private static IGenFamily CreateFamily(string husbandSurname, string wifeSurname, params string[] childSurnames)
+    {
+        var husband = Substitute.For<IGenPerson>();
+        husband.Surname.Returns(husbandSurname);
+        var wife = Substitute.For<IGenPerson>();
+        wife.Surname.Returns(wifeSurname);
+        var children = new TestIndexedList<IGenPerson>();
+        foreach (var childSurname in childSurnames)
+        {
+            var child = Substitute.For<IGenPerson>();
+            child.Surname.Returns(childSurname);
+            children.Add(child);
+        }
+
+        var family = Substitute.For<IGenFamily>();
+        family.Husband.Returns(husband);
+        family.Wife.Returns(wife);
+        family.Children.Returns(children);
+        family.ChildCount.Returns(childSurnames.Length);
         return family;
     }
 
