@@ -1,6 +1,7 @@
 using IDR.Core.Models;
 using IDR.Core.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
@@ -48,11 +49,15 @@ public sealed class PeImageLoader : IPeImageLoader
             }
 
             PeDataDirectoryReader directoryReader = new(image, headers.SectionHeaders.ToArray(), peHeader);
+            IReadOnlyList<DelphiForm> forms = directoryReader.ReadForms(out IReadOnlyList<string> formDiagnostics);
             return new PeImage(sourcePath, image, sections, (uint)peHeader.AddressOfEntryPoint)
             {
                 ImageBase = peHeader.ImageBase,
                 Imports = directoryReader.ReadImports(),
-                Exports = directoryReader.ReadExports()
+                Exports = directoryReader.ReadExports(),
+                ResourceStrings = directoryReader.ReadStringResources(),
+                Forms = forms,
+                FormDiagnostics = formDiagnostics
             };
         }
         catch (BadImageFormatException exception)
