@@ -62,12 +62,22 @@ public sealed class RealEngineIntegrationTests
             Assert.IsTrue(root.GetProperty("DisassemblyLineCount").GetInt32() > 0);
             Assert.IsTrue(root.GetProperty("Items").GetArrayLength() > 0);
             Assert.IsTrue(root.GetProperty("Disassembly").GetArrayLength() > 0);
+            Assert.AreEqual(
+                root.GetProperty("FormCount").GetInt32(),
+                root.GetProperty("Forms").GetArrayLength());
+            Assert.IsTrue(root.GetProperty("Forms").EnumerateArray().All(form =>
+                form.TryGetProperty("Root", out _)
+                && form.TryGetProperty("ResourceName", out _)));
             Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
                 item.TryGetProperty("RegisterArgumentCandidates", out _)));
             Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
                 item.TryGetProperty("ReturnTypeCandidate", out _)));
             Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
                 item.TryGetProperty("DataTypeCandidate", out _)));
+            Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
+                item.TryGetProperty("ResourceStringCandidate", out _)));
+            Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
+                item.TryGetProperty("ThreadVariableCandidate", out _)));
             Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
                 item.TryGetProperty("StackLocalVariables", out _)));
             Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>

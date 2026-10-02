@@ -1,3 +1,4 @@
+using Avalonia;
 using IDR.App;
 using IDR.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,5 +15,14 @@ public sealed class AppCompositionTests
         using var services = App.CreateServices();
         Assert.IsNotNull(services);
         Assert.IsNotNull(services.GetRequiredService<IKnowledgeBaseProvider>());
+    }
+
+    [TestMethod]
+    public void MainWindowCanBeCreatedWithFormViewerMarkup()
+    {
+        AppBuilder.Configure<App>().UsePlatformDetect().SetupWithoutStarting();
+        using var services = App.CreateServices();
+
+        Assert.IsNotNull(services.GetRequiredService<MainWindow>());
     }
 }

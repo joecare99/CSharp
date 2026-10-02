@@ -39,6 +39,68 @@ public sealed class MainWindowViewModelTests
     }
 
     [TestMethod]
+    public async Task OpenCommandDisplaysDfmTreePropertiesAndPreview()
+    {
+        PeImage image = CreateImage() with
+        {
+            FormDiagnostics = ["Form resource 'Broken' was skipped."],
+            Forms =
+            [
+                new DelphiForm(
+                    "FORM1",
+                    new DelphiFormComponent(
+                        "TForm",
+                        "Form1",
+                        [
+                            new DelphiFormProperty("Width", "640"),
+                            new DelphiFormProperty("Height", "480"),
+                            new DelphiFormProperty("Caption", "Sample form")
+                        ],
+                        [
+                            new DelphiFormComponent(
+                                "TButton",
+                                "Button1",
+                                [
+                                    new DelphiFormProperty("Left", "10"),
+                                    new DelphiFormProperty("Top", "20"),
+                                    new DelphiFormProperty("Width", "80"),
+                                    new DelphiFormProperty("Height", "25"),
+                                    new DelphiFormProperty("Caption", "Open")
+                                ],
+                                []),
+                            new DelphiFormComponent("TCustomWidget", "Widget1", [], [])
+                        ]))
+            ]
+        };
+        MainWindowViewModel viewModel = new(
+            new FakeFileSelectionService("sample.exe"),
+            new FakePeImageLoader(image),
+            new FakeVersionDetector(),
+            new FakeKnowledgeBasePathResolver(),
+            new FakeKnowledgeBaseProvider(),
+            new FakeAnalysisService());
+
+        await viewModel.OpenCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(1, viewModel.Forms.Count);
+        Assert.AreEqual("Analysis completed with diagnostics", viewModel.StatusText);
+        StringAssert.Contains(viewModel.DiagnosticText, "Form resource 'Broken' was skipped.");
+        Assert.AreEqual("FORM1 (Form1: TForm)", viewModel.SelectedForm?.DisplayName);
+        Assert.AreEqual("Form1: TForm", viewModel.SelectedForm?.Components[0].TreeLabel);
+        Assert.AreEqual(640, viewModel.SelectedForm?.Width);
+        Assert.AreEqual(2, viewModel.SelectedForm?.PreviewComponents.Count);
+        DelphiFormComponentViewModel button = viewModel.SelectedForm!.Components[1];
+        Assert.AreEqual(10d, button.Left);
+        Assert.AreEqual(20d, button.Top);
+        Assert.AreEqual("Open", button.PreviewText);
+        Assert.IsTrue(viewModel.SelectedForm.Components[2].IsPlaceholder);
+
+        viewModel.SelectedFormComponent = button;
+        Assert.AreEqual("Open", viewModel.SelectedFormProperties.Single(property =>
+            property.Name == "Caption").Value);
+    }
+
+    [TestMethod]
     public async Task OpenCommandDoesNothingWhenSelectionIsCanceled()
     {
         MainWindowViewModel viewModel = new(
@@ -163,6 +225,30 @@ public sealed class MainWindowViewModelTests
         AnalysisItemViewModel viewModel = new(item, session);
 
         Assert.AreEqual("IInterface", viewModel.DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public void AnalysisItemViewModelDisplaysResourceStringCandidate()
+    {
+        AnalysisSession session = new("sample.exe", ReadOnlyMemory<byte>.Empty);
+        AnalysisItem item = session.GetOrAddItem(0x2000);
+        item.ResourceStringCandidate = "Hello";
+
+        AnalysisItemViewModel viewModel = new(item, session);
+
+        Assert.AreEqual("Hello", viewModel.ResourceStringCandidate);
+    }
+
+    [TestMethod]
+    public void AnalysisItemViewModelDisplaysThreadVariableCandidate()
+    {
+        AnalysisSession session = new("sample.exe", ReadOnlyMemory<byte>.Empty);
+        AnalysisItem item = session.GetOrAddItem(0x2000);
+        item.ThreadVariableCandidate = "threadvar_36";
+
+        AnalysisItemViewModel viewModel = new(item, session);
+
+        Assert.AreEqual("threadvar_36", viewModel.ThreadVariableCandidate);
     }
 
     [TestMethod]
