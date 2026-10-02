@@ -20,4 +20,5 @@
   <Folder Name="/Projektmappenelemente/">
     <File Path="../Packages.props" />
   </Folder>
+  <Project Path="OFBCreator.Console.Tests/OFBCreator.Console.Tests.csproj" />
 </Solution>
