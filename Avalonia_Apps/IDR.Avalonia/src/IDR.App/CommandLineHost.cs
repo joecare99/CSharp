@@ -4,6 +4,7 @@ using IDR.Infrastructure.Disassembly;
 using IDR.Infrastructure.KnowledgeBase;
 using IDR.Infrastructure.Pe;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -186,7 +187,7 @@ public sealed class CommandLineHost
             {
                 EntryPointRva = image.EntryPointRva
             };
-            session.LoadPeDirectories(image.Imports, image.Exports);
+            session.LoadPeDirectories(image.Imports, image.Exports, image.ResourceStrings);
             session.LoadKnowledgeBase(knowledgeBase);
 
             IProgress<AnalysisProgress>? progress = showProgress
@@ -202,6 +203,8 @@ public sealed class CommandLineHost
                     resolvedKnowledgeBasePath,
                     detection,
                     result,
+                    image.Forms,
+                    image.FormDiagnostics,
                     summaryOnly),
                 outputPath,
                 cancellationToken).ConfigureAwait(false);
@@ -246,6 +249,8 @@ public sealed class CommandLineHost
         string knowledgeBasePath,
         DelphiVersionDetection detection,
         AnalysisResult result,
+        IReadOnlyList<DelphiForm> forms,
+        IReadOnlyList<string> formDiagnostics,
         bool summaryOnly)
     {
         AnalysisItem[] items = session.Items.Values.OrderBy(item => item.Address).ToArray();
@@ -266,6 +271,8 @@ public sealed class CommandLineHost
             items.Count(item => item.Flags.HasFlag(AnalysisFlags.String)),
             items.Count(item => item.Flags.HasFlag(AnalysisFlags.ProcedureStart)),
             session.DisassemblyLines.Count,
+            forms.Count,
+            summaryOnly ? [] : forms.ToArray(),
             summaryOnly ? [] : items.Select(item => new CommandLineAnalysisItem(
                 item.Address,
                 $"0x{item.Address:X8}",
@@ -283,6 +290,8 @@ public sealed class CommandLineHost
                 item.ReturnStackBytes,
                 item.ReturnTypeCandidate,
                 item.DataTypeCandidate,
+                item.ResourceStringCandidate,
+                item.ThreadVariableCandidate,
                 item.UsesFramePointer,
                 item.StackPointerDeltaBytes,
                 item.StackArguments.ToArray(),
@@ -314,7 +323,7 @@ public sealed class CommandLineHost
                 line.FormattedText,
                 line.BranchTarget,
                 line.FlowControl.ToString())).ToArray(),
-            result.Diagnostics.ToArray());
+            formDiagnostics.Concat(result.Diagnostics).ToArray());
     }
 
     private sealed class ConsoleAnalysisProgress : IProgress<AnalysisProgress>
@@ -370,6 +379,8 @@ public sealed class CommandLineHost
         int StringCount,
         int ProcedureCount,
         int DisassemblyLineCount,
+        int FormCount,
+        DelphiForm[] Forms,
         CommandLineAnalysisItem[] Items,
         CommandLineDisassemblyLine[] Disassembly,
         string[] Diagnostics);
@@ -391,6 +402,8 @@ public sealed class CommandLineHost
         ushort? ReturnStackBytes,
         string? ReturnTypeCandidate,
         string? DataTypeCandidate,
+        string? ResourceStringCandidate,
+        string? ThreadVariableCandidate,
         bool UsesFramePointer,
         long? StackPointerDeltaBytes,
         StackArgument[] StackArguments,

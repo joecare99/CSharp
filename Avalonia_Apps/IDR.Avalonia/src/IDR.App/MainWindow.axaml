@@ -72,6 +72,8 @@
                 <dg:DataGridTextColumn Header="Return stack bytes" Binding="{Binding ReturnStackBytes}" />
                 <dg:DataGridTextColumn Header="Return type candidate" Binding="{Binding ReturnTypeCandidate}" />
                 <dg:DataGridTextColumn Header="Data type candidate" Binding="{Binding DataTypeCandidate}" />
+                <dg:DataGridTextColumn Header="Resource string" Binding="{Binding ResourceStringCandidate}" />
+                <dg:DataGridTextColumn Header="Thread variable" Binding="{Binding ThreadVariableCandidate}" />
                 <dg:DataGridTextColumn Header="Frame pointer" Binding="{Binding UsesFramePointer}" />
                 <dg:DataGridTextColumn Header="Stack delta (bytes)" Binding="{Binding StackPointerDeltaBytes}" />
                 <dg:DataGridTextColumn Header="Stack arguments" Binding="{Binding StackArguments}" />
@@ -83,6 +85,71 @@
                 <dg:DataGridTextColumn Header="Xref targets" Binding="{Binding CrossReferenceTargets}" />
               </dg:DataGrid.Columns>
             </dg:DataGrid>
+          </Grid>
+        </TabItem>
+        <TabItem Header="Forms">
+          <Grid ColumnDefinitions="180,240,260,*" ColumnSpacing="8">
+            <ListBox ItemsSource="{Binding Forms}"
+                     SelectedItem="{Binding SelectedForm}">
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:DelphiFormViewModel">
+                  <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap" />
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <dg:DataGrid Grid.Column="1"
+                         ItemsSource="{Binding SelectedForm.Components}"
+                         SelectedItem="{Binding SelectedFormComponent}"
+                         AutoGenerateColumns="False">
+              <dg:DataGrid.Columns>
+                <dg:DataGridTextColumn Header="Component tree" Binding="{Binding TreeLabel}" />
+              </dg:DataGrid.Columns>
+            </dg:DataGrid>
+            <dg:DataGrid Grid.Column="2"
+                         ItemsSource="{Binding SelectedFormProperties}"
+                         AutoGenerateColumns="False">
+              <dg:DataGrid.Columns>
+                <dg:DataGridTextColumn Header="Property" Binding="{Binding Name}" />
+                <dg:DataGridTextColumn Header="Value" Binding="{Binding Value}" />
+              </dg:DataGrid.Columns>
+            </dg:DataGrid>
+            <ScrollViewer Grid.Column="3"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+              <Canvas Width="{Binding SelectedForm.Width}"
+                      Height="{Binding SelectedForm.Height}"
+                      Background="#FFF0F0F0">
+                <ItemsControl ItemsSource="{Binding SelectedForm.PreviewComponents}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <Canvas />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.Styles>
+                    <Style Selector="ContentPresenter" x:DataType="vm:DelphiFormComponentViewModel">
+                      <Setter Property="Canvas.Left" Value="{Binding Left}" />
+                      <Setter Property="Canvas.Top" Value="{Binding Top}" />
+                    </Style>
+                  </ItemsControl.Styles>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:DelphiFormComponentViewModel">
+                      <Border Width="{Binding Width}"
+                              Height="{Binding Height}"
+                              BorderBrush="#FF606060"
+                              BorderThickness="1"
+                              Background="#FFFDFDFD"
+                              Opacity="0.92">
+                        <TextBlock Text="{Binding PreviewText}"
+                                   FontSize="10"
+                                   TextWrapping="Wrap"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center" />
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </Canvas>
+            </ScrollViewer>
           </Grid>
         </TabItem>
         <TabItem Header="Entry-point disassembly">

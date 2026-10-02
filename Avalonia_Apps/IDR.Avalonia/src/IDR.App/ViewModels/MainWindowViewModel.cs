@@ -52,6 +52,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ObservableCollection<DisassemblyLineViewModel> DisassemblyLines { get; } = [];
 
+    public ObservableCollection<DelphiFormViewModel> Forms { get; } = [];
+
     public ObservableCollection<DelphiVersionOption> VersionOptions { get; } = [];
 
     [ObservableProperty]
@@ -85,6 +87,24 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private AnalysisItemViewModel? _selectedAnalysisItem;
 
+    [ObservableProperty]
+    private DelphiFormViewModel? _selectedForm;
+
+    [ObservableProperty]
+    private DelphiFormComponentViewModel? _selectedFormComponent;
+
+    public IReadOnlyList<DelphiFormPropertyViewModel> SelectedFormProperties =>
+        SelectedFormComponent?.Properties ?? Array.Empty<DelphiFormPropertyViewModel>();
+
+    partial void OnSelectedFormChanged(DelphiFormViewModel? value)
+    {
+        SelectedFormComponent = value?.RootComponent;
+        OnPropertyChanged(nameof(SelectedFormProperties));
+    }
+
+    partial void OnSelectedFormComponentChanged(DelphiFormComponentViewModel? value) =>
+        OnPropertyChanged(nameof(SelectedFormProperties));
+
     [RelayCommand]
     private async Task OpenAsync()
     {
@@ -116,6 +136,9 @@ public partial class MainWindowViewModel : ObservableObject
         Items.Clear();
         SelectedAnalysisItem = null;
         DisassemblyLines.Clear();
+        Forms.Clear();
+        SelectedForm = null;
+        SelectedFormComponent = null;
         VersionOptions.Clear();
         SelectedVersion = null;
         _currentImage = null;
@@ -129,6 +152,12 @@ public partial class MainWindowViewModel : ObservableObject
                 .LoadAsync(path, _analysisCancellation.Token)
                 .ConfigureAwait(true);
             _currentImage = image;
+            foreach (DelphiForm form in image.Forms)
+            {
+                Forms.Add(new DelphiFormViewModel(form));
+            }
+
+            SelectedForm = Forms.FirstOrDefault();
             DelphiVersionDetection detection = _versionDetector.Detect(image);
             VersionOptions.Clear();
             foreach (DelphiVersion candidate in detection.Candidates)
@@ -143,6 +172,7 @@ public partial class MainWindowViewModel : ObservableObject
                 ? "Delphi version: select a candidate"
                 : $"Delphi version: {SelectedVersion.DisplayName}";
             List<string> diagnostics = [];
+            diagnostics.AddRange(image.FormDiagnostics);
             if (SelectedVersion is not null)
             {
                 string? diagnostic = await TryLoadKnowledgeBaseAsync(
@@ -163,7 +193,7 @@ public partial class MainWindowViewModel : ObservableObject
                 EntryPointRva = image.EntryPointRva,
                 SelectedDelphiVersion = SelectedVersion?.Version ?? DelphiVersion.Unknown
             };
-            session.LoadPeDirectories(image.Imports, image.Exports);
+            session.LoadPeDirectories(image.Imports, image.Exports, image.ResourceStrings);
             _currentSession = session;
             if (_currentKnowledgeBase is not null)
             {
@@ -490,6 +520,8 @@ public sealed record AnalysisItemViewModel(
         ReturnStackBytes = item.ReturnStackBytes;
         ReturnTypeCandidate = item.ReturnTypeCandidate ?? string.Empty;
         DataTypeCandidate = item.DataTypeCandidate ?? string.Empty;
+        ResourceStringCandidate = item.ResourceStringCandidate ?? string.Empty;
+        ThreadVariableCandidate = item.ThreadVariableCandidate ?? string.Empty;
         UsesFramePointer = item.UsesFramePointer;
         StackPointerDeltaBytes = item.StackPointerDeltaBytes;
         StackArguments = string.Join(", ", item.StackArguments.Select(argument =>
@@ -552,6 +584,10 @@ public sealed record AnalysisItemViewModel(
     public string ReturnTypeCandidate { get; init; } = string.Empty;
 
     public string DataTypeCandidate { get; init; } = string.Empty;
+
+    public string ResourceStringCandidate { get; init; } = string.Empty;
+
+    public string ThreadVariableCandidate { get; init; } = string.Empty;
 
     public bool UsesFramePointer { get; init; }
 
