@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Document.Base.Factories;
+using Document.Docx;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OFBCreator.Abstractions.Interfaces;
@@ -20,6 +22,8 @@ public static class Program
     /// </summary>
     private static async Task<int> Main(string[] args)
     {
+        UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
+
         var services = new ServiceCollection();
 
         // Register data source providers
@@ -38,7 +42,7 @@ public static class Program
         });
 
         // Register document factory (wraps CSharpBible DocumentUtils)
-        services.AddSingleton<IUserDocumentFactory, OFBDocumentFactory>();
+        services.AddSingleton<IUserDocumentFactory, UserDocumentFactoryImpl>();
 
         var serviceProvider = services.BuildServiceProvider();
 
@@ -56,22 +60,26 @@ public static class Program
     /// </summary>
     private static Command GenerateCommand(IServiceProvider serviceProvider)
     {
-        var inputOption = new Option<string>("--input", "Path to the source data file (GEDCOM or other format)");
-        var outputOption = new Option<string>("--output", "Path to the output OFB document (.docx/.odt)");
-        var titleOption = new Option<string>("--title", "Title of the Ortsfamilienbuch");
-        var placeIdOption = new Option<string?>("--place-id", "GedCom reference ID for the primary place filter (optional)");
-        var includeDescendants = new Option<bool>("--include-descendants", "Include descendants of families in this place");
-        var prefaceOption = new Option<string?>("--preface", "Preface/introduction text for the OFB");
-        var legendOption = new Option<string?>("--legend", "Character explanation/legend text");
-        var docxOption = new Option<bool>("--docx", "Use DOCX format (default)");
-        var odtOption = new Option<bool>("--odt", "Use ODF (ODT) format instead of DOCX");
-        var dataSourceOption = new Option<string>("--data-source", "-s",
-            "Data source provider: 'gedcom' (default), 'winahnen', 'securestore', or leave empty for auto-detect");
+        var inputOption = new Option<string>("--input") { Description = "Path to the source data file (GEDCOM or other format)" };
+        var outputOption = new Option<string>("--output") { Description = "Path to the output OFB document (.docx/.odt)" };
+        var titleOption = new Option<string>("--title") { Description = "Title of the Ortsfamilienbuch" };
+        var placeIdOption = new Option<string?>("--place-id") { Description = "GedCom reference ID for the primary place filter (optional)" };
+        var includeDescendants = new Option<bool>("--include-descendants") { Description = "Include descendants of families in this place" };
+        var prefaceOption = new Option<string?>("--preface") { Description = "Preface/introduction text for the OFB" };
+        var legendOption = new Option<string?>("--legend") { Description = "Character explanation/legend text" };
+        var entryFormatOption = new Option<string>("--entry-format") { Description = "Family entry layout: 'gc' (default) or 'ak'" };
+        entryFormatOption.DefaultValueFactory = _ => "gc";
+        var docxOption = new Option<bool>("--docx") { Description = "Use DOCX format (default)" };
+        var odtOption = new Option<bool>("--odt") { Description = "Use ODF (ODT) format instead of DOCX" };
+        var dataSourceOption = new Option<string>("--data-source", "-s")
+        {
+            Description = "Data source provider: 'gedcom' (default), 'winahnen', 'securestore', or leave empty for auto-detect"
+        };
 
         var command = new Command("generate", "Generate OFB from genealogical data")
         {
             inputOption, outputOption, titleOption, placeIdOption,
-            includeDescendants, prefaceOption, legendOption, docxOption, odtOption, dataSourceOption
+            includeDescendants, prefaceOption, legendOption, entryFormatOption, docxOption, odtOption, dataSourceOption
         };
 
         command.SetAction(async context =>
@@ -82,6 +90,9 @@ public static class Program
 
             var docxUsed = context.GetValue(docxOption);
             var odtUsed = context.GetValue(odtOption);
+            var entryFormatValue = context.GetValue(entryFormatOption);
+            if (!Enum.TryParse<OFBEntryFormat>(entryFormatValue, ignoreCase: true, out var entryFormat))
+                throw new ArgumentException($"Unknown entry format: '{entryFormatValue}'. Use 'gc' or 'ak'.");
 
             var options = new OFBGenerateOptions()
             {
@@ -92,6 +103,7 @@ public static class Program
                 IncludeDescendants = context.GetValue(includeDescendants),
                 Preface = context.GetValue(prefaceOption),
                 Legend = context.GetValue(legendOption),
+                EntryFormat = entryFormat,
                 UseDocxFormat = docxUsed || (!odtUsed && !context.GetValue(odtOption)),
                 DataSource = dataSource,
             };

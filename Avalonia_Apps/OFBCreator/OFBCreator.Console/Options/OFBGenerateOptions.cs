@@ -52,6 +52,11 @@ public sealed class OFBGenerateOptions
     public string? Legend { get; init; }
 
     /// <summary>
+    /// Family entry layout. Defaults to the GC-style format.
+    /// </summary>
+    public OFBEntryFormat EntryFormat { get; init; } = OFBEntryFormat.GC;
+
+    /// <summary>
     /// When true (default), outputs DOCX format using Xceed.Document.NET.
     /// Set to false with --odt to output ODF (.odt) format instead.
     /// </summary>

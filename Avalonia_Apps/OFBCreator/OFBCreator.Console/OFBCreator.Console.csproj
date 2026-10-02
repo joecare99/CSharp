@@ -23,6 +23,8 @@
     <!-- Core OFB Creator Libraries -->
     <ProjectReference Include="..\OFBCreator.Abstractions\OFBCreator.Abstractions.csproj" />
     <ProjectReference Include="..\OFBCreator.Core\OFBCreator.Core.csproj" />
+    <ProjectReference Include="..\..\Libraries\GenInterfaces\GenInterfaces.csproj" />
+    <ProjectReference Include="..\..\..\CSharpBible\Data\DocumentUtils\Document.Docx\Document.Docx.csproj" />
   </ItemGroup>
 
   <!-- Application packages -->
