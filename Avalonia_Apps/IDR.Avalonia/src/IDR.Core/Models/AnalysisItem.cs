@@ -91,6 +91,10 @@ public sealed class AnalysisItem
 
     public string? DataTypeCandidate { get; set; }
 
+    public string? ResourceStringCandidate { get; set; }
+
+    public string? ThreadVariableCandidate { get; set; }
+
     public bool UsesFramePointer { get; set; }
 
     public long? StackPointerDeltaBytes { get; set; }

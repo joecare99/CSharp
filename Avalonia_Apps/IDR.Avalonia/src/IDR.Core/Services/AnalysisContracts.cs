@@ -63,6 +63,12 @@ public sealed record PeImage(
     public IReadOnlyList<PeImportModule> Imports { get; init; } = [];
 
     public IReadOnlyList<PeExport> Exports { get; init; } = [];
+
+    public IReadOnlyList<PeResourceString> ResourceStrings { get; init; } = [];
+
+    public IReadOnlyList<DelphiForm> Forms { get; init; } = [];
+
+    public IReadOnlyList<string> FormDiagnostics { get; init; } = [];
 }
 
 public sealed record PeImportModule(string Name, IReadOnlyList<PeImportSymbol> Symbols);
@@ -70,6 +76,20 @@ public sealed record PeImportModule(string Name, IReadOnlyList<PeImportSymbol> S
 public sealed record PeImportSymbol(string? Name, ushort? Ordinal, uint AddressRva);
 
 public sealed record PeExport(string? Name, uint Ordinal, uint AddressRva, string? Forwarder);
+
+public sealed record PeResourceString(uint Id, ushort LanguageId, string Value);
+
+public sealed record DelphiForm(
+    string ResourceName,
+    DelphiFormComponent Root);
+
+public sealed record DelphiFormComponent(
+    string ClassName,
+    string Name,
+    IReadOnlyList<DelphiFormProperty> Properties,
+    IReadOnlyList<DelphiFormComponent> Children);
+
+public sealed record DelphiFormProperty(string Name, string Value);
 
 public enum DelphiVersion
 {

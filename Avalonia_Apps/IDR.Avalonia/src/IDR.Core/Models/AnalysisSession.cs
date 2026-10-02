@@ -13,6 +13,7 @@ public sealed class AnalysisSession
     private IReadOnlyList<KnowledgeBaseProcedure> _knowledgeBaseProcedures = [];
     private IReadOnlyList<PeImportModule> _imports = [];
     private IReadOnlyList<PeExport> _exports = [];
+    private IReadOnlyList<PeResourceString> _resourceStrings = [];
     private readonly List<DisassemblyLine> _disassemblyLines = [];
 
     public AnalysisSession(
@@ -61,6 +62,8 @@ public sealed class AnalysisSession
 
     public IReadOnlyList<PeExport> Exports => _exports;
 
+    public IReadOnlyList<PeResourceString> ResourceStrings => _resourceStrings;
+
     public IReadOnlyList<DisassemblyLine> DisassemblyLines => _disassemblyLines;
 
     public IReadOnlyList<CrossReference> GetIncomingCrossReferences(uint targetAddress)
@@ -83,12 +86,32 @@ public sealed class AnalysisSession
 
     public void LoadPeDirectories(
         IEnumerable<PeImportModule> imports,
-        IEnumerable<PeExport> exports)
+        IEnumerable<PeExport> exports,
+        IEnumerable<PeResourceString>? resourceStrings = null)
     {
         ArgumentNullException.ThrowIfNull(imports);
         ArgumentNullException.ThrowIfNull(exports);
         _imports = imports.ToArray();
         _exports = exports.ToArray();
+        _resourceStrings = resourceStrings?.ToArray() ?? [];
+    }
+
+    public bool TryGetUnambiguousResourceString(uint id, out string? value)
+    {
+        string[] matches = _resourceStrings
+            .Where(resourceString => resourceString.Id == id)
+            .Select(resourceString => resourceString.Value)
+            .Distinct(StringComparer.Ordinal)
+            .Take(2)
+            .ToArray();
+        if (matches.Length == 1)
+        {
+            value = matches[0];
+            return true;
+        }
+
+        value = null;
+        return false;
     }
 
     public void ClearAnalysisItems()
