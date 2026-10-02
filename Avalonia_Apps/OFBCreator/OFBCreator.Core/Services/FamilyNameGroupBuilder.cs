@@ -8,21 +8,16 @@ using OFBCreator.Abstractions.Interfaces;
 namespace OFBCreator.Core.Services;
 
 /// <summary>
-/// Builder for family name groups used in OFB sorting and grouping.
-/// Tracks surname evolution across generations through blood relationships.
-/// Algorithm: Phase 1 — exact-name grouping, then detect parent→child phonetic
-/// bridges (father/mother to child) to fuse groups representing the same lineage
-/// across sound shifts (e.g. Heis → Heus → Hös). Adoptions keep groups separated.
+/// Builder for family-name groups based on repeated parent-to-family-surname transitions
+/// and close phonetic relationships between surnames.
 /// </summary>
 public class FamilyNameGroupBuilder : IFamilyNameGroupBuilder
 {
-    private readonly HashSet<string> _groupMembers = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _groupMembers = new(StringComparer.OrdinalIgnoreCase);
     private Dictionary<string, List<IGenFamily>>? _fusedGroups;
 
     /// <summary>
-    /// Builds family name groups from the provided families.
-    /// Phase 1: Collect all unique surnames and group families by primary surname
-    /// Phase 2: Detect parent→child phonetic bridges and fuse groups via Union-Find
+    /// Builds groups from single family surnames and their parent-surname transitions.
     /// </summary>
     public void BuildGroups(IEnumerable<IGenFamily> families)
     {
@@ -31,41 +26,28 @@ public class FamilyNameGroupBuilder : IFamilyNameGroupBuilder
         _groupMembers.Clear();
         var allFamilies = families.ToList();
 
-        // Phase 1a: Collect all unique surnames from ALL members (not just primary keys)
-        var allSurnames = new HashSet<string>(StringComparer.Ordinal);
-
+        // Initialize groups only for actual family surnames; parent-only surnames are ignored.
+        var exactGroups = new Dictionary<string, List<IGenFamily>>(StringComparer.OrdinalIgnoreCase);
         foreach (var family in allFamilies)
         {
             if (family == null) continue;
 
-            AddSurnameFromPerson(allSurnames, family.Husband);
-            AddSurnameFromPerson(allSurnames, family.Wife);
+            var familySurname = FamilySurnameSelector.Select(family);
+            if (string.IsNullOrWhiteSpace(familySurname) || familySurname == "Unbekannt")
+                continue;
 
-            var children = family.Children;
-            if (children != null)
-            {
-                foreach (var child in children)
-                {
-                    AddSurnameFromPerson(allSurnames, child);
-                }
-            }
+            _groupMembers.Add(familySurname);
+            if (!exactGroups.ContainsKey(familySurname))
+                exactGroups[familySurname] = new List<IGenFamily>();
         }
 
-        // Phase 1b: Initialize exact-groups for every unique surname (may be empty initially)
-        var exactGroups = new Dictionary<string, List<IGenFamily>>(StringComparer.Ordinal);
-        foreach (var surname in allSurnames)
-        {
-            _groupMembers.Add(surname);
-            exactGroups[surname] = new List<IGenFamily>();
-        }
-
-        // Phase 1c: Assign each family to its primary-surname group
+        // Assign each family to its primary-surname group
         foreach (var family in allFamilies)
         {
             if (family == null) continue;
 
-            var primarySurname = GetPrimarySurname(family);
-            if (string.IsNullOrEmpty(primarySurname)) continue;
+            var primarySurname = FamilySurnameSelector.Select(family);
+            if (string.IsNullOrWhiteSpace(primarySurname) || primarySurname == "Unbekannt") continue;
 
             exactGroups[primarySurname].Add(family);
         }
@@ -76,21 +58,56 @@ public class FamilyNameGroupBuilder : IFamilyNameGroupBuilder
             return;
         }
 
-        // Phase 2: Detect parent→child phonetic bridges and fuse groups
-        var surnameToGroup = exactGroups.Keys.ToDictionary(k => k, StringComparer.Ordinal);
-        _fusedGroups = FuseViaParentChildBridges(exactGroups, allFamilies, surnameToGroup);
-    }
+        // Repeated surname transitions represent a shared family group.
+        var surnameToGroup = exactGroups.Keys.ToDictionary(k => k, StringComparer.OrdinalIgnoreCase);
+        var unionFind = new UnionFind(surnameToGroup.Keys.ToList());
+        var transitions = new Dictionary<(string Parent, string Family), int>();
+        foreach (var family in allFamilies)
+        {
+            if (family is null || IsAdoptedFamily(family))
+                continue;
 
-    private static void AddSurnameFromPerson(HashSet<string> set, IGenPerson? person)
-    {
-        if (person == null || string.IsNullOrEmpty(person.Surname)) return;
-        set.Add(person.Surname.Trim());
+            var familySurname = FamilySurnameSelector.Select(family);
+            if (!surnameToGroup.ContainsKey(familySurname))
+                continue;
+
+            foreach (var parentSurname in new[] { family.Husband?.Surname, family.Wife?.Surname }
+                         .Where(surname => !string.IsNullOrWhiteSpace(surname))
+                         .Select(surname => surname!.Trim())
+                         .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                if (string.Equals(parentSurname, familySurname, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                var key = (parentSurname, familySurname);
+                transitions.TryGetValue(key, out var count);
+                transitions[key] = count + 1;
+            }
+        }
+
+        foreach (var transition in transitions.Where(transition => transition.Value >= 2))
+        {
+            if (surnameToGroup.TryGetValue(transition.Key.Parent, out var parentGroup))
+                unionFind.Union(parentGroup, transition.Key.Family);
+        }
+
+        var surnames = surnameToGroup.Keys.ToArray();
+        for (var first = 0; first < surnames.Length; first++)
+        {
+            for (var second = first + 1; second < surnames.Length; second++)
+            {
+                if (PhoneticDistance(surnames[first], surnames[second]) <= 2)
+                    unionFind.Union(surnames[first], surnames[second]);
+            }
+        }
+
+        _fusedGroups = BuildFusedGroups(exactGroups, unionFind);
     }
 
     /// <summary>
     /// Returns all unique group keys (fused name groups).
     /// </summary>
-    public IReadOnlyCollection<string> GroupKeys => _fusedGroups?.Keys.ToList().AsReadOnly() ?? (IReadOnlyCollection<string>)new List<string>();
+    public IReadOnlyCollection<string> GroupKeys => _fusedGroups?.Keys.ToList().AsReadOnly() ?? (IReadOnlyCollection<string>)Array.Empty<string>();
 
     /// <summary>
     /// Gets families in a specific fused name group.
@@ -220,86 +237,6 @@ public class FamilyNameGroupBuilder : IFamilyNameGroupBuilder
         }
 
         return fusedGroups;
-    }
-
-    /// <summary>
-    /// Checks whether children's names are phonetically closer to one parent than the other.
-    /// Returns true if there is a clear bias supporting group fusion.
-    /// </summary>
-    private static bool HasChildPhoneticBias(
-        IGenFamily family, string parent1Name, string parent2Name, Dictionary<string, List<IGenFamily>> exactGroups,
-        Dictionary<string, string> surnameToGroup, UnionFind uf)
-    {
-        var children = family.Children;
-        if (children == null || children.Count == 0)
-            return false;
-
-        int p1Score = 0;
-        int p2Score = 0;
-
-        foreach (var child in children)
-        {
-            if (child == null) continue;
-
-            var childSurname = child.Surname;
-            if (string.IsNullOrEmpty(childSurname)) continue;
-
-            // Does child belong to parent1's exact group? (childSurname is primary key of a family in p1's group)
-            
-            bool belongsToP1 = false;
-            bool belongsToP2 = false;
-
-            foreach (var famP1 in exactGroups[parent1Name])
-            {
-                if (famP1 == null) continue;
-                var pk = GetPrimarySurname(famP1);
-                if (!string.Equals(pk, childSurname, StringComparison.Ordinal)) continue;
-
-                // This family's primary key matches child — check if mapped surname agrees
-                foreach (var fp in new[] { famP1.Husband, famP1.Wife }.Where(p => p != null))
-                {
-                    if (fp.Surname == childSurname && surnameToGroup.ContainsKey(childSurname) && surnameToGroup[childSurname] == pk)
-                        belongsToP1 = true;
-                }
-            }
-
-            foreach (var famP2 in exactGroups[parent2Name])
-            {
-                if (famP2 == null) continue;
-                var pk = GetPrimarySurname(famP2);
-                if (!string.Equals(pk, childSurname, StringComparison.Ordinal)) continue;
-
-                foreach (var fp in new[] { famP2.Husband, famP2.Wife }.Where(p => p != null))
-                {
-                    if (fp.Surname == childSurname && surnameToGroup.ContainsKey(childSurname) && surnameToGroup[childSurname] == pk)
-                        belongsToP2 = true;
-                }
-            }
-
-            if (belongsToP1 && !belongsToP2)
-            {
-                p1Score++;
-                continue;
-            }
-
-            if (belongsToP2 && !belongsToP1)
-            {
-                p2Score++;
-                continue;
-            }
-
-            // Child has new/unseen surname: use phonetic distance to determine bias
-            int dist1 = PhoneticDistance(childSurname, parent1Name);
-            int dist2 = PhoneticDistance(childSurname, parent2Name);
-
-            if (dist1 < dist2)
-                p1Score++;
-            else if (dist2 < dist1)
-                p2Score++;
-        }
-
-        // Child must be closer to one parent for fusion
-        return p1Score > 0 || p2Score > 0;
     }
 
     /// <summary>

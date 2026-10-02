@@ -15,6 +15,7 @@ public class OFBFamilySorter : IOFBFamilySorter
 {
     private const int MinNumberWidth = 4;
     private const int MaxNumberWidth = 5;
+    private static readonly GermanSurnameComparer SurnameComparer = new();
 
     /// <summary>
     /// Sorts families by name group and formation date, assigns global numbers.
@@ -49,24 +50,7 @@ public class OFBFamilySorter : IOFBFamilySorter
 
         foreach ( var family in filteredFamilies )
         {
-            var husbandSurname = family.Husband?.Surname ?? "Unbekannt";
-            var wifeSurname = family.Wife?.Surname;
-            
-            // Compute group name: combine surnames alphabetically for married couples
-            string familyName;
-            if ( !string.IsNullOrWhiteSpace( wifeSurname ) && 
-                 string.Compare( husbandSurname, wifeSurname, StringComparison.Ordinal ) <= 0 )
-            {
-                familyName = $"{husbandSurname}/{wifeSurname}";
-            }
-            else if ( !string.IsNullOrWhiteSpace( wifeSurname ) )
-            {
-                familyName = $"{wifeSurname}/{husbandSurname}";
-            }
-            else
-            {
-                familyName = husbandSurname;
-            }
+            var familyName = FamilySurnameSelector.Select(family);
 
             var ofb = new OFBFamilyModel
             {
@@ -98,7 +82,7 @@ public class OFBFamilySorter : IOFBFamilySorter
     private static int CompareForOFBSort( OFBFamilyModel a, OFBFamilyModel b )
     {
         // Primary: name group sort key (surname alphabetically)
-        var nameCompare = string.Compare( a.FamilyName, b.FamilyName, StringComparison.Ordinal );
+        var nameCompare = SurnameComparer.Compare(a.FamilyName, b.FamilyName);
         if ( nameCompare != 0 ) return nameCompare;
 
         // Secondary: formation date (earlier dates first, unknown dates at end)

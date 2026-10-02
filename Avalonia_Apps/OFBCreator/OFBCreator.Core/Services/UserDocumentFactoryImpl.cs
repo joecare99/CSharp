@@ -17,7 +17,7 @@ public sealed class UserDocumentFactoryImpl : IUserDocumentFactory
         return format switch
         {
             OFBOutputFormat.Docx => UserDocumentFactory.Create( ".docx" ),
-            OFBOutputFormat.Odt  => UserDocumentFactory.Create( ".odt" ),
+            OFBOutputFormat.Odt  => throw new NotSupportedException( "ODT output is not supported because no ODT document provider is registered." ),
             _ => throw new ArgumentException( $"Unknown output format: {format}", nameof( format ) )
         };
     }
