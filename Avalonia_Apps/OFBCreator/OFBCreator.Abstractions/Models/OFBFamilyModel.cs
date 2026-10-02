@@ -17,7 +17,7 @@ public sealed class OFBFamilyModel
     public string GlobalNumber { get; set; } = default!;
 
     /// <summary>
-    /// Family name group identifier (surname of father or combined parent names).
+    /// Single family surname, normally the most frequent surname among the children.
     /// Used for grouping and sorting families by surname.
     /// </summary>
     public string FamilyName { get; set; } = default!;
