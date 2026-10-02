@@ -77,6 +77,105 @@ public sealed class PeImageLoaderTests
     }
 
     [TestMethod]
+    public async Task LoadAsyncReadsStringResources()
+    {
+        string sourcePath = await WriteFixtureAsync(CreatePeFixtureWithStringResource());
+
+        try
+        {
+            PeImage image = await new PeImageLoader().LoadAsync(sourcePath, CancellationToken.None);
+
+            CollectionAssert.AreEqual(
+                new[] { new PeResourceString(1, 0x0409, "Hello") },
+                image.ResourceStrings.ToArray());
+        }
+        finally
+        {
+            File.Delete(sourcePath);
+        }
+    }
+
+    [TestMethod]
+    public async Task LoadAsyncRejectsTruncatedStringResourceDirectory()
+    {
+        byte[] image = CreatePeFixtureWithStringResource();
+        BitConverter.GetBytes(15u).CopyTo(image, 0x10c);
+        string sourcePath = await WriteFixtureAsync(image);
+
+        try
+        {
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(
+                () => new PeImageLoader().LoadAsync(sourcePath, CancellationToken.None));
+        }
+        finally
+        {
+            File.Delete(sourcePath);
+        }
+    }
+
+    [TestMethod]
+    public async Task LoadAsyncReadsNamedDelphiFormResources()
+    {
+        string sourcePath = await WriteFixtureAsync(CreatePeFixtureWithFormResource());
+
+        try
+        {
+            PeImage image = await new PeImageLoader().LoadAsync(sourcePath, CancellationToken.None);
+
+            DelphiForm form = image.Forms.Single();
+            Assert.AreEqual("Form1", form.ResourceName);
+            Assert.AreEqual("TForm", form.Root.ClassName);
+            Assert.AreEqual("Form1", form.Root.Name);
+            Assert.AreEqual("Example", form.Root.Properties.Single(property =>
+                property.Name == "Caption").Value);
+            DelphiFormComponent button = form.Root.Children.Single();
+            Assert.AreEqual("TButton", button.ClassName);
+            Assert.AreEqual("Button1", button.Name);
+            Assert.AreEqual("Run", button.Properties.Single(property =>
+                property.Name == "Caption").Value);
+        }
+        finally
+        {
+            File.Delete(sourcePath);
+        }
+    }
+
+    [TestMethod]
+    public async Task LoadAsyncRejectsTruncatedDfmComponentData()
+    {
+        byte[] image = CreatePeFixtureWithFormResource();
+        BitConverter.GetBytes(4u).CopyTo(image, 0x404);
+        string sourcePath = await WriteFixtureAsync(image);
+
+        try
+        {
+            PeImage loadedImage = await new PeImageLoader().LoadAsync(sourcePath, CancellationToken.None);
+
+            Assert.AreEqual(0, loadedImage.Forms.Count);
+            StringAssert.Contains(string.Join(Environment.NewLine, loadedImage.FormDiagnostics), "truncated");
+        }
+        finally
+        {
+            File.Delete(sourcePath);
+        }
+    }
+
+    [TestMethod]
+    public async Task LoadAsyncReadsConfiguredRealDelphiForms()
+    {
+        string? sourcePath = Environment.GetEnvironmentVariable("IDR_DFM_INTEGRATION_PE");
+        if (string.IsNullOrWhiteSpace(sourcePath) || !File.Exists(sourcePath))
+        {
+            Assert.Inconclusive("Set IDR_DFM_INTEGRATION_PE to a Delphi PE containing DFM resources.");
+        }
+
+        PeImage image = await new PeImageLoader().LoadAsync(sourcePath!, CancellationToken.None);
+
+        Assert.IsTrue(image.Forms.Count > 0, "The configured PE contains no supported TPF0 form resources.");
+        Assert.IsTrue(image.Forms.Any(form => form.Root.Children.Count > 0));
+    }
+
+    [TestMethod]
     public async Task LoadAsyncRejectsImportDirectoryOutsideRawSections()
     {
         byte[] fixture = CreatePeFixture();
@@ -160,6 +259,111 @@ public sealed class PeImageLoaderTests
         BitConverter.GetBytes((ushort)0).CopyTo(data, 0x370);
         WriteAscii(data, 0x372, "CreateFileW");
         return data;
+    }
+
+    private static byte[] CreatePeFixtureWithStringResource()
+    {
+        byte[] data = CreatePeFixture();
+        BitConverter.GetBytes(0x1180u).CopyTo(data, 0x108);
+        BitConverter.GetBytes(0x80u).CopyTo(data, 0x10c);
+
+        BitConverter.GetBytes((ushort)1).CopyTo(data, 0x38e);
+        WriteUInt32(data, 0x390, 6);
+        WriteUInt32(data, 0x394, 0x80000020);
+
+        BitConverter.GetBytes((ushort)1).CopyTo(data, 0x3ae);
+        WriteUInt32(data, 0x3b0, 1);
+        WriteUInt32(data, 0x3b4, 0x80000040);
+
+        BitConverter.GetBytes((ushort)1).CopyTo(data, 0x3ce);
+        WriteUInt32(data, 0x3d0, 0x0409);
+        WriteUInt32(data, 0x3d4, 0x60);
+
+        WriteUInt32(data, 0x3e0, 0x1200);
+        WriteUInt32(data, 0x3e4, 42);
+        BitConverter.GetBytes((ushort)5).CopyTo(data, 0x402);
+        Encoding.Unicode.GetBytes("Hello").CopyTo(data, 0x404);
+        return data;
+    }
+
+    private static byte[] CreatePeFixtureWithFormResource()
+    {
+        byte[] data = CreatePeFixture();
+        byte[] formBytes = CreateBinaryFormFixture();
+        BitConverter.GetBytes(0x1180u).CopyTo(data, 0x108);
+        BitConverter.GetBytes(0xc0u).CopyTo(data, 0x10c);
+
+        BitConverter.GetBytes((ushort)1).CopyTo(data, 0x38e);
+        WriteUInt32(data, 0x390, 10);
+        WriteUInt32(data, 0x394, 0x80000020);
+
+        BitConverter.GetBytes((ushort)1).CopyTo(data, 0x3ac);
+        WriteUInt32(data, 0x3b0, 0x80000060);
+        WriteUInt32(data, 0x3b4, 0x80000040);
+
+        BitConverter.GetBytes((ushort)1).CopyTo(data, 0x3ce);
+        WriteUInt32(data, 0x3d0, 0);
+        WriteUInt32(data, 0x3d4, 0x80);
+
+        BitConverter.GetBytes((ushort)5).CopyTo(data, 0x3e0);
+        Encoding.Unicode.GetBytes("Form1").CopyTo(data, 0x3e2);
+        WriteUInt32(data, 0x400, 0x1240);
+        WriteUInt32(data, 0x404, checked((uint)formBytes.Length));
+        formBytes.CopyTo(data, 0x440);
+        return data;
+    }
+
+    private static byte[] CreateBinaryFormFixture()
+    {
+        using MemoryStream stream = new();
+        using BinaryWriter writer = new(stream, Encoding.UTF8, leaveOpen: true);
+        writer.Write(Encoding.ASCII.GetBytes("TPF0"));
+        WriteShortString(writer, "TForm");
+        WriteShortString(writer, "Form1");
+        WriteShortString(writer, "Caption");
+        writer.Write((byte)6);
+        WriteShortString(writer, "Example");
+        WriteShortString(writer, "Width");
+        writer.Write((byte)3);
+        writer.Write((short)320);
+        WriteShortString(writer, "Height");
+        writer.Write((byte)3);
+        writer.Write((short)200);
+        writer.Write((byte)0);
+
+        WriteShortString(writer, "TButton");
+        WriteShortString(writer, "Button1");
+        WriteShortString(writer, "Caption");
+        writer.Write((byte)6);
+        WriteShortString(writer, "Run");
+        WriteShortString(writer, "Left");
+        writer.Write((byte)3);
+        writer.Write((short)16);
+        WriteShortString(writer, "Top");
+        writer.Write((byte)3);
+        writer.Write((short)24);
+        WriteShortString(writer, "Width");
+        writer.Write((byte)3);
+        writer.Write((short)80);
+        WriteShortString(writer, "Height");
+        writer.Write((byte)3);
+        writer.Write((short)25);
+        writer.Write((byte)0);
+        writer.Write((byte)0);
+        writer.Write((byte)0);
+        return stream.ToArray();
+    }
+
+    private static void WriteShortString(BinaryWriter writer, string value)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(value);
+        if (bytes.Length >= byte.MaxValue)
+        {
+            throw new InvalidOperationException("The test short string is too long.");
+        }
+
+        writer.Write((byte)bytes.Length);
+        writer.Write(bytes);
     }
 
     private static void WriteUInt32(byte[] data, int offset, uint value) =>

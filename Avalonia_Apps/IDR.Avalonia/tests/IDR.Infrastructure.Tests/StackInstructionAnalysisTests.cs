@@ -1,10 +1,12 @@
+using System;
+using System.Buffers.Binary;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using IDR.Core.Models;
 using IDR.Core.Services;
 using IDR.Infrastructure.Disassembly;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace IDR.Infrastructure.Tests;
 
@@ -307,6 +309,191 @@ public sealed class StackInstructionAnalysisTests
         CrossReference reference = session.GetIncomingCrossReferences(0x100a).Single();
         Assert.AreEqual(0x1000u, reference.SourceAddress);
         Assert.AreEqual(CrossReferenceKind.Constant, reference.Kind);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRecordsConstantCrossReferenceToAbsoluteDataAddress()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x24, 0x20, 0x40, 0x00,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        CrossReference reference = session.GetIncomingCrossReferences(0x2024).Single();
+        Assert.AreEqual(0x1000u, reference.SourceAddress);
+        Assert.AreEqual(CrossReferenceKind.Constant, reference.Kind);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRecordsConstantCrossReferencesForAbsoluteMemoryOperands()
+    {
+        byte[][] instructions =
+        [
+            [0xa1, 0x24, 0x20, 0x40, 0x00],
+            [0x8d, 0x05, 0x24, 0x20, 0x40, 0x00]
+        ];
+
+        foreach (byte[] instruction in instructions)
+        {
+            AnalysisSession session = CreateClassFieldAccessSession(
+                [.. instruction, 0xc3],
+                useParentField: false);
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            CrossReference[] references = session.GetIncomingCrossReferences(0x2024).ToArray();
+            Assert.AreEqual(1, references.Length, Convert.ToHexString(instruction));
+            CrossReference reference = references[0];
+            Assert.AreEqual(0x1000u, reference.SourceAddress);
+            Assert.AreEqual(CrossReferenceKind.Constant, reference.Kind);
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotTreatSegmentRelativeMemoryAsAbsoluteImageAddress()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x64, 0xa1, 0x24, 0x20, 0x40, 0x00,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.GetIncomingCrossReferences(0x2024).Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRecordsAbsoluteDataCrossReferenceToZeroInitializedSection()
+    {
+        byte[] image = new byte[0x20];
+        byte[] code = [0xb8, 0x04, 0x20, 0x40, 0x00, 0xc3];
+        code.CopyTo(image, 0);
+        AnalysisSession session = new(
+            "bss-reference.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x20, 0, 0x20, true),
+                new PeSection(".bss", 0x2000, 0x20, 0x20, 0, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        CrossReference reference = session.GetIncomingCrossReferences(0x2004).Single();
+        Assert.AreEqual(0x1000u, reference.SourceAddress);
+        Assert.AreEqual(CrossReferenceKind.Constant, reference.Kind);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRecordsDataCrossReferenceThroughTrackedBaseRegister()
+    {
+        DecodedOperand operand = new IcedInstructionDecoder()
+            .Decode([0x8b, 0x10], 0x1005, 32)
+            .Operands[1];
+        Assert.AreEqual("EAX", operand.BaseRegister);
+        Assert.AreEqual(0UL, operand.Displacement);
+        Assert.AreEqual("DS", operand.SegmentRegister);
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x24, 0x20, 0x40, 0x00,
+            0x8b, 0x10,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(
+            session.GetIncomingCrossReferences(0x2024).Any(reference =>
+                reference.SourceAddress == 0x1005u
+                && reference.Kind == CrossReferenceKind.Constant),
+            string.Join(
+                "; ",
+                session.Items.Values.SelectMany(item => item.CrossReferences)
+                    .Select(reference => $"{reference.SourceAddress:X8}->{reference.TargetAddress:X8}")));
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotCrossReferenceUnknownBaseRegisterAddress()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x8b, 0x10,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.GetIncomingCrossReferences(0x2024).Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisIncludesPositiveDisplacementForTrackedBaseRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x8b, 0x50, 0x04,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.GetIncomingCrossReferences(0x2024).Any(reference =>
+            reference.SourceAddress == 0x1005u
+            && reference.Kind == CrossReferenceKind.Constant));
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferDataAddressForIndexedMemoryOperand()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x8b, 0x14, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.GetIncomingCrossReferences(0x2020).Any(reference =>
+            reference.SourceAddress == 0x1005u));
+    }
+
+    [TestMethod]
+    public async Task AnalysisIgnoresAbsoluteImmediateOutsideMappedImageData()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x50, 0x40, 0x00,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x1000].CrossReferences.Count);
     }
 
     [TestMethod]
@@ -1187,6 +1374,26 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisMarksNestedProcedureCallingClassCreateAsConstructorCandidate()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0xe8;
+        code[1] = 0x0b;
+        code[5] = 0xc3;
+        code[0x10] = 0xe8;
+        code[0x11] = 0x03;
+        code[0x15] = 0xc3;
+        code[0x18] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+        session.GetOrAddItem(0x1018).Name = "@ClassCreate";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items[0x1010].Flags.HasFlag(AnalysisFlags.ConstructorCandidate));
+    }
+
+    [TestMethod]
     public async Task AnalysisMarksProcedureCallingClassDestroyAsDestructorCandidate()
     {
         AnalysisSession session = CreateSession(
@@ -1204,6 +1411,26 @@ public sealed class StackInstructionAnalysisTests
             session.Items[0x1000].Flags.HasFlag(AnalysisFlags.DestructorCandidate));
         Assert.IsFalse(
             session.Items[0x1000].Flags.HasFlag(AnalysisFlags.ConstructorCandidate));
+    }
+
+    [TestMethod]
+    public async Task AnalysisMarksNestedProcedureCallingClassDestroyAsDestructorCandidate()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0xe8;
+        code[1] = 0x0b;
+        code[5] = 0xc3;
+        code[0x10] = 0xe8;
+        code[0x11] = 0x03;
+        code[0x15] = 0xc3;
+        code[0x18] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+        session.GetOrAddItem(0x1018).Name = "@ClassDestroy";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items[0x1010].Flags.HasFlag(AnalysisFlags.DestructorCandidate));
     }
 
     [TestMethod]
@@ -1657,6 +1884,51 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisRecognizesImmediateEaxBasedThreadVariableAccessAfterGetTls()
+    {
+        byte[] code = new byte[0x20];
+        byte[] instructions =
+        [
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x8b, 0x48, 0x24,
+            0xc3
+        ];
+        instructions.CopyTo(code, 0);
+        code[0x18] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+        session.GetOrAddItem(0x1018).Name = "@GetTls";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("threadvar_36", session.Items[0x1005].ThreadVariableCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferThreadVariableWithoutImmediateEaxBasedAccess()
+    {
+        foreach (byte[] followingInstructions in new[]
+        {
+            new byte[] { 0x90, 0x8b, 0x48, 0x24, 0xc3 },
+            new byte[] { 0x8b, 0x4b, 0x24, 0xc3 }
+        })
+        {
+            byte[] code = new byte[0x20];
+            byte[] prefix = [0xe8, 0x13, 0x00, 0x00, 0x00];
+            prefix.CopyTo(code, 0);
+            followingInstructions.CopyTo(code, prefix.Length);
+            code[0x18] = 0xc3;
+            AnalysisSession session = CreateSession(code);
+            session.GetOrAddItem(0x1018).Name = "@GetTls";
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.IsTrue(session.Items.Values.All(item => item.ThreadVariableCandidate is null));
+        }
+    }
+
+    [TestMethod]
     public async Task AnalysisInfersAsClassReturnTypeFromKnownVmtRegister()
     {
         byte[] code = new byte[0x20];
@@ -1679,6 +1951,45 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.AreEqual("TExample", session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersReturnTypeFromKnownEaxGlobalDataType()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xa1, 0x20, 0x20, 0x40, 0x00,
+            0xc3
+        ],
+            useParentField: false);
+        AnalysisItem global = session.GetOrAddItem(0x2020);
+        global.DataTypeCandidate = "TChild";
+        global.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferClassReturnTypeForConstructorCandidate()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xa1, 0x20, 0x20, 0x40, 0x00,
+            0xc3
+        ],
+            useParentField: false);
+        AnalysisItem global = session.GetOrAddItem(0x2020);
+        global.DataTypeCandidate = "TChild";
+        global.SetFlags(AnalysisFlags.Data);
+        session.GetOrAddItem(0x1000).SetFlags(AnalysisFlags.ConstructorCandidate);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
     }
 
     [TestMethod]
@@ -1954,6 +2265,38 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.AreEqual("TRecord", session.Items[0x2004].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisAnnotatesCallsWithUniqueResourceStrings()
+    {
+        foreach (string helperName in new[] { "@LoadStr", "FmtLoadStr", "@LoadResString" })
+        {
+            AnalysisSession session = CreateResourceStringHelperSession(
+                helperName,
+                [new PeResourceString(1, 0x0409, "Hello")]);
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.AreEqual("Hello", session.Items[0x1005].ResourceStringCandidate);
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotChooseBetweenConflictingResourceStringLanguages()
+    {
+        AnalysisSession session = CreateResourceStringHelperSession(
+            "@LoadStr",
+            [
+                new PeResourceString(1, 0x0409, "Hello"),
+                new PeResourceString(1, 0x040c, "Bonjour")
+            ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1005].ResourceStringCandidate);
     }
 
     [TestMethod]
@@ -2743,6 +3086,217 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisResolvesClassFieldWhenAddressFormedByAddImmediate()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x89, 0xc2,
+                0x83, 0xc0, 0x08,
+                0xc3
+            ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x100c].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual(8, access.Offset);
+        Assert.AreEqual("FCount", access.FieldName);
+        Assert.AreEqual("Integer", access.TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesNestedClassTypeWhenAddressFormedByAddImmediate()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x89, 0xc2,
+                0x83, 0xc0, 0x08,
+                0x8b, 0x48, 0x0c,
+                0xc3
+            ],
+            useParentField: false);
+        AnalysisItem fieldTypeInfo = session.Items[0x2018];
+        fieldTypeInfo.TypeKind = DelphiTypeKind.Class;
+        fieldTypeInfo.ClassVmtAddress = 0x2020;
+        AnalysisItem nestedVmt = session.GetOrAddItem(0x2020);
+        nestedVmt.Name = "TInner";
+        nestedVmt.SetFlags(AnalysisFlags.Vmt);
+        nestedVmt.Fields = [new DelphiVmtField("FValue", 12, 0x2030)];
+        session.GetOrAddItem(0x2030).Name = "Integer";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate addressAccess = session.Items[0x100c].MemberAccessCandidates.Single();
+        Assert.AreEqual("FCount", addressAccess.FieldName);
+        MemberAccessCandidate nestedAccess = session.Items[0x100f].MemberAccessCandidates.Single();
+        Assert.AreEqual("TInner", nestedAccess.OwnerTypeName);
+        Assert.AreEqual("FValue", nestedAccess.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersUnknownClassFieldTypeFromStoredClassRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0x89, 0xc2,
+                0xb9, 0x20, 0x20, 0x40, 0x00,
+                0x89, 0x4a, 0x08,
+                0xc3
+            ],
+            useParentField: false);
+        session.Items[0x2000].Fields = [new DelphiVmtField("FChild", 8, null)];
+        AnalysisItem nestedVmt = session.GetOrAddItem(0x2020);
+        nestedVmt.Name = "TInner";
+        nestedVmt.SetFlags(AnalysisFlags.Vmt);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x100c].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FChild", access.FieldName);
+        Assert.AreEqual("TInner", access.TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersUnknownClassFieldTypeFromExchangedClassRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0x89, 0xc2,
+                0xb9, 0x20, 0x20, 0x40, 0x00,
+                0x87, 0x4a, 0x08,
+                0xc3
+            ],
+            useParentField: false);
+        session.Items[0x2000].Fields = [new DelphiVmtField("FChild", 8, null)];
+        AnalysisItem nestedVmt = session.GetOrAddItem(0x2020);
+        nestedVmt.Name = "TInner";
+        nestedVmt.SetFlags(AnalysisFlags.Vmt);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x100c].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FChild", access.FieldName);
+        Assert.AreEqual("TInner", access.TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisLoadsClassFieldTypeIntoRegisterAfterExchange()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0x89, 0xc2,
+                0xb9, 0x30, 0x20, 0x40, 0x00,
+                0x87, 0x4a, 0x08,
+                0x8b, 0x41, 0x0c,
+                0xc3
+            ],
+            useParentField: false);
+        session.Items[0x2000].Fields = [new DelphiVmtField("FChild", 8, 0x2018)];
+        AnalysisItem nestedTypeInfo = session.GetOrAddItem(0x2018);
+        nestedTypeInfo.Name = "TInner";
+        nestedTypeInfo.TypeKind = DelphiTypeKind.Class;
+        nestedTypeInfo.ClassVmtAddress = 0x2020;
+        AnalysisItem nestedVmt = session.GetOrAddItem(0x2020);
+        nestedVmt.Name = "TInner";
+        nestedVmt.SetFlags(AnalysisFlags.Vmt);
+        nestedVmt.ClassInstanceSizeBytes = 20;
+        nestedVmt.Fields = [new DelphiVmtField("FValue", 12, 0x2038)];
+        session.GetOrAddItem(0x2030).Name = "TSource";
+        session.GetOrAddItem(0x2030).SetFlags(AnalysisFlags.Vmt);
+        session.GetOrAddItem(0x2038).Name = "Integer";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate exchangedField = session.Items[0x100c].MemberAccessCandidates.Single();
+        Assert.AreEqual("TInner", exchangedField.TypeName);
+        MemberAccessCandidate nestedField = session.Items[0x100f].MemberAccessCandidates.Single();
+        Assert.AreEqual("TInner", nestedField.OwnerTypeName);
+        Assert.AreEqual("FValue", nestedField.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersVirtualMethodOwnerForImplicitSelfRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0x8b, 0x48, 0x08, 0xc3],
+            useParentField: false);
+        session.Items[0x2000].VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1000)];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1000].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersDynamicMethodOwnerForImplicitSelfRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0x8b, 0x48, 0x08, 0xc3],
+            useParentField: false);
+        session.Items[0x2000].DynamicMethods = [new DelphiVmtDynamicMethod(1, 0x1000)];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1000].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersCommonAncestorAsInheritedMethodOwner()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0x8b, 0x48, 0x08, 0xc3],
+            useParentField: true);
+        session.Items[0x2000].VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1000)];
+        session.Items[0x2010].VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1000)];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1000].MemberAccessCandidates.Single();
+        Assert.AreEqual("TBase", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferOwnerForMethodSharedByUnrelatedClasses()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0x8b, 0x48, 0x08, 0xc3],
+            useParentField: false);
+        session.Items[0x2000].VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1000)];
+        AnalysisItem unrelatedVmt = session.GetOrAddItem(0x2010);
+        unrelatedVmt.Name = "TOther";
+        unrelatedVmt.SetFlags(AnalysisFlags.Vmt);
+        unrelatedVmt.VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1000)];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x1000].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
     public async Task AnalysisResolvesClassFieldAccessInsideFieldRange()
     {
         AnalysisSession session = CreateClassFieldAccessSession(
@@ -2769,6 +3323,486 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.AreEqual(0, session.Items[0x100e].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersGlobalClassPointerTypeWhenStoringKnownClassRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x16, 0x00, 0x00, 0x00,
+            0xa3, 0x20, 0x20, 0x40, 0x00,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x2020].DataTypeCandidate);
+        Assert.IsTrue(session.Items[0x2020].Flags.HasFlag(AnalysisFlags.Data));
+        CrossReference reference = session.GetIncomingCrossReferences(0x2020).Single();
+        Assert.AreEqual(0x100au, reference.SourceAddress);
+        Assert.AreEqual(CrossReferenceKind.Constant, reference.Kind);
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersClassTypeForGlobalStoreThroughTrackedRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x16, 0x00, 0x00, 0x00,
+            0x89, 0xc2,
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x89, 0x10,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x2020].DataTypeCandidate);
+        Assert.IsTrue(session.GetIncomingCrossReferences(0x2020).Any(reference =>
+            reference.SourceAddress == 0x1011u
+            && reference.Kind == CrossReferenceKind.Constant));
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersClassTypeForGlobalStoreThroughEbx()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x16, 0x00, 0x00, 0x00,
+            0x89, 0xc2,
+            0xbb, 0x20, 0x20, 0x40, 0x00,
+            0x89, 0x13,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x2020].DataTypeCandidate);
+        Assert.IsTrue(session.GetIncomingCrossReferences(0x2020).Any(reference =>
+            reference.SourceAddress == 0x1011u
+            && reference.Kind == CrossReferenceKind.Constant));
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersClassTypeForGlobalStoreThroughTrackedRegisterOffset()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x16, 0x00, 0x00, 0x00,
+            0x89, 0xc2,
+            0xb8, 0x1c, 0x20, 0x40, 0x00,
+            0x89, 0x50, 0x04,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x2020].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferClassTypeForIndexedGlobalStoreThroughTrackedRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x16, 0x00, 0x00, 0x00,
+            0x89, 0xc2,
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x31, 0xc9,
+            0x89, 0x14, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items.ContainsKey(0x2020));
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferGlobalTypeForUnknownStoreBase()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x16, 0x00, 0x00, 0x00,
+            0x89, 0xc2,
+            0x31, 0xc0,
+            0x89, 0x10,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items.ContainsKey(0x2020));
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferGlobalTypeForSegmentRelativeStore()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x16, 0x00, 0x00, 0x00,
+            0x89, 0xc2,
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x64, 0x89, 0x10,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items.ContainsKey(0x2020));
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferGlobalClassPointerTypeAfterRegisterClobber()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x16, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0xa3, 0x20, 0x20, 0x40, 0x00,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items.ContainsKey(0x2020));
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersClassTypeForStackLocalStoresFromKnownRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x89, 0x45, 0xfc,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        CollectionAssert.AreEqual(
+            new[] { new StackLocalVariable(-4, 4, "TChild") },
+            session.Items[0x1000].StackLocalVariables.ToArray());
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersClassTypeForStackArgumentStoresFromKnownRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x89, 0x45, 0x08,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(
+            new StackArgument(8, 4, "TChild"),
+            session.Items[0x1000].StackArguments.Single());
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferStackArgumentTypeAfterRegisterClobber()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0x89, 0x45, 0x08,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(8u, session.Items[0x1000].StackArguments.Single().Offset);
+        Assert.IsNull(session.Items[0x1000].StackArguments.Single().TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisResolvesFieldAccessAfterTypedStackArgumentStoreAndLoad()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x89, 0x45, 0x08,
+            0x8b, 0x4d, 0x08,
+            0x89, 0xca,
+            0x8b, 0x42, 0x08,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x1000].StackArguments.Single().TypeName);
+        Assert.AreEqual("FCount", session.Items[0x1015].MemberAccessCandidates.Single().FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisResolvesFieldAccessAfterTypedStackArgumentExchange()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x89, 0x45, 0x08,
+            0x87, 0x4d, 0x08,
+            0x89, 0xca,
+            0x8b, 0x42, 0x08,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x1000].StackArguments.Single().TypeName);
+        Assert.AreEqual("FCount", session.Items[0x1015].MemberAccessCandidates.Single().FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesTypedStackArgumentThroughLea()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x89, 0x45, 0x08,
+            0x8d, 0x4d, 0x08,
+            0x89, 0xca,
+            0x8b, 0x42, 0x08,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x1000].StackArguments.Single().TypeName);
+        Assert.AreEqual("FCount", session.Items[0x1015].MemberAccessCandidates.Single().FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesClassTypeAcrossNonArgumentRegisters()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xbb, 0x00, 0x20, 0x40, 0x00,
+            0x89, 0xde,
+            0x89, 0xf7,
+            0x8b, 0x47, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1009].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisLoadsVmtPointerThroughGlobalAddressHeldInEbx()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xbb, 0x20, 0x20, 0x40, 0x00,
+                0x8b, 0x03,
+                0x8b, 0x48, 0x08,
+                0xc3
+            ],
+            useParentField: false,
+            globalPointerValue: 0x402000);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1007].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+        Assert.IsTrue(session.Items[0x1005].CrossReferences.Any(reference =>
+            reference.TargetAddress == 0x2020
+            && reference.Kind == CrossReferenceKind.Constant));
+    }
+
+    [TestMethod]
+    public async Task AnalysisInvalidatesGlobalAddressHeldInEbxAfterFullOrPartialOverwrite()
+    {
+        (byte[] Code, uint LoadRva)[] cases =
+        [
+            (
+                [
+                    0xbb, 0x20, 0x20, 0x40, 0x00,
+                    0x31, 0xdb,
+                    0x8b, 0x03,
+                    0xc3
+                ],
+                0x1007),
+            (
+                [
+                    0xbb, 0x20, 0x20, 0x40, 0x00,
+                    0x66, 0xbb, 0x00, 0x00,
+                    0x8b, 0x03,
+                    0xc3
+                ],
+                0x1009)
+        ];
+
+        foreach ((byte[] code, uint loadRva) in cases)
+        {
+            AnalysisSession session = CreateClassFieldAccessSession(
+                code,
+                useParentField: false,
+                globalPointerValue: 0x402000);
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.IsFalse(session.Items[loadRva].CrossReferences.Any(reference =>
+                reference.TargetAddress == 0x2020
+                && reference.Kind == CrossReferenceKind.Constant));
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisInvalidatesNonArgumentClassTypeAfterFullOrPartialOverwrite()
+    {
+        (byte[] Code, uint AccessRva)[] cases =
+        [
+            (
+                [
+                    0xbb, 0x00, 0x20, 0x40, 0x00,
+                    0x31, 0xdb,
+                    0x8b, 0x43, 0x08,
+                    0xc3
+                ],
+                0x1007),
+            (
+                [
+                    0xbb, 0x00, 0x20, 0x40, 0x00,
+                    0x66, 0xbb, 0x00, 0x00,
+                    0x8b, 0x43, 0x08,
+                    0xc3
+                ],
+                0x1009)
+        ];
+
+        foreach ((byte[] code, uint accessRva) in cases)
+        {
+            AnalysisSession session = CreateClassFieldAccessSession(code, useParentField: false);
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.AreEqual(0, session.Items[accessRva].MemberAccessCandidates.Count);
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferUnknownStackArgumentTypeFromExchange()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x89, 0xc1,
+            0x87, 0x4d, 0x08,
+            0x89, 0xca,
+            0x8b, 0x42, 0x08,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1000].StackArguments.Single().TypeName);
+        Assert.AreEqual(0, session.Items[0x1014].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisLoadsTypedStackLocalThroughExchange()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x89, 0x45, 0xf8,
+            0x87, 0x4d, 0xf8,
+            0x89, 0xca,
+            0x8b, 0x42, 0x08,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x1000].StackLocalVariables.Single().TypeName);
+        Assert.AreEqual("FCount", session.Items[0x1015].MemberAccessCandidates.Single().FieldName);
     }
 
     [TestMethod]
@@ -2800,6 +3834,283 @@ public sealed class StackInstructionAnalysisTests
         MemberAccessCandidate nestedAccess = session.Items[0x100f].MemberAccessCandidates.Single();
         Assert.AreEqual("TInner", nestedAccess.OwnerTypeName);
         Assert.AreEqual("FValue", nestedAccess.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesGlobalDataTypeThroughAbsolutePointerLoad()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xa1, 0x20, 0x20, 0x40, 0x00,
+            0x89, 0xc2,
+            0x8b, 0x4a, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+        AnalysisItem pointerGlobal = session.GetOrAddItem(0x2020);
+        pointerGlobal.DataTypeCandidate = "TChild";
+        pointerGlobal.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1007].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesClassTypeFromImmediateGlobalAddress()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x8b, 0x48, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+        AnalysisItem global = session.GetOrAddItem(0x2020);
+        global.DataTypeCandidate = "TChild";
+        global.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1005].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesClassTypeFromAbsoluteGlobalLea()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x8d, 0x05, 0x20, 0x20, 0x40, 0x00,
+            0x8b, 0x48, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+        AnalysisItem global = session.GetOrAddItem(0x2020);
+        global.DataTypeCandidate = "TChild";
+        global.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1006].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotPropagateTypeFromAddressInsideCodeSection()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x10, 0x40, 0x00,
+            0x8b, 0x48, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+        AnalysisItem codeItem = session.GetOrAddItem(0x1000);
+        codeItem.DataTypeCandidate = "TChild";
+        codeItem.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x1005].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesClassTypeFromGlobalVmtPointerLoad()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xa1, 0x20, 0x20, 0x40, 0x00,
+            0x89, 0xc2,
+            0xe8, 0x14, 0x00, 0x00, 0x00,
+            0xc3
+        ],
+            useParentField: false,
+            globalPointerValue: 0x00402000);
+        session.GetOrAddItem(0x1020).Name = "@AsClass";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesClassTypeFromTrackedOffsetVmtPointerLoad()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x1c, 0x20, 0x40, 0x00,
+            0x8b, 0x50, 0x04,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0xc3
+        ],
+            useParentField: false,
+            globalPointerValue: 0x00402000);
+        session.GetOrAddItem(0x1020).Name = "@AsClass";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("TChild", session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotPropagateUntypedAbsolutePointerLoad()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xa1, 0x20, 0x20, 0x40, 0x00,
+            0x89, 0xc2,
+            0x8b, 0x4a, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x1007].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesGlobalTypeThroughTrackedRegisterPointerLoad()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x8b, 0x10,
+            0x8b, 0x4a, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+        AnalysisItem pointerGlobal = session.GetOrAddItem(0x2020);
+        pointerGlobal.DataTypeCandidate = "TChild";
+        pointerGlobal.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1007].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesGlobalTypeThroughTrackedRegisterPointerLoadWithOffset()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x8b, 0x50, 0x04,
+            0x8b, 0x4a, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+        AnalysisItem pointerGlobal = session.GetOrAddItem(0x2024);
+        pointerGlobal.DataTypeCandidate = "TChild";
+        pointerGlobal.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1008].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotPropagateUntypedOffsetGlobalThroughTrackedRegisterLoad()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x8b, 0x50, 0x04,
+            0x8b, 0x4a, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x1008].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotPropagateGlobalTypeThroughSegmentOverriddenRegisterLoad()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x64, 0x8b, 0x50, 0x04,
+            0x8b, 0x4a, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+        AnalysisItem pointerGlobal = session.GetOrAddItem(0x2024);
+        pointerGlobal.DataTypeCandidate = "TChild";
+        pointerGlobal.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x1009].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesKnownTypeThroughFrameLocalLoad()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x13, 0x00, 0x00, 0x00,
+            0x89, 0x45, 0xfc,
+            0x8b, 0x45, 0xfc,
+            0x89, 0xc2,
+            0x8b, 0x4a, 0x08,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1015].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotPropagateUnknownFrameLocalType()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0x8b, 0x45, 0xfc,
+            0x89, 0xc2,
+            0x8b, 0x4a, 0x08,
+            0xc9,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x1008].MemberAccessCandidates.Count);
     }
 
     [TestMethod]
@@ -3666,6 +4977,31 @@ public sealed class StackInstructionAnalysisTests
         return session;
     }
 
+    private static AnalysisSession CreateResourceStringHelperSession(
+        string helperName,
+        PeResourceString[] resourceStrings)
+    {
+        byte[] image = new byte[0x20];
+        byte[] code =
+        [
+            0xb8, 0x01, 0x00, 0x00, 0x00,
+            0xe8, 0x0e, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "resource-string.exe",
+            image,
+            [new PeSection(".text", 0x1000, 0x20, 0, 0x20, true)])
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = helperName;
+        session.LoadPeDirectories([], [], resourceStrings);
+        return session;
+    }
+
     private static AnalysisSession CreateStackRuntimeClearSession(string helperName)
     {
         byte[] image = new byte[0x30];
@@ -3926,11 +5262,19 @@ public sealed class StackInstructionAnalysisTests
         return session;
     }
 
-    private static AnalysisSession CreateClassFieldAccessSession(byte[] code, bool useParentField)
+    private static AnalysisSession CreateClassFieldAccessSession(
+        byte[] code,
+        bool useParentField,
+        uint? globalPointerValue = null)
     {
         byte[] image = new byte[0x80];
         code.CopyTo(image, 0);
         image[0x20] = 0xc3;
+        if (globalPointerValue is uint pointerValue)
+        {
+            BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(0x60, sizeof(uint)), pointerValue);
+        }
+
         AnalysisSession session = new(
             "class-field-access.exe",
             image,
