@@ -21,6 +21,9 @@
 
   <ItemGroup>
     <!-- Core OFB Creator Libraries -->
+    <ProjectReference Include="..\Genealogy.Core\Genealogy.Core.csproj" />
+    <ProjectReference Include="..\Genealogy.Gedcom\Genealogy.Gedcom.csproj" />
+    <ProjectReference Include="..\OFBCreator.Projects\OFBCreator.Projects.csproj" />
     <ProjectReference Include="..\OFBCreator.Abstractions\OFBCreator.Abstractions.csproj" />
     <ProjectReference Include="..\OFBCreator.Core\OFBCreator.Core.csproj" />
     <ProjectReference Include="..\..\Libraries\GenInterfaces\GenInterfaces.csproj" />
@@ -32,6 +35,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="System.CommandLine" />
     <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\*.json" />
   </ItemGroup>
 
 </Project>
