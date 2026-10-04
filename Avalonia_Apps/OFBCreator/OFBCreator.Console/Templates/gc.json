@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "id": "gc",
+  "entryRoot": "Family",
+  "fragments": {
+    "occupations": [
+      {
+        "kind": "forEach",
+        "items": "person.occupations",
+        "as": "occupation",
+        "template": [
+          {
+            "kind": "paragraph",
+            "role": "family-data",
+            "content": [
+              { "kind": "field", "path": "occupation.date", "formatter": "gedcomDatePrefix" },
+              {
+                "kind": "link",
+                "target": "occupation.indexAnchor",
+                "content": [{ "kind": "field", "path": "occupation.name" }]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "parent": [
+      {
+        "kind": "paragraph",
+        "role": "adult",
+        "anchor": "person.anchor",
+        "content": [
+          { "kind": "field", "path": "person.nameGc" },
+          { "kind": "field", "path": "person.vitalEventsGc" },
+          {
+            "kind": "link",
+            "target": "person.indexAnchor",
+            "content": [{ "kind": "text", "value": " [Index]" }]
+          }
+        ]
+      },
+      { "kind": "include", "fragment": "occupations" },
+      {
+        "kind": "paragraph",
+        "role": "note",
+        "content": [
+          { "kind": "text", "value": "PN = " },
+          { "kind": "field", "path": "person.reference" },
+          {
+            "kind": "link",
+            "target": "person.indexAnchor",
+            "content": [{ "kind": "text", "value": " [Index]" }]
+          }
+        ]
+      }
+    ]
+  },
+  "blocks": [
+    {
+      "kind": "paragraph",
+      "role": "family-data",
+      "content": [
+        { "kind": "text", "value": "Ehe: " },
+        { "kind": "field", "path": "family.union" }
+      ]
+    },
+    {
+      "kind": "forEach",
+      "items": "family.parents",
+      "as": "person",
+      "template": [{ "kind": "include", "fragment": "parent" }]
+    },
+    {
+      "kind": "forEach",
+      "items": "family.children",
+      "as": "child",
+      "template": [
+        {
+          "kind": "paragraph",
+          "role": "child",
+          "anchor": "child.anchor",
+          "content": [
+            { "kind": "text", "value": "- " },
+            { "kind": "field", "path": "child.nameGc" },
+            { "kind": "field", "path": "child.birth", "formatter": "dateSuffix" },
+            {
+              "kind": "link",
+              "target": "child.indexAnchor",
+              "content": [{ "kind": "text", "value": " [Index]" }]
+            }
+          ]
+        },
+        {
+          "kind": "forEach",
+          "items": "child.occupations",
+          "as": "occupation",
+          "template": [
+            {
+              "kind": "paragraph",
+              "role": "family-data",
+              "content": [
+                { "kind": "field", "path": "occupation.date", "formatter": "gedcomDatePrefix" },
+                {
+                  "kind": "link",
+                  "target": "occupation.indexAnchor",
+                  "content": [{ "kind": "field", "path": "occupation.name" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

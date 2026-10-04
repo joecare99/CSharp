@@ -1,0 +1,190 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="OFBCreator.Avalonia.Views.MainWindow"
+        Width="1120"
+        Height="820"
+        MinWidth="900"
+        MinHeight="650"
+        Title="OFB Creator">
+  <Grid RowDefinitions="Auto,*" Margin="18">
+    <Border Grid.Row="0" Padding="0,0,0,14">
+      <StackPanel>
+        <TextBlock FontSize="24" FontWeight="SemiBold" Text="Ortsfamilienbuch Creator" />
+        <TextBlock Opacity="0.72" Text="Portable project workspace — the same .ofbproject is used by the CLI." />
+      </StackPanel>
+    </Border>
+    <TabControl Grid.Row="1">
+      <TabItem Header="Project">
+        <ScrollViewer>
+          <StackPanel Spacing="10" Margin="14">
+            <TextBlock Text="Portable project file" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+              <TextBox Grid.Column="0" PlaceholderText="C:\path\book.ofbproject" Text="{Binding ProjectFilePath}" />
+              <Button Grid.Column="1" Content="New" Command="{Binding NewProjectCommand}" />
+              <Button Grid.Column="2" Content="Open" Command="{Binding OpenProjectCommand}" />
+              <Button Grid.Column="3" Content="Save" Command="{Binding SaveProjectCommand}" />
+            </Grid>
+            <TextBlock Text="Project name" />
+            <TextBox Text="{Binding Name}" />
+            <TextBlock Text="Document title" />
+            <TextBox Text="{Binding Title}" />
+            <TextBlock Text="Recent projects" FontWeight="SemiBold" Margin="0,12,0,0" />
+            <ItemsControl ItemsSource="{Binding RecentProjects}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                          Content="{Binding}"
+                          Command="{Binding $parent[Window].DataContext.OpenRecentProjectCommand}"
+                          CommandParameter="{Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Source &amp; Export">
+        <ScrollViewer>
+          <StackPanel Spacing="9" Margin="14">
+            <TextBlock Text="GEDCOM input path" />
+            <TextBox PlaceholderText="Relative to the project file or absolute" Text="{Binding InputPath}" />
+            <TextBlock Text="DOCX output path" />
+            <TextBox PlaceholderText="Relative to the project file or absolute" Text="{Binding OutputPath}" />
+            <TextBlock Text="Entry template (gc, ak, or JSON path)" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBox Width="420" Text="{Binding EntryTemplate}" />
+              <Button Content="Validate template" Command="{Binding ValidateTemplateCommand}" />
+            </StackPanel>
+            <TextBlock Text="Place filter (optional)" />
+            <TextBox Text="{Binding PlaceId}" />
+            <CheckBox Content="Include descendants of families matching the place filter"
+                      IsChecked="{Binding IncludeDescendants}" />
+            <TextBlock Text="Preface" />
+            <TextBox AcceptsReturn="True" MinHeight="70" TextWrapping="Wrap" Text="{Binding Preface}" />
+            <TextBlock Text="Legend" />
+            <TextBox AcceptsReturn="True" MinHeight="70" TextWrapping="Wrap" Text="{Binding Legend}" />
+            <Button HorizontalAlignment="Left" Padding="18,8" Content="Save project and export DOCX"
+                    Command="{Binding ExportCommand}" IsEnabled="{Binding IsNotBusy}" />
+            <Button HorizontalAlignment="Left" Content="Cancel export"
+                    Command="{Binding ExportCancelCommand}" IsEnabled="{Binding IsBusy}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Privacy &amp; Filters">
+        <ScrollViewer>
+          <StackPanel Spacing="8" Margin="14">
+            <TextBlock Text="Rules are applied to a detached export view; imported genealogy data is never edited."
+                       TextWrapping="Wrap" />
+            <Grid ColumnDefinitions="150,*,130,150,180,90,Auto" ColumnSpacing="6">
+              <ComboBox Grid.Column="0" ItemsSource="{Binding RuleTargetKinds}" SelectedItem="{Binding RuleTargetKind}" />
+              <TextBox Grid.Column="1" PlaceholderText="gedcom:person:I7" Text="{Binding RuleTargetId}" />
+              <ComboBox Grid.Column="2" ItemsSource="{Binding RuleActions}" SelectedItem="{Binding RuleAction}" />
+              <TextBox Grid.Column="3" PlaceholderText="Field" Text="{Binding RuleField}" />
+              <TextBox Grid.Column="4" PlaceholderText="Replacement / policy" Text="{Binding RuleValue}" />
+              <NumericUpDown Grid.Column="5" Minimum="1" Maximum="9999"
+                             Value="{Binding RuleOccurrence}" ToolTip.Tip="One-based occurrence, for fact rules only" />
+              <Button Grid.Column="6" Content="Add rule" Command="{Binding AddRuleCommand}" />
+            </Grid>
+            <TextBlock Text="Fact rules use the Field as a fact type; occurrence is optional and one-based." Opacity="0.75" />
+            <ListBox ItemsSource="{Binding ExportRules}" SelectedItem="{Binding SelectedRule}" MinHeight="240">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal" Spacing="12" Margin="3">
+                    <TextBlock Text="{Binding Order}" Width="48" />
+                    <TextBlock Text="{Binding TargetKind}" Width="70" />
+                    <TextBlock Text="{Binding TargetId}" Width="220" />
+                    <TextBlock Text="{Binding Action}" Width="90" />
+                    <TextBlock Text="{Binding Field}" Width="120" />
+                    <TextBlock Text="{Binding Value}" />
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Content="Move up" Command="{Binding MoveSelectedRuleUpCommand}" />
+              <Button Content="Move down" Command="{Binding MoveSelectedRuleDownCommand}" />
+              <Button Content="Apply form edits" Command="{Binding UpdateSelectedRuleCommand}" />
+              <Button Content="Remove selected rule" Command="{Binding RemoveRuleCommand}" />
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Grouping review">
+        <ScrollViewer>
+          <StackPanel Spacing="9" Margin="14">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <TextBlock VerticalAlignment="Center" Text="Automatic acceptance threshold (0–100)" />
+              <NumericUpDown Width="110" Minimum="0" Maximum="100"
+                             Value="{Binding AutoAcceptThreshold}" />
+              <Button Content="Refresh evidence" Command="{Binding RefreshGroupingCandidatesCommand}"
+                      IsEnabled="{Binding IsNotBusy}" />
+              <Button Content="Cancel" Command="{Binding RefreshGroupingCandidatesCancelCommand}"
+                      IsEnabled="{Binding IsBusy}" />
+            </StackPanel>
+            <TextBlock Text="Candidates are based on phonetic distance and repeated parent-to-family-surname transitions."
+                       TextWrapping="Wrap" />
+            <ItemsControl ItemsSource="{Binding GroupingCandidates}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border BorderBrush="#808080" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,3">
+                    <StackPanel Spacing="5">
+                      <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock FontWeight="SemiBold" Text="{Binding LeftSurname}" />
+                        <TextBlock Text="↔" />
+                        <TextBlock FontWeight="SemiBold" Text="{Binding RightSurname}" />
+                        <TextBlock Text="{Binding Score, StringFormat='Score: {0}/100'}" Margin="12,0,0,0" />
+                        <TextBlock Text="{Binding Status}" />
+                      </StackPanel>
+                      <ItemsControl ItemsSource="{Binding Evidence}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <TextBlock Text="{Binding Kind}" Opacity="0.8" />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                      <StackPanel Orientation="Horizontal" Spacing="7">
+                        <Button Content="Accept merge"
+                                Command="{Binding $parent[Window].DataContext.AcceptCandidateCommand}"
+                                CommandParameter="{Binding}" />
+                        <Button Content="Keep separate"
+                                Command="{Binding $parent[Window].DataContext.RejectCandidateCommand}"
+                                CommandParameter="{Binding}" />
+                        <TextBox Width="180" PlaceholderText="Manual group label"
+                                 Text="{Binding $parent[Window].DataContext.ManualGroupName}" />
+                        <Button Content="Manual merge"
+                                Command="{Binding $parent[Window].DataContext.ManualMergeCandidateCommand}"
+                                CommandParameter="{Binding}" />
+                      </StackPanel>
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="Saved decisions" FontWeight="SemiBold" Margin="0,10,0,0" />
+            <ItemsControl ItemsSource="{Binding GroupingDecisions}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Action}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Diagnostics">
+        <ScrollViewer>
+          <StackPanel Spacing="8" Margin="14">
+            <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
+            <TextBlock FontWeight="SemiBold" Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+            <ItemsControl ItemsSource="{Binding Diagnostics}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,3" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
+  </Grid>
+</Window>
