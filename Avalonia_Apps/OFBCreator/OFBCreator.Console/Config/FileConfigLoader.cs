@@ -25,6 +25,7 @@ public static class FileConfigLoader
     private const string IncludeDescendantsKey = "includeDescendants";
     private const string PrefaceKey = "preface";
     private const string LegendKey = "legend";
+    private const string TemplateKey = "template";
     private const string FormatKey = "format"; // "docx" or "odt"
 
     /// <summary>
@@ -58,6 +59,7 @@ public static class FileConfigLoader
                 IncludeDescendants = TryGetValueAsBool( dict, IncludeDescendantsKey, false ),
                 Preface = TryGetValue( dict, PrefaceKey )?.ToString(),
                 Legend = TryGetValue( dict, LegendKey )?.ToString(),
+                Template = TryGetValue( dict, TemplateKey )?.ToString() ?? "gc",
                 UseDocxFormat = TryGetValue( dict, FormatKey )?.ToString()?.Equals( "odt", StringComparison.OrdinalIgnoreCase ) != true,
             };
         }
@@ -84,6 +86,7 @@ public static class FileConfigLoader
                 [IncludeDescendantsKey] = options.IncludeDescendants,
                 [PrefaceKey] = string.IsNullOrEmpty( options.Preface ) ? null : options.Preface,
                 [LegendKey] = string.IsNullOrEmpty( options.Legend ) ? null : options.Legend,
+                [TemplateKey] = options.Template,
                 [FormatKey] = options.UseDocxFormat ? "docx" : "odt"
             };
 

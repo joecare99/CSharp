@@ -17,6 +17,7 @@
 
   <ItemGroup>
 	<ProjectReference Include="..\OFBCreator.Console\OFBCreator.Console.csproj" />
+	<ProjectReference Include="..\OFBCreator.Projects\OFBCreator.Projects.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,9 +11,17 @@
   <Folder Name="/OFBCreator/">
     <File Path="Directory.Packages.props" />
     <File Path="Directory.target.props" />
+    <Project Path="Genealogy.Core.Tests/Genealogy.Core.Tests.csproj" />
+    <Project Path="Genealogy.Core/Genealogy.Core.csproj" />
+    <Project Path="Genealogy.Gedcom.Tests/Genealogy.Gedcom.Tests.csproj" />
+    <Project Path="Genealogy.Gedcom/Genealogy.Gedcom.csproj" />
     <Project Path="OFBCreator.Abstractions.Tests/OFBCreator.Abstractions.Tests.csproj" />
     <Project Path="OFBCreator.Abstractions/OFBCreator.Abstractions.csproj" />
     <Project Path="OFBCreator.Console/OFBCreator.Console.csproj" />
+    <Project Path="OFBCreator.Projects/OFBCreator.Projects.csproj" />
+    <Project Path="OFBCreator.Projects.Tests/OFBCreator.Projects.Tests.csproj" />
+    <Project Path="OFBCreator.Avalonia/OFBCreator.Avalonia.csproj" />
+    <Project Path="OFBCreator.Avalonia.Tests/OFBCreator.Avalonia.Tests.csproj" />
     <Project Path="OFBCreator.Core.Tests/OFBCreator.Core.Tests.csproj" />
     <Project Path="OFBCreator.Core/OFBCreator.Core.csproj" />
   </Folder>

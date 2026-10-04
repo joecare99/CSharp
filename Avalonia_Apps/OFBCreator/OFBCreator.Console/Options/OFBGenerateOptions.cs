@@ -1,4 +1,6 @@
 using System.CommandLine;
+using System.Collections.Generic;
+using OFBCreator.Projects.Models;
 
 /// <summary>
 /// Options for the OFB (Ortsfamilienbuch) generation pipeline.
@@ -52,9 +54,9 @@ public sealed class OFBGenerateOptions
     public string? Legend { get; init; }
 
     /// <summary>
-    /// Family entry layout. Defaults to the GC-style format.
+    /// Built-in template name or path to an external JSON entry template.
     /// </summary>
-    public OFBEntryFormat EntryFormat { get; init; } = OFBEntryFormat.GC;
+    public string Template { get; init; } = "gc";
 
     /// <summary>
     /// When true (default), outputs DOCX format using Xceed.Document.NET.
@@ -72,4 +74,15 @@ public sealed class OFBGenerateOptions
     /// When null or empty, the data source is auto-detected by probing with CanRead.
     /// </summary>
     public string? DataSource { get; init; }
+
+    /// <summary>
+    /// Ordered, project-persisted transformations applied to a detached export view.
+    /// </summary>
+    public IReadOnlyList<OFBExportRule> ExportRules { get; init; } = [];
+
+    /// <summary>Evidence threshold used when forming surname groups.</summary>
+    public OFBGroupingPolicy GroupingPolicy { get; init; } = new();
+
+    /// <summary>Persisted editorial choices for evidence-scored surname merges.</summary>
+    public IReadOnlyList<OFBGroupingDecision> GroupingDecisions { get; init; } = [];
 }
