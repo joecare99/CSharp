@@ -38,6 +38,31 @@ internal static class ParadoxBlockCipher
     public static void DecryptDatabaseBlock(Span<byte> block, uint encryption, int blockNumber) =>
         DecryptBlock(block, encryption, 0, (byte)blockNumber, true);
 
+    public static void EncryptDatabaseBlock(Span<byte> block, uint encryption, int blockNumber)
+    {
+        ValidateBlock(block);
+
+        byte a = (byte)encryption;
+        byte b = (byte)(encryption >> 8);
+        Span<byte> encrypted = stackalloc byte[256];
+        for (int chunkIndex = 0; chunkIndex < block.Length / 256; chunkIndex++)
+        {
+            int chunkOffset = chunkIndex * 256;
+            Span<byte> source = block.Slice(chunkOffset, 256);
+            for (int index = 0; index < 256; index++)
+            {
+                int tableIndex = (EncryptionTableC[index] - (byte)blockNumber) & 0xFF;
+                encrypted[tableIndex] = (byte)(
+                    source[index] ^
+                    EncryptionTableA[(index + a) & 0xFF] ^
+                    EncryptionTableB[(tableIndex + b) & 0xFF] ^
+                    EncryptionTableC[(tableIndex + chunkIndex) & 0xFF]);
+            }
+
+            encrypted.CopyTo(source);
+        }
+    }
+
     public static void DecryptMemoBlock(Span<byte> block, uint encryption) =>
         DecryptBlock(
             block,
@@ -48,10 +73,7 @@ internal static class ParadoxBlockCipher
 
     private static void DecryptBlock(Span<byte> block, uint encryption, byte c, byte d, bool incrementChunk)
     {
-        if (block.Length == 0 || block.Length % 256 != 0)
-        {
-            throw new ArgumentException("Paradox encrypted blocks must contain a non-empty multiple of 256 bytes.", nameof(block));
-        }
+        ValidateBlock(block);
 
         byte a = (byte)encryption;
         byte b = (byte)(encryption >> 8);
@@ -73,6 +95,14 @@ internal static class ParadoxBlockCipher
             }
 
             temporary.CopyTo(source);
+        }
+    }
+
+    private static void ValidateBlock(ReadOnlySpan<byte> block)
+    {
+        if (block.Length == 0 || block.Length % 256 != 0)
+        {
+            throw new ArgumentException("Paradox encrypted blocks must contain a non-empty multiple of 256 bytes.", nameof(block));
         }
     }
 }
