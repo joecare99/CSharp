@@ -13,6 +13,7 @@ public sealed class ParadoxEmptyTemplateInsertionTests
 {
     private const string TemplateEnvironmentVariable = "AHWB_EMPTY_TEMPLATE_DIRECTORY";
     private const string TrialEnvironmentVariable = "AHWB_EMPTY_TRIAL_DIRECTORY";
+    private const string GenerateAutoIdsEnvironmentVariable = "AHWB_GENERATE_AUTO_IDS";
     private const string TrialDirectoryName = "AHNENWIN_Empty2_pxlib_trial12";
 
     [TestMethod]
@@ -39,6 +40,11 @@ public sealed class ParadoxEmptyTemplateInsertionTests
         Assert.IsFalse(Directory.Exists(trialDirectory), $"Trial directory already exists: {trialDirectory}");
 
         CopyTemplate(templatePath, trialDirectory);
+        bool generateAutoIds = Environment.GetEnvironmentVariable(GenerateAutoIdsEnvironmentVariable) == "1";
+        uint initialMarriageId = BinaryPrimitives.ReadUInt32LittleEndian(
+            File.ReadAllBytes(Path.Combine(trialDirectory, "MRG.DB")).AsSpan(0x49, sizeof(uint)));
+        uint initialSourceId = BinaryPrimitives.ReadUInt32LittleEndian(
+            File.ReadAllBytes(Path.Combine(trialDirectory, "sour2.DB")).AsSpan(0x49, sizeof(uint)));
         Dictionary<string, byte> primaryIndexMutationBytes = Directory
             .EnumerateFiles(trialDirectory, "*.PX", SearchOption.TopDirectoryOnly)
             .ToDictionary(
@@ -80,20 +86,15 @@ public sealed class ParadoxEmptyTemplateInsertionTests
                     ("Vornamen", "Ben"),
                     ("Geschlecht", "M"))
             ]);
-        writer.AppendRecords(
-            Path.Combine(trialDirectory, "MRG.DB"),
-            "Numr",
-            [
-                Record(
-                    ("Numr", "1"),
-                    ("Nummer", "1"),
-                    ("Epnum", "2"),
-                    ("Htag", "1"),
-                    ("Hmonat", "1"),
-                    ("Hjahr", "1900"),
-                    ("Hort", "Pxlib-Testort"),
-                    ("Hqu", "ProbeSrc"))
-            ]);
+        Dictionary<string, string?> marriageRecord = Record(
+            ("Nummer", "1"), ("Epnum", "2"), ("Htag", "1"), ("Hmonat", "1"),
+            ("Hjahr", "1900"), ("Hort", "Pxlib-Testort"), ("Hqu", "ProbeSrc"));
+        if (!generateAutoIds)
+        {
+            marriageRecord["Numr"] = "1";
+        }
+
+        writer.AppendRecords(Path.Combine(trialDirectory, "MRG.DB"), "Numr", [marriageRecord]);
         writer.AppendRecords(
             Path.Combine(trialDirectory, "adp.DB"),
             "Nummer",
@@ -102,10 +103,13 @@ public sealed class ParadoxEmptyTemplateInsertionTests
             Path.Combine(trialDirectory, "LOC.db"),
             "Ort",
             [Record(("Ort", "Pxlib-Testort"), ("Land", "Testland"))]);
-        writer.AppendRecords(
-            Path.Combine(trialDirectory, "sour2.DB"),
-            "N",
-            [Record(("N", "1"), ("Titel", "Probe source"), ("Abk", "ProbeSrc"))]);
+        Dictionary<string, string?> sourceRecord = Record(("Titel", "Probe source"), ("Abk", "ProbeSrc"));
+        if (!generateAutoIds)
+        {
+            sourceRecord["N"] = "1";
+        }
+
+        writer.AppendRecords(Path.Combine(trialDirectory, "sour2.DB"), "N", [sourceRecord]);
 
         ParadoxSecondaryIndexWriter secondaryIndexWriter = new(reader);
         foreach (string databaseFileName in new[] { "AWD.DB", "MRG.DB", "adp.DB", "LOC.db", "sour2.DB" })
@@ -161,6 +165,7 @@ public sealed class ParadoxEmptyTemplateInsertionTests
 
         ParadoxTable marriages = reader.Read(Path.Combine(trialDirectory, "MRG.DB"));
         Assert.AreEqual(1, marriages.Records.Count);
+        Assert.AreEqual(generateAutoIds ? (initialMarriageId + 1).ToString() : "1", marriages.Records[0][0]);
         Assert.AreEqual("2", marriages.Records[0][2]);
         Assert.AreEqual("Pxlib-Testort", marriages.Records[0][6]);
         Assert.AreEqual("ProbeSrc", marriages.Records[0][18]);
@@ -169,19 +174,20 @@ public sealed class ParadoxEmptyTemplateInsertionTests
         Assert.AreEqual(
             "Probe source",
             reader.Read(Path.Combine(trialDirectory, "sour2.DB")).Records[0][1]);
+        Assert.AreEqual(generateAutoIds ? (initialSourceId + 1).ToString() : "1",
+            reader.Read(Path.Combine(trialDirectory, "sour2.DB")).Records[0][0]);
+        Assert.AreEqual(initialMarriageId + (generateAutoIds ? 1u : 0u),
+            BinaryPrimitives.ReadUInt32LittleEndian(
+                File.ReadAllBytes(Path.Combine(trialDirectory, "MRG.DB")).AsSpan(0x49, sizeof(uint))));
+        Assert.AreEqual(initialSourceId + (generateAutoIds ? 1u : 0u),
+            BinaryPrimitives.ReadUInt32LittleEndian(
+                File.ReadAllBytes(Path.Combine(trialDirectory, "sour2.DB")).AsSpan(0x49, sizeof(uint))));
 
-        foreach ((string tableName, int recordCount) in new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
-                 {
-                     ["AWD"] = 2,
-                     ["MRG"] = 1,
-                     ["adp"] = 1,
-                     ["LOC"] = 1,
-                     ["sour2"] = 1
-                 })
+        foreach (string tableName in indexedTableNames)
         {
             byte[] primaryIndex = File.ReadAllBytes(Path.Combine(trialDirectory, $"{tableName}.PX"));
             Assert.AreEqual(
-                unchecked((byte)(primaryIndexMutationBytes[tableName] + recordCount)),
+                unchecked((byte)(primaryIndexMutationBytes[tableName] + 1)),
                 primaryIndex[0x2C],
                 $"The primary-index change marker for {tableName} was not advanced.");
         }
@@ -198,6 +204,9 @@ public sealed class ParadoxEmptyTemplateInsertionTests
             };
             byte[] secondaryData = File.ReadAllBytes(secondaryDataPath);
             Assert.AreEqual(8, secondaryData[4], fileName);
+            byte[] parentPrimaryIndex = File.ReadAllBytes(Path.Combine(trialDirectory, $"{tableName}.PX"));
+            Assert.AreEqual(parentPrimaryIndex[0x2C], secondaryData[0x2F],
+                $"The XG revision must match the parent primary-index revision: {fileName}");
             Assert.AreEqual(
                 expectedRecordCount,
                 BinaryPrimitives.ReadInt32LittleEndian(secondaryData.AsSpan(6)),
@@ -283,7 +292,7 @@ public sealed class ParadoxEmptyTemplateInsertionTests
         return suffix.Length > 0 && suffix.All(char.IsAsciiDigit);
     }
 
-    private static IReadOnlyDictionary<string, string?> Record(params (string Field, string Value)[] values) =>
+    private static Dictionary<string, string?> Record(params (string Field, string Value)[] values) =>
         values.ToDictionary(static item => item.Field, static item => (string?)item.Value, StringComparer.OrdinalIgnoreCase);
 
     private static void CopyTemplate(string sourceDirectory, string destinationDirectory)
