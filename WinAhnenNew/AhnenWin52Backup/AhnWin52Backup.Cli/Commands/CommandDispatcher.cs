@@ -47,6 +47,11 @@ internal sealed class CommandDispatcher
             return InspectDatabase(arguments);
         }
 
+        if (string.Equals(arguments[0], "inventory-db", StringComparison.OrdinalIgnoreCase))
+        {
+            return InventoryDatabase(arguments);
+        }
+
         if (string.Equals(arguments[0], "--set-passwd", StringComparison.OrdinalIgnoreCase))
         {
             return _setPasswordCommand.Run(arguments);
@@ -91,9 +96,13 @@ internal sealed class CommandDispatcher
 
     private int InspectDatabase(string[] arguments)
     {
-        if (arguments.Length != 2)
+        int requested = 0;
+        bool showFirst = arguments.Length == 4 &&
+            string.Equals(arguments[2], "--first", StringComparison.OrdinalIgnoreCase) &&
+            int.TryParse(arguments[3], out requested) && requested is >= 1 and <= 200;
+        if (arguments.Length != 2 && !showFirst)
         {
-            _console.WriteErrorLine("The inspect-db command requires exactly one Paradox .db file path.");
+            _console.WriteErrorLine("Usage: inspect-db <file.db> [--first <1..200>]");
             WriteUsage();
             return 2;
         }
@@ -105,6 +114,43 @@ internal sealed class CommandDispatcher
         foreach (ParadoxField field in table.Fields)
         {
             _console.WriteLine($"{field.Name}: type 0x{field.TypeCode:X2}, {field.Length} bytes");
+        }
+
+        if (showFirst)
+        {
+            for (int row = 0; row < Math.Min(requested, table.Records.Count); row++)
+            {
+                _console.WriteLine($"Record {row + 1}:");
+                for (int column = 0; column < table.Fields.Count; column++)
+                {
+                    _console.WriteLine($"  {table.Fields[column].Name}: {table.Records[row][column] ?? "<null>"}");
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private int InventoryDatabase(string[] arguments)
+    {
+        if (arguments.Length != 2)
+        {
+            _console.WriteErrorLine("The inventory-db command requires one database directory.");
+            return 2;
+        }
+
+        var tables = new ParadoxDirectoryInventory().Read(Path.GetFullPath(arguments[1]));
+        _console.WriteLine($"Paradox tables: {tables.Count}");
+        foreach (var table in tables)
+        {
+            _console.WriteLine($"{table.FileName}: version 0x{table.Schema.Version:X2}, " +
+                $"declared rows {table.Schema.DeclaredRecordCount}, blocks {table.Schema.DeclaredBlockCount}, " +
+                $"encrypted {table.Schema.Encrypted}, PX {table.HasPrimaryIndex}, MB {table.HasMemoFile}, " +
+                $"XG/YG pairs {table.SecondaryIndexes.Count}");
+            foreach (ParadoxField field in table.Schema.Fields)
+            {
+                _console.WriteLine($"  {field.Name}: type 0x{field.TypeCode:X2}, {field.Length} bytes");
+            }
         }
 
         return 0;
@@ -180,7 +226,8 @@ internal sealed class CommandDispatcher
     {
         _console.WriteLine("AhnWin52Backup");
         _console.WriteLine("  inspect <file.hej>   Validate a HEJ backup and show section record counts.");
-        _console.WriteLine("  inspect-db <file.db> Read a Paradox table schema and record count.");
+        _console.WriteLine("  inspect-db <file.db> [--first <1..200>] Read schema/count, optionally show records.");
+        _console.WriteLine("  inventory-db <db-dir> List all Paradox table schemas and sidecar presence without reading records.");
         _console.WriteLine("  backup <db-dir> <file.hej> Export all five AhnWin tables without overwriting output.");
         _console.WriteLine("  --set-passwd        Securely save the Paradox password in Windows Credential Manager.");
     }
