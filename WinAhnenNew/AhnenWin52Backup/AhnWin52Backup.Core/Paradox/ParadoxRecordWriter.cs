@@ -65,7 +65,9 @@ internal sealed class ParadoxRecordWriter
 
         int primaryFieldIndex = FindField(table.Fields, primaryKeyField);
         ParadoxField keyField = table.Fields[primaryFieldIndex];
-        byte[][] encodedRecords = records
+        IReadOnlyList<IReadOnlyDictionary<string, string?>> resolvedRecords =
+            ResolveAutoIncrementRecords(table.Fields, database, records);
+        byte[][] encodedRecords = resolvedRecords
             .Select(record => EncodeRecord(table.Fields, record))
             .ToArray();
         int keyOffset = table.Fields.Take(primaryFieldIndex).Sum(static field => field.Length);
@@ -128,7 +130,7 @@ internal sealed class ParadoxRecordWriter
         WriteParadoxShort(entryTail[4..], 0);
 
         UpdateSingleBlockHeader(database, records.Count);
-        UpdateSingleBlockHeader(primaryIndex, 1, records.Count);
+        UpdateSingleBlockHeader(primaryIndex, 1);
         database = CommitBlock(database, databaseBlock, databaseHeader, 1);
         primaryIndex = CommitBlock(primaryIndex, primaryBlock, primaryHeader, 1);
 
@@ -180,20 +182,32 @@ internal sealed class ParadoxRecordWriter
         return block;
     }
 
-    internal static void UpdateSingleBlockHeader(byte[] file, int recordCount, int primaryKeyChanges = 0)
+    internal static void UpdateSingleBlockHeader(byte[] file, int recordCount)
     {
+        byte fileType = file[4];
         BinaryPrimitives.WriteInt32LittleEndian(file.AsSpan(6, sizeof(int)), recordCount);
         BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x0A, sizeof(ushort)), 1);
         BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x0C, sizeof(ushort)), 1);
         BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x0E, sizeof(ushort)), 1);
         BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x10, sizeof(ushort)), 1);
         BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x3A, sizeof(ushort)), 1);
-        if (file[4] is 1 or 7)
+        if (fileType is 0 or 6 or 8)
+        {
+            file[0x2D] = unchecked((byte)(file[0x2D] + 1));
+        }
+
+        if (fileType is 1 or 6 or 7 or 8)
+        {
+            uint metadata = BinaryPrimitives.ReadUInt32LittleEndian(file.AsSpan(0x49, sizeof(uint)));
+            BinaryPrimitives.WriteUInt32LittleEndian(file.AsSpan(0x49, sizeof(uint)), unchecked(metadata + 1));
+        }
+
+        if (fileType is 1 or 7)
         {
             BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x1E, sizeof(ushort)), 1);
             file[0x20] = 1;
-            // Paradox tracks primary-key changes in the .PX header.
-            file[0x2C] = unchecked((byte)(file[0x2C] + primaryKeyChanges));
+            // The native one-block fixtures advance this marker once, even for multiple records.
+            file[0x2C] = unchecked((byte)(file[0x2C] + 1));
         }
     }
 
@@ -339,6 +353,58 @@ internal sealed class ParadoxRecordWriter
     {
         BinaryPrimitives.WriteInt16BigEndian(destination, value);
         destination[0] |= 0x80;
+    }
+
+    internal static IReadOnlyList<IReadOnlyDictionary<string, string?>> ResolveAutoIncrementRecords(
+        IReadOnlyList<ParadoxField> fields,
+        byte[] database,
+        IReadOnlyList<IReadOnlyDictionary<string, string?>> records)
+    {
+        ParadoxField[] autoFields = fields.Where(static field => field.TypeCode == AutoIncrementType).ToArray();
+        if (autoFields.Length == 0)
+        {
+            return records;
+        }
+
+        if (autoFields.Length != 1 || database.Length < 0x4D)
+        {
+            throw new NotSupportedException("Only one auto-increment field per table is supported.");
+        }
+
+        ParadoxField autoField = autoFields[0];
+        uint lastIssued = BinaryPrimitives.ReadUInt32LittleEndian(database.AsSpan(0x49, sizeof(uint)));
+        List<IReadOnlyDictionary<string, string?>> resolved = new(records.Count);
+        foreach (IReadOnlyDictionary<string, string?> record in records)
+        {
+            string? value = FindValue(record, autoField.Name);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                if (lastIssued >= int.MaxValue)
+                {
+                    throw new InvalidDataException($"Auto-increment field \"{autoField.Name}\" has exhausted its range.");
+                }
+
+                lastIssued++;
+                Dictionary<string, string?> generated = new(record, StringComparer.OrdinalIgnoreCase)
+                {
+                    [autoField.Name] = lastIssued.ToString(CultureInfo.InvariantCulture)
+                };
+                resolved.Add(generated);
+            }
+            else
+            {
+                if (!int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out int explicitId) ||
+                    explicitId <= 0)
+                {
+                    throw new ArgumentException($"Auto-increment field \"{autoField.Name}\" requires a positive integer.");
+                }
+
+                resolved.Add(record);
+            }
+        }
+
+        BinaryPrimitives.WriteUInt32LittleEndian(database.AsSpan(0x49, sizeof(uint)), lastIssued);
+        return resolved;
     }
 
     private static string? FindValue(IReadOnlyDictionary<string, string?> values, string fieldName)

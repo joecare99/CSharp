@@ -50,6 +50,10 @@ internal sealed class ParadoxSecondaryIndexWriter
         string directory = Path.GetDirectoryName(fullDatabasePath)
             ?? throw new InvalidOperationException("The database file has no parent directory.");
         string tableName = Path.GetFileNameWithoutExtension(fullDatabasePath);
+        string primaryIndexPath = Path.ChangeExtension(fullDatabasePath, ".PX");
+        byte[] primaryIndex = File.ReadAllBytes(primaryIndexPath);
+        _ = ParadoxRecordWriter.ReadHeader(primaryIndex, expectedFileType: 1, primaryIndexPath);
+        byte primaryRevision = primaryIndex[0x2C];
         string sidecarPrefix = $"{tableName}.XG";
         string[] secondaryDataPaths = Directory.EnumerateFiles(directory)
             .Where(path => IsSecondaryDataFile(Path.GetFileName(path), sidecarPrefix))
@@ -64,14 +68,15 @@ internal sealed class ParadoxSecondaryIndexWriter
         {
             int indexNumber = GetIndexNumber(Path.GetFileName(secondaryDataPath), sidecarPrefix);
             string secondaryIndexPath = Path.Combine(directory, $"{tableName}.YG{indexNumber}");
-            WriteIndexPair(table, secondaryDataPath, secondaryIndexPath);
+            WriteIndexPair(table, secondaryDataPath, secondaryIndexPath, primaryRevision);
         }
     }
 
     private static void WriteIndexPair(
         ParadoxTable table,
         string secondaryDataPath,
-        string secondaryIndexPath)
+        string secondaryIndexPath,
+        byte primaryRevision)
     {
         byte[] secondaryDataFile = File.ReadAllBytes(secondaryDataPath);
         ParadoxRecordWriter.TableHeader secondaryDataHeader =
@@ -88,6 +93,8 @@ internal sealed class ParadoxSecondaryIndexWriter
         {
             throw new InvalidDataException($"The empty XG index header is inconsistent: {secondaryDataPath}");
         }
+
+        SynchronizePrimaryRevision(secondaryDataFile, primaryRevision);
 
         int keyLength = secondaryFields.Take(keyFieldCount).Sum(static field => field.Length);
         List<EncodedIndexRecord> encodedRecords = new(table.Records.Count);
@@ -176,6 +183,18 @@ internal sealed class ParadoxSecondaryIndexWriter
             encodedRecords.Count);
     }
 
+    internal static void SynchronizePrimaryRevision(byte[] secondaryDataFile, byte primaryRevision)
+    {
+        ArgumentNullException.ThrowIfNull(secondaryDataFile);
+        if (secondaryDataFile.Length <= 0x2F ||
+            secondaryDataFile[0x2F] != unchecked((byte)(primaryRevision - 1)))
+        {
+            throw new InvalidDataException("The empty XG revision does not match the preceding primary-index revision.");
+        }
+
+        secondaryDataFile[0x2F] = primaryRevision;
+    }
+
     private static void WriteSecondaryDataBlock(
         byte[] file,
         ParadoxRecordWriter.TableHeader header,
@@ -215,7 +234,7 @@ internal sealed class ParadoxSecondaryIndexWriter
         ParadoxRecordWriter.WriteParadoxShort(reference[2..], checked((short)secondaryRecordCount));
         ParadoxRecordWriter.WriteParadoxShort(reference[4..], 0);
 
-        ParadoxRecordWriter.UpdateSingleBlockHeader(file, 1, secondaryRecordCount);
+        ParadoxRecordWriter.UpdateSingleBlockHeader(file, 1);
         file = ParadoxRecordWriter.CommitBlock(file, block, header, 1);
         File.WriteAllBytes(path, file);
     }

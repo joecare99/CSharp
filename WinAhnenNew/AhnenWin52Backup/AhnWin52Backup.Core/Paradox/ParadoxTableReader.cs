@@ -45,7 +45,7 @@ public sealed class ParadoxTableReader : IParadoxTableReader
         byte[] database = File.ReadAllBytes(fullPath);
         try
         {
-            TableHeader header = ReadHeader(database);
+            TableHeader header = ReadHeader(database, database.Length);
             List<IReadOnlyList<string?>> records = ReadRecords(database, header, fullPath);
 
             return new ParadoxTable(header.Name, header.Fields, records);
@@ -56,7 +56,34 @@ public sealed class ParadoxTableReader : IParadoxTableReader
         }
     }
 
-    private static TableHeader ReadHeader(byte[] database)
+    public ParadoxTableSchema ReadSchema(string databaseFilePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(databaseFilePath);
+        using FileStream stream = new(databaseFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        Span<byte> prefix = stackalloc byte[CommonHeaderSize];
+        stream.ReadExactly(prefix);
+        int headerSize = BinaryPrimitives.ReadUInt16LittleEndian(prefix[2..]);
+        if (headerSize < DataHeaderSize || headerSize > stream.Length)
+        {
+            throw new InvalidDataException("The Paradox header size is invalid.");
+        }
+
+        byte[] bytes = new byte[headerSize];
+        stream.Position = 0;
+        stream.ReadExactly(bytes);
+        try
+        {
+            TableHeader header = ReadHeader(bytes, stream.Length);
+            return new ParadoxTableSchema(header.Name, header.Fields, header.RecordCount,
+                header.BlockCount, bytes[0x39], header.Encryption != 0);
+        }
+        catch (OverflowException exception)
+        {
+            throw new InvalidDataException("Paradox table dimensions exceed the supported file size.", exception);
+        }
+    }
+
+    private static TableHeader ReadHeader(byte[] database, long fileLength)
     {
         if (database.Length < CommonHeaderSize)
         {
@@ -121,7 +148,7 @@ public sealed class ParadoxTableReader : IParadoxTableReader
 
         string name = ReadTableName(database, dataHeaderOffset, headerSize, fieldCount, version);
         int tableBlockSize = checked(maximumTableSize * 1024);
-        int availableDataBlocks = (database.Length - headerSize) / tableBlockSize;
+        long availableDataBlocks = (fileLength - headerSize) / tableBlockSize;
         if (blockCount > availableDataBlocks)
         {
             throw new InvalidDataException("The Paradox header declares data blocks beyond the end of the file.");

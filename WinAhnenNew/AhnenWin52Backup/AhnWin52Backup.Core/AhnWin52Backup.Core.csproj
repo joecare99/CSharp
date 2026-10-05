@@ -9,6 +9,10 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\namesdays.json" LogicalName="AhnWin52Backup.Core.namesdays.json" />
+  </ItemGroup>
+
   <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
     <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
   </PropertyGroup>
