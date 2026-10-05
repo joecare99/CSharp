@@ -20,6 +20,19 @@ public sealed class ParadoxBlockCipherTests
     }
 
     [TestMethod]
+    public void EncryptDatabaseBlock_ProducesBlocksThatDecryptBackToTheOriginal()
+    {
+        byte[] original = Enumerable.Range(0, 2048).Select(static value => (byte)(value * 37)).ToArray();
+        byte[] encrypted = original.ToArray();
+
+        ParadoxBlockCipher.EncryptDatabaseBlock(encrypted, 0x37A75081, 3);
+        Assert.IsFalse(original.SequenceEqual(encrypted));
+        ParadoxBlockCipher.DecryptDatabaseBlock(encrypted, 0x37A75081, 3);
+
+        CollectionAssert.AreEqual(original, encrypted);
+    }
+
+    [TestMethod]
     public void DecryptMemoBlock_UsesTheMemoCipherParametersForEveryChunk()
     {
         const string encryptedChunk =
