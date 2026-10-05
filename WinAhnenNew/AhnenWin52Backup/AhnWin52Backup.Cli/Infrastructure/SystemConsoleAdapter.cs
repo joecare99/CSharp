@@ -20,7 +20,7 @@ internal sealed class SystemConsoleAdapter : IConsoleAdapter
         }
 
         Console.Write(prompt);
-        char[] buffer = new char[256];
+        char[] buffer = new char[1280];
         int length = 0;
         try
         {
