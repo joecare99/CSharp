@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="AhnWin52Backup.Cli/AhnWin52Backup.Cli.csproj" />
+  <Project Path="AhnWin52Backup.Core/AhnWin52Backup.Core.csproj" />
+  <Project Path="AhnWin52Backup.Tests/AhnWin52Backup.Tests.csproj" />
+</Solution>
