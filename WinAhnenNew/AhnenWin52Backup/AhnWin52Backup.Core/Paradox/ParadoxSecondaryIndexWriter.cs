@@ -398,7 +398,7 @@ internal sealed class ParadoxSecondaryIndexWriter
 
         return indexLabel.ToLowerInvariant() switch
         {
-            "namgeb" or "geba" =>
+            "namgeb" or "geba" or "gebnam" =>
                 string.Equals(fieldName, "Name", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(fieldName, "Vornamen", StringComparison.OrdinalIgnoreCase),
             "gebo" => string.Equals(fieldName, "Gebort", StringComparison.OrdinalIgnoreCase),
