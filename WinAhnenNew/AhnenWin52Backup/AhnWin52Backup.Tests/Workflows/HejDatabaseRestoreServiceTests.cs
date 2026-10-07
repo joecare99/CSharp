@@ -41,6 +41,11 @@ public sealed class HejDatabaseRestoreServiceTests
             HejDocument restored = new HejDatabaseExportService(new ParadoxTableReader()).Export(destination);
             Assert.AreEqual(source.Individuals[0].Fields[31], Normalize(restored.Individuals[0].Fields[31]));
             Assert.AreEqual(source.Individuals[0].Fields[3], restored.Individuals[0].Fields[3]);
+            ParadoxTable surnameList = new ParadoxTableReader().Read(Path.Combine(destination, "NM.db"));
+            Assert.AreEqual(1, surnameList.Records.Count);
+            Assert.AreEqual("Restore", surnameList.Records[0][0]);
+            Assert.IsTrue(File.Exists(Path.Combine(destination, "over.db")));
+            Assert.IsTrue(File.Exists(Path.Combine(destination, "over.YG1")));
         }
         finally
         {
@@ -59,6 +64,13 @@ public sealed class HejDatabaseRestoreServiceTests
             new StructureTemplateMaterializer().Materialize(destination);
             string sentinel = Path.Combine(destination, "user.keep");
             File.WriteAllText(sentinel, "preserve");
+            byte[] overBefore = File.ReadAllBytes(Path.Combine(destination, "over.db"));
+            ParadoxTableReader reader = new();
+            new ParadoxRecordWriter(reader).AppendRecords(
+                Path.Combine(destination, "NM.db"),
+                "Name",
+                [new Dictionary<string, string?> { ["Name"] = "OldSurname" }]);
+            new ParadoxSecondaryIndexWriter(reader).RebuildForTable(Path.Combine(destination, "NM.db"));
             string inputPath = WriteHejFile(root, CreateDocument());
 
             HejDatabaseRestoreResult result = CreateService().Restore(
@@ -70,6 +82,11 @@ public sealed class HejDatabaseRestoreServiceTests
             Assert.AreEqual("preserve", File.ReadAllText(Path.Combine(destination, "user.keep")));
             Assert.AreEqual(1, result.RecordCounts["Individuals"]);
             Assert.AreEqual(1, new ParadoxTableReader().Read(Path.Combine(destination, "AWD.DB")).Records.Count);
+            Assert.AreEqual(
+                "Restore",
+                new ParadoxTableReader().Read(Path.Combine(destination, "NM.db")).Records.Single()[0]);
+            Assert.IsTrue(File.Exists(Path.Combine(destination, "over.db")));
+            CollectionAssert.AreEqual(overBefore, File.ReadAllBytes(Path.Combine(destination, "over.db")));
         }
         finally
         {

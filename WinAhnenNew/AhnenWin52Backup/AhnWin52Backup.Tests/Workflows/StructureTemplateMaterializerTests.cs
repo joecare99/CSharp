@@ -22,8 +22,8 @@ public sealed class StructureTemplateMaterializerTests
         Assert.AreEqual(1, manifest.SchemaVersion);
         Assert.AreEqual("ahnwin52-empty2-structure-v1", manifest.TemplateId);
         Assert.AreEqual(0x37A75081u, manifest.EncryptionKey);
-        Assert.AreEqual(102, manifest.Assets.Count);
-        Assert.AreEqual(16, manifest.Tables.Count);
+        Assert.AreEqual(108, manifest.Assets.Count);
+        Assert.AreEqual(17, manifest.Tables.Count);
         Assert.IsTrue(manifest.Assets.Any(static asset => asset.FileName == "par.cfg"));
         Assert.IsTrue(manifest.Assets.Any(static asset => asset.FileName == "FOKO.DBF"));
         Assert.IsFalse(manifest.Assets.Any(static asset =>
@@ -44,6 +44,12 @@ public sealed class StructureTemplateMaterializerTests
         Assert.IsTrue(individuals.SecondaryIndexes.Any(static index =>
             index.Label.Equals("gebo", StringComparison.OrdinalIgnoreCase) &&
             index.KeyFields.Contains("Gebort", StringComparer.OrdinalIgnoreCase)));
+
+        StructureTemplateTable over = manifest.Tables.Single(static table => table.FileName == "over.DB");
+        Assert.IsFalse(over.GeneratedFromSchema);
+        Assert.AreEqual(17, over.Fields.Count);
+        Assert.AreEqual(2, over.SecondaryIndexes.Count);
+        Assert.IsTrue(manifest.Assets.Any(static asset => asset.FileName == "over.db"));
     }
 
     [TestMethod]
@@ -67,6 +73,13 @@ public sealed class StructureTemplateMaterializerTests
                 168,
                 new ParadoxTableReader().Read(Path.Combine(destination, "chnt.DB")).Records.Count);
             Assert.AreEqual(0, tables.Single(static table => table.FileName == "AWD.DB").Schema.DeclaredRecordCount);
+            Assert.IsTrue(File.Exists(Path.Combine(destination, "over.db")));
+            Assert.IsTrue(File.Exists(Path.Combine(destination, "over.PX")));
+            Assert.AreEqual(
+                0,
+                tables.Single(static table =>
+                    table.FileName.Equals("over.DB", StringComparison.OrdinalIgnoreCase))
+                    .Schema.DeclaredRecordCount);
         }
         finally
         {
@@ -89,6 +102,14 @@ public sealed class StructureTemplateMaterializerTests
             Assert.AreEqual(referenceManifest.IndexMaximumTableSize, manifest.IndexMaximumTableSize);
             Assert.IsTrue(Directory.Exists(destination));
             Assert.AreEqual(manifest.Assets.Count, Directory.EnumerateFiles(destination).Count());
+            foreach (StructureTemplateAsset asset in manifest.Assets.Where(static asset =>
+                         asset.FileName.StartsWith("over.", StringComparison.OrdinalIgnoreCase)))
+            {
+                CollectionAssert.AreEqual(
+                    File.ReadAllBytes(Path.Combine(reference, asset.FileName)),
+                    File.ReadAllBytes(Path.Combine(destination, asset.FileName)),
+                    asset.FileName);
+            }
             IReadOnlyList<ParadoxTableInventory> inventory = new ParadoxDirectoryInventory().Read(destination);
             Assert.AreEqual(manifest.Tables.Count, inventory.Count);
             foreach (StructureTemplateTable expected in manifest.Tables)

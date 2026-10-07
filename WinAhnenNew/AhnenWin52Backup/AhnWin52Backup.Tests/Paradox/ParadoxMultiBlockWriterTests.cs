@@ -13,7 +13,7 @@ namespace AhnWin52Backup.Tests.Paradox;
 public sealed class ParadoxMultiBlockWriterTests
 {
     [TestMethod]
-    public void RebuildSecondaryIndexes_NormalizesGebnamAlphaKeysBeforeSorting()
+    public void RebuildSecondaryIndexes_PreservesGebnamAlphaKeysAndSortsWithoutCase()
     {
         string directory = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");
         Directory.CreateDirectory(directory);
@@ -53,8 +53,61 @@ public sealed class ParadoxMultiBlockWriterTests
                 nameOffset + header.RecordSize,
                 nameLength).TrimEnd('\0');
 
-            Assert.AreEqual("APPLE", firstName);
-            Assert.AreEqual("BANANA", secondName);
+            Assert.AreEqual("apple", firstName);
+            Assert.AreEqual("Banana", secondName);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public void RebuildSecondaryIndexes_StoresSourceDatabaseBlockInGebnamHint()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string databaseDirectory = Path.Combine(directory, "database");
+            new StructureTemplateMaterializer().Materialize(databaseDirectory);
+            string databasePath = Path.Combine(databaseDirectory, "AWD.DB");
+            byte[] emptyDatabase = File.ReadAllBytes(databasePath);
+            ParadoxRecordWriter.TableHeader databaseHeader =
+                ParadoxRecordWriter.ReadHeader(emptyDatabase, 0, databasePath);
+            int recordsPerDatabaseBlock = ParadoxRecordWriter.GetRecordsPerDataBlock(
+                databaseHeader.BlockSize,
+                databaseHeader.RecordSize);
+            IReadOnlyDictionary<string, string?>[] records = Enumerable
+                .Range(1, recordsPerDatabaseBlock + 1)
+                .Select(static key => (IReadOnlyDictionary<string, string?>)new Dictionary<string, string?>
+                {
+                    ["Nummer"] = key.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["Name"] = "Baker"
+                })
+                .ToArray();
+
+            ParadoxTableReader reader = new();
+            new ParadoxRecordWriter(reader).AppendRecords(databasePath, "Nummer", records);
+            new ParadoxSecondaryIndexWriter(reader).RebuildForTable(databasePath);
+
+            string secondaryPath = Path.Combine(databaseDirectory, "AWD.XG4");
+            byte[] secondaryFile = File.ReadAllBytes(secondaryPath);
+            ParadoxRecordWriter.TableHeader secondaryHeader =
+                ParadoxRecordWriter.ReadHeader(secondaryFile, 8, secondaryPath);
+            byte[] block = secondaryFile
+                .AsSpan(secondaryHeader.HeaderSize, secondaryHeader.BlockSize)
+                .ToArray();
+            ParadoxBlockCipher.DecryptDatabaseBlock(
+                block,
+                ParadoxRecordWriter.ReadEncryption(secondaryFile),
+                1);
+
+            int keyLength = 4 + 2 + 2 + 45 + 45 + 4;
+            int lastRecordOffset = 6 + recordsPerDatabaseBlock * secondaryHeader.RecordSize;
+            CollectionAssert.AreEqual(
+                new byte[] { 0x80, 0x02 },
+                block.AsSpan(lastRecordOffset + keyLength, 2).ToArray());
         }
         finally
         {
