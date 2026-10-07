@@ -1,0 +1,3844 @@
+{
+  "schemaVersion": 1,
+  "templateId": "ahnwin52-empty2-structure-v1",
+  "sourceDescription": "Read-only extraction from the user-provided AHNENWIN_Empty2 baseline.",
+  "encoding": "Windows-1252",
+  "encryptionKey": 933712001,
+  "indexMaximumTableSize": 2,
+  "assets": [
+    {
+      "fileName": "adp.DB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.adp.DB",
+      "sizeBytes": 2048,
+      "sha256": "c022f275421ef7a6c3bb31929b62f56b7b63aa4daada5de9cbbfe6e2b07595cd",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "adp.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.adp.PX",
+      "sizeBytes": 2048,
+      "sha256": "7477258e4c9c20b8125ad856211dadd74d46971812ff46631b0269b48e9af33f",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "adp.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.adp.XG0",
+      "sizeBytes": 2048,
+      "sha256": "de17b4f73b6f1fd6c77d3f36542c507048a9eb57c8e13eab37aa4dc3f9ed47e7",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "adp.XG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.adp.XG1",
+      "sizeBytes": 2048,
+      "sha256": "ecb207003208145b1c6efa8dc570bedee17554321fab05ace03f161243e4cbad",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "adp.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.adp.YG0",
+      "sizeBytes": 2048,
+      "sha256": "b90ac8da336b743a7fbcae65ffcddc8a5700ca17b6d1051301686563960ed996",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "adp.YG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.adp.YG1",
+      "sizeBytes": 2048,
+      "sha256": "00f43144229adca09f9398ff535609468957184c84181328af9338c6bb6438b8",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "AWD.DB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.DB",
+      "sizeBytes": 18432,
+      "sha256": "e419ea401f1433b26a815d5b61bc044484539a5b59800f16b62d80622d4debe0",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "AWD.MB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.MB",
+      "sizeBytes": 4096,
+      "sha256": "f0401caf5d4424cc12414497ea190711a9d14c8ab9744ac534fb9bdd6f722e7b",
+      "kind": "memo"
+    },
+    {
+      "fileName": "AWD.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.PX",
+      "sizeBytes": 4096,
+      "sha256": "a6c92a76a7c74805109733d400467c323ea3ddf649f13e28b76f804e71733de2",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "AWD.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.XG0",
+      "sizeBytes": 18432,
+      "sha256": "ecbc4df5dfdd82725bf2f7b08e6b6bb9e5f1d1aecbde1f1fcfc58ea15d495c40",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "AWD.XG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.XG1",
+      "sizeBytes": 18432,
+      "sha256": "f458d486dc7eb0428ea5ea1e8d7653a9b8eeeb9b5694f97b8e60280d9bf50e1b",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "AWD.XG2",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.XG2",
+      "sizeBytes": 18432,
+      "sha256": "8131d34885164557e40cc9317aec6d5745dbc2ca7495b2428d4cf69ab38a102c",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "AWD.XG3",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.XG3",
+      "sizeBytes": 18432,
+      "sha256": "b352fb7b1b53ea6d328f3f316bbddcdaa648c205ca125bfb306f706a2bb1aa85",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "AWD.XG4",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.XG4",
+      "sizeBytes": 18432,
+      "sha256": "c0acd85f635d19b4821df019c8efdfda4f7212a471fac4f2d78cc1cd331f0f75",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "AWD.XG5",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.XG5",
+      "sizeBytes": 18432,
+      "sha256": "1e5064625d1bcbb38e2563d6ee20b0792d3bcf993d04e7dbace6e7b731240038",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "AWD.XG6",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.XG6",
+      "sizeBytes": 18432,
+      "sha256": "a82cef2112c20bb540e7bc71bcf4f2e3d8b13430f9b1b3e4695558ab8f007507",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "AWD.XG7",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.XG7",
+      "sizeBytes": 18432,
+      "sha256": "6ca43c1f5afbacfbc91e626dfc7da4d8b40a442c0a477b23333ee4315bf56a90",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "AWD.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.YG0",
+      "sizeBytes": 4096,
+      "sha256": "b1dc2c4080fbc6381d988dc7eb79b4f5574437433aef59a3e0ef4b901b808724",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "AWD.YG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.YG1",
+      "sizeBytes": 4096,
+      "sha256": "55444116d3d7cd03e693e1aad78d00b8181d9f507b4d4dd8910d853e4fb4508d",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "AWD.YG2",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.YG2",
+      "sizeBytes": 4096,
+      "sha256": "96bfba4679439f83ad0efe7249566ccdd82a6a422cd33f8c12af060ad720f784",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "AWD.YG3",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.YG3",
+      "sizeBytes": 4096,
+      "sha256": "b23e7cc1d4b59421bb687ee144d0b13ac0cf566353e77beec43f5a34185bd59b",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "AWD.YG4",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.YG4",
+      "sizeBytes": 4096,
+      "sha256": "6aa0bbc190f9021cb397eaf45bfb3b71988d2b7046e047d8ae6e1839c25110f3",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "AWD.YG5",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.YG5",
+      "sizeBytes": 4096,
+      "sha256": "51f86c96117cfdc41136a687481b22e4f1fed79f68af3f3596fee78ed5293ded",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "AWD.YG6",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.YG6",
+      "sizeBytes": 4096,
+      "sha256": "575900388b0efdc5dfe1486782022101a053fbf3078f40432ab892a5fd71514c",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "AWD.YG7",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.AWD.YG7",
+      "sizeBytes": 4096,
+      "sha256": "c0a2c6ee0e052f36e2e5a03f9197cec0cb453d91cfaff3e8dd0ce2e8e18a8764",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "chnt.DB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.chnt.DB",
+      "sizeBytes": 8192,
+      "sha256": "920bc4a171d3e19ea75e2d29a9a0c0bcda6731e326085fda4f2bfb1b3d5cf56a",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "chnt.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.chnt.PX",
+      "sizeBytes": 4096,
+      "sha256": "0ef3f66d3cd3e752d0cd10d4e897e466123caddb40940f08ad730c643fd1a5d9",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "chnt.xml",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.chnt.xml",
+      "sizeBytes": 8953,
+      "sha256": "2a603e27a384f3d9ffdcd6999f71e9df63bced112e02136cd6a782594ff58ad3",
+      "kind": "baseline-data"
+    },
+    {
+      "fileName": "FOKO.ABK",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.FOKO.ABK",
+      "sizeBytes": 32092,
+      "sha256": "d806be6e3bbe15ac9757b0bd06d2d9a1fd75571521e30820b63ae24dbec69094",
+      "kind": "foko-baseline"
+    },
+    {
+      "fileName": "FOKO.DBF",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.FOKO.DBF",
+      "sizeBytes": 482,
+      "sha256": "56a0b3123e9bfd4ae29f1a2f53b8641e2a359fba2d4a070d6cb1112ba3c82611",
+      "kind": "foko-baseline"
+    },
+    {
+      "fileName": "FOKO.MDX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.FOKO.MDX",
+      "sizeBytes": 6144,
+      "sha256": "47e0a44bcf29fefe2970c25002b0d18e6da2698db60b13d59bfa5bbefd9c1b24",
+      "kind": "foko-baseline"
+    },
+    {
+      "fileName": "ftab.DB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ftab.DB",
+      "sizeBytes": 2048,
+      "sha256": "b503b9ab47eb94864c1c9b0b3a61c30fc82616b75a09f3fb152657aaa069f9ec",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "ftab.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ftab.PX",
+      "sizeBytes": 2048,
+      "sha256": "0c19083d95f0c2a01864ac97a5229079383ead09dc146ed01a5ee04e009fabc9",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "ftab.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ftab.XG0",
+      "sizeBytes": 2048,
+      "sha256": "b4065cd15fa1723849f196b85cd5f96c1e6be4eda214fc5aacd2dad63fcd9b43",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "ftab.XG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ftab.XG1",
+      "sizeBytes": 2048,
+      "sha256": "532be7db9553c6b4241465cc5fe107dfe935b7bd0f3e078a03e8499f31196812",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "ftab.XG2",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ftab.XG2",
+      "sizeBytes": 2048,
+      "sha256": "76a4b9c79d30c3111b1f0c36c9fc642dec8272263eb68753cd88c78ffcf3ef7a",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "ftab.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ftab.YG0",
+      "sizeBytes": 2048,
+      "sha256": "9e78f5d5f39f4d957503088a055544c41a4cd6c53fc362c65d4a6c0f7268cbb5",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "ftab.YG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ftab.YG1",
+      "sizeBytes": 2048,
+      "sha256": "ac4ccb58c35a5a35a9966242b0796d66cb54d0b4288c0458c5d60fc8d3f63579",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "ftab.YG2",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ftab.YG2",
+      "sizeBytes": 2048,
+      "sha256": "6928394403858195343f72a608c0532872703ffb28db13d1c1b133d4d1973995",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "gedh.db",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.gedh.db",
+      "sizeBytes": 2048,
+      "sha256": "4ad5e952ef852d7bad2fa3a9b606fbcadd39ce55e151849fb75d03b338e0e403",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "gedh.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.gedh.PX",
+      "sizeBytes": 2048,
+      "sha256": "e0d0c5c47281633b4a094bdb525252a4ab5631ed82dc0580d7665f0af177969b",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "gedh.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.gedh.XG0",
+      "sizeBytes": 2048,
+      "sha256": "852e5b1cb8e4f886f68e7d7d97c6887e4c2c9fec1c2749591f2d2b8074d3b75e",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "gedh.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.gedh.YG0",
+      "sizeBytes": 2048,
+      "sha256": "110dbfa049b10d89ad455262ef3d41626b8a76ef08a6963cf428ea32a66b8166",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "lc.DB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.lc.DB",
+      "sizeBytes": 2048,
+      "sha256": "ddea1ba0f2af61eca0f764bd5e6d244872fa05adf8e59bfe2ed107224db625de",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "lc.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.lc.PX",
+      "sizeBytes": 2048,
+      "sha256": "15449eb10fe865804564063b70271e08e56626e38e45359ef74e203a80214ee0",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "lc.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.lc.XG0",
+      "sizeBytes": 2048,
+      "sha256": "2d6a53d79f4923d619062a408f621cc156a28fa4e442e9274be33937cf6db112",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "lc.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.lc.YG0",
+      "sizeBytes": 2048,
+      "sha256": "f7f31b1e7f44902b9f263dd5930aa41cfef4147deea9a0522416797182749eb7",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "LOC.db",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.LOC.db",
+      "sizeBytes": 2048,
+      "sha256": "49a522d5853c9319a10d2c45f583b08f67b03d6f08eafac3b2edd6e2fef715e9",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "LOC.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.LOC.PX",
+      "sizeBytes": 2048,
+      "sha256": "5d31b0a70189c3fae8b1b43608e765270919bcbf5ad7180475b08a0136f518c6",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "LOC.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.LOC.XG0",
+      "sizeBytes": 2048,
+      "sha256": "2f01819a8f3b68c607c28bcd1ea38cfc341e2a004a904caf348b0b2763b932f5",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "LOC.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.LOC.YG0",
+      "sizeBytes": 2048,
+      "sha256": "d085d0271debbfcd8d431ef7918025eef691b500d4a49de4d61bad6dca78fe7a",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "MRG.DB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.DB",
+      "sizeBytes": 2048,
+      "sha256": "c846ef9fb6211c4bd35a1a8d464cb5969dbaf017e3b9adfc02c33132f7624690",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "MRG.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.PX",
+      "sizeBytes": 2048,
+      "sha256": "635c52c2388b7c65700fac2fa57bf5245ba183c15e7d053c38e15f3f8edc1e3a",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "MRG.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.XG0",
+      "sizeBytes": 2048,
+      "sha256": "840184dfdc195406fb2b220cf7353e0a2467af53114f44a63bf93ceba46fbd9d",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "MRG.XG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.XG1",
+      "sizeBytes": 2048,
+      "sha256": "39aceb39b2dda2640603cc21b371565e5b5914fa03a95be67e707bbd722a3cc6",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "MRG.XG2",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.XG2",
+      "sizeBytes": 2048,
+      "sha256": "c8031a005e1ab9600e17147553ee3aa2005b9f639aa657ecb3b7dd880cdf4f18",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "MRG.XG3",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.XG3",
+      "sizeBytes": 2048,
+      "sha256": "3a3a6f4b1512d485f17a602e529cd586c68f2301308ec258593533c02f3313fa",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "MRG.XG4",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.XG4",
+      "sizeBytes": 2048,
+      "sha256": "5002cdf8781245a2bf632271b6c6355740b2d16ee6dd4b3bf833457450a8631a",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "MRG.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.YG0",
+      "sizeBytes": 2048,
+      "sha256": "52d1cfeb8672a433dfba7c7b6522f4d23879e33398c5adfc6f1fa01366a65c89",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "MRG.YG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.YG1",
+      "sizeBytes": 2048,
+      "sha256": "48071820c5cde268ed081f5d316b8bb7fb85982fb373138acd630027906f2215",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "MRG.YG2",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.YG2",
+      "sizeBytes": 2048,
+      "sha256": "cbfa5188217e1aa82e66072d9a9b546ed1725b1158e66cd96eb24e7fa13dafcb",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "MRG.YG3",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.YG3",
+      "sizeBytes": 2048,
+      "sha256": "17e7d69faebfcaf6dcd9eae16513b7cba10184926f6be0147b449401636c925a",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "MRG.YG4",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.MRG.YG4",
+      "sizeBytes": 2048,
+      "sha256": "820203f7800ccd720e0d4ea9e3ccecfc544337fbcbc0e2be8cc6cb1d05defbf8",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "ndh.db",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ndh.db",
+      "sizeBytes": 2048,
+      "sha256": "1d33b100fe8d2b7ac58b237c1f3461278a6f9df6f3f4091819fc2eccf34a0cbb",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "ndh.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ndh.PX",
+      "sizeBytes": 2048,
+      "sha256": "c34d0096a5a20aac826e990c9741a6ddf6177f5ab7907708c735dccafdc17feb",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "NM.db",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.NM.db",
+      "sizeBytes": 2048,
+      "sha256": "dcb84e6435111755edf8ec7b88d0e78716157bc9d852b72f9ec15a5e007d30c8",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "NM.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.NM.PX",
+      "sizeBytes": 2048,
+      "sha256": "c516fa0c3aac7f357824f339f10de0e1bca00acf04c64e8d8cc4e5a205e0eafe",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "NM.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.NM.XG0",
+      "sizeBytes": 2048,
+      "sha256": "1a4634c8bcf032c82777717549a4b303b4c66c7d8644c1c1a89d5fc71e15859c",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "NM.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.NM.YG0",
+      "sizeBytes": 2048,
+      "sha256": "52892033467177a62192b9fe2156d495a13555b159db6470548a7131f65fd8f8",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "NUMRES.DB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.NUMRES.DB",
+      "sizeBytes": 2048,
+      "sha256": "5a8b408580b95e5bfaa9efdb7f96294cee05881cf25d83a2321fc1a0693b8da1",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "NUMRES.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.NUMRES.PX",
+      "sizeBytes": 2048,
+      "sha256": "1efc158393893d1899da03a6bc07748dc096909734ff4508592398b463442b33",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "occ.db",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.occ.db",
+      "sizeBytes": 2048,
+      "sha256": "da6dad304a36f9c906a4df42424a63567d18542f1bf750afeeae2de4f7e80ad1",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "occ.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.occ.PX",
+      "sizeBytes": 2048,
+      "sha256": "ad623206306d2ef848a1e0c4b7a535669c70e1b801a4a38a4c49a34ab7b88674",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "occ.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.occ.XG0",
+      "sizeBytes": 2048,
+      "sha256": "ee17f041bf549b7c97745b818cd65783df1b7ffba03a4b8b01f1bc9721428e63",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "occ.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.occ.YG0",
+      "sizeBytes": 2048,
+      "sha256": "aeb2d73b91e123e1825704a4d1bdee718ddf0e7604f1122882e6286a5cce004c",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "ofb.css",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.ofb.css",
+      "sizeBytes": 189,
+      "sha256": "0384f0f100e5cdb3c272e623240a57ac565b1c32148755a495f14cb18b4e84fe",
+      "kind": "stylesheet"
+    },
+    {
+      "fileName": "OUTP.db",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.OUTP.db",
+      "sizeBytes": 2048,
+      "sha256": "94ff113b7aa785fd174f30bfa895411593eb871a5ee30698b155c064c58834d0",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "OUTP.MB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.OUTP.MB",
+      "sizeBytes": 4096,
+      "sha256": "f0401caf5d4424cc12414497ea190711a9d14c8ab9744ac534fb9bdd6f722e7b",
+      "kind": "memo"
+    },
+    {
+      "fileName": "OUTP.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.OUTP.PX",
+      "sizeBytes": 2048,
+      "sha256": "7767d5e8fbfcafd9d0782d37e3ebab9b6070489ba56d0d345d104d1f54fcbe66",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "OUTP.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.OUTP.XG0",
+      "sizeBytes": 2048,
+      "sha256": "e66baf3cb77c5a92259daf27175c2d00ab187dbe6cf8606bc40629752d77f520",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "OUTP.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.OUTP.YG0",
+      "sizeBytes": 2048,
+      "sha256": "60590d5be43b3ac741734d95d4eff425700cd32706f45731a6c077bb8976a35c",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "par.cfg",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.par.cfg",
+      "sizeBytes": 51,
+      "sha256": "663ed3a9452ac36d564c8532678f02d306d098b7beefb36e9f5dc11ea09ee608",
+      "kind": "configuration"
+    },
+    {
+      "fileName": "repso.db",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.repso.db",
+      "sizeBytes": 2048,
+      "sha256": "6e85b15f1a19040a0755606498d1e1c2002c9a8986c1d6dc22d7cf462d3742ab",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "repso.MB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.repso.MB",
+      "sizeBytes": 4096,
+      "sha256": "f0401caf5d4424cc12414497ea190711a9d14c8ab9744ac534fb9bdd6f722e7b",
+      "kind": "memo"
+    },
+    {
+      "fileName": "repso.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.repso.PX",
+      "sizeBytes": 2048,
+      "sha256": "54698cd88047cd6063fa84990013b826c47019086c79f3b7d575d149becb0a8b",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "repso.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.repso.XG0",
+      "sizeBytes": 2048,
+      "sha256": "019ac5813b450793c7a0e9f4e000d363c49cd3967a0a1f2925eb8e5acd111a05",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "repso.XG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.repso.XG1",
+      "sizeBytes": 2048,
+      "sha256": "1924476648114f01cc5eebfd39206dafa9df5a5830646d0b598bd481721ff007",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "repso.XG2",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.repso.XG2",
+      "sizeBytes": 2048,
+      "sha256": "da20ae95964069c16795c709de52382ad48dc947eb045026e0a078e38917f437",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "repso.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.repso.YG0",
+      "sizeBytes": 2048,
+      "sha256": "59486a1d5fd8434a326e6778c5ce7f36e3a30c2cc35d64276740c780cb1896cf",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "repso.YG1",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.repso.YG1",
+      "sizeBytes": 2048,
+      "sha256": "cd67be6f3c6e9c290b914681778eb9f8ed325768dc08aa0c3d567f4646c94b2b",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "repso.YG2",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.repso.YG2",
+      "sizeBytes": 2048,
+      "sha256": "47feba3d286937d2b0e7e77f713f9f7d8d9ce78df2ccff73b5c31bb23d02e379",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "sour.DB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.sour.DB",
+      "sizeBytes": 2048,
+      "sha256": "14503141d4da10b83b2d14656ac9e99434554729b367f91ab16670329273329f",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "sour.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.sour.PX",
+      "sizeBytes": 2048,
+      "sha256": "5613a031f219ee5df9845ae71d5e0b11126a7d94f1a7b41b519561562627eef7",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "sour.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.sour.XG0",
+      "sizeBytes": 2048,
+      "sha256": "5c3ea24ae83c22de9ec5fb53df083b91d487c966e2f76dcfd85e7a195b3c45fb",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "sour.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.sour.YG0",
+      "sizeBytes": 2048,
+      "sha256": "a7b773bee7b14b204d74aa1cec26423dd9bb80d7383c64e8d33ee571ec5b1c84",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "sour2.DB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.sour2.DB",
+      "sizeBytes": 2048,
+      "sha256": "59a7b9a680b6e39944a228cfe7907def657b9e1dfe97a9ecd0c38c9835c59a16",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "sour2.MB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.sour2.MB",
+      "sizeBytes": 4096,
+      "sha256": "f0401caf5d4424cc12414497ea190711a9d14c8ab9744ac534fb9bdd6f722e7b",
+      "kind": "memo"
+    },
+    {
+      "fileName": "sour2.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.sour2.PX",
+      "sizeBytes": 2048,
+      "sha256": "07d80ef1305131ae1a6b0feb15e7297da97d56f745a1d91736bd18420e205afc",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "sour2.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.sour2.XG0",
+      "sizeBytes": 2048,
+      "sha256": "a0ce3e325e5538be95597fcd2f6d315dd98139b7617e999940a176c0f62420c2",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "sour2.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.sour2.YG0",
+      "sizeBytes": 2048,
+      "sha256": "356f6a70fef1bbf01e339a389f8e2210857e32ec620d1ed3a0123aaaf9cef794",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "style.css",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.style.css",
+      "sizeBytes": 1634,
+      "sha256": "3d4610d822074aa321d05838599add9701283fe4616aa4191ae351569fb86b41",
+      "kind": "stylesheet"
+    },
+    {
+      "fileName": "tab.css",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.tab.css",
+      "sizeBytes": 1429,
+      "sha256": "791ea9979a5d5906a39718130c6eefb6c64850fc68535ff9a1e2a14548a7dbfd",
+      "kind": "stylesheet"
+    }
+  ],
+  "tables": [
+    {
+      "fileName": "adp.DB",
+      "version": 11,
+      "recordSize": 12,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "adp.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Nummer",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "Av",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "Am",
+          "typeCode": 4,
+          "length": 4
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "adp.XG0",
+          "ygFile": "adp.YG0",
+          "sortOrder": "intl",
+          "label": "Adopm",
+          "keyFields": [
+            "Am",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Am",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 65,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "FF538706",
+            "autoIncrementValue": 2498,
+            "dataHeaderMetadataHex": "04009700A200B50101019D000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "0000000000010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 66,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "0C000000",
+            "autoIncrementValue": 2500,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        },
+        {
+          "number": 1,
+          "xgFile": "adp.XG1",
+          "ygFile": "adp.YG1",
+          "sortOrder": "intl",
+          "label": "Adopv",
+          "keyFields": [
+            "Av",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Av",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 63,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "FFEC8706",
+            "autoIncrementValue": 2498,
+            "dataHeaderMetadataHex": "04009700A200B50101019D000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "0000000000010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 64,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "A5000000",
+            "autoIncrementValue": 2500,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 61,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "004D8700",
+        "autoIncrementValue": 0,
+        "dataHeaderMetadataHex": "040092000000B50101019800FD08000000000000",
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000F5000000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 62,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "06000000",
+        "autoIncrementValue": 2500,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "AWD.DB",
+      "version": 11,
+      "recordSize": 1868,
+      "maximumTableSize": 16,
+      "expectedRecords": 0,
+      "expectedBlocks": 1,
+      "encrypted": true,
+      "primaryIndexFile": "AWD.PX",
+      "memoFile": "AWD.MB",
+      "fields": [
+        {
+          "name": "Nummer",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "Vater",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "Mutter",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "Name",
+          "typeCode": 1,
+          "length": 45
+        },
+        {
+          "name": "Vornamen",
+          "typeCode": 1,
+          "length": 45
+        },
+        {
+          "name": "Geschlecht",
+          "typeCode": 1,
+          "length": 1
+        },
+        {
+          "name": "Religion",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Beruf",
+          "typeCode": 1,
+          "length": 70
+        },
+        {
+          "name": "Gebtag",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Gebmonat",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Gebjahr",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Gebort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Tauftag",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Taufmonat",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Taufjahr",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Taufort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Taufpat",
+          "typeCode": 1,
+          "length": 120
+        },
+        {
+          "name": "Lebensort",
+          "typeCode": 1,
+          "length": 80
+        },
+        {
+          "name": "Sttag",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Stmonat",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Stjahr",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Stort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Todesurs",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Begtag",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Begmonat",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Begjahr",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Begort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Quelleg",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Quellet",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Quelles",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Quelleb",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Kommentar",
+          "typeCode": 12,
+          "length": 20
+        },
+        {
+          "name": "Lebt",
+          "typeCode": 1,
+          "length": 1
+        },
+        {
+          "name": "Bild",
+          "typeCode": 16,
+          "length": 10
+        },
+        {
+          "name": "Namex",
+          "typeCode": 1,
+          "length": 60
+        },
+        {
+          "name": "IDNR",
+          "typeCode": 1,
+          "length": 10
+        },
+        {
+          "name": "Kistat",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Hausname",
+          "typeCode": 1,
+          "length": 70
+        },
+        {
+          "name": "Adr1",
+          "typeCode": 1,
+          "length": 30
+        },
+        {
+          "name": "Adr2",
+          "typeCode": 1,
+          "length": 30
+        },
+        {
+          "name": "PLZ",
+          "typeCode": 1,
+          "length": 30
+        },
+        {
+          "name": "Ort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Adrzus",
+          "typeCode": 1,
+          "length": 30
+        },
+        {
+          "name": "Indj",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Indm",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Indt",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Alter",
+          "typeCode": 1,
+          "length": 15
+        },
+        {
+          "name": "Tel",
+          "typeCode": 1,
+          "length": 25
+        },
+        {
+          "name": "Ema",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Ur",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Quelle",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Rufname",
+          "typeCode": 1,
+          "length": 30
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "AWD.XG0",
+          "ygFile": "AWD.YG0",
+          "sortOrder": "intl850",
+          "label": "muto",
+          "keyFields": [
+            "Mutter",
+            "Gebjahr",
+            "Gebmonat",
+            "Gebtag",
+            "Taufjahr",
+            "Taufmonat",
+            "Tauftag",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Mutter",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Gebjahr",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Gebmonat",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Gebtag",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Taufjahr",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Taufmonat",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Tauftag",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 1,
+          "expectedYgBlocks": 1,
+          "xgEmptyBlockRecordHex": "0000000000000000000000000000000000000000000000008001",
+          "ygEmptyBlockRecordHex": "000000000000000000000000000000000000000000000000800180008000",
+          "xgHeaderMetadata": {
+            "word12": 5,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "FF90CA00",
+            "autoIncrementValue": 73,
+            "dataHeaderMetadataHex": "1000F2000C015203010104010000000000000000",
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "0000000069010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 6,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "E6000000",
+            "autoIncrementValue": 75,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "00000000BB000000000000"
+          }
+        },
+        {
+          "number": 1,
+          "xgFile": "AWD.XG1",
+          "ygFile": "AWD.YG1",
+          "sortOrder": "intl850",
+          "label": "vato",
+          "keyFields": [
+            "Vater",
+            "Gebjahr",
+            "Gebmonat",
+            "Gebtag",
+            "Taufjahr",
+            "Taufmonat",
+            "Tauftag",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Vater",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Gebjahr",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Gebmonat",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Gebtag",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Taufjahr",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Taufmonat",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Tauftag",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 1,
+          "expectedYgBlocks": 1,
+          "xgEmptyBlockRecordHex": "0000000000000000000000000000000000000000000000008001",
+          "ygEmptyBlockRecordHex": "000000000000000000000000000000000000000000000000800180008000",
+          "xgHeaderMetadata": {
+            "word12": 7,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "FF00CA00",
+            "autoIncrementValue": 73,
+            "dataHeaderMetadataHex": "1000F1000B015203010103010000000000000000",
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "0000000068010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 8,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "56000000",
+            "autoIncrementValue": 75,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "00000000BB000000000000"
+          }
+        },
+        {
+          "number": 2,
+          "xgFile": "AWD.XG2",
+          "ygFile": "AWD.YG2",
+          "sortOrder": "intl850",
+          "label": "namgeb",
+          "keyFields": [
+            "Name",
+            "Vornamen",
+            "Gebjahr",
+            "Indj",
+            "Indm",
+            "Indt",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Name",
+              "typeCode": 1,
+              "length": 45
+            },
+            {
+              "name": "Vornamen",
+              "typeCode": 1,
+              "length": 45
+            },
+            {
+              "name": "Gebjahr",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Indj",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Indm",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Indt",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 1,
+          "expectedYgBlocks": 1,
+          "xgEmptyBlockRecordHex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008001",
+          "ygEmptyBlockRecordHex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800180008000",
+          "xgHeaderMetadata": {
+            "word12": 9,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "FF35CA00",
+            "autoIncrementValue": 75,
+            "dataHeaderMetadataHex": "2F00D700EF0052030101E7000000000000000000",
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "000000004E010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 10,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "8B000000",
+            "autoIncrementValue": 77,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "00000000B9000000000000"
+          }
+        },
+        {
+          "number": 3,
+          "xgFile": "AWD.XG3",
+          "ygFile": "AWD.YG3",
+          "sortOrder": "intl850",
+          "label": "geba",
+          "keyFields": [
+            "Name",
+            "Vornamen",
+            "Gebjahr",
+            "Gebmonat",
+            "Gebtag",
+            "Taufjahr",
+            "Taufmonat",
+            "Tauftag",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Name",
+              "typeCode": 1,
+              "length": 45
+            },
+            {
+              "name": "Vornamen",
+              "typeCode": 1,
+              "length": 45
+            },
+            {
+              "name": "Gebjahr",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Gebmonat",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Gebtag",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Taufjahr",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Taufmonat",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Tauftag",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 1,
+          "expectedYgBlocks": 1,
+          "xgEmptyBlockRecordHex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008001",
+          "ygEmptyBlockRecordHex": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800180008000",
+          "xgHeaderMetadata": {
+            "word12": 11,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "FF4CCA00",
+            "autoIncrementValue": 75,
+            "dataHeaderMetadataHex": "1000FF001B015203010113010000000000000000",
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "0000000078010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 12,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "A2000000",
+            "autoIncrementValue": 77,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "00000000BD000000000000"
+          }
+        },
+        {
+          "number": 4,
+          "xgFile": "AWD.XG4",
+          "ygFile": "AWD.YG4",
+          "sortOrder": "intl850",
+          "label": "gebnam",
+          "keyFields": [
+            "Indj",
+            "Indm",
+            "Indt",
+            "Name",
+            "Vornamen",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Indj",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Indm",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Indt",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Name",
+              "typeCode": 1,
+              "length": 45
+            },
+            {
+              "name": "Vornamen",
+              "typeCode": 1,
+              "length": 45
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 1,
+          "expectedYgBlocks": 1,
+          "xgEmptyBlockRecordHex": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008001",
+          "ygEmptyBlockRecordHex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800180008000",
+          "xgHeaderMetadata": {
+            "word12": 13,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "FF74CA00",
+            "autoIncrementValue": 75,
+            "dataHeaderMetadataHex": "2F00C900DF0052030101D7000000000000000000",
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "000000003E010000002000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 14,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "CA000000",
+            "autoIncrementValue": 77,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "00000000B7000000000000"
+          }
+        },
+        {
+          "number": 5,
+          "xgFile": "AWD.XG5",
+          "ygFile": "AWD.YG5",
+          "sortOrder": "intl850",
+          "label": "mut",
+          "keyFields": [
+            "Mutter",
+            "Indj",
+            "Indm",
+            "Indt",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Mutter",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Indj",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Indm",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Indt",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 1,
+          "expectedYgBlocks": 1,
+          "xgEmptyBlockRecordHex": "000000000000000000000000000000008001",
+          "ygEmptyBlockRecordHex": "00000000000000000000000000000000800180008000",
+          "xgHeaderMetadata": {
+            "word12": 15,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "FF48CA00",
+            "autoIncrementValue": 73,
+            "dataHeaderMetadataHex": "2F00BC00D00052030101C8000000000000000000",
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "000000002C010000002000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 16,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "9E000000",
+            "autoIncrementValue": 75,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "00000000B5000000000000"
+          }
+        },
+        {
+          "number": 6,
+          "xgFile": "AWD.XG6",
+          "ygFile": "AWD.YG6",
+          "sortOrder": "intl850",
+          "label": "vat",
+          "keyFields": [
+            "Vater",
+            "Indj",
+            "Indm",
+            "Indt",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Vater",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Indj",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Indm",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Indt",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 1,
+          "expectedYgBlocks": 1,
+          "xgEmptyBlockRecordHex": "000000000000000000000000000000008001",
+          "ygEmptyBlockRecordHex": "00000000000000000000000000000000800180008000",
+          "xgHeaderMetadata": {
+            "word12": 17,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "FF5ACA00",
+            "autoIncrementValue": 73,
+            "dataHeaderMetadataHex": "2F00BB00CF0052030101C7000000000000000000",
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "000000002B010000002000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 18,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "B0000000",
+            "autoIncrementValue": 75,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "00000000B5000000000000"
+          }
+        },
+        {
+          "number": 7,
+          "xgFile": "AWD.XG7",
+          "ygFile": "AWD.YG7",
+          "sortOrder": "intl850",
+          "label": "gebo",
+          "keyFields": [
+            "Gebort",
+            "Nummer"
+          ],
+          "fields": [
+            {
+              "name": "Gebort",
+              "typeCode": 1,
+              "length": 40
+            },
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 1,
+          "expectedYgBlocks": 1,
+          "xgEmptyBlockRecordHex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000008001",
+          "ygEmptyBlockRecordHex": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800180008000",
+          "xgHeaderMetadata": {
+            "word12": 19,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "FF9ACA00",
+            "autoIncrementValue": 74,
+            "dataHeaderMetadataHex": "0D009B00A90052030101A1000000000000000000",
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "0000000006010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 20,
+            "sortOrderCode": 84,
+            "revisionBytesHex": "F0000000",
+            "autoIncrementValue": 76,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B010000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 1,
+      "primaryIndexEmptyBlockRecordHex": "00000000800180008000",
+      "databaseHeaderMetadata": {
+        "word12": 3,
+        "sortOrderCode": 84,
+        "revisionBytesHex": "00A9CA00",
+        "autoIncrementValue": 0,
+        "dataHeaderMetadataHex": "3C0015030000520301017D031600000000000000",
+        "headerBytes38To3FHex": "000B010000000000",
+        "headerBytes4DTo57Hex": "00000000DD030000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 4,
+        "sortOrderCode": 84,
+        "revisionBytesHex": "00000000",
+        "autoIncrementValue": 74,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B010000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "chnt.DB",
+      "version": 11,
+      "recordSize": 33,
+      "maximumTableSize": 2,
+      "expectedRecords": 168,
+      "expectedBlocks": 3,
+      "encrypted": true,
+      "primaryIndexFile": "chnt.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Nr",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "FELD001",
+          "typeCode": 1,
+          "length": 25
+        },
+        {
+          "name": "FELD002",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "FELD003",
+          "typeCode": 1,
+          "length": 2
+        }
+      ],
+      "secondaryIndexes": [],
+      "baselineData": {
+        "resourceName": "AhnWin52Backup.Core.namesdays.json",
+        "expectedRecords": 168
+      },
+      "expectedPrimaryIndexBlocks": 1,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 29,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "00516300",
+        "autoIncrementValue": 0,
+        "dataHeaderMetadataHex": "0500A6000000B5010101AE000200000000000000",
+        "headerBytes38To3FHex": "000B030000000000",
+        "headerBytes4DTo57Hex": "000000000B010000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 30,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "0A000000",
+        "autoIncrementValue": 1,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B010000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "ftab.DB",
+      "version": 12,
+      "recordSize": 1074,
+      "maximumTableSize": 4,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "ftab.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "N",
+          "typeCode": 22,
+          "length": 4
+        },
+        {
+          "name": "Fv",
+          "typeCode": 1,
+          "length": 6
+        },
+        {
+          "name": "Fm",
+          "typeCode": 1,
+          "length": 6
+        },
+        {
+          "name": "Fk",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Fn",
+          "typeCode": 1,
+          "length": 15
+        },
+        {
+          "name": "H",
+          "typeCode": 1,
+          "length": 15
+        },
+        {
+          "name": "Ho",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Hq",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "S",
+          "typeCode": 1,
+          "length": 15
+        },
+        {
+          "name": "So",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Sq",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Sch",
+          "typeCode": 1,
+          "length": 15
+        },
+        {
+          "name": "Scho",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Schq",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Vb",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Indj",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Indm",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Htz",
+          "typeCode": 1,
+          "length": 120
+        },
+        {
+          "name": "Stz",
+          "typeCode": 1,
+          "length": 120
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "ftab.XG0",
+          "ygFile": "ftab.YG0",
+          "sortOrder": "ANSIINTL",
+          "label": "v",
+          "keyFields": [
+            "Fv",
+            "Indj",
+            "Indm",
+            "N"
+          ],
+          "fields": [
+            {
+              "name": "Fv",
+              "typeCode": 1,
+              "length": 6
+            },
+            {
+              "name": "Indj",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Indm",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "N",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 11,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FF068844",
+            "autoIncrementValue": 40267,
+            "dataHeaderMetadataHex": "12005E017101E404010168010000000000000000",
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "00000000CB010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 12,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "6A000000",
+            "autoIncrementValue": 15747,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "0000000069010000000000"
+          }
+        },
+        {
+          "number": 1,
+          "xgFile": "ftab.XG1",
+          "ygFile": "ftab.YG1",
+          "sortOrder": "ANSIINTL",
+          "label": "m",
+          "keyFields": [
+            "Fm",
+            "Indj",
+            "Indm",
+            "N"
+          ],
+          "fields": [
+            {
+              "name": "Fm",
+              "typeCode": 1,
+              "length": 6
+            },
+            {
+              "name": "Indj",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Indm",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "N",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 9,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FF758844",
+            "autoIncrementValue": 40267,
+            "dataHeaderMetadataHex": "12005E017101E404010168010000000000000000",
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "00000000CB010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 10,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "D9000000",
+            "autoIncrementValue": 15747,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "0000000069010000000000"
+          }
+        },
+        {
+          "number": 2,
+          "xgFile": "ftab.XG2",
+          "ygFile": "ftab.YG2",
+          "sortOrder": "ANSIINTL",
+          "label": "verb",
+          "keyFields": [
+            "Vb",
+            "N"
+          ],
+          "fields": [
+            {
+              "name": "Vb",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "N",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 7,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FFA88844",
+            "autoIncrementValue": 40267,
+            "dataHeaderMetadataHex": "100048015701E40401014E010000000000000000",
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "00000000B4010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 8,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "0D000000",
+            "autoIncrementValue": 15747,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "0000000065010000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 5,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "00DF8800",
+        "autoIncrementValue": 163154,
+        "dataHeaderMetadataHex": "1400DC010000E40401010202013D000000000000",
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "0000000063020000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 6,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "44000000",
+        "autoIncrementValue": 15746,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "0000000063010000000000"
+      }
+    },
+    {
+      "fileName": "gedh.db",
+      "version": 11,
+      "recordSize": 12,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "gedh.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Z",
+          "typeCode": 22,
+          "length": 4
+        },
+        {
+          "name": "A",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "N",
+          "typeCode": 4,
+          "length": 4
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "gedh.XG0",
+          "ygFile": "gedh.YG0",
+          "sortOrder": "intl",
+          "label": "AA",
+          "keyFields": [
+            "A",
+            "Z"
+          ],
+          "fields": [
+            {
+              "name": "A",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Z",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 86,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "FF49EF0E",
+            "autoIncrementValue": 346966,
+            "dataHeaderMetadataHex": "040091009C00B501010197000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000F7000000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 87,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "02000000",
+            "autoIncrementValue": 98664,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 84,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "0055EF00",
+        "autoIncrementValue": 1501569,
+        "dataHeaderMetadataHex": "04008B000000B50101019100727E010000000000",
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000EE000000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 85,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "0E000000",
+        "autoIncrementValue": 98663,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "lc.DB",
+      "version": 11,
+      "recordSize": 54,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "lc.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Nr",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "Ort",
+          "typeCode": 1,
+          "length": 50
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "lc.XG0",
+          "ygFile": "lc.YG0",
+          "sortOrder": "intl",
+          "label": "lo",
+          "keyFields": [
+            "Ort",
+            "Nr"
+          ],
+          "fields": [
+            {
+              "name": "Ort",
+              "typeCode": 1,
+              "length": 50
+            },
+            {
+              "name": "Nr",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 7,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "FF169C4B",
+            "autoIncrementValue": 4,
+            "dataHeaderMetadataHex": "040094009F00B50101019A000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000FA000000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 8,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "CE000000",
+            "autoIncrementValue": 6,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 5,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "00929C00",
+        "autoIncrementValue": 0,
+        "dataHeaderMetadataHex": "030086000000B50101018A001100000000000000",
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000E7000000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 6,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "4B000000",
+        "autoIncrementValue": 5,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "LOC.db",
+      "version": 11,
+      "recordSize": 470,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "LOC.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Ort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "PLZ",
+          "typeCode": 1,
+          "length": 10
+        },
+        {
+          "name": "Land",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "RegBez",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Gov",
+          "typeCode": 1,
+          "length": 30
+        },
+        {
+          "name": "Bland",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Gde",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Pfr",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Lkr",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Abk",
+          "typeCode": 1,
+          "length": 20
+        },
+        {
+          "name": "Lg",
+          "typeCode": 1,
+          "length": 30
+        },
+        {
+          "name": "Bg",
+          "typeCode": 1,
+          "length": 30
+        },
+        {
+          "name": "Maid",
+          "typeCode": 1,
+          "length": 10
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "LOC.XG0",
+          "ygFile": "LOC.YG0",
+          "sortOrder": "ascii",
+          "label": "Ort_",
+          "keyFields": [
+            "Ort",
+            "Ort"
+          ],
+          "fields": [
+            {
+              "name": "Ort",
+              "typeCode": 1,
+              "length": 40
+            },
+            {
+              "name": "Ort",
+              "typeCode": 1,
+              "length": 40
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 26,
+            "sortOrderCode": 0,
+            "revisionBytesHex": "FF3EA928",
+            "autoIncrementValue": 1011,
+            "dataHeaderMetadataHex": "04009500A100520301019B000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000FE000000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 27,
+            "sortOrderCode": 0,
+            "revisionBytesHex": "3E000000",
+            "autoIncrementValue": 1013,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 24,
+        "sortOrderCode": 0,
+        "revisionBytesHex": "0028A900",
+        "autoIncrementValue": 0,
+        "dataHeaderMetadataHex": "1000FA0000005203010114015102000000000000",
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "0000000072010000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 25,
+        "sortOrderCode": 0,
+        "revisionBytesHex": "28000000",
+        "autoIncrementValue": 1012,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "MRG.DB",
+      "version": 11,
+      "recordSize": 872,
+      "maximumTableSize": 4,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "MRG.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Numr",
+          "typeCode": 22,
+          "length": 4
+        },
+        {
+          "name": "Nummer",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "Epnum",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "Htag",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Hmonat",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Hjahr",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Hort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Trauz",
+          "typeCode": 1,
+          "length": 120
+        },
+        {
+          "name": "Satag",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Samonat",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Sajahr",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Saort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Satrauz",
+          "typeCode": 1,
+          "length": 120
+        },
+        {
+          "name": "Verbind",
+          "typeCode": 1,
+          "length": 20
+        },
+        {
+          "name": "Schtag",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Schmonat",
+          "typeCode": 1,
+          "length": 2
+        },
+        {
+          "name": "Schjahr",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Schort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Hqu",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Saqu",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Schqu",
+          "typeCode": 1,
+          "length": 150
+        },
+        {
+          "name": "Indj",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Indm",
+          "typeCode": 1,
+          "length": 2
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "MRG.XG0",
+          "ygFile": "MRG.YG0",
+          "sortOrder": "intl",
+          "label": "nm",
+          "keyFields": [
+            "Nummer",
+            "Numr"
+          ],
+          "fields": [
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Numr",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 38,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "FFBE5D97",
+            "autoIncrementValue": 2492603,
+            "dataHeaderMetadataHex": "04009900A400B50101019F000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000FF000000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 39,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "77000000",
+            "autoIncrementValue": 219,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        },
+        {
+          "number": 1,
+          "xgFile": "MRG.XG1",
+          "ygFile": "MRG.YG1",
+          "sortOrder": "intl",
+          "label": "epn",
+          "keyFields": [
+            "Epnum",
+            "Indj",
+            "Indm",
+            "Numr"
+          ],
+          "fields": [
+            {
+              "name": "Epnum",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Indj",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Indm",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Numr",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 36,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "FF5C5D97",
+            "autoIncrementValue": 2492620,
+            "dataHeaderMetadataHex": "1800AE00BD00B5010101B8000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "0000000019010000002000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 37,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "15000000",
+            "autoIncrementValue": 236,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000B3000000000000"
+          }
+        },
+        {
+          "number": 2,
+          "xgFile": "MRG.XG2",
+          "ygFile": "MRG.YG2",
+          "sortOrder": "intl",
+          "label": "num",
+          "keyFields": [
+            "Nummer",
+            "Indj",
+            "Indm",
+            "Numr"
+          ],
+          "fields": [
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Indj",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Indm",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Numr",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 34,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "FFB85D97",
+            "autoIncrementValue": 2492620,
+            "dataHeaderMetadataHex": "1800AF00BE00B5010101B9000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "000000001A010000002000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 35,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "71000000",
+            "autoIncrementValue": 236,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000B3000000000000"
+          }
+        },
+        {
+          "number": 3,
+          "xgFile": "MRG.XG3",
+          "ygFile": "MRG.YG3",
+          "sortOrder": "intl",
+          "label": "ep",
+          "keyFields": [
+            "Epnum",
+            "Numr"
+          ],
+          "fields": [
+            {
+              "name": "Epnum",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Numr",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 32,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "FF795D97",
+            "autoIncrementValue": 2492603,
+            "dataHeaderMetadataHex": "04009800A300B50101019E000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000FE000000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 33,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "32000000",
+            "autoIncrementValue": 219,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        },
+        {
+          "number": 4,
+          "xgFile": "MRG.XG4",
+          "ygFile": "MRG.YG4",
+          "sortOrder": "intl",
+          "label": "mh",
+          "keyFields": [
+            "Nummer",
+            "Hjahr",
+            "Hmonat",
+            "Htag",
+            "Sajahr",
+            "Samonat",
+            "Satag",
+            "Numr"
+          ],
+          "fields": [
+            {
+              "name": "Nummer",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Hjahr",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Hmonat",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Htag",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Sajahr",
+              "typeCode": 1,
+              "length": 4
+            },
+            {
+              "name": "Samonat",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Satag",
+              "typeCode": 1,
+              "length": 2
+            },
+            {
+              "name": "Numr",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 30,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "FF675D97",
+            "autoIncrementValue": 2492612,
+            "dataHeaderMetadataHex": "0C00E400FB00B5010101F6000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "0000000056010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 31,
+            "sortOrderCode": 183,
+            "revisionBytesHex": "20000000",
+            "autoIncrementValue": 228,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000BB000000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 28,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "00DE5D00",
+        "autoIncrementValue": 2833279,
+        "dataHeaderMetadataHex": "18008F010000B5010101BD014F00000000000000",
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "000000001A020000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 29,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "97000000",
+        "autoIncrementValue": 218,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "ndh.db",
+      "version": 12,
+      "recordSize": 100,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": false,
+      "primaryIndexFile": "ndh.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Hofname",
+          "typeCode": 1,
+          "length": 100
+        }
+      ],
+      "secondaryIndexes": [],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 50,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "00EB8200",
+        "autoIncrementValue": 0,
+        "dataHeaderMetadataHex": "020037010000E404010139014800000000000000",
+        "headerBytes38To3FHex": "000C000000001F0F",
+        "headerBytes4DTo57Hex": "000000009A010000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 51,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "50000000",
+        "autoIncrementValue": 106,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "0000000063010000000000"
+      }
+    },
+    {
+      "fileName": "NM.db",
+      "version": 11,
+      "recordSize": 50,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "NM.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Name",
+          "typeCode": 1,
+          "length": 50
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "NM.XG0",
+          "ygFile": "NM.YG0",
+          "sortOrder": "ascii",
+          "label": "Nam_",
+          "keyFields": [
+            "Name",
+            "Name"
+          ],
+          "fields": [
+            {
+              "name": "Name",
+              "typeCode": 1,
+              "length": 50
+            },
+            {
+              "name": "Name",
+              "typeCode": 1,
+              "length": 50
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 44,
+            "sortOrderCode": 0,
+            "revisionBytesHex": "FF55175E",
+            "autoIncrementValue": 107686,
+            "dataHeaderMetadataHex": "04009700A300520301019D000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "0000000000010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 45,
+            "sortOrderCode": 0,
+            "revisionBytesHex": "55000000",
+            "autoIncrementValue": 107689,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 42,
+        "sortOrderCode": 0,
+        "revisionBytesHex": "005E1700",
+        "autoIncrementValue": 0,
+        "dataHeaderMetadataHex": "0B007E000000B50101018000FE42030000000000",
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000DE000000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 43,
+        "sortOrderCode": 0,
+        "revisionBytesHex": "5E000000",
+        "autoIncrementValue": 107688,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "NUMRES.DB",
+      "version": 11,
+      "recordSize": 4,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "NUMRES.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Num",
+          "typeCode": 4,
+          "length": 4
+        }
+      ],
+      "secondaryIndexes": [],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 22,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "004E8600",
+        "autoIncrementValue": 0,
+        "dataHeaderMetadataHex": "02007D000000B50101017F00AD10000000000000",
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000DC000000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 23,
+        "sortOrderCode": 183,
+        "revisionBytesHex": "07000000",
+        "autoIncrementValue": 3772,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "occ.db",
+      "version": 12,
+      "recordSize": 74,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": false,
+      "primaryIndexFile": "occ.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "NN",
+          "typeCode": 22,
+          "length": 4
+        },
+        {
+          "name": "Occ",
+          "typeCode": 1,
+          "length": 70
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "occ.XG0",
+          "ygFile": "occ.YG0",
+          "sortOrder": "ANSIINTL",
+          "label": "ber",
+          "keyFields": [
+            "Occ",
+            "NN"
+          ],
+          "fields": [
+            {
+              "name": "Occ",
+              "typeCode": 1,
+              "length": 70
+            },
+            {
+              "name": "NN",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 59,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FF0682DB",
+            "autoIncrementValue": 76233,
+            "dataHeaderMetadataHex": "04004A015901E404010150010000000000000000",
+            "headerBytes38To3FHex": "000C000000001F0F",
+            "headerBytes4DTo57Hex": "00000000B5010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 60,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "6A000000",
+            "autoIncrementValue": 76235,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "0000000065010000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 57,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "00778200",
+        "autoIncrementValue": 168470,
+        "dataHeaderMetadataHex": "03003C010000E40401014001C028010000000000",
+        "headerBytes38To3FHex": "000C000000001F0F",
+        "headerBytes4DTo57Hex": "00000000A1010000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 58,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "DB000000",
+        "autoIncrementValue": 76235,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "0000000063010000000000"
+      }
+    },
+    {
+      "fileName": "OUTP.db",
+      "version": 12,
+      "recordSize": 103,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "OUTP.PX",
+      "memoFile": "OUTP.MB",
+      "fields": [
+        {
+          "name": "Nr",
+          "typeCode": 22,
+          "length": 4
+        },
+        {
+          "name": "Zeile",
+          "typeCode": 12,
+          "length": 20
+        },
+        {
+          "name": "Nm",
+          "typeCode": 1,
+          "length": 25
+        },
+        {
+          "name": "Nm2",
+          "typeCode": 1,
+          "length": 4
+        },
+        {
+          "name": "Nm3",
+          "typeCode": 1,
+          "length": 50
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "OUTP.XG0",
+          "ygFile": "OUTP.YG0",
+          "sortOrder": "ANSIINTL",
+          "label": "Valf",
+          "keyFields": [
+            "Nm3",
+            "Nm",
+            "Nr"
+          ],
+          "fields": [
+            {
+              "name": "Nm3",
+              "typeCode": 1,
+              "length": 50
+            },
+            {
+              "name": "Nm",
+              "typeCode": 1,
+              "length": 25
+            },
+            {
+              "name": "Nr",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 81,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FF018A91",
+            "autoIncrementValue": 990709,
+            "dataHeaderMetadataHex": "060053016401E40401015B010000000000000000",
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "00000000C1010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 82,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "65000000",
+            "autoIncrementValue": 270232,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "0000000067010000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 79,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "002D8A00",
+        "autoIncrementValue": 1103193,
+        "dataHeaderMetadataHex": "06005B010000E404010165016429040000000000",
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "00000000C6010000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 80,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "91000000",
+        "autoIncrementValue": 270231,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "0000000063010000000000"
+      }
+    },
+    {
+      "fileName": "repso.db",
+      "version": 11,
+      "recordSize": 313,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "repso.PX",
+      "memoFile": "repso.MB",
+      "fields": [
+        {
+          "name": "Z",
+          "typeCode": 22,
+          "length": 4
+        },
+        {
+          "name": "Nr",
+          "typeCode": 4,
+          "length": 4
+        },
+        {
+          "name": "Inh",
+          "typeCode": 1,
+          "length": 255
+        },
+        {
+          "name": "Inh2",
+          "typeCode": 12,
+          "length": 20
+        },
+        {
+          "name": "Alt",
+          "typeCode": 1,
+          "length": 30
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "repso.XG0",
+          "ygFile": "repso.YG0",
+          "sortOrder": "ANSIINTL",
+          "label": "alt_",
+          "keyFields": [
+            "Alt",
+            "Z"
+          ],
+          "fields": [
+            {
+              "name": "Alt",
+              "typeCode": 1,
+              "length": 30
+            },
+            {
+              "name": "Z",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 94,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FF9F8A76",
+            "autoIncrementValue": 36563,
+            "dataHeaderMetadataHex": "06009300A200E404010199000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000FF000000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 95,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "04000000",
+            "autoIncrementValue": 9068,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        },
+        {
+          "number": 1,
+          "xgFile": "repso.XG1",
+          "ygFile": "repso.YG1",
+          "sortOrder": "ANSIINTL",
+          "label": "nro",
+          "keyFields": [
+            "Nr",
+            "Z"
+          ],
+          "fields": [
+            {
+              "name": "Nr",
+              "typeCode": 4,
+              "length": 4
+            },
+            {
+              "name": "Z",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 92,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FFD48A76",
+            "autoIncrementValue": 36563,
+            "dataHeaderMetadataHex": "04009200A100E404010198000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000FD000000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 93,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "39000000",
+            "autoIncrementValue": 9068,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        },
+        {
+          "number": 2,
+          "xgFile": "repso.XG2",
+          "ygFile": "repso.YG2",
+          "sortOrder": "ANSIINTL",
+          "label": "ih",
+          "keyFields": [
+            "Inh",
+            "Z"
+          ],
+          "fields": [
+            {
+              "name": "Inh",
+              "typeCode": 1,
+              "length": 255
+            },
+            {
+              "name": "Z",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 90,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FF448A76",
+            "autoIncrementValue": 36563,
+            "dataHeaderMetadataHex": "04009300A200E404010199000000000000000000",
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000FD000000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 91,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "A8000000",
+            "autoIncrementValue": 9068,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000B000000000000",
+            "headerBytes4DTo57Hex": "00000000AF000000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 88,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "00128A00",
+        "autoIncrementValue": 43856,
+        "dataHeaderMetadataHex": "0600A3000000E4040101AD00E622000000000000",
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "000000000E010000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 89,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "76000000",
+        "autoIncrementValue": 9067,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000B000000000000",
+        "headerBytes4DTo57Hex": "00000000AD000000000000"
+      }
+    },
+    {
+      "fileName": "sour.DB",
+      "version": 12,
+      "recordSize": 154,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "sour.PX",
+      "memoFile": null,
+      "fields": [
+        {
+          "name": "Nn",
+          "typeCode": 22,
+          "length": 4
+        },
+        {
+          "name": "Quelle",
+          "typeCode": 1,
+          "length": 150
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "sour.XG0",
+          "ygFile": "sour.YG0",
+          "sortOrder": "ANSIINTL",
+          "label": "qu",
+          "keyFields": [
+            "Quelle",
+            "Nn"
+          ],
+          "fields": [
+            {
+              "name": "Quelle",
+              "typeCode": 1,
+              "length": 150
+            },
+            {
+              "name": "Nn",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 48,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FFC38B00",
+            "autoIncrementValue": 2044,
+            "dataHeaderMetadataHex": "04004D015C01E404010153010000000000000000",
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "00000000B7010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 49,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "28000000",
+            "autoIncrementValue": 2047,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "0000000065010000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 46,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "009B8B00",
+        "autoIncrementValue": 4378,
+        "dataHeaderMetadataHex": "05003F010000E404010143012807000000000000",
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "00000000A4010000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 47,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "00000000",
+        "autoIncrementValue": 2019,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "0000000063010000000000"
+      }
+    },
+    {
+      "fileName": "sour2.DB",
+      "version": 12,
+      "recordSize": 424,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "sour2.PX",
+      "memoFile": "sour2.MB",
+      "fields": [
+        {
+          "name": "N",
+          "typeCode": 22,
+          "length": 4
+        },
+        {
+          "name": "Titel",
+          "typeCode": 1,
+          "length": 80
+        },
+        {
+          "name": "Abk",
+          "typeCode": 1,
+          "length": 80
+        },
+        {
+          "name": "Ereig",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Von",
+          "typeCode": 1,
+          "length": 10
+        },
+        {
+          "name": "Bis",
+          "typeCode": 1,
+          "length": 10
+        },
+        {
+          "name": "Standort",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Publ",
+          "typeCode": 12,
+          "length": 20
+        },
+        {
+          "name": "Rep",
+          "typeCode": 1,
+          "length": 60
+        },
+        {
+          "name": "Bem",
+          "typeCode": 12,
+          "length": 20
+        },
+        {
+          "name": "Bestand",
+          "typeCode": 1,
+          "length": 40
+        },
+        {
+          "name": "Med",
+          "typeCode": 1,
+          "length": 20
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "sour2.XG0",
+          "ygFile": "sour2.YG0",
+          "sortOrder": "ANSIINTL",
+          "label": "tit",
+          "keyFields": [
+            "Titel",
+            "N"
+          ],
+          "fields": [
+            {
+              "name": "Titel",
+              "typeCode": 1,
+              "length": 80
+            },
+            {
+              "name": "N",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 54,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FFBC86F8",
+            "autoIncrementValue": 4132,
+            "dataHeaderMetadataHex": "04004B015A01E404010151010000000000000000",
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "00000000B6010000012000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 55,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "21000000",
+            "autoIncrementValue": 682,
+            "dataHeaderMetadataHex": null,
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "0000000065010000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 52,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "00948600",
+        "autoIncrementValue": 91041,
+        "dataHeaderMetadataHex": "1200AD010000E4040101C5017401000000000000",
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "0000000026020000002000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 53,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "F8000000",
+        "autoIncrementValue": 680,
+        "dataHeaderMetadataHex": null,
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "0000000063010000000000"
+      }
+    }
+  ]
+}
