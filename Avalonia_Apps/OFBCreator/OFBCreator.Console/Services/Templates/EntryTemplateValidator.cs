@@ -20,10 +20,10 @@ public static class EntryTemplateValidator
         new Dictionary<string, string[]>(StringComparer.Ordinal)
         {
             ["section"] = ["kind", "columns", "blocks"],
-            ["paragraph"] = ["kind", "role", "anchor", "content"],
-            ["text"] = ["kind", "value"],
-            ["field"] = ["kind", "path", "formatter"],
-            ["link"] = ["kind", "target", "content"],
+            ["paragraph"] = ["kind", "role", "anchor", "content", "hangingIndent"],
+            ["text"] = ["kind", "value", "bold", "italic", "underline"],
+            ["field"] = ["kind", "path", "formatter", "bold", "italic", "underline"],
+            ["link"] = ["kind", "target", "content", "bold", "italic", "underline"],
             ["if"] = ["kind", "condition", "then"],
             ["forEach"] = ["kind", "items", "as", "template"],
             ["include"] = ["kind", "fragment"]
@@ -168,7 +168,9 @@ public static class EntryTemplateValidator
                 ["person"] = "person",
                 ["child"] = "person",
                 ["individual"] = "person",
-                ["occupation"] = "occupation"
+                ["occupation"] = "occupation",
+                ["property"] = "property",
+                ["familyReference"] = "familyReference"
             };
             ValidateBlocks(fragment, definition, fragmentVariables, inSection: false, topLevel: false);
         }
@@ -207,6 +209,8 @@ public static class EntryTemplateValidator
                         throw new InvalidDataException($"Unknown logical style role '{block.Role}'.");
                     if (block.Anchor is not null)
                         ValidatePath(block.Anchor, variables, requireAnchor: true);
+                    if (block.HangingIndent is < 0 or > 1440)
+                        throw new InvalidDataException("A paragraph hangingIndent value must be between 0 and 1440 points.");
                     ValidateBlocks(block.Content, definition, variables, inSection, topLevel: false);
                     break;
                 case "text":
@@ -217,11 +221,12 @@ public static class EntryTemplateValidator
                     if (string.IsNullOrWhiteSpace(block.Path))
                         throw new InvalidDataException("A field block requires a path.");
                     ValidatePath(block.Path, variables);
+                    var canonicalPath = CanonicalizePath(block.Path, variables);
                     if (block.Formatter is not null && !Formatters.Contains(block.Formatter))
                         throw new InvalidDataException($"Unknown safe formatter '{block.Formatter}'.");
-                    if (block.Formatter is not null && !IsFormatterCompatible(block.Path, block.Formatter))
+                    if (block.Formatter is not null && !IsFormatterCompatible(canonicalPath, block.Formatter))
                         throw new InvalidDataException($"Formatter '{block.Formatter}' cannot be used with path '{block.Path}'.");
-                    if (block.Formatter is null && !IsScalarPath(block.Path))
+                    if (block.Formatter is null && !IsScalarPath(canonicalPath))
                         throw new InvalidDataException($"Field path '{block.Path}' requires a compatible safe formatter.");
                     break;
                 case "link":
@@ -234,8 +239,8 @@ public static class EntryTemplateValidator
                     if (block.Condition is null)
                         throw new InvalidDataException("An if block requires a condition.");
                     ValidatePath(block.Condition, variables);
-                    if (!block.Condition.EndsWith(".any", StringComparison.Ordinal))
-                        throw new InvalidDataException("Conditions must use a supported '.any' collection test.");
+                    if (!IsSupportedCondition(block.Condition, variables))
+                        throw new InvalidDataException("Conditions must use a supported collection test or optional typed value.");
                     ValidateBlocks(block.Then, definition, variables, inSection, topLevel: false);
                     break;
                 case "forEach":
@@ -278,29 +283,47 @@ public static class EntryTemplateValidator
         var property = string.Join('.', parts.Skip(1));
         var isValid = type switch
         {
-            "family" => property is "number" or "anchor" or "union" or "parents" or "children" or "children.any",
-            "person" => property is "nameGc" or "nameAk" or "anchor" or "reference" or "vitalEventsGc" or "vitalEventsAk" or "birth" or "death" or "indexAnchor" or "occupations" or "occupations.any" or "ordinal",
-            "occupation" => property is "name" or "date" or "indexAnchor",
+            "family" => property is "number" or "anchor" or "union" or "marriageMark" or "marriageDate" or "marriagePlace" or "marriagePlaceShort" or "marriagePlaceAnchor" or "properties" or "properties.any" or "parents" or "children" or "children.any",
+            "person" => property is "nameGc" or "nameAk" or "anchor" or "reference" or "indexLabel" or "vitalEventsGc" or "vitalEventsAk" or "additionalLifeDataGc" or "birth" or "death" or "indexAnchor"
+                or "occupations" or "occupations.any" or "properties" or "properties.any" or "residence" or "residenceAnchor" or "ordinal" or "parentFamily" or "parentFamily.number" or "parentFamily.anchor" or "childFamilies" or "parentFamilies" or "childFamilyTokens" or "parentFamilyTokens" or "childFamilyTokens.any" or "parentFamilyTokens.any",
+            "familyReference" => property is "number" or "anchor",
+            "familyReferenceToken" => property is "text" or "anchor",
+            "occupation" => property is "name" or "date" or "indexAnchor" or "place" or "placeAnchor",
+            "property" => property is "name" or "date" or "place" or "indexAnchor" or "placeAnchor",
             _ => false
         };
         if (!isValid)
             throw new InvalidDataException($"Unknown typed template path '{path}'.");
 
-        if (requireAnchor && property is not ("anchor" or "indexAnchor"))
+            if (requireAnchor && property is not ("anchor" or "indexAnchor" or "parentFamily.anchor" or "marriagePlaceAnchor" or "residenceAnchor" or "placeAnchor" or "parentFamily.anchor"))
             throw new InvalidDataException($"Link target '{path}' is not an anchor field.");
+    }
+
+    private static string CanonicalizePath(string path, IReadOnlyDictionary<string, string> variables)
+    {
+        var parts = path.Split('.');
+        if (parts.Length == 0 || !variables.TryGetValue(parts[0], out var type))
+            return path;
+
+        return parts.Length == 1
+            ? type
+            : $"{type}.{string.Join('.', parts.Skip(1))}";
     }
 
     private static string GetCollectionElementType(string path) => path switch
     {
         "family.parents" or "family.children" => "person",
         _ when path.EndsWith(".occupations", StringComparison.Ordinal) => "occupation",
+        _ when path.EndsWith(".childFamilies", StringComparison.Ordinal) || path.EndsWith(".parentFamilies", StringComparison.Ordinal) => "familyReference",
+        _ when path.EndsWith(".childFamilyTokens", StringComparison.Ordinal) || path.EndsWith(".parentFamilyTokens", StringComparison.Ordinal) => "familyReferenceToken",
+        "family.properties" or "person.properties" or "child.properties" or "individual.properties" => "property",
         _ => throw new InvalidDataException($"Path '{path}' is not a supported template collection.")
     };
 
     private static bool IsFormatterCompatible(string path, string formatter) => formatter switch
     {
         "childCount" => path == "family.children",
-        "dateSuffix" => path is "family.union" or "person.birth" or "child.birth" or "individual.birth"
+        "dateSuffix" => path is "family.union" or "family.marriageDate" or "person.birth" or "child.birth" or "individual.birth"
             or "person.death" or "child.death" or "individual.death",
         "gedcomDatePrefix" => path.EndsWith(".date", StringComparison.Ordinal),
         "ordinal" => path.EndsWith(".ordinal", StringComparison.Ordinal),
@@ -310,19 +333,60 @@ public static class EntryTemplateValidator
 
     private static bool IsScalarPath(string path) => path switch
     {
-        "family.number" or "family.anchor" or "family.union" => true,
-        "person.nameGc" or "person.nameAk" or "person.anchor" or "person.reference"
-            or "person.vitalEventsGc" or "person.vitalEventsAk" or "person.birth" or "person.death"
-            or "person.indexAnchor" or "person.ordinal" => true,
+        "family.number" or "family.anchor" or "family.union" or "family.marriageMark" or "family.marriageDate"
+            or "family.marriagePlace" or "family.marriagePlaceShort" or "family.marriagePlaceAnchor" => true,
+        "person.nameGc" or "person.nameAk" or "person.anchor" or "person.reference" or "person.indexLabel"
+            or "person.vitalEventsGc" or "person.vitalEventsAk" or "person.additionalLifeDataGc" or "person.birth" or "person.death"
+            or "person.indexAnchor" or "person.ordinal" or "person.residence" or "person.residenceAnchor" or "person.parentFamily.number" or "person.parentFamily.anchor"
+            or "person.parentFamily" => true,
         "child.nameGc" or "child.nameAk" or "child.anchor" or "child.reference"
-            or "child.vitalEventsGc" or "child.vitalEventsAk" or "child.birth" or "child.death"
-            or "child.indexAnchor" or "child.ordinal" => true,
+            or "child.vitalEventsGc" or "child.vitalEventsAk" or "child.additionalLifeDataGc" or "child.birth" or "child.death"
+            or "child.indexAnchor" or "child.ordinal" or "child.residence" or "child.residenceAnchor"
+            or "child.parentFamily.number" or "child.parentFamily.anchor" or "child.parentFamily" => true,
         "individual.nameGc" or "individual.nameAk" or "individual.anchor" or "individual.reference"
-            or "individual.vitalEventsGc" or "individual.vitalEventsAk" or "individual.birth"
-            or "individual.death" or "individual.indexAnchor" or "individual.ordinal" => true,
-        "occupation.name" or "occupation.date" or "occupation.indexAnchor" => true,
+            or "individual.vitalEventsGc" or "individual.vitalEventsAk" or "individual.additionalLifeDataGc" or "individual.birth"
+            or "individual.death" or "individual.indexAnchor" or "individual.ordinal" or "individual.residence" or "individual.residenceAnchor"
+            or "individual.parentFamily.number" or "individual.parentFamily.anchor" or "individual.parentFamily" => true,
+        "occupation.name" or "occupation.date" or "occupation.indexAnchor" or "occupation.place" or "occupation.placeAnchor" => true,
+        "property.name" or "property.date" or "property.place" or "property.indexAnchor" or "property.placeAnchor" => true,
+        "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
+        "familyReference.number" or "familyReference.anchor" or "familyReferenceToken" or "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
         _ => false
     };
+
+    private static bool IsSupportedCondition(string path, IReadOnlyDictionary<string, string> variables)
+    {
+        if (path.EndsWith(".any", StringComparison.Ordinal))
+            return IsSupportedAnyConditionPath(path, variables);
+
+        var parts = path.Split('.');
+        if (parts.Length != 2 || !variables.TryGetValue(parts[0], out var type))
+            return false;
+
+        return (type, parts[1]) switch
+        {
+            ("person", "parentFamily" or "residence") => true,
+            ("family", "marriagePlaceShort") => true,
+            ("occupation" or "property", "place") => true,
+            _ => false
+        };
+    }
+
+    private static bool IsSupportedAnyConditionPath(string path, IReadOnlyDictionary<string, string> variables)
+    {
+        var collectionPath = path[..^4];
+        var parts = collectionPath.Split('.');
+        if (parts.Length < 2 || !variables.TryGetValue(parts[0], out var type))
+            return false;
+
+        var property = string.Join('.', parts.Skip(1));
+        return type switch
+        {
+            "family" => property is "children" or "properties",
+            "person" => property is "occupations" or "properties" or "childFamilies" or "parentFamilies" or "childFamilyTokens" or "parentFamilyTokens",
+            _ => false
+        };
+    }
 
     private static bool IsIdentifier(string name) =>
         name.Length > 0

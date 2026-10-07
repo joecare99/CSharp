@@ -17,6 +17,7 @@ using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
 using OFBCreator.Projects.Models;
 using OFBCreator.Projects.Services;
+using PortableProjectStore = OFBCreator.Projects.Services.OFBProjectStore;
 
 namespace OFBCreator.Console;
 
@@ -39,7 +40,7 @@ public static class Program
         // Register data source providers
         services.AddSingleton<CanonicalGenealogyAdapter>();
         services.AddSingleton<CanonicalGedcomFamilyDataSource>();
-        services.AddSingleton<OFBProjectStore>();
+        services.AddSingleton<PortableProjectStore>();
         services.AddSingleton<EntryTemplateStore>();
         services.AddSingleton<WinAhnenDataSource>();
         services.AddSingleton<SecureStoreDataSource>();
@@ -120,7 +121,7 @@ public static class Program
 
             var projectResult = string.IsNullOrWhiteSpace(projectName)
                 ? null
-                : serviceProvider.GetRequiredService<OFBProjectStore>().LoadOrCreate(projectName, projectTemplateName);
+                : serviceProvider.GetRequiredService<PortableProjectStore>().LoadOrCreate(projectName, projectTemplateName);
             var project = projectResult?.Project;
             var dataSource = dataSourceOverride ?? project?.DataSource;
             if (projectResult?.RequiresMigrationSave == true)
@@ -128,9 +129,9 @@ public static class Program
                     $"Legacy project '{projectResult.ProjectPath}' was loaded without changes. Use 'project-migrate --project \"{projectResult.ProjectPath}\" --output <path.ofbproject>' to save the portable version.");
 
             var inputPath = context.GetValue(inputOption)
-                ?? OFBProjectStore.ResolveProjectPath(projectResult?.ProjectPath ?? string.Empty, project?.InputPath);
+                ?? PortableProjectStore.ResolveProjectPath(projectResult?.ProjectPath ?? string.Empty, project?.InputPath);
             var outputPath = context.GetValue(outputOption)
-                ?? OFBProjectStore.ResolveProjectPath(projectResult?.ProjectPath ?? string.Empty, project?.OutputPath);
+                ?? PortableProjectStore.ResolveProjectPath(projectResult?.ProjectPath ?? string.Empty, project?.OutputPath);
             var title = context.GetValue(titleOption) ?? project?.Title;
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("Specify --title or select a named --project.");
@@ -142,7 +143,7 @@ public static class Program
             var template = context.GetValue(templateOption)
                 ?? (project is null
                     ? "gc"
-                    : OFBProjectStore.ResolveEntryTemplate(projectResult!.ProjectPath, project.EntryTemplate));
+                    : PortableProjectStore.ResolveEntryTemplate(projectResult!.ProjectPath, project.EntryTemplate));
 
             var options = new OFBGenerateOptions()
             {
@@ -190,7 +191,7 @@ public static class Program
             if (string.IsNullOrWhiteSpace(projectPath) || string.IsNullOrWhiteSpace(outputPath))
                 throw new ArgumentException("Both --project and --output are required.");
 
-            var store = serviceProvider.GetRequiredService<OFBProjectStore>();
+            var store = serviceProvider.GetRequiredService<PortableProjectStore>();
             var loaded = store.Open(projectPath);
             if (!loaded.RequiresMigrationSave)
                 throw new InvalidOperationException($"Project '{loaded.ProjectPath}' is already using the portable schema.");

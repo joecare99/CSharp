@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net8.0</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>OFBCreator.Console</RootNamespace>
     <AssemblyName>OFBCreator.Console</AssemblyName>
     <SignAssembly>true</SignAssembly>
@@ -39,6 +38,10 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\OFBProjectStore.cs" />
   </ItemGroup>
 
 </Project>
