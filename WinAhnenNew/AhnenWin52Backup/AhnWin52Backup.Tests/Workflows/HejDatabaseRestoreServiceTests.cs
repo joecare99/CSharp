@@ -35,6 +35,9 @@ public sealed class HejDatabaseRestoreServiceTests
             Assert.AreEqual(1, result.RecordCounts["Places"]);
             Assert.AreEqual(1, result.RecordCounts["Sources"]);
 
+            byte[] individualsDatabase = File.ReadAllBytes(Path.Combine(destination, "AWD.DB"));
+            StringAssert.Contains(Encoding.ASCII.GetString(individualsDatabase), "intl850");
+
             HejDocument restored = new HejDatabaseExportService(new ParadoxTableReader()).Export(destination);
             Assert.AreEqual(source.Individuals[0].Fields[31], Normalize(restored.Individuals[0].Fields[31]));
             Assert.AreEqual(source.Individuals[0].Fields[3], restored.Individuals[0].Fields[3]);

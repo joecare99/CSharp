@@ -100,6 +100,19 @@ public sealed class StructureTemplateMaterializerTests
                 Assert.AreEqual(expected.Encrypted, actual.Encrypted, expected.FileName);
                 byte[] database = File.ReadAllBytes(Path.Combine(destination, expected.FileName));
                 byte[] referenceDatabase = File.ReadAllBytes(Path.Combine(reference, expected.FileName));
+                CollectionAssert.AreEqual(
+                    expected.DatabaseFieldNumbers.ToArray(),
+                    ReadDatabaseFieldNumbers(database),
+                    expected.FileName);
+                Assert.AreEqual(expected.DatabaseSortOrder, ReadDatabaseSortOrder(database), expected.FileName);
+                CollectionAssert.AreEqual(
+                    ReadDatabaseFieldNumbers(referenceDatabase),
+                    ReadDatabaseFieldNumbers(database),
+                    $"{expected.FileName} reference field numbers");
+                Assert.AreEqual(
+                    ReadDatabaseSortOrder(referenceDatabase),
+                    ReadDatabaseSortOrder(database),
+                    $"{expected.FileName} reference sort order");
                 Assert.AreEqual(expected.MaximumTableSize, (int)database[5], expected.FileName);
                 Assert.AreEqual(referenceDatabase[5], database[5], expected.FileName);
                 AssertHeaderMetadata(referenceDatabase, database, expected.FileName);
@@ -301,16 +314,21 @@ public sealed class StructureTemplateMaterializerTests
             generated.AsSpan(0x38, 8).ToArray(),
             $"{fileName} extended file flags");
         CollectionAssert.AreEqual(
+            reference.AsSpan(0x16, 8).ToArray(),
+            generated.AsSpan(0x16, 8).ToArray(),
+            $"{fileName} index workspace metadata");
+        CollectionAssert.AreEqual(
+            reference.AsSpan(0x30, 0x19).ToArray(),
+            generated.AsSpan(0x30, 0x19).ToArray(),
+            $"{fileName} pointer and common header metadata");
+        CollectionAssert.AreEqual(
             reference.AsSpan(0x4D, 0x0B).ToArray(),
             generated.AsSpan(0x4D, 0x0B).ToArray(),
             $"{fileName} trailing file-header metadata");
-        if (reference[4] is 0 or 8)
-        {
-            CollectionAssert.AreEqual(
-                reference.AsSpan(0x64, 0x14).ToArray(),
-                generated.AsSpan(0x64, 0x14).ToArray(),
-                $"{fileName} extended data-header metadata");
-        }
+        CollectionAssert.AreEqual(
+            reference.AsSpan(0x58, 0x20).ToArray(),
+            generated.AsSpan(0x58, 0x20).ToArray(),
+            $"{fileName} extended/reserved header metadata");
     }
 
     private static void AssertInitialIndexBlocksMatch(
@@ -398,6 +416,40 @@ public sealed class StructureTemplateMaterializerTests
         string value = Encoding.ASCII.GetString(file, start, offset - start);
         offset++;
         return value;
+    }
+
+    private static int[] ReadDatabaseFieldNumbers(byte[] file)
+    {
+        int fieldCount = BinaryPrimitives.ReadUInt16LittleEndian(file.AsSpan(0x21));
+        int tableNameLength = file[0x39] == 0x0C ? 261 : 79;
+        int offset = checked(0x78 + fieldCount * 2 + sizeof(uint) + fieldCount * sizeof(uint) + tableNameLength);
+        for (int index = 0; index < fieldCount; index++)
+        {
+            _ = ReadNullTerminatedAscii(file, ref offset);
+        }
+
+        int[] fieldNumbers = new int[fieldCount];
+        for (int index = 0; index < fieldCount; index++)
+        {
+            fieldNumbers[index] = BinaryPrimitives.ReadUInt16LittleEndian(file.AsSpan(offset));
+            offset += sizeof(ushort);
+        }
+
+        return fieldNumbers;
+    }
+
+    private static string ReadDatabaseSortOrder(byte[] file)
+    {
+        int fieldCount = BinaryPrimitives.ReadUInt16LittleEndian(file.AsSpan(0x21));
+        int tableNameLength = file[0x39] == 0x0C ? 261 : 79;
+        int offset = checked(0x78 + fieldCount * 2 + sizeof(uint) + fieldCount * sizeof(uint) + tableNameLength);
+        for (int index = 0; index < fieldCount; index++)
+        {
+            _ = ReadNullTerminatedAscii(file, ref offset);
+        }
+
+        offset = checked(offset + fieldCount * sizeof(ushort));
+        return ReadNullTerminatedAscii(file, ref offset);
     }
 
     [TestMethod]
