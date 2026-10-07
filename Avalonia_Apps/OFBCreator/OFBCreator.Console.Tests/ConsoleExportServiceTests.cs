@@ -10,6 +10,7 @@ using Document.Base.Models.Interfaces;
 using Document.Base.Factories;
 using Document.Docx;
 using Genealogy.Gedcom;
+using Genealogy.Drivers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using OFBCreator.Abstractions.Interfaces;
@@ -58,10 +59,10 @@ public sealed class ConsoleExportServiceTests
             .ToArray();
         var prefaceIndex = Array.FindIndex(paragraphTexts, text => text == "Vorwort");
         var groupIndex = Array.FindIndex(paragraphTexts, text => text == "Beispiel");
-        var familyNameIndex = Array.FindIndex(paragraphTexts, groupIndex + 1, text => text == "Beispiel");
         var familyIndex = Array.FindIndex(paragraphTexts, text => text == "00001");
         var personIndex = Array.FindIndex(paragraphTexts, text => text == "Personenindex");
-        Assert.IsTrue(prefaceIndex >= 0 && groupIndex > prefaceIndex && familyNameIndex > groupIndex && familyIndex > familyNameIndex && personIndex > familyIndex);
+        Assert.IsTrue(prefaceIndex >= 0 && groupIndex > prefaceIndex && familyIndex >= groupIndex && personIndex > familyIndex);
+        Assert.AreEqual(-1, Array.FindIndex(paragraphTexts, groupIndex + 1, text => text == "Beispiel"));
 
         var bookmarkNames = documentXml.Descendants(word + "bookmarkStart")
             .Select(element => (string?)element.Attribute(word + "name"))
@@ -81,6 +82,194 @@ public sealed class ConsoleExportServiceTests
         documentStream.Dispose();
         archive.Dispose();
         File.Delete(outputPath);
+    }
+
+    [TestMethod]
+    public async Task ExportAsync_WithGcTemplateRendersFamilyNumberMarriagePlaceAndPropertyFacts()
+    {
+        const string gedcom =
+            "0 HEAD\r\n1 CHAR UTF-8\r\n" +
+            "0 @I1@ INDI\r\n1 NAME Emil /Muster/\r\n1 SEX M\r\n1 FAMS @F1@\r\n1 PROP Hofgut\r\n2 DATE 1 JAN 1890\r\n" +
+            "0 @I2@ INDI\r\n1 NAME Anna /Muster/\r\n1 SEX F\r\n1 FAMS @F1@\r\n1 RESI\r\n2 PLAC München, Bayern\r\n" +
+            "0 @I3@ INDI\r\n1 NAME Kind /Muster/\r\n1 FAMC @F1@\r\n" +
+            "0 @F1@ FAM\r\n1 HUSB @I1@\r\n1 WIFE @I2@\r\n1 CHIL @I3@\r\n1 MARR\r\n2 DATE 1 JAN 1888\r\n2 PLAC München, Bayern\r\n1 PROP Mühle\r\n2 DATE 1 JAN 1880\r\n0 TRLR\r\n";
+        var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-gc-properties-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(testDirectory);
+        var inputPath = Path.Combine(testDirectory, "properties.ged");
+        var outputPath = Path.Combine(testDirectory, "properties.docx");
+        await File.WriteAllTextAsync(inputPath, gedcom, Encoding.UTF8);
+
+        try
+        {
+            UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
+            var documentFactory = Substitute.For<IUserDocumentFactory>();
+            documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
+            await new ConsoleExportService(
+                new CanonicalGedcomFamilyDataSource(new GedcomInputDriver(), new CanonicalGenealogyAdapter()),
+                documentFactory).ExportAsync(new OFBGenerateOptions
+            {
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                Title = "GC Besitzdaten",
+                UseDocxFormat = true
+            });
+
+            using var archive = ZipFile.OpenRead(outputPath);
+            using var stream = archive.GetEntry("word/document.xml")!.Open();
+            var xml = XDocument.Load(stream);
+            XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            var paragraphs = xml.Descendants(word + "p").ToArray();
+            var texts = paragraphs.Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value))).ToArray();
+            Assert.IsTrue(texts.Any(text => text.Contains("00001 oo", StringComparison.Ordinal)), string.Join(Environment.NewLine, texts));
+            Assert.IsTrue(texts.Any(text => text.Contains("Mühle", StringComparison.Ordinal)));
+            Assert.IsTrue(texts.Any(text => text.Contains("Hofgut", StringComparison.Ordinal)));
+            Assert.IsTrue(texts.Any(text => text.Contains("Wohnort: München, Bayern", StringComparison.Ordinal)));
+            var bookmarks = xml.Descendants(word + "bookmarkStart").Select(element => (string?)element.Attribute(word + "name")).ToHashSet(StringComparer.Ordinal);
+            var links = xml.Descendants(word + "hyperlink").Select(element => (string?)element.Attribute(word + "anchor")).Where(target => target is not null).ToArray();
+            Assert.IsTrue(bookmarks.Contains("index-property-1"));
+            Assert.IsTrue(links.Contains("index-property-1"));
+            Assert.IsTrue(paragraphs.Any(paragraph => paragraph.Descendants(word + "t").Any(text => text.Value.Contains("Muster, Emil", StringComparison.Ordinal))));
+        }
+        finally
+        {
+            Directory.Delete(testDirectory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task ExportAsync_WithGcTemplate_WritesLinkedParentAndSubsequentFamilyReferences()
+    {
+        const string gedcom =
+            "0 HEAD\r\n1 CHAR UTF-8\r\n" +
+            "0 @I1@ INDI\r\n1 NAME Emil /Muster/\r\n1 SEX M\r\n1 FAMS @F1@\r\n" +
+            "0 @I2@ INDI\r\n1 NAME Anna /Muster/\r\n1 SEX F\r\n1 FAMS @F1@\r\n" +
+            "0 @I3@ INDI\r\n1 NAME Ältestes /Muster/\r\n1 FAMC @F1@\r\n1 FAMS @F2@\r\n1 BIRT\r\n2 DATE 1 JAN 1920\r\n" +
+            "0 @I4@ INDI\r\n1 NAME Jüngstes /Muster/\r\n1 FAMC @F1@\r\n1 BIRT\r\n2 DATE 1 JAN 1930\r\n" +
+            "0 @I5@ INDI\r\n1 NAME Partner /Beispiel/\r\n1 SEX F\r\n1 FAMS @F2@\r\n" +
+            "0 @F1@ FAM\r\n1 HUSB @I1@\r\n1 WIFE @I2@\r\n1 CHIL @I3@\r\n1 CHIL @I4@\r\n1 MARR\r\n2 DATE 1 JAN 1900\r\n" +
+            "0 @F2@ FAM\r\n1 HUSB @I3@\r\n1 WIFE @I5@\r\n1 MARR\r\n2 DATE 1 JAN 1940\r\n0 TRLR\r\n";
+        var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-gc-references-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(testDirectory);
+        var inputPath = Path.Combine(testDirectory, "references.ged");
+        var outputPath = Path.Combine(testDirectory, "references.docx");
+        await File.WriteAllTextAsync(inputPath, gedcom, Encoding.UTF8);
+
+        try
+        {
+            UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
+            var documentFactory = Substitute.For<IUserDocumentFactory>();
+            documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
+
+            await new ConsoleExportService(new GedComDataSource(), documentFactory).ExportAsync(new OFBGenerateOptions
+            {
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                Title = "GC-Verweise",
+                UseDocxFormat = true
+            });
+
+            using var archive = ZipFile.OpenRead(outputPath);
+            using var documentStream = archive.GetEntry("word/document.xml")!.Open();
+            var documentXml = XDocument.Load(documentStream);
+            XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            var paragraphTexts = documentXml.Descendants(word + "p")
+                .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
+                .ToArray();
+            var childParagraph = paragraphTexts.Single(text => text.StartsWith("- Muster, Ältestes", StringComparison.Ordinal));
+            Assert.IsTrue(childParagraph.Contains("[00002]", StringComparison.Ordinal));
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("Muster, Ältestes", StringComparison.Ordinal) && text.Contains("<00001>", StringComparison.Ordinal)));
+            var personIndexParagraph = paragraphTexts.FirstOrDefault(text => text.Contains("Kind:", StringComparison.Ordinal) && text.Contains("Parent:", StringComparison.Ordinal));
+            Assert.IsNotNull(personIndexParagraph, string.Join(" | ", paragraphTexts));
+            Assert.IsTrue(personIndexParagraph.Contains("Kind: 00001", StringComparison.Ordinal), string.Join(" | ", paragraphTexts));
+            Assert.IsTrue(personIndexParagraph.Contains("Parent: 00002", StringComparison.Ordinal), string.Join(" | ", paragraphTexts));
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("<PN=I3>", StringComparison.Ordinal)));
+            Assert.IsTrue(Array.FindIndex(paragraphTexts, text => text.StartsWith("- Muster, Ältestes", StringComparison.Ordinal))
+                < Array.FindIndex(paragraphTexts, text => text.StartsWith("- Muster, Jüngstes", StringComparison.Ordinal)));
+
+            var bookmarkNames = documentXml.Descendants(word + "bookmarkStart")
+                .Select(element => (string?)element.Attribute(word + "name"))
+                .Where(name => name is not null)
+                .ToHashSet(StringComparer.Ordinal);
+            var familyLinks = documentXml.Descendants(word + "hyperlink")
+                .Select(element => (string?)element.Attribute(word + "anchor"))
+                .Where(anchor => anchor is not null && anchor.StartsWith("family-", StringComparison.Ordinal))
+                .ToArray();
+            CollectionAssert.IsSubsetOf(new[] { "family-00001", "family-00002" }, familyLinks!);
+            Assert.IsTrue(familyLinks.All(anchor => bookmarkNames.Contains(anchor!)));
+        }
+        finally
+        {
+            Directory.Delete(testDirectory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task ExportAsync_GroupsFamiliesTogetherNumbersThemSequentiallyAndAddsSubtitleOnlyForMultipleSurnames()
+    {
+        const string gedcom = "0 HEAD\r\n1 CHAR UTF-8\r\n"
+            + "0 @I1@ INDI\r\n1 NAME Anna /Müller/\r\n1 FAMS @F1@\r\n"
+            + "0 @I2@ INDI\r\n1 NAME Bernd /Müller/\r\n1 FAMS @F2@\r\n"
+            + "0 @I3@ INDI\r\n1 NAME Carla /Meier/\r\n1 FAMS @F3@\r\n"
+            + "0 @I4@ INDI\r\n1 NAME Dora /Zeller/\r\n1 FAMS @F4@\r\n"
+            + "0 @F1@ FAM\r\n1 HUSB @I1@\r\n"
+            + "0 @F2@ FAM\r\n1 HUSB @I2@\r\n"
+            + "0 @F3@ FAM\r\n1 HUSB @I3@\r\n"
+            + "0 @F4@ FAM\r\n1 HUSB @I4@\r\n"
+            + "0 TRLR\r\n";
+        var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-group-export-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(testDirectory);
+        var inputPath = Path.Combine(testDirectory, "groups.ged");
+        var outputPath = Path.Combine(testDirectory, "groups.docx");
+        await File.WriteAllTextAsync(inputPath, gedcom, Encoding.UTF8);
+
+        try
+        {
+            UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
+            var documentFactory = Substitute.For<IUserDocumentFactory>();
+            documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
+            var decision = new OFBGroupingDecision
+            {
+                Order = 1,
+                LeftFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F1"),
+                RightFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F3"),
+                Action = "manualMerge",
+                GroupName = "A-Gruppe"
+            };
+
+            await new ConsoleExportService(new GedComDataSource(), documentFactory).ExportAsync(new OFBGenerateOptions
+            {
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                Title = "Gruppentest",
+                GroupingDecisions = [decision],
+                UseDocxFormat = true
+            });
+
+            using var archive = ZipFile.OpenRead(outputPath);
+            using var documentStream = archive.GetEntry("word/document.xml")!.Open();
+            var documentXml = XDocument.Load(documentStream);
+            XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            var paragraphs = documentXml.Descendants(word + "p")
+                .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
+                .ToArray();
+            var groupIndex = Array.IndexOf(paragraphs, "A-Gruppe");
+            var subtitleIndex = Array.IndexOf(paragraphs, "Meier, Müller");
+            var firstNumberIndex = Array.IndexOf(paragraphs, "00001");
+            var secondNumberIndex = Array.IndexOf(paragraphs, "00002");
+            var thirdNumberIndex = Array.IndexOf(paragraphs, "00003");
+            var standaloneGroupIndex = Array.IndexOf(paragraphs, "Zeller");
+            var fourthNumberIndex = Array.IndexOf(paragraphs, "00004");
+
+            Assert.IsTrue(groupIndex >= 0 && subtitleIndex > groupIndex);
+            Assert.IsTrue(firstNumberIndex > subtitleIndex && secondNumberIndex > firstNumberIndex
+                && thirdNumberIndex > secondNumberIndex && standaloneGroupIndex > thirdNumberIndex
+                && fourthNumberIndex > standaloneGroupIndex);
+            Assert.AreEqual("00004", paragraphs[standaloneGroupIndex + 1]);
+        }
+        finally
+        {
+            Directory.Delete(testDirectory, recursive: true);
+        }
     }
 
     [TestMethod]
@@ -110,9 +299,9 @@ public sealed class ConsoleExportServiceTests
             var paragraphTexts = documentXml.Descendants(word + "p")
                 .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
                 .ToArray();
-            Assert.IsTrue(paragraphTexts.Any(text => text == "Ehe: München"));
+            Assert.IsTrue(paragraphTexts.Any(text => text.StartsWith("00001 oo", StringComparison.Ordinal)));
             Assert.IsTrue(paragraphTexts.Any(text => text.Contains("Muster, Emil", StringComparison.Ordinal)));
-            Assert.IsTrue(paragraphTexts.Any(text => text.StartsWith("PN = I2", StringComparison.Ordinal)));
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("<PN=I2>", StringComparison.Ordinal)));
             Assert.IsFalse(paragraphTexts.Any(text => text.Contains("Emil /Muster/", StringComparison.Ordinal)));
             var targets = documentXml.Descendants(word + "hyperlink")
                 .Select(element => (string?)element.Attribute(word + "anchor"))
