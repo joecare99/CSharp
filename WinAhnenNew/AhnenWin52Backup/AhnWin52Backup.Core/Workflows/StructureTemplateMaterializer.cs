@@ -127,7 +127,7 @@ public sealed class StructureTemplateMaterializer
         }
     }
 
-    /// <summary>Creates the Paradox files from the manifest and copies only non-Paradox assets.</summary>
+    /// <summary>Creates schema-generated Paradox files and restores explicitly archived assets.</summary>
     public StructureTemplateManifest MaterializeGenerated(string destinationDirectory)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(destinationDirectory);
@@ -149,8 +149,8 @@ public sealed class StructureTemplateMaterializer
         Directory.CreateDirectory(stagingDirectory);
         try
         {
-            foreach (StructureTemplateAsset asset in manifest.Assets.Where(static asset =>
-                         !ParadoxStructureWriter.IsParadoxFileName(asset.FileName)))
+            foreach (StructureTemplateAsset asset in manifest.Assets.Where(asset =>
+                         !IsGeneratedParadoxAsset(asset.FileName, manifest)))
             {
                 byte[] contents = ReadAndValidateAsset(asset);
                 string assetPath = Path.Combine(stagingDirectory, asset.FileName);
@@ -159,7 +159,7 @@ public sealed class StructureTemplateMaterializer
                 destination.Flush(flushToDisk: true);
             }
 
-            foreach (StructureTemplateTable table in manifest.Tables)
+            foreach (StructureTemplateTable table in manifest.Tables.Where(static table => table.GeneratedFromSchema))
             {
                 ParadoxStructureWriter.WriteTableFamily(
                     stagingDirectory,
@@ -169,7 +169,7 @@ public sealed class StructureTemplateMaterializer
             }
 
             foreach (StructureTemplateTable table in manifest.Tables.Where(static table =>
-                         table.BaselineData is not null))
+                         table.GeneratedFromSchema && table.BaselineData is not null))
             {
                 IReadOnlyList<IReadOnlyDictionary<string, string?>> records = NamesdayDefaults.Read();
                 string databasePath = Path.Combine(stagingDirectory, table.FileName);
@@ -252,7 +252,7 @@ public sealed class StructureTemplateMaterializer
 
         foreach (StructureTemplateAsset asset in manifest.Assets)
         {
-            if (generatedParadoxFiles && ParadoxStructureWriter.IsParadoxFileName(asset.FileName))
+            if (generatedParadoxFiles && IsGeneratedParadoxAsset(asset.FileName, manifest))
             {
                 continue;
             }
@@ -295,6 +295,20 @@ public sealed class StructureTemplateMaterializer
                 manifest.EncryptionKey,
                 manifest.IndexMaximumTableSize);
         }
+    }
+
+    private static bool IsGeneratedParadoxAsset(string fileName, StructureTemplateManifest manifest)
+    {
+        if (!ParadoxStructureWriter.IsParadoxFileName(fileName))
+        {
+            return false;
+        }
+
+        string stem = Path.GetFileNameWithoutExtension(fileName);
+        StructureTemplateTable? table = manifest.Tables.FirstOrDefault(candidate =>
+            Path.GetFileNameWithoutExtension(candidate.FileName)
+                .Equals(stem, StringComparison.OrdinalIgnoreCase));
+        return table?.GeneratedFromSchema == true;
     }
 
     private void ValidateTable(

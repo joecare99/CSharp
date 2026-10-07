@@ -97,11 +97,9 @@ internal sealed class ParadoxRecordWriter
                 $"type 0x{primaryIndex[0x58]:X2}/0x{keyField.TypeCode:X2}, length {primaryIndex[0x59]}/{keyField.Length}).");
         }
 
-        int recordsPerTableBlock = (databaseHeader.BlockSize - DataBlockHeaderSize) / databaseHeader.RecordSize;
-        if (recordsPerTableBlock <= 0)
-        {
-            throw new InvalidDataException("A table data block cannot contain one record.");
-        }
+        int recordsPerTableBlock = GetRecordsPerDataBlock(
+            databaseHeader.BlockSize,
+            databaseHeader.RecordSize);
 
         byte[][] encodedRecords = sortedRecords.Select(static record => record.Data).ToArray();
         List<byte[]> tableBlocks = CreateTableBlocks(databaseHeader, encodedRecords, recordsPerTableBlock);
@@ -425,6 +423,17 @@ internal sealed class ParadoxRecordWriter
     {
         BinaryPrimitives.WriteInt16BigEndian(destination, value);
         destination[0] |= 0x80;
+    }
+
+    internal static int GetRecordsPerDataBlock(int blockSize, int recordSize)
+    {
+        int physicalCapacity = (blockSize - DataBlockHeaderSize) / recordSize;
+        if (physicalCapacity <= 0)
+        {
+            throw new InvalidDataException("A Paradox data block cannot contain one record.");
+        }
+
+        return Math.Max(1, physicalCapacity - 1);
     }
 
     internal static IReadOnlyList<IReadOnlyDictionary<string, string?>> ResolveAutoIncrementRecords(

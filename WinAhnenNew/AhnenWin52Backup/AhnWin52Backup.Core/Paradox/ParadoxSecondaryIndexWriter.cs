@@ -1,10 +1,12 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using AhnWin52Backup.Core.Abstractions;
+using AhnWin52Backup.Core.Hej;
 
 namespace AhnWin52Backup.Core.Paradox;
 
@@ -46,6 +48,10 @@ internal sealed class ParadoxSecondaryIndexWriter
                 "The secondary-index writer requires a non-empty table with valid data blocks.");
         }
 
+        int recordsPerDatabaseBlock = ParadoxRecordWriter.GetRecordsPerDataBlock(
+            databaseHeader.BlockSize,
+            databaseHeader.RecordSize);
+
         string directory = Path.GetDirectoryName(fullDatabasePath)
             ?? throw new InvalidOperationException("The database file has no parent directory.");
         string tableName = Path.GetFileNameWithoutExtension(fullDatabasePath);
@@ -67,7 +73,12 @@ internal sealed class ParadoxSecondaryIndexWriter
         {
             int indexNumber = GetIndexNumber(Path.GetFileName(secondaryDataPath), sidecarPrefix);
             string secondaryIndexPath = Path.Combine(directory, $"{tableName}.YG{indexNumber}");
-            WriteIndexPair(table, secondaryDataPath, secondaryIndexPath, primaryRevision);
+            WriteIndexPair(
+                table,
+                secondaryDataPath,
+                secondaryIndexPath,
+                primaryRevision,
+                recordsPerDatabaseBlock);
         }
     }
 
@@ -75,7 +86,8 @@ internal sealed class ParadoxSecondaryIndexWriter
         ParadoxTable table,
         string secondaryDataPath,
         string secondaryIndexPath,
-        byte primaryRevision)
+        byte primaryRevision,
+        int recordsPerDatabaseBlock)
     {
         byte[] secondaryDataFile = File.ReadAllBytes(secondaryDataPath);
         ParadoxRecordWriter.TableHeader secondaryDataHeader =
@@ -95,13 +107,15 @@ internal sealed class ParadoxSecondaryIndexWriter
 
         SynchronizePrimaryRevision(secondaryDataFile, primaryRevision);
 
-        int keyLength = secondaryFields.Take(keyFieldCount).Sum(static field => field.Length);
+        ParadoxField[] keyFields = secondaryFields.Take(keyFieldCount).ToArray();
+        int keyLength = keyFields.Sum(static field => field.Length);
         List<EncodedIndexRecord> encodedRecords = new(table.Records.Count);
         List<string?> encodedValues = new(keyFieldCount + 1);
         Dictionary<string, string?> sourceValues = new(StringComparer.OrdinalIgnoreCase);
         byte indexFieldNumber = secondaryDataFile[0x15];
-        foreach (IReadOnlyList<string?> sourceRecord in table.Records)
+        for (int recordIndex = 0; recordIndex < table.Records.Count; recordIndex++)
         {
+            IReadOnlyList<string?> sourceRecord = table.Records[recordIndex];
             encodedValues.Clear();
             sourceValues.Clear();
             for (int fieldIndex = 0; fieldIndex < keyFieldCount; fieldIndex++)
@@ -142,13 +156,18 @@ internal sealed class ParadoxSecondaryIndexWriter
                 encodedValues.Add(value);
             }
 
-            encodedValues.Add("1");
+            int databaseBlockNumber = recordIndex / recordsPerDatabaseBlock + 1;
+            encodedValues.Add(databaseBlockNumber.ToString(CultureInfo.InvariantCulture));
             byte[] record = ParadoxRecordWriter.EncodeRecord(secondaryFields, encodedValues);
             encodedRecords.Add(new EncodedIndexRecord(record, record.AsSpan(0, keyLength).ToArray()));
         }
 
-        encodedRecords.Sort(static (left, right) =>
-            left.Key.AsSpan().SequenceCompareTo(right.Key));
+        encodedRecords.Sort((left, right) => CompareIndexKeys(
+            left.Key,
+            right.Key,
+            keyFields,
+            secondarySchema.SortOrder,
+            secondarySchema.IndexLabel));
 
         int recordsPerSecondaryBlock = (secondaryDataHeader.BlockSize - DataBlockHeaderSize) /
                                        secondaryDataHeader.RecordSize;
@@ -398,13 +417,50 @@ internal sealed class ParadoxSecondaryIndexWriter
 
         return indexLabel.ToLowerInvariant() switch
         {
-            "namgeb" or "geba" or "gebnam" =>
+            "namgeb" or "geba" =>
                 string.Equals(fieldName, "Name", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(fieldName, "Vornamen", StringComparison.OrdinalIgnoreCase),
             "gebo" => string.Equals(fieldName, "Gebort", StringComparison.OrdinalIgnoreCase),
             "tit" => string.Equals(fieldName, "Titel", StringComparison.OrdinalIgnoreCase),
             _ => false
         };
+    }
+
+    private static int CompareIndexKeys(
+        byte[] left,
+        byte[] right,
+        IReadOnlyList<ParadoxField> fields,
+        string sortOrder,
+        string indexLabel)
+    {
+        int offset = 0;
+        foreach (ParadoxField field in fields)
+        {
+            ReadOnlySpan<byte> leftValue = left.AsSpan(offset, field.Length);
+            ReadOnlySpan<byte> rightValue = right.AsSpan(offset, field.Length);
+            int comparison;
+            if (field.TypeCode == AlphaType &&
+                sortOrder.Contains("intl", StringComparison.OrdinalIgnoreCase) &&
+                indexLabel.Equals("gebnam", StringComparison.OrdinalIgnoreCase))
+            {
+                comparison = StringComparer.OrdinalIgnoreCase.Compare(
+                    Windows1252.Decode(leftValue.ToArray()).TrimEnd('\0', ' '),
+                    Windows1252.Decode(rightValue.ToArray()).TrimEnd('\0', ' '));
+            }
+            else
+            {
+                comparison = leftValue.SequenceCompareTo(rightValue);
+            }
+
+            if (comparison != 0)
+            {
+                return comparison;
+            }
+
+            offset += field.Length;
+        }
+
+        return 0;
     }
 
     private static bool IsSecondaryDataFile(string fileName, string prefix)

@@ -11,10 +11,19 @@ internal sealed class ParadoxMemoWriter
     private const int MemoBlockSize = 4096;
     private const int MemoBlockHeaderSize = 9;
     private const int InlineReferenceSize = 10;
+    private const int SuballocatedBlockHeaderSize = 12;
+    private const int SuballocatedSlotSize = 5;
+    private const int SuballocatedSlotCount = 64;
+    private const int SuballocatedDataStartUnit = 21;
+    private const int SuballocatedDataUnitSize = 16;
+    private const int MaximumSuballocatedBlobSize = 2048;
     private readonly string _memoFilePath;
     private readonly uint _encryption;
     private byte[]? _memoFile;
     private ushort _modificationCount;
+    private int _suballocatedBlockOffset;
+    private int _suballocatedBlobCount;
+    private int _suballocatedUsedUnits;
 
     public ParadoxMemoWriter(string memoFilePath, uint encryption)
     {
@@ -45,8 +54,8 @@ internal sealed class ParadoxMemoWriter
             return field;
         }
 
-        uint offset = Append(contents);
-        BinaryPrimitives.WriteUInt32LittleEndian(field.AsSpan(leaderLength), offset | 0xFFu);
+        uint location = Append(contents);
+        BinaryPrimitives.WriteUInt32LittleEndian(field.AsSpan(leaderLength), location);
         BinaryPrimitives.WriteUInt32LittleEndian(field.AsSpan(leaderLength + 4), checked((uint)contents.Length));
         BinaryPrimitives.WriteUInt16LittleEndian(field.AsSpan(leaderLength + 8), _modificationCount);
         return field;
@@ -70,12 +79,13 @@ internal sealed class ParadoxMemoWriter
     private uint Append(byte[] contents)
     {
         byte[] memoFile = GetMemoFile();
-        int start = memoFile.Length;
-        if (start % MemoBlockSize != 0)
+        if (contents.Length <= MaximumSuballocatedBlobSize)
         {
-            throw new InvalidDataException($"The Paradox memo file is not aligned to {MemoBlockSize}-byte blocks.");
+            return AppendSuballocated(memoFile, contents);
         }
 
+        int start = memoFile.Length;
+        ValidateBlockAlignedOffset(start);
         if ((uint)start > 0xFFFFFF00u)
         {
             throw new NotSupportedException("The Paradox memo file has exhausted its addressable offset range.");
@@ -92,16 +102,70 @@ internal sealed class ParadoxMemoWriter
         memoFile[start] = 2;
         BinaryPrimitives.WriteUInt16LittleEndian(memoFile.AsSpan(start + 1), checked((ushort)blockCount));
         BinaryPrimitives.WriteUInt32LittleEndian(memoFile.AsSpan(start + 3), checked((uint)contents.Length));
+        AdvanceModificationCount();
+        BinaryPrimitives.WriteUInt16LittleEndian(memoFile.AsSpan(start + 7), _modificationCount);
+        contents.CopyTo(memoFile, start + MemoBlockHeaderSize);
+        _memoFile = memoFile;
+        return checked((uint)start | 0xFFu);
+    }
+
+    private uint AppendSuballocated(byte[] memoFile, byte[] contents)
+    {
+        int requiredUnits = checked((contents.Length + SuballocatedDataUnitSize - 1) / SuballocatedDataUnitSize);
+        if (_suballocatedBlockOffset == 0 ||
+            _suballocatedBlobCount >= SuballocatedSlotCount ||
+            _suballocatedUsedUnits + requiredUnits > MemoBlockSize / SuballocatedDataUnitSize)
+        {
+            int start = memoFile.Length;
+            ValidateBlockAlignedOffset(start);
+            if ((uint)start > 0xFFFFFF00u)
+            {
+                throw new NotSupportedException("The Paradox memo file has exhausted its addressable offset range.");
+            }
+
+            Array.Resize(ref memoFile, checked(start + MemoBlockSize));
+            memoFile[start] = 3;
+            BinaryPrimitives.WriteUInt16LittleEndian(memoFile.AsSpan(start + 1), 1);
+            _suballocatedBlockOffset = start;
+            _suballocatedBlobCount = 0;
+            _suballocatedUsedUnits = SuballocatedDataStartUnit;
+        }
+
+        int slot = SuballocatedSlotCount - 1 - _suballocatedBlobCount;
+        int dataUnitOffset = _suballocatedUsedUnits;
+        int tableOffset = checked(
+            _suballocatedBlockOffset + SuballocatedBlockHeaderSize + slot * SuballocatedSlotSize);
+        memoFile[tableOffset] = checked((byte)dataUnitOffset);
+        memoFile[tableOffset + 1] = checked((byte)requiredUnits);
+        AdvanceModificationCount();
+        BinaryPrimitives.WriteUInt16LittleEndian(memoFile.AsSpan(tableOffset + 2), _modificationCount);
+        int finalUnitLength = contents.Length % SuballocatedDataUnitSize;
+        memoFile[tableOffset + 4] = checked((byte)(finalUnitLength == 0
+            ? SuballocatedDataUnitSize
+            : finalUnitLength));
+        contents.CopyTo(memoFile, checked(_suballocatedBlockOffset + dataUnitOffset * SuballocatedDataUnitSize));
+
+        _suballocatedBlobCount++;
+        _suballocatedUsedUnits += requiredUnits;
+        _memoFile = memoFile;
+        return checked((uint)_suballocatedBlockOffset | (uint)slot);
+    }
+
+    private static void ValidateBlockAlignedOffset(int offset)
+    {
+        if (offset % MemoBlockSize != 0)
+        {
+            throw new InvalidDataException($"The Paradox memo file is not aligned to {MemoBlockSize}-byte blocks.");
+        }
+    }
+
+    private void AdvanceModificationCount()
+    {
         _modificationCount = unchecked((ushort)(_modificationCount + 1));
         if (_modificationCount == 0)
         {
             _modificationCount = 1;
         }
-
-        BinaryPrimitives.WriteUInt16LittleEndian(memoFile.AsSpan(start + 7), _modificationCount);
-        contents.CopyTo(memoFile, start + MemoBlockHeaderSize);
-        _memoFile = memoFile;
-        return checked((uint)start);
     }
 
     private byte[] GetMemoFile()

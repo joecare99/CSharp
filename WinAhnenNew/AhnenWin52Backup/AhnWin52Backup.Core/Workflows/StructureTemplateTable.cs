@@ -21,4 +21,7 @@ public sealed record StructureTemplateTable(
     IReadOnlyList<StructureTemplateIndex> SecondaryIndexes,
     StructureTemplateBaseline? BaselineData,
     StructureTemplateHeaderMetadata DatabaseHeaderMetadata,
-    StructureTemplateHeaderMetadata PrimaryIndexHeaderMetadata);
+    StructureTemplateHeaderMetadata PrimaryIndexHeaderMetadata)
+{
+    public bool GeneratedFromSchema { get; init; } = true;
+}

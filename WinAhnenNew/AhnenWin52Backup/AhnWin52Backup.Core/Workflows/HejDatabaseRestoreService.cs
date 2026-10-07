@@ -208,6 +208,7 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
             indexWriter.RebuildForTable(databasePath);
         }
 
+        RebuildSurnameList(directory, writer, indexWriter);
         ValidateCandidate(directory, document, manifest);
     }
 
@@ -237,6 +238,10 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
                 }
 
                 ValidateSecondaryRecordCounts(directory, expected, expectedCount);
+            }
+            else if (expected.FileName.Equals("NM.db", StringComparison.OrdinalIgnoreCase))
+            {
+                ValidateSurnameList(directory, expected);
             }
             else if (validateAncillaryBaseline &&
                      actual.Schema.DeclaredRecordCount != expected.ExpectedRecords)
@@ -344,15 +349,78 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
         }
     }
 
+    private void RebuildSurnameList(
+        string directory,
+        ParadoxRecordWriter writer,
+        ParadoxSecondaryIndexWriter indexWriter)
+    {
+        ParadoxTable individuals = _tableReader.Read(FindFilePath(directory, "AWD.DB"));
+        int surnameIndex = individuals.Fields
+            .Select((field, index) => (field, index))
+            .Single(static item => item.field.Name.Equals("Name", StringComparison.OrdinalIgnoreCase))
+            .index;
+        HashSet<string> knownSurnames = new(StringComparer.Ordinal);
+        List<IReadOnlyDictionary<string, string?>> records = new();
+        foreach (IReadOnlyList<string?> individual in individuals.Records)
+        {
+            string? surname = individual[surnameIndex];
+            if (!string.IsNullOrWhiteSpace(surname) && knownSurnames.Add(surname))
+            {
+                records.Add(new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["Name"] = surname
+                });
+            }
+        }
+
+        string namesPath = FindFilePath(directory, "NM.db");
+        if (records.Count > 0)
+        {
+            writer.AppendRecords(namesPath, "Name", records);
+            indexWriter.RebuildForTable(namesPath);
+        }
+    }
+
+    private void ValidateSurnameList(string directory, StructureTemplateTable namesTable)
+    {
+        ParadoxTable individuals = _tableReader.Read(FindFilePath(directory, "AWD.DB"));
+        int surnameIndex = individuals.Fields
+            .Select((field, index) => (field, index))
+            .Single(static item => item.field.Name.Equals("Name", StringComparison.OrdinalIgnoreCase))
+            .index;
+        HashSet<string> expectedNames = individuals.Records
+            .Select(record => record[surnameIndex])
+            .Where(static surname => !string.IsNullOrWhiteSpace(surname))
+            .Select(static surname => surname!)
+            .ToHashSet(StringComparer.Ordinal);
+        ParadoxTable names = _tableReader.Read(FindFilePath(directory, "NM.db"));
+        HashSet<string> actualNames = names.Records
+            .Select(static record => record[0])
+            .Where(static surname => !string.IsNullOrWhiteSpace(surname))
+            .Select(static surname => surname!)
+            .ToHashSet(StringComparer.Ordinal);
+        if (names.Records.Count != expectedNames.Count ||
+            actualNames.Count != expectedNames.Count ||
+            !actualNames.SetEquals(expectedNames))
+        {
+            throw new InvalidDataException("The derived NM.db surname list does not match the restored AWD.DB names.");
+        }
+
+        ValidateSecondaryRecordCounts(directory, namesTable, expectedNames.Count);
+    }
+
     private void ReplaceMappedFamilies(
         string restoredTemplateDirectory,
         string stagingDirectory,
         StructureTemplateManifest manifest)
     {
+        HashSet<string> replacementTableStems = MappedTableNames
+            .Append("NM.DB")
+            .Select(static tableName => Path.GetFileNameWithoutExtension(tableName))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         HashSet<string> replacementFiles = manifest.Assets
             .Select(static asset => asset.FileName)
-            .Where(fileName => MappedTableNames.Any(tableName =>
-                fileName.StartsWith(Path.GetFileNameWithoutExtension(tableName) + ".", StringComparison.OrdinalIgnoreCase)))
+            .Where(fileName => replacementTableStems.Contains(Path.GetFileNameWithoutExtension(fileName)))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         foreach (string file in Directory.EnumerateFiles(stagingDirectory, "*", SearchOption.TopDirectoryOnly))
         {
