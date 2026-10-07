@@ -2,9 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>

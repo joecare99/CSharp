@@ -15,7 +15,7 @@ namespace OFBCreator.Core.Tests.Services;
 public sealed class OFBFamilyGroupingServiceTests
 {
     [TestMethod]
-    public void BuildGroups_KeepsPhoneticOnlySuggestionSeparateBelowThreshold()
+    public void BuildGroups_DoesNotOfferPhoneticOnlyPairsWithoutQualifyingParentTransitions()
     {
         var result = new OFBFamilyGroupingService().BuildGroups(
             [
@@ -27,10 +27,57 @@ public sealed class OFBFamilyGroupingServiceTests
             []);
 
         Assert.AreEqual(2, result.Groups.Count);
+        Assert.AreEqual(0, result.Candidates.Count);
+    }
+
+    [TestMethod]
+    public void BuildGroups_OffersTransitionWhenSingleKnownParentAndFamilyNameAreDifferentGroups()
+    {
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            [
+                CreateFamily("F1", "Kind", parentSurname: "Elternname"),
+                CreateFamily("F2", "Elternname")
+            ],
+            "gedcom",
+            new OFBGroupingPolicy(),
+            []);
+
         Assert.AreEqual(1, result.Candidates.Count);
-        Assert.AreEqual(80, result.Candidates[0].Score);
-        Assert.AreEqual("suggested", result.Candidates[0].Status);
-        Assert.AreEqual("phoneticSimilarity", result.Candidates[0].Evidence.Single().Kind);
+        CollectionAssert.AreEquivalent(
+            new[] { "Elternname", "Kind" },
+            new[] { result.Candidates[0].LeftSurname, result.Candidates[0].RightSurname });
+        Assert.IsTrue(result.Candidates[0].Evidence.Any(evidence =>
+            evidence.Kind == "parentFamilySurnameTransition" && evidence.ObservationCount == 1));
+    }
+
+    [TestMethod]
+    public void BuildGroups_OffersEachTransitionWhenBothParentsAndChildHaveDifferentGroups()
+    {
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            [
+                CreateFamilyWithParents("F1", "Kind", "ElternEins", "ElternZwei"),
+                CreateFamily("F2", "ElternEins"),
+                CreateFamily("F3", "ElternZwei")
+            ],
+            "gedcom",
+            new OFBGroupingPolicy(),
+            []);
+
+        Assert.AreEqual(2, result.Candidates.Count);
+        Assert.IsTrue(result.Candidates.All(candidate =>
+            candidate.Evidence.Any(evidence => evidence.Kind == "parentFamilySurnameTransition")));
+    }
+
+    [TestMethod]
+    public void BuildGroups_DoesNotOfferTransitionWhenParentAndFamilyShareSurnameGroup()
+    {
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            [CreateFamily("F1", "Gleich"), CreateFamily("F2", "Andere")],
+            "gedcom",
+            new OFBGroupingPolicy(),
+            []);
+
+        Assert.AreEqual(0, result.Candidates.Count);
     }
 
     [TestMethod]
@@ -50,23 +97,62 @@ public sealed class OFBFamilyGroupingServiceTests
         Assert.AreEqual("autoAccepted", result.Candidates.Single().Status);
         Assert.IsTrue(result.Candidates.Single().Evidence.Any(evidence =>
             evidence.Kind == "parentFamilySurnameTransition" && evidence.ObservationCount == 2));
+        Assert.AreEqual("Müller", result.Groups.Keys.Single());
+    }
+
+    [TestMethod]
+    public void BuildGroups_ManualGroupNameOverridesMostFrequentSurname()
+    {
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            [
+                CreateFamily("F1", "Müller"),
+                CreateFamily("F2", "Müller"),
+                CreateFamily("F3", "Mueller")
+            ],
+            "gedcom",
+            new OFBGroupingPolicy(),
+            [new OFBGroupingDecision
+            {
+                Order = 1,
+                LeftFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F1"),
+                RightFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F3"),
+                Action = "manualMerge",
+                GroupName = "Redaktionell"
+            }]);
+
+        Assert.AreEqual("Redaktionell", result.Groups.Keys.Single());
     }
 
     [TestMethod]
     public void BuildGroups_AppliesPersistedRejectAndManualMergeDecisions()
     {
-        var families = new[] { CreateFamily("F1", "Müller"), CreateFamily("F2", "Mueller") };
         var service = new OFBFamilyGroupingService();
-        var initial = service.BuildGroups(families, "gedcom", new OFBGroupingPolicy(), []);
-        var candidate = initial.Candidates.Single();
-        var reject = CreateDecision(candidate, "rejectMerge");
+        var families = new[]
+        {
+            CreateFamily("F1", "Müller", parentSurname: "Meier"),
+            CreateFamily("F2", "Meier")
+        };
+        var decision = new OFBGroupingDecision
+        {
+            Order = 1,
+            LeftFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F1"),
+            RightFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F2"),
+            Action = "rejectMerge"
+        };
+        var reject = decision;
         var rejected = service.BuildGroups(families, "gedcom", new OFBGroupingPolicy(), [reject]);
 
         Assert.AreEqual(2, rejected.Groups.Count);
         Assert.AreEqual("rejected", rejected.Candidates.Single().Status);
         Assert.AreEqual(0, rejected.Diagnostics.Count);
 
-        var manual = CreateDecision(candidate, "manualMerge");
+        var manual = new OFBGroupingDecision
+        {
+            Order = 1,
+            LeftFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F1"),
+            RightFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F2"),
+            Action = "manualMerge"
+        };
         manual.GroupName = "Redaktionelle Gruppe";
         var manuallyGrouped = service.BuildGroups(families, "gedcom", new OFBGroupingPolicy(), [manual]);
 
@@ -115,7 +201,7 @@ public sealed class OFBFamilyGroupingServiceTests
         Assert.AreEqual("GROUPING_DECISION_STALE", staleResult.Diagnostics.Single().Code);
 
         var unstableResult = new OFBFamilyGroupingService().BuildGroups(
-            [CreateFamily(null, "Müller"), CreateFamily(null, "Mueller")],
+            [CreateFamily(null, "Mueller", parentSurname: "Müller"), CreateFamily(null, "Müller")],
             "gedcom",
             new OFBGroupingPolicy { AutoAcceptThreshold = 75 },
             []);
@@ -142,6 +228,24 @@ public sealed class OFBFamilyGroupingServiceTests
         var children = new TestIndexedList<IGenPerson>();
         if (parentSurname is not null)
             children.Add(CreatePerson(surname));
+        family.Children.Returns(children);
+        return family;
+    }
+
+    private static IGenFamily CreateFamilyWithParents(
+        string familyId,
+        string childSurname,
+        string husbandSurname,
+        string? wifeSurname)
+    {
+        var family = Substitute.For<IGenFamily>();
+        family.FamilyRefID.Returns(familyId);
+        var wife = wifeSurname is null ? null : CreatePerson(wifeSurname);
+        var husband = CreatePerson(husbandSurname);
+        family.Husband.Returns(husband);
+        family.Wife.Returns(wife);
+        var children = new TestIndexedList<IGenPerson>();
+        children.Add(CreatePerson(childSurname));
         family.Children.Returns(children);
         return family;
     }

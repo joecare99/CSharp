@@ -57,6 +57,10 @@ public sealed class OFBExportOverlayServiceTests
         Assert.AreEqual(new DateTime(1870, 1, 1), exportedPerson.BirthDate?.Date1);
         Assert.AreSame(exportedPerson, exportedFamily.Husband);
         Assert.AreEqual(0, result.Diagnostics.Count);
+        var preview = result.PersonPreviews.Single();
+        Assert.AreEqual(OFBExportRuleTarget.Person("gedcom", "I1"), preview.TargetId);
+        Assert.IsTrue(preview.HasChanges);
+        CollectionAssert.AreEquivalent(new[] { "surname", "birthDate" }, preview.Changes.Select(change => change.Field).ToArray());
     }
 
     [TestMethod]
@@ -85,6 +89,7 @@ public sealed class OFBExportOverlayServiceTests
 
         Assert.AreEqual(0, result.Genealogy.Entitys.OfType<IGenFamily>().Count());
         Assert.AreEqual(0, result.Genealogy.Entitys.OfType<IGenPerson>().Count());
+        Assert.AreEqual(0, result.PersonPreviews.Count);
         Assert.AreEqual("Smith", sourcePerson.Surname);
         Assert.AreEqual("STALE_RULE_TARGET", result.Diagnostics.Single().Code);
         Assert.IsFalse(result.Diagnostics.Single().IsError);
@@ -107,6 +112,7 @@ public sealed class OFBExportOverlayServiceTests
         Assert.AreEqual(0, result.Genealogy.Entitys.OfType<IGenPerson>().Count());
         Assert.AreEqual(0, result.Genealogy.Entitys.OfType<IGenFamily>().Count());
         Assert.AreEqual("STALE_RULE_TARGET", result.Diagnostics.Single().Code);
+        Assert.AreEqual(0, result.PersonPreviews.Count);
     }
 
     [TestMethod]
@@ -136,6 +142,19 @@ public sealed class OFBExportOverlayServiceTests
         Assert.AreEqual("Teacher", exportedPerson.Facts.Single()?.Data);
         Assert.AreEqual("Teacher", exportedPerson.Occupation);
         Assert.AreEqual(0, result.Diagnostics.Count);
+    }
+
+    [TestMethod]
+    public void Apply_WithoutRules_ReturnsUnchangedPersonPreviewWithoutUsingUnfilteredNameFallback()
+    {
+        var (genealogy, _, _) = CreateGenealogy();
+
+        var result = new OFBExportOverlayService().Apply(genealogy, "gedcom", []);
+
+        var preview = result.PersonPreviews.Single();
+        Assert.AreEqual(OFBExportRuleTarget.Person("gedcom", "I1"), preview.TargetId);
+        Assert.AreEqual("Alice Smith", preview.DisplayName);
+        Assert.IsFalse(preview.HasChanges);
     }
 
     [TestMethod]

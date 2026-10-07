@@ -84,6 +84,9 @@ public class DocumentComposerTests
     {
         public static readonly ParagraphStub Instance = new();
         private ParagraphStub() { }
+        public IList<IDocAttributes> DocAttributes { get; } = new List<IDocAttributes>();
+        public bool IsLink { get; set; }
+        public string? Href { get; set; }
 
         // IDocElement
         public IDocElement AppendDocElement(Enum aType) => (IDocElement)this;
@@ -137,6 +140,9 @@ public class DocumentComposerTests
     {
         public static readonly HeadlineStub Instance = new();
         private HeadlineStub() { }
+        public IList<IDocAttributes> DocAttributes { get; } = new List<IDocAttributes>();
+        public bool IsLink { get; set; }
+        public string? Href { get; set; }
 
         // IDocElement
         public IDocElement AppendDocElement(Enum aType) => (IDocElement)this;
@@ -191,6 +197,9 @@ public class DocumentComposerTests
     {
         public static readonly TocStub Instance = new();
         private TocStub() { }
+        public IList<IDocAttributes> DocAttributes { get; } = new List<IDocAttributes>();
+        public bool IsLink { get; set; }
+        public string? Href { get; set; }
 
         // IDocElement
         public IDocElement AppendDocElement(Enum aType) => (IDocElement)this;
@@ -244,6 +253,9 @@ public class DocumentComposerTests
     {
         public static readonly SpanStub Instance = new();
         private SpanStub() { }
+        public IList<IDocAttributes> DocAttributes { get; } = new List<IDocAttributes>();
+        public bool IsLink { get; set; }
+        public string? Href { get; set; }
 
         // IDocElement
         public IDocElement AppendDocElement(Enum aType) => (IDocElement)this;
