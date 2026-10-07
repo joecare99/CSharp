@@ -31,7 +31,8 @@ public sealed class HejCodecTests
 
         Assert.AreEqual("Care", restored.Individuals[0].Fields[3]);
         Assert.AreEqual("Götz", restored.Individuals[0].Fields[4]);
-        Assert.AreEqual("first line\nsecond line", restored.Individuals[0].Fields[31]);
+        Assert.AreEqual("first\tline\nsecond line", restored.Individuals[0].Fields[31]);
+        Assert.AreEqual(0, restored.Warnings.Count);
         Assert.AreEqual("mrg", restored.Marriages[0].Fields[0]);
         Assert.AreEqual("adop", restored.Adoptions[0].Fields[0]);
         Assert.AreEqual("Adelsheim", restored.Places[0].Fields[0]);
@@ -100,7 +101,7 @@ public sealed class HejCodecTests
     }
 
     [TestMethod]
-    public void Read_NormalizesLegacyTrailingFieldOmissionAndReportsDiscardedControls()
+    public void Read_NormalizesLegacyTrailingFieldOmissionAndPreservesTabs()
     {
         string individualLine = "\t" + string.Concat(Enumerable.Repeat("\u000F", 49));
         byte[] data = Encoding.ASCII.GetBytes(
@@ -110,19 +111,38 @@ public sealed class HejCodecTests
         HejDocument document = _codec.Read(input);
 
         Assert.AreEqual(51, document.Individuals[0].Fields.Count);
-        Assert.AreEqual(string.Empty, document.Individuals[0].Fields[0]);
-        Assert.AreEqual(1, document.Warnings.Count);
-        StringAssert.Contains(document.Warnings[0], "0x09");
+        Assert.AreEqual("\t", document.Individuals[0].Fields[0]);
+        Assert.AreEqual(0, document.Warnings.Count);
     }
 
     [TestMethod]
-    public void Write_RejectsFieldWithUnrepresentableControlByte()
+    public void Write_PreservesTabsAndEncodesCarriageReturnLineFeedAsMarker()
     {
-        HejRecord[] individuals = [Record(HejSection.Individuals, 0, "\t")];
+        HejRecord[] individuals = [Record(HejSection.Individuals, 0, "before\tafter\r\nnext")];
         HejDocument document = new(individuals, [], [], [], []);
         using MemoryStream output = new();
 
-        Assert.Throws<ArgumentException>(() => _codec.Write(document, output));
+        _codec.Write(document, output);
+
+        byte[] expectedPrefix = Encoding.ASCII.GetBytes("before\t");
+        byte[] expectedSuffix = [0x10, .. Encoding.ASCII.GetBytes("next"), 0x0F];
+        byte[] actual = output.ToArray();
+        CollectionAssert.AreEqual(expectedPrefix, actual[..expectedPrefix.Length]);
+        CollectionAssert.AreEqual(
+            expectedSuffix,
+            actual.AsSpan(expectedPrefix.Length + "after".Length, expectedSuffix.Length).ToArray());
+    }
+
+    [TestMethod]
+    public void Write_RejectsUnsupportedControlByteWithFieldLocation()
+    {
+        HejRecord[] individuals = [Record(HejSection.Individuals, 0, "\b")];
+        HejDocument document = new(individuals, [], [], [], []);
+        using MemoryStream output = new();
+
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => _codec.Write(document, output));
+        StringAssert.Contains(exception.Message, "Individuals record 1, field 1");
+        StringAssert.Contains(exception.Message, "U+0008");
     }
 
     private static HejDocument CreateDocument()
@@ -133,7 +153,7 @@ public sealed class HejCodecTests
         individualFields[2] = "0";
         individualFields[3] = "Care";
         individualFields[4] = "Götz";
-        individualFields[31] = "first line\r\nsecond line";
+        individualFields[31] = "first\tline\r\nsecond line";
 
         return new HejDocument(
             [new HejRecord(individualFields)],
