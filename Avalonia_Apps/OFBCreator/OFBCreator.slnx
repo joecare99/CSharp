@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/DocumentUtils/">
     <Project Path="../../CSharpBible/Data/DocumentUtils/Document.Base/Document.Base.csproj" />
+    <Project Path="../../CSharpBible/Data/DocumentUtils/Document.Docx/Document.Docx.csproj" />
+    <Project Path="../../CSharpBible/Data/DocumentUtils/Document.Markdown/Document.Markdown.csproj" />
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="../Libraries/Libraries.props" />
@@ -9,24 +11,25 @@
     <Project Path="../Libraries/GenInterfaces/GenInterfaces.csproj" />
   </Folder>
   <Folder Name="/OFBCreator/">
+    <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
-    <File Path="Directory.target.props" />
     <Project Path="Genealogy.Core.Tests/Genealogy.Core.Tests.csproj" />
     <Project Path="Genealogy.Core/Genealogy.Core.csproj" />
     <Project Path="Genealogy.Gedcom.Tests/Genealogy.Gedcom.Tests.csproj" />
     <Project Path="Genealogy.Gedcom/Genealogy.Gedcom.csproj" />
     <Project Path="OFBCreator.Abstractions.Tests/OFBCreator.Abstractions.Tests.csproj" />
     <Project Path="OFBCreator.Abstractions/OFBCreator.Abstractions.csproj" />
-    <Project Path="OFBCreator.Console/OFBCreator.Console.csproj" />
-    <Project Path="OFBCreator.Projects/OFBCreator.Projects.csproj" />
-    <Project Path="OFBCreator.Projects.Tests/OFBCreator.Projects.Tests.csproj" />
-    <Project Path="OFBCreator.Avalonia/OFBCreator.Avalonia.csproj" />
     <Project Path="OFBCreator.Avalonia.Tests/OFBCreator.Avalonia.Tests.csproj" />
+    <Project Path="OFBCreator.Avalonia/OFBCreator.Avalonia.csproj" />
+    <Project Path="OFBCreator.Console.Tests/OFBCreator.Console.Tests.csproj" />
+    <Project Path="OFBCreator.Console/OFBCreator.Console.csproj" />
     <Project Path="OFBCreator.Core.Tests/OFBCreator.Core.Tests.csproj" />
     <Project Path="OFBCreator.Core/OFBCreator.Core.csproj" />
+    <Project Path="OFBCreator.Projects.Tests/OFBCreator.Projects.Tests.csproj" />
+    <Project Path="OFBCreator.Projects/OFBCreator.Projects.csproj" />
   </Folder>
   <Folder Name="/Projektmappenelemente/">
     <File Path="../Packages.props" />
+    <File Path="../Solution.props" />
   </Folder>
-  <Project Path="OFBCreator.Console.Tests/OFBCreator.Console.Tests.csproj" />
 </Solution>
