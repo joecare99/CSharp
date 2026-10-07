@@ -27,12 +27,21 @@ internal static class CliHost
         services.AddSingleton<IParadoxTableReader>(static _ => new ParadoxTableReader());
         services.AddSingleton<IHejDatabaseExportService>(
             static provider => new HejDatabaseExportService(provider.GetRequiredService<IParadoxTableReader>()));
+        services.AddSingleton<StructureTemplateMaterializer>(static _ => new StructureTemplateMaterializer());
+        services.AddSingleton<IHejDatabaseRestoreService>(
+            static provider => new HejDatabaseRestoreService(
+                provider.GetRequiredService<IHejReader>(),
+                provider.GetRequiredService<IHejDatabaseExportService>(),
+                provider.GetRequiredService<IParadoxTableReader>(),
+                provider.GetRequiredService<StructureTemplateMaterializer>()));
         services.AddSingleton<CommandDispatcher>(
             static provider => new CommandDispatcher(
                 provider.GetRequiredService<IHejInspectionService>(),
                 provider.GetRequiredService<IHejDatabaseExportService>(),
+                provider.GetRequiredService<IHejDatabaseRestoreService>(),
                 provider.GetRequiredService<IHejWriter>(),
                 provider.GetRequiredService<IParadoxTableReader>(),
+                provider.GetRequiredService<StructureTemplateMaterializer>(),
                 provider.GetRequiredService<IConsoleAdapter>(),
                 provider.GetRequiredService<IPasswordCredentialStore>()));
 

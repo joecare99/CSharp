@@ -13,23 +13,29 @@ internal sealed class CommandDispatcher
 {
     private readonly IHejInspectionService _inspectionService;
     private readonly IHejDatabaseExportService _databaseExportService;
+    private readonly IHejDatabaseRestoreService _databaseRestoreService;
     private readonly IHejWriter _hejWriter;
     private readonly IParadoxTableReader _paradoxTableReader;
+    private readonly StructureTemplateMaterializer _structureTemplateMaterializer;
     private readonly IConsoleAdapter _console;
     private readonly SetPasswordCommand _setPasswordCommand;
 
     public CommandDispatcher(
         IHejInspectionService inspectionService,
         IHejDatabaseExportService databaseExportService,
+        IHejDatabaseRestoreService databaseRestoreService,
         IHejWriter hejWriter,
         IParadoxTableReader paradoxTableReader,
+        StructureTemplateMaterializer structureTemplateMaterializer,
         IConsoleAdapter console,
         IPasswordCredentialStore credentialStore)
     {
         _inspectionService = inspectionService;
         _databaseExportService = databaseExportService;
+        _databaseRestoreService = databaseRestoreService;
         _hejWriter = hejWriter;
         _paradoxTableReader = paradoxTableReader;
+        _structureTemplateMaterializer = structureTemplateMaterializer;
         _console = console;
         _setPasswordCommand = new SetPasswordCommand(console, credentialStore);
     }
@@ -52,6 +58,16 @@ internal sealed class CommandDispatcher
             return InventoryDatabase(arguments);
         }
 
+        if (string.Equals(arguments[0], "create-template", StringComparison.OrdinalIgnoreCase))
+        {
+            return CreateTemplate(arguments);
+        }
+
+        if (string.Equals(arguments[0], "create-generated-template", StringComparison.OrdinalIgnoreCase))
+        {
+            return CreateGeneratedTemplate(arguments);
+        }
+
         if (string.Equals(arguments[0], "--set-passwd", StringComparison.OrdinalIgnoreCase))
         {
             return _setPasswordCommand.Run(arguments);
@@ -60,6 +76,11 @@ internal sealed class CommandDispatcher
         if (string.Equals(arguments[0], "backup", StringComparison.OrdinalIgnoreCase))
         {
             return BackupDatabase(arguments);
+        }
+
+        if (string.Equals(arguments[0], "restore", StringComparison.OrdinalIgnoreCase))
+        {
+            return RestoreDatabase(arguments);
         }
 
         if (!string.Equals(arguments[0], "inspect", StringComparison.OrdinalIgnoreCase))
@@ -156,6 +177,50 @@ internal sealed class CommandDispatcher
         return 0;
     }
 
+    private int CreateTemplate(string[] arguments)
+    {
+        if (arguments.Length != 2)
+        {
+            _console.WriteErrorLine("Usage: create-template <new-database-directory>");
+            WriteUsage();
+            return 2;
+        }
+
+        string destinationPath = Path.GetFullPath(arguments[1]);
+        StructureTemplateManifest manifest = _structureTemplateMaterializer.Materialize(destinationPath);
+        _console.WriteLine($"Created and verified AhnWin structure template: {destinationPath}");
+        _console.WriteLine($"Paradox tables: {manifest.Tables.Count}");
+        _console.WriteLine($"Structure assets: {manifest.Assets.Count}");
+        foreach (StructureTemplateTable table in manifest.Tables)
+        {
+            _console.WriteLine($"{table.FileName}: {table.ExpectedRecords} baseline records");
+        }
+
+        return 0;
+    }
+
+    private int CreateGeneratedTemplate(string[] arguments)
+    {
+        if (arguments.Length != 2)
+        {
+            _console.WriteErrorLine("Usage: create-generated-template <new-database-directory>");
+            WriteUsage();
+            return 2;
+        }
+
+        string destinationPath = Path.GetFullPath(arguments[1]);
+        StructureTemplateManifest manifest = _structureTemplateMaterializer.MaterializeGenerated(destinationPath);
+        _console.WriteLine($"Created and verified generated AhnWin structure: {destinationPath}");
+        _console.WriteLine($"Paradox tables generated from schema: {manifest.Tables.Count}");
+        _console.WriteLine("Non-Paradox support assets copied from the embedded ZIP.");
+        foreach (StructureTemplateTable table in manifest.Tables)
+        {
+            _console.WriteLine($"{table.FileName}: {table.ExpectedRecords} baseline records");
+        }
+
+        return 0;
+    }
+
     private int BackupDatabase(string[] arguments)
     {
         if (arguments.Length != 3)
@@ -222,13 +287,51 @@ internal sealed class CommandDispatcher
         }
     }
 
+    private int RestoreDatabase(string[] arguments)
+    {
+        if (!RestoreCommandOptions.TryParse(arguments, out RestoreCommandOptions? options, out string error))
+        {
+            _console.WriteErrorLine(error);
+            return 2;
+        }
+
+        HejDatabaseRestoreMode mode = options!.Mode switch
+        {
+            RestoreMode.ExistingTemplate => HejDatabaseRestoreMode.ExistingTemplate,
+            RestoreMode.FromScratch => HejDatabaseRestoreMode.FromScratch,
+            RestoreMode.Override => HejDatabaseRestoreMode.Override,
+            _ => throw new ArgumentOutOfRangeException(nameof(options), options.Mode, "Unknown restore mode.")
+        };
+        HejDatabaseRestoreResult result = _databaseRestoreService.Restore(
+            options.InputPath,
+            options.DestinationPath,
+            mode,
+            options.Force);
+
+        _console.WriteLine($"Restored and verified HEJ database: {result.DestinationDirectory}");
+        foreach ((string section, int count) in result.RecordCounts)
+        {
+            _console.WriteLine($"{section}: {count} records");
+        }
+
+        foreach (string warning in result.Warnings)
+        {
+            _console.WriteErrorLine($"Compatibility warning: {warning}");
+        }
+
+        return 0;
+    }
+
     private void WriteUsage()
     {
         _console.WriteLine("AhnWin52Backup");
         _console.WriteLine("  inspect <file.hej>   Validate a HEJ backup and show section record counts.");
         _console.WriteLine("  inspect-db <file.db> [--first <1..200>] Read schema/count, optionally show records.");
         _console.WriteLine("  inventory-db <db-dir> List all Paradox table schemas and sidecar presence without reading records.");
+        _console.WriteLine("  create-template <new-db-dir> Create and verify a new from-scratch AhnWin structure directory.");
+        _console.WriteLine("  create-generated-template <new-db-dir> Generate Paradox table/index files from schema and copy support assets.");
         _console.WriteLine("  backup <db-dir> <file.hej> Export all five AhnWin tables without overwriting output.");
+        _console.WriteLine("  restore [--fromscratch|--override] [--force] <file.hej> <db-dir> Restore HEJ records into a verified Paradox database.");
         _console.WriteLine("  --set-passwd        Securely save the Paradox password in Windows Credential Manager.");
     }
 
@@ -236,4 +339,5 @@ internal sealed class CommandDispatcher
         string.Equals(value, "help", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(value, "--help", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(value, "-h", StringComparison.OrdinalIgnoreCase);
+
 }
