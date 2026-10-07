@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using AhnWin52Backup.Core.Abstractions;
 using AhnWin52Backup.Core.Paradox;
 using AhnWin52Backup.Core.Workflows;
@@ -11,6 +12,56 @@ namespace AhnWin52Backup.Tests.Paradox;
 [TestClass]
 public sealed class ParadoxMultiBlockWriterTests
 {
+    [TestMethod]
+    public void RebuildSecondaryIndexes_NormalizesGebnamAlphaKeysBeforeSorting()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string databaseDirectory = Path.Combine(directory, "database");
+            new StructureTemplateMaterializer().Materialize(databaseDirectory);
+            string databasePath = Path.Combine(databaseDirectory, "AWD.DB");
+            IReadOnlyDictionary<string, string?>[] records =
+            [
+                new Dictionary<string, string?> { ["Nummer"] = "1", ["Name"] = "apple" },
+                new Dictionary<string, string?> { ["Nummer"] = "2", ["Name"] = "Banana" }
+            ];
+
+            ParadoxTableReader reader = new();
+            new ParadoxRecordWriter(reader).AppendRecords(databasePath, "Nummer", records);
+            new ParadoxSecondaryIndexWriter(reader).RebuildForTable(databasePath);
+
+            string secondaryPath = Path.Combine(databaseDirectory, "AWD.XG4");
+            byte[] secondaryFile = File.ReadAllBytes(secondaryPath);
+            ParadoxRecordWriter.TableHeader header =
+                ParadoxRecordWriter.ReadHeader(secondaryFile, 8, secondaryPath);
+            Assert.AreEqual(2, header.RecordCount);
+            byte[] block = secondaryFile
+                .AsSpan(header.HeaderSize, header.BlockSize)
+                .ToArray();
+            ParadoxBlockCipher.DecryptDatabaseBlock(
+                block,
+                ParadoxRecordWriter.ReadEncryption(secondaryFile),
+                1);
+
+            int nameOffset = 6 + 4 + 2 + 2;
+            int nameLength = 45;
+            string firstName = Encoding.ASCII.GetString(block, nameOffset, nameLength).TrimEnd('\0');
+            string secondName = Encoding.ASCII.GetString(
+                block,
+                nameOffset + header.RecordSize,
+                nameLength).TrimEnd('\0');
+
+            Assert.AreEqual("APPLE", firstName);
+            Assert.AreEqual("BANANA", secondName);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
     [TestMethod]
     public void AppendAndRebuildSecondaryIndexes_SupportsRecordsAcrossBlocks()
     {
