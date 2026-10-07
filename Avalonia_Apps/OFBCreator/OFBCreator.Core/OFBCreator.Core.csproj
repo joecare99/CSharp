@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
-    <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>OFBCreator.Core</RootNamespace>
     <AssemblyName>OFBCreator.Core</AssemblyName>
     <SignAssembly>true</SignAssembly>

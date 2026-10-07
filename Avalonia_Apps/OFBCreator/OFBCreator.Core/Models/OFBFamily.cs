@@ -49,6 +49,10 @@ public class OFBFamily
     /// </summary>
     public IGenPlace? MarriagePlace { get; set; }
 
+    public IGenFact? Marriage { get; set; }
+
+    public IReadOnlyList<IGenFact?> Facts { get; set; } = Array.Empty<IGenFact?>();
+
     /// <summary>
     /// Calculated family formation date according to priority rules:
     /// 1) MarriageDate (MARR) → primary
