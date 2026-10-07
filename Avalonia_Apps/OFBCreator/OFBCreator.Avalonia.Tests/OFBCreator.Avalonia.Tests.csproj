@@ -29,8 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\OFBCreator.Console.Tests\TestData\gedcom-5.5.1-synthetic.ged"
-          Link="TestData\gedcom-5.5.1-synthetic.ged"
-          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\OFBCreator.Console.Tests\TestData\gedcom-5.5.1-synthetic.ged" Link="TestData\gedcom-5.5.1-synthetic.ged" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
