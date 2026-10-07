@@ -8,5 +8,7 @@ public sealed record StructureTemplateManifest(
     string TemplateId,
     string SourceDescription,
     string Encoding,
+    uint EncryptionKey,
+    int IndexMaximumTableSize,
     IReadOnlyList<StructureTemplateAsset> Assets,
     IReadOnlyList<StructureTemplateTable> Tables);

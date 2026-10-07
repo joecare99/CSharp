@@ -71,6 +71,32 @@ internal static class ParadoxBlockCipher
             (byte)(((encryption >> 8) & 0xFF) + 1),
             false);
 
+    public static void EncryptMemoBlock(Span<byte> block, uint encryption)
+    {
+        ValidateBlock(block);
+
+        byte a = (byte)encryption;
+        byte b = (byte)(encryption >> 8);
+        byte c = unchecked((byte)(a + 1));
+        byte d = unchecked((byte)(b + 1));
+        Span<byte> encrypted = stackalloc byte[256];
+        for (int chunkIndex = 0; chunkIndex < block.Length / 256; chunkIndex++)
+        {
+            Span<byte> source = block.Slice(chunkIndex * 256, 256);
+            for (int index = 0; index < 256; index++)
+            {
+                int tableIndex = (EncryptionTableC[index] - d) & 0xFF;
+                encrypted[tableIndex] = (byte)(
+                    source[index] ^
+                    EncryptionTableA[(index + a) & 0xFF] ^
+                    EncryptionTableB[(tableIndex + b) & 0xFF] ^
+                    EncryptionTableC[(tableIndex + c) & 0xFF]);
+            }
+
+            encrypted.CopyTo(source);
+        }
+    }
+
     private static void DecryptBlock(Span<byte> block, uint encryption, byte c, byte d, bool incrementChunk)
     {
         ValidateBlock(block);

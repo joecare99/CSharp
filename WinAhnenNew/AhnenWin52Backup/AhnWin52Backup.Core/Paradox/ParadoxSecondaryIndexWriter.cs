@@ -37,14 +37,13 @@ internal sealed class ParadoxSecondaryIndexWriter
         byte[] database = File.ReadAllBytes(fullDatabasePath);
         ParadoxRecordWriter.TableHeader databaseHeader =
             ParadoxRecordWriter.ReadHeader(database, expectedFileType: 0, fullDatabasePath);
-        if (databaseHeader.BlockCount != 1 ||
-            databaseHeader.FirstBlock != 1 ||
-            databaseHeader.LastBlock != 1 ||
-            table.Records.Count == 0 ||
-            table.Records.Count > (databaseHeader.BlockSize - DataBlockHeaderSize) / databaseHeader.RecordSize)
+        if (databaseHeader.BlockCount <= 0 ||
+            databaseHeader.FirstBlock <= 0 ||
+            databaseHeader.LastBlock <= 0 ||
+            table.Records.Count == 0)
         {
             throw new NotSupportedException(
-                "The experimental secondary-index writer requires non-empty records in one database block.");
+                "The secondary-index writer requires a non-empty table with valid data blocks.");
         }
 
         string directory = Path.GetDirectoryName(fullDatabasePath)
@@ -151,11 +150,11 @@ internal sealed class ParadoxSecondaryIndexWriter
         encodedRecords.Sort(static (left, right) =>
             left.Key.AsSpan().SequenceCompareTo(right.Key));
 
-        if (encodedRecords.Count > (secondaryDataHeader.BlockSize - DataBlockHeaderSize) /
-                                   secondaryDataHeader.RecordSize)
+        int recordsPerSecondaryBlock = (secondaryDataHeader.BlockSize - DataBlockHeaderSize) /
+                                       secondaryDataHeader.RecordSize;
+        if (recordsPerSecondaryBlock <= 0)
         {
-            throw new NotSupportedException(
-                $"The experimental writer cannot fit all records into one XG data block: {secondaryDataPath}");
+            throw new InvalidDataException($"An XG block cannot contain an index entry: {secondaryDataPath}");
         }
 
         byte[] secondaryIndexFile = File.ReadAllBytes(secondaryIndexPath);
@@ -174,13 +173,20 @@ internal sealed class ParadoxSecondaryIndexWriter
             throw new InvalidDataException($"The empty YG index header does not match its XG key: {secondaryIndexPath}");
         }
 
-        WriteSecondaryDataBlock(secondaryDataFile, secondaryDataHeader, secondaryDataPath, encodedRecords);
-        WriteSecondaryIndexBlock(
-            secondaryIndexFile,
-            secondaryIndexHeader,
-            secondaryIndexPath,
-            encodedRecords[0].Key,
-            encodedRecords.Count);
+        EncodedIndexRecord[][] secondaryGroups = encodedRecords
+            .Chunk(recordsPerSecondaryBlock)
+            .Select(static group => group.ToArray())
+            .ToArray();
+        ParadoxIndexFileBuilder.IndexEntry[] indexEntries = secondaryGroups
+            .Select((group, index) => new ParadoxIndexFileBuilder.IndexEntry(
+                group[0].Key,
+                index + 1,
+                group.Length))
+            .ToArray();
+
+        WriteSecondaryDataFile(secondaryDataFile, secondaryDataHeader, secondaryDataPath, encodedRecords);
+        secondaryIndexFile = ParadoxIndexFileBuilder.Build(secondaryIndexFile, SecondaryIndexFileType, indexEntries);
+        File.WriteAllBytes(secondaryIndexPath, secondaryIndexFile);
     }
 
     internal static void SynchronizePrimaryRevision(byte[] secondaryDataFile, byte primaryRevision)
@@ -195,26 +201,50 @@ internal sealed class ParadoxSecondaryIndexWriter
         secondaryDataFile[0x2F] = primaryRevision;
     }
 
-    private static void WriteSecondaryDataBlock(
+    private static void WriteSecondaryDataFile(
         byte[] file,
         ParadoxRecordWriter.TableHeader header,
         string path,
         IReadOnlyList<EncodedIndexRecord> records)
     {
-        byte[] block = ParadoxRecordWriter.PrepareEmptyBlock(file, header, path);
-        BinaryPrimitives.WriteInt16LittleEndian(
-            block.AsSpan(4, sizeof(short)),
-            checked((short)((records.Count - 1) * header.RecordSize)));
-        int offset = DataBlockHeaderSize;
-        foreach (EncodedIndexRecord record in records)
+        int recordsPerBlock = (header.BlockSize - DataBlockHeaderSize) / header.RecordSize;
+        int blockCount = checked((records.Count + recordsPerBlock - 1) / recordsPerBlock);
+        if (blockCount > ushort.MaxValue)
         {
-            record.Data.CopyTo(block, offset);
-            offset += record.Data.Length;
+            throw new NotSupportedException($"The XG file requires too many blocks: {path}");
         }
 
-        ParadoxRecordWriter.UpdateSingleBlockHeader(file, records.Count);
-        file = ParadoxRecordWriter.CommitBlock(file, block, header, 1);
-        File.WriteAllBytes(path, file);
+        byte[] output = new byte[checked(header.HeaderSize + blockCount * header.BlockSize)];
+        file.AsSpan(0, header.HeaderSize).CopyTo(output);
+        ParadoxRecordWriter.UpdateMultipleBlockHeader(output, records.Count, blockCount);
+        for (int index = 0; index < blockCount; index++)
+        {
+            EncodedIndexRecord[] group = records.Skip(index * recordsPerBlock).Take(recordsPerBlock).ToArray();
+            byte[] block = new byte[header.BlockSize];
+            BinaryPrimitives.WriteUInt16LittleEndian(
+                block,
+                index + 1 < blockCount ? checked((ushort)(index + 2)) : (ushort)0);
+            BinaryPrimitives.WriteUInt16LittleEndian(block.AsSpan(2), checked((ushort)index));
+            BinaryPrimitives.WriteInt16LittleEndian(
+                block.AsSpan(4),
+                checked((short)((group.Length - 1) * header.RecordSize)));
+            int offset = DataBlockHeaderSize;
+            foreach (EncodedIndexRecord record in group)
+            {
+                record.Data.CopyTo(block, offset);
+                offset += record.Data.Length;
+            }
+
+            uint encryption = ParadoxRecordWriter.ReadEncryption(output);
+            if (encryption != 0)
+            {
+                ParadoxBlockCipher.EncryptDatabaseBlock(block, encryption, index + 1);
+            }
+
+            block.CopyTo(output, header.HeaderSize + index * header.BlockSize);
+        }
+
+        File.WriteAllBytes(path, output);
     }
 
     private static void WriteSecondaryIndexBlock(

@@ -103,9 +103,10 @@ public sealed class HejCodec : IHejReader, IHejWriter
                 WriteCrLf(destination);
             }
 
-            foreach (HejRecord record in document.GetRecords(section))
+            IReadOnlyList<HejRecord> sectionRecords = document.GetRecords(section);
+            for (int recordIndex = 0; recordIndex < sectionRecords.Count; recordIndex++)
             {
-                WriteRecord(record, destination);
+                WriteRecord(sectionRecords[recordIndex], section, recordIndex + 1, destination);
                 WriteCrLf(destination);
             }
         }
@@ -205,6 +206,10 @@ public sealed class HejCodec : IHejReader, IHejWriter
                 fields.Add(DecodeField(fieldBytes));
                 fieldBytes.Clear();
             }
+            else if (value == 0x09)
+            {
+                fieldBytes.Add(value);
+            }
             else if (value is < 0x20 and not 0x10)
             {
                 ignoredControls.TryAdd((section, value), lineNumber);
@@ -257,7 +262,7 @@ public sealed class HejCodec : IHejReader, IHejWriter
         return result.ToString();
     }
 
-    private static void WriteRecord(HejRecord record, Stream destination)
+    private static void WriteRecord(HejRecord record, HejSection section, int recordNumber, Stream destination)
     {
         for (int fieldIndex = 0; fieldIndex < record.Fields.Count; fieldIndex++)
         {
@@ -266,11 +271,16 @@ public sealed class HejCodec : IHejReader, IHejWriter
                 destination.WriteByte(0x0F);
             }
 
-            WriteField(record.Fields[fieldIndex], destination);
+            WriteField(record.Fields[fieldIndex], section, recordNumber, fieldIndex + 1, destination);
         }
     }
 
-    private static void WriteField(string field, Stream destination)
+    private static void WriteField(
+        string field,
+        HejSection section,
+        int recordNumber,
+        int fieldNumber,
+        Stream destination)
     {
         for (int index = 0; index < field.Length; index++)
         {
@@ -288,6 +298,10 @@ public sealed class HejCodec : IHejReader, IHejWriter
             {
                 destination.WriteByte(0x10);
             }
+            else if (character == '\t')
+            {
+                destination.WriteByte(0x09);
+            }
             else if (character is '\u000F' or '\u0010')
             {
                 destination.WriteByte((byte)' ');
@@ -295,7 +309,7 @@ public sealed class HejCodec : IHejReader, IHejWriter
             else if (character < '\u0020')
             {
                 throw new ArgumentException(
-                    $"HEJ fields cannot contain control character U+{(int)character:X4}.");
+                    $"{section} record {recordNumber}, field {fieldNumber} contains unsupported control character U+{(int)character:X4}.");
             }
             else
             {

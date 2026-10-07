@@ -11,7 +11,7 @@ namespace AhnWin52Backup.Core.Workflows;
 /// <summary>Maps the five AhnWin Paradox tables into their ordered HEJ sections.</summary>
 public sealed class HejDatabaseExportService : IHejDatabaseExportService
 {
-    private static readonly string[] IndividualFields =
+    internal static readonly string[] IndividualFields =
     [
         "Nummer", "Vater", "Mutter", "Name", "Vornamen", "Geschlecht", "Religion", "Beruf",
         "Gebtag", "Gebmonat", "Gebjahr", "Gebort", "Tauftag", "Taufmonat", "Taufjahr", "Taufort",
@@ -21,20 +21,20 @@ public sealed class HejDatabaseExportService : IHejDatabaseExportService
         "Indj", "Indm", "Indt", "Alter", "Tel", "Ema", "Ur", "Quelle", "Rufname"
     ];
 
-    private static readonly string[] MarriageFields =
+    internal static readonly string[] MarriageFields =
     [
         "Nummer", "Epnum", "Htag", "Hmonat", "Hjahr", "Hort", "Trauz", "Satag", "Samonat", "Sajahr",
         "Saort", "Satrauz", "Verbind", "Schtag", "Schmonat", "Schjahr", "Schort", "Hqu", "Saqu", "Schqu",
         "Indj", "Indm"
     ];
 
-    private static readonly string[] AdoptionFields = ["Nummer", "Av", "Am"];
-    private static readonly string[] PlaceFields =
+    internal static readonly string[] AdoptionFields = ["Nummer", "Av", "Am"];
+    internal static readonly string[] PlaceFields =
     [
         "Ort", "PLZ", "Land", "RegBez", "Gov", "Bland", "Gde", "Pfr", "Lkr", "Abk", "Lg", "Bg", "Maid"
     ];
 
-    private static readonly string[] SourceFields =
+    internal static readonly string[] SourceFields =
     [
         "Titel", "Abk", "Ereig", "Von", "Bis", "Standort", "Publ", "Rep", "Bem", "Bestand", "Med"
     ];

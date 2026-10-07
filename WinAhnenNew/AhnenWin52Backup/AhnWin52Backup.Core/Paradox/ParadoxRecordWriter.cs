@@ -9,10 +9,7 @@ using AhnWin52Backup.Core.Hej;
 
 namespace AhnWin52Backup.Core.Paradox;
 
-/// <summary>
-/// Experimental pxlib-compatible append path for validating AhnWin's handling
-/// of encrypted tables whose secondary indexes have not yet been rebuilt.
-/// </summary>
+/// <summary>Writes restored records and rebuilt indexes into empty Paradox tables.</summary>
 internal sealed class ParadoxRecordWriter
 {
     private const int DataHeaderSize = 0x78;
@@ -67,20 +64,21 @@ internal sealed class ParadoxRecordWriter
         ParadoxField keyField = table.Fields[primaryFieldIndex];
         IReadOnlyList<IReadOnlyDictionary<string, string?>> resolvedRecords =
             ResolveAutoIncrementRecords(table.Fields, database, records);
-        byte[][] encodedRecords = resolvedRecords
-            .Select(record => EncodeRecord(table.Fields, record))
-            .ToArray();
+        ParadoxMemoWriter memoWriter = new(Path.ChangeExtension(fullPath, ".MB"), ReadEncryption(database));
         int keyOffset = table.Fields.Take(primaryFieldIndex).Sum(static field => field.Length);
-        byte[][] encodedKeys = encodedRecords
-            .Select(record => record.AsSpan(keyOffset, keyField.Length).ToArray())
-            .ToArray();
-        for (int index = 1; index < encodedKeys.Length; index++)
-        {
-            if (encodedKeys[index - 1].AsSpan().SequenceCompareTo(encodedKeys[index]) >= 0)
+        EncodedRecord[] sortedRecords = resolvedRecords
+            .Select(record =>
             {
-                throw new ArgumentException(
-                    "Records must be supplied in strictly ascending primary-key byte order.",
-                    nameof(records));
+                byte[] data = EncodeRecord(table.Fields, record, memoWriter);
+                return new EncodedRecord(data, data.AsSpan(keyOffset, keyField.Length).ToArray());
+            })
+            .OrderBy(static record => record.Key, ByteArrayComparer.Instance)
+            .ToArray();
+        for (int index = 1; index < sortedRecords.Length; index++)
+        {
+            if (sortedRecords[index - 1].Key.AsSpan().SequenceCompareTo(sortedRecords[index].Key) >= 0)
+            {
+                throw new ArgumentException("Primary-key values must be unique.", nameof(records));
             }
         }
 
@@ -90,52 +88,88 @@ internal sealed class ParadoxRecordWriter
         if (primaryHeader.RecordCount != 0 ||
             primaryHeader.RecordSize != keyField.Length + DataBlockHeaderSize ||
             primaryHeader.FieldCount != 1 ||
-        primaryIndex[0x58] != keyField.TypeCode ||
-        primaryIndex[0x59] != keyField.Length)
+            primaryIndex[0x58] != keyField.TypeCode ||
+            primaryIndex[0x59] != keyField.Length)
         {
-            throw new InvalidDataException("The primary index header does not match the empty table's key field.");
+            throw new InvalidDataException(
+                $"The primary index header does not match the empty table's key field " +
+                $"(records {primaryHeader.RecordCount}, size {primaryHeader.RecordSize}, fields {primaryHeader.FieldCount}, " +
+                $"type 0x{primaryIndex[0x58]:X2}/0x{keyField.TypeCode:X2}, length {primaryIndex[0x59]}/{keyField.Length}).");
         }
 
         int recordsPerTableBlock = (databaseHeader.BlockSize - DataBlockHeaderSize) / databaseHeader.RecordSize;
-        if (records.Count > recordsPerTableBlock)
+        if (recordsPerTableBlock <= 0)
         {
-            throw new NotSupportedException("The experimental writer supports records in one data block only.");
+            throw new InvalidDataException("A table data block cannot contain one record.");
         }
 
-        int indexBlockSize = checked(primaryHeader.MaximumTableSize * 1024);
-        if (indexBlockSize - DataBlockHeaderSize < primaryHeader.RecordSize)
+        byte[][] encodedRecords = sortedRecords.Select(static record => record.Data).ToArray();
+        List<byte[]> tableBlocks = CreateTableBlocks(databaseHeader, encodedRecords, recordsPerTableBlock);
+        ParadoxIndexFileBuilder.IndexEntry[] indexEntries = sortedRecords
+            .Chunk(recordsPerTableBlock)
+            .Select((group, index) => new ParadoxIndexFileBuilder.IndexEntry(
+                group[0].Key,
+                index + 1,
+                group.Length))
+            .ToArray();
+
+        byte[] outputDatabase = new byte[checked(databaseHeader.HeaderSize + tableBlocks.Count * databaseHeader.BlockSize)];
+        database.AsSpan(0, databaseHeader.HeaderSize).CopyTo(outputDatabase);
+        UpdateMultipleBlockHeader(outputDatabase, encodedRecords.Length, tableBlocks.Count);
+        for (int index = 0; index < tableBlocks.Count; index++)
         {
-            throw new InvalidDataException("The primary index block cannot contain its first entry.");
+            byte[] block = tableBlocks[index];
+            uint encryption = ReadEncryption(outputDatabase);
+            if (encryption != 0)
+            {
+                ParadoxBlockCipher.EncryptDatabaseBlock(block, encryption, index + 1);
+            }
+
+            block.CopyTo(outputDatabase, databaseHeader.HeaderSize + index * databaseHeader.BlockSize);
         }
 
-        byte[] databaseBlock = PrepareEmptyBlock(database, databaseHeader, fullPath);
-        BinaryPrimitives.WriteInt16LittleEndian(
-            databaseBlock.AsSpan(4, sizeof(short)),
-            checked((short)((records.Count - 1) * databaseHeader.RecordSize)));
-        int recordOffset = DataBlockHeaderSize;
-        foreach (byte[] record in encodedRecords)
-        {
-            record.CopyTo(databaseBlock, recordOffset);
-            recordOffset += record.Length;
-        }
+        primaryIndex = ParadoxIndexFileBuilder.Build(primaryIndex, 1, indexEntries);
 
-        byte[] primaryBlock = PrepareEmptyBlock(primaryIndex, primaryHeader, primaryIndexPath);
-        BinaryPrimitives.WriteInt16LittleEndian(primaryBlock.AsSpan(4, sizeof(short)), 0);
-        encodedKeys[0].CopyTo(primaryBlock, DataBlockHeaderSize);
-        Span<byte> entryTail = primaryBlock.AsSpan(
-            DataBlockHeaderSize + keyField.Length,
-            DataBlockHeaderSize);
-        WriteParadoxShort(entryTail, 1);
-        WriteParadoxShort(entryTail[2..], checked((short)records.Count));
-        WriteParadoxShort(entryTail[4..], 0);
-
-        UpdateSingleBlockHeader(database, records.Count);
-        UpdateSingleBlockHeader(primaryIndex, 1);
-        database = CommitBlock(database, databaseBlock, databaseHeader, 1);
-        primaryIndex = CommitBlock(primaryIndex, primaryBlock, primaryHeader, 1);
-
-        File.WriteAllBytes(fullPath, database);
+        memoWriter.Save();
+        File.WriteAllBytes(fullPath, outputDatabase);
         File.WriteAllBytes(primaryIndexPath, primaryIndex);
+    }
+
+    private static List<byte[]> CreateTableBlocks(
+        TableHeader header,
+        IReadOnlyList<byte[]> records,
+        int recordsPerBlock)
+    {
+        int blockCount = checked((records.Count + recordsPerBlock - 1) / recordsPerBlock);
+        if (blockCount > ushort.MaxValue)
+        {
+            throw new NotSupportedException("The table requires more physical data blocks than Paradox can address.");
+        }
+
+        List<byte[]> blocks = new(blockCount);
+        for (int start = 0; start < records.Count; start += recordsPerBlock)
+        {
+            int blockNumber = blocks.Count + 1;
+            byte[][] blockRecords = records.Skip(start).Take(recordsPerBlock).ToArray();
+            byte[] block = new byte[header.BlockSize];
+            BinaryPrimitives.WriteUInt16LittleEndian(
+                block,
+                blockNumber < blockCount ? checked((ushort)(blockNumber + 1)) : (ushort)0);
+            BinaryPrimitives.WriteUInt16LittleEndian(block.AsSpan(2), checked((ushort)(blockNumber - 1)));
+            BinaryPrimitives.WriteInt16LittleEndian(
+                block.AsSpan(4),
+                checked((short)((blockRecords.Length - 1) * header.RecordSize)));
+            int offset = DataBlockHeaderSize;
+            foreach (byte[] record in blockRecords)
+            {
+                record.CopyTo(block, offset);
+                offset += record.Length;
+            }
+
+            blocks.Add(block);
+        }
+
+        return blocks;
     }
 
     internal static byte[] PrepareEmptyBlock(byte[] file, TableHeader header, string path)
@@ -184,13 +218,29 @@ internal sealed class ParadoxRecordWriter
 
     internal static void UpdateSingleBlockHeader(byte[] file, int recordCount)
     {
+        UpdateMultipleBlockHeader(file, recordCount, 1);
+        byte fileType = file[4];
+        if (fileType is 1 or 7)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x1E, sizeof(ushort)), 1);
+            file[0x20] = 1;
+        }
+    }
+
+    internal static void UpdateMultipleBlockHeader(byte[] file, int recordCount, int blockCount)
+    {
+        if (file.Length < 0x4D || recordCount < 0 || blockCount <= 0 || blockCount > ushort.MaxValue)
+        {
+            throw new ArgumentOutOfRangeException(nameof(blockCount), "Paradox header dimensions exceed the supported range.");
+        }
+
         byte fileType = file[4];
         BinaryPrimitives.WriteInt32LittleEndian(file.AsSpan(6, sizeof(int)), recordCount);
-        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x0A, sizeof(ushort)), 1);
-        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x0C, sizeof(ushort)), 1);
+        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x0A, sizeof(ushort)), checked((ushort)blockCount));
+        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x0C, sizeof(ushort)), checked((ushort)blockCount));
         BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x0E, sizeof(ushort)), 1);
-        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x10, sizeof(ushort)), 1);
-        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x3A, sizeof(ushort)), 1);
+        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x10, sizeof(ushort)), checked((ushort)blockCount));
+        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x3A, sizeof(ushort)), checked((ushort)blockCount));
         if (fileType is 0 or 6 or 8)
         {
             file[0x2D] = unchecked((byte)(file[0x2D] + 1));
@@ -204,9 +254,7 @@ internal sealed class ParadoxRecordWriter
 
         if (fileType is 1 or 7)
         {
-            BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(0x1E, sizeof(ushort)), 1);
-            file[0x20] = 1;
-            // The native one-block fixtures advance this marker once, even for multiple records.
+            // The native fixtures advance this marker once for a rewritten index.
             file[0x2C] = unchecked((byte)(file[0x2C] + 1));
         }
     }
@@ -235,6 +283,12 @@ internal sealed class ParadoxRecordWriter
     internal static byte[] EncodeRecord(
         IReadOnlyList<ParadoxField> fields,
         IReadOnlyDictionary<string, string?> values)
+        => EncodeRecord(fields, values, null);
+
+    private static byte[] EncodeRecord(
+        IReadOnlyList<ParadoxField> fields,
+        IReadOnlyDictionary<string, string?> values,
+        ParadoxMemoWriter? memoWriter)
     {
         ArgumentNullException.ThrowIfNull(values);
         foreach (string fieldName in values.Keys)
@@ -245,12 +299,18 @@ internal sealed class ParadoxRecordWriter
             }
         }
 
-        return EncodeRecord(fields, fields.Select(field => FindValue(values, field.Name)).ToArray());
+        return EncodeRecord(fields, fields.Select(field => FindValue(values, field.Name)).ToArray(), memoWriter);
     }
 
     internal static byte[] EncodeRecord(
         IReadOnlyList<ParadoxField> fields,
         IReadOnlyList<string?> values)
+        => EncodeRecord(fields, values, null);
+
+    private static byte[] EncodeRecord(
+        IReadOnlyList<ParadoxField> fields,
+        IReadOnlyList<string?> values,
+        ParadoxMemoWriter? memoWriter)
     {
         ArgumentNullException.ThrowIfNull(values);
         if (fields.Count != values.Count)
@@ -291,8 +351,20 @@ internal sealed class ParadoxRecordWriter
                     EncodeInteger(value, destination, 4, field.Name);
                     break;
                 case MemoType:
-                case BlobType:
                 case FormattedMemoType:
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        if (memoWriter is null)
+                        {
+                            throw new NotSupportedException(
+                                $"A Paradox memo writer is required for field \"{field.Name}\".");
+                        }
+
+                        memoWriter.EncodeText(value, field.Length, field.Name).CopyTo(destination);
+                    }
+
+                    break;
+                case BlobType:
                 case OleType:
                 case GraphicType:
                     if (!string.IsNullOrEmpty(value))
@@ -451,13 +523,19 @@ internal sealed class ParadoxRecordWriter
         int headerSize = BinaryPrimitives.ReadUInt16LittleEndian(file.AsSpan(2, sizeof(ushort)));
         if (recordSize <= 0 ||
             recordCount < 0 ||
-            blockCount is < 0 or > 1 ||
+            blockCount < 0 ||
             maximumTableSize is < 1 or > 32 ||
             fieldCount <= 0 ||
             headerSize < (expectedFileType is 0 or 2 or 6 or 8 ? DataHeaderSize : 0x58) ||
             headerSize > file.Length)
         {
             throw new InvalidDataException($"The Paradox file dimensions are invalid: {path}");
+        }
+
+        int blockSize = checked(maximumTableSize * 1024);
+        if (blockCount > (file.Length - headerSize) / blockSize)
+        {
+            throw new InvalidDataException($"The Paradox file does not contain all declared blocks: {path}");
         }
 
         return new TableHeader(
@@ -492,5 +570,17 @@ internal sealed class ParadoxRecordWriter
         int HeaderSize)
     {
         public int BlockSize => checked(MaximumTableSize * 1024);
+    }
+
+    private sealed record EncodedRecord(byte[] Data, byte[] Key);
+
+    private sealed class ByteArrayComparer : IComparer<byte[]>
+    {
+        public static ByteArrayComparer Instance { get; } = new();
+
+        public int Compare(byte[]? left, byte[]? right) =>
+            left is null
+                ? right is null ? 0 : -1
+                : right is null ? 1 : left.AsSpan().SequenceCompareTo(right);
     }
 }

@@ -11,7 +11,18 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\namesdays.json" LogicalName="AhnWin52Backup.Core.namesdays.json" />
+    <EmbeddedResource Include="Resources\StructureTemplate\manifest.json"
+                      LogicalName="AhnWin52Backup.Core.StructureTemplate.manifest.json" />
+    <EmbeddedResource Include="$(IntermediateOutputPath)StructureTemplate\assets.zip"
+                      LogicalName="AhnWin52Backup.Core.StructureTemplate.assets.zip" />
   </ItemGroup>
+
+  <Target Name="CreateStructureTemplateArchive" BeforeTargets="PrepareForBuild">
+    <MakeDir Directories="$(IntermediateOutputPath)StructureTemplate" />
+    <ZipDirectory SourceDirectory="$(MSBuildProjectDirectory)\Resources\StructureTemplate\Files"
+                  DestinationFile="$(IntermediateOutputPath)StructureTemplate\assets.zip"
+                  Overwrite="true" />
+  </Target>
 
   <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
     <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>

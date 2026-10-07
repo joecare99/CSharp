@@ -12,4 +12,10 @@ public sealed record StructureTemplateIndex(
     IReadOnlyList<string> KeyFields,
     IReadOnlyList<StructureTemplateField> Fields,
     int ExpectedXgRecords,
-    int ExpectedYgRecords);
+    int ExpectedYgRecords,
+    int ExpectedXgBlocks,
+    int ExpectedYgBlocks,
+    string? XgEmptyBlockRecordHex,
+    string? YgEmptyBlockRecordHex,
+    StructureTemplateHeaderMetadata XgHeaderMetadata,
+    StructureTemplateHeaderMetadata YgHeaderMetadata);

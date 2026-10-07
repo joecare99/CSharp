@@ -7,11 +7,16 @@ public sealed record StructureTemplateTable(
     string FileName,
     byte Version,
     int RecordSize,
+    int MaximumTableSize,
     int ExpectedRecords,
     int ExpectedBlocks,
+    int ExpectedPrimaryIndexBlocks,
+    string? PrimaryIndexEmptyBlockRecordHex,
     bool Encrypted,
     string PrimaryIndexFile,
     string? MemoFile,
     IReadOnlyList<StructureTemplateField> Fields,
     IReadOnlyList<StructureTemplateIndex> SecondaryIndexes,
-    StructureTemplateBaseline? BaselineData);
+    StructureTemplateBaseline? BaselineData,
+    StructureTemplateHeaderMetadata DatabaseHeaderMetadata,
+    StructureTemplateHeaderMetadata PrimaryIndexHeaderMetadata);
