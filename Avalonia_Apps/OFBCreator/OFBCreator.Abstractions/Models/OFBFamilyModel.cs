@@ -52,6 +52,11 @@ public sealed class OFBFamilyModel
     public IGenPlace? MarriagePlace { get; set; }
 
     /// <summary>
+    /// The original family facts, including marriage and property events.
+    /// </summary>
+    public IReadOnlyList<IGenFact?> Facts { get; set; } = Array.Empty<IGenFact?>();
+
+    /// <summary>
     /// Calculated family formation date following priority rules:
     /// 1) MarriageDate (MARR) → primary
     /// 2) FirstChildBirthDate → if no MARR
