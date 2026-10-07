@@ -102,7 +102,7 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
         string stagingDirectory = CreateSiblingPath(destinationPath, "restore");
         try
         {
-            _templateMaterializer.Materialize(stagingDirectory);
+            _templateMaterializer.MaterializeGenerated(stagingDirectory);
             PopulateAndValidate(stagingDirectory, document, manifest);
             Directory.Move(stagingDirectory, destinationPath);
             return CreateResult(destinationPath, document, document.Warnings);

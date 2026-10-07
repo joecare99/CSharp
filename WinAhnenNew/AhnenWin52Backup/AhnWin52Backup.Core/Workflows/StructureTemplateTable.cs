@@ -8,6 +8,8 @@ public sealed record StructureTemplateTable(
     byte Version,
     int RecordSize,
     int MaximumTableSize,
+    string DatabaseSortOrder,
+    IReadOnlyList<int> DatabaseFieldNumbers,
     int ExpectedRecords,
     int ExpectedBlocks,
     int ExpectedPrimaryIndexBlocks,

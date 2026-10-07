@@ -67,6 +67,8 @@ internal static class ParadoxStructureWriter
             table.MaximumTableSize,
             initialTableBlocks,
             encryptionKey,
+            table.DatabaseFieldNumbers,
+            table.DatabaseSortOrder,
             table.DatabaseHeaderMetadata);
         WritePrimaryIndex(
             Path.Combine(directory, table.PrimaryIndexFile),
@@ -150,6 +152,8 @@ internal static class ParadoxStructureWriter
         int maximumTableSize,
         int blockCount,
         uint encryptionKey,
+        IReadOnlyList<int> fieldNumbers,
+        string sortOrder,
         StructureTemplateHeaderMetadata headerMetadata)
     {
         byte[] file = CreateHeader(
@@ -164,8 +168,8 @@ internal static class ParadoxStructureWriter
             blockCount,
             includeDataHeader: true,
             includeFieldNames: true,
-            fieldMap: Enumerable.Range(1, fields.Count).ToArray(),
-            sortOrder: "ANSIINTL",
+            fieldMap: fieldNumbers,
+            sortOrder,
             indexLabel: null,
             dataHeaderKind: 1,
             encryptionKey,
@@ -421,8 +425,6 @@ internal static class ParadoxStructureWriter
                 encryptionKey);
         }
 
-        ApplyHeaderMetadata(header, headerMetadata);
-
         int descriptorOffset = dataOffset;
         for (int index = 0; index < fields.Count; index++)
         {
@@ -469,6 +471,7 @@ internal static class ParadoxStructureWriter
             encodedIndexLabel.CopyTo(header, mapOffset);
         }
 
+        ApplyHeaderMetadata(header, headerMetadata);
         return header;
     }
 
@@ -480,13 +483,19 @@ internal static class ParadoxStructureWriter
         }
 
         byte[] revisionBytes;
+        byte[] headerBytes16To1D;
+        byte[] headerBytes30To48;
         byte[] headerBytes38To3F;
         byte[] headerBytes4DTo57;
+        byte[] extendedHeaderBytes58To77;
         try
         {
             revisionBytes = Convert.FromHexString(headerMetadata.RevisionBytesHex);
+            headerBytes16To1D = Convert.FromHexString(headerMetadata.HeaderBytes16To1DHex);
+            headerBytes30To48 = Convert.FromHexString(headerMetadata.HeaderBytes30To48Hex);
             headerBytes38To3F = Convert.FromHexString(headerMetadata.HeaderBytes38To3FHex);
             headerBytes4DTo57 = Convert.FromHexString(headerMetadata.HeaderBytes4DTo57Hex);
+            extendedHeaderBytes58To77 = Convert.FromHexString(headerMetadata.ExtendedHeaderBytes58To77Hex);
         }
         catch (FormatException exception)
         {
@@ -494,38 +503,25 @@ internal static class ParadoxStructureWriter
         }
 
         if (revisionBytes.Length != 4 ||
+            headerBytes16To1D.Length != 8 ||
+            headerBytes30To48.Length != 0x19 ||
             headerBytes38To3F.Length != 8 ||
             headerBytes4DTo57.Length != 11 ||
+            extendedHeaderBytes58To77.Length != 0x20 ||
             header.Length < 0x58)
         {
             throw new InvalidDataException("The Paradox header metadata has an invalid size.");
         }
 
-        byte[]? dataHeaderMetadata = null;
-        if (headerMetadata.DataHeaderMetadataHex is not null)
-        {
-            try
-            {
-                dataHeaderMetadata = Convert.FromHexString(headerMetadata.DataHeaderMetadataHex);
-            }
-            catch (FormatException exception)
-            {
-                throw new InvalidDataException("The extended Paradox header metadata is not valid hexadecimal.", exception);
-            }
-
-            if (dataHeaderMetadata.Length != 0x14 || header.Length < DataHeaderSize)
-            {
-                throw new InvalidDataException("The extended Paradox header metadata has an invalid size.");
-            }
-        }
-
         BinaryPrimitives.WriteUInt16LittleEndian(header.AsSpan(0x12), headerMetadata.Word12);
+        headerBytes16To1D.CopyTo(header, 0x16);
         header[0x29] = headerMetadata.SortOrderCode;
         revisionBytes.CopyTo(header, 0x2C);
         BinaryPrimitives.WriteUInt32LittleEndian(header.AsSpan(0x49), headerMetadata.AutoIncrementValue);
+        headerBytes30To48.CopyTo(header, 0x30);
         headerBytes38To3F.CopyTo(header, 0x38);
         headerBytes4DTo57.CopyTo(header, 0x4D);
-        dataHeaderMetadata?.CopyTo(header, 0x64);
+        extendedHeaderBytes58To77.CopyTo(header, 0x58);
     }
 
     private static void WriteDataHeader(

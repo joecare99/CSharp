@@ -6,6 +6,8 @@ public sealed record StructureTemplateHeaderMetadata(
     byte SortOrderCode,
     string RevisionBytesHex,
     uint AutoIncrementValue,
+    string HeaderBytes16To1DHex,
+    string HeaderBytes30To48Hex,
     string HeaderBytes38To3FHex,
     string HeaderBytes4DTo57Hex,
-    string? DataHeaderMetadataHex);
+    string ExtendedHeaderBytes58To77Hex);

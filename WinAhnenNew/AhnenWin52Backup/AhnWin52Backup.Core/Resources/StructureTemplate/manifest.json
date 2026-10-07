@@ -788,18 +788,22 @@
             "sortOrderCode": 183,
             "revisionBytesHex": "FF538706",
             "autoIncrementValue": 2498,
-            "dataHeaderMetadataHex": "04009700A200B50101019D000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "0000000000010000012000"
+            "headerBytes4DTo57Hex": "0000000000010000012000",
+            "headerBytes16To1DHex": "FC12E16BFC26E16B",
+            "headerBytes30To48Hex": "581BE16B521BE16B000B000000000000C91BE16BCC1BE16B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737DA4E1B4204009700A200B50101019D000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 66,
             "sortOrderCode": 183,
             "revisionBytesHex": "0C000000",
             "autoIncrementValue": 2500,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "3615E16B3215E16B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "040404043A15E16B6164702E5947300000000000000000000000000000000000"
           }
         },
         {
@@ -840,18 +844,22 @@
             "sortOrderCode": 183,
             "revisionBytesHex": "FFEC8706",
             "autoIncrementValue": 2498,
-            "dataHeaderMetadataHex": "04009700A200B50101019D000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "0000000000010000012000"
+            "headerBytes4DTo57Hex": "0000000000010000012000",
+            "headerBytes16To1DHex": "CC05E16BFC18E16B",
+            "headerBytes30To48Hex": "280EE16B220EE16B000B000000000000990EE16B9C0EE16B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737DA4E1B4204009700A200B50101019D000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 64,
             "sortOrderCode": 183,
             "revisionBytesHex": "A5000000",
             "autoIncrementValue": 2500,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "0608E16B0208E16B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "040404040A08E16B6164702E5947310000000000000000000000000000000000"
           }
         }
       ],
@@ -863,19 +871,29 @@
         "sortOrderCode": 183,
         "revisionBytesHex": "004D8700",
         "autoIncrementValue": 0,
-        "dataHeaderMetadataHex": "040092000000B50101019800FD08000000000000",
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000F5000000002000"
+        "headerBytes4DTo57Hex": "00000000F5000000002000",
+        "headerBytes16To1DHex": "FC20E16B8C40E16B",
+        "headerBytes30To48Hex": "5829E16B5229E16B000B000000000000C429E16BC729E16B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A73740C7FE35040092000000B50101019800FD08000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 62,
         "sortOrderCode": 183,
         "revisionBytesHex": "06000000",
         "autoIncrementValue": 2500,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "3423E16B3223E16B000B000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "04043823E16B6164702E50580000000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "intl",
+      "databaseFieldNumbers": [
+        1,
+        2,
+        3
+      ]
     },
     {
       "fileName": "AWD.DB",
@@ -1224,18 +1242,22 @@
             "sortOrderCode": 84,
             "revisionBytesHex": "FF90CA00",
             "autoIncrementValue": 73,
-            "dataHeaderMetadataHex": "1000F2000C015203010104010000000000000000",
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "0000000069010000012000"
+            "headerBytes4DTo57Hex": "0000000069010000012000",
+            "headerBytes16To1DHex": "DC00DF6BBC13DF6B",
+            "headerBytes30To48Hex": "6409DF6B5209DF6B000B010000000000240ADF6B2D0ADF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7378885E64B1000F2000C015203010104010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 6,
             "sortOrderCode": 84,
             "revisionBytesHex": "E6000000",
             "autoIncrementValue": 75,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "00000000BB000000000000"
+            "headerBytes4DTo57Hex": "00000000BB000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "2203DF6B1203DF6B000B010000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "0404010401020102010401020102040436BBDF6B4157442E5947300000000000"
           }
         },
         {
@@ -1312,18 +1334,22 @@
             "sortOrderCode": 84,
             "revisionBytesHex": "FF00CA00",
             "autoIncrementValue": 73,
-            "dataHeaderMetadataHex": "1000F1000B015203010103010000000000000000",
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "0000000068010000012000"
+            "headerBytes4DTo57Hex": "0000000068010000012000",
+            "headerBytes16To1DHex": "ACD6DF6BFC06DF6B",
+            "headerBytes30To48Hex": "34DFDF6B22DFDF6B000B010000000000F3DFDF6BFCDFDF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7378885E64B1000F1000B015203010103010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 8,
             "sortOrderCode": 84,
             "revisionBytesHex": "56000000",
             "autoIncrementValue": 75,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "00000000BB000000000000"
+            "headerBytes4DTo57Hex": "00000000BB000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "F2D8DF6BE2D8DF6B000B010000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "0404010401020102010401020102040466ADDF6B4157442E5947310000000000"
           }
         },
         {
@@ -1394,18 +1420,22 @@
             "sortOrderCode": 84,
             "revisionBytesHex": "FF35CA00",
             "autoIncrementValue": 75,
-            "dataHeaderMetadataHex": "2F00D700EF0052030101E7000000000000000000",
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "000000004E010000012000"
+            "headerBytes4DTo57Hex": "000000004E010000012000",
+            "headerBytes16To1DHex": "BCC8DF6BCCDCDF6B",
+            "headerBytes30To48Hex": "92D1DF6B82D1DF6B000B01000000000039D2DF6B41D2DF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7378885E64B2F00D700EF0052030101E7000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 10,
             "sortOrderCode": 84,
             "revisionBytesHex": "8B000000",
             "autoIncrementValue": 77,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "00000000B9000000000000"
+            "headerBytes4DTo57Hex": "00000000B9000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "00CBDF6BF2CADF6B000B010000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "012D012D01040104010201020404049FDF6B4157442E59473200000000000000"
           }
         },
         {
@@ -1488,18 +1518,22 @@
             "sortOrderCode": 84,
             "revisionBytesHex": "FF4CCA00",
             "autoIncrementValue": 75,
-            "dataHeaderMetadataHex": "1000FF001B015203010113010000000000000000",
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "0000000078010000012000"
+            "headerBytes4DTo57Hex": "0000000078010000012000",
+            "headerBytes16To1DHex": "DCB9DF6B2CCFDF6B",
+            "headerBytes30To48Hex": "B6C2DF6BA2C2DF6B000B01000000000081C3DF6B8BC3DF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7378885E64B1000FF001B015203010113010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 12,
             "sortOrderCode": 84,
             "revisionBytesHex": "A2000000",
             "autoIncrementValue": 77,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "00000000BD000000000000"
+            "headerBytes4DTo57Hex": "00000000BD000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "24BCDF6B12BCDF6B000B010000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "012D012D01040102010201040102010204042890DF6B4157442E594733000000"
           }
         },
         {
@@ -1564,18 +1598,22 @@
             "sortOrderCode": 84,
             "revisionBytesHex": "FF74CA00",
             "autoIncrementValue": 75,
-            "dataHeaderMetadataHex": "2F00C900DF0052030101D7000000000000000000",
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "000000003E010000002000"
+            "headerBytes4DTo57Hex": "000000003E010000002000",
+            "headerBytes16To1DHex": "4CABDF6B4CC0DF6B",
+            "headerBytes30To48Hex": "10B4DF6B02B4DF6B000B010000000000ABB4DF6BB2B4DF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7378985E64B2F00C900DF0052030101D7000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 14,
             "sortOrderCode": 84,
             "revisionBytesHex": "CA000000",
             "autoIncrementValue": 77,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "00000000B7000000000000"
+            "headerBytes4DTo57Hex": "00000000B7000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "8EADDF6B82ADDF6B000B010000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "010401020102012D012D04049281DF6B4157442E594734000000000000000000"
           }
         },
         {
@@ -1634,18 +1672,22 @@
             "sortOrderCode": 84,
             "revisionBytesHex": "FF48CA00",
             "autoIncrementValue": 73,
-            "dataHeaderMetadataHex": "2F00BC00D00052030101C8000000000000000000",
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "000000002C010000002000"
+            "headerBytes4DTo57Hex": "000000002C010000002000",
+            "headerBytes16To1DHex": "7C9DDF6BACB1DF6B",
+            "headerBytes30To48Hex": "EEA5DF6BE2A5DF6B000B0100000000007EA6DF6B84A6DF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7378985E64B2F00BC00D00052030101C8000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 16,
             "sortOrderCode": 84,
             "revisionBytesHex": "9E000000",
             "autoIncrementValue": 75,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "00000000B5000000000000"
+            "headerBytes4DTo57Hex": "00000000B5000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "BC9FDF6BB29FDF6B000B010000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "040401040102010204043021DF6B4157442E5947350000000000000000000000"
           }
         },
         {
@@ -1704,18 +1746,22 @@
             "sortOrderCode": 84,
             "revisionBytesHex": "FF5ACA00",
             "autoIncrementValue": 73,
-            "dataHeaderMetadataHex": "2F00BB00CF0052030101C7000000000000000000",
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "000000002B010000002000"
+            "headerBytes4DTo57Hex": "000000002B010000002000",
+            "headerBytes16To1DHex": "FC8FDF6B8CA3DF6B",
+            "headerBytes30To48Hex": "6E98DF6B6298DF6B000B010000000000FD98DF6B0399DF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7378985E64B2F00BB00CF0052030101C7000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 18,
             "sortOrderCode": 84,
             "revisionBytesHex": "B0000000",
             "autoIncrementValue": 75,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "00000000B5000000000000"
+            "headerBytes4DTo57Hex": "00000000B5000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "3C92DF6B3292DF6B000B010000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "04040104010201020404B013DF6B4157442E5947360000000000000000000000"
           }
         },
         {
@@ -1756,18 +1802,22 @@
             "sortOrderCode": 84,
             "revisionBytesHex": "FF9ACA00",
             "autoIncrementValue": 74,
-            "dataHeaderMetadataHex": "0D009B00A90052030101A1000000000000000000",
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "0000000006010000012000"
+            "headerBytes4DTo57Hex": "0000000006010000012000",
+            "headerBytes16To1DHex": "7C82DF6B0C96DF6B",
+            "headerBytes30To48Hex": "F88ADF6BF28ADF6B000B0100000000006D8BDF6B708BDF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7378985E64B0D009B00A90052030101A1000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 20,
             "sortOrderCode": 84,
             "revisionBytesHex": "F0000000",
             "autoIncrementValue": 76,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B010000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "B684DF6BB284DF6B000B010000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "012804042A06DF6B4157442E5947370000000000000000000000000000000000"
           }
         }
       ],
@@ -1779,19 +1829,78 @@
         "sortOrderCode": 84,
         "revisionBytesHex": "00A9CA00",
         "autoIncrementValue": 0,
-        "dataHeaderMetadataHex": "3C0015030000520301017D031600000000000000",
         "headerBytes38To3FHex": "000B010000000000",
-        "headerBytes4DTo57Hex": "00000000DD030000002000"
+        "headerBytes4DTo57Hex": "00000000DD030000002000",
+        "headerBytes16To1DHex": "BC0DDF6B00000000",
+        "headerBytes30To48Hex": "7A16DF6B1216DF6B000B0100000000000719DF6B3B19DF6B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A737E02ADE343C0015030000520301017D031600000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 4,
         "sortOrderCode": 84,
         "revisionBytesHex": "00000000",
         "autoIncrementValue": 74,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B010000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "F40FDF6BF20FDF6B000B010000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "040488E4DF6B4157442E50580000000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "intl850",
+      "databaseFieldNumbers": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        27,
+        28,
+        11,
+        12,
+        29,
+        30,
+        13,
+        14,
+        15,
+        16,
+        31,
+        32,
+        17,
+        18,
+        19,
+        33,
+        34,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        36,
+        37,
+        38,
+        40,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59
+      ]
     },
     {
       "fileName": "chnt.DB",
@@ -1837,19 +1946,30 @@
         "sortOrderCode": 183,
         "revisionBytesHex": "00516300",
         "autoIncrementValue": 0,
-        "dataHeaderMetadataHex": "0500A6000000B5010101AE000200000000000000",
         "headerBytes38To3FHex": "000B030000000000",
-        "headerBytes4DTo57Hex": "000000000B010000002000"
+        "headerBytes4DTo57Hex": "000000000B010000002000",
+        "headerBytes16To1DHex": "7C2FE86B6C62E86B",
+        "headerBytes30To48Hex": "4A39E86B4239E86B000B030000000000C839E86BCC39E86B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A737B4C768350500A6000000B5010101AE000200000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 30,
         "sortOrderCode": 183,
         "revisionBytesHex": "0A000000",
         "autoIncrementValue": 1,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B010000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "B431E86BB231E86B000B010000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "0404B831E86B7265737474656D702E5058000000000000000000000000000000"
+      },
+      "databaseSortOrder": "intl",
+      "databaseFieldNumbers": [
+        4,
+        1,
+        2,
+        3
+      ]
     },
     {
       "fileName": "ftab.DB",
@@ -2009,18 +2129,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FF068844",
             "autoIncrementValue": 40267,
-            "dataHeaderMetadataHex": "12005E017101E404010168010000000000000000",
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "00000000CB010000012000"
+            "headerBytes4DTo57Hex": "00000000CB010000012000",
+            "headerBytes16To1DHex": "5CC8E06BDCE7E06B",
+            "headerBytes30To48Hex": "FCD1E06BF2D1E06B000C00000000000030D3E06B35D3E06B00",
+            "extendedHeaderBytes58To77Hex": "0C010C018150A737F0AE364212005E017101E404010168010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 12,
             "sortOrderCode": 98,
             "revisionBytesHex": "6A000000",
             "autoIncrementValue": 15747,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "0000000069010000000000"
+            "headerBytes4DTo57Hex": "0000000069010000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "9ACAE06B92CAE06B000C000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "01060104010216049ECAE06B667461622E594730000000000000000000000000"
           }
         },
         {
@@ -2073,18 +2197,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FF758844",
             "autoIncrementValue": 40267,
-            "dataHeaderMetadataHex": "12005E017101E404010168010000000000000000",
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "00000000CB010000012000"
+            "headerBytes4DTo57Hex": "00000000CB010000012000",
+            "headerBytes16To1DHex": "8CB9E06B9CCFE06B",
+            "headerBytes30To48Hex": "ACC2E06BA2C2E06B000C000000000000E0C3E06BE5C3E06B00",
+            "extendedHeaderBytes58To77Hex": "0C010C018150A737F0AE364212005E017101E404010168010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 10,
             "sortOrderCode": 98,
             "revisionBytesHex": "D9000000",
             "autoIncrementValue": 15747,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "0000000069010000000000"
+            "headerBytes4DTo57Hex": "0000000069010000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "CABBE06BC2BBE06B000C000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "0106010401021604CEBBE06B667461622E594731000000000000000000000000"
           }
         },
         {
@@ -2125,18 +2253,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FFA88844",
             "autoIncrementValue": 40267,
-            "dataHeaderMetadataHex": "100048015701E40401014E010000000000000000",
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "00000000B4010000012000"
+            "headerBytes4DTo57Hex": "00000000B4010000012000",
+            "headerBytes16To1DHex": "ECAAE06B4CC0E06B",
+            "headerBytes30To48Hex": "F8B3E06BF2B3E06B000C0000000000001AB5E06B1DB5E06B00",
+            "extendedHeaderBytes58To77Hex": "0C010C018150A737F0AE3642100048015701E40401014E010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 8,
             "sortOrderCode": 98,
             "revisionBytesHex": "0D000000",
             "autoIncrementValue": 15747,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "0000000065010000000000"
+            "headerBytes4DTo57Hex": "0000000065010000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "26ADE06B22ADE06B000C000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "010216042AADE06B667461622E59473200000000000000000000000000000000"
           }
         }
       ],
@@ -2148,19 +2280,45 @@
         "sortOrderCode": 98,
         "revisionBytesHex": "00DF8800",
         "autoIncrementValue": 163154,
-        "dataHeaderMetadataHex": "1400DC010000E40401010202013D000000000000",
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "0000000063020000002000"
+        "headerBytes4DTo57Hex": "0000000063020000002000",
+        "headerBytes16To1DHex": "2CE1E06B00000000",
+        "headerBytes30To48Hex": "58EAE06B32EAE06B000C000000000000EEEBE06B01ECE06B00",
+        "extendedHeaderBytes58To77Hex": "0C010C018150A73716E92B421400DC010000E40401010202013D000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 6,
         "sortOrderCode": 98,
         "revisionBytesHex": "44000000",
         "autoIncrementValue": 15746,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "0000000063010000000000"
-      }
+        "headerBytes4DTo57Hex": "0000000063010000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "64E3E06B62E3E06B000C000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "160468E3E06B667461622E505800000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ANSIINTL",
+      "databaseFieldNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        15,
+        8,
+        9,
+        16,
+        10,
+        11,
+        17,
+        12,
+        13,
+        14,
+        18,
+        19
+      ]
     },
     {
       "fileName": "gedh.db",
@@ -2228,18 +2386,22 @@
             "sortOrderCode": 183,
             "revisionBytesHex": "FF49EF0E",
             "autoIncrementValue": 346966,
-            "dataHeaderMetadataHex": "040091009C00B501010197000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000F7000000012000"
+            "headerBytes4DTo57Hex": "00000000F7000000012000",
+            "headerBytes16To1DHex": "AC8AE26B9C9EE26B",
+            "headerBytes30To48Hex": "0893E26B0293E26B000B0000000000007393E26B7693E26B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737A98E3142040091009C00B501010197000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 87,
             "sortOrderCode": 183,
             "revisionBytesHex": "02000000",
             "autoIncrementValue": 98664,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "E68CE26BE28CE26B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "04041604EA8CE26B676564682E59473000000000000000000000000000000000"
           }
         }
       ],
@@ -2251,19 +2413,29 @@
         "sortOrderCode": 183,
         "revisionBytesHex": "0055EF00",
         "autoIncrementValue": 1501569,
-        "dataHeaderMetadataHex": "04008B000000B50101019100727E010000000000",
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000EE000000002000"
+        "headerBytes4DTo57Hex": "00000000EE000000002000",
+        "headerBytes16To1DHex": "9C98E26BCCDEE26B",
+        "headerBytes30To48Hex": "F8A0E26BF2A0E26B000B0000000000005DA1E26B60A1E26B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A737E094543604008B000000B50101019100727E010000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 85,
         "sortOrderCode": 183,
         "revisionBytesHex": "0E000000",
         "autoIncrementValue": 98663,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "D49AE26BD29AE26B000B000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "1604D89AE26B676564682E505800000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "intl",
+      "databaseFieldNumbers": [
+        3,
+        1,
+        2
+      ]
     },
     {
       "fileName": "lc.DB",
@@ -2326,18 +2498,22 @@
             "sortOrderCode": 183,
             "revisionBytesHex": "FF169C4B",
             "autoIncrementValue": 4,
-            "dataHeaderMetadataHex": "040094009F00B50101019A000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000FA000000012000"
+            "headerBytes4DTo57Hex": "00000000FA000000012000",
+            "headerBytes16To1DHex": "7CD9E06B4CEDE06B",
+            "headerBytes30To48Hex": "08E2E06B02E2E06B000B00000000000076E2E06B79E2E06B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737588EC742040094009F00B50101019A000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 8,
             "sortOrderCode": 183,
             "revisionBytesHex": "CE000000",
             "autoIncrementValue": 6,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "B6DBE06BB2DBE06B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "01320404BADBE06B6C632E594730000000000000000000000000000000000000"
           }
         }
       ],
@@ -2349,19 +2525,28 @@
         "sortOrderCode": 183,
         "revisionBytesHex": "00929C00",
         "autoIncrementValue": 0,
-        "dataHeaderMetadataHex": "030086000000B50101018A001100000000000000",
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000E7000000002000"
+        "headerBytes4DTo57Hex": "00000000E7000000002000",
+        "headerBytes16To1DHex": "4CE7E06B00000000",
+        "headerBytes30To48Hex": "A6EFE06BA2EFE06B000B00000000000008F0E06B0AF0E06B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A73740354635030086000000B50101018A001100000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 6,
         "sortOrderCode": 183,
         "revisionBytesHex": "4B000000",
         "autoIncrementValue": 5,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "84E9E06B82E9E06B000B000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "040488E9E06B6C632E5058000000000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "intl",
+      "databaseFieldNumbers": [
+        2,
+        1
+      ]
     },
     {
       "fileName": "LOC.db",
@@ -2479,18 +2664,22 @@
             "sortOrderCode": 0,
             "revisionBytesHex": "FF3EA928",
             "autoIncrementValue": 1011,
-            "dataHeaderMetadataHex": "04009500A100520301019B000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000FE000000012000"
+            "headerBytes4DTo57Hex": "00000000FE000000012000",
+            "headerBytes16To1DHex": "7C73E16B9C8DE16B",
+            "headerBytes30To48Hex": "187CE16B127CE16B000B000000000000877CE16B8A7CE16B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7378C7B004E04009500A100520301019B000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 27,
             "sortOrderCode": 0,
             "revisionBytesHex": "3E000000",
             "autoIncrementValue": 1013,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "B675E16BB275E16B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "01280128BA75E16B4C4F432E5947300000000000000000000000000000000000"
           }
         }
       ],
@@ -2502,19 +2691,39 @@
         "sortOrderCode": 0,
         "revisionBytesHex": "0028A900",
         "autoIncrementValue": 0,
-        "dataHeaderMetadataHex": "1000FA0000005203010114015102000000000000",
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "0000000072010000002000"
+        "headerBytes4DTo57Hex": "0000000072010000002000",
+        "headerBytes16To1DHex": "7C87E16B5C97E06B",
+        "headerBytes30To48Hex": "0C90E16BF28FE16B000B000000000000CC90E16BD990E16B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A737403546351000FA0000005203010114015102000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 25,
         "sortOrderCode": 0,
         "revisionBytesHex": "28000000",
         "autoIncrementValue": 1012,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "B489E16BB289E16B000B000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "0128B889E16B4C4F432E50580000000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ascii",
+      "databaseFieldNumbers": [
+        1,
+        7,
+        3,
+        4,
+        5,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
     },
     {
       "fileName": "MRG.DB",
@@ -2682,18 +2891,22 @@
             "sortOrderCode": 183,
             "revisionBytesHex": "FFBE5D97",
             "autoIncrementValue": 2492603,
-            "dataHeaderMetadataHex": "04009900A400B50101019F000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000FF000000012000"
+            "headerBytes4DTo57Hex": "00000000FF000000012000",
+            "headerBytes16To1DHex": "1C67DF6B2CF4E06B",
+            "headerBytes30To48Hex": "98DDE06B92DDE06B000B0000000000000BDEE06B0EDEE06B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737AC68DD4A04009900A400B50101019F000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 39,
             "sortOrderCode": 183,
             "revisionBytesHex": "77000000",
             "autoIncrementValue": 219,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "5669DF6B5269DF6B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "040416045A69DF6B4D52472E5947300000000000000000000000000000000000"
           }
         },
         {
@@ -2746,18 +2959,22 @@
             "sortOrderCode": 183,
             "revisionBytesHex": "FF5C5D97",
             "autoIncrementValue": 2492620,
-            "dataHeaderMetadataHex": "1800AE00BD00B5010101B8000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "0000000019010000002000"
+            "headerBytes4DTo57Hex": "0000000019010000002000",
+            "headerBytes16To1DHex": "9C5ADF6B3CDBE06B",
+            "headerBytes30To48Hex": "0C63DF6B0263DF6B000B0000000000009063DF6B9563DF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737AC68DD4A1800AE00BD00B5010101B8000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 37,
             "sortOrderCode": 183,
             "revisionBytesHex": "15000000",
             "autoIncrementValue": 236,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000B3000000000000"
+            "headerBytes4DTo57Hex": "00000000B3000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "DA5CDF6BD25CDF6B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "0404010401021604DE5CDF6B4D52472E59473100000000000000000000000000"
           }
         },
         {
@@ -2810,18 +3027,22 @@
             "sortOrderCode": 183,
             "revisionBytesHex": "FFB85D97",
             "autoIncrementValue": 2492620,
-            "dataHeaderMetadataHex": "1800AF00BE00B5010101B9000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "000000001A010000002000"
+            "headerBytes4DTo57Hex": "000000001A010000002000",
+            "headerBytes16To1DHex": "1C4EDF6BAC60DF6B",
+            "headerBytes30To48Hex": "8C56DF6B8256DF6B000B0000000000001157DF6B1657DF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737AC68DD4A1800AF00BE00B5010101B9000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 35,
             "sortOrderCode": 183,
             "revisionBytesHex": "71000000",
             "autoIncrementValue": 236,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000B3000000000000"
+            "headerBytes4DTo57Hex": "00000000B3000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "5A50DF6B5250DF6B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "04040104010216045E50DF6B4D52472E59473200000000000000000000000000"
           }
         },
         {
@@ -2862,18 +3083,22 @@
             "sortOrderCode": 183,
             "revisionBytesHex": "FF795D97",
             "autoIncrementValue": 2492603,
-            "dataHeaderMetadataHex": "04009800A300B50101019E000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000FE000000012000"
+            "headerBytes4DTo57Hex": "00000000FE000000012000",
+            "headerBytes16To1DHex": "5C41DF6B2C54DF6B",
+            "headerBytes30To48Hex": "B849DF6BB249DF6B000B0000000000002A4ADF6B2D4ADF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737AC68DD4A04009800A300B50101019E000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 33,
             "sortOrderCode": 183,
             "revisionBytesHex": "32000000",
             "autoIncrementValue": 219,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "9643DF6B9243DF6B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "040416049A43DF6B4D52472E5947330000000000000000000000000000000000"
           }
         },
         {
@@ -2950,18 +3175,22 @@
             "sortOrderCode": 183,
             "revisionBytesHex": "FF675D97",
             "autoIncrementValue": 2492612,
-            "dataHeaderMetadataHex": "0C00E400FB00B5010101F6000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "0000000056010000012000"
+            "headerBytes4DTo57Hex": "0000000056010000012000",
+            "headerBytes16To1DHex": "AC33DF6B5C47DF6B",
+            "headerBytes30To48Hex": "343CDF6B223CDF6B000B000000000000E63CDF6BEF3CDF6B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737AC68DD4A0C00E400FB00B5010101F6000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 31,
             "sortOrderCode": 183,
             "revisionBytesHex": "20000000",
             "autoIncrementValue": 228,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000BB000000000000"
+            "headerBytes4DTo57Hex": "00000000BB000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "F235DF6BE235DF6B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "04040104010201020104010201021604F635DF6B4D52472E5947340000000000"
           }
         }
       ],
@@ -2973,19 +3202,49 @@
         "sortOrderCode": 183,
         "revisionBytesHex": "00DE5D00",
         "autoIncrementValue": 2833279,
-        "dataHeaderMetadataHex": "18008F010000B5010101BD014F00000000000000",
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "000000001A020000002000"
+        "headerBytes4DTo57Hex": "000000001A020000002000",
+        "headerBytes16To1DHex": "2CEEE06BFC3EE06B",
+        "headerBytes30To48Hex": "B0F6E06B82F6E06B000B000000000000F1F7E06B08F8E06B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A737E02ADE3418008F010000B5010101BD014F00000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 29,
         "sortOrderCode": 183,
         "revisionBytesHex": "97000000",
         "autoIncrementValue": 218,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "64F0E06B62F0E06B000B000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "160468F0E06B4D52472E50580000000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "intl",
+      "databaseFieldNumbers": [
+        18,
+        1,
+        2,
+        3,
+        12,
+        13,
+        4,
+        5,
+        6,
+        14,
+        15,
+        7,
+        8,
+        9,
+        10,
+        16,
+        17,
+        11,
+        19,
+        20,
+        21,
+        22,
+        23
+      ]
     },
     {
       "fileName": "ndh.db",
@@ -3013,19 +3272,27 @@
         "sortOrderCode": 98,
         "revisionBytesHex": "00EB8200",
         "autoIncrementValue": 0,
-        "dataHeaderMetadataHex": "020037010000E404010139014800000000000000",
         "headerBytes38To3FHex": "000C000000001F0F",
-        "headerBytes4DTo57Hex": "000000009A010000002000"
+        "headerBytes4DTo57Hex": "000000009A010000002000",
+        "headerBytes16To1DHex": "BC59E06BBCD7E16B",
+        "headerBytes30To48Hex": "B495E06BB295E06B000C000000001F0F000000000000000000",
+        "extendedHeaderBytes58To77Hex": "0C010C0100000000FF3CED4B020037010000E404010139014800000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 51,
         "sortOrderCode": 98,
         "revisionBytesHex": "50000000",
         "autoIncrementValue": 106,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "0000000063010000000000"
-      }
+        "headerBytes4DTo57Hex": "0000000063010000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "F45BE06BF25BE06B000C000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "0164F85BE06B6E64682E50580000000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ANSIINTL",
+      "databaseFieldNumbers": [
+        1
+      ]
     },
     {
       "fileName": "NM.db",
@@ -3083,18 +3350,22 @@
             "sortOrderCode": 0,
             "revisionBytesHex": "FF55175E",
             "autoIncrementValue": 107686,
-            "dataHeaderMetadataHex": "04009700A300520301019D000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "0000000000010000012000"
+            "headerBytes4DTo57Hex": "0000000000010000012000",
+            "headerBytes16To1DHex": "ACA8E06B6CC0E16B",
+            "headerBytes30To48Hex": "68B1E06B62B1E06B000B000000000000D9B1E06BDCB1E06B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A737D302734404009700A300520301019D000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 45,
             "sortOrderCode": 0,
             "revisionBytesHex": "55000000",
             "autoIncrementValue": 107689,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "E6AAE06BE2AAE06B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "01320132EAAAE06B4E4D2E594730000000000000000000000000000000000000"
           }
         }
       ],
@@ -3106,19 +3377,27 @@
         "sortOrderCode": 0,
         "revisionBytesHex": "005E1700",
         "autoIncrementValue": 0,
-        "dataHeaderMetadataHex": "0B007E000000B50101018000FE42030000000000",
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000DE000000002000"
+        "headerBytes4DTo57Hex": "00000000DE000000002000",
+        "headerBytes16To1DHex": "ECB8E16BBCD7E16B",
+        "headerBytes30To48Hex": "C4C2E16BC2C2E16B000B00000000000020C3E16B21C3E16B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A737403546350B007E000000B50101018000FE42030000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 43,
         "sortOrderCode": 0,
         "revisionBytesHex": "5E000000",
         "autoIncrementValue": 107688,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "24BBE16B22BBE16B000B000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "013228BBE16B4E4D2E5058000000000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ascii",
+      "databaseFieldNumbers": [
+        7
+      ]
     },
     {
       "fileName": "NUMRES.DB",
@@ -3146,19 +3425,27 @@
         "sortOrderCode": 183,
         "revisionBytesHex": "004E8600",
         "autoIncrementValue": 0,
-        "dataHeaderMetadataHex": "02007D000000B50101017F00AD10000000000000",
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000DC000000002000"
+        "headerBytes4DTo57Hex": "00000000DC000000002000",
+        "headerBytes16To1DHex": "8CA0E16B3CC0E16B",
+        "headerBytes30To48Hex": "E4A8E16BE2A8E16B000B0000000000003FA9E16B40A9E16B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A73740947D3502007D000000B50101017F00AD10000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 23,
         "sortOrderCode": 183,
         "revisionBytesHex": "07000000",
         "autoIncrementValue": 3772,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "C4A2E16BC2A2E16B000B000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "0404C8A2E16B4E554D5245532E50580000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "intl",
+      "databaseFieldNumbers": [
+        1
+      ]
     },
     {
       "fileName": "occ.db",
@@ -3221,18 +3508,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FF0682DB",
             "autoIncrementValue": 76233,
-            "dataHeaderMetadataHex": "04004A015901E404010150010000000000000000",
             "headerBytes38To3FHex": "000C000000001F0F",
-            "headerBytes4DTo57Hex": "00000000B5010000012000"
+            "headerBytes4DTo57Hex": "00000000B5010000012000",
+            "headerBytes16To1DHex": "ECD1E16B8C78E26B",
+            "headerBytes30To48Hex": "18DAE16B12DAE16B000C000000001F0F000000000000000000",
+            "extendedHeaderBytes58To77Hex": "0C010C0100000000942EC84704004A015901E404010150010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 60,
             "sortOrderCode": 98,
             "revisionBytesHex": "6A000000",
             "autoIncrementValue": 76235,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "0000000065010000000000"
+            "headerBytes4DTo57Hex": "0000000065010000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "26D4E16B22D4E16B000C000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "014616042AD4E16B6F63632E5947300000000000000000000000000000000000"
           }
         }
       ],
@@ -3244,19 +3535,28 @@
         "sortOrderCode": 98,
         "revisionBytesHex": "00778200",
         "autoIncrementValue": 168470,
-        "dataHeaderMetadataHex": "03003C010000E40401014001C028010000000000",
         "headerBytes38To3FHex": "000C000000001F0F",
-        "headerBytes4DTo57Hex": "00000000A1010000002000"
+        "headerBytes4DTo57Hex": "00000000A1010000002000",
+        "headerBytes16To1DHex": "DC71E26B0CAFE06B",
+        "headerBytes30To48Hex": "E67AE26BE27AE26B000C000000001F0F000000000000000000",
+        "extendedHeaderBytes58To77Hex": "0C010C0100000000942EC84703003C010000E40401014001C028010000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 58,
         "sortOrderCode": 98,
         "revisionBytesHex": "DB000000",
         "autoIncrementValue": 76235,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "0000000063010000000000"
-      }
+        "headerBytes4DTo57Hex": "0000000063010000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "1474E26B1274E26B000C000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "16041874E26B6F63632E50580000000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ANSIINTL",
+      "databaseFieldNumbers": [
+        1,
+        2
+      ]
     },
     {
       "fileName": "OUTP.db",
@@ -3340,18 +3640,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FF018A91",
             "autoIncrementValue": 990709,
-            "dataHeaderMetadataHex": "060053016401E40401015B010000000000000000",
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "00000000C1010000012000"
+            "headerBytes4DTo57Hex": "00000000C1010000012000",
+            "headerBytes16To1DHex": "CCD7E26B9CEFE26B",
+            "headerBytes30To48Hex": "2AE1E26B22E1E26B000C00000000000055E2E26B59E2E26B00",
+            "extendedHeaderBytes58To77Hex": "0C010C018150A7374091DC42060053016401E40401015B010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 82,
             "sortOrderCode": 98,
             "revisionBytesHex": "65000000",
             "autoIncrementValue": 270232,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "0000000067010000000000"
+            "headerBytes4DTo57Hex": "0000000067010000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "08DAE26B02DAE26B000C000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "0132011916040CDAE26B4F5554502E5947300000000000000000000000000000"
           }
         }
       ],
@@ -3363,19 +3667,31 @@
         "sortOrderCode": 98,
         "revisionBytesHex": "002D8A00",
         "autoIncrementValue": 1103193,
-        "dataHeaderMetadataHex": "06005B010000E404010165016429040000000000",
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "00000000C6010000002000"
+        "headerBytes4DTo57Hex": "00000000C6010000002000",
+        "headerBytes16To1DHex": "ECE8E26BBC79E16B",
+        "headerBytes30To48Hex": "FCF1E26BF2F1E26B000C0000000000002DF3E26B32F3E26B00",
+        "extendedHeaderBytes58To77Hex": "0C010C018150A737C491C54006005B010000E404010165016429040000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 80,
         "sortOrderCode": 98,
         "revisionBytesHex": "91000000",
         "autoIncrementValue": 270231,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "0000000063010000000000"
-      }
+        "headerBytes4DTo57Hex": "0000000063010000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "24EBE26B22EBE26B000C000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "160428EBE26B4F5554502E505800000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ANSIINTL",
+      "databaseFieldNumbers": [
+        2,
+        1,
+        3,
+        4,
+        5
+      ]
     },
     {
       "fileName": "repso.db",
@@ -3453,18 +3769,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FF9F8A76",
             "autoIncrementValue": 36563,
-            "dataHeaderMetadataHex": "06009300A200E404010199000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000FF000000012000"
+            "headerBytes4DTo57Hex": "00000000FF000000012000",
+            "headerBytes16To1DHex": "8C49E26BDC5EE26B",
+            "headerBytes30To48Hex": "0852E26B0252E26B000B0000000000007552E26B7852E26B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7374A24834206009300A200E404010199000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 95,
             "sortOrderCode": 98,
             "revisionBytesHex": "04000000",
             "autoIncrementValue": 9068,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "C64BE26BC24BE26B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "011E1604CA4BE26B726570736F2E594730000000000000000000000000000000"
           }
         },
         {
@@ -3505,18 +3825,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FFD48A76",
             "autoIncrementValue": 36563,
-            "dataHeaderMetadataHex": "04009200A100E404010198000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000FD000000012000"
+            "headerBytes4DTo57Hex": "00000000FD000000012000",
+            "headerBytes16To1DHex": "3C3CE26BAC4FE26B",
+            "headerBytes30To48Hex": "9844E26B9244E26B000B0000000000000445E26B0745E26B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7374A24834204009200A100E404010198000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 93,
             "sortOrderCode": 98,
             "revisionBytesHex": "39000000",
             "autoIncrementValue": 9068,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "763EE26B723EE26B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "040416047A3EE26B726570736F2E594731000000000000000000000000000000"
           }
         },
         {
@@ -3557,18 +3881,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FF448A76",
             "autoIncrementValue": 36563,
-            "dataHeaderMetadataHex": "04009300A200E404010199000000000000000000",
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000FD000000012000"
+            "headerBytes4DTo57Hex": "00000000FD000000012000",
+            "headerBytes16To1DHex": "1C2DE26B3C42E26B",
+            "headerBytes30To48Hex": "7836E26B7236E26B000B000000000000E536E26BE836E26B00",
+            "extendedHeaderBytes58To77Hex": "0B010B018150A7374A24834204009300A200E404010199000000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 91,
             "sortOrderCode": 98,
             "revisionBytesHex": "A8000000",
             "autoIncrementValue": 9068,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000B000000000000",
-            "headerBytes4DTo57Hex": "00000000AF000000000000"
+            "headerBytes4DTo57Hex": "00000000AF000000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "562FE26B522FE26B000B000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "01FF16045A2FE26B726570736F2E594732000000000000000000000000000000"
           }
         }
       ],
@@ -3580,19 +3908,31 @@
         "sortOrderCode": 98,
         "revisionBytesHex": "00128A00",
         "autoIncrementValue": 43856,
-        "dataHeaderMetadataHex": "0600A3000000E4040101AD00E622000000000000",
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "000000000E010000002000"
+        "headerBytes4DTo57Hex": "000000000E010000002000",
+        "headerBytes16To1DHex": "DC58E26BAC90E26B",
+        "headerBytes30To48Hex": "3C61E26B3261E26B000B000000000000B561E26BBA61E26B00",
+        "extendedHeaderBytes58To77Hex": "0B010B018150A737C0B8F13A0600A3000000E4040101AD00E622000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 89,
         "sortOrderCode": 98,
         "revisionBytesHex": "76000000",
         "autoIncrementValue": 9067,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000B000000000000",
-        "headerBytes4DTo57Hex": "00000000AD000000000000"
-      }
+        "headerBytes4DTo57Hex": "00000000AD000000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "145BE26B125BE26B000B000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "1604185BE26B726570736F2E5058000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ANSIINTL",
+      "databaseFieldNumbers": [
+        1,
+        2,
+        3,
+        5,
+        4
+      ]
     },
     {
       "fileName": "sour.DB",
@@ -3655,18 +3995,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FFC38B00",
             "autoIncrementValue": 2044,
-            "dataHeaderMetadataHex": "04004D015C01E404010153010000000000000000",
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "00000000B7010000012000"
+            "headerBytes4DTo57Hex": "00000000B7010000012000",
+            "headerBytes16To1DHex": "4C39E16BFC4FE16B",
+            "headerBytes30To48Hex": "E842E16BE242E16B000C0000000000000F44E16B1244E16B00",
+            "extendedHeaderBytes58To77Hex": "0C010C018150A73730B8C74704004D015C01E404010153010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 49,
             "sortOrderCode": 98,
             "revisionBytesHex": "28000000",
             "autoIncrementValue": 2047,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "0000000065010000000000"
+            "headerBytes4DTo57Hex": "0000000065010000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "863BE16B823BE16B000C000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "019616048A3BE16B736F75722E59473000000000000000000000000000000000"
           }
         }
       ],
@@ -3678,19 +4022,28 @@
         "sortOrderCode": 98,
         "revisionBytesHex": "009B8B00",
         "autoIncrementValue": 4378,
-        "dataHeaderMetadataHex": "05003F010000E404010143012807000000000000",
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "00000000A4010000002000"
+        "headerBytes4DTo57Hex": "00000000A4010000002000",
+        "headerBytes16To1DHex": "4C49E16BBC79E16B",
+        "headerBytes30To48Hex": "5652E16B5252E16B000C0000000000007153E16B7353E16B00",
+        "extendedHeaderBytes58To77Hex": "0C010C018150A737455CF64105003F010000E404010143012807000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 47,
         "sortOrderCode": 98,
         "revisionBytesHex": "00000000",
         "autoIncrementValue": 2019,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "0000000063010000000000"
-      }
+        "headerBytes4DTo57Hex": "0000000063010000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "844BE16B824BE16B000C000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "1604884BE16B736F75722E505800000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ANSIINTL",
+      "databaseFieldNumbers": [
+        4,
+        1
+      ]
     },
     {
       "fileName": "sour2.DB",
@@ -3803,18 +4156,22 @@
             "sortOrderCode": 98,
             "revisionBytesHex": "FFBC86F8",
             "autoIncrementValue": 4132,
-            "dataHeaderMetadataHex": "04004B015A01E404010151010000000000000000",
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "00000000B6010000012000"
+            "headerBytes4DTo57Hex": "00000000B6010000012000",
+            "headerBytes16To1DHex": "1C39E06BACEFE16B",
+            "headerBytes30To48Hex": "5841E06B5241E06B000C0000000000007D42E06B8042E06B00",
+            "extendedHeaderBytes58To77Hex": "0C010C018150A7373B49FB4D04004B015A01E404010151010000000000000000"
           },
           "ygHeaderMetadata": {
             "word12": 55,
             "sortOrderCode": 98,
             "revisionBytesHex": "21000000",
             "autoIncrementValue": 682,
-            "dataHeaderMetadataHex": null,
             "headerBytes38To3FHex": "000C000000000000",
-            "headerBytes4DTo57Hex": "0000000065010000000000"
+            "headerBytes4DTo57Hex": "0000000065010000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "563BE06B523BE06B000C000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "015016045A3BE06B736F7572322E594730000000000000000000000000000000"
           }
         }
       ],
@@ -3826,19 +4183,38 @@
         "sortOrderCode": 98,
         "revisionBytesHex": "00948600",
         "autoIncrementValue": 91041,
-        "dataHeaderMetadataHex": "1200AD010000E4040101C5017401000000000000",
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "0000000026020000002000"
+        "headerBytes4DTo57Hex": "0000000026020000002000",
+        "headerBytes16To1DHex": "FCE8E16B2C78DF6B",
+        "headerBytes30To48Hex": "1AF2E16B02F2E16B000C0000000000008FF3E16B9BF3E16B00",
+        "extendedHeaderBytes58To77Hex": "0C010C018150A737BB2B7E4C1200AD010000E4040101C5017401000000000000"
       },
       "primaryIndexHeaderMetadata": {
         "word12": 53,
         "sortOrderCode": 98,
         "revisionBytesHex": "F8000000",
         "autoIncrementValue": 680,
-        "dataHeaderMetadataHex": null,
         "headerBytes38To3FHex": "000C000000000000",
-        "headerBytes4DTo57Hex": "0000000063010000000000"
-      }
+        "headerBytes4DTo57Hex": "0000000063010000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "34EBE16B32EBE16B000C000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "160438EBE16B736F7572322E5058000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ANSIINTL",
+      "databaseFieldNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        11,
+        12,
+        13
+      ]
     }
   ]
 }

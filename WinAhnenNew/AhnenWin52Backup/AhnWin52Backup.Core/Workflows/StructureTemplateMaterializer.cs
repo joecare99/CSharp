@@ -539,6 +539,9 @@ public sealed class StructureTemplateMaterializer
                 table.RecordSize <= 0 ||
                 table.MaximumTableSize is < 1 or > 32 ||
                 table.Fields.Count == 0 ||
+                table.DatabaseFieldNumbers.Count != table.Fields.Count ||
+                table.DatabaseFieldNumbers.Any(static fieldNumber => fieldNumber is < 1 or > ushort.MaxValue) ||
+                string.IsNullOrWhiteSpace(table.DatabaseSortOrder) ||
                 table.Fields.Sum(static field => field.Length) != table.RecordSize ||
                 table.SecondaryIndexes.Select(static index => index.Number).Distinct().Count() !=
                 table.SecondaryIndexes.Count)
