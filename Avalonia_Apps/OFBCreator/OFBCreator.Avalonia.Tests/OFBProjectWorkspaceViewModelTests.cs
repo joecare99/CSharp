@@ -89,6 +89,64 @@ public sealed class OFBProjectWorkspaceViewModelTests : IDisposable
     }
 
     [TestMethod]
+    public void ManualMergeSelectedCommand_CreatesDecisionForSelectedFamilyGroups()
+    {
+        var viewModel = CreateViewModel();
+        viewModel.GroupingChoices.Add("Elternname");
+        viewModel.GroupingChoices.Add("Kindname");
+        viewModel.LeftGroupingChoice = "Elternname";
+        viewModel.RightGroupingChoice = "Kindname";
+
+        var targetMap = typeof(OFBProjectWorkspaceViewModel)
+            .GetField("_groupingTargetBySurname", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+        var targets = (System.Collections.Generic.Dictionary<string, string>)targetMap.GetValue(viewModel)!;
+        targets["Elternname"] = OFBExportRuleTarget.Family("gedcom", "F1");
+        targets["Kindname"] = OFBExportRuleTarget.Family("gedcom", "F2");
+
+        viewModel.ManualMergeSelectedCommand.Execute(null);
+
+        var decision = viewModel.GroupingDecisions.Single();
+        Assert.AreEqual("manualMerge", decision.Action);
+        Assert.AreEqual("Elternname", decision.GroupName);
+        Assert.AreEqual(OFBExportRuleTarget.Family("gedcom", "F1"), decision.LeftFamilyTargetId);
+        Assert.AreEqual(OFBExportRuleTarget.Family("gedcom", "F2"), decision.RightFamilyTargetId);
+    }
+
+    [TestMethod]
+    public async Task RefreshGroupingCandidatesCommand_LoadsPrivacyPeopleAndGroupingCandidatesTogether()
+    {
+        var projectPath = Path.Combine(_testDirectory, "FamilyBook.ofbproject");
+        var projectStore = new OFBProjectStore(Path.Combine(_testDirectory, "catalog"));
+        var project = new OFBProject { Name = "FamilyBook", Title = "Family Book", InputPath = "family.ged" };
+        projectStore.Save(project, projectPath);
+        var previewPerson = new OFBPersonPrivacyPreview(
+            "gedcom:person:I1",
+            "Alice Example",
+            [new OFBPersonPrivacyChange("surname", "Example", "Private")]);
+        var candidate = new OFBGroupingCandidate("candidate", "Example", "Exempel", "gedcom:family:F1", "gedcom:family:F2", 80, "suggested", []);
+        var grouping = new OFBFamilyGroupingResult(
+            new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IReadOnlyList<GenInterfaces.Interfaces.Genealogic.IGenFamily>>
+            {
+                ["Suggested group"] = [Substitute.For<GenInterfaces.Interfaces.Genealogic.IGenFamily>()]
+            },
+            [candidate],
+            []);
+        var workspaceService = Substitute.For<IOFBWorkspaceService>();
+        workspaceService.PreviewWorkspaceAsync(Arg.Any<OFBProject>(), projectPath, Arg.Any<System.Threading.CancellationToken>())
+            .Returns(Task.FromResult(new OFBWorkspacePreview(grouping, [previewPerson])));
+        var viewModel = new OFBProjectWorkspaceViewModel(projectStore, workspaceService);
+        viewModel.ProjectFilePath = projectPath;
+        viewModel.OpenProjectCommand.Execute(null);
+
+        await viewModel.RefreshGroupingCandidatesCommand.ExecuteAsync(null);
+
+        Assert.AreSame(previewPerson, viewModel.PrivacyPeople.Single());
+        Assert.AreSame(candidate, viewModel.GroupingCandidates.Single());
+        StringAssert.StartsWith(viewModel.GroupingSummaries.Single(), "Suggested group (1 families:");
+        StringAssert.Contains(viewModel.StatusMessage, "1 people pass the filters");
+    }
+
+    [TestMethod]
     public void AddRuleCommand_ReportsInvalidRulesWithoutAddingThem()
     {
         var viewModel = CreateViewModel();
@@ -110,6 +168,84 @@ public sealed class OFBProjectWorkspaceViewModelTests : IDisposable
         viewModel.ValidateTemplateCommand.Execute(null);
 
         StringAssert.Contains(viewModel.StatusMessage, "is valid");
+    }
+
+    [TestMethod]
+    public void DefaultPathWatermarks_UseStandardFolderUntilProjectPathIsSelected()
+    {
+        var viewModel = CreateViewModel();
+        viewModel.Name = "FamilyBook";
+        var defaultDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "OFBCreator");
+
+        Assert.AreEqual(Path.Combine(defaultDirectory, "FamilyBook.ofbproject"), viewModel.DefaultProjectPath);
+        Assert.AreEqual(Path.Combine(defaultDirectory, "FamilyBook.docx"), viewModel.DefaultOutputPath);
+
+        viewModel.ProjectFilePath = Path.Combine(_testDirectory, "FamilyBook.ofbproject");
+        Assert.AreEqual(Path.Combine(_testDirectory, "FamilyBook.docx"), viewModel.DefaultOutputPath);
+    }
+
+    [TestMethod]
+    public async Task FileDialogCommands_ApplySelectedPathsAndSaveProjectAs()
+    {
+        var dialogs = Substitute.For<IOFBFileDialogService>();
+        var gedcomPath = Path.Combine(_testDirectory, "source.ged");
+        var outputPath = Path.Combine(_testDirectory, "result.docx");
+        var projectPath = Path.Combine(_testDirectory, "FamilyBook.ofbproject");
+        dialogs.OpenGedcomAsync(Arg.Any<string?>()).Returns(Task.FromResult<string?>(gedcomPath));
+        dialogs.SaveDocxAsAsync(Arg.Any<string>()).Returns(Task.FromResult<string?>(outputPath));
+        dialogs.SaveProjectAsAsync(Arg.Any<string>()).Returns(Task.FromResult<string?>(projectPath));
+        var workspaceService = Substitute.For<IOFBWorkspaceService>();
+        workspaceService.PreviewWorkspaceAsync(Arg.Any<OFBProject>(), Arg.Any<string>(), Arg.Any<System.Threading.CancellationToken>())
+            .Returns(Task.FromResult(new OFBWorkspacePreview(
+                new OFBFamilyGroupingResult(
+                    new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IReadOnlyList<GenInterfaces.Interfaces.Genealogic.IGenFamily>>(),
+                    [],
+                    []),
+                [])));
+        var viewModel = new OFBProjectWorkspaceViewModel(
+            new OFBProjectStore(Path.Combine(_testDirectory, "catalog")),
+            workspaceService,
+            fileDialogService: dialogs);
+
+        await viewModel.OpenGedcomFileCommand.ExecuteAsync(null);
+        await viewModel.SaveDocxAsCommand.ExecuteAsync(null);
+        await viewModel.SaveProjectAsCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(gedcomPath, viewModel.InputPath);
+        Assert.AreEqual(outputPath, viewModel.OutputPath);
+        Assert.AreEqual(Path.GetFullPath(projectPath), viewModel.ProjectFilePath);
+        Assert.IsTrue(File.Exists(projectPath));
+        await dialogs.Received(1).OpenGedcomAsync(Arg.Any<string?>());
+        await dialogs.Received(1).SaveDocxAsAsync(Arg.Any<string>());
+        await dialogs.Received(1).SaveProjectAsAsync(Arg.Any<string>());
+    }
+
+    [TestMethod]
+    public async Task SelectProjectFolderCommand_SetsDefaultProjectFilename()
+    {
+        var dialogs = Substitute.For<IOFBFileDialogService>();
+        dialogs.PickDirectoryAsync(Arg.Any<string?>()).Returns(Task.FromResult<string?>(_testDirectory));
+        var viewModel = CreateViewModel(dialogs);
+        viewModel.Name = "FamilyBook";
+
+        await viewModel.SelectProjectFolderCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(Path.Combine(_testDirectory, "FamilyBook.ofbproject"), viewModel.ProjectFilePath);
+    }
+
+    [TestMethod]
+    public async Task SelectOutputFolderCommand_SetsDefaultDocxFilename()
+    {
+        var dialogs = Substitute.For<IOFBFileDialogService>();
+        dialogs.PickDirectoryAsync(Arg.Any<string?>()).Returns(Task.FromResult<string?>(_testDirectory));
+        var viewModel = CreateViewModel(dialogs);
+        viewModel.Name = "FamilyBook";
+
+        await viewModel.SelectOutputFolderCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(Path.Combine(_testDirectory, "FamilyBook.docx"), viewModel.OutputPath);
     }
 
     [TestMethod]
@@ -230,10 +366,13 @@ public sealed class OFBProjectWorkspaceViewModelTests : IDisposable
             Directory.Delete(_testDirectory, recursive: true);
     }
 
-    private OFBProjectWorkspaceViewModel CreateViewModel()
+    private OFBProjectWorkspaceViewModel CreateViewModel(IOFBFileDialogService? fileDialogService = null)
     {
         var store = new OFBProjectStore(Path.Combine(_testDirectory, "catalog"));
-        return new OFBProjectWorkspaceViewModel(store, Substitute.For<IOFBWorkspaceService>());
+        return new OFBProjectWorkspaceViewModel(
+            store,
+            Substitute.For<IOFBWorkspaceService>(),
+            fileDialogService: fileDialogService);
     }
 
     private ProcessStartInfo CreateCliStartInfo(string projectPath, string outputPath)

@@ -13,4 +13,9 @@ public interface IOFBWorkspaceService
         OFBProject project,
         string projectPath,
         CancellationToken cancellationToken = default);
+
+    Task<OFBWorkspacePreview> PreviewWorkspaceAsync(
+        OFBProject project,
+        string projectPath,
+        CancellationToken cancellationToken = default);
 }

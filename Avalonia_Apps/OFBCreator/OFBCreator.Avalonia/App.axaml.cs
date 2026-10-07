@@ -16,6 +16,7 @@ using OFBCreator.Console.Services.Templates;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
 using OFBCreator.Projects.Services;
+using PortableProjectStore = OFBCreator.Projects.Services.OFBProjectStore;
 
 namespace OFBCreator.Avalonia;
 
@@ -51,7 +52,8 @@ public partial class App : Application
         services.AddSingleton<IFamilyDataSource>(provider =>
             provider.GetRequiredService<CanonicalGedcomFamilyDataSource>());
         services.AddSingleton<IUserDocumentFactory, UserDocumentFactoryImpl>();
-        services.AddSingleton<OFBProjectStore>();
+        services.AddSingleton<PortableProjectStore>();
+        services.AddSingleton<IOFBFileDialogService, AvaloniaFileDialogService>();
         services.AddSingleton<EntryTemplateStore>();
         services.AddSingleton<ConsoleExportService>();
         services.AddSingleton<IOFBWorkspaceService, OFBWorkspaceService>();

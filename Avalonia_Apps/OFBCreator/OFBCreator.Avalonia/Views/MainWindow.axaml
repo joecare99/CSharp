@@ -7,6 +7,14 @@
         MinHeight="650"
         Title="OFB Creator">
   <Grid RowDefinitions="Auto,*" Margin="18">
+    <Grid.Styles>
+      <Style Selector="Border.privacy-person">
+        <Setter Property="BorderBrush" Value="#4CAF50" />
+      </Style>
+      <Style Selector="Border.privacy-person.modified">
+        <Setter Property="BorderBrush" Value="#FFB300" />
+      </Style>
+    </Grid.Styles>
     <Border Grid.Row="0" Padding="0,0,0,14">
       <StackPanel>
         <TextBlock FontSize="24" FontWeight="SemiBold" Text="Ortsfamilienbuch Creator" />
@@ -18,12 +26,15 @@
         <ScrollViewer>
           <StackPanel Spacing="10" Margin="14">
             <TextBlock Text="Portable project file" FontWeight="SemiBold" />
-            <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
-              <TextBox Grid.Column="0" PlaceholderText="C:\path\book.ofbproject" Text="{Binding ProjectFilePath}" />
-              <Button Grid.Column="1" Content="New" Command="{Binding NewProjectCommand}" />
-              <Button Grid.Column="2" Content="Open" Command="{Binding OpenProjectCommand}" />
-              <Button Grid.Column="3" Content="Save" Command="{Binding SaveProjectCommand}" />
-            </Grid>
+            <TextBox PlaceholderText="{Binding DefaultProjectPath}" Text="{Binding ProjectFilePath}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Content="New" Command="{Binding NewProjectCommand}" />
+              <Button Content="Open..." Command="{Binding BrowseProjectCommand}" />
+              <Button Content="Open path" Command="{Binding OpenProjectCommand}" />
+              <Button Content="Choose folder" Command="{Binding SelectProjectFolderCommand}" />
+              <Button Content="Save as..." Command="{Binding SaveProjectAsCommand}" />
+              <Button Content="Save" Command="{Binding SaveProjectCommand}" />
+            </StackPanel>
             <TextBlock Text="Project name" />
             <TextBox Text="{Binding Name}" />
             <TextBlock Text="Document title" />
@@ -46,9 +57,16 @@
         <ScrollViewer>
           <StackPanel Spacing="9" Margin="14">
             <TextBlock Text="GEDCOM input path" />
-            <TextBox PlaceholderText="Relative to the project file or absolute" Text="{Binding InputPath}" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+              <TextBox Grid.Column="0" PlaceholderText="Relative to the project file or absolute" Text="{Binding InputPath}" />
+              <Button Grid.Column="1" Content="Open GEDCOM..." Command="{Binding OpenGedcomFileCommand}" />
+            </Grid>
             <TextBlock Text="DOCX output path" />
-            <TextBox PlaceholderText="Relative to the project file or absolute" Text="{Binding OutputPath}" />
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+              <TextBox Grid.Column="0" PlaceholderText="{Binding DefaultOutputPath}" Text="{Binding OutputPath}" />
+              <Button Grid.Column="1" Content="Choose folder" Command="{Binding SelectOutputFolderCommand}" />
+              <Button Grid.Column="2" Content="Save as..." Command="{Binding SaveDocxAsCommand}" />
+            </Grid>
             <TextBlock Text="Entry template (gc, ak, or JSON path)" />
             <StackPanel Orientation="Horizontal" Spacing="8">
               <TextBox Width="420" Text="{Binding EntryTemplate}" />
@@ -105,23 +123,69 @@
               <Button Content="Apply form edits" Command="{Binding UpdateSelectedRuleCommand}" />
               <Button Content="Remove selected rule" Command="{Binding RemoveRuleCommand}" />
             </StackPanel>
-          </StackPanel>
-        </ScrollViewer>
-      </TabItem>
-      <TabItem Header="Grouping review">
-        <ScrollViewer>
-          <StackPanel Spacing="9" Margin="14">
-            <StackPanel Orientation="Horizontal" Spacing="10">
-              <TextBlock VerticalAlignment="Center" Text="Automatic acceptance threshold (0–100)" />
-              <NumericUpDown Width="110" Minimum="0" Maximum="100"
-                             Value="{Binding AutoAcceptThreshold}" />
-              <Button Content="Refresh evidence" Command="{Binding RefreshGroupingCandidatesCommand}"
+            <TextBlock Text="People remaining after filters" FontWeight="SemiBold" Margin="0,12,0,0" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Content="Refresh privacy and grouping preview" Command="{Binding RefreshGroupingCandidatesCommand}"
                       IsEnabled="{Binding IsNotBusy}" />
               <Button Content="Cancel" Command="{Binding RefreshGroupingCandidatesCancelCommand}"
                       IsEnabled="{Binding IsBusy}" />
+              <TextBlock Text="Green: unchanged; amber: privacy fields changed." VerticalAlignment="Center" Opacity="0.8" />
             </StackPanel>
-            <TextBlock Text="Candidates are based on phonetic distance and repeated parent-to-family-surname transitions."
-                       TextWrapping="Wrap" />
+            <ItemsControl ItemsSource="{Binding PrivacyPeople}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Classes="privacy-person" Classes.modified="{Binding HasChanges}"
+                          BorderThickness="2" CornerRadius="4" Padding="7" Margin="0,2">
+                    <StackPanel Spacing="4">
+                      <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" />
+                        <TextBlock Text="{Binding TargetId}" Opacity="0.7" />
+                      </StackPanel>
+                      <ItemsControl ItemsSource="{Binding Changes}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <TextBlock Text="{Binding Field, StringFormat='{}{0}: changed'}" />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Grouping">
+        <ScrollViewer>
+          <StackPanel Spacing="9" Margin="14">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Content="Refresh grouping preview" Command="{Binding RefreshGroupingCandidatesCommand}"
+                      IsEnabled="{Binding IsNotBusy}" />
+              <Button Content="Cancel" Command="{Binding RefreshGroupingCandidatesCancelCommand}"
+                      IsEnabled="{Binding IsBusy}" />
+              <TextBlock Text="Candidates require different parent and family-name groups."
+                         VerticalAlignment="Center" TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <TextBlock VerticalAlignment="Center" Text="Automatic acceptance threshold (0–100)" />
+              <NumericUpDown Width="110" Minimum="0" Maximum="100"
+                              Value="{Binding AutoAcceptThreshold, Mode=TwoWay}" />
+            </StackPanel>
+            <TextBlock Text="Manual merge" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto,*,Auto" ColumnSpacing="8">
+              <ComboBox Grid.Column="0" ItemsSource="{Binding GroupingChoices}" SelectedItem="{Binding LeftGroupingChoice}" />
+              <TextBlock Grid.Column="1" Text="↔" VerticalAlignment="Center" />
+              <ComboBox Grid.Column="2" ItemsSource="{Binding GroupingChoices}" SelectedItem="{Binding RightGroupingChoice}" />
+              <Button Grid.Column="3" Content="Merge" Command="{Binding ManualMergeSelectedCommand}" />
+            </Grid>
+            <ItemsControl ItemsSource="{Binding GroupingSummaries}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <ItemsControl ItemsSource="{Binding GroupingCandidates}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -148,9 +212,9 @@
                         <Button Content="Keep separate"
                                 Command="{Binding $parent[Window].DataContext.RejectCandidateCommand}"
                                 CommandParameter="{Binding}" />
-                        <TextBox Width="180" PlaceholderText="Manual group label"
+                        <TextBox Width="180" PlaceholderText="Override suggested name"
                                  Text="{Binding $parent[Window].DataContext.ManualGroupName}" />
-                        <Button Content="Manual merge"
+                        <Button Content="Merge with this name"
                                 Command="{Binding $parent[Window].DataContext.ManualMergeCandidateCommand}"
                                 CommandParameter="{Binding}" />
                       </StackPanel>

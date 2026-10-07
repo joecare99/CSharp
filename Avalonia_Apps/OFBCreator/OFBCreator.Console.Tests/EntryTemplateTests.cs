@@ -4,6 +4,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Document.Base.Models;
+using Document.Base.Models.Interfaces;
 using Document.Docx;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OFBCreator.Console.Models;
@@ -67,6 +69,60 @@ public sealed class EntryTemplateTests
         Assert.ThrowsExactly<InvalidDataException>(() => EntryTemplateValidator.ParseAndValidate(expression));
         Assert.ThrowsExactly<InvalidDataException>(() => EntryTemplateValidator.ParseAndValidate(invalidColumns));
         Assert.ThrowsExactly<InvalidDataException>(() => EntryTemplateValidator.ParseAndValidate(nestedSections));
+    }
+
+    [TestMethod]
+    public void EntryTemplateValidator_AcceptsFontStylesAndHangingIndentAndRejectsOutOfRangeIndent()
+    {
+        const string valid = """
+            {"schemaVersion":1,"id":"styled","entryRoot":"Family","blocks":[
+              {"kind":"paragraph","hangingIndent":18,"content":[
+                {"kind":"field","path":"family.number","bold":true,"italic":true,"underline":true}
+              ]}
+            ]}
+            """;
+        const string invalid = """
+            {"schemaVersion":1,"id":"invalid-indent","entryRoot":"Family","blocks":[
+              {"kind":"paragraph","hangingIndent":1441,"content":[]}
+            ]}
+            """;
+
+        Assert.AreEqual("styled", EntryTemplateValidator.ParseAndValidate(valid).Id);
+        Assert.ThrowsExactly<InvalidDataException>(() => EntryTemplateValidator.ParseAndValidate(invalid));
+    }
+
+    [TestMethod]
+    public void EntryTemplateRenderer_AppliesInlineFontOptionsAndHangingIndent()
+    {
+        const string json = """
+            {"schemaVersion":1,"id":"styled-render","entryRoot":"Individual","blocks":[
+              {"kind":"paragraph","role":"adult","hangingIndent":18,"content":[
+                {"kind":"field","path":"individual.nameGc","bold":true,"italic":true,"underline":true}
+              ]}
+            ]}
+            """;
+        var template = EntryTemplateValidator.ParseAndValidate(json);
+        var document = new DocxDocument();
+        var person = new PersonEntryTemplateModel
+        {
+            NameGc = "Beispiel, Ada",
+            NameAk = "Ada Beispiel",
+            Anchor = "person-I1",
+            Reference = "I1",
+            VitalEventsGc = string.Empty,
+            VitalEventsAk = string.Empty,
+            IndexAnchor = string.Empty,
+            Occupations = Array.Empty<OccupationEntryTemplateModel>()
+        };
+
+        new EntryTemplateRenderer().RenderIndividual(document, template, person);
+
+        var paragraph = document.Root.Enumerate().OfType<IDocParagraph>().First();
+        var span = paragraph.Nodes.OfType<IDocSpan>().First();
+        Assert.IsTrue(paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationHanging && Equals(attribute.Value, 18)));
+        Assert.IsTrue(span.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.Bold && Equals(attribute.Value, true)));
+        Assert.IsTrue(span.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.Italic && Equals(attribute.Value, true)));
+        Assert.IsTrue(span.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.Underline && Equals(attribute.Value, true)));
     }
 
     [TestMethod]
@@ -159,6 +215,37 @@ public sealed class EntryTemplateTests
             .ToArray();
 
         CollectionAssert.AreEqual(new[] { "1", "4" }, columns);
+    }
+
+    [TestMethod]
+    public void DocxDocument_SaveToStreamSerializesGenericParagraphAndCharacterAttributes()
+    {
+        var document = new DocxDocument();
+        var paragraph = document.AddParagraph("Normal");
+        paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, 18));
+        paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 18));
+        var span = paragraph.AddLink("#person-1", DocFontStyle.Default);
+        span.TextContent = "Ada Beispiel";
+        span.DocAttributes.Add(new DocAttribute(DocAttributeNames.Bold, true));
+        span.DocAttributes.Add(new DocAttribute(DocAttributeNames.Italic, true));
+        span.DocAttributes.Add(new DocAttribute(DocAttributeNames.Underline, true));
+        span.DocAttributes.Add(new DocAttribute(DocAttributeNames.FontSizePt, 12d));
+
+        using var output = new MemoryStream();
+        Assert.IsTrue(document.SaveTo(output));
+        output.Position = 0;
+        using var archive = new ZipArchive(output, ZipArchiveMode.Read, leaveOpen: true);
+        using var stream = archive.GetEntry("word/document.xml")!.Open();
+        var xml = XDocument.Load(stream);
+        XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        var paragraphProperties = xml.Descendants(word + "pPr").First();
+        Assert.AreEqual("360", (string?)paragraphProperties.Element(word + "ind")?.Attribute(word + "left"));
+        Assert.AreEqual("360", (string?)paragraphProperties.Element(word + "ind")?.Attribute(word + "hanging"));
+        var hyperlinkRunProperties = xml.Descendants(word + "hyperlink").Descendants(word + "rPr").First();
+        Assert.IsNotNull(hyperlinkRunProperties.Element(word + "b"));
+        Assert.IsNotNull(hyperlinkRunProperties.Element(word + "i"));
+        Assert.AreEqual("single", (string?)hyperlinkRunProperties.Element(word + "u")?.Attribute(word + "val"));
+        Assert.AreEqual("24", (string?)hyperlinkRunProperties.Element(word + "sz")?.Attribute(word + "val"));
     }
 
     [TestMethod]

@@ -27,6 +27,12 @@ public sealed class OFBWorkspaceService(ConsoleExportService exportService) : IO
         CancellationToken cancellationToken = default) =>
         _exportService.PreviewGroupingAsync(CreateOptions(project, projectPath), cancellationToken);
 
+    public Task<OFBWorkspacePreview> PreviewWorkspaceAsync(
+        OFBProject project,
+        string projectPath,
+        CancellationToken cancellationToken = default) =>
+        _exportService.PreviewWorkspaceAsync(CreateOptions(project, projectPath), cancellationToken);
+
     private static OFBGenerateOptions CreateOptions(OFBProject project, string projectPath)
     {
         ArgumentNullException.ThrowIfNull(project);
@@ -36,7 +42,7 @@ public sealed class OFBWorkspaceService(ConsoleExportService exportService) : IO
             throw new NotSupportedException(
                 $"The Avalonia workspace currently supports the 'gedcom' source, not '{project.DataSource}'.");
 
-        var inputPath = OFBProjectStore.ResolveProjectPath(projectPath, project.InputPath);
+        var inputPath = Projects.Services.OFBProjectStore.ResolveProjectPath(projectPath, project.InputPath);
         if (string.IsNullOrWhiteSpace(inputPath))
             throw new InvalidDataException($"Project '{project.Name}' does not specify an input file.");
         var outputPath = OFBProjectStore.ResolveProjectPath(projectPath, project.OutputPath)

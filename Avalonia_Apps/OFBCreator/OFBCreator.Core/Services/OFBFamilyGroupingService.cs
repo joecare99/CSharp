@@ -12,10 +12,13 @@ using OFBCreator.Projects.Services;
 namespace OFBCreator.Core.Services;
 
 /// <summary>
-/// Scores surname merge evidence and applies only threshold-qualified or explicitly reviewed decisions.
+/// Scores qualifying parent-to-family surname transitions and applies only threshold-qualified or explicitly reviewed decisions.
 /// </summary>
 public sealed class OFBFamilyGroupingService
 {
+    /// <summary>Returns the representative surname selected for a source family.</summary>
+    public static string SelectFamilySurname(IGenFamily family) => FamilySurnameSelector.Select(family);
+
     public OFBFamilyGroupingResult BuildGroups(
         IEnumerable<IGenFamily> families,
         string providerId,
@@ -78,7 +81,7 @@ public sealed class OFBFamilyGroupingService
                     && TargetsMatch(item.RightFamilyTargetId, rightTargetId)
                     || TargetsMatch(item.LeftFamilyTargetId, rightTargetId)
                     && TargetsMatch(item.RightFamilyTargetId, leftTargetId));
-                if (distance > 2 && transitionCount == 0 && decision is null)
+                if (transitionCount == 0 && decision is null)
                     continue;
 
                 var evidence = BuildEvidence(distance, transitionCount);
@@ -145,7 +148,14 @@ public sealed class OFBFamilyGroupingService
         var labelsByRoot = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var component in components)
         {
-            var label = component.Value[0];
+            var label = component.Value
+                .SelectMany(surname => exactGroups[surname])
+                .Select(FamilySurnameSelector.Select)
+                .GroupBy(surname => surname, StringComparer.OrdinalIgnoreCase)
+                .OrderByDescending(group => group.Count())
+                .ThenBy(group => group.Key, germanComparer)
+                .Select(group => group.Key)
+                .First();
             var applicableManualLabel = manualLabels
                 .Where(item => string.Equals(unionFind.Find(item.Left), component.Key, StringComparison.Ordinal)
                     && string.Equals(unionFind.Find(item.Right), component.Key, StringComparison.Ordinal))
@@ -190,12 +200,23 @@ public sealed class OFBFamilyGroupingService
             var parentSurnames = new[] { family.Husband?.Surname, family.Wife?.Surname }
                 .Where(surname => !string.IsNullOrWhiteSpace(surname))
                 .Select(surname => surname!.Trim())
-                .Distinct(StringComparer.OrdinalIgnoreCase);
-            foreach (var parentSurname in parentSurnames)
+                .ToArray();
+            var distinctParentSurnames = parentSurnames
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            if (distinctParentSurnames.Length != parentSurnames.Length
+                || distinctParentSurnames.Any(parentSurname => !knownSurnames.Contains(parentSurname)))
+                continue;
+
+            var distinctFamilyGroups = distinctParentSurnames
+                .Append(familySurname)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Count();
+            if (distinctFamilyGroups != parentSurnames.Length + 1)
+                continue;
+
+            foreach (var parentSurname in distinctParentSurnames)
             {
-                if (string.Equals(parentSurname, familySurname, StringComparison.OrdinalIgnoreCase)
-                    || !knownSurnames.Contains(parentSurname))
-                    continue;
                 var key = (parentSurname, familySurname);
                 transitions.TryGetValue(key, out var count);
                 transitions[key] = count + 1;

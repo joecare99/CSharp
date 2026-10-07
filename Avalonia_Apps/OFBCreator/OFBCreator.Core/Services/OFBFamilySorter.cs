@@ -58,6 +58,8 @@ public class OFBFamilySorter : IOFBFamilySorter
                 Wife = family.Wife,
                 Children = ToReadOnly( (IEnumerable<IGenPerson>)family.Children ),
                 MarriagePlace = family.MarriagePlace,
+                MarriageDate = family.MarriageDate,
+                Facts = family.Facts.ToArray(),
                 SourceRefId = family.FamilyRefID ?? string.Empty,
                 FamilyName = familyName,
                 FormationDate = ComputeFormationDate( family ),

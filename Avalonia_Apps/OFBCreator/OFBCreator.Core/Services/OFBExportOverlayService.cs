@@ -31,7 +31,10 @@ public sealed partial class OFBExportOverlayService
 
         var enabledRules = rules.Where(rule => rule.Enabled).OrderBy(rule => rule.Order).ToArray();
         if (enabledRules.Length == 0 && selectedFamilies is null)
-            return new OFBExportOverlayResult(source, Array.Empty<OFBExportRuleDiagnostic>());
+            return new OFBExportOverlayResult(
+                source,
+                Array.Empty<OFBExportRuleDiagnostic>(),
+                CreateUnchangedPersonPreviews(source, providerId));
 
         var genealogy = new GedcomGenealogy();
         var diagnostics = new List<OFBExportRuleDiagnostic>();
@@ -95,6 +98,19 @@ public sealed partial class OFBExportOverlayService
         }
 
         LinkClonedRelationships(familyBySource);
+        var retainedPeople = new HashSet<IGenPerson>(
+            familyBySource.Values
+                .SelectMany(family => new[] { family.Husband, family.Wife }.OfType<IGenPerson>()
+                    .Concat(family.Children.OfType<IGenPerson>())),
+            (IEqualityComparer<IGenPerson>)ReferenceEqualityComparer.Instance);
+        var personPreviews = sourcePeople
+            .Where(peopleBySource.ContainsKey)
+            .Where(person => retainedPeople.Contains(peopleBySource[person]))
+            .Select(person => CreatePersonPreview(
+                providerId,
+                person,
+                peopleBySource[person]))
+            .ToArray();
         foreach (var rule in enabledRules)
         {
             if (!matchedRules.Contains(rule.Id))
@@ -105,7 +121,87 @@ public sealed partial class OFBExportOverlayService
                     false));
         }
 
-        return new OFBExportOverlayResult(genealogy, diagnostics);
+        return new OFBExportOverlayResult(genealogy, diagnostics, personPreviews);
+    }
+
+    private static OFBPersonPrivacyPreview CreatePersonPreview(
+        string providerId,
+        IGenPerson source,
+        IGenPerson exported)
+    {
+        var changes = new List<OFBPersonPrivacyChange>();
+        AddChange(changes, "givenName", source.GivenName, exported.GivenName);
+        AddChange(changes, "surname", source.Surname, exported.Surname);
+        AddChange(changes, "title", source.Title, exported.Title);
+        AddChange(changes, "religion", source.Religion, exported.Religion);
+        AddChange(changes, "occupation", source.Occupation, exported.Occupation);
+        AddChange(changes, "birthDate", FormatDate(source.BirthDate), FormatDate(exported.BirthDate));
+        AddChange(changes, "birthPlace", FormatPlace(source.BirthPlace), FormatPlace(exported.BirthPlace));
+        AddChange(changes, "baptismDate", FormatDate(source.BaptDate), FormatDate(exported.BaptDate));
+        AddChange(changes, "baptismPlace", FormatPlace(source.BaptPlace), FormatPlace(exported.BaptPlace));
+        AddChange(changes, "deathDate", FormatDate(source.DeathDate), FormatDate(exported.DeathDate));
+        AddChange(changes, "deathPlace", FormatPlace(source.DeathPlace), FormatPlace(exported.DeathPlace));
+        AddChange(changes, "burialDate", FormatDate(source.BurialDate), FormatDate(exported.BurialDate));
+        AddChange(changes, "burialPlace", FormatPlace(source.BurialPlace), FormatPlace(exported.BurialPlace));
+        AddChange(changes, "residence", FormatPlace(source.Residence), FormatPlace(exported.Residence));
+        AddChange(changes, "occupationPlace", FormatPlace(source.OccuPlace), FormatPlace(exported.OccuPlace));
+        AddChange(changes, "facts", FormatFacts(source), FormatFacts(exported));
+
+        var displayName = string.Join(" ", new[] { exported.GivenName, exported.Surname }
+            .Where(value => !string.IsNullOrWhiteSpace(value)));
+        if (string.IsNullOrWhiteSpace(displayName))
+            displayName = GetPersonTarget(providerId, source) ?? string.Empty;
+
+        return new OFBPersonPrivacyPreview(
+            GetPersonTarget(providerId, source) ?? string.Empty,
+            displayName,
+            changes);
+    }
+
+    private static IReadOnlyList<OFBPersonPrivacyPreview> CreateUnchangedPersonPreviews(
+        IGenealogy source,
+        string providerId)
+    {
+        var families = source.Entitys.OfType<IGenFamily>().ToArray();
+        var people = source.Entitys.OfType<IGenPerson>()
+            .Concat(families.SelectMany(GetFamilyPeople))
+            .Distinct((IEqualityComparer<IGenPerson>)ReferenceEqualityComparer.Instance);
+        return people
+            .Where(person => !string.IsNullOrWhiteSpace(GetPersonTarget(providerId, person)))
+            .Select(person => CreatePersonPreview(providerId, person, person))
+            .ToArray();
+    }
+
+    private static void AddChange(
+        ICollection<OFBPersonPrivacyChange> changes,
+        string field,
+        string? originalValue,
+        string? exportValue)
+    {
+        if (!string.Equals(originalValue, exportValue, StringComparison.Ordinal))
+            changes.Add(new OFBPersonPrivacyChange(field, originalValue, exportValue));
+    }
+
+    private static string? FormatDate(IGenDate? date) => date is null
+        ? null
+        : string.IsNullOrWhiteSpace(date.DateText)
+            ? date.Date1 == default ? null : date.Date1.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+            : date.DateText;
+
+    private static string? FormatPlace(IGenPlace? place) => place?.Name;
+
+    private static string? FormatFacts(IGenEntity person)
+    {
+        var facts = person.Facts.OfType<IGenFact>()
+            .Select(fact => string.Join(" | ", new[]
+            {
+                fact.eFactType.ToString(),
+                fact.Data,
+                FormatDate(fact.Date),
+                FormatPlace(fact.Place)
+            }.Where(value => !string.IsNullOrWhiteSpace(value))))
+            .ToArray();
+        return facts.Length == 0 ? null : string.Join("; ", facts);
     }
 
     private static GedcomPerson ClonePerson(

@@ -52,6 +52,14 @@ public sealed class EntryTemplateBlock
 
     public int? Columns { get; set; }
 
+    public int? HangingIndent { get; set; }
+
+    public bool Bold { get; set; }
+
+    public bool Italic { get; set; }
+
+    public bool Underline { get; set; }
+
     public List<EntryTemplateBlock> Content { get; set; } = new();
 
     public List<EntryTemplateBlock> Then { get; set; } = new();

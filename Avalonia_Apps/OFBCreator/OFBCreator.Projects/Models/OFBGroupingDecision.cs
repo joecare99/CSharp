@@ -1,3 +1,5 @@
+using System;
+
 namespace OFBCreator.Projects.Models;
 
 /// <summary>A persisted editorial choice for a merge candidate identified by stable family records.</summary>

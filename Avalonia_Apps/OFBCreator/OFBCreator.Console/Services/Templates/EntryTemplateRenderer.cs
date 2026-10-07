@@ -5,8 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Document.Base.Models.Interfaces;
-using Document.Docx;
-using Document.Docx.Model;
+using Document.Base.Models;
 using OFBCreator.Console.Models;
 
 namespace OFBCreator.Console.Services.Templates;
@@ -67,10 +66,7 @@ public sealed class EntryTemplateRenderer
         IUserDocument document,
         IEnumerable<PersonEntryTemplateModel> people)
     {
-        if (document is not DocxDocument)
-            return;
-
-        var spans = document.Enumerate().OfType<DocxSpan>().ToArray();
+        var spans = document.Enumerate().OfType<IDocSpan>().ToArray();
         var bookmarks = spans
             .Where(span => !string.IsNullOrWhiteSpace(span.Id))
             .Select(span => span.Id!)
@@ -83,12 +79,17 @@ public sealed class EntryTemplateRenderer
         foreach (var person in people)
         {
             if (!string.IsNullOrWhiteSpace(person.Anchor) && bookmarks.Add(person.Anchor))
-                document.AddParagraph("adult").AddBookmark(person.Anchor, DocxFontStyle.Default);
+            {
+                var anchorParagraph = document.AddParagraph("adult");
+                anchorParagraph.AddBookmark(person.Anchor, DocFontStyle.Default);
+            }
 
             if (!string.IsNullOrWhiteSpace(person.IndexAnchor) && linkTargets.Add(person.IndexAnchor))
-                document.AddParagraph("note")
-                    .AddLink($"#{person.IndexAnchor}", DocxFontStyle.UnderlineStyle)
-                    .TextContent = " [Index]";
+            {
+                var indexParagraph = document.AddParagraph("note");
+                var link = indexParagraph.AddLink($"#{person.IndexAnchor}", new DocFontStyle { Underline = true });
+                link.TextContent = " [Index]";
+            }
         }
     }
 
@@ -112,18 +113,26 @@ public sealed class EntryTemplateRenderer
             switch (block.Kind)
             {
                 case "section":
-                    if (document is not DocxDocument docxDocument)
-                        throw new NotSupportedException("Template sections are currently supported only by the DOCX provider.");
-                    docxDocument.AddSection(block.Columns);
+                    if (document is not IDocSectionProvider sectionProvider)
+                        throw new NotSupportedException("The selected document provider does not support sections.");
+                    sectionProvider.AddSection(block.Columns);
                     RenderBlocks(document, template, block.Blocks, variables, includeStack);
                     break;
                 case "paragraph":
                     var paragraph = document.AddParagraph(block.Role ?? "family-data");
+                    if (block.HangingIndent is int hangingIndent)
+                    {
+        paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, hangingIndent));
+        paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, hangingIndent));
+                    }
                     if (block.Anchor is not null)
                     {
                         var anchor = GetString(Resolve(block.Anchor, variables));
                         if (!string.IsNullOrWhiteSpace(anchor))
-                            paragraph.AddBookmark(anchor, DocxFontStyle.Default);
+                        {
+                            var bookmark = paragraph.AddBookmark(anchor, DocFontStyle.Default);
+                            bookmark.TextContent = string.Empty;
+                        }
                     }
                     RenderInline(document, template, paragraph, block.Content, variables, includeStack);
                     break;
@@ -156,18 +165,22 @@ public sealed class EntryTemplateRenderer
             switch (block.Kind)
             {
                 case "text":
-                    AppendText(paragraph, block.Value!);
+                    AppendText(paragraph, block.Value!, block);
                     break;
                 case "field":
-                    AppendText(paragraph, Format(Resolve(block.Path!, variables), block.Formatter));
+                    AppendText(paragraph, Format(Resolve(block.Path!, variables), block.Formatter), block);
                     break;
                 case "link":
                     var target = GetString(Resolve(block.Target!, variables));
                     var text = RenderInlineToString(template, block.Content, variables, includeStack);
                     if (string.IsNullOrWhiteSpace(target))
-                        AppendText(paragraph, text);
+                        AppendText(paragraph, text, block);
                     else
-                        paragraph.AddLink($"#{target}", DocxFontStyle.UnderlineStyle).TextContent = text;
+                    {
+                        var link = paragraph.AddLink($"#{target}", new DocFontStyle { Underline = true });
+                        link.SetStyle(CreateFontStyle(block, underline: true));
+                        link.TextContent = text;
+                    }
                     break;
                 case "if":
                     if (IsTruthy(Resolve(block.Condition!, variables)))
@@ -206,12 +219,54 @@ public sealed class EntryTemplateRenderer
                     if (IsTruthy(Resolve(block.Condition!, variables)))
                         values.Add(RenderInlineToString(template, block.Then, variables, includeStack));
                     break;
+                case "forEach":
+                    values.Add(RenderEachInlineToString(template, block, variables, includeStack));
+                    break;
+                case "include":
+                    values.Add(RenderIncludeInlineToString(template, block.Fragment!, variables, includeStack));
+                    break;
                 default:
                     throw new InvalidDataException($"Block '{block.Kind}' cannot be nested inside a link.");
             }
         }
 
         return string.Concat(values);
+    }
+
+    private static string RenderEachInlineToString(
+        EntryTemplateDefinition template,
+        EntryTemplateBlock block,
+        Dictionary<string, object?> variables,
+        HashSet<string> includeStack)
+    {
+        var values = new List<string>();
+        foreach (var item in Enumerate(Resolve(block.Items!, variables)))
+        {
+            var hadPriorValue = variables.TryGetValue(block.As!, out var priorValue);
+            variables[block.As!] = item;
+            values.Add(RenderInlineToString(template, block.Template, variables, includeStack));
+            RestoreVariable(variables, block.As!, hadPriorValue, priorValue);
+        }
+
+        return string.Concat(values);
+    }
+
+    private static string RenderIncludeInlineToString(
+        EntryTemplateDefinition template,
+        string fragmentName,
+        Dictionary<string, object?> variables,
+        HashSet<string> includeStack)
+    {
+        if (!includeStack.Add(fragmentName))
+            throw new InvalidDataException($"Template include cycle detected at fragment '{fragmentName}'.");
+        try
+        {
+            return RenderInlineToString(template, template.Fragments[fragmentName], variables, includeStack);
+        }
+        finally
+        {
+            includeStack.Remove(fragmentName);
+        }
     }
 
     private static void RenderEach(
@@ -294,29 +349,65 @@ public sealed class EntryTemplateRenderer
 
         for (var index = 1; index < parts.Length; index++)
         {
+            if (string.Equals(parts[index], "any", StringComparison.Ordinal))
+            {
+                value = value switch
+                {
+                    ICollection collection => collection.Count > 0,
+                    IEnumerable enumerable when value is not string => enumerable.Cast<object?>().Any(),
+                    _ => throw new InvalidDataException($"Template value '{path}' is not available in this rendering context.")
+                };
+                continue;
+            }
+
             value = (value, parts[index]) switch
             {
                 (FamilyEntryTemplateModel family, "number") => family.Number,
                 (FamilyEntryTemplateModel family, "anchor") => family.Anchor,
                 (FamilyEntryTemplateModel family, "union") => family.Union,
+                (FamilyEntryTemplateModel family, "marriageMark") => family.MarriageMark,
+                (FamilyEntryTemplateModel family, "marriageDate") => family.MarriageDate,
+                (FamilyEntryTemplateModel family, "marriagePlace") => family.MarriagePlace,
+                (FamilyEntryTemplateModel family, "marriagePlaceShort") => family.MarriagePlaceShort,
+                (FamilyEntryTemplateModel family, "marriagePlaceAnchor") => family.MarriagePlaceAnchor,
+                (FamilyEntryTemplateModel family, "properties") => family.Properties,
                 (FamilyEntryTemplateModel family, "parents") => family.Parents,
                 (FamilyEntryTemplateModel family, "children") => family.Children,
-                (IReadOnlyCollection<PersonEntryTemplateModel> children, "any") => children.Count > 0,
                 (PersonEntryTemplateModel person, "nameGc") => person.NameGc,
                 (PersonEntryTemplateModel person, "nameAk") => person.NameAk,
                 (PersonEntryTemplateModel person, "anchor") => person.Anchor,
                 (PersonEntryTemplateModel person, "reference") => person.Reference,
+                (PersonEntryTemplateModel person, "indexLabel") => person.IndexLabel,
                 (PersonEntryTemplateModel person, "vitalEventsGc") => person.VitalEventsGc,
+                (PersonEntryTemplateModel person, "additionalLifeDataGc") => person.AdditionalLifeDataGc,
                 (PersonEntryTemplateModel person, "vitalEventsAk") => person.VitalEventsAk,
                 (PersonEntryTemplateModel person, "birth") => person.Birth,
                 (PersonEntryTemplateModel person, "death") => person.Death,
                 (PersonEntryTemplateModel person, "indexAnchor") => person.IndexAnchor,
                 (PersonEntryTemplateModel person, "occupations") => person.Occupations,
-                (PersonEntryTemplateModel person, "any") => person.Occupations.Count > 0,
+                (PersonEntryTemplateModel person, "properties") => person.Properties,
+                (PersonEntryTemplateModel person, "residence") => person.Residence,
+                (PersonEntryTemplateModel person, "residenceAnchor") => person.ResidenceAnchor,
+                (PersonEntryTemplateModel person, "parentFamily") => person.ParentFamily,
+                (PersonEntryTemplateModel person, "childFamilies") => person.ChildFamilies,
+                (PersonEntryTemplateModel person, "parentFamilies") => person.ParentFamilies,
+                (PersonEntryTemplateModel person, "childFamilyTokens") => person.ChildFamilyTokens,
+                (PersonEntryTemplateModel person, "parentFamilyTokens") => person.ParentFamilyTokens,
+                (FamilyReferenceTokenModel token, "text") => token.Text,
+                (FamilyReferenceTokenModel token, "anchor") => token.Anchor,
                 (PersonEntryTemplateModel person, "ordinal") => person.Ordinal,
+                (FamilyReferenceEntryTemplateModel familyReference, "number") => familyReference.Number,
+                (FamilyReferenceEntryTemplateModel familyReference, "anchor") => familyReference.Anchor,
                 (OccupationEntryTemplateModel occupation, "name") => occupation.Name,
                 (OccupationEntryTemplateModel occupation, "date") => occupation.Date,
                 (OccupationEntryTemplateModel occupation, "indexAnchor") => occupation.IndexAnchor,
+                (OccupationEntryTemplateModel occupation, "place") => occupation.Place,
+                (OccupationEntryTemplateModel occupation, "placeAnchor") => occupation.PlaceAnchor,
+                (PropertyEntryTemplateModel property, "name") => property.Name,
+                (PropertyEntryTemplateModel property, "date") => property.Date,
+                (PropertyEntryTemplateModel property, "place") => property.Place,
+                (PropertyEntryTemplateModel property, "placeAnchor") => property.PlaceAnchor,
+                (PropertyEntryTemplateModel property, "indexAnchor") => property.IndexAnchor,
                 _ => throw new InvalidDataException($"Template value '{path}' is not available in this rendering context.")
             };
         }
@@ -354,8 +445,10 @@ public sealed class EntryTemplateRenderer
     private static bool IsTruthy(object? value) => value switch
     {
         bool boolean => boolean,
+        string text => !string.IsNullOrWhiteSpace(text),
         ICollection collection => collection.Count > 0,
-        _ => false
+        null => false,
+        _ => true
     };
 
     private static string GetString(object? value) => value switch
@@ -365,11 +458,26 @@ public sealed class EntryTemplateRenderer
         _ => Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty
     };
 
-    private static void AppendText(IDocParagraph paragraph, string text)
+    private static void AppendText(IDocParagraph paragraph, string text, EntryTemplateBlock block)
     {
         if (!string.IsNullOrEmpty(text))
-            paragraph.AddSpan(text, DocxFontStyle.Default);
+            paragraph.AddSpan(text, CreateFontStyle(block));
     }
+
+    private static void AppendLinkedText(IDocParagraph paragraph, string target, string text, EntryTemplateBlock block)
+    {
+        var style = CreateFontStyle(block, underline: true);
+        var link = paragraph.AddLink($"#{target}", style);
+        link.SetStyle(style);
+        link.TextContent = text;
+    }
+
+    private static IDocFontStyle CreateFontStyle(EntryTemplateBlock block, bool underline = false) => new DocFontStyle
+    {
+        Bold = block.Bold,
+        Italic = block.Italic,
+        Underline = block.Underline || underline
+    };
 
     private static void RestoreVariable(
         Dictionary<string, object?> variables,
