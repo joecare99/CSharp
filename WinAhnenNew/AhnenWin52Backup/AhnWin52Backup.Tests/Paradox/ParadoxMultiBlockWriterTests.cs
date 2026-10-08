@@ -1,4 +1,5 @@
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,72 @@ namespace AhnWin52Backup.Tests.Paradox;
 public sealed class ParadoxMultiBlockWriterTests
 {
     [TestMethod]
-    public void RebuildSecondaryIndexes_PreservesGebnamAlphaKeysAndSortsWithoutCase()
+    public void BuildIndexFile_SupportsThreeLevels()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string databaseDirectory = Path.Combine(directory, "database");
+            new StructureTemplateMaterializer().Materialize(databaseDirectory);
+            string templatePath = Path.Combine(databaseDirectory, "AWD.YG2");
+            byte[] template = File.ReadAllBytes(templatePath);
+            ParadoxRecordWriter.TableHeader templateHeader =
+                ParadoxRecordWriter.ReadHeader(template, 7, templatePath);
+            int entriesPerNode = (templateHeader.BlockSize - 6) / templateHeader.RecordSize;
+            int entryCount = checked(entriesPerNode * entriesPerNode + 1);
+            int keyLength = templateHeader.RecordSize - 6;
+            ParadoxIndexFileBuilder.IndexEntry[] entries = Enumerable
+                .Range(1, entryCount)
+                .Select(index =>
+                {
+                    byte[] key = new byte[keyLength];
+                    BinaryPrimitives.WriteInt32BigEndian(key, index);
+                    return new ParadoxIndexFileBuilder.IndexEntry(key, index, 1);
+                })
+                .ToArray();
+
+            byte[] rebuilt = ParadoxIndexFileBuilder.Build(template, 7, entries);
+
+            ParadoxRecordWriter.TableHeader rebuiltHeader =
+                ParadoxRecordWriter.ReadHeader(rebuilt, 7, "rebuilt AWD.YG2");
+            int leafCount = (entryCount + entriesPerNode - 1) / entriesPerNode;
+            int parentCount = (leafCount + entriesPerNode - 1) / entriesPerNode;
+            int rootBlock = BinaryPrimitives.ReadUInt16LittleEndian(rebuilt.AsSpan(0x1E, sizeof(ushort)));
+            Assert.AreEqual(3, rebuilt[0x20]);
+            Assert.AreEqual(leafCount + parentCount + 1, rebuiltHeader.BlockCount);
+            Assert.AreEqual(rootBlock, rebuiltHeader.BlockCount);
+            Assert.AreEqual(entryCount + leafCount + parentCount, rebuiltHeader.RecordCount);
+
+            byte[] root = rebuilt
+                .AsSpan(rebuiltHeader.HeaderSize + (rootBlock - 1) * rebuiltHeader.BlockSize, rebuiltHeader.BlockSize)
+                .ToArray();
+            ParadoxBlockCipher.DecryptDatabaseBlock(
+                root,
+                ParadoxRecordWriter.ReadEncryption(rebuilt),
+                rootBlock);
+            Assert.AreEqual((short)templateHeader.RecordSize, BinaryPrimitives.ReadInt16LittleEndian(root.AsSpan(4, 2)));
+            int childLinkOffset = 6 + keyLength;
+            Assert.AreEqual(
+                leafCount + 1,
+                ReadParadoxShort(root.AsSpan(childLinkOffset, sizeof(short))));
+            Assert.AreEqual(
+                leafCount + 2,
+                ReadParadoxShort(root.AsSpan(childLinkOffset + templateHeader.RecordSize, sizeof(short))));
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    [DataRow(2, "AWD.XG2")]
+    [DataRow(3, "AWD.XG3")]
+    [DataRow(4, "AWD.XG4")]
+    public void RebuildSecondaryIndexes_PreservesNameKeySpellingAndSortsWithoutCase(
+        int indexNumber,
+        string secondaryFileName)
     {
         string directory = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");
         Directory.CreateDirectory(directory);
@@ -32,7 +98,19 @@ public sealed class ParadoxMultiBlockWriterTests
             new ParadoxRecordWriter(reader).AppendRecords(databasePath, "Nummer", records);
             new ParadoxSecondaryIndexWriter(reader).RebuildForTable(databasePath);
 
-            string secondaryPath = Path.Combine(databaseDirectory, "AWD.XG4");
+            StructureTemplateTable individuals = new StructureTemplateMaterializer()
+                .ReadManifest()
+                .Tables
+                .Single(static table => table.FileName.Equals("AWD.DB", StringComparison.OrdinalIgnoreCase));
+            StructureTemplateIndex index = individuals.SecondaryIndexes
+                .Single(candidate => candidate.Number == indexNumber);
+            int nameOffset = index.Fields
+                .TakeWhile(static field => !field.Name.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                .Sum(static field => field.Length);
+            int nameLength = index.Fields
+                .Single(static field => field.Name.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                .Length;
+            string secondaryPath = Path.Combine(databaseDirectory, secondaryFileName);
             byte[] secondaryFile = File.ReadAllBytes(secondaryPath);
             ParadoxRecordWriter.TableHeader header =
                 ParadoxRecordWriter.ReadHeader(secondaryFile, 8, secondaryPath);
@@ -45,13 +123,12 @@ public sealed class ParadoxMultiBlockWriterTests
                 ParadoxRecordWriter.ReadEncryption(secondaryFile),
                 1);
 
-            int nameOffset = 6 + 4 + 2 + 2;
-            int nameLength = 45;
-            string firstName = Encoding.ASCII.GetString(block, nameOffset, nameLength).TrimEnd('\0');
+            int firstNameOffset = 6 + nameOffset;
+            string firstName = Encoding.ASCII.GetString(block, firstNameOffset, nameLength).TrimEnd('\0', ' ');
             string secondName = Encoding.ASCII.GetString(
                 block,
-                nameOffset + header.RecordSize,
-                nameLength).TrimEnd('\0');
+                firstNameOffset + header.RecordSize,
+                nameLength).TrimEnd('\0', ' ');
 
             Assert.AreEqual("apple", firstName);
             Assert.AreEqual("Banana", secondName);
@@ -108,6 +185,56 @@ public sealed class ParadoxMultiBlockWriterTests
             CollectionAssert.AreEqual(
                 new byte[] { 0x80, 0x02 },
                 block.AsSpan(lastRecordOffset + keyLength, 2).ToArray());
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public void RebuildSecondaryIndexes_UsesObservedSparseXgBlockOccupancy()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string databaseDirectory = Path.Combine(directory, "database");
+            new StructureTemplateMaterializer().Materialize(databaseDirectory);
+            string databasePath = Path.Combine(databaseDirectory, "AWD.DB");
+            string secondaryPath = Path.Combine(databaseDirectory, "AWD.XG2");
+            byte[] emptySecondary = File.ReadAllBytes(secondaryPath);
+            ParadoxRecordWriter.TableHeader secondaryHeader =
+                ParadoxRecordWriter.ReadHeader(emptySecondary, 8, secondaryPath);
+            int physicalCapacity = (secondaryHeader.BlockSize - 6) / secondaryHeader.RecordSize;
+            int sparseCapacity = physicalCapacity * 65 / 100;
+            int requestedRecords = sparseCapacity + 1;
+            IReadOnlyDictionary<string, string?>[] records = Enumerable
+                .Range(1, requestedRecords)
+                .Select(static key => (IReadOnlyDictionary<string, string?>)new Dictionary<string, string?>
+                {
+                    ["Nummer"] = key.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    ["Name"] = "Baker"
+                })
+                .ToArray();
+
+            ParadoxTableReader reader = new();
+            new ParadoxRecordWriter(reader).AppendRecords(databasePath, "Nummer", records);
+            new ParadoxSecondaryIndexWriter(reader).RebuildForTable(databasePath);
+
+            byte[] rebuiltSecondary = File.ReadAllBytes(secondaryPath);
+            ParadoxRecordWriter.TableHeader rebuiltXgHeader =
+                ParadoxRecordWriter.ReadHeader(rebuiltSecondary, 8, secondaryPath);
+            Assert.AreEqual(requestedRecords, rebuiltXgHeader.RecordCount);
+            Assert.AreEqual(2, rebuiltXgHeader.BlockCount);
+
+            string indexPath = Path.Combine(databaseDirectory, "AWD.YG2");
+            byte[] rebuiltIndex = File.ReadAllBytes(indexPath);
+            ParadoxRecordWriter.TableHeader rebuiltYgHeader =
+                ParadoxRecordWriter.ReadHeader(rebuiltIndex, 7, indexPath);
+            Assert.AreEqual(2, rebuiltYgHeader.RecordCount);
+            Assert.AreEqual(1, rebuiltYgHeader.BlockCount);
+            Assert.AreEqual(1, rebuiltIndex[0x20]);
         }
         finally
         {
@@ -183,4 +310,7 @@ public sealed class ParadoxMultiBlockWriterTests
             Directory.Delete(directory, recursive: true);
         }
     }
+
+    private static int ReadParadoxShort(ReadOnlySpan<byte> value) =>
+        ((value[0] & 0x7F) << 8) | value[1];
 }
