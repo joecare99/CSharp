@@ -10,7 +10,7 @@ using AhnWin52Backup.Core.Hej;
 
 namespace AhnWin52Backup.Core.Paradox;
 
-/// <summary>Rebuilds the supported single-block Paradox XG/YG secondary-index pairs.</summary>
+/// <summary>Rebuilds the Paradox XG/YG secondary-index pairs.</summary>
 internal sealed class ParadoxSecondaryIndexWriter
 {
     private const int CommonHeaderSize = 0x58;
@@ -21,6 +21,10 @@ internal sealed class ParadoxSecondaryIndexWriter
     private const byte BcdType = 0x17;
     private const byte SecondaryDataFileType = 8;
     private const byte SecondaryIndexFileType = 7;
+    // Trial21's native namgeb files use about 65% XG and two-thirds YG node occupancy.
+    private const int SecondaryDataBlockFillPercent = 65;
+    private const int SecondaryIndexNodeFillNumerator = 2;
+    private const int SecondaryIndexNodeFillDenominator = 3;
 
     private readonly IParadoxTableReader _tableReader;
 
@@ -169,12 +173,16 @@ internal sealed class ParadoxSecondaryIndexWriter
             secondarySchema.SortOrder,
             secondarySchema.IndexLabel));
 
-        int recordsPerSecondaryBlock = (secondaryDataHeader.BlockSize - DataBlockHeaderSize) /
-                                       secondaryDataHeader.RecordSize;
-        if (recordsPerSecondaryBlock <= 0)
+        int physicalRecordsPerSecondaryBlock = (secondaryDataHeader.BlockSize - DataBlockHeaderSize) /
+                                               secondaryDataHeader.RecordSize;
+        if (physicalRecordsPerSecondaryBlock <= 0)
         {
             throw new InvalidDataException($"An XG block cannot contain an index entry: {secondaryDataPath}");
         }
+
+        int recordsPerSecondaryBlock = Math.Max(
+            1,
+            physicalRecordsPerSecondaryBlock * SecondaryDataBlockFillPercent / 100);
 
         byte[] secondaryIndexFile = File.ReadAllBytes(secondaryIndexPath);
         ParadoxRecordWriter.TableHeader secondaryIndexHeader =
@@ -203,8 +211,22 @@ internal sealed class ParadoxSecondaryIndexWriter
                 group.Length))
             .ToArray();
 
-        WriteSecondaryDataFile(secondaryDataFile, secondaryDataHeader, secondaryDataPath, encodedRecords);
-        secondaryIndexFile = ParadoxIndexFileBuilder.Build(secondaryIndexFile, SecondaryIndexFileType, indexEntries);
+        WriteSecondaryDataFile(
+            secondaryDataFile,
+            secondaryDataHeader,
+            secondaryDataPath,
+            encodedRecords,
+            recordsPerSecondaryBlock);
+        int physicalIndexNodeCapacity =
+            (secondaryIndexHeader.BlockSize - DataBlockHeaderSize) / secondaryIndexHeader.RecordSize;
+        int maximumIndexNodeEntries = Math.Max(
+            1,
+            physicalIndexNodeCapacity * SecondaryIndexNodeFillNumerator / SecondaryIndexNodeFillDenominator);
+        secondaryIndexFile = ParadoxIndexFileBuilder.Build(
+            secondaryIndexFile,
+            SecondaryIndexFileType,
+            indexEntries,
+            maximumIndexNodeEntries);
         File.WriteAllBytes(secondaryIndexPath, secondaryIndexFile);
     }
 
@@ -224,9 +246,15 @@ internal sealed class ParadoxSecondaryIndexWriter
         byte[] file,
         ParadoxRecordWriter.TableHeader header,
         string path,
-        IReadOnlyList<EncodedIndexRecord> records)
+        IReadOnlyList<EncodedIndexRecord> records,
+        int recordsPerBlock)
     {
-        int recordsPerBlock = (header.BlockSize - DataBlockHeaderSize) / header.RecordSize;
+        int physicalCapacity = (header.BlockSize - DataBlockHeaderSize) / header.RecordSize;
+        if (recordsPerBlock <= 0 || recordsPerBlock > physicalCapacity)
+        {
+            throw new InvalidDataException($"The XG block entry capacity is invalid: {path}");
+        }
+
         int blockCount = checked((records.Count + recordsPerBlock - 1) / recordsPerBlock);
         if (blockCount > ushort.MaxValue)
         {
@@ -417,9 +445,6 @@ internal sealed class ParadoxSecondaryIndexWriter
 
         return indexLabel.ToLowerInvariant() switch
         {
-            "namgeb" or "geba" =>
-                string.Equals(fieldName, "Name", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(fieldName, "Vornamen", StringComparison.OrdinalIgnoreCase),
             "gebo" => string.Equals(fieldName, "Gebort", StringComparison.OrdinalIgnoreCase),
             "tit" => string.Equals(fieldName, "Titel", StringComparison.OrdinalIgnoreCase),
             _ => false
@@ -441,7 +466,7 @@ internal sealed class ParadoxSecondaryIndexWriter
             int comparison;
             if (field.TypeCode == AlphaType &&
                 sortOrder.Contains("intl", StringComparison.OrdinalIgnoreCase) &&
-                indexLabel.Equals("gebnam", StringComparison.OrdinalIgnoreCase))
+                indexLabel.ToLowerInvariant() is "namgeb" or "geba" or "gebnam")
             {
                 comparison = StringComparer.OrdinalIgnoreCase.Compare(
                     Windows1252.Decode(leftValue.ToArray()).TrimEnd('\0', ' '),
