@@ -1,4 +1,5 @@
 using System.Text;
+using Document.Base.Models;
 using Document.Base.Models.Interfaces;
 using Document.Markdown.Model;
 
@@ -100,44 +101,50 @@ public static class MarkdownRenderer
     private static void WriteSpan(StringBuilder sb, MarkdownSpan span)
     {
         string inner = RenderInlineText(span);
+        var bold = GetAttribute(span.DocAttributes, DocAttributeNames.Bold, span.FontStyle.Bold);
+        var italic = GetAttribute(span.DocAttributes, DocAttributeNames.Italic, span.FontStyle.Italic);
+        var underline = GetAttribute(span.DocAttributes, DocAttributeNames.Underline, span.FontStyle.Underline);
+        var strikeout = GetAttribute(span.DocAttributes, DocAttributeNames.Strikeout, span.FontStyle.Strikeout);
 
         if (span.IsLink || !string.IsNullOrWhiteSpace(span.Href))
         {
+            if (bold || italic || underline || strikeout)
+                inner = ApplyCharacterFormatting(inner, bold, italic, underline, strikeout);
             sb.Append('[').Append(inner).Append("](").Append(EscapeLinkDestination(span.Href ?? string.Empty)).Append(')');
             return;
         }
 
-        if (span.FontStyle.Bold && span.FontStyle.Italic)
-        {
-            sb.Append("***").Append(inner).Append("***");
-            return;
-        }
+        sb.Append(ApplyCharacterFormatting(inner, bold, italic, underline, strikeout));
+    }
 
-        if (span.FontStyle.Bold)
-        {
-            sb.Append("**").Append(inner).Append("**");
-            return;
-        }
+    private static string ApplyCharacterFormatting(string text, bool bold, bool italic, bool underline, bool strikeout)
+    {
+        if (bold && italic)
+            text = $"***{text}***";
+        else if (bold)
+            text = $"**{text}**";
+        else if (italic)
+            text = $"*{text}*";
+        if (underline)
+            text = $"<u>{text}</u>";
+        if (strikeout)
+            text = $"~~{text}~~";
+        return text;
+    }
 
-        if (span.FontStyle.Italic)
+    private static T GetAttribute<T>(IList<IDocAttributes> attributes, string name, T fallback)
+    {
+        for (var index = attributes.Count - 1; index >= 0; index--)
         {
-            sb.Append('*').Append(inner).Append('*');
-            return;
+            var attribute = attributes[index];
+            if (!string.Equals(attribute.Name, name, StringComparison.Ordinal))
+                continue;
+            if (attribute.Value is T value)
+                return value;
+            if (typeof(T) == typeof(bool) && bool.TryParse(attribute.Value?.ToString(), out var parsed))
+                return (T)(object)parsed;
         }
-
-        if (span.FontStyle.Underline)
-        {
-            sb.Append("<u>").Append(inner).Append("</u>");
-            return;
-        }
-
-        if (span.FontStyle.Strikeout)
-        {
-            sb.Append("~~").Append(inner).Append("~~");
-            return;
-        }
-
-        sb.Append(inner);
+        return fallback;
     }
 
     private static string RenderInlineText(IDocContent content)

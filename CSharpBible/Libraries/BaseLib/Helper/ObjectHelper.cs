@@ -152,6 +152,8 @@ public static class ObjectHelper
         {
             long i => i,
             ulong ul => unchecked((long)ul),
+            float f => (long)f,
+            double d => (long)d,
             string s => long.TryParse(s, out long i) ? i : def,
             IHasValue f => f.Value.AsLong(),
             null => def,

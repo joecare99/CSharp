@@ -10,6 +10,21 @@
 public interface IDocSpan : IDocContent
 {
     /// <summary>
+    /// Gets the character-level attributes applied by document providers.
+    /// </summary>
+    new IList<IDocAttributes> DocAttributes { get; }
+
+    /// <summary>
+    /// Gets or sets whether this span is a hyperlink.
+    /// </summary>
+    bool IsLink { get; set; }
+
+    /// <summary>
+    /// Gets or sets the hyperlink target.
+    /// </summary>
+    string? Href { get; set; }
+
+    /// <summary>
     /// Applies a style from an untyped style object.
     /// </summary>
     /// <param name="fs">The style payload.</param>

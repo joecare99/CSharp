@@ -184,7 +184,17 @@ public static class StringUtils
     /// Thrown when the format string is invalid or when there are more placeholders than parameters.
     /// </exception>
     public static string Format(this string aStr, params object[] par)
-        => string.Format(aStr, par);
+        => string.Format(CultureInfo.InvariantCulture, aStr, par);
+
+    /// <summary>
+    /// Formats a string using the specified format provider and arguments.
+    /// </summary>
+    /// <param name="aStr">The format string.</param>
+    /// <param name="provider">The format provider to use.</param>
+    /// <param name="par">The format arguments.</param>
+    /// <returns>The formatted string.</returns>
+    public static string Format(this string aStr, IFormatProvider provider, params object[] par)
+        => string.Format(provider, aStr, par);
 
     /// <summary>
     /// Extracts the first part of a string before the specified separator.

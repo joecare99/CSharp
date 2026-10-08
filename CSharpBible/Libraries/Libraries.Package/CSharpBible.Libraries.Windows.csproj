@@ -8,7 +8,7 @@
 	<PackageId>JCSoft.CSharpBible.Libraries.Windows</PackageId>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageOutputPath>$(UpDir)\..\.packages</PackageOutputPath>
-	<Version>1.0.0-b</Version>
+	<Version>1.0.2</Version>
 	<Title>CSharpBible Libraries Windows</Title>
 	<Description>Windows-specific package for the CSharpBible libraries.</Description>
 	<PackageReadmeFile>README.Windows.md</PackageReadmeFile>
@@ -48,16 +48,12 @@
   </ItemGroup>
 
 	<ItemGroup>
-	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net6.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net6.0-windows\*.xml" Pack="true" PackagePath="lib\net6.0-windows10.0.19041.0" Visible="false" />
-	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net7.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net7.0-windows\*.xml" Pack="true" PackagePath="lib\net7.0-windows10.0.19041.0" Visible="false" />
 	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net8.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net8.0-windows\*.xml" Pack="true" PackagePath="lib\net8.0-windows10.0.19041.0" Visible="false" />
 	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net9.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net9.0-windows\*.xml" Pack="true" PackagePath="lib\net9.0-windows10.0.19041.0" Visible="false" />
 	<None Include="$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net10.0-windows\CommonDialogs_net.dll;$(UpDir)\..\bin\CommonDialogs_net\$(Configuration)\net10.0-windows\*.xml" Pack="true" PackagePath="lib\net10.0-windows10.0.19041.0" Visible="false" />
 	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net8.0-windows\ConsoleLib.ExtCon.dll;$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net8.0-windows\*.xml" Pack="true" PackagePath="lib\net8.0-windows10.0.19041.0" Visible="false" />
 	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net9.0-windows\ConsoleLib.ExtCon.dll;$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net9.0-windows\*.xml" Pack="true" PackagePath="lib\net9.0-windows10.0.19041.0" Visible="false" />
 	<None Include="$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net10.0-windows\ConsoleLib.ExtCon.dll;$(UpDir)\..\bin\ConsoleLib.ExtCon\$(Configuration)\net10.0-windows\*.xml" Pack="true" PackagePath="lib\net10.0-windows10.0.19041.0" Visible="false" />
-	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net6.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net6.0-windows\*.xml" Pack="true" PackagePath="lib\net6.0-windows10.0.19041.0" Visible="false" />
-	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net7.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net7.0-windows\*.xml" Pack="true" PackagePath="lib\net7.0-windows10.0.19041.0" Visible="false" />
 	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net8.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net8.0-windows\*.xml" Pack="true" PackagePath="lib\net8.0-windows10.0.19041.0" Visible="false" />
 	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net9.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net9.0-windows\*.xml" Pack="true" PackagePath="lib\net9.0-windows10.0.19041.0" Visible="false" />
 	<None Include="$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net10.0-windows\ExtendedConsole.dll;$(UpDir)\..\bin\ExtendedConsole\$(Configuration)\net10.0-windows\*.xml" Pack="true" PackagePath="lib\net10.0-windows10.0.19041.0" Visible="false" />

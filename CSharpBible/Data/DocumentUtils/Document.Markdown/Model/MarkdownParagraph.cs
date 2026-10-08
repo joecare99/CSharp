@@ -4,6 +4,8 @@ namespace Document.Markdown.Model;
 
 public sealed class MarkdownParagraph : MarkdownContentBase, IDocParagraph
 {
+    public new IList<IDocAttributes> DocAttributes { get; } = new List<IDocAttributes>();
+
     public string? StyleName { get; }
 
     public MarkdownParagraph(string? styleName = null)

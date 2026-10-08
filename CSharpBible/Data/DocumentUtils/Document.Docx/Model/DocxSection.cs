@@ -4,6 +4,16 @@ namespace Document.Docx.Model;
 
 public sealed class DocxSection : DocxNodeBase, IDocSection
 {
+    public DocxSection(int? columns = null)
+    {
+        Columns = columns;
+    }
+
+    /// <summary>
+    /// Gets the requested column count for this real Word section, or null to inherit it.
+    /// </summary>
+    public int? Columns { get; }
+
     public IDocParagraph AddParagraph(string ATextStyleName)
         => (IDocParagraph)AddChild(new DocxParagraph(ATextStyleName));
 
