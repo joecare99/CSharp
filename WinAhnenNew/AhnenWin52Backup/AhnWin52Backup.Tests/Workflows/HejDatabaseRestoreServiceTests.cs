@@ -44,8 +44,50 @@ public sealed class HejDatabaseRestoreServiceTests
             ParadoxTable surnameList = new ParadoxTableReader().Read(Path.Combine(destination, "NM.db"));
             Assert.AreEqual(1, surnameList.Records.Count);
             Assert.AreEqual("Restore", surnameList.Records[0][0]);
+            ParadoxTable occupations = new ParadoxTableReader().Read(Path.Combine(destination, "occ.db"));
+            Assert.AreEqual("Rittmeister", occupations.Records.Single()[1]);
             Assert.IsTrue(File.Exists(Path.Combine(destination, "over.db")));
             Assert.IsTrue(File.Exists(Path.Combine(destination, "over.YG1")));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public void Restore_FromScratchBuildsDistinctProfessionLookupAndSecondaryIndex()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string inputPath = WriteHejFile(
+                root,
+                CreateDocument("Rittmeister", "rittmeister", "Rittmeister", "", "Schneider"));
+            string destination = Path.Combine(root, "restored");
+
+            CreateService().Restore(
+                inputPath,
+                destination,
+                HejDatabaseRestoreMode.FromScratch,
+                force: false);
+
+            ParadoxTable occupations = new ParadoxTableReader().Read(Path.Combine(destination, "occ.db"));
+            HashSet<string?> actualOccupations = occupations.Records
+                .Select(static record => record[1])
+                .ToHashSet(StringComparer.Ordinal);
+            CollectionAssert.AreEquivalent(
+                new string?[] { "Rittmeister", "Schneider" },
+                actualOccupations.ToArray());
+            Assert.AreEqual(2, occupations.Records.Count);
+
+            string secondaryPath = Path.Combine(destination, "occ.XG0");
+            ParadoxRecordWriter.TableHeader secondaryHeader = ParadoxRecordWriter.ReadHeader(
+                File.ReadAllBytes(secondaryPath),
+                8,
+                secondaryPath);
+            Assert.AreEqual(2, secondaryHeader.RecordCount);
         }
         finally
         {
@@ -71,6 +113,11 @@ public sealed class HejDatabaseRestoreServiceTests
                 "Name",
                 [new Dictionary<string, string?> { ["Name"] = "OldSurname" }]);
             new ParadoxSecondaryIndexWriter(reader).RebuildForTable(Path.Combine(destination, "NM.db"));
+            new ParadoxRecordWriter(reader).AppendRecords(
+                Path.Combine(destination, "occ.db"),
+                "NN",
+                [new Dictionary<string, string?> { ["Occ"] = "Old profession" }]);
+            new ParadoxSecondaryIndexWriter(reader).RebuildForTable(Path.Combine(destination, "occ.db"));
             string inputPath = WriteHejFile(root, CreateDocument());
 
             HejDatabaseRestoreResult result = CreateService().Restore(
@@ -85,6 +132,9 @@ public sealed class HejDatabaseRestoreServiceTests
             Assert.AreEqual(
                 "Restore",
                 new ParadoxTableReader().Read(Path.Combine(destination, "NM.db")).Records.Single()[0]);
+            Assert.AreEqual(
+                "Rittmeister",
+                new ParadoxTableReader().Read(Path.Combine(destination, "occ.db")).Records.Single()[1]);
             Assert.IsTrue(File.Exists(Path.Combine(destination, "over.db")));
             CollectionAssert.AreEqual(overBefore, File.ReadAllBytes(Path.Combine(destination, "over.db")));
         }
@@ -177,15 +227,26 @@ public sealed class HejDatabaseRestoreServiceTests
         return path;
     }
 
-    private static HejDocument CreateDocument()
+    private static HejDocument CreateDocument(params string[] occupations)
     {
-        string[] individuals = EmptyFields(HejSection.Individuals);
-        individuals[0] = "1";
-        individuals[1] = "0";
-        individuals[2] = "0";
-        individuals[3] = "Restore";
-        individuals[4] = "Probe";
-        individuals[31] = "memo\tline one\nline two";
+        string[] occupationValues = occupations.Length == 0 ? ["Rittmeister"] : occupations;
+        List<HejRecord> individuals = new(occupationValues.Length);
+        for (int index = 0; index < occupationValues.Length; index++)
+        {
+            string[] fields = EmptyFields(HejSection.Individuals);
+            fields[0] = (index + 1).ToString(System.Globalization.CultureInfo.InvariantCulture);
+            fields[1] = "0";
+            fields[2] = "0";
+            fields[3] = "Restore";
+            fields[4] = "Probe";
+            fields[7] = occupationValues[index];
+            if (index == 0)
+            {
+                fields[31] = "memo\tline one\nline two";
+            }
+
+            individuals.Add(new HejRecord(fields));
+        }
 
         string[] marriages = EmptyFields(HejSection.Marriages);
         marriages[0] = "1";
@@ -204,7 +265,7 @@ public sealed class HejDatabaseRestoreServiceTests
         sources[1] = "RS";
 
         return new HejDocument(
-            [new HejRecord(individuals)],
+            individuals,
             [new HejRecord(marriages)],
             [new HejRecord(adoptions)],
             [new HejRecord(places)],

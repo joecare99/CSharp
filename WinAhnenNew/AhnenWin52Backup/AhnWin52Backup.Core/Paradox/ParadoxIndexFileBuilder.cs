@@ -14,7 +14,8 @@ internal static class ParadoxIndexFileBuilder
     public static byte[] Build(
         byte[] templateFile,
         byte expectedFileType,
-        IReadOnlyList<IndexEntry> entries)
+        IReadOnlyList<IndexEntry> entries,
+        int? maximumEntriesPerBlock = null)
     {
         ArgumentNullException.ThrowIfNull(templateFile);
         ArgumentNullException.ThrowIfNull(entries);
@@ -31,84 +32,94 @@ internal static class ParadoxIndexFileBuilder
         }
 
         int keyLength = header.RecordSize - DataBlockHeaderSize;
-        int recordsPerBlock = (header.BlockSize - DataBlockHeaderSize) / header.RecordSize;
-        if (recordsPerBlock <= 0)
+        int physicalCapacity = (header.BlockSize - DataBlockHeaderSize) / header.RecordSize;
+        int recordsPerBlock = maximumEntriesPerBlock ?? physicalCapacity;
+        if (physicalCapacity <= 0 || recordsPerBlock <= 0 || recordsPerBlock > physicalCapacity)
         {
-            throw new InvalidDataException("The index data block cannot contain an entry.");
+            throw new InvalidDataException("The index data block has an invalid entry capacity.");
         }
 
-        List<IndexEntry[]> leafGroups = entries
-            .Chunk(recordsPerBlock)
-            .Select(static group => group.ToArray())
-            .ToList();
-        bool hasSecondLevel = leafGroups.Count > 1;
-        if (hasSecondLevel && leafGroups.Count > recordsPerBlock)
+        if (entries.Count > recordsPerBlock && recordsPerBlock < 2)
         {
             throw new NotSupportedException(
-                "The Paradox index requires more than two index levels; this database exceeds the supported B-tree depth.");
+                "The Paradox index block cannot reduce the number of nodes at each tree level.");
         }
 
-        List<byte[]> blocks = new();
-        if (!hasSecondLevel)
+        List<List<IndexNode>> levels = new();
+        List<IndexNode> currentLevel = new();
+        int nextBlockNumber = 1;
+        int indexRecordCount = 0;
+        foreach (IndexEntry[] group in entries.Chunk(recordsPerBlock))
         {
-            blocks.Add(CreateDataBlock(
-                templateFile,
-                header,
-                1,
-                0,
-                0,
-                leafGroups[0].Select(entry => EncodeIndexRecord(entry.Key, entry.BlockNumber, entry.RecordCount))));
+            byte[][] recordsForNode = group
+                .Select(entry => EncodeIndexRecord(entry.Key, entry.BlockNumber, entry.RecordCount))
+                .ToArray();
+            currentLevel.Add(new IndexNode(
+                nextBlockNumber++,
+                group[0].Key,
+                group.Sum(static entry => entry.RecordCount),
+                recordsForNode));
+            indexRecordCount = checked(indexRecordCount + recordsForNode.Length);
         }
-        else
+
+        levels.Add(currentLevel);
+        while (currentLevel.Count > 1)
         {
-            IndexEntry[] rootEntries = new IndexEntry[leafGroups.Count];
-            for (int index = 0; index < leafGroups.Count; index++)
+            List<IndexNode> parentLevel = new();
+            foreach (IndexNode[] childGroup in currentLevel.Chunk(recordsPerBlock))
             {
-                IndexEntry[] group = leafGroups[index];
-                int childBlockNumber = index + 2;
-                rootEntries[index] = new IndexEntry(
-                    group[0].Key,
-                    childBlockNumber,
-                    group.Sum(static entry => entry.RecordCount));
-                blocks.Add(Array.Empty<byte>());
+                byte[][] recordsForNode = childGroup
+                    .Select(child => EncodeIndexRecord(
+                        child.FirstKey,
+                        child.BlockNumber,
+                        child.RecordCount))
+                    .ToArray();
+                parentLevel.Add(new IndexNode(
+                    nextBlockNumber++,
+                    childGroup[0].FirstKey,
+                    childGroup.Sum(static child => child.RecordCount),
+                    recordsForNode));
+                indexRecordCount = checked(indexRecordCount + recordsForNode.Length);
             }
 
-            blocks.Insert(0, CreateDataBlock(
-                templateFile,
-                header,
-                1,
-                0,
-                0,
-                rootEntries.Select(entry => EncodeIndexRecord(
-                    entry.Key,
-                    entry.BlockNumber,
-                    entry.RecordCount))));
+            levels.Add(parentLevel);
+            currentLevel = parentLevel;
+        }
 
-            for (int index = 0; index < leafGroups.Count; index++)
+        int blockCount = nextBlockNumber - 1;
+        if (blockCount > ushort.MaxValue || levels.Count > byte.MaxValue)
+        {
+            throw new NotSupportedException("The Paradox index exceeds the supported block or tree-depth range.");
+        }
+
+        byte[][] blocks = new byte[blockCount][];
+        foreach (List<IndexNode> level in levels)
+        {
+            for (int index = 0; index < level.Count; index++)
             {
-                int blockNumber = index + 2;
-                blocks[blockNumber - 1] = CreateDataBlock(
+                IndexNode node = level[index];
+                blocks[node.BlockNumber - 1] = CreateDataBlock(
                     templateFile,
                     header,
-                    blockNumber,
-                    blockNumber - 1,
-                    blockNumber == leafGroups.Count + 1 ? 0 : blockNumber + 1,
-                    leafGroups[index].Select(entry =>
-                        EncodeIndexRecord(entry.Key, entry.BlockNumber, entry.RecordCount)));
+                    node.BlockNumber,
+                    index == 0 ? 0 : level[index - 1].BlockNumber,
+                    index == level.Count - 1 ? 0 : level[index + 1].BlockNumber,
+                    node.Records);
             }
         }
 
-        byte[] output = new byte[checked(header.HeaderSize + blocks.Count * header.BlockSize)];
+        byte[] output = new byte[checked(header.HeaderSize + blocks.Length * header.BlockSize)];
         templateFile.AsSpan(0, header.HeaderSize).CopyTo(output);
-        for (int index = 0; index < blocks.Count; index++)
+        for (int index = 0; index < blocks.Length; index++)
         {
             blocks[index].CopyTo(output, header.HeaderSize + index * header.BlockSize);
         }
 
-        int indexRecordCount = entries.Count + (hasSecondLevel ? leafGroups.Count : 0);
-        ParadoxRecordWriter.UpdateMultipleBlockHeader(output, indexRecordCount, blocks.Count);
-        BinaryPrimitives.WriteUInt16LittleEndian(output.AsSpan(0x1E, sizeof(ushort)), 1);
-        output[0x20] = hasSecondLevel ? (byte)2 : (byte)1;
+        ParadoxRecordWriter.UpdateMultipleBlockHeader(output, indexRecordCount, blocks.Length);
+        BinaryPrimitives.WriteUInt16LittleEndian(
+            output.AsSpan(0x1E, sizeof(ushort)),
+            checked((ushort)currentLevel[0].BlockNumber));
+        output[0x20] = checked((byte)levels.Count);
         return output;
 
         byte[] EncodeIndexRecord(byte[] key, int targetBlock, int recordCount)
@@ -171,4 +182,6 @@ internal static class ParadoxIndexFileBuilder
     }
 
     internal sealed record IndexEntry(byte[] Key, int BlockNumber, int RecordCount);
+
+    private sealed record IndexNode(int BlockNumber, byte[] FirstKey, int RecordCount, byte[][] Records);
 }

@@ -13,6 +13,7 @@ namespace AhnWin52Backup.Core.Workflows;
 public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
 {
     private static readonly string[] MappedTableNames = ["AWD.DB", "MRG.DB", "adp.DB", "LOC.DB", "sour2.DB"];
+    private static readonly string[] DerivedTableNames = ["NM.db", "occ.db"];
 
     private readonly IHejReader _hejReader;
     private readonly IHejDatabaseExportService _databaseExportService;
@@ -209,6 +210,7 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
         }
 
         RebuildSurnameList(directory, writer, indexWriter);
+        RebuildOccupationList(directory, writer, indexWriter);
         ValidateCandidate(directory, document, manifest);
     }
 
@@ -242,6 +244,10 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
             else if (expected.FileName.Equals("NM.db", StringComparison.OrdinalIgnoreCase))
             {
                 ValidateSurnameList(directory, expected);
+            }
+            else if (expected.FileName.Equals("occ.db", StringComparison.OrdinalIgnoreCase))
+            {
+                ValidateOccupationList(directory, expected);
             }
             else if (validateAncillaryBaseline &&
                      actual.Schema.DeclaredRecordCount != expected.ExpectedRecords)
@@ -289,7 +295,7 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
         Dictionary<string, ParadoxTableInventory> byName = tables.ToDictionary(
             static table => table.FileName,
             StringComparer.OrdinalIgnoreCase);
-        foreach (string tableName in MappedTableNames)
+        foreach (string tableName in MappedTableNames.Concat(DerivedTableNames))
         {
             StructureTemplateTable expected = manifest.Tables.Single(table =>
                 table.FileName.Equals(tableName, StringComparison.OrdinalIgnoreCase));
@@ -338,13 +344,13 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
 
     private void EnsureMappedTablesEmpty(string directory)
     {
-        foreach (string tableName in MappedTableNames)
+        foreach (string tableName in MappedTableNames.Concat(DerivedTableNames))
         {
             ParadoxTable table = _tableReader.Read(FindFilePath(directory, tableName));
             if (table.Records.Count != 0)
             {
                 throw new InvalidDataException(
-                    $"The existing-template restore requires empty mapped tables; {tableName} contains {table.Records.Count} records. Use --override explicitly.");
+                    $"The existing-template restore requires empty HEJ and derived tables; {tableName} contains {table.Records.Count} records. Use --override explicitly.");
             }
         }
     }
@@ -381,6 +387,38 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
         }
     }
 
+    private void RebuildOccupationList(
+        string directory,
+        ParadoxRecordWriter writer,
+        ParadoxSecondaryIndexWriter indexWriter)
+    {
+        ParadoxTable individuals = _tableReader.Read(FindFilePath(directory, "AWD.DB"));
+        int occupationIndex = individuals.Fields
+            .Select((field, index) => (field, index))
+            .Single(static item => item.field.Name.Equals("Beruf", StringComparison.OrdinalIgnoreCase))
+            .index;
+        HashSet<string> knownOccupations = new(StringComparer.OrdinalIgnoreCase);
+        List<IReadOnlyDictionary<string, string?>> records = new();
+        foreach (IReadOnlyList<string?> individual in individuals.Records)
+        {
+            string? occupation = individual[occupationIndex];
+            if (!string.IsNullOrWhiteSpace(occupation) && knownOccupations.Add(occupation))
+            {
+                records.Add(new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["Occ"] = occupation
+                });
+            }
+        }
+
+        string occupationsPath = FindFilePath(directory, "occ.db");
+        if (records.Count > 0)
+        {
+            writer.AppendRecords(occupationsPath, "NN", records);
+            indexWriter.RebuildForTable(occupationsPath);
+        }
+    }
+
     private void ValidateSurnameList(string directory, StructureTemplateTable namesTable)
     {
         ParadoxTable individuals = _tableReader.Read(FindFilePath(directory, "AWD.DB"));
@@ -409,13 +447,46 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
         ValidateSecondaryRecordCounts(directory, namesTable, expectedNames.Count);
     }
 
+    private void ValidateOccupationList(string directory, StructureTemplateTable occupationsTable)
+    {
+        ParadoxTable individuals = _tableReader.Read(FindFilePath(directory, "AWD.DB"));
+        int occupationIndex = individuals.Fields
+            .Select((field, index) => (field, index))
+            .Single(static item => item.field.Name.Equals("Beruf", StringComparison.OrdinalIgnoreCase))
+            .index;
+        HashSet<string> expectedOccupations = individuals.Records
+            .Select(record => record[occupationIndex])
+            .Where(static occupation => !string.IsNullOrWhiteSpace(occupation))
+            .Select(static occupation => occupation!)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        ParadoxTable occupations = _tableReader.Read(FindFilePath(directory, "occ.db"));
+        int occupationValueIndex = occupations.Fields
+            .Select((field, index) => (field, index))
+            .Single(static item => item.field.Name.Equals("Occ", StringComparison.OrdinalIgnoreCase))
+            .index;
+        HashSet<string> actualOccupations = occupations.Records
+            .Select(record => record[occupationValueIndex])
+            .Where(static occupation => !string.IsNullOrWhiteSpace(occupation))
+            .Select(static occupation => occupation!)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (occupations.Records.Count != expectedOccupations.Count ||
+            actualOccupations.Count != expectedOccupations.Count ||
+            !actualOccupations.SetEquals(expectedOccupations))
+        {
+            throw new InvalidDataException(
+                "The derived occ.db profession list does not match the restored AWD.DB occupations.");
+        }
+
+        ValidateSecondaryRecordCounts(directory, occupationsTable, expectedOccupations.Count);
+    }
+
     private void ReplaceMappedFamilies(
         string restoredTemplateDirectory,
         string stagingDirectory,
         StructureTemplateManifest manifest)
     {
         HashSet<string> replacementTableStems = MappedTableNames
-            .Append("NM.DB")
+            .Concat(DerivedTableNames)
             .Select(static tableName => Path.GetFileNameWithoutExtension(tableName))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         HashSet<string> replacementFiles = manifest.Assets

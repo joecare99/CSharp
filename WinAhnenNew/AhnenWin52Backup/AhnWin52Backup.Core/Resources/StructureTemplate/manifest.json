@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateId": "ahnwin52-empty2-structure-v1",
-  "sourceDescription": "Read-only extraction from the user-provided AHNENWIN_Empty2 baseline.",
+  "sourceDescription": "Read-only extraction from the user-provided AHNENWIN_Empty2 baseline, with the approved nol and over ancillary families from AHNENWIN_Empty.",
   "encoding": "Windows-1252",
   "encryptionKey": 933712001,
   "indexMaximumTableSize": 2,
@@ -487,6 +487,41 @@
       "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.NM.YG0",
       "sizeBytes": 2048,
       "sha256": "52892033467177a62192b9fe2156d495a13555b159db6470548a7131f65fd8f8",
+      "kind": "secondary-primary-index"
+    },
+    {
+      "fileName": "nol.db",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.nol.db",
+      "sizeBytes": 2048,
+      "sha256": "66AD302755D455DA39DB384D373D988887B4BC12C9A4B77977E31C1BD7B3DD11",
+      "kind": "paradox-table"
+    },
+    {
+      "fileName": "nol.MB",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.nol.MB",
+      "sizeBytes": 4096,
+      "sha256": "F0401CAF5D4424CC12414497EA190711A9D14C8AB9744AC534FB9BDD6F722E7B",
+      "kind": "memo"
+    },
+    {
+      "fileName": "nol.PX",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.nol.PX",
+      "sizeBytes": 2048,
+      "sha256": "15D58E1BF2442F13595D835D4E53B94E890D93CE444E9CBD62596990C9144C05",
+      "kind": "primary-index"
+    },
+    {
+      "fileName": "nol.XG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.nol.XG0",
+      "sizeBytes": 2048,
+      "sha256": "09779271FDFA6B177C30420D0EAE73B45038BF459069C3B1489F35762CA1CA70",
+      "kind": "secondary-data-index"
+    },
+    {
+      "fileName": "nol.YG0",
+      "resourceName": "AhnWin52Backup.Core.StructureTemplate.Files.nol.YG0",
+      "sizeBytes": 2048,
+      "sha256": "A486A76CE2D4F7CF387F0615B14E71A05006AFF736CC3070AFBACD48D9F184A4",
       "kind": "secondary-primary-index"
     },
     {
@@ -3440,6 +3475,124 @@
       "databaseFieldNumbers": [
         7
       ]
+    },
+    {
+      "fileName": "nol.db",
+      "version": 12,
+      "recordSize": 74,
+      "maximumTableSize": 2,
+      "expectedRecords": 0,
+      "expectedBlocks": 0,
+      "encrypted": true,
+      "primaryIndexFile": "nol.PX",
+      "memoFile": "nol.MB",
+      "fields": [
+        {
+          "name": "Nr",
+          "typeCode": 22,
+          "length": 4
+        },
+        {
+          "name": "No",
+          "typeCode": 1,
+          "length": 50
+        },
+        {
+          "name": "Zus",
+          "typeCode": 12,
+          "length": 20
+        }
+      ],
+      "secondaryIndexes": [
+        {
+          "number": 0,
+          "xgFile": "nol.XG0",
+          "ygFile": "nol.YG0",
+          "sortOrder": "ANSIINTL",
+          "label": "namort",
+          "keyFields": [
+            "No",
+            "Nr"
+          ],
+          "fields": [
+            {
+              "name": "No",
+              "typeCode": 1,
+              "length": 50
+            },
+            {
+              "name": "Nr",
+              "typeCode": 22,
+              "length": 4
+            },
+            {
+              "name": "Blk Num",
+              "typeCode": 3,
+              "length": 2
+            }
+          ],
+          "expectedXgRecords": 0,
+          "expectedYgRecords": 0,
+          "expectedXgBlocks": 0,
+          "expectedYgBlocks": 0,
+          "xgEmptyBlockRecordHex": null,
+          "ygEmptyBlockRecordHex": null,
+          "xgHeaderMetadata": {
+            "word12": 7,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "FFC38467",
+            "autoIncrementValue": 114689,
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "00000000B7010000012000",
+            "headerBytes16To1DHex": "0CD6E06B7CECE06B",
+            "headerBytes30To48Hex": "48DFE06B42DFE06B000C0000000000006BE0E06B6EE0E06B00",
+            "extendedHeaderBytes58To77Hex": "0C010C018150A7377A3C1742040049015801E40401014F010000000000000000"
+          },
+          "ygHeaderMetadata": {
+            "word12": 8,
+            "sortOrderCode": 98,
+            "revisionBytesHex": "28000000",
+            "autoIncrementValue": 97872,
+            "headerBytes38To3FHex": "000C000000000000",
+            "headerBytes4DTo57Hex": "0000000065010000000000",
+            "headerBytes16To1DHex": "0000000000000000",
+            "headerBytes30To48Hex": "46D8E06B42D8E06B000C000000000000000000000000000000",
+            "extendedHeaderBytes58To77Hex": "013216044AD8E06B6E6F6C2E5947300000000000000000000000000000000000"
+          }
+        }
+      ],
+      "baselineData": null,
+      "expectedPrimaryIndexBlocks": 0,
+      "primaryIndexEmptyBlockRecordHex": null,
+      "databaseHeaderMetadata": {
+        "word12": 5,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "00038400",
+        "autoIncrementValue": 166369,
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "00000000AC010000002000",
+        "headerBytes16To1DHex": "CCE5E06B00000000",
+        "headerBytes30To48Hex": "D8EEE06BD2EEE06B000C000000000000F7EFE06BFAEFE06B00",
+        "extendedHeaderBytes58To77Hex": "0C010C018150A73779CBF340040045010000E40401014B01D27B010000000000"
+      },
+      "primaryIndexHeaderMetadata": {
+        "word12": 6,
+        "sortOrderCode": 98,
+        "revisionBytesHex": "67000000",
+        "autoIncrementValue": 97871,
+        "headerBytes38To3FHex": "000C000000000000",
+        "headerBytes4DTo57Hex": "0000000063010000000000",
+        "headerBytes16To1DHex": "0000000000000000",
+        "headerBytes30To48Hex": "04E8E06B02E8E06B000C000000000000000000000000000000",
+        "extendedHeaderBytes58To77Hex": "160408E8E06B6E6F6C2E50580000000000000000000000000000000000000000"
+      },
+      "databaseSortOrder": "ANSIINTL",
+      "databaseFieldNumbers": [
+        1,
+        2,
+        3
+      ],
+      "generatedFromSchema": false
     },
     {
       "fileName": "over.DB",

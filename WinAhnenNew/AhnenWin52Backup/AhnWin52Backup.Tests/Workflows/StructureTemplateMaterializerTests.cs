@@ -22,8 +22,8 @@ public sealed class StructureTemplateMaterializerTests
         Assert.AreEqual(1, manifest.SchemaVersion);
         Assert.AreEqual("ahnwin52-empty2-structure-v1", manifest.TemplateId);
         Assert.AreEqual(0x37A75081u, manifest.EncryptionKey);
-        Assert.AreEqual(108, manifest.Assets.Count);
-        Assert.AreEqual(17, manifest.Tables.Count);
+        Assert.AreEqual(113, manifest.Assets.Count);
+        Assert.AreEqual(18, manifest.Tables.Count);
         Assert.IsTrue(manifest.Assets.Any(static asset => asset.FileName == "par.cfg"));
         Assert.IsTrue(manifest.Assets.Any(static asset => asset.FileName == "FOKO.DBF"));
         Assert.IsFalse(manifest.Assets.Any(static asset =>
@@ -50,6 +50,13 @@ public sealed class StructureTemplateMaterializerTests
         Assert.AreEqual(17, over.Fields.Count);
         Assert.AreEqual(2, over.SecondaryIndexes.Count);
         Assert.IsTrue(manifest.Assets.Any(static asset => asset.FileName == "over.db"));
+
+        StructureTemplateTable notes = manifest.Tables.Single(static table => table.FileName == "nol.db");
+        Assert.IsFalse(notes.GeneratedFromSchema);
+        Assert.AreEqual("nol.MB", notes.MemoFile);
+        Assert.AreEqual(3, notes.Fields.Count);
+        Assert.AreEqual(1, notes.SecondaryIndexes.Count);
+        Assert.IsTrue(manifest.Assets.Any(static asset => asset.FileName == "nol.db"));
     }
 
     [TestMethod]
@@ -75,10 +82,17 @@ public sealed class StructureTemplateMaterializerTests
             Assert.AreEqual(0, tables.Single(static table => table.FileName == "AWD.DB").Schema.DeclaredRecordCount);
             Assert.IsTrue(File.Exists(Path.Combine(destination, "over.db")));
             Assert.IsTrue(File.Exists(Path.Combine(destination, "over.PX")));
+            Assert.IsTrue(File.Exists(Path.Combine(destination, "nol.db")));
+            Assert.IsTrue(File.Exists(Path.Combine(destination, "nol.MB")));
             Assert.AreEqual(
                 0,
                 tables.Single(static table =>
                     table.FileName.Equals("over.DB", StringComparison.OrdinalIgnoreCase))
+                    .Schema.DeclaredRecordCount);
+            Assert.AreEqual(
+                0,
+                tables.Single(static table =>
+                    table.FileName.Equals("nol.db", StringComparison.OrdinalIgnoreCase))
                     .Schema.DeclaredRecordCount);
         }
         finally
@@ -103,7 +117,8 @@ public sealed class StructureTemplateMaterializerTests
             Assert.IsTrue(Directory.Exists(destination));
             Assert.AreEqual(manifest.Assets.Count, Directory.EnumerateFiles(destination).Count());
             foreach (StructureTemplateAsset asset in manifest.Assets.Where(static asset =>
-                         asset.FileName.StartsWith("over.", StringComparison.OrdinalIgnoreCase)))
+                         asset.FileName.StartsWith("over.", StringComparison.OrdinalIgnoreCase) ||
+                         asset.FileName.StartsWith("nol.", StringComparison.OrdinalIgnoreCase)))
             {
                 CollectionAssert.AreEqual(
                     File.ReadAllBytes(Path.Combine(reference, asset.FileName)),
