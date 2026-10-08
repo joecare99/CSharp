@@ -10,6 +10,11 @@
 public interface IDocParagraph : IDocContent
 {
     /// <summary>
+    /// Gets the paragraph-level attributes applied by document providers.
+    /// </summary>
+    new IList<IDocAttributes> DocAttributes { get; }
+
+    /// <summary>
     /// Adds a bookmark span to the paragraph.
     /// </summary>
     /// <param name="Id">The bookmark identifier.</param>

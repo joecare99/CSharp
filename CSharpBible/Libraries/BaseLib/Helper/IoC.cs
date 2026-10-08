@@ -13,6 +13,7 @@
 // ***********************************************************************
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading;
 
 /// <summary>
 /// The Extension namespace.
@@ -73,23 +74,26 @@ public class IoC
     /// The scope
     /// </summary>
     private static IServiceScope _Scope;
-    /// <summary>
-    /// The base scope
-    /// </summary>
-    private static IServiceScope _BaseScope;
 #pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
+    private static readonly AsyncLocal<IServiceScope?> _CurrentScope = new();
 
     /// <summary>
     /// Gets the scope.
     /// </summary>
     /// <value>The scope.</value>
-    public static IServiceScope Scope => _Scope;
+    public static IServiceScope Scope => _CurrentScope.Value ?? _Scope;
     /// <summary>
     /// Gets the required service.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns>T, the initialized service(class)</returns>
-    public static T GetRequiredService<T>() => (T)GetReqSrv.Invoke(typeof(T));
+    public static T GetRequiredService<T>()
+    {
+        if (_CurrentScope.Value is IServiceScope scope)
+            return (T)scope.ServiceProvider.GetRequiredService(typeof(T));
+
+        return (T)GetReqSrv.Invoke(typeof(T));
+    }
     /// <summary>
     /// Gets the required, keyed service.
     /// </summary>
@@ -102,7 +106,10 @@ public class IoC
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns>System.Nullable&lt;T&gt;, the initialized service(class)</returns>
-    public static T? GetService<T>() => (T?)GetSrv.Invoke(typeof(T));
+    public static T? GetService<T>()
+        => _CurrentScope.Value is IServiceScope scope
+            ? (T?)scope.ServiceProvider.GetService(typeof(T))
+            : (T?)GetSrv.Invoke(typeof(T));
 
     /// <summary>Configures the <see cref="T:MVVM.View.Extension.IoC" /> class with the specified <see cref="IServiceProvider" /> sp.</summary>
     /// <param name="sp">The sp.</param>
@@ -117,7 +124,8 @@ public class IoC
     public static void Configure(IServiceProvider sp)
     {
         GetScope = sp.CreateScope;
-        _Scope = _BaseScope = GetScope();
+        _Scope = GetScope();
+        _CurrentScope.Value = null;
         GetReqSrv = (t) => { var s = sp.GetService(t); return s ?? throw new InvalidOperationException($"No service for {t}"); };
         GetSrv = sp.GetService;
         GetKydReqSrv = (t, k) => { var s = sp.GetRequiredKeyedService(t, k); return s; };
@@ -128,16 +136,11 @@ public class IoC
     /// </summary>
     /// <param name="aScope">a scope.</param>
     /// <returns><see cref="IServiceScope" />.</returns>
-    public static IServiceScope GetNewScope(IServiceScope? aScope = null) => _Scope = aScope == null ? GetScope() : aScope.ServiceProvider.CreateScope();
+    public static IServiceScope GetNewScope(IServiceScope? aScope = null) => aScope == null ? GetScope() : aScope.ServiceProvider.CreateScope();
 
     /// <summary>
     /// Sets the current scope.
     /// </summary>
     /// <param name="scope">The scope.</param>
-    public static void SetCurrentScope(IServiceScope scope)
-    {
-        var sp = (_Scope = scope).ServiceProvider;
-        GetReqSrv = (t) => { var s = sp.GetService(t); return s ?? throw new InvalidOperationException($"No service for {t}"); };
-        GetSrv = sp.GetService;
-    }
+    public static void SetCurrentScope(IServiceScope? scope) => _CurrentScope.Value = scope;
 }
