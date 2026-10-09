@@ -335,6 +335,11 @@ public sealed class GedcomOutputDriver : IGenealogyOutputDriver
             Tag = node.TypeCode,
             Value = node.Value
         };
+        foreach (var association in node.Associations)
+        {
+            if (!string.Equals(node.TypeCode, "ASSO", StringComparison.OrdinalIgnoreCase))
+                continue;
+        }
         foreach (var child in node.Children)
             result.Children.Add(BuildSyntaxNode(child, level + 1));
         return result;

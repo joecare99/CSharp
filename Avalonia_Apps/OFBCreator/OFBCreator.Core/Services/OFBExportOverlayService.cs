@@ -213,6 +213,8 @@ public sealed partial class OFBExportOverlayService
         ICollection<OFBExportRuleDiagnostic> diagnostics)
     {
         var fieldRules = GetFieldRules("person", targetId, rules, matchedRules);
+        var nameVariants = CanonicalGenealogyAdapter.GetNameVariants(source);
+        var nameEvents = CanonicalGenealogyAdapter.GetNameEvents(source);
         var clone = new GedcomPerson
         {
             UId = source.UId,
@@ -220,13 +222,28 @@ public sealed partial class OFBExportOverlayService
             Name = source.Name,
             GivenName = source.GivenName,
             Surname = source.Surname,
+            BirthSurname = nameVariants.BirthSurname,
+            ReferenceNumber = source is GedcomPerson gedcomPerson ? gedcomPerson.ReferenceNumber : null,
             Title = source.Title,
             Sex = source.Sex,
             IndRefID = source.IndRefID,
             Religion = source.Religion,
             Occupation = source.Occupation
         };
+        clone.BirthDate = CloneDate(source.BirthDate ?? source.Birth?.Date);
+        clone.DeathDate = CloneDate(source.DeathDate ?? source.Death?.Date);
+        clone.BaptDate = CloneDate(source.BaptDate ?? source.Baptism?.Date);
+        clone.BurialDate = CloneDate(source.BurialDate ?? source.Burial?.Date);
         clone.SetOwner(genealogy);
+        clone.AliasNames.AddRange(nameVariants.AliasNames);
+        clone.NameEvents.AddRange(nameEvents.Select(nameEvent => new GedcomNameEvent
+        {
+            GivenName = nameEvent.GivenName,
+            Surname = nameEvent.Surname,
+            Type = nameEvent.Type,
+            DateText = nameEvent.DateText,
+            Date = nameEvent.Date
+        }));
 
         clone.GivenName = ApplyTextRules(clone.GivenName, fieldRules, "givenName");
         clone.Surname = ApplyTextRules(clone.Surname, fieldRules, "surname");
@@ -242,6 +259,7 @@ public sealed partial class OFBExportOverlayService
         }
 
         var factCopies = CloneFacts(source, targetId, fieldRules, rules, matchedRules, clone, diagnostics);
+        clone.ReferenceNumber = clone.Facts.FirstOrDefault(fact => fact?.eFactType == EFactType.Reference)?.Data;
         if (source.Facts.Any(fact => fact?.eFactType == EFactType.Occupation))
             clone.Occupation = clone.Facts
                 .FirstOrDefault(fact => fact?.eFactType == EFactType.Occupation)?.Data;
@@ -252,11 +270,13 @@ public sealed partial class OFBExportOverlayService
         clone.Baptism = FindFactCopy(source.Baptism, factCopies);
         clone.Death = FindFactCopy(source.Death, factCopies);
         clone.Burial = FindFactCopy(source.Burial, factCopies);
-        clone.BirthDate = ResolveDate(source.BirthDate, source.Birth, clone.Birth, fieldRules, "birthDate", diagnostics);
+        clone.BirthDate = ResolveDate(source.BirthDate, source.Birth, clone.Birth, fieldRules, "birthDate", diagnostics)
+            ?? clone.Birth?.Date;
         clone.BirthPlace = ResolvePlace(source.BirthPlace, source.Birth, clone.Birth, fieldRules, "birthPlace");
         clone.BaptDate = ResolveDate(source.BaptDate, source.Baptism, clone.Baptism, fieldRules, "baptismDate", diagnostics);
         clone.BaptPlace = ResolvePlace(source.BaptPlace, source.Baptism, clone.Baptism, fieldRules, "baptismPlace");
-        clone.DeathDate = ResolveDate(source.DeathDate, source.Death, clone.Death, fieldRules, "deathDate", diagnostics);
+        clone.DeathDate = ResolveDate(source.DeathDate, source.Death, clone.Death, fieldRules, "deathDate", diagnostics)
+            ?? clone.Death?.Date;
         clone.DeathPlace = ResolvePlace(source.DeathPlace, source.Death, clone.Death, fieldRules, "deathPlace");
         clone.BurialDate = ResolveDate(source.BurialDate, source.Burial, clone.Burial, fieldRules, "burialDate", diagnostics);
         clone.BurialPlace = ResolvePlace(source.BurialPlace, source.Burial, clone.Burial, fieldRules, "burialPlace");

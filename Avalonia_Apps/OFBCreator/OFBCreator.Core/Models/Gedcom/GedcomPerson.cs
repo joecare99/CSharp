@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
@@ -10,9 +11,13 @@ internal sealed class GedcomPerson : GedcomEntity, IGenPerson
     public string Name { get; set; } = string.Empty;
     public string? GivenName { get; set; }
     public string? Surname { get; set; }
+    public string? BirthSurname { get; set; }
+    public List<string> AliasNames { get; } = new();
+    public List<GedcomNameEvent> NameEvents { get; } = new();
     public string? Title { get; set; }
     public string Sex { get; set; } = string.Empty;
     public string? IndRefID { get; set; }
+    public string? ReferenceNumber { get; set; }
     public IGenPerson? Father { get; set; }
     public IGenPerson? Mother { get; set; }
     public int ChildCount => Children.Count;

@@ -13,8 +13,16 @@ namespace OFBCreator.Core.Services;
 /// Adapts the canonical genealogy document to the existing OFB rendering contracts.
 /// This compatibility boundary can be removed after OFB selection and rendering consume Genealogy.Core directly.
 /// </summary>
-public sealed class CanonicalGenealogyAdapter
+public sealed class CanonicalGenealogyAdapter()
 {
+    public static (string? BirthSurname, IReadOnlyList<string> AliasNames) GetNameVariants(IGenPerson person) =>
+        person is GedcomPerson gedcomPerson
+            ? (gedcomPerson.BirthSurname, gedcomPerson.AliasNames)
+            : (null, Array.Empty<string>());
+
+    public static IReadOnlyList<GedcomNameEvent> GetNameEvents(IGenPerson person) =>
+        person is GedcomPerson gedcomPerson ? gedcomPerson.NameEvents : Array.Empty<GedcomNameEvent>();
+
     public IGenealogy Adapt(GenealogyDocument document)
     {
         ArgumentNullException.ThrowIfNull(document);
@@ -42,6 +50,7 @@ public sealed class CanonicalGenealogyAdapter
             }
         }
 
+        LinkAliases(document.Records, peopleById);
         LinkRelationships(document.Records, peopleById, familiesById);
         return genealogy;
     }
@@ -57,8 +66,37 @@ public sealed class CanonicalGenealogyAdapter
             Name = GetContent(record, "NAME")?.Value ?? record.DisplayName ?? string.Empty,
             GivenName = record.GivenName,
             Surname = record.Surname,
+            ReferenceNumber = GetContent(record, "REFN")?.Value,
             Sex = record.Sex ?? string.Empty
         };
+        foreach (var nameNode in record.Content.Where(node => node.TypeCode.Equals("NAME", StringComparison.OrdinalIgnoreCase)))
+        {
+            var givenName = GetContent(nameNode, "GIVN")?.Value;
+            var surname = GetContent(nameNode, "SURN")?.Value;
+            var rawName = nameNode.Value;
+            var firstSlash = rawName.IndexOf('/');
+            var lastSlash = rawName.LastIndexOf('/');
+            if (firstSlash >= 0 && lastSlash > firstSlash)
+            {
+                givenName ??= rawName[..firstSlash].Trim();
+                surname ??= rawName[(firstSlash + 1)..lastSlash].Trim();
+            }
+            else
+            {
+                givenName ??= rawName.Trim();
+            }
+            var nameDate = CreateDate(GetContent(nameNode, "DATE")?.Value);
+            person.NameEvents.Add(new GedcomNameEvent
+            {
+                GivenName = givenName ?? string.Empty,
+                Surname = surname ?? string.Empty,
+                Type = GetContent(nameNode, "TYPE")?.Value,
+                DateText = GetContent(nameNode, "DATE")?.Value,
+                Date = nameDate?.Date1 == default ? null : nameDate?.Date1
+            });
+            if (string.Equals(GetContent(nameNode, "TYPE")?.Value, "BIRTH", StringComparison.OrdinalIgnoreCase))
+                person.BirthSurname = surname;
+        }
         person.SetOwner(genealogy);
 
         foreach (var node in record.Content)
@@ -68,7 +106,6 @@ public sealed class CanonicalGenealogyAdapter
             if (fact is not null)
                 person.Facts.Add(fact);
         }
-
         person.Occupation = GetContent(record, "OCCU")?.Value;
         person.Religion = GetContent(record, "RELI")?.Value;
         person.Birth = GetFact(person, EFactType.Birth);
@@ -86,6 +123,43 @@ public sealed class CanonicalGenealogyAdapter
         person.Residence = GetFact(person, EFactType.Residence)?.Place;
         person.OccuPlace = GetFact(person, EFactType.Occupation)?.Place;
         return person;
+    }
+
+    private static void LinkAliases(
+        IEnumerable<GenealogyRecord> records,
+        IReadOnlyDictionary<Guid, GedcomPerson> people)
+    {
+        foreach (var record in records)
+        {
+            if (!people.TryGetValue(record.Id, out var person))
+                continue;
+            foreach (var association in record.Associations)
+            {
+                if (association.Role == "Alias")
+                {
+                    var alias = association.Detail ?? (association.TargetRecordId is Guid targetId && people.TryGetValue(targetId, out var aliasPerson)
+                        ? string.Join(' ', aliasPerson.Name.Replace("/", " ", StringComparison.Ordinal)
+                            .Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                        : association.TargetIdentifier?.Value);
+                    if (string.IsNullOrWhiteSpace(alias))
+                        continue;
+                    if (alias.Length > 0 && !person.AliasNames.Contains(alias, StringComparer.OrdinalIgnoreCase))
+                        person.AliasNames.Add(alias);
+                }
+            }
+            foreach (var aliasNode in record.Content.Where(node => node.TypeCode.Equals("ALIA", StringComparison.OrdinalIgnoreCase)))
+            {
+                var alias = aliasNode.Value;
+                if (string.IsNullOrWhiteSpace(alias))
+                    continue;
+                if (alias.StartsWith('@') && alias.EndsWith('@'))
+                    continue;
+                alias = string.Join(' ', alias.Replace("/", " ", StringComparison.Ordinal)
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries));
+                if (!person.AliasNames.Contains(alias, StringComparer.OrdinalIgnoreCase))
+                    person.AliasNames.Add(alias);
+            }
+        }
     }
 
     private static GedcomFamily CreateFamily(
@@ -129,6 +203,11 @@ public sealed class CanonicalGenealogyAdapter
             Place = CreatePlace(GetContent(node, "PLAC")?.Value, placesByName, genealogy)
         };
         fact.SetOwner(owner);
+        foreach (var association in node.Associations)
+        {
+            if (association.TargetRecordId is null || association.TargetIdentifier is null)
+                continue;
+        }
         return fact;
     }
 
@@ -238,6 +317,7 @@ public sealed class CanonicalGenealogyAdapter
     private static EFactType MapFactType(string tag) =>
         tag.ToUpperInvariant() switch
         {
+            "NAME" => EFactType.Info,
             "GIVN" => EFactType.Givenname,
             "SURN" => EFactType.Surname,
             "TITL" => EFactType.Title,
@@ -248,6 +328,7 @@ public sealed class CanonicalGenealogyAdapter
             "DEAT" => EFactType.Death,
             "BURI" => EFactType.Burial,
             "RELI" => EFactType.Religion,
+            "REFN" => EFactType.Reference,
             "OCCU" => EFactType.Occupation,
             "RESI" => EFactType.Residence,
             "EDUC" => EFactType.Education,

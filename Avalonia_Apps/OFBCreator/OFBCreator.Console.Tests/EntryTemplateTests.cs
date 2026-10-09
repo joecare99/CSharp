@@ -26,6 +26,20 @@ public sealed class EntryTemplateTests
         Assert.AreEqual(name, template.Id);
         Assert.AreEqual("Family", template.EntryRoot);
         Assert.IsTrue(template.Blocks.Count > 0);
+        Assert.IsTrue(template.Legend.Count > 0);
+        Assert.IsTrue(template.Legend.Where(entry => entry.Symbol != "Kdr.").All(entry => entry.Event.HasValue));
+        Assert.IsNull(template.Legend.Single(entry => entry.Symbol == "Kdr.").Event);
+    }
+
+    [TestMethod]
+    public void EntryTemplateValidator_RejectsEmptyLegendSymbol()
+    {
+        const string json = """
+            {"schemaVersion":1,"id":"legend","entryRoot":"Family",
+             "legend":[{"symbol":" ","meaning":"geboren"}],"blocks":[]}
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() => EntryTemplateValidator.ParseAndValidate(json));
     }
 
     [TestMethod]
@@ -90,6 +104,120 @@ public sealed class EntryTemplateTests
         Assert.AreEqual("styled", EntryTemplateValidator.ParseAndValidate(valid).Id);
         Assert.ThrowsExactly<InvalidDataException>(() => EntryTemplateValidator.ParseAndValidate(invalid));
     }
+
+    [TestMethod]
+    public void EntryTemplateValidator_AcceptsExactlyOneAndNegatedCollectionConditions()
+    {
+        const string json = """
+            {"schemaVersion":1,"id":"conditions","entryRoot":"Family","blocks":[
+              {"kind":"if","condition":"family.children.one","then":[]},
+              {"kind":"if","condition":"!family.children.one","then":[]},
+              {"kind":"if","condition":"!family.children.any","then":[]}
+            ]}
+            """;
+        const string doubleNegation = """
+            {"schemaVersion":1,"id":"invalid-condition","entryRoot":"Family","blocks":[
+              {"kind":"if","condition":"!!family.children.one","then":[]}
+            ]}
+            """;
+
+        Assert.AreEqual("conditions", EntryTemplateValidator.ParseAndValidate(json).Id);
+        Assert.ThrowsExactly<InvalidDataException>(() => EntryTemplateValidator.ParseAndValidate(doubleNegation));
+    }
+
+    [TestMethod]
+    public void EntryTemplateValidator_AcceptsOptionalPersonEventPlaceAndAdditionalConditions()
+    {
+        const string json = """
+            {"schemaVersion":1,"id":"event-optional-condition","entryRoot":"Individual","blocks":[
+              {"kind":"forEach","items":"person.events","as":"personEvent","template":[
+                {"kind":"if","condition":"personEvent.place","then":[]},
+                {"kind":"if","condition":"!personEvent.place","then":[]},
+                {"kind":"if","condition":"personEvent.additional","then":[]},
+                {"kind":"if","condition":"!personEvent.additional","then":[]}
+              ]}
+            ]}
+            """;
+
+        Assert.AreEqual("event-optional-condition", EntryTemplateValidator.ParseAndValidate(json).Id);
+    }
+
+    [TestMethod]
+    public void EntryTemplateRenderer_RendersSingularPluralChildLabelsAndIndentedOrdinals()
+    {
+        const string json = """
+            {"schemaVersion":1,"id":"children","entryRoot":"Family","blocks":[
+              {"kind":"if","condition":"family.children.one","then":[
+                {"kind":"paragraph","content":[{"kind":"text","value":"Kind:"}]}
+              ]},
+              {"kind":"if","condition":"!family.children.one","then":[
+                {"kind":"paragraph","content":[{"kind":"text","value":"Kinder:"}]}
+              ]},
+              {"kind":"forEach","items":"family.children","as":"person","template":[
+                {"kind":"paragraph","indent":36,"content":[
+                  {"kind":"field","path":"person.ordinal","formatter":"ordinal"},
+                  {"kind":"text","value":" "},
+                  {"kind":"field","path":"person.nameAk"}
+                ]}
+              ]}
+            ]}
+            """;
+        var template = EntryTemplateValidator.ParseAndValidate(json);
+        var singleChildDocument = new DocxDocument();
+        var singleChild = CreateTemplatePerson("Ada", 1);
+
+        new EntryTemplateRenderer().RenderFamily(singleChildDocument, template, CreateTemplateFamily(singleChild));
+
+        var singleParagraphs = singleChildDocument.Enumerate().OfType<IDocParagraph>().ToArray();
+        var singleText = singleParagraphs.Select(paragraph => paragraph.GetTextContent()).ToArray();
+        CollectionAssert.Contains(singleText, "Kind:");
+        CollectionAssert.Contains(singleText, "1. Ada");
+        Assert.IsFalse(singleText.Contains("Kinder:"));
+        Assert.IsTrue(singleParagraphs.Any(paragraph => paragraph.GetTextContent() == "1. Ada"
+            && paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationBefore
+                && Equals(attribute.Value, 36))));
+        Assert.IsFalse(singleParagraphs.Any(paragraph => paragraph.GetTextContent() == "1. Ada"
+            && paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationHanging)));
+        Assert.IsFalse(singleParagraphs.Any(paragraph => paragraph.GetTextContent() == "1. Ada"
+            && paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationHanging)));
+
+        var multipleChildrenDocument = new DocxDocument();
+        new EntryTemplateRenderer().RenderFamily(
+            multipleChildrenDocument,
+            template,
+            CreateTemplateFamily(CreateTemplatePerson("Ada", 1), CreateTemplatePerson("Bernd", 2)));
+
+        var multipleText = multipleChildrenDocument.Enumerate()
+            .OfType<IDocParagraph>()
+            .Select(paragraph => paragraph.GetTextContent())
+            .ToArray();
+        CollectionAssert.Contains(multipleText, "Kinder:");
+        CollectionAssert.Contains(multipleText, "1. Ada");
+        CollectionAssert.Contains(multipleText, "2. Bernd");
+        Assert.IsFalse(multipleText.Contains("Kind:"));
+    }
+
+    private static FamilyEntryTemplateModel CreateTemplateFamily(params PersonEntryTemplateModel[] children) => new()
+    {
+        Number = "00001",
+        Anchor = "family-00001",
+        Union = string.Empty,
+        Parents = Array.Empty<PersonEntryTemplateModel>(),
+        Children = children
+    };
+
+    private static PersonEntryTemplateModel CreateTemplatePerson(string name, int ordinal) => new()
+    {
+        NameGc = name,
+        NameAk = name,
+        Anchor = $"person-{ordinal}",
+        Reference = ordinal.ToString(),
+        VitalEventsGc = string.Empty,
+        VitalEventsAk = string.Empty,
+        IndexAnchor = string.Empty,
+        Ordinal = ordinal,
+        Occupations = Array.Empty<OccupationEntryTemplateModel>()
+    };
 
     [TestMethod]
     public void EntryTemplateRenderer_AppliesInlineFontOptionsAndHangingIndent()
