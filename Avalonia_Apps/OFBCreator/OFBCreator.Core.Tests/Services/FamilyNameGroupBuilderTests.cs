@@ -44,6 +44,34 @@ public class FamilyNameGroupBuilderTests
     #region Phase 1: Exact name grouping (no phonetic bridges)
 
     [TestMethod]
+    public void BuildGroups_KeepsPlaceholderFamiliesInSeparateNoNameSection()
+    {
+        var noNameFamily = CreateFamilyWithSurname("NA");
+        var namedFamily = CreateFamilyWithSurname("Miller");
+        var builder = new FamilyNameGroupBuilder();
+
+        builder.BuildGroups(new[] { noNameFamily, namedFamily });
+
+        var noNameGroup = builder.GetGroup("Familien ohne Namen");
+        Assert.IsNotNull(noNameGroup);
+        Assert.AreSame(noNameFamily, noNameGroup!.Single());
+        Assert.AreEqual(2, builder.GroupKeys.Count);
+    }
+
+    [TestMethod]
+    public void BuildGroups_DoesNotTreatRealSurnameAsNoNameSection()
+    {
+        var realSurnameFamily = CreateFamilyWithSurname("Familien ohne Namen");
+        var unnamedFamily = CreateFamilyWithSurname("NA");
+        var builder = new FamilyNameGroupBuilder();
+
+        builder.BuildGroups([unnamedFamily, realSurnameFamily]);
+
+        Assert.AreSame(realSurnameFamily, builder.GetGroup("Familien ohne Namen")!.Single());
+        Assert.AreSame(unnamedFamily, builder.GetGroup("Familien ohne Namen (2)")!.Single());
+    }
+
+    [TestMethod]
     public void BuildGroups_WithNoPhoneticBridge_ShouldKeepExactGroups()
     {
         var builder = new FamilyNameGroupBuilder();

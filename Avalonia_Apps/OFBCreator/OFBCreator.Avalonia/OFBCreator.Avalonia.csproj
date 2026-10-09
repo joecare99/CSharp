@@ -32,8 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OFBCreator.Console\OFBCreator.Console.csproj" />
     <ProjectReference Include="..\OFBCreator.Core\OFBCreator.Core.csproj" />
+    <ProjectReference Include="..\OFBCreator.Publishing\OFBCreator.Publishing.csproj" />
     <ProjectReference Include="..\OFBCreator.Projects\OFBCreator.Projects.csproj" />
   </ItemGroup>
 </Project>

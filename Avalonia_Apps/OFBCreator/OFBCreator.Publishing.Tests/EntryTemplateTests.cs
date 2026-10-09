@@ -8,10 +8,10 @@ using Document.Base.Models;
 using Document.Base.Models.Interfaces;
 using Document.Docx;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OFBCreator.Console.Models;
-using OFBCreator.Console.Services.Templates;
+using OFBCreator.Publishing.Models;
+using OFBCreator.Publishing.Services.Templates;
 
-namespace OFBCreator.Console.Tests;
+namespace OFBCreator.Publishing.Tests;
 
 [TestClass]
 public sealed class EntryTemplateTests
@@ -195,6 +195,72 @@ public sealed class EntryTemplateTests
         CollectionAssert.Contains(multipleText, "1. Ada");
         CollectionAssert.Contains(multipleText, "2. Bernd");
         Assert.IsFalse(multipleText.Contains("Kind:"));
+    }
+
+    [TestMethod]
+    [DataRow("gc")]
+    [DataRow("ak")]
+    public void EntryTemplateRenderer_RendersVisibleNonVitalEventsAsLinkedParagraphs(string templateName)
+    {
+        var template = new EntryTemplateStore().Load(templateName);
+        var document = new DocxDocument();
+        var person = new PersonEntryTemplateModel
+        {
+            NameGc = "Beispiel, Ada",
+            NameAk = "Ada Beispiel",
+            Anchor = "person-1",
+            Reference = "1",
+            VitalEventsGc = string.Empty,
+            VitalEventsAk = string.Empty,
+            IndexAnchor = string.Empty,
+            Ordinal = 1,
+            Occupations = Array.Empty<OccupationEntryTemplateModel>(),
+            ShowNonVitalEvents = true,
+            Events =
+            [
+                new PersonEventEntryTemplateModel
+                {
+                    Symbol = string.Empty,
+                    EventName = "Ausbildung",
+                    Date = "22.06.1912",
+                    PlacePreposition = "bei",
+                    Place = "Berlin",
+                    PlaceAnchor = "place-Berlin",
+                    Additional = "Besuch",
+                    RelatedPersonName = "Emil Beispiel",
+                    RelatedPersonAnchor = "person-I2",
+                    RelatedFamilyNumber = "00002",
+                    RelatedFamilyAnchor = "family-00002",
+                    IsVital = false,
+                    IsListableNonVital = true
+                },
+                new PersonEventEntryTemplateModel
+                {
+                    Symbol = string.Empty,
+                    EventName = "Titel",
+                    Date = string.Empty,
+                    PlacePreposition = "in",
+                    Place = string.Empty,
+                    IsVital = false,
+                    IsListableNonVital = true
+                }
+            ]
+        };
+
+        new EntryTemplateRenderer().RenderFamily(document, template, CreateTemplateFamily(person));
+
+        var paragraphs = document.Enumerate().OfType<IDocParagraph>().ToArray();
+        var eventParagraph = paragraphs.Single(paragraph =>
+            paragraph.GetTextContent().Contains("22.06.1912: Ausbildung bei Berlin, Besuch", StringComparison.Ordinal));
+        Assert.IsTrue(eventParagraph.Nodes.OfType<IDocSpan>().Any(span =>
+            span.IsLink && span.Href == "#place-Berlin"));
+        Assert.IsTrue(eventParagraph.Nodes.OfType<IDocSpan>().Any(span =>
+            span.IsLink && span.Href == "#person-I2"));
+        Assert.IsTrue(eventParagraph.Nodes.OfType<IDocSpan>().Any(span =>
+            span.IsLink && span.Href == "#family-00002"));
+        var undatedEventParagraph = paragraphs.Single(paragraph =>
+            paragraph.GetTextContent().Contains("Titel", StringComparison.Ordinal));
+        Assert.AreEqual("Titel", undatedEventParagraph.GetTextContent());
     }
 
     private static FamilyEntryTemplateModel CreateTemplateFamily(params PersonEntryTemplateModel[] children) => new()

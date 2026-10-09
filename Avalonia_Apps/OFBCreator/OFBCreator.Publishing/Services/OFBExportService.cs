@@ -15,8 +15,10 @@ using OFBCreator.Abstractions.Interfaces;
 using OFBCreator.Abstractions.Models;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
-using OFBCreator.Console.Models;
-using OFBCreator.Console.Services.Templates;
+using OFBCreator.Publishing.Models;
+using OFBCreator.Publishing.Services.Templates;
+
+namespace OFBCreator.Publishing.Services;
 
 /// <summary>
 /// Headless export service that orchestrates the full OFB (Ortsfamilienbuch) generation pipeline.
@@ -29,7 +31,7 @@ using OFBCreator.Console.Services.Templates;
 /// 4. Generate all indices (Person, Occupation, Property, PlaceHierarchy, PlaceAlphabetical).
 /// 5. Compose the OFB document via IUserDocument abstraction (DOCX or ODT).
 /// </remarks>
-public sealed class ConsoleExportService(
+public sealed class OFBExportService(
     IFamilyDataSource dataSource,
     IUserDocumentFactory documentFactory,
     EntryTemplateStore? templateStore = null)
@@ -50,7 +52,7 @@ public sealed class ConsoleExportService(
     /// <summary>
     /// Executes the full OFB generation pipeline for the given options.
     /// </summary>
-    public async Task ExportAsync(OFBGenerateOptions options, CancellationToken cancellationToken = default)
+    public async Task ExportAsync(OFBGenerateOptions options, CancellationToken cancellationToken = default, IProgress<OFBExportProgress>? progress = null)
     {
         ArgumentNullException.ThrowIfNull( options );
 
@@ -72,15 +74,15 @@ public sealed class ConsoleExportService(
             throw new InvalidDataException(
                 $"Template '{entryTemplate.Id}' uses the Individual root, but the current export pipeline generates Family entries.");
 
-        System.Console.WriteLine($"Loading from {_dataSource.DisplayName}...");
+        progress?.Report(new OFBExportProgress($"Loading from {_dataSource.DisplayName}..."));
         var preparation = await PrepareGroupingAsync(options, cancellationToken).ConfigureAwait(false);
         var allFamilies = preparation.Families;
         var groupingResult = preparation.GroupingResult;
         foreach (var diagnostic in groupingResult.Diagnostics)
-            System.Console.Error.WriteLine($"Warning [{diagnostic.Code}]: {diagnostic.Message}");
+            progress?.Report(new OFBExportProgress($"Warning [{diagnostic.Code}]: {diagnostic.Message}", IsWarning: true));
 
         // Step 3: Convert Abstraction models to Core models, sort, and assign global numbers
-        System.Console.WriteLine( "Sorting and numbering families..." );
+        progress?.Report(new OFBExportProgress("Sorting and numbering families..."));
         var sorter = new OFBFamilySorter();
         var abFamilies = sorter.SortAndNumber(allFamilies);
         var groupByFamilyReference = groupingResult.Groups
@@ -101,7 +103,11 @@ public sealed class ConsoleExportService(
 
         var germanComparer = StringComparer.Create(CultureInfo.GetCultureInfo("de-DE"), ignoreCase: true);
         var orderedFamilies = abFamilies
-            .OrderBy(family => groupByFamilyReference.TryGetValue(family.SourceRefId, out var groupName)
+            .OrderBy(family =>
+                groupingResult.NoNameGroupName is not null
+                && groupByFamilyReference.TryGetValue(family.SourceRefId, out var groupName)
+                && string.Equals(groupName, groupingResult.NoNameGroupName, StringComparison.OrdinalIgnoreCase))
+            .ThenBy(family => groupByFamilyReference.TryGetValue(family.SourceRefId, out var groupName)
                 ? groupName
                 : family.FamilyName, germanComparer)
             .ThenBy(family => family.FamilyName, germanComparer)
@@ -121,10 +127,10 @@ public sealed class ConsoleExportService(
         }
 
         // Step 4: Generate indices
-        System.Console.WriteLine( "Generating Person Index..." );
+        progress?.Report(new OFBExportProgress("Generating Person Index..."));
         var personIndex = await GeneratePersonIndexAsync( sortedFamilies );
 
-        System.Console.WriteLine( "Generating Occupation Index..." );
+        progress?.Report(new OFBExportProgress("Generating Occupation Index..."));
         var occIndex = await GenerateOccupationIndexAsync( sortedFamilies );
         _occupationIndexAnchorByName.Clear();
         for (var index = 0; index < occIndex.Length; index++)
@@ -135,7 +141,7 @@ public sealed class ConsoleExportService(
             _occupationIndexAnchorByName.TryAdd(occupationName, CreateIndexAnchor("occupation", index));
         }
 
-        System.Console.WriteLine( "Generating Property Index..." );
+        progress?.Report(new OFBExportProgress("Generating Property Index..."));
         var propIndex = await GeneratePropertyIndexAsync( sortedFamilies );
         _propertyIndexAnchorByName.Clear();
         for (var index = 0; index < propIndex.Length; index++)
@@ -146,17 +152,17 @@ public sealed class ConsoleExportService(
             _propertyIndexAnchorByName.TryAdd(propertyName, CreateIndexAnchor("property", index));
         }
 
-        System.Console.WriteLine( "Generating Place Hierarchy Index..." );
+        progress?.Report(new OFBExportProgress("Generating Place Hierarchy Index..."));
         var placeHierarchyIndex = await GeneratePlaceHierarchyIndexAsync( sortedFamilies );
 
-        System.Console.WriteLine( "Generating Place Alphabetical Index..." );
+        progress?.Report(new OFBExportProgress("Generating Place Alphabetical Index..."));
         var placeAlphaIndex = await GeneratePlaceAlphabeticalIndexAsync( sortedFamilies );
         _placeIndexAnchorByName.Clear();
         for (var index = 0; index < placeAlphaIndex.Length; index++)
             _placeIndexAnchorByName.TryAdd(placeAlphaIndex[index].Name ?? placeAlphaIndex[index].SortKey, CreateIndexAnchor("place", index));
 
         // Step 5: Create document and compose content
-        System.Console.WriteLine( "Composing document..." );
+        progress?.Report(new OFBExportProgress("Composing document..."));
         var doc = _documentFactory.CreateDocument( options.UseDocxFormat ? OFBOutputFormat.Docx : OFBOutputFormat.Odt );
 
         await ComposeTitlePageAsync( doc, options );
@@ -165,7 +171,7 @@ public sealed class ConsoleExportService(
         await ComposeIndicesAsync( doc, personIndex, occIndex, propIndex, placeHierarchyIndex, placeAlphaIndex );
 
         // Step 6: Save document
-        System.Console.WriteLine( "Saving output..." );
+        progress?.Report(new OFBExportProgress("Saving output..."));
         var outputDirectory = Path.GetDirectoryName( Path.GetFullPath( options.OutputPath ) );
         if ( !string.IsNullOrEmpty( outputDirectory ) )
             Directory.CreateDirectory( outputDirectory );
@@ -421,11 +427,11 @@ public sealed class ConsoleExportService(
 
     private static string LoadEmbeddedPreface()
     {
-        var resourceName = typeof(ConsoleExportService).Assembly.GetManifestResourceNames()
+        var resourceName = typeof(OFBExportService).Assembly.GetManifestResourceNames()
             .SingleOrDefault(name => name.EndsWith("Templates.Vorwort.md", StringComparison.Ordinal));
         if (resourceName is null)
             return string.Empty;
-        using var resource = typeof(ConsoleExportService).Assembly.GetManifestResourceStream(resourceName);
+        using var resource = typeof(OFBExportService).Assembly.GetManifestResourceStream(resourceName);
         if (resource is null)
             return string.Empty;
         using var reader = new StreamReader(resource);
@@ -588,15 +594,29 @@ public sealed class ConsoleExportService(
                 currentGroupName = groupName;
             }
 
-            var familySpacer = doc.AddParagraph("Normaler Absatz");
-            familySpacer.TextContent = string.Empty;
-
             var entryModel = CreateEntryTemplateModel(family, sortedFamilies);
-            doc.AddHeadline(3, GetFamilyAnchor(family.GlobalNumber));
+            var existingParagraphs = doc.Enumerate().OfType<IDocParagraph>().ToHashSet();
             templateRenderer.RenderFamily(doc, entryTemplate, entryModel);
+            EnsureFamilyAnchor(doc, entryModel.Anchor, existingParagraphs);
         }
 
         templateRenderer.EnsureNavigation(doc, Array.Empty<PersonEntryTemplateModel>());
+    }
+
+    private static void EnsureFamilyAnchor(
+        IUserDocument document,
+        string anchor,
+        IReadOnlySet<IDocParagraph> existingParagraphs)
+    {
+        var spans = document.Enumerate().OfType<IDocSpan>().ToArray();
+        if (spans.Any(span => string.Equals(span.Id, anchor, StringComparison.Ordinal)))
+            return;
+
+        var firstEntryParagraph = document.Enumerate()
+            .OfType<IDocParagraph>()
+            .FirstOrDefault(paragraph => !existingParagraphs.Contains(paragraph))
+            ?? throw new InvalidDataException($"The family template rendered no paragraph for anchor '{anchor}'.");
+        firstEntryParagraph.AddBookmark(anchor, DocxFontStyle.Default).TextContent = string.Empty;
     }
 
     private static string GetFamilyGroupName(OFBFamily family, IReadOnlyDictionary<string, string> groupByFamilyReference)
@@ -821,7 +841,7 @@ public sealed class ConsoleExportService(
         var vitalEventsAk = string.Join(", ", vitalEvents);
         var events = person.Facts
             .Where(fact => fact is not null
-                && fact.Date is not null
+                && (!IsVitalEvent(fact.eFactType) || fact.Date is not null)
                 && fact.eFactType is not (EFactType.Mariage or EFactType.Reference)
                 && (!IsVitalEvent(fact.eFactType)
                     || ReferenceEquals(fact, vitalEventValues.First(item => item.Event == fact.eFactType).Fact)))
@@ -885,6 +905,9 @@ public sealed class ConsoleExportService(
             ParentFamilies = parentFamilies,
             ChildFamilyTokens = CreateFamilyReferenceTokens(childFamilies),
             ParentFamilyTokens = CreateFamilyReferenceTokens(parentFamilies),
+            ShowNonVitalEvents = ordinal is null
+                ? ShouldShowParentNonVitalEvents(person, currentFamilyNumber, allFamilies)
+                : parentFamilies.Length == 0,
             Occupations = GetOccupations(person)
                 .Select(occupation => new OccupationEntryTemplateModel
                 {
@@ -986,6 +1009,8 @@ public sealed class ConsoleExportService(
         {
             Symbol = symbol,
             Date = date,
+            EventName = GetLegendEntry(eventType)?.Meaning ?? GetEventFallbackName(eventType),
+            PlacePreposition = GetLegendPlacePreposition(eventType),
             Place = GetShortPlaceName(fact.Place?.Name),
             PlaceAnchor = GetPlaceIndexAnchor(fact.Place?.Name),
             Additional = additional,
@@ -995,18 +1020,74 @@ public sealed class ConsoleExportService(
                 : GetPersonAnchor(relatedPerson.IndRefID ?? relatedPerson.Name),
             RelatedFamilyNumber = relatedFamily?.GlobalNumber,
             RelatedFamilyAnchor = relatedFamily is null ? string.Empty : GetFamilyAnchor(relatedFamily.GlobalNumber),
-            IsVital = IsVitalEvent(eventType)
+            IsVital = IsVitalEvent(eventType),
+            IsListableNonVital = IsListableNonVitalEvent(eventType)
         };
     }
 
     private PersonEventEntryTemplateModel CreatePersonEventTemplateModel(
         EFactType eventType,
-        string date) => new()
+        string? date) => new()
         {
             Symbol = GetLegendSymbol(eventType),
-            Date = date,
-            IsVital = IsVitalEvent(eventType)
+            Date = date ?? string.Empty,
+            EventName = GetLegendEntry(eventType)?.Meaning ?? GetEventFallbackName(eventType),
+            PlacePreposition = GetLegendPlacePreposition(eventType),
+            IsVital = IsVitalEvent(eventType),
+            IsListableNonVital = IsListableNonVitalEvent(eventType)
         };
+
+    private static bool IsListableNonVitalEvent(EFactType eventType) =>
+        !IsVitalEvent(eventType)
+        && eventType is not (EFactType.Mariage or EFactType.Reference
+            or EFactType.Occupation or EFactType.Property or EFactType.Residence);
+
+    private bool ShouldShowParentNonVitalEvents(
+        IGenPerson person,
+        string currentFamilyNumber,
+        IReadOnlyList<OFBFamily> allFamilies)
+    {
+        var parentFamilies = allFamilies
+            .Where(family => IsSamePerson(family.Husband, person) || IsSamePerson(family.Wife, person))
+            .ToArray();
+        var selectedFamily = parentFamilies.FirstOrDefault(IsMarriageFamily)
+            ?? parentFamilies.FirstOrDefault();
+        return selectedFamily is not null
+            && string.Equals(selectedFamily.GlobalNumber, currentFamilyNumber, StringComparison.Ordinal);
+    }
+
+    private static bool IsMarriageFamily(OFBFamily family)
+    {
+        var marriageText = family.Marriage?.Data;
+        if (!string.IsNullOrWhiteSpace(marriageText)
+            && (marriageText.Contains("unverheirat", StringComparison.OrdinalIgnoreCase)
+                || marriageText.Contains("unehelich", StringComparison.OrdinalIgnoreCase)))
+            return false;
+
+        return family.Marriage is not null || family.MarriageDate is not null;
+    }
+
+    private static string GetEventFallbackName(EFactType eventType) => eventType switch
+    {
+        EFactType.Birth => "Geburt",
+        EFactType.Baptism => "Taufe",
+        EFactType.Death => "Tod",
+        EFactType.Burial => "Beerdigung",
+        EFactType.Occupation => "Beruf",
+        EFactType.Residence => "Wohnsitz",
+        EFactType.Education => "Ausbildung",
+        EFactType.Property => "Besitz",
+        EFactType.Religion => "Religion",
+        EFactType.Military => "Militär",
+        EFactType.Emigration => "Auswanderung",
+        EFactType.Immigration => "Einwanderung",
+        EFactType.Naturalization => "Einbürgerung",
+        EFactType.Divorce => "Scheidung",
+        EFactType.Adoption => "Adoption",
+        EFactType.Census => "Volkszählung",
+        EFactType.Title => "Titel",
+        _ => eventType.ToString()
+    };
 
     private static bool IsVitalEvent(EFactType eventType) =>
         eventType is EFactType.Birth or EFactType.Baptism or EFactType.Death or EFactType.Burial;
@@ -1174,8 +1255,17 @@ public sealed class ConsoleExportService(
         return birthYear is null && deathYear is null ? string.Empty : $"{birthYear ?? "?"}–{deathYear ?? "?"}";
     }
 
-    private string GetLegendSymbol(EFactType eventType) => _legendEntries
-        .FirstOrDefault(entry => entry.Event == eventType)?.Symbol ?? string.Empty;
+    private EntryTemplateLegendEntry? GetLegendEntry(EFactType eventType) =>
+        _legendEntries.FirstOrDefault(entry => entry.Event == eventType);
+
+    private string GetLegendSymbol(EFactType eventType) =>
+        GetLegendEntry(eventType)?.Symbol ?? string.Empty;
+
+    private string GetLegendPlacePreposition(EFactType eventType)
+    {
+        var preposition = GetLegendEntry(eventType)?.PlacePreposition;
+        return string.IsNullOrWhiteSpace(preposition) ? "in" : preposition.Trim();
+    }
 
     /// <summary>
     /// Generates alphabetical occupation index with person/family references.

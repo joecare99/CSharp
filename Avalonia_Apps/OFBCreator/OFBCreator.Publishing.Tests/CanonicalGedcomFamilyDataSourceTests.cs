@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Genealogy.Gedcom;
 using GenInterfaces.Interfaces.Genealogic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OFBCreator.Console.Services;
+using OFBCreator.Publishing.Services;
 using OFBCreator.Core.Services;
 
-namespace OFBCreator.Console.Tests;
+namespace OFBCreator.Publishing.Tests;
 
 [TestClass]
 public sealed class CanonicalGedcomFamilyDataSourceTests

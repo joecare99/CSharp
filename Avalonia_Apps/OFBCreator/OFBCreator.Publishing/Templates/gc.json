@@ -10,6 +10,17 @@
     { "symbol": "⚭", "meaning": "geheiratet", "event": "Mariage" },
     { "symbol": "o-o", "meaning": "uneheliche Verbindung", "event": "Partner" },
     { "symbol": "%", "meaning": "geschieden", "event": "Divorce" },
+    { "symbol": "Ber.", "meaning": "Beruf", "event": "Occupation" },
+    { "symbol": "Wh.", "meaning": "Wohnsitz", "event": "Residence" },
+    { "symbol": "Ausb.", "meaning": "Ausbildung", "event": "Education" },
+    { "symbol": "Bes.", "meaning": "Besitz", "event": "Property" },
+    { "symbol": "Rel.", "meaning": "Religion", "event": "Religion" },
+    { "symbol": "Mil.", "meaning": "Militär", "event": "Military" },
+    { "symbol": "Ausw.", "meaning": "Auswanderung", "event": "Emigration" },
+    { "symbol": "Einw.", "meaning": "Einwanderung", "event": "Immigration" },
+    { "symbol": "Ebg.", "meaning": "Einbürgerung", "event": "Naturalization" },
+    { "symbol": "Zähl.", "meaning": "Volkszählung", "event": "Census" },
+    { "symbol": "Tit.", "meaning": "Titel", "event": "Title" },
     { "symbol": "Kdr.", "meaning": "Kinder", "event": null }
   ],
   "fragments": {
@@ -69,7 +80,7 @@
     "personEvents": [
       {
         "kind": "if",
-        "condition": "person.events.any",
+        "condition": "person.vitalEventsGc",
         "then": [
           { "kind": "text", "value": ", " },
           {
@@ -108,6 +119,92 @@
                 "condition": "personEvent.isVital",
                 "then": [
                   { "kind": "include", "fragment": "personEvent" }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "personNonVitalEvents": [
+      {
+        "kind": "forEach",
+        "items": "person.events",
+        "as": "personEvent",
+        "template": [
+          {
+            "kind": "if",
+            "condition": "personEvent.isListableNonVital",
+            "then": [
+              {
+                "kind": "paragraph",
+                "role": "family-data",
+                "hangingIndent": 18,
+                "content": [
+                  {
+                    "kind": "if",
+                    "condition": "personEvent.date",
+                    "then": [
+                      { "kind": "field", "path": "personEvent.date" },
+                      { "kind": "text", "value": ": " }
+                    ]
+                  },
+                  {
+                    "kind": "if",
+                    "condition": "personEvent.symbol",
+                    "then": [{ "kind": "field", "path": "personEvent.symbol" }]
+                  },
+                  {
+                    "kind": "if",
+                    "condition": "!personEvent.symbol",
+                    "then": [{ "kind": "field", "path": "personEvent.eventName" }]
+                  },
+                  {
+                    "kind": "if",
+                    "condition": "personEvent.place",
+                    "then": [
+                      { "kind": "text", "value": " " },
+                      { "kind": "field", "path": "personEvent.placePreposition" },
+                      { "kind": "text", "value": " " },
+                      {
+                        "kind": "link",
+                        "target": "personEvent.placeAnchor",
+                        "content": [{ "kind": "field", "path": "personEvent.place" }]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "if",
+                    "condition": "personEvent.additional",
+                    "then": [
+                      { "kind": "text", "value": ", " },
+                      { "kind": "field", "path": "personEvent.additional" }
+                    ]
+                  },
+                  {
+                    "kind": "if",
+                    "condition": "personEvent.relatedPerson",
+                    "then": [
+                      { "kind": "text", "value": ", " },
+                      {
+                        "kind": "link",
+                        "target": "personEvent.relatedPersonAnchor",
+                        "content": [{ "kind": "field", "path": "personEvent.relatedPersonName" }]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "if",
+                    "condition": "personEvent.relatedFamily",
+                    "then": [
+                      { "kind": "text", "value": ", " },
+                      {
+                        "kind": "link",
+                        "target": "personEvent.relatedFamilyAnchor",
+                        "content": [{ "kind": "field", "path": "personEvent.relatedFamilyNumber" }]
+                      }
+                    ]
+                  }
                 ]
               }
             ]
@@ -201,12 +298,18 @@
               { "kind": "if", "condition": "person.referenceNumber", "then": [
                 {
                   "kind": "text",
-                  "value": "PN=",
+                  "value": "<PN=",
                   "lineBreakBefore": true
                 },
-                { "kind": "field", "path": "person.referenceNumber" }
+                { "kind": "field", "path": "person.referenceNumber" },
+                { "kind": "text", "value": ">" }
               ] }
         ]
+      },
+      {
+        "kind": "if",
+        "condition": "person.showNonVitalEvents",
+        "then": [{ "kind": "include", "fragment": "personNonVitalEvents" }]
       }
     ]
   },
@@ -350,22 +453,12 @@
                     {
                       "kind": "if",
                       "condition": "person.parentFamilyTokens.any",
-                      "then": [
-                        {
-                          "kind": "include",
-                          "fragment": "personVitalEvents"
-                        }
-                      ]
+                      "then": [{ "kind": "include", "fragment": "personVitalEvents" }]
                     },
                     {
                       "kind": "if",
                       "condition": "!person.parentFamilyTokens.any",
-                      "then": [
-                        {
-                          "kind": "include",
-                          "fragment": "personEvents"
-                        }
-                      ]
+                      "then": [{ "kind": "include", "fragment": "personEvents" }]
                     },
                 {
                   "kind": "if",
@@ -399,6 +492,11 @@
                   ]
                 }
               ]
+            },
+            {
+              "kind": "if",
+              "condition": "person.showNonVitalEvents",
+              "then": [{ "kind": "include", "fragment": "personNonVitalEvents" }]
             }
           ]
         }

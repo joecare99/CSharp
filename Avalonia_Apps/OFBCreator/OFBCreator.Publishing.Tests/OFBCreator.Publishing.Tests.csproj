@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
@@ -24,13 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OFBCreator.Avalonia\OFBCreator.Avalonia.csproj" />
-    <ProjectReference Include="..\OFBCreator.Console\OFBCreator.Console.csproj" />
     <ProjectReference Include="..\OFBCreator.Publishing\OFBCreator.Publishing.csproj" />
-    <ProjectReference Include="..\OFBCreator.Projects\OFBCreator.Projects.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\OFBCreator.Publishing.Tests\TestData\gedcom-5.5.1-synthetic.ged" Link="TestData\gedcom-5.5.1-synthetic.ged" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="TestData\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
