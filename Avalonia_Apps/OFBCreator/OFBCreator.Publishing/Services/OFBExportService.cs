@@ -8,6 +8,7 @@ using System.Globalization;
 
 using BaseLib.Models.Interfaces;
 using Document.Docx;
+using Document.Base.Models;
 using Document.Base.Models.Interfaces;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
@@ -461,6 +462,7 @@ public sealed class OFBExportService(
         for (var index = 0; index < personIndex.Length; index++)
         {
             var entry = personIndex[index];
+            if (entry.Name.StartsWith("(")) continue;
             if (!string.Equals(previousSurname, entry.Name, StringComparison.OrdinalIgnoreCase))
             {
                 previousSurname = entry.Name;
@@ -471,6 +473,7 @@ public sealed class OFBExportService(
                 }
             }
             var para = doc.AddParagraph( "Normaler Absatz" );
+            para.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9));
             var entryAnchor = CreateIndexAnchor("person", index);
             var personAnchor = GetPersonAnchor(entry.Ref);
             var givenName = GetPersonIndexGivenName(entry.SortKey, entry.Name);
@@ -492,21 +495,25 @@ public sealed class OFBExportService(
         {
             var entry = occIndex[index];
             var para = doc.AddParagraph( "Normaler Absatz" );
+            para.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9));
             para.AddBookmark(CreateIndexAnchor("occupation", index), DocxFontStyle.Default).TextContent = entry.SortKey;
             AppendIndexFamilyReferences(para, entry, entry.Ref);
         }
 
-        // Property Index (alphabetical, decision 1A)
-        var propTitle = doc.AddHeadline( 1, "Besitzindex" );
-        propTitle.TextContent = "Eigentums-/Besitz-Index";
-        for (var index = 0; index < propIndex.Length; index++)
+        if (propIndex.Length > 0)
         {
-            var entry = propIndex[index];
-            var para = doc.AddParagraph( "Normaler Absatz" );
-            para.AddBookmark(CreateIndexAnchor("property", index), DocxFontStyle.Default).TextContent = entry.SortKey;
-            AppendIndexFamilyReferences(para, entry, entry.Ref);
+            // Property Index (alphabetical, decision 1A)
+            var propTitle = doc.AddHeadline(1, "Besitzindex");
+            propTitle.TextContent = "Eigentums-/Besitz-Index";
+            for (var index = 0; index < propIndex.Length; index++)
+            {
+                var entry = propIndex[index];
+                var para = doc.AddParagraph("Normaler Absatz");
+                para.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9));
+                para.AddBookmark(CreateIndexAnchor("property", index), DocxFontStyle.Default).TextContent = entry.SortKey;
+                AppendIndexFamilyReferences(para, entry, entry.Ref);
+            }
         }
-
         // Place Hierarchy Index (tree structure)
         var phTitle = doc.AddHeadline( 1, "Ortsindex (Hierarchisch)" );
         phTitle.TextContent = "Ortsindex";
@@ -519,6 +526,7 @@ public sealed class OFBExportService(
         {
             var entry = placeAlpha[index];
             var para = doc.AddParagraph( "Normaler Absatz" );
+            para.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9));
             para.AddBookmark(CreateIndexAnchor("place", index), DocxFontStyle.Default).TextContent = entry.SortKey;
             AppendIndexFamilyReferences(para, entry, entry.Ref);
         }
@@ -554,8 +562,20 @@ public sealed class OFBExportService(
     {
         foreach ( var node in nodes )
         {
-            var heading = doc.AddHeadline(Math.Min(indent + 2, 9), $"place-{SanitizeAnchor(node.PlaceId)}");
-            heading.TextContent = node.Name;
+			IDocParagraph references;
+            if (node.Children is { Length: > 0 })
+            {
+                var heading = doc.AddHeadline(Math.Min(indent + 2, 9), $"place-{SanitizeAnchor(node.PlaceId)}");
+                heading.TextContent = node.Name;
+                references = doc.AddParagraph("Normaler Absatz");
+                references.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, (indent + 1) * 9));            }
+            else
+            {
+                references = doc.AddParagraph("Normaler Absatz");
+                references.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, indent * 9));
+                references.TextContent = node.Name+ " ";
+            }
+
             var familyTokens = CreateFamilyReferenceTokens(node.FamilyReferences
                 .Distinct(StringComparer.Ordinal)
                 .Select(number => new FamilyReferenceEntryTemplateModel
@@ -566,12 +586,10 @@ public sealed class OFBExportService(
                 .ToArray());
             if (familyTokens.Count > 0)
             {
-                var references = doc.AddParagraph("Normaler Absatz");
-                references.TextContent = new string(' ', (indent + 1) * 2);
-                AppendFamilyTokens(references, "[", familyTokens);
-            }
+                references.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9 ));
+                AppendFamilyTokens(references, "[", familyTokens);            }
 
-            if ( node.Children != null && node.Children.Length > 0 )
+            if (node.Children is { Length: > 0 })
                 await WritePlaceHierarchyAsync( doc, node.Children, indent + 1 );
         }
     }
@@ -587,13 +605,15 @@ public sealed class OFBExportService(
         IReadOnlyDictionary<string, IReadOnlyList<string>> familyNamesByGroup)
     {
         var templateRenderer = new EntryTemplateRenderer();
+        var directoryHeadline = doc.AddHeadline(1, "Familienverzeichnis");
+        directoryHeadline.TextContent = "Familienverzeichnis";
         string? currentGroupName = null;
         foreach (var family in sortedFamilies)
         {
             var groupName = GetFamilyGroupName(family, groupByFamilyReference);
             if (!string.Equals(groupName, currentGroupName, StringComparison.Ordinal))
             {
-                var groupHeadline = doc.AddHeadline(1, $"group-{SanitizeAnchor(groupName)}-{family.GlobalNumber}");
+                var groupHeadline = doc.AddHeadline(2, $"group-{SanitizeAnchor(groupName)}-{family.GlobalNumber}");
                 groupHeadline.TextContent = groupName;
                 if (familyNamesByGroup.TryGetValue(groupName, out var familyNames) && familyNames.Count > 1)
                 {
