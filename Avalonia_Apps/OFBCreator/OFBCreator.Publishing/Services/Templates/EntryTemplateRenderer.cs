@@ -6,9 +6,9 @@ using System.IO;
 using System.Linq;
 using Document.Base.Models.Interfaces;
 using Document.Base.Models;
-using OFBCreator.Console.Models;
+using OFBCreator.Publishing.Models;
 
-namespace OFBCreator.Console.Services.Templates;
+namespace OFBCreator.Publishing.Services.Templates;
 
 /// <summary>
 /// Renders validated entry templates without evaluating executable expressions.
@@ -149,7 +149,7 @@ public sealed class EntryTemplateRenderer
                     RenderEach(document, template, block, variables, includeStack);
                     break;
                 case "include":
-                    RenderInclude(document, template, block.Fragment!, variables, includeStack);
+                    RenderInclude(document, template, block, variables, includeStack);
                     break;
                 default:
                     throw new InvalidDataException($"Block '{block.Kind}' is not valid at template block level.");
@@ -198,7 +198,7 @@ public sealed class EntryTemplateRenderer
                     RenderEachInline(document, template, paragraph, block, variables, includeStack);
                     break;
                 case "include":
-                    RenderIncludeInline(document, template, paragraph, block.Fragment!, variables, includeStack);
+                    RenderIncludeInline(document, template, paragraph, block, variables, includeStack);
                     break;
                 default:
                     throw new InvalidDataException($"Block '{block.Kind}' is not valid inside paragraph content.");
@@ -237,7 +237,7 @@ public sealed class EntryTemplateRenderer
                     values.Add(RenderEachInlineToString(template, block, variables, includeStack));
                     break;
                 case "include":
-                    values.Add(RenderIncludeInlineToString(template, block.Fragment!, variables, includeStack));
+                    values.Add(RenderIncludeInlineToString(template, block, variables, includeStack));
                     break;
                 default:
                     throw new InvalidDataException($"Block '{block.Kind}' cannot be nested inside a link.");
@@ -267,15 +267,16 @@ public sealed class EntryTemplateRenderer
 
     private static string RenderIncludeInlineToString(
         EntryTemplateDefinition template,
-        string fragmentName,
+        EntryTemplateBlock block,
         Dictionary<string, object?> variables,
         HashSet<string> includeStack)
     {
+        var fragmentName = block.Fragment!;
         if (!includeStack.Add(fragmentName))
             throw new InvalidDataException($"Template include cycle detected at fragment '{fragmentName}'.");
         try
         {
-            return RenderInlineToString(template, template.Fragments[fragmentName], variables, includeStack);
+            return RenderInlineToString(template, template.Fragments[fragmentName], CreateIncludeVariables(block, variables), includeStack);
         }
         finally
         {
@@ -319,15 +320,16 @@ public sealed class EntryTemplateRenderer
     private static void RenderInclude(
         IUserDocument document,
         EntryTemplateDefinition template,
-        string fragmentName,
+        EntryTemplateBlock block,
         Dictionary<string, object?> variables,
         HashSet<string> includeStack)
     {
+        var fragmentName = block.Fragment!;
         if (!includeStack.Add(fragmentName))
             throw new InvalidDataException($"Template include cycle detected at fragment '{fragmentName}'.");
         try
         {
-            RenderBlocks(document, template, template.Fragments[fragmentName], variables, includeStack);
+            RenderBlocks(document, template, template.Fragments[fragmentName], CreateIncludeVariables(block, variables), includeStack);
         }
         finally
         {
@@ -339,20 +341,31 @@ public sealed class EntryTemplateRenderer
         IUserDocument document,
         EntryTemplateDefinition template,
         IDocParagraph paragraph,
-        string fragmentName,
+        EntryTemplateBlock block,
         Dictionary<string, object?> variables,
         HashSet<string> includeStack)
     {
+        var fragmentName = block.Fragment!;
         if (!includeStack.Add(fragmentName))
             throw new InvalidDataException($"Template include cycle detected at fragment '{fragmentName}'.");
         try
         {
-            RenderInline(document, template, paragraph, template.Fragments[fragmentName], variables, includeStack);
+            RenderInline(document, template, paragraph, template.Fragments[fragmentName], CreateIncludeVariables(block, variables), includeStack);
         }
         finally
         {
             includeStack.Remove(fragmentName);
         }
+    }
+
+    private static Dictionary<string, object?> CreateIncludeVariables(
+        EntryTemplateBlock block,
+        IReadOnlyDictionary<string, object?> variables)
+    {
+        var includeVariables = variables.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+        if (block.Context is not null)
+            includeVariables["person"] = Resolve(block.Context, variables);
+        return includeVariables;
     }
 
     private static object? Resolve(string path, IReadOnlyDictionary<string, object?> variables)
@@ -398,6 +411,7 @@ public sealed class EntryTemplateRenderer
                 (PersonEntryTemplateModel person, "reference") => person.Reference,
                 (PersonEntryTemplateModel person, "referenceNumber") => person.ReferenceNumber,
                 (PersonEntryTemplateModel person, "events") => person.Events,
+                (PersonEntryTemplateModel person, "showNonVitalEvents") => person.ShowNonVitalEvents,
                 (PersonEntryTemplateModel person, "indexLabel") => person.IndexLabel,
                 (PersonEntryTemplateModel person, "vitalEventsGc") => person.VitalEventsGc,
                 (PersonEntryTemplateModel person, "additionalLifeDataGc") => person.AdditionalLifeDataGc,
@@ -431,9 +445,12 @@ public sealed class EntryTemplateRenderer
                 (PropertyEntryTemplateModel property, "indexAnchor") => property.IndexAnchor,
                 (PersonEventEntryTemplateModel personEvent, "symbol") => personEvent.Symbol,
                 (PersonEventEntryTemplateModel personEvent, "isVital") => personEvent.IsVital,
+                (PersonEventEntryTemplateModel personEvent, "isListableNonVital") => personEvent.IsListableNonVital,
                 (PersonEventEntryTemplateModel personEvent, "relatedPerson") => personEvent.HasRelatedPerson,
                 (PersonEventEntryTemplateModel personEvent, "relatedFamily") => personEvent.HasRelatedFamily,
                 (PersonEventEntryTemplateModel personEvent, "date") => personEvent.Date,
+                (PersonEventEntryTemplateModel personEvent, "eventName") => personEvent.EventName,
+                (PersonEventEntryTemplateModel personEvent, "placePreposition") => personEvent.PlacePreposition,
                 (PersonEventEntryTemplateModel personEvent, "place") => personEvent.Place,
                 (PersonEventEntryTemplateModel personEvent, "placeAnchor") => personEvent.PlaceAnchor,
                 (PersonEventEntryTemplateModel personEvent, "additional") => personEvent.Additional,

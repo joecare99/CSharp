@@ -16,13 +16,14 @@ using NSubstitute;
 using OFBCreator.Abstractions.Interfaces;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
-using OFBCreator.Console.Services;
+using OFBCreator.Publishing.Models;
+using OFBCreator.Publishing.Services;
 using OFBCreator.Projects.Models;
 
-namespace OFBCreator.Console.Tests;
+namespace OFBCreator.Publishing.Tests;
 
 [TestClass]
-public sealed class ConsoleExportServiceTests
+public sealed class OFBExportServiceTests
 {
     [TestMethod]
     public async Task ExportAsync_WithSyntheticGedcom_WritesOrderedDocxWithResolvedNavigation()
@@ -33,7 +34,7 @@ public sealed class ConsoleExportServiceTests
         UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
         var documentFactory = Substitute.For<IUserDocumentFactory>();
         documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
-        var service = new ConsoleExportService(new GedComDataSource(), documentFactory);
+        var service = new OFBExportService(new GedComDataSource(), documentFactory);
         var outputPath = Path.Combine(Path.GetTempPath(), $"ofb-test-{Guid.NewGuid():N}", "sample.docx");
 
         await service.ExportAsync(new OFBGenerateOptions
@@ -93,6 +94,59 @@ public sealed class ConsoleExportServiceTests
     }
 
     [TestMethod]
+    public async Task ExportAsync_PublishesFamiliesWithoutSurnameAfterNamedGroupsWithContinuousNumbers()
+    {
+        const string gedcom =
+            "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n2 FORM LINEAGE-LINKED\r\n1 CHAR UTF-8\r\n"
+            + "0 @I1@ INDI\r\n1 NAME Anna /NN/\r\n1 FAMS @F1@\r\n"
+            + "0 @I2@ INDI\r\n1 NAME Bernd /Miller/\r\n1 FAMS @F2@\r\n"
+            + "0 @F1@ FAM\r\n1 HUSB @I1@\r\n"
+            + "0 @F2@ FAM\r\n1 HUSB @I2@\r\n"
+            + "0 TRLR\r\n";
+        var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-no-name-order-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(testDirectory);
+        var inputPath = Path.Combine(testDirectory, "families.ged");
+        var outputPath = Path.Combine(testDirectory, "families.docx");
+        await File.WriteAllTextAsync(inputPath, gedcom, Encoding.UTF8);
+
+        try
+        {
+            UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
+            var documentFactory = Substitute.For<IUserDocumentFactory>();
+            documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
+            await new OFBExportService(new GedComDataSource(), documentFactory).ExportAsync(new OFBGenerateOptions
+            {
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                Title = "Namenlose Familien",
+                UseDocxFormat = true
+            });
+
+            using var archive = ZipFile.OpenRead(outputPath);
+            using var documentStream = archive.GetEntry("word/document.xml")!.Open();
+            var documentXml = XDocument.Load(documentStream);
+            XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            var paragraphTexts = documentXml.Descendants(word + "p")
+                .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
+                .ToArray();
+            var namedGroupIndex = Array.IndexOf(paragraphTexts, "Miller");
+            var noNameGroupIndex = Array.IndexOf(paragraphTexts, "Familien ohne Namen");
+            var namedFamilyIndex = Array.FindIndex(paragraphTexts, text => text.StartsWith("00001 ", StringComparison.Ordinal));
+            var noNameFamilyIndex = Array.FindIndex(paragraphTexts, text => text.StartsWith("00002 ", StringComparison.Ordinal));
+
+            Assert.IsTrue(namedGroupIndex >= 0 && namedFamilyIndex > namedGroupIndex, string.Join(" | ", paragraphTexts));
+            Assert.IsTrue(noNameGroupIndex > namedFamilyIndex && noNameFamilyIndex > noNameGroupIndex,
+                string.Join(" | ", paragraphTexts));
+            Assert.IsTrue(paragraphTexts[namedFamilyIndex].StartsWith("00001 ", StringComparison.Ordinal));
+            Assert.IsTrue(paragraphTexts[noNameFamilyIndex].StartsWith("00002 ", StringComparison.Ordinal));
+        }
+        finally
+        {
+            Directory.Delete(testDirectory, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task ExportAsync_RendersParentAliasesAndSurnameVariantsInPersonIndex()
     {
         const string gedcom =
@@ -112,7 +166,7 @@ public sealed class ConsoleExportServiceTests
             UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
             var documentFactory = Substitute.For<IUserDocumentFactory>();
             documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
-            await new ConsoleExportService(
+            await new OFBExportService(
                 new CanonicalGedcomFamilyDataSource(new GedcomInputDriver(), new CanonicalGenealogyAdapter()),
                 documentFactory).ExportAsync(new OFBGenerateOptions
             {
@@ -165,7 +219,7 @@ public sealed class ConsoleExportServiceTests
             UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
             var documentFactory = Substitute.For<IUserDocumentFactory>();
             documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
-            await new ConsoleExportService(
+            await new OFBExportService(
                 new CanonicalGedcomFamilyDataSource(new GedcomInputDriver(), new CanonicalGenealogyAdapter()),
                 documentFactory).ExportAsync(new OFBGenerateOptions
             {
@@ -238,7 +292,7 @@ public sealed class ConsoleExportServiceTests
             var documentFactory = Substitute.For<IUserDocumentFactory>();
             documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
 
-            await new ConsoleExportService(new GedComDataSource(), documentFactory).ExportAsync(new OFBGenerateOptions
+            await new OFBExportService(new GedComDataSource(), documentFactory).ExportAsync(new OFBGenerateOptions
             {
                 InputPath = inputPath,
                 OutputPath = outputPath,
@@ -269,12 +323,15 @@ public sealed class ConsoleExportServiceTests
                 text.Contains("Ältestes (1920–?)", StringComparison.Ordinal));
             Assert.IsTrue(personIndexParagraphIndex >= 0, string.Join(" | ", paragraphTexts));
             var personIndexParagraph = paragraphTexts[personIndexParagraphIndex];
-            Assert.IsTrue(personIndexParagraph.Contains("Ältestes (1920–?) <00001>[00002 - 00004, 00006]", StringComparison.Ordinal),
+            Assert.IsTrue(personIndexParagraph.Contains("Ältestes (1920–?)", StringComparison.Ordinal)
+                && personIndexParagraph.Contains("<00001>", StringComparison.Ordinal)
+                && personIndexParagraph.Contains("[00002 - 00004, 00006]", StringComparison.Ordinal),
                 personIndexParagraph);
             var siblingIndexParagraph = paragraphTexts.Single(text =>
                 text.Contains("Jüngstes (1930–?)", StringComparison.Ordinal));
-            Assert.IsTrue(siblingIndexParagraph.Contains("<00001><00002>", StringComparison.Ordinal), siblingIndexParagraph);
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("<PN=PN-003>", StringComparison.Ordinal)));
+            Assert.IsTrue(siblingIndexParagraph.Contains("<00001, 00002>", StringComparison.Ordinal), siblingIndexParagraph);
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("<PN=PN-003>", StringComparison.Ordinal)),
+                string.Join(" | ", paragraphTexts));
             Assert.IsFalse(paragraphTexts.Any(text => text.Contains("<PN=I3>", StringComparison.Ordinal)));
             Assert.IsTrue(Array.FindIndex(paragraphTexts, text => text.StartsWith("1. Ältestes", StringComparison.Ordinal))
                 < Array.FindIndex(paragraphTexts, text => text.StartsWith("2. Jüngstes", StringComparison.Ordinal)));
@@ -340,7 +397,7 @@ public sealed class ConsoleExportServiceTests
             documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
 
             var dataSource = new CanonicalGedcomFamilyDataSource(new GedcomInputDriver(), new CanonicalGenealogyAdapter());
-            await new ConsoleExportService(dataSource, documentFactory).ExportAsync(new OFBGenerateOptions
+            await new OFBExportService(dataSource, documentFactory).ExportAsync(new OFBGenerateOptions
             {
                 InputPath = inputPath,
                 OutputPath = outputPath,
@@ -361,9 +418,9 @@ public sealed class ConsoleExportServiceTests
             var unlinkedChildEvents = paragraphTexts.Single(text => text.StartsWith("2. Unverlinktes Kind", StringComparison.Ordinal));
             var linkedChildAsParentEvents = paragraphTexts.Single(text => text.Contains("1930", StringComparison.Ordinal));
             var birthIndex = parentEvents.IndexOf("* 1900", StringComparison.Ordinal);
-            var censusIndex = parentEvents.IndexOf("1940", StringComparison.Ordinal);
             var deathIndex = parentEvents.IndexOf("† 1980", StringComparison.Ordinal);
-            Assert.IsTrue(birthIndex >= 0 && birthIndex < censusIndex && censusIndex < deathIndex, parentEvents);
+            Assert.IsTrue(birthIndex >= 0 && birthIndex < deathIndex, parentEvents);
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1940: Zähl.", StringComparison.Ordinal)));
             Assert.IsFalse(parentEvents.Contains("1901", StringComparison.Ordinal), parentEvents);
             Assert.IsFalse(parentEvents.Contains("1981", StringComparison.Ordinal), parentEvents);
             Assert.IsTrue(linkedChildEvents.Contains(", * 1920 in Kinderort, ≈ 1923", StringComparison.Ordinal), linkedChildEvents);
@@ -372,9 +429,11 @@ public sealed class ConsoleExportServiceTests
             Assert.IsFalse(linkedChildEvents.Contains("1924", StringComparison.Ordinal), linkedChildEvents);
             Assert.IsTrue(linkedChildAsParentEvents.Contains("1930", StringComparison.Ordinal), linkedChildAsParentEvents);
             Assert.IsTrue(unlinkedChildEvents.Contains("* 1950", StringComparison.Ordinal), unlinkedChildEvents);
-            Assert.IsTrue(unlinkedChildEvents.Contains("1955", StringComparison.Ordinal), unlinkedChildEvents);
-            Assert.IsTrue(unlinkedChildEvents.IndexOf("* 1950", StringComparison.Ordinal)
-                < unlinkedChildEvents.IndexOf("1955", StringComparison.Ordinal), unlinkedChildEvents);
+            var unlinkedCensusIndex = Array.FindIndex(paragraphTexts, text =>
+                text.Contains("1955", StringComparison.Ordinal)
+                && text.Contains("Zähl.", StringComparison.Ordinal));
+            Assert.IsTrue(unlinkedCensusIndex > Array.IndexOf(paragraphTexts, unlinkedChildEvents),
+                string.Join(" | ", paragraphTexts));
 
             var placeLinks = documentXml.Descendants(word + "hyperlink")
                 .Select(link => new
@@ -436,7 +495,7 @@ public sealed class ConsoleExportServiceTests
                 GroupName = "A-Gruppe"
             };
 
-            await new ConsoleExportService(new GedComDataSource(), documentFactory).ExportAsync(new OFBGenerateOptions
+            await new OFBExportService(new GedComDataSource(), documentFactory).ExportAsync(new OFBGenerateOptions
             {
                 InputPath = inputPath,
                 OutputPath = outputPath,
@@ -467,6 +526,9 @@ public sealed class ConsoleExportServiceTests
                 && fourthNumberIndex > standaloneGroupIndex,
                 $"subtitle={subtitleIndex}, numbers={firstNumberIndex}/{secondNumberIndex}/{thirdNumberIndex}/{fourthNumberIndex}, "
                 + $"standalone={standaloneGroupIndex}; {string.Join(" | ", paragraphs)}");
+            foreach (var familyIndex in new[] { firstNumberIndex, secondNumberIndex, thirdNumberIndex, fourthNumberIndex })
+                Assert.IsFalse(string.IsNullOrWhiteSpace(paragraphs[familyIndex - 1]),
+                    $"A blank paragraph preceded family entry {paragraphs[familyIndex]}.");
             Assert.IsTrue(paragraphs[fourthNumberIndex].StartsWith("00004 ", StringComparison.Ordinal));
         }
         finally
@@ -482,7 +544,7 @@ public sealed class ConsoleExportServiceTests
         UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
         var documentFactory = Substitute.For<IUserDocumentFactory>();
         documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
-        var service = new ConsoleExportService(new GedComDataSource(), documentFactory);
+        var service = new OFBExportService(new GedComDataSource(), documentFactory);
         var outputPath = Path.Combine(Path.GetTempPath(), $"ofb-test-{Guid.NewGuid():N}", "gc-sample.docx");
 
         try
@@ -526,7 +588,7 @@ public sealed class ConsoleExportServiceTests
         UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
         var documentFactory = Substitute.For<IUserDocumentFactory>();
         documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
-        var service = new ConsoleExportService(new GedComDataSource(), documentFactory);
+        var service = new OFBExportService(new GedComDataSource(), documentFactory);
         var outputDirectory = Path.Combine(Path.GetTempPath(), $"ofb-overlay-{Guid.NewGuid():N}");
         var outputPath = Path.Combine(outputDirectory, "pseudonym.docx");
 
@@ -587,7 +649,7 @@ public sealed class ConsoleExportServiceTests
         UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
         var documentFactory = Substitute.For<IUserDocumentFactory>();
         documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
-        var service = new ConsoleExportService(new GedComDataSource(), documentFactory);
+        var service = new OFBExportService(new GedComDataSource(), documentFactory);
         var outputPath = Path.Combine(Path.GetTempPath(), $"ofb-test-{Guid.NewGuid():N}", "ak-sample.docx");
 
         try
@@ -658,7 +720,7 @@ public sealed class ConsoleExportServiceTests
             var dataSource = new CanonicalGedcomFamilyDataSource(
                 new GedcomInputDriver(),
                 new CanonicalGenealogyAdapter());
-            var service = new ConsoleExportService(dataSource, documentFactory);
+            var service = new OFBExportService(dataSource, documentFactory);
 
             await service.ExportAsync(new OFBGenerateOptions
             {
@@ -737,7 +799,7 @@ public sealed class ConsoleExportServiceTests
             UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
             var documentFactory = Substitute.For<IUserDocumentFactory>();
             documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
-            var service = new ConsoleExportService(new GedComDataSource(), documentFactory);
+            var service = new OFBExportService(new GedComDataSource(), documentFactory);
 
             await service.ExportAsync(new OFBGenerateOptions
             {
@@ -777,7 +839,7 @@ public sealed class ConsoleExportServiceTests
     public async Task ExportAsync_WhenInputFileDoesNotExist_ThrowsFileNotFoundException()
     {
         var documentFactory = Substitute.For<IUserDocumentFactory>();
-        var service = new ConsoleExportService(new GedComDataSource(), documentFactory);
+        var service = new OFBExportService(new GedComDataSource(), documentFactory);
 
         await Assert.ThrowsExactlyAsync<FileNotFoundException>(() => service.ExportAsync(new OFBGenerateOptions
         {

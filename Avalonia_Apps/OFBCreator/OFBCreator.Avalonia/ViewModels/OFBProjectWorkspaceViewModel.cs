@@ -10,7 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using OFBCreator.Avalonia.Services;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
-using OFBCreator.Console.Services.Templates;
+using OFBCreator.Publishing.Services.Templates;
 using OFBCreator.Projects.Models;
 using OFBCreator.Projects.Services;
 

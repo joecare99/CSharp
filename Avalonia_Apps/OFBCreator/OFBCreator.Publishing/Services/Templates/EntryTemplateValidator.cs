@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using GenInterfaces.Data;
 
-namespace OFBCreator.Console.Services.Templates;
+namespace OFBCreator.Publishing.Services.Templates;
 
 /// <summary>
 /// Parses and validates the safe, declarative entry-template grammar.
@@ -31,7 +31,7 @@ public static class EntryTemplateValidator
             ["link"] = ["kind", "target", "content", "bold", "italic", "underline", "lineBreakBefore"],
             ["if"] = ["kind", "condition", "then"],
             ["forEach"] = ["kind", "items", "as", "template"],
-            ["include"] = ["kind", "fragment"]
+            ["include"] = ["kind", "fragment", "context"]
         };
 
     private static readonly HashSet<string> Formatters = new(StringComparer.Ordinal)
@@ -141,9 +141,10 @@ public static class EntryTemplateValidator
                 throw new InvalidDataException("Every legend entry must be an object.");
             foreach (var property in entry.EnumerateObject())
             {
-                if (property.Name is not ("symbol" or "meaning" or "event"))
+                if (property.Name is not ("symbol" or "meaning" or "event" or "placePreposition"))
                     throw new InvalidDataException($"Unknown legend property '{property.Name}'.");
-                if ((property.Name is "symbol" or "meaning") && property.Value.ValueKind != JsonValueKind.String)
+                if ((property.Name is "symbol" or "meaning" or "placePreposition")
+                    && property.Value.ValueKind is not (JsonValueKind.String or JsonValueKind.Null))
                     throw new InvalidDataException($"Legend property '{property.Name}' must be a string.");
                 if (property.Name == "event"
                     && property.Value.ValueKind is not (JsonValueKind.String or JsonValueKind.Null))
@@ -308,6 +309,12 @@ public static class EntryTemplateValidator
                         throw new InvalidDataException("An include block requires a fragment name.");
                     if (!definition.Fragments.ContainsKey(block.Fragment))
                         throw new InvalidDataException($"Unknown template fragment '{block.Fragment}'.");
+                    if (block.Context is not null)
+                    {
+                        ValidatePath(block.Context, variables);
+                        if (CanonicalizePath(block.Context, variables) != "person")
+                            throw new InvalidDataException("An include context must resolve to a person value.");
+                    }
                     break;
             }
         }
@@ -332,11 +339,11 @@ public static class EntryTemplateValidator
         var isValid = type switch
         {
             "family" => property is "number" or "anchor" or "union" or "marriageMark" or "marriageDate" or "marriagePlace" or "marriagePlaceShort" or "marriagePlaceAnchor" or "properties" or "properties.any" or "properties.one" or "parents" or "parents.any" or "parents.one" or "children" or "children.any" or "children.one",
-            "person" => property is "nameGc" or "nameAk" or "akaNames" or "anchor" or "reference" or "referenceNumber" or "events" or "events.any" or "events.one" or "indexLabel" or "vitalEventsGc" or "vitalEventsAk" or "additionalLifeDataGc" or "birth" or "death" or "indexAnchor"
+            "person" => property is "nameGc" or "nameAk" or "akaNames" or "anchor" or "reference" or "referenceNumber" or "events" or "events.any" or "events.one" or "showNonVitalEvents" or "indexLabel" or "vitalEventsGc" or "vitalEventsAk" or "additionalLifeDataGc" or "birth" or "death" or "indexAnchor"
                 or "occupations" or "occupations.any" or "occupations.one" or "properties" or "properties.any" or "properties.one" or "residence" or "residenceAnchor" or "ordinal" or "parentFamily" or "parentFamily.number" or "parentFamily.anchor" or "childFamilies" or "childFamilies.any" or "childFamilies.one" or "parentFamilies" or "parentFamilies.any" or "parentFamilies.one" or "childFamilyTokens" or "parentFamilyTokens" or "childFamilyTokens.any" or "childFamilyTokens.one" or "parentFamilyTokens.any" or "parentFamilyTokens.one",
             "familyReference" => property is "number" or "anchor",
             "familyReferenceToken" => property is "text" or "anchor",
-            "personEvent" => property is "symbol" or "date" or "place" or "placeAnchor" or "additional" or "relatedPersonName" or "relatedPersonAnchor" or "relatedFamilyNumber" or "relatedFamilyAnchor" or "relatedFamily" or "relatedPerson" or "isVital",
+            "personEvent" => property is "symbol" or "eventName" or "placePreposition" or "date" or "place" or "placeAnchor" or "additional" or "relatedPersonName" or "relatedPersonAnchor" or "relatedFamilyNumber" or "relatedFamilyAnchor" or "relatedFamily" or "relatedPerson" or "isVital" or "isListableNonVital",
             "occupation" => property is "name" or "date" or "indexAnchor" or "place" or "placeAnchor",
             "property" => property is "name" or "date" or "place" or "indexAnchor" or "placeAnchor",
             _ => false
@@ -400,7 +407,7 @@ public static class EntryTemplateValidator
             or "individual.parentFamily.number" or "individual.parentFamily.anchor" or "individual.parentFamily" => true,
         "occupation.name" or "occupation.date" or "occupation.indexAnchor" or "occupation.place" or "occupation.placeAnchor" => true,
         "property.name" or "property.date" or "property.place" or "property.indexAnchor" or "property.placeAnchor" => true,
-        "personEvent.symbol" or "personEvent.isVital" or "personEvent.relatedPerson" or "personEvent.relatedFamily"
+        "personEvent.symbol" or "personEvent.eventName" or "personEvent.placePreposition" or "personEvent.isVital" or "personEvent.isListableNonVital" or "personEvent.relatedPerson" or "personEvent.relatedFamily"
             or "personEvent.date" or "personEvent.place" or "personEvent.additional"
             or "personEvent.relatedPersonName" or "personEvent.relatedPersonAnchor" or "personEvent.relatedFamilyNumber" or "personEvent.relatedFamilyAnchor"
             or "personEvent.relatedFamily" or "personEvent.relatedPerson" or "personEvent.isVital" => true,
@@ -420,8 +427,8 @@ public static class EntryTemplateValidator
 
         return (type, parts[1]) switch
         {
-            ("person" or "child" or "individual", "parentFamily" or "residence" or "akaNames" or "referenceNumber" or "vitalEventsGc") => true,
-            ("personEvent", "relatedPerson" or "relatedFamily" or "isVital" or "place" or "additional") => true,
+            ("person" or "child" or "individual", "parentFamily" or "residence" or "akaNames" or "referenceNumber" or "vitalEventsGc" or "showNonVitalEvents") => true,
+            ("personEvent", "relatedPerson" or "relatedFamily" or "isVital" or "isListableNonVital" or "symbol" or "place" or "additional" or "date") => true,
             ("family", "marriagePlaceShort") => true,
             ("occupation" or "property", "place") => true,
             _ => false

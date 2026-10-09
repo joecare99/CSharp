@@ -210,6 +210,162 @@ public sealed class OFBFamilyGroupingServiceTests
         Assert.AreEqual("GROUPING_TARGET_UNSTABLE", unstableResult.Diagnostics.Single().Code);
     }
 
+    [TestMethod]
+    [DataRow("123!? ")]
+    [DataRow("(Miller)")]
+    [DataRow("NN")]
+    [DataRow("nA")]
+    public void SelectFamilySurname_UsesNoNameSectionWhenEverySurnameIsAPlaceholder(string placeholder)
+    {
+        var family = CreateFamily("F1", placeholder);
+
+        Assert.AreEqual("Familien ohne Namen", OFBFamilyGroupingService.SelectFamilySurname(family));
+    }
+
+    [TestMethod]
+    public void SelectFamilySurname_PrefersRealChildSurnameOverPlaceholderAndParent()
+    {
+        var family = CreateFamilyWithNames("F1", "Schmidt", "NN", "(Miller)", "Meier", "NA");
+
+        Assert.AreEqual("Meier", OFBFamilyGroupingService.SelectFamilySurname(family));
+    }
+
+    [TestMethod]
+    public void SelectFamilySurname_FallsBackToRealParentWhenChildrenArePlaceholders()
+    {
+        var family = CreateFamilyWithNames("F1", "(Miller)", "Weber", "NN", "NA");
+
+        Assert.AreEqual("Weber", OFBFamilyGroupingService.SelectFamilySurname(family));
+    }
+
+    [TestMethod]
+    public void BuildGroups_KeepsFamiliesWithoutRealSurnameInNoNameSection()
+    {
+        var noNameFamily = CreateFamily("F1", "NA");
+        var namedFamily = CreateFamily("F2", "Miller");
+
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            [noNameFamily, namedFamily], "gedcom", new OFBGroupingPolicy(), []);
+
+        Assert.AreEqual(2, result.Groups.Count);
+        Assert.AreSame(noNameFamily, result.Groups["Familien ohne Namen"].Single());
+        Assert.AreEqual("Familien ohne Namen", result.NoNameGroupName);
+        Assert.AreEqual(0, result.Candidates.Count);
+    }
+
+    [TestMethod]
+    public void BuildGroups_KeepsNoNameSectionDistinctFromManualGroupLabel()
+    {
+        var noNameFamily = CreateFamily("F3", "NA");
+        var decision = new OFBGroupingDecision
+        {
+            Order = 1,
+            LeftFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F1"),
+            RightFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F2"),
+            Action = "manualMerge",
+            GroupName = "Familien ohne Namen"
+        };
+
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            [CreateFamily("F1", "Meyer"), CreateFamily("F2", "Meier"), noNameFamily],
+            "gedcom", new OFBGroupingPolicy(), [decision]);
+
+        Assert.AreEqual(2, result.Groups["Familien ohne Namen"].Count);
+        Assert.AreSame(noNameFamily, result.Groups["Familien ohne Namen (2)"].Single());
+        Assert.AreEqual("Familien ohne Namen (2)", result.NoNameGroupName);
+    }
+
+    [TestMethod]
+    public void BuildGroups_DistinguishesRealSurnameMatchingNoNameSectionLabel()
+    {
+        var realSurnameFamily = CreateFamily("F1", "Familien ohne Namen");
+        var unnamedFamily = CreateFamily("F2", "NA");
+
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            [unnamedFamily, realSurnameFamily], "gedcom", new OFBGroupingPolicy(), []);
+
+        Assert.AreSame(realSurnameFamily, result.Groups["Familien ohne Namen"].Single());
+        Assert.AreSame(unnamedFamily, result.Groups["Familien ohne Namen (2)"].Single());
+        Assert.AreEqual("Familien ohne Namen (2)", result.NoNameGroupName);
+    }
+
+    [TestMethod]
+    public void BuildGroups_SuppressesTransitionFromFamilyWithExactParentSurnameContinuity()
+    {
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            [
+                CreateFamily("F0", "Kind"),
+                CreateFamily("F1", "Meier"),
+                CreateFamilyWithParents("F2", "Kind", "Kind", "Meier")
+            ],
+            "gedcom",
+            new OFBGroupingPolicy(),
+            []);
+
+        Assert.AreEqual(0, result.Candidates.Count);
+        Assert.AreEqual(2, result.Groups.Count);
+    }
+
+    [TestMethod]
+    public void BuildGroups_RetainsOnlyNearestCandidatesForEachSurnameAndPreservesTies()
+    {
+        var families = new[]
+        {
+            CreateFamily("F1", "Meyer"),
+            CreateFamily("F2", "Meier"),
+            CreateFamily("F3", "Mayer"),
+            CreateFamilyWithParents("F4", "Meyer", "Meier", null),
+            CreateFamilyWithParents("F5", "Meyer", "Mayer", null)
+        };
+
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            families, "gedcom", new OFBGroupingPolicy(), []);
+
+        Assert.AreEqual(2, result.Candidates.Count);
+        Assert.IsTrue(result.Candidates.All(candidate => candidate.Evidence.Any(evidence =>
+            evidence.Kind == "phoneticSimilarity" && evidence.Distance == 1)));
+        Assert.IsTrue(result.Candidates.All(candidate => candidate.LeftSurname == "Meyer" || candidate.RightSurname == "Meyer"));
+    }
+
+    [TestMethod]
+    public void BuildGroups_DropsCandidateWhenBothGroupsHaveCloserCandidates()
+    {
+        var families = new[]
+        {
+            CreateFamily("F1", "Johns"),
+            CreateFamily("F2", "Jones"),
+            CreateFamily("F3", "John"),
+            CreateFamily("F4", "Jone"),
+            CreateFamilyWithParents("F5", "Johns", "Jones", null),
+            CreateFamilyWithParents("F6", "Johns", "John", null),
+            CreateFamilyWithParents("F7", "Jones", "Jone", null)
+        };
+
+        var result = new OFBFamilyGroupingService().BuildGroups(
+            families, "gedcom", new OFBGroupingPolicy(), []);
+
+        Assert.IsFalse(result.Candidates.Any(candidate =>
+            new[] { candidate.LeftSurname, candidate.RightSurname }.Contains("Johns")
+            && new[] { candidate.LeftSurname, candidate.RightSurname }.Contains("Jones")));
+        Assert.AreEqual(2, result.Candidates.Count);
+    }
+
+    private static IGenFamily CreateFamilyWithNames(
+        string familyId, string? husbandSurname, string? wifeSurname, params string[] childSurnames)
+    {
+        var family = Substitute.For<IGenFamily>();
+        family.FamilyRefID.Returns(familyId);
+        var husband = husbandSurname is null ? null : CreatePerson(husbandSurname);
+        var wife = wifeSurname is null ? null : CreatePerson(wifeSurname);
+        family.Husband.Returns(husband);
+        family.Wife.Returns(wife);
+        var children = new TestIndexedList<IGenPerson>();
+        foreach (var childSurname in childSurnames)
+            children.Add(CreatePerson(childSurname));
+        family.Children.Returns(children);
+        return family;
+    }
+
     private static OFBGroupingDecision CreateDecision(OFBGroupingCandidate candidate, string action) => new()
     {
         Order = 1,

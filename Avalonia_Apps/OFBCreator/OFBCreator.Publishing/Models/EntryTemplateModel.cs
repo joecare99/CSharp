@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace OFBCreator.Console.Models;
+namespace OFBCreator.Publishing.Models;
 
 /// <summary>
 /// Typed data exposed to family-entry templates.
@@ -68,6 +68,8 @@ public sealed class PersonEntryTemplateModel
 
     public required IReadOnlyList<OccupationEntryTemplateModel> Occupations { get; init; }
 
+    public bool ShowNonVitalEvents { get; init; }
+
     public IReadOnlyList<PropertyEntryTemplateModel> Properties { get; init; } = Array.Empty<PropertyEntryTemplateModel>();
 
     public string? Residence { get; init; }
@@ -94,6 +96,10 @@ public sealed class PersonEventEntryTemplateModel
 
     public required string Date { get; init; }
 
+    public string EventName { get; init; } = string.Empty;
+
+    public string PlacePreposition { get; init; } = "in";
+
     public string Place { get; init; } = string.Empty;
 
     public string PlaceAnchor { get; init; } = string.Empty;
@@ -109,6 +115,8 @@ public sealed class PersonEventEntryTemplateModel
     public string RelatedFamilyAnchor { get; init; } = string.Empty;
 
     public bool IsVital { get; init; }
+
+    public bool IsListableNonVital { get; init; }
 
     public bool HasRelatedPerson => !string.IsNullOrWhiteSpace(RelatedPersonName);
 

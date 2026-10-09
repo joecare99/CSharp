@@ -10,9 +10,17 @@ namespace OFBCreator.Core.Services;
 /// </summary>
 internal static class FamilySurnameSelector
 {
+    internal static bool HasRealSurname(IGenFamily family)
+    {
+        ArgumentNullException.ThrowIfNull(family);
+        return family.Children?.Any(child => !SurnamePlaceholderClassifier.IsPlaceholder(child?.Surname)) == true
+            || !SurnamePlaceholderClassifier.IsPlaceholder(family.Husband?.Surname)
+            || !SurnamePlaceholderClassifier.IsPlaceholder(family.Wife?.Surname);
+    }
+
     /// <summary>
-    /// Returns the most frequent child surname, or the first available parent surname
-    /// when no child surname is available.
+    /// Returns the most frequent non-placeholder child surname, or the first available real parent surname.
+    /// Families without a real surname are assigned to the no-name section.
     /// </summary>
     internal static string Select(IGenFamily family)
     {
@@ -24,11 +32,11 @@ internal static class FamilySurnameSelector
             foreach (var child in family.Children)
             {
                 var surname = child?.Surname?.Trim();
-                if (string.IsNullOrWhiteSpace(surname))
+                if (SurnamePlaceholderClassifier.IsPlaceholder(surname))
                     continue;
 
-                childSurnameCounts.TryGetValue(surname, out var count);
-                childSurnameCounts[surname] = count + 1;
+                childSurnameCounts.TryGetValue(surname!, out var count);
+                childSurnameCounts[surname!] = count + 1;
             }
         }
 
@@ -43,10 +51,12 @@ internal static class FamilySurnameSelector
         }
 
         var husbandSurname = family.Husband?.Surname?.Trim();
-        if (!string.IsNullOrWhiteSpace(husbandSurname))
-            return husbandSurname;
+        if (!SurnamePlaceholderClassifier.IsPlaceholder(husbandSurname))
+            return husbandSurname!;
 
         var wifeSurname = family.Wife?.Surname?.Trim();
-        return string.IsNullOrWhiteSpace(wifeSurname) ? "Unbekannt" : wifeSurname;
+        return SurnamePlaceholderClassifier.IsPlaceholder(wifeSurname)
+            ? SurnamePlaceholderClassifier.NoNameSectionName
+            : wifeSurname!;
     }
 }

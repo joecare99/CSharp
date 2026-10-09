@@ -3,9 +3,10 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
+    <RootNamespace>OFBCreator.Publishing</RootNamespace>
+    <AssemblyName>OFBCreator.Publishing</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Libraries\sgLib.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
     <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
@@ -18,19 +19,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="MSTest" />
-    <PackageReference Include="NSubstitute" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\OFBCreator.Avalonia\OFBCreator.Avalonia.csproj" />
-    <ProjectReference Include="..\OFBCreator.Console\OFBCreator.Console.csproj" />
-    <ProjectReference Include="..\OFBCreator.Publishing\OFBCreator.Publishing.csproj" />
+    <ProjectReference Include="..\Genealogy.Gedcom\Genealogy.Gedcom.csproj" />
+    <ProjectReference Include="..\OFBCreator.Abstractions\OFBCreator.Abstractions.csproj" />
+    <ProjectReference Include="..\OFBCreator.Core\OFBCreator.Core.csproj" />
     <ProjectReference Include="..\OFBCreator.Projects\OFBCreator.Projects.csproj" />
+    <ProjectReference Include="..\..\Libraries\GenInterfaces\GenInterfaces.csproj" />
+    <ProjectReference Include="..\..\..\CSharpBible\Data\DocumentUtils\Document.Docx\Document.Docx.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\OFBCreator.Publishing.Tests\TestData\gedcom-5.5.1-synthetic.ged" Link="TestData\gedcom-5.5.1-synthetic.ged" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Templates\*.json" />
+    <EmbeddedResource Include="Templates\Vorwort.md" />
   </ItemGroup>
 </Project>
