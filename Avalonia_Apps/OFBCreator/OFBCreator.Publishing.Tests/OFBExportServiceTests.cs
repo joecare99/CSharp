@@ -236,6 +236,14 @@ public sealed class OFBExportServiceTests
             var paragraphs = xml.Descendants(word + "p").ToArray();
             var texts = paragraphs.Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value))).ToArray();
             Assert.IsTrue(texts.Any(text => text.Contains("00001 ⚭", StringComparison.Ordinal)), string.Join(Environment.NewLine, texts));
+            var familyDirectoryIndex = Array.IndexOf(texts, "Familienverzeichnis");
+            Assert.IsTrue(familyDirectoryIndex >= 0);
+            Assert.AreEqual("Heading1", (string?)paragraphs[familyDirectoryIndex]
+                .Descendants(word + "pStyle").FirstOrDefault()?.Attribute(word + "val"));
+            var nextFamilyGroupIndex = Enumerable.Range(familyDirectoryIndex + 1, paragraphs.Length - familyDirectoryIndex - 1)
+                .First(index => paragraphs[index].Descendants(word + "pStyle").FirstOrDefault() is not null);
+            Assert.AreEqual("Heading2", (string?)paragraphs[nextFamilyGroupIndex]
+                .Descendants(word + "pStyle").FirstOrDefault()?.Attribute(word + "val"));
             Assert.IsTrue(texts.Any(text => text.Contains("Mühle", StringComparison.Ordinal)));
             Assert.IsTrue(texts.Any(text => text.Contains("Hofgut", StringComparison.Ordinal)));
             Assert.IsTrue(texts.Any(text => text.Contains("Wohnort: München, Oberbayern, Bayern", StringComparison.Ordinal)));
@@ -250,11 +258,11 @@ public sealed class OFBExportServiceTests
             Assert.IsTrue(hierarchyTexts.Contains("Deutschland"));
             Assert.IsTrue(hierarchyTexts.Contains("Baden-Württemberg"), string.Join(" | ", hierarchyTexts));
             Assert.IsTrue(hierarchyTexts.Contains("Tübingen"));
-            Assert.IsFalse(hierarchyTexts.Contains("Baden-Würtemberg"));
+            Assert.IsFalse(hierarchyTexts.Any(text => text.Contains("Baden-Würtemberg", StringComparison.Ordinal)));
             Assert.IsTrue(hierarchyTexts.Contains("Bayern"));
             Assert.IsTrue(hierarchyTexts.Contains("Oberbayern"));
             Assert.IsTrue(hierarchyTexts.Contains("München"));
-            var headingIndexes = new[] { "Deutschland", "Baden-Württemberg", "Bayern", "Oberbayern", "Tübingen", "München" }
+            var headingIndexes = new[] { "Deutschland", "Baden-Württemberg", "Bayern", "Oberbayern" }
                 .Select(name => Array.IndexOf(hierarchyTexts, name))
                 .ToArray();
             Assert.IsTrue(headingIndexes.All(index => index >= 0));
@@ -262,8 +270,15 @@ public sealed class OFBExportServiceTests
                 "Hierarchy headings must not carry inherited family links.");
             var tuebingenIndex = Array.IndexOf(hierarchyTexts, "Tübingen");
             var muenchenIndex = Array.IndexOf(hierarchyTexts, "München");
-            Assert.AreEqual("      [00001]", hierarchyTexts[tuebingenIndex + 1]);
-            Assert.AreEqual("        [00001]", hierarchyTexts[muenchenIndex + 1]);
+            Assert.AreEqual("[00001]", hierarchyTexts[tuebingenIndex + 1]);
+            Assert.AreEqual("[00001]", hierarchyTexts[muenchenIndex + 1]);
+            Assert.IsTrue(new[] { tuebingenIndex, muenchenIndex }.All(index =>
+                hierarchyParagraphs[index].Descendants(word + "pStyle")
+                    .All(style => !((string?)style.Attribute(word + "val") ?? string.Empty)
+                        .StartsWith("Heading", StringComparison.OrdinalIgnoreCase))),
+                "Terminal places remain ordinary text rather than chapter headings.");
+            Assert.IsTrue(hierarchyParagraphs[tuebingenIndex].Descendants(word + "ind").Any());
+            Assert.IsTrue(hierarchyParagraphs[tuebingenIndex + 1].Descendants(word + "ind").Any());
             var hierarchyHeadings = headingIndexes
                 .Select(index => (string?)hierarchyParagraphs[index].Descendants(word + "pStyle").FirstOrDefault()?.Attribute(word + "val"))
                 .ToArray();
@@ -273,7 +288,8 @@ public sealed class OFBExportServiceTests
                 .ToArray();
             Assert.AreEqual(2, headingLevels[0]);
             Assert.AreEqual(3, headingLevels[1]);
-            Assert.AreEqual(4, headingLevels[4]);
+            Assert.AreEqual(3, headingLevels[2]);
+            Assert.AreEqual(4, headingLevels[3]);
             var bookmarks = xml.Descendants(word + "bookmarkStart").Select(element => (string?)element.Attribute(word + "name")).ToHashSet(StringComparer.Ordinal);
             var links = xml.Descendants(word + "hyperlink").Select(element => (string?)element.Attribute(word + "anchor")).Where(target => target is not null).ToArray();
             Assert.IsTrue(bookmarks.Contains("index-property-1"));
