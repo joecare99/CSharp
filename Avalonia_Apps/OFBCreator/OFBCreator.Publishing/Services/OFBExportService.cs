@@ -554,9 +554,8 @@ public sealed class OFBExportService(
     {
         foreach ( var node in nodes )
         {
-            var prefix = new string( ' ', indent * 2 );
-            var para = doc.AddParagraph( "Normaler Absatz" );
-            para.TextContent = $"{prefix}{node.Name}";
+            var heading = doc.AddHeadline(Math.Min(indent + 2, 9), $"place-{SanitizeAnchor(node.PlaceId)}");
+            heading.TextContent = node.Name;
             var familyTokens = CreateFamilyReferenceTokens(node.FamilyReferences
                 .Distinct(StringComparer.Ordinal)
                 .Select(number => new FamilyReferenceEntryTemplateModel
@@ -565,7 +564,12 @@ public sealed class OFBExportService(
                     Anchor = GetFamilyAnchor(number)
                 })
                 .ToArray());
-            AppendFamilyTokens(para, "[", familyTokens);
+            if (familyTokens.Count > 0)
+            {
+                var references = doc.AddParagraph("Normaler Absatz");
+                references.TextContent = new string(' ', (indent + 1) * 2);
+                AppendFamilyTokens(references, "[", familyTokens);
+            }
 
             if ( node.Children != null && node.Children.Length > 0 )
                 await WritePlaceHierarchyAsync( doc, node.Children, indent + 1 );
@@ -855,23 +859,29 @@ public sealed class OFBExportService(
 
         var vitalEventsAk = string.Join(", ", vitalEvents);
         var occupations = GetOccupations(person).ToArray();
-        var preferredOccupation = GetPreferredOccupation(occupations);
+        var preferredOccupations = GetPreferredOccupations(occupations);
         var events = person.Facts
             .Where(fact => fact is not null
                 && (!IsVitalEvent(fact.eFactType) || fact.Date is not null)
                 && fact.eFactType is not (EFactType.Mariage or EFactType.Reference)
                 && (!IsVitalEvent(fact.eFactType)
                     || ReferenceEquals(fact, vitalEventValues.First(item => item.Event == fact.eFactType).Fact)))
-            .Select(fact => (
-                Event: CreatePersonEventTemplateModel(
-                    fact!,
-                    allFamilies,
-                    IsVitalEvent(fact!.eFactType)
-                        ? vitalEventValues.First(item => item.Event == fact.eFactType).Date?.ToString()
-                        : null),
-                Date: IsVitalEvent(fact!.eFactType)
+            .SelectMany(fact =>
+            {
+                var eventDate = IsVitalEvent(fact!.eFactType)
                     ? vitalEventValues.First(item => item.Event == fact.eFactType).Date
-                    : fact.Date))
+                    : fact.Date;
+                var dateText = IsVitalEvent(fact.eFactType) ? eventDate?.ToString() : null;
+                var eventModels = fact.eFactType == EFactType.Occupation
+                    ? OccupationDesignationParser.Parse(fact.Data)
+                        .Select(designation => CreatePersonEventTemplateModel(
+                            fact,
+                            allFamilies,
+                            dateText,
+                            designation))
+                    : new[] { CreatePersonEventTemplateModel(fact, allFamilies, dateText) };
+                return eventModels.Select(eventModel => (Event: eventModel, Date: eventDate));
+            })
             .Concat(vitalEventValues
                 .Where(item => item.Date is not null
                     && !person.Facts.Any(fact => fact is not null
@@ -926,21 +936,19 @@ public sealed class OFBExportService(
             ShowNonVitalEvents = ordinal is null
                 ? ShouldShowParentNonVitalEvents(person, currentFamilyNumber, allFamilies)
                 : parentFamilies.Length == 0,
-            Occupations = preferredOccupation is null
-                ? Array.Empty<OccupationEntryTemplateModel>()
-                : new[]
+            Occupations = preferredOccupations
+                .Select(occupation => new OccupationEntryTemplateModel
                 {
-                    new OccupationEntryTemplateModel
-                    {
-                        Name = preferredOccupation.Value.Name,
-                        Date = preferredOccupation.Value.Date?.ToString(),
-                        Place = preferredOccupation.Value.Place?.Name,
-                        PlaceAnchor = GetPlaceIndexAnchor(preferredOccupation.Value.Place?.Name),
-                        IndexAnchor = _occupationIndexAnchorByName.TryGetValue(preferredOccupation.Value.Name, out var anchor)
-                            ? anchor
-                            : string.Empty
-                    }
-                },
+                    Name = occupation.Name,
+                    Date = occupation.Date?.ToString(),
+                    Place = GetShortPlaceName(occupation.Place?.Name ?? occupation.ContextPlace),
+                    PlaceAnchor = GetPlaceIndexAnchor(occupation.Place?.Name ?? occupation.ContextPlace),
+                    Employer = occupation.Employer ?? string.Empty,
+                    IndexAnchor = _occupationIndexAnchorByName.TryGetValue(occupation.Name, out var anchor)
+                        ? anchor
+                        : string.Empty
+                })
+                .ToArray(),
             Properties = CreatePropertyTemplateModels(person.Facts)
         };
     }
@@ -971,7 +979,7 @@ public sealed class OFBExportService(
         string.Join(' ', name.Replace("/", " ", StringComparison.Ordinal)
             .Split(' ', StringSplitOptions.RemoveEmptyEntries));
 
-    private static IEnumerable<(string Name, IGenDate? Date, IGenPlace? Place)> GetOccupations(IGenPerson person)
+    private static IEnumerable<OccupationProjection> GetOccupations(IGenPerson person)
     {
         var hasOccupationFacts = false;
         foreach (var fact in person.Facts)
@@ -980,24 +988,58 @@ public sealed class OFBExportService(
                 continue;
 
             hasOccupationFacts = true;
-            yield return (fact.Data.Trim(), fact.Date, fact.Place);
+            foreach (var designation in OccupationDesignationParser.Parse(fact.Data))
+            {
+                yield return new OccupationProjection(
+                    designation.Name,
+                    fact.Date,
+                    fact.Place,
+                    designation.Place,
+                    designation.Employer,
+                    fact,
+                    fact.Data.Trim());
+            }
         }
 
         if (!hasOccupationFacts && !string.IsNullOrWhiteSpace(person.Occupation))
-            yield return (person.Occupation.Trim(), null, person.OccuPlace);
-    }
-
-    private static (string Name, IGenDate? Date, IGenPlace? Place)? GetPreferredOccupation(
-        IReadOnlyList<(string Name, IGenDate? Date, IGenPlace? Place)> occupations)
-    {
-        foreach (var occupation in occupations)
         {
-            if (occupation.Date is null)
-                return occupation;
+            var occupationText = person.Occupation.Trim();
+            foreach (var designation in OccupationDesignationParser.Parse(occupationText))
+            {
+                yield return new OccupationProjection(
+                    designation.Name,
+                    null,
+                    person.OccuPlace,
+                    designation.Place,
+                    designation.Employer,
+                    null,
+                    occupationText);
+            }
         }
-
-        return occupations.Count == 0 ? null : occupations[^1];
     }
+
+    private static IReadOnlyList<OccupationProjection> GetPreferredOccupations(
+        IReadOnlyList<OccupationProjection> occupations)
+    {
+        var preferred = occupations.FirstOrDefault(occupation => occupation.Date is null)
+            ?? occupations.LastOrDefault();
+        if (preferred is null)
+            return Array.Empty<OccupationProjection>();
+
+        return preferred.Fact is null
+            ? occupations.Where(occupation => occupation.Fact is null
+                && string.Equals(occupation.SourceText, preferred.SourceText, StringComparison.Ordinal)).ToArray()
+            : occupations.Where(occupation => ReferenceEquals(occupation.Fact, preferred.Fact)).ToArray();
+    }
+
+    private sealed record OccupationProjection(
+        string Name,
+        IGenDate? Date,
+        IGenPlace? Place,
+        string? ContextPlace,
+        string? Employer,
+        IGenFact? Fact,
+        string SourceText);
 
     private IReadOnlyList<PropertyEntryTemplateModel> CreatePropertyTemplateModels(IEnumerable<IGenFact?> facts) => facts
         .Where(fact => fact?.eFactType == EFactType.Property && !string.IsNullOrWhiteSpace(fact.Data))
@@ -1022,7 +1064,8 @@ public sealed class OFBExportService(
     private PersonEventEntryTemplateModel CreatePersonEventTemplateModel(
         IGenFact fact,
         IReadOnlyList<OFBFamily> allFamilies,
-        string? dateOverride = null)
+        string? dateOverride = null,
+        OccupationDesignation? occupationDesignation = null)
     {
         var relatedPerson = fact.Entities
             .Select(connection => connection?.Entity)
@@ -1036,7 +1079,9 @@ public sealed class OFBExportService(
         var eventType = fact.eFactType;
         var date = dateOverride ?? fact.Date?.ToString() ?? string.Empty;
         var symbol = GetLegendSymbol(eventType);
-        var additional = string.IsNullOrWhiteSpace(fact.Data) ? string.Empty : fact.Data.Trim();
+        var additional = occupationDesignation?.Name
+            ?? (string.IsNullOrWhiteSpace(fact.Data) ? string.Empty : fact.Data.Trim());
+        var placeName = fact.Place?.Name ?? occupationDesignation?.Place;
 
         return new PersonEventEntryTemplateModel
         {
@@ -1044,9 +1089,10 @@ public sealed class OFBExportService(
             Date = date,
             EventName = GetLegendEntry(eventType)?.Meaning ?? GetEventFallbackName(eventType),
             PlacePreposition = GetLegendPlacePreposition(eventType),
-            Place = GetShortPlaceName(fact.Place?.Name),
-            PlaceAnchor = GetPlaceIndexAnchor(fact.Place?.Name),
+            Place = GetShortPlaceName(placeName),
+            PlaceAnchor = GetPlaceIndexAnchor(placeName),
             Additional = additional,
+            OccupationEmployer = occupationDesignation?.Employer ?? string.Empty,
             RelatedPersonName = relatedPerson is null ? null : FormatPersonName(relatedPerson, gcFormat: false),
             RelatedPersonAnchor = relatedPerson is null
                 ? string.Empty
@@ -1459,7 +1505,8 @@ public sealed class OFBExportService(
 
             var components = place.Name.Split(new[] { ',' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             Array.Reverse(components);
-            components = components.Take(5).ToArray();
+            var hierarchy = GermanPlaceHierarchyCatalog.CompleteHierarchy(components);
+            components = hierarchy.ToArray();
             if (components.Length == 0)
                 return;
 
@@ -1481,11 +1528,11 @@ public sealed class OFBExportService(
                 }
                 currentNode = nextNode;
 
-                if (!currentNode.FamilyReferences.Contains(familyNumber, StringComparer.Ordinal))
-                    currentNode.FamilyReferences = currentNode.FamilyReferences.Concat([familyNumber]).ToArray();
-
                 parentKey = nodeKey;
             }
+
+            if (currentNode is not null && !currentNode.FamilyReferences.Contains(familyNumber, StringComparer.Ordinal))
+                currentNode.FamilyReferences = currentNode.FamilyReferences.Concat([familyNumber]).ToArray();
         }
     }
 

@@ -190,6 +190,14 @@
                         "kind": "link",
                         "target": "personEvent.occupationIndexAnchor",
                         "content": [{ "kind": "field", "path": "personEvent.additional" }]
+                      },
+                      {
+                        "kind": "if",
+                        "condition": "personEvent.occupationEmployer",
+                        "then": [
+                          { "kind": "text", "value": " bei " },
+                          { "kind": "field", "path": "personEvent.occupationEmployer" }
+                        ]
                       }
                     ]
                   },
@@ -244,10 +252,11 @@
         "items": "person.occupations",
         "as": "occupation",
         "template": [
-          { "kind": "text", "value": " " },
+          { "kind": "text", "value": ", " },
           { "kind": "field", "path": "occupation.date", "formatter": "gedcomDatePrefix" },
           { "kind": "link", "target": "occupation.indexAnchor", "italic": true, "content": [{ "kind": "field", "path": "occupation.name", "italic": true }] },
-          { "kind": "if", "condition": "occupation.place", "then": [{ "kind": "text", "value": " in " }, { "kind": "link", "target": "occupation.placeAnchor", "content": [{ "kind": "field", "path": "occupation.place" }] }] }
+          { "kind": "if", "condition": "occupation.place", "then": [{ "kind": "text", "value": " in " }, { "kind": "link", "target": "occupation.placeAnchor", "content": [{ "kind": "field", "path": "occupation.place" }] }] },
+          { "kind": "if", "condition": "occupation.employer", "then": [{ "kind": "text", "value": " bei " }, { "kind": "field", "path": "occupation.employer" }] }
         ]
       },
       {

@@ -118,6 +118,8 @@ public sealed class PersonEventEntryTemplateModel
 
     public string OccupationIndexAnchor { get; init; } = string.Empty;
 
+    public string OccupationEmployer { get; init; } = string.Empty;
+
     public bool IsVital { get; init; }
 
     public bool IsListableNonVital { get; init; }
@@ -153,6 +155,8 @@ public sealed class OccupationEntryTemplateModel
     public string? Place { get; init; }
 
     public string PlaceAnchor { get; init; } = string.Empty;
+
+    public string Employer { get; init; } = string.Empty;
 }
 
 /// <summary>

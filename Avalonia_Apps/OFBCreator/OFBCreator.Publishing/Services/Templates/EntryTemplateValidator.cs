@@ -345,8 +345,8 @@ public static class EntryTemplateValidator
                 or "occupations" or "occupations.any" or "occupations.one" or "properties" or "properties.any" or "properties.one" or "residence" or "residenceAnchor" or "ordinal" or "parentFamily" or "parentFamily.number" or "parentFamily.anchor" or "childFamilies" or "childFamilies.any" or "childFamilies.one" or "parentFamilies" or "parentFamilies.any" or "parentFamilies.one" or "childFamilyTokens" or "parentFamilyTokens" or "childFamilyTokens.any" or "childFamilyTokens.one" or "parentFamilyTokens.any" or "parentFamilyTokens.one",
             "familyReference" => property is "number" or "anchor",
             "familyReferenceToken" => property is "text" or "anchor",
-            "personEvent" => property is "symbol" or "eventName" or "placePreposition" or "date" or "place" or "placeAnchor" or "additional" or "relatedPersonName" or "relatedPersonAnchor" or "relatedFamilyNumber" or "relatedFamilyAnchor" or "occupationIndexAnchor" or "isOccupation" or "relatedFamily" or "relatedPerson" or "isVital" or "isListableNonVital",
-            "occupation" => property is "name" or "date" or "indexAnchor" or "place" or "placeAnchor",
+            "personEvent" => property is "symbol" or "eventName" or "placePreposition" or "date" or "place" or "placeAnchor" or "additional" or "relatedPersonName" or "relatedPersonAnchor" or "relatedFamilyNumber" or "relatedFamilyAnchor" or "occupationIndexAnchor" or "occupationEmployer" or "isOccupation" or "relatedFamily" or "relatedPerson" or "isVital" or "isListableNonVital",
+            "occupation" => property is "name" or "date" or "indexAnchor" or "place" or "placeAnchor" or "employer",
             "property" => property is "name" or "date" or "place" or "indexAnchor" or "placeAnchor",
             _ => false
         };
@@ -407,12 +407,12 @@ public static class EntryTemplateValidator
             or "individual.vitalEventsGc" or "individual.vitalEventsAk" or "individual.additionalLifeDataGc" or "individual.birth"
             or "individual.death" or "individual.indexAnchor" or "individual.ordinal" or "individual.residence" or "individual.residenceAnchor"
             or "individual.parentFamily.number" or "individual.parentFamily.anchor" or "individual.parentFamily" => true,
-        "occupation.name" or "occupation.date" or "occupation.indexAnchor" or "occupation.place" or "occupation.placeAnchor" => true,
+        "occupation.name" or "occupation.date" or "occupation.indexAnchor" or "occupation.place" or "occupation.placeAnchor" or "occupation.employer" => true,
         "property.name" or "property.date" or "property.place" or "property.indexAnchor" or "property.placeAnchor" => true,
         "personEvent.symbol" or "personEvent.eventName" or "personEvent.placePreposition" or "personEvent.isVital" or "personEvent.isListableNonVital" or "personEvent.relatedPerson" or "personEvent.relatedFamily"
             or "personEvent.date" or "personEvent.place" or "personEvent.additional"
             or "personEvent.relatedPersonName" or "personEvent.relatedPersonAnchor" or "personEvent.relatedFamilyNumber" or "personEvent.relatedFamilyAnchor"
-            or "personEvent.occupationIndexAnchor" or "personEvent.isOccupation"
+            or "personEvent.occupationIndexAnchor" or "personEvent.occupationEmployer" or "personEvent.isOccupation"
             or "personEvent.relatedFamily" or "personEvent.relatedPerson" or "personEvent.isVital" => true,
         "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
         "familyReference.number" or "familyReference.anchor" or "familyReferenceToken" or "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
@@ -431,9 +431,9 @@ public static class EntryTemplateValidator
         return (type, parts[1]) switch
         {
             ("person" or "child" or "individual", "parentFamily" or "residence" or "akaNames" or "referenceNumber" or "religion" or "vitalEventsGc" or "showNonVitalEvents") => true,
-            ("personEvent", "relatedPerson" or "relatedFamily" or "isVital" or "isListableNonVital" or "isOccupation" or "symbol" or "place" or "additional" or "date") => true,
+            ("personEvent", "relatedPerson" or "relatedFamily" or "isVital" or "isListableNonVital" or "isOccupation" or "symbol" or "place" or "additional" or "date" or "occupationEmployer") => true,
             ("family", "marriagePlaceShort") => true,
-            ("occupation" or "property", "place") => true,
+            ("occupation" or "property", "place" or "employer") => true,
             _ => false
         };
     }

@@ -443,6 +443,7 @@ public sealed class EntryTemplateRenderer
                 (OccupationEntryTemplateModel occupation, "indexAnchor") => occupation.IndexAnchor,
                 (OccupationEntryTemplateModel occupation, "place") => occupation.Place,
                 (OccupationEntryTemplateModel occupation, "placeAnchor") => occupation.PlaceAnchor,
+                (OccupationEntryTemplateModel occupation, "employer") => occupation.Employer,
                 (PropertyEntryTemplateModel property, "name") => property.Name,
                 (PropertyEntryTemplateModel property, "date") => property.Date,
                 (PropertyEntryTemplateModel property, "place") => property.Place,
@@ -464,6 +465,7 @@ public sealed class EntryTemplateRenderer
                 (PersonEventEntryTemplateModel personEvent, "relatedFamilyNumber") => personEvent.RelatedFamilyNumber,
                 (PersonEventEntryTemplateModel personEvent, "relatedFamilyAnchor") => personEvent.RelatedFamilyAnchor,
                 (PersonEventEntryTemplateModel personEvent, "occupationIndexAnchor") => personEvent.OccupationIndexAnchor,
+                (PersonEventEntryTemplateModel personEvent, "occupationEmployer") => personEvent.OccupationEmployer,
                 (PersonEventEntryTemplateModel personEvent, "isOccupation") => personEvent.IsOccupation,
                 _ => throw new InvalidDataException($"Template value '{path}' is not available in this rendering context.")
             };

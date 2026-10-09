@@ -88,6 +88,18 @@ public class OccupationIndexGeneratorTests
     }
 
     [TestMethod]
+    public async Task GenerateAsync_CompoundOccupation_CreatesSeparateIndexEntries()
+    {
+        var generator = new OccupationIndexGenerator(_logger);
+        var person = CreateMockPerson("Müller", "Hans", "I1");
+        person.Occupation.Returns("Ackersmann, Taglöhner");
+
+        var result = await generator.GenerateAsync(new[] { CreateMockFamily(person, null!) });
+
+        CollectionAssert.AreEqual(new[] { "Ackersmann", "Taglöhner" }, result.Select(entry => entry.Name).ToArray());
+    }
+
+    [TestMethod]
     public async Task GenerateAsync_WifeOccupation_Extracted()
     {
         var generator = new OccupationIndexGenerator(_logger);
