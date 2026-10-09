@@ -58,9 +58,17 @@
           { "kind": "field", "path": "personEvent.place" }
         ] }
       ] },
-      { "kind": "if", "condition": "personEvent.additional", "then": [
+      { "kind": "if", "condition": "personEvent.isOccupation", "then": [
         { "kind": "text", "value": " " },
-        { "kind": "field", "path": "personEvent.additional" }
+        { "kind": "link", "target": "personEvent.occupationIndexAnchor", "content": [
+          { "kind": "field", "path": "personEvent.additional" }
+        ] }
+      ] },
+      { "kind": "if", "condition": "!personEvent.isOccupation", "then": [
+        { "kind": "if", "condition": "personEvent.additional", "then": [
+          { "kind": "text", "value": " " },
+          { "kind": "field", "path": "personEvent.additional" }
+        ] }
       ] },
       { "kind": "if", "condition": "personEvent.relatedPerson", "then": [
         { "kind": "text", "value": " " },
@@ -139,7 +147,7 @@
               {
                 "kind": "paragraph",
                 "role": "family-data",
-                "hangingIndent": 18,
+                "indent": 36,
                 "content": [
                   {
                     "kind": "if",
@@ -175,10 +183,28 @@
                   },
                   {
                     "kind": "if",
-                    "condition": "personEvent.additional",
+                    "condition": "personEvent.isOccupation",
                     "then": [
                       { "kind": "text", "value": ", " },
-                      { "kind": "field", "path": "personEvent.additional" }
+                      {
+                        "kind": "link",
+                        "target": "personEvent.occupationIndexAnchor",
+                        "content": [{ "kind": "field", "path": "personEvent.additional" }]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "if",
+                    "condition": "!personEvent.isOccupation",
+                    "then": [
+                      {
+                        "kind": "if",
+                        "condition": "personEvent.additional",
+                        "then": [
+                          { "kind": "text", "value": ", " },
+                          { "kind": "field", "path": "personEvent.additional" }
+                        ]
+                      }
                     ]
                   },
                   {
@@ -243,6 +269,7 @@
         "kind": "paragraph",
         "role": "adult",
         "anchor": "person.anchor",
+        "indent": 36,
         "hangingIndent": 18,
         "content": [
           { "kind": "text", "value": "•\t" },
@@ -292,18 +319,26 @@
               }
             ]
           },
+          {
+            "kind": "if",
+            "condition": "person.referenceNumber",
+            "then": [
+              { "kind": "text", "value": "<PN=", "lineBreakBefore": true },
+              { "kind": "field", "path": "person.referenceNumber" },
+              { "kind": "text", "value": ">" }
+            ]
+          },
+          {
+            "kind": "if",
+            "condition": "person.religion",
+            "then": [
+              { "kind": "text", "value": ", " },
+              { "kind": "field", "path": "person.religion" }
+            ]
+          },
           { "kind": "include", "fragment": "personEvents" },
           { "kind": "field", "path": "person.additionalLifeDataGc" },
-          { "kind": "include", "fragment": "personDetails" },
-              { "kind": "if", "condition": "person.referenceNumber", "then": [
-                {
-                  "kind": "text",
-                  "value": "<PN=",
-                  "lineBreakBefore": true
-                },
-                { "kind": "field", "path": "person.referenceNumber" },
-                { "kind": "text", "value": ">" }
-              ] }
+          { "kind": "include", "fragment": "personDetails" }
         ]
       },
       {
@@ -318,6 +353,7 @@
       "kind": "paragraph",
       "role": "family-data",
       "anchor": "family.anchor",
+      "spaceBefore": 6,
       "content": [
         {
           "kind": "field",
@@ -402,7 +438,7 @@
         {
           "kind": "paragraph",
           "role": "children-header",
-          "hangingIndent": 18,
+          "indent": 18,
           "content": [
             { "kind": "text", "value": "•\t" },
             {
@@ -426,8 +462,8 @@
               "kind": "paragraph",
               "role": "child",
               "anchor": "person.anchor",
+              "indent": 54,
               "hangingIndent": 18,
-              "indent": 18,
               "content": [
                 {
                   "kind": "field",

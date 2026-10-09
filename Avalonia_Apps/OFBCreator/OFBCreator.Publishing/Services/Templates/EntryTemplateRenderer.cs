@@ -130,6 +130,10 @@ public sealed class EntryTemplateRenderer
                     {
                         paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, hangingIndent));
                     }
+                    if (block.SpaceBefore is int spaceBefore)
+                    {
+                        paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.SpacingBeforePt, spaceBefore));
+                    }
                     if (block.Anchor is not null)
                     {
                         var anchor = GetString(Resolve(block.Anchor, variables));
@@ -407,6 +411,7 @@ public sealed class EntryTemplateRenderer
                 (PersonEntryTemplateModel person, "nameGc") => person.NameGc,
                 (PersonEntryTemplateModel person, "nameAk") => person.NameAk,
                 (PersonEntryTemplateModel person, "akaNames") => person.AkaNames,
+                (PersonEntryTemplateModel person, "religion") => person.Religion,
                 (PersonEntryTemplateModel person, "anchor") => person.Anchor,
                 (PersonEntryTemplateModel person, "reference") => person.Reference,
                 (PersonEntryTemplateModel person, "referenceNumber") => person.ReferenceNumber,
@@ -458,6 +463,8 @@ public sealed class EntryTemplateRenderer
                 (PersonEventEntryTemplateModel personEvent, "relatedPersonAnchor") => personEvent.RelatedPersonAnchor,
                 (PersonEventEntryTemplateModel personEvent, "relatedFamilyNumber") => personEvent.RelatedFamilyNumber,
                 (PersonEventEntryTemplateModel personEvent, "relatedFamilyAnchor") => personEvent.RelatedFamilyAnchor,
+                (PersonEventEntryTemplateModel personEvent, "occupationIndexAnchor") => personEvent.OccupationIndexAnchor,
+                (PersonEventEntryTemplateModel personEvent, "isOccupation") => personEvent.IsOccupation,
                 _ => throw new InvalidDataException($"Template value '{path}' is not available in this rendering context.")
             };
         }

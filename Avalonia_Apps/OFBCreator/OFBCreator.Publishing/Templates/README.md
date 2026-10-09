@@ -27,7 +27,7 @@ Blocks are rendered in array order. A block may only use the properties listed f
 
 | Kind | Properties | Behavior |
 | --- | --- | --- |
-| `paragraph` | `role`, `anchor`, `indent`, `hangingIndent`, `content` | Creates a paragraph, optionally with a style role, bookmark, indentation, and inline content. |
+| `paragraph` | `role`, `anchor`, `indent`, `hangingIndent`, `spaceBefore`, `content` | Creates a paragraph, optionally with a style role, bookmark, indentation, spacing before, and inline content. |
 | `text` | `value`, `bold`, `italic`, `underline` | Adds literal text. |
 | `field` | `path`, `formatter`, `bold`, `italic`, `underline` | Adds a typed value from the current rendering context. |
 | `link` | `target`, `content`, `bold`, `italic`, `underline` | Renders inline content as an internal document link when its target is available. |
@@ -42,7 +42,9 @@ Inline `text`, `field`, `link`, `if`, `forEach`, and `include` blocks can be pla
 
 - `indent` sets the paragraph's left indentation in points. Use it to move child entries farther right, for example `"indent": 36`.
 - `hangingIndent` sets the hanging-indent configuration in points. It is not a substitute for increasing the whole paragraph's left indentation. It is useful for wrapped lines in a bullet/list paragraph.
+- `spaceBefore` adds paragraph spacing before the paragraph in points, without inserting an empty paragraph. For example, `6` creates a compact half-line gap for standard body text.
 - Both indentation values must be between `0` and `1440`.
+- `spaceBefore` must be between `0` and `1440`.
 - `role` selects a logical document style. Supported roles are `section-heading`, `family-header`, `family-data`, `adult`, `children-header`, `child`, and `note`. The document provider determines the concrete formatting for each role.
 - `anchor` is a typed path to a bookmark field, such as `person.anchor` or `family.anchor`.
 

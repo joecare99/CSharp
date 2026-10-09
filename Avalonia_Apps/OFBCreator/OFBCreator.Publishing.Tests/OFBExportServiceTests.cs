@@ -100,8 +100,8 @@ public sealed class OFBExportServiceTests
             "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n2 FORM LINEAGE-LINKED\r\n1 CHAR UTF-8\r\n"
             + "0 @I1@ INDI\r\n1 NAME Anna /NN/\r\n1 FAMS @F1@\r\n"
             + "0 @I2@ INDI\r\n1 NAME Bernd /Miller/\r\n1 FAMS @F2@\r\n"
-            + "0 @F1@ FAM\r\n1 HUSB @I1@\r\n"
-            + "0 @F2@ FAM\r\n1 HUSB @I2@\r\n"
+            + "0 @F1@ FAM\r\n1 HUSB @I1@\r\n1 MARR\r\n"
+            + "0 @F2@ FAM\r\n1 HUSB @I2@\r\n1 MARR\r\n"
             + "0 TRLR\r\n";
         var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-no-name-order-{Guid.NewGuid():N}");
         Directory.CreateDirectory(testDirectory);
@@ -383,7 +383,7 @@ public sealed class OFBExportServiceTests
             "0 @I5@ INDI\r\n1 NAME Unverlinktes Kind /Muster/\r\n1 FAMC @F1@\r\n" +
             "1 CENS\r\n2 DATE 1955\r\n1 BIRT\r\n2 DATE 1950\r\n" +
             "0 @F1@ FAM\r\n1 HUSB @I1@\r\n1 WIFE @I2@\r\n1 CHIL @I3@\r\n1 CHIL @I5@\r\n" +
-            "0 @F2@ FAM\r\n1 HUSB @I3@\r\n1 WIFE @I4@\r\n0 TRLR\r\n";
+            "0 @F2@ FAM\r\n1 HUSB @I3@\r\n1 WIFE @I4@\r\n1 MARR\r\n0 TRLR\r\n";
         var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-gc-preferred-events-{Guid.NewGuid():N}");
         Directory.CreateDirectory(testDirectory);
         var inputPath = Path.Combine(testDirectory, "preferred-events.ged");
@@ -463,6 +463,96 @@ public sealed class OFBExportServiceTests
     }
 
     [TestMethod]
+    [DataRow("gc")]
+    [DataRow("ak")]
+    public async Task ExportAsync_RendersPersonTitleAndReligionInNameOrderAndListsOnlyDatedEvents(string templateName)
+    {
+        const string gedcom =
+            "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n2 FORM LINEAGE-LINKED\r\n1 CHAR UTF-8\r\n"
+            + "0 @I1@ INDI\r\n1 NAME Anna /Muster/\r\n1 SEX F\r\n2 DATE 1939\r\n1 TITL Gräfin\r\n1 RELI katholisch\r\n1 REFN PN-1\r\n1 FAMS @F1@\r\n"
+            + "1 BIRT\r\n2 DATE 1900\r\n1 CENS\r\n2 DATE 1940\r\n1 CENS\r\n"
+            + "1 INFO Private Information\r\n2 DATE 1942\r\n1 EVEN Geheime Beschreibung\r\n2 DATE 1943\r\n"
+            + "0 @I2@ INDI\r\n1 NAME Kind /Muster/\r\n1 FAMC @F1@\r\n1 CENS\r\n2 DATE 1960\r\n"
+            + "0 @F1@ FAM\r\n1 WIFE @I1@\r\n1 CHIL @I2@\r\n0 TRLR\r\n";
+        var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-person-fact-layout-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(testDirectory);
+        var inputPath = Path.Combine(testDirectory, "people.ged");
+        var outputPath = Path.Combine(testDirectory, "people.docx");
+        await File.WriteAllTextAsync(inputPath, gedcom, Encoding.UTF8);
+
+        try
+        {
+            UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
+            var documentFactory = Substitute.For<IUserDocumentFactory>();
+            documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
+            await new OFBExportService(
+                new CanonicalGedcomFamilyDataSource(new GedcomInputDriver(), new CanonicalGenealogyAdapter()),
+                documentFactory).ExportAsync(new OFBGenerateOptions
+            {
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                Title = "Personenfakten",
+                Template = templateName,
+                UseDocxFormat = true
+            });
+
+            using var archive = ZipFile.OpenRead(outputPath);
+            using var documentStream = archive.GetEntry("word/document.xml")!.Open();
+            var documentXml = XDocument.Load(documentStream);
+            XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            var paragraphs = documentXml.Descendants(word + "p").ToArray();
+            var paragraphTexts = paragraphs
+                .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
+                .ToArray();
+            var parentIndex = Array.FindIndex(paragraphTexts, text => text.Contains("Gräfin", StringComparison.Ordinal));
+            Assert.IsTrue(parentIndex >= 0, string.Join(" | ", paragraphTexts));
+            var parentText = paragraphTexts[parentIndex];
+            var expectedNameAndTitle = templateName == "gc"
+                ? "Muster, Anna, Gräfin"
+                : "Anna Muster, Gräfin";
+            Assert.IsTrue(parentText.Contains(expectedNameAndTitle, StringComparison.Ordinal), parentText);
+            var titleIndex = parentText.IndexOf("Gräfin", StringComparison.Ordinal);
+            var referenceIndex = parentText.IndexOf("PN-1", StringComparison.Ordinal);
+            var religionIndex = parentText.IndexOf("katholisch", StringComparison.Ordinal);
+            var birthIndex = parentText.IndexOf("* 1900", StringComparison.Ordinal);
+            Assert.IsTrue(titleIndex >= 0 && referenceIndex > titleIndex, parentText);
+            Assert.IsTrue(religionIndex > referenceIndex && birthIndex > religionIndex, parentText);
+
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1940: Zähl.", StringComparison.Ordinal)));
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1960: Zähl.", StringComparison.Ordinal)));
+            Assert.IsFalse(paragraphTexts.Any(text => text.Contains("Private Information", StringComparison.Ordinal)));
+            Assert.IsFalse(paragraphTexts.Any(text => text.Contains("Geheime Beschreibung", StringComparison.Ordinal)));
+            Assert.IsFalse(paragraphTexts.Any(text => text.Contains("1942", StringComparison.Ordinal)));
+            Assert.IsFalse(paragraphTexts.Any(text => text.Contains("1943", StringComparison.Ordinal)));
+            Assert.IsFalse(paragraphTexts.Any(text => text.Contains("1939", StringComparison.Ordinal)));
+            Assert.AreEqual(2, paragraphTexts.Count(text =>
+                text.StartsWith("1940: Zähl.", StringComparison.Ordinal)
+                || text.StartsWith("1960: Zähl.", StringComparison.Ordinal)));
+
+            var childIndex = Array.FindIndex(paragraphTexts, text =>
+                text.StartsWith("1. Kind", StringComparison.Ordinal)
+                || text.StartsWith("- Kind", StringComparison.Ordinal));
+            var childEventIndex = Array.FindIndex(paragraphTexts, text => text.Contains("1960: Zähl.", StringComparison.Ordinal));
+            Assert.IsTrue(childIndex >= 0 && childEventIndex > childIndex,
+                string.Join(" | ", paragraphTexts));
+            AssertParagraphIndent(paragraphs[childIndex], left: "1080", hanging: "360");
+            AssertParagraphIndent(paragraphs[childEventIndex], left: "720", hanging: null);
+        }
+        finally
+        {
+            Directory.Delete(testDirectory, recursive: true);
+        }
+    }
+
+    private static void AssertParagraphIndent(XElement paragraph, string left, string? hanging)
+    {
+        XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        var indentation = paragraph.Element(word + "pPr")?.Element(word + "ind");
+        Assert.AreEqual(left, (string?)indentation?.Attribute(word + "left"), paragraph.ToString(SaveOptions.DisableFormatting));
+        Assert.AreEqual(hanging, (string?)indentation?.Attribute(word + "hanging"), paragraph.ToString(SaveOptions.DisableFormatting));
+    }
+
+    [TestMethod]
     public async Task ExportAsync_GroupsFamiliesTogetherNumbersThemSequentiallyAndAddsSubtitleOnlyForMultipleSurnames()
     {
         const string gedcom = "0 HEAD\r\n1 CHAR UTF-8\r\n"
@@ -470,10 +560,10 @@ public sealed class OFBExportServiceTests
             + "0 @I2@ INDI\r\n1 NAME Bernd /Müller/\r\n1 FAMS @F2@\r\n"
             + "0 @I3@ INDI\r\n1 NAME Carla /Meier/\r\n1 FAMS @F3@\r\n"
             + "0 @I4@ INDI\r\n1 NAME Dora /Zeller/\r\n1 FAMS @F4@\r\n"
-            + "0 @F1@ FAM\r\n1 HUSB @I1@\r\n"
-            + "0 @F2@ FAM\r\n1 HUSB @I2@\r\n"
-            + "0 @F3@ FAM\r\n1 HUSB @I3@\r\n"
-            + "0 @F4@ FAM\r\n1 HUSB @I4@\r\n"
+            + "0 @F1@ FAM\r\n1 HUSB @I1@\r\n1 MARR\r\n"
+            + "0 @F2@ FAM\r\n1 HUSB @I2@\r\n1 MARR\r\n"
+            + "0 @F3@ FAM\r\n1 HUSB @I3@\r\n1 MARR\r\n"
+            + "0 @F4@ FAM\r\n1 HUSB @I4@\r\n1 MARR\r\n"
             + "0 TRLR\r\n";
         var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-group-export-{Guid.NewGuid():N}");
         Directory.CreateDirectory(testDirectory);
@@ -698,14 +788,23 @@ public sealed class OFBExportServiceTests
     }
 
     [TestMethod]
-    public async Task ExportAsync_RendersEveryDatedAndUndatedOccupationWithIndexLinks()
+    [DataRow("gc")]
+    [DataRow("ak")]
+    public async Task ExportAsync_RendersPreferredInlineAndDatedOccupationEventsWithIndexLinks(string templateName)
     {
         const string gedcom =
             "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n2 FORM LINEAGE-LINKED\r\n1 CHAR UTF-8\r\n" +
             "0 @I1@ INDI\r\n1 NAME Ada /Beispiel/\r\n2 GIVN Ada\r\n2 SURN Beispiel\r\n1 SEX F\r\n" +
-            "1 OCCU Schneiderin\r\n2 DATE BET 1920 AND 1930\r\n1 OCCU Hebamme\r\n" +
+            "1 OCCU Hebamme\r\n1 OCCU Schneiderin\r\n2 DATE BET 1920 AND 1930\r\n1 OCCU Lehrerin\r\n2 DATE 1 JAN 1940\r\n" +
             "0 @I2@ INDI\r\n1 NAME Emil /Muster/\r\n1 SEX M\r\n1 OCCU Bauer\r\n" +
-            "0 @F1@ FAM\r\n1 HUSB @I2@\r\n1 WIFE @I1@\r\n1 MARR\r\n2 DATE 1 JAN 1940\r\n0 TRLR\r\n";
+            "0 @I3@ INDI\r\n1 NAME Carla /Beispiel/\r\n1 FAMS @F2@\r\n1 OCCU Schreiner\r\n2 DATE 1 JAN 1900\r\n1 OCCU Lehrerin\r\n2 DATE 1 JAN 1910\r\n" +
+            "0 @I4@ INDI\r\n1 NAME Emil /Beispiel/\r\n1 FAMC @F2@\r\n" +
+            "0 @I5@ INDI\r\n1 NAME Entfernt /Leereintrag/\r\n1 FAMS @F3@\r\n" +
+            "0 @I6@ INDI\r\n1 NAME Ehe /OhneDatum/\r\n1 FAMS @F4@\r\n" +
+            "0 @F1@ FAM\r\n1 HUSB @I2@\r\n1 WIFE @I1@\r\n1 MARR\r\n2 DATE 1 JAN 1940\r\n" +
+            "0 @F2@ FAM\r\n1 WIFE @I3@\r\n1 CHIL @I4@\r\n" +
+            "0 @F3@ FAM\r\n1 HUSB @I5@\r\n" +
+            "0 @F4@ FAM\r\n1 WIFE @I6@\r\n1 MARR\r\n0 TRLR\r\n";
         var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-occupations-{Guid.NewGuid():N}");
         Directory.CreateDirectory(testDirectory);
         var inputPath = Path.Combine(testDirectory, "occupations.ged");
@@ -727,6 +826,7 @@ public sealed class OFBExportServiceTests
                 InputPath = inputPath,
                 OutputPath = outputPath,
                 Title = "Berufe Testbuch",
+                Template = templateName,
                 UseDocxFormat = true
             });
 
@@ -737,25 +837,36 @@ public sealed class OFBExportServiceTests
             var paragraphTexts = documentXml.Descendants(word + "p")
                 .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
                 .ToArray();
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("BET 1920 AND 1930: Schneiderin", StringComparison.Ordinal)),
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("BET 1920 AND 1930: Ber., Schneiderin", StringComparison.Ordinal)),
                 string.Join(" | ", paragraphTexts.Where(text => text.Contains("Schneiderin", StringComparison.Ordinal)
                     || text.Contains("1920", StringComparison.Ordinal))));
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1940: Ber., Lehrerin", StringComparison.Ordinal)),
+                string.Join(" | ", paragraphTexts.Where(text => text.Contains("Lehrerin", StringComparison.Ordinal)
+                    || text.Contains("1940", StringComparison.Ordinal))));
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1910: Ber., Lehrerin", StringComparison.Ordinal)));
+            Assert.AreEqual(2, paragraphTexts.Count(text => text.Contains("1910", StringComparison.Ordinal)
+                && text.Contains("Lehrerin", StringComparison.Ordinal)),
+                "When all occupations have dates, the last one must appear both inline and in the dated event list.");
             Assert.IsTrue(paragraphTexts.Any(text => text.Contains("Hebamme", StringComparison.Ordinal)));
             Assert.IsTrue(paragraphTexts.Any(text => text.Contains("Bauer", StringComparison.Ordinal)),
                 string.Join(" | ", paragraphTexts.Where(text => text.Contains("Bauer", StringComparison.OrdinalIgnoreCase))));
+            Assert.IsTrue(paragraphTexts.Any(text => text.StartsWith("1. Emil", StringComparison.Ordinal)
+                || text.StartsWith("- Emil", StringComparison.Ordinal)));
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("Ehe", StringComparison.Ordinal)));
             Assert.IsTrue(paragraphTexts.Contains("Berufsindex"));
+            Assert.IsFalse(paragraphTexts.Any(text => text.Contains("Entfernt", StringComparison.Ordinal)));
 
             var bookmarks = documentXml.Descendants(word + "bookmarkStart")
                 .Select(element => (string?)element.Attribute(word + "name"))
                 .Where(name => name is not null)
                 .ToHashSet(StringComparer.Ordinal);
+            Assert.AreEqual(3, bookmarks.Count(name => name!.StartsWith("family-", StringComparison.Ordinal)));
             var occupationTargets = documentXml.Descendants(word + "hyperlink")
                 .Select(element => (string?)element.Attribute(word + "anchor"))
                 .Where(target => target is not null && target.StartsWith("index-occupation-", StringComparison.Ordinal))
                 .ToArray();
-            Assert.IsTrue(bookmarks.Contains("index-occupation-1"));
-            Assert.IsTrue(bookmarks.Contains("index-occupation-2"));
-            Assert.AreEqual(3, occupationTargets.Length);
+            Assert.AreEqual(5, bookmarks.Count(name => name!.StartsWith("index-occupation-", StringComparison.Ordinal)));
+            Assert.AreEqual(7, occupationTargets.Length);
             Assert.IsTrue(occupationTargets.All(target => bookmarks.Contains(target!)));
         }
         finally

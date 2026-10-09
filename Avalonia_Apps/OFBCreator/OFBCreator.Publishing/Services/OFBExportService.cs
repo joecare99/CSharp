@@ -271,6 +271,11 @@ public sealed class OFBExportService(
         }
 
         var families = overlay.Genealogy.Entitys.OfType<IGenFamily>().ToList();
+        families.RemoveAll(family =>
+            family.Marriage is null
+            && family.MarriageDate is null
+            && family.MarriagePlace is null
+            && family.Children.Count == 0);
         if (families.Count == 0)
             throw new InvalidOperationException($"No families found in '{options.InputPath}' after applying project rules.");
 
@@ -657,24 +662,34 @@ public sealed class OFBExportService(
     {
         var givenName = person.GivenName?.Trim();
         var surname = person.Surname?.Trim();
+        var title = person.Title;
+        if (string.IsNullOrWhiteSpace(title))
+            title = person.Facts.FirstOrDefault(fact => fact?.eFactType == EFactType.Title)?.Data;
+        title = title?.Trim();
+        string formattedName;
         if (!string.IsNullOrWhiteSpace(givenName) && !string.IsNullOrWhiteSpace(surname))
         {
-            if (gcFormat && !string.IsNullOrWhiteSpace(familySurnameToAbbreviate)
-                && string.Equals(surname, familySurnameToAbbreviate.Trim(), StringComparison.OrdinalIgnoreCase))
-                return givenName;
-
-            return gcFormat
-                ? $"{surname}, {givenName}"
-                : $"{givenName} {surname}";
+            formattedName = gcFormat && !string.IsNullOrWhiteSpace(familySurnameToAbbreviate)
+                && string.Equals(surname, familySurnameToAbbreviate.Trim(), StringComparison.OrdinalIgnoreCase)
+                    ? givenName
+                    : gcFormat
+                        ? $"{surname}, {givenName}"
+                        : $"{givenName} {surname}";
         }
-        if (!string.IsNullOrWhiteSpace(givenName))
-            return givenName;
-        if (!string.IsNullOrWhiteSpace(surname))
-            return surname;
+        else if (!string.IsNullOrWhiteSpace(givenName))
+            formattedName = givenName;
+        else if (!string.IsNullOrWhiteSpace(surname))
+            formattedName = surname;
+        else
+        {
+            var name = person.Name?.Trim() ?? string.Empty;
+            var normalized = name.Replace("/", " ", StringComparison.Ordinal);
+            formattedName = string.Join(' ', normalized.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        }
 
-        var name = person.Name?.Trim() ?? string.Empty;
-        var normalized = name.Replace("/", " ", StringComparison.Ordinal);
-        return string.Join(' ', normalized.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        return !string.IsNullOrWhiteSpace(title)
+            ? $"{formattedName}, {title}"
+            : formattedName;
     }
 
     private static string GetFamilyAnchor(string familyNumber) => $"family-{familyNumber}";
@@ -839,6 +854,8 @@ public sealed class OFBExportService(
         var vitalEventsGc = string.Join(", ", vitalEvents);
 
         var vitalEventsAk = string.Join(", ", vitalEvents);
+        var occupations = GetOccupations(person).ToArray();
+        var preferredOccupation = GetPreferredOccupation(occupations);
         var events = person.Facts
             .Where(fact => fact is not null
                 && (!IsVitalEvent(fact.eFactType) || fact.Date is not null)
@@ -888,6 +905,7 @@ public sealed class OFBExportService(
             NameGc = FormatPersonName(person, gcFormat: true, familySurnameToAbbreviate),
             NameAk = FormatPersonName(person, gcFormat: false),
             AkaNames = FormatAlternativeNames(person),
+            Religion = GetPersonReligion(person),
             Anchor = GetPersonAnchor(reference),
             Reference = reference,
             ReferenceNumber = GetReferenceNumber(person),
@@ -908,18 +926,21 @@ public sealed class OFBExportService(
             ShowNonVitalEvents = ordinal is null
                 ? ShouldShowParentNonVitalEvents(person, currentFamilyNumber, allFamilies)
                 : parentFamilies.Length == 0,
-            Occupations = GetOccupations(person)
-                .Select(occupation => new OccupationEntryTemplateModel
+            Occupations = preferredOccupation is null
+                ? Array.Empty<OccupationEntryTemplateModel>()
+                : new[]
                 {
-                    Name = occupation.Name,
-                    Date = occupation.Date?.ToString(),
-                    Place = occupation.Place?.Name,
-                    PlaceAnchor = GetPlaceIndexAnchor(occupation.Place?.Name),
-                    IndexAnchor = _occupationIndexAnchorByName.TryGetValue(occupation.Name, out var anchor)
-                        ? anchor
-                        : string.Empty
-                })
-                .ToArray(),
+                    new OccupationEntryTemplateModel
+                    {
+                        Name = preferredOccupation.Value.Name,
+                        Date = preferredOccupation.Value.Date?.ToString(),
+                        Place = preferredOccupation.Value.Place?.Name,
+                        PlaceAnchor = GetPlaceIndexAnchor(preferredOccupation.Value.Place?.Name),
+                        IndexAnchor = _occupationIndexAnchorByName.TryGetValue(preferredOccupation.Value.Name, out var anchor)
+                            ? anchor
+                            : string.Empty
+                    }
+                },
             Properties = CreatePropertyTemplateModels(person.Facts)
         };
     }
@@ -964,6 +985,18 @@ public sealed class OFBExportService(
 
         if (!hasOccupationFacts && !string.IsNullOrWhiteSpace(person.Occupation))
             yield return (person.Occupation.Trim(), null, person.OccuPlace);
+    }
+
+    private static (string Name, IGenDate? Date, IGenPlace? Place)? GetPreferredOccupation(
+        IReadOnlyList<(string Name, IGenDate? Date, IGenPlace? Place)> occupations)
+    {
+        foreach (var occupation in occupations)
+        {
+            if (occupation.Date is null)
+                return occupation;
+        }
+
+        return occupations.Count == 0 ? null : occupations[^1];
     }
 
     private IReadOnlyList<PropertyEntryTemplateModel> CreatePropertyTemplateModels(IEnumerable<IGenFact?> facts) => facts
@@ -1020,8 +1053,13 @@ public sealed class OFBExportService(
                 : GetPersonAnchor(relatedPerson.IndRefID ?? relatedPerson.Name),
             RelatedFamilyNumber = relatedFamily?.GlobalNumber,
             RelatedFamilyAnchor = relatedFamily is null ? string.Empty : GetFamilyAnchor(relatedFamily.GlobalNumber),
+            OccupationIndexAnchor = eventType == EFactType.Occupation
+                && _occupationIndexAnchorByName.TryGetValue(additional, out var occupationAnchor)
+                    ? occupationAnchor
+                    : string.Empty,
             IsVital = IsVitalEvent(eventType),
-            IsListableNonVital = IsListableNonVitalEvent(eventType)
+            IsListableNonVital = IsListableNonVitalEvent(eventType, date),
+            IsOccupation = eventType == EFactType.Occupation
         };
     }
 
@@ -1034,13 +1072,16 @@ public sealed class OFBExportService(
             EventName = GetLegendEntry(eventType)?.Meaning ?? GetEventFallbackName(eventType),
             PlacePreposition = GetLegendPlacePreposition(eventType),
             IsVital = IsVitalEvent(eventType),
-            IsListableNonVital = IsListableNonVitalEvent(eventType)
+            IsListableNonVital = IsListableNonVitalEvent(eventType, date)
         };
 
-    private static bool IsListableNonVitalEvent(EFactType eventType) =>
-        !IsVitalEvent(eventType)
+    private static bool IsListableNonVitalEvent(EFactType eventType, string? date) =>
+        !string.IsNullOrWhiteSpace(date)
+        && !IsVitalEvent(eventType)
         && eventType is not (EFactType.Mariage or EFactType.Reference
-            or EFactType.Occupation or EFactType.Property or EFactType.Residence);
+            or EFactType.Property or EFactType.Residence
+            or EFactType.Title or EFactType.Religion or EFactType.Sex
+            or EFactType.Info or EFactType.Description);
 
     private bool ShouldShowParentNonVitalEvents(
         IGenPerson person,
@@ -1091,6 +1132,14 @@ public sealed class OFBExportService(
 
     private static bool IsVitalEvent(EFactType eventType) =>
         eventType is EFactType.Birth or EFactType.Baptism or EFactType.Death or EFactType.Burial;
+
+    private static string GetPersonReligion(IGenPerson person)
+    {
+        var religion = person.Religion;
+        if (string.IsNullOrWhiteSpace(religion))
+            religion = person.Facts.FirstOrDefault(fact => fact?.eFactType == EFactType.Religion)?.Data;
+        return religion?.Trim() ?? string.Empty;
+    }
 
     private static DateTime GetEventSortDate(IGenDate? date)
     {

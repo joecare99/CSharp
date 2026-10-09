@@ -75,6 +75,8 @@ public sealed class EntryTemplateBlock
 
     public int? HangingIndent { get; set; }
 
+    public int? SpaceBefore { get; set; }
+
     public bool Bold { get; set; }
 
     public bool Italic { get; set; }
