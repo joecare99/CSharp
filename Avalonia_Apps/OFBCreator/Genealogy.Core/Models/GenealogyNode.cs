@@ -20,4 +20,6 @@ public class GenealogyNode
     public IList<GenealogyNode> Children { get; } = new List<GenealogyNode>();
 
     public IList<GenealogyIdentifier> References { get; } = new List<GenealogyIdentifier>();
+
+    public IList<GenealogyAssociation> Associations { get; } = new List<GenealogyAssociation>();
 }
