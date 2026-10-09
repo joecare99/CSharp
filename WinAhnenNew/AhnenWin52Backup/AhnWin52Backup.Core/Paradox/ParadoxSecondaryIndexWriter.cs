@@ -21,10 +21,10 @@ internal sealed class ParadoxSecondaryIndexWriter
     private const byte BcdType = 0x17;
     private const byte SecondaryDataFileType = 8;
     private const byte SecondaryIndexFileType = 7;
-    // Trial21's native namgeb files use about 65% XG and two-thirds YG node occupancy.
+    // Trial21's native namgeb YG2 has 26 leaves for 294 XG blocks (about 64% of node capacity).
     private const int SecondaryDataBlockFillPercent = 65;
-    private const int SecondaryIndexNodeFillNumerator = 2;
-    private const int SecondaryIndexNodeFillDenominator = 3;
+    private const int SecondaryIndexLeafFillNumerator = 16;
+    private const int SecondaryIndexLeafFillDenominator = 25;
 
     private readonly IParadoxTableReader _tableReader;
 
@@ -219,14 +219,22 @@ internal sealed class ParadoxSecondaryIndexWriter
             recordsPerSecondaryBlock);
         int physicalIndexNodeCapacity =
             (secondaryIndexHeader.BlockSize - DataBlockHeaderSize) / secondaryIndexHeader.RecordSize;
-        int maximumIndexNodeEntries = Math.Max(
-            1,
-            physicalIndexNodeCapacity * SecondaryIndexNodeFillNumerator / SecondaryIndexNodeFillDenominator);
+        if (physicalIndexNodeCapacity <= 0)
+        {
+            throw new InvalidDataException($"A YG block cannot contain an index entry: {secondaryIndexPath}");
+        }
+
+        int targetLeafNodeCount = indexEntries.Length <= physicalIndexNodeCapacity
+            ? 1
+            : checked((int)(
+                ((long)indexEntries.Length * SecondaryIndexLeafFillDenominator +
+                 (long)physicalIndexNodeCapacity * SecondaryIndexLeafFillNumerator - 1) /
+                ((long)physicalIndexNodeCapacity * SecondaryIndexLeafFillNumerator)));
         secondaryIndexFile = ParadoxIndexFileBuilder.Build(
             secondaryIndexFile,
             SecondaryIndexFileType,
             indexEntries,
-            maximumIndexNodeEntries);
+            targetLeafNodeCount: targetLeafNodeCount);
         File.WriteAllBytes(secondaryIndexPath, secondaryIndexFile);
     }
 

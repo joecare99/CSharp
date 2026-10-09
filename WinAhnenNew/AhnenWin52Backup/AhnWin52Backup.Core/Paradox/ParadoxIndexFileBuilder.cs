@@ -15,7 +15,8 @@ internal static class ParadoxIndexFileBuilder
         byte[] templateFile,
         byte expectedFileType,
         IReadOnlyList<IndexEntry> entries,
-        int? maximumEntriesPerBlock = null)
+        int? maximumLeafEntriesPerBlock = null,
+        int? targetLeafNodeCount = null)
     {
         ArgumentNullException.ThrowIfNull(templateFile);
         ArgumentNullException.ThrowIfNull(entries);
@@ -33,13 +34,20 @@ internal static class ParadoxIndexFileBuilder
 
         int keyLength = header.RecordSize - DataBlockHeaderSize;
         int physicalCapacity = (header.BlockSize - DataBlockHeaderSize) / header.RecordSize;
-        int recordsPerBlock = maximumEntriesPerBlock ?? physicalCapacity;
-        if (physicalCapacity <= 0 || recordsPerBlock <= 0 || recordsPerBlock > physicalCapacity)
+        int recordsPerLeaf = maximumLeafEntriesPerBlock ?? physicalCapacity;
+        if (physicalCapacity <= 0 || recordsPerLeaf <= 0 || recordsPerLeaf > physicalCapacity)
         {
             throw new InvalidDataException("The index data block has an invalid entry capacity.");
         }
 
-        if (entries.Count > recordsPerBlock && recordsPerBlock < 2)
+        int minimumLeafNodeCount = (entries.Count + recordsPerLeaf - 1) / recordsPerLeaf;
+        int leafNodeCount = targetLeafNodeCount ?? minimumLeafNodeCount;
+        if (leafNodeCount < minimumLeafNodeCount || leafNodeCount > entries.Count)
+        {
+            throw new InvalidDataException("The requested index leaf-node count is invalid.");
+        }
+
+        if (entries.Count > 1 && physicalCapacity < 2)
         {
             throw new NotSupportedException(
                 "The Paradox index block cannot reduce the number of nodes at each tree level.");
@@ -49,7 +57,7 @@ internal static class ParadoxIndexFileBuilder
         List<IndexNode> currentLevel = new();
         int nextBlockNumber = 1;
         int indexRecordCount = 0;
-        foreach (IndexEntry[] group in entries.Chunk(recordsPerBlock))
+        foreach (IndexEntry[] group in Partition(entries, leafNodeCount))
         {
             byte[][] recordsForNode = group
                 .Select(entry => EncodeIndexRecord(entry.Key, entry.BlockNumber, entry.RecordCount))
@@ -66,7 +74,7 @@ internal static class ParadoxIndexFileBuilder
         while (currentLevel.Count > 1)
         {
             List<IndexNode> parentLevel = new();
-            foreach (IndexNode[] childGroup in currentLevel.Chunk(recordsPerBlock))
+            foreach (IndexNode[] childGroup in currentLevel.Chunk(physicalCapacity))
             {
                 byte[][] recordsForNode = childGroup
                     .Select(child => EncodeIndexRecord(
@@ -102,8 +110,7 @@ internal static class ParadoxIndexFileBuilder
                     templateFile,
                     header,
                     node.BlockNumber,
-                    index == 0 ? 0 : level[index - 1].BlockNumber,
-                    index == level.Count - 1 ? 0 : level[index + 1].BlockNumber,
+                    blockCount,
                     node.Records);
             }
         }
@@ -140,12 +147,29 @@ internal static class ParadoxIndexFileBuilder
         }
     }
 
+    private static IEnumerable<T[]> Partition<T>(IReadOnlyList<T> items, int groupCount)
+    {
+        int groupSize = items.Count / groupCount;
+        int largerGroupCount = items.Count % groupCount;
+        int offset = 0;
+        for (int groupIndex = 0; groupIndex < groupCount; groupIndex++)
+        {
+            int currentGroupSize = groupSize + (groupIndex < largerGroupCount ? 1 : 0);
+            T[] group = new T[currentGroupSize];
+            for (int itemIndex = 0; itemIndex < currentGroupSize; itemIndex++)
+            {
+                group[itemIndex] = items[offset++];
+            }
+
+            yield return group;
+        }
+    }
+
     private static byte[] CreateDataBlock(
         byte[] templateFile,
         ParadoxRecordWriter.TableHeader header,
         int blockNumber,
-        int previousBlock,
-        int nextBlock,
+        int blockCount,
         IEnumerable<byte[]> records)
     {
         byte[][] rows = records.ToArray();
@@ -155,8 +179,12 @@ internal static class ParadoxIndexFileBuilder
         }
 
         byte[] block = new byte[header.BlockSize];
-        BinaryPrimitives.WriteUInt16LittleEndian(block, checked((ushort)nextBlock));
-        BinaryPrimitives.WriteUInt16LittleEndian(block.AsSpan(2), checked((ushort)previousBlock));
+        BinaryPrimitives.WriteUInt16LittleEndian(
+            block,
+            blockNumber < blockCount ? checked((ushort)(blockNumber + 1)) : (ushort)0);
+        BinaryPrimitives.WriteUInt16LittleEndian(
+            block.AsSpan(2),
+            checked((ushort)(blockNumber - 1)));
         BinaryPrimitives.WriteInt16LittleEndian(
             block.AsSpan(4),
             checked((short)((rows.Length - 1) * header.RecordSize)));
