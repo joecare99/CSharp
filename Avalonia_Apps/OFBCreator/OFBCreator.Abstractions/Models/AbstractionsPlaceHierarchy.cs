@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Hierarchical place node for tree-structured place index.
@@ -28,6 +29,11 @@ public sealed class OFBPlaceHierarchyNode
     /// Populated when building the complete tree structure.
     /// </summary>
     public OFBPlaceHierarchyNode[] Children { get; set; } = [];
+
+    /// <summary>
+    /// Family numbers associated with this place node.
+    /// </summary>
+    public IReadOnlyList<string> FamilyReferences { get; set; } = Array.Empty<string>();
 
     public OFBPlaceHierarchyNode( string name, string placeId )
     {

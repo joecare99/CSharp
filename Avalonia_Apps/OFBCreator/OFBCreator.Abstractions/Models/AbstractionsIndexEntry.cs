@@ -26,6 +26,17 @@ public sealed class OFBIndexEntry
     public string Ref { get; init; } = default!;
 
     /// <summary>
+    /// Additional family numbers associated with this index entry.
+    /// </summary>
+    public IReadOnlyList<string> FamilyReferences { get; init; } = Array.Empty<string>();
+
+    /// <summary>Life span rendered beside a person name in the person index.</summary>
+    public string LifeSpan { get; init; } = string.Empty;
+
+    /// <summary>Date associated with a historical name entry, if known.</summary>
+    public string NameEventDate { get; init; } = string.Empty;
+
+    /// <summary>
     /// References to families where the indexed person appears as a child.
     /// </summary>
     public IReadOnlyList<string> ChildFamilyReferences { get; init; } = Array.Empty<string>();
