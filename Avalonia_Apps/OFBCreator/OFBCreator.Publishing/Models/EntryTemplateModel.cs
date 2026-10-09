@@ -42,6 +42,8 @@ public sealed class PersonEntryTemplateModel
 
     public string AkaNames { get; init; } = string.Empty;
 
+    public string Religion { get; init; } = string.Empty;
+
     public required string Anchor { get; init; }
 
     public required string Reference { get; init; }
@@ -114,9 +116,15 @@ public sealed class PersonEventEntryTemplateModel
 
     public string RelatedFamilyAnchor { get; init; } = string.Empty;
 
+    public string OccupationIndexAnchor { get; init; } = string.Empty;
+
+    public string OccupationEmployer { get; init; } = string.Empty;
+
     public bool IsVital { get; init; }
 
     public bool IsListableNonVital { get; init; }
+
+    public bool IsOccupation { get; init; }
 
     public bool HasRelatedPerson => !string.IsNullOrWhiteSpace(RelatedPersonName);
 
@@ -147,6 +155,8 @@ public sealed class OccupationEntryTemplateModel
     public string? Place { get; init; }
 
     public string PlaceAnchor { get; init; } = string.Empty;
+
+    public string Employer { get; init; } = string.Empty;
 }
 
 /// <summary>

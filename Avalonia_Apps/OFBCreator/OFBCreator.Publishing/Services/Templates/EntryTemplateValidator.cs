@@ -24,7 +24,7 @@ public static class EntryTemplateValidator
         {
             ["section"] = ["kind", "columns", "blocks"],
             // Keep "indent" explicitly whitelisted for paragraph blocks (no-op guard).
-            ["paragraph"] = ["kind", "role", "anchor", "content", "indent", "hangingIndent"],
+            ["paragraph"] = ["kind", "role", "anchor", "content", "indent", "hangingIndent", "spaceBefore"],
             // Allow inline line breaks so non-vital events can render line-by-line within one paragraph.
             ["text"] = ["kind", "value", "bold", "italic", "underline", "lineBreakBefore"],
             ["field"] = ["kind", "path", "formatter", "bold", "italic", "underline", "lineBreakBefore"],
@@ -257,6 +257,8 @@ public static class EntryTemplateValidator
                         throw new InvalidDataException("A paragraph hangingIndent value must be between 0 and 1440 points.");
                     if (block.Indent is < 0 or > 1440)
                         throw new InvalidDataException("A paragraph indent value must be between 0 and 1440 points.");
+                    if (block.SpaceBefore is < 0 or > 1440)
+                        throw new InvalidDataException("A paragraph spaceBefore value must be between 0 and 1440 points.");
                     ValidateBlocks(block.Content, definition, variables, inSection, topLevel: false);
                     break;
                 case "text":
@@ -339,19 +341,19 @@ public static class EntryTemplateValidator
         var isValid = type switch
         {
             "family" => property is "number" or "anchor" or "union" or "marriageMark" or "marriageDate" or "marriagePlace" or "marriagePlaceShort" or "marriagePlaceAnchor" or "properties" or "properties.any" or "properties.one" or "parents" or "parents.any" or "parents.one" or "children" or "children.any" or "children.one",
-            "person" => property is "nameGc" or "nameAk" or "akaNames" or "anchor" or "reference" or "referenceNumber" or "events" or "events.any" or "events.one" or "showNonVitalEvents" or "indexLabel" or "vitalEventsGc" or "vitalEventsAk" or "additionalLifeDataGc" or "birth" or "death" or "indexAnchor"
+            "person" => property is "nameGc" or "nameAk" or "akaNames" or "religion" or "anchor" or "reference" or "referenceNumber" or "events" or "events.any" or "events.one" or "showNonVitalEvents" or "indexLabel" or "vitalEventsGc" or "vitalEventsAk" or "additionalLifeDataGc" or "birth" or "death" or "indexAnchor"
                 or "occupations" or "occupations.any" or "occupations.one" or "properties" or "properties.any" or "properties.one" or "residence" or "residenceAnchor" or "ordinal" or "parentFamily" or "parentFamily.number" or "parentFamily.anchor" or "childFamilies" or "childFamilies.any" or "childFamilies.one" or "parentFamilies" or "parentFamilies.any" or "parentFamilies.one" or "childFamilyTokens" or "parentFamilyTokens" or "childFamilyTokens.any" or "childFamilyTokens.one" or "parentFamilyTokens.any" or "parentFamilyTokens.one",
             "familyReference" => property is "number" or "anchor",
             "familyReferenceToken" => property is "text" or "anchor",
-            "personEvent" => property is "symbol" or "eventName" or "placePreposition" or "date" or "place" or "placeAnchor" or "additional" or "relatedPersonName" or "relatedPersonAnchor" or "relatedFamilyNumber" or "relatedFamilyAnchor" or "relatedFamily" or "relatedPerson" or "isVital" or "isListableNonVital",
-            "occupation" => property is "name" or "date" or "indexAnchor" or "place" or "placeAnchor",
+            "personEvent" => property is "symbol" or "eventName" or "placePreposition" or "date" or "place" or "placeAnchor" or "additional" or "relatedPersonName" or "relatedPersonAnchor" or "relatedFamilyNumber" or "relatedFamilyAnchor" or "occupationIndexAnchor" or "occupationEmployer" or "isOccupation" or "relatedFamily" or "relatedPerson" or "isVital" or "isListableNonVital",
+            "occupation" => property is "name" or "date" or "indexAnchor" or "place" or "placeAnchor" or "employer",
             "property" => property is "name" or "date" or "place" or "indexAnchor" or "placeAnchor",
             _ => false
         };
         if (!isValid)
             throw new InvalidDataException($"Unknown typed template path '{path}'.");
 
-            if (requireAnchor && property is not ("anchor" or "indexAnchor" or "parentFamily.anchor" or "marriagePlaceAnchor" or "residenceAnchor" or "placeAnchor" or "relatedPersonAnchor" or "relatedFamilyAnchor"))
+            if (requireAnchor && property is not ("anchor" or "indexAnchor" or "parentFamily.anchor" or "marriagePlaceAnchor" or "residenceAnchor" or "placeAnchor" or "relatedPersonAnchor" or "relatedFamilyAnchor" or "occupationIndexAnchor"))
             throw new InvalidDataException($"Link target '{path}' is not an anchor field.");
     }
 
@@ -393,23 +395,24 @@ public static class EntryTemplateValidator
     {
         "family.number" or "family.anchor" or "family.union" or "family.marriageMark" or "family.marriageDate"
             or "family.marriagePlace" or "family.marriagePlaceShort" or "family.marriagePlaceAnchor" => true,
-            "person.nameGc" or "person.nameAk" or "person.akaNames" or "person.anchor" or "person.reference" or "person.referenceNumber" or "person.indexLabel"
+            "person.nameGc" or "person.nameAk" or "person.akaNames" or "person.anchor" or "person.reference" or "person.referenceNumber" or "person.religion" or "person.indexLabel"
             or "person.vitalEventsGc" or "person.vitalEventsAk" or "person.additionalLifeDataGc" or "person.birth" or "person.death"
             or "person.indexAnchor" or "person.ordinal" or "person.residence" or "person.residenceAnchor" or "person.parentFamily.number" or "person.parentFamily.anchor"
             or "person.parentFamily" => true,
-        "child.nameGc" or "child.nameAk" or "child.akaNames" or "child.anchor" or "child.reference" or "child.referenceNumber"
+        "child.nameGc" or "child.nameAk" or "child.akaNames" or "child.anchor" or "child.reference" or "child.referenceNumber" or "child.religion"
             or "child.vitalEventsGc" or "child.vitalEventsAk" or "child.additionalLifeDataGc" or "child.birth" or "child.death"
             or "child.indexAnchor" or "child.ordinal" or "child.residence" or "child.residenceAnchor"
             or "child.parentFamily.number" or "child.parentFamily.anchor" or "child.parentFamily" => true,
-        "individual.nameGc" or "individual.nameAk" or "individual.akaNames" or "individual.anchor" or "individual.reference" or "individual.referenceNumber"
+        "individual.nameGc" or "individual.nameAk" or "individual.akaNames" or "individual.anchor" or "individual.reference" or "individual.referenceNumber" or "individual.religion"
             or "individual.vitalEventsGc" or "individual.vitalEventsAk" or "individual.additionalLifeDataGc" or "individual.birth"
             or "individual.death" or "individual.indexAnchor" or "individual.ordinal" or "individual.residence" or "individual.residenceAnchor"
             or "individual.parentFamily.number" or "individual.parentFamily.anchor" or "individual.parentFamily" => true,
-        "occupation.name" or "occupation.date" or "occupation.indexAnchor" or "occupation.place" or "occupation.placeAnchor" => true,
+        "occupation.name" or "occupation.date" or "occupation.indexAnchor" or "occupation.place" or "occupation.placeAnchor" or "occupation.employer" => true,
         "property.name" or "property.date" or "property.place" or "property.indexAnchor" or "property.placeAnchor" => true,
         "personEvent.symbol" or "personEvent.eventName" or "personEvent.placePreposition" or "personEvent.isVital" or "personEvent.isListableNonVital" or "personEvent.relatedPerson" or "personEvent.relatedFamily"
             or "personEvent.date" or "personEvent.place" or "personEvent.additional"
             or "personEvent.relatedPersonName" or "personEvent.relatedPersonAnchor" or "personEvent.relatedFamilyNumber" or "personEvent.relatedFamilyAnchor"
+            or "personEvent.occupationIndexAnchor" or "personEvent.occupationEmployer" or "personEvent.isOccupation"
             or "personEvent.relatedFamily" or "personEvent.relatedPerson" or "personEvent.isVital" => true,
         "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
         "familyReference.number" or "familyReference.anchor" or "familyReferenceToken" or "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
@@ -427,10 +430,10 @@ public static class EntryTemplateValidator
 
         return (type, parts[1]) switch
         {
-            ("person" or "child" or "individual", "parentFamily" or "residence" or "akaNames" or "referenceNumber" or "vitalEventsGc" or "showNonVitalEvents") => true,
-            ("personEvent", "relatedPerson" or "relatedFamily" or "isVital" or "isListableNonVital" or "symbol" or "place" or "additional" or "date") => true,
+            ("person" or "child" or "individual", "parentFamily" or "residence" or "akaNames" or "referenceNumber" or "religion" or "vitalEventsGc" or "showNonVitalEvents") => true,
+            ("personEvent", "relatedPerson" or "relatedFamily" or "isVital" or "isListableNonVital" or "isOccupation" or "symbol" or "place" or "additional" or "date" or "occupationEmployer") => true,
             ("family", "marriagePlaceShort") => true,
-            ("occupation" or "property", "place") => true,
+            ("occupation" or "property", "place" or "employer") => true,
             _ => false
         };
     }

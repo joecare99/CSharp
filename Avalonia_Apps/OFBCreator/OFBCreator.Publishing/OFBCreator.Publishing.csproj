@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\*.json" />
+    <EmbeddedResource Include="Data\Places\*.json" />
     <EmbeddedResource Include="Templates\Vorwort.md" />
   </ItemGroup>
 </Project>

@@ -37,6 +37,7 @@
               {
                 "kind": "paragraph",
                 "role": "family-data",
+                "indent": 36,
                 "content": [
                   {
                     "kind": "if",
@@ -72,10 +73,36 @@
                   },
                   {
                     "kind": "if",
-                    "condition": "personEvent.additional",
+                    "condition": "personEvent.isOccupation",
                     "then": [
                       { "kind": "text", "value": ", " },
-                      { "kind": "field", "path": "personEvent.additional" }
+                      {
+                        "kind": "link",
+                        "target": "personEvent.occupationIndexAnchor",
+                        "content": [{ "kind": "field", "path": "personEvent.additional" }]
+                      },
+                      {
+                        "kind": "if",
+                        "condition": "personEvent.occupationEmployer",
+                        "then": [
+                          { "kind": "text", "value": " bei " },
+                          { "kind": "field", "path": "personEvent.occupationEmployer" }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "if",
+                    "condition": "!personEvent.isOccupation",
+                    "then": [
+                      {
+                        "kind": "if",
+                        "condition": "personEvent.additional",
+                        "then": [
+                          { "kind": "text", "value": ", " },
+                          { "kind": "field", "path": "personEvent.additional" }
+                        ]
+                      }
                     ]
                   },
                   {
@@ -118,12 +145,33 @@
           {
             "kind": "paragraph",
             "role": "family-data",
+            "indent": 36,
             "content": [
               { "kind": "field", "path": "occupation.date", "formatter": "gedcomDatePrefix" },
               {
                 "kind": "link",
                 "target": "occupation.indexAnchor",
                 "content": [{ "kind": "field", "path": "occupation.name" }]
+              },
+              {
+                "kind": "if",
+                "condition": "occupation.place",
+                "then": [
+                  { "kind": "text", "value": " in " },
+                  {
+                    "kind": "link",
+                    "target": "occupation.placeAnchor",
+                    "content": [{ "kind": "field", "path": "occupation.place" }]
+                  }
+                ]
+              },
+              {
+                "kind": "if",
+                "condition": "occupation.employer",
+                "then": [
+                  { "kind": "text", "value": " bei " },
+                  { "kind": "field", "path": "occupation.employer" }
+                ]
               }
             ]
           }
@@ -135,27 +183,13 @@
         "kind": "paragraph",
         "role": "adult",
         "anchor": "person.anchor",
+        "indent": 18,
         "content": [
           { "kind": "field", "path": "person.nameAk" },
           { "kind": "if", "condition": "person.akaNames", "then": [
             { "kind": "text", "value": " (" },
             { "kind": "field", "path": "person.akaNames" },
             { "kind": "text", "value": ")" }
-          ] },
-          { "kind": "forEach", "items": "person.events", "as": "personEvent", "template": [
-            { "kind": "if", "condition": "personEvent.isVital", "then": [
-              { "kind": "field", "path": "personEvent.symbol" },
-              { "kind": "text", "value": " " },
-              { "kind": "field", "path": "personEvent.date" },
-              { "kind": "if", "condition": "personEvent.place", "then": [
-                { "kind": "text", "value": " in " },
-                { "kind": "field", "path": "personEvent.place" }
-              ] },
-              { "kind": "if", "condition": "personEvent.additional", "then": [
-                { "kind": "text", "value": " " },
-                { "kind": "field", "path": "personEvent.additional" }
-              ] }
-            ] }
           ] },
           {
             "kind": "link",
@@ -166,7 +200,12 @@
             { "kind": "text", "value": " <PN=" },
             { "kind": "field", "path": "person.referenceNumber" },
             { "kind": "text", "value": ">" }
-          ] }
+          ] },
+          { "kind": "if", "condition": "person.religion", "then": [
+            { "kind": "text", "value": ", " },
+            { "kind": "field", "path": "person.religion" }
+          ] },
+          { "kind": "field", "path": "person.vitalEventsAk" }
         ]
       },
       {
@@ -182,6 +221,7 @@
       "kind": "paragraph",
       "role": "family-data",
       "anchor": "family.anchor",
+      "spaceBefore": 6,
       "content": [
         { "kind": "text", "value": "⚭" },
         { "kind": "field", "path": "family.union", "formatter": "dateSuffix" }
@@ -200,6 +240,7 @@
         {
           "kind": "paragraph",
           "role": "children-header",
+          "indent": 18,
           "content": [
             { "kind": "if", "condition": "family.children.one", "then": [{ "kind": "text", "value": "Kind:" }] },
             { "kind": "if", "condition": "!family.children.one", "then": [{ "kind": "text", "value": "Kinder:" }] }
@@ -214,6 +255,8 @@
               "kind": "paragraph",
               "role": "child",
               "anchor": "child.anchor",
+              "indent": 54,
+              "hangingIndent": 18,
               "content": [
                 { "kind": "text", "value": "- " },
                 { "kind": "field", "path": "child.nameAk" },
@@ -233,6 +276,7 @@
                 {
                   "kind": "paragraph",
                   "role": "family-data",
+                  "indent": 36,
                   "content": [
                     { "kind": "field", "path": "occupation.date", "formatter": "gedcomDatePrefix" },
                     {

@@ -301,9 +301,23 @@ public class GedComDataSource : IFamilyDataSource
                 family.Children.Add(child);
         }
 
+        var marriageRecord = record.Children.FirstOrDefault(child => child.Tag == "MARR");
         PopulateVitalEvent(record.Children, "MARR", places, genealogy, out var marriageDate, out var marriagePlace);
         family.MarriageDate = marriageDate;
         family.MarriagePlace = marriagePlace;
+        if (marriageRecord is not null)
+        {
+            var marriage = new GedcomFact
+            {
+                eFactType = EFactType.Mariage,
+                Data = marriageRecord.Value,
+                Date = marriageDate,
+                Place = marriagePlace
+            };
+            marriage.SetOwner(family);
+            family.Marriage = marriage;
+            family.Facts.Add(marriage);
+        }
     }
 
     private static void ConnectFamily(GedcomFamily family)

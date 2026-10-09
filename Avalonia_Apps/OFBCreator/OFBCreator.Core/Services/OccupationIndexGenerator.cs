@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using GenInterfaces.Interfaces.Genealogic;
 using OFBCreator.Abstractions.Interfaces;
 using OFBCreator.Abstractions.Models;
+using OFBCreator.Core.Services;
 
 /// <summary>
 /// Generates a normalized occupation index from selected OFB families.
@@ -56,17 +57,17 @@ public class OccupationIndexGenerator : IOccupationIndexGenerator
                 if (string.IsNullOrWhiteSpace(occupation))
                     continue;
 
-                // Normalize: lowercase for sort key, preserve original display
-                var normalized = occupation.ToLowerInvariant();
-
-                if (!occupationMap.TryGetValue(normalized, out var data))
+                foreach (var designation in OccupationDesignationParser.Parse(occupation))
                 {
-                    data = (DisplayName: occupation, new HashSet<string>(StringComparer.Ordinal));
-                    occupationMap[normalized] = data;
-                }
+                    var normalized = designation.Name.ToLowerInvariant();
+                    if (!occupationMap.TryGetValue(normalized, out var data))
+                    {
+                        data = (DisplayName: designation.Name, new HashSet<string>(StringComparer.Ordinal));
+                        occupationMap[normalized] = data;
+                    }
 
-                // Add family reference (deduplicated per occupation entry)
-                data.FamilyRefs.Add(family.GlobalNumber);
+                    data.FamilyRefs.Add(family.GlobalNumber);
+                }
             }
         }
 
