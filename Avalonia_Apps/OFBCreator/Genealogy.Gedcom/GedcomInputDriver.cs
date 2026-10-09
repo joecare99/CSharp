@@ -364,7 +364,10 @@ public sealed class GedcomInputDriver : IGenealogyInputDriver
 
         foreach (var record in document.Records)
         foreach (var node in record.Content)
+        {
             ProjectAssociations(record, node, recordsByXref, document);
+            ProjectNodeAssociations(node, node, recordsByXref, document);
+        }
     }
 
     private static bool IsXref(string value) =>
@@ -417,6 +420,17 @@ public sealed class GedcomInputDriver : IGenealogyInputDriver
                     $"Cross-reference '{reference}' has no corresponding record.");
             }
         }
+        if (string.Equals(owner.TypeCode, "INDI", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(node.TypeCode, "ALIA", StringComparison.OrdinalIgnoreCase)
+            && !string.IsNullOrWhiteSpace(node.Value) && !IsXref(node.Value))
+        {
+            owner.Associations.Add(new GenealogyAssociation
+            {
+                SourceRecordId = owner.Id,
+                Role = "Alias",
+                Detail = node.Value
+            });
+        }
 
         foreach (var child in node.Children)
             ProjectAssociations(owner, child, recordsByXref, document);
@@ -441,6 +455,41 @@ public sealed class GedcomInputDriver : IGenealogyInputDriver
         foreach (var child in syntax.Children)
             node.Children.Add(ProjectNode(child, syntax.Tag));
         return node;
+    }
+
+    private static void ProjectNodeAssociations(
+        GenealogyNode owner,
+        GenealogyNode node,
+        IReadOnlyDictionary<string, (GenealogyRecord Record, GedcomSyntaxNode Syntax)> recordsByXref,
+        GenealogyDocument document)
+    {
+        var reference = node.References.FirstOrDefault(identifier => identifier.Provider == "gedcom")?.Value;
+        if (reference is null && IsXref(node.Value))
+            reference = node.Value;
+
+        if (reference is not null && string.Equals(node.TypeCode, "ASSO", StringComparison.OrdinalIgnoreCase))
+        {
+            var role = node.Children.FirstOrDefault(child =>
+                child.TypeCode.Equals("RELA", StringComparison.OrdinalIgnoreCase))?.Value ?? "Associated";
+            var hasTarget = recordsByXref.TryGetValue(reference, out var target);
+            owner.Associations.Add(new GenealogyAssociation
+            {
+                SourceRecordId = owner.Id,
+                TargetRecordId = hasTarget ? target.Record.Id : null,
+                TargetIdentifier = new GenealogyIdentifier { Provider = "gedcom", Value = reference },
+                Role = role,
+                Detail = node.Children.FirstOrDefault(child =>
+                    child.TypeCode.Equals("NOTE", StringComparison.OrdinalIgnoreCase))?.Value
+            });
+            if (!hasTarget)
+            {
+                AddRecoveryDiagnostic(document, "GEDCOM_UNRESOLVED_REFERENCE",
+                    $"Cross-reference '{reference}' has no corresponding record.");
+            }
+        }
+
+        foreach (var child in node.Children)
+            ProjectNodeAssociations(owner, child, recordsByXref, document);
     }
 
     private static void ProjectName(GedcomSyntaxNode name, GenealogyRecord record)
