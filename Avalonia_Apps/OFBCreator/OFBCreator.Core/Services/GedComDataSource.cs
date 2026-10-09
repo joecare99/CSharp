@@ -196,6 +196,7 @@ public class GedComDataSource : IFamilyDataSource
             var person = new GedcomPerson { IndRefID = record.Xref };
             person.SetOwner(genealogy);
             PopulatePerson(person, record, places, genealogy);
+            PopulateReferenceFact(person);
             people[record.Xref!] = person;
             genealogy.Entitys.Add(person);
         }
@@ -258,6 +259,7 @@ public class GedComDataSource : IFamilyDataSource
         person.GivenName = FindValue(name?.Children, "GIVN") ?? ParseNamePart(person.Name, false);
         person.Surname = FindValue(name?.Children, "SURN") ?? ParseNamePart(person.Name, true);
         person.Sex = FindValue(record.Children, "SEX") ?? string.Empty;
+        person.ReferenceNumber = FindValue(record.Children, "REFN");
         person.Occupation = FindValue(record.Children, "OCCU");
         person.Religion = FindValue(record.Children, "RELI");
         PopulateVitalEvent(record.Children, "BIRT", places, genealogy, out var birthDate, out var birthPlace);
@@ -272,6 +274,19 @@ public class GedComDataSource : IFamilyDataSource
         PopulateVitalEvent(record.Children, "BURI", places, genealogy, out var burialDate, out var burialPlace);
         person.BurialDate = burialDate;
         person.BurialPlace = burialPlace;
+    }
+
+    private static void PopulateReferenceFact(GedcomPerson person)
+    {
+        if (string.IsNullOrWhiteSpace(person.ReferenceNumber))
+            return;
+        var fact = new GedcomFact
+        {
+            eFactType = EFactType.Reference,
+            Data = person.ReferenceNumber
+        };
+        fact.SetOwner(person);
+        person.Facts.Add(fact);
     }
 
     private static void PopulateFamily(GedcomFamily family, GedcomRecord record, IReadOnlyDictionary<string, GedcomPerson> people, IDictionary<string, GedcomPlace> places, GedcomGenealogy genealogy)
