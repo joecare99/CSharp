@@ -50,6 +50,21 @@ public sealed class ParadoxMultiBlockWriterTests
             Assert.AreEqual(leafCount + parentCount + 1, rebuiltHeader.BlockCount);
             Assert.AreEqual(rootBlock, rebuiltHeader.BlockCount);
             Assert.AreEqual(entryCount + leafCount + parentCount, rebuiltHeader.RecordCount);
+            for (int blockNumber = 1; blockNumber <= rebuiltHeader.BlockCount; blockNumber++)
+            {
+                int blockOffset = rebuiltHeader.HeaderSize + (blockNumber - 1) * rebuiltHeader.BlockSize;
+                byte[] block = rebuilt.AsSpan(blockOffset, rebuiltHeader.BlockSize).ToArray();
+                ParadoxBlockCipher.DecryptDatabaseBlock(
+                    block,
+                    ParadoxRecordWriter.ReadEncryption(rebuilt),
+                    blockNumber);
+                Assert.AreEqual(
+                    blockNumber < rebuiltHeader.BlockCount ? blockNumber + 1 : 0,
+                    BinaryPrimitives.ReadUInt16LittleEndian(block));
+                Assert.AreEqual(
+                    blockNumber - 1,
+                    BinaryPrimitives.ReadUInt16LittleEndian(block.AsSpan(2, sizeof(ushort))));
+            }
 
             byte[] root = rebuilt
                 .AsSpan(rebuiltHeader.HeaderSize + (rootBlock - 1) * rebuiltHeader.BlockSize, rebuiltHeader.BlockSize)
@@ -66,6 +81,66 @@ public sealed class ParadoxMultiBlockWriterTests
             Assert.AreEqual(
                 leafCount + 2,
                 ReadParadoxShort(root.AsSpan(childLinkOffset + templateHeader.RecordSize, sizeof(short))));
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public void BuildIndexFile_SeparatesLeafFillFromParentCapacity()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string databaseDirectory = Path.Combine(directory, "database");
+            new StructureTemplateMaterializer().Materialize(databaseDirectory);
+            string templatePath = Path.Combine(databaseDirectory, "AWD.YG2");
+            byte[] template = File.ReadAllBytes(templatePath);
+            ParadoxRecordWriter.TableHeader templateHeader =
+                ParadoxRecordWriter.ReadHeader(template, 7, templatePath);
+            int keyLength = templateHeader.RecordSize - 6;
+            ParadoxIndexFileBuilder.IndexEntry[] entries = Enumerable
+                .Range(1, 294)
+                .Select(index =>
+                {
+                    byte[] key = new byte[keyLength];
+                    BinaryPrimitives.WriteInt32BigEndian(key, index);
+                    return new ParadoxIndexFileBuilder.IndexEntry(key, index, 1);
+                })
+                .ToArray();
+
+            byte[] rebuilt = ParadoxIndexFileBuilder.Build(
+                template,
+                7,
+                entries,
+                maximumLeafEntriesPerBlock: 12,
+                targetLeafNodeCount: 26);
+
+            ParadoxRecordWriter.TableHeader rebuiltHeader =
+                ParadoxRecordWriter.ReadHeader(rebuilt, 7, "rebuilt AWD.YG2");
+            int rootBlockNumber = BinaryPrimitives.ReadUInt16LittleEndian(rebuilt.AsSpan(0x1E, sizeof(ushort)));
+            Assert.AreEqual(29, rebuiltHeader.BlockCount);
+            Assert.AreEqual(322, rebuiltHeader.RecordCount);
+            Assert.AreEqual(3, rebuilt[0x20]);
+
+            byte[] root = ReadDecryptedIndexBlock(rebuilt, rebuiltHeader, rootBlockNumber);
+            Assert.AreEqual((short)templateHeader.RecordSize, BinaryPrimitives.ReadInt16LittleEndian(root.AsSpan(4, 2)));
+            int childLinkOffset = 6 + keyLength;
+            Assert.AreEqual(27, ReadParadoxShort(root.AsSpan(childLinkOffset, sizeof(short))));
+            Assert.AreEqual(28, ReadParadoxShort(
+                root.AsSpan(childLinkOffset + templateHeader.RecordSize, sizeof(short))));
+
+            byte[] firstParent = ReadDecryptedIndexBlock(rebuilt, rebuiltHeader, 27);
+            byte[] secondParent = ReadDecryptedIndexBlock(rebuilt, rebuiltHeader, 28);
+            Assert.AreEqual(
+                (short)(17 * templateHeader.RecordSize),
+                BinaryPrimitives.ReadInt16LittleEndian(firstParent.AsSpan(4, 2)));
+            Assert.AreEqual(
+                (short)(7 * templateHeader.RecordSize),
+                BinaryPrimitives.ReadInt16LittleEndian(secondParent.AsSpan(4, 2)));
         }
         finally
         {
@@ -313,4 +388,19 @@ public sealed class ParadoxMultiBlockWriterTests
 
     private static int ReadParadoxShort(ReadOnlySpan<byte> value) =>
         ((value[0] & 0x7F) << 8) | value[1];
+
+    private static byte[] ReadDecryptedIndexBlock(
+        byte[] indexFile,
+        ParadoxRecordWriter.TableHeader header,
+        int blockNumber)
+    {
+        byte[] block = indexFile
+            .AsSpan(header.HeaderSize + (blockNumber - 1) * header.BlockSize, header.BlockSize)
+            .ToArray();
+        ParadoxBlockCipher.DecryptDatabaseBlock(
+            block,
+            ParadoxRecordWriter.ReadEncryption(indexFile),
+            blockNumber);
+        return block;
+    }
 }
