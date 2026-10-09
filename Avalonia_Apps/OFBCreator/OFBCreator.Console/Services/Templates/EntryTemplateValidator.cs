@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using GenInterfaces.Data;
 
 namespace OFBCreator.Console.Services.Templates;
 
@@ -13,17 +15,20 @@ public static class EntryTemplateValidator
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() }
     };
 
     private static readonly IReadOnlyDictionary<string, string[]> AllowedProperties =
         new Dictionary<string, string[]>(StringComparer.Ordinal)
         {
             ["section"] = ["kind", "columns", "blocks"],
-            ["paragraph"] = ["kind", "role", "anchor", "content", "hangingIndent"],
-            ["text"] = ["kind", "value", "bold", "italic", "underline"],
-            ["field"] = ["kind", "path", "formatter", "bold", "italic", "underline"],
-            ["link"] = ["kind", "target", "content", "bold", "italic", "underline"],
+            // Keep "indent" explicitly whitelisted for paragraph blocks (no-op guard).
+            ["paragraph"] = ["kind", "role", "anchor", "content", "indent", "hangingIndent"],
+            // Allow inline line breaks so non-vital events can render line-by-line within one paragraph.
+            ["text"] = ["kind", "value", "bold", "italic", "underline", "lineBreakBefore"],
+            ["field"] = ["kind", "path", "formatter", "bold", "italic", "underline", "lineBreakBefore"],
+            ["link"] = ["kind", "target", "content", "bold", "italic", "underline", "lineBreakBefore"],
             ["if"] = ["kind", "condition", "then"],
             ["forEach"] = ["kind", "items", "as", "template"],
             ["include"] = ["kind", "fragment"]
@@ -70,7 +75,7 @@ public static class EntryTemplateValidator
 
         if (!isBlock)
         {
-            var allowedRoot = new HashSet<string>(["schemaVersion", "id", "entryRoot", "fragments", "blocks"], StringComparer.Ordinal);
+            var allowedRoot = new HashSet<string>(["schemaVersion", "id", "entryRoot", "fragments", "blocks", "legend"], StringComparer.Ordinal);
             foreach (var property in element.EnumerateObject())
                 if (!allowedRoot.Contains(property.Name))
                     throw new InvalidDataException($"Unknown template property '{property.Name}'.");
@@ -83,6 +88,8 @@ public static class EntryTemplateValidator
                 || entryRoot.ValueKind != JsonValueKind.String
                 || !element.TryGetProperty("blocks", out var rootBlocks))
                 throw new InvalidDataException("A template requires schemaVersion, id, entryRoot, and blocks.");
+            if (element.TryGetProperty("legend", out var legend))
+                ValidateLegendShape(legend);
             ValidateBlockArray(rootBlocks);
             if (element.TryGetProperty("fragments", out var fragments))
             {
@@ -123,6 +130,33 @@ public static class EntryTemplateValidator
                 throw new InvalidDataException($"A '{kind}' block requires '{requiredProperty}'.");
     }
 
+    private static void ValidateLegendShape(JsonElement legend)
+    {
+        if (legend.ValueKind != JsonValueKind.Array)
+            throw new InvalidDataException("Template legend must be an array.");
+
+        foreach (var entry in legend.EnumerateArray())
+        {
+            if (entry.ValueKind != JsonValueKind.Object)
+                throw new InvalidDataException("Every legend entry must be an object.");
+            foreach (var property in entry.EnumerateObject())
+            {
+                if (property.Name is not ("symbol" or "meaning" or "event"))
+                    throw new InvalidDataException($"Unknown legend property '{property.Name}'.");
+                if ((property.Name is "symbol" or "meaning") && property.Value.ValueKind != JsonValueKind.String)
+                    throw new InvalidDataException($"Legend property '{property.Name}' must be a string.");
+                if (property.Name == "event"
+                    && property.Value.ValueKind is not (JsonValueKind.String or JsonValueKind.Null))
+                    throw new InvalidDataException("A legend event must be an EFactType name or null.");
+                if (property.Name == "event" && property.Value.ValueKind == JsonValueKind.String
+                    && (!Enum.TryParse<EFactType>(property.Value.GetString(), ignoreCase: false, out var eventType)
+                        || !Enum.IsDefined(eventType)
+                        || eventType == EFactType.Reference))
+                    throw new InvalidDataException($"Unknown legend event '{property.Value.GetString()}'.");
+            }
+        }
+    }
+
     private static void ValidateBlockArray(JsonElement element)
     {
         if (element.ValueKind != JsonValueKind.Array)
@@ -144,6 +178,14 @@ public static class EntryTemplateValidator
             throw new InvalidDataException("The template must define a blocks array.");
         if (definition.Fragments is null)
             throw new InvalidDataException("The template fragments object cannot be null.");
+        if (definition.Legend is null)
+            throw new InvalidDataException("The template legend cannot be null.");
+        if (definition.Legend.Any(entry => entry is null
+            || string.IsNullOrWhiteSpace(entry.Symbol)
+            || string.IsNullOrWhiteSpace(entry.Meaning)))
+            throw new InvalidDataException("Legend entries require non-empty symbol and meaning values.");
+        if (definition.Legend.Any(entry => entry.Event == EFactType.Reference))
+            throw new InvalidDataException("Legend event values cannot be reference metadata.");
 
         foreach (var fragment in definition.Fragments)
         {
@@ -170,7 +212,8 @@ public static class EntryTemplateValidator
                 ["individual"] = "person",
                 ["occupation"] = "occupation",
                 ["property"] = "property",
-                ["familyReference"] = "familyReference"
+                ["familyReference"] = "familyReference",
+                ["personEvent"] = "personEvent"
             };
             ValidateBlocks(fragment, definition, fragmentVariables, inSection: false, topLevel: false);
         }
@@ -211,6 +254,8 @@ public static class EntryTemplateValidator
                         ValidatePath(block.Anchor, variables, requireAnchor: true);
                     if (block.HangingIndent is < 0 or > 1440)
                         throw new InvalidDataException("A paragraph hangingIndent value must be between 0 and 1440 points.");
+                    if (block.Indent is < 0 or > 1440)
+                        throw new InvalidDataException("A paragraph indent value must be between 0 and 1440 points.");
                     ValidateBlocks(block.Content, definition, variables, inSection, topLevel: false);
                     break;
                 case "text":
@@ -238,8 +283,11 @@ public static class EntryTemplateValidator
                 case "if":
                     if (block.Condition is null)
                         throw new InvalidDataException("An if block requires a condition.");
-                    ValidatePath(block.Condition, variables);
-                    if (!IsSupportedCondition(block.Condition, variables))
+                    var conditionPath = block.Condition.StartsWith('!') ? block.Condition[1..] : block.Condition;
+                    if (string.IsNullOrWhiteSpace(conditionPath) || conditionPath.StartsWith('!'))
+                        throw new InvalidDataException("A condition may have only one leading '!' negation.");
+                    ValidatePath(conditionPath, variables);
+                    if (!IsSupportedCondition(conditionPath, variables))
                         throw new InvalidDataException("Conditions must use a supported collection test or optional typed value.");
                     ValidateBlocks(block.Then, definition, variables, inSection, topLevel: false);
                     break;
@@ -283,11 +331,12 @@ public static class EntryTemplateValidator
         var property = string.Join('.', parts.Skip(1));
         var isValid = type switch
         {
-            "family" => property is "number" or "anchor" or "union" or "marriageMark" or "marriageDate" or "marriagePlace" or "marriagePlaceShort" or "marriagePlaceAnchor" or "properties" or "properties.any" or "parents" or "children" or "children.any",
-            "person" => property is "nameGc" or "nameAk" or "anchor" or "reference" or "indexLabel" or "vitalEventsGc" or "vitalEventsAk" or "additionalLifeDataGc" or "birth" or "death" or "indexAnchor"
-                or "occupations" or "occupations.any" or "properties" or "properties.any" or "residence" or "residenceAnchor" or "ordinal" or "parentFamily" or "parentFamily.number" or "parentFamily.anchor" or "childFamilies" or "parentFamilies" or "childFamilyTokens" or "parentFamilyTokens" or "childFamilyTokens.any" or "parentFamilyTokens.any",
+            "family" => property is "number" or "anchor" or "union" or "marriageMark" or "marriageDate" or "marriagePlace" or "marriagePlaceShort" or "marriagePlaceAnchor" or "properties" or "properties.any" or "properties.one" or "parents" or "parents.any" or "parents.one" or "children" or "children.any" or "children.one",
+            "person" => property is "nameGc" or "nameAk" or "akaNames" or "anchor" or "reference" or "referenceNumber" or "events" or "events.any" or "events.one" or "indexLabel" or "vitalEventsGc" or "vitalEventsAk" or "additionalLifeDataGc" or "birth" or "death" or "indexAnchor"
+                or "occupations" or "occupations.any" or "occupations.one" or "properties" or "properties.any" or "properties.one" or "residence" or "residenceAnchor" or "ordinal" or "parentFamily" or "parentFamily.number" or "parentFamily.anchor" or "childFamilies" or "childFamilies.any" or "childFamilies.one" or "parentFamilies" or "parentFamilies.any" or "parentFamilies.one" or "childFamilyTokens" or "parentFamilyTokens" or "childFamilyTokens.any" or "childFamilyTokens.one" or "parentFamilyTokens.any" or "parentFamilyTokens.one",
             "familyReference" => property is "number" or "anchor",
             "familyReferenceToken" => property is "text" or "anchor",
+            "personEvent" => property is "symbol" or "date" or "place" or "placeAnchor" or "additional" or "relatedPersonName" or "relatedPersonAnchor" or "relatedFamilyNumber" or "relatedFamilyAnchor" or "relatedFamily" or "relatedPerson" or "isVital",
             "occupation" => property is "name" or "date" or "indexAnchor" or "place" or "placeAnchor",
             "property" => property is "name" or "date" or "place" or "indexAnchor" or "placeAnchor",
             _ => false
@@ -295,7 +344,7 @@ public static class EntryTemplateValidator
         if (!isValid)
             throw new InvalidDataException($"Unknown typed template path '{path}'.");
 
-            if (requireAnchor && property is not ("anchor" or "indexAnchor" or "parentFamily.anchor" or "marriagePlaceAnchor" or "residenceAnchor" or "placeAnchor" or "parentFamily.anchor"))
+            if (requireAnchor && property is not ("anchor" or "indexAnchor" or "parentFamily.anchor" or "marriagePlaceAnchor" or "residenceAnchor" or "placeAnchor" or "relatedPersonAnchor" or "relatedFamilyAnchor"))
             throw new InvalidDataException($"Link target '{path}' is not an anchor field.");
     }
 
@@ -316,6 +365,8 @@ public static class EntryTemplateValidator
         _ when path.EndsWith(".occupations", StringComparison.Ordinal) => "occupation",
         _ when path.EndsWith(".childFamilies", StringComparison.Ordinal) || path.EndsWith(".parentFamilies", StringComparison.Ordinal) => "familyReference",
         _ when path.EndsWith(".childFamilyTokens", StringComparison.Ordinal) || path.EndsWith(".parentFamilyTokens", StringComparison.Ordinal) => "familyReferenceToken",
+        // Event entries are already validated as a collection element type.
+        _ when path.EndsWith(".events", StringComparison.Ordinal) => "personEvent",
         "family.properties" or "person.properties" or "child.properties" or "individual.properties" => "property",
         _ => throw new InvalidDataException($"Path '{path}' is not a supported template collection.")
     };
@@ -335,20 +386,24 @@ public static class EntryTemplateValidator
     {
         "family.number" or "family.anchor" or "family.union" or "family.marriageMark" or "family.marriageDate"
             or "family.marriagePlace" or "family.marriagePlaceShort" or "family.marriagePlaceAnchor" => true,
-        "person.nameGc" or "person.nameAk" or "person.anchor" or "person.reference" or "person.indexLabel"
+            "person.nameGc" or "person.nameAk" or "person.akaNames" or "person.anchor" or "person.reference" or "person.referenceNumber" or "person.indexLabel"
             or "person.vitalEventsGc" or "person.vitalEventsAk" or "person.additionalLifeDataGc" or "person.birth" or "person.death"
             or "person.indexAnchor" or "person.ordinal" or "person.residence" or "person.residenceAnchor" or "person.parentFamily.number" or "person.parentFamily.anchor"
             or "person.parentFamily" => true,
-        "child.nameGc" or "child.nameAk" or "child.anchor" or "child.reference"
+        "child.nameGc" or "child.nameAk" or "child.akaNames" or "child.anchor" or "child.reference" or "child.referenceNumber"
             or "child.vitalEventsGc" or "child.vitalEventsAk" or "child.additionalLifeDataGc" or "child.birth" or "child.death"
             or "child.indexAnchor" or "child.ordinal" or "child.residence" or "child.residenceAnchor"
             or "child.parentFamily.number" or "child.parentFamily.anchor" or "child.parentFamily" => true,
-        "individual.nameGc" or "individual.nameAk" or "individual.anchor" or "individual.reference"
+        "individual.nameGc" or "individual.nameAk" or "individual.akaNames" or "individual.anchor" or "individual.reference" or "individual.referenceNumber"
             or "individual.vitalEventsGc" or "individual.vitalEventsAk" or "individual.additionalLifeDataGc" or "individual.birth"
             or "individual.death" or "individual.indexAnchor" or "individual.ordinal" or "individual.residence" or "individual.residenceAnchor"
             or "individual.parentFamily.number" or "individual.parentFamily.anchor" or "individual.parentFamily" => true,
         "occupation.name" or "occupation.date" or "occupation.indexAnchor" or "occupation.place" or "occupation.placeAnchor" => true,
         "property.name" or "property.date" or "property.place" or "property.indexAnchor" or "property.placeAnchor" => true,
+        "personEvent.symbol" or "personEvent.isVital" or "personEvent.relatedPerson" or "personEvent.relatedFamily"
+            or "personEvent.date" or "personEvent.place" or "personEvent.additional"
+            or "personEvent.relatedPersonName" or "personEvent.relatedPersonAnchor" or "personEvent.relatedFamilyNumber" or "personEvent.relatedFamilyAnchor"
+            or "personEvent.relatedFamily" or "personEvent.relatedPerson" or "personEvent.isVital" => true,
         "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
         "familyReference.number" or "familyReference.anchor" or "familyReferenceToken" or "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
         _ => false
@@ -356,7 +411,7 @@ public static class EntryTemplateValidator
 
     private static bool IsSupportedCondition(string path, IReadOnlyDictionary<string, string> variables)
     {
-        if (path.EndsWith(".any", StringComparison.Ordinal))
+        if (path.EndsWith(".any", StringComparison.Ordinal) || path.EndsWith(".one", StringComparison.Ordinal))
             return IsSupportedAnyConditionPath(path, variables);
 
         var parts = path.Split('.');
@@ -365,7 +420,8 @@ public static class EntryTemplateValidator
 
         return (type, parts[1]) switch
         {
-            ("person", "parentFamily" or "residence") => true,
+            ("person" or "child" or "individual", "parentFamily" or "residence" or "akaNames" or "referenceNumber" or "vitalEventsGc") => true,
+            ("personEvent", "relatedPerson" or "relatedFamily" or "isVital" or "place" or "additional") => true,
             ("family", "marriagePlaceShort") => true,
             ("occupation" or "property", "place") => true,
             _ => false
@@ -382,10 +438,10 @@ public static class EntryTemplateValidator
         var property = string.Join('.', parts.Skip(1));
         return type switch
         {
-            "family" => property is "children" or "properties",
-            "person" => property is "occupations" or "properties" or "childFamilies" or "parentFamilies" or "childFamilyTokens" or "parentFamilyTokens",
+            "family" => property is "children" or "properties" or "parents",
+            "person" => property is "occupations" or "properties" or "events" or "childFamilies" or "parentFamilies" or "childFamilyTokens" or "parentFamilyTokens",
             _ => false
-        };
+        } && (path.EndsWith(".any", StringComparison.Ordinal) || path.EndsWith(".one", StringComparison.Ordinal));
     }
 
     private static bool IsIdentifier(string name) =>

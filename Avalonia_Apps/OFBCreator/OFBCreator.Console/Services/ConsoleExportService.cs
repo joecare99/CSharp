@@ -37,12 +37,15 @@ public sealed class ConsoleExportService(
     private readonly IFamilyDataSource _dataSource = dataSource;
     private readonly IUserDocumentFactory _documentFactory = documentFactory;
     private readonly EntryTemplateStore _templateStore = templateStore ?? new EntryTemplateStore();
+    private IReadOnlyList<EntryTemplateLegendEntry> _legendEntries = Array.Empty<EntryTemplateLegendEntry>();
     private readonly Dictionary<string, string> _personReferenceBySortKey = new(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _personIndexAnchorByReference = new(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _occupationIndexAnchorByName = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> _propertyIndexAnchorByName = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> _placeIndexAnchorByName = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> _familyAnchorBySourceReference = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _personReferenceByIndexName = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _personIndexAnchorByName = new(StringComparer.Ordinal);
 
     /// <summary>
     /// Executes the full OFB generation pipeline for the given options.
@@ -63,7 +66,8 @@ public sealed class ConsoleExportService(
         if ( !File.Exists( options.InputPath ) )
             throw new FileNotFoundException( $"GEDCOM input file was not found: '{options.InputPath}'.", options.InputPath );
 
-        var entryTemplate = _templateStore.Load(options.Template);
+        var entryTemplate = _templateStore.Load( options.Template );
+        _legendEntries = entryTemplate.Legend;
         if (!string.Equals(entryTemplate.EntryRoot, "Family", StringComparison.Ordinal))
             throw new InvalidDataException(
                 $"Template '{entryTemplate.Id}' uses the Individual root, but the current export pipeline generates Family entries.");
@@ -156,10 +160,9 @@ public sealed class ConsoleExportService(
         var doc = _documentFactory.CreateDocument( options.UseDocxFormat ? OFBOutputFormat.Docx : OFBOutputFormat.Odt );
 
         await ComposeTitlePageAsync( doc, options );
-        await ComposePrefaceAsync( doc, options );
+        await ComposePrefaceAsync(doc, options, entryTemplate);
         await ComposeFamiliesAsync(doc, sortedFamilies, entryTemplate, groupByFamilyReference, familyNamesByGroup);
         await ComposeIndicesAsync( doc, personIndex, occIndex, propIndex, placeHierarchyIndex, placeAlphaIndex );
-        await ComposeLegendAsync( doc, options.Legend ?? string.Empty );
 
         // Step 6: Save document
         System.Console.WriteLine( "Saving output..." );
@@ -172,7 +175,6 @@ public sealed class ConsoleExportService(
             throw new InvalidOperationException( $"Failed to save OFB document to '{options.OutputPath}'" );
     }
 
-    // ExportAsync is intentionally closed above; helper methods continue below.
     private static IReadOnlyList<FamilyReferenceTokenModel> CreateFamilyReferenceTokens(
         IReadOnlyList<FamilyReferenceEntryTemplateModel> references)
     {
@@ -207,6 +209,7 @@ public sealed class ConsoleExportService(
                     tokens.Add(new FamilyReferenceTokenModel { Text = numbered[itemIndex].Reference.Number, Anchor = numbered[itemIndex].Reference.Anchor });
                 }
             }
+
             index = end + 1;
         }
         return tokens;
@@ -325,50 +328,113 @@ public sealed class ConsoleExportService(
     /// <summary>
     /// Composes the preface section if provided.
     /// </summary>
-    private async Task ComposePrefaceAsync( IUserDocument doc, OFBGenerateOptions options )
+    private async Task ComposePrefaceAsync(
+        IUserDocument doc,
+        OFBGenerateOptions options,
+        EntryTemplateDefinition entryTemplate)
     {
-        if ( string.IsNullOrWhiteSpace( options.Preface ) )
+        var preface = LoadEmbeddedPreface();
+        if (!string.IsNullOrWhiteSpace(options.Preface))
+            preface += Environment.NewLine + Environment.NewLine + options.Preface;
+        if (string.IsNullOrWhiteSpace(preface))
             return;
 
-        var prefaceHeadline = doc.AddHeadline( 1, "Vorwort" );
+        var prefaceHeadline = doc.AddHeadline(1, "Vorwort");
         prefaceHeadline.TextContent = "Vorwort";
-        var prefacePara = doc.AddParagraph( "Normaler Absatz" );
-        prefacePara.TextContent = options.Preface;
+        var markdown = preface.Replace("<!-- OFB-LEGEND -->", FormatLegend(entryTemplate.Legend, options.Legend), StringComparison.Ordinal);
+        foreach (var line in markdown.Split(["\r\n", "\n"], StringSplitOptions.None))
+        {
+            var text = line.Trim();
+            if (text.Length == 0)
+                continue;
+            if (text.StartsWith('|'))
+            {
+                var cells = text.Trim('|').Split('|', StringSplitOptions.TrimEntries);
+                if (cells.Length >= 2 && !cells[0].StartsWith('-'))
+                {
+                    var symbolParagraph = doc.AddParagraph("Normaler Absatz");
+                    symbolParagraph.TextContent = $"{cells[0]} = {cells[1]}";
+                }
+                continue;
+            }
+            if (text.StartsWith("# ", StringComparison.Ordinal))
+            {
+                doc.AddHeadline(2, SanitizeAnchor(text[2..])).TextContent = text[2..];
+                continue;
+            }
+            if (text.StartsWith("## ", StringComparison.Ordinal))
+            {
+                doc.AddHeadline(3, SanitizeAnchor(text[3..])).TextContent = text[3..];
+                continue;
+            }
+            var paragraph = doc.AddParagraph("Normaler Absatz");
+            paragraph.TextContent = text;
+        }
+    }
+
+    private void AppendIndexFamilyTokens(IDocParagraph paragraph, OFBIndexEntry entry, bool addLeadingSpace = false)
+    {
+        var childNumbers = entry.ChildFamilyReferences.Distinct(StringComparer.Ordinal).ToArray();
+        var parentNumbers = entry.ParentFamilyReferences.Distinct(StringComparer.Ordinal).ToArray();
+        if (childNumbers.Length == 0 && parentNumbers.Length == 0)
+            return;
+        if (addLeadingSpace)
+            paragraph.AddSpan("Referenz-Abstand", DocxFontStyle.Default).TextContent = " ";
+        var childTokens = childNumbers.Length > 0
+            ? CreateFamilyReferenceTokens(childNumbers.Select(CreateNumberedFamilyReference).ToArray())
+            : Array.Empty<FamilyReferenceTokenModel>();
+        if (childTokens.Count > 0)
+            AppendFamilyTokens(paragraph, "<", childTokens, closeWith: ">");
+
+        if (parentNumbers.Length > 0)
+        {
+            if (childTokens.Count > 0)
+                paragraph.AddSpan("Referenz-Abstand", DocxFontStyle.Default).TextContent = " ";
+            var tokens = CreateFamilyReferenceTokens(parentNumbers.Select(CreateNumberedFamilyReference).ToArray());
+            AppendFamilyTokens(paragraph, "[", tokens);
+        }
     }
 
     /// <summary>
     /// Composes the character explanation/legend showing OFB symbols.
     /// </summary>
-    private async Task ComposeLegendAsync( IUserDocument doc, string legend )
+    private async Task ComposeLegendAsync(
+        IUserDocument doc,
+        IReadOnlyList<EntryTemplateLegendEntry> legendEntries,
+        string additionalLegend)
     {
         var legendHeadline = doc.AddHeadline( 1, "Zeichenerklärung" );
         legendHeadline.TextContent = "Zeichenerklärung";
 
-        // Standard OFB character conventions (user confirmed)
-        var lines = new[]
+        foreach (var entry in legendEntries)
         {
-            "* = Geboren",
-            "~ = Getauft",
-            "+ = Gestorben",
-            "= = Begraben",
-            "",
-            "oo = Hochzeit (verheiratet)",
-            "o-o = Verbindung (unverheiratet)",
-            "o/o = Geschieden"
-        };
-
-        foreach ( var line in lines )
-        {
-            var para = doc.AddParagraph( "Normaler Absatz" );
-            para.TextContent = line;
+            var para = doc.AddParagraph("Normaler Absatz");
+            para.TextContent = $"{entry.Symbol} = {entry.Meaning}";
         }
 
-        if ( !string.IsNullOrWhiteSpace( legend ) )
+        if (!string.IsNullOrWhiteSpace(additionalLegend))
         {
-            var legendPara = doc.AddParagraph( "Normaler Absatz" );
-            legendPara.TextContent = $"\n{legend}";
+            var legendPara = doc.AddParagraph("Normaler Absatz");
+            legendPara.TextContent = additionalLegend;
         }
     }
+
+    private static string LoadEmbeddedPreface()
+    {
+        var resourceName = typeof(ConsoleExportService).Assembly.GetManifestResourceNames()
+            .SingleOrDefault(name => name.EndsWith("Templates.Vorwort.md", StringComparison.Ordinal));
+        if (resourceName is null)
+            return string.Empty;
+        using var resource = typeof(ConsoleExportService).Assembly.GetManifestResourceStream(resourceName);
+        if (resource is null)
+            return string.Empty;
+        using var reader = new StreamReader(resource);
+        return reader.ReadToEnd();
+    }
+
+    private static string FormatLegend(IReadOnlyList<EntryTemplateLegendEntry> entries, string? additionalLegend) =>
+        string.Join(Environment.NewLine, entries.Select(entry => $"{entry.Symbol} = {entry.Meaning}")
+            .Concat(string.IsNullOrWhiteSpace(additionalLegend) ? [] : [additionalLegend]));
 
     /// <summary>
     /// Composes all index sections (Person, Occupation, Property, Place).
@@ -378,16 +444,35 @@ public sealed class ConsoleExportService(
         OFBPlaceHierarchyNode[] placeHierarchy, OFBIndexEntry[] placeAlpha )
     {
         // Person Index (alphabetical)
-        var personTitle = doc.AddHeadline( 1, "Personenindex" );
+        var personTitle = doc.AddHeadline(1, "Personenindex");
         personTitle.TextContent = "Personenindex";
+        string? previousSurname = null;
         for (var index = 0; index < personIndex.Length; index++)
         {
             var entry = personIndex[index];
+            if (!string.Equals(previousSurname, entry.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                previousSurname = entry.Name;
+                if (!string.IsNullOrWhiteSpace(previousSurname))
+                {
+                    var surnameHeading = doc.AddHeadline(2, SanitizeAnchor($"person-index-{previousSurname}"));
+                    surnameHeading.TextContent = previousSurname;
+                }
+            }
             var para = doc.AddParagraph( "Normaler Absatz" );
             var entryAnchor = CreateIndexAnchor("person", index);
-            para.AddBookmark(entryAnchor, DocxFontStyle.Default).TextContent = entry.SortKey;
-            AppendFamilyTokens(para, " — Kind: ", CreateFamilyReferenceTokens(entry.ChildFamilyReferences.Select(CreateNumberedFamilyReference).ToArray()));
-            AppendFamilyTokens(para, "; Parent: ", CreateFamilyReferenceTokens(entry.ParentFamilyReferences.Select(CreateNumberedFamilyReference).ToArray()));
+            var personAnchor = GetPersonAnchor(entry.Ref);
+            var givenName = GetPersonIndexGivenName(entry.SortKey, entry.Name);
+            var personIndexLabel = string.IsNullOrEmpty(entry.LifeSpan)
+                ? givenName
+                : $"{givenName} ({entry.LifeSpan})";
+            para.AddBookmark(entryAnchor, DocxFontStyle.Default).TextContent = personIndexLabel;
+            para.AddBookmark(personAnchor, DocxFontStyle.Default).TextContent = string.Empty;
+            if (entry.ChildFamilyReferences.Count > 0 && entry.ParentFamilyReferences.Count > 0)
+                para.AppendText(" ");
+            if (!string.IsNullOrEmpty(entry.NameEventDate))
+                para.AppendText($" [{entry.NameEventDate}]");
+            AppendIndexFamilyTokens(para, entry, addLeadingSpace: true);
         }
         // Occupation Index (alphabetical)
         var occTitle = doc.AddHeadline( 1, "Berufsindex" );
@@ -397,7 +482,7 @@ public sealed class ConsoleExportService(
             var entry = occIndex[index];
             var para = doc.AddParagraph( "Normaler Absatz" );
             para.AddBookmark(CreateIndexAnchor("occupation", index), DocxFontStyle.Default).TextContent = entry.SortKey;
-            AppendFamilyReference(para, entry.Ref);
+            AppendIndexFamilyReferences(para, entry, entry.Ref);
         }
 
         // Property Index (alphabetical, decision 1A)
@@ -408,7 +493,7 @@ public sealed class ConsoleExportService(
             var entry = propIndex[index];
             var para = doc.AddParagraph( "Normaler Absatz" );
             para.AddBookmark(CreateIndexAnchor("property", index), DocxFontStyle.Default).TextContent = entry.SortKey;
-            AppendFamilyReference(para, entry.Ref);
+            AppendIndexFamilyReferences(para, entry, entry.Ref);
         }
 
         // Place Hierarchy Index (tree structure)
@@ -424,11 +509,19 @@ public sealed class ConsoleExportService(
             var entry = placeAlpha[index];
             var para = doc.AddParagraph( "Normaler Absatz" );
             para.AddBookmark(CreateIndexAnchor("place", index), DocxFontStyle.Default).TextContent = entry.SortKey;
-            AppendFamilyReference(para, entry.Ref);
+            AppendIndexFamilyReferences(para, entry, entry.Ref);
         }
     }
 
-    private static void AppendFamilyTokens(IDocParagraph paragraph, string prefix, IReadOnlyList<FamilyReferenceTokenModel> tokens)
+    private static string GetPersonIndexGivenName(string sortKey, string surname)
+    {
+        var namePrefix = string.IsNullOrWhiteSpace(surname) ? string.Empty : $"{surname}, ";
+        return sortKey.StartsWith(namePrefix, StringComparison.Ordinal)
+            ? sortKey[namePrefix.Length..]
+            : sortKey;
+    }
+
+    private static void AppendFamilyTokens(IDocParagraph paragraph, string prefix, IReadOnlyList<FamilyReferenceTokenModel> tokens, string closeWith = "]")
     {
         if (tokens.Count == 0)
             return;
@@ -440,6 +533,7 @@ public sealed class ConsoleExportService(
             else
                 paragraph.AddLink($"#{token.Anchor}", DocxFontStyle.UnderlineStyle).TextContent = token.Text;
         }
+        paragraph.AddSpan(closeWith, DocxFontStyle.Default).TextContent = closeWith;
     }
 
     /// <summary>
@@ -451,7 +545,16 @@ public sealed class ConsoleExportService(
         {
             var prefix = new string( ' ', indent * 2 );
             var para = doc.AddParagraph( "Normaler Absatz" );
-            para.TextContent = $"{prefix}{node.Name} ({node.PlaceId})";
+            para.TextContent = $"{prefix}{node.Name}";
+            var familyTokens = CreateFamilyReferenceTokens(node.FamilyReferences
+                .Distinct(StringComparer.Ordinal)
+                .Select(number => new FamilyReferenceEntryTemplateModel
+                {
+                    Number = number,
+                    Anchor = GetFamilyAnchor(number)
+                })
+                .ToArray());
+            AppendFamilyTokens(para, "[", familyTokens);
 
             if ( node.Children != null && node.Children.Length > 0 )
                 await WritePlaceHierarchyAsync( doc, node.Children, indent + 1 );
@@ -469,7 +572,6 @@ public sealed class ConsoleExportService(
         IReadOnlyDictionary<string, IReadOnlyList<string>> familyNamesByGroup)
     {
         var templateRenderer = new EntryTemplateRenderer();
-        var renderedPeople = new List<PersonEntryTemplateModel>();
         string? currentGroupName = null;
         foreach (var family in sortedFamilies)
         {
@@ -486,17 +588,15 @@ public sealed class ConsoleExportService(
                 currentGroupName = groupName;
             }
 
+            var familySpacer = doc.AddParagraph("Normaler Absatz");
+            familySpacer.TextContent = string.Empty;
+
             var entryModel = CreateEntryTemplateModel(family, sortedFamilies);
-            renderedPeople.AddRange(entryModel.Parents);
-            renderedPeople.AddRange(entryModel.Children);
             doc.AddHeadline(3, GetFamilyAnchor(family.GlobalNumber));
             templateRenderer.RenderFamily(doc, entryTemplate, entryModel);
-
-            var blankPara = doc.AddParagraph( "Normaler Absatz" );
-            blankPara.TextContent = "";
         }
 
-        templateRenderer.EnsureNavigation(doc, renderedPeople);
+        templateRenderer.EnsureNavigation(doc, Array.Empty<PersonEntryTemplateModel>());
     }
 
     private static string GetFamilyGroupName(OFBFamily family, IReadOnlyDictionary<string, string> groupByFamilyReference)
@@ -514,26 +614,39 @@ public sealed class ConsoleExportService(
         return string.Join(" in ", new[] { date, place }.Where(value => !string.IsNullOrWhiteSpace(value)));
     }
 
-    private static string GetFamilyMarriageMark(OFBFamily family)
+    private string GetFamilyMarriageMark(OFBFamily family)
     {
+        var partnerSymbol = GetLegendSymbol(EFactType.Partner);
+        if (string.IsNullOrWhiteSpace(partnerSymbol))
+            partnerSymbol = "o-o";
+        var marriageSymbol = GetLegendSymbol(EFactType.Mariage);
+        if (string.IsNullOrWhiteSpace(marriageSymbol))
+            marriageSymbol = "oo";
+
         var eventText = family.Marriage?.Data;
         if (string.IsNullOrWhiteSpace(eventText))
-            return family.Marriage is null && family.MarriageDate is null ? "o-o" : "oo";
+            return family.Marriage is null && family.MarriageDate is null ? partnerSymbol : marriageSymbol;
 
         if (eventText.Contains("unverheirat", StringComparison.OrdinalIgnoreCase)
             || eventText.Contains("unehelich", StringComparison.OrdinalIgnoreCase))
-            return "o-o";
-        return "oo";
+            return partnerSymbol;
+        return marriageSymbol;
     }
 
-    private static string FormatPersonName(IGenPerson person, bool gcFormat)
+    private static string FormatPersonName(IGenPerson person, bool gcFormat, string? familySurnameToAbbreviate = null)
     {
         var givenName = person.GivenName?.Trim();
         var surname = person.Surname?.Trim();
         if (!string.IsNullOrWhiteSpace(givenName) && !string.IsNullOrWhiteSpace(surname))
+        {
+            if (gcFormat && !string.IsNullOrWhiteSpace(familySurnameToAbbreviate)
+                && string.Equals(surname, familySurnameToAbbreviate.Trim(), StringComparison.OrdinalIgnoreCase))
+                return givenName;
+
             return gcFormat
                 ? $"{surname}, {givenName}"
                 : $"{givenName} {surname}";
+        }
         if (!string.IsNullOrWhiteSpace(givenName))
             return givenName;
         if (!string.IsNullOrWhiteSpace(surname))
@@ -556,13 +669,34 @@ public sealed class ConsoleExportService(
             : int.TryParse(sourceReference, out _) ? GetFamilyAnchor(sourceReference) : null;
     }
 
-    private void AppendFamilyReference(IDocParagraph paragraph, string reference)
+    private void AppendFamilyNumber(IDocParagraph paragraph, string familyNumber)
     {
-        var targetAnchor = ResolveFamilyAnchor(reference);
+        var targetAnchor = ResolveFamilyAnchor(familyNumber);
+        var token = $"[{familyNumber}]";
         if (targetAnchor is null)
-            paragraph.AppendText($" — {reference}");
+            paragraph.AppendText(token);
         else
-            paragraph.AddLink($"#{targetAnchor}", DocxFontStyle.UnderlineStyle).TextContent = $" — {reference}";
+            paragraph.AddLink($"#{targetAnchor}", DocxFontStyle.UnderlineStyle).TextContent = token;
+    }
+
+    private static string NormalizeFamilyNumber(string reference)
+    {
+        var value = reference.StartsWith("Fam.", StringComparison.Ordinal) ? reference[4..] : reference;
+        return value.EndsWith('K') ? value[..^1] : value;
+    }
+
+    private void AppendIndexFamilyReferences(IDocParagraph paragraph, OFBIndexEntry entry, string? fallbackReference = null)
+    {
+        var references = entry.FamilyReferences.Count > 0
+            ? entry.FamilyReferences
+            : string.IsNullOrWhiteSpace(fallbackReference) ? Array.Empty<string>() : [fallbackReference];
+        var grouped = references
+            .Select(NormalizeFamilyNumber)
+            .Distinct(StringComparer.Ordinal)
+            .Select(number => CreateNumberedFamilyReference(number))
+            .ToArray();
+        var tokens = CreateFamilyReferenceTokens(grouped);
+        AppendFamilyTokens(paragraph, "[", tokens);
     }
 
     private static string GetPersonAnchor(string personReference) => $"person-{SanitizeAnchor(personReference)}";
@@ -584,7 +718,8 @@ public sealed class ConsoleExportService(
         var children = family.Children
             .OrderBy(person => person.BirthDate?.Date1 ?? DateTime.MaxValue)
             .ThenBy(person => person.IndRefID ?? person.Name, StringComparer.Ordinal)
-            .Select((person, index) => CreatePersonTemplateModel(person, index + 1, allFamilies, family.GlobalNumber))
+            .Select((person, index) => CreatePersonTemplateModel(
+                person, index + 1, allFamilies, family.GlobalNumber, family.FamilyName))
             .ToArray();
 
         return new FamilyEntryTemplateModel
@@ -601,6 +736,35 @@ public sealed class ConsoleExportService(
             Parents = parents,
             Children = children
         };
+    }
+
+    private static IReadOnlyList<FamilyReferenceTokenModel> CreateIndexFamilyReferenceTokens(OFBIndexEntry entry)
+    {
+        var tokens = new List<FamilyReferenceTokenModel>();
+        var childTokens = CreateFamilyReferenceTokens(entry.ChildFamilyReferences
+            .Distinct(StringComparer.Ordinal)
+            .Select(CreateNumberedFamilyReference)
+            .ToArray());
+        if (childTokens.Count > 0)
+        {
+            tokens.Add(new FamilyReferenceTokenModel { Text = "<" });
+            tokens.AddRange(childTokens);
+            tokens.Add(new FamilyReferenceTokenModel { Text = ">" });
+        }
+
+        var parentTokens = CreateFamilyReferenceTokens(entry.ParentFamilyReferences
+            .Distinct(StringComparer.Ordinal)
+            .Select(CreateNumberedFamilyReference)
+            .ToArray());
+        if (parentTokens.Count > 0)
+        {
+            if (tokens.Count > 0)
+                tokens.Add(new FamilyReferenceTokenModel { Text = " " });
+            tokens.Add(new FamilyReferenceTokenModel { Text = "[" });
+            tokens.AddRange(parentTokens);
+            tokens.Add(new FamilyReferenceTokenModel { Text = "]" });
+        }
+        return tokens;
     }
 
     private FamilyReferenceEntryTemplateModel? CreateFamilyReferenceTemplateModel(IGenFamily? family)
@@ -629,22 +793,61 @@ public sealed class ConsoleExportService(
         return string.Equals(candidate.IndRefID ?? candidate.Name, reference, StringComparison.Ordinal);
     }
 
-    private PersonEntryTemplateModel CreatePersonTemplateModel(IGenPerson person, int? ordinal, IReadOnlyList<OFBFamily> allFamilies, string currentFamilyNumber)
+    private PersonEntryTemplateModel CreatePersonTemplateModel(
+        IGenPerson person,
+        int? ordinal,
+        IReadOnlyList<OFBFamily> allFamilies,
+        string currentFamilyNumber,
+        string? familySurnameToAbbreviate = null)
     {
         var reference = person.IndRefID ?? person.Name ?? string.Empty;
         _personIndexAnchorByReference.TryGetValue(reference, out var personIndexAnchor);
-        var birth = person.BirthDate?.ToString();
-        var death = person.DeathDate?.ToString();
-        var vitalEventsGc = string.Join("  ", new[]
+        var birth = (person.BirthDate ?? person.Birth?.Date)?.ToString();
+        var death = (person.DeathDate ?? person.Death?.Date)?.ToString();
+        var vitalEventValues = new (EFactType Event, IGenDate? Date, IGenFact? Fact)[]
         {
-            string.IsNullOrWhiteSpace(birth) ? null : $"* {birth}",
-            string.IsNullOrWhiteSpace(death) ? null : $"+ {death}"
-        }.Where(value => value is not null));
-        var vitalEventsAk = string.Join(", ", new[]
-        {
-            string.IsNullOrWhiteSpace(birth) ? null : $"* {birth}",
-            string.IsNullOrWhiteSpace(death) ? null : $"† {death}"
-        }.Where(value => value is not null));
+            (EFactType.Birth, person.BirthDate ?? person.Birth?.Date, person.Birth),
+            (EFactType.Baptism, person.BaptDate ?? person.Baptism?.Date, person.Baptism),
+            (EFactType.Death, person.DeathDate ?? person.Death?.Date, person.Death),
+            (EFactType.Burial, person.BurialDate ?? person.Burial?.Date, person.Burial)
+        };
+        var vitalEvents = vitalEventValues
+            .Where(item => item.Date is not null)
+            .OrderBy(item => GetEventSortDate(item.Date))
+            .Select(item => $"{GetLegendSymbol(item.Event)} {item.Date}")
+            .ToArray();
+        var vitalEventsGc = string.Join(", ", vitalEvents);
+
+        var vitalEventsAk = string.Join(", ", vitalEvents);
+        var events = person.Facts
+            .Where(fact => fact is not null
+                && fact.Date is not null
+                && fact.eFactType is not (EFactType.Mariage or EFactType.Reference)
+                && (!IsVitalEvent(fact.eFactType)
+                    || ReferenceEquals(fact, vitalEventValues.First(item => item.Event == fact.eFactType).Fact)))
+            .Select(fact => (
+                Event: CreatePersonEventTemplateModel(
+                    fact!,
+                    allFamilies,
+                    IsVitalEvent(fact!.eFactType)
+                        ? vitalEventValues.First(item => item.Event == fact.eFactType).Date?.ToString()
+                        : null),
+                Date: IsVitalEvent(fact!.eFactType)
+                    ? vitalEventValues.First(item => item.Event == fact.eFactType).Date
+                    : fact.Date))
+            .Concat(vitalEventValues
+                .Where(item => item.Date is not null
+                    && !person.Facts.Any(fact => fact is not null
+                        && ReferenceEquals(fact, item.Fact)
+                        && fact.Date is not null))
+                .Select(item => (
+                    Event: item.Fact is null
+                        ? CreatePersonEventTemplateModel(item.Event, item.Date!.ToString())
+                        : CreatePersonEventTemplateModel(item.Fact, allFamilies, item.Date?.ToString()),
+                    Date: item.Date)))
+            .OrderBy(item => GetEventSortDate(item.Date))
+            .Select(item => item.Event)
+            .ToArray();
 
         var parentFamily = CreateFamilyReferenceTemplateModel(person.ParentFamily);
         var childFamilies = parentFamily is null
@@ -662,12 +865,15 @@ public sealed class ConsoleExportService(
 
         return new PersonEntryTemplateModel
         {
-            NameGc = FormatPersonName(person, gcFormat: true),
+            NameGc = FormatPersonName(person, gcFormat: true, familySurnameToAbbreviate),
             NameAk = FormatPersonName(person, gcFormat: false),
+            AkaNames = FormatAlternativeNames(person),
             Anchor = GetPersonAnchor(reference),
             Reference = reference,
+            ReferenceNumber = GetReferenceNumber(person),
+            Events = events,
             IndexLabel = FormatPersonName(person, gcFormat: true),
-            VitalEventsGc = vitalEventsGc.Length == 0 ? string.Empty : "  " + vitalEventsGc,
+            VitalEventsGc = vitalEventsGc.Length == 0 ? string.Empty : ", " + vitalEventsGc,
             VitalEventsAk = vitalEventsAk.Length == 0 ? string.Empty : ", " + vitalEventsAk,
             Birth = birth,
             Death = death,
@@ -694,6 +900,32 @@ public sealed class ConsoleExportService(
             Properties = CreatePropertyTemplateModels(person.Facts)
         };
     }
+
+    private static string FormatAlternativeNames(IGenPerson person)
+    {
+        var primaryName = NormalizeGedcomName(FormatPersonName(person, gcFormat: false));
+        var birthSurname = CanonicalGenealogyAdapter.GetNameVariants(person).BirthSurname;
+        var birthName = NormalizeGedcomName(string.Join(' ', new[] { person.GivenName, birthSurname }
+            .Where(part => !string.IsNullOrWhiteSpace(part))));
+        var aliases = CanonicalGenealogyAdapter.GetNameVariants(person).AliasNames
+            .Concat(CanonicalGenealogyAdapter.GetNameEvents(person)
+                .Where(nameEvent => string.Equals(nameEvent.Type, "AKA", StringComparison.OrdinalIgnoreCase)
+                    && !string.IsNullOrWhiteSpace( nameEvent.Surname )
+                    && !string.Equals(nameEvent.Surname, person.Surname, StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(nameEvent.Surname, birthSurname, StringComparison.OrdinalIgnoreCase))
+                .Select(nameEvent => string.Join(' ', new[] { nameEvent.GivenName, nameEvent.Surname }
+                    .Where(part => !string.IsNullOrWhiteSpace(part)))))
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Select(NormalizeGedcomName)
+            .Where(name => !string.Equals(name, primaryName, StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        return string.Join("; ", aliases);
+    }
+
+    private static string NormalizeGedcomName(string name) =>
+        string.Join(' ', name.Replace("/", " ", StringComparison.Ordinal)
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries));
 
     private static IEnumerable<(string Name, IGenDate? Date, IGenPlace? Place)> GetOccupations(IGenPerson person)
     {
@@ -728,6 +960,71 @@ public sealed class ConsoleExportService(
             ? anchor
             : string.Empty;
 
+    private static string GetReferenceNumber(IGenPerson person) => person.Facts
+        .FirstOrDefault(fact => fact?.eFactType == EFactType.Reference)?.Data ?? string.Empty;
+
+    private PersonEventEntryTemplateModel CreatePersonEventTemplateModel(
+        IGenFact fact,
+        IReadOnlyList<OFBFamily> allFamilies,
+        string? dateOverride = null)
+    {
+        var relatedPerson = fact.Entities
+            .Select(connection => connection?.Entity)
+            .OfType<IGenPerson>()
+            .FirstOrDefault();
+        var relatedFamily = relatedPerson is null
+            ? null
+            : allFamilies.FirstOrDefault(family => IsSamePerson(family.Husband, relatedPerson)
+                || IsSamePerson(family.Wife, relatedPerson)
+                || family.Children.Any(child => IsSamePerson(child, relatedPerson)));
+        var eventType = fact.eFactType;
+        var date = dateOverride ?? fact.Date?.ToString() ?? string.Empty;
+        var symbol = GetLegendSymbol(eventType);
+        var additional = string.IsNullOrWhiteSpace(fact.Data) ? string.Empty : fact.Data.Trim();
+
+        return new PersonEventEntryTemplateModel
+        {
+            Symbol = symbol,
+            Date = date,
+            Place = GetShortPlaceName(fact.Place?.Name),
+            PlaceAnchor = GetPlaceIndexAnchor(fact.Place?.Name),
+            Additional = additional,
+            RelatedPersonName = relatedPerson is null ? null : FormatPersonName(relatedPerson, gcFormat: false),
+            RelatedPersonAnchor = relatedPerson is null
+                ? string.Empty
+                : GetPersonAnchor(relatedPerson.IndRefID ?? relatedPerson.Name),
+            RelatedFamilyNumber = relatedFamily?.GlobalNumber,
+            RelatedFamilyAnchor = relatedFamily is null ? string.Empty : GetFamilyAnchor(relatedFamily.GlobalNumber),
+            IsVital = IsVitalEvent(eventType)
+        };
+    }
+
+    private PersonEventEntryTemplateModel CreatePersonEventTemplateModel(
+        EFactType eventType,
+        string date) => new()
+        {
+            Symbol = GetLegendSymbol(eventType),
+            Date = date,
+            IsVital = IsVitalEvent(eventType)
+        };
+
+    private static bool IsVitalEvent(EFactType eventType) =>
+        eventType is EFactType.Birth or EFactType.Baptism or EFactType.Death or EFactType.Burial;
+
+    private static DateTime GetEventSortDate(IGenDate? date)
+    {
+        if (date is null)
+            return DateTime.MaxValue;
+        if (date.Date1 != default)
+            return date.Date1;
+        if (int.TryParse(date.DateText, NumberStyles.None, CultureInfo.InvariantCulture, out var year)
+            && year is >= 1 and <= 9999)
+            return new DateTime(year, 1, 1);
+        return DateTime.TryParse(date.DateText, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var parsed)
+            ? parsed
+            : DateTime.MaxValue;
+    }
+
     private static string GetShortPlaceName(string? placeName) =>
         string.IsNullOrWhiteSpace(placeName)
             ? string.Empty
@@ -744,6 +1041,8 @@ public sealed class ConsoleExportService(
         var referencesByPerson = new Dictionary<string, (List<FamilyReferenceEntryTemplateModel> Child, List<FamilyReferenceEntryTemplateModel> Parent)>(StringComparer.Ordinal);
         _personReferenceBySortKey.Clear();
         _personIndexAnchorByReference.Clear();
+        _personReferenceByIndexName.Clear();
+        _personIndexAnchorByName.Clear();
 
         foreach ( var family in sortedFamilies )
         {
@@ -766,23 +1065,30 @@ public sealed class ConsoleExportService(
             }
         }
 
-        // Sort alphabetically by full name key
-        entries.Sort( ( a, b ) => string.Compare( a.SortKey, b.SortKey, StringComparison.Ordinal ) );
-        entries = entries.Select(entry => _personReferenceBySortKey.TryGetValue(entry.SortKey, out var personReference)
-            && referencesByPerson.TryGetValue(personReference, out var references)
-            ? new OFBIndexEntry
+        var germanComparer = StringComparer.Create(CultureInfo.GetCultureInfo("de-DE"), ignoreCase: true);
+        entries = entries.OrderBy(entry => entry.Name, germanComparer)
+            .ThenBy(entry => entry.SortKey, germanComparer)
+            .ToList();
+        for (var index = 0; index < entries.Count; index++)
+        {
+            var entry = entries[index];
+            if (!referencesByPerson.TryGetValue(entry.Ref, out var references))
+                continue;
+            entries[index] = new OFBIndexEntry
             {
                 SortKey = entry.SortKey,
                 Name = entry.Name,
                 Ref = entry.Ref,
-                ChildFamilyReferences = references.Child.Select(reference => reference.Number).ToArray(),
-                ParentFamilyReferences = references.Parent.Select(reference => reference.Number).ToArray()
-            }
-            : entry).ToList();
+                LifeSpan = entry.LifeSpan,
+                NameEventDate = entry.NameEventDate,
+                ChildFamilyReferences = references.Child.Select(reference => reference.Number).Distinct(StringComparer.Ordinal).ToArray(),
+                ParentFamilyReferences = references.Parent.Select(reference => reference.Number).Distinct(StringComparer.Ordinal).ToArray()
+            };
+            _personIndexAnchorByName[entry.SortKey] = CreateIndexAnchor("person", index);
+        }
         _personIndexAnchorByReference.Clear();
         for (var index = 0; index < entries.Count; index++)
-            if (_personReferenceBySortKey.TryGetValue(entries[index].SortKey, out var personReference))
-                _personIndexAnchorByReference.TryAdd(personReference, CreateIndexAnchor("person", index));
+            _personIndexAnchorByReference.TryAdd(entries[index].Ref, CreateIndexAnchor("person", index));
         return [.. entries];
     }
 
@@ -814,38 +1120,98 @@ public sealed class ConsoleExportService(
 
         if (seen.Add(personReference))
         {
-            var entry = OFBIndexEntry.FromCombined(
-                person.Surname ?? string.Empty,
-                person.GivenName ?? string.Empty,
-                personReference);
-            entries.Add(entry);
-            _personReferenceBySortKey.TryAdd(entry.SortKey, personReference);
+            var givenName = person.GivenName?.Trim() ?? string.Empty;
+            var lifeSpan = FormatLifeSpan(person.BirthDate ?? person.Birth?.Date, person.DeathDate ?? person.Death?.Date);
+            var birthSurname = CanonicalGenealogyAdapter.GetNameVariants(person).BirthSurname;
+            var nameEvents = CanonicalGenealogyAdapter.GetNameEvents(person);
+            var surnameEvents = nameEvents
+                .Where(nameEvent => !string.IsNullOrWhiteSpace(nameEvent.Surname))
+                .Where(nameEvent => string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(nameEvent.Type, "AKA", StringComparison.OrdinalIgnoreCase))
+                .GroupBy(nameEvent => nameEvent.Surname.Trim(), StringComparer.OrdinalIgnoreCase)
+                .Select(group => group.OrderBy(nameEvent => nameEvent.Date ?? DateTime.MaxValue).First())
+                .OrderBy(nameEvent => nameEvent.Date ?? DateTime.MaxValue)
+                .ToArray();
+            var indexedNames = surnameEvents
+                .Select(nameEvent => (
+                    Surname: nameEvent.Surname.Trim(),
+                    GivenName: string.IsNullOrWhiteSpace(nameEvent.GivenName) ? givenName : nameEvent.GivenName.Trim(),
+                    Date: nameEvent.DateText ?? string.Empty))
+                .ToList();
+            if (!string.IsNullOrWhiteSpace(person.Surname)
+                && !indexedNames.Any(name => string.Equals(name.Surname, person.Surname.Trim(), StringComparison.OrdinalIgnoreCase)))
+                indexedNames.Add((person.Surname.Trim(), givenName, string.Empty));
+            if (!string.IsNullOrWhiteSpace(birthSurname)
+                && !indexedNames.Any(name => string.Equals(name.Surname, birthSurname.Trim(), StringComparison.OrdinalIgnoreCase)))
+                indexedNames.Add((birthSurname.Trim(), givenName, string.Empty));
+            if (indexedNames.Count == 0)
+                indexedNames.Add((string.Empty, givenName, string.Empty));
+            foreach (var indexedName in indexedNames)
+            {
+                var sortKey = string.IsNullOrEmpty(indexedName.Surname)
+                    ? indexedName.GivenName
+                    : string.IsNullOrEmpty(indexedName.GivenName) ? indexedName.Surname : $"{indexedName.Surname}, {indexedName.GivenName}";
+                entries.Add(new OFBIndexEntry
+                {
+                    SortKey = sortKey,
+                    Name = indexedName.Surname,
+                    Ref = personReference,
+                    LifeSpan = lifeSpan,
+                    NameEventDate = indexedName.Date
+                });
+                _personReferenceByIndexName.TryAdd(sortKey, personReference);
+            }
         }
     }
+
+    private static string FormatLifeSpan(IGenDate? birthDate, IGenDate? deathDate)
+    {
+        static string? GetYear(IGenDate? date) => date?.Date1 is DateTime value && value != default
+            ? value.Year.ToString(CultureInfo.InvariantCulture)
+            : null;
+        var birthYear = GetYear(birthDate);
+        var deathYear = GetYear(deathDate);
+        return birthYear is null && deathYear is null ? string.Empty : $"{birthYear ?? "?"}–{deathYear ?? "?"}";
+    }
+
+    private string GetLegendSymbol(EFactType eventType) => _legendEntries
+        .FirstOrDefault(entry => entry.Event == eventType)?.Symbol ?? string.Empty;
 
     /// <summary>
     /// Generates alphabetical occupation index with person/family references.
     /// </summary>
     private async Task<OFBIndexEntry[]> GenerateOccupationIndexAsync( IReadOnlyList<OFBFamily> sortedFamilies )
     {
-        var entries = new List<OFBIndexEntry>();
-        var seen = new HashSet<string>( StringComparer.OrdinalIgnoreCase);
+        var referencesByOccupation = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
 
         foreach ( var family in sortedFamilies )
         {
             foreach ( var person in new[] { family.Husband, family.Wife }.Where( p => p != null ) )
                 foreach (var occupation in GetOccupations(person!))
-                    if (seen.Add(occupation.Name))
-                        entries.Add(OFBIndexEntry.FromSingle(occupation.Name, $"Fam.{family.GlobalNumber}"));
+                    AddReference(occupation.Name, family.GlobalNumber);
 
             foreach ( var child in family.Children )
                 foreach (var occupation in GetOccupations(child))
-                    if (seen.Add(occupation.Name))
-                        entries.Add(OFBIndexEntry.FromSingle(occupation.Name, $"Fam.{family.GlobalNumber}K"));
+                    AddReference(occupation.Name, family.GlobalNumber);
         }
 
-        entries.Sort( ( a, b ) => string.Compare( a.SortKey, b.SortKey, StringComparison.Ordinal ) );
-        return [.. entries];
+        return referencesByOccupation
+            .OrderBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(pair => new OFBIndexEntry
+            {
+                SortKey = pair.Key,
+                Name = pair.Key,
+                Ref = pair.Value.First(),
+                FamilyReferences = pair.Value.OrderBy(number => number, StringComparer.Ordinal).ToArray()
+            })
+            .ToArray();
+
+        void AddReference(string occupation, string familyNumber)
+        {
+            if (!referencesByOccupation.TryGetValue(occupation, out var references))
+                referencesByOccupation[occupation] = references = new HashSet<string>(StringComparer.Ordinal);
+            references.Add(familyNumber);
+        }
     }
 
     /// <summary>
@@ -854,19 +1220,29 @@ public sealed class ConsoleExportService(
     /// </summary>
     private async Task<OFBIndexEntry[]> GeneratePropertyIndexAsync( IReadOnlyList<OFBFamily> sortedFamilies )
     {
-        var entries = new List<OFBIndexEntry>();
-        var propertyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var referencesByProperty = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
 
         foreach ( var family in sortedFamilies )
         {
             var properties = ExtractPropertiesFromFamily( family );
             foreach ( var prop in properties )
-                if (propertyNames.Add(prop))
-                    entries.Add( OFBIndexEntry.FromSingle( prop, $"Fam.{family.GlobalNumber}" ));
+            {
+                if (!referencesByProperty.TryGetValue(prop, out var references))
+                    referencesByProperty[prop] = references = new HashSet<string>(StringComparer.Ordinal);
+                references.Add(family.GlobalNumber);
+            }
         }
 
-        entries.Sort( ( a, b ) => string.Compare( a.SortKey, b.SortKey, StringComparison.Ordinal ) );
-        return [.. entries];
+        return referencesByProperty
+            .OrderBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(pair => new OFBIndexEntry
+            {
+                SortKey = pair.Key,
+                Name = pair.Key,
+                Ref = pair.Value.First(),
+                FamilyReferences = pair.Value.OrderBy(number => number, StringComparer.Ordinal).ToArray()
+            })
+            .ToArray();
     }
 
     /// <summary>
@@ -915,37 +1291,72 @@ public sealed class ConsoleExportService(
     /// </summary>
     private async Task<OFBPlaceHierarchyNode[]> GeneratePlaceHierarchyIndexAsync( IReadOnlyList<OFBFamily> families )
     {
-        // Collect unique places and build tree structure
-        var placeMap = new Dictionary<string, OFBPlaceHierarchyNode>( StringComparer.Ordinal );
+        var rootNodes = new Dictionary<string, OFBPlaceHierarchyNode>(StringComparer.OrdinalIgnoreCase);
 
         foreach ( var family in families )
         {
-            AddPlace(family.MarriagePlace);
+            AddPlace(family.MarriagePlace, family.GlobalNumber);
             foreach (var fact in family.Facts.OfType<IGenFact>())
-                AddPlace(fact.Place);
+                AddPlace(fact.Place, family.GlobalNumber);
 
             foreach (var person in new[] { family.Husband, family.Wife }.Where(person => person is not null).Cast<IGenPerson>().Concat(family.Children))
             {
-                AddPlace(person.BirthPlace);
-                AddPlace(person.DeathPlace);
-                AddPlace(person.BurialPlace);
-                AddPlace(person.Residence);
-                AddPlace(person.OccuPlace);
+                AddPlace(person.BirthPlace, family.GlobalNumber);
+                AddPlace(person.DeathPlace, family.GlobalNumber);
+                AddPlace(person.BurialPlace, family.GlobalNumber);
+                AddPlace(person.Residence, family.GlobalNumber);
+                AddPlace(person.OccuPlace, family.GlobalNumber);
                 foreach (var fact in person.Facts.OfType<IGenFact>())
-                    AddPlace(fact.Place);
+                    AddPlace(fact.Place, family.GlobalNumber);
             }
         }
 
-        // TODO: Build parent-child relationships from GEDCOM place hierarchy data
-        return [.. placeMap.Values];
+        return SortPlaceHierarchyNodes(rootNodes.Values);
 
-        void AddPlace(IGenPlace? place)
+        void AddPlace(IGenPlace? place, string familyNumber)
         {
-            if (string.IsNullOrWhiteSpace(place?.GOV_ID) || string.IsNullOrWhiteSpace(place.Name))
+            if (string.IsNullOrWhiteSpace(place?.Name))
                 return;
-            if (!placeMap.ContainsKey(place.GOV_ID))
-                placeMap[place.GOV_ID] = new OFBPlaceHierarchyNode(place.Name, place.GOV_ID);
+
+            var components = place.Name.Split(new[] { ',' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            Array.Reverse(components);
+            components = components.Take(5).ToArray();
+            if (components.Length == 0)
+                return;
+
+            OFBPlaceHierarchyNode? currentNode = null;
+            var parentKey = string.Empty;
+            foreach (var component in components)
+            {
+                var nodeKey = $"{parentKey}/{component}";
+                var siblings = currentNode is null
+                    ? rootNodes
+                    : currentNode.Children.ToDictionary(node => node.Name, StringComparer.OrdinalIgnoreCase);
+                if (!siblings.TryGetValue(component, out var nextNode))
+                {
+                    nextNode = new OFBPlaceHierarchyNode(component, nodeKey);
+                    if (currentNode is null)
+                        rootNodes.Add(component, nextNode);
+                    else
+                        currentNode.Children = currentNode.Children.Append(nextNode).ToArray();
+                }
+                currentNode = nextNode;
+
+                if (!currentNode.FamilyReferences.Contains(familyNumber, StringComparer.Ordinal))
+                    currentNode.FamilyReferences = currentNode.FamilyReferences.Concat([familyNumber]).ToArray();
+
+                parentKey = nodeKey;
+            }
         }
+    }
+
+    private static OFBPlaceHierarchyNode[] SortPlaceHierarchyNodes(IEnumerable<OFBPlaceHierarchyNode> nodes)
+    {
+        var comparer = StringComparer.Create(CultureInfo.GetCultureInfo("de-DE"), true);
+        var sortedNodes = nodes.OrderBy(node => node.Name, comparer).ToArray();
+        foreach (var node in sortedNodes)
+            node.Children = SortPlaceHierarchyNodes(node.Children);
+        return sortedNodes;
     }
 
     /// <summary>
@@ -954,20 +1365,17 @@ public sealed class ConsoleExportService(
     /// </summary>
     private async Task<OFBIndexEntry[]> GeneratePlaceAlphabeticalIndexAsync( IReadOnlyList<OFBFamily> families )
     {
-        var seen = new HashSet<string>( StringComparer.Ordinal );
-        var entries = new List<OFBIndexEntry>();
+        var referencesByPlace = new Dictionary<string, (string DisplayName, HashSet<string> References)>(StringComparer.OrdinalIgnoreCase);
 
         foreach ( var family in families )
         {
-            AddPlace(family.MarriagePlace, $"Fam.{family.GlobalNumber}");
+            AddPlace(family.MarriagePlace, family.GlobalNumber);
             foreach (var fact in family.Facts.OfType<IGenFact>())
-                AddPlace(fact.Place, $"Fam.{family.GlobalNumber}");
+                AddPlace(fact.Place, family.GlobalNumber);
 
             foreach (var person in new[] { family.Husband, family.Wife }.Where(person => person is not null).Cast<IGenPerson>().Concat(family.Children))
             {
-                var reference = person == family.Husband || person == family.Wife
-                    ? $"Fam.{family.GlobalNumber}"
-                    : $"Fam.{family.GlobalNumber}K";
+                var reference = family.GlobalNumber;
                 AddPlace(person.BirthPlace, reference);
                 AddPlace(person.DeathPlace, reference);
                 AddPlace(person.BurialPlace, reference);
@@ -978,13 +1386,24 @@ public sealed class ConsoleExportService(
             }
         }
 
-        entries.Sort( ( a, b ) => string.Compare( a.SortKey, b.SortKey, StringComparison.Ordinal ) );
-        return [.. entries];
+        return referencesByPlace
+            .OrderBy(pair => pair.Key, StringComparer.Create(CultureInfo.GetCultureInfo("de-DE"), true))
+            .Select(pair => new OFBIndexEntry
+            {
+                SortKey = pair.Value.DisplayName,
+                Name = pair.Value.DisplayName,
+                Ref = pair.Value.References.First(),
+                FamilyReferences = pair.Value.References.OrderBy(number => number, StringComparer.Ordinal).ToArray()
+            })
+            .ToArray();
 
         void AddPlace(IGenPlace? place, string reference)
         {
-            if (!string.IsNullOrWhiteSpace(place?.Name) && seen.Add(place.Name))
-                entries.Add(OFBIndexEntry.FromSingle(place.Name, reference));
+            if (string.IsNullOrWhiteSpace(place?.Name))
+                return;
+            if (!referencesByPlace.TryGetValue(place.Name.Trim(), out var placeData))
+                referencesByPlace[place.Name.Trim()] = placeData = (place.Name.Trim(), new HashSet<string>(StringComparer.Ordinal));
+            placeData.References.Add(reference);
         }
     }
 }

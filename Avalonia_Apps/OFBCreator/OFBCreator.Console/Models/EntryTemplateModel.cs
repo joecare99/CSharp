@@ -40,9 +40,15 @@ public sealed class PersonEntryTemplateModel
 
     public required string NameAk { get; init; }
 
+    public string AkaNames { get; init; } = string.Empty;
+
     public required string Anchor { get; init; }
 
     public required string Reference { get; init; }
+
+    public string? ReferenceNumber { get; init; }
+
+    public IReadOnlyList<PersonEventEntryTemplateModel> Events { get; init; } = Array.Empty<PersonEventEntryTemplateModel>();
 
     public string IndexLabel { get; init; } = string.Empty;
 
@@ -77,6 +83,36 @@ public sealed class PersonEntryTemplateModel
     public IReadOnlyList<FamilyReferenceTokenModel> ChildFamilyTokens { get; init; } = Array.Empty<FamilyReferenceTokenModel>();
 
     public IReadOnlyList<FamilyReferenceTokenModel> ParentFamilyTokens { get; init; } = Array.Empty<FamilyReferenceTokenModel>();
+}
+
+/// <summary>
+/// A dated event associated with a person and optional related person/family links.
+/// </summary>
+public sealed class PersonEventEntryTemplateModel
+{
+    public required string Symbol { get; init; }
+
+    public required string Date { get; init; }
+
+    public string Place { get; init; } = string.Empty;
+
+    public string PlaceAnchor { get; init; } = string.Empty;
+
+    public string Additional { get; init; } = string.Empty;
+
+    public string? RelatedPersonName { get; init; }
+
+    public string RelatedPersonAnchor { get; init; } = string.Empty;
+
+    public string? RelatedFamilyNumber { get; init; }
+
+    public string RelatedFamilyAnchor { get; init; } = string.Empty;
+
+    public bool IsVital { get; init; }
+
+    public bool HasRelatedPerson => !string.IsNullOrWhiteSpace(RelatedPersonName);
+
+    public bool HasRelatedFamily => !string.IsNullOrWhiteSpace(RelatedFamilyNumber);
 }
 
 /// <summary>

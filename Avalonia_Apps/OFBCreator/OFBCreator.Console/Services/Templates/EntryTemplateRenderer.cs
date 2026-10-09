@@ -31,6 +31,7 @@ public sealed class EntryTemplateRenderer
         {
             ["family"] = family
         });
+        EnsurePersonNavigation(document, family.Parents.Concat(family.Children));
     }
 
     public void RenderIndividual(
@@ -120,10 +121,14 @@ public sealed class EntryTemplateRenderer
                     break;
                 case "paragraph":
                     var paragraph = document.AddParagraph(block.Role ?? "family-data");
+                    if (block.Indent.HasValue || block.HangingIndent.HasValue)
+                    {
+                        var indentationBefore = block.Indent ?? block.HangingIndent.GetValueOrDefault();
+                        paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, indentationBefore));
+                    }
                     if (block.HangingIndent is int hangingIndent)
                     {
-        paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, hangingIndent));
-        paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, hangingIndent));
+                        paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, hangingIndent));
                     }
                     if (block.Anchor is not null)
                     {
@@ -137,7 +142,7 @@ public sealed class EntryTemplateRenderer
                     RenderInline(document, template, paragraph, block.Content, variables, includeStack);
                     break;
                 case "if":
-                    if (IsTruthy(Resolve(block.Condition!, variables)))
+                    if (IsConditionMet(block.Condition!, variables))
                         RenderBlocks(document, template, block.Then, variables, includeStack);
                     break;
                 case "forEach":
@@ -165,12 +170,15 @@ public sealed class EntryTemplateRenderer
             switch (block.Kind)
             {
                 case "text":
+                    AddLineBreakIfRequested(paragraph, block);
                     AppendText(paragraph, block.Value!, block);
                     break;
                 case "field":
+                    AddLineBreakIfRequested(paragraph, block);
                     AppendText(paragraph, Format(Resolve(block.Path!, variables), block.Formatter), block);
                     break;
                 case "link":
+                    AddLineBreakIfRequested(paragraph, block);
                     var target = GetString(Resolve(block.Target!, variables));
                     var text = RenderInlineToString(template, block.Content, variables, includeStack);
                     if (string.IsNullOrWhiteSpace(target))
@@ -183,7 +191,7 @@ public sealed class EntryTemplateRenderer
                     }
                     break;
                 case "if":
-                    if (IsTruthy(Resolve(block.Condition!, variables)))
+                    if (IsConditionMet(block.Condition!, variables))
                         RenderInline(document, template, paragraph, block.Then, variables, includeStack);
                     break;
                 case "forEach":
@@ -196,6 +204,12 @@ public sealed class EntryTemplateRenderer
                     throw new InvalidDataException($"Block '{block.Kind}' is not valid inside paragraph content.");
             }
         }
+    }
+
+    private static void AddLineBreakIfRequested(IDocParagraph paragraph, EntryTemplateBlock block)
+    {
+        if (block.LineBreakBefore)
+            paragraph.AddLineBreak();
     }
 
     private static string RenderInlineToString(
@@ -216,7 +230,7 @@ public sealed class EntryTemplateRenderer
                     values.Add(Format(Resolve(block.Path!, variables), block.Formatter));
                     break;
                 case "if":
-                    if (IsTruthy(Resolve(block.Condition!, variables)))
+                    if (IsConditionMet(block.Condition!, variables))
                         values.Add(RenderInlineToString(template, block.Then, variables, includeStack));
                     break;
                 case "forEach":
@@ -349,12 +363,16 @@ public sealed class EntryTemplateRenderer
 
         for (var index = 1; index < parts.Length; index++)
         {
-            if (string.Equals(parts[index], "any", StringComparison.Ordinal))
+            if (parts[index] is "any" or "one")
             {
                 value = value switch
                 {
-                    ICollection collection => collection.Count > 0,
-                    IEnumerable enumerable when value is not string => enumerable.Cast<object?>().Any(),
+                    ICollection collection when parts[index] == "any" => collection.Count > 0,
+                    ICollection collection when parts[index] == "one" => collection.Count == 1,
+                    IEnumerable enumerable when value is not string && parts[index] == "any"
+                        => enumerable.Cast<object?>().Any(),
+                    IEnumerable enumerable when value is not string && parts[index] == "one"
+                        => enumerable.Cast<object?>().Take(2).Count() == 1,
                     _ => throw new InvalidDataException($"Template value '{path}' is not available in this rendering context.")
                 };
                 continue;
@@ -375,8 +393,11 @@ public sealed class EntryTemplateRenderer
                 (FamilyEntryTemplateModel family, "children") => family.Children,
                 (PersonEntryTemplateModel person, "nameGc") => person.NameGc,
                 (PersonEntryTemplateModel person, "nameAk") => person.NameAk,
+                (PersonEntryTemplateModel person, "akaNames") => person.AkaNames,
                 (PersonEntryTemplateModel person, "anchor") => person.Anchor,
                 (PersonEntryTemplateModel person, "reference") => person.Reference,
+                (PersonEntryTemplateModel person, "referenceNumber") => person.ReferenceNumber,
+                (PersonEntryTemplateModel person, "events") => person.Events,
                 (PersonEntryTemplateModel person, "indexLabel") => person.IndexLabel,
                 (PersonEntryTemplateModel person, "vitalEventsGc") => person.VitalEventsGc,
                 (PersonEntryTemplateModel person, "additionalLifeDataGc") => person.AdditionalLifeDataGc,
@@ -408,6 +429,18 @@ public sealed class EntryTemplateRenderer
                 (PropertyEntryTemplateModel property, "place") => property.Place,
                 (PropertyEntryTemplateModel property, "placeAnchor") => property.PlaceAnchor,
                 (PropertyEntryTemplateModel property, "indexAnchor") => property.IndexAnchor,
+                (PersonEventEntryTemplateModel personEvent, "symbol") => personEvent.Symbol,
+                (PersonEventEntryTemplateModel personEvent, "isVital") => personEvent.IsVital,
+                (PersonEventEntryTemplateModel personEvent, "relatedPerson") => personEvent.HasRelatedPerson,
+                (PersonEventEntryTemplateModel personEvent, "relatedFamily") => personEvent.HasRelatedFamily,
+                (PersonEventEntryTemplateModel personEvent, "date") => personEvent.Date,
+                (PersonEventEntryTemplateModel personEvent, "place") => personEvent.Place,
+                (PersonEventEntryTemplateModel personEvent, "placeAnchor") => personEvent.PlaceAnchor,
+                (PersonEventEntryTemplateModel personEvent, "additional") => personEvent.Additional,
+                (PersonEventEntryTemplateModel personEvent, "relatedPersonName") => personEvent.RelatedPersonName,
+                (PersonEventEntryTemplateModel personEvent, "relatedPersonAnchor") => personEvent.RelatedPersonAnchor,
+                (PersonEventEntryTemplateModel personEvent, "relatedFamilyNumber") => personEvent.RelatedFamilyNumber,
+                (PersonEventEntryTemplateModel personEvent, "relatedFamilyAnchor") => personEvent.RelatedFamilyAnchor,
                 _ => throw new InvalidDataException($"Template value '{path}' is not available in this rendering context.")
             };
         }
@@ -450,6 +483,14 @@ public sealed class EntryTemplateRenderer
         null => false,
         _ => true
     };
+
+    private static bool IsConditionMet(string condition, IReadOnlyDictionary<string, object?> variables)
+    {
+        var negate = condition.StartsWith('!');
+        var path = negate ? condition[1..] : condition;
+        var value = IsTruthy(Resolve(path, variables));
+        return negate ? !value : value;
+    }
 
     private static string GetString(object? value) => value switch
     {

@@ -2,7 +2,119 @@
   "schemaVersion": 1,
   "id": "gc",
   "entryRoot": "Family",
+  "legend": [
+    { "symbol": "*", "meaning": "geboren", "event": "Birth" },
+    { "symbol": "≈", "meaning": "getauft", "event": "Baptism" },
+    { "symbol": "†", "meaning": "gestorben", "event": "Death" },
+    { "symbol": "∩", "meaning": "begraben", "event": "Burial" },
+    { "symbol": "⚭", "meaning": "geheiratet", "event": "Mariage" },
+    { "symbol": "o-o", "meaning": "uneheliche Verbindung", "event": "Partner" },
+    { "symbol": "%", "meaning": "geschieden", "event": "Divorce" },
+    { "symbol": "Kdr.", "meaning": "Kinder", "event": null }
+  ],
   "fragments": {
+    "personEvent": [
+      { "kind": "if", "condition": "!personEvent.isVital", "then": [
+        { "kind": "field", "path": "personEvent.symbol", "lineBreakBefore": true },
+        { "kind": "text", "value": " " }
+      ] },
+      { "kind": "if", "condition": "personEvent.isVital", "then": [
+        { "kind": "field", "path": "personEvent.symbol" },
+        { "kind": "text", "value": " " },
+        { "kind": "field", "path": "personEvent.date" }
+      ] },
+      {
+        "kind": "if",
+        "condition": "!personEvent.isVital",
+        "then": [
+          {
+            "kind": "field",
+            "path": "personEvent.date"
+          },
+          {
+            "kind": "text",
+            "value": ": "
+          },
+          {
+            "kind": "field",
+            "path": "personEvent.symbol"
+          }
+        ]
+      },
+      { "kind": "if", "condition": "personEvent.place", "then": [
+        { "kind": "text", "value": " in " },
+        { "kind": "link", "target": "personEvent.placeAnchor", "content": [
+          { "kind": "field", "path": "personEvent.place" }
+        ] }
+      ] },
+      { "kind": "if", "condition": "personEvent.additional", "then": [
+        { "kind": "text", "value": " " },
+        { "kind": "field", "path": "personEvent.additional" }
+      ] },
+      { "kind": "if", "condition": "personEvent.relatedPerson", "then": [
+        { "kind": "text", "value": " " },
+        { "kind": "link", "target": "personEvent.relatedPersonAnchor", "content": [
+          { "kind": "field", "path": "personEvent.relatedPersonName" }
+        ] }
+      ] },
+      { "kind": "if", "condition": "personEvent.relatedFamily", "then": [
+        { "kind": "text", "value": " [" },
+        { "kind": "link", "target": "personEvent.relatedFamilyAnchor", "content": [
+          { "kind": "field", "path": "personEvent.relatedFamilyNumber" }
+        ] },
+        { "kind": "text", "value": "]" }
+      ] },
+      { "kind": "text", "value": ", " }
+    ],
+    "personEvents": [
+      {
+        "kind": "if",
+        "condition": "person.events.any",
+        "then": [
+          { "kind": "text", "value": ", " },
+          {
+            "kind": "forEach",
+            "items": "person.events",
+            "as": "personEvent",
+            "template": [
+              {
+                "kind": "if",
+                "condition": "personEvent.isVital",
+                "then": [
+                  {
+                    "kind": "include",
+                    "fragment": "personEvent"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "personVitalEvents": [
+      {
+        "kind": "if",
+        "condition": "person.vitalEventsGc",
+        "then": [
+          { "kind": "text", "value": ", " },
+          {
+            "kind": "forEach",
+            "items": "person.events",
+            "as": "personEvent",
+            "template": [
+              {
+                "kind": "if",
+                "condition": "personEvent.isVital",
+                "then": [
+                  { "kind": "include", "fragment": "personEvent" }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
     "personDetails": [
       {
         "kind": "forEach",
@@ -38,8 +150,11 @@
         "content": [
           { "kind": "text", "value": "•\t" },
           { "kind": "link", "target": "person.indexAnchor", "bold": true, "content": [{ "kind": "field", "path": "person.nameGc", "bold": true }] },
-          { "kind": "field", "path": "person.vitalEventsGc" },
-          { "kind": "field", "path": "person.additionalLifeDataGc" },
+          { "kind": "if", "condition": "person.akaNames", "then": [
+            { "kind": "text", "value": " (" },
+            { "kind": "field", "path": "person.akaNames" },
+            { "kind": "text", "value": ")" }
+          ] },
           {
             "kind": "if",
             "condition": "person.parentFamily",
@@ -53,17 +168,44 @@
             "kind": "if",
             "condition": "person.parentFamilyTokens.any",
             "then": [
-              { "kind": "text", "value": " [" },
-              { "kind": "forEach", "items": "person.parentFamilyTokens", "as": "familyToken", "template": [
-                { "kind": "link", "target": "familyToken.anchor", "content": [{ "kind": "field", "path": "familyToken.text" }] }
-              ] },
-              { "kind": "text", "value": "]" }
+              {
+                "kind": "text",
+                "value": " ["
+              },
+              {
+                "kind": "forEach",
+                "items": "person.parentFamilyTokens",
+                "as": "familyToken",
+                "template": [
+                  {
+                    "kind": "link",
+                    "target": "familyToken.anchor",
+                    "content": [
+                      {
+                        "kind": "field",
+                        "path": "familyToken.text"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "text",
+                "value": "]"
+              }
             ]
           },
+          { "kind": "include", "fragment": "personEvents" },
+          { "kind": "field", "path": "person.additionalLifeDataGc" },
           { "kind": "include", "fragment": "personDetails" },
-          { "kind": "text", "value": " <PN=" },
-          { "kind": "field", "path": "person.reference" },
-          { "kind": "text", "value": ">" }
+              { "kind": "if", "condition": "person.referenceNumber", "then": [
+                {
+                  "kind": "text",
+                  "value": "PN=",
+                  "lineBreakBefore": true
+                },
+                { "kind": "field", "path": "person.referenceNumber" }
+              ] }
         ]
       }
     ]
@@ -74,16 +216,42 @@
       "role": "family-data",
       "anchor": "family.anchor",
       "content": [
-        { "kind": "field", "path": "family.number", "bold": true },
-        { "kind": "text", "value": " " },
-        { "kind": "field", "path": "family.marriageMark" },
-        { "kind": "field", "path": "family.marriageDate", "formatter": "dateSuffix" },
+        {
+          "kind": "field",
+          "path": "family.number",
+          "bold": true
+        },
+        {
+          "kind": "text",
+          "value": " "
+        },
+        {
+          "kind": "field",
+          "path": "family.marriageMark"
+        },
+        {
+          "kind": "field",
+          "path": "family.marriageDate",
+          "formatter": "dateSuffix"
+        },
         {
           "kind": "if",
           "condition": "family.marriagePlaceShort",
           "then": [
-            { "kind": "text", "value": " in " },
-            { "kind": "link", "target": "family.marriagePlaceAnchor", "content": [{ "kind": "field", "path": "family.marriagePlaceShort" }] }
+            {
+              "kind": "text",
+              "value": " in "
+            },
+            {
+              "kind": "link",
+              "target": "family.marriagePlaceAnchor",
+              "content": [
+                {
+                  "kind": "field",
+                  "path": "family.marriagePlaceShort"
+                }
+              ]
+            }
           ]
         },
         {
@@ -91,9 +259,24 @@
           "items": "family.properties",
           "as": "property",
           "template": [
-            { "kind": "text", "value": " [" },
-            { "kind": "link", "target": "property.indexAnchor", "content": [{ "kind": "field", "path": "property.name" }] },
-            { "kind": "text", "value": "]" }
+            {
+              "kind": "text",
+              "value": " ["
+            },
+            {
+              "kind": "link",
+              "target": "property.indexAnchor",
+              "content": [
+                {
+                  "kind": "field",
+                  "path": "property.name"
+                }
+              ]
+            },
+            {
+              "kind": "text",
+              "value": "]"
+            }
           ]
         }
       ]
@@ -102,37 +285,121 @@
       "kind": "forEach",
       "items": "family.parents",
       "as": "person",
-      "template": [{ "kind": "include", "fragment": "parent" }]
-    },
-    {
-      "kind": "forEach",
-      "items": "family.children",
-      "as": "person",
       "template": [
         {
+          "kind": "include",
+          "fragment": "parent"
+        }
+      ]
+    },
+    {
+      "kind": "if",
+      "condition": "family.children.any",
+      "then": [
+        {
           "kind": "paragraph",
-          "role": "child",
-          "anchor": "person.anchor",
+          "role": "children-header",
           "hangingIndent": 18,
           "content": [
-            { "kind": "text", "value": "- " },
-            { "kind": "link", "target": "person.indexAnchor", "bold": true, "content": [{ "kind": "field", "path": "person.nameGc", "bold": true }] },
-            { "kind": "field", "path": "person.vitalEventsGc" },
-            { "kind": "field", "path": "person.additionalLifeDataGc" },
+            { "kind": "text", "value": "•\t" },
             {
               "kind": "if",
-              "condition": "person.parentFamilyTokens.any",
-              "then": [
-                { "kind": "text", "value": " [" },
-                { "kind": "forEach", "items": "person.parentFamilyTokens", "as": "familyToken", "template": [
-                  { "kind": "link", "target": "familyToken.anchor", "content": [{ "kind": "field", "path": "familyToken.text" }] }
-                ] },
-                { "kind": "text", "value": "]" }
-              ]
+              "condition": "family.children.one",
+              "then": [{ "kind": "text", "value": "Kind:" }]
             },
-            { "kind": "field", "path": "person.birth", "formatter": "dateSuffix" },
-            { "kind": "link", "target": "person.indexAnchor", "content": [{ "kind": "text", "value": " [Index]" }] },
-            { "kind": "include", "fragment": "personDetails" }
+            {
+              "kind": "if",
+              "condition": "!family.children.one",
+              "then": [{ "kind": "text", "value": "Kinder:" }]
+            }
+          ]
+        },
+        {
+          "kind": "forEach",
+          "items": "family.children",
+          "as": "person",
+          "template": [
+            {
+              "kind": "paragraph",
+              "role": "child",
+              "anchor": "person.anchor",
+              "hangingIndent": 18,
+              "indent": 18,
+              "content": [
+                {
+                  "kind": "field",
+                  "path": "person.ordinal",
+                  "formatter": "ordinal"
+                },
+                {
+                  "kind": "text",
+                  "value": " "
+                },
+                {
+                  "kind": "link",
+                  "target": "person.indexAnchor",
+                  "bold": true,
+                  "content": [
+                    {
+                      "kind": "field",
+                      "path": "person.nameGc",
+                      "bold": true
+                    }
+                  ]
+                },
+                    {
+                      "kind": "if",
+                      "condition": "person.parentFamilyTokens.any",
+                      "then": [
+                        {
+                          "kind": "include",
+                          "fragment": "personVitalEvents"
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "if",
+                      "condition": "!person.parentFamilyTokens.any",
+                      "then": [
+                        {
+                          "kind": "include",
+                          "fragment": "personEvents"
+                        }
+                      ]
+                    },
+                {
+                  "kind": "if",
+                  "condition": "person.parentFamilyTokens.any",
+                  "then": [
+                    {
+                      "kind": "text",
+                      "value": " ["
+                    },
+                    {
+                      "kind": "forEach",
+                      "items": "person.parentFamilyTokens",
+                      "as": "familyToken",
+                      "template": [
+                        {
+                          "kind": "link",
+                          "target": "familyToken.anchor",
+                          "content": [
+                            {
+                              "kind": "field",
+                              "path": "familyToken.text"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "text",
+                      "value": "]"
+                    }
+                  ]
+                }
+              ]
+            }
           ]
         }
       ]

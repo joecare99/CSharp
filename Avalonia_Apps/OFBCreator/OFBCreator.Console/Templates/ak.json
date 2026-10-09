@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "id": "ak",
   "entryRoot": "Family",
+  "legend": [
+    { "symbol": "*", "meaning": "geboren", "event": "Birth" },
+    { "symbol": "~", "meaning": "getauft", "event": "Baptism" },
+    { "symbol": "†", "meaning": "gestorben", "event": "Death" },
+    { "symbol": "=", "meaning": "begraben", "event": "Burial" },
+    { "symbol": "⚭", "meaning": "geheiratet", "event": "Mariage" },
+    { "symbol": "o-o", "meaning": "uneheliche Verbindung", "event": "Partner" },
+    { "symbol": "o/o", "meaning": "geschieden", "event": "Divorce" },
+    { "symbol": "Kdr.", "meaning": "Kinder", "event": null }
+  ],
   "fragments": {
     "occupations": [
       {
@@ -31,12 +41,53 @@
         "anchor": "person.anchor",
         "content": [
           { "kind": "field", "path": "person.nameAk" },
-          { "kind": "field", "path": "person.vitalEventsAk" },
+          { "kind": "if", "condition": "person.akaNames", "then": [
+            { "kind": "text", "value": " (" },
+            { "kind": "field", "path": "person.akaNames" },
+            { "kind": "text", "value": ")" }
+          ] },
+          { "kind": "forEach", "items": "person.events", "as": "personEvent", "template": [
+            { "kind": "if", "condition": "!personEvent.isVital", "then": [
+              { "kind": "field", "path": "personEvent.symbol", "lineBreakBefore": true },
+              { "kind": "text", "value": " " }
+            ] },
+            { "kind": "if", "condition": "personEvent.isVital", "then": [
+              { "kind": "field", "path": "personEvent.symbol" },
+              { "kind": "text", "value": " " }
+            ] },
+            { "kind": "field", "path": "personEvent.date" },
+            { "kind": "if", "condition": "personEvent.place", "then": [
+              { "kind": "text", "value": " in " },
+              { "kind": "field", "path": "personEvent.place" }
+            ] },
+            { "kind": "if", "condition": "personEvent.additional", "then": [
+              { "kind": "text", "value": " " },
+              { "kind": "field", "path": "personEvent.additional" }
+            ] },
+            { "kind": "if", "condition": "personEvent.relatedPerson", "then": [
+              { "kind": "text", "value": " " },
+              { "kind": "link", "target": "personEvent.relatedPersonAnchor", "content": [
+                { "kind": "field", "path": "personEvent.relatedPersonName" }
+              ] }
+            ] },
+            { "kind": "if", "condition": "personEvent.relatedFamily", "then": [
+              { "kind": "text", "value": " [" },
+              { "kind": "link", "target": "personEvent.relatedFamilyAnchor", "content": [
+                { "kind": "field", "path": "personEvent.relatedFamilyNumber" }
+              ] },
+              { "kind": "text", "value": "]" }
+            ] }
+          ] },
           {
             "kind": "link",
             "target": "person.indexAnchor",
             "content": [{ "kind": "text", "value": " [Index]" }]
-          }
+          },
+          { "kind": "if", "condition": "person.referenceNumber", "then": [
+            { "kind": "text", "value": " <PN=" },
+            { "kind": "field", "path": "person.referenceNumber" },
+            { "kind": "text", "value": ">" }
+          ] }
         ]
       },
       { "kind": "include", "fragment": "occupations" }
@@ -64,7 +115,10 @@
         {
           "kind": "paragraph",
           "role": "children-header",
-          "content": [{ "kind": "field", "path": "family.children", "formatter": "childCount" }]
+          "content": [
+            { "kind": "if", "condition": "family.children.one", "then": [{ "kind": "text", "value": "Kind:" }] },
+            { "kind": "if", "condition": "!family.children.one", "then": [{ "kind": "text", "value": "Kinder:" }] }
+          ]
         },
         {
           "kind": "forEach",

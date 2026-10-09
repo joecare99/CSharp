@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using GenInterfaces.Data;
 
 namespace OFBCreator.Console.Services.Templates;
 
@@ -15,12 +16,24 @@ public sealed class EntryTemplateDefinition
 
     public string EntryRoot { get; set; } = string.Empty;
 
+    public List<EntryTemplateLegendEntry> Legend { get; set; } = [];
+
     public Dictionary<string, List<EntryTemplateBlock>> Fragments { get; set; } = new();
 
     public List<EntryTemplateBlock> Blocks { get; set; } = new();
 
     [JsonExtensionData]
     public Dictionary<string, JsonElement>? ExtraProperties { get; set; }
+}
+
+/// <summary>One symbol and its explanatory text in the book legend.</summary>
+public sealed class EntryTemplateLegendEntry
+{
+    public string Symbol { get; set; } = string.Empty;
+
+    public string Meaning { get; set; } = string.Empty;
+
+    public EFactType? Event { get; set; }
 }
 
 /// <summary>
@@ -35,6 +48,8 @@ public sealed class EntryTemplateBlock
     public string? Anchor { get; set; }
 
     public string? Value { get; set; }
+
+    public bool LineBreakBefore { get; set; }
 
     public string? Path { get; set; }
 
@@ -52,6 +67,8 @@ public sealed class EntryTemplateBlock
 
     public int? Columns { get; set; }
 
+    public int? Indent { get; set; }
+
     public int? HangingIndent { get; set; }
 
     public bool Bold { get; set; }
@@ -67,6 +84,11 @@ public sealed class EntryTemplateBlock
     public List<EntryTemplateBlock> Template { get; set; } = new();
 
     public List<EntryTemplateBlock> Blocks { get; set; } = new();
+
+    public static IReadOnlyDictionary<string, string[]> RequiredFieldsByKind { get; } = new Dictionary<string, string[]>
+    {
+        ["include"] = ["kind", "fragment"]
+    };
 
     [JsonExtensionData]
     public Dictionary<string, JsonElement>? ExtraProperties { get; set; }

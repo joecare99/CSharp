@@ -26,12 +26,7 @@ Bei Personen, die von auswärts stammen, in den Ort eingeheiratet oder zugezogen
 
 Um den gesamten Inhalt der Kirchenbücher und Standesamtsregister auf so knappem Raum wiedergeben zu können, wurden weitgehend Zeichen und Abkürzungen verwendet und die Angaben so kurz wie möglich gehalten. Im Familientext gelten folgende Zeichen:
 
-| Zeichen | Bedeutung || Zeichen | Bedeutung |
-|---|---||---|---|
-| * | geboren || ~ | getauft |
-| † | gestorben || = | begraben |
-| ⚭ | geheiratet || o/o | geschieden |
-| o-o | unehelich || | 
+<!-- OFB-LEGEND -->
 
 ## Angaben zu jeder Familie
 
