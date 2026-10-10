@@ -600,7 +600,10 @@ public sealed class OFBExportService(
                 placeText.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, indent * 9));
                 placeText.TextContent = node.Name;
                 if (familyTokens.Count > 0)
-                    WritePlaceReferences(doc, familyTokens, indent + 1);
+                {
+                    placeText.AddSpan("Referenz-Abstand", DocxFontStyle.Default).TextContent = " ";
+                    AppendFamilyTokens(placeText, "[", familyTokens);
+                }
             }
 
             if (node.Children is { Length: > 0 })
@@ -783,10 +786,21 @@ public sealed class OFBExportService(
             .Select(number => CreateNumberedFamilyReference(number))
             .ToArray();
         var tokens = CreateFamilyReferenceTokens(grouped);
+        if (tokens.Count > 0)
+            paragraph.AddSpan("Referenz-Abstand", DocxFontStyle.Default).TextContent = " ";
         AppendFamilyTokens(paragraph, "[", tokens);
     }
 
     private static string GetPersonAnchor(string personReference) => $"person-{SanitizeAnchor(personReference)}";
+
+    private static string GetPersonReference(IGenPerson person)
+    {
+        if (!string.IsNullOrWhiteSpace(person.IndRefID))
+            return person.IndRefID;
+        if (!string.IsNullOrWhiteSpace(person.Name))
+            return person.Name;
+        return $"{person.GivenName}|{person.Surname}";
+    }
 
     private static string CreateIndexAnchor(string category, int ordinal) => $"index-{category}-{ordinal + 1}";
 
@@ -804,7 +818,7 @@ public sealed class OFBExportService(
             .ToArray();
         var children = family.Children
             .OrderBy(person => person.BirthDate?.Date1 ?? DateTime.MaxValue)
-            .ThenBy(person => person.IndRefID ?? person.Name, StringComparer.Ordinal)
+            .ThenBy(GetPersonReference, StringComparer.Ordinal)
             .Select((person, index) => CreatePersonTemplateModel(
                 person, index + 1, allFamilies, family.GlobalNumber, family.FamilyName))
             .ToArray();
@@ -876,8 +890,7 @@ public sealed class OFBExportService(
     {
         if (candidate is null)
             return false;
-        var reference = person.IndRefID ?? person.Name;
-        return string.Equals(candidate.IndRefID ?? candidate.Name, reference, StringComparison.Ordinal);
+        return string.Equals(GetPersonReference(candidate), GetPersonReference(person), StringComparison.Ordinal);
     }
 
     private PersonEntryTemplateModel CreatePersonTemplateModel(
@@ -887,7 +900,7 @@ public sealed class OFBExportService(
         string currentFamilyNumber,
         string? familySurnameToAbbreviate = null)
     {
-        var reference = person.IndRefID ?? person.Name ?? string.Empty;
+        var reference = GetPersonReference(person);
         _personIndexAnchorByReference.TryGetValue(reference, out var personIndexAnchor);
         var birth = (person.BirthDate ?? person.Birth?.Date)?.ToString();
         var death = (person.DeathDate ?? person.Death?.Date)?.ToString();
@@ -1144,7 +1157,7 @@ public sealed class OFBExportService(
             RelatedPersonName = relatedPerson is null ? null : FormatPersonName(relatedPerson, gcFormat: false),
             RelatedPersonAnchor = relatedPerson is null
                 ? string.Empty
-                : GetPersonAnchor(relatedPerson.IndRefID ?? relatedPerson.Name),
+                : GetPersonAnchor(GetPersonReference(relatedPerson)),
             RelatedFamilyNumber = relatedFamily?.GlobalNumber,
             RelatedFamilyAnchor = relatedFamily is null ? string.Empty : GetFamilyAnchor(relatedFamily.GlobalNumber),
             OccupationIndexAnchor = eventType == EFactType.Occupation
@@ -1272,19 +1285,19 @@ public sealed class OFBExportService(
         {
             if ( family.Husband != null )
             {
-                var key = family.Husband.IndRefID ?? family.Husband.Name;
+                var key = GetPersonReference(family.Husband);
                 AddPersonFamilyReference(family.Husband, family, isChild: false, key, seen, entries, referencesByPerson);
             }
 
             if ( family.Wife != null )
             {
-                var key = family.Wife.IndRefID ?? family.Wife.Name;
+                var key = GetPersonReference(family.Wife);
                 AddPersonFamilyReference(family.Wife, family, isChild: false, key, seen, entries, referencesByPerson);
             }
 
             foreach ( var child in family.Children )
             {
-                var key = child.IndRefID ?? child.Name;
+                var key = GetPersonReference(child);
                 AddPersonFamilyReference(child, family, isChild: true, key, seen, entries, referencesByPerson);
             }
         }
@@ -1355,8 +1368,11 @@ public sealed class OFBExportService(
         {
             var givenName = person.GivenName?.Trim() ?? string.Empty;
             var lifeSpan = FormatLifeSpan(person.BirthDate ?? person.Birth?.Date, person.DeathDate ?? person.Death?.Date);
-            var birthSurname = CanonicalGenealogyAdapter.GetNameVariants(person).BirthSurname;
             var nameEvents = CanonicalGenealogyAdapter.GetNameEvents(person);
+            var birthSurname = CanonicalGenealogyAdapter.GetNameVariants(person).BirthSurname
+                ?? nameEvents.FirstOrDefault(nameEvent =>
+                    string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase))?.Surname;
+            birthSurname = string.IsNullOrWhiteSpace(birthSurname) ? person.Surname?.Trim() : birthSurname.Trim();
             var surnameEvents = nameEvents
                 .Where(nameEvent => !string.IsNullOrWhiteSpace(nameEvent.Surname))
                 .Where(nameEvent => string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase)
@@ -1373,9 +1389,8 @@ public sealed class OFBExportService(
                     Surname: nameEvent.Surname.Trim(),
                     GivenName: string.IsNullOrWhiteSpace(nameEvent.GivenName) ? givenName : nameEvent.GivenName.Trim(),
                     Date: nameEvent.DateText ?? string.Empty,
-                    IsBirthName: string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase)
-                        || (!string.IsNullOrWhiteSpace(birthSurname)
-                            && string.Equals(nameEvent.Surname.Trim(), birthSurname.Trim(), StringComparison.OrdinalIgnoreCase))))
+                    IsBirthName: !string.IsNullOrWhiteSpace(birthSurname)
+                        && string.Equals(nameEvent.Surname.Trim(), birthSurname, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
             if (!string.IsNullOrWhiteSpace(person.Surname)
                 && !indexedNames.Any(name => string.Equals(name.Surname, person.Surname.Trim(), StringComparison.OrdinalIgnoreCase)))
@@ -1384,10 +1399,10 @@ public sealed class OFBExportService(
                     givenName,
                     string.Empty,
                     !string.IsNullOrWhiteSpace(birthSurname)
-                        && string.Equals(person.Surname.Trim(), birthSurname.Trim(), StringComparison.OrdinalIgnoreCase)));
+                        && string.Equals(person.Surname.Trim(), birthSurname, StringComparison.OrdinalIgnoreCase)));
             if (!string.IsNullOrWhiteSpace(birthSurname)
-                && !indexedNames.Any(name => string.Equals(name.Surname, birthSurname.Trim(), StringComparison.OrdinalIgnoreCase)))
-                indexedNames.Add((birthSurname.Trim(), givenName, string.Empty, true));
+                && !indexedNames.Any(name => string.Equals(name.Surname, birthSurname, StringComparison.OrdinalIgnoreCase)))
+                indexedNames.Add((birthSurname, givenName, string.Empty, true));
             if (indexedNames.Count == 0)
                 indexedNames.Add((string.Empty, givenName, string.Empty, true));
             foreach (var indexedName in indexedNames)
