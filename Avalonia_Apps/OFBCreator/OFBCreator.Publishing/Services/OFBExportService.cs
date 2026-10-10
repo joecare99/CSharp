@@ -955,6 +955,7 @@ public sealed class OFBExportService(
                     Date: item.Date)))
             .OrderBy(item => GetEventSortDate(item.Date))
             .Select(item => item.Event)
+            .DistinctBy(GetPersonEventAppearanceKey)
             .ToArray();
 
         var parentFamily = CreateFamilyReferenceTemplateModel(person.ParentFamily);
@@ -1169,6 +1170,24 @@ public sealed class OFBExportService(
             IsOccupation = eventType == EFactType.Occupation
         };
     }
+
+    private static (string Symbol, string EventName, string Date, string PlacePreposition, string Place, string Additional,
+        string? RelatedPersonName, string? RelatedFamilyNumber, string OccupationEmployer, bool IsVital, bool IsListableNonVital, bool IsOccupation)
+        GetPersonEventAppearanceKey(PersonEventEntryTemplateModel eventModel) =>
+        (
+            eventModel.Symbol,
+            string.IsNullOrEmpty(eventModel.Symbol) ? eventModel.EventName : string.Empty,
+            eventModel.Date,
+            eventModel.PlacePreposition,
+            eventModel.Place,
+            eventModel.Additional,
+            eventModel.RelatedPersonName,
+            eventModel.RelatedFamilyNumber,
+            eventModel.OccupationEmployer,
+            eventModel.IsVital,
+            eventModel.IsListableNonVital,
+            eventModel.IsOccupation
+        );
 
     private PersonEventEntryTemplateModel CreatePersonEventTemplateModel(
         EFactType eventType,

@@ -493,7 +493,7 @@ public sealed class OFBExportServiceTests
         const string gedcom =
             "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n2 FORM LINEAGE-LINKED\r\n1 CHAR UTF-8\r\n" +
             "0 @I1@ INDI\r\n1 NAME Eltern /Muster/\r\n1 SEX M\r\n1 FAMS @F1@\r\n" +
-            "1 DEAT\r\n2 DATE 1980\r\n1 CENS\r\n2 DATE 1940\r\n" +
+            "1 DEAT\r\n2 DATE 1980\r\n1 CENS\r\n2 DATE 1940\r\n1 CENS\r\n2 DATE 1940\r\n" +
             "1 BIRT\r\n2 DATE 1900\r\n2 PLAC Beispielort\r\n1 BIRT\r\n2 DATE 1901\r\n2 PLAC Alternativort\r\n1 DEAT\r\n2 DATE 1981\r\n" +
             "0 @I2@ INDI\r\n1 NAME Elternteil /Beispiel/\r\n1 SEX F\r\n1 FAMS @F1@\r\n" +
             "0 @I3@ INDI\r\n1 NAME Kind /Muster/\r\n1 FAMC @F1@\r\n1 FAMS @F2@\r\n" +
@@ -540,7 +540,8 @@ public sealed class OFBExportServiceTests
             var birthIndex = parentEvents.IndexOf("* 1900", StringComparison.Ordinal);
             var deathIndex = parentEvents.IndexOf("† 1980", StringComparison.Ordinal);
             Assert.IsTrue(birthIndex >= 0 && birthIndex < deathIndex, parentEvents);
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1940: Zähl.", StringComparison.Ordinal)));
+            Assert.AreEqual(1, paragraphTexts.Count(text => text.Contains("1940: Zähl.", StringComparison.Ordinal)),
+                string.Join(" | ", paragraphTexts));
             Assert.IsFalse(parentEvents.Contains("1901", StringComparison.Ordinal), parentEvents);
             Assert.IsFalse(parentEvents.Contains("1981", StringComparison.Ordinal), parentEvents);
             Assert.IsTrue(linkedChildEvents.Contains(", * 1920 in Kinderort, ≈ 1923", StringComparison.Ordinal), linkedChildEvents);
