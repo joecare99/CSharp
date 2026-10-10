@@ -151,7 +151,7 @@ public sealed class OFBExportServiceTests
     {
         const string gedcom =
             "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n2 FORM LINEAGE-LINKED\r\n1 CHAR UTF-8\r\n" +
-            "0 @I1@ INDI\r\n1 NAME Anna /Muster/\r\n2 GIVN Anna\r\n2 SURN Muster\r\n2 TYPE BIRTH\r\n1 NAME Anna /Beispiel/\r\n2 GIVN Anna\r\n2 SURN Beispiel\r\n2 TYPE AKA\r\n1 ALIA Anna /Alias/\r\n1 SEX F\r\n1 BIRT\r\n2 DATE 1901\r\n1 DEAT\r\n2 DATE 1980\r\n1 FAMS @F1@\r\n" +
+            "0 @I1@ INDI\r\n1 NAME Anna /Muster/\r\n2 GIVN Anna\r\n2 SURN Muster\r\n2 TYPE BIRTH\r\n1 NAME Anna /Beispiel/\r\n2 GIVN Anna\r\n2 SURN Beispiel\r\n2 TYPE AKA\r\n1 NAME Anna /Verheiratet/\r\n2 GIVN Anna\r\n2 SURN Verheiratet\r\n2 TYPE MARRIED\r\n1 ALIA Anna /Alias/\r\n1 SEX F\r\n1 BIRT\r\n2 DATE 1901\r\n1 DEAT\r\n2 DATE 1980\r\n1 FAMS @F1@\r\n" +
             "0 @I2@ INDI\r\n1 NAME Emil /Partner/\r\n1 SEX M\r\n" +
             "0 @I3@ INDI\r\n1 NAME Kind /Muster/\r\n1 FAMC @F1@\r\n" +
             "0 @F1@ FAM\r\n1 HUSB @I2@\r\n1 WIFE @I1@\r\n1 CHIL @I3@\r\n0 TRLR\r\n";
@@ -183,7 +183,7 @@ public sealed class OFBExportServiceTests
             var texts = xml.Descendants(word + "p")
                 .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
                 .ToArray();
-            Assert.IsTrue(texts.Any(text => text.Contains("Beispiel, Anna (Anna Alias)", StringComparison.Ordinal)),
+            Assert.IsTrue(texts.Any(text => text.Contains("Verheiratet, Anna (Anna Alias; Anna Beispiel)", StringComparison.Ordinal)),
                 string.Join(" | ", texts.Where(text => text.Contains("Anna", StringComparison.OrdinalIgnoreCase))));
             Assert.IsTrue(texts.Any(text => text.Contains("Anna (1901–1980) [00001]", StringComparison.Ordinal)),
                 string.Join(" | ", texts.Where(text => text.Contains("Anna", StringComparison.Ordinal))));
@@ -196,8 +196,12 @@ public sealed class OFBExportServiceTests
                 string.Join(" | ", personIndexTexts.Where(text => text.Contains("Anna", StringComparison.Ordinal))));
             Assert.IsTrue(personIndexTexts.Any(text => text.StartsWith("^Anna (1901–1980)", StringComparison.Ordinal)),
                 string.Join(" | ", personIndexTexts.Where(text => text.Contains("Anna", StringComparison.Ordinal))));
+            var marriedSurnameIndex = Array.IndexOf(personIndexTexts, "Verheiratet");
+            Assert.IsTrue(marriedSurnameIndex >= 0, string.Join(" | ", personIndexTexts));
+            Assert.IsTrue(personIndexTexts[marriedSurnameIndex + 1].StartsWith("^Anna (1901–1980)", StringComparison.Ordinal),
+                string.Join(" | ", personIndexTexts));
             Assert.AreEqual(1, personIndexTexts.Count(text => text.StartsWith("Anna (1901–1980)", StringComparison.Ordinal)));
-            Assert.AreEqual(1, personIndexTexts.Count(text => text.StartsWith("^Anna (1901–1980)", StringComparison.Ordinal)));
+            Assert.AreEqual(2, personIndexTexts.Count(text => text.StartsWith("^Anna (1901–1980)", StringComparison.Ordinal)));
         }
         finally
         {

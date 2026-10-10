@@ -1375,8 +1375,6 @@ public sealed class OFBExportService(
             birthSurname = string.IsNullOrWhiteSpace(birthSurname) ? person.Surname?.Trim() : birthSurname.Trim();
             var surnameEvents = nameEvents
                 .Where(nameEvent => !string.IsNullOrWhiteSpace(nameEvent.Surname))
-                .Where(nameEvent => string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(nameEvent.Type, "AKA", StringComparison.OrdinalIgnoreCase))
                 .GroupBy(nameEvent => nameEvent.Surname.Trim(), StringComparer.OrdinalIgnoreCase)
                 .Select(group => group
                     .OrderBy(nameEvent => string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
