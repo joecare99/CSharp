@@ -16,6 +16,15 @@ public static class DocAttributeNames
     /// <summary>Gets the paragraph first-line indentation.</summary>
     public const string IndentationFirstLine = "paragraph.indentationFirstLine";
 
+    /// <summary>Gets the paragraph spacing before its text, in points.</summary>
+    public const string SpacingBeforePt = "paragraph.spacingBeforePt";
+
+    /// <summary>Gets the paragraph spacing after its text, in points.</summary>
+    public const string SpacingAfterPt = "paragraph.spacingAfterPt";
+
+    /// <summary>Gets the paragraph alignment.</summary>
+    public const string Alignment = "paragraph.alignment";
+
     /// <summary>Gets the character font size in points.</summary>
     public const string FontSizePt = "character.fontSizePt";
 
