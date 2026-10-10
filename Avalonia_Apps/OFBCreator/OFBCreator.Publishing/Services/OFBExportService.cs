@@ -17,6 +17,8 @@ using OFBCreator.Abstractions.Models;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
 using OFBCreator.Publishing.Models;
+using OFBCreator.Projects.Models;
+using OFBCreator.Projects.Services;
 using OFBCreator.Publishing.Services.Templates;
 
 namespace OFBCreator.Publishing.Services;
@@ -164,12 +166,14 @@ public sealed class OFBExportService(
 
         // Step 5: Create document and compose content
         progress?.Report(new OFBExportProgress("Composing document..."));
+        OFBProjectLayoutValidator.Validate(options.Layout);
         var doc = _documentFactory.CreateDocument( options.UseDocxFormat ? OFBOutputFormat.Docx : OFBOutputFormat.Odt );
+        OFBDocumentLayout.ApplyPageMargins(doc, options.Layout);
 
         await ComposeTitlePageAsync( doc, options );
         await ComposePrefaceAsync(doc, options, entryTemplate);
-        await ComposeFamiliesAsync(doc, sortedFamilies, entryTemplate, groupByFamilyReference, familyNamesByGroup);
-        await ComposeIndicesAsync( doc, personIndex, occIndex, propIndex, placeHierarchyIndex, placeAlphaIndex );
+        await ComposeFamiliesAsync(doc, sortedFamilies, entryTemplate, groupByFamilyReference, familyNamesByGroup, options.Layout);
+        await ComposeIndicesAsync(doc, personIndex, occIndex, propIndex, placeHierarchyIndex, placeAlphaIndex, options.Layout);
 
         // Step 6: Save document
         progress?.Report(new OFBExportProgress("Saving output..."));
@@ -453,11 +457,13 @@ public sealed class OFBExportService(
     /// </summary>
     private async Task ComposeIndicesAsync( IUserDocument doc, OFBIndexEntry[] personIndex,
         OFBIndexEntry[] occIndex, OFBIndexEntry[] propIndex,
-        OFBPlaceHierarchyNode[] placeHierarchy, OFBIndexEntry[] placeAlpha )
+        OFBPlaceHierarchyNode[] placeHierarchy, OFBIndexEntry[] placeAlpha, OFBProjectLayout layout)
     {
         // Person Index (alphabetical)
+        OFBDocumentLayout.AddSection(doc, 1);
         var personTitle = doc.AddHeadline(1, "Personenindex");
         personTitle.TextContent = "Personenindex";
+        OFBDocumentLayout.AddSection(doc, layout.PersonIndexColumns);
         string? previousSurname = null;
         for (var index = 0; index < personIndex.Length; index++)
         {
@@ -473,13 +479,16 @@ public sealed class OFBExportService(
                 }
             }
             var para = doc.AddParagraph( "Normaler Absatz" );
-            para.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9));
+            OFBDocumentLayout.ApplyStyle(para, layout.IndexEntry);
             var entryAnchor = CreateIndexAnchor("person", index);
             var personAnchor = GetPersonAnchor(entry.Ref);
             var givenName = GetPersonIndexGivenName(entry.SortKey, entry.Name);
+            var displayName = string.Equals(entry.Role, "alternative-name", StringComparison.Ordinal)
+                ? $"^{givenName}"
+                : givenName;
             var personIndexLabel = string.IsNullOrEmpty(entry.LifeSpan)
-                ? givenName
-                : $"{givenName} ({entry.LifeSpan})";
+                ? displayName
+                : $"{displayName} ({entry.LifeSpan})";
             para.AddBookmark(entryAnchor, DocxFontStyle.Default).TextContent = personIndexLabel;
             para.AddBookmark(personAnchor, DocxFontStyle.Default).TextContent = string.Empty;
             if (entry.ChildFamilyReferences.Count > 0 && entry.ParentFamilyReferences.Count > 0)
@@ -489,13 +498,15 @@ public sealed class OFBExportService(
             AppendIndexFamilyTokens(para, entry, addLeadingSpace: true);
         }
         // Occupation Index (alphabetical)
+        OFBDocumentLayout.AddSection(doc, 1);
         var occTitle = doc.AddHeadline( 1, "Berufsindex" );
         occTitle.TextContent = "Berufsindex";
+        OFBDocumentLayout.AddSection(doc, layout.OccupationIndexColumns);
         for (var index = 0; index < occIndex.Length; index++)
         {
             var entry = occIndex[index];
             var para = doc.AddParagraph( "Normaler Absatz" );
-            para.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9));
+            OFBDocumentLayout.ApplyStyle(para, layout.IndexEntry);
             para.AddBookmark(CreateIndexAnchor("occupation", index), DocxFontStyle.Default).TextContent = entry.SortKey;
             AppendIndexFamilyReferences(para, entry, entry.Ref);
         }
@@ -503,30 +514,36 @@ public sealed class OFBExportService(
         if (propIndex.Length > 0)
         {
             // Property Index (alphabetical, decision 1A)
+            OFBDocumentLayout.AddSection(doc, 1);
             var propTitle = doc.AddHeadline(1, "Besitzindex");
             propTitle.TextContent = "Eigentums-/Besitz-Index";
+            OFBDocumentLayout.AddSection(doc, layout.PropertyIndexColumns);
             for (var index = 0; index < propIndex.Length; index++)
             {
                 var entry = propIndex[index];
                 var para = doc.AddParagraph("Normaler Absatz");
-                para.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9));
+                OFBDocumentLayout.ApplyStyle(para, layout.IndexEntry);
                 para.AddBookmark(CreateIndexAnchor("property", index), DocxFontStyle.Default).TextContent = entry.SortKey;
                 AppendIndexFamilyReferences(para, entry, entry.Ref);
             }
         }
         // Place Hierarchy Index (tree structure)
+        OFBDocumentLayout.AddSection(doc, 1);
         var phTitle = doc.AddHeadline( 1, "Ortsindex (Hierarchisch)" );
         phTitle.TextContent = "Ortsindex";
+        OFBDocumentLayout.AddSection(doc, layout.HierarchicalPlaceIndexColumns);
         await WritePlaceHierarchyAsync( doc, placeHierarchy, indent: 0 );
 
         // Place Alphabetical Index (A-Z flat list)
+        OFBDocumentLayout.AddSection(doc, 1);
         var paTitle = doc.AddHeadline( 1, "Ortsindex (Alphabetisch)" );
         paTitle.TextContent = "Ortsindex Alphabetisch";
+        OFBDocumentLayout.AddSection(doc, layout.AlphabeticalPlaceIndexColumns);
         for (var index = 0; index < placeAlpha.Length; index++)
         {
             var entry = placeAlpha[index];
             var para = doc.AddParagraph( "Normaler Absatz" );
-            para.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9));
+            OFBDocumentLayout.ApplyStyle(para, layout.IndexEntry);
             para.AddBookmark(CreateIndexAnchor("place", index), DocxFontStyle.Default).TextContent = entry.SortKey;
             AppendIndexFamilyReferences(para, entry, entry.Ref);
         }
@@ -562,20 +579,6 @@ public sealed class OFBExportService(
     {
         foreach ( var node in nodes )
         {
-			IDocParagraph references;
-            if (node.Children is { Length: > 0 })
-            {
-                var heading = doc.AddHeadline(Math.Min(indent + 2, 9), $"place-{SanitizeAnchor(node.PlaceId)}");
-                heading.TextContent = node.Name;
-                references = doc.AddParagraph("Normaler Absatz");
-                references.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, (indent + 1) * 9));            }
-            else
-            {
-                references = doc.AddParagraph("Normaler Absatz");
-                references.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, indent * 9));
-                references.TextContent = node.Name+ " ";
-            }
-
             var familyTokens = CreateFamilyReferenceTokens(node.FamilyReferences
                 .Distinct(StringComparer.Ordinal)
                 .Select(number => new FamilyReferenceEntryTemplateModel
@@ -584,14 +587,36 @@ public sealed class OFBExportService(
                     Anchor = GetFamilyAnchor(number)
                 })
                 .ToArray());
-            if (familyTokens.Count > 0)
+            if (node.Children is { Length: > 0 })
             {
-                references.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9 ));
-                AppendFamilyTokens(references, "[", familyTokens);            }
+                var heading = doc.AddHeadline(Math.Min(indent + 2, 9), $"place-{SanitizeAnchor(node.PlaceId)}");
+                heading.TextContent = node.Name;
+                if (familyTokens.Count > 0)
+                    WritePlaceReferences(doc, familyTokens, indent + 1);
+            }
+            else
+            {
+                var placeText = doc.AddParagraph("Normaler Absatz");
+                placeText.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, indent * 9));
+                placeText.TextContent = node.Name;
+                if (familyTokens.Count > 0)
+                    WritePlaceReferences(doc, familyTokens, indent + 1);
+            }
 
             if (node.Children is { Length: > 0 })
                 await WritePlaceHierarchyAsync( doc, node.Children, indent + 1 );
         }
+    }
+
+    private static void WritePlaceReferences(
+        IUserDocument document,
+        IReadOnlyList<FamilyReferenceTokenModel> familyTokens,
+        int indent)
+    {
+        var references = document.AddParagraph("Normaler Absatz");
+        references.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, indent * 9));
+        references.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, 9));
+        AppendFamilyTokens(references, "[", familyTokens);
     }
 
     /// <summary>
@@ -602,11 +627,14 @@ public sealed class OFBExportService(
         IReadOnlyList<OFBFamily> sortedFamilies,
         EntryTemplateDefinition entryTemplate,
         IReadOnlyDictionary<string, string> groupByFamilyReference,
-        IReadOnlyDictionary<string, IReadOnlyList<string>> familyNamesByGroup)
+        IReadOnlyDictionary<string, IReadOnlyList<string>> familyNamesByGroup,
+        OFBProjectLayout layout)
     {
-        var templateRenderer = new EntryTemplateRenderer();
+        OFBDocumentLayout.AddSection(doc, 1);
+        var templateRenderer = new EntryTemplateRenderer(layout);
         var directoryHeadline = doc.AddHeadline(1, "Familienverzeichnis");
         directoryHeadline.TextContent = "Familienverzeichnis";
+        OFBDocumentLayout.AddSection(doc, layout.FamilyDirectoryColumns);
         string? currentGroupName = null;
         foreach (var family in sortedFamilies)
         {
@@ -1277,14 +1305,23 @@ public sealed class OFBExportService(
                 Ref = entry.Ref,
                 LifeSpan = entry.LifeSpan,
                 NameEventDate = entry.NameEventDate,
+                Role = entry.Role,
                 ChildFamilyReferences = references.Child.Select(reference => reference.Number).Distinct(StringComparer.Ordinal).ToArray(),
                 ParentFamilyReferences = references.Parent.Select(reference => reference.Number).Distinct(StringComparer.Ordinal).ToArray()
             };
             _personIndexAnchorByName[entry.SortKey] = CreateIndexAnchor("person", index);
         }
         _personIndexAnchorByReference.Clear();
-        for (var index = 0; index < entries.Count; index++)
-            _personIndexAnchorByReference.TryAdd(entries[index].Ref, CreateIndexAnchor("person", index));
+        foreach (var group in entries
+            .Select((entry, index) => (entry, index))
+            .GroupBy(item => item.entry.Ref, StringComparer.Ordinal))
+        {
+            var preferredIndexEntry = group
+                .OrderBy(item => string.Equals(item.entry.Role, "alternative-name", StringComparison.Ordinal) ? 1 : 0)
+                .First();
+            _personIndexAnchorByReference[group.Key] =
+                CreateIndexAnchor("person", preferredIndexEntry.index);
+        }
         return [.. entries];
     }
 
@@ -1325,23 +1362,34 @@ public sealed class OFBExportService(
                 .Where(nameEvent => string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase)
                     || string.Equals(nameEvent.Type, "AKA", StringComparison.OrdinalIgnoreCase))
                 .GroupBy(nameEvent => nameEvent.Surname.Trim(), StringComparer.OrdinalIgnoreCase)
-                .Select(group => group.OrderBy(nameEvent => nameEvent.Date ?? DateTime.MaxValue).First())
+                .Select(group => group
+                    .OrderBy(nameEvent => string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+                    .ThenBy(nameEvent => nameEvent.Date ?? DateTime.MaxValue)
+                    .First())
                 .OrderBy(nameEvent => nameEvent.Date ?? DateTime.MaxValue)
                 .ToArray();
             var indexedNames = surnameEvents
                 .Select(nameEvent => (
                     Surname: nameEvent.Surname.Trim(),
                     GivenName: string.IsNullOrWhiteSpace(nameEvent.GivenName) ? givenName : nameEvent.GivenName.Trim(),
-                    Date: nameEvent.DateText ?? string.Empty))
+                    Date: nameEvent.DateText ?? string.Empty,
+                    IsBirthName: string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase)
+                        || (!string.IsNullOrWhiteSpace(birthSurname)
+                            && string.Equals(nameEvent.Surname.Trim(), birthSurname.Trim(), StringComparison.OrdinalIgnoreCase))))
                 .ToList();
             if (!string.IsNullOrWhiteSpace(person.Surname)
                 && !indexedNames.Any(name => string.Equals(name.Surname, person.Surname.Trim(), StringComparison.OrdinalIgnoreCase)))
-                indexedNames.Add((person.Surname.Trim(), givenName, string.Empty));
+                indexedNames.Add((
+                    person.Surname.Trim(),
+                    givenName,
+                    string.Empty,
+                    !string.IsNullOrWhiteSpace(birthSurname)
+                        && string.Equals(person.Surname.Trim(), birthSurname.Trim(), StringComparison.OrdinalIgnoreCase)));
             if (!string.IsNullOrWhiteSpace(birthSurname)
                 && !indexedNames.Any(name => string.Equals(name.Surname, birthSurname.Trim(), StringComparison.OrdinalIgnoreCase)))
-                indexedNames.Add((birthSurname.Trim(), givenName, string.Empty));
+                indexedNames.Add((birthSurname.Trim(), givenName, string.Empty, true));
             if (indexedNames.Count == 0)
-                indexedNames.Add((string.Empty, givenName, string.Empty));
+                indexedNames.Add((string.Empty, givenName, string.Empty, true));
             foreach (var indexedName in indexedNames)
             {
                 var sortKey = string.IsNullOrEmpty(indexedName.Surname)
@@ -1353,7 +1401,8 @@ public sealed class OFBExportService(
                     Name = indexedName.Surname,
                     Ref = personReference,
                     LifeSpan = lifeSpan,
-                    NameEventDate = indexedName.Date
+                    NameEventDate = indexedName.Date,
+                    Role = indexedName.IsBirthName ? "birth-name" : "alternative-name"
                 });
                 _personReferenceByIndexName.TryAdd(sortKey, personReference);
             }
@@ -1362,9 +1411,21 @@ public sealed class OFBExportService(
 
     private static string FormatLifeSpan(IGenDate? birthDate, IGenDate? deathDate)
     {
-        static string? GetYear(IGenDate? date) => date?.Date1 is DateTime value && value != default
-            ? value.Year.ToString(CultureInfo.InvariantCulture)
-            : null;
+        static string? GetYear(IGenDate? date)
+        {
+            if (date is null)
+                return null;
+            if (date.Date1 != default)
+                return date.Date1.Year.ToString(CultureInfo.InvariantCulture);
+            foreach (var token in (date.DateText ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (int.TryParse(token, NumberStyles.None, CultureInfo.InvariantCulture, out var year)
+                    && year is >= 1 and <= 9999)
+                    return year.ToString(CultureInfo.InvariantCulture);
+            }
+            return null;
+        }
+
         var birthYear = GetYear(birthDate);
         var deathYear = GetYear(deathDate);
         return birthYear is null && deathYear is null ? string.Empty : $"{birthYear ?? "?"}–{deathYear ?? "?"}";

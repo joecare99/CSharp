@@ -147,7 +147,6 @@
               {
                 "kind": "paragraph",
                 "role": "family-data",
-                "indent": 36,
                 "content": [
                   {
                     "kind": "if",
@@ -278,8 +277,6 @@
         "kind": "paragraph",
         "role": "adult",
         "anchor": "person.anchor",
-        "indent": 36,
-        "hangingIndent": 18,
         "content": [
           { "kind": "text", "value": "•\t" },
           { "kind": "link", "target": "person.indexAnchor", "bold": true, "content": [{ "kind": "field", "path": "person.nameGc", "bold": true }] },
@@ -362,7 +359,6 @@
       "kind": "paragraph",
       "role": "family-data",
       "anchor": "family.anchor",
-      "spaceBefore": 6,
       "content": [
         {
           "kind": "field",
@@ -447,7 +443,6 @@
         {
           "kind": "paragraph",
           "role": "children-header",
-          "indent": 18,
           "content": [
             { "kind": "text", "value": "•\t" },
             {
@@ -471,8 +466,6 @@
               "kind": "paragraph",
               "role": "child",
               "anchor": "person.anchor",
-              "indent": 54,
-              "hangingIndent": 18,
               "content": [
                 {
                   "kind": "field",

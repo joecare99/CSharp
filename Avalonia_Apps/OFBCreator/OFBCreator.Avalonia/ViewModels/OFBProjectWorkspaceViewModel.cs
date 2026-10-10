@@ -60,6 +60,9 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
     private string? _legend;
 
     [ObservableProperty]
+    private OFBLayoutEditorViewModel _layoutEditor = new();
+
+    [ObservableProperty]
     private int _autoAcceptThreshold = 85;
 
     [ObservableProperty]
@@ -257,6 +260,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         IncludeDescendants = false;
         Preface = null;
         Legend = null;
+        LayoutEditor.Load(new OFBProjectLayout());
         AutoAcceptThreshold = 85;
         ExportRules.Clear();
         GroupingDecisions.Clear();
@@ -705,6 +709,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         project.ExportRules = ExportRules.ToList();
         project.GroupingPolicy = new OFBGroupingPolicy { AutoAcceptThreshold = AutoAcceptThreshold };
         project.GroupingDecisions = GroupingDecisions.ToList();
+        project.Layout = LayoutEditor.ToModel();
         return project;
     }
 
@@ -720,6 +725,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         IncludeDescendants = project.IncludeDescendants;
         Preface = project.Preface;
         Legend = project.Legend;
+        LayoutEditor.Load(project.Layout);
         AutoAcceptThreshold = project.GroupingPolicy.AutoAcceptThreshold;
         ExportRules.Clear();
         foreach (var rule in project.ExportRules)

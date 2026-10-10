@@ -86,4 +86,7 @@ public sealed class OFBGenerateOptions
 
     /// <summary>Persisted editorial choices for evidence-scored surname merges.</summary>
     public IReadOnlyList<OFBGroupingDecision> GroupingDecisions { get; init; } = [];
+
+    /// <summary>Project-local page, section, and paragraph layout.</summary>
+    public OFBProjectLayout Layout { get; init; } = new();
 }

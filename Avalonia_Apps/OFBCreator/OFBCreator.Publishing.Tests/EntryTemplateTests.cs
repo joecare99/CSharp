@@ -279,7 +279,7 @@ public sealed class EntryTemplateTests
         var template = new EntryTemplateStore().Load(templateName);
         var parent = CreateTemplatePerson(
             "Parent",
-            1,
+            null,
             showNonVitalEvents: true,
             events: [CreateNonVitalEvent()],
             occupations: [CreateOccupation()]);
@@ -312,28 +312,15 @@ public sealed class EntryTemplateTests
 
         Assert.AreEqual(6, GetParagraphAttribute(familyParagraph, DocAttributeNames.SpacingBeforePt));
         Assert.AreEqual(18, GetParagraphAttribute(childrenHeader, DocAttributeNames.IndentationBefore));
-        Assert.IsNull(GetParagraphAttribute(childrenHeader, DocAttributeNames.IndentationHanging));
+        Assert.AreEqual(0, GetParagraphAttribute(childrenHeader, DocAttributeNames.IndentationHanging) ?? 0);
         Assert.AreEqual(54, GetParagraphAttribute(childParagraph, DocAttributeNames.IndentationBefore));
         Assert.AreEqual(18, GetParagraphAttribute(childParagraph, DocAttributeNames.IndentationHanging));
         Assert.AreEqual(2, eventParagraphs.Length);
-        Assert.IsTrue(eventParagraphs.All(paragraph =>
-            Equals(GetParagraphAttribute(paragraph, DocAttributeNames.IndentationBefore), 36)));
+        Assert.AreEqual(36, GetParagraphAttribute(eventParagraphs[0], DocAttributeNames.IndentationBefore));
+        Assert.AreEqual(72, GetParagraphAttribute(eventParagraphs[1], DocAttributeNames.IndentationBefore));
 
-        if (templateName == "gc")
-        {
-            Assert.AreEqual(36, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationBefore));
-            Assert.AreEqual(18, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationHanging));
-        }
-        else
-        {
-            Assert.AreEqual(18, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationBefore));
-            Assert.IsNull(GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationHanging));
-            var occupationParagraphs = paragraphs.Where(paragraph =>
-                paragraph.GetTextContent().Contains("Beruf", StringComparison.Ordinal)).ToArray();
-            Assert.AreEqual(2, occupationParagraphs.Length);
-            Assert.IsTrue(occupationParagraphs.All(paragraph =>
-                Equals(GetParagraphAttribute(paragraph, DocAttributeNames.IndentationBefore), 36)));
-        }
+        Assert.AreEqual(36, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationBefore));
+        Assert.AreEqual(18, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationHanging));
 
         using var output = new MemoryStream();
         Assert.IsTrue(document.SaveTo(output));
@@ -360,7 +347,7 @@ public sealed class EntryTemplateTests
 
     private static PersonEntryTemplateModel CreateTemplatePerson(
         string name,
-        int ordinal,
+        int? ordinal,
         bool showNonVitalEvents = false,
         IReadOnlyList<PersonEventEntryTemplateModel>? events = null,
         IReadOnlyList<OccupationEntryTemplateModel>? occupations = null) => new()
@@ -368,7 +355,7 @@ public sealed class EntryTemplateTests
         NameGc = name,
         NameAk = name,
         Anchor = $"person-{ordinal}",
-        Reference = ordinal.ToString(),
+        Reference = ordinal?.ToString() ?? string.Empty,
         VitalEventsGc = string.Empty,
         VitalEventsAk = string.Empty,
         IndexAnchor = string.Empty,
@@ -401,7 +388,7 @@ public sealed class EntryTemplateTests
     {
         const string json = """
             {"schemaVersion":1,"id":"styled-render","entryRoot":"Individual","blocks":[
-              {"kind":"paragraph","role":"adult","hangingIndent":18,"content":[
+              {"kind":"paragraph","role":"adult","indent":18,"hangingIndent":18,"content":[
                 {"kind":"field","path":"individual.nameGc","bold":true,"italic":true,"underline":true}
               ]}
             ]}
@@ -424,7 +411,10 @@ public sealed class EntryTemplateTests
 
         var paragraph = document.Root.Enumerate().OfType<IDocParagraph>().First();
         var span = paragraph.Nodes.OfType<IDocSpan>().First();
-        Assert.IsTrue(paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationHanging && Equals(attribute.Value, 18)));
+        Assert.IsTrue(paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationBefore && Equals(attribute.Value, 54)));
+        Assert.IsTrue(paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationHanging && Equals(attribute.Value, 36)));
+        Assert.AreEqual(1, paragraph.DocAttributes.Count(attribute => attribute.Name == DocAttributeNames.IndentationBefore));
+        Assert.AreEqual(1, paragraph.DocAttributes.Count(attribute => attribute.Name == DocAttributeNames.IndentationHanging));
         Assert.IsTrue(span.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.Bold && Equals(attribute.Value, true)));
         Assert.IsTrue(span.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.Italic && Equals(attribute.Value, true)));
         Assert.IsTrue(span.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.Underline && Equals(attribute.Value, true)));

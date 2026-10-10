@@ -7,6 +7,8 @@ using System.Linq;
 using Document.Base.Models.Interfaces;
 using Document.Base.Models;
 using OFBCreator.Publishing.Models;
+using OFBCreator.Publishing.Services;
+using OFBCreator.Projects.Models;
 
 namespace OFBCreator.Publishing.Services.Templates;
 
@@ -15,6 +17,13 @@ namespace OFBCreator.Publishing.Services.Templates;
 /// </summary>
 public sealed class EntryTemplateRenderer
 {
+    private readonly OFBProjectLayout _layout;
+
+    public EntryTemplateRenderer(OFBProjectLayout? layout = null)
+    {
+        _layout = layout ?? new OFBProjectLayout();
+    }
+
     public void RenderFamily(
         IUserDocument document,
         EntryTemplateDefinition template,
@@ -94,7 +103,7 @@ public sealed class EntryTemplateRenderer
         }
     }
 
-    private static void RenderRoot(
+    private void RenderRoot(
         IUserDocument document,
         EntryTemplateDefinition template,
         Dictionary<string, object?> variables)
@@ -102,7 +111,7 @@ public sealed class EntryTemplateRenderer
         RenderBlocks(document, template, template.Blocks, variables, new HashSet<string>(StringComparer.Ordinal));
     }
 
-    private static void RenderBlocks(
+    private void RenderBlocks(
         IUserDocument document,
         EntryTemplateDefinition template,
         IEnumerable<EntryTemplateBlock> blocks,
@@ -121,11 +130,8 @@ public sealed class EntryTemplateRenderer
                     break;
                 case "paragraph":
                     var paragraph = document.AddParagraph(block.Role ?? "family-data");
-                    if (block.Indent.HasValue || block.HangingIndent.HasValue)
-                    {
-                        var indentationBefore = block.Indent ?? block.HangingIndent.GetValueOrDefault();
+                    if (block.Indent is int indentationBefore)
                         paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationBefore, indentationBefore));
-                    }
                     if (block.HangingIndent is int hangingIndent)
                     {
                         paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.IndentationHanging, hangingIndent));
@@ -134,6 +140,7 @@ public sealed class EntryTemplateRenderer
                     {
                         paragraph.DocAttributes.Add(new DocAttribute(DocAttributeNames.SpacingBeforePt, spaceBefore));
                     }
+                    ApplyLayoutStyle(paragraph, block.Role, variables);
                     if (block.Anchor is not null)
                     {
                         var anchor = GetString(Resolve(block.Anchor, variables));
@@ -288,7 +295,7 @@ public sealed class EntryTemplateRenderer
         }
     }
 
-    private static void RenderEach(
+    private void RenderEach(
         IUserDocument document,
         EntryTemplateDefinition template,
         EntryTemplateBlock block,
@@ -321,7 +328,7 @@ public sealed class EntryTemplateRenderer
         }
     }
 
-    private static void RenderInclude(
+    private void RenderInclude(
         IUserDocument document,
         EntryTemplateDefinition template,
         EntryTemplateBlock block,
@@ -370,6 +377,35 @@ public sealed class EntryTemplateRenderer
         if (block.Context is not null)
             includeVariables["person"] = Resolve(block.Context, variables);
         return includeVariables;
+    }
+
+    private void ApplyLayoutStyle(
+        IDocParagraph paragraph,
+        string? templateRole,
+        IReadOnlyDictionary<string, object?> variables)
+    {
+        var style = templateRole switch
+        {
+            "FamilyEntry" => _layout.FamilyEntry,
+            "ParentEntry" => _layout.ParentEntry,
+            "ParentLifeEvents" => _layout.ParentLifeEvents,
+            "ChildHeader" => _layout.ChildHeader,
+            "ChildEntry" => _layout.ChildEntry,
+            "ChildLifeEvents" => _layout.ChildLifeEvents,
+            "IndexEntry" => _layout.IndexEntry,
+            "family-data" when variables.TryGetValue("person", out var value)
+                && value is PersonEntryTemplateModel person && person.Ordinal.HasValue => _layout.ChildLifeEvents,
+            "family-data" when variables.ContainsKey("person") => _layout.ParentLifeEvents,
+            "family-data" => _layout.FamilyEntry,
+            "adult" => _layout.ParentEntry,
+            "children-header" => _layout.ChildHeader,
+            "child" => _layout.ChildEntry,
+            _ => null
+        };
+        if (style is null)
+            return;
+
+        OFBDocumentLayout.ApplyStyle(paragraph, style);
     }
 
     private static object? Resolve(string path, IReadOnlyDictionary<string, object?> variables)

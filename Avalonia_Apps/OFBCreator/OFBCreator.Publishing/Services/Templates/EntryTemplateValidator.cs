@@ -51,7 +51,14 @@ public static class EntryTemplateValidator
         "adult",
         "children-header",
         "child",
-        "note"
+        "note",
+        "FamilyEntry",
+        "ParentEntry",
+        "ParentLifeEvents",
+        "ChildHeader",
+        "ChildEntry",
+        "ChildLifeEvents",
+        "IndexEntry"
     };
 
     public static EntryTemplateDefinition ParseAndValidate(string json)

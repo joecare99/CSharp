@@ -203,6 +203,7 @@ public sealed class OFBProjectStore
             IncludeDescendants = source.IncludeDescendants,
             Preface = source.Preface,
             Legend = source.Legend,
+            Layout = source.Layout.Clone(),
             ExportRules = source.ExportRules.Select(rule => new OFBExportRule
             {
                 Order = rule.Order,
@@ -260,6 +261,13 @@ public sealed class OFBProjectStore
             project.SchemaVersion = OFBProject.CurrentSchemaVersion;
             project.GroupingPolicy ??= new OFBGroupingPolicy();
             project.GroupingDecisions ??= [];
+        }
+        else if (schemaVersion == 4)
+        {
+            project = JsonSerializer.Deserialize<OFBProject>(json.RootElement.GetRawText(), SerializerOptions)
+                ?? throw new InvalidDataException($"Project file '{path}' does not contain a project.");
+            project.SchemaVersion = OFBProject.CurrentSchemaVersion;
+            project.Layout ??= new OFBProjectLayout();
         }
         else if (schemaVersion == OFBProject.CurrentSchemaVersion)
         {
@@ -389,6 +397,7 @@ public sealed class OFBProjectStore
             throw new InvalidDataException($"Project '{project.Name}' has no selected entry template.");
         OFBExportRuleValidator.Validate(project.ExportRules);
         OFBGroupingPolicyValidator.Validate(project.GroupingPolicy, project.GroupingDecisions);
+        OFBProjectLayoutValidator.Validate(project.Layout);
         if (string.Equals(project.EntryTemplate, "gc", StringComparison.OrdinalIgnoreCase)
             || string.Equals(project.EntryTemplate, "ak", StringComparison.OrdinalIgnoreCase))
             project.EntryTemplate = project.EntryTemplate.ToLowerInvariant();

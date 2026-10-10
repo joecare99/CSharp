@@ -87,6 +87,105 @@
           </StackPanel>
         </ScrollViewer>
       </TabItem>
+      <TabItem Header="Layout &amp; styles">
+        <ScrollViewer>
+          <StackPanel Spacing="12" Margin="14">
+            <TextBlock Text="Page margins (millimeters)" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+              <StackPanel Grid.Column="0" Spacing="4">
+                <TextBlock Text="Top" />
+                <NumericUpDown Minimum="5" Maximum="100" Value="{Binding LayoutEditor.TopMarginMm}" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="4">
+                <TextBlock Text="Bottom" />
+                <NumericUpDown Minimum="5" Maximum="100" Value="{Binding LayoutEditor.BottomMarginMm}" />
+              </StackPanel>
+              <StackPanel Grid.Column="2" Spacing="4">
+                <TextBlock Text="Left / inside" />
+                <NumericUpDown Minimum="5" Maximum="100" Value="{Binding LayoutEditor.LeftMarginMm}" />
+              </StackPanel>
+              <StackPanel Grid.Column="3" Spacing="4">
+                <TextBlock Text="Right / outside" />
+                <NumericUpDown Minimum="5" Maximum="100" Value="{Binding LayoutEditor.RightMarginMm}" />
+              </StackPanel>
+            </Grid>
+            <TextBlock Text="Columns by section (1–4). Section titles remain one-column." FontWeight="SemiBold"
+                       Margin="0,8,0,0" />
+            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+              <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                <TextBlock Text="Family directory" />
+                <NumericUpDown Minimum="1" Maximum="4" Value="{Binding LayoutEditor.FamilyDirectoryColumns}" />
+              </StackPanel>
+              <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                <TextBlock Text="Person index" />
+                <NumericUpDown Minimum="1" Maximum="4" Value="{Binding LayoutEditor.PersonIndexColumns}" />
+              </StackPanel>
+              <StackPanel Grid.Row="0" Grid.Column="2" Spacing="4">
+                <TextBlock Text="Occupation index" />
+                <NumericUpDown Minimum="1" Maximum="4" Value="{Binding LayoutEditor.OccupationIndexColumns}" />
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
+                <TextBlock Text="Property index" />
+                <NumericUpDown Minimum="1" Maximum="4" Value="{Binding LayoutEditor.PropertyIndexColumns}" />
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+                <TextBlock Text="Hierarchical place index" />
+                <NumericUpDown Minimum="1" Maximum="4" Value="{Binding LayoutEditor.HierarchicalPlaceIndexColumns}" />
+              </StackPanel>
+              <StackPanel Grid.Row="1" Grid.Column="2" Spacing="4">
+                <TextBlock Text="Alphabetical place index" />
+                <NumericUpDown Minimum="1" Maximum="4" Value="{Binding LayoutEditor.AlphabeticalPlaceIndexColumns}" />
+              </StackPanel>
+            </Grid>
+            <TextBlock Text="Paragraph format styles" FontWeight="SemiBold" Margin="0,8,0,0" />
+            <TextBlock Text="Font family/size, indentation, spacing, and alignment are saved in this project. Bold, italic, and underline remain defined by the entry template."
+                       TextWrapping="Wrap" Opacity="0.8" />
+            <ItemsControl ItemsSource="{Binding LayoutEditor.Styles}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border BorderBrush="#808080" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,3">
+                    <StackPanel Spacing="6">
+                      <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" />
+                      <Grid ColumnDefinitions="2*,*,*,*,*,*,*" ColumnSpacing="7">
+                        <StackPanel Grid.Column="0" Spacing="3">
+                          <TextBlock Text="Font family" FontSize="11" />
+                          <TextBox Text="{Binding FontFamily}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="3">
+                          <TextBlock Text="Size (pt)" FontSize="11" />
+                          <NumericUpDown Minimum="4" Maximum="144" Value="{Binding FontSizePt}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Spacing="3">
+                          <TextBlock Text="Indent (pt)" FontSize="11" />
+                          <NumericUpDown Minimum="0" Maximum="1440" Value="{Binding IndentPt}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="3" Spacing="3">
+                          <TextBlock Text="Hanging (pt)" FontSize="11" />
+                          <NumericUpDown Minimum="0" Maximum="1440" Value="{Binding HangingIndentPt}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="4" Spacing="3">
+                          <TextBlock Text="Space before" FontSize="11" />
+                          <NumericUpDown Minimum="0" Maximum="1440" Value="{Binding SpaceBeforePt}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="5" Spacing="3">
+                          <TextBlock Text="Space after" FontSize="11" />
+                          <NumericUpDown Minimum="0" Maximum="1440" Value="{Binding SpaceAfterPt}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="6" Spacing="3">
+                          <TextBlock Text="Alignment" FontSize="11" />
+                          <ComboBox ItemsSource="{Binding AlignmentOptions}" SelectedItem="{Binding Alignment}" />
+                        </StackPanel>
+                      </Grid>
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="Save the project to persist layout changes; export saves the project before publishing."
+                       Opacity="0.8" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
       <TabItem Header="Privacy &amp; Filters">
         <ScrollViewer>
           <StackPanel Spacing="8" Margin="14">

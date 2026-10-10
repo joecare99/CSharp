@@ -167,6 +167,7 @@ public static class Program
                 ExportRules = project?.ExportRules ?? [],
                 GroupingPolicy = project?.GroupingPolicy ?? new OFBGroupingPolicy(),
                 GroupingDecisions = project?.GroupingDecisions ?? [],
+                Layout = project?.Layout ?? new OFBProjectLayout(),
             };
 
             await RunExportAsync(options, serviceProvider);
