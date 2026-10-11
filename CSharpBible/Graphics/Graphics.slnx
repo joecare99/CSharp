@@ -45,6 +45,9 @@
   </Folder>
   <Folder Name="/Libraries/">
     <File Path="../Libraries/Libraries.props" />
+    <Project Path="../Libraries/CommonDialogs.Abstractions/CommonDialogs.Abstractions.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+    </Project>
     <Project Path="../Libraries/BaseLib/BaseLib.csproj">
       <Platform Solution="*|x64" Project="x64" />
     </Project>

@@ -26,3 +26,12 @@ public interface IDocSectionProvider
     /// </summary>
     IDocElement AddSection(int? columns = null);
 }
+
+/// <summary>
+/// Represents a document provider capability for setting page margins.
+/// </summary>
+public interface IDocPageLayoutProvider
+{
+    /// <summary>Sets the page margins in millimeters.</summary>
+    void SetPageMarginsMm(double top, double bottom, double left, double right);
+}

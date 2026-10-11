@@ -14,10 +14,11 @@ using Xceed.Words.NET;
 namespace Document.Docx;
 
 [UserDocumentProvider("docx", Extensions = new[] { ".docx" }, ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document", DisplayName = "Word (DocX)")]
-public sealed class DocxDocument : IUserDocument, IDocSectionProvider
+public sealed class DocxDocument : IUserDocument, IDocSectionProvider, IDocPageLayoutProvider
 {
     private bool _isModified;
     private readonly List<PendingHyperlinkStyle> _pendingHyperlinkStyles = new();
+    private (double Top, double Bottom, double Left, double Right)? _pageMarginsMm;
 
     public DocxDocument() => Root = new DocxSection();
 
@@ -49,6 +50,16 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider
 
     IDocElement IDocSectionProvider.AddSection(int? columns) => AddSection(columns);
 
+    public void SetPageMarginsMm(double top, double bottom, double left, double right)
+    {
+        if (!double.IsFinite(top) || !double.IsFinite(bottom)
+            || !double.IsFinite(left) || !double.IsFinite(right))
+            throw new ArgumentOutOfRangeException(nameof(top), "Page margins must be finite millimeter values.");
+
+        _pageMarginsMm = (top, bottom, left, right);
+        _isModified = true;
+    }
+
     public IEnumerable<IDocElement> Enumerate() => Root.Enumerate();
 
     public bool SaveTo(string cOutputPath)
@@ -64,7 +75,7 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider
             }
 
             ApplyHyperlinkStyles(cOutputPath, _pendingHyperlinkStyles);
-            ApplyColumnCounts(cOutputPath, columnCounts);
+            ApplyDocumentLayout(cOutputPath, columnCounts, _pageMarginsMm);
             _isModified = false;
             return true;
         }
@@ -88,7 +99,7 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider
             }
 
             ApplyHyperlinkStyles(buffer, _pendingHyperlinkStyles);
-            ApplyColumnCounts(buffer, columnCounts);
+            ApplyDocumentLayout(buffer, columnCounts, _pageMarginsMm);
             buffer.Position = 0;
             if (sOutputStream.CanSeek)
             {
@@ -171,35 +182,54 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider
                         var indentBefore = GetAttribute<int?>(p.DocAttributes, DocAttributeNames.IndentationBefore, null);
                         var hangingIndentPoints = GetAttribute<int?>(p.DocAttributes, DocAttributeNames.IndentationHanging, null);
                         var firstLineIndent = GetAttribute<int?>(p.DocAttributes, DocAttributeNames.IndentationFirstLine, null);
-                        if (indentBefore is int before)
-                            par.IndentationBefore = before;
+                        var spacingBeforePoints = GetAttribute<int?>(p.DocAttributes, DocAttributeNames.SpacingBeforePt, null);
+                        var spacingAfterPoints = GetAttribute<int?>(p.DocAttributes, DocAttributeNames.SpacingAfterPt, null);
+                        var alignment = GetAttribute<string?>(p.DocAttributes, DocAttributeNames.Alignment, null);
                         if (hangingIndentPoints is int hanging)
                         {
-                            par.IndentationBefore = indentBefore ?? hanging;
                             par.IndentationHanging = hanging;
                         }
+                        if (indentBefore is int before)
+                            par.IndentationBefore = before;
+                        else if (hangingIndentPoints is not null)
+                            par.IndentationBefore = hangingIndentPoints.Value;
                         if (firstLineIndent is int firstLine)
                             par.IndentationFirstLine = firstLine;
+                        if (spacingBeforePoints is int spacingBefore)
+                            par.SpacingBefore(spacingBefore);
+                        if (spacingAfterPoints is int spacingAfter)
+                            par.SpacingAfter(spacingAfter);
+                        if (alignment is not null)
+                            par.Alignment = alignment switch
+                            {
+                                "Left" => Alignment.left,
+                                "Center" => Alignment.center,
+                                "Right" => Alignment.right,
+                                "Justified" => Alignment.both,
+                                _ => throw new InvalidDataException($"Unsupported paragraph alignment '{alignment}'.")
+                            };
+                        var paragraphFormatting = new Formatting();
+                        ApplyRunFormatting(paragraphFormatting, p.DocAttributes);
                         if (!string.IsNullOrEmpty(p.TextContent))
-                            par.Append(p.TextContent);
+                            AppendFormattedRun(par, p.TextContent, p.DocAttributes, paragraphFormatting);
                         foreach (var child in p.Nodes)
                         {
                             if (child is DocxSpan sp)
                             {
                                 var fmt = new Formatting();
-                                ApplyRunFormatting(fmt, sp.DocAttributes);
+                                ApplyRunFormatting(fmt, p.DocAttributes.Concat(sp.DocAttributes).ToList());
                                 if (sp.IsLink && !string.IsNullOrEmpty(sp.Href))
                                 {
                                     if (sp.Href!.StartsWith("#", StringComparison.Ordinal))
                                     {
                                         var internalLink = doc.AddHyperlink(sp.TextContent ?? sp.Href, sp.Href[1..]);
-                                        _pendingHyperlinkStyles.Add(new PendingHyperlinkStyle(sp.Href[1..], sp.TextContent ?? string.Empty, sp.DocAttributes.ToArray()));
+                                        _pendingHyperlinkStyles.Add(new PendingHyperlinkStyle(sp.Href[1..], sp.TextContent ?? string.Empty, p.DocAttributes.Concat(sp.DocAttributes).ToArray()));
                                         par.AppendHyperlink(internalLink);
                                     }
                                     else
                                     {
                                         var hyperlink = doc.AddHyperlink(sp.TextContent ?? sp.Href!, new Uri(sp.Href!, UriKind.RelativeOrAbsolute));
-                                        _pendingHyperlinkStyles.Add(new PendingHyperlinkStyle(sp.Href!, sp.TextContent ?? string.Empty, sp.DocAttributes.ToArray()));
+                                        _pendingHyperlinkStyles.Add(new PendingHyperlinkStyle(sp.Href!, sp.TextContent ?? string.Empty, p.DocAttributes.Concat(sp.DocAttributes).ToArray()));
                                         par.AppendHyperlink(hyperlink);
                                     }
                                 }
@@ -207,7 +237,7 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider
                                 {
                                     if (!string.IsNullOrWhiteSpace(sp.Id))
                                         par.AppendBookmark(sp.Id);
-                                    AppendFormattedRun(par, sp.TextContent ?? string.Empty, sp.DocAttributes, fmt);
+                                    AppendFormattedRun(par, sp.TextContent ?? string.Empty, p.DocAttributes.Concat(sp.DocAttributes).ToArray(), fmt);
                                 }
                             }
                             else if (child is DocxLineBreak)
@@ -373,15 +403,21 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider
         runProperties.Add(new XElement(word + "color", new XAttribute(word + "val", color.TrimStart('#'))));
     }
 
-    private static void ApplyColumnCounts(string path, IReadOnlyList<int> columnCounts)
+    private static void ApplyDocumentLayout(
+        string path,
+        IReadOnlyList<int> columnCounts,
+        (double Top, double Bottom, double Left, double Right)? pageMarginsMm)
     {
         using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-        ApplyColumnCounts(stream, columnCounts);
+        ApplyDocumentLayout(stream, columnCounts, pageMarginsMm);
     }
 
-    private static void ApplyColumnCounts(Stream stream, IReadOnlyList<int> columnCounts)
+    private static void ApplyDocumentLayout(
+        Stream stream,
+        IReadOnlyList<int> columnCounts,
+        (double Top, double Bottom, double Left, double Right)? pageMarginsMm)
     {
-        if (columnCounts.Count == 1)
+        if (columnCounts.Count == 1 && pageMarginsMm is null)
             return;
 
         stream.Position = 0;
@@ -401,14 +437,35 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider
         for (var index = 0; index < sectionProperties.Length; index++)
         {
             var properties = sectionProperties[index];
-            var columns = properties.Element(word + "cols");
-            if (columns is null)
+            if (columnCounts.Count > 1)
             {
-                columns = new XElement(word + "cols");
-                properties.Add(columns);
+                var columns = properties.Element(word + "cols");
+                if (columns is null)
+                {
+                    columns = new XElement(word + "cols");
+                    properties.Add(columns);
+                }
+                columns.SetAttributeValue(word + "num", columnCounts[index].ToString(System.Globalization.CultureInfo.InvariantCulture));
             }
 
-            columns.SetAttributeValue(word + "num", columnCounts[index].ToString(System.Globalization.CultureInfo.InvariantCulture));
+            if (pageMarginsMm is { } margins)
+            {
+                var pageMargins = properties.Element(word + "pgMar");
+                if (pageMargins is null)
+                {
+                    pageMargins = new XElement(word + "pgMar");
+                    var columnsElement = properties.Element(word + "cols");
+                    if (columnsElement is null)
+                        properties.Add(pageMargins);
+                    else
+                        columnsElement.AddBeforeSelf(pageMargins);
+                }
+
+                pageMargins.SetAttributeValue(word + "top", ToTwips(margins.Top));
+                pageMargins.SetAttributeValue(word + "bottom", ToTwips(margins.Bottom));
+                pageMargins.SetAttributeValue(word + "left", ToTwips(margins.Left));
+                pageMargins.SetAttributeValue(word + "right", ToTwips(margins.Right));
+            }
         }
 
         entry.Delete();
@@ -416,5 +473,9 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider
         using var destination = replacement.Open();
         document.Save(destination);
     }
+
+    private static string ToTwips(double millimeters) =>
+        Math.Round(millimeters * 1440 / 25.4, MidpointRounding.AwayFromZero)
+            .ToString(System.Globalization.CultureInfo.InvariantCulture);
 
 }
