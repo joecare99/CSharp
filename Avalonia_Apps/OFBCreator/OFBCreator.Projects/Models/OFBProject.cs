@@ -9,7 +9,7 @@ namespace OFBCreator.Projects.Models;
 /// </summary>
 public sealed class OFBProject
 {
-    public const int CurrentSchemaVersion = 4;
+    public const int CurrentSchemaVersion = 5;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
 
@@ -34,6 +34,8 @@ public sealed class OFBProject
     public string? Preface { get; set; }
 
     public string? Legend { get; set; }
+
+    public OFBProjectLayout Layout { get; set; } = new();
 
     /// <summary>Ordered non-destructive filters and transformations applied only during export.</summary>
     public List<OFBExportRule> ExportRules { get; set; } = [];

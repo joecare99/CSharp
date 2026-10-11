@@ -121,6 +121,25 @@ public sealed class OFBProjectStoreTests
     }
 
     [TestMethod]
+    public void Open_MigratesSchemaFourProjectToDefaultLayoutInMemory()
+    {
+        using var testDirectory = new TestDirectory();
+        var path = Path.Combine(testDirectory.Path, "SchemaFour.ofbproject");
+        var id = Guid.NewGuid();
+        File.WriteAllText(path,
+            $"{{\"SchemaVersion\":4,\"Id\":\"{id:D}\",\"Name\":\"SchemaFour\",\"Title\":\"Schema Four\",\"EntryTemplate\":\"gc\",\"ExportRules\":[],\"GroupingPolicy\":{{\"AutoAcceptThreshold\":85}},\"GroupingDecisions\":[]}}");
+
+        var loaded = new OFBProjectStore(testDirectory.Path).Open(path);
+
+        Assert.IsTrue(loaded.RequiresMigrationSave);
+        Assert.AreEqual(4, loaded.SourceSchemaVersion);
+        Assert.AreEqual(OFBProject.CurrentSchemaVersion, loaded.Project.SchemaVersion);
+        Assert.AreEqual(2, loaded.Project.Layout.FamilyDirectoryColumns);
+        Assert.AreEqual(3, loaded.Project.Layout.PersonIndexColumns);
+        Assert.AreEqual(4, ReadSchemaVersion(path));
+    }
+
+    [TestMethod]
     public void LoadOrCreate_FindsLegacyNamedProjectInsteadOfCreatingASecondDefault()
     {
         using var testDirectory = new TestDirectory();
@@ -173,7 +192,18 @@ public sealed class OFBProjectStoreTests
                     RightFamilyTargetId = OFBExportRuleTarget.Family("gedcom", "F2"),
                     Action = "acceptMerge"
                 }
-            ]
+            ],
+            Layout = new OFBProjectLayout
+            {
+                LeftMarginMm = 25,
+                FamilyDirectoryColumns = 1,
+                FamilyEntry = new OFBParagraphStyle
+                {
+                    FontFamily = "Calibri",
+                    FontSizePt = 12,
+                    Alignment = "Center"
+                }
+            }
         };
         store.Save(source, Path.Combine(testDirectory.Path, "Source.ofbproject"));
 
@@ -194,6 +224,28 @@ public sealed class OFBProjectStoreTests
         Assert.AreEqual(90, created.GroupingPolicy.AutoAcceptThreshold);
         Assert.AreEqual(1, created.GroupingDecisions.Count);
         Assert.AreNotEqual(source.GroupingDecisions[0].Id, created.GroupingDecisions[0].Id);
+        Assert.AreEqual(25, created.Layout.LeftMarginMm);
+        Assert.AreEqual(1, created.Layout.FamilyDirectoryColumns);
+        Assert.AreEqual("Calibri", created.Layout.FamilyEntry.FontFamily);
+        Assert.AreNotSame(source.Layout, created.Layout);
+        Assert.AreNotSame(source.Layout.FamilyEntry, created.Layout.FamilyEntry);
+    }
+
+    [TestMethod]
+    [DataRow(0)]
+    [DataRow(5)]
+    public void Save_RejectsInvalidLayoutColumns(int columns)
+    {
+        using var testDirectory = new TestDirectory();
+        var project = new OFBProject
+        {
+            Name = "InvalidLayout",
+            Title = "Invalid Layout",
+            Layout = new OFBProjectLayout { FamilyDirectoryColumns = columns }
+        };
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new OFBProjectStore(testDirectory.Path).Save(project, Path.Combine(testDirectory.Path, "invalid.ofbproject")));
     }
 
     [TestMethod]

@@ -215,12 +215,14 @@ public sealed class EntryTemplateTests
         var document = new DocxDocument();
         var person = new PersonEntryTemplateModel
         {
+            Surname = "Beispiel",
+            GivenNames = "Ada",
+            Title = string.Empty,
             NameGc = "Beispiel, Ada",
             NameAk = "Ada Beispiel",
             Anchor = "person-1",
             Reference = "1",
-            VitalEventsGc = string.Empty,
-            VitalEventsAk = string.Empty,
+            VitalEvents = string.Empty,
             IndexAnchor = string.Empty,
             Ordinal = 1,
             Occupations = Array.Empty<OccupationEntryTemplateModel>(),
@@ -272,6 +274,62 @@ public sealed class EntryTemplateTests
     }
 
     [TestMethod]
+    public void EntryTemplateRenderer_FormatsParentAndChildSurnamesWithinIndexLinks()
+    {
+        var template = new EntryTemplateStore().Load("gc");
+        var parent = new PersonEntryTemplateModel
+        {
+            Surname = "Elternname",
+            GivenNames = "Ada Eltern",
+            Title = "Dr.",
+            NameGc = "Elternname, Ada Eltern, Dr.",
+            NameAk = "Ada Eltern Dr. Elternname",
+            Anchor = "person-parent",
+            Reference = "1",
+            VitalEvents = string.Empty,
+            IndexAnchor = "index-parent",
+            Ordinal = null,
+            Occupations = Array.Empty<OccupationEntryTemplateModel>()
+        };
+        var child = new PersonEntryTemplateModel
+        {
+            Surname = "Kindname",
+            GivenNames = "Bernd Kind",
+            Title = "Prof.",
+            NameGc = "Kindname, Bernd Kind, Prof.",
+            NameAk = "Bernd Kind Prof. Kindname",
+            Anchor = "person-child",
+            Reference = "2",
+            VitalEvents = string.Empty,
+            IndexAnchor = "index-child",
+            Ordinal = 1,
+            Occupations = Array.Empty<OccupationEntryTemplateModel>()
+        };
+        var family = new FamilyEntryTemplateModel
+        {
+            Number = "00001",
+            Anchor = "family-00001",
+            Union = string.Empty,
+            Parents = [parent],
+            Children = [child]
+        };
+        var document = new DocxDocument();
+
+        new EntryTemplateRenderer().RenderFamily(document, template, family);
+
+        using var output = new MemoryStream();
+        Assert.IsTrue(document.SaveTo(output));
+        output.Position = 0;
+        using var archive = new ZipArchive(output, ZipArchiveMode.Read, leaveOpen: true);
+        using var stream = archive.GetEntry("word/document.xml")!.Open();
+        var xml = XDocument.Load(stream);
+        XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+        AssertNameLinkFormatting(xml, word, "index-parent", "Elternname", "Ada Eltern", "Dr.");
+        AssertNameLinkFormatting(xml, word, "index-child", "Kindname", "Bernd Kind", "Prof.");
+    }
+
+    [TestMethod]
     [DataRow("gc")]
     [DataRow("ak")]
     public void EntryTemplateRenderer_UsesSpacingAndIndentationForFamilyHierarchy(string templateName)
@@ -279,7 +337,7 @@ public sealed class EntryTemplateTests
         var template = new EntryTemplateStore().Load(templateName);
         var parent = CreateTemplatePerson(
             "Parent",
-            1,
+            null,
             showNonVitalEvents: true,
             events: [CreateNonVitalEvent()],
             occupations: [CreateOccupation()]);
@@ -312,28 +370,15 @@ public sealed class EntryTemplateTests
 
         Assert.AreEqual(6, GetParagraphAttribute(familyParagraph, DocAttributeNames.SpacingBeforePt));
         Assert.AreEqual(18, GetParagraphAttribute(childrenHeader, DocAttributeNames.IndentationBefore));
-        Assert.IsNull(GetParagraphAttribute(childrenHeader, DocAttributeNames.IndentationHanging));
+        Assert.AreEqual(0, GetParagraphAttribute(childrenHeader, DocAttributeNames.IndentationHanging) ?? 0);
         Assert.AreEqual(54, GetParagraphAttribute(childParagraph, DocAttributeNames.IndentationBefore));
         Assert.AreEqual(18, GetParagraphAttribute(childParagraph, DocAttributeNames.IndentationHanging));
         Assert.AreEqual(2, eventParagraphs.Length);
-        Assert.IsTrue(eventParagraphs.All(paragraph =>
-            Equals(GetParagraphAttribute(paragraph, DocAttributeNames.IndentationBefore), 36)));
+        Assert.AreEqual(36, GetParagraphAttribute(eventParagraphs[0], DocAttributeNames.IndentationBefore));
+        Assert.AreEqual(72, GetParagraphAttribute(eventParagraphs[1], DocAttributeNames.IndentationBefore));
 
-        if (templateName == "gc")
-        {
-            Assert.AreEqual(36, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationBefore));
-            Assert.AreEqual(18, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationHanging));
-        }
-        else
-        {
-            Assert.AreEqual(18, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationBefore));
-            Assert.IsNull(GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationHanging));
-            var occupationParagraphs = paragraphs.Where(paragraph =>
-                paragraph.GetTextContent().Contains("Beruf", StringComparison.Ordinal)).ToArray();
-            Assert.AreEqual(2, occupationParagraphs.Length);
-            Assert.IsTrue(occupationParagraphs.All(paragraph =>
-                Equals(GetParagraphAttribute(paragraph, DocAttributeNames.IndentationBefore), 36)));
-        }
+        Assert.AreEqual(36, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationBefore));
+        Assert.AreEqual(18, GetParagraphAttribute(parentParagraph, DocAttributeNames.IndentationHanging));
 
         using var output = new MemoryStream();
         Assert.IsTrue(document.SaveTo(output));
@@ -349,6 +394,38 @@ public sealed class EntryTemplateTests
             .Element(word + "spacing")?.Attribute(word + "before"));
     }
 
+    private static void AssertNameLinkFormatting(
+        XDocument xml,
+        XNamespace word,
+        string anchor,
+        string surname,
+        string givenNames,
+        string title)
+    {
+        var runs = xml.Descendants(word + "hyperlink")
+            .Where(hyperlink => (string?)hyperlink.Attribute(word + "anchor") == anchor)
+            .SelectMany(hyperlink => hyperlink.Elements(word + "r"))
+            .ToArray();
+
+        Assert.IsTrue(runs.Length > 0, $"Expected a hyperlink to '{anchor}'.");
+        AssertRunFormatting(runs, word, surname, bold: true);
+        AssertRunFormatting(runs, word, givenNames, bold: false);
+        AssertRunFormatting(runs, word, title, bold: false);
+    }
+
+    private static void AssertRunFormatting(
+        IEnumerable<XElement> runs,
+        XNamespace word,
+        string text,
+        bool bold)
+    {
+        var run = runs.Single(candidate => string.Concat(candidate.Descendants(word + "t").Select(node => node.Value)) == text);
+        var properties = run.Element(word + "rPr");
+
+        Assert.AreEqual(bold, properties?.Element(word + "b") is not null, $"Unexpected bold formatting for '{text}'.");
+        Assert.AreEqual("single", (string?)properties?.Element(word + "u")?.Attribute(word + "val"));
+    }
+
     private static FamilyEntryTemplateModel CreateTemplateFamily(params PersonEntryTemplateModel[] children) => new()
     {
         Number = "00001",
@@ -360,17 +437,19 @@ public sealed class EntryTemplateTests
 
     private static PersonEntryTemplateModel CreateTemplatePerson(
         string name,
-        int ordinal,
+        int? ordinal,
         bool showNonVitalEvents = false,
         IReadOnlyList<PersonEventEntryTemplateModel>? events = null,
         IReadOnlyList<OccupationEntryTemplateModel>? occupations = null) => new()
     {
+        Surname = string.Empty,
+        GivenNames = name,
+        Title = string.Empty,
         NameGc = name,
         NameAk = name,
         Anchor = $"person-{ordinal}",
-        Reference = ordinal.ToString(),
-        VitalEventsGc = string.Empty,
-        VitalEventsAk = string.Empty,
+        Reference = ordinal?.ToString() ?? string.Empty,
+        VitalEvents = string.Empty,
         IndexAnchor = string.Empty,
         Ordinal = ordinal,
         Occupations = occupations ?? Array.Empty<OccupationEntryTemplateModel>(),
@@ -401,7 +480,7 @@ public sealed class EntryTemplateTests
     {
         const string json = """
             {"schemaVersion":1,"id":"styled-render","entryRoot":"Individual","blocks":[
-              {"kind":"paragraph","role":"adult","hangingIndent":18,"content":[
+              {"kind":"paragraph","role":"adult","indent":18,"hangingIndent":18,"content":[
                 {"kind":"field","path":"individual.nameGc","bold":true,"italic":true,"underline":true}
               ]}
             ]}
@@ -410,12 +489,14 @@ public sealed class EntryTemplateTests
         var document = new DocxDocument();
         var person = new PersonEntryTemplateModel
         {
+            Surname = "Beispiel",
+            GivenNames = "Ada",
+            Title = string.Empty,
             NameGc = "Beispiel, Ada",
             NameAk = "Ada Beispiel",
             Anchor = "person-I1",
             Reference = "I1",
-            VitalEventsGc = string.Empty,
-            VitalEventsAk = string.Empty,
+            VitalEvents = string.Empty,
             IndexAnchor = string.Empty,
             Occupations = Array.Empty<OccupationEntryTemplateModel>()
         };
@@ -424,7 +505,10 @@ public sealed class EntryTemplateTests
 
         var paragraph = document.Root.Enumerate().OfType<IDocParagraph>().First();
         var span = paragraph.Nodes.OfType<IDocSpan>().First();
-        Assert.IsTrue(paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationHanging && Equals(attribute.Value, 18)));
+        Assert.IsTrue(paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationBefore && Equals(attribute.Value, 54)));
+        Assert.IsTrue(paragraph.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.IndentationHanging && Equals(attribute.Value, 36)));
+        Assert.AreEqual(1, paragraph.DocAttributes.Count(attribute => attribute.Name == DocAttributeNames.IndentationBefore));
+        Assert.AreEqual(1, paragraph.DocAttributes.Count(attribute => attribute.Name == DocAttributeNames.IndentationHanging));
         Assert.IsTrue(span.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.Bold && Equals(attribute.Value, true)));
         Assert.IsTrue(span.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.Italic && Equals(attribute.Value, true)));
         Assert.IsTrue(span.DocAttributes.Any(attribute => attribute.Name == DocAttributeNames.Underline && Equals(attribute.Value, true)));
@@ -443,12 +527,14 @@ public sealed class EntryTemplateTests
         var document = new DocxDocument();
         var person = new PersonEntryTemplateModel
         {
+            Surname = "Beispiel",
+            GivenNames = "Ada",
+            Title = string.Empty,
             NameGc = "Beispiel, Ada",
             NameAk = "Ada Beispiel",
             Anchor = "person-I1",
             Reference = "I1",
-            VitalEventsGc = string.Empty,
-            VitalEventsAk = string.Empty,
+            VitalEvents = string.Empty,
             IndexAnchor = string.Empty,
             Occupations = Array.Empty<OccupationEntryTemplateModel>()
         };

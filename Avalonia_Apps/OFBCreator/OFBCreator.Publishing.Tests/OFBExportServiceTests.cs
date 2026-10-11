@@ -151,7 +151,7 @@ public sealed class OFBExportServiceTests
     {
         const string gedcom =
             "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n2 FORM LINEAGE-LINKED\r\n1 CHAR UTF-8\r\n" +
-            "0 @I1@ INDI\r\n1 NAME Anna /Muster/\r\n2 GIVN Anna\r\n2 SURN Muster\r\n2 TYPE BIRTH\r\n1 NAME Anna /Beispiel/\r\n2 GIVN Anna\r\n2 SURN Beispiel\r\n2 TYPE AKA\r\n1 ALIA Anna /Alias/\r\n1 SEX F\r\n1 BIRT\r\n2 DATE 1901\r\n1 DEAT\r\n2 DATE 1980\r\n1 FAMS @F1@\r\n" +
+            "0 @I1@ INDI\r\n1 NAME Anna /Muster/\r\n2 GIVN Anna\r\n2 SURN Muster\r\n2 TYPE BIRTH\r\n1 NAME Anna /Beispiel/\r\n2 GIVN Anna\r\n2 SURN Beispiel\r\n2 TYPE AKA\r\n1 NAME Anna /Verheiratet/\r\n2 GIVN Anna\r\n2 SURN Verheiratet\r\n2 TYPE MARRIED\r\n1 NAME Anna /Muster/\r\n2 GIVN Anna\r\n2 SURN Muster\r\n2 TYPE MARRIED\r\n1 ALIA Anna /Alias/\r\n1 SEX F\r\n1 BIRT\r\n2 DATE 1901\r\n1 DEAT\r\n2 DATE 1980\r\n1 FAMS @F1@\r\n" +
             "0 @I2@ INDI\r\n1 NAME Emil /Partner/\r\n1 SEX M\r\n" +
             "0 @I3@ INDI\r\n1 NAME Kind /Muster/\r\n1 FAMC @F1@\r\n" +
             "0 @F1@ FAM\r\n1 HUSB @I2@\r\n1 WIFE @I1@\r\n1 CHIL @I3@\r\n0 TRLR\r\n";
@@ -183,15 +183,85 @@ public sealed class OFBExportServiceTests
             var texts = xml.Descendants(word + "p")
                 .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
                 .ToArray();
-            Assert.IsTrue(texts.Any(text => text.Contains("Beispiel, Anna (Anna Alias)", StringComparison.Ordinal)),
+            Assert.IsTrue(texts.Any(text => text.Contains("Muster, Anna (Anna Alias; Anna Beispiel)", StringComparison.Ordinal)),
                 string.Join(" | ", texts.Where(text => text.Contains("Anna", StringComparison.OrdinalIgnoreCase))));
-            Assert.IsTrue(texts.Any(text => text.Contains("Anna [00001]", StringComparison.Ordinal)),
+            Assert.IsTrue(texts.Any(text => text.Contains("Anna (1901–1980) [00001]", StringComparison.Ordinal)),
                 string.Join(" | ", texts.Where(text => text.Contains("Anna", StringComparison.Ordinal))));
-            Assert.IsTrue(texts.Count(text => text.Contains("Anna [00001]", StringComparison.Ordinal)) >= 2);
+            Assert.IsTrue(texts.Any(text => text.Contains("Anna (1901–1980) [00001]", StringComparison.Ordinal)));
             var personIndexPosition = Array.IndexOf(texts, "Personenindex");
             Assert.IsTrue(personIndexPosition >= 0);
             var personIndexTexts = texts.Skip(personIndexPosition + 1).ToArray();
             Assert.IsTrue(personIndexTexts.Any(text => text.Contains("00001", StringComparison.Ordinal)), string.Join(" | ", personIndexTexts));
+            Assert.IsTrue(personIndexTexts.Any(text => text.StartsWith("Anna (1901–1980)", StringComparison.Ordinal)),
+                string.Join(" | ", personIndexTexts.Where(text => text.Contains("Anna", StringComparison.Ordinal))));
+            Assert.IsTrue(personIndexTexts.Any(text => text.StartsWith("Anna ^Beispiel (1901–1980)", StringComparison.Ordinal)),
+                string.Join(" | ", personIndexTexts.Where(text => text.Contains("Anna", StringComparison.Ordinal))));
+            var marriedSurnameIndex = Array.IndexOf(personIndexTexts, "Verheiratet");
+            Assert.IsTrue(marriedSurnameIndex >= 0, string.Join(" | ", personIndexTexts));
+            Assert.IsTrue(personIndexTexts[marriedSurnameIndex + 1].StartsWith("Anna ^Verheiratet (1901–1980)", StringComparison.Ordinal),
+                string.Join(" | ", personIndexTexts));
+            var birthSurnameIndex = Array.IndexOf(personIndexTexts, "Muster");
+            Assert.IsTrue(birthSurnameIndex >= 0, string.Join(" | ", personIndexTexts));
+            Assert.IsTrue(personIndexTexts.Skip(birthSurnameIndex + 1).Take(2)
+                .Any(text => text.StartsWith("Anna ^Muster (1901–1980)", StringComparison.Ordinal)),
+                string.Join(" | ", personIndexTexts));
+            Assert.AreEqual(1, personIndexTexts.Count(text => text.StartsWith("Anna (1901–1980)", StringComparison.Ordinal)));
+            Assert.AreEqual(3, personIndexTexts.Count(text => text.StartsWith("Anna ^", StringComparison.Ordinal)));
+        }
+        finally
+        {
+            Directory.Delete(testDirectory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task ExportAsync_WithOnlyCurrentMarriedName_KeepsPersonIndexBacklinkWithoutGuessingBirthName()
+    {
+        const string gedcom =
+            "0 HEAD\r\n1 CHAR UTF-8\r\n" +
+            "0 @I1@ INDI\r\n1 NAME Anna /Verheiratet/\r\n1 SEX F\r\n1 FAMS @F1@\r\n" +
+            "0 @I2@ INDI\r\n1 NAME Emil /Partner/\r\n1 SEX M\r\n1 FAMS @F1@\r\n" +
+            "0 @F1@ FAM\r\n1 HUSB @I2@\r\n1 WIFE @I1@\r\n1 MARR\r\n0 TRLR\r\n";
+        var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-index-current-name-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(testDirectory);
+        var inputPath = Path.Combine(testDirectory, "names.ged");
+        var outputPath = Path.Combine(testDirectory, "names.docx");
+        await File.WriteAllTextAsync(inputPath, gedcom, Encoding.UTF8);
+
+        try
+        {
+            UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
+            var documentFactory = Substitute.For<IUserDocumentFactory>();
+            documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
+            await new OFBExportService(
+                new CanonicalGedcomFamilyDataSource(new GedcomInputDriver(), new CanonicalGenealogyAdapter()),
+                documentFactory).ExportAsync(new OFBGenerateOptions
+            {
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                Title = "Nur aktueller Name",
+                UseDocxFormat = true
+            });
+
+            using var archive = ZipFile.OpenRead(outputPath);
+            using var stream = archive.GetEntry("word/document.xml")!.Open();
+            var xml = XDocument.Load(stream);
+            XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            var personIndexRow = xml.Descendants(word + "p")
+                .Single(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value))
+                    .StartsWith("Anna", StringComparison.Ordinal));
+            var personIndexRowText = string.Concat(personIndexRow.Descendants(word + "t").Select(text => text.Value));
+            Assert.IsFalse(personIndexRowText.StartsWith("^", StringComparison.Ordinal), personIndexRowText);
+            var indexAnchor = personIndexRow.Descendants(word + "bookmarkStart")
+                .Select(bookmark => (string?)bookmark.Attribute(word + "name"))
+                .Single(name => name is not null && name.StartsWith("index-person-", StringComparison.Ordinal));
+            var linkTargets = xml.Descendants(word + "hyperlink")
+                .Select(link => (string?)link.Attribute(word + "anchor"))
+                .Where(target => target is not null)
+                .ToArray();
+
+            Assert.IsTrue(linkTargets.Contains(indexAnchor),
+                $"Expected a family-entry backlink to {indexAnchor}; targets: {string.Join(", ", linkTargets)}");
         }
         finally
         {
@@ -251,34 +321,40 @@ public sealed class OFBExportServiceTests
             Assert.IsTrue(placeIndex >= 0);
             var alphaPlaceIndex = Array.FindIndex(texts, placeIndex + 1, text => text == "Ortsindex Alphabetisch");
             Assert.IsTrue(alphaPlaceIndex > placeIndex);
+            Assert.IsTrue(texts.Skip(alphaPlaceIndex + 1).Any(text =>
+                text.StartsWith("München", StringComparison.Ordinal)
+                && text.EndsWith(" [00001]", StringComparison.Ordinal)),
+                string.Join(" | ", texts.Skip(alphaPlaceIndex + 1).Take(10)));
             var hierarchyParagraphs = paragraphs.Skip(placeIndex + 1).Take(alphaPlaceIndex - placeIndex - 1).ToArray();
             var hierarchyTexts = hierarchyParagraphs
                 .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
                 .ToArray();
             Assert.IsTrue(hierarchyTexts.Contains("Deutschland"));
             Assert.IsTrue(hierarchyTexts.Contains("Baden-Württemberg"), string.Join(" | ", hierarchyTexts));
-            Assert.IsTrue(hierarchyTexts.Contains("Tübingen"));
+            Assert.IsTrue(hierarchyTexts.Any(text => text.StartsWith("Tübingen", StringComparison.Ordinal)),
+                string.Join(" | ", hierarchyTexts));
             Assert.IsFalse(hierarchyTexts.Any(text => text.Contains("Baden-Würtemberg", StringComparison.Ordinal)));
             Assert.IsTrue(hierarchyTexts.Contains("Bayern"));
             Assert.IsTrue(hierarchyTexts.Contains("Oberbayern"));
-            Assert.IsTrue(hierarchyTexts.Contains("München"));
+            Assert.IsTrue(hierarchyTexts.Any(text => text.StartsWith("München", StringComparison.Ordinal)));
             var headingIndexes = new[] { "Deutschland", "Baden-Württemberg", "Bayern", "Oberbayern" }
                 .Select(name => Array.IndexOf(hierarchyTexts, name))
                 .ToArray();
             Assert.IsTrue(headingIndexes.All(index => index >= 0));
             Assert.IsTrue(headingIndexes.All(index => !hierarchyParagraphs[index].Descendants(word + "hyperlink").Any()),
                 "Hierarchy headings must not carry inherited family links.");
-            var tuebingenIndex = Array.IndexOf(hierarchyTexts, "Tübingen");
-            var muenchenIndex = Array.IndexOf(hierarchyTexts, "München");
-            Assert.AreEqual("[00001]", hierarchyTexts[tuebingenIndex + 1]);
-            Assert.AreEqual("[00001]", hierarchyTexts[muenchenIndex + 1]);
+            var tuebingenIndex = Array.FindIndex(hierarchyTexts, text =>
+                text.StartsWith("Tübingen", StringComparison.Ordinal));
+            var muenchenIndex = Array.FindIndex(hierarchyTexts, text =>
+                text.StartsWith("München", StringComparison.Ordinal));
+            Assert.AreEqual("Tübingen [00001]", hierarchyTexts[tuebingenIndex]);
+            Assert.AreEqual("München [00001]", hierarchyTexts[muenchenIndex]);
             Assert.IsTrue(new[] { tuebingenIndex, muenchenIndex }.All(index =>
                 hierarchyParagraphs[index].Descendants(word + "pStyle")
                     .All(style => !((string?)style.Attribute(word + "val") ?? string.Empty)
                         .StartsWith("Heading", StringComparison.OrdinalIgnoreCase))),
                 "Terminal places remain ordinary text rather than chapter headings.");
             Assert.IsTrue(hierarchyParagraphs[tuebingenIndex].Descendants(word + "ind").Any());
-            Assert.IsTrue(hierarchyParagraphs[tuebingenIndex + 1].Descendants(word + "ind").Any());
             var hierarchyHeadings = headingIndexes
                 .Select(index => (string?)hierarchyParagraphs[index].Descendants(word + "pStyle").FirstOrDefault()?.Attribute(word + "val"))
                 .ToArray();
@@ -294,7 +370,9 @@ public sealed class OFBExportServiceTests
             var links = xml.Descendants(word + "hyperlink").Select(element => (string?)element.Attribute(word + "anchor")).Where(target => target is not null).ToArray();
             Assert.IsTrue(bookmarks.Contains("index-property-1"));
             Assert.IsTrue(links.Contains("index-property-1"));
-            Assert.IsTrue(paragraphs.Any(paragraph => paragraph.Descendants(word + "t").Any(text => text.Value.Contains("Muster, Emil", StringComparison.Ordinal))));
+            Assert.IsTrue(paragraphs.Any(paragraph =>
+                string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value))
+                    .Contains("Muster, Emil", StringComparison.Ordinal)));
         }
         finally
         {
@@ -374,7 +452,7 @@ public sealed class OFBExportServiceTests
             var siblingIndexParagraph = paragraphTexts.Single(text =>
                 text.Contains("Jüngstes (1930–?)", StringComparison.Ordinal));
             Assert.IsTrue(siblingIndexParagraph.Contains("<00001, 00002>", StringComparison.Ordinal), siblingIndexParagraph);
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("<PN=PN-003>", StringComparison.Ordinal)),
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("PN=PN-003", StringComparison.Ordinal)),
                 string.Join(" | ", paragraphTexts));
             Assert.IsFalse(paragraphTexts.Any(text => text.Contains("<PN=I3>", StringComparison.Ordinal)));
             Assert.IsTrue(Array.FindIndex(paragraphTexts, text => text.StartsWith("1. Ältestes", StringComparison.Ordinal))
@@ -417,7 +495,7 @@ public sealed class OFBExportServiceTests
         const string gedcom =
             "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n2 FORM LINEAGE-LINKED\r\n1 CHAR UTF-8\r\n" +
             "0 @I1@ INDI\r\n1 NAME Eltern /Muster/\r\n1 SEX M\r\n1 FAMS @F1@\r\n" +
-            "1 DEAT\r\n2 DATE 1980\r\n1 CENS\r\n2 DATE 1940\r\n" +
+            "1 DEAT\r\n2 DATE 1980\r\n1 CENS\r\n2 DATE 1940\r\n1 CENS\r\n2 DATE 1940\r\n" +
             "1 BIRT\r\n2 DATE 1900\r\n2 PLAC Beispielort\r\n1 BIRT\r\n2 DATE 1901\r\n2 PLAC Alternativort\r\n1 DEAT\r\n2 DATE 1981\r\n" +
             "0 @I2@ INDI\r\n1 NAME Elternteil /Beispiel/\r\n1 SEX F\r\n1 FAMS @F1@\r\n" +
             "0 @I3@ INDI\r\n1 NAME Kind /Muster/\r\n1 FAMC @F1@\r\n1 FAMS @F2@\r\n" +
@@ -464,7 +542,8 @@ public sealed class OFBExportServiceTests
             var birthIndex = parentEvents.IndexOf("* 1900", StringComparison.Ordinal);
             var deathIndex = parentEvents.IndexOf("† 1980", StringComparison.Ordinal);
             Assert.IsTrue(birthIndex >= 0 && birthIndex < deathIndex, parentEvents);
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1940: Zähl.", StringComparison.Ordinal)));
+            Assert.AreEqual(1, paragraphTexts.Count(text => text.Contains("1940: Zähl.", StringComparison.Ordinal)),
+                string.Join(" | ", paragraphTexts));
             Assert.IsFalse(parentEvents.Contains("1901", StringComparison.Ordinal), parentEvents);
             Assert.IsFalse(parentEvents.Contains("1981", StringComparison.Ordinal), parentEvents);
             Assert.IsTrue(linkedChildEvents.Contains(", * 1920 in Kinderort, ≈ 1923", StringComparison.Ordinal), linkedChildEvents);
@@ -556,11 +635,14 @@ public sealed class OFBExportServiceTests
                 : "Anna Muster, Gräfin";
             Assert.IsTrue(parentText.Contains(expectedNameAndTitle, StringComparison.Ordinal), parentText);
             var titleIndex = parentText.IndexOf("Gräfin", StringComparison.Ordinal);
-            var referenceIndex = parentText.IndexOf("PN-1", StringComparison.Ordinal);
             var religionIndex = parentText.IndexOf("katholisch", StringComparison.Ordinal);
             var birthIndex = parentText.IndexOf("* 1900", StringComparison.Ordinal);
-            Assert.IsTrue(titleIndex >= 0 && referenceIndex > titleIndex, parentText);
-            Assert.IsTrue(religionIndex > referenceIndex && birthIndex > religionIndex, parentText);
+            var referenceParagraphIndex = Array.FindIndex(paragraphTexts, text => text.Contains("PN=PN-1", StringComparison.Ordinal));
+            Assert.IsTrue(titleIndex >= 0 && religionIndex > titleIndex && birthIndex > religionIndex, parentText);
+            if (templateName == "gc")
+                Assert.IsTrue(referenceParagraphIndex > parentIndex, string.Join(" | ", paragraphTexts));
+            else
+                Assert.IsTrue(parentText.Contains("<PN=PN-1>", StringComparison.Ordinal), parentText);
 
             Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1940: Zähl.", StringComparison.Ordinal)));
             Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1960: Zähl.", StringComparison.Ordinal)));
@@ -580,7 +662,7 @@ public sealed class OFBExportServiceTests
             Assert.IsTrue(childIndex >= 0 && childEventIndex > childIndex,
                 string.Join(" | ", paragraphTexts));
             AssertParagraphIndent(paragraphs[childIndex], left: "1080", hanging: "360");
-            AssertParagraphIndent(paragraphs[childEventIndex], left: "720", hanging: null);
+            AssertParagraphIndent(paragraphs[childEventIndex], left: "1440", hanging: null);
         }
         finally
         {
@@ -924,10 +1006,15 @@ public sealed class OFBExportServiceTests
             Assert.IsTrue(occupationTargets.All(target => bookmarks.Contains(target!)));
             var occupationIndexPosition = Array.IndexOf(paragraphTexts, "Berufsindex");
             var propertyIndexPosition = Array.IndexOf(paragraphTexts, "Eigentums-/Besitz-Index");
+            var placeIndexPosition = Array.IndexOf(paragraphTexts, "Ortsindex");
+            var occupationIndexEndPosition = propertyIndexPosition >= 0 ? propertyIndexPosition : placeIndexPosition;
             var occupationIndexTexts = paragraphTexts.Skip(occupationIndexPosition + 1)
-                .Take(propertyIndexPosition - occupationIndexPosition - 1)
+                .Take(occupationIndexEndPosition - occupationIndexPosition - 1)
                 .ToArray();
-            Assert.IsTrue(occupationIndexTexts.Any(text => text.StartsWith("Ackersmann", StringComparison.Ordinal)));
+            Assert.IsTrue(occupationIndexTexts.Any(text => text.StartsWith("Ackersmann", StringComparison.Ordinal)),
+                string.Join(" | ", occupationIndexTexts));
+            Assert.IsTrue(occupationIndexTexts.Any(text => text.StartsWith("Ackersmann [", StringComparison.Ordinal)),
+                string.Join(" | ", occupationIndexTexts));
             Assert.IsTrue(occupationIndexTexts.Any(text => text.StartsWith("Taglöhner", StringComparison.Ordinal)));
             Assert.IsFalse(occupationIndexTexts.Any(text => text.Contains("Graf Müller", StringComparison.Ordinal)));
         }

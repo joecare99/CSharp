@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using GenInterfaces.Data;
+using OFBCreator.Publishing.Models;
 
 namespace OFBCreator.Publishing.Services.Templates;
 
@@ -22,36 +24,43 @@ public static class EntryTemplateValidator
     private static readonly IReadOnlyDictionary<string, string[]> AllowedProperties =
         new Dictionary<string, string[]>(StringComparer.Ordinal)
         {
-            ["section"] = ["kind", "columns", "blocks"],
+            [EntryTemplateContract.Block.Section] = ["kind", "columns", "blocks"],
             // Keep "indent" explicitly whitelisted for paragraph blocks (no-op guard).
-            ["paragraph"] = ["kind", "role", "anchor", "content", "indent", "hangingIndent", "spaceBefore"],
+            [EntryTemplateContract.Block.Paragraph] = ["kind", "role", "anchor", "content", "indent", "hangingIndent", "spaceBefore"],
             // Allow inline line breaks so non-vital events can render line-by-line within one paragraph.
-            ["text"] = ["kind", "value", "bold", "italic", "underline", "lineBreakBefore"],
-            ["field"] = ["kind", "path", "formatter", "bold", "italic", "underline", "lineBreakBefore"],
-            ["link"] = ["kind", "target", "content", "bold", "italic", "underline", "lineBreakBefore"],
-            ["if"] = ["kind", "condition", "then"],
-            ["forEach"] = ["kind", "items", "as", "template"],
-            ["include"] = ["kind", "fragment", "context"]
+            [EntryTemplateContract.Block.Text] = ["kind", "value", "bold", "italic", "underline", "lineBreakBefore"],
+            [EntryTemplateContract.Block.Field] = ["kind", "path", "formatter", "bold", "italic", "underline", "lineBreakBefore"],
+            [EntryTemplateContract.Block.Link] = ["kind", "target", "content", "bold", "italic", "underline", "lineBreakBefore"],
+            [EntryTemplateContract.Block.If] = ["kind", "condition", "then"],
+            [EntryTemplateContract.Block.ForEach] = ["kind", "items", "as", "template"],
+            [EntryTemplateContract.Block.Include] = ["kind", "fragment", "context"]
         };
 
     private static readonly HashSet<string> Formatters = new(StringComparer.Ordinal)
     {
-        "childCount",
-        "dateSuffix",
-        "gedcomDatePrefix",
-        "ordinal",
-        "vitalEvents"
+        EntryTemplateContract.Formatter.ChildCount,
+        EntryTemplateContract.Formatter.DateSuffix,
+        EntryTemplateContract.Formatter.GedcomDatePrefix,
+        EntryTemplateContract.Formatter.Ordinal,
+        EntryTemplateContract.Formatter.VitalEvents
     };
 
     private static readonly HashSet<string> Roles = new(StringComparer.Ordinal)
     {
-        "section-heading",
-        "family-header",
-        "family-data",
-        "adult",
-        "children-header",
-        "child",
-        "note"
+        EntryTemplateContract.Role.SectionHeading,
+        EntryTemplateContract.Role.FamilyHeader,
+        EntryTemplateContract.Role.FamilyData,
+        EntryTemplateContract.Role.Adult,
+        EntryTemplateContract.Role.ChildrenHeader,
+        EntryTemplateContract.Role.Child,
+        EntryTemplateContract.Role.Note,
+        EntryTemplateContract.Role.FamilyEntry,
+        EntryTemplateContract.Role.ParentEntry,
+        EntryTemplateContract.Role.ParentLifeEvents,
+        EntryTemplateContract.Role.ChildHeader,
+        EntryTemplateContract.Role.ChildEntry,
+        EntryTemplateContract.Role.ChildLifeEvents,
+        EntryTemplateContract.Role.IndexEntry
     };
 
     public static EntryTemplateDefinition ParseAndValidate(string json)
@@ -116,13 +125,13 @@ public static class EntryTemplateValidator
         }
         var requiredProperties = kind switch
         {
-            "section" => new[] { "blocks" },
-            "text" => new[] { "value" },
-            "field" => new[] { "path" },
-            "link" => new[] { "target", "content" },
-            "if" => new[] { "condition", "then" },
-            "forEach" => new[] { "items", "as", "template" },
-            "include" => new[] { "fragment" },
+            EntryTemplateContract.Block.Section => new[] { "blocks" },
+            EntryTemplateContract.Block.Text => new[] { "value" },
+            EntryTemplateContract.Block.Field => new[] { "path" },
+            EntryTemplateContract.Block.Link => new[] { "target", "content" },
+            EntryTemplateContract.Block.If => new[] { "condition", "then" },
+            EntryTemplateContract.Block.ForEach => new[] { "items", "as", "template" },
+            EntryTemplateContract.Block.Include => new[] { "fragment" },
             _ => Array.Empty<string>()
         };
         foreach (var requiredProperty in requiredProperties)
@@ -173,7 +182,7 @@ public static class EntryTemplateValidator
             throw new InvalidDataException($"Unsupported entry-template schema version {definition.SchemaVersion}.");
         if (string.IsNullOrWhiteSpace(definition.Id))
             throw new InvalidDataException("An entry template must have a non-empty id.");
-        if (definition.EntryRoot is not ("Family" or "Individual"))
+        if (definition.EntryRoot is not (EntryTemplateContract.EntryRoot.Family or EntryTemplateContract.EntryRoot.Individual))
             throw new InvalidDataException("entryRoot must be either 'Family' or 'Individual'.");
         if (definition.Blocks is null)
             throw new InvalidDataException("The template must define a blocks array.");
@@ -194,12 +203,12 @@ public static class EntryTemplateValidator
                 throw new InvalidDataException("Template fragments must have names and block arrays.");
         }
 
-        var rootVariables = definition.EntryRoot == "Family"
-            ? new Dictionary<string, string>(StringComparer.Ordinal) { ["family"] = "family" }
+        var rootVariables = definition.EntryRoot == EntryTemplateContract.EntryRoot.Family
+            ? new Dictionary<string, string>(StringComparer.Ordinal) { [EntryTemplateContract.Variable.Family] = EntryTemplateContract.Model.Family }
             : new Dictionary<string, string>(StringComparer.Ordinal)
             {
-                ["individual"] = "person",
-                ["person"] = "person"
+                [EntryTemplateContract.Variable.Individual] = EntryTemplateContract.Model.Person,
+                [EntryTemplateContract.Variable.Person] = EntryTemplateContract.Model.Person
             };
 
         ValidateBlocks(definition.Blocks, definition, rootVariables, inSection: false, topLevel: true);
@@ -207,14 +216,15 @@ public static class EntryTemplateValidator
         {
             var fragmentVariables = new Dictionary<string, string>(StringComparer.Ordinal)
             {
-                ["family"] = "family",
-                ["person"] = "person",
-                ["child"] = "person",
-                ["individual"] = "person",
-                ["occupation"] = "occupation",
-                ["property"] = "property",
-                ["familyReference"] = "familyReference",
-                ["personEvent"] = "personEvent"
+                [EntryTemplateContract.Variable.Family] = EntryTemplateContract.Model.Family,
+                [EntryTemplateContract.Variable.Person] = EntryTemplateContract.Model.Person,
+                [EntryTemplateContract.Variable.Child] = EntryTemplateContract.Model.Person,
+                [EntryTemplateContract.Variable.Individual] = EntryTemplateContract.Model.Person,
+                [EntryTemplateContract.Variable.Occupation] = EntryTemplateContract.Model.Occupation,
+                [EntryTemplateContract.Variable.Property] = EntryTemplateContract.Model.Property,
+                [EntryTemplateContract.Variable.FamilyReference] = EntryTemplateContract.Model.FamilyReference,
+                [EntryTemplateContract.Variable.FamilyReferenceToken] = EntryTemplateContract.Model.FamilyReferenceToken,
+                [EntryTemplateContract.Variable.PersonEvent] = EntryTemplateContract.Model.PersonEvent
             };
             ValidateBlocks(fragment, definition, fragmentVariables, inSection: false, topLevel: false);
         }
@@ -239,7 +249,7 @@ public static class EntryTemplateValidator
 
             switch (block.Kind)
             {
-                case "section":
+                case EntryTemplateContract.Block.Section:
                     if (!topLevel)
                         throw new InvalidDataException("Template sections are allowed only as top-level blocks.");
                     if (inSection)
@@ -248,7 +258,7 @@ public static class EntryTemplateValidator
                         throw new InvalidDataException("A section columns value must be between 1 and 4.");
                     ValidateBlocks(block.Blocks, definition, variables, inSection: true, topLevel: false);
                     break;
-                case "paragraph":
+                case EntryTemplateContract.Block.Paragraph:
                     if (block.Role is not null && !Roles.Contains(block.Role))
                         throw new InvalidDataException($"Unknown logical style role '{block.Role}'.");
                     if (block.Anchor is not null)
@@ -261,11 +271,11 @@ public static class EntryTemplateValidator
                         throw new InvalidDataException("A paragraph spaceBefore value must be between 0 and 1440 points.");
                     ValidateBlocks(block.Content, definition, variables, inSection, topLevel: false);
                     break;
-                case "text":
+                case EntryTemplateContract.Block.Text:
                     if (block.Value is null)
                         throw new InvalidDataException("A text block requires a value.");
                     break;
-                case "field":
+                case EntryTemplateContract.Block.Field:
                     if (string.IsNullOrWhiteSpace(block.Path))
                         throw new InvalidDataException("A field block requires a path.");
                     ValidatePath(block.Path, variables);
@@ -277,13 +287,13 @@ public static class EntryTemplateValidator
                     if (block.Formatter is null && !IsScalarPath(canonicalPath))
                         throw new InvalidDataException($"Field path '{block.Path}' requires a compatible safe formatter.");
                     break;
-                case "link":
+                case EntryTemplateContract.Block.Link:
                     if (string.IsNullOrWhiteSpace(block.Target))
                         throw new InvalidDataException("A link block requires a target path.");
                     ValidatePath(block.Target, variables, requireAnchor: true);
                     ValidateBlocks(block.Content, definition, variables, inSection, topLevel: false);
                     break;
-                case "if":
+                case EntryTemplateContract.Block.If:
                     if (block.Condition is null)
                         throw new InvalidDataException("An if block requires a condition.");
                     var conditionPath = block.Condition.StartsWith('!') ? block.Condition[1..] : block.Condition;
@@ -294,7 +304,7 @@ public static class EntryTemplateValidator
                         throw new InvalidDataException("Conditions must use a supported collection test or optional typed value.");
                     ValidateBlocks(block.Then, definition, variables, inSection, topLevel: false);
                     break;
-                case "forEach":
+                case EntryTemplateContract.Block.ForEach:
                     if (string.IsNullOrWhiteSpace(block.Items) || string.IsNullOrWhiteSpace(block.As))
                         throw new InvalidDataException("A forEach block requires items and as values.");
                     ValidatePath(block.Items, variables);
@@ -302,11 +312,11 @@ public static class EntryTemplateValidator
                         throw new InvalidDataException($"Invalid forEach variable name '{block.As}'.");
                     var childVariables = new Dictionary<string, string>(variables, StringComparer.Ordinal)
                     {
-                        [block.As] = GetCollectionElementType(block.Items)
+                        [block.As] = GetCollectionElementType(block.Items, variables)
                     };
                     ValidateBlocks(block.Template, definition, childVariables, inSection, topLevel: false);
                     break;
-                case "include":
+                case EntryTemplateContract.Block.Include:
                     if (string.IsNullOrWhiteSpace(block.Fragment))
                         throw new InvalidDataException("An include block requires a fragment name.");
                     if (!definition.Fragments.ContainsKey(block.Fragment))
@@ -314,7 +324,7 @@ public static class EntryTemplateValidator
                     if (block.Context is not null)
                     {
                         ValidatePath(block.Context, variables);
-                        if (CanonicalizePath(block.Context, variables) != "person")
+                        if (CanonicalizePath(block.Context, variables) != EntryTemplateContract.Model.Person)
                             throw new InvalidDataException("An include context must resolve to a person value.");
                     }
                     break;
@@ -330,30 +340,16 @@ public static class EntryTemplateValidator
 
         if (parts.Length == 1)
         {
-            if (!requireAnchor && variables[parts[0]] is "person" or "occupation" or "family")
+            if (!requireAnchor && EntryTemplateContract.GetModelType(type) is not null)
                 return;
             throw new InvalidDataException($"Template path '{path}' must select a typed value.");
         }
-        if (parts.Length < 2)
-            throw new InvalidDataException($"Template path '{path}' must select a typed value.");
-
-        var property = string.Join('.', parts.Skip(1));
-        var isValid = type switch
-        {
-            "family" => property is "number" or "anchor" or "union" or "marriageMark" or "marriageDate" or "marriagePlace" or "marriagePlaceShort" or "marriagePlaceAnchor" or "properties" or "properties.any" or "properties.one" or "parents" or "parents.any" or "parents.one" or "children" or "children.any" or "children.one",
-            "person" => property is "nameGc" or "nameAk" or "akaNames" or "religion" or "anchor" or "reference" or "referenceNumber" or "events" or "events.any" or "events.one" or "showNonVitalEvents" or "indexLabel" or "vitalEventsGc" or "vitalEventsAk" or "additionalLifeDataGc" or "birth" or "death" or "indexAnchor"
-                or "occupations" or "occupations.any" or "occupations.one" or "properties" or "properties.any" or "properties.one" or "residence" or "residenceAnchor" or "ordinal" or "parentFamily" or "parentFamily.number" or "parentFamily.anchor" or "childFamilies" or "childFamilies.any" or "childFamilies.one" or "parentFamilies" or "parentFamilies.any" or "parentFamilies.one" or "childFamilyTokens" or "parentFamilyTokens" or "childFamilyTokens.any" or "childFamilyTokens.one" or "parentFamilyTokens.any" or "parentFamilyTokens.one",
-            "familyReference" => property is "number" or "anchor",
-            "familyReferenceToken" => property is "text" or "anchor",
-            "personEvent" => property is "symbol" or "eventName" or "placePreposition" or "date" or "place" or "placeAnchor" or "additional" or "relatedPersonName" or "relatedPersonAnchor" or "relatedFamilyNumber" or "relatedFamilyAnchor" or "occupationIndexAnchor" or "occupationEmployer" or "isOccupation" or "relatedFamily" or "relatedPerson" or "isVital" or "isListableNonVital",
-            "occupation" => property is "name" or "date" or "indexAnchor" or "place" or "placeAnchor" or "employer",
-            "property" => property is "name" or "date" or "place" or "indexAnchor" or "placeAnchor",
-            _ => false
-        };
-        if (!isValid)
+        var property = GetPathProperty(path, variables);
+        if (property is null)
             throw new InvalidDataException($"Unknown typed template path '{path}'.");
-
-            if (requireAnchor && property is not ("anchor" or "indexAnchor" or "parentFamily.anchor" or "marriagePlaceAnchor" or "residenceAnchor" or "placeAnchor" or "relatedPersonAnchor" or "relatedFamilyAnchor" or "occupationIndexAnchor"))
+        if (requireAnchor
+            && (property.PropertyType != typeof(string)
+                || !property.Name.EndsWith("Anchor", StringComparison.Ordinal)))
             throw new InvalidDataException($"Link target '{path}' is not an anchor field.");
     }
 
@@ -368,91 +364,116 @@ public static class EntryTemplateValidator
             : $"{type}.{string.Join('.', parts.Skip(1))}";
     }
 
-    private static string GetCollectionElementType(string path) => path switch
+    private static string GetCollectionElementType(string path, IReadOnlyDictionary<string, string> variables)
     {
-        "family.parents" or "family.children" => "person",
-        _ when path.EndsWith(".occupations", StringComparison.Ordinal) => "occupation",
-        _ when path.EndsWith(".childFamilies", StringComparison.Ordinal) || path.EndsWith(".parentFamilies", StringComparison.Ordinal) => "familyReference",
-        _ when path.EndsWith(".childFamilyTokens", StringComparison.Ordinal) || path.EndsWith(".parentFamilyTokens", StringComparison.Ordinal) => "familyReferenceToken",
-        // Event entries are already validated as a collection element type.
-        _ when path.EndsWith(".events", StringComparison.Ordinal) => "personEvent",
-        "family.properties" or "person.properties" or "child.properties" or "individual.properties" => "property",
-        _ => throw new InvalidDataException($"Path '{path}' is not a supported template collection.")
-    };
+        var property = GetPathProperty(path, variables);
+        if (property is null
+            || !EntryTemplateContract.TryGetCollectionElementType(property.PropertyType, out var elementType)
+            || elementType is null)
+            throw new InvalidDataException($"Path '{path}' is not a supported template collection.");
+        return EntryTemplateContract.GetModelName(elementType)
+            ?? throw new InvalidDataException($"Path '{path}' does not contain a supported template model.");
+    }
 
-    private static bool IsFormatterCompatible(string path, string formatter) => formatter switch
+    private static bool IsFormatterCompatible(string path, string formatter)
     {
-        "childCount" => path == "family.children",
-        "dateSuffix" => path is "family.union" or "family.marriageDate" or "person.birth" or "child.birth" or "individual.birth"
-            or "person.death" or "child.death" or "individual.death",
-        "gedcomDatePrefix" => path.EndsWith(".date", StringComparison.Ordinal),
-        "ordinal" => path.EndsWith(".ordinal", StringComparison.Ordinal),
-        "vitalEvents" => path is "person" or "individual" or "child",
-        _ => false
-    };
+        var models = GetAllModelVariables();
+        if (path.Split('.').Length == 1)
+            return formatter == EntryTemplateContract.Formatter.VitalEvents
+                && models.TryGetValue(path, out var modelName)
+                && EntryTemplateContract.GetModelType(modelName) == typeof(PersonEntryTemplateModel);
 
-    private static bool IsScalarPath(string path) => path switch
+        var property = GetPathProperty(path, models);
+        return formatter switch
+        {
+            EntryTemplateContract.Formatter.ChildCount => property?.Name == nameof(FamilyEntryTemplateModel.Children),
+            EntryTemplateContract.Formatter.DateSuffix => property?.Name is nameof(FamilyEntryTemplateModel.Union)
+                or nameof(FamilyEntryTemplateModel.MarriageDate)
+                or nameof(PersonEntryTemplateModel.Birth)
+                or nameof(PersonEntryTemplateModel.Death),
+            EntryTemplateContract.Formatter.GedcomDatePrefix => property?.Name is nameof(PersonEventEntryTemplateModel.Date)
+                or nameof(OccupationEntryTemplateModel.Date)
+                or nameof(PropertyEntryTemplateModel.Date),
+            EntryTemplateContract.Formatter.Ordinal => property?.Name == nameof(PersonEntryTemplateModel.Ordinal),
+            _ => false
+        };
+    }
+
+    private static bool IsScalarPath(string path)
     {
-        "family.number" or "family.anchor" or "family.union" or "family.marriageMark" or "family.marriageDate"
-            or "family.marriagePlace" or "family.marriagePlaceShort" or "family.marriagePlaceAnchor" => true,
-            "person.nameGc" or "person.nameAk" or "person.akaNames" or "person.anchor" or "person.reference" or "person.referenceNumber" or "person.religion" or "person.indexLabel"
-            or "person.vitalEventsGc" or "person.vitalEventsAk" or "person.additionalLifeDataGc" or "person.birth" or "person.death"
-            or "person.indexAnchor" or "person.ordinal" or "person.residence" or "person.residenceAnchor" or "person.parentFamily.number" or "person.parentFamily.anchor"
-            or "person.parentFamily" => true,
-        "child.nameGc" or "child.nameAk" or "child.akaNames" or "child.anchor" or "child.reference" or "child.referenceNumber" or "child.religion"
-            or "child.vitalEventsGc" or "child.vitalEventsAk" or "child.additionalLifeDataGc" or "child.birth" or "child.death"
-            or "child.indexAnchor" or "child.ordinal" or "child.residence" or "child.residenceAnchor"
-            or "child.parentFamily.number" or "child.parentFamily.anchor" or "child.parentFamily" => true,
-        "individual.nameGc" or "individual.nameAk" or "individual.akaNames" or "individual.anchor" or "individual.reference" or "individual.referenceNumber" or "individual.religion"
-            or "individual.vitalEventsGc" or "individual.vitalEventsAk" or "individual.additionalLifeDataGc" or "individual.birth"
-            or "individual.death" or "individual.indexAnchor" or "individual.ordinal" or "individual.residence" or "individual.residenceAnchor"
-            or "individual.parentFamily.number" or "individual.parentFamily.anchor" or "individual.parentFamily" => true,
-        "occupation.name" or "occupation.date" or "occupation.indexAnchor" or "occupation.place" or "occupation.placeAnchor" or "occupation.employer" => true,
-        "property.name" or "property.date" or "property.place" or "property.indexAnchor" or "property.placeAnchor" => true,
-        "personEvent.symbol" or "personEvent.eventName" or "personEvent.placePreposition" or "personEvent.isVital" or "personEvent.isListableNonVital" or "personEvent.relatedPerson" or "personEvent.relatedFamily"
-            or "personEvent.date" or "personEvent.place" or "personEvent.additional"
-            or "personEvent.relatedPersonName" or "personEvent.relatedPersonAnchor" or "personEvent.relatedFamilyNumber" or "personEvent.relatedFamilyAnchor"
-            or "personEvent.occupationIndexAnchor" or "personEvent.occupationEmployer" or "personEvent.isOccupation"
-            or "personEvent.relatedFamily" or "personEvent.relatedPerson" or "personEvent.isVital" => true,
-        "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
-        "familyReference.number" or "familyReference.anchor" or "familyReferenceToken" or "familyReferenceToken.text" or "familyReferenceToken.anchor" => true,
-        _ => false
-    };
+        var property = GetPathProperty(path, GetAllModelVariables());
+        if (property is null)
+            return false;
+
+        var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+        return EntryTemplateContract.IsScalar(propertyType)
+            || EntryTemplateContract.GetModelName(propertyType) == EntryTemplateContract.Model.FamilyReference;
+    }
 
     private static bool IsSupportedCondition(string path, IReadOnlyDictionary<string, string> variables)
     {
         if (path.EndsWith(".any", StringComparison.Ordinal) || path.EndsWith(".one", StringComparison.Ordinal))
             return IsSupportedAnyConditionPath(path, variables);
 
-        var parts = path.Split('.');
-        if (parts.Length != 2 || !variables.TryGetValue(parts[0], out var type))
-            return false;
-
-        return (type, parts[1]) switch
-        {
-            ("person" or "child" or "individual", "parentFamily" or "residence" or "akaNames" or "referenceNumber" or "religion" or "vitalEventsGc" or "showNonVitalEvents") => true,
-            ("personEvent", "relatedPerson" or "relatedFamily" or "isVital" or "isListableNonVital" or "isOccupation" or "symbol" or "place" or "additional" or "date" or "occupationEmployer") => true,
-            ("family", "marriagePlaceShort") => true,
-            ("occupation" or "property", "place" or "employer") => true,
-            _ => false
-        };
+        var property = GetPathProperty(path, variables);
+        return property is not null
+            && !EntryTemplateContract.TryGetCollectionElementType(property.PropertyType, out _)
+            && (EntryTemplateContract.IsScalar(property.PropertyType)
+                || EntryTemplateContract.GetModelName(Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType) is not null);
     }
 
     private static bool IsSupportedAnyConditionPath(string path, IReadOnlyDictionary<string, string> variables)
     {
-        var collectionPath = path[..^4];
-        var parts = collectionPath.Split('.');
-        if (parts.Length < 2 || !variables.TryGetValue(parts[0], out var type))
+        if (!path.EndsWith(".any", StringComparison.Ordinal) && !path.EndsWith(".one", StringComparison.Ordinal))
             return false;
 
-        var property = string.Join('.', parts.Skip(1));
-        return type switch
-        {
-            "family" => property is "children" or "properties" or "parents",
-            "person" => property is "occupations" or "properties" or "events" or "childFamilies" or "parentFamilies" or "childFamilyTokens" or "parentFamilyTokens",
-            _ => false
-        } && (path.EndsWith(".any", StringComparison.Ordinal) || path.EndsWith(".one", StringComparison.Ordinal));
+        var collectionPath = path[..path.LastIndexOf('.')];
+        var property = GetPathProperty(collectionPath, variables);
+        return property is not null
+            && EntryTemplateContract.TryGetCollectionElementType(property.PropertyType, out _);
     }
+
+    private static PropertyInfo? GetPathProperty(string path, IReadOnlyDictionary<string, string> variables)
+    {
+        var parts = path.Split('.');
+        if (parts.Length < 2 || !variables.TryGetValue(parts[0], out var modelName))
+            return null;
+
+        var modelType = EntryTemplateContract.GetModelType(modelName);
+        PropertyInfo? property = null;
+        for (var index = 1; index < parts.Length; index++)
+        {
+            if (parts[index] is "any" or "one")
+                return index == parts.Length - 1 ? property : null;
+            if (modelType is null)
+                return null;
+
+            property = EntryTemplateContract.GetProperty(modelType, parts[index]);
+            if (property is null)
+                return null;
+            var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+            if (EntryTemplateContract.TryGetCollectionElementType(propertyType, out var elementType))
+                modelType = elementType is not null && EntryTemplateContract.GetModelName(elementType) is not null ? elementType : null;
+            else
+                modelType = EntryTemplateContract.GetModelName(propertyType) is not null ? propertyType : null;
+        }
+
+        return property;
+    }
+
+    private static IReadOnlyDictionary<string, string> GetAllModelVariables() =>
+        new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [EntryTemplateContract.Variable.Family] = EntryTemplateContract.Model.Family,
+            [EntryTemplateContract.Variable.Person] = EntryTemplateContract.Model.Person,
+            [EntryTemplateContract.Variable.Child] = EntryTemplateContract.Model.Person,
+            [EntryTemplateContract.Variable.Individual] = EntryTemplateContract.Model.Person,
+            [EntryTemplateContract.Variable.Occupation] = EntryTemplateContract.Model.Occupation,
+            [EntryTemplateContract.Variable.Property] = EntryTemplateContract.Model.Property,
+            [EntryTemplateContract.Variable.FamilyReference] = EntryTemplateContract.Model.FamilyReference,
+            [EntryTemplateContract.Variable.FamilyReferenceToken] = EntryTemplateContract.Model.FamilyReferenceToken,
+            [EntryTemplateContract.Variable.PersonEvent] = EntryTemplateContract.Model.PersonEvent
+        };
 
     private static bool IsIdentifier(string name) =>
         name.Length > 0
@@ -485,7 +506,7 @@ public static class EntryTemplateValidator
         {
             foreach (var block in blocks)
             {
-                if (block.Kind == "include")
+                if (block.Kind == EntryTemplateContract.Block.Include)
                     yield return block.Fragment!;
                 foreach (var nested in block.Content.Concat(block.Then).Concat(block.Template).Concat(block.Blocks))
                 {

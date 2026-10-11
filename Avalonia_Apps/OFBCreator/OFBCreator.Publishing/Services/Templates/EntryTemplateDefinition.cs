@@ -93,7 +93,11 @@ public sealed class EntryTemplateBlock
 
     public static IReadOnlyDictionary<string, string[]> RequiredFieldsByKind { get; } = new Dictionary<string, string[]>
     {
-        ["include"] = ["kind", "fragment"]
+        [EntryTemplateContract.Block.Include] =
+        [
+            EntryTemplateContract.ToCamelCase(nameof(Kind)),
+            EntryTemplateContract.ToCamelCase(nameof(Fragment))
+        ]
     };
 
     [JsonExtensionData]

@@ -62,7 +62,8 @@ public sealed class OFBWorkspaceService(OFBExportService exportService) : IOFBWo
             DataSource = project.DataSource ?? "gedcom",
             ExportRules = project.ExportRules,
             GroupingPolicy = project.GroupingPolicy,
-            GroupingDecisions = project.GroupingDecisions
+            GroupingDecisions = project.GroupingDecisions,
+            Layout = project.Layout
         };
     }
 }
