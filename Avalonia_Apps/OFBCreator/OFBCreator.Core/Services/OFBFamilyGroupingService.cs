@@ -32,22 +32,38 @@ public sealed class OFBFamilyGroupingService
         OFBGroupingPolicyValidator.Validate(policy, decisions);
 
         var sourceFamilies = families.ToArray();
+        var noNameFamilies = new List<IGenFamily>();
         var exactGroups = new Dictionary<string, List<IGenFamily>>(StringComparer.OrdinalIgnoreCase);
         foreach (var family in sourceFamilies)
         {
             var surname = FamilySurnameSelector.Select(family);
-            if (string.IsNullOrWhiteSpace(surname) || surname == "Unbekannt")
+            if (!FamilySurnameSelector.HasRealSurname(family))
+            {
+                noNameFamilies.Add(family);
                 continue;
+            }
             if (!exactGroups.ContainsKey(surname))
                 exactGroups.Add(surname, []);
             exactGroups[surname].Add(family);
         }
 
         if (exactGroups.Count == 0)
+        {
+            var noNameGroups = new Dictionary<string, IReadOnlyList<IGenFamily>>(StringComparer.OrdinalIgnoreCase);
+            string? unnamedGroupName = null;
+            if (noNameFamilies.Count > 0)
+            {
+                unnamedGroupName = SurnamePlaceholderClassifier.GetUniqueNoNameSectionName(noNameGroups.Keys);
+                noNameGroups.Add(unnamedGroupName, noNameFamilies.AsReadOnly());
+            }
             return new OFBFamilyGroupingResult(
-                new Dictionary<string, IReadOnlyList<IGenFamily>>(StringComparer.OrdinalIgnoreCase),
+                noNameGroups,
                 Array.Empty<OFBGroupingCandidate>(),
-                Array.Empty<OFBGroupingDiagnostic>());
+                Array.Empty<OFBGroupingDiagnostic>())
+            {
+                NoNameGroupName = unnamedGroupName
+            };
+        }
 
         var surnames = exactGroups.Keys.ToArray();
         var unionFind = new UnionFind(surnames);
@@ -65,6 +81,7 @@ public sealed class OFBFamilyGroupingService
         var candidates = new List<OFBGroupingCandidate>();
         var manualLabels = new List<(string Left, string Right, int Order, string Label)>();
 
+        var candidateDrafts = new List<CandidateDraft>();
         for (var leftIndex = 0; leftIndex < surnames.Length; leftIndex++)
         {
             for (var rightIndex = leftIndex + 1; rightIndex < surnames.Length; rightIndex++)
@@ -84,49 +101,77 @@ public sealed class OFBFamilyGroupingService
                 if (transitionCount == 0 && decision is null)
                     continue;
 
-                var evidence = BuildEvidence(distance, transitionCount);
-                var score = evidence.Count == 0 ? 0 : evidence.Max(item => item.Score);
-                var candidateId = CreateCandidateId(leftTargetId, rightTargetId, leftSurname, rightSurname);
-                var status = "suggested";
-
-                if (leftTargetId is null || rightTargetId is null)
-                {
-                    status = "requiresStableTargets";
-                    diagnostics.Add(new OFBGroupingDiagnostic(
-                        "GROUPING_TARGET_UNSTABLE",
-                        null,
-                        $"Surname groups '{leftSurname}' and '{rightSurname}' cannot be reviewed or persisted because both lack stable family identifiers."));
-                }
-                else if (decision is not null)
-                {
-                    usedDecisions.Add(decision.Id);
-                    status = decision.Action switch
-                    {
-                        "acceptMerge" => "accepted",
-                        "rejectMerge" => "rejected",
-                        _ => "manualMerge"
-                    };
-                    if (decision.Action is "acceptMerge" or "manualMerge")
-                        unionFind.Union(leftSurname, rightSurname);
-                    if (decision.Action == "manualMerge")
-                        manualLabels.Add((leftSurname, rightSurname, decision.Order, decision.GroupName!));
-                }
-                else if (score >= policy.AutoAcceptThreshold)
-                {
-                    status = "autoAccepted";
-                    unionFind.Union(leftSurname, rightSurname);
-                }
-
-                candidates.Add(new OFBGroupingCandidate(
-                    candidateId,
+                candidateDrafts.Add(new CandidateDraft(
                     leftSurname,
                     rightSurname,
                     leftTargetId,
                     rightTargetId,
-                    score,
-                    status,
-                    evidence));
+                    distance,
+                    transitionCount,
+                    decision));
             }
+        }
+
+        var minimumDistanceBySurname = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        foreach (var draft in candidateDrafts)
+        {
+            SetMinimumDistance(minimumDistanceBySurname, draft.LeftSurname, draft.Distance);
+            SetMinimumDistance(minimumDistanceBySurname, draft.RightSurname, draft.Distance);
+        }
+
+        foreach (var draft in candidateDrafts.Where(draft =>
+                     draft.Distance == minimumDistanceBySurname[draft.LeftSurname]
+                     || draft.Distance == minimumDistanceBySurname[draft.RightSurname]))
+        {
+            var leftSurname = draft.LeftSurname;
+            var rightSurname = draft.RightSurname;
+            var leftTargetId = draft.LeftTargetId;
+            var rightTargetId = draft.RightTargetId;
+            var distance = draft.Distance;
+            var transitionCount = draft.TransitionCount;
+            var decision = draft.Decision;
+            var evidence = BuildEvidence(distance, transitionCount);
+            var score = evidence.Count == 0 ? 0 : evidence.Max(item => item.Score);
+            var candidateId = CreateCandidateId(leftTargetId, rightTargetId, leftSurname, rightSurname);
+            var status = "suggested";
+
+            if (leftTargetId is null || rightTargetId is null)
+            {
+                status = "requiresStableTargets";
+                diagnostics.Add(new OFBGroupingDiagnostic(
+                    "GROUPING_TARGET_UNSTABLE",
+                    null,
+                    $"Surname groups '{leftSurname}' and '{rightSurname}' cannot be reviewed or persisted because both lack stable family identifiers."));
+            }
+            else if (decision is not null)
+            {
+                usedDecisions.Add(decision.Id);
+                status = decision.Action switch
+                {
+                    "acceptMerge" => "accepted",
+                    "rejectMerge" => "rejected",
+                    _ => "manualMerge"
+                };
+                if (decision.Action is "acceptMerge" or "manualMerge")
+                    unionFind.Union(leftSurname, rightSurname);
+                if (decision.Action == "manualMerge")
+                    manualLabels.Add((leftSurname, rightSurname, decision.Order, decision.GroupName!));
+            }
+            else if (score >= policy.AutoAcceptThreshold)
+            {
+                status = "autoAccepted";
+                unionFind.Union(leftSurname, rightSurname);
+            }
+
+            candidates.Add(new OFBGroupingCandidate(
+                candidateId,
+                leftSurname,
+                rightSurname,
+                leftTargetId,
+                rightTargetId,
+                score,
+                status,
+                evidence));
         }
 
         foreach (var decision in decisions)
@@ -176,13 +221,23 @@ public sealed class OFBFamilyGroupingService
             group.AddRange(exactGroups[surname]);
         }
 
+        string? noNameGroupName = null;
+        if (noNameFamilies.Count > 0)
+        {
+            noNameGroupName = SurnamePlaceholderClassifier.GetUniqueNoNameSectionName(groups.Keys);
+            groups.Add(noNameGroupName, noNameFamilies);
+        }
+
         return new OFBFamilyGroupingResult(
             groups.ToDictionary(
                 pair => pair.Key,
                 pair => (IReadOnlyList<IGenFamily>)pair.Value.AsReadOnly(),
                 StringComparer.OrdinalIgnoreCase),
             candidates.AsReadOnly(),
-            diagnostics.AsReadOnly());
+            diagnostics.AsReadOnly())
+        {
+            NoNameGroupName = noNameGroupName
+        };
     }
 
     private static Dictionary<(string Parent, string Family), int> CountSurnameTransitions(
@@ -193,14 +248,21 @@ public sealed class OFBFamilyGroupingService
         var knownSurnames = new HashSet<string>(exactGroups.Keys, StringComparer.OrdinalIgnoreCase);
         foreach (var family in families)
         {
+            if (!FamilySurnameSelector.HasRealSurname(family))
+                continue;
+
             var familySurname = FamilySurnameSelector.Select(family);
             if (!knownSurnames.Contains(familySurname))
                 continue;
 
             var parentSurnames = new[] { family.Husband?.Surname, family.Wife?.Surname }
-                .Where(surname => !string.IsNullOrWhiteSpace(surname))
+                .Where(surname => !SurnamePlaceholderClassifier.IsPlaceholder(surname))
                 .Select(surname => surname!.Trim())
                 .ToArray();
+            if (parentSurnames.Any(parentSurname =>
+                    string.Equals(parentSurname, familySurname, StringComparison.OrdinalIgnoreCase)))
+                continue;
+
             var distinctParentSurnames = parentSurnames
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
@@ -224,6 +286,21 @@ public sealed class OFBFamilyGroupingService
         }
         return transitions;
     }
+
+    private static void SetMinimumDistance(IDictionary<string, int> minimums, string surname, int distance)
+    {
+        if (!minimums.TryGetValue(surname, out var currentMinimum) || distance < currentMinimum)
+            minimums[surname] = distance;
+    }
+
+    private sealed record CandidateDraft(
+        string LeftSurname,
+        string RightSurname,
+        string? LeftTargetId,
+        string? RightTargetId,
+        int Distance,
+        int TransitionCount,
+        OFBGroupingDecision? Decision);
 
     private static IReadOnlyList<OFBGroupingEvidence> BuildEvidence(int distance, int transitionCount)
     {

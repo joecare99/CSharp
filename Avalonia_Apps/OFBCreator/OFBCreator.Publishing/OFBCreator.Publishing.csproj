@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>OFBCreator.Publishing</RootNamespace>
+    <AssemblyName>OFBCreator.Publishing</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Libraries\sgLib.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Genealogy.Gedcom\Genealogy.Gedcom.csproj" />
+    <ProjectReference Include="..\OFBCreator.Abstractions\OFBCreator.Abstractions.csproj" />
+    <ProjectReference Include="..\OFBCreator.Core\OFBCreator.Core.csproj" />
+    <ProjectReference Include="..\OFBCreator.Projects\OFBCreator.Projects.csproj" />
+    <ProjectReference Include="..\..\Libraries\GenInterfaces\GenInterfaces.csproj" />
+    <ProjectReference Include="..\..\..\CSharpBible\Data\DocumentUtils\Document.Docx\Document.Docx.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\*.json" />
+    <EmbeddedResource Include="Data\Places\*.json" />
+    <EmbeddedResource Include="Templates\Vorwort.md" />
+  </ItemGroup>
+</Project>

@@ -7,4 +7,8 @@ namespace OFBCreator.Core.Models;
 public sealed record OFBFamilyGroupingResult(
     IReadOnlyDictionary<string, IReadOnlyList<IGenFamily>> Groups,
     IReadOnlyList<OFBGroupingCandidate> Candidates,
-    IReadOnlyList<OFBGroupingDiagnostic> Diagnostics);
+    IReadOnlyList<OFBGroupingDiagnostic> Diagnostics)
+{
+    /// <summary>The generated group label containing families without a publishable surname.</summary>
+    public string? NoNameGroupName { get; init; }
+}

@@ -2,14 +2,14 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace OFBCreator.Console.Services.Templates;
+namespace OFBCreator.Publishing.Services.Templates;
 
 /// <summary>
 /// Resolves built-in template names and loads external JSON templates.
 /// </summary>
 public sealed class EntryTemplateStore
 {
-    private const string ResourcePrefix = "OFBCreator.Console.Templates.";
+    private const string ResourcePrefix = "OFBCreator.Publishing.Templates.";
 
     public EntryTemplateDefinition Load(string nameOrPath)
     {

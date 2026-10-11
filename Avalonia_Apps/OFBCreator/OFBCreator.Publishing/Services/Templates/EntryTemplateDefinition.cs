@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using GenInterfaces.Data;
 
-namespace OFBCreator.Console.Services.Templates;
+namespace OFBCreator.Publishing.Services.Templates;
 
 /// <summary>
 /// A validated declarative entry template.
@@ -34,6 +34,8 @@ public sealed class EntryTemplateLegendEntry
     public string Meaning { get; set; } = string.Empty;
 
     public EFactType? Event { get; set; }
+
+    public string? PlacePreposition { get; set; }
 }
 
 /// <summary>
@@ -65,11 +67,15 @@ public sealed class EntryTemplateBlock
 
     public string? Fragment { get; set; }
 
+    public string? Context { get; set; }
+
     public int? Columns { get; set; }
 
     public int? Indent { get; set; }
 
     public int? HangingIndent { get; set; }
+
+    public int? SpaceBefore { get; set; }
 
     public bool Bold { get; set; }
 

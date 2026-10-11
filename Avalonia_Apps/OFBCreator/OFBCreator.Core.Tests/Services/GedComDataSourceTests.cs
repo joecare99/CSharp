@@ -62,6 +62,22 @@ public sealed class GedComDataSourceTests
     }
 
     [TestMethod]
+    public async Task ImportAsync_PreservesMarriageFactWithoutDateOrPlace()
+    {
+        const string content = "0 HEAD\n1 GEDC\n2 VERS 5.5.1\n" +
+            "0 @I1@ INDI\n1 NAME Paul /Fischer/\n0 @F1@ FAM\n1 HUSB @I1@\n1 MARR\n0 TRLR\n";
+        var source = new GedComDataSource();
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+
+        var genealogy = await source.ImportAsync(stream);
+        var family = genealogy.Entitys.OfType<IGenFamily>().Single();
+
+        Assert.IsNotNull(family.Marriage);
+        Assert.IsNull(family.MarriageDate);
+        Assert.IsNull(family.MarriagePlace);
+    }
+
+    [TestMethod]
     public async Task ImportAsync_LoadsSyntheticFixtureAndResolvesFamilyRelationships()
     {
         var fixturePath = Path.Combine(AppContext.BaseDirectory, "TestData", "gedcom-5.5.1-synthetic.ged");

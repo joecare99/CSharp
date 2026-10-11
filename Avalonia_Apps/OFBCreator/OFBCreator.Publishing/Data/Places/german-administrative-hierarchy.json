@@ -1,0 +1,26 @@
+{
+  "countries": [
+    {
+      "name": "Deutschland",
+      "aliases": ["Germany"],
+      "administrativeUnits": [
+        { "name": "Baden-Württemberg", "aliases": ["Baden-Wuerttemberg", "Baden-Würtemberg", "Baden Württemberg"] },
+        { "name": "Bayern", "aliases": ["Bavaria"] },
+        { "name": "Berlin", "aliases": [] },
+        { "name": "Brandenburg", "aliases": [] },
+        { "name": "Bremen", "aliases": [] },
+        { "name": "Hamburg", "aliases": [] },
+        { "name": "Hessen", "aliases": ["Hesse"] },
+        { "name": "Mecklenburg-Vorpommern", "aliases": ["Mecklenburg Western Pomerania"] },
+        { "name": "Niedersachsen", "aliases": ["Lower Saxony"] },
+        { "name": "Nordrhein-Westfalen", "aliases": ["North Rhine-Westphalia"] },
+        { "name": "Rheinland-Pfalz", "aliases": ["Rhineland-Palatinate"] },
+        { "name": "Saarland", "aliases": [] },
+        { "name": "Sachsen", "aliases": ["Saxony"] },
+        { "name": "Sachsen-Anhalt", "aliases": ["Saxony-Anhalt"] },
+        { "name": "Schleswig-Holstein", "aliases": [] },
+        { "name": "Thüringen", "aliases": ["Thueringen", "Thuringia"] }
+      ]
+    }
+  ]
+}

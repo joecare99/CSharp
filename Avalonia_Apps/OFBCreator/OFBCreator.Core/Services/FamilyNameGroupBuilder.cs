@@ -26,15 +26,19 @@ public class FamilyNameGroupBuilder : IFamilyNameGroupBuilder
         _groupMembers.Clear();
         var allFamilies = families.ToList();
 
-        // Initialize groups only for actual family surnames; parent-only surnames are ignored.
+        // Keep families without a real surname for publication, but exclude their section from surname merging.
+        var noNameFamilies = new List<IGenFamily>();
         var exactGroups = new Dictionary<string, List<IGenFamily>>(StringComparer.OrdinalIgnoreCase);
         foreach (var family in allFamilies)
         {
             if (family == null) continue;
 
             var familySurname = FamilySurnameSelector.Select(family);
-            if (string.IsNullOrWhiteSpace(familySurname) || familySurname == "Unbekannt")
+            if (!FamilySurnameSelector.HasRealSurname(family))
+            {
+                noNameFamilies.Add(family);
                 continue;
+            }
 
             _groupMembers.Add(familySurname);
             if (!exactGroups.ContainsKey(familySurname))
@@ -47,7 +51,8 @@ public class FamilyNameGroupBuilder : IFamilyNameGroupBuilder
             if (family == null) continue;
 
             var primarySurname = FamilySurnameSelector.Select(family);
-            if (string.IsNullOrWhiteSpace(primarySurname) || primarySurname == "Unbekannt") continue;
+            if (!FamilySurnameSelector.HasRealSurname(family))
+                continue;
 
             exactGroups[primarySurname].Add(family);
         }
@@ -55,6 +60,10 @@ public class FamilyNameGroupBuilder : IFamilyNameGroupBuilder
         if (exactGroups.Count == 0)
         {
             _fusedGroups = new Dictionary<string, List<IGenFamily>>(StringComparer.Ordinal);
+            if (noNameFamilies.Count > 0)
+                _fusedGroups.Add(
+                    SurnamePlaceholderClassifier.GetUniqueNoNameSectionName(_fusedGroups.Keys),
+                    noNameFamilies);
             return;
         }
 
@@ -102,6 +111,10 @@ public class FamilyNameGroupBuilder : IFamilyNameGroupBuilder
         }
 
         _fusedGroups = BuildFusedGroups(exactGroups, unionFind);
+        if (noNameFamilies.Count > 0)
+            _fusedGroups.Add(
+                SurnamePlaceholderClassifier.GetUniqueNoNameSectionName(_fusedGroups.Keys),
+                noNameFamilies);
     }
 
     /// <summary>

@@ -26,6 +26,8 @@
     <Project Path="OFBCreator.Core.Tests/OFBCreator.Core.Tests.csproj" />
     <Project Path="OFBCreator.Core/OFBCreator.Core.csproj" />
     <Project Path="OFBCreator.Projects.Tests/OFBCreator.Projects.Tests.csproj" />
+    <Project Path="OFBCreator.Publishing.Tests/OFBCreator.Publishing.Tests.csproj" />
+    <Project Path="OFBCreator.Publishing/OFBCreator.Publishing.csproj" />
     <Project Path="OFBCreator.Projects/OFBCreator.Projects.csproj" />
   </Folder>
   <Folder Name="/Projektmappenelemente/">

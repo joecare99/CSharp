@@ -2,7 +2,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using OFBCreator.Console.Services;
+using OFBCreator.Publishing.Models;
+using OFBCreator.Publishing.Services;
 using OFBCreator.Core.Models;
 using OFBCreator.Projects.Models;
 using OFBCreator.Projects.Services;
@@ -10,9 +11,9 @@ using OFBCreator.Projects.Services;
 namespace OFBCreator.Avalonia.Services;
 
 /// <summary>Adapts the shared project contract to the same export pipeline used by the CLI.</summary>
-public sealed class OFBWorkspaceService(ConsoleExportService exportService) : IOFBWorkspaceService
+public sealed class OFBWorkspaceService(OFBExportService exportService) : IOFBWorkspaceService
 {
-    private readonly ConsoleExportService _exportService =
+    private readonly OFBExportService _exportService =
         exportService ?? throw new ArgumentNullException(nameof(exportService));
 
     public Task ExportAsync(

@@ -1,19 +1,20 @@
-using System.CommandLine;
 using System.Collections.Generic;
 using OFBCreator.Projects.Models;
 
+namespace OFBCreator.Publishing.Models;
+
 /// <summary>
-/// Options for the OFB (Ortsfamilienbuch) generation pipeline.
+/// Host-neutral options for the OFB (Ortsfamilienbuch) publication pipeline.
 /// </summary>
 /// <remarks>
-/// Represents all CLI and config parameters needed to generate a local family book.
-/// Immutable after creation to support JSON deserialization safety.
+/// Represents the source, output, filtering, and rendering settings used by any host to publish a family book.
+/// Immutable after creation to support safe JSON deserialization.
 /// </remarks>
 public sealed class OFBGenerateOptions
 {
     /// <summary>
     /// Path to the source GEDCOM file (required).
-    /// OS-agnostic: resolved by FileConfigLoader / DI at runtime.
+    /// Resolved by the host before invoking the shared publication pipeline.
     /// </summary>
     public string InputPath { get; init; } = default!;
 

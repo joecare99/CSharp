@@ -1,4 +1,4 @@
-namespace OFBCreator.Console.Models;
+namespace OFBCreator.Publishing.Models;
 
 /// <summary>
 /// One display token in a compact family-reference list.

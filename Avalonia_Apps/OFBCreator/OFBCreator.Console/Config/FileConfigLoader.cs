@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OFBCreator.Core.Models;
 
+using OFBCreator.Publishing.Models;
+
 namespace OFBCreator.Console.Config;
 
 /// <summary>

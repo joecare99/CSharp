@@ -19,6 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.10.1" />
-    <PackageVersion Update="MSTest" Version="4.4.1" />
+    <PackageVersion Update="MSTest" Version="4.5.1" />
   </ItemGroup>
 </Project>

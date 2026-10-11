@@ -8,8 +8,9 @@ using Document.Base.Factories;
 using Document.Docx;
 using Genealogy.Drivers;
 using Genealogy.Gedcom;
-using OFBCreator.Console.Services;
-using OFBCreator.Console.Services.Templates;
+using OFBCreator.Publishing.Models;
+using OFBCreator.Publishing.Services;
+using OFBCreator.Publishing.Services.Templates;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OFBCreator.Abstractions.Interfaces;
@@ -42,6 +43,11 @@ public static class Program
         services.AddSingleton<CanonicalGedcomFamilyDataSource>();
         services.AddSingleton<PortableProjectStore>();
         services.AddSingleton<EntryTemplateStore>();
+        services.AddSingleton<Func<IFamilyDataSource, OFBExportService>>(provider => dataSource =>
+            new OFBExportService(
+                dataSource,
+                provider.GetRequiredService<IUserDocumentFactory>(),
+                provider.GetRequiredService<EntryTemplateStore>()));
         services.AddSingleton<WinAhnenDataSource>();
         services.AddSingleton<SecureStoreDataSource>();
 
@@ -325,11 +331,8 @@ public static class Program
                 System.Console.WriteLine($"  Data Source: {dataSource.DisplayName} (auto-detected)");
             }
 
-            var exportService = new ConsoleExportService(
-                dataSource,
-                serviceProvider.GetRequiredService<IUserDocumentFactory>(),
-                serviceProvider.GetRequiredService<EntryTemplateStore>());
-            await exportService.ExportAsync(options);
+            var exportService = serviceProvider.GetRequiredService<Func<IFamilyDataSource, OFBExportService>>()(dataSource);
+            await exportService.ExportAsync(options, progress: new ConsoleExportProgress());
 
             System.Console.WriteLine("OFB generation completed successfully.");
         }
@@ -344,6 +347,17 @@ public static class Program
             }
 
             Environment.Exit(1);
+        }
+    }
+
+    private sealed class ConsoleExportProgress : IProgress<OFBExportProgress>
+    {
+        public void Report(OFBExportProgress value)
+        {
+            if (value.IsWarning)
+                System.Console.Error.WriteLine(value.Message);
+            else
+                System.Console.WriteLine(value.Message);
         }
     }
 

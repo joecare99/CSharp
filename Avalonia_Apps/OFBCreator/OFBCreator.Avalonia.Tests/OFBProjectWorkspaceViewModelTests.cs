@@ -12,7 +12,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using OFBCreator.Avalonia.Services;
 using OFBCreator.Avalonia.ViewModels;
-using OFBCreator.Console.Services;
+using OFBCreator.Publishing.Models;
+using OFBCreator.Publishing.Services;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
 using OFBCreator.Projects.Models;
@@ -335,7 +336,7 @@ public sealed class OFBProjectWorkspaceViewModelTests : IDisposable
         var dataSource = new CanonicalGedcomFamilyDataSource(
             new GedcomInputDriver(),
             new CanonicalGenealogyAdapter());
-        var workspaceService = new OFBWorkspaceService(new ConsoleExportService(dataSource, documentFactory));
+        var workspaceService = new OFBWorkspaceService(new OFBExportService(dataSource, documentFactory));
         await workspaceService.ExportAsync(project, projectPath);
 
         var cliOutputPath = Path.Combine(_testDirectory, "cli.docx");
@@ -384,7 +385,7 @@ public sealed class OFBProjectWorkspaceViewModelTests : IDisposable
             RedirectStandardOutput = true,
             RedirectStandardError = true
         };
-        startInfo.ArgumentList.Add(typeof(ConsoleExportService).Assembly.Location);
+        startInfo.ArgumentList.Add(typeof(OFBCreator.Console.Program).Assembly.Location);
         startInfo.ArgumentList.Add("generate");
         startInfo.ArgumentList.Add("--project");
         startInfo.ArgumentList.Add(projectPath);

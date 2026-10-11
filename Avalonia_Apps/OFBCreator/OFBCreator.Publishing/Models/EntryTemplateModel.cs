@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace OFBCreator.Console.Models;
+namespace OFBCreator.Publishing.Models;
 
 /// <summary>
 /// Typed data exposed to family-entry templates.
@@ -42,6 +42,8 @@ public sealed class PersonEntryTemplateModel
 
     public string AkaNames { get; init; } = string.Empty;
 
+    public string Religion { get; init; } = string.Empty;
+
     public required string Anchor { get; init; }
 
     public required string Reference { get; init; }
@@ -67,6 +69,8 @@ public sealed class PersonEntryTemplateModel
     public int? Ordinal { get; init; }
 
     public required IReadOnlyList<OccupationEntryTemplateModel> Occupations { get; init; }
+
+    public bool ShowNonVitalEvents { get; init; }
 
     public IReadOnlyList<PropertyEntryTemplateModel> Properties { get; init; } = Array.Empty<PropertyEntryTemplateModel>();
 
@@ -94,6 +98,10 @@ public sealed class PersonEventEntryTemplateModel
 
     public required string Date { get; init; }
 
+    public string EventName { get; init; } = string.Empty;
+
+    public string PlacePreposition { get; init; } = "in";
+
     public string Place { get; init; } = string.Empty;
 
     public string PlaceAnchor { get; init; } = string.Empty;
@@ -108,7 +116,15 @@ public sealed class PersonEventEntryTemplateModel
 
     public string RelatedFamilyAnchor { get; init; } = string.Empty;
 
+    public string OccupationIndexAnchor { get; init; } = string.Empty;
+
+    public string OccupationEmployer { get; init; } = string.Empty;
+
     public bool IsVital { get; init; }
+
+    public bool IsListableNonVital { get; init; }
+
+    public bool IsOccupation { get; init; }
 
     public bool HasRelatedPerson => !string.IsNullOrWhiteSpace(RelatedPersonName);
 
@@ -139,6 +155,8 @@ public sealed class OccupationEntryTemplateModel
     public string? Place { get; init; }
 
     public string PlaceAnchor { get; init; } = string.Empty;
+
+    public string Employer { get; init; } = string.Empty;
 }
 
 /// <summary>

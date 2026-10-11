@@ -7,7 +7,7 @@ using OFBCreator.Abstractions.Interfaces;
 using OFBCreator.Core.Services;
 using GenInterfaces.Interfaces.Genealogic;
 
-namespace OFBCreator.Console.Services;
+namespace OFBCreator.Publishing.Services;
 
 /// <summary>
 /// Bridges the provider-neutral GEDCOM model into the existing OFB data-source contract.
