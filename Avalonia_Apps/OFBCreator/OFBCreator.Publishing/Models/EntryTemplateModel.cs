@@ -36,6 +36,10 @@ public sealed class FamilyEntryTemplateModel
 /// </summary>
 public sealed class PersonEntryTemplateModel
 {
+    public required string Surname { get; init; }
+    public required string GivenNames { get; init; }
+    public required string Title { get; init; }
+
     public required string NameGc { get; init; }
 
     public required string NameAk { get; init; }
@@ -54,11 +58,9 @@ public sealed class PersonEntryTemplateModel
 
     public string IndexLabel { get; init; } = string.Empty;
 
-    public required string VitalEventsGc { get; init; }
+    public required string VitalEvents { get; init; }
 
     public string AdditionalLifeDataGc { get; init; } = string.Empty;
-
-    public required string VitalEventsAk { get; init; }
 
     public string? Birth { get; init; }
 

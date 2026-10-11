@@ -215,12 +215,14 @@ public sealed class EntryTemplateTests
         var document = new DocxDocument();
         var person = new PersonEntryTemplateModel
         {
+            Surname = "Beispiel",
+            GivenNames = "Ada",
+            Title = string.Empty,
             NameGc = "Beispiel, Ada",
             NameAk = "Ada Beispiel",
             Anchor = "person-1",
             Reference = "1",
-            VitalEventsGc = string.Empty,
-            VitalEventsAk = string.Empty,
+            VitalEvents = string.Empty,
             IndexAnchor = string.Empty,
             Ordinal = 1,
             Occupations = Array.Empty<OccupationEntryTemplateModel>(),
@@ -269,6 +271,62 @@ public sealed class EntryTemplateTests
             span.IsLink && span.Href == "#family-00002"));
         Assert.IsFalse(paragraphs.Any(paragraph =>
             paragraph.GetTextContent().Contains("Titel", StringComparison.Ordinal)));
+    }
+
+    [TestMethod]
+    public void EntryTemplateRenderer_FormatsParentAndChildSurnamesWithinIndexLinks()
+    {
+        var template = new EntryTemplateStore().Load("gc");
+        var parent = new PersonEntryTemplateModel
+        {
+            Surname = "Elternname",
+            GivenNames = "Ada Eltern",
+            Title = "Dr.",
+            NameGc = "Elternname, Ada Eltern, Dr.",
+            NameAk = "Ada Eltern Dr. Elternname",
+            Anchor = "person-parent",
+            Reference = "1",
+            VitalEvents = string.Empty,
+            IndexAnchor = "index-parent",
+            Ordinal = null,
+            Occupations = Array.Empty<OccupationEntryTemplateModel>()
+        };
+        var child = new PersonEntryTemplateModel
+        {
+            Surname = "Kindname",
+            GivenNames = "Bernd Kind",
+            Title = "Prof.",
+            NameGc = "Kindname, Bernd Kind, Prof.",
+            NameAk = "Bernd Kind Prof. Kindname",
+            Anchor = "person-child",
+            Reference = "2",
+            VitalEvents = string.Empty,
+            IndexAnchor = "index-child",
+            Ordinal = 1,
+            Occupations = Array.Empty<OccupationEntryTemplateModel>()
+        };
+        var family = new FamilyEntryTemplateModel
+        {
+            Number = "00001",
+            Anchor = "family-00001",
+            Union = string.Empty,
+            Parents = [parent],
+            Children = [child]
+        };
+        var document = new DocxDocument();
+
+        new EntryTemplateRenderer().RenderFamily(document, template, family);
+
+        using var output = new MemoryStream();
+        Assert.IsTrue(document.SaveTo(output));
+        output.Position = 0;
+        using var archive = new ZipArchive(output, ZipArchiveMode.Read, leaveOpen: true);
+        using var stream = archive.GetEntry("word/document.xml")!.Open();
+        var xml = XDocument.Load(stream);
+        XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+        AssertNameLinkFormatting(xml, word, "index-parent", "Elternname", "Ada Eltern", "Dr.");
+        AssertNameLinkFormatting(xml, word, "index-child", "Kindname", "Bernd Kind", "Prof.");
     }
 
     [TestMethod]
@@ -336,6 +394,38 @@ public sealed class EntryTemplateTests
             .Element(word + "spacing")?.Attribute(word + "before"));
     }
 
+    private static void AssertNameLinkFormatting(
+        XDocument xml,
+        XNamespace word,
+        string anchor,
+        string surname,
+        string givenNames,
+        string title)
+    {
+        var runs = xml.Descendants(word + "hyperlink")
+            .Where(hyperlink => (string?)hyperlink.Attribute(word + "anchor") == anchor)
+            .SelectMany(hyperlink => hyperlink.Elements(word + "r"))
+            .ToArray();
+
+        Assert.IsTrue(runs.Length > 0, $"Expected a hyperlink to '{anchor}'.");
+        AssertRunFormatting(runs, word, surname, bold: true);
+        AssertRunFormatting(runs, word, givenNames, bold: false);
+        AssertRunFormatting(runs, word, title, bold: false);
+    }
+
+    private static void AssertRunFormatting(
+        IEnumerable<XElement> runs,
+        XNamespace word,
+        string text,
+        bool bold)
+    {
+        var run = runs.Single(candidate => string.Concat(candidate.Descendants(word + "t").Select(node => node.Value)) == text);
+        var properties = run.Element(word + "rPr");
+
+        Assert.AreEqual(bold, properties?.Element(word + "b") is not null, $"Unexpected bold formatting for '{text}'.");
+        Assert.AreEqual("single", (string?)properties?.Element(word + "u")?.Attribute(word + "val"));
+    }
+
     private static FamilyEntryTemplateModel CreateTemplateFamily(params PersonEntryTemplateModel[] children) => new()
     {
         Number = "00001",
@@ -352,12 +442,14 @@ public sealed class EntryTemplateTests
         IReadOnlyList<PersonEventEntryTemplateModel>? events = null,
         IReadOnlyList<OccupationEntryTemplateModel>? occupations = null) => new()
     {
+        Surname = string.Empty,
+        GivenNames = name,
+        Title = string.Empty,
         NameGc = name,
         NameAk = name,
         Anchor = $"person-{ordinal}",
         Reference = ordinal?.ToString() ?? string.Empty,
-        VitalEventsGc = string.Empty,
-        VitalEventsAk = string.Empty,
+        VitalEvents = string.Empty,
         IndexAnchor = string.Empty,
         Ordinal = ordinal,
         Occupations = occupations ?? Array.Empty<OccupationEntryTemplateModel>(),
@@ -397,12 +489,14 @@ public sealed class EntryTemplateTests
         var document = new DocxDocument();
         var person = new PersonEntryTemplateModel
         {
+            Surname = "Beispiel",
+            GivenNames = "Ada",
+            Title = string.Empty,
             NameGc = "Beispiel, Ada",
             NameAk = "Ada Beispiel",
             Anchor = "person-I1",
             Reference = "I1",
-            VitalEventsGc = string.Empty,
-            VitalEventsAk = string.Empty,
+            VitalEvents = string.Empty,
             IndexAnchor = string.Empty,
             Occupations = Array.Empty<OccupationEntryTemplateModel>()
         };
@@ -433,12 +527,14 @@ public sealed class EntryTemplateTests
         var document = new DocxDocument();
         var person = new PersonEntryTemplateModel
         {
+            Surname = "Beispiel",
+            GivenNames = "Ada",
+            Title = string.Empty,
             NameGc = "Beispiel, Ada",
             NameAk = "Ada Beispiel",
             Anchor = "person-I1",
             Reference = "I1",
-            VitalEventsGc = string.Empty,
-            VitalEventsAk = string.Empty,
+            VitalEvents = string.Empty,
             IndexAnchor = string.Empty,
             Occupations = Array.Empty<OccupationEntryTemplateModel>()
         };

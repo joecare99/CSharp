@@ -485,6 +485,8 @@ public sealed class OFBExportService(
             var givenName = GetPersonIndexGivenName(entry.SortKey, entry.Name);
             var displayName = string.Equals(entry.Role, "alternative-name", StringComparison.Ordinal)
                 ? $"{givenName} ^{entry.Name}"
+                : string.Equals(entry.Role, "family-name", StringComparison.Ordinal)
+                ? $"^{givenName}"
                 : givenName;
             var personIndexLabel = string.IsNullOrEmpty(entry.LifeSpan)
                 ? displayName
@@ -717,10 +719,7 @@ public sealed class OFBExportService(
     {
         var givenName = person.GivenName?.Trim();
         var surname = person.Surname?.Trim();
-        var title = person.Title;
-        if (string.IsNullOrWhiteSpace(title))
-            title = person.Facts.FirstOrDefault(fact => fact?.eFactType == EFactType.Title)?.Data;
-        title = title?.Trim();
+        var title = GetPersonTitle(person);
         string formattedName;
         if (!string.IsNullOrWhiteSpace(givenName) && !string.IsNullOrWhiteSpace(surname))
         {
@@ -745,6 +744,14 @@ public sealed class OFBExportService(
         return !string.IsNullOrWhiteSpace(title)
             ? $"{formattedName}, {title}"
             : formattedName;
+    }
+
+    private static string GetPersonTitle(IGenPerson person)
+    {
+        var title = person.Title;
+        if (string.IsNullOrWhiteSpace(title))
+            title = person.Facts.FirstOrDefault(fact => fact?.eFactType == EFactType.Title)?.Data;
+        return title?.Trim() ?? string.Empty;
     }
 
     private static string GetFamilyAnchor(string familyNumber) => $"family-{familyNumber}";
@@ -918,7 +925,6 @@ public sealed class OFBExportService(
             .ToArray();
         var vitalEventsGc = string.Join(", ", vitalEvents);
 
-        var vitalEventsAk = string.Join(", ", vitalEvents);
         var occupations = GetOccupations(person).ToArray();
         var preferredOccupations = GetPreferredOccupations(occupations);
         var events = person.Facts
@@ -974,6 +980,13 @@ public sealed class OFBExportService(
 
         return new PersonEntryTemplateModel
         {
+            Surname = ordinal.HasValue
+                && !string.IsNullOrWhiteSpace(familySurnameToAbbreviate)
+                && string.Equals(person.Surname?.Trim(), familySurnameToAbbreviate.Trim(), StringComparison.OrdinalIgnoreCase)
+                    ? string.Empty
+                    : person.Surname?.Trim() ?? "",
+            GivenNames = person.GivenName?.Trim() ?? "",
+            Title = GetPersonTitle(person),
             NameGc = FormatPersonName(person, gcFormat: true, familySurnameToAbbreviate),
             NameAk = FormatPersonName(person, gcFormat: false),
             AkaNames = FormatAlternativeNames(person),
@@ -983,8 +996,7 @@ public sealed class OFBExportService(
             ReferenceNumber = GetReferenceNumber(person),
             Events = events,
             IndexLabel = FormatPersonName(person, gcFormat: true),
-            VitalEventsGc = vitalEventsGc.Length == 0 ? string.Empty : ", " + vitalEventsGc,
-            VitalEventsAk = vitalEventsAk.Length == 0 ? string.Empty : ", " + vitalEventsAk,
+            VitalEvents = vitalEventsGc.Length == 0 ? string.Empty : ", " + vitalEventsGc,
             Birth = birth,
             Death = death,
             IndexAnchor = personIndexAnchor ?? string.Empty,
@@ -1383,67 +1395,94 @@ public sealed class OFBExportService(
         };
         (isChild ? references.Child : references.Parent).Add(familyReference);
 
-        if (seen.Add(personReference))
+        // If person was already processed (seen), add a simple index entry for the family's normal surname
+        // without running the full name-event aggregation again.
+        if (!seen.Add(personReference))
         {
-            var givenName = person.GivenName?.Trim() ?? string.Empty;
-            var lifeSpan = FormatLifeSpan(person.BirthDate ?? person.Birth?.Date, person.DeathDate ?? person.Death?.Date);
-            var nameEvents = CanonicalGenealogyAdapter.GetNameEvents(person);
-            var birthSurname = !string.IsNullOrWhiteSpace(person.Surname)
-                ? person.Surname.Trim()
-                : CanonicalGenealogyAdapter.GetNameVariants(person).BirthSurname
-                    ?? nameEvents.FirstOrDefault(nameEvent =>
-                        string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase))?.Surname;
-            birthSurname = string.IsNullOrWhiteSpace(birthSurname) ? null : birthSurname.Trim();
-            var surnameEvents = nameEvents
-                .Where(nameEvent => !string.IsNullOrWhiteSpace(nameEvent.Surname))
-                .GroupBy(nameEvent => nameEvent.Surname.Trim(), StringComparer.OrdinalIgnoreCase)
-                .SelectMany(group => group
-                    .GroupBy(nameEvent => string.Equals(nameEvent.Type, "MARRIED", StringComparison.OrdinalIgnoreCase))
-                    .Select(nameGroup => nameGroup
-                        .OrderBy(nameEvent => string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
-                        .ThenBy(nameEvent => nameEvent.Date ?? DateTime.MaxValue)
-                        .First()))
-                .OrderBy(nameEvent => nameEvent.Date ?? DateTime.MaxValue)
-                .ToArray();
-            var indexedNames = surnameEvents
-                .Select(nameEvent => (
-                    Surname: nameEvent.Surname.Trim(),
-                    GivenName: string.IsNullOrWhiteSpace(nameEvent.GivenName) ? givenName : nameEvent.GivenName.Trim(),
-                    Date: nameEvent.DateText ?? string.Empty,
-                    IsAlternativeName: string.Equals(nameEvent.Type, "MARRIED", StringComparison.OrdinalIgnoreCase)
-                        || (!string.IsNullOrWhiteSpace(birthSurname)
-                            && !string.Equals(nameEvent.Surname.Trim(), birthSurname, StringComparison.OrdinalIgnoreCase))))
-                .ToList();
-            if (!string.IsNullOrWhiteSpace(person.Surname)
-                && !indexedNames.Any(name => string.Equals(name.Surname, person.Surname.Trim(), StringComparison.OrdinalIgnoreCase)))
-                indexedNames.Add((
-                    person.Surname.Trim(),
-                    givenName,
-                    string.Empty,
-                    !string.IsNullOrWhiteSpace(birthSurname)
-                        && !string.Equals(person.Surname.Trim(), birthSurname, StringComparison.OrdinalIgnoreCase)));
-            if (!string.IsNullOrWhiteSpace(birthSurname)
-                && !indexedNames.Any(name => !name.IsAlternativeName
-                    && string.Equals(name.Surname, birthSurname, StringComparison.OrdinalIgnoreCase)))
-                indexedNames.Add((birthSurname, givenName, string.Empty, false));
-            if (indexedNames.Count == 0)
-                indexedNames.Add((string.Empty, givenName, string.Empty, false));
-            foreach (var indexedName in indexedNames)
+            if (!string.IsNullOrWhiteSpace(family.FamilyName))
             {
-                var sortKey = string.IsNullOrEmpty(indexedName.Surname)
-                    ? indexedName.GivenName
-                    : string.IsNullOrEmpty(indexedName.GivenName) ? indexedName.Surname : $"{indexedName.Surname}, {indexedName.GivenName}";
-                entries.Add(new OFBIndexEntry
+                var surname = family.FamilyName.Trim();
+                var givenName = person.GivenName?.Trim() ?? string.Empty;
+                var sortKey = string.IsNullOrEmpty(surname)
+                    ? givenName
+                    : string.IsNullOrEmpty(givenName) ? surname : $"{surname}, {givenName}";
+                if (!_personReferenceByIndexName.ContainsKey(sortKey))
                 {
-                    SortKey = sortKey,
-                    Name = indexedName.Surname,
-                    Ref = personReference,
-                    LifeSpan = lifeSpan,
-                    NameEventDate = indexedName.Date,
-                    Role = indexedName.IsAlternativeName ? "alternative-name" : "birth-name"
-                });
-                _personReferenceByIndexName.TryAdd(sortKey, personReference);
+                    var lifeSpan = FormatLifeSpan(person.BirthDate ?? person.Birth?.Date, person.DeathDate ?? person.Death?.Date);
+                    entries.Add(new OFBIndexEntry
+                    {
+                        SortKey = sortKey,
+                        Name = surname,
+                        Ref = personReference,
+                        LifeSpan = lifeSpan,
+                        NameEventDate = string.Empty,
+                        Role = "family-name"
+                    });
+                    _personReferenceByIndexName.TryAdd(sortKey, personReference);
+                }
             }
+            return;
+        }
+
+        // First time we see this person: build full set of index names from name events.
+        var given = person.GivenName?.Trim() ?? string.Empty;
+        var lifeSpanFull = FormatLifeSpan(person.BirthDate ?? person.Birth?.Date, person.DeathDate ?? person.Death?.Date);
+        var nameEvents = CanonicalGenealogyAdapter.GetNameEvents(person);
+        var birthSurname = !string.IsNullOrWhiteSpace(person.Surname)
+            ? person.Surname.Trim()
+            : CanonicalGenealogyAdapter.GetNameVariants(person).BirthSurname
+                ?? nameEvents.FirstOrDefault(nameEvent =>
+                    string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase))?.Surname;
+        birthSurname = string.IsNullOrWhiteSpace(birthSurname) ? null : birthSurname.Trim();
+        var surnameEvents = nameEvents
+            .Where(nameEvent => !string.IsNullOrWhiteSpace(nameEvent.Surname))
+            .GroupBy(nameEvent => nameEvent.Surname.Trim(), StringComparer.OrdinalIgnoreCase)
+            .SelectMany(group => group
+                .GroupBy(nameEvent => string.Equals(nameEvent.Type, "MARRIED", StringComparison.OrdinalIgnoreCase))
+                .Select(nameGroup => nameGroup
+                    .OrderBy(nameEvent => string.Equals(nameEvent.Type, "BIRTH", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+                    .ThenBy(nameEvent => nameEvent.Date ?? DateTime.MaxValue)
+                    .First()))
+            .OrderBy(nameEvent => nameEvent.Date ?? DateTime.MaxValue)
+            .ToArray();
+        var indexedNames = surnameEvents
+            .Select(nameEvent => (
+                Surname: nameEvent.Surname.Trim(),
+                GivenName: string.IsNullOrWhiteSpace(nameEvent.GivenName) ? given : nameEvent.GivenName.Trim(),
+                Date: nameEvent.DateText ?? string.Empty,
+                IsAlternativeName: string.Equals(nameEvent.Type, "MARRIED", StringComparison.OrdinalIgnoreCase)
+                    || (!string.IsNullOrWhiteSpace(birthSurname)
+                        && !string.Equals(nameEvent.Surname.Trim(), birthSurname, StringComparison.OrdinalIgnoreCase))))
+            .ToList();
+        if (!string.IsNullOrWhiteSpace(person.Surname)
+            && !indexedNames.Any(name => string.Equals(name.Surname, person.Surname.Trim(), StringComparison.OrdinalIgnoreCase)))
+            indexedNames.Add((
+                person.Surname.Trim(),
+                given,
+                string.Empty,
+                !string.IsNullOrWhiteSpace(birthSurname)
+                    && !string.Equals(person.Surname.Trim(), birthSurname, StringComparison.OrdinalIgnoreCase)));
+        if (!string.IsNullOrWhiteSpace(birthSurname)
+            && !indexedNames.Any(name => !name.IsAlternativeName
+                && string.Equals(name.Surname, birthSurname, StringComparison.OrdinalIgnoreCase)))
+            indexedNames.Add((birthSurname, given, string.Empty, false));
+        if (indexedNames.Count == 0)
+            indexedNames.Add((string.Empty, given, string.Empty, false));
+        foreach (var indexedName in indexedNames)
+        {
+            var sortKey = string.IsNullOrEmpty(indexedName.Surname)
+                ? indexedName.GivenName
+                : string.IsNullOrEmpty(indexedName.GivenName) ? indexedName.Surname : $"{indexedName.Surname}, {indexedName.GivenName}";
+            entries.Add(new OFBIndexEntry
+            {
+                SortKey = sortKey,
+                Name = indexedName.Surname,
+                Ref = personReference,
+                LifeSpan = lifeSpanFull,
+                NameEventDate = indexedName.Date,
+                Role = indexedName.IsAlternativeName ? "alternative-name" : "birth-name"
+            });
+            _personReferenceByIndexName.TryAdd(sortKey, personReference);
         }
     }
 
@@ -1466,7 +1505,7 @@ public sealed class OFBExportService(
 
         var birthYear = GetYear(birthDate);
         var deathYear = GetYear(deathDate);
-        return birthYear is null && deathYear is null ? string.Empty : $"{birthYear ?? "?"}–{deathYear ?? "?"}";
+        return birthYear is null && deathYear is null ? string.Empty : $"{birthYear ?? "?"}–{deathYear ?? "?" }";
     }
 
     private EntryTemplateLegendEntry? GetLegendEntry(EFactType eventType) =>

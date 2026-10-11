@@ -370,7 +370,9 @@ public sealed class OFBExportServiceTests
             var links = xml.Descendants(word + "hyperlink").Select(element => (string?)element.Attribute(word + "anchor")).Where(target => target is not null).ToArray();
             Assert.IsTrue(bookmarks.Contains("index-property-1"));
             Assert.IsTrue(links.Contains("index-property-1"));
-            Assert.IsTrue(paragraphs.Any(paragraph => paragraph.Descendants(word + "t").Any(text => text.Value.Contains("Muster, Emil", StringComparison.Ordinal))));
+            Assert.IsTrue(paragraphs.Any(paragraph =>
+                string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value))
+                    .Contains("Muster, Emil", StringComparison.Ordinal)));
         }
         finally
         {
@@ -450,7 +452,7 @@ public sealed class OFBExportServiceTests
             var siblingIndexParagraph = paragraphTexts.Single(text =>
                 text.Contains("Jüngstes (1930–?)", StringComparison.Ordinal));
             Assert.IsTrue(siblingIndexParagraph.Contains("<00001, 00002>", StringComparison.Ordinal), siblingIndexParagraph);
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("<PN=PN-003>", StringComparison.Ordinal)),
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("PN=PN-003", StringComparison.Ordinal)),
                 string.Join(" | ", paragraphTexts));
             Assert.IsFalse(paragraphTexts.Any(text => text.Contains("<PN=I3>", StringComparison.Ordinal)));
             Assert.IsTrue(Array.FindIndex(paragraphTexts, text => text.StartsWith("1. Ältestes", StringComparison.Ordinal))
@@ -633,11 +635,14 @@ public sealed class OFBExportServiceTests
                 : "Anna Muster, Gräfin";
             Assert.IsTrue(parentText.Contains(expectedNameAndTitle, StringComparison.Ordinal), parentText);
             var titleIndex = parentText.IndexOf("Gräfin", StringComparison.Ordinal);
-            var referenceIndex = parentText.IndexOf("PN-1", StringComparison.Ordinal);
             var religionIndex = parentText.IndexOf("katholisch", StringComparison.Ordinal);
             var birthIndex = parentText.IndexOf("* 1900", StringComparison.Ordinal);
-            Assert.IsTrue(titleIndex >= 0 && referenceIndex > titleIndex, parentText);
-            Assert.IsTrue(religionIndex > referenceIndex && birthIndex > religionIndex, parentText);
+            var referenceParagraphIndex = Array.FindIndex(paragraphTexts, text => text.Contains("PN=PN-1", StringComparison.Ordinal));
+            Assert.IsTrue(titleIndex >= 0 && religionIndex > titleIndex && birthIndex > religionIndex, parentText);
+            if (templateName == "gc")
+                Assert.IsTrue(referenceParagraphIndex > parentIndex, string.Join(" | ", paragraphTexts));
+            else
+                Assert.IsTrue(parentText.Contains("<PN=PN-1>", StringComparison.Ordinal), parentText);
 
             Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1940: Zähl.", StringComparison.Ordinal)));
             Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1960: Zähl.", StringComparison.Ordinal)));
