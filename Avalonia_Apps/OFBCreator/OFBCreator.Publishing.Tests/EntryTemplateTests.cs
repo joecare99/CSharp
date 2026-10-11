@@ -11,6 +11,7 @@ using Document.Docx;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OFBCreator.Publishing.Models;
 using OFBCreator.Publishing.Services.Templates;
+using OFBCreator.Projects.Models;
 
 namespace OFBCreator.Publishing.Tests;
 
@@ -327,6 +328,49 @@ public sealed class EntryTemplateTests
 
         AssertNameLinkFormatting(xml, word, "index-parent", "Elternname", "Ada Eltern", "Dr.");
         AssertNameLinkFormatting(xml, word, "index-child", "Kindname", "Bernd Kind", "Prof.");
+    }
+
+    [TestMethod]
+    public void EntryTemplateRenderer_InheritsFamilyParagraphFontForInlinePlaceLinks()
+    {
+        var template = new EntryTemplateStore().Load("gc");
+        var layout = new OFBProjectLayout();
+        layout.FamilyEntry.FontFamily = "Arial";
+        layout.FamilyEntry.FontSizePt = 9;
+        var family = new FamilyEntryTemplateModel
+        {
+            Number = "00001",
+            Anchor = "family-00001",
+            Union = string.Empty,
+            MarriageMark = "⚭",
+            MarriagePlaceShort = "Kleinstadt",
+            MarriagePlaceAnchor = "place-test",
+            Parents = Array.Empty<PersonEntryTemplateModel>(),
+            Children = Array.Empty<PersonEntryTemplateModel>()
+        };
+        var document = new DocxDocument();
+
+        new EntryTemplateRenderer(layout).RenderFamily(document, template, family);
+
+        using var output = new MemoryStream();
+        Assert.IsTrue(document.SaveTo(output));
+        output.Position = 0;
+        using var archive = new ZipArchive(output, ZipArchiveMode.Read, leaveOpen: true);
+        using var stream = archive.GetEntry("word/document.xml")!.Open();
+        var xml = XDocument.Load(stream);
+        XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        var linkedPlaceRun = xml.Descendants(word + "hyperlink")
+            .Where(hyperlink => (string?)hyperlink.Attribute(word + "anchor") == "place-test")
+            .SelectMany(hyperlink => hyperlink.Elements(word + "r"))
+            .Single(run => string.Concat(run.Descendants(word + "t").Select(text => text.Value)) == "Kleinstadt");
+        var linkedPlaceProperties = linkedPlaceRun.Element(word + "rPr");
+        Assert.AreEqual("18", (string?)linkedPlaceProperties?.Element(word + "sz")?.Attribute(word + "val"));
+        Assert.AreEqual("Arial", (string?)linkedPlaceProperties?.Element(word + "rFonts")?.Attribute(word + "ascii"));
+
+        var familyParagraph = linkedPlaceRun.Ancestors(word + "p").Single();
+        var prepositionRun = familyParagraph.Elements(word + "r")
+            .Single(run => string.Concat(run.Descendants(word + "t").Select(text => text.Value)) == " in ");
+        Assert.AreEqual("18", (string?)prepositionRun.Element(word + "rPr")?.Element(word + "sz")?.Attribute(word + "val"));
     }
 
     [TestMethod]

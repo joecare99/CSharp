@@ -227,7 +227,11 @@ public sealed class EntryTemplateRenderer
                         {
                             Bold = segment.Bold,
                             Italic = segment.Italic,
-                            Underline = true
+                            Underline = true,
+                            FontFamily = paragraph.DocAttributes
+                                .LastOrDefault(attribute => attribute.Name == DocAttributeNames.FontFamily)?.Value as string,
+                            FontSizePt = paragraph.DocAttributes
+                                .LastOrDefault(attribute => attribute.Name == DocAttributeNames.FontSizePt)?.Value as double?
                         };
                         var link = paragraph.AddLink($"#{target}", style);
                         link.SetStyle(style);
