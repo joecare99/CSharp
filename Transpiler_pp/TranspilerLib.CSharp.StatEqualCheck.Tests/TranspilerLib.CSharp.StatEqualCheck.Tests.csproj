@@ -18,7 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TranspilerLib.CSharp.StatEqualCheck\TranspilerLib.CSharp.StatEqualCheck.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
-    <PackageReference Include="MSTest" Version="4.4.1" />
+    <PackageReference Include="MSTest" Version="4.5.1" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
