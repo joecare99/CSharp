@@ -7,6 +7,8 @@ using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Models.Gedcom;
+using OFBCreator.Projects.Models;
+using OFBCreator.Projects.Services;
 
 namespace OFBCreator.Core.Services;
 
@@ -20,9 +22,12 @@ public sealed partial class OFBDateEstimationService
     /// <summary>
     /// Applies family/parent estimates and then bounded two-year sibling estimates until stable.
     /// </summary>
-    public IReadOnlyList<OFBGroupingDiagnostic> Apply(IEnumerable<IGenFamily> families)
+    public IReadOnlyList<OFBGroupingDiagnostic> Apply(
+        IEnumerable<IGenFamily> families,
+        int? cutoffYear = OFBProject.DefaultDateEstimationCutoffYear)
     {
         ArgumentNullException.ThrowIfNull(families);
+        OFBDateEstimationCutoffValidator.Validate(cutoffYear);
         var familyList = families.ToArray();
         var diagnostics = new List<OFBGroupingDiagnostic>();
         var reportedConflicts = new HashSet<string>(StringComparer.Ordinal);
@@ -34,8 +39,9 @@ public sealed partial class OFBDateEstimationService
 
         for (var pass = 0; pass < maximumPassCount; pass++)
         {
-            var parentDatesChanged = ApplyParentDateCandidates(familyList, diagnostics, reportedConflicts);
-            var siblingDatesChanged = ApplySiblingDateCandidates(familyList);
+            var parentDatesChanged = ApplyParentDateCandidates(
+                familyList, cutoffYear, diagnostics, reportedConflicts);
+            var siblingDatesChanged = ApplySiblingDateCandidates(familyList, cutoffYear);
             if (!parentDatesChanged && !siblingDatesChanged)
                 return diagnostics;
         }
@@ -46,27 +52,30 @@ public sealed partial class OFBDateEstimationService
 
     private static bool ApplyParentDateCandidates(
         IReadOnlyList<IGenFamily> families,
+        int? cutoffYear,
         ICollection<OFBGroupingDiagnostic> diagnostics,
         ISet<string> reportedConflicts)
     {
         var candidates = families
             .OrderBy(family => family.FamilyRefID, StringComparer.Ordinal)
-            .SelectMany(CreateCandidates)
+            .SelectMany(family => CreateCandidates(family, cutoffYear))
             .ToArray();
         var changed = false;
 
         foreach (var group in candidates
-            .Where(candidate => candidate.Year is >= 1 and <= 9999)
+            .Where(candidate => candidate.Year >= (cutoffYear ?? 1) && candidate.Year <= 9999)
             .GroupBy(candidate => candidate.Person))
         {
             var person = group.Key;
-            var currentYear = GetBirthYear(person, out _);
+            var currentYear = GetBirthYear(person, cutoffYear, out _);
             if (currentYear is int existingYear)
             {
                 foreach (var candidate in group)
                     ReportConflict(person, existingYear, candidate, diagnostics, reportedConflicts);
                 continue;
             }
+            if (GetBirthDate(person) is not null)
+                continue;
 
             var ordered = group
                 .OrderBy(candidate => candidate.Priority)
@@ -79,20 +88,19 @@ public sealed partial class OFBDateEstimationService
             var selected = ordered[0];
             foreach (var candidate in ordered.Skip(1))
                 ReportCandidateConflict(person, selected, candidate, diagnostics, reportedConflicts);
-            SetEstimatedBirthYear(person, selected.Year);
-            changed = true;
+            changed |= SetEstimatedBirthYear(person, selected.Year, cutoffYear);
         }
 
         return changed;
     }
 
-    private static IEnumerable<DateCandidate> CreateCandidates(IGenFamily family)
+    private static IEnumerable<DateCandidate> CreateCandidates(IGenFamily family, int? cutoffYear)
     {
         var datedChildren = family.Children
             .OfType<IGenPerson>()
             .Select((person, index) =>
             {
-                var year = GetBirthYear(person, out var estimated);
+                var year = GetBirthYear(person, cutoffYear, out var estimated);
                 return year is int value ? new DatedChild(person, value, estimated) : null;
             })
             .OfType<DatedChild>()
@@ -121,19 +129,19 @@ public sealed partial class OFBDateEstimationService
 
         if (family.Husband is IGenPerson husband && family.Wife is IGenPerson wife)
         {
-            var husbandYear = GetBirthYear(husband, out _);
-            var wifeYear = GetBirthYear(wife, out _);
+            var husbandYear = GetBirthYear(husband, cutoffYear, out _);
+            var wifeYear = GetBirthYear(wife, cutoffYear, out _);
             if (wifeYear is int knownWifeYear)
             {
                 var candidateYear = knownWifeYear - 5;
-                if (GetBirthYear(wife, out var wifeEstimated) is not null && wifeEstimated)
+                if (GetBirthYear(wife, cutoffYear, out var wifeEstimated) is not null && wifeEstimated)
                     candidateYear = RoundToFiveYears(candidateYear);
                 yield return new DateCandidate(husband, candidateYear, 1, "spouse-age-difference", familyReference);
             }
             if (husbandYear is int knownHusbandYear)
             {
                 var candidateYear = knownHusbandYear + 5;
-                if (GetBirthYear(husband, out var husbandEstimated) is not null && husbandEstimated)
+                if (GetBirthYear(husband, cutoffYear, out var husbandEstimated) is not null && husbandEstimated)
                     candidateYear = RoundToFiveYears(candidateYear);
                 yield return new DateCandidate(wife, candidateYear, 1, "spouse-age-difference", familyReference);
             }
@@ -161,7 +169,7 @@ public sealed partial class OFBDateEstimationService
         }
     }
 
-    private static bool ApplySiblingDateCandidates(IReadOnlyList<IGenFamily> families)
+    private static bool ApplySiblingDateCandidates(IReadOnlyList<IGenFamily> families, int? cutoffYear)
     {
         var changed = false;
         foreach (var family in families.OrderBy(item => item.FamilyRefID, StringComparer.Ordinal))
@@ -169,17 +177,17 @@ public sealed partial class OFBDateEstimationService
             var children = family.Children.OfType<IGenPerson>().ToArray();
             for (var firstIndex = 0; firstIndex < children.Length; firstIndex++)
             {
-                var firstYear = GetBirthYear(children[firstIndex], out _);
+                var firstYear = GetBirthYear(children[firstIndex], cutoffYear, out _);
                 if (firstYear is null)
                     continue;
 
                 var nextIndex = firstIndex + 1;
-                while (nextIndex < children.Length && GetBirthYear(children[nextIndex], out _) is null)
+                while (nextIndex < children.Length && GetBirthYear(children[nextIndex], cutoffYear, out _) is null)
                     nextIndex++;
                 if (nextIndex >= children.Length || nextIndex - firstIndex < 2)
                     continue;
 
-                var nextYear = GetBirthYear(children[nextIndex], out _);
+                var nextYear = GetBirthYear(children[nextIndex], cutoffYear, out _);
                 if (nextYear is null)
                     continue;
                 var slots = nextIndex - firstIndex;
@@ -191,8 +199,7 @@ public sealed partial class OFBDateEstimationService
                 for (var index = firstIndex + 1; index < nextIndex; index++)
                 {
                     var estimatedYear = firstYear.Value + direction * 2 * (index - firstIndex);
-                    SetEstimatedBirthYear(children[index], estimatedYear);
-                    changed = true;
+                    changed |= SetEstimatedBirthYear(children[index], estimatedYear, cutoffYear);
                 }
                 firstIndex = nextIndex - 1;
             }
@@ -211,20 +218,28 @@ public sealed partial class OFBDateEstimationService
     private static int RoundToFiveYears(int year) =>
         (int)(Math.Round(year / 5d, MidpointRounding.AwayFromZero) * 5);
 
-    private static int? GetBirthYear(IGenPerson person, out bool isEstimated)
+    private static int? GetBirthYear(IGenPerson person, int? cutoffYear, out bool isEstimated)
     {
-        var date = person.BirthDate ?? person.Birth?.Date;
+        var date = GetBirthDate(person);
         isEstimated = IsEstimatedBirth(date);
         if (date is null)
             return null;
-        if (date.Date1 != default && date.Date1.Year is >= 1 and <= 9999)
-            return date.Date1.Year;
+        int? year = date.Date1 != default && date.Date1.Year is >= 1 and <= 9999
+            ? date.Date1.Year
+            : null;
 
-        var match = YearToken().Match(date.DateText ?? string.Empty);
-        return match.Success
-            && int.TryParse(match.Value, NumberStyles.None, CultureInfo.InvariantCulture, out var year)
-                ? year
+        if (year is null)
+        {
+            var match = YearToken().Match(date.DateText ?? string.Empty);
+            year = match.Success
+            && int.TryParse(match.Value, NumberStyles.None, CultureInfo.InvariantCulture, out var parsedYear)
+                ? parsedYear
                 : null;
+        }
+
+        return year is >= 1 and <= 9999 && year >= (cutoffYear ?? 1)
+            ? year
+            : null;
     }
 
     private static bool IsEstimatedBirth(IGenDate? date) =>
@@ -232,10 +247,17 @@ public sealed partial class OFBDateEstimationService
         && (date.eDateModifier == EDateModifier.Estimated
             || date.DateText?.TrimStart().StartsWith("EST ", StringComparison.OrdinalIgnoreCase) == true);
 
-    private static void SetEstimatedBirthYear(IGenPerson person, int year)
+    private static IGenDate? GetBirthDate(IGenPerson person) =>
+        person.BirthDate ?? person.Birth?.Date;
+
+    private static bool SetEstimatedBirthYear(IGenPerson person, int year, int? cutoffYear)
     {
-        if (year is < 1 or > 9999)
-            return;
+        if (year < (cutoffYear ?? 1) || year > 9999 || GetBirthDate(person) is not null)
+            return false;
+        if (person is not GedcomPerson gedcomPerson)
+            throw new InvalidOperationException(
+                $"Date estimation requires a detached GEDCOM person; '{person.IndRefID}' is not detached.");
+
         var estimatedDate = new GedcomDate
         {
             Date1 = new DateTime(year, 1, 1),
@@ -245,20 +267,17 @@ public sealed partial class OFBDateEstimationService
         };
 
         person.BirthDate = estimatedDate;
-        if (person is not GedcomPerson gedcomPerson)
-            throw new InvalidOperationException(
-                $"Date estimation requires a detached GEDCOM person; '{person.IndRefID}' is not detached.");
-
         if (gedcomPerson.Birth is GedcomFact birthFact)
         {
             birthFact.Date = estimatedDate;
-            return;
+            return true;
         }
 
         birthFact = new GedcomFact { eFactType = EFactType.Birth, Date = estimatedDate };
         birthFact.SetOwner(gedcomPerson);
         gedcomPerson.Facts.Add(birthFact);
         gedcomPerson.Birth = birthFact;
+        return true;
     }
 
     private static void ReportConflict(

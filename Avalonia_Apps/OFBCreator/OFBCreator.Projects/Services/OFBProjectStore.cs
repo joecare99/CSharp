@@ -199,6 +199,7 @@ public sealed class OFBProjectStore
             Title = name,
             EntryTemplate = entryTemplate,
             ExportCulture = source.ExportCulture,
+            DateEstimationCutoffYear = source.DateEstimationCutoffYear,
             DataSource = source.DataSource,
             PlaceId = source.PlaceId,
             IncludeDescendants = source.IncludeDescendants,
@@ -278,6 +279,13 @@ public sealed class OFBProjectStore
             project.ExportCulture = string.IsNullOrWhiteSpace(project.ExportCulture)
                 ? OFBExportCulture.Default
                 : project.ExportCulture;
+        }
+        else if (schemaVersion == 6)
+        {
+            project = JsonSerializer.Deserialize<OFBProject>(json.RootElement.GetRawText(), SerializerOptions)
+                ?? throw new InvalidDataException($"Project file '{path}' does not contain a project.");
+            project.SchemaVersion = OFBProject.CurrentSchemaVersion;
+            project.DateEstimationCutoffYear ??= OFBProject.DefaultDateEstimationCutoffYear;
         }
         else if (schemaVersion == OFBProject.CurrentSchemaVersion)
         {
@@ -406,6 +414,7 @@ public sealed class OFBProjectStore
         if (string.IsNullOrWhiteSpace(project.EntryTemplate))
             throw new InvalidDataException($"Project '{project.Name}' has no selected entry template.");
         OFBExportCulture.Validate(project.ExportCulture);
+        OFBDateEstimationCutoffValidator.Validate(project.DateEstimationCutoffYear);
         OFBExportRuleValidator.Validate(project.ExportRules);
         OFBGroupingPolicyValidator.Validate(project.GroupingPolicy, project.GroupingDecisions);
         OFBProjectLayoutValidator.Validate(project.Layout);

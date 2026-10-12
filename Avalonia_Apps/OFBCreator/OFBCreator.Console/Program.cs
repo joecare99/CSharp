@@ -1,5 +1,6 @@
 using System;
 using System.CommandLine;
+using System.Globalization;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -99,6 +100,14 @@ public static class Program
         var legendOption = new Option<string?>("--legend") { Description = "Character explanation/legend text" };
         var templateOption = new Option<string?>("--template") { Description = "Override the project entry template: 'gc', 'ak', or a JSON template path" };
         var cultureOption = new Option<string?>("--culture") { Description = "Date display culture: 'de-DE' or 'en-US'" };
+        var dateEstimationCutoffYearOption = new Option<string?>("--date-estimation-cutoff-year")
+        {
+            Description = "Earliest source year used for estimates; defaults to 900"
+        };
+        var disableDateEstimationCutoffOption = new Option<bool>("--no-date-estimation-cutoff")
+        {
+            Description = "Allow any valid year as estimation evidence"
+        };
         var docxOption = new Option<bool>("--docx") { Description = "Use DOCX format (default)" };
         var odtOption = new Option<bool>("--odt") { Description = "Use ODF (ODT) format instead of DOCX" };
         var dataSourceOption = new Option<string>("--data-source", "-s")
@@ -109,7 +118,8 @@ public static class Program
         var command = new Command("generate", "Generate OFB from genealogical data")
         {
             inputOption, outputOption, titleOption, projectOption, projectTemplateOption, placeIdOption,
-            includeDescendants, excludeDescendants, prefaceOption, legendOption, templateOption, cultureOption, docxOption,
+            includeDescendants, excludeDescendants, prefaceOption, legendOption, templateOption, cultureOption,
+            dateEstimationCutoffYearOption, disableDateEstimationCutoffOption, docxOption,
             odtOption, dataSourceOption
         };
 
@@ -125,6 +135,9 @@ public static class Program
                 throw new ArgumentException("--project-template can only be used together with --project.");
             if (context.GetValue(includeDescendants) && context.GetValue(excludeDescendants))
                 throw new ArgumentException("--include-descendants and --no-include-descendants cannot be used together.");
+            if (context.GetValue(disableDateEstimationCutoffOption)
+                && context.GetValue(dateEstimationCutoffYearOption) is not null)
+                throw new ArgumentException("--date-estimation-cutoff-year and --no-date-estimation-cutoff cannot be used together.");
 
             var projectResult = string.IsNullOrWhiteSpace(projectName)
                 ? null
@@ -151,6 +164,18 @@ public static class Program
                 ?? (project is null
                     ? "gc"
                     : PortableProjectStore.ResolveEntryTemplate(projectResult!.ProjectPath, project.EntryTemplate));
+            var cutoffText = context.GetValue(dateEstimationCutoffYearOption);
+            int? dateEstimationCutoffYear;
+            if (context.GetValue(disableDateEstimationCutoffOption))
+                dateEstimationCutoffYear = null;
+            else if (string.IsNullOrWhiteSpace(cutoffText))
+                dateEstimationCutoffYear = project is null
+                    ? OFBProject.DefaultDateEstimationCutoffYear
+                    : project.DateEstimationCutoffYear;
+            else if (int.TryParse(cutoffText, NumberStyles.None, CultureInfo.InvariantCulture, out var cutoffYear))
+                dateEstimationCutoffYear = cutoffYear;
+            else
+                throw new ArgumentException("Specify a whole-number year for --date-estimation-cutoff-year.");
 
             var options = new OFBGenerateOptions()
             {
@@ -164,6 +189,7 @@ public static class Program
                 Legend = context.GetValue(legendOption) ?? project?.Legend,
                 Template = template,
                 ExportCulture = context.GetValue(cultureOption) ?? project?.ExportCulture ?? OFBExportCulture.Default,
+                DateEstimationCutoffYear = dateEstimationCutoffYear,
                 UseDocxFormat = docxUsed || (!odtUsed && !context.GetValue(odtOption)),
                 DataSource = dataSource,
                 ExportRules = project?.ExportRules ?? [],

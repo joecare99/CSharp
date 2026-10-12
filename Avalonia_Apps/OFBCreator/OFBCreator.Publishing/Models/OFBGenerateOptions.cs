@@ -65,6 +65,11 @@ public sealed class OFBGenerateOptions
     public string ExportCulture { get; init; } = OFBExportCulture.Default;
 
     /// <summary>
+    /// Earliest source year that may be used as date-estimation evidence; null disables the cutoff.
+    /// </summary>
+    public int? DateEstimationCutoffYear { get; init; } = OFBProject.DefaultDateEstimationCutoffYear;
+
+    /// <summary>
     /// When true (default), outputs DOCX format using Xceed.Document.NET.
     /// Set to false with --odt to output ODF (.odt) format instead.
     /// </summary>

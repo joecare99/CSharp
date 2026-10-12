@@ -76,6 +76,8 @@
             <ComboBox Width="180" HorizontalAlignment="Left"
                       ItemsSource="{Binding ExportCultureOptions}"
                       SelectedItem="{Binding ExportCulture}" />
+            <TextBlock Text="Date estimation cutoff year (empty disables)" />
+            <TextBox Width="180" HorizontalAlignment="Left" Text="{Binding DateEstimationCutoffYear}" />
             <TextBlock Text="Place filter (optional)" />
             <TextBox Text="{Binding PlaceId}" />
             <CheckBox Content="Include descendants of families matching the place filter"

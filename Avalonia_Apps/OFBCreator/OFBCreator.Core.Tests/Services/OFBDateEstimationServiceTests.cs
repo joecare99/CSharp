@@ -52,6 +52,81 @@ public sealed class OFBDateEstimationServiceTests
     }
 
     [TestMethod]
+    public async Task Apply_ExcludesPreCutoffChildDatesFromEstimationEvidence()
+    {
+        var source = await ImportAsync(CreateParentAndChildrenGedcom(
+            motherBirth: null,
+            fatherBirth: null,
+            childDates: ["899", "1900"]));
+        var sourceFamily = source.Entitys.OfType<IGenFamily>().Single();
+        var exportFamily = CreateDetachedExport(source, sourceFamily).Entitys.OfType<IGenFamily>().Single();
+
+        _ = new OFBDateEstimationService().Apply([exportFamily], cutoffYear: 900);
+
+        Assert.AreEqual("EST 1880", exportFamily.Wife?.BirthDate?.DateText);
+        Assert.AreEqual("899", sourceFamily.Children.ElementAt(0).BirthDate?.DateText);
+    }
+
+    [TestMethod]
+    public async Task Apply_PreservesExistingBirthDatesBeforeCutoff()
+    {
+        var source = await ImportAsync(CreateParentAndChildrenGedcom(
+            motherBirth: "899",
+            fatherBirth: null,
+            childDates: ["1900", "1920"]));
+        var sourceFamily = source.Entitys.OfType<IGenFamily>().Single();
+        var exportFamily = CreateDetachedExport(source, sourceFamily).Entitys.OfType<IGenFamily>().Single();
+
+        _ = new OFBDateEstimationService().Apply([exportFamily], cutoffYear: 900);
+
+        Assert.AreEqual("899", exportFamily.Wife?.BirthDate?.DateText);
+    }
+
+    [TestMethod]
+    public async Task Apply_DoesNotCreateEstimatesBeforeCutoff()
+    {
+        var source = await ImportAsync(CreateParentAndChildrenGedcom(
+            motherBirth: null,
+            fatherBirth: null,
+            childDates: ["910", "914"]));
+        var sourceFamily = source.Entitys.OfType<IGenFamily>().Single();
+        var exportFamily = CreateDetachedExport(source, sourceFamily).Entitys.OfType<IGenFamily>().Single();
+
+        _ = new OFBDateEstimationService().Apply([exportFamily], cutoffYear: 900);
+
+        Assert.IsNull(exportFamily.Wife?.BirthDate);
+        Assert.IsNull(exportFamily.Husband?.BirthDate);
+    }
+
+    [TestMethod]
+    public async Task Apply_TreatsYearZeroAsMissingAndNeverCreatesYearZero()
+    {
+        var source = await ImportAsync(CreateParentAndChildrenGedcom(
+            motherBirth: null,
+            fatherBirth: null,
+            childDates: ["0", "1900"]));
+        var sourceFamily = source.Entitys.OfType<IGenFamily>().Single();
+        var exportFamily = CreateDetachedExport(source, sourceFamily).Entitys.OfType<IGenFamily>().Single();
+
+        _ = new OFBDateEstimationService().Apply([exportFamily], cutoffYear: null);
+
+        Assert.AreEqual("EST 1880", exportFamily.Wife?.BirthDate?.DateText);
+
+        var yearZeroSource = await ImportAsync(CreateParentAndChildrenGedcom(
+            motherBirth: null,
+            fatherBirth: null,
+            childDates: ["20", "24"]));
+        var yearZeroFamily = yearZeroSource.Entitys.OfType<IGenFamily>().Single();
+        var yearZeroExport = CreateDetachedExport(yearZeroSource, yearZeroFamily)
+            .Entitys.OfType<IGenFamily>().Single();
+
+        _ = new OFBDateEstimationService().Apply([yearZeroExport], cutoffYear: null);
+
+        Assert.IsNull(yearZeroExport.Wife?.BirthDate);
+        Assert.IsNull(yearZeroExport.Husband?.BirthDate);
+    }
+
+    [TestMethod]
     public async Task Apply_RetainsExistingBirthDateAndWarnsForLargeConflict()
     {
         var source = await ImportAsync(CreateParentAndChildrenGedcom(
