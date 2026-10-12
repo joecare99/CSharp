@@ -374,6 +374,55 @@ public sealed class EntryTemplateTests
     }
 
     [TestMethod]
+    public void EntryTemplateRenderer_PreservesFontPerRepeatedLinkTargetAndText()
+    {
+        const string json = """
+            {"schemaVersion":1,"id":"repeated-link-fonts","entryRoot":"Family","blocks":[
+              {"kind":"paragraph","role":"FamilyEntry","content":[
+                {"kind":"link","target":"family.marriagePlaceAnchor","content":[{"kind":"text","value":"Kleinstadt"}]}
+              ]},
+              {"kind":"paragraph","role":"ParentEntry","content":[
+                {"kind":"link","target":"family.marriagePlaceAnchor","content":[{"kind":"text","value":"Kleinstadt"}]}
+              ]}
+            ]}
+            """;
+        var template = EntryTemplateValidator.ParseAndValidate(json);
+        var layout = new OFBProjectLayout();
+        layout.FamilyEntry.FontFamily = "Arial";
+        layout.FamilyEntry.FontSizePt = 9;
+        layout.ParentEntry.FontFamily = "Georgia";
+        layout.ParentEntry.FontSizePt = 14;
+        var family = new FamilyEntryTemplateModel
+        {
+            Number = "00001",
+            Anchor = "family-00001",
+            Union = string.Empty,
+            MarriagePlaceAnchor = "place-test",
+            Parents = Array.Empty<PersonEntryTemplateModel>(),
+            Children = Array.Empty<PersonEntryTemplateModel>()
+        };
+        var document = new DocxDocument();
+
+        new EntryTemplateRenderer(layout).RenderFamily(document, template, family);
+
+        using var output = new MemoryStream();
+        Assert.IsTrue(document.SaveTo(output));
+        output.Position = 0;
+        using var archive = new ZipArchive(output, ZipArchiveMode.Read, leaveOpen: true);
+        using var stream = archive.GetEntry("word/document.xml")!.Open();
+        var xml = XDocument.Load(stream);
+        XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        var linkRuns = xml.Descendants(word + "hyperlink")
+            .Where(hyperlink => (string?)hyperlink.Attribute(word + "anchor") == "place-test")
+            .SelectMany(hyperlink => hyperlink.Elements(word + "r"))
+            .ToArray();
+
+        Assert.AreEqual(2, linkRuns.Length);
+        AssertRunFont(linkRuns[0], word, "18", "Arial");
+        AssertRunFont(linkRuns[1], word, "28", "Georgia");
+    }
+
+    [TestMethod]
     [DataRow("gc")]
     [DataRow("ak")]
     public void EntryTemplateRenderer_UsesSpacingAndIndentationForFamilyHierarchy(string templateName)
@@ -468,6 +517,16 @@ public sealed class EntryTemplateTests
 
         Assert.AreEqual(bold, properties?.Element(word + "b") is not null, $"Unexpected bold formatting for '{text}'.");
         Assert.AreEqual("single", (string?)properties?.Element(word + "u")?.Attribute(word + "val"));
+    }
+
+    private static void AssertRunFont(XElement run, XNamespace word, string expectedSize, string expectedFamily)
+    {
+        var properties = run.Element(word + "rPr");
+        Assert.AreEqual(expectedSize, (string?)properties?.Elements(word + "sz").SingleOrDefault()?.Attribute(word + "val"));
+        Assert.AreEqual(expectedFamily, (string?)properties?.Elements(word + "rFonts").SingleOrDefault()?.Attribute(word + "ascii"));
+        Assert.AreEqual(expectedFamily, (string?)properties?.Elements(word + "rFonts").SingleOrDefault()?.Attribute(word + "hAnsi"));
+        Assert.AreEqual(1, properties?.Elements(word + "sz").Count());
+        Assert.AreEqual(1, properties?.Elements(word + "rFonts").Count());
     }
 
     private static FamilyEntryTemplateModel CreateTemplateFamily(params PersonEntryTemplateModel[] children) => new()
