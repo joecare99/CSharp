@@ -140,6 +140,24 @@ public sealed class OFBProjectStoreTests
     }
 
     [TestMethod]
+    public void Open_MigratesSchemaFiveProjectToDefaultCultureInMemory()
+    {
+        using var testDirectory = new TestDirectory();
+        var path = Path.Combine(testDirectory.Path, "SchemaFive.ofbproject");
+        var id = Guid.NewGuid();
+        File.WriteAllText(path,
+            $"{{\"SchemaVersion\":5,\"Id\":\"{id:D}\",\"Name\":\"SchemaFive\",\"Title\":\"Schema Five\",\"EntryTemplate\":\"gc\",\"ExportRules\":[],\"GroupingPolicy\":{{\"AutoAcceptThreshold\":85}},\"GroupingDecisions\":[],\"Layout\":{{}}}}");
+
+        var loaded = new OFBProjectStore(testDirectory.Path).Open(path);
+
+        Assert.IsTrue(loaded.RequiresMigrationSave);
+        Assert.AreEqual(5, loaded.SourceSchemaVersion);
+        Assert.AreEqual(OFBProject.CurrentSchemaVersion, loaded.Project.SchemaVersion);
+        Assert.AreEqual(OFBExportCulture.Default, loaded.Project.ExportCulture);
+        Assert.AreEqual(5, ReadSchemaVersion(path));
+    }
+
+    [TestMethod]
     public void LoadOrCreate_FindsLegacyNamedProjectInsteadOfCreatingASecondDefault()
     {
         using var testDirectory = new TestDirectory();
@@ -165,6 +183,7 @@ public sealed class OFBProjectStoreTests
             Name = "Source",
             Title = "Source Title",
             EntryTemplate = "ak",
+            ExportCulture = OFBExportCulture.EnglishUnitedStates,
             InputPath = "private\\input.ged",
             OutputPath = "old-output.docx",
             PlaceId = "P1",
@@ -212,6 +231,7 @@ public sealed class OFBProjectStoreTests
         Assert.AreEqual("NewBook", created.Name);
         Assert.AreEqual("NewBook", created.Title);
         Assert.AreEqual("ak", created.EntryTemplate);
+        Assert.AreEqual(OFBExportCulture.EnglishUnitedStates, created.ExportCulture);
         Assert.IsNull(created.InputPath);
         Assert.IsNull(created.OutputPath);
         Assert.AreEqual("P1", created.PlaceId);
@@ -242,6 +262,21 @@ public sealed class OFBProjectStoreTests
             Name = "InvalidLayout",
             Title = "Invalid Layout",
             Layout = new OFBProjectLayout { FamilyDirectoryColumns = columns }
+        };
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new OFBProjectStore(testDirectory.Path).Save(project, Path.Combine(testDirectory.Path, "invalid.ofbproject")));
+    }
+
+    [TestMethod]
+    public void Save_RejectsUnsupportedExportCulture()
+    {
+        using var testDirectory = new TestDirectory();
+        var project = new OFBProject
+        {
+            Name = "InvalidCulture",
+            Title = "Invalid Culture",
+            ExportCulture = "fr-FR"
         };
 
         Assert.ThrowsExactly<InvalidDataException>(() =>

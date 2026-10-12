@@ -72,6 +72,10 @@
               <TextBox Width="420" Text="{Binding EntryTemplate}" />
               <Button Content="Validate template" Command="{Binding ValidateTemplateCommand}" />
             </StackPanel>
+            <TextBlock Text="Date display culture" />
+            <ComboBox Width="180" HorizontalAlignment="Left"
+                      ItemsSource="{Binding ExportCultureOptions}"
+                      SelectedItem="{Binding ExportCulture}" />
             <TextBlock Text="Place filter (optional)" />
             <TextBox Text="{Binding PlaceId}" />
             <CheckBox Content="Include descendants of families matching the place filter"

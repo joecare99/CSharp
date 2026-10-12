@@ -98,6 +98,7 @@ public static class Program
         var prefaceOption = new Option<string?>("--preface") { Description = "Preface/introduction text for the OFB" };
         var legendOption = new Option<string?>("--legend") { Description = "Character explanation/legend text" };
         var templateOption = new Option<string?>("--template") { Description = "Override the project entry template: 'gc', 'ak', or a JSON template path" };
+        var cultureOption = new Option<string?>("--culture") { Description = "Date display culture: 'de-DE' or 'en-US'" };
         var docxOption = new Option<bool>("--docx") { Description = "Use DOCX format (default)" };
         var odtOption = new Option<bool>("--odt") { Description = "Use ODF (ODT) format instead of DOCX" };
         var dataSourceOption = new Option<string>("--data-source", "-s")
@@ -108,7 +109,7 @@ public static class Program
         var command = new Command("generate", "Generate OFB from genealogical data")
         {
             inputOption, outputOption, titleOption, projectOption, projectTemplateOption, placeIdOption,
-            includeDescendants, excludeDescendants, prefaceOption, legendOption, templateOption, docxOption,
+            includeDescendants, excludeDescendants, prefaceOption, legendOption, templateOption, cultureOption, docxOption,
             odtOption, dataSourceOption
         };
 
@@ -162,6 +163,7 @@ public static class Program
                 Preface = context.GetValue(prefaceOption) ?? project?.Preface,
                 Legend = context.GetValue(legendOption) ?? project?.Legend,
                 Template = template,
+                ExportCulture = context.GetValue(cultureOption) ?? project?.ExportCulture ?? OFBExportCulture.Default,
                 UseDocxFormat = docxUsed || (!odtUsed && !context.GetValue(odtOption)),
                 DataSource = dataSource,
                 ExportRules = project?.ExportRules ?? [],

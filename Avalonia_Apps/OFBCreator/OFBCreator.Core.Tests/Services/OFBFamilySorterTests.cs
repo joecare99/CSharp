@@ -72,6 +72,26 @@ public class OFBFamilySorterTests
     }
 
     [TestMethod]
+    public void SortAndNumber_EstimatesFamilyFormationOneYearBeforeFirstChild()
+    {
+        var childDate = Substitute.For<IGenDate>();
+        childDate.Date1.Returns(new DateTime(1900, 4, 12));
+        var child = Substitute.For<IGenPerson>();
+        child.BirthDate.Returns(childDate);
+        var husband = Substitute.For<IGenPerson>();
+        husband.Surname.Returns("Example");
+        var family = Substitute.For<IGenFamily>();
+        family.Husband.Returns(husband);
+        family.Children.Returns(new TestIndexedList<IGenPerson> { child });
+        family.Facts.Returns(Array.Empty<IGenFact?>());
+        family.FamilyRefID.Returns("F1");
+
+        var result = new OFBFamilySorter().SortAndNumber([family]);
+
+        Assert.AreEqual(new DateTime(1899, 4, 12), result.Single().FormationDate);
+    }
+
+    [TestMethod]
     public void SortAndNumber_WhenChildSurnameCountsTie_UsesAlphabeticallyFirstName()
     {
         var family = CreateFamilyWithChildren("Zeller", "Adler");

@@ -26,6 +26,61 @@ namespace OFBCreator.Publishing.Tests;
 public sealed class OFBExportServiceTests
 {
     [TestMethod]
+    public async Task ExportAsync_RendersGenealogyDatesUsingProjectCulture()
+    {
+        const string gedcom =
+            "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n1 CHAR UTF-8\r\n" +
+            "0 @I1@ INDI\r\n1 NAME John /Smith/\r\n1 SEX M\r\n1 FAMS @F1@\r\n1 BIRT\r\n2 DATE 15 MAR 1875\r\n" +
+            "0 @I2@ INDI\r\n1 NAME Jane /Smith/\r\n1 SEX F\r\n1 FAMS @F1@\r\n" +
+            "0 @I3@ INDI\r\n1 NAME Child1 /Smith/\r\n1 FAMC @F1@\r\n1 BIRT\r\n2 DATE 1900\r\n" +
+            "0 @I4@ INDI\r\n1 NAME Child2 /Smith/\r\n1 FAMC @F1@\r\n1 BIRT\r\n2 DATE 1920\r\n" +
+            "0 @F1@ FAM\r\n1 HUSB @I1@\r\n1 WIFE @I2@\r\n1 CHIL @I3@\r\n1 CHIL @I4@\r\n1 MARR\r\n2 DATE 1 JAN 1920\r\n" +
+            "0 TRLR\r\n";
+        var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-date-culture-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(testDirectory);
+        var inputPath = Path.Combine(testDirectory, "dates.ged");
+        await File.WriteAllTextAsync(inputPath, gedcom, Encoding.UTF8);
+
+        try
+        {
+            UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
+            var documentFactory = Substitute.For<IUserDocumentFactory>();
+            documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
+
+            foreach (var (culture, birthDate, marriageDate) in new[]
+            {
+                (OFBExportCulture.German, "15.03.1875", "01.01.1920"),
+                (OFBExportCulture.EnglishUnitedStates, "3/15/1875", "1/1/1920")
+            })
+            {
+                var outputPath = Path.Combine(testDirectory, culture + ".docx");
+                await new OFBExportService(new GedComDataSource(), documentFactory).ExportAsync(new OFBGenerateOptions
+                {
+                    InputPath = inputPath,
+                    OutputPath = outputPath,
+                    Title = "Date culture",
+                    ExportCulture = culture
+                });
+
+                using var archive = ZipFile.OpenRead(outputPath);
+                using var documentStream = archive.GetEntry("word/document.xml")!.Open();
+                var documentXml = XDocument.Load(documentStream);
+                XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+                var outputText = string.Concat(documentXml.Descendants(word + "t").Select(text => text.Value));
+                StringAssert.Contains(outputText, birthDate);
+                StringAssert.Contains(outputText, marriageDate);
+                StringAssert.Contains(
+                    outputText,
+                    culture == OFBExportCulture.German ? "geschätzt 1880" : "estimated 1880");
+            }
+        }
+        finally
+        {
+            Directory.Delete(testDirectory, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task ExportAsync_WithSyntheticGedcom_WritesOrderedDocxWithResolvedNavigation()
     {
         var fixturePath = Path.Combine(AppContext.BaseDirectory, "TestData", "gedcom-5.5.1-synthetic.ged");
@@ -886,7 +941,7 @@ public sealed class OFBExportServiceTests
             var paragraphTexts = documentXml.Descendants(word + "p")
                 .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
                 .ToArray();
-            Assert.IsTrue(paragraphTexts.Any(text => text.StartsWith("⚭ 1 JAN 2000 in München", StringComparison.Ordinal)),
+            Assert.IsTrue(paragraphTexts.Any(text => text.StartsWith("⚭ 01.01.2000 in München", StringComparison.Ordinal)),
                 string.Join(" | ", paragraphTexts.Where(text => text.Contains("⚭", StringComparison.Ordinal))));
             Assert.IsTrue(paragraphTexts.Any(text => text.Contains("Kinder", StringComparison.Ordinal)),
                 string.Join(" | ", paragraphTexts.Where(text => text.Contains("Kdr", StringComparison.Ordinal)
@@ -963,14 +1018,14 @@ public sealed class OFBExportServiceTests
             var paragraphTexts = documentXml.Descendants(word + "p")
                 .Select(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value)))
                 .ToArray();
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("BET 1920 AND 1930: Ber., Schneiderin", StringComparison.Ordinal)),
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("zwischen 1920 und 1930: Ber., Schneiderin", StringComparison.Ordinal)),
                 string.Join(" | ", paragraphTexts.Where(text => text.Contains("Schneiderin", StringComparison.Ordinal)
                     || text.Contains("1920", StringComparison.Ordinal))));
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("BET 1920 AND 1930: Ber., Näherin", StringComparison.Ordinal)));
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1940: Ber., Lehrerin", StringComparison.Ordinal)),
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("zwischen 1920 und 1930: Ber., Näherin", StringComparison.Ordinal)));
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("01.01.1940: Ber., Lehrerin", StringComparison.Ordinal)),
                 string.Join(" | ", paragraphTexts.Where(text => text.Contains("Lehrerin", StringComparison.Ordinal)
                     || text.Contains("1940", StringComparison.Ordinal))));
-            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("1910: Ber., Lehrerin", StringComparison.Ordinal)));
+            Assert.IsTrue(paragraphTexts.Any(text => text.Contains("01.01.1910: Ber., Lehrerin", StringComparison.Ordinal)));
             Assert.AreEqual(2, paragraphTexts.Count(text => text.Contains("1910", StringComparison.Ordinal)
                 && text.Contains("Lehrerin", StringComparison.Ordinal)),
                 "When all occupations have dates, the last one must appear both inline and in the dated event list.");

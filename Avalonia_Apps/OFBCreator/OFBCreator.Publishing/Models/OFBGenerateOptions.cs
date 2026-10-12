@@ -60,6 +60,11 @@ public sealed class OFBGenerateOptions
     public string Template { get; init; } = "gc";
 
     /// <summary>
+    /// Culture used to render GEDCOM dates and their modifiers.
+    /// </summary>
+    public string ExportCulture { get; init; } = OFBExportCulture.Default;
+
+    /// <summary>
     /// When true (default), outputs DOCX format using Xceed.Document.NET.
     /// Set to false with --odt to output ODF (.odt) format instead.
     /// </summary>

@@ -68,6 +68,8 @@ public sealed class OFBExportService(
         if ( string.IsNullOrWhiteSpace( options.Title ) )
             throw new ArgumentException( "OFB title is required.", nameof( options ) );
 
+        var dateCulture = OFBExportCulture.GetCulture(options.ExportCulture);
+
         if ( !File.Exists( options.InputPath ) )
             throw new FileNotFoundException( $"GEDCOM input file was not found: '{options.InputPath}'.", options.InputPath );
 
@@ -131,7 +133,7 @@ public sealed class OFBExportService(
 
         // Step 4: Generate indices
         progress?.Report(new OFBExportProgress("Generating Person Index..."));
-        var personIndex = await GeneratePersonIndexAsync( sortedFamilies );
+        var personIndex = await GeneratePersonIndexAsync(sortedFamilies, dateCulture);
 
         progress?.Report(new OFBExportProgress("Generating Occupation Index..."));
         var occIndex = await GenerateOccupationIndexAsync( sortedFamilies );
@@ -170,9 +172,10 @@ public sealed class OFBExportService(
         var doc = _documentFactory.CreateDocument( options.UseDocxFormat ? OFBOutputFormat.Docx : OFBOutputFormat.Odt );
         OFBDocumentLayout.ApplyPageMargins(doc, options.Layout);
 
-        await ComposeTitlePageAsync( doc, options );
+        await ComposeTitlePageAsync(doc, options, dateCulture);
         await ComposePrefaceAsync(doc, options, entryTemplate);
-        await ComposeFamiliesAsync(doc, sortedFamilies, entryTemplate, groupByFamilyReference, familyNamesByGroup, options.Layout);
+        await ComposeFamiliesAsync(
+            doc, sortedFamilies, entryTemplate, groupByFamilyReference, familyNamesByGroup, options.Layout, dateCulture);
         await ComposeIndicesAsync(doc, personIndex, occIndex, propIndex, placeHierarchyIndex, placeAlphaIndex, options.Layout);
 
         // Step 6: Save document
@@ -276,6 +279,7 @@ public sealed class OFBExportService(
         }
 
         var families = overlay.Genealogy.Entitys.OfType<IGenFamily>().ToList();
+        var dateDiagnostics = new OFBDateEstimationService().Apply(families);
         families.RemoveAll(family =>
             family.Marriage is null
             && family.MarriageDate is null
@@ -288,7 +292,10 @@ public sealed class OFBExportService(
             families, _dataSource.SourceId, options.GroupingPolicy, options.GroupingDecisions);
         var overlayDiagnostics = overlay.Diagnostics.Select(diagnostic =>
             new OFBGroupingDiagnostic(diagnostic.Code, diagnostic.RuleId, diagnostic.Message));
-        var combinedDiagnostics = grouping.Diagnostics.Concat(overlayDiagnostics).ToArray();
+        var combinedDiagnostics = grouping.Diagnostics
+            .Concat(overlayDiagnostics)
+            .Concat(dateDiagnostics)
+            .ToArray();
         return new ExportGroupingPreparation(
             families,
             grouping with { Diagnostics = combinedDiagnostics },
@@ -329,7 +336,10 @@ public sealed class OFBExportService(
     /// <summary>
     /// Composes the title page with OFB title, place name, and date.
     /// </summary>
-    private async Task ComposeTitlePageAsync( IUserDocument doc, OFBGenerateOptions options )
+    private async Task ComposeTitlePageAsync(
+        IUserDocument doc,
+        OFBGenerateOptions options,
+        CultureInfo dateCulture)
     {
         // Title (headline level 1)
         var titleHeadline = doc.AddHeadline( 1, "Titel" );
@@ -338,7 +348,8 @@ public sealed class OFBExportService(
         // Subtitle with place info
         var placeInfo = string.IsNullOrEmpty( options.PlaceId ) ? "alle Orte" : $"Ort: {options.PlaceId}";
         var subtitle = doc.AddParagraph( "Normaler Absatz" );
-        subtitle.TextContent = $"{placeInfo}, erstellt {DateTime.Now:yyyy-MM-dd}";
+        subtitle.TextContent =
+            $"{placeInfo}, erstellt {DateTime.Now.ToString(dateCulture.DateTimeFormat.ShortDatePattern, dateCulture)}";
     }
 
     /// <summary>
@@ -633,7 +644,8 @@ public sealed class OFBExportService(
         EntryTemplateDefinition entryTemplate,
         IReadOnlyDictionary<string, string> groupByFamilyReference,
         IReadOnlyDictionary<string, IReadOnlyList<string>> familyNamesByGroup,
-        OFBProjectLayout layout)
+        OFBProjectLayout layout,
+        CultureInfo dateCulture)
     {
         OFBDocumentLayout.AddSection(doc, 1);
         var templateRenderer = new EntryTemplateRenderer(layout);
@@ -656,7 +668,7 @@ public sealed class OFBExportService(
                 currentGroupName = groupName;
             }
 
-            var entryModel = CreateEntryTemplateModel(family, sortedFamilies);
+            var entryModel = CreateEntryTemplateModel(family, sortedFamilies, dateCulture);
             var existingParagraphs = doc.Enumerate().OfType<IDocParagraph>().ToHashSet();
             templateRenderer.RenderFamily(doc, entryTemplate, entryModel);
             EnsureFamilyAnchor(doc, entryModel.Anchor, existingParagraphs);
@@ -689,9 +701,9 @@ public sealed class OFBExportService(
         return family.FamilyName;
     }
 
-    private static string FormatFamilyEvent(OFBFamily family)
+    private static string FormatFamilyEvent(OFBFamily family, CultureInfo dateCulture)
     {
-        var date = family.MarriageDate?.ToString();
+        var date = GedcomDateFormatter.Format(family.MarriageDate, dateCulture);
         var place = family.MarriagePlace?.Name;
         return string.Join(" in ", new[] { date, place }.Where(value => !string.IsNullOrWhiteSpace(value)));
     }
@@ -817,30 +829,33 @@ public sealed class OFBExportService(
         return new string(characters).Trim('-');
     }
 
-    private FamilyEntryTemplateModel CreateEntryTemplateModel(OFBFamily family, IReadOnlyList<OFBFamily> allFamilies)
+    private FamilyEntryTemplateModel CreateEntryTemplateModel(
+        OFBFamily family,
+        IReadOnlyList<OFBFamily> allFamilies,
+        CultureInfo dateCulture)
     {
         var parents = new[] { family.Husband, family.Wife }
             .Where(person => person is not null)
-            .Select(person => CreatePersonTemplateModel(person!, ordinal: null, allFamilies, family.GlobalNumber))
+            .Select(person => CreatePersonTemplateModel(person!, ordinal: null, allFamilies, family.GlobalNumber, dateCulture))
             .ToArray();
         var children = family.Children
             .OrderBy(person => person.BirthDate?.Date1 ?? DateTime.MaxValue)
             .ThenBy(GetPersonReference, StringComparer.Ordinal)
             .Select((person, index) => CreatePersonTemplateModel(
-                person, index + 1, allFamilies, family.GlobalNumber, family.FamilyName))
+                person, index + 1, allFamilies, family.GlobalNumber, dateCulture, family.FamilyName))
             .ToArray();
 
         return new FamilyEntryTemplateModel
         {
             Number = family.GlobalNumber,
             Anchor = GetFamilyAnchor(family.GlobalNumber),
-            Union = FormatFamilyEvent(family),
+            Union = FormatFamilyEvent(family, dateCulture),
             MarriageMark = GetFamilyMarriageMark(family),
-            MarriageDate = family.MarriageDate?.ToString() ?? string.Empty,
+            MarriageDate = GedcomDateFormatter.Format(family.MarriageDate, dateCulture) ?? string.Empty,
             MarriagePlace = family.MarriagePlace?.Name ?? string.Empty,
             MarriagePlaceShort = GetShortPlaceName(family.MarriagePlace?.Name),
             MarriagePlaceAnchor = GetPlaceIndexAnchor(family.MarriagePlace?.Name),
-            Properties = CreatePropertyTemplateModels(family.Facts),
+            Properties = CreatePropertyTemplateModels(family.Facts, dateCulture),
             Parents = parents,
             Children = children
         };
@@ -905,23 +920,26 @@ public sealed class OFBExportService(
         int? ordinal,
         IReadOnlyList<OFBFamily> allFamilies,
         string currentFamilyNumber,
+        CultureInfo dateCulture,
         string? familySurnameToAbbreviate = null)
     {
         var reference = GetPersonReference(person);
         _personIndexAnchorByReference.TryGetValue(reference, out var personIndexAnchor);
-        var birth = (person.BirthDate ?? person.Birth?.Date)?.ToString();
-        var death = (person.DeathDate ?? person.Death?.Date)?.ToString();
+        var birthDate = person.BirthDate ?? person.Birth?.Date;
+        var deathDate = person.DeathDate ?? person.Death?.Date;
+        var birth = GedcomDateFormatter.Format(birthDate, dateCulture);
+        var death = GedcomDateFormatter.Format(deathDate, dateCulture);
         var vitalEventValues = new (EFactType Event, IGenDate? Date, IGenFact? Fact)[]
         {
-            (EFactType.Birth, person.BirthDate ?? person.Birth?.Date, person.Birth),
+            (EFactType.Birth, birthDate, person.Birth),
             (EFactType.Baptism, person.BaptDate ?? person.Baptism?.Date, person.Baptism),
-            (EFactType.Death, person.DeathDate ?? person.Death?.Date, person.Death),
+            (EFactType.Death, deathDate, person.Death),
             (EFactType.Burial, person.BurialDate ?? person.Burial?.Date, person.Burial)
         };
         var vitalEvents = vitalEventValues
             .Where(item => item.Date is not null)
             .OrderBy(item => GetEventSortDate(item.Date))
-            .Select(item => $"{GetLegendSymbol(item.Event)} {item.Date}")
+            .Select(item => $"{GetLegendSymbol(item.Event)} {GedcomDateFormatter.Format(item.Date, dateCulture)}")
             .ToArray();
         var vitalEventsGc = string.Join(", ", vitalEvents);
 
@@ -938,15 +956,18 @@ public sealed class OFBExportService(
                 var eventDate = IsVitalEvent(fact!.eFactType)
                     ? vitalEventValues.First(item => item.Event == fact.eFactType).Date
                     : fact.Date;
-                var dateText = IsVitalEvent(fact.eFactType) ? eventDate?.ToString() : null;
+                var dateText = IsVitalEvent(fact.eFactType)
+                    ? GedcomDateFormatter.Format(eventDate, dateCulture)
+                    : null;
                 var eventModels = fact.eFactType == EFactType.Occupation
                     ? OccupationDesignationParser.Parse(fact.Data)
                         .Select(designation => CreatePersonEventTemplateModel(
                             fact,
                             allFamilies,
+                            dateCulture,
                             dateText,
                             designation))
-                    : new[] { CreatePersonEventTemplateModel(fact, allFamilies, dateText) };
+                    : new[] { CreatePersonEventTemplateModel(fact, allFamilies, dateCulture, dateText) };
                 return eventModels.Select(eventModel => (Event: eventModel, Date: eventDate));
             })
             .Concat(vitalEventValues
@@ -956,8 +977,9 @@ public sealed class OFBExportService(
                         && fact.Date is not null))
                 .Select(item => (
                     Event: item.Fact is null
-                        ? CreatePersonEventTemplateModel(item.Event, item.Date!.ToString())
-                        : CreatePersonEventTemplateModel(item.Fact, allFamilies, item.Date?.ToString()),
+                        ? CreatePersonEventTemplateModel(item.Event, GedcomDateFormatter.Format(item.Date, dateCulture))
+                        : CreatePersonEventTemplateModel(
+                            item.Fact, allFamilies, dateCulture, GedcomDateFormatter.Format(item.Date, dateCulture)),
                     Date: item.Date)))
             .OrderBy(item => GetEventSortDate(item.Date))
             .Select(item => item.Event)
@@ -1014,7 +1036,7 @@ public sealed class OFBExportService(
                 .Select(occupation => new OccupationEntryTemplateModel
                 {
                     Name = occupation.Name,
-                    Date = occupation.Date?.ToString(),
+                    Date = GedcomDateFormatter.Format(occupation.Date, dateCulture),
                     Place = GetShortPlaceName(occupation.Place?.Name ?? occupation.ContextPlace),
                     PlaceAnchor = GetPlaceIndexAnchor(occupation.Place?.Name ?? occupation.ContextPlace),
                     Employer = occupation.Employer ?? string.Empty,
@@ -1023,7 +1045,7 @@ public sealed class OFBExportService(
                         : string.Empty
                 })
                 .ToArray(),
-            Properties = CreatePropertyTemplateModels(person.Facts)
+            Properties = CreatePropertyTemplateModels(person.Facts, dateCulture)
         };
     }
 
@@ -1115,12 +1137,14 @@ public sealed class OFBExportService(
         IGenFact? Fact,
         string SourceText);
 
-    private IReadOnlyList<PropertyEntryTemplateModel> CreatePropertyTemplateModels(IEnumerable<IGenFact?> facts) => facts
+    private IReadOnlyList<PropertyEntryTemplateModel> CreatePropertyTemplateModels(
+        IEnumerable<IGenFact?> facts,
+        CultureInfo dateCulture) => facts
         .Where(fact => fact?.eFactType == EFactType.Property && !string.IsNullOrWhiteSpace(fact.Data))
         .Select(fact => new PropertyEntryTemplateModel
         {
             Name = fact!.Data!.Trim(),
-            Date = fact.Date?.ToString(),
+            Date = GedcomDateFormatter.Format(fact.Date, dateCulture),
             Place = fact.Place?.Name,
             PlaceAnchor = GetPlaceIndexAnchor(fact.Place?.Name),
             IndexAnchor = _propertyIndexAnchorByName.TryGetValue(fact.Data.Trim(), out var anchor) ? anchor : string.Empty
@@ -1138,6 +1162,7 @@ public sealed class OFBExportService(
     private PersonEventEntryTemplateModel CreatePersonEventTemplateModel(
         IGenFact fact,
         IReadOnlyList<OFBFamily> allFamilies,
+        CultureInfo dateCulture,
         string? dateOverride = null,
         OccupationDesignation? occupationDesignation = null)
     {
@@ -1151,7 +1176,9 @@ public sealed class OFBExportService(
                 || IsSamePerson(family.Wife, relatedPerson)
                 || family.Children.Any(child => IsSamePerson(child, relatedPerson)));
         var eventType = fact.eFactType;
-        var date = dateOverride ?? fact.Date?.ToString() ?? string.Empty;
+        var date = dateOverride
+            ?? GedcomDateFormatter.Format(fact.Date, dateCulture)
+            ?? string.Empty;
         var symbol = GetLegendSymbol(eventType);
         var additional = occupationDesignation?.Name
             ?? (string.IsNullOrWhiteSpace(fact.Data) ? string.Empty : fact.Data.Trim());
@@ -1301,7 +1328,9 @@ public sealed class OFBExportService(
     /// <summary>
     /// Generates alphabetical person index entries for all individuals.
     /// </summary>
-    private async Task<OFBIndexEntry[]> GeneratePersonIndexAsync( IReadOnlyList<OFBFamily> sortedFamilies )
+    private async Task<OFBIndexEntry[]> GeneratePersonIndexAsync(
+        IReadOnlyList<OFBFamily> sortedFamilies,
+        CultureInfo dateCulture)
     {
         // Collect unique persons from all families (use OFBFamily which has GlobalNumber)
         var seen = new HashSet<string>();
@@ -1317,19 +1346,19 @@ public sealed class OFBExportService(
             if ( family.Husband != null )
             {
                 var key = GetPersonReference(family.Husband);
-                AddPersonFamilyReference(family.Husband, family, isChild: false, key, seen, entries, referencesByPerson);
+                AddPersonFamilyReference(family.Husband, family, isChild: false, key, seen, entries, referencesByPerson, dateCulture);
             }
 
             if ( family.Wife != null )
             {
                 var key = GetPersonReference(family.Wife);
-                AddPersonFamilyReference(family.Wife, family, isChild: false, key, seen, entries, referencesByPerson);
+                AddPersonFamilyReference(family.Wife, family, isChild: false, key, seen, entries, referencesByPerson, dateCulture);
             }
 
             foreach ( var child in family.Children )
             {
                 var key = GetPersonReference(child);
-                AddPersonFamilyReference(child, family, isChild: true, key, seen, entries, referencesByPerson);
+                AddPersonFamilyReference(child, family, isChild: true, key, seen, entries, referencesByPerson, dateCulture);
             }
         }
 
@@ -1382,7 +1411,8 @@ public sealed class OFBExportService(
         string personReference,
         HashSet<string> seen,
         List<OFBIndexEntry> entries,
-        Dictionary<string, (List<FamilyReferenceEntryTemplateModel> Child, List<FamilyReferenceEntryTemplateModel> Parent)> referencesByPerson)
+        Dictionary<string, (List<FamilyReferenceEntryTemplateModel> Child, List<FamilyReferenceEntryTemplateModel> Parent)> referencesByPerson,
+        CultureInfo dateCulture)
     {
         if (string.IsNullOrWhiteSpace(personReference))
             personReference = person.Name ?? $"{person.GivenName}|{person.Surname}";
@@ -1449,7 +1479,7 @@ public sealed class OFBExportService(
             .Select(nameEvent => (
                 Surname: nameEvent.Surname.Trim(),
                 GivenName: string.IsNullOrWhiteSpace(nameEvent.GivenName) ? given : nameEvent.GivenName.Trim(),
-                Date: nameEvent.DateText ?? string.Empty,
+                Date: GedcomDateFormatter.FormatText(nameEvent.DateText, dateCulture) ?? string.Empty,
                 IsAlternativeName: string.Equals(nameEvent.Type, "MARRIED", StringComparison.OrdinalIgnoreCase)
                     || (!string.IsNullOrWhiteSpace(birthSurname)
                         && !string.Equals(nameEvent.Surname.Trim(), birthSurname, StringComparison.OrdinalIgnoreCase))))

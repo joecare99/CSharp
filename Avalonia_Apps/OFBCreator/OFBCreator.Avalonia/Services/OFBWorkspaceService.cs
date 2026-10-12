@@ -59,6 +59,7 @@ public sealed class OFBWorkspaceService(OFBExportService exportService) : IOFBWo
             Preface = project.Preface,
             Legend = project.Legend,
             Template = OFBProjectStore.ResolveEntryTemplate(projectPath, project.EntryTemplate),
+            ExportCulture = project.ExportCulture,
             DataSource = project.DataSource ?? "gedcom",
             ExportRules = project.ExportRules,
             GroupingPolicy = project.GroupingPolicy,

@@ -48,6 +48,9 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
     private string _entryTemplate = "gc";
 
     [ObservableProperty]
+    private string _exportCulture = OFBExportCulture.Default;
+
+    [ObservableProperty]
     private string? _placeId;
 
     [ObservableProperty]
@@ -141,6 +144,9 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
     public ObservableCollection<string> Diagnostics { get; } = [];
 
     public string[] RuleTargetKinds { get; } = ["person", "family", "fact"];
+
+    public string[] ExportCultureOptions { get; } =
+        [OFBExportCulture.German, OFBExportCulture.EnglishUnitedStates];
 
     public string[] RuleActions { get; } = ["include", "exclude", "replace", "redact", "generalize"];
 
@@ -256,6 +262,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         InputPath = string.Empty;
         OutputPath = string.Empty;
         EntryTemplate = "gc";
+        ExportCulture = OFBExportCulture.Default;
         PlaceId = null;
         IncludeDescendants = false;
         Preface = null;
@@ -684,6 +691,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         {
             OFBExportRuleValidator.Validate(project.ExportRules);
             OFBGroupingPolicyValidator.Validate(project.GroupingPolicy, project.GroupingDecisions);
+            OFBExportCulture.Validate(project.ExportCulture);
             return true;
         }
         catch (InvalidDataException exception)
@@ -702,6 +710,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         project.InputPath = NullIfWhiteSpace(InputPath);
         project.OutputPath = NullIfWhiteSpace(OutputPath);
         project.EntryTemplate = EntryTemplate;
+        project.ExportCulture = ExportCulture;
         project.PlaceId = NullIfWhiteSpace(PlaceId);
         project.IncludeDescendants = IncludeDescendants;
         project.Preface = NullIfWhiteSpace(Preface);
@@ -721,6 +730,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         InputPath = project.InputPath ?? string.Empty;
         OutputPath = project.OutputPath ?? string.Empty;
         EntryTemplate = project.EntryTemplate;
+        ExportCulture = project.ExportCulture;
         PlaceId = project.PlaceId;
         IncludeDescendants = project.IncludeDescendants;
         Preface = project.Preface;

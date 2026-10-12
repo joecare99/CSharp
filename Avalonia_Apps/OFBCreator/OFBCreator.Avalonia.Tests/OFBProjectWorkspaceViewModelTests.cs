@@ -38,6 +38,7 @@ public sealed class OFBProjectWorkspaceViewModelTests : IDisposable
         viewModel.InputPath = "data\\sample.ged";
         viewModel.OutputPath = "output\\book.docx";
         viewModel.EntryTemplate = "ak";
+        viewModel.ExportCulture = OFBExportCulture.EnglishUnitedStates;
         viewModel.AutoAcceptThreshold = 91;
         viewModel.RuleTargetKind = "person";
         viewModel.RuleTargetId = OFBExportRuleTarget.Person("gedcom", "I1");
@@ -52,6 +53,7 @@ public sealed class OFBProjectWorkspaceViewModelTests : IDisposable
             .Open(viewModel.ProjectFilePath).Project;
         Assert.AreEqual("FamilyBook", saved.Name);
         Assert.AreEqual("data\\sample.ged", saved.InputPath);
+        Assert.AreEqual(OFBExportCulture.EnglishUnitedStates, saved.ExportCulture);
         Assert.AreEqual(91, saved.GroupingPolicy.AutoAcceptThreshold);
         Assert.AreEqual("Anna", saved.ExportRules.Single().Value);
 
@@ -59,6 +61,7 @@ public sealed class OFBProjectWorkspaceViewModelTests : IDisposable
         viewModel.ProjectFilePath = Path.Combine(_testDirectory, "FamilyBook.ofbproject");
         viewModel.OpenProjectCommand.Execute(null);
         Assert.AreEqual("FamilyBook", viewModel.Name);
+        Assert.AreEqual(OFBExportCulture.EnglishUnitedStates, viewModel.ExportCulture);
         Assert.AreEqual(1, viewModel.ExportRules.Count);
     }
 

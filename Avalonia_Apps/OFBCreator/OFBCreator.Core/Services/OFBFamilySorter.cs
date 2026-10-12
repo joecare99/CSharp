@@ -250,14 +250,15 @@ public class OFBFamilySorter : IOFBFamilySorter
         var children = family.Children;
         if ( children?.Count > 0 )
         {
-            // Priority 2: First child's birth date
-            foreach ( var child in children )
-            {
-                if ( child == null || child.BirthDate == null || child.BirthDate.Date1 == default )
-                    continue;
-
-                return child.BirthDate.Date1;
-            }
+            // Family formation is estimated to precede the first known child by one year.
+            var firstChildBirthDate = children
+                .OfType<IGenPerson>()
+                .Select(child => (child.BirthDate ?? child.Birth?.Date)?.Date1)
+                .Where(date => date.HasValue && date.Value != default)
+                .OrderBy(date => date)
+                .FirstOrDefault();
+            if (firstChildBirthDate.HasValue)
+                return firstChildBirthDate.Value.AddYears(-1);
 
             // Priority 3: First child's baptism date (additional fallback from Delphi)
             foreach ( var child in children )
