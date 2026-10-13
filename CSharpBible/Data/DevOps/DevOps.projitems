@@ -45,6 +45,7 @@
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831191-Specify-workbench-standalone-primary-workflow.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831192-Specify-preview-coupling-and-contextual-validation.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-831193-Implement-keyboard-oriented-main-menu.md" />
+    <None Include="$(MSBuildThisFileDirectory)Tasks\T-831194-Read-Beckhoff-SVDX.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-ConsoleProxy-Platform-Robustness.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-010-Use-differential-patches-for-SVN-sync.md" />
     <None Include="$(MSBuildThisFileDirectory)Tasks\T-RepoMigrator-011-Close-priority-test-coverage-gaps.md" />
