@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace Avln_CommonDialogs.Base.Interfaces;
 
 public interface IPrintDialog

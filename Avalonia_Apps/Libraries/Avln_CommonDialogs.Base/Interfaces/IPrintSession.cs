@@ -1,3 +1,7 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Avln_CommonDialogs.Base.Interfaces;
 
 public interface IPrintSession : IAsyncDisposable
