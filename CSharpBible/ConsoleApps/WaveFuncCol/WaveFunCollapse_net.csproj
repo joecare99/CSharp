@@ -18,7 +18,7 @@
 		<None Remove="obj\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="System.Drawing.Common" Version="10.0.12" />
+	  <PackageReference Include="System.Drawing.Common" Version="10.0.13" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Libraries\ConsoleDisplay\ConsoleDisplay.csproj" />

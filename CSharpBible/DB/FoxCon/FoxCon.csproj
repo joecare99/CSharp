@@ -14,8 +14,8 @@
   <ItemGroup>
     <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.27.0" />
     <PackageReference Include="Selenium.Mozilla.Firefox.Webdriver" Version="0.6.0.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.50.0" />
-    <PackageReference Include="System.Text.Json" Version="10.0.12" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.51.0" />
+    <PackageReference Include="System.Text.Json" Version="10.0.13" />
   </ItemGroup>
 
 </Project>
