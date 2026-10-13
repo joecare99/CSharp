@@ -14,6 +14,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using static BaseLib.Helper.TestHelper;
@@ -119,11 +120,12 @@ public class StringUtilsTests
     [DataRow("This is a Newline", "This is a {0}", "Newline")]
     [DataRow("This is a HexNumber 008CEA1F", "This is a HexNumber {0:X8}", 9234975)]
     [DataRow("This is a Number 07346238", "This is a Number {0:D8}", 7346238)]
-    [DataRow("This is a Number 1,414", "This is a Number {0}", 1.414)] //!!
-    [DataRow("This is a Number 3,14", "This is a Number {0:F2}", 3.141525345)]
+    [DataRow("This is a Number 1.414", "This is a Number {0}", 1.414)] //!!
+    [DataRow("This is a Number 3.14", "This is a Number {0:F2}", 3.141525345)]
     [DataRow("A () guess !", "A ({0}) guess !", null)]
     public void FormatTest(string sExp, string sWork, object sMsg)
     {
+        CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;        
         Assert.AreEqual(sExp, StringUtils.Format(sWork, sMsg));
     }
 
@@ -132,11 +134,12 @@ public class StringUtilsTests
     [DataRow("This is a Newline", "This is a {0}", "Newline")]
     [DataRow("This is a HexNumber 008CEA1F", "This is a HexNumber {0:X8}", 9234975)]
     [DataRow("This is a Number 07346238", "This is a Number {0:D8}", 7346238)]
-    [DataRow("This is a Number 1,414", "This is a Number {0}", 1.414)] //!!
-    [DataRow("This is a Number 3,14", "This is a Number {0:F2}", 3.141525345)]
+    [DataRow("This is a Number 1.414", "This is a Number {0}", 1.414)] //!!
+    [DataRow("This is a Number 3.14", "This is a Number {0:F2}", 3.141525345)]
     [DataRow("A () guess !", "A ({0}) guess !", null)]
     public void FormatTest1(string sExp, string sWork, object sMsg)
     {
+        CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
         Assert.AreEqual(sExp, sWork.Format(sMsg));
     }
 

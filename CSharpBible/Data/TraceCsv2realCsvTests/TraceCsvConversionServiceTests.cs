@@ -7,6 +7,7 @@ using System.Text;
 using TraceAnalysis.Base.Filters;
 using TraceAnalysis.Filter.CSV.Filters;
 using TraceAnalysis.Filter.CSV.Model;
+using TraceAnalysis.Filter.BeckhoffSvdx.Filters;
 using TraceAnalysis.Filter.JSON.Filters;
 using TraceAnalysis.Filter.JSON.Model;
 using TraceAnalysis.Filter.MovirunText.Filters;
@@ -155,6 +156,7 @@ public class TraceCsvConversionServiceTests
             new TraceCsvInputFilter(),
             new FlatCsvInputFilter(),
             new JsonInputFilter(),
+            new BeckhoffSvdxInputFilter(),
             new MovirunTextTraceInputFilter(),
             new MovirunTraceXmlInputFilter()
         ];

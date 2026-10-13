@@ -30,6 +30,7 @@
 		<ProjectReference Include="..\TraceCsv2realCsv\TraceCsv2realCsv.csproj" />
 		<ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.CSV\TraceAnalysis.Filter.CSV.csproj" />
 		<ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.JSON\TraceAnalysis.Filter.JSON.csproj" />
+		<ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.BeckhoffSvdx\TraceAnalysis.Filter.BeckhoffSvdx.csproj" />
 		<ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Workbench.Core\TraceAnalysis.Workbench.Core.csproj" Condition="'$(TargetFramework)'=='net8.0' or '$(TargetFramework)'=='net9.0' or '$(TargetFramework)'=='net10.0'" />
 		<ProjectReference Include="..\..\Libraries\BaseLib\BaseLib.csproj" />
 	</ItemGroup>

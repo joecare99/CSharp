@@ -22,6 +22,7 @@
         <ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Base\TraceAnalysis.Base.csproj" />
 		<ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.CSV\TraceAnalysis.Filter.CSV.csproj" />
         <ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.JSON\TraceAnalysis.Filter.JSON.csproj" />
+		<ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.BeckhoffSvdx\TraceAnalysis.Filter.BeckhoffSvdx.csproj" />
         <ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.MovirunText\TraceAnalysis.Filter.MovirunText.csproj" />
 		<ProjectReference Include="..\TraceAnalysis\TraceAnalysis.Filter.MovirunTrace\TraceAnalysis.Filter.MovirunTrace.csproj" />
 	</ItemGroup>

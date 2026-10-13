@@ -24,6 +24,7 @@
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.CSV/TraceAnalysis.Filter.CSV.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.Excel/TraceAnalysis.Filter.Excel.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.JSON/TraceAnalysis.Filter.JSON.csproj" />
+    <Project Path="TraceAnalysis/TraceAnalysis.Filter.BeckhoffSvdx/TraceAnalysis.Filter.BeckhoffSvdx.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.MovirunText/TraceAnalysis.Filter.MovirunText.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Filter.MovirunTrace/TraceAnalysis.Filter.MovirunTrace.csproj" />
     <Project Path="TraceAnalysis/TraceAnalysis.Show.Wpf/TraceAnalysis.Show.Wpf.csproj" />

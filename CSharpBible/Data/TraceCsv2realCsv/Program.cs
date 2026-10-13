@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using TraceAnalysis.Base.Filters;
 using TraceAnalysis.Filter.CSV.Filters;
+using TraceAnalysis.Filter.BeckhoffSvdx.Filters;
 using TraceAnalysis.Filter.JSON.Filters;
 using TraceAnalysis.Filter.MovirunText.Filters;
 using TraceAnalysis.Filter.MovirunTrace.Filters;
@@ -50,6 +51,7 @@ public class Program
         services.AddSingleton<IAnalyzableInputFilter, TraceCsvInputFilter>();
         services.AddSingleton<IAnalyzableInputFilter, FlatCsvInputFilter>();
         services.AddSingleton<IAnalyzableInputFilter, JsonInputFilter>();
+        services.AddSingleton<IAnalyzableInputFilter, BeckhoffSvdxInputFilter>();
         services.AddSingleton<IAnalyzableInputFilter, MovirunTextTraceInputFilter>();
         services.AddSingleton<IAnalyzableInputFilter, MovirunTraceXmlInputFilter>();
         services.AddSingleton<IOutputFilter>(_ => new CsvOutputFilter());

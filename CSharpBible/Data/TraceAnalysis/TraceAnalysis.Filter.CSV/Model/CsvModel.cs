@@ -209,7 +209,7 @@ public class CsvModel
         tw.WriteLine(string.Join($"{cSeparator}", _header.ConvertAll((l) => $"\"{l.name}\"")));
         // Write Data
         foreach (var l in _data)
-            tw.WriteLine($"{(l.Key is string sl ? $"\"{sl.Quote()}\"" : l.Key)}{cSeparator}" + string.Join($"{cSeparator}", l.Value.ConvertAll((l) => l is string sl ? $"\"{sl.Quote()}\"" : l is double d ? $"{d.ToString(CultureInfo.InvariantCulture)}" : $"{l}")));
+            tw.WriteLine($"{(l.Key is string sl ? $"\"{sl.Quote()}\"" : l.Key is DateTime timestamp ? timestamp.ToString("O", CultureInfo.InvariantCulture) : l.Key)}{cSeparator}" + string.Join($"{cSeparator}", l.Value.ConvertAll((l) => l is string sl ? $"\"{sl.Quote()}\"" : l is double d ? $"{d.ToString(CultureInfo.InvariantCulture)}" : $"{l}")));
 
     }
 

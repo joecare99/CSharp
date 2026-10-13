@@ -7,6 +7,7 @@ Apply these defaults when working in this repository unless the user explicitly 
 - Validate changes with relevant builds and tests before finishing.
 - If requirements are unclear, ask clarifying questions before starting implementation or planning refinement.
 - When reviewing build warnings in this repository, ignore unsupported older framework warnings if the project also targets newer supported frameworks. Additionally, ignore `IDE0130` warnings in test projects.
+- When correcting a technical analysis, adopt the correction as the authoritative hypothesis, review the previous direction for clarity, and explicitly correct errors instead of adhering to the old interpretation.
 
 ## Process and Planning
 - Document changes in a DevOps manner using Markdown, extrapolating bugs, tasks, backlogs, and features.

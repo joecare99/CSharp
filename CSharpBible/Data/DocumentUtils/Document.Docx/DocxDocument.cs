@@ -329,6 +329,13 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider, IDocPageL
             }
         }
 
+        // Identical links can inherit different paragraph fonts; consume their styles in document order.
+        var stylesByTargetAndText = styles
+            .GroupBy(style => (style.Target, style.Text))
+            .ToDictionary(
+                group => group.Key,
+                group => new Queue<PendingHyperlinkStyle>(group));
+
         foreach (var hyperlink in document.Descendants(word + "hyperlink"))
         {
             var anchor = (string?)hyperlink.Attribute(word + "anchor");
@@ -337,9 +344,11 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider, IDocPageL
             if (target is null && relationshipId is not null)
                 relationshipTargets.TryGetValue(relationshipId, out target);
             var text = string.Concat(hyperlink.Descendants(word + "t").Select(node => node.Value));
-            var style = styles.FirstOrDefault(candidate => candidate.Target == target && candidate.Text == text);
-            if (style is null)
+            if (target is null
+                || !stylesByTargetAndText.TryGetValue((target, text), out var matchingStyles)
+                || matchingStyles.Count == 0)
                 continue;
+            var style = matchingStyles.Dequeue();
             foreach (var run in hyperlink.Elements(word + "r"))
                 ApplyRunAttributes(run, style.Attributes, word);
         }
@@ -360,20 +369,45 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider, IDocPageL
         }
 
         if (GetAttribute(attributes, DocAttributeNames.Bold, false))
-            properties.Add(new XElement(word + "b"));
+            SetRunProperty(properties, word + "b", new XElement(word + "b"));
         if (GetAttribute(attributes, DocAttributeNames.Italic, false))
-            properties.Add(new XElement(word + "i"));
+            SetRunProperty(properties, word + "i", new XElement(word + "i"));
         if (GetAttribute(attributes, DocAttributeNames.Underline, false))
-            properties.Add(new XElement(word + "u", new XAttribute(word + "val", "single")));
+            SetRunProperty(properties, word + "u", new XElement(word + "u", new XAttribute(word + "val", "single")));
         if (GetAttribute(attributes, DocAttributeNames.Strikeout, false))
-            properties.Add(new XElement(word + "strike"));
-
+            SetRunProperty(properties, word + "strike", new XElement(word + "strike"));
         if (GetAttribute<double?>(attributes, DocAttributeNames.FontSizePt, null) is double fontSize)
-            properties.Add(new XElement(word + "sz", new XAttribute(word + "val", Math.Round(fontSize * 2).ToString(System.Globalization.CultureInfo.InvariantCulture))));
+            SetRunProperty(
+                properties,
+                word + "sz",
+                new XElement(word + "sz", new XAttribute(word + "val", Math.Round(fontSize * 2).ToString(System.Globalization.CultureInfo.InvariantCulture))));
         if (GetAttribute<string?>(attributes, DocAttributeNames.FontFamily, null) is string fontFamily)
-            properties.Add(new XElement(word + "rFonts", new XAttribute(word + "ascii", fontFamily), new XAttribute(word + "hAnsi", fontFamily)));
+            SetFontFamily(properties, fontFamily, word);
         if (GetAttribute<string?>(attributes, DocAttributeNames.Color, null) is string color)
-            properties.Add(new XElement(word + "color", new XAttribute(word + "val", color.TrimStart('#'))));
+            SetRunProperty(properties, word + "color", new XElement(word + "color", new XAttribute(word + "val", color.TrimStart('#'))));
+    }
+
+    private static void SetFontFamily(XElement properties, string fontFamily, XNamespace word)
+    {
+        var fontProperties = properties.Elements(word + "rFonts").FirstOrDefault();
+        if (fontProperties is null)
+        {
+            fontProperties = new XElement(word + "rFonts");
+            properties.Add(fontProperties);
+        }
+        else
+        {
+            properties.Elements(word + "rFonts").Skip(1).Remove();
+        }
+
+        fontProperties.SetAttributeValue(word + "ascii", fontFamily);
+        fontProperties.SetAttributeValue(word + "hAnsi", fontFamily);
+    }
+
+    private static void SetRunProperty(XElement properties, XName name, XElement value)
+    {
+        properties.Elements(name).Remove();
+        properties.Add(value);
     }
 
     private sealed record PendingHyperlinkStyle(string Target, string Text, IList<IDocAttributes> Attributes);
