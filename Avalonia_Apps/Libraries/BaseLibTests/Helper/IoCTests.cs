@@ -94,12 +94,13 @@ public class IoCTests : BaseTest
     [TestMethod()]
     public void SetCurrentScopeTest()
     {
-        var s = IoC.GetNewScope();
+        var s = IoC.Scope;
+        var s1 = IoC.GetNewScope();
         Assert.AreEqual("GetScope()\r\n", DebugLog);
         Assert.AreEqual(s, IoC.Scope);
         s.ServiceProvider.GetService(typeof(object)).Returns(null);
         var s2 = IoC.GetNewScope(s);
-        Assert.AreEqual(s2, IoC.Scope);
+        Assert.AreEqual(s, IoC.Scope);
         s2.ServiceProvider.GetService(typeof(object)).Returns(this);
         IoC.SetCurrentScope(s2);
         Assert.AreEqual(s2, IoC.Scope);
@@ -107,7 +108,7 @@ public class IoCTests : BaseTest
         IoC.SetCurrentScope(s);
         Assert.AreEqual(s, IoC.Scope);
         Assert.ThrowsExactly<InvalidOperationException>(() => IoC.GetRequiredService<Object>());
-        Assert.AreEqual("GetScope()\r\nGetScope()\r\n", DebugLog);
+        Assert.AreEqual("GetScope()\r\n", DebugLog);
     }
 
     [TestMethod()]

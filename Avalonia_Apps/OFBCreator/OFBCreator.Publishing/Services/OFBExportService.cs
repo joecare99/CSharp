@@ -69,6 +69,7 @@ public sealed class OFBExportService(
             throw new ArgumentException( "OFB title is required.", nameof( options ) );
 
         var dateCulture = OFBExportCulture.GetCulture(options.ExportCulture);
+        OFBDateEstimationCutoffValidator.Validate(options.DateEstimationCutoffYear);
 
         if ( !File.Exists( options.InputPath ) )
             throw new FileNotFoundException( $"GEDCOM input file was not found: '{options.InputPath}'.", options.InputPath );
@@ -279,7 +280,7 @@ public sealed class OFBExportService(
         }
 
         var families = overlay.Genealogy.Entitys.OfType<IGenFamily>().ToList();
-        var dateDiagnostics = new OFBDateEstimationService().Apply(families);
+        var dateDiagnostics = new OFBDateEstimationService().Apply(families, options.DateEstimationCutoffYear);
         families.RemoveAll(family =>
             family.Marriage is null
             && family.MarriageDate is null

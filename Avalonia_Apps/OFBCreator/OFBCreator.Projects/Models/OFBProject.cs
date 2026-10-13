@@ -9,7 +9,9 @@ namespace OFBCreator.Projects.Models;
 /// </summary>
 public sealed class OFBProject
 {
-    public const int CurrentSchemaVersion = 6;
+    public const int CurrentSchemaVersion = 7;
+
+    public const int DefaultDateEstimationCutoffYear = 900;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
 
@@ -22,6 +24,8 @@ public sealed class OFBProject
     public string EntryTemplate { get; set; } = "gc";
 
     public string ExportCulture { get; set; } = OFBExportCulture.Default;
+
+    public int? DateEstimationCutoffYear { get; set; } = DefaultDateEstimationCutoffYear;
 
     public string? InputPath { get; set; }
 

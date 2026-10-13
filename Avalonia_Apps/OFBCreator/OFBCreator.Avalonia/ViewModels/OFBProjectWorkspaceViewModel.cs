@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -49,6 +50,9 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
 
     [ObservableProperty]
     private string _exportCulture = OFBExportCulture.Default;
+
+    [ObservableProperty]
+    private string _dateEstimationCutoffYear = OFBProject.DefaultDateEstimationCutoffYear.ToString(CultureInfo.InvariantCulture);
 
     [ObservableProperty]
     private string? _placeId;
@@ -263,6 +267,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         OutputPath = string.Empty;
         EntryTemplate = "gc";
         ExportCulture = OFBExportCulture.Default;
+        DateEstimationCutoffYear = OFBProject.DefaultDateEstimationCutoffYear.ToString(CultureInfo.InvariantCulture);
         PlaceId = null;
         IncludeDescendants = false;
         Preface = null;
@@ -660,9 +665,9 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
             return false;
         }
 
-        var project = BuildProject();
         try
         {
+            var project = BuildProject();
             ProjectFilePath = _projectStore.Save(project, ProjectFilePath);
             _loadedProject = project;
             RefreshRecentProjects();
@@ -685,17 +690,19 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
 
     private bool TryBuildProject(out OFBProject project, out string projectPath)
     {
-        project = BuildProject();
         projectPath = string.IsNullOrWhiteSpace(ProjectFilePath) ? DefaultProjectPath : ProjectFilePath;
         try
         {
+            project = BuildProject();
             OFBExportRuleValidator.Validate(project.ExportRules);
             OFBGroupingPolicyValidator.Validate(project.GroupingPolicy, project.GroupingDecisions);
             OFBExportCulture.Validate(project.ExportCulture);
+            OFBDateEstimationCutoffValidator.Validate(project.DateEstimationCutoffYear);
             return true;
         }
         catch (InvalidDataException exception)
         {
+            project = new OFBProject();
             StatusMessage = exception.Message;
             return false;
         }
@@ -711,6 +718,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         project.OutputPath = NullIfWhiteSpace(OutputPath);
         project.EntryTemplate = EntryTemplate;
         project.ExportCulture = ExportCulture;
+        project.DateEstimationCutoffYear = ParseDateEstimationCutoffYear();
         project.PlaceId = NullIfWhiteSpace(PlaceId);
         project.IncludeDescendants = IncludeDescendants;
         project.Preface = NullIfWhiteSpace(Preface);
@@ -722,6 +730,17 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         return project;
     }
 
+    private int? ParseDateEstimationCutoffYear()
+    {
+        var value = DateEstimationCutoffYear.Trim();
+        if (value.Length == 0)
+            return null;
+        if (!int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out var year))
+            throw new InvalidDataException("Enter a whole-number date estimation cutoff year, or clear the field to disable it.");
+        OFBDateEstimationCutoffValidator.Validate(year);
+        return year;
+    }
+
     private void LoadProject(OFBProject project)
     {
         _loadedProject = project;
@@ -731,6 +750,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         OutputPath = project.OutputPath ?? string.Empty;
         EntryTemplate = project.EntryTemplate;
         ExportCulture = project.ExportCulture;
+        DateEstimationCutoffYear = project.DateEstimationCutoffYear?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
         PlaceId = project.PlaceId;
         IncludeDescendants = project.IncludeDescendants;
         Preface = project.Preface;

@@ -21,6 +21,7 @@ public sealed class OFBProjectStoreTests
         var reopened = store.Open(created.ProjectPath);
 
         Assert.AreEqual(OFBProject.CurrentSchemaVersion, created.Project.SchemaVersion);
+        Assert.AreEqual(OFBProject.DefaultDateEstimationCutoffYear, created.Project.DateEstimationCutoffYear);
         Assert.AreEqual("Obrigheim", reopened.Project.Name);
         Assert.AreEqual(Path.Combine(testDirectory.Path, "Obrigheim.ofbproject"), created.ProjectPath);
         CollectionAssert.Contains(store.GetRecentProjects().ToArray(), created.ProjectPath);
@@ -158,6 +159,58 @@ public sealed class OFBProjectStoreTests
     }
 
     [TestMethod]
+    public void Open_MigratesSchemaSixProjectToDefaultDateEstimationCutoffInMemory()
+    {
+        using var testDirectory = new TestDirectory();
+        var path = Path.Combine(testDirectory.Path, "SchemaSix.ofbproject");
+        var id = Guid.NewGuid();
+        File.WriteAllText(path,
+            $"{{\"SchemaVersion\":6,\"Id\":\"{id:D}\",\"Name\":\"SchemaSix\",\"Title\":\"Schema Six\",\"EntryTemplate\":\"gc\",\"ExportRules\":[],\"GroupingPolicy\":{{\"AutoAcceptThreshold\":85}},\"GroupingDecisions\":[],\"Layout\":{{}},\"ExportCulture\":\"de-DE\"}}");
+
+        var loaded = new OFBProjectStore(testDirectory.Path).Open(path);
+
+        Assert.IsTrue(loaded.RequiresMigrationSave);
+        Assert.AreEqual(6, loaded.SourceSchemaVersion);
+        Assert.AreEqual(OFBProject.CurrentSchemaVersion, loaded.Project.SchemaVersion);
+        Assert.AreEqual(OFBProject.DefaultDateEstimationCutoffYear, loaded.Project.DateEstimationCutoffYear);
+        Assert.AreEqual(6, ReadSchemaVersion(path));
+    }
+
+    [TestMethod]
+    public void SaveAndOpen_PreservesDisabledDateEstimationCutoff()
+    {
+        using var testDirectory = new TestDirectory();
+        var path = Path.Combine(testDirectory.Path, "NoCutoff.ofbproject");
+        var project = new OFBProject
+        {
+            Name = "NoCutoff",
+            Title = "No cutoff",
+            DateEstimationCutoffYear = null
+        };
+        var store = new OFBProjectStore(testDirectory.Path);
+
+        store.Save(project, path);
+
+        Assert.IsNull(store.Open(path).Project.DateEstimationCutoffYear);
+    }
+
+    [TestMethod]
+    public void Save_RejectsYearZeroAsDateEstimationCutoff()
+    {
+        using var testDirectory = new TestDirectory();
+        var project = new OFBProject
+        {
+            Name = "InvalidCutoff",
+            Title = "Invalid cutoff",
+            DateEstimationCutoffYear = 0
+        };
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new OFBProjectStore(testDirectory.Path).Save(
+                project, Path.Combine(testDirectory.Path, "InvalidCutoff.ofbproject")));
+    }
+
+    [TestMethod]
     public void LoadOrCreate_FindsLegacyNamedProjectInsteadOfCreatingASecondDefault()
     {
         using var testDirectory = new TestDirectory();
@@ -184,6 +237,7 @@ public sealed class OFBProjectStoreTests
             Title = "Source Title",
             EntryTemplate = "ak",
             ExportCulture = OFBExportCulture.EnglishUnitedStates,
+            DateEstimationCutoffYear = null,
             InputPath = "private\\input.ged",
             OutputPath = "old-output.docx",
             PlaceId = "P1",
@@ -232,6 +286,7 @@ public sealed class OFBProjectStoreTests
         Assert.AreEqual("NewBook", created.Title);
         Assert.AreEqual("ak", created.EntryTemplate);
         Assert.AreEqual(OFBExportCulture.EnglishUnitedStates, created.ExportCulture);
+        Assert.IsNull(created.DateEstimationCutoffYear);
         Assert.IsNull(created.InputPath);
         Assert.IsNull(created.OutputPath);
         Assert.AreEqual("P1", created.PlaceId);
