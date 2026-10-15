@@ -36,4 +36,12 @@
     <ProjectReference Include="..\OFBCreator.Publishing\OFBCreator.Publishing.csproj" />
     <ProjectReference Include="..\OFBCreator.Projects\OFBCreator.Projects.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="Avalonia" Version="12.1.4" />
+    <PackageVersion Update="Avalonia.Desktop" Version="12.1.4" />
+    <PackageVersion Update="Avalonia.Fonts.Inter" Version="12.1.4" />
+    <PackageVersion Update="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.13" />
+  </ItemGroup>
 </Project>
