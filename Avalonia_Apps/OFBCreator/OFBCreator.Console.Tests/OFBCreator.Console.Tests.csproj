@@ -27,4 +27,8 @@
 	<None Update="TestData\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+  </ItemGroup>
+
 </Project>
