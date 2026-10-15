@@ -34,5 +34,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\CSharpBible\Data\DocumentUtils\Document.Base\Document.Base.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.Extensions.Logging.Abstractions" Version="10.0.13" />
+  </ItemGroup>
 
 </Project>
