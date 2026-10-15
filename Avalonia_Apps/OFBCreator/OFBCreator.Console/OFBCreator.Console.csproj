@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -40,6 +40,12 @@
 
   <ItemGroup>
     <Compile Remove="Services\OFBProjectStore.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="10.0.13" />
+    <PackageVersion Update="System.CommandLine" Version="2.0.13" />
   </ItemGroup>
 
 </Project>
