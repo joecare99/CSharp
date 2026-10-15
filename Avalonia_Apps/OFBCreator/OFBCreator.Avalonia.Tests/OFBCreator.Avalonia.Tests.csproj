@@ -33,4 +33,8 @@
   <ItemGroup>
     <None Include="..\OFBCreator.Publishing.Tests\TestData\gedcom-5.5.1-synthetic.ged" Link="TestData\gedcom-5.5.1-synthetic.ged" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+  </ItemGroup>
 </Project>
