@@ -14,7 +14,7 @@ using Xceed.Words.NET;
 namespace Document.Docx;
 
 [UserDocumentProvider("docx", Extensions = new[] { ".docx" }, ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document", DisplayName = "Word (DocX)")]
-public sealed class DocxDocument : IUserDocument, IDocSectionProvider, IDocPageLayoutProvider
+public sealed class DocxDocument : IUserDocument, IUserDocumentImageProvider, IDocSectionProvider, IDocPageLayoutProvider
 {
     private bool _isModified;
     private readonly List<PendingHyperlinkStyle> _pendingHyperlinkStyles = new();
@@ -33,6 +33,16 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider, IDocPageL
 
     public IDocTOC AddTOC(string cName, int nLevel)
     { var section = EnsureRoot(); _isModified = true; return section.AddTOC(cName, nLevel); }
+
+    public IDocImage AddImage(byte[] imageData, string contentType, string? altText = null)
+    {
+        ArgumentNullException.ThrowIfNull(imageData);
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentType);
+        var image = new DocxImage(imageData.ToArray(), contentType, altText);
+        EnsureRoot().AddChild(image);
+        _isModified = true;
+        return image;
+    }
 
     /// <summary>
     /// Adds a real document section with an optional column count.
@@ -276,6 +286,16 @@ public sealed class DocxDocument : IUserDocument, IDocSectionProvider, IDocPageL
                     };
 
                         doc.InsertTableOfContents("Table of Contents", switches);
+                        break;
+                    }
+                case DocxImage image:
+                    {
+                        using var imageStream = new MemoryStream(image.ImageData, writable: false);
+                        var docxImage = doc.AddImage(imageStream);
+                        var picture = docxImage.CreatePicture();
+                        if (!string.IsNullOrWhiteSpace(image.AltText))
+                            picture.Description = image.AltText;
+                        doc.InsertParagraph().AppendPicture(picture);
                         break;
                     }
             }
