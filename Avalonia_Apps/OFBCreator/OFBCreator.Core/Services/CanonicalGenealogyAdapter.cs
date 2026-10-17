@@ -368,7 +368,7 @@ public sealed class CanonicalGenealogyAdapter()
         };
         var offset = modifier == EDateModifier.None ? 0 : 1;
         var valuePart = string.Join(' ', tokens.Skip(offset));
-        DateTime.TryParse(valuePart, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var parsed);
+        var parsedSuccessfully = TryParseDateValue(valuePart, out var parsed);
         DateTime? second = null;
         var secondSeparator = modifier == EDateModifier.Between ? "AND"
             : modifier == EDateModifier.From && tokens.Contains("TO", StringComparer.OrdinalIgnoreCase) ? "TO"
@@ -381,12 +381,19 @@ public sealed class CanonicalGenealogyAdapter()
             {
                 var firstText = string.Join(' ', tokens.Skip(offset).Take(separatorIndex - offset));
                 valuePart = firstText;
-                DateTime.TryParse(firstText, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out parsed);
+                var firstParsed = TryParseDateValue(firstText, out parsed);
                 var secondText = string.Join(' ', tokens.Skip(separatorIndex + 1));
-                if (DateTime.TryParse(secondText, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var parsedSecond))
+                var secondParsed = TryParseDateValue(secondText, out var parsedSecond);
+                if (firstParsed && secondParsed)
+                {
                     second = parsedSecond;
-                if (modifier == EDateModifier.From)
-                    modifier = EDateModifier.FromTo;
+                    if (modifier == EDateModifier.From)
+                        modifier = EDateModifier.FromTo;
+                }
+                else
+                {
+                    parsedSuccessfully = false;
+                }
             }
         }
         return new GedcomDate
@@ -394,10 +401,22 @@ public sealed class CanonicalGenealogyAdapter()
             DateText = value,
             Date1 = parsed,
             Date2 = second,
-            eDateModifier = parsed == default && modifier == EDateModifier.None ? EDateModifier.Text : modifier,
+            eDateModifier = parsedSuccessfully ? modifier : EDateModifier.Text,
             eDateType1 = GetDateType(valuePart),
             eDateType2 = second is null ? null : EDateType.Full
         };
+    }
+
+    /// <summary>
+    /// Parses a date using the supported GEDCOM calendar and invariant date formats.
+    /// </summary>
+    /// <param name="value">The date text without its GEDCOM modifier.</param>
+    /// <param name="date">The parsed Gregorian date when successful.</param>
+    /// <returns><see langword="true"/> when the date can be normalized.</returns>
+    private static bool TryParseDateValue(string value, out DateTime date)
+    {
+        return GedcomCalendarDateParser.TryParseDate(value, out date) ||
+            DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out date);
     }
 
     private static EDateType GetDateType(string value)

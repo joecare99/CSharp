@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Globalization;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces;
 using GenInterfaces.Interfaces.Genealogic;
@@ -397,6 +396,10 @@ public class GedComDataSource : IFamilyDataSource
                     gedcomDate.eDateType1 = GetDateType(firstDate);
                     gedcomDate.eDateType2 = GetDateType(secondDate);
                 }
+                else
+                {
+                    gedcomDate.eDateModifier = EDateModifier.Text;
+                }
             }
             return gedcomDate;
         }
@@ -407,7 +410,7 @@ public class GedComDataSource : IFamilyDataSource
             gedcomDate.Date1 = parsedDate;
             gedcomDate.eDateType1 = GetDateType(dateValue);
         }
-        else if (gedcomDate.eDateModifier == EDateModifier.None)
+        else
         {
             gedcomDate.eDateModifier = EDateModifier.Text;
         }
@@ -417,8 +420,7 @@ public class GedComDataSource : IFamilyDataSource
 
     private static bool TryParseDate(string value, out DateTime date)
     {
-        string[] formats = ["d MMM yyyy", "dd MMM yyyy", "d.M.yyyy", "dd.MM.yyyy", "d/M/yyyy", "dd/MM/yyyy", "MMM yyyy", "MMMM yyyy", "yyyy"];
-        return DateTime.TryParseExact(value.Trim(), formats, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out date);
+        return GedcomCalendarDateParser.TryParseDate(value, out date);
     }
 
     private static EDateType GetDateType(string value)
