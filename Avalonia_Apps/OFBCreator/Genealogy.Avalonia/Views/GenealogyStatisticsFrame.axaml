@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:views="clr-namespace:Genealogy.Avalonia.Views"
+			 x:Class="Genealogy.Avalonia.Views.GenealogyStatisticsFrame">
+  <ScrollViewer>
+	<StackPanel Spacing="14" Margin="14">
+	  <TextBlock FontSize="22" FontWeight="SemiBold" Text="Genealogy statistics" />
+	  <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+		<Border Grid.Row="0" Grid.Column="0" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Earliest birth" /><TextBlock TextWrapping="Wrap" Text="{Binding EarliestPersonText}" /></StackPanel></Border>
+		<Border Grid.Row="0" Grid.Column="1" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Latest birth" /><TextBlock TextWrapping="Wrap" Text="{Binding LatestPersonText}" /></StackPanel></Border>
+		<Border Grid.Row="0" Grid.Column="2" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Oldest woman" /><TextBlock TextWrapping="Wrap" Text="{Binding OldestWomanText}" /></StackPanel></Border>
+		<Border Grid.Row="1" Grid.Column="0" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Oldest man" /><TextBlock TextWrapping="Wrap" Text="{Binding OldestManText}" /></StackPanel></Border>
+		<Border Grid.Row="1" Grid.Column="1" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Earliest marriage" /><TextBlock TextWrapping="Wrap" Text="{Binding EarliestMarriageText}" /></StackPanel></Border>
+		<Border Grid.Row="1" Grid.Column="2" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Latest marriage" /><TextBlock TextWrapping="Wrap" Text="{Binding LatestMarriageText}" /></StackPanel></Border>
+		<Border Grid.Row="2" Grid.Column="0" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Top places" /><TextBlock TextWrapping="Wrap" Text="{Binding TopPlacesText}" /></StackPanel></Border>
+		<Border Grid.Row="2" Grid.Column="1" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Top occupations" /><TextBlock TextWrapping="Wrap" Text="{Binding TopOccupationsText}" /></StackPanel></Border>
+		<Border Grid.Row="2" Grid.Column="2" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Top given names" /><TextBlock TextWrapping="Wrap" Text="{Binding TopGivenNamesText}" /></StackPanel></Border>
+		<Border Grid.Row="3" Grid.Column="0" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Top surnames" /><TextBlock TextWrapping="Wrap" Text="{Binding TopSurnamesText}" /></StackPanel></Border>
+		<Border Grid.Row="3" Grid.Column="1" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Average age" /><TextBlock TextWrapping="Wrap" Text="{Binding AverageAgeText}" /></StackPanel></Border>
+		<Border Grid.Row="3" Grid.Column="2" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Average death age" /><TextBlock TextWrapping="Wrap" Text="{Binding AverageDeathAgeText}" /></StackPanel></Border>
+		<Border Grid.Row="4" Grid.Column="0" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Generation gap men" /><TextBlock TextWrapping="Wrap" Text="{Binding AverageGenerationGapMaleText}" /></StackPanel></Border>
+		<Border Grid.Row="4" Grid.Column="1" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Generation gap women" /><TextBlock TextWrapping="Wrap" Text="{Binding AverageGenerationGapFemaleText}" /></StackPanel></Border>
+		<Border Grid.Row="4" Grid.Column="2" Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080"><StackPanel Spacing="4"><TextBlock FontWeight="SemiBold" Text="Generation gap total" /><TextBlock TextWrapping="Wrap" Text="{Binding AverageGenerationGapGeneralText}" /></StackPanel></Border>
+	  </Grid>
+	  <Border Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080">
+		<StackPanel Spacing="8">
+		  <TextBlock FontSize="18" FontWeight="SemiBold" Text="Annual timeline" />
+		  <views:GenealogyStatisticsChart Height="360" Chart="{Binding Chart}" />
+		  <TextBlock Text="X: Year | Primary Y: Living people | Secondary Y (0–100%): Births, deaths, family founding" />
+		  <StackPanel Orientation="Horizontal" Spacing="14">
+			<TextBlock Foreground="DodgerBlue" Text="━ Living people" />
+			<TextBlock Foreground="ForestGreen" Text="━ Births" />
+			<TextBlock Foreground="IndianRed" Text="━ Deaths" />
+			<TextBlock Foreground="MediumPurple" Text="━ Family founding" />
+		  </StackPanel>
+		</StackPanel>
+	  </Border>
+	  <Border Padding="10" CornerRadius="4" BorderThickness="1" BorderBrush="#808080">
+		<StackPanel Spacing="8">
+		  <TextBlock FontSize="18" FontWeight="SemiBold" Text="Age timeline" />
+		  <views:GenealogyStatisticsAgeDistributionChart Height="320" Chart="{Binding AgeDistributionChart}" />
+		  <TextBlock Text="X: Year | Y: Normalized yearly averages for age, generation gap and death age" />
+		  <StackPanel Orientation="Horizontal" Spacing="14">
+			<TextBlock Foreground="DodgerBlue" Text="━ Age" />
+			<TextBlock Foreground="ForestGreen" Text="━ Generation gap" />
+			<TextBlock Foreground="IndianRed" Text="━ Death age" />
+		  </StackPanel>
+		</StackPanel>
+	  </Border>
+	</StackPanel>
+  </ScrollViewer>
+</UserControl>
