@@ -4,6 +4,9 @@
     <Project Path="../../CSharpBible/Data/DocumentUtils/Document.Docx/Document.Docx.csproj" />
     <Project Path="../../CSharpBible/Data/DocumentUtils/Document.Markdown/Document.Markdown.csproj" />
   </Folder>
+  <Folder Name="/Genealogy/">
+    <Project Path="Genealogy.Avalonia/Genealogy.Avalonia.csproj" />
+  </Folder>
   <Folder Name="/Libraries/">
     <File Path="../Libraries/Libraries.props" />
     <Project Path="../Libraries/Avln_CommonDialogs.Base/Avln_CommonDialogs.Base.csproj" />
