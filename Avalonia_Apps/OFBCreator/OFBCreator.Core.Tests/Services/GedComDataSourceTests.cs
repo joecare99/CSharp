@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GenInterfaces.Data;
 using GenInterfaces.Interfaces.Genealogic;
+using Genealogy.Statistics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OFBCreator.Core.Services;
 
@@ -44,6 +45,55 @@ public sealed class GedComDataSourceTests
         Assert.AreEqual("ABT 12 MAR 1900", mother.BirthDate?.DateText);
         Assert.AreEqual(EDateModifier.Between, family.MarriageDate?.eDateModifier);
         Assert.AreEqual("BET 1 JAN 1920 AND 31 DEC 1920", family.MarriageDate?.DateText);
+    }
+
+    [TestMethod]
+    public async Task ImportAsync_ConvertsFrenchRepublicanBirthDateBeforeCalculatingAge()
+    {
+        const string content = "0 HEAD\n1 GEDC\n2 VERS 7.0\n" +
+            "0 @I1@ INDI\n1 NAME Edwin /Müller/\n1 SEX M\n" +
+            "1 BIRT\n2 DATE ABT @#DFRENCH R@ 3 BRUM 3\n" +
+            "1 DEAT\n2 DATE 01 JUL 1870\n" +
+            "0 @I2@ INDI\n1 NAME Invalid /Date/\n1 SEX M\n" +
+            "1 BIRT\n2 DATE ABT not-a-calendar-date\n" +
+            "1 DEAT\n2 DATE 01 JUL 1936\n0 TRLR\n";
+        var source = new GedComDataSource();
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+
+        var genealogy = await source.ImportAsync(stream);
+        var people = genealogy.Entitys.OfType<IGenPerson>().ToArray();
+        var person = people.Single(candidate => candidate.GivenName == "Edwin");
+        var invalidPerson = people.Single(candidate => candidate.GivenName == "Invalid");
+        var result = GenealogyStatisticsAnalyzer.Analyze(people, 1794, 1936);
+
+        Console.WriteLine(
+            $"{person.GivenName} {person.Surname}: birth={person.BirthDate?.Date1:yyyy-MM-dd}, " +
+            $"age={result.OldestMan?.EstimatedAgeYears:0.0} years");
+        Assert.AreEqual(new DateTime(1794, 10, 24), person.BirthDate!.Date1);
+        Assert.AreEqual(EDateModifier.Text, invalidPerson.BirthDate!.eDateModifier);
+        Assert.AreSame(person, result.OldestMan!.Person);
+        Assert.AreEqual(75.7, result.OldestMan.EstimatedAgeYears!.Value, 0.2);
+    }
+
+    [TestMethod]
+    public async Task ImportAsync_ReportsExpectedAgeForEdwinMullerDatesFromReportedFile()
+    {
+        const string content = "0 HEAD\n1 GEDC\n2 VERS 7.0\n" +
+            "0 @I1@ INDI\n1 NAME Edwin /Müller/\n1 SEX M\n" +
+            "1 BIRT\n2 DATE ABT 1860\n" +
+            "1 DEAT\n2 DATE 01 JUL 1936\n0 TRLR\n";
+        var source = new GedComDataSource();
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+
+        var genealogy = await source.ImportAsync(stream);
+        var person = genealogy.Entitys.OfType<IGenPerson>().Single();
+        var result = GenealogyStatisticsAnalyzer.Analyze(new[] { person }, 1860, 1936);
+
+        Console.WriteLine(
+            $"{person.GivenName} {person.Surname}: birth={person.BirthDate?.Date1:yyyy-MM-dd}, " +
+            $"death={person.DeathDate?.Date1:yyyy-MM-dd}, age={result.OldestMan?.EstimatedAgeYears:0.0} years");
+        Assert.AreSame(person, result.OldestMan!.Person);
+        Assert.AreEqual(76.5, result.OldestMan.EstimatedAgeYears!.Value, 0.2);
     }
 
     [TestMethod]
