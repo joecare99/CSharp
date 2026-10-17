@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Document.Base.Factories;
@@ -18,6 +19,7 @@ using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
 using OFBCreator.Projects.Models;
 using OFBCreator.Projects.Services;
+using Genealogy.Statistics;
 
 namespace OFBCreator.Avalonia.Tests;
 
@@ -166,6 +168,39 @@ public sealed class OFBProjectWorkspaceViewModelTests : IDisposable
         Assert.AreSame(candidate, viewModel.GroupingCandidates.Single());
         StringAssert.StartsWith(viewModel.GroupingSummaries.Single(), "Suggested group (1 families:");
         StringAssert.Contains(viewModel.StatusMessage, "1 people pass the filters");
+    }
+
+    [TestMethod]
+    public async Task RefreshStatisticsCommand_UsesSelectedYearRangeAndLoadsReusableFrame()
+    {
+        var projectPath = Path.Combine(_testDirectory, "Statistics.ofbproject");
+        var projectStore = new OFBProjectStore(Path.Combine(_testDirectory, "catalog"));
+        projectStore.Save(new OFBProject { Name = "Statistics", Title = "Statistics", InputPath = "family.ged" }, projectPath);
+        var result = Genealogy.Statistics.GenealogyStatisticsAnalyzer.Analyze(
+            Array.Empty<GenInterfaces.Interfaces.Genealogic.IGenPerson>(),
+            Array.Empty<GenInterfaces.Interfaces.Genealogic.IGenFamily>(), 1800, 1801);
+        var workspaceService = Substitute.For<IOFBWorkspaceService>();
+        workspaceService.PreviewStatisticsAsync(
+                Arg.Any<OFBProject>(), projectPath, 1800, 1801, Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(result));
+        var viewModel = new OFBProjectWorkspaceViewModel(projectStore, workspaceService)
+        {
+            ProjectFilePath = projectPath
+        };
+        viewModel.OpenProjectCommand.Execute(null);
+        viewModel.StatisticsFirstYear = 1800;
+        viewModel.StatisticsLastYear = 1801;
+
+        await viewModel.RefreshStatisticsCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(2, viewModel.StatisticsFrame.Years.Count);
+        Assert.AreEqual(1800, viewModel.StatisticsFrame.Years[0].Year);
+        StringAssert.Contains(viewModel.StatusMessage, "1800–1801");
+        await workspaceService.Received(1).PreviewStatisticsAsync(
+            Arg.Any<OFBProject>(), projectPath, 1800, 1801, Arg.Any<CancellationToken>());
+        var savedProject = projectStore.Open(projectPath).Project;
+        Assert.AreEqual(1800, savedProject.StatisticsFirstYear);
+        Assert.AreEqual(1801, savedProject.StatisticsLastYear);
     }
 
     [TestMethod]
