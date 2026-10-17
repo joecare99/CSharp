@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:genealogy="clr-namespace:Genealogy.Avalonia.Views;assembly=Genealogy.Avalonia"
         x:Class="OFBCreator.Avalonia.Views.MainWindow"
         Width="1120"
         Height="820"
@@ -338,6 +339,19 @@
             </ItemsControl>
           </StackPanel>
         </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Statistics">
+        <Grid RowDefinitions="Auto,*" Margin="10">
+          <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="4,0,4,10">
+            <TextBlock VerticalAlignment="Center" Text="From year" />
+            <NumericUpDown Width="110" Minimum="1" Maximum="9999" Value="{Binding StatisticsFirstYear}" />
+            <TextBlock VerticalAlignment="Center" Text="To year" />
+            <NumericUpDown Width="110" Minimum="1" Maximum="9999" Value="{Binding StatisticsLastYear}" />
+            <Button Content="Calculate" Command="{Binding RefreshStatisticsCommand}" IsEnabled="{Binding IsNotBusy}" />
+            <Button Content="Cancel" Command="{Binding RefreshStatisticsCancelCommand}" IsEnabled="{Binding IsBusy}" />
+          </StackPanel>
+          <genealogy:GenealogyStatisticsFrame Grid.Row="1" DataContext="{Binding StatisticsFrame}" />
+        </Grid>
       </TabItem>
       <TabItem Header="Diagnostics">
         <ScrollViewer>

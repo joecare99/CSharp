@@ -35,6 +35,7 @@
     <ProjectReference Include="..\OFBCreator.Core\OFBCreator.Core.csproj" />
     <ProjectReference Include="..\OFBCreator.Publishing\OFBCreator.Publishing.csproj" />
     <ProjectReference Include="..\OFBCreator.Projects\OFBCreator.Projects.csproj" />
+    <ProjectReference Include="..\Genealogy.Avalonia\Genealogy.Avalonia.csproj" />
   </ItemGroup>
 
   <ItemGroup>

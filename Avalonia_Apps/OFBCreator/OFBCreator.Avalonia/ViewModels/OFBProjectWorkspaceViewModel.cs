@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Genealogy.Avalonia.ViewModels;
 using OFBCreator.Avalonia.Services;
 using OFBCreator.Core.Models;
 using OFBCreator.Core.Services;
@@ -71,6 +72,31 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
 
     [ObservableProperty]
     private int _autoAcceptThreshold = 85;
+
+    private int _statisticsFirstYear = 1500;
+    private int _statisticsLastYear = DateTime.Today.Year;
+    private bool _statisticsFirstYearOverridden;
+    private bool _statisticsLastYearOverridden;
+
+    public int StatisticsFirstYear
+    {
+        get => _statisticsFirstYear;
+        set
+        {
+            _statisticsFirstYearOverridden = true;
+            SetProperty(ref _statisticsFirstYear, value);
+        }
+    }
+
+    public int StatisticsLastYear
+    {
+        get => _statisticsLastYear;
+        set
+        {
+            _statisticsLastYearOverridden = true;
+            SetProperty(ref _statisticsLastYear, value);
+        }
+    }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
@@ -147,6 +173,8 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
 
     public ObservableCollection<string> Diagnostics { get; } = [];
 
+    public GenealogyStatisticsFrameViewModel StatisticsFrame { get; } = new();
+
     public string[] RuleTargetKinds { get; } = ["person", "family", "fact"];
 
     public string[] ExportCultureOptions { get; } =
@@ -176,6 +204,80 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         RuleField = value.Field ?? string.Empty;
         RuleValue = value.Value ?? string.Empty;
         RuleOccurrence = value.Occurrence;
+    }
+
+    [RelayCommand(IncludeCancelCommand = true)]
+    private async Task RefreshStatisticsAsync(CancellationToken cancellationToken)
+    {
+        if (!TryBuildProject(out var project, out var projectPath))
+        {
+            return;
+        }
+        var firstYear = _statisticsFirstYearOverridden ? StatisticsFirstYear : _loadedProject?.StatisticsFirstYear;
+        var lastYear = _statisticsLastYearOverridden ? StatisticsLastYear : _loadedProject?.StatisticsLastYear;
+        if (firstYear.HasValue && (firstYear.Value < 1 || (lastYear.HasValue && firstYear.Value > lastYear.Value)) ||
+            lastYear.HasValue && (lastYear.Value < 1 || lastYear.Value > 9999))
+        {
+            StatusMessage = "Enter a valid statistics year range between year 1 and year 9999.";
+            return;
+        }
+
+        IsBusy = true;
+        StatusMessage = "Calculating genealogy statistics...";
+        try
+        {
+            var result = await _workspaceService.PreviewStatisticsAsync(
+                project,
+                projectPath,
+                firstYear,
+                lastYear,
+                cancellationToken).ConfigureAwait(true);
+            StatisticsFrame.Load(result);
+            if (result.Years.Count > 0)
+            {
+                _statisticsFirstYear = result.Years[0].Year;
+                _statisticsLastYear = result.Years[^1].Year;
+                OnPropertyChanged(nameof(StatisticsFirstYear));
+                OnPropertyChanged(nameof(StatisticsLastYear));
+            }
+            _loadedProject ??= project;
+            _loadedProject.StatisticsFirstYear = firstYear;
+            _loadedProject.StatisticsLastYear = lastYear;
+            _projectStore.Save(_loadedProject, projectPath);
+            StatusMessage = $"Statistics loaded for {result.Years[0].Year}–{result.Years[^1].Year}.";
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            StatusMessage = "Statistics calculation was canceled.";
+        }
+        catch (InvalidDataException exception)
+        {
+            StatusMessage = exception.Message;
+        }
+        catch (FileNotFoundException exception)
+        {
+            StatusMessage = exception.Message;
+        }
+        catch (IOException exception)
+        {
+            StatusMessage = exception.Message;
+        }
+        catch (InvalidOperationException exception)
+        {
+            StatusMessage = exception.Message;
+        }
+        catch (NotSupportedException exception)
+        {
+            StatusMessage = exception.Message;
+        }
+        catch (ArgumentException exception)
+        {
+            StatusMessage = exception.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
@@ -260,6 +362,12 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
     private void NewProject()
     {
         _loadedProject = null;
+        _statisticsFirstYearOverridden = false;
+        _statisticsLastYearOverridden = false;
+        _statisticsFirstYear = 1500;
+        _statisticsLastYear = DateTime.Today.Year;
+        OnPropertyChanged(nameof(StatisticsFirstYear));
+        OnPropertyChanged(nameof(StatisticsLastYear));
         ProjectFilePath = string.Empty;
         Name = "New OFB";
         Title = "New OFB";
@@ -280,6 +388,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         GroupingSummaries.Clear();
         PrivacyPeople.Clear();
         Diagnostics.Clear();
+        StatisticsFrame.Load(null);
         StatusMessage = "New project. Choose a .ofbproject path before saving.";
     }
 
@@ -719,6 +828,8 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         project.EntryTemplate = EntryTemplate;
         project.ExportCulture = ExportCulture;
         project.DateEstimationCutoffYear = ParseDateEstimationCutoffYear();
+        project.StatisticsFirstYear = _statisticsFirstYearOverridden ? StatisticsFirstYear : project.StatisticsFirstYear;
+        project.StatisticsLastYear = _statisticsLastYearOverridden ? StatisticsLastYear : project.StatisticsLastYear;
         project.PlaceId = NullIfWhiteSpace(PlaceId);
         project.IncludeDescendants = IncludeDescendants;
         project.Preface = NullIfWhiteSpace(Preface);
@@ -751,6 +862,12 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         EntryTemplate = project.EntryTemplate;
         ExportCulture = project.ExportCulture;
         DateEstimationCutoffYear = project.DateEstimationCutoffYear?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+        _statisticsFirstYearOverridden = project.StatisticsFirstYear.HasValue;
+        _statisticsLastYearOverridden = project.StatisticsLastYear.HasValue;
+        _statisticsFirstYear = project.StatisticsFirstYear ?? 1500;
+        _statisticsLastYear = project.StatisticsLastYear ?? DateTime.Today.Year;
+        OnPropertyChanged(nameof(StatisticsFirstYear));
+        OnPropertyChanged(nameof(StatisticsLastYear));
         PlaceId = project.PlaceId;
         IncludeDescendants = project.IncludeDescendants;
         Preface = project.Preface;
@@ -768,6 +885,7 @@ public sealed partial class OFBProjectWorkspaceViewModel : ObservableObject
         GroupingSummaries.Clear();
         GroupingChoices.Clear();
         _groupingTargetBySurname.Clear();
+        StatisticsFrame.Load(null);
     }
 
     private void SaveGroupingDecision(OFBGroupingCandidate candidate, string action, string? groupName)

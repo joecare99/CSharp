@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Genealogy.Statistics;
 using OFBCreator.Publishing.Models;
 using OFBCreator.Publishing.Services;
 using OFBCreator.Core.Models;
@@ -34,6 +35,15 @@ public sealed class OFBWorkspaceService(OFBExportService exportService) : IOFBWo
         CancellationToken cancellationToken = default) =>
         _exportService.PreviewWorkspaceAsync(CreateOptions(project, projectPath), cancellationToken);
 
+    public Task<GenealogyStatisticsResult> PreviewStatisticsAsync(
+        OFBProject project,
+        string projectPath,
+        int? firstYear,
+        int? lastYear,
+        CancellationToken cancellationToken = default) =>
+        _exportService.PreviewStatisticsAsync(
+            CreateOptions(project, projectPath), firstYear, lastYear, cancellationToken);
+
     private static OFBGenerateOptions CreateOptions(OFBProject project, string projectPath)
     {
         ArgumentNullException.ThrowIfNull(project);
@@ -61,6 +71,8 @@ public sealed class OFBWorkspaceService(OFBExportService exportService) : IOFBWo
             Template = OFBProjectStore.ResolveEntryTemplate(projectPath, project.EntryTemplate),
             ExportCulture = project.ExportCulture,
             DateEstimationCutoffYear = project.DateEstimationCutoffYear,
+            StatisticsFirstYear = project.StatisticsFirstYear,
+            StatisticsLastYear = project.StatisticsLastYear,
             DataSource = project.DataSource ?? "gedcom",
             ExportRules = project.ExportRules,
             GroupingPolicy = project.GroupingPolicy,
