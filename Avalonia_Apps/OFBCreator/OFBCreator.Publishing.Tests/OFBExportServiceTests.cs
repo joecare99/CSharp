@@ -117,9 +117,13 @@ public sealed class OFBExportServiceTests
         var groupIndex = Array.FindIndex(paragraphTexts, text => text == "Beispiel");
         var familyIndex = Array.FindIndex(paragraphTexts, text => text.StartsWith("00001 ", StringComparison.Ordinal));
         var personIndex = Array.FindIndex(paragraphTexts, text => text == "Personenindex");
+        var statisticsIndex = Array.FindIndex(paragraphTexts, text => text == "Genealogische Statistiken");
+        var timelineIndex = Array.FindIndex(paragraphTexts, text => text == "Jährlicher Zeitverlauf");
         Assert.IsTrue(prefaceIndex >= 0 && groupIndex > prefaceIndex && familyIndex >= groupIndex && personIndex > familyIndex,
             $"preface={prefaceIndex}, group={groupIndex}, family={familyIndex}, personIndex={personIndex}; "
             + string.Join(" | ", paragraphTexts.Where(text => text is "Vorwort" or "Beispiel" or "00001" or "Personenindex")));
+        Assert.IsTrue(statisticsIndex > familyIndex && timelineIndex > statisticsIndex && personIndex > timelineIndex);
+        Assert.IsTrue(paragraphTexts.Any(text => text.StartsWith("Früheste Geburt: ", StringComparison.Ordinal)));
         Assert.IsFalse(paragraphTexts.Skip(groupIndex + 1).Take(personIndex - groupIndex - 1)
             .Any(text => text == "Beispiel"));
 
@@ -134,8 +138,10 @@ public sealed class OFBExportServiceTests
         Assert.IsTrue(bookmarkNames.Contains("family-00001"));
         Assert.IsTrue(bookmarkNames.Contains("person-I1"));
         Assert.IsTrue(bookmarkNames.Contains("index-person-1"));
+        Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.StartsWith("word/media/", StringComparison.Ordinal)));
         Assert.IsTrue(linkTargets.Length > 0);
         Assert.IsTrue(linkTargets.Contains("index-person-1"));
+        Assert.IsTrue(linkTargets.Contains("family-00001"));
         Assert.IsFalse(linkTargets.Any(target => !bookmarkNames.Contains(target!)));
         Assert.IsTrue(string.Concat(paragraphTexts).Contains("Synthetische Beispieldaten", StringComparison.Ordinal));
         Assert.IsTrue(paragraphTexts.Contains("* = geboren", StringComparer.Ordinal));
@@ -146,6 +152,54 @@ public sealed class OFBExportServiceTests
         documentStream.Dispose();
         archive.Dispose();
         File.Delete(outputPath);
+    }
+
+    [TestMethod]
+    public async Task ExportAsync_PersonStatisticLinksItsFamilyNumber()
+    {
+        const string gedcom =
+            "0 HEAD\r\n1 GEDC\r\n2 VERS 5.5.1\r\n1 CHAR UTF-8\r\n"
+            + "0 @I1@ INDI\r\n1 NAME Ada /Example/\r\n1 SEX F\r\n1 FAMS @F1@\r\n1 BIRT\r\n2 DATE 1 JAN 1800\r\n"
+            + "0 @F1@ FAM\r\n1 WIFE @I1@\r\n1 MARR\r\n2 DATE 1820\r\n"
+            + "0 TRLR\r\n";
+        var testDirectory = Path.Combine(Path.GetTempPath(), $"ofb-statistics-links-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(testDirectory);
+        var inputPath = Path.Combine(testDirectory, "statistics.ged");
+        var outputPath = Path.Combine(testDirectory, "statistics.docx");
+        await File.WriteAllTextAsync(inputPath, gedcom, Encoding.UTF8);
+
+        try
+        {
+            UserDocumentFactory.ScanAssemblies(new[] { typeof(DocxDocument).Assembly });
+            var documentFactory = Substitute.For<IUserDocumentFactory>();
+            documentFactory.CreateDocument(OFBOutputFormat.Docx).Returns(_ => UserDocumentFactory.Create(".docx"));
+            await new OFBExportService(new GedComDataSource(), documentFactory).ExportAsync(new OFBGenerateOptions
+            {
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                Title = "Statistics links",
+                UseDocxFormat = true
+            });
+
+            using var archive = ZipFile.OpenRead(outputPath);
+            using var documentStream = archive.GetEntry("word/document.xml")!.Open();
+            var documentXml = XDocument.Load(documentStream);
+            XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            var statisticParagraph = documentXml.Descendants(word + "p")
+                .Single(paragraph => string.Concat(paragraph.Descendants(word + "t").Select(text => text.Value))
+                    .StartsWith("Früheste Geburt: ", StringComparison.Ordinal));
+            var statisticText = string.Concat(statisticParagraph.Descendants(word + "t").Select(text => text.Value));
+            Assert.IsTrue(statisticText.Contains("[00001]", StringComparison.Ordinal), statisticText);
+            CollectionAssert.Contains(
+                statisticParagraph.Descendants(word + "hyperlink")
+                    .Select(link => (string?)link.Attribute(word + "anchor"))
+                    .ToArray(),
+                "family-00001");
+        }
+        finally
+        {
+            Directory.Delete(testDirectory, recursive: true);
+        }
     }
 
     [TestMethod]
