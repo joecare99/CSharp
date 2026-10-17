@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Genealogy.Gedcom\Genealogy.Gedcom.csproj" />
+    <ProjectReference Include="..\Genealogy.Core\Genealogy.Core.csproj" />
     <ProjectReference Include="..\OFBCreator.Abstractions\OFBCreator.Abstractions.csproj" />
     <ProjectReference Include="..\OFBCreator.Core\OFBCreator.Core.csproj" />
     <ProjectReference Include="..\OFBCreator.Projects\OFBCreator.Projects.csproj" />

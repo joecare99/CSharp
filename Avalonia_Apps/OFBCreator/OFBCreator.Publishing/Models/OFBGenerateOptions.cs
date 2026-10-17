@@ -69,6 +69,12 @@ public sealed class OFBGenerateOptions
     /// </summary>
     public int? DateEstimationCutoffYear { get; init; } = OFBProject.DefaultDateEstimationCutoffYear;
 
+    /// <summary>Optional project-specific first year for annual statistics.</summary>
+    public int? StatisticsFirstYear { get; init; }
+
+    /// <summary>Optional project-specific last year for annual statistics.</summary>
+    public int? StatisticsLastYear { get; init; }
+
     /// <summary>
     /// When true (default), outputs DOCX format using Xceed.Document.NET.
     /// Set to false with --odt to output ODF (.odt) format instead.

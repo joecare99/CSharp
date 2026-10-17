@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 
 using BaseLib.Models.Interfaces;
+using Genealogy.Statistics;
 using Document.Docx;
 using Document.Base.Models;
 using Document.Base.Models.Interfaces;
@@ -177,6 +178,12 @@ public sealed class OFBExportService(
         await ComposePrefaceAsync(doc, options, entryTemplate);
         await ComposeFamiliesAsync(
             doc, sortedFamilies, entryTemplate, groupByFamilyReference, familyNamesByGroup, options.Layout, dateCulture);
+        var statistics = GenealogyStatisticsAnalyzer.AnalyzeForChart(
+            GetStatisticsPeople(allFamilies),
+            allFamilies,
+            options.StatisticsFirstYear,
+            options.StatisticsLastYear);
+        await ComposeStatisticsAsync(doc, statistics, sortedFamilies, dateCulture);
         await ComposeIndicesAsync(doc, personIndex, occIndex, propIndex, placeHierarchyIndex, placeAlphaIndex, options.Layout);
 
         // Step 6: Save document
@@ -256,6 +263,68 @@ public sealed class OFBExportService(
 
         var preparation = await PrepareGroupingAsync(options, cancellationToken).ConfigureAwait(false);
         return new OFBWorkspacePreview(preparation.GroupingResult, preparation.PersonPreviews);
+    }
+
+    /// <summary>
+    /// Imports and analyzes the same project-filtered people and families used by document export.
+    /// </summary>
+    /// <param name="options">The project export options.</param>
+    /// <param name="firstYear">The first year to include.</param>
+    /// <param name="lastYear">The last year to include.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The genealogical statistics for the filtered data.</returns>
+    public async Task<GenealogyStatisticsResult> PreviewStatisticsAsync(
+        OFBGenerateOptions options,
+        int? firstYear,
+        int? lastYear,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        if (string.IsNullOrWhiteSpace(options.InputPath))
+        {
+            throw new ArgumentException("GEDCOM input path is required.", nameof(options));
+        }
+        if (!File.Exists(options.InputPath))
+        {
+            throw new FileNotFoundException($"GEDCOM input file was not found: '{options.InputPath}'.", options.InputPath);
+        }
+
+        var preparation = await PrepareGroupingAsync(options, cancellationToken).ConfigureAwait(false);
+        var people = GetStatisticsPeople(preparation.Families);
+        return GenealogyStatisticsAnalyzer.AnalyzeForChart(people, preparation.Families, firstYear, lastYear);
+    }
+
+    private static IReadOnlyList<IGenPerson> GetStatisticsPeople(IReadOnlyList<IGenFamily> families)
+    {
+        var people = new List<IGenPerson>();
+        var identifiedPeople = new HashSet<Guid>();
+        var unidentifiedPeople = new HashSet<IGenPerson>((IEqualityComparer<IGenPerson>)ReferenceEqualityComparer.Instance);
+
+        void Include(IGenPerson? person)
+        {
+            if (person is null)
+            {
+                return;
+            }
+            var isNew = person.UId == Guid.Empty
+                ? unidentifiedPeople.Add(person)
+                : identifiedPeople.Add(person.UId);
+            if (isNew)
+            {
+                people.Add(person);
+            }
+        }
+
+        foreach (var family in families)
+        {
+            Include(family.Husband);
+            Include(family.Wife);
+            foreach (var child in family.Children)
+            {
+                Include(child);
+            }
+        }
+        return people;
     }
 
     private async Task<ExportGroupingPreparation> PrepareGroupingAsync(
@@ -707,6 +776,188 @@ public sealed class OFBExportService(
         var date = GedcomDateFormatter.Format(family.MarriageDate, dateCulture);
         var place = family.MarriagePlace?.Name;
         return string.Join(" in ", new[] { date, place }.Where(value => !string.IsNullOrWhiteSpace(value)));
+    }
+
+    /// <summary>
+    /// Composes the extreme statistics and a format-neutral annual text chart.
+    /// </summary>
+    /// <param name="document">The output-agnostic document being composed.</param>
+    /// <param name="statistics">The statistics calculated from exported people and families.</param>
+    /// <param name="dateCulture">The culture used to format dates.</param>
+    private Task ComposeStatisticsAsync(
+        IUserDocument document,
+        GenealogyStatisticsResult statistics,
+        IReadOnlyList<OFBFamily> families,
+        CultureInfo dateCulture)
+    {
+        OFBDocumentLayout.AddSection(document, 1);
+        var headline = document.AddHeadline(1, "Genealogische Statistiken");
+        headline.TextContent = "Genealogische Statistiken";
+
+        AppendPersonStatistic(document, "Früheste Geburt", statistics.EarliestPerson, families, dateCulture);
+        AppendPersonStatistic(document, "Späteste Geburt", statistics.LatestPerson, families, dateCulture);
+        AppendPersonStatistic(document, "Älteste Frau", statistics.OldestWoman, families, dateCulture, includeAge: true);
+        AppendPersonStatistic(document, "Ältester Mann", statistics.OldestMan, families, dateCulture, includeAge: true);
+        AppendMarriageStatistic(document, "Früheste Hochzeit", statistics.EarliestMarriage, dateCulture);
+        AppendMarriageStatistic(document, "Späteste Hochzeit", statistics.LatestMarriage, dateCulture);
+
+        AppendRankedStatistic(document, "Häufigste Orte", statistics.TopPlaces);
+        AppendRankedStatistic(document, "Häufigste Berufe", statistics.TopOccupations);
+        AppendRankedStatistic(document, "Häufigste Vornamen", statistics.TopGivenNames);
+        AppendRankedStatistic(document, "Häufigste Nachnamen", statistics.TopSurnames);
+        AppendAverageStatistic(document, "Durchschnittsalter", statistics.AverageAgeYears);
+        AppendAverageStatistic(document, "Durchschnittliches Todesalter", statistics.AverageDeathAgeYears);
+        AppendAverageStatistic(document, "Generationenabstand Männer", statistics.AverageGenerationGapMaleYears);
+        AppendAverageStatistic(document, "Generationenabstand Frauen", statistics.AverageGenerationGapFemaleYears);
+        AppendAverageStatistic(document, "Generationenabstand gesamt", statistics.AverageGenerationGapGeneralYears);
+
+        var seriesHeadline = document.AddHeadline(2, "Jährlicher Zeitverlauf");
+        seriesHeadline.TextContent = "Jährlicher Zeitverlauf";
+        var chart = GenealogyStatisticsChartModel.Create(statistics);
+        if (document is IUserDocumentImageProvider imageProvider)
+        {
+            imageProvider.AddImage(
+                GenealogyStatisticsChartRenderer.RenderPng(chart),
+                "image/png",
+                "Genealogischer Zeitverlauf: lebende Personen, Geburten, Todesfälle und Familiengründungen");
+        }
+        else
+        {
+            foreach (var line in GenealogyStatisticsChartRenderer.RenderMonospace(chart).Split(Environment.NewLine))
+            {
+                var paragraph = document.AddParagraph("Normaler Absatz");
+                paragraph.TextContent = line;
+            }
+        }
+
+        var ageHeadline = document.AddHeadline(2, "Altersverteilung");
+        ageHeadline.TextContent = "Altersverteilung";
+        var ageChart = GenealogyStatisticsAgeDistributionChartModel.Create(statistics);
+        if (document is IUserDocumentImageProvider ageImageProvider)
+        {
+            ageImageProvider.AddImage(
+                GenealogyStatisticsAgeDistributionChartRenderer.RenderPng(ageChart),
+                "image/png",
+                "Altersverteilung: Alter, Generationenabstand und Todesalter");
+        }
+        else
+        {
+            foreach (var line in GenealogyStatisticsAgeDistributionChartRenderer.RenderMonospace(ageChart).Split(Environment.NewLine))
+            {
+                var paragraph = document.AddParagraph("Normaler Absatz");
+                paragraph.TextContent = line;
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Adds an extreme person statistic with an internal link to the person's entry.
+    /// </summary>
+    private void AppendPersonStatistic(
+        IUserDocument document,
+        string label,
+        GenealogyPersonStatistic? statistic,
+        IReadOnlyList<OFBFamily> families,
+        CultureInfo dateCulture,
+        bool includeAge = false)
+    {
+        var paragraph = document.AddParagraph("Normaler Absatz");
+        AppendStatisticsText(paragraph, $"{label}: ");
+        if (statistic is null)
+        {
+            AppendStatisticsText(paragraph, "nicht verfügbar");
+            return;
+        }
+
+        var person = statistic.Person;
+        var name = FormatPersonName(person, gcFormat: false);
+        var personAnchor = GetPersonAnchor(GetPersonReference(person));
+        paragraph.AddLink($"#{personAnchor}", DocxFontStyle.UnderlineStyle).TextContent = name;
+        var familyReferences = person.Marriages
+            .Where(family => family is not null)
+            .Select(family => family!.FamilyRefID)
+            .Append(person.ParentFamily?.FamilyRefID)
+            .Where(reference => !string.IsNullOrWhiteSpace(reference))
+            .ToHashSet(StringComparer.Ordinal);
+        var familyNumbers = families
+            .Where(family => IsSamePerson(family.Husband, person)
+                || IsSamePerson(family.Wife, person)
+                || family.Children.Any(child => IsSamePerson(child, person))
+                || familyReferences.Contains(family.SourceRefId))
+            .Select(family => family.GlobalNumber)
+            .Where(number => !string.IsNullOrWhiteSpace(number))
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(number => number, StringComparer.Ordinal)
+            .ToArray();
+        if (familyNumbers.Length > 0)
+        {
+            var references = familyNumbers.Select(CreateNumberedFamilyReference).ToArray();
+            AppendFamilyTokens(paragraph, " [", CreateFamilyReferenceTokens(references));
+        }
+        var birthYears = FormatYearRange(statistic.PossibleBirthStart, statistic.PossibleBirthEnd, dateCulture);
+        AppendStatisticsText(paragraph, $" ({birthYears}");
+        if (includeAge && statistic.EstimatedAgeYears.HasValue)
+            AppendStatisticsText(paragraph, $"; {statistic.EstimatedAgeYears.Value.ToString("0.0", dateCulture)} Jahre");
+        AppendStatisticsText(paragraph, ")");
+    }
+
+    private static void AppendStatisticsText(IDocParagraph paragraph, string text) =>
+        paragraph.AddSpan(text, DocxFontStyle.Default).TextContent = text;
+
+    private static void AppendRankedStatistic(IUserDocument document, string label, IReadOnlyList<GenealogyStatisticsCountEntry> entries)
+    {
+        var paragraph = document.AddParagraph("Normaler Absatz");
+        AppendStatisticsText(paragraph, $"{label}: ");
+        AppendStatisticsText(paragraph, entries.Count == 0 ? "nicht verfügbar" : string.Join(", ", entries.Select(entry => $"{entry.Label} ({entry.Count})")));
+    }
+
+    private static void AppendAverageStatistic(IUserDocument document, string label, double value)
+    {
+        var paragraph = document.AddParagraph("Normaler Absatz");
+        AppendStatisticsText(paragraph, $"{label}: {value:0.0} Jahre");
+    }
+
+    /// <summary>
+    /// Adds an extreme marriage statistic with an internal link to the family entry.
+    /// </summary>
+    private void AppendMarriageStatistic(
+        IUserDocument document,
+        string label,
+        GenealogyMarriageStatistic? statistic,
+        CultureInfo dateCulture)
+    {
+        var paragraph = document.AddParagraph("Normaler Absatz");
+        paragraph.AppendText($"{label}: ");
+        if (statistic is null)
+        {
+            paragraph.AppendText("nicht verfügbar");
+            return;
+        }
+
+        var family = statistic.Family;
+        var familyAnchor = ResolveFamilyAnchor(family.FamilyRefID ?? string.Empty);
+        var familyLabel = string.Join(" & ", new[] { family.Husband, family.Wife }
+            .Where(person => person is not null)
+            .Select(person => FormatPersonName(person!, gcFormat: false)));
+        if (string.IsNullOrWhiteSpace(familyLabel))
+            familyLabel = string.IsNullOrWhiteSpace(family.FamilyName) ? "Familie" : family.FamilyName!;
+        if (familyAnchor is null)
+            paragraph.AppendText(familyLabel);
+        else
+            paragraph.AddLink($"#{familyAnchor}", DocxFontStyle.UnderlineStyle).TextContent = familyLabel;
+        paragraph.AppendText($" ({FormatYearRange(statistic.PossibleDateStart, statistic.PossibleDateEnd, dateCulture)})");
+    }
+
+    /// <summary>
+    /// Formats an uncertain date interval as one year or a year range.
+    /// </summary>
+    private static string FormatYearRange(DateTime first, DateTime last, CultureInfo dateCulture)
+    {
+        var firstYear = first.ToString("yyyy", dateCulture);
+        var lastYear = last.ToString("yyyy", dateCulture);
+        return string.Equals(firstYear, lastYear, StringComparison.Ordinal) ? firstYear : $"{firstYear}–{lastYear}";
     }
 
     private string GetFamilyMarriageMark(OFBFamily family)
