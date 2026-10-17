@@ -9,6 +9,8 @@ using Document.Base.Factories;
 using Document.Docx;
 using Genealogy.Drivers;
 using Genealogy.Gedcom;
+using Genealogy.Statistics;
+using GenInterfaces.Interfaces.Genealogic;
 using OFBCreator.Publishing.Models;
 using OFBCreator.Publishing.Services;
 using OFBCreator.Publishing.Services.Templates;
@@ -71,10 +73,12 @@ public static class Program
         var generateCmd = GenerateCommand(serviceProvider);
         var exportCmd = ExportCommand(serviceProvider);
         var roundTripCmd = GedcomRoundTripCommand(serviceProvider);
+        var statisticsCmd = StatisticsCommand(serviceProvider);
         var migrateProjectCmd = MigrateProjectCommand(serviceProvider);
         rootCommand.Add(generateCmd);
         rootCommand.Add(exportCmd);
         rootCommand.Add(roundTripCmd);
+        rootCommand.Add(statisticsCmd);
         rootCommand.Add(migrateProjectCmd);
 
         return await rootCommand.Parse(args).InvokeAsync();
@@ -234,6 +238,94 @@ public static class Program
             System.Console.WriteLine($"Portable project saved to '{migratedPath}'.");
         });
         return command;
+    }
+
+    /// <summary>
+    /// Creates a diagnostic command that prints genealogy statistics for a GEDCOM file.
+    /// </summary>
+    /// <param name="serviceProvider">The application service provider.</param>
+    /// <returns>A command that imports a GEDCOM file and writes the statistics to standard output.</returns>
+    private static Command StatisticsCommand(IServiceProvider serviceProvider)
+    {
+        var inputOption = new Option<string?>("--input")
+        {
+            Description = "Path to the GEDCOM file to analyze"
+        };
+        var command = new Command("statistics", "Print genealogy extremes and the annual time graph")
+        {
+            inputOption
+        };
+
+        command.SetAction(async context =>
+        {
+            var inputPath = context.GetValue(inputOption);
+            if (string.IsNullOrWhiteSpace(inputPath))
+            {
+                throw new ArgumentException("The --input path is required.");
+            }
+
+            var dataSource = serviceProvider.GetRequiredService<CanonicalGedcomFamilyDataSource>();
+            await using var stream = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var genealogy = await dataSource.ImportAsync(stream);
+            var people = genealogy.Entitys.OfType<IGenPerson>().ToArray();
+            var families = genealogy.Entitys.OfType<IGenFamily>().ToArray();
+            var statistics = GenealogyStatisticsAnalyzer.AnalyzeForChart(people, families);
+
+            System.Console.WriteLine($"People: {people.Length}; families: {families.Length}");
+            WritePersonStatistic("Oldest woman", statistics.OldestWoman);
+            WritePersonStatistic("Oldest man", statistics.OldestMan);
+            WriteTextStatistic("Top places", statistics.TopPlaces);
+            WriteTextStatistic("Top occupations", statistics.TopOccupations);
+            WriteTextStatistic("Top given names", statistics.TopGivenNames);
+            WriteTextStatistic("Top surnames", statistics.TopSurnames);
+            WriteAverageStatistic("Average age", statistics.AverageAgeYears);
+            WriteAverageStatistic("Average death age", statistics.AverageDeathAgeYears);
+            WriteAverageStatistic("Generation gap men", statistics.AverageGenerationGapMaleYears);
+            WriteAverageStatistic("Generation gap women", statistics.AverageGenerationGapFemaleYears);
+            WriteAverageStatistic("Generation gap total", statistics.AverageGenerationGapGeneralYears);
+            System.Console.WriteLine(GenealogyStatisticsChartRenderer.RenderMonospace(
+                GenealogyStatisticsChartModel.Create(statistics)));
+            System.Console.WriteLine(GenealogyStatisticsAgeDistributionChartRenderer.RenderMonospace(
+                GenealogyStatisticsAgeDistributionChartModel.Create(statistics)));
+        });
+
+        return command;
+    }
+
+    /// <summary>
+    /// Writes one selected person and the calculated age to standard output.
+    /// </summary>
+    /// <param name="label">The statistic label.</param>
+    /// <param name="statistic">The selected person statistic, when available.</param>
+    private static void WritePersonStatistic(string label, GenealogyPersonStatistic? statistic)
+    {
+        if (statistic is null)
+        {
+            System.Console.WriteLine($"{label}: not available");
+            return;
+        }
+
+        var person = statistic.Person;
+        var name = string.Join(" ", person.GivenName, person.Surname).Trim();
+        var age = statistic.EstimatedAgeYears?.ToString("0.0", CultureInfo.InvariantCulture) ?? "unknown";
+        System.Console.WriteLine($"{label}: {name} ({age} years)");
+    }
+
+    /// <summary>
+    /// Writes a ranked summary statistic.
+    /// </summary>
+    private static void WriteTextStatistic(string label, IReadOnlyList<GenealogyStatisticsCountEntry> entries)
+    {
+        var text = entries.Count == 0 ? "not available" : string.Join(", ", entries.Select(entry => $"{entry.Label} ({entry.Count})"));
+        System.Console.WriteLine($"{label}: {text}");
+    }
+
+    /// <summary>
+    /// Writes one average statistic.
+    /// </summary>
+    private static void WriteAverageStatistic(string label, double value)
+    {
+        System.Console.WriteLine($"{label}: {value:0.0} years");
     }
 
     /// <summary>
