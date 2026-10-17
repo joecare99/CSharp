@@ -27,6 +27,10 @@ public sealed class OFBProject
 
     public int? DateEstimationCutoffYear { get; set; } = DefaultDateEstimationCutoffYear;
 
+    public int? StatisticsFirstYear { get; set; }
+
+    public int? StatisticsLastYear { get; set; }
+
     public string? InputPath { get; set; }
 
     public string? OutputPath { get; set; }
