@@ -6,6 +6,6 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="NAudio.Midi" Version="3.2.0" />
+    <PackageVersion Include="NAudio.Midi" Version="3.3.0" />
   </ItemGroup>
 </Project>
