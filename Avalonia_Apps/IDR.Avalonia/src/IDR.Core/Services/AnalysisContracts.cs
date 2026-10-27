@@ -181,7 +181,24 @@ public sealed record KnowledgeBaseProcedure(
     string Name,
     byte DumpType,
     ReadOnlyMemory<byte> Code,
-    ReadOnlyMemory<byte> Relocations);
+    ReadOnlyMemory<byte> Relocations)
+{
+    public byte MethodKind { get; init; }
+
+    public byte CallingConvention { get; init; }
+
+    public string ReturnType { get; init; } = string.Empty;
+
+    public IReadOnlyList<KnowledgeBaseArgument> Arguments { get; init; } = Array.Empty<KnowledgeBaseArgument>();
+}
+
+public sealed record KnowledgeBaseArgument(
+    byte Tag,
+    bool IsRegister,
+    int RegisterOrStackIndex,
+    int SizeBytes,
+    string Name,
+    string TypeName);
 
 public static class DelphiRuntimeHandlerSymbols
 {

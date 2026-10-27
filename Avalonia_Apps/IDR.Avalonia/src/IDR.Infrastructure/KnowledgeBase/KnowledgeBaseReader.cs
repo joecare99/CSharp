@@ -193,26 +193,24 @@ public sealed class KnowledgeBaseReader : IKnowledgeBaseProvider
             throw new InvalidDataException("The Knowledge Base contains an invalid procedure record.");
         }
 
-        if (!DelphiRuntimeHandlerSymbols.IsSupported(name))
-        {
-            return null;
-        }
+        bool isRuntimeHandler = DelphiRuntimeHandlerSymbols.IsSupported(name);
 
         if (position > record.Length - 8)
         {
-            throw new InvalidDataException("The Knowledge Base contains an invalid procedure record.");
+            return InvalidProcedure(isRuntimeHandler, "The Knowledge Base contains an invalid procedure record.");
         }
 
-        byte embedded = record[position++];
+        position++;
         byte dumpType = record[position++];
-        position += 2;
-        _ = embedded;
-        if (!TryReadUInt32(record, ref position, out _))
+        byte methodKind = record[position++];
+        byte callingConvention = record[position++];
+        if (position > record.Length - sizeof(uint))
         {
-            throw new InvalidDataException("The Knowledge Base contains an invalid procedure record.");
+            return InvalidProcedure(isRuntimeHandler, "The Knowledge Base contains an invalid procedure record.");
         }
 
-        if (!TryReadPascalCString(record, ref position, out _)
+        position += sizeof(uint);
+        if (!TryReadPascalCString(record, ref position, out string returnType)
             || !TryReadUInt32(record, ref position, out uint dumpTotal)
             || !TryReadUInt32(record, ref position, out uint dumpSize)
             || !TryReadUInt32(record, ref position, out _)
@@ -221,24 +219,109 @@ public sealed class KnowledgeBaseReader : IKnowledgeBaseProvider
             || (ulong)dumpSize * 2 > dumpTotal
             || (ulong)position + (ulong)dumpSize * 2 > (ulong)record.Length)
         {
-            throw new InvalidDataException("The Knowledge Base contains an invalid procedure dump.");
+            return InvalidProcedure(isRuntimeHandler, "The Knowledge Base contains an invalid procedure dump.");
         }
 
         int codeSize = (int)dumpSize;
         int codeOffset = position;
         int relocationOffset = checked(codeOffset + codeSize);
-        if (dumpType != (byte)'C'
-            || codeSize is 0 or > MaximumProcedureSignatureSize)
+        if (isRuntimeHandler)
+        {
+            if (dumpType != (byte)'C' || codeSize is 0 or > MaximumProcedureSignatureSize)
+            {
+                return null;
+            }
+
+            return new KnowledgeBaseProcedure(
+                moduleId,
+                name,
+                dumpType,
+                record.Slice(codeOffset, codeSize).ToArray(),
+                record.Slice(relocationOffset, codeSize).ToArray())
+            {
+                MethodKind = methodKind,
+                CallingConvention = callingConvention,
+                ReturnType = returnType
+            };
+        }
+
+        if (dumpTotal > (uint)(record.Length - position))
         {
             return null;
+        }
+
+        position = checked(codeOffset + (int)dumpTotal);
+        if (!TryReadUInt32(record, ref position, out uint argumentSectionSize)
+            || argumentSectionSize is < sizeof(ushort) or > int.MaxValue
+            || argumentSectionSize > record.Length - position)
+        {
+            return InvalidProcedure(isRuntimeHandler, "The Knowledge Base contains an invalid procedure argument section.");
+        }
+
+        int argumentSectionEnd = checked(position + (int)argumentSectionSize);
+        if (!TryReadUInt16(record[..argumentSectionEnd], ref position, out ushort argumentCount)
+            || argumentCount > 4096)
+        {
+            return InvalidProcedure(isRuntimeHandler, "The Knowledge Base contains an invalid procedure argument count.");
+        }
+
+        List<KnowledgeBaseArgument> arguments = new(argumentCount);
+        for (int index = 0; index < argumentCount; index++)
+        {
+            if (position > argumentSectionEnd - 1)
+            {
+                return InvalidProcedure(isRuntimeHandler, "The Knowledge Base contains a truncated procedure argument.");
+            }
+
+            byte tag = record[position++];
+            if (position > argumentSectionEnd - 9)
+            {
+                return InvalidProcedure(isRuntimeHandler, "The Knowledge Base contains a truncated procedure argument.");
+            }
+
+            bool isRegister = record[position++] != 0;
+            int registerOrStackIndex = BinaryPrimitives.ReadInt32LittleEndian(record.Slice(position, sizeof(int)));
+            position += sizeof(int);
+            int sizeBytes = BinaryPrimitives.ReadInt32LittleEndian(record.Slice(position, sizeof(int)));
+            position += sizeof(int);
+            if (sizeBytes < 0
+                || !TryReadPascalCString(record[..argumentSectionEnd], ref position, out string argumentName)
+                || !TryReadPascalCString(record[..argumentSectionEnd], ref position, out string argumentType))
+            {
+                return InvalidProcedure(isRuntimeHandler, "The Knowledge Base contains an invalid procedure argument.");
+            }
+
+            arguments.Add(new KnowledgeBaseArgument(
+                tag,
+                isRegister,
+                registerOrStackIndex,
+                sizeBytes,
+                argumentName,
+                argumentType));
         }
 
         return new KnowledgeBaseProcedure(
             moduleId,
             name,
             dumpType,
-            record.Slice(codeOffset, codeSize).ToArray(),
-            record.Slice(relocationOffset, codeSize).ToArray());
+            ReadOnlyMemory<byte>.Empty,
+            ReadOnlyMemory<byte>.Empty)
+        {
+            MethodKind = methodKind,
+            CallingConvention = callingConvention,
+            ReturnType = returnType,
+            Arguments = arguments
+        };
+    }
+
+    private static KnowledgeBaseProcedure? InvalidProcedure(bool isRuntimeHandler, string message)
+    {
+        if (isRuntimeHandler)
+        {
+            throw new InvalidDataException(message);
+        }
+
+        return null;
     }
 
     private static bool TryReadPascalCString(

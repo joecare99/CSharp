@@ -2607,20 +2607,21 @@ public sealed class BasicAnalysisService : IAnalysisService
         AnalysisSession session,
         IReadOnlyDictionary<int, ulong> registerAddressValues)
     {
-        bool isMoveRegisterImmediate = string.Equals(
-                instruction.Mnemonic,
-                "Mov",
-                StringComparison.OrdinalIgnoreCase)
-            && instruction.Operands.Count == 2
+        bool isDirectDataAddressLoad = instruction.Operands.Count == 2
             && instruction.Operands[0].Kind == DecodedOperandKind.Register
-            && instruction.Operands[1].Kind == DecodedOperandKind.Immediate;
+            && (string.Equals(instruction.Mnemonic, "Mov", StringComparison.OrdinalIgnoreCase)
+                    && instruction.Operands[1].Kind == DecodedOperandKind.Immediate
+                || string.Equals(instruction.Mnemonic, "Lea", StringComparison.OrdinalIgnoreCase)
+                    && instruction.Operands[1].Kind == DecodedOperandKind.Memory
+                    && instruction.Operands[1].BaseRegister is null
+                    && instruction.Operands[1].IndexRegister is null);
 
         uint sourceRva = checked((uint)instruction.Address);
         foreach (DecodedOperand operand in instruction.Operands)
         {
             ulong? absoluteAddress = operand.Kind switch
             {
-                DecodedOperandKind.Immediate when isMoveRegisterImmediate => operand.Immediate,
+                DecodedOperandKind.Immediate when isDirectDataAddressLoad => operand.Immediate,
                 DecodedOperandKind.Memory
                     when operand.BaseRegister is null
                         && operand.IndexRegister is null
@@ -2642,6 +2643,21 @@ public sealed class BasicAnalysisService : IAnalysisService
                 && IsMappedDataRva(session, targetRva))
             {
                 AddConstantCrossReferenceIfMissing(session, sourceRva, targetRva);
+                if (isDirectDataAddressLoad
+                    && session.Items.TryGetValue(targetRva, out AnalysisItem? targetItem)
+                    && targetItem.Flags.HasFlag(AnalysisFlags.String))
+                {
+                    string? typeName = targetItem.TypeKind switch
+                    {
+                        DelphiTypeKind.AnsiString => "AnsiString",
+                        DelphiTypeKind.UnicodeString => "UnicodeString",
+                        _ => null
+                    };
+                    if (typeName is not null)
+                    {
+                        session.GetOrAddItem(sourceRva).DataTypeCandidate ??= typeName;
+                    }
+                }
             }
         }
     }
@@ -2689,6 +2705,12 @@ public sealed class BasicAnalysisService : IAnalysisService
         int? AutoMethodTableDisplacement,
         int? InterfaceTableDisplacement,
         bool HasInterfaceImplementationGetter);
+
+    private readonly record struct RegisterStackState(
+        string? ClassType,
+        ulong? Address,
+        int? LocalOffset,
+        uint? StackArgumentOffset);
 
     private void AnalyzeCode(
         AnalysisSession session,
@@ -2769,7 +2791,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             bool[] availableRegisterArguments = [true, true, true];
             bool[] usedRegisterArguments = [false, false, false];
             Dictionary<int, string> classRegisterTypes = [];
-            List<string?> classTypeStack = [];
+            List<RegisterStackState> registerStack = [];
             if (procedureOwnerClassNames.TryGetValue(codeStart, out string? ownerClassName))
             {
                 classRegisterTypes[0] = ownerClassName;
@@ -3004,6 +3026,10 @@ public sealed class BasicAnalysisService : IAnalysisService
                             registerAddressValues,
                             classRegisterTypes,
                             stackArguments);
+                        ApplyKnownCallDataArguments(
+                            knownCallInstruction,
+                            session,
+                            registerAddressValues);
                         returnTypeCandidate = GetKnownCallReturnTypeCandidate(
                             knownCallInstruction,
                             session,
@@ -3035,6 +3061,12 @@ public sealed class BasicAnalysisService : IAnalysisService
                         registerAddressValues,
                         startItem,
                         stackLocalVariables);
+                    ApplyKnownManagedStringStoreTypeCandidate(
+                        instruction,
+                        session,
+                        registerAddressValues,
+                        startItem,
+                        stackLocalVariables);
                     string? returnedClassType = instruction.FlowControl == InstructionFlowControl.Return
                         && !startItem.Flags.HasFlag(AnalysisFlags.ConstructorCandidate)
                         && !startItem.Flags.HasFlag(AnalysisFlags.DestructorCandidate)
@@ -3048,7 +3080,6 @@ public sealed class BasicAnalysisService : IAnalysisService
                         stackLocalVariables,
                         stackArguments,
                         registerAddressValues);
-                    UpdateClassTypeStack(instruction, classRegisterTypes, classTypeStack);
                     if (returnTypeCandidate is null && returnedClassType is not null)
                     {
                         returnTypeCandidate = returnedClassType;
@@ -3060,6 +3091,13 @@ public sealed class BasicAnalysisService : IAnalysisService
                         instruction,
                         session,
                         registerStackArgumentOffsets);
+                    UpdateRegisterStackState(
+                        instruction,
+                        classRegisterTypes,
+                        registerAddressValues,
+                        registerLocalOffsets,
+                        registerStackArgumentOffsets,
+                        registerStack);
                 }
 
                 if (isProcedureStart && startItem.UsesFramePointer)
@@ -3455,12 +3493,21 @@ public sealed class BasicAnalysisService : IAnalysisService
         MarkFunctionCandidates(session, functionCandidateTargets);
     }
 
-    private static void UpdateClassTypeStack(
+    private static void UpdateRegisterStackState(
         DecodedInstruction instruction,
         Dictionary<int, string> classRegisterTypes,
-        List<string?> classTypeStack)
+        Dictionary<int, ulong> registerAddressValues,
+        Dictionary<int, int> registerLocalOffsets,
+        Dictionary<int, uint> registerStackArgumentOffsets,
+        List<RegisterStackState> registerStack)
     {
         string mnemonic = instruction.Mnemonic;
+        if (instruction.FlowControl == InstructionFlowControl.Call)
+        {
+            registerStack.Clear();
+            return;
+        }
+
         if (string.Equals(mnemonic, "Push", StringComparison.OrdinalIgnoreCase))
         {
             if (instruction.Operands.Count == 1
@@ -3468,16 +3515,44 @@ public sealed class BasicAnalysisService : IAnalysisService
                 && IsFullWidthStackRegister(instruction.Operands[0].Register))
             {
                 string? classType = null;
+                ulong? address = null;
+                int? localOffset = null;
+                uint? stackArgumentOffset = null;
                 if (GetClassRegisterTypeIndex(instruction.Operands[0].Register) is int registerIndex)
                 {
                     classRegisterTypes.TryGetValue(registerIndex, out classType);
                 }
 
-                classTypeStack.Add(classType);
+                if (GetRegisterAddressIndex(instruction.Operands[0].Register) is int addressIndex
+                    && registerAddressValues.TryGetValue(addressIndex, out ulong trackedAddress))
+                {
+                    address = trackedAddress;
+                }
+
+                if (GetFullRegisterArgumentIndex(instruction.Operands[0].Register) is int argumentIndex)
+                {
+                    if (registerLocalOffsets.TryGetValue(argumentIndex, out int trackedLocalOffset))
+                    {
+                        localOffset = trackedLocalOffset;
+                    }
+
+                    if (registerStackArgumentOffsets.TryGetValue(
+                        argumentIndex,
+                        out uint trackedStackArgumentOffset))
+                    {
+                        stackArgumentOffset = trackedStackArgumentOffset;
+                    }
+                }
+
+                registerStack.Add(new RegisterStackState(
+                    classType,
+                    address,
+                    localOffset,
+                    stackArgumentOffset));
             }
             else
             {
-                classTypeStack.Clear();
+                registerStack.Clear();
             }
 
             return;
@@ -3493,26 +3568,49 @@ public sealed class BasicAnalysisService : IAnalysisService
                     "ESP",
                     StringComparison.OrdinalIgnoreCase))
             {
-                string? classType = classTypeStack.Count > 0
-                    ? classTypeStack[^1]
-                    : null;
-                if (classTypeStack.Count > 0)
+                RegisterStackState savedState = default;
+                if (registerStack.Count > 0)
                 {
-                    classTypeStack.RemoveAt(classTypeStack.Count - 1);
+                    savedState = registerStack[^1];
+                    registerStack.RemoveAt(registerStack.Count - 1);
                 }
 
                 if (GetClassRegisterTypeIndex(instruction.Operands[0].Register) is int registerIndex)
                 {
                     classRegisterTypes.Remove(registerIndex);
-                    if (!string.IsNullOrWhiteSpace(classType))
+                    if (!string.IsNullOrWhiteSpace(savedState.ClassType))
                     {
-                        classRegisterTypes[registerIndex] = classType;
+                        classRegisterTypes[registerIndex] = savedState.ClassType;
+                    }
+                }
+
+                if (GetRegisterAddressIndex(instruction.Operands[0].Register) is int addressIndex)
+                {
+                    registerAddressValues.Remove(addressIndex);
+                    if (savedState.Address is ulong address)
+                    {
+                        registerAddressValues[addressIndex] = address;
+                    }
+                }
+
+                if (GetFullRegisterArgumentIndex(instruction.Operands[0].Register) is int argumentIndex)
+                {
+                    registerLocalOffsets.Remove(argumentIndex);
+                    if (savedState.LocalOffset is int localOffset)
+                    {
+                        registerLocalOffsets[argumentIndex] = localOffset;
+                    }
+
+                    registerStackArgumentOffsets.Remove(argumentIndex);
+                    if (savedState.StackArgumentOffset is uint stackArgumentOffset)
+                    {
+                        registerStackArgumentOffsets[argumentIndex] = stackArgumentOffset;
                     }
                 }
             }
             else
             {
-                classTypeStack.Clear();
+                registerStack.Clear();
             }
 
             return;
@@ -3520,15 +3618,19 @@ public sealed class BasicAnalysisService : IAnalysisService
 
         if (instruction.Operands.Any(operand =>
                 operand.Kind == DecodedOperandKind.Register
-                && string.Equals(operand.Register, "ESP", StringComparison.OrdinalIgnoreCase))
+                    && string.Equals(operand.Register, "ESP", StringComparison.OrdinalIgnoreCase)
+                || operand.Kind == DecodedOperandKind.Memory
+                    && string.Equals(operand.BaseRegister, "ESP", StringComparison.OrdinalIgnoreCase))
             || string.Equals(mnemonic, "Pusha", StringComparison.OrdinalIgnoreCase)
             || string.Equals(mnemonic, "Pushad", StringComparison.OrdinalIgnoreCase)
             || string.Equals(mnemonic, "Popa", StringComparison.OrdinalIgnoreCase)
             || string.Equals(mnemonic, "Popad", StringComparison.OrdinalIgnoreCase)
             || string.Equals(mnemonic, "Enter", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(mnemonic, "Leave", StringComparison.OrdinalIgnoreCase))
+            || string.Equals(mnemonic, "Leave", StringComparison.OrdinalIgnoreCase)
+            || mnemonic.StartsWith("Push", StringComparison.OrdinalIgnoreCase)
+            || mnemonic.StartsWith("Pop", StringComparison.OrdinalIgnoreCase))
         {
-            classTypeStack.Clear();
+            registerStack.Clear();
         }
     }
 
@@ -5066,6 +5168,307 @@ public sealed class BasicAnalysisService : IAnalysisService
         return $"threadvar_{displacement}";
     }
 
+    private static void ApplyKnownCallDataArguments(
+        DecodedInstruction instruction,
+        AnalysisSession session,
+        IReadOnlyDictionary<int, ulong> registerAddressValues)
+    {
+        if (instruction.NearBranchTarget is not ulong targetAddress
+            || targetAddress > uint.MaxValue
+            || !session.Items.TryGetValue((uint)targetAddress, out AnalysisItem? target)
+            || string.IsNullOrWhiteSpace(target.Name))
+        {
+            return;
+        }
+
+        if (!session.TryGetUnambiguousKnowledgeBaseProcedure(target.Name, out KnowledgeBaseProcedure? procedure)
+            || procedure is null
+            || procedure.DumpType != (byte)'C')
+        {
+            return;
+        }
+
+        uint sourceRva = checked((uint)instruction.Address);
+        foreach (KnowledgeBaseArgument argument in procedure.Arguments)
+        {
+            if (!argument.IsRegister
+                || argument.Tag != 0x21
+                || argument.SizeBytes != sizeof(uint)
+                || GetKnowledgeBaseRegisterIndex(argument.RegisterOrStackIndex) is not int registerIndex
+                || !registerAddressValues.TryGetValue(registerIndex, out ulong value)
+                || value > uint.MaxValue
+                || !TryGetRawAddressRange(session, (uint)value, out uint dataRva, out int rawOffset, out int rawLength))
+            {
+                continue;
+            }
+
+            if (argument.Tag == 0x21
+                && string.Equals(argument.TypeName, "WideString", StringComparison.OrdinalIgnoreCase))
+            {
+                if (value < sizeof(uint)
+                    || !TryGetRawAddressRange(
+                        session,
+                        checked((uint)(value - sizeof(uint))),
+                        out uint lengthPrefixRva,
+                        out int lengthPrefixOffset,
+                        out int lengthPrefixRawLength)
+                    || lengthPrefixRva + sizeof(uint) != dataRva
+                    || lengthPrefixOffset + sizeof(uint) != rawOffset)
+                {
+                    continue;
+                }
+
+                ReadOnlySpan<byte> image = session.Image.Span;
+                int wideStringByteLength = BinaryPrimitives.ReadInt32LittleEndian(
+                    image.Slice(lengthPrefixOffset, sizeof(int)));
+                if (wideStringByteLength < 0
+                    || (wideStringByteLength & 1) != 0
+                    || wideStringByteLength > 64 * 1024
+                    || lengthPrefixRawLength < sizeof(uint) + wideStringByteLength + sizeof(ushort)
+                    || BinaryPrimitives.ReadUInt16LittleEndian(
+                        image.Slice(rawOffset + wideStringByteLength, sizeof(ushort))) != 0)
+                {
+                    continue;
+                }
+
+                string wideStringValue = System.Text.Encoding.Unicode.GetString(
+                    image.Slice(rawOffset, wideStringByteLength));
+                if (!IsDisplayableManagedString(wideStringValue))
+                {
+                    continue;
+                }
+
+                AnalysisItem wideStringItem = session.GetOrAddItem(dataRva);
+                if (wideStringItem.Flags.HasFlag(AnalysisFlags.Code)
+                    || wideStringItem.Flags.HasFlag(AnalysisFlags.Instruction))
+                {
+                    continue;
+                }
+
+                wideStringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
+                wideStringItem.TypeKind = DelphiTypeKind.WideString;
+                wideStringItem.Name ??= wideStringValue;
+                wideStringItem.DataTypeCandidate ??= "WideString";
+                AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
+                continue;
+            }
+
+            if (argument.Tag == 0x21
+                && (string.Equals(argument.TypeName, "ShortString", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(argument.TypeName, "PShortString", StringComparison.OrdinalIgnoreCase)))
+            {
+                AnalysisItem shortStringItem = session.GetOrAddItem(dataRva);
+                if (rawLength == 0
+                    || shortStringItem.Flags.HasFlag(AnalysisFlags.Code)
+                    || shortStringItem.Flags.HasFlag(AnalysisFlags.Instruction))
+                {
+                    continue;
+                }
+
+                int characterCount = session.Image.Span[rawOffset];
+                if (characterCount > rawLength - 1)
+                {
+                    continue;
+                }
+
+                string shortStringValue = System.Text.Encoding.Latin1.GetString(
+                    session.Image.Span.Slice(rawOffset + 1, characterCount));
+                if (!IsDisplayableManagedString(shortStringValue))
+                {
+                    continue;
+                }
+
+                shortStringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
+                shortStringItem.Name ??= shortStringValue;
+                shortStringItem.DataTypeCandidate ??= "ShortString";
+                AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
+                continue;
+            }
+
+            if (argument.Tag == 0x21
+                && TryGetManagedStringType(
+                    argument.TypeName,
+                    session.SelectedDelphiVersion,
+                    out DelphiTypeKind expectedStringType,
+                    out string managedStringTypeName))
+            {
+                if (!session.Items.TryGetValue(dataRva, out AnalysisItem? managedStringItem)
+                    || managedStringItem.TypeKind != expectedStringType
+                    || !managedStringItem.Flags.HasFlag(AnalysisFlags.String)
+                    || managedStringItem.Flags.HasFlag(AnalysisFlags.Code)
+                    || managedStringItem.Flags.HasFlag(AnalysisFlags.Instruction))
+                {
+                    continue;
+                }
+
+                managedStringItem.DataTypeCandidate ??= managedStringTypeName;
+                AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
+                continue;
+            }
+
+            if (string.Equals(argument.TypeName, "TGUID", StringComparison.OrdinalIgnoreCase))
+            {
+                const int guidSize = 16;
+                AnalysisItem guidItem = session.GetOrAddItem(dataRva);
+                if (rawLength < guidSize
+                    || guidItem.Flags.HasFlag(AnalysisFlags.Code)
+                    || guidItem.Flags.HasFlag(AnalysisFlags.Instruction))
+                {
+                    continue;
+                }
+
+                ReadOnlySpan<byte> guidBytes = session.Image.Span.Slice(rawOffset, guidSize);
+                guidItem.SetFlags(AnalysisFlags.Data);
+                guidItem.Name ??= new Guid(guidBytes).ToString("D");
+                guidItem.DataTypeCandidate ??= "TGUID";
+                AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
+                continue;
+            }
+
+            if (!TryGetStringPointerElementSize(argument.TypeName, out int elementSize))
+            {
+                continue;
+            }
+
+            ReadOnlySpan<byte> stringData = session.Image.Span.Slice(rawOffset, rawLength);
+            int byteLength = FindStringTerminator(stringData, elementSize);
+            if (byteLength < 0)
+            {
+                continue;
+            }
+
+            string valueText = elementSize == sizeof(ushort)
+                ? System.Text.Encoding.Unicode.GetString(stringData[..byteLength])
+                : System.Text.Encoding.Latin1.GetString(stringData[..byteLength]);
+            AnalysisItem stringItem = session.GetOrAddItem(dataRva);
+            if (stringItem.Flags.HasFlag(AnalysisFlags.Code)
+                || stringItem.Flags.HasFlag(AnalysisFlags.Instruction))
+            {
+                continue;
+            }
+
+            stringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
+            stringItem.Name ??= valueText;
+            AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
+        }
+    }
+
+    private static bool TryGetManagedStringType(
+        string typeName,
+        DelphiVersion delphiVersion,
+        out DelphiTypeKind typeKind,
+        out string candidateName)
+    {
+        typeKind = DelphiTypeKind.String;
+        candidateName = string.Empty;
+        if (delphiVersion < DelphiVersion.Delphi2009)
+        {
+            return false;
+        }
+
+        if (string.Equals(typeName, "AnsiString", StringComparison.OrdinalIgnoreCase))
+        {
+            typeKind = DelphiTypeKind.AnsiString;
+            candidateName = "AnsiString";
+            return true;
+        }
+
+        if (string.Equals(typeName, "String", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(typeName, "UString", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(typeName, "UnicodeString", StringComparison.OrdinalIgnoreCase))
+        {
+            typeKind = DelphiTypeKind.UnicodeString;
+            candidateName = "UnicodeString";
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryGetStringPointerElementSize(string typeName, out int elementSize)
+    {
+        if (string.Equals(typeName, "PAnsiChar", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(typeName, "PChar", StringComparison.OrdinalIgnoreCase))
+        {
+            elementSize = sizeof(byte);
+            return true;
+        }
+
+        if (string.Equals(typeName, "PWideChar", StringComparison.OrdinalIgnoreCase))
+        {
+            elementSize = sizeof(ushort);
+            return true;
+        }
+
+        elementSize = 0;
+        return false;
+    }
+
+    private static int? GetKnowledgeBaseRegisterIndex(int registerIndex) =>
+        registerIndex switch
+        {
+            0 => 0,
+            1 => 2,
+            2 => 1,
+            _ => null
+        };
+
+    private static bool TryGetRawAddressRange(
+        AnalysisSession session,
+        uint va,
+        out uint rva,
+        out int rawOffset,
+        out int rawLength)
+    {
+        if (!TryVaToRva(session, va, out rva))
+        {
+            rawOffset = 0;
+            rawLength = 0;
+            return false;
+        }
+
+        foreach (PeSection section in session.Sections)
+        {
+            ulong sectionRvaEnd = (ulong)section.VirtualAddress + section.RawSize;
+            ulong sectionRawEnd = (ulong)section.RawAddress + section.RawSize;
+            if (section.ContainsCode
+                || rva < section.VirtualAddress
+                || rva >= sectionRvaEnd
+                || sectionRawEnd > (ulong)session.Image.Length)
+            {
+                continue;
+            }
+
+            rawOffset = checked((int)((ulong)section.RawAddress + (rva - section.VirtualAddress)));
+            rawLength = checked((int)(sectionRawEnd - (uint)rawOffset));
+            return true;
+        }
+
+        rawOffset = 0;
+        rawLength = 0;
+        return false;
+    }
+
+    private static int FindStringTerminator(ReadOnlySpan<byte> data, int elementSize)
+    {
+        if (elementSize == sizeof(byte))
+        {
+            int terminator = data.IndexOf((byte)0);
+            return terminator >= 0 && terminator <= 64 * 1024 ? terminator : -1;
+        }
+
+        int maximumLength = Math.Min(data.Length, 64 * 1024) & ~1;
+        for (int offset = 0; offset < maximumLength; offset += sizeof(ushort))
+        {
+            if (data[offset] == 0 && data[offset + 1] == 0)
+            {
+                return offset;
+            }
+        }
+
+        return -1;
+    }
+
     private static void ApplyKnownCallLocalDataTypes(
         DecodedInstruction instruction,
         AnalysisSession session,
@@ -5631,6 +6034,107 @@ public sealed class BasicAnalysisService : IAnalysisService
                 checked((uint)instruction.Address),
                 dataRva);
         }
+    }
+
+    private static void ApplyKnownManagedStringStoreTypeCandidate(
+        DecodedInstruction instruction,
+        AnalysisSession session,
+        IReadOnlyDictionary<int, ulong> registerAddressValues,
+        AnalysisItem procedure,
+        Dictionary<int, StackLocalVariable> stackLocalVariables)
+    {
+        if (!string.Equals(instruction.Mnemonic, "Mov", StringComparison.OrdinalIgnoreCase)
+            || instruction.Operands.Count != 2
+            || instruction.Operands[0] is not
+            {
+                Kind: DecodedOperandKind.Memory,
+                IndexRegister: null,
+                MemorySizeBytes: sizeof(uint),
+                SegmentRegister: string segmentRegister,
+            }
+            || instruction.Operands[1].Kind != DecodedOperandKind.Register
+            || GetRegisterAddressIndex(instruction.Operands[1].Register) is not int sourceRegisterIndex
+            || !registerAddressValues.TryGetValue(sourceRegisterIndex, out ulong sourceAddress)
+            || sourceAddress > uint.MaxValue
+            || !TryVaToRva(session, (uint)sourceAddress, out uint sourceRva)
+            || !session.Items.TryGetValue(sourceRva, out AnalysisItem? sourceItem)
+            || !sourceItem.Flags.HasFlag(AnalysisFlags.String))
+        {
+            return;
+        }
+
+        DecodedOperand destination = instruction.Operands[0];
+        string? typeName = sourceItem.TypeKind switch
+        {
+            DelphiTypeKind.AnsiString => "AnsiString",
+            DelphiTypeKind.UnicodeString => "UnicodeString",
+            _ => null
+        };
+        if (typeName is null)
+        {
+            return;
+        }
+
+        if (procedure.UsesFramePointer
+            && string.Equals(destination.BaseRegister, "EBP", StringComparison.OrdinalIgnoreCase)
+            && destination.IndexRegister is null
+            && IsDefaultStackSegment(segmentRegister)
+            && destination.Displacement is ulong stackDisplacement)
+        {
+            int localOffset = unchecked((int)(uint)stackDisplacement);
+            if (localOffset < 0)
+            {
+                AddStackLocalVariable(
+                    stackLocalVariables,
+                    localOffset,
+                    typeName,
+                    overwrite: false);
+            }
+
+            return;
+        }
+
+        if (!IsDefaultDataSegment(segmentRegister))
+        {
+            return;
+        }
+
+        ulong destinationAddress;
+        if (destination.BaseRegister is null
+            && destination.Displacement is ulong absoluteAddress)
+        {
+            destinationAddress = absoluteAddress;
+        }
+        else if (GetRegisterAddressIndex(destination.BaseRegister) is int baseRegisterIndex
+            && registerAddressValues.TryGetValue(baseRegisterIndex, out ulong baseAddress)
+            && destination.Displacement is ulong displacement
+            && displacement <= int.MaxValue
+            && baseAddress <= uint.MaxValue - displacement)
+        {
+            destinationAddress = baseAddress + displacement;
+        }
+        else
+        {
+            return;
+        }
+
+        if (destinationAddress > uint.MaxValue
+            || !TryVaToRva(session, (uint)destinationAddress, out uint destinationRva)
+            || !IsMappedDataRva(session, destinationRva))
+        {
+            return;
+        }
+
+        ApplyDataTypeCandidate(
+            session,
+            destinationAddress,
+            typeName,
+            overwrite: false,
+            AnalysisFlags.None);
+        AddConstantCrossReferenceIfMissing(
+            session,
+            checked((uint)instruction.Address),
+            destinationRva);
     }
 
     private static void ApplyKnownClassStackArgumentStoreTypeCandidate(

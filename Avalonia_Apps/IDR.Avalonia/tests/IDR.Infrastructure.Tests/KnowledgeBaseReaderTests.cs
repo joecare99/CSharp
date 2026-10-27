@@ -60,12 +60,61 @@ public sealed class KnowledgeBaseReaderTests
     }
 
     [TestMethod]
+    public void ParseReadsRuntimeHandlerWhenDumpTotalExceedsRecordRemainder()
+    {
+        const string procedureName = "@HandleOnException";
+        byte[] code = [0x55, 0x8b, 0xec, 0xc3];
+        byte[] data = CreateKnowledgeBase("System", 7, procedureName, code);
+        int procedureOffset = GetProcedureOffset(procedureName);
+        int dumpTotalOffset = procedureOffset + 2 + 2 + Encoding.ASCII.GetByteCount(procedureName) + 1 + 4 + 4 + 3;
+        BinaryPrimitives.WriteUInt32LittleEndian(data.AsSpan(dumpTotalOffset), 0x1000);
+
+        KnowledgeBaseData result = new KnowledgeBaseReader().Parse(data);
+
+        Assert.AreEqual(1, result.Procedures.Count);
+        CollectionAssert.AreEqual(code, result.Procedures[0].Code.ToArray());
+    }
+
+    [TestMethod]
+    public void ParseReadsProcedurePrototypeArgumentsAndCallingConvention()
+    {
+        byte[] data = CreateKnowledgeBase(
+            "System",
+            7,
+            "TExample.ReadText",
+            [0xc3],
+            methodKind: (byte)'F',
+            callingConvention: 3,
+            returnType: "Integer",
+            arguments:
+            [
+                new KnowledgeBaseArgument(0x21, true, 0, 4, "Text", "PAnsiChar"),
+                new KnowledgeBaseArgument(0x22, false, 8, 4, "Output", "PWideChar")
+            ]);
+
+        KnowledgeBaseData result = new KnowledgeBaseReader().Parse(data);
+
+        KnowledgeBaseProcedure procedure = result.Procedures.Single();
+        Assert.AreEqual("TExample.ReadText", procedure.Name);
+        Assert.AreEqual((byte)'F', procedure.MethodKind);
+        Assert.AreEqual((byte)3, procedure.CallingConvention);
+        Assert.AreEqual("Integer", procedure.ReturnType);
+        Assert.AreEqual(2, procedure.Arguments.Count);
+        Assert.AreEqual(
+            new KnowledgeBaseArgument(0x21, true, 0, 4, "Text", "PAnsiChar"),
+            procedure.Arguments[0]);
+        Assert.AreEqual(
+            new KnowledgeBaseArgument(0x22, false, 8, 4, "Output", "PWideChar"),
+            procedure.Arguments[1]);
+        Assert.AreEqual(0, procedure.Code.Length);
+    }
+
+    [TestMethod]
     public void ParseRejectsProcedureDumpOutsideItsRecord()
     {
         const string procedureName = "@HandleOnException";
         byte[] data = CreateKnowledgeBase("System", 7, procedureName, [0x55, 0x8b, 0xec, 0xc3]);
-        int moduleRecordSize = 4 + Encoding.ASCII.GetByteCount("System") + 1;
-        int procedureOffset = 293 + 6 * 8 + 2 * 16 + moduleRecordSize;
+        int procedureOffset = GetProcedureOffset(procedureName);
         int dumpSizeOffset = procedureOffset + 2 + 2 + Encoding.ASCII.GetByteCount(procedureName) + 1 + 4 + 4 + 3 + 4;
         BinaryPrimitives.WriteUInt32LittleEndian(data.AsSpan(dumpSizeOffset), uint.MaxValue);
 
@@ -78,8 +127,7 @@ public sealed class KnowledgeBaseReaderTests
     {
         const string procedureName = "TActionBarAccessibility.accDoDefaultAction";
         byte[] data = CreateKnowledgeBase("System", 7, procedureName, [0x55, 0x8b, 0xec, 0xc3]);
-        int moduleRecordSize = 4 + Encoding.ASCII.GetByteCount("System") + 1;
-        int procedureOffset = 293 + 6 * 8 + 2 * 16 + moduleRecordSize;
+        int procedureOffset = GetProcedureOffset("System", procedureName);
         int dumpSizeOffset = procedureOffset + 2 + 2 + Encoding.ASCII.GetByteCount(procedureName) + 1 + 4 + 4 + 3 + 4;
         BinaryPrimitives.WriteUInt32LittleEndian(data.AsSpan(dumpSizeOffset), uint.MaxValue);
 
@@ -454,7 +502,11 @@ public sealed class KnowledgeBaseReaderTests
         string moduleName,
         ushort moduleId,
         string? procedureName = null,
-        byte[]? procedureCode = null)
+        byte[]? procedureCode = null,
+        byte methodKind = (byte)'P',
+        byte callingConvention = 0,
+        string returnType = "",
+        KnowledgeBaseArgument[]? arguments = null)
     {
         const int headerSize = 293;
         byte[] record = new byte[4 + Encoding.ASCII.GetByteCount(moduleName) + 1];
@@ -463,7 +515,14 @@ public sealed class KnowledgeBaseReaderTests
         int sectionsOffset = headerSize;
         byte[]? procedureRecord = procedureName is null || procedureCode is null
             ? null
-            : CreateProcedureRecord(moduleId, procedureName, procedureCode);
+            : CreateProcedureRecord(
+                moduleId,
+                procedureName,
+                procedureCode,
+                methodKind,
+                callingConvention,
+                returnType,
+                arguments ?? []);
         int recordOffset = sectionsOffset + 6 * 8 + (procedureRecord is null ? 16 : 32);
         int procedureOffset = recordOffset + record.Length;
         using MemoryStream stream = new();
@@ -502,7 +561,26 @@ public sealed class KnowledgeBaseReaderTests
         return stream.ToArray();
     }
 
-    private static byte[] CreateProcedureRecord(ushort moduleId, string name, byte[] code)
+    private static int GetProcedureOffset(string procedureName)
+    {
+        return GetProcedureOffset("System", procedureName);
+    }
+
+    private static int GetProcedureOffset(string moduleName, string procedureName)
+    {
+        const int headerSize = 293;
+        int moduleRecordSize = 4 + Encoding.ASCII.GetByteCount(moduleName) + 1;
+        return headerSize + 6 * 8 + 2 * 16 + moduleRecordSize;
+    }
+
+    private static byte[] CreateProcedureRecord(
+        ushort moduleId,
+        string name,
+        byte[] code,
+        byte methodKind,
+        byte callingConvention,
+        string returnType,
+        KnowledgeBaseArgument[] arguments)
     {
         using MemoryStream stream = new();
         using BinaryWriter writer = new(stream, Encoding.ASCII, leaveOpen: true);
@@ -510,17 +588,32 @@ public sealed class KnowledgeBaseReaderTests
         WritePascalCString(writer, name);
         writer.Write((byte)0);
         writer.Write((byte)'C');
-        writer.Write((byte)'P');
-        writer.Write((byte)0);
+        writer.Write(methodKind);
+        writer.Write(callingConvention);
         writer.Write(0);
-        WritePascalCString(writer, string.Empty);
+        WritePascalCString(writer, returnType);
         writer.Write((uint)(2 * code.Length));
         writer.Write((uint)code.Length);
         writer.Write(0u);
         writer.Write(code);
         writer.Write(new byte[code.Length]);
-        writer.Write(2u);
-        writer.Write((ushort)0);
+        using MemoryStream argumentStream = new();
+        using (BinaryWriter argumentWriter = new(argumentStream, Encoding.ASCII, leaveOpen: true))
+        {
+            argumentWriter.Write((ushort)arguments.Length);
+            foreach (KnowledgeBaseArgument argument in arguments)
+            {
+                argumentWriter.Write(argument.Tag);
+                argumentWriter.Write(argument.IsRegister);
+                argumentWriter.Write(argument.RegisterOrStackIndex);
+                argumentWriter.Write(argument.SizeBytes);
+                WritePascalCString(argumentWriter, argument.Name);
+                WritePascalCString(argumentWriter, argument.TypeName);
+            }
+        }
+
+        writer.Write((uint)argumentStream.Length);
+        writer.Write(argumentStream.ToArray());
         return stream.ToArray();
     }
 

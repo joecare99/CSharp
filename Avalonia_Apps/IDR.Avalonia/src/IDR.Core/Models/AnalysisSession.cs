@@ -11,6 +11,8 @@ public sealed class AnalysisSession
     private readonly Dictionary<uint, List<CrossReference>> _incomingCrossReferences = [];
     private IReadOnlyList<KnowledgeBaseModule> _knowledgeBaseModules = [];
     private IReadOnlyList<KnowledgeBaseProcedure> _knowledgeBaseProcedures = [];
+    private IReadOnlyDictionary<string, KnowledgeBaseProcedure[]> _knowledgeBaseProceduresByName =
+        new Dictionary<string, KnowledgeBaseProcedure[]>(StringComparer.OrdinalIgnoreCase);
     private IReadOnlyList<PeImportModule> _imports = [];
     private IReadOnlyList<PeExport> _exports = [];
     private IReadOnlyList<PeResourceString> _resourceStrings = [];
@@ -80,8 +82,30 @@ public sealed class AnalysisSession
         ArgumentNullException.ThrowIfNull(knowledgeBase);
         _knowledgeBaseModules = knowledgeBase.Modules.ToArray();
         _knowledgeBaseProcedures = knowledgeBase.Procedures.ToArray();
+        _knowledgeBaseProceduresByName = _knowledgeBaseProcedures
+            .GroupBy(procedure => procedure.Name, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                group => group.Key,
+                group => group.ToArray(),
+                StringComparer.OrdinalIgnoreCase);
         HasKnowledgeBase = true;
         SystemModuleId = null;
+    }
+
+    public bool TryGetUnambiguousKnowledgeBaseProcedure(
+        string procedureName,
+        out KnowledgeBaseProcedure? procedure)
+    {
+        if (!string.IsNullOrWhiteSpace(procedureName)
+            && _knowledgeBaseProceduresByName.TryGetValue(procedureName, out KnowledgeBaseProcedure[]? matches)
+            && matches.Length == 1)
+        {
+            procedure = matches[0];
+            return true;
+        }
+
+        procedure = null;
+        return false;
     }
 
     public void LoadPeDirectories(
