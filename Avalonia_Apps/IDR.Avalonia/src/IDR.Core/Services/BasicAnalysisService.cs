@@ -2769,6 +2769,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             bool[] availableRegisterArguments = [true, true, true];
             bool[] usedRegisterArguments = [false, false, false];
             Dictionary<int, string> classRegisterTypes = [];
+            List<string?> classTypeStack = [];
             if (procedureOwnerClassNames.TryGetValue(codeStart, out string? ownerClassName))
             {
                 classRegisterTypes[0] = ownerClassName;
@@ -3047,6 +3048,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                         stackLocalVariables,
                         stackArguments,
                         registerAddressValues);
+                    UpdateClassTypeStack(instruction, classRegisterTypes, classTypeStack);
                     if (returnTypeCandidate is null && returnedClassType is not null)
                     {
                         returnTypeCandidate = returnedClassType;
@@ -3452,6 +3454,87 @@ public sealed class BasicAnalysisService : IAnalysisService
         PropagateCallReturnTypeCandidates(session, returnedCallTargets);
         MarkFunctionCandidates(session, functionCandidateTargets);
     }
+
+    private static void UpdateClassTypeStack(
+        DecodedInstruction instruction,
+        Dictionary<int, string> classRegisterTypes,
+        List<string?> classTypeStack)
+    {
+        string mnemonic = instruction.Mnemonic;
+        if (string.Equals(mnemonic, "Push", StringComparison.OrdinalIgnoreCase))
+        {
+            if (instruction.Operands.Count == 1
+                && instruction.Operands[0].Kind == DecodedOperandKind.Register
+                && IsFullWidthStackRegister(instruction.Operands[0].Register))
+            {
+                string? classType = null;
+                if (GetClassRegisterTypeIndex(instruction.Operands[0].Register) is int registerIndex)
+                {
+                    classRegisterTypes.TryGetValue(registerIndex, out classType);
+                }
+
+                classTypeStack.Add(classType);
+            }
+            else
+            {
+                classTypeStack.Clear();
+            }
+
+            return;
+        }
+
+        if (string.Equals(mnemonic, "Pop", StringComparison.OrdinalIgnoreCase))
+        {
+            if (instruction.Operands.Count == 1
+                && instruction.Operands[0].Kind == DecodedOperandKind.Register
+                && IsFullWidthStackRegister(instruction.Operands[0].Register)
+                && !string.Equals(
+                    instruction.Operands[0].Register,
+                    "ESP",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                string? classType = classTypeStack.Count > 0
+                    ? classTypeStack[^1]
+                    : null;
+                if (classTypeStack.Count > 0)
+                {
+                    classTypeStack.RemoveAt(classTypeStack.Count - 1);
+                }
+
+                if (GetClassRegisterTypeIndex(instruction.Operands[0].Register) is int registerIndex)
+                {
+                    classRegisterTypes.Remove(registerIndex);
+                    if (!string.IsNullOrWhiteSpace(classType))
+                    {
+                        classRegisterTypes[registerIndex] = classType;
+                    }
+                }
+            }
+            else
+            {
+                classTypeStack.Clear();
+            }
+
+            return;
+        }
+
+        if (instruction.Operands.Any(operand =>
+                operand.Kind == DecodedOperandKind.Register
+                && string.Equals(operand.Register, "ESP", StringComparison.OrdinalIgnoreCase))
+            || string.Equals(mnemonic, "Pusha", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(mnemonic, "Pushad", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(mnemonic, "Popa", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(mnemonic, "Popad", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(mnemonic, "Enter", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(mnemonic, "Leave", StringComparison.OrdinalIgnoreCase))
+        {
+            classTypeStack.Clear();
+        }
+    }
+
+    private static bool IsFullWidthStackRegister(string? register) =>
+        register?.ToUpperInvariant() is
+            "EAX" or "ECX" or "EDX" or "EBX" or "ESP" or "EBP" or "ESI" or "EDI";
 
     private bool IsCallToNextInstructionFollowedByPop(
         AnalysisSession session,

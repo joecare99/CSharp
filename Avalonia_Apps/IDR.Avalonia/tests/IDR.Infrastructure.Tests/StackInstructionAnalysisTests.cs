@@ -3812,6 +3812,49 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisPropagatesClassTypeThroughRegisterPushAndPop()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0x50,
+            0x31, 0xc0,
+            0x59,
+            0x8b, 0x41, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1009].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotPropagateClassTypeThroughUnsupportedStackPush()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0x50,
+            0x6a, 0x01,
+            0x59,
+            0x5b,
+            0x8b, 0x43, 0x08,
+            0xc3
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x100A].MemberAccessCandidates.Any());
+    }
+
+    [TestMethod]
     public async Task AnalysisLoadsVmtPointerThroughGlobalAddressHeldInEbx()
     {
         AnalysisSession session = CreateClassFieldAccessSession(
