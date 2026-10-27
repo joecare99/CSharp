@@ -4278,37 +4278,49 @@ public sealed class BasicAnalysisService : IAnalysisService
             && GetClassRegisterTypeIndex(instruction.Operands[0].Register) is int destinationRegisterIndex
             && classRegisterTypes.TryGetValue(destinationRegisterIndex, out string? ownerTypeName)
             && instruction.Operands[1].Kind == DecodedOperandKind.Immediate
-            && instruction.Operands[1].Immediate is ulong arithmeticOffset and > 0 and <= int.MaxValue
-            && TryGetTypedField(
-                session,
-                ownerTypeName,
-                (int)arithmeticOffset,
-                out string? arithmeticFieldName,
-                out uint? arithmeticFieldTypeInfoAddress))
+            && instruction.Operands[1].Immediate is ulong arithmeticOffset and > 0 and <= int.MaxValue)
         {
-            string? arithmeticTypeName = arithmeticFieldTypeInfoAddress is uint typeInfoAddress
-                && session.Items.TryGetValue(typeInfoAddress, out AnalysisItem? typeInfo)
-                    ? typeInfo.Name
-                    : null;
-            MemberAccessCandidate arithmeticAccess = new(
-                ownerTypeName,
-                (int)arithmeticOffset,
-                arithmeticFieldName!,
-                arithmeticFieldTypeInfoAddress,
-                arithmeticTypeName);
-            if (!instructionItem.MemberAccessCandidates.Contains(arithmeticAccess))
+            if (TryGetTypedField(
+                    session,
+                    ownerTypeName,
+                    (int)arithmeticOffset,
+                    out string? arithmeticFieldName,
+                    out uint? arithmeticFieldTypeInfoAddress))
             {
-                instructionItem.MemberAccessCandidates =
-                [
-                    .. instructionItem.MemberAccessCandidates,
-                    arithmeticAccess
-                ];
+                string? arithmeticTypeName = arithmeticFieldTypeInfoAddress is uint typeInfoAddress
+                    && session.Items.TryGetValue(typeInfoAddress, out AnalysisItem? typeInfo)
+                        ? typeInfo.Name
+                        : null;
+                AddMemberAccessCandidate(
+                    instructionItem,
+                    new MemberAccessCandidate(
+                        ownerTypeName,
+                        (int)arithmeticOffset,
+                        arithmeticFieldName!,
+                        arithmeticFieldTypeInfoAddress,
+                        arithmeticTypeName));
+            }
+            else if (TryCreateInferredClassFieldAccess(
+                         session,
+                         ownerTypeName,
+                         (int)arithmeticOffset,
+                         null,
+                         instruction,
+                         classRegisterTypes,
+                         out MemberAccessCandidate? arithmeticAccess))
+            {
+                if (arithmeticAccess is not null)
+                {
+                    AddMemberAccessCandidate(instructionItem, arithmeticAccess);
+                }
             }
         }
 
         foreach (DecodedOperand operand in instruction.Operands)
         {
             if (operand.Kind != DecodedOperandKind.Memory
+                || operand.HasSegmentPrefix
+                || !IsDefaultDataSegment(operand.SegmentRegister)
                 || operand.IndexRegister is not null
                 || operand.Displacement is not ulong displacement
                 || displacement is 0 or > int.MaxValue
@@ -4348,16 +4360,151 @@ public sealed class BasicAnalysisService : IAnalysisService
                     fieldName!,
                     fieldTypeInfoAddress,
                     typeName);
-                if (!instructionItem.MemberAccessCandidates.Contains(access))
+                AddMemberAccessCandidate(instructionItem, access);
+            }
+            else if (TryCreateInferredClassFieldAccess(
+                         session,
+                         className,
+                         (int)displacement,
+                         operand,
+                         instruction,
+                         classRegisterTypes,
+                         out MemberAccessCandidate? inferredAccess))
+            {
+                if (inferredAccess is not null)
                 {
-                    instructionItem.MemberAccessCandidates =
-                    [
-                        .. instructionItem.MemberAccessCandidates,
-                        access
-                    ];
+                    AddMemberAccessCandidate(instructionItem, inferredAccess);
                 }
             }
         }
+    }
+
+    private static void AddMemberAccessCandidate(
+        AnalysisItem instructionItem,
+        MemberAccessCandidate candidate)
+    {
+        if (instructionItem.MemberAccessCandidates.Contains(candidate))
+        {
+            return;
+        }
+
+        instructionItem.MemberAccessCandidates =
+        [
+            .. instructionItem.MemberAccessCandidates,
+            candidate
+        ];
+    }
+
+    private static bool TryCreateInferredClassFieldAccess(
+        AnalysisSession session,
+        string className,
+        int offset,
+        DecodedOperand? memoryOperand,
+        DecodedInstruction instruction,
+        IReadOnlyDictionary<int, string> classRegisterTypes,
+        out MemberAccessCandidate? candidate)
+    {
+        candidate = null;
+        if (offset <= 0
+            || !TryGetUniqueClassVmt(session, className, out AnalysisItem? classVmt)
+            || classVmt is null
+            || classVmt.ClassInstanceSizeBytes is not uint instanceSize
+            || (uint)offset >= instanceSize
+            || (memoryOperand?.MemorySizeBytes is int accessSize
+                && accessSize > 0
+                && (ulong)(uint)offset + (uint)accessSize > instanceSize)
+            || IsInsideKnownRecordField(session, classVmt, offset))
+        {
+            return false;
+        }
+
+        string? typeName = null;
+        if (memoryOperand is not null
+            && (string.Equals(instruction.Mnemonic, "Mov", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(instruction.Mnemonic, "Xchg", StringComparison.OrdinalIgnoreCase))
+            && instruction.Operands.Count == 2
+            && instruction.Operands[0] == memoryOperand
+            && instruction.Operands[1].Kind == DecodedOperandKind.Register
+            && GetClassRegisterTypeIndex(instruction.Operands[1].Register) is int sourceRegisterIndex)
+        {
+            classRegisterTypes.TryGetValue(sourceRegisterIndex, out typeName);
+        }
+
+        candidate = new MemberAccessCandidate(
+            className,
+            offset,
+            $"f{offset}",
+            null,
+            typeName,
+            IsInferred: true);
+        return true;
+    }
+
+    private static bool TryGetUniqueClassVmt(
+        AnalysisSession session,
+        string className,
+        out AnalysisItem? vmt)
+    {
+        AnalysisItem[] matchingVmts = session.Items.Values
+            .Where(item =>
+                item.Flags.HasFlag(AnalysisFlags.Vmt)
+                && string.Equals(item.Name, className, StringComparison.Ordinal))
+            .Take(2)
+            .ToArray();
+        vmt = matchingVmts.Length == 1 ? matchingVmts[0] : null;
+        return vmt is not null;
+    }
+
+    private static bool IsInsideKnownRecordField(
+        AnalysisSession session,
+        AnalysisItem classVmt,
+        int offset)
+    {
+        HashSet<uint> visitedVmts = [];
+        AnalysisItem? currentVmt = classVmt;
+        while (currentVmt is not null && visitedVmts.Add(currentVmt.Address))
+        {
+            foreach (DelphiVmtField field in currentVmt.Fields)
+            {
+                if (field.Offset < 0
+                    || field.Offset >= offset
+                    || field.TypeInfoAddress is not uint typeInfoAddress
+                    || !session.Items.TryGetValue(typeInfoAddress, out AnalysisItem? fieldType)
+                    || fieldType is null
+                    || fieldType.TypeKind != DelphiTypeKind.Record)
+                {
+                    continue;
+                }
+
+                ulong fieldEnd;
+                if (fieldType.RecordSizeBytes is uint recordSize)
+                {
+                    fieldEnd = (ulong)(uint)field.Offset + recordSize;
+                }
+                else
+                {
+                    uint nextFieldOffset = currentVmt.Fields
+                        .Where(candidate => candidate.Offset > field.Offset)
+                        .Select(candidate => (uint)candidate.Offset)
+                        .DefaultIfEmpty(currentVmt.ClassInstanceSizeBytes ?? uint.MaxValue)
+                        .Min();
+                    fieldEnd = nextFieldOffset;
+                }
+
+                if ((uint)offset < fieldEnd)
+                {
+                    return true;
+                }
+            }
+
+            currentVmt = currentVmt.ParentAddress is uint parentAddress
+                && session.Items.TryGetValue(parentAddress, out AnalysisItem? parent)
+                && parent.Flags.HasFlag(AnalysisFlags.Vmt)
+                    ? parent
+                    : null;
+        }
+
+        return false;
     }
 
     private static bool TryGetTypedField(

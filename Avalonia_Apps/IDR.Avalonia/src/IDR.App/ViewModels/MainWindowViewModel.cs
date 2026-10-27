@@ -497,7 +497,8 @@ public sealed record AnalysisItemViewModel(
                     ? $": {typeInfo.Name ?? $"0x{typeInfoAddress:X8}"}"
                     : string.Empty)));
         MemberAccessCandidates = string.Join(", ", item.MemberAccessCandidates.Select(access =>
-            $"{access.OwnerTypeName}.{access.FieldName} (+0x{access.Offset:X})"
+            $"{(access.IsInferred ? "[inferred] " : string.Empty)}"
+                + $"{access.OwnerTypeName}.{access.FieldName} (+0x{access.Offset:X})"
                 + (access.TypeName is null ? string.Empty : $": {access.TypeName}")));
         Interfaces = string.Join(", ", item.Interfaces.Select(intf =>
             FormatInterface(intf, session)));

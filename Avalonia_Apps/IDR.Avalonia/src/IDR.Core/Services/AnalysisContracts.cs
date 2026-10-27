@@ -100,6 +100,7 @@ public enum DelphiVersion
     Delphi5 = 5,
     Delphi6 = 6,
     Delphi7 = 7,
+    Delphi8 = 8,
     Delphi2005 = 2005,
     Delphi2006 = 2006,
     Delphi2007 = 2007,
@@ -136,7 +137,8 @@ public sealed record DecodedOperand(
     string? IndexRegister = null,
     ulong? Displacement = null,
     ulong? Immediate = null,
-    int? MemorySizeBytes = null);
+    int? MemorySizeBytes = null,
+    bool HasSegmentPrefix = false);
 
 public enum DecodedOperandKind
 {

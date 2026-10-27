@@ -3086,6 +3086,159 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisReportsUnknownInRangeClassFieldAsNonPersistentCandidate()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x89, 0xc2,
+                0x8b, 0x4a, 0x0c,
+                0xc3
+            ],
+            useParentField: false);
+        AnalysisItem classVmt = session.Items[0x2000];
+        classVmt.Fields = [];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x100c].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual(12, access.Offset);
+        Assert.AreEqual("f12", access.FieldName);
+        Assert.IsNull(access.TypeInfoAddress);
+        Assert.IsNull(access.TypeName);
+        Assert.IsTrue(access.IsInferred);
+        Assert.AreEqual(0, classVmt.Fields.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisCarriesKnownStoredTypeOnUnknownClassFieldCandidate()
+    {
+        foreach (byte[] storeInstruction in new[]
+        {
+            new byte[] { 0x89, 0x4a, 0x0c },
+            new byte[] { 0x87, 0x4a, 0x0c }
+        })
+        {
+            byte[] code =
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x89, 0xc2,
+                0xb9, 0x20, 0x20, 0x40, 0x00,
+                .. storeInstruction,
+                0xc3
+            ];
+            AnalysisSession session = CreateClassFieldAccessSession(
+                code,
+                useParentField: false);
+            session.Items[0x2000].Fields = [];
+            AnalysisItem sourceVmt = session.GetOrAddItem(0x2020);
+            sourceVmt.Name = "TInner";
+            sourceVmt.SetFlags(AnalysisFlags.Vmt);
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            uint accessAddress = (uint)(0x1000 + 5 + 5 + 2 + 5);
+            MemberAccessCandidate access = session.Items[accessAddress]
+                .MemberAccessCandidates.Single();
+            Assert.AreEqual("TChild", access.OwnerTypeName);
+            Assert.AreEqual(12, access.Offset);
+            Assert.AreEqual("f12", access.FieldName);
+            Assert.IsNull(access.TypeInfoAddress);
+            Assert.AreEqual("TInner", access.TypeName);
+            Assert.IsTrue(access.IsInferred);
+            Assert.AreEqual(0, session.Items[0x2000].Fields.Count);
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferUnknownClassFieldForIndexedOrOutOfRangeAccess()
+    {
+        byte[][] codeSamples =
+        [
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x89, 0xc2,
+                0x8b, 0x4c, 0x02, 0x0c,
+                0xc3
+            ],
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x89, 0xc2,
+                0x8b, 0x4a, 0x14,
+                0xc3
+            ],
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x89, 0xc2,
+                0x8b, 0x4a, 0x12,
+                0xc3
+            ]
+        ];
+
+        foreach (byte[] code in codeSamples)
+        {
+            AnalysisSession session = CreateClassFieldAccessSession(
+                code,
+                useParentField: false);
+            session.Items[0x2000].Fields = [];
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.AreEqual(0, session.Items[0x100c].MemberAccessCandidates.Count);
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferUnknownClassFieldForExplicitSegmentPrefix()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x89, 0xc2,
+                0x3e, 0x8b, 0x4a, 0x0c,
+                0xc3
+            ],
+            useParentField: false);
+        session.Items[0x2000].Fields = [];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x100c].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferUnknownClassFieldWithoutKnownInstanceSize()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xe8, 0x16, 0x00, 0x00, 0x00,
+                0x89, 0xc2,
+                0x8b, 0x4a, 0x0c,
+                0xc3
+            ],
+            useParentField: false);
+        session.Items[0x2000].Fields = [];
+        session.Items[0x2000].ClassInstanceSizeBytes = null;
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x100c].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
     public async Task AnalysisResolvesClassFieldWhenAddressFormedByAddImmediate()
     {
         AnalysisSession session = CreateClassFieldAccessSession(

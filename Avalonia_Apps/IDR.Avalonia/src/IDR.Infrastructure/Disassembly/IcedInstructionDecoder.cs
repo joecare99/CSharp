@@ -56,14 +56,18 @@ public sealed class IcedInstructionDecoder : IInstructionDecoder
             flowControl,
             formattedOutput.ToString())
         {
-            Operands = DecodeOperands(instruction),
+            Operands = DecodeOperands(instruction, bytes),
             HasRepeatPrefix = instruction.HasRepPrefix || instruction.HasRepnePrefix
         };
     }
 
-    private static DecodedOperand[] DecodeOperands(Instruction instruction)
+    private static DecodedOperand[] DecodeOperands(
+        Instruction instruction,
+        ReadOnlySpan<byte> instructionBytes)
     {
         DecodedOperand[] operands = new DecodedOperand[instruction.OpCount];
+        bool hasSegmentPrefix = instruction.HasSegmentPrefix
+            || HasSegmentOverridePrefix(instructionBytes);
         for (int index = 0; index < operands.Length; index++)
         {
             OpKind kind = instruction.GetOpKind(index);
@@ -82,7 +86,8 @@ public sealed class IcedInstructionDecoder : IInstructionDecoder
                         ? null
                         : instruction.MemoryIndex.ToString(),
                     Displacement: instruction.MemoryDisplacement64,
-                    MemorySizeBytes: instruction.MemorySize.GetSize()),
+                    MemorySizeBytes: instruction.MemorySize.GetSize(),
+                    HasSegmentPrefix: hasSegmentPrefix),
                 OpKind.NearBranch16 or OpKind.NearBranch32 or OpKind.NearBranch64 =>
                     new DecodedOperand(
                         DecodedOperandKind.NearBranch,
@@ -103,6 +108,24 @@ public sealed class IcedInstructionDecoder : IInstructionDecoder
         }
 
         return operands;
+    }
+
+    private static bool HasSegmentOverridePrefix(ReadOnlySpan<byte> instructionBytes)
+    {
+        foreach (byte value in instructionBytes)
+        {
+            if (value is 0x2e or 0x36 or 0x3e or 0x26 or 0x64 or 0x65)
+            {
+                return true;
+            }
+
+            if (value is not (0xf0 or 0xf2 or 0xf3 or 0x66 or 0x67))
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     private static bool HasNearBranchOperand(Instruction instruction)

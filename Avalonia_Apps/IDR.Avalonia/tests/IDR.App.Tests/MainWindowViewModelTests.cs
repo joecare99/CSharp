@@ -262,12 +262,15 @@ public sealed class MainWindowViewModelTests
         session.GetOrAddItem(0x2000).Name = "Integer";
         item.MemberAccessCandidates =
         [
-            new MemberAccessCandidate("TForm", 8, "FCount", 0x2000, "Integer")
+            new MemberAccessCandidate("TForm", 8, "FCount", 0x2000, "Integer"),
+            new MemberAccessCandidate("TForm", 12, "f12", null, null, IsInferred: true)
         ];
 
         AnalysisItemViewModel viewModel = new(item, session);
 
-        Assert.AreEqual("TForm.FCount (+0x8): Integer", viewModel.MemberAccessCandidates);
+        Assert.AreEqual(
+            "TForm.FCount (+0x8): Integer, [inferred] TForm.f12 (+0xC)",
+            viewModel.MemberAccessCandidates);
         Assert.AreEqual("12 bytes", viewModel.RecordSize);
         Assert.AreEqual("24 bytes", viewModel.ClassInstanceSize);
         Assert.AreEqual("f4 @ 4: Integer", viewModel.RecordFields);

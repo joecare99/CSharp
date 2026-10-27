@@ -22,6 +22,7 @@ public sealed class CommandLineHostTests
         (string Text, DelphiVersion Expected)[] cases =
         [
             ("7", DelphiVersion.Delphi7),
+            ("8", DelphiVersion.Delphi8),
             ("Delphi2007", DelphiVersion.Delphi2007),
             ("2010", DelphiVersion.Delphi2010),
             ("XE2", DelphiVersion.DelphiXE2),
@@ -127,6 +128,14 @@ public sealed class CommandLineHostTests
             Assert.AreEqual(
                 "Button1",
                 form.GetProperty("Root").GetProperty("Children")[0].GetProperty("Name").GetString());
+            JsonElement memberAccess = root.GetProperty("Items")
+                .EnumerateArray()
+                .Single()
+                .GetProperty("MemberAccessCandidates")
+                .EnumerateArray()
+                .Single();
+            Assert.IsTrue(memberAccess.GetProperty("IsInferred").GetBoolean());
+            Assert.AreEqual("f12", memberAccess.GetProperty("FieldName").GetString());
 
             int summaryExitCode = await host.RunAsync(
             [
@@ -198,7 +207,19 @@ public sealed class CommandLineHostTests
         public Task<AnalysisResult> AnalyzeAsync(
             AnalysisSession session,
             IProgress<AnalysisProgress>? progress,
-            CancellationToken cancellationToken) =>
-            Task.FromResult(new AnalysisResult(session, Array.Empty<string>()));
+            CancellationToken cancellationToken)
+        {
+            session.GetOrAddItem(0x1000).MemberAccessCandidates =
+            [
+                new MemberAccessCandidate(
+                    "TForm",
+                    12,
+                    "f12",
+                    null,
+                    null,
+                    IsInferred: true)
+            ];
+            return Task.FromResult(new AnalysisResult(session, Array.Empty<string>()));
+        }
     }
 }

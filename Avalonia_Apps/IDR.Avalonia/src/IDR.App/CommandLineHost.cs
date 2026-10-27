@@ -51,7 +51,7 @@ public sealed class CommandLineHost
         Option<string> versionOption = new("--delphi-version")
         {
             Aliases = { "--version" },
-            Description = "Delphi version (for example 7, 2007, 2009, 2010, XE1, XE2, XE3, or XE4).",
+            Description = "Delphi version (for example 7, 8, 2007, 2009, 2010, XE1, XE2, XE3, or XE4).",
             Required = true
         };
         Option<string?> knowledgeBaseOption = new("--knowledge-base")
