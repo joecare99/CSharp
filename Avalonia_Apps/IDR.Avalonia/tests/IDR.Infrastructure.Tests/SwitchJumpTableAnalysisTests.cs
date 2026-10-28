@@ -38,6 +38,102 @@ public sealed class SwitchJumpTableAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisTransfersClassRegisterContextToSwitchCases()
+    {
+        byte[] image = new byte[0x80];
+        image[0] = 0xb9;
+        WriteUInt32(image, 1, 0x402030);
+        image[5] = 0x83;
+        image[6] = 0xf8;
+        image[7] = 0x01;
+        image[8] = 0xff;
+        image[9] = 0x24;
+        image[10] = 0x85;
+        WriteUInt32(image, 11, 0x402020);
+        image[15] = 0xc3;
+        image[0x20] = 0x8b;
+        image[0x21] = 0x41;
+        image[0x22] = 0x08;
+        image[0x23] = 0xc3;
+        WriteUInt32(image, 0x60, 0x401020);
+
+        AnalysisSession session = new(
+            "switch-class-context.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem classVmt = session.GetOrAddItem(0x2030);
+        classVmt.Name = "TChild";
+        classVmt.SetFlags(AnalysisFlags.Vmt);
+        classVmt.ClassInstanceSizeBytes = 20;
+        classVmt.Fields = [new DelphiVmtField("FCount", 8, 0x2038)];
+        session.GetOrAddItem(0x2038).Name = "Integer";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(
+            "FCount",
+            session.Items[0x1020].MemberAccessCandidates.Single().FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTransfersTrackedGlobalAddressContextToSwitchCases()
+    {
+        byte[] image = new byte[0x80];
+        image[0] = 0xbb;
+        WriteUInt32(image, 1, 0x402020);
+        image[5] = 0x83;
+        image[6] = 0xf8;
+        image[7] = 0x01;
+        image[8] = 0xff;
+        image[9] = 0x24;
+        image[10] = 0x85;
+        WriteUInt32(image, 11, 0x402024);
+        image[15] = 0xc3;
+        image[0x20] = 0x8b;
+        image[0x21] = 0x13;
+        image[0x22] = 0x8b;
+        image[0x23] = 0x4a;
+        image[0x24] = 0x08;
+        image[0x25] = 0xc3;
+        WriteUInt32(image, 0x60, 0x402030);
+        WriteUInt32(image, 0x64, 0x401020);
+
+        AnalysisSession session = new(
+            "switch-global-address-context.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem classVmt = session.GetOrAddItem(0x2030);
+        classVmt.Name = "TChild";
+        classVmt.SetFlags(AnalysisFlags.Vmt);
+        classVmt.ClassInstanceSizeBytes = 20;
+        classVmt.Fields = [new DelphiVmtField("FCount", 8, 0x2038)];
+        session.GetOrAddItem(0x2038).Name = "Integer";
+        session.GetOrAddItem(0x2020).DataTypeCandidate = "TChild";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1022].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
     public async Task AnalysisDoesNotClassifyIndexedJumpWithUnmappedTable()
     {
         byte[] image = CreateSwitchImage(0x402000);

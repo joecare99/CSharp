@@ -5,4 +5,5 @@ public sealed record MemberAccessCandidate(
     int Offset,
     string FieldName,
     uint? TypeInfoAddress,
-    string? TypeName);
+    string? TypeName,
+    bool IsInferred = false);

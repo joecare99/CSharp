@@ -100,6 +100,7 @@ public enum DelphiVersion
     Delphi5 = 5,
     Delphi6 = 6,
     Delphi7 = 7,
+    Delphi8 = 8,
     Delphi2005 = 2005,
     Delphi2006 = 2006,
     Delphi2007 = 2007,
@@ -136,7 +137,8 @@ public sealed record DecodedOperand(
     string? IndexRegister = null,
     ulong? Displacement = null,
     ulong? Immediate = null,
-    int? MemorySizeBytes = null);
+    int? MemorySizeBytes = null,
+    bool HasSegmentPrefix = false);
 
 public enum DecodedOperandKind
 {
@@ -179,7 +181,24 @@ public sealed record KnowledgeBaseProcedure(
     string Name,
     byte DumpType,
     ReadOnlyMemory<byte> Code,
-    ReadOnlyMemory<byte> Relocations);
+    ReadOnlyMemory<byte> Relocations)
+{
+    public byte MethodKind { get; init; }
+
+    public byte CallingConvention { get; init; }
+
+    public string ReturnType { get; init; } = string.Empty;
+
+    public IReadOnlyList<KnowledgeBaseArgument> Arguments { get; init; } = Array.Empty<KnowledgeBaseArgument>();
+}
+
+public sealed record KnowledgeBaseArgument(
+    byte Tag,
+    bool IsRegister,
+    int RegisterOrStackIndex,
+    int SizeBytes,
+    string Name,
+    string TypeName);
 
 public static class DelphiRuntimeHandlerSymbols
 {

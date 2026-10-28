@@ -61,6 +61,7 @@ public sealed class IcedInstructionDecoderTests
             32);
         DecodedInstruction pushFs = decoder.Decode([0x64, 0xff, 0x30], 0x1007, 32);
         DecodedInstruction setFs = decoder.Decode([0x64, 0x89, 0x20], 0x100a, 32);
+        DecodedInstruction explicitDs = decoder.Decode([0x3e, 0x8b, 0x4a, 0x0c], 0x100d, 32);
 
         Assert.AreEqual(DecodedOperandKind.Register, xor.Operands[0].Kind);
         Assert.AreEqual(xor.Operands[0].Register, xor.Operands[1].Register);
@@ -70,8 +71,12 @@ public sealed class IcedInstructionDecoderTests
         Assert.AreEqual("FS", pushFs.Operands[0].SegmentRegister);
         Assert.AreEqual("EAX", pushFs.Operands[0].BaseRegister);
         Assert.AreEqual(4, pushFs.Operands[0].MemorySizeBytes);
+        Assert.IsTrue(pushFs.Operands[0].HasSegmentPrefix);
         Assert.AreEqual("FS", setFs.Operands[0].SegmentRegister);
         Assert.AreEqual("ESP", setFs.Operands[1].Register);
+        Assert.AreEqual(DecodedOperandKind.Memory, explicitDs.Operands[1].Kind);
+        Assert.AreEqual("DS", explicitDs.Operands[1].SegmentRegister);
+        Assert.IsTrue(explicitDs.Operands[1].HasSegmentPrefix);
     }
 
     [TestMethod]
