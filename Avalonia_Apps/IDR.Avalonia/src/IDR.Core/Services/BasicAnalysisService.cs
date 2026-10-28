@@ -2,6 +2,7 @@ using IDR.Core.Models;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -13,6 +14,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 {
     private const int MaximumInstructionsPerProcedure = 4096;
     private const int MaximumCodeStarts = 16384;
+    private const int MaximumCodeStartIterations = 65536;
     private const int MaximumMetadataEntryCount = 10000;
     private const int MaximumKnowledgeBaseSignatureSize = 512;
     private const int MaximumSwitchTableEntryCount = 4096;
@@ -1892,19 +1894,14 @@ public sealed class BasicAnalysisService : IAnalysisService
         uint? lastCompareAddress,
         uint codeStart,
         Queue<(uint Address, bool IsProcedureStart)> codeStarts,
-        HashSet<uint> queuedStarts,
-        IReadOnlyDictionary<int, string> classRegisterTypes,
-        Dictionary<uint, Dictionary<int, string>> branchClassContexts,
-        IReadOnlyDictionary<int, ulong> registerAddressValues,
-        Dictionary<uint, Dictionary<int, ulong>> branchRegisterAddressContexts,
-        IReadOnlyDictionary<int, int> dynamicMethodIds,
-        Dictionary<uint, Dictionary<int, int>> branchDynamicMethodIdContexts,
-        IReadOnlyDictionary<int, int> registerLocalOffsets,
-        Dictionary<uint, Dictionary<int, int>> branchRegisterLocalOffsetContexts,
-        IReadOnlyDictionary<int, uint> registerStackArgumentOffsets,
-        Dictionary<uint, Dictionary<int, uint>> branchRegisterStackArgumentContexts,
-        IReadOnlyList<RegisterStackState> registerStack,
-        Dictionary<uint, List<RegisterStackState>> branchRegisterStackContexts,
+        HashSet<uint> scheduledStarts,
+        HashSet<uint> processedStarts,
+        HashSet<uint> processedProcedureStarts,
+        HashSet<uint> coveredStarts,
+        ProcedureFlowState flowState,
+        Dictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges,
+        Dictionary<uint, ProcedureFlowState> branchFlowContexts,
+        HashSet<uint> flowTargets,
         CancellationToken cancellationToken)
     {
         if (instruction.FlowControl != InstructionFlowControl.IndirectBranch
@@ -1958,35 +1955,31 @@ public sealed class BasicAnalysisService : IAnalysisService
             session.GetOrAddItem(compareAddress).SetFlags(AnalysisFlags.Switch);
         }
 
-        foreach ((uint entryRva, uint targetRva) in entries)
+        for (int index = 0; index < entries.Count; index++)
         {
+            (uint entryRva, uint targetRva) = entries[index];
             session.GetOrAddItem(entryRva).SetFlags(AnalysisFlags.Data | AnalysisFlags.SwitchTable);
             session.AddCrossReference(checked((uint)instruction.Address), targetRva, CrossReferenceKind.Jump);
-            MergeBranchClassContext(targetRva, classRegisterTypes, branchClassContexts);
-            MergeBranchRegisterAddressContext(
+            bool flowContextChanged = UpdateFlowContextForEdge(
+                checked((uint)instruction.Address),
                 targetRva,
-                registerAddressValues,
-                branchRegisterAddressContexts);
-            MergeBranchRegisterOriginContext(
+                FlowEdgeKind.SwitchCase,
+                index,
+                flowState,
+                incomingFlowEdges,
+                branchFlowContexts);
+            flowTargets.Add(targetRva);
+            bool isProcedureStart = session.Items.TryGetValue(targetRva, out AnalysisItem? targetItem)
+                && targetItem.Flags.HasFlag(AnalysisFlags.ProcedureStart);
+            ScheduleCodeStart(
                 targetRva,
-                dynamicMethodIds,
-                branchDynamicMethodIdContexts);
-            MergeBranchRegisterStackContext(
-                targetRva,
-                registerStack,
-                branchRegisterStackContexts);
-            MergeBranchRegisterOriginContext(
-                targetRva,
-                registerLocalOffsets,
-                branchRegisterLocalOffsetContexts);
-            MergeBranchRegisterOriginContext(
-                targetRva,
-                registerStackArgumentOffsets,
-                branchRegisterStackArgumentContexts);
-            if (queuedStarts.Add(targetRva))
-            {
-                codeStarts.Enqueue((targetRva, false));
-            }
+                isProcedureStart,
+                codeStarts,
+                scheduledStarts,
+                processedStarts,
+                processedProcedureStarts,
+                coveredStarts,
+                flowContextChanged);
         }
 
         return true;
@@ -1997,18 +1990,15 @@ public sealed class BasicAnalysisService : IAnalysisService
         uint targetRva,
         uint tableRva,
         Queue<(uint Address, bool IsProcedureStart)> codeStarts,
-        HashSet<uint> queuedStarts,
-        Dictionary<uint, Dictionary<int, string>> branchClassContexts,
-        IReadOnlyDictionary<int, ulong> registerAddressValues,
-        Dictionary<uint, Dictionary<int, ulong>> branchRegisterAddressContexts,
-        IReadOnlyDictionary<int, int> dynamicMethodIds,
-        Dictionary<uint, Dictionary<int, int>> branchDynamicMethodIdContexts,
-        IReadOnlyDictionary<int, int> registerLocalOffsets,
-        Dictionary<uint, Dictionary<int, int>> branchRegisterLocalOffsetContexts,
-        IReadOnlyDictionary<int, uint> registerStackArgumentOffsets,
-        Dictionary<uint, Dictionary<int, uint>> branchRegisterStackArgumentContexts,
-        IReadOnlyList<RegisterStackState> registerStack,
-        Dictionary<uint, List<RegisterStackState>> branchRegisterStackContexts,
+        HashSet<uint> scheduledStarts,
+        HashSet<uint> processedStarts,
+        HashSet<uint> processedProcedureStarts,
+        HashSet<uint> coveredStarts,
+        uint sourceAddress,
+        ProcedureFlowState flowState,
+        Dictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges,
+        Dictionary<uint, ProcedureFlowState> branchFlowContexts,
+        HashSet<uint> flowTargets,
         List<string> diagnostics,
         CancellationToken cancellationToken)
     {
@@ -2054,51 +2044,40 @@ public sealed class BasicAnalysisService : IAnalysisService
             handlers.Add(new DelphiExceptionHandler(exceptionInfoRva, procedureRva));
             if (procedureRva is uint validProcedureRva)
             {
-                Dictionary<int, ulong> handlerAddressContext = new(registerAddressValues);
-                handlerAddressContext.Remove(0);
-                MergeBranchRegisterAddressContext(
-                    validProcedureRva,
-                    handlerAddressContext,
-                    branchRegisterAddressContexts);
-                Dictionary<int, int> handlerDynamicMethodIdContext = new(dynamicMethodIds);
-                handlerDynamicMethodIdContext.Remove(0);
-                MergeBranchRegisterOriginContext(
-                    validProcedureRva,
-                    handlerDynamicMethodIdContext,
-                    branchDynamicMethodIdContexts);
-                MergeBranchRegisterStackContext(
-                    validProcedureRva,
-                    registerStack,
-                    branchRegisterStackContexts);
-                Dictionary<int, int> handlerLocalOffsetContext = new(registerLocalOffsets);
-                handlerLocalOffsetContext.Remove(0);
-                MergeBranchRegisterOriginContext(
-                    validProcedureRva,
-                    handlerLocalOffsetContext,
-                    branchRegisterLocalOffsetContexts);
-                Dictionary<int, uint> handlerStackArgumentContext = new(registerStackArgumentOffsets);
-                handlerStackArgumentContext.Remove(0);
-                MergeBranchRegisterOriginContext(
-                    validProcedureRva,
-                    handlerStackArgumentContext,
-                    branchRegisterStackArgumentContexts);
+                ProcedureFlowState handlerFlowState = flowState.WithoutRegister(0);
 
                 if (exceptionInfoRva is uint validExceptionInfoRva
                     && session.Items.TryGetValue(validExceptionInfoRva, out AnalysisItem? exceptionClass)
                     && exceptionClass.Flags.HasFlag(AnalysisFlags.Vmt)
                     && !string.IsNullOrWhiteSpace(exceptionClass.Name))
                 {
-                    MergeBranchClassContext(
-                        validProcedureRva,
-                        new Dictionary<int, string> { [0] = exceptionClass.Name },
-                        branchClassContexts);
+                    handlerFlowState = handlerFlowState with
+                    {
+                        ClassRegisterTypes = handlerFlowState.ClassRegisterTypes.SetItem(
+                            0,
+                            exceptionClass.Name)
+                    };
                 }
 
+                bool flowContextChanged = UpdateFlowContextForEdge(
+                    sourceAddress,
+                    validProcedureRva,
+                    FlowEdgeKind.ExceptionHandler,
+                    index,
+                    handlerFlowState,
+                    incomingFlowEdges,
+                    branchFlowContexts);
+                flowTargets.Add(validProcedureRva);
                 session.GetOrAddItem(validProcedureRva).SetFlags(AnalysisFlags.ProcedureStart);
-                if (queuedStarts.Add(validProcedureRva))
-                {
-                    codeStarts.Enqueue((validProcedureRva, true));
-                }
+                ScheduleCodeStart(
+                    validProcedureRva,
+                    true,
+                    codeStarts,
+                    scheduledStarts,
+                    processedStarts,
+                    processedProcedureStarts,
+                    coveredStarts,
+                    flowContextChanged);
             }
         }
 
@@ -2797,6 +2776,67 @@ public sealed class BasicAnalysisService : IAnalysisService
         uint? StackArgumentOffset,
         int? DynamicMethodId);
 
+    private enum FlowEdgeKind
+    {
+        FallThrough,
+        Branch,
+        SwitchCase,
+        ExceptionHandler,
+        Root
+    }
+
+    private readonly record struct FlowEdgeKey(
+        uint SourceAddress,
+        uint TargetAddress,
+        FlowEdgeKind Kind,
+        int Ordinal);
+
+    private sealed record ProcedureFlowState(
+        ImmutableDictionary<int, string> ClassRegisterTypes,
+        ImmutableDictionary<int, ulong> RegisterAddressValues,
+        ImmutableDictionary<int, int> DynamicMethodIds,
+        ImmutableDictionary<int, int> RegisterLocalOffsets,
+        ImmutableDictionary<int, uint> RegisterStackArgumentOffsets,
+        ImmutableArray<RegisterStackState> RegisterStack)
+    {
+        public static ProcedureFlowState Empty { get; } = new(
+            ImmutableDictionary<int, string>.Empty,
+            ImmutableDictionary<int, ulong>.Empty,
+            ImmutableDictionary<int, int>.Empty,
+            ImmutableDictionary<int, int>.Empty,
+            ImmutableDictionary<int, uint>.Empty,
+            ImmutableArray<RegisterStackState>.Empty);
+
+        public static ProcedureFlowState Capture(
+            IReadOnlyDictionary<int, string> classRegisterTypes,
+            IReadOnlyDictionary<int, ulong> registerAddressValues,
+            IReadOnlyDictionary<int, int> dynamicMethodIds,
+            IReadOnlyDictionary<int, int> registerLocalOffsets,
+            IReadOnlyDictionary<int, uint> registerStackArgumentOffsets,
+            IReadOnlyList<RegisterStackState> registerStack)
+        {
+            return new ProcedureFlowState(
+                classRegisterTypes.ToImmutableDictionary(),
+                registerAddressValues.ToImmutableDictionary(),
+                dynamicMethodIds.ToImmutableDictionary(),
+                registerLocalOffsets.ToImmutableDictionary(),
+                registerStackArgumentOffsets.ToImmutableDictionary(),
+                registerStack.ToImmutableArray());
+        }
+
+        public ProcedureFlowState WithoutRegister(int registerIndex)
+        {
+            return this with
+            {
+                ClassRegisterTypes = ClassRegisterTypes.Remove(registerIndex),
+                RegisterAddressValues = RegisterAddressValues.Remove(registerIndex),
+                DynamicMethodIds = DynamicMethodIds.Remove(registerIndex),
+                RegisterLocalOffsets = RegisterLocalOffsets.Remove(registerIndex),
+                RegisterStackArgumentOffsets = RegisterStackArgumentOffsets.Remove(registerIndex)
+            };
+        }
+    }
+
     private void AnalyzeCode(
         AnalysisSession session,
         IProgress<AnalysisProgress>? progress,
@@ -2807,36 +2847,55 @@ public sealed class BasicAnalysisService : IAnalysisService
         Dictionary<uint, uint> returnedCallTargets = [];
         Dictionary<uint, string> procedureOwnerClassNames = BuildProcedureOwnerClassNames(session);
         HashSet<uint> functionCandidateTargets = [];
-        HashSet<uint> queuedStarts = [session.EntryPointRva];
+        HashSet<uint> scheduledStarts = [session.EntryPointRva];
+        HashSet<uint> processedStarts = [];
+        HashSet<uint> processedProcedureStarts = [];
+        HashSet<uint> coveredStarts = [];
         HashSet<uint> decodedAddresses = [];
+        HashSet<uint> flowTargets = [];
+        Dictionary<uint, ProcedureFlowState> decodedFlowStates = [];
         Dictionary<uint, DecodedInstruction> decodedInstructions = [];
-        Dictionary<uint, Dictionary<int, string>> branchClassContexts = [];
-        Dictionary<uint, Dictionary<int, ulong>> branchRegisterAddressContexts = [];
-        Dictionary<uint, Dictionary<int, int>> branchDynamicMethodIdContexts = [];
-        Dictionary<uint, Dictionary<int, int>> branchRegisterLocalOffsetContexts = [];
-        Dictionary<uint, Dictionary<int, uint>> branchRegisterStackArgumentContexts = [];
-        Dictionary<uint, List<RegisterStackState>> branchRegisterStackContexts = [];
+        Dictionary<uint, ProcedureFlowState> branchFlowContexts = [];
+        Dictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges = [];
         codeStarts.Enqueue((session.EntryPointRva, true));
         foreach (AnalysisItem item in session.Items.Values)
         {
             if (item.Flags.HasFlag(AnalysisFlags.ProcedureStart)
                 && item.Address != session.EntryPointRva
-                && TryGetCodeSection(session, item.Address, out _, out _)
-                && queuedStarts.Add(item.Address))
+                && TryGetCodeSection(session, item.Address, out _, out _))
             {
-                codeStarts.Enqueue((item.Address, true));
+                ScheduleCodeStart(
+                    item.Address,
+                    true,
+                    codeStarts,
+                    scheduledStarts,
+                    processedStarts,
+                    processedProcedureStarts,
+                    coveredStarts);
             }
         }
 
         int completedStarts = 0;
+        int completedIterations = 0;
         progress?.Report(new AnalysisProgress("CodeScan", 0, MaximumCodeStarts));
 
-        while (codeStarts.Count > 0 && completedStarts < MaximumCodeStarts)
+        while (codeStarts.Count > 0
+            && processedStarts.Count < MaximumCodeStarts
+            && completedIterations < MaximumCodeStartIterations)
         {
             cancellationToken.ThrowIfCancellationRequested();
             (uint codeStart, bool isProcedureStart) = codeStarts.Dequeue();
-            if (decodedAddresses.Contains(codeStart))
+            scheduledStarts.Remove(codeStart);
+            completedIterations++;
+            isProcedureStart |= session.Items.TryGetValue(codeStart, out AnalysisItem? queuedItem)
+                && queuedItem.Flags.HasFlag(AnalysisFlags.ProcedureStart);
+            if (decodedFlowStates.TryGetValue(codeStart, out ProcedureFlowState? previouslyDecodedState)
+                && AreFlowStatesEqual(
+                    previouslyDecodedState,
+                    branchFlowContexts.GetValueOrDefault(codeStart, ProcedureFlowState.Empty))
+                && (!isProcedureStart || processedProcedureStarts.Contains(codeStart)))
             {
+                coveredStarts.Add(codeStart);
                 continue;
             }
 
@@ -2847,7 +2906,13 @@ public sealed class BasicAnalysisService : IAnalysisService
                     diagnostics.Add("The entry point is not mapped to raw code-section data.");
                 }
 
-                completedStarts++;
+                processedStarts.Add(codeStart);
+                if (isProcedureStart)
+                {
+                    processedProcedureStarts.Add(codeStart);
+                }
+
+                completedStarts = processedStarts.Count;
                 progress?.Report(new AnalysisProgress(
                     "CodeScan",
                     completedStarts,
@@ -2879,73 +2944,44 @@ public sealed class BasicAnalysisService : IAnalysisService
             uint? pendingReturnCallTarget = null;
             uint? pendingFunctionResultTarget = null;
             uint? pendingX87ResultTarget = null;
+            HashSet<uint> visitedAddresses = [];
             bool[] availableRegisterArguments = [true, true, true];
             bool[] usedRegisterArguments = [false, false, false];
-            Dictionary<int, string> classRegisterTypes = [];
-            if (branchClassContexts.TryGetValue(codeStart, out Dictionary<int, string>? branchClassContext))
+            if (isProcedureStart
+                && (codeStart == session.EntryPointRva
+                    || procedureOwnerClassNames.ContainsKey(codeStart)))
             {
-                foreach ((int registerIndex, string classType) in branchClassContext)
+                ProcedureFlowState rootFlowState = ProcedureFlowState.Empty;
+                if (procedureOwnerClassNames.TryGetValue(codeStart, out string? ownerClassName))
                 {
-                    classRegisterTypes.Add(registerIndex, classType);
+                    rootFlowState = rootFlowState with
+                    {
+                        ClassRegisterTypes = rootFlowState.ClassRegisterTypes.SetItem(
+                            0,
+                            ownerClassName)
+                    };
                 }
+
+                UpdateFlowContextForEdge(
+                    codeStart,
+                    codeStart,
+                    FlowEdgeKind.Root,
+                    0,
+                    rootFlowState,
+                    incomingFlowEdges,
+                    branchFlowContexts);
             }
 
-            List<RegisterStackState> registerStack = [];
-            if (branchRegisterStackContexts.TryGetValue(
+            ProcedureFlowState entryFlowState = branchFlowContexts.GetValueOrDefault(
                 codeStart,
-                out List<RegisterStackState>? branchRegisterStackContext))
-            {
-                registerStack.AddRange(branchRegisterStackContext);
-            }
-
-            if (procedureOwnerClassNames.TryGetValue(codeStart, out string? ownerClassName))
-            {
-                classRegisterTypes[0] = ownerClassName;
-            }
-
-            Dictionary<int, ulong> registerAddressValues = [];
-            if (branchRegisterAddressContexts.TryGetValue(
-                codeStart,
-                out Dictionary<int, ulong>? branchRegisterAddressContext))
-            {
-                foreach ((int registerIndex, ulong address) in branchRegisterAddressContext)
-                {
-                    registerAddressValues.Add(registerIndex, address);
-                }
-            }
-
-            Dictionary<int, int> dynamicMethodIds = [];
-            if (branchDynamicMethodIdContexts.TryGetValue(
-                codeStart,
-                out Dictionary<int, int>? branchDynamicMethodIdContext))
-            {
-                foreach ((int registerIndex, int methodId) in branchDynamicMethodIdContext)
-                {
-                    dynamicMethodIds.Add(registerIndex, methodId);
-                }
-            }
-
-            Dictionary<int, int> registerLocalOffsets = [];
-            if (branchRegisterLocalOffsetContexts.TryGetValue(
-                codeStart,
-                out Dictionary<int, int>? branchRegisterLocalOffsetContext))
-            {
-                foreach ((int registerIndex, int localOffset) in branchRegisterLocalOffsetContext)
-                {
-                    registerLocalOffsets.Add(registerIndex, localOffset);
-                }
-            }
-
-            Dictionary<int, uint> registerStackArgumentOffsets = [];
-            if (branchRegisterStackArgumentContexts.TryGetValue(
-                codeStart,
-                out Dictionary<int, uint>? branchRegisterStackArgumentContext))
-            {
-                foreach ((int registerIndex, uint argumentOffset) in branchRegisterStackArgumentContext)
-                {
-                    registerStackArgumentOffsets.Add(registerIndex, argumentOffset);
-                }
-            }
+                ProcedureFlowState.Empty);
+            Dictionary<int, string> classRegisterTypes = entryFlowState.ClassRegisterTypes.ToDictionary();
+            List<RegisterStackState> registerStack = entryFlowState.RegisterStack.ToList();
+            Dictionary<int, ulong> registerAddressValues = entryFlowState.RegisterAddressValues.ToDictionary();
+            Dictionary<int, int> dynamicMethodIds = entryFlowState.DynamicMethodIds.ToDictionary();
+            Dictionary<int, int> registerLocalOffsets = entryFlowState.RegisterLocalOffsets.ToDictionary();
+            Dictionary<int, uint> registerStackArgumentOffsets =
+                entryFlowState.RegisterStackArgumentOffsets.ToDictionary();
 
             Dictionary<int, StackLocalVariable> stackLocalVariables = [];
             string? returnTypeCandidate = null;
@@ -3006,64 +3042,30 @@ public sealed class BasicAnalysisService : IAnalysisService
                         $"The decoder returned address 0x{instruction.Address:X8} for instruction RVA 0x{currentRva:X8}.");
                 }
 
-                if (!decodedAddresses.Add(currentRva))
+                if (!visitedAddresses.Add(currentRva))
                 {
                     break;
                 }
+                decodedAddresses.Add(currentRva);
 
                 if (currentRva != codeStart
-                    && branchClassContexts.TryGetValue(
-                        currentRva,
-                        out Dictionary<int, string>? incomingClassContext))
+                    && branchFlowContexts.TryGetValue(currentRva, out ProcedureFlowState? incomingFlowState))
                 {
-                    MergeKnownRegisterTypes(classRegisterTypes, incomingClassContext);
-                }
-
-                if (currentRva != codeStart
-                    && branchRegisterAddressContexts.TryGetValue(
-                        currentRva,
-                        out Dictionary<int, ulong>? incomingRegisterAddressContext))
-                {
-                    MergeKnownRegisterAddresses(registerAddressValues, incomingRegisterAddressContext);
-                }
-
-                if (currentRva != codeStart
-                    && branchDynamicMethodIdContexts.TryGetValue(
-                        currentRva,
-                        out Dictionary<int, int>? incomingDynamicMethodIdContext))
-                {
-                    MergeKnownRegisterOrigins(dynamicMethodIds, incomingDynamicMethodIdContext);
-                }
-
-                if (currentRva != codeStart
-                    && branchRegisterStackContexts.TryGetValue(
-                        currentRva,
-                        out List<RegisterStackState>? incomingRegisterStackContext))
-                {
-                    MergeKnownRegisterStack(registerStack, incomingRegisterStackContext);
-                }
-
-                if (currentRva != codeStart
-                    && branchRegisterLocalOffsetContexts.TryGetValue(
-                        currentRva,
-                        out Dictionary<int, int>? incomingRegisterLocalOffsetContext))
-                {
+                    MergeKnownRegisterTypes(classRegisterTypes, incomingFlowState.ClassRegisterTypes);
+                    MergeKnownRegisterAddresses(
+                        registerAddressValues,
+                        incomingFlowState.RegisterAddressValues);
+                    MergeKnownRegisterOrigins(dynamicMethodIds, incomingFlowState.DynamicMethodIds);
+                    MergeKnownRegisterStack(registerStack, incomingFlowState.RegisterStack);
                     MergeKnownRegisterOrigins(
                         registerLocalOffsets,
-                        incomingRegisterLocalOffsetContext);
-                }
-
-                if (currentRva != codeStart
-                    && branchRegisterStackArgumentContexts.TryGetValue(
-                        currentRva,
-                        out Dictionary<int, uint>? incomingRegisterStackArgumentContext))
-                {
+                        incomingFlowState.RegisterLocalOffsets);
                     MergeKnownRegisterOrigins(
                         registerStackArgumentOffsets,
-                        incomingRegisterStackArgumentContext);
+                        incomingFlowState.RegisterStackArgumentOffsets);
                 }
 
-                decodedInstructions.Add(currentRva, instruction);
+                decodedInstructions.TryAdd(currentRva, instruction);
                 decodedCount++;
                 DecodedInstruction classTypeInstruction = instruction;
                 AnalysisItem item = session.GetOrAddItem(currentRva);
@@ -3081,18 +3083,14 @@ public sealed class BasicAnalysisService : IAnalysisService
                     item.ThreadVariableCandidate = GetTlsThreadVariableCandidate(instruction);
                 }
 
-                Dictionary<int, string> classRegisterTypesBeforeInstruction =
-                    new(classRegisterTypes);
-                Dictionary<int, ulong> registerAddressValuesBeforeInstruction =
-                    new(registerAddressValues);
-                Dictionary<int, int> dynamicMethodIdsBeforeInstruction =
-                    new(dynamicMethodIds);
-                Dictionary<int, int> registerLocalOffsetsBeforeInstruction =
-                    new(registerLocalOffsets);
-                Dictionary<int, uint> registerStackArgumentOffsetsBeforeInstruction =
-                    new(registerStackArgumentOffsets);
-                List<RegisterStackState> registerStackBeforeInstruction =
-                    new(registerStack);
+                ProcedureFlowState flowStateBeforeInstruction = ProcedureFlowState.Capture(
+                    classRegisterTypes,
+                    registerAddressValues,
+                    dynamicMethodIds,
+                    registerLocalOffsets,
+                    registerStackArgumentOffsets,
+                    registerStack);
+                decodedFlowStates[currentRva] = flowStateBeforeInstruction;
                 bool isCallPopSequence = IsCallToNextInstructionFollowedByPop(session, instruction);
                 AnalyzeStackInstruction(instruction, currentRva, codeStart, isProcedureStart, startItem, item);
                 if (isProcedureStart)
@@ -3180,10 +3178,14 @@ public sealed class BasicAnalysisService : IAnalysisService
                             item.SetFlags(AnalysisFlags.Call);
                             session.GetOrAddItem(resolvedCallTarget)
                                 .SetFlags(AnalysisFlags.ProcedureStart);
-                            if (queuedStarts.Add(resolvedCallTarget))
-                            {
-                                codeStarts.Enqueue((resolvedCallTarget, true));
-                            }
+                            ScheduleCodeStart(
+                                resolvedCallTarget,
+                                true,
+                                codeStarts,
+                                scheduledStarts,
+                                processedStarts,
+                                processedProcedureStarts,
+                                coveredStarts);
                         }
 
                         if (IsTryFinallyExitCall(instruction, session))
@@ -3479,10 +3481,14 @@ public sealed class BasicAnalysisService : IAnalysisService
                             {
                                 session.GetOrAddItem((uint)branchTarget)
                                     .SetFlags(AnalysisFlags.ProcedureStart);
-                                if (queuedStarts.Add((uint)branchTarget))
-                                {
-                                    codeStarts.Enqueue(((uint)branchTarget, true));
-                                }
+                                ScheduleCodeStart(
+                                    (uint)branchTarget,
+                                    true,
+                                    codeStarts,
+                                    scheduledStarts,
+                                    processedStarts,
+                                    processedProcedureStarts,
+                                    coveredStarts);
                             }
                         }
                         else
@@ -3490,33 +3496,33 @@ public sealed class BasicAnalysisService : IAnalysisService
                             if ((instruction.FlowControl is
                                     InstructionFlowControl.ConditionalBranch
                                     or InstructionFlowControl.UnconditionalBranch)
-                                && branchTarget > currentRva
                                 && TryGetCodeSection(session, (uint)branchTarget, out _, out _))
                             {
-                                MergeBranchClassContext(
+                                bool flowContextChanged = UpdateFlowContextForEdge(
+                                    currentRva,
                                     (uint)branchTarget,
-                                    classRegisterTypes,
-                                    branchClassContexts);
-                                MergeBranchRegisterAddressContext(
+                                    FlowEdgeKind.Branch,
+                                    0,
+                                    ProcedureFlowState.Capture(
+                                        classRegisterTypes,
+                                        registerAddressValues,
+                                        dynamicMethodIds,
+                                        registerLocalOffsets,
+                                        registerStackArgumentOffsets,
+                                        registerStack),
+                                    incomingFlowEdges,
+                                    branchFlowContexts);
+                                flowTargets.Add((uint)branchTarget);
+                                AnalysisItem branchTargetItem = session.GetOrAddItem((uint)branchTarget);
+                                ScheduleCodeStart(
                                     (uint)branchTarget,
-                                    registerAddressValues,
-                                    branchRegisterAddressContexts);
-                                MergeBranchRegisterOriginContext(
-                                    (uint)branchTarget,
-                                    dynamicMethodIds,
-                                    branchDynamicMethodIdContexts);
-                                MergeBranchRegisterStackContext(
-                                    (uint)branchTarget,
-                                    registerStack,
-                                    branchRegisterStackContexts);
-                                MergeBranchRegisterOriginContext(
-                                    (uint)branchTarget,
-                                    registerLocalOffsets,
-                                    branchRegisterLocalOffsetContexts);
-                                MergeBranchRegisterOriginContext(
-                                    (uint)branchTarget,
-                                    registerStackArgumentOffsets,
-                                    branchRegisterStackArgumentContexts);
+                                    branchTargetItem.Flags.HasFlag(AnalysisFlags.ProcedureStart),
+                                    codeStarts,
+                                    scheduledStarts,
+                                    processedStarts,
+                                    processedProcedureStarts,
+                                    coveredStarts,
+                                    flowContextChanged);
                             }
 
                             if (branchTarget < currentRva
@@ -3528,13 +3534,6 @@ public sealed class BasicAnalysisService : IAnalysisService
                                 session.GetOrAddItem((uint)branchTarget).SetFlags(AnalysisFlags.Loop);
                             }
 
-                            if ((instruction.FlowControl is InstructionFlowControl.ConditionalBranch
-                                or InstructionFlowControl.UnconditionalBranch)
-                                && TryGetCodeSection(session, (uint)branchTarget, out _, out _)
-                                && queuedStarts.Add((uint)branchTarget))
-                            {
-                                codeStarts.Enqueue(((uint)branchTarget, false));
-                            }
                         }
                     }
                 }
@@ -3568,10 +3567,14 @@ public sealed class BasicAnalysisService : IAnalysisService
                     region.SetFlags(AnalysisFlags.ExceptionRegion);
                     region.ExceptionRegionHandlerAddress = handlerRva;
                     session.GetOrAddItem(handlerRva).SetFlags(AnalysisFlags.ExceptionHandler);
-                    if (queuedStarts.Add(handlerRva))
-                    {
-                        codeStarts.Enqueue((handlerRva, false));
-                    }
+                    ScheduleCodeStart(
+                        handlerRva,
+                        false,
+                        codeStarts,
+                        scheduledStarts,
+                        processedStarts,
+                        processedProcedureStarts,
+                        coveredStarts);
                 }
 
                 if (TryMatchDelphiFinallyEnd(
@@ -3640,22 +3643,55 @@ public sealed class BasicAnalysisService : IAnalysisService
                     lastCompareAddress,
                     codeStart,
                     codeStarts,
-                    queuedStarts,
-                    classRegisterTypesBeforeInstruction,
-                    branchClassContexts,
-                    registerAddressValuesBeforeInstruction,
-                    branchRegisterAddressContexts,
-                    dynamicMethodIdsBeforeInstruction,
-                    branchDynamicMethodIdContexts,
-                    registerLocalOffsetsBeforeInstruction,
-                    branchRegisterLocalOffsetContexts,
-                    registerStackArgumentOffsetsBeforeInstruction,
-                    branchRegisterStackArgumentContexts,
-                    registerStackBeforeInstruction,
-                    branchRegisterStackContexts,
+                    scheduledStarts,
+                    processedStarts,
+                    processedProcedureStarts,
+                    coveredStarts,
+                    flowStateBeforeInstruction,
+                    incomingFlowEdges,
+                    branchFlowContexts,
+                    flowTargets,
                     cancellationToken);
 
                 uint nextRva = checked(currentRva + (uint)instruction.Length);
+                if (!isHaltCall
+                    && instruction.FlowControl is not (
+                        InstructionFlowControl.Return
+                        or InstructionFlowControl.UnconditionalBranch
+                        or InstructionFlowControl.IndirectBranch
+                        or InstructionFlowControl.Interrupt))
+                {
+                    bool fallThroughContextChanged = UpdateFlowContextForEdge(
+                        currentRva,
+                        nextRva,
+                        FlowEdgeKind.FallThrough,
+                        0,
+                        ProcedureFlowState.Capture(
+                            classRegisterTypes,
+                            registerAddressValues,
+                            dynamicMethodIds,
+                            registerLocalOffsets,
+                            registerStackArgumentOffsets,
+                            registerStack),
+                        incomingFlowEdges,
+                        branchFlowContexts);
+                    if (fallThroughContextChanged
+                        && flowTargets.Contains(nextRva)
+                        && decodedAddresses.Contains(nextRva))
+                    {
+                        ScheduleCodeStart(
+                            nextRva,
+                            session.Items.TryGetValue(nextRva, out AnalysisItem? fallThroughTarget)
+                                && fallThroughTarget.Flags.HasFlag(AnalysisFlags.ProcedureStart),
+                            codeStarts,
+                            scheduledStarts,
+                            processedStarts,
+                            processedProcedureStarts,
+                            coveredStarts,
+                            flowContextChanged: true);
+                    }
+                }
+
                 if (instruction.FlowControl == InstructionFlowControl.UnconditionalBranch
                     && storedBranchTarget is uint exceptionHandlerRva)
                 {
@@ -3664,18 +3700,15 @@ public sealed class BasicAnalysisService : IAnalysisService
                         exceptionHandlerRva,
                         nextRva,
                         codeStarts,
-                        queuedStarts,
-                        branchClassContexts,
-                        registerAddressValuesBeforeInstruction,
-                        branchRegisterAddressContexts,
-                        dynamicMethodIdsBeforeInstruction,
-                        branchDynamicMethodIdContexts,
-                        registerLocalOffsetsBeforeInstruction,
-                        branchRegisterLocalOffsetContexts,
-                        registerStackArgumentOffsetsBeforeInstruction,
-                        branchRegisterStackArgumentContexts,
-                        registerStackBeforeInstruction,
-                        branchRegisterStackContexts,
+                        scheduledStarts,
+                        processedStarts,
+                        processedProcedureStarts,
+                        coveredStarts,
+                        currentRva,
+                        flowStateBeforeInstruction,
+                        incomingFlowEdges,
+                        branchFlowContexts,
+                        flowTargets,
                         diagnostics,
                         cancellationToken);
                 }
@@ -3755,10 +3788,14 @@ public sealed class BasicAnalysisService : IAnalysisService
 
                     AddConstantCrossReferenceIfMissing(session, sourceRva, targetRva);
                     targetItem.SetFlags(AnalysisFlags.Code | AnalysisFlags.ProcedureStart);
-                    if (queuedStarts.Add(targetRva))
-                    {
-                        codeStarts.Enqueue((targetRva, true));
-                    }
+                    ScheduleCodeStart(
+                        targetRva,
+                        true,
+                        codeStarts,
+                        scheduledStarts,
+                        processedStarts,
+                        processedProcedureStarts,
+                        coveredStarts);
                 }
             }
 
@@ -3776,7 +3813,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                 session.GetOrAddItem(endAddress).SetFlags(AnalysisFlags.ProcedureEnd);
             }
 
-            completedStarts++;
+            processedStarts.Add(codeStart);
+            completedStarts = processedStarts.Count;
             progress?.Report(new AnalysisProgress(
                 "CodeScan",
                 completedStarts,
@@ -3785,26 +3823,13 @@ public sealed class BasicAnalysisService : IAnalysisService
 
         if (codeStarts.Count > 0)
         {
-            diagnostics.Add(
-                $"Code scan stopped after {MaximumCodeStarts} code starts.");
+            diagnostics.Add(completedIterations >= MaximumCodeStartIterations
+                ? $"Code-flow analysis stopped after {MaximumCodeStartIterations} start iterations before reaching a fixpoint."
+                : $"Code scan stopped after {MaximumCodeStarts} code starts.");
         }
 
         PropagateCallReturnTypeCandidates(session, returnedCallTargets);
         MarkFunctionCandidates(session, functionCandidateTargets);
-    }
-
-    private static void MergeBranchClassContext(
-        uint targetRva,
-        IReadOnlyDictionary<int, string> incoming,
-        Dictionary<uint, Dictionary<int, string>> contexts)
-    {
-        if (!contexts.TryGetValue(targetRva, out Dictionary<int, string>? existing))
-        {
-            contexts.Add(targetRva, new Dictionary<int, string>(incoming));
-            return;
-        }
-
-        MergeKnownRegisterTypes(existing, incoming);
     }
 
     private static void MergeKnownRegisterTypes(
@@ -3821,20 +3846,6 @@ public sealed class BasicAnalysisService : IAnalysisService
         }
     }
 
-    private static void MergeBranchRegisterAddressContext(
-        uint targetRva,
-        IReadOnlyDictionary<int, ulong> incoming,
-        Dictionary<uint, Dictionary<int, ulong>> contexts)
-    {
-        if (!contexts.TryGetValue(targetRva, out Dictionary<int, ulong>? existing))
-        {
-            contexts.Add(targetRva, new Dictionary<int, ulong>(incoming));
-            return;
-        }
-
-        MergeKnownRegisterAddresses(existing, incoming);
-    }
-
     private static void MergeKnownRegisterAddresses(
         Dictionary<int, ulong> current,
         IReadOnlyDictionary<int, ulong> incoming)
@@ -3849,20 +3860,6 @@ public sealed class BasicAnalysisService : IAnalysisService
         }
     }
 
-    private static void MergeBranchRegisterStackContext(
-        uint targetRva,
-        IReadOnlyList<RegisterStackState> incoming,
-        Dictionary<uint, List<RegisterStackState>> contexts)
-    {
-        if (!contexts.TryGetValue(targetRva, out List<RegisterStackState>? existing))
-        {
-            contexts.Add(targetRva, incoming.ToList());
-            return;
-        }
-
-        MergeKnownRegisterStack(existing, incoming);
-    }
-
     private static void MergeKnownRegisterStack(
         List<RegisterStackState> current,
         IReadOnlyList<RegisterStackState> incoming)
@@ -3871,21 +3868,6 @@ public sealed class BasicAnalysisService : IAnalysisService
         {
             current.Clear();
         }
-    }
-
-    private static void MergeBranchRegisterOriginContext<T>(
-        uint targetRva,
-        IReadOnlyDictionary<int, T> incoming,
-        Dictionary<uint, Dictionary<int, T>> contexts)
-        where T : IEquatable<T>
-    {
-        if (!contexts.TryGetValue(targetRva, out Dictionary<int, T>? existing))
-        {
-            contexts.Add(targetRva, new Dictionary<int, T>(incoming));
-            return;
-        }
-
-        MergeKnownRegisterOrigins(existing, incoming);
     }
 
     private static void MergeKnownRegisterOrigins<T>(
@@ -3901,6 +3883,176 @@ public sealed class BasicAnalysisService : IAnalysisService
                 current.Remove(registerIndex);
             }
         }
+    }
+
+    private static bool UpdateFlowContextForEdge(
+        uint sourceAddress,
+        uint targetRva,
+        FlowEdgeKind edgeKind,
+        int ordinal,
+        ProcedureFlowState incoming,
+        Dictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges,
+        Dictionary<uint, ProcedureFlowState> contexts)
+    {
+        if (!incomingFlowEdges.TryGetValue(
+            targetRva,
+            out Dictionary<FlowEdgeKey, ProcedureFlowState>? targetEdges))
+        {
+            targetEdges = [];
+            incomingFlowEdges.Add(targetRva, targetEdges);
+        }
+
+        FlowEdgeKey edge = new(sourceAddress, targetRva, edgeKind, ordinal);
+        if (targetEdges.TryGetValue(edge, out ProcedureFlowState? existingEdgeState)
+            && AreFlowStatesEqual(existingEdgeState, incoming))
+        {
+            return false;
+        }
+
+        targetEdges[edge] = incoming;
+        using IEnumerator<ProcedureFlowState> edgeStates = targetEdges.Values.GetEnumerator();
+        if (!edgeStates.MoveNext())
+        {
+            return false;
+        }
+
+        ProcedureFlowState merged = edgeStates.Current;
+        while (edgeStates.MoveNext())
+        {
+            merged = MeetFlowStates(merged, edgeStates.Current);
+        }
+
+        if (contexts.TryGetValue(targetRva, out ProcedureFlowState? existingContext)
+            && AreFlowStatesEqual(existingContext, merged))
+        {
+            return false;
+        }
+
+        contexts[targetRva] = merged;
+        return true;
+    }
+
+    private static bool AreFlowStatesEqual(
+        ProcedureFlowState first,
+        ProcedureFlowState second)
+    {
+        return AreValuesEqual(first.ClassRegisterTypes, second.ClassRegisterTypes)
+            && AreValuesEqual(first.RegisterAddressValues, second.RegisterAddressValues)
+            && AreValuesEqual(first.DynamicMethodIds, second.DynamicMethodIds)
+            && AreValuesEqual(first.RegisterLocalOffsets, second.RegisterLocalOffsets)
+            && AreValuesEqual(first.RegisterStackArgumentOffsets, second.RegisterStackArgumentOffsets)
+            && first.RegisterStack.SequenceEqual(second.RegisterStack);
+    }
+
+    private static bool AreValuesEqual<T>(
+        IReadOnlyDictionary<int, T> first,
+        IReadOnlyDictionary<int, T> second)
+    {
+        if (first.Count != second.Count)
+        {
+            return false;
+        }
+
+        foreach ((int key, T value) in first)
+        {
+            if (!second.TryGetValue(key, out T? otherValue)
+                || !EqualityComparer<T>.Default.Equals(value, otherValue))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool ScheduleCodeStart(
+        uint address,
+        bool isProcedureStart,
+        Queue<(uint Address, bool IsProcedureStart)> codeStarts,
+        HashSet<uint> scheduledStarts,
+        HashSet<uint> processedStarts,
+        HashSet<uint> processedProcedureStarts,
+        HashSet<uint> coveredStarts,
+        bool flowContextChanged = false)
+    {
+        if (!flowContextChanged
+            && (processedStarts.Contains(address)
+                    && (!isProcedureStart || processedProcedureStarts.Contains(address))
+                || coveredStarts.Contains(address) && !isProcedureStart))
+        {
+            return false;
+        }
+
+        if (!scheduledStarts.Add(address))
+        {
+            return false;
+        }
+
+        codeStarts.Enqueue((address, isProcedureStart));
+        return true;
+    }
+
+    private static ProcedureFlowState MeetFlowStates(
+        ProcedureFlowState existing,
+        ProcedureFlowState incoming)
+    {
+        ImmutableDictionary<int, string> classTypes = MeetValues(
+            existing.ClassRegisterTypes,
+            incoming.ClassRegisterTypes);
+        ImmutableDictionary<int, ulong> addresses = MeetValues(
+            existing.RegisterAddressValues,
+            incoming.RegisterAddressValues);
+        ImmutableDictionary<int, int> dynamicMethodIds = MeetValues(
+            existing.DynamicMethodIds,
+            incoming.DynamicMethodIds);
+        ImmutableDictionary<int, int> localOffsets = MeetValues(
+            existing.RegisterLocalOffsets,
+            incoming.RegisterLocalOffsets);
+        ImmutableDictionary<int, uint> stackArgumentOffsets = MeetValues(
+            existing.RegisterStackArgumentOffsets,
+            incoming.RegisterStackArgumentOffsets);
+        ImmutableArray<RegisterStackState> registerStack =
+            existing.RegisterStack.SequenceEqual(incoming.RegisterStack)
+                ? existing.RegisterStack
+                : ImmutableArray<RegisterStackState>.Empty;
+
+        if (ReferenceEquals(classTypes, existing.ClassRegisterTypes)
+            && ReferenceEquals(addresses, existing.RegisterAddressValues)
+            && ReferenceEquals(dynamicMethodIds, existing.DynamicMethodIds)
+            && ReferenceEquals(localOffsets, existing.RegisterLocalOffsets)
+            && ReferenceEquals(stackArgumentOffsets, existing.RegisterStackArgumentOffsets)
+            && registerStack == existing.RegisterStack)
+        {
+            return existing;
+        }
+
+        return new ProcedureFlowState(
+            classTypes,
+            addresses,
+            dynamicMethodIds,
+            localOffsets,
+            stackArgumentOffsets,
+            registerStack);
+    }
+
+    private static ImmutableDictionary<int, T> MeetValues<T>(
+        ImmutableDictionary<int, T> existing,
+        IReadOnlyDictionary<int, T> incoming)
+    {
+        ImmutableDictionary<int, T>.Builder? builder = null;
+        foreach ((int register, T value) in existing)
+        {
+            if (incoming.TryGetValue(register, out T? incomingValue)
+                && EqualityComparer<T>.Default.Equals(value, incomingValue))
+            {
+                continue;
+            }
+
+            builder ??= existing.ToBuilder();
+            builder.Remove(register);
+        }
+
+        return builder?.ToImmutable() ?? existing;
     }
 
     private static void UpdateRegisterStackState(
@@ -4895,6 +5047,11 @@ public sealed class BasicAnalysisService : IAnalysisService
         IReadOnlyDictionary<int, string> classRegisterTypes,
         AnalysisItem instructionItem)
     {
+        RetainSupportedMemberAccessCandidates(
+            instruction,
+            classRegisterTypes,
+            instructionItem);
+
         if (instruction.FlowControl == InstructionFlowControl.Call)
         {
             return;
@@ -5005,6 +5162,53 @@ public sealed class BasicAnalysisService : IAnalysisService
                 }
             }
         }
+    }
+
+    private static void RetainSupportedMemberAccessCandidates(
+        DecodedInstruction instruction,
+        IReadOnlyDictionary<int, string> classRegisterTypes,
+        AnalysisItem instructionItem)
+    {
+        if (instructionItem.MemberAccessCandidates.Count == 0)
+        {
+            return;
+        }
+
+        MemberAccessCandidate[] supported = instructionItem.MemberAccessCandidates
+            .Where(candidate => IsMemberAccessSupportedByFlowState(
+                instruction,
+                candidate,
+                classRegisterTypes))
+            .ToArray();
+        if (supported.Length != instructionItem.MemberAccessCandidates.Count)
+        {
+            instructionItem.MemberAccessCandidates = supported;
+        }
+    }
+
+    private static bool IsMemberAccessSupportedByFlowState(
+        DecodedInstruction instruction,
+        MemberAccessCandidate candidate,
+        IReadOnlyDictionary<int, string> classRegisterTypes)
+    {
+        if (string.Equals(instruction.Mnemonic, "Add", StringComparison.OrdinalIgnoreCase)
+            && instruction.Operands.Count == 2
+            && instruction.Operands[0].Kind == DecodedOperandKind.Register
+            && GetClassRegisterTypeIndex(instruction.Operands[0].Register) is int destinationIndex
+            && instruction.Operands[1].Kind == DecodedOperandKind.Immediate
+            && instruction.Operands[1].Immediate == (ulong)candidate.Offset
+            && classRegisterTypes.TryGetValue(destinationIndex, out string? arithmeticOwner)
+            && string.Equals(arithmeticOwner, candidate.OwnerTypeName, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        return instruction.Operands.Any(operand =>
+            operand.Kind == DecodedOperandKind.Memory
+            && operand.Displacement == (ulong)candidate.Offset
+            && GetClassRegisterTypeIndex(operand.BaseRegister) is int baseRegisterIndex
+            && classRegisterTypes.TryGetValue(baseRegisterIndex, out string? ownerTypeName)
+            && string.Equals(ownerTypeName, candidate.OwnerTypeName, StringComparison.Ordinal));
     }
 
     private static void AddMemberAccessCandidate(
@@ -7817,6 +8021,48 @@ public sealed class BasicAnalysisService : IAnalysisService
             if (value is ulong knownValue)
             {
                 registerAddressValues[destinationIndex] = knownValue;
+            }
+
+            return;
+        }
+
+        bool isAdd = string.Equals(instruction.Mnemonic, "Add", StringComparison.OrdinalIgnoreCase);
+        bool isSub = string.Equals(instruction.Mnemonic, "Sub", StringComparison.OrdinalIgnoreCase);
+        if ((isAdd || isSub)
+            && instruction.Operands.Count == 2
+            && instruction.Operands[0].Kind == DecodedOperandKind.Register
+            && GetRegisterAddressIndex(instruction.Operands[0].Register) is int arithmeticDestinationIndex
+            && instruction.Operands[1].Kind == DecodedOperandKind.Immediate
+            && instruction.Operands[1].Immediate is ulong arithmeticImmediate
+            && instruction.Operands[1] is DecodedOperand
+            {
+                Immediate: not null
+            } arithmeticOperand)
+        {
+            bool hadTrackedValue = registerAddressValues.TryGetValue(
+                arithmeticDestinationIndex,
+                out ulong trackedValue);
+            registerAddressValues.Remove(arithmeticDestinationIndex);
+            if (hadTrackedValue)
+            {
+                long? immediateValue = arithmeticOperand.ImmediateSignExtensionBits switch
+                {
+                    8 => unchecked((sbyte)(byte)arithmeticImmediate),
+                    16 => unchecked((short)(ushort)arithmeticImmediate),
+                    32 => unchecked((int)(uint)arithmeticImmediate),
+                    null when arithmeticImmediate <= int.MaxValue => (long)arithmeticImmediate,
+                    _ => null
+                };
+                if (immediateValue is long signedImmediate)
+                {
+                    long adjustedValue = isAdd
+                        ? (long)trackedValue + signedImmediate
+                        : (long)trackedValue - signedImmediate;
+                    if (adjustedValue is >= 0 and <= uint.MaxValue)
+                    {
+                        registerAddressValues[arithmeticDestinationIndex] = (ulong)adjustedValue;
+                    }
+                }
             }
 
             return;

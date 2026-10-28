@@ -9,6 +9,7 @@ public sealed class AnalysisSession
 {
     private readonly Dictionary<uint, AnalysisItem> _items = [];
     private readonly Dictionary<uint, List<CrossReference>> _incomingCrossReferences = [];
+    private readonly HashSet<(uint SourceAddress, uint TargetAddress, CrossReferenceKind Kind)> _crossReferenceKeys = [];
     private IReadOnlyList<KnowledgeBaseModule> _knowledgeBaseModules = [];
     private IReadOnlyList<KnowledgeBaseProcedure> _knowledgeBaseProcedures = [];
     private IReadOnlyDictionary<string, KnowledgeBaseProcedure[]> _knowledgeBaseProceduresByName =
@@ -17,6 +18,7 @@ public sealed class AnalysisSession
     private IReadOnlyList<PeExport> _exports = [];
     private IReadOnlyList<PeResourceString> _resourceStrings = [];
     private readonly List<DisassemblyLine> _disassemblyLines = [];
+    private readonly HashSet<uint> _disassemblyAddresses = [];
 
     public AnalysisSession(
         string sourcePath,
@@ -142,7 +144,9 @@ public sealed class AnalysisSession
     {
         _items.Clear();
         _incomingCrossReferences.Clear();
+        _crossReferenceKeys.Clear();
         _disassemblyLines.Clear();
+        _disassemblyAddresses.Clear();
         SystemModuleId = null;
     }
 
@@ -151,6 +155,12 @@ public sealed class AnalysisSession
         uint targetAddress,
         CrossReferenceKind kind)
     {
+        if (!_crossReferenceKeys.Add((sourceAddress, targetAddress, kind)))
+        {
+            return _items[sourceAddress].CrossReferences.Single(reference =>
+                reference.TargetAddress == targetAddress && reference.Kind == kind);
+        }
+
         string? targetName = _items.TryGetValue(targetAddress, out AnalysisItem? target)
             ? target.Name
             : null;
@@ -169,7 +179,10 @@ public sealed class AnalysisSession
     public void AddDisassemblyLine(DisassemblyLine line)
     {
         ArgumentNullException.ThrowIfNull(line);
-        _disassemblyLines.Add(line);
+        if (_disassemblyAddresses.Add(line.Address))
+        {
+            _disassemblyLines.Add(line);
+        }
     }
 
     public void SetSystemModuleId(ushort moduleId)

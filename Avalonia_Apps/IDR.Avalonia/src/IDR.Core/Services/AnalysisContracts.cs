@@ -137,6 +137,7 @@ public sealed record DecodedOperand(
     string? IndexRegister = null,
     ulong? Displacement = null,
     ulong? Immediate = null,
+    int? ImmediateSignExtensionBits = null,
     int? MemorySizeBytes = null,
     bool HasSegmentPrefix = false);
 
