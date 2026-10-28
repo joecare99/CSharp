@@ -54,18 +54,25 @@ public sealed class StructureTemplateMaterializer
     /// <summary>Loads and validates the embedded JSON manifest and each declared embedded asset.</summary>
     public StructureTemplateManifest ReadManifest()
     {
-        using Stream manifestStream = _assembly.GetManifestResourceStream(ManifestResourceName)
-            ?? throw new InvalidDataException("The embedded structure-template manifest is missing.");
-        StructureTemplateManifest manifest = JsonSerializer.Deserialize<StructureTemplateManifest>(
-            manifestStream,
-            JsonOptions) ?? throw new InvalidDataException("The embedded structure-template manifest is empty.");
-        ValidateManifest(manifest);
+        StructureTemplateManifest manifest = ReadSchemaManifest();
         ValidateAssetArchive(manifest);
         foreach (StructureTemplateAsset asset in manifest.Assets)
         {
             _ = ReadAndValidateAsset(asset);
         }
 
+        return manifest;
+    }
+
+    /// <summary>Loads the embedded schemas without accessing the original template-file archive.</summary>
+    public StructureTemplateManifest ReadSchemaManifest()
+    {
+        using Stream manifestStream = _assembly.GetManifestResourceStream(ManifestResourceName)
+            ?? throw new InvalidDataException("The embedded structure-template manifest is missing.");
+        StructureTemplateManifest manifest = JsonSerializer.Deserialize<StructureTemplateManifest>(
+            manifestStream,
+            JsonOptions) ?? throw new InvalidDataException("The embedded structure-template manifest is empty.");
+        ValidateManifest(manifest);
         return manifest;
     }
 

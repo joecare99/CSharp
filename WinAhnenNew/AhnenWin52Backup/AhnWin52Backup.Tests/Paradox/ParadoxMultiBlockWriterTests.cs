@@ -14,6 +14,54 @@ namespace AhnWin52Backup.Tests.Paradox;
 public sealed class ParadoxMultiBlockWriterTests
 {
     [TestMethod]
+    public void BuildIndexFile_CrossesWideKeyLeafCapacityBoundary()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string databaseDirectory = Path.Combine(directory, "database");
+            new StructureTemplateMaterializer().Materialize(databaseDirectory);
+            string templatePath = Path.Combine(databaseDirectory, "AWD.YG2");
+            byte[] template = File.ReadAllBytes(templatePath);
+            ParadoxRecordWriter.TableHeader header =
+                ParadoxRecordWriter.ReadHeader(template, 7, templatePath);
+            int entriesPerNode = (header.BlockSize - 6) / header.RecordSize;
+            int keyLength = header.RecordSize - 6;
+
+            ParadoxIndexFileBuilder.IndexEntry[] MakeEntries(int count) =>
+                Enumerable.Range(1, count)
+                    .Select(index =>
+                    {
+                        byte[] key = new byte[keyLength];
+                        BinaryPrimitives.WriteInt32BigEndian(key, index);
+                        return new ParadoxIndexFileBuilder.IndexEntry(key, index, 1);
+                    })
+                    .ToArray();
+
+            byte[] leafOnly = ParadoxIndexFileBuilder.Build(
+                template, 7, MakeEntries(entriesPerNode));
+            ParadoxRecordWriter.TableHeader leafHeader =
+                ParadoxRecordWriter.ReadHeader(leafOnly, 7, "leaf-only index");
+            Assert.AreEqual(1, leafHeader.BlockCount);
+            Assert.AreEqual(1, leafOnly[0x20]);
+            Assert.AreEqual(entriesPerNode, leafHeader.RecordCount);
+
+            byte[] withRoot = ParadoxIndexFileBuilder.Build(
+                template, 7, MakeEntries(entriesPerNode + 1));
+            ParadoxRecordWriter.TableHeader rootHeader =
+                ParadoxRecordWriter.ReadHeader(withRoot, 7, "two-level index");
+            Assert.AreEqual(3, rootHeader.BlockCount);
+            Assert.AreEqual(2, withRoot[0x20]);
+            Assert.AreEqual(entriesPerNode + 3, rootHeader.RecordCount);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public void BuildIndexFile_SupportsThreeLevels()
     {
         string directory = Path.Combine(Path.GetTempPath(), $"AhnWin52Backup-{Guid.NewGuid():N}");

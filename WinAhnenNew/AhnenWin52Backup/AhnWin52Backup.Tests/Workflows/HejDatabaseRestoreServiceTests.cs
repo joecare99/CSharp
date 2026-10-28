@@ -108,6 +108,17 @@ public sealed class HejDatabaseRestoreServiceTests
             File.WriteAllText(sentinel, "preserve");
             byte[] overBefore = File.ReadAllBytes(Path.Combine(destination, "over.db"));
             ParadoxTableReader reader = new();
+            string individualsPath = Path.Combine(destination, "AWD.DB");
+            new ParadoxRecordWriter(reader).AppendRecords(
+                individualsPath,
+                "Nummer",
+                [new Dictionary<string, string?>
+                {
+                    ["Nummer"] = "999",
+                    ["Name"] = "OldSurname",
+                    ["Vornamen"] = "Stale"
+                }]);
+            new ParadoxSecondaryIndexWriter(reader).RebuildForTable(individualsPath);
             new ParadoxRecordWriter(reader).AppendRecords(
                 Path.Combine(destination, "NM.db"),
                 "Name",
@@ -128,7 +139,10 @@ public sealed class HejDatabaseRestoreServiceTests
 
             Assert.AreEqual("preserve", File.ReadAllText(Path.Combine(destination, "user.keep")));
             Assert.AreEqual(1, result.RecordCounts["Individuals"]);
-            Assert.AreEqual(1, new ParadoxTableReader().Read(Path.Combine(destination, "AWD.DB")).Records.Count);
+            ParadoxTable restoredIndividuals = new ParadoxTableReader().Read(individualsPath);
+            Assert.AreEqual(1, restoredIndividuals.Records.Count);
+            Assert.AreEqual("Restore", restoredIndividuals.Records.Single()[3]);
+            Assert.AreNotEqual("Stale", restoredIndividuals.Records.Single()[4]);
             Assert.AreEqual(
                 "Restore",
                 new ParadoxTableReader().Read(Path.Combine(destination, "NM.db")).Records.Single()[0]);

@@ -19,8 +19,12 @@ internal sealed class ParadoxSecondaryIndexWriter
     private const byte AlphaType = 0x01;
     private const byte ShortType = 0x03;
     private const byte BcdType = 0x17;
-    private const byte SecondaryDataFileType = 8;
-    private const byte SecondaryIndexFileType = 7;
+    private const int SecondaryIndexOptionsOffset = 0x55;
+    private const byte CaseInsensitiveIndexFlag = 0x01;
+    private const byte SecondaryDataFileType = 5;
+    private const byte SecondaryIndexFileType = 4;
+    private const byte SecondaryDataFileTypeG = 8;
+    private const byte SecondaryIndexFileTypeG = 7;
     // Trial21's native namgeb YG2 has 26 leaves for 294 XG blocks (about 64% of node capacity).
     private const int SecondaryDataBlockFillPercent = 65;
     private const int SecondaryIndexLeafFillNumerator = 16;
@@ -63,24 +67,25 @@ internal sealed class ParadoxSecondaryIndexWriter
         byte[] primaryIndex = File.ReadAllBytes(primaryIndexPath);
         _ = ParadoxRecordWriter.ReadHeader(primaryIndex, expectedFileType: 1, primaryIndexPath);
         byte primaryRevision = primaryIndex[0x2C];
-        string sidecarPrefix = $"{tableName}.XG";
-        string[] secondaryDataPaths = Directory.EnumerateFiles(directory)
-            .Where(path => IsSecondaryDataFile(Path.GetFileName(path), sidecarPrefix))
-            .OrderBy(path => GetIndexNumber(Path.GetFileName(path), sidecarPrefix))
+        SecondaryIndexFilePair[] indexPairs = Directory.EnumerateFiles(directory)
+            .Select(path => TryGetSecondaryIndexFilePair(path, directory, tableName))
+            .Where(static pair => pair is not null)
+            .Select(static pair => pair!)
+            .OrderBy(static pair => pair.IndexNumber)
             .ToArray();
-        if (secondaryDataPaths.Length == 0)
+        if (indexPairs.Length == 0)
         {
-            throw new FileNotFoundException($"No XG secondary-index files were found for {fullDatabasePath}.");
+            throw new FileNotFoundException($"No supported secondary-index files were found for {fullDatabasePath}.");
         }
 
-        foreach (string secondaryDataPath in secondaryDataPaths)
+        foreach (SecondaryIndexFilePair pair in indexPairs)
         {
-            int indexNumber = GetIndexNumber(Path.GetFileName(secondaryDataPath), sidecarPrefix);
-            string secondaryIndexPath = Path.Combine(directory, $"{tableName}.YG{indexNumber}");
             WriteIndexPair(
                 table,
-                secondaryDataPath,
-                secondaryIndexPath,
+                pair.DataPath,
+                pair.IndexPath,
+                pair.DataFileType,
+                pair.IndexFileType,
                 primaryRevision,
                 recordsPerDatabaseBlock);
         }
@@ -90,15 +95,29 @@ internal sealed class ParadoxSecondaryIndexWriter
         ParadoxTable table,
         string secondaryDataPath,
         string secondaryIndexPath,
+        byte secondaryDataFileType,
+        byte secondaryIndexFileType,
         byte primaryRevision,
         int recordsPerDatabaseBlock)
     {
         byte[] secondaryDataFile = File.ReadAllBytes(secondaryDataPath);
         ParadoxRecordWriter.TableHeader secondaryDataHeader =
-            ParadoxRecordWriter.ReadHeader(secondaryDataFile, SecondaryDataFileType, secondaryDataPath);
+            ParadoxRecordWriter.ReadHeader(secondaryDataFile, secondaryDataFileType, secondaryDataPath);
         SecondaryDataSchema secondarySchema = ReadSecondaryDataSchema(secondaryDataFile, secondaryDataHeader);
         IReadOnlyList<ParadoxField> secondaryFields = secondarySchema.Fields;
         int keyFieldCount = secondaryDataHeader.PrimaryKeyFieldCount;
+        bool caseInsensitive = false;
+        if (secondaryDataFileType == SecondaryDataFileTypeG)
+        {
+            byte indexOptions = secondaryDataFile[SecondaryIndexOptionsOffset];
+            if ((indexOptions & ~CaseInsensitiveIndexFlag) != 0)
+            {
+                throw new NotSupportedException(
+                    $"Secondary-index options 0x{indexOptions:X2} are not supported: {secondaryDataPath}");
+            }
+
+            caseInsensitive = (indexOptions & CaseInsensitiveIndexFlag) != 0;
+        }
         if (secondaryDataHeader.RecordCount != 0 ||
             keyFieldCount <= 0 ||
             keyFieldCount != secondaryFields.Count - 1 ||
@@ -148,11 +167,23 @@ internal sealed class ParadoxSecondaryIndexWriter
 
                 sourceValues[indexField.Name] = value;
                 if (value is not null &&
+                    caseInsensitive &&
+                    indexField.TypeCode == AlphaType &&
+                    secondarySchema.SortOrder.Equals("DBWINUS0", StringComparison.OrdinalIgnoreCase) &&
+                    value.Any(static character => character > 0x7F))
+                {
+                    throw new NotSupportedException(
+                        $"Non-ASCII case folding is not supported for {secondaryDataPath}.");
+                }
+
+                if (value is not null &&
                     ShouldUppercaseIndexField(
                         secondarySchema.SortOrder,
                         secondarySchema.IndexLabel,
                         indexField.Name,
-                        fieldIndex))
+                        fieldIndex,
+                        indexField.TypeCode,
+                        caseInsensitive))
                 {
                     value = value.ToUpperInvariant();
                 }
@@ -186,7 +217,7 @@ internal sealed class ParadoxSecondaryIndexWriter
 
         byte[] secondaryIndexFile = File.ReadAllBytes(secondaryIndexPath);
         ParadoxRecordWriter.TableHeader secondaryIndexHeader =
-            ParadoxRecordWriter.ReadHeader(secondaryIndexFile, SecondaryIndexFileType, secondaryIndexPath);
+            ParadoxRecordWriter.ReadHeader(secondaryIndexFile, secondaryIndexFileType, secondaryIndexPath);
         IReadOnlyList<ParadoxField> secondaryIndexFields =
             ReadSecondaryIndexFields(secondaryIndexFile, secondaryIndexHeader);
         if (secondaryIndexHeader.RecordCount != 0 ||
@@ -232,7 +263,7 @@ internal sealed class ParadoxSecondaryIndexWriter
                 ((long)physicalIndexNodeCapacity * SecondaryIndexLeafFillNumerator)));
         secondaryIndexFile = ParadoxIndexFileBuilder.Build(
             secondaryIndexFile,
-            SecondaryIndexFileType,
+            secondaryIndexFileType,
             indexEntries,
             targetLeafNodeCount: targetLeafNodeCount);
         File.WriteAllBytes(secondaryIndexPath, secondaryIndexFile);
@@ -365,9 +396,9 @@ internal sealed class ParadoxSecondaryIndexWriter
         int fieldMapEnd = checked(nameOffset + header.FieldCount * sizeof(ushort));
         string sortOrder = ReadNullTerminatedAscii(file, ref fieldMapEnd, header.HeaderSize);
         string indexLabel = ReadNullTerminatedAscii(file, ref fieldMapEnd, header.HeaderSize);
-        if (string.IsNullOrWhiteSpace(sortOrder) || string.IsNullOrWhiteSpace(indexLabel))
+        if (string.IsNullOrWhiteSpace(sortOrder))
         {
-            throw new InvalidDataException("The XG sort order or index label is missing.");
+            throw new InvalidDataException("The secondary-index sort order is missing.");
         }
 
         return new SecondaryDataSchema(fields, sortOrder, indexLabel);
@@ -437,8 +468,17 @@ internal sealed class ParadoxSecondaryIndexWriter
         string sortOrder,
         string indexLabel,
         string fieldName,
-        int fieldPosition)
+        int fieldPosition,
+        byte fieldType,
+        bool caseInsensitive)
     {
+        if (caseInsensitive &&
+            fieldType == AlphaType &&
+            sortOrder.Equals("DBWINUS0", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
         if (string.Equals(indexLabel, "Ort_", StringComparison.OrdinalIgnoreCase) &&
             fieldPosition == 0 &&
             string.Equals(fieldName, "Ort", StringComparison.OrdinalIgnoreCase))
@@ -496,23 +536,45 @@ internal sealed class ParadoxSecondaryIndexWriter
         return 0;
     }
 
-    private static bool IsSecondaryDataFile(string fileName, string prefix)
+    private static SecondaryIndexFilePair? TryGetSecondaryIndexFilePair(
+        string dataPath,
+        string directory,
+        string tableName)
     {
-        if (!fileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        string fileName = Path.GetFileName(dataPath);
+        string gPrefix = $"{tableName}.XG";
+        if (fileName.StartsWith(gPrefix, StringComparison.OrdinalIgnoreCase))
         {
-            return false;
+            string suffix = fileName[gPrefix.Length..];
+            if (suffix.Length > 0 && suffix.All(char.IsAsciiDigit) &&
+                int.TryParse(suffix, NumberStyles.None, CultureInfo.InvariantCulture, out int gIndex))
+            {
+                return new SecondaryIndexFilePair(
+                    dataPath,
+                    Path.Combine(directory, $"{tableName}.YG{suffix}"),
+                    gIndex,
+                    SecondaryDataFileTypeG,
+                    SecondaryIndexFileTypeG);
+            }
         }
 
-        string suffix = fileName[prefix.Length..];
-        return suffix.Length > 0 && suffix.All(char.IsAsciiDigit);
-    }
+        string prefix = $"{tableName}.X";
+        if (fileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            string suffix = fileName[prefix.Length..];
+            if (suffix.Length > 0 && suffix.All(char.IsAsciiDigit) &&
+                int.TryParse(suffix, NumberStyles.None, CultureInfo.InvariantCulture, out int index))
+            {
+                return new SecondaryIndexFilePair(
+                    dataPath,
+                    Path.Combine(directory, $"{tableName}.Y{suffix}"),
+                    index,
+                    SecondaryDataFileType,
+                    SecondaryIndexFileType);
+            }
+        }
 
-    private static int GetIndexNumber(string fileName, string prefix)
-    {
-        string suffix = fileName[prefix.Length..];
-        return int.TryParse(suffix, out int indexNumber)
-            ? indexNumber
-            : throw new InvalidDataException($"The secondary-index suffix is invalid: {fileName}");
+        return null;
     }
 
     private static string ReadNullTerminatedAscii(byte[] data, ref int offset, int limit)
@@ -539,4 +601,11 @@ internal sealed class ParadoxSecondaryIndexWriter
         IReadOnlyList<ParadoxField> Fields,
         string SortOrder,
         string IndexLabel);
+
+    private sealed record SecondaryIndexFilePair(
+        string DataPath,
+        string IndexPath,
+        int IndexNumber,
+        byte DataFileType,
+        byte IndexFileType);
 }
