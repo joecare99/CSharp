@@ -209,6 +209,38 @@ public sealed class ArchitectureTests
     }
 
     [TestMethod]
+    public void AnalysisSessionDeduplicatesRepeatedFlowOutputs()
+    {
+        AnalysisSession session = new("test.exe", ReadOnlyMemory<byte>.Empty);
+        CrossReference firstReference = session.AddCrossReference(
+            0x1000,
+            0x2000,
+            CrossReferenceKind.Jump);
+        CrossReference repeatedReference = session.AddCrossReference(
+            0x1000,
+            0x2000,
+            CrossReferenceKind.Jump);
+        DisassemblyLine line = new(
+            0x1000,
+            "90",
+            "Nop",
+            "nop",
+            null,
+            InstructionFlowControl.Next);
+        session.AddDisassemblyLine(line);
+        session.AddDisassemblyLine(line);
+
+        Assert.AreSame(firstReference, repeatedReference);
+        Assert.AreEqual(1, session.Items[0x1000].CrossReferences.Count);
+        Assert.AreEqual(1, session.GetIncomingCrossReferences(0x2000).Count);
+        Assert.AreEqual(1, session.DisassemblyLines.Count);
+
+        session.ClearAnalysisItems();
+        session.AddDisassemblyLine(line);
+        Assert.AreEqual(1, session.DisassemblyLines.Count);
+    }
+
+    [TestMethod]
     public void SessionRejectsMissingSourcePath()
     {
         Assert.ThrowsExactly<ArgumentException>(
