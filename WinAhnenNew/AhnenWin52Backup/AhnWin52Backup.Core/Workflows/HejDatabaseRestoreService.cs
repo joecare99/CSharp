@@ -77,15 +77,20 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
             throw new IOException($"The restore destination is a file: {destinationPath}");
         }
 
-        StructureTemplateManifest manifest = _templateMaterializer.ReadManifest();
         return mode switch
         {
-            HejDatabaseRestoreMode.FromScratch =>
-                RestoreFromScratch(destinationPath, document, manifest),
-            HejDatabaseRestoreMode.ExistingTemplate =>
-                RestoreExistingTemplate(destinationPath, document, manifest),
-            HejDatabaseRestoreMode.Override =>
-                RestoreOverride(destinationPath, document, manifest),
+            HejDatabaseRestoreMode.FromScratch => RestoreFromScratch(
+                destinationPath,
+                document,
+                _templateMaterializer.ReadManifest()),
+            HejDatabaseRestoreMode.ExistingTemplate => RestoreExistingTemplate(
+                destinationPath,
+                document,
+                _templateMaterializer.ReadManifest()),
+            HejDatabaseRestoreMode.Override => RestoreOverride(
+                destinationPath,
+                document,
+                _templateMaterializer.ReadSchemaManifest()),
             _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, "Unknown restore mode.")
         };
     }
@@ -152,21 +157,18 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
         }
 
         ValidateCompatibleDirectory(destinationPath, manifest);
-        string candidateDirectory = CreateSiblingPath(destinationPath, "candidate");
         string stagingDirectory = CreateSiblingPath(destinationPath, "override");
         try
         {
-            _templateMaterializer.Materialize(candidateDirectory);
-            PopulateAndValidate(candidateDirectory, document, manifest);
             CopyDirectory(destinationPath, stagingDirectory);
-            ReplaceMappedFamilies(candidateDirectory, stagingDirectory, manifest);
+            RecreateMappedFamilies(stagingDirectory, manifest);
+            PopulateAndValidate(stagingDirectory, document, manifest);
             ValidateCandidate(stagingDirectory, document, manifest, validateAncillaryBaseline: false);
             return PublishReplacingDirectory(stagingDirectory, destinationPath, document);
         }
         catch (Exception operationException)
         {
             CleanupAfterFailure(stagingDirectory, operationException);
-            CleanupAfterFailure(candidateDirectory, operationException);
             throw;
         }
     }
@@ -480,8 +482,7 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
         ValidateSecondaryRecordCounts(directory, occupationsTable, expectedOccupations.Count);
     }
 
-    private void ReplaceMappedFamilies(
-        string restoredTemplateDirectory,
+    private static void RecreateMappedFamilies(
         string stagingDirectory,
         StructureTemplateManifest manifest)
     {
@@ -489,23 +490,30 @@ public sealed class HejDatabaseRestoreService : IHejDatabaseRestoreService
             .Concat(DerivedTableNames)
             .Select(static tableName => Path.GetFileNameWithoutExtension(tableName))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        HashSet<string> replacementFiles = manifest.Assets
-            .Select(static asset => asset.FileName)
-            .Where(fileName => replacementTableStems.Contains(Path.GetFileNameWithoutExtension(fileName)))
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         foreach (string file in Directory.EnumerateFiles(stagingDirectory, "*", SearchOption.TopDirectoryOnly))
         {
-            if (replacementFiles.Contains(Path.GetFileName(file)))
+            string fileName = Path.GetFileName(file);
+            if (ParadoxStructureWriter.IsParadoxFileName(fileName) &&
+                replacementTableStems.Contains(Path.GetFileNameWithoutExtension(fileName)))
             {
                 File.Delete(file);
             }
         }
 
-        foreach (string fileName in replacementFiles)
+        foreach (StructureTemplateTable table in manifest.Tables.Where(table =>
+                     replacementTableStems.Contains(Path.GetFileNameWithoutExtension(table.FileName))))
         {
-            string sourcePath = FindFilePath(restoredTemplateDirectory, fileName);
-            string destinationPath = Path.Combine(stagingDirectory, fileName);
-            File.Copy(sourcePath, destinationPath, overwrite: false);
+            if (!table.GeneratedFromSchema)
+            {
+                throw new InvalidDataException(
+                    $"The override table cannot be recreated from its schema: {table.FileName}.");
+            }
+
+            ParadoxStructureWriter.WriteTableFamily(
+                stagingDirectory,
+                table,
+                manifest.EncryptionKey,
+                manifest.IndexMaximumTableSize);
         }
     }
 

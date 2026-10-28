@@ -10,6 +10,10 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
   <ItemGroup>
+    <ProjectReference Include="..\DBParadox\DBParadox.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Resources\namesdays.json" LogicalName="AhnWin52Backup.Core.namesdays.json" />
     <EmbeddedResource Include="Resources\StructureTemplate\manifest.json"
                       LogicalName="AhnWin52Backup.Core.StructureTemplate.manifest.json" />
