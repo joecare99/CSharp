@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageReference Include="MSTest" Version="4.5.1" />
     <PackageReference Include="NSubstitute" Version="6.2.0" />
     <PackageReference Include="coverlet.collector" Version="10.1.0">
@@ -32,7 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DBParadox\DBParadox.csproj" />
     <ProjectReference Include="..\AhnWin52Backup.Core\AhnWin52Backup.Core.csproj" />
     <ProjectReference Include="..\AhnWin52Backup.Cli\AhnWin52Backup.Cli.csproj" />
+    <Content Include="..\..\..\..\Delphi\Components\Source\DBParadox\Tests\Conformance\vectors.txt"
+             Link="Conformance\vectors.txt"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
