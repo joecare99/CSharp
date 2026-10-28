@@ -59,6 +59,7 @@ public sealed class IcedInstructionDecoderTests
             [0x68, 0x20, 0x10, 0x40, 0x00],
             0x1002,
             32);
+        DecodedInstruction signExtendedImmediate = decoder.Decode([0x83, 0xe8, 0xfc], 0x1007, 32);
         DecodedInstruction pushFs = decoder.Decode([0x64, 0xff, 0x30], 0x1007, 32);
         DecodedInstruction setFs = decoder.Decode([0x64, 0x89, 0x20], 0x100a, 32);
         DecodedInstruction explicitDs = decoder.Decode([0x3e, 0x8b, 0x4a, 0x0c], 0x100d, 32);
@@ -67,6 +68,7 @@ public sealed class IcedInstructionDecoderTests
         Assert.AreEqual(xor.Operands[0].Register, xor.Operands[1].Register);
         Assert.AreEqual(DecodedOperandKind.Immediate, pushHandler.Operands[0].Kind);
         Assert.AreEqual(0x401020UL, pushHandler.Operands[0].Immediate);
+        Assert.AreEqual(8, signExtendedImmediate.Operands[1].ImmediateSignExtensionBits);
         Assert.AreEqual(DecodedOperandKind.Memory, pushFs.Operands[0].Kind);
         Assert.AreEqual("FS", pushFs.Operands[0].SegmentRegister);
         Assert.AreEqual("EAX", pushFs.Operands[0].BaseRegister);

@@ -3527,6 +3527,70 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisTypesTracksGlobalAddressAfterRegisterImmediateAddition()
+    {
+        byte[] image = new byte[0x40];
+        byte[] code =
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0x83, 0xc0, 0x04,
+            0xe8, 0x0b, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "runtime-type-register-add.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x20, 0, 0x20, true),
+                new PeSection(".data", 0x2000, 0x20, 0x20, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = "@IntfClear";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("IInterface", session.Items[0x2004].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesTracksGlobalAddressAfterSignedImmediateSubtraction()
+    {
+        byte[] image = new byte[0x40];
+        byte[] code =
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0x83, 0xe8, 0xfc,
+            0xe8, 0x0b, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "runtime-type-register-sub.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x20, 0, 0x20, true),
+                new PeSection(".data", 0x2000, 0x20, 0x20, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = "@IntfClear";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("IInterface", session.Items[0x2004].DataTypeCandidate);
+    }
+
+    [TestMethod]
     public async Task AnalysisTypesGlobalFormVariableFromCreateFormCall()
     {
         byte[] image = new byte[0xc0];
@@ -6468,6 +6532,56 @@ public sealed class StackInstructionAnalysisTests
 
         Assert.IsFalse(session.Items.TryGetValue(0x100f, out AnalysisItem? fieldAccess)
             && fieldAccess.MemberAccessCandidates.Count != 0);
+    }
+
+    [TestMethod]
+    public async Task AnalysisCarriesClassTypeAcrossBackwardBranchToPreviouslyScannedBlock()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xeb, 0x04,
+            0x90, 0x90, 0x90, 0x90,
+            0x74, 0x06,
+            0xc3,
+            0x8b, 0x50, 0x08,
+            0xc3,
+            0x90,
+            0xeb, 0xf9
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x100e].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+        Assert.AreEqual(1, session.DisassemblyLines.Count(line => line.Address == 0x100e));
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesFieldCandidateAfterLateConflictingPredecessor()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0b,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0x8b, 0x50, 0x08,
+            0xc3,
+            0x90,
+            0x31, 0xc0,
+            0xeb, 0xf7
+        ],
+            useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x100f, out AnalysisItem? fieldAccess));
+        Assert.AreEqual(0, fieldAccess.MemberAccessCandidates.Count);
     }
 
     [TestMethod]
