@@ -102,7 +102,15 @@ public sealed class IcedInstructionDecoder : IInstructionDecoder
                     or OpKind.Immediate8to64
                     or OpKind.Immediate32to64 => new DecodedOperand(
                         DecodedOperandKind.Immediate,
-                        Immediate: instruction.GetImmediate(index)),
+                        Immediate: instruction.GetImmediate(index),
+                        ImmediateSignExtensionBits: kind switch
+                        {
+                            OpKind.Immediate8to16
+                                or OpKind.Immediate8to32
+                                or OpKind.Immediate8to64 => 8,
+                            OpKind.Immediate32to64 => 32,
+                            _ => null
+                        }),
                 _ => new DecodedOperand(DecodedOperandKind.Other)
             };
         }
