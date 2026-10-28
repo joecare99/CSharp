@@ -20,14 +20,37 @@ public sealed class KnowledgeBaseReaderTests
     {
         public DecodedInstruction Decode(ReadOnlySpan<byte> bytes, ulong address, int bitness)
         {
-            return address == 0x1000
-                ? new DecodedInstruction(
+            if (address == 0x1000)
+            {
+                return new DecodedInstruction(
                     address,
                     5,
                     "Jmp",
                     0x1018,
-                    InstructionFlowControl.UnconditionalBranch)
-                : new DecodedInstruction(address, 1, "Ret", null, InstructionFlowControl.Return);
+                    InstructionFlowControl.UnconditionalBranch);
+            }
+
+            if (address == 0x1030)
+            {
+                return new DecodedInstruction(
+                    address,
+                    3,
+                    "Mov",
+                    null)
+                {
+                    Operands =
+                    [
+                        new DecodedOperand(DecodedOperandKind.Register, Register: "ECX"),
+                        new DecodedOperand(
+                            DecodedOperandKind.Memory,
+                            BaseRegister: "EAX",
+                            Displacement: 8,
+                            MemorySizeBytes: sizeof(uint))
+                    ]
+                };
+            }
+
+            return new DecodedInstruction(address, 1, "Ret", null, InstructionFlowControl.Return);
         }
     }
 
@@ -158,6 +181,11 @@ public sealed class KnowledgeBaseReaderTests
             EntryPointRva = 0x1000
         };
         session.LoadKnowledgeBase(knowledgeBase);
+        AnalysisItem exceptionVmt = session.GetOrAddItem(0x1020);
+        exceptionVmt.Name = "TExampleException";
+        exceptionVmt.SetFlags(AnalysisFlags.Vmt);
+        exceptionVmt.ClassInstanceSizeBytes = 16;
+        exceptionVmt.Fields = [new DelphiVmtField("FValue", 8, null)];
         BasicAnalysisService analysisService = new(new ExceptionHandlerDecoder());
 
         AnalysisResult result = await analysisService.AnalyzeAsync(
@@ -169,6 +197,9 @@ public sealed class KnowledgeBaseReaderTests
         Assert.IsTrue(session.Items[0x1018].Flags.HasFlag(AnalysisFlags.ProcedureStart));
         Assert.IsTrue(session.Items[0x1005].Flags.HasFlag(AnalysisFlags.ExceptionTable));
         Assert.AreEqual(0x1030U, session.Items[0x1005].ExceptionHandlers[0].ProcedureAddress);
+        Assert.AreEqual(
+            "FValue",
+            session.Items[0x1030].MemberAccessCandidates.Single().FieldName);
         Assert.AreEqual(0, result.Diagnostics.Count);
     }
 
