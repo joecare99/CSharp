@@ -2791,6 +2791,15 @@ public sealed class BasicAnalysisService : IAnalysisService
         FlowEdgeKind Kind,
         int Ordinal);
 
+    private readonly record struct DataTypeCandidateMutation(
+        uint TargetAddress,
+        string? PreviousType,
+        string AppliedType);
+
+    private readonly record struct ResourceStringCandidateMutation(
+        string? PreviousValue,
+        string AppliedValue);
+
     private sealed record ProcedureFlowState(
         ImmutableDictionary<int, string> ClassRegisterTypes,
         ImmutableDictionary<int, ulong> RegisterAddressValues,
@@ -2857,6 +2866,8 @@ public sealed class BasicAnalysisService : IAnalysisService
         Dictionary<uint, DecodedInstruction> decodedInstructions = [];
         Dictionary<uint, ProcedureFlowState> branchFlowContexts = [];
         Dictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges = [];
+        Dictionary<uint, List<DataTypeCandidateMutation>> callDataTypeCandidateMutations = [];
+        Dictionary<uint, ResourceStringCandidateMutation> callResourceStringCandidateMutations = [];
         codeStarts.Enqueue((session.EntryPointRva, true));
         foreach (AnalysisItem item in session.Items.Values)
         {
@@ -3093,6 +3104,26 @@ public sealed class BasicAnalysisService : IAnalysisService
                 decodedFlowStates[currentRva] = flowStateBeforeInstruction;
                 bool isCallPopSequence = IsCallToNextInstructionFollowedByPop(session, instruction);
                 AnalyzeStackInstruction(instruction, currentRva, codeStart, isProcedureStart, startItem, item);
+                if (instruction.FlowControl == InstructionFlowControl.Call
+                    && !isCallPopSequence
+                    && instruction.NearBranchTarget is not null)
+                {
+                    ApplyCallDataTypeCandidateWithProvenance(
+                        instruction,
+                        currentRva,
+                        session,
+                        registerAddressValues,
+                        classRegisterTypes,
+                        callDataTypeCandidateMutations);
+                    ApplyCallResourceStringCandidateWithProvenance(
+                        instruction,
+                        currentRva,
+                        session,
+                        registerAddressValues,
+                        item,
+                        callResourceStringCandidateMutations);
+                }
+
                 if (isProcedureStart)
                 {
                     ApplyFloatingPointMemoryTypeCandidate(
@@ -3216,16 +3247,25 @@ public sealed class BasicAnalysisService : IAnalysisService
                         }
 
                         classTypeInstruction = knownCallInstruction;
-                        ApplyKnownCallDataTypeCandidate(
-                            knownCallInstruction,
-                            session,
-                            registerAddressValues,
-                            classRegisterTypes);
-                        ApplyKnownCallResourceString(
-                            knownCallInstruction,
-                            session,
-                            registerAddressValues,
-                            item);
+                        if (instruction.NearBranchTarget is null
+                            && knownCallInstruction.NearBranchTarget is not null)
+                        {
+                            ApplyCallDataTypeCandidateWithProvenance(
+                                knownCallInstruction,
+                                currentRva,
+                                session,
+                                registerAddressValues,
+                                classRegisterTypes,
+                                callDataTypeCandidateMutations);
+                            ApplyCallResourceStringCandidateWithProvenance(
+                                knownCallInstruction,
+                                currentRva,
+                                session,
+                                registerAddressValues,
+                                item,
+                                callResourceStringCandidateMutations);
+                        }
+
                         ApplyKnownCallLocalDataTypes(
                             knownCallInstruction,
                             session,
@@ -7537,7 +7577,8 @@ public sealed class BasicAnalysisService : IAnalysisService
         DecodedInstruction instruction,
         AnalysisSession session,
         IReadOnlyDictionary<int, ulong> registerAddressValues,
-        IReadOnlyDictionary<int, string> classRegisterTypes)
+        IReadOnlyDictionary<int, string> classRegisterTypes,
+        List<DataTypeCandidateMutation> mutations)
     {
         if (instruction.NearBranchTarget is not ulong targetAddress
             || targetAddress > uint.MaxValue
@@ -7565,15 +7606,26 @@ public sealed class BasicAnalysisService : IAnalysisService
                 session,
                 registerAddressValues,
                 2,
-                formClassName);
+                formClassName,
+                mutations: mutations);
         }
         else if (string.Equals(helperName, "IntfClear", StringComparison.OrdinalIgnoreCase))
         {
-            ApplyRegisterDataTypeCandidate(session, registerAddressValues, 0, "IInterface");
+            ApplyRegisterDataTypeCandidate(
+                session,
+                registerAddressValues,
+                0,
+                "IInterface",
+                mutations: mutations);
         }
         else if (string.Equals(helperName, "VarClr", StringComparison.OrdinalIgnoreCase))
         {
-            ApplyRegisterDataTypeCandidate(session, registerAddressValues, 0, "Variant");
+            ApplyRegisterDataTypeCandidate(
+                session,
+                registerAddressValues,
+                0,
+                "Variant",
+                mutations: mutations);
         }
         else if (string.Equals(helperName, "DynArrayAddRef", StringComparison.OrdinalIgnoreCase))
         {
@@ -7583,12 +7635,18 @@ public sealed class BasicAnalysisService : IAnalysisService
                 0,
                 null,
                 overwrite: false,
-                additionalFlags: AnalysisFlags.DynamicArrayCandidate);
+                additionalFlags: AnalysisFlags.DynamicArrayCandidate,
+                mutations: mutations);
         }
         else if (string.Equals(helperName, "FinalizeRecord", StringComparison.OrdinalIgnoreCase)
             && TryGetKnownTypeInfoName(session, registerAddressValues, out string? recordTypeName))
         {
-            ApplyRegisterDataTypeCandidate(session, registerAddressValues, 0, recordTypeName);
+            ApplyRegisterDataTypeCandidate(
+                session,
+                registerAddressValues,
+                0,
+                recordTypeName,
+                mutations: mutations);
         }
         else if (string.Equals(helperName, "FinalizeArray", StringComparison.OrdinalIgnoreCase)
             && TryGetKnownTypeInfoName(session, registerAddressValues, out string? elementTypeName)
@@ -7599,7 +7657,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                 session,
                 registerAddressValues,
                 0,
-                $"array[{elementCount}] of {elementTypeName}");
+                $"array[{elementCount}] of {elementTypeName}",
+                mutations: mutations);
         }
         else if (IsDynamicArrayTypeHelper(helperName)
             && TryGetKnownTypeInfoName(session, registerAddressValues, out string? dynamicArrayTypeName))
@@ -7611,7 +7670,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                 0,
                 dynamicArrayTypeName,
                 overwrite,
-                AnalysisFlags.DynamicArrayCandidate);
+                AnalysisFlags.DynamicArrayCandidate,
+                mutations);
             if (string.Equals(helperName, "DynArrayCopy", StringComparison.OrdinalIgnoreCase))
             {
                 ApplyRegisterDataTypeCandidate(
@@ -7620,7 +7680,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                     2,
                     dynamicArrayTypeName,
                     overwrite: true,
-                    additionalFlags: AnalysisFlags.DynamicArrayCandidate);
+                    additionalFlags: AnalysisFlags.DynamicArrayCandidate,
+                    mutations: mutations);
             }
         }
     }
@@ -7667,11 +7728,12 @@ public sealed class BasicAnalysisService : IAnalysisService
         int registerIndex,
         string? typeName,
         bool overwrite = true,
-        AnalysisFlags additionalFlags = AnalysisFlags.None)
+        AnalysisFlags additionalFlags = AnalysisFlags.None,
+        List<DataTypeCandidateMutation>? mutations = null)
     {
         if (registerAddressValues.TryGetValue(registerIndex, out ulong value))
         {
-            ApplyDataTypeCandidate(session, value, typeName, overwrite, additionalFlags);
+            ApplyDataTypeCandidate(session, value, typeName, overwrite, additionalFlags, mutations);
         }
     }
 
@@ -7680,7 +7742,8 @@ public sealed class BasicAnalysisService : IAnalysisService
         ulong value,
         string? typeName,
         bool overwrite,
-        AnalysisFlags additionalFlags)
+        AnalysisFlags additionalFlags,
+        List<DataTypeCandidateMutation>? mutations = null)
     {
         if ((typeName is null && additionalFlags == AnalysisFlags.None)
             || value > uint.MaxValue
@@ -7701,10 +7764,86 @@ public sealed class BasicAnalysisService : IAnalysisService
 
         if (typeName is not null && (overwrite || string.IsNullOrEmpty(dataItem.DataTypeCandidate)))
         {
+            string? previousType = dataItem.DataTypeCandidate;
             dataItem.DataTypeCandidate = typeName;
+            if (!string.Equals(previousType, typeName, StringComparison.Ordinal))
+            {
+                mutations?.Add(new DataTypeCandidateMutation(dataRva, previousType, typeName));
+            }
         }
 
         dataItem.SetFlags(AnalysisFlags.Data | additionalFlags);
+    }
+
+    private static void RestoreCallDataTypeCandidateMutations(
+        uint instructionAddress,
+        AnalysisSession session,
+        Dictionary<uint, List<DataTypeCandidateMutation>> mutationsByInstruction)
+    {
+        if (!mutationsByInstruction.Remove(instructionAddress, out List<DataTypeCandidateMutation>? mutations))
+        {
+            return;
+        }
+
+        for (int index = mutations.Count - 1; index >= 0; index--)
+        {
+            DataTypeCandidateMutation mutation = mutations[index];
+            if (session.Items.TryGetValue(mutation.TargetAddress, out AnalysisItem? item)
+                && string.Equals(item.DataTypeCandidate, mutation.AppliedType, StringComparison.Ordinal))
+            {
+                item.DataTypeCandidate = mutation.PreviousType;
+            }
+        }
+    }
+
+    private static void ApplyCallDataTypeCandidateWithProvenance(
+        DecodedInstruction instruction,
+        uint instructionAddress,
+        AnalysisSession session,
+        IReadOnlyDictionary<int, ulong> registerAddressValues,
+        IReadOnlyDictionary<int, string> classRegisterTypes,
+        Dictionary<uint, List<DataTypeCandidateMutation>> mutationsByInstruction)
+    {
+        RestoreCallDataTypeCandidateMutations(instructionAddress, session, mutationsByInstruction);
+        List<DataTypeCandidateMutation> mutations = [];
+        ApplyKnownCallDataTypeCandidate(
+            instruction,
+            session,
+            registerAddressValues,
+            classRegisterTypes,
+            mutations);
+        if (mutations.Count > 0)
+        {
+            mutationsByInstruction[instructionAddress] = mutations;
+        }
+    }
+
+    private static void ApplyCallResourceStringCandidateWithProvenance(
+        DecodedInstruction instruction,
+        uint instructionAddress,
+        AnalysisSession session,
+        IReadOnlyDictionary<int, ulong> registerAddressValues,
+        AnalysisItem instructionItem,
+        Dictionary<uint, ResourceStringCandidateMutation> mutationsByInstruction)
+    {
+        if (mutationsByInstruction.Remove(instructionAddress, out ResourceStringCandidateMutation previousMutation)
+            && string.Equals(
+                instructionItem.ResourceStringCandidate,
+                previousMutation.AppliedValue,
+                StringComparison.Ordinal))
+        {
+            instructionItem.ResourceStringCandidate = previousMutation.PreviousValue;
+        }
+
+        string? previousValue = instructionItem.ResourceStringCandidate;
+        ApplyKnownCallResourceString(instruction, session, registerAddressValues, instructionItem);
+        if (instructionItem.ResourceStringCandidate is string appliedValue
+            && !string.Equals(previousValue, appliedValue, StringComparison.Ordinal))
+        {
+            mutationsByInstruction[instructionAddress] = new ResourceStringCandidateMutation(
+                previousValue,
+                appliedValue);
+        }
     }
 
     private static bool IsMappedDataRva(AnalysisSession session, uint rva) =>
@@ -8008,6 +8147,31 @@ public sealed class BasicAnalysisService : IAnalysisService
             {
                 value = registerValue;
             }
+            else if (isMov
+                && source.Kind == DecodedOperandKind.Memory
+                && source.MemorySizeBytes == sizeof(uint)
+                && source.IndexRegister is null
+                && IsDefaultDataSegment(source.SegmentRegister)
+                && TryGetMemoryOperandAddress(source, registerAddressValues, out uint memoryAddress)
+                && TryReadFileBackedDataUInt32(session, memoryAddress, out uint loadedValue))
+            {
+                value = loadedValue;
+            }
+            else if (isLea
+                && source.Kind == DecodedOperandKind.Memory
+                && source.IndexRegister is null
+                && source.Displacement is ulong baseDisplacement
+                && baseDisplacement <= uint.MaxValue
+                && GetRegisterAddressIndex(source.BaseRegister) is int baseRegisterIndex
+                && registerAddressValues.TryGetValue(baseRegisterIndex, out ulong baseAddress))
+            {
+                long displacement = unchecked((int)(uint)baseDisplacement);
+                long adjustedAddress = (long)baseAddress + displacement;
+                if (adjustedAddress is >= 0 and <= uint.MaxValue)
+                {
+                    value = (ulong)adjustedAddress;
+                }
+            }
             else if (isLea
                 && source.Kind == DecodedOperandKind.Memory
                 && source.BaseRegister is null
@@ -8115,6 +8279,67 @@ public sealed class BasicAnalysisService : IAnalysisService
                 registerAddressValues.Remove(argumentIndex);
             }
         }
+    }
+
+    private static bool TryGetMemoryOperandAddress(
+        DecodedOperand operand,
+        IReadOnlyDictionary<int, ulong> registerAddressValues,
+        out uint address)
+    {
+        address = 0;
+        if (operand.Displacement is not ulong displacement || displacement > uint.MaxValue)
+        {
+            return false;
+        }
+
+        if (operand.BaseRegister is null)
+        {
+            address = (uint)displacement;
+            return true;
+        }
+
+        if (GetRegisterAddressIndex(operand.BaseRegister) is not int baseRegisterIndex
+            || !registerAddressValues.TryGetValue(baseRegisterIndex, out ulong baseAddress)
+            || baseAddress > uint.MaxValue)
+        {
+            return false;
+        }
+
+        long effectiveAddress = (long)baseAddress + unchecked((int)(uint)displacement);
+        if (effectiveAddress is < 0 or > uint.MaxValue)
+        {
+            return false;
+        }
+
+        address = (uint)effectiveAddress;
+        return true;
+    }
+
+    private static bool TryReadFileBackedDataUInt32(
+        AnalysisSession session,
+        uint address,
+        out uint value)
+    {
+        value = 0;
+        return TryVaToRva(session, address, out uint rva)
+            && IsFileBackedDataRange(session, rva, sizeof(uint))
+            && session.AddressMap is not null
+            && session.AddressMap.TryRvaToRaw(rva, out int rawOffset)
+            && TryReadUInt32(session.Image.Span, rawOffset, out value);
+    }
+
+    private static bool IsFileBackedDataRange(
+        AnalysisSession session,
+        uint rva,
+        uint length)
+    {
+        ulong endRva = (ulong)rva + length;
+        return length > 0
+            && session.Sections.Any(section =>
+                !section.ContainsCode
+                && rva >= section.VirtualAddress
+                && endRva <= (ulong)section.VirtualAddress + section.VirtualSize
+                && endRva <= (ulong)section.VirtualAddress + section.RawSize);
     }
 
     private static void UpdateRegisterDynamicMethodIds(

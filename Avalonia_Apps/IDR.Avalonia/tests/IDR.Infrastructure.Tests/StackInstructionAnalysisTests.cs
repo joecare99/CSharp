@@ -3591,6 +3591,141 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisTypesTracksGlobalAddressThroughLeaWithPositiveDisplacement()
+    {
+        byte[] image = new byte[0x40];
+        byte[] code =
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0x8d, 0x40, 0x04,
+            0xe8, 0x0b, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "runtime-type-register-lea-positive.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x20, 0, 0x20, true),
+                new PeSection(".data", 0x2000, 0x20, 0x20, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = "@IntfClear";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("IInterface", session.Items[0x2004].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesTracksGlobalAddressThroughLeaWithSignedNegativeDisplacement()
+    {
+        byte[] image = new byte[0x40];
+        byte[] code =
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x8d, 0x40, 0xfc,
+            0xe8, 0x0b, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x18] = 0xc3;
+        AnalysisSession session = new(
+            "runtime-type-register-lea-negative.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x20, 0, 0x20, true),
+                new PeSection(".data", 0x2000, 0x20, 0x20, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = "@IntfClear";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("IInterface", session.Items[0x201c].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesTracksPointerLoadedFromAbsoluteGlobal()
+    {
+        AnalysisSession session = CreatePointerLoadedGlobalHelperSession(
+            [0xa1, 0x00, 0x20, 0x40, 0x00]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Variant", session.Items[0x2010].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesTracksPointerLoadedThroughTrackedBaseRegister()
+    {
+        AnalysisSession session = CreatePointerLoadedGlobalHelperSession(
+            [
+                0xbb, 0x00, 0x20, 0x40, 0x00,
+                0x8b, 0x03
+            ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Variant", session.Items[0x2010].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesTracksPointerLoadedThroughNegativeBaseDisplacement()
+    {
+        AnalysisSession session = CreatePointerLoadedGlobalHelperSession(
+            [
+                0xbb, 0x04, 0x20, 0x40, 0x00,
+                0x8b, 0x43, 0xfc
+            ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Variant", session.Items[0x2010].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesDoesNotTrackPointerLoadedFromCodeBytes()
+    {
+        AnalysisSession session = CreatePointerLoadedGlobalHelperSession(
+            [0xa1, 0x30, 0x10, 0x40, 0x00],
+            storePointerInCode: true);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items.TryGetValue(0x2010, out AnalysisItem? variable)
+            && variable.DataTypeCandidate is not null);
+    }
+
+    [TestMethod]
+    public async Task AnalysisTypesDoesNotReadPointerAcrossDataSectionBoundary()
+    {
+        AnalysisSession session = CreatePointerLoadedGlobalHelperSession(
+            [0xa1, 0x1e, 0x20, 0x40, 0x00],
+            dataRawSize: 0x20,
+            pointerRawOffset: 0x5e);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items.TryGetValue(0x2010, out AnalysisItem? variable)
+            && variable.DataTypeCandidate is not null);
+    }
+
+    [TestMethod]
     public async Task AnalysisTypesGlobalFormVariableFromCreateFormCall()
     {
         byte[] image = new byte[0xc0];
@@ -6585,6 +6720,76 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisRemovesCallDataTypeCandidateAfterLateConflictingPredecessor()
+    {
+        byte[] image = new byte[0x60];
+        byte[] code =
+        [
+            0xb8, 0x04, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0b,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xe8, 0x0c, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0xeb, 0xf7
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "runtime-type-late-conflict.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x20, 0x40, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = "@VarClr";
+        AnalysisItem variable = session.GetOrAddItem(0x2004);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(variable.Flags.HasFlag(AnalysisFlags.Data));
+        Assert.IsNull(variable.DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesCallResourceStringCandidateAfterRegisterValueIsClobbered()
+    {
+        byte[] image = new byte[0x40];
+        byte[] code =
+        [
+            0xb8, 0x01, 0x00, 0x00, 0x00,
+            0xe8, 0x16, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0xeb, 0xf7
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "resource-string-late-conflict.exe",
+            image,
+            [new PeSection(".text", 0x1000, 0x40, 0, 0x40, true)],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = "@LoadStr";
+        session.LoadPeDirectories(
+            [],
+            [],
+            [new PeResourceString(1, 0x0409, "Greeting")]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1005].ResourceStringCandidate);
+    }
+
+    [TestMethod]
     public async Task AnalysisClearsAsClassTypeCandidateWhenEaxIsOverwritten()
     {
         byte[] code = new byte[0x20];
@@ -8021,6 +8226,44 @@ public sealed class StackInstructionAnalysisTests
             EntryPointRva = 0x1000
         };
         session.GetOrAddItem(0x1018).Name = helperName;
+        return session;
+    }
+
+    private static AnalysisSession CreatePointerLoadedGlobalHelperSession(
+        byte[] loadInstructions,
+        bool storePointerInCode = false,
+        uint dataRawSize = 0x40,
+        int pointerRawOffset = 0x40)
+    {
+        byte[] image = new byte[0x80];
+        byte[] code = new byte[loadInstructions.Length + 6];
+        loadInstructions.CopyTo(code, 0);
+        int callOffset = loadInstructions.Length;
+        code[callOffset] = 0xe8;
+        int callNextOffset = callOffset + 5;
+        int callDisplacement = 0x20 - callNextOffset;
+        BitConverter.GetBytes(callDisplacement).CopyTo(code, callOffset + 1);
+        code[^1] = 0xc3;
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        BitConverter.GetBytes(0x00402010u).CopyTo(image, pointerRawOffset);
+        if (storePointerInCode)
+        {
+            BitConverter.GetBytes(0x00402010u).CopyTo(image, 0x30);
+        }
+
+        AnalysisSession session = new(
+            "runtime-type-pointer-load.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, dataRawSize, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = "@VarClr";
         return session;
     }
 
