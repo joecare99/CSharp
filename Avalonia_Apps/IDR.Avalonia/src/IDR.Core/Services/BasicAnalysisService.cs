@@ -2867,6 +2867,9 @@ public sealed class BasicAnalysisService : IAnalysisService
         Dictionary<uint, ProcedureFlowState> branchFlowContexts = [];
         Dictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges = [];
         Dictionary<uint, List<DataTypeCandidateMutation>> callDataTypeCandidateMutations = [];
+        Dictionary<uint, List<DataTypeCandidateMutation>> classStoreDataTypeCandidateMutations = [];
+        Dictionary<uint, List<DataTypeCandidateMutation>> managedStringStoreDataTypeCandidateMutations = [];
+        Dictionary<uint, List<DataTypeCandidateMutation>> floatingPointDataTypeCandidateMutations = [];
         Dictionary<uint, ResourceStringCandidateMutation> callResourceStringCandidateMutations = [];
         codeStarts.Enqueue((session.EntryPointRva, true));
         foreach (AnalysisItem item in session.Items.Values)
@@ -3124,15 +3127,17 @@ public sealed class BasicAnalysisService : IAnalysisService
                         callResourceStringCandidateMutations);
                 }
 
+                ApplyFloatingPointMemoryTypeCandidateWithProvenance(
+                    instruction,
+                    currentRva,
+                    session,
+                    startItem,
+                    registerAddressValues,
+                    stackLocalVariables,
+                    floatingPointDataTypeCandidateMutations);
+
                 if (isProcedureStart)
                 {
-                    ApplyFloatingPointMemoryTypeCandidate(
-                        instruction,
-                        session,
-                        startItem,
-                        registerAddressValues,
-                        stackLocalVariables);
-
                     if (pendingX87ResultTarget is uint x87Target)
                     {
                         if (IsX87ResultStore(instruction))
@@ -3312,19 +3317,23 @@ public sealed class BasicAnalysisService : IAnalysisService
                     }
 
                     ApplyKnownClassFieldAccess(instruction, session, classRegisterTypes, item);
-                    ApplyKnownClassStoreTypeCandidate(
+                    ApplyKnownClassStoreTypeCandidateWithProvenance(
                         instruction,
+                        currentRva,
                         session,
                         classRegisterTypes,
                         registerAddressValues,
                         startItem,
-                        stackLocalVariables);
-                    ApplyKnownManagedStringStoreTypeCandidate(
+                        stackLocalVariables,
+                        classStoreDataTypeCandidateMutations);
+                    ApplyKnownManagedStringStoreTypeCandidateWithProvenance(
                         instruction,
+                        currentRva,
                         session,
                         registerAddressValues,
                         startItem,
-                        stackLocalVariables);
+                        stackLocalVariables,
+                        managedStringStoreDataTypeCandidateMutations);
                     string? returnedClassType = instruction.FlowControl == InstructionFlowControl.Return
                         && !startItem.Flags.HasFlag(AnalysisFlags.ConstructorCandidate)
                         && !startItem.Flags.HasFlag(AnalysisFlags.DestructorCandidate)
@@ -5292,6 +5301,11 @@ public sealed class BasicAnalysisService : IAnalysisService
 
         string? typeName = null;
         if (memoryOperand is not null
+            && instruction.Mnemonic.StartsWith("F", StringComparison.OrdinalIgnoreCase))
+        {
+            typeName = GetFloatingPointTypeName(memoryOperand.MemorySizeBytes);
+        }
+        else if (memoryOperand is not null
             && (string.Equals(instruction.Mnemonic, "Mov", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(instruction.Mnemonic, "Xchg", StringComparison.OrdinalIgnoreCase))
             && instruction.Operands.Count == 2
@@ -7499,7 +7513,8 @@ public sealed class BasicAnalysisService : IAnalysisService
         AnalysisSession session,
         AnalysisItem procedure,
         IReadOnlyDictionary<int, ulong> registerAddressValues,
-        Dictionary<int, StackLocalVariable> stackLocalVariables)
+        Dictionary<int, StackLocalVariable> stackLocalVariables,
+        List<DataTypeCandidateMutation> mutations)
     {
         if (!instruction.Mnemonic.StartsWith("F", StringComparison.OrdinalIgnoreCase))
         {
@@ -7514,13 +7529,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             }
 
             int? sizeBytes = operand.MemorySizeBytes;
-            string typeName = sizeBytes switch
-            {
-                4 => "Single",
-                8 => "Double",
-                10 => "Extended",
-                _ => "Float"
-            };
+            string typeName = GetFloatingPointTypeName(sizeBytes);
 
             if (string.IsNullOrEmpty(operand.BaseRegister)
                 && string.IsNullOrEmpty(operand.IndexRegister)
@@ -7532,7 +7541,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                     absoluteAddress,
                     typeName,
                     overwrite: false,
-                    AnalysisFlags.None);
+                    AnalysisFlags.None,
+                    mutations);
                 continue;
             }
 
@@ -7547,7 +7557,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                     registerAddress,
                     typeName,
                     overwrite: false,
-                    AnalysisFlags.None);
+                    AnalysisFlags.None,
+                    mutations);
                 continue;
             }
 
@@ -7570,6 +7581,38 @@ public sealed class BasicAnalysisService : IAnalysisService
                     overwrite: false,
                     sizeBytes.Value);
             }
+        }
+    }
+
+    private static string GetFloatingPointTypeName(int? sizeBytes) => sizeBytes switch
+    {
+        4 => "Single",
+        8 => "Double",
+        10 => "Extended",
+        _ => "Float"
+    };
+
+    private static void ApplyFloatingPointMemoryTypeCandidateWithProvenance(
+        DecodedInstruction instruction,
+        uint instructionAddress,
+        AnalysisSession session,
+        AnalysisItem procedure,
+        IReadOnlyDictionary<int, ulong> registerAddressValues,
+        Dictionary<int, StackLocalVariable> stackLocalVariables,
+        Dictionary<uint, List<DataTypeCandidateMutation>> mutationsByInstruction)
+    {
+        RestoreDataTypeCandidateMutations(instructionAddress, session, mutationsByInstruction);
+        List<DataTypeCandidateMutation> mutations = [];
+        ApplyFloatingPointMemoryTypeCandidate(
+            instruction,
+            session,
+            procedure,
+            registerAddressValues,
+            stackLocalVariables,
+            mutations);
+        if (mutations.Count > 0)
+        {
+            mutationsByInstruction[instructionAddress] = mutations;
         }
     }
 
@@ -7775,7 +7818,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         dataItem.SetFlags(AnalysisFlags.Data | additionalFlags);
     }
 
-    private static void RestoreCallDataTypeCandidateMutations(
+    private static void RestoreDataTypeCandidateMutations(
         uint instructionAddress,
         AnalysisSession session,
         Dictionary<uint, List<DataTypeCandidateMutation>> mutationsByInstruction)
@@ -7804,7 +7847,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         IReadOnlyDictionary<int, string> classRegisterTypes,
         Dictionary<uint, List<DataTypeCandidateMutation>> mutationsByInstruction)
     {
-        RestoreCallDataTypeCandidateMutations(instructionAddress, session, mutationsByInstruction);
+        RestoreDataTypeCandidateMutations(instructionAddress, session, mutationsByInstruction);
         List<DataTypeCandidateMutation> mutations = [];
         ApplyKnownCallDataTypeCandidate(
             instruction,
@@ -7858,7 +7901,8 @@ public sealed class BasicAnalysisService : IAnalysisService
         IReadOnlyDictionary<int, string> classRegisterTypes,
         IReadOnlyDictionary<int, ulong> registerAddressValues,
         AnalysisItem procedure,
-        Dictionary<int, StackLocalVariable> stackLocalVariables)
+        Dictionary<int, StackLocalVariable> stackLocalVariables,
+        List<DataTypeCandidateMutation> mutations)
     {
         if (!string.Equals(instruction.Mnemonic, "Mov", StringComparison.OrdinalIgnoreCase)
             || instruction.Operands.Count != 2
@@ -7884,7 +7928,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                 instruction,
                 session,
                 address,
-                className);
+                className,
+                mutations);
         }
         else if (destination.IndexRegister is null
             && IsDefaultDataSegment(destination.SegmentRegister)
@@ -7898,7 +7943,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                 instruction,
                 session,
                 baseAddress + displacement,
-                className);
+                className,
+                mutations);
         }
         else if (procedure.UsesFramePointer
             && string.Equals(destination.BaseRegister, "EBP", StringComparison.OrdinalIgnoreCase)
@@ -7927,14 +7973,16 @@ public sealed class BasicAnalysisService : IAnalysisService
         DecodedInstruction instruction,
         AnalysisSession session,
         ulong address,
-        string className)
+        string className,
+        List<DataTypeCandidateMutation> mutations)
     {
         ApplyDataTypeCandidate(
             session,
             address,
             className,
             overwrite: false,
-            AnalysisFlags.None);
+            AnalysisFlags.None,
+            mutations);
         if (address <= uint.MaxValue
             && TryVaToRva(session, (uint)address, out uint dataRva)
             && IsMappedDataRva(session, dataRva))
@@ -7951,7 +7999,8 @@ public sealed class BasicAnalysisService : IAnalysisService
         AnalysisSession session,
         IReadOnlyDictionary<int, ulong> registerAddressValues,
         AnalysisItem procedure,
-        Dictionary<int, StackLocalVariable> stackLocalVariables)
+        Dictionary<int, StackLocalVariable> stackLocalVariables,
+        List<DataTypeCandidateMutation> mutations)
     {
         if (!string.Equals(instruction.Mnemonic, "Mov", StringComparison.OrdinalIgnoreCase)
             || instruction.Operands.Count != 2
@@ -8040,11 +8089,62 @@ public sealed class BasicAnalysisService : IAnalysisService
             destinationAddress,
             typeName,
             overwrite: false,
-            AnalysisFlags.None);
+            AnalysisFlags.None,
+            mutations);
         AddConstantCrossReferenceIfMissing(
             session,
             checked((uint)instruction.Address),
             destinationRva);
+    }
+
+    private static void ApplyKnownClassStoreTypeCandidateWithProvenance(
+        DecodedInstruction instruction,
+        uint instructionAddress,
+        AnalysisSession session,
+        IReadOnlyDictionary<int, string> classRegisterTypes,
+        IReadOnlyDictionary<int, ulong> registerAddressValues,
+        AnalysisItem procedure,
+        Dictionary<int, StackLocalVariable> stackLocalVariables,
+        Dictionary<uint, List<DataTypeCandidateMutation>> mutationsByInstruction)
+    {
+        RestoreDataTypeCandidateMutations(instructionAddress, session, mutationsByInstruction);
+        List<DataTypeCandidateMutation> mutations = [];
+        ApplyKnownClassStoreTypeCandidate(
+            instruction,
+            session,
+            classRegisterTypes,
+            registerAddressValues,
+            procedure,
+            stackLocalVariables,
+            mutations);
+        if (mutations.Count > 0)
+        {
+            mutationsByInstruction[instructionAddress] = mutations;
+        }
+    }
+
+    private static void ApplyKnownManagedStringStoreTypeCandidateWithProvenance(
+        DecodedInstruction instruction,
+        uint instructionAddress,
+        AnalysisSession session,
+        IReadOnlyDictionary<int, ulong> registerAddressValues,
+        AnalysisItem procedure,
+        Dictionary<int, StackLocalVariable> stackLocalVariables,
+        Dictionary<uint, List<DataTypeCandidateMutation>> mutationsByInstruction)
+    {
+        RestoreDataTypeCandidateMutations(instructionAddress, session, mutationsByInstruction);
+        List<DataTypeCandidateMutation> mutations = [];
+        ApplyKnownManagedStringStoreTypeCandidate(
+            instruction,
+            session,
+            registerAddressValues,
+            procedure,
+            stackLocalVariables,
+            mutations);
+        if (mutations.Count > 0)
+        {
+            mutationsByInstruction[instructionAddress] = mutations;
+        }
     }
 
     private static void ApplyKnownClassStackArgumentStoreTypeCandidate(

@@ -94,6 +94,29 @@ public sealed class FloatingPointMemoryAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisRemovesX87TypeAfterLateConflictingRegisterPredecessor()
+    {
+        AnalysisSession session = CreateSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0b,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xd9, 0x18,
+            0xc3,
+            0x90, 0x90,
+            0x31, 0xc0,
+            0xeb, 0xf7
+        ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x2020].DataTypeCandidate);
+        Assert.IsTrue(session.Items[0x2020].Flags.HasFlag(AnalysisFlags.Data));
+    }
+
+    [TestMethod]
     public async Task AnalysisDoesNotInferX87PrecisionForOffsetOrUnknownRegisterAddress()
     {
         AnalysisSession offsetSession = CreateSession(

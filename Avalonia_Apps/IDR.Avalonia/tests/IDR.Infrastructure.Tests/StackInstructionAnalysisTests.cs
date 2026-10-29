@@ -4981,6 +4981,28 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisInfersX87PrecisionForUnknownClassFieldAccess()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xd9, 0x40, 0x0c,
+            0xc3
+        ],
+            useParentField: false);
+        session.Items[0x2000].Fields = [];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1005].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("f12", access.FieldName);
+        Assert.AreEqual("Single", access.TypeName);
+        Assert.IsTrue(access.IsInferred);
+    }
+
+    [TestMethod]
     public async Task AnalysisDoesNotInferUnknownClassFieldForIndexedOrOutOfRangeAccess()
     {
         byte[][] codeSamples =
@@ -6754,6 +6776,108 @@ public sealed class StackInstructionAnalysisTests
 
         Assert.IsTrue(variable.Flags.HasFlag(AnalysisFlags.Data));
         Assert.IsNull(variable.DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesManagedStringStoreTypeAfterLateConflictingPredecessor()
+    {
+        AnalysisSession positiveSession = CreateManagedStringStoreSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x89, 0x05, 0x30, 0x20, 0x40, 0x00,
+            0xc3
+        ]);
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(positiveSession, null, CancellationToken.None);
+        Assert.AreEqual("UnicodeString", positiveSession.Items[0x2030].DataTypeCandidate);
+
+        AnalysisSession session = CreateManagedStringStoreSession(
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0b,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0x89, 0x05, 0x30, 0x20, 0x40, 0x00,
+            0x31, 0xc0,
+            0xeb, 0xf6
+        ]);
+        AnalysisItem variable = session.Items[0x2030];
+        variable.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(variable.DataTypeCandidate);
+        Assert.IsTrue(variable.Flags.HasFlag(AnalysisFlags.Data));
+        Assert.AreEqual(
+            1,
+            session.GetIncomingCrossReferences(0x2030)
+                .Count(reference => reference.SourceAddress == 0x100f));
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesClassStoreTypeAfterLateConflictingPredecessor()
+    {
+        byte[] image = new byte[0x80];
+        byte[] code =
+        [
+            0xb8, 0x20, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0b,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0x89, 0x05, 0x30, 0x20, 0x40, 0x00,
+            0x31, 0xc0,
+            0xeb, 0xf6
+        ];
+        code.CopyTo(image, 0);
+        AnalysisSession session = new(
+            "class-store-late-conflict.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem classVmt = session.GetOrAddItem(0x2020);
+        classVmt.Name = "TChild";
+        classVmt.SetFlags(AnalysisFlags.Vmt);
+        AnalysisItem variable = session.GetOrAddItem(0x2030);
+        variable.SetFlags(AnalysisFlags.Data);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(variable.DataTypeCandidate);
+        Assert.IsTrue(variable.Flags.HasFlag(AnalysisFlags.Data));
+        Assert.AreEqual(
+            1,
+            session.GetIncomingCrossReferences(0x2030)
+                .Count(reference => reference.SourceAddress == 0x100f));
+    }
+
+    private static AnalysisSession CreateManagedStringStoreSession(byte[] code)
+    {
+        byte[] image = new byte[0x80];
+        code.CopyTo(image, 0);
+        AnalysisSession session = new(
+            "managed-string-store-late-conflict.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem managedString = session.GetOrAddItem(0x2020);
+        managedString.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
+        managedString.TypeKind = DelphiTypeKind.UnicodeString;
+        session.GetOrAddItem(0x2030);
+        return session;
     }
 
     [TestMethod]
