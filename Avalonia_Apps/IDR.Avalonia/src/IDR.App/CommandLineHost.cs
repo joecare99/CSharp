@@ -1,5 +1,6 @@
 using IDR.Core.Models;
 using IDR.Core.Services;
+using IDR.Infrastructure.Analysis;
 using IDR.Infrastructure.Disassembly;
 using IDR.Infrastructure.KnowledgeBase;
 using IDR.Infrastructure.Pe;
@@ -20,7 +21,7 @@ public sealed class CommandLineHost
     private readonly IDelphiVersionDetector _versionDetector;
     private readonly IKnowledgeBaseProvider _knowledgeBaseProvider;
     private readonly IInstructionDecoder _instructionDecoder;
-    private readonly IAnalysisService _analysisService;
+    private readonly AnalysisRunner _analysisRunner;
 
     public CommandLineHost(
         IPeImageLoader imageLoader,
@@ -35,7 +36,11 @@ public sealed class CommandLineHost
             ?? throw new ArgumentNullException(nameof(knowledgeBaseProvider));
         _instructionDecoder = instructionDecoder
             ?? throw new ArgumentNullException(nameof(instructionDecoder));
-        _analysisService = analysisService ?? throw new ArgumentNullException(nameof(analysisService));
+        _analysisRunner = new AnalysisRunner(
+            _imageLoader,
+            _versionDetector,
+            _knowledgeBaseProvider,
+            analysisService ?? throw new ArgumentNullException(nameof(analysisService)));
     }
 
     public RootCommand CreateRootCommand()
@@ -159,52 +164,27 @@ public sealed class CommandLineHost
             return 1;
         }
 
-        if (knowledgeBasePath is not null && knowledgeBaseDirectory is not null)
-        {
-            Console.Error.WriteLine(
-                "Specify either --knowledge-base or --knowledge-base-directory, not both.");
-            return 2;
-        }
-
-        string resolvedKnowledgeBasePath = ResolveKnowledgeBasePath(
-            version,
-            knowledgeBasePath,
-            knowledgeBaseDirectory);
         try
         {
-            PeImage image = await _imageLoader.LoadAsync(inputPath, cancellationToken)
-                .ConfigureAwait(false);
-            DelphiVersionDetection detection = _versionDetector.Detect(image);
-            IKnowledgeBase knowledgeBase = await _knowledgeBaseProvider
-                .OpenAsync(resolvedKnowledgeBasePath, cancellationToken)
-                .ConfigureAwait(false);
-            AnalysisSession session = new(
-                Path.GetFullPath(inputPath),
-                image.Image,
-                image.Sections,
-                image.ImageBase,
-                version)
-            {
-                EntryPointRva = image.EntryPointRva
-            };
-            session.LoadPeDirectories(image.Imports, image.Exports, image.ResourceStrings);
-            session.LoadKnowledgeBase(knowledgeBase);
-
             IProgress<AnalysisProgress>? progress = showProgress
                 ? new ConsoleAnalysisProgress()
                 : null;
-            AnalysisResult result = await _analysisService
-                .AnalyzeAsync(session, progress, cancellationToken)
-                .ConfigureAwait(false);
+            AnalysisExecution execution = await _analysisRunner.AnalyzeAsync(
+                inputPath,
+                version,
+                knowledgeBasePath,
+                knowledgeBaseDirectory,
+                progress,
+                cancellationToken).ConfigureAwait(false);
             await WriteOutputAsync(
-                CreateOutput(
-                    session,
-                    knowledgeBase,
-                    resolvedKnowledgeBasePath,
-                    detection,
-                    result,
-                    image.Forms,
-                    image.FormDiagnostics,
+                CommandLineAnalysisReport.Create(
+                    execution.Session,
+                    execution.KnowledgeBase,
+                    execution.KnowledgeBasePath,
+                    execution.Detection,
+                    execution.Result,
+                    execution.Forms,
+                    execution.FormDiagnostics,
                     summaryOnly),
                 outputPath,
                 cancellationToken).ConfigureAwait(false);
@@ -214,6 +194,12 @@ public sealed class CommandLineHost
         {
             Console.Error.WriteLine("Analysis canceled.");
             return 130;
+        }
+        catch (ArgumentException exception) when (
+            exception.Message.StartsWith("Specify either a Knowledge Base", StringComparison.Ordinal))
+        {
+            Console.Error.WriteLine(exception.Message);
+            return 2;
         }
         catch (Exception exception) when (
             exception is IOException
@@ -225,105 +211,6 @@ public sealed class CommandLineHost
             Console.Error.WriteLine(exception.Message);
             return 1;
         }
-    }
-
-    private static string ResolveKnowledgeBasePath(
-        DelphiVersion version,
-        string? knowledgeBasePath,
-        string? knowledgeBaseDirectory)
-    {
-        if (knowledgeBasePath is not null)
-        {
-            return Path.GetFullPath(knowledgeBasePath);
-        }
-
-        string directory = knowledgeBaseDirectory
-            ?? Environment.GetEnvironmentVariable("IDR_KNOWLEDGE_BASE_DIRECTORY")
-            ?? AppContext.BaseDirectory;
-        return new KnowledgeBasePathResolver(directory).ResolvePath(version);
-    }
-
-    private static CommandLineAnalysisOutput CreateOutput(
-        AnalysisSession session,
-        IKnowledgeBase knowledgeBase,
-        string knowledgeBasePath,
-        DelphiVersionDetection detection,
-        AnalysisResult result,
-        IReadOnlyList<DelphiForm> forms,
-        IReadOnlyList<string> formDiagnostics,
-        bool summaryOnly)
-    {
-        AnalysisItem[] items = session.Items.Values.OrderBy(item => item.Address).ToArray();
-        return new CommandLineAnalysisOutput(
-            1,
-            session.SourcePath,
-            session.ImageBase,
-            session.EntryPointRva,
-            session.SelectedDelphiVersion.ToString(),
-            detection.Candidates.Select(candidate => candidate.ToString()).ToArray(),
-            knowledgeBasePath,
-            knowledgeBase.Modules.Count,
-            knowledgeBase.Procedures.Count,
-            session.SystemModuleId,
-            items.Length,
-            items.Count(item => item.Flags.HasFlag(AnalysisFlags.Vmt)),
-            items.Count(item => item.Flags.HasFlag(AnalysisFlags.Rtti)),
-            items.Count(item => item.Flags.HasFlag(AnalysisFlags.String)),
-            items.Count(item => item.Flags.HasFlag(AnalysisFlags.ProcedureStart)),
-            session.DisassemblyLines.Count,
-            forms.Count,
-            summaryOnly ? [] : forms.ToArray(),
-            summaryOnly ? [] : items.Select(item => new CommandLineAnalysisItem(
-                item.Address,
-                $"0x{item.Address:X8}",
-                $"0x{session.ImageBase + item.Address:X8}",
-                item.Flags.ToString(),
-                item.Name,
-                item.TypeKind?.ToString(),
-                item.RecordSizeBytes,
-                item.ClassInstanceSizeBytes,
-                item.ParentAddress,
-                item.ExceptionRegionHandlerAddress,
-                item.FinallyRegionEndAddress,
-                item.Int64ComparisonEndAddress,
-                item.ProcedureSizeBytes,
-                item.ReturnStackBytes,
-                item.ReturnTypeCandidate,
-                item.DataTypeCandidate,
-                item.ResourceStringCandidate,
-                item.ThreadVariableCandidate,
-                item.UsesFramePointer,
-                item.StackPointerDeltaBytes,
-                item.StackArguments.ToArray(),
-                item.StackLocalVariables.ToArray(),
-                item.RegisterArgumentCandidates.ToArray(),
-                item.CrossReferences.Select(reference => new CommandLineCrossReference(
-                    reference.TargetAddress,
-                    $"0x{reference.TargetAddress:X8}",
-                    reference.Kind.ToString(),
-                    reference.TargetName)).ToArray(),
-                session.GetIncomingCrossReferences(item.Address).Select(reference =>
-                    new CommandLineCrossReference(
-                        reference.SourceAddress,
-                        $"0x{reference.SourceAddress:X8}",
-                        reference.Kind.ToString(),
-                        reference.TargetName)).ToArray(),
-                item.ExceptionHandlers.ToArray(),
-                item.Methods.ToArray(),
-                item.Fields.ToArray(),
-                item.RecordFields.ToArray(),
-                item.MemberAccessCandidates.ToArray(),
-                item.Interfaces.ToArray(),
-                item.VirtualMethods.ToArray())).ToArray(),
-            summaryOnly ? [] : session.DisassemblyLines.Select(line => new CommandLineDisassemblyLine(
-                line.Address,
-                $"0x{line.Address:X8}",
-                line.Bytes,
-                line.Mnemonic,
-                line.FormattedText,
-                line.BranchTarget,
-                line.FlowControl.ToString())).ToArray(),
-            formDiagnostics.Concat(result.Diagnostics).ToArray());
     }
 
     private sealed class ConsoleAnalysisProgress : IProgress<AnalysisProgress>
@@ -362,75 +249,4 @@ public sealed class CommandLineHost
             .ConfigureAwait(false);
     }
 
-    private sealed record CommandLineAnalysisOutput(
-        int SchemaVersion,
-        string Input,
-        ulong ImageBase,
-        uint EntryPointRva,
-        string DelphiVersion,
-        string[] DetectedVersionCandidates,
-        string KnowledgeBase,
-        int KnowledgeBaseModuleCount,
-        int KnowledgeBaseProcedureCount,
-        ushort? SystemModuleId,
-        int ItemCount,
-        int VmtCount,
-        int RttiCount,
-        int StringCount,
-        int ProcedureCount,
-        int DisassemblyLineCount,
-        int FormCount,
-        DelphiForm[] Forms,
-        CommandLineAnalysisItem[] Items,
-        CommandLineDisassemblyLine[] Disassembly,
-        string[] Diagnostics);
-
-    private sealed record CommandLineAnalysisItem(
-        uint AddressRva,
-        string Rva,
-        string Va,
-        string Flags,
-        string? Name,
-        string? TypeKind,
-        uint? RecordSizeBytes,
-        uint? ClassInstanceSizeBytes,
-        uint? ParentRva,
-        uint? ExceptionRegionHandlerRva,
-        uint? FinallyRegionEndRva,
-        uint? Int64ComparisonEndRva,
-        uint? ProcedureSizeBytes,
-        ushort? ReturnStackBytes,
-        string? ReturnTypeCandidate,
-        string? DataTypeCandidate,
-        string? ResourceStringCandidate,
-        string? ThreadVariableCandidate,
-        bool UsesFramePointer,
-        long? StackPointerDeltaBytes,
-        StackArgument[] StackArguments,
-        StackLocalVariable[] StackLocalVariables,
-        string[] RegisterArgumentCandidates,
-        CommandLineCrossReference[] OutgoingCrossReferences,
-        CommandLineCrossReference[] IncomingCrossReferences,
-        DelphiExceptionHandler[] ExceptionHandlers,
-        DelphiVmtMethod[] Methods,
-        DelphiVmtField[] Fields,
-        DelphiRttiRecordField[] RecordFields,
-        MemberAccessCandidate[] MemberAccessCandidates,
-        DelphiVmtInterface[] Interfaces,
-        DelphiVmtVirtualMethod[] VirtualMethods);
-
-    private sealed record CommandLineCrossReference(
-        uint AddressRva,
-        string Rva,
-        string Kind,
-        string? Name);
-
-    private sealed record CommandLineDisassemblyLine(
-        uint AddressRva,
-        string Rva,
-        string Bytes,
-        string Mnemonic,
-        string FormattedText,
-        uint? BranchTargetRva,
-        string FlowControl);
 }
