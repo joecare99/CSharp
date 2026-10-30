@@ -7549,6 +7549,103 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisMarksCalleeAsFunctionWhenBranchOnlyFlowReadsEaxResult()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0x74;
+        code[1] = 0x02;
+        code[2] = 0xc3;
+        code[4] = 0xe8;
+        code[5] = 0x0f;
+        code[9] = 0x83;
+        code[10] = 0xf8;
+        code[11] = 0x00;
+        code[12] = 0xc3;
+        code[0x18] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x1004].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        Assert.IsTrue(session.Items[0x1018].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotMarkBranchOnlyCalleeWhenEaxIsOverwritten()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0x74;
+        code[1] = 0x02;
+        code[2] = 0xc3;
+        code[4] = 0xe8;
+        code[5] = 0x0f;
+        code[9] = 0xb8;
+        code[10] = 0x01;
+        code[14] = 0xc3;
+        code[0x18] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x1018].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
+    }
+
+    [TestMethod]
+    public async Task AnalysisMarksCalleeAsFunctionWhenBranchOnlyFlowStoresX87Result()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0x74;
+        code[1] = 0x02;
+        code[2] = 0xc3;
+        code[4] = 0xe8;
+        code[5] = 0x0f;
+        code[9] = 0xd9;
+        code[10] = 0x1d;
+        code[11] = 0x00;
+        code[12] = 0x20;
+        code[13] = 0x00;
+        code[14] = 0x00;
+        code[15] = 0xc3;
+        code[0x18] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x1004].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        Assert.AreEqual("Fstp", session.Items[0x1009].Name);
+        Assert.IsTrue(session.Items[0x1018].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotMarkBranchOnlyX87CalleeWhenStoreIsNotImmediate()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0x74;
+        code[1] = 0x02;
+        code[2] = 0xc3;
+        code[4] = 0xe8;
+        code[5] = 0x0f;
+        code[9] = 0xb8;
+        code[10] = 0x01;
+        code[14] = 0xd9;
+        code[15] = 0x1d;
+        code[16] = 0x00;
+        code[17] = 0x20;
+        code[18] = 0x00;
+        code[19] = 0x00;
+        code[0x18] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x1018].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
+    }
+
+    [TestMethod]
     public async Task AnalysisMarksDirectCalleeAsFunctionWhenEaxIsExchanged()
     {
         byte[] code = new byte[0x20];

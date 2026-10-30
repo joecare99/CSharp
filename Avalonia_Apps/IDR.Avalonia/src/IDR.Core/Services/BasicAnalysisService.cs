@@ -3146,47 +3146,51 @@ public sealed class BasicAnalysisService : IAnalysisService
                     stackLocalVariables,
                     floatingPointDataTypeCandidateMutations);
 
+                if (instruction.FlowControl == InstructionFlowControl.Call && !isCallPopSequence)
+                {
+                    pendingFunctionResultTarget = instruction.NearBranchTarget is ulong calledAddress
+                        && calledAddress <= uint.MaxValue
+                            ? (uint)calledAddress
+                            : null;
+                }
+                else if (pendingFunctionResultTarget is uint calledTarget)
+                {
+                    if (ReadsRegisterArgument(instruction, 0))
+                    {
+                        functionCandidateTargets.Add(calledTarget);
+                        pendingFunctionResultTarget = null;
+                    }
+                    else if (WritesRegisterArgument(instruction, 0))
+                    {
+                        pendingFunctionResultTarget = null;
+                    }
+                    else if (instruction.FlowControl == InstructionFlowControl.Return)
+                    {
+                        functionCandidateTargets.Add(calledTarget);
+                        pendingFunctionResultTarget = null;
+                    }
+                }
+
+                if (pendingX87ResultTarget is uint x87Target)
+                {
+                    if (IsX87ResultStore(instruction))
+                    {
+                        functionCandidateTargets.Add(x87Target);
+                    }
+
+                    pendingX87ResultTarget = null;
+                }
+
+                if (instruction.FlowControl == InstructionFlowControl.Call && !isCallPopSequence)
+                {
+                    pendingX87ResultTarget = instruction.NearBranchTarget is ulong x87CalledAddress
+                        && x87CalledAddress <= uint.MaxValue
+                            ? (uint)x87CalledAddress
+                            : null;
+                }
+
                 if (isProcedureStart)
                 {
-                    if (pendingX87ResultTarget is uint x87Target)
-                    {
-                        if (IsX87ResultStore(instruction))
-                        {
-                            functionCandidateTargets.Add(x87Target);
-                        }
-
-                        pendingX87ResultTarget = null;
-                    }
-
-                    if (instruction.FlowControl == InstructionFlowControl.Call && !isCallPopSequence)
-                    {
-                        pendingFunctionResultTarget = instruction.NearBranchTarget is ulong calledAddress
-                            && calledAddress <= uint.MaxValue
-                                ? (uint)calledAddress
-                                : null;
-                        pendingX87ResultTarget = instruction.NearBranchTarget is ulong x87CalledAddress
-                            && x87CalledAddress <= uint.MaxValue
-                                ? (uint)x87CalledAddress
-                                : null;
-                    }
-                    else if (pendingFunctionResultTarget is uint calledTarget)
-                    {
-                        if (ReadsRegisterArgument(instruction, 0))
-                        {
-                            functionCandidateTargets.Add(calledTarget);
-                            pendingFunctionResultTarget = null;
-                        }
-                        else if (WritesRegisterArgument(instruction, 0))
-                        {
-                            pendingFunctionResultTarget = null;
-                        }
-                        else if (instruction.FlowControl == InstructionFlowControl.Return)
-                        {
-                            functionCandidateTargets.Add(calledTarget);
-                            pendingFunctionResultTarget = null;
-                        }
-                    }
-
                     bool preservesRegisterArguments = isCallPopSequence
                         || IsRegisterPreservingCall(instruction, session);
                     AnalyzeRegisterArgumentCandidates(

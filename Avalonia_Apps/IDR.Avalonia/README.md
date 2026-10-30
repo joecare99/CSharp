@@ -81,7 +81,7 @@ For procedure starts whose scan reaches a return, the engine records the byte si
 
 The code scan also marks x86 frame setup/teardown, push/pop operations, and immediate `add`/`sub ESP` adjustments. Per-instruction stack-pointer deltas are exposed in results, while an `EBP`-based frame is recorded on the procedure start.
 
-For procedures with an EBP frame, positive index-free `[EBP+offset]` memory references from `+8` through `+0x10000` are collected as stack arguments on the procedure start. Access sizes are rounded up to 4-byte stack slots (with a 4-byte minimum), and 10-byte accesses are labeled `Extended`. Delphi record and dynamic-array runtime helpers can add a type candidate to directly tracked arguments when valid RTTI is known.
+For procedures with an EBP frame, positive index-free `[EBP+offset]` memory references from `+8` through `+0x10000` are collected as stack arguments on the procedure start. Access sizes are rounded up to 4-byte stack slots (with a 4-byte minimum), and 10-byte accesses are labeled `Extended`. Delphi record and dynamic-array runtime helpers can add a type candidate to directly tracked arguments when valid RTTI is known. A direct callee whose x87 result is consumed by the immediately following `FST`/`FSTP` is also marked as a function candidate, including on separately scanned branch-only paths.
 
 Frame-based procedures receive a `StackArgumentSizeMismatch` flag when the discovered stack-argument byte sizes exceed the `ret N` cleanup amount. This is a conservative warning: arguments the procedure does not access cannot be inferred from code references alone. Standard `ENTER` prologues with a valid nesting level establish frame-pointer state and report their net stack allocation; `LEAVE` is marked as a frame instruction without inventing a fixed stack delta. A direct callee is marked as a function candidate if its EAX result is read or returned before overwrite, or if an immediately following x87 `FST`/`FSTP` consumes its floating-point return value.
 
@@ -125,7 +125,7 @@ Calls to `@TryFinallyExit` mark the preceding straight-line instructions back to
 
 Direct calls to known `@ClassCreate` and `@ClassDestroy` symbols mark the calling procedure as a constructor or destructor candidate, respectively; these candidate flags are included in the normal result flags and CLI JSON.
 
-When a direct callee's EAX result is read before EAX is overwritten, the callee receives a `FunctionCandidate` flag. Imported routines and constructor/destructor candidates are not reclassified.
+When a direct callee's EAX result is read before EAX is overwritten, the callee receives a `FunctionCandidate` flag. This also applies to separately scanned branch-only flow paths. An immediately following x87 `FST`/`FSTP` that consumes the callee's x87 result provides the same evidence. Imported routines and constructor/destructor candidates are not reclassified.
 
 Calls to the known non-returning Delphi runtime routine `@Halt0` terminate the current code path rather than scanning unreachable fallthrough instructions.
 
