@@ -3389,6 +3389,26 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisRecognizesThreadVariableAccessAfterGetTlsInBranchOnlyFlow()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0x74;
+        code[1] = 0x02;
+        code[2] = 0xc3;
+        byte[] branchInstructions = [0xe8, 0x0f, 0x00, 0x00, 0x00, 0x8b, 0x48, 0x24, 0xc3];
+        branchInstructions.CopyTo(code, 4);
+        code[0x18] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+        session.GetOrAddItem(0x1018).Name = "@GetTls";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x1004].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        Assert.AreEqual("threadvar_36", session.Items[0x1009].ThreadVariableCandidate);
+    }
+
+    [TestMethod]
     public async Task AnalysisDoesNotInferThreadVariableWithoutImmediateEaxBasedAccess()
     {
         foreach (byte[] followingInstructions in new[]
@@ -4889,6 +4909,69 @@ public sealed class StackInstructionAnalysisTests
             reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
         Assert.IsTrue(session.Items[0x100e].Flags.HasFlag(AnalysisFlags.Call));
         Assert.IsTrue(session.Items[0x1030].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+    }
+
+    [TestMethod]
+    public async Task AnalysisMarksResolvedVirtualCalleeAsFunctionWhenEaxIsRead()
+    {
+        AnalysisSession session = CreateVirtualMethodSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xff, 0x50, 0x04,
+                0x83, 0xf8, 0x00,
+                0xc3
+            ]);
+        session.Items[0x2000].Name = "TExample";
+        session.Items[0x2000].VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1030)];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items[0x1005].CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
+        Assert.IsTrue(session.Items[0x1030].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
+    }
+
+    [TestMethod]
+    public async Task AnalysisResolvesVirtualCallInBranchOnlyFlowAndTracksEaxResult()
+    {
+        AnalysisSession session = CreateVirtualMethodSession(
+            [
+                0x74, 0x02, 0xc3, 0x90,
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xff, 0x50, 0x04,
+                0x83, 0xf8, 0x00,
+                0xc3
+            ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x1004].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        Assert.IsTrue(session.Items[0x1009].CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
+        Assert.IsTrue(session.Items[0x1030].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotMarkResolvedVirtualCalleeWhenEaxIsOverwritten()
+    {
+        AnalysisSession session = CreateVirtualMethodSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                0xff, 0x50, 0x04,
+                0xb8, 0x01, 0x00, 0x00, 0x00,
+                0xc3
+            ]);
+        session.Items[0x2000].Name = "TExample";
+        session.Items[0x2000].VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1030)];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items[0x1005].CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
+        Assert.IsFalse(session.Items[0x1030].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
     }
 
     [TestMethod]

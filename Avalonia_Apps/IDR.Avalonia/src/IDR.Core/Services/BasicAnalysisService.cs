@@ -3265,6 +3265,15 @@ public sealed class BasicAnalysisService : IAnalysisService
                             };
                         }
 
+                        pendingFunctionResultTarget = knownCallInstruction.NearBranchTarget is ulong functionTarget
+                            && functionTarget <= uint.MaxValue
+                                ? (uint)functionTarget
+                                : null;
+                        pendingX87ResultTarget = knownCallInstruction.NearBranchTarget is ulong x87ResolvedTarget
+                            && x87ResolvedTarget <= uint.MaxValue
+                                ? (uint)x87ResolvedTarget
+                                : null;
+
                         classTypeInstruction = knownCallInstruction;
                         if (instruction.NearBranchTarget is null
                             && knownCallInstruction.NearBranchTarget is not null)
@@ -3388,33 +3397,102 @@ public sealed class BasicAnalysisService : IAnalysisService
                 if (!isProcedureStart)
                 {
                     if (instruction.FlowControl == InstructionFlowControl.Call
-                        && !isCallPopSequence
-                        && instruction.NearBranchTarget is not null)
+                        && !isCallPopSequence)
                     {
-                        ApplyKnownCallDataArgumentsWithProvenance(
-                            instruction,
-                            session,
-                            registerAddressValues,
-                            callPrototypeDataTypeCandidateMutations);
-                        ApplyKnownCallStackArgumentsWithProvenance(
-                            instruction,
-                            session,
-                            branchFlowInstructions,
-                            callStackPrototypeMutations);
-                        ApplyCallDataTypeCandidateWithProvenance(
-                            instruction,
-                            currentRva,
-                            session,
-                            registerAddressValues,
-                            classRegisterTypes,
-                            callDataTypeCandidateMutations);
-                        ApplyCallResourceStringCandidateWithProvenance(
-                            instruction,
-                            currentRva,
-                            session,
-                            registerAddressValues,
-                            item,
-                            callResourceStringCandidateMutations);
+                        DecodedInstruction knownCallInstruction = instruction;
+                        if (instruction.NearBranchTarget is null)
+                        {
+                            List<uint> resolvedTargets = [];
+                            if (TryResolveDynamicMethodTarget(
+                                    instruction,
+                                    session,
+                                    classRegisterTypes,
+                                    dynamicMethodIds,
+                                    branchFlowInstructions,
+                                    out uint dynamicTarget))
+                            {
+                                resolvedTargets.Add(dynamicTarget);
+                            }
+
+                            if (TryResolveVirtualMethodTarget(
+                                    instruction,
+                                    session,
+                                    classRegisterTypes,
+                                    out uint virtualTarget))
+                            {
+                                resolvedTargets.Add(virtualTarget);
+                            }
+
+                            uint[] uniqueTargets = resolvedTargets.Distinct().ToArray();
+                            if (uniqueTargets.Length == 1)
+                            {
+                                uint resolvedTarget = uniqueTargets[0];
+                                knownCallInstruction = instruction with
+                                {
+                                    NearBranchTarget = resolvedTarget
+                                };
+                                session.AddCrossReference(
+                                    currentRva,
+                                    resolvedTarget,
+                                    CrossReferenceKind.Call);
+                                item.SetFlags(AnalysisFlags.Call);
+                                session.GetOrAddItem(resolvedTarget)
+                                    .SetFlags(AnalysisFlags.ProcedureStart);
+                                ScheduleCodeStart(
+                                    resolvedTarget,
+                                    true,
+                                    codeStarts,
+                                    scheduledStarts,
+                                    processedStarts,
+                                    processedProcedureStarts,
+                                    coveredStarts);
+                            }
+                        }
+
+                        if (knownCallInstruction.NearBranchTarget is not null)
+                        {
+                            classTypeInstruction = knownCallInstruction;
+                            pendingFunctionResultTarget = knownCallInstruction.NearBranchTarget is ulong functionTarget
+                                && functionTarget <= uint.MaxValue
+                                    ? (uint)functionTarget
+                                    : null;
+                            pendingX87ResultTarget = knownCallInstruction.NearBranchTarget is ulong x87ResolvedTarget
+                                && x87ResolvedTarget <= uint.MaxValue
+                                    ? (uint)x87ResolvedTarget
+                                    : null;
+                            pendingTlsBase = string.Equals(
+                                GetKnownCallReturnTypeCandidate(
+                                    knownCallInstruction,
+                                    session,
+                                    classRegisterTypes),
+                                "#TLS",
+                                StringComparison.Ordinal);
+
+                            ApplyKnownCallDataArgumentsWithProvenance(
+                                knownCallInstruction,
+                                session,
+                                registerAddressValues,
+                                callPrototypeDataTypeCandidateMutations);
+                            ApplyKnownCallStackArgumentsWithProvenance(
+                                knownCallInstruction,
+                                session,
+                                branchFlowInstructions,
+                                callStackPrototypeMutations);
+                            ApplyCallDataTypeCandidateWithProvenance(
+                                knownCallInstruction,
+                                currentRva,
+                                session,
+                                registerAddressValues,
+                                classRegisterTypes,
+                                callDataTypeCandidateMutations);
+                            ApplyCallResourceStringCandidateWithProvenance(
+                                knownCallInstruction,
+                                currentRva,
+                                session,
+                                registerAddressValues,
+                                item,
+                                callResourceStringCandidateMutations);
+                        }
                     }
 
                     ApplyKnownClassStoreTypeCandidateWithProvenance(
