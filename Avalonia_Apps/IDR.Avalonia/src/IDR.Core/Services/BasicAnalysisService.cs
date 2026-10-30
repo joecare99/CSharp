@@ -2771,6 +2771,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 
     private readonly record struct RegisterStackState(
         string? ClassType,
+        string? IndirectClassType,
         ulong? Address,
         int? LocalOffset,
         uint? StackArgumentOffset,
@@ -2809,6 +2810,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 
     private sealed record ProcedureFlowState(
         ImmutableDictionary<int, string> ClassRegisterTypes,
+        ImmutableDictionary<int, string> IndirectClassRegisterTypes,
         ImmutableDictionary<int, ulong> RegisterAddressValues,
         ImmutableDictionary<int, int> DynamicMethodIds,
         ImmutableDictionary<int, int> RegisterLocalOffsets,
@@ -2818,6 +2820,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         ImmutableArray<RegisterStackState> RegisterStack)
     {
         public static ProcedureFlowState Empty { get; } = new(
+            ImmutableDictionary<int, string>.Empty,
             ImmutableDictionary<int, string>.Empty,
             ImmutableDictionary<int, ulong>.Empty,
             ImmutableDictionary<int, int>.Empty,
@@ -2829,6 +2832,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 
         public static ProcedureFlowState Capture(
             IReadOnlyDictionary<int, string> classRegisterTypes,
+            IReadOnlyDictionary<int, string> indirectClassRegisterTypes,
             IReadOnlyDictionary<int, ulong> registerAddressValues,
             IReadOnlyDictionary<int, int> dynamicMethodIds,
             IReadOnlyDictionary<int, int> registerLocalOffsets,
@@ -2839,6 +2843,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         {
             return new ProcedureFlowState(
                 classRegisterTypes.ToImmutableDictionary(),
+                indirectClassRegisterTypes.ToImmutableDictionary(),
                 registerAddressValues.ToImmutableDictionary(),
                 dynamicMethodIds.ToImmutableDictionary(),
                 registerLocalOffsets.ToImmutableDictionary(),
@@ -2853,6 +2858,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             return this with
             {
                 ClassRegisterTypes = ClassRegisterTypes.Remove(registerIndex),
+                IndirectClassRegisterTypes = IndirectClassRegisterTypes.Remove(registerIndex),
                 RegisterAddressValues = RegisterAddressValues.Remove(registerIndex),
                 DynamicMethodIds = DynamicMethodIds.Remove(registerIndex),
                 RegisterLocalOffsets = RegisterLocalOffsets.Remove(registerIndex),
@@ -2994,15 +3000,21 @@ public sealed class BasicAnalysisService : IAnalysisService
             {
                 ProcedureFlowState rootFlowState = ProcedureFlowState.Empty;
                 bool hasRootFlowState = codeStart == session.EntryPointRva;
+                ImmutableDictionary<int, string> indirectPrototypeRegisterTypes =
+                    ImmutableDictionary<int, string>.Empty;
                 if (session.Items.TryGetValue(codeStart, out AnalysisItem? procedureItem))
                 {
                     ImmutableDictionary<int, string> prototypeRegisterTypes =
-                        GetKnownProcedureRegisterTypes(session, procedureItem.Name);
-                    if (prototypeRegisterTypes.Count > 0)
+                        GetKnownProcedureRegisterTypes(
+                            session,
+                            procedureItem.Name,
+                            out indirectPrototypeRegisterTypes);
+                    if (prototypeRegisterTypes.Count > 0 || indirectPrototypeRegisterTypes.Count > 0)
                     {
                         rootFlowState = rootFlowState with
                         {
-                            ClassRegisterTypes = prototypeRegisterTypes
+                            ClassRegisterTypes = prototypeRegisterTypes,
+                            IndirectClassRegisterTypes = indirectPrototypeRegisterTypes
                         };
                         hasRootFlowState = true;
                     }
@@ -3014,7 +3026,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                     {
                         ClassRegisterTypes = rootFlowState.ClassRegisterTypes.SetItem(
                             0,
-                            ownerClassName)
+                            ownerClassName),
+                        IndirectClassRegisterTypes = rootFlowState.IndirectClassRegisterTypes.Remove(0)
                     };
                     hasRootFlowState = true;
                 }
@@ -3036,6 +3049,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                 codeStart,
                 ProcedureFlowState.Empty);
             Dictionary<int, string> classRegisterTypes = entryFlowState.ClassRegisterTypes.ToDictionary();
+            Dictionary<int, string> indirectClassRegisterTypes =
+                entryFlowState.IndirectClassRegisterTypes.ToDictionary();
             List<RegisterStackState> registerStack = entryFlowState.RegisterStack.ToList();
             Dictionary<int, ulong> registerAddressValues = entryFlowState.RegisterAddressValues.ToDictionary();
             Dictionary<int, int> dynamicMethodIds = entryFlowState.DynamicMethodIds.ToDictionary();
@@ -3116,6 +3131,9 @@ public sealed class BasicAnalysisService : IAnalysisService
                     && branchFlowContexts.TryGetValue(currentRva, out ProcedureFlowState? incomingFlowState))
                 {
                     MergeKnownRegisterTypes(classRegisterTypes, incomingFlowState.ClassRegisterTypes);
+                    MergeKnownRegisterTypes(
+                        indirectClassRegisterTypes,
+                        incomingFlowState.IndirectClassRegisterTypes);
                     MergeKnownRegisterAddresses(
                         registerAddressValues,
                         incomingFlowState.RegisterAddressValues);
@@ -3165,6 +3183,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 
                 ProcedureFlowState flowStateBeforeInstruction = ProcedureFlowState.Capture(
                     classRegisterTypes,
+                    indirectClassRegisterTypes,
                     registerAddressValues,
                     dynamicMethodIds,
                     registerLocalOffsets,
@@ -3447,6 +3466,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                         classTypeInstruction,
                         session,
                         classRegisterTypes,
+                        indirectClassRegisterTypes,
                         stackLocalVariables,
                         stackArguments,
                         registerAddressValues);
@@ -3465,6 +3485,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                     UpdateRegisterStackState(
                         instruction,
                         classRegisterTypes,
+                        indirectClassRegisterTypes,
                         registerAddressValues,
                         dynamicMethodIds,
                         registerLocalOffsets,
@@ -3616,6 +3637,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                         instruction,
                         session,
                         classRegisterTypes,
+                        indirectClassRegisterTypes,
                         stackLocalVariables,
                         stackArguments,
                         registerAddressValues);
@@ -3629,6 +3651,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                     UpdateRegisterStackState(
                         instruction,
                         classRegisterTypes,
+                        indirectClassRegisterTypes,
                         registerAddressValues,
                         dynamicMethodIds,
                         registerLocalOffsets,
@@ -3794,6 +3817,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                                     0,
                                     ProcedureFlowState.Capture(
                                         classRegisterTypes,
+                                        indirectClassRegisterTypes,
                                         registerAddressValues,
                                         dynamicMethodIds,
                                         registerLocalOffsets,
@@ -3963,6 +3987,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                         0,
                         ProcedureFlowState.Capture(
                             classRegisterTypes,
+                            indirectClassRegisterTypes,
                             registerAddressValues,
                             dynamicMethodIds,
                             registerLocalOffsets,
@@ -4239,6 +4264,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         ProcedureFlowState second)
     {
         return AreValuesEqual(first.ClassRegisterTypes, second.ClassRegisterTypes)
+            && AreValuesEqual(first.IndirectClassRegisterTypes, second.IndirectClassRegisterTypes)
             && AreValuesEqual(first.RegisterAddressValues, second.RegisterAddressValues)
             && AreValuesEqual(first.DynamicMethodIds, second.DynamicMethodIds)
             && AreValuesEqual(first.RegisterLocalOffsets, second.RegisterLocalOffsets)
@@ -4304,6 +4330,9 @@ public sealed class BasicAnalysisService : IAnalysisService
         ImmutableDictionary<int, string> classTypes = MeetValues(
             existing.ClassRegisterTypes,
             incoming.ClassRegisterTypes);
+        ImmutableDictionary<int, string> indirectClassTypes = MeetValues(
+            existing.IndirectClassRegisterTypes,
+            incoming.IndirectClassRegisterTypes);
         ImmutableDictionary<int, ulong> addresses = MeetValues(
             existing.RegisterAddressValues,
             incoming.RegisterAddressValues);
@@ -4328,6 +4357,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 : ImmutableArray<RegisterStackState>.Empty;
 
         if (ReferenceEquals(classTypes, existing.ClassRegisterTypes)
+            && ReferenceEquals(indirectClassTypes, existing.IndirectClassRegisterTypes)
             && ReferenceEquals(addresses, existing.RegisterAddressValues)
             && ReferenceEquals(dynamicMethodIds, existing.DynamicMethodIds)
             && ReferenceEquals(localOffsets, existing.RegisterLocalOffsets)
@@ -4341,6 +4371,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 
         return new ProcedureFlowState(
             classTypes,
+            indirectClassTypes,
             addresses,
             dynamicMethodIds,
             localOffsets,
@@ -4374,6 +4405,7 @@ public sealed class BasicAnalysisService : IAnalysisService
     private static void UpdateRegisterStackState(
         DecodedInstruction instruction,
         Dictionary<int, string> classRegisterTypes,
+        Dictionary<int, string> indirectClassRegisterTypes,
         Dictionary<int, ulong> registerAddressValues,
         Dictionary<int, int> dynamicMethodIds,
         Dictionary<int, int> registerLocalOffsets,
@@ -4394,6 +4426,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 && IsFullWidthStackRegister(instruction.Operands[0].Register))
             {
                 string? classType = null;
+                string? indirectClassType = null;
                 ulong? address = null;
                 int? localOffset = null;
                 uint? stackArgumentOffset = null;
@@ -4401,6 +4434,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 if (GetClassRegisterTypeIndex(instruction.Operands[0].Register) is int registerIndex)
                 {
                     classRegisterTypes.TryGetValue(registerIndex, out classType);
+                    indirectClassRegisterTypes.TryGetValue(registerIndex, out indirectClassType);
                 }
 
                 if (GetRegisterAddressIndex(instruction.Operands[0].Register) is int addressIndex
@@ -4432,6 +4466,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 
                 registerStack.Add(new RegisterStackState(
                     classType,
+                    indirectClassType,
                     address,
                     localOffset,
                     stackArgumentOffset,
@@ -4465,9 +4500,15 @@ public sealed class BasicAnalysisService : IAnalysisService
                 if (GetClassRegisterTypeIndex(instruction.Operands[0].Register) is int registerIndex)
                 {
                     classRegisterTypes.Remove(registerIndex);
+                    indirectClassRegisterTypes.Remove(registerIndex);
                     if (!string.IsNullOrWhiteSpace(savedState.ClassType))
                     {
                         classRegisterTypes[registerIndex] = savedState.ClassType;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(savedState.IndirectClassType))
+                    {
+                        indirectClassRegisterTypes[registerIndex] = savedState.IndirectClassType;
                     }
                 }
 
@@ -6087,6 +6128,12 @@ public sealed class BasicAnalysisService : IAnalysisService
         return aliases.Any(alias => string.Equals(candidate, alias, StringComparison.OrdinalIgnoreCase));
     }
 
+    private static bool IsKnownClassOrRecordType(AnalysisSession session, string typeName) =>
+        session.Items.Values.Any(item =>
+            string.Equals(item.Name, typeName, StringComparison.OrdinalIgnoreCase)
+            && (item.Flags.HasFlag(AnalysisFlags.Vmt)
+                || item.TypeKind == DelphiTypeKind.Record));
+
     private static string? GetKnownCallReturnTypeCandidate(
         DecodedInstruction instruction,
         AnalysisSession session,
@@ -6126,6 +6173,16 @@ public sealed class BasicAnalysisService : IAnalysisService
             && classRegisterTypes.TryGetValue(1, out string? className))
         {
             return className;
+        }
+
+        if (session.TryGetUnambiguousKnowledgeBaseProcedure(
+                target.Name ?? string.Empty,
+                out KnowledgeBaseProcedure? procedure)
+            && procedure is not null
+            && procedure.DumpType == (byte)'C'
+            && !string.IsNullOrWhiteSpace(procedure.ReturnType))
+        {
+            return procedure.ReturnType;
         }
 
         return null;
@@ -9342,6 +9399,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         DecodedInstruction instruction,
         AnalysisSession session,
         Dictionary<int, string> classRegisterTypes,
+        Dictionary<int, string> indirectClassRegisterTypes,
         Dictionary<int, StackLocalVariable> stackLocalVariables,
         Dictionary<uint, StackArgument> stackArguments,
         IReadOnlyDictionary<int, ulong> registerAddressValues)
@@ -9366,9 +9424,9 @@ public sealed class BasicAnalysisService : IAnalysisService
                 ? GetKnownCallReturnTypeCandidate(instruction, session, classRegisterTypes)
                 : null;
             classRegisterTypes.Clear();
+            indirectClassRegisterTypes.Clear();
             if (!string.IsNullOrWhiteSpace(callReturnType)
-                && !string.Equals(callReturnType, "Boolean", StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(callReturnType, "#TLS", StringComparison.OrdinalIgnoreCase))
+                && IsKnownClassOrRecordType(session, callReturnType))
             {
                 classRegisterTypes[0] = callReturnType;
             }
@@ -9384,6 +9442,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             && GetClassRegisterTypeIndex(instruction.Operands[0].Register) is int destinationIndex)
         {
             string? className = null;
+            string? indirectClassName = null;
             DecodedOperand source = instruction.Operands[1];
             if (isMov
                 && source.Kind == DecodedOperandKind.Immediate
@@ -9404,6 +9463,19 @@ public sealed class BasicAnalysisService : IAnalysisService
                 && GetClassRegisterTypeIndex(source.Register) is int sourceIndex)
             {
                 classRegisterTypes.TryGetValue(sourceIndex, out className);
+                indirectClassRegisterTypes.TryGetValue(sourceIndex, out indirectClassName);
+            }
+            else if (isMov
+                && source.Kind == DecodedOperandKind.Memory
+                && source.IndexRegister is null
+                && IsDefaultDataSegment(source.SegmentRegister)
+                && source.Displacement is null or 0
+                && GetClassRegisterTypeIndex(source.BaseRegister) is int indirectBaseRegisterIndex
+                && indirectClassRegisterTypes.TryGetValue(
+                    indirectBaseRegisterIndex,
+                    out string? dereferencedClassName))
+            {
+                className = dereferencedClassName;
             }
             else if (isMov
                 && source.Kind == DecodedOperandKind.Memory
@@ -9563,9 +9635,15 @@ public sealed class BasicAnalysisService : IAnalysisService
             }
 
             classRegisterTypes.Remove(destinationIndex);
+            indirectClassRegisterTypes.Remove(destinationIndex);
             if (className is not null)
             {
                 classRegisterTypes[destinationIndex] = className;
+            }
+
+            if (indirectClassName is not null)
+            {
+                indirectClassRegisterTypes[destinationIndex] = indirectClassName;
             }
 
             return;
@@ -9606,6 +9684,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             }
 
             classRegisterTypes.Remove(addDestinationIndex);
+            indirectClassRegisterTypes.Remove(addDestinationIndex);
             if (!string.IsNullOrWhiteSpace(fieldTypeName))
             {
                 classRegisterTypes[addDestinationIndex] = fieldTypeName;
@@ -9626,8 +9705,14 @@ public sealed class BasicAnalysisService : IAnalysisService
                 {
                     bool hasFirstType = classRegisterTypes.TryGetValue(firstIndex, out string? firstType);
                     bool hasSecondType = classRegisterTypes.TryGetValue(secondIndex, out string? secondType);
+                    bool hasFirstIndirectType =
+                        indirectClassRegisterTypes.TryGetValue(firstIndex, out string? firstIndirectType);
+                    bool hasSecondIndirectType =
+                        indirectClassRegisterTypes.TryGetValue(secondIndex, out string? secondIndirectType);
                     classRegisterTypes.Remove(firstIndex);
                     classRegisterTypes.Remove(secondIndex);
+                    indirectClassRegisterTypes.Remove(firstIndex);
+                    indirectClassRegisterTypes.Remove(secondIndex);
                     if (hasFirstType)
                     {
                         classRegisterTypes[secondIndex] = firstType!;
@@ -9636,6 +9721,16 @@ public sealed class BasicAnalysisService : IAnalysisService
                     if (hasSecondType)
                     {
                         classRegisterTypes[firstIndex] = secondType!;
+                    }
+
+                    if (hasFirstIndirectType)
+                    {
+                        indirectClassRegisterTypes[secondIndex] = firstIndirectType!;
+                    }
+
+                    if (hasSecondIndirectType)
+                    {
+                        indirectClassRegisterTypes[firstIndex] = secondIndirectType!;
                     }
                 }
 
@@ -9690,6 +9785,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                     }
 
                     classRegisterTypes.Remove(exchangedRegisterIndex);
+                    indirectClassRegisterTypes.Remove(exchangedRegisterIndex);
                     if (!string.IsNullOrWhiteSpace(exchangedTypeName))
                     {
                         classRegisterTypes[exchangedRegisterIndex] = exchangedTypeName;
@@ -9722,6 +9818,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                         out string? exchangedFieldTypeName))
                 {
                     classRegisterTypes.Remove(exchangedRegisterIndex);
+                    indirectClassRegisterTypes.Remove(exchangedRegisterIndex);
                     if (!string.IsNullOrWhiteSpace(exchangedFieldTypeName))
                     {
                         classRegisterTypes[exchangedRegisterIndex] = exchangedFieldTypeName;
@@ -9737,6 +9834,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                     && GetClassRegisterFamilyIndex(operand.Register) is int exchangedIndex)
                 {
                     classRegisterTypes.Remove(exchangedIndex);
+                    indirectClassRegisterTypes.Remove(exchangedIndex);
                 }
             }
 
@@ -9748,6 +9846,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             if (WritesTrackedRegister(instruction, argumentIndex))
             {
                 classRegisterTypes.Remove(argumentIndex);
+                indirectClassRegisterTypes.Remove(argumentIndex);
             }
         }
     }
@@ -9805,8 +9904,10 @@ public sealed class BasicAnalysisService : IAnalysisService
 
     private static ImmutableDictionary<int, string> GetKnownProcedureRegisterTypes(
         AnalysisSession session,
-        string? procedureName)
+        string? procedureName,
+        out ImmutableDictionary<int, string> indirectRegisterTypes)
     {
+        indirectRegisterTypes = ImmutableDictionary<int, string>.Empty;
         if (!session.TryGetUnambiguousKnowledgeBaseProcedure(
                 procedureName ?? string.Empty,
                 out KnowledgeBaseProcedure? procedure)
@@ -9817,11 +9918,11 @@ public sealed class BasicAnalysisService : IAnalysisService
             return ImmutableDictionary<int, string>.Empty;
         }
 
-        List<(int RegisterIndex, string TypeName)> candidates = [];
+        List<(int RegisterIndex, string TypeName, bool IsIndirect)> candidates = [];
         foreach (KnowledgeBaseArgument argument in procedure.Arguments)
         {
             if (!argument.IsRegister
-                || argument.Tag != 0x21
+                || argument.Tag is not (0x21 or 0x22)
                 || argument.SizeBytes != sizeof(uint)
                 || GetKnowledgeBaseRegisterIndex(argument.RegisterOrStackIndex) is not int registerIndex
                 || string.IsNullOrWhiteSpace(argument.TypeName)
@@ -9833,18 +9934,33 @@ public sealed class BasicAnalysisService : IAnalysisService
                 continue;
             }
 
-            candidates.Add((registerIndex, argument.TypeName));
+            candidates.Add((registerIndex, argument.TypeName, argument.Tag == 0x22));
         }
 
-        return candidates
+        ImmutableDictionary<int, (string TypeName, bool IsIndirect)> resolvedCandidates = candidates
             .GroupBy(candidate => candidate.RegisterIndex)
-            .Where(group => group.Select(candidate => candidate.TypeName)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .Take(2)
-                .Count() == 1)
+            .Select(group => new
+            {
+                RegisterIndex = group.Key,
+                Candidates = group
+                    .Select(candidate => (candidate.TypeName, candidate.IsIndirect))
+                    .DistinctBy(candidate => (candidate.TypeName.ToUpperInvariant(), candidate.IsIndirect))
+                    .Take(2)
+                    .ToArray()
+            })
+            .Where(group => group.Candidates.Length == 1)
             .ToImmutableDictionary(
-                group => group.Key,
-                group => group.First().TypeName);
+                group => group.RegisterIndex,
+                group => group.Candidates[0]);
+        ImmutableDictionary<int, string>.Builder direct = ImmutableDictionary.CreateBuilder<int, string>();
+        ImmutableDictionary<int, string>.Builder indirect = ImmutableDictionary.CreateBuilder<int, string>();
+        foreach ((int registerIndex, (string typeName, bool isIndirect)) in resolvedCandidates)
+        {
+            (isIndirect ? indirect : direct).Add(registerIndex, typeName);
+        }
+
+        indirectRegisterTypes = indirect.ToImmutable();
+        return direct.ToImmutable();
     }
 
     private static Dictionary<uint, string> BuildProcedureOwnerClassNames(AnalysisSession session)
