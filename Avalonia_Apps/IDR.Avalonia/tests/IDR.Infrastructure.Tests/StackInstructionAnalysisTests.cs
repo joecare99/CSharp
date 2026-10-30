@@ -3801,6 +3801,94 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisUsesKnownPrototypeClassReturnTypeForFollowingFieldAccess()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0xe8, 0x0b, 0x00, 0x00, 0x00, 0x8b, 0xc8, 0x8b, 0x51, 0x08, 0xc3],
+            useParentField: false);
+        session.GetOrAddItem(0x1010).Name = "TFactory.CreateChild";
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "TFactory.CreateChild",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    ReturnType = "TChild"
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1007].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisReportsScalarPrototypeReturnTypeWithoutClassFieldInference()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0xe8, 0x0b, 0x00, 0x00, 0x00, 0x8b, 0xc8, 0x8b, 0x51, 0x08, 0xc3],
+            useParentField: false);
+        session.GetOrAddItem(0x1010).Name = "TFactory.CreateScalar";
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "TFactory.CreateScalar",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    ReturnType = "Integer"
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Integer", session.Items[0x1000].ReturnTypeCandidate);
+        Assert.AreEqual(0, session.Items[0x1007].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotUseDataDumpPrototypeAsCallReturnType()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0xe8, 0x0b, 0x00, 0x00, 0x00, 0x8b, 0xc8, 0x8b, 0x51, 0x08, 0xc3],
+            useParentField: false);
+        session.GetOrAddItem(0x1010).Name = "TFactory.NonCode";
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "TFactory.NonCode",
+                    (byte)'D',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    ReturnType = "TChild"
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
+        Assert.AreEqual(0, session.Items[0x1007].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
     public async Task AnalysisTypesGlobalInterfaceClearedByRuntimeHelper()
     {
         AnalysisSession session = CreateRuntimeVariableTypeSession("@IntfClear", 0x402004);
@@ -7187,6 +7275,124 @@ public sealed class StackInstructionAnalysisTests
 
             Assert.AreEqual(0, session.Items[0x1000].MemberAccessCandidates.Count);
         }
+    }
+
+    [TestMethod]
+    public async Task AnalysisDereferencesKnownVarClassRegisterBeforeResolvingFieldsAcrossBranch()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0x74, 0x02, 0xc3, 0x90, 0x8b, 0x02, 0x8b, 0x48, 0x08, 0xc3],
+            useParentField: false);
+        session.GetOrAddItem(0x1000).Name = "TChild.ReadCount";
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "TChild.ReadCount",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    CallingConvention = 0,
+                    Arguments =
+                    [
+                        new KnowledgeBaseArgument(
+                            0x22,
+                            true,
+                            2,
+                            sizeof(uint),
+                            "Value",
+                            "TChild")
+                    ]
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1006].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotTreatVarClassPointerAsObjectRegister()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0x8b, 0x4a, 0x08, 0xc3],
+            useParentField: false);
+        session.GetOrAddItem(0x1000).Name = "TChild.ReadCount";
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "TChild.ReadCount",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    CallingConvention = 0,
+                    Arguments =
+                    [
+                        new KnowledgeBaseArgument(
+                            0x22,
+                            true,
+                            2,
+                            sizeof(uint),
+                            "Value",
+                            "TChild")
+                    ]
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x1000].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisPreservesVarClassPointerThroughRegisterStackSnapshot()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0x52, 0x31, 0xd2, 0x5b, 0x8b, 0x03, 0x8b, 0x48, 0x08, 0xc3],
+            useParentField: false);
+        session.GetOrAddItem(0x1000).Name = "TChild.ReadCount";
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "TChild.ReadCount",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    CallingConvention = 0,
+                    Arguments =
+                    [
+                        new KnowledgeBaseArgument(
+                            0x22,
+                            true,
+                            2,
+                            sizeof(uint),
+                            "Value",
+                            "TChild")
+                    ]
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1006].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
     }
 
     [TestMethod]
