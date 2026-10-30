@@ -2798,7 +2798,9 @@ public sealed class BasicAnalysisService : IAnalysisService
         string? PreviousResourceStringCandidate = null,
         string? AppliedResourceStringCandidate = null,
         DelphiTypeKind? PreviousTypeKind = null,
-        DelphiTypeKind? AppliedTypeKind = null);
+        DelphiTypeKind? AppliedTypeKind = null,
+        string? PreviousName = null,
+        string? AppliedName = null);
 
     private readonly record struct ResourceStringCandidateMutation(
         string? PreviousValue,
@@ -6841,7 +6843,10 @@ public sealed class BasicAnalysisService : IAnalysisService
             }
 
             argumentItem.SetFlags(AnalysisFlags.Data);
-            argumentItem.Name ??= new Guid(image.Slice(argumentRawOffset, 16)).ToString("D");
+            SetNameWithProvenance(
+                argumentItem,
+                new Guid(image.Slice(argumentRawOffset, 16)).ToString("D"),
+                mutations);
             SetDataTypeCandidateWithProvenance(argumentItem, "TGUID", mutations);
             AddConstantCrossReferenceIfMissing(session, sourceRva, argumentRva);
             return;
@@ -7012,7 +7017,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             }
 
             stringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-            stringItem.Name ??= value;
+            SetNameWithProvenance(stringItem, value, mutations);
             SetDataTypeCandidateWithProvenance(stringItem, "ShortString", mutations);
             argumentItem.SetFlags(AnalysisFlags.Data);
             SetDataTypeCandidateWithProvenance(argumentItem, argument.TypeName, mutations);
@@ -7101,7 +7106,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 
             stringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
             SetTypeKindWithProvenance(stringItem, DelphiTypeKind.WideString, mutations);
-            stringItem.Name ??= value;
+            SetNameWithProvenance(stringItem, value, mutations);
             SetDataTypeCandidateWithProvenance(stringItem, "WideString", mutations);
             argumentItem.SetFlags(AnalysisFlags.Data);
             SetDataTypeCandidateWithProvenance(argumentItem, "WideString", mutations);
@@ -7168,7 +7173,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             argumentItem.SetFlags(AnalysisFlags.Data);
             SetDataTypeCandidateWithProvenance(argumentItem, argument.TypeName, mutations);
             stringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-            stringItem.Name ??= targetValue;
+            SetNameWithProvenance(stringItem, targetValue, mutations);
             AddConstantCrossReferenceIfMissing(session, sourceRva, argumentRva);
             AddConstantCrossReferenceIfMissing(session, sourceRva, stringRva);
             return;
@@ -7190,7 +7195,7 @@ public sealed class BasicAnalysisService : IAnalysisService
         }
 
         argumentItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-        argumentItem.Name ??= stringValue;
+        SetNameWithProvenance(argumentItem, stringValue, mutations);
         AddConstantCrossReferenceIfMissing(session, sourceRva, argumentRva);
     }
 
@@ -8002,6 +8007,13 @@ public sealed class BasicAnalysisService : IAnalysisService
             {
                 item.TypeKind = mutation.PreviousTypeKind;
             }
+
+            if (mutation.AppliedName is string appliedName
+                && session.Items.TryGetValue(mutation.TargetAddress, out item)
+                && string.Equals(item.Name, appliedName, StringComparison.Ordinal))
+            {
+                item.Name = mutation.PreviousName;
+            }
         }
     }
 
@@ -8041,6 +8053,25 @@ public sealed class BasicAnalysisService : IAnalysisService
             PreviousTypeKind: item.TypeKind,
             AppliedTypeKind: typeKind));
         item.TypeKind = typeKind;
+    }
+
+    private static void SetNameWithProvenance(
+        AnalysisItem item,
+        string value,
+        List<DataTypeCandidateMutation> mutations)
+    {
+        if (item.Name is not null)
+        {
+            return;
+        }
+
+        mutations.Add(new DataTypeCandidateMutation(
+            item.Address,
+            null,
+            null,
+            PreviousName: null,
+            AppliedName: value));
+        item.Name = value;
     }
 
     private static void ApplyCallDataTypeCandidateWithProvenance(

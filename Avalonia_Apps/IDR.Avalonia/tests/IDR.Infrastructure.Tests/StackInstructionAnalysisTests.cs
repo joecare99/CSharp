@@ -698,6 +698,7 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.IsNull(session.Items[0x2020].TypeKind);
+        Assert.IsNull(session.Items[0x2020].Name);
     }
 
     [TestMethod]
