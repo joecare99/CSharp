@@ -689,6 +689,8 @@ public sealed class StackInstructionAnalysisTests
             EntryPointRva = 0x1000
         };
         session.GetOrAddItem(0x1020).Name = procedure.Name;
+        AnalysisItem wideStringItem = session.GetOrAddItem(0x2020);
+        wideStringItem.SetFlags(AnalysisFlags.Data);
         session.LoadKnowledgeBase(new KnowledgeBaseData(
             2,
             [new KnowledgeBaseModule(7, "System")],
@@ -697,8 +699,10 @@ public sealed class StackInstructionAnalysisTests
         await new BasicAnalysisService(new IcedInstructionDecoder())
             .AnalyzeAsync(session, null, CancellationToken.None);
 
-        Assert.IsNull(session.Items[0x2020].TypeKind);
-        Assert.IsNull(session.Items[0x2020].Name);
+        Assert.IsNull(wideStringItem.TypeKind);
+        Assert.IsNull(wideStringItem.Name);
+        Assert.IsTrue(wideStringItem.Flags.HasFlag(AnalysisFlags.Data));
+        Assert.IsFalse(wideStringItem.Flags.HasFlag(AnalysisFlags.String));
     }
 
     [TestMethod]
@@ -6929,6 +6933,8 @@ public sealed class StackInstructionAnalysisTests
         Assert.IsTrue(session.Items.TryGetValue(0x100f, out AnalysisItem? callItem));
         Assert.IsTrue(callItem!.Flags.HasFlag(AnalysisFlags.Call));
         Assert.IsNull(guid.DataTypeCandidate);
+        Assert.IsNull(guid.Name);
+        Assert.IsFalse(guid.Flags.HasFlag(AnalysisFlags.Data));
         Assert.AreEqual(
             1,
             session.GetIncomingCrossReferences(0x2004)

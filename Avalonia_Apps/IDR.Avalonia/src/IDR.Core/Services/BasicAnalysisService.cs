@@ -2800,7 +2800,8 @@ public sealed class BasicAnalysisService : IAnalysisService
         DelphiTypeKind? PreviousTypeKind = null,
         DelphiTypeKind? AppliedTypeKind = null,
         string? PreviousName = null,
-        string? AppliedName = null);
+        string? AppliedName = null,
+        AnalysisFlags AddedFlags = AnalysisFlags.None);
 
     private readonly record struct ResourceStringCandidateMutation(
         string? PreviousValue,
@@ -6033,12 +6034,12 @@ public sealed class BasicAnalysisService : IAnalysisService
                         continue;
                     }
 
-                    variableSlot.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(variableSlot, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(
                         variableSlot,
                         fixedSizeVariableType,
                         mutations);
-                    variableTarget.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(variableTarget, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(
                         variableTarget,
                         fixedSizeVariableType,
@@ -6088,9 +6089,9 @@ public sealed class BasicAnalysisService : IAnalysisService
                         continue;
                     }
 
-                    resourceSlot.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(resourceSlot, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(resourceSlot, "PResStringRec", mutations);
-                    resourceRecord.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(resourceRecord, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(resourceRecord, "PResStringRec", mutations);
                     SetResourceStringCandidateWithProvenance(
                         session.GetOrAddItem(sourceRva),
@@ -6163,11 +6164,17 @@ public sealed class BasicAnalysisService : IAnalysisService
                         continue;
                     }
 
-                    legacyStringSlot.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(legacyStringSlot, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(legacyStringSlot, "AnsiString", mutations);
-                    legacyStringTarget.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-                    legacyStringTarget.TypeKind = DelphiTypeKind.AnsiString;
-                    legacyStringTarget.Name ??= legacyStringValue;
+                    SetFlagsWithProvenance(
+                        legacyStringTarget,
+                        AnalysisFlags.Data | AnalysisFlags.String,
+                        mutations);
+                    SetTypeKindWithProvenance(
+                        legacyStringTarget,
+                        DelphiTypeKind.AnsiString,
+                        mutations);
+                    SetNameWithProvenance(legacyStringTarget, legacyStringValue, mutations);
                     SetDataTypeCandidateWithProvenance(legacyStringTarget, "AnsiString", mutations);
                     AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
                     AddConstantCrossReferenceIfMissing(session, sourceRva, legacyStringRva);
@@ -6210,7 +6217,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                         continue;
                     }
 
-                    managedStringSlot.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(managedStringSlot, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(
                         managedStringSlot,
                         variableStringTypeName,
@@ -6253,12 +6260,14 @@ public sealed class BasicAnalysisService : IAnalysisService
                     }
 
                     AnalysisItem guidPointerSlot = session.GetOrAddItem(dataRva);
-                    guidPointerSlot.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(guidPointerSlot, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(guidPointerSlot, "TGUID", mutations);
-                    guidTarget.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(guidTarget, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(guidTarget, "TGUID", mutations);
-                    guidTarget.Name ??= new Guid(
-                        session.Image.Span.Slice(guidRawOffset, 16)).ToString("D");
+                    SetNameWithProvenance(
+                        guidTarget,
+                        new Guid(session.Image.Span.Slice(guidRawOffset, 16)).ToString("D"),
+                        mutations);
                     AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
                     AddConstantCrossReferenceIfMissing(session, sourceRva, guidRva);
                     continue;
@@ -6322,11 +6331,17 @@ public sealed class BasicAnalysisService : IAnalysisService
                         continue;
                     }
 
-                    wideStringSlot.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(wideStringSlot, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(wideStringSlot, "WideString", mutations);
-                    wideStringTarget.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-                    wideStringTarget.TypeKind = DelphiTypeKind.WideString;
-                    wideStringTarget.Name ??= wideStringValue;
+                    SetFlagsWithProvenance(
+                        wideStringTarget,
+                        AnalysisFlags.Data | AnalysisFlags.String,
+                        mutations);
+                    SetTypeKindWithProvenance(
+                        wideStringTarget,
+                        DelphiTypeKind.WideString,
+                        mutations);
+                    SetNameWithProvenance(wideStringTarget, wideStringValue, mutations);
                     SetDataTypeCandidateWithProvenance(wideStringTarget, "WideString", mutations);
                     AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
                     AddConstantCrossReferenceIfMissing(session, sourceRva, wideStringRva);
@@ -6387,13 +6402,16 @@ public sealed class BasicAnalysisService : IAnalysisService
                     }
 
                     AnalysisItem shortStringSlot = session.GetOrAddItem(dataRva);
-                    shortStringSlot.SetFlags(AnalysisFlags.Data);
+                    SetFlagsWithProvenance(shortStringSlot, AnalysisFlags.Data, mutations);
                     SetDataTypeCandidateWithProvenance(
                         shortStringSlot,
                         argument.TypeName,
                         mutations);
-                    variableStringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-                    variableStringItem.Name ??= shortStringValue;
+                    SetFlagsWithProvenance(
+                        variableStringItem,
+                        AnalysisFlags.Data | AnalysisFlags.String,
+                        mutations);
+                    SetNameWithProvenance(variableStringItem, shortStringValue, mutations);
                     SetDataTypeCandidateWithProvenance(
                         variableStringItem,
                         "ShortString",
@@ -6420,10 +6438,13 @@ public sealed class BasicAnalysisService : IAnalysisService
                 }
 
                 AnalysisItem variableItem = session.GetOrAddItem(dataRva);
-                variableItem.SetFlags(AnalysisFlags.Data);
+                SetFlagsWithProvenance(variableItem, AnalysisFlags.Data, mutations);
                 SetDataTypeCandidateWithProvenance(variableItem, argument.TypeName, mutations);
-                variableStringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-                variableStringItem.Name ??= variableStringValue;
+                SetFlagsWithProvenance(
+                    variableStringItem,
+                    AnalysisFlags.Data | AnalysisFlags.String,
+                    mutations);
+                SetNameWithProvenance(variableStringItem, variableStringValue, mutations);
                 AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
                 AddConstantCrossReferenceIfMissing(session, sourceRva, stringRva);
                 continue;
@@ -6493,9 +6514,12 @@ public sealed class BasicAnalysisService : IAnalysisService
                     continue;
                 }
 
-                wideStringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-                wideStringItem.TypeKind = DelphiTypeKind.WideString;
-                wideStringItem.Name ??= wideStringValue;
+                SetFlagsWithProvenance(
+                    wideStringItem,
+                    AnalysisFlags.Data | AnalysisFlags.String,
+                    mutations);
+                SetTypeKindWithProvenance(wideStringItem, DelphiTypeKind.WideString, mutations);
+                SetNameWithProvenance(wideStringItem, wideStringValue, mutations);
                 SetDataTypeCandidateWithProvenance(wideStringItem, "WideString", mutations);
                 AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
                 continue;
@@ -6526,8 +6550,11 @@ public sealed class BasicAnalysisService : IAnalysisService
                     continue;
                 }
 
-                shortStringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-                shortStringItem.Name ??= shortStringValue;
+                SetFlagsWithProvenance(
+                    shortStringItem,
+                    AnalysisFlags.Data | AnalysisFlags.String,
+                    mutations);
+                SetNameWithProvenance(shortStringItem, shortStringValue, mutations);
                 SetDataTypeCandidateWithProvenance(shortStringItem, "ShortString", mutations);
                 AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
                 continue;
@@ -6579,9 +6606,15 @@ public sealed class BasicAnalysisService : IAnalysisService
                     continue;
                 }
 
-                legacyStringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-                legacyStringItem.TypeKind = DelphiTypeKind.AnsiString;
-                legacyStringItem.Name ??= stringValue;
+                SetFlagsWithProvenance(
+                    legacyStringItem,
+                    AnalysisFlags.Data | AnalysisFlags.String,
+                    mutations);
+                SetTypeKindWithProvenance(
+                    legacyStringItem,
+                    DelphiTypeKind.AnsiString,
+                    mutations);
+                SetNameWithProvenance(legacyStringItem, stringValue, mutations);
                 SetDataTypeCandidateWithProvenance(legacyStringItem, "AnsiString", mutations);
                 AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
                 continue;
@@ -6623,8 +6656,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                 }
 
                 ReadOnlySpan<byte> guidBytes = session.Image.Span.Slice(rawOffset, guidSize);
-                guidItem.SetFlags(AnalysisFlags.Data);
-                guidItem.Name ??= new Guid(guidBytes).ToString("D");
+                SetFlagsWithProvenance(guidItem, AnalysisFlags.Data, mutations);
+                SetNameWithProvenance(guidItem, new Guid(guidBytes).ToString("D"), mutations);
                 SetDataTypeCandidateWithProvenance(guidItem, "TGUID", mutations);
                 AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
                 continue;
@@ -6655,8 +6688,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                 continue;
             }
 
-            stringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
-            stringItem.Name ??= valueText;
+            SetFlagsWithProvenance(stringItem, AnalysisFlags.Data | AnalysisFlags.String, mutations);
+            SetNameWithProvenance(stringItem, valueText, mutations);
             AddConstantCrossReferenceIfMissing(session, sourceRva, dataRva);
         }
     }
@@ -6842,7 +6875,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 return;
             }
 
-            argumentItem.SetFlags(AnalysisFlags.Data);
+            SetFlagsWithProvenance(argumentItem, AnalysisFlags.Data, mutations);
             SetNameWithProvenance(
                 argumentItem,
                 new Guid(image.Slice(argumentRawOffset, 16)).ToString("D"),
@@ -6893,7 +6926,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 return;
             }
 
-            argumentItem.SetFlags(AnalysisFlags.Data);
+            SetFlagsWithProvenance(argumentItem, AnalysisFlags.Data, mutations);
             SetDataTypeCandidateWithProvenance(argumentItem, "PResStringRec", mutations);
             AnalysisItem resourceItem = session.GetOrAddItem(resourceRva);
             if (resourceItem.Flags.HasFlag(AnalysisFlags.Code)
@@ -6902,7 +6935,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 return;
             }
 
-            resourceItem.SetFlags(AnalysisFlags.Data);
+            SetFlagsWithProvenance(resourceItem, AnalysisFlags.Data, mutations);
             SetDataTypeCandidateWithProvenance(resourceItem, "PResStringRec", mutations);
             SetResourceStringCandidateWithProvenance(
                 session.GetOrAddItem(sourceRva),
@@ -6952,7 +6985,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             SetDataTypeCandidateWithProvenance(stringItem, managedStringTypeName, mutations);
             if (pointerSlot is not null)
             {
-                pointerSlot.SetFlags(AnalysisFlags.Data);
+                SetFlagsWithProvenance(pointerSlot, AnalysisFlags.Data, mutations);
                 SetDataTypeCandidateWithProvenance(
                     pointerSlot,
                     managedStringTypeName,
@@ -7016,10 +7049,10 @@ public sealed class BasicAnalysisService : IAnalysisService
                 return;
             }
 
-            stringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
+            SetFlagsWithProvenance(stringItem, AnalysisFlags.Data | AnalysisFlags.String, mutations);
             SetNameWithProvenance(stringItem, value, mutations);
             SetDataTypeCandidateWithProvenance(stringItem, "ShortString", mutations);
-            argumentItem.SetFlags(AnalysisFlags.Data);
+            SetFlagsWithProvenance(argumentItem, AnalysisFlags.Data, mutations);
             SetDataTypeCandidateWithProvenance(argumentItem, argument.TypeName, mutations);
             AddConstantCrossReferenceIfMissing(session, sourceRva, argumentRva);
             if (stringRva != argumentRva)
@@ -7104,11 +7137,11 @@ public sealed class BasicAnalysisService : IAnalysisService
                 return;
             }
 
-            stringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
+            SetFlagsWithProvenance(stringItem, AnalysisFlags.Data | AnalysisFlags.String, mutations);
             SetTypeKindWithProvenance(stringItem, DelphiTypeKind.WideString, mutations);
             SetNameWithProvenance(stringItem, value, mutations);
             SetDataTypeCandidateWithProvenance(stringItem, "WideString", mutations);
-            argumentItem.SetFlags(AnalysisFlags.Data);
+            SetFlagsWithProvenance(argumentItem, AnalysisFlags.Data, mutations);
             SetDataTypeCandidateWithProvenance(argumentItem, "WideString", mutations);
             AddConstantCrossReferenceIfMissing(session, sourceRva, argumentRva);
             AddConstantCrossReferenceIfMissing(session, sourceRva, wideStringRva);
@@ -7131,7 +7164,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 image.Slice(argumentRawOffset, sizeof(uint)));
             if (stringVa == 0)
             {
-                argumentItem.SetFlags(AnalysisFlags.Data);
+                SetFlagsWithProvenance(argumentItem, AnalysisFlags.Data, mutations);
                 SetDataTypeCandidateWithProvenance(argumentItem, argument.TypeName, mutations);
                 AddConstantCrossReferenceIfMissing(session, sourceRva, argumentRva);
                 return;
@@ -7170,9 +7203,9 @@ public sealed class BasicAnalysisService : IAnalysisService
                 return;
             }
 
-            argumentItem.SetFlags(AnalysisFlags.Data);
+            SetFlagsWithProvenance(argumentItem, AnalysisFlags.Data, mutations);
             SetDataTypeCandidateWithProvenance(argumentItem, argument.TypeName, mutations);
-            stringItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
+            SetFlagsWithProvenance(stringItem, AnalysisFlags.Data | AnalysisFlags.String, mutations);
             SetNameWithProvenance(stringItem, targetValue, mutations);
             AddConstantCrossReferenceIfMissing(session, sourceRva, argumentRva);
             AddConstantCrossReferenceIfMissing(session, sourceRva, stringRva);
@@ -7194,7 +7227,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             return;
         }
 
-        argumentItem.SetFlags(AnalysisFlags.Data | AnalysisFlags.String);
+        SetFlagsWithProvenance(argumentItem, AnalysisFlags.Data | AnalysisFlags.String, mutations);
         SetNameWithProvenance(argumentItem, stringValue, mutations);
         AddConstantCrossReferenceIfMissing(session, sourceRva, argumentRva);
     }
@@ -8014,6 +8047,12 @@ public sealed class BasicAnalysisService : IAnalysisService
             {
                 item.Name = mutation.PreviousName;
             }
+
+            if (mutation.AddedFlags != AnalysisFlags.None
+                && session.Items.TryGetValue(mutation.TargetAddress, out item))
+            {
+                item.ClearFlags(mutation.AddedFlags);
+            }
         }
     }
 
@@ -8072,6 +8111,25 @@ public sealed class BasicAnalysisService : IAnalysisService
             PreviousName: null,
             AppliedName: value));
         item.Name = value;
+    }
+
+    private static void SetFlagsWithProvenance(
+        AnalysisItem item,
+        AnalysisFlags flags,
+        List<DataTypeCandidateMutation> mutations)
+    {
+        AnalysisFlags addedFlags = flags & ~item.Flags;
+        if (addedFlags == AnalysisFlags.None)
+        {
+            return;
+        }
+
+        item.SetFlags(addedFlags);
+        mutations.Add(new DataTypeCandidateMutation(
+            item.Address,
+            null,
+            null,
+            AddedFlags: addedFlags));
     }
 
     private static void ApplyCallDataTypeCandidateWithProvenance(
