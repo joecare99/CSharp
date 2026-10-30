@@ -241,6 +241,31 @@ public sealed class ArchitectureTests
     }
 
     [TestMethod]
+    public void AnalysisSessionRemovesCrossReferenceFromAllIndexes()
+    {
+        AnalysisSession session = new("test.exe", ReadOnlyMemory<byte>.Empty);
+        session.AddCrossReference(0x1000, 0x2000, CrossReferenceKind.Call);
+        session.AddCrossReference(0x1000, 0x2000, CrossReferenceKind.Constant);
+        session.AddCrossReference(0x1001, 0x2000, CrossReferenceKind.Call);
+
+        Assert.IsTrue(session.RemoveCrossReference(0x1000, 0x2000, CrossReferenceKind.Call));
+        Assert.IsFalse(session.RemoveCrossReference(0x1000, 0x2000, CrossReferenceKind.Call));
+
+        Assert.IsFalse(session.Items[0x1000].CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call));
+        Assert.IsTrue(session.Items[0x1000].CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Constant));
+        Assert.AreEqual(
+            1,
+            session.GetIncomingCrossReferences(0x2000).Count(reference =>
+                reference.SourceAddress == 0x1001 && reference.Kind == CrossReferenceKind.Call));
+        Assert.AreEqual(
+            1,
+            session.GetIncomingCrossReferences(0x2000).Count(reference =>
+                reference.SourceAddress == 0x1000 && reference.Kind == CrossReferenceKind.Constant));
+    }
+
+    [TestMethod]
     public void SessionRejectsMissingSourcePath()
     {
         Assert.ThrowsExactly<ArgumentException>(

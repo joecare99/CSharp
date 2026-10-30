@@ -2858,6 +2858,23 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisMarksProcedureCallingResolvedVirtualClassCreateAsConstructorCandidate()
+    {
+        AnalysisSession session = CreateVirtualMethodSession(
+            [0xb8, 0x00, 0x20, 0x40, 0x00, 0xff, 0x50, 0x04, 0xc3]);
+        session.Items[0x2000].Name = "TConstructor";
+        session.Items[0x2000].VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1030)];
+        session.GetOrAddItem(0x1030).Name = "@ClassCreate";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items[0x1005].CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
+        Assert.IsTrue(session.Items[0x1000].Flags.HasFlag(AnalysisFlags.ConstructorCandidate));
+    }
+
+    [TestMethod]
     public async Task AnalysisMarksNestedProcedureCallingClassCreateAsConstructorCandidate()
     {
         byte[] code = new byte[0x20];
@@ -3406,6 +3423,170 @@ public sealed class StackInstructionAnalysisTests
 
         Assert.IsFalse(session.Items[0x1004].Flags.HasFlag(AnalysisFlags.ProcedureStart));
         Assert.AreEqual("threadvar_36", session.Items[0x1009].ThreadVariableCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesThreadVariableCandidateWhenLatePredecessorInvalidatesVirtualGetTlsCall()
+    {
+        byte[] image = new byte[0x70];
+        byte[] code =
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0d,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xff, 0x50, 0x04,
+            0x8b, 0x48, 0x24,
+            0xc3,
+            0xb8, 0x10, 0x20, 0x40, 0x00,
+            0xeb, 0xf2
+        ];
+        code.CopyTo(image, 0);
+        image[0x30] = 0xc3;
+        image[0x34] = 0xc3;
+        AnalysisSession session = new(
+            "tls-virtual-call-late-predecessor.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x30, 0x40, 0x30, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem vmt = session.GetOrAddItem(0x2000);
+        vmt.Name = "TExample";
+        vmt.SetFlags(AnalysisFlags.Vmt);
+        vmt.VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1030)];
+        AnalysisItem otherVmt = session.GetOrAddItem(0x2010);
+        otherVmt.Name = "TOther";
+        otherVmt.SetFlags(AnalysisFlags.Vmt);
+        otherVmt.VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1034)];
+        session.GetOrAddItem(0x1030).Name = "@GetTls";
+        session.GetOrAddItem(0x1034).Name = "TOther.Method";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x1016, out _));
+        Assert.IsTrue(session.Items.TryGetValue(0x100f, out AnalysisItem? callItem));
+        Assert.IsFalse(callItem!.CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
+        Assert.IsFalse(session.GetIncomingCrossReferences(0x1030).Any(reference =>
+            reference.SourceAddress == 0x100f && reference.Kind == CrossReferenceKind.Call));
+        Assert.IsNull(session.Items[0x1012].ThreadVariableCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesReturnPropagationAfterLatePredecessorInvalidatesVirtualCall()
+    {
+        byte[] image = new byte[0x70];
+        byte[] code =
+        [
+            0x74, 0x07,
+            0xff, 0x50, 0x04,
+            0x8b, 0xc8,
+            0xc3,
+            0x90,
+            0xb8, 0x10, 0x20, 0x40, 0x00,
+            0xeb, 0xf0
+        ];
+        code.CopyTo(image, 0);
+        image[0x30] = 0x0f;
+        image[0x31] = 0x95;
+        image[0x32] = 0xc0;
+        image[0x33] = 0xc3;
+        image[0x34] = 0xc3;
+        AnalysisSession session = new(
+            "return-virtual-call-late-predecessor.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x30, 0x40, 0x30, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem vmt = session.GetOrAddItem(0x2000);
+        vmt.Name = "TBooleanReturn";
+        vmt.SetFlags(AnalysisFlags.Vmt);
+        vmt.VirtualMethods =
+        [
+            new DelphiVmtVirtualMethod(4, 0x1030),
+            new DelphiVmtVirtualMethod(8, 0x1000)
+        ];
+        AnalysisItem otherVmt = session.GetOrAddItem(0x2010);
+        otherVmt.Name = "TOther";
+        otherVmt.SetFlags(AnalysisFlags.Vmt);
+        otherVmt.VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1034)];
+        session.GetOrAddItem(0x1030).Name = "@IsClass";
+        session.GetOrAddItem(0x1034).Name = "TOther.Method";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x1002, out AnalysisItem? callItem));
+        Assert.IsFalse(callItem!.CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
+        Assert.IsFalse(session.GetIncomingCrossReferences(0x1030).Any(reference =>
+            reference.SourceAddress == 0x1002 && reference.Kind == CrossReferenceKind.Call));
+        Assert.AreEqual("Boolean", session.Items[0x1030].ReturnTypeCandidate);
+        Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
+        Assert.IsFalse(session.Items[0x1030].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesConstructorCandidateAfterLatePredecessorInvalidatesVirtualCall()
+    {
+        byte[] image = new byte[0x70];
+        byte[] code =
+        [
+            0x74, 0x07,
+            0xff, 0x50, 0x04,
+            0x8b, 0xc8,
+            0xc3,
+            0x90,
+            0xb8, 0x10, 0x20, 0x40, 0x00,
+            0xeb, 0xf0
+        ];
+        code.CopyTo(image, 0);
+        image[0x30] = 0xc3;
+        image[0x34] = 0xc3;
+        AnalysisSession session = new(
+            "constructor-virtual-call-late-predecessor.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x30, 0x40, 0x30, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem vmt = session.GetOrAddItem(0x2000);
+        vmt.Name = "TConstructor";
+        vmt.SetFlags(AnalysisFlags.Vmt);
+        vmt.VirtualMethods =
+        [
+            new DelphiVmtVirtualMethod(4, 0x1030),
+            new DelphiVmtVirtualMethod(8, 0x1000)
+        ];
+        AnalysisItem otherVmt = session.GetOrAddItem(0x2010);
+        otherVmt.Name = "TOther";
+        otherVmt.SetFlags(AnalysisFlags.Vmt);
+        otherVmt.VirtualMethods = [new DelphiVmtVirtualMethod(4, 0x1034)];
+        session.GetOrAddItem(0x1030).Name = "@ClassCreate";
+        session.GetOrAddItem(0x1034).Name = "TOther.Method";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x1002, out AnalysisItem? callItem));
+        Assert.IsFalse(callItem!.CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
+        Assert.IsFalse(session.Items[0x1000].Flags.HasFlag(AnalysisFlags.ConstructorCandidate));
     }
 
     [TestMethod]
@@ -4215,6 +4396,149 @@ public sealed class StackInstructionAnalysisTests
         CollectionAssert.AreEqual(
             new[] { new StackLocalVariable(-8, 4, "TRecord") },
             session.Items[0x1000].StackLocalVariables.ToArray());
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task AnalysisTypesLocalRecordFinalizedInBranchOnlyFlow(bool hasUntypedIncomingFlow)
+    {
+        byte[] image = new byte[0x60];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8d, 0x45, 0xf8,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0x74, 0x05,
+            0xc3,
+            0x90, 0x90, 0x90, 0x90,
+            0xe8, 0x19, 0x00, 0x00, 0x00,
+            0xeb, 0x03,
+            0x90, 0x90, 0x90,
+            0x8b, 0x45, 0xf8,
+            0x8b, 0x48, 0x04,
+            0xc3
+        ];
+        if (hasUntypedIncomingFlow)
+        {
+            code[13] = 0xeb;
+            code[14] = 0x0d;
+        }
+
+        code.CopyTo(image, 0);
+        image[0x30] = 0xc3;
+        AnalysisSession session = new(
+            "branch-local-record-finalize.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x20, 0x40, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1030).Name = "@FinalizeRecord";
+        AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+        typeInfo.Name = "TRecord";
+        typeInfo.TypeKind = DelphiTypeKind.Record;
+        typeInfo.SetFlags(AnalysisFlags.Rtti);
+        typeInfo.RecordSizeBytes = 8;
+        typeInfo.RecordFields = [new DelphiRttiRecordField("FValue", 4, 0x2010)];
+        AnalysisItem integerType = session.GetOrAddItem(0x2010);
+        integerType.Name = "Integer";
+        integerType.TypeKind = DelphiTypeKind.Integer;
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x1012].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        Assert.IsFalse(session.Items[0x101c].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        if (hasUntypedIncomingFlow)
+        {
+            Assert.IsFalse(session.Items.TryGetValue(0x101f, out AnalysisItem? fieldAccess)
+                && fieldAccess.MemberAccessCandidates.Count > 0);
+        }
+        else
+        {
+            MemberAccessCandidate access = session.Items[0x101f].MemberAccessCandidates.Single();
+            Assert.AreEqual("TRecord", access.OwnerTypeName);
+            Assert.AreEqual("FValue", access.FieldName);
+            Assert.AreEqual("Integer", access.TypeName);
+        }
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task AnalysisTypesStackArgumentFinalizedAcrossBranchFlow(bool hasUntypedIncomingFlow)
+    {
+        byte[] image = new byte[0x60];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0x74, 0x05,
+            0xc3,
+            0x90, 0x90, 0x90, 0x90,
+            0xe8, 0x19, 0x00, 0x00, 0x00,
+            0xeb, 0x03,
+            0x90, 0x90, 0x90,
+            0x8b, 0x45, 0x08,
+            0x8b, 0x48, 0x04,
+            0xc3,
+            0x90,
+            0x90
+        ];
+        if (hasUntypedIncomingFlow)
+        {
+            code[13] = 0xeb;
+            code[14] = 0x14;
+            code[0x23] = 0xeb;
+            code[0x24] = 0xf7;
+        }
+
+        code.CopyTo(image, 0);
+        image[0x30] = 0xc3;
+        AnalysisSession session = new(
+            "branch-stack-argument-finalize.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x20, 0x40, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1030).Name = "@FinalizeRecord";
+        AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+        typeInfo.Name = "TRecord";
+        typeInfo.TypeKind = DelphiTypeKind.Record;
+        typeInfo.SetFlags(AnalysisFlags.Rtti);
+        typeInfo.RecordSizeBytes = 8;
+        typeInfo.RecordFields = [new DelphiRttiRecordField("FValue", 4, 0x2010)];
+        AnalysisItem integerType = session.GetOrAddItem(0x2010);
+        integerType.Name = "Integer";
+        integerType.TypeKind = DelphiTypeKind.Integer;
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x1012].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        if (hasUntypedIncomingFlow)
+        {
+            Assert.IsFalse(session.Items.TryGetValue(0x101f, out AnalysisItem? fieldAccess)
+                && fieldAccess.MemberAccessCandidates.Count > 0);
+        }
+        else
+        {
+            MemberAccessCandidate access = session.Items[0x101f].MemberAccessCandidates.Single();
+            Assert.AreEqual("TRecord", access.OwnerTypeName);
+            Assert.AreEqual("FValue", access.FieldName);
+            Assert.AreEqual("Integer", access.TypeName);
+        }
     }
 
     [TestMethod]
@@ -5437,6 +5761,49 @@ public sealed class StackInstructionAnalysisTests
         MemberAccessCandidate access = session.Items[0x1000].MemberAccessCandidates.Single();
         Assert.AreEqual("TChild", access.OwnerTypeName);
         Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisInfersImplicitSelfForNamedNonVirtualMethod()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0x8b, 0x48, 0x08, 0xc3],
+            useParentField: false);
+        session.GetOrAddItem(0x1000).Name = "TChild.ReadCount";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1000].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferImplicitSelfForUnknownOrAmbiguousClassName()
+    {
+        foreach (bool duplicateVmt in new[] { false, true })
+        {
+            AnalysisSession session = CreateClassFieldAccessSession(
+                [0x8b, 0x48, 0x08, 0xc3],
+                useParentField: false);
+            session.GetOrAddItem(0x1000).Name = "TChild.ReadCount";
+            if (duplicateVmt)
+            {
+                AnalysisItem duplicateVmtItem = session.GetOrAddItem(0x2020);
+                duplicateVmtItem.Name = "TChild";
+                duplicateVmtItem.SetFlags(AnalysisFlags.Vmt);
+            }
+            else
+            {
+                session.GetOrAddItem(0x1000).Name = "TUnknown.ReadCount";
+            }
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.AreEqual(0, session.Items[0x1000].MemberAccessCandidates.Count);
+        }
     }
 
     [TestMethod]
@@ -6731,6 +7098,95 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.AreEqual("TExample", session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisSeedsKnownRegisterPrototypeTypesAtProcedureEntry()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+            [0x8b, 0x42, 0x08, 0xc3],
+            useParentField: false);
+        session.GetOrAddItem(0x1000).Name = "TChild.ReadCount";
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "TChild.ReadCount",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    CallingConvention = 0,
+                    Arguments =
+                    [
+                        new KnowledgeBaseArgument(
+                            0x21,
+                            true,
+                            2,
+                            sizeof(uint),
+                            "Self",
+                            "TChild")
+                    ]
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        MemberAccessCandidate access = session.Items[0x1000].MemberAccessCandidates.Single();
+        Assert.AreEqual("TChild", access.OwnerTypeName);
+        Assert.AreEqual("FCount", access.FieldName);
+        Assert.AreEqual("Integer", access.TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRequiresUnambiguousRegisterConventionAndKnownTypesForPrototypeSeeds()
+    {
+        foreach ((byte callingConvention, string argumentType, bool duplicatePrototype, byte argumentTag) in new[]
+        {
+            ((byte)3, "TChild", false, (byte)0x21),
+            ((byte)0, "TUnknown", false, (byte)0x21),
+            ((byte)0, "TChild", true, (byte)0x21),
+            ((byte)0, "TChild", false, (byte)0x22)
+        })
+        {
+            AnalysisSession session = CreateClassFieldAccessSession(
+                [0x8b, 0x42, 0x08, 0xc3],
+                useParentField: false);
+            session.GetOrAddItem(0x1000).Name = "TChild.ReadCount";
+            KnowledgeBaseProcedure procedure = new(
+                7,
+                "TChild.ReadCount",
+                (byte)'C',
+                ReadOnlyMemory<byte>.Empty,
+                ReadOnlyMemory<byte>.Empty)
+            {
+                CallingConvention = callingConvention,
+                Arguments =
+                [
+                    new KnowledgeBaseArgument(
+                        argumentTag,
+                        true,
+                        2,
+                        sizeof(uint),
+                        "Self",
+                        argumentType)
+                ]
+            };
+            session.LoadKnowledgeBase(new KnowledgeBaseData(
+                2,
+                [new KnowledgeBaseModule(7, "System")],
+                duplicatePrototype
+                    ? [procedure, procedure with { Arguments = [] }]
+                    : [procedure]));
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.AreEqual(0, session.Items[0x1000].MemberAccessCandidates.Count);
+        }
     }
 
     [TestMethod]

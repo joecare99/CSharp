@@ -176,6 +176,37 @@ public sealed class AnalysisSession
         return reference;
     }
 
+    public bool RemoveCrossReference(
+        uint sourceAddress,
+        uint targetAddress,
+        CrossReferenceKind kind)
+    {
+        if (!_items.TryGetValue(sourceAddress, out AnalysisItem? source)
+            || !_crossReferenceKeys.Contains((sourceAddress, targetAddress, kind)))
+        {
+            return false;
+        }
+
+        CrossReference? reference = source.CrossReferences.FirstOrDefault(candidate =>
+            candidate.TargetAddress == targetAddress && candidate.Kind == kind);
+        if (reference is null || !source.RemoveCrossReference(reference))
+        {
+            return false;
+        }
+
+        _crossReferenceKeys.Remove((sourceAddress, targetAddress, kind));
+        if (_incomingCrossReferences.TryGetValue(targetAddress, out List<CrossReference>? incoming))
+        {
+            incoming.Remove(reference);
+            if (incoming.Count == 0)
+            {
+                _incomingCrossReferences.Remove(targetAddress);
+            }
+        }
+
+        return true;
+    }
+
     public void AddDisassemblyLine(DisassemblyLine line)
     {
         ArgumentNullException.ThrowIfNull(line);

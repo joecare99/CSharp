@@ -123,4 +123,10 @@ public sealed class AnalysisItem
         ArgumentNullException.ThrowIfNull(reference);
         _crossReferences.Add(reference);
     }
+
+    public bool RemoveCrossReference(CrossReference reference)
+    {
+        ArgumentNullException.ThrowIfNull(reference);
+        return _crossReferences.Remove(reference);
+    }
 }

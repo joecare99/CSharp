@@ -2813,6 +2813,8 @@ public sealed class BasicAnalysisService : IAnalysisService
         ImmutableDictionary<int, int> DynamicMethodIds,
         ImmutableDictionary<int, int> RegisterLocalOffsets,
         ImmutableDictionary<int, uint> RegisterStackArgumentOffsets,
+        ImmutableDictionary<uint, StackArgument> StackArguments,
+        ImmutableDictionary<int, StackLocalVariable> StackLocalVariables,
         ImmutableArray<RegisterStackState> RegisterStack)
     {
         public static ProcedureFlowState Empty { get; } = new(
@@ -2821,6 +2823,8 @@ public sealed class BasicAnalysisService : IAnalysisService
             ImmutableDictionary<int, int>.Empty,
             ImmutableDictionary<int, int>.Empty,
             ImmutableDictionary<int, uint>.Empty,
+            ImmutableDictionary<uint, StackArgument>.Empty,
+            ImmutableDictionary<int, StackLocalVariable>.Empty,
             ImmutableArray<RegisterStackState>.Empty);
 
         public static ProcedureFlowState Capture(
@@ -2829,6 +2833,8 @@ public sealed class BasicAnalysisService : IAnalysisService
             IReadOnlyDictionary<int, int> dynamicMethodIds,
             IReadOnlyDictionary<int, int> registerLocalOffsets,
             IReadOnlyDictionary<int, uint> registerStackArgumentOffsets,
+            IReadOnlyDictionary<uint, StackArgument> stackArguments,
+            IReadOnlyDictionary<int, StackLocalVariable> stackLocalVariables,
             IReadOnlyList<RegisterStackState> registerStack)
         {
             return new ProcedureFlowState(
@@ -2837,6 +2843,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                 dynamicMethodIds.ToImmutableDictionary(),
                 registerLocalOffsets.ToImmutableDictionary(),
                 registerStackArgumentOffsets.ToImmutableDictionary(),
+                stackArguments.ToImmutableDictionary(),
+                stackLocalVariables.ToImmutableDictionary(),
                 registerStack.ToImmutableArray());
         }
 
@@ -2861,8 +2869,14 @@ public sealed class BasicAnalysisService : IAnalysisService
     {
         Queue<(uint Address, bool IsProcedureStart)> codeStarts = new();
         Dictionary<uint, uint> returnedCallTargets = [];
+        Dictionary<uint, HashSet<uint>> resolvedIndirectCallTargetsByAddress = [];
         Dictionary<uint, string> procedureOwnerClassNames = BuildProcedureOwnerClassNames(session);
-        HashSet<uint> functionCandidateTargets = [];
+        Dictionary<uint, HashSet<uint>> functionCandidateTargetsByStart = [];
+        const AnalysisFlags procedureRoleFlags =
+            AnalysisFlags.ConstructorCandidate | AnalysisFlags.DestructorCandidate;
+        Dictionary<uint, AnalysisFlags> initialProcedureRoleFlags = session.Items.Values
+            .Where(item => (item.Flags & procedureRoleFlags) != AnalysisFlags.None)
+            .ToDictionary(item => item.Address, item => item.Flags & procedureRoleFlags);
         HashSet<uint> scheduledStarts = [session.EntryPointRva];
         HashSet<uint> processedStarts = [];
         HashSet<uint> processedProcedureStarts = [];
@@ -2880,6 +2894,8 @@ public sealed class BasicAnalysisService : IAnalysisService
         Dictionary<uint, List<DataTypeCandidateMutation>> managedStringStoreDataTypeCandidateMutations = [];
         Dictionary<uint, List<DataTypeCandidateMutation>> floatingPointDataTypeCandidateMutations = [];
         Dictionary<uint, ResourceStringCandidateMutation> callResourceStringCandidateMutations = [];
+        Dictionary<uint, (uint TargetAddress, string? PreviousValue, string AppliedValue)>
+            threadVariableCandidateMutations = [];
         codeStarts.Enqueue((session.EntryPointRva, true));
         foreach (AnalysisItem item in session.Items.Values)
         {
@@ -2944,10 +2960,14 @@ public sealed class BasicAnalysisService : IAnalysisService
             }
 
             AnalysisItem startItem = session.GetOrAddItem(codeStart);
+            startItem.ClearFlags(procedureRoleFlags);
+            startItem.SetFlags(initialProcedureRoleFlags.GetValueOrDefault(codeStart));
             startItem.SetFlags(AnalysisFlags.Code);
             if (isProcedureStart)
             {
                 startItem.SetFlags(AnalysisFlags.ProcedureStart);
+                startItem.ReturnTypeCandidate = null;
+                returnedCallTargets.Remove(codeStart);
             }
 
             ulong rawEnd = (ulong)section.RawAddress + section.RawSize;
@@ -2962,7 +2982,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             int decodedCount = 0;
             uint? lastCompareAddress = null;
             uint? procedureEnd = null;
-            Dictionary<uint, StackArgument> stackArguments = [];
+            HashSet<uint> functionCandidatesForStart = [];
             List<(uint SourceRva, uint TargetRva)> codePointerCandidates = [];
             uint? pendingReturnCallTarget = null;
             uint? pendingFunctionResultTarget = null;
@@ -2970,11 +2990,24 @@ public sealed class BasicAnalysisService : IAnalysisService
             HashSet<uint> visitedAddresses = [];
             bool[] availableRegisterArguments = [true, true, true];
             bool[] usedRegisterArguments = [false, false, false];
-            if (isProcedureStart
-                && (codeStart == session.EntryPointRva
-                    || procedureOwnerClassNames.ContainsKey(codeStart)))
+            if (isProcedureStart)
             {
                 ProcedureFlowState rootFlowState = ProcedureFlowState.Empty;
+                bool hasRootFlowState = codeStart == session.EntryPointRva;
+                if (session.Items.TryGetValue(codeStart, out AnalysisItem? procedureItem))
+                {
+                    ImmutableDictionary<int, string> prototypeRegisterTypes =
+                        GetKnownProcedureRegisterTypes(session, procedureItem.Name);
+                    if (prototypeRegisterTypes.Count > 0)
+                    {
+                        rootFlowState = rootFlowState with
+                        {
+                            ClassRegisterTypes = prototypeRegisterTypes
+                        };
+                        hasRootFlowState = true;
+                    }
+                }
+
                 if (procedureOwnerClassNames.TryGetValue(codeStart, out string? ownerClassName))
                 {
                     rootFlowState = rootFlowState with
@@ -2983,16 +3016,20 @@ public sealed class BasicAnalysisService : IAnalysisService
                             0,
                             ownerClassName)
                     };
+                    hasRootFlowState = true;
                 }
 
-                UpdateFlowContextForEdge(
-                    codeStart,
-                    codeStart,
-                    FlowEdgeKind.Root,
-                    0,
-                    rootFlowState,
-                    incomingFlowEdges,
-                    branchFlowContexts);
+                if (hasRootFlowState)
+                {
+                    UpdateFlowContextForEdge(
+                        codeStart,
+                        codeStart,
+                        FlowEdgeKind.Root,
+                        0,
+                        rootFlowState,
+                        incomingFlowEdges,
+                        branchFlowContexts);
+                }
             }
 
             ProcedureFlowState entryFlowState = branchFlowContexts.GetValueOrDefault(
@@ -3006,7 +3043,9 @@ public sealed class BasicAnalysisService : IAnalysisService
             Dictionary<int, uint> registerStackArgumentOffsets =
                 entryFlowState.RegisterStackArgumentOffsets.ToDictionary();
 
-            Dictionary<int, StackLocalVariable> stackLocalVariables = [];
+            Dictionary<uint, StackArgument> stackArguments = entryFlowState.StackArguments.ToDictionary();
+            Dictionary<int, StackLocalVariable> stackLocalVariables =
+                entryFlowState.StackLocalVariables.ToDictionary();
             string? returnTypeCandidate = null;
             bool reachedTerminator = false;
             List<DecodedInstruction> recentInstructions = [];
@@ -3014,6 +3053,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             List<DecodedInstruction> branchFlowInstructions = [];
             bool markNextInstructionAsFinallyExit = false;
             bool pendingTlsBase = false;
+            uint? pendingTlsCallAddress = null;
             for (int instructionCount = 0;
                 instructionCount < MaximumInstructionsPerProcedure;
                 instructionCount++)
@@ -3087,6 +3127,12 @@ public sealed class BasicAnalysisService : IAnalysisService
                     MergeKnownRegisterOrigins(
                         registerStackArgumentOffsets,
                         incomingFlowState.RegisterStackArgumentOffsets);
+                    MergeKnownRegisterOrigins(
+                        stackLocalVariables,
+                        incomingFlowState.StackLocalVariables);
+                    MergeKnownRegisterOrigins(
+                        stackArguments,
+                        incomingFlowState.StackArguments);
                 }
 
                 decodedInstructions.TryAdd(currentRva, instruction);
@@ -3104,7 +3150,17 @@ public sealed class BasicAnalysisService : IAnalysisService
                 if (pendingTlsBase)
                 {
                     pendingTlsBase = false;
-                    item.ThreadVariableCandidate = GetTlsThreadVariableCandidate(instruction);
+                    if (pendingTlsCallAddress is uint tlsCallAddress
+                        && GetTlsThreadVariableCandidate(instruction) is string threadVariableCandidate)
+                    {
+                        threadVariableCandidateMutations[tlsCallAddress] = (
+                            currentRva,
+                            item.ThreadVariableCandidate,
+                            threadVariableCandidate);
+                        item.ThreadVariableCandidate = threadVariableCandidate;
+                    }
+
+                    pendingTlsCallAddress = null;
                 }
 
                 ProcedureFlowState flowStateBeforeInstruction = ProcedureFlowState.Capture(
@@ -3113,9 +3169,23 @@ public sealed class BasicAnalysisService : IAnalysisService
                     dynamicMethodIds,
                     registerLocalOffsets,
                     registerStackArgumentOffsets,
+                    stackArguments,
+                    stackLocalVariables,
                     registerStack);
                 decodedFlowStates[currentRva] = flowStateBeforeInstruction;
                 bool isCallPopSequence = IsCallToNextInstructionFollowedByPop(session, instruction);
+                if (instruction.FlowControl == InstructionFlowControl.Call && !isCallPopSequence)
+                {
+                    RestoreResolvedIndirectCallCrossReferences(
+                        currentRva,
+                        session,
+                        resolvedIndirectCallTargetsByAddress);
+                    RestoreThreadVariableCandidateMutation(
+                        currentRva,
+                        session,
+                        threadVariableCandidateMutations);
+                }
+
                 AnalyzeStackInstruction(instruction, currentRva, codeStart, isProcedureStart, startItem, item);
                 if (instruction.FlowControl == InstructionFlowControl.Call
                     && !isCallPopSequence
@@ -3157,7 +3227,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 {
                     if (ReadsRegisterArgument(instruction, 0))
                     {
-                        functionCandidateTargets.Add(calledTarget);
+                        functionCandidatesForStart.Add(calledTarget);
                         pendingFunctionResultTarget = null;
                     }
                     else if (WritesRegisterArgument(instruction, 0))
@@ -3166,7 +3236,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                     }
                     else if (instruction.FlowControl == InstructionFlowControl.Return)
                     {
-                        functionCandidateTargets.Add(calledTarget);
+                        functionCandidatesForStart.Add(calledTarget);
                         pendingFunctionResultTarget = null;
                     }
                 }
@@ -3175,7 +3245,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 {
                     if (IsX87ResultStore(instruction))
                     {
-                        functionCandidateTargets.Add(x87Target);
+                        functionCandidatesForStart.Add(x87Target);
                     }
 
                     pendingX87ResultTarget = null;
@@ -3222,6 +3292,12 @@ public sealed class BasicAnalysisService : IAnalysisService
                         }
 
                         uint[] uniqueResolvedCallTargets = resolvedCallTargets.Distinct().ToArray();
+                        if (instruction.NearBranchTarget is null && uniqueResolvedCallTargets.Length > 0)
+                        {
+                            resolvedIndirectCallTargetsByAddress[currentRva] =
+                                uniqueResolvedCallTargets.ToHashSet();
+                        }
+
                         foreach (uint resolvedCallTarget in uniqueResolvedCallTargets)
                         {
                             session.AddCrossReference(currentRva, resolvedCallTarget, CrossReferenceKind.Call);
@@ -3265,6 +3341,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                             };
                         }
 
+                        startItem.SetFlags(GetProcedureRoleCandidate(knownCallInstruction, session));
                         pendingFunctionResultTarget = knownCallInstruction.NearBranchTarget is ulong functionTarget
                             && functionTarget <= uint.MaxValue
                                 ? (uint)functionTarget
@@ -3326,6 +3403,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                             returnTypeCandidate,
                             "#TLS",
                             StringComparison.Ordinal);
+                        pendingTlsCallAddress = pendingTlsBase ? currentRva : null;
                         pendingReturnCallTarget = knownCallInstruction.NearBranchTarget is ulong callTarget
                             && callTarget <= uint.MaxValue
                                 ? (uint)callTarget
@@ -3424,6 +3502,11 @@ public sealed class BasicAnalysisService : IAnalysisService
                             }
 
                             uint[] uniqueTargets = resolvedTargets.Distinct().ToArray();
+                            if (uniqueTargets.Length > 0)
+                            {
+                                resolvedIndirectCallTargetsByAddress[currentRva] = uniqueTargets.ToHashSet();
+                            }
+
                             if (uniqueTargets.Length == 1)
                             {
                                 uint resolvedTarget = uniqueTargets[0];
@@ -3451,6 +3534,7 @@ public sealed class BasicAnalysisService : IAnalysisService
 
                         if (knownCallInstruction.NearBranchTarget is not null)
                         {
+                            startItem.SetFlags(GetProcedureRoleCandidate(knownCallInstruction, session));
                             classTypeInstruction = knownCallInstruction;
                             pendingFunctionResultTarget = knownCallInstruction.NearBranchTarget is ulong functionTarget
                                 && functionTarget <= uint.MaxValue
@@ -3467,7 +3551,22 @@ public sealed class BasicAnalysisService : IAnalysisService
                                     classRegisterTypes),
                                 "#TLS",
                                 StringComparison.Ordinal);
+                            pendingTlsCallAddress = pendingTlsBase ? currentRva : null;
 
+                            ApplyKnownCallLocalDataTypes(
+                                knownCallInstruction,
+                                session,
+                                registerLocalOffsets,
+                                registerAddressValues,
+                                classRegisterTypes,
+                                stackLocalVariables);
+                            ApplyKnownCallStackArgumentTypes(
+                                knownCallInstruction,
+                                session,
+                                registerStackArgumentOffsets,
+                                registerAddressValues,
+                                classRegisterTypes,
+                                stackArguments);
                             ApplyKnownCallDataArgumentsWithProvenance(
                                 knownCallInstruction,
                                 session,
@@ -3699,6 +3798,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                                         dynamicMethodIds,
                                         registerLocalOffsets,
                                         registerStackArgumentOffsets,
+                                        stackArguments,
+                                        stackLocalVariables,
                                         registerStack),
                                     incomingFlowEdges,
                                     branchFlowContexts);
@@ -3866,6 +3967,8 @@ public sealed class BasicAnalysisService : IAnalysisService
                             dynamicMethodIds,
                             registerLocalOffsets,
                             registerStackArgumentOffsets,
+                            stackArguments,
+                            stackLocalVariables,
                             registerStack),
                         incomingFlowEdges,
                         branchFlowContexts);
@@ -4008,6 +4111,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 session.GetOrAddItem(endAddress).SetFlags(AnalysisFlags.ProcedureEnd);
             }
 
+            functionCandidateTargetsByStart[codeStart] = functionCandidatesForStart;
             processedStarts.Add(codeStart);
             completedStarts = processedStarts.Count;
             progress?.Report(new AnalysisProgress(
@@ -4024,7 +4128,9 @@ public sealed class BasicAnalysisService : IAnalysisService
         }
 
         PropagateCallReturnTypeCandidates(session, returnedCallTargets);
-        MarkFunctionCandidates(session, functionCandidateTargets);
+        MarkFunctionCandidates(
+            session,
+            functionCandidateTargetsByStart.Values.SelectMany(targets => targets).Distinct());
     }
 
     private static void MergeKnownRegisterTypes(
@@ -4065,17 +4171,18 @@ public sealed class BasicAnalysisService : IAnalysisService
         }
     }
 
-    private static void MergeKnownRegisterOrigins<T>(
-        Dictionary<int, T> current,
-        IReadOnlyDictionary<int, T> incoming)
+    private static void MergeKnownRegisterOrigins<TKey, T>(
+        Dictionary<TKey, T> current,
+        IReadOnlyDictionary<TKey, T> incoming)
+        where TKey : notnull
         where T : IEquatable<T>
     {
-        foreach (int registerIndex in current.Keys.ToArray())
+        foreach (TKey key in current.Keys.ToArray())
         {
-            if (!incoming.TryGetValue(registerIndex, out T? incomingValue)
-                || !current[registerIndex].Equals(incomingValue))
+            if (!incoming.TryGetValue(key, out T? incomingValue)
+                || !current[key].Equals(incomingValue))
             {
-                current.Remove(registerIndex);
+                current.Remove(key);
             }
         }
     }
@@ -4136,19 +4243,22 @@ public sealed class BasicAnalysisService : IAnalysisService
             && AreValuesEqual(first.DynamicMethodIds, second.DynamicMethodIds)
             && AreValuesEqual(first.RegisterLocalOffsets, second.RegisterLocalOffsets)
             && AreValuesEqual(first.RegisterStackArgumentOffsets, second.RegisterStackArgumentOffsets)
+            && AreValuesEqual(first.StackArguments, second.StackArguments)
+            && AreValuesEqual(first.StackLocalVariables, second.StackLocalVariables)
             && first.RegisterStack.SequenceEqual(second.RegisterStack);
     }
 
-    private static bool AreValuesEqual<T>(
-        IReadOnlyDictionary<int, T> first,
-        IReadOnlyDictionary<int, T> second)
+    private static bool AreValuesEqual<TKey, T>(
+        IReadOnlyDictionary<TKey, T> first,
+        IReadOnlyDictionary<TKey, T> second)
+        where TKey : notnull
     {
         if (first.Count != second.Count)
         {
             return false;
         }
 
-        foreach ((int key, T value) in first)
+        foreach ((TKey key, T value) in first)
         {
             if (!second.TryGetValue(key, out T? otherValue)
                 || !EqualityComparer<T>.Default.Equals(value, otherValue))
@@ -4206,6 +4316,12 @@ public sealed class BasicAnalysisService : IAnalysisService
         ImmutableDictionary<int, uint> stackArgumentOffsets = MeetValues(
             existing.RegisterStackArgumentOffsets,
             incoming.RegisterStackArgumentOffsets);
+        ImmutableDictionary<uint, StackArgument> stackArguments = MeetValues(
+            existing.StackArguments,
+            incoming.StackArguments);
+        ImmutableDictionary<int, StackLocalVariable> stackLocalVariables = MeetValues(
+            existing.StackLocalVariables,
+            incoming.StackLocalVariables);
         ImmutableArray<RegisterStackState> registerStack =
             existing.RegisterStack.SequenceEqual(incoming.RegisterStack)
                 ? existing.RegisterStack
@@ -4216,6 +4332,8 @@ public sealed class BasicAnalysisService : IAnalysisService
             && ReferenceEquals(dynamicMethodIds, existing.DynamicMethodIds)
             && ReferenceEquals(localOffsets, existing.RegisterLocalOffsets)
             && ReferenceEquals(stackArgumentOffsets, existing.RegisterStackArgumentOffsets)
+            && ReferenceEquals(stackArguments, existing.StackArguments)
+            && ReferenceEquals(stackLocalVariables, existing.StackLocalVariables)
             && registerStack == existing.RegisterStack)
         {
             return existing;
@@ -4227,24 +4345,27 @@ public sealed class BasicAnalysisService : IAnalysisService
             dynamicMethodIds,
             localOffsets,
             stackArgumentOffsets,
+            stackArguments,
+            stackLocalVariables,
             registerStack);
     }
 
-    private static ImmutableDictionary<int, T> MeetValues<T>(
-        ImmutableDictionary<int, T> existing,
-        IReadOnlyDictionary<int, T> incoming)
+    private static ImmutableDictionary<TKey, T> MeetValues<TKey, T>(
+        ImmutableDictionary<TKey, T> existing,
+        IReadOnlyDictionary<TKey, T> incoming)
+        where TKey : notnull
     {
-        ImmutableDictionary<int, T>.Builder? builder = null;
-        foreach ((int register, T value) in existing)
+        ImmutableDictionary<TKey, T>.Builder? builder = null;
+        foreach ((TKey key, T value) in existing)
         {
-            if (incoming.TryGetValue(register, out T? incomingValue)
+            if (incoming.TryGetValue(key, out T? incomingValue)
                 && EqualityComparer<T>.Default.Equals(value, incomingValue))
             {
                 continue;
             }
 
             builder ??= existing.ToBuilder();
-            builder.Remove(register);
+            builder.Remove(key);
         }
 
         return builder?.ToImmutable() ?? existing;
@@ -6010,6 +6131,28 @@ public sealed class BasicAnalysisService : IAnalysisService
         return null;
     }
 
+    private static AnalysisFlags GetProcedureRoleCandidate(
+        DecodedInstruction instruction,
+        AnalysisSession session)
+    {
+        if (instruction.FlowControl != InstructionFlowControl.Call
+            || instruction.NearBranchTarget is not ulong targetAddress
+            || targetAddress > uint.MaxValue
+            || !session.Items.TryGetValue((uint)targetAddress, out AnalysisItem? target))
+        {
+            return AnalysisFlags.None;
+        }
+
+        if (string.Equals(target.Name, "@ClassCreate", StringComparison.OrdinalIgnoreCase))
+        {
+            return AnalysisFlags.ConstructorCandidate;
+        }
+
+        return string.Equals(target.Name, "@ClassDestroy", StringComparison.OrdinalIgnoreCase)
+            ? AnalysisFlags.DestructorCandidate
+            : AnalysisFlags.None;
+    }
+
     private static string? GetTlsThreadVariableCandidate(DecodedInstruction instruction)
     {
         DecodedOperand? tlsMemoryOperand = instruction.Operands.FirstOrDefault(operand =>
@@ -6022,6 +6165,38 @@ public sealed class BasicAnalysisService : IAnalysisService
 
         int displacement = unchecked((int)(tlsMemoryOperand.Displacement ?? 0));
         return $"threadvar_{displacement}";
+    }
+
+    private static void RestoreThreadVariableCandidateMutation(
+        uint callAddress,
+        AnalysisSession session,
+        Dictionary<uint, (uint TargetAddress, string? PreviousValue, string AppliedValue)> mutations)
+    {
+        if (mutations.Remove(callAddress, out var mutation)
+            && session.Items.TryGetValue(mutation.TargetAddress, out AnalysisItem? item)
+            && string.Equals(
+                item.ThreadVariableCandidate,
+                mutation.AppliedValue,
+                StringComparison.Ordinal))
+        {
+            item.ThreadVariableCandidate = mutation.PreviousValue;
+        }
+    }
+
+    private static void RestoreResolvedIndirectCallCrossReferences(
+        uint callAddress,
+        AnalysisSession session,
+        Dictionary<uint, HashSet<uint>> resolvedTargetsByAddress)
+    {
+        if (!resolvedTargetsByAddress.Remove(callAddress, out HashSet<uint>? previousTargets))
+        {
+            return;
+        }
+
+        foreach (uint targetAddress in previousTargets)
+        {
+            session.RemoveCrossReference(callAddress, targetAddress, CrossReferenceKind.Call);
+        }
     }
 
     private static void ApplyKnownCallDataArgumentsWithProvenance(
@@ -9628,6 +9803,50 @@ public sealed class BasicAnalysisService : IAnalysisService
         return false;
     }
 
+    private static ImmutableDictionary<int, string> GetKnownProcedureRegisterTypes(
+        AnalysisSession session,
+        string? procedureName)
+    {
+        if (!session.TryGetUnambiguousKnowledgeBaseProcedure(
+                procedureName ?? string.Empty,
+                out KnowledgeBaseProcedure? procedure)
+            || procedure is null
+            || procedure.DumpType != (byte)'C'
+            || procedure.CallingConvention != 0)
+        {
+            return ImmutableDictionary<int, string>.Empty;
+        }
+
+        List<(int RegisterIndex, string TypeName)> candidates = [];
+        foreach (KnowledgeBaseArgument argument in procedure.Arguments)
+        {
+            if (!argument.IsRegister
+                || argument.Tag != 0x21
+                || argument.SizeBytes != sizeof(uint)
+                || GetKnowledgeBaseRegisterIndex(argument.RegisterOrStackIndex) is not int registerIndex
+                || string.IsNullOrWhiteSpace(argument.TypeName)
+                || !session.Items.Values.Any(item =>
+                    string.Equals(item.Name, argument.TypeName, StringComparison.OrdinalIgnoreCase)
+                    && (item.Flags.HasFlag(AnalysisFlags.Vmt)
+                        || item.TypeKind == DelphiTypeKind.Record)))
+            {
+                continue;
+            }
+
+            candidates.Add((registerIndex, argument.TypeName));
+        }
+
+        return candidates
+            .GroupBy(candidate => candidate.RegisterIndex)
+            .Where(group => group.Select(candidate => candidate.TypeName)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Take(2)
+                .Count() == 1)
+            .ToImmutableDictionary(
+                group => group.Key,
+                group => group.First().TypeName);
+    }
+
     private static Dictionary<uint, string> BuildProcedureOwnerClassNames(AnalysisSession session)
     {
         Dictionary<uint, List<AnalysisItem>> referencingVmtsByProcedure = [];
@@ -9671,6 +9890,31 @@ public sealed class BasicAnalysisService : IAnalysisService
             {
                 procedureOwnerClassNames.Add(procedureAddress, className);
             }
+        }
+
+        Dictionary<string, AnalysisItem[]> vmtsByName = session.Items.Values
+            .Where(item => item.Flags.HasFlag(AnalysisFlags.Vmt)
+                && !string.IsNullOrWhiteSpace(item.Name))
+            .GroupBy(item => item.Name!, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.ToArray(), StringComparer.OrdinalIgnoreCase);
+        foreach (AnalysisItem procedure in session.Items.Values)
+        {
+            if (string.IsNullOrWhiteSpace(procedure.Name))
+            {
+                continue;
+            }
+
+            int separator = procedure.Name.IndexOf('.');
+            if (separator <= 0
+                || !vmtsByName.TryGetValue(procedure.Name[..separator], out AnalysisItem[]? ownerVmts)
+                || ownerVmts.Length != 1
+                || ownerVmts[0].Name is not string className
+                || string.IsNullOrWhiteSpace(className))
+            {
+                continue;
+            }
+
+            procedureOwnerClassNames.TryAdd(procedure.Address, className);
         }
 
         return procedureOwnerClassNames;
