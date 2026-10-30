@@ -216,6 +216,25 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisClearsStaleStackArgumentMismatchWhenRecomputingProcedureSummary()
+    {
+        AnalysisSession session = CreateSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0xc2, 0x04, 0x00
+        ]);
+        session.GetOrAddItem(0x1000).SetFlags(AnalysisFlags.StackArgumentSizeMismatch);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(
+            session.Items[0x1000].Flags.HasFlag(AnalysisFlags.StackArgumentSizeMismatch));
+    }
+
+    [TestMethod]
     public async Task AnalysisRoundsSmallStackArgumentAccessesToFourByteSlots()
     {
         AnalysisSession session = CreateSession(
@@ -618,6 +637,67 @@ public sealed class StackInstructionAnalysisTests
 
         Assert.AreEqual("Stack resource", resourceSession.Items[0x1005].ResourceStringCandidate);
         Assert.AreEqual("PResStringRec", resourceSession.Items[0x2020].DataTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesStackWideStringTypeKindAfterLateCallReprocessing()
+    {
+        byte[] image = new byte[0x80];
+        byte[] code =
+        [
+            0xb8, 0x30, 0x20, 0x40, 0x00,
+            0x68, 0x20, 0x20, 0x40, 0x00,
+            0xe8, 0x11, 0x00, 0x00, 0x00,
+            0xeb, 0xf9
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        byte[] widePayload = [.. Encoding.Unicode.GetBytes("Wide stack"), 0, 0];
+        BinaryPrimitives.WriteInt32LittleEndian(
+            image.AsSpan(0x5c, sizeof(int)),
+            widePayload.Length - sizeof(ushort));
+        widePayload.CopyTo(image, 0x60);
+
+        KnowledgeBaseProcedure procedure = new(
+            7,
+            "TExample.ReadStackWideText",
+            (byte)'C',
+            ReadOnlyMemory<byte>.Empty,
+            ReadOnlyMemory<byte>.Empty)
+        {
+            CallingConvention = 3,
+            Arguments =
+            [
+                new KnowledgeBaseArgument(
+                    0x21,
+                    false,
+                    8,
+                    sizeof(uint),
+                    "Text",
+                    "WideString")
+            ]
+        };
+        AnalysisSession session = new(
+            "stack-wide-string-late-reprocessing.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = procedure.Name;
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [procedure]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x2020].TypeKind);
     }
 
     [TestMethod]
@@ -4983,23 +5063,33 @@ public sealed class StackInstructionAnalysisTests
     [TestMethod]
     public async Task AnalysisInfersX87PrecisionForUnknownClassFieldAccess()
     {
-        AnalysisSession session = CreateClassFieldAccessSession(
+        (byte[] Instruction, string ExpectedType)[] cases =
         [
-            0xb8, 0x00, 0x20, 0x40, 0x00,
-            0xd9, 0x40, 0x0c,
-            0xc3
-        ],
-            useParentField: false);
-        session.Items[0x2000].Fields = [];
+            ([0xd9, 0x40, 0x08], "Single"),
+            ([0xdd, 0x40, 0x08], "Double"),
+            ([0xdb, 0x68, 0x08], "Extended")
+        ];
 
-        await new BasicAnalysisService(new IcedInstructionDecoder())
-            .AnalyzeAsync(session, null, CancellationToken.None);
+        foreach ((byte[] instruction, string expectedType) in cases)
+        {
+            AnalysisSession session = CreateClassFieldAccessSession(
+            [
+                0xb8, 0x00, 0x20, 0x40, 0x00,
+                .. instruction,
+                0xc3
+            ],
+                useParentField: false);
+            session.Items[0x2000].Fields = [];
 
-        MemberAccessCandidate access = session.Items[0x1005].MemberAccessCandidates.Single();
-        Assert.AreEqual("TChild", access.OwnerTypeName);
-        Assert.AreEqual("f12", access.FieldName);
-        Assert.AreEqual("Single", access.TypeName);
-        Assert.IsTrue(access.IsInferred);
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            MemberAccessCandidate access = session.Items[0x1005].MemberAccessCandidates.Single();
+            Assert.AreEqual("TChild", access.OwnerTypeName);
+            Assert.AreEqual("f8", access.FieldName);
+            Assert.AreEqual(expectedType, access.TypeName);
+            Assert.IsTrue(access.IsInferred);
+        }
     }
 
     [TestMethod]
@@ -6779,6 +6869,135 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisRemovesPrototypeArgumentTypesAfterLateConflictingPredecessor()
+    {
+        byte[] image = new byte[0x80];
+        byte[] code =
+        [
+            0xb8, 0x04, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0b,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xe8, 0x0c, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0xeb, 0xf7
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "prototype-type-late-conflict.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000,
+            SelectedDelphiVersion = DelphiVersion.Delphi2009
+        };
+        session.GetOrAddItem(0x1020).Name = "TExample.ReadValue";
+        AnalysisItem guid = session.GetOrAddItem(0x2004);
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "TExample.ReadValue",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    Arguments =
+                    [
+                        new KnowledgeBaseArgument(
+                            0x21,
+                            true,
+                            0,
+                            sizeof(uint),
+                            "Value",
+                            "TGUID")
+                    ]
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x100f, out AnalysisItem? callItem));
+        Assert.IsTrue(callItem!.Flags.HasFlag(AnalysisFlags.Call));
+        Assert.IsNull(guid.DataTypeCandidate);
+        Assert.AreEqual(
+            1,
+            session.GetIncomingCrossReferences(0x2004)
+                .Count(reference => reference.SourceAddress == 0x100f
+                    && reference.Kind == CrossReferenceKind.Constant));
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesPrototypeResourceStringCandidateAfterLateConflictingPredecessor()
+    {
+        byte[] image = new byte[0x80];
+        byte[] code =
+        [
+            0xb8, 0x04, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0b,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xe8, 0x0c, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0xeb, 0xf7
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(0x48, sizeof(uint)), 1);
+        KnowledgeBaseProcedure procedure = new(
+            7,
+            "TExample.LoadResource",
+            (byte)'C',
+            ReadOnlyMemory<byte>.Empty,
+            ReadOnlyMemory<byte>.Empty)
+        {
+            Arguments =
+            [
+                new KnowledgeBaseArgument(
+                    0x21,
+                    true,
+                    0,
+                    sizeof(uint),
+                    "Resource",
+                    "PResStringRec")
+            ]
+        };
+        AnalysisSession session = new(
+            "prototype-resource-string-late-conflict.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        AnalysisItem call = session.GetOrAddItem(0x1020);
+        call.Name = procedure.Name;
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [procedure]));
+        session.LoadPeDirectories([], [], [new PeResourceString(1, 0x0409, "Greeting")]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x100f, out AnalysisItem? callItem));
+        Assert.IsTrue(callItem!.Flags.HasFlag(AnalysisFlags.Call));
+        Assert.IsNull(callItem.ResourceStringCandidate);
+    }
+
+    [TestMethod]
     public async Task AnalysisRemovesManagedStringStoreTypeAfterLateConflictingPredecessor()
     {
         AnalysisSession positiveSession = CreateManagedStringStoreSession(
@@ -6856,6 +7075,232 @@ public sealed class StackInstructionAnalysisTests
             1,
             session.GetIncomingCrossReferences(0x2030)
                 .Count(reference => reference.SourceAddress == 0x100f));
+    }
+
+    [TestMethod]
+    public async Task AnalysisAppliesRuntimeCallCandidatesInBranchFlowTargets()
+    {
+        byte[] image = new byte[0x80];
+        byte[] code =
+        [
+            0xeb, 0x06,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xb8, 0x30, 0x20, 0x40, 0x00,
+            0xe8, 0x0e, 0x00, 0x00, 0x00,
+            0xb8, 0x01, 0x00, 0x00, 0x00,
+            0xe8, 0x08, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        image[0x24] = 0xc3;
+        AnalysisSession session = new(
+            "branch-runtime-candidates.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = "@VarClr";
+        session.GetOrAddItem(0x1024).Name = "@LoadStr";
+        AnalysisItem variable = session.GetOrAddItem(0x2030);
+        session.LoadPeDirectories([], [], [new PeResourceString(1, 0x0409, "Greeting")]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Variant", variable.DataTypeCandidate);
+        Assert.IsTrue(variable.Flags.HasFlag(AnalysisFlags.Data));
+        Assert.AreEqual("Greeting", session.Items[0x1017].ResourceStringCandidate);
+        Assert.IsTrue(session.Items.TryGetValue(0x1008, out AnalysisItem? flowTarget));
+        Assert.IsFalse(flowTarget!.Flags.HasFlag(AnalysisFlags.ProcedureStart));
+    }
+
+    [TestMethod]
+    public async Task AnalysisAppliesClassAndManagedStringStoresInBranchFlowTargets()
+    {
+        foreach (bool managedString in new[] { false, true })
+        {
+            byte[] image = new byte[0x80];
+            byte[] code =
+            [
+                0xb8, 0x20, 0x20, 0x40, 0x00,
+                0xeb, 0x08,
+                0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+                0x89, 0x05, 0x30, 0x20, 0x40, 0x00,
+                0xc3
+            ];
+            code.CopyTo(image, 0);
+            AnalysisSession session = new(
+                managedString ? "branch-managed-string-store.exe" : "branch-class-store.exe",
+                image,
+                [
+                    new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                    new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+                ],
+                0x400000)
+            {
+                EntryPointRva = 0x1000
+            };
+            AnalysisItem source = session.GetOrAddItem(0x2020);
+            source.Name = managedString ? "ManagedText" : "TStoredClass";
+            source.SetFlags(managedString
+                ? AnalysisFlags.Data | AnalysisFlags.String
+                : AnalysisFlags.Vmt);
+            if (managedString)
+            {
+                source.TypeKind = DelphiTypeKind.UnicodeString;
+            }
+
+            AnalysisItem destination = session.GetOrAddItem(0x2030);
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.AreEqual(
+                managedString ? "UnicodeString" : "TStoredClass",
+                destination.DataTypeCandidate);
+            Assert.IsTrue(destination.Flags.HasFlag(AnalysisFlags.Data));
+            Assert.IsTrue(session.Items.TryGetValue(0x100f, out AnalysisItem? flowTarget));
+            Assert.IsFalse(flowTarget!.Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisAppliesPrototypeStringArgumentsInBranchFlowTargets()
+    {
+        byte[] image = new byte[0x80];
+        byte[] code =
+        [
+            0xeb, 0x06,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xb8, 0x10, 0x20, 0x40, 0x00,
+            0xe8, 0x06, 0x00, 0x00, 0x00,
+            0xc3,
+            0x90, 0x90, 0x90, 0x90, 0x90,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        Encoding.Latin1.GetBytes("Branch argument\0").CopyTo(image, 0x50);
+        AnalysisSession session = new(
+            "branch-prototype-argument.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000,
+            DelphiVersion.Delphi2007)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = "TExample.ReadText";
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "TExample.ReadText",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    Arguments =
+                    [
+                        new KnowledgeBaseArgument(
+                            0x21,
+                            true,
+                            0,
+                            sizeof(uint),
+                            "Text",
+                            "PAnsiChar")
+                    ]
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Branch argument", session.Items[0x2010].Name);
+        Assert.IsTrue(session.Items.TryGetValue(0x1008, out AnalysisItem? flowTarget));
+        Assert.IsFalse(flowTarget!.Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        Assert.AreEqual(
+            1,
+            session.GetIncomingCrossReferences(0x2010)
+                .Count(reference => reference.SourceAddress == 0x100d
+                    && reference.Kind == CrossReferenceKind.Constant));
+    }
+
+    [TestMethod]
+    public async Task AnalysisAppliesPrototypeStackArgumentsInBranchFlowTargets()
+    {
+        byte[] image = new byte[0x80];
+        byte[] code =
+        [
+            0xeb, 0x06,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0x68, 0x30, 0x20, 0x40, 0x00,
+            0xe8, 0x06, 0x00, 0x00, 0x00,
+            0xc3,
+            0x90, 0x90, 0x90, 0x90, 0x90,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        Encoding.Latin1.GetBytes("Branch stack\0").CopyTo(image, 0x70);
+        KnowledgeBaseProcedure procedure = new(
+            7,
+            "TExample.ReadStackText",
+            (byte)'C',
+            ReadOnlyMemory<byte>.Empty,
+            ReadOnlyMemory<byte>.Empty)
+        {
+            CallingConvention = 3,
+            Arguments =
+            [
+                    new KnowledgeBaseArgument(
+                        0x21,
+                        false,
+                        8,
+                        sizeof(uint),
+                        "Text",
+                        "PAnsiChar")
+            ]
+        };
+        AnalysisSession session = new(
+            "branch-stack-prototype-argument.exe",
+            image,
+            [
+                    new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                    new PeSection(".data", 0x2000, 0x40, 0x40, 0x40, false)
+            ],
+            0x400000,
+            DelphiVersion.Delphi2007)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1018).Name = procedure.Name;
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [procedure]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Branch stack", session.Items[0x2030].Name);
+        Assert.IsTrue(session.Items[0x2030].Flags.HasFlag(AnalysisFlags.String));
+        Assert.IsTrue(session.Items.TryGetValue(0x1008, out AnalysisItem? flowTarget));
+        Assert.IsFalse(flowTarget!.Flags.HasFlag(AnalysisFlags.ProcedureStart));
+        Assert.AreEqual(
+            1,
+            session.GetIncomingCrossReferences(0x2030)
+                    .Count(reference => reference.SourceAddress == 0x100d
+                        && reference.Kind == CrossReferenceKind.Constant));
     }
 
     private static AnalysisSession CreateManagedStringStoreSession(byte[] code)
