@@ -8,6 +8,7 @@ using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
 using AppKomponentBaseLib.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using AA98_AvlnCodeStudio.Planning.Core.Services;
@@ -29,7 +30,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly Services.IWorkspaceFileDialogService _workspaceFileDialogService;
         private readonly ICodeStudioBuilderService _builderService;
         private readonly IVersionControlService _versionControlService;
+        private readonly Services.CSharpSyntaxDiagnosticService _csharpSyntaxDiagnosticService;
+        private readonly List<Diagnostic> _buildDiagnostics = [];
+        private List<Diagnostic> _languageDiagnostics = [];
+        private CancellationTokenSource? _languageAnalysisCancellation;
         private EditorViewModel? _observedEditor;
+        private Controls.EditorTextArea? _observedEditorTextArea;
 
         public MainWindowViewModel()
             : this(
@@ -49,7 +55,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 new NullCodeStudioBuilderService(),
                 new NullVersionControlService(),
                 null,
-                new Services.DesignEditorFileDialogService())
+                new Services.DesignEditorFileDialogService(),
+                new Services.CSharpSyntaxDiagnosticService())
         {
         }
 
@@ -64,7 +71,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             ICodeStudioBuilderService? builderService = null,
             IVersionControlService? versionControlService = null,
             EditorDocumentWorkspace? editorWorkspace = null,
-            AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService? editorFileDialogService = null)
+            AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService? editorFileDialogService = null,
+            Services.CSharpSyntaxDiagnosticService? csharpSyntaxDiagnosticService = null)
         {
             _editorWorkspace = editorWorkspace ?? new EditorDocumentWorkspace(editorComponent);
             _workspaceLoader = workspaceLoader ?? new CSharpWorkspaceLoader();
@@ -72,9 +80,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _builderService = builderService ?? new NullCodeStudioBuilderService();
             _versionControlService = versionControlService ?? new NullVersionControlService();
             _editorFileDialogService = editorFileDialogService ?? new Services.DesignEditorFileDialogService();
+            _csharpSyntaxDiagnosticService = csharpSyntaxDiagnosticService ?? new Services.CSharpSyntaxDiagnosticService();
             _editorWorkspace.PropertyChanged += OnEditorWorkspacePropertyChanged;
             _observedEditor = _editorWorkspace.ActiveTab.Editor;
             _observedEditor.PropertyChanged += OnActiveEditorPropertyChanged;
+            ObserveActiveEditorControl();
+            CompletionSuggestions.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasCompletionSuggestions));
             PlanningExplorer = planningExplorer;
             DiagnosticCollection = diagnosticCollection ?? throw new ArgumentNullException(nameof(diagnosticCollection));
             ConfigUi = configUi;
@@ -154,6 +165,16 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string SaveAsCommandText => UiStrings.SaveAsCommandText;
 
+        public string CompleteCommandText => UiStrings.CompleteCommandText;
+
+        public string ApplyCompletionCommandText => UiStrings.ApplyCompletionCommandText;
+
+        public ObservableCollection<string> CompletionSuggestions { get; } = [];
+
+        public string? SelectedCompletion { get; set; }
+
+        public bool HasCompletionSuggestions => CompletionSuggestions.Count > 0;
+
         [RelayCommand]
         private void NewDocument()
         {
@@ -172,6 +193,65 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             await _editorWorkspace.OpenOrActivateAsync(path, cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task RequestCompletionsAsync(CancellationToken cancellationToken)
+        {
+            string? filePath = Editor.CurrentFilePath;
+            if (Workspace is null
+                || string.IsNullOrWhiteSpace(filePath)
+                || _observedEditorTextArea is null)
+            {
+                CompletionSuggestions.Clear();
+                return;
+            }
+
+            IReadOnlyList<string> suggestions = await _csharpSyntaxDiagnosticService.GetCompletionsAsync(
+                Editor.Text,
+                filePath,
+                _observedEditorTextArea.CaretOffset,
+                Workspace,
+                cancellationToken);
+            CompletionSuggestions.Clear();
+            foreach (string suggestion in suggestions.Take(50))
+            {
+                CompletionSuggestions.Add(suggestion);
+            }
+
+            SelectedCompletion = CompletionSuggestions.FirstOrDefault();
+            OnPropertyChanged(nameof(SelectedCompletion));
+            if (CompletionSuggestions.Count == 0)
+            {
+                Editor.NotificationText = "No C# completions are available at the current position.";
+            }
+        }
+
+        [RelayCommand]
+        private void ApplySelectedCompletion()
+        {
+            if (string.IsNullOrWhiteSpace(SelectedCompletion) || _observedEditorTextArea is null)
+            {
+                return;
+            }
+
+            string source = Editor.Text;
+            int caretOffset = Math.Clamp(_observedEditorTextArea.CaretOffset, 0, source.Length);
+            int replacementStart = caretOffset;
+            while (replacementStart > 0 && IsIdentifierCharacter(source[replacementStart - 1]))
+            {
+                replacementStart--;
+            }
+
+            string updatedSource = string.Concat(
+                source[..replacementStart],
+                SelectedCompletion,
+                source[caretOffset..]);
+            Editor.Text = updatedSource;
+            _observedEditorTextArea.SetCaretOffset(replacementStart + SelectedCompletion.Length);
+            CompletionSuggestions.Clear();
+            SelectedCompletion = null;
+            OnPropertyChanged(nameof(SelectedCompletion));
         }
 
         public string OpenWorkspaceCommandText => UiStrings.OpenWorkspaceCommandText;
@@ -217,7 +297,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 diagnostics.AddRange(result.Diagnostics.Select(MapDiagnostic));
             }
 
-            await DiagnosticCollection.ConsumeAsync(diagnostics, cancellationToken);
+            _buildDiagnostics.Clear();
+            _buildDiagnostics.AddRange(diagnostics);
+            await RefreshDiagnosticsAsync(cancellationToken);
             Editor.StatusText = $"Build: {succeededCount}/{workspace.Projects.Count} projects succeeded.";
             Editor.NotificationText = $"Build diagnostics: {diagnostics.Count}.";
         }
@@ -232,6 +314,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             Workspace = workspace;
+            QueueLanguageAnalysis();
             VersionControlStatus = await _versionControlService.GetStatusAsync(new VersionControlStatusRequest
             {
                 RepositoryContextPath = workspace.RootPath,
@@ -260,10 +343,36 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             _observedEditor = _editorWorkspace.ActiveTab.Editor;
             _observedEditor.PropertyChanged += OnActiveEditorPropertyChanged;
+            ObserveActiveEditorControl();
             OnPropertyChanged(nameof(ActiveEditorTab));
             OnPropertyChanged(nameof(Editor));
             OnPropertyChanged(nameof(EditorComponent));
             OnPropertyChanged(nameof(WindowTitle));
+            QueueLanguageAnalysis();
+        }
+
+        private void ObserveActiveEditorControl()
+        {
+            if (_observedEditorTextArea is not null)
+            {
+                _observedEditorTextArea.CompletionRequested -= OnCompletionRequested;
+            }
+
+            _observedEditorTextArea = _editorWorkspace.ActiveTab.View as Controls.EditorTextArea;
+            if (_observedEditorTextArea is not null)
+            {
+                _observedEditorTextArea.CompletionRequested += OnCompletionRequested;
+            }
+        }
+
+        private void OnCompletionRequested(object? sender, EventArgs e)
+        {
+            RequestCompletionsCommand.Execute(null);
+        }
+
+        private static bool IsIdentifierCharacter(char character)
+        {
+            return char.IsLetterOrDigit(character) || character == '_';
         }
 
         private void OnActiveEditorPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -272,6 +381,65 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             {
                 OnPropertyChanged(nameof(WindowTitle));
             }
+
+            if (e.PropertyName is nameof(EditorViewModel.Text) or nameof(EditorViewModel.CurrentFilePath))
+            {
+                QueueLanguageAnalysis();
+            }
+        }
+
+        private async void QueueLanguageAnalysis()
+        {
+            _languageAnalysisCancellation?.Cancel();
+            _languageAnalysisCancellation?.Dispose();
+            CancellationTokenSource cancellation = new();
+            _languageAnalysisCancellation = cancellation;
+
+            try
+            {
+                await AnalyzeActiveDocumentAsync(cancellation.Token);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception exception)
+            {
+                Editor.NotificationText = $"C# analysis failed: {exception.Message}";
+            }
+        }
+
+        private async Task AnalyzeActiveDocumentAsync(CancellationToken cancellationToken)
+        {
+            string? filePath = Editor.CurrentFilePath;
+            if (string.IsNullOrWhiteSpace(filePath)
+                || !string.Equals(Path.GetExtension(filePath), ".cs", StringComparison.OrdinalIgnoreCase))
+            {
+                _languageDiagnostics = [];
+                await RefreshDiagnosticsAsync(cancellationToken);
+                return;
+            }
+
+            string source = Editor.Text;
+            await Task.Delay(TimeSpan.FromMilliseconds(300), cancellationToken);
+            List<Diagnostic> diagnostics = (await _csharpSyntaxDiagnosticService.AnalyzeAsync(
+                source,
+                filePath,
+                Workspace,
+                cancellationToken)).ToList();
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!string.Equals(filePath, Editor.CurrentFilePath, StringComparison.OrdinalIgnoreCase)
+                || !string.Equals(source, Editor.Text, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _languageDiagnostics = diagnostics;
+            await RefreshDiagnosticsAsync(cancellationToken);
+        }
+
+        private ValueTask RefreshDiagnosticsAsync(CancellationToken cancellationToken)
+        {
+            return DiagnosticCollection.ConsumeAsync(_buildDiagnostics.Concat(_languageDiagnostics), cancellationToken);
         }
 
         private static Diagnostic MapDiagnostic(BuilderDiagnostic diagnostic)

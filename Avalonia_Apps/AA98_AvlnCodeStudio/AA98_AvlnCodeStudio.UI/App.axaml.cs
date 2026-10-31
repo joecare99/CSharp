@@ -100,6 +100,7 @@ namespace AA98_AvlnCodeStudio.UI
                 .AddConfigUiAvalonia();
             services.AddSingleton<IFileEditorDocumentFactory, FileEditorDocumentFactory>();
             services.AddSingleton<Services.IWorkspaceFileDialogService, Services.AvaloniaWorkspaceFileDialogService>();
+            services.AddSingleton<UI.Services.CSharpSyntaxDiagnosticService>();
             services.AddSingleton<IEditorWorkflowFactory, EditorWorkflowFactory>();
             services.AddSingleton<UI.ViewModels.IEditorViewModelFactory, UI.ViewModels.EditorViewModelFactory>();
             services.AddSingleton<UI.Services.IEditorViewFactory, UI.Services.AvaloniaEditorViewFactory>();
@@ -132,7 +133,8 @@ namespace AA98_AvlnCodeStudio.UI
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Building.Services.ICodeStudioBuilderService>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Versioning.Services.IVersionControlService>(),
                 serviceProvider.GetRequiredService<UI.ViewModels.EditorDocumentWorkspace>(),
-                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService>()));
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService>(),
+                serviceProvider.GetRequiredService<UI.Services.CSharpSyntaxDiagnosticService>()));
             services.AddSingleton<MainWindow>();
         }
 

@@ -34,7 +34,27 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Locator" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.StringTools" ExcludeAssets="runtime" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp" VersionOverride="4.14.0" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="4.14.0" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Features" VersionOverride="4.14.0" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.MSBuild" VersionOverride="4.14.0" />
+    <PackageReference Include="Microsoft.Build" VersionOverride="17.14.28" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Framework" VersionOverride="17.14.28" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" VersionOverride="17.14.28" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" VersionOverride="17.14.28" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Update="Microsoft.NET.StringTools" VersionOverride="17.14.28" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" VersionOverride="10.0.14" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="System.Security.Cryptography.Xml" VersionOverride="10.0.14" ExcludeAssets="runtime" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

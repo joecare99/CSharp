@@ -1,7 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Input;
 using AvaloniaEdit;
+using AvaloniaEdit.Highlighting;
 using Code.Navigation;
 using System;
 
@@ -28,10 +30,16 @@ public partial class EditorTextArea : UserControl
         _editor = this.FindControl<TextEditor>("PART_Editor");
         if (_editor is not null)
         {
+            _editor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
             _editor.Text = Text ?? string.Empty;
             _editor.TextChanged += OnEditorTextChanged;
+            _editor.KeyDown += OnEditorKeyDown;
         }
     }
+
+    public event EventHandler? CompletionRequested;
+
+    public int CaretOffset => _editor?.CaretOffset ?? 0;
 
     /// <summary>
     /// Gets or sets the editor text.
@@ -59,6 +67,17 @@ public partial class EditorTextArea : UserControl
         var text = _editor.Text ?? string.Empty;
         var requestedOffset = location.Offset ?? GetOffset(text, location.Line, location.Column);
         _editor.CaretOffset = Math.Clamp(requestedOffset, 0, text.Length);
+        _editor.Focus();
+    }
+
+    public void SetCaretOffset(int offset)
+    {
+        if (_editor is null)
+        {
+            throw new InvalidOperationException("The Avalonia editor control is unavailable.");
+        }
+
+        _editor.CaretOffset = Math.Clamp(offset, 0, (_editor.Text ?? string.Empty).Length);
         _editor.Focus();
     }
 
@@ -95,6 +114,15 @@ public partial class EditorTextArea : UserControl
         _isUpdatingFromEditor = true;
         Text = _editor.Text;
         _isUpdatingFromEditor = false;
+    }
+
+    private void OnEditorKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            e.Handled = true;
+            CompletionRequested?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private static int GetOffset(string text, int? line, int? column)

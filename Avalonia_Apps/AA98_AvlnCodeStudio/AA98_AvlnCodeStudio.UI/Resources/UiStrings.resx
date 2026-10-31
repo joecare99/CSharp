@@ -54,6 +54,12 @@
   <data name="SaveAsCommandText" xml:space="preserve">
     <value>Save As</value>
   </data>
+  <data name="CompleteCommandText" xml:space="preserve">
+    <value>Complete (Ctrl+Space)</value>
+  </data>
+  <data name="ApplyCompletionCommandText" xml:space="preserve">
+    <value>Insert selected completion</value>
+  </data>
   <data name="OpenWorkspaceCommandText" xml:space="preserve">
     <value>Open C# Workspace...</value>
   </data>

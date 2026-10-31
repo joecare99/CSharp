@@ -41,6 +41,7 @@
                         <MenuItem Header="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
                         <MenuItem Header="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
                         <MenuItem Header="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
+                        <MenuItem Header="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
                     </MenuItem>
                     <MenuItem Header="{Binding ViewMenuHeader}">
                         <MenuItem Header="{Binding NavigationPlaceholderMenuText}" />
@@ -54,6 +55,7 @@
                     <Button Content="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
                     <Button Content="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
                     <Button Content="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
+                    <Button Content="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -114,6 +116,18 @@
                            Margin="0,0,0,8"
                            Text="{Binding VersionControlSummary}"
                            Opacity="0.7" />
+                <StackPanel DockPanel.Dock="Top"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            IsVisible="{Binding HasCompletionSuggestions}">
+                    <ListBox Width="260"
+                             Height="140"
+                             ItemsSource="{Binding CompletionSuggestions}"
+                             SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" />
+                    <Button VerticalAlignment="Top"
+                            Content="{Binding ApplyCompletionCommandText}"
+                            Command="{Binding ApplySelectedCompletionCommand}" />
+                </StackPanel>
                 <TabControl ItemsSource="{Binding EditorWorkspace.Tabs}"
                             SelectedItem="{Binding ActiveEditorTab, Mode=TwoWay}">
                     <TabControl.ItemTemplate>
