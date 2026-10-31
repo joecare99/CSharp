@@ -3056,6 +3056,7 @@ public sealed class StackInstructionAnalysisTests
             session.Items[0x1000].EventHandlerSignatureCandidate!;
         Assert.AreEqual("OnClick", signature.EventPropertyName);
         Assert.AreEqual("TNotifyEvent", signature.EventTypeName);
+        Assert.AreEqual("TForm", signature.SelfTypeName);
         Assert.IsNull(signature.ReturnTypeName);
         CollectionAssert.AreEqual(
             new[]
@@ -3064,21 +3065,29 @@ public sealed class StackInstructionAnalysisTests
                     "Sender",
                     "TObject",
                     EventHandlerParameterPassingMode.Value,
+                    null,
+                    "EDX",
                     null),
                 new EventHandlerParameterCandidate(
                     "Shift",
                     "TShiftState",
                     EventHandlerParameterPassingMode.Const,
+                    null,
+                    "ECX",
                     null),
                 new EventHandlerParameterCandidate(
                     "X",
                     "Integer",
                     EventHandlerParameterPassingMode.Value,
-                    4),
+                    4,
+                    null,
+                    0),
                 new EventHandlerParameterCandidate(
                     "Y",
                     "Integer",
                     EventHandlerParameterPassingMode.Value,
+                    4,
+                    null,
                     4)
             },
             signature.Parameters.ToArray());
@@ -8323,6 +8332,68 @@ public sealed class StackInstructionAnalysisTests
         MemberAccessCandidate access = session.Items[0x100e].MemberAccessCandidates.Single();
         Assert.AreEqual("TChild", access.OwnerTypeName);
         Assert.AreEqual("FCount", access.FieldName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisNormalizesRegisterPrototypeTypesForLocalAddressArguments()
+    {
+        foreach ((string argumentType, DelphiVersion delphiVersion, string expectedType) in new[]
+        {
+            ("Pointer", DelphiVersion.Delphi7, "Byte"),
+            ("PAnsiChar", DelphiVersion.Delphi7, "AnsiChar"),
+            ("AnsiString", DelphiVersion.Delphi2009, "UnicodeString")
+        })
+        {
+            AnalysisSession session = CreateClassFieldAccessSession(
+                [
+                    0x55,
+                    0x8b, 0xec,
+                    0x8d, 0x45, 0xfc,
+                    0xe8, 0x15, 0x00, 0x00, 0x00,
+                    0x8b, 0x4d, 0xfc,
+                    0x8b, 0x51, 0x08,
+                    0x8b, 0xe5,
+                    0x5d,
+                    0xc3,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0xc3
+                ],
+                useParentField: false);
+            session.SelectedDelphiVersion = delphiVersion;
+            session.GetOrAddItem(0x1020).Name = "KnownPrototype";
+            session.LoadKnowledgeBase(new KnowledgeBaseData(
+                2,
+                [new KnowledgeBaseModule(7, "System")],
+                [
+                    new KnowledgeBaseProcedure(
+                        7,
+                        "KnownPrototype",
+                        (byte)'C',
+                        ReadOnlyMemory<byte>.Empty,
+                        ReadOnlyMemory<byte>.Empty)
+                    {
+                        Arguments =
+                        [
+                            new KnowledgeBaseArgument(
+                                0x21,
+                                true,
+                                0,
+                                sizeof(uint),
+                                "Value",
+                                argumentType)
+                        ]
+                    }
+                ]));
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.AreEqual(
+                expectedType,
+                session.Items[0x1000].StackLocalVariables
+                    .Single(variable => variable.EbpOffset == -4).TypeName,
+                $"{argumentType} in {delphiVersion}");
+        }
     }
 
     [TestMethod]
