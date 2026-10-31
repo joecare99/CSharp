@@ -136,6 +136,20 @@ public sealed class CommandLineHostTests
                 .Single();
             Assert.IsTrue(memberAccess.GetProperty("IsInferred").GetBoolean());
             Assert.AreEqual("f12", memberAccess.GetProperty("FieldName").GetString());
+            JsonElement eventSignature = root.GetProperty("Items")
+                .EnumerateArray()
+                .Single()
+                .GetProperty("EventHandlerSignatureCandidate");
+            Assert.AreEqual("TNotifyEvent", eventSignature.GetProperty("EventTypeName").GetString());
+            Assert.AreEqual("TForm", eventSignature.GetProperty("SelfTypeName").GetString());
+            JsonElement eventParameter = eventSignature.GetProperty("Parameters").EnumerateArray().Single();
+            Assert.AreEqual("Sender", eventParameter.GetProperty("Name").GetString());
+            Assert.AreEqual("TObject", eventParameter.GetProperty("TypeName").GetString());
+            Assert.AreEqual(
+                (int)EventHandlerParameterPassingMode.Value,
+                eventParameter.GetProperty("PassingMode").GetInt32());
+            Assert.AreEqual("EDX", eventParameter.GetProperty("RegisterName").GetString());
+            Assert.AreEqual(JsonValueKind.Null, eventParameter.GetProperty("StackOffsetBytes").ValueKind);
 
             int summaryExitCode = await host.RunAsync(
             [
@@ -211,7 +225,8 @@ public sealed class CommandLineHostTests
             IProgress<AnalysisProgress>? progress,
             CancellationToken cancellationToken)
         {
-            session.GetOrAddItem(0x1000).MemberAccessCandidates =
+            AnalysisItem item = session.GetOrAddItem(0x1000);
+            item.MemberAccessCandidates =
             [
                 new MemberAccessCandidate(
                     "TForm",
@@ -221,6 +236,20 @@ public sealed class CommandLineHostTests
                     null,
                     IsInferred: true)
             ];
+            item.EventHandlerSignatureCandidate = new EventHandlerSignatureCandidate(
+                "OnClick",
+                "TNotifyEvent",
+                "procedure(Sender: TObject) of object",
+                "TForm",
+                "EAX",
+                null,
+                [new EventHandlerParameterCandidate(
+                    "Sender",
+                    "TObject",
+                    EventHandlerParameterPassingMode.Value,
+                    null,
+                    "EDX",
+                    null)]);
             return Task.FromResult(new AnalysisResult(session, Array.Empty<string>()));
         }
     }
