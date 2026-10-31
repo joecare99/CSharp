@@ -35,8 +35,10 @@
             <StackPanel Spacing="8">
                 <Menu>
                     <MenuItem Header="{Binding FileMenuHeader}">
-                        <MenuItem Header="{Binding NewCommandText}" Command="{Binding Editor.NewDocumentCommand}" />
-                        <MenuItem Header="{Binding OpenCommandText}" Command="{Binding Editor.OpenCommand}" />
+                        <MenuItem Header="{Binding OpenWorkspaceCommandText}" Command="{Binding OpenWorkspaceCommand}" />
+                        <MenuItem Header="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
+                        <MenuItem Header="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
+                        <MenuItem Header="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
                         <MenuItem Header="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
                         <MenuItem Header="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
                     </MenuItem>
@@ -47,10 +49,11 @@
                 </Menu>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Button Content="{Binding NewCommandText}" Command="{Binding Editor.NewDocumentCommand}" />
-                    <Button Content="{Binding OpenCommandText}" Command="{Binding Editor.OpenCommand}" />
+                    <Button Content="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
+                    <Button Content="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
                     <Button Content="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
                     <Button Content="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
+                    <Button Content="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -102,7 +105,28 @@
                            Margin="0,0,0,8"
                            Text="{Binding EditorRegionTitle}"
                            FontWeight="SemiBold" />
-                <ContentControl x:Name="EditorHost" />
+                <TextBlock DockPanel.Dock="Top"
+                           Margin="0,0,0,8"
+                           Text="{Binding WorkspaceTitle}"
+                           Opacity="0.7"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock DockPanel.Dock="Top"
+                           Margin="0,0,0,8"
+                           Text="{Binding VersionControlSummary}"
+                           Opacity="0.7" />
+                <TabControl ItemsSource="{Binding EditorWorkspace.Tabs}"
+                            SelectedItem="{Binding ActiveEditorTab, Mode=TwoWay}">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:EditorTabViewModel">
+                            <TextBlock Text="{Binding Title}" />
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate x:DataType="vm:EditorTabViewModel">
+                            <ContentControl Content="{Binding View}" />
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
             </DockPanel>
         </Border>
 

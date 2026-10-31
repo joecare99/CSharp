@@ -99,6 +99,7 @@ namespace AA98_AvlnCodeStudio.UI
                 .AddConfigServiceUi()
                 .AddConfigUiAvalonia();
             services.AddSingleton<IFileEditorDocumentFactory, FileEditorDocumentFactory>();
+            services.AddSingleton<Services.IWorkspaceFileDialogService, Services.AvaloniaWorkspaceFileDialogService>();
             services.AddSingleton<IEditorWorkflowFactory, EditorWorkflowFactory>();
             services.AddSingleton<UI.ViewModels.IEditorViewModelFactory, UI.ViewModels.EditorViewModelFactory>();
             services.AddSingleton<UI.Services.IEditorViewFactory, UI.Services.AvaloniaEditorViewFactory>();
@@ -106,6 +107,9 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<UI.Components.IAvaloniaEditorComponentFactory>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.AvaloniaEditorComponentFactory>());
             services.AddSingleton<IEditorComponentFactory>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.AvaloniaEditorComponentFactory>());
             services.AddSingleton<UI.Components.IAvaloniaEditorComponent>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>().Create());
+            services.AddSingleton<UI.ViewModels.EditorDocumentWorkspace>(serviceProvider => new UI.ViewModels.EditorDocumentWorkspace(
+                serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponent>(),
+                serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>()));
             services.AddSingleton<IEditorDocumentHost, WorkbenchEditorDocumentHost>();
             services.AddSingleton<IEditorCaretService, WorkbenchEditorCaretService>();
             services.AddSingleton<ICodeNavigator, EditorCodeNavigator>();
@@ -120,7 +124,13 @@ namespace AA98_AvlnCodeStudio.UI
                 serviceProvider.GetRequiredService<UI.ViewModels.PlanningExplorerViewModel>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels.DiagnosticCollectionViewModel>(),
                 serviceProvider.GetRequiredService<ConfigUiViewModel>(),
-                serviceProvider.GetRequiredService<ProjectExplorerViewModel>()));
+                serviceProvider.GetRequiredService<ProjectExplorerViewModel>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.CSharpWorkspaceLoader>(),
+                serviceProvider.GetRequiredService<Services.IWorkspaceFileDialogService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Building.Services.ICodeStudioBuilderService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Versioning.Services.IVersionControlService>(),
+                serviceProvider.GetRequiredService<UI.ViewModels.EditorDocumentWorkspace>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService>()));
             services.AddSingleton<MainWindow>();
         }
 

@@ -110,7 +110,7 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     /// <returns>A task that completes when the document is available.</returns>
     public async Task OpenFileAsync(string filePath, CancellationToken cancellationToken = default)
     {
-        var result = await _workflow.OpenFileAsync(filePath, cancellationToken).ConfigureAwait(false);
+        var result = await _workflow.OpenFileAsync(filePath, cancellationToken);
         Text = _workflow.Document.Content;
         SynchronizeFromDocument();
         ApplyResult(

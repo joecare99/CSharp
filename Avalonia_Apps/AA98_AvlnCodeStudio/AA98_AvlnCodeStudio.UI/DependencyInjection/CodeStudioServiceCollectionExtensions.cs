@@ -1,5 +1,9 @@
 using AA98_AvlnCodeStudio.Base.AI.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Building.DependencyInjection;
+#if NET10_0
+using AA98_AvlnCodeStudio.Building.Workbench.DependencyInjection;
+using AA98_AvlnCodeStudio.Versioning.Git.DependencyInjection;
+#endif
 using AA98_AvlnCodeStudio.Base.Debugging.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.OS.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Testing.DependencyInjection;
@@ -28,8 +32,13 @@ public static class CodeStudioServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddCodeStudioAI();
+#if NET10_0
+        services.AddWorkbenchCodeStudioBuilding();
+        services.AddGitCodeStudioVersioning();
+#else
         services.AddCodeStudioBuilding();
         services.AddCodeStudioVersioning();
+#endif
         services.AddCodeStudioTesting();
         services.AddCodeStudioDebugging();
         services.AddCodeStudioOS<FileSystemTextDocumentStorageService>();

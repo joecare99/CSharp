@@ -54,6 +54,30 @@
   <data name="SaveAsCommandText" xml:space="preserve">
     <value>Save As</value>
   </data>
+  <data name="OpenWorkspaceCommandText" xml:space="preserve">
+    <value>Open C# Workspace...</value>
+  </data>
+  <data name="BuildWorkspaceCommandText" xml:space="preserve">
+    <value>Build Workspace</value>
+  </data>
+  <data name="BuildUnavailableText" xml:space="preserve">
+    <value>Build unavailable for this target</value>
+  </data>
+  <data name="NoWorkspaceOpenText" xml:space="preserve">
+    <value>No C# workspace open</value>
+  </data>
+  <data name="WorkspaceOpenStatusFormat" xml:space="preserve">
+    <value>Workspace: {0}</value>
+  </data>
+  <data name="NoRepositoryStatusText" xml:space="preserve">
+    <value>No Git repository detected</value>
+  </data>
+  <data name="RepositoryStatusFormat" xml:space="preserve">
+    <value>Git: {0} | {1} | {2} changes</value>
+  </data>
+  <data name="UnknownReferenceText" xml:space="preserve">
+    <value>no branch</value>
+  </data>
   <data name="NavigationPlaceholderMenuText" xml:space="preserve">
     <value>Navigation Placeholder</value>
   </data>

@@ -44,6 +44,22 @@ public static class UiStrings
 
     public static string SaveAsCommandText => GetString(nameof(SaveAsCommandText));
 
+    public static string OpenWorkspaceCommandText => GetString(nameof(OpenWorkspaceCommandText));
+
+    public static string BuildWorkspaceCommandText => GetString(nameof(BuildWorkspaceCommandText));
+
+    public static string BuildUnavailableText => GetString(nameof(BuildUnavailableText));
+
+    public static string NoWorkspaceOpenText => GetString(nameof(NoWorkspaceOpenText));
+
+    public static string WorkspaceOpenStatusFormat => GetString(nameof(WorkspaceOpenStatusFormat));
+
+    public static string NoRepositoryStatusText => GetString(nameof(NoRepositoryStatusText));
+
+    public static string RepositoryStatusFormat => GetString(nameof(RepositoryStatusFormat));
+
+    public static string UnknownReferenceText => GetString(nameof(UnknownReferenceText));
+
     public static string NavigationPlaceholderMenuText => GetString(nameof(NavigationPlaceholderMenuText));
 
     public static string StatusPlaceholderMenuText => GetString(nameof(StatusPlaceholderMenuText));

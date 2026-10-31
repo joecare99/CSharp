@@ -13,11 +13,6 @@ namespace AA98_AvlnCodeStudio.UI.Views
             : this()
         {
             DataContext = viewModel;
-            var editorHost = this.FindControl<ContentControl>(nameof(EditorHost));
-            if (editorHost is not null)
-            {
-                editorHost.Content = viewModel.EditorComponent.View;
-            }
         }
     }
 }
