@@ -445,6 +445,9 @@ public sealed class MainWindowViewModelTests
         public IReadOnlyList<KnowledgeBaseModule> Modules { get; } =
             [new KnowledgeBaseModule(1, "System")];
 
+        public IReadOnlyList<KnowledgeBaseType> Types { get; } =
+            Array.Empty<KnowledgeBaseType>();
+
         public IReadOnlyList<KnowledgeBaseProcedure> Procedures { get; } =
             Array.Empty<KnowledgeBaseProcedure>();
 

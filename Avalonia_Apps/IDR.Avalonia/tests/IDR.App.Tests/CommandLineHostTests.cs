@@ -195,6 +195,8 @@ public sealed class CommandLineHostTests
 
         public IReadOnlyList<KnowledgeBaseModule> Modules => [];
 
+        public IReadOnlyList<KnowledgeBaseType> Types => [];
+
         public IReadOnlyList<KnowledgeBaseProcedure> Procedures => [];
 
         public ushort GetModuleId(string moduleName) => 0;
