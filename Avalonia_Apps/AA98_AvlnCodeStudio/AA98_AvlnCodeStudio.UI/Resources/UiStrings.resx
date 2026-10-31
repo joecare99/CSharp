@@ -60,6 +60,9 @@
   <data name="ApplyCompletionCommandText" xml:space="preserve">
     <value>Insert selected completion</value>
   </data>
+  <data name="GoToDefinitionCommandText" xml:space="preserve">
+    <value>Go to definition (F12)</value>
+  </data>
   <data name="OpenWorkspaceCommandText" xml:space="preserve">
     <value>Open C# Workspace...</value>
   </data>

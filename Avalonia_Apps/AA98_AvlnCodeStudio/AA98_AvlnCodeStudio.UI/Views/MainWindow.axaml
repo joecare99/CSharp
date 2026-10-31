@@ -42,6 +42,7 @@
                         <MenuItem Header="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
                         <MenuItem Header="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
                         <MenuItem Header="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
+                        <MenuItem Header="{Binding GoToDefinitionCommandText}" Command="{Binding GoToDefinitionCommand}" />
                     </MenuItem>
                     <MenuItem Header="{Binding ViewMenuHeader}">
                         <MenuItem Header="{Binding NavigationPlaceholderMenuText}" />
@@ -56,6 +57,7 @@
                     <Button Content="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
                     <Button Content="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
                     <Button Content="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
+                    <Button Content="{Binding GoToDefinitionCommandText}" Command="{Binding GoToDefinitionCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>

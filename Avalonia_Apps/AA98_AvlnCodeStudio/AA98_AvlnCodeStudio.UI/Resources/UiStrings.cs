@@ -48,6 +48,8 @@ public static class UiStrings
 
     public static string ApplyCompletionCommandText => GetString(nameof(ApplyCompletionCommandText));
 
+    public static string GoToDefinitionCommandText => GetString(nameof(GoToDefinitionCommandText));
+
     public static string OpenWorkspaceCommandText => GetString(nameof(OpenWorkspaceCommandText));
 
     public static string BuildWorkspaceCommandText => GetString(nameof(BuildWorkspaceCommandText));

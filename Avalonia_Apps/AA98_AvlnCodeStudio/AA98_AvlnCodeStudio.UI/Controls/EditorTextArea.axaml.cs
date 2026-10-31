@@ -39,6 +39,8 @@ public partial class EditorTextArea : UserControl
 
     public event EventHandler? CompletionRequested;
 
+    public event EventHandler? GoToDefinitionRequested;
+
     public int CaretOffset => _editor?.CaretOffset ?? 0;
 
     /// <summary>
@@ -122,6 +124,11 @@ public partial class EditorTextArea : UserControl
         {
             e.Handled = true;
             CompletionRequested?.Invoke(this, EventArgs.Empty);
+        }
+        else if (e.Key == Key.F12)
+        {
+            e.Handled = true;
+            GoToDefinitionRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 

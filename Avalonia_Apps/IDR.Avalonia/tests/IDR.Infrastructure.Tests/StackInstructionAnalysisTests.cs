@@ -8337,11 +8337,12 @@ public sealed class StackInstructionAnalysisTests
     [TestMethod]
     public async Task AnalysisNormalizesRegisterPrototypeTypesForLocalAddressArguments()
     {
-        foreach ((string argumentType, DelphiVersion delphiVersion, string expectedType) in new[]
+        foreach ((byte argumentTag, string argumentType, DelphiVersion delphiVersion, string expectedType) in new[]
         {
-            ("Pointer", DelphiVersion.Delphi7, "Byte"),
-            ("PAnsiChar", DelphiVersion.Delphi7, "AnsiChar"),
-            ("AnsiString", DelphiVersion.Delphi2009, "UnicodeString")
+            ((byte)0x21, "Pointer", DelphiVersion.Delphi7, "Byte"),
+            ((byte)0x21, "PAnsiChar", DelphiVersion.Delphi7, "AnsiChar"),
+            ((byte)0x21, "AnsiString", DelphiVersion.Delphi2009, "UnicodeString"),
+            ((byte)0x22, "TChild", DelphiVersion.Delphi7, "TChild")
         })
         {
             AnalysisSession session = CreateClassFieldAccessSession(
@@ -8375,7 +8376,7 @@ public sealed class StackInstructionAnalysisTests
                         Arguments =
                         [
                             new KnowledgeBaseArgument(
-                                0x21,
+                                argumentTag,
                                 true,
                                 0,
                                 sizeof(uint),

@@ -1,5 +1,6 @@
 ﻿using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.Editor.Services;
+using AA98_AvlnCodeStudio.Editor.Navigation;
 using AA98_AvlnCodeStudio.Base.Building.Models;
 using AA98_AvlnCodeStudio.Base.Building.Services;
 using AA98_AvlnCodeStudio.Base.Versioning.Models;
@@ -169,6 +170,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string ApplyCompletionCommandText => UiStrings.ApplyCompletionCommandText;
 
+        public string GoToDefinitionCommandText => UiStrings.GoToDefinitionCommandText;
+
         public ObservableCollection<string> CompletionSuggestions { get; } = [];
 
         public string? SelectedCompletion { get; set; }
@@ -252,6 +255,46 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             CompletionSuggestions.Clear();
             SelectedCompletion = null;
             OnPropertyChanged(nameof(SelectedCompletion));
+        }
+
+        [RelayCommand]
+        private async Task GoToDefinitionAsync(CancellationToken cancellationToken)
+        {
+            string? filePath = Editor.CurrentFilePath;
+            if (Workspace is null
+                || string.IsNullOrWhiteSpace(filePath)
+                || _observedEditorTextArea is null)
+            {
+                return;
+            }
+
+            Code.Navigation.CodeLocation? location = await _csharpSyntaxDiagnosticService.FindDefinitionAsync(
+                Editor.Text,
+                filePath,
+                _observedEditorTextArea.CaretOffset,
+                Workspace,
+                cancellationToken);
+            if (location is null)
+            {
+                Editor.NotificationText = "No source definition was found at the current position.";
+                return;
+            }
+
+            IEditorDocument? document = await _editorWorkspace.OpenOrActivateAsync(location.Path, cancellationToken);
+            if (document is null)
+            {
+                Editor.NotificationText = $"The definition file '{location.Path}' is no longer available.";
+                return;
+            }
+
+            EditorTabViewModel? targetTab = _editorWorkspace.FindByPath(location.Path);
+            if (targetTab?.View is not Controls.EditorTextArea targetEditor)
+            {
+                throw new InvalidOperationException($"The definition file '{location.Path}' has no caret-capable editor.");
+            }
+
+            targetEditor.FocusAndMoveCaret(location);
+            targetTab.Editor.StatusText = $"Navigated to definition in {Path.GetFileName(location.Path)}.";
         }
 
         public string OpenWorkspaceCommandText => UiStrings.OpenWorkspaceCommandText;
@@ -356,18 +399,25 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             if (_observedEditorTextArea is not null)
             {
                 _observedEditorTextArea.CompletionRequested -= OnCompletionRequested;
+                _observedEditorTextArea.GoToDefinitionRequested -= OnGoToDefinitionRequested;
             }
 
             _observedEditorTextArea = _editorWorkspace.ActiveTab.View as Controls.EditorTextArea;
             if (_observedEditorTextArea is not null)
             {
                 _observedEditorTextArea.CompletionRequested += OnCompletionRequested;
+                _observedEditorTextArea.GoToDefinitionRequested += OnGoToDefinitionRequested;
             }
         }
 
         private void OnCompletionRequested(object? sender, EventArgs e)
         {
             RequestCompletionsCommand.Execute(null);
+        }
+
+        private void OnGoToDefinitionRequested(object? sender, EventArgs e)
+        {
+            GoToDefinitionCommand.Execute(null);
         }
 
         private static bool IsIdentifierCharacter(char character)
