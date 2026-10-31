@@ -1,6 +1,8 @@
 using AA98_AvlnCodeStudio.UI;
 using AA98_AvlnCodeStudio.Base.Components.Commands;
+using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI.ViewModels;
+using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.Editor.Navigation;
 using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -45,6 +47,8 @@ public class AppStartupCompositionTests
         var diagnostics = serviceProvider.GetRequiredService<DiagnosticCollectionViewModel>();
         var projectExplorer = serviceProvider.GetRequiredService<ProjectExplorerViewModel>();
         var commandCatalog = serviceProvider.GetRequiredService<IWorkbenchCommandCatalog>();
+        var workspaceLoader = serviceProvider.GetRequiredService<CSharpWorkspaceLoader>();
+        var workspaceFileDialog = serviceProvider.GetRequiredService<IWorkspaceFileDialogService>();
 
         Assert.IsNotNull(viewModelFactory);
         Assert.IsNotNull(workflowFactory);
@@ -55,6 +59,8 @@ public class AppStartupCompositionTests
         Assert.IsNotNull(navigator);
         Assert.IsNotNull(projectExplorer);
         Assert.IsNotNull(commandCatalog);
+        Assert.IsNotNull(workspaceLoader);
+        Assert.IsNotNull(workspaceFileDialog);
         diagnostics.SelectedDiagnostic = new AppKomponentBaseLib.Diagnostics.Diagnostic
         {
             SourcePath = Path.GetTempFileName(),

@@ -1,5 +1,10 @@
 using AA98_AvlnCodeStudio.Base.AI.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.AI.Services;
+using AA98_AvlnCodeStudio.Base.Components.Commands;
+using AA98_AvlnCodeStudio.Model.Workspaces;
+#if NET10_0
+using AA98_AvlnCodeStudio.Building.Workbench.Services;
+#endif
 using AA98_AvlnCodeStudio.Base.Building.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Building.Services;
 using AA98_AvlnCodeStudio.Base.Debugging.DependencyInjection;
@@ -27,7 +32,9 @@ using AA98_AvlnCodeStudio.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AA98_AvlnCodeStudio.Planning.Core.Services;
 
@@ -179,7 +186,12 @@ public class CodeStudioServiceCollectionExtensionsTests
 
         using var serviceProvider = services.BuildServiceProvider();
         Assert.IsNotNull(serviceProvider.GetRequiredService<IAIClientFactory>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<CSharpWorkspaceLoader>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<ICodeStudioBuilderService>());
+#if NET10_0
+        Assert.IsInstanceOfType<WorkbenchCodeStudioBuilderService>(serviceProvider.GetRequiredService<ICodeStudioBuilderService>());
+        Assert.IsInstanceOfType<GitVersionControlService>(serviceProvider.GetRequiredService<IVersionControlService>());
+#endif
         Assert.IsNotNull(serviceProvider.GetRequiredService<IVersionControlService>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<ITestExecutionService>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<IDebugSessionService>());
@@ -195,6 +207,32 @@ public class CodeStudioServiceCollectionExtensionsTests
 
         Assert.AreEqual(typeof(FileSystemTextDocumentStorageService), storageDescriptor.ImplementationType);
         Assert.AreEqual(typeof(AvaloniaEditorFileDialogService), dialogDescriptor.ImplementationType);
+    }
+
+    [TestMethod]
+    public void AddWorkbenchCommandCatalog_RegistersInProcessContributions()
+    {
+        var services = new ServiceCollection();
+        services.AddWorkbenchCommandCatalog();
+        services.AddWorkbenchCommandContribution<TestWorkbenchCommandContribution>();
+
+        using var serviceProvider = services.BuildServiceProvider();
+
+        Assert.IsNotNull(serviceProvider.GetRequiredService<IWorkbenchCommandCatalog>());
+        Assert.IsInstanceOfType<TestWorkbenchCommandContribution>(
+            serviceProvider.GetRequiredService<IEnumerable<IWorkbenchCommandContribution>>().Single());
+    }
+
+    private sealed class TestWorkbenchCommandContribution : IWorkbenchCommandContribution
+    {
+        public WorkbenchCommandDescriptor Descriptor { get; } = new("Test.Command", "Test");
+
+        public bool CanExecute(IWorkbenchCommandContext context) => true;
+
+        public Task ExecuteAsync(IWorkbenchCommandContext context, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
 #if NET10_0
