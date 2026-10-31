@@ -35,6 +35,7 @@ public static class CodeStudioServiceCollectionExtensions
         services.AddCodeStudioOS<FileSystemTextDocumentStorageService>();
         services.AddCodeStudioUI<AvaloniaEditorFileDialogService>();
         services.AddWorkbenchCommandCatalog();
+        services.AddCSharpWorkspace();
         services.AddSingleton<IPlanningProvider, MarkdownPlanningReader>();
         services.AddSingleton<PlanningExplorerViewModel>();
         return services;
