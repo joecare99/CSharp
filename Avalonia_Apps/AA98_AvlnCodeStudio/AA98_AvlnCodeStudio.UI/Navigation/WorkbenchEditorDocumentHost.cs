@@ -11,15 +11,15 @@ namespace AA98_AvlnCodeStudio.UI.Navigation;
 /// </summary>
 public sealed class WorkbenchEditorDocumentHost : IEditorDocumentHost
 {
-    private readonly EditorDocumentWorkspace _editorWorkspace;
+    private readonly Func<EditorDocumentWorkspace> _editorWorkspaceFactory;
 
     /// <summary>
     /// Initializes a document host for the composed workbench editor.
     /// </summary>
-    /// <param name="editorWorkspace">The editor workspace.</param>
-    public WorkbenchEditorDocumentHost(EditorDocumentWorkspace editorWorkspace)
+    /// <param name="editorWorkspaceFactory">Creates the editor workspace on first use.</param>
+    public WorkbenchEditorDocumentHost(Func<EditorDocumentWorkspace> editorWorkspaceFactory)
     {
-        _editorWorkspace = editorWorkspace ?? throw new ArgumentNullException(nameof(editorWorkspace));
+        _editorWorkspaceFactory = editorWorkspaceFactory ?? throw new ArgumentNullException(nameof(editorWorkspaceFactory));
     }
 
     /// <inheritdoc/>
@@ -27,6 +27,6 @@ public sealed class WorkbenchEditorDocumentHost : IEditorDocumentHost
         string filePath,
         CancellationToken cancellationToken = default)
     {
-        return await _editorWorkspace.OpenOrActivateAsync(filePath, cancellationToken).ConfigureAwait(false);
+        return await _editorWorkspaceFactory().OpenOrActivateAsync(filePath, cancellationToken).ConfigureAwait(false);
     }
 }

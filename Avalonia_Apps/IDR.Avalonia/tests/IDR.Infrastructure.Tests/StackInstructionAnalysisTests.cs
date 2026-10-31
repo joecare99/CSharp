@@ -3033,7 +3033,7 @@ public sealed class StackInstructionAnalysisTests
                     0,
                     (byte)DelphiTypeKind.Procedure,
                     0,
-                    "procedure(Sender: TObject) of object",
+                    "procedure(Sender: TObject; const Shift: TShiftState; X, Y: Integer:4) of object",
                     [])
             ]));
         Assert.AreEqual(2, session.KnowledgeBaseTypes.Count);
@@ -3052,12 +3052,36 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
-        Assert.AreEqual(
-            new EventHandlerSignatureCandidate(
-                "OnClick",
-                "TNotifyEvent",
-                "procedure(Sender: TObject) of object"),
-            session.Items[0x1000].EventHandlerSignatureCandidate);
+        EventHandlerSignatureCandidate signature =
+            session.Items[0x1000].EventHandlerSignatureCandidate!;
+        Assert.AreEqual("OnClick", signature.EventPropertyName);
+        Assert.AreEqual("TNotifyEvent", signature.EventTypeName);
+        Assert.IsNull(signature.ReturnTypeName);
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                new EventHandlerParameterCandidate(
+                    "Sender",
+                    "TObject",
+                    EventHandlerParameterPassingMode.Value,
+                    null),
+                new EventHandlerParameterCandidate(
+                    "Shift",
+                    "TShiftState",
+                    EventHandlerParameterPassingMode.Const,
+                    null),
+                new EventHandlerParameterCandidate(
+                    "X",
+                    "Integer",
+                    EventHandlerParameterPassingMode.Value,
+                    4),
+                new EventHandlerParameterCandidate(
+                    "Y",
+                    "Integer",
+                    EventHandlerParameterPassingMode.Value,
+                    4)
+            },
+            signature.Parameters.ToArray());
     }
 
     [TestMethod]

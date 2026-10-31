@@ -110,6 +110,8 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<UI.ViewModels.EditorDocumentWorkspace>(serviceProvider => new UI.ViewModels.EditorDocumentWorkspace(
                 serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponent>(),
                 serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>()));
+            services.AddSingleton<Func<UI.ViewModels.EditorDocumentWorkspace>>(serviceProvider =>
+                () => serviceProvider.GetRequiredService<UI.ViewModels.EditorDocumentWorkspace>());
             services.AddSingleton<IEditorDocumentHost, WorkbenchEditorDocumentHost>();
             services.AddSingleton<IEditorCaretService, WorkbenchEditorCaretService>();
             services.AddSingleton<ICodeNavigator, EditorCodeNavigator>();

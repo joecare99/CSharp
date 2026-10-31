@@ -13,15 +13,15 @@ namespace AA98_AvlnCodeStudio.UI.Navigation;
 /// </summary>
 public sealed class WorkbenchEditorCaretService : IEditorCaretService
 {
-    private readonly EditorDocumentWorkspace _editorWorkspace;
+    private readonly Func<EditorDocumentWorkspace> _editorWorkspaceFactory;
 
     /// <summary>
     /// Initializes a caret service for the composed workbench editor.
     /// </summary>
-    /// <param name="editorWorkspace">The editor workspace.</param>
-    public WorkbenchEditorCaretService(EditorDocumentWorkspace editorWorkspace)
+    /// <param name="editorWorkspaceFactory">Creates the editor workspace on first use.</param>
+    public WorkbenchEditorCaretService(Func<EditorDocumentWorkspace> editorWorkspaceFactory)
     {
-        _editorWorkspace = editorWorkspace ?? throw new ArgumentNullException(nameof(editorWorkspace));
+        _editorWorkspaceFactory = editorWorkspaceFactory ?? throw new ArgumentNullException(nameof(editorWorkspaceFactory));
     }
 
     /// <inheritdoc/>
@@ -34,13 +34,14 @@ public sealed class WorkbenchEditorCaretService : IEditorCaretService
         ArgumentNullException.ThrowIfNull(location);
         cancellationToken.ThrowIfCancellationRequested();
 
-        EditorTabViewModel? tab = _editorWorkspace.FindByPath(document.FilePath);
+        EditorDocumentWorkspace editorWorkspace = _editorWorkspaceFactory();
+        EditorTabViewModel? tab = editorWorkspace.FindByPath(document.FilePath);
         if (tab is null)
         {
             throw new InvalidOperationException($"The document '{document.FilePath}' is not open in the workbench.");
         }
 
-        _editorWorkspace.Activate(tab);
+        editorWorkspace.Activate(tab);
         if (tab.View is not EditorTextArea editor)
         {
             throw new InvalidOperationException("The workbench editor does not provide a caret-capable text area.");
