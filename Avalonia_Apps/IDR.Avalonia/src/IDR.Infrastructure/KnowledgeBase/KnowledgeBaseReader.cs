@@ -76,7 +76,10 @@ public sealed class KnowledgeBaseReader : IKnowledgeBaseProvider
                 .OrderBy(module => module.Id)
                 .ToList();
             SkipSection(reader, data.Length);
-            SkipSection(reader, data.Length);
+            SectionOffset[] typeOffsets = ReadSection(reader, data.Length);
+            List<KnowledgeBaseType> types = typeOffsets
+                .Select(offset => ReadType(data.Span, offset, formatVersion))
+                .ToList();
             SkipSection(reader, data.Length);
             SkipSection(reader, data.Length);
             SectionOffset[] procedureOffsets = ReadSection(reader, data.Length);
@@ -86,7 +89,7 @@ public sealed class KnowledgeBaseReader : IKnowledgeBaseProvider
                 .Select(procedure => procedure!)
                 .ToList();
 
-            return new KnowledgeBaseData(formatVersion, modules, procedures);
+            return new KnowledgeBaseData(formatVersion, modules, procedures, types);
         }
         catch (EndOfStreamException exception)
         {
@@ -178,6 +181,106 @@ public sealed class KnowledgeBaseReader : IKnowledgeBaseProvider
 
         string name = Encoding.ASCII.GetString(record.Slice(nameStart, nameLength));
         return new KnowledgeBaseModule(id, name);
+    }
+
+    private static KnowledgeBaseType ReadType(
+        ReadOnlySpan<byte> data,
+        SectionOffset offset,
+        uint formatVersion)
+    {
+        ReadOnlySpan<byte> record = data.Slice(offset.Offset, offset.Size);
+        if (record.Length < sizeof(uint))
+        {
+            throw new InvalidDataException("The Knowledge Base type record is truncated.");
+        }
+
+        uint sizeBytes = formatVersion == 1
+            ? checked((uint)offset.Size)
+            : BinaryPrimitives.ReadUInt32LittleEndian(record);
+        int position = sizeof(uint);
+        if (!TryReadUInt16(record, ref position, out ushort moduleId)
+            || !TryReadPascalCString(record, ref position, out string name)
+            || name.Length == 0
+            || position >= record.Length)
+        {
+            throw new InvalidDataException("The Knowledge Base contains an invalid type record.");
+        }
+
+        byte kind = record[position++];
+        if (!TryReadUInt16(record, ref position, out ushort virtualMethodCount)
+            || !TryReadPascalCString(record, ref position, out string declaration))
+        {
+            throw new InvalidDataException("The Knowledge Base contains an invalid type declaration.");
+        }
+
+        _ = ReadTypeSection(record, ref position);
+        _ = ReadTypeSection(record, ref position);
+        ReadOnlySpan<byte> propertySection = ReadTypeSection(record, ref position);
+        if (propertySection.Length < sizeof(ushort))
+        {
+            throw new InvalidDataException("The Knowledge Base property section is truncated.");
+        }
+
+        int propertyPosition = 0;
+        if (!TryReadUInt16(propertySection, ref propertyPosition, out ushort propertyCount))
+        {
+            throw new InvalidDataException("The Knowledge Base property section is truncated.");
+        }
+
+        List<KnowledgeBaseProperty> properties = new(propertyCount);
+        for (int index = 0; index < propertyCount; index++)
+        {
+            if (propertyPosition >= propertySection.Length)
+            {
+                throw new InvalidDataException("The Knowledge Base contains a truncated type property.");
+            }
+
+            byte scope = propertySection[propertyPosition++];
+            if (!TryReadUInt32(propertySection, ref propertyPosition, out uint propertyIndex)
+                || !TryReadUInt32(propertySection, ref propertyPosition, out uint dispatchId)
+                || !TryReadPascalCString(propertySection, ref propertyPosition, out string propertyName)
+                || !TryReadPascalCString(propertySection, ref propertyPosition, out string typeDefinition)
+                || !TryReadPascalCString(propertySection, ref propertyPosition, out string readName)
+                || !TryReadPascalCString(propertySection, ref propertyPosition, out string writeName)
+                || !TryReadPascalCString(propertySection, ref propertyPosition, out string storedName))
+            {
+                throw new InvalidDataException("The Knowledge Base contains an invalid type property.");
+            }
+
+            properties.Add(new KnowledgeBaseProperty(
+                scope,
+                propertyIndex,
+                dispatchId,
+                propertyName,
+                typeDefinition,
+                readName,
+                writeName,
+                storedName));
+        }
+
+        _ = ReadTypeSection(record, ref position);
+        return new KnowledgeBaseType(
+            moduleId,
+            name,
+            sizeBytes,
+            kind,
+            virtualMethodCount,
+            declaration,
+            properties);
+    }
+
+    private static ReadOnlySpan<byte> ReadTypeSection(ReadOnlySpan<byte> record, ref int position)
+    {
+        if (!TryReadUInt32(record, ref position, out uint sectionSize)
+            || sectionSize > int.MaxValue
+            || position > record.Length - (int)sectionSize)
+        {
+            throw new InvalidDataException("The Knowledge Base type section is invalid.");
+        }
+
+        ReadOnlySpan<byte> section = record.Slice(position, (int)sectionSize);
+        position += (int)sectionSize;
+        return section;
     }
 
     private static KnowledgeBaseProcedure? ReadProcedure(
@@ -383,16 +486,20 @@ public sealed class KnowledgeBaseData : IKnowledgeBase
     public KnowledgeBaseData(
         uint formatVersion,
         IReadOnlyList<KnowledgeBaseModule> modules,
-        IReadOnlyList<KnowledgeBaseProcedure>? procedures = null)
+        IReadOnlyList<KnowledgeBaseProcedure>? procedures = null,
+        IReadOnlyList<KnowledgeBaseType>? types = null)
     {
         FormatVersion = formatVersion;
         Modules = modules;
         Procedures = procedures ?? Array.Empty<KnowledgeBaseProcedure>();
+        Types = types ?? Array.Empty<KnowledgeBaseType>();
     }
 
     public uint FormatVersion { get; }
 
     public IReadOnlyList<KnowledgeBaseModule> Modules { get; }
+
+    public IReadOnlyList<KnowledgeBaseType> Types { get; }
 
     public IReadOnlyList<KnowledgeBaseProcedure> Procedures { get; }
 

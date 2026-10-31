@@ -63,6 +63,7 @@ public sealed class AnalysisRunner
             EntryPointRva = image.EntryPointRva
         };
         session.LoadPeDirectories(image.Imports, image.Exports, image.ResourceStrings);
+        session.LoadForms(image.Forms);
         session.LoadKnowledgeBase(knowledgeBase);
 
         AnalysisResult result = await _analysisService
