@@ -16,6 +16,120 @@ namespace IDR.Core.Tests;
 public sealed class ArchitectureTests
 {
     [TestMethod]
+    public void EventHandlerDeclarationParserExpandsNamedParameterGroups()
+    {
+        bool parsed = EventHandlerDeclarationParser.TryParse(
+            "procedure(Sender: TObject; const Shift: TShiftState; X, Y: Integer:4) of object",
+            out IReadOnlyList<EventHandlerParameterCandidate> parameters,
+            out string? returnTypeName);
+
+        Assert.IsTrue(parsed);
+        Assert.IsNull(returnTypeName);
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                new EventHandlerParameterCandidate(
+                    "Sender",
+                    "TObject",
+                    EventHandlerParameterPassingMode.Value,
+                    null,
+                    "EDX",
+                    null),
+                new EventHandlerParameterCandidate(
+                    "Shift",
+                    "TShiftState",
+                    EventHandlerParameterPassingMode.Const,
+                    null,
+                    "ECX",
+                    null),
+                new EventHandlerParameterCandidate(
+                    "X",
+                    "Integer",
+                    EventHandlerParameterPassingMode.Value,
+                    4,
+                    null,
+                    0),
+                new EventHandlerParameterCandidate(
+                    "Y",
+                    "Integer",
+                    EventHandlerParameterPassingMode.Value,
+                    4,
+                    null,
+                    4)
+            },
+            parameters.ToArray());
+    }
+
+    [TestMethod]
+    public void EventHandlerDeclarationParserUsesStackForWideParameterWithoutConsumingFastcallRegisters()
+    {
+        bool parsed = EventHandlerDeclarationParser.TryParse(
+            "procedure(Wide: Extended:10; Second: Integer; Third: Byte:1) of object",
+            out IReadOnlyList<EventHandlerParameterCandidate> parameters,
+            out _);
+
+        Assert.IsTrue(parsed);
+        Assert.IsNull(parameters[0].RegisterName);
+        Assert.AreEqual(0, parameters[0].StackOffsetBytes);
+        Assert.AreEqual("ECX", parameters[1].RegisterName);
+        Assert.AreEqual(10, parameters[2].StackOffsetBytes);
+    }
+
+    [TestMethod]
+    public void EventHandlerDeclarationParserReadsFunctionResultAndNestedType()
+    {
+        bool parsed = EventHandlerDeclarationParser.TryParse(
+            "function(const Values: TArray<Integer>): Boolean of object",
+            out IReadOnlyList<EventHandlerParameterCandidate> parameters,
+            out string? returnTypeName);
+
+        Assert.IsTrue(parsed);
+        Assert.AreEqual("Boolean", returnTypeName);
+        Assert.AreEqual(1, parameters.Count);
+        Assert.AreEqual("TArray<Integer>", parameters[0].TypeName);
+        Assert.AreEqual(EventHandlerParameterPassingMode.Const, parameters[0].PassingMode);
+        Assert.AreEqual("EDX", parameters[0].RegisterName);
+    }
+
+    [TestMethod]
+    public void EventHandlerDeclarationParserRejectsMalformedParameters()
+    {
+        bool parsed = EventHandlerDeclarationParser.TryParse(
+            "procedure(Sender TObject) of object",
+            out IReadOnlyList<EventHandlerParameterCandidate> parameters,
+            out string? returnTypeName);
+
+        Assert.IsFalse(parsed);
+        Assert.AreEqual(0, parameters.Count);
+        Assert.IsNull(returnTypeName);
+    }
+
+    [TestMethod]
+    public void EventHandlerDeclarationParserRejectsOverLimitDeclaration()
+    {
+        bool parsed = EventHandlerDeclarationParser.TryParse(
+            $"procedure({new string('A', 4097)}) of object",
+            out IReadOnlyList<EventHandlerParameterCandidate> parameters,
+            out string? returnTypeName);
+
+        Assert.IsFalse(parsed);
+        Assert.AreEqual(0, parameters.Count);
+        Assert.IsNull(returnTypeName);
+    }
+
+    [TestMethod]
+    public void EventHandlerDeclarationParserRejectsUnboundedStackParameterSize()
+    {
+        bool parsed = EventHandlerDeclarationParser.TryParse(
+            "procedure(Data: TBytes:2147483647) of object",
+            out IReadOnlyList<EventHandlerParameterCandidate> parameters,
+            out _);
+
+        Assert.IsFalse(parsed);
+        Assert.AreEqual(0, parameters.Count);
+    }
+
+    [TestMethod]
     public void CoreAssemblyLoads()
     {
         Assert.IsNotNull(new ArchitectureMarker());
