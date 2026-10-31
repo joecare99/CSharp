@@ -521,7 +521,15 @@ public sealed record AnalysisItemViewModel(
         ReturnStackBytes = item.ReturnStackBytes;
         ReturnTypeCandidate = item.ReturnTypeCandidate ?? string.Empty;
         EventHandlerSignatureCandidate = item.EventHandlerSignatureCandidate is { } signature
-            ? $"{signature.EventPropertyName}: {signature.EventTypeName} = {signature.Declaration}"
+            ? $"{signature.EventPropertyName}: {signature.EventTypeName}"
+                + (signature.SelfTypeName is null
+                    ? string.Empty
+                    : $" (Self: {signature.SelfTypeName} in {signature.SelfRegisterName})")
+                + (signature.Parameters.Count == 0
+                    ? string.Empty
+                    : $" [{string.Join(", ", signature.Parameters.Select(parameter =>
+                        $"{parameter.Name ?? "?"}={parameter.RegisterName ?? (parameter.StackOffsetBytes is int offset ? $"stack+{offset}" : "?")}"))}]")
+                + $" = {signature.Declaration}"
             : string.Empty;
         DataTypeCandidate = item.DataTypeCandidate ?? string.Empty;
         ResourceStringCandidate = item.ResourceStringCandidate ?? string.Empty;
