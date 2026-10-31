@@ -280,6 +280,7 @@ public sealed class CliTests
     {
         public uint FormatVersion => 1;
         public IReadOnlyList<KnowledgeBaseModule> Modules => [];
+        public IReadOnlyList<KnowledgeBaseType> Types => [];
         public IReadOnlyList<KnowledgeBaseProcedure> Procedures => [];
         public ushort GetModuleId(string moduleName) => 0;
         public string? GetModuleName(ushort moduleId) => null;
