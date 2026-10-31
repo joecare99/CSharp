@@ -73,6 +73,8 @@ public sealed class RealEngineIntegrationTests
             Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
                 item.TryGetProperty("ReturnTypeCandidate", out _)));
             Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
+                item.TryGetProperty("EventHandlerSignatureCandidate", out _)));
+            Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
                 item.TryGetProperty("DataTypeCandidate", out _)));
             Assert.IsTrue(root.GetProperty("Items").EnumerateArray().All(item =>
                 item.TryGetProperty("ResourceStringCandidate", out _)));
