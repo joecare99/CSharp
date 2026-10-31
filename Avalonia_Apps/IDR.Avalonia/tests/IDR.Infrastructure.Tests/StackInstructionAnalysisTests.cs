@@ -3004,6 +3004,39 @@ public sealed class StackInstructionAnalysisTests
         formRtti.TypeKind = DelphiTypeKind.Class;
         formRtti.ClassVmtAddress = formVmt.Address;
         formRtti.PropertyNames = ["OnClick"];
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [],
+            types:
+            [
+                new KnowledgeBaseType(
+                    1,
+                    "TForm",
+                    0,
+                    (byte)DelphiTypeKind.Class,
+                    0,
+                    "class",
+                    [
+                        new KnowledgeBaseProperty(
+                            0,
+                            0,
+                            0,
+                            "OnClick",
+                            "System.Classes.TNotifyEvent",
+                            "FOnClick",
+                            "FOnClick",
+                            "")
+                    ]),
+                new KnowledgeBaseType(
+                    1,
+                    "TNotifyEvent",
+                    0,
+                    (byte)DelphiTypeKind.Procedure,
+                    0,
+                    "procedure(Sender: TObject) of object",
+                    [])
+            ]));
+        Assert.AreEqual(2, session.KnowledgeBaseTypes.Count);
         session.LoadForms(
         [
             new DelphiForm(
@@ -3018,6 +3051,82 @@ public sealed class StackInstructionAnalysisTests
         await new BasicAnalysisService(new IcedInstructionDecoder())
             .AnalyzeAsync(session, null, CancellationToken.None);
 
+        Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
+        Assert.AreEqual(
+            new EventHandlerSignatureCandidate(
+                "OnClick",
+                "TNotifyEvent",
+                "procedure(Sender: TObject) of object"),
+            session.Items[0x1000].EventHandlerSignatureCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotChooseAmbiguousKbEventTypeDeclaration()
+    {
+        AnalysisSession session = CreateSession([0x0f, 0x95, 0xc0, 0xc3]);
+        AnalysisItem formVmt = session.GetOrAddItem(0x2000);
+        formVmt.Name = "TForm";
+        formVmt.SetFlags(AnalysisFlags.Vmt);
+        formVmt.Methods = [new DelphiVmtMethod("ButtonClick", 0x1000)];
+        AnalysisItem formRtti = session.GetOrAddItem(0x2010);
+        formRtti.TypeKind = DelphiTypeKind.Class;
+        formRtti.ClassVmtAddress = formVmt.Address;
+        formRtti.PropertyNames = ["OnClick"];
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [],
+            types:
+            [
+                new KnowledgeBaseType(
+                    1,
+                    "TForm",
+                    0,
+                    (byte)DelphiTypeKind.Class,
+                    0,
+                    "class",
+                    [
+                        new KnowledgeBaseProperty(
+                            0,
+                            0,
+                            0,
+                            "OnClick",
+                            "System.Classes.TNotifyEvent",
+                            "",
+                            "",
+                            "")
+                    ]),
+                new KnowledgeBaseType(
+                    1,
+                    "TNotifyEvent",
+                    0,
+                    (byte)DelphiTypeKind.Procedure,
+                    0,
+                    "procedure(Sender: TObject) of object",
+                    []),
+                new KnowledgeBaseType(
+                    2,
+                    "TNotifyEvent",
+                    0,
+                    (byte)DelphiTypeKind.Procedure,
+                    0,
+                    "procedure(Sender: TObject; Value: Integer) of object",
+                    [])
+            ]));
+        session.LoadForms(
+        [
+            new DelphiForm(
+                "MAINFORM",
+                new DelphiFormComponent(
+                    "TForm",
+                    "Form1",
+                    [new DelphiFormProperty("OnClick", "ButtonClick")],
+                    []))
+        ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1000].EventHandlerSignatureCandidate);
         Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
     }
 
