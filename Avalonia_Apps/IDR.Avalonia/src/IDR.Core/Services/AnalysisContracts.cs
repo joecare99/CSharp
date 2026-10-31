@@ -45,6 +45,8 @@ public interface IKnowledgeBase
 
     IReadOnlyList<KnowledgeBaseModule> Modules { get; }
 
+    IReadOnlyList<KnowledgeBaseType> Types { get; }
+
     IReadOnlyList<KnowledgeBaseProcedure> Procedures { get; }
 
     ushort GetModuleId(string moduleName);
@@ -176,6 +178,25 @@ public sealed record AnalysisResult(
     IReadOnlyList<string> Diagnostics);
 
 public sealed record KnowledgeBaseModule(ushort Id, string Name);
+
+public sealed record KnowledgeBaseType(
+    ushort ModuleId,
+    string Name,
+    uint SizeBytes,
+    byte Kind,
+    ushort VirtualMethodCount,
+    string Declaration,
+    IReadOnlyList<KnowledgeBaseProperty> Properties);
+
+public sealed record KnowledgeBaseProperty(
+    byte Scope,
+    uint Index,
+    uint DispatchId,
+    string Name,
+    string TypeDefinition,
+    string ReadName,
+    string WriteName,
+    string StoredName);
 
 public sealed record KnowledgeBaseProcedure(
     ushort ModuleId,

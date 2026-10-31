@@ -17,6 +17,7 @@ public sealed class AnalysisSession
     private IReadOnlyList<PeImportModule> _imports = [];
     private IReadOnlyList<PeExport> _exports = [];
     private IReadOnlyList<PeResourceString> _resourceStrings = [];
+    private IReadOnlyList<DelphiForm> _forms = [];
     private readonly List<DisassemblyLine> _disassemblyLines = [];
     private readonly HashSet<uint> _disassemblyAddresses = [];
 
@@ -67,6 +68,8 @@ public sealed class AnalysisSession
     public IReadOnlyList<PeExport> Exports => _exports;
 
     public IReadOnlyList<PeResourceString> ResourceStrings => _resourceStrings;
+
+    public IReadOnlyList<DelphiForm> Forms => _forms;
 
     public IReadOnlyList<DisassemblyLine> DisassemblyLines => _disassemblyLines;
 
@@ -120,6 +123,12 @@ public sealed class AnalysisSession
         _imports = imports.ToArray();
         _exports = exports.ToArray();
         _resourceStrings = resourceStrings?.ToArray() ?? [];
+    }
+
+    public void LoadForms(IEnumerable<DelphiForm> forms)
+    {
+        ArgumentNullException.ThrowIfNull(forms);
+        _forms = forms.ToArray();
     }
 
     public bool TryGetUnambiguousResourceString(uint id, out string? value)
