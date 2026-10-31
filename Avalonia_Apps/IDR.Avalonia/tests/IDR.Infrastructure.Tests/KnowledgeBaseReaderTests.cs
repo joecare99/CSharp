@@ -68,6 +68,119 @@ public sealed class KnowledgeBaseReaderTests
     }
 
     [TestMethod]
+    public void ParseReadsTypeDeclarationsAndPropertyRecords()
+    {
+        KnowledgeBaseType type = new(
+            7,
+            "TExample",
+            4,
+            1,
+            3,
+            "class",
+            [
+                new KnowledgeBaseProperty(
+                    2,
+                    4,
+                    9,
+                    "OnClick",
+                    "System.Classes.TNotifyEvent",
+                    "FOnClick",
+                    "FOnClick",
+                    "")
+            ]);
+        byte[] data = CreateKnowledgeBase(
+            "System",
+            7,
+            types: [type]);
+
+        KnowledgeBaseData result = new KnowledgeBaseReader().Parse(data);
+
+        KnowledgeBaseType parsedType = result.Types.Single();
+        Assert.AreEqual(type.ModuleId, parsedType.ModuleId);
+        Assert.AreEqual(type.Name, parsedType.Name);
+        Assert.AreEqual(type.SizeBytes, parsedType.SizeBytes);
+        Assert.AreEqual(type.Kind, parsedType.Kind);
+        Assert.AreEqual(type.VirtualMethodCount, parsedType.VirtualMethodCount);
+        Assert.AreEqual(type.Declaration, parsedType.Declaration);
+        Assert.AreEqual(type.Properties.Single(), parsedType.Properties.Single());
+    }
+
+    [TestMethod]
+    public void ParseReadsLegacyVersionOneTypeRecordWithoutEmbeddedSize()
+    {
+        KnowledgeBaseType type = new(
+            7,
+            "TLegacy",
+            0,
+            1,
+            0,
+            "class",
+            Array.Empty<KnowledgeBaseProperty>());
+        byte[] data = CreateKnowledgeBase(
+            "System",
+            7,
+            formatVersion: 1,
+            types: [type]);
+
+        KnowledgeBaseData result = new KnowledgeBaseReader().Parse(data);
+
+        Assert.AreEqual(1u, result.FormatVersion);
+        Assert.AreEqual("TLegacy", result.Types.Single().Name);
+        Assert.AreEqual(
+            (uint)(data.Length - GetTypeRecordOffset("System") - sizeof(uint)),
+            result.Types.Single().SizeBytes);
+    }
+
+    [TestMethod]
+    public void ParsePreservesTypeSizeIndependentOfRecordBounds()
+    {
+        KnowledgeBaseType type = new(
+            7,
+            "TExample",
+            4096,
+            1,
+            0,
+            "class",
+            Array.Empty<KnowledgeBaseProperty>());
+        byte[] data = CreateKnowledgeBase("System", 7, types: [type]);
+        int typeOffset = GetTypeRecordOffset("System");
+        BinaryPrimitives.WriteUInt32LittleEndian(data.AsSpan(typeOffset), type.SizeBytes);
+
+        KnowledgeBaseData result = new KnowledgeBaseReader().Parse(data);
+
+        Assert.AreEqual(type.SizeBytes, result.Types.Single().SizeBytes);
+    }
+
+    [TestMethod]
+    public void ParseRejectsPropertyCountBeyondItsTypeSection()
+    {
+        KnowledgeBaseType type = new(
+            7,
+            "TExample",
+            4,
+            1,
+            0,
+            "class",
+            [
+                new KnowledgeBaseProperty(
+                    2,
+                    0,
+                    0,
+                    "OnClick",
+                    "TNotifyEvent",
+                    "",
+                    "",
+                    "")
+            ]);
+        byte[] data = CreateKnowledgeBase("System", 7, types: [type]);
+        int propertyCountOffset = GetTypePropertyCountOffset("System", "TExample", "class");
+        BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(propertyCountOffset), 2);
+
+        Assert.ThrowsExactly<InvalidDataException>(
+            () => new KnowledgeBaseReader().Parse(data));
+    }
+
+    [TestMethod]
     public void ParseReadsCodeProcedureNamesAndMaskedSignatures()
     {
         byte[] code = [0x55, 0x8b, 0xec, 0xc3];
@@ -537,13 +650,19 @@ public sealed class KnowledgeBaseReaderTests
         byte methodKind = (byte)'P',
         byte callingConvention = 0,
         string returnType = "",
-        KnowledgeBaseArgument[]? arguments = null)
+        KnowledgeBaseArgument[]? arguments = null,
+        uint formatVersion = 2,
+        KnowledgeBaseType[]? types = null)
     {
         const int headerSize = 293;
         byte[] record = new byte[4 + Encoding.ASCII.GetByteCount(moduleName) + 1];
         BitConverter.GetBytes(moduleId).CopyTo(record, 0);
         Encoding.ASCII.GetBytes(moduleName).CopyTo(record, 4);
         int sectionsOffset = headerSize;
+        KnowledgeBaseType[] typeList = types ?? [];
+        byte[][] typeRecords = typeList
+            .Select(type => CreateTypeRecord(type, formatVersion))
+            .ToArray();
         byte[]? procedureRecord = procedureName is null || procedureCode is null
             ? null
             : CreateProcedureRecord(
@@ -554,8 +673,11 @@ public sealed class KnowledgeBaseReaderTests
                 callingConvention,
                 returnType,
                 arguments ?? []);
-        int recordOffset = sectionsOffset + 6 * 8 + (procedureRecord is null ? 16 : 32);
-        int procedureOffset = recordOffset + record.Length;
+        int sectionIndexSize = 6 * 8 + 16 + (typeRecords.Length * 16)
+            + (procedureRecord is null ? 0 : 16);
+        int recordOffset = sectionsOffset + sectionIndexSize;
+        int typeOffset = recordOffset + record.Length;
+        int procedureOffset = typeOffset + typeRecords.Sum(typeRecord => typeRecord.Length);
         using MemoryStream stream = new();
         using BinaryWriter writer = new(stream, Encoding.ASCII, leaveOpen: true);
 
@@ -566,12 +688,20 @@ public sealed class KnowledgeBaseReaderTests
         writer.Write(0);
         writer.Write(0u);
         writer.Write(new byte[256]);
-        writer.Write(2u);
+        writer.Write(formatVersion);
         writer.Write(1);
         writer.Write(record.Length);
         WriteSectionOffset(writer, recordOffset, record.Length);
         WriteEmptySection(writer);
-        WriteEmptySection(writer);
+        writer.Write(typeRecords.Length);
+        writer.Write(typeRecords.Length == 0 ? 0 : typeRecords.Max(typeRecord => typeRecord.Length));
+        int currentTypeOffset = typeOffset;
+        foreach (byte[] typeRecord in typeRecords)
+        {
+            WriteSectionOffset(writer, currentTypeOffset, typeRecord.Length);
+            currentTypeOffset += typeRecord.Length;
+        }
+
         WriteEmptySection(writer);
         WriteEmptySection(writer);
         writer.Write(procedureRecord is null ? 0 : 1);
@@ -582,6 +712,11 @@ public sealed class KnowledgeBaseReaderTests
         }
 
         writer.Write(record);
+        foreach (byte[] typeRecord in typeRecords)
+        {
+            writer.Write(typeRecord);
+        }
+
         if (procedureRecord is not null)
         {
             writer.Write(procedureRecord);
@@ -590,6 +725,34 @@ public sealed class KnowledgeBaseReaderTests
         writer.Write(sectionsOffset);
 
         return stream.ToArray();
+    }
+
+    private static int GetTypeRecordOffset(string moduleName)
+    {
+        const int headerSize = 293;
+        int moduleRecordSize = 4 + Encoding.ASCII.GetByteCount(moduleName) + 1;
+        return headerSize + 6 * 8 + 16 + 16 + moduleRecordSize;
+    }
+
+    private static int GetTypePropertyCountOffset(
+        string moduleName,
+        string typeName,
+        string declaration)
+    {
+        int typeHeaderSize = sizeof(uint)
+            + sizeof(ushort)
+            + sizeof(ushort) + Encoding.ASCII.GetByteCount(typeName) + 1
+            + sizeof(byte)
+            + sizeof(ushort)
+            + sizeof(ushort) + Encoding.ASCII.GetByteCount(declaration) + 1;
+        int dumpSectionSize = sizeof(uint) + (2 * sizeof(uint));
+        int fieldsSectionSize = sizeof(uint) + sizeof(ushort);
+        int propertySectionLengthPrefixSize = sizeof(uint);
+        return GetTypeRecordOffset(moduleName)
+            + typeHeaderSize
+            + dumpSectionSize
+            + fieldsSectionSize
+            + propertySectionLengthPrefixSize;
     }
 
     private static int GetProcedureOffset(string procedureName)
@@ -646,6 +809,48 @@ public sealed class KnowledgeBaseReaderTests
         writer.Write((uint)argumentStream.Length);
         writer.Write(argumentStream.ToArray());
         return stream.ToArray();
+    }
+
+    private static byte[] CreateTypeRecord(KnowledgeBaseType type, uint formatVersion)
+    {
+        using MemoryStream stream = new();
+        using BinaryWriter writer = new(stream, Encoding.ASCII, leaveOpen: true);
+        writer.Write(formatVersion == 1 ? 0u : type.SizeBytes);
+        writer.Write(type.ModuleId);
+        WritePascalCString(writer, type.Name);
+        writer.Write(type.Kind);
+        writer.Write(type.VirtualMethodCount);
+        WritePascalCString(writer, type.Declaration);
+        WriteTypeSection(writer, new byte[2 * sizeof(uint)]);
+        WriteTypeSection(writer, new byte[sizeof(ushort)]);
+
+        using MemoryStream propertyStream = new();
+        using (BinaryWriter propertyWriter = new(propertyStream, Encoding.ASCII, leaveOpen: true))
+        {
+            propertyWriter.Write((ushort)type.Properties.Count);
+            foreach (KnowledgeBaseProperty property in type.Properties)
+            {
+                propertyWriter.Write(property.Scope);
+                propertyWriter.Write(property.Index);
+                propertyWriter.Write(property.DispatchId);
+                WritePascalCString(propertyWriter, property.Name);
+                WritePascalCString(propertyWriter, property.TypeDefinition);
+                WritePascalCString(propertyWriter, property.ReadName);
+                WritePascalCString(propertyWriter, property.WriteName);
+                WritePascalCString(propertyWriter, property.StoredName);
+            }
+        }
+
+        WriteTypeSection(writer, propertyStream.ToArray());
+        WriteTypeSection(writer, new byte[sizeof(ushort)]);
+
+        return stream.ToArray();
+    }
+
+    private static void WriteTypeSection(BinaryWriter writer, byte[] section)
+    {
+        writer.Write((uint)section.Length);
+        writer.Write(section);
     }
 
     private static void WritePascalCString(BinaryWriter writer, string value)

@@ -2993,6 +2993,113 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisDoesNotInferReturnTypeForDfmEventHandler()
+    {
+        AnalysisSession session = CreateSession([0x0f, 0x95, 0xc0, 0xc3]);
+        AnalysisItem formVmt = session.GetOrAddItem(0x2000);
+        formVmt.Name = "TForm";
+        formVmt.SetFlags(AnalysisFlags.Vmt);
+        formVmt.Methods = [new DelphiVmtMethod("ButtonClick", 0x1000)];
+        AnalysisItem formRtti = session.GetOrAddItem(0x2010);
+        formRtti.TypeKind = DelphiTypeKind.Class;
+        formRtti.ClassVmtAddress = formVmt.Address;
+        formRtti.PropertyNames = ["OnClick"];
+        session.LoadForms(
+        [
+            new DelphiForm(
+                "MAINFORM",
+                new DelphiFormComponent(
+                    "TForm",
+                    "Form1",
+                    [new DelphiFormProperty("OnClick", "ButtonClick")],
+                    []))
+        ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisKeepsReturnTypeWhenDfmPropertyIsNotKnownEvent()
+    {
+        AnalysisSession session = CreateSession([0x0f, 0x95, 0xc0, 0xc3]);
+        AnalysisItem formVmt = session.GetOrAddItem(0x2000);
+        formVmt.Name = "TForm";
+        formVmt.SetFlags(AnalysisFlags.Vmt);
+        formVmt.Methods = [new DelphiVmtMethod("ButtonClick", 0x1000)];
+        session.LoadForms(
+        [
+            new DelphiForm(
+                "MAINFORM",
+                new DelphiFormComponent(
+                    "TForm",
+                    "Form1",
+                    [new DelphiFormProperty("OnClick", "ButtonClick")],
+                    []))
+        ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Boolean", session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotMarkDfmEventHandlerAsFunctionCandidate()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0xe8;
+        code[1] = 0x0b;
+        code[5] = 0x83;
+        code[6] = 0xf8;
+        code[8] = 0xc3;
+        code[0x10] = 0x0f;
+        code[0x11] = 0x95;
+        code[0x12] = 0xc0;
+        code[0x13] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+        AnalysisItem formVmt = session.GetOrAddItem(0x2000);
+        formVmt.Name = "TForm";
+        formVmt.SetFlags(AnalysisFlags.Vmt);
+        formVmt.Methods = [new DelphiVmtMethod("ButtonClick", 0x1010)];
+        AnalysisItem buttonVmt = session.GetOrAddItem(0x2004);
+        buttonVmt.Name = "TButton";
+        buttonVmt.SetFlags(AnalysisFlags.Vmt);
+        buttonVmt.ParentAddress = 0x2008;
+        AnalysisItem parentVmt = session.GetOrAddItem(0x2008);
+        parentVmt.Name = "TControl";
+        parentVmt.SetFlags(AnalysisFlags.Vmt);
+        AnalysisItem parentRtti = session.GetOrAddItem(0x2014);
+        parentRtti.TypeKind = DelphiTypeKind.Class;
+        parentRtti.ClassVmtAddress = parentVmt.Address;
+        parentRtti.PropertyNames = ["OnClick"];
+        session.LoadForms(
+        [
+            new DelphiForm(
+                "MAINFORM",
+                new DelphiFormComponent(
+                    "TForm",
+                    "Form1",
+                    [],
+                    [
+                        new DelphiFormComponent(
+                            "TButton",
+                            "Button1",
+                            [new DelphiFormProperty("OnClick", "ButtonClick")],
+                            [])
+                    ]))
+        ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items[0x1010].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
+        Assert.IsNull(session.Items[0x1010].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
     public async Task AnalysisClearsBooleanReturnCandidateWhenEaxIsOverwrittenBeforeReturn()
     {
         AnalysisSession session = CreateSession(
@@ -3026,6 +3133,152 @@ public sealed class StackInstructionAnalysisTests
 
         Assert.AreEqual("Boolean", session.Items[0x1000].ReturnTypeCandidate);
         Assert.AreEqual("Boolean", session.Items[0x1010].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisMergesMatchingReturnsFromBranchOnlyFlowTarget()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0x74;
+        code[1] = 0x05;
+        code[2] = 0x0f;
+        code[3] = 0x95;
+        code[4] = 0xc0;
+        code[5] = 0xc3;
+        code[7] = 0x0f;
+        code[8] = 0x95;
+        code[9] = 0xc0;
+        code[10] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Boolean", session.Items[0x1000].ReturnTypeCandidate);
+        Assert.IsFalse(session.Items[0x1007].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+    }
+
+    [TestMethod]
+    public async Task AnalysisPropagatesReturnFromCallInsideBranchOnlyFlowTarget()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0xeb;
+        code[1] = 0x06;
+        code[8] = 0xe8;
+        code[9] = 0x0b;
+        code[13] = 0xc3;
+        code[0x18] = 0x0f;
+        code[0x19] = 0x95;
+        code[0x1a] = 0xc0;
+        code[0x1b] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Boolean", session.Items[0x1000].ReturnTypeCandidate);
+        Assert.AreEqual("Boolean", session.Items[0x1018].ReturnTypeCandidate);
+        Assert.IsFalse(session.Items[0x1008].Flags.HasFlag(AnalysisFlags.ProcedureStart));
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferReturnTypeForDynamicMethod()
+    {
+        AnalysisSession session = CreateSession([0x0f, 0x95, 0xc0, 0xc3]);
+        AnalysisItem vmt = session.GetOrAddItem(0x2000);
+        vmt.SetFlags(AnalysisFlags.Vmt);
+        vmt.DynamicMethods = [new DelphiVmtDynamicMethod(0x1234, 0x1000)];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotMarkDynamicMethodAsFunctionWhenEaxIsRead()
+    {
+        AnalysisSession session = CreateVirtualMethodSession(
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xff, 0x50, 0x04,
+            0x83, 0xf8, 0x00,
+            0xc3
+        ]);
+        session.Items[0x2000].DynamicMethods = [new DelphiVmtDynamicMethod(0x1234, 0x1030)];
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items[0x1005].CrossReferences.Any(reference =>
+            reference.Kind == CrossReferenceKind.Call && reference.TargetAddress == 0x1030));
+        Assert.IsFalse(session.Items[0x1030].Flags.HasFlag(AnalysisFlags.FunctionCandidate));
+    }
+
+    [TestMethod]
+    public async Task AnalysisRejectsReturnCandidateWhenBranchOnlyReturnIsUnknown()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0x74;
+        code[1] = 0x05;
+        code[2] = 0x0f;
+        code[3] = 0x95;
+        code[4] = 0xc0;
+        code[5] = 0xc3;
+        code[7] = 0xc3;
+        AnalysisSession session = CreateSession(code);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRejectsConflictingReturnCandidatesAcrossBranchOnlyPath()
+    {
+        AnalysisSession session = CreateClassFieldAccessSession(
+        [
+            0x74, 0x0c,
+            0x0f, 0x95, 0xc0,
+            0xc3,
+            0x90, 0x90, 0x90, 0x90,
+            0x90, 0x90, 0x90, 0x90,
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0xe8, 0x08, 0x00, 0x00, 0x00,
+            0xc3
+        ],
+            useParentField: false);
+        session.GetOrAddItem(0x1020).Name = "@ClassCreate";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotAssignSharedBranchReturnToEitherProcedureOwner()
+    {
+        byte[] code = new byte[0x20];
+        code[0] = 0xe8;
+        code[1] = 0x0b;
+        code[5] = 0xeb;
+        code[6] = 0x11;
+        code[0x18] = 0x0f;
+        code[0x19] = 0x95;
+        code[0x1a] = 0xc0;
+        code[0x1b] = 0xc3;
+        code[0x10] = 0xeb;
+        code[0x11] = 0x06;
+        AnalysisSession session = CreateSession(code);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1000].ReturnTypeCandidate);
+        Assert.IsNull(session.Items[0x1010].ReturnTypeCandidate);
+        Assert.IsFalse(session.Items[0x1018].Flags.HasFlag(AnalysisFlags.ProcedureStart));
     }
 
     [TestMethod]
@@ -4538,6 +4791,65 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisResolvesResourceIdFromXorOfKnownRegisterValues()
+    {
+        byte[] image = new byte[0x30];
+        byte[] code =
+        [
+            0xb8, 0x45, 0x00, 0x00, 0x00,
+            0xba, 0x44, 0x00, 0x00, 0x00,
+            0x31, 0xd0,
+            0xe8, 0x0f, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "resource-string-xor-registers.exe",
+            image,
+            [new PeSection(".text", 0x1000, 0x30, 0, 0x30, true)])
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = "@LoadStr";
+        session.LoadPeDirectories([], [], [new PeResourceString(1, 0x0409, "Xor resource")]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual("Xor resource", session.Items[0x100c].ResourceStringCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotResolveResourceIdFromXorWithUnknownRegister()
+    {
+        byte[] image = new byte[0x30];
+        byte[] code =
+        [
+            0xb8, 0x45, 0x00, 0x00, 0x00,
+            0x31, 0xd0,
+            0xe8, 0x14, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "resource-string-xor-unknown.exe",
+            image,
+            [new PeSection(".text", 0x1000, 0x30, 0, 0x30, true)])
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = "@LoadStr";
+        session.LoadPeDirectories([], [], [new PeResourceString(0x45, 0x0409, "Unknown XOR")]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1007].ResourceStringCandidate);
+    }
+
+    [TestMethod]
     public async Task AnalysisDoesNotChooseBetweenConflictingResourceStringLanguages()
     {
         AnalysisSession session = CreateResourceStringHelperSession(
@@ -5634,6 +5946,39 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.IsFalse(session.Items.Values.Any(item => item.Flags.HasFlag(AnalysisFlags.FinallyExit)));
+    }
+
+    [TestMethod]
+    public async Task AnalysisMarksTryFinallyExitSequenceInBranchOnlyFlowTarget()
+    {
+        byte[] image = new byte[0x40];
+        image[0] = 0xeb;
+        image[1] = 0x0e;
+        image[0x10] = 0x90;
+        image[0x11] = 0xe8;
+        image[0x12] = 0x12;
+        image[0x16] = 0xc3;
+        image[0x28] = 0xc3;
+        AnalysisSession session = new(
+            "finally-exit-branch-flow.exe",
+            image,
+            [new PeSection(".text", 0x1000, (uint)image.Length, 0, (uint)image.Length, true)],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1028).Name = "@TryFinallyExit";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x1010, out AnalysisItem? precedingInstruction));
+        Assert.IsTrue(precedingInstruction!.Flags.HasFlag(AnalysisFlags.FinallyExit));
+        Assert.IsTrue(session.Items.TryGetValue(0x1011, out AnalysisItem? call));
+        Assert.IsTrue(call!.Flags.HasFlag(AnalysisFlags.FinallyExit));
+        Assert.IsTrue(session.Items.TryGetValue(0x1016, out AnalysisItem? followingInstruction));
+        Assert.IsTrue(followingInstruction!.Flags.HasFlag(AnalysisFlags.FinallyExit));
+        Assert.IsFalse(precedingInstruction.Flags.HasFlag(AnalysisFlags.ProcedureStart));
     }
 
     [TestMethod]
@@ -8469,6 +8814,53 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisRemovesDynamicArrayTypeAfterLateConflictingPredecessor()
+    {
+        byte[] image = new byte[0x60];
+        byte[] code =
+        [
+            0xb8, 0x04, 0x20, 0x40, 0x00,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0b,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xe8, 0x17, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0xeb, 0xf7
+        ];
+        code.CopyTo(image, 0);
+        image[0x30] = 0xc3;
+        AnalysisSession session = new(
+            "dynamic-array-type-late-conflict.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x20, 0x40, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1030).Name = "@DynArraySetLength";
+        AnalysisItem array = session.GetOrAddItem(0x2004);
+        AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+        typeInfo.Name = "TItem";
+        typeInfo.TypeKind = DelphiTypeKind.Record;
+        typeInfo.SetFlags(AnalysisFlags.Rtti);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x1014, out AnalysisItem? callItem));
+        Assert.IsTrue(callItem!.Flags.HasFlag(AnalysisFlags.Instruction));
+        Assert.IsTrue(callItem.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1030 }));
+        Assert.IsNull(array.DataTypeCandidate);
+        Assert.IsFalse(array.Flags.HasFlag(AnalysisFlags.DynamicArrayCandidate));
+        Assert.IsTrue(array.Flags.HasFlag(AnalysisFlags.Data));
+    }
+
+    [TestMethod]
     public async Task AnalysisRemovesPrototypeArgumentTypesAfterLateConflictingPredecessor()
     {
         byte[] image = new byte[0x80];
@@ -8994,6 +9386,95 @@ public sealed class StackInstructionAnalysisTests
         Assert.IsTrue(callItem!.CrossReferences.Any(reference =>
             reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1020 }));
         Assert.IsNull(callItem.ResourceStringCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesDynamicArrayFlagAfterLateRegisterMerge()
+    {
+        byte[] image = new byte[0x60];
+        byte[] code =
+        [
+            0xb8, 0x04, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0b,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xe8, 0x0c, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0xeb, 0xf7
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "dynamic-array-late-merge.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x40, 0, 0x40, true),
+                new PeSection(".data", 0x2000, 0x20, 0x40, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = "@DynArrayAddRef";
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsFalse(session.Items.TryGetValue(0x2004, out AnalysisItem? array)
+            && array!.Flags.HasFlag(AnalysisFlags.DynamicArrayCandidate));
+        Assert.IsTrue(array!.Flags.HasFlag(AnalysisFlags.Data));
+    }
+
+    [TestMethod]
+    public async Task AnalysisPreservesSharedDynamicArrayFlagFromIndependentProcedure()
+    {
+        byte[] image = new byte[0xa0];
+        byte[] code =
+        [
+            0xb8, 0x04, 0x20, 0x40, 0x00,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0x74, 0x08,
+            0xeb, 0x0f,
+            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+            0xe8, 0x3f, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0xeb, 0xf7,
+            0x31, 0xc0,
+            0xeb, 0xf3
+        ];
+        code.CopyTo(image, 0);
+        image[0x40] = 0xb8;
+        BitConverter.GetBytes(0x00402004u).CopyTo(image, 0x41);
+        image[0x45] = 0xba;
+        BitConverter.GetBytes(0x00402008u).CopyTo(image, 0x46);
+        image[0x4a] = 0xe8;
+        BitConverter.GetBytes(0x09).CopyTo(image, 0x4b);
+        image[0x4f] = 0xc3;
+        image[0x58] = 0xc3;
+
+        AnalysisSession session = new(
+            "dynamic-array-independent-contributor.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x80, 0, 0x80, true),
+                new PeSection(".data", 0x2000, 0x20, 0x80, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1058).Name = "@DynArrayAddRef";
+        session.GetOrAddItem(0x1040).SetFlags(AnalysisFlags.ProcedureStart);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x2004, out AnalysisItem? array));
+        Assert.IsNull(array!.DataTypeCandidate);
+        Assert.IsTrue(array.Flags.HasFlag(AnalysisFlags.DynamicArrayCandidate));
+        Assert.IsTrue(session.Items.TryGetValue(0x104a, out AnalysisItem? independentCall));
+        Assert.IsTrue(independentCall!.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1058 }));
     }
 
     [TestMethod]
