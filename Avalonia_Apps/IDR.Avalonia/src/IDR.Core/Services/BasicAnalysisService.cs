@@ -125,8 +125,13 @@ public sealed class BasicAnalysisService : IAnalysisService
                             continue;
                         }
 
-                        if (!signatures.TryAdd(codeAddress, signature)
-                            && signatures[codeAddress] != signature)
+                        EventHandlerSignatureCandidate boundSignature = signature with
+                        {
+                            SelfTypeName = form.Root.ClassName,
+                            SelfRegisterName = "EAX"
+                        };
+                        if (!signatures.TryAdd(codeAddress, boundSignature)
+                            && signatures[codeAddress] != boundSignature)
                         {
                             signatures.Remove(codeAddress);
                             conflictingSignatures.Add(codeAddress);
@@ -264,17 +269,23 @@ public sealed class BasicAnalysisService : IAnalysisService
             return false;
         }
 
+        if (!EventHandlerDeclarationParser.TryParse(
+                eventTypes[0].Declaration,
+                out IReadOnlyList<EventHandlerParameterCandidate> parameters,
+                out string? returnTypeName))
+        {
+            return false;
+        }
+
         signature = new EventHandlerSignatureCandidate(
             propertyName,
             eventTypes[0].Name,
-            eventTypes[0].Declaration);
+            eventTypes[0].Declaration,
+            null,
+            "EAX",
+            returnTypeName,
+            parameters);
         return true;
-    }
-
-    private static string GetUnqualifiedTypeName(string typeName)
-    {
-        int separator = typeName.LastIndexOfAny(['.', ':']);
-        return separator >= 0 ? typeName[(separator + 1)..] : typeName;
     }
 
     private static bool IsProcedureTypeDeclaration(string declaration)
@@ -282,6 +293,12 @@ public sealed class BasicAnalysisService : IAnalysisService
         string trimmed = declaration.TrimStart();
         return trimmed.StartsWith("procedure", StringComparison.OrdinalIgnoreCase)
             || trimmed.StartsWith("function", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetUnqualifiedTypeName(string typeName)
+    {
+        int separator = typeName.LastIndexOfAny(['.', ':']);
+        return separator >= 0 ? typeName[(separator + 1)..] : typeName;
     }
 
     private static bool IsPascalIdentifier(string value)

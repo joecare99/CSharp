@@ -201,7 +201,26 @@ public sealed record KnowledgeBaseProperty(
 public sealed record EventHandlerSignatureCandidate(
     string EventPropertyName,
     string EventTypeName,
-    string Declaration);
+    string Declaration,
+    string? SelfTypeName,
+    string SelfRegisterName,
+    string? ReturnTypeName,
+    IReadOnlyList<EventHandlerParameterCandidate> Parameters);
+
+public enum EventHandlerParameterPassingMode
+{
+    Value,
+    Var,
+    Const
+}
+
+public sealed record EventHandlerParameterCandidate(
+    string? Name,
+    string? TypeName,
+    EventHandlerParameterPassingMode PassingMode,
+    int? DeclaredSizeBytes,
+    string? RegisterName,
+    int? StackOffsetBytes);
 
 public sealed record KnowledgeBaseProcedure(
     ushort ModuleId,
