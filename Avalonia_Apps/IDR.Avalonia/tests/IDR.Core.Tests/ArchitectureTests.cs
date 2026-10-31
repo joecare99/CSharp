@@ -1885,6 +1885,9 @@ public sealed class ArchitectureTests
 
         public IReadOnlyList<KnowledgeBaseModule> Modules { get; } = modules;
 
+        public IReadOnlyList<KnowledgeBaseType> Types { get; } =
+            Array.Empty<KnowledgeBaseType>();
+
         public IReadOnlyList<KnowledgeBaseProcedure> Procedures { get; } =
             procedures ?? Array.Empty<KnowledgeBaseProcedure>();
 
