@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.Editor.Services;
+using AA98_AvlnCodeStudio.Editor.Components;
 using AA98_AvlnCodeStudio.Model.Documents;
 using AA98_AvlnCodeStudio.UI.Components;
 using AA98_AvlnCodeStudio.UI.Services;
