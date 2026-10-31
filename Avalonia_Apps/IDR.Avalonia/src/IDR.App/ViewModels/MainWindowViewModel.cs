@@ -520,6 +520,9 @@ public sealed record AnalysisItemViewModel(
         ProcedureSizeBytes = item.ProcedureSizeBytes;
         ReturnStackBytes = item.ReturnStackBytes;
         ReturnTypeCandidate = item.ReturnTypeCandidate ?? string.Empty;
+        EventHandlerSignatureCandidate = item.EventHandlerSignatureCandidate is { } signature
+            ? $"{signature.EventPropertyName}: {signature.EventTypeName} = {signature.Declaration}"
+            : string.Empty;
         DataTypeCandidate = item.DataTypeCandidate ?? string.Empty;
         ResourceStringCandidate = item.ResourceStringCandidate ?? string.Empty;
         ThreadVariableCandidate = item.ThreadVariableCandidate ?? string.Empty;
@@ -583,6 +586,8 @@ public sealed record AnalysisItemViewModel(
     public ushort? ReturnStackBytes { get; init; }
 
     public string ReturnTypeCandidate { get; init; } = string.Empty;
+
+    public string EventHandlerSignatureCandidate { get; init; } = string.Empty;
 
     public string DataTypeCandidate { get; init; } = string.Empty;
 

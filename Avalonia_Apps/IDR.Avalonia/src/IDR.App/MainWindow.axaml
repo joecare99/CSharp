@@ -71,6 +71,7 @@
                 <dg:DataGridTextColumn Header="Procedure size (bytes)" Binding="{Binding ProcedureSizeBytes}" />
                 <dg:DataGridTextColumn Header="Return stack bytes" Binding="{Binding ReturnStackBytes}" />
                 <dg:DataGridTextColumn Header="Return type candidate" Binding="{Binding ReturnTypeCandidate}" />
+                <dg:DataGridTextColumn Header="Event signature candidate" Binding="{Binding EventHandlerSignatureCandidate}" />
                 <dg:DataGridTextColumn Header="Data type candidate" Binding="{Binding DataTypeCandidate}" />
                 <dg:DataGridTextColumn Header="Resource string" Binding="{Binding ResourceStringCandidate}" />
                 <dg:DataGridTextColumn Header="Thread variable" Binding="{Binding ThreadVariableCandidate}" />
