@@ -235,6 +235,33 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisClearsProcedureSummariesWhenRescanNoLongerReachesReturn()
+    {
+        AnalysisSession session = CreateSession([0xeb, 0xfe]);
+        AnalysisItem procedure = session.GetOrAddItem(0x1000);
+        procedure.ProcedureSizeBytes = 2;
+        procedure.ReturnStackBytes = 4;
+        procedure.ReturnTypeCandidate = "Integer";
+        procedure.StackArguments = [new StackArgument(8, sizeof(uint), "Integer")];
+        procedure.StackLocalVariables = [new StackLocalVariable(-4, sizeof(uint), "Integer")];
+        procedure.RegisterArgumentCandidates = ["EAX"];
+        procedure.UsesFramePointer = true;
+        procedure.SetFlags(AnalysisFlags.StackArgumentSizeMismatch);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(procedure.ProcedureSizeBytes);
+        Assert.IsNull(procedure.ReturnStackBytes);
+        Assert.IsNull(procedure.ReturnTypeCandidate);
+        Assert.AreEqual(0, procedure.StackArguments.Count);
+        Assert.AreEqual(0, procedure.StackLocalVariables.Count);
+        Assert.AreEqual(0, procedure.RegisterArgumentCandidates.Count);
+        Assert.IsFalse(procedure.UsesFramePointer);
+        Assert.IsFalse(procedure.Flags.HasFlag(AnalysisFlags.StackArgumentSizeMismatch));
+    }
+
+    [TestMethod]
     public async Task AnalysisRoundsSmallStackArgumentAccessesToFourByteSlots()
     {
         AnalysisSession session = CreateSession(
@@ -259,7 +286,7 @@ public sealed class StackInstructionAnalysisTests
         [
             0x55,
             0x8b, 0xec,
-            0x8d, 0x45, 0x08,
+            0x8b, 0x45, 0x08,
             0xc3
         ]);
 
@@ -3742,6 +3769,20 @@ public sealed class StackInstructionAnalysisTests
         AnalysisItem vmt = session.GetOrAddItem(0x1018);
         vmt.Name = "TExample";
         vmt.SetFlags(AnalysisFlags.Vmt);
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "@BeforeDestruction",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    ReturnType = "Integer"
+                }
+            ]));
 
         await new BasicAnalysisService(new IcedInstructionDecoder())
             .AnalyzeAsync(session, null, CancellationToken.None);
@@ -4008,6 +4049,68 @@ public sealed class StackInstructionAnalysisTests
 
         Assert.AreEqual("Integer", session.Items[0x1000].ReturnTypeCandidate);
         Assert.AreEqual(0, session.Items[0x1007].MemberAccessCandidates.Count);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotUsePrototypeReturnTypeForLegacyHelpersWithoutReturns()
+    {
+        foreach (string helperName in new[]
+        {
+            "@LoadStr",
+            "FmtLoadStr",
+            "@LoadResString",
+            "TApplication.CreateForm",
+            "@FinalizeRecord",
+            "@DynArrayAddRef",
+            "@DynArrayClear",
+            "@DynArraySetLength",
+            "@DynArrayCopy",
+            "@IntfClear",
+            "@FinalizeArray",
+            "@VarClr",
+            "@AfterConstruction",
+            "@AsClass",
+            "@BeforeDestruction",
+            "@ClassCreate",
+            "@CallDynaInst",
+            "@CallDynaClass",
+            "@FindDynaInst",
+            "@FindDynaClass",
+            "@LStrArrayClr",
+            "@WStrArrayClr",
+            "@UStrArrayClr",
+            "@TryFinallyExit"
+        })
+        {
+            byte[] code = new byte[0x20];
+            code[0] = 0xe8;
+            code[1] = 0x0b;
+            code[5] = 0xc3;
+            code[0x10] = 0xc3;
+            AnalysisSession session = CreateSession(code);
+            session.GetOrAddItem(0x1010).Name = helperName;
+            session.LoadKnowledgeBase(new KnowledgeBaseData(
+                2,
+                [new KnowledgeBaseModule(7, "System")],
+                [
+                    new KnowledgeBaseProcedure(
+                        7,
+                        helperName,
+                        (byte)'C',
+                        ReadOnlyMemory<byte>.Empty,
+                        ReadOnlyMemory<byte>.Empty)
+                    {
+                        ReturnType = "Integer"
+                    }
+                ]));
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.IsNull(
+                session.Items[0x1000].ReturnTypeCandidate,
+                $"Helper {helperName} must not inherit a Knowledge-Base return type.");
+        }
     }
 
     [TestMethod]
@@ -8855,6 +8958,42 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.IsNull(session.Items[0x1005].ResourceStringCandidate);
+    }
+
+    [TestMethod]
+    public async Task AnalysisRemovesZeroResourceStringCandidateAfterLateRegisterMerge()
+    {
+        byte[] image = new byte[0x40];
+        byte[] code =
+        [
+            0x31, 0xc0,
+            0xe8, 0x19, 0x00, 0x00, 0x00,
+            0xb8, 0x01, 0x00, 0x00, 0x00,
+            0xeb, 0xf4
+        ];
+        code.CopyTo(image, 0);
+        image[0x20] = 0xc3;
+        AnalysisSession session = new(
+            "zero-resource-string-late-merge.exe",
+            image,
+            [new PeSection(".text", 0x1000, 0x40, 0, 0x40, true)],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1020).Name = "@LoadStr";
+        session.LoadPeDirectories(
+            [],
+            [],
+            [new PeResourceString(0, 0x0409, "Zero resource")]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x1002, out AnalysisItem? callItem));
+        Assert.IsTrue(callItem!.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1020 }));
+        Assert.IsNull(callItem.ResourceStringCandidate);
     }
 
     [TestMethod]

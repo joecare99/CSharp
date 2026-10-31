@@ -2974,7 +2974,14 @@ public sealed class BasicAnalysisService : IAnalysisService
             if (isProcedureStart)
             {
                 startItem.SetFlags(AnalysisFlags.ProcedureStart);
+                startItem.ProcedureSizeBytes = null;
+                startItem.ReturnStackBytes = null;
                 startItem.ReturnTypeCandidate = null;
+                startItem.StackArguments = Array.Empty<StackArgument>();
+                startItem.StackLocalVariables = Array.Empty<StackLocalVariable>();
+                startItem.RegisterArgumentCandidates = Array.Empty<string>();
+                startItem.UsesFramePointer = false;
+                startItem.ClearFlags(AnalysisFlags.StackArgumentSizeMismatch);
                 returnedCallTargets.Remove(codeStart);
             }
 
@@ -6216,22 +6223,24 @@ public sealed class BasicAnalysisService : IAnalysisService
             return "#TLS";
         }
 
-        if (string.Equals(target.Name, "@BeforeDestruction", StringComparison.OrdinalIgnoreCase)
-            && classRegisterTypes.TryGetValue(0, out string? destroyedClassName))
+        if (string.Equals(target.Name, "@BeforeDestruction", StringComparison.OrdinalIgnoreCase))
         {
-            return destroyedClassName;
+            return classRegisterTypes.GetValueOrDefault(0);
         }
 
-        if (string.Equals(target.Name, "@ClassCreate", StringComparison.OrdinalIgnoreCase)
-            && classRegisterTypes.TryGetValue(0, out string? createdClassName))
+        if (string.Equals(target.Name, "@ClassCreate", StringComparison.OrdinalIgnoreCase))
         {
-            return createdClassName;
+            return classRegisterTypes.GetValueOrDefault(0);
         }
 
-        if (string.Equals(target.Name, "@AsClass", StringComparison.OrdinalIgnoreCase)
-            && classRegisterTypes.TryGetValue(1, out string? className))
+        if (string.Equals(target.Name, "@AsClass", StringComparison.OrdinalIgnoreCase))
         {
-            return className;
+            return classRegisterTypes.GetValueOrDefault(1);
+        }
+
+        if (IsKnownCallWithoutReturnType(target.Name))
+        {
+            return null;
         }
 
         if (target.Flags.HasFlag(AnalysisFlags.ConstructorCandidate)
@@ -6251,6 +6260,34 @@ public sealed class BasicAnalysisService : IAnalysisService
         }
 
         return null;
+    }
+
+    private static bool IsKnownCallWithoutReturnType(string? name)
+    {
+        string helperName = name is not null && name.StartsWith('@')
+            ? name[1..]
+            : name ?? string.Empty;
+        return helperName.Equals("LoadStr", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("FmtLoadStr", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("LoadResString", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("TApplication.CreateForm", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("FinalizeRecord", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("DynArrayAddRef", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("DynArrayClear", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("DynArraySetLength", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("DynArrayCopy", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("IntfClear", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("FinalizeArray", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("VarClr", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("AfterConstruction", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("CallDynaInst", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("CallDynaClass", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("FindDynaInst", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("FindDynaClass", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("LStrArrayClr", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("WStrArrayClr", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("UStrArrayClr", StringComparison.OrdinalIgnoreCase)
+            || helperName.Equals("TryFinallyExit", StringComparison.OrdinalIgnoreCase);
     }
 
     private static AnalysisFlags GetProcedureRoleCandidate(
