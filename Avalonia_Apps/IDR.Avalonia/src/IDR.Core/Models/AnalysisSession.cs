@@ -11,6 +11,7 @@ public sealed class AnalysisSession
     private readonly Dictionary<uint, List<CrossReference>> _incomingCrossReferences = [];
     private readonly HashSet<(uint SourceAddress, uint TargetAddress, CrossReferenceKind Kind)> _crossReferenceKeys = [];
     private IReadOnlyList<KnowledgeBaseModule> _knowledgeBaseModules = [];
+    private IReadOnlyList<KnowledgeBaseType> _knowledgeBaseTypes = [];
     private IReadOnlyList<KnowledgeBaseProcedure> _knowledgeBaseProcedures = [];
     private IReadOnlyDictionary<string, KnowledgeBaseProcedure[]> _knowledgeBaseProceduresByName =
         new Dictionary<string, KnowledgeBaseProcedure[]>(StringComparer.OrdinalIgnoreCase);
@@ -59,6 +60,8 @@ public sealed class AnalysisSession
 
     public IReadOnlyList<KnowledgeBaseModule> KnowledgeBaseModules => _knowledgeBaseModules;
 
+    public IReadOnlyList<KnowledgeBaseType> KnowledgeBaseTypes => _knowledgeBaseTypes;
+
     public IReadOnlyList<KnowledgeBaseProcedure> KnowledgeBaseProcedures => _knowledgeBaseProcedures;
 
     public bool HasKnowledgeBase { get; private set; }
@@ -86,6 +89,7 @@ public sealed class AnalysisSession
     {
         ArgumentNullException.ThrowIfNull(knowledgeBase);
         _knowledgeBaseModules = knowledgeBase.Modules.ToArray();
+        _knowledgeBaseTypes = knowledgeBase.Types.ToArray();
         _knowledgeBaseProcedures = knowledgeBase.Procedures.ToArray();
         _knowledgeBaseProceduresByName = _knowledgeBaseProcedures
             .GroupBy(procedure => procedure.Name, StringComparer.OrdinalIgnoreCase)

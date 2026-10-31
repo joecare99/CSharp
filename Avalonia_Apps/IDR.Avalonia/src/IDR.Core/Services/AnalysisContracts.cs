@@ -198,6 +198,11 @@ public sealed record KnowledgeBaseProperty(
     string WriteName,
     string StoredName);
 
+public sealed record EventHandlerSignatureCandidate(
+    string EventPropertyName,
+    string EventTypeName,
+    string Declaration);
+
 public sealed record KnowledgeBaseProcedure(
     ushort ModuleId,
     string Name,

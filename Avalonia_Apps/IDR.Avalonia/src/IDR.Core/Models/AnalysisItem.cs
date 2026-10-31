@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using IDR.Core.Services;
 
 namespace IDR.Core.Models;
 
@@ -88,6 +89,8 @@ public sealed class AnalysisItem
     public ushort? ReturnStackBytes { get; set; }
 
     public string? ReturnTypeCandidate { get; set; }
+
+    public EventHandlerSignatureCandidate? EventHandlerSignatureCandidate { get; set; }
 
     public string? DataTypeCandidate { get; set; }
 

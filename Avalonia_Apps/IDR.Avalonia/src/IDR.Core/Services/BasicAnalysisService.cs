@@ -90,6 +90,13 @@ public sealed class BasicAnalysisService : IAnalysisService
     private static HashSet<uint> FindEventHandlerProcedureAddresses(AnalysisSession session)
     {
         HashSet<uint> addresses = [];
+        Dictionary<uint, EventHandlerSignatureCandidate> signatures = [];
+        HashSet<uint> conflictingSignatures = [];
+        foreach (AnalysisItem item in session.Items.Values)
+        {
+            item.EventHandlerSignatureCandidate = null;
+        }
+
         foreach (DelphiForm form in session.Forms)
         {
             AnalysisItem[] formVmts = session.Items.Values
@@ -102,51 +109,74 @@ public sealed class BasicAnalysisService : IAnalysisService
                 continue;
             }
 
-            HashSet<string> handlerNames = [];
-            CollectFormEventHandlerNames(session, form.Root, handlerNames);
-            foreach (string handlerName in handlerNames)
+            List<EventHandlerBinding> bindings = [];
+            CollectFormEventHandlers(session, form.Root, bindings);
+            foreach (EventHandlerBinding binding in bindings)
             {
                 foreach (DelphiVmtMethod method in formVmts[0].Methods)
                 {
                     if (method.CodeAddress is uint codeAddress
-                        && string.Equals(method.Name, handlerName, StringComparison.OrdinalIgnoreCase))
+                        && string.Equals(method.Name, binding.HandlerName, StringComparison.OrdinalIgnoreCase))
                     {
                         addresses.Add(codeAddress);
+                        if (binding.Signature is not EventHandlerSignatureCandidate signature
+                            || conflictingSignatures.Contains(codeAddress))
+                        {
+                            continue;
+                        }
+
+                        if (!signatures.TryAdd(codeAddress, signature)
+                            && signatures[codeAddress] != signature)
+                        {
+                            signatures.Remove(codeAddress);
+                            conflictingSignatures.Add(codeAddress);
+                        }
                     }
                 }
             }
         }
 
+        foreach ((uint address, EventHandlerSignatureCandidate signature) in signatures)
+        {
+            session.GetOrAddItem(address).EventHandlerSignatureCandidate = signature;
+        }
+
         return addresses;
     }
 
-    private static void CollectFormEventHandlerNames(
+    private static void CollectFormEventHandlers(
         AnalysisSession session,
         DelphiFormComponent component,
-        HashSet<string> handlerNames)
+        List<EventHandlerBinding> bindings)
     {
         foreach (DelphiFormProperty property in component.Properties)
         {
             if (property.Name.StartsWith("On", StringComparison.OrdinalIgnoreCase)
                 && property.Value.Length > 0
                 && IsPascalIdentifier(property.Value)
-                && IsKnownEventProperty(session, component.ClassName, property.Name))
+                && TryGetKnownEventProperty(
+                    session,
+                    component.ClassName,
+                    property.Name,
+                    out EventHandlerSignatureCandidate? signature))
             {
-                handlerNames.Add(property.Value);
+                bindings.Add(new EventHandlerBinding(property.Value, signature));
             }
         }
 
         foreach (DelphiFormComponent child in component.Children)
         {
-            CollectFormEventHandlerNames(session, child, handlerNames);
+            CollectFormEventHandlers(session, child, bindings);
         }
     }
 
-    private static bool IsKnownEventProperty(
+    private static bool TryGetKnownEventProperty(
         AnalysisSession session,
         string componentClassName,
-        string propertyName)
+        string propertyName,
+        out EventHandlerSignatureCandidate? signature)
     {
+        signature = null;
         AnalysisItem[] componentVmts = session.Items.Values
             .Where(item => item.Flags.HasFlag(AnalysisFlags.Vmt)
                 && string.Equals(item.Name, componentClassName, StringComparison.OrdinalIgnoreCase))
@@ -157,6 +187,7 @@ public sealed class BasicAnalysisService : IAnalysisService
             return false;
         }
 
+        bool propertyFound = false;
         HashSet<uint> visitedVmtAddresses = [];
         AnalysisItem? currentVmt = componentVmts[0];
         while (currentVmt is not null && visitedVmtAddresses.Add(currentVmt.Address))
@@ -166,12 +197,20 @@ public sealed class BasicAnalysisService : IAnalysisService
                     && item.ClassVmtAddress == currentVmt.Address)
                 .Take(2)
                 .ToArray();
-            if (classRttiItems.Length == 1
-                && classRttiItems[0].PropertyNames.Any(name =>
-                    string.Equals(name, propertyName, StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(name, "F" + propertyName, StringComparison.OrdinalIgnoreCase)))
+            if (classRttiItems.Length == 1)
             {
-                return true;
+                propertyFound |= classRttiItems[0].PropertyNames.Any(name =>
+                    string.Equals(name, propertyName, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(name, "F" + propertyName, StringComparison.OrdinalIgnoreCase));
+                if (signature is null
+                    && TryResolveEventSignature(
+                    session,
+                    currentVmt.Name ?? string.Empty,
+                    propertyName,
+                    out EventHandlerSignatureCandidate? resolved))
+                {
+                    signature = resolved;
+                }
             }
 
             if (currentVmt.ParentAddress is not uint parentAddress)
@@ -187,7 +226,62 @@ public sealed class BasicAnalysisService : IAnalysisService
             currentVmt = parentVmts.Length == 1 ? parentVmts[0] : null;
         }
 
-        return false;
+        return propertyFound;
+    }
+
+    private static bool TryResolveEventSignature(
+        AnalysisSession session,
+        string componentClassName,
+        string propertyName,
+        out EventHandlerSignatureCandidate? signature)
+    {
+        signature = null;
+        string[] typeDefinitions = session.KnowledgeBaseTypes
+            .Where(type => string.Equals(type.Name, componentClassName, StringComparison.OrdinalIgnoreCase))
+            .SelectMany(type => type.Properties)
+            .Where(property => string.Equals(property.Name, propertyName, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(property.Name, "F" + propertyName, StringComparison.OrdinalIgnoreCase))
+            .Select(property => property.TypeDefinition)
+            .Where(typeName => !string.IsNullOrWhiteSpace(typeName))
+            .Select(GetUnqualifiedTypeName)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Take(2)
+            .ToArray();
+        if (typeDefinitions.Length != 1)
+        {
+            return false;
+        }
+
+        KnowledgeBaseType[] eventTypes = session.KnowledgeBaseTypes
+            .Where(type => type.Kind == (byte)DelphiTypeKind.Procedure
+                && string.Equals(type.Name, typeDefinitions[0], StringComparison.OrdinalIgnoreCase)
+                && IsProcedureTypeDeclaration(type.Declaration))
+            .DistinctBy(type => type.Declaration, StringComparer.OrdinalIgnoreCase)
+            .Take(2)
+            .ToArray();
+        if (eventTypes.Length != 1)
+        {
+            return false;
+        }
+
+        signature = new EventHandlerSignatureCandidate(
+            propertyName,
+            eventTypes[0].Name,
+            eventTypes[0].Declaration);
+        return true;
+    }
+
+    private static string GetUnqualifiedTypeName(string typeName)
+    {
+        int separator = typeName.LastIndexOfAny(['.', ':']);
+        return separator >= 0 ? typeName[(separator + 1)..] : typeName;
+    }
+
+    private static bool IsProcedureTypeDeclaration(string declaration)
+    {
+        string trimmed = declaration.TrimStart();
+        return trimmed.StartsWith("procedure", StringComparison.OrdinalIgnoreCase)
+            || trimmed.StartsWith("function", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsPascalIdentifier(string value)
@@ -2923,6 +3017,10 @@ public sealed class BasicAnalysisService : IAnalysisService
     private readonly record struct ResourceStringCandidateMutation(
         string? PreviousValue,
         string AppliedValue);
+
+    private readonly record struct EventHandlerBinding(
+        string HandlerName,
+        EventHandlerSignatureCandidate? Signature);
 
     private readonly record struct ReturnCandidateContribution(
         uint FlowStartAddress,
