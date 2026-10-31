@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.UI;
+using AA98_AvlnCodeStudio.Base.Components.Commands;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using AA98_AvlnCodeStudio.Editor.Navigation;
 using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
@@ -43,6 +44,7 @@ public class AppStartupCompositionTests
         var navigator = serviceProvider.GetRequiredService<ICodeNavigator>();
         var diagnostics = serviceProvider.GetRequiredService<DiagnosticCollectionViewModel>();
         var projectExplorer = serviceProvider.GetRequiredService<ProjectExplorerViewModel>();
+        var commandCatalog = serviceProvider.GetRequiredService<IWorkbenchCommandCatalog>();
 
         Assert.IsNotNull(viewModelFactory);
         Assert.IsNotNull(workflowFactory);
@@ -52,6 +54,7 @@ public class AppStartupCompositionTests
         Assert.IsNotNull(caretService);
         Assert.IsNotNull(navigator);
         Assert.IsNotNull(projectExplorer);
+        Assert.IsNotNull(commandCatalog);
         diagnostics.SelectedDiagnostic = new AppKomponentBaseLib.Diagnostics.Diagnostic
         {
             SourcePath = Path.GetTempFileName(),
