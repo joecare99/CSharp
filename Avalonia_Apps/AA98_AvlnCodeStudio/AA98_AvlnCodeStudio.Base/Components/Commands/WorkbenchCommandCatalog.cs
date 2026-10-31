@@ -48,14 +48,11 @@ public sealed class WorkbenchCommandCatalog : IWorkbenchCommandCatalog
         string normalizedPath = NormalizePath(path);
         return _contributions
             .Where(contribution => contribution.CanExecute(context))
-            .Select(contribution => (
-                Contribution: contribution,
-                Placements: contribution.Descriptor.Placements
+            .SelectMany(contribution => contribution.Descriptor.Placements
                 .Where(placement => placement.Surface == surface
                     && string.Equals(placement.Path, normalizedPath, StringComparison.Ordinal))
-                .ToArray()))
-            .Where(static entry => entry.Placements.Length > 0)
-            .OrderBy(static entry => entry.Placements.Min(static placement => placement.Order))
+                .Select(placement => (Contribution: contribution, Placement: placement)))
+            .OrderBy(static entry => entry.Placement.Order)
             .ThenBy(static entry => entry.Contribution.Descriptor.CommandId, StringComparer.Ordinal)
             .Select(static entry => entry.Contribution)
             .ToArray();
@@ -71,10 +68,9 @@ public sealed class WorkbenchCommandCatalog : IWorkbenchCommandCatalog
 
         return _contributions
             .OfType<IWorkbenchPopupCommandContribution>()
-            .Where(contribution => contribution.Descriptor.Placements
-                    .Any(static placement => placement.Surface == WorkbenchCommandSurface.ContextMenu)
-                && contribution.CanExecute(context)
+            .Where(contribution => contribution.CanExecute(context)
                 && contribution.AppliesTo(context, popupTarget))
+            .Select(static contribution => contribution)
             .OrderBy(static contribution => contribution.Descriptor.Placements
                 .Where(static placement => placement.Surface == WorkbenchCommandSurface.ContextMenu)
                 .Select(static placement => placement.Order)
