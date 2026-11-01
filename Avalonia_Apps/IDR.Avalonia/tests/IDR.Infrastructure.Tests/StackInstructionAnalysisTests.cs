@@ -2168,6 +2168,31 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
+    public async Task AnalysisIncludesRegisterArgumentReadFromBranchOnlyReturnPath()
+    {
+        AnalysisSession session = CreateSession([0x74, 0x02, 0xc3, 0x90, 0x89, 0xc3, 0xc3]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        CollectionAssert.AreEqual(
+            new[] { "EAX" },
+            session.Items[0x1000].RegisterArgumentCandidates.ToArray());
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotInferBranchOnlyRegisterArgumentAfterEntryClobber()
+    {
+        AnalysisSession session = CreateSession(
+            [0x31, 0xc0, 0x74, 0x02, 0xc3, 0x90, 0x89, 0xc3, 0xc3]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.AreEqual(0, session.Items[0x1000].RegisterArgumentCandidates.Count);
+    }
+
+    [TestMethod]
     public async Task AnalysisInfersEaxArgumentReadImplicitlyBySahf()
     {
         AnalysisSession session = CreateSession([0x9e, 0xc3]);
@@ -4341,6 +4366,35 @@ public sealed class StackInstructionAnalysisTests
             .AnalyzeAsync(session, null, CancellationToken.None);
 
         Assert.AreEqual((ushort)4, callee.ReturnStackBytes);
+        Assert.IsFalse(session.Items[0x100e].MemberAccessCandidates.Any());
+    }
+
+    [TestMethod]
+    public async Task AnalysisInvalidatesCallerRegisterStackWhenCalleeReturnPathsDisagreeOnCleanup()
+    {
+        byte[] code = new byte[0x40];
+        byte[] caller =
+        [
+            0xb8, 0x00, 0x20, 0x40, 0x00,
+            0x50,
+            0xe8, 0x25, 0x00, 0x00, 0x00,
+            0x31, 0xc0,
+            0x59,
+            0x8b, 0x51, 0x08,
+            0xc3
+        ];
+        caller.CopyTo(code, 0);
+        new byte[] { 0x85, 0xc9, 0x74, 0x03, 0xc3, 0x90, 0x90, 0xc2, 0x04, 0x00 }
+            .CopyTo(code, 0x30);
+        AnalysisSession session = CreateClassFieldAccessSession(code, useParentField: false);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsNull(session.Items[0x1030].ReturnStackBytes);
+        Assert.IsTrue(session.Items.TryGetValue(0x1006, out AnalysisItem? callItem));
+        Assert.IsTrue(callItem!.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1030 }));
         Assert.IsFalse(session.Items[0x100e].MemberAccessCandidates.Any());
     }
 
@@ -8337,12 +8391,18 @@ public sealed class StackInstructionAnalysisTests
     [TestMethod]
     public async Task AnalysisNormalizesRegisterPrototypeTypesForLocalAddressArguments()
     {
-        foreach ((byte argumentTag, string argumentType, DelphiVersion delphiVersion, string expectedType) in new[]
+        foreach ((
+            byte callingConvention,
+            byte argumentTag,
+            string argumentType,
+            DelphiVersion delphiVersion,
+            string? expectedType) in new[]
         {
-            ((byte)0x21, "Pointer", DelphiVersion.Delphi7, "Byte"),
-            ((byte)0x21, "PAnsiChar", DelphiVersion.Delphi7, "AnsiChar"),
-            ((byte)0x21, "AnsiString", DelphiVersion.Delphi2009, "UnicodeString"),
-            ((byte)0x22, "TChild", DelphiVersion.Delphi7, "TChild")
+            ((byte)0, (byte)0x21, "Pointer", DelphiVersion.Delphi7, "Byte"),
+            ((byte)0, (byte)0x21, "PAnsiChar", DelphiVersion.Delphi7, "AnsiChar"),
+            ((byte)0, (byte)0x21, "AnsiString", DelphiVersion.Delphi2009, "UnicodeString"),
+            ((byte)0, (byte)0x22, "TChild", DelphiVersion.Delphi7, "TChild"),
+            ((byte)3, (byte)0x21, "TChild", DelphiVersion.Delphi7, null)
         })
         {
             AnalysisSession session = CreateClassFieldAccessSession(
@@ -8373,6 +8433,7 @@ public sealed class StackInstructionAnalysisTests
                         ReadOnlyMemory<byte>.Empty,
                         ReadOnlyMemory<byte>.Empty)
                     {
+                        CallingConvention = callingConvention,
                         Arguments =
                         [
                             new KnowledgeBaseArgument(
@@ -8389,12 +8450,89 @@ public sealed class StackInstructionAnalysisTests
             await new BasicAnalysisService(new IcedInstructionDecoder())
                 .AnalyzeAsync(session, null, CancellationToken.None);
 
+            bool hasExpectedLocalType = session.Items[0x1000].StackLocalVariables
+                .Any(variable =>
+                    variable.EbpOffset == -4
+                    && string.Equals(variable.TypeName, expectedType, StringComparison.Ordinal));
             Assert.AreEqual(
-                expectedType,
-                session.Items[0x1000].StackLocalVariables
-                    .Single(variable => variable.EbpOffset == -4).TypeName,
-                $"{argumentType} in {delphiVersion}");
+                expectedType is not null,
+                hasExpectedLocalType,
+                $"{argumentType} using convention {callingConvention} in {delphiVersion}");
         }
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotReplaceExistingLocalTypeWithPrototypeType()
+    {
+        byte[] image = new byte[0xa0];
+        byte[] code =
+        [
+            0x55,
+            0x8b, 0xec,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0x8d, 0x45, 0xfc,
+            0xe8, 0x40, 0x00, 0x00, 0x00,
+            0x8d, 0x45, 0xfc,
+            0xe8, 0x48, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x50] = 0xc3;
+        image[0x60] = 0xc3;
+        AnalysisSession session = new(
+            "prototype-local-preserves-existing-type.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x80, 0, 0x80, true),
+                new PeSection(".data", 0x2000, 0x20, 0x80, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1050).Name = "@FinalizeRecord";
+        session.GetOrAddItem(0x1060).Name = "ConflictingPrototype";
+        AnalysisItem recordTypeInfo = session.GetOrAddItem(0x2008);
+        recordTypeInfo.Name = "TRecord";
+        recordTypeInfo.TypeKind = DelphiTypeKind.Record;
+        recordTypeInfo.SetFlags(AnalysisFlags.Rtti);
+        session.LoadKnowledgeBase(new KnowledgeBaseData(
+            2,
+            [new KnowledgeBaseModule(7, "System")],
+            [
+                new KnowledgeBaseProcedure(
+                    7,
+                    "ConflictingPrototype",
+                    (byte)'C',
+                    ReadOnlyMemory<byte>.Empty,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    Arguments =
+                    [
+                        new KnowledgeBaseArgument(
+                            0x21,
+                            true,
+                            0,
+                            sizeof(uint),
+                            "Value",
+                            "TChild")
+                    ]
+                }
+            ]));
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x100b, out AnalysisItem? finalizeCall));
+        Assert.IsTrue(finalizeCall!.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1050 }));
+        Assert.IsTrue(session.Items.TryGetValue(0x1013, out AnalysisItem? prototypeCall));
+        Assert.IsTrue(prototypeCall!.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1060 }));
+        Assert.AreEqual(
+            "TRecord",
+            session.Items[0x1000].StackLocalVariables
+                .Single(variable => variable.EbpOffset == -4).TypeName);
     }
 
     [TestMethod]
@@ -8575,33 +8713,145 @@ public sealed class StackInstructionAnalysisTests
     }
 
     [TestMethod]
-    public async Task AnalysisRemovesFinalizeRecordLocalTypeAfterLateConflictingPredecessor()
+    public async Task AnalysisRemovesRttiLocalTypeAfterLateConflictingPredecessor()
+    {
+        foreach (string helperName in new[]
+        {
+            "@FinalizeRecord",
+            "@DynArraySetLength",
+            "@DynArrayCopy"
+        })
+        {
+            byte[] image = new byte[0x80];
+            byte[] code =
+            [
+                0x55,
+                0x8b, 0xec,
+                0xba, 0x08, 0x20, 0x40, 0x00,
+                0x8d, 0x45, 0xfc,
+                0x74, 0x0e,
+                0xeb, 0x1e,
+                0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+                0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+                0xe8, 0x30, 0x00, 0x00, 0x00,
+                0x8b, 0x4d, 0xfc,
+                0x8b, 0x51, 0x08,
+                0x8b, 0xe5,
+                0x5d,
+                0xc3,
+                0x90, 0x90, 0x90, 0x90,
+                0x31, 0xc0,
+                0xeb, 0xea
+            ];
+            code.CopyTo(image, 0);
+            image[0x50] = 0xc3;
+            AnalysisSession session = new(
+                $"{helperName.TrimStart('@')}-local-late-predecessor.exe",
+                image,
+                [
+                    new PeSection(".text", 0x1000, 0x60, 0, 0x60, true),
+                    new PeSection(".data", 0x2000, 0x20, 0x60, 0x20, false)
+                ],
+                0x400000)
+            {
+                EntryPointRva = 0x1000
+            };
+            session.GetOrAddItem(0x1050).Name = helperName;
+            AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+            typeInfo.Name = "TRecord";
+            typeInfo.TypeKind = DelphiTypeKind.Record;
+            typeInfo.SetFlags(AnalysisFlags.Rtti);
+
+            await new BasicAnalysisService(new IcedInstructionDecoder())
+                .AnalyzeAsync(session, null, CancellationToken.None);
+
+            Assert.IsTrue(session.Items.TryGetValue(0x101b, out AnalysisItem? callItem));
+            Assert.IsTrue(callItem!.CrossReferences.Any(reference =>
+                reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1050 }));
+            Assert.IsFalse(session.Items[0x1000].StackLocalVariables
+                .Any(variable => variable.EbpOffset == -4));
+            Assert.IsFalse(session.Items.Values.Any(item =>
+                item.MemberAccessCandidates.Any(candidate => candidate.OwnerTypeName == "TRecord")));
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalysisPreservesDynArrayCopySourceLocalWhenLatePredecessorInvalidatesDestination()
     {
         byte[] image = new byte[0x80];
         byte[] code =
         [
             0x55,
             0x8b, 0xec,
-            0xba, 0x08, 0x20, 0x40, 0x00,
             0x8d, 0x45, 0xfc,
-            0x74, 0x0e,
-            0xeb, 0x1e,
-            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
-            0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
-            0xe8, 0x30, 0x00, 0x00, 0x00,
-            0x8b, 0x4d, 0xfc,
-            0x8b, 0x51, 0x08,
-            0x8b, 0xe5,
-            0x5d,
+            0x8d, 0x4d, 0xf8,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0x74, 0x06,
+            0xe8, 0x3b, 0x00, 0x00, 0x00,
             0xc3,
-            0x90, 0x90, 0x90, 0x90,
-            0x31, 0xc0,
-            0xeb, 0xea
+            0x31, 0xc9,
+            0xeb, 0xf6
         ];
         code.CopyTo(image, 0);
         image[0x50] = 0xc3;
         AnalysisSession session = new(
-            "finalize-record-local-late-predecessor.exe",
+            "dynarray-copy-destination-late-predecessor.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x60, 0, 0x60, true),
+                new PeSection(".data", 0x2000, 0x20, 0x60, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1050).Name = "@DynArrayCopy";
+        AnalysisItem typeInfo = session.GetOrAddItem(0x2008);
+        typeInfo.Name = "TRecord";
+        typeInfo.TypeKind = DelphiTypeKind.Record;
+        typeInfo.SetFlags(AnalysisFlags.Rtti);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        Assert.IsTrue(session.Items.TryGetValue(0x1010, out AnalysisItem? callItem));
+        Assert.IsTrue(callItem!.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1050 }));
+        Assert.IsTrue(session.Items.TryGetValue(0x1018, out AnalysisItem? latePredecessor));
+        Assert.IsTrue(latePredecessor!.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Jump, TargetAddress: 0x1010 }));
+        Assert.AreEqual(
+            1,
+            session.Items[0x1000].StackLocalVariables.Count,
+            string.Join(
+                "; ",
+                session.Items[0x1000].StackLocalVariables.Select(variable =>
+                    $"{variable.EbpOffset}:{variable.TypeName}")));
+        CollectionAssert.AreEqual(
+            new[] { new StackLocalVariable(-4, 4, "TRecord") },
+            session.Items[0x1000].StackLocalVariables.ToArray());
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotRetainStackArgumentTypeFromOnlyOneReturnPath()
+    {
+        byte[] image = new byte[0x80];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0x8d, 0x45, 0x08,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0x85, 0xc9,
+            0x74, 0x06,
+            0xe8, 0x39, 0x00, 0x00, 0x00,
+            0xc3,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x50] = 0xc3;
+        AnalysisSession session = new(
+            "stack-argument-one-return-path.exe",
             image,
             [
                 new PeSection(".text", 0x1000, 0x60, 0, 0x60, true),
@@ -8620,13 +8870,69 @@ public sealed class StackInstructionAnalysisTests
         await new BasicAnalysisService(new IcedInstructionDecoder())
             .AnalyzeAsync(session, null, CancellationToken.None);
 
-        Assert.IsTrue(session.Items.TryGetValue(0x101b, out AnalysisItem? callItem));
+        Assert.IsTrue(session.Items.TryGetValue(0x1012, out AnalysisItem? callItem));
         Assert.IsTrue(callItem!.CrossReferences.Any(reference =>
             reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1050 }));
-        Assert.IsFalse(session.Items[0x1000].StackLocalVariables
-            .Any(variable => variable.EbpOffset == -4));
-        Assert.IsFalse(session.Items.Values.Any(item =>
-            item.MemberAccessCandidates.Any(candidate => candidate.OwnerTypeName == "TRecord")));
+        StackArgument argument = session.Items[0x1000].StackArguments.Single(candidate =>
+            candidate.Offset == 8);
+        Assert.AreEqual(sizeof(uint), argument.SizeBytes);
+        Assert.IsNull(argument.TypeName);
+    }
+
+    [TestMethod]
+    public async Task AnalysisDoesNotChooseBetweenConflictingStackArgumentTypesAcrossReturnPaths()
+    {
+        byte[] image = new byte[0x80];
+        byte[] code =
+        [
+            0x55, 0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0x8d, 0x45, 0x08,
+            0xba, 0x08, 0x20, 0x40, 0x00,
+            0x85, 0xc9,
+            0x74, 0x06,
+            0xe8, 0x39, 0x00, 0x00, 0x00,
+            0xc3,
+            0xba, 0x10, 0x20, 0x40, 0x00,
+            0xe8, 0x2e, 0x00, 0x00, 0x00,
+            0xc3
+        ];
+        code.CopyTo(image, 0);
+        image[0x50] = 0xc3;
+        AnalysisSession session = new(
+            "stack-argument-conflicting-return-types.exe",
+            image,
+            [
+                new PeSection(".text", 0x1000, 0x60, 0, 0x60, true),
+                new PeSection(".data", 0x2000, 0x20, 0x60, 0x20, false)
+            ],
+            0x400000)
+        {
+            EntryPointRva = 0x1000
+        };
+        session.GetOrAddItem(0x1050).Name = "@FinalizeRecord";
+        AnalysisItem firstTypeInfo = session.GetOrAddItem(0x2008);
+        firstTypeInfo.Name = "TFirstRecord";
+        firstTypeInfo.TypeKind = DelphiTypeKind.Record;
+        firstTypeInfo.SetFlags(AnalysisFlags.Rtti);
+        AnalysisItem secondTypeInfo = session.GetOrAddItem(0x2010);
+        secondTypeInfo.Name = "TSecondRecord";
+        secondTypeInfo.TypeKind = DelphiTypeKind.Record;
+        secondTypeInfo.SetFlags(AnalysisFlags.Rtti);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        StackArgument argument = session.Items[0x1000].StackArguments.Single(candidate =>
+            candidate.Offset == 8);
+        Assert.AreEqual(sizeof(uint), argument.SizeBytes);
+        Assert.IsNull(argument.TypeName);
+        Assert.IsTrue(session.Items.TryGetValue(0x1012, out AnalysisItem? firstCall));
+        Assert.IsTrue(firstCall!.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1050 }));
+        Assert.IsTrue(session.Items.TryGetValue(0x101d, out AnalysisItem? secondCall));
+        Assert.IsTrue(secondCall!.CrossReferences.Any(reference =>
+            reference is { Kind: CrossReferenceKind.Call, TargetAddress: 0x1050 }));
     }
 
     [TestMethod]

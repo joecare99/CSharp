@@ -36,6 +36,50 @@ public sealed class ProcedureMetadataAnalysisTests
         Assert.AreEqual((ushort)0, session.Items[0x1000].ReturnStackBytes);
     }
 
+    [TestMethod]
+    public async Task AnalysisDoesNotChooseReturnStackCleanupFromConflictingReturnPaths()
+    {
+        AnalysisSession session = CreateSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0x85, 0xc9,
+            0x74, 0x03,
+            0xc2, 0x04, 0x00,
+            0xc2, 0x08, 0x00
+        ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        AnalysisItem procedure = session.Items[0x1000];
+        Assert.IsNull(procedure.ReturnStackBytes);
+        Assert.IsFalse(procedure.Flags.HasFlag(AnalysisFlags.StackArgumentSizeMismatch));
+    }
+
+    [TestMethod]
+    public async Task AnalysisKeepsReturnStackCleanupWhenAllReturnPathsAgree()
+    {
+        AnalysisSession session = CreateSession(
+        [
+            0x55,
+            0x8b, 0xec,
+            0x8b, 0x45, 0x08,
+            0x85, 0xc9,
+            0x74, 0x03,
+            0xc2, 0x04, 0x00,
+            0xc2, 0x04, 0x00
+        ]);
+
+        await new BasicAnalysisService(new IcedInstructionDecoder())
+            .AnalyzeAsync(session, null, CancellationToken.None);
+
+        AnalysisItem procedure = session.Items[0x1000];
+        Assert.AreEqual((ushort)4, procedure.ReturnStackBytes);
+        Assert.IsFalse(procedure.Flags.HasFlag(AnalysisFlags.StackArgumentSizeMismatch));
+    }
+
     private static AnalysisSession CreateSession(byte[] code)
     {
         byte[] image = new byte[0x20];
