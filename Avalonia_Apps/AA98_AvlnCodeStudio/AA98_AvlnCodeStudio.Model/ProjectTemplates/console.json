@@ -1,0 +1,13 @@
+{
+  "id": "console",
+  "name": "Console Application",
+  "description": "A C# command-line application.",
+  "defaultProjectFileName": "ConsoleApp.csproj",
+  "projectFileContent": "<Project Sdk=\"Microsoft.NET.Sdk\">\n  <PropertyGroup>\n    <OutputType>Exe</OutputType>\n    <TargetFramework>{{TargetFramework}}</TargetFramework>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <Nullable>enable</Nullable>\n  </PropertyGroup>\n</Project>\n",
+  "files": [
+    {
+      "path": "Program.cs",
+      "content": "Console.WriteLine(\"Hello, World!\");\n"
+    }
+  ]
+}

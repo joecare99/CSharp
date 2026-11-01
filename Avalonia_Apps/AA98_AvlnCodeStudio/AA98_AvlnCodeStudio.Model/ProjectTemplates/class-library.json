@@ -1,0 +1,13 @@
+{
+  "id": "class-library",
+  "name": "Class Library",
+  "description": "A reusable C# class library.",
+  "defaultProjectFileName": "ClassLibrary.csproj",
+  "projectFileContent": "<Project Sdk=\"Microsoft.NET.Sdk\">\n  <PropertyGroup>\n    <TargetFramework>{{TargetFramework}}</TargetFramework>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <Nullable>enable</Nullable>\n  </PropertyGroup>\n</Project>\n",
+  "files": [
+    {
+      "path": "Class1.cs",
+      "content": "namespace {{ProjectNameIdentifier}};\n\npublic sealed class Class1\n{\n}\n"
+    }
+  ]
+}
