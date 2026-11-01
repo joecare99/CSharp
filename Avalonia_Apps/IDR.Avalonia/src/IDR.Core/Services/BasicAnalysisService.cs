@@ -15,6 +15,7 @@ public sealed class BasicAnalysisService : IAnalysisService
     private const int MaximumInstructionsPerProcedure = 4096;
     private const int MaximumCodeStarts = 16384;
     private const int MaximumCodeStartIterations = 65536;
+    private const byte RegisterArgumentMask = 0b0000_0111;
     private const int MaximumMetadataEntryCount = 10000;
     private const int MaximumKnowledgeBaseSignatureSize = 512;
     private const int MaximumSwitchTableEntryCount = 4096;
@@ -3054,7 +3055,9 @@ public sealed class BasicAnalysisService : IAnalysisService
         ImmutableDictionary<int, uint> RegisterStackArgumentOffsets,
         ImmutableDictionary<uint, StackArgument> StackArguments,
         ImmutableDictionary<int, StackLocalVariable> StackLocalVariables,
-        ImmutableArray<RegisterStackState> RegisterStack)
+        ImmutableArray<RegisterStackState> RegisterStack,
+        byte AvailableRegisterArgumentMask,
+        byte UsedRegisterArgumentMask)
     {
         public static ProcedureFlowState Empty { get; } = new(
             ImmutableDictionary<int, string>.Empty,
@@ -3065,7 +3068,9 @@ public sealed class BasicAnalysisService : IAnalysisService
             ImmutableDictionary<int, uint>.Empty,
             ImmutableDictionary<uint, StackArgument>.Empty,
             ImmutableDictionary<int, StackLocalVariable>.Empty,
-            ImmutableArray<RegisterStackState>.Empty);
+            ImmutableArray<RegisterStackState>.Empty,
+            0,
+            0);
 
         public static ProcedureFlowState Capture(
             IReadOnlyDictionary<int, string> classRegisterTypes,
@@ -3076,7 +3081,9 @@ public sealed class BasicAnalysisService : IAnalysisService
             IReadOnlyDictionary<int, uint> registerStackArgumentOffsets,
             IReadOnlyDictionary<uint, StackArgument> stackArguments,
             IReadOnlyDictionary<int, StackLocalVariable> stackLocalVariables,
-            IReadOnlyList<RegisterStackState> registerStack)
+            IReadOnlyList<RegisterStackState> registerStack,
+            byte availableRegisterArgumentMask,
+            byte usedRegisterArgumentMask)
         {
             return new ProcedureFlowState(
                 classRegisterTypes.ToImmutableDictionary(),
@@ -3087,7 +3094,9 @@ public sealed class BasicAnalysisService : IAnalysisService
                 registerStackArgumentOffsets.ToImmutableDictionary(),
                 stackArguments.ToImmutableDictionary(),
                 stackLocalVariables.ToImmutableDictionary(),
-                registerStack.ToImmutableArray());
+                registerStack.ToImmutableArray(),
+                availableRegisterArgumentMask,
+                usedRegisterArgumentMask);
         }
 
         public ProcedureFlowState WithoutRegister(int registerIndex)
@@ -3113,6 +3122,18 @@ public sealed class BasicAnalysisService : IAnalysisService
     {
         Queue<(uint Address, bool IsProcedureStart)> codeStarts = new();
         Dictionary<uint, ReturnCandidateContribution> returnCandidateContributions = [];
+        Dictionary<uint, byte> registerArgumentContributions = [];
+        Dictionary<uint, ushort> returnStackByteContributions = [];
+        Dictionary<uint, ImmutableDictionary<uint, StackArgument>> stackArgumentContributions = [];
+        Dictionary<uint, ImmutableDictionary<int, StackLocalVariable>> stackLocalVariableContributions = [];
+        Dictionary<uint, ushort?> previousReturnStackBytesByProcedure = session.Items.Values
+            .Where(item => item.Flags.HasFlag(AnalysisFlags.ProcedureStart))
+            .ToDictionary(item => item.Address, item => item.ReturnStackBytes);
+        previousReturnStackBytesByProcedure.TryAdd(
+            session.EntryPointRva,
+            session.Items.TryGetValue(session.EntryPointRva, out AnalysisItem? entryPointItem)
+                ? entryPointItem.ReturnStackBytes
+                : null);
         HashSet<uint> dynamicMethodProcedureAddresses = session.Items.Values
             .Where(item => item.Flags.HasFlag(AnalysisFlags.Vmt))
             .SelectMany(item => item.DynamicMethods)
@@ -3190,6 +3211,10 @@ public sealed class BasicAnalysisService : IAnalysisService
             }
 
             returnCandidateContributions.Remove(codeStart);
+            registerArgumentContributions.Remove(codeStart);
+            returnStackByteContributions.Remove(codeStart);
+            stackArgumentContributions.Remove(codeStart);
+            stackLocalVariableContributions.Remove(codeStart);
             if (!TryGetCodeSection(session, codeStart, out PeSection? section, out int rawOffset))
             {
                 if (codeStart == session.EntryPointRva)
@@ -3212,7 +3237,6 @@ public sealed class BasicAnalysisService : IAnalysisService
             }
 
             AnalysisItem startItem = session.GetOrAddItem(codeStart);
-            ushort? previousReturnStackBytes = startItem.ReturnStackBytes;
             startItem.ClearFlags(procedureRoleFlags);
             startItem.SetFlags(initialProcedureRoleFlags.GetValueOrDefault(codeStart));
             startItem.SetFlags(AnalysisFlags.Code);
@@ -3247,12 +3271,14 @@ public sealed class BasicAnalysisService : IAnalysisService
             uint? pendingFunctionResultTarget = null;
             uint? pendingX87ResultTarget = null;
             HashSet<uint> visitedAddresses = [];
-            bool[] availableRegisterArguments = [true, true, true];
-            bool[] usedRegisterArguments = [false, false, false];
             if (isProcedureStart)
             {
                 ProcedureFlowState rootFlowState = ProcedureFlowState.Empty;
-                bool hasRootFlowState = codeStart == session.EntryPointRva;
+                rootFlowState = rootFlowState with
+                {
+                    AvailableRegisterArgumentMask = RegisterArgumentMask
+                };
+                bool hasRootFlowState = true;
                 ImmutableDictionary<int, string> indirectPrototypeRegisterTypes =
                     ImmutableDictionary<int, string>.Empty;
                 if (session.Items.TryGetValue(codeStart, out AnalysisItem? procedureItem))
@@ -3314,6 +3340,10 @@ public sealed class BasicAnalysisService : IAnalysisService
             Dictionary<uint, StackArgument> stackArguments = entryFlowState.StackArguments.ToDictionary();
             Dictionary<int, StackLocalVariable> stackLocalVariables =
                 entryFlowState.StackLocalVariables.ToDictionary();
+            bool[] availableRegisterArguments =
+                CreateRegisterArgumentStates(entryFlowState.AvailableRegisterArgumentMask);
+            bool[] usedRegisterArguments =
+                CreateRegisterArgumentStates(entryFlowState.UsedRegisterArgumentMask);
             string? returnTypeCandidate = null;
             bool reachedTerminator = false;
             List<DecodedInstruction> recentInstructions = [];
@@ -3443,7 +3473,9 @@ public sealed class BasicAnalysisService : IAnalysisService
                     registerStackArgumentOffsets,
                     stackArguments,
                     stackLocalVariables,
-                    registerStack);
+                    registerStack,
+                    GetRegisterArgumentMask(availableRegisterArguments),
+                    GetRegisterArgumentMask(usedRegisterArguments));
                 decodedFlowStates[currentRva] = flowStateBeforeInstruction;
                 bool isCallPopSequence = IsCallToNextInstructionFollowedByPop(session, instruction);
                 if (instruction.FlowControl == InstructionFlowControl.Call && !isCallPopSequence)
@@ -3538,15 +3570,15 @@ public sealed class BasicAnalysisService : IAnalysisService
                     && classRegisterTypes.TryGetValue(0, out string? eaxClassType)
                         ? eaxClassType
                         : null;
+                bool preservesRegisterArguments = isCallPopSequence
+                    || IsRegisterPreservingCall(instruction, session);
+                AnalyzeRegisterArgumentCandidates(
+                    instruction,
+                    availableRegisterArguments,
+                    usedRegisterArguments,
+                    preservesRegisterArguments);
                 if (isProcedureStart)
                 {
-                    bool preservesRegisterArguments = isCallPopSequence
-                        || IsRegisterPreservingCall(instruction, session);
-                    AnalyzeRegisterArgumentCandidates(
-                        instruction,
-                        availableRegisterArguments,
-                        usedRegisterArguments,
-                        preservesRegisterArguments);
                     if (instruction.FlowControl == InstructionFlowControl.Call && !isCallPopSequence)
                     {
                         List<uint> resolvedCallTargets = [];
@@ -3974,6 +4006,11 @@ public sealed class BasicAnalysisService : IAnalysisService
                         returnTypeCandidate,
                         pendingReturnCallTarget,
                         returnedClassType);
+                    registerArgumentContributions[codeStart] =
+                        GetRegisterArgumentMask(usedRegisterArguments);
+                    stackLocalVariableContributions[codeStart] =
+                        stackLocalVariables.ToImmutableDictionary();
+                    stackArgumentContributions[codeStart] = stackArguments.ToImmutableDictionary();
                 }
 
                 if (isProcedureStart && startItem.UsesFramePointer)
@@ -4141,7 +4178,9 @@ public sealed class BasicAnalysisService : IAnalysisService
                                         registerStackArgumentOffsets,
                                         stackArguments,
                                         stackLocalVariables,
-                                        registerStack),
+                                        registerStack,
+                                        GetRegisterArgumentMask(availableRegisterArguments),
+                                        GetRegisterArgumentMask(usedRegisterArguments)),
                                     incomingFlowEdges,
                                     branchFlowContexts);
                                 flowTargets.Add((uint)branchTarget);
@@ -4311,7 +4350,9 @@ public sealed class BasicAnalysisService : IAnalysisService
                             registerStackArgumentOffsets,
                             stackArguments,
                             stackLocalVariables,
-                            registerStack),
+                            registerStack,
+                            GetRegisterArgumentMask(availableRegisterArguments),
+                            GetRegisterArgumentMask(usedRegisterArguments)),
                         incomingFlowEdges,
                         branchFlowContexts);
                     if (fallThroughContextChanged
@@ -4366,6 +4407,12 @@ public sealed class BasicAnalysisService : IAnalysisService
                     or InstructionFlowControl.Interrupt)
                 {
                     reachedTerminator = true;
+                    if (instruction.FlowControl == InstructionFlowControl.Return)
+                    {
+                        returnStackByteContributions[codeStart] =
+                            GetReturnStackBytes(instruction);
+                    }
+
                     if (instruction.FlowControl is InstructionFlowControl.Return or InstructionFlowControl.Interrupt)
                     {
                         procedureEnd = checked(currentRva - (uint)instruction.Length);
@@ -4380,18 +4427,6 @@ public sealed class BasicAnalysisService : IAnalysisService
                                 .ToArray();
                             startItem.RegisterArgumentCandidates = GetRegisterArgumentCandidates(
                                 usedRegisterArguments);
-                            if (instruction.FlowControl == InstructionFlowControl.Return)
-                            {
-                                ushort returnStackBytes = GetReturnStackBytes(instruction);
-                                startItem.ReturnStackBytes = returnStackBytes;
-                                startItem.ClearFlags(AnalysisFlags.StackArgumentSizeMismatch);
-                                if (stackArguments.Values.Sum(argument => (long)argument.SizeBytes)
-                                    > returnStackBytes)
-                                {
-                                    startItem.SetFlags(AnalysisFlags.StackArgumentSizeMismatch);
-                                }
-
-                            }
                         }
                     }
 
@@ -4448,23 +4483,32 @@ public sealed class BasicAnalysisService : IAnalysisService
                 session.GetOrAddItem(endAddress).SetFlags(AnalysisFlags.ProcedureEnd);
             }
 
-            if (isProcedureStart
-                && startItem.ReturnStackBytes != previousReturnStackBytes
-                && procedureCallersByTarget.TryGetValue(codeStart, out HashSet<uint>? callerStarts))
+            HashSet<uint> changedReturnStackProcedures = ReconcileReturnStackSummaries(
+                session,
+                returnStackByteContributions,
+                stackArgumentContributions,
+                incomingFlowEdges,
+                previousReturnStackBytesByProcedure);
+            foreach (uint procedureAddress in changedReturnStackProcedures)
             {
-                foreach (uint callerStart in callerStarts)
+                if (procedureCallersByTarget.TryGetValue(
+                    procedureAddress,
+                    out HashSet<uint>? callerStarts))
                 {
-                    decodedFlowStates.Remove(callerStart);
-                    ScheduleCodeStart(
-                        callerStart,
-                        session.Items.TryGetValue(callerStart, out AnalysisItem? callerItem)
-                            && callerItem.Flags.HasFlag(AnalysisFlags.ProcedureStart),
-                        codeStarts,
-                        scheduledStarts,
-                        processedStarts,
-                        processedProcedureStarts,
-                        coveredStarts,
-                        flowContextChanged: true);
+                    foreach (uint callerStart in callerStarts)
+                    {
+                        decodedFlowStates.Remove(callerStart);
+                        ScheduleCodeStart(
+                            callerStart,
+                            session.Items.TryGetValue(callerStart, out AnalysisItem? callerItem)
+                                && callerItem.Flags.HasFlag(AnalysisFlags.ProcedureStart),
+                            codeStarts,
+                            scheduledStarts,
+                            processedStarts,
+                            processedProcedureStarts,
+                            coveredStarts,
+                            flowContextChanged: true);
+                    }
                 }
             }
 
@@ -4484,6 +4528,9 @@ public sealed class BasicAnalysisService : IAnalysisService
                 : $"Code scan stopped after {MaximumCodeStarts} code starts.");
         }
 
+        ReconcileStackArgumentSummaries(session, stackArgumentContributions, incomingFlowEdges);
+        ReconcileStackLocalVariables(session, stackLocalVariableContributions, incomingFlowEdges);
+        ReconcileRegisterArgumentSummaries(session, registerArgumentContributions, incomingFlowEdges);
         PropagateCallReturnTypeCandidates(
             session,
             returnCandidateContributions,
@@ -4495,6 +4542,225 @@ public sealed class BasicAnalysisService : IAnalysisService
             functionCandidateTargetsByStart.Values.SelectMany(targets => targets).Distinct(),
             dynamicMethodProcedureAddresses,
             eventHandlerProcedureAddresses);
+    }
+
+    private static void ReconcileStackArgumentSummaries(
+        AnalysisSession session,
+        IReadOnlyDictionary<uint, ImmutableDictionary<uint, StackArgument>> contributions,
+        IReadOnlyDictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges)
+    {
+        Dictionary<uint, List<ImmutableDictionary<uint, StackArgument>>> contributionsByProcedure = [];
+        foreach ((uint flowStart, ImmutableDictionary<uint, StackArgument> arguments) in contributions)
+        {
+            if (!TryGetUniqueProcedureFlowOwner(
+                flowStart,
+                session,
+                incomingFlowEdges,
+                out uint procedureAddress))
+            {
+                continue;
+            }
+
+            if (!contributionsByProcedure.TryGetValue(
+                procedureAddress,
+                out List<ImmutableDictionary<uint, StackArgument>>? procedureContributions))
+            {
+                procedureContributions = [];
+                contributionsByProcedure.Add(procedureAddress, procedureContributions);
+            }
+
+            procedureContributions.Add(arguments);
+        }
+
+        foreach ((uint procedureAddress, List<ImmutableDictionary<uint, StackArgument>> procedureContributions)
+            in contributionsByProcedure)
+        {
+            if (!session.Items.TryGetValue(procedureAddress, out AnalysisItem? procedure))
+            {
+                continue;
+            }
+
+            Dictionary<uint, StackArgument> commonArguments = procedureContributions[0].ToDictionary();
+            foreach (ImmutableDictionary<uint, StackArgument> contribution in procedureContributions.Skip(1))
+            {
+                foreach ((uint offset, StackArgument existing) in commonArguments.ToArray())
+                {
+                    if (!contribution.TryGetValue(offset, out StackArgument? argument)
+                        || argument.SizeBytes != existing.SizeBytes)
+                    {
+                        commonArguments.Remove(offset);
+                        continue;
+                    }
+
+                    if (!string.Equals(existing.TypeName, argument.TypeName, StringComparison.Ordinal))
+                    {
+                        commonArguments[offset] = existing with { TypeName = null };
+                    }
+                }
+            }
+
+            procedure.StackArguments = commonArguments.Values
+                .OrderBy(argument => argument.Offset)
+                .ToArray();
+        }
+    }
+
+    private static void ReconcileRegisterArgumentSummaries(
+        AnalysisSession session,
+        IReadOnlyDictionary<uint, byte> contributions,
+        IReadOnlyDictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges)
+    {
+        Dictionary<uint, byte> masksByProcedure = [];
+        foreach ((uint flowStart, byte mask) in contributions)
+        {
+            if (!TryGetUniqueProcedureFlowOwner(
+                flowStart,
+                session,
+                incomingFlowEdges,
+                out uint procedureAddress))
+            {
+                continue;
+            }
+
+            masksByProcedure[procedureAddress] =
+                (byte)(masksByProcedure.GetValueOrDefault(procedureAddress) | mask);
+        }
+
+        foreach ((uint procedureAddress, byte mask) in masksByProcedure)
+        {
+            if (session.Items.TryGetValue(procedureAddress, out AnalysisItem? procedure))
+            {
+                procedure.RegisterArgumentCandidates =
+                    GetRegisterArgumentCandidates(CreateRegisterArgumentStates(mask));
+            }
+        }
+    }
+
+    private static HashSet<uint> ReconcileReturnStackSummaries(
+        AnalysisSession session,
+        IReadOnlyDictionary<uint, ushort> returnStackByteContributions,
+        IReadOnlyDictionary<uint, ImmutableDictionary<uint, StackArgument>> stackArgumentContributions,
+        IReadOnlyDictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges,
+        Dictionary<uint, ushort?> previousReturnStackBytesByProcedure)
+    {
+        Dictionary<uint, List<uint>> returnPathsByProcedure = [];
+        foreach (uint flowStart in returnStackByteContributions.Keys)
+        {
+            if (!TryGetUniqueProcedureFlowOwner(
+                flowStart,
+                session,
+                incomingFlowEdges,
+                out uint procedureAddress))
+            {
+                continue;
+            }
+
+            if (!returnPathsByProcedure.TryGetValue(
+                procedureAddress,
+                out List<uint>? returnPaths))
+            {
+                returnPaths = [];
+                returnPathsByProcedure.Add(procedureAddress, returnPaths);
+            }
+
+            returnPaths.Add(flowStart);
+        }
+
+        HashSet<uint> changedProcedures = [];
+        foreach (AnalysisItem procedure in session.Items.Values.Where(item =>
+                     item.Flags.HasFlag(AnalysisFlags.ProcedureStart)
+                     || item.Address == session.EntryPointRva))
+        {
+            List<uint> returnPaths = returnPathsByProcedure.GetValueOrDefault(procedure.Address) ?? [];
+            ushort? commonCleanup = null;
+            if (returnPaths.Count > 0)
+            {
+                ushort firstCleanup = returnStackByteContributions[returnPaths[0]];
+                if (returnPaths.All(flowStart =>
+                    returnStackByteContributions[flowStart] == firstCleanup))
+                {
+                    commonCleanup = firstCleanup;
+                }
+            }
+
+            procedure.ReturnStackBytes = commonCleanup;
+            procedure.ClearFlags(AnalysisFlags.StackArgumentSizeMismatch);
+            if (commonCleanup is ushort cleanupBytes
+                && returnPaths.Any(flowStart =>
+                    stackArgumentContributions.TryGetValue(
+                        flowStart,
+                        out ImmutableDictionary<uint, StackArgument>? arguments)
+                    && arguments.Values.Sum(argument => (long)argument.SizeBytes) > cleanupBytes))
+            {
+                procedure.SetFlags(AnalysisFlags.StackArgumentSizeMismatch);
+            }
+
+            if (!previousReturnStackBytesByProcedure.TryGetValue(
+                    procedure.Address,
+                    out ushort? previousCleanup)
+                || previousCleanup != commonCleanup)
+            {
+                changedProcedures.Add(procedure.Address);
+                previousReturnStackBytesByProcedure[procedure.Address] = commonCleanup;
+            }
+        }
+
+        return changedProcedures;
+    }
+
+    private static void ReconcileStackLocalVariables(
+        AnalysisSession session,
+        IReadOnlyDictionary<uint, ImmutableDictionary<int, StackLocalVariable>> contributions,
+        IReadOnlyDictionary<uint, Dictionary<FlowEdgeKey, ProcedureFlowState>> incomingFlowEdges)
+    {
+        Dictionary<uint, List<ImmutableDictionary<int, StackLocalVariable>>> contributionsByProcedure = [];
+        foreach ((uint flowStart, ImmutableDictionary<int, StackLocalVariable> localVariables) in contributions)
+        {
+            if (!TryGetUniqueProcedureFlowOwner(
+                flowStart,
+                session,
+                incomingFlowEdges,
+                out uint procedureAddress))
+            {
+                continue;
+            }
+
+            if (!contributionsByProcedure.TryGetValue(
+                procedureAddress,
+                out List<ImmutableDictionary<int, StackLocalVariable>>? procedureContributions))
+            {
+                procedureContributions = [];
+                contributionsByProcedure.Add(procedureAddress, procedureContributions);
+            }
+
+            procedureContributions.Add(localVariables);
+        }
+
+        foreach ((uint procedureAddress, List<ImmutableDictionary<int, StackLocalVariable>> procedureContributions)
+            in contributionsByProcedure)
+        {
+            if (!session.Items.TryGetValue(procedureAddress, out AnalysisItem? procedure))
+            {
+                continue;
+            }
+
+            Dictionary<int, StackLocalVariable> commonVariables = procedureContributions[0].ToDictionary();
+            foreach (ImmutableDictionary<int, StackLocalVariable> contribution in procedureContributions.Skip(1))
+            {
+                foreach (int offset in commonVariables.Keys.ToArray())
+                {
+                    if (!contribution.TryGetValue(offset, out StackLocalVariable? variable)
+                        || variable != commonVariables[offset])
+                    {
+                        commonVariables.Remove(offset);
+                    }
+                }
+            }
+
+            procedure.StackLocalVariables = commonVariables.Values
+                .OrderBy(variable => variable.EbpOffset)
+                .ToArray();
+        }
     }
 
     private static void MergeKnownRegisterTypes(
@@ -4667,7 +4933,9 @@ public sealed class BasicAnalysisService : IAnalysisService
             && AreValuesEqual(first.RegisterStackArgumentOffsets, second.RegisterStackArgumentOffsets)
             && AreValuesEqual(first.StackArguments, second.StackArguments)
             && AreValuesEqual(first.StackLocalVariables, second.StackLocalVariables)
-            && first.RegisterStack.SequenceEqual(second.RegisterStack);
+            && first.RegisterStack.SequenceEqual(second.RegisterStack)
+            && first.AvailableRegisterArgumentMask == second.AvailableRegisterArgumentMask
+            && first.UsedRegisterArgumentMask == second.UsedRegisterArgumentMask;
     }
 
     private static bool AreValuesEqual<TKey, T>(
@@ -4751,6 +5019,10 @@ public sealed class BasicAnalysisService : IAnalysisService
             existing.RegisterStack.SequenceEqual(incoming.RegisterStack)
                 ? existing.RegisterStack
                 : ImmutableArray<RegisterStackState>.Empty;
+        byte availableRegisterArgumentMask =
+            (byte)(existing.AvailableRegisterArgumentMask & incoming.AvailableRegisterArgumentMask);
+        byte usedRegisterArgumentMask =
+            (byte)(existing.UsedRegisterArgumentMask | incoming.UsedRegisterArgumentMask);
 
         if (ReferenceEquals(classTypes, existing.ClassRegisterTypes)
             && ReferenceEquals(indirectClassTypes, existing.IndirectClassRegisterTypes)
@@ -4760,7 +5032,9 @@ public sealed class BasicAnalysisService : IAnalysisService
             && ReferenceEquals(stackArgumentOffsets, existing.RegisterStackArgumentOffsets)
             && ReferenceEquals(stackArguments, existing.StackArguments)
             && ReferenceEquals(stackLocalVariables, existing.StackLocalVariables)
-            && registerStack == existing.RegisterStack)
+            && registerStack == existing.RegisterStack
+            && availableRegisterArgumentMask == existing.AvailableRegisterArgumentMask
+            && usedRegisterArgumentMask == existing.UsedRegisterArgumentMask)
         {
             return existing;
         }
@@ -4774,7 +5048,9 @@ public sealed class BasicAnalysisService : IAnalysisService
             stackArgumentOffsets,
             stackArguments,
             stackLocalVariables,
-            registerStack);
+            registerStack,
+            availableRegisterArgumentMask,
+            usedRegisterArgumentMask);
     }
 
     private static ImmutableDictionary<TKey, T> MeetValues<TKey, T>(
@@ -11029,6 +11305,23 @@ public sealed class BasicAnalysisService : IAnalysisService
             ? []
             : registerNames[..(lastUsedIndex + 1)];
     }
+
+    private static byte GetRegisterArgumentMask(IReadOnlyList<bool> values)
+    {
+        byte mask = 0;
+        for (int index = 0; index < Math.Min(values.Count, 3); index++)
+        {
+            if (values[index])
+            {
+                mask |= (byte)(1 << index);
+            }
+        }
+
+        return mask;
+    }
+
+    private static bool[] CreateRegisterArgumentStates(byte mask) =>
+        Enumerable.Range(0, 3).Select(index => (mask & (1 << index)) != 0).ToArray();
 
     private static bool IsRegisterOperand(DecodedOperand operand, string register) =>
         operand.Kind == DecodedOperandKind.Register
