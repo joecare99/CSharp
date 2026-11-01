@@ -148,6 +148,65 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
         }
     }
 
+    [TestMethod]
+    public async Task FindDefinitionAsync_ReturnsSourceLocationForReferencedSymbol()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_RoslynDefinition_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string sourcePath = Path.Combine(root, "Program.cs");
+            string definitionPath = Path.Combine(root, "MarkerType.cs");
+            await File.WriteAllTextAsync(projectPath,
+                $"<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net{Environment.Version.Major}.0</TargetFramework><ImplicitUsings>disable</ImplicitUsings></PropertyGroup></Project>");
+            await File.WriteAllTextAsync(sourcePath,
+                "using Demo;\npublic class Consumer { void Run() { var value = new MarkerType(); } }");
+            await File.WriteAllTextAsync(definitionPath,
+                "namespace Demo;\npublic class MarkerType { }");
+
+            ProcessStartInfo restoreStartInfo = new("dotnet")
+            {
+                WorkingDirectory = AppContext.BaseDirectory,
+                ArgumentList = { "restore", projectPath, "--ignore-failed-sources", "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            ClearInheritedMsBuildEnvironment(restoreStartInfo);
+            using Process restore = Process.Start(restoreStartInfo)
+                ?? throw new InvalidOperationException("Could not start dotnet restore for the definition test.");
+            Task<string> standardOutput = restore.StandardOutput.ReadToEndAsync();
+            Task<string> standardError = restore.StandardError.ReadToEndAsync();
+            await restore.WaitForExitAsync();
+            if (restore.ExitCode != 0)
+            {
+                Assert.Fail($"Temporary C# project restore failed: {await standardOutput}{await standardError}");
+            }
+
+            AA98_AvlnCodeStudio.Model.Workspaces.CSharpWorkspace workspace =
+                new AA98_AvlnCodeStudio.Model.Workspaces.CSharpWorkspaceLoader().Load(projectPath);
+            const string source = "using Demo;\npublic class Consumer { void Run() { var value = new MarkerType(); } }";
+            int position = source.IndexOf("MarkerType", source.IndexOf("new MarkerType", StringComparison.Ordinal), StringComparison.Ordinal);
+            using CSharpSyntaxDiagnosticService service = new();
+
+            Code.Navigation.CodeLocation? location = await service.FindDefinitionAsync(
+                source,
+                sourcePath,
+                position,
+                workspace);
+
+            Assert.IsNotNull(location);
+            Assert.AreEqual(Path.GetFullPath(definitionPath), location.Path);
+            Assert.AreEqual(2, location.Line);
+            Assert.AreEqual(14, location.Column);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
     private static void ClearInheritedMsBuildEnvironment(ProcessStartInfo startInfo)
     {
         startInfo.Environment.Remove("MSBuildSDKsPath");

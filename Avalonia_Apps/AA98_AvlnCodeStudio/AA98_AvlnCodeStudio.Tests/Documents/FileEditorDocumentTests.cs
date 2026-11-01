@@ -1,6 +1,7 @@
 using AA98_AvlnCodeStudio.Model.Documents;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 
 namespace AA98_AvlnCodeStudio.Tests.Documents;
 
@@ -31,10 +32,11 @@ public class FileEditorDocumentTests
     public void LoadSetsContentAndClearsDirtyFlag()
     {
         var document = new FileEditorDocument();
+        string filePath = Path.Combine(Path.GetTempPath(), "sample.cs");
 
-        document.Load(@"C:\Temp\sample.cs", "class C {}\n");
+        document.Load(filePath, "class C {}\n");
 
-        Assert.AreEqual(@"C:\Temp\sample.cs", document.FilePath);
+        Assert.AreEqual(filePath, document.FilePath);
         Assert.AreEqual("sample.cs", document.DisplayName);
         Assert.AreEqual("class C {}\n", document.Content);
         Assert.IsFalse(document.IsDirty);

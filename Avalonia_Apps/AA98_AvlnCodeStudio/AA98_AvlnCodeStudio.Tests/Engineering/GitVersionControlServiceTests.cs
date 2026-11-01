@@ -24,8 +24,8 @@ public class GitVersionControlServiceTests
     public async Task GetStatusAsync_MapsRepositoryBranchAndChanges()
     {
         IGitCommandRunner gitCommandRunner = Substitute.For<IGitCommandRunner>();
-        string repositoryContextPath = Path.Combine("C:", "src", "AA98");
-        string repositoryRootPath = Path.Combine("C:", "src", "AA98");
+        string repositoryContextPath = Path.Combine(Path.GetTempPath(), "src", "AA98");
+        string repositoryRootPath = repositoryContextPath;
 
         gitCommandRunner
             .RunAsync(repositoryContextPath, "rev-parse --show-toplevel", Arg.Any<CancellationToken>())
@@ -93,7 +93,7 @@ public class GitVersionControlServiceTests
     public async Task GetStatusAsync_MapsDetachedHeadWhenBranchIsUnavailable()
     {
         IGitCommandRunner gitCommandRunner = Substitute.For<IGitCommandRunner>();
-        string repositoryRootPath = Path.Combine("C:", "src", "AA98");
+        string repositoryRootPath = Path.Combine(Path.GetTempPath(), "src", "AA98");
 
         gitCommandRunner
             .RunAsync(repositoryRootPath, "rev-parse --show-toplevel", Arg.Any<CancellationToken>())
@@ -144,7 +144,7 @@ public class GitVersionControlServiceTests
     public async Task GetStatusAsync_ReturnsConservativeStatusWhenRepositoryDiscoveryFails()
     {
         IGitCommandRunner gitCommandRunner = Substitute.For<IGitCommandRunner>();
-        string repositoryContextPath = Path.Combine("C:", "src", "NoRepo");
+        string repositoryContextPath = Path.Combine(Path.GetTempPath(), "src", "NoRepo");
 
         gitCommandRunner
             .RunAsync(repositoryContextPath, "rev-parse --show-toplevel", Arg.Any<CancellationToken>())
@@ -177,7 +177,7 @@ public class GitVersionControlServiceTests
     public async Task GetStatusAsync_DoesNotPopulateCapabilitiesWhenDisabled()
     {
         IGitCommandRunner gitCommandRunner = Substitute.For<IGitCommandRunner>();
-        string repositoryRootPath = Path.Combine("C:", "src", "AA98");
+        string repositoryRootPath = Path.Combine(Path.GetTempPath(), "src", "AA98");
 
         gitCommandRunner
             .RunAsync(repositoryRootPath, "rev-parse --show-toplevel", Arg.Any<CancellationToken>())
@@ -220,7 +220,7 @@ public class GitVersionControlServiceTests
     public async Task GetStatusAsync_SkipsChangeEnumerationWhenDisabled()
     {
         IGitCommandRunner gitCommandRunner = Substitute.For<IGitCommandRunner>();
-        string repositoryRootPath = Path.Combine("C:", "src", "AA98");
+        string repositoryRootPath = Path.Combine(Path.GetTempPath(), "src", "AA98");
 
         gitCommandRunner
             .RunAsync(repositoryRootPath, "rev-parse --show-toplevel", Arg.Any<CancellationToken>())

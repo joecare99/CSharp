@@ -315,7 +315,7 @@ public class MarkdownPlanningReaderTests
             Assert.IsNotNull(task.Parent);
             Assert.AreEqual("AA98-Bl043", task.Parent.ItemId);
             Assert.AreEqual(PlanningItemKind.BacklogItem, task.Parent.Kind);
-            Assert.AreEqual("DevOps\\BacklogItems\\AA98-Bl043-DevOps-Planning-Local-Model-Baseline.md", task.Parent.SourcePath);
+            Assert.AreEqual(Path.Combine("DevOps", "BacklogItems", "AA98-Bl043-DevOps-Planning-Local-Model-Baseline.md"), task.Parent.SourcePath);
             Assert.IsFalse(task.Diagnostics.Any(static diagnostic => diagnostic.Code == "PLN031"));
         }
         finally
@@ -524,7 +524,7 @@ public class MarkdownPlanningReaderTests
             Assert.AreEqual(PlanningItemStatus.Completed, extractedTask.Status);
             Assert.IsNotNull(extractedTask.Parent);
             Assert.AreEqual("AA98-Bl010", extractedTask.Parent.ItemId);
-            Assert.AreEqual("DevOps\\BacklogItems\\AA98-Bl010-Component-Registration-Baseline.md", extractedTask.Parent.SourcePath);
+            Assert.AreEqual(Path.Combine("DevOps", "BacklogItems", "AA98-Bl010-Component-Registration-Baseline.md"), extractedTask.Parent.SourcePath);
             Assert.AreEqual(2, extractedTask.RelatedParents.Count);
             Assert.AreEqual("DevOps/Features/AA98-F03-Workbench-Startup-and-Composition.md", extractedTask.RelatedParents[0].ItemId);
             Assert.AreEqual("DevOps/Epics/AA98-E02-Editor-Framework.md", extractedTask.RelatedParents[1].ItemId);
@@ -533,7 +533,7 @@ public class MarkdownPlanningReaderTests
                 item.SourcePath.EndsWith("AA98-T001-Implement-Small-Editor.md", StringComparison.Ordinal));
             Assert.IsNotNull(smallEditorTask.Parent);
             Assert.AreEqual("AA98-Bl001", smallEditorTask.Parent.ItemId);
-            Assert.AreEqual("DevOps\\BacklogItems\\AA98-Bl001-Small-Editor-Foundation.md", smallEditorTask.Parent.SourcePath);
+            Assert.AreEqual(Path.Combine("DevOps", "BacklogItems", "AA98-Bl001-Small-Editor-Foundation.md"), smallEditorTask.Parent.SourcePath);
             Assert.IsFalse(smallEditorTask.Diagnostics.Any(static diagnostic => diagnostic.Code == "PLN031"));
         }
         finally

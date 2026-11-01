@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Property.Editor;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -198,8 +199,10 @@ public class PlanningUiExplorerViewModelTests
     {
         IPlanningProvider provider = Substitute.For<IPlanningProvider>();
         PlanningReadResult readResult = CreateResult();
-        readResult.RepositoryRootPath = "C:\\Repo";
-        readResult.PlanningRootPath = "C:\\Repo\\DevOps";
+        string repositoryRootPath = Path.Combine(Path.GetTempPath(), "AA98_PlanningUiExplorerTests");
+        string planningRootPath = Path.Combine(repositoryRootPath, "DevOps");
+        readResult.RepositoryRootPath = repositoryRootPath;
+        readResult.PlanningRootPath = planningRootPath;
         provider
             .ReadAsync(Arg.Any<PlanningReadRequest>(), Arg.Any<CancellationToken>())
             .Returns(_ => Task.FromResult(readResult));
@@ -210,7 +213,7 @@ public class PlanningUiExplorerViewModelTests
         PlanningExplorerViewModel viewModel = new(provider);
         await viewModel.LoadAsync(new PlanningReadRequest
         {
-            RepositoryRootPath = "C:\\Repo",
+            RepositoryRootPath = repositoryRootPath,
             PlanningRootPath = "DevOps",
         });
         viewModel.SelectedItemDocumentText = "# AA98-E12 Updated Document";
@@ -220,12 +223,12 @@ public class PlanningUiExplorerViewModelTests
 
         await provider.Received(1).WriteAsync(
             Arg.Is<PlanningWriteRequest>(request =>
-                request.RepositoryRootPath == "C:\\Repo" &&
+                request.RepositoryRootPath == repositoryRootPath &&
                 request.PlanningRootPath == "DevOps" &&
                 request.Items.Single().Id == "AA98-E12" &&
                 request.Items.Single().DocumentText == "# AA98-E12 Updated Document" &&
                 request.Items.Single().Status == PlanningItemStatus.Completed &&
-                request.ExpectedDocumentTexts["DevOps\\Epics\\AA98-E12-DevOps-Planning-Workbench.md"] == "# AA98-E12 DevOps Planning Workbench"),
+                request.ExpectedDocumentTexts[Path.Combine("DevOps", "Epics", "AA98-E12-DevOps-Planning-Workbench.md")] == "# AA98-E12 DevOps Planning Workbench"),
             Arg.Any<CancellationToken>());
         Assert.AreEqual("Saved AA98-E12.", viewModel.StatusText);
     }
@@ -238,7 +241,7 @@ public class PlanningUiExplorerViewModelTests
             Title = "DevOps Planning Workbench",
             Kind = PlanningItemKind.Epic,
             Status = PlanningItemStatus.InProgress,
-            SourcePath = "DevOps\\Epics\\AA98-E12-DevOps-Planning-Workbench.md",
+            SourcePath = Path.Combine("DevOps", "Epics", "AA98-E12-DevOps-Planning-Workbench.md"),
             DocumentText = "# AA98-E12 DevOps Planning Workbench",
         };
 
@@ -248,7 +251,7 @@ public class PlanningUiExplorerViewModelTests
             Title = "Repository and Planning Workflows",
             Kind = PlanningItemKind.Feature,
             Status = PlanningItemStatus.InProgress,
-            SourcePath = "DevOps\\Features\\AA98-F43-Repository-and-Planning-Workflows.md",
+            SourcePath = Path.Combine("DevOps", "Features", "AA98-F43-Repository-and-Planning-Workflows.md"),
             DocumentText = "# AA98-F43 Repository and Planning Workflows",
             Parent = new PlanningItemLink
             {
@@ -271,7 +274,7 @@ public class PlanningUiExplorerViewModelTests
             Title = "Add Planning UI Tests",
             Kind = PlanningItemKind.Task,
             Status = PlanningItemStatus.Proposed,
-            SourcePath = "DevOps\\Tasks\\AA98-T064-Add-Planning-UI-Tests.md",
+            SourcePath = Path.Combine("DevOps", "Tasks", "AA98-T064-Add-Planning-UI-Tests.md"),
         };
         task.Diagnostics.Add(new Diagnostic
         {

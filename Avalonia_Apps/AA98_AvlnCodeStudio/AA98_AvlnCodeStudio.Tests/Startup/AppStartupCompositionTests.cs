@@ -5,6 +5,8 @@ using AA98_AvlnCodeStudio.UI.ViewModels;
 using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.Editor.Navigation;
 using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
+using AA98_AvlnCodeStudio.Base.Testing.Services;
+using AA98_AvlnCodeStudio.Base.Debugging.Services;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avln_CommonDialogs.Base.Interfaces;
 using Code.Navigation;
@@ -49,6 +51,8 @@ public class AppStartupCompositionTests
         var commandCatalog = serviceProvider.GetRequiredService<IWorkbenchCommandCatalog>();
         var workspaceLoader = serviceProvider.GetRequiredService<CSharpWorkspaceLoader>();
         var workspaceFileDialog = serviceProvider.GetRequiredService<IWorkspaceFileDialogService>();
+        var testExecutionService = serviceProvider.GetRequiredService<ITestExecutionService>();
+        var debugSessionService = serviceProvider.GetRequiredService<IDebugSessionService>();
 
         Assert.IsNotNull(viewModelFactory);
         Assert.IsNotNull(workflowFactory);
@@ -61,6 +65,8 @@ public class AppStartupCompositionTests
         Assert.IsNotNull(commandCatalog);
         Assert.IsNotNull(workspaceLoader);
         Assert.IsNotNull(workspaceFileDialog);
+        Assert.IsInstanceOfType<DotNetTestExecutionService>(testExecutionService);
+        Assert.IsInstanceOfType<NetCoreDbgDebugSessionService>(debugSessionService);
         diagnostics.SelectedDiagnostic = new AppKomponentBaseLib.Diagnostics.Diagnostic
         {
             SourcePath = Path.GetTempFileName(),
