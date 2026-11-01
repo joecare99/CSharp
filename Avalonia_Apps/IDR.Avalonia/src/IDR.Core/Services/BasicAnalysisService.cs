@@ -3278,7 +3278,7 @@ public sealed class BasicAnalysisService : IAnalysisService
                 {
                     AvailableRegisterArgumentMask = RegisterArgumentMask
                 };
-                bool hasRootFlowState = true;
+                bool hasRootFlowState = codeStart == session.EntryPointRva;
                 ImmutableDictionary<int, string> indirectPrototypeRegisterTypes =
                     ImmutableDictionary<int, string>.Empty;
                 if (session.Items.TryGetValue(codeStart, out AnalysisItem? procedureItem))
@@ -3344,6 +3344,11 @@ public sealed class BasicAnalysisService : IAnalysisService
                 CreateRegisterArgumentStates(entryFlowState.AvailableRegisterArgumentMask);
             bool[] usedRegisterArguments =
                 CreateRegisterArgumentStates(entryFlowState.UsedRegisterArgumentMask);
+            if (isProcedureStart)
+            {
+                Array.Fill(availableRegisterArguments, true);
+                Array.Fill(usedRegisterArguments, false);
+            }
             string? returnTypeCandidate = null;
             bool reachedTerminator = false;
             List<DecodedInstruction> recentInstructions = [];
