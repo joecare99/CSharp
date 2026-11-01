@@ -6,10 +6,12 @@
     <Project Path="AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.Building/AA98_AvlnCodeStudio.Base.Building.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.Debugging/AA98_AvlnCodeStudio.Base.Debugging.csproj" />
+    <Project Path="AA98_AvlnCodeStudio.Host.Mcp/AA98_AvlnCodeStudio.Host.Mcp.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.OS/AA98_AvlnCodeStudio.Base.OS.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.Testing/AA98_AvlnCodeStudio.Base.Testing.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.UI/AA98_AvlnCodeStudio.Base.UI.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base/AA98_AvlnCodeStudio.Base.csproj" />
+    <Project Path="AA98_AvlnCodeStudio.AxamlDesigner.UI/AA98_AvlnCodeStudio.AxamlDesigner.UI.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.Versioning/AA98_AvlnCodeStudio.Base.Versioning.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Building.Workbench/AA98_AvlnCodeStudio.Building.Workbench.csproj" />
     <Project Path="AA98.Builder.Host/AA98.Builder.Host.csproj" />
@@ -29,6 +31,7 @@
     <Project Path="AA98_AvlnCodeStudio.Model/AA98_AvlnCodeStudio.Model.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj" />
     <Project Path="AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" />
+    <Project Path="AA98_AxamlDesigner.Host/AA98_AxamlDesigner.Host.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Versioning.Git/AA98_AvlnCodeStudio.Versioning.Git.csproj" />
   </Folder>
   <Folder Name="/Libraries/">
