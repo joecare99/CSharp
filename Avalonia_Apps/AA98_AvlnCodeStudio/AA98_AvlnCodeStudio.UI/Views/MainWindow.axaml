@@ -7,6 +7,8 @@
         xmlns:configUi="using:Config.UI.Avalonia.Views"
         xmlns:projectExplorer="using:Project.Explorer.Avalonia.Views"
         xmlns:debugging="using:AA98_AvlnCodeStudio.Base.Debugging.Models"
+        xmlns:designer="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.Views"
+        xmlns:workspaces="using:AA98_AvlnCodeStudio.Model.Workspaces"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="AA98_AvlnCodeStudio.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -36,6 +38,10 @@
             <StackPanel Spacing="8">
                 <Menu>
                     <MenuItem Header="{Binding FileMenuHeader}">
+                        <MenuItem Header="{Binding ProjectTemplatesMenuText}">
+                            <MenuItem Header="{Binding CreateSelectedProjectCommandText}" Command="{Binding CreateSelectedProjectCommand}" />
+                            <MenuItem Header="{Binding ReloadProjectTemplatesCommandText}" Command="{Binding ReloadProjectTemplatesCommand}" />
+                        </MenuItem>
                         <MenuItem Header="{Binding OpenWorkspaceCommandText}" Command="{Binding OpenWorkspaceCommand}" />
                         <MenuItem Header="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
                         <MenuItem Header="{Binding RunTestsCommandText}" Command="{Binding RunWorkspaceTestsCommand}" />
@@ -61,6 +67,17 @@
                 </Menu>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ComboBox Width="220"
+                              ItemsSource="{Binding ProjectTemplates}"
+                              SelectedItem="{Binding SelectedProjectTemplate, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Content="{Binding CreateSelectedProjectCommandText}" Command="{Binding CreateSelectedProjectCommand}" />
+                    <Button Content="{Binding ReloadProjectTemplatesCommandText}" Command="{Binding ReloadProjectTemplatesCommand}" />
                     <Button Content="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
                     <Button Content="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
                     <Button Content="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
@@ -81,6 +98,68 @@
                     <Button Content="{Binding StepOverCommandText}" Command="{Binding StepOverCommand}" />
                     <Button Content="{Binding StepOutCommandText}" Command="{Binding StepOutCommand}" />
                 </StackPanel>
+                <Grid ColumnDefinitions="*,*"
+                      RowDefinitions="Auto,120"
+                      ColumnSpacing="8"
+                      RowSpacing="6">
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <ComboBox Width="200"
+                                      PlaceholderText="{Binding PackageProjectPlaceholderText}"
+                                      ItemsSource="{Binding PackageProjects}"
+                                      SelectedItem="{Binding SelectedPackageProject, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <Button Content="{Binding ListPackagesCommandText}" Command="{Binding RefreshPackagesCommand}" />
+                            <TextBox Width="200"
+                                     PlaceholderText="{Binding PackageSearchPlaceholderText}"
+                                     Text="{Binding PackageSearchText, Mode=TwoWay}" />
+                            <Button Content="{Binding SearchPackagesCommandText}" Command="{Binding SearchPackagesCommand}" />
+                            <TextBox Width="180"
+                                     PlaceholderText="{Binding PackageIdPlaceholderText}"
+                                     Text="{Binding PackageId, Mode=TwoWay}" />
+                            <TextBox Width="150"
+                                     PlaceholderText="{Binding PackageVersionPlaceholderText}"
+                                     Text="{Binding PackageVersion, Mode=TwoWay}" />
+                            <Button Content="{Binding AddPackageCommandText}" Command="{Binding AddPackageCommand}" />
+                            <Button Content="{Binding RemovePackageCommandText}" Command="{Binding RemovePackageCommand}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <ListBox Grid.Row="1" Grid.Column="0"
+                             ItemsSource="{Binding InstalledPackages}"
+                             SelectedItem="{Binding SelectedInstalledPackage, Mode=TwoWay}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="workspaces:CSharpProjectPackageReference">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding ResolvedVersion}" />
+                                    <TextBlock Text="{Binding TargetFramework}" Opacity="0.7" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <ListBox Grid.Row="1" Grid.Column="1"
+                             ItemsSource="{Binding PackageSearchResults}"
+                             SelectedItem="{Binding SelectedPackageSearchResult, Mode=TwoWay}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="workspaces:NuGetPackageSearchResult">
+                                <StackPanel Spacing="2">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding LatestVersion}" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Description}"
+                                               Opacity="0.7"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
             </StackPanel>
         </Border>
 
@@ -194,19 +273,30 @@
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-                <TabControl ItemsSource="{Binding EditorWorkspace.Tabs}"
-                            SelectedItem="{Binding ActiveEditorTab, Mode=TwoWay}">
-                    <TabControl.ItemTemplate>
-                        <DataTemplate x:DataType="vm:EditorTabViewModel">
-                            <TextBlock Text="{Binding Title}" />
-                        </DataTemplate>
-                    </TabControl.ItemTemplate>
-                    <TabControl.ContentTemplate>
-                        <DataTemplate x:DataType="vm:EditorTabViewModel">
-                            <ContentControl Content="{Binding View}" />
-                        </DataTemplate>
-                    </TabControl.ContentTemplate>
-                </TabControl>
+                <Grid ColumnDefinitions="*,Auto,*">
+                    <TabControl Grid.Column="0"
+                                ItemsSource="{Binding EditorWorkspace.Tabs}"
+                                SelectedItem="{Binding ActiveEditorTab, Mode=TwoWay}">
+                        <TabControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:EditorTabViewModel">
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </TabControl.ItemTemplate>
+                        <TabControl.ContentTemplate>
+                            <DataTemplate x:DataType="vm:EditorTabViewModel">
+                                <ContentControl Content="{Binding View}" />
+                            </DataTemplate>
+                        </TabControl.ContentTemplate>
+                    </TabControl>
+                    <GridSplitter Grid.Column="1"
+                                  Width="8"
+                                  ResizeDirection="Columns"
+                                  IsVisible="{Binding HasAxamlPreview}" />
+                    <designer:AxamlDesignerView Grid.Column="2"
+                                                Margin="8,0,0,0"
+                                                IsVisible="{Binding HasPreview}"
+                                                DataContext="{Binding AxamlDesigner}" />
+                </Grid>
             </DockPanel>
         </Border>
 

@@ -56,6 +56,12 @@ public static class UiStrings
 
     public static string OpenWorkspaceCommandText => GetString(nameof(OpenWorkspaceCommandText));
 
+    public static string CreateConsoleProjectCommandText => GetString(nameof(CreateConsoleProjectCommandText));
+
+    public static string CreateClassLibraryProjectCommandText => GetString(nameof(CreateClassLibraryProjectCommandText));
+
+    public static string CreateTestProjectCommandText => GetString(nameof(CreateTestProjectCommandText));
+
     public static string BuildWorkspaceCommandText => GetString(nameof(BuildWorkspaceCommandText));
 
     public static string BuildUnavailableText => GetString(nameof(BuildUnavailableText));

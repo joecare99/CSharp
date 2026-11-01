@@ -72,6 +72,15 @@
   <data name="OpenWorkspaceCommandText" xml:space="preserve">
     <value>Open C# Workspace...</value>
   </data>
+  <data name="CreateConsoleProjectCommandText" xml:space="preserve">
+    <value>New Console Project...</value>
+  </data>
+  <data name="CreateClassLibraryProjectCommandText" xml:space="preserve">
+    <value>New Class Library...</value>
+  </data>
+  <data name="CreateTestProjectCommandText" xml:space="preserve">
+    <value>New MSTest Project...</value>
+  </data>
   <data name="BuildWorkspaceCommandText" xml:space="preserve">
     <value>Build Workspace</value>
   </data>

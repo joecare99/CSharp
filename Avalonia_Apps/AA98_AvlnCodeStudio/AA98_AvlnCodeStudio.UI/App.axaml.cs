@@ -100,6 +100,13 @@ namespace AA98_AvlnCodeStudio.UI
                 .AddConfigUiAvalonia();
             services.AddSingleton<IFileEditorDocumentFactory, FileEditorDocumentFactory>();
             services.AddSingleton<Services.IWorkspaceFileDialogService, Services.AvaloniaWorkspaceFileDialogService>();
+            services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.CSharpProjectTemplateService>();
+            services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.ICSharpProjectPackageService,
+                AA98_AvlnCodeStudio.Model.Workspaces.DotNetCSharpProjectPackageService>();
+            services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.AxamlPreviewService>();
+            services.AddSingleton<AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels.AxamlDesignerViewModel>(serviceProvider =>
+                new AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels.AxamlDesignerViewModel(
+                    serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.AxamlPreviewService>()));
             services.AddSingleton<UI.Services.CSharpSyntaxDiagnosticService>();
             services.AddSingleton<IEditorWorkflowFactory, EditorWorkflowFactory>();
             services.AddSingleton<UI.ViewModels.IEditorViewModelFactory, UI.ViewModels.EditorViewModelFactory>();
@@ -136,7 +143,10 @@ namespace AA98_AvlnCodeStudio.UI
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService>(),
                 serviceProvider.GetRequiredService<UI.Services.CSharpSyntaxDiagnosticService>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Testing.Services.ITestExecutionService>(),
-                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Debugging.Services.IDebugSessionService>()));
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Debugging.Services.IDebugSessionService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.CSharpProjectTemplateService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.ICSharpProjectPackageService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels.AxamlDesignerViewModel>()));
             services.AddSingleton<MainWindow>();
         }
 

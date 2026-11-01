@@ -12,13 +12,16 @@ public sealed class AvaloniaWorkspaceFileDialogService : IWorkspaceFileDialogSer
     private static readonly FileTypeFilter WorkspaceFilter = new(
         "C# workspace files",
         new[] { "*.sln", "*.slnx", "*.csproj" });
+    private static readonly FileTypeFilter ProjectFilter = new("C# project", new[] { "*.csproj" });
     private static readonly FileTypeFilter AllFilesFilter = new("All files", new[] { "*" });
 
     private readonly IOpenFileDialog _openFileDialog;
+    private readonly ISaveFileDialog _saveFileDialog;
 
-    public AvaloniaWorkspaceFileDialogService(IOpenFileDialog openFileDialog)
+    public AvaloniaWorkspaceFileDialogService(IOpenFileDialog openFileDialog, ISaveFileDialog saveFileDialog)
     {
         _openFileDialog = openFileDialog;
+        _saveFileDialog = saveFileDialog;
     }
 
     /// <inheritdoc/>
@@ -37,5 +40,25 @@ public sealed class AvaloniaWorkspaceFileDialogService : IWorkspaceFileDialogSer
 
         var files = await _openFileDialog.ShowAsync().ConfigureAwait(false);
         return files.Count > 0 ? files[0] : null;
+    }
+
+    /// <inheritdoc/>
+    public async Task<string?> ShowSaveCSharpProjectDialogAsync(
+        string? initialDirectory,
+        string? initialFileName,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        _saveFileDialog.Title = "Create C# console project";
+        _saveFileDialog.InitialDirectory = initialDirectory;
+        _saveFileDialog.InitialFileName = initialFileName;
+        _saveFileDialog.DefaultExtension = "csproj";
+        _saveFileDialog.OverwritePrompt = false;
+        _saveFileDialog.MutableFilters.Clear();
+        _saveFileDialog.MutableFilters.Add(ProjectFilter);
+        _saveFileDialog.MutableFilters.Add(AllFilesFilter);
+
+        return await _saveFileDialog.ShowAsync().ConfigureAwait(false);
     }
 }
