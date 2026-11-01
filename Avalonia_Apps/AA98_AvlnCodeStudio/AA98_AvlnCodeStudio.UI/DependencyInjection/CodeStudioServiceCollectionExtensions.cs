@@ -1,5 +1,6 @@
 using AA98_AvlnCodeStudio.Base.AI.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Building.DependencyInjection;
+using AA98_AvlnCodeStudio.Base.Debugging.Services;
 #if NET10_0
 using AA98_AvlnCodeStudio.Building.Workbench.DependencyInjection;
 using AA98_AvlnCodeStudio.Versioning.Git.DependencyInjection;
@@ -7,6 +8,7 @@ using AA98_AvlnCodeStudio.Versioning.Git.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Debugging.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.OS.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Testing.DependencyInjection;
+using AA98_AvlnCodeStudio.Base.Testing.Services;
 using AA98_AvlnCodeStudio.Base.UI.DependencyInjection;
 using AA98_AvlnCodeStudio.Base.Versioning.DependencyInjection;
 using AA98_AvlnCodeStudio.Planning.Core.Services;
@@ -39,8 +41,9 @@ public static class CodeStudioServiceCollectionExtensions
         services.AddCodeStudioBuilding();
         services.AddCodeStudioVersioning();
 #endif
-        services.AddCodeStudioTesting();
-        services.AddCodeStudioDebugging();
+        services.AddCodeStudioTesting<DotNetTestExecutionService>();
+        services.AddSingleton<AA98_AvlnCodeStudio.Base.Debugging.Services.IDebugSessionService>(
+            _ => new NetCoreDbgDebugSessionService());
         services.AddCodeStudioOS<FileSystemTextDocumentStorageService>();
         services.AddCodeStudioUI<AvaloniaEditorFileDialogService>();
         services.AddWorkbenchCommandCatalog();

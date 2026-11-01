@@ -50,11 +50,41 @@ public static class UiStrings
 
     public static string GoToDefinitionCommandText => GetString(nameof(GoToDefinitionCommandText));
 
+    public static string RunTestsCommandText => GetString(nameof(RunTestsCommandText));
+
+    public static string RunTestsUnavailableText => GetString(nameof(RunTestsUnavailableText));
+
     public static string OpenWorkspaceCommandText => GetString(nameof(OpenWorkspaceCommandText));
 
     public static string BuildWorkspaceCommandText => GetString(nameof(BuildWorkspaceCommandText));
 
     public static string BuildUnavailableText => GetString(nameof(BuildUnavailableText));
+
+    public static string StartDebuggingCommandText => GetString(nameof(StartDebuggingCommandText));
+
+    public static string StopDebuggingCommandText => GetString(nameof(StopDebuggingCommandText));
+
+    public static string ToggleBreakpointCommandText => GetString(nameof(ToggleBreakpointCommandText));
+
+    public static string ContinueDebuggingCommandText => GetString(nameof(ContinueDebuggingCommandText));
+
+    public static string PauseDebuggingCommandText => GetString(nameof(PauseDebuggingCommandText));
+
+    public static string StepIntoCommandText => GetString(nameof(StepIntoCommandText));
+
+    public static string StepOverCommandText => GetString(nameof(StepOverCommandText));
+
+    public static string StepOutCommandText => GetString(nameof(StepOutCommandText));
+
+    public static string RefreshDebugStackCommandText => GetString(nameof(RefreshDebugStackCommandText));
+
+    public static string LoadDebugVariablesCommandText => GetString(nameof(LoadDebugVariablesCommandText));
+
+    public static string DebugStackFramesTitle => GetString(nameof(DebugStackFramesTitle));
+
+    public static string DebugVariablesTitle => GetString(nameof(DebugVariablesTitle));
+
+    public static string DebugTargetPlaceholderText => GetString(nameof(DebugTargetPlaceholderText));
 
     public static string NoWorkspaceOpenText => GetString(nameof(NoWorkspaceOpenText));
 

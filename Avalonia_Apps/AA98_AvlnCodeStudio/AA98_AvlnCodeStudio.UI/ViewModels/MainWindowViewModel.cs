@@ -5,6 +5,10 @@ using AA98_AvlnCodeStudio.Base.Building.Models;
 using AA98_AvlnCodeStudio.Base.Building.Services;
 using AA98_AvlnCodeStudio.Base.Versioning.Models;
 using AA98_AvlnCodeStudio.Base.Versioning.Services;
+using AA98_AvlnCodeStudio.Base.Testing.Models;
+using AA98_AvlnCodeStudio.Base.Testing.Services;
+using AA98_AvlnCodeStudio.Base.Debugging.Models;
+using AA98_AvlnCodeStudio.Base.Debugging.Services;
 using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
 using AppKomponentBaseLib.Diagnostics;
 using System;
@@ -20,6 +24,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Threading;
+using Code.Navigation;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels
 {
@@ -32,7 +38,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly ICodeStudioBuilderService _builderService;
         private readonly IVersionControlService _versionControlService;
         private readonly Services.CSharpSyntaxDiagnosticService _csharpSyntaxDiagnosticService;
+        private readonly ITestExecutionService _testExecutionService;
+        private readonly IDebugSessionService _debugSessionService;
         private readonly List<Diagnostic> _buildDiagnostics = [];
+        private readonly Dictionary<string, HashSet<int>> _debugBreakpoints = new(
+            OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
         private List<Diagnostic> _languageDiagnostics = [];
         private CancellationTokenSource? _languageAnalysisCancellation;
         private EditorViewModel? _observedEditor;
@@ -73,7 +83,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             IVersionControlService? versionControlService = null,
             EditorDocumentWorkspace? editorWorkspace = null,
             AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService? editorFileDialogService = null,
-            Services.CSharpSyntaxDiagnosticService? csharpSyntaxDiagnosticService = null)
+            Services.CSharpSyntaxDiagnosticService? csharpSyntaxDiagnosticService = null,
+            ITestExecutionService? testExecutionService = null,
+            IDebugSessionService? debugSessionService = null)
         {
             _editorWorkspace = editorWorkspace ?? new EditorDocumentWorkspace(editorComponent);
             _workspaceLoader = workspaceLoader ?? new CSharpWorkspaceLoader();
@@ -82,6 +94,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _versionControlService = versionControlService ?? new NullVersionControlService();
             _editorFileDialogService = editorFileDialogService ?? new Services.DesignEditorFileDialogService();
             _csharpSyntaxDiagnosticService = csharpSyntaxDiagnosticService ?? new Services.CSharpSyntaxDiagnosticService();
+            _testExecutionService = testExecutionService ?? new NullTestExecutionService();
+            _debugSessionService = debugSessionService ?? new NullDebugSessionService();
+            _debugSessionService.SessionEventReceived += OnDebugSessionEventReceived;
             _editorWorkspace.PropertyChanged += OnEditorWorkspacePropertyChanged;
             _observedEditor = _editorWorkspace.ActiveTab.Editor;
             _observedEditor.PropertyChanged += OnActiveEditorPropertyChanged;
@@ -122,7 +137,22 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(WorkspaceTitle))]
         [NotifyCanExecuteChangedFor(nameof(BuildWorkspaceCommand))]
+        [NotifyCanExecuteChangedFor(nameof(RunWorkspaceTestsCommand))]
+        [NotifyCanExecuteChangedFor(nameof(StartDebugSessionCommand))]
         private CSharpWorkspace? _workspace;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(StartDebugSessionCommand))]
+        private string _debugTargetPath = string.Empty;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(LoadDebugVariablesCommand))]
+        private DebugStackFrame? _selectedDebugStackFrame;
+
+        [ObservableProperty]
+        private DebugSessionState? _activeDebugSessionState;
+
+        private string? _activeDebugSessionId;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(VersionControlSummary))]
@@ -172,11 +202,21 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string GoToDefinitionCommandText => UiStrings.GoToDefinitionCommandText;
 
+        public string RunTestsCommandText => _testExecutionService is NullTestExecutionService
+            ? UiStrings.RunTestsUnavailableText
+            : UiStrings.RunTestsCommandText;
+
         public ObservableCollection<string> CompletionSuggestions { get; } = [];
+
+        public ObservableCollection<DebugStackFrame> DebugStackFrames { get; } = [];
+
+        public ObservableCollection<DebugVariable> DebugVariables { get; } = [];
 
         public string? SelectedCompletion { get; set; }
 
         public bool HasCompletionSuggestions => CompletionSuggestions.Count > 0;
+
+        public bool HasDebugSession => _activeDebugSessionId is not null;
 
         [RelayCommand]
         private void NewDocument()
@@ -303,6 +343,32 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             ? UiStrings.BuildUnavailableText
             : UiStrings.BuildWorkspaceCommandText;
 
+        public string StartDebuggingCommandText => UiStrings.StartDebuggingCommandText;
+
+        public string StopDebuggingCommandText => UiStrings.StopDebuggingCommandText;
+
+        public string ToggleBreakpointCommandText => UiStrings.ToggleBreakpointCommandText;
+
+        public string ContinueDebuggingCommandText => UiStrings.ContinueDebuggingCommandText;
+
+        public string PauseDebuggingCommandText => UiStrings.PauseDebuggingCommandText;
+
+        public string StepIntoCommandText => UiStrings.StepIntoCommandText;
+
+        public string StepOverCommandText => UiStrings.StepOverCommandText;
+
+        public string StepOutCommandText => UiStrings.StepOutCommandText;
+
+        public string RefreshDebugStackCommandText => UiStrings.RefreshDebugStackCommandText;
+
+        public string LoadDebugVariablesCommandText => UiStrings.LoadDebugVariablesCommandText;
+
+        public string DebugStackFramesTitle => UiStrings.DebugStackFramesTitle;
+
+        public string DebugVariablesTitle => UiStrings.DebugVariablesTitle;
+
+        public string DebugTargetPlaceholderText => UiStrings.DebugTargetPlaceholderText;
+
         public string NavigationPlaceholderMenuText => UiStrings.NavigationPlaceholderMenuText;
 
         public string StatusPlaceholderMenuText => UiStrings.StatusPlaceholderMenuText;
@@ -372,6 +438,404 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 && Workspace is { Projects.Count: > 0 };
         }
 
+        [RelayCommand(CanExecute = nameof(CanRunWorkspaceTests))]
+        private async Task RunWorkspaceTestsAsync(CancellationToken cancellationToken)
+        {
+            CSharpWorkspace workspace = Workspace
+                ?? throw new InvalidOperationException("Open a C# workspace before running tests.");
+            TestRunSummary summary = await _testExecutionService.RunTestsAsync(new TestRunRequest
+            {
+                WorkspaceRootPath = workspace.RootPath,
+                ProjectPath = workspace.EntryPath,
+            }, cancellationToken);
+
+            Editor.StatusText = $"Tests: {summary.Outcome} ({summary.TotalCount} total).";
+            Editor.NotificationText =
+                $"Tests: {summary.PassedCount} passed, {summary.FailedCount} failed, {summary.SkippedCount} skipped.";
+        }
+
+        private bool CanRunWorkspaceTests()
+        {
+            return _testExecutionService is not NullTestExecutionService
+                && Workspace is { Projects.Count: > 0 };
+        }
+
+        [RelayCommand(CanExecute = nameof(CanStartDebugSession))]
+        private async Task StartDebugSessionAsync(CancellationToken cancellationToken)
+        {
+            CSharpWorkspace workspace = Workspace
+                ?? throw new InvalidOperationException("Open a C# workspace before starting a debug session.");
+            string targetPath = Path.IsPathRooted(DebugTargetPath)
+                ? DebugTargetPath
+                : Path.Combine(workspace.RootPath, DebugTargetPath);
+            DebugSessionInfo session = await _debugSessionService.StartSessionAsync(new DebugLaunchRequest
+            {
+                Target = targetPath,
+                WorkingDirectory = workspace.RootPath,
+                StopAtEntry = true,
+            }, cancellationToken);
+
+            _activeDebugSessionId = session.SessionId;
+            ActiveDebugSessionState = session.State;
+            _debugBreakpoints.Clear();
+            DebugStackFrames.Clear();
+            DebugVariables.Clear();
+            SelectedDebugStackFrame = null;
+            OnPropertyChanged(nameof(HasDebugSession));
+            StartDebugSessionCommand.NotifyCanExecuteChanged();
+            StopDebugSessionCommand.NotifyCanExecuteChanged();
+            NotifyDebugControlCommands();
+            Editor.StatusText = session.State == DebugSessionState.Paused
+                ? $"Debugging paused at entry: {session.DisplayName ?? targetPath}."
+                : $"Debugging: {session.DisplayName ?? targetPath}.";
+            if (session.State == DebugSessionState.Paused)
+            {
+                _ = RefreshDebugStackForStoppedEventAsync(session.SessionId);
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanStopDebugSession))]
+        private async Task StopDebugSessionAsync(CancellationToken cancellationToken)
+        {
+            string sessionId = _activeDebugSessionId
+                ?? throw new InvalidOperationException("There is no active debug session.");
+            try
+            {
+                await _debugSessionService.StopSessionAsync(sessionId, cancellationToken);
+                Editor.StatusText = "Debug session stopped.";
+            }
+            finally
+            {
+                _activeDebugSessionId = null;
+                ActiveDebugSessionState = null;
+                _debugBreakpoints.Clear();
+                DebugStackFrames.Clear();
+                DebugVariables.Clear();
+                SelectedDebugStackFrame = null;
+                OnPropertyChanged(nameof(HasDebugSession));
+                StartDebugSessionCommand.NotifyCanExecuteChanged();
+                StopDebugSessionCommand.NotifyCanExecuteChanged();
+                NotifyDebugControlCommands();
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanContinueDebugSession))]
+        private async Task ContinueDebugSessionAsync(CancellationToken cancellationToken)
+        {
+            await _debugSessionService.ContinueSessionAsync(GetActiveDebugSessionId(), cancellationToken);
+            ActiveDebugSessionState = DebugSessionState.Running;
+            ClearDebugInspection();
+            NotifyDebugControlCommands();
+            Editor.StatusText = "Debug session continued.";
+        }
+
+        [RelayCommand(CanExecute = nameof(CanPauseDebugSession))]
+        private async Task PauseDebugSessionAsync(CancellationToken cancellationToken)
+        {
+            await _debugSessionService.PauseSessionAsync(GetActiveDebugSessionId(), cancellationToken);
+            ClearDebugInspection();
+            Editor.StatusText = "Debug session pause requested.";
+        }
+
+        [RelayCommand(CanExecute = nameof(CanStepDebugSession))]
+        private async Task StepIntoAsync(CancellationToken cancellationToken)
+        {
+            await StepDebugSessionAsync(DebugStepKind.Into, cancellationToken);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanStepDebugSession))]
+        private async Task StepOverAsync(CancellationToken cancellationToken)
+        {
+            await StepDebugSessionAsync(DebugStepKind.Over, cancellationToken);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanStepDebugSession))]
+        private async Task StepOutAsync(CancellationToken cancellationToken)
+        {
+            await StepDebugSessionAsync(DebugStepKind.Out, cancellationToken);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanInspectDebugSession))]
+        private async Task RefreshDebugStackAsync(CancellationToken cancellationToken)
+        {
+            await RefreshDebugStackAsync(GetActiveDebugSessionId(), cancellationToken);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanLoadDebugVariables))]
+        private async Task LoadDebugVariablesAsync(CancellationToken cancellationToken)
+        {
+            DebugStackFrame selectedFrame = SelectedDebugStackFrame
+                ?? throw new InvalidOperationException("Select a stack frame before loading variables.");
+            await LoadVariablesForFrameAsync(selectedFrame.Id, cancellationToken);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanToggleBreakpoint))]
+        private async Task ToggleBreakpointAsync(CancellationToken cancellationToken)
+        {
+            string sessionId = GetActiveDebugSessionId();
+            string sourcePath = Path.GetFullPath(Editor.CurrentFilePath
+                ?? throw new InvalidOperationException("Open a C# source file before setting a breakpoint."));
+            string source = Editor.Text ?? string.Empty;
+            int line = GetLineNumber(source, _observedEditorTextArea?.CaretOffset ?? 0);
+            HashSet<int> updatedLines = _debugBreakpoints.TryGetValue(sourcePath, out HashSet<int>? currentLines)
+                ? new HashSet<int>(currentLines)
+                : [];
+            bool added = updatedLines.Add(line);
+            if (!added)
+            {
+                updatedLines.Remove(line);
+            }
+
+            await _debugSessionService.SetBreakpointsAsync(
+                sessionId,
+                sourcePath,
+                updatedLines.Order().ToArray(),
+                cancellationToken);
+
+            if (updatedLines.Count == 0)
+            {
+                _debugBreakpoints.Remove(sourcePath);
+            }
+            else
+            {
+                _debugBreakpoints[sourcePath] = updatedLines;
+            }
+
+            Editor.StatusText = added
+                ? $"Breakpoint set at {Path.GetFileName(sourcePath)}:{line}."
+                : $"Breakpoint removed at {Path.GetFileName(sourcePath)}:{line}.";
+        }
+
+        private bool CanStartDebugSession()
+        {
+            if (_debugSessionService is NullDebugSessionService
+                || Workspace is null
+                || _activeDebugSessionId is not null
+                || string.IsNullOrWhiteSpace(DebugTargetPath))
+            {
+                return false;
+            }
+
+            string targetPath = Path.IsPathRooted(DebugTargetPath)
+                ? DebugTargetPath
+                : Path.Combine(Workspace.RootPath, DebugTargetPath);
+            return File.Exists(targetPath);
+        }
+
+        private bool CanStopDebugSession()
+        {
+            return _activeDebugSessionId is not null;
+        }
+
+        private bool CanContinueDebugSession()
+        {
+            return _activeDebugSessionId is not null && ActiveDebugSessionState == DebugSessionState.Paused;
+        }
+
+        private bool CanPauseDebugSession()
+        {
+            return _activeDebugSessionId is not null && ActiveDebugSessionState == DebugSessionState.Running;
+        }
+
+        private bool CanStepDebugSession()
+        {
+            return CanContinueDebugSession();
+        }
+
+        private bool CanInspectDebugSession()
+        {
+            return CanContinueDebugSession();
+        }
+
+        private bool CanLoadDebugVariables()
+        {
+            return CanInspectDebugSession() && SelectedDebugStackFrame is not null;
+        }
+
+        private bool CanToggleBreakpoint()
+        {
+            return _activeDebugSessionId is not null
+                && (ActiveDebugSessionState is DebugSessionState.Running or DebugSessionState.Paused)
+                && !string.IsNullOrWhiteSpace(Editor.CurrentFilePath)
+                && string.Equals(Path.GetExtension(Editor.CurrentFilePath), ".cs", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private string GetActiveDebugSessionId()
+        {
+            return _activeDebugSessionId
+                ?? throw new InvalidOperationException("There is no active debug session.");
+        }
+
+        private async Task StepDebugSessionAsync(DebugStepKind stepKind, CancellationToken cancellationToken)
+        {
+            await _debugSessionService.StepSessionAsync(GetActiveDebugSessionId(), stepKind, cancellationToken);
+            ActiveDebugSessionState = DebugSessionState.Running;
+            ClearDebugInspection();
+            NotifyDebugControlCommands();
+            Editor.StatusText = stepKind switch
+            {
+                DebugStepKind.Into => "Stepped into the next statement.",
+                DebugStepKind.Over => "Stepped over the current statement.",
+                DebugStepKind.Out => "Stepped out of the current function.",
+                _ => throw new ArgumentOutOfRangeException(nameof(stepKind), stepKind, "Unknown debugger step operation."),
+            };
+        }
+
+        private void ClearDebugInspection()
+        {
+            DebugStackFrames.Clear();
+            DebugVariables.Clear();
+            SelectedDebugStackFrame = null;
+        }
+
+        private async Task LoadVariablesForFrameAsync(int frameId, CancellationToken cancellationToken)
+        {
+            IReadOnlyList<DebugVariable> variables = await _debugSessionService.GetVariablesAsync(
+                GetActiveDebugSessionId(),
+                frameId,
+                cancellationToken);
+            DebugVariables.Clear();
+            foreach (DebugVariable variable in variables)
+            {
+                DebugVariables.Add(variable);
+            }
+
+            Editor.NotificationText = $"Loaded {variables.Count} variables.";
+        }
+
+        private async Task RefreshDebugStackAsync(string sessionId, CancellationToken cancellationToken)
+        {
+            IReadOnlyList<DebugStackFrame> frames = await _debugSessionService.GetStackTraceAsync(
+                sessionId,
+                cancellationToken);
+            if (!string.Equals(_activeDebugSessionId, sessionId, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            DebugStackFrames.Clear();
+            foreach (DebugStackFrame frame in frames)
+            {
+                DebugStackFrames.Add(frame);
+            }
+
+            SelectedDebugStackFrame = DebugStackFrames.FirstOrDefault();
+            if (SelectedDebugStackFrame is null)
+            {
+                DebugVariables.Clear();
+                Editor.NotificationText = "No stack frames are available for this stop.";
+                return;
+            }
+
+            DebugStackFrame selectedFrame = SelectedDebugStackFrame;
+            if (!string.IsNullOrWhiteSpace(selectedFrame.SourcePath)
+                && selectedFrame.Line > 0
+                && File.Exists(selectedFrame.SourcePath))
+            {
+                await _editorWorkspace.OpenOrActivateAsync(selectedFrame.SourcePath, cancellationToken);
+                if (!string.Equals(_activeDebugSessionId, sessionId, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                EditorTabViewModel? targetTab = _editorWorkspace.FindByPath(selectedFrame.SourcePath);
+                if (targetTab?.View is Controls.EditorTextArea editorTextArea)
+                {
+                    editorTextArea.FocusAndMoveCaret(new CodeLocation(
+                        selectedFrame.SourcePath,
+                        selectedFrame.Line,
+                        selectedFrame.Column));
+                }
+            }
+
+            await LoadVariablesForFrameAsync(selectedFrame.Id, cancellationToken);
+        }
+
+        private void OnDebugSessionEventReceived(object? sender, DebugSessionEventArgs e)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (!string.Equals(_activeDebugSessionId, e.SessionId, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                if (e.State is { } state)
+                {
+                    ActiveDebugSessionState = state;
+                    NotifyDebugControlCommands();
+                }
+
+                switch (e.EventName)
+                {
+                    case "stopped":
+                        Editor.StatusText = string.IsNullOrWhiteSpace(e.Reason)
+                            ? "Debug session paused."
+                            : $"Debug session paused: {e.Reason}.";
+                        _ = RefreshDebugStackForStoppedEventAsync(e.SessionId);
+                        break;
+                    case "continued":
+                        ClearDebugInspection();
+                        Editor.StatusText = "Debug session running.";
+                        break;
+                    case "terminated":
+                    case "exited":
+                        ClearDebugInspection();
+                        Editor.StatusText = "Debug target exited.";
+                        break;
+                    case "output":
+                        if (!string.IsNullOrWhiteSpace(e.Output))
+                        {
+                            Editor.NotificationText = e.Output.TrimEnd();
+                        }
+
+                        break;
+                }
+            });
+        }
+
+        private async Task RefreshDebugStackForStoppedEventAsync(string sessionId)
+        {
+            try
+            {
+                await RefreshDebugStackAsync(sessionId, CancellationToken.None);
+            }
+            catch (Exception exception)
+            {
+                if (string.Equals(_activeDebugSessionId, sessionId, StringComparison.Ordinal))
+                {
+                    Editor.NotificationText = $"Could not refresh debugger stack: {exception.Message}";
+                }
+            }
+        }
+
+        private static int GetLineNumber(string text, int caretOffset)
+        {
+            int line = 1;
+            int boundedOffset = Math.Clamp(caretOffset, 0, text.Length);
+            for (int index = 0; index < boundedOffset; index++)
+            {
+                if (text[index] == '\n')
+                {
+                    line++;
+                }
+            }
+
+            return line;
+        }
+
+        private void NotifyDebugControlCommands()
+        {
+            ContinueDebugSessionCommand.NotifyCanExecuteChanged();
+            PauseDebugSessionCommand.NotifyCanExecuteChanged();
+            StepIntoCommand.NotifyCanExecuteChanged();
+            StepOverCommand.NotifyCanExecuteChanged();
+            StepOutCommand.NotifyCanExecuteChanged();
+            ToggleBreakpointCommand.NotifyCanExecuteChanged();
+            RefreshDebugStackCommand.NotifyCanExecuteChanged();
+            LoadDebugVariablesCommand.NotifyCanExecuteChanged();
+        }
+
         private void OnEditorWorkspacePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName != nameof(EditorDocumentWorkspace.ActiveTab))
@@ -391,6 +855,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             OnPropertyChanged(nameof(Editor));
             OnPropertyChanged(nameof(EditorComponent));
             OnPropertyChanged(nameof(WindowTitle));
+            ToggleBreakpointCommand.NotifyCanExecuteChanged();
             QueueLanguageAnalysis();
         }
 
@@ -434,6 +899,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             if (e.PropertyName is nameof(EditorViewModel.Text) or nameof(EditorViewModel.CurrentFilePath))
             {
+                if (e.PropertyName == nameof(EditorViewModel.CurrentFilePath))
+                {
+                    ToggleBreakpointCommand.NotifyCanExecuteChanged();
+                }
+
                 QueueLanguageAnalysis();
             }
         }

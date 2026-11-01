@@ -63,6 +63,12 @@
   <data name="GoToDefinitionCommandText" xml:space="preserve">
     <value>Go to definition (F12)</value>
   </data>
+  <data name="RunTestsCommandText" xml:space="preserve">
+    <value>Run Workspace Tests</value>
+  </data>
+  <data name="RunTestsUnavailableText" xml:space="preserve">
+    <value>Test runner unavailable</value>
+  </data>
   <data name="OpenWorkspaceCommandText" xml:space="preserve">
     <value>Open C# Workspace...</value>
   </data>
@@ -71,6 +77,45 @@
   </data>
   <data name="BuildUnavailableText" xml:space="preserve">
     <value>Build unavailable for this target</value>
+  </data>
+  <data name="StartDebuggingCommandText" xml:space="preserve">
+    <value>Start Debugging</value>
+  </data>
+  <data name="StopDebuggingCommandText" xml:space="preserve">
+    <value>Stop Debugging</value>
+  </data>
+  <data name="ToggleBreakpointCommandText" xml:space="preserve">
+    <value>Toggle Breakpoint at Caret</value>
+  </data>
+  <data name="ContinueDebuggingCommandText" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="PauseDebuggingCommandText" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="StepIntoCommandText" xml:space="preserve">
+    <value>Step Into</value>
+  </data>
+  <data name="StepOverCommandText" xml:space="preserve">
+    <value>Step Over</value>
+  </data>
+  <data name="StepOutCommandText" xml:space="preserve">
+    <value>Step Out</value>
+  </data>
+  <data name="RefreshDebugStackCommandText" xml:space="preserve">
+    <value>Refresh Stack</value>
+  </data>
+  <data name="LoadDebugVariablesCommandText" xml:space="preserve">
+    <value>Load Variables</value>
+  </data>
+  <data name="DebugStackFramesTitle" xml:space="preserve">
+    <value>Call Stack</value>
+  </data>
+  <data name="DebugVariablesTitle" xml:space="preserve">
+    <value>Variables</value>
+  </data>
+  <data name="DebugTargetPlaceholderText" xml:space="preserve">
+    <value>Path to debug target DLL</value>
   </data>
   <data name="NoWorkspaceOpenText" xml:space="preserve">
     <value>No C# workspace open</value>

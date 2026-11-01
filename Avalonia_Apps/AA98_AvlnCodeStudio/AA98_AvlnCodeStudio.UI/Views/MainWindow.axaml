@@ -6,6 +6,7 @@
         xmlns:diagnostics="using:AA98_AvlnCodeStudio.Diagnostics.UI.Views"
         xmlns:configUi="using:Config.UI.Avalonia.Views"
         xmlns:projectExplorer="using:Project.Explorer.Avalonia.Views"
+        xmlns:debugging="using:AA98_AvlnCodeStudio.Base.Debugging.Models"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="AA98_AvlnCodeStudio.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -37,6 +38,15 @@
                     <MenuItem Header="{Binding FileMenuHeader}">
                         <MenuItem Header="{Binding OpenWorkspaceCommandText}" Command="{Binding OpenWorkspaceCommand}" />
                         <MenuItem Header="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
+                        <MenuItem Header="{Binding RunTestsCommandText}" Command="{Binding RunWorkspaceTestsCommand}" />
+                        <MenuItem Header="{Binding StartDebuggingCommandText}" Command="{Binding StartDebugSessionCommand}" />
+                        <MenuItem Header="{Binding StopDebuggingCommandText}" Command="{Binding StopDebugSessionCommand}" />
+                        <MenuItem Header="{Binding ToggleBreakpointCommandText}" Command="{Binding ToggleBreakpointCommand}" />
+                        <MenuItem Header="{Binding ContinueDebuggingCommandText}" Command="{Binding ContinueDebugSessionCommand}" />
+                        <MenuItem Header="{Binding PauseDebuggingCommandText}" Command="{Binding PauseDebugSessionCommand}" />
+                        <MenuItem Header="{Binding StepIntoCommandText}" Command="{Binding StepIntoCommand}" />
+                        <MenuItem Header="{Binding StepOverCommandText}" Command="{Binding StepOverCommand}" />
+                        <MenuItem Header="{Binding StepOutCommandText}" Command="{Binding StepOutCommand}" />
                         <MenuItem Header="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
                         <MenuItem Header="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
                         <MenuItem Header="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
@@ -56,8 +66,20 @@
                     <Button Content="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
                     <Button Content="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
                     <Button Content="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
+                    <Button Content="{Binding RunTestsCommandText}" Command="{Binding RunWorkspaceTestsCommand}" />
                     <Button Content="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
                     <Button Content="{Binding GoToDefinitionCommandText}" Command="{Binding GoToDefinitionCommand}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBox Width="220" PlaceholderText="{Binding DebugTargetPlaceholderText}" Text="{Binding DebugTargetPath, Mode=TwoWay}" />
+                    <Button Content="{Binding StartDebuggingCommandText}" Command="{Binding StartDebugSessionCommand}" />
+                    <Button Content="{Binding StopDebuggingCommandText}" Command="{Binding StopDebugSessionCommand}" />
+                    <Button Content="{Binding ToggleBreakpointCommandText}" Command="{Binding ToggleBreakpointCommand}" />
+                    <Button Content="{Binding ContinueDebuggingCommandText}" Command="{Binding ContinueDebugSessionCommand}" />
+                    <Button Content="{Binding PauseDebuggingCommandText}" Command="{Binding PauseDebugSessionCommand}" />
+                    <Button Content="{Binding StepIntoCommandText}" Command="{Binding StepIntoCommand}" />
+                    <Button Content="{Binding StepOverCommandText}" Command="{Binding StepOverCommand}" />
+                    <Button Content="{Binding StepOutCommandText}" Command="{Binding StepOutCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -129,6 +151,48 @@
                     <Button VerticalAlignment="Top"
                             Content="{Binding ApplyCompletionCommandText}"
                             Command="{Binding ApplySelectedCompletionCommand}" />
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Bottom"
+                            Margin="0,8,0,0"
+                            Spacing="4"
+                            IsVisible="{Binding HasDebugSession}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Content="{Binding RefreshDebugStackCommandText}"
+                                Command="{Binding RefreshDebugStackCommand}" />
+                        <Button Content="{Binding LoadDebugVariablesCommandText}"
+                                Command="{Binding LoadDebugVariablesCommand}" />
+                    </StackPanel>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Height="140">
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Text="{Binding DebugStackFramesTitle}" FontWeight="SemiBold" />
+                            <ListBox ItemsSource="{Binding DebugStackFrames}"
+                                     SelectedItem="{Binding SelectedDebugStackFrame, Mode=TwoWay}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="debugging:DebugStackFrame">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <TextBlock Text="{Binding Name}" />
+                                            <TextBlock Text="{Binding SourcePath}" Opacity="0.7" />
+                                            <TextBlock Text="{Binding Line}" Opacity="0.7" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Text="{Binding DebugVariablesTitle}" FontWeight="SemiBold" />
+                            <ListBox ItemsSource="{Binding DebugVariables}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="debugging:DebugVariable">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding Value}" />
+                                            <TextBlock Text="{Binding Type}" Opacity="0.7" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Grid>
                 </StackPanel>
                 <TabControl ItemsSource="{Binding EditorWorkspace.Tabs}"
                             SelectedItem="{Binding ActiveEditorTab, Mode=TwoWay}">

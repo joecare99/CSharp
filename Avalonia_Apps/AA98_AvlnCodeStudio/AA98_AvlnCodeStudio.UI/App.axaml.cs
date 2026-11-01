@@ -134,7 +134,9 @@ namespace AA98_AvlnCodeStudio.UI
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Versioning.Services.IVersionControlService>(),
                 serviceProvider.GetRequiredService<UI.ViewModels.EditorDocumentWorkspace>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService>(),
-                serviceProvider.GetRequiredService<UI.Services.CSharpSyntaxDiagnosticService>()));
+                serviceProvider.GetRequiredService<UI.Services.CSharpSyntaxDiagnosticService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Testing.Services.ITestExecutionService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Debugging.Services.IDebugSessionService>()));
             services.AddSingleton<MainWindow>();
         }
 

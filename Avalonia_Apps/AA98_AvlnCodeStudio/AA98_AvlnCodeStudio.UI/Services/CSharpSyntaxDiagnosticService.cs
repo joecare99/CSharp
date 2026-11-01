@@ -5,8 +5,10 @@ using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.Build.Locator;
 using AA98_AvlnCodeStudio.Model.Workspaces;
+using Code.Navigation;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -181,6 +183,97 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                 .Where(static item => !string.IsNullOrWhiteSpace(item))
                 .Distinct(StringComparer.Ordinal)
                 .ToArray() ?? [];
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    public async Task<CodeLocation?> FindDefinitionAsync(
+        string source,
+        string filePath,
+        int position,
+        CSharpWorkspace workspace,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+        ArgumentNullException.ThrowIfNull(workspace);
+        if (position < 0 || position > source.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(position));
+        }
+
+        string normalizedFilePath = Path.GetFullPath(filePath);
+        CSharpWorkspaceProject? projectDescriptor = workspace.Projects
+            .Select(project => new
+            {
+                Project = project,
+                Directory = Path.GetDirectoryName(project.ProjectPath)!,
+            })
+            .Where(candidate => IsWithinDirectory(normalizedFilePath, candidate.Directory))
+            .OrderByDescending(candidate => candidate.Directory.Length)
+            .Select(candidate => candidate.Project)
+            .FirstOrDefault();
+        if (projectDescriptor is null)
+        {
+            return null;
+        }
+
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ProjectContext context = await GetProjectContextAsync(projectDescriptor.ProjectPath, cancellationToken)
+                .ConfigureAwait(false);
+            Document? document = context.Workspace.CurrentSolution
+                .GetProject(context.ProjectId)?
+                .Documents.FirstOrDefault(candidate =>
+                    string.Equals(candidate.FilePath, normalizedFilePath, StringComparison.OrdinalIgnoreCase));
+            if (document is null)
+            {
+                return null;
+            }
+
+            Solution updatedSolution = context.Workspace.CurrentSolution.WithDocumentText(
+                document.Id,
+                SourceText.From(source));
+            if (!context.Workspace.TryApplyChanges(updatedSolution))
+            {
+                throw new InvalidOperationException($"Could not update Roslyn document '{normalizedFilePath}'.");
+            }
+
+            Document updatedDocument = context.Workspace.CurrentSolution.GetDocument(document.Id)
+                ?? throw new InvalidOperationException($"Roslyn document '{normalizedFilePath}' is no longer available.");
+            SemanticModel semanticModel = await updatedDocument.GetSemanticModelAsync(cancellationToken)
+                .ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"Could not create a semantic model for '{normalizedFilePath}'.");
+            ISymbol? symbol = await SymbolFinder.FindSymbolAtPositionAsync(
+                semanticModel,
+                position,
+                context.Workspace,
+                cancellationToken).ConfigureAwait(false);
+            if (symbol is null)
+            {
+                return null;
+            }
+
+            ISymbol? sourceDefinition = await SymbolFinder.FindSourceDefinitionAsync(
+                symbol,
+                context.Workspace.CurrentSolution,
+                cancellationToken).ConfigureAwait(false);
+            Location? definitionLocation = sourceDefinition?.Locations
+                .FirstOrDefault(static location => location.IsInSource
+                    && !string.IsNullOrWhiteSpace(location.SourceTree?.FilePath));
+            if (definitionLocation is null)
+            {
+                return null;
+            }
+
+            FileLinePositionSpan lineSpan = definitionLocation.GetLineSpan();
+            return new CodeLocation(
+                lineSpan.Path,
+                lineSpan.StartLinePosition.Line + 1,
+                lineSpan.StartLinePosition.Character + 1);
         }
         finally
         {
