@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels"
+             xmlns:preview="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.Controls"
+             x:Class="AA98_AvlnCodeStudio.AxamlDesigner.UI.Views.AxamlDesignerView"
+             x:DataType="vm:AxamlDesignerViewModel">
+  <Grid ColumnDefinitions="*,Auto,220"
+        ColumnSpacing="8">
+    <Border Grid.Column="0"
+            Padding="8"
+            BorderBrush="{DynamicResource ThemeControlMidBrush}"
+            BorderThickness="1"
+            CornerRadius="4">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top"
+                   Margin="0,0,0,6"
+                   Text="{Binding PreviewTitle}"
+                   FontWeight="SemiBold" />
+        <TextBlock DockPanel.Dock="Top"
+                   Margin="0,0,0,6"
+                   Text="Drag the selected element's blue corner to resize." />
+        <TextBlock DockPanel.Dock="Top"
+                   Margin="0,0,0,6"
+                   Text="{Binding ErrorText}"
+                   TextWrapping="Wrap" />
+        <ScrollViewer>
+          <preview:AxamlPreviewControl x:Name="PreviewControl"
+                                       PreviewNode="{Binding PreviewRoot}"
+                                       SelectedNode="{Binding SelectedNode, Mode=TwoWay}" />
+        </ScrollViewer>
+      </DockPanel>
+    </Border>
+    <GridSplitter Grid.Column="1"
+                  Width="8"
+                  ResizeDirection="Columns" />
+    <Border Grid.Column="2"
+            Padding="8"
+            BorderBrush="{DynamicResource ThemeControlMidBrush}"
+            BorderThickness="1"
+            CornerRadius="4">
+      <StackPanel Spacing="6">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Button Content="Undo" Command="{Binding UndoCommand}" />
+          <Button Content="Redo" Command="{Binding RedoCommand}" />
+          <Button Content="Screenshot" Click="OnScreenshotRequested" />
+        </StackPanel>
+        <TextBlock Text="{Binding SelectedElementName}"
+                   FontWeight="SemiBold" />
+        <ComboBox ItemsSource="{Binding EditableProperties}"
+                  SelectedItem="{Binding SelectedProperty, Mode=TwoWay}" />
+        <TextBox Text="{Binding SelectedValue, Mode=TwoWay}"
+                 PlaceholderText="Property value" />
+        <Button HorizontalAlignment="Left"
+                Content="Apply property"
+                Command="{Binding ApplySelectedValueCommand}" />
+        <TextBlock Text="{Binding StatusText}"
+                   TextWrapping="Wrap" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

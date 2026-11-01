@@ -14,4 +14,12 @@ public sealed class DesignWorkspaceFileDialogService : IWorkspaceFileDialogServi
     {
         return Task.FromResult<string?>(null);
     }
+
+    public Task<string?> ShowSaveCSharpProjectDialogAsync(
+        string? initialDirectory,
+        string? initialFileName,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult<string?>(null);
+    }
 }

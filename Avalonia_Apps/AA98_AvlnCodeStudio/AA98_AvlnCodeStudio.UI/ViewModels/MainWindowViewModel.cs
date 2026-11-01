@@ -20,6 +20,7 @@ using AA98_AvlnCodeStudio.Planning.Core.Services;
 using Config.UI.Avalonia.ViewModels;
 using Project.Explorer.Avalonia.ViewModels;
 using AA98_AvlnCodeStudio.Model.Workspaces;
+using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Threading;
@@ -34,6 +35,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly EditorDocumentWorkspace _editorWorkspace;
         private readonly AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService _editorFileDialogService;
         private readonly CSharpWorkspaceLoader _workspaceLoader;
+        private readonly CSharpProjectTemplateService _projectTemplateService;
+        private readonly ICSharpProjectPackageService _projectPackageService;
+        private readonly AxamlDesignerViewModel _axamlDesigner;
         private readonly Services.IWorkspaceFileDialogService _workspaceFileDialogService;
         private readonly ICodeStudioBuilderService _builderService;
         private readonly IVersionControlService _versionControlService;
@@ -47,7 +51,6 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private CancellationTokenSource? _languageAnalysisCancellation;
         private EditorViewModel? _observedEditor;
         private Controls.EditorTextArea? _observedEditorTextArea;
-
         public MainWindowViewModel()
             : this(
                 new Components.AvaloniaEditorComponent(
@@ -85,10 +88,18 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             AA98_AvlnCodeStudio.Base.UI.Services.IEditorFileDialogService? editorFileDialogService = null,
             Services.CSharpSyntaxDiagnosticService? csharpSyntaxDiagnosticService = null,
             ITestExecutionService? testExecutionService = null,
-            IDebugSessionService? debugSessionService = null)
+            IDebugSessionService? debugSessionService = null,
+            CSharpProjectTemplateService? projectTemplateService = null,
+            ICSharpProjectPackageService? projectPackageService = null,
+            AxamlDesignerViewModel? axamlDesignerViewModel = null)
         {
             _editorWorkspace = editorWorkspace ?? new EditorDocumentWorkspace(editorComponent);
             _workspaceLoader = workspaceLoader ?? new CSharpWorkspaceLoader();
+            _projectTemplateService = projectTemplateService ?? new CSharpProjectTemplateService();
+            _projectPackageService = projectPackageService ?? new DotNetCSharpProjectPackageService();
+            _axamlDesigner = axamlDesignerViewModel ?? new AxamlDesignerViewModel();
+            _axamlDesigner.MarkupChanged += OnAxamlDesignerMarkupChanged;
+            _axamlDesigner.PropertyChanged += OnAxamlDesignerPropertyChanged;
             _workspaceFileDialogService = workspaceFileDialogService ?? new Services.DesignWorkspaceFileDialogService();
             _builderService = builderService ?? new NullCodeStudioBuilderService();
             _versionControlService = versionControlService ?? new NullVersionControlService();
@@ -108,6 +119,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             ProjectExplorer = projectExplorer;
             PlanningExplorer.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
             ProjectExplorer?.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
+            LoadProjectTemplates(showStatus: false);
+            RefreshAxamlPreview();
         }
 
         public EditorDocumentWorkspace EditorWorkspace => _editorWorkspace;
@@ -139,6 +152,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [NotifyCanExecuteChangedFor(nameof(BuildWorkspaceCommand))]
         [NotifyCanExecuteChangedFor(nameof(RunWorkspaceTestsCommand))]
         [NotifyCanExecuteChangedFor(nameof(StartDebugSessionCommand))]
+        [NotifyCanExecuteChangedFor(nameof(AddPackageCommand))]
+        [NotifyCanExecuteChangedFor(nameof(RemovePackageCommand))]
         private CSharpWorkspace? _workspace;
 
         [ObservableProperty]
@@ -208,6 +223,18 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public ObservableCollection<string> CompletionSuggestions { get; } = [];
 
+        public ObservableCollection<CSharpProjectTemplateDefinition> ProjectTemplates { get; } = [];
+
+        public AxamlDesignerViewModel AxamlDesigner => _axamlDesigner;
+
+        public bool HasAxamlPreview => _axamlDesigner.HasPreview;
+
+        public ObservableCollection<CSharpWorkspaceProject> PackageProjects { get; } = [];
+
+        public ObservableCollection<CSharpProjectPackageReference> InstalledPackages { get; } = [];
+
+        public ObservableCollection<NuGetPackageSearchResult> PackageSearchResults { get; } = [];
+
         public ObservableCollection<DebugStackFrame> DebugStackFrames { get; } = [];
 
         public ObservableCollection<DebugVariable> DebugVariables { get; } = [];
@@ -217,6 +244,27 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         public bool HasCompletionSuggestions => CompletionSuggestions.Count > 0;
 
         public bool HasDebugSession => _activeDebugSessionId is not null;
+
+        [ObservableProperty]
+        private CSharpProjectTemplateDefinition? _selectedProjectTemplate;
+
+        [ObservableProperty]
+        private CSharpWorkspaceProject? _selectedPackageProject;
+
+        [ObservableProperty]
+        private CSharpProjectPackageReference? _selectedInstalledPackage;
+
+        [ObservableProperty]
+        private NuGetPackageSearchResult? _selectedPackageSearchResult;
+
+        [ObservableProperty]
+        private string _packageId = string.Empty;
+
+        [ObservableProperty]
+        private string _packageVersion = string.Empty;
+
+        [ObservableProperty]
+        private string _packageSearchText = string.Empty;
 
         [RelayCommand]
         private void NewDocument()
@@ -339,6 +387,34 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string OpenWorkspaceCommandText => UiStrings.OpenWorkspaceCommandText;
 
+        public string CreateConsoleProjectCommandText => UiStrings.CreateConsoleProjectCommandText;
+
+        public string CreateClassLibraryProjectCommandText => UiStrings.CreateClassLibraryProjectCommandText;
+
+        public string CreateTestProjectCommandText => UiStrings.CreateTestProjectCommandText;
+
+        public string ProjectTemplatesMenuText => "Project Templates";
+
+        public string CreateSelectedProjectCommandText => "Create Selected Project";
+
+        public string ReloadProjectTemplatesCommandText => "Reload Templates";
+
+        public string PackageProjectPlaceholderText => "Project";
+
+        public string PackageIdPlaceholderText => "NuGet package ID";
+
+        public string PackageVersionPlaceholderText => "Version (optional)";
+
+        public string AddPackageCommandText => "Add Package";
+
+        public string RemovePackageCommandText => "Remove Package";
+
+        public string ListPackagesCommandText => "Refresh";
+
+        public string SearchPackagesCommandText => "Search NuGet";
+
+        public string PackageSearchPlaceholderText => "Search NuGet.org";
+
         public string BuildWorkspaceCommandText => _builderService is NullCodeStudioBuilderService
             ? UiStrings.BuildUnavailableText
             : UiStrings.BuildWorkspaceCommandText;
@@ -384,6 +460,307 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             await OpenWorkspaceFileAsync(path, cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task CreateConsoleProjectAsync(CancellationToken cancellationToken)
+        {
+            await CreateProjectFromTemplateAsync("console", cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task CreateClassLibraryProjectAsync(CancellationToken cancellationToken)
+        {
+            await CreateProjectFromTemplateAsync("class-library", cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task CreateTestProjectAsync(CancellationToken cancellationToken)
+        {
+            await CreateProjectFromTemplateAsync("mstest", cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task CreateSelectedProjectAsync(CancellationToken cancellationToken)
+        {
+            if (SelectedProjectTemplate is null)
+            {
+                Editor.NotificationText = "Select a project template first.";
+                return;
+            }
+
+            await CreateProjectFromTemplateAsync(SelectedProjectTemplate.Id, cancellationToken);
+        }
+
+        [RelayCommand]
+        private void ReloadProjectTemplates()
+        {
+            LoadProjectTemplates(showStatus: true);
+        }
+
+        private void LoadProjectTemplates(bool showStatus)
+        {
+            try
+            {
+                string? selectedTemplateId = SelectedProjectTemplate?.Id;
+                IReadOnlyList<CSharpProjectTemplateDefinition> templates = _projectTemplateService.ReloadTemplates();
+                ProjectTemplates.Clear();
+                foreach (CSharpProjectTemplateDefinition template in templates)
+                {
+                    ProjectTemplates.Add(template);
+                }
+
+                SelectedProjectTemplate = ProjectTemplates.FirstOrDefault(template =>
+                    string.Equals(template.Id, selectedTemplateId, StringComparison.OrdinalIgnoreCase))
+                    ?? ProjectTemplates.FirstOrDefault();
+
+                if (showStatus)
+                {
+                    Editor.StatusText = $"Loaded {ProjectTemplates.Count} project templates.";
+                    Editor.NotificationText = string.Join(
+                        Environment.NewLine,
+                        _projectTemplateService.TemplateDirectories);
+                }
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+            {
+                Editor.StatusText = "Project template loading failed.";
+                Editor.NotificationText = exception.Message;
+            }
+        }
+
+        private async Task CreateProjectFromTemplateAsync(string templateId, CancellationToken cancellationToken)
+        {
+            CSharpProjectTemplateDefinition? template = ProjectTemplates.FirstOrDefault(candidate =>
+                string.Equals(candidate.Id, templateId, StringComparison.OrdinalIgnoreCase));
+            if (template is null)
+            {
+                Editor.StatusText = "Project template is unavailable.";
+                Editor.NotificationText = $"Template '{templateId}' is not loaded. Reload the templates and try again.";
+                return;
+            }
+
+            string defaultFileName = template.DefaultProjectFileName.Replace(
+                "{{ProjectName}}",
+                "NewProject",
+                StringComparison.Ordinal);
+            string? path = await _workspaceFileDialogService.ShowSaveCSharpProjectDialogAsync(
+                Workspace?.RootPath ?? Directory.GetCurrentDirectory(),
+                defaultFileName,
+                cancellationToken);
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+
+            string projectPath;
+            try
+            {
+                projectPath = _projectTemplateService.CreateProject(template.Id, path);
+            }
+            catch (Exception exception) when (exception is IOException or ArgumentException or KeyNotFoundException)
+            {
+                Editor.StatusText = "C# project creation failed.";
+                Editor.NotificationText = exception.Message;
+                return;
+            }
+
+            await OpenWorkspaceFileAsync(projectPath, cancellationToken);
+            Editor.StatusText = $"Created {template.Name} '{Path.GetFileNameWithoutExtension(projectPath)}'.";
+            Editor.NotificationText = projectPath;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanManagePackages))]
+        private async Task AddPackageAsync(CancellationToken cancellationToken)
+        {
+            CSharpWorkspaceProject project = SelectedPackageProject
+                ?? throw new InvalidOperationException("Select a C# project before managing packages.");
+            try
+            {
+                string output = await _projectPackageService.AddPackageAsync(
+                    project.ProjectPath,
+                    PackageId,
+                    string.IsNullOrWhiteSpace(PackageVersion) ? null : PackageVersion,
+                    cancellationToken);
+                Editor.StatusText = $"Added NuGet package '{PackageId}' to {project.Name}.";
+                Editor.NotificationText = output;
+                await LoadInstalledPackagesAsync(project, cancellationToken, updateStatus: false);
+            }
+            catch (Exception exception) when (exception is IOException
+                or InvalidOperationException
+                or ArgumentException
+                or System.ComponentModel.Win32Exception)
+            {
+                Editor.StatusText = "Adding NuGet package failed.";
+                Editor.NotificationText = exception.Message;
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanManagePackages))]
+        private async Task RemovePackageAsync(CancellationToken cancellationToken)
+        {
+            CSharpWorkspaceProject project = SelectedPackageProject
+                ?? throw new InvalidOperationException("Select a C# project before managing packages.");
+            try
+            {
+                string output = await _projectPackageService.RemovePackageAsync(
+                    project.ProjectPath,
+                    PackageId,
+                    cancellationToken);
+                Editor.StatusText = $"Removed NuGet package '{PackageId}' from {project.Name}.";
+                Editor.NotificationText = output;
+                await LoadInstalledPackagesAsync(project, cancellationToken, updateStatus: false);
+            }
+            catch (Exception exception) when (exception is IOException
+                or InvalidOperationException
+                or ArgumentException
+                or System.ComponentModel.Win32Exception)
+            {
+                Editor.StatusText = "Removing NuGet package failed.";
+                Editor.NotificationText = exception.Message;
+            }
+        }
+
+        private bool CanManagePackages()
+        {
+            return SelectedPackageProject is not null
+                && !string.IsNullOrWhiteSpace(PackageId);
+        }
+
+        [RelayCommand]
+        private async Task RefreshPackagesAsync(CancellationToken cancellationToken)
+        {
+            if (SelectedPackageProject is { } project)
+            {
+                await LoadInstalledPackagesAsync(project, cancellationToken);
+            }
+        }
+
+        private async Task LoadInstalledPackagesAsync(
+            CSharpWorkspaceProject project,
+            CancellationToken cancellationToken,
+            bool updateStatus = true)
+        {
+            try
+            {
+                IReadOnlyList<CSharpProjectPackageReference> packages =
+                    await _projectPackageService.ListPackagesAsync(project.ProjectPath, cancellationToken);
+                InstalledPackages.Clear();
+                foreach (CSharpProjectPackageReference package in packages)
+                {
+                    InstalledPackages.Add(package);
+                }
+
+                string? selectedPackageId = SelectedInstalledPackage?.Id;
+                SelectedInstalledPackage = InstalledPackages.FirstOrDefault(package =>
+                    string.Equals(package.Id, selectedPackageId, StringComparison.OrdinalIgnoreCase))
+                    ?? InstalledPackages.FirstOrDefault();
+                if (updateStatus)
+                {
+                    Editor.StatusText = $"Loaded {InstalledPackages.Count} package references for {project.Name}.";
+                    Editor.NotificationText = string.Join(
+                        Environment.NewLine,
+                        InstalledPackages.Select(static package =>
+                            $"{package.Id} {package.ResolvedVersion} ({package.TargetFramework})"));
+                }
+            }
+            catch (Exception exception) when (exception is IOException
+                or InvalidOperationException
+                or ArgumentException
+                or System.ComponentModel.Win32Exception
+                or System.Net.Http.HttpRequestException
+                or System.Text.Json.JsonException)
+            {
+                Editor.StatusText = "Loading NuGet packages failed.";
+                Editor.NotificationText = exception.Message;
+            }
+        }
+
+        [RelayCommand]
+        private async Task SearchPackagesAsync(CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(PackageSearchText))
+            {
+                Editor.StatusText = "Enter a package name or search term.";
+                return;
+            }
+
+            try
+            {
+                IReadOnlyList<NuGetPackageSearchResult> results =
+                    await _projectPackageService.SearchPackagesAsync(PackageSearchText, cancellationToken: cancellationToken);
+                PackageSearchResults.Clear();
+                foreach (NuGetPackageSearchResult result in results)
+                {
+                    PackageSearchResults.Add(result);
+                }
+
+                SelectedPackageSearchResult = PackageSearchResults.FirstOrDefault();
+                Editor.StatusText = $"Found {PackageSearchResults.Count} NuGet packages.";
+                Editor.NotificationText = string.Join(
+                    Environment.NewLine,
+                    PackageSearchResults.Select(static package => $"{package.Id} {package.LatestVersion}: {package.Description}"));
+            }
+            catch (Exception exception) when (exception is IOException
+                or InvalidOperationException
+                or ArgumentException
+                or System.Net.Http.HttpRequestException
+                or System.Text.Json.JsonException)
+            {
+                Editor.StatusText = "NuGet package search failed.";
+                Editor.NotificationText = exception.Message;
+            }
+        }
+
+        partial void OnWorkspaceChanged(CSharpWorkspace? value)
+        {
+            string? previousProjectPath = SelectedPackageProject?.ProjectPath;
+            PackageProjects.Clear();
+            if (value is not null)
+            {
+                foreach (CSharpWorkspaceProject project in value.Projects)
+                {
+                    PackageProjects.Add(project);
+                }
+            }
+
+            SelectedPackageProject = PackageProjects.FirstOrDefault(project =>
+                string.Equals(project.ProjectPath, previousProjectPath, OperatingSystem.IsWindows()
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal))
+                ?? PackageProjects.FirstOrDefault();
+        }
+
+        partial void OnSelectedPackageProjectChanged(CSharpWorkspaceProject? value)
+        {
+            AddPackageCommand.NotifyCanExecuteChanged();
+            RemovePackageCommand.NotifyCanExecuteChanged();
+            InstalledPackages.Clear();
+            SelectedInstalledPackage = null;
+        }
+
+        partial void OnSelectedInstalledPackageChanged(CSharpProjectPackageReference? value)
+        {
+            if (value is not null)
+            {
+                PackageId = value.Id;
+                PackageVersion = value.RequestedVersion;
+            }
+        }
+
+        partial void OnSelectedPackageSearchResultChanged(NuGetPackageSearchResult? value)
+        {
+            if (value is not null)
+            {
+                PackageId = value.Id;
+                PackageVersion = value.LatestVersion;
+            }
+        }
+
+        partial void OnPackageIdChanged(string value)
+        {
+            AddPackageCommand.NotifyCanExecuteChanged();
+            RemovePackageCommand.NotifyCanExecuteChanged();
         }
 
         [RelayCommand(CanExecute = nameof(CanBuildWorkspace))]
@@ -857,6 +1234,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             OnPropertyChanged(nameof(WindowTitle));
             ToggleBreakpointCommand.NotifyCanExecuteChanged();
             QueueLanguageAnalysis();
+            RefreshAxamlPreview();
         }
 
         private void ObserveActiveEditorControl()
@@ -905,6 +1283,29 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 }
 
                 QueueLanguageAnalysis();
+                RefreshAxamlPreview();
+            }
+        }
+
+        private void RefreshAxamlPreview()
+        {
+            string? filePath = Editor.CurrentFilePath;
+            bool isAxamlDocument = !string.IsNullOrWhiteSpace(filePath)
+                && string.Equals(Path.GetExtension(filePath), ".axaml", StringComparison.OrdinalIgnoreCase);
+            _axamlDesigner.LoadMarkup(isAxamlDocument ? Editor.Text : null);
+        }
+
+        private void OnAxamlDesignerMarkupChanged(object? sender, AxamlDesignerMarkupChangedEventArgs e)
+        {
+            Editor.Text = e.Markup;
+            Editor.NotificationText = _axamlDesigner.StatusText;
+        }
+
+        private void OnAxamlDesignerPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(AxamlDesignerViewModel.HasPreview))
+            {
+                OnPropertyChanged(nameof(HasAxamlPreview));
             }
         }
 

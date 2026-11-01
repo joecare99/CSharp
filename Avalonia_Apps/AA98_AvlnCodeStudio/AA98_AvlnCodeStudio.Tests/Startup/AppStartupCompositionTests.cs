@@ -50,6 +50,7 @@ public class AppStartupCompositionTests
         var projectExplorer = serviceProvider.GetRequiredService<ProjectExplorerViewModel>();
         var commandCatalog = serviceProvider.GetRequiredService<IWorkbenchCommandCatalog>();
         var workspaceLoader = serviceProvider.GetRequiredService<CSharpWorkspaceLoader>();
+        var projectTemplateService = serviceProvider.GetRequiredService<CSharpProjectTemplateService>();
         var workspaceFileDialog = serviceProvider.GetRequiredService<IWorkspaceFileDialogService>();
         var testExecutionService = serviceProvider.GetRequiredService<ITestExecutionService>();
         var debugSessionService = serviceProvider.GetRequiredService<IDebugSessionService>();
@@ -64,6 +65,7 @@ public class AppStartupCompositionTests
         Assert.IsNotNull(projectExplorer);
         Assert.IsNotNull(commandCatalog);
         Assert.IsNotNull(workspaceLoader);
+        Assert.IsNotNull(projectTemplateService);
         Assert.IsNotNull(workspaceFileDialog);
         Assert.IsInstanceOfType<DotNetTestExecutionService>(testExecutionService);
         Assert.IsInstanceOfType<NetCoreDbgDebugSessionService>(debugSessionService);

@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AA98_AxamlDesigner.Host.ViewModels"
+        xmlns:designer="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.Views"
+        x:Class="AA98_AxamlDesigner.Host.Views.MainWindow"
+        x:DataType="vm:AxamlDesignerHostViewModel"
+        Title="{Binding WindowTitle}"
+        Width="1200"
+        Height="760"
+        MinWidth="900"
+        MinHeight="560">
+  <Grid Margin="12"
+        RowDefinitions="Auto,*,Auto"
+        RowSpacing="8">
+    <Grid ColumnDefinitions="*,Auto,Auto,Auto"
+          ColumnSpacing="8">
+      <TextBox Grid.Column="0"
+               PlaceholderText="AXAML file path"
+               Text="{Binding FilePath, Mode=TwoWay}" />
+      <Button Grid.Column="1"
+              Content="Browse..."
+              Click="OnBrowseRequested" />
+      <Button Grid.Column="2"
+              Content="Open"
+              Click="OnOpenPathRequested" />
+      <Button Grid.Column="3"
+              Content="Save"
+              Click="OnSaveRequested" />
+    </Grid>
+    <designer:AxamlDesignerView x:Name="DesignerView"
+                                Grid.Row="1"
+                                DataContext="{Binding Designer}" />
+    <TextBlock Grid.Row="2"
+               Text="{Binding StatusText}"
+               TextTrimming="CharacterEllipsis" />
+  </Grid>
+</Window>

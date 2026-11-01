@@ -74,6 +74,7 @@
     <ProjectReference Include="..\..\Libraries\Project.Explorer.FileSystem\Project.Explorer.FileSystem.csproj" />
     <ProjectReference Include="..\..\Libraries\Project.Explorer.Avalonia\Project.Explorer.Avalonia.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Model\AA98_AvlnCodeStudio.Model.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.AxamlDesigner.UI\AA98_AvlnCodeStudio.AxamlDesigner.UI.csproj" />
     <ProjectReference Include="..\..\Libraries\Avln_CommonDialogs.Avalonia\Avln_CommonDialogs.Avalonia.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Core\AA98_AvlnCodeStudio.Planning.Core.csproj" />
   </ItemGroup>

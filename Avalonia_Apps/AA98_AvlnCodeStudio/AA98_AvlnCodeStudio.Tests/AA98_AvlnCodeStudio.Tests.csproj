@@ -23,6 +23,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NSubstitute" />
+    <PackageReference Include="ModelContextProtocol" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\AppKomponentBaseLib\AppKomponentBaseLib.csproj" />
@@ -51,6 +52,9 @@
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.Local\AA98_AvlnCodeStudio.Planning.Local.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Planning.UI\AA98_AvlnCodeStudio.Planning.UI.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.UI\AA98_AvlnCodeStudio.UI.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.AxamlDesigner.UI\AA98_AvlnCodeStudio.AxamlDesigner.UI.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Host.Mcp\AA98_AvlnCodeStudio.Host.Mcp.csproj" />
+    <ProjectReference Include="..\AA98_AxamlDesigner.Host\AA98_AxamlDesigner.Host.csproj" />
     <ProjectReference Include="..\AA98.MarkDown.Host\AA98.MarkDown.Host.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
