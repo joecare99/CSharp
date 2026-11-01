@@ -26,4 +26,9 @@ public sealed class DebugLaunchRequest
     /// Gets or sets a value indicating whether the request should attach to an existing process.
     /// </summary>
     public bool AttachToExistingProcess { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the target should pause before executing its entry point.
+    /// </summary>
+    public bool StopAtEntry { get; set; }
 }
