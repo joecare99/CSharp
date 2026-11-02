@@ -54,7 +54,7 @@ public sealed class NetCoreDbgDebugSessionServiceTests
                 {
                     continuedEvent.TrySetResult(eventArgs);
                 }
-                else if (eventArgs.EventName == "stopped")
+                else if (eventArgs.EventName == "stopped" && eventArgs.Reason == "breakpoint")
                 {
                     stoppedEvent.TrySetResult(eventArgs);
                 }
@@ -92,6 +92,69 @@ public sealed class NetCoreDbgDebugSessionServiceTests
             Assert.AreEqual("counter", variables[0].Name);
             Assert.AreEqual("3", variables[0].Value);
             await service.StopSessionAsync(session.SessionId);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    [TestCategory("Integration")]
+    public async Task StartAndStopSession_UsesInstalledNetCoreDbgWhenConfigured()
+    {
+        string? adapterPath = Environment.GetEnvironmentVariable("AVLN_NETCOREDBG_PATH");
+        if (string.IsNullOrWhiteSpace(adapterPath) || !File.Exists(adapterPath))
+        {
+            Assert.Inconclusive("Set AVLN_NETCOREDBG_PATH to run the real NetCoreDbg integration test.");
+        }
+
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_NetCoreDbgSmoke_{Guid.NewGuid():N}");
+        string projectDirectory = Path.Combine(root, "debuggee");
+        string outputDirectory = Path.Combine(root, "output");
+        Directory.CreateDirectory(projectDirectory);
+        Directory.CreateDirectory(outputDirectory);
+
+        try
+        {
+            string projectPath = Path.Combine(projectDirectory, "Debuggee.csproj");
+            File.WriteAllText(projectPath,
+                $"""
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <OutputType>Exe</OutputType>
+                    <TargetFramework>net{Environment.Version.Major}.0</TargetFramework>
+                    <ImplicitUsings>enable</ImplicitUsings>
+                    <Nullable>enable</Nullable>
+                  </PropertyGroup>
+                </Project>
+                """);
+            File.WriteAllText(
+                Path.Combine(projectDirectory, "Program.cs"),
+                "int answer = 42; Console.WriteLine(answer);");
+            await BuildFakeAdapterAsync(projectPath, outputDirectory);
+
+            NetCoreDbgDebugSessionService service = new(adapterPath);
+            DebugSessionInfo? session = null;
+            try
+            {
+                session = await service.StartSessionAsync(new DebugLaunchRequest
+                {
+                    Target = Path.Combine(outputDirectory, "Debuggee.dll"),
+                    WorkingDirectory = projectDirectory,
+                    StopAtEntry = true,
+                });
+
+                Assert.AreEqual(DebugSessionState.Paused, session.State);
+                Assert.IsTrue((await service.GetStackTraceAsync(session.SessionId)).Count > 0);
+            }
+            finally
+            {
+                if (session is not null)
+                {
+                    await service.StopSessionAsync(session.SessionId);
+                }
+            }
         }
         finally
         {
@@ -200,12 +263,18 @@ public sealed class NetCoreDbgDebugSessionServiceTests
             object? eventBody = command switch
             {
                 "continue" => new { threadId = 1, allThreadsContinued = true },
+                "configurationDone" => new { reason = "entry", threadId = 1, allThreadsStopped = true },
                 "pause" => new { reason = "breakpoint", threadId = 1, allThreadsStopped = true },
                 _ => null,
             };
             if (eventBody is not null)
             {
-                string eventName = command == "continue" ? "continued" : "stopped";
+                string eventName = command switch
+                {
+                    "continue" => "continued",
+                    "configurationDone" or "pause" => "stopped",
+                    _ => throw new InvalidOperationException($"Unexpected event-producing command '{command}'."),
+                };
                 byte[] eventMessage = JsonSerializer.SerializeToUtf8Bytes(new
                 {
                     seq = ++responseSequence,

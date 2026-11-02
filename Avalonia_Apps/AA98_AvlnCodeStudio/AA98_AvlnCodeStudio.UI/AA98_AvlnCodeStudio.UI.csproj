@@ -60,10 +60,12 @@
   <ItemGroup>
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base\AA98_AvlnCodeStudio.Base.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.AI\AA98_AvlnCodeStudio.Base.AI.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Host.Mcp\AA98_AvlnCodeStudio.Host.Mcp.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Building\AA98_AvlnCodeStudio.Base.Building.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.UI\AA98_AvlnCodeStudio.Base.UI.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.OS\AA98_AvlnCodeStudio.Base.OS.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Versioning\AA98_AvlnCodeStudio.Base.Versioning.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Versioning.Svn\AA98_AvlnCodeStudio.Versioning.Svn.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Testing\AA98_AvlnCodeStudio.Base.Testing.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Debugging\AA98_AvlnCodeStudio.Base.Debugging.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Editor\AA98_AvlnCodeStudio.Editor.csproj" />

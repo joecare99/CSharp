@@ -3,6 +3,7 @@ using AA98_AvlnCodeStudio.Base.Components.Commands;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using AA98_AvlnCodeStudio.UI.Services;
+using AA98_AvlnCodeStudio.UI.Configuration;
 using AA98_AvlnCodeStudio.Editor.Navigation;
 using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
 using AA98_AvlnCodeStudio.Base.Testing.Services;
@@ -54,6 +55,8 @@ public class AppStartupCompositionTests
         var workspaceFileDialog = serviceProvider.GetRequiredService<IWorkspaceFileDialogService>();
         var testExecutionService = serviceProvider.GetRequiredService<ITestExecutionService>();
         var debugSessionService = serviceProvider.GetRequiredService<IDebugSessionService>();
+        CodeStudioSettings workbenchSettings = serviceProvider.GetRequiredService<CodeStudioSettings>();
+        var aiSettings = serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.AI.Models.OpenAICompatibleAISettings>();
 
         Assert.IsNotNull(viewModelFactory);
         Assert.IsNotNull(workflowFactory);
@@ -69,6 +72,9 @@ public class AppStartupCompositionTests
         Assert.IsNotNull(workspaceFileDialog);
         Assert.IsInstanceOfType<DotNetTestExecutionService>(testExecutionService);
         Assert.IsInstanceOfType<NetCoreDbgDebugSessionService>(debugSessionService);
+        Assert.AreEqual(workbenchSettings.AIEndpoint, aiSettings.Endpoint);
+        Assert.AreEqual(workbenchSettings.AIModelId, aiSettings.ModelId);
+        Assert.AreEqual(string.Empty, aiSettings.ApiKey);
         diagnostics.SelectedDiagnostic = new AppKomponentBaseLib.Diagnostics.Diagnostic
         {
             SourcePath = Path.GetTempFileName(),

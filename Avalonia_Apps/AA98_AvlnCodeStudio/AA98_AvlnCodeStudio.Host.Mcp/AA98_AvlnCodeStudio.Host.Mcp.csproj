@@ -18,6 +18,7 @@
     <PackageReference Include="ModelContextProtocol" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.AI\AA98_AvlnCodeStudio.Base.AI.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base\AA98_AvlnCodeStudio.Base.csproj" />
   </ItemGroup>
 </Project>

@@ -20,7 +20,9 @@ public static class GitVersioningServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddSingleton<IGitCommandRunner, GitCommandRunner>();
-        services.AddSingleton<IVersionControlService, GitVersionControlService>();
+        services.AddSingleton<GitVersionControlService>();
+        services.AddSingleton<IVersionControlService>(provider =>
+            provider.GetRequiredService<GitVersionControlService>());
         return services;
     }
 }

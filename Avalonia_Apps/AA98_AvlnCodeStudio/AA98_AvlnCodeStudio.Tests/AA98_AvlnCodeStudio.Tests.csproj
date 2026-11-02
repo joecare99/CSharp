@@ -61,5 +61,6 @@
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Building.Workbench\AA98_AvlnCodeStudio.Building.Workbench.csproj" />
     <ProjectReference Include="..\AA98.Builder.Host\AA98.Builder.Host.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Versioning.Git\AA98_AvlnCodeStudio.Versioning.Git.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Versioning.Svn\AA98_AvlnCodeStudio.Versioning.Svn.csproj" />
   </ItemGroup>
 </Project>

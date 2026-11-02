@@ -147,74 +147,23 @@ public sealed class CSharpProjectTemplateService
     /// </summary>
     public string CreateProject(string templateId, string projectFilePath, string targetFramework)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(templateId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(projectFilePath);
-        ArgumentException.ThrowIfNullOrWhiteSpace(targetFramework);
-        if (!s_targetFrameworkPattern.IsMatch(targetFramework))
-        {
-            throw new ArgumentException("The target framework must use the netX.Y format.", nameof(targetFramework));
-        }
-
-        CSharpProjectTemplateDefinition template = _templates.FirstOrDefault(candidate =>
-            string.Equals(candidate.Id, templateId, StringComparison.OrdinalIgnoreCase))
-            ?? throw new KeyNotFoundException($"Project template '{templateId}' is not loaded.");
-
-        string normalizedProjectPath = Path.GetFullPath(projectFilePath);
-        if (!string.Equals(Path.GetExtension(normalizedProjectPath), ".csproj", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new ArgumentException("A C# project file path ending in .csproj is required.", nameof(projectFilePath));
-        }
-
-        string projectDirectory = Path.GetDirectoryName(normalizedProjectPath)
-            ?? throw new ArgumentException("The project file must have a parent directory.", nameof(projectFilePath));
-        if (!Directory.Exists(projectDirectory))
-        {
-            throw new DirectoryNotFoundException($"The project directory '{projectDirectory}' does not exist.");
-        }
-
-        string projectName = Path.GetFileNameWithoutExtension(normalizedProjectPath);
-        Dictionary<string, string> replacements = new(StringComparer.Ordinal)
-        {
-            ["{{ProjectName}}"] = projectName,
-            ["{{ProjectNameIdentifier}}"] = ToCSharpIdentifier(projectName),
-            ["{{TargetFramework}}"] = targetFramework,
-        };
-        string[] outputPaths =
-        [
-            normalizedProjectPath,
-            .. template.Files.Select(file =>
-                ResolveOutputPath(projectDirectory, ApplyReplacements(file.Path, replacements))),
-        ];
-        if (outputPaths.Distinct(GetPathComparer()).Count() != outputPaths.Length)
-        {
-            throw new InvalidDataException($"Template '{template.Id}' generates the same file more than once.");
-        }
-
-        if (outputPaths.Any(File.Exists))
-        {
-            throw new IOException("The project file or a generated file already exists; no files were overwritten.");
-        }
-
+        IReadOnlyList<GeneratedProjectFile> files = GetProjectFiles(
+            templateId,
+            projectFilePath,
+            targetFramework);
+        string normalizedProjectPath = files[0].Path;
         List<string> createdPaths = [];
         try
         {
-            WriteNewFile(
-                normalizedProjectPath,
-                ApplyReplacements(template.ProjectFileContent, replacements),
-                createdPaths);
-
-            foreach (CSharpProjectTemplateFile file in template.Files)
+            foreach (GeneratedProjectFile file in files)
             {
-                string outputPath = ResolveOutputPath(
-                    projectDirectory,
-                    ApplyReplacements(file.Path, replacements));
-                string? outputDirectory = Path.GetDirectoryName(outputPath);
+                string? outputDirectory = Path.GetDirectoryName(file.Path);
                 if (outputDirectory is not null)
                 {
                     Directory.CreateDirectory(outputDirectory);
                 }
 
-                WriteNewFile(outputPath, ApplyReplacements(file.Content, replacements), createdPaths);
+                WriteNewFile(file.Path, file.Content, createdPaths);
             }
 
             return normalizedProjectPath;
@@ -228,6 +177,35 @@ public sealed class CSharpProjectTemplateService
 
             throw;
         }
+    }
+
+    /// <summary>
+    /// Prepares new-project file contents for review without writing them.
+    /// </summary>
+    public IReadOnlyList<WorkspaceFileChangeRequest> PrepareProjectChangeRequests(
+        string templateId,
+        string projectFilePath)
+    {
+        return PrepareProjectChangeRequests(templateId, projectFilePath, DefaultTargetFramework);
+    }
+
+    /// <summary>
+    /// Prepares new-project file contents for review without writing them.
+    /// </summary>
+    public IReadOnlyList<WorkspaceFileChangeRequest> PrepareProjectChangeRequests(
+        string templateId,
+        string projectFilePath,
+        string targetFramework)
+    {
+        IReadOnlyList<GeneratedProjectFile> files = GetProjectFiles(
+            templateId,
+            projectFilePath,
+            targetFramework);
+        string projectDirectory = Path.GetDirectoryName(files[0].Path)!;
+        return files.Select(file => new WorkspaceFileChangeRequest(
+                Path.GetRelativePath(projectDirectory, file.Path),
+                file.Content))
+            .ToArray();
     }
 
     public string CreateConsoleProject(string projectFilePath)
@@ -296,6 +274,64 @@ public sealed class CSharpProjectTemplateService
         {
             throw new InvalidDataException($"Project template JSON '{filePath}' is invalid: {exception.Message}", exception);
         }
+    }
+
+    private IReadOnlyList<GeneratedProjectFile> GetProjectFiles(
+        string templateId,
+        string projectFilePath,
+        string targetFramework)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(templateId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectFilePath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(targetFramework);
+        if (!s_targetFrameworkPattern.IsMatch(targetFramework))
+        {
+            throw new ArgumentException("The target framework must use the netX.Y format.", nameof(targetFramework));
+        }
+
+        CSharpProjectTemplateDefinition template = _templates.FirstOrDefault(candidate =>
+            string.Equals(candidate.Id, templateId, StringComparison.OrdinalIgnoreCase))
+            ?? throw new KeyNotFoundException($"Project template '{templateId}' is not loaded.");
+
+        string normalizedProjectPath = Path.GetFullPath(projectFilePath);
+        if (!string.Equals(Path.GetExtension(normalizedProjectPath), ".csproj", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException("A C# project file path ending in .csproj is required.", nameof(projectFilePath));
+        }
+
+        string projectDirectory = Path.GetDirectoryName(normalizedProjectPath)
+            ?? throw new ArgumentException("The project file must have a parent directory.", nameof(projectFilePath));
+        if (!Directory.Exists(projectDirectory))
+        {
+            throw new DirectoryNotFoundException($"The project directory '{projectDirectory}' does not exist.");
+        }
+
+        Dictionary<string, string> replacements = new(StringComparer.Ordinal)
+        {
+            ["{{ProjectName}}"] = Path.GetFileNameWithoutExtension(normalizedProjectPath),
+            ["{{ProjectNameIdentifier}}"] = ToCSharpIdentifier(Path.GetFileNameWithoutExtension(normalizedProjectPath)),
+            ["{{TargetFramework}}"] = targetFramework,
+        };
+        GeneratedProjectFile[] files =
+        [
+            new(
+                normalizedProjectPath,
+                ApplyReplacements(template.ProjectFileContent, replacements)),
+            .. template.Files.Select(file => new GeneratedProjectFile(
+                ResolveOutputPath(projectDirectory, ApplyReplacements(file.Path, replacements)),
+                ApplyReplacements(file.Content, replacements))),
+        ];
+        if (files.Select(static file => file.Path).Distinct(GetPathComparer()).Count() != files.Length)
+        {
+            throw new InvalidDataException($"Template '{template.Id}' generates the same file more than once.");
+        }
+
+        if (files.Any(static file => File.Exists(file.Path)))
+        {
+            throw new IOException("The project file or a generated file already exists; no files were overwritten.");
+        }
+
+        return files;
     }
 
     private static void ValidateTemplate(CSharpProjectTemplateDefinition template)
@@ -428,4 +464,6 @@ public sealed class CSharpProjectTemplateService
     {
         return OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
     }
+
+    private sealed record GeneratedProjectFile(string Path, string Content);
 }

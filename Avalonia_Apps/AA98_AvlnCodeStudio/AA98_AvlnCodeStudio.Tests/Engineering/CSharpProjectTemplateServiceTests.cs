@@ -65,6 +65,22 @@ public sealed class CSharpProjectTemplateServiceTests
             service.SaveTemplate(definition, templatePath);
 
             service.ReloadTemplates();
+            string reviewedProjectDirectory = Path.Combine(outputDirectory, "reviewed");
+            Directory.CreateDirectory(reviewedProjectDirectory);
+            WorkspaceFileChangeRequest[] reviewedRequests = service
+                .PrepareProjectChangeRequests(
+                    "custom-app",
+                    Path.Combine(reviewedProjectDirectory, "Reviewed-App.csproj"),
+                    "net9.0")
+                .ToArray();
+            Assert.IsFalse(Directory.Exists(Path.Combine(reviewedProjectDirectory, "src")));
+            WorkspaceFileChangeService changeService = new(new NoOpenDocuments());
+            WorkspaceFileChangeProposal proposal = changeService.Prepare(reviewedProjectDirectory, reviewedRequests);
+            changeService.Apply(proposal, confirmed: true);
+            Assert.AreEqual(
+                "namespace Reviewed_App;",
+                File.ReadAllText(Path.Combine(reviewedProjectDirectory, "src", "Reviewed_App.cs")));
+
             string projectPath = service.CreateProject("custom-app", Path.Combine(outputDirectory, "My-App.csproj"), "net9.0");
             service.SaveTemplate(new CSharpProjectTemplateDefinition
             {
@@ -133,6 +149,36 @@ public sealed class CSharpProjectTemplateServiceTests
     }
 
     [TestMethod]
+    public void PrepareProjectChangeRequests_CreatesReviewableNewProjectWithoutWritingFiles()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string projectPath = Path.Combine(root, "MvvmSample.csproj");
+            CSharpProjectTemplateService templates = new();
+            WorkspaceFileChangeRequest[] requests = templates
+                .PrepareProjectChangeRequests("avalonia-mvvm", projectPath, "net10.0")
+                .ToArray();
+
+            Assert.AreEqual(7, requests.Length);
+            Assert.IsFalse(File.Exists(projectPath));
+            Assert.IsFalse(File.Exists(Path.Combine(root, "MainWindowViewModel.cs")));
+            StringAssert.Contains(
+                requests.Single(request => request.RelativePath == "MainWindowViewModel.cs").ProposedContent,
+                "[ObservableProperty]");
+
+            WorkspaceFileChangeService changes = new(new NoOpenDocuments());
+            WorkspaceFileChangeProposal proposal = changes.Prepare(root, requests);
+            Assert.IsTrue(proposal.Changes.All(static change => change.IsNewFile));
+
+            changes.Apply(proposal, confirmed: true);
+
+            Assert.IsTrue(File.Exists(projectPath));
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindow.axaml")), "GreetCommand");
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindowViewModel.cs")), "[RelayCommand]");
+        });
+    }
+
+    [TestMethod]
     public void CreateConsoleProject_RejectsUnsupportedPathsAndFrameworks()
     {
         WithTemporaryDirectory(root =>
@@ -183,6 +229,63 @@ public sealed class CSharpProjectTemplateServiceTests
                 File.ReadAllText(Path.Combine(root, "SampleTests.cs")),
                 "[TestMethod]");
             Assert.AreEqual(1, new CSharpWorkspaceLoader().Load(projectPath).Projects.Count);
+        });
+    }
+
+    [TestMethod]
+    public async Task CreateAvaloniaMvvmProject_WritesCompiledBindingsAndBuilds()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            string projectPath = new CSharpProjectTemplateService().CreateProject(
+                "avalonia-mvvm",
+                Path.Combine(root, "MvvmSample.csproj"),
+                $"net{Environment.Version.Major}.0");
+
+            string projectContent = File.ReadAllText(projectPath);
+            StringAssert.Contains(projectContent, "CommunityToolkit.Mvvm");
+            StringAssert.Contains(projectContent, "<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>");
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindow.axaml")), "GreetCommand");
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindowViewModel.cs")), "[ObservableProperty]");
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindowViewModel.cs")), "[RelayCommand]");
+
+            const string generatedMarkup = """
+                <Window xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        x:Class="MvvmSample.GeneratedWindow">
+                  <StackPanel>
+                    <TextBox x:Name="UserNameTextBox" Text="Ada" />
+                    <CheckBox x:Name="RememberMeCheckBox" IsChecked="True" />
+                    <ToggleSwitch x:Name="NotificationsToggleSwitch" IsChecked="False" />
+                    <RadioButton x:Name="PersonalRadioButton" IsChecked="True" />
+                    <NumericUpDown x:Name="QuantityNumericUpDown" Value="12.5" />
+                    <Slider x:Name="VolumeSlider" Value="0.75" />
+                    <ComboBox x:Name="CountryComboBox" SelectedIndex="1" />
+                    <Button x:Name="SubmitButton" Content="Submit" />
+                    <TextBlock x:Name="StatusTextBlock" Text="Ready" />
+                  </StackPanel>
+                </Window>
+                """;
+            string generatedViewPath = Path.Combine(root, "GeneratedWindow.axaml");
+            File.WriteAllText(generatedViewPath, generatedMarkup);
+            File.WriteAllText(
+                generatedViewPath + ".cs",
+                """
+                using Avalonia.Controls;
+                namespace MvvmSample;
+                public partial class GeneratedWindow : Window
+                {
+                    public GeneratedWindow() => InitializeComponent();
+                }
+                """);
+            WorkspaceFileChangeRequest[] generatedChanges = new AxamlMvvmGenerator()
+                .Generate("GeneratedWindow.axaml", generatedMarkup)
+                .ToArray();
+            WorkspaceFileChangeService changeService = new(new NoOpenDocuments());
+            WorkspaceFileChangeProposal proposal = changeService.Prepare(root, generatedChanges);
+            changeService.Apply(proposal, confirmed: true);
+
+            await BuildProjectAsync(projectPath);
         });
     }
 
@@ -255,7 +358,7 @@ public sealed class CSharpProjectTemplateServiceTests
     {
         ProcessStartInfo startInfo = new("dotnet")
         {
-            WorkingDirectory = Path.GetDirectoryName(projectPath)!,
+            WorkingDirectory = Path.GetTempPath(),
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -264,6 +367,8 @@ public sealed class CSharpProjectTemplateServiceTests
         startInfo.ArgumentList.Add("build");
         startInfo.ArgumentList.Add(projectPath);
         startInfo.ArgumentList.Add("--nologo");
+        startInfo.ArgumentList.Add("--disable-build-servers");
+        startInfo.ArgumentList.Add("-nodeReuse:false");
         startInfo.ArgumentList.Add("--verbosity");
         startInfo.ArgumentList.Add("quiet");
         startInfo.Environment.Remove("MSBuildSDKsPath");
@@ -280,4 +385,10 @@ public sealed class CSharpProjectTemplateServiceTests
         await process.WaitForExitAsync();
         Assert.AreEqual(0, process.ExitCode, $"{await outputTask}{Environment.NewLine}{await errorTask}");
     }
+
+    private sealed class NoOpenDocuments : IWorkspaceOpenDocumentProvider
+    {
+        public bool IsDocumentOpen(string fullPath) => false;
+    }
+
 }

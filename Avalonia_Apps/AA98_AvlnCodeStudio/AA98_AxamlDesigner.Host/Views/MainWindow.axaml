@@ -9,10 +9,17 @@
         Height="760"
         MinWidth="900"
         MinHeight="560">
-  <Grid Margin="12"
-        RowDefinitions="Auto,*,Auto"
-        RowSpacing="8">
-    <Grid ColumnDefinitions="*,Auto,Auto,Auto"
+  <Grid ClipToBounds="True">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" MinHeight="0" />
+      <RowDefinition Height="28" />
+    </Grid.RowDefinitions>
+  <DockPanel Grid.Row="0"
+             MinHeight="0"
+             LastChildFill="True">
+    <Grid DockPanel.Dock="Top"
+          Margin="12,12,12,8"
+          ColumnDefinitions="*,Auto,Auto,Auto"
           ColumnSpacing="8">
       <TextBox Grid.Column="0"
                PlaceholderText="AXAML file path"
@@ -27,11 +34,21 @@
               Content="Save"
               Click="OnSaveRequested" />
     </Grid>
-    <designer:AxamlDesignerView x:Name="DesignerView"
-                                Grid.Row="1"
+
+    <designer:AxamlDesignerView Margin="12,0,12,8"
+                                MinHeight="0"
+                                x:Name="DesignerView"
                                 DataContext="{Binding Designer}" />
-    <TextBlock Grid.Row="2"
-               Text="{Binding StatusText}"
+  </DockPanel>
+  <Border Grid.Row="1"
+          Height="28"
+          Padding="8,3"
+          Background="#2D2D30"
+          BorderBrush="#555555"
+          BorderThickness="0,1,0,0">
+    <TextBlock Text="{Binding StatusText}"
+               VerticalAlignment="Center"
                TextTrimming="CharacterEllipsis" />
+  </Border>
   </Grid>
 </Window>

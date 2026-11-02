@@ -33,6 +33,7 @@
     <Project Path="AA98_AvlnCodeStudio.UI/AA98_AvlnCodeStudio.UI.csproj" />
     <Project Path="AA98_AxamlDesigner.Host/AA98_AxamlDesigner.Host.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Versioning.Git/AA98_AvlnCodeStudio.Versioning.Git.csproj" />
+    <Project Path="AA98_AvlnCodeStudio.Versioning.Svn/AA98_AvlnCodeStudio.Versioning.Svn.csproj" />
   </Folder>
   <Folder Name="/Libraries/">
     <Project Path="../Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace AA98_AvlnCodeStudio.Base.AI.Services;
 
 /// <summary>
-/// Defines a provider-agnostic AI client for text generation operations.
+/// Defines a provider-agnostic AI client for text generation and structured tool calls.
 /// </summary>
 public interface IAIClient
 {

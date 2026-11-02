@@ -32,6 +32,10 @@ public static class UiStrings
 
     public static string NotificationRegionTitle => GetString(nameof(NotificationRegionTitle));
 
+    public static string DocumentStatusLabel => GetString(nameof(DocumentStatusLabel));
+
+    public static string EditorStatusLabel => GetString(nameof(EditorStatusLabel));
+
     public static string FileMenuHeader => GetString(nameof(FileMenuHeader));
 
     public static string ViewMenuHeader => GetString(nameof(ViewMenuHeader));

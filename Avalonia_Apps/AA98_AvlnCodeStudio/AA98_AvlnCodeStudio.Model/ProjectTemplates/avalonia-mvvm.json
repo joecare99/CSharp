@@ -1,0 +1,33 @@
+{
+  "id": "avalonia-mvvm",
+  "name": "Avalonia MVVM Application",
+  "description": "A cross-platform Avalonia desktop application using CommunityToolkit.Mvvm.",
+  "defaultProjectFileName": "{{ProjectName}}.csproj",
+  "projectFileContent": "<Project Sdk=\"Microsoft.NET.Sdk\">\n  <PropertyGroup>\n    <OutputType>WinExe</OutputType>\n    <TargetFramework>{{TargetFramework}}</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>\n  </PropertyGroup>\n  <ItemGroup>\n    <PackageReference Include=\"Avalonia\" Version=\"12.1.4\" />\n    <PackageReference Include=\"Avalonia.Desktop\" Version=\"12.1.4\" />\n    <PackageReference Include=\"Avalonia.Themes.Fluent\" Version=\"12.1.4\" />\n    <PackageReference Include=\"Avalonia.Fonts.Inter\" Version=\"12.1.4\" />\n    <PackageReference Include=\"CommunityToolkit.Mvvm\" Version=\"8.4.2\" />\n  </ItemGroup>\n</Project>\n",
+  "files": [
+    {
+      "path": "Program.cs",
+      "content": "using Avalonia;\nusing System;\n\nnamespace {{ProjectNameIdentifier}};\n\ninternal static class Program\n{\n    [STAThread]\n    public static void Main(string[] args)\n    {\n        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);\n    }\n\n    public static AppBuilder BuildAvaloniaApp()\n    {\n        return AppBuilder.Configure<App>()\n            .UsePlatformDetect()\n            .WithInterFont()\n            .LogToTrace();\n    }\n}\n"
+    },
+    {
+      "path": "App.axaml",
+      "content": "<Application xmlns=\"https://github.com/avaloniaui\"\n             xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"\n             x:Class=\"{{ProjectNameIdentifier}}.App\"\n             RequestedThemeVariant=\"Default\">\n  <Application.Styles>\n    <FluentTheme />\n  </Application.Styles>\n</Application>\n"
+    },
+    {
+      "path": "App.axaml.cs",
+      "content": "using Avalonia;\nusing Avalonia.Controls.ApplicationLifetimes;\nusing Avalonia.Markup.Xaml;\n\nnamespace {{ProjectNameIdentifier}};\n\npublic partial class App : Application\n{\n    public override void Initialize()\n    {\n        AvaloniaXamlLoader.Load(this);\n    }\n\n    public override void OnFrameworkInitializationCompleted()\n    {\n        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)\n        {\n            desktop.MainWindow = new MainWindow\n            {\n                DataContext = new MainWindowViewModel(),\n            };\n        }\n\n        base.OnFrameworkInitializationCompleted();\n    }\n}\n"
+    },
+    {
+      "path": "MainWindow.axaml",
+      "content": "<Window xmlns=\"https://github.com/avaloniaui\"\n        xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"\n        xmlns:vm=\"using:{{ProjectNameIdentifier}}\"\n        x:Class=\"{{ProjectNameIdentifier}}.MainWindow\"\n        x:DataType=\"vm:MainWindowViewModel\"\n        Title=\"{{ProjectName}}\"\n        Width=\"480\"\n        Height=\"280\">\n  <StackPanel Margin=\"24\" Spacing=\"12\" VerticalAlignment=\"Center\">\n    <TextBlock Text=\"Name\" />\n    <TextBox Text=\"{Binding Name, Mode=TwoWay}\" PlaceholderText=\"Enter your name\" />\n    <Button Content=\"Greet\" Command=\"{Binding GreetCommand}\" HorizontalAlignment=\"Left\" />\n    <TextBlock Text=\"{Binding Greeting}\" />\n  </StackPanel>\n</Window>\n"
+    },
+    {
+      "path": "MainWindow.axaml.cs",
+      "content": "using Avalonia.Controls;\n\nnamespace {{ProjectNameIdentifier}};\n\npublic partial class MainWindow : Window\n{\n    public MainWindow()\n    {\n        InitializeComponent();\n    }\n}\n"
+    },
+    {
+      "path": "MainWindowViewModel.cs",
+      "content": "using CommunityToolkit.Mvvm.ComponentModel;\nusing CommunityToolkit.Mvvm.Input;\n\nnamespace {{ProjectNameIdentifier}};\n\npublic partial class MainWindowViewModel : ObservableObject\n{\n    [ObservableProperty]\n    private string _name = string.Empty;\n\n    [ObservableProperty]\n    private string _greeting = \"Enter a name and choose Greet.\";\n\n    [RelayCommand]\n    private void Greet()\n    {\n        Greeting = string.IsNullOrWhiteSpace(Name)\n            ? \"Please enter a name first.\"\n            : $\"Hello, {Name}!\";\n    }\n}\n"
+    }
+  ]
+}

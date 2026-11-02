@@ -1,4 +1,7 @@
 using AA98_AvlnCodeStudio.Model.Workspaces;
+using AA98_AvlnCodeStudio.Base.AI.Models;
+using AA98_AvlnCodeStudio.Base.AI.Services;
+using AA98_AvlnCodeStudio.UI.Configuration;
 using AA98_AvlnCodeStudio.Editor.Components;
 using AA98_AvlnCodeStudio.Editor.Services;
 using AA98_AvlnCodeStudio.Editor.Navigation;
@@ -22,9 +25,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Config.Service;
 using Code.Navigation;
 using Diagnostics.Navigation;
 
@@ -132,6 +137,336 @@ public sealed class CSharpWorkspaceLoaderTests
     }
 
     [TestMethod]
+    public async Task MainWindowViewModel_AIChatIncludesCurrentWorkspaceContextOnEachTurn()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            string firstProject = Path.Combine(root, "First.csproj");
+            string firstSolution = Path.Combine(root, "First.slnx");
+            string secondProject = Path.Combine(root, "Second.csproj");
+            string secondSolution = Path.Combine(root, "Second.slnx");
+            File.WriteAllText(firstProject, "<Project />");
+            File.WriteAllText(firstSolution, "<Solution><Project Path=\"First.csproj\" /></Solution>");
+            File.WriteAllText(secondProject, "<Project />");
+            File.WriteAllText(secondSolution, "<Solution><Project Path=\"Second.csproj\" /></Solution>");
+            List<AICompletionRequest> requests = [];
+            List<string> statusReferences =
+            [
+                "first-open",
+                "first-turn",
+                "second-open",
+                "second-turn",
+            ];
+            int statusCallIndex = 0;
+            IVersionControlService versionControlService = Substitute.For<IVersionControlService>();
+            versionControlService.GetStatusAsync(
+                    Arg.Any<VersionControlStatusRequest>(),
+                    Arg.Any<CancellationToken>())
+                .Returns(_ =>
+                {
+                    string reference = statusReferences[statusCallIndex++];
+                    VersionControlStatus status = new()
+                    {
+                        RepositoryRootPath = root,
+                        RepositoryName = "Sample",
+                        ActiveReferenceName = reference,
+                        IsRepositoryRootDiscovered = true,
+                        HasLocalChanges = true,
+                    };
+                    status.Capabilities.Add(VersionControlCapability.InspectStatus);
+                    status.Changes.Add(new VersionControlChangeSummary
+                    {
+                        Path = "tracked.cs",
+                        ChangeKind = VersionControlChangeKind.Modified,
+                    });
+                    return Task.FromResult(status);
+                });
+            IAIClient client = Substitute.For<IAIClient>();
+            client.CompleteAsync(Arg.Any<AICompletionRequest>(), Arg.Any<CancellationToken>())
+                .Returns(call =>
+                {
+                    requests.Add(call.Arg<AICompletionRequest>());
+                    return Task.FromResult(new AICompletionResponse(
+                        new AIMessage(AIMessageRole.Assistant, "Ready.")));
+                });
+            IAvaloniaEditorComponent editorComponent = Substitute.For<IAvaloniaEditorComponent>();
+            editorComponent.EditorViewModel.Returns(new EditorViewModel());
+            MainWindowViewModel viewModel = new(
+                editorComponent,
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                new DiagnosticCollectionViewModel(),
+                null,
+                null,
+                versionControlService: versionControlService,
+                aiChatService: new AIChatService(client, new AIChatToolCatalog([])));
+            viewModel.AiModel = "test-model";
+
+            await viewModel.OpenWorkspaceFileAsync(firstSolution);
+            viewModel.AiChatInput = "What is in this workspace?";
+            await viewModel.SendAIChatMessageCommand.ExecuteAsync(null);
+
+            await viewModel.OpenWorkspaceFileAsync(secondSolution);
+            viewModel.AiChatInput = "And now?";
+            await viewModel.SendAIChatMessageCommand.ExecuteAsync(null);
+
+            Assert.AreEqual(2, requests.Count);
+            StringAssert.Contains(requests[0].Messages[0].Content, firstSolution);
+            StringAssert.Contains(requests[0].Messages[0].Content, firstProject);
+            StringAssert.Contains(requests[1].Messages[0].Content, secondSolution);
+            StringAssert.Contains(requests[1].Messages[0].Content, secondProject);
+            StringAssert.Contains(requests[0].Messages[0].Content, "reference: first-turn");
+            StringAssert.Contains(requests[0].Messages[0].Content, "local changes: 1 (present)");
+            StringAssert.Contains(requests[1].Messages[0].Content, "reference: second-turn");
+            StringAssert.Contains(requests[1].Messages[0].Content, "local changes: 1 (present)");
+            Assert.IsFalse(requests[0].Messages[0].Content.Contains("<Project />", StringComparison.Ordinal));
+            Assert.IsFalse(requests[1].Messages[0].Content.Contains("<Project />", StringComparison.Ordinal));
+            Assert.AreEqual(1, requests[1].Messages.Count(static message => message.Role == AIMessageRole.System));
+            Assert.AreEqual(4, statusCallIndex);
+        });
+    }
+
+    [TestMethod]
+    public async Task MainWindowViewModel_ExecutedChatBuildPublishesNavigableWorkspaceDiagnostics()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            string projectPath = Path.Combine(root, "App.csproj");
+            string solutionPath = Path.Combine(root, "Sample.slnx");
+            string sourcePath = Path.Combine(root, "Program.cs");
+            string outsideSourcePath = Path.Combine(Path.GetTempPath(), $"AvlnOutside-{Guid.NewGuid():N}.cs");
+            File.WriteAllText(projectPath, "<Project />");
+            File.WriteAllText(solutionPath, "<Solution><Project Path=\"App.csproj\" /></Solution>");
+            File.WriteAllText(sourcePath, "class Program { }\n");
+            File.WriteAllText(outsideSourcePath, "class Outside { }\n");
+            try
+            {
+                using JsonDocument arguments = JsonDocument.Parse(JsonSerializer.Serialize(new
+                {
+                    workspacePath = solutionPath,
+                    projectPath,
+                }));
+                string buildResult = JsonSerializer.Serialize(new
+                {
+                    ProjectPath = projectPath,
+                    Succeeded = false,
+                    Diagnostics = new[]
+                    {
+                        new
+                        {
+                            Code = "CS1002",
+                            Message = "Expected ;",
+                            Severity = "Error",
+                            FilePath = sourcePath,
+                            LineNumber = 1,
+                            ColumnNumber = 16,
+                        },
+                        new
+                        {
+                            Code = "CS9999",
+                            Message = "Outside diagnostic",
+                            Severity = "Warning",
+                            FilePath = outsideSourcePath,
+                            LineNumber = 1,
+                            ColumnNumber = 1,
+                        },
+                    },
+                });
+                FakeBuildChatTool buildTool = new(buildResult);
+                Queue<AICompletionResponse> responses = new(
+                [
+                    new AICompletionResponse(
+                        new AIMessage(AIMessageRole.Assistant, string.Empty),
+                        [new AIChatToolCall("build-call", "workspace.build", arguments.RootElement)]),
+                    new AICompletionResponse(new AIMessage(AIMessageRole.Assistant, "Build finished.")),
+                ]);
+                IAIClient client = Substitute.For<IAIClient>();
+                client.CompleteAsync(Arg.Any<AICompletionRequest>(), Arg.Any<CancellationToken>())
+                    .Returns(_ => Task.FromResult(responses.Dequeue()));
+                ICodeNavigator navigator = Substitute.For<ICodeNavigator>();
+                DiagnosticCollectionViewModel diagnostics = new(new DiagnosticLocationMapper(), navigator);
+                IAvaloniaEditorComponent editorComponent = Substitute.For<IAvaloniaEditorComponent>();
+                editorComponent.EditorViewModel.Returns(new EditorViewModel());
+                MainWindowViewModel viewModel = new(
+                    editorComponent,
+                    new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                    diagnostics,
+                    null,
+                    null,
+                    aiChatService: new AIChatService(client, new AIChatToolCatalog([buildTool])));
+                viewModel.AiModel = "test-model";
+                viewModel.ApproveAIChatToolExecutionAsync = (_, _, _) => Task.FromResult(true);
+
+                await viewModel.OpenWorkspaceFileAsync(solutionPath);
+                viewModel.AiChatInput = "Build the solution.";
+                await viewModel.SendAIChatMessageCommand.ExecuteAsync(null);
+
+                Assert.AreEqual(1, diagnostics.Items.Count);
+                Assert.AreEqual("CS1002", diagnostics.Items[0].Code);
+                Assert.AreEqual(AppKomponentBaseLib.Diagnostics.DiagnosticSeverity.Error, diagnostics.Items[0].Severity);
+                Assert.AreEqual(Path.GetFullPath(sourcePath), diagnostics.Items[0].SourcePath);
+                Assert.AreEqual(1, diagnostics.Items[0].LineNumber);
+                StringAssert.Contains(viewModel.AIChatMessages[^1].Content, "Build finished.");
+
+                await diagnostics.ActivateAsync(diagnostics.Items[0]);
+
+                await navigator.Received(1).NavigateAsync(
+                    Arg.Is<CodeLocation>(location =>
+                        location.Path == Path.GetFullPath(sourcePath)
+                        && location.Line == 1
+                        && location.Column == 16),
+                    Arg.Any<CancellationToken>());
+            }
+            finally
+            {
+                File.Delete(outsideSourcePath);
+            }
+        });
+    }
+
+    [TestMethod]
+    public async Task MainWindowViewModel_ExecutedChatInspectionPublishesNavigableDiagnosticsWithoutBuild()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            string projectPath = Path.Combine(root, "App.csproj");
+            string solutionPath = Path.Combine(root, "Sample.slnx");
+            string sourcePath = Path.Combine(root, "Program.cs");
+            string outsideSourcePath = Path.Combine(Path.GetTempPath(), $"AvlnInspectOutside-{Guid.NewGuid():N}.cs");
+            File.WriteAllText(projectPath, "<Project />");
+            File.WriteAllText(solutionPath, "<Solution><Project Path=\"App.csproj\" /></Solution>");
+            File.WriteAllText(sourcePath, "class Program { }\n");
+            File.WriteAllText(outsideSourcePath, "class Outside { }\n");
+            try
+            {
+                using JsonDocument arguments = JsonDocument.Parse(JsonSerializer.Serialize(new
+                {
+                    workspacePath = solutionPath,
+                }));
+                string inspectionResult = JsonSerializer.Serialize(new
+                {
+                    EntryPath = solutionPath,
+                    RootPath = root,
+                    Projects = new[]
+                    {
+                        new
+                        {
+                            Name = "App",
+                            ProjectPath = projectPath,
+                            TargetFramework = "net10.0",
+                            IsTestProject = false,
+                            Diagnostics = new[]
+                            {
+                                new
+                                {
+                                    Code = "BLD0001",
+                                    Message = "Project inspection warning.",
+                                    Severity = "Warning",
+                                    FilePath = sourcePath,
+                                    LineNumber = 1,
+                                    ColumnNumber = 7,
+                                },
+                                new
+                                {
+                                    Code = "BLD9999",
+                                    Message = "Outside diagnostic",
+                                    Severity = "Error",
+                                    FilePath = outsideSourcePath,
+                                    LineNumber = 1,
+                                    ColumnNumber = 1,
+                                },
+                            },
+                        },
+                    },
+                });
+                FakeWorkspaceInspectionChatTool inspectionTool = new(inspectionResult);
+                Queue<AICompletionResponse> responses = new(
+                [
+                    new AICompletionResponse(
+                        new AIMessage(AIMessageRole.Assistant, string.Empty),
+                        [new AIChatToolCall("inspect-call", "workspace.inspect", arguments.RootElement)]),
+                    new AICompletionResponse(new AIMessage(AIMessageRole.Assistant, "Inspection complete.")),
+                ]);
+                IAIClient client = Substitute.For<IAIClient>();
+                client.CompleteAsync(Arg.Any<AICompletionRequest>(), Arg.Any<CancellationToken>())
+                    .Returns(_ => Task.FromResult(responses.Dequeue()));
+                ICodeNavigator navigator = Substitute.For<ICodeNavigator>();
+                DiagnosticCollectionViewModel diagnostics = new(new DiagnosticLocationMapper(), navigator);
+                IAvaloniaEditorComponent editorComponent = Substitute.For<IAvaloniaEditorComponent>();
+                editorComponent.EditorViewModel.Returns(new EditorViewModel());
+                MainWindowViewModel viewModel = new(
+                    editorComponent,
+                    new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                    diagnostics,
+                    null,
+                    null,
+                    aiChatService: new AIChatService(client, new AIChatToolCatalog([inspectionTool])));
+                viewModel.AiModel = "test-model";
+
+                await viewModel.OpenWorkspaceFileAsync(solutionPath);
+                viewModel.AiChatInput = "Inspect this workspace.";
+                await viewModel.SendAIChatMessageCommand.ExecuteAsync(null);
+
+                Assert.AreEqual(1, diagnostics.Items.Count);
+                Assert.AreEqual("BLD0001", diagnostics.Items[0].Code);
+                Assert.AreEqual(AppKomponentBaseLib.Diagnostics.DiagnosticSeverity.Warning, diagnostics.Items[0].Severity);
+                Assert.AreEqual(Path.GetFullPath(sourcePath), diagnostics.Items[0].SourcePath);
+                Assert.IsTrue(viewModel.AIChatMessages.Any(message =>
+                    message.Content.Contains("ignored 1 inspection diagnostic", StringComparison.OrdinalIgnoreCase)));
+                StringAssert.Contains(viewModel.AIChatMessages[^1].Content, "Inspection complete.");
+
+                await diagnostics.ActivateAsync(diagnostics.Items[0]);
+
+                await navigator.Received(1).NavigateAsync(
+                    Arg.Is<CodeLocation>(location =>
+                        location.Path == Path.GetFullPath(sourcePath)
+                        && location.Line == 1
+                        && location.Column == 7),
+                    Arg.Any<CancellationToken>());
+            }
+            finally
+            {
+                File.Delete(outsideSourcePath);
+            }
+        });
+    }
+
+    [TestMethod]
+    public async Task MainWindowViewModel_SaveAIChatSettings_PersistsEndpointAndModelWithoutApiKey()
+    {
+        IConfigStore store = Substitute.For<IConfigStore>();
+        ConfigService configService = new(store, "JC-Soft.AA98-CodeStudio");
+        CodeStudioSettings settings = new();
+        OpenAICompatibleAISettings runtimeSettings = new();
+        IAvaloniaEditorComponent editorComponent = Substitute.For<IAvaloniaEditorComponent>();
+        editorComponent.EditorViewModel.Returns(new EditorViewModel());
+        MainWindowViewModel viewModel = new(
+            editorComponent,
+            new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+            new DiagnosticCollectionViewModel(),
+            null,
+            null,
+            aiSettings: runtimeSettings,
+            codeStudioSettings: settings,
+            configService: configService);
+        viewModel.AiEndpoint = "https://api.example.test/v1/chat/completions";
+        viewModel.AiModel = "test-model";
+        viewModel.AiApiKey = "temporary-secret";
+
+        await viewModel.SaveAIChatSettingsCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(viewModel.AiEndpoint, runtimeSettings.Endpoint);
+        Assert.AreEqual(viewModel.AiModel, runtimeSettings.ModelId);
+        await store.Received(1).SaveAsync(
+            "JC-Soft.AA98-CodeStudio.Workbench",
+            Arg.Is<CodeStudioSettings>(saved =>
+                saved.AIEndpoint == "https://api.example.test/v1/chat/completions"
+                && saved.AIModelId == "test-model"));
+        Assert.IsFalse(System.Text.Json.JsonSerializer.Serialize(settings).Contains(
+            "temporary-secret",
+            StringComparison.Ordinal));
+    }
+
+    [TestMethod]
     public async Task MainWindowViewModel_CreateConsoleProject_CreatesAndOpensSelectedProject()
     {
         await WithTemporaryDirectoryAsync(async root =>
@@ -157,6 +492,7 @@ public sealed class CSharpWorkspaceLoaderTests
                 null,
                 null,
                 workspaceFileDialogService: workspaceFileDialog);
+            ApproveWorkspaceFileChanges(viewModel);
 
             await viewModel.CreateConsoleProjectCommand.ExecuteAsync(null);
 
@@ -168,6 +504,159 @@ public sealed class CSharpWorkspaceLoaderTests
                 Arg.Any<string?>(),
                 "ConsoleApp.csproj",
                 Arg.Any<CancellationToken>());
+        });
+    }
+
+    [TestMethod]
+    public async Task MainWindowViewModel_CancelledProjectChangeReviewCreatesNoFiles()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            string projectPath = Path.Combine(root, "NewApp.csproj");
+            IWorkspaceFileDialogService workspaceFileDialog = Substitute.For<IWorkspaceFileDialogService>();
+            workspaceFileDialog
+                .ShowSaveCSharpProjectDialogAsync(
+                    Arg.Any<string?>(),
+                    "ConsoleApp.csproj",
+                    Arg.Any<CancellationToken>())
+                .Returns(Task.FromResult<string?>(projectPath));
+            var viewModel = new MainWindowViewModel(
+                new AvaloniaEditorComponent(
+                    new EditorWorkflow(
+                        new AA98_AvlnCodeStudio.Model.Documents.FileEditorDocument(),
+                        new DesignEditorFileDialogService(),
+                        new DesignTextDocumentStorageService()),
+                    new EditorViewModel(),
+                    null!),
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                new DiagnosticCollectionViewModel(),
+                null,
+                null,
+                workspaceFileDialogService: workspaceFileDialog)
+            {
+                ReviewWorkspaceFileChangesAsync = (_, _) => Task.FromResult(false),
+            };
+
+            await viewModel.CreateConsoleProjectCommand.ExecuteAsync(null);
+
+            Assert.IsFalse(File.Exists(projectPath));
+            Assert.IsFalse(File.Exists(Path.Combine(root, "Program.cs")));
+            Assert.IsNull(viewModel.Workspace);
+            StringAssert.Contains(viewModel.Editor.StatusText, "cancelled");
+        });
+    }
+
+    [TestMethod]
+    public async Task MainWindowViewModel_GeneratesMvvmForSavedOpenAxamlWithReview()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string axamlPath = Path.Combine(root, "LoginView.axaml");
+            string originalMarkup = """
+                <Window xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        x:Class="Sample.LoginView">
+                  <StackPanel>
+                    <TextBox x:Name="UserNameTextBox" Text="Ada" />
+                    <Button x:Name="SubmitButton" Content="Submit" />
+                  </StackPanel>
+                </Window>
+                """;
+            File.WriteAllText(
+                projectPath,
+                """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                  <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
+                </Project>
+                """);
+            File.WriteAllText(axamlPath, originalMarkup);
+            TestEditorComponentFactory editorFactory = new();
+            IAvaloniaEditorComponent editorComponent = editorFactory.Create();
+            EditorDocumentWorkspace editorWorkspace = new(editorComponent, editorFactory);
+            MainWindowViewModel viewModel = new(
+                editorComponent,
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                new DiagnosticCollectionViewModel(),
+                null,
+                null,
+                editorWorkspace: editorWorkspace);
+            await viewModel.OpenWorkspaceFileAsync(projectPath);
+            await viewModel.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+            ApproveWorkspaceFileChanges(viewModel);
+
+            Assert.IsTrue(viewModel.GenerateAxamlMvvmCommand.CanExecute(null));
+            await viewModel.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+
+            string generatedViewModelPath = Path.Combine(root, "LoginViewViewModel.cs");
+            Assert.IsTrue(File.Exists(generatedViewModelPath));
+            StringAssert.Contains(File.ReadAllText(generatedViewModelPath), "private string _userName = \"Ada\";");
+            StringAssert.Contains(viewModel.Editor.Text, "Text=\"{Binding UserName, Mode=TwoWay}\"");
+            StringAssert.Contains(viewModel.Editor.Text, "Command=\"{Binding SubmitCommand}\"");
+            Assert.IsFalse(viewModel.Editor.IsDirty);
+            Assert.AreEqual(viewModel.Editor.Text, File.ReadAllText(axamlPath));
+            StringAssert.Contains(viewModel.Editor.StatusText, "Generated MVVM code");
+        });
+    }
+
+    [TestMethod]
+    public async Task MainWindowViewModel_DoesNotOverwriteExistingViewModelDuringGeneration()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string axamlPath = Path.Combine(root, "LoginView.axaml");
+            string viewModelPath = Path.Combine(root, "LoginViewViewModel.cs");
+            const string originalMarkup = """
+                <Window xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        x:Class="Sample.LoginView">
+                  <TextBox x:Name="UserNameTextBox" Text="Ada" />
+                </Window>
+                """;
+            const string existingViewModel = """
+                namespace Sample;
+                public partial class LoginViewViewModel
+                {
+                    public string UserLogic => "preserve me";
+                }
+                """;
+            File.WriteAllText(
+                projectPath,
+                """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                  <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
+                </Project>
+                """);
+            File.WriteAllText(axamlPath, originalMarkup);
+            File.WriteAllText(viewModelPath, existingViewModel);
+            TestEditorComponentFactory editorFactory = new();
+            IAvaloniaEditorComponent editorComponent = editorFactory.Create();
+            EditorDocumentWorkspace editorWorkspace = new(editorComponent, editorFactory);
+            MainWindowViewModel viewModel = new(
+                editorComponent,
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                new DiagnosticCollectionViewModel(),
+                null,
+                null,
+                editorWorkspace: editorWorkspace);
+            await viewModel.OpenWorkspaceFileAsync(projectPath);
+            await viewModel.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+            bool reviewInvoked = false;
+            viewModel.ReviewWorkspaceFileChangesAsync = (_, _) =>
+            {
+                reviewInvoked = true;
+                return Task.FromResult(true);
+            };
+
+            await viewModel.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+
+            Assert.IsFalse(reviewInvoked);
+            Assert.AreEqual(existingViewModel, File.ReadAllText(viewModelPath));
+            Assert.AreEqual(originalMarkup, File.ReadAllText(axamlPath));
+            StringAssert.Contains(viewModel.Editor.NotificationText, "Incremental MVVM generation is not supported yet");
         });
     }
 
@@ -208,6 +697,7 @@ public sealed class CSharpWorkspaceLoaderTests
                 null,
                 workspaceFileDialogService: workspaceFileDialog,
                 projectTemplateService: templateService);
+            ApproveWorkspaceFileChanges(viewModel);
 
             Assert.IsTrue(viewModel.ProjectTemplates.Any(template => template.Id == "custom-workbench"));
             viewModel.SelectedProjectTemplate = viewModel.ProjectTemplates.Single(template => template.Id == "custom-workbench");
@@ -427,6 +917,7 @@ public sealed class CSharpWorkspaceLoaderTests
                 null,
                 null,
                 workspaceFileDialogService: workspaceFileDialog);
+            ApproveWorkspaceFileChanges(viewModel);
 
             await viewModel.CreateClassLibraryProjectCommand.ExecuteAsync(null);
             Assert.AreEqual(Path.GetFullPath(libraryPath), viewModel.Workspace?.EntryPath);
@@ -806,6 +1297,16 @@ public sealed class CSharpWorkspaceLoaderTests
         }
     }
 
+    private static void ApproveWorkspaceFileChanges(MainWindowViewModel viewModel)
+    {
+        viewModel.ReviewWorkspaceFileChangesAsync = (proposal, cancellationToken) =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            viewModel.WorkspaceFileChangeService.Apply(proposal, confirmed: true);
+            return Task.FromResult(true);
+        };
+    }
+
     private static async Task WithTemporaryDirectoryAsync(Func<string, Task> action)
     {
         string root = Path.Combine(Path.GetTempPath(), $"AA98_CSharpWorkspace_{Guid.NewGuid():N}");
@@ -836,6 +1337,35 @@ public sealed class CSharpWorkspaceLoaderTests
         }
 
         IEditorComponent IEditorComponentFactory.Create() => Create();
+    }
+
+    private sealed class FakeBuildChatTool(string result) : IAIChatTool
+    {
+        public AIChatToolDescriptor Descriptor { get; } = new(
+            "workspace.build",
+            "Build workspace.",
+            """{"type":"object","properties":{"workspacePath":{"type":"string"},"projectPath":{"type":"string"}},"required":["workspacePath","projectPath"],"additionalProperties":false}""",
+            requiresConfirmation: true);
+
+        public Task<string> ExecuteAsync(JsonElement arguments, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(result);
+        }
+    }
+
+    private sealed class FakeWorkspaceInspectionChatTool(string result) : IAIChatTool
+    {
+        public AIChatToolDescriptor Descriptor { get; } = new(
+            "workspace.inspect",
+            "Inspect workspace.",
+            """{"type":"object","properties":{"workspacePath":{"type":"string"}},"required":["workspacePath"],"additionalProperties":false}""");
+
+        public Task<string> ExecuteAsync(JsonElement arguments, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(result);
+        }
     }
 
     private sealed class FakeDebugSessionService : IDebugSessionService

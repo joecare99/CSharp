@@ -19,4 +19,9 @@ public enum AIMessageRole
     /// Represents an assistant message.
     /// </summary>
     Assistant,
+
+    /// <summary>
+    /// Represents the result of a tool call.
+    /// </summary>
+    Tool,
 }
