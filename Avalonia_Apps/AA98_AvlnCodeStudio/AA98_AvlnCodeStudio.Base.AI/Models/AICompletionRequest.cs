@@ -14,7 +14,10 @@ public sealed class AICompletionRequest
     /// </summary>
     /// <param name="messages">The input messages.</param>
     /// <param name="options">The optional request options.</param>
-    public AICompletionRequest(IEnumerable<AIMessage> messages, AICompletionOptions? options = null)
+    public AICompletionRequest(
+        IEnumerable<AIMessage> messages,
+        AICompletionOptions? options = null,
+        IEnumerable<AIChatToolDescriptor>? tools = null)
     {
         if (messages is null)
         {
@@ -28,6 +31,23 @@ public sealed class AICompletionRequest
         }
 
         Options = options ?? new AICompletionOptions();
+        AIChatToolDescriptor[] availableTools = tools?.ToArray() ?? [];
+        if (availableTools.Any(static tool => tool is null))
+        {
+            throw new ArgumentException("AI completion tools cannot contain null entries.", nameof(tools));
+        }
+
+        string? duplicateToolName = availableTools
+            .GroupBy(static tool => tool.Name, StringComparer.Ordinal)
+            .Where(static group => group.Count() > 1)
+            .Select(static group => group.Key)
+            .FirstOrDefault();
+        if (duplicateToolName is not null)
+        {
+            throw new ArgumentException($"The AI tool '{duplicateToolName}' is provided more than once.", nameof(tools));
+        }
+
+        Tools = availableTools;
     }
 
     /// <summary>
@@ -39,4 +59,9 @@ public sealed class AICompletionRequest
     /// Gets the optional request options.
     /// </summary>
     public AICompletionOptions Options { get; }
+
+    /// <summary>
+    /// Gets the explicitly available structured tools.
+    /// </summary>
+    public IReadOnlyList<AIChatToolDescriptor> Tools { get; }
 }

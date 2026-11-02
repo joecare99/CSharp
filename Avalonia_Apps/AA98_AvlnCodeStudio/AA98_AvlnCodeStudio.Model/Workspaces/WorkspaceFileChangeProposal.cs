@@ -1,0 +1,60 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+namespace AA98_AvlnCodeStudio.Model.Workspaces;
+
+/// <summary>
+/// Captures a workspace-bounded set of text changes and their original file snapshots.
+/// </summary>
+public sealed class WorkspaceFileChangeProposal
+{
+    internal WorkspaceFileChangeProposal(string workspaceRoot, IList<WorkspaceFileChange> changes)
+    {
+        WorkspaceRoot = workspaceRoot;
+        Changes = new ReadOnlyCollection<WorkspaceFileChange>(changes);
+    }
+
+    public string WorkspaceRoot { get; }
+
+    public IReadOnlyList<WorkspaceFileChange> Changes { get; }
+}
+
+/// <summary>
+/// Describes one file in a prepared change proposal.
+/// </summary>
+public sealed class WorkspaceFileChange
+{
+    private readonly byte[]? _originalBytes;
+    private readonly byte[] _proposedBytes;
+
+    internal WorkspaceFileChange(
+        string relativePath,
+        string targetPath,
+        byte[]? originalBytes,
+        string? originalContent,
+        string proposedContent,
+        byte[] proposedBytes)
+    {
+        RelativePath = relativePath;
+        TargetPath = targetPath;
+        _originalBytes = originalBytes;
+        OriginalContent = originalContent;
+        ProposedContent = proposedContent;
+        _proposedBytes = proposedBytes;
+    }
+
+    public string RelativePath { get; }
+
+    public bool IsNewFile => _originalBytes is null;
+
+    public string? OriginalContent { get; }
+
+    public string ProposedContent { get; }
+
+    internal string TargetPath { get; }
+
+    internal byte[]? OriginalBytes => _originalBytes;
+
+    internal byte[] ProposedBytes => _proposedBytes;
+}

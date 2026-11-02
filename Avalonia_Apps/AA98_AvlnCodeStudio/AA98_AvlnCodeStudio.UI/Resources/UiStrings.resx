@@ -36,6 +36,12 @@
   <data name="NotificationRegionTitle" xml:space="preserve">
     <value>Notification</value>
   </data>
+  <data name="DocumentStatusLabel" xml:space="preserve">
+    <value>Document:</value>
+  </data>
+  <data name="EditorStatusLabel" xml:space="preserve">
+    <value>Editor:</value>
+  </data>
   <data name="FileMenuHeader" xml:space="preserve">
     <value>_File</value>
   </data>
@@ -133,7 +139,7 @@
     <value>Workspace: {0}</value>
   </data>
   <data name="NoRepositoryStatusText" xml:space="preserve">
-    <value>No Git repository detected</value>
+    <value>No Git repository detected; SVN status is not integrated.</value>
   </data>
   <data name="RepositoryStatusFormat" xml:space="preserve">
     <value>Git: {0} | {1} | {2} changes</value>

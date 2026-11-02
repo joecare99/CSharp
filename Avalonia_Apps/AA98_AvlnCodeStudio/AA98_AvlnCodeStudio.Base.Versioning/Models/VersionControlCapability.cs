@@ -33,5 +33,10 @@ public enum VersionControlCapability
     /// <summary>
     /// Local ignore rules can be evaluated.
     /// </summary>
-    EvaluateIgnoreRules
+    EvaluateIgnoreRules,
+
+    /// <summary>
+    /// The working copy can be updated from its remote repository.
+    /// </summary>
+    UpdateWorkingCopy
 }

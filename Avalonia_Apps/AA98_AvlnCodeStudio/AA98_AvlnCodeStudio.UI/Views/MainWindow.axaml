@@ -17,34 +17,68 @@
         Height="800"
         MinWidth="900"
         MinHeight="600"
+        Background="#252526"
         Title="{Binding WindowTitle}">
 
+    <Window.Styles>
+        <Style Selector="TabControl TabItem">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="8,2" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+        <Style Selector="Menu">
+            <Setter Property="Background" Value="#1E1E1E" />
+        </Style>
+    </Window.Styles>
+
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid Margin="12"
-          RowDefinitions="Auto,*,Auto"
-          ColumnDefinitions="260,*">
+    <Grid ClipToBounds="True"
+          RowDefinitions="*,28">
+        <Grid Grid.Row="0"
+              Margin="8"
+              MinHeight="0"
+              RowDefinitions="Auto,*,Auto"
+              ColumnDefinitions="280,*">
         <Border Grid.Row="0"
                 Grid.ColumnSpan="2"
                 Margin="0,0,0,8"
-                Padding="8,6"
+                Padding="8,4"
                 BorderBrush="{DynamicResource ThemeControlMidBrush}"
                 BorderThickness="1"
                 CornerRadius="4">
-            <StackPanel Spacing="8">
+            <StackPanel Spacing="6">
                 <Menu>
                     <MenuItem Header="{Binding FileMenuHeader}">
+                        <MenuItem Header="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
+                        <MenuItem Header="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
+                        <MenuItem Header="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
+                        <MenuItem Header="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
+                        <Separator />
+                        <MenuItem Header="{Binding OpenWorkspaceCommandText}" Command="{Binding OpenWorkspaceCommand}" />
                         <MenuItem Header="{Binding ProjectTemplatesMenuText}">
                             <MenuItem Header="{Binding CreateSelectedProjectCommandText}" Command="{Binding CreateSelectedProjectCommand}" />
                             <MenuItem Header="{Binding ReloadProjectTemplatesCommandText}" Command="{Binding ReloadProjectTemplatesCommand}" />
                         </MenuItem>
-                        <MenuItem Header="{Binding OpenWorkspaceCommandText}" Command="{Binding OpenWorkspaceCommand}" />
+                    </MenuItem>
+                    <MenuItem Header="_Edit">
+                        <MenuItem Header="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
+                        <MenuItem Header="{Binding GoToDefinitionCommandText}" Command="{Binding GoToDefinitionCommand}" />
+                        <Separator />
+                        <MenuItem Header="{Binding GenerateAxamlMvvmCommandText}" Command="{Binding GenerateAxamlMvvmCommand}" />
+                    </MenuItem>
+                    <MenuItem Header="_Build">
                         <MenuItem Header="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
                         <MenuItem Header="{Binding RunTestsCommandText}" Command="{Binding RunWorkspaceTestsCommand}" />
+                    </MenuItem>
+                    <MenuItem Header="_Debug">
                         <MenuItem Header="{Binding StartDebuggingCommandText}" Command="{Binding StartDebugSessionCommand}" />
                         <MenuItem Header="{Binding StopDebuggingCommandText}" Command="{Binding StopDebugSessionCommand}" />
                         <MenuItem Header="{Binding ToggleBreakpointCommandText}" Command="{Binding ToggleBreakpointCommand}" />
@@ -53,60 +87,136 @@
                         <MenuItem Header="{Binding StepIntoCommandText}" Command="{Binding StepIntoCommand}" />
                         <MenuItem Header="{Binding StepOverCommandText}" Command="{Binding StepOverCommand}" />
                         <MenuItem Header="{Binding StepOutCommandText}" Command="{Binding StepOutCommand}" />
-                        <MenuItem Header="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
-                        <MenuItem Header="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
-                        <MenuItem Header="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
-                        <MenuItem Header="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
-                        <MenuItem Header="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
-                        <MenuItem Header="{Binding GoToDefinitionCommandText}" Command="{Binding GoToDefinitionCommand}" />
-                    </MenuItem>
-                    <MenuItem Header="{Binding ViewMenuHeader}">
-                        <MenuItem Header="{Binding NavigationPlaceholderMenuText}" />
-                        <MenuItem Header="{Binding StatusPlaceholderMenuText}" />
                     </MenuItem>
                 </Menu>
 
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <ComboBox Width="220"
-                              ItemsSource="{Binding ProjectTemplates}"
-                              SelectedItem="{Binding SelectedProjectTemplate, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <Button Content="{Binding CreateSelectedProjectCommandText}" Command="{Binding CreateSelectedProjectCommand}" />
-                    <Button Content="{Binding ReloadProjectTemplatesCommandText}" Command="{Binding ReloadProjectTemplatesCommand}" />
-                    <Button Content="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
-                    <Button Content="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
-                    <Button Content="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
-                    <Button Content="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
-                    <Button Content="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
-                    <Button Content="{Binding RunTestsCommandText}" Command="{Binding RunWorkspaceTestsCommand}" />
-                    <Button Content="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
-                    <Button Content="{Binding GoToDefinitionCommandText}" Command="{Binding GoToDefinitionCommand}" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Command="{Binding OpenWorkspaceCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/workspace-open.png" Width="16" Height="16" />
+                            <TextBlock Text="{Binding OpenWorkspaceCommandText}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NewDocumentCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/document-new.png" Width="16" Height="16" />
+                            <TextBlock Text="{Binding NewCommandText}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding OpenDocumentCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/document-open.png" Width="16" Height="16" />
+                            <TextBlock Text="{Binding OpenCommandText}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding Editor.SaveCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/save.png" Width="16" Height="16" />
+                            <TextBlock Text="{Binding SaveCommandText}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding BuildWorkspaceCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/build.png" Width="16" Height="16" />
+                            <TextBlock Text="{Binding BuildWorkspaceCommandText}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding RunWorkspaceTestsCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/test.png" Width="16" Height="16" />
+                            <TextBlock Text="{Binding RunTestsCommandText}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBox Width="220" PlaceholderText="{Binding DebugTargetPlaceholderText}" Text="{Binding DebugTargetPath, Mode=TwoWay}" />
-                    <Button Content="{Binding StartDebuggingCommandText}" Command="{Binding StartDebugSessionCommand}" />
-                    <Button Content="{Binding StopDebuggingCommandText}" Command="{Binding StopDebugSessionCommand}" />
-                    <Button Content="{Binding ToggleBreakpointCommandText}" Command="{Binding ToggleBreakpointCommand}" />
-                    <Button Content="{Binding ContinueDebuggingCommandText}" Command="{Binding ContinueDebugSessionCommand}" />
-                    <Button Content="{Binding PauseDebuggingCommandText}" Command="{Binding PauseDebugSessionCommand}" />
-                    <Button Content="{Binding StepIntoCommandText}" Command="{Binding StepIntoCommand}" />
-                    <Button Content="{Binding StepOverCommandText}" Command="{Binding StepOverCommand}" />
-                    <Button Content="{Binding StepOutCommandText}" Command="{Binding StepOutCommand}" />
-                </StackPanel>
-                <Grid ColumnDefinitions="*,*"
-                      RowDefinitions="Auto,120"
-                      ColumnSpacing="8"
-                      RowSpacing="6">
-                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Spacing="6">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <ComboBox Width="200"
-                                      PlaceholderText="{Binding PackageProjectPlaceholderText}"
-                                      ItemsSource="{Binding PackageProjects}"
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Grid.Column="0"
+                Margin="0,0,8,0"
+                Padding="6"
+                MinHeight="0"
+                BorderBrush="{DynamicResource ThemeControlMidBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+            <TabControl>
+                <TabItem Header="AI Chat">
+                    <Grid RowDefinitions="Auto,*,Auto,Auto" RowSpacing="8">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="{Binding AIChatStatus}"
+                                       Opacity="0.8"
+                                       TextWrapping="Wrap" />
+                            <TextBox PlaceholderText="{Binding AIChatEndpointPlaceholderText}"
+                                     Text="{Binding AiEndpoint, Mode=TwoWay}" />
+                            <TextBox PlaceholderText="{Binding AIChatModelPlaceholderText}"
+                                     Text="{Binding AiModel, Mode=TwoWay}" />
+                            <TextBox PlaceholderText="{Binding AIChatApiKeyPlaceholderText}"
+                                     Text="{Binding AiApiKey, Mode=TwoWay}"
+                                     PasswordChar="*" />
+                            <Button Content="Save AI settings"
+                                    Command="{Binding SaveAIChatSettingsCommand}" />
+                        </StackPanel>
+                        <ListBox Grid.Row="1"
+                                 ItemsSource="{Binding AIChatMessages}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="vm:AIChatMessageViewModel">
+                                    <StackPanel Margin="4" Spacing="2">
+                                        <TextBlock Text="{Binding Role}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Content}"
+                                                   TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <TextBox Grid.Row="2"
+                                 MinHeight="72"
+                                 PlaceholderText="{Binding AIChatInputPlaceholderText}"
+                                 Text="{Binding AiChatInput, Mode=TwoWay}"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap" />
+                        <StackPanel Grid.Row="3"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="8">
+                            <Button Content="Clear"
+                                    Command="{Binding ClearAIChatCommand}" />
+                            <Button Content="{Binding AIChatSendCommandText}"
+                                    Command="{Binding SendAIChatMessageCommand}" />
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Solution">
+                    <Grid RowDefinitions="Auto,*" RowSpacing="6">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="{Binding WorkspaceTitle}"
+                                       FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding VersionControlSummary}"
+                                       Opacity="0.75"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <projectExplorer:ProjectExplorerView Grid.Row="1"
+                                                              DataContext="{Binding ProjectExplorer}" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Plan">
+                    <TreeView ItemsSource="{Binding PlanningExplorer.RootItems}"
+                              SelectedItem="{Binding PlanningExplorer.SelectedItem, Mode=TwoWay}">
+                        <TreeView.ItemTemplate>
+                            <TreeDataTemplate ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="{Binding Id}" />
+                                    <TextBlock Text="{Binding Title}" Opacity="0.8" />
+                                </StackPanel>
+                            </TreeDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </TabItem>
+                <TabItem Header="NuGet">
+                    <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="8">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Project" FontWeight="SemiBold" />
+                            <ComboBox ItemsSource="{Binding PackageProjects}"
                                       SelectedItem="{Binding SelectedPackageProject, Mode=TwoWay}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
@@ -114,112 +224,122 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <Button Content="{Binding ListPackagesCommandText}" Command="{Binding RefreshPackagesCommand}" />
-                            <TextBox Width="200"
-                                     PlaceholderText="{Binding PackageSearchPlaceholderText}"
-                                     Text="{Binding PackageSearchText, Mode=TwoWay}" />
-                            <Button Content="{Binding SearchPackagesCommandText}" Command="{Binding SearchPackagesCommand}" />
-                            <TextBox Width="180"
-                                     PlaceholderText="{Binding PackageIdPlaceholderText}"
-                                     Text="{Binding PackageId, Mode=TwoWay}" />
-                            <TextBox Width="150"
-                                     PlaceholderText="{Binding PackageVersionPlaceholderText}"
-                                     Text="{Binding PackageVersion, Mode=TwoWay}" />
-                            <Button Content="{Binding AddPackageCommandText}" Command="{Binding AddPackageCommand}" />
-                            <Button Content="{Binding RemovePackageCommandText}" Command="{Binding RemovePackageCommand}" />
+                            <Button Content="{Binding ListPackagesCommandText}"
+                                    Command="{Binding RefreshPackagesCommand}" />
                         </StackPanel>
-                    </StackPanel>
-                    <ListBox Grid.Row="1" Grid.Column="0"
-                             ItemsSource="{Binding InstalledPackages}"
-                             SelectedItem="{Binding SelectedInstalledPackage, Mode=TwoWay}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate x:DataType="workspaces:CSharpProjectPackageReference">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
-                                    <TextBlock Text="{Binding ResolvedVersion}" />
-                                    <TextBlock Text="{Binding TargetFramework}" Opacity="0.7" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <ListBox Grid.Row="1" Grid.Column="1"
-                             ItemsSource="{Binding PackageSearchResults}"
-                             SelectedItem="{Binding SelectedPackageSearchResult, Mode=TwoWay}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate x:DataType="workspaces:NuGetPackageSearchResult">
-                                <StackPanel Spacing="2">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
-                                        <TextBlock Text="{Binding LatestVersion}" />
-                                    </StackPanel>
-                                    <TextBlock Text="{Binding Description}"
-                                               Opacity="0.7"
-                                               TextTrimming="CharacterEllipsis" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
-            </StackPanel>
-        </Border>
-
-        <Border Grid.Row="1"
-                Grid.Column="0"
-                Margin="0,0,12,0"
-                Padding="12"
-                BorderBrush="{DynamicResource ThemeControlMidBrush}"
-                BorderThickness="1"
-                CornerRadius="4">
-            <Grid RowDefinitions="Auto,Auto,180,*,Auto"
-                  RowSpacing="8">
-                <TextBlock Grid.Row="0"
-                           Text="{Binding NavigationTitle}"
-                           FontWeight="SemiBold" />
-                <TextBlock Grid.Row="1"
-                           Text="{Binding PlanningExplorerTitle}"
-                           Opacity="0.7"
-                           TextWrapping="Wrap" />
-                <projectExplorer:ProjectExplorerView Grid.Row="2"
-                                                      DataContext="{Binding ProjectExplorer}" />
-                <TreeView Grid.Row="3"
-                          ItemsSource="{Binding PlanningExplorer.RootItems}"
-                          SelectedItem="{Binding PlanningExplorer.SelectedItem, Mode=TwoWay}">
-                    <TreeView.ItemTemplate>
-                        <TreeDataTemplate ItemsSource="{Binding Children}">
+                        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                            <TextBox PlaceholderText="{Binding PackageSearchPlaceholderText}"
+                                     Text="{Binding PackageSearchText, Mode=TwoWay}" />
+                            <Button Grid.Column="1"
+                                    Content="{Binding SearchPackagesCommandText}"
+                                    Command="{Binding SearchPackagesCommand}" />
+                        </Grid>
+                        <TabControl Grid.Row="2">
+                            <TabItem Header="Installed">
+                                <ListBox ItemsSource="{Binding InstalledPackages}"
+                                         SelectedItem="{Binding SelectedInstalledPackage, Mode=TwoWay}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="workspaces:CSharpProjectPackageReference">
+                                            <StackPanel Spacing="2">
+                                                <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding ResolvedVersion}" Opacity="0.8" />
+                                                <TextBlock Text="{Binding TargetFramework}" Opacity="0.7" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </TabItem>
+                            <TabItem Header="Search results">
+                                <ListBox ItemsSource="{Binding PackageSearchResults}"
+                                         SelectedItem="{Binding SelectedPackageSearchResult, Mode=TwoWay}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="workspaces:NuGetPackageSearchResult">
+                                            <StackPanel Spacing="2">
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding LatestVersion}" />
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding Description}"
+                                                           Opacity="0.7"
+                                                           TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </TabItem>
+                        </TabControl>
+                        <StackPanel Grid.Row="3" Spacing="6">
+                            <TextBox PlaceholderText="{Binding PackageIdPlaceholderText}"
+                                     Text="{Binding PackageId, Mode=TwoWay}" />
+                            <TextBox PlaceholderText="{Binding PackageVersionPlaceholderText}"
+                                     Text="{Binding PackageVersion, Mode=TwoWay}" />
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock Text="{Binding Id}" />
-                                <TextBlock Text="{Binding Title}" Opacity="0.8" />
+                                <Button Content="{Binding AddPackageCommandText}" Command="{Binding AddPackageCommand}" />
+                                <Button Content="{Binding RemovePackageCommandText}" Command="{Binding RemovePackageCommand}" />
                             </StackPanel>
-                        </TreeDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>
-                <configUi:ConfigUiView Grid.Row="4"
-                                       DataContext="{Binding ConfigUi}"
-                                       Margin="0,8,0,0" />
-            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Debug">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="8">
+                            <TextBox PlaceholderText="{Binding DebugTargetPlaceholderText}"
+                                     Text="{Binding DebugTargetPath, Mode=TwoWay}" />
+                            <Button Content="{Binding StartDebuggingCommandText}"
+                                    Command="{Binding StartDebugSessionCommand}" />
+                            <Button Content="{Binding StopDebuggingCommandText}"
+                                    Command="{Binding StopDebugSessionCommand}" />
+                            <Button Content="{Binding ToggleBreakpointCommandText}"
+                                    Command="{Binding ToggleBreakpointCommand}" />
+                            <Button Content="{Binding ContinueDebuggingCommandText}"
+                                    Command="{Binding ContinueDebugSessionCommand}" />
+                            <Button Content="{Binding PauseDebuggingCommandText}"
+                                    Command="{Binding PauseDebugSessionCommand}" />
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <Button Content="{Binding StepIntoCommandText}" Command="{Binding StepIntoCommand}" />
+                                <Button Content="{Binding StepOverCommandText}" Command="{Binding StepOverCommand}" />
+                                <Button Content="{Binding StepOutCommandText}" Command="{Binding StepOutCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem Header="Config">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <configUi:ConfigUiView DataContext="{Binding ConfigUi}" />
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
         </Border>
 
         <Border Grid.Row="1"
                 Grid.Column="1"
-                Padding="12"
+                Padding="8"
+                MinHeight="0"
                 BorderBrush="{DynamicResource ThemeControlMidBrush}"
                 BorderThickness="1"
                 CornerRadius="4">
             <DockPanel LastChildFill="True">
-                <TextBlock DockPanel.Dock="Top"
-                           Margin="0,0,0,8"
-                           Text="{Binding EditorRegionTitle}"
-                           FontWeight="SemiBold" />
-                <TextBlock DockPanel.Dock="Top"
-                           Margin="0,0,0,8"
-                           Text="{Binding WorkspaceTitle}"
-                           Opacity="0.7"
-                           TextTrimming="CharacterEllipsis" />
-                <TextBlock DockPanel.Dock="Top"
-                           Margin="0,0,0,8"
-                           Text="{Binding VersionControlSummary}"
-                           Opacity="0.7" />
                 <StackPanel DockPanel.Dock="Top"
+                            Margin="0,0,0,8"
+                            Spacing="4">
+                    <TextBlock Text="{Binding EditorRegionTitle}"
+                               FontWeight="SemiBold" />
+                    <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="8">
+                        <TextBlock Text="{Binding WorkspaceTitle}"
+                                   Opacity="0.75"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding VersionControlSummary}"
+                                   Opacity="0.75"
+                                   TextTrimming="CharacterEllipsis" />
+                        <Button Grid.Column="2"
+                                Content="{Binding UpdateSvnWorkspaceCommandText}"
+                                Command="{Binding UpdateSvnWorkspaceCommand}"
+                                IsVisible="{Binding CanUpdateSvnWorkspace}" />
+                    </Grid>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Top"
+                            Margin="0,0,0,8"
                             Orientation="Horizontal"
                             Spacing="8"
                             IsVisible="{Binding HasCompletionSuggestions}">
@@ -231,26 +351,25 @@
                             Content="{Binding ApplyCompletionCommandText}"
                             Command="{Binding ApplySelectedCompletionCommand}" />
                 </StackPanel>
-                <StackPanel DockPanel.Dock="Bottom"
-                            Margin="0,8,0,0"
-                            Spacing="4"
-                            IsVisible="{Binding HasDebugSession}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <Button Content="{Binding RefreshDebugStackCommandText}"
-                                Command="{Binding RefreshDebugStackCommand}" />
-                        <Button Content="{Binding LoadDebugVariablesCommandText}"
-                                Command="{Binding LoadDebugVariablesCommand}" />
-                    </StackPanel>
+                <Expander DockPanel.Dock="Bottom"
+                          Margin="0,8,0,0"
+                          Header="Debug details"
+                          IsVisible="{Binding HasDebugSession}">
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Height="140">
                         <StackPanel Grid.Column="0" Spacing="2">
                             <TextBlock Text="{Binding DebugStackFramesTitle}" FontWeight="SemiBold" />
+                            <Button HorizontalAlignment="Left"
+                                    Content="{Binding RefreshDebugStackCommandText}"
+                                    Command="{Binding RefreshDebugStackCommand}" />
                             <ListBox ItemsSource="{Binding DebugStackFrames}"
                                      SelectedItem="{Binding SelectedDebugStackFrame, Mode=TwoWay}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate x:DataType="debugging:DebugStackFrame">
                                         <StackPanel Orientation="Horizontal" Spacing="6">
                                             <TextBlock Text="{Binding Name}" />
-                                            <TextBlock Text="{Binding SourcePath}" Opacity="0.7" />
+                                            <TextBlock Text="{Binding SourcePath}"
+                                                       Opacity="0.7"
+                                                       TextTrimming="CharacterEllipsis" />
                                             <TextBlock Text="{Binding Line}" Opacity="0.7" />
                                         </StackPanel>
                                     </DataTemplate>
@@ -259,6 +378,9 @@
                         </StackPanel>
                         <StackPanel Grid.Column="1" Spacing="2">
                             <TextBlock Text="{Binding DebugVariablesTitle}" FontWeight="SemiBold" />
+                            <Button HorizontalAlignment="Left"
+                                    Content="{Binding LoadDebugVariablesCommandText}"
+                                    Command="{Binding LoadDebugVariablesCommand}" />
                             <ListBox ItemsSource="{Binding DebugVariables}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate x:DataType="debugging:DebugVariable">
@@ -272,8 +394,13 @@
                             </ListBox>
                         </StackPanel>
                     </Grid>
-                </StackPanel>
-                <Grid ColumnDefinitions="*,Auto,*">
+                </Expander>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="{Binding PreviewColumnWidth}" />
+                    </Grid.ColumnDefinitions>
                     <TabControl Grid.Column="0"
                                 ItemsSource="{Binding EditorWorkspace.Tabs}"
                                 SelectedItem="{Binding ActiveEditorTab, Mode=TwoWay}">
@@ -301,37 +428,50 @@
         </Border>
 
         <Grid Grid.Row="2"
-                Grid.ColumnSpan="2"
-                Margin="0,12,0,0"
-                RowDefinitions="Auto,Auto"
-                RowSpacing="8">
-        <Border Grid.Row="0"
-                Padding="8,6"
-                BorderBrush="{DynamicResource ThemeControlMidBrush}"
-                BorderThickness="1"
-                CornerRadius="4">
-            <StackPanel Spacing="4">
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Left"
-                               Margin="0,0,16,0"
-                               Text="{Binding StatusRegionTitle}"
-                               FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding Editor.StatusText}" />
-                </DockPanel>
-
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Left"
-                               Margin="0,0,16,0"
-                               Text="{Binding NotificationRegionTitle}"
-                               FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding Editor.NotificationText}" />
-                </DockPanel>
-            </StackPanel>
-        </Border>
-        <diagnostics:DiagnosticListView Grid.Row="1"
-                                         DataContext="{Binding DiagnosticCollection}" />
+              Grid.ColumnSpan="2"
+              Margin="0,8,0,0"
+              MaxHeight="220">
+            <Expander
+                      Header="Diagnostics"
+                      MaxHeight="220">
+                <diagnostics:DiagnosticListView DataContext="{Binding DiagnosticCollection}" />
+            </Expander>
         </Grid>
-    </Grid>
+        </Grid>
 
+        <Border Grid.Row="1"
+                Height="28"
+                Padding="8,3"
+                Background="#2D2D30"
+                BorderBrush="#555555"
+                BorderThickness="0,1,0,0">
+            <Grid ColumnDefinitions="*,Auto,*">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="{Binding DocumentStatusLabel}"
+                               Opacity="0.75"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Editor.StatusText}"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                    <TextBlock Text="{Binding EditorStatusLabel}"
+                               Opacity="0.75"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Editor.NotificationText}"
+                               Opacity="0.8"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+                <TextBlock Grid.Column="2"
+                           Text="{Binding VersionControlSummary}"
+                           Opacity="0.8"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           TextTrimming="CharacterEllipsis" />
+            </Grid>
+        </Border>
+    </Grid>
 </Window>
-    

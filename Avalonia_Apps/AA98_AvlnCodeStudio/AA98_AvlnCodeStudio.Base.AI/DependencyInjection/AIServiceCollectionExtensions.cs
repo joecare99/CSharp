@@ -20,6 +20,8 @@ public static class AIServiceCollectionExtensions
 
         services.AddSingleton<IAIClientFactory, NullAIClientFactory>();
         services.AddTransient<IAIClient>(serviceProvider => serviceProvider.GetRequiredService<IAIClientFactory>().Create());
+        services.AddSingleton<AIChatToolCatalog>();
+        services.AddTransient<AIChatService>();
         return services;
     }
 
@@ -36,6 +38,19 @@ public static class AIServiceCollectionExtensions
 
         services.AddSingleton<IAIClientFactory, TAIClientFactory>();
         services.AddTransient<IAIClient>(serviceProvider => serviceProvider.GetRequiredService<IAIClientFactory>().Create());
+        services.AddSingleton<AIChatToolCatalog>();
+        services.AddTransient<AIChatService>();
+        return services;
+    }
+
+    /// <summary>
+    /// Adds an AI chat tool to the explicitly configured provider-neutral tool catalog.
+    /// </summary>
+    public static IServiceCollection AddCodeStudioAIChatTool<TTool>(this IServiceCollection services)
+        where TTool : class, IAIChatTool
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        services.AddSingleton<IAIChatTool, TTool>();
         return services;
     }
 }

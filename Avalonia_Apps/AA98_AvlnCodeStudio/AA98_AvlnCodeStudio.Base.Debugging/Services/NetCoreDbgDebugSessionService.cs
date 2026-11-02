@@ -97,7 +97,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
         DapConnection connection = new(process.StandardInput.BaseStream, process.StandardOutput.BaseStream);
         DebugSession session = new(sessionId, process, connection);
         connection.EventReceived += message => OnAdapterEvent(session, message);
-        _ = process.StandardError.ReadToEndAsync();
+        Task<string> standardErrorTask = process.StandardError.ReadToEndAsync();
         try
         {
             await connection.SendRequestAsync("initialize", new
@@ -127,6 +127,13 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
             }, cancellationToken).ConfigureAwait(false);
 
             await connection.SendRequestAsync("configurationDone", new { }, cancellationToken).ConfigureAwait(false);
+            if (request.StopAtEntry)
+            {
+                await session.InitialStop.Task
+                    .WaitAsync(TimeSpan.FromSeconds(10), cancellationToken)
+                    .ConfigureAwait(false);
+            }
+
             if (session.State == DebugSessionState.Starting)
             {
                 session.State = request.StopAtEntry ? DebugSessionState.Paused : DebugSessionState.Running;
@@ -144,7 +151,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
                 State = session.State,
             };
         }
-        catch
+        catch (Exception exception)
         {
             connection.Dispose();
             if (!process.HasExited)
@@ -154,6 +161,14 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
 
             await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
             process.Dispose();
+            string standardError = (await standardErrorTask.ConfigureAwait(false)).Trim();
+            if (!string.IsNullOrWhiteSpace(standardError))
+            {
+                throw new InvalidOperationException(
+                    $"{exception.Message}{Environment.NewLine}{standardError}",
+                    exception);
+            }
+
             throw;
         }
     }
@@ -419,6 +434,11 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
             session.State = state.Value;
         }
 
+        if (eventName == "stopped")
+        {
+            session.InitialStop.TrySetResult();
+        }
+
         SessionEventReceived?.Invoke(this, new DebugSessionEventArgs
         {
             SessionId = session.SessionId,
@@ -484,6 +504,8 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
         public Process Process { get; } = process;
 
         public DapConnection Connection { get; } = connection;
+
+        public TaskCompletionSource InitialStop { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public DebugSessionState State { get; set; } = DebugSessionState.Starting;
     }

@@ -1,6 +1,7 @@
 using AA98_AvlnCodeStudio.Editor.Services;
 using AA98_AvlnCodeStudio.Editor.Components;
 using AA98_AvlnCodeStudio.Model.Documents;
+using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI.Components;
 using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
@@ -32,8 +33,10 @@ public sealed class EditorDocumentWorkspaceTests
 
             await workspace.OpenOrActivateAsync(firstPath);
             EditorTabViewModel firstTab = workspace.ActiveTab;
+            Assert.IsTrue(workspace.IsDocumentOpen(firstPath));
             await workspace.OpenOrActivateAsync(secondPath);
             EditorTabViewModel secondTab = workspace.ActiveTab;
+            Assert.IsTrue(workspace.IsDocumentOpen(secondPath));
 
             firstTab.Editor.Text = "class First { int Value; }";
             await workspace.OpenOrActivateAsync(firstPath);
@@ -43,6 +46,44 @@ public sealed class EditorDocumentWorkspaceTests
             Assert.AreNotSame(firstTab.Editor, secondTab.Editor);
             Assert.AreEqual("class First { int Value; }", firstTab.Editor.Text);
             Assert.AreEqual("class Second {}", secondTab.Editor.Text);
+            Assert.IsTrue(workspace.IsDocumentOpen(Path.GetFullPath(firstPath)));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task WorkspaceChange_UpdatesCleanOpenDocumentAndRejectsDirtyDocument()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_EditorChange_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string path = Path.Combine(root, "View.axaml");
+            const string original = "<Window />";
+            await File.WriteAllTextAsync(path, original);
+            TestEditorComponentFactory factory = new();
+            EditorDocumentWorkspace documents = new(factory.Create(), factory);
+            await documents.OpenOrActivateAsync(path);
+            WorkspaceFileChangeService changes = new(documents);
+            WorkspaceFileChangeProposal proposal = changes.Prepare(root,
+            [
+                new WorkspaceFileChangeRequest("View.axaml", "<Window Title=\"Updated\" />"),
+            ]);
+
+            changes.Apply(proposal, confirmed: true);
+
+            Assert.AreEqual("<Window Title=\"Updated\" />", documents.ActiveTab.Editor.Text);
+            Assert.IsFalse(documents.ActiveTab.Editor.IsDirty);
+            Assert.AreEqual(documents.ActiveTab.Editor.Text, await File.ReadAllTextAsync(path));
+
+            documents.ActiveTab.Editor.Text = "<Window Title=\"Unsaved\" />";
+            Assert.ThrowsExactly<WorkspaceOpenDocumentException>(() => changes.Prepare(root,
+            [
+                new WorkspaceFileChangeRequest("View.axaml", "<Window Title=\"Generated\" />"),
+            ]));
         }
         finally
         {

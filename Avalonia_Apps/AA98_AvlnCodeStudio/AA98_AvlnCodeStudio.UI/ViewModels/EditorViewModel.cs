@@ -4,6 +4,8 @@ using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -119,6 +121,30 @@ public partial class EditorViewModel : CodeStudioViewModelBase
             string.Format(UiStrings.LoadedDocumentNotificationFormat, _workflow.Document.DisplayName),
             UiStrings.OpenCanceledStatusText,
             UiStrings.OpenCanceledNotificationText);
+    }
+
+    public bool CanApplyExternalChange(string fullPath, string expectedContent)
+    {
+        return !IsDirty
+            && string.Equals(CurrentFilePath, Path.GetFullPath(fullPath), OperatingSystem.IsWindows()
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal)
+            && string.Equals(_workflow.Document.Content, expectedContent, StringComparison.Ordinal);
+    }
+
+    public void ApplyExternalChange(string fullPath, string expectedContent, string proposedContent)
+    {
+        ArgumentNullException.ThrowIfNull(expectedContent);
+        ArgumentNullException.ThrowIfNull(proposedContent);
+        if (!CanApplyExternalChange(fullPath, expectedContent))
+        {
+            throw new IOException("The open document changed or became dirty after the change review.");
+        }
+
+        string normalizedPath = Path.GetFullPath(fullPath);
+        _workflow.Document.Load(normalizedPath, proposedContent);
+        Text = proposedContent;
+        SynchronizeFromDocument();
     }
 
     /// <summary>

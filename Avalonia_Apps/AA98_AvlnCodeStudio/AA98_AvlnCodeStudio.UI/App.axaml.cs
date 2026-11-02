@@ -98,12 +98,29 @@ namespace AA98_AvlnCodeStudio.UI
                 .AddConfigSection<Configuration.CodeStudioSettings>(new Configuration.CodeStudioSettingsProvider())
                 .AddConfigServiceUi()
                 .AddConfigUiAvalonia();
+            services.AddSingleton(serviceProvider =>
+                serviceProvider.GetRequiredService<Config.Service.ConfigService>()
+                    .LoadAsync<Configuration.CodeStudioSettings>("Workbench")
+                    .GetAwaiter()
+                    .GetResult()
+                ?? new Configuration.CodeStudioSettings());
+            services.AddSingleton(serviceProvider =>
+            {
+                Configuration.CodeStudioSettings settings =
+                    serviceProvider.GetRequiredService<Configuration.CodeStudioSettings>();
+                return new AA98_AvlnCodeStudio.Base.AI.Models.OpenAICompatibleAISettings
+                {
+                    Endpoint = settings.AIEndpoint,
+                    ModelId = settings.AIModelId,
+                };
+            });
             services.AddSingleton<IFileEditorDocumentFactory, FileEditorDocumentFactory>();
             services.AddSingleton<Services.IWorkspaceFileDialogService, Services.AvaloniaWorkspaceFileDialogService>();
             services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.CSharpProjectTemplateService>();
             services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.ICSharpProjectPackageService,
                 AA98_AvlnCodeStudio.Model.Workspaces.DotNetCSharpProjectPackageService>();
             services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.AxamlPreviewService>();
+            services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.AxamlMvvmGenerator>();
             services.AddSingleton<AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels.AxamlDesignerViewModel>(serviceProvider =>
                 new AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels.AxamlDesignerViewModel(
                     serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.AxamlPreviewService>()));
@@ -118,6 +135,9 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<UI.ViewModels.EditorDocumentWorkspace>(serviceProvider => new UI.ViewModels.EditorDocumentWorkspace(
                 serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponent>(),
                 serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>()));
+            services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.IWorkspaceOpenDocumentProvider>(
+                serviceProvider => serviceProvider.GetRequiredService<UI.ViewModels.EditorDocumentWorkspace>());
+            services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.WorkspaceFileChangeService>();
             services.AddSingleton<Func<UI.ViewModels.EditorDocumentWorkspace>>(serviceProvider =>
                 () => serviceProvider.GetRequiredService<UI.ViewModels.EditorDocumentWorkspace>());
             services.AddSingleton<IEditorDocumentHost, WorkbenchEditorDocumentHost>();
@@ -146,7 +166,14 @@ namespace AA98_AvlnCodeStudio.UI
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Debugging.Services.IDebugSessionService>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.CSharpProjectTemplateService>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.ICSharpProjectPackageService>(),
-                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels.AxamlDesignerViewModel>()));
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels.AxamlDesignerViewModel>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.AI.Services.AIChatService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.AI.Models.OpenAICompatibleAISettings>(),
+                serviceProvider.GetRequiredService<Configuration.CodeStudioSettings>(),
+                serviceProvider.GetRequiredService<Config.Service.ConfigService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Versioning.Svn.Services.ISvnWorkingCopyOperations>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.WorkspaceFileChangeService>(),
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.AxamlMvvmGenerator>()));
             services.AddSingleton<MainWindow>();
         }
 

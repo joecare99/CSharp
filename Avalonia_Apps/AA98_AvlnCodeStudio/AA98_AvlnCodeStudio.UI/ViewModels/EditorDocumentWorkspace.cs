@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.Editor.Navigation;
+using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI.Components;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
@@ -13,7 +14,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels;
 /// <summary>
 /// Owns the editor tabs hosted by the workbench.
 /// </summary>
-public sealed partial class EditorDocumentWorkspace : ObservableObject
+public sealed partial class EditorDocumentWorkspace : ObservableObject, IWorkspaceOpenDocumentChangeProvider
 {
     private readonly IAvaloniaEditorComponentFactory? _componentFactory;
 
@@ -103,5 +104,38 @@ public sealed partial class EditorDocumentWorkspace : ObservableObject
         string normalizedPath = Path.GetFullPath(filePath);
         return Tabs.FirstOrDefault(tab =>
             string.Equals(tab.FilePath, normalizedPath, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public bool IsDocumentOpen(string fullPath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(fullPath);
+        string normalizedPath = Path.GetFullPath(fullPath);
+        StringComparison comparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+        return Tabs.Any(tab => tab.FilePath is { } filePath
+            && string.Equals(filePath, normalizedPath, comparison));
+    }
+
+    public bool CanApplyChange(string fullPath, string expectedContent)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(fullPath);
+        ArgumentNullException.ThrowIfNull(expectedContent);
+        EditorTabViewModel? tab = FindByPath(fullPath);
+        return tab is not null && tab.Editor.CanApplyExternalChange(fullPath, expectedContent);
+    }
+
+    public void ApplyChange(string fullPath, string expectedContent, string proposedContent)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(fullPath);
+        ArgumentNullException.ThrowIfNull(expectedContent);
+        ArgumentNullException.ThrowIfNull(proposedContent);
+        EditorTabViewModel? tab = FindByPath(fullPath);
+        if (tab is null)
+        {
+            throw new InvalidOperationException($"The document '{fullPath}' is no longer open.");
+        }
+
+        tab.Editor.ApplyExternalChange(fullPath, expectedContent, proposedContent);
     }
 }

@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.Base.AI.DependencyInjection;
+using AA98_AvlnCodeStudio.Base.AI.Models;
 using AA98_AvlnCodeStudio.Base.AI.Services;
 using AA98_AvlnCodeStudio.Base.Components.Commands;
 using AA98_AvlnCodeStudio.Model.Workspaces;
@@ -21,10 +22,12 @@ using AA98_AvlnCodeStudio.Base.Versioning.Services;
 using AA98_AvlnCodeStudio.Diagnostics.Debug.DependencyInjection;
 using AA98_AvlnCodeStudio.Diagnostics.UI.DependencyInjection;
 using AA98_AvlnCodeStudio.Diagnostics.UI.ViewModels;
+using AA98_AvlnCodeStudio.Host.Mcp;
 using AppKomponentBaseLib.Diagnostics;
 #if NET10_0
 using AA98_AvlnCodeStudio.Versioning.Git.DependencyInjection;
 using AA98_AvlnCodeStudio.Versioning.Git.Services;
+using AA98_AvlnCodeStudio.Versioning.Svn.Services;
 #endif
 using AA98_AvlnCodeStudio.UI.DependencyInjection;
 using AA98_AvlnCodeStudio.UI.Services;
@@ -59,6 +62,8 @@ public class CodeStudioServiceCollectionExtensionsTests
         using var serviceProvider = services.BuildServiceProvider();
         Assert.IsInstanceOfType<NullAIClientFactory>(serviceProvider.GetRequiredService<IAIClientFactory>());
         Assert.IsInstanceOfType<NullAIClient>(serviceProvider.GetRequiredService<IAIClient>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<AIChatToolCatalog>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<AIChatService>());
     }
 
     /// <summary>
@@ -186,11 +191,40 @@ public class CodeStudioServiceCollectionExtensionsTests
 
         using var serviceProvider = services.BuildServiceProvider();
         Assert.IsNotNull(serviceProvider.GetRequiredService<IAIClientFactory>());
+        Assert.IsInstanceOfType<OpenAICompatibleAIClient>(serviceProvider.GetRequiredService<IAIClient>());
+        Assert.IsNotNull(serviceProvider.GetRequiredService<OpenAICompatibleAISettings>());
+        CollectionAssert.Contains(
+            serviceProvider.GetRequiredService<AIChatService>().AvailableTools
+                .Select(static tool => tool.Name).ToArray(),
+            "workspace.inspect");
+        AIChatToolDescriptor testTool = serviceProvider.GetRequiredService<AIChatService>()
+            .AvailableTools.Single(static tool => tool.Name == "workspace.test");
+        Assert.IsTrue(testTool.RequiresConfirmation);
+        Assert.IsFalse(serviceProvider.GetServices<IComponentMcpCommand>()
+            .Single(static command => command.Descriptor.CommandId == "workspace.test")
+            .Descriptor.IsReadOnly);
+        AIChatToolDescriptor svnUpdateTool = serviceProvider.GetRequiredService<AIChatService>()
+            .AvailableTools.Single(static tool => tool.Name == "workspace.svn.update");
+        Assert.IsTrue(svnUpdateTool.RequiresConfirmation);
+        AIChatToolDescriptor versionControlStatusTool = serviceProvider.GetRequiredService<AIChatService>()
+            .AvailableTools.Single(static tool => tool.Name == "workspace.versioning.status");
+        Assert.IsFalse(versionControlStatusTool.RequiresConfirmation);
+        ComponentMcpCommandDescriptor svnStatusMcpCommand = serviceProvider
+            .GetServices<IComponentMcpCommand>()
+            .Select(static command => command.Descriptor)
+            .Single(static command => command.CommandId == "workspace.versioning.status");
+        Assert.IsTrue(svnStatusMcpCommand.IsReadOnly);
+#if NET10_0
+        AIChatToolDescriptor buildTool = serviceProvider.GetRequiredService<AIChatService>()
+            .AvailableTools.Single(static tool => tool.Name == "workspace.build");
+        Assert.IsTrue(buildTool.RequiresConfirmation);
+#endif
         Assert.IsNotNull(serviceProvider.GetRequiredService<CSharpWorkspaceLoader>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<ICodeStudioBuilderService>());
 #if NET10_0
         Assert.IsInstanceOfType<WorkbenchCodeStudioBuilderService>(serviceProvider.GetRequiredService<ICodeStudioBuilderService>());
-        Assert.IsInstanceOfType<GitVersionControlService>(serviceProvider.GetRequiredService<IVersionControlService>());
+        Assert.IsInstanceOfType<WorkspaceVersionControlService>(serviceProvider.GetRequiredService<IVersionControlService>());
+        Assert.IsInstanceOfType<SvnVersionControlService>(serviceProvider.GetRequiredService<SvnVersionControlService>());
 #endif
         Assert.IsNotNull(serviceProvider.GetRequiredService<IVersionControlService>());
         Assert.IsNotNull(serviceProvider.GetRequiredService<ITestExecutionService>());

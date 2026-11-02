@@ -11,6 +11,7 @@
   </UserControl.Styles>
 
   <Grid Name="PART_LayoutGrid"
+		MinHeight="0"
 		RowDefinitions="Auto,*"
 		ColumnDefinitions="*,6,*"
 		RowSpacing="6">
@@ -30,6 +31,7 @@
 			BorderThickness="1"
 			CornerRadius="4">
 	  <avalonEdit:TextEditor Name="PART_Editor"
+							 MinHeight="0"
 							 ShowLineNumbers="True"
 							 HorizontalScrollBarVisibility="Auto"
 							 VerticalScrollBarVisibility="Auto"
@@ -53,6 +55,7 @@
 			BorderThickness="1"
 			CornerRadius="4">
 	  <md:MarkdownScrollViewer Name="PART_Preview"
+							 MinHeight="0"
 							 Margin="8"
 							 Markdown="" />
 	</Border>
