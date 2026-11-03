@@ -464,14 +464,25 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
 
                 namespace Sample;
 
-                public partial class MainWindowViewModel : ObservableObject
+                public class BaseViewModel : ObservableObject
                 {
+                    public string Status { get; set; } = string.Empty;
+                }
+
+                public partial class MainWindowViewModel : BaseViewModel
+                {
+                    private int closeCommand;
+                    public void OnStatusChanged(string value) { }
+
                     // Preserve this user-authored implementation.
                     [ObservableProperty]
                     private string _name = string.Empty;
 
                     [RelayCommand]
                     private void Save() { }
+
+                    [RelayCommand]
+                    private void FooCommand() { }
 
                     [RelayCommand]
                     private async System.Threading.Tasks.Task RefreshAsync() => await System.Threading.Tasks.Task.Yield();
@@ -530,10 +541,91 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
             Assert.IsTrue(generatedAsyncCommand.IsCommand);
             Assert.IsFalse(generatedAsyncCommand.IsWritable);
 
+            AxamlMvvmMemberPlanEntry[] collidingAddition = new AxamlMvvmMemberPlanner().Plan(
+                [new AxamlMvvmMemberRequirement("CloseCommand", "ICommand", IsCommand: true)],
+                resolution.ViewModelMembers,
+                createMissingMembers: true).ToArray();
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(async () =>
+                await service.PlanViewModelSourceAdditionAsync(
+                    root,
+                    projectPath,
+                    "Sample.MainWindowViewModel",
+                    collidingAddition));
+
+            AxamlMvvmMemberPlanEntry[] inheritedCollision =
+            [
+                new(
+                    new AxamlMvvmMemberRequirement("Status", "string", IsCommand: false),
+                    AxamlMvvmMemberPlanAction.Create,
+                    null),
+            ];
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(async () =>
+                await service.PlanViewModelSourceAdditionAsync(
+                    root,
+                    projectPath,
+                    "Sample.MainWindowViewModel",
+                    inheritedCollision));
+
+            AxamlMvvmMemberPlanEntry[] changeHookCollision =
+            [
+                new(
+                    new AxamlMvvmMemberRequirement("Status", "string", IsCommand: false),
+                    AxamlMvvmMemberPlanAction.Create,
+                    null),
+            ];
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(async () =>
+                await service.PlanViewModelSourceAdditionAsync(
+                    root,
+                    projectPath,
+                    "Sample.MainWindowViewModel",
+                    changeHookCollision));
+
+            AxamlMvvmMemberPlanEntry[] generatedCommandFieldCollision =
+            [
+                new(
+                    new AxamlMvvmMemberRequirement("fooCommandCommand", "ICommand", IsCommand: true),
+                    AxamlMvvmMemberPlanAction.Create,
+                    null),
+            ];
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(async () =>
+                await service.PlanViewModelSourceAdditionAsync(
+                    root,
+                    projectPath,
+                    "Sample.MainWindowViewModel",
+                    generatedCommandFieldCollision));
+
+            AxamlMvvmMemberPlanEntry[] asyncCommandFieldCollision =
+            [
+                new(
+                    new AxamlMvvmMemberRequirement("refreshCommand", "string", IsCommand: false),
+                    AxamlMvvmMemberPlanAction.Create,
+                    null),
+            ];
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(async () =>
+                await service.PlanViewModelSourceAdditionAsync(
+                    root,
+                    projectPath,
+                    "Sample.MainWindowViewModel",
+                    asyncCommandFieldCollision));
+
+            AxamlMvvmMemberPlanEntry[] invalidCommandAddition =
+            [
+                new(
+                    new AxamlMvvmMemberRequirement("Command", "ICommand", IsCommand: true),
+                    AxamlMvvmMemberPlanAction.Create,
+                    null),
+            ];
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(async () =>
+                await service.PlanViewModelSourceAdditionAsync(
+                    root,
+                    projectPath,
+                    "Sample.MainWindowViewModel",
+                    invalidCommandAddition));
+
             AxamlMvvmMemberPlanEntry[] additions = new AxamlMvvmMemberPlanner().Plan(
                 [
-                    new AxamlMvvmMemberRequirement("Status", "string", IsCommand: false),
-                    new AxamlMvvmMemberRequirement("CloseCommand", "ICommand", IsCommand: true),
+                    new AxamlMvvmMemberRequirement("Notice", "string", IsCommand: false),
+                    new AxamlMvvmMemberRequirement("ExitCommand", "ICommand", IsCommand: true),
                 ],
                 resolution.ViewModelMembers,
                 createMissingMembers: true).ToArray();
@@ -550,9 +642,17 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
                 await File.ReadAllTextAsync(Path.Combine(root, "MainWindowViewModel.cs")));
             StringAssert.Contains(sourceChange.ProposedContent, "// Preserve this user-authored implementation.");
             StringAssert.Contains(sourceChange.ProposedContent, "[global::CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]");
-            StringAssert.Contains(sourceChange.ProposedContent, "private string _status = string.Empty;");
+            StringAssert.Contains(sourceChange.ProposedContent, "private string _notice = string.Empty;");
             StringAssert.Contains(sourceChange.ProposedContent, "[global::CommunityToolkit.Mvvm.Input.RelayCommand]");
-            StringAssert.Contains(sourceChange.ProposedContent, "private void Close()");
+            StringAssert.Contains(sourceChange.ProposedContent, "private void Exit()");
+            Assert.AreEqual(
+                0,
+                (await service.GetNewCompilerErrorsAsync(projectPath, sourceChange)).Count);
+            WorkspaceFileChangeRequest invalidSourceChange = WorkspaceFileChangeRequest.ReplaceExisting(
+                sourceChange.RelativePath,
+                sourceChange.ExpectedContent!,
+                sourceChange.ProposedContent + Environment.NewLine + "invalid C#");
+            Assert.IsTrue((await service.GetNewCompilerErrorsAsync(projectPath, invalidSourceChange)).Count > 0);
 
             await File.WriteAllTextAsync(Path.Combine(root, "MainWindowViewModel.cs"), sourceChange.ProposedContent);
             ProcessStartInfo additionBuildInfo = new("dotnet")

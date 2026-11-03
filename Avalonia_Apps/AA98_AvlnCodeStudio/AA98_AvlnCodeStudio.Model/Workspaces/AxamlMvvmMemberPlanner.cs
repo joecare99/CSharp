@@ -17,21 +17,27 @@ public sealed class AxamlMvvmMemberPlanner
         Dictionary<string, AxamlMvvmSemanticMember> members = existingMembers
             .GroupBy(static member => member.Name, StringComparer.Ordinal)
             .ToDictionary(static group => group.Key, static group => group.First(), StringComparer.Ordinal);
-        HashSet<string> requirementNames = new(StringComparer.Ordinal);
+        Dictionary<string, AxamlMvvmMemberRequirement> requirementNames = new(StringComparer.Ordinal);
         List<AxamlMvvmMemberPlanEntry> plan = [];
 
         foreach (AxamlMvvmMemberRequirement requirement in requirements)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(requirement.Name);
             ArgumentException.ThrowIfNullOrWhiteSpace(requirement.TypeName);
-            if (!requirementNames.Add(requirement.Name))
+            if (requirementNames.TryGetValue(requirement.Name, out AxamlMvvmMemberRequirement? priorRequirement))
             {
-                plan.Add(new AxamlMvvmMemberPlanEntry(
-                    requirement,
-                    AxamlMvvmMemberPlanAction.Conflict,
-                    $"More than one requested binding targets '{requirement.Name}'."));
+                if (!string.Equals(priorRequirement.TypeName, requirement.TypeName, StringComparison.Ordinal)
+                    || priorRequirement.IsCommand != requirement.IsCommand)
+                {
+                    plan.Add(new AxamlMvvmMemberPlanEntry(
+                        requirement,
+                        AxamlMvvmMemberPlanAction.Conflict,
+                        $"Bindings for '{requirement.Name}' require incompatible member types."));
+                }
+
                 continue;
             }
+            requirementNames.Add(requirement.Name, requirement);
 
             if (!members.TryGetValue(requirement.Name, out AxamlMvvmSemanticMember? existingMember))
             {

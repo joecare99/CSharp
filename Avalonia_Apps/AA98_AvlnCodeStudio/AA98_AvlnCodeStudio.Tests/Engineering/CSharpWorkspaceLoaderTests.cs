@@ -22,6 +22,7 @@ using AA98_AvlnCodeStudio.Base.Debugging.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -604,7 +605,7 @@ public sealed class CSharpWorkspaceLoaderTests
     }
 
     [TestMethod]
-    public async Task MainWindowViewModel_DoesNotOverwriteExistingViewModelDuringGeneration()
+    public async Task MainWindowViewModel_ExtendsExistingViewModelOnlyAfterReview()
     {
         await WithTemporaryDirectoryAsync(async root =>
         {
@@ -614,14 +615,18 @@ public sealed class CSharpWorkspaceLoaderTests
             const string originalMarkup = """
                 <Window xmlns="https://github.com/avaloniaui"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        x:Class="Sample.LoginView">
-                  <TextBox x:Name="UserNameTextBox" Text="Ada" />
+                        xmlns:vm="using:Sample"
+                        x:Class="Sample.LoginView"
+                        x:DataType="vm:LoginViewViewModel">
+                  <TextBox x:Name="UserNameTextBox" Text="{Binding UserName, Mode=TwoWay}" />
                 </Window>
                 """;
             const string existingViewModel = """
+                using CommunityToolkit.Mvvm.ComponentModel;
                 namespace Sample;
-                public partial class LoginViewViewModel
+                public partial class LoginViewViewModel : ObservableObject
                 {
+                    // Existing user behavior must survive incremental generation.
                     public string UserLogic => "preserve me";
                 }
                 """;
@@ -633,8 +638,37 @@ public sealed class CSharpWorkspaceLoaderTests
                   <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
                 </Project>
                 """);
+            File.WriteAllText(
+                Path.Combine(root, "LoginView.axaml.cs"),
+                """
+                namespace Sample;
+                public partial class LoginView
+                {
+                    public object? DataContext { get; set; }
+                    public LoginView() => DataContext = new LoginViewViewModel();
+                }
+                """);
             File.WriteAllText(axamlPath, originalMarkup);
             File.WriteAllText(viewModelPath, existingViewModel);
+            ProcessStartInfo buildStartInfo = new("dotnet")
+            {
+                WorkingDirectory = AppContext.BaseDirectory,
+                ArgumentList = { "build", projectPath, "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            ClearInheritedMsBuildEnvironment(buildStartInfo);
+            using Process build = Process.Start(buildStartInfo)
+                ?? throw new InvalidOperationException("Could not start the existing ViewModel fixture build.");
+            Task<string> buildOutput = build.StandardOutput.ReadToEndAsync();
+            Task<string> buildError = build.StandardError.ReadToEndAsync();
+            await build.WaitForExitAsync();
+            if (build.ExitCode != 0)
+            {
+                Assert.Fail($"Existing ViewModel fixture build failed: {await buildOutput}{await buildError}");
+            }
+
             TestEditorComponentFactory editorFactory = new();
             IAvaloniaEditorComponent editorComponent = editorFactory.Create();
             EditorDocumentWorkspace editorWorkspace = new(editorComponent, editorFactory);
@@ -647,19 +681,53 @@ public sealed class CSharpWorkspaceLoaderTests
                 editorWorkspace: editorWorkspace);
             await viewModel.OpenWorkspaceFileAsync(projectPath);
             await viewModel.EditorWorkspace.OpenOrActivateAsync(axamlPath);
-            bool reviewInvoked = false;
-            viewModel.ReviewWorkspaceFileChangesAsync = (_, _) =>
+            int reviewCount = 0;
+            viewModel.ReviewWorkspaceFileChangesAsync = (proposal, cancellationToken) =>
             {
-                reviewInvoked = true;
+                cancellationToken.ThrowIfCancellationRequested();
+                reviewCount++;
+                viewModel.WorkspaceFileChangeService.Apply(proposal, confirmed: true);
                 return Task.FromResult(true);
             };
 
             await viewModel.GenerateAxamlMvvmCommand.ExecuteAsync(null);
 
-            Assert.IsFalse(reviewInvoked);
-            Assert.AreEqual(existingViewModel, File.ReadAllText(viewModelPath));
+            string updatedViewModel = File.ReadAllText(viewModelPath);
+            StringAssert.Contains(updatedViewModel,
+                "[global::CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]");
+            StringAssert.Contains(updatedViewModel, "Existing user behavior must survive incremental generation.");
+            StringAssert.Contains(updatedViewModel, "public string UserLogic => \"preserve me\";");
+            StringAssert.Contains(updatedViewModel, "private string _userName = string.Empty;");
             Assert.AreEqual(originalMarkup, File.ReadAllText(axamlPath));
-            StringAssert.Contains(viewModel.Editor.NotificationText, "Incremental MVVM generation is not supported yet");
+            Assert.AreEqual(originalMarkup, viewModel.Editor.Text);
+            Assert.IsFalse(viewModel.Editor.IsDirty);
+            StringAssert.Contains(viewModel.Editor.StatusText, "Extended ViewModel");
+            Assert.AreEqual(1, reviewCount);
+
+            ProcessStartInfo incrementalBuildInfo = new("dotnet")
+            {
+                WorkingDirectory = AppContext.BaseDirectory,
+                ArgumentList = { "build", projectPath, "--no-restore", "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            ClearInheritedMsBuildEnvironment(incrementalBuildInfo);
+            using Process incrementalBuild = Process.Start(incrementalBuildInfo)
+                ?? throw new InvalidOperationException("Could not start the Workbench incremental ViewModel build.");
+            Task<string> incrementalOutput = incrementalBuild.StandardOutput.ReadToEndAsync();
+            Task<string> incrementalError = incrementalBuild.StandardError.ReadToEndAsync();
+            await incrementalBuild.WaitForExitAsync();
+            if (incrementalBuild.ExitCode != 0)
+            {
+                Assert.Fail($"Workbench incremental ViewModel build failed: {await incrementalOutput}{await incrementalError}");
+            }
+
+            await viewModel.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+
+            Assert.AreEqual(1, reviewCount);
+            Assert.AreEqual(updatedViewModel, File.ReadAllText(viewModelPath));
+            StringAssert.Contains(viewModel.Editor.StatusText, "no changes were needed");
         });
     }
 
@@ -1308,6 +1376,16 @@ public sealed class CSharpWorkspaceLoaderTests
             viewModel.WorkspaceFileChangeService.Apply(proposal, confirmed: true);
             return Task.FromResult(true);
         };
+    }
+
+    private static void ClearInheritedMsBuildEnvironment(ProcessStartInfo startInfo)
+    {
+        startInfo.Environment.Remove("MSBuildSDKsPath");
+        startInfo.Environment.Remove("MSBuildExtensionsPath");
+        startInfo.Environment.Remove("MSBuildExtensionsPath32");
+        startInfo.Environment.Remove("MSBuildToolsPath");
+        startInfo.Environment.Remove("DOTNET_MSBUILD_SDK_RESOLVER_SDKS_DIR");
+        startInfo.Environment.Remove("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR");
     }
 
     private static async Task WithTemporaryDirectoryAsync(Func<string, Task> action)

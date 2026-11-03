@@ -1002,6 +1002,102 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 }
 
                 string relativeAxamlPath = Path.GetRelativePath(workspace.RootPath, filePath);
+                AxamlMvvmSemanticResolution existingResolution =
+                    await _csharpSyntaxDiagnosticService.AnalyzeAxamlMvvmAsync(
+                        Editor.Text,
+                        filePath,
+                        workspace,
+                        cancellationToken,
+                        allowExistingRuntimeDataContext: true);
+                if (!existingResolution.IsSuccessful)
+                {
+                    throw new InvalidDataException(
+                        "MVVM generation stopped because the view or its DataContext could not be resolved safely:"
+                        + Environment.NewLine
+                        + string.Join(Environment.NewLine, existingResolution.Diagnostics));
+                }
+
+                if (existingResolution.HasRuntimeDataContext
+                    && !string.IsNullOrWhiteSpace(existingResolution.ViewModelTypeName))
+                {
+                    IReadOnlyList<AxamlMvvmMemberRequirement> requirements =
+                        new AxamlMvvmBindingAnalyzer().Analyze(Editor.Text);
+                    IReadOnlyList<AxamlMvvmMemberPlanEntry> memberPlan = new AxamlMvvmMemberPlanner().Plan(
+                        requirements,
+                        existingResolution.ViewModelMembers,
+                        createMissingMembers: true);
+                    AxamlMvvmMemberPlanEntry[] conflicts = memberPlan
+                        .Where(static entry => entry.Action is AxamlMvvmMemberPlanAction.Conflict
+                            or AxamlMvvmMemberPlanAction.NeedsCreationChoice)
+                        .ToArray();
+                    if (conflicts.Length > 0)
+                    {
+                        throw new InvalidDataException(
+                            "Existing ViewModel bindings are not compatible:"
+                            + Environment.NewLine
+                            + string.Join(
+                                Environment.NewLine,
+                                conflicts.Select(static entry => entry.Diagnostic)));
+                    }
+
+                    AxamlMvvmMemberPlanEntry[] additions = memberPlan
+                        .Where(static entry => entry.Action == AxamlMvvmMemberPlanAction.Create)
+                        .ToArray();
+                    if (additions.Length == 0)
+                    {
+                        Editor.StatusText = "Existing ViewModel bindings are already compatible; no changes were needed.";
+                        Editor.NotificationText = "The AXAML and ViewModel were left unchanged.";
+                        return;
+                    }
+
+                    WorkspaceFileChangeRequest sourceRequest =
+                        await _csharpSyntaxDiagnosticService.PlanViewModelSourceAdditionAsync(
+                            workspace.RootPath,
+                            project.ProjectPath,
+                            existingResolution.ViewModelTypeName!,
+                            additions,
+                            cancellationToken);
+                    IReadOnlyList<string> newCompilerErrors =
+                        await _csharpSyntaxDiagnosticService.GetNewCompilerErrorsAsync(
+                            project.ProjectPath,
+                            sourceRequest,
+                            cancellationToken);
+                    if (newCompilerErrors.Count > 0)
+                    {
+                        throw new InvalidDataException(
+                            "MVVM generation would introduce C# compiler errors:"
+                            + Environment.NewLine
+                            + string.Join(Environment.NewLine, newCompilerErrors));
+                    }
+
+                    WorkspaceFileChangeProposal incrementalProposal = _workspaceFileChangeService.Prepare(
+                        workspace.RootPath,
+                        [sourceRequest]);
+                    Func<WorkspaceFileChangeProposal, CancellationToken, Task<bool>>? incrementalReview =
+                        ReviewWorkspaceFileChangesAsync;
+                    if (incrementalReview is null)
+                    {
+                        Editor.StatusText = "MVVM generation is unavailable in this host.";
+                        Editor.NotificationText = "This host does not provide the workspace change review dialog.";
+                        return;
+                    }
+
+                    if (!await incrementalReview(incrementalProposal, cancellationToken))
+                    {
+                        Editor.StatusText = "MVVM generation was cancelled; no files were changed.";
+                        return;
+                    }
+
+                    await _csharpSyntaxDiagnosticService.RefreshProjectContextAsync(
+                        project.ProjectPath,
+                        cancellationToken);
+                    Editor.StatusText = $"Extended ViewModel '{existingResolution.ViewModelTypeName}'.";
+                    Editor.NotificationText = string.Join(
+                        Environment.NewLine,
+                        incrementalProposal.Changes.Select(static change => change.RelativePath));
+                    return;
+                }
+
                 IReadOnlyList<WorkspaceFileChangeRequest> requests =
                     _axamlMvvmGenerator.Generate(relativeAxamlPath, Editor.Text);
                 string viewModelPath = Path.GetFullPath(
@@ -1044,6 +1140,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     return;
                 }
 
+                await _csharpSyntaxDiagnosticService.RefreshProjectContextAsync(
+                    project.ProjectPath,
+                    cancellationToken);
                 Editor.StatusText = $"Generated MVVM code for {Path.GetFileName(filePath)}.";
                 Editor.NotificationText = string.Join(
                     Environment.NewLine,

@@ -288,7 +288,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         string markup,
         string filePath,
         CSharpWorkspace workspace,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        bool allowExistingRuntimeDataContext = false)
     {
         ArgumentNullException.ThrowIfNull(markup);
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
@@ -449,8 +450,12 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             else if (runtimeDataContexts.Count == 1)
             {
                 declaredDataType ??= runtimeDataContexts[0];
-                diagnostics.Add(
-                    $"The view already receives runtime DataContext '{runtimeDataContexts[0].ToDisplayString()}'; it will not be replaced.");
+                if (!allowExistingRuntimeDataContext)
+                {
+                    diagnostics.Add(
+                        $"The view already receives runtime DataContext '{runtimeDataContexts[0].ToDisplayString()}'; it will not be replaced.");
+                }
+
                 if (declaredDataType is not null
                     && !SymbolEqualityComparer.Default.Equals(declaredDataType, runtimeDataContexts[0]))
                 {
@@ -547,9 +552,32 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                     $"ViewModel '{viewModelTypeName}' must have only partial class declarations before it can be extended.");
             }
 
-            HashSet<string> existingNames = new(
-                viewModelType.GetMembers().Select(static member => member.Name),
-                StringComparer.Ordinal);
+            HashSet<string> existingNames = new(StringComparer.Ordinal);
+            for (INamedTypeSymbol? currentType = viewModelType;
+                 currentType is not null && currentType.SpecialType != SpecialType.System_Object;
+                 currentType = currentType.BaseType)
+            {
+                foreach (ISymbol member in currentType.GetMembers())
+                {
+                    existingNames.Add(member.Name);
+
+                    if (member is IFieldSymbol field
+                        && HasAttribute(field, "CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute")
+                        && TryGetObservablePropertyName(field.Name, out string propertyName))
+                    {
+                        existingNames.Add(propertyName);
+                        existingNames.Add($"On{propertyName}Changing");
+                        existingNames.Add($"On{propertyName}Changed");
+                    }
+                    else if (member is IMethodSymbol method
+                        && HasAttribute(method, "CommunityToolkit.Mvvm.Input.RelayCommandAttribute")
+                        && TryGetRelayCommandPropertyName(method, out string commandPropertyName))
+                    {
+                        existingNames.Add(commandPropertyName);
+                        existingNames.Add(ToBackingFieldName(commandPropertyName));
+                    }
+                }
+            }
             List<string> membersToInsert = [];
             foreach (AxamlMvvmMemberPlanEntry entry in additions)
             {
@@ -564,12 +592,19 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                     }
 
                     string methodName = requirement.Name[..^"Command".Length];
-                    if (!SyntaxFacts.IsValidIdentifier(methodName)
-                        || !existingNames.Add(methodName)
-                        || !existingNames.Add(requirement.Name))
+                    if (methodName.Length == 0 || !SyntaxFacts.IsValidIdentifier(methodName))
                     {
                         throw new InvalidDataException(
-                            $"Generated command '{requirement.Name}' conflicts with an existing ViewModel member.");
+                            $"Generated command '{requirement.Name}' does not contain a valid method name.");
+                    }
+
+                    string commandFieldName = ToBackingFieldName(requirement.Name);
+                    if (!existingNames.Add(methodName)
+                        || !existingNames.Add(requirement.Name)
+                        || !existingNames.Add(commandFieldName))
+                    {
+                        throw new InvalidDataException(
+                            $"Generated command '{requirement.Name}' or its backing field '{commandFieldName}' conflicts with an existing ViewModel member.");
                     }
 
                     membersToInsert.Add(
@@ -599,6 +634,15 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                 {
                     throw new InvalidDataException(
                         $"Generated backing field '{fieldName}' conflicts with an existing ViewModel member.");
+                }
+
+                string changingHookName = $"On{requirement.Name}Changing";
+                string changedHookName = $"On{requirement.Name}Changed";
+                if (!existingNames.Add(changingHookName)
+                    || !existingNames.Add(changedHookName))
+                {
+                    throw new InvalidDataException(
+                        $"Generated property '{requirement.Name}' conflicts with an existing ObservableProperty change hook.");
                 }
 
                 membersToInsert.Add(
@@ -647,6 +691,115 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         {
             _workspaceGate.Release();
         }
+    }
+
+    public async Task RefreshProjectContextAsync(
+        string projectPath,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+        string normalizedProjectPath = Path.GetFullPath(projectPath);
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            if (_projectContexts.Remove(normalizedProjectPath, out ProjectContext? context))
+            {
+                context.Workspace.Dispose();
+            }
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    public async Task<IReadOnlyList<string>> GetNewCompilerErrorsAsync(
+        string projectPath,
+        WorkspaceFileChangeRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+        ArgumentNullException.ThrowIfNull(request);
+        if (request.Target != WorkspaceFileChangeTarget.MustExist)
+        {
+            throw new InvalidDataException("Compiler error comparison currently requires a snapshot-checked source replacement.");
+        }
+
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ProjectContext context = await GetProjectContextAsync(projectPath, cancellationToken)
+                .ConfigureAwait(false);
+            Microsoft.CodeAnalysis.Project project =
+                context.Workspace.CurrentSolution.GetProject(context.ProjectId)
+                ?? throw new InvalidOperationException($"Could not load project '{projectPath}'.");
+            string targetPath = Path.GetFullPath(Path.Combine(
+                Path.GetDirectoryName(projectPath)!,
+                request.RelativePath));
+            Document? document = project.Documents.FirstOrDefault(candidate =>
+                candidate.FilePath is not null
+                && WorkspacePathIdentity.AreEqual(candidate.FilePath, targetPath));
+            if (document is null)
+            {
+                throw new InvalidDataException(
+                    $"The proposed C# file '{request.RelativePath}' is not a source document in project '{projectPath}'.");
+            }
+
+            SourceText existingText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            if (!string.Equals(existingText.ToString(), request.ExpectedContent, StringComparison.Ordinal))
+            {
+                throw new InvalidDataException(
+                    $"The Roslyn snapshot for '{request.RelativePath}' is stale; reanalyze the project before proposing edits.");
+            }
+
+            Compilation baselineCompilation = await project.GetCompilationAsync(cancellationToken)
+                .ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"Could not compile project '{projectPath}'.");
+            Diagnostic[] baselineErrors = baselineCompilation.GetDiagnostics(cancellationToken)
+                .Where(static diagnostic => diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error)
+                .ToArray();
+
+            Solution updatedSolution = context.Workspace.CurrentSolution.WithDocumentText(
+                document.Id,
+                SourceText.From(request.ProposedContent));
+            Microsoft.CodeAnalysis.Project updatedProject = updatedSolution.GetProject(context.ProjectId)
+                ?? throw new InvalidOperationException($"Could not create an updated compilation for '{projectPath}'.");
+            Compilation updatedCompilation = await updatedProject.GetCompilationAsync(cancellationToken)
+                .ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"Could not compile the proposed changes for '{projectPath}'.");
+            Dictionary<string, int> remainingErrors = baselineErrors
+                .GroupBy(GetCompilerDiagnosticKey, StringComparer.Ordinal)
+                .ToDictionary(static group => group.Key, static group => group.Count(), StringComparer.Ordinal);
+            List<string> newErrors = [];
+            foreach (Diagnostic diagnostic in updatedCompilation.GetDiagnostics(cancellationToken)
+                         .Where(static diagnostic => diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error))
+            {
+                string key = GetCompilerDiagnosticKey(diagnostic);
+                if (remainingErrors.TryGetValue(key, out int count) && count > 0)
+                {
+                    remainingErrors[key] = count - 1;
+                }
+                else
+                {
+                    newErrors.Add(diagnostic.ToString());
+                }
+            }
+
+            return newErrors;
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    private static string GetCompilerDiagnosticKey(Diagnostic diagnostic)
+    {
+        string sourcePath = diagnostic.Location.SourceTree?.FilePath ?? string.Empty;
+        string normalizedPath = string.IsNullOrWhiteSpace(sourcePath)
+            ? string.Empty
+            : WorkspacePathIdentity.Normalize(sourcePath);
+        return $"{diagnostic.Id}|{normalizedPath}|{diagnostic.GetMessage()}";
     }
 
     private static bool InheritsFrom(INamedTypeSymbol type, INamedTypeSymbol baseType)
@@ -817,6 +970,13 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 
         propertyName = methodName + "Command";
         return SyntaxFacts.IsValidIdentifier(propertyName);
+    }
+
+    private static string ToBackingFieldName(string propertyName)
+    {
+        return propertyName.Length == 0
+            ? string.Empty
+            : char.ToLowerInvariant(propertyName[0]) + propertyName[1..];
     }
 
     private static INamedTypeSymbol? ResolveAxamlType(

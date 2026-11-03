@@ -70,12 +70,27 @@ public sealed class AxamlMvvmMemberPlannerTests
     }
 
     [TestMethod]
-    public void Plan_ReportsDuplicateBindingTargetsAsConflict()
+    public void Plan_DeduplicatesCompatibleRepeatedBindingTargets()
     {
         AxamlMvvmMemberPlanEntry[] plan = new AxamlMvvmMemberPlanner().Plan(
             [
                 new AxamlMvvmMemberRequirement("Name", "string", IsCommand: false),
                 new AxamlMvvmMemberRequirement("Name", "string", IsCommand: false),
+            ],
+            [],
+            createMissingMembers: true).ToArray();
+
+        Assert.AreEqual(AxamlMvvmMemberPlanAction.Create, plan[0].Action);
+        Assert.AreEqual(1, plan.Length);
+    }
+
+    [TestMethod]
+    public void Plan_RejectsRepeatedBindingTargetsWithIncompatibleTypes()
+    {
+        AxamlMvvmMemberPlanEntry[] plan = new AxamlMvvmMemberPlanner().Plan(
+            [
+                new AxamlMvvmMemberRequirement("Value", "string", IsCommand: false),
+                new AxamlMvvmMemberRequirement("Value", "double", IsCommand: false),
             ],
             [],
             createMissingMembers: true).ToArray();
