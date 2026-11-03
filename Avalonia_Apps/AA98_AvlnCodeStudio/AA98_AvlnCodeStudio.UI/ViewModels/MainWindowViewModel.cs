@@ -23,6 +23,7 @@ using Config.UI.Avalonia.ViewModels;
 using Project.Explorer.Avalonia.ViewModels;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
+using AA98_AvlnCodeStudio.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Threading;
@@ -119,6 +120,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _axamlMvvmGenerator = axamlMvvmGenerator ?? new AxamlMvvmGenerator();
             _workspaceFileChangeService = workspaceFileChangeService
                 ?? new WorkspaceFileChangeService(_editorWorkspace);
+            _workspaceFileChangeService.HistoryChanged += OnWorkspaceChangeHistoryChanged;
             _projectPackageService = projectPackageService ?? new DotNetCSharpProjectPackageService();
             _axamlDesigner = axamlDesignerViewModel ?? new AxamlDesignerViewModel();
             _axamlDesigner.MarkupChanged += OnAxamlDesignerMarkupChanged;
@@ -455,6 +457,10 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         }
 
         public string OpenWorkspaceCommandText => UiStrings.OpenWorkspaceCommandText;
+
+        public string UndoWorkspaceChangeCommandText => "Undo workspace change";
+
+        public string RedoWorkspaceChangeCommandText => "Redo workspace change";
 
         public string CreateConsoleProjectCommandText => UiStrings.CreateConsoleProjectCommandText;
 
@@ -866,6 +872,62 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string StatusPlaceholderMenuText => UiStrings.StatusPlaceholderMenuText;
 
+        [RelayCommand(CanExecute = nameof(CanUndoWorkspaceChange))]
+        private void UndoWorkspaceChange()
+        {
+            try
+            {
+                if (_workspaceFileChangeService.Undo())
+                {
+                    Editor.StatusText = "Undid the last confirmed workspace change.";
+                    Editor.NotificationText = _workspaceFileChangeService.HistoryWarning
+                        ?? "All affected files and open documents were restored.";
+                }
+            }
+            catch (Exception exception) when (exception is IOException
+                or UnauthorizedAccessException
+                or InvalidOperationException
+                or ArgumentException
+                or AggregateException)
+            {
+                Editor.StatusText = "Workspace undo failed.";
+                Editor.NotificationText = exception.Message;
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanRedoWorkspaceChange))]
+        private void RedoWorkspaceChange()
+        {
+            try
+            {
+                if (_workspaceFileChangeService.Redo())
+                {
+                    Editor.StatusText = "Redid the last undone workspace change.";
+                    Editor.NotificationText = _workspaceFileChangeService.HistoryWarning
+                        ?? "All affected files and open documents were reapplied.";
+                }
+            }
+            catch (Exception exception) when (exception is IOException
+                or UnauthorizedAccessException
+                or InvalidOperationException
+                or ArgumentException
+                or AggregateException)
+            {
+                Editor.StatusText = "Workspace redo failed.";
+                Editor.NotificationText = exception.Message;
+            }
+        }
+
+        private bool CanUndoWorkspaceChange() => _workspaceFileChangeService.CanUndo;
+
+        private bool CanRedoWorkspaceChange() => _workspaceFileChangeService.CanRedo;
+
+        private void OnWorkspaceChangeHistoryChanged(object? sender, EventArgs e)
+        {
+            UndoWorkspaceChangeCommand.NotifyCanExecuteChanged();
+            RedoWorkspaceChangeCommand.NotifyCanExecuteChanged();
+        }
+
         [RelayCommand]
         private async Task OpenWorkspaceAsync(CancellationToken cancellationToken)
         {
@@ -948,6 +1010,20 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 {
                     throw new InvalidDataException(
                         $"'{requests[1].RelativePath}' already exists. Incremental MVVM generation is not supported yet; the existing ViewModel was left unchanged.");
+                }
+
+                AxamlMvvmSemanticResolution semanticResolution =
+                    await _csharpSyntaxDiagnosticService.AnalyzeAxamlMvvmAsync(
+                        Editor.Text,
+                        filePath,
+                        workspace,
+                        cancellationToken);
+                if (!semanticResolution.IsSuccessful)
+                {
+                    throw new InvalidDataException(
+                        "MVVM generation stopped because the view or its DataContext could not be resolved safely:"
+                        + Environment.NewLine
+                        + string.Join(Environment.NewLine, semanticResolution.Diagnostics));
                 }
 
                 WorkspaceFileChangeProposal proposal = _workspaceFileChangeService.Prepare(
@@ -1360,6 +1436,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             if (ProjectExplorer is not null)
             {
                 await ProjectExplorer.LoadAsync(workspace.RootPath, cancellationToken);
+            }
+
+            if (Workspace is null
+                || !WorkspacePathIdentity.AreEqual(Workspace.RootPath, workspace.RootPath))
+            {
+                _workspaceFileChangeService.ResetHistory();
             }
 
             Workspace = workspace;

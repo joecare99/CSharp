@@ -19,20 +19,43 @@
              LastChildFill="True">
     <Grid DockPanel.Dock="Top"
           Margin="12,12,12,8"
-          ColumnDefinitions="*,Auto,Auto,Auto"
-          ColumnSpacing="8">
-      <TextBox Grid.Column="0"
-               PlaceholderText="AXAML file path"
-               Text="{Binding FilePath, Mode=TwoWay}" />
-      <Button Grid.Column="1"
-              Content="Browse..."
-              Click="OnBrowseRequested" />
-      <Button Grid.Column="2"
-              Content="Open"
-              Click="OnOpenPathRequested" />
-      <Button Grid.Column="3"
-              Content="Save"
-              Click="OnSaveRequested" />
+          RowDefinitions="Auto,Auto,Auto"
+          RowSpacing="6">
+      <Grid Grid.Row="0"
+            ColumnDefinitions="*,Auto,Auto,Auto"
+            ColumnSpacing="8">
+        <TextBox Grid.Column="0"
+                 PlaceholderText="AXAML file path"
+                 Text="{Binding FilePath, Mode=TwoWay}" />
+        <Button Grid.Column="1"
+                Content="Browse..."
+                Click="OnBrowseRequested" />
+        <Button Grid.Column="2"
+                Content="Open"
+                Click="OnOpenPathRequested" />
+        <Button Grid.Column="3"
+                Content="Save"
+                Click="OnSaveRequested" />
+      </Grid>
+      <Grid Grid.Row="1"
+            ColumnDefinitions="*,Auto,Auto"
+            ColumnSpacing="8">
+        <TextBox Grid.Column="0"
+                 PlaceholderText="Project/workspace directory (required for multi-file changes)"
+                 Text="{Binding WorkspacePathInput, Mode=TwoWay}" />
+        <Button Grid.Column="1"
+                Content="Select workspace..."
+                Click="OnWorkspaceBrowseRequested" />
+        <Button Grid.Column="2"
+                Content="Use path"
+                Command="{Binding ApplyWorkspaceContextCommand}" />
+      </Grid>
+      <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
+        <Button Content="Undo workspace change"
+                Command="{Binding UndoWorkspaceChangeCommand}" />
+        <Button Content="Redo workspace change"
+                Command="{Binding RedoWorkspaceChangeCommand}" />
+      </StackPanel>
     </Grid>
 
     <designer:AxamlDesignerView Margin="12,0,12,8"
@@ -46,9 +69,14 @@
           Background="#2D2D30"
           BorderBrush="#555555"
           BorderThickness="0,1,0,0">
-    <TextBlock Text="{Binding StatusText}"
-               VerticalAlignment="Center"
-               TextTrimming="CharacterEllipsis" />
+    <StackPanel Orientation="Horizontal" Spacing="16">
+      <TextBlock Text="{Binding WorkspaceContextStatus}"
+                 VerticalAlignment="Center"
+                 TextTrimming="CharacterEllipsis" />
+      <TextBlock Text="{Binding StatusText}"
+                 VerticalAlignment="Center"
+                 TextTrimming="CharacterEllipsis" />
+    </StackPanel>
   </Border>
   </Grid>
 </Window>

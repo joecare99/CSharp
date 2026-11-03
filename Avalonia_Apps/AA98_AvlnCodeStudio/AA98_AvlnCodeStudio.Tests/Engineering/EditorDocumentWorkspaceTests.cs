@@ -97,6 +97,116 @@ public sealed class EditorDocumentWorkspaceTests
         }
     }
 
+    [TestMethod]
+    public async Task WorkspaceChange_RejectsDocumentThatBecameDirtyAfterPreparation()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_EditorStaleChange_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string path = Path.Combine(root, "View.axaml");
+            const string original = "<Window />";
+            await File.WriteAllTextAsync(path, original);
+            TestEditorComponentFactory factory = new();
+            EditorDocumentWorkspace documents = new(factory.Create(), factory);
+            await documents.OpenOrActivateAsync(path);
+            WorkspaceFileChangeService changes = new(documents);
+            WorkspaceFileChangeProposal proposal = changes.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", original, "<Window Title=\"Generated\" />"),
+            ]);
+
+            documents.ActiveTab.Editor.Text = "<Window Title=\"User edit\" />";
+            Assert.ThrowsExactly<WorkspaceOpenDocumentException>(
+                () => changes.Apply(proposal, confirmed: true));
+
+            Assert.AreEqual(original, await File.ReadAllTextAsync(path));
+            Assert.AreEqual("<Window Title=\"User edit\" />", documents.ActiveTab.Editor.Text);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task WorkspaceChange_UndoSynchronizesCleanDocumentAndRejectsDirtyDocument()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_EditorUndo_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string path = Path.Combine(root, "View.axaml");
+            const string original = "<Window />";
+            await File.WriteAllTextAsync(path, original);
+            TestEditorComponentFactory factory = new();
+            EditorDocumentWorkspace documents = new(factory.Create(), factory);
+            await documents.OpenOrActivateAsync(path);
+            WorkspaceFileChangeService changes = new(documents);
+            WorkspaceFileChangeProposal proposal = changes.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", original, "<Window Title=\"Generated\" />"),
+            ]);
+            changes.Apply(proposal, confirmed: true);
+
+            Assert.IsTrue(changes.Undo());
+            Assert.AreEqual(original, documents.ActiveTab.Editor.Text);
+            Assert.IsFalse(documents.ActiveTab.Editor.IsDirty);
+
+            Assert.IsTrue(changes.Redo());
+            documents.ActiveTab.Editor.Text = "<Window Title=\"Unsaved\" />";
+            Assert.ThrowsExactly<WorkspaceOpenDocumentException>(() => changes.Undo());
+            Assert.AreEqual("<Window Title=\"Generated\" />", await File.ReadAllTextAsync(path));
+            Assert.AreEqual("<Window Title=\"Unsaved\" />", documents.ActiveTab.Editor.Text);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task OpenOrActivateAsync_UsesPlatformPathCaseRules()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_EditorCase_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string upperPath = Path.Combine(root, "View.axaml");
+            string lowerPath = Path.Combine(root, "view.axaml");
+            await File.WriteAllTextAsync(upperPath, "upper");
+            if (!OperatingSystem.IsWindows())
+            {
+                await File.WriteAllTextAsync(lowerPath, "lower");
+            }
+
+            TestEditorComponentFactory factory = new();
+            EditorDocumentWorkspace documents = new(factory.Create(), factory);
+            await documents.OpenOrActivateAsync(upperPath);
+            EditorTabViewModel upperTab = documents.ActiveTab;
+            await documents.OpenOrActivateAsync(lowerPath);
+            EditorTabViewModel lowerTab = documents.ActiveTab;
+
+            if (OperatingSystem.IsWindows())
+            {
+                Assert.AreSame(upperTab, lowerTab);
+                Assert.AreSame(upperTab, documents.FindByPath(lowerPath));
+            }
+            else
+            {
+                Assert.AreNotSame(upperTab, lowerTab);
+                Assert.AreEqual("upper", upperTab.Editor.Text);
+                Assert.AreEqual("lower", lowerTab.Editor.Text);
+                Assert.AreSame(upperTab, documents.FindByPath(upperPath));
+                Assert.AreSame(lowerTab, documents.FindByPath(lowerPath));
+            }
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
     private sealed class TestEditorComponentFactory : IAvaloniaEditorComponentFactory
     {
         public IAvaloniaEditorComponent Create()

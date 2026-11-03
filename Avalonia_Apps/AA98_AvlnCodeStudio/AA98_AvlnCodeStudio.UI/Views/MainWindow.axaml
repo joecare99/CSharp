@@ -69,6 +69,9 @@
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Header="_Edit">
+                        <MenuItem Header="{Binding UndoWorkspaceChangeCommandText}" Command="{Binding UndoWorkspaceChangeCommand}" />
+                        <MenuItem Header="{Binding RedoWorkspaceChangeCommandText}" Command="{Binding RedoWorkspaceChangeCommand}" />
+                        <Separator />
                         <MenuItem Header="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
                         <MenuItem Header="{Binding GoToDefinitionCommandText}" Command="{Binding GoToDefinitionCommand}" />
                         <Separator />

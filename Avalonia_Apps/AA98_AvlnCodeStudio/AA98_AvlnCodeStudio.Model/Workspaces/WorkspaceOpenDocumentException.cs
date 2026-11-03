@@ -8,7 +8,7 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 public sealed class WorkspaceOpenDocumentException : InvalidOperationException
 {
     public WorkspaceOpenDocumentException(string relativePath)
-        : base($"'{relativePath}' is open in an editor. Save and close it before applying this file change.")
+        : base($"'{relativePath}' is open in an editor and is dirty, ambiguous, or no longer matches the reviewed content.")
     {
         RelativePath = relativePath;
     }

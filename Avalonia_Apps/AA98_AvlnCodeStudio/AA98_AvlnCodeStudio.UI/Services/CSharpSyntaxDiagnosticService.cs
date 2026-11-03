@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.CodeAnalysis.FindSymbols;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Build.Locator;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Code.Navigation;
@@ -14,6 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System;
+using System.Xml;
+using System.Xml.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WorkbenchDiagnostic = AppKomponentBaseLib.Diagnostics.Diagnostic;
@@ -279,6 +282,737 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         {
             _workspaceGate.Release();
         }
+    }
+
+    public async Task<AxamlMvvmSemanticResolution> AnalyzeAxamlMvvmAsync(
+        string markup,
+        string filePath,
+        CSharpWorkspace workspace,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(markup);
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+        ArgumentNullException.ThrowIfNull(workspace);
+
+        string normalizedFilePath = Path.GetFullPath(filePath);
+        CSharpWorkspaceProject[] candidates = workspace.Projects
+            .Where(project => IsWithinDirectory(
+                normalizedFilePath,
+                Path.GetDirectoryName(project.ProjectPath)!))
+            .OrderByDescending(project => Path.GetDirectoryName(project.ProjectPath)!.Length)
+            .ToArray();
+        if (candidates.Length == 0)
+        {
+            return AxamlMvvmSemanticResolution.Failure(
+                null,
+                "The AXAML file is not located under a project in the current workspace.");
+        }
+
+        int longestProjectDirectory = Path.GetDirectoryName(candidates[0].ProjectPath)!.Length;
+        CSharpWorkspaceProject[] bestCandidates = candidates
+            .Where(project => Path.GetDirectoryName(project.ProjectPath)!.Length == longestProjectDirectory)
+            .ToArray();
+        if (bestCandidates.Length != 1)
+        {
+            return AxamlMvvmSemanticResolution.Failure(
+                null,
+                "More than one C# project could own this AXAML file. Select a project explicitly before generating MVVM code.");
+        }
+
+        string projectPath = bestCandidates[0].ProjectPath;
+        XDocument document;
+        try
+        {
+            if (markup.Length > 1_000_000)
+            {
+                return AxamlMvvmSemanticResolution.Failure(
+                    projectPath,
+                    "AXAML markup exceeds the semantic analyzer size limit.");
+            }
+
+            using StringReader stringReader = new(markup);
+            using XmlReader xmlReader = XmlReader.Create(
+                stringReader,
+                new XmlReaderSettings
+                {
+                    DtdProcessing = DtdProcessing.Prohibit,
+                    XmlResolver = null,
+                    MaxCharactersInDocument = 1_000_000,
+                });
+            document = XDocument.Load(xmlReader, LoadOptions.SetLineInfo);
+        }
+        catch (XmlException exception)
+        {
+            string location = exception.LineNumber > 0
+                ? $" at line {exception.LineNumber}, column {exception.LinePosition}"
+                : string.Empty;
+            return AxamlMvvmSemanticResolution.Failure(
+                projectPath,
+                $"AXAML could not be parsed{location}: {exception.Message}");
+        }
+
+        XNamespace xamlNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
+        XElement? root = document.Root;
+        string? className = (string?)root?.Attribute(xamlNamespace + "Class");
+        if (root is null || string.IsNullOrWhiteSpace(className))
+        {
+            return AxamlMvvmSemanticResolution.Failure(
+                projectPath,
+                WithAxamlLocation(
+                    "The AXAML root must declare x:Class so its C# view type can be resolved.",
+                    root));
+        }
+
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ProjectContext context = await GetProjectContextAsync(projectPath, cancellationToken)
+                .ConfigureAwait(false);
+            Microsoft.CodeAnalysis.Project? project =
+                context.Workspace.CurrentSolution.GetProject(context.ProjectId);
+            if (project is null || !project.SupportsCompilation)
+            {
+                return AxamlMvvmSemanticResolution.Failure(
+                    projectPath,
+                    "The selected project does not provide a C# compilation for semantic view-model analysis.");
+            }
+
+            Compilation compilation = await project.GetCompilationAsync(cancellationToken)
+                .ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"Could not create a compilation for '{projectPath}'.");
+            INamedTypeSymbol? viewType = compilation.GetTypeByMetadataName(className);
+            if (viewType is null || !viewType.Locations.Any(static location => location.IsInSource))
+            {
+                return AxamlMvvmSemanticResolution.Failure(
+                    projectPath,
+                    WithAxamlLocation(
+                        $"The C# view type '{className}' could not be uniquely resolved in the selected project.",
+                        root.Attribute(xamlNamespace + "Class")));
+            }
+
+            if (viewType.TypeKind != TypeKind.Class)
+            {
+                return AxamlMvvmSemanticResolution.Failure(
+                    projectPath,
+                    WithAxamlLocation(
+                        $"The x:Class type '{className}' is not a class.",
+                        root.Attribute(xamlNamespace + "Class")));
+            }
+
+            if (!viewType.DeclaringSyntaxReferences
+                    .Select(reference => reference.GetSyntax(cancellationToken))
+                    .OfType<ClassDeclarationSyntax>()
+                    .Any(declaration => declaration.Modifiers.Any(SyntaxKind.PartialKeyword)))
+            {
+                return AxamlMvvmSemanticResolution.Failure(
+                    projectPath,
+                    WithAxamlLocation(
+                        $"The view type '{className}' is not partial; Avalonia-generated view code cannot be safely associated with it.",
+                        root.Attribute(xamlNamespace + "Class")));
+            }
+
+            List<string> diagnostics = [];
+            string? dataTypeName = (string?)root.Attribute(xamlNamespace + "DataType");
+            INamedTypeSymbol? declaredDataType = null;
+            if (!string.IsNullOrWhiteSpace(dataTypeName))
+            {
+                declaredDataType = ResolveAxamlType(dataTypeName, root, compilation);
+                if (declaredDataType is null)
+                {
+                    diagnostics.Add(WithAxamlLocation(
+                        $"The x:DataType '{dataTypeName}' could not be resolved unambiguously in project '{Path.GetFileName(projectPath)}'.",
+                        root.Attribute(xamlNamespace + "DataType")));
+                }
+            }
+
+            bool markupDataContext = root.Attribute("DataContext") is not null
+                || root.Elements().Any(element => element.Name.LocalName == "DataContext");
+            List<INamedTypeSymbol> runtimeDataContexts = await FindRuntimeDataContextTypesAsync(
+                project,
+                compilation,
+                viewType,
+                cancellationToken).ConfigureAwait(false);
+            bool runtimeDataContext = markupDataContext || runtimeDataContexts.Count > 0;
+            if (markupDataContext)
+            {
+                XObject? dataContextNode = (XObject?)root.Attribute("DataContext")
+                    ?? root.Elements().FirstOrDefault(element => element.Name.LocalName == "DataContext");
+                diagnostics.Add(WithAxamlLocation(
+                    "The AXAML root already defines DataContext; automatic runtime wiring is unsafe.",
+                    dataContextNode));
+            }
+
+            if (runtimeDataContexts.Count > 1)
+            {
+                diagnostics.Add("The project assigns multiple DataContext types to this view; choose the runtime type explicitly.");
+            }
+            else if (runtimeDataContexts.Count == 1)
+            {
+                declaredDataType ??= runtimeDataContexts[0];
+                diagnostics.Add(
+                    $"The view already receives runtime DataContext '{runtimeDataContexts[0].ToDisplayString()}'; it will not be replaced.");
+                if (declaredDataType is not null
+                    && !SymbolEqualityComparer.Default.Equals(declaredDataType, runtimeDataContexts[0]))
+                {
+                    diagnostics.Add(WithAxamlLocation(
+                        $"The x:DataType '{declaredDataType.ToDisplayString()}' does not match the runtime DataContext type '{runtimeDataContexts[0].ToDisplayString()}'.",
+                        root.Attribute(xamlNamespace + "DataType")));
+                }
+            }
+
+            if (declaredDataType is not null && runtimeDataContexts.Count == 0 && !markupDataContext)
+            {
+                diagnostics.Add(
+                    WithAxamlLocation(
+                        $"The view declares x:DataType '{declaredDataType.ToDisplayString()}', but its runtime DataContext cannot be established from the AXAML or project source.",
+                        root.Attribute(xamlNamespace + "DataType")));
+            }
+
+            AxamlMvvmSemanticMember[] viewModelMembers = declaredDataType is null
+                ? []
+                : GetViewModelMembers(declaredDataType);
+            return new AxamlMvvmSemanticResolution(
+                projectPath,
+                className,
+                declaredDataType?.ToDisplayString(),
+                runtimeDataContext,
+                viewModelMembers,
+                diagnostics);
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    public async Task<WorkspaceFileChangeRequest> PlanViewModelSourceAdditionAsync(
+        string workspaceRoot,
+        string projectPath,
+        string viewModelTypeName,
+        IReadOnlyList<AxamlMvvmMemberPlanEntry> additions,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(viewModelTypeName);
+        ArgumentNullException.ThrowIfNull(additions);
+        if (additions.Count == 0
+            || additions.Any(static entry => entry.Action != AxamlMvvmMemberPlanAction.Create))
+        {
+            throw new InvalidDataException("Source additions require a non-empty plan containing only explicitly approved Create entries.");
+        }
+
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ProjectContext context = await GetProjectContextAsync(projectPath, cancellationToken)
+                .ConfigureAwait(false);
+            Microsoft.CodeAnalysis.Project project =
+                context.Workspace.CurrentSolution.GetProject(context.ProjectId)
+                ?? throw new InvalidOperationException($"Could not load project '{projectPath}'.");
+            Compilation compilation = await project.GetCompilationAsync(cancellationToken)
+                .ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"Could not compile project '{projectPath}'.");
+            INamedTypeSymbol viewModelType = compilation.GetTypeByMetadataName(viewModelTypeName)
+                ?? throw new InvalidDataException($"ViewModel type '{viewModelTypeName}' could not be uniquely resolved.");
+            INamedTypeSymbol? observableObjectType = compilation.GetTypeByMetadataName(
+                "CommunityToolkit.Mvvm.ComponentModel.ObservableObject");
+            if (observableObjectType is null
+                || !InheritsFrom(viewModelType, observableObjectType))
+            {
+                throw new InvalidDataException(
+                    $"ViewModel '{viewModelTypeName}' must derive from CommunityToolkit.Mvvm.ComponentModel.ObservableObject for safe generated properties and commands.");
+            }
+
+            Dictionary<string, Document> sourceDocuments = project.Documents
+                .Where(static document => !string.IsNullOrWhiteSpace(document.FilePath))
+                .ToDictionary(
+                    document => Path.GetFullPath(document.FilePath!),
+                    document => document,
+                    WorkspacePathIdentity.Comparer);
+            (ClassDeclarationSyntax Declaration, Document Document)[] declarations = viewModelType.DeclaringSyntaxReferences
+                .Select(reference => reference.GetSyntax(cancellationToken))
+                .OfType<ClassDeclarationSyntax>()
+                .Where(declaration => declaration.SyntaxTree.FilePath is not null
+                    && sourceDocuments.ContainsKey(Path.GetFullPath(declaration.SyntaxTree.FilePath)))
+                .Select(declaration => (
+                    Declaration: declaration,
+                    Document: sourceDocuments[Path.GetFullPath(declaration.SyntaxTree.FilePath!)]))
+                .ToArray();
+            if (declarations.Length == 0
+                || declarations.Any(static item =>
+                    !item.Declaration.Modifiers.Any(SyntaxKind.PartialKeyword)))
+            {
+                throw new InvalidDataException(
+                    $"ViewModel '{viewModelTypeName}' must have only partial class declarations before it can be extended.");
+            }
+
+            HashSet<string> existingNames = new(
+                viewModelType.GetMembers().Select(static member => member.Name),
+                StringComparer.Ordinal);
+            List<string> membersToInsert = [];
+            foreach (AxamlMvvmMemberPlanEntry entry in additions)
+            {
+                AxamlMvvmMemberRequirement requirement = entry.Requirement;
+                if (requirement.IsCommand)
+                {
+                    if (!string.Equals(requirement.TypeName, "ICommand", StringComparison.Ordinal)
+                        || !requirement.Name.EndsWith("Command", StringComparison.Ordinal))
+                    {
+                        throw new InvalidDataException(
+                            $"Command member '{requirement.Name}' does not match the supported generated command shape.");
+                    }
+
+                    string methodName = requirement.Name[..^"Command".Length];
+                    if (!SyntaxFacts.IsValidIdentifier(methodName)
+                        || !existingNames.Add(methodName)
+                        || !existingNames.Add(requirement.Name))
+                    {
+                        throw new InvalidDataException(
+                            $"Generated command '{requirement.Name}' conflicts with an existing ViewModel member.");
+                    }
+
+                    membersToInsert.Add(
+                        $"[global::CommunityToolkit.Mvvm.Input.RelayCommand]{Environment.NewLine}"
+                        + $"private void {methodName}(){Environment.NewLine}"
+                        + "{" + Environment.NewLine
+                        + $"    // TODO: Implement the {methodName} action.{Environment.NewLine}"
+                        + "}");
+                    continue;
+                }
+
+                if (!TryGetGeneratedPropertyType(requirement.TypeName, out string fieldType, out string initialValue))
+                {
+                    throw new InvalidDataException(
+                        $"Property '{requirement.Name}' has unsupported generated type '{requirement.TypeName}'.");
+                }
+
+                if (!SyntaxFacts.IsValidIdentifier(requirement.Name)
+                    || !existingNames.Add(requirement.Name))
+                {
+                    throw new InvalidDataException(
+                        $"Generated property '{requirement.Name}' conflicts with an existing ViewModel member.");
+                }
+
+                string fieldName = "_" + char.ToLowerInvariant(requirement.Name[0]) + requirement.Name[1..];
+                if (!existingNames.Add(fieldName))
+                {
+                    throw new InvalidDataException(
+                        $"Generated backing field '{fieldName}' conflicts with an existing ViewModel member.");
+                }
+
+                membersToInsert.Add(
+                    $"[global::CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]{Environment.NewLine}"
+                    + $"private {fieldType} {fieldName} = {initialValue};");
+            }
+
+            (ClassDeclarationSyntax targetDeclaration, Document sourceDocument) = declarations
+                .OrderByDescending(static item => item.Declaration.Members.Count)
+                .First();
+
+            SourceText sourceText = await sourceDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            string source = sourceText.ToString();
+            int closingBracePosition = targetDeclaration.CloseBraceToken.SpanStart;
+            int lineStart = source.LastIndexOfAny(['\r', '\n'], Math.Max(0, closingBracePosition - 1)) + 1;
+            if (source.AsSpan(lineStart, closingBracePosition - lineStart)
+                .IndexOfAnyExcept(' ', '\t') >= 0)
+            {
+                throw new InvalidDataException(
+                    $"ViewModel '{viewModelTypeName}' has an inline closing brace; source-preserving member insertion is unavailable.");
+            }
+
+            string indentation = source[lineStart..closingBracePosition];
+            string newline = source.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+            string memberIndentation = GetLineIndentation(source, targetDeclaration.SpanStart) + "    ";
+            string insertion = memberIndentation
+                + string.Join(
+                    newline + memberIndentation,
+                    membersToInsert.Select(member =>
+                        member.Replace(Environment.NewLine, newline + memberIndentation, StringComparison.Ordinal)))
+                + newline;
+            string proposedSource = source.Insert(lineStart, insertion);
+            string normalizedWorkspaceRoot = Path.GetFullPath(workspaceRoot);
+            if (!IsWithinDirectory(sourceDocument.FilePath!, normalizedWorkspaceRoot))
+            {
+                throw new InvalidDataException(
+                    $"The ViewModel source file '{sourceDocument.FilePath}' is outside workspace '{normalizedWorkspaceRoot}'.");
+            }
+
+            return WorkspaceFileChangeRequest.ReplaceExisting(
+                Path.GetRelativePath(normalizedWorkspaceRoot, sourceDocument.FilePath!),
+                source,
+                proposedSource);
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    private static bool InheritsFrom(INamedTypeSymbol type, INamedTypeSymbol baseType)
+    {
+        for (INamedTypeSymbol? current = type; current is not null; current = current.BaseType)
+        {
+            if (SymbolEqualityComparer.Default.Equals(current, baseType))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryGetGeneratedPropertyType(
+        string requestedType,
+        out string fieldType,
+        out string initialValue)
+    {
+        (fieldType, initialValue) = requestedType switch
+        {
+            "string" => ("string", "string.Empty"),
+            "string?" => ("string?", "null"),
+            "bool?" => ("bool?", "null"),
+            "decimal?" => ("decimal?", "null"),
+            "double" => ("double", "0d"),
+            "int" => ("int", "0"),
+            _ => (string.Empty, string.Empty),
+        };
+        return fieldType.Length > 0;
+    }
+
+    private static string GetLineIndentation(string source, int position)
+    {
+        int lineStart = source.LastIndexOfAny(['\r', '\n'], Math.Max(0, position - 1)) + 1;
+        int firstNonWhitespace = lineStart;
+        while (firstNonWhitespace < source.Length
+            && source[firstNonWhitespace] is ' ' or '\t')
+        {
+            firstNonWhitespace++;
+        }
+
+        return source[lineStart..firstNonWhitespace];
+    }
+
+    private static string WithAxamlLocation(string message, XObject? node)
+    {
+        if (node is IXmlLineInfo lineInfo && lineInfo.HasLineInfo())
+        {
+            return $"{message} (line {lineInfo.LineNumber}, column {lineInfo.LinePosition})";
+        }
+
+        return message;
+    }
+
+    private static AxamlMvvmSemanticMember[] GetViewModelMembers(INamedTypeSymbol viewModelType)
+    {
+        List<AxamlMvvmSemanticMember> members = [];
+        HashSet<string> memberNames = new(StringComparer.Ordinal);
+        for (INamedTypeSymbol? currentType = viewModelType;
+             currentType is not null && currentType.SpecialType != SpecialType.System_Object;
+             currentType = currentType.BaseType)
+        {
+            foreach (IPropertySymbol property in currentType.GetMembers().OfType<IPropertySymbol>()
+                         .Where(static property =>
+                             !property.IsStatic
+                             && property.Parameters.Length == 0
+                             && property.GetMethod?.DeclaredAccessibility == Accessibility.Public))
+            {
+                if (!memberNames.Add(property.Name))
+                {
+                    continue;
+                }
+
+                bool isCommand = property.Type is INamedTypeSymbol namedType
+                    && namedType.AllInterfaces.Any(static implementedInterface =>
+                        implementedInterface.ToDisplayString() == "System.Windows.Input.ICommand");
+                members.Add(new AxamlMvvmSemanticMember(
+                    property.Name,
+                    property.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                    isCommand,
+                    !isCommand
+                        && property.SetMethod?.DeclaredAccessibility == Accessibility.Public
+                        && !property.SetMethod.IsInitOnly));
+            }
+
+            foreach (ISymbol member in currentType.GetMembers())
+            {
+                if (memberNames.Contains(member.Name))
+                {
+                    continue;
+                }
+                memberNames.Add(member.Name);
+
+                if (member is IFieldSymbol field
+                    && HasAttribute(field, "CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute")
+                    && TryGetObservablePropertyName(field.Name, out string propertyName)
+                    && memberNames.Add(propertyName))
+                {
+                    members.Add(new AxamlMvvmSemanticMember(
+                        propertyName,
+                        field.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                        IsCommand: false,
+                        IsWritable: true));
+                }
+                else if (member is IMethodSymbol method
+                    && HasAttribute(method, "CommunityToolkit.Mvvm.Input.RelayCommandAttribute")
+                    && TryGetRelayCommandPropertyName(method, out string commandPropertyName)
+                    && memberNames.Add(commandPropertyName))
+                {
+                    bool isAsync = method.ReturnType.ToDisplayString() is "System.Threading.Tasks.Task"
+                        or "System.Threading.Tasks.ValueTask"
+                        || method.ReturnType is INamedTypeSymbol returnType
+                            && returnType.ConstructedFrom.ToDisplayString() is "System.Threading.Tasks.Task<TResult>"
+                                or "System.Threading.Tasks.ValueTask<TResult>";
+                    members.Add(new AxamlMvvmSemanticMember(
+                        commandPropertyName,
+                        isAsync ? "IAsyncRelayCommand" : "IRelayCommand",
+                        IsCommand: true,
+                        IsWritable: false));
+                }
+            }
+        }
+
+        return members.OrderBy(static member => member.Name, StringComparer.Ordinal).ToArray();
+    }
+
+    private static bool HasAttribute(ISymbol symbol, string metadataName)
+    {
+        return symbol.GetAttributes().Any(attribute =>
+            string.Equals(
+                attribute.AttributeClass?.ToDisplayString(),
+                metadataName,
+                StringComparison.Ordinal));
+    }
+
+    private static bool TryGetObservablePropertyName(string fieldName, out string propertyName)
+    {
+        string baseName = fieldName.StartsWith("m_", StringComparison.Ordinal)
+            ? fieldName[2..]
+            : fieldName.StartsWith('_')
+                ? fieldName[1..]
+                : fieldName;
+        if (baseName.Length == 0 || !SyntaxFacts.IsValidIdentifier(baseName))
+        {
+            propertyName = string.Empty;
+            return false;
+        }
+
+        propertyName = char.ToUpperInvariant(baseName[0]) + baseName[1..];
+        return SyntaxFacts.IsValidIdentifier(propertyName);
+    }
+
+    private static bool TryGetRelayCommandPropertyName(IMethodSymbol method, out string propertyName)
+    {
+        string methodName = method.Name;
+        bool returnsTask = method.ReturnType.ToDisplayString() is "System.Threading.Tasks.Task"
+            or "System.Threading.Tasks.ValueTask"
+            || method.ReturnType is INamedTypeSymbol returnType
+                && returnType.ConstructedFrom.ToDisplayString() is "System.Threading.Tasks.Task<TResult>"
+                    or "System.Threading.Tasks.ValueTask<TResult>";
+        if (returnsTask && methodName.EndsWith("Async", StringComparison.Ordinal)
+            && methodName.Length > "Async".Length)
+        {
+            methodName = methodName[..^"Async".Length];
+        }
+
+        propertyName = methodName + "Command";
+        return SyntaxFacts.IsValidIdentifier(propertyName);
+    }
+
+    private static INamedTypeSymbol? ResolveAxamlType(
+        string typeReference,
+        XElement element,
+        Compilation compilation)
+    {
+        string reference = typeReference.Trim();
+        if (reference.StartsWith('{') && reference.EndsWith('}'))
+        {
+            string extension = reference[1..^1].Trim();
+            int extensionSeparator = extension.IndexOfAny([' ', '\t', '\r', '\n']);
+            if (extensionSeparator < 0
+                || !string.Equals(extension[..extensionSeparator], "x:Type", StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            reference = extension[(extensionSeparator + 1)..].Trim();
+        }
+
+        int separator = reference.IndexOf(':');
+        if (separator <= 0 || separator == reference.Length - 1)
+        {
+            return null;
+        }
+
+        string prefix = reference[..separator];
+        string typeName = reference[(separator + 1)..];
+        string? xmlNamespace = element.GetNamespaceOfPrefix(prefix)?.NamespaceName;
+        if (string.IsNullOrWhiteSpace(xmlNamespace))
+        {
+            return null;
+        }
+
+        List<(string ClrNamespace, string? AssemblyName)> namespaceMappings = [];
+        if (xmlNamespace.StartsWith("using:", StringComparison.Ordinal))
+        {
+            namespaceMappings.Add((xmlNamespace["using:".Length..], null));
+        }
+        else if (xmlNamespace.StartsWith("clr-namespace:", StringComparison.Ordinal))
+        {
+            string[] parts = xmlNamespace["clr-namespace:".Length..].Split(';');
+            string clrNamespace = parts[0].Trim();
+            string? assemblyName = parts
+                .Skip(1)
+                .Select(static part => part.Trim())
+                .Where(static part => part.StartsWith("assembly=", StringComparison.Ordinal))
+                .Select(static part => part["assembly=".Length..].Trim())
+                .FirstOrDefault();
+            namespaceMappings.Add((clrNamespace, assemblyName));
+        }
+        else
+        {
+            namespaceMappings.AddRange(FindXmlnsDefinitionMappings(xmlNamespace, compilation));
+        }
+
+        INamedTypeSymbol[] matches = namespaceMappings
+            .Select(mapping => (
+                MetadataName: string.IsNullOrEmpty(mapping.ClrNamespace)
+                    ? typeName
+                    : $"{mapping.ClrNamespace}.{typeName}",
+                mapping.AssemblyName))
+            .Select(candidate => ResolveMetadataType(
+                candidate.MetadataName,
+                candidate.AssemblyName,
+                compilation))
+            .Where(static symbol => symbol is not null)
+            .Cast<INamedTypeSymbol>()
+            .DistinctBy(static symbol => (
+                symbol.ContainingAssembly?.Identity,
+                symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)))
+            .ToArray();
+        return matches.Length == 1 ? matches[0] : null;
+    }
+
+    private static INamedTypeSymbol? ResolveMetadataType(
+        string metadataName,
+        string? assemblyName,
+        Compilation compilation)
+    {
+        if (assemblyName is null)
+        {
+            return compilation.GetTypeByMetadataName(metadataName);
+        }
+
+        IAssemblySymbol[] matchingAssemblies = compilation.SourceModule.ReferencedAssemblySymbols
+            .Append(compilation.Assembly)
+            .Where(assembly => string.Equals(assembly.Identity.Name, assemblyName, StringComparison.Ordinal))
+            .ToArray();
+        if (matchingAssemblies.Length != 1)
+        {
+            return null;
+        }
+
+        return matchingAssemblies[0].GetTypeByMetadataName(metadataName);
+    }
+
+    private static IEnumerable<(string ClrNamespace, string? AssemblyName)> FindXmlnsDefinitionMappings(
+        string xmlNamespace,
+        Compilation compilation)
+    {
+        foreach (IAssemblySymbol assembly in compilation.SourceModule.ReferencedAssemblySymbols
+                     .Append(compilation.Assembly))
+        {
+            foreach (AttributeData attribute in assembly.GetAttributes())
+            {
+                if (!string.Equals(
+                        attribute.AttributeClass?.ToDisplayString(),
+                        "Avalonia.Metadata.XmlnsDefinitionAttribute",
+                        StringComparison.Ordinal)
+                    || attribute.ConstructorArguments.Length < 2
+                    || attribute.ConstructorArguments[0].Value is not string mappedXmlNamespace
+                    || attribute.ConstructorArguments[1].Value is not string clrNamespace
+                    || !string.Equals(mappedXmlNamespace, xmlNamespace, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                yield return (clrNamespace, assembly.Identity.Name);
+            }
+        }
+    }
+
+    private static async Task<List<INamedTypeSymbol>> FindRuntimeDataContextTypesAsync(
+        Microsoft.CodeAnalysis.Project project,
+        Compilation compilation,
+        INamedTypeSymbol viewType,
+        CancellationToken cancellationToken)
+    {
+        List<INamedTypeSymbol> result = [];
+        foreach (Document document in project.Documents)
+        {
+            SyntaxNode? syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken)
+                .ConfigureAwait(false);
+            if (syntaxRoot is null)
+            {
+                continue;
+            }
+
+            SemanticModel semanticModel = compilation.GetSemanticModel(syntaxRoot.SyntaxTree);
+            foreach (AssignmentExpressionSyntax assignment in syntaxRoot
+                         .DescendantNodes()
+                         .OfType<AssignmentExpressionSyntax>()
+                         .Where(static assignment => assignment.IsKind(SyntaxKind.SimpleAssignmentExpression)))
+            {
+                if (!IsDataContextAssignmentForView(assignment.Left, semanticModel, viewType, cancellationToken))
+                {
+                    continue;
+                }
+
+                ITypeSymbol? assignedType = semanticModel.GetTypeInfo(assignment.Right, cancellationToken).Type;
+                if (assignedType is INamedTypeSymbol namedType
+                    && !result.Any(existing => SymbolEqualityComparer.Default.Equals(existing, namedType)))
+                {
+                    result.Add(namedType);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static bool IsDataContextAssignmentForView(
+        ExpressionSyntax left,
+        SemanticModel semanticModel,
+        INamedTypeSymbol viewType,
+        CancellationToken cancellationToken)
+    {
+        if (left is MemberAccessExpressionSyntax memberAccess
+            && memberAccess.Name.Identifier.ValueText == "DataContext")
+        {
+            return SymbolEqualityComparer.Default.Equals(
+                semanticModel.GetTypeInfo(memberAccess.Expression, cancellationToken).Type,
+                viewType);
+        }
+
+        if (left is not IdentifierNameSyntax identifier
+            || identifier.Identifier.ValueText != "DataContext")
+        {
+            return false;
+        }
+
+        InitializerExpressionSyntax? initializer = identifier.Ancestors()
+            .OfType<InitializerExpressionSyntax>()
+            .FirstOrDefault(candidate => candidate.IsKind(SyntaxKind.ObjectInitializerExpression));
+        if (initializer?.Parent?.Parent is ObjectCreationExpressionSyntax objectCreation)
+        {
+            return SymbolEqualityComparer.Default.Equals(
+                semanticModel.GetTypeInfo(objectCreation, cancellationToken).Type,
+                viewType);
+        }
+
+        return SymbolEqualityComparer.Default.Equals(
+            semanticModel.GetEnclosingSymbol(identifier.SpanStart, cancellationToken)?.ContainingType,
+            viewType);
     }
 
     private async Task<ProjectContext> GetProjectContextAsync(string projectPath, CancellationToken cancellationToken)

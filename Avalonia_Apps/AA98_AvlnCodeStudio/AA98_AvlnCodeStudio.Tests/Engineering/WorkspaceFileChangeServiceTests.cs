@@ -121,6 +121,147 @@ public sealed class WorkspaceFileChangeServiceTests
     }
 
     [TestMethod]
+    public void UndoRedo_RestoresOriginalBytesAndMixedFileExistence()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string existingPath = Path.Combine(root, "View.axaml");
+            string nestedDirectory = Path.Combine(root, "ViewModels");
+            string generatedPath = Path.Combine(nestedDirectory, "ViewModel.cs");
+            byte[] originalBytes = [0xEF, 0xBB, 0xBF, .. System.Text.Encoding.UTF8.GetBytes("before")];
+            File.WriteAllBytes(existingPath, originalBytes);
+            WorkspaceFileChangeService service = CreateService();
+            WorkspaceFileChangeProposal proposal = service.Prepare(
+                root,
+                [
+                    WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", "before", "after"),
+                    WorkspaceFileChangeRequest.CreateNew(Path.Combine("ViewModels", "ViewModel.cs"), "generated"),
+                ]);
+
+            service.Apply(proposal, confirmed: true);
+            Assert.IsTrue(service.CanUndo);
+            Assert.IsFalse(service.CanRedo);
+            Assert.IsTrue(File.Exists(generatedPath));
+
+            Assert.IsTrue(service.Undo());
+            CollectionAssert.AreEqual(originalBytes, File.ReadAllBytes(existingPath));
+            Assert.IsFalse(File.Exists(generatedPath));
+            Assert.IsFalse(Directory.Exists(nestedDirectory));
+            Assert.IsFalse(service.CanUndo);
+            Assert.IsTrue(service.CanRedo);
+
+            Assert.IsTrue(service.Redo());
+            Assert.AreEqual("after", File.ReadAllText(existingPath));
+            Assert.AreEqual("generated", File.ReadAllText(generatedPath));
+            Assert.IsTrue(service.CanUndo);
+            Assert.IsFalse(service.CanRedo);
+        });
+    }
+
+    [TestMethod]
+    public void Apply_WhenHistoryLimitIsExceeded_ReportsThatChangeCannotBeUndone()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            WorkspaceFileChangeService service = CreateService();
+            WorkspaceFileChangeProposal initialProposal = service.Prepare(
+                root,
+                [WorkspaceFileChangeRequest.CreateNew("Initial.cs", "initial")]);
+            service.Apply(initialProposal, confirmed: true);
+            Assert.IsTrue(service.CanUndo);
+
+            string largeContent = new('x', 32 * 1024 * 1024 + 1);
+            WorkspaceFileChangeProposal largeProposal = service.Prepare(
+                root,
+                [WorkspaceFileChangeRequest.CreateNew("Large.cs", largeContent)]);
+            service.Apply(largeProposal, confirmed: true);
+
+            Assert.IsTrue(File.Exists(Path.Combine(root, "Large.cs")));
+            Assert.IsFalse(service.CanUndo);
+            Assert.IsFalse(service.CanRedo);
+            StringAssert.Contains(service.HistoryWarning, "exceeded the 32 MiB undo-history limit");
+        });
+    }
+
+    [TestMethod]
+    public void Undo_RejectsAnyStaleFileBeforeChangingTheTransaction()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            File.WriteAllText(Path.Combine(root, "First.txt"), "first");
+            File.WriteAllText(Path.Combine(root, "Second.txt"), "second");
+            WorkspaceFileChangeService service = CreateService();
+            WorkspaceFileChangeProposal proposal = service.Prepare(
+                root,
+                [
+                    WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "generated-first"),
+                    WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "generated-second"),
+                ]);
+            service.Apply(proposal, confirmed: true);
+            File.WriteAllText(Path.Combine(root, "Second.txt"), "external edit");
+
+            WorkspaceFileChangeConflictException exception =
+                Assert.ThrowsExactly<WorkspaceFileChangeConflictException>(() => service.Undo());
+
+            Assert.AreEqual("Second.txt", exception.RelativePath);
+            Assert.AreEqual("generated-first", File.ReadAllText(Path.Combine(root, "First.txt")));
+            Assert.AreEqual("external edit", File.ReadAllText(Path.Combine(root, "Second.txt")));
+            Assert.IsTrue(service.CanUndo);
+        });
+    }
+
+    [TestMethod]
+    public void Undo_RollsBackFileWhenOpenDocumentCannotBeSynchronized()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string path = Path.Combine(root, "View.axaml");
+            File.WriteAllText(path, "before");
+            ToggleSynchronizationProvider documents = new(path);
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(
+                root,
+                [WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", "before", "generated")]);
+            service.Apply(proposal, confirmed: true);
+            documents.FailNextChange = true;
+
+            Assert.ThrowsExactly<IOException>(() => service.Undo());
+
+            Assert.AreEqual("generated", File.ReadAllText(path));
+            Assert.AreEqual("generated", documents.Content);
+            Assert.IsTrue(service.CanUndo);
+            Assert.IsFalse(service.CanRedo);
+        });
+    }
+
+    [TestMethod]
+    public void ApplyAfterUndo_ClearsRedoHistoryAndResetClearsUndoHistory()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string path = Path.Combine(root, "View.txt");
+            File.WriteAllText(path, "before");
+            WorkspaceFileChangeService service = CreateService();
+            WorkspaceFileChangeProposal first = service.Prepare(
+                root,
+                [WorkspaceFileChangeRequest.ReplaceExisting("View.txt", "before", "first")]);
+            service.Apply(first, confirmed: true);
+            Assert.IsTrue(service.Undo());
+
+            WorkspaceFileChangeProposal second = service.Prepare(
+                root,
+                [WorkspaceFileChangeRequest.ReplaceExisting("View.txt", "before", "second")]);
+            service.Apply(second, confirmed: true);
+
+            Assert.IsFalse(service.CanRedo);
+            Assert.IsTrue(service.CanUndo);
+            service.ResetHistory();
+            Assert.IsFalse(service.CanUndo);
+            Assert.IsFalse(service.CanRedo);
+        });
+    }
+
+    [TestMethod]
     public void Prepare_RejectsPathsOutsideWorkspace()
     {
         WithTemporaryDirectory(root =>
@@ -210,6 +351,24 @@ public sealed class WorkspaceFileChangeServiceTests
             Assert.AreEqual("before", File.ReadAllText(viewPath));
             Assert.IsFalse(File.Exists(generatedPath));
             Assert.IsFalse(Directory.Exists(Path.GetDirectoryName(generatedPath)));
+        });
+    }
+
+    [TestMethod]
+    public void Apply_RollsBackFilesWhenOpenDocumentDoesNotReachProposedSnapshot()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string path = Path.Combine(root, "View.axaml");
+            File.WriteAllText(path, "before");
+            WorkspaceFileChangeService service = new(new NonSynchronizingOpenDocumentProvider(path));
+            WorkspaceFileChangeProposal proposal = service.Prepare(
+                root,
+                [WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", "before", "generated")]);
+
+            Assert.ThrowsExactly<IOException>(() => service.Apply(proposal, confirmed: true));
+
+            Assert.AreEqual("before", File.ReadAllText(path));
         });
     }
 
@@ -335,6 +494,61 @@ public sealed class WorkspaceFileChangeServiceTests
         public void ApplyChange(string fullPath, string expectedContent, string proposedContent)
         {
             throw new InvalidOperationException("Simulated editor synchronization failure.");
+        }
+    }
+
+    private sealed class NonSynchronizingOpenDocumentProvider(string openPath)
+        : IWorkspaceOpenDocumentChangeProvider
+    {
+        private readonly string _openPath = WorkspacePathIdentity.Normalize(openPath);
+
+        public bool IsDocumentOpen(string fullPath)
+        {
+            return WorkspacePathIdentity.AreEqual(fullPath, _openPath);
+        }
+
+        public bool CanApplyChange(string fullPath, string expectedContent)
+        {
+            return IsDocumentOpen(fullPath)
+                && string.Equals(expectedContent, "before", StringComparison.Ordinal);
+        }
+
+        public void ApplyChange(string fullPath, string expectedContent, string proposedContent)
+        {
+        }
+    }
+
+    private sealed class ToggleSynchronizationProvider(string openPath)
+        : IWorkspaceOpenDocumentChangeProvider
+    {
+        private readonly string _openPath = WorkspacePathIdentity.Normalize(openPath);
+
+        public string Content { get; private set; } = "before";
+
+        public bool FailNextChange { get; set; }
+
+        public bool IsDocumentOpen(string fullPath) => WorkspacePathIdentity.AreEqual(fullPath, _openPath);
+
+        public bool CanApplyChange(string fullPath, string expectedContent)
+        {
+            return IsDocumentOpen(fullPath)
+                && string.Equals(Content, expectedContent, StringComparison.Ordinal);
+        }
+
+        public void ApplyChange(string fullPath, string expectedContent, string proposedContent)
+        {
+            if (!CanApplyChange(fullPath, expectedContent))
+            {
+                throw new IOException("The open document snapshot is stale.");
+            }
+
+            if (FailNextChange)
+            {
+                FailNextChange = false;
+                return;
+            }
+
+            Content = proposedContent;
         }
     }
 }

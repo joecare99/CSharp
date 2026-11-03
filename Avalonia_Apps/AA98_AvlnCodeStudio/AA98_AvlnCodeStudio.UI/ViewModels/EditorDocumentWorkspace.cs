@@ -65,14 +65,13 @@ public sealed partial class EditorDocumentWorkspace : ObservableObject, IWorkspa
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
         cancellationToken.ThrowIfCancellationRequested();
 
-        string normalizedPath = Path.GetFullPath(filePath);
+        string normalizedPath = WorkspacePathIdentity.Normalize(filePath);
         if (!File.Exists(normalizedPath))
         {
             return null;
         }
 
-        EditorTabViewModel? existingTab = Tabs.FirstOrDefault(tab =>
-            string.Equals(tab.FilePath, normalizedPath, StringComparison.OrdinalIgnoreCase));
+        EditorTabViewModel? existingTab = FindByPath(normalizedPath);
         if (existingTab is not null)
         {
             Activate(existingTab);
@@ -101,27 +100,50 @@ public sealed partial class EditorDocumentWorkspace : ObservableObject, IWorkspa
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
 
-        string normalizedPath = Path.GetFullPath(filePath);
-        return Tabs.FirstOrDefault(tab =>
-            string.Equals(tab.FilePath, normalizedPath, StringComparison.OrdinalIgnoreCase));
+        string normalizedPath = WorkspacePathIdentity.Normalize(filePath);
+        EditorTabViewModel? match = null;
+        foreach (EditorTabViewModel tab in Tabs)
+        {
+            if (tab.FilePath is not { } tabPath
+                || !WorkspacePathIdentity.AreEqual(tabPath, normalizedPath))
+            {
+                continue;
+            }
+
+            if (match is not null)
+            {
+                throw new InvalidOperationException(
+                    $"More than one editor tab represents the file '{normalizedPath}'.");
+            }
+
+            match = tab;
+        }
+
+        return match;
     }
 
     public bool IsDocumentOpen(string fullPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fullPath);
-        string normalizedPath = Path.GetFullPath(fullPath);
-        StringComparison comparison = OperatingSystem.IsWindows()
-            ? StringComparison.OrdinalIgnoreCase
-            : StringComparison.Ordinal;
+        string normalizedPath = WorkspacePathIdentity.Normalize(fullPath);
         return Tabs.Any(tab => tab.FilePath is { } filePath
-            && string.Equals(filePath, normalizedPath, comparison));
+            && WorkspacePathIdentity.AreEqual(filePath, normalizedPath));
     }
 
     public bool CanApplyChange(string fullPath, string expectedContent)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fullPath);
         ArgumentNullException.ThrowIfNull(expectedContent);
-        EditorTabViewModel? tab = FindByPath(fullPath);
+        EditorTabViewModel? tab;
+        try
+        {
+            tab = FindByPath(fullPath);
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+
         return tab is not null && tab.Editor.CanApplyExternalChange(fullPath, expectedContent);
     }
 

@@ -10,15 +10,18 @@ using System.Threading.Tasks;
 
 namespace AA98_AxamlDesigner.Host.ViewModels;
 
-public partial class AxamlDesignerHostViewModel : ObservableObject
+public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOpenDocumentChangeProvider
 {
     private string _markup = string.Empty;
     private string _savedMarkup = string.Empty;
     private Func<CancellationToken, Task<byte[]>>? _screenshotCapture;
+    private readonly WorkspaceFileChangeService _workspaceFileChangeService;
 
     public AxamlDesignerHostViewModel()
     {
         Designer.MarkupChanged += OnMarkupChanged;
+        _workspaceFileChangeService = new WorkspaceFileChangeService(this);
+        _workspaceFileChangeService.HistoryChanged += OnWorkspaceChangeHistoryChanged;
     }
 
     public AxamlDesignerViewModel Designer { get; } = new();
@@ -28,6 +31,15 @@ public partial class AxamlDesignerHostViewModel : ObservableObject
 
     [ObservableProperty]
     private string _statusText = "Open an AXAML file or enter a path.";
+
+    [ObservableProperty]
+    private string _workspaceRootPath = string.Empty;
+
+    [ObservableProperty]
+    private string _workspacePathInput = string.Empty;
+
+    [ObservableProperty]
+    private string _workspaceContextStatus = "No project/workspace selected. Multi-file changes are unavailable.";
 
     public bool IsDirty => !string.Equals(_markup, _savedMarkup, StringComparison.Ordinal);
 
@@ -63,7 +75,8 @@ public partial class AxamlDesignerHostViewModel : ObservableObject
             _savedMarkup = markup;
             Designer.LoadMarkup(markup);
             NotifyDocumentStateChanged();
-            StatusText = $"Opened {Path.GetFileName(fullPath)}.";
+            StatusText = ClearWorkspaceContextIfDocumentIsOutside(fullPath)
+                ?? $"Opened {Path.GetFileName(fullPath)}.";
             return true;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
@@ -94,7 +107,8 @@ public partial class AxamlDesignerHostViewModel : ObservableObject
             FilePath = fullPath;
             _savedMarkup = _markup;
             NotifyDocumentStateChanged();
-            StatusText = $"Saved {Path.GetFileName(fullPath)}.";
+            StatusText = ClearWorkspaceContextIfDocumentIsOutside(fullPath)
+                ?? $"Saved {Path.GetFileName(fullPath)}.";
             return true;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
@@ -114,7 +128,8 @@ public partial class AxamlDesignerHostViewModel : ObservableObject
             FilePath = fullPath;
             _savedMarkup = _markup;
             NotifyDocumentStateChanged();
-            StatusText = $"Saved {Path.GetFileName(fullPath)}.";
+            StatusText = ClearWorkspaceContextIfDocumentIsOutside(fullPath)
+                ?? $"Saved {Path.GetFileName(fullPath)}.";
             return true;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
@@ -128,6 +143,144 @@ public partial class AxamlDesignerHostViewModel : ObservableObject
     {
         ArgumentNullException.ThrowIfNull(screenshotCapture);
         _screenshotCapture = screenshotCapture;
+    }
+
+    public bool SetWorkspaceContext(string path)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        try
+        {
+            string fullPath = WorkspacePathIdentity.Normalize(path);
+            if (!Directory.Exists(fullPath))
+            {
+                WorkspaceContextStatus = "The selected project/workspace directory does not exist.";
+                StatusText = WorkspaceContextStatus;
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(FilePath) && !IsWithinWorkspace(fullPath, FilePath))
+            {
+                WorkspaceContextStatus = "The open AXAML file is outside the selected project/workspace.";
+                StatusText = WorkspaceContextStatus;
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(WorkspaceRootPath)
+                && !WorkspacePathIdentity.AreEqual(WorkspaceRootPath, fullPath))
+            {
+                _workspaceFileChangeService.ResetHistory();
+            }
+
+            WorkspaceRootPath = fullPath;
+            WorkspacePathInput = fullPath;
+            WorkspaceContextStatus = "Project/workspace selected. Multi-file generation can be scoped here when enabled.";
+            StatusText = WorkspaceContextStatus;
+            return true;
+        }
+        catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            WorkspaceContextStatus = $"Invalid project/workspace path: {exception.Message}";
+            StatusText = WorkspaceContextStatus;
+            return false;
+        }
+    }
+
+    public void ClearWorkspaceContext()
+    {
+        _workspaceFileChangeService.ResetHistory();
+        WorkspaceRootPath = string.Empty;
+        WorkspacePathInput = string.Empty;
+        WorkspaceContextStatus = "No project/workspace selected. Multi-file changes are unavailable.";
+        StatusText = WorkspaceContextStatus;
+    }
+
+    public WorkspaceFileChangeProposal PrepareWorkspaceChanges(
+        IEnumerable<WorkspaceFileChangeRequest> requests)
+    {
+        if (string.IsNullOrWhiteSpace(WorkspaceRootPath))
+        {
+            throw new InvalidOperationException("Select a project/workspace before preparing multi-file changes.");
+        }
+
+        return _workspaceFileChangeService.Prepare(WorkspaceRootPath, requests);
+    }
+
+    public void ApplyWorkspaceChanges(WorkspaceFileChangeProposal proposal, bool confirmed)
+    {
+        ArgumentNullException.ThrowIfNull(proposal);
+        if (string.IsNullOrWhiteSpace(WorkspaceRootPath)
+            || !WorkspacePathIdentity.AreEqual(WorkspaceRootPath, proposal.WorkspaceRoot))
+        {
+            throw new InvalidOperationException("The change proposal does not match the selected project/workspace.");
+        }
+
+        _workspaceFileChangeService.Apply(proposal, confirmed);
+        StatusText = _workspaceFileChangeService.HistoryWarning
+            ?? "Confirmed workspace changes applied.";
+    }
+
+    [RelayCommand(CanExecute = nameof(CanUndoWorkspaceChange))]
+    private void UndoWorkspaceChange()
+    {
+        try
+        {
+            if (_workspaceFileChangeService.Undo())
+            {
+                StatusText = _workspaceFileChangeService.HistoryWarning
+                    ?? "Undid the last confirmed workspace change.";
+            }
+        }
+        catch (Exception exception) when (exception is IOException
+            or UnauthorizedAccessException
+            or InvalidOperationException
+            or ArgumentException
+            or AggregateException)
+        {
+            StatusText = $"Workspace undo failed: {exception.Message}";
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanRedoWorkspaceChange))]
+    private void RedoWorkspaceChange()
+    {
+        try
+        {
+            if (_workspaceFileChangeService.Redo())
+            {
+                StatusText = _workspaceFileChangeService.HistoryWarning
+                    ?? "Redid the last undone workspace change.";
+            }
+        }
+        catch (Exception exception) when (exception is IOException
+            or UnauthorizedAccessException
+            or InvalidOperationException
+            or ArgumentException
+            or AggregateException)
+        {
+            StatusText = $"Workspace redo failed: {exception.Message}";
+        }
+    }
+
+    private bool CanUndoWorkspaceChange() => _workspaceFileChangeService.CanUndo;
+
+    private bool CanRedoWorkspaceChange() => _workspaceFileChangeService.CanRedo;
+
+    private void OnWorkspaceChangeHistoryChanged(object? sender, EventArgs e)
+    {
+        UndoWorkspaceChangeCommand.NotifyCanExecuteChanged();
+        RedoWorkspaceChangeCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand]
+    private void ApplyWorkspaceContext()
+    {
+        if (string.IsNullOrWhiteSpace(WorkspacePathInput))
+        {
+            ClearWorkspaceContext();
+            return;
+        }
+
+        SetWorkspaceContext(WorkspacePathInput);
     }
 
     public Task<byte[]> CaptureScreenshotPngAsync(CancellationToken cancellationToken = default)
@@ -185,6 +338,8 @@ public partial class AxamlDesignerHostViewModel : ObservableObject
         return System.Text.Json.JsonSerializer.Serialize(new
         {
             FilePath,
+            WorkspaceRootPath,
+            WorkspaceContextStatus,
             Designer.ErrorText,
             SelectedElementName = Designer.SelectedElementName,
             SelectedProperty = Designer.SelectedProperty,
@@ -228,5 +383,60 @@ public partial class AxamlDesignerHostViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(IsDirty));
         OnPropertyChanged(nameof(WindowTitle));
+    }
+
+    private string? ClearWorkspaceContextIfDocumentIsOutside(string filePath)
+    {
+        if (string.IsNullOrWhiteSpace(WorkspaceRootPath)
+            || IsWithinWorkspace(WorkspaceRootPath, filePath))
+        {
+            return null;
+        }
+
+        ClearWorkspaceContext();
+        return "Project/workspace context cleared because the current file is outside it.";
+    }
+
+    bool IWorkspaceOpenDocumentProvider.IsDocumentOpen(string fullPath)
+    {
+        return !string.IsNullOrWhiteSpace(FilePath)
+            && WorkspacePathIdentity.AreEqual(FilePath, fullPath);
+    }
+
+    bool IWorkspaceOpenDocumentChangeProvider.CanApplyChange(string fullPath, string expectedContent)
+    {
+        return ((IWorkspaceOpenDocumentProvider)this).IsDocumentOpen(fullPath)
+            && !IsDirty
+            && string.Equals(_markup, expectedContent, StringComparison.Ordinal)
+            && string.Equals(_savedMarkup, expectedContent, StringComparison.Ordinal);
+    }
+
+    void IWorkspaceOpenDocumentChangeProvider.ApplyChange(
+        string fullPath,
+        string expectedContent,
+        string proposedContent)
+    {
+        if (!((IWorkspaceOpenDocumentChangeProvider)this).CanApplyChange(fullPath, expectedContent))
+        {
+            string relativePath = string.IsNullOrWhiteSpace(WorkspaceRootPath)
+                ? Path.GetFileName(fullPath)
+                : Path.GetRelativePath(WorkspaceRootPath, fullPath);
+            throw new WorkspaceOpenDocumentException(relativePath);
+        }
+
+        _markup = proposedContent;
+        _savedMarkup = proposedContent;
+        Designer.LoadMarkup(proposedContent);
+        NotifyDocumentStateChanged();
+        StatusText = "Open AXAML document synchronized with confirmed workspace changes.";
+    }
+
+    private static bool IsWithinWorkspace(string workspaceRoot, string filePath)
+    {
+        string relativePath = Path.GetRelativePath(workspaceRoot, filePath);
+        return !Path.IsPathRooted(relativePath)
+            && relativePath != ".."
+            && !relativePath.StartsWith($"..{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
+            && !relativePath.StartsWith($"..{Path.AltDirectorySeparatorChar}", StringComparison.Ordinal);
     }
 }

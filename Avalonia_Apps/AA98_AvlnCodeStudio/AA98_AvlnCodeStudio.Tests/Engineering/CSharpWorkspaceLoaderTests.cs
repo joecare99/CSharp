@@ -571,6 +571,9 @@ public sealed class CSharpWorkspaceLoaderTests
                   <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
                 </Project>
                 """);
+            File.WriteAllText(
+                Path.Combine(root, "LoginView.axaml.cs"),
+                "namespace Sample; public partial class LoginView { }");
             File.WriteAllText(axamlPath, originalMarkup);
             TestEditorComponentFactory editorFactory = new();
             IAvaloniaEditorComponent editorComponent = editorFactory.Create();

@@ -11,16 +11,36 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 /// </summary>
 public sealed class WorkspaceFileChangeService
 {
+    private const int MaximumHistoryEntries = 20;
+    private const long MaximumHistoryBytes = 32 * 1024 * 1024;
     private static readonly UTF8Encoding s_utf8 = new(encoderShouldEmitUTF8Identifier: false);
-    private static readonly StringComparer s_pathComparer = OperatingSystem.IsWindows()
-        ? StringComparer.OrdinalIgnoreCase
-        : StringComparer.Ordinal;
+    private static readonly StringComparer s_pathComparer = WorkspacePathIdentity.Comparer;
     private readonly IWorkspaceOpenDocumentProvider _openDocumentProvider;
+    private readonly Stack<HistoryEntry> _undoHistory = [];
+    private readonly Stack<HistoryEntry> _redoHistory = [];
+    private string? _historyWorkspaceRoot;
 
     public WorkspaceFileChangeService(IWorkspaceOpenDocumentProvider openDocumentProvider)
     {
         _openDocumentProvider = openDocumentProvider
             ?? throw new ArgumentNullException(nameof(openDocumentProvider));
+    }
+
+    public bool CanUndo => _undoHistory.Count > 0;
+
+    public bool CanRedo => _redoHistory.Count > 0;
+
+    public string? HistoryWarning { get; private set; }
+
+    public event EventHandler? HistoryChanged;
+
+    public void ResetHistory()
+    {
+        _undoHistory.Clear();
+        _redoHistory.Clear();
+        _historyWorkspaceRoot = null;
+        HistoryWarning = null;
+        HistoryChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -111,11 +131,7 @@ public sealed class WorkspaceFileChangeService
         foreach (WorkspaceFileChange change in proposal.Changes)
         {
             EnsureDocumentCanBeChanged(change);
-            EnsureParentDirectoriesAreSafe(
-                proposal.WorkspaceRoot,
-                change.TargetPath,
-                createMissing: false,
-                null);
+            EnsureParentDirectoriesAreSafe(proposal.WorkspaceRoot, change.TargetPath, createMissing: false, null);
             EnsureNoReparsePoints(proposal.WorkspaceRoot, change.TargetPath);
             EnsureUnchanged(change);
         }
@@ -129,11 +145,7 @@ public sealed class WorkspaceFileChangeService
             foreach (WorkspaceFileChange change in proposal.Changes)
             {
                 string parentPath = Path.GetDirectoryName(change.TargetPath)!;
-                EnsureParentDirectoriesAreSafe(
-                    proposal.WorkspaceRoot,
-                    change.TargetPath,
-                    createMissing: true,
-                    createdDirectories);
+                EnsureParentDirectoriesAreSafe(proposal.WorkspaceRoot, change.TargetPath, true, createdDirectories);
                 stagedFiles.Add(change, WriteTemporaryFile(parentPath, change.ProposedBytes));
             }
 
@@ -152,38 +164,34 @@ public sealed class WorkspaceFileChangeService
                 appliedChanges.Add(change);
             }
 
-            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider changeProvider)
+            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider provider)
             {
                 foreach (WorkspaceFileChange change in appliedChanges.Where(change =>
                              _openDocumentProvider.IsDocumentOpen(change.TargetPath)))
                 {
-                    changeProvider.ApplyChange(
-                        change.TargetPath,
-                        change.OriginalContent!,
-                        change.ProposedContent);
+                    provider.ApplyChange(change.TargetPath, change.OriginalContent!, change.ProposedContent);
                     synchronizedDocuments.Add(change);
+                    if (!provider.CanApplyChange(change.TargetPath, change.ProposedContent))
+                    {
+                        throw new IOException($"The open document '{change.RelativePath}' did not match the confirmed change after synchronization.");
+                    }
                 }
             }
         }
         catch (Exception applyException)
         {
             List<Exception> rollbackErrors = [];
-            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider changeProvider)
+            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider provider)
             {
                 foreach (WorkspaceFileChange change in synchronizedDocuments.AsEnumerable().Reverse())
                 {
                     try
                     {
-                        changeProvider.ApplyChange(
-                            change.TargetPath,
-                            change.ProposedContent,
-                            change.OriginalContent!);
+                        provider.ApplyChange(change.TargetPath, change.ProposedContent, change.OriginalContent!);
                     }
                     catch (Exception rollbackException)
                     {
-                        rollbackErrors.Add(new IOException(
-                            $"Could not restore the open document '{change.RelativePath}' after applying the change proposal.",
-                            rollbackException));
+                        rollbackErrors.Add(new IOException($"Could not restore the open document '{change.RelativePath}' after applying the change proposal.", rollbackException));
                     }
                 }
             }
@@ -196,9 +204,7 @@ public sealed class WorkspaceFileChangeService
                 }
                 catch (Exception rollbackException)
                 {
-                    rollbackErrors.Add(new IOException(
-                        $"Could not restore '{change.RelativePath}' after applying the change proposal.",
-                        rollbackException));
+                    rollbackErrors.Add(new IOException($"Could not restore '{change.RelativePath}' after applying the change proposal.", rollbackException));
                 }
             }
 
@@ -210,9 +216,7 @@ public sealed class WorkspaceFileChangeService
                 }
                 catch (Exception cleanupException) when (cleanupException is IOException or UnauthorizedAccessException)
                 {
-                    rollbackErrors.Add(new IOException(
-                        $"Could not remove temporary file '{temporaryPath}' after applying the change proposal failed.",
-                        cleanupException));
+                    rollbackErrors.Add(new IOException($"Could not remove temporary file '{temporaryPath}' after applying the change proposal failed.", cleanupException));
                 }
             }
 
@@ -221,37 +225,282 @@ public sealed class WorkspaceFileChangeService
             {
                 try
                 {
-                    if (Directory.Exists(directoryPath))
-                    {
-                        Directory.Delete(directoryPath);
-                    }
+                    if (Directory.Exists(directoryPath)) Directory.Delete(directoryPath);
                 }
                 catch (Exception cleanupException) when (cleanupException is IOException or UnauthorizedAccessException)
                 {
-                    rollbackErrors.Add(new IOException(
-                        $"Could not remove the newly created directory '{directoryPath}' after applying the change proposal failed.",
-                        cleanupException));
+                    rollbackErrors.Add(new IOException($"Could not remove the newly created directory '{directoryPath}' after applying the change proposal failed.", cleanupException));
                 }
             }
 
             if (rollbackErrors.Count > 0)
             {
                 rollbackErrors.Insert(0, applyException);
-                throw new AggregateException(
-                    "Applying the workspace changes failed and one or more files could not be restored.",
-                    rollbackErrors);
+                throw new AggregateException("Applying the workspace changes failed and one or more files could not be restored.", rollbackErrors);
             }
 
             throw;
         }
         finally
         {
-            foreach (string temporaryPath in stagedFiles.Values)
+            foreach (string temporaryPath in stagedFiles.Values) File.Delete(temporaryPath);
+        }
+
+        RecordSuccessfulChange(proposal, createdDirectories);
+    }
+
+    public bool Undo()
+    {
+        if (_undoHistory.Count == 0) return false;
+        HistoryEntry entry = _undoHistory.Peek();
+        ApplyHistoryEntry(entry, undo: true);
+        _undoHistory.Pop();
+        _redoHistory.Push(entry);
+        HistoryChanged?.Invoke(this, EventArgs.Empty);
+        return true;
+    }
+
+    public bool Redo()
+    {
+        if (_redoHistory.Count == 0) return false;
+        HistoryEntry entry = _redoHistory.Peek();
+        ApplyHistoryEntry(entry, undo: false);
+        _redoHistory.Pop();
+        _undoHistory.Push(entry);
+        TrimHistory(_undoHistory);
+        HistoryChanged?.Invoke(this, EventArgs.Empty);
+        return true;
+    }
+
+    private void RecordSuccessfulChange(WorkspaceFileChangeProposal proposal, IReadOnlyList<string> createdDirectories)
+    {
+        HistoryWarning = null;
+        if (_historyWorkspaceRoot is not null && !WorkspacePathIdentity.AreEqual(_historyWorkspaceRoot, proposal.WorkspaceRoot))
+        {
+            _undoHistory.Clear();
+            _redoHistory.Clear();
+        }
+
+        _historyWorkspaceRoot = proposal.WorkspaceRoot;
+        HistoryEntry entry = new(proposal.WorkspaceRoot, proposal.Changes.ToArray(), createdDirectories.ToArray());
+        if (entry.Size > MaximumHistoryBytes)
+        {
+            _undoHistory.Clear();
+            _redoHistory.Clear();
+            HistoryWarning = "The confirmed workspace change exceeded the 32 MiB undo-history limit. It was applied but was not recorded, and existing undo/redo history was cleared.";
+        }
+        else
+        {
+            _undoHistory.Push(entry);
+            TrimHistory(_undoHistory);
+            _redoHistory.Clear();
+        }
+
+        HistoryChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private static void TrimHistory(Stack<HistoryEntry> history)
+    {
+        HistoryEntry[] retained = history.Reverse().ToArray();
+        long size = retained.Sum(static entry => entry.Size);
+        int removeCount = 0;
+        while (retained.Length - removeCount > MaximumHistoryEntries || size > MaximumHistoryBytes)
+        {
+            size -= retained[removeCount++].Size;
+        }
+
+        history.Clear();
+        for (int index = removeCount; index < retained.Length; index++) history.Push(retained[index]);
+    }
+
+    private void ApplyHistoryEntry(HistoryEntry entry, bool undo)
+    {
+        if (!Directory.Exists(entry.WorkspaceRoot))
+            throw new DirectoryNotFoundException($"Workspace directory '{entry.WorkspaceRoot}' no longer exists.");
+
+        foreach (WorkspaceFileChange change in entry.Changes)
+        {
+            EnsureNoReparsePoints(entry.WorkspaceRoot, change.TargetPath);
+            EnsureParentDirectoriesAreSafe(entry.WorkspaceRoot, change.TargetPath, false, null);
+            bool expectedExists = undo || !change.IsNewFile;
+            byte[]? expectedBytes = undo ? change.ProposedBytes : change.OriginalBytes;
+            if (File.Exists(change.TargetPath) != expectedExists || (expectedExists && !File.ReadAllBytes(change.TargetPath).AsSpan().SequenceEqual(expectedBytes)))
+                throw new WorkspaceFileChangeConflictException(change.RelativePath, $"'{change.RelativePath}' changed since this action. Undo/redo was cancelled without applying any changes.");
+
+            bool targetExists = !undo || !change.IsNewFile;
+            if (_openDocumentProvider.IsDocumentOpen(change.TargetPath)
+                && (!expectedExists || !targetExists
+                    || _openDocumentProvider is not IWorkspaceOpenDocumentChangeProvider provider
+                    || !provider.CanApplyChange(change.TargetPath, undo ? change.ProposedContent : change.OriginalContent!)))
+                throw new WorkspaceOpenDocumentException(change.RelativePath);
+        }
+
+        List<string> createdDirectories = [];
+        List<HistoryFileTransition> applied = [];
+        List<WorkspaceFileChange> synchronized = [];
+        Dictionary<WorkspaceFileChange, string> stagedFiles = [];
+        try
+        {
+            if (!undo)
             {
-                File.Delete(temporaryPath);
+                foreach (string directoryPath in entry.CreatedDirectories)
+                {
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        EnsureNoReparsePoints(entry.WorkspaceRoot, directoryPath);
+                        Directory.CreateDirectory(directoryPath);
+                        createdDirectories.Add(directoryPath);
+                    }
+                }
+            }
+
+            foreach (WorkspaceFileChange change in entry.Changes)
+            {
+                if (!undo || !change.IsNewFile)
+                    stagedFiles.Add(change, WriteTemporaryFile(Path.GetDirectoryName(change.TargetPath)!, undo ? change.OriginalBytes! : change.ProposedBytes));
+            }
+
+            foreach (WorkspaceFileChange change in entry.Changes)
+            {
+                bool expectedExists = undo || !change.IsNewFile;
+                byte[]? expectedBytes = undo ? change.ProposedBytes : change.OriginalBytes;
+                if (File.Exists(change.TargetPath) != expectedExists || (expectedExists && !File.ReadAllBytes(change.TargetPath).AsSpan().SequenceEqual(expectedBytes)))
+                    throw new WorkspaceFileChangeConflictException(change.RelativePath);
+
+                bool targetExists = !undo || !change.IsNewFile;
+                if (targetExists)
+                {
+                    if (expectedExists) File.Replace(stagedFiles[change], change.TargetPath, destinationBackupFileName: null);
+                    else File.Move(stagedFiles[change], change.TargetPath);
+                    stagedFiles.Remove(change);
+                }
+                else
+                {
+                    File.Delete(change.TargetPath);
+                }
+
+                applied.Add(new HistoryFileTransition(change, expectedExists, expectedBytes, targetExists, undo ? change.OriginalBytes : change.ProposedBytes));
+            }
+
+            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider provider)
+            {
+                foreach (WorkspaceFileChange change in entry.Changes.Where(change => _openDocumentProvider.IsDocumentOpen(change.TargetPath)))
+                {
+                    string expectedContent = undo ? change.ProposedContent : change.OriginalContent!;
+                    string targetContent = undo ? change.OriginalContent! : change.ProposedContent;
+                    provider.ApplyChange(change.TargetPath, expectedContent, targetContent);
+                    synchronized.Add(change);
+                    if (!provider.CanApplyChange(change.TargetPath, targetContent))
+                        throw new IOException($"The open document '{change.RelativePath}' did not match the undo/redo snapshot.");
+                }
+            }
+
+            if (undo)
+            {
+                foreach (string directoryPath in Enumerable.Reverse(entry.CreatedDirectories))
+                {
+                    if (Directory.Exists(directoryPath) && !Directory.EnumerateFileSystemEntries(directoryPath).Any())
+                    {
+                        try
+                        {
+                            Directory.Delete(directoryPath);
+                        }
+                        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+                        {
+                            HistoryWarning = $"Undo completed, but the empty generated directory '{directoryPath}' could not be removed: {exception.Message}";
+                        }
+                    }
+                }
             }
         }
+        catch (Exception exception)
+        {
+            List<Exception> rollbackErrors = [];
+            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider provider)
+            {
+                foreach (WorkspaceFileChange change in synchronized.AsEnumerable().Reverse())
+                {
+                    try
+                    {
+                        string expectedContent = undo ? change.ProposedContent : change.OriginalContent!;
+                        string targetContent = undo ? change.OriginalContent! : change.ProposedContent;
+                        if (provider.CanApplyChange(change.TargetPath, targetContent))
+                            provider.ApplyChange(change.TargetPath, targetContent, expectedContent);
+                        else if (!provider.CanApplyChange(change.TargetPath, expectedContent))
+                            throw new IOException($"The open document '{change.RelativePath}' could not be restored after undo/redo failed.");
+                    }
+                    catch (Exception rollbackException) { rollbackErrors.Add(rollbackException); }
+                }
+            }
+
+            foreach (HistoryFileTransition transition in applied.AsEnumerable().Reverse())
+            {
+                try { RestoreHistoryFile(transition); }
+                catch (Exception rollbackException) { rollbackErrors.Add(rollbackException); }
+            }
+
+            foreach (string directoryPath in createdDirectories.AsEnumerable().Reverse())
+            {
+                try { if (Directory.Exists(directoryPath) && !Directory.EnumerateFileSystemEntries(directoryPath).Any()) Directory.Delete(directoryPath); }
+                catch (Exception rollbackException) when (rollbackException is IOException or UnauthorizedAccessException) { rollbackErrors.Add(rollbackException); }
+            }
+
+            foreach (string temporaryPath in stagedFiles.Values) File.Delete(temporaryPath);
+            if (rollbackErrors.Count > 0)
+            {
+                rollbackErrors.Insert(0, exception);
+                throw new AggregateException("Undo/redo failed and rollback was incomplete.", rollbackErrors);
+            }
+
+            throw;
+        }
+        finally
+        {
+            foreach (string temporaryPath in stagedFiles.Values) File.Delete(temporaryPath);
+        }
     }
+
+    private static void RestoreHistoryFile(HistoryFileTransition transition)
+    {
+        WorkspaceFileChange change = transition.Change;
+        if (!transition.ExpectedExists)
+        {
+            if (transition.TargetExistsAfterTransition && File.Exists(change.TargetPath)
+                && File.ReadAllBytes(change.TargetPath).AsSpan().SequenceEqual(transition.TargetBytesAfterTransition))
+            {
+                File.Delete(change.TargetPath);
+                return;
+            }
+
+            if (File.Exists(change.TargetPath) || Directory.Exists(change.TargetPath))
+                throw new IOException($"The undo/redo target '{change.RelativePath}' was created by another process.");
+            return;
+        }
+
+        if (!File.Exists(change.TargetPath))
+        {
+            string temporary = WriteTemporaryFile(Path.GetDirectoryName(change.TargetPath)!, transition.ExpectedBytes!);
+            try { File.Move(temporary, change.TargetPath); }
+            finally { File.Delete(temporary); }
+            return;
+        }
+
+        if (!File.ReadAllBytes(change.TargetPath).AsSpan().SequenceEqual(transition.TargetBytesAfterTransition))
+            throw new IOException($"The undo/redo target '{change.RelativePath}' changed during rollback.");
+        string restorePath = WriteTemporaryFile(Path.GetDirectoryName(change.TargetPath)!, transition.ExpectedBytes!);
+        try { File.Replace(restorePath, change.TargetPath, destinationBackupFileName: null); }
+        finally { File.Delete(restorePath); }
+    }
+
+    private sealed class HistoryEntry(string workspaceRoot, WorkspaceFileChange[] changes, string[] createdDirectories)
+    {
+        public string WorkspaceRoot { get; } = workspaceRoot;
+        public WorkspaceFileChange[] Changes { get; } = changes;
+        public string[] CreatedDirectories { get; } = createdDirectories;
+        public long Size => Changes.Sum(static change => (long)(change.OriginalBytes?.Length ?? 0) + change.ProposedBytes.Length);
+    }
+
+    private sealed record HistoryFileTransition(WorkspaceFileChange Change, bool ExpectedExists, byte[]? ExpectedBytes, bool TargetExistsAfterTransition, byte[]? TargetBytesAfterTransition);
 
     private static void EnsureUnchanged(WorkspaceFileChange change)
     {

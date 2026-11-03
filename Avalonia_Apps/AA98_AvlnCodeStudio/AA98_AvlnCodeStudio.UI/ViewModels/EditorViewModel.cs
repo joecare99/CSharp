@@ -1,5 +1,6 @@
 using AA98_AvlnCodeStudio.Base.ViewModels;
 using AA98_AvlnCodeStudio.Editor.Services;
+using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -126,9 +127,8 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     public bool CanApplyExternalChange(string fullPath, string expectedContent)
     {
         return !IsDirty
-            && string.Equals(CurrentFilePath, Path.GetFullPath(fullPath), OperatingSystem.IsWindows()
-                ? StringComparison.OrdinalIgnoreCase
-                : StringComparison.Ordinal)
+            && CurrentFilePath is { } currentPath
+            && WorkspacePathIdentity.AreEqual(currentPath, fullPath)
             && string.Equals(_workflow.Document.Content, expectedContent, StringComparison.Ordinal);
     }
 
@@ -141,7 +141,7 @@ public partial class EditorViewModel : CodeStudioViewModelBase
             throw new IOException("The open document changed or became dirty after the change review.");
         }
 
-        string normalizedPath = Path.GetFullPath(fullPath);
+        string normalizedPath = WorkspacePathIdentity.Normalize(fullPath);
         _workflow.Document.Load(normalizedPath, proposedContent);
         Text = proposedContent;
         SynchronizeFromDocument();

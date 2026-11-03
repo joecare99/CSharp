@@ -67,6 +67,35 @@ public partial class MainWindow : Window
         await OpenDocumentAsync(viewModel, path);
     }
 
+    private async void OnWorkspaceBrowseRequested(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not AxamlDesignerHostViewModel viewModel
+            || TopLevel.GetTopLevel(this)?.StorageProvider is not { } storageProvider)
+        {
+            return;
+        }
+
+        IReadOnlyList<IStorageFolder> folders = await storageProvider.OpenFolderPickerAsync(
+            new FolderPickerOpenOptions
+            {
+                Title = "Select project/workspace directory",
+                AllowMultiple = false,
+            });
+        if (folders.Count == 0)
+        {
+            return;
+        }
+
+        string? path = TryGetLocalPath(folders[0]);
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            viewModel.StatusText = "The selected directory cannot be resolved to a local path.";
+            return;
+        }
+
+        viewModel.SetWorkspaceContext(path);
+    }
+
     private async void OnOpenPathRequested(object? sender, RoutedEventArgs e)
     {
         if (DataContext is AxamlDesignerHostViewModel viewModel)

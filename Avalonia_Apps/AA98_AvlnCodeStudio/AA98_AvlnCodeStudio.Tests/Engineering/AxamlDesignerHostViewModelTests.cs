@@ -1,6 +1,7 @@
 using AA98_AxamlDesigner.Host.ViewModels;
 using AA98_AxamlDesigner.Host.Commands;
 using AA98_AvlnCodeStudio.Host.Mcp;
+using AA98_AvlnCodeStudio.Model.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -107,6 +108,87 @@ public sealed class AxamlDesignerHostViewModelTests
         finally
         {
             Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public void HostViewModel_RequiresExplicitWorkspaceContextAndClearsItWhenDocumentLeavesScope()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AxamlWorkspaceContext-{Guid.NewGuid():N}");
+        string other = Path.Combine(Path.GetTempPath(), $"AxamlWorkspaceOther-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        Directory.CreateDirectory(other);
+        try
+        {
+            string inWorkspacePath = Path.Combine(root, "View.axaml");
+            string outsidePath = Path.Combine(other, "Other.axaml");
+            File.WriteAllText(inWorkspacePath, "<TextBlock />");
+            File.WriteAllText(outsidePath, "<TextBlock />");
+            AxamlDesignerHostViewModel viewModel = new();
+
+            Assert.AreEqual(string.Empty, viewModel.WorkspaceRootPath);
+            StringAssert.Contains(viewModel.WorkspaceContextStatus, "unavailable");
+            Assert.IsTrue(viewModel.OpenDocument(inWorkspacePath));
+            Assert.IsTrue(viewModel.SetWorkspaceContext(root));
+            Assert.AreEqual(Path.GetFullPath(root), viewModel.WorkspaceRootPath);
+            using (JsonDocument state = JsonDocument.Parse(viewModel.GetDesignerStateJson()))
+            {
+                Assert.AreEqual(
+                    Path.GetFullPath(root),
+                    state.RootElement.GetProperty("WorkspaceRootPath").GetString());
+            }
+
+            Assert.IsFalse(viewModel.SetWorkspaceContext(other));
+            Assert.AreEqual(Path.GetFullPath(root), viewModel.WorkspaceRootPath);
+            Assert.IsTrue(viewModel.OpenDocument(outsidePath));
+            Assert.AreEqual(string.Empty, viewModel.WorkspaceRootPath);
+            StringAssert.Contains(viewModel.WorkspaceContextStatus, "No project/workspace selected");
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+            Directory.Delete(other, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public void HostViewModel_WorkspaceUndoRedoSynchronizesOpenDocumentAndClearsHistoryOnContextChange()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AxamlWorkspaceUndo-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string path = Path.Combine(root, "View.axaml");
+            const string original = "<TextBlock Text='Before' />";
+            const string updated = "<TextBlock Text='After' />";
+            File.WriteAllText(path, original);
+            AxamlDesignerHostViewModel viewModel = new();
+            Assert.IsTrue(viewModel.OpenDocument(path));
+            Assert.IsTrue(viewModel.SetWorkspaceContext(root));
+
+            WorkspaceFileChangeProposal proposal = viewModel.PrepareWorkspaceChanges(
+                [WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", original, updated)]);
+            viewModel.ApplyWorkspaceChanges(proposal, confirmed: true);
+
+            Assert.IsTrue(viewModel.UndoWorkspaceChangeCommand.CanExecute(null));
+            Assert.AreEqual(updated, File.ReadAllText(path));
+            Assert.IsFalse(viewModel.IsDirty);
+            viewModel.UndoWorkspaceChangeCommand.Execute(null);
+            Assert.AreEqual(original, File.ReadAllText(path));
+            StringAssert.Contains(viewModel.GetDesignerStateJson(), "Before");
+
+            Assert.IsTrue(viewModel.RedoWorkspaceChangeCommand.CanExecute(null));
+            viewModel.RedoWorkspaceChangeCommand.Execute(null);
+            Assert.AreEqual(updated, File.ReadAllText(path));
+            StringAssert.Contains(viewModel.GetDesignerStateJson(), "After");
+
+            viewModel.ClearWorkspaceContext();
+            Assert.IsFalse(viewModel.UndoWorkspaceChangeCommand.CanExecute(null));
+            Assert.IsFalse(viewModel.RedoWorkspaceChangeCommand.CanExecute(null));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
         }
     }
 
