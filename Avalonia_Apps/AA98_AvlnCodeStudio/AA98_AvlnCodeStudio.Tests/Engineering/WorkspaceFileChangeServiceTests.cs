@@ -20,8 +20,11 @@ public sealed class WorkspaceFileChangeServiceTests
             WorkspaceFileChangeProposal proposal = service.Prepare(
                 root,
                 [
-                    new WorkspaceFileChangeRequest("View.axaml", "<TextBlock Text=\"After\" />"),
-                    new WorkspaceFileChangeRequest("ViewModel.cs", "partial class ViewModel { }"),
+                    WorkspaceFileChangeRequest.ReplaceExisting(
+                        "View.axaml",
+                        "<TextBlock Text=\"Before\" />",
+                        "<TextBlock Text=\"After\" />"),
+                    WorkspaceFileChangeRequest.CreateNew("ViewModel.cs", "partial class ViewModel { }"),
                 ]);
 
             Assert.AreEqual(2, proposal.Changes.Count);
@@ -52,8 +55,8 @@ public sealed class WorkspaceFileChangeServiceTests
             WorkspaceFileChangeProposal proposal = service.Prepare(
                 root,
                 [
-                    new WorkspaceFileChangeRequest("View.axaml", "generated"),
-                    new WorkspaceFileChangeRequest("ViewModel.cs", "new file"),
+                    WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", "before", "generated"),
+                    WorkspaceFileChangeRequest.CreateNew("ViewModel.cs", "new file"),
                 ]);
             File.WriteAllText(existingPath, "external edit");
 
@@ -63,6 +66,57 @@ public sealed class WorkspaceFileChangeServiceTests
             Assert.AreEqual("View.axaml", exception.RelativePath);
             Assert.AreEqual("external edit", File.ReadAllText(existingPath));
             Assert.IsFalse(File.Exists(newPath));
+        });
+    }
+
+    [TestMethod]
+    public void Prepare_EnforcesCreateAndReplacePreconditions()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string existingPath = Path.Combine(root, "View.axaml");
+            File.WriteAllText(existingPath, "current");
+            WorkspaceFileChangeService service = CreateService();
+
+            WorkspaceFileChangeConflictException createConflict =
+                Assert.ThrowsExactly<WorkspaceFileChangeConflictException>(() => service.Prepare(
+                    root,
+                    [WorkspaceFileChangeRequest.CreateNew("View.axaml", "replacement")]));
+            WorkspaceFileChangeConflictException mismatchConflict =
+                Assert.ThrowsExactly<WorkspaceFileChangeConflictException>(() => service.Prepare(
+                    root,
+                    [WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", "stale", "replacement")]));
+            WorkspaceFileChangeConflictException missingConflict =
+                Assert.ThrowsExactly<WorkspaceFileChangeConflictException>(() => service.Prepare(
+                    root,
+                    [WorkspaceFileChangeRequest.ReplaceExisting("Missing.axaml", "expected", "replacement")]));
+
+            Assert.AreEqual("View.axaml", createConflict.RelativePath);
+            Assert.AreEqual("View.axaml", mismatchConflict.RelativePath);
+            Assert.AreEqual("Missing.axaml", missingConflict.RelativePath);
+            Assert.AreEqual("current", File.ReadAllText(existingPath));
+        });
+    }
+
+    [TestMethod]
+    public void Apply_PreservesFileCreatedAfterPreparation()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            WorkspaceFileChangeService service = CreateService();
+            WorkspaceFileChangeProposal proposal = service.Prepare(
+                root,
+                [WorkspaceFileChangeRequest.CreateNew("ViewModel.cs", "generated")]);
+            string path = Path.Combine(root, "ViewModel.cs");
+            const string externalContent = "created by another process";
+            File.WriteAllText(path, externalContent);
+
+            WorkspaceFileChangeConflictException exception =
+                Assert.ThrowsExactly<WorkspaceFileChangeConflictException>(
+                    () => service.Apply(proposal, confirmed: true));
+
+            Assert.AreEqual("ViewModel.cs", exception.RelativePath);
+            Assert.AreEqual(externalContent, File.ReadAllText(path));
         });
     }
 
@@ -77,7 +131,7 @@ public sealed class WorkspaceFileChangeServiceTests
             {
                 Assert.ThrowsExactly<ArgumentException>(() => service.Prepare(
                     root,
-                    [new WorkspaceFileChangeRequest(relativePath, "content")]));
+                    [WorkspaceFileChangeRequest.CreateNew(relativePath, "content")]));
             }
         });
     }
@@ -92,13 +146,13 @@ public sealed class WorkspaceFileChangeServiceTests
             Assert.ThrowsExactly<InvalidDataException>(() => service.Prepare(
                 root,
                 [
-                    new WorkspaceFileChangeRequest("View.axaml", "one"),
-                    new WorkspaceFileChangeRequest("View.axaml", "two"),
+                    WorkspaceFileChangeRequest.CreateNew("View.axaml", "one"),
+                    WorkspaceFileChangeRequest.CreateNew("View.axaml", "two"),
                 ]));
             File.WriteAllText(Path.Combine(root, "Views"), "not a directory");
             Assert.ThrowsExactly<IOException>(() => service.Prepare(
                 root,
-                [new WorkspaceFileChangeRequest(Path.Combine("Views", "View.axaml"), "content")]));
+                [WorkspaceFileChangeRequest.CreateNew(Path.Combine("Views", "View.axaml"), "content")]));
         });
     }
 
@@ -111,8 +165,10 @@ public sealed class WorkspaceFileChangeServiceTests
             WorkspaceFileChangeProposal proposal = service.Prepare(
                 root,
                 [
-                    new WorkspaceFileChangeRequest(Path.Combine("Views", "Login.axaml"), "<Window />"),
-                    new WorkspaceFileChangeRequest(Path.Combine("ViewModels", "LoginViewModel.cs"), "class LoginViewModel { }"),
+                    WorkspaceFileChangeRequest.CreateNew(Path.Combine("Views", "Login.axaml"), "<Window />"),
+                    WorkspaceFileChangeRequest.CreateNew(
+                        Path.Combine("ViewModels", "LoginViewModel.cs"),
+                        "class LoginViewModel { }"),
                 ]);
             string viewsDirectory = Path.Combine(root, "Views");
             string viewModelsDirectory = Path.Combine(root, "ViewModels");
@@ -143,8 +199,10 @@ public sealed class WorkspaceFileChangeServiceTests
             WorkspaceFileChangeProposal proposal = service.Prepare(
                 root,
                 [
-                    new WorkspaceFileChangeRequest("View.axaml", "generated"),
-                    new WorkspaceFileChangeRequest(Path.Combine("ViewModels", "ViewModel.cs"), "class ViewModel { }"),
+                    WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", "before", "generated"),
+                    WorkspaceFileChangeRequest.CreateNew(
+                        Path.Combine("ViewModels", "ViewModel.cs"),
+                        "class ViewModel { }"),
                 ]);
 
             Assert.ThrowsExactly<InvalidOperationException>(() => service.Apply(proposal, confirmed: true));
@@ -178,7 +236,7 @@ public sealed class WorkspaceFileChangeServiceTests
             WorkspaceFileChangeService service = CreateService();
             Assert.ThrowsExactly<IOException>(() => service.Prepare(
                 root,
-                [new WorkspaceFileChangeRequest(Path.Combine("linked", "Outside.cs"), "content")]));
+                [WorkspaceFileChangeRequest.CreateNew(Path.Combine("linked", "Outside.cs"), "content")]));
         }
         finally
         {
@@ -197,7 +255,7 @@ public sealed class WorkspaceFileChangeServiceTests
             WorkspaceFileChangeService service = new(openDocuments);
             WorkspaceFileChangeProposal proposal = service.Prepare(
                 root,
-                [new WorkspaceFileChangeRequest("View.axaml", "generated")]);
+                [WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", "before", "generated")]);
             openDocuments.Open(path);
 
             WorkspaceOpenDocumentException exception = Assert.ThrowsExactly<WorkspaceOpenDocumentException>(
@@ -222,7 +280,7 @@ public sealed class WorkspaceFileChangeServiceTests
             WorkspaceOpenDocumentException exception = Assert.ThrowsExactly<WorkspaceOpenDocumentException>(
                 () => service.Prepare(
                     root,
-                    [new WorkspaceFileChangeRequest("View.axaml", "generated")]));
+                    [WorkspaceFileChangeRequest.ReplaceExisting("View.axaml", "before", "generated")]));
 
             Assert.AreEqual("View.axaml", exception.RelativePath);
             Assert.AreEqual("before", File.ReadAllText(path));

@@ -202,7 +202,7 @@ public sealed class CSharpProjectTemplateService
             projectFilePath,
             targetFramework);
         string projectDirectory = Path.GetDirectoryName(files[0].Path)!;
-        return files.Select(file => new WorkspaceFileChangeRequest(
+        return files.Select(file => WorkspaceFileChangeRequest.CreateNew(
                 Path.GetRelativePath(projectDirectory, file.Path),
                 file.Content))
             .ToArray();

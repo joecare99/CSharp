@@ -31,6 +31,7 @@ public sealed class WorkspaceFileChange
     internal WorkspaceFileChange(
         string relativePath,
         string targetPath,
+        WorkspaceFileChangeTarget target,
         byte[]? originalBytes,
         string? originalContent,
         string proposedContent,
@@ -38,6 +39,7 @@ public sealed class WorkspaceFileChange
     {
         RelativePath = relativePath;
         TargetPath = targetPath;
+        Target = target;
         _originalBytes = originalBytes;
         OriginalContent = originalContent;
         ProposedContent = proposedContent;
@@ -46,7 +48,9 @@ public sealed class WorkspaceFileChange
 
     public string RelativePath { get; }
 
-    public bool IsNewFile => _originalBytes is null;
+    public bool IsNewFile => Target == WorkspaceFileChangeTarget.MustNotExist;
+
+    public WorkspaceFileChangeTarget Target { get; }
 
     public string? OriginalContent { get; }
 

@@ -9,7 +9,14 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 public sealed class WorkspaceFileChangeConflictException : IOException
 {
     public WorkspaceFileChangeConflictException(string relativePath)
-        : base($"'{relativePath}' changed after the proposal was prepared. Review the current file and prepare the changes again.")
+        : this(
+            relativePath,
+            $"'{relativePath}' changed after the proposal was prepared. Review the current file and prepare the changes again.")
+    {
+    }
+
+    public WorkspaceFileChangeConflictException(string relativePath, string message)
+        : base(message)
     {
         RelativePath = relativePath;
     }

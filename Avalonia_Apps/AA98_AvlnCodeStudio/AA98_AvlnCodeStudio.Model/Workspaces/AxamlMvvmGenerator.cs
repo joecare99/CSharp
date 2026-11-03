@@ -23,6 +23,9 @@ public sealed class AxamlMvvmGenerator
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(axamlRelativePath);
         ArgumentNullException.ThrowIfNull(markup);
+        axamlRelativePath = axamlRelativePath
+            .Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
         if (markup.Length > MaximumMarkupLength)
         {
             throw new InvalidDataException("AXAML markup exceeds the MVVM generator size limit.");
@@ -285,8 +288,10 @@ public sealed class AxamlMvvmGenerator
 
         return
         [
-            new WorkspaceFileChangeRequest(axamlRelativePath, generatedMarkup),
-            new WorkspaceFileChangeRequest(viewModelPath, GenerateViewModel(viewModelNamespace, viewModelName, properties, commands)),
+            WorkspaceFileChangeRequest.ReplaceExisting(axamlRelativePath, markup, generatedMarkup),
+            WorkspaceFileChangeRequest.CreateNew(
+                viewModelPath,
+                GenerateViewModel(viewModelNamespace, viewModelName, properties, commands)),
         ];
     }
 

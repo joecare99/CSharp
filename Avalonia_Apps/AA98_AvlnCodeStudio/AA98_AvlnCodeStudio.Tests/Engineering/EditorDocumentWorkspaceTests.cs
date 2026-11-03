@@ -70,7 +70,10 @@ public sealed class EditorDocumentWorkspaceTests
             WorkspaceFileChangeService changes = new(documents);
             WorkspaceFileChangeProposal proposal = changes.Prepare(root,
             [
-                new WorkspaceFileChangeRequest("View.axaml", "<Window Title=\"Updated\" />"),
+                WorkspaceFileChangeRequest.ReplaceExisting(
+                    "View.axaml",
+                    original,
+                    "<Window Title=\"Updated\" />"),
             ]);
 
             changes.Apply(proposal, confirmed: true);
@@ -82,7 +85,10 @@ public sealed class EditorDocumentWorkspaceTests
             documents.ActiveTab.Editor.Text = "<Window Title=\"Unsaved\" />";
             Assert.ThrowsExactly<WorkspaceOpenDocumentException>(() => changes.Prepare(root,
             [
-                new WorkspaceFileChangeRequest("View.axaml", "<Window Title=\"Generated\" />"),
+                WorkspaceFileChangeRequest.ReplaceExisting(
+                    "View.axaml",
+                    "<Window Title=\"Updated\" />",
+                    "<Window Title=\"Generated\" />"),
             ]));
         }
         finally

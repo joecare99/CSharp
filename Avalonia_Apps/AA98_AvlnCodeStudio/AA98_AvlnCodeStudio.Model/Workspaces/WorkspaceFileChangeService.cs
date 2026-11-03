@@ -63,6 +63,7 @@ public sealed class WorkspaceFileChangeService
             string? originalContent = originalBytes is null
                 ? null
                 : File.ReadAllText(targetPath);
+            ValidateRequestTarget(request, relativePath, originalContent);
             byte[] proposedBytes = s_utf8.GetBytes(request.ProposedContent);
             if (originalBytes is not null
                 && (originalBytes.AsSpan().SequenceEqual(proposedBytes)
@@ -74,6 +75,7 @@ public sealed class WorkspaceFileChangeService
             WorkspaceFileChange change = new(
                 relativePath,
                 targetPath,
+                request.Target,
                 originalBytes,
                 originalContent,
                 request.ProposedContent,
@@ -145,10 +147,7 @@ public sealed class WorkspaceFileChangeService
             foreach (WorkspaceFileChange change in proposal.Changes)
             {
                 EnsureDocumentCanBeChanged(change);
-                File.Move(
-                    stagedFiles[change],
-                    change.TargetPath,
-                    overwrite: !change.IsNewFile);
+                MoveStagedFile(stagedFiles[change], change);
                 stagedFiles.Remove(change);
                 appliedChanges.Add(change);
             }
@@ -257,7 +256,7 @@ public sealed class WorkspaceFileChangeService
     private static void EnsureUnchanged(WorkspaceFileChange change)
     {
         bool exists = File.Exists(change.TargetPath);
-        if (change.IsNewFile)
+        if (change.Target == WorkspaceFileChangeTarget.MustNotExist)
         {
             if (exists || Directory.Exists(change.TargetPath))
             {
@@ -270,6 +269,58 @@ public sealed class WorkspaceFileChangeService
         if (!exists || !File.ReadAllBytes(change.TargetPath).AsSpan().SequenceEqual(change.OriginalBytes))
         {
             throw new WorkspaceFileChangeConflictException(change.RelativePath);
+        }
+    }
+
+    private static void ValidateRequestTarget(
+        WorkspaceFileChangeRequest request,
+        string relativePath,
+        string? originalContent)
+    {
+        if (request.Target == WorkspaceFileChangeTarget.MustNotExist)
+        {
+            if (originalContent is not null)
+            {
+                throw new WorkspaceFileChangeConflictException(
+                    relativePath,
+                    $"'{relativePath}' already exists and this proposal only allows creating a new file.");
+            }
+
+            return;
+        }
+
+        if (originalContent is null)
+        {
+            throw new WorkspaceFileChangeConflictException(
+                relativePath,
+                $"'{relativePath}' does not exist and this proposal requires replacing an existing file.");
+        }
+
+        if (!string.Equals(originalContent, request.ExpectedContent, StringComparison.Ordinal))
+        {
+            throw new WorkspaceFileChangeConflictException(
+                relativePath,
+                $"'{relativePath}' no longer matches the content this proposal was based on. Review the current file and prepare the changes again.");
+        }
+    }
+
+    private static void MoveStagedFile(string stagedPath, WorkspaceFileChange change)
+    {
+        if (change.Target == WorkspaceFileChangeTarget.MustExist)
+        {
+            File.Replace(stagedPath, change.TargetPath, destinationBackupFileName: null);
+            return;
+        }
+
+        try
+        {
+            File.Move(stagedPath, change.TargetPath);
+        }
+        catch (IOException) when (File.Exists(change.TargetPath) || Directory.Exists(change.TargetPath))
+        {
+            throw new WorkspaceFileChangeConflictException(
+                change.RelativePath,
+                $"'{change.RelativePath}' was created by another process while applying the proposal. The existing target was preserved.");
         }
     }
 
