@@ -575,6 +575,11 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                     {
                         existingNames.Add(commandPropertyName);
                         existingNames.Add(ToBackingFieldName(commandPropertyName));
+                        if (TryGetRelayCommandCancelPropertyName(method, commandPropertyName, out string cancelCommandName))
+                        {
+                            existingNames.Add(cancelCommandName);
+                            existingNames.Add(ToBackingFieldName(cancelCommandName));
+                        }
                     }
                 }
             }
@@ -876,8 +881,9 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                 }
 
                 bool isCommand = property.Type is INamedTypeSymbol namedType
-                    && namedType.AllInterfaces.Any(static implementedInterface =>
-                        implementedInterface.ToDisplayString() == "System.Windows.Input.ICommand");
+                    && (namedType.ToDisplayString() == "System.Windows.Input.ICommand"
+                        || namedType.AllInterfaces.Any(static implementedInterface =>
+                            implementedInterface.ToDisplayString() == "System.Windows.Input.ICommand"));
                 members.Add(new AxamlMvvmSemanticMember(
                     property.Name,
                     property.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
@@ -921,6 +927,15 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                         isAsync ? "IAsyncRelayCommand" : "IRelayCommand",
                         IsCommand: true,
                         IsWritable: false));
+                    if (TryGetRelayCommandCancelPropertyName(method, commandPropertyName, out string cancelCommandName)
+                        && memberNames.Add(cancelCommandName))
+                    {
+                        members.Add(new AxamlMvvmSemanticMember(
+                            cancelCommandName,
+                            "ICommand",
+                            IsCommand: true,
+                            IsWritable: false));
+                    }
                 }
             }
         }
@@ -970,6 +985,39 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 
         propertyName = methodName + "Command";
         return SyntaxFacts.IsValidIdentifier(propertyName);
+    }
+
+    private static bool TryGetRelayCommandCancelPropertyName(
+        IMethodSymbol method,
+        string commandPropertyName,
+        out string cancelCommandName)
+    {
+        AttributeData? relayCommandAttribute = method.GetAttributes()
+            .FirstOrDefault(attribute => string.Equals(
+                attribute.AttributeClass?.ToDisplayString(),
+                "CommunityToolkit.Mvvm.Input.RelayCommandAttribute",
+                StringComparison.Ordinal));
+        bool includesCancelCommand = relayCommandAttribute?.NamedArguments.Any(static argument =>
+            argument.Key == "IncludeCancelCommand"
+            && argument.Value.Value is true) == true;
+        bool isAsync = method.ReturnType.ToDisplayString() is "System.Threading.Tasks.Task"
+            or "System.Threading.Tasks.ValueTask"
+            || method.ReturnType is INamedTypeSymbol returnType
+                && returnType.ConstructedFrom.ToDisplayString() is "System.Threading.Tasks.Task<TResult>"
+                    or "System.Threading.Tasks.ValueTask<TResult>";
+        bool acceptsCancellationToken = method.Parameters.Any(static parameter =>
+            parameter.Type.ToDisplayString() == "System.Threading.CancellationToken");
+        string commandName = commandPropertyName.EndsWith("Command", StringComparison.Ordinal)
+            ? commandPropertyName[..^"Command".Length]
+            : string.Empty;
+        if (!includesCancelCommand || !isAsync || !acceptsCancellationToken || commandName.Length == 0)
+        {
+            cancelCommandName = string.Empty;
+            return false;
+        }
+
+        cancelCommandName = commandName + "CancelCommand";
+        return SyntaxFacts.IsValidIdentifier(cancelCommandName);
     }
 
     private static string ToBackingFieldName(string propertyName)
