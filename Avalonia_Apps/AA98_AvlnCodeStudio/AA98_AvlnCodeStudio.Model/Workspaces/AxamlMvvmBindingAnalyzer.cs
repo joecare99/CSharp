@@ -32,9 +32,14 @@ public sealed class AxamlMvvmBindingAnalyzer
             }
 
             string controlName = element.Name.LocalName;
-            foreach ((string propertyName, string typeName, bool isCommand) in GetBindableProperties(controlName))
+            if (!AxamlControlCatalog.TryGet(controlName, out AxamlControlCapability capability))
             {
-                XAttribute? attribute = element.Attribute(propertyName);
+                continue;
+            }
+
+            foreach (AxamlBindablePropertyCapability bindableProperty in capability.BindableProperties)
+            {
+                XAttribute? attribute = element.Attribute(bindableProperty.Name);
                 if (attribute is null || !TryReadBindingPath(attribute.Value, out string bindingPath))
                 {
                     continue;
@@ -49,10 +54,13 @@ public sealed class AxamlMvvmBindingAnalyzer
                     || bindingPath.Contains('?'))
                 {
                     throw new InvalidDataException(
-                        $"Binding '{bindingPath}' on {controlName}.{propertyName} is not a simple ViewModel member and cannot be planned safely.");
+                        $"Binding '{bindingPath}' on {controlName}.{bindableProperty.Name} is not a simple ViewModel member and cannot be planned safely.");
                 }
 
-                requirements.Add(new AxamlMvvmMemberRequirement(bindingPath, typeName, isCommand));
+                requirements.Add(new AxamlMvvmMemberRequirement(
+                    bindingPath,
+                    bindableProperty.TypeName,
+                    bindableProperty.IsCommand));
             }
         }
 
@@ -128,18 +136,4 @@ public sealed class AxamlMvvmBindingAnalyzer
             char.IsLetterOrDigit(character) || character == '_');
     }
 
-    private static IEnumerable<(string PropertyName, string TypeName, bool IsCommand)> GetBindableProperties(string controlName)
-    {
-        return controlName switch
-        {
-            "TextBox" => [("Text", "string", false)],
-            "TextBlock" => [("Text", "string", false)],
-            "CheckBox" or "ToggleSwitch" or "RadioButton" => [("IsChecked", "bool?", false)],
-            "NumericUpDown" => [("Value", "decimal?", false)],
-            "Slider" => [("Value", "double", false)],
-            "ComboBox" => [("SelectedIndex", "int", false)],
-            "Button" => [("Command", "ICommand", true)],
-            _ => [],
-        };
-    }
 }

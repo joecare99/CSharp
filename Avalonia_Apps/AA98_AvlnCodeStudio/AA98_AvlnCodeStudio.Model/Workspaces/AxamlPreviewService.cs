@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -12,33 +13,10 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 /// </summary>
 public sealed class AxamlPreviewService
 {
+    private static readonly XNamespace s_avaloniaNamespace = "https://github.com/avaloniaui";
     private const int MaximumDocumentCharacters = 1_000_000;
     private const int MaximumTreeDepth = 64;
     private const int MaximumControls = 2_000;
-    private static readonly HashSet<string> s_supportedControls = new(StringComparer.Ordinal)
-    {
-        "Border",
-        "Button",
-        "CheckBox",
-        "ComboBox",
-        "ContentControl",
-        "DockPanel",
-        "Grid",
-        "Label",
-        "ListBox",
-        "ProgressBar",
-        "RadioButton",
-        "ScrollViewer",
-        "Separator",
-        "Slider",
-        "StackPanel",
-        "TextBlock",
-        "TextBox",
-        "UserControl",
-        "Window",
-        "WrapPanel",
-    };
-
     /// <summary>
     /// Parses an AXAML document and returns its preview tree.
     /// </summary>
@@ -94,19 +72,9 @@ public sealed class AxamlPreviewService
     public IReadOnlyList<string> GetEditableProperties(AxamlPreviewNode node)
     {
         ArgumentNullException.ThrowIfNull(node);
-        string[] properties = node.TypeName switch
-        {
-            "Border" => ["Background", "BorderThickness", "Height", "Margin", "Padding", "Width"],
-            "Button" => ["Content", "Height", "HorizontalAlignment", "Margin", "VerticalAlignment", "Width"],
-            "CheckBox" or "RadioButton" or "Label" => ["Content", "Height", "HorizontalAlignment", "Margin", "VerticalAlignment", "Width"],
-            "Grid" => ["Height", "Margin", "Width"],
-            "StackPanel" => ["Height", "Margin", "Orientation", "Spacing", "Width"],
-            "WrapPanel" => ["Height", "Margin", "Orientation", "Width"],
-            "TextBlock" => ["FontSize", "FontWeight", "Height", "HorizontalAlignment", "Margin", "Text", "VerticalAlignment", "Width"],
-            "TextBox" => ["Height", "Margin", "PlaceholderText", "Text", "Width"],
-            _ => [],
-        };
-        return properties;
+        return AxamlControlCatalog.TryGet(node.TypeName, out AxamlControlCapability capability)
+            ? capability.EditableProperties
+            : [];
     }
 
     public string UpdateTextAttribute(string axaml, AxamlPreviewNode node, string value)
@@ -201,6 +169,113 @@ public sealed class AxamlPreviewService
             axaml.AsSpan(insertionOffset));
     }
 
+    public string InsertChildControl(string axaml, AxamlPreviewNode parent, string childTypeName)
+    {
+        ArgumentNullException.ThrowIfNull(axaml);
+        ArgumentNullException.ThrowIfNull(parent);
+        ArgumentException.ThrowIfNullOrWhiteSpace(childTypeName);
+        if (!parent.IsSupported
+            || !AxamlControlCatalog.TryGet(parent.TypeName, out AxamlControlCapability parentCapability)
+            || parentCapability.MaximumChildren == 0
+            || parent.Children.Count >= parentCapability.MaximumChildren)
+        {
+            throw new InvalidOperationException($"The '{parent.TypeName}' control cannot contain another child.");
+        }
+
+        if (!AxamlControlCatalog.TryGet(childTypeName, out _))
+        {
+            throw new InvalidOperationException($"The '{childTypeName}' control is not in the supported designer catalog.");
+        }
+
+        bool isGrid = string.Equals(parent.TypeName, "Grid", StringComparison.Ordinal);
+        (int Row, int Column) gridCell = isGrid
+            ? GetNextGridCell(parent)
+            : (-1, -1);
+        if ((parent.HasChildElements && !parent.CanAppendChildren && !parent.CanAddGridChild)
+            || parent.HasInlineText || parent.SourceStartOffset < 0
+            || parent.SourceStartTag is null)
+        {
+            throw new InvalidOperationException(
+                "Controls can only be inserted into an empty container, appended to a supported layout panel, or placed in a safe Grid cell; existing content is preserved.");
+        }
+
+        int tagStart = parent.SourceStartOffset;
+        int tagEnd = FindStartTagEnd(axaml, tagStart);
+        if (!axaml.AsSpan(tagStart, tagEnd - tagStart + 1).SequenceEqual(parent.SourceStartTag.AsSpan()))
+        {
+            throw new InvalidDataException("The AXAML source changed; select the container again.");
+        }
+
+        string qualifiedName = GetElementName(parent.SourceStartTag);
+        int colon = qualifiedName.LastIndexOf(':');
+        string childQualifiedName = colon < 0
+            ? childTypeName
+            : qualifiedName[..(colon + 1)] + childTypeName;
+        string placementAttributes = isGrid
+            ? $" Grid.Row=\"{gridCell.Row}\" Grid.Column=\"{gridCell.Column}\""
+            : string.Empty;
+        string childMarkup = $"<{childQualifiedName}{placementAttributes} />";
+        string lineIndentation = GetLineIndentation(axaml, tagStart);
+        string childIndentation = lineIndentation + "  ";
+        string newline = axaml.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+
+        if (parent.HasChildElements)
+        {
+            int appendClosingTagStart = FindMatchingEndTag(axaml, tagEnd, qualifiedName);
+            int closingLineStart = axaml.LastIndexOf('\n', appendClosingTagStart - 1) + 1;
+            bool closingTagHasOwnLine = axaml.AsSpan(closingLineStart, appendClosingTagStart - closingLineStart)
+                .Trim()
+                .IsEmpty;
+            int appendInsertionOffset = closingTagHasOwnLine ? closingLineStart : appendClosingTagStart;
+            string insertion = closingTagHasOwnLine
+                ? $"{childIndentation}{childMarkup}{newline}"
+                : $"{newline}{childIndentation}{childMarkup}{newline}{lineIndentation}";
+            return string.Concat(
+                axaml.AsSpan(0, appendInsertionOffset),
+                insertion,
+                axaml.AsSpan(appendInsertionOffset));
+        }
+
+        int insertionOffset = tagEnd;
+        while (insertionOffset > tagStart && char.IsWhiteSpace(axaml[insertionOffset - 1]))
+        {
+            insertionOffset--;
+        }
+
+        if (insertionOffset > tagStart && axaml[insertionOffset - 1] == '/')
+        {
+            int openingTagEnd = insertionOffset - 1;
+            while (openingTagEnd > tagStart && char.IsWhiteSpace(axaml[openingTagEnd - 1]))
+            {
+                openingTagEnd--;
+            }
+
+            string openingTag = axaml[tagStart..openingTagEnd] + ">";
+            string closingTag = $"</{qualifiedName}>";
+            return string.Concat(
+                axaml[..tagStart],
+                openingTag,
+                newline,
+                childIndentation,
+                childMarkup,
+                newline,
+                lineIndentation,
+                closingTag,
+                axaml[(tagEnd + 1)..]);
+        }
+
+        int closingTagStart = FindMatchingEndTag(axaml, tagEnd, qualifiedName);
+
+        return string.Concat(
+            axaml[..closingTagStart],
+            newline,
+            childIndentation,
+            childMarkup,
+            newline,
+            lineIndentation,
+            axaml[closingTagStart..]);
+    }
+
     private static AxamlPreviewNode ParseElement(XElement element, string source, int depth, ref int controlCount)
     {
         if (depth > MaximumTreeDepth)
@@ -214,6 +289,14 @@ public sealed class AxamlPreviewService
         }
 
         string typeName = element.Name.LocalName;
+        bool canAppendChildren = AxamlControlCatalog.TryGet(typeName, out AxamlControlCapability capability)
+            && capability.AllowsAppendingChildren
+            && !element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value))
+            && element.Elements().All(static child =>
+                !child.Name.LocalName.Contains('.', StringComparison.Ordinal)
+                && LooksLikeControl(child)
+                && IsSupportedElement(child, child.Name.LocalName));
+        bool canAddGridChild = CanAddGridChild(element);
         Dictionary<string, string> properties = element.Attributes()
             .Where(static attribute => !attribute.IsNamespaceDeclaration && attribute.Name.NamespaceName.Length == 0)
             .Where(static attribute => !attribute.Name.LocalName.StartsWith("x:", StringComparison.Ordinal))
@@ -277,13 +360,16 @@ public sealed class AxamlPreviewService
         {
             TypeName = typeName,
             Text = text,
-            IsSupported = s_supportedControls.Contains(typeName),
+            IsSupported = IsSupportedElement(element, typeName),
             SourceStartOffset = sourceStartOffset,
             SourceStartTag = sourceStartOffset >= 0
                 ? source[sourceStartOffset..(FindStartTagEnd(source, sourceStartOffset) + 1)]
                 : null,
             HasTextPropertyElement = hasTextPropertyElement,
             HasInlineText = element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value)),
+            HasChildElements = element.HasElements,
+            CanAppendChildren = canAppendChildren,
+            CanAddGridChild = canAddGridChild,
             PropertyElementNames = propertyElementNames,
             Properties = properties,
             Children = children,
@@ -354,6 +440,101 @@ public sealed class AxamlPreviewService
         }
 
         throw new InvalidDataException("The AXAML start tag is incomplete.");
+    }
+
+    private static int FindMatchingEndTag(string source, int startTagEnd, string qualifiedName)
+    {
+        int depth = 1;
+        int index = startTagEnd + 1;
+        while (index < source.Length)
+        {
+            int tagStart = source.IndexOf('<', index);
+            if (tagStart < 0)
+            {
+                break;
+            }
+
+            if (source.AsSpan(tagStart).StartsWith("<!--", StringComparison.Ordinal))
+            {
+                int commentEnd = source.IndexOf("-->", tagStart + 4, StringComparison.Ordinal);
+                if (commentEnd < 0)
+                {
+                    break;
+                }
+
+                index = commentEnd + 3;
+                continue;
+            }
+
+            if (source.AsSpan(tagStart).StartsWith("<![CDATA[", StringComparison.Ordinal))
+            {
+                int cdataEnd = source.IndexOf("]]>", tagStart + 9, StringComparison.Ordinal);
+                if (cdataEnd < 0)
+                {
+                    break;
+                }
+
+                index = cdataEnd + 3;
+                continue;
+            }
+
+            if (tagStart + 1 < source.Length && source[tagStart + 1] == '?')
+            {
+                int instructionEnd = source.IndexOf("?>", tagStart + 2, StringComparison.Ordinal);
+                if (instructionEnd < 0)
+                {
+                    break;
+                }
+
+                index = instructionEnd + 2;
+                continue;
+            }
+
+            if (tagStart + 1 < source.Length && source[tagStart + 1] == '!')
+            {
+                int declarationEnd = FindStartTagEnd(source, tagStart);
+                index = declarationEnd + 1;
+                continue;
+            }
+
+            int tagEnd = FindStartTagEnd(source, tagStart);
+            bool isEndTag = tagStart + 1 < source.Length && source[tagStart + 1] == '/';
+            int nameStart = tagStart + (isEndTag ? 2 : 1);
+            int nameEnd = nameStart;
+            while (nameEnd < tagEnd
+                && !char.IsWhiteSpace(source[nameEnd])
+                && source[nameEnd] is not '/' and not '>')
+            {
+                nameEnd++;
+            }
+
+            string name = source[nameStart..nameEnd];
+            int beforeEnd = tagEnd - 1;
+            while (beforeEnd > tagStart && char.IsWhiteSpace(source[beforeEnd]))
+            {
+                beforeEnd--;
+            }
+
+            bool isSelfClosing = !isEndTag && source[beforeEnd] == '/';
+            if (string.Equals(name, qualifiedName, StringComparison.Ordinal))
+            {
+                if (isEndTag)
+                {
+                    if (--depth == 0)
+                    {
+                        return tagStart;
+                    }
+                }
+                else if (!isSelfClosing)
+                {
+                    depth++;
+                }
+            }
+
+            index = tagEnd + 1;
+        }
+
+        throw new InvalidDataException("The AXAML container has no matching closing tag.");
     }
 
     private static int FindAttributeValueStart(string source, int tagStart, int tagEnd, string propertyName)
@@ -436,7 +617,187 @@ public sealed class AxamlPreviewService
     {
         string name = element.Name.LocalName;
         return !name.Contains('.', StringComparison.Ordinal)
-            && (s_supportedControls.Contains(name) || name.Length > 0 && char.IsUpper(name[0]));
+            && (AxamlControlCatalog.TryGet(name, out _) || name.Length > 0 && char.IsUpper(name[0]));
+    }
+
+    private static bool IsSupportedElement(XElement element, string typeName)
+    {
+        return (element.Name.Namespace == XNamespace.None || element.Name.Namespace == s_avaloniaNamespace)
+            && AxamlControlCatalog.TryGet(typeName, out _);
+    }
+
+    private static bool CanAddGridChild(XElement element)
+    {
+        if (element.Name.LocalName != "Grid"
+            || !IsSupportedElement(element, "Grid")
+            || element.Nodes().OfType<XText>().Any(static text => !string.IsNullOrWhiteSpace(text.Value)))
+        {
+            return false;
+        }
+
+        if (!IsSafeGridDefinitionList((string?)element.Attribute("RowDefinitions"))
+            || !IsSafeGridDefinitionList((string?)element.Attribute("ColumnDefinitions")))
+        {
+            return false;
+        }
+
+        HashSet<string> definitionProperties = new(StringComparer.Ordinal);
+        foreach (XElement child in element.Elements())
+        {
+            string childName = child.Name.LocalName;
+            if (childName is "Grid.RowDefinitions" or "Grid.ColumnDefinitions")
+            {
+                if (child.Name.Namespace != element.Name.Namespace
+                    || !definitionProperties.Add(childName)
+                    || child.Nodes().OfType<XText>().Any(static text => !string.IsNullOrWhiteSpace(text.Value))
+                    || child.Elements().Any(definition =>
+                        definition.Name.Namespace != element.Name.Namespace
+                        || definition.Name.LocalName != (childName == "Grid.RowDefinitions" ? "RowDefinition" : "ColumnDefinition")
+                        || definition.HasElements
+                        || definition.Nodes().OfType<XText>().Any(static text => !string.IsNullOrWhiteSpace(text.Value))
+                        || !IsSafeGridLength((string?)definition.Attribute(
+                            childName == "Grid.RowDefinitions" ? "Height" : "Width") ?? "Auto")))
+                {
+                    return false;
+                }
+
+                continue;
+            }
+
+            if (childName.Contains('.', StringComparison.Ordinal)
+                || !LooksLikeControl(child)
+                || !IsSupportedElement(child, childName))
+            {
+                return false;
+            }
+        }
+
+        if ((element.Attribute("RowDefinitions") is not null && definitionProperties.Contains("Grid.RowDefinitions"))
+            || (element.Attribute("ColumnDefinitions") is not null && definitionProperties.Contains("Grid.ColumnDefinitions")))
+        {
+            return false;
+        }
+
+        int rowCount = GetGridDefinitionCount(
+            element,
+            "RowDefinitions",
+            "Grid.RowDefinitions",
+            "RowDefinition");
+        int columnCount = GetGridDefinitionCount(
+            element,
+            "ColumnDefinitions",
+            "Grid.ColumnDefinitions",
+            "ColumnDefinition");
+        HashSet<(int Row, int Column)> occupiedCells = [];
+        foreach (XElement child in element.Elements().Where(static child =>
+            !child.Name.LocalName.Contains('.', StringComparison.Ordinal)))
+        {
+            if (!TryGetGridInteger(child, "Grid.Row", defaultValue: 0, minimum: 0, out int row)
+                || !TryGetGridInteger(child, "Grid.Column", defaultValue: 0, minimum: 0, out int column)
+                || !TryGetGridInteger(child, "Grid.RowSpan", defaultValue: 1, minimum: 1, out int rowSpan)
+                || !TryGetGridInteger(child, "Grid.ColumnSpan", defaultValue: 1, minimum: 1, out int columnSpan)
+                || rowSpan != 1
+                || columnSpan != 1
+                || row >= rowCount
+                || column >= columnCount
+                || !occupiedCells.Add((row, column)))
+            {
+                return false;
+            }
+        }
+
+        return (long)occupiedCells.Count < (long)rowCount * columnCount;
+    }
+
+    private static int GetGridDefinitionCount(
+        XElement grid,
+        string attributeName,
+        string propertyElementName,
+        string definitionElementName)
+    {
+        int count = grid.Attribute(attributeName) is { } attribute
+            ? attribute.Value.Split(',').Length
+            : grid.Elements()
+                .Where(child => child.Name.LocalName == propertyElementName)
+                .SelectMany(static property => property.Elements())
+                .Count(definition => definition.Name.LocalName == definitionElementName);
+        return Math.Max(1, count);
+    }
+
+    private static bool TryGetGridInteger(
+        XElement element,
+        string propertyName,
+        int defaultValue,
+        int minimum,
+        out int result)
+    {
+        XAttribute? attribute = element.Attribute(propertyName);
+        if (attribute is null)
+        {
+            result = defaultValue;
+            return true;
+        }
+
+        return int.TryParse(attribute.Value, NumberStyles.None, CultureInfo.InvariantCulture, out result)
+            && result >= minimum;
+    }
+
+    private static bool IsSafeGridDefinitionList(string? definitions)
+    {
+        if (definitions is null)
+        {
+            return true;
+        }
+
+        string[] values = definitions.Split(',');
+        return values.Length > 0 && values.All(IsSafeGridLength);
+    }
+
+    private static bool IsSafeGridLength(string value)
+    {
+        string trimmed = value.Trim();
+        if (trimmed.Length == 0 || trimmed.StartsWith('{'))
+        {
+            return false;
+        }
+
+        if (string.Equals(trimmed, "Auto", StringComparison.OrdinalIgnoreCase)
+            || trimmed == "*")
+        {
+            return true;
+        }
+
+        bool isStarLength = trimmed.EndsWith('*');
+        string numericPart = isStarLength ? trimmed[..^1].Trim() : trimmed;
+        return double.TryParse(numericPart, NumberStyles.Float, CultureInfo.InvariantCulture, out double length)
+            && double.IsFinite(length)
+            && length >= 0;
+    }
+
+    private static string GetElementName(string startTag)
+    {
+        int nameStart = startTag.IndexOf('<') + 1;
+        int nameEnd = nameStart;
+        while (nameEnd < startTag.Length
+            && !char.IsWhiteSpace(startTag[nameEnd])
+            && startTag[nameEnd] is not '/' and not '>')
+        {
+            nameEnd++;
+        }
+
+        return startTag[nameStart..nameEnd];
+    }
+
+    private static string GetLineIndentation(string source, int offset)
+    {
+        int lineStart = source.LastIndexOf('\n', Math.Max(0, offset - 1)) + 1;
+        int indentationEnd = lineStart;
+        while (indentationEnd < offset && source[indentationEnd] is ' ' or '\t')
+        {
+            indentationEnd++;
+        }
+
+        return indentationEnd == offset ? source[lineStart..offset] : string.Empty;
     }
 
     private static bool IsContentRoot(string typeName)
@@ -495,5 +856,75 @@ public sealed class AxamlPreviewService
         }
 
         return definitions.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList();
+    }
+
+    private static (int Row, int Column) GetNextGridCell(AxamlPreviewNode grid)
+    {
+        if (!grid.CanAddGridChild || grid.HasInlineText)
+        {
+            throw new InvalidOperationException(
+                "Grid insertion requires simple, supported direct children without property elements or inline text.");
+        }
+
+        int rowCount = grid.RowDefinitions.Count == 0 ? 1 : grid.RowDefinitions.Count;
+        int columnCount = grid.ColumnDefinitions.Count == 0 ? 1 : grid.ColumnDefinitions.Count;
+        HashSet<(int Row, int Column)> occupiedCells = [];
+        foreach (AxamlPreviewNode child in grid.Children)
+        {
+            int row = GetGridIndex(child, "Grid.Row");
+            int column = GetGridIndex(child, "Grid.Column");
+            int rowSpan = GetGridSpan(child, "Grid.RowSpan");
+            int columnSpan = GetGridSpan(child, "Grid.ColumnSpan");
+            if (rowSpan != 1 || columnSpan != 1
+                || row >= rowCount || column >= columnCount
+                || !occupiedCells.Add((row, column)))
+            {
+                throw new InvalidOperationException(
+                    "Grid insertion requires non-overlapping children with valid single-cell row and column placements.");
+            }
+        }
+
+        for (int row = 0; row < rowCount; row++)
+        {
+            for (int column = 0; column < columnCount; column++)
+            {
+                if (!occupiedCells.Contains((row, column)))
+                {
+                    return (row, column);
+                }
+            }
+        }
+
+        throw new InvalidOperationException("The selected Grid has no unoccupied cells.");
+    }
+
+    private static int GetGridIndex(AxamlPreviewNode node, string propertyName)
+    {
+        if (!node.Properties.TryGetValue(propertyName, out string? text))
+        {
+            return 0;
+        }
+
+        if (int.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out int index) && index >= 0)
+        {
+            return index;
+        }
+
+        throw new InvalidOperationException($"'{propertyName}' must be a non-negative integer for Grid insertion.");
+    }
+
+    private static int GetGridSpan(AxamlPreviewNode node, string propertyName)
+    {
+        if (!node.Properties.TryGetValue(propertyName, out string? text))
+        {
+            return 1;
+        }
+
+        if (int.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out int span) && span > 0)
+        {
+            return span;
+        }
+
+        throw new InvalidOperationException($"'{propertyName}' must be a positive integer for Grid insertion.");
     }
 }

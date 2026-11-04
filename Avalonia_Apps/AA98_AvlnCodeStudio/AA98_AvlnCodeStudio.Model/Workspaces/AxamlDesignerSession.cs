@@ -159,6 +159,28 @@ public sealed class AxamlDesignerSession
         return true;
     }
 
+    public bool AddChildControl(string childTypeName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(childTypeName);
+        AxamlPreviewNode selectedNode = SelectedNode
+            ?? throw new InvalidOperationException("Select a container before inserting a control.");
+        string updatedMarkup = _previewService.InsertChildControl(Markup, selectedNode, childTypeName);
+        if (string.Equals(updatedMarkup, Markup, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        PushHistory(_undoHistory, Capture());
+        _redoHistory.Clear();
+        Markup = updatedMarkup;
+        Root = root;
+        SelectedNode = FindNode(root, selectedNode.TypeName, selectedNode.SourceStartOffset);
+        SelectedProperty = EditableProperties.FirstOrDefault();
+        RefreshSelectedValue();
+        return true;
+    }
+
     public bool Undo()
     {
         if (_undoHistory.Count == 0)

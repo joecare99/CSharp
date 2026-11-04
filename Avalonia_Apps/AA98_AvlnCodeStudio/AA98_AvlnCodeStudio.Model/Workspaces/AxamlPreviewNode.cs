@@ -21,6 +21,12 @@ public sealed class AxamlPreviewNode
 
     public bool HasInlineText { get; init; }
 
+    public bool HasChildElements { get; init; }
+
+    public bool CanAppendChildren { get; init; }
+
+    public bool CanAddGridChild { get; init; }
+
     public IReadOnlyList<string> PropertyElementNames { get; init; } = [];
 
     public IReadOnlyDictionary<string, string> Properties { get; init; } =

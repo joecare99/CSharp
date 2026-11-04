@@ -15,6 +15,7 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 public sealed class AxamlMvvmGenerator
 {
     private static readonly XNamespace s_xamlNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
+    private static readonly XNamespace s_avaloniaNamespace = "https://github.com/avaloniaui";
     private const int MaximumMarkupLength = 1_000_000;
 
     public IReadOnlyList<WorkspaceFileChangeRequest> Generate(
@@ -59,8 +60,20 @@ public sealed class AxamlMvvmGenerator
         HashSet<string> memberNames = new(StringComparer.Ordinal);
         foreach (XElement element in root.Descendants())
         {
+            if (element.Name.Namespace != XNamespace.None
+                && element.Name.Namespace != s_avaloniaNamespace)
+            {
+                continue;
+            }
+
             string? controlName = (string?)element.Attribute(s_xamlNamespace + "Name");
             if (string.IsNullOrWhiteSpace(controlName))
+            {
+                continue;
+            }
+
+            if (!AxamlControlCatalog.TryGet(element.Name.LocalName, out AxamlControlCapability capability)
+                || !capability.SupportsMvvmGeneration)
             {
                 continue;
             }
