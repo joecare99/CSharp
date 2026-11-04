@@ -38,14 +38,51 @@
             BorderBrush="{DynamicResource ThemeControlMidBrush}"
             BorderThickness="1"
             CornerRadius="4">
-      <StackPanel Spacing="6">
-        <StackPanel Orientation="Horizontal" Spacing="6">
-          <Button Content="Undo" Command="{Binding UndoCommand}" />
-          <Button Content="Redo" Command="{Binding RedoCommand}" />
-          <Button Content="Screenshot" Click="OnScreenshotRequested" />
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="6">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Button Content="Undo" Command="{Binding UndoCommand}" />
+            <Button Content="Redo" Command="{Binding RedoCommand}" />
+            <Button Content="Screenshot" Click="OnScreenshotRequested" />
+          </StackPanel>
+        <TextBlock Text="Add to selected container (panels append; Grid uses the next free cell)"
+                   FontWeight="SemiBold" />
+        <StackPanel Orientation="Horizontal" Spacing="4">
+          <Button Content="TextBlock" Command="{Binding AddTextBlockCommand}" />
+          <Button Content="Label" Command="{Binding AddLabelCommand}" />
+          <Button Content="TextBox" Command="{Binding AddTextBoxCommand}" />
+          <Button Content="Button" Command="{Binding AddButtonCommand}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="4">
+          <Button Content="CheckBox" Command="{Binding AddCheckBoxCommand}" />
+          <Button Content="ComboBox" Command="{Binding AddComboBoxCommand}" />
+          <Button Content="Numeric" Command="{Binding AddNumericUpDownCommand}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="4">
+          <Button Content="RadioButton" Command="{Binding AddRadioButtonCommand}" />
+          <Button Content="Slider" Command="{Binding AddSliderCommand}" />
+          <Button Content="Toggle" Command="{Binding AddToggleSwitchCommand}" />
+        </StackPanel>
+        <TextBlock Text="Add layout container" FontWeight="SemiBold" />
+        <StackPanel Orientation="Horizontal" Spacing="4">
+          <Button Content="Border" Command="{Binding AddBorderCommand}" />
+          <Button Content="Content" Command="{Binding AddContentControlCommand}" />
+          <Button Content="DockPanel" Command="{Binding AddDockPanelCommand}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="4">
+          <Button Content="Grid" Command="{Binding AddGridCommand}" />
+          <Button Content="Progress" Command="{Binding AddProgressBarCommand}" />
+          <Button Content="ScrollViewer" Command="{Binding AddScrollViewerCommand}" />
+          <Button Content="Separator" Command="{Binding AddSeparatorCommand}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="4">
+          <Button Content="StackPanel" Command="{Binding AddStackPanelCommand}" />
+          <Button Content="WrapPanel" Command="{Binding AddWrapPanelCommand}" />
         </StackPanel>
         <TextBlock Text="{Binding SelectedElementName}"
                    FontWeight="SemiBold" />
+        <TextBlock Text="{Binding SelectedCapabilityText}"
+                   TextWrapping="Wrap" />
         <ComboBox ItemsSource="{Binding EditableProperties}"
                   SelectedItem="{Binding SelectedProperty, Mode=TwoWay}" />
         <TextBox Text="{Binding SelectedValue, Mode=TwoWay}"
@@ -56,6 +93,7 @@
         <TextBlock Text="{Binding StatusText}"
                    TextWrapping="Wrap" />
       </StackPanel>
+      </ScrollViewer>
     </Border>
   </Grid>
 </UserControl>

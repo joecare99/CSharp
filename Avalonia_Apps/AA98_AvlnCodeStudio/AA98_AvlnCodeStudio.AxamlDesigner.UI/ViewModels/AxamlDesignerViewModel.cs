@@ -29,6 +29,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedElementName))]
+    [NotifyPropertyChangedFor(nameof(SelectedCapabilityText))]
     private AxamlPreviewNode? _selectedNode;
 
     [ObservableProperty]
@@ -49,6 +50,48 @@ public partial class AxamlDesignerViewModel : ObservableObject
     public bool HasPreview => PreviewRoot is not null || !string.IsNullOrWhiteSpace(ErrorText);
 
     public string SelectedElementName => SelectedNode?.TypeName ?? "Select a control in the preview.";
+
+    public string SelectedCapabilityText
+    {
+        get
+        {
+            if (SelectedNode is null)
+            {
+                return "Select a control to inspect its designer capabilities.";
+            }
+
+            if (!SelectedNode.IsSupported
+                || !AxamlControlCatalog.TryGet(SelectedNode.TypeName, out AxamlControlCapability capability))
+            {
+                return "Safe placeholder preview only; property editing, binding analysis, and MVVM generation are unavailable.";
+            }
+
+            string editableProperties = capability.EditableProperties.Count == 0
+                ? "none"
+                : string.Join(", ", capability.EditableProperties);
+            string bindings = capability.BindableProperties.Count == 0
+                ? "none"
+                : string.Join(", ", capability.BindableProperties.Select(static property => property.Name));
+            string generation = capability.SupportsMvvmGeneration
+                ? "supported for named controls"
+                : "not supported";
+            string childLimit = capability.MaximumChildren == int.MaxValue
+                ? "multiple"
+                : $"up to {capability.MaximumChildren}";
+            string children = capability.MaximumChildren == 0
+                ? "none"
+                : capability.TypeName == "Grid"
+                    ? SelectedNode.CanAddGridChild
+                        ? $"{childLimit}; next unoccupied cell"
+                        : $"{childLimit}; placement unavailable for ambiguous or unsupported structure"
+                : capability.AllowsAppendingChildren && SelectedNode.CanAppendChildren
+                    ? $"{childLimit}; appending supported"
+                : capability.AllowsAppendingChildren
+                    ? $"{childLimit}; appending unavailable for ambiguous or unsupported content"
+                    : $"{childLimit}; empty containers only";
+            return $"Editable: {editableProperties}. Binding analysis: {bindings}. MVVM generation: {generation}. Children: {children}.";
+        }
+    }
 
     public string PreviewTitle => "AXAML Preview (safe subset)";
 
@@ -135,6 +178,139 @@ public partial class AxamlDesignerViewModel : ObservableObject
         catch (Exception exception) when (exception is InvalidDataException or InvalidOperationException or ArgumentException)
         {
             StatusText = $"AXAML designer edit failed: {exception.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void AddTextBlock()
+    {
+        AddChildControl("TextBlock");
+    }
+
+    [RelayCommand]
+    private void AddLabel()
+    {
+        AddChildControl("Label");
+    }
+
+    [RelayCommand]
+    private void AddTextBox()
+    {
+        AddChildControl("TextBox");
+    }
+
+    [RelayCommand]
+    private void AddButton()
+    {
+        AddChildControl("Button");
+    }
+
+    [RelayCommand]
+    private void AddCheckBox()
+    {
+        AddChildControl("CheckBox");
+    }
+
+    [RelayCommand]
+    private void AddComboBox()
+    {
+        AddChildControl("ComboBox");
+    }
+
+    [RelayCommand]
+    private void AddNumericUpDown()
+    {
+        AddChildControl("NumericUpDown");
+    }
+
+    [RelayCommand]
+    private void AddRadioButton()
+    {
+        AddChildControl("RadioButton");
+    }
+
+    [RelayCommand]
+    private void AddSlider()
+    {
+        AddChildControl("Slider");
+    }
+
+    [RelayCommand]
+    private void AddToggleSwitch()
+    {
+        AddChildControl("ToggleSwitch");
+    }
+
+    [RelayCommand]
+    private void AddBorder()
+    {
+        AddChildControl("Border");
+    }
+
+    [RelayCommand]
+    private void AddContentControl()
+    {
+        AddChildControl("ContentControl");
+    }
+
+    [RelayCommand]
+    private void AddDockPanel()
+    {
+        AddChildControl("DockPanel");
+    }
+
+    [RelayCommand]
+    private void AddGrid()
+    {
+        AddChildControl("Grid");
+    }
+
+    [RelayCommand]
+    private void AddProgressBar()
+    {
+        AddChildControl("ProgressBar");
+    }
+
+    [RelayCommand]
+    private void AddScrollViewer()
+    {
+        AddChildControl("ScrollViewer");
+    }
+
+    [RelayCommand]
+    private void AddSeparator()
+    {
+        AddChildControl("Separator");
+    }
+
+    [RelayCommand]
+    private void AddStackPanel()
+    {
+        AddChildControl("StackPanel");
+    }
+
+    [RelayCommand]
+    private void AddWrapPanel()
+    {
+        AddChildControl("WrapPanel");
+    }
+
+    private void AddChildControl(string controlType)
+    {
+        try
+        {
+            if (!_session.AddChildControl(controlType))
+            {
+                return;
+            }
+
+            SynchronizeState();
+            StatusText = $"{controlType} inserted into the selected container.";
+            RaiseMarkupChanged();
+        }
+        catch (Exception exception) when (exception is InvalidDataException or InvalidOperationException or ArgumentException)
+        {
+            StatusText = $"Could not insert {controlType}: {exception.Message}";
         }
     }
 
