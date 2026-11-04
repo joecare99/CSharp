@@ -1,5 +1,6 @@
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
@@ -87,5 +88,109 @@ public sealed class AxamlDesignerSessionTests
 
         Assert.AreEqual(markup, session.Markup);
         Assert.IsFalse(session.CanUndo);
+    }
+
+    [TestMethod]
+    public void AddChildControl_UpdatesEmptyContainerAndSupportsUndoRedo()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<StackPanel />");
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.AddChildControl("TextBlock"));
+        StringAssert.Contains(session.Markup, "<StackPanel>");
+        StringAssert.Contains(session.Markup, "<TextBlock />");
+        StringAssert.Contains(session.Markup, "</StackPanel>");
+        Assert.IsTrue(session.CanUndo);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("<StackPanel />", session.Markup);
+        Assert.IsTrue(session.Redo());
+        StringAssert.Contains(session.Markup, "<TextBlock />");
+    }
+
+    [TestMethod]
+    public void AddChildControl_PreservesPrefixAndAppendsToEmptyExplicitContainer()
+    {
+        const string markup = "<av:Grid xmlns:av='https://github.com/avaloniaui'></av:Grid>";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.AddChildControl("Button"));
+
+        StringAssert.Contains(session.Markup, "<av:Button Grid.Row=\"0\" Grid.Column=\"0\" />");
+        Assert.IsTrue(session.Markup.StartsWith("<av:Grid", System.StringComparison.Ordinal));
+        Assert.IsTrue(session.Markup.EndsWith("</av:Grid>", System.StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void AddChildControl_RejectsNonContainersExistingContentAndUnknownControls()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<TextBlock />");
+        session.SelectNode(session.Root);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => session.AddChildControl("Button"));
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => session.AddChildControl("CustomControl"));
+
+        session.Load("<StackPanel><TextBlock /></StackPanel>");
+        session.SelectNode(session.Root);
+        Assert.IsTrue(session.AddChildControl("Button"));
+        Assert.AreEqual(2, session.Root!.Children.Count);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(1, session.Root!.Children.Count);
+    }
+
+    [TestMethod]
+    public void AddChildControl_BuildsNestedContainersAsSeparateUndoUnits()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<StackPanel />");
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.AddChildControl("DockPanel"));
+        AxamlPreviewNode dockPanel = session.Root!.Children.Single();
+        session.SelectNode(dockPanel);
+        Assert.IsTrue(session.AddChildControl("Button"));
+
+        Assert.AreEqual("Button", session.Root.Children.Single().Children.Single().TypeName);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("DockPanel", session.Root!.Children.Single().TypeName);
+        Assert.AreEqual(0, session.Root.Children.Single().Children.Count);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(0, session.Root!.Children.Count);
+    }
+
+    [TestMethod]
+    public void AddChildControl_AppendsAndUndoesAsOneSourcePreservingEdit()
+    {
+        const string markup = "<StackPanel>\r\n  <TextBlock Text='existing' />\r\n</StackPanel>";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.AddChildControl("Button"));
+        StringAssert.Contains(session.Markup, "<TextBlock Text='existing' />\r\n  <Button />");
+        Assert.AreEqual("existing", session.Root!.Children[0].Text);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(2, session.Root!.Children.Count);
+    }
+
+    [TestMethod]
+    public void AddChildControl_AddsNextGridCellAsOneUndoableEdit()
+    {
+        const string markup = "<Grid RowDefinitions='*,*' ColumnDefinitions='*,*'><TextBlock Grid.Row='0' Grid.Column='0' /></Grid>";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.AddChildControl("Button"));
+        Assert.AreEqual("0", session.Root!.Children[1].Properties["Grid.Row"]);
+        Assert.AreEqual("1", session.Root.Children[1].Properties["Grid.Column"]);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(2, session.Root!.Children.Count);
     }
 }

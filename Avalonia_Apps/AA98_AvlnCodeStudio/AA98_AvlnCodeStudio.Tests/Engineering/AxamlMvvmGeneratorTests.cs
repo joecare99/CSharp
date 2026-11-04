@@ -92,6 +92,24 @@ public sealed class AxamlMvvmGeneratorTests
     }
 
     [TestMethod]
+    public void Generate_DoesNotGenerateBindingsForCustomNamespaceLookalikes()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:custom="urn:sample"
+                    x:Class="Sample.MainWindow">
+              <custom:TextBox x:Name="InputTextBox" Text="keep" />
+              <custom:Button x:Name="SaveButton" />
+            </Window>
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("MainWindow.axaml", markup));
+        Assert.IsFalse(markup.Contains("{Binding", System.StringComparison.Ordinal));
+    }
+
+    [TestMethod]
     public void Generate_RejectsUnsafeMarkupAndClassNames()
     {
         AxamlMvvmGenerator generator = new();

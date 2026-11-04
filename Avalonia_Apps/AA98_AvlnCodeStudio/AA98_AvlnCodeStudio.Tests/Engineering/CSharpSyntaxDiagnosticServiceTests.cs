@@ -486,6 +486,10 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
 
                     [RelayCommand]
                     private async System.Threading.Tasks.Task RefreshAsync() => await System.Threading.Tasks.Task.Yield();
+
+                    [RelayCommand(IncludeCancelCommand = true)]
+                    private async System.Threading.Tasks.Task DownloadAsync(System.Threading.CancellationToken cancellationToken)
+                        => await System.Threading.Tasks.Task.Yield();
                 }
                 """);
 
@@ -540,6 +544,11 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
             Assert.AreEqual("IAsyncRelayCommand", generatedAsyncCommand.TypeName);
             Assert.IsTrue(generatedAsyncCommand.IsCommand);
             Assert.IsFalse(generatedAsyncCommand.IsWritable);
+            AxamlMvvmSemanticMember generatedCancelCommand = resolution.ViewModelMembers
+                .Single(member => member.Name == "DownloadCancelCommand");
+            Assert.AreEqual("ICommand", generatedCancelCommand.TypeName);
+            Assert.IsTrue(generatedCancelCommand.IsCommand);
+            Assert.IsFalse(generatedCancelCommand.IsWritable);
 
             AxamlMvvmMemberPlanEntry[] collidingAddition = new AxamlMvvmMemberPlanner().Plan(
                 [new AxamlMvvmMemberRequirement("CloseCommand", "ICommand", IsCommand: true)],
@@ -607,6 +616,20 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
                     projectPath,
                     "Sample.MainWindowViewModel",
                     asyncCommandFieldCollision));
+
+            AxamlMvvmMemberPlanEntry[] cancelCommandFieldCollision =
+            [
+                new(
+                    new AxamlMvvmMemberRequirement("downloadCancelCommand", "string", IsCommand: false),
+                    AxamlMvvmMemberPlanAction.Create,
+                    null),
+            ];
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(async () =>
+                await service.PlanViewModelSourceAdditionAsync(
+                    root,
+                    projectPath,
+                    "Sample.MainWindowViewModel",
+                    cancelCommandFieldCollision));
 
             AxamlMvvmMemberPlanEntry[] invalidCommandAddition =
             [
