@@ -1,5 +1,6 @@
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -35,6 +36,41 @@ public sealed class AxamlPreviewServiceTests
         Assert.AreEqual("Auto", root.RowDefinitions[0]);
         Assert.AreEqual("*", root.RowDefinitions[1]);
         Assert.IsFalse(root.Properties.ContainsKey("Class"));
+    }
+
+    [TestMethod]
+    public void Parse_RepresentsExpanderHeaderAndSingleContentChild()
+    {
+        const string markup =
+            "<Expander xmlns='https://github.com/avaloniaui' Header='Details' IsExpanded='True'><TextBlock Text='Content' /></Expander>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode root = service.Parse(markup);
+
+        Assert.AreEqual("Expander", root.TypeName);
+        Assert.IsTrue(root.IsSupported);
+        Assert.AreEqual("Details", root.Text);
+        Assert.AreEqual("Content", root.Children.Single().Text);
+        Assert.IsFalse(root.CanAppendChildren);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() =>
+            service.InsertChildControl(markup, root, "Button"));
+    }
+
+    [TestMethod]
+    public void Parse_RepresentsGroupBoxHeaderAndSingleContentChild()
+    {
+        const string markup =
+            "<GroupBox xmlns='https://github.com/avaloniaui' Header='Options'><TextBlock Text='Content' /></GroupBox>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode root = service.Parse(markup);
+
+        Assert.AreEqual("GroupBox", root.TypeName);
+        Assert.IsTrue(root.IsSupported);
+        Assert.AreEqual("Options", root.Text);
+        Assert.AreEqual("Content", root.Children.Single().Text);
+        Assert.IsFalse(root.CanAppendChildren);
+        Assert.IsTrue(service.CanEditProperty(root, "Header"));
+        Assert.ThrowsExactly<System.InvalidOperationException>(() =>
+            service.InsertChildControl(markup, root, "Button"));
     }
 
     [TestMethod]
@@ -81,6 +117,66 @@ public sealed class AxamlPreviewServiceTests
             service.Parse("<!DOCTYPE x [<!ENTITY e 'expanded'>]><TextBlock Text='&e;' />"));
         Assert.ThrowsExactly<InvalidDataException>(() =>
             service.Parse(new string(' ', 1_000_001)));
+    }
+
+    [TestMethod]
+    public void ParseForPreview_RecoversValidControlsAroundMalformedElement()
+    {
+        const string axaml =
+            "<?xml version='1.0'?><StackPanel xmlns='https://github.com/avaloniaui'><TextBlock Text='Keep this' /><Button Content=broken /><Label Content='Keep this too' /></StackPanel>";
+
+        AxamlPreviewParseResult result = new AxamlPreviewService().ParseForPreview(axaml);
+
+        Assert.IsNotNull(result.Root);
+        Assert.IsTrue(result.Root.IsRecoveryRoot);
+        Assert.AreEqual(3, result.Root.Children.Count);
+        Assert.AreEqual("Keep this", result.Root.Children[0].Text);
+        Assert.IsFalse(result.Root.Children[1].IsSupported);
+        StringAssert.Contains(result.Root.Children[1].Diagnostic, "Could not preview <Button>");
+        Assert.AreEqual("Keep this too", result.Root.Children[2].Text);
+        Assert.IsTrue(result.Root.Children.Where(static node => node.TypeName != "Invalid AXAML")
+            .All(static node => node.SourceStartOffset < 0));
+        StringAssert.Contains(result.Diagnostic, "Partial preview");
+    }
+
+    [TestMethod]
+    public void Parse_RepresentsViewboxWithSingleChildAndStretchCapability()
+    {
+        const string markup =
+            "<Viewbox xmlns='https://github.com/avaloniaui' Stretch='UniformToFill'><TextBlock Text='Scale me' /></Viewbox>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode root = service.Parse(markup);
+
+        Assert.AreEqual("Viewbox", root.TypeName);
+        Assert.IsTrue(root.IsSupported);
+        Assert.AreEqual("Scale me", root.Children.Single().Text);
+        Assert.IsTrue(service.CanEditProperty(root, "Stretch"));
+        Assert.IsFalse(root.CanAppendChildren);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() =>
+            service.InsertChildControl(markup, root, "Button"));
+    }
+
+    [TestMethod]
+    public void Parse_RepresentsUniformGridPropertiesAndSupportsSafeAppend()
+    {
+        const string markup =
+            "<UniformGrid xmlns='https://github.com/avaloniaui' Rows='2' Columns='3' FirstColumn='1'><TextBlock Text='First' /></UniformGrid>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode root = service.Parse(markup);
+
+        Assert.AreEqual("UniformGrid", root.TypeName);
+        Assert.IsTrue(root.IsSupported);
+        Assert.AreEqual("2", root.Properties["Rows"]);
+        Assert.AreEqual("3", root.Properties["Columns"]);
+        Assert.AreEqual("1", root.Properties["FirstColumn"]);
+        Assert.IsTrue(root.CanAppendChildren);
+        Assert.IsTrue(service.CanEditProperty(root, "Rows"));
+
+        string updated = service.InsertChildControl(markup, root, "Button");
+        AxamlPreviewNode updatedRoot = service.Parse(updated);
+        Assert.AreEqual(2, updatedRoot.Children.Count);
+        Assert.AreEqual("First", updatedRoot.Children[0].Text);
+        Assert.AreEqual("Button", updatedRoot.Children[1].TypeName);
     }
 
     [TestMethod]
@@ -167,6 +263,38 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void UpdateAttribute_EmptyValueRemovesTheAttributeInsteadOfWritingAnInvalidLiteral()
+    {
+        const string markup = "<StackPanel   Width='120' Height=\"80\" />";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode node = service.Parse(markup);
+
+        string updated = service.UpdateAttribute(markup, node, "Width", string.Empty);
+
+        Assert.AreEqual("<StackPanel    Height=\"80\" />", updated);
+        AxamlPreviewNode withoutWidth = service.Parse(updated);
+        Assert.AreEqual(updated, service.UpdateAttribute(updated, withoutWidth, "Width", string.Empty));
+    }
+
+    [TestMethod]
+    public void UpdateBinding_OnlyWritesSimpleMemberPathsToCataloguedBindableProperties()
+    {
+        AxamlPreviewService service = new();
+        const string markup = "<Button xmlns='https://github.com/avaloniaui' Command='{Binding OldCommand}' />";
+        AxamlPreviewNode node = service.Parse(markup);
+
+        string updated = service.UpdateBinding(markup, node, "Command", "SaveCommand");
+
+        StringAssert.Contains(updated, "Command='{Binding SaveCommand}'");
+        Assert.ThrowsExactly<InvalidOperationException>(() =>
+            service.UpdateBinding(markup, node, "Command", "SaveCommand.Execute"));
+        Assert.ThrowsExactly<InvalidOperationException>(() =>
+            service.UpdateBinding(markup, node, "Width", "PanelWidth"));
+        Assert.ThrowsExactly<InvalidOperationException>(() =>
+            service.UpdateBinding(markup, node, "Command", "Bad Command"));
+    }
+
+    [TestMethod]
     public void InsertChildControl_AppendsToSupportedPanelsAndMatchesNestedClosingTags()
     {
         const string markup = "<StackPanel>\r\n  <StackPanel />\r\n</StackPanel>";
@@ -184,18 +312,79 @@ public sealed class AxamlPreviewServiceTests
     [TestMethod]
     public void InsertChildControl_AppendsToInlinePanelAndPreservesExistingMarkup()
     {
-        const string markup = "<av:DockPanel xmlns:av='https://github.com/avaloniaui'><av:TextBlock Text='keep' /></av:DockPanel>";
+        const string markup = "<av:DockPanel xmlns:av='https://github.com/avaloniaui' LastChildFill='False'><av:TextBlock Text='keep' /></av:DockPanel>";
         AxamlPreviewService service = new();
         AxamlPreviewNode root = service.Parse(markup);
 
-        string updated = service.InsertChildControl(markup, root, "Button");
+        string updated = service.InsertChildControl(markup, root, "Button", AxamlDockPanelPlacement.Bottom);
 
         StringAssert.Contains(
             updated,
-            "<av:TextBlock Text='keep' />\n  <av:Button />\n</av:DockPanel>");
+            "<av:TextBlock Text='keep' />\n  <av:Button DockPanel.Dock=\"Bottom\" />\n</av:DockPanel>");
         AxamlPreviewNode updatedRoot = service.Parse(updated);
         Assert.AreEqual("keep", updatedRoot.Children[0].Text);
         Assert.AreEqual("Button", updatedRoot.Children[1].TypeName);
+    }
+
+    [TestMethod]
+    public void InsertChildControl_InsertsDockedChildrenBeforeTheClientChild()
+    {
+        AxamlPreviewService service = new();
+        const string empty = "<DockPanel />";
+        AxamlPreviewNode emptyPanel = service.Parse(empty);
+        string withClient = service.InsertChildControl(
+            empty,
+            emptyPanel,
+            "TextBlock",
+            AxamlDockPanelPlacement.Client);
+        AxamlPreviewNode clientPanel = service.Parse(withClient);
+
+        string withTop = service.InsertChildControl(
+            withClient,
+            clientPanel,
+            "Button",
+            AxamlDockPanelPlacement.Top);
+        AxamlPreviewNode topPanel = service.Parse(withTop);
+        string withBottom = service.InsertChildControl(
+            withTop,
+            topPanel,
+            "Separator",
+            AxamlDockPanelPlacement.Bottom);
+
+        StringAssert.Contains(
+            withBottom,
+            "<Button DockPanel.Dock=\"Top\" />\n  <Separator DockPanel.Dock=\"Bottom\" />\n  <TextBlock />");
+        AxamlPreviewNode result = service.Parse(withBottom);
+        Assert.AreEqual("Button", result.Children[0].TypeName);
+        Assert.AreEqual("Top", result.Children[0].Properties["DockPanel.Dock"]);
+        Assert.AreEqual("Bottom", result.Children[1].Properties["DockPanel.Dock"]);
+        Assert.AreEqual("TextBlock", result.Children[2].TypeName);
+        Assert.IsTrue(result.CanAppendChildren);
+    }
+
+    [TestMethod]
+    public void InsertChildControl_RejectsInvalidClientPlacementRequests()
+    {
+        AxamlPreviewService service = new();
+        const string empty = "<DockPanel />";
+        AxamlPreviewNode emptyPanel = service.Parse(empty);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() =>
+            service.InsertChildControl(empty, emptyPanel, "Button", AxamlDockPanelPlacement.Top));
+
+        const string withClient = "<DockPanel><TextBlock /></DockPanel>";
+        AxamlPreviewNode clientPanel = service.Parse(withClient);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() =>
+            service.InsertChildControl(withClient, clientPanel, "Button", AxamlDockPanelPlacement.Client));
+        Assert.ThrowsExactly<System.InvalidOperationException>(() =>
+            service.InsertChildControl(withClient, clientPanel, "Button"));
+
+        const string noFill = "<DockPanel LastChildFill='False'><TextBlock /></DockPanel>";
+        AxamlPreviewNode noFillPanel = service.Parse(noFill);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() =>
+            service.InsertChildControl(noFill, noFillPanel, "Button", AxamlDockPanelPlacement.Client));
+        StringAssert.Contains(
+            service.InsertChildControl(noFill, noFillPanel, "Button", AxamlDockPanelPlacement.Bottom),
+            "<Button DockPanel.Dock=\"Bottom\" />");
     }
 
     [TestMethod]
@@ -221,8 +410,9 @@ public sealed class AxamlPreviewServiceTests
         Assert.ThrowsExactly<System.InvalidOperationException>(() =>
             service.InsertChildControl(unknownMarkup, panelWithUnknownContent, "Button"));
         Assert.IsFalse(panelWithInlineText.CanAppendChildren);
-        Assert.ThrowsExactly<System.InvalidOperationException>(() =>
+        System.InvalidOperationException inlineTextException = Assert.ThrowsExactly<System.InvalidOperationException>(() =>
             service.InsertChildControl(inlineTextMarkup, panelWithInlineText, "Button"));
+        StringAssert.Contains(inlineTextException.Message, "Correct invalid inline text");
         Assert.IsFalse(panelWithCustomControl.CanAppendChildren);
         Assert.ThrowsExactly<System.InvalidOperationException>(() =>
             service.InsertChildControl(customMarkup, panelWithCustomControl, "Button"));
@@ -293,6 +483,24 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void InsertChildControl_AccountsForExistingGridSpans()
+    {
+        const string markup = """
+            <Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
+              <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
+            </Grid>
+            """;
+        AxamlPreviewService service = new();
+        AxamlPreviewNode grid = service.Parse(markup);
+
+        Assert.IsTrue(grid.CanAddGridChild);
+        string updated = service.InsertChildControl(markup, grid, "Button");
+
+        StringAssert.Contains(updated, "<Button Grid.Row=\"1\" Grid.Column=\"0\" />");
+        Assert.AreEqual(2, service.Parse(updated).Children.Count);
+    }
+
+    [TestMethod]
     public void InsertChildControl_RejectsAmbiguousOrFullGridPlacements()
     {
         AxamlPreviewService service = new();
@@ -306,6 +514,15 @@ public sealed class AxamlPreviewServiceTests
         const string emptyDefinitionSlot = "<Grid RowDefinitions='Auto,,*' />";
         const string dynamicDefinitionList = "<Grid RowDefinitions='{Binding Rows}' />";
         const string invalidGridLength = "<Grid ColumnDefinitions='Auto,unknown' />";
+        string oversizedGrid =
+            $"<Grid RowDefinitions='{string.Join(',', Enumerable.Repeat("Auto", 317))}' " +
+            $"ColumnDefinitions='{string.Join(',', Enumerable.Repeat("Auto", 317))}' />";
+        const string overlappingSpan = """
+            <Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
+              <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
+              <Button Grid.Row="0" Grid.Column="1" />
+            </Grid>
+            """;
         const string dynamicPropertyDefinition = """
             <Grid>
               <Grid.RowDefinitions><RowDefinition Height="{Binding Height}" /></Grid.RowDefinitions>
@@ -316,10 +533,20 @@ public sealed class AxamlPreviewServiceTests
               <Grid.ColumnDefinitions><ColumnDefinition Width="-1" /></Grid.ColumnDefinitions>
             </Grid>
             """;
+        const string namespacedGridPlacement =
+            "<Grid xmlns:custom='urn:custom'><TextBlock custom:Grid.Row='0' /></Grid>";
+        const string namespacedGridDimensions =
+            "<Grid xmlns:custom='urn:custom' custom:RowDefinitions='Auto,Auto' />";
+        const string namespacedDefinitionLength = """
+            <Grid xmlns:custom="urn:custom">
+              <Grid.RowDefinitions><RowDefinition custom:Height="*" /></Grid.RowDefinitions>
+            </Grid>
+            """;
 
         foreach (string markup in new[]
         {
             duplicateCell,
+            overlappingSpan,
             spanningChild,
             outOfRangeChild,
             duplicateDefinitionSources,
@@ -327,8 +554,12 @@ public sealed class AxamlPreviewServiceTests
             emptyDefinitionSlot,
             dynamicDefinitionList,
             invalidGridLength,
+            oversizedGrid,
             dynamicPropertyDefinition,
             negativePropertyDefinition,
+            namespacedGridPlacement,
+            namespacedGridDimensions,
+            namespacedDefinitionLength,
         })
         {
             AxamlPreviewNode grid = service.Parse(markup);

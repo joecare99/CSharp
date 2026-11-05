@@ -403,20 +403,27 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
             && WorkspacePathIdentity.AreEqual(FilePath, fullPath);
     }
 
-    bool IWorkspaceOpenDocumentChangeProvider.CanApplyChange(string fullPath, string expectedContent)
+    bool IWorkspaceOpenDocumentChangeProvider.CanApplyChange(
+        string fullPath,
+        string expectedContent,
+        string expectedSavedContent)
     {
         return ((IWorkspaceOpenDocumentProvider)this).IsDocumentOpen(fullPath)
-            && !IsDirty
             && string.Equals(_markup, expectedContent, StringComparison.Ordinal)
-            && string.Equals(_savedMarkup, expectedContent, StringComparison.Ordinal);
+            && string.Equals(_savedMarkup, expectedSavedContent, StringComparison.Ordinal);
     }
 
     void IWorkspaceOpenDocumentChangeProvider.ApplyChange(
         string fullPath,
         string expectedContent,
-        string proposedContent)
+        string expectedSavedContent,
+        string proposedContent,
+        string proposedSavedContent)
     {
-        if (!((IWorkspaceOpenDocumentChangeProvider)this).CanApplyChange(fullPath, expectedContent))
+        if (!((IWorkspaceOpenDocumentChangeProvider)this).CanApplyChange(
+                fullPath,
+                expectedContent,
+                expectedSavedContent))
         {
             string relativePath = string.IsNullOrWhiteSpace(WorkspaceRootPath)
                 ? Path.GetFileName(fullPath)
@@ -425,7 +432,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
         }
 
         _markup = proposedContent;
-        _savedMarkup = proposedContent;
+        _savedMarkup = proposedSavedContent;
         Designer.LoadMarkup(proposedContent);
         NotifyDocumentStateChanged();
         StatusText = "Open AXAML document synchronized with confirmed workspace changes.";

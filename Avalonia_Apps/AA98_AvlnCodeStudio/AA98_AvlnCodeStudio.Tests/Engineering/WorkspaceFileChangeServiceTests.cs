@@ -70,6 +70,46 @@ public sealed class WorkspaceFileChangeServiceTests
     }
 
     [TestMethod]
+    public void ApplyUndoRedo_PreservesDirtyOpenDocumentAndSavedSnapshots()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string path = Path.Combine(root, "View.axaml");
+            File.WriteAllText(path, "saved");
+            ToggleSynchronizationProvider provider = new(path)
+            {
+                Content = "dirty editor buffer",
+                SavedContent = "saved",
+            };
+            WorkspaceFileChangeService service = new(provider);
+            WorkspaceFileChangeProposal proposal = service.Prepare(
+                root,
+                [WorkspaceFileChangeRequest.ReplaceExisting(
+                    "View.axaml",
+                    "saved",
+                    "reviewed result",
+                    expectedOpenDocumentContent: "dirty editor buffer")]);
+
+            service.Apply(proposal, confirmed: true);
+            Assert.AreEqual("reviewed result", File.ReadAllText(path));
+            Assert.AreEqual("reviewed result", provider.Content);
+            Assert.AreEqual("reviewed result", provider.SavedContent);
+            Assert.IsFalse(provider.IsDirty);
+
+            Assert.IsTrue(service.Undo());
+            Assert.AreEqual("saved", File.ReadAllText(path));
+            Assert.AreEqual("dirty editor buffer", provider.Content);
+            Assert.AreEqual("saved", provider.SavedContent);
+            Assert.IsTrue(provider.IsDirty);
+
+            Assert.IsTrue(service.Redo());
+            Assert.AreEqual("reviewed result", provider.Content);
+            Assert.AreEqual("reviewed result", provider.SavedContent);
+            Assert.IsFalse(provider.IsDirty);
+        });
+    }
+
+    [TestMethod]
     public void Prepare_EnforcesCreateAndReplacePreconditions()
     {
         WithTemporaryDirectory(root =>
@@ -489,9 +529,14 @@ public sealed class WorkspaceFileChangeServiceTests
                 OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
         }
 
-        public bool CanApplyChange(string fullPath, string expectedContent) => true;
+        public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent) => true;
 
-        public void ApplyChange(string fullPath, string expectedContent, string proposedContent)
+        public void ApplyChange(
+            string fullPath,
+            string expectedContent,
+            string expectedSavedContent,
+            string proposedContent,
+            string proposedSavedContent)
         {
             throw new InvalidOperationException("Simulated editor synchronization failure.");
         }
@@ -507,13 +552,19 @@ public sealed class WorkspaceFileChangeServiceTests
             return WorkspacePathIdentity.AreEqual(fullPath, _openPath);
         }
 
-        public bool CanApplyChange(string fullPath, string expectedContent)
+        public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent)
         {
             return IsDocumentOpen(fullPath)
-                && string.Equals(expectedContent, "before", StringComparison.Ordinal);
+                && string.Equals(expectedContent, "before", StringComparison.Ordinal)
+                && string.Equals(expectedSavedContent, "before", StringComparison.Ordinal);
         }
 
-        public void ApplyChange(string fullPath, string expectedContent, string proposedContent)
+        public void ApplyChange(
+            string fullPath,
+            string expectedContent,
+            string expectedSavedContent,
+            string proposedContent,
+            string proposedSavedContent)
         {
         }
     }
@@ -523,21 +574,31 @@ public sealed class WorkspaceFileChangeServiceTests
     {
         private readonly string _openPath = WorkspacePathIdentity.Normalize(openPath);
 
-        public string Content { get; private set; } = "before";
+        public string Content { get; set; } = "before";
+
+        public string SavedContent { get; set; } = "before";
+
+        public bool IsDirty => !string.Equals(Content, SavedContent, StringComparison.Ordinal);
 
         public bool FailNextChange { get; set; }
 
         public bool IsDocumentOpen(string fullPath) => WorkspacePathIdentity.AreEqual(fullPath, _openPath);
 
-        public bool CanApplyChange(string fullPath, string expectedContent)
+        public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent)
         {
             return IsDocumentOpen(fullPath)
-                && string.Equals(Content, expectedContent, StringComparison.Ordinal);
+                && string.Equals(Content, expectedContent, StringComparison.Ordinal)
+                && string.Equals(SavedContent, expectedSavedContent, StringComparison.Ordinal);
         }
 
-        public void ApplyChange(string fullPath, string expectedContent, string proposedContent)
+        public void ApplyChange(
+            string fullPath,
+            string expectedContent,
+            string expectedSavedContent,
+            string proposedContent,
+            string proposedSavedContent)
         {
-            if (!CanApplyChange(fullPath, expectedContent))
+            if (!CanApplyChange(fullPath, expectedContent, expectedSavedContent))
             {
                 throw new IOException("The open document snapshot is stale.");
             }
@@ -549,6 +610,7 @@ public sealed class WorkspaceFileChangeServiceTests
             }
 
             Content = proposedContent;
+            SavedContent = proposedSavedContent;
         }
     }
 }

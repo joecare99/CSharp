@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.Model.Workspaces;
+using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 using AA98_AvlnCodeStudio.Base.AI.Models;
 using AA98_AvlnCodeStudio.Base.AI.Services;
 using AA98_AvlnCodeStudio.UI.Configuration;
@@ -728,6 +729,127 @@ public sealed class CSharpWorkspaceLoaderTests
             Assert.AreEqual(1, reviewCount);
             Assert.AreEqual(updatedViewModel, File.ReadAllText(viewModelPath));
             StringAssert.Contains(viewModel.Editor.StatusText, "no changes were needed");
+        });
+    }
+
+    [TestMethod]
+    public async Task MainWindowViewModel_ReviewsNewBindingAndViewModelMemberTogetherForDirtyAxaml()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string axamlPath = Path.Combine(root, "View.axaml");
+            string viewModelPath = Path.Combine(root, "ViewModel.cs");
+            const string savedMarkup = """
+                <UserControl xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:vm="using:Sample"
+                        x:Class="Sample.View"
+                        x:DataType="vm:ViewModel">
+                  <TextBox />
+                    </UserControl>
+                """;
+            const string dirtyMarkup = """
+                    <UserControl xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:vm="using:Sample"
+                        x:Class="Sample.View"
+                        x:DataType="vm:ViewModel">
+                  <TextBox Text="Unsaved draft" />
+                    </UserControl>
+                """;
+            File.WriteAllText(
+                projectPath,
+                """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                  <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
+                </Project>
+                """);
+            File.WriteAllText(
+                Path.Combine(root, "View.axaml.cs"),
+                """
+                namespace Sample;
+                public partial class View
+                {
+                    public object? DataContext { get; set; }
+                    public View() => DataContext = new ViewModel();
+                }
+                """);
+            File.WriteAllText(
+                viewModelPath,
+                """
+                using CommunityToolkit.Mvvm.ComponentModel;
+                namespace Sample;
+                public partial class ViewModel : ObservableObject
+                {
+                }
+                """);
+            File.WriteAllText(axamlPath, savedMarkup);
+
+            ProcessStartInfo buildStartInfo = new("dotnet")
+            {
+                WorkingDirectory = AppContext.BaseDirectory,
+                ArgumentList = { "build", projectPath, "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            ClearInheritedMsBuildEnvironment(buildStartInfo);
+            using Process build = Process.Start(buildStartInfo)
+                ?? throw new InvalidOperationException("Could not start the dirty AXAML binding fixture build.");
+            Task<string> buildOutput = build.StandardOutput.ReadToEndAsync();
+            Task<string> buildError = build.StandardError.ReadToEndAsync();
+            await build.WaitForExitAsync();
+            if (build.ExitCode != 0)
+            {
+                Assert.Fail($"Dirty AXAML binding fixture build failed: {await buildOutput}{await buildError}");
+            }
+
+            TestEditorComponentFactory editorFactory = new();
+            IAvaloniaEditorComponent editorComponent = editorFactory.Create();
+            EditorDocumentWorkspace editorWorkspace = new(editorComponent, editorFactory);
+            MainWindowViewModel viewModel = new(
+                editorComponent,
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                new DiagnosticCollectionViewModel(),
+                null,
+                null,
+                editorWorkspace: editorWorkspace);
+            await viewModel.OpenWorkspaceFileAsync(projectPath);
+            await editorWorkspace.OpenOrActivateAsync(axamlPath);
+            viewModel.Editor.Text = dirtyMarkup;
+            viewModel.AxamlDesigner.SelectedNode = viewModel.AxamlDesigner.PreviewRoot;
+            viewModel.AxamlDesigner.SetBindingContext([]);
+            AxamlBindingRowViewModel binding = viewModel.AxamlDesigner.BindingRows.Single();
+            binding.NewMemberName = "Caption";
+
+            WorkspaceFileChangeProposal? reviewedProposal = null;
+            viewModel.ReviewWorkspaceFileChangesAsync = (proposal, cancellationToken) =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                reviewedProposal = proposal;
+                viewModel.WorkspaceFileChangeService.Apply(proposal, confirmed: true);
+                return Task.FromResult(true);
+            };
+
+            await viewModel.AxamlDesigner.ApplyBindingRowAsync(binding);
+
+            Assert.IsNotNull(
+                reviewedProposal,
+                $"{viewModel.AxamlDesigner.StatusText} {binding.Diagnostic} {viewModel.Editor.NotificationText}");
+            Assert.AreEqual(2, reviewedProposal!.Changes.Count);
+            Assert.AreEqual(dirtyMarkup, reviewedProposal.Changes.Single(change => change.RelativePath == "View.axaml").OriginalOpenDocumentContent);
+            Assert.AreEqual(savedMarkup, reviewedProposal.Changes.Single(change => change.RelativePath == "View.axaml").OriginalContent);
+            StringAssert.Contains(File.ReadAllText(axamlPath), "Text=\"{Binding Caption}\"");
+            StringAssert.Contains(File.ReadAllText(viewModelPath), "private string _caption = string.Empty;");
+            Assert.IsFalse(viewModel.Editor.IsDirty);
+
+            Assert.IsTrue(viewModel.WorkspaceFileChangeService.Undo());
+            Assert.AreEqual(savedMarkup, File.ReadAllText(axamlPath));
+            Assert.AreEqual(dirtyMarkup, viewModel.Editor.Text);
+            Assert.IsTrue(viewModel.Editor.IsDirty);
+            Assert.IsFalse(File.ReadAllText(viewModelPath).Contains("_caption", StringComparison.Ordinal));
         });
     }
 

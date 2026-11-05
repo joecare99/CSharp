@@ -6,6 +6,7 @@ using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Controls;
+using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 using System;
 using System.IO;
 using System.Threading;
@@ -15,10 +16,15 @@ namespace AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
 
 public partial class AxamlDesignerView : UserControl
 {
+    private readonly DispatcherTimer _propertyApplyTimer;
+    private AxamlPropertyRowViewModel? _pendingPropertyRow;
+
     public AxamlDesignerView()
     {
         InitializeComponent();
         PreviewControl.LayoutResizeRequested += OnLayoutResizeRequested;
+        _propertyApplyTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(350) };
+        _propertyApplyTimer.Tick += OnPropertyApplyTimerTick;
     }
 
     public async Task<byte[]> CapturePreviewPngAsync(CancellationToken cancellationToken = default)
@@ -105,5 +111,103 @@ public partial class AxamlDesignerView : UserControl
         {
             viewModel.ResizeElement(e.Node, e.Width, e.Height);
         }
+    }
+
+    private void OnPropertyEditorGotFocus(object? sender, RoutedEventArgs e)
+    {
+        if (TryGetPropertyRow(sender, out AxamlPropertyRowViewModel? row)
+            && DataContext is AxamlDesignerViewModel viewModel)
+        {
+            viewModel.BeginPropertyDraft(row, hasChanged: false);
+        }
+    }
+
+    private void OnPropertyTextChanged(object? sender, RoutedEventArgs e)
+    {
+        if (TryGetPropertyRow(sender, out AxamlPropertyRowViewModel? row)
+            && DataContext is AxamlDesignerViewModel viewModel
+            && row.IsEditing)
+        {
+            viewModel.BeginPropertyDraft(row, hasChanged: true);
+            _pendingPropertyRow = row;
+            _propertyApplyTimer.Stop();
+            _propertyApplyTimer.Start();
+        }
+    }
+
+    private void OnPropertyEditorLostFocus(object? sender, RoutedEventArgs e)
+    {
+        if (!TryGetPropertyRow(sender, out AxamlPropertyRowViewModel? row)
+            || DataContext is not AxamlDesignerViewModel viewModel)
+        {
+            return;
+        }
+
+        if (ReferenceEquals(_pendingPropertyRow, row))
+        {
+            _propertyApplyTimer.Stop();
+            _pendingPropertyRow = null;
+        }
+
+        if (!row.HasValidationError)
+        {
+            viewModel.ApplyPropertyRow(row, finalize: true);
+        }
+        else
+        {
+            viewModel.EndPropertyEdit();
+            row.IsEditing = false;
+        }
+    }
+
+    private void OnPropertyChoiceChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (TryGetPropertyRow(sender, out AxamlPropertyRowViewModel? row)
+            && DataContext is AxamlDesignerViewModel viewModel
+            && row.IsEditing)
+        {
+            viewModel.ApplyPropertyRow(row, finalize: true);
+        }
+    }
+
+    private void OnDiscardPropertyDraft(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Control { DataContext: AxamlPropertyRowViewModel row }
+            && DataContext is AxamlDesignerViewModel viewModel)
+        {
+            if (ReferenceEquals(_pendingPropertyRow, row))
+            {
+                _propertyApplyTimer.Stop();
+                _pendingPropertyRow = null;
+            }
+
+            viewModel.DiscardPropertyDraft(row);
+        }
+    }
+
+    private async void OnApplyBinding(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Control { DataContext: AxamlBindingRowViewModel row }
+            && DataContext is AxamlDesignerViewModel viewModel)
+        {
+            await viewModel.ApplyBindingRowAsync(row);
+        }
+    }
+
+    private void OnPropertyApplyTimerTick(object? sender, EventArgs e)
+    {
+        _propertyApplyTimer.Stop();
+        AxamlPropertyRowViewModel? row = _pendingPropertyRow;
+        _pendingPropertyRow = null;
+        if (row is not null && DataContext is AxamlDesignerViewModel viewModel)
+        {
+            viewModel.ApplyPropertyRow(row, finalize: false);
+        }
+    }
+
+    private static bool TryGetPropertyRow(object? sender, out AxamlPropertyRowViewModel? row)
+    {
+        row = (sender as Control)?.DataContext as AxamlPropertyRowViewModel;
+        return row is not null;
     }
 }

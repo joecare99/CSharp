@@ -126,23 +126,45 @@ public partial class EditorViewModel : CodeStudioViewModelBase
 
     public bool CanApplyExternalChange(string fullPath, string expectedContent)
     {
-        return !IsDirty
-            && CurrentFilePath is { } currentPath
+        return CanApplyExternalChange(fullPath, expectedContent, expectedContent);
+    }
+
+    public bool CanApplyExternalChange(
+        string fullPath,
+        string expectedContent,
+        string expectedSavedContent)
+    {
+        ArgumentNullException.ThrowIfNull(expectedContent);
+        ArgumentNullException.ThrowIfNull(expectedSavedContent);
+        return CurrentFilePath is { } currentPath
             && WorkspacePathIdentity.AreEqual(currentPath, fullPath)
-            && string.Equals(_workflow.Document.Content, expectedContent, StringComparison.Ordinal);
+            && string.Equals(_workflow.Document.Content, expectedContent, StringComparison.Ordinal)
+            && string.Equals(_workflow.Document.SavedContent, expectedSavedContent, StringComparison.Ordinal);
     }
 
     public void ApplyExternalChange(string fullPath, string expectedContent, string proposedContent)
     {
+        ApplyExternalChange(fullPath, expectedContent, expectedContent, proposedContent, proposedContent);
+    }
+
+    public void ApplyExternalChange(
+        string fullPath,
+        string expectedContent,
+        string expectedSavedContent,
+        string proposedContent,
+        string proposedSavedContent)
+    {
         ArgumentNullException.ThrowIfNull(expectedContent);
+        ArgumentNullException.ThrowIfNull(expectedSavedContent);
         ArgumentNullException.ThrowIfNull(proposedContent);
-        if (!CanApplyExternalChange(fullPath, expectedContent))
+        ArgumentNullException.ThrowIfNull(proposedSavedContent);
+        if (!CanApplyExternalChange(fullPath, expectedContent, expectedSavedContent))
         {
-            throw new IOException("The open document changed or became dirty after the change review.");
+            throw new IOException("The open document or saved snapshot changed after the change review.");
         }
 
         string normalizedPath = WorkspacePathIdentity.Normalize(fullPath);
-        _workflow.Document.Load(normalizedPath, proposedContent);
+        _workflow.Document.LoadWithSavedContent(normalizedPath, proposedContent, proposedSavedContent);
         Text = proposedContent;
         SynchronizeFromDocument();
     }

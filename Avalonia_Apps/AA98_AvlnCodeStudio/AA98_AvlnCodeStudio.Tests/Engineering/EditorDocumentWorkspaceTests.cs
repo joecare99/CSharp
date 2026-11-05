@@ -98,6 +98,49 @@ public sealed class EditorDocumentWorkspaceTests
     }
 
     [TestMethod]
+    public async Task WorkspaceChange_ExplicitlyReviewsDirtyDocumentAndRestoresItOnUndo()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_EditorDirtyChange_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string path = Path.Combine(root, "View.axaml");
+            const string saved = "<Window />";
+            const string dirty = "<Window Title=\"Unsaved\" />";
+            const string proposed = "<Window Title=\"Reviewed\" />";
+            await File.WriteAllTextAsync(path, saved);
+            TestEditorComponentFactory factory = new();
+            EditorDocumentWorkspace documents = new(factory.Create(), factory);
+            await documents.OpenOrActivateAsync(path);
+            documents.ActiveTab.Editor.Text = dirty;
+
+            WorkspaceFileChangeService changes = new(documents);
+            WorkspaceFileChangeProposal proposal = changes.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting(
+                    "View.axaml",
+                    saved,
+                    proposed,
+                    expectedOpenDocumentContent: dirty),
+            ]);
+            changes.Apply(proposal, confirmed: true);
+
+            Assert.AreEqual(proposed, documents.ActiveTab.Editor.Text);
+            Assert.IsFalse(documents.ActiveTab.Editor.IsDirty);
+            Assert.AreEqual(proposed, await File.ReadAllTextAsync(path));
+
+            Assert.IsTrue(changes.Undo());
+            Assert.AreEqual(dirty, documents.ActiveTab.Editor.Text);
+            Assert.IsTrue(documents.ActiveTab.Editor.IsDirty);
+            Assert.AreEqual(saved, await File.ReadAllTextAsync(path));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task WorkspaceChange_RejectsDocumentThatBecameDirtyAfterPreparation()
     {
         string root = Path.Combine(Path.GetTempPath(), $"AA98_EditorStaleChange_{Guid.NewGuid():N}");

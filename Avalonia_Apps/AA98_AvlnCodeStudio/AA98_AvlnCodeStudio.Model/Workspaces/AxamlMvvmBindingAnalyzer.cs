@@ -117,23 +117,12 @@ public sealed class AxamlMvvmBindingAnalyzer
         }
 
         path = pathToken.ToString();
-        if (path.Length == 0 || !IsSimpleIdentifier(path))
+        if (!AxamlMvvmMemberName.IsValid(path))
         {
             throw new InvalidDataException("The binding path is malformed or not a simple member name.");
         }
 
         return true;
-    }
-
-    private static bool IsSimpleIdentifier(string value)
-    {
-        if (!(char.IsLetter(value[0]) || value[0] == '_'))
-        {
-            return false;
-        }
-
-        return value.Skip(1).All(static character =>
-            char.IsLetterOrDigit(character) || character == '_');
     }
 
 }

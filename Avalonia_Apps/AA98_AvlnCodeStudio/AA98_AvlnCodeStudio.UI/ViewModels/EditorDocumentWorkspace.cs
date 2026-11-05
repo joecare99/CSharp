@@ -130,10 +130,11 @@ public sealed partial class EditorDocumentWorkspace : ObservableObject, IWorkspa
             && WorkspacePathIdentity.AreEqual(filePath, normalizedPath));
     }
 
-    public bool CanApplyChange(string fullPath, string expectedContent)
+    public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fullPath);
         ArgumentNullException.ThrowIfNull(expectedContent);
+        ArgumentNullException.ThrowIfNull(expectedSavedContent);
         EditorTabViewModel? tab;
         try
         {
@@ -144,20 +145,32 @@ public sealed partial class EditorDocumentWorkspace : ObservableObject, IWorkspa
             return false;
         }
 
-        return tab is not null && tab.Editor.CanApplyExternalChange(fullPath, expectedContent);
+        return tab is not null && tab.Editor.CanApplyExternalChange(fullPath, expectedContent, expectedSavedContent);
     }
 
-    public void ApplyChange(string fullPath, string expectedContent, string proposedContent)
+    public void ApplyChange(
+        string fullPath,
+        string expectedContent,
+        string expectedSavedContent,
+        string proposedContent,
+        string proposedSavedContent)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fullPath);
         ArgumentNullException.ThrowIfNull(expectedContent);
+        ArgumentNullException.ThrowIfNull(expectedSavedContent);
         ArgumentNullException.ThrowIfNull(proposedContent);
+        ArgumentNullException.ThrowIfNull(proposedSavedContent);
         EditorTabViewModel? tab = FindByPath(fullPath);
         if (tab is null)
         {
             throw new InvalidOperationException($"The document '{fullPath}' is no longer open.");
         }
 
-        tab.Editor.ApplyExternalChange(fullPath, expectedContent, proposedContent);
+        tab.Editor.ApplyExternalChange(
+            fullPath,
+            expectedContent,
+            expectedSavedContent,
+            proposedContent,
+            proposedSavedContent);
     }
 }

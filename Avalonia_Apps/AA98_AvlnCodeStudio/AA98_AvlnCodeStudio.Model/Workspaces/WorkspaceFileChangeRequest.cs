@@ -11,7 +11,8 @@ public sealed class WorkspaceFileChangeRequest
         string relativePath,
         string proposedContent,
         WorkspaceFileChangeTarget target,
-        string? expectedContent)
+        string? expectedContent,
+        string? expectedOpenDocumentContent)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(relativePath);
         ArgumentNullException.ThrowIfNull(proposedContent);
@@ -19,6 +20,7 @@ public sealed class WorkspaceFileChangeRequest
         ProposedContent = proposedContent;
         Target = target;
         ExpectedContent = expectedContent;
+        ExpectedOpenDocumentContent = expectedOpenDocumentContent;
     }
 
     public string RelativePath { get; }
@@ -29,26 +31,34 @@ public sealed class WorkspaceFileChangeRequest
 
     public string? ExpectedContent { get; }
 
+    /// <summary>
+    /// Gets the expected in-memory snapshot for an open document, when it differs from the file snapshot.
+    /// </summary>
+    public string? ExpectedOpenDocumentContent { get; }
+
     public static WorkspaceFileChangeRequest CreateNew(string relativePath, string proposedContent)
     {
         return new WorkspaceFileChangeRequest(
             relativePath,
             proposedContent,
             WorkspaceFileChangeTarget.MustNotExist,
-            expectedContent: null);
+            expectedContent: null,
+            expectedOpenDocumentContent: null);
     }
 
     public static WorkspaceFileChangeRequest ReplaceExisting(
         string relativePath,
         string expectedContent,
-        string proposedContent)
+        string proposedContent,
+        string? expectedOpenDocumentContent = null)
     {
         ArgumentNullException.ThrowIfNull(expectedContent);
         return new WorkspaceFileChangeRequest(
             relativePath,
             proposedContent,
             WorkspaceFileChangeTarget.MustExist,
-            expectedContent);
+            expectedContent,
+            expectedOpenDocumentContent);
     }
 }
 

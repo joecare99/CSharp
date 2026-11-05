@@ -4,6 +4,17 @@ using System.Linq;
 
 namespace AA98_AvlnCodeStudio.Model.Workspaces;
 
+public static class AxamlMvvmMemberName
+{
+    public static bool IsValid(string value)
+    {
+        return !string.IsNullOrEmpty(value)
+            && (char.IsLetter(value[0]) || value[0] == '_')
+            && value.Skip(1).All(static character =>
+                char.IsLetterOrDigit(character) || character == '_');
+    }
+}
+
 public sealed class AxamlMvvmMemberPlanner
 {
     public IReadOnlyList<AxamlMvvmMemberPlanEntry> Plan(

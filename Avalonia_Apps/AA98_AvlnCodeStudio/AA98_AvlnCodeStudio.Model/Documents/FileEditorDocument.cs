@@ -20,6 +20,8 @@ public sealed class FileEditorDocument : IFileEditorDocument
     /// </summary>
     public string Content { get; private set; } = string.Empty;
 
+    public string SavedContent { get; private set; } = string.Empty;
+
     /// <summary>
     /// Gets a value indicating whether the document has unsaved changes.
     /// </summary>
@@ -39,6 +41,7 @@ public sealed class FileEditorDocument : IFileEditorDocument
     {
         FilePath = null;
         Content = string.Empty;
+        SavedContent = string.Empty;
         IsDirty = false;
     }
 
@@ -54,9 +57,20 @@ public sealed class FileEditorDocument : IFileEditorDocument
             throw new ArgumentException("A file path is required to load a document.", nameof(filePath));
         }
 
+        LoadWithSavedContent(filePath, content, content);
+    }
+
+    public void LoadWithSavedContent(string filePath, string content, string savedContent)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new ArgumentException("A file path is required to load a document.", nameof(filePath));
+        }
+
         FilePath = filePath;
         Content = content ?? string.Empty;
-        IsDirty = false;
+        SavedContent = savedContent ?? string.Empty;
+        IsDirty = !string.Equals(Content, SavedContent, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -88,6 +102,7 @@ public sealed class FileEditorDocument : IFileEditorDocument
         }
 
         FilePath = filePath;
+        SavedContent = Content;
         IsDirty = false;
     }
 }

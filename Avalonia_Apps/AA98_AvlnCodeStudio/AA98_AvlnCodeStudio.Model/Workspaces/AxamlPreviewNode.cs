@@ -13,6 +13,10 @@ public sealed class AxamlPreviewNode
 
     public bool IsSupported { get; init; }
 
+    public bool IsRecoveryRoot { get; init; }
+
+    public string? Diagnostic { get; init; }
+
     public int SourceStartOffset { get; init; } = -1;
 
     public string? SourceStartTag { get; init; }

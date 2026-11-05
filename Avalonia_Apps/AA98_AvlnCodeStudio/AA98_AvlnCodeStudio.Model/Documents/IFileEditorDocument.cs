@@ -16,6 +16,11 @@ public interface IFileEditorDocument
     string Content { get; }
 
     /// <summary>
+    /// Gets the content of the last successfully saved snapshot.
+    /// </summary>
+    string SavedContent { get; }
+
+    /// <summary>
     /// Gets a value indicating whether the document has unsaved changes.
     /// </summary>
     bool IsDirty { get; }
@@ -36,6 +41,11 @@ public interface IFileEditorDocument
     /// <param name="filePath">The source file path.</param>
     /// <param name="content">The loaded text content.</param>
     void Load(string filePath, string content);
+
+    /// <summary>
+    /// Loads an editor and saved-file snapshot that may differ after a coordinated external change.
+    /// </summary>
+    void LoadWithSavedContent(string filePath, string content, string savedContent);
 
     /// <summary>
     /// Updates the current document content.

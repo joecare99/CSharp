@@ -63,6 +63,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
         private List<Diagnostic> _languageDiagnostics = [];
         private CancellationTokenSource? _languageAnalysisCancellation;
+        private CancellationTokenSource? _axamlBindingAnalysisCancellation;
         private EditorViewModel? _observedEditor;
         private Controls.EditorTextArea? _observedEditorTextArea;
         public MainWindowViewModel()
@@ -125,6 +126,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _axamlDesigner = axamlDesignerViewModel ?? new AxamlDesignerViewModel();
             _axamlDesigner.MarkupChanged += OnAxamlDesignerMarkupChanged;
             _axamlDesigner.PropertyChanged += OnAxamlDesignerPropertyChanged;
+            _axamlDesigner.ApplyMissingBindingAsync = ApplyMissingAxamlBindingAsync;
             _workspaceFileDialogService = workspaceFileDialogService ?? new Services.DesignWorkspaceFileDialogService();
             _builderService = builderService ?? new NullCodeStudioBuilderService();
             _versionControlService = versionControlService ?? new NullVersionControlService();
@@ -1091,6 +1093,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     await _csharpSyntaxDiagnosticService.RefreshProjectContextAsync(
                         project.ProjectPath,
                         cancellationToken);
+                    QueueAxamlMvvmBindingContext(Editor.Text, filePath);
                     Editor.StatusText = $"Extended ViewModel '{existingResolution.ViewModelTypeName}'.";
                     Editor.NotificationText = string.Join(
                         Environment.NewLine,
@@ -1143,6 +1146,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 await _csharpSyntaxDiagnosticService.RefreshProjectContextAsync(
                     project.ProjectPath,
                     cancellationToken);
+                QueueAxamlMvvmBindingContext(Editor.Text, filePath);
                 Editor.StatusText = $"Generated MVVM code for {Path.GetFileName(filePath)}.";
                 Editor.NotificationText = string.Join(
                     Environment.NewLine,
@@ -1452,6 +1456,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         partial void OnWorkspaceChanged(CSharpWorkspace? value)
         {
             GenerateAxamlMvvmCommand.NotifyCanExecuteChanged();
+            QueueAxamlMvvmBindingContext(
+                string.Equals(Path.GetExtension(Editor.CurrentFilePath), ".axaml", StringComparison.OrdinalIgnoreCase)
+                    ? Editor.Text
+                    : null,
+                Editor.CurrentFilePath);
             string? previousProjectPath = SelectedPackageProject?.ProjectPath;
             PackageProjects.Clear();
             if (value is not null)
@@ -2109,13 +2118,219 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             string? filePath = Editor.CurrentFilePath;
             bool isAxamlDocument = !string.IsNullOrWhiteSpace(filePath)
                 && string.Equals(Path.GetExtension(filePath), ".axaml", StringComparison.OrdinalIgnoreCase);
-            _axamlDesigner.LoadMarkup(isAxamlDocument ? Editor.Text : null);
+            string? markup = isAxamlDocument ? Editor.Text : null;
+            _axamlDesigner.LoadMarkup(markup);
+            QueueAxamlMvvmBindingContext(markup, filePath);
+        }
+
+        private void QueueAxamlMvvmBindingContext(string? markup, string? filePath)
+        {
+            _axamlBindingAnalysisCancellation?.Cancel();
+            _axamlBindingAnalysisCancellation?.Dispose();
+            CancellationTokenSource cancellation = new();
+            _axamlBindingAnalysisCancellation = cancellation;
+            _ = RefreshAxamlMvvmBindingContextAsync(markup, filePath, cancellation.Token);
+        }
+
+        private async Task RefreshAxamlMvvmBindingContextAsync(
+            string? markup,
+            string? filePath,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(markup)
+                || string.IsNullOrWhiteSpace(filePath)
+                || Workspace is not { Projects.Count: > 0 } workspace)
+            {
+                _axamlDesigner.SetBindingContext(
+                    [],
+                    "Open a C# workspace and a view with a resolvable runtime DataContext to select ViewModel members.");
+                return;
+            }
+
+            try
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(300), cancellationToken);
+                AxamlMvvmSemanticResolution resolution =
+                    await _csharpSyntaxDiagnosticService.AnalyzeAxamlMvvmAsync(
+                        markup,
+                        filePath,
+                        workspace,
+                        cancellationToken,
+                        allowExistingRuntimeDataContext: true);
+                if (!ReferenceEquals(workspace, Workspace)
+                    || !string.Equals(filePath, Editor.CurrentFilePath, StringComparison.OrdinalIgnoreCase)
+                    || !string.Equals(markup, Editor.Text, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                string? diagnostic = resolution.IsSuccessful && resolution.HasRuntimeDataContext
+                    ? null
+                    : resolution.Diagnostics.Count > 0
+                        ? string.Join(Environment.NewLine, resolution.Diagnostics)
+                        : "The view has no uniquely resolved runtime DataContext.";
+                _axamlDesigner.SetBindingContext(
+                    resolution.IsSuccessful && resolution.HasRuntimeDataContext
+                        ? resolution.ViewModelMembers
+                        : [],
+                    diagnostic);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+            }
+            catch (Exception exception) when (exception is InvalidOperationException or InvalidDataException or IOException)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                _axamlDesigner.SetBindingContext([], $"ViewModel member analysis failed: {exception.Message}");
+            }
         }
 
         private void OnAxamlDesignerMarkupChanged(object? sender, AxamlDesignerMarkupChangedEventArgs e)
         {
             Editor.Text = e.Markup;
             Editor.NotificationText = _axamlDesigner.StatusText;
+        }
+
+        private async Task<bool> ApplyMissingAxamlBindingAsync(AxamlBindingRowViewModel row)
+        {
+            ArgumentNullException.ThrowIfNull(row);
+            string filePath = Editor.CurrentFilePath
+                ?? throw new InvalidOperationException("Save the AXAML view before creating a ViewModel binding.");
+            CSharpWorkspace workspace = Workspace
+                ?? throw new InvalidOperationException("Open the containing C# workspace before creating a ViewModel binding.");
+            string markup = Editor.Text;
+            AxamlPreviewNode selectedNode = _axamlDesigner.SelectedNode
+                ?? throw new InvalidOperationException("Select a supported control before applying a ViewModel binding.");
+            CSharpWorkspaceProject project = workspace.Projects
+                .Where(candidate => IsPathWithinDirectory(
+                    filePath,
+                    Path.GetDirectoryName(candidate.ProjectPath)!))
+                .OrderByDescending(candidate => candidate.ProjectPath.Length)
+                .FirstOrDefault()
+                ?? throw new InvalidOperationException("The active AXAML file is not inside a project in this workspace.");
+
+            if (!ProjectReferencesMvvmToolkit(project.ProjectPath))
+            {
+                throw new InvalidDataException("Add CommunityToolkit.Mvvm to the active project before creating a ViewModel member.");
+            }
+
+            string? memberName = row.GetRequestedMember();
+            if (memberName is null
+                || !AxamlControlCatalog.TryGet(row.ControlType, out AxamlControlCapability capability)
+                || capability.BindableProperties.FirstOrDefault(property =>
+                    string.Equals(property.Name, row.PropertyName, StringComparison.Ordinal)) is not { } bindableProperty)
+            {
+                throw new InvalidDataException(row.Diagnostic ?? "The selected binding is not supported by the designer.");
+            }
+
+            AxamlMvvmSemanticResolution resolution =
+                await _csharpSyntaxDiagnosticService.AnalyzeAxamlMvvmAsync(
+                    markup,
+                    filePath,
+                    workspace,
+                    CancellationToken.None,
+                    allowExistingRuntimeDataContext: true);
+            if (!ReferenceEquals(workspace, Workspace)
+                || !string.Equals(filePath, Editor.CurrentFilePath, StringComparison.OrdinalIgnoreCase)
+                || !string.Equals(markup, Editor.Text, StringComparison.Ordinal)
+                || !ReferenceEquals(selectedNode, _axamlDesigner.SelectedNode))
+            {
+                throw new InvalidOperationException("The workspace or AXAML document changed during binding analysis. Retry the binding.");
+            }
+
+            if (!resolution.IsSuccessful
+                || !resolution.HasRuntimeDataContext
+                || string.IsNullOrWhiteSpace(resolution.ViewModelTypeName))
+            {
+                throw new InvalidDataException(
+                    "A missing ViewModel member cannot be created because the runtime DataContext is not uniquely resolved:"
+                    + Environment.NewLine
+                    + string.Join(Environment.NewLine, resolution.Diagnostics));
+            }
+
+            AxamlMvvmMemberRequirement requirement = new(
+                memberName,
+                bindableProperty.TypeName,
+                bindableProperty.IsCommand);
+            AxamlMvvmMemberPlanEntry memberPlan = new AxamlMvvmMemberPlanner()
+                .Plan([requirement], resolution.ViewModelMembers, createMissingMembers: true)
+                .Single();
+            if (memberPlan.Action == AxamlMvvmMemberPlanAction.Reuse)
+            {
+                _axamlDesigner.ApplyBindingRow(row);
+                return true;
+            }
+
+            if (memberPlan.Action != AxamlMvvmMemberPlanAction.Create)
+            {
+                throw new InvalidDataException(
+                    memberPlan.Diagnostic ?? $"ViewModel member '{memberName}' cannot be created safely.");
+            }
+
+            WorkspaceFileChangeRequest sourceRequest =
+                await _csharpSyntaxDiagnosticService.PlanViewModelSourceAdditionAsync(
+                    workspace.RootPath,
+                    project.ProjectPath,
+                    resolution.ViewModelTypeName,
+                    [memberPlan],
+                    CancellationToken.None);
+            IReadOnlyList<string> newCompilerErrors =
+                await _csharpSyntaxDiagnosticService.GetNewCompilerErrorsAsync(
+                    project.ProjectPath,
+                    sourceRequest,
+                    CancellationToken.None);
+            if (newCompilerErrors.Count > 0)
+            {
+                throw new InvalidDataException(
+                    "Creating the ViewModel member would introduce C# compiler errors:"
+                    + Environment.NewLine
+                    + string.Join(Environment.NewLine, newCompilerErrors));
+            }
+
+            if (!ReferenceEquals(selectedNode, _axamlDesigner.SelectedNode)
+                || !string.Equals(markup, Editor.Text, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("The selected control or AXAML document changed during member planning. Retry the binding.");
+            }
+
+            string proposedMarkup = _axamlDesigner.CreateBindingMarkupForRow(row);
+            string relativeAxamlPath = Path.GetRelativePath(workspace.RootPath, filePath);
+            string savedMarkup = File.ReadAllText(filePath);
+            List<WorkspaceFileChangeRequest> requests = [sourceRequest];
+            if (!string.Equals(markup, proposedMarkup, StringComparison.Ordinal))
+            {
+                requests.Add(WorkspaceFileChangeRequest.ReplaceExisting(
+                    relativeAxamlPath,
+                    savedMarkup,
+                    proposedMarkup,
+                    expectedOpenDocumentContent: markup));
+            }
+
+            WorkspaceFileChangeProposal proposal = _workspaceFileChangeService.Prepare(workspace.RootPath, requests);
+            Func<WorkspaceFileChangeProposal, CancellationToken, Task<bool>>? review =
+                ReviewWorkspaceFileChangesAsync;
+            if (review is null)
+            {
+                throw new InvalidOperationException("This host does not provide a workspace change review dialog.");
+            }
+
+            if (!await review(proposal, CancellationToken.None))
+            {
+                Editor.StatusText = "Binding and ViewModel member creation cancelled; no files were changed.";
+                return false;
+            }
+
+            await _csharpSyntaxDiagnosticService.RefreshProjectContextAsync(project.ProjectPath);
+            QueueAxamlMvvmBindingContext(Editor.Text, filePath);
+            Editor.StatusText = $"Created ViewModel member '{memberName}' and applied the AXAML binding.";
+            Editor.NotificationText = string.Join(
+                Environment.NewLine,
+                proposal.Changes.Select(static change => change.RelativePath));
+            return true;
         }
 
         private void OnAxamlDesignerPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)

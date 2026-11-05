@@ -71,6 +71,60 @@ public sealed class AxamlDesignerSessionTests
     }
 
     [TestMethod]
+    public void ApplyPropertyEdit_CoalescesDebouncedValuesIntoOneUndoStep()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<StackPanel Width='100' />");
+        session.SelectNode(session.Root);
+        session.BeginPropertyEdit("Width");
+
+        Assert.IsTrue(session.ApplySelectedValue("120"));
+        Assert.IsTrue(session.ApplySelectedValue("140"));
+        session.EndPropertyEdit();
+        session.BeginPropertyEdit("Width");
+        Assert.IsTrue(session.ApplySelectedValue("160"));
+        session.EndPropertyEdit();
+
+        StringAssert.Contains(session.Markup, "Width='160'");
+        Assert.IsTrue(session.Undo());
+        StringAssert.Contains(session.Markup, "Width='140'");
+        Assert.IsTrue(session.Undo());
+        StringAssert.Contains(session.Markup, "Width='100'");
+        Assert.IsFalse(session.CanUndo);
+        Assert.IsTrue(session.CanRedo);
+    }
+
+    [TestMethod]
+    public void ApplySelectedValue_RejectsInvalidLiteralWithoutChangingMarkupOrHistory()
+    {
+        const string markup = "<StackPanel Width='100' />";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root);
+        session.SelectProperty("Width");
+
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => session.ApplySelectedValue("-1"));
+
+        Assert.AreEqual(markup, session.Markup);
+        Assert.IsFalse(session.CanUndo);
+    }
+
+    [TestMethod]
+    public void ApplyBinding_UpdatesBindablePropertyAndSupportsUndoRedo()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<TextBox Text='{Binding ExistingText}' />");
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.ApplyBinding("Text", "NewText"));
+        StringAssert.Contains(session.Markup, "Text='{Binding NewText}'");
+        Assert.IsTrue(session.Undo());
+        StringAssert.Contains(session.Markup, "Text='{Binding ExistingText}'");
+        Assert.IsTrue(session.Redo());
+        StringAssert.Contains(session.Markup, "Text='{Binding NewText}'");
+    }
+
+    [TestMethod]
     public void ApplyValues_RejectsPropertyElementsWithoutChangingMarkup()
     {
         const string markup = "<StackPanel xmlns='https://github.com/avaloniaui'><StackPanel.Width>120</StackPanel.Width></StackPanel>";
@@ -150,7 +204,7 @@ public sealed class AxamlDesignerSessionTests
         Assert.IsTrue(session.AddChildControl("DockPanel"));
         AxamlPreviewNode dockPanel = session.Root!.Children.Single();
         session.SelectNode(dockPanel);
-        Assert.IsTrue(session.AddChildControl("Button"));
+        Assert.IsTrue(session.AddChildControl("Button", AxamlDockPanelPlacement.Client));
 
         Assert.AreEqual("Button", session.Root.Children.Single().Children.Single().TypeName);
         Assert.IsTrue(session.Undo());
@@ -192,5 +246,29 @@ public sealed class AxamlDesignerSessionTests
         Assert.AreEqual(markup, session.Markup);
         Assert.IsTrue(session.Redo());
         Assert.AreEqual(2, session.Root!.Children.Count);
+    }
+
+    [TestMethod]
+    public void AddChildControl_KeepsDockPanelClientLastAndSupportsUndoRedo()
+    {
+        const string original = "<DockPanel />";
+        AxamlDesignerSession session = new();
+        session.Load(original);
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.AddChildControl("TextBlock", AxamlDockPanelPlacement.Client));
+        Assert.IsTrue(session.AddChildControl("Button", AxamlDockPanelPlacement.Top));
+        Assert.IsTrue(session.AddChildControl("Separator", AxamlDockPanelPlacement.Bottom));
+        Assert.AreEqual("Button", session.Root!.Children[0].TypeName);
+        Assert.AreEqual("Top", session.Root.Children[0].Properties["DockPanel.Dock"]);
+        Assert.AreEqual("Separator", session.Root.Children[1].TypeName);
+        Assert.AreEqual("Bottom", session.Root.Children[1].Properties["DockPanel.Dock"]);
+        Assert.AreEqual("TextBlock", session.Root.Children[2].TypeName);
+
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(2, session.Root!.Children.Count);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(3, session.Root!.Children.Count);
+        Assert.AreEqual("TextBlock", session.Root.Children[2].TypeName);
     }
 }

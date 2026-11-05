@@ -3,6 +3,7 @@ using AA98_AvlnCodeStudio.Model.Workspaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
 
@@ -34,6 +35,118 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public void PropertyRows_DebouncedEditsAreUndoableAsOneAndInvalidDraftRequiresDiscard()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<StackPanel Width='100'><TextBlock Text='Hello' /></StackPanel>");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        AxamlPropertyRowViewModel width = viewModel.PropertyRows.Single(static row => row.Name == "Width");
+        Assert.IsFalse(viewModel.PropertyRows.Single(static row => row.Name == "Height").HasValidationError);
+
+        width.Value = "120";
+        viewModel.BeginPropertyDraft(width, hasChanged: true);
+        viewModel.ApplyPropertyRow(width, finalize: false);
+        width.Value = "140";
+        viewModel.BeginPropertyDraft(width, hasChanged: true);
+        viewModel.ApplyPropertyRow(width, finalize: true);
+
+        StringAssert.Contains(viewModel.PreviewRoot!.Properties["Width"], "140");
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("100", viewModel.PreviewRoot!.Properties["Width"]);
+
+        width = viewModel.PropertyRows.Single(static row => row.Name == "Width");
+        width.Value = "-2";
+        viewModel.BeginPropertyDraft(width, hasChanged: true);
+        Assert.IsTrue(width.HasValidationError);
+        AxamlPreviewNode selectedNode = viewModel.SelectedNode!;
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
+        Assert.AreSame(selectedNode, viewModel.SelectedNode);
+        Assert.IsTrue(viewModel.HasInvalidPropertyDraft);
+
+        viewModel.DiscardPropertyDraft(width);
+        Assert.IsFalse(viewModel.HasInvalidPropertyDraft);
+        Assert.AreEqual("100", width.Value);
+    }
+
+    [TestMethod]
+    public void BindingRows_OfferCompatibleMembersAndApplyExplicitNewBinding()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Button Command='{Binding OldCommand}' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        viewModel.SetBindingContext(
+        [
+            new AxamlMvvmSemanticMember("SaveCommand", "ICommand", IsCommand: true, IsWritable: false),
+            new AxamlMvvmSemanticMember("Caption", "string", IsCommand: false, IsWritable: true),
+        ]);
+
+        AxamlBindingRowViewModel command = viewModel.BindingRows.Single();
+        Assert.AreEqual("Command (ICommand)", command.MemberKindLabel);
+        Assert.AreEqual("New command member name", command.NewMemberPlaceholder);
+        CollectionAssert.AreEqual(new[] { "SaveCommand" }, command.AvailableMembers.ToArray());
+        Assert.IsTrue(command.IsCreatingNewMember);
+        Assert.IsFalse(command.IsSelectingExistingMember);
+        command.NewMemberName = string.Empty;
+        Assert.IsNull(command.GetRequestedMember());
+        command.SelectExistingMemberSource();
+        Assert.IsTrue(command.IsSelectingExistingMember);
+        command.SelectedMember = "SaveCommand";
+        Assert.AreEqual("SaveCommand", command.GetRequestedMember());
+        command.NewMemberName = "DeleteCommand";
+        Assert.IsTrue(command.IsCreatingNewMember);
+        viewModel.ApplyBindingRow(command);
+
+        StringAssert.Contains(viewModel.PreviewRoot!.Properties["Command"], "DeleteCommand");
+        Assert.IsTrue(viewModel.CanUndo);
+        Assert.IsFalse(viewModel.BindingRows.Single().HasDiagnostic);
+
+        viewModel.SetBindingContext(
+        [
+            new AxamlMvvmSemanticMember("SaveCommand", "ICommand", IsCommand: true, IsWritable: false),
+            new AxamlMvvmSemanticMember("Caption", "string", IsCommand: false, IsWritable: true),
+        ]);
+        command = viewModel.BindingRows.Single();
+        command.NewMemberName = "Caption";
+        viewModel.ApplyBindingRow(command);
+
+        StringAssert.Contains(viewModel.PreviewRoot!.Properties["Command"], "DeleteCommand");
+        StringAssert.Contains(command.Diagnostic, "incompatible");
+
+        AxamlDesignerViewModel propertyViewModel = new();
+        propertyViewModel.LoadMarkup("<TextBox />");
+        propertyViewModel.SelectedNode = propertyViewModel.PreviewRoot;
+        propertyViewModel.SetBindingContext([]);
+        AxamlBindingRowViewModel property = propertyViewModel.BindingRows.Single();
+        Assert.AreEqual("Property (string)", property.MemberKindLabel);
+        Assert.AreEqual("New string property name", property.NewMemberPlaceholder);
+        CollectionAssert.AreEqual(new[] { "Create new member" }, property.MemberSources.ToArray());
+        Assert.IsTrue(property.IsCreatingNewMember);
+    }
+
+    [TestMethod]
+    public async Task BindingRows_SendMissingMemberToWorkspaceReviewHandler()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<TextBox Text='unsaved draft' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        viewModel.SetBindingContext([]);
+        AxamlBindingRowViewModel row = viewModel.BindingRows.Single();
+        row.NewMemberName = "Caption";
+        bool invoked = false;
+        viewModel.ApplyMissingBindingAsync = requestedRow =>
+        {
+            invoked = ReferenceEquals(requestedRow, row);
+            return Task.FromResult(false);
+        };
+
+        await viewModel.ApplyBindingRowAsync(row);
+
+        Assert.IsTrue(invoked);
+        Assert.AreEqual("unsaved draft", viewModel.PreviewRoot!.Properties["Text"]);
+        Assert.IsFalse(viewModel.CanUndo);
+    }
+
+    [TestMethod]
     public void DesignerViewModel_InvalidMarkupSurfacesErrorAndCanRecover()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -48,6 +161,22 @@ public sealed class AxamlDesignerViewModelTests
         Assert.IsNotNull(viewModel.PreviewRoot);
         Assert.IsTrue(viewModel.HasPreview);
         Assert.AreEqual(string.Empty, viewModel.ErrorText);
+    }
+
+    [TestMethod]
+    public void DesignerViewModel_PreservesValidPreviewElementsWhenMarkupIsMalformed()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<StackPanel xmlns='https://github.com/avaloniaui'><TextBlock Text='Visible' /><Button Content=broken /><Label Content='Also visible' /></StackPanel>");
+
+        Assert.IsNotNull(viewModel.PreviewRoot);
+        Assert.IsTrue(viewModel.PreviewRoot.IsRecoveryRoot);
+        Assert.AreEqual(3, viewModel.PreviewRoot.Children.Count);
+        Assert.IsFalse(viewModel.PreviewRoot.Children[1].IsSupported);
+        Assert.IsTrue(viewModel.HasPreview);
+        StringAssert.Contains(viewModel.ErrorText, "Partial preview");
+        Assert.IsFalse(viewModel.CanUndo);
     }
 
     [TestMethod]
@@ -77,7 +206,18 @@ public sealed class AxamlDesignerViewModelTests
 
         viewModel.LoadMarkup("<StackPanel>unmodeled text<TextBlock /></StackPanel>");
         viewModel.SelectedNode = viewModel.PreviewRoot;
-        StringAssert.Contains(viewModel.SelectedCapabilityText, "appending unavailable");
+        StringAssert.Contains(viewModel.SelectedCapabilityText, "correct invalid or unsupported markup");
+        viewModel.AddButtonCommand.Execute(null);
+        StringAssert.Contains(viewModel.StatusText, "Correct invalid inline text");
+
+        viewModel.LoadMarkup("<DockPanel><TextBlock /></DockPanel>");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        StringAssert.Contains(viewModel.SelectedCapabilityText, "docked children stay before Client");
+        Assert.IsTrue(viewModel.IsDockPanelSelected);
+
+        viewModel.LoadMarkup("<DockPanel LastChildFill='False'><TextBlock /></DockPanel>");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        StringAssert.Contains(viewModel.SelectedCapabilityText, "LastChildFill is disabled");
 
         viewModel.LoadMarkup("<Grid />");
         viewModel.SelectedNode = viewModel.PreviewRoot;
@@ -85,7 +225,33 @@ public sealed class AxamlDesignerViewModelTests
 
         viewModel.LoadMarkup("<Grid RowDefinitions='Auto,,*' />");
         viewModel.SelectedNode = viewModel.PreviewRoot;
-        StringAssert.Contains(viewModel.SelectedCapabilityText, "placement unavailable");
+        StringAssert.Contains(viewModel.SelectedCapabilityText, "correct invalid or unsupported markup");
+    }
+
+    [TestMethod]
+    public void DesignerViewModel_DockPanelPaletteKeepsClientLastAndAddsDockedChildren()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<DockPanel />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+
+        Assert.IsTrue(viewModel.IsDockPanelSelected);
+        Assert.AreEqual(AxamlDockPanelPlacement.Client, viewModel.SelectedDockPanelPlacement);
+        viewModel.AddTextBlockCommand.Execute(null);
+
+        viewModel.SelectedDockPanelPlacement = AxamlDockPanelPlacement.Top;
+        viewModel.AddButtonCommand.Execute(null);
+        viewModel.SelectedDockPanelPlacement = AxamlDockPanelPlacement.Bottom;
+        viewModel.AddSeparatorCommand.Execute(null);
+
+        Assert.AreEqual("Button", viewModel.PreviewRoot?.Children[0].TypeName);
+        Assert.AreEqual("Top", viewModel.PreviewRoot?.Children[0].Properties["DockPanel.Dock"]);
+        Assert.AreEqual("Separator", viewModel.PreviewRoot?.Children[1].TypeName);
+        Assert.AreEqual("Bottom", viewModel.PreviewRoot?.Children[1].Properties["DockPanel.Dock"]);
+        Assert.AreEqual("TextBlock", viewModel.PreviewRoot?.Children[2].TypeName);
+        Assert.IsTrue(viewModel.CanUndo);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(2, viewModel.PreviewRoot?.Children.Count);
     }
 
     [TestMethod]
@@ -126,12 +292,16 @@ public sealed class AxamlDesignerViewModelTests
             ("<Border />", viewModel => viewModel.AddBorderCommand.Execute(null)),
             ("<ContentControl />", viewModel => viewModel.AddContentControlCommand.Execute(null)),
             ("<DockPanel />", viewModel => viewModel.AddDockPanelCommand.Execute(null)),
+            ("<Expander />", viewModel => viewModel.AddExpanderCommand.Execute(null)),
+            ("<GroupBox />", viewModel => viewModel.AddGroupBoxCommand.Execute(null)),
             ("<Grid />", viewModel => viewModel.AddGridCommand.Execute(null)),
             ("<ProgressBar />", viewModel => viewModel.AddProgressBarCommand.Execute(null)),
             ("<ScrollViewer />", viewModel => viewModel.AddScrollViewerCommand.Execute(null)),
             ("<Separator />", viewModel => viewModel.AddSeparatorCommand.Execute(null)),
             ("<StackPanel />", viewModel => viewModel.AddStackPanelCommand.Execute(null)),
             ("<WrapPanel />", viewModel => viewModel.AddWrapPanelCommand.Execute(null)),
+            ("<Viewbox />", viewModel => viewModel.AddViewboxCommand.Execute(null)),
+            ("<UniformGrid />", viewModel => viewModel.AddUniformGridCommand.Execute(null)),
         ];
 
         foreach ((string expectedControl, Action<AxamlDesignerViewModel> execute) in paletteActions)

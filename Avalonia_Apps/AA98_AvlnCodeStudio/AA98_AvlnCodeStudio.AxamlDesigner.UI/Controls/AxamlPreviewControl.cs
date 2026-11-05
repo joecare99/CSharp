@@ -1,6 +1,7 @@
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -130,6 +131,28 @@ public sealed class AxamlPreviewControl : ContentControl
 
     private Control BuildControl(AxamlPreviewNode node)
     {
+        if (node.IsRecoveryRoot)
+        {
+            StackPanel recoveredContent = new() { Spacing = 8 };
+            recoveredContent.Children.Add(new Border
+            {
+                Padding = new Thickness(8),
+                BorderThickness = new Thickness(1),
+                BorderBrush = Brushes.DarkOrange,
+                Child = new TextBlock
+                {
+                    Text = node.Diagnostic,
+                    TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                },
+            });
+            foreach (AxamlPreviewNode child in node.Children)
+            {
+                recoveredContent.Children.Add(BuildControl(child));
+            }
+
+            return recoveredContent;
+        }
+
         if (!node.IsSupported)
         {
             return WrapNode(node, new Border
@@ -137,7 +160,7 @@ public sealed class AxamlPreviewControl : ContentControl
                 Padding = new Thickness(8),
                 BorderThickness = new Thickness(1),
                 BorderBrush = Brushes.DarkOrange,
-                Child = new TextBlock { Text = $"Unsupported control: {node.TypeName}" },
+                Child = new TextBlock { Text = node.Diagnostic ?? $"Unsupported control: {node.TypeName}" },
             });
         }
 
@@ -164,7 +187,18 @@ public sealed class AxamlPreviewControl : ContentControl
             },
             "ContentControl" => BuildContentControl(node),
             "DockPanel" => BuildDockPanel(node),
+            "Expander" => new Expander
+            {
+                Header = node.Text ?? "Expander",
+                IsExpanded = ParseBoolean(node, "IsExpanded") ?? true,
+                Content = BuildChildren(node),
+            },
             "Grid" => BuildGrid(node),
+            "GroupBox" => new GroupBox
+            {
+                Header = node.Text ?? "Group",
+                Content = BuildChildren(node),
+            },
             "Label" or "TextBlock" => BuildTextBlock(node),
             "ListBox" => new ListBox
             {
@@ -198,6 +232,14 @@ public sealed class AxamlPreviewControl : ContentControl
                 Text = node.Text,
                 PlaceholderText = GetProperty(node, "Watermark") ?? GetProperty(node, "PlaceholderText"),
                 IsReadOnly = true,
+            },
+            "UniformGrid" => BuildUniformGrid(node),
+            "Viewbox" => new Viewbox
+            {
+                Child = node.Children.FirstOrDefault() is { } child ? BuildControl(child) : null,
+                Stretch = Enum.TryParse(GetProperty(node, "Stretch"), ignoreCase: true, out Stretch stretch)
+                    ? stretch
+                    : Stretch.Uniform,
             },
             "WrapPanel" => BuildWrapPanel(node),
             "Window" or "UserControl" => BuildChildren(node),
@@ -239,7 +281,7 @@ public sealed class AxamlPreviewControl : ContentControl
 
         return new Border
         {
-            Tag = node,
+            Tag = node.SourceStartOffset >= 0 ? node : null,
             Child = wrapper,
             Background = Brushes.Transparent,
             BorderBrush = isSelected ? Brushes.DodgerBlue : Brushes.Transparent,
@@ -398,6 +440,22 @@ public sealed class AxamlPreviewControl : ContentControl
         return panel;
     }
 
+    private Control BuildUniformGrid(AxamlPreviewNode node)
+    {
+        UniformGrid grid = new()
+        {
+            Rows = ParseInt(node, "Rows"),
+            Columns = ParseInt(node, "Columns"),
+            FirstColumn = ParseInt(node, "FirstColumn"),
+        };
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            grid.Children.Add(BuildControl(child));
+        }
+
+        return grid;
+    }
+
     private Control BuildChildren(AxamlPreviewNode node)
     {
         if (node.Children.Count == 1)
@@ -507,6 +565,14 @@ public sealed class AxamlPreviewControl : ContentControl
     private static bool TryGetInt(AxamlPreviewNode node, string propertyName, out int value)
     {
         return int.TryParse(GetProperty(node, propertyName), NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+    }
+
+    private static int ParseInt(AxamlPreviewNode node, string propertyName)
+    {
+        return int.TryParse(GetProperty(node, propertyName), NumberStyles.Integer, CultureInfo.InvariantCulture, out int value)
+            && value >= 0
+                ? value
+                : 0;
     }
 
     private static string? GetProperty(AxamlPreviewNode node, string name)

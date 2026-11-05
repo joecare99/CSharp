@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 
 namespace AA98_AvlnCodeStudio.Model.Workspaces;
 
@@ -13,6 +14,9 @@ public sealed class AxamlDesignerSession
     private readonly AxamlPreviewService _previewService;
     private readonly Stack<Snapshot> _undoHistory = [];
     private readonly Stack<Snapshot> _redoHistory = [];
+    private Snapshot? _propertyEditSnapshot;
+    private string? _propertyEditName;
+    private bool _propertyEditHasChanges;
 
     public AxamlDesignerSession(AxamlPreviewService? previewService = null)
     {
@@ -22,6 +26,8 @@ public sealed class AxamlDesignerSession
     public string Markup { get; private set; } = string.Empty;
 
     public AxamlPreviewNode? Root { get; private set; }
+
+    public string? PreviewDiagnostic { get; private set; }
 
     public AxamlPreviewNode? SelectedNode { get; private set; }
 
@@ -49,11 +55,15 @@ public sealed class AxamlDesignerSession
 
         string? selectedType = SelectedNode?.TypeName;
         int selectedOffset = SelectedNode?.SourceStartOffset ?? -1;
-        AxamlPreviewNode root = _previewService.Parse(markup);
+        AxamlPreviewParseResult result = _previewService.ParseForPreview(markup);
+        AxamlPreviewNode root = result.Root
+            ?? throw new XmlException(result.Diagnostic ?? "The AXAML document could not be previewed.");
         Markup = markup;
         Root = root;
+        PreviewDiagnostic = result.Diagnostic;
         SelectedNode = selectedType is null ? null : FindNode(root, selectedType, selectedOffset);
         ClearHistory();
+        EndPropertyEdit();
         RefreshSelectedValue();
     }
 
@@ -61,14 +71,17 @@ public sealed class AxamlDesignerSession
     {
         Markup = string.Empty;
         Root = null;
+        PreviewDiagnostic = null;
         SelectedNode = null;
         SelectedProperty = null;
         SelectedValue = string.Empty;
         ClearHistory();
+        EndPropertyEdit();
     }
 
     public void SelectNode(AxamlPreviewNode? node)
     {
+        EndPropertyEdit();
         if (node is null)
         {
             SelectedNode = null;
@@ -97,8 +110,33 @@ public sealed class AxamlDesignerSession
             throw new InvalidOperationException($"The '{propertyName}' property cannot be edited on the selected AXAML control.");
         }
 
+        if (!string.Equals(SelectedProperty, propertyName, StringComparison.Ordinal))
+        {
+            EndPropertyEdit();
+        }
+
         SelectedProperty = propertyName;
         RefreshSelectedValue();
+    }
+
+    public void BeginPropertyEdit(string propertyName)
+    {
+        SelectProperty(propertyName);
+        if (string.Equals(_propertyEditName, propertyName, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        EndPropertyEdit();
+        _propertyEditName = propertyName;
+        _propertyEditSnapshot = Capture();
+    }
+
+    public void EndPropertyEdit()
+    {
+        _propertyEditName = null;
+        _propertyEditSnapshot = null;
+        _propertyEditHasChanges = false;
     }
 
     public bool ApplySelectedValue(string value)
@@ -109,6 +147,39 @@ public sealed class AxamlDesignerSession
         return ApplyValues(
             new Dictionary<string, string>(StringComparer.Ordinal) { [selectedProperty] = value },
             selectedProperty);
+    }
+
+    public bool ApplyBinding(string propertyName, string memberName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(propertyName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(memberName);
+        EndPropertyEdit();
+        AxamlPreviewNode selectedNode = SelectedNode
+            ?? throw new InvalidOperationException("Select an AXAML control before creating a binding.");
+        string updatedMarkup = CreateBindingMarkup(propertyName, memberName);
+        if (string.Equals(updatedMarkup, Markup, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        PushHistory(_undoHistory, Capture());
+        _redoHistory.Clear();
+        Markup = updatedMarkup;
+        Root = root;
+        SelectedNode = FindNode(root, selectedNode.TypeName, selectedNode.SourceStartOffset);
+        SelectedProperty = propertyName;
+        RefreshSelectedValue();
+        return true;
+    }
+
+    public string CreateBindingMarkup(string propertyName, string memberName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(propertyName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(memberName);
+        AxamlPreviewNode selectedNode = SelectedNode
+            ?? throw new InvalidOperationException("Select an AXAML control before creating a binding.");
+        return _previewService.UpdateBinding(Markup, selectedNode, propertyName, memberName);
     }
 
     public bool ApplyValues(IReadOnlyDictionary<string, string> values, string selectedProperty)
@@ -133,6 +204,12 @@ public sealed class AxamlDesignerSession
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(propertyName);
             ArgumentNullException.ThrowIfNull(value);
+            string? validationError = AxamlPropertyValueValidator.Validate(currentNode.TypeName, propertyName, value);
+            if (validationError is not null)
+            {
+                throw new InvalidOperationException($"The '{propertyName}' value is invalid: {validationError}");
+            }
+
             string previousMarkup = updatedMarkup;
             updatedMarkup = _previewService.UpdateAttribute(updatedMarkup, currentNode, propertyName, value);
             if (!string.Equals(updatedMarkup, previousMarkup, StringComparison.Ordinal))
@@ -149,8 +226,21 @@ public sealed class AxamlDesignerSession
         }
 
         AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
-        PushHistory(_undoHistory, Capture());
-        _redoHistory.Clear();
+        if (string.Equals(_propertyEditName, selectedProperty, StringComparison.Ordinal)
+            && _propertyEditSnapshot is not null)
+        {
+            if (!_propertyEditHasChanges)
+            {
+                PushHistory(_undoHistory, _propertyEditSnapshot);
+                _redoHistory.Clear();
+                _propertyEditHasChanges = true;
+            }
+        }
+        else
+        {
+            PushHistory(_undoHistory, Capture());
+            _redoHistory.Clear();
+        }
         Markup = updatedMarkup;
         Root = root;
         SelectedNode = FindNode(root, selectedNode.TypeName, selectedNode.SourceStartOffset);
@@ -159,12 +249,18 @@ public sealed class AxamlDesignerSession
         return true;
     }
 
-    public bool AddChildControl(string childTypeName)
+    public bool AddChildControl(
+        string childTypeName,
+        AxamlDockPanelPlacement? dockPanelPlacement = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(childTypeName);
         AxamlPreviewNode selectedNode = SelectedNode
             ?? throw new InvalidOperationException("Select a container before inserting a control.");
-        string updatedMarkup = _previewService.InsertChildControl(Markup, selectedNode, childTypeName);
+        string updatedMarkup = _previewService.InsertChildControl(
+            Markup,
+            selectedNode,
+            childTypeName,
+            dockPanelPlacement);
         if (string.Equals(updatedMarkup, Markup, StringComparison.Ordinal))
         {
             return false;
@@ -183,6 +279,7 @@ public sealed class AxamlDesignerSession
 
     public bool Undo()
     {
+        EndPropertyEdit();
         if (_undoHistory.Count == 0)
         {
             return false;
@@ -195,6 +292,7 @@ public sealed class AxamlDesignerSession
 
     public bool Redo()
     {
+        EndPropertyEdit();
         if (_redoHistory.Count == 0)
         {
             return false;

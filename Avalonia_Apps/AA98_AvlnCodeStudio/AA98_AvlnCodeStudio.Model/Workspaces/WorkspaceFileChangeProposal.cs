@@ -34,6 +34,7 @@ public sealed class WorkspaceFileChange
         WorkspaceFileChangeTarget target,
         byte[]? originalBytes,
         string? originalContent,
+        string? originalOpenDocumentContent,
         string proposedContent,
         byte[] proposedBytes)
     {
@@ -42,6 +43,7 @@ public sealed class WorkspaceFileChange
         Target = target;
         _originalBytes = originalBytes;
         OriginalContent = originalContent;
+        OriginalOpenDocumentContent = originalOpenDocumentContent;
         ProposedContent = proposedContent;
         _proposedBytes = proposedBytes;
     }
@@ -53,6 +55,13 @@ public sealed class WorkspaceFileChange
     public WorkspaceFileChangeTarget Target { get; }
 
     public string? OriginalContent { get; }
+
+    /// <summary>
+    /// Gets the open editor snapshot that was reviewed, which can differ from the saved file content.
+    /// </summary>
+    public string? OriginalOpenDocumentContent { get; }
+
+    internal string? DocumentOriginalContent => OriginalOpenDocumentContent ?? OriginalContent;
 
     public string ProposedContent { get; }
 

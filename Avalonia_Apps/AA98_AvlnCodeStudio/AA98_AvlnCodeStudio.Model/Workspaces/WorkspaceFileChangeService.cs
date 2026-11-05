@@ -98,6 +98,7 @@ public sealed class WorkspaceFileChangeService
                 request.Target,
                 originalBytes,
                 originalContent,
+                request.ExpectedOpenDocumentContent ?? originalContent,
                 request.ProposedContent,
                 proposedBytes);
             EnsureDocumentCanBeChanged(change);
@@ -169,9 +170,14 @@ public sealed class WorkspaceFileChangeService
                 foreach (WorkspaceFileChange change in appliedChanges.Where(change =>
                              _openDocumentProvider.IsDocumentOpen(change.TargetPath)))
                 {
-                    provider.ApplyChange(change.TargetPath, change.OriginalContent!, change.ProposedContent);
+                    provider.ApplyChange(
+                        change.TargetPath,
+                        change.DocumentOriginalContent!,
+                        change.OriginalContent!,
+                        change.ProposedContent,
+                        change.ProposedContent);
                     synchronizedDocuments.Add(change);
-                    if (!provider.CanApplyChange(change.TargetPath, change.ProposedContent))
+                    if (!provider.CanApplyChange(change.TargetPath, change.ProposedContent, change.ProposedContent))
                     {
                         throw new IOException($"The open document '{change.RelativePath}' did not match the confirmed change after synchronization.");
                     }
@@ -187,7 +193,12 @@ public sealed class WorkspaceFileChangeService
                 {
                     try
                     {
-                        provider.ApplyChange(change.TargetPath, change.ProposedContent, change.OriginalContent!);
+                        provider.ApplyChange(
+                            change.TargetPath,
+                            change.ProposedContent,
+                            change.ProposedContent,
+                            change.DocumentOriginalContent!,
+                            change.OriginalContent!);
                     }
                     catch (Exception rollbackException)
                     {
@@ -331,7 +342,10 @@ public sealed class WorkspaceFileChangeService
             if (_openDocumentProvider.IsDocumentOpen(change.TargetPath)
                 && (!expectedExists || !targetExists
                     || _openDocumentProvider is not IWorkspaceOpenDocumentChangeProvider provider
-                    || !provider.CanApplyChange(change.TargetPath, undo ? change.ProposedContent : change.OriginalContent!)))
+                    || !provider.CanApplyChange(
+                        change.TargetPath,
+                        undo ? change.ProposedContent : change.DocumentOriginalContent!,
+                        undo ? change.ProposedContent : change.OriginalContent!)))
                 throw new WorkspaceOpenDocumentException(change.RelativePath);
         }
 
@@ -386,11 +400,18 @@ public sealed class WorkspaceFileChangeService
             {
                 foreach (WorkspaceFileChange change in entry.Changes.Where(change => _openDocumentProvider.IsDocumentOpen(change.TargetPath)))
                 {
-                    string expectedContent = undo ? change.ProposedContent : change.OriginalContent!;
-                    string targetContent = undo ? change.OriginalContent! : change.ProposedContent;
-                    provider.ApplyChange(change.TargetPath, expectedContent, targetContent);
+                    string expectedContent = undo ? change.ProposedContent : change.DocumentOriginalContent!;
+                    string expectedSavedContent = undo ? change.ProposedContent : change.OriginalContent!;
+                    string targetContent = undo ? change.DocumentOriginalContent! : change.ProposedContent;
+                    string targetSavedContent = undo ? change.OriginalContent! : change.ProposedContent;
+                    provider.ApplyChange(
+                        change.TargetPath,
+                        expectedContent,
+                        expectedSavedContent,
+                        targetContent,
+                        targetSavedContent);
                     synchronized.Add(change);
-                    if (!provider.CanApplyChange(change.TargetPath, targetContent))
+                    if (!provider.CanApplyChange(change.TargetPath, targetContent, targetSavedContent))
                         throw new IOException($"The open document '{change.RelativePath}' did not match the undo/redo snapshot.");
                 }
             }
@@ -422,11 +443,18 @@ public sealed class WorkspaceFileChangeService
                 {
                     try
                     {
-                        string expectedContent = undo ? change.ProposedContent : change.OriginalContent!;
-                        string targetContent = undo ? change.OriginalContent! : change.ProposedContent;
-                        if (provider.CanApplyChange(change.TargetPath, targetContent))
-                            provider.ApplyChange(change.TargetPath, targetContent, expectedContent);
-                        else if (!provider.CanApplyChange(change.TargetPath, expectedContent))
+                        string expectedContent = undo ? change.ProposedContent : change.DocumentOriginalContent!;
+                        string expectedSavedContent = undo ? change.ProposedContent : change.OriginalContent!;
+                        string targetContent = undo ? change.DocumentOriginalContent! : change.ProposedContent;
+                        string targetSavedContent = undo ? change.OriginalContent! : change.ProposedContent;
+                        if (provider.CanApplyChange(change.TargetPath, targetContent, targetSavedContent))
+                            provider.ApplyChange(
+                                change.TargetPath,
+                                targetContent,
+                                targetSavedContent,
+                                expectedContent,
+                                expectedSavedContent);
+                        else if (!provider.CanApplyChange(change.TargetPath, expectedContent, expectedSavedContent))
                             throw new IOException($"The open document '{change.RelativePath}' could not be restored after undo/redo failed.");
                     }
                     catch (Exception rollbackException) { rollbackErrors.Add(rollbackException); }
@@ -580,9 +608,9 @@ public sealed class WorkspaceFileChangeService
             return;
         }
 
-        if (change.OriginalContent is not null
+        if (change.DocumentOriginalContent is not null
             && _openDocumentProvider is IWorkspaceOpenDocumentChangeProvider changeProvider
-            && changeProvider.CanApplyChange(change.TargetPath, change.OriginalContent))
+            && changeProvider.CanApplyChange(change.TargetPath, change.DocumentOriginalContent, change.OriginalContent!))
         {
             return;
         }

@@ -4,7 +4,7 @@
              xmlns:preview="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.Controls"
              x:Class="AA98_AvlnCodeStudio.AxamlDesigner.UI.Views.AxamlDesignerView"
              x:DataType="vm:AxamlDesignerViewModel">
-  <Grid ColumnDefinitions="*,Auto,220"
+  <Grid ColumnDefinitions="*,8,240,8,2*"
         ColumnSpacing="8">
     <Border Grid.Column="0"
             Padding="8"
@@ -18,7 +18,8 @@
                    FontWeight="SemiBold" />
         <TextBlock DockPanel.Dock="Top"
                    Margin="0,0,0,6"
-                   Text="Drag the selected element's blue corner to resize." />
+                   Text="Drag the selected element's blue corner to resize."
+                   TextWrapping="Wrap" />
         <TextBlock DockPanel.Dock="Top"
                    Margin="0,0,0,6"
                    Text="{Binding ErrorText}"
@@ -38,62 +39,177 @@
             BorderBrush="{DynamicResource ThemeControlMidBrush}"
             BorderThickness="1"
             CornerRadius="4">
-      <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Spacing="6">
-          <StackPanel Orientation="Horizontal" Spacing="6">
-            <Button Content="Undo" Command="{Binding UndoCommand}" />
-            <Button Content="Redo" Command="{Binding RedoCommand}" />
-            <Button Content="Screenshot" Click="OnScreenshotRequested" />
+      <Grid RowDefinitions="Auto,*"
+            RowSpacing="8">
+        <UniformGrid Grid.Row="0" Columns="2">
+          <Button Content="Undo" Command="{Binding UndoCommand}" />
+          <Button Content="Redo" Command="{Binding RedoCommand}" />
+          <Button Content="Screenshot" Click="OnScreenshotRequested" />
+        </UniformGrid>
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+          <StackPanel Spacing="6">
+            <Expander Header="Basis controls" IsExpanded="True">
+              <UniformGrid Columns="2" Margin="4">
+                <Button Content="TextBlock" Command="{Binding AddTextBlockCommand}" />
+                <Button Content="Label" Command="{Binding AddLabelCommand}" />
+                <Button Content="Button" Command="{Binding AddButtonCommand}" />
+                <Button Content="Progress" Command="{Binding AddProgressBarCommand}" />
+                <Button Content="Separator" Command="{Binding AddSeparatorCommand}" />
+              </UniformGrid>
+            </Expander>
+            <Expander Header="Eingabe" IsExpanded="False">
+              <UniformGrid Columns="2" Margin="4">
+                <Button Content="TextBox" Command="{Binding AddTextBoxCommand}" />
+                <Button Content="CheckBox" Command="{Binding AddCheckBoxCommand}" />
+                <Button Content="ComboBox" Command="{Binding AddComboBoxCommand}" />
+                <Button Content="Numeric" Command="{Binding AddNumericUpDownCommand}" />
+                <Button Content="RadioButton" Command="{Binding AddRadioButtonCommand}" />
+                <Button Content="Slider" Command="{Binding AddSliderCommand}" />
+                <Button Content="Toggle" Command="{Binding AddToggleSwitchCommand}" />
+              </UniformGrid>
+            </Expander>
+            <Expander Header="Layout und Container" IsExpanded="False">
+              <StackPanel Spacing="6" Margin="4">
+                <TextBlock Text="Add layout container" FontWeight="SemiBold" />
+                <UniformGrid Columns="2">
+                  <Button Content="Border" Command="{Binding AddBorderCommand}" />
+                  <Button Content="Content" Command="{Binding AddContentControlCommand}" />
+                  <Button Content="DockPanel" Command="{Binding AddDockPanelCommand}" />
+                  <Button Content="Expander" Command="{Binding AddExpanderCommand}" />
+                  <Button Content="GroupBox" Command="{Binding AddGroupBoxCommand}" />
+                  <Button Content="Grid" Command="{Binding AddGridCommand}" />
+                  <Button Content="ScrollViewer" Command="{Binding AddScrollViewerCommand}" />
+                  <Button Content="StackPanel" Command="{Binding AddStackPanelCommand}" />
+                  <Button Content="UniformGrid" Command="{Binding AddUniformGridCommand}" />
+                  <Button Content="Viewbox" Command="{Binding AddViewboxCommand}" />
+                  <Button Content="WrapPanel" Command="{Binding AddWrapPanelCommand}" />
+                </UniformGrid>
+              </StackPanel>
+            </Expander>
+            <TextBlock Text="Correct invalid markup first, then add controls. DockPanel keeps its client last; Grid uses the next free cell."
+                       FontWeight="SemiBold"
+                       TextWrapping="Wrap" />
+            <ComboBox ItemsSource="{Binding DockPanelPlacements}"
+                      SelectedItem="{Binding SelectedDockPanelPlacement, Mode=TwoWay}"
+                      IsVisible="{Binding IsDockPanelSelected}" />
           </StackPanel>
-        <TextBlock Text="Add to selected container (panels append; Grid uses the next free cell)"
+        </ScrollViewer>
+      </Grid>
+    </Border>
+    <GridSplitter Grid.Column="3"
+                  Width="8"
+                  ResizeDirection="Columns" />
+    <Border Grid.Column="4"
+            Padding="8"
+            BorderBrush="{DynamicResource ThemeControlMidBrush}"
+            BorderThickness="1"
+            CornerRadius="4">
+      <Grid RowDefinitions="Auto,Auto,*,Auto"
+            RowSpacing="8">
+        <TextBlock Grid.Row="0"
+                   Text="{Binding SelectedElementName}"
                    FontWeight="SemiBold" />
-        <StackPanel Orientation="Horizontal" Spacing="4">
-          <Button Content="TextBlock" Command="{Binding AddTextBlockCommand}" />
-          <Button Content="Label" Command="{Binding AddLabelCommand}" />
-          <Button Content="TextBox" Command="{Binding AddTextBoxCommand}" />
-          <Button Content="Button" Command="{Binding AddButtonCommand}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="4">
-          <Button Content="CheckBox" Command="{Binding AddCheckBoxCommand}" />
-          <Button Content="ComboBox" Command="{Binding AddComboBoxCommand}" />
-          <Button Content="Numeric" Command="{Binding AddNumericUpDownCommand}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="4">
-          <Button Content="RadioButton" Command="{Binding AddRadioButtonCommand}" />
-          <Button Content="Slider" Command="{Binding AddSliderCommand}" />
-          <Button Content="Toggle" Command="{Binding AddToggleSwitchCommand}" />
-        </StackPanel>
-        <TextBlock Text="Add layout container" FontWeight="SemiBold" />
-        <StackPanel Orientation="Horizontal" Spacing="4">
-          <Button Content="Border" Command="{Binding AddBorderCommand}" />
-          <Button Content="Content" Command="{Binding AddContentControlCommand}" />
-          <Button Content="DockPanel" Command="{Binding AddDockPanelCommand}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="4">
-          <Button Content="Grid" Command="{Binding AddGridCommand}" />
-          <Button Content="Progress" Command="{Binding AddProgressBarCommand}" />
-          <Button Content="ScrollViewer" Command="{Binding AddScrollViewerCommand}" />
-          <Button Content="Separator" Command="{Binding AddSeparatorCommand}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="4">
-          <Button Content="StackPanel" Command="{Binding AddStackPanelCommand}" />
-          <Button Content="WrapPanel" Command="{Binding AddWrapPanelCommand}" />
-        </StackPanel>
-        <TextBlock Text="{Binding SelectedElementName}"
-                   FontWeight="SemiBold" />
-        <TextBlock Text="{Binding SelectedCapabilityText}"
+        <TextBlock Grid.Row="1"
+                   Text="{Binding SelectedCapabilityText}"
                    TextWrapping="Wrap" />
-        <ComboBox ItemsSource="{Binding EditableProperties}"
-                  SelectedItem="{Binding SelectedProperty, Mode=TwoWay}" />
-        <TextBox Text="{Binding SelectedValue, Mode=TwoWay}"
-                 PlaceholderText="Property value" />
-        <Button HorizontalAlignment="Left"
-                Content="Apply property"
-                Command="{Binding ApplySelectedValueCommand}" />
-        <TextBlock Text="{Binding StatusText}"
+        <ScrollViewer Grid.Row="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+          <StackPanel Spacing="12">
+            <ItemsControl ItemsSource="{Binding PropertyRows}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:AxamlPropertyRowViewModel">
+                  <StackPanel Spacing="3">
+                    <Grid ColumnDefinitions="120,*"
+                          ColumnSpacing="6">
+                      <TextBlock Grid.Column="0"
+                                 Text="{Binding Name}"
+                                 VerticalAlignment="Center"
+                                 ToolTip.Tip="{Binding ReadOnlyReason}" />
+                      <TextBox Grid.Column="1"
+                               IsVisible="{Binding IsTextEditor}"
+                               Text="{Binding Value, Mode=TwoWay}"
+                               GotFocus="OnPropertyEditorGotFocus"
+                               TextChanged="OnPropertyTextChanged"
+                               LostFocus="OnPropertyEditorLostFocus" />
+                      <TextBox Grid.Column="1"
+                               IsVisible="{Binding IsNumberEditor}"
+                               Text="{Binding Value, Mode=TwoWay}"
+                               GotFocus="OnPropertyEditorGotFocus"
+                               TextChanged="OnPropertyTextChanged"
+                               LostFocus="OnPropertyEditorLostFocus" />
+                      <ComboBox Grid.Column="1"
+                                IsVisible="{Binding IsChoiceEditor}"
+                                ItemsSource="{Binding Options}"
+                                SelectedItem="{Binding Value, Mode=TwoWay}"
+                                GotFocus="OnPropertyEditorGotFocus"
+                                LostFocus="OnPropertyEditorLostFocus"
+                                SelectionChanged="OnPropertyChoiceChanged" />
+                      <TextBlock Grid.Column="1"
+                                 IsVisible="{Binding IsReadOnly}"
+                                 Text="{Binding Value}"
+                                 VerticalAlignment="Center"
+                                 ToolTip.Tip="{Binding ReadOnlyReason}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto"
+                          IsVisible="{Binding HasValidationError}"
+                          ColumnSpacing="6">
+                      <TextBlock Text="{Binding ValidationError}"
+                                 TextWrapping="Wrap" />
+                      <Button Grid.Column="1"
+                              Content="Discard"
+                              IsVisible="{Binding IsDraft}"
+                              Click="OnDiscardPropertyDraft" />
+                    </Grid>
+                    <TextBlock Text="{Binding ReadOnlyReason}"
+                               IsVisible="{Binding HasReadOnlyReason}"
+                               FontSize="11"
+                               TextWrapping="Wrap" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <StackPanel Spacing="4"
+                        IsVisible="{Binding HasBindingRows}">
+              <TextBlock Text="ViewModel bindings"
+                         FontWeight="SemiBold" />
+              <ItemsControl ItemsSource="{Binding BindingRows}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:AxamlBindingRowViewModel">
+                    <StackPanel Spacing="3">
+                      <TextBlock Text="{Binding PropertyName}"
+                                 FontWeight="SemiBold" />
+                      <TextBlock Text="{Binding MemberKindLabel}"
+                                 FontSize="11" />
+                      <ComboBox ItemsSource="{Binding MemberSources}"
+                                SelectedItem="{Binding MemberSource, Mode=TwoWay}" />
+                      <ComboBox ItemsSource="{Binding AvailableMembers}"
+                                SelectedItem="{Binding SelectedMember, Mode=TwoWay}"
+                                IsVisible="{Binding IsSelectingExistingMember}" />
+                      <TextBox Text="{Binding NewMemberName, Mode=TwoWay}"
+                               PlaceholderText="{Binding NewMemberPlaceholder}"
+                               IsVisible="{Binding IsCreatingNewMember}" />
+                      <Button HorizontalAlignment="Left"
+                              Content="Apply binding"
+                              Click="OnApplyBinding" />
+                      <TextBlock Text="{Binding Diagnostic}"
+                                 IsVisible="{Binding HasDiagnostic}"
+                                 TextWrapping="Wrap" />
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Text="Existing members can be selected. In the Workbench, applying a missing member reviews its AXAML binding and ViewModel change together. Save the AXAML file first. The standalone host edits AXAML only."
+                         TextWrapping="Wrap" />
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+        <TextBlock Grid.Row="3"
+                   Text="{Binding StatusText}"
                    TextWrapping="Wrap" />
-      </StackPanel>
-      </ScrollViewer>
+      </Grid>
     </Border>
   </Grid>
 </UserControl>

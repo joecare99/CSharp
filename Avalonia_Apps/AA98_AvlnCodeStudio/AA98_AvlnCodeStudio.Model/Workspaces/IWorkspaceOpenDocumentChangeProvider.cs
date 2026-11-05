@@ -8,11 +8,16 @@ public interface IWorkspaceOpenDocumentChangeProvider : IWorkspaceOpenDocumentPr
     /// <summary>
     /// Returns whether exactly one open document can transition from the expected snapshot.
     /// </summary>
-    bool CanApplyChange(string fullPath, string expectedContent);
+    bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent);
 
     /// <summary>
     /// Applies a change only if the open document still matches the expected snapshot.
-    /// A successful call must leave the document clean and matching the proposed snapshot.
+    /// The saved snapshot is supplied separately so dirty documents can be restored accurately by undo.
     /// </summary>
-    void ApplyChange(string fullPath, string expectedContent, string proposedContent);
+    void ApplyChange(
+        string fullPath,
+        string expectedContent,
+        string expectedSavedContent,
+        string proposedContent,
+        string proposedSavedContent);
 }
