@@ -13,6 +13,7 @@
           <DataTemplate x:DataType="vm:PropertyEditorItemViewModel">
             <Grid ColumnDefinitions="140,*"
                   RowDefinitions="Auto,Auto,Auto"
+                  IsVisible="{Binding IsVisible}"
                   Margin="0,0,0,6">
               <TextBlock Grid.Column="0"
                          VerticalAlignment="Center"
@@ -26,17 +27,20 @@
               <Grid Grid.Column="1">
                 <TextBox IsVisible="{Binding ShowScalarEditor}"
                          IsEnabled="{Binding IsEditable}"
+                         AutomationProperties.Name="{Binding DisplayName}"
                          PasswordChar="{Binding PasswordChar}"
                            Text="{Binding ScalarValue, Mode=TwoWay}"
                            GotFocus="OnEditorGotFocus"
                            LostFocus="OnEditorLostFocus" />
                   <CheckBox IsVisible="{Binding ShowBooleanEditor}"
                             IsEnabled="{Binding IsEditable}"
+                            AutomationProperties.Name="{Binding DisplayName}"
                             IsChecked="{Binding BooleanValue, Mode=TwoWay}"
                             GotFocus="OnEditorGotFocus"
                             LostFocus="OnEditorLostFocus" />
                   <ComboBox IsVisible="{Binding ShowEnumEditor}"
                             IsEnabled="{Binding IsEditable}"
+                            AutomationProperties.Name="{Binding DisplayName}"
                             ItemsSource="{Binding Options}"
                             SelectedItem="{Binding SelectedOption, Mode=TwoWay}"
                             GotFocus="OnEditorGotFocus"

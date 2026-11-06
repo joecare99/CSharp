@@ -49,6 +49,10 @@ public sealed class PropertyEditorViewModel : ObservableObject
             return;
         }
 
+        foreach (PropertyEditorItemViewModel item in Items)
+        {
+            item.Detach();
+        }
         Items.Clear();
         foreach (IPropertyItem item in orderedItems)
         {

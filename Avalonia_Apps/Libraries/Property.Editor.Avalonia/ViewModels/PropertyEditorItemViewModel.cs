@@ -28,6 +28,10 @@ public sealed partial class PropertyEditorItemViewModel : ObservableObject
     /// <summary>Gets the neutral property item.</summary>
     public IPropertyItem PropertyItem => _propertyItem;
 
+    /// <summary>Gets or sets whether the host displays this item; the underlying draft remains available.</summary>
+    [ObservableProperty]
+    private bool _isVisible = true;
+
     /// <summary>Gets the display name supplied by the consumer.</summary>
     public string DisplayName => _propertyItem.DisplayName;
 
@@ -153,6 +157,8 @@ public sealed partial class PropertyEditorItemViewModel : ObservableObject
     {
         SynchronizeFromItem();
     }
+
+    internal void Detach() => _propertyItem.ValueChanged -= OnPropertyValueChanged;
 
     private void ApplyValue(object? value)
     {
