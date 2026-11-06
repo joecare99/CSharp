@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 
 namespace Config.Service.Tests;
 
@@ -91,5 +92,62 @@ public sealed class ConfigLayerStorePathResolverTests
             @"Nested\Editor",
             userRoot: Path.GetTempPath(),
             systemRoot: Path.GetTempPath()));
+    }
+
+    [TestMethod]
+    public void EvaluateWriteAccess_DoesNotCreateUnprovisionedDirectory()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "ConfigLayerAccessTests", Guid.NewGuid().ToString("N"));
+        try
+        {
+            JsonConfigLayerStore store = new(ConfigLayer.System, Path.Combine(directory, "system.json"));
+
+            ConfigLayerStoreAccessResult result = ConfigLayerStoreAccessEvaluator.Evaluate(store);
+
+            Assert.IsFalse(result.CanWrite);
+            StringAssert.Contains(result.ReadOnlyReason, "not been provisioned");
+            Assert.IsFalse(Directory.Exists(directory));
+        }
+        finally
+        {
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public void EvaluateWriteAccess_UsesAndRemovesAnEphemeralSiblingProbe()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "ConfigLayerAccessTests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string path = Path.Combine(directory, "system.json");
+            JsonConfigLayerStore store = new(ConfigLayer.System, path);
+
+            ConfigLayerStoreAccessResult result = ConfigLayerStoreAccessEvaluator.Evaluate(store);
+
+            Assert.IsTrue(result.CanWrite, result.ReadOnlyReason);
+            string[] files = Directory.GetFiles(directory);
+            Assert.AreEqual(0, files.Length);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public void EvaluateWriteAccess_RefusesUnsupportedStoreTypes()
+    {
+        IConfigLayerStore store = Substitute.For<IConfigLayerStore>();
+        store.Layer.Returns(ConfigLayer.Group);
+
+        ConfigLayerStoreAccessResult result = ConfigLayerStoreAccessEvaluator.Evaluate(store);
+
+        Assert.IsFalse(result.CanWrite);
+        StringAssert.Contains(result.ReadOnlyReason, "cannot be verified");
     }
 }
