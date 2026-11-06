@@ -69,6 +69,8 @@
                     </MenuItem>
                     <MenuItem Header="_View">
                         <MenuItem Header="Settings..." Command="{Binding OpenConfigurationCommand}" />
+                        <MenuItem Header="System Settings..." Command="{Binding OpenSystemConfigurationCommand}" />
+                        <MenuItem Header="Group Settings..." Command="{Binding OpenGroupConfigurationCommand}" />
                         <MenuItem Header="AI Credentials..." Command="{Binding OpenAICredentialsCommand}" />
                         <MenuItem Header="Project Settings..." Command="{Binding OpenProjectConfigurationCommand}" />
                     </MenuItem>

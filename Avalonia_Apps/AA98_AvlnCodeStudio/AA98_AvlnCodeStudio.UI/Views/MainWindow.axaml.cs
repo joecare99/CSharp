@@ -1,8 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Config.Service;
 using Config.UI;
 using Config.UI.Avalonia.Views;
+using Config.UI.ConfigService;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Property.Editor;
@@ -14,6 +16,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AA98_AvlnCodeStudio.UI.Views
 {
@@ -30,6 +33,11 @@ namespace AA98_AvlnCodeStudio.UI.Views
         }
 
         public MainWindow(ViewModels.MainWindowViewModel viewModel)
+            : this(viewModel, null)
+        {
+        }
+
+        public MainWindow(ViewModels.MainWindowViewModel viewModel, IServiceProvider? hostServices)
             : this()
         {
             DataContext = viewModel;
@@ -97,6 +105,91 @@ namespace AA98_AvlnCodeStudio.UI.Views
                         viewModel.ConfigUi.ValidateChangesAsync = originalValidator;
                     }
                 }
+            };
+            viewModel.OpenConfigurationLayerDialogAsync = async layer =>
+            {
+                if (hostServices is null)
+                {
+                    viewModel.Editor.StatusText = "Layer-specific settings are unavailable because the host services were not provided.";
+                    return;
+                }
+
+                IConfigLayerStore? targetStore = hostServices.GetServices<IConfigLayerStore>()
+                    .SingleOrDefault(store => store.Layer == layer);
+                if (targetStore is null)
+                {
+                    viewModel.Editor.StatusText = layer == ConfigLayer.Group
+                        ? "Group settings are not configured. Configure both AVLN_CONFIG_GROUP_ROOT and AVLN_CONFIG_GROUP_ID."
+                        : "The system configuration store is not available.";
+                    return;
+                }
+
+                ConfigLayerStoreAccessResult access = ConfigLayerStoreAccessEvaluator.Evaluate(targetStore);
+                ConfigLayeredUiSectionRegistry registry = new(
+                    hostServices.GetRequiredService<IConfigSectionRegistry>(),
+                    hostServices.GetRequiredService<ConfigLayeredSettingsResolver>(),
+                    targetStore,
+                    layer,
+                    optionsProvider: static (section, property) =>
+                    {
+                        if (!string.Equals(section.Name, "Workbench", StringComparison.Ordinal)
+                            || !string.Equals(property.Name, nameof(Configuration.CodeStudioSettings.CredentialManager), StringComparison.Ordinal))
+                        {
+                            return null;
+                        }
+
+                        List<PropertyOption> options =
+                        [
+                            new(Configuration.CredentialManagerSelection.None, "None (session only)"),
+                            new(Configuration.CredentialManagerSelection.EncryptedFileVault, "Encrypted local vault (passphrase)"),
+                        ];
+                        if (OperatingSystem.IsWindows())
+                        {
+                            options.Add(new(Configuration.CredentialManagerSelection.WindowsCredentialManager, "Windows Credential Manager"));
+                        }
+                        else if (OperatingSystem.IsLinux())
+                        {
+                            options.Add(new(Configuration.CredentialManagerSelection.LinuxSecretService, "Linux Secret Service"));
+                        }
+
+                        return options;
+                    },
+                    isReadOnly: !access.CanWrite,
+                    storageLocation: targetStore is JsonConfigLayerStore jsonStore ? jsonStore.FilePath : null);
+                global::Config.UI.Avalonia.ViewModels.ConfigUiViewModel configViewModel = new(
+                    registry,
+                    new PropertyEditorViewModel(),
+                    layer == ConfigLayer.System ? "System Settings" : "Group Settings");
+                Configuration.WorkbenchSettingsRuntimeActivator settingsActivator =
+                    hostServices.GetRequiredService<Configuration.WorkbenchSettingsRuntimeActivator>();
+                configViewModel.ValidateChangesAsync = settingsActivator.ValidateChangesAsync;
+                configViewModel.SectionAppliedAsync = settingsActivator.ActivateAsync;
+
+                string layerContext = layer == ConfigLayer.System
+                    ? "System values are not treated as enforced policy until operating-system protection is independently verified."
+                    : "The configured group ID is used for this layer; group membership is not verified by the workbench.";
+                StackPanel hostContent = new() { Spacing = 6 };
+                if (!access.CanWrite)
+                {
+                    hostContent.Children.Add(new TextBlock
+                    {
+                        Text = access.ReadOnlyReason,
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                    });
+                }
+
+                hostContent.Children.Add(new TextBlock
+                {
+                    Text = layerContext,
+                    TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                });
+
+                ConfigUiDialog layerDialog = new(configViewModel)
+                {
+                    Height = 620,
+                    HostContent = hostContent,
+                };
+                await layerDialog.ShowDialog(this);
             };
             viewModel.OpenAICredentialsDialogAsync = async () =>
                 await new AICredentialsDialog { DataContext = viewModel }.ShowDialog(this);

@@ -65,6 +65,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly WorkbenchSettingsRuntimeActivator? _settingsRuntimeActivator;
         private readonly CredentialProviderCatalog? _credentialProviderCatalog;
         private long _credentialContextVersion;
+        private long _credentialStatusRevision;
         private readonly List<AIMessage> _aiConversation = [];
         private readonly List<Diagnostic> _buildDiagnostics = [];
         private readonly Dictionary<string, HashSet<int>> _debugBreakpoints = new(
@@ -218,6 +219,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         /// <summary>Opens the settings dialog for an explicitly selected project.</summary>
         public Func<Task>? OpenProjectConfigurationDialogAsync { get; set; }
+
+        /// <summary>Opens settings for an explicitly selected configuration layer.</summary>
+        public Func<ConfigLayer, Task>? OpenConfigurationLayerDialogAsync { get; set; }
 
         /// <summary>Opens the AI credential manager outside the chat pane.</summary>
         public Func<Task>? OpenAICredentialsDialogAsync { get; set; }
@@ -576,6 +580,25 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string CredentialProviderDisplay => SelectedCredentialProviderId ?? "None (session only)";
 
+        public bool IsEncryptedVaultSelected =>
+            string.Equals(SelectedCredentialProviderId, "encrypted-file-vault", StringComparison.Ordinal);
+
+        public bool EncryptedVaultNeedsInitialization =>
+            IsEncryptedVaultSelected && TryGetSelectedEncryptedVault(out EncryptedFileCredentialProvider? vault) && !vault.IsInitialized;
+
+        public bool EncryptedVaultNeedsUnlock =>
+            IsEncryptedVaultSelected && TryGetSelectedEncryptedVault(out EncryptedFileCredentialProvider? vault)
+            && vault.IsInitialized && !vault.IsUnlocked;
+
+        public bool EncryptedVaultUnlocked =>
+            IsEncryptedVaultSelected && TryGetSelectedEncryptedVault(out EncryptedFileCredentialProvider? vault) && vault.IsUnlocked;
+
+        public string EncryptedVaultPath =>
+            IsEncryptedVaultSelected
+                && TryGetSelectedEncryptedVault(out EncryptedFileCredentialProvider? vault)
+                ? vault.VaultPath
+                : string.Empty;
+
         public IReadOnlyList<string> AIChatAgentModes { get; } = ["Plan", "Build", "Debug"];
 
         [ObservableProperty]
@@ -590,13 +613,32 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         public string CredentialStorageStatus
         {
             get => _credentialStorageStatus;
-            private set => SetProperty(ref _credentialStorageStatus, value);
+            private set
+            {
+                Interlocked.Increment(ref _credentialStatusRevision);
+                SetProperty(ref _credentialStorageStatus, value);
+            }
         }
 
         private string _credentialStorageStatus = "Choose a credential provider. No automatic fallback is used.";
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(EncryptedVaultNeedsInitialization))]
+        [NotifyPropertyChangedFor(nameof(EncryptedVaultNeedsUnlock))]
+        [NotifyPropertyChangedFor(nameof(EncryptedVaultUnlocked))]
+        [NotifyPropertyChangedFor(nameof(EncryptedVaultPath))]
         private string? _selectedCredentialProviderId;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(EncryptedVaultNeedsInitialization))]
+        [NotifyPropertyChangedFor(nameof(EncryptedVaultNeedsUnlock))]
+        [NotifyPropertyChangedFor(nameof(EncryptedVaultUnlocked))]
+        [NotifyPropertyChangedFor(nameof(EncryptedVaultPath))]
+        [NotifyCanExecuteChangedFor(nameof(SaveAICredentialCommand))]
+        [NotifyCanExecuteChangedFor(nameof(LoadAICredentialCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DeleteAICredentialCommand))]
+        [NotifyCanExecuteChangedFor(nameof(RefreshCredentialProviderStatusCommand))]
+        private bool _credentialOperationBusy;
 
         public string AIChatInputPlaceholderText => "Ask a question or request a workspace action...";
 
@@ -662,16 +704,78 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     "windows-credential-manager",
                 Configuration.CredentialManagerSelection.LinuxSecretService when OperatingSystem.IsLinux() =>
                     "linux-secret-service",
+                Configuration.CredentialManagerSelection.EncryptedFileVault =>
+                    "encrypted-file-vault",
                 _ => null,
             };
+
+        public async Task InitializeEncryptedVaultAsync(
+            CredentialSecret passphrase,
+            CredentialSecret confirmation,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(passphrase);
+            ArgumentNullException.ThrowIfNull(confirmation);
+            if (!passphrase.Reveal().SequenceEqual(confirmation.Reveal()))
+            {
+                CredentialStorageStatus = "The vault passphrases do not match.";
+                return;
+            }
+
+            await RunEncryptedVaultOperationAsync(
+                "The encrypted vault was initialized and is unlocked for this session.",
+                (vault, token) => vault.InitializeAsync(passphrase, token),
+                mayHaveTakenEffect: true,
+                "Could not initialize the vault",
+                cancellationToken);
+        }
+
+        public async Task UnlockEncryptedVaultAsync(
+            CredentialSecret passphrase,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(passphrase);
+            await RunEncryptedVaultOperationAsync(
+                "The encrypted vault is unlocked for this session.",
+                (vault, token) => vault.UnlockAsync(passphrase, token),
+                mayHaveTakenEffect: false,
+                "Could not unlock the vault",
+                cancellationToken);
+        }
+
+        public async Task LockEncryptedVaultAsync(CancellationToken cancellationToken = default)
+        {
+            bool locked = await RunEncryptedVaultOperationAsync(
+                "The encrypted vault is locked.",
+                static (vault, token) => vault.LockAsync(token).AsTask(),
+                mayHaveTakenEffect: false,
+                "Could not lock the vault",
+                cancellationToken);
+            if (locked)
+            {
+                AiApiKey = string.Empty;
+                if (_aiSettings is not null)
+                {
+                    _aiSettings.ApiKey = string.Empty;
+                }
+
+                CredentialStorageStatus = "The encrypted vault is locked and the session API key was cleared.";
+            }
+        }
 
         partial void OnSelectedCredentialProviderIdChanged(string? value)
         {
             _credentialContextVersion++;
             OnPropertyChanged(nameof(CredentialProviderDisplay));
+            OnPropertyChanged(nameof(IsEncryptedVaultSelected));
+            OnPropertyChanged(nameof(EncryptedVaultNeedsInitialization));
+            OnPropertyChanged(nameof(EncryptedVaultNeedsUnlock));
+            OnPropertyChanged(nameof(EncryptedVaultUnlocked));
+            OnPropertyChanged(nameof(EncryptedVaultPath));
             SaveAICredentialCommand.NotifyCanExecuteChanged();
             LoadAICredentialCommand.NotifyCanExecuteChanged();
             DeleteAICredentialCommand.NotifyCanExecuteChanged();
+            RefreshCredentialProviderStatusCommand.NotifyCanExecuteChanged();
             _ = UpdateCredentialProviderStatusAsync(value);
         }
 
@@ -710,6 +814,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         private bool CanManageAICredential() =>
             _credentialProviderCatalog is not null
+            && !CredentialOperationBusy
             && !string.IsNullOrWhiteSpace(SelectedCredentialProviderId);
 
         private bool CanSaveAICredential() =>
@@ -718,39 +823,65 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [RelayCommand(CanExecute = nameof(CanSaveAICredential))]
         private async Task SaveAICredentialAsync(CancellationToken cancellationToken)
         {
-            if (!TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
+            if (CredentialOperationBusy || !TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
             {
                 return;
             }
 
+            Interlocked.Increment(ref _credentialStatusRevision);
+            long version = _credentialContextVersion;
+            bool operationStarted = false;
+            CredentialOperationBusy = true;
             try
             {
                 using CredentialSecret secret = new(AiApiKey.AsSpan());
-                await provider.SetAsync(GetAICredentialId(AiEndpoint), secret, cancellationToken);
-                CredentialStorageStatus = $"API key saved in {provider.ProviderId}.";
+                CredentialId id = GetAICredentialId(AiEndpoint);
+                operationStarted = true;
+                await provider.SetAsync(id, secret, cancellationToken);
+                CredentialStorageStatus = version == _credentialContextVersion
+                    ? $"API key saved in {provider.ProviderId}."
+                    : $"API key saved in {provider.ProviderId} for the previous credential context; the current session key was left unchanged.";
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
+                CredentialStorageStatus = operationStarted
+                    ? "Saving was cancelled; the key may already have been saved. Check the original credential context before retrying."
+                    : "Saving was cancelled before contacting the credential manager.";
                 throw;
             }
             catch (Exception exception)
             {
-                CredentialStorageStatus = $"Could not save API key: {exception.Message}";
+                string uncertainty = operationStarted
+                    ? " The key may already have been saved; check the original credential context before retrying."
+                    : string.Empty;
+                string context = version == _credentialContextVersion ? "" : " for the previous credential context";
+                string reason = operationStarted ? DescribeCredentialProviderFailure(exception) : DescribeCredentialPreparationFailure(exception);
+                CredentialStorageStatus = $"Could not save API key{context}: {reason}{uncertainty}";
+            }
+            finally
+            {
+                CredentialOperationBusy = false;
             }
         }
 
         [RelayCommand(CanExecute = nameof(CanManageAICredential))]
         private async Task LoadAICredentialAsync(CancellationToken cancellationToken)
         {
-            if (!TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
+            if (CredentialOperationBusy || !TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
             {
                 return;
             }
 
+            Interlocked.Increment(ref _credentialStatusRevision);
+            long version = _credentialContextVersion;
+            bool operationStarted = false;
+            CredentialOperationBusy = true;
             try
             {
-                long version = _credentialContextVersion;
-                using CredentialSecret? secret = await provider.GetAsync(GetAICredentialId(AiEndpoint), cancellationToken);
+                CredentialId id = GetAICredentialId(AiEndpoint);
+                operationStarted = true;
+                using CredentialSecret? secret = await provider.GetAsync(id, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
                 if (version != _credentialContextVersion)
                 {
                     CredentialStorageStatus = "The endpoint, credential manager, or session key changed while loading; the result was discarded.";
@@ -768,29 +899,42 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
+                string context = version == _credentialContextVersion ? "" : " for the previous credential context";
+                CredentialStorageStatus = $"Loading API key{context} was cancelled; the current session key was left unchanged.";
                 throw;
             }
             catch (Exception exception)
             {
-                CredentialStorageStatus = $"Could not load API key: {exception.Message}";
+                string context = version == _credentialContextVersion ? "" : " for the previous credential context";
+                string reason = operationStarted ? DescribeCredentialProviderFailure(exception) : DescribeCredentialPreparationFailure(exception);
+                CredentialStorageStatus = $"Could not load API key{context}: {reason}";
+            }
+            finally
+            {
+                CredentialOperationBusy = false;
             }
         }
 
         [RelayCommand(CanExecute = nameof(CanManageAICredential))]
         private async Task DeleteAICredentialAsync(CancellationToken cancellationToken)
         {
-            if (!TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
+            if (CredentialOperationBusy || !TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
             {
                 return;
             }
 
+            Interlocked.Increment(ref _credentialStatusRevision);
+            long version = _credentialContextVersion;
+            bool operationStarted = false;
+            CredentialOperationBusy = true;
             try
             {
-                long version = _credentialContextVersion;
-                await provider.DeleteAsync(GetAICredentialId(AiEndpoint), cancellationToken);
+                CredentialId id = GetAICredentialId(AiEndpoint);
+                operationStarted = true;
+                await provider.DeleteAsync(id, cancellationToken);
                 if (version != _credentialContextVersion)
                 {
-                    CredentialStorageStatus = "The stored key was deleted for the previous endpoint; the current session key was left unchanged.";
+                    CredentialStorageStatus = "The stored key was deleted for the previous credential context; the current session key was left unchanged.";
                     return;
                 }
                 AiApiKey = string.Empty;
@@ -798,18 +942,30 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
+                CredentialStorageStatus = operationStarted
+                    ? "Deleting was cancelled; the stored key may already have been deleted. Check the original credential context before retrying."
+                    : "Deleting was cancelled before contacting the credential manager.";
                 throw;
             }
             catch (Exception exception)
             {
-                CredentialStorageStatus = $"Could not delete API key: {exception.Message}";
+                string uncertainty = operationStarted
+                    ? " The stored key may already have been deleted; check the original credential context before retrying."
+                    : string.Empty;
+                string context = version == _credentialContextVersion ? "" : " for the previous credential context";
+                string reason = operationStarted ? DescribeCredentialProviderFailure(exception) : DescribeCredentialPreparationFailure(exception);
+                CredentialStorageStatus = $"Could not delete API key{context}: {reason}{uncertainty}";
+            }
+            finally
+            {
+                CredentialOperationBusy = false;
             }
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanManageAICredential))]
         private async Task RefreshCredentialProviderStatusAsync(CancellationToken cancellationToken)
         {
-            if (!TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
+            if (CredentialOperationBusy || !TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
             {
                 return;
             }
@@ -821,6 +977,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             string? providerId,
             CancellationToken cancellationToken = default)
         {
+            long revision = Interlocked.Increment(ref _credentialStatusRevision);
             if (string.IsNullOrWhiteSpace(providerId) || _credentialProviderCatalog is null)
             {
                 CredentialStorageStatus = "Choose a credential provider. No automatic fallback is used.";
@@ -832,7 +989,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 CredentialProviderStatus status = await _credentialProviderCatalog
                     .GetRequired(providerId)
                     .GetStatusAsync(cancellationToken);
-                if (!string.Equals(SelectedCredentialProviderId, providerId, StringComparison.Ordinal))
+                if (revision != Interlocked.Read(ref _credentialStatusRevision)
+                    || !string.Equals(SelectedCredentialProviderId, providerId, StringComparison.Ordinal))
                 {
                     return;
                 }
@@ -840,7 +998,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 CredentialStorageStatus = status.Availability switch
                 {
                     CredentialProviderAvailability.Available => $"{providerId} is available.",
-                    CredentialProviderAvailability.Locked => $"{providerId} is locked. Unlock the operating-system keyring and retry.",
+                    CredentialProviderAvailability.Locked => $"{providerId} is locked. Unlock it and retry.",
                     _ => $"{providerId} is unavailable. Select or configure a provider explicitly; no fallback is used.",
                 };
             }
@@ -850,9 +1008,10 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
             catch (Exception exception)
             {
-                if (string.Equals(SelectedCredentialProviderId, providerId, StringComparison.Ordinal))
+                if (revision == Interlocked.Read(ref _credentialStatusRevision)
+                    && string.Equals(SelectedCredentialProviderId, providerId, StringComparison.Ordinal))
                 {
-                    CredentialStorageStatus = $"Could not check {providerId}: {exception.Message}";
+                    CredentialStorageStatus = $"Could not check {providerId}: {DescribeCredentialProviderFailure(exception)}";
                 }
             }
         }
@@ -871,12 +1030,103 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 provider = _credentialProviderCatalog.GetRequired(SelectedCredentialProviderId);
                 return true;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                CredentialStorageStatus = $"Credential provider selection failed: {exception.Message}";
+                CredentialStorageStatus = "Credential provider selection failed. Select a registered credential manager.";
                 return false;
             }
         }
+
+        private bool TryGetSelectedEncryptedVault([NotNullWhen(true)] out EncryptedFileCredentialProvider? vault)
+        {
+            vault = null;
+            if (!IsEncryptedVaultSelected || _credentialProviderCatalog is null)
+            {
+                return false;
+            }
+
+            try
+            {
+                vault = _credentialProviderCatalog.GetRequired(SelectedCredentialProviderId!) as EncryptedFileCredentialProvider;
+                if (vault is not null)
+                {
+                    return true;
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                CredentialStorageStatus = "The encrypted vault provider is not registered in this host.";
+                return false;
+            }
+
+            CredentialStorageStatus = "The selected provider is not an encrypted vault.";
+            return false;
+        }
+
+        private async Task<bool> RunEncryptedVaultOperationAsync(
+            string successMessage,
+            Func<EncryptedFileCredentialProvider, CancellationToken, Task> operation,
+            bool mayHaveTakenEffect,
+            string failureMessage,
+            CancellationToken cancellationToken)
+        {
+            if (CredentialOperationBusy || !TryGetSelectedEncryptedVault(out EncryptedFileCredentialProvider? vault))
+            {
+                return false;
+            }
+
+            bool operationStarted = false;
+            CredentialOperationBusy = true;
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                operationStarted = true;
+                await operation(vault, cancellationToken);
+                CredentialStorageStatus = successMessage;
+                return true;
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                CredentialStorageStatus = mayHaveTakenEffect
+                    ? $"{failureMessage}: cancelled; the vault may already have been created. Check its status before retrying."
+                    : $"{failureMessage}: cancelled.";
+                throw;
+            }
+            catch (Exception exception)
+            {
+                string uncertainty = operationStarted && mayHaveTakenEffect
+                    ? " The vault may already have been created; check its status before retrying."
+                    : string.Empty;
+                CredentialStorageStatus = $"{failureMessage}: {DescribeCredentialProviderFailure(exception)}{uncertainty}";
+                return false;
+            }
+            finally
+            {
+                CredentialOperationBusy = false;
+                OnPropertyChanged(nameof(EncryptedVaultNeedsInitialization));
+                OnPropertyChanged(nameof(EncryptedVaultNeedsUnlock));
+                OnPropertyChanged(nameof(EncryptedVaultUnlocked));
+                OnPropertyChanged(nameof(EncryptedVaultPath));
+            }
+        }
+
+        private static string DescribeCredentialPreparationFailure(Exception exception) =>
+            exception is InvalidOperationException
+                ? "A valid absolute HTTP(S) endpoint is required to manage its API key."
+                : "Credential preparation failed.";
+
+        private static string DescribeCredentialProviderFailure(Exception exception) =>
+            exception switch
+            {
+                CredentialProviderLockedException => "The credential provider is locked. Unlock it and retry.",
+                CredentialVaultUnlockException => "The vault could not be unlocked; the passphrase may be wrong or the file may be damaged.",
+                UnauthorizedAccessException => "Access to the credential manager was denied.",
+                PlatformNotSupportedException => "The credential manager is not supported on this platform.",
+                InvalidDataException => "The credential manager returned invalid or ambiguous data. Inspect the store before retrying.",
+                IOException => "The credential manager encountered an I/O or connection error.",
+                ArgumentException => "The credential manager rejected the credential or its identifier.",
+                _ => "The credential manager reported an error. Check its availability and configuration.",
+            };
 
         private static CredentialId GetAICredentialId(string endpoint)
         {
@@ -1280,6 +1530,29 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             await OpenConfigurationDialogAsync();
+        }
+
+        [RelayCommand]
+        private async Task OpenSystemConfigurationAsync()
+        {
+            await OpenConfigurationLayerAsync(ConfigLayer.System);
+        }
+
+        [RelayCommand]
+        private async Task OpenGroupConfigurationAsync()
+        {
+            await OpenConfigurationLayerAsync(ConfigLayer.Group);
+        }
+
+        private async Task OpenConfigurationLayerAsync(ConfigLayer layer)
+        {
+            if (OpenConfigurationLayerDialogAsync is null)
+            {
+                Editor.StatusText = "Layer-specific settings are not available in this host.";
+                return;
+            }
+
+            await OpenConfigurationLayerDialogAsync(layer);
         }
 
         [RelayCommand(CanExecute = nameof(CanOpenAIConfiguration))]

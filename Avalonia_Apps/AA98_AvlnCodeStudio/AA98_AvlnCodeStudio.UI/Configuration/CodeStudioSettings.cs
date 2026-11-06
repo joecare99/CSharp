@@ -8,6 +8,7 @@ public enum CredentialManagerSelection
     None,
     WindowsCredentialManager,
     LinuxSecretService,
+    EncryptedFileVault,
 }
 
 public enum AIProviderPreset

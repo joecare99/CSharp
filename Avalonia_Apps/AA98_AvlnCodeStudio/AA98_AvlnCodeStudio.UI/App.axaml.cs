@@ -174,6 +174,7 @@ namespace AA98_AvlnCodeStudio.UI
                         List<PropertyOption> options =
                         [
                             new(Configuration.CredentialManagerSelection.None, "None (session only)"),
+                            new(Configuration.CredentialManagerSelection.EncryptedFileVault, "Encrypted local vault (passphrase)"),
                         ];
                         if (OperatingSystem.IsWindows())
                         {
@@ -227,10 +228,13 @@ namespace AA98_AvlnCodeStudio.UI
                     ApiKey = string.Empty,
                 };
             });
+            services.AddSingleton(serviceProvider => new EncryptedFileCredentialProvider(
+                ResolveCredentialVaultPath(userConfigRoot)));
             services.AddSingleton(serviceProvider => new CredentialProviderCatalog(
             [
                 new WindowsCredentialProvider(),
                 new LinuxSecretServiceProvider(),
+                serviceProvider.GetRequiredService<EncryptedFileCredentialProvider>(),
             ]));
             services.AddSingleton<Configuration.WorkbenchSettingsRuntimeActivator>();
             services.AddSingleton<IFileEditorDocumentFactory, FileEditorDocumentFactory>();
@@ -295,7 +299,10 @@ namespace AA98_AvlnCodeStudio.UI
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.AxamlMvvmGenerator>(),
                 serviceProvider.GetRequiredService<Configuration.WorkbenchSettingsRuntimeActivator>(),
                 serviceProvider.GetRequiredService<CredentialProviderCatalog>()));
-            services.AddSingleton<MainWindow>();
+            services.AddSingleton<MainWindow>(serviceProvider =>
+                new MainWindow(
+                    serviceProvider.GetRequiredService<MainWindowViewModel>(),
+                    serviceProvider));
         }
 
         public static MainWindow CreateMainWindow(IServiceProvider serviceProvider)
@@ -310,6 +317,20 @@ namespace AA98_AvlnCodeStudio.UI
             {
                 throw new InvalidOperationException("AA98 main window creation failed. Check UI component and editor registrations.", exception);
             }
+        }
+
+        private static string ResolveCredentialVaultPath(string? userConfigRoot)
+        {
+            string? configuredRoot = userConfigRoot ?? Environment.GetEnvironmentVariable("CONFIG_ROOT");
+            string root = !string.IsNullOrWhiteSpace(configuredRoot)
+                ? configuredRoot
+                : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (string.IsNullOrWhiteSpace(root))
+            {
+                throw new InvalidOperationException("The local application-data directory is unavailable for the credential vault.");
+            }
+
+            return Path.Combine(root, "JC-Soft", "AA98-CodeStudio", "secrets", "vault.json");
         }
 
         private static string ResolveLegacyWorkbenchSettingsPath(string? userConfigRoot)
