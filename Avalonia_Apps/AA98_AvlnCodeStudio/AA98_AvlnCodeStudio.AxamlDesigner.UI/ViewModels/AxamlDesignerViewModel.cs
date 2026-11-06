@@ -46,7 +46,11 @@ public partial class AxamlDesignerViewModel : ObservableObject
             string? expression = node.Properties.TryGetValue(property.Name, out string? value)
                 ? value
                 : null;
-            string memberName = AxamlBindingRowViewModel.ReadBindingPath(expression) ?? string.Empty;
+            string? parsedMemberName = AxamlBindingRowViewModel.ReadBindingPath(
+                expression,
+                out AxamlBindingMode parsedBindingMode,
+                out AxamlBindingUpdateSourceTrigger parsedUpdateSourceTrigger);
+            string memberName = parsedMemberName ?? string.Empty;
             bool isNewRow = !existing.TryGetValue(property.Name, out AxamlBindingRowViewModel? current)
                 || current.ControlType != node.TypeName;
             AxamlBindingRowViewModel row = isNewRow
@@ -55,10 +59,28 @@ public partial class AxamlDesignerViewModel : ObservableObject
                     property.Name,
                     expression,
                     property.TypeName,
-                    property.IsCommand)
+                    property.IsCommand,
+                    property.DefaultBindingMode,
+                    property.SupportsUpdateSourceTrigger)
                 : current!;
             bool bindingChanged = !string.Equals(row.MemberName, memberName, StringComparison.Ordinal);
+            AxamlBindingMode desiredBindingMode = parsedMemberName is null
+                ? property.DefaultBindingMode
+                : parsedBindingMode;
+            bool bindingModeChanged = row.BindingMode != desiredBindingMode;
+            AxamlBindingUpdateSourceTrigger desiredUpdateSourceTrigger = parsedMemberName is null
+                ? AxamlBindingUpdateSourceTrigger.Default
+                : parsedUpdateSourceTrigger;
+            bool updateSourceTriggerChanged = row.UpdateSourceTrigger != desiredUpdateSourceTrigger;
             row.MemberName = memberName;
+            if (isNewRow || bindingChanged || bindingModeChanged)
+            {
+                row.BindingMode = desiredBindingMode;
+            }
+            if (isNewRow || bindingChanged || updateSourceTriggerChanged)
+            {
+                row.UpdateSourceTrigger = desiredUpdateSourceTrigger;
+            }
             row.Diagnostic = _bindingContextDiagnostic;
             AxamlMvvmMemberRequirement[] requirements = _bindingMembers
                 .Select(member => new AxamlMvvmMemberRequirement(member.Name, property.TypeName, property.IsCommand))
@@ -367,7 +389,11 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
         try
         {
-            if (_session.ApplyBinding(row.PropertyName, memberName))
+            if (_session.ApplyBinding(
+                row.PropertyName,
+                memberName,
+                row.BindingMode,
+                row.UpdateSourceTrigger))
             {
                 SynchronizeState();
                 StatusText = $"Binding {row.PropertyName} to '{memberName}' applied.";
@@ -427,7 +453,11 @@ public partial class AxamlDesignerViewModel : ObservableObject
             throw new InvalidOperationException(row.Diagnostic ?? "The binding row is no longer available.");
         }
 
-        return _session.CreateBindingMarkup(row.PropertyName, memberName);
+        return _session.CreateBindingMarkup(
+            row.PropertyName,
+            memberName,
+            row.BindingMode,
+            row.UpdateSourceTrigger);
     }
 
     private bool TryResolveBindingRow(AxamlBindingRowViewModel row, out string memberName)
@@ -435,6 +465,12 @@ public partial class AxamlDesignerViewModel : ObservableObject
         memberName = string.Empty;
         if (!BindingRows.Contains(row) || SelectedNode is null)
         {
+            return false;
+        }
+
+        if (!row.CanEditBinding)
+        {
+            row.Diagnostic = row.BindingExpressionDiagnostic;
             return false;
         }
 
@@ -796,7 +832,8 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
         for (int index = PropertyRows.Count - 1; index >= 0; index--)
         {
-            if (!descriptors.Any(descriptor => descriptor.Name == PropertyRows[index].Name))
+            if (PropertyRows[index].ControlType != node.TypeName
+                || !descriptors.Any(descriptor => descriptor.Name == PropertyRows[index].Name))
             {
                 PropertyRows.RemoveAt(index);
             }

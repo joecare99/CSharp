@@ -1,6 +1,7 @@
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using System;
@@ -35,6 +36,7 @@ public sealed class WorkspaceFileChangeReviewDialog : Window
         MinHeight = 480;
         CanResize = true;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        KeyDown += OnKeyDown;
 
         ListBox changeList = new()
         {
@@ -175,6 +177,15 @@ public sealed class WorkspaceFileChangeReviewDialog : Window
             or AggregateException)
         {
             _statusText.Text = $"Changes were not fully applied: {exception.Message}";
+        }
+    }
+
+    private void OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            e.Handled = true;
+            Close(false);
         }
     }
 }

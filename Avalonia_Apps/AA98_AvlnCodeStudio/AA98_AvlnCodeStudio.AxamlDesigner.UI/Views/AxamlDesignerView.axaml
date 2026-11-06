@@ -15,6 +15,7 @@
         <TextBlock DockPanel.Dock="Top"
                    Margin="0,0,0,6"
                    Text="{Binding PreviewTitle}"
+                   TextWrapping="Wrap"
                    FontWeight="SemiBold" />
         <TextBlock DockPanel.Dock="Top"
                    Margin="0,0,0,6"
@@ -110,6 +111,7 @@
             RowSpacing="8">
         <TextBlock Grid.Row="0"
                    Text="{Binding SelectedElementName}"
+                   TextWrapping="Wrap"
                    FontWeight="SemiBold" />
         <TextBlock Grid.Row="1"
                    Text="{Binding SelectedCapabilityText}"
@@ -183,16 +185,45 @@
                                  FontWeight="SemiBold" />
                       <TextBlock Text="{Binding MemberKindLabel}"
                                  FontSize="11" />
+                      <TextBlock Text="{Binding BindingExpressionDiagnostic}"
+                                 IsVisible="{Binding HasUnsupportedBindingExpression}"
+                                 TextWrapping="Wrap" />
+                      <TextBlock Text="Binding mode"
+                                 IsVisible="{Binding SupportsBindingMode}"
+                                 FontSize="11" />
+                      <ComboBox ItemsSource="{Binding BindingModes}"
+                                SelectedItem="{Binding BindingMode, Mode=TwoWay}"
+                                IsVisible="{Binding SupportsBindingMode}"
+                                IsEnabled="{Binding CanEditBinding}" />
+                      <TextBlock Text="Update source trigger"
+                                 IsVisible="{Binding SupportsUpdateSourceTrigger}"
+                                 FontSize="11" />
+                      <ComboBox ItemsSource="{Binding UpdateSourceTriggers}"
+                                SelectedItem="{Binding UpdateSourceTrigger, Mode=TwoWay}"
+                                IsVisible="{Binding SupportsUpdateSourceTrigger}"
+                                IsEnabled="{Binding CanEditBinding}" />
+                      <TextBlock Text="ViewModel member"
+                                 FontSize="11" />
                       <ComboBox ItemsSource="{Binding MemberSources}"
-                                SelectedItem="{Binding MemberSource, Mode=TwoWay}" />
+                                SelectedItem="{Binding MemberSource, Mode=TwoWay}"
+                                IsEnabled="{Binding CanEditBinding}" />
+                      <TextBlock Text="Existing member"
+                                 IsVisible="{Binding IsSelectingExistingMember}"
+                                 FontSize="11" />
                       <ComboBox ItemsSource="{Binding AvailableMembers}"
                                 SelectedItem="{Binding SelectedMember, Mode=TwoWay}"
-                                IsVisible="{Binding IsSelectingExistingMember}" />
+                                IsVisible="{Binding IsSelectingExistingMember}"
+                                IsEnabled="{Binding CanEditBinding}" />
+                      <TextBlock Text="New member name"
+                                 IsVisible="{Binding IsCreatingNewMember}"
+                                 FontSize="11" />
                       <TextBox Text="{Binding NewMemberName, Mode=TwoWay}"
                                PlaceholderText="{Binding NewMemberPlaceholder}"
-                               IsVisible="{Binding IsCreatingNewMember}" />
+                               IsVisible="{Binding IsCreatingNewMember}"
+                               IsEnabled="{Binding CanEditBinding}" />
                       <Button HorizontalAlignment="Left"
                               Content="Apply binding"
+                              IsEnabled="{Binding CanEditBinding}"
                               Click="OnApplyBinding" />
                       <TextBlock Text="{Binding Diagnostic}"
                                  IsVisible="{Binding HasDiagnostic}"
@@ -201,7 +232,7 @@
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
-              <TextBlock Text="Existing members can be selected. In the Workbench, applying a missing member reviews its AXAML binding and ViewModel change together. Save the AXAML file first. The standalone host edits AXAML only."
+              <TextBlock Text="Choose an existing ViewModel member or create one. In the Workbench and standalone host, missing members and AXAML bindings are reviewed together. The Workbench includes unsaved editor content; the standalone host requires an explicitly selected solution or project and a saved view inside its workspace. Both require CommunityToolkit.Mvvm in the owning project."
                          TextWrapping="Wrap" />
             </StackPanel>
           </StackPanel>

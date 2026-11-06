@@ -1,6 +1,7 @@
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 
 namespace AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
@@ -15,13 +16,25 @@ public partial class AxamlBindingRowViewModel : ObservableObject
         string propertyName,
         string? expression,
         string memberTypeName = "object",
-        bool isCommand = false)
+        bool isCommand = false,
+        AxamlBindingMode defaultBindingMode = AxamlBindingMode.Default,
+        bool supportsUpdateSourceTrigger = false)
     {
         ControlType = controlType;
         PropertyName = propertyName;
         MemberTypeName = memberTypeName;
         IsCommand = isCommand;
-        MemberName = ReadBindingPath(expression) ?? string.Empty;
+        MemberName = ReadBindingPath(
+            expression,
+            out AxamlBindingMode parsedMode,
+            out AxamlBindingUpdateSourceTrigger parsedUpdateSourceTrigger) ?? string.Empty;
+        BindingMode = MemberName.Length == 0 ? defaultBindingMode : parsedMode;
+        UpdateSourceTrigger = MemberName.Length == 0
+            ? AxamlBindingUpdateSourceTrigger.Default
+            : parsedUpdateSourceTrigger;
+        SupportsUpdateSourceTrigger = supportsUpdateSourceTrigger;
+        HasUnsupportedBindingExpression = expression?.TrimStart().StartsWith('{') == true
+            && MemberName.Length == 0;
     }
 
     public string ControlType { get; }
@@ -31,6 +44,36 @@ public partial class AxamlBindingRowViewModel : ObservableObject
     public string MemberTypeName { get; }
 
     public bool IsCommand { get; }
+
+    public bool SupportsBindingMode => !IsCommand;
+
+    public bool SupportsUpdateSourceTrigger { get; }
+
+    public bool CanEditBinding => !HasUnsupportedBindingExpression;
+
+    public bool HasUnsupportedBindingExpression { get; }
+
+    public string? BindingExpressionDiagnostic => HasUnsupportedBindingExpression
+        ? "This binding uses a path or option not yet supported by the safe binding editor; it is preserved unchanged."
+        : null;
+
+    public AxamlBindingMode[] BindingModes { get; } =
+    [
+        AxamlBindingMode.Default,
+        AxamlBindingMode.OneTime,
+        AxamlBindingMode.OneWay,
+        AxamlBindingMode.OneWayToSource,
+        AxamlBindingMode.TwoWay,
+    ];
+
+    public AxamlBindingUpdateSourceTrigger[] UpdateSourceTriggers { get; } =
+    [
+        AxamlBindingUpdateSourceTrigger.Default,
+        AxamlBindingUpdateSourceTrigger.PropertyChanged,
+        AxamlBindingUpdateSourceTrigger.LostFocus,
+        AxamlBindingUpdateSourceTrigger.Explicit,
+        AxamlBindingUpdateSourceTrigger.DataValidation,
+    ];
 
     public string MemberKindLabel => IsCommand
         ? $"Command ({MemberTypeName})"
@@ -55,6 +98,12 @@ public partial class AxamlBindingRowViewModel : ObservableObject
 
     [ObservableProperty]
     private string _memberSource = NewMemberSource;
+
+    [ObservableProperty]
+    private AxamlBindingMode _bindingMode;
+
+    [ObservableProperty]
+    private AxamlBindingUpdateSourceTrigger _updateSourceTrigger;
 
     [ObservableProperty]
     private string? _diagnostic;
@@ -150,21 +199,108 @@ public partial class AxamlBindingRowViewModel : ObservableObject
 
     public static string? ReadBindingPath(string? expression)
     {
+        return ReadBindingPath(expression, out _);
+    }
+
+    public static string? ReadBindingPath(string? expression, out AxamlBindingMode bindingMode)
+    {
+        return ReadBindingPath(expression, out bindingMode, out _);
+    }
+
+    public static string? ReadBindingPath(
+        string? expression,
+        out AxamlBindingMode bindingMode,
+        out AxamlBindingUpdateSourceTrigger updateSourceTrigger)
+    {
+        bindingMode = AxamlBindingMode.Default;
+        updateSourceTrigger = AxamlBindingUpdateSourceTrigger.Default;
         if (string.IsNullOrWhiteSpace(expression))
         {
             return null;
         }
 
         string value = expression.Trim();
-        const string prefix = "{Binding ";
-        if (!value.StartsWith(prefix, StringComparison.Ordinal)
-            || !value.EndsWith('}'))
+        const string extensionName = "{Binding";
+        if (!value.StartsWith(extensionName, StringComparison.Ordinal)
+            || !value.EndsWith('}')
+            || value.Length > extensionName.Length
+                && !char.IsWhiteSpace(value[extensionName.Length])
+                && value[extensionName.Length] != ',')
         {
             return null;
         }
 
-        string path = value[prefix.Length..^1].Trim();
-        return AxamlMvvmMemberName.IsValid(path) ? path : null;
+        string[] tokens = value[extensionName.Length..^1]
+            .Split(',')
+            .Select(static token => token.Trim())
+            .ToArray();
+        string? path = null;
+        bool modeSpecified = false;
+        bool updateSourceTriggerSpecified = false;
+        foreach (string token in tokens)
+        {
+            if (token.Length == 0)
+            {
+                continue;
+            }
+
+            int separator = token.IndexOf('=');
+            if (separator < 0)
+            {
+                if (path is not null || !AxamlMvvmMemberName.IsValid(token))
+                {
+                    return null;
+                }
+
+                path = token;
+                continue;
+            }
+
+            string optionName = token[..separator].Trim();
+            string optionValue = token[(separator + 1)..].Trim();
+            if (string.Equals(optionName, "Path", StringComparison.Ordinal))
+            {
+                if (path is not null || !AxamlMvvmMemberName.IsValid(optionValue))
+                {
+                    return null;
+                }
+
+                path = optionValue;
+            }
+            else if (string.Equals(optionName, "Mode", StringComparison.Ordinal))
+            {
+                if (modeSpecified
+                    || !Enum.TryParse(optionValue, ignoreCase: true, out AxamlBindingMode parsedMode)
+                    || !Enum.IsDefined(parsedMode))
+                {
+                    return null;
+                }
+
+                bindingMode = parsedMode;
+                modeSpecified = true;
+            }
+            else if (string.Equals(optionName, "UpdateSourceTrigger", StringComparison.Ordinal))
+            {
+                if (updateSourceTriggerSpecified
+                    || !Enum.TryParse(
+                        optionValue,
+                        ignoreCase: true,
+                        out AxamlBindingUpdateSourceTrigger parsedTrigger)
+                    || !Enum.IsDefined(parsedTrigger))
+                {
+                    return null;
+                }
+
+                updateSourceTrigger = parsedTrigger;
+                updateSourceTriggerSpecified = true;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        return path;
     }
 
     partial void OnDiagnosticChanged(string? value)

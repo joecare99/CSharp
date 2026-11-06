@@ -27,7 +27,11 @@ public sealed class AxamlPreviewControl : ContentControl
 
     public AxamlPreviewControl()
     {
-        AddHandler(InputElement.PointerPressedEvent, OnPreviewPointerPressed, RoutingStrategies.Bubble);
+        AddHandler(
+            InputElement.PointerPressedEvent,
+            OnPreviewPointerPressed,
+            RoutingStrategies.Bubble,
+            handledEventsToo: true);
         AddHandler(InputElement.PointerReleasedEvent, OnResizePointerReleased, RoutingStrategies.Bubble);
         AddHandler(InputElement.PointerCaptureLostEvent, OnResizePointerCaptureLost, RoutingStrategies.Bubble);
     }
@@ -262,7 +266,7 @@ public sealed class AxamlPreviewControl : ContentControl
             content.Height = height;
         }
 
-        content.IsHitTestVisible = false;
+        content.IsHitTestVisible = node.Children.Count > 0;
         Grid wrapper = new();
         wrapper.Children.Add(content);
         if (isSelected && CanResize(node))
