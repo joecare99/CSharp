@@ -1,0 +1,36 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:AA98_AvlnCodeStudio.UI.Views"
+        xmlns:workspaces="using:AA98_AvlnCodeStudio.Model.Workspaces"
+        x:Class="AA98_AvlnCodeStudio.UI.Views.ProjectSettingsTargetDialog"
+        x:DataType="views:ProjectSettingsTargetDialog"
+        Width="480"
+        Height="360"
+        MinWidth="360"
+        MinHeight="280"
+        Title="Select Project Settings Target"
+        WindowStartupLocation="CenterOwner">
+  <Grid Margin="12" RowDefinitions="Auto,*,Auto" RowSpacing="10">
+    <TextBlock Text="Choose the project whose settings you want to edit."
+               TextWrapping="Wrap" />
+    <ListBox Grid.Row="1"
+             ItemsSource="{Binding Projects}"
+             SelectedItem="{Binding SelectedProject, Mode=TwoWay}">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="workspaces:CSharpWorkspaceProject">
+          <StackPanel Spacing="2">
+            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+            <TextBlock Text="{Binding ProjectPath}" FontSize="11" Opacity="0.75" />
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <StackPanel Grid.Row="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8">
+      <Button Content="Open" Click="OnOpenClick" />
+      <Button Content="Cancel" Click="OnCancelClick" />
+    </StackPanel>
+  </Grid>
+</Window>

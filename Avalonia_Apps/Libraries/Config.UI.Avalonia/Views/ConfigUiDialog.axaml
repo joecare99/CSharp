@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:configUi="using:Config.UI.Avalonia.Views"
+        xmlns:vm="using:Config.UI.Avalonia.ViewModels"
+        x:Class="Config.UI.Avalonia.Views.ConfigUiDialog"
+        x:DataType="vm:ConfigUiViewModel"
+        Width="760"
+        Height="560"
+        MinWidth="600"
+        MinHeight="420"
+        Title="{Binding DialogTitle}"
+        WindowStartupLocation="CenterOwner">
+  <Grid Margin="12" RowDefinitions="*,Auto" RowSpacing="12">
+    <configUi:ConfigUiView ShowSectionActions="False" DataContext="{Binding}" />
+    <StackPanel Grid.Row="1"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8">
+      <Button Content="OK" Click="OnOkClick" />
+      <Button Content="Apply"
+              IsEnabled="{Binding CanApplyChanges}"
+              Click="OnApplyClick" />
+      <Button Content="Cancel" Click="OnCancelClick" />
+    </StackPanel>
+  </Grid>
+</Window>
