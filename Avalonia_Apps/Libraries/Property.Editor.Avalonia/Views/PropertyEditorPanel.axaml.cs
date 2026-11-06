@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace Property.Editor.Avalonia.Views;
 
@@ -13,5 +14,36 @@ public partial class PropertyEditorPanel : UserControl
     public PropertyEditorPanel()
     {
         InitializeComponent();
+    }
+
+    private void OnEditorGotFocus(object? sender, RoutedEventArgs eventArgs)
+    {
+        if (sender is Control { DataContext: PropertyEditorItemViewModel item }
+            && DataContext is PropertyEditorViewModel viewModel)
+        {
+            viewModel.NotifyEditStarted(item.PropertyItem);
+        }
+    }
+
+    private void OnEditorLostFocus(object? sender, RoutedEventArgs eventArgs)
+    {
+        NotifyEditCompleted(sender);
+    }
+
+    private void OnOptionSelectionChanged(object? sender, SelectionChangedEventArgs eventArgs)
+    {
+        if (eventArgs.AddedItems.Count > 0)
+        {
+            NotifyEditCompleted(sender);
+        }
+    }
+
+    private void NotifyEditCompleted(object? sender)
+    {
+        if (sender is Control { DataContext: PropertyEditorItemViewModel item }
+            && DataContext is PropertyEditorViewModel viewModel)
+        {
+            viewModel.NotifyEditCompleted(item.PropertyItem);
+        }
     }
 }

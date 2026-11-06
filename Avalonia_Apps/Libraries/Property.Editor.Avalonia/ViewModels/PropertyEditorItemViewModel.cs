@@ -31,6 +31,51 @@ public sealed partial class PropertyEditorItemViewModel : ObservableObject
     /// <summary>Gets the display name supplied by the consumer.</summary>
     public string DisplayName => _propertyItem.DisplayName;
 
+    /// <summary>Gets a human-readable description of the property's effective source.</summary>
+    public string SourceContextText
+    {
+        get
+        {
+            PropertyValueContext? context = _propertyItem.ValueContext;
+            if (context is null)
+            {
+                return string.Empty;
+            }
+
+            if (context.Scope == PropertyScope.Unspecified)
+            {
+                return string.Empty;
+            }
+
+            string text = context.Scope.ToString();
+            if (!string.IsNullOrWhiteSpace(context.Origin))
+            {
+                text += $" - {context.Origin}";
+            }
+
+            if (context.IsInherited)
+            {
+                text += " (inherited)";
+            }
+
+            if (context.IsPolicyLocked)
+            {
+                text += " (policy)";
+            }
+
+            return text;
+        }
+    }
+
+    /// <summary>Gets the reason a property cannot be edited.</summary>
+    public string ReadOnlyReasonText =>
+        _propertyItem.ReadOnlyReason
+        ?? _propertyItem.ValueContext?.ReadOnlyReason
+        ?? string.Empty;
+
+    /// <summary>Gets whether a read-only explanation is available.</summary>
+    public bool HasReadOnlyReason => !string.IsNullOrWhiteSpace(ReadOnlyReasonText);
+
     /// <summary>Gets whether this item accepts changes.</summary>
     public bool IsEditable => _propertyItem.IsEditable;
 

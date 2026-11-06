@@ -11,10 +11,26 @@ namespace Property.Editor.Avalonia;
 /// </summary>
 public sealed class PropertyEditorViewModel : ObservableObject
 {
+    public event EventHandler<PropertyEditorEditEventArgs>? EditStarted;
+
+    public event EventHandler<PropertyEditorEditEventArgs>? EditCompleted;
+
     /// <summary>
     /// Gets the items rendered by a Property.Editor Avalonia control.
     /// </summary>
     public ObservableCollection<PropertyEditorItemViewModel> Items { get; } = [];
+
+    public void NotifyEditStarted(IPropertyItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        EditStarted?.Invoke(this, new PropertyEditorEditEventArgs(item));
+    }
+
+    public void NotifyEditCompleted(IPropertyItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        EditCompleted?.Invoke(this, new PropertyEditorEditEventArgs(item));
+    }
 
     /// <summary>
     /// Replaces the editor items using the neutral deterministic ordering.
@@ -24,10 +40,24 @@ public sealed class PropertyEditorViewModel : ObservableObject
     {
         ArgumentNullException.ThrowIfNull(items);
 
+        IPropertyItem[] orderedItems = PropertyItemOrdering.Order(items).ToArray();
+        if (Items.Count == orderedItems.Length
+            && Items.Select(static item => item.PropertyItem)
+                .Zip(orderedItems)
+                .All(static pair => ReferenceEquals(pair.First, pair.Second)))
+        {
+            return;
+        }
+
         Items.Clear();
-        foreach (IPropertyItem item in PropertyItemOrdering.Order(items))
+        foreach (IPropertyItem item in orderedItems)
         {
             Items.Add(new PropertyEditorItemViewModel(item));
         }
     }
+}
+
+public sealed class PropertyEditorEditEventArgs(IPropertyItem propertyItem) : EventArgs
+{
+    public IPropertyItem PropertyItem { get; } = propertyItem;
 }
