@@ -118,10 +118,24 @@ public sealed class AxamlDesignerSessionTests
 
         Assert.IsTrue(session.ApplyBinding("Text", "NewText"));
         StringAssert.Contains(session.Markup, "Text='{Binding NewText}'");
+        Assert.IsTrue(session.ApplyBinding(
+            "Text",
+            "NewText",
+            AxamlBindingMode.TwoWay,
+            AxamlBindingUpdateSourceTrigger.PropertyChanged));
+        StringAssert.Contains(
+            session.Markup,
+            "Text='{Binding NewText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}'");
+        Assert.IsTrue(session.Undo());
+        StringAssert.Contains(session.Markup, "Text='{Binding NewText}'");
         Assert.IsTrue(session.Undo());
         StringAssert.Contains(session.Markup, "Text='{Binding ExistingText}'");
         Assert.IsTrue(session.Redo());
         StringAssert.Contains(session.Markup, "Text='{Binding NewText}'");
+        Assert.IsTrue(session.Redo());
+        StringAssert.Contains(
+            session.Markup,
+            "Text='{Binding NewText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}'");
     }
 
     [TestMethod]

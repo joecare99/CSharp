@@ -69,6 +69,31 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public void PropertyRows_ChangingSelectedControlDoesNotDuplicateSharedProperties()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<StackPanel xmlns='https://github.com/avaloniaui'><TextBox /></StackPanel>");
+        AxamlPreviewNode stackPanel = viewModel.PreviewRoot!;
+        AxamlPreviewNode textBox = stackPanel.Children[0];
+        viewModel.SelectedNode = stackPanel;
+        viewModel.SelectedNode = textBox;
+
+        Assert.AreEqual(
+            viewModel.PropertyRows.Count,
+            viewModel.PropertyRows.Select(static row => row.Name).Distinct(StringComparer.Ordinal).Count());
+        Assert.IsTrue(viewModel.PropertyRows.All(static row => row.ControlType == "TextBox"));
+        Assert.AreEqual(1, viewModel.PropertyRows.Count(static row => row.Name == "Height"));
+        Assert.AreEqual(1, viewModel.PropertyRows.Count(static row => row.Name == "Width"));
+
+        AxamlBindingRowViewModel binding = viewModel.BindingRows.Single();
+        binding.NewMemberName = "Caption";
+        viewModel.ApplyBindingRow(binding);
+
+        StringAssert.Contains(viewModel.SelectedNode!.Properties["Text"], "Binding Caption");
+    }
+
+    [TestMethod]
     public void BindingRows_OfferCompatibleMembersAndApplyExplicitNewBinding()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -100,6 +125,76 @@ public sealed class AxamlDesignerViewModelTests
         Assert.IsTrue(viewModel.CanUndo);
         Assert.IsFalse(viewModel.BindingRows.Single().HasDiagnostic);
 
+        AxamlDesignerViewModel modeViewModel = new();
+        modeViewModel.LoadMarkup("<TextBox Text='{Binding ExistingText, Mode=OneWay}' />");
+        modeViewModel.SelectedNode = modeViewModel.PreviewRoot;
+        modeViewModel.SetBindingContext(
+        [
+            new AxamlMvvmSemanticMember("ExistingText", "string", IsCommand: false, IsWritable: true),
+        ]);
+        AxamlBindingRowViewModel textBinding = modeViewModel.BindingRows.Single();
+        Assert.AreEqual(AxamlBindingMode.OneWay, textBinding.BindingMode);
+        textBinding.BindingMode = AxamlBindingMode.TwoWay;
+        textBinding.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.PropertyChanged;
+        modeViewModel.ApplyBindingRow(textBinding);
+        StringAssert.Contains(modeViewModel.PreviewRoot!.Properties["Text"], "Mode=TwoWay");
+        StringAssert.Contains(modeViewModel.PreviewRoot!.Properties["Text"], "UpdateSourceTrigger=PropertyChanged");
+        Assert.AreEqual(AxamlBindingMode.TwoWay, modeViewModel.BindingRows.Single().BindingMode);
+        Assert.AreEqual(
+            AxamlBindingUpdateSourceTrigger.PropertyChanged,
+            modeViewModel.BindingRows.Single().UpdateSourceTrigger);
+        Assert.IsTrue(modeViewModel.UndoCommand.CanExecute(null));
+        modeViewModel.UndoCommand.Execute(null);
+        StringAssert.Contains(modeViewModel.PreviewRoot!.Properties["Text"], "Mode=OneWay");
+        Assert.IsFalse(modeViewModel.PreviewRoot!.Properties["Text"].Contains(
+            "UpdateSourceTrigger",
+            StringComparison.Ordinal));
+
+        AxamlDesignerViewModel advancedViewModel = new();
+        advancedViewModel.LoadMarkup("<TextBox Text='{Binding User.Name, Mode=TwoWay}' />");
+        advancedViewModel.SelectedNode = advancedViewModel.PreviewRoot;
+        AxamlBindingRowViewModel advancedBinding = advancedViewModel.BindingRows.Single();
+        Assert.IsFalse(advancedBinding.CanEditBinding);
+        Assert.IsTrue(advancedBinding.HasUnsupportedBindingExpression);
+        Assert.IsNotNull(advancedBinding.BindingExpressionDiagnostic);
+        Assert.IsNull(AxamlBindingRowViewModel.ReadBindingPath(
+            "{Binding UserName, Mode=OneWay, Mode=TwoWay}"));
+        Assert.IsNull(AxamlBindingRowViewModel.ReadBindingPath(
+            "{Binding UserName, Converter=Example}"));
+        Assert.AreEqual(
+            "UserName",
+            AxamlBindingRowViewModel.ReadBindingPath("{Binding Path=UserName}", out AxamlBindingMode simplePathMode));
+        Assert.AreEqual(AxamlBindingMode.Default, simplePathMode);
+        Assert.AreEqual(
+            "UserName",
+            AxamlBindingRowViewModel.ReadBindingPath(
+                "{Binding, Path=UserName, Mode=TwoWay}",
+                out AxamlBindingMode explicitPathMode));
+        Assert.AreEqual(AxamlBindingMode.TwoWay, explicitPathMode);
+        Assert.AreEqual(
+            "UserName",
+            AxamlBindingRowViewModel.ReadBindingPath(
+                "{Binding UserName, Mode=Default}",
+                out AxamlBindingMode explicitDefaultMode));
+        Assert.AreEqual(AxamlBindingMode.Default, explicitDefaultMode);
+        Assert.AreEqual(
+            "UserName",
+            AxamlBindingRowViewModel.ReadBindingPath(
+                "{Binding UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}",
+                out AxamlBindingMode updateMode,
+                out AxamlBindingUpdateSourceTrigger updateTrigger));
+        Assert.AreEqual(AxamlBindingMode.TwoWay, updateMode);
+        Assert.AreEqual(AxamlBindingUpdateSourceTrigger.PropertyChanged, updateTrigger);
+        Assert.AreEqual(
+            "UserName",
+            AxamlBindingRowViewModel.ReadBindingPath(
+                "{Binding UserName, UpdateSourceTrigger=DataValidation}",
+                out _,
+                out AxamlBindingUpdateSourceTrigger validationTrigger));
+        Assert.AreEqual(AxamlBindingUpdateSourceTrigger.DataValidation, validationTrigger);
+        Assert.IsNull(AxamlBindingRowViewModel.ReadBindingPath(
+            "{Binding UserName, UpdateSourceTrigger=PropertyChanged, UpdateSourceTrigger=LostFocus}"));
+
         viewModel.SetBindingContext(
         [
             new AxamlMvvmSemanticMember("SaveCommand", "ICommand", IsCommand: true, IsWritable: false),
@@ -121,6 +216,14 @@ public sealed class AxamlDesignerViewModelTests
         Assert.AreEqual("New string property name", property.NewMemberPlaceholder);
         CollectionAssert.AreEqual(new[] { "Create new member" }, property.MemberSources.ToArray());
         Assert.IsTrue(property.IsCreatingNewMember);
+        Assert.AreEqual(AxamlBindingMode.TwoWay, property.BindingMode);
+        Assert.IsTrue(property.SupportsUpdateSourceTrigger);
+
+        AxamlDesignerViewModel displayViewModel = new();
+        displayViewModel.LoadMarkup("<TextBlock />");
+        displayViewModel.SelectedNode = displayViewModel.PreviewRoot;
+        Assert.AreEqual(AxamlBindingMode.OneWay, displayViewModel.BindingRows.Single().BindingMode);
+        Assert.IsFalse(displayViewModel.BindingRows.Single().SupportsUpdateSourceTrigger);
     }
 
     [TestMethod]

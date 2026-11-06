@@ -1,11 +1,14 @@
 using AA98_AxamlDesigner.Host.ViewModels;
 using AA98_AxamlDesigner.Host.Commands;
+using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 using AA98_AvlnCodeStudio.Host.Mcp;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -131,6 +134,10 @@ public sealed class AxamlDesignerHostViewModelTests
             Assert.IsTrue(viewModel.OpenDocument(inWorkspacePath));
             Assert.IsTrue(viewModel.SetWorkspaceContext(root));
             Assert.AreEqual(Path.GetFullPath(root), viewModel.WorkspaceRootPath);
+            WorkspaceFileChangeProposal proposal = viewModel.PrepareWorkspaceChanges(
+                [WorkspaceFileChangeRequest.CreateNew("Generated.txt", "safe workspace change")]);
+            viewModel.ApplyWorkspaceChanges(proposal, confirmed: true);
+            Assert.AreEqual("safe workspace change", File.ReadAllText(Path.Combine(root, "Generated.txt")));
             using (JsonDocument state = JsonDocument.Parse(viewModel.GetDesignerStateJson()))
             {
                 Assert.AreEqual(
@@ -185,6 +192,108 @@ public sealed class AxamlDesignerHostViewModelTests
             viewModel.ClearWorkspaceContext();
             Assert.IsFalse(viewModel.UndoWorkspaceChangeCommand.CanExecute(null));
             Assert.IsFalse(viewModel.RedoWorkspaceChangeCommand.CanExecute(null));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task HostViewModel_CreatesMissingBindingMemberOnlyAfterWorkspaceReview()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AxamlHostMvvm-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string axamlPath = Path.Combine(root, "View.axaml");
+            string viewModelPath = Path.Combine(root, "ViewModel.cs");
+            const string markup = """
+                <UserControl xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:vm="using:Sample"
+                        x:Class="Sample.View"
+                        x:DataType="vm:ViewModel">
+                  <StackPanel><TextBox /></StackPanel>
+                </UserControl>
+                """;
+            File.WriteAllText(
+                projectPath,
+                """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                  <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
+                </Project>
+                """);
+            File.WriteAllText(
+                Path.Combine(root, "View.axaml.cs"),
+                """
+                namespace Sample;
+                public partial class View
+                {
+                    public object? DataContext { get; set; }
+                    public View() => DataContext = new ViewModel();
+                }
+                """);
+            File.WriteAllText(
+                viewModelPath,
+                """
+                using CommunityToolkit.Mvvm.ComponentModel;
+                namespace Sample;
+                public partial class ViewModel : ObservableObject
+                {
+                }
+                """);
+            File.WriteAllText(axamlPath, markup);
+            ProcessStartInfo buildStartInfo = new("dotnet")
+            {
+                WorkingDirectory = AppContext.BaseDirectory,
+                ArgumentList = { "build", projectPath, "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            buildStartInfo.Environment.Remove("MSBuildSDKsPath");
+            buildStartInfo.Environment.Remove("MSBuildExtensionsPath");
+            buildStartInfo.Environment.Remove("MSBuildExtensionsPath32");
+            buildStartInfo.Environment.Remove("MSBuildToolsPath");
+            buildStartInfo.Environment.Remove("DOTNET_MSBUILD_SDK_RESOLVER_SDKS_DIR");
+            buildStartInfo.Environment.Remove("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR");
+            using Process build = Process.Start(buildStartInfo)
+                ?? throw new InvalidOperationException("Could not start the standalone ViewModel fixture build.");
+            Task<string> buildOutput = build.StandardOutput.ReadToEndAsync();
+            Task<string> buildError = build.StandardError.ReadToEndAsync();
+            await build.WaitForExitAsync();
+            Assert.AreEqual(0, build.ExitCode, $"{await buildOutput}{await buildError}");
+
+            AxamlDesignerHostViewModel viewModel = new();
+            Assert.IsTrue(viewModel.OpenDocument(axamlPath));
+            Assert.IsTrue(viewModel.SetWorkspaceEntry(projectPath));
+            viewModel.Designer.SetBindingContext([]);
+            viewModel.Designer.SelectedNode = viewModel.Designer.PreviewRoot?.Children.Single();
+            AxamlBindingRowViewModel binding = viewModel.Designer.BindingRows.Single();
+            binding.NewMemberName = "Caption";
+
+            WorkspaceFileChangeProposal? proposal = null;
+            viewModel.ReviewWorkspaceFileChangesAsync = (candidate, cancellationToken) =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                proposal = candidate;
+                viewModel.WorkspaceFileChangeService.Apply(candidate, confirmed: true);
+                return Task.FromResult(true);
+            };
+
+            await viewModel.Designer.ApplyBindingRowAsync(binding);
+
+            Assert.IsNotNull(proposal, $"{binding.Diagnostic} {viewModel.StatusText}");
+            Assert.AreEqual(2, proposal!.Changes.Count);
+            StringAssert.Contains(File.ReadAllText(axamlPath), "{Binding Caption, Mode=TwoWay}");
+            StringAssert.Contains(File.ReadAllText(viewModelPath), "private string _caption = string.Empty;");
+
+            Assert.IsTrue(viewModel.WorkspaceFileChangeService.Undo());
+            Assert.AreEqual(markup, File.ReadAllText(axamlPath));
+            Assert.IsFalse(File.ReadAllText(viewModelPath).Contains("_caption", StringComparison.Ordinal));
         }
         finally
         {

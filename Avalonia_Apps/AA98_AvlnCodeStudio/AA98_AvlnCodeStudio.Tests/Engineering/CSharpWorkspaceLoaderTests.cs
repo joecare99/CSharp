@@ -841,7 +841,7 @@ public sealed class CSharpWorkspaceLoaderTests
             Assert.AreEqual(2, reviewedProposal!.Changes.Count);
             Assert.AreEqual(dirtyMarkup, reviewedProposal.Changes.Single(change => change.RelativePath == "View.axaml").OriginalOpenDocumentContent);
             Assert.AreEqual(savedMarkup, reviewedProposal.Changes.Single(change => change.RelativePath == "View.axaml").OriginalContent);
-            StringAssert.Contains(File.ReadAllText(axamlPath), "Text=\"{Binding Caption}\"");
+            StringAssert.Contains(File.ReadAllText(axamlPath), "Text=\"{Binding Caption, Mode=TwoWay}\"");
             StringAssert.Contains(File.ReadAllText(viewModelPath), "private string _caption = string.Empty;");
             Assert.IsFalse(viewModel.Editor.IsDirty);
 
@@ -1027,9 +1027,11 @@ public sealed class CSharpWorkspaceLoaderTests
                 null,
                 null);
 
+            Assert.AreEqual(new GridLength(0), viewModel.PreviewColumnWidth);
             await viewModel.Editor.OpenFileAsync(axamlPath);
 
             Assert.IsTrue(viewModel.HasAxamlPreview);
+            Assert.AreEqual(new GridLength(2, GridUnitType.Star), viewModel.PreviewColumnWidth);
             Assert.AreEqual("StackPanel", viewModel.AxamlDesigner.PreviewRoot?.TypeName);
             Assert.AreEqual("Preview me", viewModel.AxamlDesigner.PreviewRoot?.Children[0].Text);
 
