@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using DBus.Services.Secrets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AA98_AvlnCodeStudio.Config.Secrets.Tests;
@@ -83,6 +85,153 @@ public sealed class CredentialContractTests
 
         Assert.IsNull(await provider.GetAsync(id));
         Assert.AreEqual("[REDACTED]", input.ToString());
+    }
+
+    [TestMethod]
+    public async Task EncryptedFileCredentialProvider_InitializesEncryptsLocksAndAuthenticates()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AvlnVaultTest-{Guid.NewGuid():N}");
+        string path = Path.Combine(directory, "vault.json");
+        CredentialId id = new("code-studio", "ai-api-key", "https://private.example");
+        const string credentialText = "vault-secret-ö";
+
+        await using EncryptedFileCredentialProvider provider = new(path);
+        try
+        {
+            Assert.AreEqual(CredentialProviderAvailability.Unavailable,
+                (await provider.GetStatusAsync()).Availability);
+            Assert.IsFalse(Directory.Exists(directory));
+            using CredentialSecret weakPassphrase = new("too-short".AsSpan());
+            await Assert.ThrowsExactlyAsync<ArgumentException>(
+                () => provider.InitializeAsync(weakPassphrase));
+            Assert.IsFalse(Directory.Exists(directory));
+
+            using CredentialSecret passphrase = new("a long test passphrase".AsSpan());
+            await provider.InitializeAsync(passphrase);
+            Assert.IsTrue(provider.IsInitialized);
+            Assert.AreEqual(CredentialProviderAvailability.Available,
+                (await provider.GetStatusAsync()).Availability);
+
+            using CredentialSecret input = new(credentialText.AsSpan());
+            await provider.SetAsync(id, input);
+            string serializedVault = await File.ReadAllTextAsync(path);
+            Assert.IsFalse(serializedVault.Contains(credentialText, StringComparison.Ordinal));
+            Assert.IsFalse(serializedVault.Contains(id.ScopeId!, StringComparison.Ordinal));
+            Assert.AreEqual(1, Directory.GetFiles(directory).Length);
+
+            await provider.LockAsync();
+            Assert.IsFalse(provider.IsUnlocked);
+            Assert.AreEqual(CredentialProviderAvailability.Locked,
+                (await provider.GetStatusAsync()).Availability);
+            await Assert.ThrowsExactlyAsync<CredentialProviderLockedException>(
+                () => provider.GetAsync(id).AsTask());
+
+            using CredentialSecret wrongPassphrase = new("a different passphrase".AsSpan());
+            await Assert.ThrowsExactlyAsync<CredentialVaultUnlockException>(
+                () => provider.UnlockAsync(wrongPassphrase));
+            Assert.IsFalse(provider.IsUnlocked);
+
+            await provider.UnlockAsync(passphrase);
+            using CredentialSecret? retrieved = await provider.GetAsync(id);
+            Assert.IsNotNull(retrieved);
+            Assert.AreEqual(credentialText, new string(retrieved.Reveal()));
+
+            await provider.DeleteAsync(id);
+            Assert.IsNull(await provider.GetAsync(id));
+            await provider.LockAsync();
+            Assert.IsFalse(provider.IsUnlocked);
+        }
+        finally
+        {
+            await provider.LockAsync();
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task EncryptedFileCredentialProvider_RefusesToOverwriteExternalFileChanges()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AvlnVaultTest-{Guid.NewGuid():N}");
+        string path = Path.Combine(directory, "vault.json");
+        await using EncryptedFileCredentialProvider provider = new(path);
+        using CredentialSecret passphrase = new("another long passphrase".AsSpan());
+        using CredentialSecret input = new("first-secret".AsSpan());
+        CredentialId id = new("code-studio", "ai-api-key");
+        try
+        {
+            await provider.InitializeAsync(passphrase);
+            await provider.SetAsync(id, input);
+            await File.AppendAllTextAsync(path, " ");
+
+            using CredentialSecret replacement = new("replacement-secret".AsSpan());
+            await Assert.ThrowsExactlyAsync<IOException>(
+                () => provider.SetAsync(id, replacement).AsTask());
+
+            await provider.LockAsync();
+            string serializedVault = await File.ReadAllTextAsync(path);
+            const string verifierTagPrefix = "\"VerifierTag\":\"";
+            int verifierTagStart = serializedVault.IndexOf(verifierTagPrefix, StringComparison.Ordinal)
+                + verifierTagPrefix.Length;
+            Assert.IsTrue(verifierTagStart > verifierTagPrefix.Length);
+            char replacementCharacter = serializedVault[verifierTagStart] == 'A' ? 'B' : 'A';
+            serializedVault = serializedVault[..verifierTagStart]
+                + replacementCharacter
+                + serializedVault[(verifierTagStart + 1)..];
+            await File.WriteAllTextAsync(path, serializedVault);
+            await Assert.ThrowsExactlyAsync<CredentialVaultUnlockException>(
+                () => provider.UnlockAsync(passphrase));
+        }
+        finally
+        {
+            await provider.LockAsync();
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task EncryptedFileCredentialProvider_RefusesWriteThatWouldExceedVaultFileLimit()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AvlnVaultTest-{Guid.NewGuid():N}");
+        string path = Path.Combine(directory, "vault.json");
+        await using EncryptedFileCredentialProvider provider = new(path);
+        using CredentialSecret passphrase = new("another long passphrase".AsSpan());
+        using CredentialSecret largeSecret = new(new string('x', 1024 * 1024).AsSpan());
+        try
+        {
+            await provider.InitializeAsync(passphrase);
+            for (int index = 0; index < 11; index++)
+            {
+                await provider.SetAsync(
+                    new CredentialId("code-studio", $"large-secret-{index}"),
+                    largeSecret);
+            }
+
+            string originalVault = await File.ReadAllTextAsync(path);
+            await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+                () => provider.SetAsync(
+                    new CredentialId("code-studio", "large-secret-over-limit"),
+                    largeSecret).AsTask());
+            Assert.AreEqual(originalVault, await File.ReadAllTextAsync(path));
+
+            using CredentialSecret? retrieved = await provider.GetAsync(
+                new CredentialId("code-studio", "large-secret-0"));
+            Assert.IsNotNull(retrieved);
+            Assert.AreEqual(new string('x', 1024 * 1024), new string(retrieved.Reveal()));
+        }
+        finally
+        {
+            await provider.LockAsync();
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
     }
 
     [TestMethod]
@@ -168,13 +317,25 @@ public sealed class CredentialContractTests
 
         CredentialId id = new("code-studio-smoke", "temporary-" + Convert.ToHexString(RandomNumberGenerator.GetBytes(8)));
         using CredentialSecret secret = new("temporary-smoke-secret".AsSpan());
+        using CredentialSecret replacement = new("updated-smoke-secret-ö".AsSpan());
         try
         {
+            Assert.IsNull(await provider.GetAsync(id));
             await provider.SetAsync(id, secret);
-            using CredentialSecret? retrieved = await provider.GetAsync(id);
-
-            Assert.IsNotNull(retrieved);
-            Assert.AreEqual("temporary-smoke-secret", new string(retrieved.Reveal()));
+            using (CredentialSecret? retrieved = await provider.GetAsync(id))
+            {
+                Assert.IsNotNull(retrieved);
+                Assert.AreEqual("temporary-smoke-secret", new string(retrieved.Reveal()));
+            }
+            await provider.SetAsync(id, replacement);
+            LinuxSecretServiceProvider secondProvider = new();
+            using (CredentialSecret? retrieved = await secondProvider.GetAsync(id))
+            {
+                Assert.IsNotNull(retrieved);
+                Assert.AreEqual("updated-smoke-secret-ö", new string(retrieved.Reveal()));
+            }
+            await secondProvider.DeleteAsync(id);
+            Assert.IsNull(await provider.GetAsync(id));
         }
         finally
         {
@@ -193,6 +354,147 @@ public sealed class CredentialContractTests
         CredentialProviderStatus status = await new LinuxSecretServiceProvider().GetStatusAsync();
 
         Assert.AreEqual(CredentialProviderAvailability.Unavailable, status.Availability);
+    }
+
+    [TestMethod]
+    public async Task LinuxSecretServiceProvider_MissingServiceFailsCredentialOperations()
+    {
+        if (!OperatingSystem.IsLinux()
+            || Environment.GetEnvironmentVariable("AVLN_TEST_EMPTY_SECRET_BUS") != "1")
+        {
+            Assert.Inconclusive("Run only on an isolated D-Bus session without a Secret Service.");
+        }
+
+        LinuxSecretServiceProvider provider = new();
+        CredentialId id = new("code-studio-isolated-test", "nonexistent");
+        using CredentialSecret secret = new("test-only".AsSpan());
+        Assert.AreEqual(CredentialProviderAvailability.Unavailable, (await provider.GetStatusAsync()).Availability);
+        Assert.AreEqual(CredentialProviderAvailability.Unavailable, (await provider.GetStatusAsync()).Availability);
+        Exception read = await Assert.ThrowsAsync<Exception>(async () => await provider.GetAsync(id));
+        Exception delete = await Assert.ThrowsAsync<Exception>(async () => await provider.DeleteAsync(id));
+        Exception write = await Assert.ThrowsAsync<Exception>(async () => await provider.SetAsync(id, secret));
+        StringAssert.Contains(read.Message, "org.freedesktop.DBus.Error.ServiceUnknown");
+        StringAssert.Contains(delete.Message, "org.freedesktop.DBus.Error.ServiceUnknown");
+        StringAssert.Contains(write.Message, "org.freedesktop.DBus.Error.ServiceUnknown");
+    }
+
+    [TestMethod]
+    public async Task LinuxSecretServiceProvider_RecoversAfterIsolatedServiceRestart()
+    {
+        string? executable = Environment.GetEnvironmentVariable("AVLN_TEST_SECRET_RESTART_DAEMON");
+        if (!OperatingSystem.IsLinux() || string.IsNullOrWhiteSpace(executable))
+        {
+            Assert.Inconclusive("Run only with the isolated Secret Service restart harness.");
+        }
+
+        LinuxSecretServiceProvider provider = new();
+        CredentialId id = new("code-studio-restart-test", "temporary-" + Convert.ToHexString(RandomNumberGenerator.GetBytes(8)));
+        using CredentialSecret secret = new("isolated-restart-test".AsSpan());
+        Process? daemon = null;
+        try
+        {
+            Assert.AreEqual(CredentialProviderAvailability.Unavailable, (await provider.GetStatusAsync()).Availability);
+            daemon = StartIsolatedKeyring(executable);
+            await WaitForKeyringAsync(provider, daemon);
+            await provider.SetAsync(id, secret);
+            await StopIsolatedKeyringAsync(daemon);
+            daemon.Dispose();
+            daemon = null;
+            Assert.AreEqual(CredentialProviderAvailability.Unavailable, (await provider.GetStatusAsync()).Availability);
+            daemon = StartIsolatedKeyring(executable);
+            await WaitForKeyringAsync(provider, daemon);
+            using (CredentialSecret? restored = await provider.GetAsync(id))
+            {
+                Assert.IsNotNull(restored);
+                Assert.AreEqual("isolated-restart-test", new string(restored.Reveal()));
+            }
+            await StopIsolatedKeyringAsync(daemon);
+            daemon.Dispose();
+            daemon = StartIsolatedKeyring(executable);
+            await WaitForKeyringAsync(new LinuxSecretServiceProvider(), daemon);
+            Exception staleSession = await Assert.ThrowsAsync<Exception>(async () => await provider.GetAsync(id));
+            StringAssert.Contains(staleSession.Message, "org.freedesktop.Secret.Error.NoSession");
+            using (CredentialSecret? restored = await provider.GetAsync(id))
+            {
+                Assert.IsNotNull(restored);
+                Assert.AreEqual("isolated-restart-test", new string(restored.Reveal()));
+            }
+            await provider.DeleteAsync(id);
+            Assert.IsNull(await provider.GetAsync(id));
+        }
+        finally
+        {
+            if (daemon is not null)
+            {
+                await StopIsolatedKeyringAsync(daemon);
+                daemon.Dispose();
+            }
+        }
+    }
+
+    private static Process StartIsolatedKeyring(string executable)
+    {
+        ProcessStartInfo start = new(executable)
+        {
+            UseShellExecute = false,
+            RedirectStandardInput = true,
+        };
+        start.ArgumentList.Add("--unlock");
+        start.ArgumentList.Add("--foreground");
+        start.ArgumentList.Add("--components=secrets");
+        Process process = Process.Start(start) ?? throw new InvalidOperationException("The isolated test keyring could not be started.");
+        process.StandardInput.WriteLine("temporary-isolated-test-password");
+        process.StandardInput.Close();
+        return process;
+    }
+
+    private static async Task WaitForKeyringAsync(LinuxSecretServiceProvider provider, Process daemon)
+    {
+        for (int attempt = 0; attempt < 50; attempt++)
+        {
+            if (daemon.HasExited)
+            {
+                throw new InvalidOperationException($"The isolated test keyring exited with code {daemon.ExitCode}.");
+            }
+            if ((await provider.GetStatusAsync()).Availability == CredentialProviderAvailability.Available)
+            {
+                return;
+            }
+            await Task.Delay(100);
+        }
+        Assert.Fail("The isolated keyring did not become available.");
+    }
+
+    private static async Task StopIsolatedKeyringAsync(Process daemon)
+    {
+        if (!daemon.HasExited)
+        {
+            daemon.Kill();
+        }
+        await daemon.WaitForExitAsync();
+    }
+
+    [TestMethod]
+    public async Task LinuxSecretServiceProvider_MissingDefaultCollectionDoesNotPretendSuccess()
+    {
+        int loads = 0;
+        LinuxSecretServiceBackend backend = new(() =>
+        {
+            loads++;
+            return Task.FromResult<Collection?>(null);
+        });
+        LinuxSecretServiceProvider provider = new(backend, requiresLinux: false);
+        CredentialId id = new("code-studio-test", "nonexistent");
+        using CredentialSecret secret = new("test-only".AsSpan());
+
+        Assert.AreEqual(CredentialProviderAvailability.Unavailable, (await provider.GetStatusAsync()).Availability);
+        InvalidOperationException read = await Assert.ThrowsExactlyAsync<InvalidOperationException>(async () => await provider.GetAsync(id));
+        InvalidOperationException delete = await Assert.ThrowsExactlyAsync<InvalidOperationException>(async () => await provider.DeleteAsync(id));
+        InvalidOperationException write = await Assert.ThrowsExactlyAsync<InvalidOperationException>(async () => await provider.SetAsync(id, secret));
+        StringAssert.Contains(read.Message, "no default collection");
+        StringAssert.Contains(delete.Message, "no default collection");
+        StringAssert.Contains(write.Message, "no default collection");
+        Assert.AreEqual(4, loads);
     }
 
     [TestMethod]
