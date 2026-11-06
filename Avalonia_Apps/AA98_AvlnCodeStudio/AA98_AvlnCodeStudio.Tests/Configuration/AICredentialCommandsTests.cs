@@ -335,6 +335,36 @@ public sealed class AICredentialCommandsTests
     }
 
     [TestMethod]
+    public async Task AIChat_CancelWhileAwaitingApprovalDoesNotRunToolOrContinueConversation()
+    {
+        using JsonDocument arguments = JsonDocument.Parse("{}");
+        TaskCompletionSource<bool> approval = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        IAIChatTool tool = Substitute.For<IAIChatTool>();
+        tool.Descriptor.Returns(new AIChatToolDescriptor("workspace.build", "Build workspace.",
+            """{"type":"object","properties":{}}""", requiresConfirmation: true));
+        IAIClient client = Substitute.For<IAIClient>();
+        client.CompleteAsync(Arg.Any<AICompletionRequest>(), Arg.Any<CancellationToken>()).Returns(
+            Task.FromResult(new AICompletionResponse(new AIMessage(AIMessageRole.Assistant, string.Empty),
+                [new AIChatToolCall("call-1", "workspace.build", arguments.RootElement)])));
+        MainWindowViewModel vm = CreateViewModel(new CredentialProviderCatalog([]),
+            new OpenAICompatibleAISettings { ModelId = "model" },
+            new AIChatService(client, new AIChatToolCatalog([tool])));
+        vm.SelectedAIChatAgent = "Build";
+        vm.ApproveAIChatToolExecutionAsync = (_, _, _) => approval.Task;
+        vm.AiChatInput = "Build";
+        Task turn = vm.SendAIChatMessageCommand.ExecuteAsync(null);
+
+        vm.SendAIChatMessageCancelCommand.Execute(null);
+        approval.SetResult(true);
+        await turn;
+
+        await tool.DidNotReceive().ExecuteAsync(Arg.Any<JsonElement>(), Arg.Any<CancellationToken>());
+        await client.Received(1).CompleteAsync(Arg.Any<AICompletionRequest>(), Arg.Any<CancellationToken>());
+        Assert.IsFalse(vm.AiChatBusy);
+        Assert.IsTrue(vm.AIChatMessages.Any(message => message.Content.Contains("cancelled")));
+    }
+
+    [TestMethod]
     public async Task AIChat_WorkspaceChangeDuringContextLoadDoesNotSendOldContext()
     {
         string projectPath = Path.Combine(Path.GetTempPath(), $"ai-workspace-{Guid.NewGuid():N}.csproj");

@@ -336,6 +336,15 @@ public class AppStartupCompositionTests
                 nameof(CodeStudioSettings.AIModelId),
                 nameof(CodeStudioSettings.AIProvider),
                 nameof(CodeStudioSettings.CredentialManager),
+                nameof(CodeStudioSettings.UseAIProviderProfiles),
+                nameof(CodeStudioSettings.AIProfileOpenAIEndpoint),
+                nameof(CodeStudioSettings.AIProfileOpenAIModelId),
+                nameof(CodeStudioSettings.AIProfileOllamaEndpoint),
+                nameof(CodeStudioSettings.AIProfileOllamaModelId),
+                nameof(CodeStudioSettings.AIProfileIFMEndpoint),
+                nameof(CodeStudioSettings.AIProfileIFMModelId),
+                nameof(CodeStudioSettings.AIProfileCustomEndpoint),
+                nameof(CodeStudioSettings.AIProfileCustomModelId),
             },
             section.Properties.Select(static property => property.Name).ToArray());
 
@@ -546,6 +555,584 @@ public class AppStartupCompositionTests
             Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
             Assert.AreEqual("https://api.openai.com/v1/chat/completions", settings.GetEffectiveAIEndpoint());
             Assert.IsFalse(preview.UseTemplateEndpointCommand.CanExecute(null));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task AIProviderProfiles_OptInPreservesLegacyValuesAndKeepsProviderOverridesSeparate()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioProfiles", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using (ServiceProvider services = App.CreateServiceProvider(static () => null, root))
+            {
+                ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+                CodeStudioSettings settings = services.GetRequiredService<CodeStudioSettings>();
+                var runtime = services.GetRequiredService<AA98_AvlnCodeStudio.Base.AI.Models.OpenAICompatibleAISettings>();
+                WorkbenchSettingsRuntimeActivator activator = services.GetRequiredService<WorkbenchSettingsRuntimeActivator>();
+                config.ValidateChangesAsync = activator.ValidateChangesAsync;
+                config.SectionAppliedAsync = activator.ActivateAsync;
+                await config.LoadCommand.ExecuteAsync(null);
+                using AIProviderDraftViewModel preview = new(config, settings);
+                IPropertyItem Get(string name) => config.PropertyEditor.Items.Single(item => item.PropertyItem.Name == name).PropertyItem;
+
+                Assert.IsTrue(Get(nameof(CodeStudioSettings.AIEndpoint)).TrySetValue("https://legacy.example/chat"));
+                Assert.IsTrue(Get(nameof(CodeStudioSettings.AIModelId)).TrySetValue("legacy-model"));
+                Assert.IsTrue(Get(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).TrySetValue("https://openai.example/chat"));
+                Assert.IsTrue(Get(nameof(CodeStudioSettings.AIProfileOpenAIModelId)).TrySetValue("openai-model"));
+                Assert.IsTrue(Get(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).TrySetValue("http://localhost:22334/chat"));
+                Assert.IsTrue(Get(nameof(CodeStudioSettings.AIProfileOllamaModelId)).TrySetValue("local-model"));
+                Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
+                Assert.AreEqual("https://legacy.example/chat", settings.GetEffectiveAIEndpoint());
+                runtime.ApiKey = "session-key";
+
+                Assert.IsTrue(Get(nameof(CodeStudioSettings.UseAIProviderProfiles)).TrySetValue(true));
+                Assert.IsFalse(preview.CanManageActiveCredentials);
+                StringAssert.Contains(preview.Summary, "localhost:22334");
+                Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
+                Assert.IsTrue(preview.CanManageActiveCredentials);
+                Assert.AreEqual("local-model", settings.GetEffectiveAIModelId());
+                Assert.AreEqual(string.Empty, runtime.ApiKey);
+                Assert.IsTrue(Get(nameof(CodeStudioSettings.AIProvider)).TrySetValue(AIProviderPreset.OpenAI));
+                Assert.IsFalse(preview.CanManageActiveCredentials);
+                StringAssert.Contains(preview.Summary, "openai.example");
+                Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
+                Assert.AreEqual("https://openai.example/chat", settings.GetEffectiveAIEndpoint());
+                Assert.AreEqual("openai-model", settings.GetEffectiveAIModelId());
+
+                preview.UseTemplateEndpointCommand.Execute(null);
+                StringAssert.Contains(preview.Summary, "api.openai.com");
+                Assert.IsTrue(await config.DiscardChangesAsync());
+                Assert.AreEqual("https://openai.example/chat", settings.GetEffectiveAIEndpoint());
+                StringAssert.Contains(preview.Summary, "openai.example");
+            }
+
+            using ServiceProvider reopened = App.CreateServiceProvider(static () => null, root);
+            CodeStudioSettings saved = reopened.GetRequiredService<CodeStudioSettings>();
+            Assert.IsTrue(saved.UseAIProviderProfiles);
+            Assert.AreEqual("https://openai.example/chat", saved.GetEffectiveAIEndpoint());
+            Assert.AreEqual("http://localhost:22334/chat", saved.AIProfileOllamaEndpoint);
+            Assert.AreEqual("https://legacy.example/chat", saved.AIEndpoint);
+            saved.UseAIProviderProfiles = false;
+            Assert.AreEqual("https://legacy.example/chat", saved.GetEffectiveAIEndpoint());
+            Assert.AreEqual("legacy-model", saved.GetEffectiveAIModelId());
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task WorkbenchSettings_ReplacedPropertyCannotChangeNextLayerDraft()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioStaleProperty", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using ServiceProvider services = App.CreateServiceProvider(static () => null, root);
+            ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+            var activator = services.GetRequiredService<WorkbenchSettingsRuntimeActivator>();
+            config.ValidateChangesAsync = activator.ValidateChangesAsync;
+            config.SectionAppliedAsync = activator.ActivateAsync;
+            await config.LoadCommand.ExecuteAsync(null);
+            IPropertyItem Get(string name) => config.PropertyEditor.Items.Single(item => item.PropertyItem.Name == name).PropertyItem;
+            IPropertyItem old = Get(nameof(CodeStudioSettings.AIProfileIFMEndpoint));
+            Assert.IsTrue(old.TrySetValue("https://first.example/chat"));
+            Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
+            Assert.IsFalse(old.TrySetValue("https://obsolete.example/chat"));
+            Assert.IsFalse(config.HasUnsavedChanges);
+            Assert.IsTrue(Get(nameof(CodeStudioSettings.AIProfileCustomModelId)).TrySetValue("new-model"));
+            Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
+            Assert.AreEqual("https://first.example/chat", services.GetRequiredService<CodeStudioSettings>().AIProfileIFMEndpoint);
+            Assert.AreEqual("new-model", services.GetRequiredService<CodeStudioSettings>().AIProfileCustomModelId);
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task AIProviderProfiles_InvalidInactiveEndpointBlocksApplyWithoutWriting()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioProfileValidation", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using ServiceProvider services = App.CreateServiceProvider(static () => null, root);
+            ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+            config.ValidateChangesAsync = services.GetRequiredService<WorkbenchSettingsRuntimeActivator>().ValidateChangesAsync;
+            await config.LoadCommand.ExecuteAsync(null);
+            IPropertyItem endpoint = config.PropertyEditor.Items.Single(
+                item => item.PropertyItem.Name == nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem;
+            Assert.IsTrue(endpoint.TrySetValue("http://remote.example/chat"));
+            Assert.IsFalse(await config.ApplyChangesAsync());
+            StringAssert.Contains(config.OperationMessage, "IFM profile");
+            Assert.IsTrue(config.HasUnsavedChanges);
+            Assert.IsFalse((await services.GetRequiredService<JsonConfigLayerStore>().LoadAsync()).TryGetValue(
+                new ConfigPropertyKey("Workbench", nameof(CodeStudioSettings.AIProfileIFMEndpoint)), out _));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task AIProviderDraft_ShowAllAllowsFixingInactiveProfileWithoutChangingActiveProvider()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioProfileRepair", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using ServiceProvider services = App.CreateServiceProvider(static () => null, root);
+            ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+            var activator = services.GetRequiredService<WorkbenchSettingsRuntimeActivator>();
+            config.ValidateChangesAsync = activator.ValidateChangesAsync;
+            config.SectionAppliedAsync = activator.ActivateAsync;
+            await config.LoadCommand.ExecuteAsync(null);
+            using AIProviderDraftViewModel preview = new(config, services.GetRequiredService<CodeStudioSettings>());
+            Property.Editor.Avalonia.PropertyEditorItemViewModel Item(string name) =>
+                config.PropertyEditor.Items.Single(item => item.PropertyItem.Name == name);
+            var inactive = Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint));
+            Assert.IsFalse(inactive.IsVisible);
+            preview.ShowAllProviderFields = true;
+            Assert.IsTrue(inactive.IsVisible);
+            Assert.IsFalse(config.HasUnsavedChanges);
+            Assert.IsTrue(inactive.PropertyItem.TrySetValue("http://remote.example/chat"));
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileCustomEndpoint)).PropertyItem.TrySetValue("https://user:secret@other.example/chat?token=hidden"));
+            Assert.IsTrue(preview.HasInvalidProfileEndpoints);
+            StringAssert.Contains(preview.ProfileValidationMessage, "IFM profile");
+            StringAssert.Contains(preview.ProfileValidationMessage, "Custom profile");
+            Assert.IsFalse(preview.ProfileValidationMessage.Contains("remote.example", StringComparison.Ordinal));
+            Assert.IsFalse(preview.ProfileValidationMessage.Contains("secret", StringComparison.Ordinal));
+            Assert.IsFalse(preview.ShowInvalidProfileFieldsCommand.CanExecute(null));
+            preview.ShowAllProviderFields = false;
+            Assert.IsFalse(inactive.IsVisible);
+            Assert.IsTrue(preview.ShowInvalidProfileFieldsCommand.CanExecute(null));
+            Assert.IsFalse(await config.ApplyChangesAsync());
+            StringAssert.Contains(config.OperationMessage, "Custom profile");
+            StringAssert.Contains(config.OperationMessage, "IFM profile");
+            StringAssert.Contains(config.OperationMessage, "Show all provider fields");
+            Assert.IsFalse(config.OperationMessage.Contains("other.example", StringComparison.Ordinal));
+            Assert.IsFalse(config.OperationMessage.Contains("secret", StringComparison.Ordinal));
+            Assert.AreEqual(AIProviderPreset.Ollama, Item(nameof(CodeStudioSettings.AIProvider)).PropertyItem.Value);
+            Assert.AreEqual(false, Item(nameof(CodeStudioSettings.UseAIProviderProfiles)).PropertyItem.Value);
+
+            preview.ShowInvalidProfileFieldsCommand.Execute(null);
+            Assert.IsTrue(inactive.IsVisible);
+            Assert.IsTrue(preview.ShowAllProviderFields);
+            Assert.IsFalse(preview.ShowInvalidProfileFieldsCommand.CanExecute(null));
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileCustomEndpoint)).PropertyItem.TrySetValue("https://other.example/chat"));
+            Assert.IsFalse(preview.ProfileValidationMessage.Contains("Custom profile", StringComparison.Ordinal));
+            Assert.IsFalse(await config.ApplyChangesAsync());
+            StringAssert.Contains(config.OperationMessage, "IFM profile");
+            Assert.IsTrue(inactive.PropertyItem.TrySetValue("https://valid.example/chat"));
+            Assert.IsFalse(preview.HasInvalidProfileEndpoints);
+            Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+            Assert.AreEqual(AIProviderPreset.Ollama, services.GetRequiredService<CodeStudioSettings>().AIProvider);
+            Assert.IsFalse(services.GetRequiredService<CodeStudioSettings>().UseAIProviderProfiles);
+            preview.ShowAllProviderFields = false;
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+            Assert.IsFalse(config.HasUnsavedChanges);
+            ConfigLayerSnapshot saved = await services.GetRequiredService<JsonConfigLayerStore>().LoadAsync();
+            Assert.IsTrue(saved.TryGetValue(
+                new ConfigPropertyKey("Workbench", nameof(CodeStudioSettings.AIProfileIFMEndpoint)), out _));
+            preview.ShowAllProviderFields = true;
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.TrySetValue("http://discard.example/chat"));
+            Assert.IsTrue(preview.HasInvalidProfileEndpoints);
+            Assert.IsTrue(await config.DiscardChangesAsync());
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+            Assert.AreEqual("https://valid.example/chat", Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.Value);
+            Assert.AreEqual(AIProviderPreset.Ollama, Item(nameof(CodeStudioSettings.AIProvider)).PropertyItem.Value);
+            Assert.IsFalse(preview.HasInvalidProfileEndpoints);
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task AIProviderDraft_InspectIssueNavigatesWithoutChangingOrSavingDraft()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioProfileIssueNavigation", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using ServiceProvider services = App.CreateServiceProvider(static () => null, root);
+            ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+            var activator = services.GetRequiredService<WorkbenchSettingsRuntimeActivator>();
+            config.ValidateChangesAsync = activator.ValidateChangesAsync;
+            config.SectionAppliedAsync = activator.ActivateAsync;
+            await config.LoadCommand.ExecuteAsync(null);
+            using AIProviderDraftViewModel preview = new(config, services.GetRequiredService<CodeStudioSettings>());
+            Property.Editor.Avalonia.PropertyEditorItemViewModel Item(string name) =>
+                config.PropertyEditor.Items.Single(item => item.PropertyItem.Name == name);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.TrySetValue("http://ifm.example/chat"));
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileCustomEndpoint)).PropertyItem.TrySetValue("http://custom.example/chat"));
+            Assert.AreEqual(2, preview.ProfileIssues.Count);
+            AIProfileIssueViewModel ifm = preview.ProfileIssues.Single(issue => issue.Issue.Provider == AIProviderPreset.IFM);
+            AIProfileIssueViewModel custom = preview.ProfileIssues.Single(issue => issue.Issue.Provider == AIProviderPreset.Custom);
+            List<(AIProviderPreset Provider, long Revision)> requests = [];
+            preview.ProfileEndpointNavigationRequested += (provider, revision) => requests.Add((provider, revision));
+            preview.ShowAllProviderFields = true;
+            TaskCompletionSource<string?> validation = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            config.ValidateChangesAsync = _ => validation.Task;
+            Task<bool> apply = config.ApplyChangesAsync();
+            Assert.IsTrue(config.IsBusy);
+            Assert.IsFalse(ifm.InspectCommand.CanExecute(null));
+            ifm.InspectCommand.Execute(null);
+            Assert.AreEqual(AIProfileInspection.ActiveConnection, preview.InspectedProfile);
+            Assert.IsTrue(preview.ShowAllProviderFields);
+            Assert.AreEqual(0, requests.Count);
+            validation.SetResult("Test validation blocked the save.");
+            Assert.IsFalse(await apply);
+            config.ValidateChangesAsync = activator.ValidateChangesAsync;
+            Assert.IsTrue(ifm.InspectCommand.CanExecute(null));
+            ifm.InspectCommand.Execute(null);
+            Assert.AreEqual(1, requests.Count);
+            Assert.AreEqual(AIProviderPreset.IFM, requests[0].Provider);
+            Assert.IsTrue(preview.IsProfileNavigationCurrent(requests[0].Provider, requests[0].Revision));
+            Assert.AreEqual(AIProfileInspection.IFM, preview.InspectedProfile);
+            Assert.IsFalse(preview.ShowAllProviderFields);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileCustomEndpoint)).IsVisible);
+            Assert.AreEqual(AIProviderPreset.Ollama, Item(nameof(CodeStudioSettings.AIProvider)).PropertyItem.Value);
+            Assert.AreEqual(false, Item(nameof(CodeStudioSettings.UseAIProviderProfiles)).PropertyItem.Value);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.TrySetValue("http://different.example/chat"));
+            Assert.IsFalse(preview.IsProfileNavigationCurrent(requests[0].Provider, requests[0].Revision));
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.TrySetValue("https://ifm.example/chat"));
+            Assert.IsFalse(preview.IsProfileNavigationCurrent(requests[0].Provider, requests[0].Revision));
+            Assert.IsFalse(ifm.InspectCommand.CanExecute(null));
+            custom.InspectCommand.Execute(null);
+            Assert.AreEqual(AIProviderPreset.Custom, requests[1].Provider);
+            Assert.IsTrue(preview.IsProfileNavigationCurrent(requests[1].Provider, requests[1].Revision));
+            preview.InspectedProfile = AIProfileInspection.IFM;
+            preview.InspectedProfile = AIProfileInspection.Custom;
+            Assert.IsFalse(preview.IsProfileNavigationCurrent(requests[1].Provider, requests[1].Revision));
+            Assert.AreEqual(AIProfileInspection.Custom, preview.InspectedProfile);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileCustomEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileCustomEndpoint)).PropertyItem.TrySetValue("https://custom.example/chat"));
+            Assert.AreEqual(0, preview.ProfileIssues.Count);
+            Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
+            Assert.IsFalse(config.HasUnsavedChanges);
+            Assert.AreEqual(AIProviderPreset.Ollama, services.GetRequiredService<CodeStudioSettings>().AIProvider);
+            Assert.IsFalse(services.GetRequiredService<CodeStudioSettings>().UseAIProviderProfiles);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileCustomEndpoint)).PropertyItem.TrySetValue("http://discard.example/chat"));
+            preview.ProfileIssues.Single().InspectCommand.Execute(null);
+            Assert.IsTrue(await config.DiscardChangesAsync());
+            Assert.AreEqual(0, preview.ProfileIssues.Count);
+            Assert.AreEqual("https://custom.example/chat", Item(nameof(CodeStudioSettings.AIProfileCustomEndpoint)).PropertyItem.Value);
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task AIProviderDraft_InspectSavedInvalidProfileIsDisplayOnly()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioSavedProfileIssue", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using ServiceProvider services = App.CreateServiceProvider(static () => null, root);
+            JsonConfigLayerStore store = services.GetRequiredService<JsonConfigLayerStore>();
+            ConfigLayerSnapshot saved = await store.LoadAsync();
+            await store.SaveAsync(saved.WithValue(
+                new ConfigPropertyKey("Workbench", nameof(CodeStudioSettings.AIProfileIFMEndpoint)),
+                new ConfigLayerValue("http://invalid.example/chat")));
+            ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+            await config.LoadCommand.ExecuteAsync(null);
+            using AIProviderDraftViewModel preview = new(config, services.GetRequiredService<CodeStudioSettings>());
+            string version = (await store.LoadAsync()).StorageVersion;
+            preview.ProfileIssues.Single().InspectCommand.Execute(null);
+            Assert.AreEqual(AIProfileInspection.IFM, preview.InspectedProfile);
+            Assert.IsFalse(config.HasUnsavedChanges);
+            Assert.AreEqual(version, (await store.LoadAsync()).StorageVersion);
+            Assert.AreEqual(AIProviderPreset.Ollama, services.GetRequiredService<CodeStudioSettings>().AIProvider);
+            AIProfileIssueViewModel issue = preview.ProfileIssues.Single();
+            long revision = 0;
+            preview.ProfileEndpointNavigationRequested += (_, value) => revision = value;
+            issue.InspectCommand.Execute(null);
+            Assert.IsTrue(preview.IsProfileNavigationCurrent(AIProviderPreset.IFM, revision));
+            preview.Dispose();
+            Assert.IsFalse(preview.IsProfileNavigationCurrent(AIProviderPreset.IFM, revision));
+            Assert.IsFalse(issue.InspectCommand.CanExecute(null));
+            issue.InspectCommand.Execute(null);
+            Assert.IsTrue(config.PropertyEditor.Items.All(item => item.IsVisible));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task AIProviderDraft_InspectionEditsInactiveProfilesWithoutChangingActiveConnection()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioProfileInspection", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using ServiceProvider services = App.CreateServiceProvider(static () => null, root);
+            ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+            var activator = services.GetRequiredService<WorkbenchSettingsRuntimeActivator>();
+            config.ValidateChangesAsync = activator.ValidateChangesAsync;
+            config.SectionAppliedAsync = activator.ActivateAsync;
+            await config.LoadCommand.ExecuteAsync(null);
+            using AIProviderDraftViewModel preview = new(config, services.GetRequiredService<CodeStudioSettings>());
+            Property.Editor.Avalonia.PropertyEditorItemViewModel Item(string name) =>
+                config.PropertyEditor.Items.Single(item => item.PropertyItem.Name == name);
+            var runtime = services.GetRequiredService<AA98_AvlnCodeStudio.Base.AI.Models.OpenAICompatibleAISettings>();
+            string originalEndpoint = runtime.Endpoint;
+            runtime.ApiKey = "session-key";
+
+            preview.InspectedProfile = AIProfileInspection.IFM;
+            Assert.IsFalse(config.HasUnsavedChanges);
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMModelId)).IsVisible);
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).IsVisible);
+            preview.ShowAllProviderFields = true;
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).IsVisible);
+            preview.ShowAllProviderFields = false;
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).IsVisible);
+            Assert.IsFalse(preview.UseTemplateEndpointCommand.CanExecute(null));
+            Assert.IsFalse(preview.CopyLegacyEndpointCommand.CanExecute(null));
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.TrySetValue("https://ifm.example/chat"));
+            preview.InspectedProfile = AIProfileInspection.OpenAI;
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).PropertyItem.TrySetValue("https://openai.example/chat"));
+            Assert.AreEqual(AIProviderPreset.Ollama, Item(nameof(CodeStudioSettings.AIProvider)).PropertyItem.Value);
+            Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
+            Assert.AreEqual(originalEndpoint, runtime.Endpoint);
+            Assert.AreEqual("session-key", runtime.ApiKey);
+            Assert.IsFalse(services.GetRequiredService<CodeStudioSettings>().UseAIProviderProfiles);
+            Assert.AreEqual("https://ifm.example/chat", services.GetRequiredService<CodeStudioSettings>().AIProfileIFMEndpoint);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).IsVisible);
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.UseAIProviderProfiles)).PropertyItem.TrySetValue(true));
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).PropertyItem.TrySetValue("https://discard.example/chat"));
+            preview.InspectedProfile = AIProfileInspection.IFM;
+            Assert.IsTrue(await config.DiscardChangesAsync());
+            Assert.AreEqual(AIProfileInspection.IFM, preview.InspectedProfile);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+            Assert.AreEqual("https://ifm.example/chat", Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.Value);
+            Assert.AreEqual(false, Item(nameof(CodeStudioSettings.UseAIProviderProfiles)).PropertyItem.Value);
+            preview.InspectedProfile = AIProfileInspection.ActiveConnection;
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIEndpoint)).IsVisible);
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => preview.InspectedProfile = (AIProfileInspection)99);
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task AIProviderDraft_ShowsOnlySelectedProfileAndPreservesHiddenDrafts()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioProfileVisibility", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using ServiceProvider services = App.CreateServiceProvider(static () => null, root);
+            ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+            var activator = services.GetRequiredService<WorkbenchSettingsRuntimeActivator>();
+            config.ValidateChangesAsync = activator.ValidateChangesAsync;
+            config.SectionAppliedAsync = activator.ActivateAsync;
+            await config.LoadCommand.ExecuteAsync(null);
+            using AIProviderDraftViewModel preview = new(config, services.GetRequiredService<CodeStudioSettings>());
+            Property.Editor.Avalonia.PropertyEditorItemViewModel Item(string name) =>
+                config.PropertyEditor.Items.Single(item => item.PropertyItem.Name == name);
+
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIEndpoint)).IsVisible);
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.UseAIProviderProfiles)).PropertyItem.TrySetValue(true));
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).IsVisible);
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.TrySetValue("http://hidden.example/chat"));
+            Assert.IsTrue(preview.ShowInvalidProfileFieldsCommand.CanExecute(null));
+            preview.ShowInvalidProfileFieldsCommand.Execute(null);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).IsVisible);
+            Assert.AreEqual(AIProviderPreset.Ollama, Item(nameof(CodeStudioSettings.AIProvider)).PropertyItem.Value);
+            StringAssert.Contains(preview.Summary, "Draft: Ollama (provider profile)");
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.TrySetValue(string.Empty));
+            preview.ShowAllProviderFields = false;
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).PropertyItem.TrySetValue("http://localhost:22334/chat"));
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProvider)).PropertyItem.TrySetValue(AIProviderPreset.OpenAI));
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).PropertyItem.TrySetValue("https://openai.example/chat"));
+            Assert.IsTrue(await config.ApplyChangesAsync(), config.OperationMessage);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).IsVisible);
+            Assert.IsFalse(Item(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).IsVisible);
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProvider)).PropertyItem.TrySetValue(AIProviderPreset.Ollama));
+            Assert.AreEqual("http://localhost:22334/chat", Item(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).PropertyItem.Value);
+            Assert.IsTrue(await config.DiscardChangesAsync());
+            Assert.IsTrue(Item(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).IsVisible);
+            preview.Dispose();
+            Assert.IsTrue(config.PropertyEditor.Items.All(item => item.IsVisible));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task AIProviderDraft_CopiesLegacyValuesOnlyIntoEmptySelectedProfile()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioProfileCopy", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using ServiceProvider services = App.CreateServiceProvider(static () => null, root);
+            ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+            await config.LoadCommand.ExecuteAsync(null);
+            using AIProviderDraftViewModel preview = new(config, services.GetRequiredService<CodeStudioSettings>());
+            IPropertyItem Get(string name) => config.PropertyEditor.Items.Single(item => item.PropertyItem.Name == name).PropertyItem;
+            Assert.IsTrue(Get(nameof(CodeStudioSettings.AIEndpoint)).TrySetValue("https://legacy.example/chat"));
+            Assert.IsTrue(Get(nameof(CodeStudioSettings.AIModelId)).TrySetValue("legacy-model"));
+            Assert.IsFalse(preview.CopyLegacyEndpointCommand.CanExecute(null));
+            Assert.IsTrue(Get(nameof(CodeStudioSettings.UseAIProviderProfiles)).TrySetValue(true));
+            Assert.IsTrue(preview.CopyLegacyEndpointCommand.CanExecute(null));
+            Assert.IsTrue(preview.CopyLegacyModelCommand.CanExecute(null));
+            preview.InspectedProfile = AIProfileInspection.OpenAI;
+            Assert.IsFalse(preview.CopyLegacyEndpointCommand.CanExecute(null));
+            Assert.IsFalse(preview.CopyLegacyModelCommand.CanExecute(null));
+            preview.CopyLegacyEndpointCommand.Execute(null);
+            Assert.AreEqual(string.Empty, Get(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).Value);
+            Assert.AreEqual(string.Empty, Get(nameof(CodeStudioSettings.AIProfileOpenAIEndpoint)).Value);
+            preview.InspectedProfile = AIProfileInspection.ActiveConnection;
+            preview.CopyLegacyEndpointCommand.Execute(null);
+            preview.CopyLegacyModelCommand.Execute(null);
+            Assert.AreEqual("https://legacy.example/chat", Get(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).Value);
+            Assert.AreEqual("legacy-model", Get(nameof(CodeStudioSettings.AIProfileOllamaModelId)).Value);
+            Assert.IsFalse(preview.CopyLegacyEndpointCommand.CanExecute(null));
+            Assert.IsTrue(Get(nameof(CodeStudioSettings.AIEndpoint)).TrySetValue("https://different.example/chat"));
+            preview.CopyLegacyEndpointCommand.Execute(null);
+            Assert.AreEqual("https://legacy.example/chat", Get(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).Value);
+            Assert.IsTrue(Get(nameof(CodeStudioSettings.AIProvider)).TrySetValue(AIProviderPreset.OpenAI));
+            Assert.IsTrue(preview.CopyLegacyEndpointCommand.CanExecute(null));
+            Assert.IsTrue(await config.DiscardChangesAsync());
+            Assert.AreEqual(string.Empty, Get(nameof(CodeStudioSettings.AIProfileOllamaEndpoint)).Value);
+            Assert.AreEqual(string.Empty, Get(nameof(CodeStudioSettings.AIEndpoint)).Value);
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task AIProviderDraft_DoesNotCopyIntoReadOnlyProfile()
+    {
+        IConfigUiSection section = Substitute.For<IConfigUiSection>();
+        section.Section.Returns(new ConfigUiSection("Workbench", "Workbench", null, 0));
+        section.State.Returns(ConfigUiSectionState.Ready);
+        PropertyCategory category = new("Workbench", "Workbench");
+        PropertyItem target = new(category, nameof(CodeStudioSettings.AIProfileOpenAIEndpoint), "Endpoint",
+            typeof(string), string.Empty, isEditable: false);
+        PropertyItem inactive = new(category, nameof(CodeStudioSettings.AIProfileIFMEndpoint), "IFM Endpoint",
+            typeof(string), "http://remote.example", isEditable: false);
+        section.Properties.Returns(
+        [
+            new PropertyItem(category, nameof(CodeStudioSettings.AIEndpoint), "Global endpoint", typeof(string), "https://legacy.example/chat"),
+            new PropertyItem(category, nameof(CodeStudioSettings.AIModelId), "Global model", typeof(string), "model"),
+            new PropertyItem(category, nameof(CodeStudioSettings.AIProvider), "Provider", typeof(AIProviderPreset), AIProviderPreset.OpenAI),
+            new PropertyItem(category, nameof(CodeStudioSettings.UseAIProviderProfiles), "Profiles", typeof(bool), true),
+            target,
+            inactive,
+            new PropertyItem(category, nameof(CodeStudioSettings.AIProfileOpenAIModelId), "Model", typeof(string), string.Empty),
+        ]);
+        IConfigUiSectionRegistry registry = Substitute.For<IConfigUiSectionRegistry>();
+        registry.Sections.Returns([section]);
+        ConfigUiViewModel config = new(registry, new Property.Editor.Avalonia.PropertyEditorViewModel());
+        await config.LoadCommand.ExecuteAsync(null);
+        using AIProviderDraftViewModel preview = new(config, new CodeStudioSettings());
+        Assert.IsFalse(preview.CopyLegacyEndpointCommand.CanExecute(null));
+        preview.CopyLegacyEndpointCommand.Execute(null);
+        Assert.AreEqual(string.Empty, target.Value);
+        Assert.IsTrue(preview.CopyLegacyModelCommand.CanExecute(null));
+        var inactiveEditor = config.PropertyEditor.Items.Single(item => item.PropertyItem == inactive);
+        Assert.IsFalse(inactiveEditor.IsVisible);
+        preview.InspectedProfile = AIProfileInspection.IFM;
+        Assert.IsTrue(inactiveEditor.IsVisible);
+        Assert.IsFalse(inactive.TrySetValue("https://corrected.example"));
+        Assert.IsFalse(config.HasUnsavedChanges);
+        preview.InspectedProfile = AIProfileInspection.ActiveConnection;
+        Assert.IsTrue(preview.HasInvalidProfileEndpoints);
+        preview.ProfileIssues.Single().InspectCommand.Execute(null);
+        Assert.IsTrue(inactiveEditor.IsVisible);
+        Assert.IsFalse(inactive.TrySetValue("https://corrected.example"));
+        Assert.IsFalse(config.HasUnsavedChanges);
+        preview.InspectedProfile = AIProfileInspection.ActiveConnection;
+        Assert.IsTrue(preview.ShowInvalidProfileFieldsCommand.CanExecute(null));
+        preview.ShowInvalidProfileFieldsCommand.Execute(null);
+        Assert.IsTrue(inactiveEditor.IsVisible);
+        Assert.IsFalse(inactive.IsEditable);
+        Assert.IsFalse(inactive.TrySetValue("https://corrected.example"));
+        Assert.IsFalse(config.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    public async Task AIProviderProfiles_TemplateDriftUsesSelectedProfileNotLegacyOverride()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "CodeStudioProfileTemplate", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using ServiceProvider services = App.CreateServiceProvider(static () => null, root);
+            ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
+            await config.LoadCommand.ExecuteAsync(null);
+            using AIProviderDraftViewModel preview = new(config, services.GetRequiredService<CodeStudioSettings>());
+            IPropertyItem Get(string name) => config.PropertyEditor.Items.Single(item => item.PropertyItem.Name == name).PropertyItem;
+            Assert.IsTrue(Get(nameof(CodeStudioSettings.AIEndpoint)).TrySetValue("https://legacy.example/chat"));
+            Assert.IsTrue(Get(nameof(CodeStudioSettings.UseAIProviderProfiles)).TrySetValue(true));
+
+            string? warning = await preview.ConfirmCurrentTemplatesAsync(config.Sections.ToArray(),
+                () => Task.FromResult<IReadOnlyList<AIProviderTemplate>?>(
+                    [new() { Id = "Ollama", Endpoint = "https://updated.example/chat", DefaultModelId = "updated" }]));
+
+            StringAssert.Contains(warning, "Review");
+            StringAssert.Contains(preview.Summary, "updated.example");
+            Assert.IsFalse(preview.Summary.Contains("legacy.example", StringComparison.Ordinal));
         }
         finally
         {
