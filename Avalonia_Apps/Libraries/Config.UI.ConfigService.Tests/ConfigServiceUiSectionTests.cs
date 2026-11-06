@@ -107,6 +107,47 @@ public sealed class ConfigServiceUiSectionTests
     }
 
     [TestMethod]
+    [DataRow("save")]
+    [DataRow("discard")]
+    [DataRow("reset")]
+    public async Task LayeredUiSection_ReplacedPropertyCannotChangeSharedDraft(string operation)
+    {
+        string root = CreateTempDirectory();
+        try
+        {
+            ConfigSectionRegistry registry = new();
+            LayeredSectionProvider provider = new();
+            registry.AddSection(provider);
+            JsonConfigLayerStore store = new(ConfigLayer.User, Path.Combine(root, "user.json"));
+            ConfigLayeredSettingsResolver resolver = new(registry, [store]);
+            ConfigLayeredUiSection section = new(resolver, provider, store, ConfigLayer.User);
+            await section.LoadAsync();
+            IPropertyItem old = section.Properties.Single(property => property.Name == nameof(LayeredSettings.Name));
+            Assert.IsTrue(old.TrySetValue("first"));
+            switch (operation)
+            {
+                case "save": await section.SaveAsync(); break;
+                case "discard": await section.DiscardDraftAsync(); break;
+                case "reset": await section.ResetDraftAsync(); break;
+            }
+
+            IPropertyItem current = section.Properties.Single(property => property.Name == nameof(LayeredSettings.Name));
+            Assert.AreNotSame(old, current);
+            Assert.IsFalse(old.TrySetValue("obsolete"));
+            StringAssert.Contains(old.ValidationResult.ErrorMessage, "replaced");
+            Assert.IsTrue(current.TrySetValue("current"));
+            await section.SaveAsync();
+            ConfigLayerSnapshot saved = await store.LoadAsync();
+            Assert.AreEqual("current", ((System.Text.Json.JsonElement)
+                saved.Values[new ConfigPropertyKey("General", nameof(LayeredSettings.Name))].Value!).GetString());
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task LayeredUiSection_AllowsReplacingUnsupportedSavedEnumValue()
     {
         string root = CreateTempDirectory();
@@ -305,6 +346,59 @@ public sealed class ConfigServiceUiSectionTests
     }
 
     [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task LayeredUiSection_ReportsPersistenceWhenRefreshFails(bool reset)
+    {
+        ConfigSectionRegistry registry = new();
+        LayeredSectionProvider provider = new();
+        registry.AddSection(provider);
+        IConfigLayerStore user = Substitute.For<IConfigLayerStore>();
+        IConfigLayerStore system = Substitute.For<IConfigLayerStore>();
+        user.Layer.Returns(ConfigLayer.User);
+        system.Layer.Returns(ConfigLayer.System);
+        ConfigPropertyKey key = new("General", nameof(LayeredSettings.Name));
+        ConfigLayerSnapshot persisted = new ConfigLayerSnapshot(ConfigLayer.User, [])
+            .WithValue(key, new ConfigLayerValue("stored"));
+        bool failRefresh = false;
+        user.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ => Task.FromResult(persisted));
+        user.SaveAsync(Arg.Any<ConfigLayerSnapshot>(), Arg.Any<CancellationToken>()).Returns(call =>
+        {
+            persisted = call.Arg<ConfigLayerSnapshot>();
+            failRefresh = true;
+            return Task.FromResult(persisted);
+        });
+        system.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ => failRefresh
+            ? Task.FromException<ConfigLayerSnapshot>(new IOException("System layer unavailable"))
+            : Task.FromResult(new ConfigLayerSnapshot(ConfigLayer.System, [])));
+        ConfigLayeredSettingsResolver resolver = new(registry, [system, user]);
+        ConfigLayeredUiSection section = new(resolver, provider, user, ConfigLayer.User);
+        await section.LoadAsync();
+        if (reset)
+        {
+            await section.ResetAsync();
+            Assert.IsFalse(persisted.TryGetValue(key, out _));
+        }
+        else
+        {
+            Assert.IsTrue(section.Properties.Single(property => property.Name == nameof(LayeredSettings.Name)).TrySetValue("saved"));
+            await section.SaveAsync();
+            Assert.IsTrue(persisted.TryGetValue(key, out ConfigLayerValue? saved));
+            Assert.AreEqual("saved", saved.Value);
+        }
+
+        Assert.AreEqual(ConfigUiSectionState.Failed, section.State);
+        StringAssert.Contains(section.ErrorMessage, "saved");
+        StringAssert.Contains(section.ErrorMessage, "System layer unavailable");
+
+        failRefresh = false;
+        await section.LoadAsync();
+        Assert.AreEqual(ConfigUiSectionState.Ready, section.State);
+        Assert.AreEqual(reset ? "product-default" : "saved",
+            section.Properties.Single(property => property.Name == nameof(LayeredSettings.Name)).Value);
+    }
+
+    [TestMethod]
     public async Task LayeredUiSection_CorruptLayerDataFailsWithoutUsingProductDefaults()
     {
         string root = CreateTempDirectory();
@@ -461,6 +555,59 @@ public sealed class ConfigServiceUiSectionTests
         {
             Directory.Delete(root, recursive: true);
         }
+    }
+
+    [TestMethod]
+    public async Task LayeredUiSection_SharedReloadInvalidatesOtherSectionsBeforeRefresh()
+    {
+        ConfigSectionRegistry registry = new();
+        registry.AddSection(new LayeredSectionProvider("General", order: 10));
+        registry.AddSection(new LayeredSectionProvider("Editor", order: 20));
+        IConfigLayerStore store = Substitute.For<IConfigLayerStore>();
+        store.Layer.Returns(ConfigLayer.User);
+        store.LoadAsync(Arg.Any<CancellationToken>()).Returns(new ConfigLayerSnapshot(ConfigLayer.User, []));
+        ConfigLayeredSettingsResolver resolver = new(registry, [store]);
+        ConfigLayeredUiSectionRegistry sections = new(registry, resolver, store, ConfigLayer.User);
+        IConfigUiSection general = sections.Sections[0];
+        IConfigUiSection editor = sections.Sections[1];
+        await general.LoadAsync();
+        await editor.LoadAsync();
+        IPropertyItem oldEditor = editor.Properties.Single(property => property.Name == nameof(LayeredSettings.Name));
+
+        await ((IConfigUiDraftDiscard)general).DiscardDraftAsync();
+
+        Assert.IsFalse(oldEditor.TrySetValue("obsolete"));
+        StringAssert.Contains(oldEditor.ValidationResult.ErrorMessage, "replaced");
+        await editor.LoadAsync();
+        IPropertyItem current = editor.Properties.Single(property => property.Name == nameof(LayeredSettings.Name));
+        Assert.IsTrue(current.TrySetValue("current"));
+    }
+
+    [TestMethod]
+    public async Task LayeredUiSection_FailedStoreReloadKeepsCurrentPropertiesEditable()
+    {
+        ConfigSectionRegistry registry = new();
+        registry.AddSection(new LayeredSectionProvider("General", order: 10));
+        registry.AddSection(new LayeredSectionProvider("Editor", order: 20));
+        IConfigLayerStore store = Substitute.For<IConfigLayerStore>();
+        store.Layer.Returns(ConfigLayer.User);
+        bool fail = false;
+        store.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ => fail
+            ? Task.FromException<ConfigLayerSnapshot>(new IOException("Store unavailable"))
+            : Task.FromResult(new ConfigLayerSnapshot(ConfigLayer.User, [])));
+        ConfigLayeredSettingsResolver resolver = new(registry, [store]);
+        ConfigLayeredUiSectionRegistry sections = new(registry, resolver, store, ConfigLayer.User);
+        IConfigUiSection general = sections.Sections[0];
+        IConfigUiSection editor = sections.Sections[1];
+        await general.LoadAsync();
+        await editor.LoadAsync();
+        IPropertyItem property = editor.Properties.Single(item => item.Name == nameof(LayeredSettings.Name));
+        fail = true;
+
+        await ((IConfigUiDraftDiscard)general).DiscardDraftAsync();
+
+        Assert.AreEqual(ConfigUiSectionState.Failed, general.State);
+        Assert.IsTrue(property.TrySetValue("still valid"));
     }
 
     [TestMethod]
