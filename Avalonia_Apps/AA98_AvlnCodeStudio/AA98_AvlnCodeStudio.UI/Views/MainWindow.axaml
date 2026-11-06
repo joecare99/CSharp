@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:diagnostics="using:AA98_AvlnCodeStudio.Diagnostics.UI.Views"
-        xmlns:configUi="using:Config.UI.Avalonia.Views"
         xmlns:projectExplorer="using:Project.Explorer.Avalonia.Views"
         xmlns:debugging="using:AA98_AvlnCodeStudio.Base.Debugging.Models"
         xmlns:designer="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.Views"
@@ -67,6 +66,10 @@
                             <MenuItem Header="{Binding CreateSelectedProjectCommandText}" Command="{Binding CreateSelectedProjectCommand}" />
                             <MenuItem Header="{Binding ReloadProjectTemplatesCommandText}" Command="{Binding ReloadProjectTemplatesCommand}" />
                         </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="_View">
+                        <MenuItem Header="Settings..." Command="{Binding OpenConfigurationCommand}" />
+                        <MenuItem Header="Project Settings..." Command="{Binding OpenProjectConfigurationCommand}" />
                     </MenuItem>
                     <MenuItem Header="_Edit">
                         <MenuItem Header="{Binding UndoWorkspaceChangeCommandText}" Command="{Binding UndoWorkspaceChangeCommand}" />
@@ -149,15 +152,9 @@
                             <TextBlock Text="{Binding AIChatStatus}"
                                        Opacity="0.8"
                                        TextWrapping="Wrap" />
-                            <TextBox PlaceholderText="{Binding AIChatEndpointPlaceholderText}"
-                                     Text="{Binding AiEndpoint, Mode=TwoWay}" />
-                            <TextBox PlaceholderText="{Binding AIChatModelPlaceholderText}"
-                                     Text="{Binding AiModel, Mode=TwoWay}" />
                             <TextBox PlaceholderText="{Binding AIChatApiKeyPlaceholderText}"
                                      Text="{Binding AiApiKey, Mode=TwoWay}"
                                      PasswordChar="*" />
-                            <Button Content="Save AI settings"
-                                    Command="{Binding SaveAIChatSettingsCommand}" />
                         </StackPanel>
                         <ListBox Grid.Row="1"
                                  ItemsSource="{Binding AIChatMessages}">
@@ -304,11 +301,6 @@
                                 <Button Content="{Binding StepOutCommandText}" Command="{Binding StepOutCommand}" />
                             </StackPanel>
                         </StackPanel>
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem Header="Config">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <configUi:ConfigUiView DataContext="{Binding ConfigUi}" />
                     </ScrollViewer>
                 </TabItem>
             </TabControl>

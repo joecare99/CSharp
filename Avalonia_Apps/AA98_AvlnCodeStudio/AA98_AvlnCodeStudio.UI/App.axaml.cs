@@ -16,8 +16,12 @@ using Code.Navigation;
 using Config.Service;
 using Config.UI.Avalonia.DependencyInjection;
 using Config.UI.Avalonia.ViewModels;
+using Config.UI;
+using Config.UI.ConfigService;
 using Config.UI.ConfigService.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using System.IO;
 using Project.Explorer;
 using Project.Explorer.Avalonia.DependencyInjection;
 using Project.Explorer.Avalonia.ViewModels;
@@ -65,12 +69,14 @@ namespace AA98_AvlnCodeStudio.UI
             }
         }
 
-        public static ServiceProvider CreateServiceProvider(Func<TopLevel?> topLevelProvider)
+        public static ServiceProvider CreateServiceProvider(
+            Func<TopLevel?> topLevelProvider,
+            string? userConfigRoot = null)
         {
             ArgumentNullException.ThrowIfNull(topLevelProvider);
 
             var services = new ServiceCollection();
-            ConfigureServices(services, topLevelProvider);
+            ConfigureServices(services, topLevelProvider, userConfigRoot);
 
             return services.BuildServiceProvider(new ServiceProviderOptions
             {
@@ -86,7 +92,8 @@ namespace AA98_AvlnCodeStudio.UI
         /// <param name="topLevelProvider">Provides the current Avalonia top-level window.</param>
         public static void ConfigureServices(
             IServiceCollection services,
-            Func<TopLevel?> topLevelProvider)
+            Func<TopLevel?> topLevelProvider,
+            string? userConfigRoot = null)
         {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(topLevelProvider);
@@ -96,14 +103,57 @@ namespace AA98_AvlnCodeStudio.UI
             services
                 .AddConfigService("JC-Soft", "AA98-CodeStudio")
                 .AddConfigSection<Configuration.CodeStudioSettings>(new Configuration.CodeStudioSettingsProvider())
-                .AddConfigServiceUi()
                 .AddConfigUiAvalonia();
             services.AddSingleton(serviceProvider =>
-                serviceProvider.GetRequiredService<Config.Service.ConfigService>()
-                    .LoadAsync<Configuration.CodeStudioSettings>("Workbench")
+            {
+                string? configuredRoot = userConfigRoot ?? Environment.GetEnvironmentVariable("CONFIG_ROOT");
+                ConfigLayerStorePathResolver pathResolver = new(
+                    "JC-Soft",
+                    "AA98-CodeStudio",
+                    userRoot: configuredRoot);
+                return pathResolver.CreateUserStore();
+            });
+            services.AddSingleton<ConfigLayeredSettingsResolver>(serviceProvider =>
+                new ConfigLayeredSettingsResolver(
+                    serviceProvider.GetRequiredService<IConfigSectionRegistry>(),
+                    [serviceProvider.GetRequiredService<JsonConfigLayerStore>()]));
+            services.AddSingleton<IConfigUiSectionRegistry>(serviceProvider =>
+                new ConfigLayeredUiSectionRegistry(
+                    serviceProvider.GetRequiredService<IConfigSectionRegistry>(),
+                    serviceProvider.GetRequiredService<ConfigLayeredSettingsResolver>(),
+                    serviceProvider.GetRequiredService<JsonConfigLayerStore>(),
+                    ConfigLayer.User,
+                    storageLocation: serviceProvider.GetRequiredService<JsonConfigLayerStore>().FilePath));
+            services.AddSingleton(serviceProvider =>
+            {
+                IConfigSectionRegistry sectionRegistry = serviceProvider.GetRequiredService<IConfigSectionRegistry>();
+                JsonConfigLayerStore userStore = serviceProvider.GetRequiredService<JsonConfigLayerStore>();
+                ConfigLayerLegacyJsonMigrator migrator = new(sectionRegistry);
+                string legacyPath = ResolveLegacyWorkbenchSettingsPath(userConfigRoot);
+                migrator.MigrateSectionToUserLayerAsync(legacyPath, "Workbench", userStore)
                     .GetAwaiter()
-                    .GetResult()
-                ?? new Configuration.CodeStudioSettings());
+                    .GetResult();
+
+                IReadOnlyDictionary<string, ConfigValueResolution> resolved =
+                    serviceProvider.GetRequiredService<ConfigLayeredSettingsResolver>()
+                        .ResolveSectionAsync("Workbench")
+                        .GetAwaiter()
+                        .GetResult();
+                Configuration.CodeStudioSettings settings = new();
+                foreach (System.Reflection.PropertyInfo property in
+                    typeof(Configuration.CodeStudioSettings).GetProperties(
+                        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public))
+                {
+                    if (property.CanWrite
+                        && property.GetIndexParameters().Length == 0
+                        && resolved.TryGetValue(property.Name, out ConfigValueResolution? value))
+                    {
+                        property.SetValue(settings, value.Value);
+                    }
+                }
+
+                return settings;
+            });
             services.AddSingleton(serviceProvider =>
             {
                 Configuration.CodeStudioSettings settings =
@@ -173,7 +223,8 @@ namespace AA98_AvlnCodeStudio.UI
                 serviceProvider.GetRequiredService<Config.Service.ConfigService>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Versioning.Svn.Services.ISvnWorkingCopyOperations>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.WorkspaceFileChangeService>(),
-                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.AxamlMvvmGenerator>()));
+                serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.AxamlMvvmGenerator>(),
+                serviceProvider.GetRequiredService<ConfigLayeredSettingsResolver>()));
             services.AddSingleton<MainWindow>();
         }
 
@@ -189,6 +240,15 @@ namespace AA98_AvlnCodeStudio.UI
             {
                 throw new InvalidOperationException("AA98 main window creation failed. Check UI component and editor registrations.", exception);
             }
+        }
+
+        private static string ResolveLegacyWorkbenchSettingsPath(string? userConfigRoot)
+        {
+            string? configuredRoot = userConfigRoot ?? Environment.GetEnvironmentVariable("CONFIG_ROOT");
+            string root = !string.IsNullOrEmpty(configuredRoot)
+                ? configuredRoot
+                : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            return Path.Combine(root, "JC-Soft", "AA98-CodeStudio", "config", "Workbench.json");
         }
     }
 }

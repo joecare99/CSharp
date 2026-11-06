@@ -1,3 +1,5 @@
+using Config.UI.ConfigService;
+
 namespace AA98_AvlnCodeStudio.UI.Configuration;
 
 /// <summary>
@@ -12,8 +14,10 @@ public sealed class CodeStudioSettings
     public string AIModelId { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the initial workspace path shown by the workbench.</summary>
+    [ConfigUiIgnore]
     public string? WorkspacePath { get; set; }
 
     /// <summary>Gets or sets whether files reopen when the workbench starts.</summary>
+    [ConfigUiIgnore]
     public bool ReopenLastDocument { get; set; } = true;
 }

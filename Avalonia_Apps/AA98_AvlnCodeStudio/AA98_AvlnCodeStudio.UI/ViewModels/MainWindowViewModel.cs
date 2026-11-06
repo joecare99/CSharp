@@ -57,6 +57,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly OpenAICompatibleAISettings? _aiSettings;
         private readonly Configuration.CodeStudioSettings? _codeStudioSettings;
         private readonly ConfigService? _configService;
+        private readonly ConfigLayeredSettingsResolver? _layeredSettingsResolver;
         private readonly List<AIMessage> _aiConversation = [];
         private readonly List<Diagnostic> _buildDiagnostics = [];
         private readonly Dictionary<string, HashSet<int>> _debugBreakpoints = new(
@@ -113,7 +114,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             ConfigService? configService = null,
             ISvnWorkingCopyOperations? svnWorkingCopyOperations = null,
             WorkspaceFileChangeService? workspaceFileChangeService = null,
-            AxamlMvvmGenerator? axamlMvvmGenerator = null)
+            AxamlMvvmGenerator? axamlMvvmGenerator = null,
+            ConfigLayeredSettingsResolver? layeredSettingsResolver = null)
         {
             _editorWorkspace = editorWorkspace ?? new EditorDocumentWorkspace(editorComponent);
             _workspaceLoader = workspaceLoader ?? new CSharpWorkspaceLoader();
@@ -139,6 +141,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _aiSettings = aiSettings;
             _codeStudioSettings = codeStudioSettings;
             _configService = configService;
+            _layeredSettingsResolver = layeredSettingsResolver;
             if (_aiSettings is not null)
             {
                 AiEndpoint = _aiSettings.Endpoint;
@@ -159,6 +162,10 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             PlanningExplorer = planningExplorer;
             DiagnosticCollection = diagnosticCollection ?? throw new ArgumentNullException(nameof(diagnosticCollection));
             ConfigUi = configUi;
+            if (ConfigUi is not null)
+            {
+                ConfigUi.SectionAppliedAsync = OnConfigurationSectionAppliedAsync;
+            }
             ProjectExplorer = projectExplorer;
             PlanningExplorer.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
             ProjectExplorer?.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
@@ -188,6 +195,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         /// Gets the host-composed reusable configuration UI state.
         /// </summary>
         public ConfigUiViewModel? ConfigUi { get; }
+
+        /// <summary>Opens the host's central settings dialog.</summary>
+        public Func<Task>? OpenConfigurationDialogAsync { get; set; }
+
+        /// <summary>Opens the settings dialog for an explicitly selected project.</summary>
+        public Func<Task>? OpenProjectConfigurationDialogAsync { get; set; }
 
         /// <summary>Gets the host-composed reusable project explorer state.</summary>
         public ProjectExplorerViewModel? ProjectExplorer { get; }
@@ -530,11 +543,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public int AIChatToolCount => _aiChatService?.AvailableTools.Count ?? 0;
 
-        public string AIChatEndpointPlaceholderText => "Chat Completions endpoint (e.g. http://localhost:11434/v1/chat/completions)";
-
-        public string AIChatModelPlaceholderText => "Model ID (required)";
-
-        public string AIChatApiKeyPlaceholderText => "API key or env:VARIABLE_NAME (never persisted)";
+        public string AIChatApiKeyPlaceholderText => "Session-only API key (not persisted)";
 
         public string AIChatInputPlaceholderText => "Ask a question or request a workspace action...";
 
@@ -562,32 +571,6 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         [ObservableProperty]
         private string _aiApiKey = string.Empty;
-
-        partial void OnAiEndpointChanged(string value)
-        {
-            if (_aiSettings is not null)
-            {
-                _aiSettings.Endpoint = value;
-            }
-
-            if (_codeStudioSettings is not null)
-            {
-                _codeStudioSettings.AIEndpoint = value;
-            }
-        }
-
-        partial void OnAiModelChanged(string value)
-        {
-            if (_aiSettings is not null)
-            {
-                _aiSettings.ModelId = value;
-            }
-
-            if (_codeStudioSettings is not null)
-            {
-                _codeStudioSettings.AIModelId = value;
-            }
-        }
 
         partial void OnAiApiKeyChanged(string value)
         {
@@ -839,35 +822,76 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             AIChatMessages.Clear();
         }
 
-        [RelayCommand]
-        private async Task SaveAIChatSettingsAsync(CancellationToken cancellationToken)
+        private async Task OnConfigurationSectionAppliedAsync(string sectionName)
         {
-            if (_configService is null || _codeStudioSettings is null)
+            if (!string.Equals(sectionName, "Workbench", StringComparison.Ordinal)
+                || (_layeredSettingsResolver is null && _configService is null)
+                || _codeStudioSettings is null)
             {
-                AIChatMessages.Add(new AIChatMessageViewModel(
-                    "Error",
-                    "Persistent AI settings are not available in this host."));
                 return;
             }
 
-            try
+            Configuration.CodeStudioSettings applied;
+            if (_layeredSettingsResolver is not null)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                AiEndpoint = AiEndpoint.Trim();
-                AiModel = AiModel.Trim();
-                _codeStudioSettings.AIEndpoint = AiEndpoint;
-                _codeStudioSettings.AIModelId = AiModel;
-                await _configService.SaveAsync("Workbench", _codeStudioSettings);
-                AIChatMessages.Add(new AIChatMessageViewModel(
-                    "System",
-                    "AI endpoint and model saved. The API key remains in memory only."));
+                IReadOnlyDictionary<string, ConfigValueResolution> values =
+                    await _layeredSettingsResolver.ResolveSectionAsync("Workbench");
+                applied = new Configuration.CodeStudioSettings();
+                foreach (System.Reflection.PropertyInfo property in
+                    typeof(Configuration.CodeStudioSettings).GetProperties(
+                        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public))
+                {
+                    if (property.CanWrite
+                        && property.GetIndexParameters().Length == 0
+                        && values.TryGetValue(property.Name, out ConfigValueResolution? value))
+                    {
+                        property.SetValue(applied, value.Value);
+                    }
+                }
             }
-            catch (Exception exception) when (exception is not OperationCanceledException)
+            else
             {
-                AIChatMessages.Add(new AIChatMessageViewModel(
-                    "Error",
-                    $"Could not save AI settings: {exception.Message}"));
+                applied = await _configService!.LoadAsync<Configuration.CodeStudioSettings>("Workbench")
+                    ?? throw new InvalidOperationException("The saved Workbench settings could not be reloaded.");
             }
+
+            _codeStudioSettings.AIEndpoint = applied.AIEndpoint;
+            _codeStudioSettings.AIModelId = applied.AIModelId;
+            _codeStudioSettings.WorkspacePath = applied.WorkspacePath;
+            _codeStudioSettings.ReopenLastDocument = applied.ReopenLastDocument;
+
+            if (_aiSettings is not null)
+            {
+                _aiSettings.Endpoint = applied.AIEndpoint;
+                _aiSettings.ModelId = applied.AIModelId;
+            }
+
+            AiEndpoint = applied.AIEndpoint;
+            AiModel = applied.AIModelId;
+        }
+
+        [RelayCommand]
+        private async Task OpenConfigurationAsync()
+        {
+            if (OpenConfigurationDialogAsync is null)
+            {
+                Editor.StatusText = "The settings dialog is not available in this host.";
+                return;
+            }
+
+            await OpenConfigurationDialogAsync();
+        }
+
+        [RelayCommand]
+        private async Task OpenProjectConfigurationAsync()
+        {
+            if (OpenProjectConfigurationDialogAsync is null)
+            {
+                Editor.StatusText = "Project settings are not available in this host.";
+                return;
+            }
+
+            await OpenProjectConfigurationDialogAsync();
         }
 
         public string NavigationPlaceholderMenuText => UiStrings.NavigationPlaceholderMenuText;
