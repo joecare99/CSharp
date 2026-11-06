@@ -24,8 +24,14 @@ internal sealed class LinuxSecretServiceBackend : ILinuxSecretServiceBackend
     private const string AttributeName = "avlncodestudio.credential-id";
     private const string ContentType = "text/plain; charset=utf-8";
     private readonly SemaphoreSlim _gate = new(1, 1);
+    private readonly Func<Task<Collection?>>? _loadCollection;
     private SecretService? _service;
     private Collection? _collection;
+
+    internal LinuxSecretServiceBackend(Func<Task<Collection?>>? loadCollection = null)
+    {
+        _loadCollection = loadCollection;
+    }
 
     public async ValueTask<CredentialProviderAvailability> GetAvailabilityAsync(CancellationToken cancellationToken)
     {
@@ -39,20 +45,9 @@ internal sealed class LinuxSecretServiceBackend : ILinuxSecretServiceBackend
                     ? CredentialProviderAvailability.Locked
                     : CredentialProviderAvailability.Available;
         }
-        catch (DBusErrorReplyException)
+        catch (Exception exception) when (IsConnectionFailure(exception))
         {
-            return CredentialProviderAvailability.Unavailable;
-        }
-        catch (DBusConnectFailedException)
-        {
-            return CredentialProviderAvailability.Unavailable;
-        }
-        catch (IOException)
-        {
-            return CredentialProviderAvailability.Unavailable;
-        }
-        catch (SocketException)
-        {
+            InvalidateConnection();
             return CredentialProviderAvailability.Unavailable;
         }
         finally
@@ -67,11 +62,8 @@ internal sealed class LinuxSecretServiceBackend : ILinuxSecretServiceBackend
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            Collection? collection = await GetDefaultCollectionAsync().ConfigureAwait(false);
-            if (collection is null)
-            {
-                return null;
-            }
+            Collection collection = await GetDefaultCollectionAsync().ConfigureAwait(false)
+                ?? throw new InvalidOperationException("The operating-system Secret Service has no default collection.");
 
             await EnsureUnlockedAsync(collection).ConfigureAwait(false);
             Item? item = GetSingleItem(await collection.SearchItemsAsync(CreateAttributes(credentialKey)).ConfigureAwait(false));
@@ -82,6 +74,11 @@ internal sealed class LinuxSecretServiceBackend : ILinuxSecretServiceBackend
 
             await EnsureUnlockedAsync(item).ConfigureAwait(false);
             return await item.GetSecretAsync().ConfigureAwait(false);
+        }
+        catch (Exception exception) when (IsConnectionFailure(exception))
+        {
+            InvalidateConnection();
+            throw;
         }
         finally
         {
@@ -140,6 +137,11 @@ internal sealed class LinuxSecretServiceBackend : ILinuxSecretServiceBackend
                 CryptographicOperations.ZeroMemory(newSecretBytes);
             }
         }
+        catch (Exception exception) when (IsConnectionFailure(exception))
+        {
+            InvalidateConnection();
+            throw;
+        }
         finally
         {
             _gate.Release();
@@ -152,11 +154,8 @@ internal sealed class LinuxSecretServiceBackend : ILinuxSecretServiceBackend
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            Collection? collection = await GetDefaultCollectionAsync().ConfigureAwait(false);
-            if (collection is null)
-            {
-                return;
-            }
+            Collection collection = await GetDefaultCollectionAsync().ConfigureAwait(false)
+                ?? throw new InvalidOperationException("The operating-system Secret Service has no default collection.");
 
             await EnsureUnlockedAsync(collection).ConfigureAwait(false);
             Item? item = GetSingleItem(await collection.SearchItemsAsync(CreateAttributes(credentialKey)).ConfigureAwait(false));
@@ -166,6 +165,11 @@ internal sealed class LinuxSecretServiceBackend : ILinuxSecretServiceBackend
                 await item.DeleteAsync().ConfigureAwait(false);
             }
         }
+        catch (Exception exception) when (IsConnectionFailure(exception))
+        {
+            InvalidateConnection();
+            throw;
+        }
         finally
         {
             _gate.Release();
@@ -174,14 +178,30 @@ internal sealed class LinuxSecretServiceBackend : ILinuxSecretServiceBackend
 
     private async Task<Collection?> GetDefaultCollectionAsync()
     {
-        if (_service is null)
+        if (_loadCollection is not null)
         {
-            _service = await SecretService.ConnectAsync(EncryptionType.Dh).ConfigureAwait(false);
-            _collection = await _service.GetDefaultCollectionAsync().ConfigureAwait(false);
+            return await _loadCollection().ConfigureAwait(false);
+        }
+
+        if (_collection is null)
+        {
+            SecretService service = _service ?? await SecretService.ConnectAsync(EncryptionType.Dh).ConfigureAwait(false);
+            Collection? collection = await service.GetDefaultCollectionAsync().ConfigureAwait(false);
+            _service = service;
+            _collection = collection;
         }
 
         return _collection;
     }
+
+    private void InvalidateConnection()
+    {
+        _service = null;
+        _collection = null;
+    }
+
+    private static bool IsConnectionFailure(Exception exception) =>
+        exception is DBusErrorReplyException or DBusConnectFailedException or IOException or SocketException;
 
     private static async Task EnsureUnlockedAsync(Collection collection)
     {
