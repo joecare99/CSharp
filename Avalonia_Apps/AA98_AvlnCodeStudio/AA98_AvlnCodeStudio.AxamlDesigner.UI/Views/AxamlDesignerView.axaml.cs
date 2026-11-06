@@ -18,6 +18,7 @@ public partial class AxamlDesignerView : UserControl
 {
     private readonly DispatcherTimer _propertyApplyTimer;
     private AxamlPropertyRowViewModel? _pendingPropertyRow;
+    private AxamlDesignerViewModel? _observedViewModel;
 
     public AxamlDesignerView()
     {
@@ -25,6 +26,7 @@ public partial class AxamlDesignerView : UserControl
         PreviewControl.LayoutResizeRequested += OnLayoutResizeRequested;
         _propertyApplyTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(350) };
         _propertyApplyTimer.Tick += OnPropertyApplyTimerTick;
+        DataContextChanged += OnDataContextChanged;
     }
 
     public async Task<byte[]> CapturePreviewPngAsync(CancellationToken cancellationToken = default)
@@ -113,63 +115,6 @@ public partial class AxamlDesignerView : UserControl
         }
     }
 
-    private void OnPropertyEditorGotFocus(object? sender, RoutedEventArgs e)
-    {
-        if (TryGetPropertyRow(sender, out AxamlPropertyRowViewModel? row)
-            && DataContext is AxamlDesignerViewModel viewModel)
-        {
-            viewModel.BeginPropertyDraft(row, hasChanged: false);
-        }
-    }
-
-    private void OnPropertyTextChanged(object? sender, RoutedEventArgs e)
-    {
-        if (TryGetPropertyRow(sender, out AxamlPropertyRowViewModel? row)
-            && DataContext is AxamlDesignerViewModel viewModel
-            && row.IsEditing)
-        {
-            viewModel.BeginPropertyDraft(row, hasChanged: true);
-            _pendingPropertyRow = row;
-            _propertyApplyTimer.Stop();
-            _propertyApplyTimer.Start();
-        }
-    }
-
-    private void OnPropertyEditorLostFocus(object? sender, RoutedEventArgs e)
-    {
-        if (!TryGetPropertyRow(sender, out AxamlPropertyRowViewModel? row)
-            || DataContext is not AxamlDesignerViewModel viewModel)
-        {
-            return;
-        }
-
-        if (ReferenceEquals(_pendingPropertyRow, row))
-        {
-            _propertyApplyTimer.Stop();
-            _pendingPropertyRow = null;
-        }
-
-        if (!row.HasValidationError)
-        {
-            viewModel.ApplyPropertyRow(row, finalize: true);
-        }
-        else
-        {
-            viewModel.EndPropertyEdit();
-            row.IsEditing = false;
-        }
-    }
-
-    private void OnPropertyChoiceChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        if (TryGetPropertyRow(sender, out AxamlPropertyRowViewModel? row)
-            && DataContext is AxamlDesignerViewModel viewModel
-            && row.IsEditing)
-        {
-            viewModel.ApplyPropertyRow(row, finalize: true);
-        }
-    }
-
     private void OnDiscardPropertyDraft(object? sender, RoutedEventArgs e)
     {
         if (sender is Control { DataContext: AxamlPropertyRowViewModel row }
@@ -205,9 +150,29 @@ public partial class AxamlDesignerView : UserControl
         }
     }
 
-    private static bool TryGetPropertyRow(object? sender, out AxamlPropertyRowViewModel? row)
+    private void OnDataContextChanged(object? sender, EventArgs e)
     {
-        row = (sender as Control)?.DataContext as AxamlPropertyRowViewModel;
-        return row is not null;
+        if (_observedViewModel is not null)
+        {
+            _observedViewModel.PropertyDraftChanged -= OnPropertyDraftChanged;
+        }
+
+        _observedViewModel = DataContext as AxamlDesignerViewModel;
+        if (_observedViewModel is not null)
+            _observedViewModel.PropertyDraftChanged += OnPropertyDraftChanged;
     }
+
+    private void OnPropertyDraftChanged(AxamlPropertyRowViewModel row)
+    {
+        if (DataContext is not AxamlDesignerViewModel viewModel)
+        {
+            return;
+        }
+
+        viewModel.BeginPropertyDraft(row, hasChanged: true);
+        _pendingPropertyRow = row;
+        _propertyApplyTimer.Stop();
+        _propertyApplyTimer.Start();
+    }
+
 }

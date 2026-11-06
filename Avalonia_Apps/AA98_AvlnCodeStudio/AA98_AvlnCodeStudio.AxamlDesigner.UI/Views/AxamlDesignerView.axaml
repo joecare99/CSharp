@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels"
              xmlns:preview="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.Controls"
+             xmlns:propertyEditor="using:Property.Editor.Avalonia.Views"
              x:Class="AA98_AvlnCodeStudio.AxamlDesigner.UI.Views.AxamlDesignerView"
              x:DataType="vm:AxamlDesignerViewModel">
   <Grid ColumnDefinitions="*,8,240,8,2*"
@@ -120,55 +121,21 @@
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
           <StackPanel Spacing="12">
+            <propertyEditor:PropertyEditorPanel DataContext="{Binding PropertyEditor}" />
             <ItemsControl ItemsSource="{Binding PropertyRows}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:AxamlPropertyRowViewModel">
-                  <StackPanel Spacing="3">
-                    <Grid ColumnDefinitions="120,*"
-                          ColumnSpacing="6">
-                      <TextBlock Grid.Column="0"
-                                 Text="{Binding Name}"
-                                 VerticalAlignment="Center"
-                                 ToolTip.Tip="{Binding ReadOnlyReason}" />
-                      <TextBox Grid.Column="1"
-                               IsVisible="{Binding IsTextEditor}"
-                               Text="{Binding Value, Mode=TwoWay}"
-                               GotFocus="OnPropertyEditorGotFocus"
-                               TextChanged="OnPropertyTextChanged"
-                               LostFocus="OnPropertyEditorLostFocus" />
-                      <TextBox Grid.Column="1"
-                               IsVisible="{Binding IsNumberEditor}"
-                               Text="{Binding Value, Mode=TwoWay}"
-                               GotFocus="OnPropertyEditorGotFocus"
-                               TextChanged="OnPropertyTextChanged"
-                               LostFocus="OnPropertyEditorLostFocus" />
-                      <ComboBox Grid.Column="1"
-                                IsVisible="{Binding IsChoiceEditor}"
-                                ItemsSource="{Binding Options}"
-                                SelectedItem="{Binding Value, Mode=TwoWay}"
-                                GotFocus="OnPropertyEditorGotFocus"
-                                LostFocus="OnPropertyEditorLostFocus"
-                                SelectionChanged="OnPropertyChoiceChanged" />
-                      <TextBlock Grid.Column="1"
-                                 IsVisible="{Binding IsReadOnly}"
-                                 Text="{Binding Value}"
-                                 VerticalAlignment="Center"
-                                 ToolTip.Tip="{Binding ReadOnlyReason}" />
-                    </Grid>
-                    <Grid ColumnDefinitions="*,Auto"
-                          IsVisible="{Binding HasValidationError}"
-                          ColumnSpacing="6">
-                      <TextBlock Text="{Binding ValidationError}"
-                                 TextWrapping="Wrap" />
-                      <Button Grid.Column="1"
-                              Content="Discard"
-                              IsVisible="{Binding IsDraft}"
-                              Click="OnDiscardPropertyDraft" />
-                    </Grid>
-                    <TextBlock Text="{Binding ReadOnlyReason}"
-                               IsVisible="{Binding HasReadOnlyReason}"
-                               FontSize="11"
-                               TextWrapping="Wrap" />
+                  <StackPanel Orientation="Horizontal"
+                              Spacing="8"
+                              IsVisible="{Binding HasValidationError}">
+                    <TextBlock Text="{Binding Name}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding ValidationError}"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center" />
+                    <Button Content="Discard"
+                            IsVisible="{Binding IsDraft}"
+                            Click="OnDiscardPropertyDraft" />
                   </StackPanel>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>

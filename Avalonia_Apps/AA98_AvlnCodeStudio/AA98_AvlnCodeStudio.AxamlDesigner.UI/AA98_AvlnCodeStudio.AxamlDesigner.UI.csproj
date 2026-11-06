@@ -19,6 +19,8 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Property.Editor.Avalonia\Property.Editor.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Libraries\Property.Editor\Property.Editor.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Model\AA98_AvlnCodeStudio.Model.csproj" />
   </ItemGroup>
   <ItemGroup>

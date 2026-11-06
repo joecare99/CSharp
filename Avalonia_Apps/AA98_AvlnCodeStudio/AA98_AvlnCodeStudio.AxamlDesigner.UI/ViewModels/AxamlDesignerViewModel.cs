@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using Property.Editor;
+using Property.Editor.Avalonia;
 
 namespace AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 
@@ -22,7 +24,16 @@ public partial class AxamlDesignerViewModel : ObservableObject
     public AxamlDesignerViewModel(AxamlPreviewService? previewService = null)
     {
         _session = new AxamlDesignerSession(previewService);
+        PropertyProvider = new AxamlDesignerPropertyProvider(this);
+        PropertyEditor.EditStarted += OnPropertyEditorEditStarted;
+        PropertyEditor.EditCompleted += OnPropertyEditorEditCompleted;
     }
+
+    public AxamlDesignerPropertyProvider PropertyProvider { get; }
+
+    public PropertyEditorViewModel PropertyEditor { get; } = new();
+
+    public event Action<AxamlPropertyRowViewModel>? PropertyDraftChanged;
 
     private void SynchronizeBindingRows()
     {
@@ -318,19 +329,20 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
     }
 
-    public void ApplyPropertyRow(AxamlPropertyRowViewModel row, bool finalize)
+    public bool ApplyPropertyRow(AxamlPropertyRowViewModel row, bool finalize)
     {
         ArgumentNullException.ThrowIfNull(row);
         if (row.IsReadOnly || row.HasValidationError || SelectedNode is null || !PropertyRows.Contains(row))
         {
-            return;
+            return false;
         }
 
         try
         {
             row.IsEditing = true;
             _session.BeginPropertyEdit(row.Name);
-            if (_session.ApplySelectedValue(row.Value))
+            bool applied = _session.ApplySelectedValue(row.Value);
+            if (applied)
             {
                 SynchronizeState();
                 StatusText = $"'{row.Name}' applied to AXAML.";
@@ -343,11 +355,47 @@ public partial class AxamlDesignerViewModel : ObservableObject
                 _session.EndPropertyEdit();
                 row.IsEditing = false;
             }
+
+            return applied;
         }
         catch (Exception exception) when (exception is InvalidDataException or InvalidOperationException or ArgumentException)
         {
             _session.EndPropertyEdit();
             StatusText = $"AXAML property edit failed: {exception.Message}";
+            return false;
+        }
+    }
+
+    public void ApplyPropertyDrafts()
+    {
+        AxamlPropertyRowViewModel[] drafts = PropertyRows
+            .Where(static row => row.IsDraft)
+            .ToArray();
+        AxamlPropertyRowViewModel? invalidDraft = drafts.FirstOrDefault(
+            static row => row.IsReadOnly || row.HasValidationError);
+        if (invalidDraft is not null)
+        {
+            throw new InvalidOperationException(
+                invalidDraft.ValidationError
+                ?? invalidDraft.ReadOnlyReason
+                ?? $"Property '{invalidDraft.Name}' cannot be applied.");
+        }
+
+        foreach (AxamlPropertyRowViewModel row in drafts)
+        {
+            if (!ApplyPropertyRow(row, finalize: true))
+            {
+                throw new InvalidOperationException(
+                    $"The AXAML property '{row.Name}' could not be applied. {StatusText}");
+            }
+        }
+    }
+
+    public void DiscardPropertyDrafts()
+    {
+        foreach (AxamlPropertyRowViewModel row in PropertyRows.Where(static row => row.IsDraft).ToArray())
+        {
+            DiscardPropertyDraft(row);
         }
     }
 
@@ -799,6 +847,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
         {
             PropertyRows.Clear();
             BindingRows.Clear();
+            PropertyEditor.SetItems([]);
             OnPropertyChanged(nameof(HasBindingRows));
             return;
         }
@@ -854,8 +903,46 @@ public partial class AxamlDesignerViewModel : ObservableObject
             }
             else
             {
-                PropertyRows.Insert(index, new AxamlPropertyRowViewModel(node.TypeName, descriptor));
+                AxamlPropertyRowViewModel newRow = new(node.TypeName, descriptor);
+                newRow.ValueChanged += OnPropertyRowValueChanged;
+                PropertyRows.Insert(index, newRow);
             }
+        }
+
+        PropertyEditor.SetItems(PropertyRows);
+    }
+
+    private void OnPropertyEditorEditStarted(object? sender, PropertyEditorEditEventArgs eventArgs)
+    {
+        if (eventArgs.PropertyItem is AxamlPropertyRowViewModel row)
+        {
+            BeginPropertyDraft(row, hasChanged: false);
+        }
+    }
+
+    private void OnPropertyEditorEditCompleted(object? sender, PropertyEditorEditEventArgs eventArgs)
+    {
+        if (eventArgs.PropertyItem is not AxamlPropertyRowViewModel row || !row.IsEditing)
+        {
+            return;
+        }
+
+        if (row.HasValidationError)
+        {
+            EndPropertyEdit();
+            row.IsEditing = false;
+            return;
+        }
+
+        ApplyPropertyRow(row, finalize: true);
+    }
+
+    private void OnPropertyRowValueChanged(object? sender, PropertyValueChangedEventArgs eventArgs)
+    {
+        if (!_synchronizing
+            && sender is AxamlPropertyRowViewModel { IsEditing: true, IsDraft: true } row)
+        {
+            PropertyDraftChanged?.Invoke(row);
         }
     }
 
