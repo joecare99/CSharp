@@ -282,11 +282,14 @@ public sealed partial class ConfigUiViewModel : ObservableObject
 
         _isApplying = true;
         RefreshState();
+        bool resetCompleted = false;
+        string? resetFailure = null;
         try
         {
             await section.ResetDraftAsync();
             if (section.State == ConfigUiSectionState.Ready)
             {
+                resetCompleted = true;
                 _sectionsWithUnsavedChanges.Add(section);
                 _loadedSections.Add(section);
                 if (ReferenceEquals(section, SelectedSection))
@@ -294,10 +297,39 @@ public sealed partial class ConfigUiViewModel : ObservableObject
                     DisplaySection(section);
                 }
             }
+            else
+            {
+                resetFailure = section.ErrorMessage;
+            }
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            resetFailure = exception.Message;
         }
         finally
         {
-            SynchronizeSectionProperties(section);
+            if (!resetCompleted)
+            {
+                _sectionsWithUnsavedChanges.Add(section);
+                if (section is IConfigUiDraftDiscard sharedDraft)
+                {
+                    MarkDraftUncertain(sharedDraft.DraftIdentity);
+                    OperationMessage = "The shared draft reset did not complete and may have changed the draft. Retry discard/reload or Cancel; other unsaved changes in this draft will also be discarded.";
+                }
+                else
+                {
+                    MarkSectionForRefresh(section);
+                    OperationMessage = "The draft reset did not complete and may have changed the draft. Retry discard/reload or Cancel; unsaved changes in this section will be discarded.";
+                }
+                if (!string.IsNullOrWhiteSpace(resetFailure))
+                {
+                    OperationMessage += $"{Environment.NewLine}{section.Section.DisplayName}: {resetFailure}";
+                }
+            }
+            if (!_sectionsRequiringRefresh.Contains(section))
+            {
+                SynchronizeSectionProperties(section);
+            }
             _isApplying = false;
             RefreshState();
         }
