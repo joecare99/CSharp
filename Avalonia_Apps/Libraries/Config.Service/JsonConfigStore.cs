@@ -12,13 +12,12 @@ namespace Config.Service;
 /// </summary>
 public sealed class JsonConfigStore : IConfigStore
 {
-    private readonly IConfigSectionRegistry _registry;
     private readonly string _basePath;
     private readonly JsonSerializerOptions _options;
 
     public JsonConfigStore(IConfigSectionRegistry registry, string vendorName = "Vendor", string applicationName = "Application")
     {
-        _registry = registry ?? throw new ArgumentNullException(nameof(registry));
+        ArgumentNullException.ThrowIfNull(registry);
 
         var normalizedVendorName = string.IsNullOrWhiteSpace(vendorName) ? "Vendor" : vendorName.Trim();
         var normalizedApplicationName = string.IsNullOrWhiteSpace(applicationName) ? "Application" : applicationName.Trim();
@@ -43,7 +42,7 @@ public sealed class JsonConfigStore : IConfigStore
     /// <inheritdoc/>
     public async Task<T> LoadAsync<T>(string sectionName, T fallbackValue)
     {
-        var keyPath = Path.Combine(_basePath, $"{sectionName}.json");
+        string keyPath = ResolveKeyPath(sectionName);
 
         if (!File.Exists(keyPath))
         {
@@ -52,39 +51,64 @@ public sealed class JsonConfigStore : IConfigStore
 
         try
         {
-            var json = await File.ReadAllTextAsync(keyPath);
-            var loaded = JsonSerializer.Deserialize<T>(json, _options)!;
-            return loaded ?? fallbackValue;
+            string json = await File.ReadAllTextAsync(keyPath).ConfigureAwait(false);
+            T? loaded = JsonSerializer.Deserialize<T>(json, _options);
+            return loaded ?? throw new InvalidDataException($"Configuration section '{sectionName}' contains JSON null instead of a configuration value.");
         }
-        catch (JsonException)
+        catch (JsonException exception)
         {
-            return fallbackValue;
+            throw new InvalidDataException($"Configuration section '{sectionName}' contains invalid JSON.", exception);
         }
     }
 
     /// <inheritdoc/>
     public async Task SaveAsync<T>(string sectionName, T value)
     {
-        var keyPath = Path.Combine(_basePath, $"{sectionName}.json");
-        var json = JsonSerializer.Serialize(value, _options);
-        await File.WriteAllTextAsync(keyPath, json);
+        string keyPath = ResolveKeyPath(sectionName);
+        string temporaryPath = Path.Combine(_basePath, $".{Guid.NewGuid():N}.tmp");
+        string json = JsonSerializer.Serialize(value, _options);
+        try
+        {
+            await File.WriteAllTextAsync(temporaryPath, json).ConfigureAwait(false);
+            File.Move(temporaryPath, keyPath, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(temporaryPath))
+            {
+                File.Delete(temporaryPath);
+            }
+        }
     }
 
     /// <inheritdoc/>
     public async Task ResetAsync(string sectionName)
     {
-        var keyPath = Path.Combine(_basePath, $"{sectionName}.json");
+        string keyPath = ResolveKeyPath(sectionName);
 
         if (File.Exists(keyPath))
         {
-            try
-            {
-                await File.WriteAllTextAsync(keyPath, "");
-            }
-            catch
-            {
-                // Ignore deletion errors; the store remains consistent with its current state.
-            }
+            await Task.Run(() => File.Delete(keyPath)).ConfigureAwait(false);
         }
+    }
+
+    private string ResolveKeyPath(string sectionName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sectionName);
+        if (sectionName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
+            || sectionName.Contains(Path.DirectorySeparatorChar)
+            || sectionName.Contains(Path.AltDirectorySeparatorChar))
+        {
+            throw new ArgumentException("Configuration section names must be a single safe path segment.", nameof(sectionName));
+        }
+
+        string keyPath = Path.GetFullPath(Path.Combine(_basePath, $"{sectionName}.json"));
+        string basePathPrefix = Path.GetFullPath(_basePath) + Path.DirectorySeparatorChar;
+        if (!keyPath.StartsWith(basePathPrefix, OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
+        {
+            throw new ArgumentException("The configuration section path must remain inside the configured store.", nameof(sectionName));
+        }
+
+        return keyPath;
     }
 }
