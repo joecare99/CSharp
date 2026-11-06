@@ -13,15 +13,19 @@
   <Grid Margin="12" RowDefinitions="*,Auto,Auto" RowSpacing="12">
     <configUi:ConfigUiView ShowSectionActions="False" DataContext="{Binding}" />
     <ContentControl x:Name="HostContentPresenter" Grid.Row="1" />
-    <StackPanel Grid.Row="2"
+    <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+      <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                 IsVisible="{Binding IsBusy}" Text="Please wait for the settings operation to finish." />
+      <StackPanel Grid.Column="1"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right"
                 Spacing="8">
-      <Button Content="OK" Click="OnOkClick" />
+      <Button Content="OK" IsEnabled="{Binding !IsBusy}" Click="OnOkClick" />
       <Button Content="Apply"
               IsEnabled="{Binding CanApplyChanges}"
               Click="OnApplyClick" />
-      <Button Content="Cancel" Click="OnCancelClick" />
-    </StackPanel>
+      <Button Content="Cancel" IsEnabled="{Binding !IsBusy}" Click="OnCancelClick" />
+      </StackPanel>
+    </Grid>
   </Grid>
 </Window>

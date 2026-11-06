@@ -34,7 +34,7 @@ public partial class ConfigUiDialog : Window
 
     private async void OnOkClick(object? sender, RoutedEventArgs eventArgs)
     {
-        if (DataContext is not ConfigUiViewModel viewModel)
+        if (DataContext is not ConfigUiViewModel viewModel || viewModel.IsBusy || _discardingOnClose)
         {
             return;
         }
@@ -48,7 +48,7 @@ public partial class ConfigUiDialog : Window
 
     private async void OnApplyClick(object? sender, RoutedEventArgs eventArgs)
     {
-        if (DataContext is ConfigUiViewModel viewModel)
+        if (DataContext is ConfigUiViewModel { IsBusy: false } viewModel && !_discardingOnClose)
         {
             await viewModel.ApplyChangesAsync();
         }
@@ -56,6 +56,11 @@ public partial class ConfigUiDialog : Window
 
     private async void OnCancelClick(object? sender, RoutedEventArgs eventArgs)
     {
+        if (_discardingOnClose || DataContext is ConfigUiViewModel { IsBusy: true })
+        {
+            return;
+        }
+
         if (DataContext is not ConfigUiViewModel viewModel || await viewModel.DiscardChangesAsync())
         {
             _allowClose = true;
@@ -65,8 +70,11 @@ public partial class ConfigUiDialog : Window
 
     protected override async void OnClosing(WindowClosingEventArgs eventArgs)
     {
-        if (!_allowClose && !_discardingOnClose && DataContext is ConfigUiViewModel viewModel
-            && viewModel.HasUnsavedChanges)
+        if (!_allowClose && (_discardingOnClose || DataContext is ConfigUiViewModel { IsBusy: true }))
+        {
+            eventArgs.Cancel = true;
+        }
+        else if (!_allowClose && DataContext is ConfigUiViewModel viewModel && viewModel.HasUnsavedChanges)
         {
             eventArgs.Cancel = true;
             _discardingOnClose = true;

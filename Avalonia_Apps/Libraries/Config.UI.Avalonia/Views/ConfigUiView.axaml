@@ -32,9 +32,15 @@
         <Button Content="Reset" Command="{Binding ResetCommand}" IsEnabled="{Binding CanSave}" />
         <Button Content="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" />
       </StackPanel>
-      <TextBlock Grid.Row="3"
-                 Text="{Binding OperationMessage}"
-                 TextWrapping="Wrap" />
+      <StackPanel Grid.Row="3" Spacing="6">
+        <TextBlock Text="{Binding OperationMessage}" TextWrapping="Wrap" />
+        <Button Content="Retry discard/reload"
+                HorizontalAlignment="Left"
+                IsVisible="{Binding NeedsReloadRecovery}"
+                IsEnabled="{Binding !IsBusy}"
+                Command="{Binding RetryFailedReloadsCommand}"
+                ToolTip.Tip="Retries failed discard and reload operations. Discarded changes cannot be recovered." />
+      </StackPanel>
       <TextBlock Grid.Row="4"
                  Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
                  Text="{Binding ErrorMessage}"
