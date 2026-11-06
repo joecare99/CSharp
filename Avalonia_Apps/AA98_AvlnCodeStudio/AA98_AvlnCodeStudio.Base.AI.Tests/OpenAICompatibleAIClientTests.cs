@@ -58,6 +58,31 @@ public sealed class OpenAICompatibleAIClientTests
     }
 
     [TestMethod]
+    public async Task CompleteAsync_RequestModelOverridesConfiguredModelWithoutChangingSettings()
+    {
+        string? requestBody = null;
+        using HttpClient httpClient = new(new StubHandler(async request =>
+        {
+            requestBody = await request.Content!.ReadAsStringAsync();
+            return JsonResponse("""{"choices":[{"message":{"content":"Ready"}}]}""");
+        }));
+        OpenAICompatibleAISettings settings = new()
+        {
+            Endpoint = "https://api.example.test/v1/chat/completions",
+            ModelId = "configured",
+        };
+        OpenAICompatibleAIClient client = new(settings, httpClient);
+
+        await client.CompleteAsync(new AICompletionRequest(
+            [new AIMessage(AIMessageRole.User, "Hello")],
+            new AICompletionOptions { ModelId = "session-model" }));
+
+        using JsonDocument body = JsonDocument.Parse(requestBody!);
+        Assert.AreEqual("session-model", body.RootElement.GetProperty("model").GetString());
+        Assert.AreEqual("configured", settings.ModelId);
+    }
+
+    [TestMethod]
     public async Task CompleteAsync_UsesUniqueProviderSafeToolNamesAndMapsCallsBack()
     {
         string? requestBody = null;
@@ -149,6 +174,33 @@ public sealed class OpenAICompatibleAIClientTests
     }
 
     [TestMethod]
+    public async Task CompleteAsync_MapsHistoricalToolsWhenCurrentModeExcludesThem()
+    {
+        string? requestBody = null;
+        using HttpClient httpClient = new(new StubHandler(async request =>
+        {
+            requestBody = await request.Content!.ReadAsStringAsync();
+            return JsonResponse("""{"choices":[{"message":{"content":"Ready."}}]}""");
+        }));
+        OpenAICompatibleAIClient client = new(
+            new OpenAICompatibleAISettings { Endpoint = "https://api.example.test/v1/chat/completions", ModelId = "test" },
+            httpClient);
+        using JsonDocument arguments = JsonDocument.Parse("{}");
+        await client.CompleteAsync(new AICompletionRequest(
+            [
+                new AIMessage(AIMessageRole.Assistant, "", toolCalls: [new AIChatToolCall("call-1", "workspace.build", arguments.RootElement)]),
+                new AIMessage(AIMessageRole.Tool, "Done", toolCallId: "call-1", toolName: "workspace.build"),
+                new AIMessage(AIMessageRole.User, "Plan the next change."),
+            ],
+            tools: [new AIChatToolDescriptor("workspace.inspect", "Inspect", """{"type":"object"}""")]));
+
+        using JsonDocument body = JsonDocument.Parse(requestBody!);
+        Assert.AreEqual("workspace_build", body.RootElement.GetProperty("messages")[0]
+            .GetProperty("tool_calls")[0].GetProperty("function").GetProperty("name").GetString());
+        Assert.AreEqual(1, body.RootElement.GetProperty("tools").GetArrayLength());
+    }
+
+    [TestMethod]
     public async Task CompleteAsync_RejectsNonLocalHttpEndpointBeforeSending()
     {
         bool requestSent = false;
@@ -169,6 +221,25 @@ public sealed class OpenAICompatibleAIClientTests
             () => client.CompleteAsync(new AICompletionRequest([new AIMessage(AIMessageRole.User, "Hi.")])));
 
         StringAssert.Contains(exception.Message, "HTTPS");
+        Assert.IsFalse(requestSent);
+    }
+
+    [DataTestMethod]
+    [DataRow("https://user:password@api.example.test/v1/chat/completions")]
+    [DataRow("https://api.example.test/v1/chat/completions#fragment")]
+    public async Task CompleteAsync_RejectsCredentialsAndFragmentsInEndpoint(string endpoint)
+    {
+        bool requestSent = false;
+        using HttpClient httpClient = new(new StubHandler(_ =>
+        {
+            requestSent = true;
+            return Task.FromResult(JsonResponse("""{"choices":[{"message":{"content":"unexpected"}}]}"""));
+        }));
+        OpenAICompatibleAIClient client = new(
+            new OpenAICompatibleAISettings { Endpoint = endpoint, ModelId = "test" }, httpClient);
+
+        await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+            () => client.CompleteAsync(new AICompletionRequest([new AIMessage(AIMessageRole.User, "Hi.")]))); 
         Assert.IsFalse(requestSent);
     }
 
