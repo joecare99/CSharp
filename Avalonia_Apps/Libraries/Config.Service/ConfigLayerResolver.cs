@@ -9,6 +9,11 @@ namespace Config.Service;
 /// </summary>
 public static class ConfigLayerResolver
 {
+    private static readonly JsonSerializerOptions s_valueOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+
     /// <summary>
     /// Resolves using the precedence: enforced system policy, user, group, system, product default.
     /// </summary>
@@ -108,7 +113,7 @@ public static class ConfigLayerResolver
             {
                 try
                 {
-                    value = jsonValue.Deserialize(propertyType);
+                    value = jsonValue.Deserialize(propertyType, s_valueOptions);
                 }
                 catch (JsonException exception)
                 {
