@@ -123,6 +123,62 @@ public sealed class SharedConfigDraftIntegrationTests
     }
 
     [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task ResetFailureAfterDraftMutation_BlocksSharedDraftUntilDiscard(bool hasOtherDraft)
+    {
+        ConfigSectionRegistry registry = new();
+        registry.AddSection(CreateProvider("First", 0));
+        registry.AddSection(CreateProvider("Second", 1));
+        IConfigLayerStore user = Substitute.For<IConfigLayerStore>();
+        IConfigLayerStore system = Substitute.For<IConfigLayerStore>();
+        user.Layer.Returns(ConfigLayer.User);
+        system.Layer.Returns(ConfigLayer.System);
+        ConfigPropertyKey firstKey = new("First", nameof(TestSettings.Name));
+        ConfigLayerSnapshot persisted = new ConfigLayerSnapshot(ConfigLayer.User, [])
+            .WithValue(firstKey, new ConfigLayerValue("Stored"));
+        user.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ => Task.FromResult(persisted));
+        int systemLoads = 0;
+        bool failRefresh = false;
+        system.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            systemLoads++;
+            return failRefresh && systemLoads == 2
+                ? Task.FromException<ConfigLayerSnapshot>(new IOException("System refresh failed"))
+                : Task.FromResult(new ConfigLayerSnapshot(ConfigLayer.System, []));
+        });
+        ConfigLayeredSettingsResolver resolver = new(registry, [system, user]);
+        ConfigUiViewModel config = new(
+            new ConfigLayeredUiSectionRegistry(registry, resolver, user, ConfigLayer.User),
+            new PropertyEditorViewModel());
+        config.SelectedSection = config.Sections[1];
+        if (hasOtherDraft)
+        {
+            Assert.IsTrue(config.PropertyEditor.Items.Single().PropertyItem.TrySetValue("Other draft"));
+        }
+        config.SelectedSection = config.Sections[0];
+        systemLoads = 0;
+        failRefresh = true;
+
+        await config.ResetCommand.ExecuteAsync(null);
+
+        Assert.IsTrue(config.HasUnsavedChanges);
+        Assert.IsTrue(config.NeedsReloadRecovery);
+        Assert.IsFalse(config.CanApplyChanges);
+        Assert.AreEqual(0, config.PropertyEditor.Items.Count);
+        StringAssert.Contains(config.OperationMessage, "may have changed the draft");
+        Assert.IsFalse(await config.ApplyChangesAsync());
+        await user.DidNotReceive().SaveAsync(Arg.Any<ConfigLayerSnapshot>(), Arg.Any<CancellationToken>());
+        failRefresh = false;
+        Assert.IsTrue(await config.DiscardChangesAsync(), config.OperationMessage);
+        Assert.IsFalse(config.NeedsReloadRecovery);
+        Assert.IsFalse(config.HasUnsavedChanges);
+        Assert.AreEqual("Stored", config.PropertyEditor.Items.Single().PropertyItem.Value);
+        config.SelectedSection = config.Sections[1];
+        Assert.AreEqual("Default", config.PropertyEditor.Items.Single().PropertyItem.Value);
+    }
+
+    [TestMethod]
     public async Task AIProviderPreview_DisabledForSharedDraftRecoveryAndRestoredAfterRetry()
     {
         IConfigUiSection workbench = Substitute.For<IConfigUiSection, IConfigUiDraftDiscard>();

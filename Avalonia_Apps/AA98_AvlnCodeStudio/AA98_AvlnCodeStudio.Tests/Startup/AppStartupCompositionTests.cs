@@ -83,7 +83,7 @@ public class AppStartupCompositionTests
         Assert.AreEqual(workbenchSettings.GetEffectiveAIModelId(), aiSettings.ModelId);
         Assert.AreEqual(string.Empty, aiSettings.ApiKey);
         CollectionAssert.AreEquivalent(
-            new[] { "linux-secret-service", "windows-credential-manager" },
+            new[] { "encrypted-file-vault", "linux-secret-service", "windows-credential-manager" },
             credentialProviders.ProviderIds.ToArray());
         Assert.ThrowsExactly<KeyNotFoundException>(() => credentialProviders.GetRequired("automatic-fallback"));
         diagnostics.SelectedDiagnostic = new AppKomponentBaseLib.Diagnostics.Diagnostic

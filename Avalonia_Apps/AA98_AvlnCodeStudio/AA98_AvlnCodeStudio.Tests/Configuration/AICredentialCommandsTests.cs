@@ -12,6 +12,7 @@ using AA98_AvlnCodeStudio.UI.Components;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Avalonia.Controls;
+using Config.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using System;
@@ -161,6 +162,303 @@ public sealed class AICredentialCommandsTests
         Assert.AreEqual("new-endpoint-key", viewModel.AiApiKey);
         Assert.AreEqual("new-endpoint-key", settings.ApiKey);
         StringAssert.Contains(viewModel.CredentialStorageStatus, "discarded");
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task AIChatCredentials_CancelledLoadReportsOutcomeAndRejectsLateStatus(bool contextChanged)
+    {
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("delayed");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("delayed", CredentialProviderAvailability.Available)));
+        TaskCompletionSource<CredentialSecret?> pendingLoad = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        provider.GetAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(call => new ValueTask<CredentialSecret?>(
+                pendingLoad.Task.WaitAsync(call.Arg<CancellationToken>())));
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        viewModel.AiApiKey = "old-key";
+        TaskCompletionSource<CredentialProviderStatus> pendingStatus = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        provider.GetStatusAsync(Arg.Any<CancellationToken>())
+            .Returns(_ => new ValueTask<CredentialProviderStatus>(pendingStatus.Task));
+        Task status = viewModel.RefreshCredentialProviderStatusCommand.ExecuteAsync(null);
+        Task load = viewModel.LoadAICredentialCommand.ExecuteAsync(null);
+        if (contextChanged)
+        {
+            viewModel.AiApiKey = "new-key";
+        }
+
+        viewModel.LoadAICredentialCommand.Cancel();
+        try
+        {
+            await load;
+            Assert.Fail("Cancellation must be propagated.");
+        }
+        catch (OperationCanceledException)
+        {
+        }
+
+        Assert.AreEqual(contextChanged ? "new-key" : "old-key", viewModel.AiApiKey);
+        Assert.IsFalse(viewModel.CredentialOperationBusy);
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "cancelled");
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "current session key was left unchanged");
+        if (contextChanged)
+        {
+            StringAssert.Contains(viewModel.CredentialStorageStatus, "previous credential context");
+        }
+
+        pendingStatus.SetResult(new CredentialProviderStatus("delayed", CredentialProviderAvailability.Locked));
+        await status;
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "cancelled");
+    }
+
+    [TestMethod]
+    public async Task AIChatCredentials_CancelledLoadDiscardsSecretFromProviderIgnoringCancellation()
+    {
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("delayed");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("delayed", CredentialProviderAvailability.Available)));
+        TaskCompletionSource<CredentialSecret?> pendingLoad = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        provider.GetAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(_ => new ValueTask<CredentialSecret?>(pendingLoad.Task));
+        OpenAICompatibleAISettings settings = new();
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), settings);
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        viewModel.AiApiKey = "session-key";
+        Task load = viewModel.LoadAICredentialCommand.ExecuteAsync(null);
+        viewModel.LoadAICredentialCommand.Cancel();
+        CredentialSecret returnedSecret = new("provider-key".AsSpan());
+        pendingLoad.SetResult(returnedSecret);
+        try
+        {
+            await load;
+            Assert.Fail("Cancellation must be propagated.");
+        }
+        catch (OperationCanceledException)
+        {
+        }
+
+        Assert.AreEqual("session-key", viewModel.AiApiKey);
+        Assert.AreEqual("session-key", settings.ApiKey);
+        Assert.ThrowsExactly<ObjectDisposedException>(() => returnedSecret.Reveal().Length);
+        Assert.IsFalse(viewModel.CredentialOperationBusy);
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "cancelled");
+    }
+
+    [TestMethod]
+    [DataRow("endpoint")]
+    [DataRow("provider")]
+    [DataRow("key")]
+    public async Task AIChatCredentials_SerializesOperationsAndIdentifiesPreviousSaveContext(string change)
+    {
+        TaskCompletionSource pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        ICredentialProvider otherProvider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("delayed");
+        otherProvider.ProviderId.Returns("other");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("delayed", CredentialProviderAvailability.Available)));
+        otherProvider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("other", CredentialProviderAvailability.Available)));
+        CredentialId? savedId = null;
+        string? savedKey = null;
+        provider.SetAsync(Arg.Any<CredentialId>(), Arg.Any<CredentialSecret>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                savedId = call.Arg<CredentialId>();
+                savedKey = new string(call.Arg<CredentialSecret>().Reveal());
+                return new ValueTask(pending.Task);
+            });
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider, otherProvider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        viewModel.AiEndpoint = "https://first.example/v1";
+        viewModel.AiApiKey = "original";
+        Task saving = viewModel.SaveAICredentialCommand.ExecuteAsync(null);
+
+        Assert.IsTrue(viewModel.CredentialOperationBusy);
+        Assert.IsFalse(viewModel.LoadAICredentialCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.DeleteAICredentialCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.RefreshCredentialProviderStatusCommand.CanExecute(null));
+        await viewModel.DeleteAICredentialCommand.ExecuteAsync(null);
+        await provider.DidNotReceive().DeleteAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>());
+        if (change == "endpoint")
+        {
+            viewModel.AiEndpoint = "https://second.example/v1";
+        }
+        else if (change == "provider")
+        {
+            viewModel.SelectedCredentialProviderId = otherProvider.ProviderId;
+        }
+        if (change != "provider")
+        {
+            viewModel.AiApiKey = "new-key";
+        }
+        pending.SetResult();
+        await saving;
+
+        Assert.IsFalse(viewModel.CredentialOperationBusy);
+        Assert.IsTrue(viewModel.DeleteAICredentialCommand.CanExecute(null));
+        Assert.AreEqual(change == "provider" ? "original" : "new-key", viewModel.AiApiKey);
+        Assert.AreEqual("original", savedKey);
+        Assert.IsNotNull(savedId);
+        string expectedScope = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes("https://first.example/v1")));
+        Assert.AreEqual(expectedScope, savedId.ScopeId);
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "previous credential context");
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task AIChatCredentials_DelayedDeletePreservesChangedSessionKey(bool fail)
+    {
+        TaskCompletionSource pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("delayed");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("delayed", CredentialProviderAvailability.Available)));
+        provider.DeleteAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(_ => new ValueTask(pending.Task));
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        viewModel.AiApiKey = "old-key";
+        Task deleting = viewModel.DeleteAICredentialCommand.ExecuteAsync(null);
+        viewModel.AiApiKey = "new-key";
+        if (fail)
+        {
+            pending.SetException(new IOException("Connection interrupted"));
+        }
+        else
+        {
+            pending.SetResult();
+        }
+        await deleting;
+
+        Assert.AreEqual("new-key", viewModel.AiApiKey);
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "previous credential context");
+        if (fail)
+        {
+            StringAssert.Contains(viewModel.CredentialStorageStatus, "may already have been deleted");
+        }
+        Assert.IsFalse(viewModel.CredentialOperationBusy);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task AIChatCredentials_DelayedSaveOrLoadFailureIdentifiesPreviousContext(bool save)
+    {
+        TaskCompletionSource pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("delayed");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("delayed", CredentialProviderAvailability.Available)));
+        provider.SetAsync(Arg.Any<CredentialId>(), Arg.Any<CredentialSecret>(), Arg.Any<CancellationToken>())
+            .Returns(_ => new ValueTask(pending.Task));
+        TaskCompletionSource<CredentialSecret?> load = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        provider.GetAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(_ => new ValueTask<CredentialSecret?>(load.Task));
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        viewModel.AiApiKey = "old-key";
+        Task operation = save
+            ? viewModel.SaveAICredentialCommand.ExecuteAsync(null)
+            : viewModel.LoadAICredentialCommand.ExecuteAsync(null);
+        viewModel.AiApiKey = "new-key";
+        if (save)
+        {
+            pending.SetException(new IOException("Connection interrupted"));
+        }
+        else
+        {
+            load.SetException(new IOException("Connection interrupted"));
+        }
+        await operation;
+
+        Assert.AreEqual("new-key", viewModel.AiApiKey);
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "previous credential context");
+        if (save)
+        {
+            StringAssert.Contains(viewModel.CredentialStorageStatus, "may already have been saved");
+        }
+        Assert.IsFalse(viewModel.CredentialOperationBusy);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task AIChatCredentials_CancelledWriteOrDeleteReportsPossibleSideEffect(bool delete)
+    {
+        TaskCompletionSource pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("delayed");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("delayed", CredentialProviderAvailability.Available)));
+        provider.SetAsync(Arg.Any<CredentialId>(), Arg.Any<CredentialSecret>(), Arg.Any<CancellationToken>())
+            .Returns(call => new ValueTask(pending.Task.WaitAsync(call.Arg<CancellationToken>())));
+        provider.DeleteAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(call => new ValueTask(pending.Task.WaitAsync(call.Arg<CancellationToken>())));
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        viewModel.AiApiKey = "session-key";
+        Task operation = delete
+            ? viewModel.DeleteAICredentialCommand.ExecuteAsync(null)
+            : viewModel.SaveAICredentialCommand.ExecuteAsync(null);
+        if (delete)
+        {
+            viewModel.DeleteAICredentialCommand.Cancel();
+        }
+        else
+        {
+            viewModel.SaveAICredentialCommand.Cancel();
+        }
+        try
+        {
+            await operation;
+            Assert.Fail("Cancellation must be propagated.");
+        }
+        catch (OperationCanceledException)
+        {
+        }
+
+        Assert.AreEqual("session-key", viewModel.AiApiKey);
+        StringAssert.Contains(viewModel.CredentialStorageStatus, delete ? "may already have been deleted" : "may already have been saved");
+        Assert.IsFalse(viewModel.CredentialOperationBusy);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task AIChatCredentials_FailedWriteOrDeleteReportsPossibleSideEffect(bool delete)
+    {
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("test-keyring");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("test-keyring", CredentialProviderAvailability.Available)));
+        provider.SetAsync(Arg.Any<CredentialId>(), Arg.Any<CredentialSecret>(), Arg.Any<CancellationToken>())
+            .Returns(_ => ValueTask.FromException(new IOException("Connection interrupted")));
+        provider.DeleteAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(_ => ValueTask.FromException(new IOException("Connection interrupted")));
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        viewModel.AiApiKey = "session-key";
+
+        if (delete)
+        {
+            await viewModel.DeleteAICredentialCommand.ExecuteAsync(null);
+        }
+        else
+        {
+            await viewModel.SaveAICredentialCommand.ExecuteAsync(null);
+        }
+
+        Assert.IsFalse(viewModel.CredentialOperationBusy);
+        Assert.AreEqual("session-key", viewModel.AiApiKey);
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "I/O or connection error");
+        StringAssert.Contains(viewModel.CredentialStorageStatus, delete ? "may already have been deleted" : "may already have been saved");
     }
 
     [TestMethod]
@@ -431,6 +729,190 @@ public sealed class AICredentialCommandsTests
         StringAssert.Contains(viewModel.CredentialStorageStatus, "locked");
         Assert.IsNull(provider.StoredValue);
         Assert.AreEqual("session-key", viewModel.AiApiKey);
+    }
+
+    [TestMethod]
+    public async Task CredentialStatus_LateCheckDoesNotHideCredentialFailure()
+    {
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("test-keyring");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("test-keyring", CredentialProviderAvailability.Available)));
+        provider.GetAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(_ => ValueTask.FromException<CredentialSecret?>(new IOException("Service session expired")));
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        TaskCompletionSource<CredentialProviderStatus> pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(_ => new ValueTask<CredentialProviderStatus>(pending.Task));
+        Task check = viewModel.RefreshCredentialProviderStatusCommand.ExecuteAsync(null);
+
+        await viewModel.LoadAICredentialCommand.ExecuteAsync(null);
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "I/O or connection error");
+        pending.SetResult(new CredentialProviderStatus(provider.ProviderId, CredentialProviderAvailability.Available));
+        await check;
+
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "I/O or connection error");
+    }
+
+    [TestMethod]
+    [DataRow("save")]
+    [DataRow("load")]
+    [DataRow("delete")]
+    [DataRow("status")]
+    public async Task CredentialErrors_DoNotExposeProviderExceptionText(string operation)
+    {
+        const string key = "test-api-secret-123";
+        const string endpoint = "https://private.example/v1?token=private-token";
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("test-keyring");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("test-keyring", CredentialProviderAvailability.Available)));
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        viewModel.AiEndpoint = endpoint;
+        viewModel.AiApiKey = key;
+        string unsafeMessage = $"failed with {key} at {endpoint}";
+        provider.SetAsync(Arg.Any<CredentialId>(), Arg.Any<CredentialSecret>(), Arg.Any<CancellationToken>())
+            .Returns(_ => ValueTask.FromException(new IOException(unsafeMessage)));
+        provider.GetAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(_ => ValueTask.FromException<CredentialSecret?>(new IOException(unsafeMessage)));
+        provider.DeleteAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(_ => ValueTask.FromException(new IOException(unsafeMessage)));
+        provider.GetStatusAsync(Arg.Any<CancellationToken>())
+            .Returns(_ => ValueTask.FromException<CredentialProviderStatus>(new IOException(unsafeMessage)));
+
+        switch (operation)
+        {
+            case "save":
+                await viewModel.SaveAICredentialCommand.ExecuteAsync(null);
+                break;
+            case "load":
+                await viewModel.LoadAICredentialCommand.ExecuteAsync(null);
+                break;
+            case "delete":
+                await viewModel.DeleteAICredentialCommand.ExecuteAsync(null);
+                break;
+            case "status":
+                await viewModel.RefreshCredentialProviderStatusCommand.ExecuteAsync(null);
+                break;
+        }
+
+        string message = viewModel.CredentialStorageStatus;
+        StringAssert.Contains(message, "I/O or connection error");
+        Assert.IsFalse(message.Contains(key, StringComparison.Ordinal));
+        Assert.IsFalse(message.Contains(endpoint, StringComparison.Ordinal));
+        Assert.IsFalse(message.Contains("private-token", StringComparison.Ordinal));
+        if (operation is "save" or "delete")
+        {
+            StringAssert.Contains(message, "may already have been");
+        }
+        Assert.AreEqual(key, viewModel.AiApiKey);
+    }
+
+    [TestMethod]
+    public async Task CredentialErrors_UnknownProviderFailureIsReportedWithoutItsMessage()
+    {
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("test-keyring");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("test-keyring", CredentialProviderAvailability.Available)));
+        provider.GetAsync(Arg.Any<CredentialId>(), Arg.Any<CancellationToken>())
+            .Returns(_ => ValueTask.FromException<CredentialSecret?>(new InvalidOperationException("unexpected secret data")));
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+
+        await viewModel.LoadAICredentialCommand.ExecuteAsync(null);
+
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "credential manager reported an error");
+        Assert.IsFalse(viewModel.CredentialStorageStatus.Contains("unexpected secret data", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task CredentialStatus_LateCheckDoesNotOverrideReselectedProvider(bool fails)
+    {
+        ICredentialProvider provider = Substitute.For<ICredentialProvider>();
+        provider.ProviderId.Returns("test-keyring");
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("test-keyring", CredentialProviderAvailability.Available)));
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([provider]), new OpenAICompatibleAISettings());
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        TaskCompletionSource<CredentialProviderStatus> pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(_ => new ValueTask<CredentialProviderStatus>(pending.Task));
+        Task check = viewModel.RefreshCredentialProviderStatusCommand.ExecuteAsync(null);
+        viewModel.SelectedCredentialProviderId = null;
+        provider.GetStatusAsync(Arg.Any<CancellationToken>()).Returns(
+            ValueTask.FromResult(new CredentialProviderStatus("test-keyring", CredentialProviderAvailability.Locked)));
+        viewModel.SelectedCredentialProviderId = provider.ProviderId;
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "locked");
+
+        if (fails)
+        {
+            pending.SetException(new IOException("Outdated status error"));
+        }
+        else
+        {
+            pending.SetResult(new CredentialProviderStatus(provider.ProviderId, CredentialProviderAvailability.Available));
+        }
+        await check;
+
+        StringAssert.Contains(viewModel.CredentialStorageStatus, "locked");
+    }
+
+    [TestMethod]
+    public async Task OpenLayerSettingsCommands_DispatchExplicitTargetLayer()
+    {
+        MainWindowViewModel viewModel = CreateViewModel(
+            new CredentialProviderCatalog([]),
+            new OpenAICompatibleAISettings());
+        List<ConfigLayer> openedLayers = [];
+        viewModel.OpenConfigurationLayerDialogAsync = layer =>
+        {
+            openedLayers.Add(layer);
+            return Task.CompletedTask;
+        };
+
+        await viewModel.OpenSystemConfigurationCommand.ExecuteAsync(null);
+        await viewModel.OpenGroupConfigurationCommand.ExecuteAsync(null);
+
+        CollectionAssert.AreEqual(new[] { ConfigLayer.System, ConfigLayer.Group }, openedLayers);
+    }
+
+    [TestMethod]
+    public async Task EncryptedVaultActions_UseExplicitPassphrasesAndClearSessionKeyWhenLocked()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AvlnVaultUiTest-{Guid.NewGuid():N}");
+        string path = Path.Combine(directory, "vault.json");
+        await using EncryptedFileCredentialProvider vault = new(path);
+        OpenAICompatibleAISettings aiSettings = new();
+        MainWindowViewModel viewModel = CreateViewModel(
+            new CredentialProviderCatalog([vault]),
+            aiSettings);
+        viewModel.SelectedCredentialProviderId = vault.ProviderId;
+
+        try
+        {
+            using CredentialSecret passphrase = new("a long test vault passphrase".AsSpan());
+            using CredentialSecret confirmation = new("a long test vault passphrase".AsSpan());
+            await viewModel.InitializeEncryptedVaultAsync(passphrase, confirmation);
+            Assert.IsTrue(viewModel.EncryptedVaultUnlocked);
+
+            viewModel.AiApiKey = "session-key";
+            await viewModel.LockEncryptedVaultAsync();
+
+            Assert.IsFalse(viewModel.EncryptedVaultUnlocked);
+            Assert.AreEqual(string.Empty, viewModel.AiApiKey);
+            Assert.AreEqual(string.Empty, aiSettings.ApiKey);
+        }
+        finally
+        {
+            await vault.LockAsync();
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
     }
 
     private static MainWindowViewModel CreateViewModel(
