@@ -46,7 +46,7 @@ public sealed class OpenAICompatibleAIClient(OpenAICompatibleAISettings settings
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
-        Uri endpoint = ValidateEndpoint(_settings.Endpoint);
+        Uri endpoint = AIEndpointValidator.Validate(_settings.Endpoint);
         string model = string.IsNullOrWhiteSpace(request.Options.ModelId)
             ? _settings.ModelId
             : request.Options.ModelId;
@@ -55,7 +55,11 @@ public sealed class OpenAICompatibleAIClient(OpenAICompatibleAISettings settings
             throw new InvalidOperationException("Configure an AI model before sending a chat message.");
         }
 
-        Dictionary<string, string> providerToolNames = CreateProviderToolNames(request.Tools);
+        string[] toolNames = request.Tools.Select(static tool => tool.Name)
+            .Concat(request.Messages.SelectMany(static message => message.ToolCalls.Select(static call => call.Name)))
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+        Dictionary<string, string> providerToolNames = CreateProviderToolNames(toolNames);
         Dictionary<string, string> internalToolNames = providerToolNames
             .ToDictionary(static entry => entry.Value, static entry => entry.Key, StringComparer.Ordinal);
         object payload = new
@@ -145,22 +149,6 @@ public sealed class OpenAICompatibleAIClient(OpenAICompatibleAISettings settings
         }
     }
 
-    private static Uri ValidateEndpoint(string? endpointText)
-    {
-        if (!Uri.TryCreate(endpointText, UriKind.Absolute, out Uri? endpoint)
-            || (endpoint.Scheme != Uri.UriSchemeHttps && endpoint.Scheme != Uri.UriSchemeHttp))
-        {
-            throw new InvalidOperationException("The AI endpoint must be an absolute HTTP or HTTPS URL.");
-        }
-
-        if (endpoint.Scheme == Uri.UriSchemeHttp && !endpoint.IsLoopback)
-        {
-            throw new InvalidOperationException("Non-local AI endpoints must use HTTPS to protect credentials and source context.");
-        }
-
-        return endpoint;
-    }
-
     private static string ResolveApiKey(string? apiKey)
     {
         if (string.IsNullOrWhiteSpace(apiKey))
@@ -229,19 +217,18 @@ public sealed class OpenAICompatibleAIClient(OpenAICompatibleAISettings settings
     }
 
     private static Dictionary<string, string> CreateProviderToolNames(
-        IReadOnlyList<AIChatToolDescriptor> tools)
+        IReadOnlyList<string> tools)
     {
         HashSet<string> reservedNames = tools
-            .Where(static tool => IsProviderCompatibleToolName(tool.Name))
-            .Select(static tool => tool.Name)
+            .Where(static name => IsProviderCompatibleToolName(name))
             .ToHashSet(StringComparer.Ordinal);
         HashSet<string> usedNames = new(StringComparer.Ordinal);
         Dictionary<string, string> providerNames = new(StringComparer.Ordinal);
         int fallbackIndex = 0;
 
-        foreach (AIChatToolDescriptor tool in tools)
+        foreach (string tool in tools)
         {
-            string providerName = tool.Name;
+            string providerName = tool;
             if (!IsProviderCompatibleToolName(providerName))
             {
                 char[] sanitizedName = providerName
@@ -263,7 +250,7 @@ public sealed class OpenAICompatibleAIClient(OpenAICompatibleAISettings settings
             }
 
             usedNames.Add(providerName);
-            providerNames.Add(tool.Name, providerName);
+            providerNames.Add(tool, providerName);
         }
 
         return providerNames;

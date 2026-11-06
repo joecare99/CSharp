@@ -17,8 +17,16 @@ public sealed class AIChatService(IAIClient client, AIChatToolCatalog toolCatalo
 
     public IReadOnlyList<AIChatToolDescriptor> AvailableTools => toolCatalog.Descriptors;
 
-    public async Task<AIChatTurnResult> SendAsync(
+    public Task<AIChatTurnResult> SendAsync(
         IEnumerable<AIMessage> messages,
+        AICompletionOptions? options = null,
+        Func<AIChatToolDescriptor, JsonElement, CancellationToken, Task<bool>>? approveToolExecution = null,
+        CancellationToken cancellationToken = default) =>
+        SendWithAllowedToolsAsync(messages, null, options, approveToolExecution, cancellationToken);
+
+    public async Task<AIChatTurnResult> SendWithAllowedToolsAsync(
+        IEnumerable<AIMessage> messages,
+        IReadOnlyCollection<string>? allowedToolNames,
         AICompletionOptions? options = null,
         Func<AIChatToolDescriptor, JsonElement, CancellationToken, Task<bool>>? approveToolExecution = null,
         CancellationToken cancellationToken = default)
@@ -30,13 +38,37 @@ public sealed class AIChatService(IAIClient client, AIChatToolCatalog toolCatalo
             throw new ArgumentException("A chat turn requires at least one non-null message.", nameof(messages));
         }
 
+        IReadOnlyList<AIChatToolDescriptor> activeTools;
+        if (allowedToolNames is null)
+        {
+            activeTools = toolCatalog.Descriptors;
+        }
+        else
+        {
+            HashSet<string> allowed = new(allowedToolNames, StringComparer.Ordinal);
+            string[] unknownTools = allowed
+                .Where(name => !toolCatalog.TryGetDescriptor(name, out _))
+                .ToArray();
+            if (unknownTools.Length > 0)
+            {
+                throw new ArgumentException(
+                    $"The allowed tool list contains unregistered tools: {string.Join(", ", unknownTools)}.",
+                    nameof(allowedToolNames));
+            }
+
+            activeTools = toolCatalog.Descriptors
+                .Where(descriptor => allowed.Contains(descriptor.Name))
+                .ToArray();
+        }
+
         List<AIChatToolExecution> executions = [];
         for (int round = 0; round <= MaximumToolCallRounds; round++)
         {
             cancellationToken.ThrowIfCancellationRequested();
             AICompletionResponse response = await client.CompleteAsync(
-                new AICompletionRequest(conversation, options, toolCatalog.Descriptors),
+                new AICompletionRequest(conversation, options, activeTools),
                 cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             if (response.ToolCalls.Count == 0)
             {
                 conversation.Add(response.Message);
@@ -57,19 +89,23 @@ public sealed class AIChatService(IAIClient client, AIChatToolCatalog toolCatalo
             foreach (AIChatToolCall toolCall in response.ToolCalls)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                if (!toolCatalog.TryGetDescriptor(toolCall.Name, out AIChatToolDescriptor? descriptor))
+                AIChatToolDescriptor? descriptor = activeTools.FirstOrDefault(
+                    candidate => string.Equals(candidate.Name, toolCall.Name, StringComparison.Ordinal));
+                if (descriptor is null)
                 {
-                    throw new KeyNotFoundException($"The AI requested the unregistered tool '{toolCall.Name}'.");
+                    throw new KeyNotFoundException($"The AI requested a tool that is unavailable in this agent mode: '{toolCall.Name}'.");
                 }
 
                 string result;
-                bool wasExecuted = !descriptor!.RequiresConfirmation
+                bool wasExecuted = !descriptor.RequiresConfirmation
                     || (approveToolExecution is not null
                         && await approveToolExecution(descriptor, toolCall.Arguments, cancellationToken).ConfigureAwait(false));
+                cancellationToken.ThrowIfCancellationRequested();
                 if (wasExecuted)
                 {
                     result = await toolCatalog.ExecuteAsync(toolCall.Name, toolCall.Arguments, cancellationToken)
                         .ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
                 }
                 else
                 {
