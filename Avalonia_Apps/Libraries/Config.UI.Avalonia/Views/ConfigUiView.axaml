@@ -13,18 +13,26 @@
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
-    <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="8">
+    <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,Auto,Auto" RowSpacing="8">
       <StackPanel Spacing="2">
         <TextBlock FontWeight="SemiBold" Text="{Binding SelectedSection.Section.DisplayName}" />
         <TextBlock Opacity="0.75" Text="{Binding SelectedSection.Section.Description}" TextWrapping="Wrap" />
+        <TextBlock FontSize="11" Opacity="0.75" Text="{Binding SelectedContextDisplay}" TextWrapping="Wrap" />
       </StackPanel>
-      <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6">
+      <propertyEditor:PropertyEditorPanel Grid.Row="1" DataContext="{Binding PropertyEditor}" />
+      <StackPanel x:Name="SectionActionsPanel"
+                  Grid.Row="2"
+                  Orientation="Horizontal"
+                  HorizontalAlignment="Right"
+                  Spacing="6">
         <Button Content="Load" Command="{Binding LoadCommand}" />
-        <Button Content="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" />
         <Button Content="Reset" Command="{Binding ResetCommand}" IsEnabled="{Binding CanSave}" />
+        <Button Content="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" />
       </StackPanel>
-      <propertyEditor:PropertyEditorPanel Grid.Row="2" DataContext="{Binding PropertyEditor}" />
       <TextBlock Grid.Row="3"
+                 Text="{Binding OperationMessage}"
+                 TextWrapping="Wrap" />
+      <TextBlock Grid.Row="4"
                  Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
                  Text="{Binding ErrorMessage}"
                  TextWrapping="Wrap" />
