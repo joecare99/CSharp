@@ -79,6 +79,29 @@ public sealed class PropertyItemTests
     }
 
     [TestMethod]
+    public void Constructor_WithLayeredValueMetadata_ExposesSourceAndPolicy()
+    {
+        var context = new PropertyValueContext(
+            PropertyScope.System,
+            origin: "organization policy",
+            isPolicyLocked: true,
+            readOnlyReason: "Managed by your administrator.");
+        var item = new PropertyItem(
+            GeneralCategory,
+            "Endpoint",
+            "Endpoint",
+            typeof(string),
+            "https://service.invalid",
+            valueContext: context);
+
+        Assert.AreEqual(PropertyScope.System, item.ValueContext.Scope);
+        Assert.AreEqual("organization policy", item.ValueContext.Origin);
+        Assert.AreEqual("Managed by your administrator.", item.ReadOnlyReason);
+        Assert.IsFalse(item.TrySetValue("https://other.invalid"));
+        Assert.AreEqual("Managed by your administrator.", item.ValidationResult.ErrorMessage);
+    }
+
+    [TestMethod]
     public void TrySetValue_WithEmptyOptions_AcceptsMatchingEnumValue()
     {
         var item = new PropertyItem(GeneralCategory, "Mode", "Mode", typeof(SampleMode), SampleMode.Basic);
