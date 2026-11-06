@@ -24,16 +24,25 @@ public sealed class ConfigServiceUiSection : IConfigUiSection
     public ConfigServiceUiSection(
         global::Config.Service.ConfigService configService,
         IConfigSectionProvider provider,
-        bool isReadOnly = false)
+        bool isReadOnly = false,
+        PropertyProviderContext? context = null)
     {
         _configService = configService ?? throw new ArgumentNullException(nameof(configService));
         _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         Section = new ConfigUiSection(provider.Name, provider.DisplayName, provider.Description, provider.Order);
         IsReadOnly = isReadOnly;
+        Context = context ?? new PropertyProviderContext(
+            PropertyScope.User,
+            "User configuration",
+            Section.DisplayName,
+            readOnlyReason: isReadOnly ? "This configuration section is read-only." : null);
     }
 
     /// <inheritdoc/>
     public ConfigUiSection Section { get; }
+
+    /// <inheritdoc/>
+    public PropertyProviderContext Context { get; }
 
     /// <inheritdoc/>
     public IReadOnlyList<IPropertyItem> Properties { get; private set; } = [];
@@ -132,6 +141,25 @@ public sealed class ConfigServiceUiSection : IConfigUiSection
         }
     }
 
+    /// <inheritdoc/>
+    public Task ResetDraftAsync(CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (IsReadOnly)
+        {
+            ErrorMessage = "This configuration section is read-only.";
+            State = ConfigUiSectionState.Failed;
+            return Task.CompletedTask;
+        }
+
+        State = ConfigUiSectionState.Resetting;
+        ErrorMessage = null;
+        _model = _provider.CreateModel();
+        Properties = CreatePropertyItems(_model);
+        State = ConfigUiSectionState.Ready;
+        return Task.CompletedTask;
+    }
+
     private async Task<object> LoadModelAsync(CancellationToken cancellationToken)
     {
         MethodInfo method = typeof(global::Config.Service.ConfigService)
@@ -158,6 +186,7 @@ public sealed class ConfigServiceUiSection : IConfigUiSection
             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
             .Where(static property => property.CanRead && property.CanWrite)
             .Where(static property => property.GetCustomAttribute<ConfigIgnoreAttribute>() is null)
+            .Where(static property => property.GetCustomAttribute<ConfigUiIgnoreAttribute>() is null)
             .OrderBy(static property => property.Name, StringComparer.Ordinal)
             .Select(property => CreatePropertyItem(model, property))
             .Cast<IPropertyItem>()
@@ -185,7 +214,12 @@ public sealed class ConfigServiceUiSection : IConfigUiSection
             isNullable,
             !IsReadOnly,
             property.GetCustomAttribute<SensitiveConfigPropertyAttribute>() is not null,
-            options);
+            options,
+            valueContext: new PropertyValueContext(
+                Context.Scope,
+                origin: Context.StorageLocation ?? Context.ProviderDisplayName,
+                readOnlyReason: Context.ReadOnlyReason),
+            readOnlyReason: Context.ReadOnlyReason);
         propertyItem.ValueChanged += (_, eventArgs) => property.SetValue(model, eventArgs.NewValue);
         return propertyItem;
     }
