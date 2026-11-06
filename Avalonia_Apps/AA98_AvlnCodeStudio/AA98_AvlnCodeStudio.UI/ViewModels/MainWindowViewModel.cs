@@ -299,7 +299,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         public bool HasAxamlPreview => _axamlDesigner.HasPreview;
 
         public Avalonia.Controls.GridLength PreviewColumnWidth => HasAxamlPreview
-            ? new Avalonia.Controls.GridLength(1, Avalonia.Controls.GridUnitType.Star)
+            ? new Avalonia.Controls.GridLength(2, Avalonia.Controls.GridUnitType.Star)
             : new Avalonia.Controls.GridLength(0);
 
         public ObservableCollection<CSharpWorkspaceProject> PackageProjects { get; } = [];
