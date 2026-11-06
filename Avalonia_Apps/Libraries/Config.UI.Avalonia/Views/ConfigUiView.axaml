@@ -5,7 +5,8 @@
              x:Class="Config.UI.Avalonia.Views.ConfigUiView"
              x:DataType="vm:ConfigUiViewModel">
   <Grid ColumnDefinitions="180,*" ColumnSpacing="8">
-    <ListBox ItemsSource="{Binding Sections}"
+    <ListBox IsEnabled="{Binding !IsBusy}"
+             ItemsSource="{Binding Sections}"
              SelectedItem="{Binding SelectedSection, Mode=TwoWay}">
       <ListBox.ItemTemplate>
         <DataTemplate>
@@ -19,13 +20,15 @@
         <TextBlock Opacity="0.75" Text="{Binding SelectedSection.Section.Description}" TextWrapping="Wrap" />
         <TextBlock FontSize="11" Opacity="0.75" Text="{Binding SelectedContextDisplay}" TextWrapping="Wrap" />
       </StackPanel>
-      <propertyEditor:PropertyEditorPanel Grid.Row="1" DataContext="{Binding PropertyEditor}" />
+      <Grid Grid.Row="1" IsEnabled="{Binding !IsBusy}">
+        <propertyEditor:PropertyEditorPanel DataContext="{Binding PropertyEditor}" />
+      </Grid>
       <StackPanel x:Name="SectionActionsPanel"
                   Grid.Row="2"
                   Orientation="Horizontal"
                   HorizontalAlignment="Right"
                   Spacing="6">
-        <Button Content="Load" Command="{Binding LoadCommand}" />
+        <Button Content="Load" Command="{Binding LoadCommand}" IsEnabled="{Binding !IsBusy}" />
         <Button Content="Reset" Command="{Binding ResetCommand}" IsEnabled="{Binding CanSave}" />
         <Button Content="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" />
       </StackPanel>

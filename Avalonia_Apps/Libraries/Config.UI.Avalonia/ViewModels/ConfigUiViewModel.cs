@@ -119,6 +119,13 @@ public sealed partial class ConfigUiViewModel : ObservableObject
     /// </summary>
     public Func<string, Task>? SectionAppliedAsync { get; set; }
 
+    /// <summary>
+    /// Optionally validates the complete set of changed sections before any section is saved.
+    /// Return a user-facing message to keep the draft and cancel persistence. The callback
+    /// must not mutate sections or persist settings; exceptions are displayed as validation errors.
+    /// </summary>
+    public Func<IReadOnlyList<IConfigUiSection>, Task<string?>>? ValidateChangesAsync { get; set; }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsBusy))]
     [NotifyPropertyChangedFor(nameof(ErrorMessage))]
@@ -161,13 +168,31 @@ public sealed partial class ConfigUiViewModel : ObservableObject
             return;
         }
 
-        await section.SaveAsync();
-        if (section.State == ConfigUiSectionState.Ready)
-        {
-            _sectionsWithUnsavedChanges.Remove(section);
-        }
-
+        _isApplying = true;
         RefreshState();
+        try
+        {
+            IConfigUiSection[] sectionsToValidate = Sections
+                .Where(item => ReferenceEquals(item, section) || _sectionsWithUnsavedChanges.Contains(item))
+                .ToArray();
+            string? validationError = await ValidateDraftAsync(sectionsToValidate);
+            if (!string.IsNullOrWhiteSpace(validationError))
+            {
+                OperationMessage = $"Settings were not saved: {validationError}";
+                return;
+            }
+
+            await section.SaveAsync();
+            if (section.State == ConfigUiSectionState.Ready)
+            {
+                _sectionsWithUnsavedChanges.Remove(section);
+            }
+        }
+        finally
+        {
+            _isApplying = false;
+            RefreshState();
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanSave))]
@@ -221,6 +246,13 @@ public sealed partial class ConfigUiViewModel : ObservableObject
             if (validationFailures.Length > 0)
             {
                 OperationMessage = $"Settings were not applied because some values are invalid:{Environment.NewLine}{string.Join(Environment.NewLine, validationFailures)}";
+                return false;
+            }
+
+            string? validationError = await ValidateDraftAsync(changedSections);
+            if (!string.IsNullOrWhiteSpace(validationError))
+            {
+                OperationMessage = $"Settings were not applied: {validationError}";
                 return false;
             }
 
@@ -386,6 +418,23 @@ public sealed partial class ConfigUiViewModel : ObservableObject
         SaveCommand.NotifyCanExecuteChanged();
         ResetCommand.NotifyCanExecuteChanged();
         ApplyCommand.NotifyCanExecuteChanged();
+    }
+
+    private async Task<string?> ValidateDraftAsync(IReadOnlyList<IConfigUiSection> sections)
+    {
+        if (ValidateChangesAsync is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return await ValidateChangesAsync(sections);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            return $"Validation failed: {exception.Message}";
+        }
     }
 
     private void DisplaySection(IConfigUiSection section)

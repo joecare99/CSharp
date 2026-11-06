@@ -10,9 +10,10 @@
         MinHeight="420"
         Title="{Binding DialogTitle}"
         WindowStartupLocation="CenterOwner">
-  <Grid Margin="12" RowDefinitions="*,Auto" RowSpacing="12">
+  <Grid Margin="12" RowDefinitions="*,Auto,Auto" RowSpacing="12">
     <configUi:ConfigUiView ShowSectionActions="False" DataContext="{Binding}" />
-    <StackPanel Grid.Row="1"
+    <ContentControl x:Name="HostContentPresenter" Grid.Row="1" />
+    <StackPanel Grid.Row="2"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right"
                 Spacing="8">

@@ -25,6 +25,13 @@ public partial class ConfigUiDialog : Window
         DataContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
     }
 
+    /// <summary>Gets or sets optional host-specific content displayed above the dialog actions.</summary>
+    public Control? HostContent
+    {
+        get => HostContentPresenter.Content as Control;
+        set => HostContentPresenter.Content = value;
+    }
+
     private async void OnOkClick(object? sender, RoutedEventArgs eventArgs)
     {
         if (DataContext is not ConfigUiViewModel viewModel)
