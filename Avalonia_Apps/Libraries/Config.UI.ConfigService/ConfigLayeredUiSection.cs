@@ -19,6 +19,13 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
     private readonly IConfigSectionProvider _provider;
     private readonly ConfigLayerDraftSession _draftSession;
     private readonly Func<IConfigSectionProvider, PropertyInfo, IReadOnlyList<PropertyOption>?>? _optionsProvider;
+    private PropertyGeneration? _propertyGeneration;
+
+    private sealed class PropertyGeneration
+    {
+        public volatile bool IsCurrent = true;
+        public long ReloadVersion { get; init; }
+    }
 
     /// <summary>
     /// Initializes a provider that edits only <paramref name="targetLayer"/>.
@@ -157,15 +164,17 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
 
         State = ConfigUiSectionState.Saving;
         ErrorMessage = null;
+        bool saved = false;
         try
         {
             await _draftSession.SaveAsync(cancellationToken).ConfigureAwait(false);
+            saved = true;
             await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
             State = ConfigUiSectionState.Ready;
         }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
-            SetFailed(Unwrap(exception));
+            SetFailed(Unwrap(exception), saved);
         }
     }
 
@@ -181,17 +190,19 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
 
         State = ConfigUiSectionState.Resetting;
         ErrorMessage = null;
+        bool saved = false;
         try
         {
             await _draftSession.LoadAsync(cancellationToken).ConfigureAwait(false);
             await RemoveEditableSectionOverridesAsync(cancellationToken).ConfigureAwait(false);
             await _draftSession.SaveAsync(cancellationToken).ConfigureAwait(false);
+            saved = true;
             await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
             State = ConfigUiSectionState.Ready;
         }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
-            SetFailed(Unwrap(exception));
+            SetFailed(Unwrap(exception), saved);
         }
     }
 
@@ -245,23 +256,30 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
 
     private async Task RefreshPropertiesAsync(CancellationToken cancellationToken)
     {
-        _ = _draftSession.GetDraft();
+        long reloadVersion = _draftSession.GetReloadVersion();
         IReadOnlyDictionary<string, ConfigValueResolution> resolutions =
             await _resolver.ResolveSectionAsync(Section.Name, _draftSession.GetDraft(), cancellationToken).ConfigureAwait(false);
 
-        Properties = _provider.ModelType
+        PropertyGeneration generation = new() { ReloadVersion = reloadVersion };
+        IPropertyItem[] properties = _provider.ModelType
             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
             .Where(static property => property.CanRead && property.CanWrite)
             .Where(static property => property.GetIndexParameters().Length == 0)
             .Where(static property => property.GetCustomAttribute<ConfigIgnoreAttribute>() is null)
             .Where(static property => property.GetCustomAttribute<ConfigUiIgnoreAttribute>() is null)
             .OrderBy(static property => property.Name, StringComparer.Ordinal)
-            .Select(property => CreatePropertyItem(property, resolutions[property.Name]))
+            .Select(property => CreatePropertyItem(property, resolutions[property.Name], generation))
             .Cast<IPropertyItem>()
             .ToArray();
+        if (_propertyGeneration is not null)
+        {
+            _propertyGeneration.IsCurrent = false;
+        }
+        _propertyGeneration = generation;
+        Properties = properties;
     }
 
-    private PropertyItem CreatePropertyItem(PropertyInfo property, ConfigValueResolution resolution)
+    private PropertyItem CreatePropertyItem(PropertyInfo property, ConfigValueResolution resolution, PropertyGeneration generation)
     {
         Type declaredType = property.PropertyType;
         Type valueType = Nullable.GetUnderlyingType(declaredType) ?? declaredType;
@@ -298,6 +316,9 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
             isEditable: isEditable,
             isSensitive: property.GetCustomAttribute<SensitiveConfigPropertyAttribute>() is not null,
             options,
+            validator: _ => generation.IsCurrent && _draftSession.IsReloadVersionCurrent(generation.ReloadVersion)
+                ? PropertyValidationResult.Valid
+                : PropertyValidationResult.Invalid("This property has been replaced. Use the current settings field."),
             valueContext: valueContext,
             readOnlyReason: readOnlyReason);
         item.ValueChanged += (_, eventArgs) =>
@@ -337,10 +358,12 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
         }
     }
 
-    private void SetFailed(Exception exception)
+    private void SetFailed(Exception exception, bool saved = false)
     {
         State = ConfigUiSectionState.Failed;
-        ErrorMessage = exception.Message;
+        ErrorMessage = saved
+            ? $"Settings were saved, but the section could not be refreshed: {exception.Message}"
+            : exception.Message;
     }
 
     private static PropertyScope GetScope(ConfigLayer layer) => layer switch

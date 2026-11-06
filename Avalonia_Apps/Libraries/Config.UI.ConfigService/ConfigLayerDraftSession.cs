@@ -11,6 +11,7 @@ internal sealed class ConfigLayerDraftSession
     private readonly SemaphoreSlim _operationLock = new(1, 1);
     private readonly object _snapshotLock = new();
     private ConfigLayerSnapshot? _snapshot;
+    private long _reloadVersion;
 
     public ConfigLayerDraftSession(IConfigLayerStore store)
     {
@@ -51,6 +52,7 @@ internal sealed class ConfigLayerDraftSession
             lock (_snapshotLock)
             {
                 _snapshot = loaded;
+                _reloadVersion++;
                 return loaded;
             }
         }
@@ -66,6 +68,22 @@ internal sealed class ConfigLayerDraftSession
         {
             return _snapshot
                 ?? throw new InvalidOperationException("The configuration layer draft has not been loaded.");
+        }
+    }
+
+    public long GetReloadVersion()
+    {
+        lock (_snapshotLock)
+        {
+            return _reloadVersion;
+        }
+    }
+
+    public bool IsReloadVersionCurrent(long version)
+    {
+        lock (_snapshotLock)
+        {
+            return version == _reloadVersion;
         }
     }
 
