@@ -149,14 +149,18 @@ public sealed class AxamlDesignerSession
             selectedProperty);
     }
 
-    public bool ApplyBinding(string propertyName, string memberName)
+    public bool ApplyBinding(
+        string propertyName,
+        string memberName,
+        AxamlBindingMode bindingMode = AxamlBindingMode.Default,
+        AxamlBindingUpdateSourceTrigger updateSourceTrigger = AxamlBindingUpdateSourceTrigger.Default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(propertyName);
         ArgumentException.ThrowIfNullOrWhiteSpace(memberName);
         EndPropertyEdit();
         AxamlPreviewNode selectedNode = SelectedNode
             ?? throw new InvalidOperationException("Select an AXAML control before creating a binding.");
-        string updatedMarkup = CreateBindingMarkup(propertyName, memberName);
+        string updatedMarkup = CreateBindingMarkup(propertyName, memberName, bindingMode, updateSourceTrigger);
         if (string.Equals(updatedMarkup, Markup, StringComparison.Ordinal))
         {
             return false;
@@ -173,13 +177,23 @@ public sealed class AxamlDesignerSession
         return true;
     }
 
-    public string CreateBindingMarkup(string propertyName, string memberName)
+    public string CreateBindingMarkup(
+        string propertyName,
+        string memberName,
+        AxamlBindingMode bindingMode = AxamlBindingMode.Default,
+        AxamlBindingUpdateSourceTrigger updateSourceTrigger = AxamlBindingUpdateSourceTrigger.Default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(propertyName);
         ArgumentException.ThrowIfNullOrWhiteSpace(memberName);
         AxamlPreviewNode selectedNode = SelectedNode
             ?? throw new InvalidOperationException("Select an AXAML control before creating a binding.");
-        return _previewService.UpdateBinding(Markup, selectedNode, propertyName, memberName);
+        return _previewService.UpdateBinding(
+            Markup,
+            selectedNode,
+            propertyName,
+            memberName,
+            bindingMode,
+            updateSourceTrigger);
     }
 
     public bool ApplyValues(IReadOnlyDictionary<string, string> values, string selectedProperty)

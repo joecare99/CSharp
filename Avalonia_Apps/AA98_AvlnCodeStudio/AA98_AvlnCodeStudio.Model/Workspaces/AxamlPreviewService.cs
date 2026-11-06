@@ -118,11 +118,27 @@ public sealed class AxamlPreviewService
         return UpdateAttributeCore(axaml, node, propertyName, value, allowExistingBinding: false);
     }
 
-    public string UpdateBinding(string axaml, AxamlPreviewNode node, string propertyName, string memberName)
+    public string UpdateBinding(
+        string axaml,
+        AxamlPreviewNode node,
+        string propertyName,
+        string memberName,
+        AxamlBindingMode bindingMode = AxamlBindingMode.Default,
+        AxamlBindingUpdateSourceTrigger updateSourceTrigger = AxamlBindingUpdateSourceTrigger.Default)
     {
         ArgumentNullException.ThrowIfNull(node);
         ArgumentException.ThrowIfNullOrWhiteSpace(propertyName);
         ArgumentException.ThrowIfNullOrWhiteSpace(memberName);
+        if (!Enum.IsDefined(bindingMode))
+        {
+            throw new ArgumentOutOfRangeException(nameof(bindingMode));
+        }
+
+        if (!Enum.IsDefined(updateSourceTrigger))
+        {
+            throw new ArgumentOutOfRangeException(nameof(updateSourceTrigger));
+        }
+
         if (!AxamlMvvmMemberName.IsValid(memberName))
         {
             throw new InvalidOperationException($"'{memberName}' is not a valid simple ViewModel member name.");
@@ -137,11 +153,22 @@ public sealed class AxamlPreviewService
             throw new InvalidOperationException($"The '{propertyName}' binding on '{node.TypeName}' cannot be edited safely.");
         }
 
+        List<string> options = [];
+        if (bindingMode != AxamlBindingMode.Default)
+        {
+            options.Add($"Mode={bindingMode}");
+        }
+        if (updateSourceTrigger != AxamlBindingUpdateSourceTrigger.Default)
+        {
+            options.Add($"UpdateSourceTrigger={updateSourceTrigger}");
+        }
+
+        string optionSuffix = options.Count == 0 ? string.Empty : $", {string.Join(", ", options)}";
         return UpdateAttributeCore(
             axaml,
             node,
             propertyName,
-            $"{{Binding {memberName}}}",
+            $"{{Binding {memberName}{optionSuffix}}}",
             allowExistingBinding: true);
     }
 
