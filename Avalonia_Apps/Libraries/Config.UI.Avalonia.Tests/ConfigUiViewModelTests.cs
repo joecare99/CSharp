@@ -82,6 +82,112 @@ public sealed class ConfigUiViewModelTests
     }
 
     [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task ResetCommand_SharedDraftException_RequiresDiscardRecovery(bool cancelled)
+    {
+        IConfigUiSection section = Substitute.For<IConfigUiSection, IConfigUiDraftDiscard>();
+        IConfigUiDraftDiscard draft = (IConfigUiDraftDiscard)section;
+        draft.DraftIdentity.Returns(new object());
+        section.Section.Returns(new ConfigUiSection("General", "General"));
+        section.State.Returns(ConfigUiSectionState.Ready);
+        section.Properties.Returns(
+        [
+            new PropertyItem(new PropertyCategory("General", "General"), "Name", "Name", typeof(string), "Original"),
+        ]);
+        section.ResetDraftAsync().Returns(_ => cancelled
+            ? Task.FromException(new OperationCanceledException())
+            : Task.FromException(new InvalidOperationException("Reset failed")));
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+
+        if (cancelled)
+        {
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => viewModel.ResetCommand.ExecuteAsync(null));
+        }
+        else
+        {
+            await viewModel.ResetCommand.ExecuteAsync(null);
+            StringAssert.Contains(viewModel.OperationMessage, "Reset failed");
+        }
+
+        Assert.IsFalse(viewModel.IsBusy);
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        Assert.IsTrue(viewModel.NeedsReloadRecovery);
+        Assert.IsFalse(viewModel.CanApplyChanges);
+        Assert.AreEqual(0, viewModel.PropertyEditor.Items.Count);
+        Assert.IsTrue(await viewModel.DiscardChangesAsync(), viewModel.OperationMessage);
+        await draft.Received(1).DiscardDraftAsync();
+        Assert.IsFalse(viewModel.NeedsReloadRecovery);
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task ResetCommand_IndependentDraftFailure_RequiresRecoveryWithoutDiscardingOtherDraft(bool cancelled)
+    {
+        IConfigUiSection first = CreateSection("First", 0);
+        IConfigUiSection second = CreateSection("Second", 1);
+        first.ResetDraftAsync().Returns(_ => cancelled
+            ? Task.FromException(new OperationCanceledException())
+            : Task.FromException(new InvalidOperationException("Reset failed")));
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(viewModel.PropertyEditor.Items[0].PropertyItem.TrySetValue("Other draft"));
+        viewModel.SelectedSection = first;
+
+        if (cancelled)
+        {
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => viewModel.ResetCommand.ExecuteAsync(null));
+        }
+        else
+        {
+            await viewModel.ResetCommand.ExecuteAsync(null);
+            StringAssert.Contains(viewModel.OperationMessage, "Reset failed");
+        }
+
+        Assert.IsFalse(viewModel.IsBusy);
+        Assert.IsTrue(viewModel.NeedsReloadRecovery);
+        Assert.IsFalse(viewModel.CanApplyChanges);
+        Assert.AreEqual(0, viewModel.PropertyEditor.Items.Count);
+        await viewModel.RetryFailedReloadsCommand.ExecuteAsync(null);
+        Assert.IsFalse(viewModel.NeedsReloadRecovery);
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        Assert.IsTrue(viewModel.CanApplyChanges);
+        viewModel.SelectedSection = second;
+        Assert.AreEqual("Other draft", viewModel.PropertyEditor.Items[0].PropertyItem.Value);
+    }
+
+    [TestMethod]
+    public async Task ResetCommand_IndependentDraftReportsFailure_RequiresReload()
+    {
+        IConfigUiSection section = CreateSection("General", 0);
+        section.ResetDraftAsync().Returns(_ =>
+        {
+            section.State.Returns(ConfigUiSectionState.Failed);
+            section.ErrorMessage.Returns("Reset refresh failed");
+            return Task.CompletedTask;
+        });
+        section.LoadAsync().Returns(_ =>
+        {
+            section.State.Returns(ConfigUiSectionState.Ready);
+            return Task.CompletedTask;
+        });
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+
+        await viewModel.ResetCommand.ExecuteAsync(null);
+
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        Assert.IsTrue(viewModel.NeedsReloadRecovery);
+        Assert.IsFalse(viewModel.CanApplyChanges);
+        StringAssert.Contains(viewModel.OperationMessage, "Reset refresh failed");
+        await viewModel.RetryFailedReloadsCommand.ExecuteAsync(null);
+        Assert.IsFalse(viewModel.NeedsReloadRecovery);
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+        Assert.AreEqual(1, viewModel.PropertyEditor.Items.Count);
+    }
+
+    [TestMethod]
     public async Task LoadCommand_FailedSection_ExposesFailureMessage()
     {
         IConfigUiSection section = CreateSection("Failed", 0);
