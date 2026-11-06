@@ -8,9 +8,16 @@ namespace Config.UI;
 /// </summary>
 public interface IConfigUiDraftDiscard
 {
-    /// <summary>Gets the identity shared by providers participating in the same editable draft.</summary>
+    /// <summary>
+    /// Gets the stable object identity shared by providers participating in the same editable
+    /// draft. Consumers compare identities by reference, not by value.
+    /// </summary>
     object DraftIdentity { get; }
 
-    /// <summary>Reloads persisted values and discards the associated shared draft.</summary>
+    /// <summary>
+    /// Reloads persisted values and discards the associated shared draft. A failed operation
+    /// does not guarantee that the shared draft is unchanged; consumers must not treat
+    /// other sections as refreshed until a subsequent discard succeeds.
+    /// </summary>
     Task DiscardDraftAsync(CancellationToken cancellationToken = default);
 }
