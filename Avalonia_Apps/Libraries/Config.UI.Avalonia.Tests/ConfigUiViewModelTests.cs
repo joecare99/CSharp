@@ -137,6 +137,64 @@ public sealed class ConfigUiViewModelTests
     }
 
     [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task SavingSection_RebindsReplacementPropertiesForFurtherEdits(bool useApply)
+    {
+        PropertyCategory category = new("General", "General");
+        PropertyItem original = new(category, "Name", "Name", typeof(string), "Original");
+        PropertyItem replacement = new(category, "Name", "Name", typeof(string), "Saved");
+        IConfigUiSection section = CreateSection("General", 0, properties: [original]);
+        section.SaveAsync().Returns(_ =>
+        {
+            section.Properties.Returns([replacement]);
+            return Task.CompletedTask;
+        });
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(original.TrySetValue("Saved"));
+
+        if (useApply)
+        {
+            Assert.IsTrue(await viewModel.ApplyChangesAsync());
+        }
+        else
+        {
+            await viewModel.SaveCommand.ExecuteAsync(null);
+        }
+
+        Assert.AreSame(replacement, viewModel.PropertyEditor.Items[0].PropertyItem);
+        Assert.IsTrue(original.TrySetValue("Obsolete"));
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+        Assert.IsTrue(replacement.TrySetValue("Next draft"));
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    public async Task ApplyChangesAsync_RebindsSubscriptionsForNonselectedSections()
+    {
+        PropertyCategory category = new("First", "First");
+        PropertyItem old = new(category, "Name", "Name", typeof(string), "Original");
+        PropertyItem replacement = new(category, "Name", "Name", typeof(string), "Saved");
+        IConfigUiSection first = CreateSection("First", 0, properties: [old]);
+        IConfigUiSection second = CreateSection("Second", 1);
+        first.SaveAsync().Returns(_ =>
+        {
+            first.Properties.Returns([replacement]);
+            return Task.CompletedTask;
+        });
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(old.TrySetValue("Draft"));
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(await viewModel.ApplyChangesAsync());
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+        Assert.IsTrue(old.TrySetValue("Old object"));
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+        Assert.IsTrue(replacement.TrySetValue("New object"));
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
     public async Task ApplyChangesAsync_HostValidationBlocksAllWritesAndPreservesDraft()
     {
         PropertyItem property = new(new PropertyCategory("General", "General"), "Name", "Name", typeof(string), "Original");
@@ -180,6 +238,8 @@ public sealed class ConfigUiViewModelTests
         Task<bool> applying = viewModel.ApplyChangesAsync();
         Assert.IsTrue(viewModel.IsBusy);
         Assert.AreEqual(2, validatedSections);
+        Assert.IsFalse(await viewModel.DiscardChangesAsync());
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
         validation.SetResult("Invalid endpoint");
         Assert.IsFalse(await applying);
         Assert.IsFalse(viewModel.IsBusy);
@@ -221,6 +281,106 @@ public sealed class ConfigUiViewModelTests
     }
 
     [TestMethod]
+    public async Task DiscardChangesAsync_BlocksOverlappingApplyAndDiscardUntilReloadCompletes()
+    {
+        PropertyItem property = new(new PropertyCategory("General", "General"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection section = CreateSection("General", 0, properties: [property]);
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(property.TrySetValue("Draft"));
+        TaskCompletionSource reload = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        section.LoadAsync().Returns(_ => reload.Task);
+        section.ClearReceivedCalls();
+
+        Task<bool> discard = viewModel.DiscardChangesAsync();
+        Assert.IsTrue(viewModel.IsBusy);
+        Assert.IsFalse(viewModel.CanApplyChanges);
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+        Assert.IsFalse(await viewModel.DiscardChangesAsync());
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        await section.Received(1).LoadAsync();
+        await section.DidNotReceive().SaveAsync();
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        reload.SetResult();
+        Assert.IsTrue(await discard);
+        Assert.IsFalse(viewModel.IsBusy);
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    public async Task DiscardChangesAsync_FailedReloadReleasesBusyAndRetainsDraft()
+    {
+        PropertyItem property = new(new PropertyCategory("General", "General"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection section = CreateSection("General", 0, properties: [property]);
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(property.TrySetValue("Draft"));
+        section.LoadAsync().Returns(_ => Task.FromException(new InvalidOperationException("Reload failed")));
+
+        Assert.IsFalse(await viewModel.DiscardChangesAsync());
+        Assert.IsFalse(viewModel.IsBusy);
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        StringAssert.Contains(viewModel.OperationMessage, "Reload failed");
+    }
+
+    [TestMethod]
+    public async Task DiscardChangesAsync_CancelledReloadReleasesBusyAndRetainsDraft()
+    {
+        PropertyItem property = new(new PropertyCategory("General", "General"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection section = CreateSection("General", 0, properties: [property]);
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(property.TrySetValue("Draft"));
+        section.LoadAsync().Returns(_ => Task.FromException(new OperationCanceledException()));
+
+        await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => viewModel.DiscardChangesAsync());
+        Assert.IsFalse(viewModel.IsBusy);
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    public async Task InitialLoad_BlocksApplyAndDiscardUntilLoadCompletes()
+    {
+        IConfigUiSection section = CreateSection("General", 0);
+        TaskCompletionSource loading = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        section.LoadAsync().Returns(_ => loading.Task);
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+
+        Assert.IsTrue(viewModel.IsBusy);
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+        Assert.IsFalse(await viewModel.DiscardChangesAsync());
+        TaskCompletionSource ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        viewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ConfigUiViewModel.IsBusy) && !viewModel.IsBusy)
+            {
+                ready.TrySetResult();
+            }
+        };
+        loading.SetResult();
+        await ready.Task;
+        Assert.IsFalse(viewModel.IsBusy);
+    }
+
+    [TestMethod]
+    public async Task ResetDraft_BlocksConcurrentApplyAndDiscard()
+    {
+        IConfigUiSection section = CreateSection("General", 0);
+        TaskCompletionSource resetting = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        section.ResetDraftAsync().Returns(_ => resetting.Task);
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+        Task reset = viewModel.ResetCommand.ExecuteAsync(null);
+
+        Assert.IsTrue(viewModel.IsBusy);
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+        Assert.IsFalse(await viewModel.DiscardChangesAsync());
+        resetting.SetResult();
+        await reset;
+        Assert.IsFalse(viewModel.IsBusy);
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
     public async Task LoadCommand_SharedLayerDraftReloadsAndRefreshesEverySection()
     {
         PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
@@ -245,6 +405,284 @@ public sealed class ConfigUiViewModelTests
 
         await secondDraft.Received(1).DiscardDraftAsync();
         await first.Received(1).LoadAsync();
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    public async Task LoadCommand_DoesNotReloadOrClearUnrelatedSharedDraft()
+    {
+        PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        PropertyItem secondProperty = new(new PropertyCategory("Second", "Second"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSharedSection("First", 0, [firstProperty]);
+        IConfigUiSection second = CreateSharedSection("Second", 1, [secondProperty]);
+        ((IConfigUiDraftDiscard)first).DraftIdentity.Returns(new string('x', 1));
+        ((IConfigUiDraftDiscard)second).DraftIdentity.Returns(new string('x', 1));
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(firstProperty.TrySetValue("Draft 1"));
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(secondProperty.TrySetValue("Draft 2"));
+        first.ClearReceivedCalls();
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        await first.DidNotReceive().LoadAsync();
+        Assert.AreEqual("Draft 1", firstProperty.Value);
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        Assert.IsTrue(await viewModel.ApplyChangesAsync());
+        await first.Received(1).SaveAsync();
+        await second.DidNotReceive().SaveAsync();
+    }
+
+    [TestMethod]
+    public async Task LoadCommand_FailedSharedReloadRetainsAllDirtySections()
+    {
+        PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        PropertyItem secondProperty = new(new PropertyCategory("Second", "Second"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSharedSection("First", 0, [firstProperty]);
+        IConfigUiSection second = CreateSharedSection("Second", 1, [secondProperty]);
+        object identity = new();
+        ((IConfigUiDraftDiscard)first).DraftIdentity.Returns(identity);
+        ((IConfigUiDraftDiscard)second).DraftIdentity.Returns(identity);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(firstProperty.TrySetValue("Draft 1"));
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(secondProperty.TrySetValue("Draft 2"));
+        bool failed = true;
+        second.State.Returns(_ => failed ? ConfigUiSectionState.Failed : ConfigUiSectionState.Ready);
+        second.ErrorMessage.Returns("Storage unavailable");
+        ((IConfigUiDraftDiscard)second).DiscardDraftAsync().Returns(Task.CompletedTask);
+        first.ClearReceivedCalls();
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        await first.DidNotReceive().LoadAsync();
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        StringAssert.Contains(viewModel.OperationMessage, "Storage unavailable");
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+        failed = false;
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task DiscardChangesAsync_SharedFailureDoesNotClearSiblingAndCanRetry(bool reportFailureViaState)
+    {
+        PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        PropertyItem secondProperty = new(new PropertyCategory("Second", "Second"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSharedSection("First", 0, [firstProperty]);
+        IConfigUiSection second = CreateSharedSection("Second", 1, [secondProperty]);
+        object identity = new();
+        IConfigUiDraftDiscard firstDraft = (IConfigUiDraftDiscard)first;
+        firstDraft.DraftIdentity.Returns(identity);
+        ((IConfigUiDraftDiscard)second).DraftIdentity.Returns(identity);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(firstProperty.TrySetValue("Draft 1"));
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(secondProperty.TrySetValue("Draft 2"));
+        bool shouldFail = true;
+        bool failedState = false;
+        first.State.Returns(_ => failedState ? ConfigUiSectionState.Failed : ConfigUiSectionState.Ready);
+        first.ErrorMessage.Returns("Storage unavailable");
+        firstDraft.DiscardDraftAsync().Returns(_ =>
+        {
+            if (!shouldFail)
+            {
+                failedState = false;
+                return Task.CompletedTask;
+            }
+            if (!reportFailureViaState)
+            {
+                return Task.FromException(new InvalidOperationException("Storage unavailable"));
+            }
+            failedState = true;
+            return Task.CompletedTask;
+        });
+        second.ClearReceivedCalls();
+        Assert.IsFalse(await viewModel.DiscardChangesAsync());
+        await second.DidNotReceive().LoadAsync();
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        StringAssert.Contains(viewModel.OperationMessage, "Storage unavailable");
+
+        shouldFail = false;
+        Assert.IsTrue(await viewModel.DiscardChangesAsync());
+        await second.Received(1).LoadAsync();
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task LoadCommand_FailedRelatedRefreshBlocksApplyUntilSectionReloads(bool reportFailureViaState)
+    {
+        PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        PropertyItem secondProperty = new(new PropertyCategory("Second", "Second"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSharedSection("First", 0, [firstProperty]);
+        IConfigUiSection second = CreateSharedSection("Second", 1, [secondProperty]);
+        object identity = new();
+        ((IConfigUiDraftDiscard)first).DraftIdentity.Returns(identity);
+        ((IConfigUiDraftDiscard)second).DraftIdentity.Returns(identity);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(firstProperty.TrySetValue("Draft 1"));
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(secondProperty.TrySetValue("Draft 2"));
+        bool failed = true;
+        first.State.Returns(_ => failed && reportFailureViaState ? ConfigUiSectionState.Failed : ConfigUiSectionState.Ready);
+        first.ErrorMessage.Returns("Refresh failed");
+        first.LoadAsync().Returns(_ => failed && !reportFailureViaState
+            ? Task.FromException(new InvalidOperationException("Refresh failed"))
+            : Task.CompletedTask);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        Assert.IsFalse(viewModel.CanApplyChanges);
+        StringAssert.Contains(viewModel.OperationMessage, "Refresh failed");
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+        await first.DidNotReceive().SaveAsync();
+        failed = false;
+        viewModel.SelectedSection = first;
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+        Assert.AreEqual(1, viewModel.PropertyEditor.Items.Count);
+    }
+
+    [TestMethod]
+    public async Task DiscardChangesAsync_CancelledSharedDiscardBlocksEditingUntilRetry()
+    {
+        PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        PropertyItem secondProperty = new(new PropertyCategory("Second", "Second"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSharedSection("First", 0, [firstProperty]);
+        IConfigUiSection second = CreateSharedSection("Second", 1, [secondProperty]);
+        object identity = new();
+        IConfigUiDraftDiscard firstDraft = (IConfigUiDraftDiscard)first;
+        firstDraft.DraftIdentity.Returns(identity);
+        ((IConfigUiDraftDiscard)second).DraftIdentity.Returns(identity);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(firstProperty.TrySetValue("Draft 1"));
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(secondProperty.TrySetValue("Draft 2"));
+        bool cancel = true;
+        firstDraft.DiscardDraftAsync().Returns(_ => cancel
+            ? Task.FromException(new OperationCanceledException())
+            : Task.CompletedTask);
+
+        await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => viewModel.DiscardChangesAsync());
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        Assert.IsFalse(viewModel.CanApplyChanges);
+        viewModel.SelectedSection = first;
+        Assert.AreEqual(0, viewModel.PropertyEditor.Items.Count);
+        cancel = false;
+        Assert.IsTrue(await viewModel.DiscardChangesAsync());
+        Assert.IsFalse(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    public async Task RetryFailedReloads_PreservesIndependentDirtyDraft()
+    {
+        PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        PropertyItem secondProperty = new(new PropertyCategory("Second", "Second"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSharedSection("First", 0, [firstProperty]);
+        IConfigUiSection second = CreateSharedSection("Second", 1, [secondProperty]);
+        ((IConfigUiDraftDiscard)first).DraftIdentity.Returns(new object());
+        ((IConfigUiDraftDiscard)second).DraftIdentity.Returns(new object());
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(firstProperty.TrySetValue("Draft 1"));
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(secondProperty.TrySetValue("Draft 2"));
+        viewModel.SelectedSection = first;
+        bool fail = true;
+        ((IConfigUiDraftDiscard)first).DiscardDraftAsync().Returns(_ => fail
+            ? Task.FromException(new InvalidOperationException("Reload failed"))
+            : Task.CompletedTask);
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(viewModel.NeedsReloadRecovery);
+
+        fail = false;
+        await viewModel.RetryFailedReloadsCommand.ExecuteAsync(null);
+
+        Assert.IsFalse(viewModel.NeedsReloadRecovery);
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        Assert.AreEqual("Draft 2", secondProperty.Value);
+        Assert.IsTrue(await viewModel.ApplyChangesAsync());
+        await first.DidNotReceive().SaveAsync();
+        await second.Received(1).SaveAsync();
+    }
+
+    [TestMethod]
+    public async Task FailedCleanSectionRefresh_BlocksSavingNewEditsInSharedDraft()
+    {
+        PropertyItem property = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSharedSection("First", 0, [property]);
+        IConfigUiSection second = CreateSharedSection("Second", 1);
+        object identity = new();
+        ((IConfigUiDraftDiscard)first).DraftIdentity.Returns(identity);
+        ((IConfigUiDraftDiscard)second).DraftIdentity.Returns(identity);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        viewModel.SelectedSection = second;
+        viewModel.SelectedSection = first;
+        bool fail = true;
+        second.LoadAsync().Returns(_ => fail
+            ? Task.FromException(new InvalidOperationException("Refresh failed"))
+            : Task.CompletedTask);
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.IsTrue(viewModel.NeedsReloadRecovery);
+        Assert.IsTrue(property.TrySetValue("New draft"));
+        Assert.IsFalse(viewModel.CanSave);
+        Assert.IsFalse(viewModel.CanApplyChanges);
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+
+        fail = false;
+        await viewModel.RetryFailedReloadsCommand.ExecuteAsync(null);
+        Assert.IsFalse(viewModel.NeedsReloadRecovery);
+        Assert.IsTrue(viewModel.CanSave);
+        Assert.IsTrue(await viewModel.ApplyChangesAsync());
+        await first.Received(1).SaveAsync();
+    }
+
+    [TestMethod]
+    public async Task DiscardChangesAsync_FailedGroupDoesNotPreventIndependentDiscard()
+    {
+        PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        PropertyItem secondProperty = new(new PropertyCategory("Second", "Second"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSharedSection("First", 0, [firstProperty]);
+        IConfigUiSection second = CreateSharedSection("Second", 1, [secondProperty]);
+        ((IConfigUiDraftDiscard)first).DraftIdentity.Returns(new object());
+        ((IConfigUiDraftDiscard)second).DraftIdentity.Returns(new object());
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(firstProperty.TrySetValue("Draft 1"));
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(secondProperty.TrySetValue("Draft 2"));
+        bool failed = true;
+        ((IConfigUiDraftDiscard)first).DiscardDraftAsync().Returns(_ => failed
+            ? Task.FromException(new InvalidOperationException("Storage unavailable"))
+            : Task.CompletedTask);
+
+        Assert.IsFalse(await viewModel.DiscardChangesAsync());
+
+        await ((IConfigUiDraftDiscard)second).Received(1).DiscardDraftAsync();
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        Assert.IsTrue(viewModel.IsSelectedSectionReady);
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+        failed = false;
+        Assert.IsTrue(await viewModel.DiscardChangesAsync());
+        await second.DidNotReceive().SaveAsync();
+    }
+
+    [TestMethod]
+    public async Task DiscardChangesAsync_RefreshesCleanLoadedSharedSection()
+    {
+        PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSharedSection("First", 0, [firstProperty]);
+        IConfigUiSection second = CreateSharedSection("Second", 1);
+        object identity = new();
+        ((IConfigUiDraftDiscard)first).DraftIdentity.Returns(identity);
+        ((IConfigUiDraftDiscard)second).DraftIdentity.Returns(identity);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(firstProperty.TrySetValue("Draft"));
+        viewModel.SelectedSection = second;
+        second.ClearReceivedCalls();
+        Assert.IsTrue(await viewModel.DiscardChangesAsync());
+        await second.Received(1).LoadAsync();
         Assert.IsFalse(viewModel.HasUnsavedChanges);
     }
 
