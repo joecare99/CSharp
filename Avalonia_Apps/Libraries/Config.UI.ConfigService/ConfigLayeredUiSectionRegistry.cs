@@ -1,4 +1,5 @@
 using Config.Service;
+using Property.Editor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,22 @@ public sealed class ConfigLayeredUiSectionRegistry : IConfigUiSectionRegistry
         ConfigLayeredSettingsResolver resolver,
         IConfigLayerStore targetStore,
         ConfigLayer targetLayer,
+        bool isReadOnly = false,
+        string? storageLocation = null)
+        : this(sectionRegistry, resolver, targetStore, targetLayer, null, isReadOnly, storageLocation)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a registry with host-supplied property options for each section.
+    /// The callback may return null to use the default options.
+    /// </summary>
+    public ConfigLayeredUiSectionRegistry(
+        IConfigSectionRegistry sectionRegistry,
+        ConfigLayeredSettingsResolver resolver,
+        IConfigLayerStore targetStore,
+        ConfigLayer targetLayer,
+        Func<IConfigSectionProvider, System.Reflection.PropertyInfo, IReadOnlyList<PropertyOption>?>? optionsProvider,
         bool isReadOnly = false,
         string? storageLocation = null)
     {
@@ -45,7 +62,8 @@ public sealed class ConfigLayeredUiSectionRegistry : IConfigUiSectionRegistry
                 targetLayer,
                 draftSession,
                 isReadOnly,
-                storageLocation))
+                storageLocation,
+                optionsProvider))
             .ToArray();
     }
 

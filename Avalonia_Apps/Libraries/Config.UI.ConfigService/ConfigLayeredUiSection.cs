@@ -18,6 +18,7 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
     private readonly ConfigLayeredSettingsResolver _resolver;
     private readonly IConfigSectionProvider _provider;
     private readonly ConfigLayerDraftSession _draftSession;
+    private readonly Func<IConfigSectionProvider, PropertyInfo, IReadOnlyList<PropertyOption>?>? _optionsProvider;
 
     /// <summary>
     /// Initializes a provider that edits only <paramref name="targetLayer"/>.
@@ -30,6 +31,23 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
         ConfigLayer targetLayer,
         bool isReadOnly = false,
         string? storageLocation = null)
+        : this(resolver, provider, targetStore, targetLayer, new ConfigLayerDraftSession(targetStore), isReadOnly, storageLocation)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a section with host-supplied property options. A null result uses
+    /// the default options. A saved value outside the supplied options remains visible
+    /// as unavailable so it can be replaced without silently changing it.
+    /// </summary>
+    public ConfigLayeredUiSection(
+        ConfigLayeredSettingsResolver resolver,
+        IConfigSectionProvider provider,
+        IConfigLayerStore targetStore,
+        ConfigLayer targetLayer,
+        Func<IConfigSectionProvider, PropertyInfo, IReadOnlyList<PropertyOption>?> optionsProvider,
+        bool isReadOnly = false,
+        string? storageLocation = null)
         : this(
             resolver,
             provider,
@@ -37,7 +55,8 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
             targetLayer,
             new ConfigLayerDraftSession(targetStore),
             isReadOnly,
-            storageLocation)
+            storageLocation,
+            optionsProvider ?? throw new ArgumentNullException(nameof(optionsProvider)))
     {
     }
 
@@ -48,12 +67,14 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
         ConfigLayer targetLayer,
         ConfigLayerDraftSession draftSession,
         bool isReadOnly = false,
-        string? storageLocation = null)
+        string? storageLocation = null,
+        Func<IConfigSectionProvider, PropertyInfo, IReadOnlyList<PropertyOption>?>? optionsProvider = null)
     {
         _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
         _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         ArgumentNullException.ThrowIfNull(targetStore);
         _draftSession = draftSession ?? throw new ArgumentNullException(nameof(draftSession));
+        _optionsProvider = optionsProvider;
         if (!Enum.IsDefined(targetLayer))
         {
             throw new ArgumentOutOfRangeException(nameof(targetLayer));
@@ -245,17 +266,28 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
         Type declaredType = property.PropertyType;
         Type valueType = Nullable.GetUnderlyingType(declaredType) ?? declaredType;
         bool isNullable = !valueType.IsValueType || Nullable.GetUnderlyingType(declaredType) is not null;
-        IReadOnlyList<PropertyOption>? options = valueType.IsEnum
+        IReadOnlyList<PropertyOption>? options = _optionsProvider?.Invoke(_provider, property)
+            ?? (valueType.IsEnum
             ? Enum.GetValues(valueType)
                 .Cast<object>()
                 .Select(static value => new PropertyOption(value, value.ToString()!))
                 .ToArray()
-            : null;
+            : null);
         PropertyValueContext valueContext = ConfigLayerPropertyContext.Create(
             resolution,
-            TargetLayer,
-            Context.StorageLocation ?? Context.TargetDisplayName);
+            TargetLayer);
         string? readOnlyReason = valueContext.ReadOnlyReason ?? Context.ReadOnlyReason;
+        bool isEditable = !IsReadOnly && !resolution.IsEnforced;
+        if (isEditable && options is not null && resolution.Value is not null
+            && !options.Any(option => Equals(option.Value, resolution.Value)))
+        {
+            options = options
+                .Append(new PropertyOption(
+                    resolution.Value,
+                    $"Unavailable on this platform: {resolution.Value}"))
+                .ToArray();
+        }
+
         PropertyItem item = new(
             new PropertyCategory(Section.Name, Section.DisplayName, Section.SortOrder),
             property.Name,
@@ -263,7 +295,7 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
             valueType,
             resolution.Value,
             isNullable,
-            isEditable: !IsReadOnly && !resolution.IsEnforced,
+            isEditable: isEditable,
             isSensitive: property.GetCustomAttribute<SensitiveConfigPropertyAttribute>() is not null,
             options,
             valueContext: valueContext,
