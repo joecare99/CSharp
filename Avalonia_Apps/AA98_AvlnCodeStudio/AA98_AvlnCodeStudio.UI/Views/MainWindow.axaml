@@ -69,6 +69,7 @@
                     </MenuItem>
                     <MenuItem Header="_View">
                         <MenuItem Header="Settings..." Command="{Binding OpenConfigurationCommand}" />
+                        <MenuItem Header="AI Credentials..." Command="{Binding OpenAICredentialsCommand}" />
                         <MenuItem Header="Project Settings..." Command="{Binding OpenProjectConfigurationCommand}" />
                     </MenuItem>
                     <MenuItem Header="_Edit">
@@ -149,12 +150,20 @@
                 <TabItem Header="AI Chat">
                     <Grid RowDefinitions="Auto,*,Auto,Auto" RowSpacing="8">
                         <StackPanel Spacing="6">
+                            <ComboBox ItemsSource="{Binding AIChatAgentModes}"
+                                      SelectedItem="{Binding SelectedAIChatAgent, Mode=TwoWay}"
+                                      IsEnabled="{Binding !AiChatBusy}"
+                                      PlaceholderText="Select agent" />
+                            <TextBox Text="{Binding SessionAIModel, Mode=TwoWay}"
+                                     IsEnabled="{Binding !AiChatBusy}"
+                                     PlaceholderText="Model override (session only)"
+                                     AutomationProperties.Name="Session model override" />
+                            <TextBlock Text="{Binding AIChatModelHint}"
+                                       Opacity="0.8"
+                                       TextWrapping="Wrap" />
                             <TextBlock Text="{Binding AIChatStatus}"
                                        Opacity="0.8"
                                        TextWrapping="Wrap" />
-                            <TextBox PlaceholderText="{Binding AIChatApiKeyPlaceholderText}"
-                                     Text="{Binding AiApiKey, Mode=TwoWay}"
-                                     PasswordChar="*" />
                         </StackPanel>
                         <ListBox Grid.Row="1"
                                  ItemsSource="{Binding AIChatMessages}">
@@ -180,6 +189,8 @@
                                     Spacing="8">
                             <Button Content="Clear"
                                     Command="{Binding ClearAIChatCommand}" />
+                            <Button Content="Cancel"
+                                    Command="{Binding SendAIChatMessageCancelCommand}" />
                             <Button Content="{Binding AIChatSendCommandText}"
                                     Command="{Binding SendAIChatMessageCommand}" />
                         </StackPanel>

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Threading;
 using Config.UI;
 using Config.UI.Avalonia.Views;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
@@ -36,9 +37,36 @@ namespace AA98_AvlnCodeStudio.UI.Views
             {
                 if (viewModel.ConfigUi is not null)
                 {
-                    await new ConfigUiDialog(viewModel.ConfigUi).ShowDialog(this);
+                    using Configuration.AIProviderDraftViewModel? draft = viewModel.CreateAIProviderDraft();
+                    ConfigUiDialog dialog = new(viewModel.ConfigUi);
+                    var originalValidator = viewModel.ConfigUi.ValidateChangesAsync;
+                    if (draft is not null)
+                    {
+                        dialog.Height = 620;
+                        dialog.HostContent = new AIProviderDraftView
+                        {
+                            DataContext = draft,
+                            OpenCredentialsAsync = async () =>
+                                await new AICredentialsDialog { DataContext = viewModel }.ShowDialog(dialog),
+                        };
+                        viewModel.ConfigUi.ValidateChangesAsync = async sections =>
+                        {
+                            string? changed = await viewModel.ConfirmAIProviderTemplatesAsync(draft, sections);
+                            return changed ?? (originalValidator is null ? null : await originalValidator(sections));
+                        };
+                    }
+                    try
+                    {
+                        await dialog.ShowDialog(this);
+                    }
+                    finally
+                    {
+                        viewModel.ConfigUi.ValidateChangesAsync = originalValidator;
+                    }
                 }
             };
+            viewModel.OpenAICredentialsDialogAsync = async () =>
+                await new AICredentialsDialog { DataContext = viewModel }.ShowDialog(this);
             viewModel.OpenProjectConfigurationDialogAsync = async () =>
             {
                 CSharpWorkspace? workspace = viewModel.Workspace;
@@ -63,7 +91,7 @@ namespace AA98_AvlnCodeStudio.UI.Views
                     (proposal, cancellationToken) =>
                         viewModel.ReviewWorkspaceFileChangesAsync?.Invoke(proposal, cancellationToken)
                         ?? Task.FromResult(false));
-                Config.UI.Avalonia.ViewModels.ConfigUiViewModel configViewModel = new(
+                global::Config.UI.Avalonia.ViewModels.ConfigUiViewModel configViewModel = new(
                     new SingleSectionRegistry(new PropertyProviderConfigUiSection(
                         "Project",
                         project.Name,
@@ -96,10 +124,23 @@ namespace AA98_AvlnCodeStudio.UI.Views
             JsonElement arguments,
             CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            bool approved = await new AIChatToolApprovalDialog(descriptor, arguments).ShowDialog(this);
-            cancellationToken.ThrowIfCancellationRequested();
-            return approved;
+            return await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                AIChatToolApprovalDialog dialog = new(descriptor, arguments);
+                Task<bool> approval = dialog.ShowDialog(this);
+                using CancellationTokenRegistration registration = cancellationToken.Register(
+                    () => Dispatcher.UIThread.Post(() =>
+                    {
+                        if (dialog.IsVisible)
+                        {
+                            dialog.Close(false);
+                        }
+                    }));
+                bool approved = await approval;
+                cancellationToken.ThrowIfCancellationRequested();
+                return approved;
+            });
         }
 
         private async Task<bool> ApproveSvnUpdateAsync(

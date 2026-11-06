@@ -15,7 +15,7 @@ public sealed class CodeStudioSettingsProvider : IConfigSectionProvider
     public string DisplayName => "Workbench settings";
 
     /// <inheritdoc/>
-    public string? Description => "Configure the CodeStudio workbench behavior.";
+    public string? Description => "Choose an AI provider and credential manager. Non-empty endpoint and model overrides take precedence over the selected provider template; clear them to use the template values.";
 
     /// <inheritdoc/>
     public int Order => 0;

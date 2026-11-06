@@ -27,6 +27,8 @@ using Project.Explorer.Avalonia.DependencyInjection;
 using Project.Explorer.Avalonia.ViewModels;
 using Project.Explorer.FileSystem;
 using System;
+using AA98_AvlnCodeStudio.Config.Secrets;
+using Property.Editor;
 
 namespace AA98_AvlnCodeStudio.UI
 {
@@ -71,12 +73,15 @@ namespace AA98_AvlnCodeStudio.UI
 
         public static ServiceProvider CreateServiceProvider(
             Func<TopLevel?> topLevelProvider,
-            string? userConfigRoot = null)
+            string? userConfigRoot = null,
+            string? systemConfigRoot = null,
+            string? groupConfigRoot = null,
+            string? groupId = null)
         {
             ArgumentNullException.ThrowIfNull(topLevelProvider);
 
             var services = new ServiceCollection();
-            ConfigureServices(services, topLevelProvider, userConfigRoot);
+            ConfigureServices(services, topLevelProvider, userConfigRoot, systemConfigRoot, groupConfigRoot, groupId);
 
             return services.BuildServiceProvider(new ServiceProviderOptions
             {
@@ -93,10 +98,21 @@ namespace AA98_AvlnCodeStudio.UI
         public static void ConfigureServices(
             IServiceCollection services,
             Func<TopLevel?> topLevelProvider,
-            string? userConfigRoot = null)
+            string? userConfigRoot = null,
+            string? systemConfigRoot = null,
+            string? groupConfigRoot = null,
+            string? groupId = null)
         {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(topLevelProvider);
+
+            string? configuredGroupRoot = groupConfigRoot ?? Environment.GetEnvironmentVariable("AVLN_CONFIG_GROUP_ROOT");
+            string? configuredGroupId = groupId ?? Environment.GetEnvironmentVariable("AVLN_CONFIG_GROUP_ID");
+            if (string.IsNullOrWhiteSpace(configuredGroupRoot) != string.IsNullOrWhiteSpace(configuredGroupId))
+            {
+                throw new InvalidOperationException(
+                    "Group configuration requires both AVLN_CONFIG_GROUP_ROOT and AVLN_CONFIG_GROUP_ID.");
+            }
 
             services.AddAvaloniaCommonDialogs(topLevelProvider);
             services.AddCodeStudioFoundation();
@@ -113,17 +129,63 @@ namespace AA98_AvlnCodeStudio.UI
                     userRoot: configuredRoot);
                 return pathResolver.CreateUserStore();
             });
+            services.AddSingleton<ConfigLayerStorePathResolver>(serviceProvider =>
+                new ConfigLayerStorePathResolver(
+                    "JC-Soft",
+                    "AA98-CodeStudio",
+                    userRoot: userConfigRoot ?? Environment.GetEnvironmentVariable("CONFIG_ROOT"),
+                    systemRoot: systemConfigRoot,
+                    groupRoot: configuredGroupRoot));
+            services.AddSingleton<IConfigLayerStore>(serviceProvider =>
+                new JsonConfigLayerStore(
+                    ConfigLayer.System,
+                    serviceProvider.GetRequiredService<ConfigLayerStorePathResolver>().ResolveSystemPath()));
+            if (!string.IsNullOrWhiteSpace(configuredGroupId))
+            {
+                services.AddSingleton<IConfigLayerStore>(serviceProvider =>
+                    new JsonConfigLayerStore(
+                        ConfigLayer.Group,
+                        serviceProvider.GetRequiredService<ConfigLayerStorePathResolver>().ResolveGroupPath(
+                            configuredGroupId!)));
+            }
             services.AddSingleton<ConfigLayeredSettingsResolver>(serviceProvider =>
                 new ConfigLayeredSettingsResolver(
                     serviceProvider.GetRequiredService<IConfigSectionRegistry>(),
-                    [serviceProvider.GetRequiredService<JsonConfigLayerStore>()]));
+                    [
+                        serviceProvider.GetRequiredService<JsonConfigLayerStore>(),
+                        ..serviceProvider.GetServices<IConfigLayerStore>(),
+                    ],
+                    trustEnforcedSystemValues: false));
             services.AddSingleton<IConfigUiSectionRegistry>(serviceProvider =>
                 new ConfigLayeredUiSectionRegistry(
                     serviceProvider.GetRequiredService<IConfigSectionRegistry>(),
                     serviceProvider.GetRequiredService<ConfigLayeredSettingsResolver>(),
                     serviceProvider.GetRequiredService<JsonConfigLayerStore>(),
                     ConfigLayer.User,
-                    storageLocation: serviceProvider.GetRequiredService<JsonConfigLayerStore>().FilePath));
+                    storageLocation: serviceProvider.GetRequiredService<JsonConfigLayerStore>().FilePath,
+                    optionsProvider: static (section, property) =>
+                    {
+                        if (!string.Equals(section.Name, "Workbench", StringComparison.Ordinal)
+                            || !string.Equals(property.Name, nameof(Configuration.CodeStudioSettings.CredentialManager), StringComparison.Ordinal))
+                        {
+                            return null;
+                        }
+
+                        List<PropertyOption> options =
+                        [
+                            new(Configuration.CredentialManagerSelection.None, "None (session only)"),
+                        ];
+                        if (OperatingSystem.IsWindows())
+                        {
+                            options.Add(new(Configuration.CredentialManagerSelection.WindowsCredentialManager, "Windows Credential Manager"));
+                        }
+                        else if (OperatingSystem.IsLinux())
+                        {
+                            options.Add(new(Configuration.CredentialManagerSelection.LinuxSecretService, "Linux Secret Service"));
+                        }
+
+                        return options;
+                    }));
             services.AddSingleton(serviceProvider =>
             {
                 IConfigSectionRegistry sectionRegistry = serviceProvider.GetRequiredService<IConfigSectionRegistry>();
@@ -160,10 +222,17 @@ namespace AA98_AvlnCodeStudio.UI
                     serviceProvider.GetRequiredService<Configuration.CodeStudioSettings>();
                 return new AA98_AvlnCodeStudio.Base.AI.Models.OpenAICompatibleAISettings
                 {
-                    Endpoint = settings.AIEndpoint,
-                    ModelId = settings.AIModelId,
+                    Endpoint = settings.GetEffectiveAIEndpoint(),
+                    ModelId = settings.GetEffectiveAIModelId(),
+                    ApiKey = string.Empty,
                 };
             });
+            services.AddSingleton(serviceProvider => new CredentialProviderCatalog(
+            [
+                new WindowsCredentialProvider(),
+                new LinuxSecretServiceProvider(),
+            ]));
+            services.AddSingleton<Configuration.WorkbenchSettingsRuntimeActivator>();
             services.AddSingleton<IFileEditorDocumentFactory, FileEditorDocumentFactory>();
             services.AddSingleton<Services.IWorkspaceFileDialogService, Services.AvaloniaWorkspaceFileDialogService>();
             services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.CSharpProjectTemplateService>();
@@ -220,11 +289,12 @@ namespace AA98_AvlnCodeStudio.UI
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.AI.Services.AIChatService>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.AI.Models.OpenAICompatibleAISettings>(),
                 serviceProvider.GetRequiredService<Configuration.CodeStudioSettings>(),
-                serviceProvider.GetRequiredService<Config.Service.ConfigService>(),
+                serviceProvider.GetRequiredService<global::Config.Service.ConfigService>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Versioning.Svn.Services.ISvnWorkingCopyOperations>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.WorkspaceFileChangeService>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.AxamlMvvmGenerator>(),
-                serviceProvider.GetRequiredService<ConfigLayeredSettingsResolver>()));
+                serviceProvider.GetRequiredService<Configuration.WorkbenchSettingsRuntimeActivator>(),
+                serviceProvider.GetRequiredService<CredentialProviderCatalog>()));
             services.AddSingleton<MainWindow>();
         }
 

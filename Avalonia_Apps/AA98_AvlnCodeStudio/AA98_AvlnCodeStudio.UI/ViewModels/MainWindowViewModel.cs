@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using AA98_AvlnCodeStudio.Planning.Core.Services;
 using Config.UI.Avalonia.ViewModels;
 using Project.Explorer.Avalonia.ViewModels;
@@ -31,8 +33,11 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using Code.Navigation;
 using System.Text.Json;
+using System.Diagnostics.CodeAnalysis;
 using Config.Service;
 using AA98_AvlnCodeStudio.Versioning.Svn.Services;
+using AA98_AvlnCodeStudio.UI.Configuration;
+using AA98_AvlnCodeStudio.Config.Secrets;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels
 {
@@ -57,7 +62,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly OpenAICompatibleAISettings? _aiSettings;
         private readonly Configuration.CodeStudioSettings? _codeStudioSettings;
         private readonly ConfigService? _configService;
-        private readonly ConfigLayeredSettingsResolver? _layeredSettingsResolver;
+        private readonly WorkbenchSettingsRuntimeActivator? _settingsRuntimeActivator;
+        private readonly CredentialProviderCatalog? _credentialProviderCatalog;
+        private long _credentialContextVersion;
         private readonly List<AIMessage> _aiConversation = [];
         private readonly List<Diagnostic> _buildDiagnostics = [];
         private readonly Dictionary<string, HashSet<int>> _debugBreakpoints = new(
@@ -115,7 +122,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             ISvnWorkingCopyOperations? svnWorkingCopyOperations = null,
             WorkspaceFileChangeService? workspaceFileChangeService = null,
             AxamlMvvmGenerator? axamlMvvmGenerator = null,
-            ConfigLayeredSettingsResolver? layeredSettingsResolver = null)
+            WorkbenchSettingsRuntimeActivator? settingsRuntimeActivator = null,
+            CredentialProviderCatalog? credentialProviderCatalog = null)
         {
             _editorWorkspace = editorWorkspace ?? new EditorDocumentWorkspace(editorComponent);
             _workspaceLoader = workspaceLoader ?? new CSharpWorkspaceLoader();
@@ -141,18 +149,21 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _aiSettings = aiSettings;
             _codeStudioSettings = codeStudioSettings;
             _configService = configService;
-            _layeredSettingsResolver = layeredSettingsResolver;
+            _settingsRuntimeActivator = settingsRuntimeActivator;
+            _credentialProviderCatalog = credentialProviderCatalog;
             if (_aiSettings is not null)
             {
+                string initialKey = _aiSettings.ApiKey;
                 AiEndpoint = _aiSettings.Endpoint;
                 AiModel = _aiSettings.ModelId;
-                AiApiKey = _aiSettings.ApiKey;
+                AiApiKey = initialKey;
             }
             else if (_codeStudioSettings is not null)
             {
-                AiEndpoint = _codeStudioSettings.AIEndpoint;
-                AiModel = _codeStudioSettings.AIModelId;
+                AiEndpoint = _codeStudioSettings.GetEffectiveAIEndpoint();
+                AiModel = _codeStudioSettings.GetEffectiveAIModelId();
             }
+            SelectedCredentialProviderId = GetCredentialProviderId(_codeStudioSettings?.CredentialManager);
             _debugSessionService.SessionEventReceived += OnDebugSessionEventReceived;
             _editorWorkspace.PropertyChanged += OnEditorWorkspacePropertyChanged;
             _observedEditor = _editorWorkspace.ActiveTab.Editor;
@@ -165,6 +176,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             if (ConfigUi is not null)
             {
                 ConfigUi.SectionAppliedAsync = OnConfigurationSectionAppliedAsync;
+                if (_codeStudioSettings is not null)
+                {
+                    ConfigUi.ValidateChangesAsync = _settingsRuntimeActivator is not null
+                        ? _settingsRuntimeActivator.ValidateChangesAsync
+                        : sections => WorkbenchSettingsValidation.ValidateAsync(sections, _codeStudioSettings);
+                }
             }
             ProjectExplorer = projectExplorer;
             PlanningExplorer.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
@@ -201,6 +218,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         /// <summary>Opens the settings dialog for an explicitly selected project.</summary>
         public Func<Task>? OpenProjectConfigurationDialogAsync { get; set; }
+
+        /// <summary>Opens the AI credential manager outside the chat pane.</summary>
+        public Func<Task>? OpenAICredentialsDialogAsync { get; set; }
 
         /// <summary>Gets the host-composed reusable project explorer state.</summary>
         public ProjectExplorerViewModel? ProjectExplorer { get; }
@@ -537,13 +557,46 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string DebugTargetPlaceholderText => UiStrings.DebugTargetPlaceholderText;
 
-        public string AIChatStatus => string.IsNullOrWhiteSpace(AiModel)
-            ? "Enter a model ID to connect to the configured OpenAI-compatible endpoint."
+        public string AIChatStatus => string.IsNullOrWhiteSpace(EffectiveAIChatModel)
+            ? "Enter a model ID or configure a default model before sending."
             : AiChatBusy ? "Waiting for the AI provider..." : $"Tools available to the assistant: {AIChatToolCount}.";
 
-        public int AIChatToolCount => _aiChatService?.AvailableTools.Count ?? 0;
+        public string EffectiveAIChatModel => string.IsNullOrWhiteSpace(SessionAIModel)
+            ? AiModel
+            : SessionAIModel.Trim();
 
-        public string AIChatApiKeyPlaceholderText => "Session-only API key (not persisted)";
+        public string AIChatModelHint => string.IsNullOrWhiteSpace(SessionAIModel)
+            ? $"Configured model: {(string.IsNullOrWhiteSpace(AiModel) ? "(not configured)" : AiModel)}"
+            : "Session override; clear for configured model. Chat history remains shared.";
+
+        public int AIChatToolCount => GetAllowedAIChatTools().Count;
+
+        public string AIChatApiKeyPlaceholderText =>
+            "Session-only API key";
+
+        public string CredentialProviderDisplay => SelectedCredentialProviderId ?? "None (session only)";
+
+        public IReadOnlyList<string> AIChatAgentModes { get; } = ["Plan", "Build", "Debug"];
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(AIChatStatus))]
+        private string _selectedAIChatAgent = "Plan";
+
+        partial void OnSelectedAIChatAgentChanged(string value)
+        {
+            OnPropertyChanged(nameof(AIChatToolCount));
+        }
+
+        public string CredentialStorageStatus
+        {
+            get => _credentialStorageStatus;
+            private set => SetProperty(ref _credentialStorageStatus, value);
+        }
+
+        private string _credentialStorageStatus = "Choose a credential provider. No automatic fallback is used.";
+
+        [ObservableProperty]
+        private string? _selectedCredentialProviderId;
 
         public string AIChatInputPlaceholderText => "Ask a question or request a workspace action...";
 
@@ -559,6 +612,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [NotifyPropertyChangedFor(nameof(AIChatStatus))]
         [NotifyPropertyChangedFor(nameof(AIChatSendCommandText))]
         [NotifyCanExecuteChangedFor(nameof(SendAIChatMessageCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenConfigurationCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenAICredentialsCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ClearAIChatCommand))]
         private bool _aiChatBusy;
 
         [ObservableProperty]
@@ -567,16 +623,291 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(AIChatStatus))]
+        [NotifyPropertyChangedFor(nameof(AIChatModelHint))]
+        [NotifyPropertyChangedFor(nameof(EffectiveAIChatModel))]
         private string _aiModel = string.Empty;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(AIChatStatus))]
+        [NotifyPropertyChangedFor(nameof(AIChatModelHint))]
+        [NotifyPropertyChangedFor(nameof(EffectiveAIChatModel))]
+        private string _sessionAIModel = string.Empty;
 
         [ObservableProperty]
         private string _aiApiKey = string.Empty;
 
+        private IReadOnlyList<string> GetAllowedAIChatTools()
+        {
+            if (_aiChatService is null)
+            {
+                return Array.Empty<string>();
+            }
+
+            string[] modeTools = SelectedAIChatAgent switch
+            {
+                "Build" => ["workspace.inspect", "workspace.versioning.status", "workspace.build", "workspace.test"],
+                "Debug" => ["workspace.inspect", "workspace.versioning.status"],
+                _ => ["workspace.inspect", "workspace.versioning.status"],
+            };
+            HashSet<string> registeredTools = new(
+                _aiChatService.AvailableTools.Select(static tool => tool.Name),
+                StringComparer.Ordinal);
+            return modeTools.Where(registeredTools.Contains).ToArray();
+        }
+
+        private static string? GetCredentialProviderId(Configuration.CredentialManagerSelection? selection) =>
+            selection switch
+            {
+                Configuration.CredentialManagerSelection.WindowsCredentialManager when OperatingSystem.IsWindows() =>
+                    "windows-credential-manager",
+                Configuration.CredentialManagerSelection.LinuxSecretService when OperatingSystem.IsLinux() =>
+                    "linux-secret-service",
+                _ => null,
+            };
+
+        partial void OnSelectedCredentialProviderIdChanged(string? value)
+        {
+            _credentialContextVersion++;
+            OnPropertyChanged(nameof(CredentialProviderDisplay));
+            SaveAICredentialCommand.NotifyCanExecuteChanged();
+            LoadAICredentialCommand.NotifyCanExecuteChanged();
+            DeleteAICredentialCommand.NotifyCanExecuteChanged();
+            _ = UpdateCredentialProviderStatusAsync(value);
+        }
+
         partial void OnAiApiKeyChanged(string value)
         {
+            _credentialContextVersion++;
+            SaveAICredentialCommand.NotifyCanExecuteChanged();
             if (_aiSettings is not null)
             {
                 _aiSettings.ApiKey = value;
+            }
+        }
+
+        partial void OnAiEndpointChanged(string value)
+        {
+            if (AiChatBusy)
+            {
+                SendAIChatMessageCancelCommand.Execute(null);
+            }
+            _credentialContextVersion++;
+            SessionAIModel = string.Empty;
+            AiApiKey = string.Empty;
+            if (_aiSettings is not null)
+            {
+                _aiSettings.ApiKey = string.Empty;
+            }
+
+            if (_aiConversation.Count > 0)
+            {
+                _aiConversation.Clear();
+                AIChatMessages.Add(new AIChatMessageViewModel(
+                    "System",
+                    "The AI endpoint changed. Earlier messages remain visible but will not be sent to the new endpoint."));
+            }
+        }
+
+        private bool CanManageAICredential() =>
+            _credentialProviderCatalog is not null
+            && !string.IsNullOrWhiteSpace(SelectedCredentialProviderId);
+
+        private bool CanSaveAICredential() =>
+            CanManageAICredential() && !string.IsNullOrEmpty(AiApiKey);
+
+        [RelayCommand(CanExecute = nameof(CanSaveAICredential))]
+        private async Task SaveAICredentialAsync(CancellationToken cancellationToken)
+        {
+            if (!TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
+            {
+                return;
+            }
+
+            try
+            {
+                using CredentialSecret secret = new(AiApiKey.AsSpan());
+                await provider.SetAsync(GetAICredentialId(AiEndpoint), secret, cancellationToken);
+                CredentialStorageStatus = $"API key saved in {provider.ProviderId}.";
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                CredentialStorageStatus = $"Could not save API key: {exception.Message}";
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanManageAICredential))]
+        private async Task LoadAICredentialAsync(CancellationToken cancellationToken)
+        {
+            if (!TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
+            {
+                return;
+            }
+
+            try
+            {
+                long version = _credentialContextVersion;
+                using CredentialSecret? secret = await provider.GetAsync(GetAICredentialId(AiEndpoint), cancellationToken);
+                if (version != _credentialContextVersion)
+                {
+                    CredentialStorageStatus = "The endpoint, credential manager, or session key changed while loading; the result was discarded.";
+                    return;
+                }
+
+                if (secret is null)
+                {
+                    CredentialStorageStatus = $"No API key is stored in {provider.ProviderId} for this endpoint; the current session key was left unchanged.";
+                    return;
+                }
+
+                AiApiKey = new string(secret.Reveal());
+                CredentialStorageStatus = $"API key loaded from {provider.ProviderId} for this session.";
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                CredentialStorageStatus = $"Could not load API key: {exception.Message}";
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanManageAICredential))]
+        private async Task DeleteAICredentialAsync(CancellationToken cancellationToken)
+        {
+            if (!TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
+            {
+                return;
+            }
+
+            try
+            {
+                long version = _credentialContextVersion;
+                await provider.DeleteAsync(GetAICredentialId(AiEndpoint), cancellationToken);
+                if (version != _credentialContextVersion)
+                {
+                    CredentialStorageStatus = "The stored key was deleted for the previous endpoint; the current session key was left unchanged.";
+                    return;
+                }
+                AiApiKey = string.Empty;
+                CredentialStorageStatus = $"Stored API key deleted from {provider.ProviderId}; the session key was cleared.";
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                CredentialStorageStatus = $"Could not delete API key: {exception.Message}";
+            }
+        }
+
+        [RelayCommand]
+        private async Task RefreshCredentialProviderStatusAsync(CancellationToken cancellationToken)
+        {
+            if (!TryGetSelectedCredentialProvider(out ICredentialProvider? provider))
+            {
+                return;
+            }
+
+            await UpdateCredentialProviderStatusAsync(provider.ProviderId, cancellationToken);
+        }
+
+        private async Task UpdateCredentialProviderStatusAsync(
+            string? providerId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(providerId) || _credentialProviderCatalog is null)
+            {
+                CredentialStorageStatus = "Choose a credential provider. No automatic fallback is used.";
+                return;
+            }
+
+            try
+            {
+                CredentialProviderStatus status = await _credentialProviderCatalog
+                    .GetRequired(providerId)
+                    .GetStatusAsync(cancellationToken);
+                if (!string.Equals(SelectedCredentialProviderId, providerId, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                CredentialStorageStatus = status.Availability switch
+                {
+                    CredentialProviderAvailability.Available => $"{providerId} is available.",
+                    CredentialProviderAvailability.Locked => $"{providerId} is locked. Unlock the operating-system keyring and retry.",
+                    _ => $"{providerId} is unavailable. Select or configure a provider explicitly; no fallback is used.",
+                };
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                if (string.Equals(SelectedCredentialProviderId, providerId, StringComparison.Ordinal))
+                {
+                    CredentialStorageStatus = $"Could not check {providerId}: {exception.Message}";
+                }
+            }
+        }
+
+        private bool TryGetSelectedCredentialProvider([NotNullWhen(true)] out ICredentialProvider? provider)
+        {
+            provider = null;
+            if (_credentialProviderCatalog is null || string.IsNullOrWhiteSpace(SelectedCredentialProviderId))
+            {
+                CredentialStorageStatus = "Choose a credential provider. No automatic fallback is used.";
+                return false;
+            }
+
+            try
+            {
+                provider = _credentialProviderCatalog.GetRequired(SelectedCredentialProviderId);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                CredentialStorageStatus = $"Credential provider selection failed: {exception.Message}";
+                return false;
+            }
+        }
+
+        private static CredentialId GetAICredentialId(string endpoint)
+        {
+            if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri? uri)
+                || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+            {
+                throw new InvalidOperationException("A valid absolute HTTP(S) endpoint is required to manage its API key.");
+            }
+
+            string normalizedEndpoint = uri.GetComponents(
+                UriComponents.SchemeAndServer | UriComponents.PathAndQuery,
+                UriFormat.UriEscaped);
+            byte[] endpointBytes = Encoding.UTF8.GetBytes(normalizedEndpoint);
+            try
+            {
+                byte[] scopeHash = SHA256.HashData(endpointBytes);
+                try
+                {
+                    return new CredentialId(
+                        "AA98-CodeStudio",
+                        "AI-API-Key",
+                        Convert.ToHexString(scopeHash));
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(scopeHash);
+                }
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(endpointBytes);
             }
         }
 
@@ -585,7 +916,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             return !AiChatBusy && !string.IsNullOrWhiteSpace(AiChatInput);
         }
 
-        [RelayCommand(CanExecute = nameof(CanSendAIChatMessage))]
+        [RelayCommand(CanExecute = nameof(CanSendAIChatMessage), IncludeCancelCommand = true)]
         private async Task SendAIChatMessageAsync(CancellationToken cancellationToken)
         {
             if (_aiChatService is null)
@@ -594,7 +925,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(AiModel))
+            string model = EffectiveAIChatModel;
+            if (string.IsNullOrWhiteSpace(model))
             {
                 AIChatMessages.Add(new AIChatMessageViewModel("System", "Enter a model ID before sending a message."));
                 return;
@@ -602,30 +934,49 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             string userText = AiChatInput.Trim();
             AiChatInput = string.Empty;
-            _aiConversation.Add(new AIMessage(AIMessageRole.User, userText));
+            AIMessage pendingMessage = new(AIMessageRole.User, userText);
+            _aiConversation.Add(pendingMessage);
             AIChatMessages.Add(new AIChatMessageViewModel("You", userText));
             AiChatBusy = true;
+            bool committed = false;
+            IReadOnlyList<string> allowedTools = GetAllowedAIChatTools();
+            string agent = SelectedAIChatAgent;
             OnPropertyChanged(nameof(AIChatStatus));
             try
             {
                 List<AIMessage> requestMessages =
                 [
-                    new AIMessage(AIMessageRole.System, await CreateAIChatContextAsync(cancellationToken)),
+                    new AIMessage(AIMessageRole.System, await CreateAIChatContextAsync(agent, cancellationToken)),
                 ];
+                cancellationToken.ThrowIfCancellationRequested();
                 requestMessages.AddRange(_aiConversation);
-                AIChatTurnResult result = await _aiChatService.SendAsync(
+                AIChatTurnResult result = await _aiChatService.SendWithAllowedToolsAsync(
                     requestMessages,
+                    options: new AICompletionOptions { ModelId = model },
                     approveToolExecution: ApproveAIChatToolExecutionAsync,
-                    cancellationToken: cancellationToken);
+                    cancellationToken: cancellationToken,
+                    allowedToolNames: allowedTools);
+                cancellationToken.ThrowIfCancellationRequested();
                 _aiConversation.Clear();
                 _aiConversation.AddRange(result.Messages.Where(static message => message.Role != AIMessageRole.System));
-                bool buildDiagnosticsCleared = false;
+                committed = true;
                 foreach (AIChatToolExecution execution in result.ToolExecutions)
                 {
                     string state = execution.WasExecuted ? "completed" : "not approved";
                     AIChatMessages.Add(new AIChatMessageViewModel(
                         $"Tool: {execution.Call.Name} ({state})",
                         execution.Result));
+                }
+
+                if (!string.IsNullOrWhiteSpace(result.AssistantMessage.Content))
+                {
+                    AIChatMessages.Add(new AIChatMessageViewModel("Assistant", result.AssistantMessage.Content));
+                }
+
+                bool buildDiagnosticsCleared = false;
+                foreach (AIChatToolExecution execution in result.ToolExecutions)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
                     if (execution.WasExecuted
                         && execution.Call.Name is "workspace.build" or "workspace.inspect")
                     {
@@ -639,18 +990,32 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     }
                 }
 
-                if (!string.IsNullOrWhiteSpace(result.AssistantMessage.Content))
-                {
-                    AIChatMessages.Add(new AIChatMessageViewModel("Assistant", result.AssistantMessage.Content));
-                }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                AIChatMessages.Add(new AIChatMessageViewModel("System", "The chat request was cancelled."));
+                if (!committed)
+                {
+                    _aiConversation.Remove(pendingMessage);
+                }
+                AIChatMessages.Add(new AIChatMessageViewModel(
+                    "System",
+                    committed
+                        ? "The chat response was received, but diagnostic processing was interrupted. Any tool already started may have made changes."
+                        : "The chat request was cancelled. Any tool already started may have made changes. The incomplete turn will not be sent again."));
             }
             catch (Exception exception)
             {
+                if (!committed)
+                {
+                    _aiConversation.Remove(pendingMessage);
+                }
                 AIChatMessages.Add(new AIChatMessageViewModel("Error", exception.Message));
+                if (!committed)
+                {
+                    AIChatMessages.Add(new AIChatMessageViewModel(
+                        "System",
+                        "The incomplete turn will not be sent again. Any tool already started may have made changes."));
+                }
             }
             finally
             {
@@ -785,7 +1150,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 && !relativePath.StartsWith($"..{Path.DirectorySeparatorChar}", StringComparison.Ordinal);
         }
 
-        private async Task<string> CreateAIChatContextAsync(CancellationToken cancellationToken)
+        private async Task<string> CreateAIChatContextAsync(string agent, CancellationToken cancellationToken)
         {
             CSharpWorkspace? workspace = Workspace;
             if (workspace is null)
@@ -804,6 +1169,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     IncludeCapabilities = true,
                 },
                 cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             if (Workspace is not null && PathsEqual(Workspace.RootPath, workspace.RootPath))
             {
                 VersionControlStatus = status;
@@ -812,12 +1178,24 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             string versionControlContext = !status.IsRepositoryRootDiscovered
                 ? "No Git or SVN repository was detected."
                 : $"Repository: {status.RepositoryName ?? status.RepositoryRootPath}; reference: {status.ActiveReferenceName ?? UiStrings.UnknownReferenceText}; local changes: {status.Changes.Count} ({(status.HasLocalChanges ? "present" : "none")}).";
-            return $"You are the AI assistant inside AvlnCodeStudio. The current C# workspace is '{workspace.EntryPath}'. Its projects are:{Environment.NewLine}{projects}{Environment.NewLine}Version-control status (refreshed for this turn): {versionControlContext}{Environment.NewLine}Use workspace.inspect for more workspace metadata. Only build projects listed in this workspace; workspace.build requires explicit user approval.";
+            string agentInstructions = agent switch
+            {
+                "Build" => "You are in Build agent mode. Inspect the workspace and help build or test it. Build and test tools require explicit user approval. Do not update source control.",
+                "Debug" => "You are in Debug agent mode. You can inspect workspace metadata, but cannot control the debugger from chat. Give debugging guidance and direct the user to the IDE Debug controls for execution.",
+                _ => "You are in Plan agent mode. Help analyze and plan changes. Only read-only workspace inspection and version-control status tools are available.",
+            };
+            return $"You are the AI assistant inside AvlnCodeStudio. {agentInstructions} The current C# workspace is '{workspace.EntryPath}'. Its projects are:{Environment.NewLine}{projects}{Environment.NewLine}Version-control status (refreshed for this turn): {versionControlContext}{Environment.NewLine}Use workspace.inspect for more workspace metadata. Only build projects listed in this workspace; workspace.build requires explicit user approval.";
         }
 
-        [RelayCommand]
+        private bool CanClearAIChat() => !AiChatBusy;
+
+        [RelayCommand(CanExecute = nameof(CanClearAIChat))]
         private void ClearAIChat()
         {
+            if (AiChatBusy)
+            {
+                return;
+            }
             _aiConversation.Clear();
             AIChatMessages.Clear();
         }
@@ -825,52 +1203,65 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private async Task OnConfigurationSectionAppliedAsync(string sectionName)
         {
             if (!string.Equals(sectionName, "Workbench", StringComparison.Ordinal)
-                || (_layeredSettingsResolver is null && _configService is null)
+                || (_settingsRuntimeActivator is null && _configService is null)
                 || _codeStudioSettings is null)
             {
                 return;
             }
 
-            Configuration.CodeStudioSettings applied;
-            if (_layeredSettingsResolver is not null)
+            if (_settingsRuntimeActivator is not null)
             {
-                IReadOnlyDictionary<string, ConfigValueResolution> values =
-                    await _layeredSettingsResolver.ResolveSectionAsync("Workbench");
-                applied = new Configuration.CodeStudioSettings();
-                foreach (System.Reflection.PropertyInfo property in
-                    typeof(Configuration.CodeStudioSettings).GetProperties(
-                        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public))
-                {
-                    if (property.CanWrite
-                        && property.GetIndexParameters().Length == 0
-                        && values.TryGetValue(property.Name, out ConfigValueResolution? value))
-                    {
-                        property.SetValue(applied, value.Value);
-                    }
-                }
+                await _settingsRuntimeActivator.ActivateAsync(sectionName);
             }
             else
             {
-                applied = await _configService!.LoadAsync<Configuration.CodeStudioSettings>("Workbench")
+                Configuration.CodeStudioSettings applied = await _configService!.LoadAsync<Configuration.CodeStudioSettings>("Workbench")
                     ?? throw new InvalidOperationException("The saved Workbench settings could not be reloaded.");
+                _codeStudioSettings.AIEndpoint = applied.AIEndpoint;
+                _codeStudioSettings.AIModelId = applied.AIModelId;
+                _codeStudioSettings.AIProvider = applied.AIProvider;
+                _codeStudioSettings.CredentialManager = applied.CredentialManager;
+                _codeStudioSettings.KnownAIProviderTemplates = applied.KnownAIProviderTemplates;
+                _codeStudioSettings.WorkspacePath = applied.WorkspacePath;
+                _codeStudioSettings.ReopenLastDocument = applied.ReopenLastDocument;
+
+                if (_aiSettings is not null)
+                {
+                    string endpoint = applied.GetEffectiveAIEndpoint();
+                    if (!string.Equals(_aiSettings.Endpoint, endpoint, StringComparison.Ordinal))
+                    {
+                        _aiSettings.ApiKey = string.Empty;
+                    }
+                    _aiSettings.Endpoint = endpoint;
+                    _aiSettings.ModelId = applied.GetEffectiveAIModelId();
+                }
             }
 
-            _codeStudioSettings.AIEndpoint = applied.AIEndpoint;
-            _codeStudioSettings.AIModelId = applied.AIModelId;
-            _codeStudioSettings.WorkspacePath = applied.WorkspacePath;
-            _codeStudioSettings.ReopenLastDocument = applied.ReopenLastDocument;
-
-            if (_aiSettings is not null)
-            {
-                _aiSettings.Endpoint = applied.AIEndpoint;
-                _aiSettings.ModelId = applied.AIModelId;
-            }
-
-            AiEndpoint = applied.AIEndpoint;
-            AiModel = applied.AIModelId;
+            AiEndpoint = _aiSettings?.Endpoint ?? _codeStudioSettings.GetEffectiveAIEndpoint();
+            AiModel = _aiSettings?.ModelId ?? _codeStudioSettings.GetEffectiveAIModelId();
+            SelectedCredentialProviderId = GetCredentialProviderId(_codeStudioSettings.CredentialManager);
         }
 
-        [RelayCommand]
+        private bool CanOpenAIConfiguration() => !AiChatBusy;
+
+        public Configuration.AIProviderDraftViewModel? CreateAIProviderDraft()
+        {
+            if (ConfigUi is null || _codeStudioSettings is null)
+            {
+                return null;
+            }
+
+            return new Configuration.AIProviderDraftViewModel(ConfigUi, _codeStudioSettings);
+        }
+
+        public Task<string?> ConfirmAIProviderTemplatesAsync(
+            Configuration.AIProviderDraftViewModel draft,
+            IReadOnlyList<global::Config.UI.IConfigUiSection> sections) =>
+            _settingsRuntimeActivator is null
+                ? Task.FromResult<string?>(null)
+                : draft.ConfirmCurrentTemplatesAsync(sections, _settingsRuntimeActivator.LoadProviderTemplatesAsync);
+
+        [RelayCommand(CanExecute = nameof(CanOpenAIConfiguration))]
         private async Task OpenConfigurationAsync()
         {
             if (OpenConfigurationDialogAsync is null)
@@ -880,6 +1271,18 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             await OpenConfigurationDialogAsync();
+        }
+
+        [RelayCommand(CanExecute = nameof(CanOpenAIConfiguration))]
+        private async Task OpenAICredentialsAsync()
+        {
+            if (OpenAICredentialsDialogAsync is null)
+            {
+                Editor.StatusText = "The AI credential manager is not available in this host.";
+                return;
+            }
+
+            await OpenAICredentialsDialogAsync();
         }
 
         [RelayCommand]
@@ -1479,6 +1882,10 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         partial void OnWorkspaceChanged(CSharpWorkspace? value)
         {
+            if (AiChatBusy)
+            {
+                SendAIChatMessageCancelCommand.Execute(null);
+            }
             GenerateAxamlMvvmCommand.NotifyCanExecuteChanged();
             QueueAxamlMvvmBindingContext(
                 string.Equals(Path.GetExtension(Editor.CurrentFilePath), ".axaml", StringComparison.OrdinalIgnoreCase)
