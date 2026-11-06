@@ -13,6 +13,25 @@ public sealed class PropertyEditorItemViewModelTests
     private static readonly PropertyCategory TestCategory = new("Test", "Test");
 
     [TestMethod]
+    public void SetItems_ReleasesOldViewModelsAndKeepsUnchangedItemsSubscribed()
+    {
+        PropertyItem first = new(TestCategory, "Name", "Name", typeof(string), "Original");
+        PropertyEditorViewModel editor = new();
+        editor.SetItems([first]);
+        PropertyEditorItemViewModel original = editor.Items.Single();
+        editor.SetItems([first]);
+        Assert.AreSame(original, editor.Items.Single());
+        Assert.IsTrue(first.TrySetValue("Updated"));
+        Assert.AreEqual("Updated", original.ScalarValue);
+
+        editor.SetItems([]);
+        Assert.IsTrue(first.TrySetValue("After removal"));
+        Assert.AreEqual("Updated", original.ScalarValue);
+        editor.SetItems([first]);
+        Assert.AreEqual("After removal", editor.Items.Single().ScalarValue);
+    }
+
+    [TestMethod]
     public void ScalarValue_ValidTypedText_AppliesConvertedValue()
     {
         PropertyItem item = new(TestCategory, "Count", "Count", typeof(int), 1);
