@@ -49,6 +49,33 @@ public sealed class AIChatToolServiceTests
     }
 
     [TestMethod]
+    public async Task SendAsync_UsesRequestedModelAcrossToolRounds()
+    {
+        using JsonDocument arguments = JsonDocument.Parse("""{"message":"hello"}""");
+        FakeChatTool tool = new("chat.echo", isReadOnly: true);
+        Queue<AICompletionResponse> responses = new(
+        [
+            new AICompletionResponse(
+                new AIMessage(AIMessageRole.Assistant, string.Empty),
+                [new AIChatToolCall("call-1", "chat.echo", arguments.RootElement)]),
+            new AICompletionResponse(new AIMessage(AIMessageRole.Assistant, "Completed.")),
+        ]);
+        int requests = 0;
+        FakeAIClient client = new(request =>
+        {
+            Assert.AreEqual("session-model", request.Options.ModelId);
+            requests++;
+            return Task.FromResult(responses.Dequeue());
+        });
+
+        await new AIChatService(client, new AIChatToolCatalog([tool])).SendAsync(
+            [new AIMessage(AIMessageRole.User, "Run the echo tool.")],
+            new AICompletionOptions { ModelId = "session-model" });
+
+        Assert.AreEqual(2, requests);
+    }
+
+    [TestMethod]
     public async Task SendAsync_RequiresApprovalBeforeRunningMutatingTools()
     {
         using JsonDocument arguments = JsonDocument.Parse("""{"message":"change"}""");
@@ -111,6 +138,101 @@ public sealed class AIChatToolServiceTests
         await Assert.ThrowsExactlyAsync<System.Collections.Generic.KeyNotFoundException>(() =>
             new AIChatService(client, new AIChatToolCatalog([]))
                 .SendAsync([new AIMessage(AIMessageRole.User, "Do something.")]));
+    }
+
+    [TestMethod]
+    public async Task SendAsync_RejectsToolsExcludedByAgentMode()
+    {
+        using JsonDocument arguments = JsonDocument.Parse("""{"message":"change"}""");
+        FakeChatTool allowedTool = new("chat.inspect", isReadOnly: true);
+        FakeChatTool excludedTool = new("chat.mutate", isReadOnly: false);
+        FakeAIClient client = new(request =>
+        {
+            Assert.AreEqual(1, request.Tools.Count);
+            Assert.AreEqual("chat.inspect", request.Tools[0].Name);
+            return Task.FromResult(new AICompletionResponse(
+                new AIMessage(AIMessageRole.Assistant, string.Empty),
+                [new AIChatToolCall("call-5", "chat.mutate", arguments.RootElement)]));
+        });
+
+        await Assert.ThrowsExactlyAsync<KeyNotFoundException>(() =>
+            new AIChatService(client, new AIChatToolCatalog([allowedTool, excludedTool]))
+                .SendWithAllowedToolsAsync(
+                    [new AIMessage(AIMessageRole.User, "Inspect only.")],
+                    allowedToolNames: ["chat.inspect"]));
+
+        Assert.AreEqual(0, excludedTool.ExecutionCount);
+    }
+
+    [TestMethod]
+    public async Task SendAsync_CancelDuringApprovalDoesNotExecuteApprovedTool()
+    {
+        using JsonDocument arguments = JsonDocument.Parse("""{"message":"change"}""");
+        using CancellationTokenSource cancellation = new();
+        TaskCompletionSource<bool> approval = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        FakeChatTool tool = new("chat.mutate", isReadOnly: false);
+        FakeAIClient client = new(_ => Task.FromResult(new AICompletionResponse(
+            new AIMessage(AIMessageRole.Assistant, string.Empty),
+            [new AIChatToolCall("call-1", "chat.mutate", arguments.RootElement)])));
+
+        Task<AIChatTurnResult> turn = new AIChatService(client, new AIChatToolCatalog([tool])).SendAsync(
+            [new AIMessage(AIMessageRole.User, "Change")],
+            approveToolExecution: (_, _, _) => approval.Task,
+            cancellationToken: cancellation.Token);
+        cancellation.Cancel();
+        approval.SetResult(true);
+
+        await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => turn);
+        Assert.AreEqual(0, tool.ExecutionCount);
+    }
+
+    [TestMethod]
+    public async Task SendAsync_CancelledLateProviderResponseCannotStartTool()
+    {
+        using JsonDocument arguments = JsonDocument.Parse("""{"message":"change"}""");
+        using CancellationTokenSource cancellation = new();
+        TaskCompletionSource<AICompletionResponse> pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        FakeChatTool tool = new("chat.mutate", isReadOnly: false);
+        FakeAIClient client = new(_ => pending.Task);
+        Task<AIChatTurnResult> turn = new AIChatService(client, new AIChatToolCatalog([tool])).SendAsync(
+            [new AIMessage(AIMessageRole.User, "Change")],
+            approveToolExecution: (_, _, _) => Task.FromResult(true),
+            cancellationToken: cancellation.Token);
+        cancellation.Cancel();
+        pending.SetResult(new AICompletionResponse(new AIMessage(AIMessageRole.Assistant, string.Empty),
+            [new AIChatToolCall("call-1", "chat.mutate", arguments.RootElement)]));
+        await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => turn);
+        Assert.AreEqual(0, tool.ExecutionCount);
+    }
+
+    [TestMethod]
+    public async Task SendAsync_CancelDuringToolPreventsAnotherProviderRound()
+    {
+        using JsonDocument arguments = JsonDocument.Parse("{}");
+        using CancellationTokenSource cancellation = new();
+        TaskCompletionSource<string> pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        DelayedChatTool tool = new(pending.Task);
+        int requests = 0;
+        FakeAIClient client = new(_ =>
+        {
+            requests++;
+            return Task.FromResult(new AICompletionResponse(new AIMessage(AIMessageRole.Assistant, string.Empty),
+                [new AIChatToolCall("call-1", "chat.delayed", arguments.RootElement)]));
+        });
+        Task<AIChatTurnResult> turn = new AIChatService(client, new AIChatToolCatalog([tool])).SendAsync(
+            [new AIMessage(AIMessageRole.User, "Run")], cancellationToken: cancellation.Token);
+        cancellation.Cancel();
+        pending.SetResult("finished");
+        await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => turn);
+        Assert.AreEqual(1, requests);
+    }
+
+    private sealed class DelayedChatTool(Task<string> completion) : IAIChatTool
+    {
+        public AIChatToolDescriptor Descriptor { get; } = new("chat.delayed", "Delayed test tool.",
+            """{"type":"object","properties":{},"additionalProperties":false}""", requiresConfirmation: false);
+
+        public Task<string> ExecuteAsync(JsonElement arguments, CancellationToken cancellationToken) => completion;
     }
 
     private sealed class FakeAIClient(Func<AICompletionRequest, Task<AICompletionResponse>> complete) : IAIClient
