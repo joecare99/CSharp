@@ -321,7 +321,7 @@ public class ConfigurationStoreTests
     }
 
     [TestMethod]
-    public async Task InvalidJson_ReturnsFallbackValue()
+    public async Task InvalidJson_ThrowsDiagnosticAndPreservesFile()
     {
         var root = Environment.GetEnvironmentVariable("CONFIG_ROOT");
         var store = new JsonConfigStore(_mockRegistry, "Contoso", "PersistenceTests");
@@ -329,9 +329,19 @@ public class ConfigurationStoreTests
         await File.WriteAllTextAsync(path, "{ invalid json");
 
         var fallback = new TestConfig { Server = "fallback" };
-        var loaded = await store.LoadAsync("Invalid", fallback);
+        InvalidDataException exception = await Assert.ThrowsExactlyAsync<InvalidDataException>(
+            () => store.LoadAsync("Invalid", fallback));
 
-        Assert.AreSame(fallback, loaded);
+        StringAssert.Contains(exception.Message, "Invalid");
+        Assert.AreEqual("{ invalid json", await File.ReadAllTextAsync(path));
+    }
+
+    [TestMethod]
+    public async Task SaveAsync_RejectsSectionPathTraversal()
+    {
+        var store = new JsonConfigStore(_mockRegistry, "Contoso", "PersistenceTests");
+
+        await Assert.ThrowsExactlyAsync<ArgumentException>(() => store.SaveAsync("../outside", new TestConfig()));
     }
 
     [TestMethod]
@@ -350,7 +360,7 @@ public class ConfigurationStoreTests
     }
 
     [TestMethod]
-    public async Task UnsupportedEnumValue_UsesLookupFallback()
+    public async Task UnsupportedEnumValue_ThrowsDiagnostic()
     {
         var registry = new ConfigSectionRegistry();
         var store = new JsonConfigStore(registry, "Contoso", "PersistenceTests");
@@ -359,9 +369,10 @@ public class ConfigurationStoreTests
         var path = Path.Combine(root!, "Contoso", "PersistenceTests", "config", "Contoso.PersistenceTests.General.json");
         await File.WriteAllTextAsync(path, "{\"mode\":\"Unsupported\"}");
 
-        var mode = await configService.GetEnumValueAsync<TestConfig, TestMode>("General", "Mode", TestMode.Manual);
+        InvalidDataException exception = await Assert.ThrowsExactlyAsync<InvalidDataException>(
+            () => configService.GetEnumValueAsync<TestConfig, TestMode>("General", "Mode", TestMode.Manual));
 
-        Assert.AreEqual(TestMode.Manual, mode);
+        StringAssert.Contains(exception.Message, "invalid JSON");
     }
 
     [TestMethod]
