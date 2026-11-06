@@ -1,6 +1,7 @@
 <Project>
   <Import Project="..\Packages.props" />
   <ItemGroup>
+    <PackageVersion Include="Ace4896.DBus.Services.Secrets" Version="1.6.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.9.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Features" Version="5.9.0" />

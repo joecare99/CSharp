@@ -3,6 +3,8 @@
     <File Path="AA98_AvlnCodeStudio.props" />
     <File Path="Directory.Packages.props" />
     <Project Path="AA98_AvlnCodeStudio.Base.AI.Tests/AA98_AvlnCodeStudio.Base.AI.Tests.csproj" />
+    <Project Path="AA98_AvlnCodeStudio.Config.Secrets.Tests/AA98_AvlnCodeStudio.Config.Secrets.Tests.csproj" />
+    <Project Path="AA98_AvlnCodeStudio.Config.Secrets/AA98_AvlnCodeStudio.Config.Secrets.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.AI/AA98_AvlnCodeStudio.Base.AI.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.Building/AA98_AvlnCodeStudio.Base.Building.csproj" />
     <Project Path="AA98_AvlnCodeStudio.Base.Debugging/AA98_AvlnCodeStudio.Base.Debugging.csproj" />
