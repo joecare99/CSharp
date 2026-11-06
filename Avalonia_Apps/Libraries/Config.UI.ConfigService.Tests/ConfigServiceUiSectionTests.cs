@@ -107,6 +107,48 @@ public sealed class ConfigServiceUiSectionTests
     }
 
     [TestMethod]
+    public async Task LayeredUiSection_AllowsReplacingUnsupportedSavedEnumValue()
+    {
+        string root = CreateTempDirectory();
+        try
+        {
+            ConfigSectionRegistry registry = new();
+            EnumSettingProvider provider = new();
+            registry.AddSection(provider);
+            JsonConfigLayerStore userStore = new(ConfigLayer.User, Path.Combine(root, "user.json"));
+            ConfigLayerSnapshot draft = (await userStore.LoadAsync()).WithValue(
+                new ConfigPropertyKey("Modes", nameof(EnumSettings.Mode)),
+                new ConfigLayerValue(CredentialMode.Unsupported));
+            await userStore.SaveAsync(draft);
+            ConfigLayeredSettingsResolver resolver = new(registry, [userStore]);
+            ConfigLayeredUiSection section = new(
+                resolver,
+                provider,
+                userStore,
+                ConfigLayer.User,
+                optionsProvider: static (_, property) =>
+                    property.Name == nameof(EnumSettings.Mode)
+                        ? [new PropertyOption(CredentialMode.None, "None"), new PropertyOption(CredentialMode.Supported, "Supported")]
+                        : null);
+
+            await section.LoadAsync();
+
+            IPropertyItem mode = section.Properties.Single(static property => property.Name == nameof(EnumSettings.Mode));
+            Assert.AreEqual(CredentialMode.Unsupported, mode.Value);
+            Assert.IsTrue(mode.IsEditable);
+            StringAssert.Contains(mode.Options.Single(option => Equals(option.Value, CredentialMode.Unsupported)).DisplayName, "Unavailable");
+            Assert.IsTrue(mode.TrySetValue(CredentialMode.Supported));
+            await section.SaveAsync();
+            Assert.AreEqual(ConfigUiSectionState.Ready, section.State);
+            Assert.AreEqual(CredentialMode.Supported, section.Properties.Single().Value);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task LayeredUiSection_ResetDraftRevealsLowerLayerWithoutPersisting()
     {
         string root = CreateTempDirectory();
@@ -588,9 +630,31 @@ public sealed class ConfigServiceUiSectionTests
         public object CreateModel() => new LayeredSettings();
     }
 
+    private sealed class EnumSettings
+    {
+        public CredentialMode Mode { get; set; } = CredentialMode.None;
+    }
+
+    private sealed class EnumSettingProvider : IConfigSectionProvider
+    {
+        public string Name => "Modes";
+        public string DisplayName => "Mode settings";
+        public string? Description => null;
+        public int Order => 0;
+        public Type ModelType => typeof(EnumSettings);
+        public object CreateModel() => new EnumSettings();
+    }
+
     private enum TestMode
     {
         Manual,
         Automatic,
+    }
+
+    private enum CredentialMode
+    {
+        None,
+        Supported,
+        Unsupported,
     }
 }
