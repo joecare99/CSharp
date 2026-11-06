@@ -73,6 +73,30 @@ public sealed class JsonConfigLayerStoreTests
     }
 
     [TestMethod]
+    public async Task SaveAndLoadAsync_RoundTripsNestedObjectProperties()
+    {
+        ConfigPropertyKey key = new("Workbench", "Profiles");
+        JsonConfigLayerStore store = CreateStore(ConfigLayer.System);
+        ConfigLayerSnapshot original = (await store.LoadAsync()).WithValue(
+            key, new ConfigLayerValue(new List<Profile> { new() { DisplayName = "Local", Endpoint = "https://example.test" } }));
+        await store.SaveAsync(original);
+
+        ConfigValueResolution result = ConfigLayerResolver.Resolve(
+            key, typeof(List<Profile>), new List<Profile>(), system: await store.LoadAsync());
+
+        List<Profile> profiles = (List<Profile>)result.Value!;
+        Assert.AreEqual(1, profiles.Count);
+        Assert.AreEqual("Local", profiles[0].DisplayName);
+        Assert.AreEqual("https://example.test", profiles[0].Endpoint);
+    }
+
+    public sealed class Profile
+    {
+        public string DisplayName { get; set; } = string.Empty;
+        public string Endpoint { get; set; } = string.Empty;
+    }
+
+    [TestMethod]
     public async Task LoadAsync_CorruptOrWrongLayerFile_ReportsInvalidData()
     {
         JsonConfigLayerStore store = CreateStore(ConfigLayer.User);
