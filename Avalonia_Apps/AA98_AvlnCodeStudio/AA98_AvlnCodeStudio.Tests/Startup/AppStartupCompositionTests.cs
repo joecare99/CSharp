@@ -14,6 +14,7 @@ using Code.Navigation;
 using Config.Service;
 using Config.UI;
 using Config.UI.Avalonia.ViewModels;
+using Config.UI.ConfigService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -21,8 +22,11 @@ using Project.Explorer;
 using Project.Explorer.Avalonia.ViewModels;
 using System;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Property.Editor;
 
 namespace AA98_AvlnCodeStudio.Tests.Startup;
 
@@ -115,16 +119,82 @@ public class AppStartupCompositionTests
     [TestMethod]
     public void CreateServiceProvider_RegistersIsolatedConfigUi()
     {
-        using var serviceProvider = App.CreateServiceProvider(static () => null);
+        string configRoot = Path.Combine(Path.GetTempPath(), "CodeStudioLayeredConfig", Guid.NewGuid().ToString("N"));
+        try
+        {
+            string legacyDirectory = Path.Combine(configRoot, "JC-Soft", "AA98-CodeStudio", "config");
+            Directory.CreateDirectory(legacyDirectory);
+            string legacyPath = Path.Combine(legacyDirectory, "Workbench.json");
+            const string legacySettings = """
+                {
+                  "aiEndpoint": "https://legacy.example.test/chat",
+                  "aiModelId": "legacy-model",
+                  "workspacePath": "C:\\legacy-workspace",
+                  "reopenLastDocument": false
+                }
+                """;
+            File.WriteAllText(legacyPath, legacySettings);
 
-        ConfigService configService = serviceProvider.GetRequiredService<ConfigService>();
-        IConfigUiSectionRegistry registry = serviceProvider.GetRequiredService<IConfigUiSectionRegistry>();
+            using var serviceProvider = App.CreateServiceProvider(static () => null, configRoot);
 
-        Assert.AreEqual("JC-Soft", configService.VendorName);
-        Assert.AreEqual("AA98-CodeStudio", configService.ApplicationName);
-        Assert.AreEqual(1, registry.Sections.Count);
-        Assert.AreEqual("Workbench", registry.Sections[0].Section.Name);
-        Assert.IsNotNull(serviceProvider.GetRequiredService<ConfigUiViewModel>());
+            ConfigService configService = serviceProvider.GetRequiredService<ConfigService>();
+            IConfigUiSectionRegistry registry = serviceProvider.GetRequiredService<IConfigUiSectionRegistry>();
+            CodeStudioSettings settings = serviceProvider.GetRequiredService<CodeStudioSettings>();
+            ConfigLayerSnapshot userLayer = serviceProvider.GetRequiredService<JsonConfigLayerStore>()
+                .LoadAsync()
+                .GetAwaiter()
+                .GetResult();
+
+            Assert.AreEqual("JC-Soft", configService.VendorName);
+            Assert.AreEqual("AA98-CodeStudio", configService.ApplicationName);
+            Assert.AreEqual(1, registry.Sections.Count);
+            Assert.AreEqual("Workbench", registry.Sections[0].Section.Name);
+            Assert.AreEqual(PropertyScope.User, registry.Sections[0].Context.Scope);
+            Assert.IsTrue(registry.Sections[0].Context.StorageLocation!.EndsWith(
+                Path.Combine("config", "layers", "user.json"),
+                StringComparison.OrdinalIgnoreCase));
+            Assert.AreEqual("https://legacy.example.test/chat", settings.AIEndpoint);
+            Assert.AreEqual("legacy-model", settings.AIModelId);
+            Assert.AreEqual("C:\\legacy-workspace", settings.WorkspacePath);
+            Assert.IsFalse(settings.ReopenLastDocument);
+            Assert.IsTrue(userLayer.TryGetValue(
+                new ConfigPropertyKey("Workbench", nameof(CodeStudioSettings.AIModelId)),
+                out _));
+            Assert.AreEqual(legacySettings, File.ReadAllText(legacyPath));
+            Assert.IsNotNull(serviceProvider.GetRequiredService<ConfigUiViewModel>());
+        }
+        finally
+        {
+            if (Directory.Exists(configRoot))
+            {
+                Directory.Delete(configRoot, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task WorkbenchSettings_HideUnusedOptionsButRetainLegacySerialization()
+    {
+        IConfigStore store = Substitute.For<IConfigStore>();
+        store.LoadAsync("JC-Soft.AA98-CodeStudio.Workbench", Arg.Any<CodeStudioSettings>())
+            .Returns(Task.FromResult(new CodeStudioSettings()));
+        ConfigService configService = new(store, "JC-Soft.AA98-CodeStudio");
+        ConfigServiceUiSection section = new(configService, new CodeStudioSettingsProvider());
+
+        await section.LoadAsync();
+
+        Assert.AreEqual(ConfigUiSectionState.Ready, section.State);
+        CollectionAssert.AreEquivalent(
+            new[] { nameof(CodeStudioSettings.AIEndpoint), nameof(CodeStudioSettings.AIModelId) },
+            section.Properties.Select(static property => property.Name).ToArray());
+
+        string serializedLegacySettings = JsonSerializer.Serialize(new CodeStudioSettings
+        {
+            WorkspacePath = "C:\\legacy-workspace",
+            ReopenLastDocument = false,
+        });
+        StringAssert.Contains(serializedLegacySettings, "\"WorkspacePath\"");
+        StringAssert.Contains(serializedLegacySettings, "\"ReopenLastDocument\"");
     }
 
     /// <summary>

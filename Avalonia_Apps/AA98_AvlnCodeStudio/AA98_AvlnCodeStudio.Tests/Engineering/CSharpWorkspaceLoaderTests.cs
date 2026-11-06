@@ -433,7 +433,7 @@ public sealed class CSharpWorkspaceLoaderTests
     }
 
     [TestMethod]
-    public async Task MainWindowViewModel_SaveAIChatSettings_PersistsEndpointAndModelWithoutApiKey()
+    public async Task MainWindowViewModel_ChangingAiDraft_DoesNotPersistOrActivateIt()
     {
         IConfigStore store = Substitute.For<IConfigStore>();
         ConfigService configService = new(store, "JC-Soft.AA98-CodeStudio");
@@ -454,15 +454,13 @@ public sealed class CSharpWorkspaceLoaderTests
         viewModel.AiModel = "test-model";
         viewModel.AiApiKey = "temporary-secret";
 
-        await viewModel.SaveAIChatSettingsCommand.ExecuteAsync(null);
-
-        Assert.AreEqual(viewModel.AiEndpoint, runtimeSettings.Endpoint);
-        Assert.AreEqual(viewModel.AiModel, runtimeSettings.ModelId);
-        await store.Received(1).SaveAsync(
-            "JC-Soft.AA98-CodeStudio.Workbench",
-            Arg.Is<CodeStudioSettings>(saved =>
-                saved.AIEndpoint == "https://api.example.test/v1/chat/completions"
-                && saved.AIModelId == "test-model"));
+        Assert.AreNotEqual(viewModel.AiEndpoint, runtimeSettings.Endpoint);
+        Assert.AreNotEqual(viewModel.AiModel, runtimeSettings.ModelId);
+        Assert.AreNotEqual(viewModel.AiEndpoint, settings.AIEndpoint);
+        Assert.AreNotEqual(viewModel.AiModel, settings.AIModelId);
+        await store.DidNotReceive().SaveAsync(
+            Arg.Any<string>(),
+            Arg.Any<CodeStudioSettings>());
         Assert.IsFalse(System.Text.Json.JsonSerializer.Serialize(settings).Contains(
             "temporary-secret",
             StringComparison.Ordinal));

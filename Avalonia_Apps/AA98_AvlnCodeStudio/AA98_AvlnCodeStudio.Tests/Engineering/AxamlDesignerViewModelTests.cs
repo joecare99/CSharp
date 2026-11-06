@@ -1,6 +1,8 @@
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Property.Editor;
+using Property.Editor.Avalonia;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -66,6 +68,63 @@ public sealed class AxamlDesignerViewModelTests
         viewModel.DiscardPropertyDraft(width);
         Assert.IsFalse(viewModel.HasInvalidPropertyDraft);
         Assert.AreEqual("100", width.Value);
+    }
+
+    [TestMethod]
+    public async Task PropertyProvider_UsesSharedPropertyContractAndPreservesUndo()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<StackPanel Width='100' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var width = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Width");
+        PropertyEditorViewModel sharedEditor = new();
+        sharedEditor.SetItems(viewModel.PropertyProvider.Properties);
+
+        Assert.AreEqual(PropertyScope.Session, viewModel.PropertyProvider.Context.Scope);
+        Assert.AreEqual(1, sharedEditor.Items.Count(static item => item.PropertyItem.Name == "Width"));
+        Assert.IsTrue(width.TrySetValue("120"));
+        await viewModel.PropertyProvider.ApplyAsync();
+
+        Assert.AreEqual("120", viewModel.PreviewRoot!.Properties["Width"]);
+        Assert.IsTrue(viewModel.CanUndo);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("100", viewModel.PreviewRoot!.Properties["Width"]);
+    }
+
+    [TestMethod]
+    public void SharedPropertyEditor_EditCompletionAppliesValueAsUndoableDesignerChange()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<StackPanel Width='100' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var width = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Width");
+        viewModel.PropertyEditor.SetItems(viewModel.PropertyProvider.Properties);
+        viewModel.PropertyEditor.NotifyEditStarted(width);
+
+        Assert.IsTrue(width.TrySetValue("120"));
+        viewModel.PropertyEditor.NotifyEditCompleted(width);
+
+        Assert.AreEqual("120", viewModel.PreviewRoot!.Properties["Width"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("100", viewModel.PreviewRoot!.Properties["Width"]);
+    }
+
+    [TestMethod]
+    public async Task PropertyProvider_InvalidDraftBlocksApplyAndCanBeDiscarded()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<StackPanel Width='100' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var width = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Width");
+
+        Assert.IsFalse(width.TrySetValue("-2"));
+        Assert.IsTrue(viewModel.HasInvalidPropertyDraft);
+        await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+            () => viewModel.PropertyProvider.ApplyAsync());
+
+        await viewModel.PropertyProvider.DiscardAsync();
+        Assert.IsFalse(viewModel.HasInvalidPropertyDraft);
+        Assert.AreEqual("100", viewModel.PropertyRows.Single(static row => row.Name == "Width").Value);
     }
 
     [TestMethod]
