@@ -41,6 +41,12 @@ public interface IPropertyItem
     /// <summary>Gets the latest value validation result.</summary>
     PropertyValidationResult ValidationResult { get; }
 
+    /// <summary>Gets the source and policy metadata for the current value.</summary>
+    PropertyValueContext ValueContext => PropertyValueContext.Unspecified;
+
+    /// <summary>Gets the explanation for a read-only property, if any.</summary>
+    string? ReadOnlyReason => ValueContext.ReadOnlyReason;
+
     /// <summary>Gets the primary deterministic ordering value within its category.</summary>
     int SortOrder { get; }
 

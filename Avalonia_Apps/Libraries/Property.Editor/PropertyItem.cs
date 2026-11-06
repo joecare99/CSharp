@@ -25,7 +25,9 @@ public sealed class PropertyItem : IPropertyItem
         bool isSensitive = false,
         IReadOnlyList<PropertyOption>? options = null,
         Func<object?, PropertyValidationResult>? validator = null,
-        int sortOrder = 0)
+        int sortOrder = 0,
+        PropertyValueContext? valueContext = null,
+        string? readOnlyReason = null)
     {
         ArgumentNullException.ThrowIfNull(category);
         ArgumentNullException.ThrowIfNull(valueType);
@@ -45,10 +47,12 @@ public sealed class PropertyItem : IPropertyItem
         DisplayName = displayName;
         ValueType = valueType;
         IsNullable = isNullable;
-        IsEditable = isEditable;
         IsSensitive = isSensitive;
         Options = options?.ToArray() ?? Array.Empty<PropertyOption>();
         SortOrder = sortOrder;
+        ValueContext = valueContext ?? PropertyValueContext.Unspecified;
+        ReadOnlyReason = readOnlyReason ?? ValueContext.ReadOnlyReason;
+        IsEditable = isEditable && !ValueContext.IsPolicyLocked;
         _validator = validator;
 
         var validationResult = Validate(value);
@@ -98,6 +102,12 @@ public sealed class PropertyItem : IPropertyItem
     public PropertyValidationResult ValidationResult { get; private set; }
 
     /// <inheritdoc/>
+    public PropertyValueContext ValueContext { get; }
+
+    /// <inheritdoc/>
+    public string? ReadOnlyReason { get; }
+
+    /// <inheritdoc/>
     public int SortOrder { get; }
 
     /// <inheritdoc/>
@@ -108,7 +118,7 @@ public sealed class PropertyItem : IPropertyItem
     {
         if (!IsEditable)
         {
-            ValidationResult = PropertyValidationResult.Invalid("This property is read-only.");
+            ValidationResult = PropertyValidationResult.Invalid(ReadOnlyReason ?? "This property is read-only.");
             return false;
         }
 
