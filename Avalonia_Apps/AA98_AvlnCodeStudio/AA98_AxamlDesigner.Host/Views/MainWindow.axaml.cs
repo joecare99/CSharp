@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
 using AA98_AxamlDesigner.Host.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,14 @@ public partial class MainWindow : Window
         },
     ];
 
+    private static readonly IReadOnlyList<FilePickerFileType> s_workspaceEntryFileTypes =
+    [
+        new("C# workspace")
+        {
+            Patterns = ["*.sln", "*.slnx", "*.csproj"],
+        },
+    ];
+
     private bool _closeConfirmed;
     private bool _isClosingPromptActive;
 
@@ -35,6 +44,14 @@ public partial class MainWindow : Window
         if (DataContext is AxamlDesignerHostViewModel viewModel)
         {
             viewModel.SetScreenshotCapture(DesignerView.CapturePreviewPngAsync);
+            viewModel.ReviewWorkspaceFileChangesAsync = async (proposal, cancellationToken) =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                WorkspaceFileChangeReviewDialog dialog = new(
+                    proposal,
+                    viewModel.WorkspaceFileChangeService);
+                return await dialog.ShowDialog(this);
+            };
         }
     }
 
@@ -94,6 +111,36 @@ public partial class MainWindow : Window
         }
 
         viewModel.SetWorkspaceContext(path);
+    }
+
+    private async void OnWorkspaceEntryBrowseRequested(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not AxamlDesignerHostViewModel viewModel
+            || TopLevel.GetTopLevel(this)?.StorageProvider is not { } storageProvider)
+        {
+            return;
+        }
+
+        IReadOnlyList<IStorageFile> files = await storageProvider.OpenFilePickerAsync(
+            new FilePickerOpenOptions
+            {
+                Title = "Select C# solution or project",
+                AllowMultiple = false,
+                FileTypeFilter = s_workspaceEntryFileTypes,
+            });
+        if (files.Count == 0)
+        {
+            return;
+        }
+
+        string? path = TryGetLocalPath(files[0]);
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            viewModel.StatusText = "The selected workspace entry cannot be resolved to a local path.";
+            return;
+        }
+
+        viewModel.SetWorkspaceEntry(path);
     }
 
     private async void OnOpenPathRequested(object? sender, RoutedEventArgs e)

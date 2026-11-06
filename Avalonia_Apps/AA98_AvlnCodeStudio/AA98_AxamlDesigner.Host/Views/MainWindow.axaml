@@ -19,7 +19,7 @@
              LastChildFill="True">
     <Grid DockPanel.Dock="Top"
           Margin="12,12,12,8"
-          RowDefinitions="Auto,Auto,Auto"
+          RowDefinitions="Auto,Auto,Auto,Auto"
           RowSpacing="6">
       <Grid Grid.Row="0"
             ColumnDefinitions="*,Auto,Auto,Auto"
@@ -50,7 +50,20 @@
                 Content="Use path"
                 Command="{Binding ApplyWorkspaceContextCommand}" />
       </Grid>
-      <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
+      <Grid Grid.Row="2"
+            ColumnDefinitions="*,Auto,Auto"
+            ColumnSpacing="8">
+        <TextBox Grid.Column="0"
+                 PlaceholderText="Workspace entry (.sln, .slnx, or .csproj)"
+                 Text="{Binding WorkspaceEntryPath, Mode=TwoWay}" />
+        <Button Grid.Column="1"
+                Content="Select entry..."
+                Click="OnWorkspaceEntryBrowseRequested" />
+        <Button Grid.Column="2"
+                Content="Use entry"
+                Command="{Binding ApplyWorkspaceEntryCommand}" />
+      </Grid>
+      <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8">
         <Button Content="Undo workspace change"
                 Command="{Binding UndoWorkspaceChangeCommand}" />
         <Button Content="Redo workspace change"
