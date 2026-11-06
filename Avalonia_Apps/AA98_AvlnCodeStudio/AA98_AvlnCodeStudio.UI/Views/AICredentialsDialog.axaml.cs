@@ -13,6 +13,28 @@ public partial class AICredentialsDialog : Window
         InitializeComponent();
     }
 
+    protected override void OnOpened(EventArgs eventArgs)
+    {
+        base.OnOpened(eventArgs);
+        var screen = Screens.ScreenFromWindow(this);
+        if (screen is not null && screen.Scaling > 0)
+        {
+            double availableHeight = screen.WorkingArea.Height / screen.Scaling - 32;
+            if (availableHeight > 0)
+            {
+                MaxHeight = Math.Min(MaxHeight, availableHeight);
+            }
+        }
+    }
+
+    protected override void OnClosed(EventArgs eventArgs)
+    {
+        VaultPassphrase.Text = string.Empty;
+        VaultPassphraseConfirmation.Text = string.Empty;
+        VaultUnlockPassphrase.Text = string.Empty;
+        base.OnClosed(eventArgs);
+    }
+
     private void OnCloseClick(object? sender, RoutedEventArgs eventArgs) => Close();
 
     private async void OnInitializeVaultClick(object? sender, RoutedEventArgs eventArgs)

@@ -745,6 +745,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public async Task LockEncryptedVaultAsync(CancellationToken cancellationToken = default)
         {
+            long version = _credentialContextVersion;
             bool locked = await RunEncryptedVaultOperationAsync(
                 "The encrypted vault is locked.",
                 static (vault, token) => vault.LockAsync(token).AsTask(),
@@ -753,6 +754,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 cancellationToken);
             if (locked)
             {
+                if (version != _credentialContextVersion)
+                {
+                    CredentialStorageStatus = "The encrypted vault was locked for the previous credential context; the current session key was left unchanged.";
+                    return;
+                }
+
                 AiApiKey = string.Empty;
                 if (_aiSettings is not null)
                 {
@@ -1075,6 +1082,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 return false;
             }
 
+            Interlocked.Increment(ref _credentialStatusRevision);
+            long version = _credentialContextVersion;
             bool operationStarted = false;
             CredentialOperationBusy = true;
             try
@@ -1082,14 +1091,17 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 cancellationToken.ThrowIfCancellationRequested();
                 operationStarted = true;
                 await operation(vault, cancellationToken);
-                CredentialStorageStatus = successMessage;
+                CredentialStorageStatus = version == _credentialContextVersion
+                    ? successMessage
+                    : $"{successMessage} This action concerned the previous credential context.";
                 return true;
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
+                string context = version == _credentialContextVersion ? "" : " for the previous credential context";
                 CredentialStorageStatus = mayHaveTakenEffect
-                    ? $"{failureMessage}: cancelled; the vault may already have been created. Check its status before retrying."
-                    : $"{failureMessage}: cancelled.";
+                    ? $"{failureMessage}{context}: cancelled; the vault may already have been created. Check its status before retrying."
+                    : $"{failureMessage}{context}: cancelled.";
                 throw;
             }
             catch (Exception exception)
@@ -1097,7 +1109,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 string uncertainty = operationStarted && mayHaveTakenEffect
                     ? " The vault may already have been created; check its status before retrying."
                     : string.Empty;
-                CredentialStorageStatus = $"{failureMessage}: {DescribeCredentialProviderFailure(exception)}{uncertainty}";
+                string context = version == _credentialContextVersion ? "" : " for the previous credential context";
+                CredentialStorageStatus = $"{failureMessage}{context}: {DescribeCredentialProviderFailure(exception)}{uncertainty}";
                 return false;
             }
             finally
