@@ -12,6 +12,11 @@ namespace AA98_AvlnCodeStudio.UI.Views;
 public sealed class AIChatToolApprovalDialog : Window
 {
     public AIChatToolApprovalDialog(AIChatToolDescriptor descriptor, JsonElement arguments)
+        : this(descriptor, arguments, null)
+    {
+    }
+
+    public AIChatToolApprovalDialog(AIChatToolDescriptor descriptor, JsonElement arguments, Action? cancelRequest)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
@@ -25,8 +30,14 @@ public sealed class AIChatToolApprovalDialog : Window
 
         Button cancelButton = new()
         {
-            Content = "Cancel",
+            Content = "Skip tool",
             MinWidth = 100,
+        };
+        Button cancelRequestButton = new()
+        {
+            Content = "Cancel request",
+            MinWidth = 120,
+            IsVisible = cancelRequest is not null,
         };
         Button approveButton = new()
         {
@@ -34,6 +45,11 @@ public sealed class AIChatToolApprovalDialog : Window
             MinWidth = 130,
         };
         cancelButton.Click += (_, _) => Close(false);
+        cancelRequestButton.Click += (_, _) =>
+        {
+            cancelRequest?.Invoke();
+            Close(false);
+        };
         approveButton.Click += (_, _) => Close(true);
 
         TextBlock title = new()
@@ -44,7 +60,9 @@ public sealed class AIChatToolApprovalDialog : Window
         };
         TextBlock description = new()
         {
-            Text = descriptor.Description,
+            Text = cancelRequest is null
+                ? descriptor.Description
+                : $"{descriptor.Description}{Environment.NewLine}Skip tool continues the conversation without this action. Cancel request stops the current turn.",
             TextWrapping = TextWrapping.Wrap,
         };
         TextBox argumentsText = new()
@@ -60,7 +78,7 @@ public sealed class AIChatToolApprovalDialog : Window
             Orientation = Orientation.Horizontal,
             HorizontalAlignment = HorizontalAlignment.Right,
             Spacing = 8,
-            Children = { cancelButton, approveButton },
+            Children = { cancelRequestButton, cancelButton, approveButton },
         };
         Grid dialogContent = new()
         {

@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AA98_AvlnCodeStudio.UI.Configuration;
 using System;
 using System.Threading.Tasks;
 
@@ -13,7 +14,8 @@ public partial class AIProviderDraftView : UserControl
 
     private async void OnManageCredentialsClick(object? sender, RoutedEventArgs args)
     {
-        if (OpenCredentialsAsync is not null)
+        if (DataContext is AIProviderDraftViewModel { CanManageActiveCredentials: true }
+            && OpenCredentialsAsync is not null)
         {
             await OpenCredentialsAsync();
         }

@@ -1220,6 +1220,15 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 _codeStudioSettings.AIEndpoint = applied.AIEndpoint;
                 _codeStudioSettings.AIModelId = applied.AIModelId;
                 _codeStudioSettings.AIProvider = applied.AIProvider;
+                _codeStudioSettings.UseAIProviderProfiles = applied.UseAIProviderProfiles;
+                _codeStudioSettings.AIProfileOpenAIEndpoint = applied.AIProfileOpenAIEndpoint;
+                _codeStudioSettings.AIProfileOpenAIModelId = applied.AIProfileOpenAIModelId;
+                _codeStudioSettings.AIProfileOllamaEndpoint = applied.AIProfileOllamaEndpoint;
+                _codeStudioSettings.AIProfileOllamaModelId = applied.AIProfileOllamaModelId;
+                _codeStudioSettings.AIProfileIFMEndpoint = applied.AIProfileIFMEndpoint;
+                _codeStudioSettings.AIProfileIFMModelId = applied.AIProfileIFMModelId;
+                _codeStudioSettings.AIProfileCustomEndpoint = applied.AIProfileCustomEndpoint;
+                _codeStudioSettings.AIProfileCustomModelId = applied.AIProfileCustomModelId;
                 _codeStudioSettings.CredentialManager = applied.CredentialManager;
                 _codeStudioSettings.KnownAIProviderTemplates = applied.KnownAIProviderTemplates;
                 _codeStudioSettings.WorkspacePath = applied.WorkspacePath;

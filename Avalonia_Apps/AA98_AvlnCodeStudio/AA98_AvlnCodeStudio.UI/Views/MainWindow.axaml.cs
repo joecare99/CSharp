@@ -1,13 +1,16 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Config.UI;
 using Config.UI.Avalonia.Views;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Property.Editor;
 using Property.Editor.Avalonia;
+using Property.Editor.Avalonia.Views;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,6 +51,36 @@ namespace AA98_AvlnCodeStudio.UI.Views
                             DataContext = draft,
                             OpenCredentialsAsync = async () =>
                                 await new AICredentialsDialog { DataContext = viewModel }.ShowDialog(dialog),
+                        };
+                        draft.ProfileEndpointNavigationRequested += (provider, revision) =>
+                        {
+                            var focused = dialog.FocusManager?.GetFocusedElement();
+                            Dispatcher.UIThread.Post(() =>
+                            {
+                                if (!dialog.IsVisible || !dialog.IsActive || !draft.IsProfileNavigationCurrent(provider, revision)
+                                    || !ReferenceEquals(focused, dialog.FocusManager?.GetFocusedElement()))
+                                {
+                                    return;
+                                }
+
+                                string propertyName = Configuration.CodeStudioSettings.GetProfileEndpointPropertyName(provider);
+                                PropertyEditorItemViewModel? item = viewModel.ConfigUi.PropertyEditor.Items
+                                    .FirstOrDefault(candidate => candidate.IsVisible && candidate.PropertyItem.Name == propertyName);
+                                PropertyEditorPanel? panel = dialog.GetVisualDescendants().OfType<PropertyEditorPanel>().FirstOrDefault();
+                                Grid? row = panel?.GetVisualDescendants().OfType<Grid>()
+                                    .FirstOrDefault(candidate => ReferenceEquals(candidate.DataContext, item));
+                                if (item is null || row is null)
+                                {
+                                    return;
+                                }
+
+                                row.BringIntoView();
+                                if (item.IsEditable)
+                                {
+                                    row.GetVisualDescendants().OfType<TextBox>()
+                                        .FirstOrDefault(candidate => candidate.IsVisible && candidate.IsEnabled)?.Focus();
+                                }
+                            }, DispatcherPriority.Background);
                         };
                         viewModel.ConfigUi.ValidateChangesAsync = async sections =>
                         {
@@ -127,7 +160,13 @@ namespace AA98_AvlnCodeStudio.UI.Views
             return await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                AIChatToolApprovalDialog dialog = new(descriptor, arguments);
+                if (DataContext is not ViewModels.MainWindowViewModel viewModel)
+                {
+                    throw new InvalidOperationException("The workbench view model is not available for AI tool approval.");
+                }
+
+                AIChatToolApprovalDialog dialog = new(descriptor, arguments,
+                    () => viewModel.SendAIChatMessageCancelCommand.Execute(null));
                 Task<bool> approval = dialog.ShowDialog(this);
                 using CancellationTokenRegistration registration = cancellationToken.Register(
                     () => Dispatcher.UIThread.Post(() =>

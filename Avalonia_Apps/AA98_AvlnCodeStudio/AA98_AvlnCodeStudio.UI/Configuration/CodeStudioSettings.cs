@@ -40,6 +40,18 @@ public sealed class CodeStudioSettings
     /// <summary>Gets or sets the system-supplied provider profile used when endpoint/model overrides are empty.</summary>
     public AIProviderPreset AIProvider { get; set; } = AIProviderPreset.Ollama;
 
+    /// <summary>Uses the separately configured provider values instead of the legacy global overrides.</summary>
+    public bool UseAIProviderProfiles { get; set; }
+
+    public string AIProfileOpenAIEndpoint { get; set; } = string.Empty;
+    public string AIProfileOpenAIModelId { get; set; } = string.Empty;
+    public string AIProfileOllamaEndpoint { get; set; } = string.Empty;
+    public string AIProfileOllamaModelId { get; set; } = string.Empty;
+    public string AIProfileIFMEndpoint { get; set; } = string.Empty;
+    public string AIProfileIFMModelId { get; set; } = string.Empty;
+    public string AIProfileCustomEndpoint { get; set; } = string.Empty;
+    public string AIProfileCustomModelId { get; set; } = string.Empty;
+
     /// <summary>Gets or sets the explicitly selected credential manager.</summary>
     public CredentialManagerSelection CredentialManager { get; set; }
 
@@ -73,15 +85,57 @@ public sealed class CodeStudioSettings
         },
     ];
 
-    public string GetEffectiveAIEndpoint() =>
-        string.IsNullOrWhiteSpace(AIEndpoint)
+    public string GetEffectiveAIEndpoint()
+    {
+        string endpoint = UseAIProviderProfiles ? GetProfileEndpoint(AIProvider) : AIEndpoint;
+        return string.IsNullOrWhiteSpace(endpoint)
             ? GetSelectedProviderTemplate()?.Endpoint ?? string.Empty
-            : AIEndpoint;
+            : endpoint;
+    }
 
-    public string GetEffectiveAIModelId() =>
-        string.IsNullOrWhiteSpace(AIModelId)
+    public string GetEffectiveAIModelId()
+    {
+        string model = UseAIProviderProfiles ? GetProfileModel(AIProvider) : AIModelId;
+        return string.IsNullOrWhiteSpace(model)
             ? GetSelectedProviderTemplate()?.DefaultModelId ?? string.Empty
-            : AIModelId;
+            : model;
+    }
+
+    public string GetProfileEndpoint(AIProviderPreset provider) => provider switch
+    {
+        AIProviderPreset.OpenAI => AIProfileOpenAIEndpoint,
+        AIProviderPreset.Ollama => AIProfileOllamaEndpoint,
+        AIProviderPreset.IFM => AIProfileIFMEndpoint,
+        AIProviderPreset.Custom => AIProfileCustomEndpoint,
+        _ => throw new System.ArgumentOutOfRangeException(nameof(provider)),
+    };
+
+    public string GetProfileModel(AIProviderPreset provider) => provider switch
+    {
+        AIProviderPreset.OpenAI => AIProfileOpenAIModelId,
+        AIProviderPreset.Ollama => AIProfileOllamaModelId,
+        AIProviderPreset.IFM => AIProfileIFMModelId,
+        AIProviderPreset.Custom => AIProfileCustomModelId,
+        _ => throw new System.ArgumentOutOfRangeException(nameof(provider)),
+    };
+
+    public static string GetProfileEndpointPropertyName(AIProviderPreset provider) => provider switch
+    {
+        AIProviderPreset.OpenAI => nameof(AIProfileOpenAIEndpoint),
+        AIProviderPreset.Ollama => nameof(AIProfileOllamaEndpoint),
+        AIProviderPreset.IFM => nameof(AIProfileIFMEndpoint),
+        AIProviderPreset.Custom => nameof(AIProfileCustomEndpoint),
+        _ => throw new System.ArgumentOutOfRangeException(nameof(provider)),
+    };
+
+    public static string GetProfileModelPropertyName(AIProviderPreset provider) => provider switch
+    {
+        AIProviderPreset.OpenAI => nameof(AIProfileOpenAIModelId),
+        AIProviderPreset.Ollama => nameof(AIProfileOllamaModelId),
+        AIProviderPreset.IFM => nameof(AIProfileIFMModelId),
+        AIProviderPreset.Custom => nameof(AIProfileCustomModelId),
+        _ => throw new System.ArgumentOutOfRangeException(nameof(provider)),
+    };
 
     private AIProviderTemplate? GetSelectedProviderTemplate() =>
         AIProvider == AIProviderPreset.Custom
