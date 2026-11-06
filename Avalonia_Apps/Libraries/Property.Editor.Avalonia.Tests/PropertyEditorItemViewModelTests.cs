@@ -90,6 +90,28 @@ public sealed class PropertyEditorItemViewModelTests
     }
 
     [TestMethod]
+    public void ValueContext_ExposesScopeOriginAndPolicyLock()
+    {
+        PropertyItem item = new(
+            TestCategory,
+            "AssemblyName",
+            "Assembly name",
+            typeof(string),
+            "Sample",
+            isEditable: false,
+            valueContext: new PropertyValueContext(
+                PropertyScope.Project,
+                origin: "Sample.csproj",
+                isInherited: true,
+                readOnlyReason: "The project value is conditional."));
+        PropertyEditorItemViewModel viewModel = new(item);
+
+        Assert.AreEqual("Project - Sample.csproj (inherited)", viewModel.SourceContextText);
+        Assert.AreEqual("The project value is conditional.", viewModel.ReadOnlyReasonText);
+        Assert.IsTrue(viewModel.HasReadOnlyReason);
+    }
+
+    [TestMethod]
     public void SensitiveItem_ExposesMaskingCharacter()
     {
         PropertyItem item = new(TestCategory, "Password", "Password", typeof(string), "secret", isSensitive: true);

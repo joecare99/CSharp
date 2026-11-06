@@ -38,6 +38,35 @@ public sealed class PropertyEditorHostIndependenceTests
         Assert.AreEqual("Localized validation message.", viewModel.ValidationErrorText);
     }
 
+    [TestMethod]
+    public void SetItems_SameProperties_PreservesEditorInstancesAndEditLifecycle()
+    {
+        IPropertyItem propertyItem = CreateScalarFixture();
+        PropertyEditorViewModel editor = new();
+        editor.SetItems([propertyItem]);
+        PropertyEditorItemViewModel firstItem = editor.Items[0];
+        int startedCount = 0;
+        int completedCount = 0;
+        editor.EditStarted += (_, args) =>
+        {
+            Assert.AreSame(propertyItem, args.PropertyItem);
+            startedCount++;
+        };
+        editor.EditCompleted += (_, args) =>
+        {
+            Assert.AreSame(propertyItem, args.PropertyItem);
+            completedCount++;
+        };
+
+        editor.SetItems([propertyItem]);
+        editor.NotifyEditStarted(propertyItem);
+        editor.NotifyEditCompleted(propertyItem);
+
+        Assert.AreSame(firstItem, editor.Items[0]);
+        Assert.AreEqual(1, startedCount);
+        Assert.AreEqual(1, completedCount);
+    }
+
     private static IPropertyItem CreateScalarFixture()
     {
         IPropertyItem propertyItem = Substitute.For<IPropertyItem>();
