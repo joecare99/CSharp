@@ -9,7 +9,8 @@
               ItemsSource="{Binding RootItems}"
               SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
       <TreeView.ItemContainerTheme>
-        <ControlTheme TargetType="TreeViewItem">
+        <ControlTheme TargetType="TreeViewItem"
+                      BasedOn="{StaticResource {x:Type TreeViewItem}}">
           <Setter Property="IsExpanded" Value="{ReflectionBinding IsExpanded, Mode=TwoWay}" />
         </ControlTheme>
       </TreeView.ItemContainerTheme>
