@@ -137,6 +137,74 @@ public sealed class ConfigUiViewModelTests
     }
 
     [TestMethod]
+    public async Task ApplyChangesAsync_HostValidationBlocksAllWritesAndPreservesDraft()
+    {
+        PropertyItem property = new(new PropertyCategory("General", "General"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection section = CreateSection("General", 0, properties: [property]);
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+        viewModel.ValidateChangesAsync = _ => Task.FromResult<string?>("Invalid endpoint");
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(property.TrySetValue("Draft"));
+
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+        await section.DidNotReceive().SaveAsync();
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        StringAssert.Contains(viewModel.OperationMessage, "Invalid endpoint");
+
+        viewModel.ValidateChangesAsync = _ => Task.FromResult<string?>(null);
+        Assert.IsTrue(await viewModel.ApplyChangesAsync());
+        await section.Received(1).SaveAsync();
+    }
+
+    [TestMethod]
+    public async Task ApplyChangesAsync_AsyncValidationBlocksEverySectionAndKeepsUiBusy()
+    {
+        PropertyItem firstProperty = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        PropertyItem secondProperty = new(new PropertyCategory("Second", "Second"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSection("First", 0, properties: [firstProperty]);
+        IConfigUiSection second = CreateSection("Second", 1, properties: [secondProperty]);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(firstProperty.TrySetValue("Draft 1"));
+        viewModel.SelectedSection = second;
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(secondProperty.TrySetValue("Draft 2"));
+        TaskCompletionSource<string?> validation = new();
+        int validatedSections = 0;
+        viewModel.ValidateChangesAsync = sections =>
+        {
+            validatedSections = sections.Count;
+            return validation.Task;
+        };
+
+        Task<bool> applying = viewModel.ApplyChangesAsync();
+        Assert.IsTrue(viewModel.IsBusy);
+        Assert.AreEqual(2, validatedSections);
+        validation.SetResult("Invalid endpoint");
+        Assert.IsFalse(await applying);
+        Assert.IsFalse(viewModel.IsBusy);
+        await first.DidNotReceive().SaveAsync();
+        await second.DidNotReceive().SaveAsync();
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
+    public async Task ApplyChangesAsync_ValidationFailureIsVisibleAndDoesNotSave()
+    {
+        PropertyItem property = new(new PropertyCategory("General", "General"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection section = CreateSection("General", 0, properties: [property]);
+        ConfigUiViewModel viewModel = new(CreateRegistry(section), new PropertyEditorViewModel());
+        viewModel.ValidateChangesAsync = _ => Task.FromException<string?>(new InvalidOperationException("Layer unavailable"));
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        Assert.IsTrue(property.TrySetValue("Draft"));
+
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+        await section.DidNotReceive().SaveAsync();
+        StringAssert.Contains(viewModel.OperationMessage, "Layer unavailable");
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+    }
+
+    [TestMethod]
     public async Task DiscardChangesAsync_ReloadsChangedSections()
     {
         PropertyItem property = new(new PropertyCategory("General", "General"), "Name", "Name", typeof(string), "Original");
