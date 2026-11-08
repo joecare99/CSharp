@@ -559,7 +559,7 @@ public sealed class AxamlDesignerSessionTests
             ProcessStartInfo startInfo = new("dotnet")
             {
                 WorkingDirectory = directory,
-                ArgumentList = { "build", projectPath, "-p:RestoreIgnoreFailedSources=true", "--verbosity", "quiet" },
+                ArgumentList = { "build", projectPath, "-nr:false", "-p:UseSharedCompilation=false", "-p:RestoreIgnoreFailedSources=true", "--verbosity", "quiet" },
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -578,11 +578,23 @@ public sealed class AxamlDesignerSessionTests
             Task<string> output = process.StandardOutput.ReadToEndAsync();
             Task<string> error = process.StandardError.ReadToEndAsync();
             await process.WaitForExitAsync();
-            Assert.AreEqual(0, process.ExitCode, $"{await output}{await error}");
+            await Task.WhenAll(output, error);
+            Assert.AreEqual(0, process.ExitCode, $"{output.Result}{error.Result}");
         }
         finally
         {
-            Directory.Delete(directory, recursive: true);
+            for (int attempt = 0; ; attempt++)
+            {
+                try
+                {
+                    Directory.Delete(directory, recursive: true);
+                    break;
+                }
+                catch (IOException) when (attempt < 9)
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(200));
+                }
+            }
         }
     }
 
