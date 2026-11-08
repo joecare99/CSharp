@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels"
+             xmlns:preview="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.Controls"
+             x:Class="AA98_AvlnCodeStudio.AxamlDesigner.UI.Views.AxamlDesignerSurfaceView"
+             x:DataType="vm:AxamlDesignerViewModel">
+  <Border Padding="8"
+          BorderBrush="{DynamicResource ThemeControlMidBrush}"
+          BorderThickness="1"
+          CornerRadius="4">
+    <DockPanel>
+      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="6" Margin="0,0,0,6">
+        <Button Content="Undo" Command="{Binding UndoCommand}" />
+        <Button Content="Redo" Command="{Binding RedoCommand}" />
+        <Button Content="Screenshot" Click="OnScreenshotRequested" />
+      </StackPanel>
+      <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6"
+                 Text="{Binding PreviewTitle}" TextWrapping="Wrap" FontWeight="SemiBold" />
+      <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6"
+                 Text="Drag the selected element's blue corner to resize." TextWrapping="Wrap" />
+      <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6"
+                 Text="{Binding ErrorText}" TextWrapping="Wrap" />
+      <ScrollViewer>
+        <preview:AxamlPreviewControl x:Name="PreviewControl"
+                                     PreviewNode="{Binding PreviewRoot}"
+                                     SelectedNode="{Binding SelectedNode, Mode=TwoWay}" />
+      </ScrollViewer>
+    </DockPanel>
+  </Border>
+</UserControl>

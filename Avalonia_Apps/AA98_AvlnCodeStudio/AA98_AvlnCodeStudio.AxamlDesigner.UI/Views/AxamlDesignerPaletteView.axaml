@@ -1,0 +1,99 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels"
+             xmlns:model="using:AA98_AvlnCodeStudio.Model.Workspaces"
+             x:Class="AA98_AvlnCodeStudio.AxamlDesigner.UI.Views.AxamlDesignerPaletteView"
+             x:DataType="vm:AxamlDesignerViewModel">
+  <Border Padding="8" BorderBrush="{DynamicResource ThemeControlMidBrush}"
+          BorderThickness="1" CornerRadius="4">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Spacing="6">
+        <Expander Header="Preview structure" IsExpanded="True">
+          <StackPanel Spacing="5" Margin="4">
+            <TreeView x:Name="StructureTree" MinHeight="64" MaxHeight="180"
+                      ItemsSource="{Binding StructureRoots}"
+                      SelectedItem="{Binding SelectedNode, Mode=TwoWay}"
+                      AutomationProperties.Name="Preview structure">
+              <TreeView.Styles>
+                <Style Selector="TreeViewItem">
+                  <Setter Property="IsExpanded" Value="True" />
+                </Style>
+              </TreeView.Styles>
+              <TreeView.ItemTemplate>
+                <TreeDataTemplate x:DataType="model:AxamlPreviewNode" ItemsSource="{Binding Children}">
+                  <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="{Binding TypeName}" />
+                    <TextBlock Text="{Binding StableName}" Opacity="0.75" />
+                  </StackPanel>
+                </TreeDataTemplate>
+              </TreeView.ItemTemplate>
+            </TreeView>
+            <UniformGrid Columns="3">
+              <Button Content="Up" Command="{Binding MoveStructureEarlierCommand}" />
+              <Button Content="Down" Command="{Binding MoveStructureLaterCommand}" />
+              <Button Content="Remove" Command="{Binding RemoveStructureCommand}" />
+            </UniformGrid>
+            <StackPanel Spacing="4" IsVisible="{Binding IsSelectedGridChild}">
+              <TextBlock Text="Grid position" FontWeight="SemiBold" />
+              <UniformGrid Columns="2">
+                <Button Content="Row -" AutomationProperties.Name="Move to previous Grid row"
+                        Command="{Binding MoveGridRowEarlierCommand}" />
+                <Button Content="Row +" AutomationProperties.Name="Move to next Grid row"
+                        Command="{Binding MoveGridRowLaterCommand}" />
+                <Button Content="Col -" AutomationProperties.Name="Move to previous Grid column"
+                        Command="{Binding MoveGridColumnEarlierCommand}" />
+                <Button Content="Col +" AutomationProperties.Name="Move to next Grid column"
+                        Command="{Binding MoveGridColumnLaterCommand}" />
+              </UniformGrid>
+            </StackPanel>
+            <TextBlock Text="{Binding StructureAvailabilityText}" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap" />
+          </StackPanel>
+        </Expander>
+        <Expander Header="Basis controls" IsExpanded="True">
+          <UniformGrid Columns="2" Margin="4">
+            <Button Content="TextBlock" Command="{Binding AddTextBlockCommand}" />
+            <Button Content="Label" Command="{Binding AddLabelCommand}" />
+            <Button Content="Button" Command="{Binding AddButtonCommand}" />
+            <Button Content="Progress" Command="{Binding AddProgressBarCommand}" />
+            <Button Content="Separator" Command="{Binding AddSeparatorCommand}" />
+          </UniformGrid>
+        </Expander>
+        <Expander Header="Eingabe" IsExpanded="False">
+          <UniformGrid Columns="2" Margin="4">
+            <Button Content="TextBox" Command="{Binding AddTextBoxCommand}" />
+            <Button Content="CheckBox" Command="{Binding AddCheckBoxCommand}" />
+            <Button Content="ComboBox" Command="{Binding AddComboBoxCommand}" />
+            <Button Content="Numeric" Command="{Binding AddNumericUpDownCommand}" />
+            <Button Content="RadioButton" Command="{Binding AddRadioButtonCommand}" />
+            <Button Content="Slider" Command="{Binding AddSliderCommand}" />
+            <Button Content="Toggle" Command="{Binding AddToggleSwitchCommand}" />
+          </UniformGrid>
+        </Expander>
+        <Expander Header="Layout und Container" IsExpanded="False">
+          <StackPanel Spacing="6" Margin="4">
+            <TextBlock Text="Add layout container" FontWeight="SemiBold" />
+            <UniformGrid Columns="2">
+              <Button Content="Border" Command="{Binding AddBorderCommand}" />
+              <Button Content="Content" Command="{Binding AddContentControlCommand}" />
+              <Button Content="DockPanel" Command="{Binding AddDockPanelCommand}" />
+              <Button Content="Expander" Command="{Binding AddExpanderCommand}" />
+              <Button Content="GroupBox" Command="{Binding AddGroupBoxCommand}" />
+              <Button Content="Grid" Command="{Binding AddGridCommand}" />
+              <Button Content="ScrollViewer" Command="{Binding AddScrollViewerCommand}" />
+              <Button Content="StackPanel" Command="{Binding AddStackPanelCommand}" />
+              <Button Content="UniformGrid" Command="{Binding AddUniformGridCommand}" />
+              <Button Content="Viewbox" Command="{Binding AddViewboxCommand}" />
+              <Button Content="WrapPanel" Command="{Binding AddWrapPanelCommand}" />
+            </UniformGrid>
+          </StackPanel>
+        </Expander>
+        <TextBlock Text="Correct invalid markup first, then add controls. DockPanel keeps its client last; Grid uses the next free cell."
+                   FontWeight="SemiBold" TextWrapping="Wrap" />
+        <ComboBox ItemsSource="{Binding DockPanelPlacements}"
+                  SelectedItem="{Binding SelectedDockPanelPlacement, Mode=TwoWay}"
+                  IsVisible="{Binding IsDockPanelSelected}" />
+      </StackPanel>
+    </ScrollViewer>
+  </Border>
+</UserControl>
