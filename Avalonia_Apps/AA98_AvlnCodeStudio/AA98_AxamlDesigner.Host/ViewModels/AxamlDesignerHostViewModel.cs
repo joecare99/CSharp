@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
+using AA98_AvlnCodeStudio.Model.Documents;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,6 +18,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
 {
     private string _markup = string.Empty;
     private string _savedMarkup = string.Empty;
+    private Encoding _documentEncoding = new UTF8Encoding(false, true);
     private Func<CancellationToken, Task<byte[]>>? _screenshotCapture;
     private readonly WorkspaceFileChangeService _workspaceFileChangeService;
     private readonly CSharpWorkspaceLoader _workspaceLoader = new();
@@ -26,6 +29,13 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
     public AxamlDesignerHostViewModel()
     {
         Designer.MarkupChanged += OnMarkupChanged;
+        Designer.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(AxamlDesignerViewModel.HasUnappliedPropertyDrafts))
+            {
+                NotifyDocumentStateChanged();
+            }
+        };
         _workspaceFileChangeService = new WorkspaceFileChangeService(this);
         _workspaceFileChangeService.HistoryChanged += OnWorkspaceChangeHistoryChanged;
         Designer.ApplyMissingBindingAsync = ApplyMissingBindingAsync;
@@ -37,6 +47,9 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
 
     [ObservableProperty]
     private string _filePath = string.Empty;
+
+    [ObservableProperty]
+    private string _filePathInput = string.Empty;
 
     [ObservableProperty]
     private string _statusText = "Open an AXAML file or enter a path.";
@@ -53,28 +66,52 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
     [ObservableProperty]
     private string _workspaceContextStatus = "No project/workspace selected. Multi-file changes are unavailable.";
 
+    /// <summary>Reviews and applies a proposal; returns true only after successful application.</summary>
     public Func<WorkspaceFileChangeProposal, CancellationToken, Task<bool>>? ReviewWorkspaceFileChangesAsync { get; set; }
 
     public bool IsDirty => !string.Equals(_markup, _savedMarkup, StringComparison.Ordinal);
 
-    public string WindowTitle => $"AA98 AXAML Designer{(IsDirty ? " *" : string.Empty)}";
+    public bool HasUnsavedChanges => IsDirty || Designer.HasUnappliedPropertyDrafts;
+
+    public string WindowTitle => $"AA98 AXAML Designer{(HasUnsavedChanges ? " *" : string.Empty)}";
+
+    public string Markup
+    {
+        get => _markup;
+        set
+        {
+            value ??= string.Empty;
+            if (string.Equals(_markup, value, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _markup = value;
+            OnPropertyChanged(nameof(Markup));
+            Designer.LoadMarkup(value);
+            NotifyDocumentStateChanged();
+            StatusText = "AXAML code changes are unsaved.";
+            QueueBindingContextRefresh();
+        }
+    }
 
     [RelayCommand]
     private void Open()
     {
-        if (string.IsNullOrWhiteSpace(FilePath))
+        string path = string.IsNullOrWhiteSpace(FilePathInput) ? FilePath : FilePathInput;
+        if (string.IsNullOrWhiteSpace(path))
         {
             StatusText = "Enter an AXAML file path to open.";
             return;
         }
 
-        OpenDocument(FilePath);
+        OpenDocument(path);
     }
 
     public bool OpenDocument(string path, bool discardUnsavedChanges = false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
-        if (IsDirty && !discardUnsavedChanges)
+        if (HasUnsavedChanges && !discardUnsavedChanges)
         {
             StatusText = "Save or discard the current changes before opening another file.";
             return false;
@@ -83,18 +120,25 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
         try
         {
             string fullPath = Path.GetFullPath(path);
-            string markup = File.ReadAllText(fullPath);
+            (string markup, Encoding encoding) = TextDocumentEncoding.Decode(File.ReadAllBytes(fullPath));
+            if (discardUnsavedChanges)
+            {
+                Designer.DiscardAllPropertyDrafts();
+            }
             FilePath = fullPath;
+            FilePathInput = fullPath;
             _markup = markup;
             _savedMarkup = markup;
+            _documentEncoding = encoding;
             Designer.LoadMarkup(markup);
+            OnPropertyChanged(nameof(Markup));
             NotifyDocumentStateChanged();
             StatusText = ClearWorkspaceContextIfDocumentIsOutside(fullPath)
                 ?? $"Opened {Path.GetFileName(fullPath)}.";
             QueueBindingContextRefresh();
             return true;
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException)
         {
             StatusText = $"Open failed: {exception.Message}";
             return false;
@@ -118,15 +162,20 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
         try
         {
             string fullPath = Path.GetFullPath(FilePath);
-            File.WriteAllText(fullPath, _markup);
+            Encoding encoding = File.Exists(fullPath)
+                ? TextDocumentEncoding.Decode(File.ReadAllBytes(fullPath)).Encoding
+                : _documentEncoding;
+            File.WriteAllBytes(fullPath, TextDocumentEncoding.Encode(_markup, encoding));
             FilePath = fullPath;
+            FilePathInput = fullPath;
+            _documentEncoding = encoding;
             _savedMarkup = _markup;
             NotifyDocumentStateChanged();
             StatusText = ClearWorkspaceContextIfDocumentIsOutside(fullPath)
                 ?? $"Saved {Path.GetFileName(fullPath)}.";
             return true;
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException)
         {
             StatusText = $"Save failed: {exception.Message}";
             return false;
@@ -139,15 +188,20 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
         try
         {
             string fullPath = Path.GetFullPath(path);
-            File.WriteAllText(fullPath, _markup);
+            Encoding encoding = File.Exists(fullPath)
+                ? TextDocumentEncoding.Decode(File.ReadAllBytes(fullPath)).Encoding
+                : _documentEncoding;
+            File.WriteAllBytes(fullPath, TextDocumentEncoding.Encode(_markup, encoding));
             FilePath = fullPath;
+            FilePathInput = fullPath;
+            _documentEncoding = encoding;
             _savedMarkup = _markup;
             NotifyDocumentStateChanged();
             StatusText = ClearWorkspaceContextIfDocumentIsOutside(fullPath)
                 ?? $"Saved {Path.GetFileName(fullPath)}.";
             return true;
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException)
         {
             StatusText = $"Save failed: {exception.Message}";
             return false;
@@ -460,15 +514,32 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
             return false;
         }
 
+        string filePath = FilePath;
+        string workspaceRoot = WorkspaceRootPath;
+        string markup = _markup;
+        string savedMarkup = _savedMarkup;
+        AxamlPreviewNode? selectedNode = Designer.SelectedNode;
+        bool IsTargetCurrent() => ReferenceEquals(workspace, _workspace)
+            && string.Equals(workspaceRoot, WorkspaceRootPath, StringComparison.Ordinal)
+            && string.Equals(filePath, FilePath, StringComparison.Ordinal)
+            && string.Equals(markup, _markup, StringComparison.Ordinal)
+            && string.Equals(savedMarkup, _savedMarkup, StringComparison.Ordinal)
+            && ReferenceEquals(selectedNode, Designer.SelectedNode)
+            && Designer.BindingRows.Contains(row);
+
         try
         {
             _bindingContextRefresh?.Cancel();
             AxamlMvvmSemanticResolution resolution =
                 await _csharpSyntaxDiagnosticService.AnalyzeAxamlMvvmAsync(
-                    _markup,
-                    FilePath,
+                    markup,
+                    filePath,
                     workspace,
                     allowExistingRuntimeDataContext: true);
+            if (!IsTargetCurrent())
+            {
+                throw new InvalidOperationException("The selected control, document, or workspace changed during binding analysis. Retry the binding.");
+            }
             if (!resolution.IsSuccessful
                 || !resolution.HasRuntimeDataContext
                 || string.IsNullOrWhiteSpace(resolution.ViewModelTypeName)
@@ -495,7 +566,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
 
             WorkspaceFileChangeRequest sourceRequest =
                 await _csharpSyntaxDiagnosticService.PlanViewModelSourceAdditionAsync(
-                    WorkspaceRootPath,
+                    workspaceRoot,
                     resolution.ProjectPath,
                     resolution.ViewModelTypeName,
                     [plan]);
@@ -511,14 +582,19 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
                     + string.Join(Environment.NewLine, newCompilerErrors));
             }
 
+            if (!IsTargetCurrent())
+            {
+                throw new InvalidOperationException("The selected control, document, or workspace changed during member planning. Retry the binding.");
+            }
+
             string proposedMarkup = Designer.CreateBindingMarkupForRow(row);
             WorkspaceFileChangeRequest axamlRequest = WorkspaceFileChangeRequest.ReplaceExisting(
-                Path.GetRelativePath(WorkspaceRootPath, FilePath),
-                _savedMarkup,
+                Path.GetRelativePath(workspaceRoot, filePath),
+                savedMarkup,
                 proposedMarkup,
-                expectedOpenDocumentContent: _markup);
+                expectedOpenDocumentContent: markup);
             WorkspaceFileChangeProposal proposal = _workspaceFileChangeService.Prepare(
-                WorkspaceRootPath,
+                workspaceRoot,
                 [axamlRequest, sourceRequest]);
             Func<WorkspaceFileChangeProposal, CancellationToken, Task<bool>>? review =
                 ReviewWorkspaceFileChangesAsync;
@@ -740,6 +816,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
     private void OnMarkupChanged(object? sender, AxamlDesignerMarkupChangedEventArgs e)
     {
         _markup = e.Markup;
+        OnPropertyChanged(nameof(Markup));
         NotifyDocumentStateChanged();
         StatusText = "Designer changes are unsaved.";
         QueueBindingContextRefresh();
@@ -748,6 +825,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
     private void NotifyDocumentStateChanged()
     {
         OnPropertyChanged(nameof(IsDirty));
+        OnPropertyChanged(nameof(HasUnsavedChanges));
         OnPropertyChanged(nameof(WindowTitle));
     }
 
@@ -800,6 +878,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
         _markup = proposedContent;
         _savedMarkup = proposedSavedContent;
         Designer.LoadMarkup(proposedContent);
+        OnPropertyChanged(nameof(Markup));
         NotifyDocumentStateChanged();
         StatusText = "Open AXAML document synchronized with confirmed workspace changes.";
     }

@@ -11,7 +11,7 @@ public sealed class AxamlUnsavedChangesDialog : Window
     private TaskCompletionSource<AxamlSaveDecision>? _decisionSource;
     private bool _decisionProvided;
 
-    public AxamlUnsavedChangesDialog(string fileName, string actionTitle)
+    public AxamlUnsavedChangesDialog(string fileName, string actionTitle, bool hasPropertyDrafts = false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
         ArgumentException.ThrowIfNullOrWhiteSpace(actionTitle);
@@ -27,11 +27,13 @@ public sealed class AxamlUnsavedChangesDialog : Window
 
         TextBlock message = new()
         {
-            Text = $"\"{fileName}\" has unsaved changes. Save before {actionTitle}?",
+            Text = hasPropertyDrafts
+                ? $"\"{fileName}\" has unapplied property drafts. They cannot be saved until applied. Discard them and unsaved changes before {actionTitle}, or cancel."
+                : $"\"{fileName}\" has unsaved changes. Save before {actionTitle}?",
             TextWrapping = Avalonia.Media.TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 12),
         };
-        Button saveButton = new() { Content = "Save", MinWidth = 100 };
+        Button saveButton = new() { Content = "Save", MinWidth = 100, IsEnabled = !hasPropertyDrafts };
         Button discardButton = new() { Content = "Discard", MinWidth = 100 };
         Button cancelButton = new() { Content = "Cancel", MinWidth = 100 };
         saveButton.Click += (_, _) => ResolveDecisionAndClose(AxamlSaveDecision.Save);
