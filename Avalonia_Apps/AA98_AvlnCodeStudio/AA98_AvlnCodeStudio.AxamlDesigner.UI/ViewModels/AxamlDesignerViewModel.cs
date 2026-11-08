@@ -255,7 +255,11 @@ public partial class AxamlDesignerViewModel : ObservableObject
                 : capability.AllowsAppendingChildren
                     ? $"{childLimit}; correct invalid or unsupported markup before adding controls"
                 : capability.AllowsSafeChildRemoval
-                    ? $"{childLimit}; remove supported direct content"
+                    ? SelectedNode.CanRemoveSingleChild
+                        ? $"{childLimit}; safe removal for direct content"
+                        : SelectedNode.Children.Count == 0
+                            ? $"{childLimit}; empty containers only"
+                            : $"{childLimit}; correct unsupported content before editing"
                     : $"{childLimit}; empty containers only";
             return $"Editable: {editableProperties}. Binding analysis: {bindings}. MVVM generation: {generation}. Children: {children}.";
         }
