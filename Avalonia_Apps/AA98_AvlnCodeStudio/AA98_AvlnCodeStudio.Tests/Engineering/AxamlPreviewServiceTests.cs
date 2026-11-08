@@ -320,10 +320,11 @@ public sealed class AxamlPreviewServiceTests
 
         StringAssert.Contains(
             updated,
-            "<av:TextBlock Text='keep' />\n  <av:Button DockPanel.Dock=\"Bottom\" />\n</av:DockPanel>");
+            "<av:TextBlock Text='keep' />\n  <av:Button av:DockPanel.Dock=\"Bottom\" />\n</av:DockPanel>");
         AxamlPreviewNode updatedRoot = service.Parse(updated);
         Assert.AreEqual("keep", updatedRoot.Children[0].Text);
         Assert.AreEqual("Button", updatedRoot.Children[1].TypeName);
+        Assert.AreEqual("Bottom", updatedRoot.Children[1].Properties["DockPanel.Dock"]);
     }
 
     [TestMethod]
@@ -498,6 +499,38 @@ public sealed class AxamlPreviewServiceTests
 
         StringAssert.Contains(updated, "<Button Grid.Row=\"1\" Grid.Column=\"0\" />");
         Assert.AreEqual(2, service.Parse(updated).Children.Count);
+    }
+
+    [TestMethod]
+    public void InsertChildControl_RejectsStaleGridChildrenAndCollapsedContentRoots()
+    {
+        AxamlPreviewService service = new();
+        const string original = "<Grid ColumnDefinitions='*,*'><Button /></Grid>";
+        AxamlPreviewNode grid = service.Parse(original);
+        const string changedChild = "<Grid ColumnDefinitions='*,*'><Button Grid.Column='1' /></Grid>";
+        Assert.ThrowsExactly<System.IO.InvalidDataException>(() => service.InsertChildControl(changedChild, grid, "TextBlock"));
+
+        const string empty = "<Grid ColumnDefinitions='*,*'></Grid>";
+        AxamlPreviewNode emptyGrid = service.Parse(empty);
+        const string changedEmpty = "<Grid ColumnDefinitions='*,*'><Button /></Grid>";
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => service.InsertChildControl(changedEmpty, emptyGrid, "TextBlock"));
+
+        const string collapsed = "<Grid ColumnDefinitions='*,*'><UserControl Grid.Column='1'><Button /></UserControl></Grid>";
+        AxamlPreviewNode collapsedGrid = service.Parse(collapsed);
+        Assert.IsFalse(collapsedGrid.HasSafeGridLayout);
+        Assert.IsFalse(collapsedGrid.CanAddGridChild);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => service.InsertChildControl(collapsed, collapsedGrid, "TextBlock"));
+    }
+
+    [TestMethod]
+    public void InsertChildControl_RejectsStaleSingleChildContainerContent()
+    {
+        AxamlPreviewService service = new();
+        const string original = "<Border></Border>";
+        AxamlPreviewNode border = service.Parse(original);
+
+        Assert.ThrowsExactly<System.InvalidOperationException>(() =>
+            service.InsertChildControl("<Border><Button /></Border>", border, "TextBlock"));
     }
 
     [TestMethod]

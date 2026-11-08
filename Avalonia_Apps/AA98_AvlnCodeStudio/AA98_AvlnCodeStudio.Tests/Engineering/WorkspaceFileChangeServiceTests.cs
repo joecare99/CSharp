@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
 
@@ -169,6 +170,7 @@ public sealed class WorkspaceFileChangeServiceTests
             string nestedDirectory = Path.Combine(root, "ViewModels");
             string generatedPath = Path.Combine(nestedDirectory, "ViewModel.cs");
             byte[] originalBytes = [0xEF, 0xBB, 0xBF, .. System.Text.Encoding.UTF8.GetBytes("before")];
+            byte[] updatedBytes = [0xEF, 0xBB, 0xBF, .. Encoding.UTF8.GetBytes("after")];
             File.WriteAllBytes(existingPath, originalBytes);
             WorkspaceFileChangeService service = CreateService();
             WorkspaceFileChangeProposal proposal = service.Prepare(
@@ -182,6 +184,7 @@ public sealed class WorkspaceFileChangeServiceTests
             Assert.IsTrue(service.CanUndo);
             Assert.IsFalse(service.CanRedo);
             Assert.IsTrue(File.Exists(generatedPath));
+            CollectionAssert.AreEqual(updatedBytes, File.ReadAllBytes(existingPath));
 
             Assert.IsTrue(service.Undo());
             CollectionAssert.AreEqual(originalBytes, File.ReadAllBytes(existingPath));
@@ -192,9 +195,82 @@ public sealed class WorkspaceFileChangeServiceTests
 
             Assert.IsTrue(service.Redo());
             Assert.AreEqual("after", File.ReadAllText(existingPath));
+            CollectionAssert.AreEqual(updatedBytes, File.ReadAllBytes(existingPath));
             Assert.AreEqual("generated", File.ReadAllText(generatedPath));
             Assert.IsTrue(service.CanUndo);
             Assert.IsFalse(service.CanRedo);
+        });
+    }
+
+    [TestMethod]
+    public void ApplyUndoRedo_PreservesExistingUnicodeEncoding()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            Encoding[] encodings =
+            [
+                new UnicodeEncoding(bigEndian: false, byteOrderMark: true, throwOnInvalidBytes: true),
+                new UnicodeEncoding(bigEndian: true, byteOrderMark: true, throwOnInvalidBytes: true),
+                new UTF32Encoding(bigEndian: false, byteOrderMark: true, throwOnInvalidCharacters: true),
+                new UTF32Encoding(bigEndian: true, byteOrderMark: true, throwOnInvalidCharacters: true),
+            ];
+            const string original = "Before \u00e4";
+            const string updated = "After \u03a9";
+
+            foreach (Encoding encoding in encodings)
+            {
+                string path = Path.Combine(root, "Sample.txt");
+                byte[] originalBytes = [.. encoding.GetPreamble(), .. encoding.GetBytes(original)];
+                byte[] updatedBytes = [.. encoding.GetPreamble(), .. encoding.GetBytes(updated)];
+                File.WriteAllBytes(path, originalBytes);
+                WorkspaceFileChangeService service = CreateService();
+                WorkspaceFileChangeProposal proposal = service.Prepare(
+                    root,
+                    [WorkspaceFileChangeRequest.ReplaceExisting("Sample.txt", original, updated)]);
+
+                service.Apply(proposal, confirmed: true);
+                CollectionAssert.AreEqual(updatedBytes, File.ReadAllBytes(path), encoding.WebName);
+                Assert.IsTrue(service.Undo());
+                CollectionAssert.AreEqual(originalBytes, File.ReadAllBytes(path), encoding.WebName);
+                Assert.IsTrue(service.Redo());
+                CollectionAssert.AreEqual(updatedBytes, File.ReadAllBytes(path), encoding.WebName);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void Prepare_RejectsInvalidUnicodeWithoutChangingTheFile()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string path = Path.Combine(root, "Invalid.txt");
+            WorkspaceFileChangeService service = CreateService();
+            byte[][] invalidFiles =
+            [
+                [0xC3, 0x28],
+                [0xEF, 0xBB, 0xBF, 0xC3, 0x28],
+                [0xFF, 0xFE, 0x61],
+                [0xFE, 0xFF, 0xD8, 0x00],
+                [0xFF, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00],
+                [0x00, 0x00, 0xFE, 0xFF, 0x00, 0x11, 0x00, 0x00],
+            ];
+            foreach (byte[] originalBytes in invalidFiles)
+            {
+                File.WriteAllBytes(path, originalBytes);
+                InvalidDataException exception = Assert.ThrowsExactly<InvalidDataException>(() => service.Prepare(
+                    root,
+                    [WorkspaceFileChangeRequest.ReplaceExisting("Invalid.txt", "expected", "new")]));
+                StringAssert.Contains(exception.Message, "Invalid.txt");
+                CollectionAssert.AreEqual(originalBytes, File.ReadAllBytes(path));
+                Assert.IsFalse(service.CanUndo);
+            }
+
+            File.WriteAllText(path, "valid");
+            Assert.ThrowsExactly<InvalidDataException>(() => service.Prepare(
+                root,
+                [WorkspaceFileChangeRequest.ReplaceExisting("Invalid.txt", "valid", "\uD800")]));
+            Assert.AreEqual("valid", File.ReadAllText(path));
+            Assert.IsFalse(service.CanUndo);
         });
     }
 

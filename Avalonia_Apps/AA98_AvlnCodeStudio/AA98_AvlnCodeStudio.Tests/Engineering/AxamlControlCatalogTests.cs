@@ -86,4 +86,18 @@ public sealed class AxamlControlCatalogTests
 
         CollectionAssert.AreEqual(new[] { "DockPanel", "StackPanel", "UniformGrid", "WrapPanel" }, actual);
     }
+
+    [TestMethod]
+    public void Catalog_OnlyEnablesSafeRemovalForSupportedSingleChildContainers()
+    {
+        string[] actual = AxamlControlCatalog.All
+            .Where(static capability => capability.AllowsSafeChildRemoval)
+            .Select(static capability => capability.TypeName)
+            .OrderBy(static typeName => typeName, StringComparer.Ordinal)
+            .ToArray();
+
+        CollectionAssert.AreEqual(
+            new[] { "Border", "ContentControl", "Expander", "GroupBox", "ScrollViewer", "Viewbox" },
+            actual);
+    }
 }

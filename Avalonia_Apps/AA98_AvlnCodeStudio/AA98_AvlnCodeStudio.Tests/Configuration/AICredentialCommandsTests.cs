@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -914,6 +915,103 @@ public sealed class AICredentialCommandsTests
             }
         }
     }
+
+    [TestMethod]
+    public async Task EncryptedVaultLock_PreservesAChangedCredentialContext()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AvlnVaultUiTest-{Guid.NewGuid():N}");
+        await using EncryptedFileCredentialProvider vault = new(Path.Combine(directory, "vault.json"));
+        using CredentialSecret passphrase = new("a long test vault passphrase".AsSpan());
+        OpenAICompatibleAISettings aiSettings = new();
+        MainWindowViewModel viewModel = CreateViewModel(new CredentialProviderCatalog([vault]), aiSettings);
+        try
+        {
+            await vault.InitializeAsync(passphrase);
+            viewModel.SelectedCredentialProviderId = vault.ProviderId;
+            viewModel.AiApiKey = "previous-session-key";
+
+            SemaphoreSlim gate = GetVaultOperationGate(vault);
+            await gate.WaitAsync();
+            Task locking;
+            try
+            {
+                locking = viewModel.LockEncryptedVaultAsync();
+                Assert.IsTrue(viewModel.CredentialOperationBusy);
+                viewModel.SelectedCredentialProviderId = null;
+                viewModel.AiApiKey = "new-session-key";
+            }
+            finally
+            {
+                gate.Release();
+            }
+
+            await locking;
+
+            Assert.IsFalse(vault.IsUnlocked);
+            Assert.AreEqual("new-session-key", viewModel.AiApiKey);
+            Assert.AreEqual("new-session-key", aiSettings.ApiKey);
+            StringAssert.Contains(viewModel.CredentialStorageStatus, "previous credential context");
+        }
+        finally
+        {
+            await vault.LockAsync();
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task EncryptedVaultUnlock_ReportsAChangedCredentialContext()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AvlnVaultUiTest-{Guid.NewGuid():N}");
+        await using EncryptedFileCredentialProvider vault = new(Path.Combine(directory, "vault.json"));
+        using CredentialSecret passphrase = new("a long test vault passphrase".AsSpan());
+        MainWindowViewModel viewModel = CreateViewModel(
+            new CredentialProviderCatalog([vault]),
+            new OpenAICompatibleAISettings());
+        try
+        {
+            await vault.InitializeAsync(passphrase);
+            await vault.LockAsync();
+            viewModel.SelectedCredentialProviderId = vault.ProviderId;
+            viewModel.AiApiKey = "current-session-key";
+
+            SemaphoreSlim gate = GetVaultOperationGate(vault);
+            await gate.WaitAsync();
+            Task unlocking;
+            try
+            {
+                unlocking = viewModel.UnlockEncryptedVaultAsync(passphrase);
+                Assert.IsTrue(viewModel.CredentialOperationBusy);
+                viewModel.SelectedCredentialProviderId = null;
+            }
+            finally
+            {
+                gate.Release();
+            }
+
+            await unlocking;
+
+            Assert.IsTrue(vault.IsUnlocked);
+            Assert.AreEqual("current-session-key", viewModel.AiApiKey);
+            StringAssert.Contains(viewModel.CredentialStorageStatus, "previous credential context");
+        }
+        finally
+        {
+            await vault.LockAsync();
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+    }
+
+    private static SemaphoreSlim GetVaultOperationGate(EncryptedFileCredentialProvider vault) =>
+        (SemaphoreSlim)(typeof(EncryptedFileCredentialProvider)
+            .GetField("_gate", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .GetValue(vault)!);
 
     private static MainWindowViewModel CreateViewModel(
         CredentialProviderCatalog catalog,

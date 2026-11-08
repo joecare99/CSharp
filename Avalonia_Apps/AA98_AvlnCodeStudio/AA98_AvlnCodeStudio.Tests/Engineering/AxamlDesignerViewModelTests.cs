@@ -37,7 +37,135 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
-    public void PropertyRows_DebouncedEditsAreUndoableAsOneAndInvalidDraftRequiresDiscard()
+    public void StructureCommands_UpdateTheSharedMarkupSelectionAndUndo()
+    {
+        const string markup = "<StackPanel xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>"
+            + "<TextBox x:Name='First' /><Button x:Name='Second' /></StackPanel>";
+        AxamlDesignerViewModel viewModel = new();
+        string? published = null;
+        viewModel.MarkupChanged += (_, args) => published = args.Markup;
+        viewModel.LoadMarkup(markup);
+        Assert.AreSame(viewModel.PreviewRoot, viewModel.StructureRoots.Single());
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[1];
+
+        Assert.IsTrue(viewModel.MoveStructureEarlierCommand.CanExecute(null));
+        viewModel.MoveStructureEarlierCommand.Execute(null);
+        Assert.AreEqual("Second", viewModel.SelectedNode!.StableName);
+        Assert.AreEqual("Second", viewModel.PreviewRoot!.Children[0].StableName);
+        Assert.IsNotNull(published);
+        viewModel.RemoveStructureCommand.Execute(null);
+        Assert.AreEqual("StackPanel", viewModel.SelectedNode!.TypeName);
+        Assert.AreEqual("First", viewModel.PreviewRoot!.Children.Single().StableName);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Second", viewModel.SelectedNode!.StableName);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(markup, published);
+        Assert.AreEqual("Second", viewModel.SelectedNode!.StableName);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("Second", viewModel.PreviewRoot!.Children[0].StableName);
+    }
+
+    [TestMethod]
+    public void StructureCommands_BlockDraftsFromOtherTargetsAndProtectUndo()
+    {
+        const string markup = "<StackPanel><TextBox Width='100' /><Button /></StackPanel>";
+        AxamlDesignerViewModel viewModel = new();
+        string? published = null;
+        viewModel.MarkupChanged += (_, args) => published = args.Markup;
+        viewModel.LoadMarkup(markup);
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        viewModel.AddTextBlockCommand.Execute(null);
+        string beforeDraft = published!;
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
+        AxamlPropertyRowViewModel width = viewModel.PropertyRows.Single(row => row.Name == "Width");
+        Assert.IsFalse(width.TrySetValue("-2"));
+        viewModel.SelectedNode = viewModel.PreviewRoot.Children[1];
+
+        Assert.AreEqual(1, viewModel.UnappliedDrafts.Count);
+        Assert.IsFalse(viewModel.RemoveStructureCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.MoveStructureEarlierCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.UndoCommand.CanExecute(null));
+        viewModel.RemoveStructureCommand.Execute(null);
+        viewModel.MoveStructureEarlierCommand.Execute(null);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(beforeDraft, published);
+        Assert.AreEqual("-2", viewModel.UnappliedDrafts.Single().Value);
+        StringAssert.Contains(viewModel.StructureAvailabilityText, "all property drafts");
+
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        viewModel.AddButtonCommand.Execute(null);
+        Assert.AreEqual(beforeDraft, published);
+        viewModel.DiscardStoredDraft(viewModel.UnappliedDrafts.Single());
+        Assert.IsTrue(viewModel.UndoCommand.CanExecute(null));
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(markup, published);
+    }
+
+    [TestMethod]
+    public void StructureCommands_ExplainProtectedCommentsWithoutChangingMarkup()
+    {
+        const string markup = "<StackPanel><!-- keep --><Button /><TextBlock /></StackPanel>";
+        AxamlDesignerViewModel viewModel = new();
+        int changes = 0;
+        viewModel.MarkupChanged += (_, _) => changes++;
+        viewModel.LoadMarkup(markup);
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
+
+        viewModel.RemoveStructureCommand.Execute(null);
+
+        Assert.AreEqual(0, changes);
+        Assert.IsFalse(viewModel.CanUndo);
+        StringAssert.Contains(viewModel.StatusText, "comments");
+    }
+
+    [TestMethod]
+    public void GridCommands_MoveSpansAndBlockDraftsFromAnyTarget()
+    {
+        const string markup = "<Grid RowDefinitions='*,*' ColumnDefinitions='*,*,*'>"
+            + "<TextBox Width='100' Grid.RowSpan='2' /><Button Grid.Column='2' /></Grid>";
+        AxamlDesignerViewModel viewModel = new();
+        string? published = null;
+        viewModel.MarkupChanged += (_, args) => published = args.Markup;
+        viewModel.LoadMarkup(markup);
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
+
+        Assert.IsTrue(viewModel.IsSelectedGridChild);
+        Assert.IsTrue(viewModel.MoveGridColumnLaterCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.MoveGridRowLaterCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.MoveStructureLaterCommand.CanExecute(null));
+        viewModel.MoveGridColumnLaterCommand.Execute(null);
+        Assert.AreEqual("1", viewModel.SelectedNode!.Properties["Grid.Column"]);
+        Assert.AreEqual("2", viewModel.SelectedNode.Properties["Grid.RowSpan"]);
+        Assert.IsFalse(viewModel.MoveGridColumnLaterCommand.CanExecute(null));
+        Assert.IsTrue(viewModel.MoveGridColumnEarlierCommand.CanExecute(null));
+        string moved = published!;
+
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[1];
+        AxamlPropertyRowViewModel width = viewModel.PropertyRows.Single(row => row.Name == "Width");
+        Assert.IsFalse(width.TrySetValue("-2"));
+        Assert.IsFalse(viewModel.RemoveStructureCommand.CanExecute(null));
+        viewModel.SelectedNode = viewModel.PreviewRoot.Children[0];
+        Assert.AreEqual(1, viewModel.UnappliedDrafts.Count);
+        Assert.IsFalse(viewModel.MoveGridColumnEarlierCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.RemoveStructureCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.UndoCommand.CanExecute(null));
+        viewModel.MoveGridColumnEarlierCommand.Execute(null);
+        viewModel.RemoveStructureCommand.Execute(null);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(moved, published);
+        Assert.AreEqual("-2", viewModel.UnappliedDrafts.Single().Value);
+
+        viewModel.DiscardStoredDraft(viewModel.UnappliedDrafts.Single());
+        Assert.IsTrue(viewModel.UndoCommand.CanExecute(null));
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(markup, published);
+        Assert.IsTrue(viewModel.RedoCommand.CanExecute(null));
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual(moved, published);
+    }
+
+    [TestMethod]
+    public void PropertyRows_DebouncedEditsAreUndoableAndDraftFollowsItsOwnTarget()
     {
         AxamlDesignerViewModel viewModel = new();
         viewModel.LoadMarkup("<StackPanel Width='100'><TextBlock Text='Hello' /></StackPanel>");
@@ -62,12 +190,55 @@ public sealed class AxamlDesignerViewModelTests
         Assert.IsTrue(width.HasValidationError);
         AxamlPreviewNode selectedNode = viewModel.SelectedNode!;
         viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
-        Assert.AreSame(selectedNode, viewModel.SelectedNode);
+        Assert.AreNotSame(selectedNode, viewModel.SelectedNode);
+        Assert.AreEqual(1, viewModel.UnappliedDrafts.Count);
+        Assert.AreEqual("-2", viewModel.UnappliedDrafts[0].Value);
+        viewModel.SelectedNode = selectedNode;
+        width = viewModel.PropertyRows.Single(static row => row.Name == "Width");
+        Assert.AreEqual("-2", width.Value);
         Assert.IsTrue(viewModel.HasInvalidPropertyDraft);
 
         viewModel.DiscardPropertyDraft(width);
         Assert.IsFalse(viewModel.HasInvalidPropertyDraft);
         Assert.AreEqual("100", width.Value);
+    }
+
+    [TestMethod]
+    public void PropertyDrafts_ChangedOrMissingTargetRequiresExplicitRecovery()
+    {
+        const string original = """
+            <StackPanel xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+              <TextBox x:Name="First" Width="100" />
+              <TextBox x:Name="Second" Width="300" />
+            </StackPanel>
+            """;
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(original);
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
+        PropertyEditorItemViewModel width = viewModel.PropertyEditor.Items.Single(item => item.PropertyItem.Name == "Width");
+        width.ScalarValue = "-2";
+        Assert.IsTrue(width.HasValidationError);
+
+        viewModel.SelectedNode = viewModel.PreviewRoot.Children[1];
+        Assert.AreEqual("300", viewModel.PropertyRows.Single(row => row.Name == "Width").Value);
+        string changed = original.Replace("Width=\"100\"", "Width=\"200\"", StringComparison.Ordinal);
+        viewModel.LoadMarkup(changed);
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
+        AxamlPropertyDraft draft = viewModel.UnappliedDrafts.Single();
+        Assert.IsTrue(draft.CanRestore);
+        Assert.AreEqual("200", viewModel.PropertyRows.Single(row => row.Name == "Width").Value);
+        Assert.IsTrue(viewModel.RestoreDraft(draft));
+        Assert.AreEqual("-2", viewModel.PropertyRows.Single(row => row.Name == "Width").Value);
+        Assert.AreEqual("200", viewModel.PreviewRoot.Children[0].Properties["Width"]);
+
+        viewModel.SelectedNode = viewModel.PreviewRoot.Children[1];
+        viewModel.LoadMarkup("<StackPanel><TextBox Width='300' /></StackPanel>");
+        draft = viewModel.UnappliedDrafts.Single();
+        Assert.IsFalse(draft.CanRestore);
+        Assert.AreEqual("-2", draft.Value);
+        Assert.IsTrue(viewModel.HasUnappliedPropertyDrafts);
+        viewModel.DiscardStoredDraft(draft);
+        Assert.IsFalse(viewModel.HasUnappliedPropertyDrafts);
     }
 
     [TestMethod]
@@ -437,6 +608,24 @@ public sealed class AxamlDesignerViewModelTests
         viewModel.SelectedNode = viewModel.PreviewRoot;
         viewModel.AddButtonCommand.Execute(null);
         StringAssert.Contains(viewModel.StatusText, "cannot contain another child");
+    }
+
+    [TestMethod]
+    public void DesignerViewModel_RemovesSingleChildContentAndUndoRestoresIt()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        string? publishedMarkup = null;
+        viewModel.MarkupChanged += (_, args) => publishedMarkup = args.Markup;
+        viewModel.LoadMarkup("<Border><Button /></Border>");
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children.Single();
+
+        Assert.IsTrue(viewModel.RemoveStructureCommand.CanExecute(null));
+        viewModel.RemoveStructureCommand.Execute(null);
+
+        Assert.AreEqual("<Border></Border>", publishedMarkup);
+        Assert.IsTrue(viewModel.CanUndo);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("<Border><Button /></Border>", publishedMarkup);
     }
 
     [TestMethod]
