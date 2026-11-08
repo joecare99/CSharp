@@ -33,11 +33,14 @@ public sealed class FileSystemProjectExplorerSource : IProjectExplorerSource
 
         cancellationToken.ThrowIfCancellationRequested();
         string normalizedRootPath = Path.GetFullPath(rootPath);
-        ProjectExplorerItem rootItem = CreateDirectoryItem(
-            normalizedRootPath,
-            ProjectExplorerItemKind.Project,
-            cancellationToken);
-        return Task.FromResult(new ProjectExplorerSnapshot(normalizedRootPath, [rootItem]));
+        return Task.Run(() =>
+        {
+            ProjectExplorerItem rootItem = CreateDirectoryItem(
+                normalizedRootPath,
+                ProjectExplorerItemKind.Project,
+                cancellationToken);
+            return new ProjectExplorerSnapshot(normalizedRootPath, [rootItem]);
+        }, cancellationToken);
     }
 
     private ProjectExplorerItem CreateDirectoryItem(
@@ -65,14 +68,14 @@ public sealed class FileSystemProjectExplorerSource : IProjectExplorerSource
             }
 
             List<ProjectExplorerItem> children = [];
-            foreach (string directoryPath in Directory.EnumerateDirectories(path)
+            foreach (string directoryPath in EnumeratePaths(Directory.EnumerateDirectories(path), cancellationToken)
                          .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 children.Add(CreateDirectoryItem(directoryPath, ProjectExplorerItemKind.Folder, cancellationToken));
             }
 
-            foreach (string filePath in Directory.EnumerateFiles(path)
+            foreach (string filePath in EnumeratePaths(Directory.EnumerateFiles(path), cancellationToken)
                          .Where(IsSupportedFile)
                          .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
             {
@@ -98,6 +101,15 @@ public sealed class FileSystemProjectExplorerSource : IProjectExplorerSource
 
     private bool IsSupportedFile(string path) =>
         _supportedExtensions is null || _supportedExtensions.Contains(Path.GetExtension(path));
+
+    private static IEnumerable<string> EnumeratePaths(IEnumerable<string> paths, CancellationToken cancellationToken)
+    {
+        foreach (string path in paths)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            yield return path;
+        }
+    }
 
     private static string CreateId(ProjectExplorerItemKind kind, string path) =>
         $"{kind}:{Path.GetFullPath(path)}";
