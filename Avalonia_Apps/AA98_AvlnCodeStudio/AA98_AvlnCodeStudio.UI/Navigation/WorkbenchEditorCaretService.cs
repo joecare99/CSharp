@@ -41,8 +41,22 @@ public sealed class WorkbenchEditorCaretService : IEditorCaretService
             throw new InvalidOperationException($"The document '{document.FilePath}' is not open in the workbench.");
         }
 
-        editorWorkspace.Activate(tab);
-        if (tab.View is not EditorTextArea editor)
+        if (!ReferenceEquals(editorWorkspace.ActiveTab, tab))
+        {
+            return Task.CompletedTask;
+        }
+
+        if (!tab.HasTextEditor)
+        {
+            if (location.Line is null && location.Column is null && location.Offset is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            throw new InvalidOperationException("The workbench editor does not provide a caret-capable text area.");
+        }
+
+        if (tab.TextView is not EditorTextArea editor)
         {
             throw new InvalidOperationException("The workbench editor does not provide a caret-capable text area.");
         }

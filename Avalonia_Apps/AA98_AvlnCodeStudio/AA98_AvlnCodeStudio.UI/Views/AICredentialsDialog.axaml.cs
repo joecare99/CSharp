@@ -15,7 +15,6 @@ public partial class AICredentialsDialog : Window
 
     protected override void OnOpened(EventArgs eventArgs)
     {
-        base.OnOpened(eventArgs);
         var screen = Screens.ScreenFromWindow(this);
         if (screen is not null && screen.Scaling > 0)
         {
@@ -25,6 +24,7 @@ public partial class AICredentialsDialog : Window
                 MaxHeight = Math.Min(MaxHeight, availableHeight);
             }
         }
+        base.OnOpened(eventArgs);
     }
 
     protected override void OnClosed(EventArgs eventArgs)

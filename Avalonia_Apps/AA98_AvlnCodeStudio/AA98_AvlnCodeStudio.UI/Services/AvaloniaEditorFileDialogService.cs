@@ -33,12 +33,12 @@ public sealed class AvaloniaEditorFileDialogService : IEditorFileDialogService
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        _openFileDialog.Title = "Open text file";
+        _openFileDialog.Title = "Open file";
         _openFileDialog.InitialDirectory = initialDirectory;
         _openFileDialog.AllowMultiple = false;
         _openFileDialog.MutableFilters.Clear();
-        _openFileDialog.MutableFilters.Add(TextDocumentsFilter);
         _openFileDialog.MutableFilters.Add(AllFilesFilter);
+        _openFileDialog.MutableFilters.Add(TextDocumentsFilter);
 
         var files = await _openFileDialog.ShowAsync().ConfigureAwait(false);
         return files.Count > 0 ? files[0] : null;

@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.Base.OS.Services;
+using AA98_AvlnCodeStudio.Model.Documents;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -12,14 +13,23 @@ namespace AA98_AvlnCodeStudio.UI.Services;
 public sealed class FileSystemTextDocumentStorageService : ITextDocumentStorageService
 {
     /// <inheritdoc/>
-    public Task<string> ReadAllTextAsync(string filePath, CancellationToken cancellationToken = default)
+    public async Task<string> ReadAllTextAsync(string filePath, CancellationToken cancellationToken = default)
     {
-        return File.ReadAllTextAsync(filePath, cancellationToken);
+        byte[] bytes = await File.ReadAllBytesAsync(filePath, cancellationToken).ConfigureAwait(false);
+        return TextDocumentEncoding.Decode(bytes).Text;
     }
 
     /// <inheritdoc/>
-    public Task SaveAllTextAsync(string filePath, string content, CancellationToken cancellationToken = default)
+    public async Task SaveAllTextAsync(string filePath, string content, CancellationToken cancellationToken = default)
     {
-        return File.WriteAllTextAsync(filePath, content, Encoding.UTF8, cancellationToken);
+        Encoding encoding = new UTF8Encoding(false, true);
+        if (File.Exists(filePath))
+        {
+            byte[] existing = await File.ReadAllBytesAsync(filePath, cancellationToken).ConfigureAwait(false);
+            encoding = TextDocumentEncoding.Decode(existing).Encoding;
+        }
+
+        byte[] bytes = TextDocumentEncoding.Encode(content, encoding);
+        await File.WriteAllBytesAsync(filePath, bytes, cancellationToken).ConfigureAwait(false);
     }
 }

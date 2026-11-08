@@ -71,6 +71,16 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     /// </summary>
     public string WindowTitle => $"{UiStrings.ApplicationTitle} - {DocumentName ?? _workflow.Document.DisplayName}{(IsDirty ? UiStrings.WindowTitleDirtySuffix : string.Empty)}";
 
+    public event EventHandler? ContentChanging;
+
+    partial void OnTextChanging(string value)
+    {
+        if (!string.Equals(value, _workflow.Document.Content, StringComparison.Ordinal))
+        {
+            ContentChanging?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
     partial void OnTextChanged(string value)
     {
         _workflow.UpdateText(value);
@@ -176,9 +186,17 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     [RelayCommand]
     private async Task SaveAsync()
     {
-        var result = await _workflow.SaveAsync();
-        SynchronizeFromDocument();
-        ApplyResult(result, string.Format(UiStrings.SavedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.SavedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.SaveCanceledStatusText, UiStrings.SaveCanceledNotificationText);
+        try
+        {
+            var result = await _workflow.SaveAsync();
+            SynchronizeFromDocument();
+            ApplyResult(result, string.Format(UiStrings.SavedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.SavedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.SaveCanceledStatusText, UiStrings.SaveCanceledNotificationText);
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            StatusText = "Save failed.";
+            NotificationText = exception.Message;
+        }
     }
 
     /// <summary>
@@ -188,9 +206,17 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     [RelayCommand]
     private async Task SaveAsAsync()
     {
-        var result = await _workflow.SaveAsAsync();
-        SynchronizeFromDocument();
-        ApplyResult(result, string.Format(UiStrings.SavedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.SavedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.SaveAsCanceledStatusText, UiStrings.SaveAsCanceledNotificationText);
+        try
+        {
+            var result = await _workflow.SaveAsAsync();
+            SynchronizeFromDocument();
+            ApplyResult(result, string.Format(UiStrings.SavedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.SavedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.SaveAsCanceledStatusText, UiStrings.SaveAsCanceledNotificationText);
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            StatusText = "Save failed.";
+            NotificationText = exception.Message;
+        }
     }
 
     private void SynchronizeFromDocument()

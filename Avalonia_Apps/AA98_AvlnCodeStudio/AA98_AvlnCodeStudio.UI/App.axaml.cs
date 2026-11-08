@@ -257,7 +257,8 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<UI.Components.IAvaloniaEditorComponent>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>().Create());
             services.AddSingleton<UI.ViewModels.EditorDocumentWorkspace>(serviceProvider => new UI.ViewModels.EditorDocumentWorkspace(
                 serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponent>(),
-                serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>()));
+                serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>(),
+                serviceProvider.GetServices<IDocumentEditorFactory<EditorTabViewModel>>()));
             services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.IWorkspaceOpenDocumentProvider>(
                 serviceProvider => serviceProvider.GetRequiredService<UI.ViewModels.EditorDocumentWorkspace>());
             services.AddSingleton<AA98_AvlnCodeStudio.Model.Workspaces.WorkspaceFileChangeService>();
@@ -267,9 +268,12 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<IEditorCaretService, WorkbenchEditorCaretService>();
             services.AddSingleton<ICodeNavigator, EditorCodeNavigator>();
             services.AddSingleton<IProjectExplorerSource>(
-                new FileSystemProjectExplorerSource([".cs", ".axaml", ".csproj", ".sln", ".md", ".json"]));
+                new FileSystemProjectExplorerSource());
             services.AddSingleton<IProjectExplorerState, ProjectExplorerState>();
-            services.AddSingleton<IProjectExplorerItemOpener, CodeNavigatorProjectExplorerItemOpener>();
+            services.AddSingleton<IProjectExplorerItemOpener>(serviceProvider =>
+                new CodeNavigatorProjectExplorerItemOpener(
+                    serviceProvider.GetRequiredService<ICodeNavigator>(),
+                    serviceProvider.GetRequiredService<Func<UI.ViewModels.EditorDocumentWorkspace>>()));
             services.AddProjectExplorerAvalonia();
             services.AddDiagnosticsUi();
             services.AddSingleton<MainWindowViewModel>(serviceProvider => new MainWindowViewModel(

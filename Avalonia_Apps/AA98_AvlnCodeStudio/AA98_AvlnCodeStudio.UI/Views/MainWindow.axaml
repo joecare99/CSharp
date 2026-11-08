@@ -6,7 +6,7 @@
         xmlns:diagnostics="using:AA98_AvlnCodeStudio.Diagnostics.UI.Views"
         xmlns:projectExplorer="using:Project.Explorer.Avalonia.Views"
         xmlns:debugging="using:AA98_AvlnCodeStudio.Base.Debugging.Models"
-        xmlns:designer="using:AA98_AvlnCodeStudio.AxamlDesigner.UI.Views"
+        xmlns:propertyEditor="using:Property.Editor.Avalonia.Views"
         xmlns:workspaces="using:AA98_AvlnCodeStudio.Model.Workspaces"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="AA98_AvlnCodeStudio.UI.Views.MainWindow"
@@ -45,9 +45,9 @@
               Margin="8"
               MinHeight="0"
               RowDefinitions="Auto,*,Auto"
-              ColumnDefinitions="280,*">
+              ColumnDefinitions="280,8,*,8,300">
         <Border Grid.Row="0"
-                Grid.ColumnSpan="2"
+                Grid.ColumnSpan="5"
                 Margin="0,0,0,8"
                 Padding="8,4"
                 BorderBrush="{DynamicResource ThemeControlMidBrush}"
@@ -58,8 +58,8 @@
                     <MenuItem Header="{Binding FileMenuHeader}">
                         <MenuItem Header="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
                         <MenuItem Header="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
-                        <MenuItem Header="{Binding SaveCommandText}" Command="{Binding Editor.SaveCommand}" />
-                        <MenuItem Header="{Binding SaveAsCommandText}" Command="{Binding Editor.SaveAsCommand}" />
+                        <MenuItem Header="{Binding SaveCommandText}" Command="{Binding ActiveEditorTab.SaveCommand}" IsEnabled="{Binding CanEditActiveDocument}" />
+                        <MenuItem Header="{Binding SaveAsCommandText}" Command="{Binding ActiveEditorTab.SaveAsCommand}" IsEnabled="{Binding CanEditActiveDocument}" />
                         <Separator />
                         <MenuItem Header="{Binding OpenWorkspaceCommandText}" Command="{Binding OpenWorkspaceCommand}" />
                         <MenuItem Header="{Binding ProjectTemplatesMenuText}">
@@ -118,7 +118,7 @@
                             <TextBlock Text="{Binding OpenCommandText}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Command="{Binding Editor.SaveCommand}">
+                    <Button Command="{Binding ActiveEditorTab.SaveCommand}" IsEnabled="{Binding CanEditActiveDocument}">
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <Image Source="/Assets/Icons/save.png" Width="16" Height="16" />
                             <TextBlock Text="{Binding SaveCommandText}" VerticalAlignment="Center" />
@@ -149,6 +149,24 @@
                 BorderThickness="1"
                 CornerRadius="4">
             <TabControl>
+                <TabItem Header="Solution">
+                    <Grid RowDefinitions="Auto,*" RowSpacing="6">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="{Binding WorkspaceTitle}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding VersionControlSummary}" Opacity="0.75" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <projectExplorer:ProjectExplorerView Grid.Row="1" DataContext="{Binding ProjectExplorer}" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Palette">
+                    <Grid>
+                        <TextBlock Text="The active editor does not provide a palette."
+                                   IsVisible="{Binding !ActiveEditorTab.HasPalette}"
+                                   TextWrapping="Wrap" Margin="8" />
+                        <ContentControl IsVisible="{Binding ActiveEditorTab.HasPalette}"
+                                        Content="{Binding ActiveEditorTab.PaletteView}" />
+                    </Grid>
+                </TabItem>
                 <TabItem Header="AI Chat">
                     <Grid RowDefinitions="Auto,*,Auto,Auto" RowSpacing="8">
                         <StackPanel Spacing="6">
@@ -196,20 +214,6 @@
                             <Button Content="{Binding AIChatSendCommandText}"
                                     Command="{Binding SendAIChatMessageCommand}" />
                         </StackPanel>
-                    </Grid>
-                </TabItem>
-                <TabItem Header="Solution">
-                    <Grid RowDefinitions="Auto,*" RowSpacing="6">
-                        <StackPanel Spacing="2">
-                            <TextBlock Text="{Binding WorkspaceTitle}"
-                                       FontWeight="SemiBold"
-                                       TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{Binding VersionControlSummary}"
-                                       Opacity="0.75"
-                                       TextTrimming="CharacterEllipsis" />
-                        </StackPanel>
-                        <projectExplorer:ProjectExplorerView Grid.Row="1"
-                                                              DataContext="{Binding ProjectExplorer}" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="Plan">
@@ -319,8 +323,9 @@
             </TabControl>
         </Border>
 
+        <GridSplitter Grid.Row="1" Grid.Column="1" Width="8" ResizeDirection="Columns" />
         <Border Grid.Row="1"
-                Grid.Column="1"
+                Grid.Column="2"
                 Padding="8"
                 MinHeight="0"
                 BorderBrush="{DynamicResource ThemeControlMidBrush}"
@@ -403,40 +408,55 @@
                         </StackPanel>
                     </Grid>
                 </Expander>
+                <TabControl ItemsSource="{Binding EditorWorkspace.Tabs}"
+                            SelectedItem="{Binding ActiveEditorTab, Mode=TwoWay}">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:EditorTabViewModel">
+                            <StackPanel Orientation="Horizontal" Spacing="4" PointerPressed="OnEditorTabHeaderPointerPressed">
+                                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
+                                <Button Content="x" Padding="4,0" Click="OnCloseEditorTabRequested"
+                                        AutomationProperties.Name="Close editor tab" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate x:DataType="vm:EditorTabViewModel">
+                            <ContentControl Content="{Binding View}" />
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+            </DockPanel>
+        </Border>
+
+        <GridSplitter Grid.Row="1" Grid.Column="3" Width="8" ResizeDirection="Columns" />
+        <Border Grid.Row="1" Grid.Column="4" Padding="6" MinHeight="0"
+                BorderBrush="{DynamicResource ThemeControlMidBrush}" BorderThickness="1" CornerRadius="4">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="{Binding PropertySelectionCaption}"
+                           FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,8" />
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="{Binding PreviewColumnWidth}" />
-                    </Grid.ColumnDefinitions>
-                    <TabControl Grid.Column="0"
-                                ItemsSource="{Binding EditorWorkspace.Tabs}"
-                                SelectedItem="{Binding ActiveEditorTab, Mode=TwoWay}">
-                        <TabControl.ItemTemplate>
-                            <DataTemplate x:DataType="vm:EditorTabViewModel">
-                                <TextBlock Text="{Binding Title}" />
-                            </DataTemplate>
-                        </TabControl.ItemTemplate>
-                        <TabControl.ContentTemplate>
-                            <DataTemplate x:DataType="vm:EditorTabViewModel">
-                                <ContentControl Content="{Binding View}" />
-                            </DataTemplate>
-                        </TabControl.ContentTemplate>
-                    </TabControl>
-                    <GridSplitter Grid.Column="1"
-                                  Width="8"
-                                  ResizeDirection="Columns"
-                                  IsVisible="{Binding HasAxamlPreview}" />
-                    <designer:AxamlDesignerView Grid.Column="2"
-                                                Margin="8,0,0,0"
-                                                IsVisible="{Binding HasPreview}"
-                                                DataContext="{Binding AxamlDesigner}" />
+                    <Grid IsVisible="{Binding !HasEditorPropertyView}" RowDefinitions="*,Auto,Auto">
+                        <ScrollViewer>
+                            <propertyEditor:PropertyEditorPanel DataContext="{Binding SelectionProperties}" />
+                        </ScrollViewer>
+                        <TextBlock Grid.Row="1" Text="{Binding PropertySelectionError}"
+                                   TextWrapping="Wrap" Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}" />
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="6"
+                                    IsVisible="{Binding HasStandardEditorPropertySelection}">
+                            <Button Content="Apply" Command="{Binding ApplyEditorPropertiesCommand}"
+                                    IsEnabled="{Binding CanEditSelectedProperties}" />
+                            <Button Content="Discard" Command="{Binding DiscardEditorPropertiesCommand}"
+                                    IsEnabled="{Binding CanEditSelectedProperties}" />
+                        </StackPanel>
+                    </Grid>
+                    <ContentControl IsVisible="{Binding HasEditorPropertyView}"
+                                    Content="{Binding SelectedEditorPropertyView}" />
                 </Grid>
             </DockPanel>
         </Border>
 
         <Grid Grid.Row="2"
-              Grid.ColumnSpan="2"
+              Grid.ColumnSpan="5"
               Margin="0,8,0,0"
               MaxHeight="220">
             <Expander
