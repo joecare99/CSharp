@@ -3,7 +3,7 @@ using System;
 namespace AA98_AvlnCodeStudio.Model.Workspaces;
 
 /// <summary>
-/// Describes one proposed UTF-8 text file creation or snapshot-checked replacement.
+/// Describes one proposed UTF-8 text file creation or snapshot-checked Unicode text replacement.
 /// </summary>
 public sealed class WorkspaceFileChangeRequest
 {
@@ -32,7 +32,8 @@ public sealed class WorkspaceFileChangeRequest
     public string? ExpectedContent { get; }
 
     /// <summary>
-    /// Gets the expected in-memory snapshot for an open document, when it differs from the file snapshot.
+    /// Gets the expected in-memory snapshot. When specified, that document must remain open and unchanged
+    /// until the proposal is applied.
     /// </summary>
     public string? ExpectedOpenDocumentContent { get; }
 

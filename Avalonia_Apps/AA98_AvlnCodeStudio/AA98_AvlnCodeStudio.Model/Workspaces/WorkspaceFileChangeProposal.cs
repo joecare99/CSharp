@@ -35,6 +35,7 @@ public sealed class WorkspaceFileChange
         byte[]? originalBytes,
         string? originalContent,
         string? originalOpenDocumentContent,
+        bool requiresOpenDocument,
         string proposedContent,
         byte[] proposedBytes)
     {
@@ -44,6 +45,7 @@ public sealed class WorkspaceFileChange
         _originalBytes = originalBytes;
         OriginalContent = originalContent;
         OriginalOpenDocumentContent = originalOpenDocumentContent;
+        RequiresOpenDocument = requiresOpenDocument;
         ProposedContent = proposedContent;
         _proposedBytes = proposedBytes;
     }
@@ -62,6 +64,8 @@ public sealed class WorkspaceFileChange
     public string? OriginalOpenDocumentContent { get; }
 
     internal string? DocumentOriginalContent => OriginalOpenDocumentContent ?? OriginalContent;
+
+    internal bool RequiresOpenDocument { get; }
 
     public string ProposedContent { get; }
 

@@ -87,7 +87,7 @@ public sealed class FileEditorDocument : IFileEditorDocument
         }
 
         Content = content;
-        IsDirty = true;
+        IsDirty = !string.Equals(Content, SavedContent, StringComparison.Ordinal);
     }
 
     /// <summary>

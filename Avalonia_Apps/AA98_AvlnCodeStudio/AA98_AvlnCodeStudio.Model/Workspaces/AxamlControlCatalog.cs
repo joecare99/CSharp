@@ -16,31 +16,32 @@ public sealed record AxamlControlCapability(
     IReadOnlyList<AxamlBindablePropertyCapability> BindableProperties,
     bool SupportsMvvmGeneration,
     int MaximumChildren,
-    bool AllowsAppendingChildren);
+    bool AllowsAppendingChildren,
+    bool AllowsSafeChildRemoval);
 
 public static class AxamlControlCatalog
 {
     private static readonly IReadOnlyList<AxamlControlCapability> s_capabilities =
     [
         Create("Border", ["Background", "BorderThickness", "Height", "Margin", "Padding", "Width"],
-            maximumChildren: 1),
+            maximumChildren: 1, allowsSafeChildRemoval: true),
         Create("Button", ["Content", "Height", "HorizontalAlignment", "Margin", "VerticalAlignment", "Width"],
             [new("Command", "ICommand", IsCommand: true)], supportsMvvmGeneration: true),
         Create("CheckBox", ["Content", "Height", "HorizontalAlignment", "Margin", "VerticalAlignment", "Width"],
             [new("IsChecked", "bool?", IsCommand: false, DefaultBindingMode: AxamlBindingMode.TwoWay)], supportsMvvmGeneration: true),
         Create("ComboBox", [], [new("SelectedIndex", "int", IsCommand: false, DefaultBindingMode: AxamlBindingMode.TwoWay)], supportsMvvmGeneration: true),
-        Create("ContentControl", [], maximumChildren: 1),
+        Create("ContentControl", [], maximumChildren: 1, allowsSafeChildRemoval: true),
         Create("DockPanel", [], maximumChildren: int.MaxValue, allowsAppendingChildren: true),
-        Create("Expander", ["Header", "IsExpanded"], maximumChildren: 1),
+        Create("Expander", ["Header", "IsExpanded"], maximumChildren: 1, allowsSafeChildRemoval: true),
         Create("Grid", ["Height", "Margin", "Width"], maximumChildren: int.MaxValue),
-        Create("GroupBox", ["Header", "Height", "Margin", "Width"], maximumChildren: 1),
+        Create("GroupBox", ["Header", "Height", "Margin", "Width"], maximumChildren: 1, allowsSafeChildRemoval: true),
         Create("Label", ["Content", "Height", "HorizontalAlignment", "Margin", "VerticalAlignment", "Width"]),
         Create("ListBox", []),
         Create("NumericUpDown", [], [new("Value", "decimal?", IsCommand: false, DefaultBindingMode: AxamlBindingMode.TwoWay)], supportsMvvmGeneration: true),
         Create("ProgressBar", []),
         Create("RadioButton", ["Content", "Height", "HorizontalAlignment", "Margin", "VerticalAlignment", "Width"],
             [new("IsChecked", "bool?", IsCommand: false, DefaultBindingMode: AxamlBindingMode.TwoWay)], supportsMvvmGeneration: true),
-        Create("ScrollViewer", [], maximumChildren: 1),
+        Create("ScrollViewer", [], maximumChildren: 1, allowsSafeChildRemoval: true),
         Create("Separator", []),
         Create("Slider", [], [new("Value", "double", IsCommand: false, DefaultBindingMode: AxamlBindingMode.TwoWay)], supportsMvvmGeneration: true),
         Create("StackPanel", ["Height", "Margin", "Orientation", "Spacing", "Width"],
@@ -58,7 +59,7 @@ public static class AxamlControlCatalog
         Create("UniformGrid", ["Columns", "FirstColumn", "Height", "Margin", "Rows", "Width"],
             maximumChildren: int.MaxValue, allowsAppendingChildren: true),
         Create("UserControl", [], maximumChildren: int.MaxValue),
-        Create("Viewbox", ["Height", "Margin", "Stretch", "Width"], maximumChildren: 1),
+        Create("Viewbox", ["Height", "Margin", "Stretch", "Width"], maximumChildren: 1, allowsSafeChildRemoval: true),
         Create("Window", [], maximumChildren: int.MaxValue),
         Create("WrapPanel", ["Height", "Margin", "Orientation", "Width"],
             maximumChildren: int.MaxValue, allowsAppendingChildren: true),
@@ -92,7 +93,8 @@ public static class AxamlControlCatalog
         AxamlBindablePropertyCapability[]? bindableProperties = null,
         bool supportsMvvmGeneration = false,
         int maximumChildren = 0,
-        bool allowsAppendingChildren = false)
+        bool allowsAppendingChildren = false,
+        bool allowsSafeChildRemoval = false)
     {
         return new AxamlControlCapability(
             typeName,
@@ -100,6 +102,7 @@ public static class AxamlControlCatalog
             Array.AsReadOnly(bindableProperties ?? []),
             supportsMvvmGeneration,
             maximumChildren,
-            allowsAppendingChildren);
+            allowsAppendingChildren,
+            allowsSafeChildRemoval);
     }
 }
