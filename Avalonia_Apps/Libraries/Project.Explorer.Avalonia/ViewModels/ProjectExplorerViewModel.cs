@@ -11,12 +11,21 @@ using System.Threading.Tasks;
 namespace Project.Explorer.Avalonia.ViewModels;
 
 /// <summary>Coordinates a project explorer source, neutral view state, and host-provided file opening.</summary>
-public sealed partial class ProjectExplorerViewModel : ObservableObject
+public sealed partial class ProjectExplorerViewModel : ObservableObject, IDisposable
 {
     private readonly IProjectExplorerSource _source;
     private readonly IProjectExplorerState _state;
     private readonly IProjectExplorerItemOpener _itemOpener;
     private string? _rootPath;
+    private CancellationTokenSource? _navigationCancellation;
+    private CancellationToken _navigationToken;
+    private long _navigationVersion;
+    private CancellationTokenSource? _refreshCancellation;
+    private long _refreshVersion;
+    private int _busyCount;
+    private bool _restoringSelection;
+
+    public event Action<ProjectExplorerItem?>? UserSelectionChanged;
 
     /// <summary>Initializes an explorer with host-provided source, state, and file-opening capabilities.</summary>
     public ProjectExplorerViewModel(
@@ -44,10 +53,27 @@ public sealed partial class ProjectExplorerViewModel : ObservableObject
 
     partial void OnSelectedItemChanged(ProjectExplorerItemViewModel? value)
     {
+        if (_restoringSelection)
+        {
+            return;
+        }
+
         _state.Select(value?.Id);
+        UserSelectionChanged?.Invoke(value?.Item);
+        CancelPendingNavigation();
+        ErrorMessage = string.Empty;
+        OnPropertyChanged(nameof(ErrorMessage));
         if (value is { Item.Kind: ProjectExplorerItemKind.File, Item.IsAvailable: true })
         {
-            _ = OpenFileAsync(value.Item);
+            if (_itemOpener is IProjectExplorerPreviewOpener previewOpener)
+            {
+                CancellationToken cancellationToken = StartPendingNavigation();
+                _ = PreviewFileAsync(previewOpener, value.Item, _navigationVersion, cancellationToken);
+            }
+            else
+            {
+                _ = OpenFileAsync(value.Item, explicitActivation: false, _navigationVersion, CancellationToken.None);
+            }
         }
     }
 
@@ -60,7 +86,7 @@ public sealed partial class ProjectExplorerViewModel : ObservableObject
         }
 
         _rootPath = rootPath;
-        await RefreshCoreAsync(cancellationToken).ConfigureAwait(false);
+        await RefreshCoreAsync(cancellationToken);
     }
 
     /// <summary>Refreshes the most recently loaded root.</summary>
@@ -69,7 +95,7 @@ public sealed partial class ProjectExplorerViewModel : ObservableObject
     {
         if (_rootPath is not null)
         {
-            await RefreshCoreAsync(CancellationToken.None).ConfigureAwait(false);
+            await RefreshCoreAsync(CancellationToken.None);
         }
     }
 
@@ -85,51 +111,140 @@ public sealed partial class ProjectExplorerViewModel : ObservableObject
     public Task OpenAsync(ProjectExplorerItemViewModel item)
     {
         ArgumentNullException.ThrowIfNull(item);
-        return item.Item.Kind == ProjectExplorerItemKind.File && item.Item.IsAvailable
-            ? OpenFileAsync(item.Item)
-            : Task.CompletedTask;
+        CancelPendingNavigation();
+        if (item.Item.Kind != ProjectExplorerItemKind.File || !item.Item.IsAvailable)
+        {
+            return Task.CompletedTask;
+        }
+
+        CancellationToken cancellationToken = _itemOpener is IProjectExplorerPreviewOpener
+            ? StartPendingNavigation()
+            : CancellationToken.None;
+        return OpenFileAsync(item.Item, explicitActivation: true, _navigationVersion, cancellationToken);
     }
 
     private async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
+        CancelPendingNavigation();
+        long version = Interlocked.Increment(ref _refreshVersion);
+        string rootPath = _rootPath!;
+        CancellationTokenSource refreshCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        CancellationToken refreshToken = refreshCancellation.Token;
+        CancelRefresh(Interlocked.Exchange(ref _refreshCancellation, refreshCancellation));
         SetBusy(true);
         ErrorMessage = string.Empty;
         OnPropertyChanged(nameof(ErrorMessage));
         try
         {
-            ProjectExplorerSnapshot snapshot = await _source.RefreshAsync(_rootPath!, cancellationToken).ConfigureAwait(false);
-            RootItems.Clear();
-            foreach (ProjectExplorerItem item in snapshot.RootItems)
+            ProjectExplorerSnapshot snapshot = await _source.RefreshAsync(rootPath, refreshToken);
+            refreshToken.ThrowIfCancellationRequested();
+            if (version != Interlocked.Read(ref _refreshVersion))
             {
-                RootItems.Add(CreateItemViewModel(item));
+                return;
             }
 
-            SelectedItem = FindById(RootItems, _state.SelectedItemId);
+            string? selectedId = _state.SelectedItemId;
+            _restoringSelection = _itemOpener is IProjectExplorerPreviewOpener;
+            try
+            {
+                RootItems.Clear();
+                foreach (ProjectExplorerItem item in snapshot.RootItems)
+                {
+                    RootItems.Add(CreateItemViewModel(item));
+                }
+
+                SelectedItem = FindById(RootItems, selectedId);
+                if (_restoringSelection)
+                {
+                    _state.Select(SelectedItem?.Id);
+                }
+            }
+            finally
+            {
+                _restoringSelection = false;
+            }
+        }
+        catch (OperationCanceledException) when (refreshToken.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+        {
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            ErrorMessage = exception.Message;
-            OnPropertyChanged(nameof(ErrorMessage));
+            if (version == Interlocked.Read(ref _refreshVersion))
+            {
+                ErrorMessage = exception.Message;
+                OnPropertyChanged(nameof(ErrorMessage));
+            }
         }
         finally
         {
+            Interlocked.CompareExchange(ref _refreshCancellation, null, refreshCancellation);
+            refreshCancellation.Dispose();
             SetBusy(false);
         }
     }
 
-    private async Task OpenFileAsync(ProjectExplorerItem item)
+    private async Task PreviewFileAsync(
+        IProjectExplorerPreviewOpener opener,
+        ProjectExplorerItem item,
+        long version,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(180), cancellationToken);
+            SetBusy(true);
+            try
+            {
+                await opener.PreviewAsync(item, cancellationToken);
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+        }
+        catch (Exception exception)
+        {
+            if (version == Interlocked.Read(ref _navigationVersion))
+            {
+                ErrorMessage = exception.Message;
+                OnPropertyChanged(nameof(ErrorMessage));
+            }
+        }
+    }
+
+    private async Task OpenFileAsync(
+        ProjectExplorerItem item,
+        bool explicitActivation,
+        long version,
+        CancellationToken cancellationToken)
     {
         SetBusy(true);
         ErrorMessage = string.Empty;
         OnPropertyChanged(nameof(ErrorMessage));
         try
         {
-            await _itemOpener.OpenAsync(item).ConfigureAwait(false);
+            if (explicitActivation && _itemOpener is IProjectExplorerPreviewOpener previewOpener)
+            {
+                await previewOpener.ActivateAsync(item, cancellationToken);
+            }
+            else
+            {
+                await _itemOpener.OpenAsync(item, cancellationToken);
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
         }
         catch (Exception exception)
         {
-            ErrorMessage = exception.Message;
-            OnPropertyChanged(nameof(ErrorMessage));
+            if (version == Interlocked.Read(ref _navigationVersion))
+            {
+                ErrorMessage = exception.Message;
+                OnPropertyChanged(nameof(ErrorMessage));
+            }
         }
         finally
         {
@@ -198,8 +313,55 @@ public sealed partial class ProjectExplorerViewModel : ObservableObject
 
     private void SetBusy(bool isBusy)
     {
-        IsBusy = isBusy;
+        int count = isBusy ? Interlocked.Increment(ref _busyCount) : Interlocked.Decrement(ref _busyCount);
+        IsBusy = count > 0;
         OnPropertyChanged(nameof(IsBusy));
         RefreshCommand.NotifyCanExecuteChanged();
+    }
+
+    private CancellationToken StartPendingNavigation()
+    {
+        CancellationTokenSource cancellation = new();
+        _navigationCancellation = cancellation;
+        _navigationToken = cancellation.Token;
+        return _navigationToken;
+    }
+
+    /// <summary>
+    /// Cancels pending explorer navigation. Pass its token when an explorer-originated
+    /// document open must continue without cancelling itself.
+    /// </summary>
+    public void CancelPendingNavigation(CancellationToken except = default)
+    {
+        if (except.CanBeCanceled && except == _navigationToken)
+        {
+            return;
+        }
+
+        Interlocked.Increment(ref _navigationVersion);
+        CancellationTokenSource? cancellation = _navigationCancellation;
+        _navigationCancellation = null;
+        _navigationToken = default;
+        cancellation?.Cancel();
+        cancellation?.Dispose();
+    }
+
+    private static void CancelRefresh(CancellationTokenSource? cancellation)
+    {
+        try
+        {
+            cancellation?.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // The superseded request may already have completed and disposed its source.
+        }
+    }
+
+    public void Dispose()
+    {
+        CancelPendingNavigation();
+        Interlocked.Increment(ref _refreshVersion);
+        CancelRefresh(Interlocked.Exchange(ref _refreshCancellation, null));
     }
 }
