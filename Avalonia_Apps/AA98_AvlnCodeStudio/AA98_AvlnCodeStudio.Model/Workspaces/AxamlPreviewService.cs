@@ -85,7 +85,7 @@ public sealed class AxamlPreviewService
             && GetEditableProperties(node).Contains(propertyName, StringComparer.Ordinal)
             && node.SourceStartOffset >= 0
             && (!node.Properties.TryGetValue(propertyName, out string? value)
-                || !value.TrimStart().StartsWith('{'))
+                || !IsMarkupExtensionValue(node.TypeName, propertyName, value))
             && !(propertyName == GetEditablePropertyName(node.TypeName) && node.HasInlineText)
             && !node.PropertyElementNames.Contains($"{node.TypeName}.{propertyName}", StringComparer.Ordinal);
     }
@@ -247,7 +247,12 @@ public sealed class AxamlPreviewService
                 : string.Concat(axaml.AsSpan(0, attributeNameStart), axaml.AsSpan(attributeEnd));
         }
 
-        string escapedValue = EscapeAttributeValue(value);
+        string sourceValue = AxamlPropertyValueValidator.IsFormatProperty(node.TypeName, propertyName)
+            && value.TrimStart().StartsWith('{')
+            && !value.TrimStart().StartsWith("{}", StringComparison.Ordinal)
+                ? $"{{}}{value}"
+                : value;
+        string escapedValue = EscapeAttributeValue(sourceValue);
         if (attributeStart >= 0)
         {
             char quote = axaml[attributeStart - 1];
@@ -1236,9 +1241,17 @@ public sealed class AxamlPreviewService
         return typeName switch
         {
             "TextBlock" or "TextBox" => "Text",
-            "Button" or "CheckBox" or "RadioButton" or "Label" => "Content",
+            "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleSwitch" => "Content",
             _ => null,
         };
+    }
+
+    private static bool IsMarkupExtensionValue(string controlType, string propertyName, string value)
+    {
+        string trimmed = value.TrimStart();
+        return trimmed.StartsWith('{')
+            && !(AxamlPropertyValueValidator.IsFormatProperty(controlType, propertyName)
+                && trimmed.StartsWith("{}", StringComparison.Ordinal));
     }
 
     private static int GetSourceStartOffset(XElement element, string source)
@@ -1785,7 +1798,7 @@ public sealed class AxamlPreviewService
         string? textProperty = typeName switch
         {
             "TextBlock" or "TextBox" => "Text",
-            "Button" or "CheckBox" or "RadioButton" or "Label" => "Content",
+            "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleSwitch" => "Content",
             "Expander" or "GroupBox" => "Header",
             _ => null,
         };
