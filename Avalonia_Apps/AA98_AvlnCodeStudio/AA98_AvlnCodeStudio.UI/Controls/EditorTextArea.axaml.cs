@@ -69,7 +69,7 @@ public partial class EditorTextArea : UserControl
         var text = _editor.Text ?? string.Empty;
         var requestedOffset = location.Offset ?? GetOffset(text, location.Line, location.Column);
         _editor.CaretOffset = Math.Clamp(requestedOffset, 0, text.Length);
-        _editor.Focus();
+        _editor.Focus(Avalonia.Input.NavigationMethod.Unspecified);
     }
 
     public void SetCaretOffset(int offset)
@@ -80,7 +80,7 @@ public partial class EditorTextArea : UserControl
         }
 
         _editor.CaretOffset = Math.Clamp(offset, 0, (_editor.Text ?? string.Empty).Length);
-        _editor.Focus();
+        _editor.Focus(Avalonia.Input.NavigationMethod.Unspecified);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)

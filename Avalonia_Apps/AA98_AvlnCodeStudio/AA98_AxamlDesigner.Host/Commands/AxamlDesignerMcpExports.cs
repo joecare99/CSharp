@@ -14,7 +14,15 @@ public static class AxamlDesignerMcpExports
 {
     public static IServiceCollection AddAxamlDesignerMcpExports(this IServiceCollection services)
     {
+        return AddAxamlDesignerMcpExports(services, OnUiThreadAsync);
+    }
+
+    internal static IServiceCollection AddAxamlDesignerMcpExports(
+        this IServiceCollection services,
+        Func<Func<string>, CancellationToken, Task<string>> invokeOnUiThread)
+    {
         ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(invokeOnUiThread);
         services.AddSingleton<IComponentScreenshotSource, AxamlDesignerScreenshotSource>();
         services.AddSingleton<IComponentMcpCommand>(provider =>
         {
@@ -23,7 +31,7 @@ public static class AxamlDesignerMcpExports
                 "Returns the open file, current selection, preview tree, and editable properties.",
                 """{"type":"object","properties":{},"additionalProperties":false}""",
                 isReadOnly: true,
-                (_, token) => OnUiThreadAsync(viewModel.GetDesignerStateJson, token));
+                (_, token) => invokeOnUiThread(viewModel.GetDesignerStateJson, token));
         });
         services.AddSingleton<IComponentMcpCommand>(provider =>
         {
@@ -40,7 +48,7 @@ public static class AxamlDesignerMcpExports
                         throw new ArgumentException("Only .axaml files can be opened through the designer command.");
                     }
 
-                    return OnUiThreadAsync(() =>
+                    return invokeOnUiThread(() =>
                     {
                         if (!viewModel.OpenDocument(path))
                         {
@@ -58,7 +66,7 @@ public static class AxamlDesignerMcpExports
                 "Saves the currently open AXAML file to its existing path.",
                 """{"type":"object","properties":{},"additionalProperties":false}""",
                 false,
-                (_, token) => OnUiThreadAsync(() => viewModel.SaveDocument()
+                (_, token) => invokeOnUiThread(() => viewModel.SaveDocument()
                     ? viewModel.StatusText
                     : throw new IOException(viewModel.StatusText), token));
         });
@@ -72,7 +80,7 @@ public static class AxamlDesignerMcpExports
                 (args, token) =>
                 {
                     string path = ReadString(args, "nodePath", allowEmpty: true);
-                    return OnUiThreadAsync(() =>
+                    return invokeOnUiThread(() =>
                     {
                         if (!viewModel.SelectElement(path))
                         {
@@ -95,7 +103,7 @@ public static class AxamlDesignerMcpExports
                     string nodePath = ReadString(args, "nodePath", allowEmpty: true);
                     string propertyName = ReadString(args, "propertyName");
                     string value = ReadString(args, "value", allowEmpty: true);
-                    return OnUiThreadAsync(() =>
+                    return invokeOnUiThread(() =>
                     {
                         bool changed = viewModel.SetElementProperty(nodePath, propertyName, value);
                         if (!changed)
@@ -114,7 +122,7 @@ public static class AxamlDesignerMcpExports
                 "Undoes the most recent designer property edit.",
                 """{"type":"object","properties":{},"additionalProperties":false}""",
                 false,
-                (_, token) => OnUiThreadAsync(() =>
+                (_, token) => invokeOnUiThread(() =>
                 {
                     if (!viewModel.Designer.UndoCommand.CanExecute(null))
                     {
@@ -132,7 +140,7 @@ public static class AxamlDesignerMcpExports
                 "Reapplies the most recently undone designer property edit.",
                 """{"type":"object","properties":{},"additionalProperties":false}""",
                 false,
-                (_, token) => OnUiThreadAsync(() =>
+                (_, token) => invokeOnUiThread(() =>
                 {
                     if (!viewModel.Designer.RedoCommand.CanExecute(null))
                     {
@@ -179,7 +187,7 @@ public static class AxamlDesignerMcpExports
             return action();
         }
 
-        return await Dispatcher.UIThread.InvokeAsync(action);
+        return await Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Normal, cancellationToken);
     }
 }
 

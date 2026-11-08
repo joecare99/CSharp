@@ -24,7 +24,4 @@
 	<ProjectReference Include="..\..\Libraries\Code.Navigation\Code.Navigation.csproj" />
 	<ProjectReference Include="..\..\Libraries\Diagnostics.Navigation\Diagnostics.Navigation.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageVersion Update="Avalonia" Version="12.1.4" />
-  </ItemGroup>
 </Project>

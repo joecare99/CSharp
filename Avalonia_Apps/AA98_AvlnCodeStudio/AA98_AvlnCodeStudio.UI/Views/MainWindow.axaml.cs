@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Config.Service;
@@ -22,14 +24,103 @@ namespace AA98_AvlnCodeStudio.UI.Views
 {
     public partial class MainWindow : Window
     {
-        private sealed class SingleSectionRegistry(IConfigUiSection section) : IConfigUiSectionRegistry
+        private bool _closeConfirmed;
+        private bool _closePromptActive;
+
+        private sealed class ProjectSectionRegistry(params IConfigUiSection[] sections) : IConfigUiSectionRegistry
         {
-            public IReadOnlyList<IConfigUiSection> Sections { get; } = [section];
+            public IReadOnlyList<IConfigUiSection> Sections { get; } = sections;
         }
 
         public MainWindow()
         {
             InitializeComponent();
+            Closing += OnWindowClosing;
+            Closed += OnWindowClosed;
+        }
+
+        private void OnWindowClosed(object? sender, EventArgs e)
+        {
+            if (DataContext is ViewModels.MainWindowViewModel viewModel)
+            {
+                viewModel.EditorWorkspace.Dispose();
+            }
+        }
+
+        private void OnEditorTabHeaderPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (sender is Control { DataContext: ViewModels.EditorTabViewModel tab }
+                && DataContext is ViewModels.MainWindowViewModel viewModel)
+            {
+                viewModel.EditorWorkspace.Activate(tab);
+                tab.ActivateByUser(designerSelection: tab.SelectedProperties is not null);
+            }
+        }
+
+        private async void OnCloseEditorTabRequested(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Control { DataContext: ViewModels.EditorTabViewModel tab }
+                || DataContext is not ViewModels.MainWindowViewModel viewModel)
+            {
+                return;
+            }
+
+            if (viewModel.EditorWorkspace.IsSaving(tab))
+            {
+                viewModel.Editor.StatusText = "Wait for the document save to complete before closing the tab.";
+                return;
+            }
+
+            bool discard = !tab.IsProtected
+                || await new DiscardWorkbenchChangesDialog(tab.Title).ShowDialog<bool>(this);
+            if (discard)
+            {
+                if (!viewModel.EditorWorkspace.TryClose(tab, discardProtected: true))
+                {
+                    viewModel.Editor.StatusText = "Wait for the document save to complete before closing the tab.";
+                }
+            }
+        }
+
+        private async void OnWindowClosing(object? sender, WindowClosingEventArgs e)
+        {
+            if (_closeConfirmed || DataContext is not ViewModels.MainWindowViewModel viewModel)
+            {
+                return;
+            }
+
+            if (_closePromptActive)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            if (viewModel.EditorWorkspace.HasInProgressSaves)
+            {
+                e.Cancel = true;
+                viewModel.Editor.StatusText = "Wait for document saves to complete before closing the Workbench.";
+                return;
+            }
+
+            string[] protectedTabs = viewModel.EditorWorkspace.Tabs
+                .Where(static tab => tab.IsProtected)
+                .Select(static tab => tab.Title)
+                .ToArray();
+            if (protectedTabs.Length == 0)
+            {
+                return;
+            }
+
+            e.Cancel = true;
+            _closePromptActive = true;
+            bool discard = await new DiscardWorkbenchChangesDialog(string.Join(Environment.NewLine, protectedTabs))
+                .ShowDialog<bool>(this);
+            _closePromptActive = false;
+            if (discard)
+            {
+                _closeConfirmed = true;
+                Close();
+            }
         }
 
         public MainWindow(ViewModels.MainWindowViewModel viewModel)
@@ -215,14 +306,20 @@ namespace AA98_AvlnCodeStudio.UI.Views
                     project.ProjectPath,
                     viewModel.WorkspaceFileChangeService,
                     (proposal, cancellationToken) =>
-                        viewModel.ReviewWorkspaceFileChangesAsync?.Invoke(proposal, cancellationToken)
-                        ?? Task.FromResult(false));
+                        ApproveProjectSettingsChangeAsync(viewModel, workspace, proposal, cancellationToken));
                 global::Config.UI.Avalonia.ViewModels.ConfigUiViewModel configViewModel = new(
-                    new SingleSectionRegistry(new PropertyProviderConfigUiSection(
-                        "Project",
-                        project.Name,
-                        provider,
-                        $"Project settings from {project.ProjectPath}.")),
+                    new ProjectSectionRegistry(
+                        new PropertyProviderConfigUiSection(
+                            "Project",
+                            project.Name,
+                            provider,
+                            $"Project settings from {project.ProjectPath}."),
+                        new PropertyProviderConfigUiSection(
+                            "LaunchProfiles",
+                            "Launch profiles",
+                            new ProjectLaunchProfilesProvider(project.ProjectPath),
+                            "Read-only project profile inspection. The workbench debugger does not apply these profiles.",
+                            sortOrder: 1)),
                     new PropertyEditorViewModel(),
                     $"Project Settings - {project.Name}");
                 await new ConfigUiDialog(configViewModel).ShowDialog(this);
@@ -239,10 +336,52 @@ namespace AA98_AvlnCodeStudio.UI.Views
                 throw new InvalidOperationException("The workbench view model is not available for change review.");
             }
 
+            CSharpWorkspace? workspace = viewModel.Workspace;
+            ViewModels.EditorTabViewModel activeTab = viewModel.ActiveEditorTab;
             bool applied = await new WorkspaceFileChangeReviewDialog(
                 proposal,
-                viewModel.WorkspaceFileChangeService).ShowDialog(this);
+                viewModel.WorkspaceFileChangeService,
+                () => ReferenceEquals(DataContext, viewModel)
+                    && ReferenceEquals(viewModel.Workspace, workspace)
+                    && ReferenceEquals(viewModel.ActiveEditorTab, activeTab)).ShowDialog(this);
             return applied;
+        }
+
+        private async Task<bool> ApproveProjectSettingsChangeAsync(
+            ViewModels.MainWindowViewModel viewModel,
+            CSharpWorkspace workspace,
+            WorkspaceFileChangeProposal proposal,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!ReferenceEquals(DataContext, viewModel) || !ReferenceEquals(viewModel.Workspace, workspace))
+            {
+                throw new InvalidOperationException("The active workspace changed. Close project settings and reopen them for the current workspace.");
+            }
+
+            WorkspaceFileChangeReviewDialog dialog = WorkspaceFileChangeReviewDialog.CreateApprovalOnly(proposal);
+            Task<bool> review = dialog.ShowDialog(this);
+            using CancellationTokenRegistration registration = cancellationToken.Register(
+                () => Dispatcher.UIThread.Post(() =>
+                {
+                    if (dialog.IsVisible)
+                    {
+                        dialog.Close(false);
+                    }
+                }));
+            bool approved = await review;
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!approved)
+            {
+                return false;
+            }
+
+            if (!ReferenceEquals(DataContext, viewModel) || !ReferenceEquals(viewModel.Workspace, workspace))
+            {
+                throw new InvalidOperationException("The active workspace changed during review. No project settings were applied.");
+            }
+
+            return true;
         }
 
         private async Task<bool> ApproveAIChatToolExecutionAsync(

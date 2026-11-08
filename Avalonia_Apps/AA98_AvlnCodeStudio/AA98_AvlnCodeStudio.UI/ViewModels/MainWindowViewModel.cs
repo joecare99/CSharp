@@ -31,6 +31,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using Avalonia.Controls;
 using Code.Navigation;
 using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
@@ -38,6 +39,9 @@ using Config.Service;
 using AA98_AvlnCodeStudio.Versioning.Svn.Services;
 using AA98_AvlnCodeStudio.UI.Configuration;
 using AA98_AvlnCodeStudio.Config.Secrets;
+using Property.Editor;
+using Property.Editor.Avalonia;
+using Project.Explorer;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels
 {
@@ -50,7 +54,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly AxamlMvvmGenerator _axamlMvvmGenerator;
         private readonly WorkspaceFileChangeService _workspaceFileChangeService;
         private readonly ICSharpProjectPackageService _projectPackageService;
-        private readonly AxamlDesignerViewModel _axamlDesigner;
+        private readonly AxamlDesignerViewModel _emptyDesigner;
         private readonly Services.IWorkspaceFileDialogService _workspaceFileDialogService;
         private readonly ICodeStudioBuilderService _builderService;
         private readonly IVersionControlService _versionControlService;
@@ -66,6 +70,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly CredentialProviderCatalog? _credentialProviderCatalog;
         private long _credentialContextVersion;
         private long _credentialStatusRevision;
+        private long _workspaceOpenVersion;
         private readonly List<AIMessage> _aiConversation = [];
         private readonly List<Diagnostic> _buildDiagnostics = [];
         private readonly Dictionary<string, HashSet<int>> _debugBreakpoints = new(
@@ -74,6 +79,10 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private CancellationTokenSource? _languageAnalysisCancellation;
         private CancellationTokenSource? _axamlBindingAnalysisCancellation;
         private EditorViewModel? _observedEditor;
+        private EditorTabViewModel? _observedTab;
+        private EditorTabViewModel? _selectedPropertyTab;
+        private bool _editorPropertySelection;
+        private AxamlDesignerViewModel? _observedDesigner;
         private Controls.EditorTextArea? _observedEditorTextArea;
         public MainWindowViewModel()
             : this(
@@ -134,10 +143,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 ?? new WorkspaceFileChangeService(_editorWorkspace);
             _workspaceFileChangeService.HistoryChanged += OnWorkspaceChangeHistoryChanged;
             _projectPackageService = projectPackageService ?? new DotNetCSharpProjectPackageService();
-            _axamlDesigner = axamlDesignerViewModel ?? new AxamlDesignerViewModel();
-            _axamlDesigner.MarkupChanged += OnAxamlDesignerMarkupChanged;
-            _axamlDesigner.PropertyChanged += OnAxamlDesignerPropertyChanged;
-            _axamlDesigner.ApplyMissingBindingAsync = ApplyMissingAxamlBindingAsync;
+            _emptyDesigner = axamlDesignerViewModel ?? new AxamlDesignerViewModel();
             _workspaceFileDialogService = workspaceFileDialogService ?? new Services.DesignWorkspaceFileDialogService();
             _builderService = builderService ?? new NullCodeStudioBuilderService();
             _versionControlService = versionControlService ?? new NullVersionControlService();
@@ -167,8 +173,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             SelectedCredentialProviderId = GetCredentialProviderId(_codeStudioSettings?.CredentialManager);
             _debugSessionService.SessionEventReceived += OnDebugSessionEventReceived;
             _editorWorkspace.PropertyChanged += OnEditorWorkspacePropertyChanged;
+            _editorWorkspace.TabClosed += OnEditorTabClosed;
+            _editorWorkspace.NavigationRequested += OnEditorNavigationRequested;
             _observedEditor = _editorWorkspace.ActiveTab.Editor;
             _observedEditor.PropertyChanged += OnActiveEditorPropertyChanged;
+            ObserveActiveTab();
             ObserveActiveEditorControl();
             CompletionSuggestions.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasCompletionSuggestions));
             PlanningExplorer = planningExplorer;
@@ -185,8 +194,15 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 }
             }
             ProjectExplorer = projectExplorer;
+            if (ProjectExplorer is not null)
+            {
+                ProjectExplorer.UserSelectionChanged += OnProjectExplorerUserSelectionChanged;
+            }
             PlanningExplorer.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
-            ProjectExplorer?.LoadAsync(Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
+            if (ProjectExplorer is not null)
+            {
+                _ = ProjectExplorer.LoadAsync(Directory.GetCurrentDirectory());
+            }
             LoadProjectTemplates(showStatus: false);
             RefreshAxamlPreview();
         }
@@ -195,12 +211,19 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public WorkspaceFileChangeService WorkspaceFileChangeService => _workspaceFileChangeService;
 
+        /// <summary>Reviews and applies a proposal; returns true only after successful application.</summary>
         public Func<WorkspaceFileChangeProposal, CancellationToken, Task<bool>>? ReviewWorkspaceFileChangesAsync { get; set; }
 
         public EditorTabViewModel ActiveEditorTab
         {
             get => _editorWorkspace.ActiveTab;
-            set => _editorWorkspace.Activate(value);
+            set
+            {
+                if (value is not null && _editorWorkspace.Tabs.Contains(value))
+                {
+                    _editorWorkspace.Activate(value);
+                }
+            }
         }
 
         public EditorViewModel Editor => _editorWorkspace.ActiveTab.Editor;
@@ -229,7 +252,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         /// <summary>Gets the host-composed reusable project explorer state.</summary>
         public ProjectExplorerViewModel? ProjectExplorer { get; }
 
-        public Components.IAvaloniaEditorComponent EditorComponent => _editorWorkspace.ActiveTab.Component;
+        public Components.IAvaloniaEditorComponent? EditorComponent => _editorWorkspace.ActiveTab.Component;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(WorkspaceTitle))]
@@ -285,7 +308,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public Func<string, CancellationToken, Task<bool>>? ApproveSvnUpdateAsync { get; set; }
 
-        public string WindowTitle => Editor.WindowTitle;
+        public string WindowTitle => ActiveEditorTab.WindowTitle;
 
         public string NavigationTitle => UiStrings.NavigationTitle;
 
@@ -331,13 +354,37 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public ObservableCollection<CSharpProjectTemplateDefinition> ProjectTemplates { get; } = [];
 
-        public AxamlDesignerViewModel AxamlDesigner => _axamlDesigner;
+        public AxamlDesignerViewModel AxamlDesigner => ActiveEditorTab.Designer ?? _emptyDesigner;
 
-        public bool HasAxamlPreview => _axamlDesigner.HasPreview;
+        public bool HasAxamlPreview => ActiveEditorTab.Designer?.HasPreview == true && ActiveEditorTab.HasPalette;
 
-        public Avalonia.Controls.GridLength PreviewColumnWidth => HasAxamlPreview
-            ? new Avalonia.Controls.GridLength(2, Avalonia.Controls.GridUnitType.Star)
-            : new Avalonia.Controls.GridLength(0);
+        public bool CanEditActiveDocument => !ActiveEditorTab.IsDiagnostic;
+
+        public PropertyEditorViewModel SelectionProperties { get; } = new();
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasDesignerPropertySelection))]
+        private AxamlDesignerViewModel? _selectedPropertyDesigner;
+
+        [ObservableProperty]
+        private string _propertySelectionCaption = "Properties - no selection";
+
+        public bool HasDesignerPropertySelection => SelectedPropertyDesigner is not null;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasEditorPropertyView))]
+        private Control? _selectedEditorPropertyView;
+
+        public bool HasEditorPropertyView => SelectedEditorPropertyView is not null;
+
+        public bool HasStandardEditorPropertySelection =>
+            _editorPropertySelection && SelectedEditorPropertyView is null && _selectedPropertyTab?.SelectedProperties is not null;
+
+        public bool CanEditSelectedProperties =>
+            HasStandardEditorPropertySelection && _selectedPropertyTab?.SelectedProperties?.IsReadOnly == false;
+
+        [ObservableProperty]
+        private string _propertySelectionError = string.Empty;
 
         public ObservableCollection<CSharpWorkspaceProject> PackageProjects { get; } = [];
 
@@ -393,7 +440,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 return;
             }
 
-            await _editorWorkspace.OpenOrActivateAsync(path, cancellationToken);
+            await _editorWorkspace.OpenPreviewAsync(path, cancellationToken);
         }
 
         [RelayCommand]
@@ -478,7 +525,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 return;
             }
 
-            IEditorDocument? document = await _editorWorkspace.OpenOrActivateAsync(location.Path, cancellationToken);
+            IEditorDocument? document = await _editorWorkspace.OpenPreviewAsync(location.Path, cancellationToken);
             if (document is null)
             {
                 Editor.NotificationText = $"The definition file '{location.Path}' is no longer available.";
@@ -486,7 +533,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             EditorTabViewModel? targetTab = _editorWorkspace.FindByPath(location.Path);
-            if (targetTab?.View is not Controls.EditorTextArea targetEditor)
+            if (!ReferenceEquals(targetTab, _editorWorkspace.ActiveTab))
+            {
+                return;
+            }
+            if (targetTab?.TextView is not Controls.EditorTextArea targetEditor)
             {
                 throw new InvalidOperationException($"The definition file '{location.Path}' has no caret-capable editor.");
             }
@@ -2266,10 +2317,18 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         public async Task OpenWorkspaceFileAsync(string path, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            long version = Interlocked.Increment(ref _workspaceOpenVersion);
+            _editorWorkspace.CancelPendingPreviews();
             CSharpWorkspace workspace = _workspaceLoader.Load(path);
             if (ProjectExplorer is not null)
             {
                 await ProjectExplorer.LoadAsync(workspace.RootPath, cancellationToken);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            if (version != Interlocked.Read(ref _workspaceOpenVersion))
+            {
+                return;
             }
 
             if (Workspace is null
@@ -2280,12 +2339,17 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             Workspace = workspace;
             QueueLanguageAnalysis();
-            VersionControlStatus = await _versionControlService.GetStatusAsync(new VersionControlStatusRequest
+            RefreshAxamlPreview();
+            VersionControlStatus status = await _versionControlService.GetStatusAsync(new VersionControlStatusRequest
             {
                 RepositoryContextPath = workspace.RootPath,
                 IncludeChanges = true,
                 IncludeCapabilities = true,
             }, cancellationToken);
+            if (version == Interlocked.Read(ref _workspaceOpenVersion) && ReferenceEquals(workspace, Workspace))
+            {
+                VersionControlStatus = status;
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanUpdateSvnWorkspaceNow))]
@@ -2660,14 +2724,15 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 && selectedFrame.Line > 0
                 && File.Exists(selectedFrame.SourcePath))
             {
-                await _editorWorkspace.OpenOrActivateAsync(selectedFrame.SourcePath, cancellationToken);
+                await _editorWorkspace.OpenPreviewAsync(selectedFrame.SourcePath, cancellationToken);
                 if (!string.Equals(_activeDebugSessionId, sessionId, StringComparison.Ordinal))
                 {
                     return;
                 }
 
                 EditorTabViewModel? targetTab = _editorWorkspace.FindByPath(selectedFrame.SourcePath);
-                if (targetTab?.View is Controls.EditorTextArea editorTextArea)
+                if (ReferenceEquals(targetTab, _editorWorkspace.ActiveTab)
+                    && targetTab?.TextView is Controls.EditorTextArea editorTextArea)
                 {
                     editorTextArea.FocusAndMoveCaret(new CodeLocation(
                         selectedFrame.SourcePath,
@@ -2778,14 +2843,235 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             _observedEditor = _editorWorkspace.ActiveTab.Editor;
             _observedEditor.PropertyChanged += OnActiveEditorPropertyChanged;
+            if (_selectedPropertyTab is not null && !ReferenceEquals(_selectedPropertyTab, _editorWorkspace.ActiveTab))
+            {
+                ClearEditorPropertySelection();
+            }
+            ObserveActiveTab();
             ObserveActiveEditorControl();
             OnPropertyChanged(nameof(ActiveEditorTab));
             OnPropertyChanged(nameof(Editor));
             OnPropertyChanged(nameof(EditorComponent));
             OnPropertyChanged(nameof(WindowTitle));
+            OnPropertyChanged(nameof(AxamlDesigner));
+            OnPropertyChanged(nameof(HasAxamlPreview));
+            OnPropertyChanged(nameof(CanEditActiveDocument));
             ToggleBreakpointCommand.NotifyCanExecuteChanged();
             QueueLanguageAnalysis();
             RefreshAxamlPreview();
+        }
+
+        private void ObserveActiveTab()
+        {
+            if (_observedTab is not null)
+            {
+                _observedTab.UserActivated -= OnEditorTabUserActivated;
+                _observedTab.EditorSelectionChanged -= OnEditorSelectionChanged;
+                _observedTab.PropertyChanged -= OnActiveTabPropertyChanged;
+            }
+
+            _observedTab = _editorWorkspace.ActiveTab;
+            _observedTab.UserActivated += OnEditorTabUserActivated;
+            _observedTab.EditorSelectionChanged += OnEditorSelectionChanged;
+            _observedTab.PropertyChanged += OnActiveTabPropertyChanged;
+            ObserveActiveDesigner();
+        }
+
+        private void OnActiveTabPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(EditorTabViewModel.WindowTitle))
+            {
+                OnPropertyChanged(nameof(WindowTitle));
+            }
+        }
+
+        private void ObserveActiveDesigner()
+        {
+            AxamlDesignerViewModel? designer = _editorWorkspace.ActiveTab.Designer;
+            if (ReferenceEquals(designer, _observedDesigner))
+            {
+                return;
+            }
+
+            if (_observedDesigner is not null)
+            {
+                _observedDesigner.PropertyChanged -= OnAxamlDesignerPropertyChanged;
+                _observedDesigner.ApplyMissingBindingAsync = null;
+            }
+
+            _observedDesigner = designer;
+            if (designer is not null)
+            {
+                designer.PropertyChanged += OnAxamlDesignerPropertyChanged;
+                designer.ApplyMissingBindingAsync = ApplyMissingAxamlBindingAsync;
+            }
+
+            OnPropertyChanged(nameof(AxamlDesigner));
+            OnPropertyChanged(nameof(HasAxamlPreview));
+        }
+
+        private void OnProjectExplorerUserSelectionChanged(ProjectExplorerItem? item)
+        {
+            _editorWorkspace.CancelPendingPreviews();
+            _selectedPropertyTab = null;
+            _editorPropertySelection = false;
+            SelectedPropertyDesigner = null;
+            SelectedEditorPropertyView = null;
+            PropertySelectionError = string.Empty;
+            NotifyStandardPropertySelectionChanged();
+            if (item is null)
+            {
+                SelectionProperties.SetItems([]);
+                PropertySelectionCaption = "Properties - no selection";
+                return;
+            }
+
+            PropertyCategory category = new("Navigation", "Navigation");
+            SelectionProperties.SetItems(
+            [
+                new PropertyItem(category, "Name", "Name", typeof(string), item.Name, isEditable: false),
+                new PropertyItem(category, "Path", "Path", typeof(string), item.Path, isEditable: false),
+                new PropertyItem(category, "Kind", "Kind", typeof(string), item.Kind.ToString(), isEditable: false),
+                new PropertyItem(category, "Available", "Available", typeof(bool), item.IsAvailable, isEditable: false),
+            ]);
+            PropertySelectionCaption = $"Navigation - {item.Name}";
+        }
+
+        private void OnEditorTabUserActivated(EditorTabViewModel tab, bool designerSelection)
+        {
+            ProjectExplorer?.CancelPendingNavigation();
+            _editorWorkspace.CancelPendingPreviews();
+            _selectedPropertyTab = tab;
+            if (designerSelection)
+            {
+                _editorPropertySelection = true;
+                ShowEditorPropertySelection(tab);
+                return;
+            }
+
+            _editorPropertySelection = false;
+            SelectedPropertyDesigner = null;
+            SelectedEditorPropertyView = null;
+            PropertySelectionError = string.Empty;
+            NotifyStandardPropertySelectionChanged();
+            PropertyCategory category = new("Document", "Document");
+            SelectionProperties.SetItems(
+            [
+                new PropertyItem(category, "Name", "Name", typeof(string), tab.Title, isEditable: false),
+                new PropertyItem(category, "Path", "Path", typeof(string), tab.FilePath ?? "Untitled", isEditable: false),
+                new PropertyItem(category, "Editor", "Editor", typeof(string), tab.EditorKind, isEditable: false),
+            ]);
+            PropertySelectionCaption = $"Editor - {tab.FilePath ?? "Untitled"}";
+        }
+
+        private void OnEditorNavigationRequested(CancellationToken cancellationToken) =>
+            ProjectExplorer?.CancelPendingNavigation(cancellationToken);
+
+        private void OnEditorTabClosed(EditorTabViewModel tab)
+        {
+            if (ReferenceEquals(_selectedPropertyTab, tab))
+            {
+                ClearEditorPropertySelection();
+            }
+        }
+
+        private void OnEditorSelectionChanged(object? sender, EventArgs e)
+        {
+            if (_editorPropertySelection
+                && sender is EditorTabViewModel tab
+                && ReferenceEquals(tab, _selectedPropertyTab)
+                && ReferenceEquals(tab, ActiveEditorTab))
+            {
+                ShowEditorPropertySelection(tab);
+            }
+        }
+
+        private void ShowEditorPropertySelection(EditorTabViewModel tab)
+        {
+            if (tab.SelectedProperties is not { } provider)
+            {
+                SelectedPropertyDesigner = null;
+                SelectedEditorPropertyView = null;
+                PropertySelectionError = string.Empty;
+                SelectionProperties.SetItems([]);
+                PropertySelectionCaption = $"Editor - {tab.FilePath ?? "Untitled"} - no selection";
+                NotifyStandardPropertySelectionChanged();
+                return;
+            }
+
+            Control? propertyView = tab.PropertiesView;
+            SelectionProperties.SetItems(propertyView is null ? provider.Properties : []);
+            SelectedPropertyDesigner = tab.Designer;
+            SelectedEditorPropertyView = propertyView;
+            PropertySelectionError = string.Empty;
+            PropertySelectionCaption = $"Editor - {tab.FilePath ?? "Untitled"} - {provider.Context.TargetDisplayName}";
+            NotifyStandardPropertySelectionChanged();
+        }
+
+        private void ClearEditorPropertySelection()
+        {
+            _selectedPropertyTab = null;
+            _editorPropertySelection = false;
+            SelectedPropertyDesigner = null;
+            SelectedEditorPropertyView = null;
+            PropertySelectionError = string.Empty;
+            SelectionProperties.SetItems([]);
+            PropertySelectionCaption = "Properties - no selection";
+            NotifyStandardPropertySelectionChanged();
+        }
+
+        private void NotifyStandardPropertySelectionChanged()
+        {
+            OnPropertyChanged(nameof(HasStandardEditorPropertySelection));
+            OnPropertyChanged(nameof(CanEditSelectedProperties));
+        }
+
+        [RelayCommand]
+        private Task ApplyEditorPropertiesAsync() => CompleteEditorPropertyOperationAsync(apply: true);
+
+        [RelayCommand]
+        private Task DiscardEditorPropertiesAsync() => CompleteEditorPropertyOperationAsync(apply: false);
+
+        private async Task CompleteEditorPropertyOperationAsync(bool apply)
+        {
+            EditorTabViewModel? tab = _selectedPropertyTab;
+            IPropertyProvider? provider = tab?.SelectedProperties;
+            if (!HasStandardEditorPropertySelection || tab is null || provider is null || provider.IsReadOnly)
+            {
+                return;
+            }
+
+            try
+            {
+                if (apply)
+                {
+                    await provider.ApplyAsync();
+                }
+                else
+                {
+                    await provider.DiscardAsync();
+                }
+
+                if (ReferenceEquals(tab, _selectedPropertyTab)
+                    && ReferenceEquals(provider, tab.SelectedProperties)
+                    && HasStandardEditorPropertySelection)
+                {
+                    SelectionProperties.SetItems(provider.Properties);
+                    PropertySelectionError = string.Empty;
+                }
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                if (ReferenceEquals(tab, _selectedPropertyTab))
+                {
+                    PropertySelectionError = exception.Message;
+                }
+            }
+        }
+
+        private void UpdateDesignerSelectionCaption(EditorTabViewModel tab, AxamlDesignerViewModel designer)
+        {
+            PropertySelectionCaption = $"Editor - {tab.FilePath ?? "Untitled"} - {designer.SelectedElementName}";
         }
 
         private void ObserveActiveEditorControl()
@@ -2796,7 +3082,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 _observedEditorTextArea.GoToDefinitionRequested -= OnGoToDefinitionRequested;
             }
 
-            _observedEditorTextArea = _editorWorkspace.ActiveTab.View as Controls.EditorTextArea;
+            _observedEditorTextArea = _editorWorkspace.ActiveTab.TextView as Controls.EditorTextArea;
             if (_observedEditorTextArea is not null)
             {
                 _observedEditorTextArea.CompletionRequested += OnCompletionRequested;
@@ -2831,6 +3117,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 if (e.PropertyName == nameof(EditorViewModel.CurrentFilePath))
                 {
                     ToggleBreakpointCommand.NotifyCanExecuteChanged();
+                    ObserveActiveDesigner();
                 }
 
                 QueueLanguageAnalysis();
@@ -2845,7 +3132,6 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             bool isAxamlDocument = !string.IsNullOrWhiteSpace(filePath)
                 && string.Equals(Path.GetExtension(filePath), ".axaml", StringComparison.OrdinalIgnoreCase);
             string? markup = isAxamlDocument ? Editor.Text : null;
-            _axamlDesigner.LoadMarkup(markup);
             QueueAxamlMvvmBindingContext(markup, filePath);
         }
 
@@ -2855,10 +3141,16 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _axamlBindingAnalysisCancellation?.Dispose();
             CancellationTokenSource cancellation = new();
             _axamlBindingAnalysisCancellation = cancellation;
-            _ = RefreshAxamlMvvmBindingContextAsync(markup, filePath, cancellation.Token);
+            EditorTabViewModel tab = ActiveEditorTab;
+            if (tab.Designer is { } designer)
+            {
+                _ = RefreshAxamlMvvmBindingContextAsync(tab, designer, markup, filePath, cancellation.Token);
+            }
         }
 
         private async Task RefreshAxamlMvvmBindingContextAsync(
+            EditorTabViewModel tab,
+            AxamlDesignerViewModel designer,
             string? markup,
             string? filePath,
             CancellationToken cancellationToken)
@@ -2867,7 +3159,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 || string.IsNullOrWhiteSpace(filePath)
                 || Workspace is not { Projects.Count: > 0 } workspace)
             {
-                _axamlDesigner.SetBindingContext(
+                designer.SetBindingContext(
                     [],
                     "Open a C# workspace and a view with a resolvable runtime DataContext to select ViewModel members.");
                 return;
@@ -2884,8 +3176,10 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                         cancellationToken,
                         allowExistingRuntimeDataContext: true);
                 if (!ReferenceEquals(workspace, Workspace)
-                    || !string.Equals(filePath, Editor.CurrentFilePath, StringComparison.OrdinalIgnoreCase)
-                    || !string.Equals(markup, Editor.Text, StringComparison.Ordinal))
+                    || !ReferenceEquals(tab, ActiveEditorTab)
+                    || tab.Editor.CurrentFilePath is not { } currentPath
+                    || !WorkspacePathIdentity.AreEqual(filePath, currentPath)
+                    || !string.Equals(markup, tab.Editor.Text, StringComparison.Ordinal))
                 {
                     return;
                 }
@@ -2895,7 +3189,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     : resolution.Diagnostics.Count > 0
                         ? string.Join(Environment.NewLine, resolution.Diagnostics)
                         : "The view has no uniquely resolved runtime DataContext.";
-                _axamlDesigner.SetBindingContext(
+                designer.SetBindingContext(
                     resolution.IsSuccessful && resolution.HasRuntimeDataContext
                         ? resolution.ViewModelMembers
                         : [],
@@ -2906,31 +3200,35 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
             catch (Exception exception) when (exception is InvalidOperationException or InvalidDataException or IOException)
             {
-                if (cancellationToken.IsCancellationRequested)
+                if (cancellationToken.IsCancellationRequested || !ReferenceEquals(tab, ActiveEditorTab))
                 {
                     return;
                 }
 
-                _axamlDesigner.SetBindingContext([], $"ViewModel member analysis failed: {exception.Message}");
+                designer.SetBindingContext([], $"ViewModel member analysis failed: {exception.Message}");
             }
-        }
-
-        private void OnAxamlDesignerMarkupChanged(object? sender, AxamlDesignerMarkupChangedEventArgs e)
-        {
-            Editor.Text = e.Markup;
-            Editor.NotificationText = _axamlDesigner.StatusText;
         }
 
         private async Task<bool> ApplyMissingAxamlBindingAsync(AxamlBindingRowViewModel row)
         {
             ArgumentNullException.ThrowIfNull(row);
-            string filePath = Editor.CurrentFilePath
+            EditorTabViewModel tab = ActiveEditorTab;
+            EditorViewModel editor = tab.Editor;
+            AxamlDesignerViewModel designer = tab.Designer
+                ?? throw new InvalidOperationException("The active document does not have an AXAML designer.");
+            string filePath = editor.CurrentFilePath
                 ?? throw new InvalidOperationException("Save the AXAML view before creating a ViewModel binding.");
             CSharpWorkspace workspace = Workspace
                 ?? throw new InvalidOperationException("Open the containing C# workspace before creating a ViewModel binding.");
-            string markup = Editor.Text;
-            AxamlPreviewNode selectedNode = _axamlDesigner.SelectedNode
+            string markup = editor.Text;
+            AxamlPreviewNode selectedNode = designer.SelectedNode
                 ?? throw new InvalidOperationException("Select a supported control before applying a ViewModel binding.");
+            bool IsTargetCurrent() => ReferenceEquals(tab, ActiveEditorTab)
+                && ReferenceEquals(workspace, Workspace)
+                && editor.CurrentFilePath is { } currentPath
+                && WorkspacePathIdentity.AreEqual(filePath, currentPath)
+                && string.Equals(markup, editor.Text, StringComparison.Ordinal)
+                && ReferenceEquals(selectedNode, designer.SelectedNode);
             CSharpWorkspaceProject project = workspace.Projects
                 .Where(candidate => IsPathWithinDirectory(
                     filePath,
@@ -2960,10 +3258,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     workspace,
                     CancellationToken.None,
                     allowExistingRuntimeDataContext: true);
-            if (!ReferenceEquals(workspace, Workspace)
-                || !string.Equals(filePath, Editor.CurrentFilePath, StringComparison.OrdinalIgnoreCase)
-                || !string.Equals(markup, Editor.Text, StringComparison.Ordinal)
-                || !ReferenceEquals(selectedNode, _axamlDesigner.SelectedNode))
+            if (!IsTargetCurrent())
             {
                 throw new InvalidOperationException("The workspace or AXAML document changed during binding analysis. Retry the binding.");
             }
@@ -2987,7 +3282,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 .Single();
             if (memberPlan.Action == AxamlMvvmMemberPlanAction.Reuse)
             {
-                _axamlDesigner.ApplyBindingRow(row);
+                designer.ApplyBindingRow(row);
                 return true;
             }
 
@@ -3017,13 +3312,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     + string.Join(Environment.NewLine, newCompilerErrors));
             }
 
-            if (!ReferenceEquals(selectedNode, _axamlDesigner.SelectedNode)
-                || !string.Equals(markup, Editor.Text, StringComparison.Ordinal))
+            if (!IsTargetCurrent())
             {
                 throw new InvalidOperationException("The selected control or AXAML document changed during member planning. Retry the binding.");
             }
 
-            string proposedMarkup = _axamlDesigner.CreateBindingMarkupForRow(row);
+            string proposedMarkup = designer.CreateBindingMarkupForRow(row);
             string relativeAxamlPath = Path.GetRelativePath(workspace.RootPath, filePath);
             string savedMarkup = File.ReadAllText(filePath);
             List<WorkspaceFileChangeRequest> requests = [sourceRequest];
@@ -3046,14 +3340,17 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             if (!await review(proposal, CancellationToken.None))
             {
-                Editor.StatusText = "Binding and ViewModel member creation cancelled; no files were changed.";
+                editor.StatusText = "Binding and ViewModel member creation cancelled; no files were changed.";
                 return false;
             }
 
             await _csharpSyntaxDiagnosticService.RefreshProjectContextAsync(project.ProjectPath);
-            QueueAxamlMvvmBindingContext(Editor.Text, filePath);
-            Editor.StatusText = $"Created ViewModel member '{memberName}' and applied the AXAML binding.";
-            Editor.NotificationText = string.Join(
+            if (ReferenceEquals(tab, ActiveEditorTab) && ReferenceEquals(workspace, Workspace))
+            {
+                QueueAxamlMvvmBindingContext(editor.Text, filePath);
+            }
+            editor.StatusText = $"Created ViewModel member '{memberName}' and applied the AXAML binding.";
+            editor.NotificationText = string.Join(
                 Environment.NewLine,
                 proposal.Changes.Select(static change => change.RelativePath));
             return true;
@@ -3064,7 +3361,14 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             if (e.PropertyName == nameof(AxamlDesignerViewModel.HasPreview))
             {
                 OnPropertyChanged(nameof(HasAxamlPreview));
-                OnPropertyChanged(nameof(PreviewColumnWidth));
+            }
+
+            if (e.PropertyName == nameof(AxamlDesignerViewModel.SelectedNode)
+                && sender is AxamlDesignerViewModel designer
+                && ReferenceEquals(designer, SelectedPropertyDesigner)
+                && _selectedPropertyTab is { } tab)
+            {
+                UpdateDesignerSelectionCaption(tab, designer);
             }
         }
 

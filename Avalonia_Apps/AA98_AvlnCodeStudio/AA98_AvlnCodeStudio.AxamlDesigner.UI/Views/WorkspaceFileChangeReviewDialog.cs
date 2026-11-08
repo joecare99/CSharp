@@ -12,22 +12,43 @@ using System.Threading.Tasks;
 namespace AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
 
 /// <summary>
-/// Shows a multi-file proposal and applies it only after the user chooses the explicit apply action.
+/// Shows a multi-file proposal for explicit application or approval.
 /// </summary>
 public sealed class WorkspaceFileChangeReviewDialog : Window
 {
     private readonly WorkspaceFileChangeProposal _proposal;
-    private readonly WorkspaceFileChangeService _service;
+    private readonly WorkspaceFileChangeService? _service;
+    private readonly Func<bool>? _isContextCurrent;
     private readonly TextBox _originalText;
     private readonly TextBox _proposedText;
     private readonly TextBlock _statusText;
 
     public WorkspaceFileChangeReviewDialog(
         WorkspaceFileChangeProposal proposal,
-        WorkspaceFileChangeService service)
+        WorkspaceFileChangeService service,
+        Func<bool>? isContextCurrent = null)
+        : this(proposal, service ?? throw new ArgumentNullException(nameof(service)), applyOnConfirmation: true, isContextCurrent)
+    {
+    }
+
+    /// <summary>
+    /// Creates a review dialog that returns approval without applying the proposal.
+    /// The caller remains responsible for checking and applying the confirmed change.
+    /// </summary>
+    public static WorkspaceFileChangeReviewDialog CreateApprovalOnly(WorkspaceFileChangeProposal proposal) =>
+        new(proposal, service: null, applyOnConfirmation: false, isContextCurrent: null);
+
+    private WorkspaceFileChangeReviewDialog(
+        WorkspaceFileChangeProposal proposal,
+        WorkspaceFileChangeService? service,
+        bool applyOnConfirmation,
+        Func<bool>? isContextCurrent)
     {
         _proposal = proposal ?? throw new ArgumentNullException(nameof(proposal));
-        _service = service ?? throw new ArgumentNullException(nameof(service));
+        _service = applyOnConfirmation
+            ? service ?? throw new ArgumentNullException(nameof(service))
+            : null;
+        _isContextCurrent = isContextCurrent;
 
         Title = $"Review workspace changes ({proposal.Changes.Count})";
         Width = 1080;
@@ -62,7 +83,7 @@ public sealed class WorkspaceFileChangeReviewDialog : Window
         };
         Button applyButton = new()
         {
-            Content = $"Apply {proposal.Changes.Count} change(s)",
+            Content = $"{(_service is null ? "Approve" : "Apply")} {proposal.Changes.Count} change(s)",
             MinWidth = 150,
         };
         cancelButton.Click += (_, _) => Close(false);
@@ -108,7 +129,9 @@ public sealed class WorkspaceFileChangeReviewDialog : Window
             {
                 new TextBlock
                 {
-                    Text = "Review every file below. Applying checks that none changed since this proposal was prepared.",
+                    Text = _service is null
+                        ? "Approval does not apply the changes. The caller must recheck the file snapshots before applying."
+                        : "Review every file below. Applying checks that none changed since this proposal was prepared.",
                     TextWrapping = TextWrapping.Wrap,
                 },
                 body,
@@ -165,8 +188,20 @@ public sealed class WorkspaceFileChangeReviewDialog : Window
 
     private void ApplyChanges()
     {
+        if (_service is null)
+        {
+            Close(true);
+            return;
+        }
+
         try
         {
+            if (_isContextCurrent?.Invoke() == false)
+            {
+                _statusText.Text = "The document or workspace changed during review. Cancel and prepare the changes again.";
+                return;
+            }
+
             _service.Apply(_proposal, confirmed: true);
             Close(true);
         }

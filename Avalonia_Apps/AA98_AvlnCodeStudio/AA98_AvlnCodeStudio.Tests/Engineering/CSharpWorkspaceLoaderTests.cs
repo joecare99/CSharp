@@ -296,6 +296,7 @@ public sealed class CSharpWorkspaceLoaderTests
                     null,
                     aiChatService: new AIChatService(client, new AIChatToolCatalog([buildTool])));
                 viewModel.AiModel = "test-model";
+                viewModel.SelectedAIChatAgent = "Build";
                 viewModel.ApproveAIChatToolExecutionAsync = (_, _, _) => Task.FromResult(true);
 
                 await viewModel.OpenWorkspaceFileAsync(solutionPath);
@@ -307,7 +308,9 @@ public sealed class CSharpWorkspaceLoaderTests
                 Assert.AreEqual(AppKomponentBaseLib.Diagnostics.DiagnosticSeverity.Error, diagnostics.Items[0].Severity);
                 Assert.AreEqual(Path.GetFullPath(sourcePath), diagnostics.Items[0].SourcePath);
                 Assert.AreEqual(1, diagnostics.Items[0].LineNumber);
-                StringAssert.Contains(viewModel.AIChatMessages[^1].Content, "Build finished.");
+                Assert.IsTrue(viewModel.AIChatMessages.Any(message =>
+                    message.Role == "Assistant"
+                    && message.Content.Contains("Build finished.", StringComparison.Ordinal)));
 
                 await diagnostics.ActivateAsync(diagnostics.Items[0]);
 
@@ -414,7 +417,9 @@ public sealed class CSharpWorkspaceLoaderTests
                 Assert.AreEqual(Path.GetFullPath(sourcePath), diagnostics.Items[0].SourcePath);
                 Assert.IsTrue(viewModel.AIChatMessages.Any(message =>
                     message.Content.Contains("ignored 1 inspection diagnostic", StringComparison.OrdinalIgnoreCase)));
-                StringAssert.Contains(viewModel.AIChatMessages[^1].Content, "Inspection complete.");
+                Assert.IsTrue(viewModel.AIChatMessages.Any(message =>
+                    message.Role == "Assistant"
+                    && message.Content.Contains("Inspection complete.", StringComparison.Ordinal)));
 
                 await diagnostics.ActivateAsync(diagnostics.Items[0]);
 
@@ -1025,11 +1030,11 @@ public sealed class CSharpWorkspaceLoaderTests
                 null,
                 null);
 
-            Assert.AreEqual(new GridLength(0), viewModel.PreviewColumnWidth);
+            Assert.IsFalse(viewModel.ActiveEditorTab.HasPalette);
             await viewModel.Editor.OpenFileAsync(axamlPath);
 
             Assert.IsTrue(viewModel.HasAxamlPreview);
-            Assert.AreEqual(new GridLength(2, GridUnitType.Star), viewModel.PreviewColumnWidth);
+            Assert.IsTrue(viewModel.ActiveEditorTab.HasPalette);
             Assert.AreEqual("StackPanel", viewModel.AxamlDesigner.PreviewRoot?.TypeName);
             Assert.AreEqual("Preview me", viewModel.AxamlDesigner.PreviewRoot?.Children[0].Text);
 
@@ -1402,7 +1407,7 @@ public sealed class CSharpWorkspaceLoaderTests
 
             var debugSessionService = new FakeDebugSessionService(sourcePath);
             var viewModel = new MainWindowViewModel(
-                editorWorkspace.ActiveTab.Component,
+                editorWorkspace.ActiveTab.Component!,
                 new PlanningExplorerViewModel(new MarkdownPlanningReader()),
                 diagnostics,
                 null,

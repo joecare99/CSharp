@@ -9,6 +9,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,47 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 [TestClass]
 public sealed class AxamlDesignerHostViewModelTests
 {
+    [TestMethod]
+    public void Host_CodeAndDesignerShareBufferAndUnappliedDraftsProtectDocument()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AxamlHostBuffer-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string first = Path.Combine(directory, "First.axaml");
+            string second = Path.Combine(directory, "Second.axaml");
+            Encoding encoding = new UnicodeEncoding(false, true, true);
+            File.WriteAllBytes(first, AA98_AvlnCodeStudio.Model.Documents.TextDocumentEncoding.Encode(
+                "<TextBox Width='100' Text='Before' />", encoding));
+            File.WriteAllText(second, "<TextBox Text='Other' />");
+            AxamlDesignerHostViewModel host = new();
+            Assert.IsTrue(host.OpenDocument(first));
+            host.Markup = "<TextBox Width='100' Text='Code edit' />";
+            Assert.AreEqual("Code edit", host.Designer.PreviewRoot!.Properties["Text"]);
+            host.Designer.SelectedNode = host.Designer.PreviewRoot;
+            host.Designer.SelectedProperty = "Text";
+            host.Designer.SelectedValue = "Designer edit";
+            host.Designer.ApplySelectedValueCommand.Execute(null);
+            StringAssert.Contains(host.Markup, "Designer edit");
+            Assert.IsTrue(host.SaveDocument());
+            byte[] saved = File.ReadAllBytes(first);
+            Assert.IsTrue(saved.AsSpan().StartsWith(encoding.Preamble));
+            Assert.IsFalse(host.IsDirty);
+
+            AxamlPropertyRowViewModel width = host.Designer.PropertyRows.Single(row => row.Name == "Width");
+            Assert.IsFalse(width.TrySetValue("-2"));
+            Assert.IsTrue(host.HasUnsavedChanges);
+            Assert.IsFalse(host.OpenDocument(second));
+            Assert.AreEqual("-2", width.Value);
+            Assert.IsTrue(host.OpenDocument(second, discardUnsavedChanges: true));
+            Assert.IsFalse(host.HasUnsavedChanges);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
     [TestMethod]
     public void HostViewModel_OpenEditSave_WritesDesignerMarkup()
     {
@@ -315,7 +357,11 @@ public sealed class AxamlDesignerHostViewModelTests
             ServiceCollection services = new();
             services.AddSingleton(new AxamlDesignerHostViewModel());
             services.AddSingleton<ComponentMcpCommandCatalog>();
-            services.AddAxamlDesignerMcpExports();
+            services.AddAxamlDesignerMcpExports((action, cancellationToken) =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return Task.FromResult(action());
+            });
             using ServiceProvider provider = services.BuildServiceProvider();
             ComponentMcpCommandCatalog catalog = provider.GetRequiredService<ComponentMcpCommandCatalog>();
             using JsonDocument openArguments = JsonDocument.Parse(JsonSerializer.Serialize(new { path }));

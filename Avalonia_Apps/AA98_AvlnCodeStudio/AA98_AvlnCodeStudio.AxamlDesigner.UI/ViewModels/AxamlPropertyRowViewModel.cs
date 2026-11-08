@@ -141,6 +141,7 @@ public partial class AxamlPropertyRowViewModel : ObservableObject, IPropertyItem
         string? validationError = AxamlPropertyValueValidator.Validate(ControlType, Name, text);
         if (!string.IsNullOrWhiteSpace(validationError))
         {
+            SetPropertyValue(text);
             SetValidationError(validationError);
             return false;
         }
@@ -162,13 +163,13 @@ public partial class AxamlPropertyRowViewModel : ObservableObject, IPropertyItem
 
     public void Synchronize(AxamlPropertyDescriptor descriptor)
     {
-        ValidationError = descriptor.ValidationError;
-        _validationResult = string.IsNullOrWhiteSpace(descriptor.ValidationError)
-            ? PropertyValidationResult.Valid
-            : PropertyValidationResult.Invalid(descriptor.ValidationError);
-        OnPropertyChanged(nameof(ValidationResult));
-        if (!IsEditing)
+        if (!IsEditing && !IsDraft)
         {
+            ValidationError = descriptor.ValidationError;
+            _validationResult = string.IsNullOrWhiteSpace(descriptor.ValidationError)
+                ? PropertyValidationResult.Valid
+                : PropertyValidationResult.Invalid(descriptor.ValidationError);
+            OnPropertyChanged(nameof(ValidationResult));
             Value = descriptor.Value;
             IsDraft = false;
         }

@@ -47,9 +47,18 @@ public partial class MainWindow : Window
             viewModel.ReviewWorkspaceFileChangesAsync = async (proposal, cancellationToken) =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                string filePath = viewModel.FilePath;
+                string workspaceRoot = viewModel.WorkspaceRootPath;
+                string markup = viewModel.Markup;
+                var selection = viewModel.Designer.SelectedNode;
                 WorkspaceFileChangeReviewDialog dialog = new(
                     proposal,
-                    viewModel.WorkspaceFileChangeService);
+                    viewModel.WorkspaceFileChangeService,
+                    () => ReferenceEquals(DataContext, viewModel)
+                        && string.Equals(viewModel.FilePath, filePath, StringComparison.Ordinal)
+                        && string.Equals(viewModel.WorkspaceRootPath, workspaceRoot, StringComparison.Ordinal)
+                        && string.Equals(viewModel.Markup, markup, StringComparison.Ordinal)
+                        && ReferenceEquals(viewModel.Designer.SelectedNode, selection));
                 return await dialog.ShowDialog(this);
             };
         }
@@ -147,7 +156,7 @@ public partial class MainWindow : Window
     {
         if (DataContext is AxamlDesignerHostViewModel viewModel)
         {
-            await OpenDocumentAsync(viewModel, viewModel.FilePath);
+            await OpenDocumentAsync(viewModel, viewModel.FilePathInput);
         }
     }
 
@@ -160,7 +169,7 @@ public partial class MainWindow : Window
         }
 
         bool discardChanges = false;
-        if (viewModel.IsDirty)
+        if (viewModel.HasUnsavedChanges)
         {
             AxamlSaveDecision decision = await AskForUnsavedChangesAsync(viewModel, "opening another file");
             if (decision == AxamlSaveDecision.Cancel)
@@ -225,9 +234,18 @@ public partial class MainWindow : Window
 
     private async void OnWindowClosing(object? sender, WindowClosingEventArgs e)
     {
-        if (_closeConfirmed || _isClosingPromptActive
-            || DataContext is not AxamlDesignerHostViewModel viewModel
-            || !viewModel.IsDirty)
+        if (_closeConfirmed || DataContext is not AxamlDesignerHostViewModel viewModel)
+        {
+            return;
+        }
+
+        if (_isClosingPromptActive)
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        if (!viewModel.HasUnsavedChanges)
         {
             return;
         }
@@ -238,7 +256,7 @@ public partial class MainWindow : Window
         bool closeAllowed = decision switch
         {
             AxamlSaveDecision.Discard => true,
-            AxamlSaveDecision.Save => await SaveDocumentAsync(viewModel),
+            AxamlSaveDecision.Save => await SaveDocumentAsync(viewModel) && !viewModel.HasUnsavedChanges,
             _ => false,
         };
         _isClosingPromptActive = false;
@@ -257,7 +275,8 @@ public partial class MainWindow : Window
             string.IsNullOrWhiteSpace(viewModel.FilePath)
                 ? "Untitled AXAML document"
                 : Path.GetFileName(viewModel.FilePath),
-            actionTitle);
+            actionTitle,
+            viewModel.Designer.HasUnappliedPropertyDrafts);
         return await dialog.ShowAndGetDecisionAsync(this);
     }
 

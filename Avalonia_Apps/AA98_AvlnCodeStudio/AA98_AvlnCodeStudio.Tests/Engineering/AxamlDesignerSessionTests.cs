@@ -1,7 +1,11 @@
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
 
@@ -186,7 +190,9 @@ public sealed class AxamlDesignerSessionTests
 
         Assert.IsTrue(session.AddChildControl("Button"));
 
-        StringAssert.Contains(session.Markup, "<av:Button Grid.Row=\"0\" Grid.Column=\"0\" />");
+        StringAssert.Contains(session.Markup, "<av:Button av:Grid.Row=\"0\" av:Grid.Column=\"0\" />");
+        Assert.AreEqual("0", session.Root!.Children.Single().Properties["Grid.Row"]);
+        Assert.AreEqual("0", session.Root.Children.Single().Properties["Grid.Column"]);
         Assert.IsTrue(session.Markup.StartsWith("<av:Grid", System.StringComparison.Ordinal));
         Assert.IsTrue(session.Markup.EndsWith("</av:Grid>", System.StringComparison.Ordinal));
     }
@@ -243,6 +249,419 @@ public sealed class AxamlDesignerSessionTests
         Assert.AreEqual(markup, session.Markup);
         Assert.IsTrue(session.Redo());
         Assert.AreEqual(2, session.Root!.Children.Count);
+    }
+
+    [TestMethod]
+    public void RemoveSelectedControl_PreservesSourceAndRestoresSelectionThroughUndoRedo()
+    {
+        const string markup = "<av:StackPanel xmlns:av='https://github.com/avaloniaui'>\r\n"
+            + "  <av:TextBlock Text='Keep' />\r\n"
+            + "  <av:Button Content='Remove' />\r\n"
+            + "</av:StackPanel>";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root!.Children[1]);
+
+        Assert.IsTrue(session.CanRemoveSelectedControl);
+        Assert.IsTrue(session.RemoveSelectedControl());
+        Assert.AreEqual(markup.Replace("  <av:Button Content='Remove' />\r\n", string.Empty), session.Markup);
+        Assert.AreEqual("StackPanel", session.SelectedNode!.TypeName);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.AreEqual("Button", session.SelectedNode!.TypeName);
+        Assert.IsFalse(session.CanUndo);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("StackPanel", session.SelectedNode!.TypeName);
+        Assert.AreEqual(1, session.Root!.Children.Count);
+    }
+
+    [TestMethod]
+    public void MoveSelectedControl_PreservesNestedSourceAndTracksIdenticalSiblingTypes()
+    {
+        const string markup = "<StackPanel xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>\n"
+            + "  <StackPanel><StackPanel><Button /></StackPanel></StackPanel>\n"
+            + "  <TextBox x:Name='First' />\n"
+            + "  <TextBox x:Name='Second' />\n"
+            + "</StackPanel>";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root!.Children[2]);
+
+        Assert.IsTrue(session.CanMoveSelectedControlEarlier);
+        Assert.IsFalse(session.CanMoveSelectedControlLater);
+        Assert.IsTrue(session.MoveSelectedControl(-1));
+        Assert.AreEqual("Second", session.SelectedNode!.StableName);
+        Assert.AreEqual("Second", session.Root!.Children[1].StableName);
+        Assert.AreEqual("First", session.Root.Children[2].StableName);
+        string moved = session.Markup;
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.AreEqual("Second", session.SelectedNode!.StableName);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(moved, session.Markup);
+        Assert.AreEqual("Second", session.SelectedNode!.StableName);
+        Assert.IsTrue(session.MoveSelectedControl(-1));
+        Assert.AreEqual("Second", session.Root!.Children[0].StableName);
+        Assert.IsTrue(session.MoveSelectedControl(1));
+        Assert.AreEqual(moved, session.Markup);
+        Assert.AreEqual("Second", session.SelectedNode!.StableName);
+    }
+
+    [TestMethod]
+    public void StructureEditing_WorksInEachSupportedPanelAndPreservesNestedCommentsWhenMoving()
+    {
+        foreach (string panel in new[] { "StackPanel", "WrapPanel", "UniformGrid" })
+        {
+            string markup = $"<{panel}><StackPanel><!-- keep <StackPanel> -->"
+                + $"<Button /></StackPanel><TextBlock /></{panel}>";
+            AxamlDesignerSession session = new();
+            session.Load(markup);
+            session.SelectNode(session.Root!.Children[0]);
+
+            Assert.IsTrue(session.MoveSelectedControl(1), panel);
+            Assert.AreEqual("StackPanel", session.SelectedNode!.TypeName);
+            StringAssert.Contains(session.Markup, "<!-- keep <StackPanel> -->");
+            Assert.IsTrue(session.Undo());
+            Assert.AreEqual(markup, session.Markup);
+            session.SelectNode(session.Root!.Children[1]);
+            Assert.IsTrue(session.RemoveSelectedControl(), panel);
+            Assert.AreEqual($"<{panel}><StackPanel><!-- keep <StackPanel> -->"
+                + $"<Button /></StackPanel></{panel}>", session.Markup);
+            Assert.IsTrue(session.Undo());
+            Assert.AreEqual(markup, session.Markup);
+        }
+    }
+
+    [TestMethod]
+    public void StructureEditing_RemovesOnlySupportedDirectContentFromSingleChildContainers()
+    {
+        foreach (string container in new[] { "Border", "ContentControl", "Expander", "GroupBox", "ScrollViewer", "Viewbox" })
+        {
+            string markup = $"<{container}><Button /></{container}>";
+            AxamlDesignerSession session = new();
+            session.Load(markup);
+            session.SelectNode(session.Root!.Children.Single());
+
+            Assert.IsTrue(session.CanRemoveSelectedControl, container);
+            Assert.IsFalse(session.CanMoveSelectedControlEarlier, container);
+            Assert.IsFalse(session.CanMoveSelectedControlLater, container);
+            Assert.IsTrue(session.RemoveSelectedControl(), container);
+            Assert.AreEqual($"<{container}></{container}>", session.Markup, container);
+            Assert.IsTrue(session.Undo(), container);
+            Assert.AreEqual(markup, session.Markup, container);
+            Assert.IsTrue(session.Redo(), container);
+            Assert.AreEqual($"<{container}></{container}>", session.Markup, container);
+        }
+
+        AxamlDesignerSession propertyContent = new();
+        propertyContent.Load("<Border><Border.Child><Button /></Border.Child></Border>");
+        propertyContent.SelectNode(propertyContent.Root!.Children.Single());
+        Assert.IsFalse(propertyContent.CanRemoveSelectedControl);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => propertyContent.RemoveSelectedControl());
+
+        AxamlDesignerSession collapsedContent = new();
+        collapsedContent.Load("<Border><UserControl><Button /></UserControl></Border>");
+        collapsedContent.SelectNode(collapsedContent.Root!.Children.Single());
+        Assert.IsFalse(collapsedContent.CanRemoveSelectedControl);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => collapsedContent.RemoveSelectedControl());
+    }
+
+    [TestMethod]
+    public void StructureEditing_RejectsAmbiguousPanelsAndProtectedContent()
+    {
+        string[] protectedMarkup =
+        [
+            "<StackPanel><!-- keep --><Button /><TextBlock /></StackPanel>",
+            "<StackPanel><StackPanel><!-- keep --><Button /></StackPanel><TextBlock /></StackPanel>",
+            "<StackPanel><StackPanel><StackPanel.Resources /></StackPanel><TextBlock /></StackPanel>",
+            "<StackPanel xmlns:custom='using:Example'><StackPanel><custom:Button /></StackPanel><TextBlock /></StackPanel>",
+            "<StackPanel><UserControl><TextBlock /></UserControl><Button /></StackPanel>",
+            "<StackPanel><Button><![CDATA[keep]]></Button><TextBlock /></StackPanel>",
+        ];
+        foreach (string markup in protectedMarkup)
+        {
+            AxamlDesignerSession session = new();
+            session.Load(markup);
+            session.SelectNode(session.Root!.Children[0]);
+            Assert.ThrowsExactly<System.InvalidOperationException>(() => session.RemoveSelectedControl(), markup);
+            Assert.AreEqual(markup, session.Markup);
+            Assert.IsFalse(session.CanUndo);
+        }
+
+        AxamlDesignerSession commented = new();
+        commented.Load(protectedMarkup[0]);
+        commented.SelectNode(commented.Root!.Children[0]);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => commented.MoveSelectedControl(1));
+        Assert.AreEqual(protectedMarkup[0], commented.Markup);
+        Assert.IsFalse(commented.CanUndo);
+    }
+
+    [TestMethod]
+    public void StructureEditing_RejectsRootUnknownSiblingsAndLayoutSensitivePanels()
+    {
+        string[] markupCases =
+        [
+            "<Grid><Button /><TextBlock /></Grid>",
+            "<DockPanel><Button /><TextBlock /></DockPanel>",
+            "<StackPanel><Button /><UnknownControl /></StackPanel>",
+            "<StackPanel>unexpected<Button /></StackPanel>",
+        ];
+        foreach (string markup in markupCases)
+        {
+            AxamlDesignerSession session = new();
+            session.Load(markup);
+            session.SelectNode(session.Root);
+            Assert.IsFalse(session.CanRemoveSelectedControl);
+            Assert.ThrowsExactly<System.InvalidOperationException>(() => session.RemoveSelectedControl());
+            session.SelectNode(session.Root!.Children[0]);
+            Assert.IsFalse(session.CanRemoveSelectedControl);
+            Assert.IsFalse(session.CanMoveSelectedControlLater);
+            Assert.ThrowsExactly<System.InvalidOperationException>(() => session.RemoveSelectedControl());
+            Assert.ThrowsExactly<System.InvalidOperationException>(() => session.MoveSelectedControl(1));
+            Assert.AreEqual(markup, session.Markup);
+            Assert.IsFalse(session.CanUndo);
+        }
+    }
+
+    [TestMethod]
+    public void GridPlacement_MovesSpanningChildOnlyIntoFreeCellsAndPreservesSourceAndHistory()
+    {
+        const string markup = """
+            <av:Grid xmlns:av='https://github.com/avaloniaui' xmlns:layout='https://github.com/avaloniaui'
+                     xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+              <av:Grid.RowDefinitions><av:RowDefinition Height='*' /><av:RowDefinition Height='*' /></av:Grid.RowDefinitions>
+              <av:Grid.ColumnDefinitions><av:ColumnDefinition /><av:ColumnDefinition /><av:ColumnDefinition /></av:Grid.ColumnDefinitions>
+              <av:Button x:Name='Moving' layout:Grid.RowSpan='2' layout:Grid.Column='0' />
+              <av:TextBlock x:Name='Occupied' av:Grid.Column='2' />
+            </av:Grid>
+            """;
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root!.Children[0]);
+
+        Assert.IsTrue(session.IsSelectedGridChild);
+        Assert.IsTrue(session.CanEditSelectedGridLayout);
+        Assert.IsTrue(session.CanMoveSelectedGridControl(0, 1));
+        Assert.IsFalse(session.CanMoveSelectedGridControl(1, 0));
+        Assert.IsFalse(session.CanMoveSelectedControlLater);
+        Assert.IsTrue(session.MoveSelectedGridControl(0, 1));
+        string moved = markup.Replace("layout:Grid.Column='0'", "layout:Grid.Column='1'");
+        Assert.AreEqual(moved, session.Markup);
+        Assert.AreEqual("Moving", session.SelectedNode!.StableName);
+        Assert.IsFalse(session.CanMoveSelectedGridControl(0, 1));
+        Assert.IsTrue(session.CanMoveSelectedGridControl(0, -1));
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.AreEqual("Moving", session.SelectedNode!.StableName);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(moved, session.Markup);
+        Assert.AreEqual("Moving", session.SelectedNode!.StableName);
+    }
+
+    [TestMethod]
+    public void GridPlacement_AddsMissingCoordinatesAsSeparateUndoUnits()
+    {
+        const string markup = "<Grid RowDefinitions='*,*' ColumnDefinitions='*,*'><Button /></Grid>";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root!.Children[0]);
+
+        Assert.ThrowsExactly<System.ArgumentOutOfRangeException>(() => session.MoveSelectedGridControl(1, 1));
+        Assert.IsTrue(session.MoveSelectedGridControl(1, 0));
+        StringAssert.Contains(session.Markup, "Grid.Row=\"1\"");
+        Assert.IsTrue(session.MoveSelectedGridControl(0, 1));
+        StringAssert.Contains(session.Markup, "Grid.Column=\"1\"");
+        Assert.IsTrue(session.Undo());
+        StringAssert.Contains(session.Markup, "Grid.Row=\"1\"");
+        Assert.IsFalse(session.Markup.Contains("Grid.Column="));
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("1", session.SelectedNode!.Properties["Grid.Row"]);
+    }
+
+    [TestMethod]
+    public void GridPlacement_QualifiesMissingCoordinatesAndPreservesNamespaceDeclarations()
+    {
+        const string markup = """
+            <av:Grid xmlns:av='https://github.com/avaloniaui' xmlns='urn:other' ColumnDefinitions='*,*'>
+              <av:Button xmlns:Grid.Column='urn:unused' />
+            </av:Grid>
+            """;
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root!.Children[0]);
+
+        Assert.IsTrue(session.CanMoveSelectedGridControl(0, 1));
+        Assert.IsTrue(session.MoveSelectedGridControl(0, 1));
+        StringAssert.Contains(session.Markup, "xmlns:Grid.Column='urn:unused'");
+        StringAssert.Contains(session.Markup, "av:Grid.Column=\"1\"");
+        Assert.AreEqual("1", session.SelectedNode!.Properties["Grid.Column"]);
+        Assert.IsTrue(session.MoveSelectedGridControl(0, -1));
+        StringAssert.Contains(session.Markup, "av:Grid.Column=\"0\"");
+        Assert.IsTrue(session.Undo());
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+    }
+
+    [TestMethod]
+    public void GridPlacement_PreservesExistingQualifiedAttributeWithDefaultNamespace()
+    {
+        const string markup = """
+            <Grid xmlns='https://github.com/avaloniaui' xmlns:g='https://github.com/avaloniaui' ColumnDefinitions='*,*'>
+              <Button g:Grid.Column='0' />
+            </Grid>
+            """;
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root!.Children[0]);
+
+        Assert.IsTrue(session.MoveSelectedGridControl(0, 1));
+        Assert.AreEqual(markup.Replace("g:Grid.Column='0'", "g:Grid.Column='1'"), session.Markup);
+        Assert.AreEqual("1", session.SelectedNode!.Properties["Grid.Column"]);
+    }
+
+    [TestMethod]
+    public async Task GridPlacement_PrefixOnlyGeneratedMarkupBuildsWithAvalonia()
+    {
+        string directory = Directory.CreateTempSubdirectory("AxamlPrefixGrid-").FullName;
+        try
+        {
+            const string markup = """
+                <av:UserControl xmlns:av="https://github.com/avaloniaui"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                x:Class="GridFixture.View">
+                  <av:StackPanel>
+                    <av:Grid RowDefinitions="*,*" ColumnDefinitions="*,*"><av:Button /></av:Grid>
+                    <av:DockPanel LastChildFill="False"><av:TextBlock /></av:DockPanel>
+                  </av:StackPanel>
+                </av:UserControl>
+                """;
+            AxamlDesignerSession session = new();
+            session.Load(markup);
+            session.SelectNode(session.Root!.Children[0].Children[0]);
+            Assert.IsTrue(session.MoveSelectedGridControl(1, 0));
+            session.SelectNode(session.Root!.Children[0]);
+            Assert.IsTrue(session.AddChildControl("Label"));
+            session.SelectNode(session.Root!.Children[1]);
+            Assert.IsTrue(session.AddChildControl("Button", AxamlDockPanelPlacement.Bottom));
+
+            string projectPath = Path.Combine(directory, "GridFixture.csproj");
+            File.WriteAllText(projectPath, """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework><NuGetAudit>false</NuGetAudit></PropertyGroup>
+                  <ItemGroup><PackageReference Include="Avalonia" Version="12.1.5" /></ItemGroup>
+                </Project>
+                """);
+            File.WriteAllText(Path.Combine(directory, "View.axaml"), session.Markup);
+            File.WriteAllText(Path.Combine(directory, "View.axaml.cs"),
+                "namespace GridFixture; public partial class View : Avalonia.Controls.UserControl { }");
+            ProcessStartInfo startInfo = new("dotnet")
+            {
+                WorkingDirectory = directory,
+                ArgumentList = { "build", projectPath, "-p:RestoreIgnoreFailedSources=true", "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            foreach (string variable in new[]
+            {
+                "MSBuildSDKsPath", "MSBuildExtensionsPath", "MSBuildExtensionsPath32", "MSBuildToolsPath",
+                "DOTNET_MSBUILD_SDK_RESOLVER_SDKS_DIR", "DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR",
+            })
+            {
+                startInfo.Environment.Remove(variable);
+            }
+
+            using Process process = Process.Start(startInfo)
+                ?? throw new InvalidOperationException("Could not start the prefixed AXAML fixture build.");
+            Task<string> output = process.StandardOutput.ReadToEndAsync();
+            Task<string> error = process.StandardError.ReadToEndAsync();
+            await process.WaitForExitAsync();
+            Assert.AreEqual(0, process.ExitCode, $"{await output}{await error}");
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public void GridRemoval_WorksInFullGridAndPreservesDefinitionElements()
+    {
+        const string markup = """
+            <Grid xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+              <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition /></Grid.ColumnDefinitions>
+              <Button x:Name='First' />
+              <TextBlock x:Name='Second' Grid.Column='1' />
+            </Grid>
+            """;
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        Assert.IsTrue(session.Root!.HasSafeGridLayout);
+        Assert.IsFalse(session.Root.CanAddGridChild);
+        session.SelectNode(session.Root.Children[0]);
+
+        Assert.IsTrue(session.CanRemoveSelectedControl);
+        Assert.IsFalse(session.CanMoveSelectedControlLater);
+        Assert.IsFalse(session.CanMoveSelectedGridControl(0, 1));
+        Assert.IsTrue(session.RemoveSelectedControl());
+        string newline = markup.Contains("\r\n") ? "\r\n" : "\n";
+        Assert.AreEqual(markup.Replace($"  <Button x:Name='First' />{newline}", string.Empty), session.Markup);
+        Assert.AreEqual("Grid", session.SelectedNode!.TypeName);
+        Assert.IsTrue(session.Root!.CanAddGridChild);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.AreEqual("First", session.SelectedNode!.StableName);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("Grid", session.SelectedNode!.TypeName);
+    }
+
+    [TestMethod]
+    public void GridEditing_RejectsAmbiguousOrDynamicLayoutsAndPreservesComments()
+    {
+        string[] invalid =
+        [
+            "<Grid RowDefinitions='{Binding Rows}'><Button /></Grid>",
+            "<Grid ColumnDefinitions='*,*'><Button /><TextBlock /></Grid>",
+            "<Grid RowDefinitions='*,*'><Button Grid.RowSpan='3' /></Grid>",
+            "<Grid ColumnDefinitions='*,*'><Button /><UnknownControl Grid.Column='1' /></Grid>",
+            "<Grid xmlns:c='urn:custom' ColumnDefinitions='*,*'><Button c:Grid.Column='0' /></Grid>",
+            "<Grid ColumnDefinitions='*,*'><Button><Grid.Column>0</Grid.Column></Button></Grid>",
+            "<av:Grid xmlns:av='https://github.com/avaloniaui' ColumnDefinitions='*,*'><av:Button Grid.Column='0' /></av:Grid>",
+            "<Grid xmlns='https://github.com/avaloniaui' xmlns:av='https://github.com/avaloniaui' ColumnDefinitions='*,*'><Button Grid.Column='0' av:Grid.Column='1' /></Grid>",
+            "<av:Grid xmlns:av='https://github.com/avaloniaui' ColumnDefinitions='*,*'><av:Button av:Grid.Column='{Binding Position}' /></av:Grid>",
+            "<av:Grid xmlns:av='https://github.com/avaloniaui' ColumnDefinitions='*,*'><Button /></av:Grid>",
+            "<Grid ColumnDefinitions='*,*'><?note keep?><Button /></Grid>",
+        ];
+        foreach (string markup in invalid)
+        {
+            AxamlDesignerSession session = new();
+            session.Load(markup);
+            session.SelectNode(session.Root!.Children[0]);
+            Assert.IsTrue(session.IsSelectedGridChild, markup);
+            Assert.IsFalse(session.CanEditSelectedGridLayout, markup);
+            Assert.IsFalse(session.CanRemoveSelectedControl, markup);
+            Assert.IsFalse(session.CanMoveSelectedGridControl(0, 1), markup);
+            Assert.ThrowsExactly<System.InvalidOperationException>(() => session.RemoveSelectedControl(), markup);
+            Assert.ThrowsExactly<System.InvalidOperationException>(() => session.MoveSelectedGridControl(0, 1), markup);
+            Assert.AreEqual(markup, session.Markup);
+            Assert.IsFalse(session.CanUndo);
+        }
+
+        const string commented = "<Grid ColumnDefinitions='*,*'><!-- keep --><Button /></Grid>";
+        AxamlDesignerSession withComment = new();
+        withComment.Load(commented);
+        withComment.SelectNode(withComment.Root!.Children[0]);
+        Assert.IsFalse(withComment.CanMoveSelectedGridControl(0, 1));
+        Assert.IsFalse(withComment.CanRemoveSelectedControl);
+        Assert.IsFalse(withComment.Root.CanAddGridChild);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => withComment.MoveSelectedGridControl(0, 1));
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => withComment.RemoveSelectedControl());
+        withComment.SelectNode(withComment.Root);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => withComment.AddChildControl("TextBlock"));
+        Assert.AreEqual(commented, withComment.Markup);
+        Assert.IsFalse(withComment.CanUndo);
     }
 
     [TestMethod]

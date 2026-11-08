@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 
@@ -38,6 +39,28 @@ public sealed class AxamlDesignerSession
     public bool CanUndo => _undoHistory.Count > 0;
 
     public bool CanRedo => _redoHistory.Count > 0;
+
+    public bool CanRemoveSelectedControl => TryGetRemovablePosition(out _, out _);
+
+    public bool CanMoveSelectedControlEarlier =>
+        TryGetReorderPosition(out _, out int index) && index > 0;
+
+    public bool CanMoveSelectedControlLater =>
+        TryGetReorderPosition(out AxamlPreviewNode? parent, out int index)
+        && index < parent!.Children.Count - 1;
+
+    public bool IsSelectedGridChild =>
+        TryGetSelectedParent(out AxamlPreviewNode? parent, out _) && parent!.TypeName == "Grid";
+
+    public bool CanEditSelectedGridLayout =>
+        TryGetSelectedParent(out AxamlPreviewNode? parent, out _)
+        && parent is { IsSupported: true, TypeName: "Grid", HasSafeGridLayout: true }
+        && SelectedNode is { IsSupported: true };
+
+    public bool CanMoveSelectedGridControl(int rowChange, int columnChange) =>
+        CanEditSelectedGridLayout
+        && TryGetSelectedParent(out AxamlPreviewNode? parent, out _)
+        && _previewService.CanMoveGridChild(parent!, SelectedNode!, rowChange, columnChange);
 
     public IReadOnlyList<string> EditableProperties => SelectedNode is null
         ? []
@@ -291,6 +314,92 @@ public sealed class AxamlDesignerSession
         return true;
     }
 
+    public bool RemoveSelectedControl()
+    {
+        if (!TryGetRemovablePosition(out AxamlPreviewNode? parent, out _))
+        {
+            throw new InvalidOperationException(
+                "Select a direct child of a simple panel, safe Grid or supported single-child container.");
+        }
+
+        string updatedMarkup = _previewService.RemoveChildControl(Markup, parent!, SelectedNode!);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode newSelection = FindNode(root, parent!.TypeName, parent.SourceStartOffset)
+            ?? throw new InvalidDataException("The parent could not be located after removing the control.");
+        EndPropertyEdit();
+        PushHistory(_undoHistory, Capture());
+        _redoHistory.Clear();
+        Markup = updatedMarkup;
+        Root = root;
+        SelectedNode = newSelection;
+        SelectedProperty = EditableProperties.FirstOrDefault();
+        RefreshSelectedValue();
+        return true;
+    }
+
+    public bool MoveSelectedControl(int direction)
+    {
+        if (direction is not (-1 or 1))
+        {
+            throw new ArgumentOutOfRangeException(nameof(direction), "Move one position earlier or later.");
+        }
+
+        if (!TryGetReorderPosition(out AxamlPreviewNode? parent, out int index)
+            || index + direction < 0 || index + direction >= parent!.Children.Count)
+        {
+            throw new InvalidOperationException(
+                "Select a direct panel child with an adjacent control in that direction.");
+        }
+
+        AxamlPreviewNode selected = SelectedNode!;
+        AxamlPreviewNode sibling = parent.Children[index + direction];
+        (string updatedMarkup, int selectedOffset) = _previewService.MoveChildControl(
+            Markup, parent, selected, sibling, moveEarlier: direction < 0);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode newSelection = FindNode(root, selected.TypeName, selectedOffset)
+            ?? throw new InvalidDataException("The selected control could not be located after moving it.");
+        EndPropertyEdit();
+        PushHistory(_undoHistory, Capture());
+        _redoHistory.Clear();
+        Markup = updatedMarkup;
+        Root = root;
+        SelectedNode = newSelection;
+        SelectedProperty = EditableProperties.FirstOrDefault();
+        RefreshSelectedValue();
+        return true;
+    }
+
+    public bool MoveSelectedGridControl(int rowChange, int columnChange)
+    {
+        if (!((rowChange is -1 or 1 && columnChange == 0)
+            || (columnChange is -1 or 1 && rowChange == 0)))
+        {
+            throw new ArgumentOutOfRangeException(nameof(rowChange), "Move one row or column at a time.");
+        }
+
+        if (!CanMoveSelectedGridControl(rowChange, columnChange)
+            || !TryGetSelectedParent(out AxamlPreviewNode? parent, out _))
+        {
+            throw new InvalidOperationException(
+                "Select a Grid child with an unoccupied adjacent position in a simple static layout.");
+        }
+
+        AxamlPreviewNode selected = SelectedNode!;
+        string updatedMarkup = _previewService.MoveGridChild(Markup, parent!, selected, rowChange, columnChange);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode newSelection = FindNode(root, selected.TypeName, selected.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected control could not be located after moving it.");
+        EndPropertyEdit();
+        PushHistory(_undoHistory, Capture());
+        _redoHistory.Clear();
+        Markup = updatedMarkup;
+        Root = root;
+        SelectedNode = newSelection;
+        SelectedProperty = EditableProperties.FirstOrDefault();
+        RefreshSelectedValue();
+        return true;
+    }
+
     public bool Undo()
     {
         EndPropertyEdit();
@@ -391,6 +500,68 @@ public sealed class AxamlDesignerSession
         }
 
         return null;
+    }
+
+    private bool TryGetStructurePosition(out AxamlPreviewNode? parent, out int index)
+    {
+        return TryGetSelectedParent(out parent, out index)
+            && SelectedNode is { IsSupported: true }
+            && (parent is { IsSupported: true, CanAppendChildren: true }
+                    && parent.TypeName is "StackPanel" or "WrapPanel" or "UniformGrid"
+                || parent is { IsSupported: true, TypeName: "Grid", HasSafeGridLayout: true });
+    }
+
+    private bool TryGetRemovablePosition(out AxamlPreviewNode? parent, out int index)
+    {
+        if (TryGetStructurePosition(out parent, out index))
+        {
+            return true;
+        }
+
+        return TryGetSelectedParent(out parent, out index)
+            && SelectedNode is { IsSupported: true }
+            && parent is { IsSupported: true, HasInlineText: false, CanRemoveSingleChild: true, Children.Count: 1 }
+            && index == 0
+            && parent.PropertyElementNames.Count == 0
+            && AxamlControlCatalog.TryGet(parent.TypeName, out AxamlControlCapability capability)
+            && capability.AllowsSafeChildRemoval;
+    }
+
+    private bool TryGetReorderPosition(out AxamlPreviewNode? parent, out int index) =>
+        TryGetStructurePosition(out parent, out index) && parent!.TypeName != "Grid";
+
+    private bool TryGetSelectedParent(out AxamlPreviewNode? parent, out int index)
+    {
+        parent = null;
+        index = -1;
+        return Root is not null && SelectedNode is { } selected
+            && FindParent(Root, selected, out parent, out index);
+    }
+
+    private static bool FindParent(
+        AxamlPreviewNode node,
+        AxamlPreviewNode selected,
+        out AxamlPreviewNode? parent,
+        out int index)
+    {
+        for (int childIndex = 0; childIndex < node.Children.Count; childIndex++)
+        {
+            if (ReferenceEquals(node.Children[childIndex], selected))
+            {
+                parent = node;
+                index = childIndex;
+                return true;
+            }
+
+            if (FindParent(node.Children[childIndex], selected, out parent, out index))
+            {
+                return true;
+            }
+        }
+
+        parent = null;
+        index = -1;
+        return false;
     }
 
     private sealed record Snapshot(

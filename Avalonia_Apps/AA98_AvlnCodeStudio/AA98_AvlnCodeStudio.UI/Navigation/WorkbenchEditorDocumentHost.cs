@@ -27,6 +27,6 @@ public sealed class WorkbenchEditorDocumentHost : IEditorDocumentHost
         string filePath,
         CancellationToken cancellationToken = default)
     {
-        return await _editorWorkspaceFactory().OpenOrActivateAsync(filePath, cancellationToken).ConfigureAwait(false);
+        return await _editorWorkspaceFactory().OpenPreviewAsync(filePath, cancellationToken);
     }
 }

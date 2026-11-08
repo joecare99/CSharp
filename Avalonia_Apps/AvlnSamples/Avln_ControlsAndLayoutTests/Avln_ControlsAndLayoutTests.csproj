@@ -20,9 +20,9 @@
 		<TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Avalonia.Headless" Version="12.1.4" />
-		<PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+		<PackageReference Include="Avalonia.Headless" Version="12.1.5" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.5" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.5" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
 		<PackageReference Include="MSTest" Version="4.5.2" />
 		<PackageReference Include="coverlet.collector" Version="10.1.0">

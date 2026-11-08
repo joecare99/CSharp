@@ -373,14 +373,24 @@ public sealed class AxamlPreviewControl : ContentControl
         foreach (AxamlPreviewNode child in node.Children)
         {
             Control control = BuildControl(child);
-            if (TryGetInt(child, "Grid.Row", out int row))
+            if (TryGetInt(child, "Grid.Row", out int row) && row >= 0 && row < grid.RowDefinitions.Count)
             {
                 Grid.SetRow(control, row);
             }
 
-            if (TryGetInt(child, "Grid.Column", out int column))
+            if (TryGetInt(child, "Grid.Column", out int column) && column >= 0 && column < grid.ColumnDefinitions.Count)
             {
                 Grid.SetColumn(control, column);
+            }
+
+            if (TryGetInt(child, "Grid.RowSpan", out int rowSpan) && rowSpan > 0 && rowSpan <= grid.RowDefinitions.Count)
+            {
+                Grid.SetRowSpan(control, rowSpan);
+            }
+
+            if (TryGetInt(child, "Grid.ColumnSpan", out int columnSpan) && columnSpan > 0 && columnSpan <= grid.ColumnDefinitions.Count)
+            {
+                Grid.SetColumnSpan(control, columnSpan);
             }
 
             grid.Children.Add(control);
@@ -487,11 +497,13 @@ public sealed class AxamlPreviewControl : ContentControl
         {
             string weight = value[..^1];
             return double.TryParse(weight, CultureInfo.InvariantCulture, out double starValue)
+                && double.IsFinite(starValue) && starValue >= 0
                 ? new GridLength(starValue, GridUnitType.Star)
                 : GridLength.Star;
         }
 
         return double.TryParse(value, CultureInfo.InvariantCulture, out double pixelValue)
+            && double.IsFinite(pixelValue) && pixelValue >= 0
             ? new GridLength(pixelValue)
             : GridLength.Auto;
     }

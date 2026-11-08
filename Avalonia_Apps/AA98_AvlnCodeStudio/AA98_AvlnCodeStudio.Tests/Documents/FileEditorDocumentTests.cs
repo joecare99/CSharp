@@ -56,6 +56,27 @@ public class FileEditorDocumentTests
         Assert.IsTrue(document.IsDirty);
     }
 
+    [TestMethod]
+    public void UpdateContent_ReturningToSavedSnapshotClearsDirtyState()
+    {
+        var document = new FileEditorDocument();
+        document.Load(Path.Combine(Path.GetTempPath(), "sample.axaml"), "<StackPanel />");
+
+        document.UpdateContent("<StackPanel><Button /></StackPanel>");
+        Assert.IsTrue(document.IsDirty);
+        document.UpdateContent("<StackPanel />");
+        Assert.IsFalse(document.IsDirty);
+        document.UpdateContent("<StackPanel><Button /></StackPanel>");
+        Assert.IsTrue(document.IsDirty);
+
+        document.LoadWithSavedContent(document.FilePath!, "Unsaved draft", "Saved content");
+        document.UpdateContent("Another draft");
+        document.UpdateContent("Unsaved draft");
+        Assert.IsTrue(document.IsDirty);
+        document.UpdateContent("Saved content");
+        Assert.IsFalse(document.IsDirty);
+    }
+
     /// <summary>
     /// Verifies that saving stores the file path and clears the dirty flag.
     /// </summary>

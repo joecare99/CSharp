@@ -141,6 +141,47 @@ public sealed class PropertyEditorItemViewModelTests
     }
 
     [TestMethod]
+    public void SensitiveReadOnlyValue_IsMaskedAndChangesNotifyTheDisplayBinding()
+    {
+        PropertyItem readOnly = new(
+            TestCategory, "Password", "Password", typeof(string), "secret", isEditable: false, isSensitive: true);
+        PropertyEditorItemViewModel readOnlyViewModel = new(readOnly);
+        Assert.IsTrue(readOnlyViewModel.ShowReadOnlyValue);
+        Assert.AreEqual("********", readOnlyViewModel.ReadOnlyDisplayValue);
+
+        PropertyItem editable = new(TestCategory, "Token", "Token", typeof(string), "short", isSensitive: true);
+        PropertyEditorItemViewModel editableViewModel = new(editable);
+        bool displayChanged = false;
+        editableViewModel.PropertyChanged += (_, args) =>
+            displayChanged |= args.PropertyName == nameof(PropertyEditorItemViewModel.ReadOnlyDisplayValue);
+        Assert.IsTrue(editable.TrySetValue("longer value"));
+        Assert.IsTrue(displayChanged);
+        Assert.AreEqual("********", editableViewModel.ReadOnlyDisplayValue);
+
+        PropertyItem ordinary = new(TestCategory, "Name", "Name", typeof(string), "visible", isEditable: false);
+        Assert.AreEqual("visible", new PropertyEditorItemViewModel(ordinary).ReadOnlyDisplayValue);
+    }
+
+    [TestMethod]
+    public void SensitiveBooleanAndEnum_UseMaskedTypedScalarEditors()
+    {
+        PropertyItem boolean = new(TestCategory, "Enabled", "Enabled", typeof(bool), true, isSensitive: true);
+        PropertyEditorItemViewModel booleanViewModel = new(boolean);
+        Assert.IsTrue(booleanViewModel.ShowScalarEditor);
+        Assert.IsFalse(booleanViewModel.ShowBooleanEditor);
+        Assert.AreEqual('*', booleanViewModel.PasswordChar);
+        booleanViewModel.ScalarValue = "false";
+        Assert.AreEqual(false, boolean.Value);
+
+        PropertyItem enumeration = new(TestCategory, "Choice", "Choice", typeof(TestValue), TestValue.First, isSensitive: true);
+        PropertyEditorItemViewModel enumViewModel = new(enumeration);
+        Assert.IsTrue(enumViewModel.ShowScalarEditor);
+        Assert.IsFalse(enumViewModel.ShowEnumEditor);
+        enumViewModel.ScalarValue = "Second";
+        Assert.AreEqual(TestValue.Second, enumeration.Value);
+    }
+
+    [TestMethod]
     public void SetItems_OrdersItemsByNeutralCategoryAndPropertyOrdering()
     {
         PropertyCategory laterCategory = new("Later", "Later", 2);

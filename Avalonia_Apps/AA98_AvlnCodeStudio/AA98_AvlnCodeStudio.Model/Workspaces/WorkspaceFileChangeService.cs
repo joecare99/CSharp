@@ -9,11 +9,21 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 /// <summary>
 /// Prepares and applies explicitly confirmed text changes inside a workspace.
 /// </summary>
+/// <remarks>
+/// Existing files retain UTF-8 encoding and BOM, or BOM-marked UTF-16/UTF-32 encoding.
+/// Files without a BOM must be valid UTF-8; new files use UTF-8 without a BOM.
+/// Invalid Unicode is rejected before review rather than silently replaced.
+/// </remarks>
 public sealed class WorkspaceFileChangeService
 {
     private const int MaximumHistoryEntries = 20;
     private const long MaximumHistoryBytes = 32 * 1024 * 1024;
-    private static readonly UTF8Encoding s_utf8 = new(encoderShouldEmitUTF8Identifier: false);
+    private static readonly UTF8Encoding s_utf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+    private static readonly UTF8Encoding s_utf8WithBom = new(encoderShouldEmitUTF8Identifier: true, throwOnInvalidBytes: true);
+    private static readonly UnicodeEncoding s_utf16Le = new(bigEndian: false, byteOrderMark: true, throwOnInvalidBytes: true);
+    private static readonly UnicodeEncoding s_utf16Be = new(bigEndian: true, byteOrderMark: true, throwOnInvalidBytes: true);
+    private static readonly UTF32Encoding s_utf32Le = new(bigEndian: false, byteOrderMark: true, throwOnInvalidCharacters: true);
+    private static readonly UTF32Encoding s_utf32Be = new(bigEndian: true, byteOrderMark: true, throwOnInvalidCharacters: true);
     private static readonly StringComparer s_pathComparer = WorkspacePathIdentity.Comparer;
     private readonly IWorkspaceOpenDocumentProvider _openDocumentProvider;
     private readonly Stack<HistoryEntry> _undoHistory = [];
@@ -80,11 +90,10 @@ public sealed class WorkspaceFileChangeService
             }
 
             byte[]? originalBytes = File.Exists(targetPath) ? File.ReadAllBytes(targetPath) : null;
-            string? originalContent = originalBytes is null
-                ? null
-                : File.ReadAllText(targetPath);
+            Encoding encoding = originalBytes is null ? s_utf8 : DetectEncoding(originalBytes);
+            string? originalContent = originalBytes is null ? null : DecodeContent(originalBytes, encoding, relativePath);
             ValidateRequestTarget(request, relativePath, originalContent);
-            byte[] proposedBytes = s_utf8.GetBytes(request.ProposedContent);
+            byte[] proposedBytes = EncodeContent(request.ProposedContent, encoding, relativePath);
             if (originalBytes is not null
                 && (originalBytes.AsSpan().SequenceEqual(proposedBytes)
                     || string.Equals(originalContent, request.ProposedContent, StringComparison.Ordinal)))
@@ -99,6 +108,7 @@ public sealed class WorkspaceFileChangeService
                 originalBytes,
                 originalContent,
                 request.ExpectedOpenDocumentContent ?? originalContent,
+                requiresOpenDocument: request.ExpectedOpenDocumentContent is not null,
                 request.ProposedContent,
                 proposedBytes);
             EnsureDocumentCanBeChanged(change);
@@ -111,6 +121,43 @@ public sealed class WorkspaceFileChangeService
         }
 
         return new WorkspaceFileChangeProposal(normalizedRoot, changes);
+    }
+
+    private static Encoding DetectEncoding(ReadOnlySpan<byte> bytes)
+    {
+        if (bytes.StartsWith(s_utf32Le.Preamble)) return s_utf32Le;
+        if (bytes.StartsWith(s_utf32Be.Preamble)) return s_utf32Be;
+        if (bytes.StartsWith(s_utf8WithBom.Preamble)) return s_utf8WithBom;
+        if (bytes.StartsWith(s_utf16Le.Preamble)) return s_utf16Le;
+        if (bytes.StartsWith(s_utf16Be.Preamble)) return s_utf16Be;
+        return s_utf8;
+    }
+
+    private static string DecodeContent(byte[] bytes, Encoding encoding, string relativePath)
+    {
+        try
+        {
+            return encoding.GetString(bytes, encoding.Preamble.Length, bytes.Length - encoding.Preamble.Length);
+        }
+        catch (DecoderFallbackException exception)
+        {
+            throw new InvalidDataException($"The existing file '{relativePath}' is not valid {encoding.WebName} text.", exception);
+        }
+    }
+
+    private static byte[] EncodeContent(string content, Encoding encoding, string relativePath)
+    {
+        try
+        {
+            byte[] bytes = new byte[encoding.Preamble.Length + encoding.GetByteCount(content)];
+            encoding.Preamble.CopyTo(bytes);
+            encoding.GetBytes(content.AsSpan(), bytes.AsSpan(encoding.Preamble.Length));
+            return bytes;
+        }
+        catch (EncoderFallbackException exception)
+        {
+            throw new InvalidDataException($"The proposed content for '{relativePath}' contains invalid Unicode text.", exception);
+        }
     }
 
     /// <summary>
@@ -605,6 +652,10 @@ public sealed class WorkspaceFileChangeService
     {
         if (!_openDocumentProvider.IsDocumentOpen(change.TargetPath))
         {
+            if (change.RequiresOpenDocument)
+            {
+                throw new WorkspaceOpenDocumentException(change.RelativePath);
+            }
             return;
         }
 

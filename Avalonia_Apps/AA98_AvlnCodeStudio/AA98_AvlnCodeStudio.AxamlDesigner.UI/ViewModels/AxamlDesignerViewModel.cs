@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,6 +19,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
 {
     private readonly AxamlDesignerSession _session;
     private bool _synchronizing;
+    private string _currentMarkup = string.Empty;
 
     public Func<AxamlBindingRowViewModel, Task<bool>>? ApplyMissingBindingAsync { get; set; }
 
@@ -134,6 +136,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPreview))]
+    [NotifyPropertyChangedFor(nameof(StructureRoots))]
     private AxamlPreviewNode? _previewRoot;
 
     [ObservableProperty]
@@ -166,6 +169,11 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
     public ObservableCollection<AxamlPropertyRowViewModel> PropertyRows { get; } = [];
 
+    public ObservableCollection<AxamlPropertyDraft> UnappliedDrafts { get; } = [];
+
+    public bool HasUnappliedPropertyDrafts =>
+        UnappliedDrafts.Count > 0 || PropertyRows.Any(static row => row.IsDraft);
+
     public ObservableCollection<AxamlBindingRowViewModel> BindingRows { get; } = [];
 
     public bool HasBindingRows => BindingRows.Count > 0;
@@ -182,12 +190,24 @@ public partial class AxamlDesignerViewModel : ObservableObject
     public bool IsDockPanelSelected =>
         string.Equals(SelectedNode?.TypeName, "DockPanel", StringComparison.Ordinal);
 
+    public bool IsSelectedGridChild => _session.IsSelectedGridChild;
+
     private bool IsDockPanelClientFillEnabled =>
         SelectedNode is not null
         && (!SelectedNode.Properties.TryGetValue("LastChildFill", out string? value)
             || !string.Equals(value, "False", StringComparison.OrdinalIgnoreCase));
 
     public bool HasPreview => PreviewRoot is not null || !string.IsNullOrWhiteSpace(ErrorText);
+
+    public IReadOnlyList<AxamlPreviewNode> StructureRoots => PreviewRoot is { } root ? [root] : [];
+
+    public string StructureAvailabilityText => HasUnappliedPropertyDrafts
+        ? "Apply or discard all property drafts before changing the structure."
+        : IsSelectedGridChild
+            ? _session.CanEditSelectedGridLayout
+                ? "Move by row or column into unoccupied cells; spans are preserved. Remove is available for safe content."
+                : "Grid editing requires an unambiguous static layout with supported children and non-overlapping cells."
+            : "Remove from supported single-child containers; reorder simple panels; move Grid children by cell.";
 
     public string SelectedElementName => SelectedNode?.TypeName ?? "Select a control in the preview.";
 
@@ -234,6 +254,8 @@ public partial class AxamlDesignerViewModel : ObservableObject
                     ? $"{childLimit}; appending supported"
                 : capability.AllowsAppendingChildren
                     ? $"{childLimit}; correct invalid or unsupported markup before adding controls"
+                : capability.AllowsSafeChildRemoval
+                    ? $"{childLimit}; remove supported direct content"
                     : $"{childLimit}; empty containers only";
             return $"Editable: {editableProperties}. Binding analysis: {bindings}. MVVM generation: {generation}. Children: {children}.";
         }
@@ -258,7 +280,15 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
         try
         {
-            _session.SelectNode(node);
+            SelectedNode = node;
+            if (!ReferenceEquals(_session.SelectedNode, node))
+            {
+                return false;
+            }
+            if (!EnsureNoCurrentDrafts())
+            {
+                return false;
+            }
             Dictionary<string, string> values = new(StringComparer.Ordinal)
             {
                 ["Width"] = FormatLayoutSize(width),
@@ -283,6 +313,14 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
     public void LoadMarkup(string? markup)
     {
+        markup ??= string.Empty;
+        if (!string.Equals(_currentMarkup, markup, StringComparison.Ordinal))
+        {
+            StoreCurrentDrafts();
+            ClearPropertyRows();
+        }
+
+        _currentMarkup = markup;
         if (string.IsNullOrWhiteSpace(markup))
         {
             _session.Reset();
@@ -308,7 +346,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanApplySelectedValue))]
     private void ApplySelectedValue()
     {
-        if (SelectedProperty is null || SelectedNode is null)
+        if (SelectedProperty is null || SelectedNode is null || !EnsureNoCurrentDrafts())
         {
             return;
         }
@@ -399,6 +437,13 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
     }
 
+    public void DiscardAllPropertyDrafts()
+    {
+        DiscardPropertyDrafts();
+        UnappliedDrafts.Clear();
+        NotifyDraftStateChanged();
+    }
+
     public void BeginPropertyDraft(AxamlPropertyRowViewModel row, bool hasChanged)
     {
         ArgumentNullException.ThrowIfNull(row);
@@ -415,6 +460,49 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
         UndoCommand.NotifyCanExecuteChanged();
         RedoCommand.NotifyCanExecuteChanged();
+        NotifyDraftStateChanged();
+    }
+
+    public bool RestoreDraft(AxamlPropertyDraft draft)
+    {
+        ArgumentNullException.ThrowIfNull(draft);
+        if (!UnappliedDrafts.Contains(draft) || !draft.CanRestore)
+        {
+            return false;
+        }
+
+        AxamlPropertyRowViewModel? row = PropertyRows.FirstOrDefault(item =>
+            item.Name == draft.PropertyName && !item.IsReadOnly && !item.IsDraft);
+        if (row is null)
+        {
+            return false;
+        }
+
+        _synchronizing = true;
+        try
+        {
+            row.IsEditing = true;
+            row.IsDraft = true;
+            row.Value = draft.Value;
+        }
+        finally
+        {
+            _synchronizing = false;
+        }
+        UnappliedDrafts.Remove(draft);
+        StatusText = $"Draft for '{draft.PropertyName}' restored; review it before applying.";
+        NotifyDraftStateChanged();
+        RefreshDraftAvailability();
+        return true;
+    }
+
+    public void DiscardStoredDraft(AxamlPropertyDraft draft)
+    {
+        ArgumentNullException.ThrowIfNull(draft);
+        if (UnappliedDrafts.Remove(draft))
+        {
+            NotifyDraftStateChanged();
+        }
     }
 
     public void SetBindingContext(
@@ -513,6 +601,12 @@ public partial class AxamlDesignerViewModel : ObservableObject
         memberName = string.Empty;
         if (!BindingRows.Contains(row) || SelectedNode is null)
         {
+            return false;
+        }
+
+        if (!EnsureNoCurrentDrafts())
+        {
+            row.Diagnostic = StatusText;
             return false;
         }
 
@@ -712,6 +806,11 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
     private void AddChildControl(string controlType)
     {
+        if (!EnsureNoStructureDrafts())
+        {
+            return;
+        }
+
         try
         {
             AxamlDockPanelPlacement? dockPanelPlacement = IsDockPanelSelected
@@ -732,6 +831,78 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
     }
 
+    [RelayCommand(CanExecute = nameof(CanRemoveStructure))]
+    private void RemoveStructure() =>
+        ApplyStructureEdit(_session.RemoveSelectedControl, "Control removed; Undo restores it.");
+
+    [RelayCommand(CanExecute = nameof(CanMoveStructureEarlier))]
+    private void MoveStructureEarlier() =>
+        ApplyStructureEdit(() => _session.MoveSelectedControl(-1), "Control moved earlier.");
+
+    [RelayCommand(CanExecute = nameof(CanMoveStructureLater))]
+    private void MoveStructureLater() =>
+        ApplyStructureEdit(() => _session.MoveSelectedControl(1), "Control moved later.");
+
+    [RelayCommand(CanExecute = nameof(CanMoveGridRowEarlier))]
+    private void MoveGridRowEarlier() =>
+        ApplyStructureEdit(() => _session.MoveSelectedGridControl(-1, 0), "Control moved to the previous Grid row.");
+
+    [RelayCommand(CanExecute = nameof(CanMoveGridRowLater))]
+    private void MoveGridRowLater() =>
+        ApplyStructureEdit(() => _session.MoveSelectedGridControl(1, 0), "Control moved to the next Grid row.");
+
+    [RelayCommand(CanExecute = nameof(CanMoveGridColumnEarlier))]
+    private void MoveGridColumnEarlier() =>
+        ApplyStructureEdit(() => _session.MoveSelectedGridControl(0, -1), "Control moved to the previous Grid column.");
+
+    [RelayCommand(CanExecute = nameof(CanMoveGridColumnLater))]
+    private void MoveGridColumnLater() =>
+        ApplyStructureEdit(() => _session.MoveSelectedGridControl(0, 1), "Control moved to the next Grid column.");
+
+    private bool CanRemoveStructure() => !HasUnappliedPropertyDrafts && _session.CanRemoveSelectedControl;
+
+    private bool CanMoveStructureEarlier() =>
+        !HasUnappliedPropertyDrafts && _session.CanMoveSelectedControlEarlier;
+
+    private bool CanMoveStructureLater() =>
+        !HasUnappliedPropertyDrafts && _session.CanMoveSelectedControlLater;
+
+    private bool CanMoveGridRowEarlier() =>
+        !HasUnappliedPropertyDrafts && _session.CanMoveSelectedGridControl(-1, 0);
+
+    private bool CanMoveGridRowLater() =>
+        !HasUnappliedPropertyDrafts && _session.CanMoveSelectedGridControl(1, 0);
+
+    private bool CanMoveGridColumnEarlier() =>
+        !HasUnappliedPropertyDrafts && _session.CanMoveSelectedGridControl(0, -1);
+
+    private bool CanMoveGridColumnLater() =>
+        !HasUnappliedPropertyDrafts && _session.CanMoveSelectedGridControl(0, 1);
+
+    private void ApplyStructureEdit(Func<bool> edit, string successMessage)
+    {
+        if (!EnsureNoStructureDrafts())
+        {
+            return;
+        }
+
+        try
+        {
+            if (!edit())
+            {
+                return;
+            }
+
+            SynchronizeState();
+            StatusText = successMessage;
+            RaiseMarkupChanged();
+        }
+        catch (Exception exception) when (exception is InvalidDataException or InvalidOperationException or ArgumentException or XmlException)
+        {
+            StatusText = $"AXAML structure edit failed: {exception.Message}";
+        }
+    }
+
     private bool CanApplySelectedValue()
     {
         return SelectedNode is not null
@@ -746,13 +917,10 @@ public partial class AxamlDesignerViewModel : ObservableObject
             return;
         }
 
-        if (HasInvalidPropertyDraft && !ReferenceEquals(value, _session.SelectedNode))
+        if (!ReferenceEquals(value, _session.SelectedNode))
         {
-            _synchronizing = true;
-            SelectedNode = _session.SelectedNode;
-            _synchronizing = false;
-            StatusText = "Resolve the invalid property value or discard it before changing the selected element.";
-            return;
+            StoreCurrentDrafts();
+            ClearPropertyRows();
         }
 
         try
@@ -763,6 +931,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
         catch (InvalidOperationException exception)
         {
             StatusText = $"AXAML selection failed: {exception.Message}";
+            SynchronizeState();
         }
 
         ApplySelectedValueCommand.NotifyCanExecuteChanged();
@@ -790,6 +959,11 @@ public partial class AxamlDesignerViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanUndoDesigner))]
     private void Undo()
     {
+        if (!EnsureNoStructureDrafts())
+        {
+            return;
+        }
+
         if (_session.Undo())
         {
             SynchronizeState();
@@ -797,11 +971,16 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
     }
 
-    private bool CanUndoDesigner() => _session.CanUndo && !HasInvalidPropertyDraft;
+    private bool CanUndoDesigner() => _session.CanUndo && !HasUnappliedPropertyDrafts;
 
     [RelayCommand(CanExecute = nameof(CanRedoDesigner))]
     private void Redo()
     {
+        if (!EnsureNoStructureDrafts())
+        {
+            return;
+        }
+
         if (_session.Redo())
         {
             SynchronizeState();
@@ -809,10 +988,15 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
     }
 
-    private bool CanRedoDesigner() => _session.CanRedo && !HasInvalidPropertyDraft;
+    private bool CanRedoDesigner() => _session.CanRedo && !HasUnappliedPropertyDrafts;
 
     private void SynchronizeState()
     {
+        if (_session.Root is not null)
+        {
+            _currentMarkup = _session.Markup;
+        }
+
         _synchronizing = true;
         try
         {
@@ -827,6 +1011,8 @@ public partial class AxamlDesignerViewModel : ObservableObject
             SelectedProperty = _session.SelectedProperty;
             SelectedValue = _session.SelectedValue;
             SynchronizePropertyRows();
+            RestoreUnchangedDrafts();
+            RefreshDraftAvailability();
         }
         finally
         {
@@ -835,9 +1021,12 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
         OnPropertyChanged(nameof(CanUndo));
         OnPropertyChanged(nameof(CanRedo));
+        OnPropertyChanged(nameof(IsSelectedGridChild));
+        OnPropertyChanged(nameof(StructureAvailabilityText));
         ApplySelectedValueCommand.NotifyCanExecuteChanged();
         UndoCommand.NotifyCanExecuteChanged();
         RedoCommand.NotifyCanExecuteChanged();
+        NotifyStructureCommandsChanged();
     }
 
     private void SynchronizePropertyRows()
@@ -845,10 +1034,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
         AxamlPreviewNode? node = _session.SelectedNode;
         if (node is null)
         {
-            PropertyRows.Clear();
-            BindingRows.Clear();
-            PropertyEditor.SetItems([]);
-            OnPropertyChanged(nameof(HasBindingRows));
+            ClearPropertyRows();
             return;
         }
 
@@ -884,6 +1070,8 @@ public partial class AxamlDesignerViewModel : ObservableObject
             if (PropertyRows[index].ControlType != node.TypeName
                 || !descriptors.Any(descriptor => descriptor.Name == PropertyRows[index].Name))
             {
+                PropertyRows[index].ValueChanged -= OnPropertyRowValueChanged;
+                PropertyRows[index].PropertyChanged -= OnPropertyRowPropertyChanged;
                 PropertyRows.RemoveAt(index);
             }
         }
@@ -905,11 +1093,183 @@ public partial class AxamlDesignerViewModel : ObservableObject
             {
                 AxamlPropertyRowViewModel newRow = new(node.TypeName, descriptor);
                 newRow.ValueChanged += OnPropertyRowValueChanged;
+                newRow.PropertyChanged += OnPropertyRowPropertyChanged;
                 PropertyRows.Insert(index, newRow);
             }
         }
 
         PropertyEditor.SetItems(PropertyRows);
+    }
+
+    private void StoreCurrentDrafts()
+    {
+        AxamlPreviewNode? node = _session.SelectedNode;
+        string? key = GetTargetKey(node);
+        if (node is null || key is null)
+        {
+            return;
+        }
+
+        foreach (AxamlPropertyRowViewModel row in PropertyRows.Where(static row => row.IsDraft))
+        {
+            string target = string.IsNullOrWhiteSpace(node.StableName)
+                ? $"{node.TypeName} ({key})"
+                : $"{node.TypeName} '{node.StableName}'";
+            UnappliedDrafts.Add(new AxamlPropertyDraft(key, target, node.TypeName, row.Name, row.Value, _currentMarkup));
+        }
+
+        NotifyDraftStateChanged();
+    }
+
+    private void ClearPropertyRows()
+    {
+        PropertyEditor.SetItems([]);
+        foreach (AxamlPropertyRowViewModel row in PropertyRows)
+        {
+            row.ValueChanged -= OnPropertyRowValueChanged;
+            row.PropertyChanged -= OnPropertyRowPropertyChanged;
+        }
+
+        PropertyRows.Clear();
+        BindingRows.Clear();
+        OnPropertyChanged(nameof(HasBindingRows));
+    }
+
+    private void RestoreUnchangedDrafts()
+    {
+        AxamlPreviewNode? node = _session.SelectedNode;
+        string? key = GetTargetKey(node);
+        if (node is null || key is null)
+        {
+            return;
+        }
+
+        foreach (AxamlPropertyDraft draft in UnappliedDrafts.Where(item =>
+                     item.TargetKey == key && item.ControlType == node.TypeName
+                     && string.Equals(item.SourceMarkup, _currentMarkup, StringComparison.Ordinal)).ToArray())
+        {
+            AxamlPropertyRowViewModel? row = PropertyRows.FirstOrDefault(item =>
+                item.Name == draft.PropertyName && !item.IsReadOnly && !item.IsDraft);
+            if (row is null)
+            {
+                continue;
+            }
+
+            row.IsEditing = true;
+            row.IsDraft = true;
+            row.Value = draft.Value;
+            UnappliedDrafts.Remove(draft);
+        }
+
+        NotifyDraftStateChanged();
+    }
+
+    private void RefreshDraftAvailability()
+    {
+        AxamlPreviewNode? node = _session.SelectedNode;
+        string? key = GetTargetKey(node);
+        foreach (AxamlPropertyDraft draft in UnappliedDrafts)
+        {
+            bool unchanged = string.Equals(draft.SourceMarkup, _currentMarkup, StringComparison.Ordinal);
+            draft.CanRestore = !unchanged && key is not null && key.StartsWith("name:", StringComparison.Ordinal)
+                && draft.TargetKey == key && draft.ControlType == node?.TypeName
+                && PropertyRows.Any(row => row.Name == draft.PropertyName && !row.IsReadOnly && !row.IsDraft);
+            draft.Status = unchanged
+                ? "Select the original control to restore this draft."
+                : draft.CanRestore
+                    ? "The source changed. Restore explicitly only after reviewing the target."
+                    : "The source or target changed. Copy the retained value or discard it explicitly.";
+        }
+    }
+
+    private string? GetTargetKey(AxamlPreviewNode? node)
+    {
+        if (node is null || _session.Root is not { } root)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(node.StableName)
+            && CountNamedNodes(root, node.StableName) == 1)
+        {
+            return $"name:{node.StableName}";
+        }
+
+        return FindNodePath(root, node, "root");
+    }
+
+    private static int CountNamedNodes(AxamlPreviewNode node, string name) =>
+        (string.Equals(node.StableName, name, StringComparison.Ordinal) ? 1 : 0)
+        + node.Children.Sum(child => CountNamedNodes(child, name));
+
+    private static string? FindNodePath(AxamlPreviewNode current, AxamlPreviewNode target, string path)
+    {
+        if (ReferenceEquals(current, target))
+        {
+            return $"path:{path}";
+        }
+
+        for (int index = 0; index < current.Children.Count; index++)
+        {
+            string? found = FindNodePath(current.Children[index], target, $"{path}.{index}");
+            if (found is not null)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
+    private void OnPropertyRowPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(AxamlPropertyRowViewModel.IsDraft))
+        {
+            NotifyDraftStateChanged();
+        }
+    }
+
+    private void NotifyDraftStateChanged()
+    {
+        OnPropertyChanged(nameof(HasUnappliedPropertyDrafts));
+        OnPropertyChanged(nameof(HasInvalidPropertyDraft));
+        OnPropertyChanged(nameof(StructureAvailabilityText));
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+        NotifyStructureCommandsChanged();
+    }
+
+    private void NotifyStructureCommandsChanged()
+    {
+        RemoveStructureCommand.NotifyCanExecuteChanged();
+        MoveStructureEarlierCommand.NotifyCanExecuteChanged();
+        MoveStructureLaterCommand.NotifyCanExecuteChanged();
+        MoveGridRowEarlierCommand.NotifyCanExecuteChanged();
+        MoveGridRowLaterCommand.NotifyCanExecuteChanged();
+        MoveGridColumnEarlierCommand.NotifyCanExecuteChanged();
+        MoveGridColumnLaterCommand.NotifyCanExecuteChanged();
+    }
+
+    private bool EnsureNoStructureDrafts()
+    {
+        if (!HasUnappliedPropertyDrafts)
+        {
+            return true;
+        }
+
+        StatusText = StructureAvailabilityText;
+        return false;
+    }
+
+    private bool EnsureNoCurrentDrafts()
+    {
+        if (!PropertyRows.Any(static row => row.IsDraft))
+        {
+            return true;
+        }
+
+        StatusText = "Apply or discard the current control's property drafts before this designer operation.";
+        return false;
     }
 
     private void OnPropertyEditorEditStarted(object? sender, PropertyEditorEditEventArgs eventArgs)

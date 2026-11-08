@@ -11,7 +11,7 @@ namespace AA98_AvlnCodeStudio.Editor.Services;
 /// <summary>
 /// Implements the UI-agnostic workflow for a single text editor component.
 /// </summary>
-public sealed class EditorWorkflow : IEditorWorkflow
+public sealed class EditorWorkflow : IEditorWorkflow, ICoordinatedEditorSave
 {
     private readonly IFileEditorDocument _document;
     private readonly IEditorFileDialogService _fileDialogService;
@@ -35,6 +35,8 @@ public sealed class EditorWorkflow : IEditorWorkflow
 
     /// <inheritdoc/>
     public IFileEditorDocument Document => _document;
+
+    public Func<string, IDisposable>? AcquireSaveTarget { get; set; }
 
     /// <inheritdoc/>
     public void UpdateText(string? text)
@@ -71,6 +73,7 @@ public sealed class EditorWorkflow : IEditorWorkflow
         }
 
         var content = await _storageService.ReadAllTextAsync(filePath, cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
         _document.Load(filePath, content);
         return EditorOperationResult.Completed(EditorOperationKind.Open, _document.DisplayName, _document.FilePath);
     }
@@ -89,8 +92,10 @@ public sealed class EditorWorkflow : IEditorWorkflow
             return EditorOperationResult.Canceled(EditorOperationKind.Save, _document.DisplayName, _document.FilePath);
         }
 
-        await _storageService.SaveAllTextAsync(filePath, _document.Content, cancellationToken).ConfigureAwait(false);
-        _document.MarkSaved(filePath);
+        using IDisposable? reservation = AcquireSaveTarget?.Invoke(filePath);
+        string savedContent = _document.Content;
+        await _storageService.SaveAllTextAsync(filePath, savedContent, cancellationToken).ConfigureAwait(false);
+        _document.LoadWithSavedContent(filePath, _document.Content, savedContent);
         return EditorOperationResult.Completed(EditorOperationKind.Save, _document.DisplayName, _document.FilePath);
     }
 
@@ -103,8 +108,10 @@ public sealed class EditorWorkflow : IEditorWorkflow
             return EditorOperationResult.Canceled(EditorOperationKind.SaveAs, _document.DisplayName, _document.FilePath);
         }
 
-        await _storageService.SaveAllTextAsync(filePath, _document.Content, cancellationToken).ConfigureAwait(false);
-        _document.MarkSaved(filePath);
+        using IDisposable? reservation = AcquireSaveTarget?.Invoke(filePath);
+        string savedContent = _document.Content;
+        await _storageService.SaveAllTextAsync(filePath, savedContent, cancellationToken).ConfigureAwait(false);
+        _document.LoadWithSavedContent(filePath, _document.Content, savedContent);
         return EditorOperationResult.Completed(EditorOperationKind.SaveAs, _document.DisplayName, _document.FilePath);
     }
 

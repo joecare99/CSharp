@@ -9,6 +9,8 @@ public sealed class AxamlPreviewNode
 {
     public string TypeName { get; init; } = string.Empty;
 
+    public string? StableName { get; init; }
+
     public string? Text { get; init; }
 
     public bool IsSupported { get; init; }
@@ -30,6 +32,10 @@ public sealed class AxamlPreviewNode
     public bool CanAppendChildren { get; init; }
 
     public bool CanAddGridChild { get; init; }
+
+    public bool HasSafeGridLayout { get; init; }
+
+    public bool CanRemoveSingleChild { get; init; }
 
     public IReadOnlyList<string> PropertyElementNames { get; init; } = [];
 

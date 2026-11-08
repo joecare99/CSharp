@@ -13,6 +13,10 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 /// <summary>
 /// Exposes a project's explicit, unconditional AssemblyName as a reviewed workspace property.
 /// </summary>
+/// <remarks>
+/// Cancellation is honored before applying a confirmed proposal. Once application succeeds,
+/// the committed snapshot is retained even if cancellation is subsequently requested.
+/// </remarks>
 public sealed class ProjectAssemblyNameProvider : IPropertyProvider
 {
     private static readonly Regex s_literalElement = new(
@@ -33,6 +37,11 @@ public sealed class ProjectAssemblyNameProvider : IPropertyProvider
     private string? _readOnlyReason;
     private PropertyProviderContext _context;
 
+    /// <summary>Creates a reviewed project property provider.</summary>
+    /// <param name="workspaceRoot">The workspace containing the project.</param>
+    /// <param name="projectPath">The project file to inspect.</param>
+    /// <param name="changeService">The service that checks and applies confirmed changes.</param>
+    /// <param name="reviewAsync">Reviews the proposal and returns approval without applying it.</param>
     public ProjectAssemblyNameProvider(
         string workspaceRoot,
         string projectPath,
@@ -81,8 +90,13 @@ public sealed class ProjectAssemblyNameProvider : IPropertyProvider
     {
         cancellationToken.ThrowIfCancellationRequested();
         ErrorMessage = null;
-        _source = await File.ReadAllTextAsync(_projectPath, cancellationToken);
-        (string value, string? diagnostic) = InspectAssemblyName(_source);
+        string source = await File.ReadAllTextAsync(_projectPath, cancellationToken);
+        SetSource(source);
+    }
+
+    private void SetSource(string source)
+    {
+        (string value, string? diagnostic) = InspectAssemblyName(source);
         _readOnlyReason = _workspaceReadOnlyReason ?? diagnostic;
         if (_readOnlyReason is null && _reviewAsync is null)
             _readOnlyReason = "A workspace change review service is required before project settings can be edited.";
@@ -101,6 +115,7 @@ public sealed class ProjectAssemblyNameProvider : IPropertyProvider
                 origin: _projectPath,
                 readOnlyReason: _readOnlyReason),
             readOnlyReason: _readOnlyReason);
+        _source = source;
     }
 
     /// <inheritdoc/>
@@ -136,7 +151,8 @@ public sealed class ProjectAssemblyNameProvider : IPropertyProvider
 
         cancellationToken.ThrowIfCancellationRequested();
         _changeService.Apply(proposal, confirmed: true);
-        await LoadAsync(cancellationToken);
+        SetSource(proposedContent);
+        ErrorMessage = null;
     }
 
     /// <inheritdoc/>

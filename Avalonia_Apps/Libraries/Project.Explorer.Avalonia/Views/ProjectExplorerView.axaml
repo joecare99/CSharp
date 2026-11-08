@@ -7,7 +7,9 @@
     <Button Content="Refresh" Command="{Binding RefreshCommand}" IsEnabled="{Binding !IsBusy}" />
     <TreeView Grid.Row="1"
               ItemsSource="{Binding RootItems}"
-              SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+              SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+              DoubleTapped="OnTreeDoubleTapped"
+              KeyDown="OnTreeKeyDown">
       <TreeView.ItemContainerTheme>
         <ControlTheme TargetType="TreeViewItem"
                       BasedOn="{StaticResource {x:Type TreeViewItem}}">
