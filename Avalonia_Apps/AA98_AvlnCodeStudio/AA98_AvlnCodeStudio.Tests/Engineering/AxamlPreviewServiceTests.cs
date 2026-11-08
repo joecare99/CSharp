@@ -39,6 +39,1036 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void Parse_ExposesEditableToggleSwitchContentAndNumericValue()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode root = service.Parse(
+            "<StackPanel xmlns='https://github.com/avaloniaui'><NumericUpDown Value='12.5' />"
+            + "<ToggleSwitch Content='Notifications' IsChecked='True' OnContent='Enabled' OffContent='Disabled' /></StackPanel>");
+        AxamlPreviewNode numericUpDown = root.Children[0];
+        AxamlPreviewNode toggleSwitch = root.Children[1];
+
+        AxamlPropertyDescriptor numericValue = AxamlPropertyValueValidator.Describe(numericUpDown, "Value");
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, numericValue.EditorKind);
+        Assert.AreEqual("12.5", numericValue.Value);
+        Assert.IsNull(numericValue.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "Value", "14.75"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "Value", "14,75"));
+
+        Assert.AreEqual("Notifications", toggleSwitch.Text);
+        Assert.IsTrue(service.CanEditProperty(toggleSwitch, "Content"));
+        Assert.AreEqual("Enabled", AxamlPropertyValueValidator.Describe(toggleSwitch, "OnContent").Value);
+        Assert.AreEqual("Disabled", AxamlPropertyValueValidator.Describe(toggleSwitch, "OffContent").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ToggleSwitch", "OnContent", string.Empty));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ToggleSwitch", "OffContent", "Not active"));
+        AxamlPreviewNode boundNumericUpDown = service.Parse(
+            "<NumericUpDown Value='{Binding Quantity}' />");
+        Assert.IsFalse(service.CanEditProperty(boundNumericUpDown, "Value"));
+        AxamlPreviewNode boundToggleContent = service.Parse(
+            "<ToggleSwitch OnContent='{Binding EnabledLabel}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundToggleContent, "OnContent").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesBooleanStateForSelectorControls()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode root = service.Parse(
+            "<StackPanel xmlns='https://github.com/avaloniaui'><CheckBox /><RadioButton /><ToggleSwitch /></StackPanel>");
+
+        foreach (AxamlPreviewNode node in root.Children)
+        {
+            AxamlPropertyDescriptor isChecked = AxamlPropertyValueValidator.Describe(node, "IsChecked");
+            Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isChecked.EditorKind);
+            Assert.AreEqual("False", isChecked.Value);
+            Assert.IsFalse(isChecked.IsReadOnly);
+            Assert.IsNull(isChecked.ValidationError);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(node.TypeName, "IsChecked", "True"));
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(node.TypeName, "IsChecked", string.Empty));
+
+            AxamlPreviewNode bound = service.Parse($"<{node.TypeName} IsChecked='{{Binding Selected}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "IsChecked").IsReadOnly);
+        }
+
+        AxamlPreviewNode checkBox = root.Children[0];
+        AxamlPropertyDescriptor isThreeState = AxamlPropertyValueValidator.Describe(checkBox, "IsThreeState");
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isThreeState.EditorKind);
+        Assert.AreEqual("False", isThreeState.Value);
+        Assert.IsNull(isThreeState.ValidationError);
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("CheckBox", "IsThreeState", string.Empty));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<CheckBox IsThreeState='{Binding SupportsNull}' />"),
+            "IsThreeState").IsReadOnly);
+
+        AxamlPreviewNode toggleSwitch = root.Children[2];
+        AxamlPropertyDescriptor toggleThreeState = AxamlPropertyValueValidator.Describe(toggleSwitch, "IsThreeState");
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, toggleThreeState.EditorKind);
+        Assert.AreEqual("False", toggleThreeState.Value);
+        Assert.IsNull(toggleThreeState.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ToggleSwitch", "IsThreeState", "True"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ToggleSwitch", "IsThreeState", string.Empty));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<ToggleSwitch IsThreeState='{Binding SupportsNull}' />"),
+            "IsThreeState").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesRadioButtonGroupNameAsLiteralText()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode radioButton = service.Parse("<RadioButton GroupName='Modes' />");
+        AxamlPropertyDescriptor groupName = AxamlPropertyValueValidator.Describe(radioButton, "GroupName");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, groupName.EditorKind);
+        Assert.AreEqual("Modes", groupName.Value);
+        Assert.IsNull(groupName.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("RadioButton", "GroupName", string.Empty));
+        Assert.IsTrue(service.CanEditProperty(radioButton, "GroupName"));
+
+        AxamlPreviewNode boundGroupName = service.Parse("<RadioButton GroupName='{Binding ModeGroup}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundGroupName, "GroupName").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesSharedSelectorAppearanceSafely()
+    {
+        AxamlPreviewService service = new();
+        string[] controlTypes = ["CheckBox", "RadioButton", "ToggleSwitch"];
+        string[] appearanceProperties =
+        [
+            "Background",
+            "BorderBrush",
+            "BorderThickness",
+            "CornerRadius",
+            "FontSize",
+            "FontStyle",
+            "FontWeight",
+            "Foreground",
+            "Padding",
+        ];
+        string appearance =
+            "Background='White' BorderBrush='Black' BorderThickness='2' CornerRadius='1,2,3,4' "
+            + "FontSize='16' FontStyle='Italic' FontWeight='Medium' Foreground='Blue' Padding='4'";
+
+        foreach (string controlType in controlTypes)
+        {
+            AxamlPreviewNode node = service.Parse($"<{controlType} {appearance} />");
+            foreach (string propertyName in appearanceProperties)
+            {
+                AxamlPropertyDescriptor property = AxamlPropertyValueValidator.Describe(node, propertyName);
+                Assert.IsFalse(property.IsReadOnly, $"{controlType}.{propertyName}");
+                Assert.IsNull(property.ValidationError, $"{controlType}.{propertyName}");
+            }
+
+            AxamlPreviewNode bound = service.Parse(
+                $"<{controlType} Background='{{DynamicResource Surface}}' CornerRadius='{{Binding Radius}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "Background").IsReadOnly);
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "CornerRadius").IsReadOnly);
+        }
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTemplatedAppearanceForRangeAndComboControls()
+    {
+        AxamlPreviewService service = new();
+        string[] controlTypes = ["ComboBox", "NumericUpDown", "ProgressBar", "Slider"];
+        string[] appearanceProperties =
+        [
+            "Background",
+            "BorderBrush",
+            "BorderThickness",
+            "CornerRadius",
+            "FontSize",
+            "FontStyle",
+            "FontWeight",
+            "Foreground",
+            "Padding",
+        ];
+        string appearance =
+            "Background='White' BorderBrush='Black' BorderThickness='2' CornerRadius='1,2,3,4' "
+            + "FontSize='16' FontStyle='Italic' FontWeight='Medium' Foreground='Blue' Padding='4'";
+
+        foreach (string controlType in controlTypes)
+        {
+            AxamlPreviewNode node = service.Parse($"<{controlType} {appearance} />");
+            foreach (string propertyName in appearanceProperties)
+            {
+                AxamlPropertyDescriptor property = AxamlPropertyValueValidator.Describe(node, propertyName);
+                Assert.IsFalse(property.IsReadOnly, $"{controlType}.{propertyName}");
+                Assert.IsNull(property.ValidationError, $"{controlType}.{propertyName}");
+            }
+
+            AxamlPreviewNode bound = service.Parse(
+                $"<{controlType} Background='{{DynamicResource Surface}}' CornerRadius='{{Binding Radius}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "Background").IsReadOnly);
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "CornerRadius").IsReadOnly);
+        }
+    }
+
+    [TestMethod]
+    public void Parse_ExposesComboBoxPlaceholderAsSafeLiteralText()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode comboBox = service.Parse("<ComboBox PlaceholderText='Choose an option' />");
+        AxamlPropertyDescriptor placeholder = AxamlPropertyValueValidator.Describe(comboBox, "PlaceholderText");
+
+        Assert.IsTrue(service.CanEditProperty(comboBox, "PlaceholderText"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, placeholder.EditorKind);
+        Assert.AreEqual("Choose an option", placeholder.Value);
+        Assert.IsNull(placeholder.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ComboBox", "PlaceholderText", string.Empty));
+        Assert.AreEqual(
+            "ComboBox",
+            AxamlPropertyValueValidator.Describe(service.Parse("<ComboBox />"), "PlaceholderText").Value);
+
+        AxamlPreviewNode boundComboBox = service.Parse("<ComboBox PlaceholderText='{Binding Hint}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundComboBox, "PlaceholderText").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBlockWrappingAndForegroundSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBlock = service.Parse("<TextBlock TextWrapping='NoWrap' Foreground='Red' />");
+        AxamlPropertyDescriptor wrapping = AxamlPropertyValueValidator.Describe(textBlock, "TextWrapping");
+        AxamlPropertyDescriptor foreground = AxamlPropertyValueValidator.Describe(textBlock, "Foreground");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, wrapping.EditorKind);
+        Assert.AreEqual("NoWrap", wrapping.Value);
+        Assert.IsNull(wrapping.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, foreground.EditorKind);
+        Assert.AreEqual("Red", foreground.Value);
+        Assert.IsNull(foreground.ValidationError);
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "Foreground", "LinearGradientBrush(Red,Blue)"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "Foreground", "NotAColorName"));
+        Assert.AreEqual("Wrap", AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock />"),
+            "TextWrapping").Value);
+        CollectionAssert.AreEqual(
+            new[] { "NoWrap", "Wrap", "WrapWithOverflow" },
+            wrapping.Options.ToArray());
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBlock", "TextWrapping", "WrapWithOverflow"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "TextWrapping", "Clip"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock TextWrapping='{Binding Wrapping}' />"),
+            "TextWrapping").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock Foreground='{DynamicResource TextBrush}' />"),
+            "Foreground").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBlockFontWeightOptions()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBlock = service.Parse("<TextBlock FontWeight='SemiBold' />");
+        AxamlPropertyDescriptor fontWeight = AxamlPropertyValueValidator.Describe(textBlock, "FontWeight");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, fontWeight.EditorKind);
+        Assert.AreEqual("SemiBold", fontWeight.Value);
+        CollectionAssert.AreEqual(
+            new[] { "Thin", "Light", "Normal", "Medium", "SemiBold", "Bold", "ExtraBold", "Black" },
+            fontWeight.Options.ToArray());
+        Assert.IsNull(fontWeight.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBlock", "FontWeight", "Medium"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "FontWeight", "ExtraBlack"));
+        Assert.AreEqual("Normal", AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock />"),
+            "FontWeight").Value);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock FontWeight='{Binding Weight}' />"),
+            "FontWeight").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBoxForegroundSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBox = service.Parse("<TextBox Foreground='#FF0000FF' />");
+        AxamlPropertyDescriptor foreground = AxamlPropertyValueValidator.Describe(textBox, "Foreground");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, foreground.EditorKind);
+        Assert.AreEqual("#FF0000FF", foreground.Value);
+        Assert.IsNull(foreground.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "Foreground", "Blue"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "Foreground", "NotAColorName"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox Foreground='{DynamicResource TextBrush}' />"),
+            "Foreground").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBoxBackgroundAndPaddingSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBox = service.Parse("<TextBox Background='#FFF0F0F0' BorderBrush='Blue' Padding='8,4' />");
+        AxamlPropertyDescriptor background = AxamlPropertyValueValidator.Describe(textBox, "Background");
+        AxamlPropertyDescriptor borderBrush = AxamlPropertyValueValidator.Describe(textBox, "BorderBrush");
+        AxamlPropertyDescriptor padding = AxamlPropertyValueValidator.Describe(textBox, "Padding");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, background.EditorKind);
+        Assert.AreEqual("#FFF0F0F0", background.Value);
+        Assert.IsNull(background.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, borderBrush.EditorKind);
+        Assert.AreEqual("Blue", borderBrush.Value);
+        Assert.IsNull(borderBrush.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, padding.EditorKind);
+        Assert.AreEqual("8,4", padding.Value);
+        Assert.IsNull(padding.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "Background", "White"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "Background", "NotAColorName"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "BorderBrush", "Red"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "BorderBrush", "NotAColorName"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "Padding", "8,4"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "Padding", "8,4,2"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox Background='{DynamicResource TextBrush}' />"),
+            "Background").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox BorderBrush='{DynamicResource BorderBrush}' />"),
+            "BorderBrush").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox Padding='{Binding InnerPadding}' />"),
+            "Padding").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesButtonAppearanceSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode button = service.Parse(
+            "<Button Background='Blue' BorderBrush='Black' BorderThickness='2' CornerRadius='6,4,2,8' Foreground='White' Padding='8,4' />");
+
+        Assert.AreEqual("Blue", AxamlPropertyValueValidator.Describe(button, "Background").Value);
+        Assert.AreEqual("Black", AxamlPropertyValueValidator.Describe(button, "BorderBrush").Value);
+        Assert.AreEqual("2", AxamlPropertyValueValidator.Describe(button, "BorderThickness").Value);
+        Assert.AreEqual("6,4,2,8", AxamlPropertyValueValidator.Describe(button, "CornerRadius").Value);
+        Assert.AreEqual("White", AxamlPropertyValueValidator.Describe(button, "Foreground").Value);
+        Assert.AreEqual("8,4", AxamlPropertyValueValidator.Describe(button, "Padding").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "Background", "Red"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "BorderBrush", "Red"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "BorderThickness", "2,4"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "CornerRadius", "6"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "BorderThickness", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "CornerRadius", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "Padding", "-1"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "Margin", "-1"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "Foreground", "Red"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "Foreground", "NotAColorName"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button Background='{DynamicResource ButtonBackground}' />"),
+            "Background").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button Padding='{Binding ButtonPadding}' />"),
+            "Padding").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button BorderThickness='{Binding Outline}' />"),
+            "BorderThickness").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button CornerRadius='{Binding Radius}' />"),
+            "CornerRadius").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesButtonTypographySafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode button = service.Parse("<Button FontSize='18' FontStyle='Italic' FontWeight='SemiBold' />");
+
+        Assert.AreEqual("18", AxamlPropertyValueValidator.Describe(button, "FontSize").Value);
+        Assert.AreEqual("Italic", AxamlPropertyValueValidator.Describe(button, "FontStyle").Value);
+        Assert.AreEqual("SemiBold", AxamlPropertyValueValidator.Describe(button, "FontWeight").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "FontSize", "18.5"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "FontSize", "-1"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "FontStyle", "Oblique"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "FontWeight", "Medium"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "FontStyle", "Slanted"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "FontWeight", "ExtraBlack"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button FontSize='{Binding Size}' />"),
+            "FontSize").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button FontStyle='{Binding Style}' />"),
+            "FontStyle").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button FontWeight='{Binding Weight}' />"),
+            "FontWeight").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBoxFrameSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBox = service.Parse("<TextBox BorderThickness='2,3' CornerRadius='1,2,3,4' />");
+
+        Assert.AreEqual("2,3", AxamlPropertyValueValidator.Describe(textBox, "BorderThickness").Value);
+        Assert.AreEqual("1,2,3,4", AxamlPropertyValueValidator.Describe(textBox, "CornerRadius").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "BorderThickness", "1,2,3,4"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "CornerRadius", "6"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "BorderThickness", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "CornerRadius", "-1"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox BorderThickness='{Binding Outline}' />"),
+            "BorderThickness").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox CornerRadius='{Binding Radius}' />"),
+            "CornerRadius").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesBorderBrushAndCornerRadiusSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode border = service.Parse(
+            "<Border BorderBrush='Purple' CornerRadius='12,4,8,2' BorderThickness='2' />");
+        AxamlPropertyDescriptor borderBrush = AxamlPropertyValueValidator.Describe(border, "BorderBrush");
+        AxamlPropertyDescriptor cornerRadius = AxamlPropertyValueValidator.Describe(border, "CornerRadius");
+
+        Assert.AreEqual("Purple", borderBrush.Value);
+        Assert.IsNull(borderBrush.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, cornerRadius.EditorKind);
+        Assert.AreEqual("12,4,8,2", cornerRadius.Value);
+        Assert.IsNull(cornerRadius.ValidationError);
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(service.Parse("<Border />"), "CornerRadius").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Border", "BorderBrush", "Red"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Border", "BorderBrush", "NotAColorName"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Border", "CornerRadius", "6"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Border", "CornerRadius", "1,2,3,4"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Border", "CornerRadius", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Border", "CornerRadius", "1,2"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Border", "CornerRadius", "NaN"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Border BorderBrush='{DynamicResource BorderBrush}' />"),
+            "BorderBrush").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Border CornerRadius='{Binding Radius}' />"),
+            "CornerRadius").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBoxFontStyleAndWeightSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBox = service.Parse("<TextBox FontStyle='Italic' FontWeight='Medium' />");
+        AxamlPropertyDescriptor fontStyle = AxamlPropertyValueValidator.Describe(textBox, "FontStyle");
+        AxamlPropertyDescriptor fontWeight = AxamlPropertyValueValidator.Describe(textBox, "FontWeight");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, fontStyle.EditorKind);
+        Assert.AreEqual("Italic", fontStyle.Value);
+        CollectionAssert.AreEqual(new[] { "Normal", "Italic", "Oblique" }, fontStyle.Options.ToArray());
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, fontWeight.EditorKind);
+        Assert.AreEqual("Medium", fontWeight.Value);
+        CollectionAssert.AreEqual(
+            new[] { "Thin", "Light", "Normal", "Medium", "SemiBold", "Bold", "ExtraBold", "Black" },
+            fontWeight.Options.ToArray());
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "FontStyle", "Oblique"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "FontWeight", "Black"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "FontStyle", "Slanted"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "FontWeight", "ExtraBlack"));
+
+        AxamlPreviewNode defaults = service.Parse("<TextBox />");
+        Assert.AreEqual("Normal", AxamlPropertyValueValidator.Describe(defaults, "FontStyle").Value);
+        Assert.AreEqual("Normal", AxamlPropertyValueValidator.Describe(defaults, "FontWeight").Value);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox FontStyle='{Binding Style}' />"),
+            "FontStyle").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox FontWeight='{Binding Weight}' />"),
+            "FontWeight").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBoxFontSizeAndControlAlignmentSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBox = service.Parse(
+            "<TextBox FontSize='18' HorizontalAlignment='Center' VerticalAlignment='Bottom' />");
+        AxamlPropertyDescriptor fontSize = AxamlPropertyValueValidator.Describe(textBox, "FontSize");
+        AxamlPropertyDescriptor horizontalAlignment = AxamlPropertyValueValidator.Describe(textBox, "HorizontalAlignment");
+        AxamlPropertyDescriptor verticalAlignment = AxamlPropertyValueValidator.Describe(textBox, "VerticalAlignment");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, fontSize.EditorKind);
+        Assert.AreEqual("18", fontSize.Value);
+        Assert.IsNull(fontSize.ValidationError);
+        Assert.AreEqual("Center", horizontalAlignment.Value);
+        Assert.AreEqual("Bottom", verticalAlignment.Value);
+        CollectionAssert.AreEqual(new[] { "Left", "Center", "Right", "Stretch" }, horizontalAlignment.Options.ToArray());
+        CollectionAssert.AreEqual(new[] { "Top", "Center", "Bottom", "Stretch" }, verticalAlignment.Options.ToArray());
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "FontSize", "24.5"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "FontSize", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "HorizontalAlignment", "Baseline"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "VerticalAlignment", "Baseline"));
+
+        AxamlPreviewNode defaults = service.Parse("<TextBox />");
+        Assert.AreEqual("Stretch", AxamlPropertyValueValidator.Describe(defaults, "HorizontalAlignment").Value);
+        Assert.AreEqual("Stretch", AxamlPropertyValueValidator.Describe(defaults, "VerticalAlignment").Value);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox FontSize='{Binding Size}' />"),
+            "FontSize").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox HorizontalAlignment='{Binding Alignment}' />"),
+            "HorizontalAlignment").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox VerticalAlignment='{Binding Alignment}' />"),
+            "VerticalAlignment").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextOpacityWithinSafeRange()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBlock = service.Parse("<TextBlock Opacity='0.5' />");
+        AxamlPreviewNode textBox = service.Parse("<TextBox Opacity='0.75' />");
+        AxamlPreviewNode button = service.Parse("<Button Opacity='0.25' />");
+        AxamlPropertyDescriptor textBlockOpacity = AxamlPropertyValueValidator.Describe(textBlock, "Opacity");
+        AxamlPropertyDescriptor textBoxOpacity = AxamlPropertyValueValidator.Describe(textBox, "Opacity");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, textBlockOpacity.EditorKind);
+        Assert.AreEqual("0.5", textBlockOpacity.Value);
+        Assert.AreEqual("0.75", textBoxOpacity.Value);
+        Assert.AreEqual("0.25", AxamlPropertyValueValidator.Describe(button, "Opacity").Value);
+        Assert.AreEqual("1", AxamlPropertyValueValidator.Describe(service.Parse("<TextBlock />"), "Opacity").Value);
+        Assert.AreEqual("1", AxamlPropertyValueValidator.Describe(service.Parse("<TextBox />"), "Opacity").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBlock", "Opacity", "0"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "Opacity", "1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "Opacity", "-0.01"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "Opacity", "1.01"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "Opacity", "NaN"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock Opacity='{Binding Alpha}' />"),
+            "Opacity").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox Opacity='{Binding Alpha}' />"),
+            "Opacity").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button Opacity='{Binding Alpha}' />"),
+            "Opacity").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBlockLineHeightAsPositiveNumber()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBlock = service.Parse("<TextBlock LineHeight='24.5' />");
+        AxamlPropertyDescriptor lineHeight = AxamlPropertyValueValidator.Describe(textBlock, "LineHeight");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, lineHeight.EditorKind);
+        Assert.AreEqual("24.5", lineHeight.Value);
+        Assert.IsNull(lineHeight.ValidationError);
+        Assert.AreEqual(string.Empty, AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock />"),
+            "LineHeight").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBlock", "LineHeight", "1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "LineHeight", "0"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "LineHeight", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "LineHeight", "NaN"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock LineHeight='{Binding Height}' />"),
+            "LineHeight").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesSizeConstraintsAsSafeNumbers()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode stackPanel = service.Parse(
+            "<StackPanel MinWidth='40' MaxWidth='120' MinHeight='20' MaxHeight='80' />");
+
+        foreach (string propertyName in new[] { "MinWidth", "MaxWidth", "MinHeight", "MaxHeight" })
+        {
+            AxamlPropertyDescriptor property = AxamlPropertyValueValidator.Describe(stackPanel, propertyName);
+            Assert.AreEqual(AxamlPropertyEditorKind.Number, property.EditorKind, propertyName);
+            Assert.IsNull(property.ValidationError, propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("StackPanel", propertyName, "0"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("StackPanel", propertyName, "-1"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("StackPanel", propertyName, "NaN"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("StackPanel", propertyName, "Infinity"), propertyName);
+        }
+
+        Assert.AreEqual("40", AxamlPropertyValueValidator.Describe(stackPanel, "MinWidth").Value);
+        Assert.AreEqual("120", AxamlPropertyValueValidator.Describe(stackPanel, "MaxWidth").Value);
+        Assert.AreEqual("20", AxamlPropertyValueValidator.Describe(stackPanel, "MinHeight").Value);
+        Assert.AreEqual("80", AxamlPropertyValueValidator.Describe(stackPanel, "MaxHeight").Value);
+        Assert.AreEqual(string.Empty, AxamlPropertyValueValidator.Describe(service.Parse("<StackPanel />"), "MaxWidth").Value);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<StackPanel MinWidth='{Binding Minimum}' />"),
+            "MinWidth").IsReadOnly);
+        Assert.IsFalse(service.CanEditProperty(service.Parse("<ComboBox />"), "MinWidth"));
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBoxInputConstraintsAsTypedProperties()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBox = service.Parse("<TextBox />");
+        AxamlPropertyDescriptor acceptsReturn = AxamlPropertyValueValidator.Describe(textBox, "AcceptsReturn");
+        AxamlPropertyDescriptor acceptsTab = AxamlPropertyValueValidator.Describe(textBox, "AcceptsTab");
+        AxamlPropertyDescriptor maxLength = AxamlPropertyValueValidator.Describe(textBox, "MaxLength");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, acceptsReturn.EditorKind);
+        Assert.AreEqual("False", acceptsReturn.Value);
+        Assert.IsNull(acceptsReturn.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, acceptsTab.EditorKind);
+        Assert.AreEqual("False", acceptsTab.Value);
+        Assert.IsNull(acceptsTab.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, maxLength.EditorKind);
+        Assert.AreEqual("0", maxLength.Value);
+        Assert.IsNull(maxLength.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "AcceptsReturn", "True"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "AcceptsReturn", string.Empty));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "AcceptsTab", "True"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "AcceptsTab", "yes"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "MaxLength", "100"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "MaxLength", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "MaxLength", "1.5"));
+
+        AxamlPreviewNode boundMaxLength = service.Parse("<TextBox MaxLength='{Binding LengthLimit}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundMaxLength, "MaxLength").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox AcceptsTab='{Binding IndentWithTab}' />"),
+            "AcceptsTab").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesSafeTextAlignmentAndTextBoxWrappingEnums()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBlock = service.Parse("<TextBlock />");
+        AxamlPropertyDescriptor textBlockAlignment = AxamlPropertyValueValidator.Describe(textBlock, "TextAlignment");
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, textBlockAlignment.EditorKind);
+        Assert.AreEqual("Left", textBlockAlignment.Value);
+        CollectionAssert.AreEqual(
+            new[] { "Left", "Center", "Right", "Start", "End", "DetectFromContent", "Justify" },
+            textBlockAlignment.Options.ToArray());
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBlock", "TextAlignment", "Justify"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "TextAlignment", "Baseline"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock TextAlignment='{Binding Alignment}' />"),
+            "TextAlignment").IsReadOnly);
+
+        AxamlPreviewNode textBox = service.Parse("<TextBox />");
+        AxamlPropertyDescriptor textBoxAlignment = AxamlPropertyValueValidator.Describe(textBox, "TextAlignment");
+        AxamlPropertyDescriptor textBoxWrapping = AxamlPropertyValueValidator.Describe(textBox, "TextWrapping");
+        Assert.AreEqual("Left", textBoxAlignment.Value);
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, textBoxWrapping.EditorKind);
+        Assert.AreEqual("NoWrap", textBoxWrapping.Value);
+        CollectionAssert.AreEqual(
+            new[] { "NoWrap", "Wrap", "WrapWithOverflow" },
+            textBoxWrapping.Options.ToArray());
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "TextWrapping", "WrapWithOverflow"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "TextWrapping", "Clip"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBox TextWrapping='{Binding Wrapping}' />"),
+            "TextWrapping").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesButtonDefaultAndCancelAsSafeBooleanProperties()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode button = service.Parse("<Button />");
+        AxamlPropertyDescriptor isDefault = AxamlPropertyValueValidator.Describe(button, "IsDefault");
+        AxamlPropertyDescriptor isCancel = AxamlPropertyValueValidator.Describe(button, "IsCancel");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isDefault.EditorKind);
+        Assert.AreEqual("False", isDefault.Value);
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isCancel.EditorKind);
+        Assert.AreEqual("False", isCancel.Value);
+        Assert.IsNull(isDefault.ValidationError);
+        Assert.IsNull(isCancel.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "IsDefault", "True"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "IsCancel", "False"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "IsDefault", string.Empty));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "IsCancel", "yes"));
+
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button IsDefault='{Binding DefaultAction}' />"),
+            "IsDefault").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Button IsCancel='{Binding CancelAction}' />"),
+            "IsCancel").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBlockFontStyleAsAValidatedEnum()
+    {
+        AxamlPreviewService service = new();
+        AxamlPropertyDescriptor fontStyle = AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock />"),
+            "FontStyle");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, fontStyle.EditorKind);
+        Assert.AreEqual("Normal", fontStyle.Value);
+        CollectionAssert.AreEqual(new[] { "Normal", "Italic", "Oblique" }, fontStyle.Options.ToArray());
+        Assert.IsNull(fontStyle.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBlock", "FontStyle", "Italic"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "FontStyle", "Slanted"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock FontStyle='{Binding Style}' />"),
+            "FontStyle").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBlockMaxLinesAsNonNegativeInteger()
+    {
+        AxamlPreviewService service = new();
+        AxamlPropertyDescriptor maxLines = AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock />"),
+            "MaxLines");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, maxLines.EditorKind);
+        Assert.AreEqual("0", maxLines.Value);
+        Assert.IsNull(maxLines.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBlock", "MaxLines", "3"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "MaxLines", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "MaxLines", "1.5"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock MaxLines='{Binding LineLimit}' />"),
+            "MaxLines").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesCommonTextTrimmingModesAsSafeChoices()
+    {
+        AxamlPreviewService service = new();
+        AxamlPropertyDescriptor trimming = AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock />"),
+            "TextTrimming");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, trimming.EditorKind);
+        Assert.AreEqual("None", trimming.Value);
+        CollectionAssert.AreEqual(new[] { "None", "CharacterEllipsis", "WordEllipsis" }, trimming.Options.ToArray());
+        Assert.IsNull(trimming.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBlock", "TextTrimming", "CharacterEllipsis"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBlock", "TextTrimming", "WordEllipsis"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "TextTrimming", "PathSegmentEllipsis"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TextBlock TextTrimming='{Binding Trimming}' />"),
+            "TextTrimming").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesFiniteProgressBarValueAsNumericProperty()
+    {
+        AxamlPropertyDescriptor value = AxamlPropertyValueValidator.Describe(
+            new AxamlPreviewService().Parse("<ProgressBar />"),
+            "Value");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, value.EditorKind);
+        Assert.AreEqual("50", value.Value);
+        Assert.IsNull(value.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ProgressBar", "Value", "42.5"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ProgressBar", "Value", "NaN"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ProgressBar", "Value", "Infinity"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ProgressBar", "Value", string.Empty));
+
+        AxamlPreviewNode progressBar = new AxamlPreviewService()
+            .Parse("<ProgressBar IsIndeterminate='True' />");
+        AxamlPropertyDescriptor indeterminate = AxamlPropertyValueValidator.Describe(progressBar, "IsIndeterminate");
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, indeterminate.EditorKind);
+        Assert.AreEqual("True", indeterminate.Value);
+        Assert.IsNull(indeterminate.ValidationError);
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ProgressBar", "IsIndeterminate", string.Empty));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ProgressBar", "IsIndeterminate", "sometimes"));
+
+        AxamlPreviewNode boundProgressBar = new AxamlPreviewService()
+            .Parse("<ProgressBar Value='{Binding Progress}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundProgressBar, "Value").IsReadOnly);
+        AxamlPreviewNode boundIndeterminate = new AxamlPreviewService()
+            .Parse("<ProgressBar IsIndeterminate='{Binding Busy}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundIndeterminate, "IsIndeterminate").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesFiniteSliderValueAsNumericProperty()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode slider = service.Parse("<Slider />");
+        AxamlPropertyDescriptor value = AxamlPropertyValueValidator.Describe(slider, "Value");
+
+        Assert.IsTrue(service.CanEditProperty(slider, "Value"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, value.EditorKind);
+        Assert.AreEqual("50", value.Value);
+        Assert.IsNull(value.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Slider", "Value", "42.5"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Slider", "Value", "NaN"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Slider", "Value", "Infinity"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Slider", "Value", string.Empty));
+
+        AxamlPreviewNode boundSlider = service.Parse("<Slider Value='{Binding Progress}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundSlider, "Value").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesRangeBoundsAsFiniteEditableNumbers()
+    {
+        AxamlPreviewService service = new();
+        foreach (string controlType in new[] { "NumericUpDown", "ProgressBar", "Slider" })
+        {
+            AxamlPreviewNode node = service.Parse($"<{controlType} />");
+            string defaultMinimum = controlType == "NumericUpDown" ? string.Empty : "0";
+            string defaultMaximum = controlType == "NumericUpDown" ? string.Empty : "100";
+            foreach ((string propertyName, string defaultValue) in new[]
+            {
+                ("Minimum", defaultMinimum),
+                ("Maximum", defaultMaximum),
+            })
+            {
+                AxamlPropertyDescriptor property = AxamlPropertyValueValidator.Describe(node, propertyName);
+                Assert.AreEqual(AxamlPropertyEditorKind.Number, property.EditorKind, $"{controlType}.{propertyName}");
+                Assert.AreEqual(defaultValue, property.Value, $"{controlType}.{propertyName}");
+                Assert.IsFalse(property.IsReadOnly, $"{controlType}.{propertyName}");
+                Assert.IsNull(property.ValidationError, $"{controlType}.{propertyName}");
+                Assert.IsNull(AxamlPropertyValueValidator.Validate(controlType, propertyName, "12.5"));
+                Assert.IsNotNull(AxamlPropertyValueValidator.Validate(controlType, propertyName, "NaN"));
+
+                AxamlPreviewNode bound = service.Parse(
+                    $"<{controlType} {propertyName}='{{Binding Bound}}' />");
+                Assert.IsTrue(
+                    AxamlPropertyValueValidator.Describe(bound, propertyName).IsReadOnly,
+                    $"{controlType}.{propertyName} binding");
+            }
+        }
+    }
+
+    [TestMethod]
+    public void Parse_ExposesPositiveNumericUpDownIncrementSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode node = service.Parse("<NumericUpDown Increment='0.25' />");
+        AxamlPropertyDescriptor increment = AxamlPropertyValueValidator.Describe(node, "Increment");
+
+        Assert.IsTrue(service.CanEditProperty(node, "Increment"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, increment.EditorKind);
+        Assert.AreEqual("0.25", increment.Value);
+        Assert.IsNull(increment.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "Increment", "2.5"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "Increment", "0"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "Increment", "-0.5"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "Increment", "NaN"));
+        Assert.AreEqual(
+            "1",
+            AxamlPropertyValueValidator.Describe(service.Parse("<NumericUpDown />"), "Increment").Value);
+
+        AxamlPreviewNode bound = service.Parse("<NumericUpDown Increment='{Binding Step}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "Increment").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesNumericUpDownOptionsSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode defaults = service.Parse("<NumericUpDown />");
+        Assert.AreEqual("True", AxamlPropertyValueValidator.Describe(defaults, "AllowSpin").Value);
+        Assert.AreEqual("True", AxamlPropertyValueValidator.Describe(defaults, "ShowButtonSpinner").Value);
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(defaults, "ClipValueToMinMax").Value);
+        AxamlPropertyDescriptor defaultLocation = AxamlPropertyValueValidator.Describe(defaults, "ButtonSpinnerLocation");
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, defaultLocation.EditorKind);
+        Assert.AreEqual("Right", defaultLocation.Value);
+        CollectionAssert.AreEqual(new[] { "Left", "Right" }, defaultLocation.Options.ToArray());
+        AxamlPropertyDescriptor defaultTextAlignment = AxamlPropertyValueValidator.Describe(defaults, "TextAlignment");
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, defaultTextAlignment.EditorKind);
+        Assert.AreEqual("Start", defaultTextAlignment.Value);
+        AxamlPropertyDescriptor defaultParsingStyle = AxamlPropertyValueValidator.Describe(defaults, "ParsingNumberStyle");
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, defaultParsingStyle.EditorKind);
+        Assert.AreEqual("Any", defaultParsingStyle.Value);
+        CollectionAssert.AreEqual(new[] { "Any", "Currency", "Float", "Integer", "None", "Number" }, defaultParsingStyle.Options.ToArray());
+
+        AxamlPreviewNode configured = service.Parse(
+            "<NumericUpDown AllowSpin='False' ShowButtonSpinner='False' ClipValueToMinMax='True' ButtonSpinnerLocation='Left' TextAlignment='Center' ParsingNumberStyle='Integer' />");
+        foreach (string propertyName in new[] { "AllowSpin", "ShowButtonSpinner", "ClipValueToMinMax" })
+        {
+            Assert.AreEqual(AxamlPropertyEditorKind.Boolean,
+                AxamlPropertyValueValidator.Describe(configured, propertyName).EditorKind,
+                propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("NumericUpDown", propertyName, "True"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", propertyName, "enabled"), propertyName);
+        }
+
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(configured, "AllowSpin").Value);
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(configured, "ShowButtonSpinner").Value);
+        Assert.AreEqual("True", AxamlPropertyValueValidator.Describe(configured, "ClipValueToMinMax").Value);
+        Assert.AreEqual("Left", AxamlPropertyValueValidator.Describe(configured, "ButtonSpinnerLocation").Value);
+        Assert.AreEqual("Center", AxamlPropertyValueValidator.Describe(configured, "TextAlignment").Value);
+        Assert.AreEqual("Integer", AxamlPropertyValueValidator.Describe(configured, "ParsingNumberStyle").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "ButtonSpinnerLocation", "Right"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "ButtonSpinnerLocation", "Top"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "TextAlignment", "Right"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "TextAlignment", "Baseline"));
+        foreach (string style in new[] { "Any", "Currency", "Float", "Integer", "None", "Number" })
+        {
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "ParsingNumberStyle", style), style);
+        }
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "ParsingNumberStyle", "AllowHexSpecifier"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "ParsingNumberStyle", "Integer, AllowHexSpecifier"));
+        foreach (string propertyName in new[] { "AllowSpin", "ShowButtonSpinner", "ClipValueToMinMax" })
+        {
+            AxamlPreviewNode bound = service.Parse($"<NumericUpDown {propertyName}='{{Binding Option}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, propertyName).IsReadOnly, propertyName);
+        }
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<NumericUpDown ButtonSpinnerLocation='{Binding Location}' />"),
+            "ButtonSpinnerLocation").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<NumericUpDown TextAlignment='{Binding Alignment}' />"),
+            "TextAlignment").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<NumericUpDown ParsingNumberStyle='{Binding NumberStyle}' />"),
+            "ParsingNumberStyle").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesSliderTickSettingsSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode slider = service.Parse("<Slider TickFrequency='5' IsSnapToTickEnabled='True' TickPlacement='Outside' />");
+        AxamlPropertyDescriptor frequency = AxamlPropertyValueValidator.Describe(slider, "TickFrequency");
+        AxamlPropertyDescriptor snap = AxamlPropertyValueValidator.Describe(slider, "IsSnapToTickEnabled");
+        AxamlPropertyDescriptor placement = AxamlPropertyValueValidator.Describe(slider, "TickPlacement");
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, frequency.EditorKind);
+        Assert.AreEqual("5", frequency.Value);
+        Assert.IsNull(frequency.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Slider", "TickFrequency", "0"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Slider", "TickFrequency", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Slider", "TickFrequency", "Infinity"));
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, snap.EditorKind);
+        Assert.AreEqual("True", snap.Value);
+        Assert.IsNull(snap.ValidationError);
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Slider", "IsSnapToTickEnabled", "sometimes"));
+
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, placement.EditorKind);
+        Assert.AreEqual("Outside", placement.Value);
+        CollectionAssert.AreEqual(new[] { "None", "TopLeft", "BottomRight", "Outside" }, placement.Options.ToArray());
+        Assert.IsNull(placement.ValidationError);
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Slider", "TickPlacement", "Both"));
+
+        AxamlPreviewNode defaults = service.Parse("<Slider />");
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaults, "TickFrequency").Value);
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(defaults, "IsSnapToTickEnabled").Value);
+        Assert.AreEqual("None", AxamlPropertyValueValidator.Describe(defaults, "TickPlacement").Value);
+        foreach (string propertyName in new[] { "TickFrequency", "IsSnapToTickEnabled", "TickPlacement" })
+        {
+            AxamlPreviewNode bound = service.Parse($"<Slider {propertyName}='{{Binding Setting}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, propertyName).IsReadOnly, propertyName);
+        }
+    }
+
+    [TestMethod]
+    public void Parse_ExposesRangeControlDisplayFlagsSafely()
+    {
+        AxamlPreviewService service = new();
+        foreach ((string controlType, string propertyName) in new[]
+        {
+            ("ProgressBar", "ShowProgressText"),
+            ("Slider", "IsDirectionReversed"),
+        })
+        {
+            AxamlPreviewNode node = service.Parse($"<{controlType} />");
+            AxamlPropertyDescriptor property = AxamlPropertyValueValidator.Describe(node, propertyName);
+            Assert.AreEqual(AxamlPropertyEditorKind.Boolean, property.EditorKind, $"{controlType}.{propertyName}");
+            Assert.AreEqual("False", property.Value, $"{controlType}.{propertyName}");
+            Assert.IsFalse(property.IsReadOnly, $"{controlType}.{propertyName}");
+            Assert.IsNull(property.ValidationError, $"{controlType}.{propertyName}");
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(controlType, propertyName, "True"));
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(controlType, propertyName, "sometimes"));
+
+            AxamlPreviewNode bound = service.Parse($"<{controlType} {propertyName}='{{Binding Flag}}' />");
+            Assert.IsTrue(
+                AxamlPropertyValueValidator.Describe(bound, propertyName).IsReadOnly,
+                $"{controlType}.{propertyName} binding");
+        }
+    }
+
+    [TestMethod]
+    public void Parse_ExposesTextBoxReadOnlySourceValueAsBoolean()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode textBox = service.Parse("<TextBox IsReadOnly='True' />");
+        AxamlPropertyDescriptor isReadOnly = AxamlPropertyValueValidator.Describe(textBox, "IsReadOnly");
+
+        Assert.IsTrue(service.CanEditProperty(textBox, "IsReadOnly"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isReadOnly.EditorKind);
+        Assert.AreEqual("True", isReadOnly.Value);
+        Assert.IsNull(isReadOnly.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TextBox", "IsReadOnly", "False"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBox", "IsReadOnly", "sometimes"));
+        Assert.AreEqual(
+            "False",
+            AxamlPropertyValueValidator.Describe(service.Parse("<TextBox />"), "IsReadOnly").Value);
+
+        AxamlPreviewNode bound = service.Parse("<TextBox IsReadOnly='{Binding Locked}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "IsReadOnly").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesSafeNumericAndProgressFormats()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode numericUpDown = service.Parse("<NumericUpDown FormatString='N2' />");
+        AxamlPropertyDescriptor numericFormat = AxamlPropertyValueValidator.Describe(numericUpDown, "FormatString");
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, numericFormat.EditorKind);
+        Assert.AreEqual("N2", numericFormat.Value);
+        Assert.IsNull(numericFormat.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "FormatString", "0.00"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("NumericUpDown", "FormatString", "Q"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<NumericUpDown FormatString='{Binding NumberFormat}' />"),
+            "FormatString").IsReadOnly);
+
+        AxamlPreviewNode progressBar = service.Parse("<ProgressBar ProgressTextFormat='{}{1:0.0}%' />");
+        AxamlPropertyDescriptor progressFormat =
+            AxamlPropertyValueValidator.Describe(progressBar, "ProgressTextFormat");
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, progressFormat.EditorKind);
+        Assert.AreEqual("{1:0.0}%", progressFormat.Value);
+        Assert.IsNull(progressFormat.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ProgressBar", "ProgressTextFormat", "{1:0}%"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ProgressBar", "ProgressTextFormat", "{2:0}%"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ProgressBar", "ProgressTextFormat", "{0,999999999}%"));
+        Assert.AreEqual(
+            "{1:0}%",
+            AxamlPropertyValueValidator.Describe(service.Parse("<ProgressBar />"), "ProgressTextFormat").Value);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<ProgressBar ProgressTextFormat='{Binding TextFormat}' />"),
+            "ProgressTextFormat").IsReadOnly);
+
+        string updated = service.UpdateAttribute(
+            "<ProgressBar />",
+            service.Parse("<ProgressBar />"),
+            "ProgressTextFormat",
+            "{1:0.0}%");
+        StringAssert.Contains(updated, "ProgressTextFormat=\"{}{1:0.0}%\"");
+        Assert.AreEqual(
+            "{1:0.0}%",
+            AxamlPropertyValueValidator.Describe(service.Parse(updated), "ProgressTextFormat").Value);
+    }
+
+    [TestMethod]
+    public void Parse_ExposesHorizontalOrientationForRangeControls()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode slider = service.Parse("<Slider />");
+        AxamlPreviewNode progressBar = service.Parse("<ProgressBar />");
+
+        foreach (AxamlPreviewNode node in new[] { slider, progressBar })
+        {
+            AxamlPropertyDescriptor orientation = AxamlPropertyValueValidator.Describe(node, "Orientation");
+            Assert.AreEqual(AxamlPropertyEditorKind.Enum, orientation.EditorKind);
+            Assert.AreEqual("Horizontal", orientation.Value);
+            CollectionAssert.AreEqual(new[] { "Horizontal", "Vertical" }, orientation.Options.ToArray());
+            Assert.IsNull(orientation.ValidationError);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(node.TypeName, "Orientation", "Vertical"));
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(node.TypeName, "Orientation", "Diagonal"));
+        }
+
+        Assert.IsFalse(service.CanEditProperty(service.Parse("<Slider Orientation='{Binding Direction}' />"), "Orientation"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<ProgressBar Orientation='{Binding Direction}' />"),
+            "Orientation").IsReadOnly);
+    }
+
+    [TestMethod]
     public void Parse_RepresentsExpanderHeaderAndSingleContentChild()
     {
         const string markup =

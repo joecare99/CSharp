@@ -1,0 +1,17 @@
+<Project>
+  <Import Project="..\..\AA98_AvlnCodeStudio.props" />
+  <PropertyGroup>
+    <UpDir>..\$(UpDir)</UpDir>
+    <BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\AA98_AvlnCodeStudio.UI\AA98_AvlnCodeStudio.UI.csproj" />
+    <ProjectReference Include="..\..\AA98_AxamlDesigner.Host\AA98_AxamlDesigner.Host.csproj" />
+  </ItemGroup>
+</Project>

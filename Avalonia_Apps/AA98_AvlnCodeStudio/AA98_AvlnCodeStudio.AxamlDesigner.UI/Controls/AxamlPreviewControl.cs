@@ -171,24 +171,13 @@ public sealed class AxamlPreviewControl : ContentControl
         Control content = node.TypeName switch
         {
             "Border" => BuildBorder(node),
-            "Button" => new Button
+            "Button" => BuildButton(node),
+            "CheckBox" => BuildCheckBox(node),
+            "ComboBox" => ApplyTemplatedControlAppearance(new ComboBox
             {
-                Content = node.Text ?? "Button",
+                PlaceholderText = ParseLiteralText(node, "PlaceholderText", node.Text ?? "ComboBox"),
                 IsEnabled = false,
-                HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
-                VerticalAlignment = ParseVerticalAlignment(node),
-            },
-            "CheckBox" => new CheckBox
-            {
-                Content = node.Text ?? "CheckBox",
-                IsEnabled = false,
-                IsChecked = ParseBoolean(node, "IsChecked"),
-            },
-            "ComboBox" => new ComboBox
-            {
-                PlaceholderText = node.Text ?? "ComboBox",
-                IsEnabled = false,
-            },
+            }, node),
             "ContentControl" => BuildContentControl(node),
             "DockPanel" => BuildDockPanel(node),
             "Expander" => new Expander
@@ -209,34 +198,33 @@ public sealed class AxamlPreviewControl : ContentControl
                 ItemsSource = node.Children.Select(static child => child.Text ?? child.TypeName).ToArray(),
                 IsEnabled = false,
             },
-            "ProgressBar" => new ProgressBar
-            {
-                Minimum = ParseDouble(node, "Minimum", 0),
-                Maximum = ParseDouble(node, "Maximum", 100),
-                Value = ParseDouble(node, "Value", 50),
-            },
-            "RadioButton" => new RadioButton
-            {
-                Content = node.Text ?? "RadioButton",
-                IsEnabled = false,
-                IsChecked = ParseBoolean(node, "IsChecked"),
-            },
+            "NumericUpDown" => BuildNumericUpDown(node),
+            "ProgressBar" => BuildProgressBar(node),
+            "RadioButton" => BuildRadioButton(node),
             "ScrollViewer" => BuildScrollViewer(node),
             "Separator" => new Separator(),
-            "Slider" => new Slider
+            "Slider" => ApplyTemplatedControlAppearance(new Slider
             {
                 Minimum = ParseDouble(node, "Minimum", 0),
                 Maximum = ParseDouble(node, "Maximum", 100),
                 Value = ParseDouble(node, "Value", 50),
+                TickFrequency = ParseOptionalDouble(node, "TickFrequency") is double tickFrequency && tickFrequency >= 0
+                    ? tickFrequency
+                    : 0,
+                IsSnapToTickEnabled = ParseBoolean(node, "IsSnapToTickEnabled") ?? false,
+                IsDirectionReversed = ParseBoolean(node, "IsDirectionReversed") ?? false,
+                TickPlacement = Enum.TryParse(GetProperty(node, "TickPlacement"), ignoreCase: true, out TickPlacement tickPlacement)
+                    && Enum.IsDefined(tickPlacement)
+                        ? tickPlacement
+                        : TickPlacement.None,
+                Orientation = Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation sliderOrientation)
+                    ? sliderOrientation
+                    : Orientation.Horizontal,
                 IsEnabled = false,
-            },
+            }, node),
             "StackPanel" => BuildStackPanel(node),
-            "TextBox" => new TextBox
-            {
-                Text = node.Text,
-                PlaceholderText = GetProperty(node, "Watermark") ?? GetProperty(node, "PlaceholderText"),
-                IsReadOnly = true,
-            },
+            "TextBox" => BuildTextBox(node),
+            "ToggleSwitch" => BuildToggleSwitch(node),
             "UniformGrid" => BuildUniformGrid(node),
             "Viewbox" => new Viewbox
             {
@@ -256,6 +244,13 @@ public sealed class AxamlPreviewControl : ContentControl
     {
         bool isSelected = ReferenceEquals(node, SelectedNode);
         content.Margin = ParseThickness(node, "Margin");
+        content.HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment");
+        content.VerticalAlignment = ParseVerticalAlignment(node);
+        if (node.IsSupported)
+        {
+            content.Opacity = ParseDouble(node, "Opacity", 1);
+        }
+
         if (ParseOptionalDouble(node, "Width") is double width)
         {
             content.Width = width;
@@ -264,6 +259,26 @@ public sealed class AxamlPreviewControl : ContentControl
         if (ParseOptionalDouble(node, "Height") is double height)
         {
             content.Height = height;
+        }
+
+        if (ParseOptionalSizeConstraint(node, "MinWidth") is double minWidth)
+        {
+            content.MinWidth = minWidth;
+        }
+
+        if (ParseOptionalSizeConstraint(node, "MaxWidth") is double maxWidth)
+        {
+            content.MaxWidth = maxWidth;
+        }
+
+        if (ParseOptionalSizeConstraint(node, "MinHeight") is double minHeight)
+        {
+            content.MinHeight = minHeight;
+        }
+
+        if (ParseOptionalSizeConstraint(node, "MaxHeight") is double maxHeight)
+        {
+            content.MaxHeight = maxHeight;
         }
 
         content.IsHitTestVisible = node.Children.Count > 0;
@@ -305,8 +320,14 @@ public sealed class AxamlPreviewControl : ContentControl
         {
             Padding = ParseThickness(node, "Padding"),
             BorderThickness = ParseThickness(node, "BorderThickness"),
+            CornerRadius = ParseCornerRadius(node),
             Child = node.Children.FirstOrDefault() is { } child ? BuildControl(child) : null,
         };
+        if (ParseSimpleBrush(node, "BorderBrush") is { } borderBrush)
+        {
+            border.BorderBrush = borderBrush;
+        }
+
         string? background = GetProperty(node, "Background");
         if (!string.IsNullOrWhiteSpace(background) && !background.StartsWith('{'))
         {
@@ -320,6 +341,180 @@ public sealed class AxamlPreviewControl : ContentControl
         }
 
         return border;
+    }
+
+    private static Button BuildButton(AxamlPreviewNode node)
+    {
+        Button button = new()
+        {
+            Content = node.Text ?? "Button",
+            IsEnabled = false,
+            IsDefault = false,
+            IsCancel = false,
+            HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
+            VerticalAlignment = ParseVerticalAlignment(node),
+        };
+        return ApplyTemplatedControlAppearance(button, node);
+    }
+
+    private static Control BuildNumericUpDown(AxamlPreviewNode node)
+    {
+        NumericUpDown numericUpDown = new()
+        {
+            AllowSpin = ParseBoolean(node, "AllowSpin") ?? true,
+            ButtonSpinnerLocation = Enum.TryParse(GetProperty(node, "ButtonSpinnerLocation"), ignoreCase: true, out Location spinnerLocation)
+                && Enum.IsDefined(spinnerLocation)
+                    ? spinnerLocation
+                    : Location.Right,
+            ClipValueToMinMax = ParseBoolean(node, "ClipValueToMinMax") ?? false,
+            Increment = ParseOptionalDecimal(node, "Increment") ?? 1m,
+            Minimum = ParseOptionalDecimal(node, "Minimum") ?? decimal.MinValue,
+            Maximum = ParseOptionalDecimal(node, "Maximum") ?? decimal.MaxValue,
+            ParsingNumberStyle = ParseNumericUpDownNumberStyle(node),
+            Value = ParseOptionalDecimal(node, "Value"),
+            ShowButtonSpinner = ParseBoolean(node, "ShowButtonSpinner") ?? true,
+            TextAlignment = ParseTextAlignment(node, TextAlignment.Start),
+            IsEnabled = false,
+        };
+        if (ParseValidatedFormat(node, "FormatString") is { } formatString)
+        {
+            numericUpDown.FormatString = formatString;
+        }
+
+        return ApplyTemplatedControlAppearance(numericUpDown, node);
+    }
+
+    private static NumberStyles ParseNumericUpDownNumberStyle(AxamlPreviewNode node)
+    {
+        string value = GetProperty(node, "ParsingNumberStyle") ?? "Any";
+        return AxamlPropertyValueValidator.Validate("NumericUpDown", "ParsingNumberStyle", value) is null
+            && Enum.TryParse(value, ignoreCase: true, out NumberStyles numberStyle)
+                ? numberStyle
+                : NumberStyles.Any;
+    }
+
+    private static Control BuildProgressBar(AxamlPreviewNode node)
+    {
+        ProgressBar progressBar = new()
+        {
+            Minimum = ParseDouble(node, "Minimum", 0),
+            Maximum = ParseDouble(node, "Maximum", 100),
+            Value = ParseDouble(node, "Value", 50),
+            IsIndeterminate = ParseBoolean(node, "IsIndeterminate") ?? false,
+            ShowProgressText = ParseBoolean(node, "ShowProgressText") ?? false,
+            Orientation = Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation progressOrientation)
+                ? progressOrientation
+                : Orientation.Horizontal,
+            IsEnabled = false,
+        };
+        if (ParseValidatedFormat(node, "ProgressTextFormat") is { } format)
+        {
+            progressBar.ProgressTextFormat = format;
+        }
+
+        return ApplyTemplatedControlAppearance(progressBar, node);
+    }
+
+    private static CheckBox BuildCheckBox(AxamlPreviewNode node)
+    {
+        return ApplyTemplatedControlAppearance(new CheckBox
+        {
+            Content = node.Text ?? "CheckBox",
+            IsThreeState = ParseBoolean(node, "IsThreeState") ?? false,
+            IsEnabled = false,
+            IsChecked = ParseBoolean(node, "IsChecked"),
+        }, node);
+    }
+
+    private static RadioButton BuildRadioButton(AxamlPreviewNode node)
+    {
+        return ApplyTemplatedControlAppearance(new RadioButton
+        {
+            Content = node.Text ?? "RadioButton",
+            GroupName = ParseLiteralText(node, "GroupName", string.Empty),
+            IsEnabled = false,
+            IsChecked = ParseBoolean(node, "IsChecked"),
+        }, node);
+    }
+
+    private static T ApplyTemplatedControlAppearance<T>(T control, AxamlPreviewNode node)
+        where T : TemplatedControl
+    {
+        if (ParseSimpleBrush(node, "Background") is { } background)
+        {
+            control.Background = background;
+        }
+
+        if (ParseSimpleBrush(node, "BorderBrush") is { } borderBrush)
+        {
+            control.BorderBrush = borderBrush;
+        }
+
+        if (HasValidLiteralValue(node, "BorderThickness"))
+        {
+            control.BorderThickness = ParseThickness(node, "BorderThickness");
+        }
+
+        if (HasValidLiteralValue(node, "CornerRadius"))
+        {
+            control.CornerRadius = ParseCornerRadius(node);
+        }
+
+        if (HasValidLiteralValue(node, "FontSize"))
+        {
+            control.FontSize = ParseDouble(node, "FontSize", 14);
+        }
+
+        if (HasValidLiteralValue(node, "FontStyle"))
+        {
+            control.FontStyle = ParseFontStyle(node);
+        }
+
+        if (HasValidLiteralValue(node, "FontWeight"))
+        {
+            control.FontWeight = ParseFontWeight(node);
+        }
+
+        if (ParseSimpleBrush(node, "Foreground") is { } foreground)
+        {
+            control.Foreground = foreground;
+        }
+
+        if (HasValidLiteralValue(node, "Padding"))
+        {
+            control.Padding = ParseThickness(node, "Padding");
+        }
+
+        return control;
+    }
+
+    private static bool HasValidLiteralValue(AxamlPreviewNode node, string propertyName)
+    {
+        string? value = GetProperty(node, propertyName);
+        return !string.IsNullOrWhiteSpace(value)
+            && AxamlPropertyValueValidator.Validate(node.TypeName, propertyName, value) is null;
+    }
+
+    private static ToggleSwitch BuildToggleSwitch(AxamlPreviewNode node)
+    {
+        ToggleSwitch toggleSwitch = new()
+        {
+            Content = node.Text ?? "ToggleSwitch",
+            IsThreeState = ParseBoolean(node, "IsThreeState") ?? false,
+            IsEnabled = false,
+            IsChecked = ParseBoolean(node, "IsChecked"),
+        };
+        if (node.Properties.TryGetValue("OffContent", out string? offContent))
+        {
+            toggleSwitch.OffContent = offContent;
+        }
+
+        if (node.Properties.TryGetValue("OnContent", out string? onContent))
+        {
+            toggleSwitch.OnContent = onContent;
+        }
+
+        return ApplyTemplatedControlAppearance(toggleSwitch, node);
     }
 
     private Control BuildContentControl(AxamlPreviewNode node)
@@ -405,12 +600,44 @@ public sealed class AxamlPreviewControl : ContentControl
         {
             Text = node.Text ?? string.Empty,
             FontSize = ParseDouble(node, "FontSize", 14),
+            FontStyle = ParseFontStyle(node),
             FontWeight = ParseFontWeight(node),
-            TextWrapping = TextWrapping.Wrap,
+            LineHeight = ParseLineHeight(node),
+            MaxLines = ParseInt(node, "MaxLines"),
+            TextTrimming = ParseTextTrimming(node),
+            TextWrapping = ParseTextWrapping(node, TextWrapping.Wrap),
+            TextAlignment = ParseTextAlignment(node, TextAlignment.Left),
             HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
             VerticalAlignment = ParseVerticalAlignment(node),
         };
+        if (ParseSimpleBrush(node, "Foreground") is { } foreground)
+        {
+            textBlock.Foreground = foreground;
+        }
+
         return textBlock;
+    }
+
+    private static TextBox BuildTextBox(AxamlPreviewNode node)
+    {
+        TextBox textBox = new()
+        {
+            Text = node.Text,
+            PlaceholderText = GetProperty(node, "Watermark") ?? GetProperty(node, "PlaceholderText"),
+            AcceptsReturn = ParseBoolean(node, "AcceptsReturn") ?? false,
+            // Keep Tab available for host focus navigation in the read-only preview.
+            AcceptsTab = false,
+            MaxLength = ParseInt(node, "MaxLength"),
+            FontSize = ParseDouble(node, "FontSize", 14),
+            FontStyle = ParseFontStyle(node),
+            FontWeight = ParseFontWeight(node),
+            HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
+            TextAlignment = ParseTextAlignment(node, TextAlignment.Left),
+            TextWrapping = ParseTextWrapping(node, TextWrapping.NoWrap),
+            VerticalAlignment = ParseVerticalAlignment(node),
+            IsReadOnly = true,
+        };
+        return ApplyTemplatedControlAppearance(textBox, node);
     }
 
     private Control BuildScrollViewer(AxamlPreviewNode node)
@@ -537,9 +764,27 @@ public sealed class AxamlPreviewControl : ContentControl
         return new Thickness(0);
     }
 
+    private static CornerRadius ParseCornerRadius(AxamlPreviewNode node)
+    {
+        string? value = GetProperty(node, "CornerRadius");
+        if (string.IsNullOrWhiteSpace(value)
+            || AxamlPropertyValueValidator.Validate(node.TypeName, "CornerRadius", value) is not null)
+        {
+            return new CornerRadius(0);
+        }
+
+        double[] radii = value.Split(',', StringSplitOptions.TrimEntries)
+            .Select(part => double.Parse(part, CultureInfo.InvariantCulture))
+            .ToArray();
+        return radii.Length == 1
+            ? new CornerRadius(radii[0])
+            : new CornerRadius(radii[0], radii[1], radii[2], radii[3]);
+    }
+
     private static HorizontalAlignment ParseAlignment(AxamlPreviewNode node, string propertyName)
     {
         return Enum.TryParse(GetProperty(node, propertyName), ignoreCase: true, out HorizontalAlignment alignment)
+            && Enum.IsDefined(alignment)
             ? alignment
             : HorizontalAlignment.Stretch;
     }
@@ -547,15 +792,76 @@ public sealed class AxamlPreviewControl : ContentControl
     private static VerticalAlignment ParseVerticalAlignment(AxamlPreviewNode node)
     {
         return Enum.TryParse(GetProperty(node, "VerticalAlignment"), ignoreCase: true, out VerticalAlignment alignment)
+            && Enum.IsDefined(alignment)
             ? alignment
             : VerticalAlignment.Stretch;
     }
 
     private static FontWeight ParseFontWeight(AxamlPreviewNode node)
     {
-        return string.Equals(GetProperty(node, "FontWeight"), "Bold", StringComparison.OrdinalIgnoreCase)
-            ? FontWeight.Bold
-            : FontWeight.Normal;
+        return GetProperty(node, "FontWeight")?.ToUpperInvariant() switch
+        {
+            "THIN" => FontWeight.Thin,
+            "LIGHT" => FontWeight.Light,
+            "NORMAL" => FontWeight.Normal,
+            "MEDIUM" => FontWeight.Medium,
+            "SEMIBOLD" => FontWeight.SemiBold,
+            "BOLD" => FontWeight.Bold,
+            "EXTRABOLD" => FontWeight.ExtraBold,
+            "BLACK" => FontWeight.Black,
+            _ => FontWeight.Normal,
+        };
+    }
+
+    private static FontStyle ParseFontStyle(AxamlPreviewNode node)
+    {
+        return Enum.TryParse(GetProperty(node, "FontStyle"), ignoreCase: true, out FontStyle style)
+            ? style
+            : FontStyle.Normal;
+    }
+
+    private static TextAlignment ParseTextAlignment(AxamlPreviewNode node, TextAlignment fallback)
+    {
+        return Enum.TryParse(GetProperty(node, "TextAlignment"), ignoreCase: true, out TextAlignment alignment)
+            && Enum.IsDefined(alignment)
+            ? alignment
+            : fallback;
+    }
+
+    private static TextWrapping ParseTextWrapping(AxamlPreviewNode node, TextWrapping defaultValue)
+    {
+        return Enum.TryParse(GetProperty(node, "TextWrapping"), ignoreCase: true, out TextWrapping wrapping)
+            ? wrapping
+            : defaultValue;
+    }
+
+    private static TextTrimming ParseTextTrimming(AxamlPreviewNode node)
+    {
+        return GetProperty(node, "TextTrimming")?.ToUpperInvariant() switch
+        {
+            "CHARACTERELLIPSIS" => TextTrimming.CharacterEllipsis,
+            "WORDELLIPSIS" => TextTrimming.WordEllipsis,
+            _ => TextTrimming.None,
+        };
+    }
+
+    private static IBrush? ParseSimpleBrush(AxamlPreviewNode node, string propertyName)
+    {
+        string? value = GetProperty(node, propertyName);
+        if (string.IsNullOrWhiteSpace(value)
+            || AxamlPropertyValueValidator.Validate(node.TypeName, propertyName, value) is not null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return Brush.Parse(value);
+        }
+        catch (FormatException)
+        {
+            return null;
+        }
     }
 
     private static double? ParseOptionalDouble(AxamlPreviewNode node, string propertyName)
@@ -566,11 +872,69 @@ public sealed class AxamlPreviewControl : ContentControl
                 : null;
     }
 
+    private static double? ParseOptionalSizeConstraint(AxamlPreviewNode node, string propertyName)
+    {
+        string? value = GetProperty(node, propertyName);
+        return value is not null
+            && s_previewService.CanEditProperty(node, propertyName)
+            && AxamlPropertyValueValidator.Validate(node.TypeName, propertyName, value) is null
+                ? ParseOptionalDouble(node, propertyName)
+                : null;
+    }
+
+    private static decimal? ParseOptionalDecimal(AxamlPreviewNode node, string propertyName)
+    {
+        return decimal.TryParse(
+            GetProperty(node, propertyName),
+            NumberStyles.Float,
+            CultureInfo.InvariantCulture,
+            out decimal value)
+                ? value
+                : null;
+    }
+
     private static double ParseDouble(AxamlPreviewNode node, string propertyName, double fallback)
     {
         return double.TryParse(GetProperty(node, propertyName), CultureInfo.InvariantCulture, out double value)
+            && double.IsFinite(value)
             ? value
             : fallback;
+    }
+
+    private static double ParseLineHeight(AxamlPreviewNode node)
+    {
+        double? value = ParseOptionalDouble(node, "LineHeight");
+        return value is > 0 ? value.Value : double.NaN;
+    }
+
+    private static string ParseLiteralText(AxamlPreviewNode node, string propertyName, string fallback)
+    {
+        string? value = GetProperty(node, propertyName);
+        return value is null || value.TrimStart().StartsWith('{') ? fallback : value;
+    }
+
+    private static string? ParseValidatedFormat(AxamlPreviewNode node, string propertyName)
+    {
+        string? value = GetProperty(node, propertyName);
+        if (value is null)
+        {
+            return null;
+        }
+
+        string trimmed = value.TrimStart();
+        if (trimmed.StartsWith('{'))
+        {
+            if (!trimmed.StartsWith("{}", StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            value = value.Remove(value.Length - trimmed.Length, 2);
+        }
+
+        return AxamlPropertyValueValidator.Validate(node.TypeName, propertyName, value) is null
+            ? value
+            : null;
     }
 
     private static bool? ParseBoolean(AxamlPreviewNode node, string propertyName)
