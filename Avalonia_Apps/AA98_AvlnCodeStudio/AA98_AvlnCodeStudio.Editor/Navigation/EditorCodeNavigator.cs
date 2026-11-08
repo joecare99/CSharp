@@ -36,8 +36,7 @@ public sealed class EditorCodeNavigator : ICodeNavigator
         cancellationToken.ThrowIfCancellationRequested();
 
         var document = await _documentHost
-            .OpenOrActivateAsync(location.Path, cancellationToken)
-            .ConfigureAwait(false);
+            .OpenOrActivateAsync(location.Path, cancellationToken);
 
         if (document is null)
         {
@@ -47,7 +46,6 @@ public sealed class EditorCodeNavigator : ICodeNavigator
         }
 
         await _caretService
-            .FocusAndMoveCaretAsync(document, location, cancellationToken)
-            .ConfigureAwait(false);
+            .FocusAndMoveCaretAsync(document, location, cancellationToken);
     }
 }
