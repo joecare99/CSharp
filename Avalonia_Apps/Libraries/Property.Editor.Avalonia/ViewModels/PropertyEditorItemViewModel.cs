@@ -99,16 +99,20 @@ public sealed partial class PropertyEditorItemViewModel : ObservableObject
     public bool IsEnum => _propertyItem.EditorKind == PropertyEditorKind.Enum;
 
     /// <summary>Gets whether the scalar editor control is displayed.</summary>
-    public bool ShowScalarEditor => IsScalar && IsEditable;
+    public bool ShowScalarEditor => (IsScalar || IsSensitive) && IsEditable;
 
     /// <summary>Gets whether the Boolean editor control is displayed.</summary>
-    public bool ShowBooleanEditor => IsBoolean && IsEditable;
+    public bool ShowBooleanEditor => IsBoolean && !IsSensitive && IsEditable;
 
     /// <summary>Gets whether the enum editor control is displayed.</summary>
-    public bool ShowEnumEditor => IsEnum && IsEditable;
+    public bool ShowEnumEditor => IsEnum && !IsSensitive && IsEditable;
 
     /// <summary>Gets whether the read-only value text is displayed.</summary>
     public bool ShowReadOnlyValue => !IsEditable;
+
+    /// <summary>Gets the display value for a read-only item, masking sensitive content.</summary>
+    public string? ReadOnlyDisplayValue =>
+        IsSensitive && !string.IsNullOrEmpty(ScalarValue) ? "********" : ScalarValue;
 
     /// <summary>Gets the options for an enum editor.</summary>
     public System.Collections.Generic.IReadOnlyList<PropertyOption> Options => _propertyItem.Options;
@@ -121,6 +125,7 @@ public sealed partial class PropertyEditorItemViewModel : ObservableObject
     private string _validationErrorText = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ReadOnlyDisplayValue))]
     private string? _scalarValue;
 
     [ObservableProperty]

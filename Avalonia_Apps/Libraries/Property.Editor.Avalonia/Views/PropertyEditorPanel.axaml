@@ -24,7 +24,7 @@
                          Opacity="0.7"
                          Text="{Binding SourceContextText}"
                          TextWrapping="Wrap" />
-              <Grid Grid.Column="1">
+              <Grid Grid.Column="1" RowDefinitions="Auto,Auto,Auto">
                 <TextBox IsVisible="{Binding ShowScalarEditor}"
                          IsEnabled="{Binding IsEditable}"
                          AutomationProperties.Name="{Binding DisplayName}"
@@ -54,14 +54,16 @@
                 </ComboBox>
                 <TextBlock IsVisible="{Binding ShowReadOnlyValue}"
                            VerticalAlignment="Center"
-                           Text="{Binding ScalarValue}" />
-                <TextBlock Margin="0,28,0,0"
+                           TextWrapping="Wrap"
+                           Text="{Binding ReadOnlyDisplayValue}" />
+                <TextBlock Margin="0,4,0,0"
                            Grid.Row="1"
                            Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
                            IsVisible="{Binding HasValidationError}"
                            Text="{Binding ValidationErrorText}"
                            TextWrapping="Wrap" />
                 <TextBlock Grid.Row="2"
+                           Margin="0,4,0,0"
                            FontSize="10"
                            Opacity="0.75"
                            IsVisible="{Binding HasReadOnlyReason}"
