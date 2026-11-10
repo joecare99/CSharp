@@ -199,6 +199,11 @@ public sealed class AxamlPreviewControl : ContentControl
                 Header = node.Text ?? "Group",
                 Content = BuildChildren(node),
             }, node),
+            "ItemsControl" => ApplyTemplatedControlAppearance(new ItemsControl
+            {
+                ItemsSource = ParseSelectorItems(node),
+                IsEnabled = false,
+            }, node),
             "Label" => ApplyTemplatedControlAppearance(new Label
             {
                 Content = BuildTextBlock(node),
@@ -241,6 +246,8 @@ public sealed class AxamlPreviewControl : ContentControl
             "ToggleSwitch" => BuildToggleSwitch(node),
             "TimePicker" => BuildTimePicker(node),
             "TabControl" => BuildTabControl(node),
+            "TreeView" => BuildTreeView(node),
+            "TreeViewItem" => BuildTreeViewItem(node),
             "ToolTip" => BuildToolTip(node),
             "UniformGrid" => BuildUniformGrid(node),
             "Viewbox" => new Viewbox
@@ -842,6 +849,11 @@ public sealed class AxamlPreviewControl : ContentControl
             control.FontSize = ParseDouble(node, "FontSize", 14);
         }
 
+        if (HasValidLiteralValue(node, "FontFamily"))
+        {
+            control.FontFamily = new FontFamily(GetProperty(node, "FontFamily")!);
+        }
+
         if (HasValidLiteralValue(node, "FontStyle"))
         {
             control.FontStyle = ParseFontStyle(node);
@@ -927,6 +939,47 @@ public sealed class AxamlPreviewControl : ContentControl
         return ApplyTemplatedControlAppearance(tabControl, node);
     }
 
+    private Control BuildTreeView(AxamlPreviewNode node)
+    {
+        TreeView treeView = new() { IsEnabled = false };
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            if (child.TypeName == "TreeViewItem")
+            {
+                treeView.Items.Add(BuildTreeViewItem(child));
+            }
+        }
+
+        return ApplyTemplatedControlAppearance(treeView, node);
+    }
+
+    private Control BuildTreeViewItem(AxamlPreviewNode node)
+    {
+        TreeViewItem item = new()
+        {
+            Header = ParseLiteralText(node, "Header", "Tree item"),
+            IsExpanded = ParseBoolean(node, "IsExpanded") ?? false,
+            IsEnabled = false,
+        };
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            if (child.TypeName == "TreeViewItem")
+            {
+                item.Items.Add(BuildTreeViewItem(child));
+            }
+        }
+
+        item = ApplyTemplatedControlAppearance(item, node);
+        item.Tag = node.SourceStartOffset >= 0 ? node : null;
+        if (ReferenceEquals(node, SelectedNode))
+        {
+            item.BorderBrush = Brushes.DodgerBlue;
+            item.BorderThickness = new Thickness(1);
+        }
+
+        return item;
+    }
+
     private Control BuildMenu(AxamlPreviewNode node)
     {
         Menu menu = new()
@@ -984,7 +1037,7 @@ public sealed class AxamlPreviewControl : ContentControl
         });
         foreach (AxamlPreviewNode child in node.Children)
         {
-            if (child.TypeName is "TextBlock" or "StackPanel")
+            if (child.TypeName is "Border" or "TextBlock" or "StackPanel")
             {
                 content.Children.Add(BuildControl(child));
             }
@@ -1160,6 +1213,11 @@ public sealed class AxamlPreviewControl : ContentControl
             HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
             VerticalAlignment = ParseVerticalAlignment(node),
         };
+        if (HasValidLiteralValue(node, "FontFamily"))
+        {
+            textBlock.FontFamily = new FontFamily(GetProperty(node, "FontFamily")!);
+        }
+
         if (ParseSimpleBrush(node, "Foreground") is { } foreground)
         {
             textBlock.Foreground = foreground;
