@@ -12,6 +12,7 @@ using Workbench.Builder.Core.Models.Compilation;
 using Workbench.Builder.Core.Models.Diagnostics;
 using Workbench.Builder.Core.Models.Inspection;
 using Workbench.Builder.Core.Models.Loading;
+using Workbench.Builder.Core.Models.Projects;
 using Workbench.Builder.Core.Models.References;
 
 namespace AA98_AvlnCodeStudio.Building.Workbench.Services;
@@ -57,7 +58,8 @@ public sealed class WorkbenchCodeStudioBuilderService : ICodeStudioBuilderServic
         ArgumentNullException.ThrowIfNull(request);
         cancellationToken.ThrowIfCancellationRequested();
 
-        ProjectInspectionResult inspectionResult = _projectInspectionService.Inspect(CreateLoadRequest(request.ProjectPath, request.Configuration, request.TargetFramework));
+        ProjectInspectionResult inspectionResult = NormalizeOutputPaths(
+            _projectInspectionService.Inspect(CreateLoadRequest(request.ProjectPath, request.Configuration, request.TargetFramework)));
         ProjectCompilationResult compilationResult = _projectCompilationService.Compile(new ProjectCompilationRequest(inspectionResult));
         BuilderBuildResult result = new()
         {
@@ -81,6 +83,48 @@ public sealed class WorkbenchCodeStudioBuilderService : ICodeStudioBuilderServic
         }
 
         return Task.FromResult(result);
+    }
+
+    private static ProjectInspectionResult NormalizeOutputPaths(ProjectInspectionResult inspection)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return inspection;
+        }
+
+        BuildProjectInfo project = inspection.Project;
+        string? outputPath = project.OutputPath?.Replace('\\', Path.DirectorySeparatorChar);
+        string? intermediatePath = project.IntermediateOutputPath?.Replace('\\', Path.DirectorySeparatorChar);
+        if (outputPath == project.OutputPath && intermediatePath == project.IntermediateOutputPath)
+        {
+            return inspection;
+        }
+
+        BuildProjectInfo normalized = new(
+            project.ProjectFilePath,
+            project.ProjectDirectory,
+            project.AssemblyName,
+            project.RootNamespace,
+            project.TargetFramework,
+            project.OutputType,
+            project.LangVersion,
+            project.Nullable,
+            project.DefineConstants,
+            project.ImplicitUsings,
+            project.Configuration,
+            project.RuntimeIdentifier,
+            outputPath,
+            intermediatePath,
+            project.IsSdkStyle,
+            project.IsPackable);
+        return new ProjectInspectionResult(
+            normalized,
+            inspection.CompileItems,
+            inspection.ProjectReferences,
+            inspection.PackageReferences,
+            inspection.ResolvedReferences,
+            inspection.Diagnostics,
+            inspection.IsTestProject);
     }
 
     /// <inheritdoc/>
