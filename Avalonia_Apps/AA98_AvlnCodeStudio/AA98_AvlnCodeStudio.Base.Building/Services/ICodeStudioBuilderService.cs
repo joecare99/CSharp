@@ -18,7 +18,9 @@ public interface ICodeStudioBuilderService
     Task<BuilderProjectInspectionResult> InspectProjectAsync(BuilderProjectInspectionRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Builds the requested project and returns a structured build result.
+    /// Compiles the requested project and returns its compilation artifacts and diagnostics.
+    /// This operation does not guarantee launch-ready runtime metadata; use
+    /// <see cref="IProjectRuntimeBuilder"/> before launching an executable.
     /// </summary>
     /// <param name="request">The build request.</param>
     /// <param name="cancellationToken">The cancellation token.</param>

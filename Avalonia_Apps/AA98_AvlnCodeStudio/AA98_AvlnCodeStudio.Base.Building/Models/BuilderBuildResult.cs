@@ -18,7 +18,8 @@ public sealed class BuilderBuildResult
     public bool Succeeded { get; set; }
 
     /// <summary>
-    /// Gets the artifacts produced by the build.
+    /// Gets the compilation artifacts produced by the build.
+    /// These artifacts do not guarantee that runtime dependency metadata is current or that an executable can be launched.
     /// </summary>
     public IList<BuilderCompilationArtifact> Artifacts { get; } = new List<BuilderCompilationArtifact>();
 
