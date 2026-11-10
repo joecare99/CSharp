@@ -302,9 +302,37 @@ public sealed class AxamlPreviewService
             throw new InvalidOperationException($"The '{parent.TypeName}' control cannot contain another child.");
         }
 
+        if (parent.TypeName is "ContextMenu" or "ToolTip")
+        {
+            AxamlPreviewNode currentParent = FindNodeAtSourceOffset(Parse(axaml), parent.SourceStartOffset)
+                ?? throw new InvalidDataException("The selected container no longer exists in the AXAML source.");
+            if (!currentParent.IsSupported
+                || !currentParent.CanAppendChildren
+                || currentParent.Children.Count != parent.Children.Count
+                || currentParent.Children.Where((child, index) =>
+                    child.TypeName != parent.Children[index].TypeName
+                    || child.SourceStartOffset != parent.Children[index].SourceStartOffset).Any())
+            {
+                throw new InvalidOperationException(
+                    "The container source changed or contains unsupported items; select it again before inserting.");
+            }
+
+            ValidateSourceTag(axaml, currentParent);
+            foreach (AxamlPreviewNode child in parent.Children)
+            {
+                ValidateSourceTag(axaml, child);
+            }
+        }
+
         if (!AxamlControlCatalog.TryGet(childTypeName, out _))
         {
             throw new InvalidOperationException($"The '{childTypeName}' control is not in the supported designer catalog.");
+        }
+
+        if (!AllowsChildType(parentCapability, childTypeName))
+        {
+            throw new InvalidOperationException(
+                $"The '{parent.TypeName}' control only accepts: {string.Join(", ", parentCapability.AllowedChildTypes)}.");
         }
 
         bool isGrid = string.Equals(parent.TypeName, "Grid", StringComparison.Ordinal);
@@ -482,6 +510,134 @@ public sealed class AxamlPreviewService
             axaml[closingTagStart..]);
     }
 
+    public string InsertContextMenu(string axaml, AxamlPreviewNode control)
+    {
+        ArgumentNullException.ThrowIfNull(axaml);
+        ArgumentNullException.ThrowIfNull(control);
+        if (!CanHostContextMenu(control.TypeName) || !control.IsSupported)
+        {
+            throw new InvalidOperationException("Context menus can only be added to a supported control.");
+        }
+
+        ValidateSourceTag(axaml, control);
+        AxamlPreviewNode currentControl = FindNodeAtSourceOffset(Parse(axaml), control.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected control no longer exists in the AXAML source.");
+        string propertyElementName = $"{currentControl.TypeName}.ContextMenu";
+        if (!CanHostContextMenu(currentControl.TypeName)
+            || !currentControl.IsSupported
+            || currentControl.Properties.ContainsKey("ContextMenu")
+            || currentControl.PropertyElementNames.Contains(propertyElementName, StringComparer.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "The selected control already has a ContextMenu or contains unsupported context-menu markup.");
+        }
+
+        string qualifiedName = GetElementName(currentControl.SourceStartTag!);
+        int colon = qualifiedName.LastIndexOf(':');
+        string prefix = colon < 0 ? string.Empty : qualifiedName[..(colon + 1)];
+        return InsertPropertyElement(
+            axaml,
+            currentControl,
+            "ContextMenu",
+            [$"<{prefix}ContextMenu />"]);
+    }
+
+    public string InsertToolTip(string axaml, AxamlPreviewNode control)
+    {
+        ArgumentNullException.ThrowIfNull(axaml);
+        ArgumentNullException.ThrowIfNull(control);
+        if (!CanHostToolTip(control.TypeName) || !control.IsSupported)
+        {
+            throw new InvalidOperationException("Tooltips can only be added to a supported control.");
+        }
+
+        ValidateSourceTag(axaml, control);
+        AxamlPreviewNode currentControl = FindNodeAtSourceOffset(Parse(axaml), control.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected control no longer exists in the AXAML source.");
+        string propertyElementName = $"{currentControl.TypeName}.ToolTip";
+        if (!CanHostToolTip(currentControl.TypeName)
+            || !currentControl.IsSupported
+            || currentControl.Properties.ContainsKey("ToolTip")
+            || currentControl.PropertyElementNames.Contains(propertyElementName, StringComparer.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "The selected control already has a ToolTip or contains unsupported tooltip markup.");
+        }
+
+        string qualifiedName = GetElementName(currentControl.SourceStartTag!);
+        int colon = qualifiedName.LastIndexOf(':');
+        string prefix = colon < 0 ? string.Empty : qualifiedName[..(colon + 1)];
+        return InsertPropertyElement(
+            axaml,
+            currentControl,
+            "ToolTip",
+            [
+                $"<{prefix}ToolTip>",
+                $"  <{prefix}TextBlock Text=\"Helpful text\" />",
+                $"</{prefix}ToolTip>",
+            ]);
+    }
+
+    private static string InsertPropertyElement(
+        string axaml,
+        AxamlPreviewNode control,
+        string propertyName,
+        string[] valueLines)
+    {
+        int tagStart = control.SourceStartOffset;
+        int tagEnd = ValidateSourceTag(axaml, control);
+        string qualifiedName = GetElementName(control.SourceStartTag!);
+        string propertyElementName = $"{qualifiedName}.{propertyName}";
+        string lineIndentation = GetLineIndentation(axaml, tagStart);
+        string childIndentation = lineIndentation + "  ";
+        string contextIndentation = childIndentation + "  ";
+        string newline = axaml.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+        string propertyElementMarkup =
+            $"{childIndentation}<{propertyElementName}>{newline}"
+            + $"{contextIndentation}{string.Join(newline + contextIndentation, valueLines)}{newline}"
+            + $"{childIndentation}</{propertyElementName}>";
+
+        int insertionOffset = tagEnd;
+        while (insertionOffset > tagStart && char.IsWhiteSpace(axaml[insertionOffset - 1]))
+        {
+            insertionOffset--;
+        }
+
+        if (insertionOffset > tagStart && axaml[insertionOffset - 1] == '/')
+        {
+            int openingTagEnd = insertionOffset - 1;
+            while (openingTagEnd > tagStart && char.IsWhiteSpace(axaml[openingTagEnd - 1]))
+            {
+                openingTagEnd--;
+            }
+
+            string openingTag = axaml[tagStart..openingTagEnd] + ">";
+            return string.Concat(
+                axaml[..tagStart],
+                openingTag,
+                newline,
+                propertyElementMarkup,
+                newline,
+                lineIndentation,
+                $"</{qualifiedName}>",
+                axaml[(tagEnd + 1)..]);
+        }
+
+        int closingTagStart = FindMatchingEndTag(axaml, tagEnd, qualifiedName);
+        int closingLineStart = axaml.LastIndexOf('\n', closingTagStart - 1) + 1;
+        bool closingTagHasOwnLine = axaml.AsSpan(closingLineStart, closingTagStart - closingLineStart)
+            .Trim()
+            .IsEmpty;
+        int appendInsertionOffset = closingTagHasOwnLine ? closingLineStart : closingTagStart;
+        string insertion = closingTagHasOwnLine
+            ? $"{propertyElementMarkup}{newline}"
+            : $"{newline}{propertyElementMarkup}{newline}{lineIndentation}";
+        return string.Concat(
+            axaml.AsSpan(0, appendInsertionOffset),
+            insertion,
+            axaml.AsSpan(appendInsertionOffset));
+    }
+
     internal string RemoveChildControl(string axaml, AxamlPreviewNode parent, AxamlPreviewNode child)
     {
         XElement sourceChild = GetStructureChild(axaml, parent, child);
@@ -642,20 +798,22 @@ public sealed class AxamlPreviewService
         AxamlPreviewNode? adjacentChild = null)
     {
         bool isGrid = parent.TypeName == "Grid" && parent.HasSafeGridLayout;
-        bool isSimplePanel = parent.CanAppendChildren
-            && parent.TypeName is "StackPanel" or "WrapPanel" or "UniformGrid";
+        bool isAppendableContainer = parent.TypeName is not ("DockPanel" or "Grid")
+            && parent.CanAppendChildren
+            && AxamlControlCatalog.TryGet(parent.TypeName, out AxamlControlCapability parentCapability)
+            && parentCapability.AllowsAppendingChildren;
         bool isSingleChildContainer = adjacentChild is null
-            && AxamlControlCatalog.TryGet(parent.TypeName, out AxamlControlCapability capability)
-            && capability.AllowsSafeChildRemoval
+            && AxamlControlCatalog.TryGet(parent.TypeName, out AxamlControlCapability singleChildCapability)
+            && singleChildCapability.AllowsSafeChildRemoval
             && (child is null
                 ? parent.Children.Count == 0
                 : parent.Children.Count == 1 && parent.CanRemoveSingleChild);
         if (!parent.IsSupported
-            || (!isSimplePanel && !isGrid && !isSingleChildContainer)
+            || (!isAppendableContainer && !isGrid && !isSingleChildContainer)
             || (isGrid && adjacentChild is not null))
         {
             throw new InvalidOperationException(
-                "Structure editing requires a simple panel, a safe Grid, or a supported single-child container.");
+                "Structure editing requires a supported appendable container, safe Grid, or single-child container.");
         }
 
         ValidateSourceTag(axaml, parent);
@@ -703,7 +861,7 @@ public sealed class AxamlPreviewService
             .FirstOrDefault(element => OffsetOf(element) == parent.SourceStartOffset);
         if (sourceParent is null)
         {
-            throw new InvalidDataException("The selected panel could not be located in the AXAML source.");
+            throw new InvalidDataException("The selected container could not be located in the AXAML source.");
         }
 
         if (isGrid
@@ -721,7 +879,7 @@ public sealed class AxamlPreviewService
                 || node is XText text && !string.IsNullOrWhiteSpace(text.Value)))
         {
             throw new InvalidOperationException(
-                "The panel contains comments, text or other markup that cannot be reordered safely.");
+                "The container contains comments, text or other markup that cannot be edited structurally.");
         }
 
         XElement[] sourceChildren = sourceParent.Elements()
@@ -729,7 +887,7 @@ public sealed class AxamlPreviewService
             .ToArray();
         if (sourceChildren.Length != parent.Children.Count)
         {
-            throw new InvalidOperationException("The preview does not represent the panel's direct source children.");
+            throw new InvalidOperationException("The preview does not represent the container's direct source children.");
         }
 
         XElement? sourceChild = null;
@@ -743,7 +901,7 @@ public sealed class AxamlPreviewService
             if (OffsetOf(actualChild) != previewChild.SourceStartOffset
                 || actualChild.Name.LocalName != previewChild.TypeName)
             {
-                throw new InvalidOperationException("The preview does not represent the panel's direct source children.");
+                throw new InvalidOperationException("The preview does not represent the container's direct source children.");
             }
 
             if (ReferenceEquals(previewChild, child))
@@ -1120,12 +1278,14 @@ public sealed class AxamlPreviewService
         string typeName = element.Name.LocalName;
         bool canAppendChildren = AxamlControlCatalog.TryGet(typeName, out AxamlControlCapability capability)
             && capability.AllowsAppendingChildren
+            && element.Elements().Count() < capability.MaximumChildren
             && (typeName != "DockPanel" || HasLiteralLastChildFill(element))
             && !element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value))
-            && element.Elements().All(static child =>
+            && element.Elements().All(child =>
                 !child.Name.LocalName.Contains('.', StringComparison.Ordinal)
                 && LooksLikeControl(child)
-                && IsSupportedElement(child, child.Name.LocalName));
+                && IsSupportedElement(child, child.Name.LocalName)
+                && AllowsChildType(capability, child.Name.LocalName));
         bool hasSafeGridLayout = TryAnalyzeGridLayout(element, out bool hasFreeGridCell);
         bool canAddGridChild = hasSafeGridLayout && hasFreeGridCell;
         Dictionary<string, string> properties = element.Attributes()
@@ -1242,6 +1402,7 @@ public sealed class AxamlPreviewService
         {
             "TextBlock" or "TextBox" => "Text",
             "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleSwitch" => "Content",
+            "MenuItem" or "TabItem" => "Header",
             _ => null,
         };
     }
@@ -1280,6 +1441,24 @@ public sealed class AxamlPreviewService
         int reportedOffset = lineStart + lineInfo.LinePosition - 1;
         int tagStart = source.LastIndexOf('<', Math.Min(reportedOffset, source.Length - 1));
         return tagStart >= lineStart ? tagStart : -1;
+    }
+
+    private static AxamlPreviewNode? FindNodeAtSourceOffset(AxamlPreviewNode node, int sourceStartOffset)
+    {
+        if (node.SourceStartOffset == sourceStartOffset)
+        {
+            return node;
+        }
+
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            if (FindNodeAtSourceOffset(child, sourceStartOffset) is { } match)
+            {
+                return match;
+            }
+        }
+
+        return null;
     }
 
     private static int FindStartTagEnd(string source, int tagStart)
@@ -1504,8 +1683,227 @@ public sealed class AxamlPreviewService
 
     private static bool IsSupportedElement(XElement element, string typeName)
     {
-        return (element.Name.Namespace == XNamespace.None || element.Name.Namespace == s_avaloniaNamespace)
+        if ((element.Name.Namespace != XNamespace.None && element.Name.Namespace != s_avaloniaNamespace)
+            || !AxamlControlCatalog.TryGet(typeName, out _))
+        {
+            return false;
+        }
+
+        if (!HasSupportedContextMenu(element, typeName))
+        {
+            return false;
+        }
+
+        if (!HasSupportedToolTip(element, typeName))
+        {
+            return false;
+        }
+
+        XElement[] childControls = element.Elements()
+            .Where(static child => !child.Name.LocalName.Contains('.', StringComparison.Ordinal)
+                && LooksLikeControl(child))
+            .ToArray();
+        return typeName switch
+        {
+            "TabControl" => childControls.All(static child => child.Name.LocalName == "TabItem"),
+            "TabItem" => childControls.Length <= 1,
+            "ContextMenu" => IsSupportedContextMenuContent(element, childControls),
+            "ToolTip" => IsSupportedToolTipContent(element, childControls),
+            "Menu" or "MenuItem" => childControls.All(
+                static child => child.Name.LocalName is "MenuItem" or "Separator"),
+            _ => true,
+        };
+    }
+
+    private static bool IsSupportedContextMenuContent(XElement element, XElement[] childControls)
+    {
+        return childControls.Length == element.Elements().Count()
+            && childControls.All(child =>
+                (child.Name.LocalName is "MenuItem" or "Separator")
+                && child.Name.Namespace == element.Name.Namespace)
+            && !element.Attributes().Any(static attribute =>
+                !attribute.IsNamespaceDeclaration
+                && attribute.Name.Namespace == XNamespace.None
+                && IsMarkupExtensionValue("ContextMenu", attribute.Name.LocalName, attribute.Value))
+            && !element.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData
+                || node is XText text && !string.IsNullOrWhiteSpace(text.Value));
+    }
+
+    private static bool CanHostContextMenu(string typeName)
+    {
+        return typeName != "ContextMenu"
             && AxamlControlCatalog.TryGet(typeName, out _);
+    }
+
+    private static bool CanHostToolTip(string typeName)
+    {
+        return typeName is not ("ContextMenu" or "ToolTip")
+            && AxamlControlCatalog.TryGet(typeName, out _);
+    }
+
+    private static bool HasSupportedContextMenu(XElement element, string typeName)
+    {
+        if (element.Attributes().Any(static attribute =>
+                !attribute.IsNamespaceDeclaration && attribute.Name.LocalName == "ContextMenu"))
+        {
+            return false;
+        }
+
+        XElement[] propertyElements = element.Elements()
+            .Where(child => child.Name.LocalName == $"{typeName}.ContextMenu")
+            .ToArray();
+        if (propertyElements.Length == 0)
+        {
+            return true;
+        }
+
+        if (propertyElements.Length != 1 || propertyElements[0].Name.Namespace != element.Name.Namespace)
+        {
+            return false;
+        }
+
+        XElement propertyElement = propertyElements[0];
+        if (propertyElement.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration)
+            || propertyElement.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData
+                || node is XText text && !string.IsNullOrWhiteSpace(text.Value)))
+        {
+            return false;
+        }
+
+        XElement[] contextMenus = propertyElement.Elements().ToArray();
+        return contextMenus.Length == 1
+            && contextMenus[0].Name.LocalName == "ContextMenu"
+            && contextMenus[0].Name.Namespace == element.Name.Namespace
+            && IsSupportedContextMenuTree(contextMenus[0]);
+    }
+
+    private static bool HasSupportedToolTip(XElement element, string typeName)
+    {
+        if (element.Attributes().Any(static attribute =>
+                !attribute.IsNamespaceDeclaration && attribute.Name.LocalName == "ToolTip"))
+        {
+            return false;
+        }
+
+        XElement[] propertyElements = element.Elements()
+            .Where(child => child.Name.LocalName == $"{typeName}.ToolTip")
+            .ToArray();
+        if (propertyElements.Length == 0)
+        {
+            return true;
+        }
+
+        if (!CanHostToolTip(typeName)
+            || propertyElements.Length != 1
+            || propertyElements[0].Name.Namespace != element.Name.Namespace)
+        {
+            return false;
+        }
+
+        XElement propertyElement = propertyElements[0];
+        if (propertyElement.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration)
+            || propertyElement.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData
+                || node is XText text && !string.IsNullOrWhiteSpace(text.Value)))
+        {
+            return false;
+        }
+
+        XElement[] toolTips = propertyElement.Elements().ToArray();
+        return toolTips.Length == 1
+            && toolTips[0].Name.LocalName == "ToolTip"
+            && toolTips[0].Name.Namespace == element.Name.Namespace
+            && IsSupportedToolTipTree(toolTips[0]);
+    }
+
+    private static bool IsSupportedToolTipContent(XElement element, XElement[] childControls)
+    {
+        return childControls.Length == element.Elements().Count()
+            && childControls.Length <= 1
+            && childControls.All(child =>
+                child.Name.Namespace == element.Name.Namespace
+                && (child.Name.LocalName == "TextBlock"
+                    ? IsSupportedToolTipText(child)
+                    : child.Name.LocalName == "StackPanel" && IsSupportedToolTipStackPanel(child)))
+            && !element.Attributes().Any(attribute =>
+                !attribute.IsNamespaceDeclaration
+                && (IsMarkupExtensionValue("ToolTip", attribute.Name.LocalName, attribute.Value)
+                    || AxamlPropertyValueValidator.Validate(
+                        "ToolTip",
+                        attribute.Name.LocalName,
+                        attribute.Value) is not null))
+            && !element.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData
+                || node is XText text && !string.IsNullOrWhiteSpace(text.Value));
+    }
+
+    private static bool IsSupportedToolTipStackPanel(XElement element)
+    {
+        XElement[] textBlocks = element.Elements()
+            .Where(static child => !child.Name.LocalName.Contains('.', StringComparison.Ordinal)
+                && LooksLikeControl(child))
+            .ToArray();
+        return IsSupportedElement(element, "StackPanel")
+            && textBlocks.Length == element.Elements().Count()
+            && textBlocks.All(child =>
+                child.Name.LocalName == "TextBlock"
+                && child.Name.Namespace == element.Name.Namespace
+                && IsSupportedToolTipText(child))
+            && !element.Attributes().Any(attribute =>
+                !attribute.IsNamespaceDeclaration
+                && (attribute.Name.Namespace != XNamespace.None
+                    || IsMarkupExtensionValue("StackPanel", attribute.Name.LocalName, attribute.Value)
+                    || AxamlPropertyValueValidator.Validate(
+                        "StackPanel",
+                        attribute.Name.LocalName,
+                        attribute.Value) is not null))
+            && !element.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData
+                || node is XText text && !string.IsNullOrWhiteSpace(text.Value));
+    }
+
+    private static bool IsSupportedToolTipTree(XElement element)
+    {
+        return IsSupportedElement(element, "ToolTip")
+            && IsSupportedToolTipContent(
+                element,
+                element.Elements()
+                    .Where(static child => !child.Name.LocalName.Contains('.', StringComparison.Ordinal)
+                        && LooksLikeControl(child))
+                    .ToArray());
+    }
+
+    private static bool IsSupportedToolTipText(XElement element)
+    {
+        return IsSupportedElement(element, "TextBlock")
+            && !element.HasElements
+            && !element.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData)
+            && !element.Attributes().Any(static attribute =>
+                !attribute.IsNamespaceDeclaration
+                && IsMarkupExtensionValue("TextBlock", attribute.Name.LocalName, attribute.Value));
+    }
+
+    private static bool IsSupportedContextMenuTree(XElement element)
+    {
+        if (!IsSupportedElement(element, element.Name.LocalName))
+        {
+            return false;
+        }
+
+        return element.Name.LocalName is "ContextMenu" or "MenuItem"
+            ? element.Elements()
+                .Where(child => child.Name.LocalName != $"{element.Name.LocalName}.ContextMenu")
+                .All(IsSupportedContextMenuTree)
+            : element.Name.LocalName == "Separator" && !element.HasElements;
+    }
+
+    private static bool AllowsChildType(AxamlControlCapability capability, string childTypeName)
+    {
+        return capability.AllowedChildTypes.Count == 0
+            || capability.AllowedChildTypes.Contains(childTypeName, StringComparer.Ordinal);
     }
 
     private static bool TryAnalyzeGridLayout(XElement element, out bool hasFreeCell)
@@ -1799,7 +2197,8 @@ public sealed class AxamlPreviewService
         {
             "TextBlock" or "TextBox" => "Text",
             "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleSwitch" => "Content",
-            "Expander" or "GroupBox" => "Header",
+            "ComboBoxItem" or "ListBoxItem" => "Content",
+            "Expander" or "GroupBox" or "MenuItem" or "TabItem" => "Header",
             _ => null,
         };
         if (textProperty is not null && properties.TryGetValue(textProperty, out string? text))
@@ -1807,7 +2206,7 @@ public sealed class AxamlPreviewService
             return FormatMarkupValue(text);
         }
 
-        if (typeName is "TextBlock" or "Label")
+        if (typeName is "TextBlock" or "Label" or "ComboBoxItem" or "ListBoxItem")
         {
             string? nodeText = element.Nodes()
                 .OfType<XText>()

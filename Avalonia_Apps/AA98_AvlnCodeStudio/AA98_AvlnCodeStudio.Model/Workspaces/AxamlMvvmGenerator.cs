@@ -78,7 +78,27 @@ public sealed class AxamlMvvmGenerator
                 continue;
             }
 
-            if (element.Name.LocalName == "TextBox")
+            if (element.Name.LocalName == "AutoCompleteBox")
+            {
+                string? initialValue = (string?)element.Attribute("Text");
+                if (initialValue?.StartsWith('{') == true)
+                {
+                    continue;
+                }
+
+                string propertyName = NormalizeIdentifier(TrimSuffix(controlName, "AutoCompleteBox"), "SearchText");
+                if (!memberNames.Add(propertyName))
+                {
+                    throw new InvalidDataException($"More than one named control maps to '{propertyName}'.");
+                }
+
+                element.SetAttributeValue("Text", $"{{Binding {propertyName}, Mode=TwoWay}}");
+                properties.Add(new GeneratedProperty(
+                    propertyName,
+                    "string?",
+                    initialValue is null ? "null" : ToCSharpStringLiteral(initialValue)));
+            }
+            else if (element.Name.LocalName == "TextBox")
             {
                 if (element.Attribute("Text") is not null)
                 {
@@ -229,7 +249,7 @@ public sealed class AxamlMvvmGenerator
                 element.SetAttributeValue("Value", $"{{Binding {propertyName}, Mode=TwoWay}}");
                 properties.Add(new GeneratedProperty(propertyName, "double", initialLiteral));
             }
-            else if (element.Name.LocalName == "ComboBox")
+            else if (element.Name.LocalName is "ComboBox" or "TabControl")
             {
                 string? initialValue = (string?)element.Attribute("SelectedIndex");
                 if (initialValue?.StartsWith('{') == true)
@@ -246,16 +266,22 @@ public sealed class AxamlMvvmGenerator
                             | NumberStyles.AllowLeadingWhite
                             | NumberStyles.AllowTrailingWhite,
                         CultureInfo.InvariantCulture,
-                        out int selectedIndex))
+                        out int selectedIndex)
+                        || AxamlPropertyValueValidator.Validate(
+                            element.Name.LocalName,
+                            "SelectedIndex",
+                            initialValue) is not null)
                     {
                         throw new InvalidDataException(
-                            $"Named ComboBox '{controlName}' has a SelectedIndex that is not an invariant integer literal.");
+                            $"Named {element.Name.LocalName} '{controlName}' has an invalid SelectedIndex.");
                     }
 
                     initialLiteral = selectedIndex.ToString(CultureInfo.InvariantCulture);
                 }
 
-                string propertyName = NormalizeIdentifier(TrimSuffix(controlName, "ComboBox"), "Selection");
+                string propertyName = NormalizeIdentifier(
+                    TrimSuffix(controlName, element.Name.LocalName),
+                    "Selection");
                 if (!memberNames.Add(propertyName))
                 {
                     throw new InvalidDataException($"More than one named control maps to '{propertyName}'.");
@@ -264,10 +290,131 @@ public sealed class AxamlMvvmGenerator
                 element.SetAttributeValue("SelectedIndex", $"{{Binding {propertyName}, Mode=TwoWay}}");
                 properties.Add(new GeneratedProperty(propertyName, "int", initialLiteral));
             }
-            else if (element.Name.LocalName == "Button"
+            else if (element.Name.LocalName == "DatePicker")
+            {
+                string? initialValue = (string?)element.Attribute("SelectedDate");
+                if (initialValue?.StartsWith('{') == true)
+                {
+                    continue;
+                }
+
+                string initialLiteral = "null";
+                if (initialValue is not null)
+                {
+                    if (AxamlPropertyValueValidator.Validate("DatePicker", "SelectedDate", initialValue) is not null)
+                    {
+                        throw new InvalidDataException(
+                            $"Named DatePicker '{controlName}' has a SelectedDate that is not a valid yyyy-MM-dd date.");
+                    }
+
+                    initialLiteral =
+                        $"global::System.DateTimeOffset.ParseExact({ToCSharpStringLiteral(initialValue)}, \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None)";
+                }
+
+                string propertyName = NormalizeIdentifier(TrimSuffix(controlName, "DatePicker"), "SelectedDate");
+                if (!memberNames.Add(propertyName))
+                {
+                    throw new InvalidDataException($"More than one named control maps to '{propertyName}'.");
+                }
+
+                element.SetAttributeValue("SelectedDate", $"{{Binding {propertyName}, Mode=TwoWay}}");
+                properties.Add(new GeneratedProperty(
+                    propertyName,
+                    "global::System.DateTimeOffset?",
+                    initialLiteral));
+            }
+            else if (element.Name.LocalName == "TimePicker")
+            {
+                string? initialValue = (string?)element.Attribute("SelectedTime");
+                if (initialValue?.StartsWith('{') == true)
+                {
+                    continue;
+                }
+
+                string initialLiteral = "null";
+                if (initialValue is not null)
+                {
+                    if (AxamlPropertyValueValidator.Validate("TimePicker", "SelectedTime", initialValue) is not null)
+                    {
+                        throw new InvalidDataException(
+                            $"Named TimePicker '{controlName}' has a SelectedTime that is not a valid HH:mm or HH:mm:ss time.");
+                    }
+
+                    initialLiteral =
+                        $"global::System.TimeSpan.Parse({ToCSharpStringLiteral(initialValue)}, global::System.Globalization.CultureInfo.InvariantCulture)";
+                }
+
+                string propertyName = NormalizeIdentifier(TrimSuffix(controlName, "TimePicker"), "SelectedTime");
+                if (!memberNames.Add(propertyName))
+                {
+                    throw new InvalidDataException($"More than one named control maps to '{propertyName}'.");
+                }
+
+                element.SetAttributeValue("SelectedTime", $"{{Binding {propertyName}, Mode=TwoWay}}");
+                properties.Add(new GeneratedProperty(propertyName, "global::System.TimeSpan?", initialLiteral));
+            }
+            else if (element.Name.LocalName == "Calendar")
+            {
+                string? initialValue = (string?)element.Attribute("SelectedDate");
+                if (initialValue?.StartsWith('{') == true)
+                {
+                    continue;
+                }
+
+                string initialLiteral = "null";
+                if (initialValue is not null)
+                {
+                    if (AxamlPropertyValueValidator.Validate("Calendar", "SelectedDate", initialValue) is not null)
+                    {
+                        throw new InvalidDataException(
+                            $"Named Calendar '{controlName}' has a SelectedDate that is not a valid yyyy-MM-dd date.");
+                    }
+
+                    initialLiteral =
+                        $"global::System.DateTime.ParseExact({ToCSharpStringLiteral(initialValue)}, \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None)";
+                }
+
+                string propertyName = NormalizeIdentifier(TrimSuffix(controlName, "Calendar"), "SelectedDate");
+                if (!memberNames.Add(propertyName))
+                {
+                    throw new InvalidDataException($"More than one named control maps to '{propertyName}'.");
+                }
+
+                element.SetAttributeValue("SelectedDate", $"{{Binding {propertyName}, Mode=TwoWay}}");
+                properties.Add(new GeneratedProperty(propertyName, "global::System.DateTime?", initialLiteral));
+            }
+            else if (element.Name.LocalName == "ColorPicker")
+            {
+                string? initialValue = (string?)element.Attribute("Color");
+                if (initialValue?.StartsWith('{') == true)
+                {
+                    continue;
+                }
+
+                if (initialValue is not null
+                    && AxamlPropertyValueValidator.Validate("ColorPicker", "Color", initialValue) is not null)
+                {
+                    throw new InvalidDataException(
+                        $"Named ColorPicker '{controlName}' has a Color that is not a valid color literal.");
+                }
+
+                string initialLiteral =
+                    $"global::Avalonia.Media.Color.Parse({ToCSharpStringLiteral(initialValue ?? "White")})";
+                string propertyName = NormalizeIdentifier(TrimSuffix(controlName, "ColorPicker"), "Color");
+                if (!memberNames.Add(propertyName))
+                {
+                    throw new InvalidDataException($"Generated color '{propertyName}' conflicts with another ViewModel member.");
+                }
+
+                element.SetAttributeValue("Color", $"{{Binding {propertyName}, Mode=TwoWay}}");
+                properties.Add(new GeneratedProperty(propertyName, "global::Avalonia.Media.Color", initialLiteral));
+            }
+            else if ((element.Name.LocalName is "Button" or "MenuItem")
                 && element.Attribute("Command") is null)
             {
-                string commandName = NormalizeIdentifier(TrimSuffix(controlName, "Button"), "Action");
+                string commandName = NormalizeIdentifier(
+                   TrimSuffix(controlName, element.Name.LocalName),
+                   "Action");
                 string commandPropertyName = commandName + "Command";
                 if (!memberNames.Add(commandName) || !memberNames.Add(commandPropertyName))
                 {

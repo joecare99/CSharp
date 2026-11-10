@@ -314,12 +314,51 @@ public sealed class AxamlDesignerSession
         return true;
     }
 
+    public bool AddContextMenu()
+    {
+        return AddAttachedPreview("ContextMenu", _previewService.InsertContextMenu);
+    }
+
+    public bool AddToolTip()
+    {
+        return AddAttachedPreview("ToolTip", _previewService.InsertToolTip);
+    }
+
+    private bool AddAttachedPreview(
+        string previewTypeName,
+        Func<string, AxamlPreviewNode, string> insertPropertyElement)
+    {
+        AxamlPreviewNode selectedControl = SelectedNode
+            ?? throw new InvalidOperationException($"Select a control before adding {previewTypeName}.");
+        string updatedMarkup = insertPropertyElement(Markup, selectedControl);
+        if (string.Equals(updatedMarkup, Markup, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode updatedControl = FindNode(root, selectedControl.TypeName, selectedControl.SourceStartOffset)
+            ?? throw new InvalidDataException($"The selected control could not be located after adding its {previewTypeName}.");
+        AxamlPreviewNode attachedPreview = updatedControl.Children.SingleOrDefault(child =>
+                child.TypeName == previewTypeName)
+            ?? throw new InvalidDataException($"The added {previewTypeName} could not be located in the updated preview.");
+
+        PushHistory(_undoHistory, Capture());
+        _redoHistory.Clear();
+        Markup = updatedMarkup;
+        Root = root;
+        SelectedNode = attachedPreview;
+        SelectedProperty = EditableProperties.FirstOrDefault();
+        RefreshSelectedValue();
+        return true;
+    }
+
     public bool RemoveSelectedControl()
     {
         if (!TryGetRemovablePosition(out AxamlPreviewNode? parent, out _))
         {
             throw new InvalidOperationException(
-                "Select a direct child of a simple panel, safe Grid or supported single-child container.");
+                "Select a direct child of a supported appendable container, safe Grid or single-child container.");
         }
 
         string updatedMarkup = _previewService.RemoveChildControl(Markup, parent!, SelectedNode!);
@@ -504,11 +543,22 @@ public sealed class AxamlDesignerSession
 
     private bool TryGetStructurePosition(out AxamlPreviewNode? parent, out int index)
     {
-        return TryGetSelectedParent(out parent, out index)
-            && SelectedNode is { IsSupported: true }
-            && (parent is { IsSupported: true, CanAppendChildren: true }
-                    && parent.TypeName is "StackPanel" or "WrapPanel" or "UniformGrid"
-                || parent is { IsSupported: true, TypeName: "Grid", HasSafeGridLayout: true });
+        if (!TryGetSelectedParent(out parent, out index)
+            || SelectedNode is not { IsSupported: true }
+            || parent is not { IsSupported: true })
+        {
+            return false;
+        }
+
+        if (parent.TypeName == "Grid")
+        {
+            return parent.HasSafeGridLayout;
+        }
+
+        return parent.TypeName != "DockPanel"
+            && parent.CanAppendChildren
+            && AxamlControlCatalog.TryGet(parent.TypeName, out AxamlControlCapability capability)
+            && capability.AllowsAppendingChildren;
     }
 
     private bool TryGetRemovablePosition(out AxamlPreviewNode? parent, out int index)

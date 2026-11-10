@@ -13,6 +13,26 @@ public static class AxamlPropertyValueValidator
     private static readonly string[] s_horizontalAlignments = ["Left", "Center", "Right", "Stretch"];
     private static readonly string[] s_verticalAlignments = ["Top", "Center", "Bottom", "Stretch"];
     private static readonly string[] s_flowDirections = ["LeftToRight", "RightToLeft"];
+    private static readonly string[] s_clockIdentifiers = ["12HourClock", "24HourClock"];
+    private static readonly string[] s_dayOfWeeks = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    private static readonly string[] s_calendarSelectionModes = ["None", "SingleDate"];
+    private static readonly string[] s_colorModels = ["Hsva", "Rgba"];
+    private static readonly string[] s_autoCompleteFilterModes =
+    [
+        "None",
+        "StartsWith",
+        "StartsWithCaseSensitive",
+        "StartsWithOrdinal",
+        "StartsWithOrdinalCaseSensitive",
+        "Contains",
+        "ContainsCaseSensitive",
+        "ContainsOrdinal",
+        "ContainsOrdinalCaseSensitive",
+        "Equals",
+        "EqualsCaseSensitive",
+        "EqualsOrdinal",
+        "EqualsOrdinalCaseSensitive",
+    ];
     private static readonly string[] s_fontStyles = ["Normal", "Italic", "Oblique"];
     private static readonly string[] s_fontWeights = ["Thin", "Light", "Normal", "Medium", "SemiBold", "Bold", "ExtraBold", "Black"];
     private static readonly string[] s_stretches = ["None", "Fill", "Uniform", "UniformToFill"];
@@ -23,6 +43,24 @@ public static class AxamlPropertyValueValidator
     private static readonly string[] s_numberStyles = ["Any", "Currency", "Float", "Integer", "None", "Number"];
     private static readonly string[] s_wrapPanelItemsAlignments = ["Start", "Center", "End"];
     private static readonly string[] s_scrollBarVisibilities = ["Auto", "Disabled", "Hidden", "Visible"];
+    private static readonly string[] s_keyGestureKeys =
+    [
+        "Back", "Tab", "LineFeed", "Clear", "Return", "Enter", "Pause", "CapsLock", "Escape", "Space",
+        "PageUp", "PageDown", "End", "Home", "Left", "Up", "Right", "Down", "Select", "Print",
+        "Execute", "Snapshot", "PrintScreen", "Insert", "Delete", "Help", "LWin", "RWin", "Apps", "Sleep",
+        "Multiply", "Add", "Separator", "Subtract", "Decimal", "Divide", "NumLock", "Scroll",
+        "BrowserBack", "BrowserForward", "BrowserRefresh", "BrowserStop", "BrowserSearch", "BrowserFavorites",
+        "BrowserHome", "VolumeMute", "VolumeDown", "VolumeUp", "MediaNextTrack", "MediaPreviousTrack",
+        "MediaStop", "MediaPlayPause", "LaunchMail", "SelectMedia", "LaunchApplication1", "LaunchApplication2",
+        "OemSemicolon", "OemPlus", "OemComma", "OemMinus", "OemPeriod", "OemQuestion", "OemTilde",
+        "AbntC1", "AbntC2", "OemOpenBrackets", "OemPipe", "OemCloseBrackets", "OemQuotes", "Oem8",
+        "OemBackslash", "Oem102", "ImeProcessed", "System", "OemAttn", "OemFinish", "OemCopy", "OemAuto",
+        "OemEnlw", "OemBackTab", "Attn", "CrSel", "ExSel", "EraseEof", "Play", "Zoom", "NoName",
+        "Pa1", "OemClear", "DeadCharProcessed", "FnLeftArrow", "FnRightArrow", "FnUpArrow", "FnDownArrow",
+        "MediaHome", "MediaChannelList", "MediaChannelRaise", "MediaChannelLower", "MediaRecord", "MediaRed",
+        "MediaGreen", "MediaYellow", "MediaBlue", "MediaMenu", "MediaMore", "MediaOption", "MediaInfo",
+        "MediaSearch", "MediaSubtitle", "MediaTvGuide", "MediaPreviousChannel",
+    ];
     private static readonly Regex s_progressTextFormatPattern = new(
         @"\A(?:[^{}]|\{\{|\}\}|\{[01](?::(?:[A-Za-z][0-9]{0,2}|[0#]+(?:\.[0#]+)?))?\}){0,64}\z",
         RegexOptions.CultureInvariant);
@@ -61,6 +99,24 @@ public static class AxamlPropertyValueValidator
                 "TextTrimming" when node.TypeName == "TextBlock" => "None",
                 "TextWrapping" when node.TypeName == "TextBlock" => "Wrap",
                 "TextWrapping" when node.TypeName == "TextBox" => "NoWrap",
+                "SelectedIndex" when node.TypeName is "ComboBox" or "ListBox" or "TabControl" => "-1",
+                "DayVisible" or "MonthVisible" or "YearVisible" when node.TypeName == "DatePicker" => "True",
+                "UseSeconds" when node.TypeName == "TimePicker" => "False",
+                "ClockIdentifier" when node.TypeName == "TimePicker" => "24HourClock",
+                "MinuteIncrement" or "SecondIncrement" when node.TypeName == "TimePicker" => "1",
+                "SelectionMode" when node.TypeName == "Calendar" => "SingleDate",
+                "FirstDayOfWeek" when node.TypeName == "Calendar" => "Monday",
+                "IsTodayHighlighted" when node.TypeName == "Calendar" => "True",
+                "FilterMode" when node.TypeName == "AutoCompleteBox" => "StartsWith",
+                "MinimumPrefixLength" when node.TypeName == "AutoCompleteBox" => "1",
+                "IsTextCompletionEnabled" when node.TypeName == "AutoCompleteBox" => "False",
+                "Color" when node.TypeName == "ColorPicker" => "White",
+                "ColorModel" when node.TypeName == "ColorPicker" => "Rgba",
+                "IsAccentColorsVisible" or "IsAlphaEnabled" or "IsAlphaVisible"
+                    or "IsColorComponentsVisible" or "IsColorModelVisible" or "IsColorPaletteVisible"
+                    or "IsColorPreviewVisible" or "IsColorSpectrumSliderVisible" or "IsColorSpectrumVisible"
+                    or "IsComponentSliderVisible" or "IsComponentTextInputVisible" or "IsHexInputVisible"
+                    when node.TypeName == "ColorPicker" => "True",
                 "CornerRadius" when node.TypeName == "Border" => "0",
                 "MaxLines" when node.TypeName == "TextBlock" => "0",
                 "Opacity" => "1",
@@ -169,6 +225,21 @@ public static class AxamlPropertyValueValidator
             return "Enter a non-negative whole number.";
         }
 
+        if (controlType is "ComboBox" or "ListBox" or "TabControl" && propertyName == "SelectedIndex")
+        {
+            return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int selectedIndex)
+                && selectedIndex >= -1
+                    ? null
+                    : "Enter -1 for no selection or a non-negative whole number.";
+        }
+
+        if (value.Length == 0
+            && controlType == "DatePicker"
+            && (propertyName is "DayVisible" or "MonthVisible" or "YearVisible"))
+        {
+            return "Choose True or False.";
+        }
+
         if (value.Length == 0)
         {
             return null;
@@ -179,10 +250,93 @@ public static class AxamlPropertyValueValidator
             return null;
         }
 
+        if (controlType == "MenuItem" && propertyName == "InputGesture")
+        {
+            return IsValidInputGesture(value)
+                ? null
+                : "Enter one Avalonia key gesture such as Ctrl+S.";
+        }
+
+        if (controlType == "DatePicker" && propertyName == "SelectedDate")
+        {
+            return DateTimeOffset.TryParseExact(
+                value,
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out _)
+                    ? null
+                    : "Enter a valid date in yyyy-MM-dd format.";
+        }
+
+        if (controlType == "DatePicker" && propertyName is "DayFormat" or "MonthFormat" or "YearFormat")
+        {
+            return IsSafeDateFormatString(value)
+                ? null
+                : "Enter a valid date format string no longer than 32 characters.";
+        }
+
+        if (controlType == "DatePicker" && propertyName is "MinYear" or "MaxYear")
+        {
+            return DateTimeOffset.TryParseExact(
+                value,
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out _)
+                    ? null
+                    : "Enter a valid date in yyyy-MM-dd format.";
+        }
+
+        if (controlType == "TimePicker" && propertyName == "SelectedTime")
+        {
+            return TimeSpan.TryParseExact(
+                value,
+                ["hh\\:mm", "hh\\:mm\\:ss"],
+                CultureInfo.InvariantCulture,
+                TimeSpanStyles.None,
+                out _)
+                    ? null
+                    : "Enter a valid time in HH:mm or HH:mm:ss format.";
+        }
+
+        if (controlType == "Calendar"
+            && propertyName is "SelectedDate" or "DisplayDate" or "DisplayDateStart" or "DisplayDateEnd")
+        {
+            return DateTime.TryParseExact(
+                value,
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out _)
+                    ? null
+                    : "Enter a valid date in yyyy-MM-dd format.";
+        }
+
+        if (controlType == "TimePicker" && propertyName is "MinuteIncrement" or "SecondIncrement")
+        {
+            return int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out int increment)
+                && increment is >= 1 and <= 59
+                    ? null
+                    : "Enter a whole-number increment between 1 and 59.";
+        }
+
+        if (controlType == "ColorPicker" && propertyName == "Color")
+        {
+            return IsSimpleBrush(value)
+                ? null
+                : "Use a named color or a valid hexadecimal color such as #AABBCC.";
+        }
+
         if (propertyName is "IsExpanded" or "IsChecked" or "IsIndeterminate" or "IsDirectionReversed" or "IsReadOnly"
             or "IsSnapToTickEnabled" or "IsThreeState" or "ShowProgressText"
-            or "ShowGridLines" or "ClipToBounds" or "IsVisible"
-            or "AcceptsReturn" or "AcceptsTab" or "UseFloatingPlaceholder" or "UseLayoutRounding" or "IsCancel" or "IsDefault"
+            or "ShowGridLines" or "ClipToBounds" or "IsVisible" or "IsTodayHighlighted"
+            or "AcceptsReturn" or "AcceptsTab" or "UseFloatingPlaceholder" or "UseLayoutRounding" or "IsCancel" or "IsDefault" or "UseSeconds"
+            or "DayVisible" or "MonthVisible" or "YearVisible" or "IsTextCompletionEnabled"
+            or "IsAccentColorsVisible" or "IsAlphaEnabled" or "IsAlphaVisible"
+            or "IsColorComponentsVisible" or "IsColorModelVisible" or "IsColorPaletteVisible"
+            or "IsColorPreviewVisible" or "IsColorSpectrumSliderVisible" or "IsColorSpectrumVisible"
+            or "IsComponentSliderVisible" or "IsComponentTextInputVisible" or "IsHexInputVisible"
             or "AllowSpin" or "ClipValueToMinMax" or "ShowButtonSpinner" or "LastChildFill")
         {
             return bool.TryParse(value, out _)
@@ -235,14 +389,23 @@ public static class AxamlPropertyValueValidator
                     : "Enter a finite number using a period as the decimal separator.";
         }
 
-        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection"
+        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection" or "ClockIdentifier" or "ColorModel" or "FilterMode"
             or "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility"
-            or "TextAlignment" or "TextTrimming" or "TextWrapping")
+            or "TextAlignment" or "TextTrimming" or "TextWrapping"
+            or "FirstDayOfWeek" or "SelectionMode")
         {
             string[] options = GetEditor(controlType, propertyName).Options;
             return options.Contains(value, StringComparer.OrdinalIgnoreCase)
                 ? null
                 : $"Choose one of: {string.Join(", ", options)}.";
+        }
+
+        if (controlType == "AutoCompleteBox" && propertyName == "MinimumPrefixLength")
+        {
+            return int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out int prefixLength)
+                && prefixLength >= 0
+                    ? null
+                    : "Enter a non-negative whole-number prefix length.";
         }
 
         if (propertyName is "Rows" or "Columns" or "FirstColumn" or "MaxLength" or "MaxLines" or "MinLines")
@@ -320,16 +483,21 @@ public static class AxamlPropertyValueValidator
     {
         if (propertyName is "IsExpanded" or "IsChecked" or "IsIndeterminate" or "IsDirectionReversed" or "IsReadOnly"
             or "IsSnapToTickEnabled" or "IsThreeState" or "ShowProgressText"
-            or "ShowGridLines" or "ClipToBounds" or "IsVisible"
+            or "ShowGridLines" or "ClipToBounds" or "IsVisible" or "IsTodayHighlighted"
             or "AcceptsReturn" or "AcceptsTab" or "UseFloatingPlaceholder" or "UseLayoutRounding" or "IsCancel" or "IsDefault"
+            or "DayVisible" or "MonthVisible" or "YearVisible" or "IsTextCompletionEnabled"
+            or "IsAccentColorsVisible" or "IsAlphaEnabled" or "IsAlphaVisible"
+            or "IsColorComponentsVisible" or "IsColorModelVisible" or "IsColorPaletteVisible"
+            or "IsColorPreviewVisible" or "IsColorSpectrumSliderVisible" or "IsColorSpectrumVisible"
+            or "IsComponentSliderVisible" or "IsComponentTextInputVisible" or "IsHexInputVisible"
             or "AllowSpin" or "ClipValueToMinMax" or "ShowButtonSpinner" or "LastChildFill")
         {
             return (AxamlPropertyEditorKind.Boolean, []);
         }
 
-        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection"
+        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection" or "ClockIdentifier" or "ColorModel" or "FilterMode"
             or "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility"
-            or "TextAlignment" or "TextTrimming" or "TextWrapping")
+            or "TextAlignment" or "TextTrimming" or "TextWrapping" or "FirstDayOfWeek" or "SelectionMode")
         {
             string[] options = propertyName switch
             {
@@ -343,6 +511,11 @@ public static class AxamlPropertyValueValidator
                 "HorizontalContentAlignment" => s_horizontalAlignments,
                 "VerticalContentAlignment" => s_verticalAlignments,
                 "FlowDirection" => s_flowDirections,
+                "ClockIdentifier" => s_clockIdentifiers,
+                "ColorModel" => s_colorModels,
+                "FilterMode" => s_autoCompleteFilterModes,
+                "FirstDayOfWeek" => s_dayOfWeeks,
+                "SelectionMode" => s_calendarSelectionModes,
                 "FontStyle" => s_fontStyles,
                 "FontWeight" => s_fontWeights,
                 "Stretch" => s_stretches,
@@ -356,13 +529,19 @@ public static class AxamlPropertyValueValidator
             return (AxamlPropertyEditorKind.Enum, options);
         }
 
-        if (propertyName is "Width" or "Height" or "MinWidth" or "MaxWidth" or "MinHeight" or "MaxHeight"
+        if (controlType is "ComboBox" or "ListBox" or "TabControl" && propertyName == "SelectedIndex")
+        {
+            return (AxamlPropertyEditorKind.Number, []);
+        }
+
+        if (propertyName is "Width" or "Height" or "MinWidth" or "MaxWidth" or "MinHeight" or "MaxHeight" or "MinimumPrefixLength"
             or "FontSize" or "LineHeight" or "Opacity" or "Spacing" or "ItemSpacing" or "LineSpacing" or "ItemWidth" or "ItemHeight"
             or "HorizontalSpacing" or "VerticalSpacing" or "RowSpacing" or "ColumnSpacing"
             or "Rows" or "Columns" or "FirstColumn" or "MaxLength" or "MaxLines" or "MinLines"
             || controlType == "Slider" && propertyName == "TickFrequency"
             || controlType is "ProgressBar" or "Slider" && propertyName is "Minimum" or "Maximum" or "Value"
-            || controlType == "NumericUpDown" && propertyName is "Increment" or "Minimum" or "Maximum" or "Value")
+            || controlType == "NumericUpDown" && propertyName is "Increment" or "Minimum" or "Maximum" or "Value"
+            || controlType == "TimePicker" && propertyName is "MinuteIncrement" or "SecondIncrement")
         {
             return (AxamlPropertyEditorKind.Number, []);
         }
@@ -391,6 +570,71 @@ public static class AxamlPropertyValueValidator
         }
 
         return "This property is not supported by the current safe editor.";
+    }
+
+    private static bool IsValidInputGesture(string value)
+    {
+        string normalized = value.Trim();
+        if (normalized.Length is 0 or > 80)
+        {
+            return false;
+        }
+
+        bool isPlusKey = normalized.EndsWith("++", StringComparison.Ordinal);
+        string[] parts = (isPlusKey ? normalized[..^1] : normalized)
+            .Split('+', StringSplitOptions.TrimEntries);
+        if (parts.Length == 0 || parts.Any(static part => part.Length == 0) != isPlusKey)
+        {
+            return false;
+        }
+
+        int modifierCount = parts.Length - 1;
+        if (modifierCount < 0
+            || parts.Take(modifierCount).Any(static modifier => !IsSupportedInputGestureModifier(modifier))
+            || parts.Take(modifierCount).Distinct(StringComparer.OrdinalIgnoreCase).Count() != modifierCount)
+        {
+            return false;
+        }
+
+        return isPlusKey || IsSupportedInputGestureKey(parts[^1]);
+    }
+
+    private static bool IsSupportedInputGestureKey(string key)
+    {
+        if (key.Length == 1 && key[0] is >= 'A' and <= 'Z' or >= 'a' and <= 'z')
+        {
+            return true;
+        }
+
+        if (key.Length == 2 && (key[0] is 'D' or 'd') && char.IsAsciiDigit(key[1]))
+        {
+            return true;
+        }
+
+        if (key.StartsWith("NumPad", StringComparison.OrdinalIgnoreCase)
+            && key.Length == 7
+            && char.IsAsciiDigit(key[^1]))
+        {
+            return true;
+        }
+
+        if (key.StartsWith('F')
+            || key.StartsWith('f'))
+        {
+            return int.TryParse(key.AsSpan(1), NumberStyles.None, CultureInfo.InvariantCulture, out int functionKey)
+                && functionKey is >= 1 and <= 24
+                && string.Equals(key, $"F{functionKey}", StringComparison.OrdinalIgnoreCase);
+        }
+
+        return s_keyGestureKeys.Contains(key, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static bool IsSupportedInputGestureModifier(string modifier)
+    {
+        return modifier.Equals("Ctrl", StringComparison.OrdinalIgnoreCase)
+            || modifier.Equals("Shift", StringComparison.OrdinalIgnoreCase)
+            || modifier.Equals("Alt", StringComparison.OrdinalIgnoreCase)
+            || modifier.Equals("Meta", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsThickness(string value, bool allowNegative)
@@ -427,7 +671,8 @@ public static class AxamlPropertyValueValidator
     internal static bool IsFormatProperty(string controlType, string propertyName)
     {
         return controlType == "NumericUpDown" && propertyName == "FormatString"
-            || controlType == "ProgressBar" && propertyName == "ProgressTextFormat";
+            || controlType == "ProgressBar" && propertyName == "ProgressTextFormat"
+            || controlType == "DatePicker" && propertyName is "DayFormat" or "MonthFormat" or "YearFormat";
     }
 
     private static bool IsSafeNumericFormatString(string value)
@@ -458,6 +703,24 @@ public static class AxamlPropertyValueValidator
         try
         {
             _ = string.Format(CultureInfo.InvariantCulture, value, 42.5d, 0.425d);
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
+
+    private static bool IsSafeDateFormatString(string value)
+    {
+        if (value.Length > 32)
+        {
+            return false;
+        }
+
+        try
+        {
+            _ = DateTimeOffset.UnixEpoch.ToString(value, CultureInfo.InvariantCulture);
             return true;
         }
         catch (FormatException)
