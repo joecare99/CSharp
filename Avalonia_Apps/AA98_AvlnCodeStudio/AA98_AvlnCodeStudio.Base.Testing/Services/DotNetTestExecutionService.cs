@@ -63,6 +63,12 @@ public sealed class DotNetTestExecutionService : ITestExecutionService
             startInfo.ArgumentList.Add("--results-directory");
             startInfo.ArgumentList.Add(resultsDirectory);
 
+            if (!string.IsNullOrWhiteSpace(request.Configuration))
+            {
+                startInfo.ArgumentList.Add("--configuration");
+                startInfo.ArgumentList.Add(request.Configuration);
+            }
+
             if (!string.IsNullOrWhiteSpace(request.TargetFramework))
             {
                 startInfo.ArgumentList.Add("--framework");

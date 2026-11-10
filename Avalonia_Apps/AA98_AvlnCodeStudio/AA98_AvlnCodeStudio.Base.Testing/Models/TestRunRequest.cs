@@ -18,6 +18,11 @@ public sealed class TestRunRequest
     public string? ProjectPath { get; set; }
 
     /// <summary>
+    /// Gets or sets the optional build configuration.
+    /// </summary>
+    public string? Configuration { get; set; }
+
+    /// <summary>
     /// Gets or sets the optional target framework.
     /// </summary>
     public string? TargetFramework { get; set; }
