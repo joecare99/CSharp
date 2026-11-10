@@ -14,7 +14,9 @@ location, add it to `PATH` and set `DOTNET_ROOT` so MSBuild can discover it.
 
 The test opens a temporary synthetic C# project in the real Workbench, generates
 AXAML bindings and a CommunityToolkit ViewModel through the normal review dialog,
-checks editor/file synchronization and workspace undo/redo, and builds the
-generated project. It uses isolated configuration and deletes its temporary
-fixture after the Workbench exits. It is not a physical keyboard or
+including AutoCompleteBox text, ColorPicker color, TabControl selected-index and
+MenuItem command bindings, checks editor/file
+synchronization and workspace undo/redo, and builds the generated project against
+Avalonia and the ColorPicker package. It uses isolated configuration and deletes
+its temporary fixture after the Workbench exits. It is not a physical keyboard or
 accessibility acceptance test.

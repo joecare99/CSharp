@@ -39,12 +39,16 @@ internal static class Program
                 """
                 <Project Sdk="Microsoft.NET.Sdk">
                   <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
-                  <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
+                  <ItemGroup>
+                    <PackageReference Include="Avalonia" Version="12.1.5" />
+                    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="12.1.5" />
+                    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+                  </ItemGroup>
                 </Project>
                 """);
             File.WriteAllText(
                 Path.Combine(fixtureDirectory, "LoginView.axaml.cs"),
-                "namespace Sample; public partial class LoginView { }");
+                "using Avalonia.Controls; namespace Sample; public partial class LoginView : Window { }");
             File.WriteAllText(
                 axamlPath,
                 """
@@ -52,7 +56,16 @@ internal static class Program
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         x:Class="Sample.LoginView">
                   <StackPanel>
+                    <AutoCompleteBox x:Name="CityAutoCompleteBox" Text="Paris" />
                     <TextBox x:Name="UserNameTextBox" Text="Ada" />
+                    <ColorPicker x:Name="ThemeColorPicker" Color="#FF123456" />
+                    <TabControl x:Name="SettingsTabControl" SelectedIndex="1">
+                      <TabItem Header="General" />
+                      <TabItem Header="Advanced" />
+                    </TabControl>
+                    <Menu>
+                      <MenuItem x:Name="SaveMenuItem" Header="Save" />
+                    </Menu>
                     <Button x:Name="SubmitButton" Content="Submit" />
                   </StackPanel>
                 </Window>
@@ -96,7 +109,16 @@ internal static class Program
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         x:Class="Sample.LoginView">
                   <StackPanel>
+                    <AutoCompleteBox x:Name="CityAutoCompleteBox" Text="Paris" />
                     <TextBox x:Name="UserNameTextBox" Text="Ada" />
+                    <ColorPicker x:Name="ThemeColorPicker" Color="#FF123456" />
+                    <TabControl x:Name="SettingsTabControl" SelectedIndex="1">
+                      <TabItem Header="General" />
+                      <TabItem Header="Advanced" />
+                    </TabControl>
+                    <Menu>
+                      <MenuItem x:Name="SaveMenuItem" Header="Save" />
+                    </Menu>
                     <Button x:Name="SubmitButton" Content="Submit" />
                   </StackPanel>
                 </Window>
@@ -105,10 +127,28 @@ internal static class Program
             string generatedViewModel = await File.ReadAllTextAsync(generatedViewModelPath);
             Check(generatedMarkup.Contains("Text=\"{Binding UserName, Mode=TwoWay}\"", StringComparison.Ordinal),
                 "The approved proposal did not bind the TextBox.");
+            Check(generatedMarkup.Contains("Text=\"{Binding City, Mode=TwoWay}\"", StringComparison.Ordinal),
+                "The approved proposal did not bind the AutoCompleteBox.");
             Check(generatedMarkup.Contains("Command=\"{Binding SubmitCommand}\"", StringComparison.Ordinal),
                 "The approved proposal did not bind the Button command.");
+            Check(generatedMarkup.Contains("Command=\"{Binding SaveCommand}\"", StringComparison.Ordinal),
+                "The approved proposal did not bind the MenuItem command.");
+            Check(generatedMarkup.Contains("Color=\"{Binding Theme, Mode=TwoWay}\"", StringComparison.Ordinal),
+                "The approved proposal did not bind the ColorPicker.");
+            Check(generatedMarkup.Contains("SelectedIndex=\"{Binding Settings, Mode=TwoWay}\"", StringComparison.Ordinal),
+                "The approved proposal did not bind the TabControl selection.");
             Check(generatedViewModel.Contains("private string _userName = \"Ada\";", StringComparison.Ordinal),
                 "The generated ViewModel did not preserve the TextBox's initial value.");
+            Check(generatedViewModel.Contains("private string? _city = \"Paris\";", StringComparison.Ordinal),
+                "The generated ViewModel did not preserve the AutoCompleteBox's initial value.");
+            Check(generatedViewModel.Contains(
+                    "private global::Avalonia.Media.Color _theme = global::Avalonia.Media.Color.Parse(\"#FF123456\");",
+                    StringComparison.Ordinal),
+                "The generated ViewModel did not preserve the ColorPicker's initial color.");
+            Check(generatedViewModel.Contains("private int _settings = 1;", StringComparison.Ordinal),
+                    "The generated ViewModel did not preserve the selected tab index.");
+            Check(generatedViewModel.Contains("private void Save()", StringComparison.Ordinal),
+                "The generated ViewModel did not include the MenuItem command.");
             Check(!workbench.WorkspaceFileChangeService.CanRedo, "The applied proposal unexpectedly has redo history.");
 
             Check(workbench.WorkspaceFileChangeService.Undo(), "The generated files could not be undone.");
