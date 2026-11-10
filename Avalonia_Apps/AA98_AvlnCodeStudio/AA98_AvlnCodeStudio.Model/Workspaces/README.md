@@ -33,6 +33,40 @@ them or assume that arbitrary project files cannot contain sensitive text
 there. The snapshot is informational and does not guarantee that another tool
 supports a given profile.
 
+## Explicit project workflow
+
+`ProjectWorkflowContext` and `DotNetProjectTargetResolver` can be used without
+the Workbench. A context accepts only an existing project listed in the loaded
+workspace and captures the chosen configuration and optional target framework.
+Inspection invokes `dotnet msbuild` to evaluate the project's actual
+properties; it does not build the project or modify its files.
+
+```csharp
+ProjectWorkflowContext context =
+    ProjectWorkflowContext.Create(workspace, projectPath, "Debug", targetFramework);
+ProjectTargetInspection inspection =
+    await new DotNetProjectTargetResolver().InspectAsync(context, cancellationToken);
+```
+
+**Inspection is not a sandbox:** MSBuild imports and property functions may
+execute during evaluation. Hosts must make inspection an explicit action for
+trusted projects. If several target frameworks are available, the caller must
+choose one and inspect again. `TargetPath` is an evaluated expected path, not
+proof that the file exists. `CanDebug` also requires an executable .NET Core
+target; a build must still succeed and its artifact and runtime metadata must
+be verified before launch.
+
+The Workbench's Project tab keeps this selection only for the current session.
+Its selected-project Build, Test, and Build and Debug actions do not replace the
+workspace-wide commands or manual DLL debug path. Project tests pass the chosen
+configuration and framework to `dotnet test`. Before debugging, a regular `dotnet build
+--no-restore` refreshes runtime files even if the builder reused stale
+dependency metadata. Restore dependencies separately when necessary. No
+launch-profile argument or environment values are applied. Inspection and tests are cancellable; the
+current Workbench builder runs synchronously, so a cancellation or selection
+change prevents subsequent launch but may have to wait for an ongoing build to
+finish.
+
 ## Reviewed workspace changes
 
 `ProjectAssemblyNameProvider` expects its review callback to **approve or
