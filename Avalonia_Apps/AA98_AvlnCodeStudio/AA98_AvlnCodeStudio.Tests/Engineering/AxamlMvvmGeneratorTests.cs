@@ -39,7 +39,6 @@ public sealed class AxamlMvvmGeneratorTests
                 <Button x:Name="SubmitButton" Content="Submit" CommandParameter="document-id" />
                 <TextBlock Text="Static label" />
                 <TextBlock x:Name="WelcomeTextBlock" Text="Welcome" />
-                <TextBlock x:Name="ExistingTextBlock" Text="{Binding ExistingStatus}" />
               </StackPanel>
             </Window>
             """;
@@ -77,7 +76,6 @@ public sealed class AxamlMvvmGeneratorTests
         StringAssert.Contains(changes[0].ProposedContent, "CommandParameter=\"document-id\"");
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"{Binding Welcome, Mode=OneWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"Static label\"");
-        StringAssert.Contains(changes[0].ProposedContent, "Text=\"{Binding ExistingStatus}\"");
         StringAssert.Contains(changes[1].ProposedContent, "namespace Sample.Views;");
         StringAssert.Contains(changes[1].ProposedContent, "private string? _city = \"Paris\";");
         StringAssert.Contains(changes[1].ProposedContent, "private string _userName = \"initial\";");
@@ -103,7 +101,7 @@ public sealed class AxamlMvvmGeneratorTests
     }
 
     [TestMethod]
-    public void Generate_PreservesExistingBindingsAndRejectsExistingDataContext()
+    public void Generate_RejectsExistingBindingsAndDataContext()
     {
         const string alreadyBound = """
             <Window xmlns="https://github.com/avaloniaui"
@@ -111,6 +109,7 @@ public sealed class AxamlMvvmGeneratorTests
                     x:Class="Sample.MainWindow">
               <TextBox x:Name="NameTextBox" Text="{Binding ExistingName}" />
               <Button x:Name="SaveButton" Command="{Binding ExistingSaveCommand}" />
+              <TextBlock x:Name="WelcomeTextBlock" Text="Welcome" />
             </Window>
             """;
         const string withDataContext = """
@@ -122,14 +121,15 @@ public sealed class AxamlMvvmGeneratorTests
             </Window>
             """;
 
-        Assert.ThrowsExactly<InvalidDataException>(() =>
+        InvalidDataException bindingException = Assert.ThrowsExactly<InvalidDataException>(() =>
             new AxamlMvvmGenerator().Generate("MainWindow.axaml", alreadyBound));
         Assert.ThrowsExactly<InvalidDataException>(() =>
             new AxamlMvvmGenerator().Generate("MainWindow.axaml", withDataContext));
+        StringAssert.Contains(bindingException.Message, "already contains Binding expressions");
     }
 
     [TestMethod]
-    public void Generate_DoesNotCreateAnIncompatibleCommandForBoundCommandParameter()
+    public void Generate_RejectsBoundCommandParameterInsteadOfRedirectingItsDataContext()
     {
         const string markup = """
             <Window xmlns="https://github.com/avaloniaui"
@@ -142,13 +142,10 @@ public sealed class AxamlMvvmGeneratorTests
             </Window>
             """;
 
-        WorkspaceFileChangeRequest[] changes = new AxamlMvvmGenerator()
-            .Generate("MainWindow.axaml", markup)
-            .ToArray();
+        InvalidDataException exception = Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("MainWindow.axaml", markup));
 
-        StringAssert.Contains(changes[0].ProposedContent, "CommandParameter=\"{Binding DocumentId}\"");
-        Assert.IsFalse(changes[0].ProposedContent.Contains("Command=\"{Binding SaveCommand}\"", System.StringComparison.Ordinal));
-        Assert.IsFalse(changes[1].ProposedContent.Contains("private void Save(", System.StringComparison.Ordinal));
+        StringAssert.Contains(exception.Message, "could redirect them");
     }
 
     [TestMethod]

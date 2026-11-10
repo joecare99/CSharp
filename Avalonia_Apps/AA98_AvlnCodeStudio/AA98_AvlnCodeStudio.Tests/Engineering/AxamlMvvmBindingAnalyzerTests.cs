@@ -53,6 +53,66 @@ public sealed class AxamlMvvmBindingAnalyzerTests
     }
 
     [TestMethod]
+    public void Analyze_RejectsBindingsInTemplatesWithDifferentDataContexts()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui">
+              <StackPanel>
+                <TextBox Text="{Binding WindowTitle}" />
+                <ItemsControl ItemsSource="{Binding Items}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding ItemTitle}" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </Window>
+            """;
+
+        InvalidDataException exception = Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmBindingAnalyzer().Analyze(markup));
+
+        StringAssert.Contains(exception.Message, "DataTemplate");
+    }
+
+    [TestMethod]
+    public void Analyze_RejectsBindingsBelowNestedDataContext()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui">
+              <StackPanel>
+                <TextBox Text="{Binding WindowTitle}" />
+                <ContentControl DataContext="{Binding SelectedItem}">
+                  <TextBlock Text="{Binding ItemTitle}" />
+                </ContentControl>
+              </StackPanel>
+            </Window>
+            """;
+
+        InvalidDataException exception = Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmBindingAnalyzer().Analyze(markup));
+
+        StringAssert.Contains(exception.Message, "DataContext");
+    }
+
+    [TestMethod]
+    public void Analyze_RejectsBindingsWithExplicitSource()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+              <TextBox x:Name="SourceTextBox" Text="{Binding Name, ElementName=SourceTextBox}" />
+            </Window>
+            """;
+
+        InvalidDataException exception = Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmBindingAnalyzer().Analyze(markup));
+
+        StringAssert.Contains(exception.Message, "explicit source");
+    }
+
+    [TestMethod]
     public void Analyze_IgnoresNonBindingExpressionsAndUnsupportedControls()
     {
         const string markup = """
