@@ -12,13 +12,17 @@ public static class AxamlPropertyValueValidator
     private static readonly string[] s_spinnerLocations = ["Left", "Right"];
     private static readonly string[] s_horizontalAlignments = ["Left", "Center", "Right", "Stretch"];
     private static readonly string[] s_verticalAlignments = ["Top", "Center", "Bottom", "Stretch"];
+    private static readonly string[] s_flowDirections = ["LeftToRight", "RightToLeft"];
     private static readonly string[] s_fontStyles = ["Normal", "Italic", "Oblique"];
     private static readonly string[] s_fontWeights = ["Thin", "Light", "Normal", "Medium", "SemiBold", "Bold", "ExtraBold", "Black"];
     private static readonly string[] s_stretches = ["None", "Fill", "Uniform", "UniformToFill"];
+    private static readonly string[] s_stretchDirections = ["Both", "DownOnly", "UpOnly"];
     private static readonly string[] s_textAlignments = ["Left", "Center", "Right", "Start", "End", "DetectFromContent", "Justify"];
     private static readonly string[] s_textTrimmings = ["None", "CharacterEllipsis", "WordEllipsis"];
     private static readonly string[] s_textWrappings = ["NoWrap", "Wrap", "WrapWithOverflow"];
     private static readonly string[] s_numberStyles = ["Any", "Currency", "Float", "Integer", "None", "Number"];
+    private static readonly string[] s_wrapPanelItemsAlignments = ["Start", "Center", "End"];
+    private static readonly string[] s_scrollBarVisibilities = ["Auto", "Disabled", "Hidden", "Visible"];
     private static readonly Regex s_progressTextFormatPattern = new(
         @"\A(?:[^{}]|\{\{|\}\}|\{[01](?::(?:[A-Za-z][0-9]{0,2}|[0#]+(?:\.[0#]+)?))?\}){0,64}\z",
         RegexOptions.CultureInvariant);
@@ -36,8 +40,19 @@ public static class AxamlPropertyValueValidator
                 "PlaceholderText" when node.TypeName == "ComboBox" => "ComboBox",
                 "GroupName" when node.TypeName == "RadioButton" => string.Empty,
                 "Margin" => "0",
+                "ClipToBounds" => "False",
+                "IsVisible" => "True",
+                "UseFloatingPlaceholder" when node.TypeName == "TextBox" => "False",
                 "Orientation" when node.TypeName is "ProgressBar" or "Slider" => "Horizontal",
                 "Orientation" => "Vertical",
+                "Spacing" when node.TypeName == "StackPanel" => "0",
+                "ItemSpacing" or "LineSpacing" when node.TypeName == "WrapPanel" => "0",
+                "ItemsAlignment" when node.TypeName == "WrapPanel" => "Start",
+                "HorizontalSpacing" or "VerticalSpacing" when node.TypeName == "DockPanel" => "0",
+                "LastChildFill" when node.TypeName == "DockPanel" => "True",
+                "RowSpacing" or "ColumnSpacing" when node.TypeName is "Grid" or "UniformGrid" => "0",
+                "ShowGridLines" when node.TypeName == "Grid" => "False",
+                "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility" when node.TypeName == "ScrollViewer" => "Auto",
                 "TickFrequency" when node.TypeName == "Slider" => "0",
                 "TickPlacement" when node.TypeName == "Slider" => "None",
                 "HorizontalAlignment" or "VerticalAlignment" => "Stretch",
@@ -63,6 +78,7 @@ public static class AxamlPropertyValueValidator
                 "FontWeight" => "Normal",
                 "FontStyle" when node.TypeName is "TextBlock" or "TextBox" => "Normal",
                 "Stretch" => "Uniform",
+                "StretchDirection" when node.TypeName == "Viewbox" => "Both",
                 "IsIndeterminate" when node.TypeName == "ProgressBar" => "False",
                 "ShowProgressText" when node.TypeName == "ProgressBar" => "False",
                 "IsDirectionReversed" when node.TypeName == "Slider" => "False",
@@ -165,8 +181,9 @@ public static class AxamlPropertyValueValidator
 
         if (propertyName is "IsExpanded" or "IsChecked" or "IsIndeterminate" or "IsDirectionReversed" or "IsReadOnly"
             or "IsSnapToTickEnabled" or "IsThreeState" or "ShowProgressText"
-            or "AcceptsReturn" or "AcceptsTab" or "IsCancel" or "IsDefault"
-            or "AllowSpin" or "ClipValueToMinMax" or "ShowButtonSpinner")
+            or "ShowGridLines" or "ClipToBounds" or "IsVisible"
+            or "AcceptsReturn" or "AcceptsTab" or "UseFloatingPlaceholder" or "UseLayoutRounding" or "IsCancel" or "IsDefault"
+            or "AllowSpin" or "ClipValueToMinMax" or "ShowButtonSpinner" or "LastChildFill")
         {
             return bool.TryParse(value, out _)
                 ? null
@@ -218,7 +235,8 @@ public static class AxamlPropertyValueValidator
                     : "Enter a finite number using a period as the decimal separator.";
         }
 
-        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "HorizontalAlignment" or "VerticalAlignment" or "FontStyle" or "FontWeight" or "Stretch"
+        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection"
+            or "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility"
             or "TextAlignment" or "TextTrimming" or "TextWrapping")
         {
             string[] options = GetEditor(controlType, propertyName).Options;
@@ -227,14 +245,16 @@ public static class AxamlPropertyValueValidator
                 : $"Choose one of: {string.Join(", ", options)}.";
         }
 
-        if (propertyName is "Rows" or "Columns" or "FirstColumn" or "MaxLength" or "MaxLines")
+        if (propertyName is "Rows" or "Columns" or "FirstColumn" or "MaxLength" or "MaxLines" or "MinLines")
         {
             return int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out int integer) && integer >= 0
                 ? null
                 : "Enter a non-negative whole number.";
         }
 
-        if (propertyName is "Width" or "Height" or "MinWidth" or "MaxWidth" or "MinHeight" or "MaxHeight" or "FontSize" or "Spacing")
+        if (propertyName is "Width" or "Height" or "MinWidth" or "MaxWidth" or "MinHeight" or "MaxHeight"
+            or "FontSize" or "Spacing" or "ItemSpacing" or "LineSpacing" or "ItemWidth" or "ItemHeight"
+            or "HorizontalSpacing" or "VerticalSpacing" or "RowSpacing" or "ColumnSpacing")
         {
             return double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double number)
                 && double.IsFinite(number)
@@ -286,7 +306,7 @@ public static class AxamlPropertyValueValidator
                     : "Enter one, two, or four finite, non-negative numbers separated by commas.";
         }
 
-        if (propertyName is "Background" or "BorderBrush" or "Foreground")
+        if (propertyName is "Background" or "BorderBrush" or "Foreground" or "PlaceholderForeground")
         {
             return IsSimpleBrush(value)
                 ? null
@@ -300,13 +320,15 @@ public static class AxamlPropertyValueValidator
     {
         if (propertyName is "IsExpanded" or "IsChecked" or "IsIndeterminate" or "IsDirectionReversed" or "IsReadOnly"
             or "IsSnapToTickEnabled" or "IsThreeState" or "ShowProgressText"
-            or "AcceptsReturn" or "AcceptsTab" or "IsCancel" or "IsDefault"
-            or "AllowSpin" or "ClipValueToMinMax" or "ShowButtonSpinner")
+            or "ShowGridLines" or "ClipToBounds" or "IsVisible"
+            or "AcceptsReturn" or "AcceptsTab" or "UseFloatingPlaceholder" or "UseLayoutRounding" or "IsCancel" or "IsDefault"
+            or "AllowSpin" or "ClipValueToMinMax" or "ShowButtonSpinner" or "LastChildFill")
         {
             return (AxamlPropertyEditorKind.Boolean, []);
         }
 
-        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "HorizontalAlignment" or "VerticalAlignment" or "FontStyle" or "FontWeight" or "Stretch"
+        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection"
+            or "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility"
             or "TextAlignment" or "TextTrimming" or "TextWrapping")
         {
             string[] options = propertyName switch
@@ -315,21 +337,29 @@ public static class AxamlPropertyValueValidator
                 "TickPlacement" => s_tickPlacements,
                 "ButtonSpinnerLocation" => s_spinnerLocations,
                 "ParsingNumberStyle" => s_numberStyles,
+                "ItemsAlignment" => s_wrapPanelItemsAlignments,
                 "HorizontalAlignment" => s_horizontalAlignments,
                 "VerticalAlignment" => s_verticalAlignments,
+                "HorizontalContentAlignment" => s_horizontalAlignments,
+                "VerticalContentAlignment" => s_verticalAlignments,
+                "FlowDirection" => s_flowDirections,
                 "FontStyle" => s_fontStyles,
                 "FontWeight" => s_fontWeights,
                 "Stretch" => s_stretches,
+                "StretchDirection" => s_stretchDirections,
                 "TextAlignment" => s_textAlignments,
                 "TextTrimming" => s_textTrimmings,
                 "TextWrapping" => s_textWrappings,
+                "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility" => s_scrollBarVisibilities,
                 _ => [],
             };
             return (AxamlPropertyEditorKind.Enum, options);
         }
 
         if (propertyName is "Width" or "Height" or "MinWidth" or "MaxWidth" or "MinHeight" or "MaxHeight"
-            or "FontSize" or "LineHeight" or "Opacity" or "Spacing" or "Rows" or "Columns" or "FirstColumn" or "MaxLength" or "MaxLines"
+            or "FontSize" or "LineHeight" or "Opacity" or "Spacing" or "ItemSpacing" or "LineSpacing" or "ItemWidth" or "ItemHeight"
+            or "HorizontalSpacing" or "VerticalSpacing" or "RowSpacing" or "ColumnSpacing"
+            or "Rows" or "Columns" or "FirstColumn" or "MaxLength" or "MaxLines" or "MinLines"
             || controlType == "Slider" && propertyName == "TickFrequency"
             || controlType is "ProgressBar" or "Slider" && propertyName is "Minimum" or "Maximum" or "Value"
             || controlType == "NumericUpDown" && propertyName is "Increment" or "Minimum" or "Maximum" or "Value")
