@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace AA98_AvlnCodeStudio.Base.Testing.Models;
 
 /// <summary>
@@ -29,4 +31,9 @@ public sealed class TestRunSummary
     /// Gets or sets the number of skipped tests.
     /// </summary>
     public int SkippedCount { get; set; }
+
+    /// <summary>
+    /// Gets the structured failures reported by the test run.
+    /// </summary>
+    public IList<TestRunFailure> Failures { get; } = new List<TestRunFailure>();
 }

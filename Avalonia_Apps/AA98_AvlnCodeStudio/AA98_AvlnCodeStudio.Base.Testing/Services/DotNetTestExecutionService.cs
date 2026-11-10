@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -167,6 +169,11 @@ public sealed class DotNetTestExecutionService : ITestExecutionService
     private static void AddTrxResults(TestRunSummary summary, string trxFile)
     {
         XDocument document = XDocument.Load(trxFile);
+        XElement[] results = document.Descendants()
+            .Where(static element => element.Name.LocalName == "UnitTestResult")
+            .ToArray();
+        AddTrxFailures(summary, results);
+
         XElement? counters = document.Descendants().FirstOrDefault(static element => element.Name.LocalName == "Counters");
         if (counters is not null)
         {
@@ -185,7 +192,7 @@ public sealed class DotNetTestExecutionService : ITestExecutionService
             return;
         }
 
-        foreach (XElement result in document.Descendants().Where(static element => element.Name.LocalName == "UnitTestResult"))
+        foreach (XElement result in results)
         {
             summary.TotalCount++;
             string? outcome = (string?)result.Attribute("outcome");
@@ -206,6 +213,76 @@ public sealed class DotNetTestExecutionService : ITestExecutionService
                     break;
             }
         }
+
+    }
+
+    private static void AddTrxFailures(TestRunSummary summary, IEnumerable<XElement> results)
+    {
+        foreach (XElement result in results)
+        {
+            string? outcome = (string?)result.Attribute("outcome");
+            if (outcome is not ("Failed" or "Aborted" or "Error" or "Timeout" or "NotRunnable"))
+            {
+                continue;
+            }
+
+            XElement? errorInfo = result.Descendants()
+                .FirstOrDefault(static element => element.Name.LocalName == "ErrorInfo");
+            string? message = errorInfo?.Elements()
+                .FirstOrDefault(static element => element.Name.LocalName == "Message")
+                ?.Value;
+            string? stackTrace = errorInfo?.Elements()
+                .FirstOrDefault(static element => element.Name.LocalName == "StackTrace")
+                ?.Value;
+            (string? sourcePath, int? lineNumber) = TryGetSourceLocation(stackTrace);
+
+            summary.Failures.Add(new TestRunFailure
+            {
+                TestName = (string?)result.Attribute("testName") ?? string.Empty,
+                Message = message ?? string.Empty,
+                StackTrace = stackTrace,
+                SourcePath = sourcePath,
+                LineNumber = lineNumber,
+            });
+        }
+    }
+
+    private static (string? SourcePath, int? LineNumber) TryGetSourceLocation(string? stackTrace)
+    {
+        if (string.IsNullOrWhiteSpace(stackTrace))
+        {
+            return (null, null);
+        }
+
+        foreach (string stackLine in stackTrace.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
+        {
+            int lineMarker = stackLine.LastIndexOf(":line ", StringComparison.Ordinal);
+            if (lineMarker < 0
+                || !int.TryParse(
+                    stackLine[(lineMarker + 6)..].Trim(),
+                    NumberStyles.None,
+                    CultureInfo.InvariantCulture,
+                    out int lineNumber)
+                || lineNumber <= 0)
+            {
+                continue;
+            }
+
+            string location = stackLine[..lineMarker];
+            int pathMarker = location.IndexOf(" in ", StringComparison.Ordinal);
+            if (pathMarker < 0)
+            {
+                continue;
+            }
+
+            string sourcePath = location[(pathMarker + 4)..].Trim();
+            if (sourcePath.Length > 0)
+            {
+                return (sourcePath, lineNumber);
+            }
+        }
+
+        return (null, null);
     }
 
     private static int ReadCount(XElement counters, string name)
