@@ -55,6 +55,12 @@ public sealed class AxamlMvvmGenerator
                 "AXAML already defines DataContext. The generator will not replace existing runtime wiring.");
         }
 
+        if (AxamlBindingMarkup.ContainsBindingExpression(root))
+        {
+            throw new InvalidDataException(
+                "The view already contains Binding expressions. Adding a generated root DataContext could redirect them; extend the existing ViewModel instead.");
+        }
+
         List<GeneratedProperty> properties = [];
         List<GeneratedCommand> commands = [];
         HashSet<string> memberNames = new(StringComparer.Ordinal);
@@ -571,13 +577,21 @@ public sealed class AxamlMvvmGenerator
     private static bool TryGetBindingPath(string? value, out string path)
     {
         path = string.Empty;
-        if (value is null || !value.StartsWith("{Binding ", StringComparison.Ordinal))
+        if (value is null || !AxamlBindingMarkup.IsBindingExpression(value))
         {
             return false;
         }
 
-        int end = value.IndexOfAny([',', '}'], 9);
-        path = (end < 0 ? value[9..] : value[9..end]).Trim();
+        string expression = value.Trim();
+        int end = expression.EndsWith('}') ? expression.Length - 1 : expression.Length;
+        string body = expression[1..end].Trim()["Binding".Length..].Trim();
+        int separator = body.IndexOf(',');
+        path = (separator < 0 ? body : body[..separator]).Trim();
+        if (path.StartsWith("Path=", StringComparison.Ordinal))
+        {
+            path = path["Path=".Length..].Trim();
+        }
+
         return path.Length > 0;
     }
 

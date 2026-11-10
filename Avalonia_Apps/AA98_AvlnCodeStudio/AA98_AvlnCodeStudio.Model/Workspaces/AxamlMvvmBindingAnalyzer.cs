@@ -26,6 +26,22 @@ public sealed class AxamlMvvmBindingAnalyzer
         List<AxamlMvvmMemberRequirement> requirements = [];
         foreach (XElement element in root.DescendantsAndSelf())
         {
+            if (element != root && HasBindingScopeBoundaryAncestor(element, root))
+            {
+                continue;
+            }
+
+            if (element != root && IsBindingScopeBoundary(element))
+            {
+                if (AxamlBindingMarkup.ContainsBindingExpression(element))
+                {
+                    throw new InvalidDataException(
+                        $"Bindings inside '{element.Name.LocalName}' or its nested DataContext use a different or unresolved source and cannot be planned safely.");
+                }
+
+                continue;
+            }
+
             if (element.Name.Namespace != s_avaloniaNamespace)
             {
                 continue;
@@ -43,6 +59,12 @@ public sealed class AxamlMvvmBindingAnalyzer
                 if (attribute is null || !TryReadBindingPath(attribute.Value, out string bindingPath))
                 {
                     continue;
+                }
+
+                if (AxamlBindingMarkup.HasExplicitSource(attribute.Value))
+                {
+                    throw new InvalidDataException(
+                        $"Binding on {controlName}.{bindableProperty.Name} has an explicit source and cannot be planned as a ViewModel member.");
                 }
 
                 if (bindingPath.Contains('.')
@@ -65,6 +87,30 @@ public sealed class AxamlMvvmBindingAnalyzer
         }
 
         return requirements;
+    }
+
+    private static bool HasBindingScopeBoundaryAncestor(XElement element, XElement root)
+    {
+        return element.Ancestors()
+            .TakeWhile(ancestor => ancestor != root)
+            .Any(IsBindingScopeBoundary);
+    }
+
+    private static bool IsBindingScopeBoundary(XElement element)
+    {
+        if (element.Name.LocalName is "DataTemplate"
+            or "TreeDataTemplate"
+            or "HierarchicalDataTemplate"
+            or "ItemsPanelTemplate"
+            or "ControlTemplate")
+        {
+            return true;
+        }
+
+        return element.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal)
+            || element.Attributes().Any(static attribute =>
+                attribute.Name.LocalName == "DataContext"
+                || attribute.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal));
     }
 
     private static XDocument ParseMarkup(string markup)
@@ -125,4 +171,58 @@ public sealed class AxamlMvvmBindingAnalyzer
         return true;
     }
 
+}
+
+internal static class AxamlBindingMarkup
+{
+    public static bool ContainsBindingExpression(XElement element)
+    {
+        return element.DescendantsAndSelf()
+            .SelectMany(static descendant => descendant.Attributes())
+            .Any(static attribute => !attribute.IsNamespaceDeclaration && IsBindingExpression(attribute.Value))
+            || element.DescendantNodes().OfType<XText>()
+                .Any(static text => IsBindingExpression(text.Value));
+    }
+
+    public static bool IsBindingExpression(string value)
+    {
+        ReadOnlySpan<char> expression = value.AsSpan().Trim();
+        if (expression.Length < 2 || expression[0] != '{')
+        {
+            return false;
+        }
+
+        ReadOnlySpan<char> body = expression[1..].TrimStart();
+        return body.StartsWith("Binding", StringComparison.Ordinal)
+            && (body.Length == "Binding".Length
+                || char.IsWhiteSpace(body["Binding".Length])
+                || body["Binding".Length] is ',' or '}');
+    }
+
+    public static bool HasExplicitSource(string value)
+    {
+        if (!IsBindingExpression(value))
+        {
+            return false;
+        }
+
+        string expression = value.Trim();
+        int end = expression.EndsWith('}') ? expression.Length - 1 : expression.Length;
+        string body = expression[1..end].Trim();
+        body = body["Binding".Length..].Trim();
+        string[] options = body.Split(',');
+        return options.Skip(1).Any(static option =>
+        {
+            int equals = option.IndexOf('=');
+            if (equals < 0)
+            {
+                return false;
+            }
+
+            string name = option[..equals].Trim();
+            return string.Equals(name, "Source", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(name, "ElementName", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(name, "RelativeSource", StringComparison.OrdinalIgnoreCase);
+        });
+    }
 }
