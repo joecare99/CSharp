@@ -15,7 +15,9 @@ public static class AxamlPropertyValueValidator
     private static readonly string[] s_flowDirections = ["LeftToRight", "RightToLeft"];
     private static readonly string[] s_clockIdentifiers = ["12HourClock", "24HourClock"];
     private static readonly string[] s_dayOfWeeks = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    private static readonly string[] s_calendarSelectionModes = ["None", "SingleDate"];
+    private static readonly string[] s_calendarDisplayModes = ["Month", "Year", "Decade"];
+    private static readonly string[] s_calendarSelectionModes = ["None", "SingleDate", "SingleRange", "MultipleRange"];
+    private static readonly string[] s_menuItemToggleTypes = ["None", "CheckBox", "Radio"];
     private static readonly string[] s_colorModels = ["Hsva", "Rgba"];
     private static readonly string[] s_autoCompleteFilterModes =
     [
@@ -76,12 +78,19 @@ public static class AxamlPropertyValueValidator
             {
                 "Text" or "Content" or "Header" => node.Text ?? string.Empty,
                 "PlaceholderText" when node.TypeName == "ComboBox" => "ComboBox",
+                "PlaceholderText" when node.TypeName == "CalendarDatePicker" => "Choose a date",
                 "GroupName" when node.TypeName == "RadioButton" => string.Empty,
                 "Margin" => "0",
                 "ClipToBounds" => "False",
                 "IsEnabled" => "True",
                 "IsVisible" => "True",
-                "UseFloatingPlaceholder" when node.TypeName == "TextBox" => "False",
+                "IsDropDownOpen" when node.TypeName is "AutoCompleteBox" or "ComboBox" or "CalendarDatePicker" => "False",
+                "IsChecked" when node.TypeName == "MenuItem" => "False",
+                "IsSubMenuOpen" when node.TypeName == "MenuItem" => "False",
+                "StaysOpenOnClick" when node.TypeName == "MenuItem" => "False",
+                "GroupName" when node.TypeName == "MenuItem" => string.Empty,
+                "ToggleType" when node.TypeName == "MenuItem" => "None",
+                "UseFloatingPlaceholder" when node.TypeName is "TextBox" or "CalendarDatePicker" => "False",
                 "Orientation" when node.TypeName is "ProgressBar" or "Slider" => "Horizontal",
                 "Orientation" => "Vertical",
                 "Spacing" when node.TypeName == "StackPanel" => "0",
@@ -111,8 +120,9 @@ public static class AxamlPropertyValueValidator
                 "ClockIdentifier" when node.TypeName == "TimePicker" => "24HourClock",
                 "MinuteIncrement" or "SecondIncrement" when node.TypeName == "TimePicker" => "1",
                 "SelectionMode" when node.TypeName == "Calendar" => "SingleDate",
+                "DisplayMode" when node.TypeName == "Calendar" => "Month",
                 "FirstDayOfWeek" when node.TypeName == "Calendar" => "Monday",
-                "IsTodayHighlighted" when node.TypeName == "Calendar" => "True",
+                "IsTodayHighlighted" when node.TypeName is "Calendar" or "CalendarDatePicker" => "True",
                 "FilterMode" when node.TypeName == "AutoCompleteBox" => "StartsWith",
                 "MinimumPrefixLength" when node.TypeName == "AutoCompleteBox" => "1",
                 "IsTextCompletionEnabled" when node.TypeName == "AutoCompleteBox" => "False",
@@ -199,7 +209,17 @@ public static class AxamlPropertyValueValidator
 
         if (value.Length == 0
             && propertyName == "IsChecked"
-            && controlType is "CheckBox" or "RadioButton" or "ToggleSwitch")
+            && controlType is "CheckBox" or "RadioButton" or "ToggleSwitch" or "MenuItem")
+        {
+            return "Choose True or False.";
+        }
+
+        if (value.Length == 0 && controlType == "MenuItem" && propertyName == "IsSubMenuOpen")
+        {
+            return "Choose True or False.";
+        }
+
+        if (value.Length == 0 && controlType == "MenuItem" && propertyName == "StaysOpenOnClick")
         {
             return "Choose True or False.";
         }
@@ -261,19 +281,24 @@ public static class AxamlPropertyValueValidator
             return null;
         }
 
-        if (propertyName is "Text" or "Content" or "Header" or "PlaceholderText" or "OffContent" or "OnContent" or "GroupName")
+        if (propertyName == "CommandParameter" && value.TrimStart().StartsWith('{'))
+        {
+            return "Use a plain literal string; bindings and markup extensions are not evaluated.";
+        }
+
+        if (propertyName is "Text" or "Content" or "Header" or "Icon" or "PlaceholderText" or "OffContent" or "OnContent" or "GroupName" or "CommandParameter")
         {
             return null;
         }
 
-        if (controlType == "MenuItem" && propertyName == "InputGesture")
+        if (controlType == "MenuItem" && propertyName is "HotKey" or "InputGesture")
         {
             return IsValidInputGesture(value)
                 ? null
                 : "Enter one Avalonia key gesture such as Ctrl+S.";
         }
 
-        if (controlType == "DatePicker" && propertyName == "SelectedDate")
+        if ((controlType is "DatePicker" or "CalendarDatePicker") && propertyName == "SelectedDate")
         {
             return DateTimeOffset.TryParseExact(
                 value,
@@ -346,7 +371,7 @@ public static class AxamlPropertyValueValidator
 
         if (propertyName is "IsExpanded" or "IsChecked" or "IsIndeterminate" or "IsDirectionReversed" or "IsReadOnly"
             or "IsSnapToTickEnabled" or "IsThreeState" or "ShowProgressText"
-            or "ShowGridLines" or "ClipToBounds" or "IsEnabled" or "IsVisible" or "IsTodayHighlighted"
+            or "ShowGridLines" or "ClipToBounds" or "IsEnabled" or "IsVisible" or "IsTodayHighlighted" or "IsDropDownOpen" or "IsSubMenuOpen" or "StaysOpenOnClick"
             or "AcceptsReturn" or "AcceptsTab" or "UseFloatingPlaceholder" or "UseLayoutRounding" or "IsCancel" or "IsDefault" or "UseSeconds"
             or "DayVisible" or "MonthVisible" or "YearVisible" or "IsTextCompletionEnabled"
             or "IsAccentColorsVisible" or "IsAlphaEnabled" or "IsAlphaVisible"
@@ -405,10 +430,10 @@ public static class AxamlPropertyValueValidator
                     : "Enter a finite number using a period as the decimal separator.";
         }
 
-        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection" or "ClockIdentifier" or "ColorModel" or "FilterMode"
+        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection" or "ClockIdentifier" or "ColorModel" or "FilterMode" or "ToggleType"
             or "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility"
             or "TextAlignment" or "TextTrimming" or "TextWrapping"
-            or "FirstDayOfWeek" or "SelectionMode")
+            or "FirstDayOfWeek" or "SelectionMode" or "DisplayMode")
         {
             string[] options = GetEditor(controlType, propertyName).Options;
             return options.Contains(value, StringComparer.OrdinalIgnoreCase)
@@ -522,7 +547,7 @@ public static class AxamlPropertyValueValidator
     {
         if (propertyName is "IsExpanded" or "IsChecked" or "IsIndeterminate" or "IsDirectionReversed" or "IsReadOnly"
             or "IsSnapToTickEnabled" or "IsThreeState" or "ShowProgressText"
-            or "ShowGridLines" or "ClipToBounds" or "IsEnabled" or "IsVisible" or "IsTodayHighlighted"
+            or "ShowGridLines" or "ClipToBounds" or "IsEnabled" or "IsVisible" or "IsTodayHighlighted" or "IsDropDownOpen" or "IsSubMenuOpen" or "StaysOpenOnClick"
             or "AcceptsReturn" or "AcceptsTab" or "UseFloatingPlaceholder" or "UseLayoutRounding" or "IsCancel" or "IsDefault"
             or "DayVisible" or "MonthVisible" or "YearVisible" or "IsTextCompletionEnabled"
             or "IsAccentColorsVisible" or "IsAlphaEnabled" or "IsAlphaVisible"
@@ -534,9 +559,9 @@ public static class AxamlPropertyValueValidator
             return (AxamlPropertyEditorKind.Boolean, []);
         }
 
-        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection" or "ClockIdentifier" or "ColorModel" or "FilterMode"
+        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection" or "ClockIdentifier" or "ColorModel" or "FilterMode" or "ToggleType"
             or "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility"
-            or "TextAlignment" or "TextTrimming" or "TextWrapping" or "FirstDayOfWeek" or "SelectionMode")
+            or "TextAlignment" or "TextTrimming" or "TextWrapping" or "FirstDayOfWeek" or "SelectionMode" or "DisplayMode")
         {
             string[] options = propertyName switch
             {
@@ -555,6 +580,8 @@ public static class AxamlPropertyValueValidator
                 "FilterMode" => s_autoCompleteFilterModes,
                 "FirstDayOfWeek" => s_dayOfWeeks,
                 "SelectionMode" => s_calendarSelectionModes,
+                "DisplayMode" => s_calendarDisplayModes,
+                "ToggleType" => s_menuItemToggleTypes,
                 "FontStyle" => s_fontStyles,
                 "FontWeight" => s_fontWeights,
                 "Stretch" => s_stretches,

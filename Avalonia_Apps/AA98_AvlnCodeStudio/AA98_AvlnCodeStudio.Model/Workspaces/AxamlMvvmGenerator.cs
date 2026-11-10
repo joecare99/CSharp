@@ -290,8 +290,9 @@ public sealed class AxamlMvvmGenerator
                 element.SetAttributeValue("SelectedIndex", $"{{Binding {propertyName}, Mode=TwoWay}}");
                 properties.Add(new GeneratedProperty(propertyName, "int", initialLiteral));
             }
-            else if (element.Name.LocalName == "DatePicker")
+            else if (element.Name.LocalName is "DatePicker" or "CalendarDatePicker")
             {
+                string controlType = element.Name.LocalName;
                 string? initialValue = (string?)element.Attribute("SelectedDate");
                 if (initialValue?.StartsWith('{') == true)
                 {
@@ -301,17 +302,18 @@ public sealed class AxamlMvvmGenerator
                 string initialLiteral = "null";
                 if (initialValue is not null)
                 {
-                    if (AxamlPropertyValueValidator.Validate("DatePicker", "SelectedDate", initialValue) is not null)
+                    if (AxamlPropertyValueValidator.Validate(controlType, "SelectedDate", initialValue) is not null)
                     {
                         throw new InvalidDataException(
-                            $"Named DatePicker '{controlName}' has a SelectedDate that is not a valid yyyy-MM-dd date.");
+                            $"Named {controlType} '{controlName}' has a SelectedDate that is not a valid yyyy-MM-dd date.");
                     }
 
+                    string dateType = controlType == "DatePicker" ? "DateTimeOffset" : "DateTime";
                     initialLiteral =
-                        $"global::System.DateTimeOffset.ParseExact({ToCSharpStringLiteral(initialValue)}, \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None)";
+                        $"global::System.{dateType}.ParseExact({ToCSharpStringLiteral(initialValue)}, \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None)";
                 }
 
-                string propertyName = NormalizeIdentifier(TrimSuffix(controlName, "DatePicker"), "SelectedDate");
+                string propertyName = NormalizeIdentifier(TrimSuffix(controlName, controlType), "SelectedDate");
                 if (!memberNames.Add(propertyName))
                 {
                     throw new InvalidDataException($"More than one named control maps to '{propertyName}'.");
@@ -320,7 +322,7 @@ public sealed class AxamlMvvmGenerator
                 element.SetAttributeValue("SelectedDate", $"{{Binding {propertyName}, Mode=TwoWay}}");
                 properties.Add(new GeneratedProperty(
                     propertyName,
-                    "global::System.DateTimeOffset?",
+                    controlType == "DatePicker" ? "global::System.DateTimeOffset?" : "global::System.DateTime?",
                     initialLiteral));
             }
             else if (element.Name.LocalName == "TimePicker")
@@ -409,12 +411,28 @@ public sealed class AxamlMvvmGenerator
                 element.SetAttributeValue("Color", $"{{Binding {propertyName}, Mode=TwoWay}}");
                 properties.Add(new GeneratedProperty(propertyName, "global::Avalonia.Media.Color", initialLiteral));
             }
-            else if ((element.Name.LocalName is "Button" or "MenuItem")
+
+            if (capability.BindableProperties.Any(
+                    static property => property.Name == "Command" && property.IsCommand)
                 && element.Attribute("Command") is null)
             {
-                string commandName = NormalizeIdentifier(
-                   TrimSuffix(controlName, element.Name.LocalName),
-                   "Action");
+                string? commandParameter = (string?)element.Attribute("CommandParameter");
+                if (commandParameter is not null
+                    && AxamlPropertyValueValidator.Validate(
+                        element.Name.LocalName,
+                        "CommandParameter",
+                        commandParameter) is not null)
+                {
+                    continue;
+                }
+
+                string baseCommandName = NormalizeIdentifier(
+                    TrimSuffix(controlName, element.Name.LocalName),
+                    "Action");
+                bool isToggleControl = element.Name.LocalName is "CheckBox" or "RadioButton" or "ToggleSwitch";
+                string commandName = isToggleControl && memberNames.Contains(baseCommandName)
+                    ? NormalizeIdentifier(controlName, "Action")
+                    : baseCommandName;
                 string commandPropertyName = commandName + "Command";
                 if (!memberNames.Add(commandName) || !memberNames.Add(commandPropertyName))
                 {
@@ -422,7 +440,7 @@ public sealed class AxamlMvvmGenerator
                 }
 
                 element.SetAttributeValue("Command", $"{{Binding {commandPropertyName}}}");
-                commands.Add(new GeneratedCommand(commandName));
+                commands.Add(new GeneratedCommand(commandName, commandParameter is not null));
             }
         }
 
@@ -538,7 +556,8 @@ public sealed class AxamlMvvmGenerator
         foreach (GeneratedCommand command in commands)
         {
             source.AppendLine("    [RelayCommand]");
-            source.Append("    private void ").Append(command.Name).AppendLine("()");
+            source.Append("    private void ").Append(command.Name);
+            source.AppendLine(command.HasStringParameter ? "(string? commandParameter)" : "()");
             source.AppendLine("    {");
             source.Append("        // TODO: Implement the ").Append(command.Name).AppendLine(" action.");
             source.AppendLine("    }");
@@ -635,5 +654,5 @@ public sealed class AxamlMvvmGenerator
 
     private sealed record GeneratedProperty(string Name, string Type, string InitialValue);
 
-    private sealed record GeneratedCommand(string Name);
+    private sealed record GeneratedCommand(string Name, bool HasStringParameter);
 }
