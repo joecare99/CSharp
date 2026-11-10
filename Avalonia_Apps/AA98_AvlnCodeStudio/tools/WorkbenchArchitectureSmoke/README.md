@@ -31,3 +31,9 @@ compose the content incrementally; document Undo/Redo protects each structural
 change. Static TreeView/TreeViewItem hierarchies render literal headers and
 expanded branches in a disabled preview; dynamic item sources and unsupported
 children are rejected.
+Rectangle, Ellipse, Line, Polygon and Polyline can be inserted from the palette
+with Undo/Redo. They render only literal solid-color fills/strokes; line
+endpoints and polygon/polyline point lists are finite and bounded. Brush
+resources and dynamic shape bindings remain outside the editable preview subset.
+Specialized catalog controls and their supported static ComboBox, ListBox and
+TreeView item types are available from the external palette.

@@ -35,6 +35,11 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Ellipse = Avalonia.Controls.Shapes.Ellipse;
+using LineShape = Avalonia.Controls.Shapes.Line;
+using PolygonShape = Avalonia.Controls.Shapes.Polygon;
+using PolylineShape = Avalonia.Controls.Shapes.Polyline;
+using Rectangle = Avalonia.Controls.Shapes.Rectangle;
 
 internal static class Program
 {
@@ -97,8 +102,8 @@ internal static class Program
                 + "<Menu Width=\"122\"><MenuItem Header=\"Invalid\" InputGesture=\"NotAKey\" /></Menu>"
                 + "<Button Content=\"Context trigger\" Width=\"123\"><Button.ContextMenu><ContextMenu><MenuItem Header=\"Copy\" InputGesture=\"Ctrl+C\" /><Separator /></ContextMenu></Button.ContextMenu></Button>"
                 + "<TextBox Text=\"Context target\" Width=\"124\"><TextBox.ContextMenu><ContextMenu><MenuItem Header=\"Paste\" /></ContextMenu></TextBox.ContextMenu></TextBox>"
-                + "<Button Content=\"Tooltip target\" Width=\"125\"><Button.ToolTip><ToolTip><Border Padding=\"4\" BorderBrush=\"Blue\" CornerRadius=\"2\"><StackPanel Spacing=\"4\"><TextBlock Text=\"Helpful text\" /><TextBlock Text=\"More information\" /></StackPanel></Border></ToolTip></Button.ToolTip></Button>"
-                + "<TreeView Width=\"126\"><TreeViewItem Header=\"Project\" IsExpanded=\"True\"><TreeViewItem Header=\"src\"><TreeViewItem Header=\"Main.cs\" /></TreeViewItem></TreeViewItem></TreeView>"
+                + "<Button Content=\"Tooltip target\" IsEnabled=\"True\" Width=\"125\"><Button.ToolTip><ToolTip><Border Padding=\"4\" BorderBrush=\"Blue\" CornerRadius=\"2\"><StackPanel Spacing=\"4\"><TextBlock Text=\"Helpful text\" /><TextBlock Text=\"More information\" /></StackPanel></Border></ToolTip></Button.ToolTip></Button>"
+                + "<TreeView Width=\"126\" CornerRadius=\"4,2,4,2\" FontFamily=\"DejaVu Sans\" FontSize=\"13\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"DarkGreen\"><TreeViewItem Header=\"Project\" CornerRadius=\"3\" FontFamily=\"Arial\" FontSize=\"14\" FontStyle=\"Oblique\" FontWeight=\"Bold\" Foreground=\"Blue\" IsExpanded=\"True\"><TreeViewItem Header=\"src\"><TreeViewItem Header=\"Main.cs\" /></TreeViewItem></TreeViewItem></TreeView>"
                 + "<TimePicker SelectedTime=\"13:45:30\" UseSeconds=\"True\" ClockIdentifier=\"12HourClock\" MinuteIncrement=\"5\" SecondIncrement=\"10\" Width=\"105\" />"
                 + "<TimePicker SelectedTime=\"25:99\" UseSeconds=\"sometimes\" ClockIdentifier=\"Invalid\" MinuteIncrement=\"0\" SecondIncrement=\"60\" Width=\"106\" />"
                 + "<TimePicker SelectedTime=\"{Binding StartTime}\" UseSeconds=\"{Binding ShowSeconds}\" ClockIdentifier=\"{Binding Clock}\" MinuteIncrement=\"{Binding Minute}\" SecondIncrement=\"{Binding Second}\" Width=\"107\" />"
@@ -131,6 +136,7 @@ internal static class Program
                 + "<Border BorderBrush=\"Purple\" CornerRadius=\"12,4,8,2\" BorderThickness=\"2\" Background=\"#FFF0F0F0\" Padding=\"6\"><TextBlock Text=\"Border appearance\" /></Border>"
                 + "<TextBlock Text=\"Alignment preview\" TextAlignment=\"Center\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" LineHeight=\"24\" MaxLines=\"2\" Opacity=\"0.5\" TextTrimming=\"CharacterEllipsis\" TextWrapping=\"NoWrap\" Foreground=\"Red\" />"
                 + "<TextBox Text=\"Input preview\" PlaceholderText=\"Enter a value\" PlaceholderForeground=\"DarkGray\" IsReadOnly=\"False\" MaxLength=\"120\" MinLines=\"2\" MaxLines=\"5\" LineHeight=\"22\" UseFloatingPlaceholder=\"True\" AcceptsReturn=\"True\" AcceptsTab=\"True\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Bottom\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3,6,9,12\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"Medium\" HorizontalAlignment=\"Center\" Opacity=\"0.75\" Padding=\"8,4\" TextAlignment=\"Right\" TextWrapping=\"WrapWithOverflow\" VerticalAlignment=\"Bottom\" Foreground=\"Blue\" />"
+                + "<TextBox Text=\"Bound placeholder preview\" PlaceholderText=\"{Binding Hint}\" />"
                 + "<TextBox Text=\"Default line count preview\" />"
                 + "<TextBox Text=\"Invalid line count preview\" MinLines=\"-1\" MaxLines=\"many\" LineHeight=\"NaN\" UseFloatingPlaceholder=\"sometimes\" PlaceholderForeground=\"Gradient\" />"
                 + "<ToggleSwitch Content=\"Notifications\" IsChecked=\"True\" IsThreeState=\"True\" OnContent=\"Enabled\" OffContent=\"Disabled\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Center\" Background=\"PaleGreen\" BorderBrush=\"DarkGreen\" BorderThickness=\"3\" CornerRadius=\"5\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
@@ -145,6 +151,14 @@ internal static class Program
                 + "<ListBox Background=\"LightCyan\" SelectedIndex=\"5\"><ListBoxItem Content=\"Out of range\" /></ListBox>"
                 + "<ListBox Background=\"LightPink\" SelectedIndex=\"{Binding SelectedIndex}\"><TextBlock Text=\"Bound selection\" /></ListBox>"
                 + "<ItemsControl Width=\"127\"><TextBlock Text=\"First static item\" /><Label Content=\"Second static item\" /></ItemsControl>"
+                + "<Rectangle Width=\"90\" Height=\"36\" Fill=\"CornflowerBlue\" Stroke=\"DarkBlue\" StrokeThickness=\"2\" IsEnabled=\"True\" />"
+                + "<Ellipse Width=\"36\" Height=\"36\" Fill=\"Orange\" />"
+                + "<Line StartPoint=\"5,10\" EndPoint=\"80,40\" Stroke=\"DarkGreen\" StrokeThickness=\"3\" />"
+                + "<Line StartPoint=\"{Binding StartPoint}\" EndPoint=\"10001,0\" Stroke=\"Purple\" />"
+                + "<Polygon Points=\"40,0 80,60 0,60\" Fill=\"LightBlue\" Stroke=\"Navy\" StrokeThickness=\"2\" />"
+                + "<Polygon Points=\"{Binding Points}\" Fill=\"Purple\" />"
+                + "<Polyline Points=\"5,5 30,30 60,5\" Stroke=\"Blue\" StrokeThickness=\"2\" />"
+                + "<Polyline Points=\"0,0\" Stroke=\"Orange\" />"
                 + "<Label Content=\"Label alignment\" FontFamily=\"DejaVu Sans\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"Blue\" Background=\"#FFF0F0F0\" BorderBrush=\"Red\" BorderThickness=\"2\" CornerRadius=\"7\" Padding=\"8\" LineHeight=\"22\" MaxLines=\"2\" TextAlignment=\"Right\" TextTrimming=\"WordEllipsis\" TextWrapping=\"NoWrap\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" />"
                 + "<Label Content=\"Invalid label layout\" LineHeight=\"0\" MaxLines=\"-1\" />"
                 + "<Label Content=\"Bound label layout\" LineHeight=\"{Binding LineHeight}\" MaxLines=\"{Binding MaxLines}\" />"
@@ -237,7 +251,26 @@ internal static class Program
             "The palette is still inside the document editor.");
 
         AxamlDesignerViewModel designer = secondTab.Designer!;
-        TreeView structure = secondTab.PaletteView!.GetVisualDescendants().OfType<TreeView>()
+        Control palette = secondTab.PaletteView!;
+        foreach (string groupHeader in new[] { "Daten und Auswahl", "Statische Items" })
+        {
+            Expander group = palette.GetVisualDescendants().OfType<Expander>()
+                .Single(expander => string.Equals(expander.Header?.ToString(), groupHeader, StringComparison.Ordinal));
+            group.IsExpanded = true;
+        }
+
+        string[] paletteControlNames =
+        [
+            "AutoCompleteBox", "Calendar", "ColorPicker", "DatePicker", "ItemsControl", "ListBox",
+            "TimePicker", "TreeView", "ComboBoxItem", "ListBoxItem", "TreeViewItem",
+            "Ellipse", "Line", "Polygon", "Polyline", "Rectangle",
+        ];
+        await WaitUntilAsync(() => paletteControlNames.All(controlName =>
+            palette.GetVisualDescendants().OfType<Button>().Any(button =>
+                string.Equals(button.Content?.ToString(), controlName, StringComparison.Ordinal)
+                && button.Command is not null)), "catalogued controls in the external palette");
+
+        TreeView structure = palette.GetVisualDescendants().OfType<TreeView>()
             .Single(tree => tree.Name == "StructureTree");
         structure.SelectedItem = designer.PreviewRoot!.Children[1];
         await WaitUntilAsync(() => designer.SelectedNode?.StableName == "Label", "programmatic structure selection");
@@ -705,6 +738,8 @@ internal static class Program
         Border styledBorder = root.GetVisualDescendants().OfType<Border>()
             .Single(border => border.CornerRadius == new CornerRadius(12, 4, 8, 2));
         TextBox inputTextBox = root.GetVisualDescendants().OfType<TextBox>().Single(textBox => textBox.MaxLength == 120);
+        TextBox boundPlaceholderTextBox = root.GetVisualDescendants().OfType<TextBox>()
+            .Single(textBox => textBox.Text == "Bound placeholder preview");
         TextBox defaultLineCountTextBox = root.GetVisualDescendants().OfType<TextBox>()
             .Single(textBox => textBox.Text == "Default line count preview");
         TextBox invalidLineCountTextBox = root.GetVisualDescendants().OfType<TextBox>()
@@ -732,6 +767,22 @@ internal static class Program
             .Single(listBox => listBox.Background is ISolidColorBrush brush && brush.Color == Colors.LightPink);
         ItemsControl staticItemsControl = root.GetVisualDescendants().OfType<ItemsControl>()
             .Single(candidate => candidate.GetType() == typeof(ItemsControl) && candidate.Width == 127);
+        Rectangle rectangle = root.GetVisualDescendants().OfType<Rectangle>()
+            .Single(candidate => candidate.Width == 90);
+        Ellipse ellipse = root.GetVisualDescendants().OfType<Ellipse>()
+            .Single(candidate => candidate.Width == 36);
+        LineShape line = root.GetVisualDescendants().OfType<LineShape>()
+            .Single(candidate => candidate.Stroke is ISolidColorBrush brush && brush.Color == Colors.DarkGreen);
+        LineShape invalidLine = root.GetVisualDescendants().OfType<LineShape>()
+            .Single(candidate => candidate.Stroke is ISolidColorBrush brush && brush.Color == Colors.Purple);
+        PolygonShape polygon = root.GetVisualDescendants().OfType<PolygonShape>()
+            .Single(candidate => candidate.Stroke is ISolidColorBrush brush && brush.Color == Colors.Navy);
+        PolygonShape invalidPolygon = root.GetVisualDescendants().OfType<PolygonShape>()
+            .Single(candidate => candidate.Fill is ISolidColorBrush brush && brush.Color == Colors.Purple);
+        PolylineShape polyline = root.GetVisualDescendants().OfType<PolylineShape>()
+            .Single(candidate => candidate.Stroke is ISolidColorBrush brush && brush.Color == Colors.Blue);
+        PolylineShape invalidPolyline = root.GetVisualDescendants().OfType<PolylineShape>()
+            .Single(candidate => candidate.Stroke is ISolidColorBrush brush && brush.Color == Colors.Orange);
         Label alignedLabel = root.GetVisualDescendants().OfType<Label>()
             .Single(label => label.Content is TextBlock labelText && labelText.Text == "Label alignment");
         Label invalidLabelLayout = root.GetVisualDescendants().OfType<Label>()
@@ -948,7 +999,21 @@ internal static class Program
                 .Any(static text => text.Text == "More information"),
             "The ToolTip was not rendered as an explicitly closed, inert inline preview.");
         Check(!staticTree.IsEnabled
+            && staticTree.CornerRadius == new CornerRadius(4, 2, 4, 2)
+            && staticTree.FontFamily.ToString() == "DejaVu Sans"
+            && staticTree.FontSize == 13
+            && staticTree.FontStyle == FontStyle.Italic
+            && staticTree.FontWeight == FontWeight.SemiBold
+            && staticTree.Foreground is ISolidColorBrush treeForeground
+            && treeForeground.Color == Colors.DarkGreen
             && projectTreeItem.Header is "Project"
+            && projectTreeItem.CornerRadius == new CornerRadius(3)
+            && projectTreeItem.FontFamily.ToString() == "Arial"
+            && projectTreeItem.FontSize == 14
+            && projectTreeItem.FontStyle == FontStyle.Oblique
+            && projectTreeItem.FontWeight == FontWeight.Bold
+            && projectTreeItem.Foreground is ISolidColorBrush itemForeground
+            && itemForeground.Color == Colors.Blue
             && projectTreeItem.IsExpanded
             && !projectTreeItem.IsEnabled
             && sourceTreeItem.Header is "src"
@@ -1159,6 +1224,8 @@ internal static class Program
             && inputTextBox.Foreground is ISolidColorBrush inputForeground
             && inputForeground.Color == Colors.Blue,
             "The TextBox preview did not preserve its layout/input constraints or remained read-only.");
+        Check(string.IsNullOrEmpty(boundPlaceholderTextBox.PlaceholderText),
+            "The TextBox preview rendered a binding expression as literal placeholder text.");
         Check(defaultLineCountTextBox.MinLines == 0 && defaultLineCountTextBox.MaxLines == 0
             && invalidLineCountTextBox.MinLines == defaultLineCountTextBox.MinLines
             && invalidLineCountTextBox.MaxLines == defaultLineCountTextBox.MaxLines,
@@ -1284,6 +1351,25 @@ internal static class Program
             && staticItems.SequenceEqual(["First static item", "Second static item"])
             && !staticItemsControl.IsEnabled,
             "The ItemsControl preview did not preserve its static text items while remaining inert.");
+        Check(rectangle.Fill is ISolidColorBrush rectangleFill
+            && rectangleFill.Color == Colors.CornflowerBlue
+            && rectangle.Stroke is ISolidColorBrush rectangleStroke
+            && rectangleStroke.Color == Colors.DarkBlue
+            && rectangle.StrokeThickness == 2
+            && !rectangle.IsEnabled
+            && ellipse.Fill is ISolidColorBrush ellipseFill
+            && ellipseFill.Color == Colors.Orange
+            && line.StartPoint.Equals(new Point(5, 10))
+            && line.Stroke is ISolidColorBrush lineStroke
+            && lineStroke.Color == Colors.DarkGreen
+            && line.StrokeThickness == 3
+            && invalidLine.StartPoint.Equals(new Point(0, 0))
+            && invalidLine.EndPoint.Equals(new Point(80, 40))
+            && polygon.Points.SequenceEqual([new Point(40, 0), new Point(80, 60), new Point(0, 60)])
+            && polyline.Points.SequenceEqual([new Point(5, 5), new Point(30, 30), new Point(60, 5)])
+            && invalidPolygon.Points.SequenceEqual([new Point(40, 0), new Point(80, 60), new Point(0, 60)])
+            && invalidPolyline.Points.SequenceEqual([new Point(0, 0), new Point(80, 40)]),
+            "The safe vector-shape preview did not preserve literal geometry, fill and stroke values.");
         Check(toggleSwitch.Content?.ToString() == "Notifications"
             && toggleSwitch.IsChecked == true
             && toggleSwitch.IsThreeState
