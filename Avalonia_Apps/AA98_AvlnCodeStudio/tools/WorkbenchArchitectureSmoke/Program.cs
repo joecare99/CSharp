@@ -73,7 +73,7 @@ internal static class Program
                 "<Border xmlns=\"https://github.com/avaloniaui\"><Button /></Border>");
             File.WriteAllText(Path.Combine(fixture, "ControlPreviews.axaml"),
                 "<StackPanel xmlns=\"https://github.com/avaloniaui\">"
-                + "<ComboBox PlaceholderText=\"Choose an option\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Bottom\" Background=\"White\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"4\" FontSize=\"14\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"Black\" Padding=\"3\" />"
+                + "<ComboBox PlaceholderText=\"Choose an option\" PlaceholderForeground=\"DarkOrange\" IsDropDownOpen=\"True\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Bottom\" Background=\"White\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"4\" FontSize=\"14\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"Black\" Padding=\"3\" />"
                 + "<ComboBox PlaceholderText=\"Selector selection\" SelectedIndex=\"2\"><ComboBoxItem Content=\"First choice\" /><ComboBoxItem>Second choice</ComboBoxItem><ComboBoxItem><ComboBoxItem.Content><TextBlock Text=\"Property content\" /></ComboBoxItem.Content></ComboBoxItem></ComboBox>"
                 + "<ComboBox PlaceholderText=\"Selector invalid\" SelectedIndex=\"-2\"><ComboBoxItem>First choice</ComboBoxItem></ComboBox>"
                 + "<ComboBox PlaceholderText=\"Selector bound\" SelectedIndex=\"{Binding SelectedIndex}\"><ComboBoxItem Content=\"First choice\" /><ComboBoxItem Content=\"Second choice\" /></ComboBox>"
@@ -85,22 +85,26 @@ internal static class Program
                 + "<DatePicker SelectedDate=\"2028-02-30\" DayVisible=\"sometimes\" DayFormat=\"%\" MonthFormat=\"%\" YearFormat=\"%\" MinYear=\"2030-12-31\" MaxYear=\"2020-01-01\" Width=\"102\" />"
                 + "<DatePicker SelectedDate=\"{Binding StartDate}\" DayVisible=\"{Binding ShowDay}\" DayFormat=\"{Binding DayFormat}\" MonthFormat=\"{Binding MonthFormat}\" YearFormat=\"{Binding YearFormat}\" MinYear=\"{Binding MinYear}\" MaxYear=\"{Binding MaxYear}\" Width=\"103\" />"
                 + "<DatePicker SelectedDate=\"2040-01-01\" MinYear=\"2020-01-01\" MaxYear=\"2030-12-31\" Width=\"104\" />"
-                + "<Calendar SelectedDate=\"2028-02-29\" DisplayDate=\"2028-02-01\" DisplayDateStart=\"2028-01-01\" DisplayDateEnd=\"2028-12-31\" SelectionMode=\"SingleDate\" FirstDayOfWeek=\"Sunday\" IsTodayHighlighted=\"False\" Width=\"108\" />"
-                + "<Calendar SelectedDate=\"2028-02-30\" DisplayDateStart=\"2030-01-01\" DisplayDateEnd=\"2020-12-31\" SelectionMode=\"Unsupported\" FirstDayOfWeek=\"Funday\" IsTodayHighlighted=\"sometimes\" Width=\"109\" />"
+                + "<CalendarDatePicker SelectedDate=\"2028-02-29\" PlaceholderText=\"Choose a day\" PlaceholderForeground=\"DarkGray\" UseFloatingPlaceholder=\"True\" IsTodayHighlighted=\"False\" IsDropDownOpen=\"True\" Width=\"118\" />"
+                + "<CalendarDatePicker PlaceholderText=\"{Binding Hint}\" PlaceholderForeground=\"Gradient\" UseFloatingPlaceholder=\"sometimes\" Width=\"119\" />"
+                + "<CalendarDatePicker Width=\"120\" />"
+                + "<Calendar SelectedDate=\"2028-02-29\" DisplayDate=\"2028-02-01\" DisplayDateStart=\"2028-01-01\" DisplayDateEnd=\"2028-12-31\" DisplayMode=\"Year\" SelectionMode=\"SingleDate\" FirstDayOfWeek=\"Sunday\" IsTodayHighlighted=\"False\" Width=\"108\" />"
+                + "<Calendar SelectedDate=\"2028-02-30\" DisplayDateStart=\"2030-01-01\" DisplayDateEnd=\"2020-12-31\" DisplayMode=\"Century\" SelectionMode=\"Unsupported\" FirstDayOfWeek=\"Funday\" IsTodayHighlighted=\"sometimes\" Width=\"109\" />"
                 + "<Calendar SelectedDate=\"{Binding Date}\" DisplayDate=\"{Binding DisplayDate}\" DisplayDateStart=\"{Binding Start}\" DisplayDateEnd=\"{Binding End}\" SelectionMode=\"{Binding Mode}\" FirstDayOfWeek=\"{Binding FirstDay}\" IsTodayHighlighted=\"{Binding Highlight}\" Width=\"110\" />"
                 + "<Calendar SelectedDate=\"2040-01-01\" DisplayDateStart=\"2020-01-01\" DisplayDateEnd=\"2030-12-31\" Width=\"111\" />"
-                + "<Calendar SelectionMode=\"MultipleRange\" Width=\"112\" />"
-                + "<AutoCompleteBox Text=\"Par\" PlaceholderText=\"Find a city\" FilterMode=\"Contains\" MinimumPrefixLength=\"2\" IsTextCompletionEnabled=\"True\" Width=\"115\" />"
-                + "<AutoCompleteBox Text=\"Grace\" FilterMode=\"Custom\" MinimumPrefixLength=\"-1\" IsTextCompletionEnabled=\"maybe\" Width=\"116\" />"
-                + "<AutoCompleteBox Text=\"{Binding SearchText}\" PlaceholderText=\"{Binding SearchHint}\" FilterMode=\"{Binding Filter}\" MinimumPrefixLength=\"{Binding PrefixLength}\" IsTextCompletionEnabled=\"{Binding Complete}\" Width=\"117\" />"
+                + "<Calendar DisplayMode=\"Decade\" SelectionMode=\"MultipleRange\" Width=\"112\" />"
+                + "<AutoCompleteBox Text=\"Par\" PlaceholderText=\"Find a city\" PlaceholderForeground=\"DarkGray\" FilterMode=\"Contains\" MinimumPrefixLength=\"2\" IsTextCompletionEnabled=\"True\" IsDropDownOpen=\"True\" Width=\"115\" />"
+                + "<AutoCompleteBox Text=\"Grace\" FilterMode=\"Custom\" MinimumPrefixLength=\"-1\" IsTextCompletionEnabled=\"maybe\" PlaceholderForeground=\"Gradient\" Width=\"116\" />"
+                + "<AutoCompleteBox Text=\"{Binding SearchText}\" PlaceholderText=\"{Binding SearchHint}\" FilterMode=\"{Binding Filter}\" MinimumPrefixLength=\"{Binding PrefixLength}\" IsTextCompletionEnabled=\"{Binding Complete}\" PlaceholderForeground=\"{Binding PlaceholderBrush}\" Width=\"117\" />"
+                + "<AutoCompleteBox Width=\"121\" />"
                 + "<ColorPicker Color=\"#FF123456\" ColorModel=\"Hsva\" IsAlphaEnabled=\"False\" IsColorSpectrumVisible=\"False\" Width=\"112\" />"
                 + "<ColorPicker Color=\"NotAColor\" ColorModel=\"Unknown\" IsAlphaEnabled=\"maybe\" Width=\"113\" />"
                 + "<ColorPicker Color=\"{Binding Accent}\" ColorModel=\"{Binding Model}\" IsAlphaEnabled=\"{Binding AlphaEnabled}\" Width=\"114\" />"
                 + "<TabControl SelectedIndex=\"1\" Width=\"118\"><TabItem Header=\"General\"><TextBlock Text=\"Profile\" /></TabItem><TabItem Header=\"Advanced\" /></TabControl>"
                 + "<TabControl SelectedIndex=\"-2\" Width=\"119\"><TabItem Header=\"Invalid\" /></TabControl>"
                 + "<TabControl SelectedIndex=\"{Binding ActiveTab}\" Width=\"120\"><TabItem Header=\"Bound\" /></TabControl>"
-                + "<Menu Width=\"121\"><MenuItem Header=\"File\"><MenuItem Header=\"Open\" InputGesture=\"Ctrl+O\" /><Separator /><MenuItem Header=\"Exit\" /></MenuItem></Menu>"
-                + "<Menu Width=\"122\"><MenuItem Header=\"Invalid\" InputGesture=\"NotAKey\" /></Menu>"
+                + "<Menu Width=\"121\"><MenuItem Header=\"File\" Icon=\"F\" ToggleType=\"CheckBox\" IsChecked=\"True\" IsSubMenuOpen=\"True\" StaysOpenOnClick=\"True\"><MenuItem Header=\"Open\" InputGesture=\"Ctrl+O\" HotKey=\"Ctrl+H\" ToggleType=\"Radio\" GroupName=\"EditorMode\" IsChecked=\"True\" /><Separator /><MenuItem Header=\"Exit\" HotKey=\"Ctrl+Q\" Command=\"{Binding ExitCommand}\" CommandParameter=\"File\" /></MenuItem></Menu>"
+                + "<Menu Width=\"122\"><MenuItem Header=\"Invalid\" Icon=\"{Binding FileIcon}\" InputGesture=\"NotAKey\" HotKey=\"{Binding SaveHotKey}\" ToggleType=\"Unknown\" GroupName=\"{Binding MenuGroup}\" IsChecked=\"sometimes\" IsSubMenuOpen=\"{Binding Open}\" StaysOpenOnClick=\"{Binding StayOpen}\" Command=\"{Binding InvalidCommand}\" CommandParameter=\"{Binding FileName}\" /></Menu>"
                 + "<Button Content=\"Context trigger\" Width=\"123\"><Button.ContextMenu><ContextMenu><MenuItem Header=\"Copy\" InputGesture=\"Ctrl+C\" /><Separator /></ContextMenu></Button.ContextMenu></Button>"
                 + "<TextBox Text=\"Context target\" Width=\"124\"><TextBox.ContextMenu><ContextMenu><MenuItem Header=\"Paste\" /></ContextMenu></TextBox.ContextMenu></TextBox>"
                 + "<Button Content=\"Tooltip target\" IsEnabled=\"True\" Width=\"125\"><Button.ToolTip><ToolTip><Border Padding=\"4\" BorderBrush=\"Blue\" CornerRadius=\"2\"><StackPanel Spacing=\"4\"><TextBlock Text=\"Helpful text\" /><TextBlock Text=\"More information\" /></StackPanel></Border></ToolTip></Button.ToolTip></Button>"
@@ -108,7 +112,7 @@ internal static class Program
                 + "<TimePicker SelectedTime=\"13:45:30\" UseSeconds=\"True\" ClockIdentifier=\"12HourClock\" MinuteIncrement=\"5\" SecondIncrement=\"10\" Width=\"105\" />"
                 + "<TimePicker SelectedTime=\"25:99\" UseSeconds=\"sometimes\" ClockIdentifier=\"Invalid\" MinuteIncrement=\"0\" SecondIncrement=\"60\" Width=\"106\" />"
                 + "<TimePicker SelectedTime=\"{Binding StartTime}\" UseSeconds=\"{Binding ShowSeconds}\" ClockIdentifier=\"{Binding Clock}\" MinuteIncrement=\"{Binding Minute}\" SecondIncrement=\"{Binding Second}\" Width=\"107\" />"
-                + "<NumericUpDown Value=\"12.5\" FormatString=\"N2\" Increment=\"0.25\" Minimum=\"0.5\" Maximum=\"40\" AllowSpin=\"False\" ShowButtonSpinner=\"False\" ClipValueToMinMax=\"True\" ButtonSpinnerLocation=\"Left\" TextAlignment=\"Center\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" ParsingNumberStyle=\"Integer\" Margin=\"3,4\" HorizontalAlignment=\"Right\" VerticalAlignment=\"Center\" Width=\"120\" Height=\"60\" MinWidth=\"40\" MaxWidth=\"160\" MinHeight=\"30\" MaxHeight=\"90\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3\" FontFamily=\"DejaVu Sans\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"Bold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
+                + "<NumericUpDown Value=\"12.5\" FormatString=\"N2\" Increment=\"0.25\" Minimum=\"0.5\" Maximum=\"40\" AllowSpin=\"False\" ShowButtonSpinner=\"False\" ClipValueToMinMax=\"True\" ButtonSpinnerLocation=\"Left\" TextAlignment=\"Center\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" ParsingNumberStyle=\"Integer\" Margin=\"3,4\" HorizontalAlignment=\"Right\" VerticalAlignment=\"Center\" Width=\"120\" Height=\"60\" MinWidth=\"40\" MaxWidth=\"160\" MinHeight=\"30\" MaxHeight=\"90\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3\" FontFamily=\"DejaVu Sans\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"Bold\" Foreground=\"DarkGreen\" PlaceholderForeground=\"LimeGreen\" Padding=\"2\" />"
                 + "<NumericUpDown Value=\"0\" />"
                 + "<NumericUpDown Value=\"1\" FormatString=\"Q\" ParsingNumberStyle=\"AllowHexSpecifier\" HorizontalAlignment=\"999\" VerticalAlignment=\"999\" HorizontalContentAlignment=\"999\" VerticalContentAlignment=\"999\" />"
                 + "<DockPanel HorizontalSpacing=\"4\" VerticalSpacing=\"6\" LastChildFill=\"False\"><TextBlock Text=\"Docked preview\" /><Button Content=\"Docked button\" DockPanel.Dock=\"Bottom\" /></DockPanel>"
@@ -128,9 +132,10 @@ internal static class Program
                 + "<ProgressBar Value=\"35\" IsIndeterminate=\"True\" />"
                 + "<ProgressBar Value=\"25\" ProgressTextFormat=\"{}{2:0}%\" />"
                 + "<Slider Minimum=\"-10\" Maximum=\"60\" Value=\"35.5\" TickFrequency=\"5\" IsSnapToTickEnabled=\"True\" IsDirectionReversed=\"True\" TickPlacement=\"Outside\" Orientation=\"Vertical\" Background=\"#FFF0F0F0\" BorderBrush=\"Black\" BorderThickness=\"3\" CornerRadius=\"5\" FontSize=\"16\" FontStyle=\"Oblique\" FontWeight=\"SemiBold\" Foreground=\"Red\" Padding=\"4\" />"
-                + "<CheckBox IsChecked=\"True\" IsThreeState=\"True\" HorizontalContentAlignment=\"Left\" VerticalContentAlignment=\"Center\" Background=\"#FFF0F0F0\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"1,2,3,4\" FontSize=\"16\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"White\" Padding=\"4\" />"
-                + "<RadioButton IsChecked=\"False\" GroupName=\"Choices\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" Background=\"White\" BorderBrush=\"Purple\" BorderThickness=\"1\" CornerRadius=\"4\" FontSize=\"17\" FontStyle=\"Oblique\" FontWeight=\"Bold\" Foreground=\"Black\" Padding=\"3\" />"
-                + "<Button Content=\"Keyboard action preview\" IsDefault=\"True\" IsCancel=\"True\" HorizontalContentAlignment=\"Left\" VerticalContentAlignment=\"Top\" ClipToBounds=\"True\" Opacity=\"0.8\" MinWidth=\"100\" MaxWidth=\"200\" MinHeight=\"30\" MaxHeight=\"60\" Background=\"#FFF0F0F0\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"6,4,2,8\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"White\" Padding=\"8,4\" />"
+                + "<CheckBox IsChecked=\"True\" IsThreeState=\"True\" Command=\"{Binding RememberMeCommand}\" CommandParameter=\"RememberMe\" HorizontalContentAlignment=\"Left\" VerticalContentAlignment=\"Center\" Background=\"#FFF0F0F0\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"1,2,3,4\" FontSize=\"16\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"White\" Padding=\"4\" />"
+                + "<RadioButton IsChecked=\"False\" GroupName=\"Choices\" Command=\"{Binding SelectPersonalCommand}\" CommandParameter=\"Personal\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" Background=\"White\" BorderBrush=\"Purple\" BorderThickness=\"1\" CornerRadius=\"4\" FontSize=\"17\" FontStyle=\"Oblique\" FontWeight=\"Bold\" Foreground=\"Black\" Padding=\"3\" />"
+                + "<Button Content=\"Keyboard action preview\" IsDefault=\"True\" IsCancel=\"True\" Command=\"{Binding SaveCommand}\" CommandParameter=\"DocumentId\" HorizontalContentAlignment=\"Left\" VerticalContentAlignment=\"Top\" ClipToBounds=\"True\" Opacity=\"0.8\" MinWidth=\"100\" MaxWidth=\"200\" MinHeight=\"30\" MaxHeight=\"60\" Background=\"#FFF0F0F0\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"6,4,2,8\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"White\" Padding=\"8,4\" />"
+                + "<Button Content=\"Bound command parameter\" Command=\"{Binding LoadCommand}\" CommandParameter=\"{Binding DocumentId}\" Width=\"128\" />"
                 + "<Button Content=\"Clip fallback\" ClipToBounds=\"maybe\" />"
                 + "<Button Content=\"Hidden preview\" IsVisible=\"False\" Width=\"90\" />"
                 + "<Button Content=\"Visibility fallback\" IsVisible=\"maybe\" Width=\"89\" />"
@@ -140,7 +145,7 @@ internal static class Program
                 + "<TextBox Text=\"Bound placeholder preview\" PlaceholderText=\"{Binding Hint}\" />"
                 + "<TextBox Text=\"Default line count preview\" />"
                 + "<TextBox Text=\"Invalid line count preview\" MinLines=\"-1\" MaxLines=\"many\" LineHeight=\"NaN\" UseFloatingPlaceholder=\"sometimes\" PlaceholderForeground=\"Gradient\" />"
-                + "<ToggleSwitch Content=\"Notifications\" IsChecked=\"True\" IsThreeState=\"True\" OnContent=\"Enabled\" OffContent=\"Disabled\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Center\" Background=\"PaleGreen\" BorderBrush=\"DarkGreen\" BorderThickness=\"3\" CornerRadius=\"5\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
+                + "<ToggleSwitch Content=\"Notifications\" IsChecked=\"True\" IsThreeState=\"True\" Command=\"{Binding ToggleNotificationsCommand}\" CommandParameter=\"Notifications\" OnContent=\"Enabled\" OffContent=\"Disabled\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Center\" Background=\"PaleGreen\" BorderBrush=\"DarkGreen\" BorderThickness=\"3\" CornerRadius=\"5\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
                 + "<Border FlowDirection=\"RightToLeft\"><TextBlock Text=\"Inherited RTL direction\" UseLayoutRounding=\"True\" /></Border>"
                 + "<TextBlock Text=\"Invalid flow fallback\" FlowDirection=\"Sideways\" UseLayoutRounding=\"sometimes\" />"
                 + "<TextBlock Text=\"Bound flow fallback\" FlowDirection=\"{Binding Direction}\" UseLayoutRounding=\"{Binding LayoutRounding}\" />"
@@ -216,6 +221,7 @@ internal static class Program
     {
         MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
         Window window = desktop.MainWindow!;
+        VerifyWorkspaceSidebarVisibility(window, workbench);
         await workbench.OpenWorkspaceFileAsync(Path.Combine(fixture, "Sample.csproj"));
         ProjectExplorerViewModel explorer = workbench.ProjectExplorer!;
         ProjectExplorerItemViewModel first = FindItem(explorer.RootItems, Path.Combine(fixture, "First.axaml"));
@@ -260,9 +266,61 @@ internal static class Program
             group.IsExpanded = true;
         }
 
+        static void VerifyWorkspaceSidebarVisibility(Window window, MainWindowViewModel workbench)
+        {
+            Grid root = (Grid)window.Content!;
+            Grid layout = root.Children.OfType<Grid>().Single(child => Grid.GetRow(child) == 0);
+            ColumnDefinition workspaceColumn = layout.ColumnDefinitions[0];
+            ColumnDefinition splitterColumn = layout.ColumnDefinitions[1];
+            Border workspaceSidebar = layout.Children.OfType<Border>()
+                .Single(child => Grid.GetRow(child) == 1 && Grid.GetColumn(child) == 0);
+            GridSplitter workspaceSplitter = layout.Children.OfType<GridSplitter>()
+                .Single(child => Grid.GetRow(child) == 1 && Grid.GetColumn(child) == 1);
+            Menu menu = window.GetVisualDescendants().OfType<Menu>().Single();
+            MenuItem viewMenu = menu.Items.OfType<MenuItem>().Single(item => item.Header is "_View");
+            MenuItem toggle = viewMenu.Items.OfType<MenuItem>()
+                .Single(item => string.Equals(
+                    item.Header?.ToString(),
+                    workbench.WorkspaceSidebarMenuText,
+                    StringComparison.Ordinal));
+
+            Check(toggle.IsChecked
+                && workspaceSidebar.IsVisible
+                && workspaceSplitter.IsVisible
+                && workspaceColumn.Width == new GridLength(280)
+                && splitterColumn.Width == new GridLength(8),
+                "The workspace sidebar did not start visible with its default width.");
+
+            workspaceColumn.Width = new GridLength(360);
+            Dispatcher.UIThread.RunJobs();
+            Check(workbench.WorkspacePaneWidth == new GridLength(360),
+                "Resizing the workspace pane did not update its remembered width.");
+
+            workbench.IsWorkspacePaneVisible = false;
+            Dispatcher.UIThread.RunJobs();
+            Check(!toggle.IsChecked
+                && !workspaceSidebar.IsVisible
+                && !workspaceSplitter.IsVisible
+                && workspaceColumn.Width == new GridLength(0)
+                && splitterColumn.Width == new GridLength(0),
+                "Hiding the workspace sidebar did not collapse its pane and splitter.");
+
+            workbench.IsWorkspacePaneVisible = true;
+            Dispatcher.UIThread.RunJobs();
+            Check(toggle.IsChecked
+                && workspaceSidebar.IsVisible
+                && workspaceSplitter.IsVisible
+                && workspaceColumn.Width == new GridLength(360)
+                && splitterColumn.Width == new GridLength(8),
+                "Showing the workspace sidebar did not restore its last width.");
+
+            workspaceColumn.Width = new GridLength(280);
+            Dispatcher.UIThread.RunJobs();
+        }
+
         string[] paletteControlNames =
         [
-            "AutoCompleteBox", "Calendar", "ColorPicker", "DatePicker", "ItemsControl", "ListBox",
+            "AutoCompleteBox", "Calendar", "CalendarDatePicker", "ColorPicker", "DatePicker", "ItemsControl", "ListBox",
             "TimePicker", "TreeView", "ComboBoxItem", "ListBoxItem", "TreeViewItem",
             "Ellipse", "Line", "Polygon", "Polyline", "Rectangle",
         ];
@@ -587,6 +645,7 @@ internal static class Program
     private static async Task VerifyCatalogControlPreviewsAsync(Control root)
     {
         await WaitUntilAsync(() => root.GetVisualDescendants().OfType<ComboBox>().Any()
+            && root.GetVisualDescendants().OfType<CalendarDatePicker>().Any()
             && root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>().Any()
             && root.GetVisualDescendants().OfType<AutoCompleteBox>().Any()
             && root.GetVisualDescendants().OfType<ColorPicker>().Any()
@@ -626,6 +685,12 @@ internal static class Program
             .Single(candidate => candidate.Width == 103);
         DatePicker outOfRangeDatePicker = root.GetVisualDescendants().OfType<DatePicker>()
             .Single(candidate => candidate.Width == 104);
+        CalendarDatePicker calendarDatePicker = root.GetVisualDescendants().OfType<CalendarDatePicker>()
+            .Single(candidate => candidate.Width == 118);
+        CalendarDatePicker invalidCalendarDatePicker = root.GetVisualDescendants().OfType<CalendarDatePicker>()
+            .Single(candidate => candidate.Width == 119);
+        CalendarDatePicker defaultCalendarDatePicker = root.GetVisualDescendants().OfType<CalendarDatePicker>()
+            .Single(candidate => candidate.Width == 120);
         Avalonia.Controls.Calendar selectedCalendar = root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>()
             .Single(candidate => candidate.Width == 108);
         Avalonia.Controls.Calendar invalidCalendar = root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>()
@@ -642,6 +707,8 @@ internal static class Program
             .Single(candidate => candidate.Width == 116);
         AutoCompleteBox boundAutoCompleteBox = root.GetVisualDescendants().OfType<AutoCompleteBox>()
             .Single(candidate => candidate.Width == 117);
+        AutoCompleteBox defaultAutoCompleteBox = root.GetVisualDescendants().OfType<AutoCompleteBox>()
+            .Single(candidate => candidate.Width == 121);
         ColorPicker selectedColorPicker = root.GetVisualDescendants().OfType<ColorPicker>()
             .Single(candidate => candidate.Width == 112);
         ColorPicker invalidColorPicker = root.GetVisualDescendants().OfType<ColorPicker>()
@@ -732,6 +799,8 @@ internal static class Program
         RadioButton radioButton = root.GetVisualDescendants().OfType<RadioButton>().Single();
         Button keyboardActionButton = root.GetVisualDescendants().OfType<Button>()
             .Single(button => button.Content?.ToString() == "Keyboard action preview");
+        Button boundCommandParameterButton = root.GetVisualDescendants().OfType<Button>()
+            .Single(button => button.Content?.ToString() == "Bound command parameter");
         Button invalidClipButton = root.GetVisualDescendants().OfType<Button>()
             .Single(button => button.Content?.ToString() == "Clip fallback");
         Button hiddenPreviewButton = root.GetVisualDescendants().OfType<Button>()
@@ -793,7 +862,10 @@ internal static class Program
         Label boundLabelLayout = root.GetVisualDescendants().OfType<Label>()
             .Single(label => label.Content is TextBlock labelText && labelText.Text == "Bound label layout");
         ToggleSwitch toggleSwitch = root.GetVisualDescendants().OfType<ToggleSwitch>().Single();
-        Check(comboBox.PlaceholderText == "Choose an option" && !comboBox.IsEnabled
+        Check(comboBox.PlaceholderText == "Choose an option"
+            && comboBox.PlaceholderForeground is ISolidColorBrush comboPlaceholderForeground
+            && comboPlaceholderForeground.Color == Colors.DarkOrange
+            && !comboBox.IsEnabled && !comboBox.IsDropDownOpen
             && comboBox.HorizontalContentAlignment == HorizontalAlignment.Right
             && comboBox.VerticalContentAlignment == VerticalAlignment.Bottom
             && comboBox.Background is ISolidColorBrush comboBackground
@@ -867,10 +939,24 @@ internal static class Program
             && outOfRangeDatePicker.MaxYear.Date == new DateTime(2030, 12, 31)
             && !outOfRangeDatePicker.IsEnabled,
             $"The DatePicker preview did not preserve valid date visibility or safely ignore invalid/bound values: selected={selectedDatePicker.SelectedDate:O}/{selectedDatePicker.DayVisible},{selectedDatePicker.MonthVisible},{selectedDatePicker.YearVisible}, invalid={invalidDatePicker.SelectedDate:O}/{invalidDatePicker.DayVisible},{invalidDatePicker.MonthVisible},{invalidDatePicker.YearVisible}, bound={boundDatePicker.SelectedDate:O}/{boundDatePicker.DayVisible},{boundDatePicker.MonthVisible},{boundDatePicker.YearVisible}.");
+        Check(calendarDatePicker.SelectedDate?.Date == new DateTime(2028, 2, 29)
+            && calendarDatePicker.PlaceholderText == "Choose a day"
+            && calendarDatePicker.PlaceholderForeground is ISolidColorBrush calendarPlaceholderForeground
+            && calendarPlaceholderForeground.Color == Colors.DarkGray
+            && calendarDatePicker.UseFloatingPlaceholder
+            && !calendarDatePicker.IsTodayHighlighted
+            && !calendarDatePicker.IsDropDownOpen
+            && !calendarDatePicker.IsEnabled
+            && !defaultCalendarDatePicker.UseFloatingPlaceholder
+            && invalidCalendarDatePicker.PlaceholderText == "Choose a date"
+            && invalidCalendarDatePicker.PlaceholderForeground == defaultCalendarDatePicker.PlaceholderForeground
+            && invalidCalendarDatePicker.UseFloatingPlaceholder == defaultCalendarDatePicker.UseFloatingPlaceholder,
+            "The CalendarDatePicker preview did not preserve safe date/placeholder settings or open its popup.");
         Check(selectedCalendar.SelectedDate == new DateTime(2028, 2, 29)
             && selectedCalendar.DisplayDate == new DateTime(2028, 2, 1)
             && selectedCalendar.DisplayDateStart == new DateTime(2028, 1, 1)
             && selectedCalendar.DisplayDateEnd == new DateTime(2028, 12, 31)
+            && selectedCalendar.DisplayMode == CalendarMode.Year
             && selectedCalendar.SelectionMode == CalendarSelectionMode.SingleDate
             && selectedCalendar.FirstDayOfWeek == DayOfWeek.Sunday
             && !selectedCalendar.IsTodayHighlighted
@@ -878,6 +964,7 @@ internal static class Program
             && invalidCalendar.SelectedDate is null
             && invalidCalendar.DisplayDateStart is null
             && invalidCalendar.DisplayDateEnd is null
+            && invalidCalendar.DisplayMode == CalendarMode.Month
             && invalidCalendar.SelectionMode == CalendarSelectionMode.SingleDate
             && invalidCalendar.FirstDayOfWeek == DayOfWeek.Monday
             && invalidCalendar.IsTodayHighlighted
@@ -894,24 +981,30 @@ internal static class Program
             && outOfRangeCalendar.DisplayDateEnd == new DateTime(2030, 12, 31)
             && !outOfRangeCalendar.IsEnabled
             && multipleRangeCalendar.SelectionMode == CalendarSelectionMode.MultipleRange
+            && multipleRangeCalendar.DisplayMode == CalendarMode.Decade
             && multipleRangeCalendar.SelectedDate is null
             && !multipleRangeCalendar.IsEnabled,
             $"The Calendar preview did not preserve safe date selection, navigation bounds or fallback values: valid={selectedCalendar.SelectedDate}/{selectedCalendar.DisplayDate}, invalid={invalidCalendar.SelectedDate}/{invalidCalendar.DisplayDateStart}/{invalidCalendar.DisplayDateEnd}, bound={boundCalendar.SelectedDate}/{boundCalendar.DisplayDateStart}/{boundCalendar.DisplayDateEnd}, out-of-range={outOfRangeCalendar.SelectedDate}.");
         Check(configuredAutoCompleteBox.Text == "Par"
             && configuredAutoCompleteBox.PlaceholderText == "Find a city"
+            && configuredAutoCompleteBox.PlaceholderForeground is ISolidColorBrush autoCompletePlaceholderForeground
+            && autoCompletePlaceholderForeground.Color == Colors.DarkGray
             && configuredAutoCompleteBox.FilterMode == AutoCompleteFilterMode.Contains
             && configuredAutoCompleteBox.MinimumPrefixLength == 2
             && configuredAutoCompleteBox.IsTextCompletionEnabled
+            && !configuredAutoCompleteBox.IsDropDownOpen
             && !configuredAutoCompleteBox.IsEnabled
             && invalidAutoCompleteBox.Text == "Grace"
             && invalidAutoCompleteBox.FilterMode == AutoCompleteFilterMode.StartsWith
             && invalidAutoCompleteBox.MinimumPrefixLength == 1
+            && invalidAutoCompleteBox.PlaceholderForeground == defaultAutoCompleteBox.PlaceholderForeground
             && !invalidAutoCompleteBox.IsTextCompletionEnabled
             && !invalidAutoCompleteBox.IsEnabled
             && boundAutoCompleteBox.Text == string.Empty
             && boundAutoCompleteBox.PlaceholderText == string.Empty
             && boundAutoCompleteBox.FilterMode == AutoCompleteFilterMode.StartsWith
             && boundAutoCompleteBox.MinimumPrefixLength == 1
+            && boundAutoCompleteBox.PlaceholderForeground == defaultAutoCompleteBox.PlaceholderForeground
             && !boundAutoCompleteBox.IsTextCompletionEnabled
             && !boundAutoCompleteBox.IsEnabled,
             $"The AutoCompleteBox preview did not preserve safe text/filter settings or bound-value fallbacks: valid={configuredAutoCompleteBox.Text}/{configuredAutoCompleteBox.FilterMode}/{configuredAutoCompleteBox.MinimumPrefixLength}, invalid={invalidAutoCompleteBox.FilterMode}/{invalidAutoCompleteBox.MinimumPrefixLength}, bound={boundAutoCompleteBox.Text}/{boundAutoCompleteBox.FilterMode}/{boundAutoCompleteBox.MinimumPrefixLength}.");
@@ -963,6 +1056,11 @@ internal static class Program
         Check(!previewMenu.IsEnabled
             && previewMenu.Items.Count == 1
             && fileMenuItem.Header is "File"
+            && fileMenuItem.Icon is TextBlock { Text: "F" }
+            && fileMenuItem.ToggleType == MenuItemToggleType.CheckBox
+            && fileMenuItem.IsChecked
+            && !fileMenuItem.IsSubMenuOpen
+            && fileMenuItem.StaysOpenOnClick
             && !fileMenuItem.IsEnabled
             && fileMenuItem.Items.Count == 3
             && fileMenuItem.Items[0] is MenuItem
@@ -971,12 +1069,40 @@ internal static class Program
                 IsEnabled: false,
                 InputGesture.Key: Key.O,
                 InputGesture.KeyModifiers: KeyModifiers.Control,
+                HotKey: null,
+                ToggleType: MenuItemToggleType.Radio,
+                GroupName: "EditorMode",
+                IsChecked: true,
+                Command: null,
             }
             && fileMenuItem.Items[1] is Separator
-            && fileMenuItem.Items[2] is MenuItem { Header: "Exit", IsEnabled: false },
+            && fileMenuItem.Items[2] is MenuItem
+            {
+                Header: "Exit",
+                IsEnabled: false,
+                InputGesture.Key: Key.Q,
+                InputGesture.KeyModifiers: KeyModifiers.Control,
+                HotKey: null,
+                Command: null,
+                CommandParameter: "File",
+            },
             $"The menu preview did not preserve nested headers/separators while remaining inert: items={previewMenu.Items.Count}, fileItems={fileMenuItem.Items.Count}.");
-        Check(invalidGestureMenu.Items[0] is MenuItem { Header: "Invalid", InputGesture: null, IsEnabled: false },
-            "The menu preview did not safely ignore an invalid input gesture.");
+        Check(invalidGestureMenu.Items[0] is MenuItem
+            {
+                Header: "Invalid",
+                Icon: null,
+                InputGesture: null,
+                HotKey: null,
+                Command: null,
+                CommandParameter: null,
+                ToggleType: MenuItemToggleType.None,
+                GroupName: "",
+                IsChecked: false,
+                IsSubMenuOpen: false,
+                StaysOpenOnClick: false,
+                IsEnabled: false,
+            },
+            "The menu preview did not safely fall back for invalid state and input gesture values.");
         MenuItem contextMenuItem = buttonContextMenuPreview.GetVisualDescendants().OfType<MenuItem>().Single();
         MenuItem textBoxContextMenuItem = textBoxContextMenuPreview.GetVisualDescendants().OfType<MenuItem>().Single();
         Check(contextMenuButton.Content is "Context trigger"
@@ -1051,6 +1177,8 @@ internal static class Program
             && numericUpDown.FontWeight == FontWeight.Bold
             && numericUpDown.Foreground is ISolidColorBrush numericForeground
             && numericForeground.Color == Colors.DarkGreen
+            && numericUpDown.PlaceholderForeground is ISolidColorBrush numericPlaceholderForeground
+            && numericPlaceholderForeground.Color == Colors.LimeGreen
             && numericUpDown.Padding == new Thickness(2),
             "The NumericUpDown preview did not preserve its value or remained interactive.");
         Check(defaultNumericUpDown.AllowSpin && defaultNumericUpDown.ShowButtonSpinner
@@ -1144,6 +1272,7 @@ internal static class Program
             && slider.Padding == new Thickness(4),
             "The Slider preview did not preserve its value/orientation or remained interactive.");
         Check(checkBox.IsChecked == true && checkBox.IsThreeState && !checkBox.IsEnabled
+            && checkBox.Command is null && checkBox.CommandParameter is "RememberMe"
             && checkBox.HorizontalContentAlignment == HorizontalAlignment.Left
             && checkBox.VerticalContentAlignment == VerticalAlignment.Center
             && checkBox.Background is ISolidColorBrush checkBoxBackground
@@ -1160,6 +1289,7 @@ internal static class Program
             && checkBox.Padding == new Thickness(4),
             "The CheckBox preview did not preserve its state or remained interactive.");
         Check(radioButton.IsChecked == false && radioButton.GroupName == "Choices" && !radioButton.IsEnabled
+            && radioButton.Command is null && radioButton.CommandParameter is "Personal"
             && radioButton.HorizontalContentAlignment == HorizontalAlignment.Center
             && radioButton.VerticalContentAlignment == VerticalAlignment.Top
             && radioButton.Background is ISolidColorBrush radioBackground
@@ -1176,6 +1306,8 @@ internal static class Program
             && radioButton.Padding == new Thickness(3),
             "The RadioButton preview did not preserve its state or remained interactive.");
         Check(!keyboardActionButton.IsEnabled && !keyboardActionButton.IsDefault && !keyboardActionButton.IsCancel
+            && keyboardActionButton.Command is null
+            && keyboardActionButton.CommandParameter is "DocumentId"
             && keyboardActionButton.HorizontalContentAlignment == HorizontalAlignment.Left
             && keyboardActionButton.VerticalContentAlignment == VerticalAlignment.Top
             && keyboardActionButton.ClipToBounds && !invalidClipButton.ClipToBounds
@@ -1194,7 +1326,11 @@ internal static class Program
             && keyboardActionButton.Foreground is ISolidColorBrush buttonForeground
             && buttonForeground.Color == Colors.White
             && keyboardActionButton.Padding == new Thickness(8, 4),
-            "The Button preview did not suppress Enter/Escape actions from the source markup.");
+            "The Button preview did not preserve its inert literal command parameter and suppress keyboard/command activation.");
+        Check(!boundCommandParameterButton.IsEnabled
+            && boundCommandParameterButton.Command is null
+            && boundCommandParameterButton.CommandParameter is null,
+            "The Button preview evaluated a bound command or command parameter.");
         Check(!hiddenPreviewButton.IsVisible && invalidVisibilityButton.IsVisible,
             "The Button preview did not preserve visibility or use its safe default.");
         Check(styledBorder.BorderBrush is ISolidColorBrush styledBorderBrush
@@ -1395,6 +1531,8 @@ internal static class Program
             && toggleSwitch.Foreground is ISolidColorBrush toggleForeground
             && toggleForeground.Color == Colors.DarkGreen
             && toggleSwitch.Padding == new Thickness(2)
+            && toggleSwitch.Command is null
+            && toggleSwitch.CommandParameter is "Notifications"
             && !toggleSwitch.IsEnabled,
             "The ToggleSwitch preview did not preserve its content/state or remained interactive.");
     }
