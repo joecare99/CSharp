@@ -761,6 +761,84 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task LabelTypography_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<Label xmlns='https://github.com/avaloniaui' FontSize='12' FontStyle='Normal' FontWeight='Normal' Foreground='Black' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var fontSize = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "FontSize");
+        var fontStyle = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "FontStyle");
+        var fontWeight = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "FontWeight");
+        var foreground = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Foreground");
+
+        Assert.IsTrue(fontSize.TrySetValue("18"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(fontStyle.TrySetValue("Italic"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(fontWeight.TrySetValue("SemiBold"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(foreground.TrySetValue("Blue"));
+        await viewModel.PropertyProvider.ApplyAsync();
+
+        Assert.AreEqual("18", viewModel.PreviewRoot!.Properties["FontSize"]);
+        Assert.AreEqual("Italic", viewModel.PreviewRoot.Properties["FontStyle"]);
+        Assert.AreEqual("SemiBold", viewModel.PreviewRoot.Properties["FontWeight"]);
+        Assert.AreEqual("Blue", viewModel.PreviewRoot.Properties["Foreground"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Black", viewModel.PreviewRoot!.Properties["Foreground"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Normal", viewModel.PreviewRoot!.Properties["FontWeight"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Normal", viewModel.PreviewRoot!.Properties["FontStyle"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("12", viewModel.PreviewRoot!.Properties["FontSize"]);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("18", viewModel.PreviewRoot!.Properties["FontSize"]);
+        Assert.AreEqual("Italic", viewModel.PreviewRoot.Properties["FontStyle"]);
+        Assert.AreEqual("SemiBold", viewModel.PreviewRoot.Properties["FontWeight"]);
+        Assert.AreEqual("Blue", viewModel.PreviewRoot.Properties["Foreground"]);
+    }
+
+    [TestMethod]
+    public async Task LabelTextLayout_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<Label xmlns='https://github.com/avaloniaui' TextAlignment='Left' TextTrimming='None' TextWrapping='Wrap' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var alignment = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "TextAlignment");
+        var trimming = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "TextTrimming");
+        var wrapping = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "TextWrapping");
+
+        Assert.IsTrue(alignment.TrySetValue("Right"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(trimming.TrySetValue("CharacterEllipsis"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(wrapping.TrySetValue("NoWrap"));
+        await viewModel.PropertyProvider.ApplyAsync();
+
+        Assert.AreEqual("Right", viewModel.PreviewRoot!.Properties["TextAlignment"]);
+        Assert.AreEqual("CharacterEllipsis", viewModel.PreviewRoot.Properties["TextTrimming"]);
+        Assert.AreEqual("NoWrap", viewModel.PreviewRoot.Properties["TextWrapping"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Wrap", viewModel.PreviewRoot!.Properties["TextWrapping"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("None", viewModel.PreviewRoot!.Properties["TextTrimming"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Left", viewModel.PreviewRoot!.Properties["TextAlignment"]);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("Right", viewModel.PreviewRoot!.Properties["TextAlignment"]);
+        Assert.AreEqual("CharacterEllipsis", viewModel.PreviewRoot.Properties["TextTrimming"]);
+        Assert.AreEqual("NoWrap", viewModel.PreviewRoot.Properties["TextWrapping"]);
+    }
+
+    [TestMethod]
     public async Task BorderAppearance_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -986,14 +1064,16 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
-    public async Task StackPanelSizeConstraints_AreEditableAndUndoable()
+    public async Task ControlSizeProperties_AreEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
-        viewModel.LoadMarkup("<StackPanel xmlns='https://github.com/avaloniaui' />");
+        viewModel.LoadMarkup("<NumericUpDown xmlns='https://github.com/avaloniaui' />");
         viewModel.SelectedNode = viewModel.PreviewRoot;
 
         foreach ((string propertyName, string value) in new[]
         {
+            ("Width", "200"),
+            ("Height", "60"),
             ("MinWidth", "40"),
             ("MaxWidth", "120"),
             ("MinHeight", "20"),
@@ -1005,30 +1085,419 @@ public sealed class AxamlDesignerViewModelTests
             await viewModel.PropertyProvider.ApplyAsync();
         }
 
+        Assert.AreEqual("200", viewModel.PreviewRoot!.Properties["Width"]);
+        Assert.AreEqual("60", viewModel.PreviewRoot.Properties["Height"]);
         Assert.AreEqual("40", viewModel.PreviewRoot!.Properties["MinWidth"]);
         Assert.AreEqual("120", viewModel.PreviewRoot.Properties["MaxWidth"]);
         Assert.AreEqual("20", viewModel.PreviewRoot.Properties["MinHeight"]);
         Assert.AreEqual("80", viewModel.PreviewRoot.Properties["MaxHeight"]);
 
-        for (int index = 0; index < 4; index++)
+        for (int index = 0; index < 6; index++)
         {
             viewModel.UndoCommand.Execute(null);
         }
 
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("Width"));
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("Height"));
         Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("MinWidth"));
         Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("MaxWidth"));
         Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("MinHeight"));
         Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("MaxHeight"));
 
-        for (int index = 0; index < 4; index++)
+        for (int index = 0; index < 6; index++)
         {
             viewModel.RedoCommand.Execute(null);
         }
 
+        Assert.AreEqual("200", viewModel.PreviewRoot!.Properties["Width"]);
+        Assert.AreEqual("60", viewModel.PreviewRoot.Properties["Height"]);
         Assert.AreEqual("40", viewModel.PreviewRoot!.Properties["MinWidth"]);
         Assert.AreEqual("120", viewModel.PreviewRoot.Properties["MaxWidth"]);
         Assert.AreEqual("20", viewModel.PreviewRoot.Properties["MinHeight"]);
         Assert.AreEqual("80", viewModel.PreviewRoot.Properties["MaxHeight"]);
+    }
+
+    [TestMethod]
+    public async Task WrapPanelLayoutOptions_AreEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<WrapPanel xmlns='https://github.com/avaloniaui' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+
+        foreach ((string propertyName, string value) in new[]
+        {
+            ("ItemSpacing", "4"),
+            ("LineSpacing", "6"),
+            ("ItemWidth", "40"),
+            ("ItemHeight", "20"),
+            ("ItemsAlignment", "Center"),
+        })
+        {
+            var property = viewModel.PropertyProvider.Properties.Single(row => row.Name == propertyName);
+            Assert.IsTrue(property.TrySetValue(value), propertyName);
+            await viewModel.PropertyProvider.ApplyAsync();
+        }
+
+        foreach ((string property, string expected) in new[]
+        {
+            ("ItemSpacing", "4"),
+            ("LineSpacing", "6"),
+            ("ItemWidth", "40"),
+            ("ItemHeight", "20"),
+            ("ItemsAlignment", "Center"),
+        })
+        {
+            Assert.AreEqual(expected, viewModel.PreviewRoot!.Properties[property], property);
+        }
+
+        for (int index = 0; index < 5; index++)
+        {
+            viewModel.UndoCommand.Execute(null);
+        }
+
+        foreach (string property in new[] { "ItemSpacing", "LineSpacing", "ItemWidth", "ItemHeight", "ItemsAlignment" })
+        {
+            Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey(property), property);
+        }
+
+        for (int index = 0; index < 5; index++)
+        {
+            viewModel.RedoCommand.Execute(null);
+        }
+
+        Assert.AreEqual("Center", viewModel.PreviewRoot!.Properties["ItemsAlignment"]);
+        Assert.AreEqual("4", viewModel.PreviewRoot.Properties["ItemSpacing"]);
+    }
+
+    [TestMethod]
+    public async Task StackPanelSpacing_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<StackPanel xmlns='https://github.com/avaloniaui' Spacing='2' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var spacing = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Spacing");
+
+        Assert.IsFalse(spacing.TrySetValue("-1"));
+        Assert.IsTrue(spacing.TrySetValue("8"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("8", viewModel.PreviewRoot!.Properties["Spacing"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("2", viewModel.PreviewRoot!.Properties["Spacing"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("8", viewModel.PreviewRoot!.Properties["Spacing"]);
+    }
+
+    [TestMethod]
+    public async Task DockPanelLayoutOptions_AreEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<DockPanel xmlns='https://github.com/avaloniaui' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+
+        foreach ((string propertyName, string value) in new[]
+        {
+            ("HorizontalSpacing", "4"),
+            ("VerticalSpacing", "6"),
+            ("LastChildFill", "False"),
+        })
+        {
+            var property = viewModel.PropertyProvider.Properties.Single(row => row.Name == propertyName);
+            Assert.IsTrue(property.TrySetValue(value), propertyName);
+            await viewModel.PropertyProvider.ApplyAsync();
+        }
+
+        Assert.AreEqual("4", viewModel.PreviewRoot!.Properties["HorizontalSpacing"]);
+        Assert.AreEqual("6", viewModel.PreviewRoot.Properties["VerticalSpacing"]);
+        Assert.AreEqual("False", viewModel.PreviewRoot.Properties["LastChildFill"]);
+        for (int index = 0; index < 3; index++)
+        {
+            viewModel.UndoCommand.Execute(null);
+        }
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("HorizontalSpacing"));
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("VerticalSpacing"));
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("LastChildFill"));
+        for (int index = 0; index < 3; index++)
+        {
+            viewModel.RedoCommand.Execute(null);
+        }
+        Assert.AreEqual("False", viewModel.PreviewRoot!.Properties["LastChildFill"]);
+    }
+
+    [TestMethod]
+    public async Task UniformGridSpacing_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<UniformGrid xmlns='https://github.com/avaloniaui' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+
+        foreach ((string propertyName, string value) in new[]
+        {
+            ("RowSpacing", "3"),
+            ("ColumnSpacing", "5"),
+        })
+        {
+            var property = viewModel.PropertyProvider.Properties.Single(row => row.Name == propertyName);
+            Assert.IsTrue(property.TrySetValue(value), propertyName);
+            await viewModel.PropertyProvider.ApplyAsync();
+        }
+
+        Assert.AreEqual("3", viewModel.PreviewRoot!.Properties["RowSpacing"]);
+        Assert.AreEqual("5", viewModel.PreviewRoot.Properties["ColumnSpacing"]);
+        viewModel.UndoCommand.Execute(null);
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("RowSpacing"));
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("ColumnSpacing"));
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("3", viewModel.PreviewRoot!.Properties["RowSpacing"]);
+        Assert.AreEqual("5", viewModel.PreviewRoot.Properties["ColumnSpacing"]);
+    }
+
+    [TestMethod]
+    public async Task GridSpacing_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Grid xmlns='https://github.com/avaloniaui' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+
+        foreach ((string propertyName, string value) in new[]
+        {
+            ("RowSpacing", "2"),
+            ("ColumnSpacing", "4"),
+            ("ShowGridLines", "True"),
+        })
+        {
+            var property = viewModel.PropertyProvider.Properties.Single(row => row.Name == propertyName);
+            Assert.IsTrue(property.TrySetValue(value), propertyName);
+            await viewModel.PropertyProvider.ApplyAsync();
+        }
+
+        Assert.AreEqual("2", viewModel.PreviewRoot!.Properties["RowSpacing"]);
+        Assert.AreEqual("4", viewModel.PreviewRoot.Properties["ColumnSpacing"]);
+        Assert.AreEqual("True", viewModel.PreviewRoot.Properties["ShowGridLines"]);
+        for (int index = 0; index < 3; index++)
+        {
+            viewModel.UndoCommand.Execute(null);
+        }
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("RowSpacing"));
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("ColumnSpacing"));
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("ShowGridLines"));
+        for (int index = 0; index < 3; index++)
+        {
+            viewModel.RedoCommand.Execute(null);
+        }
+        Assert.AreEqual("2", viewModel.PreviewRoot!.Properties["RowSpacing"]);
+        Assert.AreEqual("4", viewModel.PreviewRoot.Properties["ColumnSpacing"]);
+        Assert.AreEqual("True", viewModel.PreviewRoot.Properties["ShowGridLines"]);
+    }
+
+    [TestMethod]
+    public async Task ClipToBounds_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Button xmlns='https://github.com/avaloniaui' Content='Clipped' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var clipToBounds = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "ClipToBounds");
+        Assert.IsTrue(clipToBounds.TrySetValue("True"));
+        await viewModel.PropertyProvider.ApplyAsync();
+
+        Assert.AreEqual("True", viewModel.PreviewRoot!.Properties["ClipToBounds"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("ClipToBounds"));
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("True", viewModel.PreviewRoot!.Properties["ClipToBounds"]);
+    }
+
+    [TestMethod]
+    public async Task IsVisible_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Button xmlns='https://github.com/avaloniaui' Content='Visibility' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var isVisible = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "IsVisible");
+        Assert.IsTrue(isVisible.TrySetValue("False"));
+        await viewModel.PropertyProvider.ApplyAsync();
+
+        Assert.AreEqual("False", viewModel.PreviewRoot!.Properties["IsVisible"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("IsVisible"));
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("False", viewModel.PreviewRoot!.Properties["IsVisible"]);
+    }
+
+    [TestMethod]
+    public async Task ButtonContentAlignment_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Button xmlns='https://github.com/avaloniaui' Content='Aligned' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var horizontal = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "HorizontalContentAlignment");
+        var vertical = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "VerticalContentAlignment");
+
+        Assert.IsTrue(horizontal.TrySetValue("Right"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(vertical.TrySetValue("Top"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("Right", viewModel.PreviewRoot!.Properties["HorizontalContentAlignment"]);
+        Assert.AreEqual("Top", viewModel.PreviewRoot.Properties["VerticalContentAlignment"]);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("VerticalContentAlignment"));
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("HorizontalContentAlignment"));
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("Right", viewModel.PreviewRoot!.Properties["HorizontalContentAlignment"]);
+        Assert.AreEqual("Top", viewModel.PreviewRoot.Properties["VerticalContentAlignment"]);
+    }
+
+    [TestMethod]
+    public async Task TextBoxLineLimits_AreEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<TextBox xmlns='https://github.com/avaloniaui' Text='Multiline' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var minLines = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "MinLines");
+        var maxLines = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "MaxLines");
+
+        Assert.IsTrue(minLines.TrySetValue("2"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(maxLines.TrySetValue("5"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("2", viewModel.PreviewRoot!.Properties["MinLines"]);
+        Assert.AreEqual("5", viewModel.PreviewRoot.Properties["MaxLines"]);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("MaxLines"));
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("MinLines"));
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("2", viewModel.PreviewRoot!.Properties["MinLines"]);
+        Assert.AreEqual("5", viewModel.PreviewRoot.Properties["MaxLines"]);
+    }
+
+    [TestMethod]
+    public async Task TextBoxLineHeightAndFloatingPlaceholder_AreEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<TextBox xmlns='https://github.com/avaloniaui' Text='Placeholder' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var lineHeight = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "LineHeight");
+        var floatingPlaceholder = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "UseFloatingPlaceholder");
+
+        Assert.IsTrue(lineHeight.TrySetValue("22"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(floatingPlaceholder.TrySetValue("True"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("22", viewModel.PreviewRoot!.Properties["LineHeight"]);
+        Assert.AreEqual("True", viewModel.PreviewRoot.Properties["UseFloatingPlaceholder"]);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("UseFloatingPlaceholder"));
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("LineHeight"));
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("22", viewModel.PreviewRoot!.Properties["LineHeight"]);
+        Assert.AreEqual("True", viewModel.PreviewRoot.Properties["UseFloatingPlaceholder"]);
+    }
+
+    [TestMethod]
+    public async Task TextBoxPlaceholderForeground_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<TextBox xmlns='https://github.com/avaloniaui' PlaceholderText='Enter a value' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var placeholderForeground = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "PlaceholderForeground");
+
+        Assert.IsTrue(placeholderForeground.TrySetValue("DarkGray"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("DarkGray", viewModel.PreviewRoot!.Properties["PlaceholderForeground"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("PlaceholderForeground"));
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("DarkGray", viewModel.PreviewRoot!.Properties["PlaceholderForeground"]);
+    }
+
+    [TestMethod]
+    public async Task FlowDirection_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<TextBlock xmlns='https://github.com/avaloniaui' Text='Direction' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var flowDirection = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "FlowDirection");
+
+        Assert.IsTrue(flowDirection.TrySetValue("RightToLeft"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("RightToLeft", viewModel.PreviewRoot!.Properties["FlowDirection"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("FlowDirection"));
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("RightToLeft", viewModel.PreviewRoot!.Properties["FlowDirection"]);
+    }
+
+    [TestMethod]
+    public async Task UseLayoutRounding_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Button xmlns='https://github.com/avaloniaui' Content='Pixel aligned' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var useLayoutRounding = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "UseLayoutRounding");
+
+        Assert.IsTrue(useLayoutRounding.TrySetValue("True"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("True", viewModel.PreviewRoot!.Properties["UseLayoutRounding"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("UseLayoutRounding"));
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("True", viewModel.PreviewRoot!.Properties["UseLayoutRounding"]);
+    }
+
+    [TestMethod]
+    public async Task ScrollViewerVisibility_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<ScrollViewer xmlns='https://github.com/avaloniaui' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        foreach ((string propertyName, string value) in new[]
+        {
+            ("HorizontalScrollBarVisibility", "Hidden"),
+            ("VerticalScrollBarVisibility", "Disabled"),
+        })
+        {
+            var property = viewModel.PropertyProvider.Properties.Single(row => row.Name == propertyName);
+            Assert.IsTrue(property.TrySetValue(value), propertyName);
+            await viewModel.PropertyProvider.ApplyAsync();
+        }
+
+        Assert.AreEqual("Hidden", viewModel.PreviewRoot!.Properties["HorizontalScrollBarVisibility"]);
+        Assert.AreEqual("Disabled", viewModel.PreviewRoot.Properties["VerticalScrollBarVisibility"]);
+        viewModel.UndoCommand.Execute(null);
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("HorizontalScrollBarVisibility"));
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("VerticalScrollBarVisibility"));
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("Hidden", viewModel.PreviewRoot!.Properties["HorizontalScrollBarVisibility"]);
+        Assert.AreEqual("Disabled", viewModel.PreviewRoot.Properties["VerticalScrollBarVisibility"]);
+    }
+
+    [TestMethod]
+    public async Task ViewboxStretchDirection_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Viewbox xmlns='https://github.com/avaloniaui'><TextBlock Text='Scale me' /></Viewbox>");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var direction = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "StretchDirection");
+        Assert.IsTrue(direction.TrySetValue("DownOnly"));
+        await viewModel.PropertyProvider.ApplyAsync();
+
+        Assert.AreEqual("DownOnly", viewModel.PreviewRoot!.Properties["StretchDirection"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("StretchDirection"));
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("DownOnly", viewModel.PreviewRoot!.Properties["StretchDirection"]);
     }
 
     [TestMethod]
@@ -1612,7 +2081,7 @@ public sealed class AxamlDesignerViewModelTests
             "<Window xmlns='https://github.com/avaloniaui' xmlns:custom='using:Sample'><TextBox /><custom:SpecialEditor /></Window>");
 
         viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
-        StringAssert.Contains(viewModel.SelectedCapabilityText, "Editable: AcceptsReturn, AcceptsTab, Background, BorderBrush, BorderThickness, CornerRadius, FontSize, FontStyle, FontWeight, Foreground, Height, HorizontalAlignment, IsReadOnly, Margin, MaxLength, Opacity, Padding, PlaceholderText, Text, TextAlignment, TextWrapping, VerticalAlignment, Width");
+        StringAssert.Contains(viewModel.SelectedCapabilityText, "Editable: AcceptsReturn, AcceptsTab, Background, BorderBrush, BorderThickness, ClipToBounds, CornerRadius, FlowDirection, FontSize, FontStyle, FontWeight, Foreground, Height, HorizontalAlignment, HorizontalContentAlignment, IsReadOnly, IsVisible, LineHeight, Margin, MaxHeight, MaxLength, MaxLines, MaxWidth, MinHeight, MinLines, MinWidth, Opacity, Padding, PlaceholderForeground, PlaceholderText, Text, TextAlignment, TextWrapping, UseFloatingPlaceholder, UseLayoutRounding, VerticalAlignment, VerticalContentAlignment, Width");
         StringAssert.Contains(viewModel.SelectedCapabilityText, "Binding analysis: Text");
         StringAssert.Contains(viewModel.SelectedCapabilityText, "MVVM generation: supported for named controls");
 

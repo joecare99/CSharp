@@ -956,6 +956,157 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void Parse_ExposesStackAndWrapPanelLayoutOptionsSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode defaultStackPanel = service.Parse("<StackPanel />");
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaultStackPanel, "Spacing").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Describe(defaultStackPanel, "Spacing").ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("StackPanel", "Spacing", "2.5"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("StackPanel", "Spacing", "-1"));
+        AxamlPreviewNode boundStackPanel = service.Parse("<StackPanel Spacing='{Binding Gap}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundStackPanel, "Spacing").IsReadOnly);
+
+        AxamlPreviewNode defaults = service.Parse("<WrapPanel />");
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaults, "ItemSpacing").Value);
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaults, "LineSpacing").Value);
+        Assert.AreEqual(string.Empty, AxamlPropertyValueValidator.Describe(defaults, "ItemWidth").Value);
+        Assert.AreEqual(string.Empty, AxamlPropertyValueValidator.Describe(defaults, "ItemHeight").Value);
+        AxamlPropertyDescriptor defaultAlignment = AxamlPropertyValueValidator.Describe(defaults, "ItemsAlignment");
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, defaultAlignment.EditorKind);
+        Assert.AreEqual("Start", defaultAlignment.Value);
+        CollectionAssert.AreEqual(new[] { "Start", "Center", "End" }, defaultAlignment.Options.ToArray());
+
+        AxamlPreviewNode configured = service.Parse(
+            "<WrapPanel ItemSpacing='4.5' LineSpacing='6' ItemWidth='40' ItemHeight='20' ItemsAlignment='Center' />");
+        foreach ((string property, string expected) in new[]
+        {
+            ("ItemSpacing", "4.5"),
+            ("LineSpacing", "6"),
+            ("ItemWidth", "40"),
+            ("ItemHeight", "20"),
+            ("ItemsAlignment", "Center"),
+        })
+        {
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(configured, property);
+            Assert.IsFalse(descriptor.IsReadOnly, property);
+            Assert.IsNull(descriptor.ValidationError, property);
+            Assert.AreEqual(expected, descriptor.Value, property);
+        }
+
+        foreach (string property in new[] { "ItemSpacing", "LineSpacing", "ItemWidth", "ItemHeight" })
+        {
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("WrapPanel", property, "0"), property);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("WrapPanel", property, "-1"), property);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("WrapPanel", property, "NaN"), property);
+        }
+
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("WrapPanel", "ItemsAlignment", "End"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("WrapPanel", "ItemsAlignment", "SpaceBetween"));
+        AxamlPreviewNode bound = service.Parse(
+            "<WrapPanel ItemSpacing='{Binding ItemGap}' ItemWidth='{Binding Width}' ItemsAlignment='{Binding Alignment}' />");
+        foreach (string property in new[] { "ItemSpacing", "ItemWidth", "ItemsAlignment" })
+        {
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, property).IsReadOnly, property);
+        }
+    }
+
+    [TestMethod]
+    public void Parse_ExposesDockPanelAndUniformGridLayoutOptionsSafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode defaultDockPanel = service.Parse("<DockPanel />");
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaultDockPanel, "HorizontalSpacing").Value);
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaultDockPanel, "VerticalSpacing").Value);
+        AxamlPropertyDescriptor defaultLastChildFill = AxamlPropertyValueValidator.Describe(defaultDockPanel, "LastChildFill");
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, defaultLastChildFill.EditorKind);
+        Assert.AreEqual("True", defaultLastChildFill.Value);
+
+        AxamlPreviewNode dockPanel = service.Parse(
+            "<DockPanel HorizontalSpacing='4.5' VerticalSpacing='6' LastChildFill='False' />");
+        foreach ((string property, string expected) in new[]
+        {
+            ("HorizontalSpacing", "4.5"),
+            ("VerticalSpacing", "6"),
+            ("LastChildFill", "False"),
+        })
+        {
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(dockPanel, property);
+            Assert.IsFalse(descriptor.IsReadOnly, property);
+            Assert.IsNull(descriptor.ValidationError, property);
+            Assert.AreEqual(expected, descriptor.Value, property);
+        }
+
+        foreach (string property in new[] { "HorizontalSpacing", "VerticalSpacing" })
+        {
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("DockPanel", property, "0"), property);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DockPanel", property, "-1"), property);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DockPanel", property, "NaN"), property);
+        }
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("DockPanel", "LastChildFill", "False"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DockPanel", "LastChildFill", "sometimes"));
+
+        AxamlPreviewNode defaultUniformGrid = service.Parse("<UniformGrid />");
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaultUniformGrid, "RowSpacing").Value);
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaultUniformGrid, "ColumnSpacing").Value);
+        AxamlPreviewNode uniformGrid = service.Parse(
+            "<UniformGrid RowSpacing='3' ColumnSpacing='5.5' />");
+        foreach ((string property, string expected) in new[]
+        {
+            ("RowSpacing", "3"),
+            ("ColumnSpacing", "5.5"),
+        })
+        {
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(uniformGrid, property);
+            Assert.IsFalse(descriptor.IsReadOnly, property);
+            Assert.IsNull(descriptor.ValidationError, property);
+            Assert.AreEqual(expected, descriptor.Value, property);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("UniformGrid", property, "-1"), property);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("UniformGrid", property, "Infinity"), property);
+        }
+
+        AxamlPreviewNode defaultGrid = service.Parse("<Grid />");
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaultGrid, "RowSpacing").Value);
+        Assert.AreEqual("0", AxamlPropertyValueValidator.Describe(defaultGrid, "ColumnSpacing").Value);
+        AxamlPropertyDescriptor defaultShowGridLines = AxamlPropertyValueValidator.Describe(defaultGrid, "ShowGridLines");
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, defaultShowGridLines.EditorKind);
+        Assert.AreEqual("False", defaultShowGridLines.Value);
+        AxamlPreviewNode grid = service.Parse("<Grid RowSpacing='2.5' ColumnSpacing='4' ShowGridLines='True' />");
+        Assert.AreEqual("True", AxamlPropertyValueValidator.Describe(grid, "ShowGridLines").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Grid", "ShowGridLines", "True"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Grid", "ShowGridLines", "sometimes"));
+        foreach ((string property, string expected) in new[]
+        {
+            ("RowSpacing", "2.5"),
+            ("ColumnSpacing", "4"),
+        })
+        {
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(grid, property);
+            Assert.IsFalse(descriptor.IsReadOnly, property);
+            Assert.IsNull(descriptor.ValidationError, property);
+            Assert.AreEqual(expected, descriptor.Value, property);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Grid", property, "-1"), property);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Grid", property, "Infinity"), property);
+        }
+
+        AxamlPreviewNode bound = service.Parse(
+            "<StackPanel><DockPanel HorizontalSpacing='{Binding Gap}' LastChildFill='{Binding Fill}' /><UniformGrid RowSpacing='{Binding Gap}' ColumnSpacing='{Binding ColumnGap}' /><Grid RowSpacing='{Binding Gap}' ColumnSpacing='{Binding ColumnGap}' ShowGridLines='{Binding ShowLines}' /></StackPanel>");
+        foreach ((AxamlPreviewNode node, string property) in new[]
+        {
+            (bound.Children[0], "HorizontalSpacing"),
+            (bound.Children[0], "LastChildFill"),
+            (bound.Children[1], "RowSpacing"),
+            (bound.Children[1], "ColumnSpacing"),
+            (bound.Children[2], "RowSpacing"),
+            (bound.Children[2], "ColumnSpacing"),
+            (bound.Children[2], "ShowGridLines"),
+        })
+        {
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(node, property).IsReadOnly, $"{node.TypeName}.{property}");
+        }
+    }
+
+    [TestMethod]
     public void Parse_ExposesRangeControlDisplayFlagsSafely()
     {
         AxamlPreviewService service = new();
@@ -1069,6 +1220,30 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void Parse_ExposesScrollViewerScrollbarVisibilitySafely()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode scrollViewer = service.Parse("<ScrollViewer />");
+        foreach (string property in new[] { "HorizontalScrollBarVisibility", "VerticalScrollBarVisibility" })
+        {
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(scrollViewer, property);
+            Assert.AreEqual(AxamlPropertyEditorKind.Enum, descriptor.EditorKind, property);
+            Assert.AreEqual("Auto", descriptor.Value, property);
+            CollectionAssert.AreEqual(new[] { "Auto", "Disabled", "Hidden", "Visible" }, descriptor.Options.ToArray());
+            Assert.IsNull(descriptor.ValidationError, property);
+        }
+
+        AxamlPreviewNode configured = service.Parse(
+            "<ScrollViewer HorizontalScrollBarVisibility='Hidden' VerticalScrollBarVisibility='Disabled' />");
+        Assert.AreEqual("Hidden", AxamlPropertyValueValidator.Describe(configured, "HorizontalScrollBarVisibility").Value);
+        Assert.AreEqual("Disabled", AxamlPropertyValueValidator.Describe(configured, "VerticalScrollBarVisibility").Value);
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ScrollViewer", "HorizontalScrollBarVisibility", "Always"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<ScrollViewer HorizontalScrollBarVisibility='{Binding Mode}' />"),
+            "HorizontalScrollBarVisibility").IsReadOnly);
+    }
+
+    [TestMethod]
     public void Parse_RepresentsExpanderHeaderAndSingleContentChild()
     {
         const string markup =
@@ -1173,14 +1348,25 @@ public sealed class AxamlPreviewServiceTests
     public void Parse_RepresentsViewboxWithSingleChildAndStretchCapability()
     {
         const string markup =
-            "<Viewbox xmlns='https://github.com/avaloniaui' Stretch='UniformToFill'><TextBlock Text='Scale me' /></Viewbox>";
+            "<Viewbox xmlns='https://github.com/avaloniaui' Stretch='UniformToFill' StretchDirection='UpOnly'><TextBlock Text='Scale me' /></Viewbox>";
         AxamlPreviewService service = new();
         AxamlPreviewNode root = service.Parse(markup);
+        AxamlPropertyDescriptor defaultDirection = AxamlPropertyValueValidator.Describe(
+            service.Parse("<Viewbox />"),
+            "StretchDirection");
 
         Assert.AreEqual("Viewbox", root.TypeName);
         Assert.IsTrue(root.IsSupported);
         Assert.AreEqual("Scale me", root.Children.Single().Text);
         Assert.IsTrue(service.CanEditProperty(root, "Stretch"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, defaultDirection.EditorKind);
+        Assert.AreEqual("Both", defaultDirection.Value);
+        Assert.AreEqual("UpOnly", AxamlPropertyValueValidator.Describe(root, "StretchDirection").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Viewbox", "StretchDirection", "DownOnly"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Viewbox", "StretchDirection", "Sideways"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Viewbox StretchDirection='{Binding Direction}' />"),
+            "StretchDirection").IsReadOnly);
         Assert.IsFalse(root.CanAppendChildren);
         Assert.ThrowsExactly<System.InvalidOperationException>(() =>
             service.InsertChildControl(markup, root, "Button"));
