@@ -80,6 +80,7 @@ public sealed class DotNetTestExecutionServiceTests
             {
                 WorkspaceRootPath = root,
                 ProjectPath = projectPath,
+                Configuration = "Release",
                 Targets = { "TemporaryTests.RunnerTests.PassingTest" },
             });
 
@@ -87,6 +88,7 @@ public sealed class DotNetTestExecutionServiceTests
             Assert.AreEqual(1, filteredResults.PassedCount);
             Assert.AreEqual(0, filteredResults.FailedCount);
             Assert.AreEqual(TestRunOutcome.Passed, filteredResults.Outcome);
+            Assert.IsTrue(File.Exists(Path.Combine(root, "bin", "Release", $"net{Environment.Version.Major}.0", "Sample.Tests.dll")));
         }
         finally
         {
