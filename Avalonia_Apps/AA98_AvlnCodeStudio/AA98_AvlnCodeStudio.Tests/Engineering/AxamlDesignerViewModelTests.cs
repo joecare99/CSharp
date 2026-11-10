@@ -804,6 +804,23 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task TreeViewFontFamily_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<TreeView xmlns='https://github.com/avaloniaui' FontFamily='Arial' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var fontFamily = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "FontFamily");
+
+        Assert.IsTrue(fontFamily.TrySetValue("DejaVu Sans"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("DejaVu Sans", viewModel.PreviewRoot!.Properties["FontFamily"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Arial", viewModel.PreviewRoot!.Properties["FontFamily"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("DejaVu Sans", viewModel.PreviewRoot!.Properties["FontFamily"]);
+    }
+
+    [TestMethod]
     public async Task TextBlockFontFamily_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -818,6 +835,57 @@ public sealed class AxamlDesignerViewModelTests
         Assert.AreEqual("Arial", viewModel.PreviewRoot!.Properties["FontFamily"]);
         viewModel.RedoCommand.Execute(null);
         Assert.AreEqual("DejaVu Sans", viewModel.PreviewRoot!.Properties["FontFamily"]);
+    }
+
+    [TestMethod]
+    public async Task RectangleFill_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Rectangle xmlns='https://github.com/avaloniaui' Fill='Red' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var fill = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Fill");
+
+        Assert.IsTrue(fill.TrySetValue("CornflowerBlue"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("CornflowerBlue", viewModel.PreviewRoot!.Properties["Fill"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Red", viewModel.PreviewRoot!.Properties["Fill"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("CornflowerBlue", viewModel.PreviewRoot!.Properties["Fill"]);
+    }
+
+    [TestMethod]
+    public async Task LineStartPoint_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Line xmlns='https://github.com/avaloniaui' StartPoint='0,0' EndPoint='80,40' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var startPoint = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "StartPoint");
+
+        Assert.IsTrue(startPoint.TrySetValue("5.5,10"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("5.5,10", viewModel.PreviewRoot!.Properties["StartPoint"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("0,0", viewModel.PreviewRoot!.Properties["StartPoint"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("5.5,10", viewModel.PreviewRoot!.Properties["StartPoint"]);
+    }
+
+    [TestMethod]
+    public async Task PolygonPoints_AreEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Polygon xmlns='https://github.com/avaloniaui' Points='40,0 80,60 0,60' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var points = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Points");
+
+        Assert.IsTrue(points.TrySetValue("50,0 80,70 0,70"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("50,0 80,70 0,70", viewModel.PreviewRoot!.Properties["Points"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("40,0 80,60 0,60", viewModel.PreviewRoot!.Properties["Points"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("50,0 80,70 0,70", viewModel.PreviewRoot!.Properties["Points"]);
     }
 
     [TestMethod]
@@ -1627,6 +1695,41 @@ public sealed class AxamlDesignerViewModelTests
         Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("IsVisible"));
         viewModel.RedoCommand.Execute(null);
         Assert.AreEqual("False", viewModel.PreviewRoot!.Properties["IsVisible"]);
+    }
+
+    [TestMethod]
+    public async Task IsEnabled_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Button xmlns='https://github.com/avaloniaui' Content='Enabled state' IsEnabled='True' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var isEnabled = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "IsEnabled");
+        Assert.AreEqual(true, isEnabled.Value);
+        Assert.IsTrue(isEnabled.TrySetValue("False"));
+        await viewModel.PropertyProvider.ApplyAsync();
+
+        Assert.AreEqual("False", viewModel.PreviewRoot!.Properties["IsEnabled"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("True", viewModel.PreviewRoot!.Properties["IsEnabled"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("False", viewModel.PreviewRoot!.Properties["IsEnabled"]);
+    }
+
+    [TestMethod]
+    public async Task TreeViewCornerRadius_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<TreeView xmlns='https://github.com/avaloniaui' CornerRadius='2' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var cornerRadius = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "CornerRadius");
+        Assert.IsTrue(cornerRadius.TrySetValue("4,2,4,2"));
+        await viewModel.PropertyProvider.ApplyAsync();
+
+        Assert.AreEqual("4,2,4,2", viewModel.PreviewRoot!.Properties["CornerRadius"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("2", viewModel.PreviewRoot!.Properties["CornerRadius"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("4,2,4,2", viewModel.PreviewRoot!.Properties["CornerRadius"]);
     }
 
     [TestMethod]
@@ -2545,7 +2648,7 @@ public sealed class AxamlDesignerViewModelTests
             "<Window xmlns='https://github.com/avaloniaui' xmlns:custom='using:Sample'><TextBox /><custom:SpecialEditor /></Window>");
 
         viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
-        StringAssert.Contains(viewModel.SelectedCapabilityText, "Editable: AcceptsReturn, AcceptsTab, Background, BorderBrush, BorderThickness, ClipToBounds, CornerRadius, FlowDirection, FontFamily, FontSize, FontStyle, FontWeight, Foreground, Height, HorizontalAlignment, HorizontalContentAlignment, IsReadOnly, IsVisible, LineHeight, Margin, MaxHeight, MaxLength, MaxLines, MaxWidth, MinHeight, MinLines, MinWidth, Opacity, Padding, PlaceholderForeground, PlaceholderText, Text, TextAlignment, TextWrapping, UseFloatingPlaceholder, UseLayoutRounding, VerticalAlignment, VerticalContentAlignment, Width");
+        StringAssert.Contains(viewModel.SelectedCapabilityText, "Editable: AcceptsReturn, AcceptsTab, Background, BorderBrush, BorderThickness, ClipToBounds, CornerRadius, FlowDirection, FontFamily, FontSize, FontStyle, FontWeight, Foreground, Height, HorizontalAlignment, HorizontalContentAlignment, IsReadOnly, IsVisible, LineHeight, Margin, MaxHeight, MaxLength, MaxLines, MaxWidth, MinHeight, MinLines, MinWidth, Opacity, Padding, PlaceholderForeground, PlaceholderText, Text, TextAlignment, TextWrapping, UseFloatingPlaceholder, UseLayoutRounding, VerticalAlignment, VerticalContentAlignment, Width, IsEnabled");
         StringAssert.Contains(viewModel.SelectedCapabilityText, "Binding analysis: Text");
         StringAssert.Contains(viewModel.SelectedCapabilityText, "MVVM generation: supported for named controls");
 
@@ -2660,7 +2763,18 @@ public sealed class AxamlDesignerViewModelTests
     {
         (string Markup, Action<AxamlDesignerViewModel> Execute)[] paletteActions =
         [
+            ("<AutoCompleteBox />", viewModel => viewModel.AddAutoCompleteBoxCommand.Execute(null)),
+            ("<Calendar />", viewModel => viewModel.AddCalendarCommand.Execute(null)),
+            ("<ColorPicker />", viewModel => viewModel.AddColorPickerCommand.Execute(null)),
+            ("<DatePicker />", viewModel => viewModel.AddDatePickerCommand.Execute(null)),
             ("<Label />", viewModel => viewModel.AddLabelCommand.Execute(null)),
+            ("<ItemsControl />", viewModel => viewModel.AddItemsControlCommand.Execute(null)),
+            ("<ListBox />", viewModel => viewModel.AddListBoxCommand.Execute(null)),
+            ("<Ellipse", viewModel => viewModel.AddEllipseCommand.Execute(null)),
+            ("<Line", viewModel => viewModel.AddLineCommand.Execute(null)),
+            ("<Polygon", viewModel => viewModel.AddPolygonCommand.Execute(null)),
+            ("<Polyline", viewModel => viewModel.AddPolylineCommand.Execute(null)),
+            ("<Rectangle", viewModel => viewModel.AddRectangleCommand.Execute(null)),
             ("<CheckBox />", viewModel => viewModel.AddCheckBoxCommand.Execute(null)),
             ("<ComboBox />", viewModel => viewModel.AddComboBoxCommand.Execute(null)),
             ("<NumericUpDown />", viewModel => viewModel.AddNumericUpDownCommand.Execute(null)),
@@ -2677,6 +2791,8 @@ public sealed class AxamlDesignerViewModelTests
             ("<ScrollViewer />", viewModel => viewModel.AddScrollViewerCommand.Execute(null)),
             ("<Separator />", viewModel => viewModel.AddSeparatorCommand.Execute(null)),
             ("<StackPanel />", viewModel => viewModel.AddStackPanelCommand.Execute(null)),
+            ("<TimePicker />", viewModel => viewModel.AddTimePickerCommand.Execute(null)),
+            ("<TreeView />", viewModel => viewModel.AddTreeViewCommand.Execute(null)),
             ("<WrapPanel />", viewModel => viewModel.AddWrapPanelCommand.Execute(null)),
             ("<Viewbox />", viewModel => viewModel.AddViewboxCommand.Execute(null)),
             ("<UniformGrid />", viewModel => viewModel.AddUniformGridCommand.Execute(null)),
@@ -2694,6 +2810,53 @@ public sealed class AxamlDesignerViewModelTests
             Assert.IsTrue(viewModel.CanUndo);
             Assert.IsFalse(string.IsNullOrWhiteSpace(viewModel.StatusText));
         }
+    }
+
+    [TestMethod]
+    public void DesignerViewModel_PaletteAddsStaticItemsToMatchingContainers()
+    {
+        (string Markup, string ItemType, Func<AxamlDesignerViewModel, bool> CanExecute, Action<AxamlDesignerViewModel> Execute)[] paletteActions =
+        [
+            ("<ComboBox />", "ComboBoxItem", viewModel => viewModel.AddComboBoxItemCommand.CanExecute(null), viewModel => viewModel.AddComboBoxItemCommand.Execute(null)),
+            ("<ListBox />", "ListBoxItem", viewModel => viewModel.AddListBoxItemCommand.CanExecute(null), viewModel => viewModel.AddListBoxItemCommand.Execute(null)),
+            ("<TreeView />", "TreeViewItem", viewModel => viewModel.AddTreeViewItemCommand.CanExecute(null), viewModel => viewModel.AddTreeViewItemCommand.Execute(null)),
+        ];
+
+        foreach ((string markup, string itemType, Func<AxamlDesignerViewModel, bool> canExecute, Action<AxamlDesignerViewModel> execute) in paletteActions)
+        {
+            AxamlDesignerViewModel viewModel = new();
+            string? publishedMarkup = null;
+            viewModel.MarkupChanged += (_, args) => publishedMarkup = args.Markup;
+            viewModel.LoadMarkup("<StackPanel />");
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            Assert.IsFalse(canExecute(viewModel), itemType);
+
+            viewModel.LoadMarkup(markup);
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            Assert.IsTrue(canExecute(viewModel), itemType);
+            Assert.AreEqual(itemType == "ComboBoxItem", viewModel.AddComboBoxItemCommand.CanExecute(null), itemType);
+            Assert.AreEqual(itemType == "ListBoxItem", viewModel.AddListBoxItemCommand.CanExecute(null), itemType);
+            Assert.AreEqual(itemType == "TreeViewItem", viewModel.AddTreeViewItemCommand.CanExecute(null), itemType);
+
+            execute(viewModel);
+
+            Assert.AreEqual(itemType, viewModel.PreviewRoot!.Children.Single().TypeName);
+            Assert.IsTrue(viewModel.PreviewRoot.IsSupported, itemType);
+            viewModel.UndoCommand.Execute(null);
+            Assert.AreEqual(markup, publishedMarkup, itemType);
+        }
+
+        AxamlDesignerViewModel unsupportedViewModel = new();
+        unsupportedViewModel.LoadMarkup("<ComboBox ItemsSource='{Binding Options}' />");
+        unsupportedViewModel.SelectedNode = unsupportedViewModel.PreviewRoot;
+        Assert.IsFalse(unsupportedViewModel.AddComboBoxItemCommand.CanExecute(null));
+
+        AxamlDesignerViewModel nestedTreeViewModel = new();
+        nestedTreeViewModel.LoadMarkup("<TreeView><TreeViewItem Header='Parent' /></TreeView>");
+        nestedTreeViewModel.SelectedNode = nestedTreeViewModel.PreviewRoot!.Children.Single();
+        Assert.IsTrue(nestedTreeViewModel.AddTreeViewItemCommand.CanExecute(null));
+        nestedTreeViewModel.AddTreeViewItemCommand.Execute(null);
+        Assert.AreEqual("TreeViewItem", nestedTreeViewModel.SelectedNode!.Children.Single().TypeName);
     }
 
     [TestMethod]

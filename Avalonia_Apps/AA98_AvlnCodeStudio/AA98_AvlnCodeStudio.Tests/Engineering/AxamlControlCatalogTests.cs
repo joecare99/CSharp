@@ -33,6 +33,11 @@ public sealed class AxamlControlCatalogTests
             Assert.AreEqual(AxamlPropertyEditorKind.Boolean, clipToBounds.EditorKind, capability.TypeName);
             Assert.AreEqual("False", clipToBounds.Value, capability.TypeName);
             Assert.IsNull(clipToBounds.ValidationError, capability.TypeName);
+            Assert.IsTrue(capability.EditableProperties.Contains("IsEnabled"), capability.TypeName);
+            AxamlPropertyDescriptor isEnabled = AxamlPropertyValueValidator.Describe(node, "IsEnabled");
+            Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isEnabled.EditorKind, capability.TypeName);
+            Assert.AreEqual("True", isEnabled.Value, capability.TypeName);
+            Assert.IsNull(isEnabled.ValidationError, capability.TypeName);
             Assert.IsTrue(capability.EditableProperties.Contains("IsVisible"), capability.TypeName);
             AxamlPropertyDescriptor isVisible = AxamlPropertyValueValidator.Describe(node, "IsVisible");
             Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isVisible.EditorKind, capability.TypeName);
@@ -76,7 +81,7 @@ public sealed class AxamlControlCatalogTests
         foreach (AxamlControlCapability capability in AxamlControlCatalog.All)
         {
             AxamlPreviewNode configured = service.Parse(
-                $"<{capability.TypeName} xmlns='https://github.com/avaloniaui' Width='120' Height='80' MinWidth='40' MaxWidth='160' MinHeight='30' MaxHeight='100' Margin='4,2' HorizontalAlignment='Right' VerticalAlignment='Center' ClipToBounds='True' IsVisible='False' />");
+                $"<{capability.TypeName} xmlns='https://github.com/avaloniaui' Width='120' Height='80' MinWidth='40' MaxWidth='160' MinHeight='30' MaxHeight='100' Margin='4,2' HorizontalAlignment='Right' VerticalAlignment='Center' ClipToBounds='True' IsEnabled='False' IsVisible='False' />");
             AxamlPropertyDescriptor margin = AxamlPropertyValueValidator.Describe(configured, "Margin");
             Assert.IsFalse(margin.IsReadOnly, capability.TypeName);
             Assert.AreEqual(AxamlPropertyEditorKind.Text, margin.EditorKind, capability.TypeName);
@@ -97,6 +102,12 @@ public sealed class AxamlControlCatalogTests
             Assert.AreEqual("True", clipToBounds.Value, capability.TypeName);
             Assert.IsNull(AxamlPropertyValueValidator.Validate(capability.TypeName, "ClipToBounds", "False"));
             Assert.IsNotNull(AxamlPropertyValueValidator.Validate(capability.TypeName, "ClipToBounds", "sometimes"));
+            AxamlPropertyDescriptor isEnabled = AxamlPropertyValueValidator.Describe(configured, "IsEnabled");
+            Assert.IsFalse(isEnabled.IsReadOnly, capability.TypeName);
+            Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isEnabled.EditorKind, capability.TypeName);
+            Assert.AreEqual("False", isEnabled.Value, capability.TypeName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(capability.TypeName, "IsEnabled", "True"));
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(capability.TypeName, "IsEnabled", "sometimes"));
             AxamlPropertyDescriptor isVisible = AxamlPropertyValueValidator.Describe(configured, "IsVisible");
             Assert.IsFalse(isVisible.IsReadOnly, capability.TypeName);
             Assert.AreEqual("False", isVisible.Value, capability.TypeName);
@@ -123,12 +134,13 @@ public sealed class AxamlControlCatalogTests
             }
 
             AxamlPreviewNode bound = service.Parse(
-                $"<{capability.TypeName} xmlns='https://github.com/avaloniaui' Width='{{Binding ControlWidth}}' Height='{{Binding ControlHeight}}' MinWidth='{{Binding MinimumWidth}}' MaxWidth='{{Binding MaximumWidth}}' MinHeight='{{Binding MinimumHeight}}' MaxHeight='{{Binding MaximumHeight}}' Margin='{{Binding OuterMargin}}' HorizontalAlignment='{{Binding HAlign}}' VerticalAlignment='{{Binding VAlign}}' ClipToBounds='{{Binding Clipping}}' IsVisible='{{Binding Visibility}}' />");
+                $"<{capability.TypeName} xmlns='https://github.com/avaloniaui' Width='{{Binding ControlWidth}}' Height='{{Binding ControlHeight}}' MinWidth='{{Binding MinimumWidth}}' MaxWidth='{{Binding MaximumWidth}}' MinHeight='{{Binding MinimumHeight}}' MaxHeight='{{Binding MaximumHeight}}' Margin='{{Binding OuterMargin}}' HorizontalAlignment='{{Binding HAlign}}' VerticalAlignment='{{Binding VAlign}}' ClipToBounds='{{Binding Clipping}}' IsEnabled='{{Binding Enabled}}' IsVisible='{{Binding Visibility}}' />");
             foreach (string property in new[]
             {
                 "Width", "Height", "MinWidth", "MaxWidth", "MinHeight", "MaxHeight",
                 "Margin", "HorizontalAlignment", "VerticalAlignment",
                 "ClipToBounds",
+                "IsEnabled",
                 "IsVisible",
             })
             {
@@ -200,13 +212,18 @@ public sealed class AxamlControlCatalogTests
     [TestMethod]
     public void Catalog_ExposesSafeAppearanceForTemplatedControls()
     {
-        string[] templatedControls = ["ContentControl", "Expander", "GroupBox", "Label", "ListBox", "TabItem"];
+        string[] templatedControls =
+        [
+            "ContentControl", "Expander", "GroupBox", "Label", "ListBox", "Menu", "MenuItem",
+            "TabControl", "TabItem", "TreeView", "TreeViewItem",
+        ];
         (string Property, string Value, string InvalidValue, AxamlPropertyEditorKind Editor, string DefaultValue)[] properties =
         [
             ("Background", "AliceBlue", "Gradient", AxamlPropertyEditorKind.Text, string.Empty),
             ("BorderBrush", "#FF000000", "Gradient", AxamlPropertyEditorKind.Text, string.Empty),
             ("BorderThickness", "1,2,3,4", "-1", AxamlPropertyEditorKind.Text, string.Empty),
             ("CornerRadius", "4,2,4,2", "-1", AxamlPropertyEditorKind.Text, string.Empty),
+            ("FontFamily", "DejaVu Sans", "Not/Allowed", AxamlPropertyEditorKind.Text, string.Empty),
             ("FontSize", "18", "-1", AxamlPropertyEditorKind.Number, string.Empty),
             ("FontStyle", "Italic", "Bold", AxamlPropertyEditorKind.Enum, string.Empty),
             ("FontWeight", "SemiBold", "Unknown", AxamlPropertyEditorKind.Enum, "Normal"),
@@ -231,11 +248,36 @@ public sealed class AxamlControlCatalogTests
             }
 
             AxamlPreviewNode bound = service.Parse(
-                $"<{typeName} xmlns='https://github.com/avaloniaui' Background='{{Binding Background}}' BorderBrush='{{Binding BorderBrush}}' BorderThickness='{{Binding BorderThickness}}' CornerRadius='{{Binding CornerRadius}}' FontSize='{{Binding FontSize}}' FontStyle='{{Binding FontStyle}}' FontWeight='{{Binding FontWeight}}' Foreground='{{Binding Foreground}}' Padding='{{Binding Padding}}' />");
+                $"<{typeName} xmlns='https://github.com/avaloniaui' Background='{{Binding Background}}' BorderBrush='{{Binding BorderBrush}}' BorderThickness='{{Binding BorderThickness}}' CornerRadius='{{Binding CornerRadius}}' FontFamily='{{Binding FontFamily}}' FontSize='{{Binding FontSize}}' FontStyle='{{Binding FontStyle}}' FontWeight='{{Binding FontWeight}}' Foreground='{{Binding Foreground}}' Padding='{{Binding Padding}}' />");
             foreach (var (property, _, _, _, _) in properties)
             {
                 Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, property).IsReadOnly, $"{typeName}.{property} binding");
             }
+        }
+    }
+
+    [TestMethod]
+    public void TemplatedItemContainers_ExposeSafeCornerRadius()
+    {
+        string[] controlTypes = ["Menu", "MenuItem", "TabControl", "TreeView", "TreeViewItem"];
+        AxamlPreviewService service = new();
+
+        foreach (string controlType in controlTypes)
+        {
+            AxamlControlCapability capability = AxamlControlCatalog.All.Single(item => item.TypeName == controlType);
+            AxamlPreviewNode unset = service.Parse($"<{controlType} />");
+            AxamlPropertyDescriptor defaultValue = AxamlPropertyValueValidator.Describe(unset, "CornerRadius");
+            Assert.IsTrue(capability.EditableProperties.Contains("CornerRadius"), controlType);
+            Assert.AreEqual(AxamlPropertyEditorKind.Text, defaultValue.EditorKind, controlType);
+            Assert.AreEqual(string.Empty, defaultValue.Value, controlType);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(controlType, "CornerRadius", "4,2,4,2"), controlType);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(controlType, "CornerRadius", "-1"), controlType);
+
+            AxamlPreviewNode configured = service.Parse($"<{controlType} CornerRadius='4,2,4,2' />");
+            Assert.AreEqual("4,2,4,2", AxamlPropertyValueValidator.Describe(configured, "CornerRadius").Value, controlType);
+
+            AxamlPreviewNode bound = service.Parse($"<{controlType} CornerRadius='{{Binding Radius}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "CornerRadius").IsReadOnly, controlType);
         }
     }
 
@@ -988,6 +1030,110 @@ public sealed class AxamlControlCatalogTests
                 $"<{controlType} xmlns='https://github.com/avaloniaui' FontFamily='{{Binding Family}}' />");
             Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "FontFamily").IsReadOnly, controlType);
         }
+    }
+
+    [TestMethod]
+    public void ShapeControls_ExposeSafeLiteralFillAndStroke()
+    {
+        AxamlPreviewService service = new();
+        foreach (string shapeType in new[] { "Ellipse", "Rectangle" })
+        {
+            AxamlControlCapability capability = AxamlControlCatalog.All.Single(
+                item => item.TypeName == shapeType);
+            AxamlPreviewNode shape = service.Parse(
+                $"<{shapeType} xmlns='https://github.com/avaloniaui' Fill='CornflowerBlue' Stroke='DarkBlue' StrokeThickness='2' />");
+
+            Assert.IsTrue(shape.IsSupported, shapeType);
+            Assert.IsTrue(capability.EditableProperties.Contains("Fill"), shapeType);
+            Assert.IsTrue(capability.EditableProperties.Contains("Stroke"), shapeType);
+            Assert.IsTrue(capability.EditableProperties.Contains("StrokeThickness"), shapeType);
+            Assert.AreEqual(AxamlPropertyEditorKind.Text, AxamlPropertyValueValidator.Describe(shape, "Fill").EditorKind);
+            Assert.AreEqual("CornflowerBlue", AxamlPropertyValueValidator.Describe(shape, "Fill").Value);
+            Assert.AreEqual("DarkBlue", AxamlPropertyValueValidator.Describe(shape, "Stroke").Value);
+            Assert.AreEqual(AxamlPropertyEditorKind.Number, AxamlPropertyValueValidator.Describe(shape, "StrokeThickness").EditorKind);
+            Assert.AreEqual("2", AxamlPropertyValueValidator.Describe(shape, "StrokeThickness").Value);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(shapeType, "Fill", "#FF123456"));
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(shapeType, "Stroke", "DarkBlue"));
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(shapeType, "StrokeThickness", "0"));
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(shapeType, "Fill", "Gradient"));
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(shapeType, "StrokeThickness", "-1"));
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(shapeType, "StrokeThickness", "NaN"));
+
+            AxamlPreviewNode bound = service.Parse(
+                $"<{shapeType} xmlns='https://github.com/avaloniaui' Fill='{{Binding Fill}}' Stroke='{{Binding Stroke}}' StrokeThickness='{{Binding Thickness}}' />");
+            foreach (string property in new[] { "Fill", "Stroke", "StrokeThickness" })
+            {
+                Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, property).IsReadOnly, $"{shapeType}.{property}");
+            }
+        }
+    }
+
+    [TestMethod]
+    public void Line_ExposesBoundedLiteralEndpointsAndStroke()
+    {
+        AxamlPreviewService service = new();
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(
+            static item => item.TypeName == "Line");
+        AxamlPreviewNode line = service.Parse(
+            "<Line xmlns='https://github.com/avaloniaui' StartPoint='-25.5,10' EndPoint='80,40' Stroke='DarkGreen' StrokeThickness='3' />");
+
+        Assert.IsTrue(line.IsSupported);
+        foreach (string property in new[] { "StartPoint", "EndPoint", "Stroke", "StrokeThickness" })
+        {
+            Assert.IsTrue(capability.EditableProperties.Contains(property), property);
+        }
+
+        Assert.AreEqual("-25.5,10", AxamlPropertyValueValidator.Describe(line, "StartPoint").Value);
+        Assert.AreEqual("80,40", AxamlPropertyValueValidator.Describe(line, "EndPoint").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Line", "StartPoint", "0,0"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Line", "EndPoint", "10000,-10000"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Line", "StartPoint", "NaN,0"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Line", "EndPoint", "10001,0"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Line", "EndPoint", "0"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Line", "EndPoint", string.Empty));
+
+        AxamlPreviewNode bound = service.Parse(
+            "<Line xmlns='https://github.com/avaloniaui' StartPoint='{Binding From}' EndPoint='{Binding To}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "StartPoint").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "EndPoint").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void PolylineAndPolygon_ExposeBoundedLiteralPointLists()
+    {
+        AxamlPreviewService service = new();
+        string oversized = string.Join(' ', Enumerable.Repeat("0,0", 129));
+        foreach (string shapeType in new[] { "Polyline", "Polygon" })
+        {
+            AxamlControlCapability capability = AxamlControlCatalog.All.Single(
+                item => item.TypeName == shapeType);
+            AxamlPreviewNode shape = service.Parse(
+                $"<{shapeType} xmlns='https://github.com/avaloniaui' Points='0,0 80,0 40,40' Stroke='DarkBlue' StrokeThickness='2' />");
+
+            Assert.IsTrue(shape.IsSupported, shapeType);
+            Assert.IsTrue(capability.EditableProperties.Contains("Points"), shapeType);
+            Assert.AreEqual(
+                "0,0 80,0 40,40",
+                AxamlPropertyValueValidator.Describe(shape, "Points").Value,
+                shapeType);
+            if (shapeType == "Polyline")
+            {
+                Assert.IsNull(AxamlPropertyValueValidator.Validate(shapeType, "Points", "0,0 80,40"), shapeType);
+            }
+
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(shapeType, "Points", "0,0 80,0 40,40"), shapeType);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(shapeType, "Points", "0,0"), shapeType);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(shapeType, "Points", "NaN,0 80,40"), shapeType);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(shapeType, "Points", "10001,0 80,40"), shapeType);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(shapeType, "Points", oversized), shapeType);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(shapeType, "Points", string.Empty), shapeType);
+
+            AxamlPreviewNode bound = service.Parse(
+                $"<{shapeType} xmlns='https://github.com/avaloniaui' Points='{{Binding Vertices}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "Points").IsReadOnly, shapeType);
+        }
+
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Polygon", "Points", "0,0 80,0"));
     }
 
     [TestMethod]

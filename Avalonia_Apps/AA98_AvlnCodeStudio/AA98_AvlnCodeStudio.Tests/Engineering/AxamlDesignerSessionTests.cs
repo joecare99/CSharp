@@ -577,6 +577,26 @@ public sealed class AxamlDesignerSessionTests
     }
 
     [TestMethod]
+    public void ShapeControls_CanBeAddedToPanelsWithUndoRedo()
+    {
+        foreach (string shapeType in new[] { "Ellipse", "Line", "Polygon", "Polyline", "Rectangle" })
+        {
+            AxamlDesignerSession session = new();
+            session.Load("<StackPanel />");
+            session.SelectNode(session.Root);
+
+            Assert.IsTrue(session.AddChildControl(shapeType), shapeType);
+            Assert.AreEqual(shapeType, session.Root!.Children.Single().TypeName);
+            string addedMarkup = session.Markup;
+            Assert.IsTrue(session.Undo(), shapeType);
+            Assert.AreEqual("<StackPanel />", session.Markup, shapeType);
+            Assert.IsTrue(session.Redo(), shapeType);
+            Assert.AreEqual(addedMarkup, session.Markup, shapeType);
+            Assert.AreEqual(shapeType, session.Root!.Children.Single().TypeName, shapeType);
+        }
+    }
+
+    [TestMethod]
     public void ItemsControlItems_CanBeAddedRemovedAndUndone()
     {
         AxamlDesignerSession session = new();
