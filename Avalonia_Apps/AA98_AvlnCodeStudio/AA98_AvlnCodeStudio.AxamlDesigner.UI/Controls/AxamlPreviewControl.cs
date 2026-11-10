@@ -180,19 +180,23 @@ public sealed class AxamlPreviewControl : ContentControl
             }, node),
             "ContentControl" => BuildContentControl(node),
             "DockPanel" => BuildDockPanel(node),
-            "Expander" => new Expander
+            "Expander" => ApplyTemplatedControlAppearance(new Expander
             {
                 Header = node.Text ?? "Expander",
                 IsExpanded = ParseBoolean(node, "IsExpanded") ?? true,
                 Content = BuildChildren(node),
-            },
+            }, node),
             "Grid" => BuildGrid(node),
-            "GroupBox" => new GroupBox
+            "GroupBox" => ApplyTemplatedControlAppearance(new GroupBox
             {
                 Header = node.Text ?? "Group",
                 Content = BuildChildren(node),
-            },
-            "Label" or "TextBlock" => BuildTextBlock(node),
+            }, node),
+            "Label" => ApplyTemplatedControlAppearance(new Label
+            {
+                Content = BuildTextBlock(node),
+            }, node),
+            "TextBlock" => BuildTextBlock(node),
             "ListBox" => new ListBox
             {
                 ItemsSource = node.Children.Select(static child => child.Text ?? child.TypeName).ToArray(),
@@ -232,6 +236,13 @@ public sealed class AxamlPreviewControl : ContentControl
                 Stretch = Enum.TryParse(GetProperty(node, "Stretch"), ignoreCase: true, out Stretch stretch)
                     ? stretch
                     : Stretch.Uniform,
+                StretchDirection = AxamlPropertyValueValidator.Validate(
+                    node.TypeName,
+                    "StretchDirection",
+                    GetProperty(node, "StretchDirection") ?? string.Empty) is null
+                    && Enum.TryParse(GetProperty(node, "StretchDirection"), ignoreCase: true, out StretchDirection stretchDirection)
+                        ? stretchDirection
+                        : StretchDirection.Both,
             },
             "WrapPanel" => BuildWrapPanel(node),
             "Window" or "UserControl" => BuildChildren(node),
@@ -248,7 +259,22 @@ public sealed class AxamlPreviewControl : ContentControl
         content.VerticalAlignment = ParseVerticalAlignment(node);
         if (node.IsSupported)
         {
+            if (HasValidLiteralValue(node, "FlowDirection")
+                && Enum.TryParse(GetProperty(node, "FlowDirection"), ignoreCase: true, out Avalonia.Media.FlowDirection flowDirection)
+                && Enum.IsDefined(flowDirection))
+            {
+                content.FlowDirection = flowDirection;
+            }
+
+            if (HasValidLiteralValue(node, "UseLayoutRounding")
+                && ParseBoolean(node, "UseLayoutRounding") is bool useLayoutRounding)
+            {
+                content.UseLayoutRounding = useLayoutRounding;
+            }
+
             content.Opacity = ParseDouble(node, "Opacity", 1);
+            content.ClipToBounds = ParseBoolean(node, "ClipToBounds") ?? false;
+            content.IsVisible = ParseBoolean(node, "IsVisible") ?? true;
         }
 
         if (ParseOptionalDouble(node, "Width") is double width)
@@ -440,6 +466,61 @@ public sealed class AxamlPreviewControl : ContentControl
     private static T ApplyTemplatedControlAppearance<T>(T control, AxamlPreviewNode node)
         where T : TemplatedControl
     {
+        HorizontalAlignment? horizontalContentAlignment = HasValidLiteralValue(node, "HorizontalContentAlignment")
+            ? ParseAlignment(node, "HorizontalContentAlignment")
+            : null;
+        VerticalAlignment? verticalContentAlignment = HasValidLiteralValue(node, "VerticalContentAlignment")
+            ? ParseVerticalAlignment(node, "VerticalContentAlignment")
+            : null;
+        if (control is ContentControl contentControl)
+        {
+            if (horizontalContentAlignment is { } horizontal)
+            {
+                contentControl.HorizontalContentAlignment = horizontal;
+            }
+
+            if (verticalContentAlignment is { } vertical)
+            {
+                contentControl.VerticalContentAlignment = vertical;
+            }
+        }
+        else if (control is ComboBox comboBox)
+        {
+            if (horizontalContentAlignment is { } horizontal)
+            {
+                comboBox.HorizontalContentAlignment = horizontal;
+            }
+
+            if (verticalContentAlignment is { } vertical)
+            {
+                comboBox.VerticalContentAlignment = vertical;
+            }
+        }
+        else if (control is NumericUpDown numericUpDown)
+        {
+            if (horizontalContentAlignment is { } horizontal)
+            {
+                numericUpDown.HorizontalContentAlignment = horizontal;
+            }
+
+            if (verticalContentAlignment is { } vertical)
+            {
+                numericUpDown.VerticalContentAlignment = vertical;
+            }
+        }
+        else if (control is TextBox textBox)
+        {
+            if (horizontalContentAlignment is { } horizontal)
+            {
+                textBox.HorizontalContentAlignment = horizontal;
+            }
+
+            if (verticalContentAlignment is { } vertical)
+            {
+                textBox.VerticalContentAlignment = vertical;
+            }
+        }
+
         if (ParseSimpleBrush(node, "Background") is { } background)
         {
             control.Background = background;
@@ -519,15 +600,20 @@ public sealed class AxamlPreviewControl : ContentControl
 
     private Control BuildContentControl(AxamlPreviewNode node)
     {
-        return new ContentControl
+        return ApplyTemplatedControlAppearance(new ContentControl
         {
             Content = BuildChildren(node),
-        };
+        }, node);
     }
 
     private Control BuildDockPanel(AxamlPreviewNode node)
     {
-        DockPanel panel = new();
+        DockPanel panel = new()
+        {
+            HorizontalSpacing = ParseOptionalSizeConstraint(node, "HorizontalSpacing") ?? 0,
+            LastChildFill = ParseBoolean(node, "LastChildFill") ?? true,
+            VerticalSpacing = ParseOptionalSizeConstraint(node, "VerticalSpacing") ?? 0,
+        };
         foreach (AxamlPreviewNode child in node.Children)
         {
             Control control = BuildControl(child);
@@ -544,7 +630,12 @@ public sealed class AxamlPreviewControl : ContentControl
 
     private Control BuildGrid(AxamlPreviewNode node)
     {
-        Grid grid = new();
+        Grid grid = new()
+        {
+            ColumnSpacing = ParseOptionalSizeConstraint(node, "ColumnSpacing") ?? 0,
+            RowSpacing = ParseOptionalSizeConstraint(node, "RowSpacing") ?? 0,
+            ShowGridLines = ParseBoolean(node, "ShowGridLines") ?? false,
+        };
         foreach (string row in node.RowDefinitions)
         {
             grid.RowDefinitions.Add(new RowDefinition(ParseGridLength(row)));
@@ -599,14 +690,18 @@ public sealed class AxamlPreviewControl : ContentControl
         TextBlock textBlock = new()
         {
             Text = node.Text ?? string.Empty,
-            FontSize = ParseDouble(node, "FontSize", 14),
-            FontStyle = ParseFontStyle(node),
-            FontWeight = ParseFontWeight(node),
-            LineHeight = ParseLineHeight(node),
-            MaxLines = ParseInt(node, "MaxLines"),
-            TextTrimming = ParseTextTrimming(node),
-            TextWrapping = ParseTextWrapping(node, TextWrapping.Wrap),
-            TextAlignment = ParseTextAlignment(node, TextAlignment.Left),
+            FontSize = HasValidLiteralValue(node, "FontSize") ? ParseDouble(node, "FontSize", 14) : 14,
+            FontStyle = HasValidLiteralValue(node, "FontStyle") ? ParseFontStyle(node) : FontStyle.Normal,
+            FontWeight = HasValidLiteralValue(node, "FontWeight") ? ParseFontWeight(node) : FontWeight.Normal,
+            LineHeight = HasValidLiteralValue(node, "LineHeight") ? ParseLineHeight(node) : double.NaN,
+            MaxLines = HasValidLiteralValue(node, "MaxLines") ? ParseInt(node, "MaxLines") : 0,
+            TextTrimming = HasValidLiteralValue(node, "TextTrimming") ? ParseTextTrimming(node) : TextTrimming.None,
+            TextWrapping = HasValidLiteralValue(node, "TextWrapping")
+                ? ParseTextWrapping(node, TextWrapping.Wrap)
+                : TextWrapping.Wrap,
+            TextAlignment = HasValidLiteralValue(node, "TextAlignment")
+                ? ParseTextAlignment(node, TextAlignment.Left)
+                : TextAlignment.Left,
             HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
             VerticalAlignment = ParseVerticalAlignment(node),
         };
@@ -634,9 +729,30 @@ public sealed class AxamlPreviewControl : ContentControl
             HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
             TextAlignment = ParseTextAlignment(node, TextAlignment.Left),
             TextWrapping = ParseTextWrapping(node, TextWrapping.NoWrap),
+            UseFloatingPlaceholder = ParseBoolean(node, "UseFloatingPlaceholder") ?? false,
             VerticalAlignment = ParseVerticalAlignment(node),
             IsReadOnly = true,
         };
+        if (HasValidLiteralValue(node, "MaxLines") && TryGetInt(node, "MaxLines", out int maxLines))
+        {
+            textBox.MaxLines = maxLines;
+        }
+
+        if (HasValidLiteralValue(node, "MinLines") && TryGetInt(node, "MinLines", out int minLines))
+        {
+            textBox.MinLines = minLines;
+        }
+
+        if (HasValidLiteralValue(node, "LineHeight"))
+        {
+            textBox.LineHeight = ParseDouble(node, "LineHeight", 0);
+        }
+
+        if (ParseSimpleBrush(node, "PlaceholderForeground") is { } placeholderForeground)
+        {
+            textBox.PlaceholderForeground = placeholderForeground;
+        }
+
         return ApplyTemplatedControlAppearance(textBox, node);
     }
 
@@ -645,7 +761,19 @@ public sealed class AxamlPreviewControl : ContentControl
         return new ScrollViewer
         {
             Content = BuildChildren(node),
+            HorizontalScrollBarVisibility = ParseScrollBarVisibility(node, "HorizontalScrollBarVisibility"),
+            VerticalScrollBarVisibility = ParseScrollBarVisibility(node, "VerticalScrollBarVisibility"),
         };
+    }
+
+    private static ScrollBarVisibility ParseScrollBarVisibility(AxamlPreviewNode node, string propertyName)
+    {
+        string? value = GetProperty(node, propertyName);
+        return value is not null
+            && AxamlPropertyValueValidator.Validate(node.TypeName, propertyName, value) is null
+            && Enum.TryParse(value, ignoreCase: true, out ScrollBarVisibility visibility)
+                ? visibility
+                : ScrollBarVisibility.Auto;
     }
 
     private Control BuildStackPanel(AxamlPreviewNode node)
@@ -655,7 +783,7 @@ public sealed class AxamlPreviewControl : ContentControl
             Orientation = Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation orientation)
                 ? orientation
                 : Orientation.Vertical,
-            Spacing = ParseDouble(node, "Spacing", 0),
+            Spacing = ParseOptionalSizeConstraint(node, "Spacing") ?? 0,
         };
         foreach (AxamlPreviewNode child in node.Children)
         {
@@ -672,6 +800,14 @@ public sealed class AxamlPreviewControl : ContentControl
             Orientation = Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation orientation)
                 ? orientation
                 : Orientation.Horizontal,
+            ItemHeight = ParseOptionalSizeConstraint(node, "ItemHeight") ?? double.NaN,
+            ItemSpacing = ParseOptionalSizeConstraint(node, "ItemSpacing") ?? 0,
+            ItemWidth = ParseOptionalSizeConstraint(node, "ItemWidth") ?? double.NaN,
+            ItemsAlignment = Enum.TryParse(GetProperty(node, "ItemsAlignment"), ignoreCase: true, out WrapPanelItemsAlignment itemsAlignment)
+                && Enum.IsDefined(itemsAlignment)
+                    ? itemsAlignment
+                    : WrapPanelItemsAlignment.Start,
+            LineSpacing = ParseOptionalSizeConstraint(node, "LineSpacing") ?? 0,
         };
         foreach (AxamlPreviewNode child in node.Children)
         {
@@ -685,9 +821,11 @@ public sealed class AxamlPreviewControl : ContentControl
     {
         UniformGrid grid = new()
         {
+            ColumnSpacing = ParseOptionalSizeConstraint(node, "ColumnSpacing") ?? 0,
             Rows = ParseInt(node, "Rows"),
             Columns = ParseInt(node, "Columns"),
             FirstColumn = ParseInt(node, "FirstColumn"),
+            RowSpacing = ParseOptionalSizeConstraint(node, "RowSpacing") ?? 0,
         };
         foreach (AxamlPreviewNode child in node.Children)
         {
@@ -789,9 +927,9 @@ public sealed class AxamlPreviewControl : ContentControl
             : HorizontalAlignment.Stretch;
     }
 
-    private static VerticalAlignment ParseVerticalAlignment(AxamlPreviewNode node)
+    private static VerticalAlignment ParseVerticalAlignment(AxamlPreviewNode node, string propertyName = "VerticalAlignment")
     {
-        return Enum.TryParse(GetProperty(node, "VerticalAlignment"), ignoreCase: true, out VerticalAlignment alignment)
+        return Enum.TryParse(GetProperty(node, propertyName), ignoreCase: true, out VerticalAlignment alignment)
             && Enum.IsDefined(alignment)
             ? alignment
             : VerticalAlignment.Stretch;
