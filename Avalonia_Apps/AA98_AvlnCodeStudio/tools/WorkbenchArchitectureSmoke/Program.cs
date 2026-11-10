@@ -97,11 +97,12 @@ internal static class Program
                 + "<Menu Width=\"122\"><MenuItem Header=\"Invalid\" InputGesture=\"NotAKey\" /></Menu>"
                 + "<Button Content=\"Context trigger\" Width=\"123\"><Button.ContextMenu><ContextMenu><MenuItem Header=\"Copy\" InputGesture=\"Ctrl+C\" /><Separator /></ContextMenu></Button.ContextMenu></Button>"
                 + "<TextBox Text=\"Context target\" Width=\"124\"><TextBox.ContextMenu><ContextMenu><MenuItem Header=\"Paste\" /></ContextMenu></TextBox.ContextMenu></TextBox>"
-                + "<Button Content=\"Tooltip target\" Width=\"125\"><Button.ToolTip><ToolTip><StackPanel Spacing=\"4\"><TextBlock Text=\"Helpful text\" /><TextBlock Text=\"More information\" /></StackPanel></ToolTip></Button.ToolTip></Button>"
+                + "<Button Content=\"Tooltip target\" Width=\"125\"><Button.ToolTip><ToolTip><Border Padding=\"4\" BorderBrush=\"Blue\" CornerRadius=\"2\"><StackPanel Spacing=\"4\"><TextBlock Text=\"Helpful text\" /><TextBlock Text=\"More information\" /></StackPanel></Border></ToolTip></Button.ToolTip></Button>"
+                + "<TreeView Width=\"126\"><TreeViewItem Header=\"Project\" IsExpanded=\"True\"><TreeViewItem Header=\"src\"><TreeViewItem Header=\"Main.cs\" /></TreeViewItem></TreeViewItem></TreeView>"
                 + "<TimePicker SelectedTime=\"13:45:30\" UseSeconds=\"True\" ClockIdentifier=\"12HourClock\" MinuteIncrement=\"5\" SecondIncrement=\"10\" Width=\"105\" />"
                 + "<TimePicker SelectedTime=\"25:99\" UseSeconds=\"sometimes\" ClockIdentifier=\"Invalid\" MinuteIncrement=\"0\" SecondIncrement=\"60\" Width=\"106\" />"
                 + "<TimePicker SelectedTime=\"{Binding StartTime}\" UseSeconds=\"{Binding ShowSeconds}\" ClockIdentifier=\"{Binding Clock}\" MinuteIncrement=\"{Binding Minute}\" SecondIncrement=\"{Binding Second}\" Width=\"107\" />"
-                + "<NumericUpDown Value=\"12.5\" FormatString=\"N2\" Increment=\"0.25\" Minimum=\"0.5\" Maximum=\"40\" AllowSpin=\"False\" ShowButtonSpinner=\"False\" ClipValueToMinMax=\"True\" ButtonSpinnerLocation=\"Left\" TextAlignment=\"Center\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" ParsingNumberStyle=\"Integer\" Margin=\"3,4\" HorizontalAlignment=\"Right\" VerticalAlignment=\"Center\" Width=\"120\" Height=\"60\" MinWidth=\"40\" MaxWidth=\"160\" MinHeight=\"30\" MaxHeight=\"90\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"Bold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
+                + "<NumericUpDown Value=\"12.5\" FormatString=\"N2\" Increment=\"0.25\" Minimum=\"0.5\" Maximum=\"40\" AllowSpin=\"False\" ShowButtonSpinner=\"False\" ClipValueToMinMax=\"True\" ButtonSpinnerLocation=\"Left\" TextAlignment=\"Center\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" ParsingNumberStyle=\"Integer\" Margin=\"3,4\" HorizontalAlignment=\"Right\" VerticalAlignment=\"Center\" Width=\"120\" Height=\"60\" MinWidth=\"40\" MaxWidth=\"160\" MinHeight=\"30\" MaxHeight=\"90\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3\" FontFamily=\"DejaVu Sans\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"Bold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
                 + "<NumericUpDown Value=\"0\" />"
                 + "<NumericUpDown Value=\"1\" FormatString=\"Q\" ParsingNumberStyle=\"AllowHexSpecifier\" HorizontalAlignment=\"999\" VerticalAlignment=\"999\" HorizontalContentAlignment=\"999\" VerticalContentAlignment=\"999\" />"
                 + "<DockPanel HorizontalSpacing=\"4\" VerticalSpacing=\"6\" LastChildFill=\"False\"><TextBlock Text=\"Docked preview\" /><Button Content=\"Docked button\" DockPanel.Dock=\"Bottom\" /></DockPanel>"
@@ -143,7 +144,8 @@ internal static class Program
                 + "<ListBox Background=\"LightYellow\" SelectedIndex=\"-2\"><ListBoxItem>Invalid selection</ListBoxItem></ListBox>"
                 + "<ListBox Background=\"LightCyan\" SelectedIndex=\"5\"><ListBoxItem Content=\"Out of range\" /></ListBox>"
                 + "<ListBox Background=\"LightPink\" SelectedIndex=\"{Binding SelectedIndex}\"><TextBlock Text=\"Bound selection\" /></ListBox>"
-                + "<Label Content=\"Label alignment\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"Blue\" Background=\"#FFF0F0F0\" BorderBrush=\"Red\" BorderThickness=\"2\" CornerRadius=\"7\" Padding=\"8\" LineHeight=\"22\" MaxLines=\"2\" TextAlignment=\"Right\" TextTrimming=\"WordEllipsis\" TextWrapping=\"NoWrap\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" />"
+                + "<ItemsControl Width=\"127\"><TextBlock Text=\"First static item\" /><Label Content=\"Second static item\" /></ItemsControl>"
+                + "<Label Content=\"Label alignment\" FontFamily=\"DejaVu Sans\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"Blue\" Background=\"#FFF0F0F0\" BorderBrush=\"Red\" BorderThickness=\"2\" CornerRadius=\"7\" Padding=\"8\" LineHeight=\"22\" MaxLines=\"2\" TextAlignment=\"Right\" TextTrimming=\"WordEllipsis\" TextWrapping=\"NoWrap\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" />"
                 + "<Label Content=\"Invalid label layout\" LineHeight=\"0\" MaxLines=\"-1\" />"
                 + "<Label Content=\"Bound label layout\" LineHeight=\"{Binding LineHeight}\" MaxLines=\"{Binding MaxLines}\" />"
                 + "</StackPanel>");
@@ -554,6 +556,8 @@ internal static class Program
             && root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>().Any()
             && root.GetVisualDescendants().OfType<AutoCompleteBox>().Any()
             && root.GetVisualDescendants().OfType<ColorPicker>().Any()
+            && root.GetVisualDescendants().OfType<ItemsControl>().Any(
+                static candidate => candidate.GetType() == typeof(ItemsControl) && candidate.Width == 127)
             && root.GetVisualDescendants().OfType<TabControl>().Any()
             && root.GetVisualDescendants().OfType<TimePicker>().Any()
             && root.GetVisualDescendants().OfType<NumericUpDown>().Any()
@@ -636,6 +640,11 @@ internal static class Program
             .Single(candidate => candidate.Content is "Tooltip target");
         Border toolTipPreview = root.GetVisualDescendants().OfType<Border>()
             .Single(candidate => candidate.Tag is AxamlPreviewNode { TypeName: "ToolTip" });
+        TreeView staticTree = root.GetVisualDescendants().OfType<TreeView>()
+            .Single(candidate => candidate.Width == 126);
+        TreeViewItem projectTreeItem = staticTree.Items.OfType<TreeViewItem>().Single();
+        TreeViewItem sourceTreeItem = projectTreeItem.Items.OfType<TreeViewItem>().Single();
+        TreeViewItem sourceFileTreeItem = sourceTreeItem.Items.OfType<TreeViewItem>().Single();
         TimePicker selectedTimePicker = root.GetVisualDescendants().OfType<TimePicker>()
             .Single(candidate => candidate.Width == 105);
         TimePicker invalidTimePicker = root.GetVisualDescendants().OfType<TimePicker>()
@@ -721,6 +730,8 @@ internal static class Program
             .Single(listBox => listBox.Background is ISolidColorBrush brush && brush.Color == Colors.LightCyan);
         ListBox boundSelectionListBox = root.GetVisualDescendants().OfType<ListBox>()
             .Single(listBox => listBox.Background is ISolidColorBrush brush && brush.Color == Colors.LightPink);
+        ItemsControl staticItemsControl = root.GetVisualDescendants().OfType<ItemsControl>()
+            .Single(candidate => candidate.GetType() == typeof(ItemsControl) && candidate.Width == 127);
         Label alignedLabel = root.GetVisualDescendants().OfType<Label>()
             .Single(label => label.Content is TextBlock labelText && labelText.Text == "Label alignment");
         Label invalidLabelLayout = root.GetVisualDescendants().OfType<Label>()
@@ -936,10 +947,18 @@ internal static class Program
             && toolTipPreview.GetVisualDescendants().OfType<TextBlock>()
                 .Any(static text => text.Text == "More information"),
             "The ToolTip was not rendered as an explicitly closed, inert inline preview.");
+        Check(!staticTree.IsEnabled
+            && projectTreeItem.Header is "Project"
+            && projectTreeItem.IsExpanded
+            && !projectTreeItem.IsEnabled
+            && sourceTreeItem.Header is "src"
+            && sourceFileTreeItem.Header is "Main.cs",
+            "The static TreeView hierarchy was not rendered with safe, non-interactive nodes.");
         Check(numericUpDown.Value == 12.5m && numericUpDown.FormatString == "N2"
             && !numericUpDown.AllowSpin && !numericUpDown.ShowButtonSpinner && numericUpDown.ClipValueToMinMax
             && numericUpDown.ButtonSpinnerLocation == Location.Left
             && numericUpDown.TextAlignment == TextAlignment.Center
+            && numericUpDown.FontFamily.ToString() == "DejaVu Sans"
             && numericUpDown.HorizontalContentAlignment == HorizontalAlignment.Center
             && numericUpDown.VerticalContentAlignment == VerticalAlignment.Top
             && numericUpDown.ParsingNumberStyle == System.Globalization.NumberStyles.Integer
@@ -1247,6 +1266,8 @@ internal static class Program
             && alignedLabel.CornerRadius == new CornerRadius(7)
             && alignedLabel.Padding == new Thickness(8)
             && alignedLabel.Content is TextBlock labelText
+            && alignedLabel.FontFamily.ToString() == "DejaVu Sans"
+            && labelText.FontFamily.ToString() == "DejaVu Sans"
             && labelText.LineHeight == 22
             && labelText.MaxLines == 2
             && labelText.TextAlignment == TextAlignment.Right
@@ -1258,7 +1279,11 @@ internal static class Program
             && boundLabelLayout.Content is TextBlock boundLabelText
             && double.IsNaN(boundLabelText.LineHeight)
             && boundLabelText.MaxLines == 0,
-            $"The Label content-alignment or typography preview did not preserve its values: alignment={alignedLabel.HorizontalContentAlignment}/{alignedLabel.VerticalContentAlignment}, font={alignedLabel.FontSize}/{alignedLabel.FontStyle}/{alignedLabel.FontWeight}, foreground={alignedLabel.Foreground}.");
+            $"The Label content-alignment or typography preview did not preserve its values: alignment={alignedLabel.HorizontalContentAlignment}/{alignedLabel.VerticalContentAlignment}, font={alignedLabel.FontFamily}/{alignedLabel.FontSize}/{alignedLabel.FontStyle}/{alignedLabel.FontWeight}, foreground={alignedLabel.Foreground}.");
+        Check(staticItemsControl.ItemsSource is IEnumerable<string> staticItems
+            && staticItems.SequenceEqual(["First static item", "Second static item"])
+            && !staticItemsControl.IsEnabled,
+            "The ItemsControl preview did not preserve its static text items while remaining inert.");
         Check(toggleSwitch.Content?.ToString() == "Notifications"
             && toggleSwitch.IsChecked == true
             && toggleSwitch.IsThreeState
