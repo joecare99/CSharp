@@ -58,15 +58,16 @@ internal static class Program
                   <StackPanel>
                     <AutoCompleteBox x:Name="CityAutoCompleteBox" Text="Paris" />
                     <TextBox x:Name="UserNameTextBox" Text="Ada" />
+                    <CheckBox x:Name="RememberMeCheckBox" IsChecked="True" CommandParameter="remember-me" />
                     <ColorPicker x:Name="ThemeColorPicker" Color="#FF123456" />
                     <TabControl x:Name="SettingsTabControl" SelectedIndex="1">
                       <TabItem Header="General" />
                       <TabItem Header="Advanced" />
                     </TabControl>
                     <Menu>
-                      <MenuItem x:Name="SaveMenuItem" Header="Save" />
+                      <MenuItem x:Name="SaveMenuItem" Header="Save" CommandParameter="menu-save" />
                     </Menu>
-                    <Button x:Name="SubmitButton" Content="Submit" />
+                    <Button x:Name="SubmitButton" Content="Submit" CommandParameter="document-submit" />
                   </StackPanel>
                 </Window>
                 """);
@@ -111,15 +112,16 @@ internal static class Program
                   <StackPanel>
                     <AutoCompleteBox x:Name="CityAutoCompleteBox" Text="Paris" />
                     <TextBox x:Name="UserNameTextBox" Text="Ada" />
+                    <CheckBox x:Name="RememberMeCheckBox" IsChecked="True" CommandParameter="remember-me" />
                     <ColorPicker x:Name="ThemeColorPicker" Color="#FF123456" />
                     <TabControl x:Name="SettingsTabControl" SelectedIndex="1">
                       <TabItem Header="General" />
                       <TabItem Header="Advanced" />
                     </TabControl>
                     <Menu>
-                      <MenuItem x:Name="SaveMenuItem" Header="Save" />
+                      <MenuItem x:Name="SaveMenuItem" Header="Save" CommandParameter="menu-save" />
                     </Menu>
-                    <Button x:Name="SubmitButton" Content="Submit" />
+                    <Button x:Name="SubmitButton" Content="Submit" CommandParameter="document-submit" />
                   </StackPanel>
                 </Window>
                 """;
@@ -131,8 +133,16 @@ internal static class Program
                 "The approved proposal did not bind the AutoCompleteBox.");
             Check(generatedMarkup.Contains("Command=\"{Binding SubmitCommand}\"", StringComparison.Ordinal),
                 "The approved proposal did not bind the Button command.");
+            Check(generatedMarkup.Contains("CommandParameter=\"document-submit\"", StringComparison.Ordinal),
+                "The approved proposal did not preserve the Button command parameter.");
+            Check(generatedMarkup.Contains("Command=\"{Binding RememberMeCheckBoxCommand}\"", StringComparison.Ordinal),
+                "The approved proposal did not bind the CheckBox command.");
+            Check(generatedMarkup.Contains("CommandParameter=\"remember-me\"", StringComparison.Ordinal),
+                "The approved proposal did not preserve the CheckBox command parameter.");
             Check(generatedMarkup.Contains("Command=\"{Binding SaveCommand}\"", StringComparison.Ordinal),
                 "The approved proposal did not bind the MenuItem command.");
+            Check(generatedMarkup.Contains("CommandParameter=\"menu-save\"", StringComparison.Ordinal),
+                "The approved proposal did not preserve the MenuItem command parameter.");
             Check(generatedMarkup.Contains("Color=\"{Binding Theme, Mode=TwoWay}\"", StringComparison.Ordinal),
                 "The approved proposal did not bind the ColorPicker.");
             Check(generatedMarkup.Contains("SelectedIndex=\"{Binding Settings, Mode=TwoWay}\"", StringComparison.Ordinal),
@@ -147,8 +157,12 @@ internal static class Program
                 "The generated ViewModel did not preserve the ColorPicker's initial color.");
             Check(generatedViewModel.Contains("private int _settings = 1;", StringComparison.Ordinal),
                     "The generated ViewModel did not preserve the selected tab index.");
-            Check(generatedViewModel.Contains("private void Save()", StringComparison.Ordinal),
-                "The generated ViewModel did not include the MenuItem command.");
+            Check(generatedViewModel.Contains("private void Save(string? commandParameter)", StringComparison.Ordinal),
+                "The generated ViewModel did not include the parameterized MenuItem command.");
+            Check(generatedViewModel.Contains("private void Submit(string? commandParameter)", StringComparison.Ordinal),
+                "The generated ViewModel did not include the parameterized Button command.");
+            Check(generatedViewModel.Contains("private void RememberMeCheckBox(string? commandParameter)", StringComparison.Ordinal),
+                "The generated ViewModel did not include the parameterized CheckBox command.");
             Check(!workbench.WorkspaceFileChangeService.CanRedo, "The applied proposal unexpectedly has redo history.");
 
             Check(workbench.WorkspaceFileChangeService.Undo(), "The generated files could not be undone.");
