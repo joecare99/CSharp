@@ -3,6 +3,7 @@ using AA98_AvlnCodeStudio.Base.Testing.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
@@ -66,6 +67,14 @@ public sealed class DotNetTestExecutionServiceTests
             Assert.AreEqual(1, allResults.FailedCount);
             Assert.AreEqual(1, allResults.SkippedCount);
             Assert.AreEqual(TestRunOutcome.Partial, allResults.Outcome);
+            TestRunFailure failure = allResults.Failures.Single();
+            Assert.AreEqual("FailingTest", failure.TestName);
+            StringAssert.Contains(failure.Message, "Expected test failure.");
+            Assert.AreEqual(Path.GetFullPath(Path.Combine(root, "RunnerTests.cs")), failure.SourcePath);
+            int expectedLine = Array.FindIndex(
+                File.ReadAllLines(Path.Combine(root, "RunnerTests.cs")),
+                static line => line.Contains("Assert.Fail(\"Expected test failure.\")", StringComparison.Ordinal)) + 1;
+            Assert.AreEqual(expectedLine, failure.LineNumber);
 
             TestRunSummary filteredResults = await service.RunTestsAsync(new TestRunRequest
             {

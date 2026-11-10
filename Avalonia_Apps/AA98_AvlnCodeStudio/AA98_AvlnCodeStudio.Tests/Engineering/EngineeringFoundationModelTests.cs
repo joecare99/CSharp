@@ -138,6 +138,7 @@ public class EngineeringFoundationModelTests
         Assert.AreEqual(0, summary.PassedCount);
         Assert.AreEqual(0, summary.FailedCount);
         Assert.AreEqual(0, summary.SkippedCount);
+        Assert.AreEqual(0, summary.Failures.Count);
     }
 
     /// <summary>

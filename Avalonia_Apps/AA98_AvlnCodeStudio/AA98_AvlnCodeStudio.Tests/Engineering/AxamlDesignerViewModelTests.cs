@@ -667,6 +667,39 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task CommandParameter_IsEditableAndUndoableForButtonAndMenuItem()
+    {
+        (string Markup, string InitialValue)[] cases =
+        [
+            ("<Button xmlns='https://github.com/avaloniaui' Command='{Binding SaveCommand}' CommandParameter='DocumentId' />", "DocumentId"),
+            ("<CheckBox xmlns='https://github.com/avaloniaui' Command='{Binding SaveCommand}' CommandParameter='RememberMe' />", "RememberMe"),
+            ("<Menu xmlns='https://github.com/avaloniaui'><MenuItem Command='{Binding OpenCommand}' CommandParameter='ProjectPath' /></Menu>", "ProjectPath"),
+            ("<RadioButton xmlns='https://github.com/avaloniaui' Command='{Binding SelectCommand}' CommandParameter='Personal' />", "Personal"),
+            ("<ToggleSwitch xmlns='https://github.com/avaloniaui' Command='{Binding ToggleCommand}' CommandParameter='Notifications' />", "Notifications"),
+        ];
+
+        foreach ((string markup, string initialValue) in cases)
+        {
+            AxamlDesignerViewModel viewModel = new();
+            viewModel.LoadMarkup(markup);
+            viewModel.SelectedNode = viewModel.PreviewRoot!.TypeName == "Menu"
+                ? viewModel.PreviewRoot.Children.Single()
+                : viewModel.PreviewRoot;
+            AxamlPropertyRowViewModel commandParameter = viewModel.PropertyRows.Single(
+                static row => row.Name == "CommandParameter");
+
+            Assert.IsTrue(commandParameter.TrySetValue("UpdatedValue"));
+            await viewModel.PropertyProvider.ApplyAsync();
+            Assert.AreEqual("UpdatedValue", viewModel.SelectedNode!.Properties["CommandParameter"]);
+            viewModel.UndoCommand.Execute(null);
+            Assert.AreEqual(initialValue,
+                AxamlPropertyValueValidator.Describe(viewModel.SelectedNode, "CommandParameter").Value);
+            viewModel.RedoCommand.Execute(null);
+            Assert.AreEqual("UpdatedValue", viewModel.SelectedNode.Properties["CommandParameter"]);
+        }
+    }
+
+    [TestMethod]
     public async Task ButtonAppearance_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -1038,6 +1071,51 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task CalendarDatePickerSelectedDate_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<CalendarDatePicker xmlns='https://github.com/avaloniaui' SelectedDate='2024-02-28' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var selectedDate = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "SelectedDate");
+
+        Assert.IsTrue(selectedDate.TrySetValue("2024-02-29"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("2024-02-29", viewModel.PreviewRoot!.Properties["SelectedDate"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("2024-02-28", viewModel.PreviewRoot.Properties["SelectedDate"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("2024-02-29", viewModel.PreviewRoot.Properties["SelectedDate"]);
+    }
+
+    [TestMethod]
+    public async Task CalendarDatePickerPlaceholderSettings_AreEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<CalendarDatePicker xmlns='https://github.com/avaloniaui' PlaceholderText='Choose a day' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var floatingPlaceholder = viewModel.PropertyProvider.Properties.Single(
+            static property => property.Name == "UseFloatingPlaceholder");
+        var placeholderForeground = viewModel.PropertyProvider.Properties.Single(
+            static property => property.Name == "PlaceholderForeground");
+
+        Assert.IsTrue(floatingPlaceholder.TrySetValue("True"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(placeholderForeground.TrySetValue("DarkGray"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("True", viewModel.PreviewRoot!.Properties["UseFloatingPlaceholder"]);
+        Assert.AreEqual("DarkGray", viewModel.PreviewRoot.Properties["PlaceholderForeground"]);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("PlaceholderForeground"));
+        viewModel.UndoCommand.Execute(null);
+        Assert.IsFalse(viewModel.PreviewRoot.Properties.ContainsKey("UseFloatingPlaceholder"));
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("True", viewModel.PreviewRoot!.Properties["UseFloatingPlaceholder"]);
+        Assert.AreEqual("DarkGray", viewModel.PreviewRoot.Properties["PlaceholderForeground"]);
+    }
+
+    [TestMethod]
     public async Task DatePickerVisibility_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -1120,6 +1198,60 @@ public sealed class AxamlDesignerViewModelTests
         Assert.AreEqual("2024-02-28", viewModel.PreviewRoot.Properties["SelectedDate"]);
         viewModel.RedoCommand.Execute(null);
         Assert.AreEqual("2024-02-29", viewModel.PreviewRoot.Properties["SelectedDate"]);
+    }
+
+    [TestMethod]
+    public async Task CalendarSelectionMode_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Calendar xmlns='https://github.com/avaloniaui' SelectionMode='SingleDate' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var selectionMode = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "SelectionMode");
+
+        Assert.IsTrue(selectionMode.TrySetValue("MultipleRange"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("MultipleRange", viewModel.PreviewRoot!.Properties["SelectionMode"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("SingleDate", viewModel.PreviewRoot.Properties["SelectionMode"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("MultipleRange", viewModel.PreviewRoot.Properties["SelectionMode"]);
+    }
+
+    [TestMethod]
+    public async Task CalendarDisplayMode_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Calendar xmlns='https://github.com/avaloniaui' DisplayMode='Month' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var displayMode = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "DisplayMode");
+
+        Assert.IsTrue(displayMode.TrySetValue("Year"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("Year", viewModel.PreviewRoot!.Properties["DisplayMode"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Month", viewModel.PreviewRoot.Properties["DisplayMode"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("Year", viewModel.PreviewRoot.Properties["DisplayMode"]);
+    }
+
+    [TestMethod]
+    public async Task SelectorDropdownState_IsEditableAndUndoable()
+    {
+        foreach (string typeName in new[] { "AutoCompleteBox", "ComboBox", "CalendarDatePicker" })
+        {
+            AxamlDesignerViewModel viewModel = new();
+            viewModel.LoadMarkup($"<{typeName} xmlns='https://github.com/avaloniaui' IsDropDownOpen='False' />");
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            var dropdown = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "IsDropDownOpen");
+
+            Assert.IsTrue(dropdown.TrySetValue("True"), typeName);
+            await viewModel.PropertyProvider.ApplyAsync();
+            Assert.AreEqual("True", viewModel.PreviewRoot!.Properties["IsDropDownOpen"], typeName);
+            viewModel.UndoCommand.Execute(null);
+            Assert.AreEqual("False", viewModel.PreviewRoot.Properties["IsDropDownOpen"], typeName);
+            viewModel.RedoCommand.Execute(null);
+            Assert.AreEqual("True", viewModel.PreviewRoot.Properties["IsDropDownOpen"], typeName);
+        }
     }
 
     [TestMethod]
@@ -1208,6 +1340,85 @@ public sealed class AxamlDesignerViewModelTests
         Assert.AreEqual("File", viewModel.SelectedNode.Properties["Header"]);
         viewModel.RedoCommand.Execute(null);
         Assert.AreEqual("Project", viewModel.SelectedNode.Properties["Header"]);
+    }
+
+    [TestMethod]
+    public async Task MenuItemIcon_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<Menu xmlns='https://github.com/avaloniaui'><MenuItem Header='File' Icon='F' /></Menu>");
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children.Single();
+        AxamlPropertyRowViewModel icon = viewModel.PropertyRows.Single(static row => row.Name == "Icon");
+
+        Assert.IsTrue(icon.TrySetValue("P"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("P", viewModel.SelectedNode!.Properties["Icon"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("F", viewModel.SelectedNode.Properties["Icon"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("P", viewModel.SelectedNode.Properties["Icon"]);
+    }
+
+    [TestMethod]
+    public async Task MenuItemCheckState_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<Menu xmlns='https://github.com/avaloniaui'><MenuItem Header='File' ToggleType='None' HotKey='Ctrl+K' IsChecked='False' IsSubMenuOpen='False' StaysOpenOnClick='False' /></Menu>");
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children.Single();
+        AxamlPropertyRowViewModel toggleType = viewModel.PropertyRows.Single(static row => row.Name == "ToggleType");
+        AxamlPropertyRowViewModel hotKey = viewModel.PropertyRows.Single(static row => row.Name == "HotKey");
+        AxamlPropertyRowViewModel groupName = viewModel.PropertyRows.Single(static row => row.Name == "GroupName");
+        AxamlPropertyRowViewModel isChecked = viewModel.PropertyRows.Single(static row => row.Name == "IsChecked");
+        AxamlPropertyRowViewModel isSubMenuOpen = viewModel.PropertyRows.Single(static row => row.Name == "IsSubMenuOpen");
+        AxamlPropertyRowViewModel staysOpenOnClick = viewModel.PropertyRows.Single(static row => row.Name == "StaysOpenOnClick");
+
+        Assert.IsTrue(toggleType.TrySetValue("CheckBox"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(hotKey.TrySetValue("Ctrl+Shift+Q"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(groupName.TrySetValue("QuickActions"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(isChecked.TrySetValue("True"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(isSubMenuOpen.TrySetValue("True"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.IsTrue(staysOpenOnClick.TrySetValue("True"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("CheckBox", viewModel.SelectedNode!.Properties["ToggleType"]);
+        Assert.AreEqual("Ctrl+Shift+Q", viewModel.SelectedNode.Properties["HotKey"]);
+        Assert.AreEqual("QuickActions", viewModel.SelectedNode.Properties["GroupName"]);
+        Assert.AreEqual("True", viewModel.SelectedNode.Properties["IsChecked"]);
+        Assert.AreEqual("True", viewModel.SelectedNode.Properties["IsSubMenuOpen"]);
+        Assert.AreEqual("True", viewModel.SelectedNode.Properties["StaysOpenOnClick"]);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("False", viewModel.SelectedNode.Properties["StaysOpenOnClick"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("False", viewModel.SelectedNode.Properties["IsSubMenuOpen"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("False", viewModel.SelectedNode.Properties["IsChecked"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(
+            string.Empty,
+            AxamlPropertyValueValidator.Describe(viewModel.SelectedNode, "GroupName").Value);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Ctrl+K", AxamlPropertyValueValidator.Describe(viewModel.SelectedNode, "HotKey").Value);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("None", viewModel.SelectedNode.Properties["ToggleType"]);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("CheckBox", viewModel.SelectedNode.Properties["ToggleType"]);
+        Assert.AreEqual("Ctrl+Shift+Q", viewModel.SelectedNode.Properties["HotKey"]);
+        Assert.AreEqual("QuickActions", viewModel.SelectedNode.Properties["GroupName"]);
+        Assert.AreEqual("True", viewModel.SelectedNode.Properties["IsChecked"]);
+        Assert.AreEqual("True", viewModel.SelectedNode.Properties["IsSubMenuOpen"]);
+        Assert.AreEqual("True", viewModel.SelectedNode.Properties["StaysOpenOnClick"]);
     }
 
     [TestMethod]
@@ -1825,6 +2036,27 @@ public sealed class AxamlDesignerViewModelTests
         Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("PlaceholderForeground"));
         viewModel.RedoCommand.Execute(null);
         Assert.AreEqual("DarkGray", viewModel.PreviewRoot!.Properties["PlaceholderForeground"]);
+    }
+
+    [TestMethod]
+    public async Task SelectorAndNumericPlaceholderForeground_IsEditableAndUndoable()
+    {
+        foreach (string typeName in new[] { "AutoCompleteBox", "ComboBox", "NumericUpDown" })
+        {
+            AxamlDesignerViewModel viewModel = new();
+            viewModel.LoadMarkup($"<{typeName} xmlns='https://github.com/avaloniaui' />");
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            var placeholderForeground = viewModel.PropertyProvider.Properties.Single(
+                static property => property.Name == "PlaceholderForeground");
+
+            Assert.IsTrue(placeholderForeground.TrySetValue("DarkGray"), typeName);
+            await viewModel.PropertyProvider.ApplyAsync();
+            Assert.AreEqual("DarkGray", viewModel.PreviewRoot!.Properties["PlaceholderForeground"], typeName);
+            viewModel.UndoCommand.Execute(null);
+            Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("PlaceholderForeground"), typeName);
+            viewModel.RedoCommand.Execute(null);
+            Assert.AreEqual("DarkGray", viewModel.PreviewRoot!.Properties["PlaceholderForeground"], typeName);
+        }
     }
 
     [TestMethod]
@@ -2765,6 +2997,7 @@ public sealed class AxamlDesignerViewModelTests
         [
             ("<AutoCompleteBox />", viewModel => viewModel.AddAutoCompleteBoxCommand.Execute(null)),
             ("<Calendar />", viewModel => viewModel.AddCalendarCommand.Execute(null)),
+            ("<CalendarDatePicker />", viewModel => viewModel.AddCalendarDatePickerCommand.Execute(null)),
             ("<ColorPicker />", viewModel => viewModel.AddColorPickerCommand.Execute(null)),
             ("<DatePicker />", viewModel => viewModel.AddDatePickerCommand.Execute(null)),
             ("<Label />", viewModel => viewModel.AddLabelCommand.Execute(null)),

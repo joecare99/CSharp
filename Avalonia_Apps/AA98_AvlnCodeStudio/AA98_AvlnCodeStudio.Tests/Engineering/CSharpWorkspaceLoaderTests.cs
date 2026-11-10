@@ -18,6 +18,7 @@ using AA98_AvlnCodeStudio.Base.Versioning.Models;
 using AA98_AvlnCodeStudio.Base.Versioning.Services;
 using AA98_AvlnCodeStudio.Base.Testing.Models;
 using AA98_AvlnCodeStudio.Base.Testing.Services;
+using AppKomponentBaseLib.Diagnostics;
 using AA98_AvlnCodeStudio.Base.Debugging.Models;
 using AA98_AvlnCodeStudio.Base.Debugging.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -434,6 +435,126 @@ public sealed class CSharpWorkspaceLoaderTests
             {
                 File.Delete(outsideSourcePath);
             }
+        });
+    }
+
+    [TestMethod]
+    public async Task MainWindowViewModel_ExecutedChatTestPublishesNavigableWorkspaceFailures()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            string projectPath = Path.Combine(root, "App.csproj");
+            string testProjectPath = Path.Combine(root, "Tests", "Tests.csproj");
+            string solutionPath = Path.Combine(root, "Sample.slnx");
+            string sourcePath = Path.Combine(root, "Tests", "SaveTests.cs");
+            Directory.CreateDirectory(Path.GetDirectoryName(sourcePath)!);
+            File.WriteAllText(projectPath, "<Project />");
+            File.WriteAllText(testProjectPath, "<Project />");
+            File.WriteAllText(
+                solutionPath,
+                "<Solution><Project Path=\"App.csproj\" /><Project Path=\"Tests\\Tests.csproj\" /></Solution>");
+            File.WriteAllText(sourcePath, "class SaveTests { }\n");
+
+            using JsonDocument arguments = JsonDocument.Parse(JsonSerializer.Serialize(new
+            {
+                workspacePath = solutionPath,
+            }));
+            string resultJson = JsonSerializer.Serialize(new
+            {
+                WorkspacePath = solutionPath,
+                Outcome = "Partial",
+                TotalCount = 2,
+                PassedCount = 1,
+                FailedCount = 1,
+                SkippedCount = 0,
+                Projects = new[]
+                {
+                    new
+                    {
+                        ProjectPath = projectPath,
+                        Outcome = "Passed",
+                        TotalCount = 1,
+                        PassedCount = 1,
+                        FailedCount = 0,
+                        SkippedCount = 0,
+                        Failures = Array.Empty<object>(),
+                    },
+                    new
+                    {
+                        ProjectPath = testProjectPath,
+                        Outcome = "Partial",
+                        TotalCount = 1,
+                        PassedCount = 0,
+                        FailedCount = 1,
+                        SkippedCount = 0,
+                        Failures = new object[]
+                        {
+                            new
+                            {
+                                TestName = "Sample.Tests.SaveTests.SaveFails",
+                                Message = "Expected failure.",
+                                SourcePath = sourcePath,
+                                LineNumber = 11,
+                            },
+                            new
+                            {
+                                TestName = "Sample.Tests.SaveTests.ExternalFailure",
+                                Message = "External source.",
+                                SourcePath = Path.Combine(Path.GetDirectoryName(root)!, "OutsideTests.cs"),
+                                LineNumber = 9,
+                            },
+                        },
+                    },
+                },
+            });
+            FakeWorkspaceTestChatTool testTool = new(resultJson);
+            Queue<AICompletionResponse> responses = new(
+            [
+                new AICompletionResponse(
+                    new AIMessage(AIMessageRole.Assistant, string.Empty),
+                    [new AIChatToolCall("test-call", "workspace.test", arguments.RootElement)]),
+                new AICompletionResponse(new AIMessage(AIMessageRole.Assistant, "Tests finished.")),
+            ]);
+            IAIClient client = Substitute.For<IAIClient>();
+            client.CompleteAsync(Arg.Any<AICompletionRequest>(), Arg.Any<CancellationToken>())
+                .Returns(_ => Task.FromResult(responses.Dequeue()));
+            ICodeNavigator navigator = Substitute.For<ICodeNavigator>();
+            DiagnosticCollectionViewModel diagnostics = new(new DiagnosticLocationMapper(), navigator);
+            IAvaloniaEditorComponent editorComponent = Substitute.For<IAvaloniaEditorComponent>();
+            editorComponent.EditorViewModel.Returns(new EditorViewModel());
+            MainWindowViewModel viewModel = new(
+                editorComponent,
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                diagnostics,
+                null,
+                null,
+                aiChatService: new AIChatService(client, new AIChatToolCatalog([testTool])));
+            viewModel.AiModel = "test-model";
+            viewModel.SelectedAIChatAgent = "Build";
+            viewModel.ApproveAIChatToolExecutionAsync = (_, _, _) => Task.FromResult(true);
+
+            await viewModel.OpenWorkspaceFileAsync(solutionPath);
+            viewModel.AiChatInput = "Run tests.";
+            await viewModel.SendAIChatMessageCommand.ExecuteAsync(null);
+
+            Diagnostic failure = diagnostics.Items.Single(static item =>
+                item.Code == "TEST" && item.LineNumber == 11);
+            Assert.AreEqual("Sample.Tests.SaveTests.SaveFails: Expected failure.", failure.Message);
+            Assert.AreEqual(Path.GetFullPath(sourcePath), failure.SourcePath);
+            Diagnostic externalFailure = diagnostics.Items.Single(static item =>
+                item.Message.Contains("ExternalFailure", StringComparison.Ordinal));
+            Assert.IsNull(externalFailure.SourcePath);
+            Assert.IsTrue(viewModel.AIChatMessages.Any(message =>
+                message.Content.Contains("Removed 1 test failure source location", StringComparison.Ordinal)));
+
+            await diagnostics.ActivateAsync(failure);
+
+            await navigator.Received(1).NavigateAsync(
+                Arg.Is<CodeLocation>(location =>
+                    location.Path == Path.GetFullPath(sourcePath)
+                    && location.Line == 11
+                    && location.Column == null),
+                Arg.Any<CancellationToken>());
         });
     }
 
@@ -1205,9 +1326,27 @@ public sealed class CSharpWorkspaceLoaderTests
                 .RunTestsAsync(Arg.Any<TestRunRequest>(), Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult(new TestRunSummary
                 {
-                    Outcome = TestRunOutcome.Passed,
+                    Outcome = TestRunOutcome.Partial,
                     TotalCount = 5,
-                    PassedCount = 5,
+                    PassedCount = 4,
+                    FailedCount = 1,
+                    Failures =
+                    {
+                        new TestRunFailure
+                        {
+                            TestName = "Sample.Tests.InventoryTests.SaveTest",
+                            Message = "Expected failure.",
+                            SourcePath = Path.Combine(root, "src", "InventoryTests.cs"),
+                            LineNumber = 17,
+                        },
+                        new TestRunFailure
+                        {
+                            TestName = "Sample.Tests.InventoryTests.ExternalLocation",
+                            Message = "External diagnostic.",
+                            SourcePath = Path.Combine(Path.GetDirectoryName(root)!, "OutsideTests.cs"),
+                            LineNumber = 9,
+                        },
+                    },
                 }));
             var workflow = new EditorWorkflow(
                 new AA98_AvlnCodeStudio.Model.Documents.FileEditorDocument(),
@@ -1231,8 +1370,24 @@ public sealed class CSharpWorkspaceLoaderTests
                     request.WorkspaceRootPath == root
                     && request.ProjectPath == Path.GetFullPath(solutionPath)),
                 Arg.Any<CancellationToken>());
-            StringAssert.Contains(viewModel.Editor.StatusText, "Passed");
-            StringAssert.Contains(viewModel.Editor.NotificationText, "5 passed");
+            StringAssert.Contains(viewModel.Editor.StatusText, "Partial");
+            StringAssert.Contains(viewModel.Editor.NotificationText, "4 passed, 1 failed");
+            Diagnostic failure = viewModel.DiagnosticCollection.Items[0];
+            Assert.AreEqual("TEST", failure.Code);
+            Assert.AreEqual("Sample.Tests.InventoryTests.SaveTest: Expected failure.", failure.Message);
+            Assert.AreEqual(Path.GetFullPath(Path.Combine(root, "src", "InventoryTests.cs")), failure.SourcePath);
+            Assert.AreEqual(17, failure.LineNumber);
+            Diagnostic externalFailure = viewModel.DiagnosticCollection.Items[1];
+            Assert.AreEqual("Sample.Tests.InventoryTests.ExternalLocation: External diagnostic.", externalFailure.Message);
+            Assert.IsNull(externalFailure.SourcePath);
+            Assert.IsNull(externalFailure.LineNumber);
+
+            string otherRoot = Path.Combine(root, "other");
+            Directory.CreateDirectory(otherRoot);
+            string otherSolutionPath = Path.Combine(otherRoot, "Other.slnx");
+            File.WriteAllText(otherSolutionPath, "<Solution><Project Path=\"App.csproj\" /></Solution>");
+            await viewModel.OpenWorkspaceFileAsync(otherSolutionPath);
+            Assert.IsFalse(viewModel.DiagnosticCollection.Items.Any(static diagnostic => diagnostic.Code == "TEST"));
         });
     }
 
@@ -1395,9 +1550,20 @@ public sealed class CSharpWorkspaceLoaderTests
                 .RunTestsAsync(Arg.Any<TestRunRequest>(), Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult(new TestRunSummary
                 {
-                    Outcome = TestRunOutcome.Passed,
+                    Outcome = TestRunOutcome.Partial,
                     TotalCount = 2,
-                    PassedCount = 2,
+                    PassedCount = 1,
+                    FailedCount = 1,
+                    Failures =
+                    {
+                        new TestRunFailure
+                        {
+                            TestName = "Sample.Tests.InventoryTests.SaveTest",
+                            Message = "Expected failure.",
+                            SourcePath = sourcePath,
+                            LineNumber = 2,
+                        },
+                    },
                 }));
 
             IVersionControlService versionControlService = Substitute.For<IVersionControlService>();
@@ -1463,7 +1629,18 @@ public sealed class CSharpWorkspaceLoaderTests
                     request.WorkspaceRootPath == root
                     && request.ProjectPath == Path.GetFullPath(solutionPath)),
                 Arg.Any<CancellationToken>());
-            StringAssert.Contains(viewModel.Editor.NotificationText, "2 passed");
+            StringAssert.Contains(viewModel.Editor.NotificationText, "1 passed, 1 failed");
+            Diagnostic testFailure = diagnostics.Items.Single(static item => item.Code == "TEST");
+            await editorWorkspace.OpenOrActivateAsync(notesPath);
+            await diagnostics.ActivateAsync(testFailure);
+            await caretService.Received(1).FocusAndMoveCaretAsync(
+                Arg.Is<IEditorDocument>(document => document.FilePath == Path.GetFullPath(sourcePath)),
+                Arg.Is<CodeLocation>(location =>
+                    location.Path == Path.GetFullPath(sourcePath)
+                    && location.Line == 2
+                    && location.Column == null),
+                Arg.Any<CancellationToken>());
+            Assert.AreEqual(Path.GetFullPath(sourcePath), viewModel.ActiveEditorTab.FilePath);
 
             viewModel.DebugTargetPath = targetPath;
             Assert.IsTrue(viewModel.StartDebugSessionCommand.CanExecute(null));
@@ -1574,6 +1751,21 @@ public sealed class CSharpWorkspaceLoaderTests
             "workspace.inspect",
             "Inspect workspace.",
             """{"type":"object","properties":{"workspacePath":{"type":"string"}},"required":["workspacePath"],"additionalProperties":false}""");
+
+        public Task<string> ExecuteAsync(JsonElement arguments, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(result);
+        }
+    }
+
+    private sealed class FakeWorkspaceTestChatTool(string result) : IAIChatTool
+    {
+        public AIChatToolDescriptor Descriptor { get; } = new(
+            "workspace.test",
+            "Run workspace tests.",
+            """{"type":"object","properties":{"workspacePath":{"type":"string"},"projectPath":{"type":"string"}},"required":["workspacePath"],"additionalProperties":false}""",
+            requiresConfirmation: true);
 
         public Task<string> ExecuteAsync(JsonElement arguments, CancellationToken cancellationToken)
         {

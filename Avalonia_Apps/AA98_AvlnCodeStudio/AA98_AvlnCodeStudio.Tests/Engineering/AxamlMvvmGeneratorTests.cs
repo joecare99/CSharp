@@ -18,13 +18,14 @@ public sealed class AxamlMvvmGeneratorTests
               <StackPanel>
                 <AutoCompleteBox x:Name="CityAutoCompleteBox" Text="Paris" />
                 <TextBox x:Name="UserNameTextBox" Text="initial" />
-                <CheckBox x:Name="RememberMeCheckBox" IsChecked="True" />
+                <CheckBox x:Name="RememberMeCheckBox" IsChecked="True" CommandParameter="remember-me" />
                 <ToggleSwitch x:Name="NotificationsToggleSwitch" IsChecked="False" />
                 <RadioButton x:Name="PersonalRadioButton" IsChecked="True" />
                 <NumericUpDown x:Name="QuantityNumericUpDown" Value="12.5" />
                 <Slider x:Name="VolumeSlider" Value="0.75" />
                 <ComboBox x:Name="CountryComboBox" SelectedIndex="1" />
                 <DatePicker x:Name="BirthDatePicker" SelectedDate="2024-02-29" />
+                <CalendarDatePicker x:Name="EventCalendarDatePicker" SelectedDate="2024-03-01" />
                 <TimePicker x:Name="ArrivalTimePicker" SelectedTime="13:45:30" />
                 <Calendar x:Name="ReleaseCalendar" SelectedDate="2024-02-29" />
                 <ColorPicker x:Name="ThemeColorPicker" Color="#FF123456" />
@@ -35,7 +36,7 @@ public sealed class AxamlMvvmGeneratorTests
                 <Menu>
                   <MenuItem x:Name="OpenMenuItem" Header="Open" />
                 </Menu>
-                <Button x:Name="SubmitButton" Content="Submit" />
+                <Button x:Name="SubmitButton" Content="Submit" CommandParameter="document-id" />
                 <TextBlock Text="Static label" />
                 <TextBlock x:Name="WelcomeTextBlock" Text="Welcome" />
                 <TextBlock x:Name="ExistingTextBlock" Text="{Binding ExistingStatus}" />
@@ -58,16 +59,22 @@ public sealed class AxamlMvvmGeneratorTests
         StringAssert.Contains(changes[0].ProposedContent, "IsChecked=\"{Binding RememberMe, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "IsChecked=\"{Binding Notifications, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "IsChecked=\"{Binding Personal, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "Command=\"{Binding RememberMeCheckBoxCommand}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "CommandParameter=\"remember-me\"");
+        StringAssert.Contains(changes[0].ProposedContent, "Command=\"{Binding NotificationsToggleSwitchCommand}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "Command=\"{Binding PersonalRadioButtonCommand}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Value=\"{Binding Quantity, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Value=\"{Binding Volume, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "SelectedIndex=\"{Binding Country, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "SelectedDate=\"{Binding Birth, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "SelectedDate=\"{Binding Event, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "SelectedTime=\"{Binding Arrival, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "SelectedDate=\"{Binding Release, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Color=\"{Binding Theme, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "SelectedIndex=\"{Binding Settings, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Command=\"{Binding OpenCommand}\"");
         StringAssert.Contains(changes[0].ProposedContent, "{Binding SubmitCommand}");
+        StringAssert.Contains(changes[0].ProposedContent, "CommandParameter=\"document-id\"");
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"{Binding Welcome, Mode=OneWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"Static label\"");
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"{Binding ExistingStatus}\"");
@@ -80,6 +87,7 @@ public sealed class AxamlMvvmGeneratorTests
         StringAssert.Contains(changes[1].ProposedContent, "private decimal? _quantity = 12.5m;");
         StringAssert.Contains(changes[1].ProposedContent, "private double _volume = 0.75d;");
         StringAssert.Contains(changes[1].ProposedContent, "private global::System.DateTimeOffset? _birth = global::System.DateTimeOffset.ParseExact(\"2024-02-29\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
+        StringAssert.Contains(changes[1].ProposedContent, "private global::System.DateTime? _event = global::System.DateTime.ParseExact(\"2024-03-01\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
         StringAssert.Contains(changes[1].ProposedContent, "private global::System.TimeSpan? _arrival = global::System.TimeSpan.Parse(\"13:45:30\", global::System.Globalization.CultureInfo.InvariantCulture);");
         StringAssert.Contains(changes[1].ProposedContent, "private global::System.DateTime? _release = global::System.DateTime.ParseExact(\"2024-02-29\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
         StringAssert.Contains(changes[1].ProposedContent, "private global::Avalonia.Media.Color _theme = global::Avalonia.Media.Color.Parse(\"#FF123456\");");
@@ -88,7 +96,10 @@ public sealed class AxamlMvvmGeneratorTests
         StringAssert.Contains(changes[1].ProposedContent, "private string _welcome = \"Welcome\";");
         StringAssert.Contains(changes[1].ProposedContent, "[RelayCommand]");
         StringAssert.Contains(changes[1].ProposedContent, "private void Open()");
-        StringAssert.Contains(changes[1].ProposedContent, "private void Submit()");
+        StringAssert.Contains(changes[1].ProposedContent, "private void Submit(string? commandParameter)");
+        StringAssert.Contains(changes[1].ProposedContent, "private void RememberMeCheckBox(string? commandParameter)");
+        StringAssert.Contains(changes[1].ProposedContent, "private void NotificationsToggleSwitch()");
+        StringAssert.Contains(changes[1].ProposedContent, "private void PersonalRadioButton()");
     }
 
     [TestMethod]
@@ -115,6 +126,29 @@ public sealed class AxamlMvvmGeneratorTests
             new AxamlMvvmGenerator().Generate("MainWindow.axaml", alreadyBound));
         Assert.ThrowsExactly<InvalidDataException>(() =>
             new AxamlMvvmGenerator().Generate("MainWindow.axaml", withDataContext));
+    }
+
+    [TestMethod]
+    public void Generate_DoesNotCreateAnIncompatibleCommandForBoundCommandParameter()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Sample.MainWindow">
+              <StackPanel>
+                <TextBox x:Name="NameTextBox" />
+                <Button x:Name="SaveButton" CommandParameter="{Binding DocumentId}" />
+              </StackPanel>
+            </Window>
+            """;
+
+        WorkspaceFileChangeRequest[] changes = new AxamlMvvmGenerator()
+            .Generate("MainWindow.axaml", markup)
+            .ToArray();
+
+        StringAssert.Contains(changes[0].ProposedContent, "CommandParameter=\"{Binding DocumentId}\"");
+        Assert.IsFalse(changes[0].ProposedContent.Contains("Command=\"{Binding SaveCommand}\"", System.StringComparison.Ordinal));
+        Assert.IsFalse(changes[1].ProposedContent.Contains("private void Save(", System.StringComparison.Ordinal));
     }
 
     [TestMethod]

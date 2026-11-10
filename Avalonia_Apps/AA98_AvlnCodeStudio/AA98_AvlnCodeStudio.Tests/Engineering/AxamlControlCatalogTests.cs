@@ -308,6 +308,29 @@ public sealed class AxamlControlCatalogTests
     }
 
     [TestMethod]
+    public void Selectors_ExposeDropdownStateButKeepBindingsReadOnly()
+    {
+        AxamlPreviewService service = new();
+        foreach (string typeName in new[] { "AutoCompleteBox", "ComboBox" })
+        {
+            AxamlControlCapability capability = AxamlControlCatalog.All.Single(item => item.TypeName == typeName);
+            AxamlPreviewNode unset = service.Parse($"<{typeName} />");
+            AxamlPropertyDescriptor dropdown = AxamlPropertyValueValidator.Describe(unset, "IsDropDownOpen");
+
+            Assert.IsTrue(capability.EditableProperties.Contains("IsDropDownOpen"), typeName);
+            Assert.AreEqual(AxamlPropertyEditorKind.Boolean, dropdown.EditorKind, typeName);
+            Assert.AreEqual("False", dropdown.Value, typeName);
+            Assert.IsNull(dropdown.ValidationError, typeName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(typeName, "IsDropDownOpen", "True"), typeName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(typeName, "IsDropDownOpen", "False"), typeName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(typeName, "IsDropDownOpen", "sometimes"), typeName);
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+                service.Parse($"<{typeName} IsDropDownOpen='{{Binding Open}}' />"),
+                "IsDropDownOpen").IsReadOnly, typeName);
+        }
+    }
+
+    [TestMethod]
     public void Selectors_ExposeStaticItemsAndRejectDynamicSources()
     {
         AxamlPreviewService service = new();
@@ -489,10 +512,10 @@ public sealed class AxamlControlCatalogTests
     {
         const string markup = """
             <Menu xmlns="https://github.com/avaloniaui">
-              <MenuItem Header="File">
-                <MenuItem Header="Open" InputGesture="Ctrl+O" />
+              <MenuItem Header="File" Icon="F" ToggleType="CheckBox" IsChecked="True" IsSubMenuOpen="True" StaysOpenOnClick="True">
+                <MenuItem Header="Open" InputGesture="Ctrl+O" HotKey="Ctrl+H" ToggleType="Radio" GroupName="EditorMode" IsChecked="True" />
                 <Separator />
-                <MenuItem Header="Exit" />
+                <MenuItem Header="Exit" HotKey="Ctrl+Q" />
               </MenuItem>
             </Menu>
             """;
@@ -510,16 +533,88 @@ public sealed class AxamlControlCatalogTests
         CollectionAssert.AreEquivalent(new[] { "MenuItem", "Separator" }, itemCapability.AllowedChildTypes.ToArray());
         Assert.AreEqual("File", AxamlPropertyValueValidator.Describe(fileMenuItem, "Header").Value);
         Assert.IsFalse(AxamlPropertyValueValidator.Describe(fileMenuItem, "Header").IsReadOnly);
+        AxamlPropertyDescriptor icon = AxamlPropertyValueValidator.Describe(fileMenuItem, "Icon");
+        Assert.IsTrue(itemCapability.EditableProperties.Contains("Icon"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, icon.EditorKind);
+        Assert.AreEqual("F", icon.Value);
+        Assert.IsFalse(icon.IsReadOnly);
+        Assert.IsNull(icon.ValidationError);
+        AxamlPropertyDescriptor isChecked = AxamlPropertyValueValidator.Describe(fileMenuItem, "IsChecked");
+        AxamlPropertyDescriptor isSubMenuOpen = AxamlPropertyValueValidator.Describe(fileMenuItem, "IsSubMenuOpen");
+        AxamlPropertyDescriptor staysOpenOnClick = AxamlPropertyValueValidator.Describe(fileMenuItem, "StaysOpenOnClick");
+        AxamlPropertyDescriptor groupName = AxamlPropertyValueValidator.Describe(fileMenuItem.Children[0], "GroupName");
+        AxamlPropertyDescriptor toggleType = AxamlPropertyValueValidator.Describe(fileMenuItem, "ToggleType");
+        Assert.IsTrue(itemCapability.EditableProperties.Contains("ToggleType"));
+        Assert.IsTrue(itemCapability.EditableProperties.Contains("IsChecked"));
+        Assert.IsTrue(itemCapability.EditableProperties.Contains("IsSubMenuOpen"));
+        Assert.IsTrue(itemCapability.EditableProperties.Contains("StaysOpenOnClick"));
+        Assert.IsTrue(itemCapability.EditableProperties.Contains("GroupName"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, toggleType.EditorKind);
+        Assert.AreEqual("CheckBox", toggleType.Value);
+        Assert.IsNull(toggleType.ValidationError);
+        AxamlPreviewNode boundIcon = service.Parse("<Menu xmlns='https://github.com/avaloniaui'><MenuItem Icon='{Binding FileIcon}' /></Menu>")
+            .Children.Single();
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundIcon, "Icon").IsReadOnly);
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isChecked.EditorKind);
+        Assert.AreEqual("True", isChecked.Value);
+        Assert.IsNull(isChecked.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, isSubMenuOpen.EditorKind);
+        Assert.AreEqual("True", isSubMenuOpen.Value);
+        Assert.IsNull(isSubMenuOpen.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, staysOpenOnClick.EditorKind);
+        Assert.AreEqual("True", staysOpenOnClick.Value);
+        Assert.IsNull(staysOpenOnClick.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "IsChecked", "False"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "IsChecked", "sometimes"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "IsChecked", string.Empty));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "ToggleType", "Radio"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "ToggleType", "Unknown"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "IsSubMenuOpen", "False"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "IsSubMenuOpen", "sometimes"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "IsSubMenuOpen", string.Empty));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "StaysOpenOnClick", "False"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "StaysOpenOnClick", "sometimes"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "StaysOpenOnClick", string.Empty));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "GroupName", "EditorMode"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "GroupName", string.Empty));
+        Assert.AreEqual("EditorMode", groupName.Value);
+        Assert.IsNull(groupName.ValidationError);
+        Assert.AreEqual("None", AxamlPropertyValueValidator.Describe(
+            service.Parse("<MenuItem />"),
+            "ToggleType").Value);
+        AxamlPreviewNode unsetMenuItem = service.Parse("<MenuItem />");
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(unsetMenuItem, "IsChecked").Value);
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(unsetMenuItem, "IsSubMenuOpen").Value);
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(unsetMenuItem, "StaysOpenOnClick").Value);
+        Assert.AreEqual(string.Empty, AxamlPropertyValueValidator.Describe(unsetMenuItem, "GroupName").Value);
+        AxamlPreviewNode boundMenuItem = service.Parse(
+            "<MenuItem ToggleType='{Binding ToggleType}' IsChecked='{Binding Checked}' GroupName='{Binding Group}' IsSubMenuOpen='{Binding Open}' StaysOpenOnClick='{Binding StayOpen}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundMenuItem, "ToggleType").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundMenuItem, "IsChecked").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundMenuItem, "GroupName").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundMenuItem, "IsSubMenuOpen").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundMenuItem, "StaysOpenOnClick").IsReadOnly);
         Assert.AreEqual("MenuItem", fileMenuItem.Children[0].TypeName);
         Assert.AreEqual("Separator", fileMenuItem.Children[1].TypeName);
         Assert.AreEqual("Exit", fileMenuItem.Children[2].Text);
         AxamlPropertyDescriptor inputGesture = AxamlPropertyValueValidator.Describe(
             fileMenuItem.Children[0],
             "InputGesture");
+        AxamlPropertyDescriptor hotKey = AxamlPropertyValueValidator.Describe(
+            fileMenuItem.Children[2],
+            "HotKey");
         Assert.IsTrue(itemCapability.EditableProperties.Contains("InputGesture"));
+        Assert.IsTrue(itemCapability.EditableProperties.Contains("HotKey"));
         Assert.AreEqual(AxamlPropertyEditorKind.Text, inputGesture.EditorKind);
         Assert.AreEqual("Ctrl+O", inputGesture.Value);
         Assert.IsNull(inputGesture.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, hotKey.EditorKind);
+        Assert.AreEqual("Ctrl+Q", hotKey.Value);
+        Assert.IsNull(hotKey.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "HotKey", "Ctrl+S"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "HotKey", string.Empty));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "HotKey", "NotAKey"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "HotKey", "Ctrl"));
         Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "InputGesture", "Ctrl+S"));
         Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "InputGesture", string.Empty));
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "InputGesture", "NotAKey"));
@@ -527,8 +622,9 @@ public sealed class AxamlControlCatalogTests
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "InputGesture", "Ctrl+S+T"));
 
         AxamlPreviewNode boundGesture = service.Parse(
-            "<MenuItem InputGesture='{Binding SaveGesture}' />");
+            "<MenuItem InputGesture='{Binding SaveGesture}' HotKey='{Binding SaveHotKey}' />");
         Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundGesture, "InputGesture").IsReadOnly);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundGesture, "HotKey").IsReadOnly);
 
         string withNewItem = service.InsertChildControl(markup, menu, "MenuItem");
         Assert.AreEqual(2, service.Parse(withNewItem).Children.Count);
@@ -536,6 +632,36 @@ public sealed class AxamlControlCatalogTests
             () => service.InsertChildControl(markup, menu, "Button"));
         Assert.IsFalse(service.Parse("<Menu><TextBlock /></Menu>").IsSupported);
         Assert.IsFalse(service.Parse("<MenuItem><Button /></MenuItem>").IsSupported);
+    }
+
+    [TestMethod]
+    public void CommandParameter_IsLiteralTextForCommandCapableControls()
+    {
+        AxamlPreviewService service = new();
+        string[] commandControls = ["Button", "CheckBox", "MenuItem", "RadioButton", "ToggleSwitch"];
+        foreach (string controlType in commandControls)
+        {
+            AxamlControlCapability capability = AxamlControlCatalog.All.Single(item => item.TypeName == controlType);
+            AxamlBindablePropertyCapability command = capability.BindableProperties.Single(
+                static property => property.Name == "Command");
+            AxamlPreviewNode control = service.Parse(
+                $"<{controlType} Command='{{Binding RunCommand}}' CommandParameter='DocumentId' />");
+            AxamlPropertyDescriptor parameter = AxamlPropertyValueValidator.Describe(control, "CommandParameter");
+
+            Assert.IsTrue(command.IsCommand, controlType);
+            Assert.IsTrue(capability.EditableProperties.Contains("CommandParameter"), controlType);
+            Assert.AreEqual("DocumentId", parameter.Value, controlType);
+            Assert.IsFalse(parameter.IsReadOnly, controlType);
+            Assert.AreEqual(AxamlPropertyEditorKind.Text, parameter.EditorKind, controlType);
+
+            AxamlPreviewNode boundControl = service.Parse(
+                $"<{controlType} Command='{{Binding RunCommand}}' CommandParameter='{{Binding DocumentId}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundControl, "CommandParameter").IsReadOnly, controlType);
+        }
+
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "CommandParameter", string.Empty));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "CommandParameter", "DocumentId"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "CommandParameter", "{Binding DocumentId}"));
     }
 
     [TestMethod]
@@ -711,7 +837,64 @@ public sealed class AxamlControlCatalogTests
     }
 
     [TestMethod]
-    public void Calendar_ExposesSafeSingleDateSelectionAndNavigation()
+    public void CalendarDatePicker_ExposesSafeDateAndDropdownProperties()
+    {
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(
+            static item => item.TypeName == "CalendarDatePicker");
+        AxamlPreviewService service = new();
+        AxamlPreviewNode unset = service.Parse("<CalendarDatePicker />");
+        Assert.IsTrue(unset.IsSupported);
+        Assert.IsTrue(capability.SupportsMvvmGeneration);
+        Assert.AreEqual("DateTime?", capability.BindableProperties.Single().TypeName);
+        Assert.AreEqual(AxamlBindingMode.TwoWay, capability.BindableProperties.Single().DefaultBindingMode);
+
+        AxamlPropertyDescriptor selectedDate = AxamlPropertyValueValidator.Describe(
+            service.Parse("<CalendarDatePicker SelectedDate='2024-02-29' />"),
+            "SelectedDate");
+        Assert.IsTrue(capability.EditableProperties.Contains("SelectedDate"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, selectedDate.EditorKind);
+        Assert.AreEqual("2024-02-29", selectedDate.Value);
+        Assert.IsNull(selectedDate.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("CalendarDatePicker", "SelectedDate", "2024-02-29"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("CalendarDatePicker", "SelectedDate", "2023-02-29"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<CalendarDatePicker SelectedDate='{Binding StartDate}' />"),
+            "SelectedDate").IsReadOnly);
+
+        AxamlPropertyDescriptor placeholder = AxamlPropertyValueValidator.Describe(unset, "PlaceholderText");
+        Assert.AreEqual("Choose a date", placeholder.Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("CalendarDatePicker", "PlaceholderText", string.Empty));
+
+        AxamlPropertyDescriptor floatingPlaceholder = AxamlPropertyValueValidator.Describe(unset, "UseFloatingPlaceholder");
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, floatingPlaceholder.EditorKind);
+        Assert.AreEqual("False", floatingPlaceholder.Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("CalendarDatePicker", "UseFloatingPlaceholder", "True"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("CalendarDatePicker", "UseFloatingPlaceholder", "sometimes"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<CalendarDatePicker UseFloatingPlaceholder='{Binding FloatingPlaceholder}' />"),
+            "UseFloatingPlaceholder").IsReadOnly);
+
+        AxamlPropertyDescriptor placeholderForeground = AxamlPropertyValueValidator.Describe(unset, "PlaceholderForeground");
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, placeholderForeground.EditorKind);
+        Assert.AreEqual(string.Empty, placeholderForeground.Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("CalendarDatePicker", "PlaceholderForeground", "DarkGray"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("CalendarDatePicker", "PlaceholderForeground", "Gradient"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<CalendarDatePicker PlaceholderForeground='{Binding PlaceholderBrush}' />"),
+            "PlaceholderForeground").IsReadOnly);
+
+        AxamlPropertyDescriptor dropdown = AxamlPropertyValueValidator.Describe(unset, "IsDropDownOpen");
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, dropdown.EditorKind);
+        Assert.AreEqual("False", dropdown.Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("CalendarDatePicker", "IsDropDownOpen", "True"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("CalendarDatePicker", "IsDropDownOpen", "sometimes"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<CalendarDatePicker IsDropDownOpen='{Binding PopupOpen}' />"),
+            "IsDropDownOpen").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Calendar_ExposesSafeSelectionModesAndNavigation()
     {
         AxamlControlCapability capability = AxamlControlCatalog.All.Single(static item => item.TypeName == "Calendar");
         AxamlControlCapability datePickerCapability = AxamlControlCatalog.All.Single(static item => item.TypeName == "DatePicker");
@@ -737,9 +920,26 @@ public sealed class AxamlControlCatalogTests
 
         AxamlPropertyDescriptor selectionMode = AxamlPropertyValueValidator.Describe(unset, "SelectionMode");
         Assert.AreEqual("SingleDate", selectionMode.Value);
-        CollectionAssert.AreEqual(new[] { "None", "SingleDate" }, selectionMode.Options.ToArray());
-        Assert.IsNull(AxamlPropertyValueValidator.Validate("Calendar", "SelectionMode", "None"));
-        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Calendar", "SelectionMode", "MultipleRange"));
+        CollectionAssert.AreEqual(
+            new[] { "None", "SingleDate", "SingleRange", "MultipleRange" },
+            selectionMode.Options.ToArray());
+        foreach (string value in selectionMode.Options)
+        {
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("Calendar", "SelectionMode", value), value);
+        }
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Calendar", "SelectionMode", "Multiple"));
+
+        AxamlPropertyDescriptor displayMode = AxamlPropertyValueValidator.Describe(unset, "DisplayMode");
+        Assert.AreEqual("Month", displayMode.Value);
+        CollectionAssert.AreEqual(new[] { "Month", "Year", "Decade" }, displayMode.Options.ToArray());
+        foreach (string value in displayMode.Options)
+        {
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("Calendar", "DisplayMode", value), value);
+        }
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Calendar", "DisplayMode", "Century"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Calendar DisplayMode='{Binding ViewMode}' />"),
+            "DisplayMode").IsReadOnly);
 
         AxamlPropertyDescriptor firstDayOfWeek = AxamlPropertyValueValidator.Describe(unset, "FirstDayOfWeek");
         Assert.AreEqual("Monday", firstDayOfWeek.Value);
@@ -869,6 +1069,30 @@ public sealed class AxamlControlCatalogTests
         Assert.AreEqual("False", completion.Value);
         Assert.IsNull(AxamlPropertyValueValidator.Validate("AutoCompleteBox", "IsTextCompletionEnabled", "True"));
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("AutoCompleteBox", "IsTextCompletionEnabled", "maybe"));
+    }
+
+    [TestMethod]
+    public void SelectorAndNumericPlaceholderForeground_AcceptsOnlySafeColorLiterals()
+    {
+        AxamlPreviewService service = new();
+        foreach (string typeName in new[] { "AutoCompleteBox", "ComboBox", "NumericUpDown" })
+        {
+            AxamlControlCapability capability = AxamlControlCatalog.All.Single(
+                item => item.TypeName == typeName);
+            AxamlPreviewNode unset = service.Parse($"<{typeName} />");
+            AxamlPropertyDescriptor placeholderForeground = AxamlPropertyValueValidator.Describe(
+                unset,
+                "PlaceholderForeground");
+
+            Assert.IsTrue(capability.EditableProperties.Contains("PlaceholderForeground"), typeName);
+            Assert.AreEqual(AxamlPropertyEditorKind.Text, placeholderForeground.EditorKind, typeName);
+            Assert.AreEqual(string.Empty, placeholderForeground.Value, typeName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(typeName, "PlaceholderForeground", "DarkGray"), typeName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(typeName, "PlaceholderForeground", "Gradient"), typeName);
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+                service.Parse($"<{typeName} PlaceholderForeground='{{Binding PlaceholderBrush}}' />"),
+                "PlaceholderForeground").IsReadOnly, typeName);
+        }
     }
 
     [TestMethod]
@@ -1273,6 +1497,7 @@ public sealed class AxamlControlCatalogTests
             "AutoCompleteBox",
             "Button",
             "Calendar",
+            "CalendarDatePicker",
             "CheckBox",
             "ColorPicker",
             "ComboBox",

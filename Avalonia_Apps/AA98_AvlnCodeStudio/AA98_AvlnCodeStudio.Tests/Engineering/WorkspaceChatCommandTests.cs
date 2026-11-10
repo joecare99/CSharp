@@ -246,9 +246,20 @@ public sealed class WorkspaceChatCommandTests
                 capturedRequest = call.Arg<TestRunRequest>();
                 return Task.FromResult(new TestRunSummary
                 {
-                    Outcome = TestRunOutcome.Passed,
+                    Outcome = TestRunOutcome.Partial,
                     TotalCount = 8,
-                    PassedCount = 8,
+                    PassedCount = 7,
+                    FailedCount = 1,
+                    Failures =
+                    {
+                        new TestRunFailure
+                        {
+                            TestName = "Sample.Tests.SaveTest",
+                            Message = "Expected failure.",
+                            SourcePath = Path.Combine(workspace.RootPath, "SaveTests.cs"),
+                            LineNumber = 23,
+                        },
+                    },
                 });
             });
         TestWorkspaceChatCommand command = new(new CSharpWorkspaceLoader(), testExecution);
@@ -266,8 +277,16 @@ public sealed class WorkspaceChatCommandTests
         Assert.AreEqual(workspace.RootPath, capturedRequest.WorkspaceRootPath);
         Assert.AreEqual("net10.0", capturedRequest.TargetFramework);
         using JsonDocument resultDocument = JsonDocument.Parse(result);
-        Assert.AreEqual("Passed", resultDocument.RootElement.GetProperty("Outcome").GetString());
-        Assert.AreEqual(8, resultDocument.RootElement.GetProperty("PassedCount").GetInt32());
+        Assert.AreEqual("Partial", resultDocument.RootElement.GetProperty("Outcome").GetString());
+        Assert.AreEqual(7, resultDocument.RootElement.GetProperty("PassedCount").GetInt32());
+        Assert.AreEqual(1, resultDocument.RootElement.GetProperty("FailedCount").GetInt32());
+        JsonElement failure = resultDocument.RootElement.GetProperty("Failures")[0];
+        Assert.AreEqual("Sample.Tests.SaveTest", failure.GetProperty("TestName").GetString());
+        Assert.AreEqual("Expected failure.", failure.GetProperty("Message").GetString());
+        Assert.AreEqual(
+            Path.Combine(workspace.RootPath, "SaveTests.cs"),
+            failure.GetProperty("SourcePath").GetString());
+        Assert.AreEqual(23, failure.GetProperty("LineNumber").GetInt32());
         Assert.IsFalse(command.Descriptor.IsReadOnly);
     }
 
@@ -295,13 +314,25 @@ public sealed class WorkspaceChatCommandTests
                     request.ProjectPath,
                     secondProjectPath,
                     OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
-                return Task.FromResult(new TestRunSummary
+                TestRunSummary summary = new()
                 {
                     Outcome = failed ? TestRunOutcome.Failed : TestRunOutcome.Passed,
                     TotalCount = 3,
                     PassedCount = failed ? 2 : 3,
                     FailedCount = failed ? 1 : 0,
-                });
+                };
+                if (failed)
+                {
+                    summary.Failures.Add(new TestRunFailure
+                    {
+                        TestName = "Sample.Tests.SecondProjectFailure",
+                        Message = "Second project failed.",
+                        SourcePath = Path.Combine(workspace.RootPath, "SecondTests.cs"),
+                        LineNumber = 31,
+                    });
+                }
+
+                return Task.FromResult(summary);
             });
         TestWorkspaceChatCommand command = new(new CSharpWorkspaceLoader(), testExecution);
         using JsonDocument arguments = JsonDocument.Parse(JsonSerializer.Serialize(new
@@ -326,6 +357,13 @@ public sealed class WorkspaceChatCommandTests
         Assert.AreEqual(5, resultDocument.RootElement.GetProperty("PassedCount").GetInt32());
         Assert.AreEqual(1, resultDocument.RootElement.GetProperty("FailedCount").GetInt32());
         Assert.AreEqual(2, resultDocument.RootElement.GetProperty("Projects").GetArrayLength());
+        JsonElement failedProject = resultDocument.RootElement.GetProperty("Projects")
+            .EnumerateArray()
+            .Single(project => project.GetProperty("ProjectPath").GetString() == secondProjectPath);
+        JsonElement failure = failedProject.GetProperty("Failures")[0];
+        Assert.AreEqual("Sample.Tests.SecondProjectFailure", failure.GetProperty("TestName").GetString());
+        Assert.AreEqual(Path.Combine(workspace.RootPath, "SecondTests.cs"), failure.GetProperty("SourcePath").GetString());
+        Assert.AreEqual(31, failure.GetProperty("LineNumber").GetInt32());
         await testExecution.Received(2).RunTestsAsync(
             Arg.Any<TestRunRequest>(),
             Arg.Any<CancellationToken>());
