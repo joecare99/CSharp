@@ -73,6 +73,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private long _workspaceOpenVersion;
         private readonly List<AIMessage> _aiConversation = [];
         private readonly List<Diagnostic> _buildDiagnostics = [];
+        private readonly List<Diagnostic> _testDiagnostics = [];
         private readonly Dictionary<string, HashSet<int>> _debugBreakpoints = new(
             OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
         private List<Diagnostic> _languageDiagnostics = [];
@@ -84,6 +85,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private bool _editorPropertySelection;
         private AxamlDesignerViewModel? _observedDesigner;
         private Controls.EditorTextArea? _observedEditorTextArea;
+        private GridLength _workspacePaneWidth = new(280);
+        private bool _isWorkspacePaneVisible = true;
+
         public MainWindowViewModel()
             : this(
                 new Components.AvaloniaEditorComponent(
@@ -318,6 +322,39 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string EditorRegionTitle => UiStrings.EditorRegionTitle;
 
+        public GridLength WorkspacePaneWidth
+        {
+            get => IsWorkspacePaneVisible ? _workspacePaneWidth : new GridLength(0);
+            set
+            {
+                if (value.Value <= 0 || _workspacePaneWidth == value)
+                {
+                    return;
+                }
+
+                _workspacePaneWidth = value;
+                if (IsWorkspacePaneVisible)
+                {
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public GridLength WorkspacePaneSplitterWidth => IsWorkspacePaneVisible ? new GridLength(8) : new GridLength(0);
+
+        public bool IsWorkspacePaneVisible
+        {
+            get => _isWorkspacePaneVisible;
+            set
+            {
+                if (SetProperty(ref _isWorkspacePaneVisible, value))
+                {
+                    OnPropertyChanged(nameof(WorkspacePaneWidth));
+                    OnPropertyChanged(nameof(WorkspacePaneSplitterWidth));
+                }
+            }
+        }
+
         public string StatusRegionTitle => UiStrings.StatusRegionTitle;
 
         public string NotificationRegionTitle => UiStrings.NotificationRegionTitle;
@@ -329,6 +366,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         public string FileMenuHeader => UiStrings.FileMenuHeader;
 
         public string ViewMenuHeader => UiStrings.ViewMenuHeader;
+
+        public string WorkspaceSidebarMenuText => UiStrings.WorkspaceSidebarMenuText;
 
         public string NewCommandText => UiStrings.NewCommandText;
 
@@ -1288,13 +1327,22 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 }
 
                 bool buildDiagnosticsCleared = false;
+                bool testDiagnosticsCleared = false;
                 foreach (AIChatToolExecution execution in result.ToolExecutions)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     if (execution.WasExecuted
-                        && execution.Call.Name is "workspace.build" or "workspace.inspect")
+                        && execution.Call.Name is "workspace.build" or "workspace.inspect" or "workspace.test")
                     {
-                        if (!buildDiagnosticsCleared)
+                        if (execution.Call.Name == "workspace.test")
+                        {
+                            if (!testDiagnosticsCleared)
+                            {
+                                _testDiagnostics.Clear();
+                                testDiagnosticsCleared = true;
+                            }
+                        }
+                        else if (!buildDiagnosticsCleared)
                         {
                             _buildDiagnostics.Clear();
                             buildDiagnosticsCleared = true;
@@ -1365,11 +1413,14 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 : [root];
             List<Diagnostic> diagnostics = [];
             int rejectedLocations = 0;
+            bool isTestRun = execution.Call.Name == "workspace.test";
             string sourceDescription = execution.Call.Name switch
             {
                 "workspace.build" => "Build",
                 "workspace.inspect" => "Inspection",
-                _ => "Workspace",
+                "workspace.test" => "Test",
+                _ => throw new InvalidOperationException(
+                    $"Workspace tool '{execution.Call.Name}' does not produce diagnostics."),
             };
             foreach (JsonElement projectResult in projects)
             {
@@ -1389,14 +1440,39 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                         $"{sourceDescription} result project '{projectPath}' is outside the current workspace.");
                 }
 
-                if (!projectResult.TryGetProperty("Diagnostics", out JsonElement projectDiagnostics)
+                string resultsPropertyName = isTestRun ? "Failures" : "Diagnostics";
+                if (!projectResult.TryGetProperty(resultsPropertyName, out JsonElement projectDiagnostics)
                     || projectDiagnostics.ValueKind != JsonValueKind.Array)
                 {
-                    throw new JsonException($"Build result for '{projectPath}' has no diagnostics array.");
+                    throw new JsonException(
+                        $"{sourceDescription} result for '{projectPath}' has no {resultsPropertyName} array.");
                 }
 
                 foreach (JsonElement item in projectDiagnostics.EnumerateArray())
                 {
+                    if (isTestRun)
+                    {
+                        string? sourcePath = GetOptionalString(item, "SourcePath");
+                        string? navigableSourcePath = TryGetWorkspaceTestSourcePath(sourcePath, workspace.RootPath);
+                        int? lineNumber = GetOptionalInt32(item, "LineNumber");
+                        if (!string.IsNullOrWhiteSpace(sourcePath) && navigableSourcePath is null)
+                        {
+                            rejectedLocations++;
+                        }
+
+                        diagnostics.Add(new Diagnostic
+                        {
+                            Code = "TEST",
+                            Severity = DiagnosticSeverity.Error,
+                            Message = FormatTestFailureMessage(
+                                GetOptionalString(item, "TestName"),
+                                GetOptionalString(item, "Message")),
+                            SourcePath = navigableSourcePath,
+                            LineNumber = navigableSourcePath is not null && lineNumber is > 0 ? lineNumber : null,
+                        });
+                        continue;
+                    }
+
                     string? filePath = GetOptionalString(item, "FilePath");
                     if (!string.IsNullOrWhiteSpace(filePath)
                         && !IsPathWithinDirectory(Path.GetFullPath(filePath), workspace.RootPath))
@@ -1426,14 +1502,29 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 }
             }
 
-            _buildDiagnostics.AddRange(diagnostics);
+            if (isTestRun)
+            {
+                _testDiagnostics.AddRange(diagnostics);
+            }
+            else
+            {
+                _buildDiagnostics.AddRange(diagnostics);
+            }
+
             await RefreshDiagnosticsAsync(cancellationToken);
             if (rejectedLocations > 0)
             {
-                AIChatMessages.Add(new AIChatMessageViewModel(
-                    "System",
-                    $"Ignored {rejectedLocations} {sourceDescription.ToLowerInvariant()} diagnostic location(s) outside the current workspace."));
+                string warning = isTestRun
+                    ? $"Removed {rejectedLocations} test failure source location(s) outside the current workspace."
+                    : $"Ignored {rejectedLocations} {sourceDescription.ToLowerInvariant()} diagnostic location(s) outside the current workspace.";
+                AIChatMessages.Add(new AIChatMessageViewModel("System", warning));
             }
+        }
+
+        private static string FormatTestFailureMessage(string? testName, string? message)
+        {
+            string name = string.IsNullOrWhiteSpace(testName) ? "Test failure" : testName;
+            return string.IsNullOrWhiteSpace(message) ? $"{name} failed." : $"{name}: {message}";
         }
 
         private static string? GetOptionalString(JsonElement element, string propertyName)
@@ -2331,13 +2422,20 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 return;
             }
 
-            if (Workspace is null
-                || !WorkspacePathIdentity.AreEqual(Workspace.RootPath, workspace.RootPath))
+            bool workspaceChanged = Workspace is null
+                || !WorkspacePathIdentity.AreEqual(Workspace.RootPath, workspace.RootPath);
+            if (workspaceChanged)
             {
                 _workspaceFileChangeService.ResetHistory();
+                _testDiagnostics.Clear();
             }
 
             Workspace = workspace;
+            if (workspaceChanged)
+            {
+                await RefreshDiagnosticsAsync(cancellationToken);
+            }
+
             QueueLanguageAnalysis();
             RefreshAxamlPreview();
             VersionControlStatus status = await _versionControlService.GetStatusAsync(new VersionControlStatusRequest
@@ -2441,9 +2539,44 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 ProjectPath = workspace.EntryPath,
             }, cancellationToken);
 
+            _testDiagnostics.Clear();
+            foreach (TestRunFailure failure in summary.Failures)
+            {
+                string? sourcePath = TryGetWorkspaceTestSourcePath(failure.SourcePath, workspace.RootPath);
+                _testDiagnostics.Add(new Diagnostic
+                {
+                    Code = "TEST",
+                    Severity = DiagnosticSeverity.Error,
+                    Message = FormatTestFailureMessage(failure.TestName, failure.Message),
+                    SourcePath = sourcePath,
+                    LineNumber = sourcePath is null || failure.LineNumber is <= 0
+                        ? null
+                        : failure.LineNumber,
+                });
+            }
+
+            await RefreshDiagnosticsAsync(cancellationToken);
             Editor.StatusText = $"Tests: {summary.Outcome} ({summary.TotalCount} total).";
             Editor.NotificationText =
                 $"Tests: {summary.PassedCount} passed, {summary.FailedCount} failed, {summary.SkippedCount} skipped.";
+        }
+
+        private static string? TryGetWorkspaceTestSourcePath(string? sourcePath, string workspaceRoot)
+        {
+            if (string.IsNullOrWhiteSpace(sourcePath))
+            {
+                return null;
+            }
+
+            try
+            {
+                string fullPath = Path.GetFullPath(sourcePath, workspaceRoot);
+                return IsPathWithinDirectory(fullPath, workspaceRoot) ? fullPath : null;
+            }
+            catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
+            {
+                return null;
+            }
         }
 
         private bool CanRunWorkspaceTests()
@@ -3423,7 +3556,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         private ValueTask RefreshDiagnosticsAsync(CancellationToken cancellationToken)
         {
-            return DiagnosticCollection.ConsumeAsync(_buildDiagnostics.Concat(_languageDiagnostics), cancellationToken);
+            return DiagnosticCollection.ConsumeAsync(
+                _buildDiagnostics.Concat(_languageDiagnostics).Concat(_testDiagnostics),
+                cancellationToken);
         }
 
         private static Diagnostic MapDiagnostic(BuilderDiagnostic diagnostic)

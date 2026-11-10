@@ -48,6 +48,9 @@
   <data name="ViewMenuHeader" xml:space="preserve">
     <value>_View</value>
   </data>
+  <data name="WorkspaceSidebarMenuText" xml:space="preserve">
+    <value>Show Workspace Sidebar</value>
+  </data>
   <data name="NewCommandText" xml:space="preserve">
     <value>New</value>
   </data>

@@ -44,8 +44,14 @@
         <Grid Grid.Row="0"
               Margin="8"
               MinHeight="0"
-              RowDefinitions="Auto,*,Auto"
-              ColumnDefinitions="280,8,*,8,300">
+              RowDefinitions="Auto,*,Auto">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding WorkspacePaneWidth, Mode=TwoWay}" />
+                <ColumnDefinition Width="{Binding WorkspacePaneSplitterWidth}" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="300" />
+            </Grid.ColumnDefinitions>
         <Border Grid.Row="0"
                 Grid.ColumnSpan="5"
                 Margin="0,0,0,8"
@@ -68,6 +74,10 @@
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Header="_View">
+                        <MenuItem Header="{Binding WorkspaceSidebarMenuText}"
+                                  ToggleType="CheckBox"
+                                  IsChecked="{Binding IsWorkspacePaneVisible, Mode=TwoWay}" />
+                        <Separator />
                         <MenuItem Header="Settings..." Command="{Binding OpenConfigurationCommand}" />
                         <MenuItem Header="System Settings..." Command="{Binding OpenSystemConfigurationCommand}" />
                         <MenuItem Header="Group Settings..." Command="{Binding OpenGroupConfigurationCommand}" />
@@ -145,6 +155,7 @@
                 Margin="0,0,8,0"
                 Padding="6"
                 MinHeight="0"
+                IsVisible="{Binding IsWorkspacePaneVisible}"
                 BorderBrush="{DynamicResource ThemeControlMidBrush}"
                 BorderThickness="1"
                 CornerRadius="4">
@@ -323,7 +334,8 @@
             </TabControl>
         </Border>
 
-        <GridSplitter Grid.Row="1" Grid.Column="1" Width="8" ResizeDirection="Columns" />
+        <GridSplitter Grid.Row="1" Grid.Column="1" Width="8" ResizeDirection="Columns"
+                      IsVisible="{Binding IsWorkspacePaneVisible}" />
         <Border Grid.Row="1"
                 Grid.Column="2"
                 Padding="8"

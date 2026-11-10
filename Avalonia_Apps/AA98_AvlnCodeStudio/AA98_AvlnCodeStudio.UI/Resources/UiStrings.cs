@@ -40,6 +40,8 @@ public static class UiStrings
 
     public static string ViewMenuHeader => GetString(nameof(ViewMenuHeader));
 
+    public static string WorkspaceSidebarMenuText => GetString(nameof(WorkspaceSidebarMenuText));
+
     public static string NewCommandText => GetString(nameof(NewCommandText));
 
     public static string OpenCommandText => GetString(nameof(OpenCommandText));

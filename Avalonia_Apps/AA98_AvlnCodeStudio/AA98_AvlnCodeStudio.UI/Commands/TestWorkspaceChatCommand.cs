@@ -72,7 +72,12 @@ public sealed class TestWorkspaceChatCommand(
                 result.TotalCount,
                 result.PassedCount,
                 result.FailedCount,
-                result.SkippedCount));
+                result.SkippedCount,
+                result.Failures.Select(static failure => new ProjectTestFailureResponse(
+                    failure.TestName,
+                    failure.Message,
+                    failure.SourcePath,
+                    failure.LineNumber)).ToArray()));
         }
 
         return results.Count == 1
@@ -116,5 +121,12 @@ public sealed class TestWorkspaceChatCommand(
         int TotalCount,
         int PassedCount,
         int FailedCount,
-        int SkippedCount);
+        int SkippedCount,
+        IReadOnlyList<ProjectTestFailureResponse> Failures);
+
+    private sealed record ProjectTestFailureResponse(
+        string TestName,
+        string Message,
+        string? SourcePath,
+        int? LineNumber);
 }
