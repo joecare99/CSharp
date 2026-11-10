@@ -1402,7 +1402,7 @@ public sealed class AxamlPreviewService
         {
             "TextBlock" or "TextBox" => "Text",
             "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleSwitch" => "Content",
-            "MenuItem" or "TabItem" => "Header",
+            "MenuItem" or "TabItem" or "TreeViewItem" => "Header",
             _ => null,
         };
     }
@@ -1707,12 +1707,45 @@ public sealed class AxamlPreviewService
         {
             "TabControl" => childControls.All(static child => child.Name.LocalName == "TabItem"),
             "TabItem" => childControls.Length <= 1,
+            "TreeView" or "TreeViewItem" => IsSupportedTreeViewContent(element, typeName, childControls),
+            "ComboBox" or "ItemsControl" or "ListBox" => IsSupportedStaticItemsContent(element, typeName, childControls),
             "ContextMenu" => IsSupportedContextMenuContent(element, childControls),
             "ToolTip" => IsSupportedToolTipContent(element, childControls),
             "Menu" or "MenuItem" => childControls.All(
                 static child => child.Name.LocalName is "MenuItem" or "Separator"),
             _ => true,
         };
+    }
+
+    private static bool IsSupportedStaticItemsContent(
+        XElement element,
+        string controlTypeName,
+        XElement[] childControls)
+    {
+        return childControls.Length == element.Elements().Count()
+            && !element.Attributes().Any(static attribute =>
+                !attribute.IsNamespaceDeclaration
+                && attribute.Name.LocalName is "DisplayMemberBinding"
+                    or "ItemStringFormat"
+                    or "ItemTemplate"
+                    or "ItemTemplateSelector"
+                    or "Items"
+                    or "ItemsSource"
+                    or "SelectedItem"
+                    or "SelectedValue"
+                    or "SelectedValueBinding"
+                    or "SelectedValuePath")
+            && !element.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData
+                || node is XText text && !string.IsNullOrWhiteSpace(text.Value))
+            && childControls.All(child =>
+                child.Name.Namespace == element.Name.Namespace
+                && (child.Name.LocalName is "Label" or "TextBlock"
+                    || controlTypeName == "ComboBox" && child.Name.LocalName == "ComboBoxItem"
+                    || controlTypeName == "ListBox" && child.Name.LocalName == "ListBoxItem")
+                && !child.DescendantNodes().Any(static node =>
+                    node is XComment or XProcessingInstruction or XCData)
+                && IsSupportedElement(child, child.Name.LocalName));
     }
 
     private static bool IsSupportedContextMenuContent(XElement element, XElement[] childControls)
@@ -1725,6 +1758,29 @@ public sealed class AxamlPreviewService
                 !attribute.IsNamespaceDeclaration
                 && attribute.Name.Namespace == XNamespace.None
                 && IsMarkupExtensionValue("ContextMenu", attribute.Name.LocalName, attribute.Value))
+            && !element.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData
+                || node is XText text && !string.IsNullOrWhiteSpace(text.Value));
+    }
+
+    private static bool IsSupportedTreeViewContent(
+        XElement element,
+        string typeName,
+        XElement[] childControls)
+    {
+        XElement[] contentElements = element.Elements()
+            .Where(child =>
+                child.Name.LocalName != $"{typeName}.ContextMenu"
+                && child.Name.LocalName != $"{typeName}.ToolTip")
+            .ToArray();
+        return childControls.Length == contentElements.Length
+            && childControls.All(child =>
+                child.Name.LocalName == "TreeViewItem"
+                && child.Name.Namespace == element.Name.Namespace)
+            && !element.Attributes().Any(static attribute =>
+                attribute.Name.Namespace == XNamespace.None
+                && (attribute.Name.LocalName is "ItemsSource" or "ItemTemplate" or "ItemTemplateSelector" or "SelectedItem"))
+            && !contentElements.Any(static child => child.Name.LocalName.Contains('.', StringComparison.Ordinal))
             && !element.Nodes().Any(static node =>
                 node is XComment or XProcessingInstruction or XCData
                 || node is XText text && !string.IsNullOrWhiteSpace(text.Value));
@@ -1826,12 +1882,44 @@ public sealed class AxamlPreviewService
                 child.Name.Namespace == element.Name.Namespace
                 && (child.Name.LocalName == "TextBlock"
                     ? IsSupportedToolTipText(child)
-                    : child.Name.LocalName == "StackPanel" && IsSupportedToolTipStackPanel(child)))
+                    : child.Name.LocalName switch
+                    {
+                        "Border" => IsSupportedToolTipBorder(child),
+                        "StackPanel" => IsSupportedToolTipStackPanel(child),
+                        _ => false,
+                    }))
             && !element.Attributes().Any(attribute =>
                 !attribute.IsNamespaceDeclaration
                 && (IsMarkupExtensionValue("ToolTip", attribute.Name.LocalName, attribute.Value)
                     || AxamlPropertyValueValidator.Validate(
                         "ToolTip",
+                        attribute.Name.LocalName,
+                        attribute.Value) is not null))
+            && !element.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData
+                || node is XText text && !string.IsNullOrWhiteSpace(text.Value));
+    }
+
+    private static bool IsSupportedToolTipBorder(XElement element)
+    {
+        XElement[] childControls = element.Elements()
+            .Where(static child => !child.Name.LocalName.Contains('.', StringComparison.Ordinal)
+                && LooksLikeControl(child))
+            .ToArray();
+        return IsSupportedElement(element, "Border")
+            && childControls.Length == element.Elements().Count()
+            && childControls.Length <= 1
+            && childControls.All(child =>
+                child.Name.Namespace == element.Name.Namespace
+                && (child.Name.LocalName == "TextBlock"
+                    ? IsSupportedToolTipText(child)
+                    : child.Name.LocalName == "StackPanel" && IsSupportedToolTipStackPanel(child)))
+            && !element.Attributes().Any(attribute =>
+                !attribute.IsNamespaceDeclaration
+                && (attribute.Name.Namespace != XNamespace.None
+                    || IsMarkupExtensionValue("Border", attribute.Name.LocalName, attribute.Value)
+                    || AxamlPropertyValueValidator.Validate(
+                        "Border",
                         attribute.Name.LocalName,
                         attribute.Value) is not null))
             && !element.Nodes().Any(static node =>
@@ -2198,7 +2286,7 @@ public sealed class AxamlPreviewService
             "TextBlock" or "TextBox" => "Text",
             "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleSwitch" => "Content",
             "ComboBoxItem" or "ListBoxItem" => "Content",
-            "Expander" or "GroupBox" or "MenuItem" or "TabItem" => "Header",
+            "Expander" or "GroupBox" or "MenuItem" or "TabItem" or "TreeViewItem" => "Header",
             _ => null,
         };
         if (textProperty is not null && properties.TryGetValue(textProperty, out string? text))

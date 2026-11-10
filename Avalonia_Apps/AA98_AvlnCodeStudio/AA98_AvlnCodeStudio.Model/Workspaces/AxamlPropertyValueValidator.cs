@@ -99,6 +99,7 @@ public static class AxamlPropertyValueValidator
                 "TextTrimming" when node.TypeName == "TextBlock" => "None",
                 "TextWrapping" when node.TypeName == "TextBlock" => "Wrap",
                 "TextWrapping" when node.TypeName == "TextBox" => "NoWrap",
+                "IsExpanded" when node.TypeName == "TreeViewItem" => "False",
                 "SelectedIndex" when node.TypeName is "ComboBox" or "ListBox" or "TabControl" => "-1",
                 "DayVisible" or "MonthVisible" or "YearVisible" when node.TypeName == "DatePicker" => "True",
                 "UseSeconds" when node.TypeName == "TimePicker" => "False",
@@ -476,6 +477,13 @@ public static class AxamlPropertyValueValidator
                 : "Use a color name or a hexadecimal color such as #AABBCC.";
         }
 
+        if (propertyName == "FontFamily")
+        {
+            return IsSafeFontFamily(value)
+                ? null
+                : "Enter a plain font family name using letters, numbers, spaces, dots, underscores or hyphens.";
+        }
+
         return null;
     }
 
@@ -666,6 +674,16 @@ public static class AxamlPropertyValueValidator
 
         System.Drawing.Color namedColor = System.Drawing.Color.FromName(trimmed);
         return namedColor.IsKnownColor && !namedColor.IsSystemColor;
+    }
+
+    private static bool IsSafeFontFamily(string value)
+    {
+        return value.Length is > 0 and <= 64
+            && string.Equals(value, value.Trim(), StringComparison.Ordinal)
+            && char.IsLetterOrDigit(value[0])
+            && value.All(static character =>
+                char.IsLetterOrDigit(character)
+                || character is ' ' or '.' or '_' or '-');
     }
 
     internal static bool IsFormatProperty(string controlType, string propertyName)
