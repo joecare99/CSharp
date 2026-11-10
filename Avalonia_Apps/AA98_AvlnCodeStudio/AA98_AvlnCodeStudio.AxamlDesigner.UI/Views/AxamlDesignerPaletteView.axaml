@@ -57,6 +57,8 @@
             <Button Content="Button" Command="{Binding AddButtonCommand}" />
             <Button Content="Progress" Command="{Binding AddProgressBarCommand}" />
             <Button Content="Separator" Command="{Binding AddSeparatorCommand}" />
+            <Button Content="TabControl" Command="{Binding AddTabControlCommand}" />
+            <Button Content="TabItem" Command="{Binding AddTabItemCommand}" />
           </UniformGrid>
         </Expander>
         <Expander Header="Eingabe" IsExpanded="False">
@@ -87,6 +89,18 @@
               <Button Content="WrapPanel" Command="{Binding AddWrapPanelCommand}" />
             </UniformGrid>
           </StackPanel>
+        </Expander>
+        <Expander Header="Menüs" IsExpanded="False">
+          <UniformGrid Columns="2" Margin="4">
+            <Button Content="Menu" Command="{Binding AddMenuCommand}" />
+            <Button Content="MenuItem" Command="{Binding AddMenuItemCommand}" />
+          </UniformGrid>
+        </Expander>
+        <Expander Header="Attached content" IsExpanded="False">
+          <UniformGrid Columns="2" Margin="4">
+            <Button Content="ContextMenu" Command="{Binding AddContextMenuCommand}" />
+            <Button Content="ToolTip" Command="{Binding AddToolTipCommand}" />
+          </UniformGrid>
         </Expander>
         <TextBlock Text="Correct invalid markup first, then add controls. DockPanel keeps its client last; Grid uses the next free cell."
                    FontWeight="SemiBold" TextWrapping="Wrap" />

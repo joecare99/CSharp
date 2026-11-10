@@ -170,15 +170,22 @@ public sealed class AxamlPreviewControl : ContentControl
 
         Control content = node.TypeName switch
         {
+            "AutoCompleteBox" => BuildAutoCompleteBox(node),
             "Border" => BuildBorder(node),
             "Button" => BuildButton(node),
+            "Calendar" => BuildCalendar(node),
             "CheckBox" => BuildCheckBox(node),
+            "ColorPicker" => BuildColorPicker(node),
             "ComboBox" => ApplyTemplatedControlAppearance(new ComboBox
             {
                 PlaceholderText = ParseLiteralText(node, "PlaceholderText", node.Text ?? "ComboBox"),
+                ItemsSource = ParseSelectorItems(node),
+                SelectedIndex = ParseSelectorIndex(node),
                 IsEnabled = false,
             }, node),
             "ContentControl" => BuildContentControl(node),
+            "ContextMenu" => BuildContextMenu(node),
+            "DatePicker" => BuildDatePicker(node),
             "DockPanel" => BuildDockPanel(node),
             "Expander" => ApplyTemplatedControlAppearance(new Expander
             {
@@ -197,11 +204,14 @@ public sealed class AxamlPreviewControl : ContentControl
                 Content = BuildTextBlock(node),
             }, node),
             "TextBlock" => BuildTextBlock(node),
-            "ListBox" => new ListBox
+            "ListBox" => ApplyTemplatedControlAppearance(new ListBox
             {
-                ItemsSource = node.Children.Select(static child => child.Text ?? child.TypeName).ToArray(),
+                ItemsSource = ParseSelectorItems(node),
+                SelectedIndex = ParseSelectorIndex(node),
                 IsEnabled = false,
-            },
+            }, node),
+            "Menu" => BuildMenu(node),
+            "MenuItem" => BuildMenuItem(node),
             "NumericUpDown" => BuildNumericUpDown(node),
             "ProgressBar" => BuildProgressBar(node),
             "RadioButton" => BuildRadioButton(node),
@@ -229,6 +239,9 @@ public sealed class AxamlPreviewControl : ContentControl
             "StackPanel" => BuildStackPanel(node),
             "TextBox" => BuildTextBox(node),
             "ToggleSwitch" => BuildToggleSwitch(node),
+            "TimePicker" => BuildTimePicker(node),
+            "TabControl" => BuildTabControl(node),
+            "ToolTip" => BuildToolTip(node),
             "UniformGrid" => BuildUniformGrid(node),
             "Viewbox" => new Viewbox
             {
@@ -248,12 +261,56 @@ public sealed class AxamlPreviewControl : ContentControl
             "Window" or "UserControl" => BuildChildren(node),
             _ => new TextBlock { Text = node.TypeName },
         };
+        AxamlPreviewNode[] attachedPreviews = node.Children
+            .Where(static child => child.TypeName is "ContextMenu" or "ToolTip")
+            .ToArray();
+        if (attachedPreviews.Length > 0)
+        {
+            StackPanel preview = new() { Spacing = 6 };
+            preview.Children.Add(content);
+            foreach (AxamlPreviewNode attachedPreview in attachedPreviews)
+            {
+                preview.Children.Add(BuildControl(attachedPreview));
+            }
+
+            content = preview;
+        }
+
         return WrapNode(node, content);
     }
 
     private Border WrapNode(AxamlPreviewNode node, Control content)
     {
         bool isSelected = ReferenceEquals(node, SelectedNode);
+        ApplyNodeVisualProperties(node, content);
+        Grid wrapper = new();
+        wrapper.Children.Add(content);
+        if (isSelected && CanResize(node))
+        {
+            wrapper.Children.Add(new Border
+            {
+                Width = 12,
+                Height = 12,
+                Margin = new Thickness(2),
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom,
+                Background = Brushes.DodgerBlue,
+                Classes = { "axaml-resize-grip" },
+            });
+        }
+
+        return new Border
+        {
+            Tag = node.SourceStartOffset >= 0 ? node : null,
+            Child = wrapper,
+            Background = Brushes.Transparent,
+            BorderBrush = isSelected ? Brushes.DodgerBlue : Brushes.Transparent,
+            BorderThickness = new Thickness(isSelected ? 1 : 0),
+        };
+    }
+
+    private void ApplyNodeVisualProperties(AxamlPreviewNode node, Control content)
+    {
         content.Margin = ParseThickness(node, "Margin");
         content.HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment");
         content.VerticalAlignment = ParseVerticalAlignment(node);
@@ -308,30 +365,6 @@ public sealed class AxamlPreviewControl : ContentControl
         }
 
         content.IsHitTestVisible = node.Children.Count > 0;
-        Grid wrapper = new();
-        wrapper.Children.Add(content);
-        if (isSelected && CanResize(node))
-        {
-            wrapper.Children.Add(new Border
-            {
-                Width = 12,
-                Height = 12,
-                Margin = new Thickness(2),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
-                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom,
-                Background = Brushes.DodgerBlue,
-                Classes = { "axaml-resize-grip" },
-            });
-        }
-
-        return new Border
-        {
-            Tag = node.SourceStartOffset >= 0 ? node : null,
-            Child = wrapper,
-            Background = Brushes.Transparent,
-            BorderBrush = isSelected ? Brushes.DodgerBlue : Brushes.Transparent,
-            BorderThickness = new Thickness(isSelected ? 1 : 0),
-        };
     }
 
     private static bool CanResize(AxamlPreviewNode node)
@@ -369,7 +402,7 @@ public sealed class AxamlPreviewControl : ContentControl
         return border;
     }
 
-    private static Button BuildButton(AxamlPreviewNode node)
+    private Control BuildButton(AxamlPreviewNode node)
     {
         Button button = new()
         {
@@ -408,6 +441,118 @@ public sealed class AxamlPreviewControl : ContentControl
         }
 
         return ApplyTemplatedControlAppearance(numericUpDown, node);
+    }
+
+    private static Control BuildDatePicker(AxamlPreviewNode node)
+    {
+        DatePicker datePicker = ApplyTemplatedControlAppearance(new DatePicker
+        {
+            DayVisible = ParseBoolean(node, "DayVisible") ?? true,
+            MonthVisible = ParseBoolean(node, "MonthVisible") ?? true,
+            YearVisible = ParseBoolean(node, "YearVisible") ?? true,
+            IsEnabled = false,
+        }, node);
+
+        ApplyDatePickerYearRange(node, datePicker);
+        DateTimeOffset? selectedDate = ParseDatePickerSelectedDate(node);
+        if (selectedDate is { } date
+            && date >= datePicker.MinYear
+            && date <= datePicker.MaxYear)
+        {
+            datePicker.SelectedDate = date;
+        }
+
+        if (ParseValidatedFormat(node, "DayFormat") is { } dayFormat)
+        {
+            datePicker.DayFormat = dayFormat;
+        }
+
+        if (ParseValidatedFormat(node, "MonthFormat") is { } monthFormat)
+        {
+            datePicker.MonthFormat = monthFormat;
+        }
+
+        if (ParseValidatedFormat(node, "YearFormat") is { } yearFormat)
+        {
+            datePicker.YearFormat = yearFormat;
+        }
+
+        return datePicker;
+    }
+
+    private static void ApplyDatePickerYearRange(AxamlPreviewNode node, DatePicker datePicker)
+    {
+        DateTimeOffset minimumYear = HasValidLiteralValue(node, "MinYear")
+            && DateTimeOffset.TryParseExact(
+                GetProperty(node, "MinYear"),
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out DateTimeOffset parsedMinimumYear)
+                    ? parsedMinimumYear
+                    : datePicker.MinYear;
+        DateTimeOffset maximumYear = HasValidLiteralValue(node, "MaxYear")
+            && DateTimeOffset.TryParseExact(
+                GetProperty(node, "MaxYear"),
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out DateTimeOffset parsedMaximumYear)
+                    ? parsedMaximumYear
+                    : datePicker.MaxYear;
+        if (minimumYear > maximumYear)
+        {
+            return;
+        }
+
+        if (minimumYear < datePicker.MinYear)
+        {
+            datePicker.MinYear = minimumYear;
+            datePicker.MaxYear = maximumYear;
+        }
+        else
+        {
+            datePicker.MaxYear = maximumYear;
+            datePicker.MinYear = minimumYear;
+        }
+    }
+
+    private static Control BuildTimePicker(AxamlPreviewNode node)
+    {
+        TimePicker timePicker = ApplyTemplatedControlAppearance(new TimePicker
+        {
+            ClockIdentifier = AxamlPropertyValueValidator.Validate(
+                "TimePicker",
+                "ClockIdentifier",
+                GetProperty(node, "ClockIdentifier") ?? "24HourClock") is null
+                    ? GetProperty(node, "ClockIdentifier") ?? "24HourClock"
+                    : "24HourClock",
+            MinuteIncrement = ParseTimePickerIncrement(node, "MinuteIncrement"),
+            SecondIncrement = ParseTimePickerIncrement(node, "SecondIncrement"),
+            UseSeconds = ParseBoolean(node, "UseSeconds") ?? false,
+            IsEnabled = false,
+        }, node);
+
+        string? selectedTime = GetProperty(node, "SelectedTime");
+        if (HasValidLiteralValue(node, "SelectedTime")
+            && TimeSpan.TryParseExact(
+                selectedTime,
+                ["hh\\:mm", "hh\\:mm\\:ss"],
+                CultureInfo.InvariantCulture,
+                TimeSpanStyles.None,
+                out TimeSpan time))
+        {
+            timePicker.SelectedTime = time;
+        }
+
+        return timePicker;
+    }
+
+    private static int ParseTimePickerIncrement(AxamlPreviewNode node, string propertyName)
+    {
+        return HasValidLiteralValue(node, propertyName) && TryGetInt(node, propertyName, out int increment)
+            ? increment
+            : 1;
     }
 
     private static NumberStyles ParseNumericUpDownNumberStyle(AxamlPreviewNode node)
@@ -450,6 +595,157 @@ public sealed class AxamlPreviewControl : ContentControl
             IsEnabled = false,
             IsChecked = ParseBoolean(node, "IsChecked"),
         }, node);
+    }
+
+    private static Control BuildCalendar(AxamlPreviewNode node)
+    {
+        Avalonia.Controls.Calendar calendar = ApplyTemplatedControlAppearance(new Avalonia.Controls.Calendar
+        {
+            SelectionMode = ParseCalendarSelectionMode(node),
+            FirstDayOfWeek = ParseCalendarFirstDayOfWeek(node),
+            IsTodayHighlighted = ParseBoolean(node, "IsTodayHighlighted") ?? true,
+            IsEnabled = false,
+        }, node);
+
+        DateTime? displayDateStart = ParseCalendarDate(node, "DisplayDateStart");
+        DateTime? displayDateEnd = ParseCalendarDate(node, "DisplayDateEnd");
+        if (displayDateStart is { } start && displayDateEnd is { } end && start > end)
+        {
+            displayDateStart = null;
+            displayDateEnd = null;
+        }
+
+        if (displayDateEnd is { } validEnd)
+        {
+            calendar.DisplayDateEnd = validEnd;
+        }
+
+        if (displayDateStart is { } validStart)
+        {
+            calendar.DisplayDateStart = validStart;
+        }
+
+        DateTime? selectedDate = ParseCalendarDate(node, "SelectedDate");
+        if (calendar.SelectionMode == CalendarSelectionMode.SingleDate
+            && selectedDate is { } selected
+            && IsCalendarDateInRange(selected, displayDateStart, displayDateEnd))
+        {
+            calendar.SelectedDate = selected;
+        }
+
+        DateTime? requestedDisplayDate = ParseCalendarDate(node, "DisplayDate");
+        if (requestedDisplayDate is { } requested
+            && IsCalendarDateInRange(requested, displayDateStart, displayDateEnd))
+        {
+            calendar.DisplayDate = requested;
+        }
+        else if (calendar.SelectedDate is { } selection)
+        {
+            calendar.DisplayDate = selection;
+        }
+        else if (displayDateStart is { } firstVisibleDate)
+        {
+            calendar.DisplayDate = firstVisibleDate;
+        }
+        else if (displayDateEnd is { } lastVisibleDate
+            && calendar.DisplayDate > lastVisibleDate)
+        {
+            calendar.DisplayDate = lastVisibleDate;
+        }
+
+        return calendar;
+    }
+
+    private static AutoCompleteBox BuildAutoCompleteBox(AxamlPreviewNode node)
+    {
+        return ApplyTemplatedControlAppearance(new AutoCompleteBox
+        {
+            Text = ParseLiteralText(node, "Text", string.Empty),
+            PlaceholderText = ParseLiteralText(node, "PlaceholderText", string.Empty),
+            FilterMode = HasValidLiteralValue(node, "FilterMode")
+                && Enum.TryParse(GetProperty(node, "FilterMode"), ignoreCase: true, out AutoCompleteFilterMode filterMode)
+                && Enum.IsDefined(filterMode)
+                    ? filterMode
+                    : AutoCompleteFilterMode.StartsWith,
+            MinimumPrefixLength = HasValidLiteralValue(node, "MinimumPrefixLength")
+                && TryGetInt(node, "MinimumPrefixLength", out int minimumPrefixLength)
+                    ? minimumPrefixLength
+                    : 1,
+            IsTextCompletionEnabled = ParseBoolean(node, "IsTextCompletionEnabled") ?? false,
+            IsDropDownOpen = false,
+            IsEnabled = false,
+        }, node);
+    }
+
+    private static ColorPicker BuildColorPicker(AxamlPreviewNode node)
+    {
+        ColorPicker colorPicker = ApplyTemplatedControlAppearance(new ColorPicker
+        {
+            ColorModel = HasValidLiteralValue(node, "ColorModel")
+                && Enum.TryParse(GetProperty(node, "ColorModel"), ignoreCase: true, out ColorModel colorModel)
+                && Enum.IsDefined(colorModel)
+                    ? colorModel
+                    : ColorModel.Rgba,
+            IsAccentColorsVisible = ParseBoolean(node, "IsAccentColorsVisible") ?? true,
+            IsAlphaEnabled = ParseBoolean(node, "IsAlphaEnabled") ?? true,
+            IsAlphaVisible = ParseBoolean(node, "IsAlphaVisible") ?? true,
+            IsColorComponentsVisible = ParseBoolean(node, "IsColorComponentsVisible") ?? true,
+            IsColorModelVisible = ParseBoolean(node, "IsColorModelVisible") ?? true,
+            IsColorPaletteVisible = ParseBoolean(node, "IsColorPaletteVisible") ?? true,
+            IsColorPreviewVisible = ParseBoolean(node, "IsColorPreviewVisible") ?? true,
+            IsColorSpectrumSliderVisible = ParseBoolean(node, "IsColorSpectrumSliderVisible") ?? true,
+            IsColorSpectrumVisible = ParseBoolean(node, "IsColorSpectrumVisible") ?? true,
+            IsComponentSliderVisible = ParseBoolean(node, "IsComponentSliderVisible") ?? true,
+            IsComponentTextInputVisible = ParseBoolean(node, "IsComponentTextInputVisible") ?? true,
+            IsHexInputVisible = ParseBoolean(node, "IsHexInputVisible") ?? true,
+            IsEnabled = false,
+        }, node);
+
+        string? value = GetProperty(node, "Color");
+        if (HasValidLiteralValue(node, "Color") && Color.TryParse(value, out Color color))
+        {
+            colorPicker.Color = color;
+        }
+
+        return colorPicker;
+    }
+
+    private static CalendarSelectionMode ParseCalendarSelectionMode(AxamlPreviewNode node)
+    {
+        return HasValidLiteralValue(node, "SelectionMode")
+            && Enum.TryParse(GetProperty(node, "SelectionMode"), ignoreCase: true, out CalendarSelectionMode selectionMode)
+            && selectionMode is CalendarSelectionMode.None or CalendarSelectionMode.SingleDate
+                ? selectionMode
+                : CalendarSelectionMode.SingleDate;
+    }
+
+    private static DayOfWeek ParseCalendarFirstDayOfWeek(AxamlPreviewNode node)
+    {
+        return HasValidLiteralValue(node, "FirstDayOfWeek")
+            && Enum.TryParse(GetProperty(node, "FirstDayOfWeek"), ignoreCase: true, out DayOfWeek firstDayOfWeek)
+            && Enum.IsDefined(firstDayOfWeek)
+                ? firstDayOfWeek
+                : DayOfWeek.Monday;
+    }
+
+    private static DateTime? ParseCalendarDate(AxamlPreviewNode node, string propertyName)
+    {
+        string? value = GetProperty(node, propertyName);
+        return HasValidLiteralValue(node, propertyName)
+            && DateTime.TryParseExact(
+                value,
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out DateTime date)
+                    ? date
+                    : null;
+    }
+
+    private static bool IsCalendarDateInRange(DateTime date, DateTime? displayDateStart, DateTime? displayDateEnd)
+    {
+        return (displayDateStart is null || date >= displayDateStart.Value)
+            && (displayDateEnd is null || date <= displayDateEnd.Value);
     }
 
     private static RadioButton BuildRadioButton(AxamlPreviewNode node)
@@ -604,6 +900,165 @@ public sealed class AxamlPreviewControl : ContentControl
         {
             Content = BuildChildren(node),
         }, node);
+    }
+
+    private Control BuildTabControl(AxamlPreviewNode node)
+    {
+        TabControl tabControl = new()
+        {
+            IsEnabled = false,
+        };
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            if (child.TypeName != "TabItem")
+            {
+                continue;
+            }
+
+            TabItem tabItem = ApplyTemplatedControlAppearance(new TabItem
+            {
+                Header = ParseLiteralText(child, "Header", child.Text ?? "Tab"),
+                Content = BuildChildren(child),
+            }, child);
+            tabControl.Items.Add(tabItem);
+        }
+
+        tabControl.SelectedIndex = ParseSelectorIndex(node);
+        return ApplyTemplatedControlAppearance(tabControl, node);
+    }
+
+    private Control BuildMenu(AxamlPreviewNode node)
+    {
+        Menu menu = new()
+        {
+            IsEnabled = false,
+        };
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            if (child.TypeName is not ("MenuItem" or "Separator"))
+            {
+                continue;
+            }
+
+            menu.Items.Add(BuildMenuChild(child));
+        }
+
+        return ApplyTemplatedControlAppearance(menu, node);
+    }
+
+    private Control BuildContextMenu(AxamlPreviewNode node)
+    {
+        StackPanel content = new() { Spacing = 4 };
+        content.Children.Add(new TextBlock
+        {
+            Text = "ContextMenu (closed, inert preview)",
+            FontStyle = FontStyle.Italic,
+        });
+
+        StackPanel items = new() { Spacing = 2 };
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            if (child.TypeName is "MenuItem" or "Separator")
+            {
+                items.Children.Add(BuildMenuChild(child));
+            }
+        }
+
+        content.Children.Add(items);
+        return new Border
+        {
+            Padding = new Thickness(6),
+            BorderThickness = new Thickness(1),
+            BorderBrush = Brushes.Gray,
+            Child = content,
+        };
+    }
+
+    private Control BuildToolTip(AxamlPreviewNode node)
+    {
+        StackPanel content = new() { Spacing = 4 };
+        content.Children.Add(new TextBlock
+        {
+            Text = "ToolTip (closed, inert preview)",
+            FontStyle = FontStyle.Italic,
+        });
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            if (child.TypeName is "TextBlock" or "StackPanel")
+            {
+                content.Children.Add(BuildControl(child));
+            }
+        }
+
+        return new Border
+        {
+            Padding = new Thickness(6),
+            BorderThickness = new Thickness(1),
+            BorderBrush = Brushes.Gray,
+            Child = content,
+        };
+    }
+
+    private Control BuildMenuItem(AxamlPreviewNode node)
+    {
+        MenuItem menuItem = new()
+        {
+            Header = ParseLiteralText(node, "Header", "Menu item"),
+            InputGesture = ParseInputGesture(node),
+            IsEnabled = false,
+        };
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            if (child.TypeName is not ("MenuItem" or "Separator"))
+            {
+                continue;
+            }
+
+            menuItem.Items.Add(BuildMenuChild(child));
+        }
+
+        menuItem = ApplyTemplatedControlAppearance(menuItem, node);
+        ApplyNodeVisualProperties(node, menuItem);
+        menuItem.Tag = node.SourceStartOffset >= 0 ? node : null;
+        if (ReferenceEquals(node, SelectedNode))
+        {
+            menuItem.BorderBrush = Brushes.DodgerBlue;
+            menuItem.BorderThickness = new Thickness(1);
+        }
+
+        return menuItem;
+    }
+
+    private Control BuildMenuChild(AxamlPreviewNode node)
+    {
+        if (!node.IsSupported)
+        {
+            return BuildControl(node);
+        }
+
+        if (node.TypeName == "MenuItem")
+        {
+            return BuildMenuItem(node);
+        }
+
+        if (node.TypeName == "Separator")
+        {
+            Separator separator = new();
+            ApplyNodeVisualProperties(node, separator);
+            separator.Tag = node.SourceStartOffset >= 0 ? node : null;
+            return separator;
+        }
+
+        return BuildControl(node);
+    }
+
+    private static KeyGesture? ParseInputGesture(AxamlPreviewNode node)
+    {
+        string? value = GetProperty(node, "InputGesture");
+        return string.IsNullOrEmpty(value)
+            || AxamlPropertyValueValidator.Validate(node.TypeName, "InputGesture", value) is not null
+                ? null
+                : KeyGesture.Parse(value);
     }
 
     private Control BuildDockPanel(AxamlPreviewNode node)
@@ -1091,6 +1546,56 @@ public sealed class AxamlPreviewControl : ContentControl
             && value >= 0
                 ? value
                 : 0;
+    }
+
+    private static int ParseSelectorIndex(AxamlPreviewNode node)
+    {
+        return HasValidLiteralValue(node, "SelectedIndex")
+            && TryGetInt(node, "SelectedIndex", out int selectedIndex)
+            && selectedIndex < node.Children.Count
+                ? selectedIndex
+                : -1;
+    }
+
+    private static string[] ParseSelectorItems(AxamlPreviewNode node)
+    {
+        return node.Children.Select(static child =>
+        {
+            if (child.Text is not null)
+            {
+                return child.Text;
+            }
+
+            if ((child.TypeName is "ComboBoxItem" or "ListBoxItem")
+                && child.Children.Count == 1
+                && (child.Children[0].TypeName is "TextBlock" or "Label")
+                && child.Children[0].Text is { } contentText)
+            {
+                return contentText;
+            }
+
+            if (child.Properties.TryGetValue("Content", out string? content)
+                && !content.TrimStart().StartsWith('{'))
+            {
+                return content;
+            }
+
+            return child.TypeName;
+        }).ToArray();
+    }
+
+    private static DateTimeOffset? ParseDatePickerSelectedDate(AxamlPreviewNode node)
+    {
+        string? value = GetProperty(node, "SelectedDate");
+        return HasValidLiteralValue(node, "SelectedDate")
+            && DateTimeOffset.TryParseExact(
+                value,
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out DateTimeOffset selectedDate)
+                    ? selectedDate
+                    : null;
     }
 
     private static string? GetProperty(AxamlPreviewNode node, string name)

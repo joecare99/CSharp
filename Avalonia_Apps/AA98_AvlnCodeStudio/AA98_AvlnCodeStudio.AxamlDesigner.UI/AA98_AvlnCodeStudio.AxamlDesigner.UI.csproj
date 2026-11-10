@@ -16,6 +16,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
   <ItemGroup>
@@ -25,5 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Update="Avalonia" Version="12.1.5" />
+    <PackageVersion Update="Avalonia.Controls.ColorPicker" Version="12.1.5" />
   </ItemGroup>
 </Project>

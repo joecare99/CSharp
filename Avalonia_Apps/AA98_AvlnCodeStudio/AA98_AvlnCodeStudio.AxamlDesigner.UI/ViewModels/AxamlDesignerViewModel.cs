@@ -785,6 +785,80 @@ public partial class AxamlDesignerViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void AddTabControl()
+    {
+        AddChildControl("TabControl");
+    }
+
+    [RelayCommand]
+    private void AddTabItem()
+    {
+        AddChildControl("TabItem");
+    }
+
+    [RelayCommand]
+    private void AddMenu()
+    {
+        AddChildControl("Menu");
+    }
+
+    [RelayCommand]
+    private void AddMenuItem()
+    {
+        AddChildControl("MenuItem");
+    }
+
+    [RelayCommand]
+    private void AddContextMenu()
+    {
+        if (!EnsureNoStructureDrafts())
+        {
+            return;
+        }
+
+        try
+        {
+            if (!_session.AddContextMenu())
+            {
+                return;
+            }
+
+            SynchronizeState();
+            StatusText = "ContextMenu added to the selected control.";
+            RaiseMarkupChanged();
+        }
+        catch (Exception exception) when (exception is InvalidDataException or InvalidOperationException or ArgumentException)
+        {
+            StatusText = $"Could not add ContextMenu: {exception.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void AddToolTip()
+    {
+        if (!EnsureNoStructureDrafts())
+        {
+            return;
+        }
+
+        try
+        {
+            if (!_session.AddToolTip())
+            {
+                return;
+            }
+
+            SynchronizeState();
+            StatusText = "ToolTip added to the selected control.";
+            RaiseMarkupChanged();
+        }
+        catch (Exception exception) when (exception is InvalidDataException or InvalidOperationException or ArgumentException)
+        {
+            StatusText = $"Could not add ToolTip: {exception.Message}";
+        }
+    }
+
+    [RelayCommand]
     private void AddStackPanel()
     {
         AddChildControl("StackPanel");
